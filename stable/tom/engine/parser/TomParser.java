@@ -199,9 +199,9 @@ public class TomParser implements TomParserConstants {
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
     if(fileName.equals("")) {
-        String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"),
-                                          new Object[]{new Integer(getLine()), currentFile});
-        throw new TomIncludeException(msg);
+      String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"),
+                                        new Object[]{new Integer(getLine()), currentFile});
+      throw new TomIncludeException(msg);
     }
     try {
       file = new File(fileName);
@@ -222,7 +222,6 @@ public class TomParser implements TomParserConstants {
 
           for(int i=0 ; !found && i<environment().getImportList().size() ; i++) {
             file = new File((File)environment().getImportList().get(i),fileName).getCanonicalFile();
-
             found = file.exists();
           }
           if(!found) {
@@ -2883,6 +2882,14 @@ public class TomParser implements TomParserConstants {
     finally { jj_save(12, xla); }
   }
 
+  final private boolean jj_3R_38() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_5()) jj_scanpos = xsp;
+    if (jj_3R_41()) return true;
+    return false;
+  }
+
   final private boolean jj_3R_35() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_3R_37()) return true;
@@ -3155,14 +3162,6 @@ public class TomParser implements TomParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_36()) jj_scanpos = xsp;
     if (jj_scan_token(TOM_RBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_38() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_5()) jj_scanpos = xsp;
-    if (jj_3R_41()) return true;
     return false;
   }
 

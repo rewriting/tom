@@ -70,10 +70,12 @@ public class NewTargetParser extends antlr.LLkParser       implements NewTargetP
         this.currentFile = currentFile;
         this.targetlexer = (NewTargetLexer) selector.getStream("targetlexer");
         targetlexer.setParser(this);
-        this.includedFileSet = includedFiles;
+        this.includedFileSet = new HashSet(includedFiles);
+        testIncludedFile(currentFile, includedFileSet);
+
         this.alreadyParsedFileSet = alreadyParsedFiles;
         
-	logger = Logger.getLogger(getClass().getName());
+        logger = Logger.getLogger(getClass().getName());
 
         // then create the Tom mode parser
         tomparser = new NewTomParser(getInputState(),this);
@@ -233,24 +235,33 @@ public class NewTargetParser extends antlr.LLkParser       implements NewTargetP
             }
             fileAbsoluteName = file.getAbsolutePath();
             if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
-                String msg = MessageFormat.format(TomMessage.getString("IncludedFileCycle"), new Object[]{fileName, new Integer(getLine()), currentFile});
+                p("--- included file "+fileAbsoluteName+" current file: "+currentFile);
+                String msg = MessageFormat.format(
+                    TomMessage.getString("IncludedFileCycle"), 
+                    new Object[]{fileName, new Integer(getLine()), currentFile}
+                );
                 throw new TomIncludeException(msg);
             }
             
 			// if trying to include a file twice, but not in a cycle : discard
             if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
-                if(!environment().isSilentDiscardImport(fileName)) {
-		    
-		    logger.log( Level.WARNING,
-				"IncludedFileAlreadyParsed", 
-				new Object[]{currentFile, new Integer(getLine()), fileName} );
-		}
-		return;
-                // 				String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
+                if(!environment().isSilentDiscardImport(fileName)) {                    
+                    logger.log( 
+                        Level.WARNING,
+                        "IncludedFileAlreadyParsed", 
+                        new Object[]{
+                            currentFile, 
+                            new Integer(getLine()), 
+                            fileName
+                        } 
+                    );
+                }
+                return;
+                // 		    		String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
                 //         throw new TomIncludeException(msg);
             }
             
-            parser = TomMainParser.newParser(fileAbsoluteName);
+            parser = TomMainParser.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet);
             astTom = parser.input();
             astTom = tom_make_TomInclude(astTom.getTomList());
             list.add(astTom);
@@ -258,7 +269,17 @@ public class NewTargetParser extends antlr.LLkParser       implements NewTargetP
             if(e instanceof TomIncludeException) {
                 throw (TomIncludeException)e;
             }
-            String msg = MessageFormat.format(TomMessage.getString("ErrorWhileIncludindFile"), new Object[]{e.getClass(), fileAbsoluteName, currentFile, new Integer(getLine()), e.getMessage()});
+            String msg = MessageFormat.format(
+                TomMessage.getString("ErrorWhileIncludindFile"), 
+                new Object[]{
+                    e.getClass(), 
+                    fileAbsoluteName, 
+                    currentFile, 
+                    new Integer(getLine()), 
+                    e.getMessage()
+                }
+            );
+
             throw new TomException(msg);
         }
     }
@@ -402,6 +423,11 @@ public NewTargetParser(ParserSharedInputState state) {
 			case TYPEARRAY:
 			{
 				typeArray(list);
+				break;
+			}
+			case STRING:
+			{
+				match(STRING);
 				break;
 			}
 			case LBRACE:
@@ -1011,6 +1037,7 @@ public NewTargetParser(ParserSharedInputState state) {
 		"EOF",
 		"<2>",
 		"NULL_TREE_LOOKAHEAD",
+		"STRING",
 		"LBRACE",
 		"RBRACE",
 		"RULE",
@@ -1026,8 +1053,9 @@ public NewTargetParser(ParserSharedInputState state) {
 		"TYPE",
 		"TYPELIST",
 		"TYPEARRAY",
-		"WS",
+		"ESC",
 		"HEX_DIGIT",
+		"WS",
 		"COMMENT",
 		"SL_COMMENT",
 		"ML_COMMENT",

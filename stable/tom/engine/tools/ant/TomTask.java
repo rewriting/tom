@@ -25,8 +25,9 @@
 
 package jtom.tools.ant;
 
-import java.io.File;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
+import java.util.logging.*;
 import jtom.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -41,14 +42,15 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * Compiles Tom source files. This task can take the following
  * arguments:
  * <ul>
- * <li>configfile
- * <li>sourcedir
- * <li>destdir
- * <li>outputfile
- * <li>optimize
- * <li>debug
- * <li>verbose
- * <li>failonerror
+ * <li>configfile</li>
+ * <li>logpropertiesfile</li>
+ * <li>sourcedir</li>
+ * <li>destdir</li>
+ * <li>outputfile</li>
+ * <li>optimize</li>
+ * <li>debug</li>
+ * <li>verbose</li>
+ * <li>failonerror</li>
  * </ul>
  * Of these arguments, the <b>sourcedir</b> and <b>destdir</b> are required.
  * <p>
@@ -66,6 +68,7 @@ public class TomTask extends MatchingTask {
   private Path src;
   private File destDir;
   private File configFile;
+  private String logPropertiesFile;
   private File outputFile;
   private Path compileClasspath;
   private Path compileSourcepath;
@@ -87,11 +90,21 @@ public class TomTask extends MatchingTask {
      * @param  configFile the destination directory
      */
   public void setConfig(File configFile) {
+    //System.out.println("CONFIG FILE : " + configFile);
     this.configFile = configFile;
   }
 
   public File getConfig() {
     return configFile;
+  }
+
+  public void setLogfile(String logPropertiesFile) {
+    System.out.println("LOG FILE : " + logPropertiesFile);
+    this.logPropertiesFile = logPropertiesFile;
+  }
+
+  public String getLogfile() {
+    return logPropertiesFile;
   }
 
   public void setOptions(String options) {
@@ -483,6 +496,11 @@ public class TomTask extends MatchingTask {
           System.out.println("Compiling " + compileList[i] + "...");
         
         File file = new File(filename);
+
+	if (logPropertiesFile != null) {
+	    System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
+	  System.setProperty("java.util.logging.config.file",logPropertiesFile);
+	}
 
         String cmd_line = "";
         if (options != null && getOptions().trim().length() > 0) {

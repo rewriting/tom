@@ -26,10 +26,12 @@
 package jtom.compiler;
   
 import jtom.TomBase;
-import jtom.adt.tomsignature.types.*;
-import tom.library.traversal.Replace1;
-import aterm.*;
 import jtom.exception.TomRuntimeException;
+import jtom.adt.tomsignature.types.*;
+
+import tom.library.traversal.Replace1;
+
+import aterm.*;
 
 public class TomKernelCompiler extends TomBase {
   public TomKernelCompiler() {
@@ -214,11 +216,10 @@ public class TomKernelCompiler extends TomBase {
 
         Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
-        TomType termType = tomSymbol.getTypesToType().getCodomain();
+        TomType codomain = tomSymbol.getTypesToType().getCodomain();
         
           // SUCCES
-        TomTerm subjectVariableAST =  tom_make_Variable(option(),tom_make_PositionName(path),termType,tom_empty_list_concConstraint());
+        TomTerm subjectVariableAST =  tom_make_Variable(option(),tom_make_PositionName(path),codomain,tom_empty_list_concConstraint());
         Instruction automataInstruction;
         if(isListOperator(tomSymbol)) {
             /*
@@ -227,7 +228,7 @@ public class TomKernelCompiler extends TomBase {
              */
           int indexSubterm = 1;
           TomNumberList newPath = (TomNumberList) path.append(tom_make_ListNumber(makeNumber(indexSubterm)));
-          TomTerm newSubjectVariableAST =  tom_make_VariableStar(option(),tom_make_PositionName(newPath),termType,tom_empty_list_concConstraint());
+          TomTerm newSubjectVariableAST =  tom_make_VariableStar(option(),tom_make_PositionName(newPath),codomain,tom_empty_list_concConstraint());
           boolean ensureNotEmptyList = true;
           Instruction automata = genListMatchingAutomata(new MatchingParameter(
                                                            tomSymbol,path,subAction,
@@ -245,7 +246,7 @@ public class TomKernelCompiler extends TomBase {
           int indexSubterm = 1;
           TomNumberList newPathList = (TomNumberList) path.append(tom_make_ListNumber(makeNumber(indexSubterm)));
           TomNumberList newPathIndex = (TomNumberList) path.append(tom_make_IndexNumber(makeNumber(indexSubterm)));
-          TomTerm newVariableListAST = tom_make_VariableStar(option(),tom_make_PositionName(newPathList),termType,tom_empty_list_concConstraint());
+          TomTerm newVariableListAST = tom_make_VariableStar(option(),tom_make_PositionName(newPathList),codomain,tom_empty_list_concConstraint());
           TomTerm newVariableIndexAST = tom_make_Variable(option(),tom_make_PositionName(newPathIndex),symbolTable().getIntType(),tom_empty_list_concConstraint());
           boolean ensureNotEmptyList = true;
           Instruction automata = genArrayMatchingAutomata(new MatchingParameter(
@@ -265,19 +266,12 @@ public class TomKernelCompiler extends TomBase {
         } else {
           int indexSubterm = 0;
           Instruction automata = genSyntacticMatchingAutomata(subAction,termArgs,path,indexSubterm+1);
+          TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
           automataInstruction = collectSubtermFromSubjectList(termArgs,termTypeList,tomSymbol,subjectVariableAST,indexSubterm,path,automata); 
         }
-        
-          /* TODO:remove old things
-             TomTerm annotedVariable = getAnnotedVariable(optionList);
-             if(annotedVariable != null) {
-             automataInstruction = buildLet(annotedVariable,`TomTermToExpression(subjectVariableAST),automataInstruction);
-             }
-          */
-
         automataInstruction = compileConstraint(currentTerm,tom_make_TomTermToExpression(subjectVariableAST),automataInstruction);
 
-        Expression cond = expandDisjunction(tom_make_EqualFunctionSymbol(termType,subjectVariableAST,currentTerm));
+        Expression cond = expandDisjunction(tom_make_EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm));
         Instruction test = tom_make_IfThenElse(cond,automataInstruction,tom_make_Nop());
         return test;
       }}}}} }} }}} }}}}}}} }}} }

@@ -1525,7 +1525,7 @@ public NewTomParser(ParserSharedInputState state) {
 			result = (NameList) result.append(name);
 		}
 		{
-		_loop102:
+		_loop100:
 		do {
 			if ((LA(1)==ALTERNATIVE)) {
 				match(ALTERNATIVE);
@@ -1538,7 +1538,7 @@ public NewTomParser(ParserSharedInputState state) {
 				}
 			}
 			else {
-				break _loop102;
+				break _loop100;
 			}
 			
 		} while (true);
@@ -1825,23 +1825,7 @@ public NewTomParser(ParserSharedInputState state) {
 		
 		
 		{
-		boolean synPredMatched81 = false;
-		if (((LA(1)==LBRACKET))) {
-			int _m81 = mark();
-			synPredMatched81 = true;
-			inputState.guessing++;
-			try {
-				{
-				implicitTermList(null);
-				}
-			}
-			catch (RecognitionException pe) {
-				synPredMatched81 = false;
-			}
-			rewind(_m81);
-			inputState.guessing--;
-		}
-		if ( synPredMatched81 ) {
+		if (((LA(1)==LBRACKET))&&(LA(1) == LBRACKET)) {
 			result=implicitTermList(childs);
 		}
 		else if ((_tokenSet_4.member(LA(1)))) {
@@ -1942,11 +1926,15 @@ public NewTomParser(ParserSharedInputState state) {
 		LinkedList constraintList = new LinkedList();
 		LinkedList optionListAnno2 = new LinkedList();
 		NameList nameList;
+		boolean varStar = false;
 		
 		
 		{
 		if (((LA(1)==ALL_ID||LA(1)==UNDERSCORE))&&(LA(2) == STAR)) {
 			result=variableStar(optionList,constraintList);
+			if ( inputState.guessing==0 ) {
+				varStar = true;
+			}
 		}
 		else if (((LA(1)==ALL_ID))&&(LA(2) == EQUAL)) {
 			id = LT(1);
@@ -2043,6 +2031,8 @@ public NewTomParser(ParserSharedInputState state) {
 		}
 		if ( inputState.guessing==0 ) {
 			
+			if (!varStar)
+			{
 			list.add(tom_make_PairSlotAppl(tom_make_Name(Constants.SLOT_NAME),termName));
 			// we add the specif value : _
 			list.add(tom_make_PairSlotAppl(tom_make_Name(Constants.SLOT_SPECIFIED),tom_make_Placeholder(ast().makeOption(),ast().makeConstraint())));
@@ -2061,6 +2051,7 @@ public NewTomParser(ParserSharedInputState state) {
 			
 			
 			;
+			}   
 			
 		}
 		return result;
@@ -2207,8 +2198,8 @@ public NewTomParser(ParserSharedInputState state) {
 			{
 			_loop77:
 			do {
-				if ((LA(1)==TOM_COMMA)) {
-					match(TOM_COMMA);
+				if ((LA(1)==COMMA)) {
+					match(COMMA);
 					if ( inputState.guessing==0 ) {
 						text.append(",");
 					}
@@ -2260,7 +2251,7 @@ public NewTomParser(ParserSharedInputState state) {
 			list.add(term);
 		}
 		{
-		_loop89:
+		_loop87:
 		do {
 			if ((LA(1)==COMMA)) {
 				match(COMMA);
@@ -2273,7 +2264,7 @@ public NewTomParser(ParserSharedInputState state) {
 				}
 			}
 			else {
-				break _loop89;
+				break _loop87;
 			}
 			
 		} while (true);
@@ -2306,7 +2297,7 @@ public NewTomParser(ParserSharedInputState state) {
 			list.add(tom_make_PairSlotAppl(tom_make_Name(name.getText()),term));
 		}
 		{
-		_loop93:
+		_loop91:
 		do {
 			if ((LA(1)==COMMA)) {
 				match(COMMA);
@@ -2328,7 +2319,7 @@ public NewTomParser(ParserSharedInputState state) {
 				}
 			}
 			else {
-				break _loop93;
+				break _loop91;
 			}
 			
 		} while (true);
@@ -2369,13 +2360,19 @@ public NewTomParser(ParserSharedInputState state) {
 			match(ALL_ID);
 			if ( inputState.guessing==0 ) {
 				
-				if(i.getText().equals("xml")){
-				bqparser.setXmlTerm(true);
-				}
-				blockList.add(i);
 				selector().push("bqlexer");
+				if(i.getText().equals("xml")){
+				//  bqparser.setXmlTerm(true);
+				//result = bqparser.beginBqAppl(i);
+				result = bqparser.beginXmlBackquote();
+				//p(result.toString());
+				}
+				else{
+				//blockList.add(i);
 				result = bqparser.beginBqAppl(i);
+				}
 				selector().pop();
+				
 				
 			}
 			break;
@@ -2433,10 +2430,10 @@ public NewTomParser(ParserSharedInputState state) {
 				stringSlotName = "";
 			}
 			{
-			boolean synPredMatched111 = false;
+			boolean synPredMatched109 = false;
 			if (((LA(1)==ALL_ID))) {
-				int _m111 = mark();
-				synPredMatched111 = true;
+				int _m109 = mark();
+				synPredMatched109 = true;
 				inputState.guessing++;
 				try {
 					{
@@ -2445,12 +2442,12 @@ public NewTomParser(ParserSharedInputState state) {
 					}
 				}
 				catch (RecognitionException pe) {
-					synPredMatched111 = false;
+					synPredMatched109 = false;
 				}
-				rewind(_m111);
+				rewind(_m109);
 				inputState.guessing--;
 			}
-			if ( synPredMatched111 ) {
+			if ( synPredMatched109 ) {
 				slotName = LT(1);
 				match(ALL_ID);
 				match(COLON);
@@ -2474,7 +2471,7 @@ public NewTomParser(ParserSharedInputState state) {
 				
 			}
 			{
-			_loop116:
+			_loop114:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -2482,10 +2479,10 @@ public NewTomParser(ParserSharedInputState state) {
 						stringSlotName = "";
 					}
 					{
-					boolean synPredMatched115 = false;
+					boolean synPredMatched113 = false;
 					if (((LA(1)==ALL_ID))) {
-						int _m115 = mark();
-						synPredMatched115 = true;
+						int _m113 = mark();
+						synPredMatched113 = true;
 						inputState.guessing++;
 						try {
 							{
@@ -2494,12 +2491,12 @@ public NewTomParser(ParserSharedInputState state) {
 							}
 						}
 						catch (RecognitionException pe) {
-							synPredMatched115 = false;
+							synPredMatched113 = false;
 						}
-						rewind(_m115);
+						rewind(_m113);
 						inputState.guessing--;
 					}
-					if ( synPredMatched115 ) {
+					if ( synPredMatched113 ) {
 						slotName2 = LT(1);
 						match(ALL_ID);
 						match(COLON);
@@ -2537,7 +2534,7 @@ public NewTomParser(ParserSharedInputState state) {
 					}
 				}
 				else {
-					break _loop116;
+					break _loop114;
 				}
 				
 			} while (true);
@@ -2563,7 +2560,7 @@ public NewTomParser(ParserSharedInputState state) {
 			
 		}
 		{
-		_loop118:
+		_loop116:
 		do {
 			switch ( LA(1)) {
 			case MAKE:
@@ -2610,7 +2607,7 @@ public NewTomParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop118;
+				break _loop116;
 			}
 			}
 		} while (true);
@@ -2757,7 +2754,7 @@ public NewTomParser(ParserSharedInputState state) {
 					
 				}
 				{
-				_loop166:
+				_loop164:
 				do {
 					if ((LA(1)==COMMA)) {
 						match(COMMA);
@@ -2786,7 +2783,7 @@ public NewTomParser(ParserSharedInputState state) {
 						}
 					}
 					else {
-						break _loop166;
+						break _loop164;
 					}
 					
 				} while (true);
@@ -2960,7 +2957,7 @@ public NewTomParser(ParserSharedInputState state) {
 		match(LBRACE);
 		tlFsym=keywordFsym();
 		{
-		_loop121:
+		_loop119:
 		do {
 			switch ( LA(1)) {
 			case MAKE_EMPTY:
@@ -2989,7 +2986,7 @@ public NewTomParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop121;
+				break _loop119;
 			}
 			}
 		} while (true);
@@ -3155,7 +3152,7 @@ public NewTomParser(ParserSharedInputState state) {
 		match(LBRACE);
 		tlFsym=keywordFsym();
 		{
-		_loop124:
+		_loop122:
 		do {
 			switch ( LA(1)) {
 			case MAKE_EMPTY:
@@ -3184,7 +3181,7 @@ public NewTomParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop124;
+				break _loop122;
 			}
 			}
 		} while (true);
@@ -3319,7 +3316,7 @@ public NewTomParser(ParserSharedInputState state) {
 		match(LBRACE);
 		implement=keywordImplement();
 		{
-		_loop128:
+		_loop126:
 		do {
 			switch ( LA(1)) {
 			case GET_FUN_SYM:
@@ -3356,7 +3353,7 @@ public NewTomParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop128;
+				break _loop126;
 			}
 			}
 		} while (true);
@@ -3613,7 +3610,7 @@ public NewTomParser(ParserSharedInputState state) {
 		match(LBRACE);
 		implement=keywordImplement();
 		{
-		_loop132:
+		_loop130:
 		do {
 			switch ( LA(1)) {
 			case GET_FUN_SYM:
@@ -3674,7 +3671,7 @@ public NewTomParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop132;
+				break _loop130;
 			}
 			}
 		} while (true);
@@ -3853,7 +3850,7 @@ public NewTomParser(ParserSharedInputState state) {
 		match(LBRACE);
 		implement=keywordImplement();
 		{
-		_loop136:
+		_loop134:
 		do {
 			switch ( LA(1)) {
 			case GET_FUN_SYM:
@@ -3906,7 +3903,7 @@ public NewTomParser(ParserSharedInputState state) {
 			}
 			default:
 			{
-				break _loop136;
+				break _loop134;
 			}
 			}
 		} while (true);
@@ -4059,7 +4056,6 @@ public NewTomParser(ParserSharedInputState state) {
 		"RBRACKET",
 		"EQUAL",
 		"UNDERSCORE",
-		"TOM_COMMA",
 		"STAR",
 		"\"implement\"",
 		"\"get_fun_sym\"",
@@ -4113,7 +4109,7 @@ public NewTomParser(ParserSharedInputState state) {
 	}
 	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
 	private static final long[] mk_tokenSet_3() {
-		long[] data = { 120040779760L, 0L};
+		long[] data = { 51321303024L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());

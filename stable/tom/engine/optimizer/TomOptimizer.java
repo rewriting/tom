@@ -29,7 +29,8 @@ public class TomOptimizer extends TomGenericPlugin {
   public void run() {
     if(isActivated()) {
       try {
-
+        int errorsAtStart   = getPluginPlatform().getStatusHandler().nbOfErrors();
+        int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
         long startChrono = System.currentTimeMillis();
 						
         TomTerm renamedTerm   = renameVariable( (TomTerm)getTerm(), new HashSet() );
@@ -48,9 +49,7 @@ public class TomOptimizer extends TomGenericPlugin {
           Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
                                 getTerm() );
         }
-		
-        int errorsAtStart   = getPluginPlatform().getStatusHandler().nbOfErrors();
-        int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
         printAlertMessage(errorsAtStart, warningsAtStart);
 
       } catch (Exception e) {
@@ -66,8 +65,8 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public PlatformOptionList declaredOptions() {
-    // activation flag
-    return tom_cons_list_concPlatformOption(tom_make_OptionBoolean("optimize", "O", "Optimized generated code", tom_make_False()),tom_empty_list_concPlatformOption());
+    String optimize = "name=\"optimize\" altName=\"O\" description=\"Optimized generated code\" value=\"false\"";
+    return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + optimize + "/> </options>");
   }
 
   private boolean isActivated() {

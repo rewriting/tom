@@ -1,5 +1,7 @@
 2004-08-18  pem  <pem@polly.loria.fr>
 
+  * bootinstall
+  * moved Tom.xml and Tom.src.xml into utils	
   * src/tom/platform/adt/PlatformOption.adt: redesigned the ADT
   * src/jtom/TomOptionManager.t: simplified option manager
   * src/jtom/Tom.xml: renamed valueB, valueI, and valueS into value
@@ -26,7 +28,7 @@
   *           |--- adt     
 
 2004-05-07  julien guyon  <julien.guyon@loria.fr>
-	* bootinstall of version bumped to 3.0
+  * bootinstall of version bumped to 3.0
   * new Design with plugins
 
 2004-06-28  pem  <pem@polly.loria.fr>

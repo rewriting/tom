@@ -5,6 +5,7 @@
     import jtom.*;
     import jtom.adt.tomsignature.*;
     import jtom.adt.tomsignature.types.*;
+    import jtom.xml.*;
 
     import tom.platform.*;
     
@@ -42,23 +43,12 @@ public class NewBQParser extends antlr.LLkParser       implements NewBQParserTok
         return tomparser.currentFile();
     }
 
-    private boolean xmlTerm = false;
-
-    public void setXmlTerm(boolean b){
-        xmlTerm = b;
-    }
-
     public NewBQParser(ParserSharedInputState state, NewTomParser tomparser){
         this(state);
         this.tomparser = tomparser;
         bqlexer = (NewBQLexer) selector().getStream("bqlexer");
-        // this.filename = tomparser.filename;
     }
-/*
-    private NewTomBackQuoteParser tomBQ(){
-        return tomparser.tomBQ();
-    } 
-*/
+
     private final TomSignatureFactory getTomSignatureFactory(){
         return tsf();
     }
@@ -68,20 +58,11 @@ public class NewBQParser extends antlr.LLkParser       implements NewBQParserTok
     }
     
     private TomEnvironment environment() {
-  //      return getPluginPlatform().getEnvironment();
         return TomEnvironment.getInstance();
     }
 
     private TomSignatureFactory tsf(){
         return environment().getTomSignatureFactory();
-    }
-
-    private void pushLine(int line){
-        tomparser.pushLine(line);
-    }
-
-    private void pushColumn(int column){
-        tomparser.pushColumn(column);
     }
 
     private void addTargetCode(Token t){
@@ -109,94 +90,158 @@ public class NewBQParser extends antlr.LLkParser       implements NewBQParserTok
         return compositeList;
     }
 
+    private void addComposite(LinkedList list, TomTerm term){
+         { jtom.adt.tomsignature.types.TomTerm tom_match1_1=(( jtom.adt.tomsignature.types.TomTerm)term);{ if(tom_is_fun_sym_Composite(tom_match1_1) ||  false ) {
+
+                list.add(term);
+                return;
+             }
+
+                list.add(tom_make_Composite(tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm())));
+                return;
+            }}
+
+    }
+
     // newComposite = true when we have read a comma before
     // the term 'term' in a list of term
     private void addTerm(LinkedList list, TomTerm term, boolean newComposite){
-        if(xmlTerm){
-            p("--");
-            TomTerm last = (TomTerm) list.getLast();
-            p("--");
-             { jtom.adt.tomsignature.types.TomTerm tom_match1_1=(( jtom.adt.tomsignature.types.TomTerm)last);{ if(tom_is_fun_sym_Composite(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match1_1_1=tom_get_slot_Composite_args(tom_match1_1); { jtom.adt.tomsignature.types.TomList l=tom_match1_1_1;
-
-                    list.removeLast();
-                    list.add(tom_make_Composite(tom_append_list_concTomTerm(l,tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm()))));
-                    return;
-                }} }
-
-                    // should not be here
-                    p("!! should not be here !!");
-                    return;
-                }}
-
+        if(list.size() == 0){
+            list.add(tom_make_Composite(tom_make_emptyTomList()));
         }
-        else{       
-            if(list.size() > 0) {
-                TomTerm last = (TomTerm) list.getLast();
-                
-                 { jtom.adt.tomsignature.types.TomTerm tom_match2_1=(( jtom.adt.tomsignature.types.TomTerm)term);{ if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TargetLanguage tom_match2_1_1=tom_get_slot_TargetLanguageToTomTerm_tl(tom_match2_1); if(tom_is_fun_sym_ITL(tom_match2_1_1) ||  false ) { { String  tom_match2_1_1_1=tom_get_slot_ITL_code(tom_match2_1_1); { String  s=tom_match2_1_1_1;
+        TomTerm lastElement = (TomTerm) list.getLast();
+        
+         { jtom.adt.tomsignature.types.TomTerm tom_match2_1=(( jtom.adt.tomsignature.types.TomTerm)lastElement);{ if(tom_is_fun_sym_Composite(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match2_1_1=tom_get_slot_Composite_args(tom_match2_1); { jtom.adt.tomsignature.types.TomList l=tom_match2_1_1;
 
-                        if(! newComposite){
-                             { jtom.adt.tomsignature.types.TomTerm tom_match3_1=(( jtom.adt.tomsignature.types.TomTerm)last);{ if(tom_is_fun_sym_Composite(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match3_1_1=tom_get_slot_Composite_args(tom_match3_1); { jtom.adt.tomsignature.types.TomList l=tom_match3_1_1;
+                if(!newComposite){
+                    list.set(list.size()-1,tom_make_Composite(concat(l,term)));
+                }
+                else{
+                    addComposite(list,term);
+                }
+                return;
+            }} }
 
-                                    list.removeLast();
-                                    list.add(tom_make_Composite(tom_append_list_concTomTerm(l,tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm()))));
-                                    return;
-                                }} }
-
-                                    list.add(tom_make_Composite(tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm())));
-                                    return;
-                                }}
-
-                        }
-                        else{
-                            list.add(tom_make_Composite(tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm())));
-                            return;
-                        }
-                    }} }} }
-
-                        list.add(tom_make_Composite(tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm())));
-                        return;
-                    }}
-
-            }
-            else{
-                 { jtom.adt.tomsignature.types.TomTerm tom_match4_1=(( jtom.adt.tomsignature.types.TomTerm)term);{ if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match4_1) ||  false ) {
-
-                        list.add(tom_make_Composite(tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm())));
-                        return;
-                     } if(tom_is_fun_sym_Composite(tom_match4_1) ||  false ) {
-
-                        list.add(term);
-                        return;
-                     }
-
-                        list.add(tom_make_Composite(tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm())));
-                    }}
-   
-            }
-        }
-    }
-
-    private void addXmlSubTerm(LinkedList list, TomTerm term){
-        if(list.size() > 0){
-             { jtom.adt.tomsignature.types.TomTerm tom_match5_1=(( jtom.adt.tomsignature.types.TomTerm)term);{ if(tom_is_fun_sym_Composite(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match5_1_1=tom_get_slot_Composite_args(tom_match5_1); if(tom_is_fun_sym_concTomTerm(tom_match5_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match5_1_1_list1=tom_match5_1_1; if(!(tom_is_empty_TomList(tom_match5_1_1_list1))) { { jtom.adt.tomsignature.types.TomTerm x=tom_get_head_TomList(tom_match5_1_1_list1);tom_match5_1_1_list1=tom_get_tail_TomList(tom_match5_1_1_list1); if(tom_is_empty_TomList(tom_match5_1_1_list1)) {
-
-                    list.add(x);
-                    return;
-                 }} }} }} }
-
+                if(!newComposite){
                     list.add(term);
-                }}
+                }
+                else{
+                    addComposite(list,term);
+                }
+            }}
 
+
+/*
+        if(newComposite){
+            %match(TomTerm term){
+                Composite[] -> {
+                    list.add(term);
+                    return;
+                }
+                BackQuoteAppl[] -> {
+                    list.add(`Composite(concTomTerm(term)));
+                    return;
+                }
+                _ -> {
+                    list.add(term);
+                    return;
+                }
+            }
         }
+        else{
+            list.add(term);
+        }
+*/
+
+        /*
+        if(list.size() > 0) {
+            TomTerm last = (TomTerm) list.getLast();
+            
+            %match(TomTerm term){
+                TargetLanguageToTomTerm(ITL(s)) -> {
+                    if(! newComposite){
+                        %match(TomTerm last){
+                            Composite(l) -> {
+                                list.removeLast();
+                                list.add(`Composite(concTomTerm(l*,term)));
+                                return;
+                            }
+                            _ -> {
+                                list.add(`Composite(concTomTerm(term)));
+                                return;
+                            }
+                        }
+                    }
+                    else{
+                        list.add(`Composite(concTomTerm(term)));
+                        return;
+                    }
+                }
+                _ -> {
+                    list.add(`Composite(concTomTerm(term)));
+                    return;
+                }
+            }
+        }
+        else{
+            %match(TomTerm term){
+                TargetLanguageToTomTerm[] -> {
+                    list.add(`Composite(concTomTerm(term)));
+                    return;
+                }
+                Composite[] -> {
+                    list.add(term);
+                    return;
+                }
+                _ -> {
+                    list.add(`Composite(concTomTerm(term)));
+                }
+            }   
+        }
+*/
     }
     
-    private String removeStar(String s){
-        return s.substring(0,s.lastIndexOf('*'));
+    private String encodeName(String name) {
+        return "\"" + name + "\"";
+    }
+ 
+    private TomList buildList(LinkedList list){
+        TomList result = tom_make_emptyTomList();
+        for(int i = 0; i < list.size(); i++){
+            result = (TomList) result.append((TomTerm) list.get(i));
+        }
+        return result;
+    }
+
+    private TomTerm removeComposite(TomTerm term){
+         { jtom.adt.tomsignature.types.TomTerm tom_match3_1=(( jtom.adt.tomsignature.types.TomTerm)term);{ if(tom_is_fun_sym_Composite(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match3_1_1=tom_get_slot_Composite_args(tom_match3_1); if(tom_is_fun_sym_concTomTerm(tom_match3_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match3_1_1_list1=tom_match3_1_1; if(!(tom_is_empty_TomList(tom_match3_1_1_list1))) { { jtom.adt.tomsignature.types.TomTerm tom_match3_1_1_1=tom_get_head_TomList(tom_match3_1_1_list1);tom_match3_1_1_list1=tom_get_tail_TomList(tom_match3_1_1_list1); if(tom_is_fun_sym_BackQuoteAppl(tom_match3_1_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm arg=tom_match3_1_1_1; if(tom_is_empty_TomList(tom_match3_1_1_list1)) {
+
+                return arg;
+             }} }} }} }} }
+return term;}}
+
     }
     
+    private TomTerm format(TomTerm term){
+         { jtom.adt.tomsignature.types.TomTerm tom_match4_1=(( jtom.adt.tomsignature.types.TomTerm)term);{ if(tom_is_fun_sym_Composite(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match4_1_1=tom_get_slot_Composite_args(tom_match4_1); if(tom_is_fun_sym_concTomTerm(tom_match4_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match4_1_1_list1=tom_match4_1_1; if(!(tom_is_empty_TomList(tom_match4_1_1_list1))) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_1_1=tom_get_head_TomList(tom_match4_1_1_list1);tom_match4_1_1_list1=tom_get_tail_TomList(tom_match4_1_1_list1); if(tom_is_fun_sym_BackQuoteAppl(tom_match4_1_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm t=tom_match4_1_1_1; if(tom_is_empty_TomList(tom_match4_1_1_list1)) {
 
+                return t;
+             }} }} }} }} }
 
+ return term;}}
+
+    }
+
+    private TomList concat(TomList list, TomTerm term){
+         { jtom.adt.tomsignature.types.TomTerm tom_match5_1=(( jtom.adt.tomsignature.types.TomTerm)term);{ if(tom_is_fun_sym_Composite(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match5_1_1=tom_get_slot_Composite_args(tom_match5_1); { jtom.adt.tomsignature.types.TomList l=tom_match5_1_1;
+
+                return tom_append_list_concTomTerm(list,tom_append_list_concTomTerm(l,tom_empty_list_concTomTerm()));
+            }} }
+
+                return tom_append_list_concTomTerm(list,tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm()));
+            }}
+
+    }
 
 protected NewBQParser(TokenBuffer tokenBuf, int k) {
   super(tokenBuf,k);
@@ -265,10 +310,20 @@ public NewBQParser(ParserSharedInputState state) {
 				case BQ_ID:
 				case BQ_STAR:
 				case BQ_LPAREN:
+				case BQ_DOT:
 				case BQ_INTEGER:
 				case BQ_STRING:
 				case BQ_MINUS:
 				case ANY:
+				case XML_START_ENDING:
+				case XML_CLOSE_SINGLETON:
+				case XML_START:
+				case XML_CLOSE:
+				case DOUBLE_QUOTE:
+				case XML_TEXT:
+				case XML_COMMENT:
+				case XML_PROC:
+				case XML_EQUAL:
 				{
 					break;
 				}
@@ -306,15 +361,561 @@ public NewBQParser(ParserSharedInputState state) {
 	public final TomTerm  bqTerm() throws RecognitionException, TokenStreamException {
 		TomTerm result;
 		
+		
+		result = null;
+		String s;
+		
+		
+		{
+		switch ( LA(1)) {
+		case BQ_ID:
+		case BQ_LPAREN:
+		{
+			result=bqTermShared();
+			break;
+		}
+		case BQ_WS:
+		case BQ_STAR:
+		case BQ_DOT:
+		case BQ_INTEGER:
+		case BQ_STRING:
+		case BQ_MINUS:
+		case ANY:
+		case XML_START_ENDING:
+		case XML_CLOSE_SINGLETON:
+		case XML_START:
+		case XML_CLOSE:
+		case DOUBLE_QUOTE:
+		case XML_TEXT:
+		case XML_COMMENT:
+		case XML_PROC:
+		case XML_EQUAL:
+		{
+			s=targetPlus();
+			if ( inputState.guessing==0 ) {
+				
+				result = tom_make_TargetLanguageToTomTerm(tom_make_ITL(s));
+				
+			}
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		return result;
+	}
+	
+	public final TomTerm  bqTermShared() throws RecognitionException, TokenStreamException {
+		TomTerm result;
+		
 		Token  i1 = null;
 		Token  i2 = null;
 		Token  w = null;
 		Token  i3 = null;
 		
 		result = null;
+		TomTerm term = null;
+		
 		LinkedList blockList = new LinkedList();
 		Token t = null;
 		String s = "";
+		
+		
+		{
+		if (((LA(1)==BQ_ID))&&(LA(2) == BQ_STAR)) {
+			i1 = LT(1);
+			match(BQ_ID);
+			match(BQ_STAR);
+			if ( inputState.guessing==0 ) {
+				
+				String name = i1.getText();
+				result = tom_make_VariableStar(
+				tom_cons_list_concOption(
+				tom_make_OriginTracking(
+				tom_make_Name(name), 
+				i1.getLine(), 
+				tom_make_Name(currentFile())
+				)
+				,tom_empty_list_concOption()),
+				tom_make_Name(name),
+				tom_make_TomTypeAlone("unknown type"),
+				tom_empty_list_concConstraint()
+				)
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				;
+				
+			}
+		}
+		else {
+			boolean synPredMatched14 = false;
+			if (((LA(1)==BQ_ID))) {
+				int _m14 = mark();
+				synPredMatched14 = true;
+				inputState.guessing++;
+				try {
+					{
+					match(BQ_ID);
+					{
+					_loop13:
+					do {
+						if ((LA(1)==BQ_WS)) {
+							match(BQ_WS);
+						}
+						else {
+							break _loop13;
+						}
+						
+					} while (true);
+					}
+					match(BQ_LPAREN);
+					}
+				}
+				catch (RecognitionException pe) {
+					synPredMatched14 = false;
+				}
+				rewind(_m14);
+				inputState.guessing--;
+			}
+			if ( synPredMatched14 ) {
+				i2 = LT(1);
+				match(BQ_ID);
+				{
+				_loop16:
+				do {
+					if ((LA(1)==BQ_WS)) {
+						w = LT(1);
+						match(BQ_WS);
+					}
+					else {
+						break _loop16;
+					}
+					
+				} while (true);
+				}
+				match(BQ_LPAREN);
+				{
+				_loop18:
+				do {
+					if ((LA(1)==BQ_WS)) {
+						match(BQ_WS);
+					}
+					else {
+						break _loop18;
+					}
+					
+				} while (true);
+				}
+				{
+				switch ( LA(1)) {
+				case BQ_WS:
+				case BQ_ID:
+				case BQ_STAR:
+				case BQ_LPAREN:
+				case BQ_DOT:
+				case BQ_INTEGER:
+				case BQ_STRING:
+				case BQ_MINUS:
+				case ANY:
+				case XML_START_ENDING:
+				case XML_CLOSE_SINGLETON:
+				case XML_START:
+				case XML_CLOSE:
+				case DOUBLE_QUOTE:
+				case XML_TEXT:
+				case XML_COMMENT:
+				case XML_PROC:
+				case XML_EQUAL:
+				{
+					bqList(blockList);
+					break;
+				}
+				case BQ_RPAREN:
+				{
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				}
+				}
+				match(BQ_RPAREN);
+				{
+				if ((LA(1)==BQ_DOT)) {
+					match(BQ_DOT);
+					term=bqTerm();
+				}
+				else if (((LA(1) >= BQ_COMMA && LA(1) <= XML_EQUAL))) {
+				}
+				else {
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				
+				}
+				if ( inputState.guessing==0 ) {
+					
+					if(term != null){
+					term = format(term);
+					if(blockList.size() > 0) {
+					TomList compositeList = makeCompositeList(blockList);
+					result = tom_make_Composite(
+					tom_cons_list_concTomTerm(
+					tom_make_BackQuoteAppl(
+					tom_cons_list_concOption(
+					tom_make_OriginTracking(
+					tom_make_Name(i2.getText()), 
+					i2.getLine(), 
+					tom_make_Name(currentFile())
+					)
+					,tom_empty_list_concOption()),
+					tom_make_Name(i2.getText()),
+					compositeList
+					),tom_cons_list_concTomTerm(
+					tom_make_TargetLanguageToTomTerm(tom_make_ITL(".")),tom_cons_list_concTomTerm(
+					term
+					,tom_empty_list_concTomTerm())))
+					)
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					;
+					}
+					else{
+					result = tom_make_Composite(
+					tom_cons_list_concTomTerm(
+					tom_make_BackQuoteAppl(
+					tom_cons_list_concOption(
+					tom_make_Constructor(tom_cons_list_concTomName(tom_make_Name(i2.getText()),tom_empty_list_concTomName())),tom_cons_list_concOption(
+					tom_make_OriginTracking(
+					tom_make_Name(i2.getText()), 
+					i2.getLine(), 
+					tom_make_Name(currentFile())
+					)
+					,tom_empty_list_concOption())),
+					tom_make_Name(i2.getText()),
+					tom_make_emptyTomList()
+					),tom_cons_list_concTomTerm(
+					tom_make_TargetLanguageToTomTerm(tom_make_ITL(".")),tom_cons_list_concTomTerm(
+					term
+					,tom_empty_list_concTomTerm())))
+					)
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					;
+					}
+					}
+					else{
+					if(blockList.size() > 0) {
+					TomList compositeList = makeCompositeList(blockList);
+					/*      
+					result = `BackQuoteAppl(
+					concOption(
+					OriginTracking(
+					Name(i2.getText()), 
+					i2.getLine(), 
+					Name(currentFile())
+					)
+					),
+					Name(i2.getText()),
+					compositeList
+					);*/
+					
+					result = tom_make_Composite(
+					tom_cons_list_concTomTerm(
+					tom_make_BackQuoteAppl(
+					tom_cons_list_concOption(
+					tom_make_OriginTracking(
+					tom_make_Name(i2.getText()), 
+					i2.getLine(), 
+					tom_make_Name(currentFile())
+					)
+					,tom_empty_list_concOption()),
+					tom_make_Name(i2.getText()),
+					compositeList
+					)   
+					,tom_empty_list_concTomTerm())
+					)
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					;  
+					}
+					else {/*
+					result = `BackQuoteAppl(
+					concOption(
+					Constructor(concTomName(Name(i2.getText()))),
+					OriginTracking(
+					Name(i2.getText()), 
+					i2.getLine(), 
+					Name(currentFile())
+					)
+					),
+					Name(i2.getText()),
+					emptyTomList
+					);*/
+					
+					result = tom_make_Composite(
+					tom_cons_list_concTomTerm(
+					tom_make_BackQuoteAppl(
+					tom_cons_list_concOption( 
+					tom_make_Constructor(tom_cons_list_concTomName(tom_make_Name(i2.getText()),tom_empty_list_concTomName())),tom_cons_list_concOption(
+					tom_make_OriginTracking(
+					tom_make_Name(i2.getText()), 
+					i2.getLine(), 
+					tom_make_Name(currentFile())
+					)
+					,tom_empty_list_concOption())),
+					tom_make_Name(i2.getText()),
+					tom_make_emptyTomList()
+					)
+					,tom_empty_list_concTomTerm())
+					)
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					;
+					}
+					}
+					
+				}
+			}
+			else if ((LA(1)==BQ_ID)) {
+				i3 = LT(1);
+				match(BQ_ID);
+				if ( inputState.guessing==0 ) {
+					
+					result = tom_make_BackQuoteAppl(
+					tom_cons_list_concOption(
+					tom_make_OriginTracking(
+					tom_make_Name(i3.getText()), 
+					i3.getLine(), 
+					tom_make_Name(currentFile())
+					)
+					,tom_empty_list_concOption()),
+					tom_make_Name(i3.getText()),
+					tom_empty_list_concTomTerm()
+					)
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					;
+					
+				}
+			}
+			else if ((LA(1)==BQ_LPAREN)) {
+				match(BQ_LPAREN);
+				{
+				_loop22:
+				do {
+					if ((LA(1)==BQ_WS)) {
+						match(BQ_WS);
+					}
+					else {
+						break _loop22;
+					}
+					
+				} while (true);
+				}
+				{
+				switch ( LA(1)) {
+				case BQ_WS:
+				case BQ_ID:
+				case BQ_STAR:
+				case BQ_LPAREN:
+				case BQ_DOT:
+				case BQ_INTEGER:
+				case BQ_STRING:
+				case BQ_MINUS:
+				case ANY:
+				case XML_START_ENDING:
+				case XML_CLOSE_SINGLETON:
+				case XML_START:
+				case XML_CLOSE:
+				case DOUBLE_QUOTE:
+				case XML_TEXT:
+				case XML_COMMENT:
+				case XML_PROC:
+				case XML_EQUAL:
+				{
+					bqList(blockList);
+					break;
+				}
+				case BQ_RPAREN:
+				{
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				}
+				}
+				match(BQ_RPAREN);
+				if ( inputState.guessing==0 ) {
+					
+					TomList compositeList = makeCompositeList(blockList);
+					compositeList = tom_cons_list_concTomTerm(
+					tom_make_TargetLanguageToTomTerm(tom_make_ITL("(")),tom_append_list_concTomTerm(compositeList,tom_cons_list_concTomTerm(
+					tom_make_TargetLanguageToTomTerm(tom_make_ITL(")"))
+					,tom_empty_list_concTomTerm())))
+					
+					
+					
+					;
+					
+					result = tom_make_Composite(compositeList);
+					
+				}
+			}
+			else {
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
+			return result;
+		}
+		
+	public final String  targetPlus() throws RecognitionException, TokenStreamException {
+		String result;
+		
+		
+		result = "";
+		Token t = null;
+		String x = "";
+		
+		
+		{
+		int _cnt48=0;
+		_loop48:
+		do {
+			if ((_tokenSet_1.member(LA(1)))) {
+				{
+				switch ( LA(1)) {
+				case XML_START_ENDING:
+				case XML_CLOSE_SINGLETON:
+				case XML_START:
+				case XML_CLOSE:
+				case DOUBLE_QUOTE:
+				case XML_TEXT:
+				case XML_COMMENT:
+				case XML_PROC:
+				case XML_EQUAL:
+				{
+					t=xmlToken();
+					if ( inputState.guessing==0 ) {
+						result += t.getText();
+					}
+					break;
+				}
+				case BQ_WS:
+				case BQ_STAR:
+				case BQ_DOT:
+				case BQ_INTEGER:
+				case BQ_STRING:
+				case BQ_MINUS:
+				case ANY:
+				{
+					x=targetPlusShared();
+					if ( inputState.guessing==0 ) {
+						result += x;
+					}
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				}
+				}
+			}
+			else {
+				if ( _cnt48>=1 ) { break _loop48; } else {throw new NoViableAltException(LT(1), getFilename());}
+			}
+			
+			_cnt48++;
+		} while (true);
+		}
+		return result;
+	}
+	
+	public final TomTerm  bqTermForXml(
+		TomList context
+	) throws RecognitionException, TokenStreamException {
+		TomTerm result;
+		
+		Token  i1 = null;
+		Token  i2 = null;
+		Token  w = null;
+		Token  i3 = null;
+		
+		result = null;
+		TomList compositeList = null;
+		String s;
 		
 		
 		{
@@ -323,13 +924,13 @@ public NewBQParser(ParserSharedInputState state) {
 		{
 			match(BQ_LPAREN);
 			{
-			_loop19:
+			_loop36:
 			do {
 				if ((LA(1)==BQ_WS)) {
 					match(BQ_WS);
 				}
 				else {
-					break _loop19;
+					break _loop36;
 				}
 				
 			} while (true);
@@ -340,12 +941,15 @@ public NewBQParser(ParserSharedInputState state) {
 			case BQ_ID:
 			case BQ_STAR:
 			case BQ_LPAREN:
+			case BQ_DOT:
 			case BQ_INTEGER:
 			case BQ_STRING:
 			case BQ_MINUS:
 			case ANY:
+			case XML_START:
+			case XML_TEXT:
 			{
-				bqList(blockList);
+				compositeList=bqTermForXmlList(context);
 				break;
 			}
 			case BQ_RPAREN:
@@ -361,7 +965,7 @@ public NewBQParser(ParserSharedInputState state) {
 			match(BQ_RPAREN);
 			if ( inputState.guessing==0 ) {
 				
-				TomList compositeList = makeCompositeList(blockList);
+				//                TomList compositeList = makeCompositeList(blockList);
 				compositeList = tom_cons_list_concTomTerm(
 				tom_make_TargetLanguageToTomTerm(tom_make_ITL("(")),tom_append_list_concTomTerm(compositeList,tom_cons_list_concTomTerm(
 				tom_make_TargetLanguageToTomTerm(tom_make_ITL(")"))
@@ -376,14 +980,21 @@ public NewBQParser(ParserSharedInputState state) {
 			}
 			break;
 		}
+		case XML_START:
+		case XML_TEXT:
+		{
+			result=xmlTerm(context);
+			break;
+		}
 		case BQ_WS:
 		case BQ_STAR:
+		case BQ_DOT:
 		case BQ_INTEGER:
 		case BQ_STRING:
 		case BQ_MINUS:
 		case ANY:
 		{
-			s=targetPlus();
+			s=targetPlusShared();
 			if ( inputState.guessing==0 ) {
 				
 				result = tom_make_TargetLanguageToTomTerm(tom_make_ITL(s));
@@ -426,22 +1037,22 @@ public NewBQParser(ParserSharedInputState state) {
 				}
 			}
 			else {
-				boolean synPredMatched12 = false;
+				boolean synPredMatched29 = false;
 				if (((LA(1)==BQ_ID))) {
-					int _m12 = mark();
-					synPredMatched12 = true;
+					int _m29 = mark();
+					synPredMatched29 = true;
 					inputState.guessing++;
 					try {
 						{
 						match(BQ_ID);
 						{
-						_loop11:
+						_loop28:
 						do {
 							if ((LA(1)==BQ_WS)) {
 								match(BQ_WS);
 							}
 							else {
-								break _loop11;
+								break _loop28;
 							}
 							
 						} while (true);
@@ -450,36 +1061,36 @@ public NewBQParser(ParserSharedInputState state) {
 						}
 					}
 					catch (RecognitionException pe) {
-						synPredMatched12 = false;
+						synPredMatched29 = false;
 					}
-					rewind(_m12);
+					rewind(_m29);
 					inputState.guessing--;
 				}
-				if ( synPredMatched12 ) {
+				if ( synPredMatched29 ) {
 					i2 = LT(1);
 					match(BQ_ID);
 					{
-					_loop14:
+					_loop31:
 					do {
 						if ((LA(1)==BQ_WS)) {
 							w = LT(1);
 							match(BQ_WS);
 						}
 						else {
-							break _loop14;
+							break _loop31;
 						}
 						
 					} while (true);
 					}
 					match(BQ_LPAREN);
 					{
-					_loop16:
+					_loop33:
 					do {
 						if ((LA(1)==BQ_WS)) {
 							match(BQ_WS);
 						}
 						else {
-							break _loop16;
+							break _loop33;
 						}
 						
 					} while (true);
@@ -490,12 +1101,15 @@ public NewBQParser(ParserSharedInputState state) {
 					case BQ_ID:
 					case BQ_STAR:
 					case BQ_LPAREN:
+					case BQ_DOT:
 					case BQ_INTEGER:
 					case BQ_STRING:
 					case BQ_MINUS:
 					case ANY:
+					case XML_START:
+					case XML_TEXT:
 					{
-						bqList(blockList);
+						compositeList=bqTermForXmlList(context);
 						break;
 					}
 					case BQ_RPAREN:
@@ -511,8 +1125,9 @@ public NewBQParser(ParserSharedInputState state) {
 					match(BQ_RPAREN);
 					if ( inputState.guessing==0 ) {
 						
-						if(blockList.size() > 0) {
-						TomList compositeList = makeCompositeList(blockList);
+						//if(blockList.size() > 0) {
+						if(!compositeList.isEmpty()){
+						//                    TomList compositeList = makeCompositeList(blockList);
 						
 						result = tom_make_Composite(
 						tom_cons_list_concTomTerm(
@@ -611,7 +1226,314 @@ public NewBQParser(ParserSharedInputState state) {
 			return result;
 		}
 		
-	public final String  targetPlus() throws RecognitionException, TokenStreamException {
+	public final TomList  bqTermForXmlList(
+		TomList context
+	) throws RecognitionException, TokenStreamException {
+		TomList result;
+		
+		Token  c = null;
+		
+		result = tom_make_emptyTomList();
+		TomTerm term = null;
+		
+		
+		term=bqTermForXml(context);
+		if ( inputState.guessing==0 ) {
+			
+			result = (TomList) result.append(term);
+			
+		}
+		{
+		_loop43:
+		do {
+			if ((_tokenSet_2.member(LA(1)))) {
+				{
+				switch ( LA(1)) {
+				case BQ_COMMA:
+				{
+					c = LT(1);
+					match(BQ_COMMA);
+					{
+					_loop42:
+					do {
+						if ((LA(1)==BQ_WS)) {
+							match(BQ_WS);
+						}
+						else {
+							break _loop42;
+						}
+						
+					} while (true);
+					}
+					break;
+				}
+				case BQ_WS:
+				case BQ_ID:
+				case BQ_STAR:
+				case BQ_LPAREN:
+				case BQ_DOT:
+				case BQ_INTEGER:
+				case BQ_STRING:
+				case BQ_MINUS:
+				case ANY:
+				case XML_START:
+				case XML_TEXT:
+				{
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				}
+				}
+				term=bqTermForXml(context);
+				if ( inputState.guessing==0 ) {
+					
+					result = (TomList) result.append(term);
+					
+				}
+			}
+			else {
+				break _loop43;
+			}
+			
+		} while (true);
+		}
+		return result;
+	}
+	
+	public final TomTerm  xmlTerm(
+		TomList context
+	) throws RecognitionException, TokenStreamException {
+		TomTerm result;
+		
+		Token  name = null;
+		Token  t = null;
+		
+		result = null;
+		TomTerm term = null;
+		TomList attributeTomList = tom_make_emptyTomList();
+		TomList childrenTomList = tom_make_emptyTomList();
+		TomList value = null;
+		
+		LinkedList attributes = new LinkedList();
+		LinkedList children = new LinkedList();
+		
+		
+		{
+		switch ( LA(1)) {
+		case XML_START:
+		{
+			match(XML_START);
+			{
+			_loop62:
+			do {
+				if ((LA(1)==BQ_WS)) {
+					match(BQ_WS);
+				}
+				else {
+					break _loop62;
+				}
+				
+			} while (true);
+			}
+			name = LT(1);
+			match(BQ_ID);
+			{
+			_loop64:
+			do {
+				if ((LA(1)==BQ_WS)) {
+					match(BQ_WS);
+				}
+				else {
+					break _loop64;
+				}
+				
+			} while (true);
+			}
+			xmlAttributeList(attributes,context);
+			if ( inputState.guessing==0 ) {
+				
+				attributeTomList = buildList(attributes);
+				
+			}
+			{
+			switch ( LA(1)) {
+			case XML_CLOSE_SINGLETON:
+			{
+				match(XML_CLOSE_SINGLETON);
+				{
+				_loop67:
+				do {
+					if ((LA(1)==BQ_WS)) {
+						match(BQ_WS);
+					}
+					else {
+						break _loop67;
+					}
+					
+				} while (true);
+				}
+				break;
+			}
+			case XML_CLOSE:
+			{
+				match(XML_CLOSE);
+				{
+				_loop69:
+				do {
+					if ((LA(1)==BQ_WS)) {
+						match(BQ_WS);
+					}
+					else {
+						break _loop69;
+					}
+					
+				} while (true);
+				}
+				xmlChildren(children,context);
+				if ( inputState.guessing==0 ) {
+					
+					childrenTomList = buildList(children);
+					
+				}
+				match(XML_START_ENDING);
+				{
+				_loop71:
+				do {
+					if ((LA(1)==BQ_WS)) {
+						match(BQ_WS);
+					}
+					else {
+						break _loop71;
+					}
+					
+				} while (true);
+				}
+				match(BQ_ID);
+				{
+				_loop73:
+				do {
+					if ((LA(1)==BQ_WS)) {
+						match(BQ_WS);
+					}
+					else {
+						break _loop73;
+					}
+					
+				} while (true);
+				}
+				match(XML_CLOSE);
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
+			if ( inputState.guessing==0 ) {
+				
+				TomList args = tom_cons_list_concTomTerm(
+				tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name(encodeName(name.getText())),
+				tom_make_emptyTomList()
+				),tom_cons_list_concTomTerm(
+				tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name(Constants.CONC_TNODE),
+				attributeTomList
+				),tom_cons_list_concTomTerm(
+				tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name(Constants.CONC_TNODE),
+				childrenTomList
+				)
+				,tom_empty_list_concTomTerm())))
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				;
+				
+				if(context == null){
+				result = tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name(Constants.ELEMENT_NODE),
+				args
+				)
+				
+				
+				
+				;
+				}
+				else{
+				result = tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name(Constants.ELEMENT_NODE),
+				tom_append_list_concTomTerm(context,tom_append_list_concTomTerm(args,tom_empty_list_concTomTerm()))
+				)
+				
+				
+				
+				
+				
+				;
+				}
+				
+			}
+			break;
+		}
+		case XML_TEXT:
+		{
+			t = LT(1);
+			match(XML_TEXT);
+			match(BQ_LPAREN);
+			value=bqTermForXmlList(context);
+			match(BQ_RPAREN);
+			if ( inputState.guessing==0 ) {
+				
+				result = tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name(Constants.TEXT_NODE),
+				tom_append_list_concTomTerm(context,tom_cons_list_concTomTerm(
+				tom_make_Composite(value)
+				,tom_empty_list_concTomTerm()))
+				)
+				
+				
+				
+				
+				
+				
+				;
+				
+			}
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		return result;
+	}
+	
+	public final String  targetPlusShared() throws RecognitionException, TokenStreamException {
 		String result;
 		
 		Token  in = null;
@@ -619,19 +1541,19 @@ public NewBQParser(ParserSharedInputState state) {
 		Token  m = null;
 		Token  s = null;
 		Token  w = null;
+		Token  d = null;
 		Token  a = null;
 		
 		result = "";
 		
 		
-		{
 		switch ( LA(1)) {
 		case BQ_INTEGER:
 		{
 			in = LT(1);
 			match(BQ_INTEGER);
 			if ( inputState.guessing==0 ) {
-				result += in.getText();
+				result = in.getText();
 			}
 			break;
 		}
@@ -640,7 +1562,7 @@ public NewBQParser(ParserSharedInputState state) {
 			str = LT(1);
 			match(BQ_STRING);
 			if ( inputState.guessing==0 ) {
-				result += str.getText();
+				result = str.getText();
 			}
 			break;
 		}
@@ -649,7 +1571,7 @@ public NewBQParser(ParserSharedInputState state) {
 			m = LT(1);
 			match(BQ_MINUS);
 			if ( inputState.guessing==0 ) {
-				result += m.getText();
+				result = m.getText();
 			}
 			break;
 		}
@@ -658,7 +1580,7 @@ public NewBQParser(ParserSharedInputState state) {
 			s = LT(1);
 			match(BQ_STAR);
 			if ( inputState.guessing==0 ) {
-				result += s.getText();
+				result = s.getText();
 			}
 			break;
 		}
@@ -667,7 +1589,16 @@ public NewBQParser(ParserSharedInputState state) {
 			w = LT(1);
 			match(BQ_WS);
 			if ( inputState.guessing==0 ) {
-				result += w.getText();
+				result = w.getText();
+			}
+			break;
+		}
+		case BQ_DOT:
+		{
+			d = LT(1);
+			match(BQ_DOT);
+			if ( inputState.guessing==0 ) {
+				result = d.getText();
 			}
 			break;
 		}
@@ -676,7 +1607,7 @@ public NewBQParser(ParserSharedInputState state) {
 			a = LT(1);
 			match(ANY);
 			if ( inputState.guessing==0 ) {
-				result += a.getText();
+				result = a.getText();
 			}
 			break;
 		}
@@ -684,6 +1615,111 @@ public NewBQParser(ParserSharedInputState state) {
 		{
 			throw new NoViableAltException(LT(1), getFilename());
 		}
+		}
+		return result;
+	}
+	
+	public final Token  xmlToken() throws RecognitionException, TokenStreamException {
+		Token result;
+		
+		Token  t = null;
+		Token  t1 = null;
+		Token  t2 = null;
+		Token  t3 = null;
+		Token  t4 = null;
+		Token  t5 = null;
+		Token  t6 = null;
+		Token  t7 = null;
+		Token  t8 = null;
+		
+		result = null;
+		
+		
+		switch ( LA(1)) {
+		case XML_START_ENDING:
+		{
+			t = LT(1);
+			match(XML_START_ENDING);
+			if ( inputState.guessing==0 ) {
+				result = t;
+			}
+			break;
+		}
+		case XML_CLOSE_SINGLETON:
+		{
+			t1 = LT(1);
+			match(XML_CLOSE_SINGLETON);
+			if ( inputState.guessing==0 ) {
+				result = t1;
+			}
+			break;
+		}
+		case XML_START:
+		{
+			t2 = LT(1);
+			match(XML_START);
+			if ( inputState.guessing==0 ) {
+				result = t2;
+			}
+			break;
+		}
+		case XML_CLOSE:
+		{
+			t3 = LT(1);
+			match(XML_CLOSE);
+			if ( inputState.guessing==0 ) {
+				result = t3;
+			}
+			break;
+		}
+		case DOUBLE_QUOTE:
+		{
+			t4 = LT(1);
+			match(DOUBLE_QUOTE);
+			if ( inputState.guessing==0 ) {
+				result = t4;
+			}
+			break;
+		}
+		case XML_TEXT:
+		{
+			t5 = LT(1);
+			match(XML_TEXT);
+			if ( inputState.guessing==0 ) {
+				result = t5;
+			}
+			break;
+		}
+		case XML_COMMENT:
+		{
+			t6 = LT(1);
+			match(XML_COMMENT);
+			if ( inputState.guessing==0 ) {
+				result = t6;
+			}
+			break;
+		}
+		case XML_PROC:
+		{
+			t7 = LT(1);
+			match(XML_PROC);
+			if ( inputState.guessing==0 ) {
+				result = t7;
+			}
+			break;
+		}
+		case XML_EQUAL:
+		{
+			t8 = LT(1);
+			match(XML_EQUAL);
+			if ( inputState.guessing==0 ) {
+				result = t8;
+			}
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
 		}
 		}
 		return result;
@@ -698,6 +1734,7 @@ public NewBQParser(ParserSharedInputState state) {
 		Token  str = null;
 		Token  r = null;
 		Token  m = null;
+		Token  d = null;
 		Token  w = null;
 		Token  a = null;
 		
@@ -705,6 +1742,19 @@ public NewBQParser(ParserSharedInputState state) {
 		
 		
 		switch ( LA(1)) {
+		case XML_START_ENDING:
+		case XML_CLOSE_SINGLETON:
+		case XML_START:
+		case XML_CLOSE:
+		case DOUBLE_QUOTE:
+		case XML_TEXT:
+		case XML_COMMENT:
+		case XML_PROC:
+		case XML_EQUAL:
+		{
+			result=xmlToken();
+			break;
+		}
 		case BQ_COMMA:
 		{
 			c = LT(1);
@@ -759,6 +1809,15 @@ public NewBQParser(ParserSharedInputState state) {
 			}
 			break;
 		}
+		case BQ_DOT:
+		{
+			d = LT(1);
+			match(BQ_DOT);
+			if ( inputState.guessing==0 ) {
+				result = d;
+			}
+			break;
+		}
 		case BQ_WS:
 		{
 			w = LT(1);
@@ -785,11 +1844,353 @@ public NewBQParser(ParserSharedInputState state) {
 		return result;
 	}
 	
+	public final TomList  context() throws RecognitionException, TokenStreamException {
+		TomList result;
+		
+		
+		result = tom_make_emptyTomList();
+		TomTerm term = null;
+		TomList emptyContext = tom_make_emptyTomList();
+		p("contex !!");
+		
+		
+		if ( inputState.guessing==0 ) {
+			p("one time");
+		}
+		if (!(LA(1) != XML_START))
+		  throw new SemanticException("LA(1) != XML_START");
+		if ( inputState.guessing==0 ) {
+			p("one time");
+		}
+		term=bqTermShared();
+		match(BQ_COMMA);
+		{
+		_loop53:
+		do {
+			if ((LA(1)==BQ_WS)) {
+				match(BQ_WS);
+			}
+			else {
+				break _loop53;
+			}
+			
+		} while (true);
+		}
+		if ( inputState.guessing==0 ) {
+			
+			result = (TomList) result.append(removeComposite(term));
+			
+		}
+		{
+		_loop58:
+		do {
+			if ((LA(1)==BQ_ID||LA(1)==BQ_LPAREN)) {
+				{
+				if ( inputState.guessing==0 ) {
+					p("one more time");
+				}
+				if (!(LA(1) != XML_START))
+				  throw new SemanticException("LA(1) != XML_START");
+				term=bqTermShared();
+				if ( inputState.guessing==0 ) {
+					
+					result = (TomList) result.append(removeComposite(term));
+					
+				}
+				match(BQ_COMMA);
+				{
+				_loop57:
+				do {
+					if ((LA(1)==BQ_WS)) {
+						match(BQ_WS);
+					}
+					else {
+						break _loop57;
+					}
+					
+				} while (true);
+				}
+				}
+			}
+			else {
+				break _loop58;
+			}
+			
+		} while (true);
+		}
+		if ( inputState.guessing==0 ) {
+			
+			p(result.toString());
+			
+		}
+		return result;
+	}
+	
+	public final void xmlAttributeList(
+		LinkedList attributeList, TomList context
+	) throws RecognitionException, TokenStreamException {
+		
+		
+		TomTerm term = null;
+		
+		
+		{
+		_loop78:
+		do {
+			if ((LA(1)==BQ_ID)) {
+				term=xmlAttribute(context);
+				if ( inputState.guessing==0 ) {
+					
+					attributeList.add(term);
+					
+				}
+				{
+				_loop77:
+				do {
+					if ((LA(1)==BQ_WS)) {
+						match(BQ_WS);
+					}
+					else {
+						break _loop77;
+					}
+					
+				} while (true);
+				}
+			}
+			else {
+				break _loop78;
+			}
+			
+		} while (true);
+		}
+	}
+	
+	public final void xmlChildren(
+		LinkedList children, TomList context
+	) throws RecognitionException, TokenStreamException {
+		
+		
+		TomTerm term = null;
+		TomList child =  null;
+		
+		LinkedList attributeList = new LinkedList();
+		LinkedList childrenList = new LinkedList();    
+		
+		
+		{
+		switch ( LA(1)) {
+		case BQ_WS:
+		case BQ_ID:
+		case BQ_STAR:
+		case BQ_LPAREN:
+		case BQ_DOT:
+		case BQ_INTEGER:
+		case BQ_STRING:
+		case BQ_MINUS:
+		case ANY:
+		case XML_START:
+		case XML_TEXT:
+		{
+			child=bqTermForXmlList(context);
+			{
+			_loop89:
+			do {
+				if ((LA(1)==BQ_WS)) {
+					match(BQ_WS);
+				}
+				else {
+					break _loop89;
+				}
+				
+			} while (true);
+			}
+			break;
+		}
+		case XML_START_ENDING:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+	}
+	
+	public final TomTerm  xmlAttribute(
+		TomList context
+	) throws RecognitionException, TokenStreamException {
+		TomTerm result;
+		
+		Token  n = null;
+		
+		result = null;
+		TomTerm value = null;
+		
+		
+		n = LT(1);
+		match(BQ_ID);
+		{
+		switch ( LA(1)) {
+		case BQ_WS:
+		case XML_EQUAL:
+		{
+			{
+			_loop82:
+			do {
+				if ((LA(1)==BQ_WS)) {
+					match(BQ_WS);
+				}
+				else {
+					break _loop82;
+				}
+				
+			} while (true);
+			}
+			match(XML_EQUAL);
+			{
+			_loop84:
+			do {
+				if ((LA(1)==BQ_WS)) {
+					match(BQ_WS);
+				}
+				else {
+					break _loop84;
+				}
+				
+			} while (true);
+			}
+			value=termStringIdentifier();
+			if ( inputState.guessing==0 ) {
+				
+				TomList args = tom_cons_list_concTomTerm(
+				tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name(encodeName(n.getText())),
+				tom_make_emptyTomList()
+				),tom_cons_list_concTomTerm(
+				tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name("\"true\""),
+				tom_make_emptyTomList()
+				),tom_cons_list_concTomTerm(
+				value
+				,tom_empty_list_concTomTerm())))
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				;
+				
+				if(context == null){
+				result = tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name(Constants.ATTRIBUTE_NODE),
+				args)
+				
+				
+				;
+				}   
+				else{
+				result = tom_make_BackQuoteAppl(
+				tom_make_emptyOptionList(),
+				tom_make_Name(Constants.ATTRIBUTE_NODE),
+				tom_append_list_concTomTerm(context,tom_append_list_concTomTerm(args,tom_empty_list_concTomTerm()))
+				)
+				
+				
+				
+				
+				
+				;
+				}
+				
+			}
+			break;
+		}
+		case BQ_STAR:
+		{
+			match(BQ_STAR);
+			if ( inputState.guessing==0 ) {
+				
+				result = tom_make_VariableStar(
+				tom_make_emptyOptionList(),
+				tom_make_Name(n.getText()),
+				tom_make_TomTypeAlone("unknown type"),
+				tom_make_emptyConstraintList()
+				)
+				
+				
+				
+				
+				;
+				
+			}
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		return result;
+	}
+	
+	public final TomTerm  termStringIdentifier() throws RecognitionException, TokenStreamException {
+		TomTerm result;
+		
+		Token  name = null;
+		Token  string = null;
+		
+		result = null;
+		
+		
+		switch ( LA(1)) {
+		case BQ_ID:
+		{
+			name = LT(1);
+			match(BQ_ID);
+			if ( inputState.guessing==0 ) {
+				
+				result = tom_make_TargetLanguageToTomTerm(tom_make_ITL(name.getText()));
+				
+			}
+			break;
+		}
+		case BQ_STRING:
+		{
+			string = LT(1);
+			match(BQ_STRING);
+			if ( inputState.guessing==0 ) {
+				
+				result = tom_make_TargetLanguageToTomTerm(tom_make_ITL(string.getText()));
+				
+			}
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		return result;
+	}
+	
 	public final TomTerm  beginBqAppl(
 		Token symbol
 	) throws RecognitionException, TokenStreamException {
 		TomTerm result;
 		
+		Token  lp = null;
 		
 		result = null;
 		LinkedList blockList = new LinkedList();
@@ -811,11 +2212,11 @@ public NewBQParser(ParserSharedInputState state) {
 								       symbol.getLine(), 
 								       tom_make_Name(currentFile())
 								       )
-							,tom_empty_list_concOption()),
+				,tom_empty_list_concOption()),
 				tom_make_Name(symbol.getText()),
 				tom_make_TomTypeAlone("unknown type"),
 				tom_empty_list_concConstraint()
-						    )
+				)
 				
 				
 				
@@ -827,7 +2228,7 @@ public NewBQParser(ParserSharedInputState state) {
 				
 				
 				;
-					
+				
 			}
 			break;
 		}
@@ -836,31 +2237,35 @@ public NewBQParser(ParserSharedInputState state) {
 		case BQ_ID:
 		case BQ_LPAREN:
 		case BQ_RPAREN:
+		case BQ_DOT:
 		case BQ_INTEGER:
 		case BQ_STRING:
 		case BQ_MINUS:
 		case ANY:
+		case XML_START_ENDING:
+		case XML_CLOSE_SINGLETON:
+		case XML_START:
+		case XML_CLOSE:
+		case DOUBLE_QUOTE:
+		case XML_TEXT:
+		case XML_COMMENT:
+		case XML_PROC:
+		case XML_EQUAL:
 		{
 			{
 			switch ( LA(1)) {
 			case BQ_LPAREN:
 			{
+				lp = LT(1);
 				match(BQ_LPAREN);
-				if ( inputState.guessing==0 ) {
-					
-					if(xmlTerm){
-					blockList.add(tom_make_Composite(tom_make_emptyTomList()));
-					}
-					
-				}
 				{
-				_loop28:
+				_loop94:
 				do {
 					if ((LA(1)==BQ_WS)) {
 						match(BQ_WS);
 					}
 					else {
-						break _loop28;
+						break _loop94;
 					}
 					
 				} while (true);
@@ -871,10 +2276,20 @@ public NewBQParser(ParserSharedInputState state) {
 				case BQ_ID:
 				case BQ_STAR:
 				case BQ_LPAREN:
+				case BQ_DOT:
 				case BQ_INTEGER:
 				case BQ_STRING:
 				case BQ_MINUS:
 				case ANY:
+				case XML_START_ENDING:
+				case XML_CLOSE_SINGLETON:
+				case XML_START:
+				case XML_CLOSE:
+				case DOUBLE_QUOTE:
+				case XML_TEXT:
+				case XML_COMMENT:
+				case XML_PROC:
+				case XML_EQUAL:
 				{
 					bqList(blockList);
 					break;
@@ -892,24 +2307,34 @@ public NewBQParser(ParserSharedInputState state) {
 				match(BQ_RPAREN);
 				if ( inputState.guessing==0 ) {
 					
-					if(blockList.size() > 0) {
-					TomList compositeList = makeCompositeList(blockList);
 					
-					result = tom_make_Composite(tom_cons_list_concTomTerm(tom_make_BackQuoteAppl(
-					tom_cons_list_concOption(
+					OptionList ol = tom_cons_list_concOption(
 					tom_make_OriginTracking(
 					tom_make_Name(symbol.getText()), 
 					symbol.getLine(), 
 					tom_make_Name(currentFile())
 					)
-					,tom_empty_list_concOption()),
+					,tom_empty_list_concOption())
+					
+					
+					
+					
+					
+					;
+					
+					if(blockList.size() > 0) {
+					// we have some terms between parenthesis
+					TomList compositeList = makeCompositeList(blockList);
+					
+					result = tom_make_Composite(
+					tom_cons_list_concTomTerm(
+					tom_make_BackQuoteAppl(
+					ol,
 					tom_make_Name(symbol.getText()),
 					compositeList
-					),tom_empty_list_concTomTerm())
 					)
-					
-					
-					
+					,tom_empty_list_concTomTerm())
+					)
 					
 					
 					
@@ -921,21 +2346,17 @@ public NewBQParser(ParserSharedInputState state) {
 					}
 					
 					else {
-					result = tom_make_Composite(tom_cons_list_concTomTerm(tom_make_BackQuoteAppl(
+					// no term betxeen parenthesis : it is a constructor
+					result = tom_make_Composite(
+					tom_cons_list_concTomTerm(
+					tom_make_BackQuoteAppl(
 					tom_cons_list_concOption(
-					tom_make_Constructor(tom_cons_list_concTomName(tom_make_Name(symbol.getText()),tom_empty_list_concTomName())),tom_cons_list_concOption(
-					tom_make_OriginTracking(
-					tom_make_Name(symbol.getText()), 
-					symbol.getLine(), 
-					tom_make_Name(currentFile())
-					)
-					,tom_empty_list_concOption())),
+					tom_make_Constructor(tom_cons_list_concTomName(tom_make_Name(symbol.getText()),tom_empty_list_concTomName())),tom_append_list_concOption(ol,tom_empty_list_concOption())),
 					tom_make_Name(symbol.getText()),
 					tom_make_emptyTomList()
-					),tom_empty_list_concTomTerm())
 					)
-					
-					
+					,tom_empty_list_concTomTerm())
+					)
 					
 					
 					
@@ -956,17 +2377,30 @@ public NewBQParser(ParserSharedInputState state) {
 			case BQ_WS:
 			case BQ_ID:
 			case BQ_RPAREN:
+			case BQ_DOT:
 			case BQ_INTEGER:
 			case BQ_STRING:
 			case BQ_MINUS:
 			case ANY:
+			case XML_START_ENDING:
+			case XML_CLOSE_SINGLETON:
+			case XML_START:
+			case XML_CLOSE:
+			case DOUBLE_QUOTE:
+			case XML_TEXT:
+			case XML_COMMENT:
+			case XML_PROC:
+			case XML_EQUAL:
 			{
 				t=target();
 				if ( inputState.guessing==0 ) {
 					
+					// put this token in the target code buffer
 					addTargetCode(t);
-					p(t.toString());
-					result = tom_make_BackQuoteAppl(tom_cons_list_concOption(tom_make_OriginTracking(tom_make_Name(symbol.getText()), 
+					result = tom_make_BackQuoteAppl(
+					tom_cons_list_concOption(
+					tom_make_OriginTracking(
+					tom_make_Name(symbol.getText()), 
 					symbol.getLine(), 
 					tom_make_Name(currentFile())
 					)
@@ -974,6 +2408,9 @@ public NewBQParser(ParserSharedInputState state) {
 					tom_make_Name(symbol.getText()),
 					tom_empty_list_concTomTerm()
 					)
+					
+					
+					
 					
 					
 					
@@ -1001,15 +2438,8 @@ public NewBQParser(ParserSharedInputState state) {
 		}
 		if ( inputState.guessing==0 ) {
 			
-			if(result.isComposite() && result.getArgs().isSingle()) {
-			TomTerm backQuoteTerm = result.getArgs().getHead(); 
-			if(symbol.getText().equals("xml")) {
-			TomList args = backQuoteTerm.getArgs();
-			result = tom_make_DoubleBackQuote(args);
-			}   
-			} 
-			
-			setXmlTerm(false);
+			// finished parsing backquoteTerm :
+			// return to tom parser
 			selector().pop();
 			
 		}
@@ -1030,10 +2460,20 @@ public NewBQParser(ParserSharedInputState state) {
 		case BQ_ID:
 		case BQ_STAR:
 		case BQ_LPAREN:
+		case BQ_DOT:
 		case BQ_INTEGER:
 		case BQ_STRING:
 		case BQ_MINUS:
 		case ANY:
+		case XML_START_ENDING:
+		case XML_CLOSE_SINGLETON:
+		case XML_START:
+		case XML_CLOSE:
+		case DOUBLE_QUOTE:
+		case XML_TEXT:
+		case XML_COMMENT:
+		case XML_PROC:
+		case XML_EQUAL:
 		{
 			bqList(blockList);
 			break;
@@ -1069,6 +2509,70 @@ public NewBQParser(ParserSharedInputState state) {
 		return result;
 	}
 	
+	public final TomTerm  beginXmlBackquote() throws RecognitionException, TokenStreamException {
+		TomTerm result;
+		
+		
+		result = null;
+		TomTerm term = null;
+		TomList termList = tom_make_emptyTomList();
+		TomList contextList = tom_make_emptyTomList();
+		
+		
+		match(BQ_LPAREN);
+		{
+		_loop100:
+		do {
+			if ((LA(1)==BQ_WS)) {
+				match(BQ_WS);
+			}
+			else {
+				break _loop100;
+			}
+			
+		} while (true);
+		}
+		{
+		boolean synPredMatched103 = false;
+		if ((((LA(1)==BQ_ID||LA(1)==BQ_LPAREN))&&(LA(1) != XML_START))) {
+			int _m103 = mark();
+			synPredMatched103 = true;
+			inputState.guessing++;
+			try {
+				{
+				context();
+				}
+			}
+			catch (RecognitionException pe) {
+				synPredMatched103 = false;
+			}
+			rewind(_m103);
+			inputState.guessing--;
+		}
+		if ( synPredMatched103 ) {
+			contextList=context();
+		}
+		else if ((_tokenSet_3.member(LA(1)))) {
+		}
+		else {
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		
+		}
+		if ( inputState.guessing==0 ) {
+			p(contextList.toString());
+		}
+		termList=bqTermForXmlList(contextList);
+		match(BQ_RPAREN);
+		if ( inputState.guessing==0 ) {
+			
+			selector().pop();
+			result = tom_make_Composite(termList);
+			
+		}
+		return result;
+	}
+	
 	
 	public static final String[] _tokenNames = {
 		"<0>",
@@ -1081,11 +2585,23 @@ public NewBQParser(ParserSharedInputState state) {
 		"BQ_STAR",
 		"BQ_LPAREN",
 		"BQ_RPAREN",
+		"BQ_DOT",
 		"BQ_INTEGER",
 		"BQ_STRING",
 		"BQ_MINUS",
 		"ANY",
-		"BQ_DOT",
+		"XML_START_ENDING",
+		"XML_CLOSE_SINGLETON",
+		"XML_START",
+		"XML_CLOSE",
+		"DOUBLE_QUOTE",
+		"XML_TEXT",
+		"XML_COMMENT",
+		"XML_PROC",
+		"XML_EQUAL",
+		"XML_SKIP",
+		"BQ_SIMPLE_ID",
+		"BQ_MINUS_ID",
 		"BQ_DIGIT",
 		"BQ_UNDERSCORE",
 		"BQ_ESC",
@@ -1093,9 +2609,24 @@ public NewBQParser(ParserSharedInputState state) {
 	};
 	
 	private static final long[] mk_tokenSet_0() {
-		long[] data = { 15856L, 0L};
+		long[] data = { 16776688L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
+	private static final long[] mk_tokenSet_1() {
+		long[] data = { 16776352L, 0L};
+		return data;
+	}
+	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
+	private static final long[] mk_tokenSet_2() {
+		long[] data = { 1211888L, 0L};
+		return data;
+	}
+	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
+	private static final long[] mk_tokenSet_3() {
+		long[] data = { 1211872L, 0L};
+		return data;
+	}
+	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());
 	
 	}

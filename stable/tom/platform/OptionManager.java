@@ -37,6 +37,14 @@ public interface OptionManager {
   /**
    *
    *
+   * @param name the option's name
+   * @param value the option's value
+   */
+  public abstract void setOptionValue(String name, Object value);
+
+  /**
+   *
+   *
    * @param optionName the option's name
    * @return the option's value as a boolean
    */
@@ -58,13 +66,6 @@ public interface OptionManager {
    */
   public abstract String getOptionStringValue(String optionName);
 
-  /**
-   *
-   *
-   * @param key the option's name
-   * @param value the option's value
-   */
-  public abstract void putOptionValue(Object key, Object value);
 
   /**
    *

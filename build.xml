@@ -82,8 +82,8 @@
   <property name="test.gen"     location="${test}/gen"/>    
   <property name="test.build"   location="${test}/build"/>
 
-  <property name="src.configfile"     location="${src.src}/jtom/Tom.xml"/>    
-  <property name="stable.configfile"  location="${stable.src}/jtom/Tom.xml"/>    
+  <property name="src.configfile"     location="${utils}/Tom.src.xml"/>    
+  <property name="stable.configfile"  location="${utils}/Tom.xml"/>    
 
   <!-- for bootstrap -->
   <property name="bootstrap.dir" location="${src.src}/bootstrap" />
@@ -363,6 +363,7 @@
     <copy todir="${stable.bin}" file="${utils}/javac-tom"/>
     <copy todir="${stable.bin}" file="${utils}/tom.bat"/>
     <copy todir="${stable.bin}" file="${utils}/tom"/>
+    <copy todir="${stable.dist}" file="${stable.configfile}"/>
     <copy todir="${stable.bin}">
       <fileset dir="${utils}"> 
         <include name="adt-to-tom.*"/>
@@ -440,6 +441,8 @@
     <copy todir="${src.bin}" file="${utils}/javac-tom"/>
     <copy todir="${src.bin}" file="${utils}/tom"/>
     <copy todir="${src.bin}" file="${utils}/tom.src"/>
+    <copy todir="${src.dist}" file="${src.configfile}"/>
+    <copy todir="${src.dist}" file="${stable.configfile}"/>
     <copy todir="${src.bin}">
       <fileset dir="${utils}">
         <include name="adt-to-tom.*"/>
@@ -903,7 +906,6 @@
       <fileset dir="${src.src}">
         <include name="**/*.java"/>
 				<include name="**/*.properties"/>
-        <include name="**/*.xml"/>
         <exclude name="**/adt/**/*.java"/>
         <exclude name="**/bootstrap/**/*"/>
         <exclude name="**/gen/**/*"/>

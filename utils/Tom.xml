@@ -19,14 +19,14 @@
     name CDATA #REQUIRED
     altName CDATA ""
     description CDATA ""
-    valueB (true|false) #REQUIRED>
+    value (true|false) #REQUIRED>
 
   <!ELEMENT OptionInteger EMPTY>
   <!ATTLIST OptionInteger
     name CDATA #REQUIRED
     altName CDATA ""
     description CDATA ""
-    valueI CDATA #REQUIRED
+    value CDATA #REQUIRED
     attrName CDATA #REQUIRED>
 
   <!ELEMENT OptionString EMPTY>
@@ -34,7 +34,7 @@
     name CDATA #REQUIRED
     altName CDATA ""
     description CDATA ""
-    valueS CDATA #REQUIRED
+    value CDATA #REQUIRED
     attrName CDATA #REQUIRED>
 ]>
 
@@ -98,31 +98,31 @@
     name="help"
     altName="h"
     description="Print this help"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="version"
     altName="V"
     description="Print version"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="verbose"
     altName="v"
     description="Set verbose mode on"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="intermediate"
     altName="i"
     description="Generate intermediate files"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="noDeclaration"
     altName="D"
     description="Do not generate code for declarations"
-    valueB="false" />
+    value="false" />
 
 <!-- doCompile will be replaced by an alternate XML -->
 
@@ -130,69 +130,69 @@
     name="noCheck"
     altName="f"
     description="Do not check correctness"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="noWarning"
     altName=""
     description="Do not print warning"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="lazyType"
     altName="l"
     description="Use universal type"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="pretty"
     altName="p"
     description="Generate readable code"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="static"
     altName=""
     description="Generate static functions"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="debug"
     altName=""
     description="Generate debug primitives"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="memory"
     altName=""
     description="Add memory management while debugging (not correct with list matching)"
-    valueB="false" />
+    value="false" />
 
   <OptionBoolean
     name="eclipse"
     altName=""
     description="Sets Eclipse mode"
-    valueB="false" />
+    value="false" />
 
   <OptionString
     name="import"
     altName="I"
     description="Path for %include"
-    valueS=""
+    value=""
     attrName="path" />
 
   <OptionString
     name="output"
     altName="o"
     description="Set output file name"
-    valueS=""
+    value=""
     attrName="file" />
 
   <OptionString
     name="destdir"
     altName="d"
     description="Specify where to place generated files"
-    valueS="."
+    value="."
     attrName="dir" />
 
 </options>

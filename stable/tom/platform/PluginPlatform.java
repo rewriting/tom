@@ -406,8 +406,8 @@ public class PluginPlatform {
     return optionManager.getOptionStringValue(optionName);
   }
 
-  public void putOptionValue(Object key, Object value) {
-    optionManager.putOptionValue(key, value);
+  public void setOptionValue(String key, Object value) {
+    optionManager.setOptionValue(key, value);
   }
 
 }

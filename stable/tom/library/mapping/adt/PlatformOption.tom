@@ -11,36 +11,44 @@
   equals(t1,t2) {t1.equals(t2)}
 }
 
-%op PlatformOption OptionBoolean(name:String, altName:String, description:String, valueB:PlatformBoolean) {
+%op PlatformOption PluginOption(name:String, altName:String, description:String, value:PlatformValue, attrName:String) {
   fsym {}
-  is_fsym(t) { (t!= null) && t.isOptionBoolean()}
+  is_fsym(t) { (t!= null) && t.isPluginOption()}
   get_slot(name,t) { t.getName()}
   get_slot(altName,t) { t.getAltName()}
   get_slot(description,t) { t.getDescription()}
-  get_slot(valueB,t) { t.getValueB()}
-  make(t0, t1, t2, t3) { getPlatformOptionFactory().makePlatformOption_OptionBoolean(t0, t1, t2, t3)}
+  get_slot(value,t) { t.getValue()}
+  get_slot(attrName,t) { t.getAttrName()}
+  make(t0, t1, t2, t3, t4) { getPlatformOptionFactory().makePlatformOption_PluginOption(t0, t1, t2, t3, t4)}
 }
 
-%op PlatformOption OptionInteger(name:String, altName:String, description:String, valueI:int, attrName:String) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isOptionInteger()}
-  get_slot(name,t) { t.getName()}
-  get_slot(altName,t) { t.getAltName()}
-  get_slot(description,t) { t.getDescription()}
-  get_slot(valueI,t) { t.getValueI()}
-  get_slot(attrName,t) { t.getAttrName()}
-  make(t0, t1, t2, t3, t4) { getPlatformOptionFactory().makePlatformOption_OptionInteger(t0, t1, t2, t3, t4)}
+%typeterm PlatformValue{
+  implement { tom.platform.adt.platformoption.types.PlatformValue}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
 }
 
-%op PlatformOption OptionString(name:String, altName:String, description:String, valueS:String, attrName:String) {
+%op PlatformValue BooleanValue(booleanValue:PlatformBoolean) {
   fsym {}
-  is_fsym(t) { (t!= null) && t.isOptionString()}
-  get_slot(name,t) { t.getName()}
-  get_slot(altName,t) { t.getAltName()}
-  get_slot(description,t) { t.getDescription()}
-  get_slot(valueS,t) { t.getValueS()}
-  get_slot(attrName,t) { t.getAttrName()}
-  make(t0, t1, t2, t3, t4) { getPlatformOptionFactory().makePlatformOption_OptionString(t0, t1, t2, t3, t4)}
+  is_fsym(t) { (t!= null) && t.isBooleanValue()}
+  get_slot(booleanValue,t) { t.getBooleanValue()}
+  make(t0) { getPlatformOptionFactory().makePlatformValue_BooleanValue(t0)}
+}
+
+%op PlatformValue StringValue(stringValue:String) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isStringValue()}
+  get_slot(stringValue,t) { t.getStringValue()}
+  make(t0) { getPlatformOptionFactory().makePlatformValue_StringValue(t0)}
+}
+
+%op PlatformValue IntegerValue(integerValue:int) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isIntegerValue()}
+  get_slot(integerValue,t) { t.getIntegerValue()}
+  make(t0) { getPlatformOptionFactory().makePlatformValue_IntegerValue(t0)}
 }
 
 %typeterm PlatformBoolean{

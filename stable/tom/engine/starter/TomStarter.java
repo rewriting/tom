@@ -25,6 +25,7 @@
 
 package jtom.starter;
 
+import java.util.logging.*;
 import jtom.*;
 import jtom.tools.*;
 import aterm.*;
@@ -34,8 +35,8 @@ import aterm.*;
  */
 public class TomStarter extends TomGenericPlugin {
 
-  ATerm termToRelay;
-  String fileName = null;
+  private ATerm termToRelay;
+  private String fileName = null;
 
   public TomStarter() {
     super("TomStarter");
@@ -43,7 +44,13 @@ public class TomStarter extends TomGenericPlugin {
 
   public void setTerm(ATerm term) {
     termToRelay = term;
-    fileName = ((AFun)term).getName();
+
+    if (term instanceof AFun) {
+      fileName = ((AFun)term).getName();  
+    } else {
+      getLogger().log(Level.SEVERE,
+		      "TomStarter: A AFun object was expected.");
+    }
   }
 
   public ATerm getTerm() {

@@ -59,9 +59,8 @@ public class TomMainParser extends TomGenericPlugin {
     }
 
     public PlatformOptionList declaredOptions() {
-    return tom_cons_list_concPlatformOption(tom_make_OptionBoolean("parse","","",tom_make_True()) // activation flag
-			  ,tom_empty_list_concPlatformOption())
-;
+      String parse = "name=\"parse\" altName=\"\" description=\"Parser (activated by default)\" value=\"true\"";
+      return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + parse + "/> </options>");
     }
 
     private void p(String s){
@@ -109,6 +108,7 @@ public class TomMainParser extends TomGenericPlugin {
     try {
 	
       p("-- NEW PARSER --");
+      p("-- file "+currentFile+" --");
 
       int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
       int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
@@ -198,7 +198,13 @@ public class TomMainParser extends TomGenericPlugin {
     }
 
     public void setTerm(ATerm term){
-	this.currentFile = ((AFun) term).getName();
+	if (term instanceof AFun) {
+	    currentFile = ((AFun)term).getName();  
+	} else {
+	    getLogger().log(Level.SEVERE,
+			    "TomParserPlugin: A AFun object was expected.");
+	}
+	//	this.currentFile = ((AFun) term).getName();
     }
 
     

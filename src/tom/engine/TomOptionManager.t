@@ -168,7 +168,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private PlatformOption getOptionFromName(String name) {
     PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
-      logger.log(Level.SEVERE,"OptionNotFound",name);
+      logger.log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
       throw new RuntimeException();
     }
     return option;
@@ -181,7 +181,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private OptionOwner getOptionOwnerFromName(String name) {
     OptionOwner plugin = (OptionOwner)mapNameToOptionOwner.get(getCanonicalName(name));
     if(plugin == null) {
-      logger.log(Level.SEVERE,"OptionNotFound",name);
+      logger.log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
       throw new RuntimeException();
     }
     return plugin;

@@ -55,7 +55,12 @@ public class TomParserPlugin extends TomGenericPlugin {
   }
 
   public void setTerm(ATerm term) {
-    fileName = ((AFun)term).getName();
+    if (term instanceof AFun) {
+      fileName = ((AFun)term).getName();  
+    } else {
+      getLogger().log(Level.SEVERE,
+		      "TomParserPlugin: A AFun object was expected.");
+    }
   }
 
   public void run() {
@@ -152,8 +157,7 @@ public class TomParserPlugin extends TomGenericPlugin {
   }
 
   public PlatformOptionList declaredOptions() {
-    return tom_cons_list_concPlatformOption(tom_make_OptionBoolean("parse","","",tom_make_True()) // activation flag
-			       ,tom_empty_list_concPlatformOption())
-;
+      String parse = "name=\"parse\" altName=\"\" description=\"Parser (activated by default)\" value=\"true\"";
+      return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + parse + "/> </options>");
   }
 }
