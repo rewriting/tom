@@ -294,7 +294,7 @@ public class ASTFactory {
       if(astName.isName()) {
         String tomName = encodeXMLString(symbolTable,astName.getString());
         term = term.setAstName(tsf().makeTomName_Name(tomName));
-        System.out.println("encodeXMLAppl = " + term);
+          //System.out.println("encodeXMLAppl = " + term);
       }
     }
       return term;
@@ -321,7 +321,7 @@ public class ASTFactory {
             term = tsf().makeTomTerm_Appl(
               makeOption(info),
               tsf().makeTomName_Name(Constants.TEXT_NODE),list);
-              System.out.println("metaEncodeXmlAppl = " + term);
+              //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
       }

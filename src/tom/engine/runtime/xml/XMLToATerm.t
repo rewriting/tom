@@ -117,13 +117,29 @@ public class XMLToATerm {
     return null;
   }
 
-  public TNodeList nodeListToAterm(NodeList n) {
-    TNodeList nt_result = `emptyTNodeList();
-    for (int it=0;it<n.getLength();it++)
-      nt_result = `concTNode(xmlToATerm(n.item(it)),nt_result*);
-    return nt_result;
+    
+  public TNodeList nodeListToAterm(NodeList list) {
+    TNodeList res = `emptyTNodeList();
+    for(int i=list.getLength()-1 ; i>=0 ; i--) {
+      TNode elt = xmlToATerm(list.item(i));
+      if(elt != null) {
+        res = `manyTNodeList(elt,res);
+      }
+    }
+    return res;
   }
-	
+  
+  public TNodeList namedNodeMapToAterm(NamedNodeMap list) {
+    TNodeList res = `emptyTNodeList();
+    for(int i=list.getLength()-1 ; i>=0 ; i--) {
+      TNode elt = xmlToATerm(list.item(i));
+      if(elt != null) {
+        res = `manyTNodeList(elt,res);
+      }
+    }
+    return res;
+  }
+  
   public TNode xmlToATerm(Node node) {
     if ( node == null ) { // Nothing to do
       return null;
@@ -203,35 +219,15 @@ public class XMLToATerm {
     systemId = (systemId == null ? "UNDEF" : systemId);
     String internalSubset = doctype.getInternalSubset();
     internalSubset = (internalSubset == null ? "UNDEF" : internalSubset);
-
-    TNodeList entitiesList= `concTNode();
-    NamedNodeMap entities = doctype.getEntities();
-    for(int i=0; i < entities.getLength(); i++)
-      entitiesList = `concTNode(entitiesList*,xmlToATerm(entities.item(i)));
-
-    TNodeList notationsList = `concTNode();
-    NamedNodeMap notations = doctype.getNotations();
-    for(int i=0; i < notations.getLength(); i++) 
-      notationsList = `concTNode(notationsList*,xmlToATerm(notations.item(i)));
-
+    TNodeList entitiesList = namedNodeMapToAterm(doctype.getEntities());
+    TNodeList notationsList = namedNodeMapToAterm(doctype.getNotations());
     return `DocumentTypeNode(name,publicId,systemId,
 			     internalSubset,entitiesList,notationsList);
   }
     
   private TNode makeElementNode(Element elem) {
-    TNodeList attrList=`concTNode();
-    TNode n;
-    NamedNodeMap attrs = elem.getAttributes();
-    for(int i=0; i < attrs.getLength(); i++) {
-      n = xmlToATerm(attrs.item(i));
-      if (n!=null) attrList = `concTNode(attrList*,n);
-    }
-    TNodeList childList=`concTNode();
-    NodeList nodes = elem.getChildNodes();
-    for(int i = 0; i < nodes.getLength(); i++) {
-      n = xmlToATerm(nodes.item(i));
-      if (n!=null) childList = `concTNode(childList*,n);
-    }
+    TNodeList attrList  = namedNodeMapToAterm(elem.getAttributes());
+    TNodeList childList = nodeListToAterm(elem.getChildNodes());
     return `ElementNode(elem.getNodeName(),attrList,childList);
   }
 
@@ -261,13 +257,7 @@ public class XMLToATerm {
   }
 
   private TNode makeEntityReferenceNode(EntityReference er) {
-    TNodeList list=`concTNode();
-    TNode n;
-    NodeList nodes = er.getChildNodes();
-    for(int i = 0; i < nodes.getLength(); i++) {
-      n = xmlToATerm(nodes.item(i));
-      if (n!=null) list = `concTNode(list*,n);
-    }
+    TNodeList list = nodeListToAterm(er.getChildNodes());
     return `EntityReferenceNode(er.getNodeName(),list);
   }
 

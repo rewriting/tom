@@ -247,7 +247,7 @@ public class TomExpander extends TomBase implements TomTask {
     }
     newChildList = (TomList) newChildList.reverse();
 
-      //System.out.println("+++ newAttrList  = " + newAttrList);
+      System.out.println("+++ newAttrList  = " + newAttrList);
       //System.out.println("+++ newChildList = " + newChildList);
 
     Option emptyOption = ast().makeOption();
