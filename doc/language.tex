@@ -193,7 +193,7 @@ A term has the following syntax:
 \end{center}
 
 In \TOM, we can also define a set of rewrite rules. All the
-left-handsides should begin with the same root symbol:
+left-hand sides should begin with the same root symbol:
 
 \begin{center}
   \begin{tabular}{lcl}
@@ -331,12 +331,12 @@ several access functions have to be defined:
   the compiler to declare some functions and variables.
 
 \item\label{getfs} the \lex{get\_fun\_sym(t)} construct corresponds to a
-  function (parametrised by a term variable) that should return the
+  function (parameterized by a term variable) that should return the
   root symbol of a given term (the term referenced by the term
   variable \texttt{t} in this example). 
 
 \item\label{cmpfs} the \lex{cmp\_fun\_sym(s1,s2)} construct corresponds to a
-  predicate (parametrised by two symbol variables).
+  predicate (parameterized by two symbol variables).
   This predicate should return \texttt{true} if the symbols are
   ``equal''. The \texttt{true} value should correspond to the 
   builtin \texttt{true} value of the considered target language.
@@ -344,19 +344,19 @@ several access functions have to be defined:
   \Clang\ for example). 
 
 \item\label{getsub} the \lex{get\_subterm(t,n)} construct corresponds to a
-  function (parametrised by a term variable and an integer).
+  function (parameterized by a term variable and an integer).
   This function should return the \texttt{n-th} subterm of the
-  term~\texttt{t}. This never called with and integer paramter that
+  term~\texttt{t}. This never called with and integer parameter that
   does not correspond to the arity of the root symbol of the
   considered term (i.e. we alway have $0 <= n < arity$).
 
 \item\label{equals} the \lex{equals(t1,t2)} construct corresponds to a
-  predicate (parametrised by two term variables).
+  predicate (parameterized by two term variables).
   This predicate should return \texttt{true} if the terms are
   ``equal''. The \texttt{true} value should correspond to the 
   builtin \texttt{true} value of the considered target language.
   This last optional predicate is only used to compile non-linear 
-  left-handsides. It is not needed, if the specification does not
+  left-hand sides. It is not needed, if the specification does not
   contain such patterns.
 \end{itemize}
 
@@ -365,14 +365,14 @@ several access functions have to be defined:
 When defining a new type with the \lex{\%typelist} construct,
 several other access functions have to be defined:
 \begin{itemize}
-\item\label{geth} the \lex{get\_head(l)} function is parametrised by a list
+\item\label{geth} the \lex{get\_head(l)} function is parameterized by a list
   variable and should return the first element of the considered list.
 
-\item\label{gett} the \lex{get\_tail(l)} function is parametrised by a list
+\item\label{gett} the \lex{get\_tail(l)} function is parameterized by a list
   variable and should return the tail of the considered list.
 
 \item\label{isempty} the \lex{is\_empty(l)} constructs corresponds to a
-  predicate parametrised by a list variable.
+  predicate parameterized by a list variable.
   This predicate should return \texttt{true} if the considered list
   contains no element.
 \end{itemize}
@@ -381,7 +381,7 @@ several other access functions have to be defined:
 When defining a new type with the \lex{\%typearray} construct,
 the two different access functions have to be defined:
 \begin{itemize}
-\item\label{gete} the \lex{get\_element(l,n)} construct is parametrised by a list
+\item\label{gete} the \lex{get\_element(l,n)} construct is parameterized by a list
   variable and an integer. This should correspond to a function that
   return the \texttt{n-th} element of the considered list~\texttt{l}.
 
@@ -413,7 +413,7 @@ rooted by the considered symbol ($s$ in this example). This replaces
 the use of \lex{get\_fun\_sym} and \lex{cmp\_fun\_sym}.
 
 \label{make}When defining a symbol, is it also possible to specify a
-\lex{make} construct. This function is parametrised by several 
+\lex{make} construct. This function is parameterized by several 
 term variables (i.e. that should correspond to the arity of the
 symbol). A call to this \lex{make} function should return a term
 rooted by the considered symbol, where each subterm correspond to the
@@ -446,7 +446,7 @@ longer optional as in the \lex{\%op} construct):
   list.
 
 \item\label{insert} the \lex{make\_insert(e,l)} construct corresponds to a function
-  parametrised by a list variable and a term variable. This function
+  parameterized by a list variable and a term variable. This function
   should return a new list~\texttt{l'} where the element~\texttt{e}
   has been inserted at the head of the list~\texttt{l}
   (i.e. \lex{equals(get\_head(l'),e)} and
@@ -463,7 +463,7 @@ longer optional as in the \lex{\%op} construct):
   size~\texttt{n}.  
 
 \item\label{append} the \lex{make\_append(e,l)} construct corresponds to a
-  function parametrised by a list variable and a term variable. 
+  function parameterized by a list variable and a term variable. 
 
 \textbf{Warning: }
 This function should return a list~\texttt{l'} such that
@@ -513,7 +513,7 @@ The \lex{\%match} construct is evaluated in the following way:
 \end{itemize}
 
 \noindent
-\textbf{Note:} the behaviour is not determined if a semantic action
+\textbf{Note:} the behavior is not determined if a semantic action
 modifies a target language variable which is an argument of a
 \lex{\%match} instruction under evaluation.
 
@@ -524,7 +524,7 @@ rewrite rules (the left-hand side is a term and the right-hand side is
 a term). All these rules should begin with the same root symbol. The
 \TOM\ compiler should generate a function (with one argument) whose
 name correspond to the name of this unique root symbol.
-Given a ground term, applying this function returns the instanciated
+Given a ground term, applying this function returns the instantiated
 right-hand side of the first rule whose pattern matches the considered 
 subject and whose conditions are satisfied.
 When no rule can be applied (i.e. no pattern matches the subject, or
@@ -539,9 +539,9 @@ In \TOM, we consider two kinds of conditions:
   ($t_1$ and $t_2$) are equal modulo the \lex{equals} predicate defined in
   the definition of the type associated to $t_1$ and $t_2$.
 \item a matching condition ($p := t$) is a pair of terms where p may
-  contains free variable. The conditon is satisfied if the pattern~$p$
+  contains free variable. The condition is satisfied if the pattern~$p$
   can be matched against the normal form of~$t$. In this case, the
-  free variables of~$p$ are instantited and can be used in other
+  free variables of~$p$ are instantiated and can be used in other
   conditions or the right-hand side of the rule.
 \end{itemize}
 
