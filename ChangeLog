@@ -1,3 +1,8 @@
+2005-03-24  pem  <pem@polly.loria.fr>
+
+	* src/jtom/compiler/TomExpander.t: 
+    - allows to use backquote constructs in make() { ... }
+
 2005-03-23  emilie  <emilie@galadriel.loria.fr>
 
 	* src/jtom/optimizer/TomOptimizer.t: 

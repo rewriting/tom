@@ -62,18 +62,18 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   %include { adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
 
-  protected abstract TargetLanguage genDecl(String returnType,
-                                            String declName,
-                                            String suffix,
-                                            String args[],
-                                            TargetLanguage tlCode);
+  protected abstract void genDecl(String returnType,
+                                  String declName,
+                                  String suffix,
+                                  String args[],
+                                  TargetLanguage tlCode) throws IOException;
   
-  protected abstract TargetLanguage genDeclMake(String opname, TomType returnType, 
-                                            TomList argList, TargetLanguage tlCode);
+  protected abstract void genDeclMake(String funName, TomType returnType, 
+                                      TomList argList, Instruction instr) throws IOException;
   
-  protected abstract TargetLanguage genDeclList(String name, TomType listType, TomType eltType);
+  protected abstract void genDeclList(String name, TomType listType, TomType eltType) throws IOException;
 
-  protected abstract TargetLanguage genDeclArray(String name, TomType listType, TomType eltType);
+  protected abstract void genDeclArray(String name, TomType listType, TomType eltType) throws IOException;
 
 //------------------------------------------------------------
  
@@ -282,9 +282,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
       if(getSymbolTable().isBuiltinType(type)) {
         returnType = getSymbolTable().getBuiltinType(type);
       }
-    generateTargetLanguage(deep,
-                           genDecl(getTLType(returnType),
-                                   "tom_get_fun_sym", type,args,tlCode));
+      genDecl(getTLType(returnType),"tom_get_fun_sym", type,args,tlCode);
   }
 
   protected void buildCheckStampDecl(int deep, String type, String name,
@@ -297,10 +295,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
       argType = getTLType(getUniversalType());
     }
     
-    generateTargetLanguage(deep, genDecl(getTLType(returnType),
-                                         "tom_check_stamp", type,
-                                         new String[] { argType, name },
-                                         tlCode));
+    genDecl(getTLType(returnType),"tom_check_stamp", type, new String[] { argType, name }, tlCode);
   }
 
   protected void buildSetStampDecl(int deep, String type, String name,
@@ -313,10 +308,10 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
     }
     String returnType = argType; /* TODO: use stamp type */
     
-    generateTargetLanguage(deep, genDecl(returnType,
-                                         "tom_set_stamp", type,
-                                         new String[] { argType, name },
-                                         tlCode));
+    genDecl(returnType,
+            "tom_set_stamp", type,
+            new String[] { argType, name },
+            tlCode);
   }
 
   protected void buildGetImplementationDecl(int deep, String type, String name,
@@ -329,10 +324,10 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
     }
     String returnType = argType; /* TODO: use stamp type */
     
-    generateTargetLanguage(deep, genDecl(returnType,
-                                         "tom_get_implementation", type,
-                                         new String[] { argType, name },
-                                         tlCode));
+    genDecl(returnType,
+            "tom_get_implementation", type,
+            new String[] { argType, name },
+            tlCode);
   }
 
   protected void buildIsFsymDecl(int deep, String tomName, String name1,
@@ -348,10 +343,10 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
       argType = getTLType(getUniversalType());
     }
     
-    generateTargetLanguage(deep, genDecl(getTLType(returnType),
-                                         "tom_is_fun_sym", opname,
-                                         new String[] { argType, name1 },
-                                         tlCode));
+    genDecl(getTLType(returnType),
+            "tom_is_fun_sym", opname,
+            new String[] { argType, name1 },
+            tlCode);
   }
 
   protected void buildGetSlotDecl(int deep, String tomName, String name1,
@@ -373,10 +368,10 @@ TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
     } else {
       argType = getTLType(getUniversalType());
     }
-    generateTargetLanguage(deep, genDecl(getTLType(returnType),
-                                             "tom_get_slot", opname  + "_" + slotName.getString(),
-                                             new String[] { argType, name1 },
-                                             tlCode));
+    genDecl(getTLType(returnType),
+            "tom_get_slot", opname  + "_" + slotName.getString(),
+            new String[] { argType, name1 },
+            tlCode);
   }
 
   protected void  buildCompareFunctionSymbolDecl(int deep, String name1,
@@ -390,12 +385,12 @@ String name2, String type1, String type2, TargetLanguage tlCode) throws IOExcept
       argType2 = getSymbolTable().getBuiltinType(type2);
     } 
     
-    generateTargetLanguage(deep, genDecl(getTLType(getSymbolTable().getBooleanType()), "tom_cmp_fun_sym", type1,
-                                         new String[] {
-                                           getTLType(argType1), name1,
-                                           getTLType(argType2), name2
-                                         },
-                                         tlCode));
+    genDecl(getTLType(getSymbolTable().getBooleanType()), "tom_cmp_fun_sym", type1,
+            new String[] {
+              getTLType(argType1), name1,
+              getTLType(argType2), name2
+            },
+            tlCode);
   }
 
   protected void buildTermsEqualDecl(int deep, String name1, String name2,
@@ -409,12 +404,12 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
       argType2 = getSymbolTable().getBuiltinType(type2);
     } 
     
-    generateTargetLanguage(deep, genDecl(getTLType(getSymbolTable().getBooleanType()), "tom_terms_equal", type1,
-                                             new String[] {
-                                               getTLType(argType1), name1,
-                                               getTLType(argType2), name2
-                                             },
-                                             tlCode));
+    genDecl(getTLType(getSymbolTable().getBooleanType()), "tom_terms_equal", type1,
+            new String[] {
+              getTLType(argType1), name1,
+              getTLType(argType2), name2
+            },
+            tlCode);
   }
 
   protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, TargetLanguage tlCode) 
@@ -444,10 +439,9 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
         }
       }
     }
-    generateTargetLanguage(deep,
-                           genDecl(returnType, functionName, suffix,
-                                   new String[] { argType, varName },
-                                   tlCode));
+    genDecl(returnType, functionName, suffix,
+            new String[] { argType, varName },
+            tlCode);
   }
 
   protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, TargetLanguage tlCode) 
@@ -478,10 +472,9 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
       }
     }
 
-    generateTargetLanguage(deep,
-                           genDecl(returnType, functionName, type,
-                                   new String[] { argType, varName },
-                                   tlCode));
+    genDecl(returnType, functionName, type,
+            new String[] { argType, varName },
+            tlCode);
   }
 
   protected void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
@@ -507,11 +500,10 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
       }
     }
 
-    generateTargetLanguage(deep,
-                           genDecl(getTLType(getSymbolTable().getBooleanType()),
-                                   functionName, type,
-                                   new String[] { argType, varName },
-                                   tlCode));
+    genDecl(getTLType(getSymbolTable().getBooleanType()),
+            functionName, type,
+            new String[] { argType, varName },
+            tlCode);
   }
 
   protected void buildGetElementDecl(int deep, String name1, String name2,
@@ -525,13 +517,13 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
       argType = getTLType(getUniversalType());
     }
     
-    generateTargetLanguage(deep, genDecl(returnType,
-                                         "tom_get_element", type1,
-                                         new String[] {
-                                           argType, name1,
-                                           getTLType(getSymbolTable().getIntType()), name2
-                                         },
-                                         tlCode));
+    genDecl(returnType,
+            "tom_get_element", type1,
+            new String[] {
+              argType, name1,
+              getTLType(getSymbolTable().getIntType()), name2
+            },
+            tlCode);
   }
 
   protected void buildGetSizeDecl(int deep, String name1, String type,
@@ -543,11 +535,10 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
       argType = getTLType(getUniversalType());
     }
     
-    generateTargetLanguage(deep,
-                           genDecl(getTLType(getSymbolTable().getIntType()),
-                                   "tom_get_size", type,
-                                   new String[] { argType, name1 },
-                                   tlCode));
+    genDecl(getTLType(getSymbolTable().getIntType()),
+            "tom_get_size", type,
+            new String[] { argType, name1 },
+            tlCode);
   }
 
   protected void buildTypeTermDecl(int deep, TomList declList) throws IOException {

@@ -687,6 +687,9 @@ targetLanguage [LinkedList list] returns [TargetLanguage result] throws TomExcep
         {
             String code = removeLastBrace(getCode());
 
+            //System.out.println("code = " + code);
+            //System.out.println("list = " + list);
+
             result = `TL(
                 code,
                 TextPosition(currentLine(),currentColumn()),

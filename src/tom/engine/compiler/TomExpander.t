@@ -26,6 +26,7 @@
 package jtom.compiler;
 
 import java.util.logging.Level;
+import java.util.Iterator;
 
 import jtom.adt.tomsignature.types.*;
 import jtom.exception.TomRuntimeException;
@@ -75,7 +76,7 @@ public class TomExpander extends TomGenericPlugin {
     try {
       tomKernelExpander.setSymbolTable(getStreamManager().getSymbolTable());
       TomTerm syntaxExpandedTerm   = expandTomSyntax( (TomTerm)getWorkingTerm() );
-      tomKernelExpander.updateSymbolTable();
+      updateSymbolTable();
       TomTerm context = `emptyTerm();
       
       TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
@@ -97,6 +98,26 @@ public class TomExpander extends TomGenericPlugin {
                            + EXPANDED_SUFFIX, expandedTerm);
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
                            + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
+    }
+  }
+
+  /*
+   * updateSymbol is called after a first syntax expansion phase
+   * this phase updates the symbolTable according to the typeTable
+   * this is performed by recursively traversing each symbol
+   * - backquote are expanded
+   * - each TomTypeAlone is replace by the corresponding TomType
+   */
+  public void updateSymbolTable() {
+    Iterator it = getStreamManager().getSymbolTable().keySymbolIterator();
+    while(it.hasNext()) {
+      String tomName = (String)it.next();
+      TomTerm emptyContext = `emptyTerm();
+      TomSymbol tomSymbol = getSymbolFromName(tomName);
+      tomSymbol = expandTomSyntax(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+      //System.out.println("symbol = " + tomSymbol);
+      tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
   
@@ -126,7 +147,7 @@ public class TomExpander extends TomGenericPlugin {
 
               backQuoteTerm@BackQuoteAppl[] -> {
                 TomTerm t = expandBackQuoteAppl(`backQuoteTerm);
-                  //System.out.println("t = " + t);
+                //System.out.println("t = " + t);
                 return t;
               }
 

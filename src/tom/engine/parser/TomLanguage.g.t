@@ -1,4 +1,5 @@
-header{/*
+header{
+/*
  * 
  * TOM - To One Matching Compiler
  * 
@@ -2035,10 +2036,12 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                 updatePosition(t.getLine(),t.getColumn());
 
                 selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.targetLanguage(new LinkedList());
+                LinkedList blockList = new LinkedList();
+                TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+                //System.out.println("make: " + tlCode);
                 selector().pop();
-
-                result = `MakeDecl(Name(opname),returnType,args,tlCode,ot);
+                blockList.add(tlCode);
+                result = `MakeDecl(Name(opname),returnType,args,AbstractBlock(ast().makeInstructionList(blockList)),ot);
             }
         )
     ;

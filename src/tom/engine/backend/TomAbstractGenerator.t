@@ -598,7 +598,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       MakeEmptyList(Name(opname), tlCode@TL[], _) -> {
         TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
-        `generateTargetLanguage(deep, genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), tlCode));
+        `genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), TargetLanguageToInstruction(tlCode));
         return;
       }
 
@@ -607,8 +607,8 @@ public abstract class TomAbstractGenerator extends TomBase {
                   list@Variable[astType=fullListType@Type[tlType=tlType2@TLType[]]],
                   tlCode@TL[], _) -> {
         TomType returnType = fullListType;
-        `generateTargetLanguage(deep, genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), tlCode));
-        generateTargetLanguage(deep, genDeclList(opname, fullListType,fullEltType));
+        `genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), TargetLanguageToInstruction(tlCode));
+        `genDeclList(opname, fullListType,fullEltType);
         return;
       }
 
@@ -630,7 +630,7 @@ public abstract class TomAbstractGenerator extends TomBase {
                      tlCode@TL[], _) -> {
         TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
         TomTerm newVar = `Variable(option, name, getSymbolTable().getIntType(), constraints);
-        `generateTargetLanguage(deep, genDeclMake("tom_empty_array_" + opname, returnType, concTomTerm(newVar), tlCode));
+        `genDeclMake("tom_empty_array_" + opname, returnType, concTomTerm(newVar), TargetLanguageToInstruction(tlCode));
         return;
       }
 
@@ -639,13 +639,13 @@ public abstract class TomAbstractGenerator extends TomBase {
                    list@Variable[astType=fullArrayType@Type[tlType=tlType2@TLType[]]],
                    tlCode@TL[], _) -> {
         TomType returnType = fullArrayType;
-        `generateTargetLanguage(deep, genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), tlCode));
-        generateTargetLanguage(deep, genDeclArray(opname, fullArrayType, fullEltType));
+        `genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), TargetLanguageToInstruction(tlCode));
+        `genDeclArray(opname, fullArrayType, fullEltType);
         return;
       }
 
-      MakeDecl(Name(opname), returnType, argList, tlCode@TL[], _) -> {
-        `generateTargetLanguage(deep, genDeclMake("tom_make_" + opname, returnType, argList, tlCode));
+      MakeDecl(Name(opname), returnType, argList, instr, _) -> {
+        `genDeclMake("tom_make_" + opname, returnType, argList, instr);
         return;
       }
       
@@ -712,18 +712,18 @@ public abstract class TomAbstractGenerator extends TomBase {
   
     // ------------------------------------------------------------
   
-  protected abstract TargetLanguage genDecl(String returnType,
-                                            String declName,
-                                            String suffix,
-                                            String args[],
-                                            TargetLanguage tlCode);
+  protected abstract void genDecl(String returnType,
+                                  String declName,
+                                  String suffix,
+                                  String args[],
+                                  TargetLanguage tlCode) throws IOException;
   
-  protected abstract TargetLanguage genDeclMake(String funName, TomType returnType, 
-                                            TomList argList, TargetLanguage tlCode);
+  protected abstract void genDeclMake(String funName, TomType returnType, 
+                                      TomList argList, Instruction instr) throws IOException;
   
-  protected abstract TargetLanguage genDeclList(String name, TomType listType, TomType eltType);
+  protected abstract void genDeclList(String name, TomType listType, TomType eltType) throws IOException;
 
-  protected abstract TargetLanguage genDeclArray(String name, TomType listType, TomType eltType);
+  protected abstract void genDeclArray(String name, TomType listType, TomType eltType) throws IOException;
  
   // ------------------------------------------------------------
   

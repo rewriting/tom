@@ -214,13 +214,15 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.write(", " + number + ")");
   }
 
-  protected TargetLanguage genDecl(String returnType,
-                                   String declName,
-                                   String suffix,
-                                   String args[],
-                                   TargetLanguage tlCode) {
+  protected void genDecl(String returnType,
+                         String declName,
+                         String suffix,
+                         String args[],
+                         TargetLanguage tlCode)  throws IOException {
     String s = "";
-    if(nodeclMode) { return null; }
+    if(nodeclMode) { 
+      return; 
+    }
     s =  "let " + declName + "_" + suffix + "(";
     for(int i=0 ; i<args.length ; ) {
         // the first argument is the type, second the name 
@@ -231,17 +233,26 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       }
     } 
     s += ") = " + tlCode.getCode() + " ";
-    if(tlCode.isTL()) {
-      return `TL(s, tlCode.getStart(), tlCode.getEnd());
-    } else {
-      return `ITL(s);
+
+    %match(TargetLanguage tlCode) {
+      TL(_,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
+        output.write(s, `startLine, `endLine - `startLine);
+        return;
+      }
+
+      ITL(_) -> {  // pas de \n donc pas besoin de reworkTL
+        output.write(s);
+        return;
+      }
     }
   }
 
-  protected TargetLanguage genDeclMake(String funName, TomType returnType, 
-                                       TomList argList, TargetLanguage tlCode) {
+  protected void genDeclMake(String funName, TomType returnType, 
+                             TomList argList, Instruction instr)  throws IOException {
     String s = "";
-    if(nodeclMode) { return null; }
+    if(nodeclMode) { 
+      return;
+    }
     s = "let " + funName + "(";
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
@@ -265,14 +276,15 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       }
     }
     s += ") = ";
-    s += tlCode.getCode() + " ";
-    return `TL(s, tlCode.getStart(), tlCode.getEnd());
+    output.write(s);
+    generateInstruction(0,instr);
+    output.write(" ");
   }
 
-  protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
+  protected void genDeclList(String name, TomType listType, TomType eltType)  throws IOException {
     String s = "";
     if(nodeclMode) {
-      return `ITL("");
+      return;
     }
 
     String tomType = getTomType(listType);
@@ -299,7 +311,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       get_slice + "(" + get_tail + "(beginning),ending))\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    return getAstFactory().reworkTLCode(`ITL(s), prettyMode);
+    TargetLanguage itl = getAstFactory().reworkTLCode(`ITL(s), prettyMode);
+    output.write(itl.getCode()); 
   }
   
   protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {

@@ -532,24 +532,6 @@ public class TomKernelExpander extends TomBase {
     return (Instruction) replace_replaceInstantiatedVariable.apply(subject,instantiatedVariable); 
   }
 
-
-  /*
-   * updateSymbol is called after a first syntax expansion phase
-   * this phase updates the symbolTable according to the typeTable
-   * this is performed by recursively traversing each symbol
-   * each TomTypeAlone is replace by the corresponding TomType
-   */
-  public void updateSymbolTable() {
-    Iterator it = getSymbolTable().keySymbolIterator();
-    while(it.hasNext()) {
-      String tomName = (String)it.next();
-      TomTerm emptyContext = `emptyTerm();
-      TomSymbol tomSymbol = getSymbolFromName(tomName);
-      tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
-      getSymbolTable().putSymbol(tomName,tomSymbol);
-    }
-  }
-
   private TomType getType(String tomName) {
     TomType tomType = getSymbolTable().getType(tomName);
     return tomType;

@@ -27,7 +27,7 @@ GetElementDecl(kid1:TomTerm,kid2:TomTerm,tlCode:TargetLanguage,orgTrack:Option) 
 GetSizeDecl(kid1:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 MakeEmptyArray(astName:TomName,varSize:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 MakeAddArray(astName:TomName,varElt:TomTerm,varList:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
-MakeDecl(astName:TomName,astType:TomType,args:TomList,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
+MakeDecl(astName:TomName,astType:TomType,args:TomList,instr:Instruction,orgTrack:Option) -> Declaration
 SymbolDecl(astName:TomName) -> Declaration
 ListSymbolDecl(astName:TomName) -> Declaration
 ArraySymbolDecl(astName:TomName) -> Declaration
