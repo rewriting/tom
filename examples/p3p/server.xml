@@ -1,5 +1,5 @@
 <POLICIES xmlns="http://www.w3.org/2002/01/P3Pv1">
-<POLICY name="mapolitique" discuri="http://www.ibm.com/privacy/"
+<POLICY name="mypolicy" discuri="http://www.ibm.com/privacy/"
     opturi="http://www.ibm.com/privacy/"
     xml:lang="en">
     

@@ -98,6 +98,9 @@
   <property name="xml" value="xml"/>
   <property name="xml.dir" location="${examples.dir}/${xml}" />
 
+  <property name="xquery" value="xquery"/>
+  <property name="xquery.dir" location="${examples.dir}/${xquery}" />
+
   <target name="testdistexist">
     <available file="${tom.home}/lib" type="dir" property="distexist"/>
   </target>
@@ -649,17 +652,42 @@
 		</copy>
 
   </target>
+
+  <target name="xquery" depends="init">
+    <!-- build tom -->
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
+    	nowarn="${nowarnings}"
+				 optimize="${optimize}"
+         options="-I ${tom.home}/share/jtom">
+      <include name="${xquery}/**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
+      <classpath refid="tom.classpath"/>
+      <include name="${xquery}/**/*.java"/>
+    </javac>
+		<!-- copy resourses -->
+		<copy todir="${examples.build}/${xquery}">
+			<fileset dir="${examples.dir}/${xquery}">
+				<include name="*.xquery"/>
+				<include name="*.html"/>
+			</fileset>
+		</copy>
+
+  </target>
     
 <!--
   <target name="examples" 
           description="Builds the examples (at least some)"
 					depends="addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens,
-          prodrule, propp, rbtree, set, vas, xml">
+          prodrule, propp, rbtree, set, vas, xml, xquery">
 -->
   <target name="examples" 
           description="Builds the examples (at least some)"
-					depends="xml, vas, tutorial, set, rbtree, propp, prodrule,
+					depends="xquery, xml, vas, tutorial, set, rbtree, propp, prodrule,
           addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens">
   </target>
@@ -780,6 +808,12 @@
         <include name="${xml}/*.adt"/>
         <include name="${xml}/*.xml"/>
         <include name="${xml}/*.html"/>
+
+        <include name="${xquery}/README"/>
+        <include name="${xquery}/*.t"/>
+        <include name="${xquery}/*.xml"/>
+        <include name="${xquery}/*.xquery"/>
+        <include name="${xquery}/*.html"/>
 
         <not>
           <present targetdir="${examples.dir}">
