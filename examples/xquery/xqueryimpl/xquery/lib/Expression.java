@@ -7,9 +7,6 @@ import xquery.lib.data.*;
 import org.w3c.dom.*;
 
 public class Expression extends AbstractExpression{
-
-
-
   // Expr  -> PathExpr* 
   // eval:  UNION ALL (pathexpr.eval())
 
@@ -82,26 +79,31 @@ public class Expression extends AbstractExpression{
 	if (!verifyContent()) {
 	  return null;
 	}
-
+	
 	// default: UNION alls:
-	Sequence s = new Sequence(); 
-	s.addAll(initialValue);
+	Sequence result = new Sequence(); 
+	result.addAll(initialValue);
+	//	System.out.println("Expr: evaluate: result:" + result.size());
 
 	for (int i=0 ;i < getArity(); i++) { // 0 is initial value
 	  Object achild = getChild(i);
 	  if ((achild instanceof Sequence)
 		  || (achild instanceof Item)) {
-		s.add(achild); 
+		result.add(achild); 
 	  }
 
 	  else if (achild instanceof AbstractExpression) {
 		AbstractExpression expr=(AbstractExpression)achild; 
-		Sequence result = expr.evaluate(s);
+		//		Sequence result = expr.evaluate(s);
+		result= expr.evaluate(result);
+
+		//		System.out.println("Expr: evaluate: result:" + result.size());
+		
 		if (result==null) {
 		  return null; 
 		}
 		else {
-		  s.add(result); 
+		  //	  s.add(result); 
 		}
 	  }
 
@@ -114,8 +116,7 @@ public class Expression extends AbstractExpression{
 	  }
 
 	}
-
-	return s;
+	return result;
   }
 
 }

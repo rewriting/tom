@@ -32,12 +32,8 @@ public class NodeNameTester extends NodeTester
   public NodeNameTester(String name) 
   {
 	super(); 
-	System.out.println("sao the nhi chang chay gi ca");
-	
-	this.name=new String(name);
-	System.out.println("name");
-	
-	System.out.println(name);
+	this.name=name;
+	//	System.out.println(this.name);
 	
   }
    
@@ -72,14 +68,21 @@ public class NodeNameTester extends NodeTester
    */
   public boolean doTest(Node node) 
   {
-	System.out.println(name);
+// 	System.out.println("=================================================");
+// 	System.out.println(name);
+	
+// 	System.out.println(node);
 	
     if (node instanceof Element && node.getNodeName().compareTo(name)==0) {
+// 	  System.out.println("NodeNameTester: do Test: OK");
+
 	  return true; 
 	}
 	else {
+// 	  System.out.println("NodeNameTester: do Test: failed");
 	  return false;
 	}
+
   }
    
   /**

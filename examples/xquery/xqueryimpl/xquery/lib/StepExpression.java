@@ -139,11 +139,14 @@ public class StepExpression extends AbstractExpression {
 	  predicateList.add(getChild(i));
 	}
 
+	//	System.out.println("StepOperator: doFilter: " + ((NodeNameTester)nodeTest).getName());
+	
 	pathOperator.setPathAxe(pathAxe); 
 	pathOperator.setNodeTest(nodeTest);
 	pathOperator.setPredicateList(predicateList);
-
-	return pathOperator.run(inputValue);
+	Sequence result = pathOperator.run(inputValue);
+	//	System.out.println("StepExpr: doFilter: result:" + result.size());
+	return result;
   }
   
 
@@ -166,6 +169,8 @@ public class StepExpression extends AbstractExpression {
 	
 	Sequence result = new Sequence(); 
 	result.add(initValue);
+
+	//	System.out.println("StepExpr: evaluate: result:" + result.size());
 	
 	Object secondChild = getChild(0); 
 
@@ -176,7 +181,10 @@ public class StepExpression extends AbstractExpression {
 	  result.add(((AbstractExpression)secondChild).evaluate()); 
 	  childIndex = 1;
 	}
+
+	//	System.out.println("StepExpr: evaluate: result:" + result.size());
+	result= doFilter(result, childIndex);
 	
-	return doFilter(result, childIndex);
+	return result;
   }
 }

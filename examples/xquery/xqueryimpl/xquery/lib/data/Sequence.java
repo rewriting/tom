@@ -23,6 +23,7 @@ public class Sequence extends Vector
    public boolean add(Object o) 
    {
 	 super.add(o);
+	 //	 System.out.println("add object");
 	 return true;
    }
   
@@ -34,6 +35,8 @@ public class Sequence extends Vector
   public Sequence add(Sequence s) 
   {
     super.addAll(s);
+	//	System.out.println("add sequence");
+	
 	return this;
   }
   

@@ -97,6 +97,7 @@ public class PathExpression extends AbstractExpression{
 	result.addAll(initValue); 
 	// 
 
+
 	Object secondChild = getChild(0); 
 	int childIndex = 0; 
 	if (secondChild instanceof AbstractExpression) { // union
@@ -104,8 +105,11 @@ public class PathExpression extends AbstractExpression{
 	  childIndex ++; 
 	}
 	
+// 	System.out.println("PathExpr: evaluate: result:" + result.size());
 	result = doFilter(result, childIndex);
+// 	System.out.println("PathExpr: evaluate: result:" + result.size());
 	
+
 	return result;
   }
   
@@ -116,19 +120,25 @@ public class PathExpression extends AbstractExpression{
 	// filter; by expression
 	Sequence result = new Sequence(); 
 	result.add(input);
+// 	System.out.println("PathExpr: doFilter: result:" + result.size());
 
 	for (int i=childIndex; i< getArity(); i++) {
-	  AbstractExpression expr=(AbstractExpression)getChild(childIndex); 
+	  AbstractExpression expr=(AbstractExpression)getChild(i); 
 	  // assign initial value
-	  Sequence s = expr.evaluate(result);
-	  if (s==null) {
+	  //Sequence s = expr.evaluate(result);
+	  result = expr.evaluate(result);
+// 	  System.out.println("i="+i);
+// 	  System.out.println("PathExpr: doFilter: result:" + result.size());
+	  
+	  if (result==null) {
 		return null; 
 	  }
 	  else {
-		result.add(s); 
+		//		result.add(s); 
 	  }
 	}
-	
+
+// 	System.out.println("PathExpr: doFilter: result:" + result.size());
 	return result;
   }
 }

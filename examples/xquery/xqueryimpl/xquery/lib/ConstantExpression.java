@@ -54,10 +54,10 @@ public class ConstantExpression extends AbstractExpression{
   public Sequence evaluate() 
 	throws XQueryGeneralException
   {
-	System.out.println("ConstantExpression: evaluate()");
+	//	System.out.println("ConstantExpression: evaluate()");
 	
 	if (!verifyContent()) {
-	  System.out.println("ConstantExpression: evaluate: return NULL");
+	  //	  System.out.println("ConstantExpression: evaluate: return NULL");
 	  return null;
 	}
 

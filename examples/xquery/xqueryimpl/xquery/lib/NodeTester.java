@@ -14,7 +14,7 @@ public  class NodeTester
    */
   public NodeTester() 
   {
-	System.out.println("nodenameinit");
+	//	System.out.println("nodenameinit");
 	
   }
    

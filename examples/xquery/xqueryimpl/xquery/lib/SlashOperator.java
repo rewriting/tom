@@ -75,6 +75,7 @@ public class SlashOperator extends PathOperator
    */
   public Sequence runChild(Sequence input) throws XQueryTypeException 
   {
+	//	System.out.println("SlashOperator: runChildsequence: input:" + input.size());
 	Sequence result = new Sequence();
 	Enumeration enum=input.elements(); 
 
@@ -87,6 +88,8 @@ public class SlashOperator extends PathOperator
 		result.add(runChild((Item)obj));
 	  }
 	}
+	
+	//	System.out.println("SlashOperator: runChildsequence: result:" + result.size());
 	return result;
   }
 
@@ -124,11 +127,18 @@ public class SlashOperator extends PathOperator
 		// System.out.println("i: " + i);		
 		Node childnode = nodelist.item(i);
 		if (doTest(childnode) && doFilter(childnode, i+1)) {  // i is current position in child list
+		  //		  System.out.println("slashOper; runchildNode: test OK");
 		  seq.add(childnode); // index 1
 		}
+// 		else {
+// 		  System.out.println("slashOper; runchildNode: test failed");
+		  
+// 		}
+		
 	  }
 	} 
 
+	//	System.out.println("SlashOperator: runChildNode: result:" + seq.size());
 	return seq;
   }
 
@@ -256,7 +266,7 @@ public class SlashOperator extends PathOperator
    */
   protected Sequence runAttribute(Node node) throws XQueryTypeException 
   {
-	System.out.println("run attribute");
+	//	System.out.println("run attribute");
 	Sequence seq=new Sequence();
 	if (node.hasAttributes()) {
 	  //	  System.out.println("deo hieu the nao, co attribute ro rang kia ma");
