@@ -30,7 +30,6 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 import jtom.TomEnvironment;
-import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.types.instruction.RuleSet;
 import jtom.adt.tomsignature.types.instruction.Match;
@@ -116,7 +115,8 @@ public class TomParser extends TomTask implements TomParserConstants {
 
                 // Update taskInput
                 getInput().setTerm(parsedTerm);
-
+    } catch (TokenMgrError error) {
+      addError(error.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
         } catch (TomIncludeException e) {
           addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
         } catch (TomException e) {
@@ -1323,7 +1323,7 @@ public class TomParser extends TomTask implements TomParserConstants {
       while(backQuoteMode) {
         try {
           tk = getNextToken();
-        } catch (jtom.parser.TokenMgrError Error) {
+        } catch (TokenMgrError error) {
           {if (true) throw new TomException("Invalide backquote term started line "+firstTokenLine+": EOF encountered ");}
         }
         tokenList.add(tk);
@@ -1395,12 +1395,14 @@ public class TomParser extends TomTask implements TomParserConstants {
         astTom = tomParser.startParsing();
         astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
         list.add(astTom);
+      } catch (TokenMgrError error) {
+        String msg = "TokenMgrError in file '" + fileName + "' included from file '"+currentFile+"'"+ error.getMessage();
+        {if (true) throw new TomException(msg);}
       } catch (FileNotFoundException e1) {
         String msg = "Included file '" + fileName + "' not found at line "+getLine()+" from file '"+currentFile+"'";
         {if (true) throw new TomIncludeException(msg);}
       }  catch (java.io.IOException e2) {
         String msg = "IOException occurs reading " + fileName + " at line "+getLine();
-        System.out.println(msg);
         {if (true) throw new TomException(msg);}
       }
   }
@@ -2569,17 +2571,17 @@ public class TomParser extends TomTask implements TomParserConstants {
     finally { jj_save(12, xla); }
   }
 
+  final private boolean jj_3_11() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3_3() {
     if (jj_3R_29()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_2()) jj_scanpos = xsp;
-    return false;
-  }
-
-  final private boolean jj_3_11() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
@@ -2797,6 +2799,12 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_12() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_42() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     return false;
@@ -2804,12 +2812,6 @@ public class TomParser extends TomTask implements TomParserConstants {
 
   final private boolean jj_3_10() {
     if (jj_3R_30()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_12() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 

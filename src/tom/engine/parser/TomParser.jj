@@ -37,7 +37,6 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 import jtom.TomEnvironment;
-import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.types.instruction.RuleSet;
 import jtom.adt.tomsignature.types.instruction.Match;
@@ -123,7 +122,8 @@ public class TomParser extends TomTask {
         
   		// Update taskInput
   		getInput().setTerm(parsedTerm);
-  		
+    } catch (TokenMgrError error) {
+      addError(error.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
   	} catch (TomIncludeException e) {
   	  addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
   	} catch (TomException e) {
@@ -1220,7 +1220,7 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
       while(backQuoteMode) {
         try {
           tk = getNextToken();
-        } catch (jtom.parser.TokenMgrError Error) {
+        } catch (TokenMgrError error) {
           throw new TomException("Invalide backquote term started line "+firstTokenLine+": EOF encountered ");
         }
         tokenList.add(tk);
@@ -1303,12 +1303,14 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
         astTom = tomParser.startParsing();
         astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
         list.add(astTom);
+      } catch (TokenMgrError error) {
+        String msg = "TokenMgrError in file '" + fileName + "' included from file '"+currentFile+"'"+ error.getMessage();
+        throw new TomException(msg);
       } catch (FileNotFoundException e1) {
         String msg = "Included file '" + fileName + "' not found at line "+getLine()+" from file '"+currentFile+"'";
         throw new TomIncludeException(msg);
       }  catch (java.io.IOException e2) {
         String msg = "IOException occurs reading " + fileName + " at line "+getLine();
-        System.out.println(msg);
         throw new TomException(msg);
       }
     }
