@@ -59,7 +59,7 @@ public class PluginFactory implements TomPlugin {
   }
 
   private OptionManager getOM() { return TomServer.getInstance().getOptionManager(); }
-  private TomEnvironment environment() { return TomServer.getInstance().getEnvironment(); }
+  private TomEnvironment environment() { return TomEnvironment.getInstance(); }
 
   public PluginFactory(String xmlFile) {
     allDeclaredOptions = `emptyTomOptionList();

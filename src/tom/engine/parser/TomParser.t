@@ -113,7 +113,7 @@ public class TomParser
   }
 
   private TomEnvironment environment() {
-    return getServer().getEnvironment();
+    return TomEnvironment.getInstance();
   }
 
   private SymbolTable symbolTable() {

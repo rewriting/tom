@@ -147,6 +147,7 @@ public class TomEnvironment
    */
   public static TomEnvironment create() {
     if(instance == null) {
+      //System.out.println("first call to create");
       instance = new TomEnvironment();
 
       instance.tomSignatureFactory = TomSignatureFactory.getInstance(SingletonFactory.getInstance());
@@ -172,6 +173,7 @@ public class TomEnvironment
   
       return instance;
     } else {
+      //System.out.println("subsequent calls to create");
       TomEnvironment.clear();
       return instance;
     }
@@ -184,14 +186,14 @@ public class TomEnvironment
     instance.symbolTable.init();
     instance.errors = instance.tomSignatureFactory.makeTomAlertList();
     instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
-		instance.destDir = null;
-		instance.inputFile = null;
-		instance.outputFile = null;
-		instance.userOutputFile = null;
-		instance.packagePath = null;
-		instance.eclipseMode = false;
-		instance.inputSuffix = ".t";
-		instance.outputSuffix = ".java";
+    instance.destDir = null;
+    instance.inputFile = null;
+    instance.outputFile = null;
+    instance.userOutputFile = null;
+    instance.packagePath = null;
+    instance.eclipseMode = false;
+    instance.inputSuffix = ".t";
+    instance.outputSuffix = ".java";
   }
 
     public void updateEnvironment(String localInputFileName) // updateInputOutputFiles + init
@@ -415,6 +417,7 @@ public class TomEnvironment
 //////////////////// THIS IS WHERE THE OLD TOMTASKINPUT BEGINS /////////////////////////////////
 
     public String getOutputSuffix() {
+	//System.out.println("getOutputSuffix() : " +outputSuffix);
 	return outputSuffix;
     }
   
@@ -469,6 +472,7 @@ public class TomEnvironment
     }
  
     public String getInputSuffix() {
+	//System.out.println("getInputSuffix : " +inputSuffix);
 	return inputSuffix;
     }
   
@@ -481,6 +485,7 @@ public class TomEnvironment
     }
   
     public String getPackagePath() {
+	//System.out.println("getPackagePath : " +packagePath);
 	return packagePath;
     }
 
@@ -514,12 +519,14 @@ public class TomEnvironment
     public String getInputFileNameWithoutSuffix() {
 	String inputFileName = getInputFile().getPath();
 	String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
+	//System.out.println("IFNWS : " +res);
 	return res;
     }
   
     public String getOutputFileNameWithoutSuffix() {
 	String outputFileName = getOutputFile().getPath();
 	String res = outputFileName.substring(0, outputFileName.length() - getOutputSuffix().length());
+	//System.out.println("OFNWS : " +res);
 	return res;
     }
 
@@ -568,6 +575,7 @@ public class TomEnvironment
     public String getRawFileName() {
   	String inputFileName = getInputFile().getName();
 	String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
+	//System.out.println("Raw file name : " + res);
 	return res;
     }
 

@@ -38,11 +38,6 @@ public class TomServer {
    * 
    */
   private TNodeFactory tNodeFactory;
-	
-  /**
-   * 
-   */
-  private TomEnvironment environment;
 
   /**
    *
@@ -56,13 +51,6 @@ public class TomServer {
    */  
   public TNodeFactory getTNodeFactory() { return tNodeFactory; }
 	
-  /**
-   * An accessor method.
-   * 
-   * @return a TomEnvironment
-   */
-  public TomEnvironment getEnvironment() { return environment; }
-
   /**
    * An accessor method.
    * 
@@ -108,7 +96,6 @@ public class TomServer {
         
       instance.instances = new ArrayList();
       instance.tNodeFactory = TNodeFactory.getInstance(SingletonFactory.getInstance());
-      instance.environment = TomEnvironment.create();
       instance.optionManager = new TomOptionManager();
 	
       return instance;
@@ -123,7 +110,6 @@ public class TomServer {
    */
   public static void clear() {
     instance.instances = new ArrayList();
-    instance.environment = TomEnvironment.create();
     instance.optionManager = new TomOptionManager();
   }
 
@@ -161,38 +147,41 @@ public class TomServer {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      environment.messageError(TomMessage.getString("IncompleteOption"), 
-                               new Object[]{argumentList[--i]}, 
-                               "TomServer", 
-                               TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	System.out.println("incomplete option");
+//       environment.messageError(TomMessage.getString("IncompleteOption"), 
+//                                new Object[]{argumentList[--i]}, 
+//                                "TomServer", 
+//                                TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     }
 
-    if( environment.hasError() ) {
-      environment.printErrorMessage();
-      return null;
-    }
+//     if( environment.hasError() ) {
+//       environment.printErrorMessage();
+//       return null;
+//     }
 
     try {
       File file = new File(xmlConfigurationFile);
       
       if(! file.exists() ) {
         // the case where the specified file doesn't exist is handled here
-        environment.messageError(TomMessage.getString("ConfigFileNotFound"), 
-                                 new Object[]{xmlConfigurationFile}, 
-                                 "TomServer", 
-                                 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	  System.out.println("config file not found");
+//         environment.messageError(TomMessage.getString("ConfigFileNotFound"), 
+//                                  new Object[]{xmlConfigurationFile}, 
+//                                  "TomServer", 
+//                                  TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       }
     } catch(NullPointerException npe) {
       // the lack of a configuration file is handled here
-      environment.messageError(TomMessage.getString("ConfigFileNotSpecified"), 
-                               "TomServer", 
-                               TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	System.out.println("config file not specified");
+//       environment.messageError(TomMessage.getString("ConfigFileNotSpecified"), 
+//                                "TomServer", 
+//                                TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     }
 
-    if( environment.hasError() ) {
-      environment.printErrorMessage();
-      return null;
-    }
+//     if( environment.hasError() ) {
+//       environment.printErrorMessage();
+//       return null;
+//     }
 
     return xmlConfigurationFile;
   }
@@ -212,10 +201,11 @@ public class TomServer {
 
     if( node == null ) {
       // parsing failed
-      environment.messageError(TomMessage.getString("ConfigFileNotXML"), 
-                               new Object[]{xmlConfigurationFile}, 
-                               "TomServer", 
-                               TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	System.out.println("config file not xml");
+//       environment.messageError(TomMessage.getString("ConfigFileNotXML"), 
+//                                new Object[]{xmlConfigurationFile}, 
+//                                "TomServer", 
+//                                TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       return null;
     }
 
@@ -249,7 +239,7 @@ public class TomServer {
   
     if( classPaths == null ) {
       // method parseConfigFile encountered an error
-      environment.printErrorMessage();
+//       environment.printErrorMessage();
       return 1;
     }
   
@@ -264,15 +254,18 @@ public class TomServer {
           instances.add(instance);
         } else {
 	  //System.out.println("pas un plugin");
-          environment.messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
-                                   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	    System.out.println("class not a plugin");
+//           environment.messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
+//                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
         }
       } catch(ClassNotFoundException cnfe) { 
-        environment.messageWarning(TomMessage.getString("ClassNotFound"),new Object[]{path},
-                                   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+	  System.out.println("class not found");
+//         environment.messageWarning(TomMessage.getString("ClassNotFound"),new Object[]{path},
+//                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
       } catch(Exception e) { 
-        environment.messageError(TomMessage.getString("InstantiationError"),
-                                 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+	System.out.println("other error : " + e.getMessage());
+//      environment.messageError(TomMessage.getString("InstantiationError"),
+//                               "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
       }
     }
     
@@ -280,17 +273,17 @@ public class TomServer {
 
     String[] inputFiles = optionManager.optionManagement(argumentList);
   
-    if( environment.hasError() ) {
-      environment.printAlertMessage("TomServer");
-      //displayHelp();
-      // it is kind of hard to display the help message outside of the option
-      // manager, cause the method isn't part of its interface
-      // I guess we'd better only print the help when the user requests it
-      return 1;
-    }
+//     if( environment.hasError() ) {
+//       environment.printAlertMessage("TomServer");
+//       //displayHelp();
+//       // it is kind of hard to display the help message outside of the option
+//       // manager, cause the method isn't part of its interface
+//       // I guess we'd better only print the help when the user requests it
+//       return 1;
+//     }
 
     for(int i = 0; i < inputFiles.length; i++) {
-      environment.updateEnvironment(inputFiles[i]);
+//       environment.updateEnvironment(inputFiles[i]);
       //System.out.println(inputFiles[i]);
       ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
       
@@ -301,21 +294,21 @@ public class TomServer {
         plugin.setInput(term);
         plugin.run();
         term = plugin.getOutput();
-        
-        if( environment.hasError() ) {
-          environment.printAlertMessage(plugin.getClass().toString());
-          environment.messageError(TomMessage.getString("ProcessingError"), new Object[]{inputFiles[i]},
-                                   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-          break;
-        }
+
+//         if( environment.hasError() ) {
+//           environment.printAlertMessage(plugin.getClass().toString());
+//           environment.messageError(TomMessage.getString("ProcessingError"), new Object[]{inputFiles[i]},
+//                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+//           break;
+//         }
       }
     }
-    if( environment.hasError() ) {
-      environment.printAlertMessage("TomServer");
-      return 1;
-    } else {
+//     if( environment.hasError() ) {
+//       environment.printAlertMessage("TomServer");
+//       return 1;
+//     } else {
 	    return 0;
-    }
+//     }
   }
 
     
@@ -339,7 +332,7 @@ public class TomServer {
                  TNode pluginNode = cl.getHead();
                  %match(TNode pluginNode)
                  {
-                   <plugin [classpath = cp] /> -> { v.add(cp);/*System.out.println(cp);*/ }
+		     <plugin [classpath = cp] /> -> { v.add(cp); /*System.out.println(cp);*/ }
                  }
                  cl = cl.getTail();
                }

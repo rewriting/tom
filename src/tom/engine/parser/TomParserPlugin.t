@@ -50,6 +50,9 @@ public class TomParserPlugin extends TomGenericPlugin {
       }	else {
 	environment().setPackagePath("");
       }
+   
+      //System.out.println(fileName);
+
       this.parser = TomParser.createParser(fileName);
 
       term = parser.startParsing();
