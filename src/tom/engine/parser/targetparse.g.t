@@ -64,7 +64,10 @@ options{
         
         // then create the Tom mode parser
         tomparser = new NewTomParser(getInputState(),this);
+        bqparser = tomparser.bqparser;
     } 
+
+    NewBQParser bqparser;
 
     public TokenStreamSelector getSelector(){
         return selector;
@@ -87,6 +90,7 @@ options{
     }
     
     private TomEnvironment environment() {
+//        return getServer().getEnvironment();
         return TomEnvironment.getInstance();
     }
     
@@ -478,6 +482,10 @@ signature [LinkedList list] throws TomException
                 throw new TomIncludeException(MessageFormat.format(TomMessage.getString("IOExceptionWithGeneratedTomFile"), new Object[]{fileName, currentFile, e.getMessage()}));
             } 
             includeFile(fileName, list);
+
+            // the vas construct is over : a new target block begins
+            pushLine();
+            pushColumn();
         }
     
     ;
@@ -500,7 +508,11 @@ backquoteTerm [LinkedList list]
             } 
             
             Option ot = `OriginTracking(Name("Backquote"),t.getLine(), Name(currentFile));
+            //TomTerm bqTerm = tomparser.bqTerm();
             TomTerm bqTerm = tomparser.bqTerm();
+            pushLine();
+            pushColumn();
+            
             list.add(bqTerm);
         }
     ;
@@ -550,7 +562,7 @@ operatorList [LinkedList list] throws TomException
     :
         t:OPERATORLIST 
         {
-            String textCode = pureCode(getCode());
+	    String textCode = pureCode(getCode());
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
@@ -800,7 +812,8 @@ TYPEARRAY
     :   "%typearray" {selector().push("tomlexer");}
     ;   
 OPERATORLIST
-    :   "%oplist"   {selector().push("tomlexer");}
+    :   "%oplist"   {
+            selector().push("tomlexer");}
     ;
 OPERATORARRAY
     :   "%oparray"  {selector().push("tomlexer");}

@@ -39,7 +39,7 @@ options{
 
     // the default-mode parser
     private NewTargetParser targetparser;
-    private NewBQParser bqparser;
+    protected NewBQParser bqparser;
 
     private StringBuffer text = new StringBuffer("");
     
@@ -65,6 +65,7 @@ options{
     }
     
     private TomEnvironment environment() {
+       // return getServer().getEnvironment();
         return TomEnvironment.getInstance();
     }
 
@@ -91,11 +92,11 @@ options{
     public TomStructureTable getStructTable() {
         return `StructTable(debuggedStructureList);
     }
-
+/*
     public NewTomBackQuoteParser tomBQ(){
         return NewTomBackQuoteParser.getInstance();
     }
-
+*/
 
 
     public void pushLine(int line){
@@ -192,7 +193,7 @@ matchArguments [LinkedList list]
 matchArgument [LinkedList list]
     :   
         (
-            type:ID ( BACKQUOTE )? name:ID 
+            type:ALL_ID ( BACKQUOTE )? name:ALL_ID 
         )
         {
             list.add(`TLVar(name.getText(),TomTypeAlone(type.getText())));
@@ -212,7 +213,7 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
     clearText();
 }
     :   (
-            ( (ID COLON) => label:ID COLON )?
+            ( (ALL_ID COLON) => label:ALL_ID COLON )?
              option = matchPattern[matchPatternList] 
             {
                 listOfMatchPatternList.add(ast().makeList(matchPatternList));
@@ -327,7 +328,7 @@ ruleConstruct [Option orgTrack] returns [Instruction result]
         (
             lhs = annotedTerm 
             {listOfLhs = `concTomTerm(lhs);}
-            ( ALTERNATIVE {text.append('|');} lhs = annotedTerm() 
+            ( ALTERNATIVE {text.append('|');} lhs = annotedTerm
                 {listOfLhs = (TomList) listOfLhs.append(lhs);} 
             )*
  
@@ -393,7 +394,7 @@ annotedTerm returns [TomTerm result]
 }
     :   (
             ( 
-                (ID AT) => name:ID AT 
+                (ALL_ID AT) => name:ALL_ID AT 
                 {
                     text.append(name.getText());
                     text.append('@');
@@ -558,7 +559,7 @@ pairList [LinkedList list]
     TomTerm term = null;
 }
     :   (
-            name:ID EQUAL 
+            name:ALL_ID EQUAL 
             {
                 text.append(name.getText());
                 text.append('=');
@@ -566,7 +567,7 @@ pairList [LinkedList list]
             term = annotedTerm 
             {list.add(`PairSlotAppl(Name(name.getText()),term));}
             ( COMMA {text.append(',');} 
-                name2:ID EQUAL 
+                name2:ALL_ID EQUAL 
                 {
                     text.append(name2.getText());
                     text.append('=');
@@ -588,7 +589,7 @@ variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm
 }
     :   (
             ( 
-                name1:ID 
+                name1:ALL_ID 
                 {
                     name = name1.getText();
                     line = name1.getLine();
@@ -688,13 +689,13 @@ headSymbol [LinkedList optionList] returns [TomName result]
     Token t = null;
 }
     :   (
-            i:ID 
+            i:ALL_ID 
             {
                 name = i.getText();
                 line = i.getLine();
                 text.append(name);
             }
-        |   t = constant
+        |   t = constant // add to symbol table
             {
                 name = t.getText();
                 line = t.getLine();
@@ -705,13 +706,31 @@ headSymbol [LinkedList optionList] returns [TomName result]
             setLastLine(line);
             result = `Name(name);
             optionList.add(`OriginTracking(result,line, Name(currentFile())));
+
+            if (t != null){
+                switch(t.getType()){
+                case NUM_INT:
+                    ast().makeIntegerSymbol(symbolTable(),t.getText(),optionList);
+                    break;
+                case CHARACTER:
+                    ast().makeCharSymbol(symbolTable(),t.getText(),optionList);
+                    break;
+                case NUM_DOUBLE:
+                    ast().makeDoubleSymbol(symbolTable(),t.getText(),optionList);
+                    break;
+                case STRING:
+                    ast().makeStringSymbol(symbolTable(),t.getText(),optionList);
+                    break;
+                default:
+                }
+            }
         }
     ;
 
 //This rule is called from the target parser
 //Then the rule calls the backquote parser with 2 cases :
 // 1) (...) -> bqTarget
-// 2) ID | ID* | ID(...) -> bqTargetAppl
+// 2) ALL_ID | ALL_ID* | ALL_ID(...) -> bqTargetAppl
 bqTerm returns [TomTerm result]
 {
     String bqCode = null;
@@ -724,15 +743,15 @@ bqTerm returns [TomTerm result]
             {
                 blockList.add(l);
                 selector().push("bqlexer");
-                result = bqparser.bqTarget(blockList);
+                result = bqparser.beginBqComposite();
                 selector().pop();
             }
         |
-            i:ID 
+            i:ALL_ID 
             {
-                blockList.add(i);
+		blockList.add(i);
                 selector().push("bqlexer");
-                result = bqparser.bqTargetAppl(blockList);
+                result = bqparser.beginBqAppl(i);
                 selector().pop();
             }
         )
@@ -757,7 +776,7 @@ operator returns [Declaration result] throws TomException
     Map mapNameDecl = new HashMap();
 }
     :
-        type:ID name:ID 
+        type:ALL_ID name:ALL_ID 
         {
             ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
             options.add(ot);
@@ -766,10 +785,10 @@ operator returns [Declaration result] throws TomException
             LPAREN
             { stringSlotName = ""; }
             (
-               (ID COLON) => slotName:ID COLON
+               (ALL_ID COLON) => slotName:ALL_ID COLON
                 { stringSlotName = slotName.getText(); }
             )? 
-            typeArg:ID 
+            typeArg:ALL_ID 
             {
                 slotNameList.add(ast().makeName(stringSlotName)); 
                 types = (TomTypeList) types.append(`TomTypeAlone(typeArg.getText()));
@@ -778,10 +797,10 @@ operator returns [Declaration result] throws TomException
                 COMMA
                 { stringSlotName = ""; }
                 (
-                    (ID COLON) => slotName2:ID COLON
+                    (ALL_ID COLON) => slotName2:ALL_ID COLON
                     { stringSlotName = slotName2.getText(); }
                 )?
-                typeArg2:ID
+                typeArg2:ALL_ID
                 {
                     astName = ast().makeName(stringSlotName);
 
@@ -889,12 +908,12 @@ operatorList returns [Declaration result] throws TomException
     TargetLanguage tlFsym;
 }
     :
-        type:ID name:ID
+        type:ALL_ID name:ALL_ID
         {
             Option ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
             options.add(ot);
         }
-        LPAREN typeArg:ID STAR RPAREN
+        LPAREN typeArg:ALL_ID STAR RPAREN
         {
             types = (TomTypeList) types.append(`TomTypeAlone(typeArg.getText()));
         }
@@ -941,12 +960,12 @@ operatorArray returns [Declaration result] throws TomException
     TargetLanguage tlFsym;
 }
     :
-        type:ID name:ID
+        type:ALL_ID name:ALL_ID
         {
             Option ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
             options.add(ot);
         }
-        LPAREN typeArg:ID STAR RPAREN
+        LPAREN typeArg:ALL_ID STAR RPAREN
         {
             types = (TomTypeList) types.append(`TomTypeAlone(typeArg.getText()));
         }
@@ -985,7 +1004,7 @@ typeTerm returns [Declaration result] throws TomException
     TargetLanguage implement = null;
 }
     :   (
-            type:ID
+            type:ALL_ID
             { 
                 ot = `OriginTracking(Name(type.getText()), type.getLine(),Name(currentFile()));
             }
@@ -1029,7 +1048,7 @@ typeList returns [Declaration result] throws TomException
     TargetLanguage implement = null;
 }
     :   (
-            type:ID
+            type:ALL_ID
             {ot = `OriginTracking(Name(type.getText()),type.getLine(),Name(currentFile()));}
             LBRACE
             implement = keywordImplement
@@ -1081,7 +1100,7 @@ typeArray returns [Declaration result] throws TomException
     TargetLanguage implement = null;
 }
     :   (
-            type:ID
+            type:ALL_ID
             {ot = `OriginTracking(Name(type.getText()),type.getLine(),Name(currentFile()));}
             LBRACE
             implement = keywordImplement
@@ -1143,7 +1162,7 @@ keywordGetFunSym [String type] returns [Declaration result] throws TomException
         (
             t:GET_FUN_SYM 
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name:ID RPAREN
+            LPAREN name:ALL_ID RPAREN
             {
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
                 OptionList option = `concOption(info);
@@ -1168,7 +1187,7 @@ keywordGetSubterm[String type] returns [Declaration result] throws TomException
         (
             t:GET_SUBTERM 
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name1:ID COMMA name2:ID RPAREN
+            LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
                 Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(currentFile()));
                 Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(currentFile()));
@@ -1196,7 +1215,7 @@ keywordCmpFunSym [String type] returns [Declaration result] throws TomException
         (
             t:CMP_FUN_SYM 
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
-            LPAREN name1:ID COMMA name2:ID RPAREN
+            LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
                 Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(currentFile()));
                 Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(currentFile()));
@@ -1224,7 +1243,7 @@ keywordEquals[String type] returns [Declaration result] throws TomException
         (
             t:EQUALS 
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name1:ID COMMA name2:ID RPAREN
+            LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
                 Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(currentFile()));
                 Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(currentFile()));
@@ -1251,7 +1270,7 @@ keywordGetHead[String type] returns [Declaration result] throws TomException
         (
             t:GET_HEAD 
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name:ID RPAREN
+            LPAREN name:ALL_ID RPAREN
             {
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
                 OptionList option = `concOption(info);
@@ -1278,7 +1297,7 @@ keywordGetTail[String type] returns [Declaration result] throws TomException
         (
             t:GET_TAIL 
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name:ID RPAREN
+            LPAREN name:ALL_ID RPAREN
             {
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
                 OptionList option = `concOption(info);
@@ -1304,7 +1323,7 @@ keywordIsEmpty[String type] returns [Declaration result] throws TomException
         (
             t:IS_EMPTY 
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name:ID RPAREN
+            LPAREN name:ALL_ID RPAREN
             {
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
                 OptionList option = `concOption(info);
@@ -1330,7 +1349,7 @@ keywordGetElement[String type] returns [Declaration result] throws TomException
         (
             t:GET_ELEMENT 
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name1:ID COMMA name2:ID RPAREN
+            LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
                 Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(currentFile()));
                 Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(currentFile()));
@@ -1358,7 +1377,7 @@ keywordGetSize[String type] returns [Declaration result] throws TomException
         (
             t:GET_SIZE
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name:ID RPAREN
+            LPAREN name:ALL_ID RPAREN
             {
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
                 OptionList option = `concOption(info);
@@ -1395,7 +1414,7 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
     :
         t:IS_FSYM
         { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-        LPAREN name:ID RPAREN
+        LPAREN name:ALL_ID RPAREN
         {
             Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
             OptionList option = `concOption(info);
@@ -1419,7 +1438,7 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
         (
             t:GET_SLOT
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN slotName:ID COMMA name:ID RPAREN
+            LPAREN slotName:ALL_ID COMMA name:ALL_ID RPAREN
             {                
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
                 OptionList option = `concOption(info);
@@ -1453,7 +1472,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
             ( 
                 LPAREN 
                 ( 
-                    typeArg:ID
+                    typeArg:ALL_ID
                     {
                         if( !(nbTypes > 0) ) {
                             type = `EmptyType();
@@ -1470,7 +1489,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                             ));
                     }
                     ( 
-                        COMMA nameArg:ID
+                        COMMA nameArg:ALL_ID
                         {
                             if( index >= nbTypes ) {
                                 type = `EmptyType();
@@ -1530,7 +1549,7 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
         t:MAKE_INSERT
         {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
 
-        LPAREN elementName:ID COMMA listName:ID RPAREN
+        LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
         {
             Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(currentFile()));  
             Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),Name(currentFile()));
@@ -1556,7 +1575,7 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
     :
         t:MAKE_EMPTY
         {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
-        LPAREN listName:ID RPAREN
+        LPAREN listName:ALL_ID RPAREN
         {
             Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(currentFile()));  
             OptionList listOption = `concOption(listInfo);
@@ -1579,7 +1598,7 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
     :
         t:MAKE_APPEND
         {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
-        LPAREN elementName:ID COMMA listName:ID RPAREN
+        LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
         {
             selector().push("targetlexer");
             TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
@@ -1597,6 +1616,215 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
         }
     ;
 
+/*
+
+
+// here begins the xml part
+
+xmlTerm 
+{
+    NameList nameList = null, closingNameList = null;
+    TomTerm arg1 = null, arg2 = null;
+
+    LinkedList childs = new LinkedList();
+    boolean implicit;
+}
+    :
+        START nameList = xmlNameList[optionList,true] xmlAttributeList
+        (
+            CLOSE_SINGLETON
+        |   CLOSE implicit = xmlChilds[childs] START_ENDING closingNameList = xmlNameList[optionList,false] CLOSE
+        )
+    |   TEXT LPAREN annotedTerm RPAREN
+    |   COMMENT LPAREN arg1 = termStringIdentifier[null] RPAREN 
+    |   PROC LPAREN arg1 = termStringIdentifier[null] COMMA arg2 = termStringIdentifier[null] RPAREN
+    ;
+
+xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [NameList result] 
+{
+    result = null;
+    String xmlName = null;
+    int decLine;
+}
+    :
+        (
+            i:ALL_ID 
+            {
+                text.append(i.getText());
+                xmlName = i.getText();
+                decLine = i.getLine();
+                result = `concTomName(Name(i.getText()));
+            }
+        |   u:UNDERSCORE 
+            {
+                text.append(u.getText());
+                xmlName = u.getText();
+                decLine = u.getLine();
+                result = `concTomName(Name(u.getText()));
+            }
+        |   LPAREN i1:ALL_ID 
+            {
+                text.append(i1.getText());
+                xmlName = i1.getText();
+                decLine = i1.getLine();
+                result = `concTomName(Name(i1.getText()));
+            }
+            ( 
+                ALTERNATIVE i2:ALL_ID  
+                {
+                    text.append('|');
+                    text.append(i1.getText());
+                    xmlName += "|" + i1.getText();
+                    result = (NameList) result.append(`Name(i1.getText()));
+                }
+            )+ RPAREN
+        )
+        {
+            if(needOrgTrack) {
+                optionList.add(`OriginTracking(Name(XMLName),decLine,Name( currentFile)));
+            }
+        }
+    ;
+
+xmlAttributeList
+    :
+        LBRACKET ( xmlAttribute ( COMMA xmlAttribute )* )? RBRACKET
+    |   LPAREN ( xmlAttribute ( COMMA xmlAttribute )* )? RPAREN
+    |   xmlAttribute
+    ;
+
+xmlAttribute
+{
+    TomTerm term;
+
+    LinkedList optionList = new LinkedList();
+    LinkedList constraintList = new LinkedList();
+    LinkedList optionListAnno2 = new LinkedList();
+}
+    :
+        {LA(2) == STAR}? result = variableStar[optionList,constraintList] 
+    |   ( 
+            {LA(2) == EQUAL}? ALL_ID EQUAL ( {LA(2) == AT}? ALL_ID AT )? 
+            term = unamedVariableOrTermStringIdentifier[optionListAnno2]
+        |   ( ALL_ID AT )? placeHolder[null,null] EQUAL 
+            ( {LA(2) == AT}? ALL_ID AT )? term = unamedVariableOrTermStringIdentifier[optionListAnno2]
+        )   
+    ;
+
+unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm result]
+{
+    result = null;
+    Token name = null;
+}
+    :
+        (
+            u:UNDERSCORE {name = u;}
+        |   i:ALL_ID {name = i;}
+        |   s:STRING {name = s;}
+        )
+        {
+            text.append(name.getText());
+            LinkedList optionList = (options==null)?new LinkedList():options;
+            optionList.add(
+                `OriginTracking(
+                    Name(name.getText()),
+                    name.getLine(),
+                    Name(currentFile())
+                )
+            );
+            
+            OptionList option = ast().makeOptionList(optionList);
+            
+            if(name.getType() == UNDERSCORE) {
+                result =  `UnamedVariable(option,TomTypeAlone("unknown type"),concConstraint());
+            } 
+            else {
+                if(name.getType() == STRING) {
+                    ast().makeStringSymbol(symbolTable(),name.getText(),optionList);
+                }   
+                nameList = `concTomName(Name(name.getText()));
+                result =  `Appl(
+                    option,
+                    nameList,
+                    concTomTerm(),
+                    concConstraint()
+                );
+            }
+        }
+    ;
+
+xmlChilds [LinkedList list] returns [boolean result]
+{
+    LinkedList childs = new LinkedList();
+    boolean implicit;
+}
+    :
+        ( 
+            implicit = implicitTermList[childs]
+        |   implicit = xmlTermList[childs]
+        )
+        {
+            it = childs.iterator();
+            while(it.hasNext()) {
+                list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),(TomTerm)it.next()));
+            }
+            return implicit;
+    }
+    ;
+
+implicitTermList
+    :
+        BRACKET ( annotedTerm ( COMMA annotedTerm )* )? RBRACKET
+    ;
+
+xmlTermList [LinkedList list] returns [boolean result]
+{
+    TomTerm term = null;
+}
+    :
+        ( term = annotedTerm {list.add(term);} )*
+        {result = true;}
+    ;
+
+termStringIdentifier [LinkedList options] returns [TomTerm result]
+{
+    result = null;
+    Token name = null;
+}
+    :
+        (
+            i:ALL_ID {name = i;}
+        |   s:STRING {name = s;}
+        )
+        {
+            text.append(name.getText());
+            
+            LinkedList optionList = (options==null)?new LinkedList():options;
+            optionList.add(
+                `OriginTracking(
+                    Name(name.getText()),
+                    name.getLine(),
+                    Name(currentFile())
+                )
+            );
+            
+            OptionList option = ast().makeOptionList(optionList);
+            
+            if(name.getType == STRING) {
+                ast().makeStringSymbol(symbolTable(),name.getText(),optionList);
+            }
+            
+            nameList = `concTomName(Name(name.getText()));
+            result = `Appl(
+                option,
+                nameList,
+                concTomTerm(),
+                concConstraint()
+            );
+        }
+    ;
+
+*/
 
 
 class NewTomLexer extends Lexer;
@@ -1645,8 +1873,17 @@ EQUAL       :   '=' ;
 AT          :   '@' ;
 STAR        :   '*' ;
 UNDERSCORE  :   '_' ; 
-BACKQUOTE   :   "`" ; 
+BACKQUOTE   :   "`" ;
 
+// for xml
+START   :   '<' ; 
+START_ENDING    :   "</"    ;
+CLOSE   :   '>' ;
+CLOSE_SINGLETON :   "/>"    ;
+DOUBLE_QUOTE    :   '\"'    ;
+TEXT    :   "#TEXT" ;
+COMMENT :   "#COMMENT"  ;
+PROC    :   "#PROCESSING-INSTRUCTION"   ;
 
 // tokens to skip : white spaces
 WS	:	(	' '
@@ -1693,7 +1930,7 @@ ML_COMMENT
 
 
 CHARACTER
-	:	'\'' ( ESC | ~('\''|'\n'|'\r'|'\\') ) '\''
+	:	'\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\''
 	;
 
 STRING
@@ -1739,9 +1976,21 @@ protected
 HEX_DIGIT
 	:	('0'..'9'|'A'..'F'|'a'..'f')
 	;
+/*
+BASIC_ID
+options{ testLiterals = true; }     
+    :   ('a'..'z' | 'A'..'Z')
+        ( 
+            ('a'..'z' | 'A'..'Z') 
+        |   ('0'..'9') 
+        |   UNDERSCORE 
+        )*
+    ;
+*/
 
+/*
 ID
-    options{ testLiterals = true; }   
+options{ testLiterals = true; }   
     :   ('a'..'z' | 'A'..'Z') 
         ( 
             ('a'..'z' | 'A'..'Z') 
@@ -1749,6 +1998,46 @@ ID
         |   UNDERSCORE 
         |   ( MINUS ('a'..'z' | 'A'..'Z') ) 
         )*  
+    ;
+*/
+
+protected LETTER    :   ('a'..'z' | 'A'..'Z')   ;
+protected DIGIT     :   ('0'..'9')  ;
+
+ALL_ID
+options{testLiterals = true;}
+    :
+        (
+            (ID_MINUS) => ID_MINUS
+        |   ID
+        )
+//        {System.out.println("id "+$getText);}
+    ;
+        
+
+protected ID
+options{testLiterals = true;}
+    :
+        LETTER
+        ( LETTER | DIGIT | UNDERSCORE  /*( (MINUS LETTER) => MINUS LETTER )*/ 
+        )* 
+    ;   
+/*
+ID_MINUS
+options{testLiterals = true;}   
+    :   ('a'..'z' | 'A'..'Z') 
+        ( 
+            ('a'..'z' | 'A'..'Z') 
+        |   ('0'..'9') 
+        |   UNDERSCORE 
+        |   ( MINUS ('a'..'z' | 'A'..'Z') ) 
+        )*  
+    ;
+*/
+
+protected ID_MINUS
+    :
+        ID MINUS ('a'..'z' | 'A'..'Z') ( ID_MINUS )*
     ;
 
 NUM_INT
@@ -1804,7 +2093,6 @@ NUM_INT
 			}
         )?
 	;
-
 protected MINUS         :   '-' ;
 protected PLUS          :   '+' ;
 protected QUOTE         :   '\''    ;

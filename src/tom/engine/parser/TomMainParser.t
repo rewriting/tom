@@ -79,6 +79,9 @@ public class TomMainParser extends TomGenericPlugin {
     
     public void run(){
 	try{
+	    
+	    p("-- NEW PARSER --");
+
 	    long startChrono = System.currentTimeMillis();
 	    
 	    boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
