@@ -6,4 +6,5 @@ atermjavajar={ATERMPATH}/aterm-1.6.jar
 sharedobjectjar={SHAREDPATH}/shared-objects-1.4.jar
 jjtravelerjar={JJTRAVELERPATH}/jjtraveler-0.4.2.jar
 apigenjar={APIGENPATH}/apigen-2.0.jar
+vastoadtjar={VASTOADT}/vas-0.1.jar
 javaccdir={JAVACCPATH}/java/javacc-3.2
