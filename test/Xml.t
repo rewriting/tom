@@ -33,9 +33,9 @@ public class Xml {
 
     LinkedList elements = new LinkedList();
     LinkedList reverseElements = new LinkedList();
-    t = ``xml(<IntegerList/>);
+    t = `XML(<IntegerList/>);
     for(int i =1 ; i<5 ; i++) {
-      t = ``addInteger(t,i);
+      t = `addInteger(t,i);
       elements.addLast("" + i);
       reverseElements.addFirst("" + i);
     }
@@ -55,10 +55,10 @@ public class Xml {
       <IntegerList _*>(integers*)</IntegerList> -> {
         String s = ""+n;
         if(n%2 == 0) {
-          return ``xml(<IntegerList> integers* <Integer>#TEXT(s)</Integer>
+          return `XML(<IntegerList> integers* <Integer>#TEXT(s)</Integer>
                        </IntegerList>);
         } else {
-          return ``xml(<IntegerList> integers* <Int>#TEXT(s)</Int>
+          return `XML(<IntegerList> integers* <Int>#TEXT(s)</Int>
                        </IntegerList>);
         }
       }
@@ -83,7 +83,7 @@ public class Xml {
                             n2@<(Integer|Int) []>#TEXT(s2)</(Integer|Int)>,
                             X2*)</IntegerList> -> {
         if(s1.compareTo(s2) < 0) {
-          return ``swapElements(<IntegerList attr*>X1* n2 n1 X2*</IntegerList>);
+          return `XML(swapElements(<IntegerList attr*>X1* n2 n1 X2*</IntegerList>));
         }
       }
     }
