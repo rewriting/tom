@@ -1,5 +1,7 @@
 package jtom.checker;
 
+import java.util.logging.*;
+
 import aterm.*;
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
@@ -26,16 +28,17 @@ public class TomTypeChecker extends TomChecker {
         if(verbose) {
           System.out.println("TOM type checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
         }
-        environment().printAlertMessage("TomTypeChecker");
+
+        environment().printAlertMessage("TomTypeChecker"); // TODO: soon useless
 	  
         if(!environment().isEclipseMode()) {
           // remove all warning (in command line only)
           environment().clearWarnings();
         }
       } catch (Exception e) {
-        environment().messageError("Exception occurs in TomTypeChecker: "+e.getMessage(), 
-                                   environment().getInputFile().getName(), 
-                                   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	  getLogger().log(Level.SEVERE,
+			  "ExceptionMessage",
+			  new Object[]{environment().getInputFile().getName(),"TomTypeChecker",e.getMessage()});
         e.printStackTrace();
       }
     } else { // type checker desactivated

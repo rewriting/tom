@@ -28,7 +28,9 @@ package jtom.checker;
 
 import aterm.*;
 
+import java.text.*;
 import java.util.*;
+import java.util.logging.*;
 
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
@@ -63,39 +65,39 @@ abstract public class TomChecker extends TomGenericPlugin //Base
     }
   }
     // Different kind of structures
-  private final static int APPL = 0;
-  private final static int UNAMED_APPL = 1;
-  private final static int APPL_DISJUNCTION = 2;
-  private final static int RECORD_APPL = 3;
+  private final static int APPL                    = 0;
+  private final static int UNAMED_APPL             = 1;
+  private final static int APPL_DISJUNCTION        = 2;
+  private final static int RECORD_APPL             = 3;
   private final static int RECORD_APPL_DISJUNCTION = 4;
-  private final static int XML_APPL = 5;
-  private final static int VARIABLE_STAR = 6;
-  private final static int UNAMED_VARIABLE_STAR = 7;
-  private final static int PLACE_HOLDER = 8;
+  private final static int XML_APPL                = 5;
+  private final static int VARIABLE_STAR           = 6;
+  private final static int UNAMED_VARIABLE_STAR    = 7;
+  private final static int PLACE_HOLDER            = 8;
   
   
-  private final static String OPERATOR = "Operator";
+  private final static String OPERATOR    = "Operator";
   private final static String CONSTRUCTOR = "%op";
-  private final static String OP_ARRAY = "%oparray";
-  private final static String OP_LIST = "%oplist";
-  private final static String TYPE = "Type";  
-  private final static String TYPE_TERM = "%typeterm";
-  private final static String TYPE_ARRAY = "%typearray";
-  private final static String TYPE_LIST = "%typelist";
+  private final static String OP_ARRAY    = "%oparray";
+  private final static String OP_LIST     = "%oplist";
+  private final static String TYPE        = "Type";  
+  private final static String TYPE_TERM   = "%typeterm";
+  private final static String TYPE_ARRAY  = "%typearray";
+  private final static String TYPE_LIST   = "%typelist";
   
   private final static String GET_FUN_SYM = "get_fun_sym";
   private final static String CMP_FUN_SYM = "cmp_fun_sym";
-  private final static String EQUALS = "equals";
+  private final static String EQUALS      = "equals";
   private final static String GET_SUBTERM = "get_subterm";
   private final static String GET_ELEMENT = "get_element";
-  private final static String GET_SIZE = "get_size";
-  private final static String GET_HEAD = "get_head";
-  private final static String GET_TAIL = "get_tail";
-  private final static String IS_EMPTY = "is_empty";
+  private final static String GET_SIZE    = "get_size";
+  private final static String GET_HEAD    = "get_head";
+  private final static String GET_TAIL    = "get_tail";
+  private final static String IS_EMPTY    = "is_empty";
   private final static String MAKE_APPEND = "make_append";
-  private final static String MAKE_EMPTY = "make_empty";
+  private final static String MAKE_EMPTY  = "make_empty";
   private final static String MAKE_INSERT = "make_insert";
-  private final static String MAKE = "make";
+  private final static String MAKE        = "make";
   
 
   protected boolean strictType = false, warningAll = false, noWarning = false, verbose = false;
@@ -1319,7 +1321,14 @@ abstract public class TomChecker extends TomGenericPlugin //Base
   private void messageError(int errorLine, String structInfo, String msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    environment().messageError(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
+
+    getLogger().log(Level.SEVERE,
+		    "DetailedMessage",
+		    new Object[]{fileName, new Integer(errorLine),
+				 structInfo, new Integer(structDeclLine),
+				 MessageFormat.format(msg,msgArgs)});
+
+    //environment().messageError(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
   }
 
   private void messageWarning(int errorLine, String msg, Object[] msgArg) {
@@ -1330,7 +1339,14 @@ abstract public class TomChecker extends TomGenericPlugin //Base
   private void messageWarning(int errorLine, String structInfo, String msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    environment().messageWarning(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
+
+    getLogger().log(Level.WARNING,
+		    "DetailedMessage",
+		    new Object[]{fileName, new Integer(errorLine),
+				 structInfo, new Integer(structDeclLine),
+				 MessageFormat.format(msg,msgArgs)});
+
+    //environment().messageWarning(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
   }
   
   
@@ -1351,8 +1367,10 @@ abstract public class TomChecker extends TomGenericPlugin //Base
 
   private void ensureOriginTrackingLine(int line) {
     if(line < 0) {
-      environment().messageError("findOriginTrackingLine:  not found", environment().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-      System.out.println("findOriginTrackingLine: not found ");
+      getLogger().log(Level.SEVERE,
+		      "FindOTL",
+		      environment().getInputFile().getName());
+      //System.out.println("findOriginTrackingLine: not found ");
     }
   }
 }  //Class TomChecker
