@@ -1,5 +1,8 @@
 [
-  modulentry(Name("TomName"),[],[Type("TomName"), Type("TomNumber")],
+  modulentry(
+	Name("TomName"),
+	[],
+	[Type("TomName"),Type("TomNumber"),Type("TomNumberList")],
   [
     constructor(TomName,Name,Name(<string(str)>)),
     constructor(TomName,PositionName,PositionName(<numberList(TomNumberList)>)),
