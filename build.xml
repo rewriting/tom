@@ -64,7 +64,6 @@
 	<path id="stable.classpath">
 		<path refid="external.classpath"/>
 		<pathelement location="${utils}"/>
-		<pathelement location="${stable.src}"/>
 		<fileset dir="${stable.adt}"><!-- ADT jar files -->
 			<include name="*.jar"/>
 		</fileset>
@@ -84,9 +83,6 @@
 	<path id="tom.classpath">
 		<pathelement location="${utils}"/>
 		<path refid="stable.classpath"/>
-		<fileset dir="${stable.adt}">
-			<include name="*.jar"/>
-		</fileset>
 		<pathelement location="${stable.build}"/>
 	</path>
 
@@ -115,7 +111,7 @@
 	<!-- tasks for building src -->
 	<target name="initTaskDef" depends="buildstable">
 		<javac srcdir="${utils}" destdir="${utils}">
-			<classpath refid="stable.classpath"/>
+			<classpath refid="tom.classpath"/>
 		</javac>
 		<taskdef name="adt" classname="ApigenAntTask" classpathref="stable.classpath"/>
 		<taskdef name="tom" classname="TomAntTask">
@@ -233,6 +229,10 @@
 							 excludes="jtom/adt/**/*.class"/>
 		</jar>
 	</target>
+
+	<target name="distall" 
+		      description="Prepare stable and devel distributions" 
+		      depends="diststable, distsrc"/>
 
 	<target name="cleanstable" description="Purges the generated stable files">
 		<delete dir="${stable.build}"/>

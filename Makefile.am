@@ -2,7 +2,7 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS 	= config stable utils lib test 
+SUBDIRS 	= config stable utils test 
 
 ACLOCAL_FLAGS = -I config
 
