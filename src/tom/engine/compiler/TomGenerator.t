@@ -146,7 +146,8 @@ public class TomGenerator extends TomBase {
         }
         out.write("(" + listType + ") tom_make_empty_" + name + "(" + size + ")"); 
         for(int i=0; i<size; i++) { 
-          out.write("," + i + ")"); 
+            //out.write("," + i + ")");
+          out.write(")"); 
         }
         return;
       }
@@ -962,18 +963,18 @@ public class TomGenerator extends TomBase {
       }
 
       MakeAddList(Name(opname),
-                  Variable(option1,Name(name1), fullListType@Type(TomType(type1),TLType(TL(tlType1)))),
-                  Variable(option2,Name(name2), fullEltType@Type(TomType(type2),TLType(TL(tlType2)))),
+                  Variable(option1,Name(name1), fullEltType@Type(TomType(type1),TLType(TL(tlType1)))),
+                  Variable(option2,Name(name2), fullListType@Type(TomType(type2),TLType(TL(tlType2)))),
                   TLCode(TL(tlCode))) -> {
         String returnType, argListType,argEltType;
         if(Flags.strictType) {
-          returnType = tlType1;
-          argListType = tlType1;
-          argEltType = tlType2;
+          argEltType = tlType1;
+          argListType = tlType2;
+          returnType = argListType;
         } else {
-          returnType = getTLType(getUniversalType());
+          argEltType  = getTLType(getUniversalType());
           argListType = getTLType(getUniversalType());
-          argEltType = getTLType(getUniversalType());
+          returnType  = argListType;
         }
         
         generateTargetLanguage(out,deep, genDecl(returnType,
@@ -1039,20 +1040,20 @@ public class TomGenerator extends TomBase {
       }
 
       MakeAddArray(Name(opname),
-                  Variable(option1,Name(name1), fullArrayType@Type(TomType(type1),TLType(TL(tlType1)))),
-                  Variable(option2,Name(name2), fullEltType@Type(TomType(type2),TLType(TL(tlType2)))),
-                  Variable(option3,Name(name3), Type(TomType(type3),_)),
+                  Variable(option1,Name(name1), fullEltType@Type(TomType(type1),TLType(TL(tlType1)))),
+                  Variable(option2,Name(name2), fullArrayType@Type(TomType(type2),TLType(TL(tlType2)))),
                   TLCode(TL(tlCode))) -> {
 
         String returnType, argListType,argEltType;
         if(Flags.strictType) {
-          returnType = tlType1;
-          argListType = tlType1;
-          argEltType = tlType2;
+          argEltType  = tlType1;
+          argListType = tlType2;
+          returnType  = argListType;
+
         } else {
-          returnType = getTLType(getUniversalType());
+          argEltType  = getTLType(getUniversalType());
           argListType = getTLType(getUniversalType());
-          argEltType = getTLType(getUniversalType());
+          returnType  = argListType;
         }
 
         generateTargetLanguage(out,deep,
@@ -1060,8 +1061,7 @@ public class TomGenerator extends TomBase {
                                        "tom_make_append", opname,
                                        new String[] {
                                          argEltType, name1,
-                                         argListType, name2,
-                                         getTLType(getIntType()), name3
+                                         argListType, name2
                                        },
                                        tlCode));
         generateTargetLanguage(out,deep, genDeclArray(opname, fullArrayType,fullEltType));
@@ -1326,17 +1326,15 @@ public class TomGenerator extends TomBase {
     
     s = modifier + utype + " tom_get_slice_" + name +  "(" + utype + " subject, int begin, int end) {\n";
     s+= "   " + glType + " result = " + make_empty + "(end - begin);\n";
-    s+= "    int index = 0;\n";
     s+= "    while( begin != end ) {\n";
-    s+= "      result = " + make_append + "(" + get_element + "(subject, begin),result,index);\n";
+    s+= "      result = " + make_append + "(" + get_element + "(subject, begin),result);\n";
     s+= "      begin++;\n";
-    s+= "      index++;\n";
     s+="     }\n";
     s+= "    return result;\n";
     s+= "  }\n";
     s+= "\n";
     
-    s+= modifier + utype + " tom_append_array_" + name +  "(" + utype + " l2, " + utype + " l1, int pos) {\n";
+    s+= modifier + utype + " tom_append_array_" + name +  "(" + utype + " l2, " + utype + " l1) {\n";
     s+= "    int size1 = tom_get_size_" + tomType + "(l1);\n";
     s+= "    int size2 = tom_get_size_" + tomType + "(l2);\n";
     s+= "    int index;\n";
@@ -1344,13 +1342,13 @@ public class TomGenerator extends TomBase {
 
     s+= "    index=size1;\n";
     s+= "    while(index > 0) {\n";
-    s+= "      result = " + make_append + "(" + get_element + "(l1,(size1-index)),result,(size1-index));\n";
+    s+= "      result = " + make_append + "(" + get_element + "(l1,(size1-index)),result);\n";
     s+= "      index--;\n";
     s+= "    }\n";
 
     s+= "    index=size2;\n";
     s+= "    while(index > 0) {\n";
-    s+= "      result = " + make_append + "(" + get_element + "(l2,(size2-index)),result,size1+(size2-index));\n";
+    s+= "      result = " + make_append + "(" + get_element + "(l2,(size2-index)),result);\n";
     s+= "      index--;\n";
     s+= "    }\n";
    

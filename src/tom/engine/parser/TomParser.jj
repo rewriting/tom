@@ -311,7 +311,8 @@ TOKEN :
 | < TOM_STAR:        "*" >
 | < TOM_MAKE:        "make" >
 | < TOM_MAKE_EMPTY:  "make_empty" >
-| < TOM_MAKE_ADD:    "make_add" >
+| < TOM_MAKE_INSERT: "make_insert" >
+| < TOM_MAKE_APPEND: "make_append" >
 | < TOM_IMPLEMENT:   "implement" >
 | < TOM_FSYM:        "fsym" >
 | < TOM_GET_SLOT:    "get_slot" >
@@ -1383,8 +1384,8 @@ Declaration KeywordMakeAddList(String name, String listType, String elementType)
   TargetLanguage tlCode;
 }
 {
-  <TOM_MAKE_ADD> <TOM_LPAREN> listName=<TOM_IDENTIFIER> <TOM_COMMA>
-                              elementName=<TOM_IDENTIFIER> <TOM_RPAREN>
+  <TOM_MAKE_INSERT> <TOM_LPAREN> elementName=<TOM_IDENTIFIER> <TOM_COMMA>
+                                    listName=<TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
      Option listInfo = ast().makeOriginTracking(listName.image,getLine());
@@ -1393,8 +1394,8 @@ Declaration KeywordMakeAddList(String name, String listType, String elementType)
      Option elementOption = ast().makeOption(elementInfo);
      return tsf().makeDeclaration_MakeAddList(
        tsf().makeTomName_Name(name),
-       ast().makeVariable(listOption,listName.image,listType),
        ast().makeVariable(elementOption,elementName.image,elementType),
+       ast().makeVariable(listOption,listName.image,listType),
        tsf().makeTomTerm_TLCode(tlCode)
        );
    }
@@ -1426,23 +1427,19 @@ Declaration KeywordMakeAddArray(String name, String listType, String elementType
   TargetLanguage tlCode;
 }
 {
-  <TOM_MAKE_ADD> <TOM_LPAREN> listName=<TOM_IDENTIFIER>    <TOM_COMMA>
-                              elementName=<TOM_IDENTIFIER> <TOM_COMMA>
-                              positionName=<TOM_IDENTIFIER>
+  <TOM_MAKE_APPEND> <TOM_LPAREN> elementName=<TOM_IDENTIFIER>    <TOM_COMMA>
+                                    listName=<TOM_IDENTIFIER>
                  <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
      Option listInfo = ast().makeOriginTracking(listName.image,getLine());
      Option elementInfo = ast().makeOriginTracking(elementName.image,getLine());
-     Option positionInfo = ast().makeOriginTracking(positionName.image,getLine());
      Option listOption = ast().makeOption(listInfo);
      Option elementOption = ast().makeOption(elementInfo);
-     Option positionOption = ast().makeOption(positionInfo);
      return tsf().makeDeclaration_MakeAddArray(
        tsf().makeTomName_Name(name),
-       ast().makeVariable(listOption,listName.image,listType),
        ast().makeVariable(elementOption,elementName.image,elementType),
-       ast().makeVariable(positionOption,positionName.image,"int"),
+       ast().makeVariable(listOption,listName.image,listType),
        tsf().makeTomTerm_TLCode(tlCode));
    }
 }

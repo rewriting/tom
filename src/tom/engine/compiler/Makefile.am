@@ -16,7 +16,7 @@ EXTRA_DIST 	= $(BOOTSOURCES) TomCompiler.t TomGenerator.t
 
 BUILT_SOURCES   = TomCompiler.java TomGenerator.java
 
-bootinstall :
+bootinstall:
 	$(mkinstalldirs) $(stabledir)
 	cp -f $(BOOTSOURCES) $(stabledir)
 	list='$(SUBDIRS)'; for subdir in $$list; do \

@@ -23,7 +23,7 @@
   [Declaration,MakeEmptyList,
    MakeEmptyList(<astName(TomName)>, <tlCode(TomTerm)>) ],
   [Declaration,MakeAddList,
-   MakeAddList(<astName(TomName)>, <varList(TomTerm)>, <varElt(TomTerm)>,<tlCode(TomTerm)>) ],
+   MakeAddList(<astName(TomName)>, <varElt(TomTerm)>, <varList(TomTerm)>,<tlCode(TomTerm)>) ],
   [Declaration,GetElementDecl,
    GetElementDecl(<kid1(TomTerm)>,<kid2(TomTerm)>,<kid3(TomTerm)>) ],
   [Declaration,GetSizeDecl,
@@ -31,12 +31,11 @@
   [Declaration,MakeEmptyArray,
    MakeEmptyArray(<astName(TomName)>, <varSize(TomTerm)>, <tlCode(TomTerm)>) ],
   [Declaration,MakeAddArray,
-   MakeAddArray(<astName(TomName)>, <varList(TomTerm)>, <varElt(TomTerm)>,<varIdx(TomTerm)>, <tlCode(TomTerm)>) ],
+   MakeAddArray(<astName(TomName)>, <varElt(TomTerm)>, <varList(TomTerm)>, <tlCode(TomTerm)>) ],
   [Declaration,MakeDecl,
    MakeDecl(<astName(TomName)>,<astType(TomType)>,<args(TomList)>,<tlCode(TomTerm)>) ],
   [Declaration,SymbolDecl,
    SymbolDecl(<astName(TomName)>) ],
-
 
   [OptionList,EmptyOptionList, []],
   [OptionList,ConsOptionList, [<head(Option)>,<[tail(OptionList)]>]],

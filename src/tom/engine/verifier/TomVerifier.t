@@ -922,12 +922,8 @@ public class TomVerifier extends TomBase {
         DeclarationToOption(MakeEmptyArray[varSize=Variable[option=Option(listOption)]]) -> { 
           checkField("make_empty",findFunctions,listOption);
         }
-        DeclarationToOption(MakeAddArray[varList=Variable[option=Option(listOption), astName=Name[string=name1]], varElt=Variable[astName=Name[string=name2]], varIdx=Variable[astName=Name[string=name3]]]) -> {
+        DeclarationToOption(MakeAddArray[varList=Variable[option=Option(listOption), astName=Name[string=name1]], varElt=Variable[astName=Name[string=name2]]]) -> {
           checkFieldLinearArgs("make_add",findFunctions,listOption,name1,name2);
-          if( name1 == name3 || name2 == name3 ) { 
-            String line = findOriginTrackingLine(listOption);
-            messageTwoSameNameVariableError("make_add",name3,line);
-          }
         }
       }
       optionList = optionList.getTail();

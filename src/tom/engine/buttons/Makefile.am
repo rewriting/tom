@@ -34,3 +34,5 @@ installdir   = ${prefix}/classes/jtom/buttons
 install-data-hook:
 	$(mkinstalldirs) $(installdir)
 	${INSTALL} $(BUTTONS_SRC) $(installdir)
+
+bootinstall:
