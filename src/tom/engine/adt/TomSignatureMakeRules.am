@@ -35,7 +35,7 @@ Option_TomTermToOptionImpl.java Option_TomTermToOption.java\
 Option_OptionImpl.java Option_Option.java\
 Option_DefinedSymbolImpl.java Option_DefinedSymbol.java\
 Option_OriginTrackingImpl.java Option_OriginTracking.java\
-Option_LRParenImpl.java Option_LRParen.java\
+Option_ConstructorImpl.java Option_Constructor.java\
 Expression.java ExpressionImpl.java \
 Expression_TomTermToExpressionImpl.java Expression_TomTermToExpression.java\
 Expression_NotImpl.java Expression_Not.java\

@@ -39,8 +39,6 @@ import jtom.adt.*;
 
 public class TomExpander extends TomBase {
 
-  private Option optionMatchTypeVariable;
-  
   public TomExpander(jtom.TomEnvironment environment) {
 	super(environment);
   }
@@ -91,7 +89,6 @@ public class TomExpander extends TomBase {
     /*
      * Traverse a subject and replace
      */
-  private int counter = 0;
   protected ATerm genericTraversalContext(ATerm context, ATerm subject, ReplaceContext replace) {
     ATerm res = subject;
     try {
@@ -113,11 +110,12 @@ public class TomExpander extends TomBase {
 // ------------------------------------------------------------
 
     /*
-     * The 'expand' phase replaces a 'RecordAppl' by its classical term form:
-     * The unused slots a replaced by placeholders
+     * The 'expandTomSyntax' phase replaces each 'RecordAppl' by its classical term form:
+     *     => The unused slots a replaced by placeholders
+     * but also the BackQuoteTerm
      */
   
-  public TomTerm expandSyntax(TomTerm subject) throws TomException {
+  public TomTerm expandTomSyntax(TomTerm subject) throws TomException {
     Replace replace = new Replace() { 
         public ATerm apply(ATerm subject) throws TomException {
           if(subject instanceof TomTerm) {
@@ -164,7 +162,7 @@ public class TomExpander extends TomBase {
               Name[string=name], PairSlotAppl(Name[string=name],slotSubterm) -> {
                   // bingo
                 statistics().numberSlotsExpanded++;
-                newSubterm = expandSyntax(slotSubterm);
+                newSubterm = expandTomSyntax(slotSubterm);
                 break whileBlock;
               }
             }
@@ -201,7 +199,7 @@ public class TomExpander extends TomBase {
                   } else {
                     return `BuildTerm(name,args);
                   }
-                } else if(args.isEmpty() && getLRParen(optionList)==null) {
+                } else if(args.isEmpty() && !hasConstructor(optionList)) {
                   return `BuildVariable(name);
                 } else {
                   return `FunctionCall(name,args);
@@ -236,13 +234,12 @@ public class TomExpander extends TomBase {
      * replace Name by Symbol
      * replace Name by Variable
      */
-
-  private ReplaceContext replacePass1 = new ReplaceContext() { 
+  private ReplaceContext replaceVariable = new ReplaceContext() { 
       public ATerm apply(ATerm contextSubject,ATerm subject) throws TomException {
 
         if(!(subject instanceof TomTerm)) {
-          //debugPrintln("pass1 not a tomTerm: " );
-            //System.out.println("pass1 not a tomTerm:\n\t" + subject );
+          //debugPrintln("expandVariable not a tomTerm: " );
+            //System.out.println("expandVariable not a tomTerm:\n\t" + subject );
           
           if(subject instanceof TomType) {
             %match(TomType subject) {
@@ -252,11 +249,11 @@ public class TomExpander extends TomBase {
           return genericTraversalContext(contextSubject,subject,this);
         }
 
-          //System.out.println("pass1 is a tomTerm:\n\t" + subject );
+          //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
         
         %match(TomTerm contextSubject, TomTerm subject) {
           TomTypeToTomTerm(type@Type(tomType,glType)) , appl@Appl(Option(optionList),name@Name(strName),Empty()) -> {
-            //debugPrintln("pass1.1: Type(" + tomType + "," + glType + ")");
+            //debugPrintln("expandVariable.1: Type(" + tomType + "," + glType + ")");
             //debugPrintln("appl = " + appl);
                 
             Option option = `Option(replaceAnnotedName(optionList,type));
@@ -266,13 +263,12 @@ public class TomExpander extends TomBase {
               return `Appl(option,name,Empty());
             } else {
               statistics().numberVariablesDetected++;
-              testVariableWithoutParen(option,strName);
               return `Variable(option,name,type);
             }
-          } 
-              
+          }
+          
           Variable(option1,name1,type1) , appl@Appl(Option(optionList),name@Name(strName),Empty()) -> {
-            //debugPrintln("pass1.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
+            //debugPrintln("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
             //debugPrintln("appl = " + appl);
                 
             Option option = `Option(replaceAnnotedName(optionList,type1));
@@ -283,11 +279,10 @@ public class TomExpander extends TomBase {
               return `Appl(option,name,Empty());
             } else {
               statistics().numberVariablesDetected++;
-              testVariableWithoutParen(option,strName);
               return `Variable(option,name,type1);
             }
           } 
-              
+
           TomTypeToTomTerm(type@Type(tomType,glType)) , Placeholder(Option(optionList)) -> {
             Option option = `Option(replaceAnnotedName(optionList,type));
               // create an unamed variable
@@ -301,14 +296,14 @@ public class TomExpander extends TomBase {
           } 
               
           context, Appl(Option(optionList),name@Name(tomName),l) -> {
-            //debugPrintln("pass1.6: Appl(Name(" + tomName + ")," + l + ")");
+            //debugPrintln("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
             //debugPrintln("\tcontext = " + context);
                 
               // create a  symbol
             TomSymbol tomSymbol = getSymbol(tomName);
             if(tomSymbol != null) {
-              TomList subterm = pass1List(tomSymbol, l);
-                //System.out.println("***** pass1.6: pass1List = " + subterm);
+              TomList subterm = expandVariableList(tomSymbol, l);
+                //System.out.println("***** expandVariable.6: expandVariableList = " + subterm);
               Option option = `Option(replaceAnnotedName(optionList,getSymbolCodomain(tomSymbol)));
               return `Appl(option,name,subterm);
             }
@@ -317,15 +312,11 @@ public class TomExpander extends TomBase {
           context, Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType)] -> {
               // create a variable
             TomType localType = getType(tomType);
-            if(localType == null) { 
-              messageMatchTypeVariableError(strName, tomType);
-            } else {
-              return `Variable(option,Name(strName),localType);
-            }
+            return `Variable(option,Name(strName),localType);
           }
           
           context, TLVar(strName,TomTypeAlone(tomType)) -> {
-              //debugPrintln("pass1.8: TLVar(" + strName + "," + tomType + ")");
+              //debugPrintln("expandVariable.8: TLVar(" + strName + "," + tomType + ")");
               // create a variable: its type is ensured by checker
             TomType localType = getType(tomType);
             Option option = ast().makeOption();
@@ -333,12 +324,12 @@ public class TomExpander extends TomBase {
           }
               
           SubjectList(l1), TermList(subjectList) -> {
-            //debugPrintln("pass1.9: TermList(" + subjectList + ")");
+            //debugPrintln("expandVariable.9: TermList(" + subjectList + ")");
                 
               // process a list of subterms
             ArrayList list = new ArrayList();
             while(!subjectList.isEmpty()) {
-              list.add(pass1(l1.getHead(), subjectList.getHead()));
+              list.add(expandVariable(l1.getHead(), subjectList.getHead()));
               subjectList = subjectList.getTail();
               l1 = l1.getTail();
             }
@@ -346,53 +337,48 @@ public class TomExpander extends TomBase {
           }
               
           context, Match(option,tomSubjectList,patternList) -> {
-            //debugPrintln("pass1.10: Match(" + tomSubjectList + "," + patternList + ")");
-            optionMatchTypeVariable = option;
-            TomTerm newSubjectList = pass1(context,tomSubjectList);
-            TomTerm newPatternList = pass1(newSubjectList,patternList);
+            //debugPrintln("expandVariable.10: Match(" + tomSubjectList + "," + patternList + ")");
+            TomTerm newSubjectList = expandVariable(context,tomSubjectList);
+            TomTerm newPatternList = expandVariable(newSubjectList,patternList);
             return `Match(option,newSubjectList,newPatternList);
           }
 
             /*
           context, TomTypeToTomTerm(TomTypeAlone(tomType)) -> {
-            //debugPrintln("pass1.12: TomTypeAlone(" + tomType + ")");
+            //debugPrintln("expandVariable.12: TomTypeAlone(" + tomType + ")");
               // get a type
             return `TomTypeToTomTerm(getType(tomType));
           }
             */
           
           context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),Term(rhs), orgTrack) -> { 
-            //debugPrintln("pass1.13: Rule(" + lhs + "," + rhs + ")");
+            //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
             TomSymbol tomSymbol = getSymbol(tomName);
-            if(tomSymbol != null) {
-              TomType symbolType = getSymbolCodomain(tomSymbol);
-              TomTerm newLhs = `Term(pass1(context,lhs));
-              TomTerm newRhs = `Term(pass1(TomTypeToTomTerm(symbolType),rhs));
-              return `RewriteRule(newLhs,newRhs,orgTrack);
-            } else {
-                //verifier().messageRuleSymbolError(tomName, optionList);
-            }
+            TomType symbolType = getSymbolCodomain(tomSymbol);
+            TomTerm newLhs = `Term(expandVariable(context,lhs));
+            TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
+            return `RewriteRule(newLhs,newRhs,orgTrack);
           }
               
             // default rule
           context, t -> {
-            //debugPrintln("pass1.11 default: " );
-              //System.out.println("pass1 default:\n\t" + subject );
+            //debugPrintln("expandVariable.11 default: " );
+              //System.out.println("expandVariable default:\n\t" + subject );
             return genericTraversalContext(contextSubject,subject,this);
           }
         } // end match
       } // end apply
     }; // end new
 
-  public TomTerm pass1(TomTerm contextSubject, TomTerm subject) throws TomException {
-    return (TomTerm) replacePass1.apply(contextSubject,subject); 
+  public TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) throws TomException {
+    return (TomTerm) replaceVariable.apply(contextSubject,subject); 
   }
 
-  public TomList pass1List(TomSymbol subject, TomList subjectList) throws TomException {
+  public TomList expandVariableList(TomSymbol subject, TomList subjectList) throws TomException {
     //%variable
     %match(TomSymbol subject) {
       symb@Symbol[typesToType=TypesToType(typeList,codomainType)] -> {
-        //debugPrintln("pass1List.1: " + subjectList);
+        //debugPrintln("expandVariableList.1: " + subjectList);
           
           // process a list of subterms and a list of types
         TomList result = null;
@@ -424,7 +410,7 @@ public class TomExpander extends TomBase {
                 }
                 
                 _ -> {
-                  list.add(pass1(domainType, subterm));
+                  list.add(expandVariable(domainType, subterm));
                   break matchBlock;
                 }
               }
@@ -433,7 +419,7 @@ public class TomExpander extends TomBase {
           }
         } else {
           while(!subjectList.isEmpty()) {
-            list.add(pass1(typeList.getHead(), subjectList.getHead()));
+            list.add(expandVariable(typeList.getHead(), subjectList.getHead()));
             subjectList = subjectList.getTail();
             typeList    = typeList.getTail();
           }
@@ -444,7 +430,7 @@ public class TomExpander extends TomBase {
       }
 
       _ -> {
-        System.out.println("pass1List: strange case: '" + subject + "'");
+        System.out.println("expandVariableList: strange case: '" + subject + "'");
         System.exit(1);
       }
     }
@@ -464,11 +450,11 @@ public class TomExpander extends TomBase {
         String tomName = (String)it.next();
         TomTerm emptyContext = null;
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        tomSymbol = pass1(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+        tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
         symbolTable().putSymbol(tomName,tomSymbol);
       }
     } catch(TomException e) {
-      System.out.println("updateSymbolPass1 error");
+      System.out.println("updateSymbolExpandVariable error");
       System.exit(1);
     }
   }
@@ -514,39 +500,4 @@ public class TomExpander extends TomBase {
     return null;
   }
   
-    /*
-      testVariableWithoutParen is used in 'pass1' method of TomChecker.t.
-      It is called before to transform Appl into Variable. Indeed when we create an Appl
-      in 'PlainTerm' method of TomParser.jj, we do not known if it will be a variable or not.
-      But variable with () is not a recommanded structure for a variable. So we add informations
-      thanks to 'ast().makeLRParen(name.image))' which is added to options in
-      the case of () [in 'PlainTerm' method of TomParser.jj]. When we transform Appl in Variable (when
-      it is necessary), we test if 'LRParen(_)' is in the option structure. 
-    */
-  private void testVariableWithoutParen(Option option, String name) throws TomException {
-    if(!Flags.doCheck) return;
-    
-    OptionList optionList = option.getOptionList();
-    Option lrParen = getLRParen(optionList);
-    if(lrParen!=null) {
-      String nameLrParen = lrParen.getAstName().getString();
-      if(name.equals(nameLrParen)) {
-        Integer line = findOriginTrackingLine(name, optionList);
-        messageVariableWithParenError(name,line);
-      }
-    }
-  }
-
-  private void messageMatchTypeVariableError(String name, String type) throws TomException {
-    Integer line = optionMatchTypeVariable.getLine();
-    String s = "Variable '" + name + "' has a wrong type:  '" + type + "' in %match construct";
-    System.out.println(s);
-    messageError(line,s);
-    System.exit(1);
-  }
-  private void messageVariableWithParenError( String  name, Integer line ) {
-    if(Flags.noWarning) return;
-    System.out.println("\n *** Warning *** Variable with () is not recommanded");
-    System.out.println(" *** Variable '"+name+"' has () - Line : "+line);
-  }
-}
+} // Class Tom Expander

@@ -74,9 +74,8 @@ public class Tom {
     String compiledSuffix  = ".tfix.compiled";
     String parsedSuffix    = ".tfix.parsed";
     String expandedSuffix  = ".tfix.expanded";
-    String checkedSuffix   = ".tfix.checked";
     String parsedTableSuffix = ".tfix.parsed.table";
-    String checkedTableSuffix = ".tfix.checked.table";
+    String expandedTableSuffix = ".tfix.expanded.table";
 
     List importList = new ArrayList();
     
@@ -166,7 +165,7 @@ public class Tom {
     if(Flags.doParse) {
       inputFileName = fileName + inputSuffix;
     } else if(Flags.doOnlyCompile) {
-      inputFileName = fileName + checkedSuffix;
+      inputFileName = fileName + expandedSuffix;
     }
 
     InputStream input;
@@ -183,7 +182,6 @@ public class Tom {
         
     TomTerm parsedTerm   = null;
     TomTerm expandedTerm = null;
-    TomTerm checkedTerm  = null;
     TomTerm compiledTerm = null;
 
     if(Flags.doParse && Flags.doExpand) {
@@ -219,22 +217,16 @@ public class Tom {
         
 	TomExpander tomExpander = new TomExpander(environment);
         startChrono();
-        expandedTerm = tomExpander.expandSyntax(parsedTerm);
+        expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
+        tomExpander.updateSymbol();
+        
+        TomTerm context = null;
+        expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM syntax expansion phase " + getChrono());
+        if(Flags.verbose) System.out.println("TOM expansion phase " + getChrono());
         if(Flags.intermediate) {
           generateOutput(fileName + expandedSuffix,expandedTerm);
-        }
-     
-        startChrono();
-        TomTerm context = null;
-        tomExpander.updateSymbol();
-        checkedTerm  = tomExpander.pass1(context, expandedTerm);
-        stopChrono();
-        if(Flags.verbose) System.out.println("TOM checking phase " + getChrono());
-        if(Flags.intermediate) {
-          generateOutput(fileName + checkedSuffix,checkedTerm);
-          generateOutput(fileName + checkedTableSuffix,symbolTable.toTerm());
+          generateOutput(fileName + expandedTableSuffix,symbolTable.toTerm());
         }
 
         if(Flags.demo) {
@@ -283,12 +275,12 @@ public class Tom {
     if(Flags.doCompile) {
       try {
         if(Flags.doOnlyCompile) {
-          checkedTerm = (TomTerm) tomSignatureFactory.readFromTextFile(input);
+          expandedTerm = (TomTerm) tomSignatureFactory.readFromTextFile(input);
         }
 
 	TomCompiler tomCompiler = new TomCompiler(environment);
         startChrono();
-        TomTerm simpleCheckedTerm = tomCompiler.pass2_1(checkedTerm);
+        TomTerm simpleCheckedTerm = tomCompiler.pass2_1(expandedTerm);
         
         compiledTerm = tomCompiler.pass2_2(simpleCheckedTerm);
           //System.out.println("pass2 =\n" + compiledTerm);

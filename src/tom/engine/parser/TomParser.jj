@@ -500,6 +500,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     // f[left=a,...]
     LOOKAHEAD(2)
     name = <TOM_IDENTIFIER> <TOM_LBRACKET>
+      {optionList.add(ast().makeOriginTracking(name.image,getLine()));}
     [ slotName = <TOM_IDENTIFIER> <TOM_EQUAL> term = Term()
       { list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term)); }
       ( <TOM_COMMA>
@@ -510,7 +511,6 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     <TOM_RBRACKET>
     {
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking(name.image,getLine()));
       option = ast().makeOption(ast().makeOptionList(optionList));
       return tsf().makeTomTerm_RecordAppl(
         option,
@@ -526,8 +526,9 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       option = ast().makeOption(ast().makeOptionList(optionList));
       return ast().makeVariableStar(option,name.image,"unknown type");
     }
-  | // f(a,...)
+  | // f(a,...), x. g()
     name = <TOM_IDENTIFIER>
+      {optionList.add(ast().makeOriginTracking(name.image,getLine()));}
     [ <TOM_LPAREN>
       [
       term = DotTerm()               { list.add(term); }
@@ -537,13 +538,12 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       {
         if(list.isEmpty()) {
  	  // check if it is a constant
-          optionList.add(ast().makeLRParen(name.image));
+          optionList.add(tsf().makeOption_Constructor(tsf().makeTomName_Name(name.image)));
         }	
       }
     ]
     {
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking(name.image,getLine()));
       option = ast().makeOption(ast().makeOptionList(optionList));
       return tsf().makeTomTerm_Appl(
         option,

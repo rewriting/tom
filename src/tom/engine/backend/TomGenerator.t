@@ -718,7 +718,7 @@ public class TomGenerator extends TomBase {
       }
       OriginTracking[] -> { return; }
       DefinedSymbol -> { return; }
-      LRParen[] -> { return; }
+      Constructor[] -> { return; }
 
       t -> {
         System.out.println("Cannot generate code for option: " + t);

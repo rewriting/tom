@@ -26,7 +26,7 @@
 */
 
 package jtom.checker;
- 
+
 import java.util.*;
 
 import aterm.*;
@@ -104,6 +104,7 @@ public class TomChecker extends TomBase {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
               BackQuoteTerm[term=t] -> {
+                  // is it possible
                 permissiveVerify(t);
               }
               Appl(Option(options),Name(name),args) -> {
@@ -131,7 +132,7 @@ public class TomChecker extends TomBase {
     // MATCH VERIFICATION CONCERNS //
     /////////////////////////////////
   
-      // Given a subject list, we test types in match signature and then number and type of slots found in each pattern
+    // Given a subject list, we test types in match signature and then number and type of slots found in each pattern
   private void verifyMatch(TomList subjectList, TomList patternList) throws TomException {
     ArrayList typeMatchArgs = new ArrayList();
     while( !subjectList.isEmpty() ) {
@@ -147,7 +148,7 @@ public class TomChecker extends TomBase {
       subjectList = subjectList.getTail();
     }
     
-    while( !patternList.isEmpty()) {
+    while(!patternList.isEmpty()) {
       statistics().numberMatchesTested++;
       TomTerm terms = patternList.getHead();
       verifyMatchPattern(terms, typeMatchArgs);
@@ -193,18 +194,13 @@ public class TomChecker extends TomBase {
     if(nbExpectedArgs != nbFoundArgs) {
       messageMatchErrorNumberArgument(nbExpectedArgs, nbFoundArgs, line); 
     }
-      // we test the type egality between arguments and pattern-action, if it is not a variable => type is null
+      // we test the type egality between arguments and pattern-action, if it is not a variable  => type is null
     for( int slot = 0; slot < nbExpectedArgs; slot++ ) {
-      if ( (foundTypeMatch.get(slot) != typeMatchArgs.get(slot)) && (foundTypeMatch.get(slot) != null))
+      if ( (foundTypeMatch.get(slot) !=  typeMatchArgs.get(slot)) && (foundTypeMatch.get(slot) != null))
       { 	
         messageMatchErrorTypeArgument(slot+1, (String) typeMatchArgs.get(slot), (String) foundTypeMatch.get(slot), line); 
       }
     }
-  }
-
-  private String extractType(TomSymbol symbol) {
-    TomType type = getSymbolCodomain(symbol);
-    return getTomType(type);
   }
   
   private void messageMatchErrorNumberArgument(int nbExpectedVar, int nbFoundVar, Integer line) throws TomException {
@@ -226,7 +222,7 @@ public class TomChecker extends TomBase {
     messageError(declLine,s);
   }
   
-private void messageMatchErrorVariableStar(String nameVariableStar, Integer line) throws TomException {
+  private void messageMatchErrorVariableStar(String nameVariableStar, Integer line) throws TomException {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Single list variable "+nameVariableStar+"* is not allowed on left most part of %match structure declared line "+declLine;
     messageError(line,s);
@@ -646,25 +642,87 @@ private void messageMatchErrorVariableStar(String nameVariableStar, Integer line
   
   private void verifyApplStructure(OptionList optionList, String name, TomList argsList) throws TomException {
     statistics().numberApplStructuresTested++;
+    currentTomStructureOrgTrack = findOriginTracking(optionList);
     TomSymbol symbol = symbolTable().getSymbol(name);
-    if(symbol==null  && (getLRParen(optionList)!=null || !argsList.isEmpty())) {
+    if(symbol==null  && (hasConstructor(optionList) || !argsList.isEmpty())) {
       messageSymbolError(name, optionList);
     } else {
       if(!argsList.isEmpty()) {
           //in case of oparray or oplist, the number of arguments is not tested
-        if ( !isListOperator(symbol) &&  !isArrayOperator(symbol) ) {
+        boolean listOrArray =  (isListOperator(symbol) ||  isArrayOperator(symbol));
+        int nbFoundArgs = 0;
+        ArrayList foundType = new ArrayList();
+        Map optionMap  = new HashMap();
+          // we shall test also the type of each args
+        while(!argsList.isEmpty()) {
+          TomTerm term = argsList.getHead();
+          %match(TomTerm term) {
+            Appl[option=Option(options),astName=Name[string=name1]] -> {
+              optionMap.put(new Integer(nbFoundArgs), options);
+              nbFoundArgs++;
+              foundType.add(extractType(symbolTable().getSymbol(name1)));
+            }
+            RecordAppl[option=Option(options),astName=Name[string=name1]] -> {
+              optionMap.put(new Integer(nbFoundArgs), options);
+              nbFoundArgs++;
+              foundType.add(extractType(symbolTable().getSymbol(name1)));
+            }
+            VariableStar[] -> {nbFoundArgs++;foundType.add((TomTerm)null);}
+            Placeholder[option=Option(options)] -> {
+              if (listOrArray) {
+                messageImpossiblePlaceHolderInListStructure(name,options);
+              } else {
+                nbFoundArgs++;foundType.add((TomTerm)null);
+              }
+            }
+          }
+          argsList =  argsList.getTail();
+        }
+
+        TomList l = getSymbolDomain(symbol);
+        if (!listOrArray) {
+          int nbExpectedArgs = length(l);
             // We test the number of args vs its definition
-          int nbExpectedArgs = length(getSymbolDomain(symbol));
-          int nbFoundArgs = length(argsList);
           if (nbExpectedArgs != nbFoundArgs) {
             Integer line = findOriginTrackingLine(name,optionList);
             messageNumberArgumentsError(nbExpectedArgs, nbFoundArgs, name, line);
+          }        
+          for( int slot = 0; slot < nbExpectedArgs; slot++ ) {
+            String s = getTomType(l.getHead().getAstType());
+            if ( (foundType.get(slot) != s) && (foundType.get(slot) != null))
+            {
+              Integer line = findOriginTrackingLine((OptionList) optionMap.get(new Integer(slot)));
+              messageApplErrorTypeArgument(name, slot+1, s, (String) foundType.get(slot), line); 
+            }
+            l = l.getTail();
+          }
+        } else {
+            // We worry only about returned type
+          String s = getTomType(l.getHead().getAstType());
+          for( int slot = 0; slot <foundType.size() ; slot++ ) {
+            if ( (foundType.get(slot) != s) && (foundType.get(slot) != null)) {
+              Integer line = findOriginTrackingLine((OptionList) optionMap.get(new Integer(slot)));
+              messageApplErrorTypeArgument(name, slot+1, s, (String) foundType.get(slot), line);
+            }
           }
         }
       }
     }
   }
+
+  private void  messageImpossiblePlaceHolderInListStructure(String listApplName, OptionList optionList) throws TomException {
+    Integer line = findOriginTrackingLine(optionList);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    String s = " *** Placeholder is not allowed in list operator '"+listApplName+"' declared line "+declLine;
+    messageError(line,s);
+  }
   
+  private void  messageApplErrorTypeArgument(String applName, int slotNumber, String expectedType, String givenType, Integer line) throws TomException {
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    String s = "Bad type of argument: Argument "+slotNumber+" of method '" + applName + "' has type '"+expectedType+"' required but type '"+givenType+"' found in structure declared "+declLine;
+    messageError(line,s);
+  }
+    
   private void permissiveVerifyApplStructure(OptionList optionList, String name, TomList argsList) throws TomException {
     statistics().numberApplStructuresTested++;
     TomSymbol symbol = symbolTable().getSymbol(name);
@@ -777,7 +835,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, Integer line
     %match(TomTerm lhs) {
       appl@Appl(Option(optionList),Name(name), args) -> {
         // No alone variable noor simple constructor
-        if( args.isEmpty() && getLRParen(optionList)==null) {
+        if( args.isEmpty() && !hasConstructor(optionList)) {
           Integer line = findOriginTrackingLine(optionList);
           messageRuleErrorVariable(name, line);
         }
@@ -793,8 +851,8 @@ private void messageMatchErrorVariableStar(String nameVariableStar, Integer line
         Integer line = findOriginTrackingLine(name1,optionList);
         messageRuleErrorVariableStar(name1, line); 
       }
-      Placeholder[option=Option(t)] -> { 
-        messageRuleErrorLhsImpossiblePlaceHolder(t); 
+      Placeholder[option=Option(options2)] -> { 
+        messageRuleErrorLhsImpossiblePlaceHolder(options2); 
       }
       rec@RecordAppl(Option(optionList),Name(name),args) -> {
         checkSyntax(rec);
@@ -922,7 +980,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, Integer line
             %match(TomTerm t) { 
                 // to collect annoted nodes but avoid collect variables in optionSymbol
               appl@Appl(Option(optionList), Name(name), subterms) -> {
-                if( subterms.isEmpty() && getLRParen(optionList)==null && symbolTable().getSymbol(name)==null) 
+                if( subterms.isEmpty() && !hasConstructor(optionList) && symbolTable().getSymbol(name)==null) 
                   collection.add(name);
                 annotedVariable = getAnnotedVariable(optionList);
                 if(annotedVariable!=null) {
@@ -987,6 +1045,34 @@ private void messageMatchErrorVariableStar(String nameVariableStar, Integer line
     /////////////
     // GLOBALS //
     /////////////
+  
+  private String extractType(TomSymbol symbol) {
+    TomType type = getSymbolCodomain(symbol);
+    return getTomType(type);
+  }
+
+    // findOriginTrackingLine(_,_) method returns the line (stocked in optionList)  of object 'name'.
+  private Integer findOriginTrackingLine(String name, OptionList optionList) {
+    while(!optionList.isEmptyOptionList()) {
+      Option subject = optionList.getHead();
+      %match(Option subject) {
+        OriginTracking[astName=Name[string=origName],line=line] -> {
+          if(name.equals(origName)) {
+            return line;
+          }
+        }
+      }
+      optionList = optionList.getTail();
+    }
+    System.out.println("findOriginTrackingLine: '" + name + "' not found");
+    System.exit(1); return null;
+  }
+  
+  private void messageError(Integer line, String msg) throws CheckErrorException {
+    if(!Flags.doCheck) return;
+    String s = "\n"+msg+"\n-- Error occured at line: " + line + "\n"; 
+    throw new CheckErrorException(s);
+  }
   // findOriginTrackingLine(_) method returns the first number of line (stocked in optionList).
   private Integer findOriginTrackingLine(OptionList optionList) {
     while(!optionList.isEmptyOptionList()) {

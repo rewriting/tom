@@ -449,17 +449,17 @@ public class TomBase {
     return null;
   }
 
-  protected Option getLRParen(OptionList optionList) {
-    //%variable
+  protected boolean hasConstructor(OptionList optionList) {
+      //%variable
     while(!optionList.isEmptyOptionList()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
-        LRParen[] -> { return subject; }
+        Constructor[] -> { return true; }
       }
       optionList = optionList.getTail();
     }
-    return null;
-  }
+    return false;
+    }
 
   protected TomName getSlotName(TomSymbol symbol, int number) {
     //%variable
@@ -494,28 +494,4 @@ public class TomBase {
     return -1;
   }
 
-    // findOriginTrackingLine(_,_) method returns the line (stocked in optionList)  of object 'name'.
-  protected Integer findOriginTrackingLine(String name, OptionList optionList) {
-    while(!optionList.isEmptyOptionList()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        OriginTracking[astName=Name[string=origName],line=line] -> {
-          if(name.equals(origName)) {
-            return line;
-          }
-        }
-      }
-      optionList = optionList.getTail();
-    }
-    System.out.println("findOriginTrackingLine: '" + name + "' not found");
-    System.exit(1); return null;
-  }
-  
-  protected void messageError(Integer line, String msg) throws CheckErrorException {
-    if(!Flags.doCheck) return;
-    String s = "\n"+msg+"\n-- Error occured at line: " + line + "\n"; 
-    throw new CheckErrorException(s);
-  }
-
 }
- 

@@ -56,7 +56,7 @@
   [Option,Option,Option(<optionList(OptionList)>) ],
   [Option,DefinedSymbol ,DefinedSymbol ],
   [Option,OriginTracking,OriginTracking(<astName(TomName)>, <line(int)>) ],
-  [Option,LRParen,LRParen(<astName(TomName)>) ],
+  [Option,Constructor,Constructor(<astName(TomName)>) ],
 
   [Expression,TomTermToExpression, TomTermToExpression(<astTerm(TomTerm)>) ],
   [Expression,Not,Not(<arg(Expression)>) ],

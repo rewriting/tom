@@ -336,6 +336,7 @@ public class TomParser implements TomParserConstants {
     if (jj_2_1(2)) {
       name = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_LBRACKET);
+       optionList.add(ast().makeOriginTracking(name.image,getLine()));
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_IDENTIFIER:
         slotName = jj_consume_token(TOM_IDENTIFIER);
@@ -365,7 +366,6 @@ public class TomParser implements TomParserConstants {
       }
       jj_consume_token(TOM_RBRACKET);
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking(name.image,getLine()));
       option = ast().makeOption(ast().makeOptionList(optionList));
       {if (true) return tsf().makeTomTerm_RecordAppl(
         option,
@@ -381,8 +381,9 @@ public class TomParser implements TomParserConstants {
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_IDENTIFIER:
-        // f(a,...)
+        // f(a,...), x. g()
             name = jj_consume_token(TOM_IDENTIFIER);
+       optionList.add(ast().makeOriginTracking(name.image,getLine()));
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_LPAREN:
           jj_consume_token(TOM_LPAREN);
@@ -414,7 +415,7 @@ public class TomParser implements TomParserConstants {
           jj_consume_token(TOM_RPAREN);
         if(list.isEmpty()) {
           // check if it is a constant
-          optionList.add(ast().makeLRParen(name.image));
+          optionList.add(tsf().makeOption_Constructor(tsf().makeTomName_Name(name.image)));
         }
           break;
         default:
@@ -422,7 +423,6 @@ public class TomParser implements TomParserConstants {
           ;
         }
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking(name.image,getLine()));
       option = ast().makeOption(ast().makeOptionList(optionList));
       {if (true) return tsf().makeTomTerm_Appl(
         option,
