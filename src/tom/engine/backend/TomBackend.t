@@ -11,14 +11,16 @@ import java.io.*;
 import aterm.*;
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
+import jtom.adt.options.types.*;
 import jtom.tools.*;
 
 public class TomBackend extends TomBase implements TomPlugin
 {
     %include { ../adt/TomSignature.tom }
+    %include{ ../adt/Options.tom }
 
     private TomTerm term;
-    private OptionList myOptions;
+    private TomOptionList myOptions;
 
     private final static int defaultDeep = 2;
     private TomAbstractGenerator generator;
@@ -26,7 +28,7 @@ public class TomBackend extends TomBase implements TomPlugin
 
     public TomBackend()
     {
-	myOptions = `concOption(OptionBoolean("printOutput", "", "Generate code", True()), // activation flag
+	myOptions = `concTomOption(OptionBoolean("printOutput", "", "Generate code", True()), // activation flag
 				OptionBoolean("jCode", "j", "Generate Java code", True()),
 				OptionBoolean("cCode", "c", "Generate C code", False()),
 				OptionBoolean("eCode", "e", "Generate Eiffel code", False()),
@@ -52,7 +54,7 @@ public class TomBackend extends TomBase implements TomPlugin
 	try
 	    {
 		long startChrono = System.currentTimeMillis();
-		OptionList list = `concOption(myOptions*);
+		TomOptionList list = `concTomOption(myOptions*);
 		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
 		//boolean pretty = ((Boolean)getServer().getOptionValue("pretty")).booleanValue();
 		// (doesn't seem to be used anywhere...)
@@ -63,8 +65,8 @@ public class TomBackend extends TomBase implements TomPlugin
 
 		while(!(list.isEmpty()))
 		    {
-			Option h = list.getHead();
-			%match(Option h)
+			TomOption h = list.getHead();
+			%match(TomOption h)
 			    {
 				OptionBoolean[name="jCode", valueB=True()] -> 
 				    { 
@@ -111,7 +113,7 @@ public class TomBackend extends TomBase implements TomPlugin
 	    }
     }
 
-    public OptionList declareOptions()
+    public TomOptionList declareOptions()
     {
 // 	int i = 0;
 // 	OptionList list = `concOption(myOptions*);
@@ -126,57 +128,52 @@ public class TomBackend extends TomBase implements TomPlugin
 	return myOptions;
     }
 
-    public OptionList requiredOptions()
+    public TomOptionList requiredOptions()
     {
-	return `emptyOptionList();
-    }
-
-    public TomServer getServer()
-    {
-	return TomServer.getInstance();
+	return `emptyTomOptionList();
     }
 
     public void setOption(String optionName, String optionValue)
     {
- 	%match(OptionList myOptions)
+ 	%match(TomOptionList myOptions)
  	    {
-		concOption(av*, OptionBoolean(n, alt, desc, val), ap*)
+		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
 		    -> { if(n.equals(optionName)||alt.equals(optionName))
 			{			    
 			    %match(String optionValue)
 				{
 				    ('true') ->
-					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
+					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
 				    ('false') ->
-					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
+					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
 				}
 
 			    if(optionValue.equals("true")) // no more than 1 type of code can be activated at a time
 				{
 				    if(n.equals("jCode"))
 					{ 
-					    System.out.println("Java code activated, other codes desactivated");
+					    //System.out.println("Java code activated, other codes desactivated");
 					    setOption("cCode","false");
 					    setOption("eCode","false");
 					    setOption("camlCode","false"); 
 					}
 				    else if(n.equals("cCode"))
 					{ 
-					    System.out.println("C code activated, other codes desactivated");
+					    //System.out.println("C code activated, other codes desactivated");
 					    setOption("jCode","false");
 					    setOption("eCode","false");
 					    setOption("camlCode","false"); 
 					}
 				    else if(n.equals("eCode"))
 					{ 
-					    System.out.println("Eiffel code activated, other codes desactivated");
+					    //System.out.println("Eiffel code activated, other codes desactivated");
 					    setOption("jCode","false");
 					    setOption("cCode","false");
 					    setOption("camlCode","false"); 
 					}
 				    else if(n.equals("camlCode"))
 					{ 
-					    System.out.println("Caml code activated, other codes desactivated");
+					    //System.out.println("Caml code activated, other codes desactivated");
 					    setOption("jCode","false");
 					    setOption("cCode","false");
 					    setOption("eCode","false"); 
@@ -184,13 +181,13 @@ public class TomBackend extends TomBase implements TomPlugin
 				}
 			}
 		}
-		concOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
+		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
 		}
-		concOption(av*, OptionString(n, alt, desc, val, attr), ap*)
+		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
 		}
 	    }
     }

@@ -9,6 +9,7 @@ package jtom.compiler;
 import java.util.*;
 
 import jtom.adt.tomsignature.types.*;
+import jtom.adt.options.types.*;
 
 import jtom.runtime.Replace1;
 import jtom.tools.*;
@@ -21,9 +22,10 @@ import jtom.*;
 public class TomCompiler extends TomBase implements TomPlugin
 {
     %include { ../adt/TomSignature.tom }
+    %include{ ../adt/Options.tom }
 
     private TomTerm term;
-    private OptionList myOptions;
+    private TomOptionList myOptions;
 
     private TomKernelCompiler tomKernelCompiler = new TomKernelCompiler();
     private TomFactory tomFactory = new TomFactory();
@@ -33,7 +35,7 @@ public class TomCompiler extends TomBase implements TomPlugin
 
     public TomCompiler()
     {
-	myOptions = `concOption(OptionBoolean("compile","","",True()) // activationFlag
+	myOptions = `concTomOption(OptionBoolean("compile","","",True()) // activationFlag
 				);
     }
 
@@ -517,7 +519,7 @@ public class TomCompiler extends TomBase implements TomPlugin
     return newList;
   }
 
-    public OptionList declareOptions()
+    public TomOptionList declareOptions()
     {
 // 	int i = 0;
 // 	OptionList list = `concOption(myOptions*);
@@ -532,34 +534,34 @@ public class TomCompiler extends TomBase implements TomPlugin
 	return myOptions;
     }
 
-    public OptionList requiredOptions()
+    public TomOptionList requiredOptions()
     {
-	return `emptyOptionList();
+	return `emptyTomOptionList();
     }
 
     public void setOption(String optionName, String optionValue)
     {
- 	%match(OptionList myOptions)
+ 	%match(TomOptionList myOptions)
  	    {
-		concOption(av*, OptionBoolean(n, alt, desc, val), ap*)
+		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
 		    -> { if(n.equals(optionName)||alt.equals(optionName))
 			{
 			    %match(String optionValue)
 				{
 				    ('true') ->
-					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
+					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
 				    ('false') ->
-					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
+					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
 				}
 			}
 		}
-		concOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
+		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
 		}
-		concOption(av*, OptionString(n, alt, desc, val, attr), ap*)
+		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
 		}
 	    }
     }

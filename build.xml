@@ -237,6 +237,10 @@
          factory="Set" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
+    <adt file="${src.adt}/Options.adt" 
+         factory="Options" 
+         package="jtom.adt" 
+         destdir="${src.gen}"/>
     <copy todir="${src.mapping}">
       <fileset dir="${src.gen}/jtom/adt" includes="*.tom">
         <exclude name="TomSignature.tom"/>
@@ -408,6 +412,10 @@
     <jar jarfile="${src.lib}/TomSignature-${DSTAMP}.jar">
       <fileset dir="${src.build}" 
                includes="jtom/adt/tomsignature/**/*.class"/>
+    </jar>
+    <jar jarfile="${src.lib}/Options-${DSTAMP}.jar">
+      <fileset dir="${src.build}" 
+               includes="jtom/adt/options/**/*.class"/>
     </jar>
     <jar jarfile="${src.lib}/jtom-${DSTAMP}.jar">
       <fileset dir="${src.build}" 
@@ -838,6 +846,10 @@
       <fileset dir="${src.build}" 
                includes="jtom/adt/tomsignature/**/*.class"/>
     </jar>
+    <jar jarfile="${stable.adt}/Options.jar">
+      <fileset dir="${src.build}" 
+               includes="jtom/adt/options/**/*.class"/>
+    </jar>
     <copy todir="${stable.mapping}" overwrite="true">
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
     </copy>
@@ -854,6 +866,7 @@
     <unjar src="${concurrent.lib}" dest="${bundle.dir}"/>
     <unjar src="${src.lib}/TNode-${DSTAMP}.jar" dest="${bundle.dir}"/>
     <unjar src="${src.lib}/TomSignature-${DSTAMP}.jar" dest="${bundle.dir}"/>
+    <unjar src="${src.lib}/Options-${DSTAMP}.jar" dest="${bundle.dir}"/>
     <unjar src="${src.lib}/jtom-${DSTAMP}.jar" dest="${bundle.dir}"/>
     <unjar src="${src.lib}/Set-${DSTAMP}.jar" dest="${bundle.dir}"/>
     
@@ -871,6 +884,7 @@
     <unjar src="${concurrent.lib}" dest="${bundle.dir}"/>
     <unjar src="${stable.lib}/TNode.jar" dest="${bundle.dir}"/>
     <unjar src="${stable.lib}/TomSignature.jar" dest="${bundle.dir}"/>
+    <unjar src="${stable.lib}/Options.jar" dest="${bundle.dir}"/>
     <unjar src="${stable.lib}/jtom.jar" dest="${bundle.dir}"/>
     <unjar src="${stable.lib}/Set.jar" dest="${bundle.dir}"/>
     

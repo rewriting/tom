@@ -32,15 +32,20 @@ import aterm.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
+import jtom.adt.options.*;
+import jtom.adt.options.types.*;
 import jtom.runtime.*;
 import jtom.exception.TomRuntimeException;
 
 public class TomBase {
+    %include { adt/TomSignature.tom }
+    %include { adt/Options.tom }
+
     private TomList empty;
     private GenericTraversal traversal;
 
     public TomBase() {
-	this.empty = environment().getTomSignatureFactory().makeTomList();
+	this.empty = getTomSignatureFactory().makeTomList();
 	this.traversal = new GenericTraversal();
     }
 
@@ -57,7 +62,11 @@ public class TomBase {
 	return TomServer.getInstance();
     }
 
-    protected Factory tsf() {
+    protected jtom.adt.options.Factory getOptionsFactory() {
+	return getServer().getOptionsFactory();
+    }
+
+    protected jtom.adt.tomsignature.Factory tsf() {
 	return getServer().getTomSignatureFactory();
     }
 
@@ -65,7 +74,7 @@ public class TomBase {
 	return this.traversal;
     }
 
-    protected final Factory getTomSignatureFactory() {
+    protected final jtom.adt.tomsignature.Factory getTomSignatureFactory() {
 	return tsf();
     }
 
@@ -136,7 +145,7 @@ public class TomBase {
     }
 
     // ------------------------------------------------------------
-    %include { adt/TomSignature.tom }
+    
     // ------------------------------------------------------------
 
     protected String getTomType(TomType type) {

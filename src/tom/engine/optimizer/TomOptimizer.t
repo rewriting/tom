@@ -8,6 +8,7 @@ package jtom.optimizer;
 
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
+import jtom.adt.options.types.*;
 import aterm.*;
 import java.util.*;
 import jtom.tools.*;
@@ -17,15 +18,16 @@ import jtom.runtime.*;
 public class TomOptimizer extends TomBase implements TomPlugin
 {
     %include{ ../adt/TomSignature.tom }
+    %include{ ../adt/Options.tom }
 
     private TomTerm term;
-    private OptionList myOptions;
+    private TomOptionList myOptions;
 
     public static final String OPTIMIZED_SUFFIX = ".tfix.optimized"; // was previously in TomTaskInput
 
     public TomOptimizer()
     {
-	myOptions = `concOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
+	myOptions = `concTomOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
 				);
     }
 
@@ -48,7 +50,7 @@ public class TomOptimizer extends TomBase implements TomPlugin
 	try
 	    {
 		long startChrono = System.currentTimeMillis();
-		OptionList list = `concOption(myOptions*);
+		TomOptionList list = `concTomOption(myOptions*);
 		boolean willRun = true;
 
 		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
@@ -56,8 +58,8 @@ public class TomOptimizer extends TomBase implements TomPlugin
 		
 		while(!(list.isEmpty()))
 		    {
-			Option h = list.getHead();
-			%match(Option h)
+			TomOption h = list.getHead();
+			%match(TomOption h)
 			    {
 				OptionBoolean[name="optimize", valueB=val] -> 
 				    { 
@@ -102,7 +104,7 @@ public class TomOptimizer extends TomBase implements TomPlugin
 	    }
     }
 
-    public OptionList declareOptions()
+    public TomOptionList declareOptions()
     {
 // 	int i = 0;
 // 	OptionList list = `concOption(myOptions*);
@@ -116,34 +118,34 @@ public class TomOptimizer extends TomBase implements TomPlugin
 	return myOptions;
     }
 
-    public OptionList requiredOptions()
+    public TomOptionList requiredOptions()
     {
-	return `emptyOptionList();
+	return `emptyTomOptionList();
     }
 
     public void setOption(String optionName, String optionValue)
     {
- 	%match(OptionList myOptions)
+ 	%match(TomOptionList myOptions)
  	    {
-		concOption(av*, OptionBoolean(n, alt, desc, val), ap*)
+		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
 		    -> { if(n.equals(optionName)||alt.equals(optionName))
 			{
 			    %match(String optionValue)
 				{
 				    ('true') ->
-					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
+					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
 				    ('false') ->
-					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
+					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
 				}
 			}
 		}
-		concOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
+		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
 		}
-		concOption(av*, OptionString(n, alt, desc, val, attr), ap*)
+		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
 		}
 	    }
     }
