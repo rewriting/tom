@@ -16,18 +16,32 @@
 
 \newcommand{\typeterm}{\ahrefloc{typedef}{\lex{\textbf{\%typeterm}}}}
 \newcommand{\op}{\ahrefloc{opdef}{\lex{\textbf{\%op}}}}
-\newcommand{\match}{\ahrefloc{match}{\lex{\textbf{\%match}}}}
 \newcommand{\typeint}{\ahrefloc{int}{\lex{\textbf{\%typeint}}}}
+\newcommand{\typelist}{\ahrefloc{listdef}{\lex{\textbf{\%typelist}}}}
+\newcommand{\oplist}{\ahrefloc{oplistdef}{\lex{\textbf{\%oplist}}}}
+\newcommand{\typearray}{\ahrefloc{arraydef}{\lex{\textbf{\%typearray}}}}
+\newcommand{\oparray}{\ahrefloc{oparraydef}{\lex{\textbf{\%oparray}}}}
+\newcommand{\match}{\ahrefloc{match}{\lex{\textbf{\%match}}}}
+
 \newcommand{\implement}{\ahrefloc{implement}{\lex{implement}}}
 \newcommand{\getfs}{\ahrefloc{getfs}{\lex{get\_fun\_sym}}}
 \newcommand{\cmpfs}{\ahrefloc{cmpfs}{\lex{cmp\_fun\_sym}}}
-\newcommand{\gets}{\ahrefloc{gets}{\lex{get\_subterm}}}
+\newcommand{\getsub}{\ahrefloc{getsub}{\lex{get\_subterm}}}
 \newcommand{\fsym}{\ahrefloc{fsym}{\lex{fsym}}}
 \newcommand{\make}{\ahrefloc{make}{\lex{make}}}
 \newcommand{\backquote}{\ahrefloc{backquote}{\lex{\textbf{`}}}}
 \newcommand{\isfs}{\ahrefloc{isfsym}{\lex{is\_fsym}}}
 \newcommand{\getslot}{\ahrefloc{getslot}{\lex{get\_slot}}}
-
+\newcommand{\equals}{\ahrefloc{equals}{\lex{equals}}}
+\newcommand{\geth}{\ahrefloc{geth}{\lex{get\_head}}}
+\newcommand{\gett}{\ahrefloc{gett}{\lex{get\_tail}}}
+\newcommand{\isempty}{\ahrefloc{isempty}{\lex{is\_empty}}}
+\newcommand{\getel}{\ahrefloc{gete}{\lex{get\_element}}}
+\newcommand{\getsize}{\ahrefloc{getsize}{\lex{get\_size}}}
+\newcommand{\emptyl}{\ahrefloc{emptylist}{\lex{make\_empty}}}
+\newcommand{\emptya}{\ahrefloc{emptyarray}{\lex{make\_empty}}}
+\newcommand{\minsert}{\ahrefloc{insert}{\lex{make\_insert}}}
+\newcommand{\mappend}{\ahrefloc{append}{\lex{make\_append}}}
 
 \newcommand{\alt}{$\mid$}
 \newcommand{\lex}[1]{\textcolor{blue}{\texttt{#1}}}
@@ -35,6 +49,12 @@
 
 \urldef{\tompage}{\url}{http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/}
 \urldef{\packagebase}{\url}{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase}
+\urldef{\atermpage}{\url}{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/ATermLibrary}
+\urldef{\apigenpage}{\url}{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/ApiGen}
+\urldef{\manualpage}{\url}{http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/manual.html}
+\urldef{\manualPS}{\url}{http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/Soft/manual.ps}
+\urldef{\manualDVI}{\url}{http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/Soft/manual.dvi}
+
 
 \title{\TOM\ Language Reference}
 \author{Pierre-Etienne Moreau\\(with Julien Guyon and Christophe Ringeissen)}
@@ -42,24 +62,36 @@
 \setcounter{tocdepth}{1}
 \begin{document}
 \maketitle
+
+\begin{table}[h]
+This manual also exists in  \ahref{\manualPS}{Postscript} or \ahref{\manualDVI}{dvi}.
+\end{table}
+\begin{abstract}
+TOM is a Pattern Matching Preprocessor that can be used to
+intregrate term rewriting facilities in an imperative language such as
+\Clang\ and \Java.
+
+Information on TOM is available at \ahref{\tompage}{TOM Home Page}.
+\end{abstract}
+
 \tableofcontents
 
-\newpage
+%\newpage
 %\input{introduction}
 
-\newpage
+%\newpage
 \input{install}
 
-\newpage
+%\newpage
 \input{system}
 
-\newpage
+%\newpage
 \input{language}
 
-\newpage
+%\newpage
 \input{library}
 
-\newpage
+%\newpage
 \input{tutorial}
 
 \end{document}

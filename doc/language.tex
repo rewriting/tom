@@ -172,13 +172,13 @@ left-handsides should begin with the same root symbol:
         \lex{)}\\
         &&
         \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMakeEmptyList} \alt
-        \nt{KeywordMakeAddList} )* \lex{\}}\\
+        \nt{KeywordMakeInsert} )* \lex{\}}\\
         \nt{OperatorArray} & ::= & 
         \lex{\%oparray} \nt{Type} \nt{Name} \lex{(} \nt{Type} \lex{*}
         \lex{)}\\
         &&
-        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMakeEmptyEmpty} \alt
-        \nt{KeywordMakeAddArray} )* \lex{\}}
+        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMakeEmptyArray} \alt
+        \nt{KeywordMakeAppend} )* \lex{\}}
 \end{tabular}
 \end{center}
 
@@ -251,12 +251,12 @@ left-handsides should begin with the same root symbol:
         \lex{get\_slot} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
 \nt{KeywordMakeEmptyList} & ::= &
         \lex{make\_empty} [ \lex{(} \lex{)} ] \nt{GoalLanguageBlock}\\
-\nt{KeywordMakeAddList} & ::= &
-        \lex{make\_add} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordMakeInsert} & ::= &
+        \lex{make\_insert} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
 \nt{KeywordMakeEmptyArray} & ::= &
         \lex{make\_empty} \lex{(} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
-\nt{KeywordMakeAddArray} & ::= &
-        \lex{make\_add} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}
+\nt{KeywordMakeAppend} & ::= &
+        \lex{make\_append} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}
 \end{tabular}
 \end{center}
 
@@ -288,7 +288,7 @@ several access functions have to be defined:
   (\texttt{true} in \Java, and something different from \texttt{0} in
   \Clang\ for example). 
 
-\item\label{gets} the \lex{get\_subterm(t,n)} construct corresponds to a
+\item\label{getsub} the \lex{get\_subterm(t,n)} construct corresponds to a
   function (parametrised by a term variable and an integer).
   This function should return the \texttt{n-th} subterm of the
   term~\texttt{t}. This never called with and integer paramter that
@@ -306,31 +306,31 @@ several access functions have to be defined:
 \end{itemize}
 
 
-\noindent
+\noindent\label{listdef}
 When defining a new type with the \lex{\%typelist} construct,
 several other access functions have to be defined:
 \begin{itemize}
-\item the \lex{get\_head(l)} function is parametrised by a list
+\item\label{geth} the \lex{get\_head(l)} function is parametrised by a list
   variable and should return the first element of the considered list.
 
-\item the \lex{get\_tail(l)} function is parametrised by a list
+\item\label{gett} the \lex{get\_tail(l)} function is parametrised by a list
   variable and should return the tail of the considered list.
 
-\item the \lex{is\_empty(l)} constructs corresponds to a
+\item\label{isempty} the \lex{is\_empty(l)} constructs corresponds to a
   predicate parametrised by a list variable.
   This predicate should return \texttt{true} if the considered list
   contains no element.
 \end{itemize}
 
-\noindent
+\noindent\label{arraydef}
 When defining a new type with the \lex{\%typearray} construct,
 the two different access functions have to be defined:
 \begin{itemize}
-\item the \lex{get\_element(l,n)} construct is parametrised by a list
+\item\label{gete} the \lex{get\_element(l,n)} construct is parametrised by a list
   variable and an integer. This should correspond to a function that
   return the \texttt{n-th} element of the considered list~\texttt{l}.
 
-\item the \lex{get\_size(l)} constructs corresponds to a function
+\item\label{getsize} the \lex{get\_size(l)} constructs corresponds to a function
   that returns the size of the considered list.
   By convention, an empty list contains \texttt{0} element.
 \end{itemize}
@@ -374,16 +374,16 @@ function for a given constructor. This can be done with the
 \lex{get\_slot} construct.
 \end{itemize}
 
-\smallskip\noindent
+\smallskip\noindent\label{oplistdef}
 When defining a new symbol with the \lex{\%oplist} construct,
 the user has to specify how the symbol is implemented. 
 The user has also to specify how a list can be built (this is no
 longer optional as in the \lex{\%op} construct):
 \begin{itemize}
-\item the \lex{make\_empty()} construct should return an empty
+\item\label{emptylist} the \lex{make\_empty()} construct should return an empty
   list.
 
-\item the \lex{make\_add(l,e)} construct corresponds to a function
+\item\label{insert} the \lex{make\_insert(e,l)} construct corresponds to a function
   parametrised by a list variable and a term variable. This function
   should return a new list~\texttt{l'} where the element~\texttt{e}
   has been inserted at the head of the list~\texttt{l}
@@ -391,18 +391,19 @@ longer optional as in the \lex{\%op} construct):
   \lex{equals(get\_tail(l'),l)} should be \texttt{true}).
 \end{itemize}
 
-\noindent
+\noindent\label{oparraydef}
 When defining a new symbol with the \lex{\%oparray} construct,
 the user has to specify how the symbol is implemented. 
 The user has also to specify how a list can be built (this is no 
 longer optional as in the \lex{\%op} construct):
 \begin{itemize}
-\item the \lex{make\_empty(n)} construct should return a list of
+\item\label{emptyarray} the \lex{make\_empty(n)} construct should return a list of
   size~\texttt{n}.  
 
-\item the \lex{make\_add(l,e,n)} construct corresponds to a
-  function parametrised by a list variable, a term variable and an
-  integer. This function should return a list~\texttt{l'} such that
+\item\label{append} the \lex{make\_append(e,l)} construct corresponds to a
+  function parametrised by a list variable and a term variable. 
+\\\\!! Warning..\\\\
+This function should return a list~\texttt{l'} such that
   the element~\texttt{e} is at the \texttt{n-th} position.
 \end{itemize}
 
