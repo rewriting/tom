@@ -1,10 +1,3 @@
-/**
- *
- * The TomServer manages plugins. It parses Tom.xml in order to find which
- * plugins are used and how they are ordered. Then it instantiates them.
- *
- */
-
 package jtom;
 
 import java.util.*;
@@ -25,6 +18,12 @@ import jtom.tools.*;
 import aterm.*;
 import aterm.pure.*;
 
+/**
+ * The TomServer manages plugins. It parses Tom.xml in order to find which
+ * plugins are used and how they are ordered. Then it instantiates them.
+ *
+ * @author Gr&eacute;gory ANDRIEN
+ */
 public class TomServer implements TomPluginOptions
 {
     %include{ adt/TomSignature.tom }

@@ -51,7 +51,7 @@ public class TomBackend extends TomBase implements TomPlugin
 
     public TomBackend()
     {
-	myOptions = `concTomOption(OptionBoolean("noOutput", "", "Generate code", False()), // desactivation flag
+	myOptions = `concTomOption(OptionBoolean("noOutput", "", "Do not generate code", False()), // desactivation flag
 				OptionBoolean("jCode", "j", "Generate Java code", True()),
 				OptionBoolean("cCode", "c", "Generate C code", False()),
 				OptionBoolean("eCode", "e", "Generate Eiffel code", False()),

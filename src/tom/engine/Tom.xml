@@ -142,12 +142,6 @@
     description="Add memory management while debugging (not correct with list matching)"
     valueB="false" />
 
-  <OptionBoolean
-    name="eclipse"
-    altName=""
-    description="Eclipse mode"
-    valueB="false" />
-
   <OptionString
     name="import"
     altName="I"
