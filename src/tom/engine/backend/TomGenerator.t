@@ -32,6 +32,8 @@ import java.io.Writer;
 import java.io.IOException;
 import java.util.HashMap;
 
+import aterm.*;
+
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 
@@ -41,7 +43,7 @@ import jtom.tools.SingleLineOutputCode;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
-public class TomGenerator extends /*TomBase implements*/ TomTask {
+public class TomGenerator extends TomTask {
   
   private String debugKey = null;
   private boolean cCode = false, eCode = false, jCode = false, supportedGoto = false, 

@@ -36,7 +36,7 @@ import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
-import aterm.ATerm;
+import aterm.*;
 import jtom.exception.TomRuntimeException;
 
 public class TomKernelCompiler extends TomBase {

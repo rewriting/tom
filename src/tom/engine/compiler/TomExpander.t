@@ -31,13 +31,13 @@ import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.runtime.Replace1;
 import jtom.runtime.Replace2;
-import aterm.ATerm;
+import aterm.*;
 import jtom.tools.*;
 import jtom.xml.Constants;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
-public class TomExpander extends /*TomBase implements*/ TomTask {
+public class TomExpander extends TomTask {
 	
   private TomKernelExpander tomKernelExpander;
   private TomFactory tomFactory;
