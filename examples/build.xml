@@ -297,6 +297,11 @@
       <exclude name="${caml}/List1.t"/>
       <exclude name="${caml}/PeanoMapped.t"/>
     </tom>
+    <copy todir="${examples.build}/${caml}">
+      <fileset dir="${examples.gen}/${caml}">
+        <include name="*.ml"/>
+      </fileset>
+    </copy>
     <!-- copy resources in build -->
     <copy todir="${examples.build}/${caml}">
       <fileset dir="${examples.dir}/${caml}">

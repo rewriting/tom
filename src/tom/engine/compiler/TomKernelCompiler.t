@@ -409,7 +409,7 @@ public class TomKernelCompiler extends TomBase {
             Instruction assign1 = tailExp;
             Instruction letAssign = `LetAssign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)),UnamedBlock(concInstruction(let,assign1)));
             loop = `WhileDo(Not(IsEmptyList(Ref(variableEndAST))),letAssign);
-            loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListName,TomTermToExpression(Ref(variableBeginAST)),Nop())));
+            loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListName,TomTermToExpression(variableBeginAST),Nop())));
           }
 
           Instruction letEnd = `LetRef(variableEndAST,

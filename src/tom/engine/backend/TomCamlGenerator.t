@@ -184,7 +184,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       generate(deep,variable);
       output.write(")");
     } else {
-      output.write("()");
+      output.write("(* checkstamp *)");
     }
   }
 
