@@ -24,6 +24,7 @@
 	<property name="examples"       location="examples"/>
 	<property name="utils"          location="utils"/>
 	<property name="lib"            location="lib"/>
+	<property name="man"            location="share"/>
 
 	<!-- libraries -->
 	<property name="concurrent.lib" value="${lib}/concurrent.jar"/>
@@ -281,6 +282,12 @@
 				<exclude name="TomSignature.tom"/>
 			</fileset>
 		</copy>
+		<copy todir="${stable.share}">
+			<fileset dir="${man}"> 
+				<include name="man/**/*"/>
+			</fileset>
+		</copy>
+
 		<!-- external libs -->
 		<copy todir="${stable.lib}" file="${aterm.lib}"/>
 		<copy todir="${stable.lib}" file="${sharedobject.lib}"/>
@@ -356,6 +363,11 @@
 			<fileset dir="${src.mapping}" includes="**/*.tom"/>
 			<fileset dir="${src.adt}" includes="*.tom">
 				<exclude name="TomSignature.tom"/>
+			</fileset>
+		</copy>
+		<copy todir="${src.share}">
+			<fileset dir="${man}"> 
+				<include name="man/**/*"/>
 			</fileset>
 		</copy>
 		<!-- external libs -->

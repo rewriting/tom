@@ -1,0 +1,106 @@
+.TH TOM 1
+.SH NAME
+tom \- a pattern matching compiler
+
+.SH SYNOPSIS
+.B tom
+.RI [ options ]
+.I sources[.t] ...
+.br
+.B tom.src
+.RI [ options ]
+.I sources[.t] ...
+
+.SH DESCRIPTION
+Tom is a pattern matching compiler, developed at INRIA. Tom is
+particularly well-suited for programming various transformations on
+trees/terms. The tool can be seen as a Yacc-like compiler translating
+patterns into executable pattern matching automata. Similarly to Yacc,
+when a match is found, the corresponding semantic action (a sequence
+of instructions written in C or Java) is triggered and executed.
+
+.SH OPTIONS
+The options are used either to choose the action to be performed or to
+configure the building process. They are mostly the same in
+.B tom
+and
+.BR tom.src .
+
+.TP
+.BI -c,\ --command \ <command>
+Execute the specified command (or directive). See section "Directives" for
+details.
+.TP
+.BI -s,\ --atermStat
+Print internal ATerm statistics
+.TP
+.BI -c,\ --cCode
+Generate C code
+.TP
+.BI --camlCode
+Generate Caml code
+.TP
+.BI -e,\ --eCode
+Generate Eiffel code
+.TP
+.BI -d,\ --destdir <directory>
+Specify where to place generated files
+.TP
+.BI -C,\ --doCompile
+Start after type-checking
+.TP
+.BI -h,\ --help
+Display the list of all available options and exit.
+.TP
+.BI -I,\ --import <path>
+Path for %include
+.TP
+.BI -i,\ --intermediate
+Generates intermediate files
+.TP
+.BI -l,\ --lazyType
+Use universal type
+.TP
+.BI -f,\ --noCheck
+Do not verify correctness
+.TP
+.BI -D,\ --noDeclaration
+Do not generate code for declarations
+.TP
+.BI --noOutput
+Do not generate code
+.TP
+.BI --noWarning
+Do not print warning
+.TP
+.BI --Wall
+Print all warnings
+.TP
+.BI -O,\ --optimize
+Generate optimized code
+.TP
+.BI -o,\ --output <file>
+Set output file name
+.TP
+.BI -p,\ --pretty
+Generate readable code
+.TP
+.BI --static
+Generate static functions
+.TP
+.BI -v,\ --verbose
+Set verbose mode on
+.TP
+.BI -V,\ --version
+Print version and exit.
+.PP
+
+.SH BUGS
+Report them all...
+
+This page documents TOM version 2.0rc1. 
+The homepage for TOM can be found at http://tom.loria.fr.
+
+.SH SEE ALSO
+.BR javac (1),
+.BR java (1)
