@@ -349,10 +349,10 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
 
   private void messageTypeErrorYetDefined(String name) {
-    if(Flags.noWarning) return;
     String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     System.out.println("\n *** Warning *** Multiple definition of type at line "+declLine);
     System.out.println(" *** Type '"+ name +"' is already defined");
+    Flags.findErrors = true;
   }
 
     /////////////////////////////////
@@ -383,9 +383,9 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
   
   private void messageOperatorErrorYetDefined(String name, String line) {
-    if(Flags.noWarning) return;
     System.out.println("\n *** Warning *** Multiple definition of operator at line "+line);
     System.out.println(" *** Operator '"+ name +"' is already defined");
+    Flags.findErrors = true;
   }
   
   private void verifySymbolCodomain(String returnTypeName, String symbName, String symbLine) throws TomException {
