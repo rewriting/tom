@@ -1,21 +1,22 @@
 import aterm.*;
 import aterm.pure.*;
 import jtom.runtime.*;
-import adt.gtree.*;
+import adt.gtree.term.*;
+import adt.gtree.term.types.*;
 
 public class GTree1 {
 
-  private TermFactory factory;
+  private Factory factory;
   private GenericTraversal traversal;
   
-  %include { adt/gtree/term.tom }
+  %include { term.tom }
 
-  public GTree1(TermFactory factory) {
+  public GTree1(Factory factory) {
     this.factory = factory;
     this.traversal = new GenericTraversal();
   }
 
-  public TermFactory getTermFactory() {
+  public Factory getTermFactory() {
     return factory;
   }
 
@@ -59,7 +60,7 @@ public class GTree1 {
     }
   
   public final static void main(String[] args) {
-    GTree1 test = new GTree1(new TermFactory(new PureFactory()));
+    GTree1 test = new GTree1(new Factory(new PureFactory()));
 
     test.run(0);
   }

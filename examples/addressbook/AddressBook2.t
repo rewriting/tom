@@ -1,23 +1,24 @@
 import aterm.*;
 import aterm.pure.*;
-import adt.address.*;
+import adt.address.data.*;
+import adt.address.data.types.*;
 
 
 public class AddressBook2 {
-  private DataFactory factory;
+  private Factory factory;
    
-  %include { adt/address/data.tom }
+  %include { data.tom }
  
-  public AddressBook2(DataFactory factory) {
+  public AddressBook2(Factory factory) {
     this.factory = factory;
   }
 
-  public DataFactory getDataFactory() {
+  public Factory getDataFactory() {
     return factory;
   }
 
   public final static void main(String[] args) {
-    AddressBook2 test = new AddressBook2(new DataFactory(new PureFactory()));
+    AddressBook2 test = new AddressBook2(new Factory(new PureFactory()));
     test.run();
   }
   
