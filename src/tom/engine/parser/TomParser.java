@@ -583,7 +583,7 @@ public class TomParser implements TomParserConstants {
       input.read(inputBuffer);
       tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),verifier(),importList);
       astTom = tomParser.startParsing();
-        //System.out.println("astTom = " + astTom);
+      astTom = tsf().makeTomTerm_TomInclude(astTom.getList());
       list.add(astTom);
     } catch (FileNotFoundException e1) {
       System.out.println("File " + fileName.image + " not found.");

@@ -293,7 +293,7 @@ public class Tom {
         int defaultDeep = 2;
         Writer writer = new BufferedWriter(new OutputStreamWriter(
           new FileOutputStream(fileName + outputSuffix)));
-        OutputCode out = new OutputCode(writer, Flags.pretty);
+        OutputCode out = new OutputCode(writer);
         tomGenerator.generate(out,defaultDeep,compiledTerm);
         writer.close();
         stopChrono();

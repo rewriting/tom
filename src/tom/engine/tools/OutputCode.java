@@ -27,14 +27,12 @@ package jtom.tools;
 
 import java.io.*;
 
-public final class OutputCode {
-  private Writer file;
+public class OutputCode {
+  protected Writer file;
   private int lineCounter = 0;
-  private boolean pretty = false;
-  
-  public OutputCode(Writer file, boolean prety) {
+
+  public OutputCode(Writer file) {
     this.file = file;
-    pretty = prety;
   }
 
   public OutputCode() {
@@ -67,12 +65,12 @@ public final class OutputCode {
   }
   
   public void write(String s) throws IOException {
-      //try {
+      try {
       file.write(s);
-        //} catch (IOException e) {
-        //System.out.println("write error");
-        //e.printStackTrace();
-        //}
+        } catch (IOException e) {
+        System.out.println("write error");
+        e.printStackTrace();
+        }
   }
 
   public void write(int n) throws IOException {
@@ -84,33 +82,38 @@ public final class OutputCode {
     write(s);
   }
 
-  public void writeln() throws IOException {
+  protected void internalWriteln() throws IOException {
     file.write('\n');
     lineCounter++;
   }
 
+   public void writeln() throws IOException {
+    if(Flags.pretty) {
+      System.out.println("writeln");
+      internalWriteln();
+    }
+  }
+  
   public void writeln(String s) throws IOException {
     write(s);
-    if(pretty)
-      writeln();
+    writeln();
   }
 
   public void writeln(int deep,String s) throws IOException {
     write(deep,s);
-    if(pretty)
-      writeln();
+    writeln();
   }
 
   public void write(int deep,String s, int line, int length) throws IOException {
-    if(lineCounter > line && !pretty) {
-      System.out.println("Synchronization issue:" +s+ "\nLine: "+line +" versus LineCounter:"+ lineCounter);
+    if(lineCounter > line && !Flags.pretty) {
+      System.out.println("Synchronization issue: Line: "+line +" versus LineCounter:"+ lineCounter);
     }
     
     while(lineCounter < line) {
-//        write("/* newline : Line: "+line+" Length:"+ length +" LineCounter:"+ lineCounter+"*/");
-      writeln();
+        //write("/* newline : Line: "+line+" Length:"+ length +" LineCounter:"+ lineCounter+"*/");
+      internalWriteln();
     }
-//      write(0, "/*" + "Line: " + line + " Length:" + length + "*/");
+      //write("/*" + "Line: " + line + " Length:" + length + "*/");
     write(deep,s);
     lineCounter+= length;
   } 

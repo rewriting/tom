@@ -97,6 +97,7 @@
   [TomTerm,ExpressionToTomTerm,ExpressionToTomTerm(<astExpression(Expression)>)],
 
   [TomTerm,Tom,Tom(<list(TomList)>) ],
+  [TomTerm,TomInclude,TomInclude(<list(TomList)>) ],
 
   [TomTerm,MakeTerm,MakeTerm(<kid1(TomTerm)>) ],
 

@@ -63,6 +63,13 @@ public class TomGenerator extends TomBase {
         return;
       }
 
+      TomInclude(l) -> {
+        OutputCode singleLineOutput = new SingleLineOutputCode(out);
+        generateList(singleLineOutput,deep,l);
+        return;
+      }
+
+      
       Line[] -> { return; }
      
       BuildVariable(Name(name)) -> {
