@@ -39,7 +39,7 @@ import java.text.*;
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.tomsignature.types.tomterm.RuleSet;
+import jtom.adt.tomsignature.types.instruction.RuleSet;
 import jtom.adt.tomsignature.types.instruction.Match;
 import jtom.exception.*;
 import jtom.tools.*;
@@ -1258,7 +1258,7 @@ void LocalVariableConstruct(LinkedList list) throws TomException: /* in DEFAULT 
   {
     addPreviousCode(list);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTomTerm_LocalVariable());
+    list.add(tsf().makeInstruction_LocalVariable());
   }
 }
 
@@ -1366,7 +1366,7 @@ void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
     <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    RuleSet rule = tsf().makeTomTerm_RuleSet(ruleList, orgTrackRuleSet);
+    RuleSet rule = tsf().makeInstruction_RuleSet(ruleList, orgTrackRuleSet);
     list.add(rule);
     if (debugMode)
       debuggedStructureList.add(rule);

@@ -62,52 +62,52 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
 
 
  	protected void buildTerm(int deep, String name, TomList argList) throws IOException {
-		output.write("tom_make_");
-		output.write(name);
-		output.writeOpenBrace();
-		while(!argList.isEmpty()) {
-			generate(deep,argList.getHead());
-			argList = argList.getTail();
-			if(!argList.isEmpty()) {
-				output.writeComa();
-			}
-		}
-		output.writeCloseBrace();
+          output.write("tom_make_");
+          output.write(name);
+          output.writeOpenBrace();
+          while(!argList.isEmpty()) {
+            generate(deep,argList.getHead());
+            argList = argList.getTail();
+            if(!argList.isEmpty()) {
+              output.writeComa();
+            }
+          }
+          output.writeCloseBrace();
 	}
 	
 	protected void buildList(int deep, String name, TomList argList) throws IOException {
-		TomSymbol tomSymbol = symbolTable().getSymbol(name);
-		String listType = getTLType(getSymbolCodomain(tomSymbol));
-		int size = 0;
-		while(!argList.isEmpty()) {
-			TomTerm elt = argList.getHead();
-
-			matchBlock: {
-				%match(TomTerm elt) {
-					Composite(concTomTerm(VariableStar[])) | VariableStar[] |
-						Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
-						Composite(concTomTerm(Variable[])) -> {
-						output.write("tom_insert_list_" + name + "(");
-						generate(deep,elt);
-						output.write(",");
-						break matchBlock;
-					}
-					_ -> {
-						output.write("tom_make_insert_" + name + "(");
-						generate(deep,elt);
-						output.write(",");
-						break matchBlock;
-					}
-				}
-			} // end matchBlock
-          
-			argList = argList.getTail();
-			size++;
-		}
-		output.write("(" + listType + ") tom_make_empty_" + name + "()");
-		for(int i=0; i<size; i++) {
-			output.write(")");
-		}
+          TomSymbol tomSymbol = symbolTable().getSymbol(name);
+          String listType = getTLType(getSymbolCodomain(tomSymbol));
+          int size = 0;
+          while(!argList.isEmpty()) {
+            TomTerm elt = argList.getHead();
+            
+            matchBlock: {
+              %match(TomTerm elt) {
+                Composite(concTomTerm(VariableStar[])) | VariableStar[] |
+                  Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
+                  Composite(concTomTerm(Variable[])) -> {
+                  output.write("tom_insert_list_" + name + "(");
+                  generate(deep,elt);
+                  output.write(",");
+                  break matchBlock;
+                }
+                _ -> {
+                  output.write("tom_make_insert_" + name + "(");
+                  generate(deep,elt);
+                  output.write(",");
+                  break matchBlock;
+                }
+              }
+            } // end matchBlock
+            
+            argList = argList.getTail();
+            size++;
+          }
+          output.write("(" + listType + ") tom_make_empty_" + name + "()");
+          for(int i=0; i<size; i++) {
+            output.write(")");
+          }
 	} 
 
 	protected void buildArray(int deep, String name, TomList argList) throws IOException {

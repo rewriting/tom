@@ -922,6 +922,7 @@ public class TomDebugger {
     TomList list = trm.getStructList();
     while (!list.isEmpty()) {
       TomTerm struct = list.getHead();
+      System.out.println("Warning: analyseStructure has to be re-implemented");
       if (false /*struct.isMatch()*/) {
       	/*
           // The only present option in the list is the orgTack
@@ -946,7 +947,7 @@ public class TomDebugger {
         }
         mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Match", fileName, line, nbPatterns, nbSubjects, patternText, patternLine));
         */
-      } else if (struct.isRuleSet()) {
+      } else if (false /*struct.isRuleSet()*/) {
         /*String fileName = struct.getOrgTrack().getFileName().getString();
         int line = struct.getOrgTrack().getLine();
         String key = fileName+line;

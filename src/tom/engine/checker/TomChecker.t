@@ -127,17 +127,16 @@ abstract public class TomChecker extends TomTask {
                 verifyDeclaration(declaration);
                 return false;
               }
-              
-              RuleSet(list, orgTrack) -> {
-                verifyRule(list, orgTrack);
-                return false;
-              }
             }
           } else if(subject instanceof Instruction) {
             %match(Instruction subject) {
               Match(SubjectList(matchArgsList), PatternList(patternActionList), list) -> {  
                 verifyMatch(matchArgsList, patternActionList, list);
                 return true;
+              }
+              RuleSet(list, orgTrack) -> {
+                verifyRule(list, orgTrack);
+                return false;
               }
             }
           } 
@@ -153,19 +152,16 @@ abstract public class TomChecker extends TomTask {
   protected void checkTypeInference(TomTerm expandedTerm) {
     Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm term) {
-          if(term instanceof TomTerm) {
-            %match(TomTerm term) {
-              RuleSet(list, orgTrack) -> {
-                currentTomStructureOrgTrack = orgTrack;
-                verifyRuleVariable(list);
-                return false;
-              }
-            }
-          } else if(term instanceof Instruction) {
+          if(term instanceof Instruction) {
             %match(Instruction term) {
               Match(_, PatternList(list), oplist) -> {  
                 currentTomStructureOrgTrack = findOriginTracking(oplist);
                 verifyMatchVariable(list);
+                return false;
+              }
+              RuleSet(list, orgTrack) -> {
+                currentTomStructureOrgTrack = orgTrack;
+                verifyRuleVariable(list);
                 return false;
               }
             }

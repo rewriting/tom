@@ -32,7 +32,7 @@ import java.text.*;
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.tomsignature.types.tomterm.RuleSet;
+import jtom.adt.tomsignature.types.instruction.RuleSet;
 import jtom.adt.tomsignature.types.instruction.Match;
 import jtom.exception.*;
 import jtom.tools.*;
@@ -1357,7 +1357,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     jj_consume_token(VARIABLE);
     addPreviousCode(list);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTomTerm_LocalVariable());
+    list.add(tsf().makeInstruction_LocalVariable());
   }
 
   final public void IncludeConstruct(LinkedList list) throws ParseException, TomException, TomIncludeException {
@@ -1526,7 +1526,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    RuleSet rule = tsf().makeTomTerm_RuleSet(ruleList, orgTrackRuleSet);
+    RuleSet rule = tsf().makeInstruction_RuleSet(ruleList, orgTrackRuleSet);
     list.add(rule);
     if (debugMode)
       debuggedStructureList.add(rule);

@@ -59,7 +59,6 @@ public abstract class TomAbstractGenerator extends TomBase {
     staticFunction = input.isStaticFunction();
     genDecl = input.isGenDecl();
     pretty = input.isPretty();
-
   }
 
 // ------------------------------------------------------------
@@ -145,20 +144,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
-        buildFunctionBegin(deep, tomName, varList);
-        return;
-      }
-
-      MakeFunctionEnd() -> {
-        buildFunctionEnd(deep);
-        return;
-      }
-
-      EndLocalVariable() -> {
-        output.writeln(deep,"do"); return;
-      }
-      
       TargetLanguageToTomTerm(t) -> {
         generateTargetLanguage(deep,t);
         return;
@@ -332,6 +317,21 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
+        buildFunctionBegin(deep, tomName, varList);
+        return;
+      }
+
+      MakeFunctionEnd() -> {
+        buildFunctionEnd(deep);
+        return;
+      }
+
+      EndLocalVariable() -> {
+        output.writeln(deep,"do");
+        return;
+      }
+      
       Assign(var@(Variable|VariableStar)(list,name1,
                           Type(ASTTomType(type),tlType@TLType[])),exp) -> {
         buildAssignVar(deep, var, list, type, tlType, exp);
@@ -363,6 +363,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
+      AbstractBlock(instList) -> {
+        generateInstructionList(deep, instList);
+        return;
+      }
+
       UnamedBlock(instList) -> {
         buildUnamedBlock(deep, instList);
         return;
@@ -411,21 +416,16 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      OpenBlock()  -> { output.writeln(deep,"{"); return; }
-      CloseBlock() -> { output.writeln(deep,"}"); return; }
-
-			CompiledMatch(instruction, list) -> {
-				buildCompiledMatch(deep, instruction, list);
-				return;
-			}
-
-			CompiledPattern(instruction) -> {
-				generateInstruction(deep, instruction);
-				buildInstructionSequence();
-				return;
-			}
-
-
+      CompiledMatch(instruction, list) -> {
+        buildCompiledMatch(deep, instruction, list);
+        return;
+      }
+      
+      CompiledPattern(instruction) -> {
+        generateInstruction(deep, instruction);
+        buildInstructionSequence();
+        return;
+      }
       
       t -> {
         System.out.println("Cannot generate code for instruction: " + t);
@@ -656,13 +656,13 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 
-	public void generateInstructionList(int deep, InstructionList subject)
-		throws IOException {
-		while(!subject.isEmpty()) {
-			generateInstruction(deep,subject.getHead());
-			subject = subject.getTail();
-		}
-	}
+  public void generateInstructionList(int deep, InstructionList subject)
+    throws IOException {
+    while(!subject.isEmpty()) {
+      generateInstruction(deep,subject.getHead());
+      subject = subject.getTail();
+    }
+  }
 
   public void generateSlotList(int deep, SlotList slotList)
     throws IOException {
@@ -692,6 +692,9 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildList(int deep, String name, TomList argList) throws IOException;
   protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
+  protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
+  protected abstract void buildFunctionEnd(int deep) throws IOException;
+  protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
 
   protected void buildCompiledMatch(int deep, Instruction instruction, OptionList list) throws IOException {
     boolean generated = hasGeneratedMatch(list);
@@ -708,9 +711,6 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 	
-  protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
-  protected abstract void buildFunctionEnd(int deep) throws IOException;
-  protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
   
   protected void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException {
     generateExpression(deep,exp1);

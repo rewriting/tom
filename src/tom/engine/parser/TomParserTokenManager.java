@@ -31,7 +31,7 @@ import java.text.*;
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.tomsignature.types.tomterm.RuleSet;
+import jtom.adt.tomsignature.types.instruction.RuleSet;
 import jtom.adt.tomsignature.types.instruction.Match;
 import jtom.exception.*;
 import jtom.tools.*;

@@ -127,79 +127,6 @@ public class TomCompiler extends TomTask {
               }
             }
 
-            RuleSet(ruleList@manyTomRuleList(
-                      RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],tail), orgTrack) -> {
-              if(debugMode) {
-                debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-              }
-              TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-              TomName name = tomSymbol.getAstName();
-              TomTypeList typesList = tomSymbol.getTypesToType().getDomain();        
-              TomNumberList path = tsf().makeTomNumberList();
-              TomList matchArgumentsList = empty();
-              TomList patternActionList  = empty();
-              TomTerm variable;
-              int index = 0;
-            
-              path = (TomNumberList) path.append(`RuleVar());
-            
-              while(!typesList.isEmpty()) {
-                TomType subtermType = typesList.getHead();
-                variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType);
-                matchArgumentsList = append(variable,matchArgumentsList);
-                typesList = typesList.getTail();
-                index++;
-              }
-            
-              while(!ruleList.isEmpty()) {
-                TomRule rule = ruleList.getHead();
-                %match(TomRule rule) {
-                  RewriteRule(Term(Appl[args=matchPatternsList]),
-                              Term(rhsTerm),
-                              condList,
-                              option) -> {
-                  
-                    TomTerm newRhs = preProcessing(`MakeTerm(rhsTerm));
-                    Instruction rhsInst = `Return(newRhs);
-                    if(debugMode) {
-                      TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
-                      rhsInst = `UnamedBlock(concInstruction(TargetLanguageToInstruction(tl), rhsInst));
-                    }
-                    Instruction newRhsInst = buildCondition(condList,rhsInst);
-                  
-                    patternActionList = append(`PatternAction(TermList(matchPatternsList),newRhsInst, option),patternActionList);
-                  }
-                } 
-                ruleList = ruleList.getTail();
-              }
-            
-              TomTerm subjectListAST = `SubjectList(matchArgumentsList);
-              TomTerm makeFunctionBeginAST = `MakeFunctionBegin(name,subjectListAST);
-              ArrayList optionList = new ArrayList();
-              optionList.add(orgTrack);
-                //optionList.add(tsf().makeOption_GeneratedMatch());
-              OptionList generatedOptions = ast().makeOptionList(optionList);
-              Instruction matchAST = `Match(SubjectList(matchArgumentsList),
-                                            PatternList(patternActionList),
-                                            generatedOptions);
-              Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(matchArgumentsList,replace_preProcessing_makeTerm)));
-              TomList l = empty();
-              if(eCode) {
-                l = append(makeFunctionBeginAST,l);
-                l = append(`LocalVariable(),l);
-                l = append(`EndLocalVariable(),l);
-                l = appendInstruction(matchAST,l);
-                l = appendInstruction(buildAST,l);
-                l = append(`MakeFunctionEnd(),l);
-              } else {
-                l = append(makeFunctionBeginAST,l);
-                l = appendInstruction(matchAST,l);
-                l = appendInstruction(buildAST,l);
-                l = append(`MakeFunctionEnd(),l);
-              }
-            
-              return preProcessing(`Tom(l));
-            }
           } // end match
         } else if(subject instanceof Instruction) {
           %match(Instruction subject) {
@@ -287,6 +214,85 @@ public class TomCompiler extends TomTask {
                                             matchOptionList);
               return newMatch;
             }
+
+            RuleSet(ruleList@manyTomRuleList(
+                      RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],tail), orgTrack) -> {
+              if(debugMode) {
+                debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
+              }
+              TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+              TomName name = tomSymbol.getAstName();
+              TomTypeList typesList = tomSymbol.getTypesToType().getDomain();        
+              TomNumberList path = tsf().makeTomNumberList();
+              TomList matchArgumentsList = empty();
+              TomList patternActionList  = empty();
+              TomTerm variable;
+              int index = 0;
+            
+              path = (TomNumberList) path.append(`RuleVar());
+            
+              while(!typesList.isEmpty()) {
+                TomType subtermType = typesList.getHead();
+                variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType);
+                matchArgumentsList = append(variable,matchArgumentsList);
+                typesList = typesList.getTail();
+                index++;
+              }
+            
+              while(!ruleList.isEmpty()) {
+                TomRule rule = ruleList.getHead();
+                %match(TomRule rule) {
+                  RewriteRule(Term(Appl[args=matchPatternsList]),
+                              Term(rhsTerm),
+                              condList,
+                              option) -> {
+                  
+                    TomTerm newRhs = preProcessing(`MakeTerm(rhsTerm));
+                    Instruction rhsInst = `Return(newRhs);
+                    if(debugMode) {
+                      TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
+                      rhsInst = `UnamedBlock(concInstruction(TargetLanguageToInstruction(tl), rhsInst));
+                    }
+                    Instruction newRhsInst = buildCondition(condList,rhsInst);
+                  
+                    patternActionList = append(`PatternAction(TermList(matchPatternsList),newRhsInst, option),patternActionList);
+                  }
+                } 
+                ruleList = ruleList.getTail();
+              }
+            
+              TomTerm subjectListAST = `SubjectList(matchArgumentsList);
+              Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,subjectListAST);
+              ArrayList optionList = new ArrayList();
+              optionList.add(orgTrack);
+                //optionList.add(tsf().makeOption_GeneratedMatch());
+              OptionList generatedOptions = ast().makeOptionList(optionList);
+              Instruction matchAST = `Match(SubjectList(matchArgumentsList),
+                                            PatternList(patternActionList),
+                                            generatedOptions);
+              Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(matchArgumentsList,replace_preProcessing_makeTerm)));
+              InstructionList l;
+              if(eCode) {
+                l = `concInstruction(
+                  makeFunctionBeginAST,
+                  LocalVariable(),
+                  EndLocalVariable(),
+                  matchAST,
+                  buildAST,
+                  MakeFunctionEnd()
+                  );
+              } else {
+                l = `concInstruction(
+                  makeFunctionBeginAST,
+                  matchAST,
+                  buildAST,
+                  MakeFunctionEnd()
+                  );
+              }
+            
+              return preProcessingInstruction(`AbstractBlock(l));
+            }
+
           } // end match
 
         } // end instanceof Instruction
