@@ -46,7 +46,7 @@ public class SymbolTable {
   private final static String TYPE_CHAR      = "char";
   private final static String TYPE_DOUBLE    = "double";
   private final static String TYPE_STRING    = "String";
-  private final static String TYPE_BOOL      = "bool";
+  private final static String TYPE_BOOLEAN   = "boolean";
   private final static String TYPE_UNIVERSAL = "universal";
   private final static String TYPE_VOID      = "void";
 
@@ -63,7 +63,7 @@ public class SymbolTable {
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
-      putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"int"));
+      putType(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"int"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
       putType(TYPE_LONG, ast().makeType(TYPE_LONG,"long"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
@@ -72,7 +72,7 @@ public class SymbolTable {
       putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
     } else if( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
-      putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"boolean"));
+      putType(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"boolean"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
       putType(TYPE_LONG, ast().makeType(TYPE_LONG,"long"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
@@ -81,7 +81,7 @@ public class SymbolTable {
       putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
     } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) { // this is really bad, will need to be improved
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
-      putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"bool"));
+      putType(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"bool"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
       putType(TYPE_LONG, ast().makeType(TYPE_LONG,"long"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
@@ -153,8 +153,8 @@ public class SymbolTable {
     return getType(TYPE_DOUBLE);
   }
 
-  public TomType getBoolType() {
-    return getType(TYPE_BOOL);
+  public TomType getBooleanType() {
+    return getType(TYPE_BOOLEAN);
   }
   
   public TomType getStringType() {
@@ -185,8 +185,8 @@ public class SymbolTable {
     return type.equals(TYPE_STRING);
   }
 
-  public boolean isBoolType(String type) {
-    return type.equals(TYPE_BOOL);
+  public boolean isBooleanType(String type) {
+    return type.equals(TYPE_BOOLEAN);
   }
 
   public boolean isDoubleType(String type) {
@@ -199,7 +199,7 @@ public class SymbolTable {
 
   public boolean isBuiltinType(String type) {
     return isIntType(type) || isLongType(type) || isCharType(type) ||
-      isStringType(type) || isBoolType(type) || isDoubleType(type);
+      isStringType(type) || isBooleanType(type) || isDoubleType(type);
   }
  
   public TomType getBuiltinType(String type) {
@@ -211,8 +211,8 @@ public class SymbolTable {
       return getCharType();
     } else if(isStringType(type)) {
       return getStringType();
-    } else if(isBoolType(type)) {
-      return getBoolType();
+    } else if(isBooleanType(type)) {
+      return getBooleanType();
     } else if(isDoubleType(type)) {
       return getDoubleType();
     } 

@@ -775,7 +775,7 @@ public class TomKernelCompiler extends TomBase {
       concConstraint(Ensure(exp) ,tail*) -> {
         //System.out.println("constraint: " + source + " Ensure " + exp);
         //Instruction subBody = compileConstraint(`exp,source,body);
-        TomType type = getSymbolTable().getBoolType();
+        TomType type = getSymbolTable().getBooleanType();
         Expression equality = `EqualTerm(type,ExpressionToTomTerm(TrueTL()),exp);
         Instruction generatedTest = `IfThenElse(equality,body,Nop());
         return `buildConstraint(tail,source,generatedTest);

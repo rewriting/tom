@@ -27,22 +27,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-%typeterm bool {
-  implement           { int }
+%typeterm boolean {
+  implement           { boolean }
   get_fun_sym(t)      { t }
-  cmp_fun_sym(s1,s2)  { (s1==s2) || (s1!=0 && s2!=0) }
+  cmp_fun_sym(s1,s2)  { (s1==s2) }
   get_subterm(t, n)   { null }
-  equals(t1,t2)       { (t1==t2) || (t1!=0 && t2!=0) }
+  equals(t1,t2)       { (t1==t2) }
 }
 
-%op bool true {
+%op boolean true {
   fsym {}
-  is_fsym(t) { t!=0 }
-  make { 1 }
+  is_fsym(t) { t==true }
+  make { true }
 }
 
-%op bool false {
+%op boolean false {
   fsym {}
-  is_fsym(t) { t==0 }
-  make { 0 }
+  is_fsym(t) { t==false }
+  make { false }
 }

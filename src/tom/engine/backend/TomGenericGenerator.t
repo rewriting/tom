@@ -340,7 +340,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     
-    TomType returnType = getSymbolTable().getBoolType();
+    TomType returnType = getSymbolTable().getBooleanType();
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -390,7 +390,7 @@ String name2, String type1, String type2, TargetLanguage tlCode) throws IOExcept
       argType2 = getSymbolTable().getBuiltinType(type2);
     } 
     
-    generateTargetLanguage(deep, genDecl(getTLType(getSymbolTable().getBoolType()), "tom_cmp_fun_sym", type1,
+    generateTargetLanguage(deep, genDecl(getTLType(getSymbolTable().getBooleanType()), "tom_cmp_fun_sym", type1,
                                          new String[] {
                                            getTLType(argType1), name1,
                                            getTLType(argType2), name2
@@ -409,7 +409,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
       argType2 = getSymbolTable().getBuiltinType(type2);
     } 
     
-    generateTargetLanguage(deep, genDecl(getTLType(getSymbolTable().getBoolType()), "tom_terms_equal", type1,
+    generateTargetLanguage(deep, genDecl(getTLType(getSymbolTable().getBooleanType()), "tom_terms_equal", type1,
                                              new String[] {
                                                getTLType(argType1), name1,
                                                getTLType(argType2), name2
@@ -508,7 +508,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
     }
 
     generateTargetLanguage(deep,
-                           genDecl(getTLType(getSymbolTable().getBoolType()),
+                           genDecl(getTLType(getSymbolTable().getBooleanType()),
                                    functionName, type,
                                    new String[] { argType, varName },
                                    tlCode));
