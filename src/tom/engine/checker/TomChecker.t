@@ -430,7 +430,7 @@ abstract public class TomChecker extends TomGenericPlugin //Base
             messageError(currentTomStructureOrgTrack.getLine(), 
                          symbolType+" "+symbName, 
                          TomMessage.getString("SymbolDomainError"),
-                         new Object[]{new Integer(position), symbName, `typeName});
+                         new Object[]{new Integer(position), symbName, `(typeName)});
           }
           position++;
         }
@@ -443,7 +443,7 @@ abstract public class TomChecker extends TomGenericPlugin //Base
             messageError(currentTomStructureOrgTrack.getLine(), 
                          symbolType+" "+symbName, 
                          TomMessage.getString("ListSymbolDomainError"),
-                         new Object[]{symbName, `typeName});
+                         new Object[]{symbName, `(typeName)});
           }
         }
       } //match
@@ -515,7 +515,7 @@ abstract public class TomChecker extends TomGenericPlugin //Base
           messageError(orgTrack.getLine(), 
                        symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
                        TomMessage.getString("NonLinearMacroFunction"),
-                       new Object[]{MAKE, `name});
+                       new Object[]{MAKE, `(name)});
         } else {
           listVar.add(`name);
         }
@@ -608,7 +608,7 @@ abstract public class TomChecker extends TomGenericPlugin //Base
         if (!testTypeExistence(`type)) {
           messageError(currentTomStructureOrgTrack.getLine(),
                        TomMessage.getString("UnknownMatchArgumentTypeInSignature"),
-                       new Object[]{`name, `type});
+                       new Object[]{`name, `(type)});
           typeMatchArgs.add(null);
         } else {
           typeMatchArgs.add(`tomType);
@@ -619,7 +619,7 @@ abstract public class TomChecker extends TomGenericPlugin //Base
             // Maybe its an error to have the 2 same name variable in the match definition: warn the user
           messageWarning(currentTomStructureOrgTrack.getLine(),
 												 TomMessage.getString("RepeatedMatchArgumentName"),
-                         new Object[]{`name});
+                         new Object[]{`(name)});
         }
       } 
     }
@@ -1148,7 +1148,7 @@ abstract public class TomChecker extends TomGenericPlugin //Base
             // In disjunction we can only have known symbols
           messageError(decLine,
                        TomMessage.getString("UnknownSymbolInDisjunction"),
-                       new Object[]{`dijName});
+                       new Object[]{`(dijName)});
           return null;
         }
         if ( strictType  || !topLevel ) {
@@ -1165,7 +1165,7 @@ abstract public class TomChecker extends TomGenericPlugin //Base
           if(currentDomain != domainReference) {
             messageError(decLine, 
                          TomMessage.getString("InvalidDisjunctionDomain"),
-                         new Object[]{`dijName});
+                         new Object[]{`(dijName)});
             return null;
           }
         }
