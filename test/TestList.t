@@ -108,22 +108,22 @@ public class TestList extends TestCase {
 	}
 
 	private static final TestData[] TESTS1 = new TestData[] {
-		new TestData("[f(a)]","pattern1"                   ),
-		new TestData("[a,b,f(a)]","pattern2"               ),
-		new TestData("[a,f(a),b,f(b)]","pattern3"          ),
-		new TestData("[a,f(a),f(b)]","pattern3"            ),
-		new TestData("[f(a),f(b)]","pattern3"              ),
-		new TestData("[a,f(a),b,f(b),c]","pattern4"        ),
-		new TestData("[a,f(a),f(b),c]","pattern4"          ),     
-		new TestData("[f(a),f(b),c]","pattern4"            ),
-		new TestData("[f(b),f(b)]","pattern5"              ),
-		new TestData("[f(b),f(b),c]","pattern5"            ),
-		new TestData("[f(b),a,f(b)]","pattern5"            ),
-		new TestData("[f(b),a,f(b),c]","pattern5"          ),
-		new TestData("[f(c),f(b)]","pattern6"              ),
-		new TestData("[f(a),f(c),a,f(c)]","fail"           ),
-		new TestData("[f(a),f(c),a,f(c),f(c)]","pattern6"  ),
-		new TestData("[]","pattern7"                       )
+		new TestData("[f(a)]",                  "pattern1" ),
+		new TestData("[a,b,f(a)]",              "pattern2" ),
+		new TestData("[a,f(a),b,f(b)]",         "pattern3" ),
+		new TestData("[a,f(a),f(b)]",           "pattern3" ),
+		new TestData("[f(a),f(b)]",             "pattern3" ),
+		new TestData("[a,f(a),b,f(b),c]",       "pattern4" ),
+		new TestData("[a,f(a),f(b),c]",         "pattern4" ),     
+		new TestData("[f(a),f(b),c]",           "pattern4" ),
+		new TestData("[f(b),f(b)]",             "pattern5" ),
+		new TestData("[f(b),f(b),c]",           "pattern5" ),
+		new TestData("[f(b),a,f(b)]",           "pattern5" ),
+		new TestData("[f(b),a,f(b),c]",         "pattern5" ),
+		new TestData("[f(c),f(b)]",             "pattern6" ),
+		new TestData("[f(a),f(c),a,f(c)]",          "fail" ),
+		new TestData("[f(a),f(c),a,f(c),f(c)]", "pattern6" ),
+		new TestData("[]",                      "pattern7" )
 	};
 
   public ATerm match1(ATerm t) {

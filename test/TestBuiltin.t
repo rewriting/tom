@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class TestBuiltin extends TestCase {
-  private static ATerm ok,fail;
   private static ATerm pattern1,pattern2,pattern3,pattern4,pattern5;
  
   private ATermFactory factory;
@@ -15,8 +14,6 @@ public class TestBuiltin extends TestCase {
   
   public void setUp() {
     factory = new PureFactory(16);
-    ok   = factory.parse("ok");
-    fail = factory.parse("fail");
   }
 
   %include { int.tom }  
@@ -176,28 +173,76 @@ public class TestBuiltin extends TestCase {
     assertTrue(89 == `fibE(int(10)));
   }
   
-  public void test3() {
+  public void testMatchString1() {
+    assertTrue("Albert".equals(matchString("Albert")));
+  }
+
+  public void testMatchString2() {
     assertTrue("Roger".equals(matchString("Roger")));
   }
 
-  public void test4() {
+  public void testMatchStringDefault() {
+    assertTrue("Unknown".equals(matchString("Marcel")));
+  }
+
+  public void testMatchStringE1() {
+    assertTrue("Albert".equals(matchStringE(`string("Albert"))));
+  }
+
+  public void testMatchStringE2() {
     assertTrue("Roger".equals(matchStringE(`string("Roger"))));
   }
 
-  public void test5() {
+  public void testMatchStringEdefault() {
+    assertTrue("Unknown".equals(matchStringE(`string("Marcel"))));
+  }
+
+  public void testDouble1() {
+    assertTrue(1.23 == matchDouble(1.23));
+  }
+
+  public void testDouble2() {
     assertTrue(3.14 == matchDouble(3.14));
   }
 
-  public void test6() {
+  public void testDoubleDefault() {
+    assertTrue(0 == matchDouble(2.71));
+  }
+
+  public void testDoubleE1() {
     assertTrue(1.23 == matchDoubleE(`double(1.23)));
   }
 
-  public void test7() {
+  public void testDoubleE2() {
+    assertTrue(3.14 == matchDoubleE(`double(3.14)));
+  }
+
+  public void testDoubleEdefault() {
+    assertTrue(0 == matchDoubleE(`double(2.71)));
+  }
+
+  public void testChar1() {
     assertTrue('a' == matchChar('a'));
   }
 
-  public void test8() {
+  public void testChar2() {
+    assertTrue('b' == matchChar('b'));
+  }
+
+  public void testCharDefault() {
+    assertTrue('-' == matchChar('z'));
+  }
+
+  public void testCharE1() {
+    assertTrue('a' == matchCharE(`char('a')));
+  }
+
+  public void testCharE2() {
     assertTrue('b' == matchCharE(`char('b')));
+  }
+
+  public void testCharEdefault() {
+    assertTrue('-' == matchCharE(`char('k')));
   }
 
 }
