@@ -1161,7 +1161,7 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
   <BACKQUOTE_TERM> /* switch to TOM mode */
     { addPreviousCode(list); }
-     [ token = <TOM_BACKQUOTE> ]
+     [ backQuote = <TOM_BACKQUOTE> ]
     {
       orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
       backQuoteMode = true;
@@ -1181,7 +1181,7 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
       switchToDefaultMode(); /* switch to DEFAULT mode */
         //term = ast().buildBackQuoteTerm(tokenList);
       term = tomBackQuoteParser.buildBackQuoteTerm(tokenList);
-      if(token != null) {
+      if(backQuote != null) {
         term = tsf().makeTomTerm_DoubleBackQuote(term);
       }
       list.add(term);

@@ -2,8 +2,8 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)
-			     Nancy, France.
+    Copyright (C) 2000-2003 INRIA
+			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -97,9 +97,9 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
             %match(TomTerm subject) {
               DoubleBackQuote(backQuoteTerm) -> {
                 TomTerm t = expandTomSyntax(backQuoteTerm);
-                  //System.out.println("t1 = " + t);
+                  System.out.println("t1 = " + t);
                 t = expandBackQuoteXMLAppl(t);
-                  //System.out.println("t2 = " + t);
+                  System.out.println("t2 = " + t);
                 return t;
               }
               
@@ -126,8 +126,9 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
           }
         } // end apply
       }; // end new
-    
-    return (TomTerm) replace.apply(subject); 
+
+    return (TomTerm) replace.apply(subject);
+    return subject;
   }
 
   protected TomTerm expandRecordAppl(OptionList option, NameList nameList, TomList args) {

@@ -1272,7 +1272,7 @@ public class TomParser extends TomTask implements TomParserConstants {
       addPreviousCode(list);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_BACKQUOTE:
-      token = jj_consume_token(TOM_BACKQUOTE);
+      backQuote = jj_consume_token(TOM_BACKQUOTE);
       break;
     default:
       jj_la1[38] = jj_gen;
@@ -1296,7 +1296,7 @@ public class TomParser extends TomTask implements TomParserConstants {
       switchToDefaultMode(); /* switch to DEFAULT mode */
         //term = ast().buildBackQuoteTerm(tokenList);
       term = tomBackQuoteParser.buildBackQuoteTerm(tokenList);
-      if(token != null) {
+      if(backQuote != null) {
         term = tsf().makeTomTerm_DoubleBackQuote(term);
       }
       list.add(term);
