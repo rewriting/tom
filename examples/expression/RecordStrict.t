@@ -168,11 +168,11 @@ public class RecordStrict {
       CstExp() -> { return op; }
 
       UnaryOperator[first=e1] -> {
-        return op + "(" + prettyPrint(e1) + ")";
+        return op + "(" + prettyPrint(`e1) + ")";
       }
       
       BinaryOperator[first=e1,second=e2] -> {
-        return op + "(" + prettyPrint(e1) + "," + prettyPrint(e2) + ")";
+        return op + "(" + prettyPrint(`e1) + "," + prettyPrint(`e2) + ")";
       }
     }
     return "error";
@@ -184,11 +184,11 @@ public class RecordStrict {
       CstExp() -> { return op; }
       
       UnaryOperator[first=e1] -> {
-        return prettyPrintInv(e1) + " " + op;
+        return prettyPrintInv(`e1) + " " + op;
       }
       
       BinaryOperator[first=e1,second=e2] -> {
-        return prettyPrintInv(e1) + " " + prettyPrintInv(e2) + " " + op;
+        return prettyPrintInv(`e1) + " " + prettyPrintInv(`e2) + " " + op;
       }
     }
     return "error";
@@ -197,13 +197,13 @@ public class RecordStrict {
   public Exp traversalSimplify(Exp t) {
     %match(Exp t) {
       UnaryOperator[first=e1] -> {
-        ((UnaryOperator)t).first  = traversalSimplify(e1);
+        ((UnaryOperator)t).first  = traversalSimplify(`e1);
         return simplify(t);
       }
       
       BinaryOperator[first=e1, second=e2] -> {
-        ((BinaryOperator)t).first  = traversalSimplify(e1);
-        ((BinaryOperator)t).second = traversalSimplify(e2);
+        ((BinaryOperator)t).first  = traversalSimplify(`e1);
+        ((BinaryOperator)t).second = traversalSimplify(`e2);
         return simplify(t);
       }
     }
@@ -213,14 +213,14 @@ public class RecordStrict {
   public Exp simplify(Exp t) {
     %match(Exp t) {
       Plus[first=IntExp(v1), second=IntExp(v2)] -> {
-        return new IntExp(v1 + v2);
+        return new IntExp(`v1 + `v2);
       }
 
-      Plus[first=e1, second=IntExp(0)] -> { return e1; }
-      Plus[second=e1, first=IntExp(0)] -> { return e1; }
+      Plus[first=e1, second=IntExp(0)] -> { return `e1; }
+      Plus[second=e1, first=IntExp(0)] -> { return `e1; }
 
       Plus[first=e1, second=Uminus(e2)] -> {
-        if(myEquals(e1,e2)) {
+        if(`myEquals(e1,e2)) {
           return new IntExp(0);
         } else {
           return t;
@@ -228,11 +228,11 @@ public class RecordStrict {
       }
 
       Mult[first=IntExp(v1), second=IntExp(v2)] -> {
-        return new IntExp(v1 * v2);
+        return new IntExp(`(v1 * v2));
       }
       
-      Mult[first=e1, second=IntExp(1)] -> { return e1; }
-      Mult[second=e1, first=IntExp(1)] -> { return e1; }
+      Mult[first=e1, second=IntExp(1)] -> { return `e1; }
+      Mult[second=e1, first=IntExp(1)] -> { return `e1; }
     }
     return t;
   }
@@ -240,16 +240,16 @@ public class RecordStrict {
   
   public boolean myEquals(Exp t1, Exp t2) {
     %match(Exp t1, Exp t2) {
-      IntExp[value=e1], IntExp[value=e2]       -> { return e1==e2; }
+      IntExp[value=e1], IntExp[value=e2]       -> { return `e1==`e2; }
       
-      StringExp[value=e1], StringExp[value=e2] -> { return e1.equals(e2); }
+      StringExp[value=e1], StringExp[value=e2] -> { return `e1.equals(`e2); }
       
       UnaryOperator[first=e1], UnaryOperator[first=f1] -> {
-        return t1.getOperator().equals(t2.getOperator()) && myEquals(e1,f1);
+        return t1.getOperator().equals(t2.getOperator()) && `myEquals(e1,f1);
       }
       
       BinaryOperator[first=e1, second=e2], BinaryOperator[first=f1, second=f2] -> {
-        return t1.getOperator().equals(t2.getOperator()) && myEquals(e1,f1) && myEquals(e2,f2);
+        return t1.getOperator().equals(t2.getOperator()) && `myEquals(e1,f1) && `myEquals(e2,f2);
       }
       
     }
