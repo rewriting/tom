@@ -131,8 +131,8 @@
     <!-- build adt -->
     <adt file="${apireach.dir}/reach.adt" 
          factory="reach" 
-         package="adt.apireach" 
-         destdir="${apireach.dir}"/>
+         package="ApiReach" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${apireach.dir}" 
          destdir="${apireach.dir}" 
@@ -140,7 +140,7 @@
       <include name="**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${apireach.dir}" destdir="${apireach.dir}">
+    <javac srcdir="${apireach.dir}" destdir="${examples.dir}">
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac>
@@ -559,7 +559,7 @@
 			</classpath>
 			<batchtest>
 				<fileset dir="${examples.dir}">
-					<include name="AddressBook/Test*.java"/>
+					<include name="**/Test*.java"/>
 				</fileset>
 			</batchtest>
 		</tomjunit>
