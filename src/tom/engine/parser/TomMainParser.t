@@ -134,7 +134,7 @@ public class TomMainParser extends TomGenericPlugin {
 	    //createParser();
 	    parser = newParser(currentFile);
 
-	    setTerm( parser.input() );
+	    super.setTerm( parser.input() );
 
 	    if(verbose) 
 		System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
