@@ -43,9 +43,9 @@ class Main {
     }
     
     public static void main(String[] args) {
-   
-      Main main = new Main();
-      main.init();
+	
+	Main main = new Main();
+	main.init();
 
       try {
       
@@ -63,16 +63,17 @@ class Main {
 	
 	// attach java lexer to the input stream, which also creates a shared input state object
 	NewTomLexer tomlexer = new NewTomLexer(targetlexer.getInputState());
-
+	NewBQLexer bqlexer = new NewBQLexer(targetlexer.getInputState());
 
       // notify selector about various lexers; name them for convenient reference later
       selector.addInputStream(targetlexer,"targetlexer");
       selector.addInputStream(tomlexer, "tomlexer");
+      selector.addInputStream(bqlexer, "bqlexer");
       selector.select("targetlexer"); // start with main java lexer
 
       // Create parser attached to selector
       NewTargetParser parser = new NewTargetParser(selector, file.getAbsolutePath());
-
+      
       // Pull in one or more int decls with optional javadoc
       parser.input();
 

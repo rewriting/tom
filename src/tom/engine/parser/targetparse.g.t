@@ -102,6 +102,10 @@ class NewTargetParser extends Parser;
         return result;
     }
 
+    public void addTargetCode(Token t){
+        targetlexer.target.append(t.getText());
+    }
+
     private String pureCode(String code){
         return code.replace('\t',' ');
     }
@@ -117,6 +121,10 @@ class NewTargetParser extends Parser;
         catch(Exception e){
             e.printStackTrace();
         }
+    }
+    
+    void p(String s){
+        System.out.println(s);
     }
 } 
 
@@ -152,6 +160,7 @@ blockList [LinkedList list]
             matchConstruct[list]
         |   ruleConstruct[list] 
         |   signature()
+        |   backquoteTerm[list]
         |   localVariable()
         |   operator[list] 
         |   operatorList[list] 
@@ -160,9 +169,7 @@ blockList [LinkedList list]
         |   typeTerm[list] 
         |   typeList[list] 
         |   typeArray[list] 
-        |   LBRACE  
-            blockList[list]
-            RBRACE 
+        |   LBRACE blockList[list] RBRACE 
         |   TARGET 
         )*
 
@@ -230,6 +237,30 @@ signature
         {   
             tomparser.signature();
         } 
+    ;
+
+backquoteTerm [LinkedList list]
+{
+    TargetLanguage code = null;
+}
+    :
+        t:BACKQUOTE
+        {
+            String textCode = getCode();
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(popLine(),popColumn()),
+                    TextPosition(t.getLine(),t.getColumn())
+                );
+                list.add(code);
+            } 
+            
+            Option ot = `OriginTracking(Name("Backquote"),t.getLine(), Name(filename));
+            TomTerm bqTerm = tomparser.bqTerm();
+            list.add(bqTerm);
+            p("END BQ");
+        }
     ;
 
 localVariable
@@ -421,6 +452,7 @@ goalLanguage [LinkedList list] returns [TargetLanguage result]
 targetLanguage [LinkedList list] returns [TargetLanguage result]
 {
     result = null;
+p("begin target");
 }
     :
         blockList[list] t:RBRACE
@@ -435,9 +467,18 @@ targetLanguage [LinkedList list] returns [TargetLanguage result]
             
             targetlexer.clearTarget();
      
+            p("end target "+t.getLine());
         }
     ;
-
+/*
+bqGoal returns [String bqCode]
+{
+    bqCode = getCode();
+} 
+    :
+        blockList[new LinkedList()] RPAREN
+    ;
+*/
 
 // here begins the lexer
 
@@ -463,6 +504,9 @@ options {
     }
 }
 
+BACKQUOTE
+    :   "`" {Main.selector.push("tomlexer");}
+    ;
 RULE
     :   "%rule" {Main.selector.push("tomlexer");}
     ;
@@ -499,7 +543,19 @@ OPERATORLIST
 OPERATORARRAY
     :   "%oparray"  {Main.selector.push("tomlexer");}
     ;
-
+/*
+LPAREN
+    :   '(' 
+        {
+            target.append($getText);
+        }  
+    ;
+RPAREN
+    :   ')'
+        {
+            target.append($getText);
+        }  
+    ;*/
 LBRACE  
     :   '{' 
         {
@@ -615,7 +671,7 @@ ML_COMMENT
 	;
 
 protected 
-TARGET 
+TARGET
     :
         (   
             . 

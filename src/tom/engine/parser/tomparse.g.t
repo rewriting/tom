@@ -31,10 +31,11 @@ options{
     %include{TomSignature.tom}
     //--------------------------
         
-    private String filename;
+    public String filename;
 
     // the default-mode parser
     private NewTargetParser targetparser;
+    private NewBQParser bqparser;
 
     private StringBuffer text = new StringBuffer("");
     
@@ -46,8 +47,8 @@ options{
         this(state);
         this.filename = filename;
         this.targetparser = target;
-
         this.debuggedStructureList = `emptyTomList();
+        this.bqparser = new NewBQParser(state,this);
     }
 
 
@@ -80,14 +81,22 @@ options{
         return `StructTable(debuggedStructureList);
     }
 
+    public NewTomBackQuoteParser tomBQ(){
+        return NewTomBackQuoteParser.getInstance();
+    }
 
 
-    private void pushLine(int line){
+
+    public void pushLine(int line){
         targetparser.pushLine(line);
     }
 
-    private void pushColumn(int column){
+    public void pushColumn(int column){
         targetparser.pushColumn(column);
+    }
+
+    public void addTargetCode(Token t){
+        targetparser.addTargetCode(t);
     }
 
     private void setLastLine(int line){
@@ -102,7 +111,10 @@ options{
     private void clearText(){
         text.delete(0,text.length());
     }
-
+    
+    void p(String s){
+        System.out.println(s);
+    }
 }
 
 constant returns [Token result]
@@ -139,6 +151,7 @@ matchConstruct [Option ot] returns [Instruction result]
             )* 
             t:RBRACE 
             { 
+                p("last rbrace in match");
                 result = `Match(
                     SubjectList(ast().makeList(argumentList)),
                     PatternList(ast().makeList(patternActionList)),
@@ -189,6 +202,7 @@ patternAction [LinkedList list, StringBuffer debugKey]
     Option option = null;
 
     clearText();
+    p("begin pattern action");
 }
     :   (
             ( label:ID COLON )?
@@ -233,6 +247,9 @@ patternAction [LinkedList list, StringBuffer debugKey]
                 Main.selector.push("targetlexer");
                 //                TargetLanguage tlCode = targetparser.goalLanguage(blockList);
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+
+                p("end target in pattern action ");
+
                 
                 // target parser finished : pop the target lexer
                 Main.selector.pop();
@@ -1416,12 +1433,91 @@ keywordGetSize[String type] returns [Declaration result]
         )
     ;
 
+bqTerm returns [TomTerm result]
+{
+p("bqterm");   
+
+    String bqCode = null;
+    LinkedList blockList = new LinkedList();
+    result = null;
+}
+    :
+{        p("tombq");}
+        (
+            l:LPAREN 
+            {
+                blockList.add(l);
+                Main.selector.push("bqlexer");
+                result = bqparser.bqTarget(blockList);
+                Main.selector.pop();
+            }
+        |
+            i:ID 
+            {
+                blockList.add(i);
+                Main.selector.push("bqlexer");
+                result = bqparser.bqTargetAppl(blockList);
+                /*if(t != null){
+                    p(t.toString());
+
+                    // bqparser has read one token too much:
+                    // just add it to the target code
+                    addTargetCode(t);
+
+                    result = tomBQ().buildBackQuoteAppl(i.getText(),i.getLine(),filename);
+                    p(result.toString());
+                }
+                else{
+                    result = tomBQ().buildBackQuoteTerm(blockList,filename);                    
+                    p(result.toString());
+                }*/
+
+                Main.selector.pop();
+            }
+        )
+    ;
+
+
+/*
+        |   (ID LPAREN) => k:ID l1:LPAREN
+            {
+                blockList.add(k);
+                blockList.add(l1);
+                Main.selector.push("bqlexer");
+                bqparser.bqTarget(blockList);
+                Main.selector.pop();
+                
+                result = tomBQ().buildBackQuoteTerm(blockList,filename);
+            }
+        |   (ID STAR) => j:ID s:STAR 
+            {
+                pushLine(s.getLine());
+                pushColumn(s.getColumn());
+
+                result = tomBQ().buildVariableStar(j.getText(),j.getLine(),filename);
+                Main.selector.pop();
+            }
+        |   i:ID  (ANY)?
+            {
+                pushLine(i.getLine());
+                pushColumn(i.getColumn());
+
+                result = tomBQ().buildBackQuoteAppl(i.getText(),i.getLine(),filename);
+                p(result.toString());
+
+                Main.selector.pop();
+            }
+        )
+    ;
+
+*/
 
 class NewTomLexer extends Lexer;
 options {
 	k=3; // default lookahead
     charVocabulary = '\u0000'..'\uffff'; // each character can be read
     testLiterals = false;
+  //  filter = true;//OTHER;
 }
 
 tokens{
@@ -1463,6 +1559,7 @@ EQUAL       :   '=' ;
 AT          :   '@' ;
 STAR        :   '*' ;
 UNDERSCORE  :   '_' ;  
+
 
 
 WS	:	(	' '
@@ -1618,6 +1715,8 @@ NUM_INT
         )?
 	;
 
+//ANY :   .   ;
+
 protected MINUS         :   '-' ;
 protected PLUS          :   '+' ;
 protected QUOTE         :   '\''    ;
@@ -1625,3 +1724,4 @@ protected EXPONENT      :   ('e'|'E') ( PLUS | MINUS )? ('0'..'9')+  ;
 protected DOT           :   '.' ;
 protected FLOAT_SUFFIX	:	'f'|'F'|'d'|'D'	;
 
+//protected OTHER :   .   ;
