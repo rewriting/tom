@@ -372,6 +372,7 @@
     <javac destdir="${src.build}" 
            debug="${javacDebugInfo}" 
            verbose="${javacVerbose}"
+           fork="yes"
            nowarn="${nowarnings}">
       <src path="${src.src}"/>
       <src path="${src.gen}"/>
@@ -393,6 +394,7 @@
     <javac destdir="${stable.build}" 
            debug="${javacDebugInfo}"
            verbose="${javacVerbose}"
+           fork="yes"
            nowarn="${nowarnings}">
       <src path="${stable.src}"/>
       <src path="${stable.gen}"/>
