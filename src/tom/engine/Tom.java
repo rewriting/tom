@@ -41,7 +41,7 @@ import jtom.adt.*;
 
 
 public class Tom {
-  private static String version = "1.2";
+  private static String version = "1.3beta";
   
   private static void usage() {
     if(Flags.version) {
@@ -62,7 +62,7 @@ public class Tom {
     System.out.println("\t--doCompile | -C:\tStart after type-checking");
     System.out.println("\t--noCheck | -f:\t\tDo not verify correctness");
     System.out.println("\t--Wall:\t\t\tPrint all warnings");
-    System.out.println("\t--noWarning:\tPrint warning before stopping the compilation");
+    System.out.println("\t--noWarning:\t\tDo not print warning");
     System.out.println("\t--lazyType | -l:\tUse universal type");
     System.out.println("\t--demo | -d:\t\tRun demo mode");
     System.out.println("\t--import <path> | -I:\tPath for %include");
