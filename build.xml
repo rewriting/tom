@@ -683,6 +683,7 @@
       <batchtest>
         <fileset dir="${test.gen}">
           <include name="**/Test*.java"/>
+          <exclude name="**/TestList.java"/>
           <!--<exclude name="**/error/**"/>-->
         </fileset>
       </batchtest>
