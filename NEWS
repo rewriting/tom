@@ -10,15 +10,17 @@ version 2.1:
 	- new library organization 
     * tom
     *  |--- library
-    *  |        |--- adt         (datatype definitions)
-    *  |        |--- mapping     (predefined mapping)
-    *  |               |--- adt  (generated mapping)
-    *  |        |--- set         (to handle sets)
-    *  |        |--- strategies  (Antoine's master thesis)
-    *  |        |--- traversal   (generic traversal)
-    *  |        |--- xml         (xml tools)
+    *  |        |--- adt               (datatype definitions)
+    *  |        |--- mapping           (predefined mapping)
+    *  |               |--- adt        (generated mapping)
+    *  |        |--- plugin            (platform tools)
+    *  |        |--- set               (to handle sets)
+    *  |        |--- strategy
+    *  |               |--- concurrent (to support parallel strategy)
+    *  |        |--- traversal         (generic traversal)
+    *  |        |--- xml               (xml tools)
     *  |        
-    *  |--- platform             (the Tom Plugin Platform, known as Tom server)
+    *  |--- platform                   (the Tom Plugin Platform, known as Tom server)
     *           |--- adt     
 
 version 2.0:
