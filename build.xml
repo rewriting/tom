@@ -63,7 +63,6 @@
 	<!-- Define classpath for building stable and source	-->
 	<path id="stable.classpath">
 		<path refid="external.classpath"/>
-		<pathelement location="${utils}"/>
 		<fileset dir="${stable.adt}"><!-- ADT jar files -->
 			<include name="*.jar"/>
 		</fileset>
@@ -81,13 +80,11 @@
 	</path>
 
 	<path id="tom.classpath">
-		<pathelement location="${utils}"/>
 		<path refid="stable.classpath"/>
 		<pathelement location="${stable.build}"/>
 	</path>
 
 	<path id="tomsrc.classpath">
-		<pathelement location="${utils}"/>
 		<path refid="src.classpath"/>
 		<pathelement location="${src.build}"/>
 	</path>
@@ -110,18 +107,15 @@
 	<!-- builds and defines the custom tasks -->
 	<!-- tasks for building src -->
 	<target name="initTaskDef" depends="buildstable">
-		<javac srcdir="${utils}" destdir="${utils}">
-			<classpath refid="tom.classpath"/>
-		</javac>
-		<taskdef name="adt" classname="ApigenAntTask" classpathref="stable.classpath"/>
-		<taskdef name="tom" classname="TomAntTask">
+		<taskdef name="adt" classname="jtom.tools.ant.ApigenTask" classpathref="tom.classpath"/>
+		<taskdef name="tom" classname="jtom.tools.ant.TomTask">
 			<classpath refid="tom.classpath"/>
 		</taskdef>
 	</target>
 
 	<!-- define task for running tom.src -->
 	<target name="initsrc" depends="buildsrc">
-		<taskdef name="tomsrc" classname="TomAntTask">
+		<taskdef name="tomsrc" classname="jtom.tools.ant.TomTask">
 			<classpath refid="tomsrc.classpath"/>
 		</taskdef>
 	</target>
