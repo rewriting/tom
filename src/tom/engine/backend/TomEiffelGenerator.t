@@ -237,4 +237,17 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		out.writeln(deep,"end;");
 	}
 
+	protected void buildGetSubtermDecl(String name1, String name2, TomType type1, TomType tlType1, TomType tlType2) {
+    String args[];
+    if(strictType) {
+      args = new String[] { getTLCode(tlType1), name1,
+                            getTLCode(tlType2), name2 };
+    } else {
+			args = new String[] { getTLType(getUniversalType()), name1,
+														getTLCode(tlType2), name2 };
+    }
+    generateTargetLanguage(deep, genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1,
+																				 args, tlCode));
+	}
+	
 }

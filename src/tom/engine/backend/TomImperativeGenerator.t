@@ -314,54 +314,24 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     TomTypeList l = getSymbolDomain(tomSymbol);
     TomType type1 = getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
-    if(cCode) {
-        // TODO: build an abstract declaration
-      int argno=1;
-      out.indent(deep);
-      if(!l.isEmpty()) {
-        out.write(getTLType(type1));
-        out.writeSpace();
-        out.write(name1);
-        if(!l.isEmpty()) {
-          out.writeOpenBrace();
-          while (!l.isEmpty()) {
-            out.write(getTLType(l.getHead()));
-            out.writeUnderscore();
-            out.write(argno);
-            argno++;
-            l = l.getTail() ;
-            if(!l.isEmpty()) {
-              out.writeComa();
-            }
-          }
-          out.writeCloseBrace();
-          out.writeSemiColon();
-        }
-      }
-      out.writeln();
-    } else if(jCode) {
-        // do nothing
-    } else if(eCode) {
-        // do nothing
-    }
     
-      // inspect the optionList
-    generateOptionList(out, deep, optionList);
-      // inspect the slotlist
-    generateSlotList(out, deep, slotList);
+		// inspect the optionList
+    generateOptionList(deep, optionList);
+		// inspect the slotlist
+    generateSlotList(deep, slotList);
   }
 
-    protected void buildGetSubtermDecl(String name1, String name2, TomType type1, TomType tlType1, TomType tlType2) {
+	protected void buildGetSubtermDecl(String name1, String name2, TomType type1, TomType tlType1, TomType tlType2) {
     String args[];
-    if(strictType || eCode) {
+    if(strictType) {
       args = new String[] { getTLCode(tlType1), name1,
                             getTLCode(tlType2), name2 };
     } else {
-          args = new String[] { getTLType(getUniversalType()), name1,
-                                getTLCode(tlType2), name2 };
+			args = new String[] { getTLType(getUniversalType()), name1,
+														getTLCode(tlType2), name2 };
     }
-    generateTargetLanguage(out,deep, genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1,
-                                             args, tlCode));
-  }
+    generateTargetLanguage(deep, genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1,
+																				 args, tlCode));
+		}
   
 } // class TomImperativeGenerator

@@ -179,4 +179,43 @@ public class TomCGenerator extends TomImperativeGenerator {
     generateSlotList(deep, slotList);
   }
 
+
+  protected void buildListSymbolDecl(int deep, String tomName) {
+    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    OptionList optionList = tomSymbol.getOption();
+    SlotList slotList = tomSymbol.getSlotList();
+    TomTypeList l = getSymbolDomain(tomSymbol);
+    TomType type1 = getSymbolCodomain(tomSymbol);
+    String name1 = tomSymbol.getAstName().getString();
+		// TODO: build an abstract declaration
+		int argno=1;
+		output.indent(deep);
+		if(!l.isEmpty()) {
+			output.write(getTLType(type1));
+			output.writeSpace();
+			output.write(name1);
+			if(!l.isEmpty()) {
+				output.writeOpenBrace();
+				while (!l.isEmpty()) {
+					output.write(getTLType(l.getHead()));
+					output.writeUnderscore();
+					output.write(argno);
+					argno++;
+					l = l.getTail() ;
+					if(!l.isEmpty()) {
+						output.writeComa();
+					}
+				}
+				output.writeCloseBrace();
+				output.writeSemiColon();
+			}
+		}
+		output.writeln();
+    
+		// inspect the optionList
+    generateOptionList(deep, optionList);
+		// inspect the slotlist
+    generateSlotList(deep, slotList);
+  }
+
 }
