@@ -1,6 +1,0 @@
-
-Bad type of argument: Argument 2 of method 'concList' has type 'type2' required but type 'type1' found
--- Error occured at line: 30 in file: JAppl8.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.
