@@ -39,6 +39,7 @@ syn match   tomType             "%typeint"
 syn match   tomType             "%typearray"
 syn match   tomArrow            "->"
 syn match   tomMake             "`.*;"
+syn match   tomMake             "`"
 syn keyword tomOpkey            implement get_fun_sym get_subterm cmp_fun_sym fsym
 syn keyword tomOpkey            equals get_head get_tail is_empty get_element is_fsym 
 syn keyword tomOpkey            get_size make_empty
@@ -56,13 +57,13 @@ if version >= 508 || !exists("did_jtom_syn_inits")
   else
     command -nargs=+ HiLink hi def link <args>
   endif
-  HiLink tomExternal   javaScopeDecl
+  HiLink tomExternal   Include
   HiLink tomOperator   javaScopeDecl
   HiLink tomMatch      javaScopeDecl
   HiLink tomRule       javaScopeDecl
   HiLink tomType       Type
   HiLink tomArrow      Statement
-  HiLink tomMake       Statement
+  HiLink tomMake       Special
   HiLink tomOpkey      Statement
   delcommand HiLink
 endif

@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -156,10 +156,10 @@ public class OutputCode {
   public String stringDump() {
     try {
       if(file instanceof StringWriter) {
-	file.flush();
-	return file.toString();
+  file.flush();
+  return file.toString();
       } else {
-	throw new InternalError("OutputCode does not contain any string");
+  throw new InternalError("OutputCode does not contain any string");
       }
     } catch (IOException e) {
       System.out.println("stringDump error");

@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -27,17 +27,17 @@ package jtom.exception;
 
 public class TomException extends Exception {
   
-	public TomException(Throwable t) {
-		super(t);
-	}
+  public TomException(Throwable t) {
+    super(t);
+  }
 
-	protected String msg="no message";
+  protected String msg="no message";
 
   public TomException() {
   }
 
   public TomException(String msg) {
-  	this(new Throwable(msg));
+    this(new Throwable(msg));
     this.msg = msg;
   }
 

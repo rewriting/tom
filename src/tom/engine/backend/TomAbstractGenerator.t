@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -40,7 +40,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected String debugKey;
   public TomAbstractGenerator(OutputCode output) {
     super();
-	  this.output = output;
+    this.output = output;
   }
 
 // ------------------------------------------------------------
@@ -305,10 +305,10 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-			AssignMatchSubject(var@Variable[option=option],exp) -> {
-				`buildAssignVar(deep, var, option, exp);
-				return;
-			}
+      AssignMatchSubject(var@Variable[option=option],exp) -> {
+        `buildAssignVar(deep, var, option, exp);
+        return;
+      }
 
       Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
         return;
@@ -473,7 +473,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       
       IsFsymDecl(Name(tomName),
-		   Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]], tlCode@TL[], _) -> {
+       Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]], tlCode@TL[], _) -> {
         `buildIsFsymDecl(deep, tomName, name, tlType, tlCode);
         return;
       }
@@ -589,12 +589,12 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
     }
   }
-	
-	public void generateListInclude(int deep, TomList subject) throws IOException {
- 		output.setSingleLine();
-		generateList(deep, subject);
-		output.unsetSingleLine();
-	}
+  
+  public void generateListInclude(int deep, TomList subject) throws IOException {
+    output.setSingleLine();
+    generateList(deep, subject);
+    output.unsetSingleLine();
+  }
 
   public void generateList(int deep, TomList subject)
     throws IOException {
@@ -628,9 +628,9 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
   
-	
+  
     // ------------------------------------------------------------
-	
+  
   protected abstract TargetLanguage genDecl(String returnType,
                                             String declName,
                                             String suffix,
@@ -644,7 +644,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   protected abstract TargetLanguage genDeclArray(String name, TomType listType, TomType eltType);
  
-	// ------------------------------------------------------------
+  // ------------------------------------------------------------
   
   protected abstract void buildInstructionSequence(int deep, Instruction instruction) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
@@ -658,7 +658,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
 
   protected abstract void buildCompiledMatch(int deep, Instruction instruction, OptionList list) throws IOException;
-	protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
+  protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;

@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *     
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -81,9 +81,9 @@ public class TomTask extends MatchingTask {
     this.options = options;
   }
 
-	public String getOptions() {
-		return options;
-	}
+  public String getOptions() {
+    return options;
+  }
   
     /**
      * Adds a path for source compilation.
@@ -417,26 +417,26 @@ public class TomTask extends MatchingTask {
         System.out.println("Compiling " + compileList[i] + "...");
         File file = new File(filename);
 
-				String cmd_line = "";
-				if (options != null && getOptions().trim().length() > 0) {
-					cmd_line = cmd_line.trim() + " " + options;
-				}
-				if (destDir != null) {
-					cmd_line = cmd_line.trim() + " -d " + destDir;
-				}
-				cmd_line = cmd_line.trim() + " -I " + file.getParent();
-				cmd_line = cmd_line.trim() + " " + filename;
+        String cmd_line = "";
+        if (options != null && getOptions().trim().length() > 0) {
+          cmd_line = cmd_line.trim() + " " + options;
+        }
+        if (destDir != null) {
+          cmd_line = cmd_line.trim() + " -d " + destDir;
+        }
+        cmd_line = cmd_line.trim() + " -I " + file.getParent();
+        cmd_line = cmd_line.trim() + " " + filename;
         String[] cmd = split(cmd_line);
           //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
-				int err = -1;
+        int err = -1;
         err = Tom.exec(cmd);
-				if (err != 0) {
-					if (failOnError) {
-						throw new BuildException("Java returned: " + err, getLocation());
-					} else {
-						log("Tom Result: " + err, Project.MSG_ERR);
-					}
-				}
+        if (err != 0) {
+          if (failOnError) {
+            throw new BuildException("Java returned: " + err, getLocation());
+          } else {
+            log("Tom Result: " + err, Project.MSG_ERR);
+          }
+        }
       }
     }
   }

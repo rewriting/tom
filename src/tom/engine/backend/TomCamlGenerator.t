@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -75,11 +75,11 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     return;
   }
 
-	protected void buildExpNot(int deep, Expression exp) throws IOException {
-		output.write("not(");
-		generateExpression(deep,exp);
-		output.write(")");
-	}
+  protected void buildExpNot(int deep, Expression exp) throws IOException {
+    output.write("not(");
+    generateExpression(deep,exp);
+    output.write(")");
+  }
 
   protected void buildRef(int deep, TomTerm term) throws IOException {
     output.write("!");
@@ -115,23 +115,23 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generateInstruction(deep,body);
   }
 
-	protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException {
-		output.indent(deep);
-		generate(deep,var);
-		output.write(" := ");
-		generateExpression(deep,exp);
-	}
+  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException {
+    output.indent(deep);
+    generate(deep,var);
+    output.write(" := ");
+    generateExpression(deep,exp);
+  }
 
-	protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body) throws IOException {
+  protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body) throws IOException {
     output.writeln(deep,"( (* begin let assign*)");
-		generate(deep+1,var);
-		output.write(" := ");
-		generateExpression(deep+1,exp);
+    generate(deep+1,var);
+    output.write(" := ");
+    generateExpression(deep+1,exp);
     output.writeln("; (* from let assign *)");
     generateInstruction(deep+1,body);
     output.writeln(deep,") (* end let assign*)");
 
-	}
+  }
 
   protected void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException {
     output.write(deep,"(if "); 
@@ -287,7 +287,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     s+= "   else " +  make_insert + "(" + get_head + "(beginning)," + 
       get_slice + "(" + get_tail + "(beginning),ending))\n";
     s+= "\n";
-		//If necessary we remove \n code depending on --pretty option
+    //If necessary we remove \n code depending on --pretty option
     return ast().reworkTLCode(`ITL(s), getInput().isPretty());
   }
   

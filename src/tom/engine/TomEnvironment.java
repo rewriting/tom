@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -31,9 +31,9 @@ import jtom.exception.TomRuntimeException;
 import jtom.adt.tomsignature.types.*;
 
 public class TomEnvironment {
-	private ASTFactory astFactory;
-	private Factory tomSignatureFactory;
-	private SymbolTable symbolTable;
+  private ASTFactory astFactory;
+  private Factory tomSignatureFactory;
+  private SymbolTable symbolTable;
   private TomTerm term;
   private TomErrorList errors;
 
@@ -72,17 +72,17 @@ public class TomEnvironment {
     term = null;
   }
 
-	public ASTFactory getASTFactory() {
-		return astFactory;
-	}
+  public ASTFactory getASTFactory() {
+    return astFactory;
+  }
 
-	public Factory getTomSignatureFactory() {
-		return tomSignatureFactory;
-	}
+  public Factory getTomSignatureFactory() {
+    return tomSignatureFactory;
+  }
 
-	public SymbolTable getSymbolTable() {
-		return symbolTable;
-	}
+  public SymbolTable getSymbolTable() {
+    return symbolTable;
+  }
 
   public void setTerm(TomTerm term) {
     this.term = term;
@@ -99,9 +99,9 @@ public class TomEnvironment {
   }
 
   public boolean checkNoErrors(String taskName,
-  								boolean eclipseMode,
-									boolean warningAll,
-									boolean noWarning) {
+                  boolean eclipseMode,
+                  boolean warningAll,
+                  boolean noWarning) {
     boolean res = true; 
     TomErrorList errors = getErrors();
       //System.out.println(errors);
@@ -133,7 +133,7 @@ public class TomEnvironment {
         System.out.println(msg);
       }
       if(!eclipseMode) {
-      	setErrors(getTomSignatureFactory().makeTomErrorList());
+        setErrors(getTomSignatureFactory().makeTomErrorList());
       }
     }
     return res;

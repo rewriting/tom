@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -37,7 +37,7 @@ import jtom.TomEnvironment;
 public class TomEiffelGenerator extends TomImperativeGenerator {
   
   public TomEiffelGenerator(OutputCode output) {
-		super(output);
+    super(output);
   }
 
 // ------------------------------------------------------------
@@ -49,29 +49,29 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     return;
   }
 
- 	protected void buildTerm(int deep, String name, TomList argList) throws IOException {
-		output.write("tom_make_");
-		output.write(name);
-		if(argList.isEmpty()) { // strange ?
-		} else {
-			output.writeOpenBrace();
-			while(!argList.isEmpty()) {
-				generate(deep,argList.getHead());
-				argList = argList.getTail();
-				if(!argList.isEmpty()) {
+  protected void buildTerm(int deep, String name, TomList argList) throws IOException {
+    output.write("tom_make_");
+    output.write(name);
+    if(argList.isEmpty()) { // strange ?
+    } else {
+      output.writeOpenBrace();
+      while(!argList.isEmpty()) {
+        generate(deep,argList.getHead());
+        argList = argList.getTail();
+        if(!argList.isEmpty()) {
               output.writeComa();
-				}
-			}
-			output.writeCloseBrace();
-		}
-	}
+        }
+      }
+      output.writeCloseBrace();
+    }
+  }
 
-	protected void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException {
+  protected void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String glType = getTLType(getSymbolCodomain(tomSymbol));
         String name = tomSymbol.getAstName().getString();
-				output.write(deep,name + "(");
-				while(!varList.isEmpty()) {
+        output.write(deep,name + "(");
+        while(!varList.isEmpty()) {
           TomTerm localVar = varList.getHead();
           matchBlock: {
             %match(TomTerm localVar) {
@@ -91,26 +91,26 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
               output.write(deep,"; ");
           }
         }
-				output.writeln(deep,"): " + glType + " is");
-				output.writeln(deep,"local ");
-				//out.writeln(deep,"return null;");
-	}
-	
-	protected void buildFunctionEnd(int deep) throws IOException {
-			output.writeln(deep,"end;");
-	}
-	
-	protected void buildExpNot(int deep, Expression exp) throws IOException {
-		output.write("not ");
-		generateExpression(deep,exp);
-	}
+        output.writeln(deep,"): " + glType + " is");
+        output.writeln(deep,"local ");
+        //out.writeln(deep,"return null;");
+  }
+  
+  protected void buildFunctionEnd(int deep) throws IOException {
+      output.writeln(deep,"end;");
+  }
+  
+  protected void buildExpNot(int deep, Expression exp) throws IOException {
+    output.write("not ");
+    generateExpression(deep,exp);
+  }
 
   protected void buildExpTrue(int deep) throws IOException {
-		output.write(" true ");
+    output.write(" true ");
   }
   
   protected void buildExpFalse(int deep) throws IOException {
-		output.write(" false ");
+    output.write(" false ");
   }
 
   protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException {
@@ -152,13 +152,13 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     throw new TomRuntimeException(new Throwable("buildLetRef: Eiffel code not yet implemented"));
   }
 
-	
-	protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
+  
+  protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
-		if(symbolTable().isBoolType(type) || symbolTable().isIntType(type) || symbolTable().isDoubleType(type)) {
+    if(symbolTable().isBoolType(type) || symbolTable().isIntType(type) || symbolTable().isDoubleType(type)) {
                   output.write(" := ");
-		} else {
+    } else {
         //out.write(" ?= ");
       String assignSign = " := ";
       %match(Expression exp) {
@@ -180,27 +180,27 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   }
 
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
-		System.out.println("NamedBlock: Eiffel code not yet implemented");
-		throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
+    System.out.println("NamedBlock: Eiffel code not yet implemented");
+    throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
-		System.out.println("UnamedBlock: Eiffel code not yet implemented");
-		throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
+    System.out.println("UnamedBlock: Eiffel code not yet implemented");
+    throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
   }
 
   protected void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException {
-		output.write(deep,"if "); generateExpression(deep,exp); output.writeln(" then ");
-		generateList(deep+1,succesList);
-		output.writeln(deep,"end;");
+    output.write(deep,"if "); generateExpression(deep,exp); output.writeln(" then ");
+    generateList(deep+1,succesList);
+    output.writeln(deep,"end;");
   }
 
   protected void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) throws IOException {
-		output.write(deep,"if "); generateExpression(deep,exp); output.writeln(" then ");
-		generateList(deep+1,succesList);
-		output.writeln(deep," else ");
-		generateList(deep+1,failureList);
-		output.writeln(deep,"end;");
+    output.write(deep,"if "); generateExpression(deep,exp); output.writeln(" then ");
+    generateList(deep+1,succesList);
+    output.writeln(deep," else ");
+    generateList(deep+1,failureList);
+    output.writeln(deep,"end;");
   }
 
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
@@ -209,12 +209,12 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   }
 
   protected void buildReturn(int deep, TomTerm exp) throws IOException {
-		output.writeln(deep,"if Result = Void then");
-		output.write(deep+1,"Result := ");
-		generate(deep+1,exp);
-		output.writeln(deep+1,";");
-		output.writeln(deep,"end;");
-	}
+    output.writeln(deep,"if Result = Void then");
+    output.write(deep+1,"Result := ");
+    generate(deep+1,exp);
+    output.writeln(deep+1,";");
+    output.writeln(deep,"end;");
+  }
 
     protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException {
     output.write("tom_get_head_" + getTomType(domain) + "(");
@@ -241,35 +241,35 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     output.write(", " + number + ")");
   }
 
-	protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
+  protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
     String args[];
     if(getInput().isStrictType()) {
       args = new String[] { getTLCode(tlType1), name1,
                             getTLCode(tlType2), name2 };
     } else {
-			args = new String[] { getTLType(getUniversalType()), name1,
-														getTLCode(tlType2), name2 };
+      args = new String[] { getTLType(getUniversalType()), name1,
+                            getTLCode(tlType2), name2 };
     }
     generateTargetLanguage(deep, genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1,
-																				 args, tlCode));
-	}
-	
-	protected TargetLanguage genDecl(int deep, String returnType,
-																	 String declName,
-																	 String suffix,
-																	 String args[],
-																	 TargetLanguage tlCode) {
+                                         args, tlCode));
+  }
+  
+  protected TargetLanguage genDecl(int deep, String returnType,
+                                   String declName,
+                                   String suffix,
+                                   String args[],
+                                   TargetLanguage tlCode) {
     String s = "";
     if(!getInput().isGenDecl()) { return null; }
-		s = declName + "_" + suffix + "(";
-		for(int i=0 ; i<args.length ; ) {
-			s+= args[i+1] + ": " + args[i];
-			i+=2;
-			if(i<args.length) {
-				s+= "; ";
-			}
-		} 
-		s += "): " + returnType + " is do Result := " + tlCode.getCode() + "end;";
+    s = declName + "_" + suffix + "(";
+    for(int i=0 ; i<args.length ; ) {
+      s+= args[i+1] + ": " + args[i];
+      i+=2;
+      if(i<args.length) {
+        s+= "; ";
+      }
+    } 
+    s += "): " + returnType + " is do Result := " + tlCode.getCode() + "end;";
     if(tlCode.isTL())
       return `TL(s, tlCode.getStart(), tlCode.getEnd());
     else
@@ -281,52 +281,52 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
       //%variable
     String s = "";
     if(!getInput().isGenDecl()) { return null; }
-		boolean braces = !argList.isEmpty();
-		s = "tom_make_" + opname;
-		if(braces) {
-			s = s + "(";
-		}
-		while(!argList.isEmpty()) {
-			TomTerm arg = argList.getHead();
-			matchBlock: {
-				%match(TomTerm arg) {
-					Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]] -> {
-						s += `name + ": " + getTLCode(`tlType);
-						break matchBlock;
-					}
+    boolean braces = !argList.isEmpty();
+    s = "tom_make_" + opname;
+    if(braces) {
+      s = s + "(";
+    }
+    while(!argList.isEmpty()) {
+      TomTerm arg = argList.getHead();
+      matchBlock: {
+        %match(TomTerm arg) {
+          Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]] -> {
+            s += `name + ": " + getTLCode(`tlType);
+            break matchBlock;
+          }
             
-					_ -> {
-						System.out.println("genDeclMake: strange term: " + arg);
-						throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
-					}
-				}
-			}
-			argList = argList.getTail();
-			if(!argList.isEmpty()) {
-				s += "; ";
-			}
-		}
+          _ -> {
+            System.out.println("genDeclMake: strange term: " + arg);
+            throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
+          }
+        }
+      }
+      argList = argList.getTail();
+      if(!argList.isEmpty()) {
+        s += "; ";
+      }
+    }
       if(braces) {
         s = s + ")";
       }
       s += ": " + getTLType(returnType) + " is do Result := " + tlCode.getCode() + "end;";
-			return `TL(s, tlCode.getStart(), tlCode.getEnd());
+      return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
   protected TargetLanguage genDeclList(int deep, String name, TomType listType, TomType eltType) throws IOException {
       //%variable
     String s = "";
     if(!getInput().isGenDecl()) { return null; }
-		System.out.println("genDeclList: Eiffel code not yet implemented");
-		return null;
+    System.out.println("genDeclList: Eiffel code not yet implemented");
+    return null;
   }
 
 
   protected TargetLanguage genDeclArray(int deep, String name, TomType listType, TomType eltType) throws IOException {
-		//%variable
+    //%variable
     String s = "";
     if(!getInput().isGenDecl()) { return null; }
-		System.out.println("genDeclArray: Eiffel code not yet implemented");
+    System.out.println("genDeclArray: Eiffel code not yet implemented");
     return null;
   }
 
@@ -337,15 +337,15 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
                         TargetLanguage tlCode) {
     String s = "";
     if(!getInput().isGenDecl()) { return null; }
-		s = declName + "_" + suffix + "(";
-		for(int i=0 ; i<args.length ; ) {
-			s+= args[i+1] + ": " + args[i];
-			i+=2;
-			if(i<args.length) {
-				s+= "; ";
-			}
-		} 
-		s += "): " + returnType + " is do Result := " + tlCode.getCode() + "end;";
+    s = declName + "_" + suffix + "(";
+    for(int i=0 ; i<args.length ; ) {
+      s+= args[i+1] + ": " + args[i];
+      i+=2;
+      if(i<args.length) {
+        s+= "; ";
+      }
+    } 
+    s += "): " + returnType + " is do Result := " + tlCode.getCode() + "end;";
     if(tlCode.isTL())
       return `TL(s, tlCode.getStart(), tlCode.getEnd());
     else

@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -36,11 +36,11 @@ import jtom.TomMessage;
 import jtom.runtime.*;
 
 public class TomOptimizer extends TomTask {
-	
+  
   // ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
   // ------------------------------------------------------------
-		
+    
   public TomOptimizer() {
     super("Tom Optimizer");
   }

@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -27,20 +27,20 @@ package jtom.exception;
 
 public class TomRuntimeException extends RuntimeException {
 
-	public TomRuntimeException() {
-		super();
-	}
+  public TomRuntimeException() {
+    super();
+  }
 
-	public TomRuntimeException(String arg0) {
-		super(arg0);
-	}
+  public TomRuntimeException(String arg0) {
+    super(arg0);
+  }
 
-	public TomRuntimeException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
+  public TomRuntimeException(String arg0, Throwable arg1) {
+    super(arg0, arg1);
+  }
 
-	public TomRuntimeException(Throwable arg0) {
-		super(arg0);
-	}
+  public TomRuntimeException(Throwable arg0) {
+    super(arg0);
+  }
 
 }

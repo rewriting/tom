@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -55,7 +55,7 @@ public class TomCompiler extends TomTask {
 
   public void initProcess() {
   }
-	
+  
   public void process() {
     try {
       long startChrono = 0;
@@ -76,9 +76,9 @@ public class TomCompiler extends TomTask {
       
     } catch (Exception e) {
       addError("Exception occurs in TomCompiler: "+e.getMessage(), 
-							 getInput().getInputFile().getName(), 
-							 TomMessage.DEFAULT_ERROR_LINE_NUMBER, 
-							 TomMessage.TOM_ERROR);
+               getInput().getInputFile().getName(), 
+               TomMessage.DEFAULT_ERROR_LINE_NUMBER, 
+               TomMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }
@@ -148,7 +148,7 @@ public class TomCompiler extends TomTask {
                       /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
                       TomList renamedTermList = linearizePattern(`termList,equalityCheck);
-											newPatternAction = `PatternAction(TermList(renamedTermList),actionInst, option);        
+                      newPatternAction = `PatternAction(TermList(renamedTermList),actionInst, option);        
                     
                       /* abstract patterns */
                       ArrayList abstractedPattern  = new ArrayList();
@@ -376,28 +376,28 @@ public class TomCompiler extends TomTask {
         return `var.setConstraints(newConstraintList);
       }
 
-			var@(Variable|VariableStar)[astName=name,constraints=clist] -> {
-				ConstraintList newConstraintList = renameVariableInConstraintList(`clist,multiplicityMap,equalityCheck);
-				if(!multiplicityMap.containsKey(`name)) {
-					// We see this variable for the first time
-					multiplicityMap.put(`name,new Integer(1));
-					renamedTerm = `var.setConstraints(newConstraintList);
-				} else {
-					// We have already seen this variable
-					Integer multiplicity = (Integer) multiplicityMap.get(`name);
-					int mult = multiplicity.intValue(); 
-					multiplicityMap.put(`name,new Integer(mult+1));
-					
-					TomNumberList path = tsf().makeTomNumberList();
-					path = (TomNumberList) path.append(`RenamedVar(name));
-					path = (TomNumberList) path.append(makeNumber(mult));
+      var@(Variable|VariableStar)[astName=name,constraints=clist] -> {
+        ConstraintList newConstraintList = renameVariableInConstraintList(`clist,multiplicityMap,equalityCheck);
+        if(!multiplicityMap.containsKey(`name)) {
+          // We see this variable for the first time
+          multiplicityMap.put(`name,new Integer(1));
+          renamedTerm = `var.setConstraints(newConstraintList);
+        } else {
+          // We have already seen this variable
+          Integer multiplicity = (Integer) multiplicityMap.get(`name);
+          int mult = multiplicity.intValue(); 
+          multiplicityMap.put(`name,new Integer(mult+1));
+          
+          TomNumberList path = tsf().makeTomNumberList();
+          path = (TomNumberList) path.append(`RenamedVar(name));
+          path = (TomNumberList) path.append(makeNumber(mult));
 
-					renamedTerm = `var.setAstName(`PositionName(path));
-					renamedTerm = renamedTerm.setConstraints(`concConstraint(Equal(var.setConstraints(concConstraint())),newConstraintList*));
-				}
+          renamedTerm = `var.setAstName(`PositionName(path));
+          renamedTerm = renamedTerm.setConstraints(`concConstraint(Equal(var.setConstraints(concConstraint())),newConstraintList*));
+        }
 
-				return renamedTerm;
-			}
+        return renamedTerm;
+      }
 
       Appl[option=optionList, nameList=nameList, args=arguments, constraints=constraints] -> {
         TomList args = `arguments;
@@ -440,7 +440,7 @@ public class TomCompiler extends TomTask {
     TomList newList = empty();
     while(!subject.isEmpty()) {
       TomTerm elt = subject.getHead();
-			TomTerm newElt = renameVariable(elt,multiplicityMap,equalityCheck);
+      TomTerm newElt = renameVariable(elt,multiplicityMap,equalityCheck);
       newList = append(newElt,newList);
       subject = subject.getTail();
     }

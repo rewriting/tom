@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -32,26 +32,26 @@ import java.util.ResourceBundle;
  * @author julien
  */
 public class TomMessage {
-	
-	private final static String RESOURCE_BUNDLE = "jtom.TomMessageResources";
-	  // Resource bundle.
-	private static ResourceBundle resourceBundle =  ResourceBundle.getBundle(RESOURCE_BUNDLE);
+  
+  private final static String RESOURCE_BUNDLE = "jtom.TomMessageResources";
+    // Resource bundle.
+  private static ResourceBundle resourceBundle =  ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
     // Message level
   public static int TOM_ERROR = 0;
   public static int TOM_WARNING = 1;
-	  // Default error line
+    // Default error line
   public static int DEFAULT_ERROR_LINE_NUMBER = 1; 
-	
-	public static String getString(String key) {
-		try {
-			return resourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";
-		}
-	}
+  
+  public static String getString(String key) {
+    try {
+      return resourceBundle.getString(key);
+    } catch (MissingResourceException e) {
+      return "!" + key + "!";
+    }
+  }
 
-	public static ResourceBundle getResourceBundle() {
-		return resourceBundle;
-	}
+  public static ResourceBundle getResourceBundle() {
+    return resourceBundle;
+  }
 }

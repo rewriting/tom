@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -32,47 +32,47 @@ import jtom.adt.tomsignature.types.*;
 import jtom.TomMessage;
 
 public abstract class TomTask extends TomBase {
-	
+  
   private TomTask nextTask;
   private String name;
-	
+  
   public TomTask() {
   }
   public TomTask(String name) {
     super();
     this.name = name;
   }
-	
+  
   public void addTask(TomTask task){
       //System.out.println("Connecting " +name+ " to task"+task.getName());
     this.nextTask = task;
   }
-	
+  
   public void startProcess() {
     initProcess();
     process();
     closeProcess();
   }
-	
+  
   protected void initProcess() {
   }
-	
+  
   protected void process(){
   }
-	
+  
   protected void closeProcess() {
     if ( checkNoErrors() ) {
       finishProcess();
     }
   }
-	
+  
   public boolean checkNoErrors() {
     return environment().checkNoErrors(name,
-    																	 getInput().isEclipseMode(),
-																			 getInput().isWarningAll(),
-																			 getInput().isNoWarning());
+                                       getInput().isEclipseMode(),
+                                       getInput().isWarningAll(),
+                                       getInput().isNoWarning());
   }
-	
+  
   public void finishProcess() {
       // Start next task
     if(nextTask != null) {
@@ -82,15 +82,15 @@ public abstract class TomTask extends TomBase {
       nextTask.startProcess();
     }
   }
-	
+  
   public TomTask getTask(){
     return nextTask;
   }
-	
+  
   public String getName() {
     return name;
   }
-	
+  
   public void messageError(int errorLine, String fileName,String structInfo, int structInfoLine, String msg, Object[] msgArg, int level) {
     String s;
     msg = MessageFormat.format(msg, msgArg);
@@ -99,14 +99,14 @@ public abstract class TomTask extends TomBase {
     } else {
       s = MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
     }
-		
+    
     if (getInput().isEclipseMode()) {
       addError(msg,fileName, errorLine, level);
     } else {
       addError(s,fileName, errorLine, level);
     }
   }
-				
+        
   public void addError(String msg, String file, int line, int level) {
     TomError err = tsf().makeTomError_Error(msg,file,line,level);
     environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
@@ -116,5 +116,5 @@ public abstract class TomTask extends TomBase {
     TomError err = tsf().makeTomError_Error(MessageFormat.format(msg, args), file, line, level);
     environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
   }
-		
+    
 }

@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -35,18 +35,18 @@ import jtom.TomEnvironment;
  
 public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
-	protected String modifier = "";
+  protected String modifier = "";
   public TomImperativeGenerator(OutputCode output) {
-		super(output);
+    super(output);
   }
 
   // ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
   // ------------------------------------------------------------
 
-	protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException;
-	protected abstract void buildExpTrue(int deep) throws IOException;
-	protected abstract void buildExpFalse(int deep) throws IOException;
+  protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException;
+  protected abstract void buildExpTrue(int deep) throws IOException;
+  protected abstract void buildExpFalse(int deep) throws IOException;
   
 
   /*
@@ -62,7 +62,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.writeln("/* " + text + " */");
     return;
   }
-	
+  
   protected void buildListOrArray(int deep, TomTerm list) throws IOException {
     %match(TomTerm list) {
       BuildEmptyList(Name(name)) -> {
@@ -150,16 +150,16 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       varList = varList.getTail();
       if(!varList.isEmpty()) {
         output.write(deep,", ");
-				
+        
       }
     }
     output.writeln(deep,") {");
   }
-	
+  
   protected void buildFunctionEnd(int deep) throws IOException {
     output.writeln(deep,"}");
   }
-	
+  
   protected void buildExpNot(int deep, Expression exp) throws IOException {
     output.write("!(");
     generateExpression(deep,exp);
@@ -361,7 +361,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     if(!getInput().isStrictType()) {
       utype = getTLType(getUniversalType());
     }
-		
+    
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
     String is_empty = "tom_is_empty_" + tomType;
@@ -411,7 +411,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     if(!getInput().isStrictType()) {
       utype =  getTLType(getUniversalType());
     }
-		
+    
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
     String make_empty = listCast + "tom_empty_array_" + name;

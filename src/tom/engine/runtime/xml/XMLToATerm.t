@@ -8,14 +8,14 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met: 
- * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
- * 	- Redistributions in binary form must reproduce the above copyright
- * 	notice, this list of conditions and the following disclaimer in the
- * 	documentation and/or other materials provided with the distribution.
- * 	- Neither the name of the INRIA nor the names of its
- * 	contributors may be used to endorse or promote products derived from
- * 	this software without specific prior written permission.
+ *  - Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.  
+ *  - Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  - Neither the name of the INRIA nor the names of its
+ *  contributors may be used to endorse or promote products derived from
+ *  this software without specific prior written permission.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * INRIA, Nancy, France 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
 public class XMLToATerm {
   
   %include{ ../../adt/TNode.tom }
-	
+  
   private Factory factory = null;
   private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
@@ -254,7 +254,7 @@ public class XMLToATerm {
     TNodeList entitiesList = namedNodeMapToAterm(doctype.getEntities());
     TNodeList notationsList = namedNodeMapToAterm(doctype.getNotations());
     return `DocumentTypeNode(name,publicId,systemId,
-			     internalSubset,entitiesList,notationsList);
+           internalSubset,entitiesList,notationsList);
   }
     
   private TNode makeElementNode(Element elem) {

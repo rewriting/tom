@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -73,19 +73,19 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
 
-	protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
-	protected abstract void buildExpTrue(int deep) throws IOException;
-	protected abstract void buildExpFalse(int deep) throws IOException;
-	protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException ;
+  protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
+  protected abstract void buildExpTrue(int deep) throws IOException;
+  protected abstract void buildExpFalse(int deep) throws IOException;
+  protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException ;
   protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp) throws IOException;
-	protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
-	protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
-	protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException ;
-	protected abstract void buildUnamedBlock(int deep, InstructionList instList) throws IOException ;
-	protected abstract void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException ;
-	protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
-	protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
+  protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
+  protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
+  protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException ;
+  protected abstract void buildUnamedBlock(int deep, InstructionList instList) throws IOException ;
+  protected abstract void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException ;
+  protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
+  protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
 TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException;

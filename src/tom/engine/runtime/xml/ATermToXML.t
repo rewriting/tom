@@ -8,14 +8,14 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met: 
- * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
- * 	- Redistributions in binary form must reproduce the above copyright
- * 	notice, this list of conditions and the following disclaimer in the
- * 	documentation and/or other materials provided with the distribution.
- * 	- Neither the name of the INRIA nor the names of its
- * 	contributors may be used to endorse or promote products derived from
- * 	this software without specific prior written permission.
+ *  - Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.  
+ *  - Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  - Neither the name of the INRIA nor the names of its
+ *  contributors may be used to endorse or promote products derived from
+ *  this software without specific prior written permission.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * INRIA, Nancy, France 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -88,79 +88,79 @@ public class ATermToXML {
   }
 
   public String xml(TNode n) {
-	StringWriter str_res = new StringWriter();
-	setWriter(str_res);
-	atermToXML(n);
-	return str_res.toString();
+  StringWriter str_res = new StringWriter();
+  setWriter(str_res);
+  atermToXML(n);
+  return str_res.toString();
   }
 
   public void atermToXML(TNode n) {
     %match(TNode n) {
       DocumentNode(docType,docElem) -> {
-				write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-				atermToXML(`docType);
-				atermToXML(`docElem);
-				write("\n");
-				return;
+        write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        atermToXML(`docType);
+        atermToXML(`docElem);
+        write("\n");
+        return;
       }
       DocumentTypeNode(name,publicId,systemId,internalSubset,_,_) -> {
-				write("<!DOCTYPE "+`name);
-				if (!`publicId.equals("UNDEF") && !`systemId.equals("UNDEF"))
-	  			write(" PUBLIC \""+`publicId+"\" \"");
-       	else if (!`systemId.equals("UNDEF") && `publicId.equals("UNDEF"))
-	  			write(" SYSTEM \"");
-				else {
-	  			System.out.println("Problem in DocumentTypeNode");
-	  			throw new TomRuntimeException(new Throwable("Problem in DocumentTypeNode"));
-				}
-				write(`systemId+"\"");
-				if (!`internalSubset.equals("UNDEF")) 
-	  			write(" ["+`internalSubset+"]");
-					write(">\n");
-					return;
+        write("<!DOCTYPE "+`name);
+        if (!`publicId.equals("UNDEF") && !`systemId.equals("UNDEF"))
+          write(" PUBLIC \""+`publicId+"\" \"");
+        else if (!`systemId.equals("UNDEF") && `publicId.equals("UNDEF"))
+          write(" SYSTEM \"");
+        else {
+          System.out.println("Problem in DocumentTypeNode");
+          throw new TomRuntimeException(new Throwable("Problem in DocumentTypeNode"));
+        }
+        write(`systemId+"\"");
+        if (!`internalSubset.equals("UNDEF")) 
+          write(" ["+`internalSubset+"]");
+          write(">\n");
+          return;
       }
       ElementNode(name,attrList,concTNode()) -> {
-				write("<"+`name);
-				atermToXMLList(`attrList);
-				write("/>");
-				return;
+        write("<"+`name);
+        atermToXMLList(`attrList);
+        write("/>");
+        return;
       }
       ElementNode(name,attrList,childList) -> {
-				write("<"+`name);
-				atermToXMLList(`attrList);
-				write(">");
-				atermToXMLList(`childList);
-				write("</"+`name+">");
-				return;
+        write("<"+`name);
+        atermToXMLList(`attrList);
+        write(">");
+        atermToXMLList(`childList);
+        write("</"+`name+">");
+        return;
       }
       AttributeNode(name,specified,child) -> {
-				if (`specified.equals("true")) {
-	  			write(" " + `name + "=\"" + `child + "\"");
-				}
-				return;
+        if (`specified.equals("true")) {
+          write(" " + `name + "=\"" + `child + "\"");
+        }
+        return;
       }
       TextNode(data) -> {
-				write(`data);
-				return;
+        write(`data);
+        return;
       }
       CommentNode(data) -> {
-				write("<!-- "+`data+" -->");
-				return;
+        write("<!-- "+`data+" -->");
+        return;
       }
       CDATASectionNode(data) -> {
-				write("<![CDATA["+`data+"]]>");
-				return;
+        write("<![CDATA["+`data+"]]>");
+        return;
       }
       ProcessingInstructionNode(target,data) -> {
-				write("<?"+`target+" "+`data+"?>");
-				return;
+        write("<?"+`target+" "+`data+"?>");
+        return;
       }
       EntityReferenceNode(name,childList) -> {
-				write("&"+`name+";");
-				return;
+        write("&"+`name+";");
+        return;
       }
       _ -> {
-				System.out.println("Unknown type of TNode : "+n);
+        System.out.println("Unknown type of TNode : "+n);
       }
     }
   }
@@ -178,11 +178,11 @@ public class ATermToXML {
   private void write(String s) {
     try {
       if (out != null) {
-		out.write(s.getBytes());
-		}
+    out.write(s.getBytes());
+    }
       if (writer != null) {
-		writer.write(s);
-	  }
+    writer.write(s);
+    }
     } catch (IOException e) {
       System.err.println(e.getMessage());
       e.printStackTrace();

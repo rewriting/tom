@@ -556,12 +556,22 @@
 						 eol="unix" 
 						 eof="remove"
 						 includes="**/build.xml"/>
+		<fixcrlf srcdir="${basedir}"
+						 eol="unix" 
+						 eof="remove"
+						 includes="**/*.properties"/>
 		<fixcrlf srcdir="${src.src}"
 						 tab="remove"
 						 tablength="2"
 						 eol="unix"
 						 javafiles="yes"
 						 includes="**/*.java"/>
+		<fixcrlf srcdir="${src.src}"
+						 tab="remove"
+						 tablength="2"
+						 eol="unix"
+						 javafiles="yes"
+						 includes="**/*.t"/>
 	</target>
 
     <!-- compile tom files in src.src with tom.src -->      

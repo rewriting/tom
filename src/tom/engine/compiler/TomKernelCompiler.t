@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -204,7 +204,7 @@ public class TomKernelCompiler extends TomBase {
              */
           `instruction = `NamedBlock(getLabel(optionList).getString(),
                                     concInstruction(instruction));
-          					 
+                     
         }
         return `concInstruction(CompiledPattern(patternList,instruction), newList*);
       }
@@ -723,26 +723,26 @@ public class TomKernelCompiler extends TomBase {
     return cond;
   }
 
-	private Instruction buildLet(TomTerm dest,
+  private Instruction buildLet(TomTerm dest,
                                Expression source,
                                Instruction body) {
       // Take care of constraints
     body = compileConstraint(dest,source,body);
-		return `Let(dest,source,body);
+    return `Let(dest,source,body);
   }
 
-	private Instruction compileConstraint(TomTerm subject, Expression source, Instruction body) {
+  private Instruction compileConstraint(TomTerm subject, Expression source, Instruction body) {
     %match(TomTerm subject) {
       (Variable|VariableStar)[constraints=constraints] -> {
-				return buildConstraint(`constraints,`TomTermToExpression(subject),body);
+        return buildConstraint(`constraints,`TomTermToExpression(subject),body);
       }
 
       (UnamedVariable|UnamedVariableStar)[constraints=constraints] -> {
-				return buildConstraint(`constraints,source,body);
+        return buildConstraint(`constraints,source,body);
       }
 
       Appl[constraints=constraints] -> {
-				return buildConstraint(`constraints,source,body);
+        return buildConstraint(`constraints,source,body);
       }
 
       _ -> {
@@ -751,7 +751,7 @@ public class TomKernelCompiler extends TomBase {
     }
   }
 
-	private Instruction buildConstraint(ConstraintList constraints, Expression source, Instruction body) {
+  private Instruction buildConstraint(ConstraintList constraints, Expression source, Instruction body) {
     %match(ConstraintList constraints) {
       concConstraint() -> {
         return body;
@@ -774,7 +774,7 @@ public class TomKernelCompiler extends TomBase {
       }
     }
     throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraints: " + constraints));
-	}
+  }
 
 
   private class MatchingParameter {
