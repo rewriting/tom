@@ -111,15 +111,11 @@ public class TomGenerator extends TomTask {
       }
 
       TomInclude(l) -> {
-        if(!pretty) {
-          if(jCode) {
-            //OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile(), cCode, pretty);
-            generateList(out,deep,l);
-            return;
-          }
-        }
-        generateList(out,deep,l);
-        return;
+				out.setSingleLine();
+				//OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile(), cCode, pretty);
+				generateList(out,deep,l);
+				out.unsetSingleLine();
+				return;
       }
      
       BuildVariable(Name(name)) -> {

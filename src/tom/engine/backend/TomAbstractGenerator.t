@@ -85,7 +85,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       TomInclude(l) -> {
-		generateListInclude(deep,l);
+				generateListInclude(deep,l);
         return;
       }
      
@@ -637,7 +637,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 	
 	public void generateListInclude(int deep, TomList subject) throws IOException {
-		output.setSingleLine();
+ 		output.setSingleLine();
 		generateList(deep, subject);
 		output.unsetSingleLine();
 	}
