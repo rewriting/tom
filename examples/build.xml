@@ -660,6 +660,7 @@
         <include name="${expression}/*.java"/>
 
         <include name="${gomoku}/*.t"/>
+        <include name="${gomoku}/*.vas"/>
 
         <include name="${gtree}/README"/>
         <include name="${gtree}/*.t"/>
@@ -726,7 +727,7 @@
 
         <include name="${structure}/README"/>
         <include name="${structure}/*.t"/>
-        <include name="${structure}/*.adt"/>
+        <include name="${structure}/*.vas"/>
         <include name="${structure}/customStruct.tom"/>
 
         <include name="${tutorial}/README"/>
