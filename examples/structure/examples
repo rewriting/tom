@@ -45,3 +45,6 @@
 
 #(16)
 [a,d,(-a,-c),(-b,-d),(b,c)]
+
+#deMorgan kills canonical
+(-(a,b),[a,b],-(a,b))
