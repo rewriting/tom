@@ -1253,7 +1253,7 @@ public class TomParser extends TomTask implements TomParserConstants {
   TomTerm term;
   Option orgTrack;
   Token tk;
-  int parenLevel = 0, lastTokenLine = 0;
+  int parenLevel = 0, lastTokenLine = 0, firstTokenLine = 0;
   boolean backQuoteMode = false;
   LinkedList tokenList = new LinkedList();
   Token backQuote = null;
@@ -1268,10 +1268,15 @@ public class TomParser extends TomTask implements TomParserConstants {
       jj_la1[38] = jj_gen;
       ;
     }
+          firstTokenLine = getLine();
       orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
       backQuoteMode = true;
       while(backQuoteMode) {
-        tk = getNextToken();
+        try {
+                tk = getNextToken();
+            } catch (jtom.parser.TokenMgrError Error) {
+                {if (true) throw new TomException("Invalide backquote term started line "+firstTokenLine+": EOF encountered ");}
+            }
         tokenList.add(tk);
         if(tk.kind == TOM_LPAREN) {
           parenLevel++;
@@ -1282,10 +1287,9 @@ public class TomParser extends TomTask implements TomParserConstants {
           }
         } else if (tk.kind == TOM_IDENTIFIER) {
                 tokenToDecLineMap.put(tk, new Integer(getLine()));
-        }
-        lastTokenLine = getLine();
-      }
-
+            }
+                lastTokenLine = getLine();
+          }
       switchToDefaultMode(); /* switch to DEFAULT mode */
         //term = ast().buildBackQuoteTerm(tokenList);
       term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
@@ -2574,12 +2578,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_10() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3_5() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2737,14 +2735,20 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_11() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_47() {
     if (jj_scan_token(XML_COMMENT)) return true;
     return false;
   }
 
-  final private boolean jj_3_11() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
+  final private boolean jj_3_12() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2769,14 +2773,14 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_12() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
+  final private boolean jj_3R_45() {
+    if (jj_scan_token(XML_START)) return true;
     return false;
   }
 
-  final private boolean jj_3R_45() {
-    if (jj_scan_token(XML_START)) return true;
+  final private boolean jj_3_10() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 

@@ -1143,7 +1143,7 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
   TomTerm term;
   Option orgTrack;
   Token tk;
-  int parenLevel = 0, lastTokenLine = 0;
+  int parenLevel = 0, lastTokenLine = 0, firstTokenLine = 0;
   boolean backQuoteMode = false;
   LinkedList tokenList = new LinkedList();
   Token backQuote = null;
@@ -1154,10 +1154,15 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
     { addPreviousCode(list); }
      [ backQuote = <TOM_BACKQUOTE> ]
     {
+   	  firstTokenLine = getLine();
       orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
       backQuoteMode = true;
       while(backQuoteMode) {
-        tk = getNextToken();
+        try {
+	        tk = getNextToken();
+	    } catch (jtom.parser.TokenMgrError Error) {
+	    	throw new TomException("Invalide backquote term started line "+firstTokenLine+": EOF encountered ");
+	    }
         tokenList.add(tk);
         if(tk.kind == TOM_LPAREN) { 
           parenLevel++;
@@ -1168,10 +1173,9 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
           }
         } else if (tk.kind == TOM_IDENTIFIER) {
         	tokenToDecLineMap.put(tk, new Integer(getLine()));
-        }
-        lastTokenLine = getLine();
-      }
-
+	    }
+		lastTokenLine = getLine();
+	  }
       switchToDefaultMode(); /* switch to DEFAULT mode */
         //term = ast().buildBackQuoteTerm(tokenList);
       term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
