@@ -829,13 +829,20 @@
             expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens,
             prodrule, propp, rbtree, set, vas, xml, xquery">
       -->
+<!--
       <target name="examples" 
               description="Builds the examples (at least some)"
               depends="xml, vas, tutorial, set, rbtree, propp, prodrule,
               addressbook, caml, apireach, boulderdash, builtin, dom,
               expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens">
       </target>
-      
+    -->
+<target name="examples" 
+              description="Builds the examples (at least some)"
+              depends=" vas, set, rbtree, propp, prodrule,
+              addressbook, apireach, boulderdash, builtin, 
+              expression, gtree, list, nspk, peano, pnspk, poly, pqueens">
+      </target>  
 			<target name="dist.examples" 
 							description="Prepare a distribution of examples" 
 							depends="prepare.examples">
