@@ -279,7 +279,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
   }
 
 
-    protected buildSymbolDecl(String tomName) {
+	protected buildSymbolDecl(String tomName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
@@ -287,62 +287,10 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     TomType type1 = getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     
-    if(cCode && isDefinedSymbol(tomSymbol)) {
-        // TODO: build an abstract declaration
-      int argno=1;
-        /*
-          String s = "";
-              if(!l.isEmpty()) {
-              s = getTLType(type1) + " " + name1;
-              
-              if(!l.isEmpty()) {
-              s += "(";
-              while (!l.isEmpty()) {
-              s += getTLType(l.getHead()) + " _" + argno;
-              argno++;
-              l = l.getTail() ;
-              if(!l.isEmpty()) {
-              s += ",";
-              }
-              }
-              s += ");";
-              }
-              }
-              generate(out,deep,makeTL(s));
-        */
-      
-      out.indent(deep);
-      if(!l.isEmpty()) {
-        out.write(getTLType(type1));
-        out.writeSpace();
-        out.write(name1);
-        if(!l.isEmpty()) {
-          out.writeOpenBrace();
-          while (!l.isEmpty()) {
-            out.write(getTLType(l.getHead()));
-              //out.writeUnderscore();
-              //out.write(argno);
-            argno++;
-            l = l.getTail() ;
-            if(!l.isEmpty()) {
-              out.writeComa();
-            }
-          }
-          out.writeCloseBrace();
-          out.writeSemiColon();
-        }
-      }
-      out.writeln();
-    } else if(jCode) {
-        // do nothing
-    } else if(eCode) {
-        // do nothing
-    }
-    
-      // inspect the optionList
-    generateOptionList(out, deep, optionList);
-      // inspect the slotlist
-    generateSlotList(out, deep, slotList);
+		// inspect the optionList
+    generateOptionList(deep, optionList);
+		// inspect the slotlist
+    generateSlotList(deep, slotList);
   }
 
   protected buildArraySymbolDecl(String tomName) {
@@ -353,41 +301,10 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     TomType type1 = getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     
-    if(cCode) {
-        // TODO: build an abstract declaration
-      int argno=1;
-      out.indent(deep);
-      if(!l.isEmpty()) {
-        out.write(getTLType(type1));
-        out.writeSpace();
-        out.write(name1);
-        if(!l.isEmpty()) {
-          out.writeOpenBrace();
-          while (!l.isEmpty()) {
-            out.write(getTLType(l.getHead()));
-            out.writeUnderscore();
-            out.write(argno);
-            argno++;
-            l = l.getTail() ;
-            if(!l.isEmpty()) {
-              out.writeComa();
-            }
-          }
-          out.writeCloseBrace();
-          out.writeSemiColon();
-        }
-      }
-      out.writeln();
-    } else if(jCode) {
-        // do nothing
-    } else if(eCode) {
-        // do nothing
-    }
-    
-      // inspect the optionList
-    generateOptionList(out, deep, optionList);
-      // inspect the slotlist
-    generateSlotList(out, deep, slotList);
+		// inspect the optionList
+    generateOptionList(deep, optionList);
+		// inspect the slotlist
+    generateSlotList(deep, slotList);
   }
   
 } // class TomImperativeGenerator

@@ -77,4 +77,106 @@ public class TomCGenerator extends TomImperativeGenerator {
 		output.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
   }
 
+	protected buildSymbolDecl(String tomName) {
+    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    OptionList optionList = tomSymbol.getOption();
+    SlotList slotList = tomSymbol.getSlotList();
+    TomTypeList l = getSymbolDomain(tomSymbol);
+    TomType type1 = getSymbolCodomain(tomSymbol);
+    String name1 = tomSymbol.getAstName().getString();
+    
+    if(isDefinedSymbol(tomSymbol)) {
+        // TODO: build an abstract declaration
+      int argno=1;
+        /*
+          String s = "";
+              if(!l.isEmpty()) {
+              s = getTLType(type1) + " " + name1;
+              
+              if(!l.isEmpty()) {
+              s += "(";
+              while (!l.isEmpty()) {
+              s += getTLType(l.getHead()) + " _" + argno;
+              argno++;
+              l = l.getTail() ;
+              if(!l.isEmpty()) {
+              s += ",";
+              }
+              }
+              s += ");";
+              }
+              }
+              generate(out,deep,makeTL(s));
+        */
+      
+      output.indent(deep);
+      if(!l.isEmpty()) {
+        output.write(getTLType(type1));
+        output.writeSpace();
+        output.write(name1);
+        if(!l.isEmpty()) {
+          output.writeOpenBrace();
+          while (!l.isEmpty()) {
+            output.write(getTLType(l.getHead()));
+              //out.writeUnderscore();
+              //out.write(argno);
+            argno++;
+            l = l.getTail() ;
+            if(!l.isEmpty()) {
+              output.writeComa();
+            }
+          }
+          output.writeCloseBrace();
+          output.writeSemiColon();
+        }
+      }
+      output.writeln();
+    } 
+
+		// inspect the optionList
+    generateOptionList(deep, optionList);
+		// inspect the slotlist
+    generateSlotList(deep, slotList);
+  }
+
+
+  protected buildArraySymbolDecl(String tomName) {
+    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    OptionList optionList = tomSymbol.getOption();
+    SlotList slotList = tomSymbol.getSlotList();        
+    TomTypeList l = getSymbolDomain(tomSymbol);
+    TomType type1 = getSymbolCodomain(tomSymbol);
+    String name1 = tomSymbol.getAstName().getString();
+    
+		// TODO: build an abstract declaration
+		int argno=1;
+		output.indent(deep);
+		if(!l.isEmpty()) {
+			output.write(getTLType(type1));
+			output.writeSpace();
+			outpput.write(name1);
+			if(!l.isEmpty()) {
+				output.writeOpenBrace();
+				while (!l.isEmpty()) {
+					output.write(getTLType(l.getHead()));
+					output.writeUnderscore();
+					output.write(argno);
+					argno++;
+					l = l.getTail() ;
+					if(!l.isEmpty()) {
+						output.writeComa();
+					}
+				}
+				output.writeCloseBrace();
+				output.writeSemiColon();
+			}
+		}
+		output.writeln();
+    
+		// inspect the optionList
+    generateOptionList(deep, optionList);
+		// inspect the slotlist
+    generateSlotList(deep, slotList);
+  }
+
 }
