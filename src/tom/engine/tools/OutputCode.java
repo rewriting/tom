@@ -34,8 +34,8 @@ public class OutputCode {
 
   public OutputCode(Writer file, boolean cCode, boolean pretty) {
     this.file = file;
-	this.cCode = cCode;
-	this.pretty = pretty;
+    this.cCode = cCode;
+    this.pretty = pretty;
   }
 
   public OutputCode() {
@@ -112,13 +112,11 @@ public class OutputCode {
 
   public void write(int deep,String s, int line, int length) throws IOException {
     if(lineCounter > line && !pretty) {
-      if(cCode)
-      {
+      if(cCode) {
         String s1 = "\n#line "+line+"\n";
           // writeln(deep,s);
         s = s1+s;
-      }
-      else {
+      } else {
         s = s.replace('\n', ' ');
           //System.out.println("Warning: Synchronization issue: Line: " + line + " versus LineCounter:" + lineCounter);
         length = 0;

@@ -754,7 +754,9 @@ abstract class TomChecker extends TomBase implements TomTask {
     ArrayList listOfPossibleSlot = new ArrayList();
     while ( !slotList.isEmpty() ) {
       TomName name = slotList.getHead().getSlotName();
-      if ( !name.isEmptyName()) listOfPossibleSlot.add(name.getString());
+      if(!name.isEmptyName()) {
+        listOfPossibleSlot.add(name.getString());
+      }
       slotList = slotList.getTail();
     }
     int line = nullInteger;

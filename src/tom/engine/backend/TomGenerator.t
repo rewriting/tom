@@ -132,12 +132,14 @@ public class TomGenerator extends TomBase implements TomTask {
       }
 
       TomInclude(l) -> {
-        if (jCode) {
-          OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile(), cCode, pretty);
-          generateList(singleLineOutput,deep,l);
-        } else {
-          generateList(out,deep,l);
+        if(!pretty) {
+          if(jCode) {
+            OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile(), cCode, pretty);
+            generateList(singleLineOutput,deep,l);
+            return;
+          }
         }
+        generateList(out,deep,l);
         return;
       }
      
@@ -882,6 +884,9 @@ public class TomGenerator extends TomBase implements TomTask {
         out.write("/* ");
         out.write(deep,t);
         out.write(" */ ");
+        if(pretty) {
+          out.writeln();
+        }
         return;
       }
 

@@ -1209,37 +1209,37 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
       switchToDefaultMode(); /* switch to DEFAULT mode */
       fileName = tlCode.getCode().trim();
       fileName = fileName.replace('/',File.separatorChar);
-    try {
-      file = new File(fileName);
-      if(!file.exists()) {
-        boolean found = false;
-        for(int i=0 ; !found && i<importList.length ; i++) {
-          file = new File(importList[i],fileName);
-          found = file.exists();
+      try {
+        file = new File(fileName);
+        if(!file.exists()) {
+          boolean found = false;
+          for(int i=0 ; !found && i<importList.length ; i++) {
+            file = new File(importList[i],fileName);
+            found = file.exists();
+          }
         }
+        
+          // to get the length of the file
+        inputBuffer = new byte[(int)file.length()+1];
+        input       = new FileInputStream(file);
+        input.read(inputBuffer);
+        
+        tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName, includedFiles);
+        tomParser.testIncludedFiles(fileName);
+        astTom = tomParser.startParsing();
+        astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
+        list.add(astTom);
+      } catch (FileNotFoundException e1) {
+        String msg = "Included file `" + fileName + "` not found at line "+getLine()+" from file `"+currentFile+"`";
+        System.out.println(msg);
+        throw new TomException(new Throwable(msg));
+      }  catch (java.io.IOException e2) {
+        String msg = "IOException occurs reading " + fileName + " at line "+getLine();
+        System.out.println(msg);
+        e2.printStackTrace();
+        throw new TomException(new Throwable(msg));
       }
-
-        // to get the length of the file
-      inputBuffer = new byte[(int)file.length()+1];
-      input       = new FileInputStream(file);
-      input.read(inputBuffer);
-      
-      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName, includedFiles);
-      tomParser.testIncludedFiles(fileName);
-      astTom = tomParser.startParsing();
-      astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
-      list.add(astTom);
-    } catch (FileNotFoundException e1) {
-      String msg = "Included file `" + fileName + "` not found at line "+getLine()+" from file `"+currentFile+"`";
-      System.out.println(msg);
-      throw new TomException(new Throwable(msg));
-    }  catch (java.io.IOException e2) {
-      String msg = "IOException occurs reading " + fileName + " at line "+getLine();
-      System.out.println(msg);
-      e2.printStackTrace();
-      throw new TomException(new Throwable(msg));
     }
-   }
 }
 
 void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
