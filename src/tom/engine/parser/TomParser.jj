@@ -231,6 +231,7 @@ public class TomParser extends TomTask {
   	TomParser tomParser;
 		File file;
 		String fileAbsoluteName = "";
+		System.out.println("Include file "+fileName);
 		fileName = fileName.trim();
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
@@ -243,14 +244,22 @@ public class TomParser extends TomTask {
   	    }
       } else {
 	      boolean found = false;
-        for(int i=0 ; !found && i<getInput().getImportList().size() ; i++) {
-          file = new File((File)getInput().getImportList().get(i),fileName).getCanonicalFile();
-          //System.out.println("look for: " + file.getPath());
-          found = file.exists();
-        }
-        if(!found) {
-        	String msg = "Included file '" + fileName + "' not found at line "+getLine()+" in file '"+currentFile+"'";
-          throw new TomIncludeException(msg);
+	        // try first relative to inputfilename
+	      File parent = new File(currentFile).getParentFile();
+	      file = new File(parent, fileName).getCanonicalFile();
+	      System.out.println(file);
+	      found = file.exists();
+	      if(!found) {
+	          // Look for importList
+	        for(int i=0 ; !found && i<getInput().getImportList().size() ; i++) {
+  	        file = new File((File)getInput().getImportList().get(i),fileName).getCanonicalFile();
+    	      //System.out.println("look for: " + file.getPath());
+    	      found = file.exists();
+    	    }
+       	  if(!found) {
+       	 		String msg = "Included file '" + fileName + "' not found at line "+getLine()+" in file '"+currentFile+"'";
+          	throw new TomIncludeException(msg);
+        	}
         }
       }
       fileAbsoluteName = file.getAbsolutePath();

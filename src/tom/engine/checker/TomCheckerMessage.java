@@ -42,13 +42,13 @@ public final class TomCheckerMessage {
   public static String MainWarningMessage = "{3}:{0,number,integer}:-- Warning occured in structure `{1}` declared line: {2,number,integer} \n---> {4}\n" ;
 		
   public static String OutputTwice = "Output filename specified twice";
-  public static String InvalidOption = "'{0}' is not a valid option";
+  public static String InvalidOption = "`{0} is not a valid option";
   public static String InvalidOutputDestdir = "Cannot specify --output with --destdir";
-  public static String IncompleteOption = "Expecting information after option: '{0}'";
-  public static String FileNotFound = "File '{0}' not found";
+  public static String IncompleteOption = "Expecting information after option: `{0}`";
+  public static String FileNotFound = "File `{0}` not found";
   public static String NoFileToCompile = "No file to compile";
   public static String OutputWithMultipleCompilation = "Cannot specify --output with multiple compilations";
-  public static String IOException = "IO Exception reading file '{0}'";
+  public static String IOException = "IO Exception reading file `{0}`";
   
 //Error messages linked to operator and type definitions
   public static String MultipleSymbolDefinitionError = "Multiple definition of Symbol `{0}`";

@@ -384,15 +384,9 @@ public class Tom {
           TomSymbolTable symbTable = tsf().TomSymbolTableFromTerm(fromFileSymblTable);
           environment().getSymbolTable().regenerateFromTerm(symbTable);
         } catch (FileNotFoundException e) {
-            //String s = "File `" + fileName + "` not found.";
-            //System.out.println(s);
-            //System.out.println("No file generated.");
           addError(TomCheckerMessage.FileNotFound, new Object[]{fileName}, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
           return null;
         } catch (IOException e4) {
-            //String s ="IO Exception reading file `" + fileName + "`";
-            //System.out.println(s);
-            //System.out.println("No file generated.");
           addError(TomCheckerMessage.IOException, new Object[]{fileName}, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
           return null;
         }
@@ -472,7 +466,7 @@ public class Tom {
       return 1;
     }
 
-    if(!tom.environment().checkNoErrors("Tom::main", getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning()))
+    if(!tom.environment().checkNoErrors("Tom.Main", getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning()))
       return 1;
     
     for(Iterator it = tom.inputFileList.iterator() ; it.hasNext() ; ) {
@@ -480,15 +474,15 @@ public class Tom {
       tom.run(inputFileName);
     }
 		
-		if (!tom.environment().checkNoErrors("Tom::main", 
+    if (!tom.environment().checkNoErrors("Tom.Main", 
 					getInput().isEclipseMode(), 
 					getInput().isWarningAll(), 
 					getInput().isNoWarning())) {
-			return 1;
-		} 
-		else {
-			return 0;
-		}
+      return 1;
+    } 
+    else {
+      return 0;
+    }
   }
 
   public TomErrorList getErrors() {

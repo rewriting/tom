@@ -67,47 +67,20 @@ public abstract class TomTask extends TomBase {
   }
 	
   public boolean checkNoErrors() {
-    return environment().checkNoErrors(name, getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning());
-      //System.out.println(errors);
-    /*int nbTotalError = errors.getLength();
-    int nbWarning = 0, nbError=0;
-    if(nbTotalError > 0 ) {
-      while(!errors.isEmpty()) {
-        TomError error = errors.getHead();
-        if (error.getLevel() == 1) {
-          nbWarning++;
-          if (getInput().isWarningAll() && !getInput().isEclipseMode()) {
-            System.out.println(error.getMessage());
-          }
-        } else if (error.getLevel() == 0) {
-          if(!getInput().isEclipseMode()){
-            System.out.println(error.getMessage());
-          }
-          res = false;
-          nbError++;
-        }
-        errors= errors.getTail();
-      }
-      if (nbError>0 && !getInput().isEclipseMode()) {
-        String msg = name+":  Encountered " + nbError + " errors and "+ nbWarning+" warnings.";
-        msg += "No file generated.";
-        System.out.println(msg);
-      } else if (nbWarning>0 && !getInput().isEclipseMode() && !getInput().isNoWarning()) {
-        String msg = name+":  Encountered "+ nbWarning+" warnings.";
-        System.out.println(msg);
-      }
-    }
-    return res;*/
+    return environment().checkNoErrors(name,
+    																	 getInput().isEclipseMode(),
+																			 getInput().isWarningAll(),
+																			 getInput().isNoWarning());
   }
 	
   public void finishProcess() {
-      //	Start next task
+      // Start next task
     if(nextTask != null) {
       if(!getInput().isEclipseMode()) {
         environment().setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
       } 
       nextTask.startProcess();
-    } /*else { System.out.println("No more tasks"); }*/
+    }
   }
 	
   public TomTask getTask(){
