@@ -26,6 +26,7 @@
 
 package jtom.verifier;
 
+import jtom.*;
 import aterm.*;
 import java.util.*;
 import jtom.tools.*;
@@ -35,7 +36,7 @@ import jtom.verifier.verifier.il.*;
 import jtom.verifier.verifier.il.types.*;
 import jtom.TomMessage;
 
-public class Verifier {
+public class Verifier extends TomBase {
 
 	// ------------------------------------------------------------
 // 	%include { ../adt/TomSignature.tom }
@@ -50,26 +51,26 @@ public class Verifier {
 			sorts Symbol Representation Variable Term Expr Instr 
 
 		abstract syntax
-			fsymbol(name:String) -> Symbol
+			fsymbol(name:String)                    -> Symbol
 			
-// 			repr(term:String)    -> Representation
+			//repr(term:String)                     -> Representation
 
-			var(name:String)     -> Variable
+			var(name:String)                        -> Variable
 
 			repr(term:String)                       -> Term
 			subterm(symbol:Symbol,t:Term,index:Int) -> Term
 
-			true                         -> Expr
-			false                        -> Expr
-			isfsym(t:Term,symbol:Symbol) -> Expr
-			eq(lt:Term,rt:Term)          -> Expr
+			true                                    -> Expr
+			false                                   -> Expr
+			isfsym(t:Term,symbol:Symbol)            -> Expr
+			eq(lt:Term,rt:Term)                     -> Expr
 
-			accept                              -> Instr
-			refuse                              -> Instr
-			ITE(e:Expr,ift:Instr,iff:Instr)     -> Instr
-			Let(var:Variable,t:Term,body:Instr) -> Instr
+			accept                                  -> Instr
+			refuse                                  -> Instr
+			ITE(e:Expr,ift:Instr,iff:Instr)         -> Instr
+			ILLet(var:Variable,t:Term,body:Instr)   -> Instr
 	}
-			
+
 	protected final Factory getIlFactory() {
 		return this.factory;
 	}

@@ -235,9 +235,13 @@ public class TomParser {
         String msg = MessageFormat.format(TomMessage.getString("IncludedFileCycle"), new Object[]{fileName, new Integer(getLine()), currentFile});
           throw new TomIncludeException(msg);
       }
+
+			// if trying to include a file twice, but not in a cycle : discard
       if(TomParser.testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
-        String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
-        throw new TomIncludeException(msg);
+				TomEnvironment.getInstance().messageWarning(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile}, fileName,getLine());
+				return;
+// 				String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
+//         throw new TomIncludeException(msg);
       }
        
       tomParser = TomParser.createParser(fileAbsoluteName, includedFileSet, alreadyParsedFileSet);
