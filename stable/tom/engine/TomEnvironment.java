@@ -133,22 +133,22 @@ public class TomEnvironment {
 
   public void printErrorMessage() {
     if(!getInput().isEclipseMode()) {
-      TomAlertList errors = getErrors();
-      while(!errors.isEmpty()) {
-        TomAlert error = errors.getHead();
+      TomAlertList errorList = getErrors();
+      while(!errorList.isEmpty()) {
+        TomAlert error = errorList.getHead();
         System.out.println(MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{error.getFile(), new Integer(error.getLine()), error.getMessage()}));
-      errors= errors.getTail();
+      errorList = errorList.getTail();
       }
     }
   }
 
   public void printWarningMessage() {
     if(!getInput().isEclipseMode() && !getInput().isNoWarning()) {
-      TomAlertList warnings = getWarnings();
-      while(!warnings.isEmpty()) {
-        TomAlert warning = warnings.getHead();
+      TomAlertList warningList = getWarnings();
+      while(!warningList.isEmpty()) {
+        TomAlert warning = warningList.getHead();
         System.out.println(MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{warning.getFile(), new Integer(warning.getLine()), warning.getMessage()}));
-      warnings= warnings.getTail();
+      warningList= warningList.getTail();
       }
     }
   }

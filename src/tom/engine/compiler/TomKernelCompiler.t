@@ -63,14 +63,6 @@ public class TomKernelCompiler extends TomBase {
         if(subject instanceof Instruction) {
           %match(Instruction subject) {
             Match(SubjectList(l1),PatternList(l2), optionList)  -> {
-              boolean generatedMatch = false;
-              String currentDebugKey = "noDebug";
-              if(getInput().isDebugMode()) {
-                generatedMatch = hasGeneratedMatch(`optionList);
-                Option orgTrack = findOriginTracking(`optionList);
-                currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-              }
-                
               TomList patternList = null;
               Instruction actionInst = null;
               TomList automataList = empty();
@@ -83,19 +75,11 @@ public class TomKernelCompiler extends TomBase {
                  * build a matching automata
                  */
               int actionNumber = 0;
-              boolean defaultPA =false;
               while(!`l2.isEmpty()) {
                 actionNumber++;
                 TomTerm pa = `l2.getHead();
-                defaultPA = hasDefaultCase(pa.getOption());
                 patternList = pa.getTermList().getTomList();
-                if (getInput().isDebugMode() && defaultPA) {
-                    // replace success by leaving structure
-                  TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
-                  actionInst = `UnamedBlock(concInstruction(pa.getAction(),TargetLanguageToInstruction(tl)));
-                } else {
-                  actionInst = pa.getAction();
-                }
+                actionInst = pa.getAction();
                 if(patternList==null || actionInst==null) {
                   System.out.println("TomKernelCompiler: null value");
                   throw new TomRuntimeException("TomKernelCompiler: null value");
@@ -108,13 +92,10 @@ public class TomKernelCompiler extends TomBase {
                 actionInst = (Instruction) this.apply(actionInst);
                 Instruction matchingAutomata = genSyntacticMatchingAutomata(actionInst,
                                                                             patternList,rootpath,1);
-                OptionList automataOptionList = `concOption(Debug(Name(currentDebugKey)));
+                OptionList automataOptionList = `concOption();
                 TomName label = getLabel(pa.getOption());
                 if(label != null) {
                   automataOptionList = `manyOptionList(Label(label),automataOptionList);
-                }
-                if(defaultPA) {
-                  automataOptionList = `manyOptionList(DefaultCase(),automataOptionList);
                 }
                 TomNumberList numberList = (TomNumberList) rootpath.append(`PatternNumber(makeNumber(actionNumber)));
                 TomTerm automata = `Automata(automataOptionList,patternList,numberList,matchingAutomata);
@@ -127,7 +108,7 @@ public class TomKernelCompiler extends TomBase {
                 /*
                  * return the compiled Match construction
                  */
-              InstructionList astAutomataList = automataListCompileMatchingList(automataList, generatedMatch);
+              InstructionList astAutomataList = automataListCompileMatchingList(automataList);
               Instruction astAutomata = collectVariableFromSubjectList(`l1,1,rootpath,`AbstractBlock(astAutomataList));
               return `CompiledMatch(astAutomata, optionList);
             }
@@ -180,23 +161,11 @@ public class TomKernelCompiler extends TomBase {
     /*
      * build a list of instructions from a list of automata
      */
-  private InstructionList automataListCompileMatchingList(TomList automataList, boolean generatedMatch) {
+  private InstructionList automataListCompileMatchingList(TomList automataList) {
     %match(TomList automataList) {
       emptyTomList() -> { return `emptyInstructionList(); }
       manyTomList(Automata(optionList,patternList,numberList,instruction),l)  -> {
-        InstructionList newList = automataListCompileMatchingList(`l, generatedMatch);
-
-        if(!generatedMatch && getInput().isDebugMode()) {
-          String debugKey = getDebug(`optionList);
-          Instruction tl1 = `TargetLanguageToInstruction(ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+debugKey+"\");\n"));
-          Instruction tl2 = `TargetLanguageToInstruction(ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+debugKey+"\");\n"));
-          if(!hasDefaultCase(`optionList)) {
-            `instruction = `UnamedBlock(concInstruction(tl1,instruction,tl2));
-          } else {
-            `instruction = `UnamedBlock(concInstruction(tl1,instruction));
-          }
-        }
-         
+        InstructionList newList = automataListCompileMatchingList(`l);
         if(getLabel(`optionList) != null) {
             /*
              * if a label is assigned to a pattern (label:pattern -> action)

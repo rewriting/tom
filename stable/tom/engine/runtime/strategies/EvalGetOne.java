@@ -44,7 +44,7 @@ import aterm.ATerm;
 
 public class EvalGetOne extends Strat {
     private Strat strat;
-    private Collection subjects;
+  //private Collection subjects;
     private int callbacksExpected = 0;
     private volatile int callbacksReceived = 0;
     private Collection childs = new HashSet();

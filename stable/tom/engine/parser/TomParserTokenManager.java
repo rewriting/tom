@@ -35,6 +35,7 @@ import jtom.TomEnvironment;
 import aterm.*;
 import jtom.adt.tomsignature.Factory;
 import jtom.adt.tomsignature.types.*;
+import jtom.Tom;
 import jtom.exception.*;
 import jtom.tools.*;
 import jtom.TomMessage;

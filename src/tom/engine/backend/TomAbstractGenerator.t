@@ -377,10 +377,17 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      /*
       Action(l) -> {
-        `generateList(deep, l);
+        generateList(deep,l);
         return;
       }
+
+      GuardedAction(l) -> {
+        `buildIfThenElse(deep, TrueTL(),Action(l));
+        return;
+      }
+      */
 
       Return(exp) -> {
         `buildReturn(deep, exp);
@@ -388,7 +395,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       CompiledMatch(instruction, list) -> {
-        `buildCompiledMatch(deep, instruction, list);
+        `buildCompiledMatch(deep, instruction);
         return;
       }
       
@@ -655,7 +662,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
 
-  protected abstract void buildCompiledMatch(int deep, Instruction instruction, OptionList list) throws IOException;
+  protected abstract void buildCompiledMatch(int deep, Instruction instruction) throws IOException;
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;

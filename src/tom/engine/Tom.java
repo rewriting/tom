@@ -79,10 +79,7 @@ public class Tom {
      */
   private List inputFileList;
   
-  public static String version =
-    "\njtom 2.0rc4\n"
-    + "\n"
-    + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n";
+  public final static String VERSION = "2.0rc4";
   
   public static String usage =
     "\nTom usage:"
@@ -115,7 +112,8 @@ public class Tom {
     ;
 
   public static void version() {
-    System.out.println(version);
+    System.out.println("\njtom " + VERSION + "\n\n"
+                       + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n");
   }
 
   public static void usage() {

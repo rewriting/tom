@@ -62,9 +62,6 @@ public class TomExpander extends TomTask {
       TomTerm stringExpandedTerm   = expandString(variableExpandedTerm);
       TomTerm expandedTerm         = updateCodomain(stringExpandedTerm);
       
-      if(debugMode) {
-        tomKernelExpander.expandMatchPattern(expandedTerm);
-      }
       if(verbose) {
         System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }

@@ -43,10 +43,10 @@ import aterm.ATerm;
 
 public class EvalGetAll extends Strat {
     private Strat strat;
-    private Collection subjects;
+  //private Collection subjects;
     private int callbacksExpected = 0;
     private volatile int callbacksReceived = 0;
-    protected boolean terminated = false;
+  //protected boolean terminated = false;
 
     public EvalGetAll() { }
 

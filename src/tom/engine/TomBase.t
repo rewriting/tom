@@ -520,13 +520,6 @@ public class TomBase {
     return false;
   }
 
-  protected boolean hasDefaultCase(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,DefaultCase(),_*) -> { return true; }
-    }
-    return false;
-  }
-
   protected boolean hasDefinedSymbol(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,DefinedSymbol(),_*) -> { return true; }

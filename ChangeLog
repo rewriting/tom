@@ -1,3 +1,8 @@
+2004-06-01  pem  <pem@polly.loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: fixed TOM-40 by addind a
+	  if(true) before construction the rhs of a rewrite rule  
+
 2004-05-09    <pem@BACH>
 
 	* src/jtom/parser/TomParser.t: 
