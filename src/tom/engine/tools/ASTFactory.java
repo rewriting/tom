@@ -105,6 +105,10 @@ public class ASTFactory {
     return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type));  
   }
 
+  public TomTerm makeUnamedVariableStar(Option option, String type) {
+    return tsf().makeTomTerm_UnamedVariableStar(option, tsf().makeTomType_TomTypeAlone(type));  
+  }
+
   public TomSymbol makeSymbol(String symbolName, String resultType, TomTypeList typeList, SlotList slotList,
                               List optionList, TargetLanguage glFsym) {
     TomName name = tsf().makeTomName_Name(symbolName);

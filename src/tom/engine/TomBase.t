@@ -237,12 +237,11 @@ public class TomBase {
         return tomSymbol.getTypesToType().getCodomain();
       }
       
-      Variable(option,name,type) -> { return type; }
-      
-      VariableStar(option,name,type) -> { return type; }
-      
-      UnamedVariable(option,type) -> { return type; }
-      
+      Variable[astType=type] |
+      VariableStar[astType=type] |
+      UnamedVariable[astType=type] |
+      UnamedVariableStar[astType=type] -> { return type; }
+
       _ -> {
         System.out.println("getTermType error on term: " + t);
         System.exit(1);
@@ -362,15 +361,7 @@ public class TomBase {
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;
             %match(TomTerm t) { 
-              Variable[option=Option(optionList)] -> {
-                collection.add(t);
-                annotedVariable = getAnnotedVariable(optionList);
-                if(annotedVariable!=null) {
-                  collection.add(annotedVariable);
-                }
-                return false;
-              }
-              
+              Variable[option=Option(optionList)] |
               VariableStar[option=Option(optionList)] -> {
                 collection.add(t);
                 annotedVariable = getAnnotedVariable(optionList);
@@ -380,7 +371,8 @@ public class TomBase {
                 return false;
               }
               
-              UnamedVariable[option=Option(optionList)] -> {
+              UnamedVariable[option=Option(optionList)] |
+              UnamedVariableStar[option=Option(optionList)] -> {
                 annotedVariable = getAnnotedVariable(optionList);
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);

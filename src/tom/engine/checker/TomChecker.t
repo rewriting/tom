@@ -817,10 +817,11 @@ abstract class TomChecker extends TomBase implements TomTask {
             }
             VariableStar[] -> {nbFoundArgs++;foundType.add((TomTerm)null);}
             Placeholder[option=Option(options)] -> {
-              if (listOrArray) {
+              if(false && listOrArray) {
                 messageImpossiblePlaceHolderInListStructure(name,options);
               } else {
-                nbFoundArgs++;foundType.add((TomTerm)null);
+                nbFoundArgs++;
+                foundType.add((TomTerm)null);
               }
             }
           }

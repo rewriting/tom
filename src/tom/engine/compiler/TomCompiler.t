@@ -361,7 +361,17 @@ public class TomCompiler extends TomBase implements TomTask {
     TomTerm renamedTerm = subject;
     
     %match(TomTerm subject) {
-      Variable[astName=name,astType=type] -> {
+      UnamedVariable[option=Option(optionList),astType=type] -> {
+        OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
+        return `UnamedVariable(Option(newOptionList),type);
+      }
+      
+      UnamedVariableStar[option=Option(optionList),astType=type] -> {
+        OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
+        return `UnamedVariableStar(Option(newOptionList),type);
+      }
+
+      Variable[option=Option(optionList),astName=name,astType=type] -> {
         Integer multiplicity = (Integer) multiplicityMap.get(name);
         int mult = multiplicity.intValue();
         if(mult > 1) {
@@ -371,8 +381,8 @@ public class TomCompiler extends TomBase implements TomTask {
           TomNumberList path = tsf().makeTomNumberList();
           path = (TomNumberList) path.append(`RenamedVar(name));
           path = (TomNumberList) path.append(makeNumber(mult));
-          renamedTerm = `Variable(option(),PositionName(path),type);
-
+          OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
+          renamedTerm = `Variable(Option(newOptionList),PositionName(path),type);
             //System.out.println("renamedTerm = " + renamedTerm);
 
           Expression newEquality = `EqualTerm(subject,renamedTerm);
@@ -381,7 +391,7 @@ public class TomCompiler extends TomBase implements TomTask {
         return renamedTerm;
       }
 
-      VariableStar[astName=name,astType=type] -> {
+      VariableStar[option=Option(optionList),astName=name,astType=type] -> {
         Integer multiplicity = (Integer)multiplicityMap.get(name);
         int mult = multiplicity.intValue();
         if(mult > 1) {
@@ -391,7 +401,8 @@ public class TomCompiler extends TomBase implements TomTask {
           TomNumberList path = tsf().makeTomNumberList();
           path = (TomNumberList) path.append(`RenamedVar(name));
           path = appendNumber(mult,path);
-          renamedTerm = `VariableStar(option(),PositionName(path),type);
+          OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
+          renamedTerm = `VariableStar(Option(newOptionList),PositionName(path),type);
 
             //System.out.println("renamedTerm = " + renamedTerm);
 
@@ -409,20 +420,7 @@ public class TomCompiler extends TomBase implements TomTask {
           newArgs = append(newElt,newArgs);
           args = args.getTail();
         }
-
-        ArrayList list = new ArrayList();
-        while(!optionList.isEmpty()) {
-          Option optElt = optionList.getHead();
-          Option newOptElt = optElt;
-          %match(Option optElt) {
-            TomTermToOption(var@Variable[]) -> {
-              newOptElt = `TomTermToOption(renameVariable(var,multiplicityMap,equalityCheck));
-            }
-          }
-          list.add(newOptElt);
-          optionList = optionList.getTail();
-        }
-        OptionList newOptionList = ast().makeOptionList(list);
+        OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
         renamedTerm = `Appl(Option(newOptionList),name,newArgs);
         return renamedTerm;
       }
@@ -430,6 +428,25 @@ public class TomCompiler extends TomBase implements TomTask {
     return renamedTerm;
   }
 
+  private OptionList renameVariableInOptionList(OptionList optionList,
+                                                HashMap multiplicityMap,
+                                                ArrayList equalityCheck) {
+    ArrayList list = new ArrayList();
+    while(!optionList.isEmpty()) {
+      Option optElt = optionList.getHead();
+      Option newOptElt = optElt;
+      %match(Option optElt) {
+        TomTermToOption(var@Variable[]) -> {
+          newOptElt = `TomTermToOption(renameVariable(var,multiplicityMap,equalityCheck));
+        }
+      }
+      list.add(newOptElt);
+      optionList = optionList.getTail();
+    }
+    return ast().makeOptionList(list);
+  }
+
+  
   private TomList linearizePattern(TomList subject, ArrayList equalityCheck) {
     
       // collect variables

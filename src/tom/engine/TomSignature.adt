@@ -101,6 +101,7 @@ constructor(TomTerm,Variable,Variable(<option(Option)>,<astName(TomName)>,<astTy
 constructor(TomTerm,VariableStar,VariableStar(<option(Option)>,<astName(TomName)>,<astType(TomType)>)),
 constructor(TomTerm,Placeholder,Placeholder(<option(Option)>)),
 constructor(TomTerm,UnamedVariable,UnamedVariable(<option(Option)>,<astType(TomType)>)),
+constructor(TomTerm,UnamedVariableStar,UnamedVariableStar(<option(Option)>,<astType(TomType)>)),
 constructor(TomTerm,LocalVariable,LocalVariable),
 constructor(TomTerm,EndLocalVariable,EndLocalVariable),
 constructor(TomTerm,BuildVariable,BuildVariable(<astName(TomName)>)),

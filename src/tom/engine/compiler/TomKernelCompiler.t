@@ -413,7 +413,7 @@ public class TomKernelCompiler extends TomBase {
             result = appendInstruction(`Action(actionList),result);
           }
           
-          break matchBlock;
+          break matchBlock; 
         }
 
         UnamedVariable(Option(optionList), termType) -> {
@@ -524,12 +524,6 @@ public class TomKernelCompiler extends TomBase {
                                   int indexTerm) {
     TomTerm term;
     TomList result = empty();
-      //%variable
-
-//     if(termList.isEmpty() && indexTerm >1) {
-//       return result;
-//     }
-    
     TomTerm variableListAST = null;
     if(indexTerm > 1) {
       variableListAST = subjectListName;
@@ -582,8 +576,9 @@ public class TomKernelCompiler extends TomBase {
           }
         }
         
-          //conc(var:Variable(soption,_, termType),termTail*) -> {
-        manyTomList(var@Variable(option,_, termType),termTail) -> {
+        manyTomList(var@Variable(Option(optionList),_, termType),termTail) |
+        manyTomList(var@UnamedVariable(Option(optionList), termType),termTail) -> {
+          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -598,17 +593,21 @@ public class TomKernelCompiler extends TomBase {
                */            
             TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
-            
             TomList declarationList = empty();
             TomList assignementList = empty();
-            assignementList = appendInstruction(`Assign(var,GetHead(subjectListName)),assignementList);
+
+            Expression source = `GetHead(subjectListName);
+            if(annotedVariable != null) {
+              assignementList = appendInstruction(`Assign(annotedVariable,source),assignementList);
+            }
+            assignementList = appendInstruction(`Assign(var,source),assignementList);
             assignementList = appendInstruction(`Assign(subjectListName,GetTail(subjectListName)),assignementList);
             
             if(generateSemanticAction) {
               subList = appendInstruction(`Action(actionList),subList);
             }
             
-            Expression cond = `IsEmptyList( subjectListName);
+            Expression cond = `IsEmptyList(subjectListName);
             
             Instruction test = `IfThenElse(cond, subList, empty());
             TomList succesList = appendInstruction(test,concat(declarationList,assignementList));
@@ -632,7 +631,12 @@ public class TomKernelCompiler extends TomBase {
             
             TomList declarationList = empty();
             TomList assignementList = empty();
-            assignementList = appendInstruction(`Assign(var,GetHead(subjectListName)),assignementList);
+
+            Expression source = `GetHead(subjectListName);
+            if(annotedVariable != null) {
+              assignementList = appendInstruction(`Assign(annotedVariable,source),assignementList);
+            }
+            assignementList = appendInstruction(`Assign(var,source),assignementList);
             assignementList = appendInstruction(`Assign(subjectListName,GetTail(subjectListName)),assignementList);
             
             TomList succesList = concat(concat(declarationList,assignementList),subList);
@@ -643,31 +647,9 @@ public class TomKernelCompiler extends TomBase {
           }
         }
         
-          //conc(UnamedVariable(option,_),termTail*) -> {
-        manyTomList(UnamedVariable(option,_),termTail) -> {
-          if(termTail.isEmpty()) {
-              /*
-               * generate:
-               * ---------
-               * TODO
-               */
-            System.out.println("cons(UnamedVariable(option,_), empty): not yet implemented");
-            System.exit(1);
-            break matchBlock;
-          } else {
-              /*
-               * generate:
-               * ---------
-               * TODO
-               */
-            System.out.println("cons(UnamedVariable(option,_), termTail): not yet implemented");
-            System.exit(1);
-            break matchBlock;
-          }
-        }
-        
-          //conc(var:VariableStar(option,_, termType),termTail*) -> {
-        manyTomList(var@VariableStar(option,_, termType),termTail) -> {
+        manyTomList(var@VariableStar(Option(optionList),_, termType),termTail) |
+        manyTomList(var@UnamedVariableStar(Option(optionList), termType),termTail) -> {
+          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -681,8 +663,11 @@ public class TomKernelCompiler extends TomBase {
             
             TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
-            Instruction assignement = `Assign(var,TomTermToExpression(subjectListName));
-            result = concat(appendInstruction(assignement,result),subList);
+            Expression source = `TomTermToExpression(subjectListName);
+            if(annotedVariable != null) {
+              result = appendInstruction(`Assign(annotedVariable,source),result);
+            }
+            result = concat(appendInstruction(`Assign(var,source),result),subList);
             break matchBlock;
           } else {
               /*
@@ -691,7 +676,7 @@ public class TomKernelCompiler extends TomBase {
                * TomList begin_i = subjectList;
                * TomList end_i   = subjectList;
                * do {
-               *   // SUBSTITUTION: E_i
+               *   * SUBSTITUTION: E_i
                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);
                *   ...
                *   if(!IS_EMPTY_TomList(end_i) )
@@ -713,7 +698,11 @@ public class TomKernelCompiler extends TomBase {
             TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             TomList doList = empty();
-            doList = appendInstruction(`Assign(var,GetSliceList(symbol.getAstName(),variableBeginAST,variableEndAST)),doList);
+            Expression source = `GetSliceList(symbol.getAstName(),variableBeginAST,variableEndAST);
+            if(annotedVariable != null) {
+              doList = appendInstruction(`Assign(annotedVariable,source),doList);
+            }
+            doList = appendInstruction(`Assign(var,source),doList);
             
             doList = concat(doList,subList);
 
@@ -760,8 +749,7 @@ public class TomKernelCompiler extends TomBase {
     
     TomTerm variableListAST = null;
     TomTerm variableIndexAST = null;
-    String szero = "0";
-    Expression glZero = `TomTermToExpression(TargetLanguageToTomTerm(ITL(szero)));
+    Expression glZero = `TomTermToExpression(TargetLanguageToTomTerm(ITL("0")));
     if(indexTerm > 1) {
       variableListAST = subjectListName;
       variableIndexAST = subjectListIndex;
@@ -773,7 +761,7 @@ public class TomKernelCompiler extends TomBase {
         %match(TomTerm subjectListName) {
           Variable(option, _, termType) -> {
             variableListAST = `Variable(option(),PositionName(pathList),termType);
-              // TODO: other termType
+              /* TODO: other termType */
             variableIndexAST = `Variable(option(),PositionName(pathIndex),getIntType());
             break matchBlock;
           }
@@ -801,8 +789,9 @@ public class TomKernelCompiler extends TomBase {
     matchBlock: {
       %match(TomList termList) {
         
-          //conc(var:Variable(option, _, termType),termTail*) -> {
-        manyTomList(var@Variable(option, _, termType),termTail) -> {
+        manyTomList(var@Variable(Option(optionList),_, termType),termTail) |
+        manyTomList(var@UnamedVariable(Option(optionList), termType),termTail) -> {
+          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -820,7 +809,13 @@ public class TomKernelCompiler extends TomBase {
             
             TomList declarationList = empty();
             TomList assignementList = empty();
-            assignementList = appendInstruction(`Assign(var,GetElement(subjectListName,subjectListIndex)),assignementList);
+
+            Expression source = `GetElement(subjectListName,subjectListIndex);
+            if(annotedVariable != null) {
+              assignementList = appendInstruction(`Assign(annotedVariable,source),assignementList);
+            }
+
+            assignementList = appendInstruction(`Assign(var,source),assignementList);
             assignementList = appendInstruction(`Increment(subjectListIndex),assignementList);
             
             if(generateSemanticAction) {
@@ -851,8 +846,12 @@ public class TomKernelCompiler extends TomBase {
             TomList declarationList = empty();
             TomList assignementList = empty();
             TomList succesList      = empty();
-            
-            assignementList = appendInstruction(`Assign(var,GetElement(subjectListName,subjectListIndex)),assignementList);
+
+            Expression source = `GetElement(subjectListName,subjectListIndex);
+            if(annotedVariable != null) {
+              assignementList = appendInstruction(`Assign(annotedVariable,source),assignementList);
+            }
+            assignementList = appendInstruction(`Assign(var,source),assignementList);
             assignementList = appendInstruction(`Increment(subjectListIndex),assignementList);
             
             succesList = concat(concat(concat(succesList,declarationList),assignementList),subList);
@@ -864,31 +863,9 @@ public class TomKernelCompiler extends TomBase {
           }
         }
         
-          //conc(UnamedVariable(option,_),termTail*) -> {
-        manyTomList(UnamedVariable(option,_),termTail) -> {
-          if(termTail.isEmpty()) {
-              /*
-               * generate:
-               * ---------
-               * TODO
-               */
-            System.out.println("cons(UnamedVariable(option,_), empty): not yet implemented");
-            System.exit(1);
-            break matchBlock;
-          } else {
-              /*
-               * generate:
-               * ---------
-               * TODO
-               */
-            System.out.println("cons(UnamedVariable(option,_), empty): not yet implemented");
-            System.exit(1);
-            break matchBlock;
-          }
-        }
-        
-          //conc(var:VariableStar(option,_, termType),termTail*) -> {
-        manyTomList(var@VariableStar(option,_, termType),termTail) -> {
+        manyTomList(var@VariableStar(Option(optionList),_, termType),termTail) |
+        manyTomList(var@UnamedVariableStar(Option(optionList), termType),termTail) -> {
+          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -902,13 +879,18 @@ public class TomKernelCompiler extends TomBase {
             
             TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
+            Expression source = `GetSliceArray(
+              symbol.getAstName(),subjectListName,
+              subjectListIndex,
+              ExpressionToTomTerm(GetSize(subjectListName))
+              );
+
+            if(annotedVariable != null) {
+              result = appendInstruction(`Assign(annotedVariable,source),result);
+            }
             
-            Instruction assignement = `Assign(var,GetSliceArray(
-                                            symbol.getAstName(),subjectListName,
-                                            subjectListIndex,
-                                            ExpressionToTomTerm(GetSize(subjectListName))
-                                         ));
-            result = concat(appendInstruction(assignement,result),subList);
+            result = appendInstruction(`Assign(var,source),result);
+            result = concat(result,subList);
             break matchBlock;
           } else {
               /*
@@ -917,7 +899,7 @@ public class TomKernelCompiler extends TomBase {
                * int begin_i = subjectIndex;
                * int end_i   = subjectIndex;
                * do {
-               *   // SUBSTITUTION: E_i
+               *   * SUBSTITUTION: E_i
                *   TomList E_i = GET_SLICE_TomList(subjectList,begin_i,end_i);
                *   ...
                *   end_i++;
@@ -927,7 +909,7 @@ public class TomKernelCompiler extends TomBase {
 
             TomNumberList pathBegin = (TomNumberList) oldPath.append(`Begin(makeNumber(indexTerm)));
             TomNumberList pathEnd = (TomNumberList) oldPath.append(`End(makeNumber(indexTerm)));
-              // TODO: termType
+              /* TODO: termType */
             TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),getIntType());
             TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),getIntType());
             TomList declarationList = empty();
@@ -940,9 +922,16 @@ public class TomKernelCompiler extends TomBase {
             TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             TomList doList = empty();
-            doList = appendInstruction(`Assign(var,
-                                    GetSliceArray(symbol.getAstName(),subjectListName,variableBeginAST,
-                                                  variableEndAST)),doList);
+
+            Expression source = `GetSliceArray(symbol.getAstName(),
+                                              subjectListName,variableBeginAST,
+                                              variableEndAST);
+            
+            if(annotedVariable != null) {
+              doList = appendInstruction(`Assign(annotedVariable,source),doList);
+            }
+
+            doList = appendInstruction(`Assign(var,source),doList);
             doList = concat(doList,subList);
             doList = appendInstruction(`Increment(variableEndAST),doList);
             doList = appendInstruction(`Assign(subjectListIndex,TomTermToExpression(variableEndAST)),doList); 
@@ -976,7 +965,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
 
-     /* 
+    /* 
      * postProcessing: passCompiledTermTransformation
      *
      * transform a compiledTerm
@@ -984,7 +973,7 @@ public class TomKernelCompiler extends TomBase {
      *   - collection of Declaration
      *   - replace LocalVariable and remove Declaration
      */
-
+  
   public TomTerm postProcessing(TomTerm subject) {
     TomTerm res;
     ArrayList list = new ArrayList();
@@ -1104,7 +1093,7 @@ public class TomKernelCompiler extends TomBase {
     return cons(traversalReplaceLocalVariable(list,t),
                 traversalReplaceLocalVariableList(list,l));
   }
-  
+   
   public TomTerm removeDeclaration(TomTerm subject) {
     TomTerm res = subject;
       //System.out.println("*** removeDeclaration");
@@ -1139,5 +1128,6 @@ public class TomKernelCompiler extends TomBase {
   
 } // end of class
   
-                  
+
+
     

@@ -207,9 +207,18 @@ public class TomKernelExpander extends TomBase {
 
             matchBlock: {
               %match(TomTerm subterm) {
-                VariableStar(voption,name,_) -> {
-                  list.add(`VariableStar(voption,name,codomainType));
+                VariableStar(Option(optionList),name,_) -> {
+                  Option orgTrack = findOriginTracking(optionList);
+                  Option option = `Option(replaceAnnotedName(optionList,codomainType,orgTrack));
+                  list.add(`VariableStar(option,name,codomainType));
                     //System.out.println("*** break: " + subterm);
+                  break matchBlock;
+                }
+                
+                UnamedVariableStar(Option(optionList),_) -> {
+                  Option orgTrack = findOriginTracking(optionList);
+                  Option option = `Option(replaceAnnotedName(optionList,codomainType,orgTrack));
+                  list.add(`UnamedVariableStar(option,codomainType));
                   break matchBlock;
                 }
                 

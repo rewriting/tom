@@ -694,7 +694,12 @@ public class TomGenerator extends TomBase implements TomTask {
         }
         return;
       }
-      
+
+      Assign(UnamedVariable[],exp) |  
+      Assign(UnamedVariableStar[],exp) -> {
+        return;
+      }
+
       AssignMatchSubject(var@Variable(option1,name1,
                                       Type(tomType@TomType(type),tlType@TLType[])),exp) -> {
         out.indent(deep);

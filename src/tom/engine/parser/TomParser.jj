@@ -712,6 +712,16 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       option = ast().makeOption(ast().makeOptionList(optionList));
       return ast().makeVariableStar(option,name.image,"unknown type");
     }
+  | // _*
+    LOOKAHEAD(2)
+    name = <TOM_UNDERSCORE> <TOM_STAR>
+    {
+      text += "_"+"*";
+      if(annotedName!=null) { optionList.add(annotedName); }
+      optionList.add(ast().makeOriginTracking("_",getLine(), currentFile));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      return ast().makeUnamedVariableStar(option,"unknown type");
+    }
   | // f(a,...)
     name = <TOM_IDENTIFIER>
       {optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
