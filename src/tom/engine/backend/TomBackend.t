@@ -141,16 +141,10 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 // 	return `emptyTomOptionList();
 //     }
 
-  public void setOption(String optionName, String optionValue) {
-    String type = getServer().getOptionsType(optionName);
-    if( type == "boolean")
-      putOptionValue(optionName, new Boolean(optionValue));
-    else if( type == "integer")
-      putOptionValue(optionName, new Integer(optionValue));
-    else if( type == "string")
-      putOptionValue(optionName, optionValue);
+  public void setOption(String optionName, Object optionValue) {
+    putOptionValue(optionName, optionValue);
 
-    if(optionValue.equals("true")) // no more than 1 type of code can be activated at a time
+    if(optionValue.equals(Boolean.TRUE)) // no more than 1 type of code can be activated at a time
 	{
 	    if( optionName.equals("jCode") || optionName.equals("j") )
 		{ 

@@ -92,13 +92,7 @@ public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
    * @param optionName the option's name
    * @param optionValue the option's value
    */
-  public void setOption(String optionName, String optionValue) {
-    String type = getServer().getOptionsType(optionName);
-    if( type == "boolean")
-	putOptionValue(optionName, new Boolean(optionValue));
-    else if( type == "integer")
-	putOptionValue(optionName, new Integer(optionValue));
-    else if( type == "string")
-	putOptionValue(optionName, optionValue);
+  public void setOption(String optionName, Object optionValue) {
+    putOptionValue(optionName, optionValue);
   }
 }

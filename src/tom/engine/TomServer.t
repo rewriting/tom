@@ -822,14 +822,8 @@ public class TomServer implements TomPluginOptions {
    * @param optionName the option's name
    * @param optionValue the option's desired value
    */
-  public void setOption(String optionName, String optionValue) {
-    String type = getOptionsType(optionName);
-    if( type == "boolean")
-	putOptionValue(optionName, new Boolean(optionValue));
-    else if( type == "integer")
-	putOptionValue(optionName, new Integer(optionValue));
-    else if( type == "string")
-	putOptionValue(optionName, optionValue);
+  public void setOption(String optionName, Object optionValue) {
+    putOptionValue(optionName, optionValue);
   }
 
   /**
@@ -910,12 +904,12 @@ public class TomServer implements TomPluginOptions {
                   {                    				
                     if (type.equals("boolean"))
                       {
-                        plugin.setOption(s, "true");
+			  plugin.setOption(s, Boolean.TRUE);
                       }
                     else if (type.equals("integer"))
                       {
                         String t = argumentList[++i];
-                        plugin.setOption(s, t);
+                        plugin.setOption(s, new Integer(t));
                       }
                     else if (type.equals("string")) 
                       {
