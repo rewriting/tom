@@ -13,6 +13,9 @@
   <property name="addressbook" value="AddressBook"/>
   <property name="addressbook.dir" location="${examples.dir}/${addressbook}" />
 
+  <property name="apireach" value="ApiReach"/>
+  <property name="apireach.dir" location="${examples.dir}/${apireach}" />
+
   <property name="boulderdash" value="BoulderDash"/>
   <property name="boulderdash.dir" location="${examples.dir}/${boulderdash}" />
 
@@ -22,20 +25,23 @@
   <property name="dom" value="Dom"/>
   <property name="dom.dir" location="${examples.dir}/${dom}" />
 
+  <property name="expression" value="Expression"/>
+  <property name="expression.dir" location="${examples.dir}/${expression}" />
+
+  <property name="gtree" value="GTree"/>
+  <property name="gtree.dir" location="${examples.dir}/${gtree}" />
+
+  <property name="lsystem" value="Lsystems"/>
+  <property name="lsystem.dir" location="${examples.dir}/${lsystem}" />
+
   <property name="nspk" value="Nspk"/>
   <property name="nspk.dir" location="${examples.dir}/${nspk}" />
 
   <property name="pnspk" value="PNspk"/>
   <property name="pnspk.dir" location="${examples.dir}/${pnspk}" />
 
-  <property name="xml" value="Xml"/>
-  <property name="xml.dir" location="${examples.dir}/${xml}" />
-
   <property name="pqueens" value="PQueens"/>
   <property name="pqueens.dir" location="${examples.dir}/${pqueens}" />
-
-  <property name="gtree" value="GTree"/>
-  <property name="gtree.dir" location="${examples.dir}/${gtree}" />
 
   <property name="rbtree" value="RBTree"/>
   <property name="rbtree.dir" location="${examples.dir}/${rbtree}" />
@@ -43,11 +49,14 @@
   <property name="reach" value="api_reach"/>
   <property name="reach.dir" location="${examples.dir}/${reach}" />
 
-  <property name="lsystem" value="Lsystems"/>
-  <property name="lsystem.dir" location="${examples.dir}/${lsystem}" />
-
   <property name="set" value="Set"/>
   <property name="set.dir" location="${examples.dir}/${set}" />
+
+  <property name="vas" value="Vas"/>
+  <property name="vas.dir" location="${examples.dir}/${vas}" />
+
+  <property name="xml" value="Xml"/>
+  <property name="xml.dir" location="${examples.dir}/${xml}" />
 
   <!-- Define classpath for building stable and source  -->
   <path id="tom.classpath">
@@ -106,6 +115,25 @@
     </javac>
   </target>
 
+  <target name="apireach">
+    <!-- build adt -->
+    <adt file="${apireach.dir}/reach.adt" 
+         factory="reach" 
+         package="adt.apireach" 
+         destdir="${apireach.dir}"/>
+    <!-- build tom -->
+    <tom srcdir="${apireach.dir}" 
+         destdir="${apireach.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+      <include name="**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${apireach.dir}" destdir="${apireach.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
   <target name="boulderdash">
     <!-- build adt -->
     <adt file="${boulderdash.dir}/boulder.adt" 
@@ -158,6 +186,58 @@
     </javac>
   </target>
   
+  <target name="expression">
+    <!-- build tom -->
+    <tom srcdir="${expression.dir}" 
+         destdir="${expression.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom --lazyType">
+      <include name="**/Record.t"/>
+    </tom>
+    <tom srcdir="${expression.dir}" 
+         destdir="${expression.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+      <include name="**/RecordStrict.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${expression.dir}" destdir="${expression.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="gtree">
+    <!-- build adt -->
+    <adt file="${gtree.dir}/term.adt" 
+         factory="term" 
+         package="adt.gtree" 
+         destdir="${gtree.dir}"/>
+    <!-- build tom -->
+    <tom srcdir="${gtree.dir}" 
+         destdir="${gtree.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+      <include name="**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${gtree.dir}" destdir="${gtree.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="lsystem">
+    <!-- build tom -->
+    <tom srcdir="${lsystem.dir}" 
+         destdir="${lsystem.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+      <include name="**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${lsystem.dir}" destdir="${lsystem.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
   <target name="nspk">
     <!-- build adt -->
     <adt file="${nspk.dir}/term.adt" 
@@ -195,20 +275,7 @@
       <include name="**/*.java"/>
     </javac>
   </target>
-  
-  <target name="xml">
-    <!-- build tom -->
-    <tom srcdir="${xml.dir}" 
-         destdir="${xml.dir}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
-    </tom>
-    <!-- build java source -->
-    <javac srcdir="${xml.dir}" destdir="${xml.dir}">
-      <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
-    </javac>
-  </target>
+
   
   <target name="pqueens">
     <!-- build tom -->
@@ -223,59 +290,7 @@
       <include name="**/*.java"/>
     </javac>
   </target>
-  
-  <target name="lsystem">
-    <!-- build tom -->
-    <tom srcdir="${lsystem.dir}" 
-         destdir="${lsystem.dir}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
-    </tom>
-    <!-- build java source -->
-    <javac srcdir="${lsystem.dir}" destdir="${lsystem.dir}">
-      <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
-    </javac>
-  </target>
-  
-  <target name="set">
-    <!-- build adt -->
-    <adt file="${set.dir}/set.adt" 
-         factory="Set" 
-         package="adt" 
-         destdir="${set.dir}"/>
-    <!-- build tom -->
-    <tom srcdir="${set.dir}" 
-         destdir="${set.dir}" 
-         options="-I ${env.TOM_HOME}/share/jtom --lazyType">
-      <include name="**/*.t"/>
-    </tom>
-    <!-- build java source -->
-    <javac srcdir="${set.dir}" destdir="${set.dir}">
-      <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
-    </javac>
-  </target>
-  
-  <target name="gtree">
-    <!-- build adt -->
-    <adt file="${gtree.dir}/term.adt" 
-         factory="term" 
-         package="adt.gtree" 
-         destdir="${gtree.dir}"/>
-    <!-- build tom -->
-    <tom srcdir="${gtree.dir}" 
-         destdir="${gtree.dir}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
-    </tom>
-    <!-- build java source -->
-    <javac srcdir="${gtree.dir}" destdir="${gtree.dir}">
-      <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
-    </javac>
-  </target>
-  
+
   <target name="rbtree">
     <!-- build adt -->
     <adt file="${rbtree.dir}/tree.adt" 
@@ -294,6 +309,7 @@
       <include name="**/*.java"/>
     </javac>
   </target>
+
   
   <target name="reach">
     <!-- build adt -->
@@ -313,10 +329,60 @@
       <include name="**/*.java"/>
     </javac>
   </target>
+
+ 
+  <target name="set">
+    <!-- build adt -->
+    <adt file="${set.dir}/set.adt" 
+         factory="Set" 
+         package="adt" 
+         destdir="${set.dir}"/>
+    <!-- build tom -->
+    <tom srcdir="${set.dir}" 
+         destdir="${set.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom --lazyType">
+      <include name="**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${set.dir}" destdir="${set.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="vas">
+    <!-- build tom -->
+    <tom srcdir="${vas.dir}" 
+         destdir="${vas.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+      <include name="**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${vas.dir}" destdir="${vas.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="xml">
+    <!-- build tom -->
+    <tom srcdir="${xml.dir}" 
+         destdir="${xml.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+      <include name="**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${xml.dir}" destdir="${xml.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+  
   
   <target name="build.examples" 
           description="Builds the examples (at least some)"
-          depends="addressbook, boulderdash, builtin, dom, nspk, pnspk, xml, pqueens, gtree, rbtree, reach">
+          depends="addressbook, apireach, boulderdash, builtin, dom,
+          expression, gtree, nspk, pnspk, pqueens, rbtree, reach, vas, xml">
   </target>
   
   <target name="dist.examples" description="Prepare a
@@ -326,6 +392,10 @@
         <include name="${addressbook}/README"/>
         <include name="${addressbook}/*.t"/>
         <include name="${addressbook}/*.adt"/>
+
+        <include name="${apireach}/README"/>
+        <include name="${apireach}/*.t"/>
+        <include name="${apireach}/*.adt"/>
 
         <include name="${boulderdash}/README"/>
         <include name="${boulderdash}/*.t"/>
@@ -341,6 +411,14 @@
         <include name="${dom}/*.adt"/>
         <include name="${dom}/*.xml"/>
 
+        <include name="${expression}/README"/>
+        <include name="${expression}/*.t"/>
+        <include name="${expression}/*.java"/>
+
+        <include name="${gtree}/README"/>
+        <include name="${gtree}/*.t"/>
+        <include name="${gtree}/*.adt"/>
+
         <include name="${nspk}/README"/>
         <include name="${nspk}/*.t"/>
         <include name="${nspk}/*.adt"/>
@@ -349,19 +427,9 @@
         <include name="${pnspk}/*.t"/>
         <include name="${pnspk}/*.adt"/>
 
-        <include name="${xml}/README"/>
-        <include name="${xml}/*.t"/>
-        <include name="${xml}/*.adt"/>
-        <include name="${xml}/*.xml"/>
-        <include name="${xml}/*.html"/>
-
         <include name="${pqueens}/README"/>
         <include name="${pqueens}/*.t"/>
         <include name="${pqueens}/*.tom"/>
-
-        <include name="${gtree}/README"/>
-        <include name="${gtree}/*.t"/>
-        <include name="${gtree}/*.adt"/>
 
         <include name="${rbtree}/README"/>
         <include name="${rbtree}/*.t"/>
@@ -370,6 +438,15 @@
         <include name="${reach}/README"/>
         <include name="${reach}/*.t"/>
         <include name="${reach}/*.adt"/>
+
+        <include name="${vas}/README"/>
+        <include name="${vas}/*.t"/>
+
+        <include name="${xml}/README"/>
+        <include name="${xml}/*.t"/>
+        <include name="${xml}/*.adt"/>
+        <include name="${xml}/*.xml"/>
+        <include name="${xml}/*.html"/>
 
         <not>
           <present targetdir="${examples.dir}">
