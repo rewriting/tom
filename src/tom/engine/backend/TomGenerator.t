@@ -873,6 +873,13 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
+      Comment(t) -> {
+        out.write("/* ");
+        out.write(deep,t);
+        out.write(" */ ");
+        return;
+      }
+
       t -> {
         System.out.println("Cannot generate code for: " + t);
         System.exit(1);

@@ -76,7 +76,7 @@ public class ASTFactory {
     return list;
   }
 
-  public OptionList makeOptionList(ArrayList argumentList) {
+  public OptionList makeOptionList(List argumentList) {
     OptionList list = tsf().makeOptionList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
@@ -106,7 +106,7 @@ public class ASTFactory {
   }
 
   public TomSymbol makeSymbol(String symbolName, String resultType, TomTypeList typeList, SlotList slotList,
-                              ArrayList optionList, TargetLanguage glFsym) {
+                              List optionList, TargetLanguage glFsym) {
     TomName name = tsf().makeTomName_Name(symbolName);
     TomType typesToType =  tsf().makeTomType_TypesToType(typeList, tsf().makeTomType_TomTypeAlone(resultType));
     Option options = makeOption(makeOptionList(optionList));
@@ -143,7 +143,7 @@ public class ASTFactory {
     return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), Integer.parseInt(line),tsf().makeTomName_Name( fileName));
   }
   
-  public Declaration makeMakeDecl(String opname, TomType returnType, ArrayList argList, TargetLanguage tlcode, Option orgTrack) {
+  public Declaration makeMakeDecl(String opname, TomType returnType, List argList, TargetLanguage tlcode, Option orgTrack) {
     TomName name = tsf().makeTomName_Name(opname);  
     return tsf().makeDeclaration_MakeDecl(name, returnType, makeList(argList), tlcode, orgTrack);
   }
@@ -164,7 +164,7 @@ public class ASTFactory {
      */
   private void makeSortSymbol(SymbolTable symbolTable,
                              String sort,
-                             String value, ArrayList optionList) {
+                             String value, List optionList) {
     TomTypeList typeList = tsf().makeTomTypeList();
     TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
     SlotList slotList = tsf().makeSlotList();
@@ -172,7 +172,7 @@ public class ASTFactory {
     symbolTable.putSymbol(value,astSymbol);
   }
 
-  private void makeSortDecl(ArrayList list, String sort,
+  private void makeSortDecl(List list, String sort,
                             String equality_t1t2) {
     Declaration getFunSym, getSubterm;
     Declaration cmpFunSym, equals;
@@ -200,12 +200,12 @@ public class ASTFactory {
      * create an integer symbol
      */
   public void makeIntegerSymbol(SymbolTable symbolTable,
-                                String value, ArrayList optionList) {
+                                String value, List optionList) {
     String sort = "int";
     makeSortSymbol(symbolTable, sort, value, optionList);
   }
 
-  public void makeIntegerDecl(ArrayList list) {
+  public void makeIntegerDecl(List list) {
     String sort = "int";
     String equality_t1t2 = "(t1 == t2)";
     makeSortDecl(list,sort,equality_t1t2);
@@ -215,12 +215,12 @@ public class ASTFactory {
      * create an double symbol
      */
   public void makeDoubleSymbol(SymbolTable symbolTable,
-                               String value, ArrayList optionList) {
+                               String value, List optionList) {
     String sort = "double";
     makeSortSymbol(symbolTable, sort, value, optionList);
   }
 
-  public void makeDoubleDecl(ArrayList list) {
+  public void makeDoubleDecl(List list) {
     String sort = "double";
     String equality_t1t2 = "(t1 == t2)";
     makeSortDecl(list,sort,equality_t1t2);
@@ -230,12 +230,12 @@ public class ASTFactory {
      * create a string symbol
      */
   public void makeStringSymbol(SymbolTable symbolTable,
-                               String value, ArrayList optionList) {
+                               String value, List optionList) {
     String sort = "String";
     makeSortSymbol(symbolTable, sort, value, optionList);
   } 
 
-  public void makeStringDecl(ArrayList list) {
+  public void makeStringDecl(List list) {
     String sort = "String";
     String equality_t1t2 = "t1.equals(t2)";
     makeSortDecl(list,sort,equality_t1t2);

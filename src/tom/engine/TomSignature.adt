@@ -23,7 +23,6 @@ constructor(Declaration,ListSymbolDecl,ListSymbolDecl(<astName(TomName)>)),
 constructor(Declaration,ArraySymbolDecl,ArraySymbolDecl(<astName(TomName)>)),
 constructor(Declaration,EmptyDeclaration,EmptyDeclaration),
 
-
 constructor(Option,DeclarationToOption,DeclarationToOption(<astDeclaration(Declaration)>)),
 constructor(Option,TomNameToOption,TomNameToOption(<astName(TomName)>)),
 constructor(Option,TomTermToOption,TomTermToOption(<astTerm(TomTerm)>)),
@@ -57,6 +56,7 @@ constructor(Expression,GetSliceList,GetSliceList(<astName(TomName)>,<variableBeg
 constructor(Expression,GetSliceArray,GetSliceArray(<astName(TomName)>,<subjectListName(TomTerm)>,<variableBeginAST(TomTerm)>,<variableEndAST(TomTerm)>)),
 constructor(TargetLanguage,TL,TL(<code(str)>,<start(Position)>,<end(Position)>)),
 constructor(TargetLanguage,ITL,ITL(<code(str)>)),
+constructor(TargetLanguage,Comment,Comment(<code(str)>)),
 constructor(Position,Position,Position(<line(int)>,<column(int)>)),
 constructor(TomType,Type,Type(<tomType(TomType)>,<tlType(TomType)>)),
 constructor(TomType,TypesToType,TypesToType(<domain(TomTypeList)>,<codomain(TomType)>)),
