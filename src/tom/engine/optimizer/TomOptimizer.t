@@ -74,6 +74,10 @@ public class TomOptimizer extends TomTask {
      * optimize:
      * remove variables which are only assigned once (but not used)
      * inline variables which are used only once
+     *
+     * a variable is inlined when it is used only once and
+     * when the expression depends on ref-variables which
+     * are not modified in the body
      */
 
   Replace1 replace_optimize = new Replace1() {
@@ -98,7 +102,6 @@ public class TomOptimizer extends TomTask {
             Let(var@VariableStar[astName=name],exp,body) -> {
               List list  = computeOccurences(name,body);
               int mult = list.size();
-              System.out.println(name + " --> " + mult);
 
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(var.getOption());
@@ -109,11 +112,18 @@ public class TomOptimizer extends TomTask {
                              "Variable `{0}` is never used",
                              new Object[]{name},
                              TomCheckerMessage.TOM_WARNING);
-                return optimizeInstruction(body);
+                System.out.println(name + " --> " + mult + ": remove");
+                return optimizeInstruction(body); 
               } else if(mult == 1) {
-                return optimizeInstruction(inlineInstruction(var,exp,body));
+                if(expConstantInBody(exp,body)) {
+                  System.out.println(name + " --> " + mult + ": inline");
+                  return optimizeInstruction(inlineInstruction(var,exp,body));
+                } else {
+                  System.out.println(name + " --> " + mult + ": cannot inline");
+                }
               } else {
                   /* do nothing: traversal */
+                System.out.println(name + " --> " + mult + ": do nothing");
               }
             }
 
@@ -201,5 +211,40 @@ public class TomOptimizer extends TomTask {
     traversal().genericCollect(subject, collect);
     return list;
   }
+
+  private boolean expConstantInBody(Expression exp, Instruction body) {
+    boolean res = true;
+    HashSet c = new HashSet();
+    collectRefVariable(c,exp);
+    Iterator it = c.iterator();
+    while(res && it.hasNext()) {
+      TomName name = (TomName) it.next();
+      List list = computeOccurences(name,body);
+      res = res && (list.size()==0);
+    }
+    return res; 
+  }
+
+  protected void collectRefVariable(final Collection collection, ATerm subject) {
+    Collect1 collect = new Collect1() { 
+        public boolean apply(ATerm t) {
+          if(t instanceof TomTerm) {
+            TomTerm annotedVariable = null;
+            %match(TomTerm t) { 
+              Ref(Variable[astName=name])  -> {
+                collection.add(name);
+                return false;
+              }
+             
+              _ -> { return true; }
+            }
+          } else {
+            return true;
+          }
+        } // end apply
+      }; // end new
     
+    traversal().genericCollect(subject, collect);
+  }
+  
 }  //Class TomOptimizer

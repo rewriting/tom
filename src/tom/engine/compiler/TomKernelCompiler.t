@@ -368,7 +368,7 @@ public class TomKernelCompiler extends TomBase {
           /*
            * generate:
            * ---------
-           * LetRef begin_i = subjectList;
+           * Let begin_i = subjectList;
            * LetRef end_i   = subjectList;
            * do {
            *   * SUBSTITUTION: E_i
@@ -385,7 +385,7 @@ public class TomKernelCompiler extends TomBase {
           TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType,concConstraint());
           TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),termType,concConstraint());
 
-          Expression source = `GetSliceList(p.symbol.getAstName(),Ref(variableBeginAST),Ref(variableEndAST));
+          Expression source = `GetSliceList(p.symbol.getAstName(),variableBeginAST,Ref(variableEndAST));
           Instruction let = buildAnnotedLet(optionList, source, var, subAction);
 
           Instruction test1 = `IfThenElse(Not(IsEmptyList(Ref(variableEndAST))),
@@ -398,7 +398,7 @@ public class TomKernelCompiler extends TomBase {
           Instruction letEnd = `LetRef(variableEndAST,
                                        TomTermToExpression(Ref(p.subjectListName)),
                                          doWhile);
-          Instruction letBegin = `LetRef(variableBeginAST,
+          Instruction letBegin = `Let(variableBeginAST,
                                          TomTermToExpression(Ref(p.subjectListName)),
                                          letEnd);
           return letBegin;
@@ -524,7 +524,7 @@ public class TomKernelCompiler extends TomBase {
 
           Expression source = `GetSliceArray(p.symbol.getAstName(),
                                              Ref(p.subjectListName),
-                                             Ref(variableBeginAST),
+                                             variableBeginAST,
                                              Ref(variableEndAST));
 
           Instruction let = buildAnnotedLet(optionList, source, var, subAction);
@@ -535,7 +535,7 @@ public class TomKernelCompiler extends TomBase {
           Instruction letEnd = `LetRef(variableEndAST,
                                        TomTermToExpression(Ref(p.subjectListIndex)),
                                          doWhile);
-          Instruction letBegin = `LetRef(variableBeginAST,
+          Instruction letBegin = `Let(variableBeginAST,
                                          TomTermToExpression(Ref(p.subjectListIndex)),
                                          letEnd);
           return letBegin;
