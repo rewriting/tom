@@ -1,0 +1,54 @@
+\documentclass{article}
+%\usepackage{amsmath}
+
+\newcommand{\tom}{\textsc{Tom} }
+\newcommand{\filter}{\ll}
+
+\title{Document de travail :\\ Impl\'ementation des contraintes dans \tom}
+\author{Anne-Claire Lonchamp, Pierre-Etienne Moreau}
+\date\today
+
+\begin{document}
+\maketitle
+
+\section{Syntaxe des contraintes dans \tom}
+
+\subsection{Actuellement}
+
+Les conditions, ou gardes, ont \'et\'e introduites dans \tom r\'ecement.
+\\
+
+Actuellement les condition se pr\'esentent sous la forme de fonction (Java ou \tom) retournant un bool\'een.
+Seuls des variables instenti\'e dans le pattern du \%match, ou du pattern filtrant pr\'ec\'edant dans le cas de \%match imbriqu\'es, peuvent \^etre pass\'es en arguments.
+\\\\
+$\%\:match\:\{$
+
+$p\:when\:c\rightarrow\{\dots\}$
+
+$p\:when\:c_1$\textasciicircum\dots\textasciicircum$ c_n\rightarrow\{\dots\}$
+\\$\}$
+
+\subsection{Proposition pour la nouvelle syntaxe}
+$\%\:advanced\:\{$
+
+$(p\filter s)$\textasciicircum$c\rightarrow\{\dots\}$
+
+$(p_1\filter s_1)$\textasciicircum\dots\textasciicircum$(p_n\filter s_n)$\textasciicircum$c_1$\textasciicircum\dots\textasciicircum$c_n\rightarrow\{\dots\}$
+\\$\}$
+\\\\Deux cas de figures se pr\'esentent :
+\begin{itemize}
+\item $s_1\dots s_n$ sont ind\'ependants. On accroche les gardes simplement et la r\'esolution se fait dans l'ordre d'\'ecriture des patterns.
+\item $s_1\dots s_n$ sont li\'es. L'ordre de r\'esolution doit cette fois ci \^etre d\'etermin\'e par un graphe de d\'ependances. Pour cette raison, les cycles de d\'ependances ne sont permis.
+\end{itemize}
+
+\subsection{Syntaxe proche de JRule}
+$((\_^*,p,\_^*)\filter s)$\textasciicircum$c\rightarrow\{\dots\}$ devient : $(p\in E)$\textasciicircum$c\rightarrow\{\dots\}$
+\\
+
+Cette notation pourrait intervenir en tant qu'alternative syntaxique, sans engendrer de modification dans le traitement.
+
+\section{Applications}
+
+Cette nouvelle forme de r\'esolution des contraintes est particuli\`erement int\'eressante dans le cas o\`u l'on \'ecrit actuellement des \%match imbriqu\'es. En effet l'arbre des solutions \`a parcourir se r\'eduit.
+
+\end{document}
