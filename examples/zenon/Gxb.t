@@ -45,5 +45,9 @@ class Gxb {
 		%match(Hop essai) {
 			f(f(f(y))) -> { System.out.println(`y); }
 		}
+		Hop essai2 = `g(f(f(a)),b);
+		%match(Hop essai2) {
+			g(f(f(y)),y) -> { System.out.println(`y); }
+		}
 	}
 }

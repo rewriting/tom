@@ -58,6 +58,9 @@ public class Verifier extends TomBase {
 			ExpressionToTomTerm(expr) -> {
 				return `build_TermFromExpression(expr);
 			}
+			Variable(options,name,type,constraints) -> {
+				return `build_Term_from_TomName(name);
+			}
 			_ -> {
 				System.out.println("build_TermFromTomTerm don't know how to handle this: " + tomterm);
 				return `repr("foirade");
@@ -130,8 +133,7 @@ public class Verifier extends TomBase {
 				return `isfsym(build_TermFromTomTerm(term1),fsymbol(extract_Name(symbolName)));
 			}
 			EqualTerm(type,t1,t2) -> {
-				// TODO, later
-				return `false();
+				return `eq(build_TermFromTomTerm(t1),build_TermFromTomTerm(t2));
 			}
 			_ -> {
 				System.out.println("build_ExprFromExpression don't know how to handle this: " + expression);
@@ -355,6 +357,9 @@ public class Verifier extends TomBase {
 						return `concExpr(hl*,taill*);
 					}
 				}
+			}
+			true() | false() -> {
+				return `concExpr(ex);
 			}
 			_ -> { 
 				System.out.println("apply ExprRules : nothing applies to:" + ex);
