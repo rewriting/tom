@@ -2,7 +2,7 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS         = runtime tools exception xml parser checker compiler backend debug verifier
+SUBDIRS         = runtime tools exception xml parser checker compiler optimizer backend debug verifier
 
 javadir         = ${prefix}/classes/jtom
 stabledir 	= $(top_srcdir)/stable/jtom

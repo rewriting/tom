@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.60 2004/03/15 09:15:05 moreau Exp $
+# $Id: configure.in,v 1.61 2004/03/19 09:28:41 moreau Exp $
 
 AC_INIT
 AC_CONFIG_SRCDIR([configure.in])
@@ -8,7 +8,7 @@ AC_PREREQ(2.57)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.60 2004/03/15 09:15:05 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.61 2004/03/19 09:28:41 moreau Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -57,6 +57,7 @@ AC_CONFIG_FILES([\
 	src/jtom/tools/Makefile \
 	src/jtom/xml/Makefile \
 	src/jtom/compiler/Makefile \
+	src/jtom/optimizer/Makefile \
 	src/jtom/parser/Makefile \
 	src/jtom/backend/Makefile \
 	src/jtom/runtime/Makefile \

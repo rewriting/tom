@@ -3,7 +3,7 @@
     TOM - To One Matching Compiler
 
     Copyright (C) 2000-2004 INRIA
-			    Nancy, France.
+			            Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ import jtom.adt.tomsignature.types.*;
 import jtom.backend.*;
 import jtom.checker.*;
 import jtom.compiler.*;
+import jtom.optimizer.*;
 import jtom.parser.*;
 import jtom.tools.*;
 import jtom.verifier.*;
@@ -56,7 +57,7 @@ public class Tom {
   private static String version =
     "\njtom 2.0beta\n"
     + "\n"
-    + "Copyright (C) 2000-2003 INRIA, Nancy, France.\n";
+    + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n";
 
   private static String usage =
     "Tom usage:"
@@ -417,11 +418,9 @@ public class Tom {
         TomTask generator;
         generator = new TomBackend(environment);
         if (taskInput.isDoOptimization()) {
-          /*
           TomOptimizer optimizer = new TomOptimizer(environment);
           compiler.addTask(optimizer);
           optimizer.addTask(generator);
-          */
         } else {
           compiler.addTask(generator);
         }
