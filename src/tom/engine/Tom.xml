@@ -81,12 +81,6 @@
     valueB="false" />
 
   <OptionBoolean
-    name="noOutput"
-    altName=""
-    description="Do not generate code"
-    valueB="false" />
-
-  <OptionBoolean
     name="noDeclaration"
     altName="D"
     description="Do not generate code for declarations"

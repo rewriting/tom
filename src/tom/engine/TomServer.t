@@ -197,7 +197,13 @@ public class TomServer implements TomPluginOptions
      */
     private String whichConfigFile(String[] argumentList)
     {
-	String xmlConfigurationFile = "./jtom/Tom.xml"; // default configuration file
+	// there is no default configuration file
+	// because the tom script already specifies a configuration file
+	// (which can be overridden by the user since only the last one that is specified is taken into account)
+	// so there MUST be at least one "-X" option
+	// (should be remembered if the TomServer is used outside of the tom script)
+	String xmlConfigurationFile = null; 
+	
 	int i = 0;
 
 	try
@@ -223,6 +229,8 @@ public class TomServer implements TomPluginOptions
  		return null;
  	    }
 
+	// the lack of a configuration file is handled here (if the name is null, the file doesn't exist),
+	// as well as the case where the specified file doesn't exist
 	if(! (new File(xmlConfigurationFile)).exists() )
 	    {
 		environment.messageError(TomMessage.getString("ConfigFileNotFound"), 

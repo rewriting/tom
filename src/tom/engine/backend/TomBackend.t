@@ -26,9 +26,32 @@ public class TomBackend extends TomBase implements TomPlugin
     private TomAbstractGenerator generator;
     private Writer writer;
 
+    private boolean amIActivated()
+    {
+	TomOptionList list = `concTomOption(myOptions*);
+	
+	while(!(list.isEmpty()))
+	    {
+		TomOption h = list.getHead();
+		%match(TomOption h)
+		    {
+			OptionBoolean[name="noOutput", valueB=True()] -> 
+			    { 
+				return false;
+			    }
+			OptionBoolean[name="noOutput", valueB=False()] -> 
+			    { 
+				return true;
+			    }
+		    }
+		list = list.getTail();
+	    }
+	return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
+    }
+
     public TomBackend()
     {
-	myOptions = `concTomOption(OptionBoolean("printOutput", "", "Generate code", True()), // activation flag
+	myOptions = `concTomOption(OptionBoolean("noOutput", "", "Generate code", False()), // desactivation flag
 				OptionBoolean("jCode", "j", "Generate Java code", True()),
 				OptionBoolean("cCode", "c", "Generate C code", False()),
 				OptionBoolean("eCode", "e", "Generate Eiffel code", False()),
@@ -51,65 +74,76 @@ public class TomBackend extends TomBase implements TomPlugin
 
     public void run()
     {
-	try
+	if(amIActivated() == true)
 	    {
-		long startChrono = System.currentTimeMillis();
-		TomOptionList list = `concTomOption(myOptions*);
-		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-		//boolean pretty = ((Boolean)getServer().getOptionValue("pretty")).booleanValue();
-		// (doesn't seem to be used anywhere...)
-		
-		writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
-    
-		OutputCode output = new OutputCode(writer, defaultDeep);
-
-		while(!(list.isEmpty()))
+		try
 		    {
-			TomOption h = list.getHead();
-			%match(TomOption h)
+			long startChrono = System.currentTimeMillis();
+			TomOptionList list = `concTomOption(myOptions*);
+			boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+			
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
+			
+			OutputCode output = new OutputCode(writer, defaultDeep);
+			
+			while(!(list.isEmpty()))
 			    {
-				OptionBoolean[name="jCode", valueB=True()] -> 
-				    { 
-					generator = new TomJavaGenerator(output);
-					break;
+				TomOption h = list.getHead();
+				%match(TomOption h)
+				    {
+					OptionBoolean[name="jCode", valueB=True()] -> 
+					    { 
+						generator = new TomJavaGenerator(output);
+						break;
+					    }
+					OptionBoolean[name="cCode", valueB=True()] -> 
+					    { 
+						generator = new TomCGenerator(output);
+						break;
+					    }
+					OptionBoolean[name="eCode", valueB=True()] -> 
+					    { 
+						generator = new TomEiffelGenerator(output);
+						break;
+					    }
+					OptionBoolean[name="camlCode", valueB=True()] -> 
+					    { 
+						generator = new TomCamlGenerator(output);
+						break;
+					    }
 				    }
-				OptionBoolean[name="cCode", valueB=True()] -> 
-				    { 
-					generator = new TomCGenerator(output);
-					break;
-				    }
-				OptionBoolean[name="eCode", valueB=True()] -> 
-				    { 
-					generator = new TomEiffelGenerator(output);
-					break;
-				    }
-				OptionBoolean[name="camlCode", valueB=True()] -> 
-				    { 
-					generator = new TomCamlGenerator(output);
-					break;
-				    }
+				list = list.getTail();
 			    }
-			list = list.getTail();
+			
+			generator.generate(defaultDeep, term);
+			
+			if(verbose)
+			    System.out.println("TOM generation phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+
+			writer.close();
+
+			environment().printAlertMessage("TomBackend");
+			if(!environment().isEclipseMode()) {
+			    // remove all warning (in command line only)
+			    environment().clearWarnings();
+			}
 		    }
-
-		generator.generate(defaultDeep, term);
-
-		if(verbose)
-		    System.out.println("TOM generation phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-
-		writer.close();
-
-		environment().printAlertMessage("TomBackend");
-		if(!environment().isEclipseMode()) {
-		    // remove all warning (in command line only)
-		    environment().clearWarnings();
-		}
+		catch (Exception e)
+		    {
+			environment().messageError("Exception occurs in TomBackend Init: "+e.getMessage(), 
+						   environment().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+			e.printStackTrace();
+		    }
 	    }
-	catch (Exception e)
+	else // backend desactivated
 	    {
-		environment().messageError("Exception occurs in TomBackend Init: "+e.getMessage(), 
-					   environment().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-		e.printStackTrace();
+		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+		
+		if(verbose)
+		    {
+			System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
+			System.out.println("No output !");
+		    }
 	    }
     }
 
