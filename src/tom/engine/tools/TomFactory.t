@@ -138,8 +138,7 @@ public class TomFactory extends TomBase {
       }
 
       manyTomList(head@VariableStar[],tail) |
-      manyTomList(head@Composite(concTomTerm(VariableStar[])),tail) -> {
-          /*System.out.println("head = " + head);*/
+      manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
         TomTerm subList = buildList(name,`tail);
         return `BuildAppendList(name,head,subList);
       }
@@ -153,8 +152,8 @@ public class TomFactory extends TomBase {
       }
 
       manyTomList(head@TargetLanguageToTomTerm[],tail) -> {
-	  TomTerm subList = buildList(name,`tail);
-	  return subList;
+        TomTerm subList = buildList(name,`tail);
+        return subList;
       }
 
     }
@@ -174,7 +173,7 @@ public class TomFactory extends TomBase {
       }
 
       manyTomList(head@VariableStar[],tail) |
-      manyTomList(head@Composite(concTomTerm(VariableStar[])),tail) -> {
+      manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
           /*System.out.println("head = " + head);*/
         TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildAppendArray(name,head,subList);

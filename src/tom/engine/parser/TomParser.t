@@ -2,7 +2,7 @@ options {
    JAVA_UNICODE_ESCAPE = true;
    STATIC = false;
    //DEBUG_PARSER = true;
-   DEBUG_TOKEN_MANAGER = true;
+   //DEBUG_TOKEN_MANAGER = true;
  //DEBUG_LOOKAHEAD = true;
  }
  
@@ -145,8 +145,10 @@ public class TomParser {
   }
   
   private String savePosAndExtract(int offset) {
-    String string;
-    string = tomBuffer.extractBuffer(oldPos,getPos() + offset);
+    //System.out.println("oldPos = " + oldPos);
+    //System.out.println("getPos = " + getPos());
+    //System.out.println("offset = " + offset);
+    String string = tomBuffer.extractBuffer(oldPos,getPos() + offset);
     oldPos = getPos() + offset;
     return string;
   }
@@ -2408,94 +2410,104 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
   HashMap tokenToDecLineMap = new HashMap();
 }
 {
-    <BACKQUOTE_TERM> /* switch to BQ mode */
-				{
-						addPreviousCode(list);
-						firstTokenLine = getLine();
-	    orgTrack = `OriginTracking(Name("Backquote"),getLine(),Name( currentFile));
+  <BACKQUOTE_TERM> /* switch to BQ mode */
+  {
+    addPreviousCode(list);
+    firstTokenLine = getLine();
+    orgTrack = `OriginTracking(Name("Backquote"),getLine(),Name( currentFile));
 	}
-    (
-     tk=<BQ_LPAREN> { 
-				 tokenList.add(tk); 
-				 parenLevel++; 
-				 backQuoteMode = true;
-     }
-     | tk=<BQ_IDENTIFIER> { 
-				 tokenList.add(tk);
-				 tokenToDecLineMap.put(tk, new Integer(getLine()));
-     }
-     )
-				{
-	    try {
-		nextTk = getToken(1);
-		//System.out.println("getToken(1).kind = " + nextTk.kind + " --> '" + nextTk.image + "'");
-		if(backQuoteMode || nextTk.kind == BQ_LPAREN || nextTk.image.equals("(")) {
-            /*
-             * cases:
-             *   `(...)
-             *   `identifier(...)
-             *
-             * tk and nextTk have been tokenized in BQ mode
-						 *
-             * we have to analyse the image and not only the kind
-             * (also in TomBackQuoteParser.t)
-             */
-				backQuoteMode = true;
-				while(backQuoteMode) {
-						tk = getNextToken();
-						//System.out.println("tk.kind = " + tk.kind + " --> '" + tk.image + "'");
-            tokenList.add(tk);
-            lastTokenLine = getLine();
-            if(tk.kind == BQ_LPAREN || tk.image.equals("(")) { 
-              parenLevel++;
-            } else if(tk.kind == BQ_RPAREN) {
-              parenLevel--;
-              if(parenLevel==0) {
-									backQuoteMode = false;
-              }
-            } else if (tk.kind == BQ_IDENTIFIER) {
-              tokenToDecLineMap.put(tk, new Integer(lastTokenLine));
+  (
+   tk=<BQ_LPAREN> { 
+     tokenList.add(tk); 
+     parenLevel++; 
+     backQuoteMode = true;
+   }
+   | tk=<BQ_IDENTIFIER> { 
+     tokenList.add(tk);
+     tokenToDecLineMap.put(tk, new Integer(getLine()));
+     /*
+      * We switch to DEFAULT mode to tokenize what follows the identifiers in 
+      * a correct mode, in case it is not a "("
+      */
+     switchToDefaultMode(); /* switch to DEFAULT mode */
+   }
+   )
+  {
+    try {
+      nextTk = getToken(1);
+      //System.out.println("getToken(1).kind = " + nextTk.kind + " --> '" + nextTk.image + "'");
+      if(backQuoteMode || nextTk.kind == BQ_LPAREN || nextTk.image.equals("(")) {
+        if(nextTk.image.equals("(")) {
+          /*
+           * it is a "(" so we can switch back to BQ mode
+           */
+          token_source.SwitchTo(BQ);
+        }
+        /*
+         * cases:
+         *   `(...)
+         *   `identifier(...)
+         *
+         * tk and nextTk have been tokenized in BQ mode
+         *
+         * we have to analyse the image and not only the kind
+         * (also in TomBackQuoteParser.t)
+         */
+        backQuoteMode = true;
+        while(backQuoteMode) {
+          tk = getNextToken();
+          //System.out.println("tk.kind = " + tk.kind + " --> '" + tk.image + "'");
+          tokenList.add(tk);
+          lastTokenLine = getLine();
+          if(tk.kind == BQ_LPAREN || tk.image.equals("(")) { 
+            parenLevel++;
+          } else if(tk.kind == BQ_RPAREN) {
+            parenLevel--;
+            if(parenLevel==0) {
+              backQuoteMode = false;
             }
-          }
-          term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
-					//System.out.println("term = " + term);
-          if(term.isComposite() && term.getArgs().isSingle()) {
-							TomTerm backQuoteTerm = term.getArgs().getHead(); 
-            if(backQuoteTerm.getAstName().getString().equals("xml")) {
-              TomList args = backQuoteTerm.getArgs();
-              term = `DoubleBackQuote(args);
-            } 
-          } 
-          list.add(term);
-		} else {
-            /*
-             * we are in BQ mode
-             * nextTk has been tokenized in Default mode
-             */
-          if(nextTk.kind == BQ_STAR || nextTk.image.equals("*")) {
-              /*
-               * the backquote-term is a single variable-star
-               */
-            term = tomBackQuoteParser.buildVariableStar(tk.image,lastTokenLine,currentFile);
-            list.add(term);
-              /*
-               * here we consume the "*" and we go to default mode to
-               * remove the "*" from the "previous code"
-               */
-            tk = getNextToken();
-          } else {
-            /*
-             * the backquote-term is a single variable
-             */
-          term = tomBackQuoteParser.buildBackQuoteAppl(tk.image,lastTokenLine,currentFile);
-          list.add(term);
-					tk = getNextToken();
-					list.add(`ITL(tk.image));
+          } else if (tk.kind == BQ_IDENTIFIER) {
+            tokenToDecLineMap.put(tk, new Integer(lastTokenLine));
           }
         }
-		switchToDefaultMode(); /* switch to DEFAULT mode */
-      } catch (TokenMgrError error) {
-        throw new TomException(MessageFormat.format(TomMessage.getString("InvalidBackQuoteTerm"), new Object[]{new Integer(firstTokenLine)}));
-      }  
-    }
- }
+        term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
+        //System.out.println("term = " + term);
+        if(term.isComposite() && term.getArgs().isSingle()) {
+          TomTerm backQuoteTerm = term.getArgs().getHead(); 
+          if(backQuoteTerm.getAstName().getString().equals("xml")) {
+            TomList args = backQuoteTerm.getArgs();
+            term = `DoubleBackQuote(args);
+          } 
+        } 
+        list.add(term);
+        switchToDefaultMode(); /* switch to DEFAULT mode */
+      } else {
+        /*
+         * we are in DEFAULT mode
+         * nextTk has been tokenized in Default mode
+         */
+        if(nextTk.image.equals("*")) {
+          /*
+           * the backquote-term is a single variable-star
+           */
+          term = tomBackQuoteParser.buildVariableStar(tk.image,lastTokenLine,currentFile);
+          list.add(term);
+          /*
+           * here we consume the read in advance "*" to remove it from the "previous code"
+           */
+          tk = getNextToken();
+        } else {
+          /*
+           * the backquote-term is a single variable
+           */
+          term = tomBackQuoteParser.buildBackQuoteAppl(tk.image,lastTokenLine,currentFile);
+          list.add(term);
+					//tk = getNextToken();
+					//list.add(`ITL(tk.image));
+        }
+      }
+    } catch (TokenMgrError error) {
+      throw new TomException(MessageFormat.format(TomMessage.getString("InvalidBackQuoteTerm"), new Object[]{new Integer(firstTokenLine)}));
+    }  
+  }
+}
