@@ -13,36 +13,17 @@ import jtom.TomMessage;
 /**
  * The TomVerifier plugin.
  */
-public class TomVerifier extends TomGenericPlugin //Base implements TomPlugin
+public class TomVerifier extends TomGenericPlugin
 {
     %include{ ../adt/TomSignature.tom }
     %include{ ../adt/Options.tom }
-
-//     private TomTerm term;
-//     private TomOptionList myOptions;
 
     protected Verifier verif;
 
     public TomVerifier()
     {
-	myOptions = `concTomOption(OptionBoolean("verify", "", "Verify correctness of match compilation", False()) // activation flag
-				);
 	verif = new Verifier();
     }
-
-//     public void setInput(ATerm term)
-//     {
-// 	if (term instanceof TomTerm)
-// 	    this.term = (TomTerm)term;
-// 	else
-// 	    environment().messageError(TomMessage.getString("TomTermExpected"),
-// 				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-//     }
-
-//     public ATerm getOutput()
-//     {
-// 	return term;
-//     }
 
     public void run()
     {
@@ -92,42 +73,11 @@ public class TomVerifier extends TomGenericPlugin //Base implements TomPlugin
 	    }
     }
 
-//     public TomOptionList declareOptions()
-//     {
-// 	return myOptions;
-//     }
-
-//     public TomOptionList requiredOptions()
-//     {
-// 	return `emptyTomOptionList();
-//     }
-
-//     public void setOption(String optionName, String optionValue)
-//     {
-//  	%match(TomOptionList myOptions)
-//  	    {
-// 		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			{
-// 			    %match(String optionValue)
-// 				{
-// 				    ('true') ->
-// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-// 				    ('false') ->
-// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-// 				}
-// 			}
-// 		}
-// 		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-// 		}
-// 		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-// 		}
-// 	    }
-//     }
+     public TomOptionList declaredOptions()
+     {
+ 	return `concTomOption(OptionBoolean("verify", "", "Verify correctness of match compilation", False()) // activation flag
+			      );
+     }
 
   private boolean isActivated() {
     return getServer().getOptionBooleanValue("verify");

@@ -15,13 +15,10 @@ import jtom.*;
 /**
  * The TomCompiler plugin.
  */
-public class TomCompiler extends TomGenericPlugin //Base implements TomPlugin
+public class TomCompiler extends TomGenericPlugin
 {
     %include { ../adt/TomSignature.tom }
     %include{ ../adt/Options.tom }
-
-//     private TomTerm term;
-//     private TomOptionList myOptions;
 
     private TomKernelCompiler tomKernelCompiler = new TomKernelCompiler();
     private TomFactory tomFactory = new TomFactory();
@@ -31,8 +28,7 @@ public class TomCompiler extends TomGenericPlugin //Base implements TomPlugin
 
     public TomCompiler()
     {
-	myOptions = `concTomOption(OptionBoolean("compile","","",True()) // activationFlag
-				);
+
     }
 
 //     public void setInput(ATerm term)
@@ -515,51 +511,9 @@ public class TomCompiler extends TomGenericPlugin //Base implements TomPlugin
     return newList;
   }
 
-//     public TomOptionList declareOptions()
-//     {
-// // 	int i = 0;
-// // 	OptionList list = `concOption(myOptions*);
-// // 	while(!(list.isEmpty()))
-// // 	    {
-// // 		i++;
-// // 		list = list.getTail();
-// // 	    }
-
-// // 	System.out.println("1.6. The compiler declares " +i+ " options.");
-	
-// 	return myOptions;
-//     }
-
-//     public TomOptionList requiredOptions()
-//     {
-// 	return `emptyTomOptionList();
-//     }
-
-//     public void setOption(String optionName, String optionValue)
-//     {
-//  	%match(TomOptionList myOptions)
-//  	    {
-// 		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			{
-// 			    %match(String optionValue)
-// 				{
-// 				    ('true') ->
-// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-// 				    ('false') ->
-// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-// 				}
-// 			}
-// 		}
-// 		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-// 		}
-// 		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-// 		}
-// 	    }
-//     }
+    public TomOptionList declaredOptions() {
+	return `concTomOption(OptionBoolean("compile","","",True()) // activationFlag
+			      );
+    }
 
 }

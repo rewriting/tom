@@ -11,13 +11,10 @@ import jtom.tools.*;
 /**
  * The TomBackend plugin.
  */
-public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
+public class TomBackend extends TomGenericPlugin
 {
     %include { ../adt/TomSignature.tom }
     %include{ ../adt/Options.tom }
-
-//     private TomTerm term;
-//     private TomOptionList myOptions;
 
     private final static int defaultDeep = 2;
     private TomAbstractGenerator generator;
@@ -26,26 +23,8 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 
     public TomBackend()
     {
-	myOptions = `concTomOption(OptionBoolean("noOutput", "", "Do not generate code", False()), // desactivation flag
-				OptionBoolean("jCode", "j", "Generate Java code", True()),
-				OptionBoolean("cCode", "c", "Generate C code", False()),
-				OptionBoolean("eCode", "e", "Generate Eiffel code", False()),
-				OptionBoolean("camlCode", "", "Generate Caml code", False()));
+	
     }
-
-//     public void setInput(ATerm term)
-//     {
-// 	if (term instanceof TomTerm)
-// 	    this.term = (TomTerm)term;
-// 	else
-// 	    environment().messageError(TomMessage.getString("TomTermExpected"),
-// 				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-//     }
-
-//     public ATerm getOutput()
-//     {
-// 	return term;
-//     }
 
     public void run()
     {
@@ -54,7 +33,6 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 		try
 		    {
 			long startChrono = System.currentTimeMillis();
-			//TomOptionList list = `concTomOption(myOptions*);
 			boolean verbose = getServer().getOptionBooleanValue("verbose");
 			
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
@@ -69,35 +47,6 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 			    generator = new TomEiffelGenerator(output);
 			else if( getServer().getOptionBooleanValue("camlCode") )
 			    generator = new TomCamlGenerator(output);
-
-// 			while(!(list.isEmpty()))
-// 			    {
-// 				TomOption h = list.getHead();
-// 				%match(TomOption h)
-// 				    {
-// 					OptionBoolean[name="jCode", valueB=True()] -> 
-// 					    { 
-// 						generator = new TomJavaGenerator(output);
-// 						break;
-// 					    }
-// 					OptionBoolean[name="cCode", valueB=True()] -> 
-// 					    { 
-// 						generator = new TomCGenerator(output);
-// 						break;
-// 					    }
-// 					OptionBoolean[name="eCode", valueB=True()] -> 
-// 					    { 
-// 						generator = new TomEiffelGenerator(output);
-// 						break;
-// 					    }
-// 					OptionBoolean[name="camlCode", valueB=True()] -> 
-// 					    { 
-// 						generator = new TomCamlGenerator(output);
-// 						break;
-// 					    }
-// 				    }
-// 				list = list.getTail();
-// 			    }
 			
 			generator.generate(defaultDeep, term);
 			
@@ -131,15 +80,14 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 	    }
     }
 
-//     public TomOptionList declareOptions()
-//     {
-// 	return myOptions;
-//     }
-
-//     public TomOptionList requiredOptions()
-//     {
-// 	return `emptyTomOptionList();
-//     }
+     public TomOptionList declaredOptions()
+     {
+ 	return `concTomOption(OptionBoolean("noOutput", "", "Do not generate code", False()), // desactivation flag
+			      OptionBoolean("jCode", "j", "Generate Java code", True()),
+			      OptionBoolean("cCode", "c", "Generate C code", False()),
+			      OptionBoolean("eCode", "e", "Generate Eiffel code", False()),
+			      OptionBoolean("camlCode", "", "Generate Caml code", False()));
+     }
 
   public void setOption(String optionName, Object optionValue) {
     putOptionValue(optionName, optionValue);
@@ -176,7 +124,6 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 		}
 	}
     }
-
 
   private boolean isActivated() {
     return !getServer().getOptionBooleanValue("noOutput");

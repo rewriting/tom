@@ -37,37 +37,36 @@ import jtom.runtime.*;
 import jtom.exception.TomRuntimeException;
 
 public class TomBase {
-    %include { adt/TomSignature.tom }
-    %include { adt/Options.tom }
+  %include { adt/TomSignature.tom }
+  %include { adt/Options.tom }
 
-    private TomList empty;
-    private GenericTraversal traversal;
+  private TomList empty;
+  private GenericTraversal traversal;
 
-    public TomBase() {
-	this.empty = getTomSignatureFactory().makeTomList();
-	this.traversal = new GenericTraversal();
-    }
+  public TomBase() {
+    this.empty = getTomSignatureFactory().makeTomList();
+    this.traversal = new GenericTraversal();
+  }
 
-    protected ASTFactory ast() {
-			return environment().getASTFactory();
-    }
+  protected ASTFactory ast() {
+    return environment().getASTFactory();
+  }
 
-    protected TomEnvironment environment() {
-			return getServer().getEnvironment();
-    }
+  protected TomEnvironment environment() {
+    return getServer().getEnvironment();
+  }
 
-    public TomServer getServer()
-    {
-			return TomServer.getInstance();
-    }
+  public TomServer getServer() {
+    return TomServer.getInstance();
+  }
 
   public void putOptionValue(Object key, Object value) {
       getServer().putOptionValue(key, value);
   }
 
-    protected OptionsFactory getOptionsFactory() {
-			return getServer().getOptionsFactory();
-    }
+  protected OptionsFactory getOptionsFactory() {
+    return environment().getOptionsFactory();
+  }
 
     protected TomSignatureFactory tsf() {
 			return environment().getTomSignatureFactory();

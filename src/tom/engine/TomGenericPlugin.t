@@ -24,15 +24,9 @@ public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
   protected TomTerm term;
 
   /**
-   * The options the plugin declares.
-   */
-  protected TomOptionList myOptions;
-
-  /**
-   * Constructor method. Initializes the option list.
+   * Constructor method. Does nothing for the time being.
    */
   public TomGenericPlugin() {
-    myOptions = `emptyTomOptionList();
   }
 
   /**
@@ -61,18 +55,18 @@ public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
   }
 
   /**
-   * The run method is not implemented in TomGenericPlugin.
-   * The plugin itself should implement its run method.
+   * The run() method is not implemented in TomGenericPlugin.
+   * The plugin should implement its own run() method itself.
    */
   public abstract void run();
 
   /**
-   * Returns the TomOptionList "myOptions".
+   * Returns an empty TomOptionList. By default, the plugin is considered to declare no options.
    *
-   * @return the TomOptionList "myOptions"
+   * @return an empty TomOptionList
    */
   public TomOptionList declaredOptions() {
-    return myOptions;
+    return `emptyTomOptionList;
   }
 
   /**

@@ -6,9 +6,6 @@ import java.io.*;
 import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;
 
-import jtom.adt.options.*;
-import jtom.adt.options.types.*;
-
 import jtom.exception.*;
 
 import jtom.runtime.xml.*;
@@ -27,7 +24,6 @@ import aterm.pure.*;
 public class TomServer {
 
   %include{ adt/TNode.tom }
-  %include{ adt/Options.tom }
 
   /**
    * The current version of the TOM compiler. 
@@ -48,11 +44,6 @@ public class TomServer {
   /**
    * 
    */
-  private OptionsFactory optionsFactory;
-	
-  /**
-   * 
-   */
   private TomEnvironment environment;
 
   /**
@@ -66,13 +57,6 @@ public class TomServer {
    * @return a TNodeFactory
    */  
   public TNodeFactory getTNodeFactory() { return tNodeFactory; }
-	
-  /**
-   * An accessor method.
-   * 
-   * @return an OptionsFactory
-   */
-  public OptionsFactory getOptionsFactory() { return optionsFactory; }
 	
   /**
    * An accessor method.
@@ -118,10 +102,7 @@ public class TomServer {
         instance = new TomServer();
         
 	instance.instances = new Vector();
-
         instance.tNodeFactory = new TNodeFactory(new PureFactory());
-        instance.optionsFactory = new OptionsFactory(new PureFactory());
-
         instance.environment = new TomEnvironment();
 	instance.optionManager = new TomOptionManager();
 

@@ -12,35 +12,16 @@ import jtom.runtime.*;
 /**
  * The TomOptimizer plugin.
  */
-public class TomOptimizer extends TomGenericPlugin //Base implements TomPlugin
+public class TomOptimizer extends TomGenericPlugin
 {
     %include{ ../adt/TomSignature.tom }
     %include{ ../adt/Options.tom }
-
-//     private TomTerm term;
-//     private TomOptionList myOptions;
 
     public static final String OPTIMIZED_SUFFIX = ".tfix.optimized"; // was previously in TomTaskInput
 
     public TomOptimizer()
     {
-	myOptions = `concTomOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
-				);
     }
-
-//     public void setInput(ATerm term)
-//     {
-// 	if (term instanceof TomTerm)
-// 	    this.term = (TomTerm)term;
-// 	else
-// 	    environment().messageError(TomMessage.getString("TomTermExpected"),
-// 				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-//     }
-
-//     public ATerm getOutput()
-//     {
-// 	return term;
-//     }
 
     public void run()
     {
@@ -88,42 +69,11 @@ public class TomOptimizer extends TomGenericPlugin //Base implements TomPlugin
 	    }
     }
 
-//     public TomOptionList declareOptions()
-//     {
-// 	return myOptions;
-//     }
-
-//     public TomOptionList requiredOptions()
-//     {
-// 	return `emptyTomOptionList();
-//     }
-
-//     public void setOption(String optionName, String optionValue)
-//     {
-//  	%match(TomOptionList myOptions)
-//  	    {
-// 		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			{
-// 			    %match(String optionValue)
-// 				{
-// 				    ('true') ->
-// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-// 				    ('false') ->
-// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-// 				}
-// 			}
-// 		}
-// 		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-// 		}
-// 		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-// 		}
-// 	    }
-//     }
+     public TomOptionList declaredOptions()
+     {
+ 	return `concTomOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
+			      );
+     }
 
   private boolean isActivated() {
     return getServer().getOptionBooleanValue("optimize");

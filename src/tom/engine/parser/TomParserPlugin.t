@@ -12,13 +12,10 @@ import jtom.tools.*;
 /**
  * The TomParser plugin.
  */
-public class TomParserPlugin extends TomGenericPlugin //Base implements TomPlugin
+public class TomParserPlugin extends TomGenericPlugin
 {
     %include { ../adt/TomSignature.tom }
     %include{ ../adt/Options.tom }
-
-    //private TomTerm term;
-    //private TomOptionList myOptions;
 
     private TomParser parser; // comes from the old class TomTaskParser
     private String fileName; // comes from the old class TomTaskParser
@@ -27,21 +24,13 @@ public class TomParserPlugin extends TomGenericPlugin //Base implements TomPlugi
     public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table"; // was previously in TomTaskInput
     public static final String DEBUG_TABLE_SUFFIX = ".tfix.debug.table"; // was previously in TomTaskInput
 
-    public TomParserPlugin()
-    {
-	myOptions = `concTomOption(OptionBoolean("parse","","",True()) // activation flag
-				);
+    public TomParserPlugin() {
     }
 
     public void setInput(ATerm term)
     {
 	fileName = ((AFun)term).getName();
     }
-
-//     public ATerm getOutput()
-//     {
-// 	return term;
-//     }
 
     public void run()
     {
@@ -146,51 +135,8 @@ public class TomParserPlugin extends TomGenericPlugin //Base implements TomPlugi
 	return parser.getLine();
     }
 
-//     public TomOptionList declareOptions()
-//     {
-// // 	int i = 0;
-// // 	OptionList list = `concOption(myOptions*);
-// // 	while(!(list.isEmpty()))
-// // 	    {
-// // 		i++;
-// // 		list = list.getTail();
-// // 	    }
-
-// // 	System.out.println("1.2. The parser declares " +i+ " options.");
-
-// 	return myOptions;
-//     }
-
-//     public TomOptionList requiredOptions()
-//     {
-// 	return `emptyTomOptionList();
-//     }
-
-//     public void setOption(String optionName, String optionValue)
-//     {
-//  	%match(TomOptionList myOptions)
-//  	    {
-// 		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			{
-// 			    %match(String optionValue)
-// 				{
-// 				    ('true') ->
-// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-// 				    ('false') ->
-// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-// 				}
-// 			}
-// 		}
-// 		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-// 		}
-// 		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
-// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
-// 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-// 		}
-// 	    }
-//     }
-
+     public TomOptionList declaredOptions() {
+	 return `concTomOption(OptionBoolean("parse","","",True()) // activation flag
+			      );
+     }
 }

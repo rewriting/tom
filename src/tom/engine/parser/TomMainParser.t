@@ -15,7 +15,7 @@ import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
 import jtom.exception.*;
 
-public class TomMainParser extends TomGenericPlugin implements TomPlugin {
+public class TomMainParser extends TomGenericPlugin {
 
     %include {  ../adt/TomSignature.tom }
     %include{ Options.tom }
@@ -29,8 +29,11 @@ public class TomMainParser extends TomGenericPlugin implements TomPlugin {
     private NewTargetParser parser = null;
     
     public TomMainParser(){
-	myOptions = `concTomOption(OptionBoolean("parse","","",True()) // activation flag
-				   );
+    }
+
+    public TomOptionList declaredOptions() {
+    return `concTomOption(OptionBoolean("parse","","",True()) // activation flag
+			  );
     }
 
     private void p(String s){

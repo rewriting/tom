@@ -32,6 +32,8 @@ import java.util.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
+import jtom.adt.options.*;
+import jtom.adt.options.types.*;
 
 import aterm.*;
 import aterm.pure.*;
@@ -86,6 +88,11 @@ public class TomEnvironment
     private TomSignatureFactory tomSignatureFactory;
 
     /**
+     * 
+     */
+    private OptionsFactory optionsFactory;
+
+    /**
      * An accessor method.
      * 
      * @return an ASTFactory
@@ -99,11 +106,18 @@ public class TomEnvironment
      */
     public TomSignatureFactory getTomSignatureFactory() { return tomSignatureFactory; }
 
+  /**
+   * An accessor method.
+   * 
+   * @return an OptionsFactory
+   */
+  public OptionsFactory getOptionsFactory() { return optionsFactory; }
 
     public TomEnvironment() 
     {
         tomSignatureFactory = new TomSignatureFactory(new PureFactory());
         astFactory = new ASTFactory(tomSignatureFactory);
+        optionsFactory = new OptionsFactory(new PureFactory());
 		
         symbolTable = new SymbolTable(astFactory);
 
