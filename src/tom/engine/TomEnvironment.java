@@ -50,7 +50,7 @@ public class TomEnvironment {
 
   public static TomEnvironment getInstance() {
     if(instance == null) {
-      throw new TomRuntimeException("cannot get the instance of an unitialized TomEnvironment");
+      throw new TomRuntimeException(TomMessage.getString("GetInitializedTomEnvInstance"));
     }
     return instance;
   }
@@ -65,7 +65,7 @@ public class TomEnvironment {
       instance.symbolTable = symbolTable;
       return instance;
     } else {
-      throw new TomRuntimeException("cannot create two instances of TomEnvironment");
+      throw new TomRuntimeException(TomMessage.getString("TwoTomEnvInstance"));
     }
   }
 
@@ -150,13 +150,11 @@ public class TomEnvironment {
       printErrorMessage();
       printWarningMessage();
       if(hasError()) {
-        String msg = taskName+": Encountered " + 
-          getErrors().getLength() + " errors and " +
-          getWarnings().getLength() + " warnings. No file generated.";
-        System.out.println(msg);
+      	System.out.println(MessageFormat.format(TomMessage.getString("TaskErrorMessage"),
+        		new Object[]{taskName, new Integer(getErrors().getLength()), new Integer(getWarnings().getLength())}));
       } else if(hasWarning()) {
-        String msg = taskName+": Encountered "+ getWarnings().getLength() + " warnings.";
-        System.out.println(msg);
+      	System.out.println(MessageFormat.format(TomMessage.getString("TaskWarningMessage"),
+        		new Object[]{taskName, new Integer(getWarnings().getLength())}));
       }
     }
   }

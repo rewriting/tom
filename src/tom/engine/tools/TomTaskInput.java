@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
 
+import jtom.TomMessage;
 import jtom.exception.TomRuntimeException;
 import java.io.*;
 
@@ -43,7 +44,7 @@ public class TomTaskInput {
 
   public static TomTaskInput getInstance() {
     if(instance == null) {
-      throw new TomRuntimeException("cannot get the instance of an unitialized TomTaskInput");
+      throw new TomRuntimeException(TomMessage.getString("GetInitializedTomInputInstance"));
     }
     return instance;
   }
@@ -53,7 +54,7 @@ public class TomTaskInput {
       instance = new TomTaskInput();
       return instance;
     } else {
-      throw new TomRuntimeException("cannot create two instances of TomTaskInput");
+      throw new TomRuntimeException(TomMessage.getString("TwoTomEnvInstance"));
     }
   }
 
