@@ -245,12 +245,12 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasVarList()
+  public boolean hasVarElt()
   {
     return false;
   }
 
-  public boolean hasVarElt()
+  public boolean hasVarList()
   {
     return false;
   }
@@ -261,11 +261,6 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
   }
 
   public boolean hasVarSize()
-  {
-    return false;
-  }
-
-  public boolean hasVarIdx()
   {
     return false;
   }
@@ -401,16 +396,6 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
      throw new RuntimeException("This Declaration has no Kid2");
   }
 
-  public TomTerm getVarList()
-  {
-     throw new RuntimeException("This Declaration has no VarList");
-  }
-
-  public Declaration setVarList(TomTerm _varList)
-  {
-     throw new RuntimeException("This Declaration has no VarList");
-  }
-
   public TomTerm getVarElt()
   {
      throw new RuntimeException("This Declaration has no VarElt");
@@ -419,6 +404,16 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
   public Declaration setVarElt(TomTerm _varElt)
   {
      throw new RuntimeException("This Declaration has no VarElt");
+  }
+
+  public TomTerm getVarList()
+  {
+     throw new RuntimeException("This Declaration has no VarList");
+  }
+
+  public Declaration setVarList(TomTerm _varList)
+  {
+     throw new RuntimeException("This Declaration has no VarList");
   }
 
   public TomTerm getKid3()
@@ -439,16 +434,6 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
   public Declaration setVarSize(TomTerm _varSize)
   {
      throw new RuntimeException("This Declaration has no VarSize");
-  }
-
-  public TomTerm getVarIdx()
-  {
-     throw new RuntimeException("This Declaration has no VarIdx");
-  }
-
-  public Declaration setVarIdx(TomTerm _varIdx)
-  {
-     throw new RuntimeException("This Declaration has no VarIdx");
   }
 
   public TomType getAstType()

@@ -327,7 +327,7 @@ public class TomSignatureFactory extends PureFactory
     protoDeclaration_MakeEmptyArray = new Declaration_MakeEmptyArray();
 
     Declaration_MakeAddArray.initializePattern();
-    funDeclaration_MakeAddArray = makeAFun("Declaration_MakeAddArray", 5, false);
+    funDeclaration_MakeAddArray = makeAFun("Declaration_MakeAddArray", 4, false);
     protoDeclaration_MakeAddArray = new Declaration_MakeAddArray();
 
     Declaration_MakeDecl.initializePattern();
@@ -919,8 +919,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_MakeAddList(TomName _astName, TomTerm _varList, TomTerm _varElt, TomTerm _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varList, _varElt, _tlCode};
+  public Declaration makeDeclaration_MakeAddList(TomName _astName, TomTerm _varElt, TomTerm _varList, TomTerm _tlCode) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode};
     return makeDeclaration_MakeAddList( funDeclaration_MakeAddList, args, empty);
   }
 
@@ -967,8 +967,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_MakeAddArray(TomName _astName, TomTerm _varList, TomTerm _varElt, TomTerm _varIdx, TomTerm _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varList, _varElt, _varIdx, _tlCode};
+  public Declaration makeDeclaration_MakeAddArray(TomName _astName, TomTerm _varElt, TomTerm _varList, TomTerm _tlCode) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode};
     return makeDeclaration_MakeAddArray( funDeclaration_MakeAddArray, args, empty);
   }
 

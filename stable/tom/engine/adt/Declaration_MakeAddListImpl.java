@@ -11,8 +11,8 @@ extends Declaration
     return pattern;
   }
   private static int index_astName = 0;
-  private static int index_varList = 1;
-  private static int index_varElt = 2;
+  private static int index_varElt = 1;
+  private static int index_varList = 2;
   private static int index_tlCode = 3;
 
   public shared.SharedObject duplicate() {
@@ -54,12 +54,12 @@ extends Declaration
     return true;
   }
 
-  public boolean hasVarList()
+  public boolean hasVarElt()
   {
     return true;
   }
 
-  public boolean hasVarElt()
+  public boolean hasVarList()
   {
     return true;
   }
@@ -80,16 +80,6 @@ extends Declaration
     return (Declaration) super.setArgument(_astName, index_astName);
   }
 
-  public TomTerm getVarList()
-  {
-    return (TomTerm) this.getArgument(index_varList) ;
-  }
-
-  public Declaration setVarList(TomTerm _varList)
-  {
-    return (Declaration) super.setArgument(_varList, index_varList);
-  }
-
   public TomTerm getVarElt()
   {
     return (TomTerm) this.getArgument(index_varElt) ;
@@ -98,6 +88,16 @@ extends Declaration
   public Declaration setVarElt(TomTerm _varElt)
   {
     return (Declaration) super.setArgument(_varElt, index_varElt);
+  }
+
+  public TomTerm getVarList()
+  {
+    return (TomTerm) this.getArgument(index_varList) ;
+  }
+
+  public Declaration setVarList(TomTerm _varList)
+  {
+    return (Declaration) super.setArgument(_varList, index_varList);
   }
 
   public TomTerm getTlCode()

@@ -11,10 +11,9 @@ extends Declaration
     return pattern;
   }
   private static int index_astName = 0;
-  private static int index_varList = 1;
-  private static int index_varElt = 2;
-  private static int index_varIdx = 3;
-  private static int index_tlCode = 4;
+  private static int index_varElt = 1;
+  private static int index_varList = 2;
+  private static int index_tlCode = 3;
 
   public shared.SharedObject duplicate() {
     Declaration_MakeAddArray clone = new Declaration_MakeAddArray();
@@ -27,7 +26,7 @@ extends Declaration
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("MakeAddArray(<term>,<term>,<term>,<term>,<term>)");
+    pattern = getStaticFactory().parse("MakeAddArray(<term>,<term>,<term>,<term>)");
   }
 
 
@@ -36,7 +35,7 @@ extends Declaration
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_MakeAddArray(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)), TomTerm.fromTerm( (aterm.ATerm) children.get(3)), TomTerm.fromTerm( (aterm.ATerm) children.get(4)));
+      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_MakeAddArray(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)), TomTerm.fromTerm( (aterm.ATerm) children.get(3)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -55,17 +54,12 @@ extends Declaration
     return true;
   }
 
-  public boolean hasVarList()
-  {
-    return true;
-  }
-
   public boolean hasVarElt()
   {
     return true;
   }
 
-  public boolean hasVarIdx()
+  public boolean hasVarList()
   {
     return true;
   }
@@ -86,16 +80,6 @@ extends Declaration
     return (Declaration) super.setArgument(_astName, index_astName);
   }
 
-  public TomTerm getVarList()
-  {
-    return (TomTerm) this.getArgument(index_varList) ;
-  }
-
-  public Declaration setVarList(TomTerm _varList)
-  {
-    return (Declaration) super.setArgument(_varList, index_varList);
-  }
-
   public TomTerm getVarElt()
   {
     return (TomTerm) this.getArgument(index_varElt) ;
@@ -106,14 +90,14 @@ extends Declaration
     return (Declaration) super.setArgument(_varElt, index_varElt);
   }
 
-  public TomTerm getVarIdx()
+  public TomTerm getVarList()
   {
-    return (TomTerm) this.getArgument(index_varIdx) ;
+    return (TomTerm) this.getArgument(index_varList) ;
   }
 
-  public Declaration setVarIdx(TomTerm _varIdx)
+  public Declaration setVarList(TomTerm _varList)
   {
-    return (Declaration) super.setArgument(_varIdx, index_varIdx);
+    return (Declaration) super.setArgument(_varList, index_varList);
   }
 
   public TomTerm getTlCode()
@@ -148,11 +132,6 @@ extends Declaration
           throw new RuntimeException("Argument 3 of a Declaration_MakeAddArray should have type TomTerm");
         }
         break;
-      case 4:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 4 of a Declaration_MakeAddArray should have type TomTerm");
-        }
-        break;
       default: throw new RuntimeException("Declaration_MakeAddArray does not have an argument at " + i );
     }
     return super.setArgument(arg, i);
@@ -162,7 +141,6 @@ extends Declaration
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
     int b = 0x9e3779b9;
-    b += (getArgument(4).hashCode() << 0);
     a += (getArgument(3).hashCode() << 24);
     a += (getArgument(2).hashCode() << 16);
     a += (getArgument(1).hashCode() << 8);

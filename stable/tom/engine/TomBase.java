@@ -254,8 +254,8 @@ public class TomBase {
 
     public boolean tom_is_fun_sym_MakeAddList( Declaration  t) { return  (t!=null) && t.isMakeAddList() ; }
     public  TomName  tom_get_slot_MakeAddList_astName( Declaration  t) { return  t.getAstName() ; }
-    public  TomTerm  tom_get_slot_MakeAddList_varList( Declaration  t) { return  t.getVarList() ; }
     public  TomTerm  tom_get_slot_MakeAddList_varElt( Declaration  t) { return  t.getVarElt() ; }
+    public  TomTerm  tom_get_slot_MakeAddList_varList( Declaration  t) { return  t.getVarList() ; }
     public  TomTerm  tom_get_slot_MakeAddList_tlCode( Declaration  t) { return  t.getTlCode() ; }
     public  Declaration  tom_make_MakeAddList( TomName  t0,  TomTerm  t1,  TomTerm  t2,  TomTerm  t3) { return  getTomSignatureFactory().makeDeclaration_MakeAddList(t0, t1, t2, t3); }
     
@@ -286,11 +286,10 @@ public class TomBase {
 
     public boolean tom_is_fun_sym_MakeAddArray( Declaration  t) { return  (t!=null) && t.isMakeAddArray() ; }
     public  TomName  tom_get_slot_MakeAddArray_astName( Declaration  t) { return  t.getAstName() ; }
-    public  TomTerm  tom_get_slot_MakeAddArray_varList( Declaration  t) { return  t.getVarList() ; }
     public  TomTerm  tom_get_slot_MakeAddArray_varElt( Declaration  t) { return  t.getVarElt() ; }
-    public  TomTerm  tom_get_slot_MakeAddArray_varIdx( Declaration  t) { return  t.getVarIdx() ; }
+    public  TomTerm  tom_get_slot_MakeAddArray_varList( Declaration  t) { return  t.getVarList() ; }
     public  TomTerm  tom_get_slot_MakeAddArray_tlCode( Declaration  t) { return  t.getTlCode() ; }
-    public  Declaration  tom_make_MakeAddArray( TomName  t0,  TomTerm  t1,  TomTerm  t2,  TomTerm  t3,  TomTerm  t4) { return  getTomSignatureFactory().makeDeclaration_MakeAddArray(t0, t1, t2, t3, t4); }
+    public  Declaration  tom_make_MakeAddArray( TomName  t0,  TomTerm  t1,  TomTerm  t2,  TomTerm  t3) { return  getTomSignatureFactory().makeDeclaration_MakeAddArray(t0, t1, t2, t3); }
     
 
 
@@ -1439,8 +1438,8 @@ matchlab_match5_pattern2: {
                      TomTerm  tom_match5_1_1_3 = null;
                      TomTerm  tom_match5_1_1_4 = null;
                     tom_match5_1_1_1 = ( TomName ) tom_get_slot_MakeAddList_astName(tom_match5_1_1);
-                    tom_match5_1_1_2 = ( TomTerm ) tom_get_slot_MakeAddList_varList(tom_match5_1_1);
-                    tom_match5_1_1_3 = ( TomTerm ) tom_get_slot_MakeAddList_varElt(tom_match5_1_1);
+                    tom_match5_1_1_2 = ( TomTerm ) tom_get_slot_MakeAddList_varElt(tom_match5_1_1);
+                    tom_match5_1_1_3 = ( TomTerm ) tom_get_slot_MakeAddList_varList(tom_match5_1_1);
                     tom_match5_1_1_4 = ( TomTerm ) tom_get_slot_MakeAddList_tlCode(tom_match5_1_1);
                      return true; 
                   }
@@ -1521,12 +1520,10 @@ matchlab_match7_pattern2: {
                      TomTerm  tom_match7_1_1_2 = null;
                      TomTerm  tom_match7_1_1_3 = null;
                      TomTerm  tom_match7_1_1_4 = null;
-                     TomTerm  tom_match7_1_1_5 = null;
                     tom_match7_1_1_1 = ( TomName ) tom_get_slot_MakeAddArray_astName(tom_match7_1_1);
-                    tom_match7_1_1_2 = ( TomTerm ) tom_get_slot_MakeAddArray_varList(tom_match7_1_1);
-                    tom_match7_1_1_3 = ( TomTerm ) tom_get_slot_MakeAddArray_varElt(tom_match7_1_1);
-                    tom_match7_1_1_4 = ( TomTerm ) tom_get_slot_MakeAddArray_varIdx(tom_match7_1_1);
-                    tom_match7_1_1_5 = ( TomTerm ) tom_get_slot_MakeAddArray_tlCode(tom_match7_1_1);
+                    tom_match7_1_1_2 = ( TomTerm ) tom_get_slot_MakeAddArray_varElt(tom_match7_1_1);
+                    tom_match7_1_1_3 = ( TomTerm ) tom_get_slot_MakeAddArray_varList(tom_match7_1_1);
+                    tom_match7_1_1_4 = ( TomTerm ) tom_get_slot_MakeAddArray_tlCode(tom_match7_1_1);
                      return true; 
                   }
                 }
