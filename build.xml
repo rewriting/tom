@@ -24,7 +24,25 @@
 	<property name="examples"       location="examples"/>
 	<property name="utils"          location="utils"/>
 	<property name="lib"            location="lib"/>
+
+	<!-- libraries -->
 	<property name="concurrent.lib" value="${lib}/concurrent.jar"/>
+	<property name="aterm.lib" value="${lib}/aterm.jar"/>
+	<property name="sharedobject.lib" value="${lib}/shared-objects.jar"/>
+	<property name="jjtraveler.lib" value="${lib}/jjtraveler.jar"/>
+	<property name="apigen.lib" value="${lib}/apigen.jar"/>
+	<property name="vastoadt.lib" value="${lib}/vas-to-adt.jar"/>
+
+	<path id="external.classpath">
+		<!--
+			<pathelement location="${atermjar}"/>
+			<pathelement location="${sharedobjectjar}"/>
+			<pathelement location="${jjtravelerjar}"/>
+			<pathelement location="${apigenjar}"/>
+			<pathelement location="${vastoadtjar}"/>
+		-->
+	</path>
+
 
 	<!-- for stable -->
 	<property name="stable.src"     location="stable"/>
@@ -54,7 +72,7 @@
 	<property name="src.share"    location="${src.dist}/share/jtom"/>
 	<property name="src.doc"      location="${src.dist}/doc"/>
 
-        <!-- for test -->
+	<!-- for test -->
 	<property name="test.gen"     location="${test}/gen"/>  	
 	<property name="test.build"   location="${test}/build"/>
 
@@ -67,15 +85,8 @@
 			 <property name="javacTarget" value="1.2"/>
 	-->
 	<property name="javacVerbose" value="false"/>
-
-	<path id="external.classpath">
-		<pathelement location="${atermjavajar}"/>
-		<pathelement location="${sharedobjectjar}"/>
-		<pathelement location="${jjtravelerjar}"/>
-		<pathelement location="${apigenjar}"/>
-		<pathelement location="${vastoadtjar}"/>
-	</path>
-
+	
+	
 	<!-- Define classpath for building stable and source	-->
 	<path id="stable.classpath">
 		<path refid="external.classpath"/>
@@ -244,7 +255,7 @@
 		<copy todir="${stable.bin}" file="${utils}/tom.bat"/>
 		<copy todir="${stable.bin}" file="${utils}/tom"/>
 		<copy todir="${stable.bin}">
-			<fileset dir="${utils}">
+			<fileset dir="${utils}"> 
 				<include name="adt-to-tom.*"/>
 			</fileset>
 		</copy>
@@ -260,12 +271,8 @@
 			</fileset>
 		</copy>
 		<jar jarfile="${stable.lib}/jtom-${version}.jar">
-			<fileset dir="${stable.build}"
-				includes="**/*.class"/>
-			
-				<fileset dir="${stable.src}" 
-						includes="**/*.properties"/>
-			
+			<fileset dir="${stable.build}" includes="**/*.class"/>
+			<fileset dir="${stable.src}" includes="**/*.properties"/>
 		</jar>
 		<!-- tom share -->
 		<copy todir="${stable.share}">
@@ -275,11 +282,11 @@
 			</fileset>
 		</copy>
 		<!-- external libs -->
-		<copy todir="${stable.lib}" file="${atermjavajar}"/>
-		<copy todir="${stable.lib}" file="${sharedobjectjar}"/>
-		<copy todir="${stable.lib}" file="${jjtravelerjar}"/>
-		<copy todir="${stable.lib}" file="${apigenjar}"/>
-		<copy todir="${stable.lib}" file="${vastoadtjar}"/>
+		<copy todir="${stable.lib}" file="${aterm.lib}"/>
+		<copy todir="${stable.lib}" file="${sharedobject.lib}"/>
+		<copy todir="${stable.lib}" file="${jjtraveler.lib}"/>
+		<copy todir="${stable.lib}" file="${apigen.lib}"/>
+		<copy todir="${stable.lib}" file="${vastoadt.lib}"/>
 		<copy todir="${stable.lib}" file="${concurrent.lib}"/>
 		<!-- tom doc -->
 		<copy todir="${stable.doc}" file="${referencepdf}"/>
@@ -352,11 +359,11 @@
 			</fileset>
 		</copy>
 		<!-- external libs -->
-		<copy todir="${src.lib}" file="${atermjavajar}"/>
-		<copy todir="${src.lib}" file="${sharedobjectjar}"/>
-		<copy todir="${src.lib}" file="${jjtravelerjar}"/>
-		<copy todir="${src.lib}" file="${apigenjar}"/>
-		<copy todir="${src.lib}" file="${vastoadtjar}"/>
+		<copy todir="${src.lib}" file="${aterm.lib}"/>
+		<copy todir="${src.lib}" file="${sharedobject.lib}"/>
+		<copy todir="${src.lib}" file="${jjtraveler.lib}"/>
+		<copy todir="${src.lib}" file="${apigen.lib}"/>
+		<copy todir="${src.lib}" file="${vastoadt.lib}"/>
 		<copy todir="${src.lib}" file="${concurrent.lib}"/>
 		<!-- tom doc -->
 		<copy todir="${src.doc}" file="${referencepdf}"/>

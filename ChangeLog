@@ -1,11 +1,15 @@
+2004-05-07  pem  <pem@polly.loria.fr>
+
+	* bootinstall
+
 2004-05-02  antoine	<reilles@loria.fr>
 
 	* bootinstall
-		- vas in stable
+	  - vas in stable
 
 2004-04-29  pem  <pem@polly.loria.fr>
 
-	* src/jtom/Tom.java:  is now a singleton
+	* src/jtom/Tom.java: is now a singleton
 	* src/jtom/tools/TomTaskInput.java: is now a singleton
 	* src/jtom/TomEnvironment.java: is now a singleton
 
