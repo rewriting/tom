@@ -902,7 +902,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
                 }
-                return true;;
+                return true;
                } } }}matchlab_match21_pattern2: { String tomName = null; OptionList optionList = null; TomList pairs = null; if(tom_is_fun_sym_RecordAppl(tom_match21_1)) { Option tom_match21_1_1 = null; TomName tom_match21_1_2 = null; TomList tom_match21_1_3 = null; tom_match21_1_1 = (Option) tom_get_slot_RecordAppl_option(tom_match21_1); tom_match21_1_2 = (TomName) tom_get_slot_RecordAppl_astName(tom_match21_1); tom_match21_1_3 = (TomList) tom_get_slot_RecordAppl_args(tom_match21_1); if(tom_is_fun_sym_Option(tom_match21_1_1)) { OptionList tom_match21_1_1_1 = null; tom_match21_1_1_1 = (OptionList) tom_get_slot_Option_optionList(tom_match21_1_1); optionList = (OptionList) tom_match21_1_1_1; if(tom_is_fun_sym_Name(tom_match21_1_2)) { String tom_match21_1_2_1 = null; tom_match21_1_2_1 = (String) tom_get_slot_Name_string(tom_match21_1_2); tomName = (String) tom_match21_1_2_1; pairs = (TomList) tom_match21_1_3;
  
                 annotedVariable = getAnnotedVariable(optionList);

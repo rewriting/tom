@@ -34,7 +34,7 @@ EXTRA_DIST      = $(source_java) $(source_c)
 	 echo "rm $*.java.test";\
 	) > $@ && chmod +x $@
 
-CLEANFILES+=*.test $(BUILT_SOURCES) cfib1 loulou
+CLEANFILES = *.test $(BUILT_SOURCES) cfib1 loulou
 
 EXEEXT =
 noinst_PROGRAMS         = $(PROGS)

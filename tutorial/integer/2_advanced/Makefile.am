@@ -6,5 +6,5 @@ TOM_TUTORIAL = $(wildcard *.t)
 
 EXTRA_DIST = $(TOM_TUTORIAL)
 
-CLEANFILES+= $(TOM_TUTORIAL:.t=.java) $(TOM_TUTORIAL:.t=.tom.c)\
+CLEANFILES = $(TOM_TUTORIAL:.t=.java) $(TOM_TUTORIAL:.t=.tom.c)\
              *.o *.class

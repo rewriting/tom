@@ -3,7 +3,7 @@ EXTRA_DIST = jtom.sh.src
 bin_SCRIPTS = jtom jtom.stable jtom.src
 #noinst_SCRIPTS = jtom.stable jtom.src
 
-CLEANFILES+=${bin_SCRIPTS}
+CLEANFILES =${bin_SCRIPTS}
 
 top_abs_srcdir=$(shell cd ${top_srcdir}; pwd)
 top_abs_builddir=$(shell cd ${top_builddir}; pwd)

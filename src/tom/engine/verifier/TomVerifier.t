@@ -902,7 +902,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
                 }
-                return true;;
+                return true;
               }
               RecordAppl(Option(optionList),Name(tomName),pairs) -> {
                 annotedVariable = getAnnotedVariable(optionList);
