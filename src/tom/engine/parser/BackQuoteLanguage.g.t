@@ -214,7 +214,7 @@ termList [LinkedList list,TomList context]
                     // si une virgule est lue, pas besoin d'espace
                     addTerm(list,term,true);
                   } else {
-                    addTerm(list,`TargetLanguageToTomTerm(ITL(" ")),false); 
+                    //addTerm(list,`TargetLanguageToTomTerm(ITL(" ")),false); 
                     addTerm(list,term,false);
                   }
                   c = null;
@@ -407,9 +407,6 @@ target returns [Token result]
     :
         in:BQ_INTEGER {result = in;}
     |   str:BQ_STRING {result = str;}
-    |   c:BQ_CHAR {result = c;}
-    |   eq:JAVA_EQ {result = eq;}
-    |   and:JAVA_AND {result = and;} 
     |   m:BQ_MINUS {result = m;}
     |   s:BQ_STAR {result = s;}
     |   w:BQ_WS {result = w;}
@@ -539,7 +536,7 @@ firstTerm returns [TomTerm result]
         (
          // xml(...) or (...)
             result = basicTerm[list]            
-        |   id:BQ_ID 
+            |   id:BQ_ID
             (
              // `X*
                 {LA(1) == BQ_STAR}? BQ_STAR
@@ -573,7 +570,6 @@ firstTerm returns [TomTerm result]
 beginBackquote returns [TomTerm result]
 {
     result = null;
-    Token t = null;
 }
     :
         (
@@ -651,45 +647,6 @@ options{ testLiterals = true; }
             (BQ_MINUS_ID) => BQ_MINUS_ID
         |   BQ_SIMPLE_ID
         )
-    ;
-
-BQ_CHAR : '\'' (BQ_ESC|~('\''|'\\'|'\n'|'\r')) '\'';
-
-BQ_NUMBER :
-   BQ_DOT
-   (    ('0'..'9')+ (EXPONENT)? (FLOAT_SUFFIX)?  )?
-
-   |    ('0'
-    ( ('x'|'X')
-      (                                            // hex
-       options {
-          warnWhenFollowAmbig=false;
-      }
-       :    BQ_HEX_DIGIT
-       )+
-                    |
-      (('0'..'9')+ ('.'|EXPONENT|FLOAT_SUFFIX)) => ('0'..'9')+
-      |    ('0'..'7')+                                    // octal
-      )?
-    |   ('1'..'9') ('0'..'9')*     )
-
-   (    ('l'|'L')
-   |  ( '.' ('0'..'9')* (EXPONENT)? (FLOAT_SUFFIX)?
-        |   EXPONENT (FLOAT_SUFFIX)?
-        |   FLOAT_SUFFIX
-        )
-   )?
-   ;
-
-JAVA_EQ : "==" ;
-JAVA_AND : "&&";
-
-protected EXPONENT :
-    ('e' | 'E') ('+' | '-')? (BQ_DIGIT)+
-    ;
-
-protected FLOAT_SUFFIX   :
-    'f' | 'F' | 'd' | 'D'
     ;
 
 

@@ -170,7 +170,12 @@ public class TestBuiltin extends TestCase {
   }
 
   public void test2() {
-    assertTrue(89 == `fibE(int(10)));
+    assertTrue(89 == `fibE(
+                           int(
+                               10
+                               )
+                           )
+               );
   }
   
   public void testMatchString1() {

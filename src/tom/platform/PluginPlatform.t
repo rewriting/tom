@@ -126,6 +126,8 @@ public class PluginPlatform {
       }
       if(success) {
         generatedObjects.add(arg[0]);
+      } else {
+        break;
       }
     }
     
