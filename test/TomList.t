@@ -2,7 +2,7 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 
-public class List {
+public class TomList {
   private ATermFactory factory;
 
   %typelist L {
@@ -59,12 +59,12 @@ public class List {
     double3(conc(X*)) -> conc(X*)
   } 
 
-  public List(ATermFactory factory) {
+  public TomList(ATermFactory factory) {
     this.factory = factory;
   }
 
   public final static void main(String[] args) {
-    List test = new List(new PureFactory(16));
+    TomList test = new TomList(new PureFactory(16));
     test.testList1();
     test.testList2();
   }

@@ -31,10 +31,10 @@ public class BasicFormatter extends Formatter {
   
   public String format(LogRecord record) {
     if(record instanceof PlatformLogRecord) {
-    	PlatformLogRecord plr  = (PlatformLogRecord)record;
-    	return plr.getFilePath()+":"+plr.getLine()+":"+plr.getMessage()+"\n";
+      PlatformLogRecord plr  = (PlatformLogRecord)record;
+      return plr.getFilePath()+":"+plr.getLine()+":"+plr.getMessage()+"\n";
     } else {
-    	return formatMessage(record)+"\n";
+      return formatMessage(record)+"\n";
     }
   }
 

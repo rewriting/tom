@@ -1,3 +1,9 @@
+2005-03-22  pem  <pem@polly.loria.fr>
+
+	* src/jtom/compiler/TomKernelCompiler.t: 	
+	  - fixed the completeness list-matching bug in array version
+	  (subjectIndex has to be reseted to begin)
+
 2005-03-11  Anne-Claire Lonchamp  <lonchamp@sawyer.loria.fr>
 
 	* src/jtom/compiler/TomCompiler.t: 

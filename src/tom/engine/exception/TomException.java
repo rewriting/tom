@@ -33,7 +33,7 @@ public class TomException extends Exception {
   }
   
   public TomException(String message) {
-  	this.msg = message;
+    this.msg = message;
   }
 
   public String getMessage() {

@@ -207,10 +207,10 @@ options{
     fileName = fileName.trim();
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
-		if(fileName.equals("")) {
-			String msg = TomMessage.getMessage("MissingIncludedFile", new Object[]{currentFile, new Integer(getLine())});
+    if(fileName.equals("")) {
+      String msg = TomMessage.getMessage("MissingIncludedFile", new Object[]{currentFile, new Integer(getLine())});
       throw new TomIncludeException(msg);
-		}
+    }
     
     file = new File(fileName);
     if(file.isAbsolute()) {
@@ -234,7 +234,7 @@ options{
         throw new TomIncludeException(msg);
       }
       
-			// if trying to include a file twice, but not in a cycle : discard
+      // if trying to include a file twice, but not in a cycle : discard
       if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
           getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("IncludedFileAlreadyParsed", 
@@ -259,7 +259,7 @@ options{
                                                       fileName,
                                                       currentFile,
                                                       new Integer(getLine()),
-																											sw.toString()
+                                                      sw.toString()
                                          });
       throw new TomException(msg);
     }
@@ -287,7 +287,7 @@ input returns [TomTerm result] throws TomException
     result = null;
     LinkedList list = new LinkedList();
 }   
-	:
+  :
   blockList[list] t:EOF
         {
           // This TL is last block: do no need to specify line and column
@@ -359,7 +359,7 @@ matchConstruct [LinkedList list] throws TomException
 {
     TargetLanguage code = null;
 }
-	:
+  :
         t:MATCH 
         {        
             String textCode = getCode();
@@ -420,18 +420,18 @@ signature [LinkedList list] throws TomException
     vasParams.add("--package");
     vasParams.add(subPackageName);
     PluginPlatform vasPlatform = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode));
-		if(vasPlatform == null) {
-			throw new TomException(TomMessage.getMessage("VasPlatformFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
-		}
-		int vasResult = vasPlatform.run();
-		if(vasResult != 0) {
-			//System.out.println(platform.getAlertForInput().toString());
-			throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
-		}
-		
-		generatedADTName = (String)vasPlatform.getLastGeneratedObjects().get(0);
+    if(vasPlatform == null) {
+      throw new TomException(TomMessage.getMessage("VasPlatformFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
+    }
+    int vasResult = vasPlatform.run();
+    if(vasResult != 0) {
+      //System.out.println(platform.getAlertForInput().toString());
+      throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
+    }
+    
+    generatedADTName = (String)vasPlatform.getLastGeneratedObjects().get(0);
     if(generatedADTName == null) {
-    	throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
+      throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
     }
     // Simulate the inclusion of generated Tom file
 
@@ -448,7 +448,7 @@ signature [LinkedList list] throws TomException
       throw new TomException(TomMessage.getMessage("IOExceptionWithGeneratedTomFile",
                                                           new Object[]{fileName, currentFile, e.getMessage()}));
     } catch (Exception e) {
-    	StringWriter sw = new StringWriter();
+      StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
       throw new TomException(TomMessage.getMessage("ExceptionWithGeneratedTomFile",
@@ -706,7 +706,7 @@ targetLanguage [LinkedList list] returns [TargetLanguage result] throws TomExcep
 }
 class HostLexer extends Lexer;
 options {
-	k=6; // the default lookahead
+  k=6; // the default lookahead
 
     // a filter for the target language
     // permit to read every characters without defining them
@@ -749,7 +749,7 @@ RULE
     :   "%rule" {selector().push("tomlexer");}
     ;
 MATCH
-	:	"%match" {selector().push("tomlexer");}
+  : "%match" {selector().push("tomlexer");}
     ;
 OPERATOR
     :   "%op"   {selector().push("tomlexer");}
@@ -782,7 +782,7 @@ INCLUDE
     ;/*
 VARIABLE
     :   "%variable" 
-	;*/
+  ;*/
 VAS
     :   "%vas"  
     ;
@@ -802,63 +802,63 @@ RBRACE
     ;
 
 STRING
-	:	'"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
+  : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
         {
             target.append($getText);
         } 
-	;
+  ;
 
 protected
 ESC
-	:	'\\'
-		(	'n'
-		|	'r'
-		|	't'
-		|	'b'
-		|	'f'
-		|	'"'
-		|	'\''
-		|	'\\'
-		|	('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-		|	'0'..'3'
-			(
-				options {
-					warnWhenFollowAmbig = false;
-				}
-			:	'0'..'7'
-				(
-					options {
-						warnWhenFollowAmbig = false;
-					}
-				:	'0'..'7'
-				)?
-			)?
-		|	'4'..'7'
-			(
-				options {
-					warnWhenFollowAmbig = false;
-				}
-			:	'0'..'7'
-			)?
-		)
-	;
+  : '\\'
+    ( 'n'
+    | 'r'
+    | 't'
+    | 'b'
+    | 'f'
+    | '"'
+    | '\''
+    | '\\'
+    | ('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+    | '0'..'3'
+      (
+        options {
+          warnWhenFollowAmbig = false;
+        }
+      : '0'..'7'
+        (
+          options {
+            warnWhenFollowAmbig = false;
+          }
+        : '0'..'7'
+        )?
+      )?
+    | '4'..'7'
+      (
+        options {
+          warnWhenFollowAmbig = false;
+        }
+      : '0'..'7'
+      )?
+    )
+  ;
 
 protected
 HEX_DIGIT
-	:	('0'..'9'|'A'..'F'|'a'..'f')
-	;
+  : ('0'..'9'|'A'..'F'|'a'..'f')
+  ;
 
 // tokens to skip : white spaces
-WS	:	(	' '
-		|	'\t'
-		|	'\f'
-		// handle newlines
-		|	(	"\r\n"  // Evil DOS
-			|	'\r'    // Macintosh
-			|	'\n'    // Unix (the right way)
-			)
-			{ newline(); }
-		)
+WS  : ( ' '
+    | '\t'
+    | '\f'
+    // handle newlines
+    | ( "\r\n"  // Evil DOS
+      | '\r'    // Macintosh
+      | '\n'    // Unix (the right way)
+      )
+      { newline(); }
+    )
         {  
             target.append($getText);
             $setType(Token.SKIP);
@@ -870,7 +870,7 @@ COMMENT
     :
         ( SL_COMMENT | ML_COMMENT )
         { $setType(Token.SKIP);}
-	;
+  ;
 
 protected
 SL_COMMENT 
@@ -878,24 +878,24 @@ SL_COMMENT
         "//"
         ( ~('\n'|'\r') )*
         (
-			options {
-				generateAmbigWarnings=false;
-			}
-		:	'\r' '\n'
-		|	'\r'
-		|	'\n'
+      options {
+        generateAmbigWarnings=false;
+      }
+    : '\r' '\n'
+    | '\r'
+    | '\n'
         )
         {
             target.append($getText);
             newline(); 
         }
-	;
+  ;
 
 protected
 ML_COMMENT 
     :
         "/*"        
-        (	{ LA(2)!='/' }? '*' 
+        ( { LA(2)!='/' }? '*' 
         |
         )
         (
@@ -903,14 +903,14 @@ ML_COMMENT
                 greedy=false;  // make it exit upon "*/"
                 generateAmbigWarnings=false; // shut off newline errors
             }
-        :	'\r' '\n'	{newline();}
-        |	'\r'		{newline();}
-        |	'\n'		{newline();}
-        |	~('\n'|'\r')
+        : '\r' '\n' {newline();}
+        | '\r'    {newline();}
+        | '\n'    {newline();}
+        | ~('\n'|'\r')
         )*
         "*/"
         {target.append($getText);}
-	;
+  ;
 
 
 // the rule for the filter : just append the text to the buffer

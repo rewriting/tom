@@ -38,11 +38,11 @@ public class PlatformLogRecord extends LogRecord {
   }
   
   public int getLine() {
-  	return line;
+    return line;
   }
   
   public String getFilePath() {
-  	return filePath;
+    return filePath;
   }
   
 } // class PlatformLogRecord

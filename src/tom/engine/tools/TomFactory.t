@@ -194,8 +194,8 @@ public class TomFactory extends TomBase {
       }
 
       manyTomList(head@TargetLanguageToTomTerm[],tail) -> {
-	TomTerm subList = buildArray(name,`tail,size);
-	return subList;
+  TomTerm subList = buildArray(name,`tail,size);
+  return subList;
       }
 
     }

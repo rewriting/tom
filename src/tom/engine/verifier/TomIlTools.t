@@ -38,24 +38,24 @@ import jtom.tools.SymbolTable;
 
 public class TomIlTools extends TomBase {
 
-	// ------------------------------------------------------------
- 	%include { adt/tomsignature/TomSignature.tom }
-	%include { zenon/Zenon.tom }
-	// ------------------------------------------------------------
+  // ------------------------------------------------------------
+  %include { adt/tomsignature/TomSignature.tom }
+  %include { zenon/Zenon.tom }
+  // ------------------------------------------------------------
 
   private SymbolTable symbolTable;
 
-	protected jtom.verifier.zenon.ZenonFactory zfactory;
+  protected jtom.verifier.zenon.ZenonFactory zfactory;
 
-	public TomIlTools(SymbolTable symbolTable) {
-		super();
+  public TomIlTools(SymbolTable symbolTable) {
+    super();
     this.symbolTable = symbolTable;
-		zfactory = ZenonFactory.getInstance(getTomSignatureFactory().getPureFactory());
-	}
+    zfactory = ZenonFactory.getInstance(getTomSignatureFactory().getPureFactory());
+  }
 
-	protected final ZenonFactory getZenonFactory() {
-		return zfactory;
-	}
+  protected final ZenonFactory getZenonFactory() {
+    return zfactory;
+  }
 
   private SymbolTable getSymbolTable() {
     return symbolTable;

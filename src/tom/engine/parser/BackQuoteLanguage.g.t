@@ -624,7 +624,7 @@ BQ_STAR        :    '*'   ;
 //XML Tokens
 XML_EQUAL   :   '=' ;
 XML_START_ENDING    : "</" ;
-XML_CLOSE_SINGLETON : "/>" ;	
+XML_CLOSE_SINGLETON : "/>" ;  
 XML_START   :   '<';
 XML_CLOSE   :   '>' ;
 DOUBLE_QUOTE:   '\"';
@@ -635,16 +635,16 @@ XML_PROC    :   "#PROCESSING-INSTRUCTION";
 BQ_DOT    :    '.'   ;
 
 // tokens to skip : white spaces
-BQ_WS	:	(	' '
-		|	'\t'
-		|	'\f'
-		// handle newlines
-		|	(	"\r\n"  // Evil DOS
-			|	'\r'    // Macintosh
-			|	'\n'    // Unix (the right way)
-			)
-			{ newline(); }
-		)
+BQ_WS : ( ' '
+    | '\t'
+    | '\f'
+    // handle newlines
+    | ( "\r\n"  // Evil DOS
+      | '\r'    // Macintosh
+      | '\n'    // Unix (the right way)
+      )
+      { newline(); }
+    )
     ;
 
 XML_SKIP
@@ -707,41 +707,41 @@ BQ_UNDERSCORE  :   '_' ;
 
 protected
 BQ_ESC
-	:	'\\'
-		(	'n'
-		|	'r'
-		|	't'
-		|	'b'
-		|	'f'
-		|	'"'
-		|	'\''
-		|	'\\'
-		|	('u')+ BQ_HEX_DIGIT BQ_HEX_DIGIT BQ_HEX_DIGIT BQ_HEX_DIGIT
-		|	'0'..'3'
-			(
-				options {
-					warnWhenFollowAmbig = false;
-				}
-			:	'0'..'7'
-				(
-					options {
-						warnWhenFollowAmbig = false;
-					}
-				:	'0'..'7'
-				)?
-			)?
-		|	'4'..'7'
-			(
-				options {
-					warnWhenFollowAmbig = false;
-				}
-			:	'0'..'7'
-			)?
-		)
-	;
+  : '\\'
+    ( 'n'
+    | 'r'
+    | 't'
+    | 'b'
+    | 'f'
+    | '"'
+    | '\''
+    | '\\'
+    | ('u')+ BQ_HEX_DIGIT BQ_HEX_DIGIT BQ_HEX_DIGIT BQ_HEX_DIGIT
+    | '0'..'3'
+      (
+        options {
+          warnWhenFollowAmbig = false;
+        }
+      : '0'..'7'
+        (
+          options {
+            warnWhenFollowAmbig = false;
+          }
+        : '0'..'7'
+        )?
+      )?
+    | '4'..'7'
+      (
+        options {
+          warnWhenFollowAmbig = false;
+        }
+      : '0'..'7'
+      )?
+    )
+  ;
 
 protected
 BQ_HEX_DIGIT
-	:	('0'..'9'|'A'..'F'|'a'..'f')
-	;
+  : ('0'..'9'|'A'..'F'|'a'..'f')
+  ;
 

@@ -17,18 +17,18 @@ import jjtraveler.VisitFailure;
  */
 
 public class Choice extends AbstractVisitableVisitor {
-	protected final static int FIRST = 0;
-	protected final static int THEN = 1;
+  protected final static int FIRST = 0;
+  protected final static int THEN = 1;
   public Choice(VisitableVisitor first, VisitableVisitor then) {
     init(first,then);
   }
     
   public Visitable visit(Visitable visitable) throws VisitFailure {
     try {
-	    return getArgument(FIRST).visit(visitable);
+      return getArgument(FIRST).visit(visitable);
     }
     catch (VisitFailure f) {
-	    return getArgument(THEN).visit(visitable);
+      return getArgument(THEN).visit(visitable);
     }
   }
 }

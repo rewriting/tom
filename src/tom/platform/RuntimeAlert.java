@@ -99,11 +99,11 @@ public class RuntimeAlert {
    * @param record
    */
   public void add(PlatformLogRecord record) {
-  	if(record.getLevel() == Level.SEVERE) {
-  		addError(record.getMessage(), record.getFilePath(), record.getLine());
-  	} else if(record.getLevel() == Level.WARNING) {
-  		addWarning(record.getMessage(), record.getFilePath(), record.getLine());
-  	}
+    if(record.getLevel() == Level.SEVERE) {
+      addError(record.getMessage(), record.getFilePath(), record.getLine());
+    } else if(record.getLevel() == Level.WARNING) {
+      addWarning(record.getMessage(), record.getFilePath(), record.getLine());
+    }
   }
 
 } //class RuntimeAlert

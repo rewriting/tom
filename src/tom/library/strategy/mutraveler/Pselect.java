@@ -19,8 +19,8 @@ import jjtraveler.VisitFailure;
  */
 
 public class Pselect extends AbstractVisitableVisitor {
-	protected final static int FIRST = 0;
-	protected final static int THEN = 1;
+  protected final static int FIRST = 0;
+  protected final static int THEN = 1;
   private int p;
   private int q;
   private static Random random = null;

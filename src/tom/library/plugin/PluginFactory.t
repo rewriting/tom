@@ -207,7 +207,7 @@ public class PluginFactory implements Plugin {
       if(((Boolean)getOM().getOptionValue(flagName)).booleanValue()) {
         // if this plugin is activated
         it = flagOwners.keySet().iterator();
-	      
+        
         while( it.hasNext() ) {
           String name = (String)it.next();
           if( !name.equals(flagName) ) // require that the other aren't

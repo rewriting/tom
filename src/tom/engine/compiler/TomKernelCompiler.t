@@ -71,7 +71,7 @@ public class TomKernelCompiler extends TomBase {
         if(subject instanceof Instruction) {
           %match(Instruction subject) {
             Match(SubjectList(l1),patternInstructionList, optionList)  -> {
-							TomList patternList = null;
+              TomList patternList = null;
               Instruction actionInst = null;
               TomList automataList = empty();
               TomNumberList rootpath = tsf().makeTomNumberList();
@@ -385,6 +385,7 @@ public class TomKernelCompiler extends TomBase {
                *     end_i = begin_i
                *   subjectList = end_i;
                * } while( end_i != begin_i )  
+               * *** subjectList is reseted to begin_i when the loop stops
                */
             Instruction stopIter = `Assign(variableEndAST,TomTermToExpression(variableBeginAST));
             Instruction assign1 = `genCheckEmptyList(p.symbol, Ref(variableEndAST),stopIter,tailExp);
@@ -594,26 +595,30 @@ public class TomKernelCompiler extends TomBase {
              *   end_i++;
              *   subjectIndex = end_i;
              * } while( subjectIndex <= GET_SIZE(subjectList) )
+             * subjectIndex = begin_i
+             *
              * *** we need <= instead of < to make the algorithm complete ***
              */
             Instruction assign = `Assign(p.subjectListIndex,TomTermToExpression(Ref(variableEndAST)));
             
             loop = `DoWhile(UnamedBlock(concInstruction(let,increment,assign)),
                             Not(GreaterThan(TomTermToExpression(Ref(p.subjectListIndex)),GetSize(Ref(p.subjectListName)))));
+            loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListIndex,TomTermToExpression(variableBeginAST),Nop())));
           } else {
             /*
-             * while( !IS_EMPTY_TomList(end_isubjectList) ) {
+             * while( !IS_EMPTY_TomList(end_i,subjectList) ) {
+             *   subjectIndex = end_i;
              *   * SUBSTITUTION: E_i
              *   TomList E_i = GET_SLICE_TomList(subjectList,begin_i,end_i);
              *   ...
              *   end_i++;
-             *   subjectIndex = end_i;
              * } 
+             * subjectIndex = begin_i
              */
             Instruction letAssign = `LetAssign(p.subjectListIndex,TomTermToExpression(Ref(variableEndAST)),UnamedBlock(concInstruction(let,increment)));
             loop = `WhileDo(Not(IsEmptyArray(Ref(p.subjectListName), Ref(variableEndAST))),
                             letAssign);
-            
+            loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListIndex,TomTermToExpression(variableBeginAST),Nop())));
           }
           Instruction letEnd = `LetRef(variableEndAST,
                                        TomTermToExpression(Ref(p.subjectListIndex)),

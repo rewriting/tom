@@ -15,7 +15,7 @@ import jjtraveler.VisitFailure;
 public class MuVar extends AbstractVisitableVisitor {
   private VisitableVisitor instance = null;
   protected String name;
-	
+  
   public MuVar(String name) {
     init();
     this.name = name;

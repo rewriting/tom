@@ -160,13 +160,13 @@ constant returns [Token result]
 {
     result = null;
 }
-	:	(
+  : (
           t1:NUM_INT {result = t1;}
-        |	t2:CHARACTER {result = t2;}
-        |	t3:STRING {result = t3;}
-        |	t4:NUM_FLOAT {result = t4;}
-        |	t5:NUM_LONG {result = t5;}
-        |	t6:NUM_DOUBLE {result = t6;}
+        | t2:CHARACTER {result = t2;}
+        | t3:STRING {result = t3;}
+        | t4:NUM_FLOAT {result = t4;}
+        | t5:NUM_LONG {result = t5;}
+        | t6:NUM_DOUBLE {result = t6;}
         )
     ;
 
@@ -179,7 +179,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
     LinkedList argumentList = new LinkedList();
     LinkedList patternInstructionList = new LinkedList();
 }
-	:	(
+  : (
             LPAREN matchArguments[argumentList] RPAREN 
             LBRACE 
             ( 
@@ -201,7 +201,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
                 selector().pop(); 
             }
         )
-	;
+  ;
 
 matchArguments [LinkedList list]
     :   
@@ -503,7 +503,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
         |   // (f|g...) 
             // ambiguity with the last rule so use a lookahead
             // if ALTERNATIVE then parse headSymbolList
-	    	{LA(3) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
+        {LA(3) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
             ( (args[null,null]) => implicit = args[list,secondOptionList] {withArgs = true;})?
             {
                 if(withArgs && list.isEmpty())
@@ -1267,10 +1267,10 @@ operator returns [Declaration result] throws TomException
                     mapNameDecl.put(sName,attribute);
                 } else {
                   getLogger().log(new PlatformLogRecord(Level.WARNING,
-                  		TomMessage.getMessage("WarningTwoSameSlotDecl",
+                      TomMessage.getMessage("WarningTwoSameSlotDecl",
                               new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
                                            "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ),
-																					 currentFile(), getLine()));
+                                           currentFile(), getLine()));
                 }
             }
         
@@ -1288,10 +1288,10 @@ operator returns [Declaration result] throws TomException
                 } else {
                     Declaration decl = (Declaration)mapNameDecl.get(name1);
                     if(decl == null) {
-                    	getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningMissingSlotDecl",
-                    			new Object[]{currentFile(), new Integer(ot.getLine()),
-                    			"%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} ),
-													currentFile(), getLine()));
+                      getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningMissingSlotDecl",
+                          new Object[]{currentFile(), new Integer(ot.getLine()),
+                          "%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} ),
+                          currentFile(), getLine()));
                         decl = emptyDeclaration;
                     }
                     else {
@@ -1307,10 +1307,10 @@ operator returns [Declaration result] throws TomException
                 while(it.hasNext()) {
                     TomName remainingSlot = (TomName) it.next();
                     getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningIncompatibleSlotDecl",
-                    		new Object[]{currentFile(), 
-                    		new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
-												"%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} ),
-												currentFile(), getLine()));
+                        new Object[]{currentFile(), 
+                        new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
+                        "%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} ),
+                        currentFile(), getLine()));
                 }
             }
             
@@ -2141,7 +2141,7 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
 
 class TomLexer extends Lexer;
 options {
-	k=3; // default lookahead
+  k=3; // default lookahead
     charVocabulary = '\u0000'..'\uffff'; // each character can be read
     testLiterals = false;
 }
@@ -2204,96 +2204,96 @@ XML_START_ENDING    : "</" ;
 XML_CLOSE_SINGLETON : "/>" ;
 
 // tokens to skip : white spaces
-WS	:	(	' '
-		|	'\t'
-		|	'\f'
-		// handle newlines
-		|	(	"\r\n"  // Evil DOS
-			|	'\r'    // Macintosh
-			|	'\n'    // Unix (the right way)
-			)
-			{ newline(); }
-		)
+WS  : ( ' '
+    | '\t'
+    | '\f'
+    // handle newlines
+    | ( "\r\n"  // Evil DOS
+      | '\r'    // Macintosh
+      | '\n'    // Unix (the right way)
+      )
+      { newline(); }
+    )
         { $setType(Token.SKIP); }
-	;
+  ;
 
 
 // tokens to skip : Single Line Comments
 SLCOMMENT
-	:	"//"
-		(~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
-		{
+  : "//"
+    (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
+    {
             $setType(Token.SKIP); 
             newline();
         }
-	;
+  ;
 
 // tokens to skip : Multi Lines Comments
 ML_COMMENT
-	:	"/*"
-		(	
-			options {
-				generateAmbigWarnings=false;
-			}
-		:
-			{ LA(2)!='/' }? '*'
-		|	'\r' '\n'		{newline();}
-		|	'\r'			{newline();}
-		|	'\n'			{newline();}
-		|	~('*'|'\n'|'\r')
-		)*
-		"*/"
-		{$setType(Token.SKIP);}
-	;
+  : "/*"
+    ( 
+      options {
+        generateAmbigWarnings=false;
+      }
+    :
+      { LA(2)!='/' }? '*'
+    | '\r' '\n'   {newline();}
+    | '\r'      {newline();}
+    | '\n'      {newline();}
+    | ~('*'|'\n'|'\r')
+    )*
+    "*/"
+    {$setType(Token.SKIP);}
+  ;
 
 
 CHARACTER
-	:	'\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\''
-	;
+  : '\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\''
+  ;
 
 STRING
-	:	'"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
-	;
+  : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
+  ;
 
 protected
 ESC
-	:	'\\'
-		(	'n'
-		|	'r'
-		|	't'
-		|	'b'
-		|	'f'
-		|	'"'
-		|	'\''
-		|	'\\'
-		|	('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-		|	'0'..'3'
-			(
-				options {
-					warnWhenFollowAmbig = false;
-				}
-			:	'0'..'7'
-				(
-					options {
-						warnWhenFollowAmbig = false;
-					}
-				:	'0'..'7'
-				)?
-			)?
-		|	'4'..'7'
-			(
-				options {
-					warnWhenFollowAmbig = false;
-				}
-			:	'0'..'7'
-			)?
-		)
-	;
+  : '\\'
+    ( 'n'
+    | 'r'
+    | 't'
+    | 'b'
+    | 'f'
+    | '"'
+    | '\''
+    | '\\'
+    | ('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+    | '0'..'3'
+      (
+        options {
+          warnWhenFollowAmbig = false;
+        }
+      : '0'..'7'
+        (
+          options {
+            warnWhenFollowAmbig = false;
+          }
+        : '0'..'7'
+        )?
+      )?
+    | '4'..'7'
+      (
+        options {
+          warnWhenFollowAmbig = false;
+        }
+      : '0'..'7'
+      )?
+    )
+  ;
 
 protected
 HEX_DIGIT
-	:	('0'..'9'|'A'..'F'|'a'..'f')
-	;
+  : ('0'..'9'|'A'..'F'|'a'..'f')
+  ;
 
 protected LETTER    :   ('a'..'z' | 'A'..'Z')   ;
 protected DIGIT     :   ('0'..'9')  ;
@@ -2328,61 +2328,61 @@ protected ID_MINUS
     ;
 
 NUM_INT
-	{boolean isDecimal=false; Token t=null;}
+  {boolean isDecimal=false; Token t=null;}
     :   DOT
-            (	('0'..'9')+ (EXPONENT)? (f1:FLOAT_SUFFIX {t=f1;})?
+            ( ('0'..'9')+ (EXPONENT)? (f1:FLOAT_SUFFIX {t=f1;})?
                 {
-				if (t != null && t.getText().toUpperCase().indexOf('F')>=0) {
-                	_ttype = NUM_FLOAT;
-				}
-				else {
-                	_ttype = NUM_DOUBLE; // assume double
-				}
-				}
+        if (t != null && t.getText().toUpperCase().indexOf('F')>=0) {
+                  _ttype = NUM_FLOAT;
+        }
+        else {
+                  _ttype = NUM_DOUBLE; // assume double
+        }
+        }
             )?
 
-	|	(	'0' {isDecimal = true;} // special case for just '0'
-			(	('x'|'X')
-				(											// hex
-					// the 'e'|'E' and float suffix stuff look
-					// like hex digits, hence the (...)+ doesn't
-					// know when to stop: ambig.  ANTLR resolves
-					// it correctly by matching immediately.  It
-					// is therefor ok to hush warning.
-					options {
-						warnWhenFollowAmbig=false;
-					}
-				:	HEX_DIGIT
-				)+
+  | ( '0' {isDecimal = true;} // special case for just '0'
+      ( ('x'|'X')
+        (                     // hex
+          // the 'e'|'E' and float suffix stuff look
+          // like hex digits, hence the (...)+ doesn't
+          // know when to stop: ambig.  ANTLR resolves
+          // it correctly by matching immediately.  It
+          // is therefor ok to hush warning.
+          options {
+            warnWhenFollowAmbig=false;
+          }
+        : HEX_DIGIT
+        )+
 
-			|	//float or double with leading zero
-				(('0'..'9')+ ('.'|EXPONENT|FLOAT_SUFFIX)) => ('0'..'9')+
+      | //float or double with leading zero
+        (('0'..'9')+ ('.'|EXPONENT|FLOAT_SUFFIX)) => ('0'..'9')+
 
-			|	('0'..'7')+									// octal
-			)?
-		|	('1'..'9') ('0'..'9')*  {isDecimal=true;}		// non-zero decimal
-		)
-		(	('l'|'L') { _ttype = NUM_LONG; }
+      | ('0'..'7')+                 // octal
+      )?
+    | ('1'..'9') ('0'..'9')*  {isDecimal=true;}   // non-zero decimal
+    )
+    ( ('l'|'L') { _ttype = NUM_LONG; }
 
-		// only check to see if it's a float if looks like decimal so far
-		|	{isDecimal}?
+    // only check to see if it's a float if looks like decimal so far
+    | {isDecimal}?
             (   '.' ('0'..'9')* (EXPONENT)? (f2:FLOAT_SUFFIX {t=f2;})?
             |   EXPONENT (f3:FLOAT_SUFFIX {t=f3;})?
             |   f4:FLOAT_SUFFIX {t=f4;}
             )
             {
-			if (t != null && t.getText().toUpperCase() .indexOf('F') >= 0) {
+      if (t != null && t.getText().toUpperCase() .indexOf('F') >= 0) {
                 _ttype = NUM_FLOAT;
-			}
+      }
             else {
-	           	_ttype = NUM_DOUBLE; // assume double
-			}
-			}
+              _ttype = NUM_DOUBLE; // assume double
+      }
+      }
         )?
-	;
+  ;
 protected MINUS         :   '-' ;
 protected PLUS          :   '+' ;
 protected QUOTE         :   '\''    ;
 protected EXPONENT      :   ('e'|'E') ( PLUS | MINUS )? ('0'..'9')+  ;
 protected DOT           :   '.' ;
-protected FLOAT_SUFFIX	:	'f'|'F'|'d'|'D'	;
+protected FLOAT_SUFFIX  : 'f'|'F'|'d'|'D' ;

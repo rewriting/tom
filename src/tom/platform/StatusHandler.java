@@ -44,7 +44,7 @@ public class StatusHandler extends Handler {
   
   /** Clear all previous records */
   public void clear() {
-  	levelStats = new HashMap();
+    levelStats = new HashMap();
     inputAlert = new HashMap();
   }
   
@@ -60,16 +60,16 @@ public class StatusHandler extends Handler {
     levelStats.put(recordLevel, newStats);
     
     if(record instanceof PlatformLogRecord) {
-    	PlatformLogRecord plr = (PlatformLogRecord)record;
-    	String input = plr.getFilePath();
-    	RuntimeAlert ra;
-    	if(!inputAlert.containsKey(input)) {
-    		ra = new RuntimeAlert();
+      PlatformLogRecord plr = (PlatformLogRecord)record;
+      String input = plr.getFilePath();
+      RuntimeAlert ra;
+      if(!inputAlert.containsKey(input)) {
+        ra = new RuntimeAlert();
       } else {
-      	ra = (RuntimeAlert)inputAlert.get(input);
+        ra = (RuntimeAlert)inputAlert.get(input);
       }
-    	ra.add(plr);
-    	inputAlert.put(new File(input).getPath(), ra);
+      ra.add(plr);
+      inputAlert.put(new File(input).getPath(), ra);
     }
   }
 
@@ -117,7 +117,7 @@ public class StatusHandler extends Handler {
   }
   
   public RuntimeAlert getAlertForInput(String filePath) {
-  	return (RuntimeAlert)inputAlert.get(new File(filePath).getPath());
+    return (RuntimeAlert)inputAlert.get(new File(filePath).getPath());
   }
   
   /**

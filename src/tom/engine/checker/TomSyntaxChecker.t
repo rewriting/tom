@@ -550,7 +550,7 @@ public class TomSyntaxChecker extends TomChecker {
         } else {
           // Maybe its an error to have the 2 same name variable in the match definition: warn the user
           messageWarning(currentTomStructureOrgTrack.getLine(),
-												 TomMessage.getMessage("RepeatedMatchArgumentName"),
+                         TomMessage.getMessage("RepeatedMatchArgumentName"),
                          new Object[]{`(name)});
         }
       } 

@@ -5,7 +5,7 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class IfThenElse extends AbstractVisitableVisitor {
-	
+  
   private final static int CONDITION = 1;
   private final static int TRUE_CASE = 2;
   private final static int FALSE_CASE = 3;
@@ -23,15 +23,15 @@ public class IfThenElse extends AbstractVisitableVisitor {
     boolean success;
     Visitable result;
     try {
-	    getArgument(CONDITION).visit(x);
-	    success = true;
+      getArgument(CONDITION).visit(x);
+      success = true;
     } catch (VisitFailure vf) {
-	    success = false;
+      success = false;
     }
     if (success) {
-	    result = getArgument(TRUE_CASE).visit(x);
+      result = getArgument(TRUE_CASE).visit(x);
     } else {
-	    result = getArgument(FALSE_CASE).visit(x);
+      result = getArgument(FALSE_CASE).visit(x);
     }
     return result;
   }

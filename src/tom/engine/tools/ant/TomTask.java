@@ -362,46 +362,46 @@ public class TomTask extends MatchingTask {
     return verbose;
   }
 
-	/**
-	 * If true, compiles with optimization enabled.
-	 * @param optimize if true compile with optimization enabled
-	 */
-	public void setOptimize(boolean optimize) {
-		this.optimize = optimize;
-	}
-	
-	public boolean getOptimize() {
-		return optimize;
-	}
-	
-	/**
-	 * If true, compiles with pretty-printing enabled.
-	 * @param pretty if true compile with pretty-printing enabled
-	 */
-	public void setPretty(boolean pretty) {
-		this.pretty = pretty;
-	}
-	
-	public boolean getPretty() {
-		return pretty;
-	}
+  /**
+   * If true, compiles with optimization enabled.
+   * @param optimize if true compile with optimization enabled
+   */
+  public void setOptimize(boolean optimize) {
+    this.optimize = optimize;
+  }
+  
+  public boolean getOptimize() {
+    return optimize;
+  }
+  
+  /**
+   * If true, compiles with pretty-printing enabled.
+   * @param pretty if true compile with pretty-printing enabled
+   */
+  public void setPretty(boolean pretty) {
+    this.pretty = pretty;
+  }
+  
+  public boolean getPretty() {
+    return pretty;
+  }
 
-	/**
-	 * If true, generates  protected functions instead of private
-	 * @param flag if true generates  protected functions instead of private
-	 */
-	public void setProtected(boolean flag) {
-		this.protectedFlag = flag;
-	}
-	
-	public boolean getProtected() {
-		return protectedFlag;
-	}
+  /**
+   * If true, generates  protected functions instead of private
+   * @param flag if true generates  protected functions instead of private
+   */
+  public void setProtected(boolean flag) {
+    this.protectedFlag = flag;
+  }
+  
+  public boolean getProtected() {
+    return protectedFlag;
+  }
 
-	/**
-	 * If true, disable the --wall option.
-	 * @param flag if true, disable the --wall option
-	 */
+  /**
+   * If true, disable the --wall option.
+   * @param flag if true, disable the --wall option
+   */
   public void setNowarn(boolean flag) {
     this.nowarn = flag;
   }
@@ -460,40 +460,40 @@ public class TomTask extends MatchingTask {
    * @param files    An array of filenames
    */
   protected void scanDir(File srcDir, File destDir, String[] files) {
-		if ((outputFile != null) && (files.length == 1)) {
-			GlobPatternMapper m = new GlobPatternMapper();
-			m.setFrom(files[0]);
-			m.setTo(outputFile.getPath());
-			SourceFileScanner sfs = new SourceFileScanner(this);
-			File[] newFiles = sfs.restrictAsFiles(files, srcDir, null, m);
-			
-			if (newFiles.length > 0) {
-				File[] newCompileList
-					= new File[compileList.length + newFiles.length];
-				System.arraycopy(compileList, 0, newCompileList, 0,
-												 compileList.length);
-				System.arraycopy(newFiles, 0, newCompileList,
-												 compileList.length, newFiles.length);
-				compileList = newCompileList;
-			}
-		}
-		else {
-			GlobPatternMapper m = new GlobPatternMapper();
-			m.setFrom("*.t");
-			m.setTo("*.java");
-			SourceFileScanner sfs = new SourceFileScanner(this);
-			File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
-			
-			if (newFiles.length > 0) {
-				File[] newCompileList
-					= new File[compileList.length + newFiles.length];
-				System.arraycopy(compileList, 0, newCompileList, 0,
-												 compileList.length);
-				System.arraycopy(newFiles, 0, newCompileList,
-												 compileList.length, newFiles.length);
-				compileList = newCompileList;
-			}
-		}
+    if ((outputFile != null) && (files.length == 1)) {
+      GlobPatternMapper m = new GlobPatternMapper();
+      m.setFrom(files[0]);
+      m.setTo(outputFile.getPath());
+      SourceFileScanner sfs = new SourceFileScanner(this);
+      File[] newFiles = sfs.restrictAsFiles(files, srcDir, null, m);
+      
+      if (newFiles.length > 0) {
+        File[] newCompileList
+          = new File[compileList.length + newFiles.length];
+        System.arraycopy(compileList, 0, newCompileList, 0,
+                         compileList.length);
+        System.arraycopy(newFiles, 0, newCompileList,
+                         compileList.length, newFiles.length);
+        compileList = newCompileList;
+      }
+    }
+    else {
+      GlobPatternMapper m = new GlobPatternMapper();
+      m.setFrom("*.t");
+      m.setTo("*.java");
+      SourceFileScanner sfs = new SourceFileScanner(this);
+      File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
+      
+      if (newFiles.length > 0) {
+        File[] newCompileList
+          = new File[compileList.length + newFiles.length];
+        System.arraycopy(compileList, 0, newCompileList, 0,
+                         compileList.length);
+        System.arraycopy(newFiles, 0, newCompileList,
+                         compileList.length, newFiles.length);
+        compileList = newCompileList;
+      }
+    }
   }
 
   /**

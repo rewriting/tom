@@ -35,19 +35,19 @@ import jtom.verifier.zenon.types.*;
 
 public class ZenonBackend {
 
-	// ------------------------------------------------------------
+  // ------------------------------------------------------------
   %include { zenon/Zenon.tom }
-	// ------------------------------------------------------------
+  // ------------------------------------------------------------
 
-	protected ZenonFactory zfactory;
+  protected ZenonFactory zfactory;
 
-	public ZenonBackend() {
-		zfactory = ZenonFactory.getInstance(SingletonFactory.getInstance());
-	}
+  public ZenonBackend() {
+    zfactory = ZenonFactory.getInstance(SingletonFactory.getInstance());
+  }
 
-	protected final ZenonFactory getZenonFactory() {
-		return zfactory;
-	}
+  protected final ZenonFactory getZenonFactory() {
+    return zfactory;
+  }
 
   public String genZSymbol(ZSymbol symbol) {
     %match(ZSymbol symbol) {

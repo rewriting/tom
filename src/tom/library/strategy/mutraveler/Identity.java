@@ -16,8 +16,8 @@ public class Identity extends AbstractVisitableVisitor {
     init();
   }
 
-	public Visitable visit(Visitable x) {
-		return x;
-	}
+  public Visitable visit(Visitable x) {
+    return x;
+  }
 
 }
