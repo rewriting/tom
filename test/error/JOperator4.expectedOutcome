@@ -1,6 +1,6 @@
 
-Arguments must be linear in method 'make' of '%op op' declared at line 9 :Variable 't1' is repeated
--- Error occured at line: 11 in file: JOperator4.t
+-- Error occured line: 16 in structure %op op declared line: 16 in file: JOperator4.t
+---> Multiple definition of Symbol op
 
 Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

@@ -1,6 +1,0 @@
-
-Missing macro-function(s) [make_append] in '%oparray concArray'
--- Error occured at line: 17 in file: JOpArray4.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

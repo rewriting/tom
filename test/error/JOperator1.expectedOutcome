@@ -1,6 +1,26 @@
 
-Operator 'op' has an unknown return type: 'type2'
--- Error occured at line: 9 in file: JOperator1.t
+-- Error occured line: 18 in structure %op op1 declared line: 18 in file: JOperator1.t
+---> Symbol op1 has an unknown return type: wrongtype
 
-Tom Checker:  Encountered 1 errors during verification phase.
+
+-- Error occured line: 24 in structure %op op2 declared line: 24 in file: JOperator1.t
+---> Slot 1 of op2 signature has an unknown type: wrongtype
+
+
+-- Error occured line: 29 in structure %op op2bis declared line: 29 in file: JOperator1.t
+---> Slot 2 of op2bis signature has an unknown type: wrongtype
+
+
+-- Error occured line: 38 in structure %op op3 declared line: 35 in file: JOperator1.t
+---> Repeated macro-function make
+
+
+-- Error occured line: 44 in structure %op op4 declared line: 42 in file: JOperator1.t
+---> Arguments must be linear in method make: Variable t1 is repeated
+
+
+-- Error occured line: 44 in structure %op op4 declared line: 42 in file: JOperator1.t
+---> Bad number of arguments in make(...) macro-function: 1 arguments found but 2 expected in symbol definition
+
+Tom Checker:  Encountered 6 errors during verification phase.
 No file generated.

@@ -1,6 +1,0 @@
-
-Repeated macro-function 'make_append' in '%oparray concArray' declared line 17
--- Error occured at line: 21 in file: JOpArray6.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

@@ -1,6 +1,0 @@
-
-Slot 0 in operator 'concList' signature has an unknown type: 'type'
--- Error occured at line: 17 in file: JOpList2.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

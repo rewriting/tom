@@ -1,6 +1,0 @@
-
-Multiple definition of operator: Operator 'op' is already defined
--- Error occured at line: 16 in file: JOperator5.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

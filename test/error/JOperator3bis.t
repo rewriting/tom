@@ -8,8 +8,7 @@
 
 %op type1 op(type:type1, type1) {
   fsym { fzero }
-  make(t1,t2) { factory.makeAppl(fzero) }
+  make() { factory.makeAppl(fzero) } // Bad number of arguments in make(...) macro-function: 0 arguments found but 2 expected in symbol definition
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
   get_slot(type,t) { t.getType() }
-  get_slot(type1,t) { t.getType() }
 }

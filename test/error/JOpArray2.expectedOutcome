@@ -1,6 +1,0 @@
-
-Slot 0 in operator 'concArray' signature has an unknown type: 'type'
--- Error occured at line: 17 in file: JOpArray2.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

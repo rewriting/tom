@@ -1,6 +1,0 @@
-
-Repeated macro-function 'make_empty' in '%oplist concList' declared line 17
--- Error occured at line: 21 in file: JOpList6.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

@@ -1,6 +1,6 @@
 
-Repeated macro-function 'make' in '%op op' declared line 9
--- Error occured at line: 12 in file: JOperator3.t
+-- Error occured line: 11 in structure %op op declared line: 9 in file: JOperator3.t
+---> Bad number of arguments in make(...) macro-function: 3 arguments found but 2 expected in symbol definition
 
 Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

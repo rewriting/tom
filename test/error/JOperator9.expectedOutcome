@@ -1,4 +1,0 @@
-
-Some GetSlot declaration are incompatible with operator signature
-*** This concerns following slotname:[Name("type1")] 
--- Error occured at line: 15
