@@ -144,14 +144,15 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
       int nbOfWarnings = status.nbOfWarnings() - warningsAtStart;
 
       if( nbOfErrors > 0 ) {
-	System.out.println(MessageFormat.format( TomMessage.getString("TaskErrorMessage"),
-						 new Object[]{ pluginName, 
-							       new Integer(nbOfErrors), 
-							       new Integer(nbOfWarnings) } ));
+	logger.log( Level.OFF,
+		    "TaskErrorMessage",
+		    new Object[]{ pluginName, 
+				  new Integer(nbOfErrors), 
+				  new Integer(nbOfWarnings) } );
       } else if( nbOfWarnings > 0 ) {
-	System.out.println(MessageFormat.format( TomMessage.getString("TaskWarningMessage"),
-						 new Object[]{ pluginName, 
-							       new Integer(nbOfWarnings) } ));
+	logger.log( Level.OFF,
+		    "TaskWarningMessage",
+		    new Object[]{ pluginName, new Integer(nbOfWarnings) } );
       }
     }
   }

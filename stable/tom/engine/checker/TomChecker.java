@@ -101,7 +101,7 @@ abstract public class TomChecker extends TomGenericPlugin //Base
   private final static String MAKE        = "make";
   
 
-  protected boolean strictType = false, warningAll = false, noWarning = false, verbose = false;
+  protected boolean strictType = false;
   private ArrayList alreadyStudiedTypes =  new ArrayList();
   private ArrayList alreadyStudiedSymbols =  new ArrayList();
   private ArrayList alreadyStudiedRule =  new ArrayList();
@@ -118,12 +118,6 @@ abstract public class TomChecker extends TomGenericPlugin //Base
     currentTomStructureOrgTrack = null;
   }
 
-  public void initProcess() {
-    verbose    =   getPluginPlatform().getOptionBooleanValue("verbose");
-    strictType = ! getPluginPlatform().getOptionBooleanValue("lazyType");
-    warningAll =   getPluginPlatform().getOptionBooleanValue("Wall");
-    noWarning  =   getPluginPlatform().getOptionBooleanValue("noWarning");
-  } 
     /**
      * Main type checking entry point:
      * We check all Match and RuleSet instructions

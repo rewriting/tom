@@ -70,45 +70,52 @@ public class TomBackend extends TomGenericPlugin {
   }
 
   public PlatformOptionList declaredOptions() {
-    return `concPlatformOption(OptionBoolean("noOutput", "", "Do not generate code", False()), // desactivation flag
-			  OptionBoolean("jCode", "j", "Generate Java code", True()),
-			  OptionBoolean("cCode", "c", "Generate C code", False()),
-			  OptionBoolean("eCode", "e", "Generate Eiffel code", False()),
-			  OptionBoolean("camlCode", "", "Generate Caml code", False()));
+    String noOutput = "<OptionBoolean name=\"noOutput\" altName=\"\" description=\"Do not generate code\" value=\"false\"/>";
+    String jCode = "<OptionBoolean name=\"jCode\" altName=\"j\" description=\"Generate Java code\" value=\"true\"/>";
+    String cCode = "<OptionBoolean name=\"cCode\" altName=\"c\" description=\"Generate C code\" value=\"false\"/>";
+    String eCode = "<OptionBoolean name=\"eCode\" altName=\"e\" description=\"Generate Eiffel code\" value=\"false\"/>";
+    String camlCode = "<OptionBoolean name=\"camlCode\" altName=\"\" description=\"Generate Caml code\" value=\"false\"/>";
+    return TomOptionManager.xmlToOptionList("<options>" +
+                                            noOutput + " " +
+                                            jCode + " " +
+                                            cCode + " " +
+                                            eCode + " " +
+                                            camlCode + " " +
+                                            "</options>");
   }
 
   public void setOption(String optionName, Object optionValue) {
-    putOptionValue(optionName, optionValue);
+    setOptionValue(optionName, optionValue);
 
     if(optionValue.equals(Boolean.TRUE)) // no more than 1 type of code can be activated at a time
 	{
 	    if( optionName.equals("jCode") || optionName.equals("j") )
 		{ 
 		    //System.out.println("Java code activated, other codes desactivated");
-		    putOptionValue("cCode", Boolean.FALSE);
-		    putOptionValue("eCode", Boolean.FALSE);
-		    putOptionValue("camlCode", Boolean.FALSE); 
+		    setOptionValue("cCode", Boolean.FALSE);
+		    setOptionValue("eCode", Boolean.FALSE);
+		    setOptionValue("camlCode", Boolean.FALSE); 
 		}
 	    else if( optionName.equals("cCode") || optionName.equals("c") )
 		{ 
 		    //System.out.println("C code activated, other codes desactivated");
-		    putOptionValue("jCode", Boolean.FALSE);
-		    putOptionValue("eCode", Boolean.FALSE);
-		    putOptionValue("camlCode", Boolean.FALSE); 
+		    setOptionValue("jCode", Boolean.FALSE);
+		    setOptionValue("eCode", Boolean.FALSE);
+		    setOptionValue("camlCode", Boolean.FALSE); 
 		}
 	    else if( optionName.equals("eCode") || optionName.equals("e") )
 		{ 
 		    //System.out.println("Eiffel code activated, other codes desactivated");
-		    putOptionValue("jCode", Boolean.FALSE);
-		    putOptionValue("cCode", Boolean.FALSE);
-		    putOptionValue("camlCode", Boolean.FALSE); 
+		    setOptionValue("jCode", Boolean.FALSE);
+		    setOptionValue("cCode", Boolean.FALSE);
+		    setOptionValue("camlCode", Boolean.FALSE); 
 		}
 	    else if( optionName.equals("camlCode") )
 		{ 
 		    //System.out.println("Caml code activated, other codes desactivated");
-		    putOptionValue("jCode", Boolean.FALSE);
-		    putOptionValue("cCode", Boolean.FALSE);
-		    putOptionValue("eCode", Boolean.FALSE); 
+		    setOptionValue("jCode", Boolean.FALSE);
+		    setOptionValue("cCode", Boolean.FALSE);
+		    setOptionValue("eCode", Boolean.FALSE); 
 		}
 	}
     }

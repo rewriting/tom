@@ -20,7 +20,7 @@ public class TomOptimizer extends TomGenericPlugin {
   %include{ adt/TomSignature.tom }
   %include{ adt/PlatformOption.tom }
 
-  public static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
+  private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
 
   public TomOptimizer() {
     super("TomOptimizer");
@@ -65,9 +65,8 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public PlatformOptionList declaredOptions() {
-    // activation flag
-    return TomOptionManager.xmlToOptionList("<options><OptionBoolean name=\"optimize\" altName=\"O\" description=\"Optimized generated code\" valueB=\"false\" /></options>");
-    //return `concPlatformOption(OptionBoolean("optimize", "O", "Optimized generated code", False()));
+    String optimize = "name=\"optimize\" altName=\"O\" description=\"Optimized generated code\" value=\"false\"";
+    return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + optimize + "/> </options>");
   }
 
   private boolean isActivated() {

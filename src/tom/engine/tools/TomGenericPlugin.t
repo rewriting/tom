@@ -133,7 +133,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * @param optionValue the option's value
    */
   public void setOption(String optionName, Object optionValue) {
-    putOptionValue(optionName, optionValue);
+    setOptionValue(optionName, optionValue);
   }
 
   public void printAlertMessage(int errorsAtStart, int warningsAtStart) {

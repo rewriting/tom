@@ -31,15 +31,19 @@ public class TomBasicFormatter extends Formatter {
 
   public String format(LogRecord record) {
     Level level = record.getLevel();
-    String stringLevel;
+    String levelString;
 
     if( level.equals(Level.SEVERE) ) {
-      stringLevel = "ERROR";
+      levelString = "ERROR:";
+    } else if( level.equals(Level.INFO) ) {
+      levelString = "";
+    } else if( level.equals(Level.OFF) ) {
+      levelString = "";
     } else {
-      stringLevel = level.toString();
+      levelString = level.toString() + ":";
     }
 
-    return stringLevel + ":" + formatMessage(record) + "\n";
+    return levelString + formatMessage(record) + "\n";
   }
 
 }

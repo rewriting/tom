@@ -72,8 +72,8 @@ public class TomExpander extends TomGenericPlugin {
   }
 
   public PlatformOptionList declaredOptions() {
-    return `concPlatformOption(OptionBoolean("expand","","",True()) // activationFlag
-			  );
+    String expand = "name=\"expand\" altName=\"\" description=\"Expander (activated by default)\" value=\"true\"";
+    return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + expand + "/> </options>");
   }
 
 

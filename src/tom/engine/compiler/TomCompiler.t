@@ -3,15 +3,15 @@ package jtom.compiler;
 import java.util.*;
 import java.util.logging.*;
 
+import aterm.*;
+
+import jtom.*;
+import jtom.tools.*;
+import jtom.exception.TomRuntimeException;
 import jtom.adt.tomsignature.types.*;
-import tom.platform.adt.platformoption.types.*;
 
 import tom.library.traversal.Replace1;
-import jtom.tools.*;
-import jtom.TomMessage;
-import aterm.*;
-import jtom.exception.TomRuntimeException;
-import jtom.*;
+import tom.platform.adt.platformoption.types.*;
 
 /**
  * The TomCompiler plugin.
@@ -63,11 +63,9 @@ public class TomCompiler extends TomGenericPlugin {
   }
   
   public PlatformOptionList declaredOptions() {
-    return `concPlatformOption(OptionBoolean("compile","","",True()) // activationFlag
-			  );
+    String compile = "name=\"compile\" altName=\"\" description=\"Compiler (activated by default)\" value=\"true\"";
+    return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + compile + "/> </options>");
   }
-
-
 
   private OptionList option() {
     return ast().makeOption();

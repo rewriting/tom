@@ -115,7 +115,6 @@ public class TomMainParser extends TomGenericPlugin {
 
       long startChrono = System.currentTimeMillis();
 	    
-      boolean verbose      = ((Boolean)getPluginPlatform().getOptionValue("verbose")).booleanValue();
       boolean intermediate = ((Boolean)getPluginPlatform().getOptionValue("intermediate")).booleanValue();
       boolean java         = ((Boolean)getPluginPlatform().getOptionValue("jCode")).booleanValue();
       boolean debug        = ((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue();
@@ -135,9 +134,10 @@ public class TomMainParser extends TomGenericPlugin {
       
       super.setTerm( parser.input() );
       
-      if(verbose) 
-	  System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-      
+      getLogger().log( Level.INFO,
+		       "TomParsingPhase",
+		       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
+
       if(environment().isEclipseMode()){
 	  String outputFileName = environment().getInputFile().getParent()+ File.separator + "."
 	      + environment().getRawFileName()+ PARSED_TABLE_SUFFIX;

@@ -1,3 +1,10 @@
+2004-08-18  pem  <pem@polly.loria.fr>
+
+  * src/tom/platform/adt/PlatformOption.adt: redesigned the ADT
+  * src/jtom/TomOptionManager.t: simplified option manager
+  * src/jtom/Tom.xml: renamed valueB, valueI, and valueS into value
+	
+
 2004-08-12  pem  <pem@polly.loria.fr>
   * bootinstall
 

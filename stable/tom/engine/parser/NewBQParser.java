@@ -323,39 +323,40 @@ public NewBQParser(ParserSharedInputState state) {
 		{
 			match(BQ_LPAREN);
 			{
-			_loop21:
+			_loop19:
 			do {
 				if ((LA(1)==BQ_WS)) {
 					match(BQ_WS);
 				}
 				else {
-					break _loop21;
+					break _loop19;
 				}
 				
 			} while (true);
 			}
 			{
-			if ((_tokenSet_1.member(LA(1)))) {
+			switch ( LA(1)) {
+			case BQ_WS:
+			case BQ_ID:
+			case BQ_STAR:
+			case BQ_LPAREN:
+			case BQ_INTEGER:
+			case BQ_STRING:
+			case BQ_MINUS:
+			case ANY:
+			{
 				bqList(blockList);
+				break;
 			}
-			else if ((LA(1)==BQ_WS||LA(1)==BQ_RPAREN)) {
+			case BQ_RPAREN:
+			{
+				break;
 			}
-			else {
+			default:
+			{
 				throw new NoViableAltException(LT(1), getFilename());
 			}
-			
 			}
-			{
-			_loop24:
-			do {
-				if ((LA(1)==BQ_WS)) {
-					match(BQ_WS);
-				}
-				else {
-					break _loop24;
-				}
-				
-			} while (true);
 			}
 			match(BQ_RPAREN);
 			if ( inputState.guessing==0 ) {
@@ -422,20 +423,6 @@ public NewBQParser(ParserSharedInputState state) {
 					
 					;
 					
-					/*                TomTerm varStar = `Composite(concTomTerm(VariableStar(
-					concOption(
-					OriginTracking(
-					Name(name), 
-					i1.getLine(), 
-					Name(currentFile())
-					)
-					),
-					Name(name),
-					TomTypeAlone("unknown type"),
-					concConstraint()
-					)));*/
-					//                result = varStar;
-					
 				}
 			}
 			else {
@@ -498,46 +485,34 @@ public NewBQParser(ParserSharedInputState state) {
 					} while (true);
 					}
 					{
-					if ((_tokenSet_1.member(LA(1)))) {
+					switch ( LA(1)) {
+					case BQ_WS:
+					case BQ_ID:
+					case BQ_STAR:
+					case BQ_LPAREN:
+					case BQ_INTEGER:
+					case BQ_STRING:
+					case BQ_MINUS:
+					case ANY:
+					{
 						bqList(blockList);
+						break;
 					}
-					else if ((LA(1)==BQ_WS||LA(1)==BQ_RPAREN)) {
+					case BQ_RPAREN:
+					{
+						break;
 					}
-					else {
+					default:
+					{
 						throw new NoViableAltException(LT(1), getFilename());
 					}
-					
 					}
-					{
-					_loop19:
-					do {
-						if ((LA(1)==BQ_WS)) {
-							match(BQ_WS);
-						}
-						else {
-							break _loop19;
-						}
-						
-					} while (true);
 					}
 					match(BQ_RPAREN);
 					if ( inputState.guessing==0 ) {
 						
 						if(blockList.size() > 0) {
 						TomList compositeList = makeCompositeList(blockList);
-						
-						/*                    TomTerm composite = `BackQuoteAppl(
-						concOption(
-						OriginTracking(
-						Name(i2.getText()), 
-						i2.getLine(), 
-						Name(currentFile())
-						)
-						),
-						Name(i2.getText()),
-						compositeList
-						);
-						result = composite;*/
 						
 						result = tom_make_Composite(
 						tom_cons_list_concTomTerm(
@@ -603,19 +578,6 @@ public NewBQParser(ParserSharedInputState state) {
 					i3 = LT(1);
 					match(BQ_ID);
 					if ( inputState.guessing==0 ) {
-						
-						/* TomTerm appl = `Composite(concTomTerm(BackQuoteAppl(
-						concOption(
-						OriginTracking(
-						Name(i3.getText()), 
-						i3.getLine(), 
-						Name(currentFile())
-						)
-						),
-						Name(i3.getText()),
-						concTomTerm()
-						)));
-						result = appl;*/
 						
 						result = tom_make_BackQuoteAppl(
 						tom_cons_list_concOption(
@@ -880,18 +842,6 @@ public NewBQParser(ParserSharedInputState state) {
 		case ANY:
 		{
 			{
-			_loop31:
-			do {
-				if ((LA(1)==BQ_WS)) {
-					match(BQ_WS);
-				}
-				else {
-					break _loop31;
-				}
-				
-			} while (true);
-			}
-			{
 			switch ( LA(1)) {
 			case BQ_LPAREN:
 			{
@@ -904,44 +854,43 @@ public NewBQParser(ParserSharedInputState state) {
 					
 				}
 				{
-				_loop34:
+				_loop28:
 				do {
 					if ((LA(1)==BQ_WS)) {
 						match(BQ_WS);
 					}
 					else {
-						break _loop34;
+						break _loop28;
 					}
 					
 				} while (true);
 				}
 				{
-				if ((_tokenSet_1.member(LA(1)))) {
+				switch ( LA(1)) {
+				case BQ_WS:
+				case BQ_ID:
+				case BQ_STAR:
+				case BQ_LPAREN:
+				case BQ_INTEGER:
+				case BQ_STRING:
+				case BQ_MINUS:
+				case ANY:
+				{
 					bqList(blockList);
+					break;
 				}
-				else if ((LA(1)==BQ_WS||LA(1)==BQ_RPAREN)) {
+				case BQ_RPAREN:
+				{
+					break;
 				}
-				else {
+				default:
+				{
 					throw new NoViableAltException(LT(1), getFilename());
 				}
-				
 				}
-				{
-				_loop37:
-				do {
-					if ((LA(1)==BQ_WS)) {
-						match(BQ_WS);
-					}
-					else {
-						break _loop37;
-					}
-					
-				} while (true);
 				}
 				match(BQ_RPAREN);
 				if ( inputState.guessing==0 ) {
-					
-					
 					
 					if(blockList.size() > 0) {
 					TomList compositeList = makeCompositeList(blockList);
@@ -1148,10 +1097,5 @@ public NewBQParser(ParserSharedInputState state) {
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
-	private static final long[] mk_tokenSet_1() {
-		long[] data = { 15840L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
 	
 	}

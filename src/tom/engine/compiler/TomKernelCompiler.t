@@ -26,10 +26,12 @@
 package jtom.compiler;
   
 import jtom.TomBase;
-import jtom.adt.tomsignature.types.*;
-import tom.library.traversal.Replace1;
-import aterm.*;
 import jtom.exception.TomRuntimeException;
+import jtom.adt.tomsignature.types.*;
+
+import tom.library.traversal.Replace1;
+
+import aterm.*;
 
 public class TomKernelCompiler extends TomBase {
   public TomKernelCompiler() {
@@ -204,7 +206,7 @@ public class TomKernelCompiler extends TomBase {
       } 
       
       manyTomList(var@Variable[option=optionList, astType=termType,constraints=constraints],termTail) |
-        manyTomList(var@UnamedVariable[option=optionList,astType=termType,constraints=constraints],termTail) -> {
+      manyTomList(var@UnamedVariable[option=optionList,astType=termType,constraints=constraints],termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,indexTerm+1);
         Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType, concConstraint()));
         return buildLet(`var, source, subAction);
@@ -213,11 +215,10 @@ public class TomKernelCompiler extends TomBase {
       manyTomList(currentTerm@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs,constraints=constraints],termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,indexTerm+1);
         TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
-        TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
-        TomType termType = tomSymbol.getTypesToType().getCodomain();
+        TomType codomain = tomSymbol.getTypesToType().getCodomain();
         
           // SUCCES
-        TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType,concConstraint());
+        TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),codomain,concConstraint());
         Instruction automataInstruction;
         if(isListOperator(tomSymbol)) {
             /*
@@ -226,7 +227,7 @@ public class TomKernelCompiler extends TomBase {
              */
           int indexSubterm = 1;
           TomNumberList newPath = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
-          TomTerm newSubjectVariableAST =  `VariableStar(option(),PositionName(newPath),termType,concConstraint());
+          TomTerm newSubjectVariableAST =  `VariableStar(option(),PositionName(newPath),codomain,concConstraint());
           boolean ensureNotEmptyList = true;
           Instruction automata = genListMatchingAutomata(new MatchingParameter(
                                                            tomSymbol,path,subAction,
@@ -242,7 +243,7 @@ public class TomKernelCompiler extends TomBase {
           int indexSubterm = 1;
           TomNumberList newPathList = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
           TomNumberList newPathIndex = (TomNumberList) path.append(`IndexNumber(makeNumber(indexSubterm)));
-          TomTerm newVariableListAST = `VariableStar(option(),PositionName(newPathList),termType,concConstraint());
+          TomTerm newVariableListAST = `VariableStar(option(),PositionName(newPathList),codomain,concConstraint());
           TomTerm newVariableIndexAST = `Variable(option(),PositionName(newPathIndex),symbolTable().getIntType(),concConstraint());
           boolean ensureNotEmptyList = true;
           Instruction automata = genArrayMatchingAutomata(new MatchingParameter(
@@ -259,19 +260,12 @@ public class TomKernelCompiler extends TomBase {
         } else {
           int indexSubterm = 0;
           Instruction automata = genSyntacticMatchingAutomata(subAction,`termArgs,path,indexSubterm+1);
+          TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
           automataInstruction = `collectSubtermFromSubjectList(termArgs,termTypeList,tomSymbol,subjectVariableAST,indexSubterm,path,automata); 
         }
-        
-          /* TODO:remove old things
-             TomTerm annotedVariable = getAnnotedVariable(optionList);
-             if(annotedVariable != null) {
-             automataInstruction = buildLet(annotedVariable,`TomTermToExpression(subjectVariableAST),automataInstruction);
-             }
-          */
-
         automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction);
 
-        Expression cond = `expandDisjunction(EqualFunctionSymbol(termType,subjectVariableAST,currentTerm));
+        Expression cond = `expandDisjunction(EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm));
         Instruction test = `IfThenElse(cond,automataInstruction,Nop());
         return test;
       }

@@ -28,12 +28,11 @@ public class TomBackend extends TomGenericPlugin {
   public void run() {
     if(isActivated() == true) {
       try {
-      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+	int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
 
 	long startChrono = System.currentTimeMillis();
-	boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
-			
+				
 	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
 			
 	OutputCode output = new OutputCode(writer, defaultDeep);
@@ -49,29 +48,24 @@ public class TomBackend extends TomGenericPlugin {
 	}
 			
 	generator.generate( defaultDeep, (TomTerm)getTerm() );
-			
-	if(verbose) {
-	  System.out.println("TOM generation phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-	}
+	
+	getLogger().log( Level.INFO,
+			 "TomGenerationPhase",
+			 new Integer((int)(System.currentTimeMillis()-startChrono)) );
 	
 	writer.close();
 
 	printAlertMessage(errorsAtStart, warningsAtStart);
       }
       catch (Exception e) {
-	  getLogger().log( Level.SEVERE,
-			   "ExceptionMessage",
-			   new Object[]{environment().getInputFile().getName(), "TomBackend", e.getMessage()} );
-
-	  e.printStackTrace();
+	getLogger().log( Level.SEVERE,
+			 "ExceptionMessage",
+			 new Object[]{environment().getInputFile().getName(), "TomBackend", e.getMessage()} );
+	
+	e.printStackTrace();
       }
     } else { // backend desactivated
-      boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
-		
-      if(verbose) {
-	System.out.println("The backend is not activated and thus WILL NOT RUN.");
-	System.out.println("No output !");
-      }
+	getLogger().log(Level.INFO, "The backend is not activated and thus WILL NOT RUN.\nNo output !");
     }
   }
 

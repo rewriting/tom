@@ -90,8 +90,8 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   public PlatformOptionList declaredOptions() {
-    return `concPlatformOption(OptionBoolean("verify", "", "Verify correctness of match compilation", False()) // activation flag
-			  );
+    String verify = "name=\"verify\" altName=\"\" description=\"Verify correctness of match compilation\" value=\"false\"";
+    return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + verify + "/> </options>");
   }
 
   private boolean isActivated() {

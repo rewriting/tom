@@ -22,15 +22,16 @@ public class TomTypeChecker extends TomChecker {
   public void run() {
     if(isActivated()) {
       try {
-      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+	strictType = ! getPluginPlatform().getOptionBooleanValue("lazyType");
+	int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
 
         long startChrono = System.currentTimeMillis();
         checkTypeInference( (TomTerm)getTerm() );
-			
-        if(verbose) {
-          System.out.println("TOM type checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-        }
+
+	getLogger().log( Level.INFO,
+			 "TomTypeCheckingPhase",
+			 new Integer((int)(System.currentTimeMillis()-startChrono)) );
 
         printAlertMessage(errorsAtStart, warningsAtStart);
 	  
@@ -42,9 +43,8 @@ public class TomTypeChecker extends TomChecker {
       }
     } else { // type checker desactivated
 	
-      if(verbose) {
-	System.out.println("The type checker is not activated and thus WILL NOT RUN.");
-      }
+      getLogger().log(Level.INFO, "The type checker is not activated and thus WILL NOT RUN.");
+      
     }
   }
 

@@ -35,7 +35,7 @@ import tom.platform.*;
 public class Tom {
 
   /** The current version of the TOM compiler. */
-  public final static String VERSION = "3.0alpha";
+  public final static String VERSION = "2.1 - under development";
 
   /** */
   private static Logger tomRootLogger;

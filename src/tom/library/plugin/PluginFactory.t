@@ -190,7 +190,7 @@ public class PluginFactory implements Plugin {
 	while( it.hasNext() ) {
 	  String name = (String)it.next();
 	  if( !name.equals(flagName) ) // require that the other aren't
-	    allRequiredOptions = `concPlatformOption(OptionBoolean(name, "", "", False()), allRequiredOptions*);
+	    allRequiredOptions = `concPlatformOption(PluginOption(name, "", "", BooleanValue(False()),""), allRequiredOptions*);
 	}
       }
     }
@@ -199,7 +199,7 @@ public class PluginFactory implements Plugin {
   }
 
   public void setOption(String optionName, Object optionValue) {
-    getOM().putOptionValue(optionName, optionValue);
+    getOM().setOptionValue(optionName, optionValue);
 
     if(optionValue.equals(Boolean.TRUE)) { // no more than 1 plugin can be activated at a time
       if( flagOwners.keySet().contains(optionName) ) { // if the flag just set is an activation flag...
@@ -209,7 +209,7 @@ public class PluginFactory implements Plugin {
 	  String flagName = (String)it.next();
 	  
 	  if( !flagName.equals(optionName) ) {
-	      getOM().putOptionValue(flagName, Boolean.FALSE); // ...desactivate the other flags
+	      getOM().setOptionValue(flagName, Boolean.FALSE); // ...desactivate the other flags
 	    //System.out.println(flagName + " desactivated");
 	  }
 	}

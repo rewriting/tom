@@ -82,8 +82,8 @@ public class TomBase {
     return PluginPlatform.getInstance();
   }
 
-  public void putOptionValue(Object key, Object value) {
-      getPluginPlatform().putOptionValue(key, value);
+  public void setOptionValue(String name, Object value) {
+    getPluginPlatform().setOptionValue(name, value);
   }
 
   public GenericTraversal traversal() {

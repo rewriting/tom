@@ -86,9 +86,9 @@ public class PluginPlatform {
   private static PluginPlatform instance = null;
     
   /**
-   * Part of the Singleton pattern. A protected constructor method, that exists to defeat instantiation.
+   * Part of the Singleton pattern. A private constructor method, that exists to defeat instantiation.
    */
-  protected PluginPlatform(){}
+  private PluginPlatform(){}
     
   /**
    * Part of the Singleton pattern. Returns the instance of the TomServer if it has been initialized before,
@@ -406,8 +406,8 @@ public class PluginPlatform {
     return optionManager.getOptionStringValue(optionName);
   }
 
-  public void putOptionValue(Object key, Object value) {
-    optionManager.putOptionValue(key, value);
+  public void setOptionValue(String key, Object value) {
+    optionManager.setOptionValue(key, value);
   }
 
 }

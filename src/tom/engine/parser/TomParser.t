@@ -208,9 +208,9 @@ public class TomParser
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
     if(fileName.equals("")) {
-	String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"), 
-					  new Object[]{new Integer(getLine()), currentFile});
-	throw new TomIncludeException(msg);
+      String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"), 
+                                        new Object[]{new Integer(getLine()), currentFile});
+      throw new TomIncludeException(msg);
     }
     try {
       file = new File(fileName);
@@ -231,7 +231,6 @@ public class TomParser
 	   
           for(int i=0 ; !found && i<environment().getImportList().size() ; i++) {
             file = new File((File)environment().getImportList().get(i),fileName).getCanonicalFile();
-
             found = file.exists();
           }
           if(!found) {

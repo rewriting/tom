@@ -59,8 +59,8 @@ public class TomMainParser extends TomGenericPlugin {
     }
 
     public PlatformOptionList declaredOptions() {
-    return `concPlatformOption(OptionBoolean("parse","","",True()) // activation flag
-			  );
+      String parse = "name=\"parse\" altName=\"\" description=\"Parser (activated by default)\" value=\"true\"";
+      return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + parse + "/> </options>");
     }
 
     private void p(String s){

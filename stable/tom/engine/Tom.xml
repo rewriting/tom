@@ -85,6 +85,12 @@
     classpath="jtom.optimizer.TomOptimizer" />
 
   <plugin
+    name="Verifier"
+    version=""
+    description=""
+    classpath="jtom.verifier.TomVerifier" />
+
+  <plugin
     name="Backend"
     version=""
     description=""

@@ -84,7 +84,7 @@ public class TomEnvironment {
     /**
      * 
      */
-    private PlatformOptionFactory platformOptionFactory;
+  private PlatformOptionFactory platformOptionFactory;
 
   /**
    * An accessor method.
@@ -115,7 +115,7 @@ public class TomEnvironment {
   /**
    * Part of the Singleton pattern. A protected constructor method, that exists to defeat instantiation.
    */
-  protected TomEnvironment(){}
+  private TomEnvironment(){}
     
   /**
    * Part of the Singleton pattern. Returns the instance of the PluginPlatform if it has been initialized before,
@@ -247,7 +247,7 @@ public class TomEnvironment {
     // computes destdir
     localDestDir = getPluginPlatform().getOptionStringValue("destdir");
     setDestDir(localDestDir);
-            
+
     String commandLineUserOutputFile = getPluginPlatform().getOptionStringValue("output");
     if ( commandLineUserOutputFile.length() > 0 ) {
       setUserOutputFile( commandLineUserOutputFile );

@@ -1106,13 +1106,6 @@ public class TomParser implements TomParserConstants {
                         new Object[]{currentFile, new Integer(getLine()),
                                      "match", new Integer(getLine()),
                                      expected.substring(1), found.substring(1)} );
-
-// 		environment().messageError(getLine(),
-//                      currentFile,
-//                      "match",
-//                      getLine(),
-//                      TomMessage.getString("MalformedXMLTerm"), 
-//                      new Object[]{expected.substring(1), found.substring(1)});
           }
           if(implicit) {
               /*
@@ -1549,16 +1542,10 @@ public class TomParser implements TomParserConstants {
                     logger.log( Level.SEVERE,
                                 "SimpleMessage",
                                 new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-
-//               environment().messageError(alert.getMessage(),
-// 					 currentFile, alert.getLine()+initialVasLine);
                 } else {
                     logger.log( Level.WARNING,
                                 "SimpleMessage",
                                 new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-
-// 		    environment().messageWarning(alert.getMessage(),
-// 						 currentFile, alert.getLine()+initialVasLine);
                 }
                 alerts = alerts.getTail();
             }
@@ -1840,13 +1827,6 @@ public class TomParser implements TomParserConstants {
                         "WarningTwoSameSlotDecl",
                         new Object[]{currentFile, new Integer(attribute.getOrgTrack().getLine()),
                                      "%op "+type.image, new Integer(ot.getLine()), sName.getString()} );
-
-//           environment().messageWarning(attribute.getOrgTrack().getLine(),
-//                                        currentFile,
-//                                        "%op "+type.image,
-//                                        ot.getLine(),
-//                                        TomMessage.getString("WarningTwoSameSlotDecl"), 
-//                                        new Object[]{sName.getString()});
         }
         break;
       case TOM_IS_FSYM:
@@ -1871,20 +1851,10 @@ public class TomParser implements TomParserConstants {
         } else {
           Declaration decl = (Declaration)mapNameDecl.get(name1);
           if(decl == null) {
-
-              //System.out.println("!!!!! 1 PASSAGE !!!!!");
-
             logger.log( Level.WARNING,
                         "WarningMissingSlotDecl",
                         new Object[]{currentFile, new Integer(ot.getLine()),
                                      "%op "+type.image, new Integer(ot.getLine()), name1.getString()} );
-
-// 	      environment().messageWarning(ot.getLine(), 
-//                          currentFile,
-//                          "%op "+type.image, 
-//                          ot.getLine(), 
-//                          TomMessage.getString("WarningMissingSlotDecl"),
-//                                           new Object[]{name1.getString()});
             decl = emptyDeclaration;
           }
           else {
@@ -1901,14 +1871,9 @@ public class TomParser implements TomParserConstants {
            TomName remainingSlot = (TomName) it.next();
             logger.log( Level.WARNING,
                         "WarningIncompatibleSlotDecl",
-                        new Object[]{currentFile, new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
+                        new Object[]{currentFile,
+                                     new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
                                      "%op "+type.image, new Integer(ot.getLine()), remainingSlot.getString()} );
-
-//          environment().messageWarning(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
-// 					currentFile,
-// 					"%op "+type.image,
-// 					ot.getLine(),
-//                                      TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()});
         }
       }
 
@@ -2950,17 +2915,6 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_12() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_52() {
-    if (jj_scan_token(XML_PROC)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_42() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     return false;
@@ -2982,24 +2936,13 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_6() {
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_AT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_51() {
-    if (jj_scan_token(XML_COMMENT)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_28() {
     if (jj_3R_33()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_52() {
+    if (jj_scan_token(XML_PROC)) return true;
     return false;
   }
 
@@ -3021,14 +2964,14 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_50() {
-    if (jj_scan_token(XML_TEXT)) return true;
+  final private boolean jj_3_6() {
+    if (jj_3R_31()) return true;
     return false;
   }
 
-  final private boolean jj_3_11() {
+  final private boolean jj_3_8() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
     return false;
   }
 
@@ -3040,6 +2983,17 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_12() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_51() {
+    if (jj_scan_token(XML_COMMENT)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_45() {
     Token xsp;
     xsp = jj_scanpos;
@@ -3047,6 +3001,11 @@ public class TomParser implements TomParserConstants {
     jj_scanpos = xsp;
     if (jj_3R_48()) return true;
     }
+    return false;
+  }
+
+  final private boolean jj_3R_50() {
+    if (jj_scan_token(XML_TEXT)) return true;
     return false;
   }
 
@@ -3081,9 +3040,9 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_7() {
+  final private boolean jj_3_11() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_AT)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
@@ -3111,15 +3070,9 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_13() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_9() {
+  final private boolean jj_3_7() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_EQUAL)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
     return false;
   }
 
@@ -3135,6 +3088,12 @@ public class TomParser implements TomParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_40()) jj_scanpos = xsp;
     if (jj_scan_token(TOM_RBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_9() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_EQUAL)) return true;
     return false;
   }
 
@@ -3158,6 +3117,12 @@ public class TomParser implements TomParserConstants {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_39()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_13() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
