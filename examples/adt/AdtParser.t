@@ -69,7 +69,7 @@ public class AdtParser {
     AdtModules modules = adtFactory.AdtModulesFromString(input);
     %match(AdtModules modules) {
       concAdtModule(_*,module,_*) -> {
-        System.out.println(buildModule(module, prodList, importList, sortList));
+        System.out.println(buildModule(`module, prodList, importList, sortList));
       }
     }
   }
@@ -91,16 +91,16 @@ public class AdtParser {
   private Production buildEntry(Entry entry, VasTypeList sortList) {
     %match(Entry entry) {
       constructor(sort,opname,syntax) -> { 
-        String stringName = ((ATermAppl)opname).getName();
-        String codomainString = ((ATermAppl)sort).getName();
-        FieldList fieldList = buildFieldList(((ATermAppl)syntax).getArguments());
+        String stringName = ((ATermAppl)`opname).getName();
+        String codomainString = ((ATermAppl)`sort).getName();
+        FieldList fieldList = buildFieldList(((ATermAppl)`syntax).getArguments());
         appendType(codomainString, sortList);
         return `Production(stringName, fieldList, VasType(codomainString));
       }
       list(sort,elemsort) -> {
-        String codomainString = ((ATermAppl)sort).getName();
+        String codomainString = ((ATermAppl)`sort).getName();
         appendType(codomainString, sortList);
-        String elemCodomainString = ((ATermAppl)elemsort).getName();
+        String elemCodomainString = ((ATermAppl)`elemsort).getName();
         return `Production("conc"+elemCodomainString,
                            concField(StaredField(VasType(elemCodomainString))),
                            VasType(codomainString));
@@ -140,10 +140,10 @@ public class AdtParser {
         inputName = `moduleName.getName();
       }
       modulentry[importedModule=imports] -> {
-        importList = buildImports(imports);
+        importList = buildImports(`imports);
       }
       modulentry[definedSorts=sorts] -> {
-        sortList = buildSorts(sorts);
+        sortList = buildSorts(`sorts);
       }
       modulentry(_,_,_,concEntry(_*,entry,_*)) -> {
         Production prod =  buildEntry(`entry, sortList);
@@ -188,11 +188,11 @@ public class AdtParser {
           if(t instanceof Entry) {
             %match(Entry t) {
               list[sort=sort] -> { 
-                set.add(sort);
+                set.add(`sort);
                 return false; 
               }
               constructor[sort=sort] -> { 
-                set.add(sort);
+                set.add(`sort);
                 return false; 
               }
             }

@@ -801,6 +801,7 @@
         <fileset dir="${examples.dir}">
           <include name="**/Test*.java"/>
           <exclude name="gen/**/*"/>
+          <exclude name="minirho/**/*"/>
         </fileset>
       </batchtest>
     </tomjunit>
