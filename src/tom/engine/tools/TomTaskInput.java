@@ -474,6 +474,7 @@ public class TomTaskInput {
   public void setOutputFile(String sOutputFile) {
     try {
       this.outputFile = new File(sOutputFile).getCanonicalFile();
+      this.outputFile.getParentFile().mkdirs();
       //System.out.println("setOutputFile = " + this.outputFile);
     } catch (IOException e) {
       System.out.println("IO Exception using file `" + sOutputFile + "`");
