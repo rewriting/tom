@@ -1,5 +1,10 @@
-2003-09-15  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
+2003-09-16  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+        * bootinstall
+        * bumped to 1.4beta
+
+2003-09-15  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 	* user defined labels a are allowed in patterns
 
 2003-09-11  Pierre-Etienne Moreau  <pem@escher.loria.fr>
@@ -10,7 +15,7 @@
  
 2003-08-23  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* bumped to 1.4 alpha
+	* bumped to 1.4alpha
 
 2003-08-22  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
