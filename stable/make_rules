@@ -3,7 +3,7 @@ SETADT_STABLE=$(top_srcdir)/stable/adt/Set-${VERSION}.jar
 TNODEADT_STABLE=$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
 CONCURRENT_JAR  =$(top_srcdir)/src/jtom/runtime/concurrent.jar:${prefix}/share/concurrent.jar
 
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(TSADT_STABLE):$(SETADT_STABLE):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):${CONCURRENT_JAR}:$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):${CONCURRENT_JAR}:$$CLASSPATH
 
 JAVAROOT        = ${top_builddir}/stable/
 
