@@ -41,7 +41,7 @@
 %typearray type6 { 
   implement { ArrayList }
   get_fun_sym(t)   {  }
-  cmp_fun_sym(t1,t1) { t1 == t2 } // Arguments must be linear in method cmp_fun_sym: Variable t1 is repeated
+  cmp_fun_sym(t1,t1) { t1 == t2 } // Arguments must be linear in method cmp_fun_sym: Variable t1 is repeated (line 44)
   equals(l1,l2)    { l1.equals(l2) }
   get_element(l,n) { ((ArrayList)l).get(n) }
   get_size(l)      { ((ArrayList)l).size() }
@@ -64,4 +64,21 @@
   get_element(l,n) { ((ArrayList)l).get(n) }
   get_size(l)      { ((ArrayList)l).size() }
   get_element(l,n) { ((ArrayList)l).get(n) } // Repeated macro-function get_element (line 66)
+}
+
+%typearray type9 {
+  implement { ArrayList }
+  get_fun_sym(t)   {  }
+  cmp_fun_sym(t1,t2) { t1 == t2 }
+  equals(l1,l2)    { l1.equals(l2) }
+  get_element(l,n) { ((ArrayList)l).get(n) }
+  get_size(l)      { ((ArrayList)l).size() }
+}
+%typearray type9 {  // Multiple definition of Symbol type9 (line 77)
+  implement { ArrayList }
+  get_fun_sym(t)   {  }
+  cmp_fun_sym(t1,t2) { t1 == t2 }
+  equals(l1,l2)    { l1.equals(l2) }
+  get_element(l,n) { ((ArrayList)l).get(n) }
+  get_size(l)      { ((ArrayList)l).size() }
 }

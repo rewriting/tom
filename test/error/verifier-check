@@ -56,7 +56,7 @@ for file in $files
    do
     base=`basename $file .t` 
     if [ $generation -eq 1 ]; then
-	$TOM $base > $base.expectedOutcome
+	$TOM --Wall $base > $base.expectedOutcome
 	echo generation for $file
     else   
 	$TOM $base > $base.out

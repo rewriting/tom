@@ -1,9 +1,7 @@
-List of realized syntactic Test
-
 ////////////////////
 TYPETERM DECLARATION
 ////////////////////
-Grammar {
+Grammar:
 	%typeterm typeName {
 		implement	     { ... }
 		get_fun_sym(var)     { ... }
@@ -11,25 +9,23 @@ Grammar {
 		get_subterm(var,var) { ... }
 		[equals(var,var)     { ... }]
 	}
-}
-Test {
-     JTypeTermRef.t
-     JTypeTerm1.t
-	Missing functions : [get_fun_sym]
-	Missing functions : [cmp_fun_sym]
-	Missing functions : [get_subterm]
-	Missing functions : [get_fun_sym, cmp_fun_sym, get_subterm]
-	missing optional `equals` function : No message
-	 Repeated macro-functions 'get_fun_sym'
-	Arguments must be linear in declaration 'cmp_fun_sym'
-	Arguments must be linear in declaration 'equals'
-	Multiple definition of type
-}
+Test:
+	JTypeTerm.t
+	  line 66: Multiple definition of Symbol `type9`
+	  line 55: Arguments must be linear in macro-function `equals`: Variable `t1` is repeated
+	  line 45: Arguments must be linear in macro-function `cmp_fun_sym`: Variable `s1` is repeated
+	  line 38: Repeated macro-function `get_fun_sym`
+	  line 22: Missing macro-function(s) [ get_fun_sym,  cmp_fun_sym,  get_subterm ]
+	  line 15: Missing macro-function(s) [ get_subterm ]
+	  line 8: Missing macro-function(s) [ cmp_fun_sym ]
+	  line 1: Missing macro-function(s) [ get_fun_sym ]	Missing functions : [get_fun_sym]
+	  Tom SyntaxChecker:  Encountered 8 errors and 0 warnings.
+Missing `equals` is OK
 
 ////////////////////
 TYPEARRAY DECLARATION
 ////////////////////
-Grammar {
+Grammar:
 	%typearray typeName {
 		implement            { ... }
 		get_fun_sym(var)     { ... }
@@ -38,24 +34,23 @@ Grammar {
 		get_size(var)        { ... }
 		[equals(var,var)     { ... }]
 	}
-}
-Test {
-     JTypeArrayRef.t
-     JTypeArray1.t
-	Missing functions : [get_fun_sym]
-	Missing functions : [cmp_fun_sym]
-	Missing functions : [get_element]
-	Missing functions : [get_size]
-	missing optional `equals` function : No message
-	Arguments must be linear in declaration 'cmp_fun_sym'
-	Arguments must be linear in declaration 'equals
-	Repeated macro-functions 'get_element'
-}
+Test:
+	JTypeArray.t
+	  line 77: Multiple definition of Symbol `type9`
+	  line 66: Repeated macro-function `get_element`
+	  line 54: Arguments must be linear in macro-function `equals`: Variable `l1` is repeated
+	  line 44: Arguments must be linear in macro-function `cmp_fun_sym`: Variable `t1` is repeated
+	  line 25: Missing macro-function(s) [ get_size ]
+	  line 17: Missing macro-function(s) [ get_element ]
+	  line 9: Missing macro-function(s) [ cmp_fun_sym ]
+	  line 1: Missing macro-function(s) [ get_fun_sym ]
+	  Tom SyntaxChecker:  Encountered 8 errors and 0 warnings.
+Missing `equals` is OK
 
 ////////////////////
 TYPELIST DECLARATION
 ////////////////////
-Grammar {
+Grammar:
 	%typelist typeName {
 		implement	     { ... }
 		get_fun_sym(var)     { ... }
@@ -64,25 +59,24 @@ Grammar {
 		get_tail(var)    { ... }
 		is_empty(var)    { ... }
 	}
-}
-Test {
-     JTypeListRef.t
-     JTypeList1.t
-	Missing functions : [get_fun_sym]
-	Missing functions : [cmp_fun_sym]
-	Missing functions : [get_head]
-	Missing functions : [get_tail]
-	Missing functions : [is_empty]
-	OK: Missing equals
-	Arguments must be linear in declaration 'cmp_fun_sym'
-	Arguments must be linear in declaration 'equals'
-	Repeated macro-functions 'get_head'
-}
+Test:
+	JTypeList.t
+	  line 95: Multiple definition of Symbol `type10`
+	  line 81: Repeated macro-function `get_head`
+	  line 69: Arguments must be linear in macro-function `equals`: Variable `l1` is repeated
+	  line 58: Arguments must be linear in macro-function `cmp_fun_sym`: Variable `t1` is repeated
+	  line 37: Missing macro-function(s) [ is_empty ]
+	  line 28: Missing macro-function(s) [ get_tail ]
+	  line 19: Missing macro-function(s) [ get_head ]
+	  line 10: Missing macro-function(s) [ cmp_fun_sym ]
+	  line 1: Missing macro-function(s) [ get_fun_sym ]
+	  Tom SyntaxChecker:  Encountered 9 errors and 0 warnings.
+Missing `equals` is OK
 
 ////////////////////
 OPERATOR DECLARATION
 ////////////////////
-Grammar {
+Grammar:
 	%op typeName opName [(slotName:type, type,... )] {
 		fsym             { ... }
 		[is_fsym(var)     { ... }
@@ -90,29 +84,27 @@ Grammar {
 		 get_slot(type,t) { ... }
 		]
 	}
-}
-Test {
-     JOperatorRef.t
+Test:
      JOperator1.t
-	Operator 'op' has an unknown return type
-	Slot position 1 of operator 'op' has an unknown type
-	Repeated macro-functions 'make'
-	Arguments must be linear in declaration 'make'
-	OK: Operator defined before type declaration
+	line 68: Multiple definition of Symbol `op6`
+	line 50: Bad number of arguments in make(...) macro-function: 1 arguments found but 2 expected in symbol definition
+	line 44: Arguments must be linear in macro-function `make`: Variable `t1` is repeated
+	line 38: Repeated macro-function `make`
+	line 29: Slot 2 of symbol `op2bis` declaration has an unknown type: `wrongtype`
+	line 24: Slot 1 of symbol `op2` declaration has an unknown type: `wrongtype`
+	line 18: Symbol `op1` has an unknown return type: `wrongtype`
+	Tom SyntaxChecker:  Encountered 6 errors and 0 warnings.
+Operator defined before type8 declaration is OK
 
      JOperator2.t
-	Warning: GetSlot declaration `get_slot(slot2,...)` is missing. SlotName will not be considered
-	Warning: GetSlot declaration 'type' is repeated in operator declaration
-	Warning: Some GetSlot declaration are incompatible with operator signature
+       line 23: Warning: GetSlot declaration `get_slot(type,...)` is repeated. Consider only the first one!!
+       line 14: Warning: Incompatible GetSlot declaration: `badslot` does not appears in symbol declaration
+       line 10: Warning: GetSlot declaration `get_slot(slot2,...)` is missing. Generic getsubterm macro will be used!!
+       Tom Parser:  Encountered 3 warnings.
 
      JOperator3.t
-	Bad number of arguments in method 'make'
-
-     JOperator4.t
-	Multiple definition of operator
-     JOperator5.t	
-	Repeated slot  's1' in operator declaration
-
+	line 10: Repeated slot `s0` in symbol declaration
+	Tom Parser:  Encountered 1 errors and 0 warnings.
 }
 
 ////////////////////

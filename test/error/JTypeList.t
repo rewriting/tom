@@ -43,7 +43,7 @@
   get_tail(l)    { ((ATermList)l).getNext() }
 }
 
-%typelist type6 {
+%typelist type6 {  // No error; Missing optional make macro
   implement { ATermList }
   get_fun_sym(t) {  }
   cmp_fun_sym(t1,t2) { t1 == t2 }
@@ -66,7 +66,7 @@
   implement { ATermList }
   get_fun_sym(t) {  }
   cmp_fun_sym(t1,t2) { t1 == t2 }
-  equals(l1,l1)  { l1==l2 } // Arguments must be linear in method equals: Variable l1 is repeated
+  equals(l1,l1)  { l1==l2 } // Arguments must be linear in method equals: Variable l1 is repeated (line 69)
   get_head(l)    { ((ATermList)l).getFirst() }
   get_tail(l)    { ((ATermList)l).getNext() }
   is_empty(l)    { ((ATermList)l).isEmpty() }
@@ -78,7 +78,25 @@
   cmp_fun_sym(t1,t2) { t1 == t2 }
   get_head(l)    { ((ATermList)l).getFirst() }
   equals(l1,l2)  { l1==l2 }
-  get_head(l)    { ((ATermList)l).getFirst() } // Repeated macro-function get_head
+  get_head(l)    { ((ATermList)l).getFirst() } // Repeated macro-function get_head (line 81)
+  get_tail(l)    { ((ATermList)l).getNext() }
+  is_empty(l)    { ((ATermList)l).isEmpty() }
+}
+
+%typelist type10 {
+  implement { ATermList }
+  get_fun_sym(t) {  }
+  cmp_fun_sym(t1,t2) { t1 == t2 }
+  get_head(l)    { ((ATermList)l).getFirst() }
+  get_tail(l)    { ((ATermList)l).getNext() }
+  is_empty(l)    { ((ATermList)l).isEmpty() }
+}
+
+%typelist type10 {  // Multiple definition of Symbol type10 (line 95)
+  implement { ATermList }
+  get_fun_sym(t) {  }
+  cmp_fun_sym(t1,t2) { t1 == t2 }
+  get_head(l)    { ((ATermList)l).getFirst() }
   get_tail(l)    { ((ATermList)l).getNext() }
   is_empty(l)    { ((ATermList)l).isEmpty() }
 }

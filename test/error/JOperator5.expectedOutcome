@@ -1,5 +1,0 @@
-java.lang.Throwable: -- Error occured line: 10 in structure `%op type1` declared line: 10 in file: JOperator5.t
----> Repeated slot `s0` in symbol declaration
-
-Tom Parser:  Encountered 1 errors and 0 warnings.
-No file generated.

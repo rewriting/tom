@@ -7,7 +7,7 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op type1 op9(slot1:type1, slot2: type1) { // Warning: GetSlot declaration `get_slot(slot2,...)` is missing. Slot slot2 will not be considered
+%op type1 op9(slot1:type1, slot2: type1) { // Warning: GetSlot declaration `get_slot(slot2,...)` is missing. Slot slot2 will not be considered (line 10)
   fsym { fzero }
   make(t1,t2) { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }

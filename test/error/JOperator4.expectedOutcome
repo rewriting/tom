@@ -1,5 +1,0 @@
--- Error occured line: 16 in structure `%op op` declared line: 16 in file: JOperator4.t
----> Multiple definition of Symbol `op`
-
-Tom SyntaxChecker:  Encountered 1 errors and 0 warnings.
-No file generated.

@@ -45,7 +45,13 @@
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
 }
 
-%op type1 op5(type8) { // No message: Operator defined before type8 declaration
+%op type1 op5(type1, type1) {
+  fsym { fzero }
+  make(t1) { factory.makeAppl(fzero) } // Bad number of arguments in make(...) macro-function: 1 arguments found but 2 expected in symbol definition (line 50)
+  is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
+}
+
+%op type1 op6(type8) { // No message: Operator defined before type8 declaration
   fsym { fzero }
   make(t1) { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
@@ -57,4 +63,10 @@
   cmp_fun_sym(s1,s2) { s1.equals(s2) }
   get_subterm(t,n) { null }
   equals(t1,t2) { t1.equals(t2) }
+}
+
+%op type1 op6(type8) { //  Multiple definition of Symbol `op6` (line 68)
+  fsym { fzero }
+  make(t1) { factory.makeAppl(fzero) }
+  is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
 }
