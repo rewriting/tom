@@ -33,7 +33,7 @@ import jtom.runtime.Replace1;
 import aterm.ATerm;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
-import jtom.Tom;
+import jtom.tools.Tools;
 
 public class TomExpander extends TomBase implements TomTask {
   private TomTask nextTask;
@@ -71,8 +71,8 @@ public class TomExpander extends TomBase implements TomTask {
 		System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  }
       if(intermediate) {
-          Tom.generateOutput(input.inputFileName + input.expandedSuffix, expandedTerm);
-          Tom.generateOutput(input.inputFileName + input.expandedTableSuffix, symbolTable().toTerm());
+          Tools.generateOutput(input.inputFileName + input.expandedSuffix, expandedTerm);
+          Tools.generateOutput(input.inputFileName + input.expandedTableSuffix, symbolTable().toTerm());
 	  }
       input.setTerm(expandedTerm);
     } catch (Exception e) {
@@ -104,6 +104,10 @@ public class TomExpander extends TomBase implements TomTask {
                 return expandBackQuoteTerm(t);
               }
             
+              dollarTerm@DollarAppl[] -> {
+                return expandDollarAppl(dollarTerm);
+              }
+
               RecordAppl(option,Name(tomName),args) -> {
                 return expandRecordAppl(option,tomName,args);
               }
@@ -159,6 +163,39 @@ public class TomExpander extends TomBase implements TomTask {
     return `Appl(option,Name(tomName),subtermList);
   }
 
+  protected TomTerm expandDollarAppl(TomTerm t) {
+    Replace1 replaceSymbol = new Replace1() {
+        public ATerm apply(ATerm t) {
+          if(t instanceof TomTerm) {
+            %match(TomTerm t) {
+              DollarAppl[option=Option(optionList),astName=name@Name(tomName),args=l] -> {
+                TomSymbol tomSymbol = getSymbol(tomName);
+                TomList args  = (TomList) traversal().genericTraversal(l,this);
+                
+                if(tomSymbol != null) {
+                  if(isListOperator(tomSymbol)) {
+                    return `BuildList(name,args);
+                  } else if(isArrayOperator(tomSymbol)) {
+                    return `BuildArray(name,args);
+                  } else {
+                    return `BuildTerm(name,args);
+                  }
+                } else if(args.isEmpty() && !hasConstructor(optionList)) {
+                  return `BuildVariable(name);
+                } else {
+                  return `FunctionCall(name,args);
+                }
+              }
+            } // end match 
+          } else {
+            return traversal().genericTraversal(t,this);
+          }
+          return traversal().genericTraversal(t,this);
+        } // end apply
+      }; // end replaceSymbol
+    return (TomTerm) replaceSymbol.apply(t);
+  }
+  
   private boolean isBuiltinOperator(TomSymbol subject) {
     if(subject==null) {
       return false;

@@ -26,24 +26,11 @@
 
 package jtom.parser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import java.io.*;
+import java.util.*;
 import jtom.adt.*;
-import jtom.exception.TomException;
-import jtom.tools.ASTFactory;
-import jtom.tools.SymbolTable;
-import jtom.tools.Statistics;
-import jtom.tools.TomTask;
-import jtom.tools.TomTaskInput;
-import jtom.Tom;
+import jtom.exception.*;
+import jtom.tools.*;
 
 public class TomParser implements TomTask, TomParserConstants {
 
@@ -103,8 +90,8 @@ public class TomParser implements TomTask, TomParserConstants {
                         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
                 }
         if(intermediate) {
-            Tom.generateOutput(input.inputFileName + input.parsedSuffix, parsedTerm);
-            Tom.generateOutput(input.inputFileName + input.parsedTableSuffix, symbolTable.toTerm());
+            Tools.generateOutput(input.inputFileName + input.parsedSuffix, parsedTerm);
+            Tools.generateOutput(input.inputFileName + input.parsedTableSuffix, symbolTable.toTerm());
         }
                 // Update taskInput
                 input.setTerm(parsedTerm);
@@ -265,7 +252,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                            stat.numberTomBlocsRecognized++;
         break;
       case BACKQUOTE_TERM:
-        BackQuoteTerm(blockList);
+        DollarTerm(blockList);
                                            stat.numberTomBlocsRecognized++;
         break;
       case INCLUDE:
@@ -721,6 +708,37 @@ public class TomParser implements TomTask, TomParserConstants {
     term = Term();
     switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(tsf().makeTomTerm_BackQuoteTerm(term, orgTrack));
+  }
+
+  final public void DollarTerm(ArrayList list) throws ParseException, TomException {
+  TomTerm term;
+  Option orgTrack;
+
+  Token tk;
+  int parenLevel = 0;
+  boolean dollar_mode = false;
+  ArrayList tokenList = new ArrayList();
+    jj_consume_token(BACKQUOTE_TERM);
+      addPreviousCode(list);
+      orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
+      dollar_mode = true;
+      while(dollar_mode) {
+        tk = getNextToken();
+        tokenList.add(tk);
+        if(tk.kind == TOM_LPAREN) {
+          parenLevel++;
+        } else if(tk.kind == TOM_RPAREN) {
+          parenLevel--;
+          if(parenLevel==0) {
+            dollar_mode = false;
+          }
+        }
+      }
+
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      term = ast().buildBackQuoteTerm(tokenList);
+        //list.add(tsf().makeTomTerm_BackQuoteTerm(term,orgTrack));
+      list.add(term);
   }
 
   final public void MatchXMLConstruct(ArrayList list) throws ParseException, TomException {
@@ -2265,35 +2283,6 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_STAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_23() {
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
   final private boolean jj_3_5() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     Token xsp;
@@ -2309,15 +2298,44 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_7() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_23() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
   final private boolean jj_3_3() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_AT)) return true;
     return false;
   }
 
-  final private boolean jj_3_7() {
+  final private boolean jj_3_6() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_8() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_STAR)) return true;
     return false;
   }
 
@@ -2340,13 +2358,13 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_la1_2();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x7ffae,0x7ffae,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x300,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0xfff2e,0xfff2e,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x600,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x5,0x5,0x20000000,0x20000,0x20000,0x40000,0x40000,0x40000,0x0,0x40000,0x20000000,0x800000,0x20000000,0x20000000,0x400000,0x20000000,0x20000,0x20000,0x20000000,0x2000000,0x40000,0x20000000,0x40000,0x800000,0x20000000,0x80000000,0x20000000,0x20000,0x20000,0x0,0x0,0x0,0x40000,0x800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x40000,0x800000,0x800000,0x800000,};
+      jj_la1_1 = new int[] {0xa,0xa,0x40000000,0x40000,0x40000,0x80000,0x80000,0x80000,0x0,0x80000,0x40000000,0x1000000,0x40000000,0x40000000,0x800000,0x40000000,0x40000,0x40000,0x40000000,0x4000000,0x80000,0x40000000,0x80000,0x1000000,0x40000000,0x0,0x40000000,0x40000,0x40000,0x0,0x0,0x0,0x80000,0x1000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x1000000,0x1000000,0x1000000,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x8e00000,0x0,0x0,0x0,0x0,0x0,0x400000,0x0,0x8e00000,0x0,0x8e00000,0x8e00000,0x0,0x400003,0x0,0x0,0x400003,0x0,0x0,0x400003,0x0,0x0,0x400003,0x400000,0x8e00000,0x0,0x0,0xc,0xc,0xc,0x0,0x0,0xc10,0xc10,0x860,0x860,0x8a0,0x8a0,0x0,0xf000,0xf000,0x7f000,0x7f000,0x18f000,0x18f000,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0x23800000,0x0,0x0,0x0,0x0,0x0,0x1000000,0x0,0x23800000,0x0,0x23800000,0x23800000,0x0,0x100000c,0x0,0x0,0x100000c,0x0,0x0,0x100000c,0x0,0x0,0x100000c,0x1000002,0x23800000,0x0,0x0,0x30,0x30,0x30,0x0,0x0,0x3040,0x3040,0x2180,0x2180,0x2280,0x2280,0x0,0x3c000,0x3c000,0x1fc000,0x1fc000,0x63c000,0x63c000,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[8];
   private boolean jj_rescan = false;
@@ -2517,8 +2535,8 @@ public class TomParser implements TomTask, TomParserConstants {
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[92];
-    for (int i = 0; i < 92; i++) {
+    boolean[] la1tokens = new boolean[94];
+    for (int i = 0; i < 94; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -2540,7 +2558,7 @@ public class TomParser implements TomTask, TomParserConstants {
         }
       }
     }
-    for (int i = 0; i < 92; i++) {
+    for (int i = 0; i < 94; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -47,8 +47,8 @@ import jtom.adt.TomTypeList;
 import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
+import jtom.tools.Tools;
 import aterm.ATerm;
-import jtom.Tom;
 
 public class TomCompiler extends TomBase implements TomTask {
   private TomTask nextTask;
@@ -86,7 +86,7 @@ public class TomCompiler extends TomBase implements TomTask {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-          Tom.generateOutput(input.inputFileName + input.compiledSuffix, compiledTerm);
+          Tools.generateOutput(input.inputFileName + input.compiledSuffix, compiledTerm);
       }
       input.setTerm(compiledTerm);
     } catch (Exception e) {

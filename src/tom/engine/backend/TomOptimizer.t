@@ -38,8 +38,8 @@ import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
+import jtom.tools.Tools;
 import aterm.ATerm;
-import jtom.Tom;
 
 public class TomOptimizer extends TomBase implements TomTask {
 
@@ -72,7 +72,7 @@ public class TomOptimizer extends TomBase implements TomTask {
 		System.out.println("TOM optimization phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  } 
       if(intermediate) {
-          Tom.generateOutput(input.inputFileName + input.optimizedSuffix, optimizedTerm);
+          Tools.generateOutput(input.inputFileName + input.optimizedSuffix, optimizedTerm);
 	  }
 	  input.setTerm(optimizedTerm);
     } catch (Exception e) {

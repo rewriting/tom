@@ -2,7 +2,7 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS         = runtime adt tools exception parser checker compiler backend debug buttons 
+SUBDIRS         = tools runtime adt exception parser checker compiler backend debug buttons 
 # buttons 
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 

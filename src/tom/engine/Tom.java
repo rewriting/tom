@@ -39,24 +39,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jtom.adt.TomSignatureFactory;
-import jtom.adt.TomSymbolTable;
-import jtom.adt.TomTerm;
-import jtom.backend.TomGenerator;
-import jtom.backend.TomOptimizer;
-import jtom.checker.TomSyntaxChecker;
-import jtom.checker.TomTypeChecker;
-import jtom.compiler.TomCompiler;
-import jtom.compiler.TomExpander;
-import jtom.compiler.TomKernelCompiler;
-import jtom.compiler.TomKernelExpander;
-import jtom.parser.TomBuffer;
-import jtom.parser.TomParser;
-import jtom.tools.ASTFactory;
-import jtom.tools.Statistics;
-import jtom.tools.SymbolTable;
-import jtom.tools.TomTask;
-import jtom.tools.TomTaskInput;
+import jtom.adt.*;
+import jtom.backend.*;
+import jtom.checker.*;
+import jtom.compiler.*;
+import jtom.parser.*;
+import jtom.tools.*;
 import aterm.ATerm;
 
 
@@ -377,17 +365,4 @@ public class Tom {
   return "(" + (endChrono-startChrono) + " ms)";
   }
 */
-  public static void generateOutput(String outputFileName, ATerm ast) {
-    try {
-      OutputStream output = new FileOutputStream(outputFileName);
-      Writer writer = new BufferedWriter(new OutputStreamWriter(output));
-      writer.write(ast.toString());
-      writer.flush();
-      writer.close();
-    } catch(IOException e) {
-      System.out.println("write error");
-      e.printStackTrace();
-    }
-  }
-  
 } // class Tom
