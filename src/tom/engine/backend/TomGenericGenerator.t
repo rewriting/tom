@@ -41,7 +41,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected boolean lazyMode;
 
   public TomGenericGenerator(OutputCode output, OptionManager optionManager) {
-    super(output);
+    super(output,optionManager);
     lazyMode = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
   }
 
@@ -99,6 +99,12 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
  
   protected void buildTerm(int deep, String name, TomList argList) throws IOException {
     buildFunctionCall(deep, "tom_make_"+name, argList);
+  }
+
+  protected void buildCheckStamp(int deep, TomType type, TomTerm variable) throws IOException {
+    output.write("tom_check_stamp_" + getTomType(type) + "(");
+    generate(deep,variable);
+    output.write(");");
   }
 
   protected void buildSymbolDecl(int deep, String tomName) throws IOException {
@@ -253,7 +259,53 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
                                    "tom_get_fun_sym", type,args,tlCode));
   }
 
+  protected void buildCheckStampDecl(int deep, String type, String name,
+                                 TomType tlType, TargetLanguage tlCode) throws IOException {
+    TomType returnType = symbolTable().getVoidType();
+    String argType;
+    if(!lazyMode) {
+      argType = getTLCode(tlType);
+    } else {
+      argType = getTLType(getUniversalType());
+    }
+    
+    generateTargetLanguage(deep, genDecl(getTLType(returnType),
+                                         "tom_check_stamp", type,
+                                         new String[] { argType, name },
+                                         tlCode));
+  }
 
+  protected void buildSetStampDecl(int deep, String type, String name,
+                                 TomType tlType, TargetLanguage tlCode) throws IOException {
+    String argType;
+    if(!lazyMode) {
+      argType = getTLCode(tlType);
+    } else {
+      argType = getTLType(getUniversalType());
+    }
+    String returnType = argType; /* TODO: use stamp type */
+    
+    generateTargetLanguage(deep, genDecl(returnType,
+                                         "tom_set_stamp", type,
+                                         new String[] { argType, name },
+                                         tlCode));
+  }
+
+  protected void buildGetImplementationDecl(int deep, String type, String name,
+                                 TomType tlType, TargetLanguage tlCode) throws IOException {
+    String argType;
+    if(!lazyMode) {
+      argType = getTLCode(tlType);
+    } else {
+      argType = getTLType(getUniversalType());
+    }
+    String returnType = argType; /* TODO: use stamp type */
+    
+    generateTargetLanguage(deep, genDecl(returnType,
+                                         "tom_get_implementation", type,
+                                         new String[] { argType, name },
+                                         tlCode));
+  }
 
   protected void buildIsFsymDecl(int deep, String tomName, String name1,
                                  TomType tlType, TargetLanguage tlCode) throws IOException {

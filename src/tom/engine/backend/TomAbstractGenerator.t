@@ -31,13 +31,16 @@ import jtom.adt.tomsignature.types.*;
 import jtom.TomBase;
 import jtom.tools.OutputCode;
 import jtom.exception.TomRuntimeException;
+import tom.platform.OptionManager;
  
 public abstract class TomAbstractGenerator extends TomBase {
   
   protected OutputCode output;
   protected String debugKey;
-  public TomAbstractGenerator(OutputCode output) {
+  protected OptionManager optionManager;
+  public TomAbstractGenerator(OutputCode output, OptionManager optionManager) {
     super();
+    this.optionManager = optionManager;
     this.output = output;
   }
 
@@ -402,7 +405,14 @@ public abstract class TomAbstractGenerator extends TomBase {
         `buildInstructionSequence(deep,instruction);
         return;
       }
-      
+
+      CheckStamp(variable) -> {
+        if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
+          `buildCheckStamp(deep, getTermType(variable), variable);
+        }
+        return;
+      }
+
       t -> {
         System.out.println("Cannot generate code for instruction: " + `t);
         throw new TomRuntimeException("Cannot generate code for instruction: " + `t);
@@ -469,6 +479,31 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
+      
+      CheckStampDecl(Variable[astName=Name(name), 
+                              astType=Type(ASTTomType(type),tlType@TLType[])], 
+                     tlCode, _) -> {
+        //optionManager.setOptionValue("stamp",Boolean.TRUE);
+        `buildCheckStampDecl(deep, type, name, tlType, tlCode);
+        return;
+      }
+      
+      SetStampDecl(Variable[astName=Name(name), 
+                              astType=Type(ASTTomType(type),tlType@TLType[])], 
+                     tlCode, _) -> {
+        //optionManager.setOptionValue("stamp",Boolean.TRUE);
+        `buildSetStampDecl(deep, type, name, tlType, tlCode);
+        return;
+      }
+
+      GetImplementationDecl(Variable[astName=Name(name), 
+                              astType=Type(ASTTomType(type),tlType@TLType[])], 
+                     tlCode, _) -> {
+        //optionManager.setOptionValue("stamp",Boolean.TRUE);
+        `buildGetImplementationDecl(deep, type, name, tlType, tlCode);
+        return;
+      }
+
       GetSubtermDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type1),tlType1@TLType[])],
                      Variable[astName=Name(name2), astType=Type[tlType=tlType2@TLType[]]],
                      tlCode, _) -> {
@@ -692,9 +727,17 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException;
   protected abstract void buildAddOne(int deep, TomTerm var) throws IOException;
   protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
+  protected abstract void buildCheckStamp(int deep, TomType type, TomTerm variable) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName) throws IOException ;
   protected abstract void buildGetFunctionSymbolDecl(int deep, String type, String name,
                                                      TomType tlType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildCheckStampDecl(int deep, String type, String name,
+                                              TomType tlType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildSetStampDecl(int deep, String type, String name,
+                                              TomType tlType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildGetImplementationDecl(int deep, String type, String name,
+                                              TomType tlType, TargetLanguage tlCode) throws IOException;
+
   protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
                                               TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,

@@ -35,34 +35,33 @@ import aterm.*;
  */
 public class TomStarter extends TomGenericPlugin {
 
-  private ATerm termToRelay;
+  private Object argToRelay;
   private String fileName = null;
 
   public TomStarter() {
     super("TomStarter");
   }
 
-  public void setTerm(ATerm term) {
-    termToRelay = term;
-
-    if (term instanceof AFun) {
-      fileName = ((AFun)term).getName();  
+  public void setArg(Object arg) {
+    argToRelay = arg;
+    if (arg instanceof String) {
+      fileName = (String)arg;  
     } else {
-      getLogger().log(Level.SEVERE,
-		      "TomStarter: A AFun object was expected.");
+      getLogger().log(Level.SEVERE, "TomStarter: A String was expected.");
     }
-  }
-
-  public ATerm getTerm() {
-    return termToRelay;
   }
 
   public void run() {
     // We need here to create the environment : 
     // We need to be sure we don't have side effects with the environment singleton
-    TomEnvironment env = TomEnvironment.create();
-    env.initInputFromArgs();
-    env.updateEnvironment(fileName);
+    TomEnvironment env = TomEnvironment.getInstance();
+    env.initializeFromOptionManager(getOptionManager());
+    env.prepareForInputFile(fileName);
+    argToRelay = env.getInputFile().toString();
   }
 
-}
+  public Object getArg() {
+    return argToRelay;
+  }
+
+} // class TomStarter

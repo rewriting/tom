@@ -25,6 +25,7 @@
 
 package jtom;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -41,8 +42,8 @@ public class TomMessage {
   public static int TOM_INFO = 0;
     // Default error line
   public static int DEFAULT_ERROR_LINE_NUMBER = 1; 
-  
-  public static String getString(String key) {
+
+  public static String getMessage(String key) {
     try {
       return resourceBundle.getString(key);
     } catch (MissingResourceException e) {
@@ -50,6 +51,14 @@ public class TomMessage {
     }
   }
 
+  public static String getMessage(String key, Object[] details) {
+    try {
+      return MessageFormat.format(resourceBundle.getString(key), details);
+    } catch (MissingResourceException e) {
+      return "!" + key + "!";
+    }
+  }
+  
   public static ResourceBundle getResourceBundle() {
     return resourceBundle;
   }

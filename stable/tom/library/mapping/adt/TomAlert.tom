@@ -9,6 +9,9 @@
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
+check_stamp(t) {if(t.getAnnotation(getTomAlertFactory().getPureFactory().makeList()) == getTomAlertFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(jtom.adt.tomsignature.types.TomAlert)t.setAnnotation(getTomAlertFactory().getPureFactory().makeList(),getTomAlertFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
 }
 
 %op TomAlert Error(message:String, file:String, line:int) {
@@ -37,6 +40,9 @@
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
+check_stamp(t) {if(t.getAnnotation(getTomAlertFactory().getPureFactory().makeList()) == getTomAlertFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(jtom.adt.tomsignature.types.TomAlertList)t.setAnnotation(getTomAlertFactory().getPureFactory().makeList(),getTomAlertFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
 }
 
 %oplist TomAlertList concTomAlert(TomAlert*) {

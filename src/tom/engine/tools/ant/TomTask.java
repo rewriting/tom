@@ -50,7 +50,9 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <li>optimize</li>
  * <li>debug</li>
  * <li>verbose</li>
+ * <li>visitable</li>
  * <li>failonerror</li>
+ * <li>stamp</li>
  * </ul>
  * Of these arguments, the <b>sourcedir</b> and <b>destdir</b> are required.
  * <p>
@@ -62,7 +64,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
 public class TomTask extends MatchingTask {
 
   private static final String FAIL_MSG
-  = "Compile failed; see the compiler error output for details.";
+    = "Compile failed; see the compiler error output for details.";
 
   private String options;
   private Path src;
@@ -75,6 +77,7 @@ public class TomTask extends MatchingTask {
   private boolean depend = false;
   private boolean verbose = false;
   private boolean visitable = false;
+  private boolean stamp = false;
   private Path extdirs;
   private boolean nowarn = false;
   private boolean optimize = false;
@@ -86,10 +89,10 @@ public class TomTask extends MatchingTask {
 
   private File tmpDir;
 
-    /**
-     * Set the configuration file
-     * @param  configFile the destination directory
-     */
+  /**
+   * Set the configuration file
+   * @param  configFile the destination directory
+   */
   public void setConfig(File configFile) {
     //System.out.println("CONFIG FILE : " + configFile);
     this.configFile = configFile;
@@ -116,11 +119,11 @@ public class TomTask extends MatchingTask {
     return options;
   }
   
-    /**
-     * Adds a path for source compilation.
-     *
-     * @return a nested src element.
-     */
+  /**
+   * Adds a path for source compilation.
+   *
+   * @return a nested src element.
+   */
   public Path createSrc() {
     if (src == null) {
       src = new Path(getProject());
@@ -128,20 +131,20 @@ public class TomTask extends MatchingTask {
     return src.createPath();
   }
 
-    /**
-     * Recreate src.
-     *
-     * @return a nested src element.
-     */
+  /**
+   * Recreate src.
+   *
+   * @return a nested src element.
+   */
   protected Path recreateSrc() {
     src = null;
     return createSrc();
   }
 
-    /**
-     * Set the source directories to find the source Java files.
-     * @param srcDir the source directories as a path
-     */
+  /**
+   * Set the source directories to find the source Java files.
+   * @param srcDir the source directories as a path
+   */
   public void setSrcdir(Path srcDir) {
     if (src == null) {
       src = srcDir;
@@ -150,54 +153,54 @@ public class TomTask extends MatchingTask {
     }
   }
 
-    /**
-     * Gets the source dirs to find the source java files.
-     * @return the source directories as a path
-     */
+  /**
+   * Gets the source dirs to find the source java files.
+   * @return the source directories as a path
+   */
   public Path getSrcdir() {
     return src;
   }
 
-    /**
-     * Set the destination directory into which the Tom source
-     * files should be compiled.
-     * @param destDir the destination directory
-     */
+  /**
+   * Set the destination directory into which the Tom source
+   * files should be compiled.
+   * @param destDir the destination directory
+   */
   public void setDestdir(File destDir) {
     this.destDir = destDir;
   }
 
-    /**
-     * Gets the destination directory into which the Tom source files
-     * should be compiled.
-     * @return the destination directory
-     */
+  /**
+   * Gets the destination directory into which the Tom source files
+   * should be compiled.
+   * @return the destination directory
+   */
   public File getDestdir() {
     return destDir;
   }
 
-    /**
-     * Set the destination directory into which the Tom source
-     * files should be compiled.
-     * @param destDir the destination directory
-     */
+  /**
+   * Set the destination directory into which the Tom source
+   * files should be compiled.
+   * @param destDir the destination directory
+   */
   public void setOutputFile(File outputFile) {
     this.outputFile = outputFile;
   }
 
-    /**
-     * Gets the destination directory into which the Tom source files
-     * should be compiled.
-     * @return the destination directory
-     */
+  /**
+   * Gets the destination directory into which the Tom source files
+   * should be compiled.
+   * @return the destination directory
+   */
   public File getOutputFile() {
     return outputFile;
   }
 
-    /**
-     * Set the sourcepath to be used for this compilation.
-     * @param sourcepath the source path
-     */
+  /**
+   * Set the sourcepath to be used for this compilation.
+   * @param sourcepath the source path
+   */
   public void setSourcepath(Path sourcepath) {
     if (compileSourcepath == null) {
       compileSourcepath = sourcepath;
@@ -206,18 +209,18 @@ public class TomTask extends MatchingTask {
     }
   }
 
-    /**
-     * Gets the sourcepath to be used for this compilation.
-     * @return the source path
-     */
+  /**
+   * Gets the sourcepath to be used for this compilation.
+   * @return the source path
+   */
   public Path getSourcepath() {
     return compileSourcepath;
   }
 
-    /**
-     * Adds a path to sourcepath.
-     * @return a sourcepath to be configured
-     */
+  /**
+   * Adds a path to sourcepath.
+   * @return a sourcepath to be configured
+   */
   public Path createSourcepath() {
     if (compileSourcepath == null) {
       compileSourcepath = new Path(getProject());
@@ -225,19 +228,19 @@ public class TomTask extends MatchingTask {
     return compileSourcepath.createPath();
   }
 
-    /**
-     * Adds a reference to a source path defined elsewhere.
-     * @param r a reference to a source path
-     */
+  /**
+   * Adds a reference to a source path defined elsewhere.
+   * @param r a reference to a source path
+   */
   public void setSourcepathRef(Reference r) {
     createSourcepath().setRefid(r);
   }
 
-    /**
-     * Set the classpath to be used for this compilation.
-     *
-     * @param classpath an Ant Path object containing the compilation classpath.
-     */
+  /**
+   * Set the classpath to be used for this compilation.
+   *
+   * @param classpath an Ant Path object containing the compilation classpath.
+   */
   public void setClasspath(Path classpath) {
     if (compileClasspath == null) {
       compileClasspath = classpath;
@@ -246,18 +249,18 @@ public class TomTask extends MatchingTask {
     }
   }
 
-    /**
-     * Gets the classpath to be used for this compilation.
-     * @return the class path
-     */
+  /**
+   * Gets the classpath to be used for this compilation.
+   * @return the class path
+   */
   public Path getClasspath() {
     return compileClasspath;
   }
 
-    /**
-     * Adds a path to the classpath.
-     * @return a class path to be configured
-     */
+  /**
+   * Adds a path to the classpath.
+   * @return a class path to be configured
+   */
   public Path createClasspath() {
     if (compileClasspath == null) {
       compileClasspath = new Path(getProject());
@@ -265,19 +268,19 @@ public class TomTask extends MatchingTask {
     return compileClasspath.createPath();
   }
 
-    /**
-     * Adds a reference to a classpath defined elsewhere.
-     * @param r a reference to a classpath
-     */
+  /**
+   * Adds a reference to a classpath defined elsewhere.
+   * @param r a reference to a classpath
+   */
   public void setClasspathRef(Reference r) {
     createClasspath().setRefid(r);
   }
   
-    /**
-     * Sets the extension directories that will be used during the
-     * compilation.
-     * @param extdirs a path
-     */
+  /**
+   * Sets the extension directories that will be used during the
+   * compilation.
+   * @param extdirs a path
+   */
   public void setExtdirs(Path extdirs) {
     if (this.extdirs == null) {
       this.extdirs = extdirs;
@@ -286,19 +289,19 @@ public class TomTask extends MatchingTask {
     }
   }
 
-    /**
-     * Gets the extension directories that will be used during the
-     * compilation.
-     * @return the extension directories as a path
-     */
+  /**
+   * Gets the extension directories that will be used during the
+   * compilation.
+   * @return the extension directories as a path
+   */
   public Path getExtdirs() {
     return extdirs;
   }
 
-    /**
-     * Adds a path to extdirs.
-     * @return a path to be configured
-     */
+  /**
+   * Adds a path to extdirs.
+   * @return a path to be configured
+   */
   public Path createExtdirs() {
     if (extdirs == null) {
       extdirs = new Path(getProject());
@@ -306,26 +309,26 @@ public class TomTask extends MatchingTask {
     return extdirs.createPath();
   }
 
-    /**
-     * If true, list the source files being handed off to the compiler.
-     * @param list if true list the source files
-     */
+  /**
+   * If true, list the source files being handed off to the compiler.
+   * @param list if true list the source files
+   */
   public void setListfiles(boolean list) {
     listFiles = list;
   }
 
-    /**
-     * Get the listfiles flag.
-     * @return the listfiles flag
-     */
+  /**
+   * Get the listfiles flag.
+   * @return the listfiles flag
+   */
   public boolean getListfiles() {
     return listFiles;
   }
 
-    /**
-     * If true, asks the compiler for verbose output.
-     * @param verbose if true, asks the compiler for verbose output
-     */
+  /**
+   * If true, asks the compiler for verbose output.
+   * @param verbose if true, asks the compiler for verbose output
+   */
   public void setVerbose(boolean verbose) {
     this.verbose = verbose;
   }
@@ -334,10 +337,16 @@ public class TomTask extends MatchingTask {
     this.visitable = visitable;
   }
 
-    /**
-     * Gets the verbose flag.
-     * @return the verbose flag
-     */
+
+  public void setStamp(boolean stamp) {
+    this.stamp = stamp;
+  }
+
+
+  /**
+   * Gets the verbose flag.
+   * @return the verbose flag
+   */
   public boolean getVerbose() {
     return verbose;
   }
@@ -346,6 +355,9 @@ public class TomTask extends MatchingTask {
     return visitable;
   }
 
+  public boolean getStamp() {
+    return stamp;
+  }
 	/**
 	 * If true, compiles with optimization enabled.
 	 * @param optimize if true compile with optimization enabled
@@ -366,24 +378,24 @@ public class TomTask extends MatchingTask {
     this.nowarn = flag;
   }
 
-    /**
-     * Should the -nowarn option be used.
-     * @return true if the -nowarn option should be used
-     */
+  /**
+   * Should the -nowarn option be used.
+   * @return true if the -nowarn option should be used
+   */
   public boolean getNowarn() {
     return nowarn;
   }
 
-    /**
-     * Executes the task.
-     * @exception BuildException if an error occurs
-     */
+  /**
+   * Executes the task.
+   * @exception BuildException if an error occurs
+   */
   public void execute() throws BuildException {
     checkParameters();
     resetFileLists();
 
-      // scan source directories and dest directory to build up
-      // compile lists
+    // scan source directories and dest directory to build up
+    // compile lists
     String[] list = src.list();
     for (int i = 0; i < list.length; i++) {
           
@@ -404,21 +416,21 @@ public class TomTask extends MatchingTask {
     compile();
   }
 
-    /**
-     * Clear the list of files to be compiled and copied..
-     */
+  /**
+   * Clear the list of files to be compiled and copied..
+   */
   protected void resetFileLists() {
     compileList = new File[0];
   }
 
-    /**
-     * Scans the directory looking for source files to be compiled.
-     * The results are returned in the class variable compileList
-     *
-     * @param srcDir   The source directory
-     * @param destDir  The destination directory
-     * @param files    An array of filenames
-     */
+  /**
+   * Scans the directory looking for source files to be compiled.
+   * The results are returned in the class variable compileList
+   *
+   * @param srcDir   The source directory
+   * @param destDir  The destination directory
+   * @param files    An array of filenames
+   */
   protected void scanDir(File srcDir, File destDir, String[] files) {
 		if ((outputFile != null) && (files.length == 1)) {
 			GlobPatternMapper m = new GlobPatternMapper();
@@ -456,21 +468,21 @@ public class TomTask extends MatchingTask {
 		}
   }
 
-    /**
-     * Gets the list of files to be compiled.
-     * @return the list of files as an array
-     */
+  /**
+   * Gets the list of files to be compiled.
+   * @return the list of files as an array
+   */
   public File[] getFileList() {
     return compileList;
   }
 
-    /**
-     * Check that all required attributes have been set and nothing
-     * silly has been entered.
-     *
-     * @since Ant 1.5
-     * @exception BuildException if an error occurs
-     */
+  /**
+   * Check that all required attributes have been set and nothing
+   * silly has been entered.
+   *
+   * @since Ant 1.5
+   * @exception BuildException if an error occurs
+   */
   protected void checkParameters() throws BuildException {
     if (src == null) {
       throw new BuildException("srcdir attribute must be set!",
@@ -489,9 +501,9 @@ public class TomTask extends MatchingTask {
     }
   }
 
-    /**
-     * Perform the compilation.
-     */
+  /**
+   * Perform the compilation.
+   */
   protected void compile() {
 
     if (compileList.length > 0) {
@@ -506,47 +518,50 @@ public class TomTask extends MatchingTask {
         
         File file = new File(filename);
 
-	if (logPropertiesFile != null) {
-	    System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
-	  System.setProperty("java.util.logging.config.file",logPropertiesFile);
-	}
+        if (logPropertiesFile != null) {
+          System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
+          System.setProperty("java.util.logging.config.file",logPropertiesFile);
+        }
 
         String cmd_line = "";
-        if (options != null && getOptions().trim().length() > 0) {
+        if(options != null && getOptions().trim().length() > 0) {
           cmd_line = cmd_line.trim() + " " + options;
         }
-        if (configFile != null) {
+        if(configFile != null) {
           cmd_line = cmd_line.trim() + " -X " + configFile;
         }
-        if (destDir != null) {
+        if(destDir != null) {
           cmd_line = cmd_line.trim() + " -d " + destDir;
         }
-        if (outputFile != null) {
+        if(outputFile != null) {
           cmd_line = cmd_line.trim() + " -o " + outputFile;
         }
-				if (optimize == true) {
+				if(optimize == true) {
           cmd_line = cmd_line.trim() + " --optimize";
 				}
-				if (visitable == true) {
+				if(visitable == true) {
           cmd_line = cmd_line.trim() + " --visitable";
 				}
-				if (nowarn == true) {
+				if(stamp == true) {
+          cmd_line = cmd_line.trim() + " --stamp";
+				}
+				if(nowarn == true) {
           cmd_line = cmd_line.trim() + " --noWarning";
 				}
         cmd_line = cmd_line.trim() + " -I " + file.getParent();
         cmd_line = cmd_line.trim() + " " + filename;
 
         String[] cmd = split(cmd_line);
-          //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
+        //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
         int err = -1;
         err = Tom.exec(cmd);
-        if (err != 0) {
-          if (failOnError) {
+        if(err != 0) {
+          if(failOnError) {
             throw new BuildException("Tom returned: " + err, getLocation());
           } else {
             log("Tom Result: " + err, Project.MSG_ERR);
           }
-          }
+        }
       }
     }
   }

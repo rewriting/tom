@@ -46,7 +46,8 @@ import aterm.pure.*;
  *
  */
 public class TomEnvironment {
-
+  
+  /** */
   private SymbolTable symbolTable;
 
   /** List of import paths. */
@@ -55,10 +56,8 @@ public class TomEnvironment {
   /** Absolute path where file are generated. */ 
   private File destDir;
 
-  /** Absolute name of the input file (with extension). */
+  /** Absolute name of the input/output file (with extension). */
   private File inputFile;
-
-  /** Absolute name of the output file (with extension). */
   private File outputFile;
 
   /** Absolute name of the output file (given in command line). */
@@ -70,127 +69,123 @@ public class TomEnvironment {
   /** Eclipse mode for error management. */
   private boolean eclipseMode;
 
+  /* in/out suffixes */
   private String inputSuffix;
   private String outputSuffix;
 
+  /** */
   private Collection importsToDiscard;
-
-  /** */
-  private ASTFactory astFactory;
-
-  /** */
-  private TomSignatureFactory tomSignatureFactory;
-
-    /**
-     * 
-     */
-  private PlatformOptionFactory platformOptionFactory;
-
-  /**
-   * An accessor method.
-   * 
-   * @return an ASTFactory
-   */
-  public ASTFactory getASTFactory() { return astFactory; }
-    
-  /**
-   * An accessor method.
-   * 
-   * @return a TomSignatureFactory
-   */
-  public TomSignatureFactory getTomSignatureFactory() { return tomSignatureFactory; }
-
-  /**
-   * An accessor method.
-   * 
-   * @return an PlatformOptionFactory
-   */
-  public PlatformOptionFactory getPlatformOptionFactory() { return platformOptionFactory; }
 
   /**
    * Part of the Singleton pattern. The unique instance of the PluginPlatform.
    */
-  private static TomEnvironment instance = null;
-    
+  private static TomEnvironment instance;
+  
   /**
    * Part of the Singleton pattern. A protected constructor method, that exists to defeat instantiation.
    */
-  private TomEnvironment(){}
+  private TomEnvironment(){
+    symbolTable = new SymbolTable(TomBase.getAstFactory());
     
-  /**
-   * Part of the Singleton pattern. Returns the instance of the PluginPlatform if it has been initialized before,
-   * otherwise it throws a TomRuntimeException.
-   * 
-   * @return the instance of the PluginPlatform
-   * @throws TomRuntimeException if the PluginPlatform hasn't been initialized before the call
-   */
-  public static TomEnvironment getInstance() {
-    if(instance == null) {
-      throw new TomRuntimeException(TomMessage.getString("GetInitializedPluginPlatformInstance"));
-    }
-    return instance;
+    inputSuffix = ".t";
+    outputSuffix = ".java";
+    userOutputFile = null;
+    eclipseMode = false;
+    
+    importsToDiscard = new HashSet();
+    importsToDiscard.add("string.tom");
+    importsToDiscard.add("int.tom");
+    importsToDiscard.add("double.tom");
+    importsToDiscard.add("aterm.tom");
+    importsToDiscard.add("atermlist.tom");
   }
-
+  
   /**
-   * Part of the Singleton pattern. Initializes the TomEnvironment in case it hasn't been done before,
-   * otherwise it reinitializes it.
+   * Part of the Singleton pattern. Returns the instance of the PluginPlatform
+   * if it has been initialized before,
    * 
    * @return the instance of the TomEnvironment
    */
-  public static TomEnvironment create() {
-    if(instance == null) {
+  public static TomEnvironment getInstance() {
+    if(instance ==null) {
       instance = new TomEnvironment();
-
-      instance.tomSignatureFactory = TomSignatureFactory.getInstance(SingletonFactory.getInstance());
-      instance.astFactory = new ASTFactory(instance.tomSignatureFactory);
-      instance.platformOptionFactory = PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
-		
-      instance.symbolTable = new SymbolTable(instance.astFactory);
-
-      instance.inputSuffix = ".t";
-      instance.outputSuffix = ".java";
-      instance.userOutputFile = null;
-      instance.eclipseMode = false;
-
-      instance.importsToDiscard = new HashSet();
-      instance.importsToDiscard.add("string.tom");
-      instance.importsToDiscard.add("int.tom");
-      instance.importsToDiscard.add("double.tom");
-      instance.importsToDiscard.add("aterm.tom");
-      instance.importsToDiscard.add("atermlist.tom");
-  
-      return instance;
-    } else {
-      TomEnvironment.clear();
-      return instance;
     }
+    return instance;
   }
-
+  
   /**
    * Reinitializes the TomEnvironment instance.
    */
-  public static void clear() {
-    instance.symbolTable.init();
-    instance.destDir = null;
-    instance.inputFile = null;
-    instance.outputFile = null;
-    instance.userOutputFile = null;
-    instance.packagePath = null;
-    instance.eclipseMode = false;
-    instance.inputSuffix = ".t";
-    instance.outputSuffix = ".java";
+  public void clear() {
+    //instance.symbolTable.init();
+    destDir = null;
+    inputFile = null;
+    outputFile = null;
+    userOutputFile = null;
+    packagePath = null;
+    eclipseMode = false;
+    inputSuffix = ".t";
+    outputSuffix = ".java";
   }
 
-  public void updateEnvironment(String localInputFileName) { // updateInputOutputFiles + init
-    symbolTable.init();
-	
+  public void initializeFromOptionManager(OptionManager optionManager) {
+    List localUserImportList = new ArrayList();
+    String localDestDir = null;
+    
+    clear();
+    symbolTable.init(optionManager);
+    // computes the input and output suffixes
+    // well, it would be better in the future if we let the generator append the output suffix itself
+    // so that's only temporary
+    
+    if ( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
+      inputSuffix = ".t";
+      outputSuffix = ".java";
+    } else if ( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
+      inputSuffix = ".t";
+      outputSuffix = ".tom.c";
+    } else if ( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) {
+      inputSuffix = ".t";
+      outputSuffix = ".tom.ml";
+    } else if ( ((Boolean)optionManager.getOptionValue("eCode")).booleanValue() ) {
+      inputSuffix = ".t";
+      outputSuffix = ".e";
+    } else { // we should never ever be here normally...
+      inputSuffix = ".t";
+      outputSuffix = ".java";
+    }
+    
+    // fills the local user import list
+    String imports = (String)optionManager.getOptionValue("import");
+    StringTokenizer st = new StringTokenizer(imports, ":"); // paths are separated by ':'
+    while( st.hasMoreTokens() ) {
+      String next = st.nextToken();
+      localUserImportList.add(new File(next).getAbsoluteFile());
+    }
+    // Setting importList
+    setUserImportList(localUserImportList);
+
+    // for Eclipse...
+      setEclipseMode(((Boolean)optionManager.getOptionValue("eclipse")).booleanValue());
+
+    // computes destdir
+    localDestDir = (String)optionManager.getOptionValue("destdir");
+    setDestDir(localDestDir);
+
+    String commandLineUserOutputFile = (String)optionManager.getOptionValue("output");
+    if(commandLineUserOutputFile.length() > 0) {
+      setUserOutputFile(commandLineUserOutputFile);
+    }
+  }
+  
+  public void prepareForInputFile(String localInputFileName) { // updateInputOutputFiles + init
     // compute inputFile:
     //  - add a suffix if necessary
     if(!localInputFileName.endsWith(getInputSuffix())) {
       localInputFileName += getInputSuffix();
     }
     setInputFile(localInputFileName);
-    	
+    
     // compute outputFile:
     //  - either use the given UserOutputFileName
     //  - either concatenate
@@ -205,71 +200,17 @@ public class TomEnvironment {
       setOutputFile(out.getPath());
     }
   }
-
-  public void initInputFromArgs() { // must find a more appropriate name
-    List localUserImportList = new ArrayList();
-    String localDestDir = null;
-
-    // computes the input and output suffixes
-    // well, it would be better in the future if we let the generator append the output suffix itself
-    // so that's only temporary
-    if ( getPluginPlatform().getOptionBooleanValue("jCode") ) {
-      inputSuffix = ".t";
-      outputSuffix = ".java";
-    } else if ( getPluginPlatform().getOptionBooleanValue("cCode") ) {
-      inputSuffix = ".t";
-      outputSuffix = ".tom.c";
-    } else if ( getPluginPlatform().getOptionBooleanValue("camlCode") ) {
-      inputSuffix = ".t";
-      outputSuffix = ".tom.ml";
-    } else if ( getPluginPlatform().getOptionBooleanValue("eCode") ) {
-      inputSuffix = ".t";
-      outputSuffix = ".e";
-    } else { // we should never ever be here normally...
-      inputSuffix = ".t";
-      outputSuffix = ".java";
-    }
-
-    // fills the local user import list
-    String imports = getPluginPlatform().getOptionStringValue("import");
-    StringTokenizer st = new StringTokenizer(imports, ":"); // paths are separated by ':'
-    while( st.hasMoreTokens() ) {
-      String next = st.nextToken();
-      localUserImportList.add(new File(next).getAbsoluteFile());
-    }
-    // Setting importList
-    setUserImportList(localUserImportList);
-
-    // for Eclipse...
-    if ( getPluginPlatform().getOptionBooleanValue("eclipse") )
-      setEclipseMode(true);
-
-    // computes destdir
-    localDestDir = getPluginPlatform().getOptionStringValue("destdir");
-    setDestDir(localDestDir);
-
-    String commandLineUserOutputFile = getPluginPlatform().getOptionStringValue("output");
-    if ( commandLineUserOutputFile.length() > 0 ) {
-      setUserOutputFile( commandLineUserOutputFile );
-    }
-  }
-
-  public SymbolTable getSymbolTable() {
-    return symbolTable;
-  }
-
-  public PluginPlatform getPluginPlatform() {
-    return PluginPlatform.getInstance();
-  }
-
-  public String getOutputSuffix() {
-    //System.out.println("getOutputSuffix() : " +outputSuffix);
-    return outputSuffix;
-  }
   
-  public void setOutputSuffix(String string) {
-    outputSuffix = string;
-  }
+  /**
+   * An accessor method.
+   * 
+   * @return the symbolTable
+   */
+  public SymbolTable getSymbolTable() { return symbolTable; }
+
+  public String getOutputSuffix() { return outputSuffix; }
+  
+  public void setOutputSuffix(String string) { outputSuffix = string; }
 
   public boolean isEclipseMode() {
     return eclipseMode;
@@ -300,15 +241,13 @@ public class TomEnvironment {
       importList.add(it.next());
     }
     try {
-      
       importList.add(new File(getDestDir(),getPackagePath()).getCanonicalFile());
-      
       importList.add(getInputFile().getParentFile().getCanonicalFile());
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
-	File file = new File(new File(tom_home,"jtom"),"share");
-	importList.add(file.getCanonicalFile());
-	//System.out.println(" extend import list with: " + file.getPath());
+        File file = new File(new File(tom_home,"jtom"),"share");
+        importList.add(file.getCanonicalFile());
+        //System.out.println(" extend import list with: " + file.getPath());
       }
       //System.out.println("importList = " + importList);
     } catch (IOException e) {
@@ -317,7 +256,7 @@ public class TomEnvironment {
     }
     return importList;
   }
- 
+  
   public String getInputSuffix() {
     //System.out.println("getInputSuffix : " +inputSuffix);
     return inputSuffix;

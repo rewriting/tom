@@ -44,6 +44,7 @@ public class SymbolTable {
   private final static String TYPE_STRING    = "String";
   private final static String TYPE_BOOL      = "bool";
   private final static String TYPE_UNIVERSAL = "universal";
+  private final static String TYPE_VOID      = "void";
 
   private Map mapSymbolName = null;
   private Map mapTypeName = null;
@@ -52,11 +53,11 @@ public class SymbolTable {
     this.astFactory = astFactory;
   }
 
-  public void init() {
+  public void init(OptionManager optionManager) {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
 
-    if( getPluginPlatform().getOptionBooleanValue("cCode") ) {
+    if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"int"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
@@ -64,7 +65,8 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"));
-    } else if( getPluginPlatform().getOptionBooleanValue("jCode") ) {
+      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
+    } else if( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"boolean"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
@@ -72,7 +74,8 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"));
-    } else if( getPluginPlatform().getOptionBooleanValue("eCode") ) {
+      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
+    } else if( ((Boolean)optionManager.getOptionValue("eCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"CHARACTER"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"BOOLEAN"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"INTEGER"));
@@ -80,7 +83,8 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"DOUBLE"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"STRING"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"ANY"));
-    } else if( getPluginPlatform().getOptionBooleanValue("camlCode") ) { // this is really bad, will need to be improved
+      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
+    } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) { // this is really bad, will need to be improved
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"bool"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
@@ -88,11 +92,8 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"None"));
+      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"unit"));
     }
-  }
-
-  private PluginPlatform getPluginPlatform() {
-    return PluginPlatform.getInstance();
   }
 
   public void regenerateFromTerm(TomSymbolTable symbTable) {
@@ -169,6 +170,10 @@ public class SymbolTable {
     return getType(TYPE_UNIVERSAL);
   }
 
+  public TomType getVoidType() {
+    return getType(TYPE_VOID);
+  }
+
   public boolean isIntType(String type) {
     return type.equals(TYPE_INT);
   }
@@ -191,6 +196,10 @@ public class SymbolTable {
 
   public boolean isDoubleType(String type) {
     return type.equals(TYPE_DOUBLE);
+  }
+
+  public boolean isVoidType(String type) {
+    return type.equals(TYPE_VOID);
   }
 
   public boolean isBuiltinType(String type) {
@@ -243,4 +252,4 @@ public class SymbolTable {
     return tsf().makeTomSymbolTable_Table(list);
   }
 
-}
+} // class SymbolTable

@@ -9,6 +9,9 @@
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
+check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(jtom.adt.tomsignature.types.TomName)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
 }
 
 %op TomName Name(string:String) {
@@ -37,6 +40,9 @@
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
+check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(jtom.adt.tomsignature.types.TomNumber)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
 }
 
 %op TomNumber MatchNumber(number:TomNumber) {
@@ -116,6 +122,9 @@
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
+check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(jtom.adt.tomsignature.types.TomNumberList)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
 }
 
 %oplist TomNumberList concTomNumber(TomNumber*) {

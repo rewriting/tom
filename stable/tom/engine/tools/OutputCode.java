@@ -27,26 +27,26 @@ package jtom.tools;
 
 import java.io.*;
 import tom.platform.*;
+import jtom.*;
 
 public class OutputCode {
   protected Writer file;
-  private int lineCounter = 1;
   private int defaultDeep;
+  private OptionManager optionManager;
+
+  private int lineCounter = 1;
   private int singleLine = 0;
   
-  public OutputCode(Writer file, int defaultDeep) {
+  public OutputCode(Writer file, int defaultDeep, OptionManager optionManager) {
     this.file = file;
     this.defaultDeep = defaultDeep;
-  }
-
-  private PluginPlatform getPluginPlatform() {
-    return PluginPlatform.getInstance();
+    this.optionManager = optionManager;
   }
 
   public OutputCode() {
     this.file = new StringWriter();
   }
-  
+
   public void setSingleLine() {
     this.singleLine++;
   }
@@ -97,7 +97,7 @@ public class OutputCode {
   }
   
   public void writeln() throws IOException {
-    if(((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue()) {
+    if(((Boolean)optionManager.getOptionValue("pretty")).booleanValue()) {
       file.write('\n');
     }
   }
@@ -113,16 +113,16 @@ public class OutputCode {
   }
   
   public void write(String s, int line, int length) throws IOException {
-    if(singleLine>0 && !((Boolean)getPluginPlatform().getOptionValue("cCode")).booleanValue()) {
+    if(singleLine>0 && !((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
       s = s.replace('\n', ' ');
       s = s.replace('\r', ' ');
       s = s.replace('\t', ' ');
       write(s);
       return;
     }
-    if (!((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue()) {
+    if (!((Boolean)optionManager.getOptionValue("pretty")).booleanValue()) {
       if(lineCounter > line) {
-        if(((Boolean)getPluginPlatform().getOptionValue("cCode")).booleanValue()) {
+        if(((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
           String s1 = "\n#line "+line+"\n";
             // writeln(deep,s);
           s = s1+s;
@@ -171,7 +171,7 @@ public class OutputCode {
   
   public void indent(int deep) {
     try {
-      if(((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue()) {
+      if(((Boolean)optionManager.getOptionValue("pretty")).booleanValue()) {
         for(int i=0 ; i<deep ; i++) {
           file.write(' ');
           file.write(' ');

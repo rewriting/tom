@@ -9,6 +9,9 @@
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
+check_stamp(t) {if(t.getAnnotation(getSetFactory().getPureFactory().makeList()) == getSetFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(tom.library.adt.set.types.JGTreeSet)t.setAnnotation(getSetFactory().getPureFactory().makeList(),getSetFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
 }
 
 %op JGTreeSet emptySet {

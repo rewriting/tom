@@ -13,6 +13,7 @@
   <property name="nowarnings" value="false"/>
   <property name="optimize" value="off"/>
   <property name="visitable" value="off"/>
+  <property name="stamp" value="off"/>
 
   <property environment="env" />
   <property name="tom.home" value="${env.TOM_HOME}"/>
@@ -820,6 +821,7 @@
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
+				 stamp="off"
          options="-I ${tom.home}/share/jtom">
       <include name="${vas}/**/*.t"/>
     </tom>

@@ -8,6 +8,10 @@
   constructor(Declaration,TypeArrayDecl,TypeArrayDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),
   constructor(Declaration,GetFunctionSymbolDecl,GetFunctionSymbolDecl(<termArg(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
   constructor(Declaration,GetSubtermDecl,GetSubtermDecl(<termArg(TomTerm)>,<variable(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,CheckStampDecl,CheckStampDecl(<variable(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,SetStampDecl,SetStampDecl(<variable(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,GetImplementationDecl,GetImplementationDecl(<variable(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+
   constructor(Declaration,IsFsymDecl,IsFsymDecl(<astName(TomName)>,<variable(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
   constructor(Declaration,GetSlotDecl,GetSlotDecl(<astName(TomName)>,<slotName(TomName)>,<variable(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
   constructor(Declaration,CompareFunctionSymbolDecl,CompareFunctionSymbolDecl(<symbolArg1(TomTerm)>,<symbolArg2(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),

@@ -29,6 +29,7 @@
   constructor(Instruction,EndLocalVariable,EndLocalVariable),
   constructor(Instruction,MakeFunctionBegin,MakeFunctionBegin(<astName(TomName)>,<subjectListAST(TomTerm)>)),
   constructor(Instruction,MakeFunctionEnd,MakeFunctionEnd),
+  constructor(Instruction,CheckStamp,CheckStamp(<variable(TomTerm)>)),
   list(InstructionList,Instruction)
   ])
 ]

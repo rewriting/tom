@@ -44,6 +44,7 @@ public class SymbolTable {
   private final static String TYPE_STRING    = "String";
   private final static String TYPE_BOOL      = "bool";
   private final static String TYPE_UNIVERSAL = "universal";
+  private final static String TYPE_VOID      = "void";
 
   private Map mapSymbolName = null;
   private Map mapTypeName = null;
@@ -64,6 +65,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"));
+      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
     } else if( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"boolean"));
@@ -72,6 +74,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"));
+      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
     } else if( ((Boolean)optionManager.getOptionValue("eCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"CHARACTER"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"BOOLEAN"));
@@ -80,6 +83,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"DOUBLE"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"STRING"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"ANY"));
+      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
     } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) { // this is really bad, will need to be improved
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"bool"));
@@ -88,6 +92,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"None"));
+      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"unit"));
     }
   }
 
@@ -165,6 +170,10 @@ public class SymbolTable {
     return getType(TYPE_UNIVERSAL);
   }
 
+  public TomType getVoidType() {
+    return getType(TYPE_VOID);
+  }
+
   public boolean isIntType(String type) {
     return type.equals(TYPE_INT);
   }
@@ -187,6 +196,10 @@ public class SymbolTable {
 
   public boolean isDoubleType(String type) {
     return type.equals(TYPE_DOUBLE);
+  }
+
+  public boolean isVoidType(String type) {
+    return type.equals(TYPE_VOID);
   }
 
   public boolean isBuiltinType(String type) {

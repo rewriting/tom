@@ -1440,6 +1440,13 @@ typeTerm returns [Declaration result] throws TomException
             |   attribute = keywordEquals[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
+            |   attribute = keywordCheckStamp[type.getText()]
+                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+            |   attribute = keywordSetStamp[type.getText()]
+                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+            |   attribute = keywordGetImplementation[type.getText()]
+                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+
             )*
             t:RBRACE
         )
@@ -1490,6 +1497,13 @@ typeList returns [Declaration result] throws TomException
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordIsEmpty[type.getText()]
+                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordCheckStamp[type.getText()]
+                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+            |   attribute = keywordSetStamp[type.getText()]
+                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+            |   attribute = keywordGetImplementation[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             )*
@@ -1544,6 +1558,13 @@ typeArray returns [Declaration result] throws TomException
             |   attribute = keywordGetSize[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
             
+            |   attribute = keywordCheckStamp[type.getText()]
+                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+            |   attribute = keywordSetStamp[type.getText()]
+                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+            |   attribute = keywordGetImplementation[type.getText()]
+                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+
             )*
             t:RBRACE
         )
@@ -1852,6 +1873,73 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
         }
     ;
 
+keywordCheckStamp [String typeString] returns [Declaration result] throws TomException
+{
+    result = null;
+    Option ot = null;
+}
+    :
+        t:CHECK_STAMP
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+        LPAREN name:ALL_ID RPAREN
+        {
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            OptionList option = `concOption(info);
+
+            selector().push("targetlexer");
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            selector().pop();
+
+            result = `CheckStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
+                tlCode,ot);
+        }
+    ;
+
+keywordSetStamp [String typeString] returns [Declaration result] throws TomException
+{
+    result = null;
+    Option ot = null;
+}
+    :
+        t:SET_STAMP
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+        LPAREN name:ALL_ID RPAREN
+        {
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            OptionList option = `concOption(info);
+
+            selector().push("targetlexer");
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            selector().pop();
+
+            result = `SetStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
+                tlCode,ot);
+        }
+    ;
+
+keywordGetImplementation [String typeString] returns [Declaration result] throws TomException
+{
+    result = null;
+    Option ot = null;
+}
+    :
+        t:GET_IMPLEMENTATION
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+        LPAREN name:ALL_ID RPAREN
+        {
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            OptionList option = `concOption(info);
+
+            selector().push("targetlexer");
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            selector().pop();
+
+            result = `GetImplementationDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
+                tlCode,ot);
+        }
+    ;
+
+
 keywordGetSlot [TomName astName, String type] returns [Declaration result] throws TomException
 {
     result = null;
@@ -2059,6 +2147,9 @@ tokens {
     MAKE = "make";
     GET_SLOT = "get_slot";
     IS_FSYM = "is_fsym";
+    CHECK_STAMP = "check_stamp";
+    SET_STAMP = "set_stamp";
+    GET_IMPLEMENTATION = "get_implementation";
     GET_FUN_SYM = "get_fun_sym";
     GET_SUBTERM = "get_subterm";
     CMP_FUN_SYM = "cmp_fun_sym";
@@ -2067,6 +2158,7 @@ tokens {
     GET_TAIL = "get_tail";
     IS_EMPTY = "is_empty";
     IMPLEMENT = "implement";
+    STAMP = "stamp";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
 }

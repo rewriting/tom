@@ -317,21 +317,24 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
                                          args, tlCode));
   }
 
-
   protected TargetLanguage genDeclMake(String opname, TomType returnType, 
                                        TomList argList, TargetLanguage tlCode) {
     String s = "";
+    String check = "";
     if( nodeclMode) {
       return `ITL("");
     }
-      
+
     s = modifier + getTLType(returnType) + " tom_make_" + opname + "(";
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {
         %match(TomTerm arg) {
-          Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]] -> {
+          Variable[astName=Name(name), astType=Type[tomType=tomType,tlType=tlType@TLType[]]] -> {
             s += getTLCode(`tlType) + " " + `name;
+            if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
+              check += "tom_check_stamp_" + getTomType(tomType) + "(" + name + ");\n";
+            }
             break matchBlock;
           }
             
@@ -347,12 +350,18 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       }
     }
     s += ") { ";
+    s += check;
+
+    String returnValue = tlCode.getCode();
+    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
+      returnValue = "tom_set_stamp_" + getTomType(returnType) + "(" + returnValue + ")";
+    }
     if (debugMode) {
-      s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
+      s += "\n"+getTLType(returnType)+ " debugVar = " + returnValue +";\n";
       s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
       s += "return  debugVar;\n}";
     } else {
-      s += "return " + tlCode.getCode() + "; }";
+      s += "return " + returnValue + "; }";
     }
     return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
@@ -481,7 +490,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
         s+= ", ";
       }
     } 
-    s += ") { return " + tlCode.getCode() + "; }";
+    String returnValue = symbolTable().isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
+    s += ") { " + returnValue + "; }";
     if(tlCode.isTL()) {
       return `TL(s, tlCode.getStart(), tlCode.getEnd());
     } else {

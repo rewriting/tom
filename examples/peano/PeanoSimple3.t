@@ -35,8 +35,14 @@ import aterm.pure.*;
 
 public class PeanoSimple3 {
   ATermFactory factory;
+  ATerm stamp = null;
+  ATerm tomstamp = null;
   public PeanoSimple3(ATermFactory factory) {
     this.factory = factory;
+    //this.stamp = factory.makeAppl(factory.makeAFun("stamp",0,false));
+    //this.tomstamp = factory.makeAppl(factory.makeAFun("tomstamp",0,false));
+    this.stamp = factory.makeList();
+    this.tomstamp = factory.makeList();
   }
 
   %typeterm term {
@@ -44,6 +50,9 @@ public class PeanoSimple3 {
     get_fun_sym(t)      { t.getAFun() }
     cmp_fun_sym(t1,t2)  { t1 == t2 }
     get_subterm(t, n)   { t.getArgument(n) }
+    check_stamp(t)      { if(t.getAnnotation(stamp) == tomstamp) return; else throw new RuntimeException("truand") }
+    set_stamp(t)        { (ATermAppl)t.setAnnotation(stamp,tomstamp)  }
+    get_implementation(t) { t }
   }
 
   %op term zero {
@@ -65,6 +74,7 @@ public class PeanoSimple3 {
   }
 
   public void run(int n) {
+    //ATermAppl N = factory.makeAppl(factory.makeAFun("zero",0,false));
     ATermAppl N = `zero();
     for(int i=0 ; i<n ; i++) {
       N = `suc(N);

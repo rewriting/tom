@@ -213,6 +213,7 @@
 			<include name="tom/platform/**/*.t"/> 
 			<include name="jtom/*.t"/> 
 			<include name="**/Verifier.t"/>
+			<exclude name="**/OptionParser.t"/>
 		</tom>
 
 		<tom config="${stable.configfile}"
@@ -858,6 +859,13 @@
 		<!-- build tom -->
 
 		<tomsrc config="${src.configfile}"
+				 srcdir="${src.src}" 
+				 destdir="${destination}/gen" 
+				 options="--static -I ${src.mapping}">
+			<include name="**/OptionParser.t"/>
+		</tomsrc>
+
+		<tomsrc config="${src.configfile}"
 						srcdir="${src.src}" 
 						destdir="${destination}/gen" 
 						options="-I ${src.mapping}">
@@ -865,8 +873,8 @@
 			<include name="tom/platform/**/*.t"/> 
 			<include name="jtom/*.t"/> 
 			<include name="**/Verifier.t"/>
+			<exclude name="**/OptionParser.t"/>
 		</tomsrc>
-
 
 		<tomsrc config="${src.configfile}"
 						srcdir="${src.src}" 
@@ -898,8 +906,6 @@
 						options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
 			<include name="**/BackQuoteLanguage.g.t"/>  
 		</tomsrc>
-
-
 
 		<!-- builds parser -->
 		<mkdir dir="${destination}/gen/jtom/parser"/>
@@ -936,15 +942,16 @@
 	</target>
 
 	<target name="bootinstall" 
-					description="Install src tree into stable tree" 
-					depends="bootcheck"
-					if="${bootstrap.ok}">
+					description="Install src tree into stable tree"> 
+					<!--depends="bootstrap"-->
+					<!--	if="${bootstrap.ok}"-->
 		<copy todir="${stable.src}" overwrite="true">
 			<fileset dir="${src.src}">
 				<include name="**/*.java"/>
 				<include name="**/*.properties"/>
 				<exclude name="**/adt/**/*.java"/>
 				<exclude name="**/bootstrap/**/*"/>
+				<exclude name="**/mutraveler/**/*.java"/>
 				<exclude name="**/gen/**/*"/>
 			</fileset>
 			<fileset dir="${src.gen}">
@@ -955,10 +962,14 @@
 		<copy todir="${stable.mapping}" overwrite="true">
 			<fileset dir="${src.mapping}" includes="**/*.tom"/>
 		</copy>
+		<copy todir="${stable.src}/jjtraveler" overwrite="true">
+			<fileset dir="${src.src}/tom/library/strategy/mutraveler" includes="**/*.java"/>
+		</copy>
 
 		<mkdir dir="${stable.src}/jtom/adt"/>
 		<mkdir dir="${stable.src}/tom/library/adt"/>
 		<mkdir dir="${stable.src}/tom/platform/adt"/>
+
 
 		<jar jarfile="${stable.src}/jtom/adt/TomSignature.jar">
 			<fileset dir="${src.build}" includes="jtom/adt/tomsignature/**/*.class"/>

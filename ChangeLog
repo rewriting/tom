@@ -1,3 +1,8 @@
+2004-09-16  pem  <pem@becky.local>
+
+  * bootinstall
+  * src/jtom/tools/ant/TomTask.java: added --cadt option
+
 2004-09-06  pem  <pem@polly.loria.fr>
 
   * introduced mutraveler library 

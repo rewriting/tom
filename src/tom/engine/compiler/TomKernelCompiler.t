@@ -134,6 +134,7 @@ public class TomKernelCompiler extends TomBase {
     /*
      * collect match variables (from match(t1,...,tn))
      * create a list of declaration/assignement: v1=t1 ... vn=tn in body
+     * generate a check_stamp
      */
   private Instruction collectVariableFromSubjectList(TomList subjectList, int index, TomNumberList path, Instruction body) {
     %match(TomList subjectList) { 
@@ -141,16 +142,21 @@ public class TomKernelCompiler extends TomBase {
       manyTomList(subjectVar@Variable[option=option,astType=variableType],tail) -> {
         body = collectVariableFromSubjectList(`tail,index+1,path,body);
         TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType,concConstraint());
+        Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
+        Instruction checkStamp = `CheckStamp(variable);
           // the UnamedBlock encapsulation is needed for Caml
-        return `Let(variable,Cast(variableType,TomTermToExpression(subjectVar)),UnamedBlock(concInstruction(body)));
+        return `Let(variable,source,UnamedBlock(concInstruction(checkStamp,body)));
       }
 
       manyTomList(subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_),tail) -> {
         body = collectVariableFromSubjectList(`tail,index+1,path,body);
+
         TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         TomType tomType = getSymbolCodomain(tomSymbol);
         TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType, concConstraint());
-        return `Let(variable,TomTermToExpression(subjectVar),body);
+        Expression source = `TomTermToExpression(subjectVar);
+        Instruction checkStamp = `CheckStamp(variable);
+        return `Let(variable,source,UnamedBlock(concInstruction(checkStamp,body)));
       }
 
       manyTomList(subjectVar,_) -> {
@@ -191,7 +197,7 @@ public class TomKernelCompiler extends TomBase {
      */
   
     /*
-     * given a pattern, this function generatesthe discrimitation test on the root symbol
+     * given a pattern, this function generates the discrimitation test on the root symbol
      * and recursively calls the algorithm on subterms
      */
   Instruction genSyntacticMatchingAutomata(Instruction action,
