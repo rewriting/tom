@@ -526,29 +526,57 @@ public class TomCompiler extends TomGenericPlugin {
     HashSet constraintVariable = new HashSet();
     collectVariable(patternVariable,subjectList);
     collectVariable(constraintVariable,constraint);
-    patternVariable.retainAll(constraintVariable);
+    //patternVariable.retainAll(constraintVariable);
+
+    TomList variableList = intersection(getAstFactory().makeList(patternVariable),getAstFactory().makeList(constraintVariable));
+    //System.out.println("variableList = " + variableList);
+
     //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);
-    TomList newSubjectList = (TomList) replace_attachConstraint.apply(subjectList,patternVariable,constraint); 
+    TomList newSubjectList = (TomList) replace_attachConstraint.apply(subjectList,variableList,constraint); 
 
     //System.out.println("newSubjectList = " + newSubjectList);
 
     return newSubjectList;
   }
 
+  private TomList intersection(TomList patternVariable, TomList constraintVariable) {
+    %match(TomList patternVariable, TomList constraintVariable) {
+      concTomTerm(PV1*,var@Variable[astName=name],PV2*), concTomTerm(CV1*,Variable[astName=name],CV2*) -> {
+        TomList inter = `intersection(concTomTerm(PV1*,PV2*), concTomTerm(CV1*,CV2*));
+        return `concTomTerm(var,inter*);
+      }
+      concTomTerm(PV1*,var@VariableStar[astName=name],PV2*), concTomTerm(CV1*,VariableStar[astName=name],CV2*) -> {
+        TomList inter = `intersection(concTomTerm(PV1*,PV2*), concTomTerm(CV1*,CV2*));
+        return `concTomTerm(var,inter*);
+      }
+    }
+    return `concTomTerm();
+  }
+
+  private TomList remove(TomList list, TomTerm element) {
+    %match(TomList list, TomTerm element) {
+      concTomTerm(C1*,x,C2*), x -> {
+        return `concTomTerm(C1*,C2*);
+      }
+    }
+    return list;
+  }
+
+
   protected Replace3 replace_attachConstraint = new Replace3() { 
       public ATerm apply(ATerm subject, Object arg1, Object arg2) {
-        Set variableSet = (Set) arg1;
+        TomList variableList = (TomList) arg1;
         TomTerm constraint = (TomTerm) arg2;
 
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) {
             var@(Variable|VariableStar)[constraints=constraintList] -> {
               //System.out.println("var = " + var);
-              //System.out.println("set1 = " + variableSet);
-              variableSet.remove(`var);
-              //System.out.println("set2 = " + variableSet);
+              //System.out.println("set1 = " + variableList);
+              variableList = `remove(variableList,var);
+              //System.out.println("set2 = " + variableList);
 
-              if(variableSet.isEmpty()) {
+              if(variableList.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
                 return var.setConstraints(newConstraintList);
               }
@@ -556,7 +584,7 @@ public class TomCompiler extends TomGenericPlugin {
             }
 
             appl@Appl[constraints=constraintList] -> {
-              if(variableSet.isEmpty()) {
+              if(variableList.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
                 return appl.setConstraints(newConstraintList);
               }
@@ -565,7 +593,7 @@ public class TomCompiler extends TomGenericPlugin {
           }
         }
 
-        return traversal().genericTraversal(subject,this,variableSet,constraint);
+        return traversal().genericTraversal(subject,this,variableList,constraint);
       } // end apply
     }; // end new
 

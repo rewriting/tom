@@ -132,7 +132,7 @@ public class TomTypeChecker extends TomChecker {
   /**
    * The notion of conditional rewrite rule can be generalised with a sequence of conditions
    * as in lhs -> rhs where P1:=C1 ... where Pn:=Cn if Qj==Dj 
-   * (i) Var(Pi) inter (var(lhs) U var(P1) U ... U var(Pi-1)) = vide
+   * (i) Var(Pi) inter (var(lhs) U var(P1) U ... U var(Pi-1)) = empty
    * => introduced variables in Pi are "fresh"
    * (ii) var(ci) included in (var(lhs) U var(P1) U ... U var(Pi-1))
    * no new fresh variables in Ci

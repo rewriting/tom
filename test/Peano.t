@@ -139,8 +139,8 @@ public class Peano {
   }
   
   %rule {
-    fib1(zero())        -> suc(zero())
-    fib1(suc(zero()))   -> suc(zero())
+    fib1(zero())      -> suc(zero())
+    fib1(suc(zero())) -> suc(zero())
     fib1(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
   }
   
