@@ -47,5 +47,17 @@
   fsym { factory.makeAFun("conc", 1, false) }
   make_empty(n)  { factory.makeList() }
   make_append(e,l) { ((ATermList)l).insert((ATerm)e) }
-  make_append(e,l) { ((ATermList)l).insert((ATerm)e) } // Repeated macro-function make_append
+  make_append(e,l) { ((ATermList)l).insert((ATerm)e) } // Repeated macro-function make_append (line 50)
+}
+
+%oparray type1 concArray7( type2* ) {
+  fsym { factory.makeAFun("conc", 1, false) }
+  make_empty(n)  { factory.makeList() }
+  make_append(e,f) { ((ATermList)l).insert((ATerm)e) }
+}
+
+%oparray type1 concArray7( type2* ) { //  Multiple definition of Symbol `concArray7` (line 59)
+  fsym { factory.makeAFun("conc", 1, false) }
+  make_empty(n)  { factory.makeList() }
+  make_append(e,f) { ((ATermList)l).insert((ATerm)e) }
 }

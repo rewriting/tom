@@ -48,3 +48,15 @@
   make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
   make_empty()  { factory.makeList() } // Repeated macro-function make_empty (line49)
 }
+
+%oplist type1 concList7( type2* ) {
+  fsym { factory.makeAFun("conc", 1, false) }
+  make_empty()  { factory.makeList() }
+  make_insert(e,f) { ((ATermList)l).insert((ATerm)e) }
+}
+
+%oplist type1 concList7( type2* ) {  //  Multiple definition of Symbol `concList7` (line 58)
+  fsym { factory.makeAFun("conc", 1, false) }
+  make_empty()  { factory.makeList() }
+  make_insert(e,f) { ((ATermList)l).insert((ATerm)e) }
+}

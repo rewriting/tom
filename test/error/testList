@@ -105,50 +105,47 @@ Operator defined before type8 declaration is OK
      JOperator3.t
 	line 10: Repeated slot `s0` in symbol declaration
 	Tom Parser:  Encountered 1 errors and 0 warnings.
-}
 
 ////////////////////
 OPARRAY DECLARATION
 ////////////////////
-Grammar {
+Grammar:
 	%oparray typeName opName(typeName*) {
 		fsym                  { ... }
 		make_empty(var)       { ... }
 		make_append(var, var) { ... }
 	}
-}
-
-Test {
-     JOpArrayRef.t
+Test:
      JOpArray1.t
-	Operator 'concArray' has an unknown return type
-	Slot position 1 of operator 'concArray' has an unknown type
-	Missing functions : [make_empty]
-	Missing functions : [make_append]
-	Arguments must be linear in declaration 'make_append'
-	Repeated macro-functions 'make_append'
-}
+       line: 59 Multiple definition of Symbol `concArray7`
+       line: 50 Repeated macro-function `make_append`
+       line: 43  Arguments must be linear in macro-function `make_append`: Variable `e` is repeated
+       line: 35 Missing macro-function(s) [ make_append ]
+       line: 30Missing macro-function(s) [ make_empty ]
+       line: 24 List symbol `concArray2` has an unknown parameter type: `wrongType`
+       line: 18 Symbol `concArray1` has an unknown return type: `wrongType`
+       Tom SyntaxChecker:  Encountered 6 errors and 0 warnings.
 
 ////////////////////
 OPLIST DECLARATION
 ////////////////////
-Grammar {
+Grammar:
 	%oplist typeName opName(typeName*) {
 		fsym                  { ... }
 		make_empty(var)       { ... }
 		make_insert(var, var) { ... }
 	}
-}
 
-Test {
-     JOpListRef.t
+Test:
      JOpList1.t
-	Operator 'concList' has an unknown return type
-	Slot position 1 of operator 'concList' has an unknown type
-	Missing functions : [make_empty]
-	Missing functions : [make_insert]
-	Arguments must be linear in declaration 'make_insert'
-	Repeated macro-functions 'make_empty'
+       line 58: Multiple definition of Symbol `concList7`
+       line 49: Repeated macro-function `make_empty`
+       line 42: Arguments must be linear in macro-function `make_insert`: Variable `e` is repeated
+       line 34: Missing macro-function(s) [ make_insert ]
+       line 29: Missing macro-function(s) [ make_empty ]
+       line 23: List symbol `concList2` has an unknown parameter type: `wrongtype`
+       line 17: Symbol `concList1` has an unknown return type: `wrongtype`
+       Tom SyntaxChecker:  Encountered 7 errors and 0 warnings.
 }
 
 

@@ -1,5 +1,0 @@
--- Error occured line: 11 in structure `%op op` declared line: 9 in file: JOperator3bis.t
----> Bad number of arguments in make(...) macro-function: 0 arguments found but 2 expected in symbol definition
-
-Tom SyntaxChecker:  Encountered 1 errors and 0 warnings.
-No file generated.
