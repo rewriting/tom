@@ -116,7 +116,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @param argumentList the command line
    * @return an array of String containing the names of the files to compile
    */
-  public String[] initOptionManagement(List plugins, String[] argumentList) {
+  public Object[] initOptionManagement(List plugins, String[] argumentList) {
     List optionOwnerList = new ArrayList(plugins);
     optionOwnerList.add(this);
 
@@ -138,7 +138,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     }
     
     // set options accordingly to the arguments given in input
-    String[] inputFiles = processArguments(argumentList);
+    Object[] inputFiles = processArguments(argumentList);
 
     // checks if every plugin's needs are fulfilled
     for(Iterator it = optionOwnerList.iterator(); it.hasNext() ; ) {

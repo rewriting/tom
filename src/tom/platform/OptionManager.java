@@ -17,7 +17,7 @@ public interface OptionManager {
    * @param args
    * @return an array of String containing the names of the files to compile
    */
-  public abstract String[] initOptionManagement(List plugins, String[] args);
+  public abstract Object[] initOptionManagement(List plugins, String[] args);
 
   /**
    *
