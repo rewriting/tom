@@ -122,7 +122,7 @@ package minirho;
 									break l;}
 							}
 							//2. on calcule le resultat a retourner.
-							return computeMatch.apply(co);
+							return normalize(co,computeMatch);
 						}
 						//simplify
 						and(dk(),(X*,match(a@const[],a),Y*)) -> {return `and(dk(),concConstraint(X*,Y*));}
@@ -135,10 +135,12 @@ package minirho;
 						and(dk(),(X*,and(g(),(c*)),Y*,m@match[pa=var[]],Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(m,c*)),Y*,Z*));}
 
 						and(dk(),(X*,and(g(),(c*)),Y*,and(g(),(d*)),Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(c*,d*))));}
-						//NGood!!!!!!!!!!!!!!!!: A AJOUTER
+						//NGood
+						
+
 						//ShareMatch A Enrichir
 						appSc(phi,match(B,C)) -> {return `match(B,appSt(phi,C));}
-						//ShareAnd for all types of and
+						//ShareAnd for all types of "and"
 						appSc(phi,and(x,C)) -> {
 							Replace2 r = new Replace2(){
 									public ATerm apply(ATerm t,Object o){
@@ -171,15 +173,29 @@ package minirho;
 	 
 //try to normalize
 	 public  ATerm normalize(ATerm form, Replace1 r){
-		 ATerm res = r.apply(form);
-		 if (res != form) {
-			 System.out.println("|--> " + res);
-			 return normalize(res,r);
+		 ATerm res = null;
+		 while(res != form){
+//		 System.out.println("|--> " + printInfix(res));
+			 res = form;
+			 form = r.apply(form);
 		 }
-		 else {
-			 return res;
-		 }
+		 System.out.println("|--> " + printInfix(res));
+		 return res;
 	 }
+
+
+// //try to normalize
+// 	 public  ATerm normalize(ATerm form, Replace1 r){
+// 		 ATerm res = r.apply(form);
+// 		 	 if (res != form) {
+// //			 System.out.println("|--> " + printInfix(res));
+// //			 System.out.println("|--> " + res);
+// 			 return normalize(res,r);
+// 		 }
+// 		 else {
+// 			 return res;
+// 		 }
+// 	 }
 
 	 public Rho(rhotermFactory factory) {
 		 this.factory = factory;
@@ -188,28 +204,22 @@ package minirho;
   public rhotermFactory getRhotermFactory() {
     return factory;
   }
-
-	 public void run(){
-
-		 RTerm resu;
-		 String s;
-		 System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\n by Germain Faure and ...\n version 0.1 \n ******************************************************************");
-		 while(true){
-			 System.out.print("RomCal>");
-			 s = Clavier.lireLigne();
-			 resu = factory.RTermFromString(s);
-			 System.out.println(" " + printInfix(resu));
-			 printInfix((RTerm)normalize(resu,reductionRules));
-		 }
-
-	 }
-    
-	 public final static void main(String[] args) {
-		 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
-		 rhoEngine.run();
-	 }
-
 	 Replace1 headisConstant = new Replace1() {
+			 public ATerm apply(ATerm t) {
+				 if (t instanceof Constraint){
+					 %match(Constraint t){
+						 matchH(app(t1@app[],A),app(t2@app[],B)) -> {
+							 return `matchH(t1,t2);
+						 }
+						 matchH(app(f@const[],A),app(f,B)) -> {
+							 return `match(A,B);
+						 }
+					 }
+				 }
+				 return traversal.genericTraversal(t,this);
+			 }
+		 };
+	 Replace1 head_is_not_Constant = new Replace1() {
 			 public ATerm apply(ATerm t) {
 				 if (t instanceof Constraint){
 					 %match(Constraint t){
@@ -244,6 +254,27 @@ package minirho;
 		 return (Constraint)normalize(c,headisConstant);
 	 }
 
+	 public void run(){
+
+		 RTerm resu;
+		 String s;
+		 System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\n by Germain Faure and ...\n version 0.1 \n ******************************************************************");
+		 while(true){
+			 System.out.print("RomCal>");
+			 s = Clavier.lireLigne();
+			 resu = factory.RTermFromString(s);
+			 System.out.println(" " + printInfix(resu));
+			 printInfix((RTerm)normalize(resu,reductionRules));
+		 }
+
+	 }
+    
+	 public final static void main(String[] args) {
+		 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
+		 rhoEngine.run();
+	 }
+
+
 
 //PRINT FUNCTIONS
 	 public String printInfix(ATerm t){
@@ -269,7 +300,7 @@ package minirho;
 		 %match(Constraint c){
 			 appSc(subst, co) -> {return "{" + printInfixCons(subst) + "}" + "(" + printInfixCons(co) + ")";}
 			 match(pa,rhs) -> {return printInfix(pa) + " << " + printInfix(rhs);}
-			 matchH(pa,rhs) -> {return printInfix(pa) + " <<H " + printInfix(rhs);}
+//			 matchH(pa,rhs) -> {return printInfix(pa) + " <<H " + printInfix(rhs);}
 			 and(g(),l) -> {
 				 //code mauvais
 				 ListConstraint tmp = l;
@@ -300,7 +331,7 @@ package minirho;
 				 }
 				 return s.substring(0,s.length() - 3);
 			 }
-			 _ -> {return "please extend printInfixCons";}
+			 _ -> {return "";}
 		 }
 	 }
  }
