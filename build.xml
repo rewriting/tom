@@ -296,13 +296,14 @@
          destdir="${src.gen}">
       <include name="tom/platform/adt/*.vas"/>
     </vas>
+
 <!--
     <vas config="${stable.vasconfigfile}"
          srcdir="${src.src}"
          package="jtom.adt" 
          name="tomsignature" 
          destdir="${src.gen}">
-      <include name="jtom/adt/*.vas"/>
+      <include name="jtom/adt/TomSignature.vas"/>
     </vas>
 -->
     <adt srcdir="${src.src}"
