@@ -31,6 +31,7 @@ import java.io.*;
 
 public class TomDebugEnvironment {
   private String key;
+  private String type;
   private String fileName = null;
   private Integer line = null;
   private BufferedReader in;
@@ -47,6 +48,7 @@ public class TomDebugEnvironment {
     this.patternList = struct.watchPatternList;
     this.patternText = struct.patternText;
     this.key = struct.key;
+    this.type = struct.type;
     this.fileName = struct.fileName;
     this.line = struct.line;
     
@@ -58,6 +60,16 @@ public class TomDebugEnvironment {
 
   }
 
+  public void leaving() {
+    System.out.println("\tLeaving "+type+" declared in "+fileName+" at line "+line);
+    try {
+      String str = "";
+      System.out.print(">:(Press enter to contine....");
+      str = in.readLine();
+    } catch (IOException e) {
+    }
+  }
+  
   public String getKey() {
     return key;
   }

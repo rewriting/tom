@@ -266,8 +266,10 @@ public class TomDebugger {
   
   public void leavingMatch(String key) {
     if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      ((TomDebugEnvironment)(environment.peek())).leaving();
       environment.pop();
-      System.out.println("\tLeaving Match");
+      System.out.println("\tLeaving Match\n");
+      
     }
   }
 
