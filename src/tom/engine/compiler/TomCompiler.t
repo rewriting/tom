@@ -66,7 +66,7 @@ public class TomCompiler extends TomTask {
       if(verbose) { startChrono = System.currentTimeMillis();}
       
       TomTerm preCompiledTerm = preProcessing(getInput().getTerm());
-        //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
+      //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       
       if(verbose) {
@@ -464,7 +464,6 @@ public class TomCompiler extends TomTask {
                                                 Map multiplicityMap,
                                                 Map maxmultiplicityMap,
                                                 ArrayList equalityCheck) {
-		System.out.println("slist : " + constraintList);
     ArrayList list = new ArrayList();
     while(!constraintList.isEmpty()) {
       Constraint cstElt = constraintList.getHead();
@@ -477,7 +476,6 @@ public class TomCompiler extends TomTask {
       list.add(newCstElt);
       constraintList = constraintList.getTail();
     }
-		System.out.println(" gives : " + list);
     return ast().makeConstraintList(list);
   }
 /*

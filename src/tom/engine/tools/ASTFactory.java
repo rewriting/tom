@@ -201,8 +201,8 @@ public class ASTFactory {
     return list;
   }
 
-	public Constraint makeAssignTo(TomName name) {
-		return tsf().makeConstraint_AssignTo(tsf().makeTomTerm_Variable(makeOption(),
+	public Constraint makeAssignTo(TomName name,int line, String fileName) {
+		return tsf().makeConstraint_AssignTo(tsf().makeTomTerm_Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
 					name,
 					tsf().makeTomType_TomTypeAlone("unknown type"),
 					tsf().makeConstraintList()));

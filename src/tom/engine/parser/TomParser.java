@@ -642,7 +642,7 @@ public class TomParser extends TomTask implements TomParserConstants {
   NameList nameList = null;
   boolean implicit = false;
   boolean withArgs = false;
-  Constraint annotedName = (astAnnotedName==null)?null:ast().makeAssignTo(astAnnotedName);
+  Constraint annotedName = (astAnnotedName==null)?null:ast().makeAssignTo(astAnnotedName,getLine(), currentFile);
   if(annotedName!=null) { constraintList.add(annotedName); }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case XML_START:

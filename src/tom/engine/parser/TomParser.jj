@@ -773,7 +773,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   NameList nameList = null;
   boolean implicit = false;
   boolean withArgs = false;
-  Constraint annotedName = (astAnnotedName==null)?null:ast().makeAssignTo(astAnnotedName);
+  Constraint annotedName = (astAnnotedName==null)?null:ast().makeAssignTo(astAnnotedName,getLine(), currentFile);
   if(annotedName!=null) { constraintList.add(annotedName); }
 }
 {

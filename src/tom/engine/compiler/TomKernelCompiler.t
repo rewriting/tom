@@ -237,8 +237,8 @@ public class TomKernelCompiler extends TomBase {
         return action;
       } 
       
-      manyTomList(var@Variable[option=optionList, astType=termType],termTail) |
-      manyTomList(var@UnamedVariable[option=optionList,astType=termType],termTail) -> {
+      manyTomList(var@Variable[option=optionList, astType=termType,constraints=constraints],termTail) |
+      manyTomList(var@UnamedVariable[option=optionList,astType=termType,constraints=constraints],termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
         Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType, concConstraint()));
         return buildLet(var, source, subAction);
@@ -251,7 +251,7 @@ public class TomKernelCompiler extends TomBase {
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         
         // SUCCES
-        TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType,constraints);
+        TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType,concConstraint());
         Instruction automataInstruction;
         if(isListOperator(tomSymbol)) {
           /*
@@ -298,7 +298,7 @@ public class TomKernelCompiler extends TomBase {
         }
 				*/
 
-        automataInstruction = compileConstraint(subjectVariableAST,automataInstruction);
+        automataInstruction = compileConstraint(currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction);
 
         Expression cond = `expandDisjunction(EqualFunctionSymbol(termType,subjectVariableAST,currentTerm));
         Instruction test = `IfThenElse(cond,automataInstruction,Nop());
@@ -643,18 +643,22 @@ public class TomKernelCompiler extends TomBase {
     }
 		*/
 		// Take care of constraints
-    body = compileConstraint(dest,body);
+    body = compileConstraint(dest,source,body);
 		return `Let(dest,source,body);
   }
 
-	private Instruction compileConstraint(TomTerm subject, Instruction body) {
+	private Instruction compileConstraint(TomTerm subject, Expression source, Instruction body) {
     %match(TomTerm subject) {
-      (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[constraints=constraints] -> {
-				return buildConstraint(constraints,subject,body);
+      (Variable|VariableStar)[constraints=constraints] -> {
+				return buildConstraint(constraints,`TomTermToExpression(subject),body);
+      }
+
+      (UnamedVariable|UnamedVariableStar)[constraints=constraints] -> {
+				return buildConstraint(constraints,source,body);
       }
 
       Appl[constraints=constraints] -> {
-				return buildConstraint(constraints,subject,body);
+				return buildConstraint(constraints,source,body);
       }
 
       _ -> {
@@ -663,22 +667,24 @@ public class TomKernelCompiler extends TomBase {
     }
   }
 
-	private Instruction buildConstraint(ConstraintList constraints, TomTerm term, Instruction body) {
+	private Instruction buildConstraint(ConstraintList constraints, Expression source, Instruction body) {
     %match(ConstraintList constraints) {
       concConstraint() -> {
         return body;
       }
 
       concConstraint(Equal(var) ,tail*) -> {
-        System.out.println("buildConstraint " + term);
-        System.out.println("EqualTo " + var);
-        return `buildConstraint(tail,term,IfThenElse(EqualTerm(term,var),body,Nop()));
+        //System.out.println("constraint: " + source + " EqualTo " + var);
+        Instruction subBody = compileConstraint(var,source,body);
+        return `buildConstraint(tail,source,IfThenElse(EqualTerm(var,ExpressionToTomTerm(source)),subBody,Nop()));
+        //return newBody;
       }
 
-      concConstraint(AssignTo(var) ,tail*) -> {
-        System.out.println("buildConstraint " + term);
-        System.out.println("AssignTo " + var);
-        return `buildConstraint(tail,term,buildLet(var,TomTermToExpression(term),body));
+      concConstraint(AssignTo(var@(Variable|VariableStar)[]) ,tail*) -> {
+        //System.out.println("constraint: " + source + " AssignTo " + var);
+        Instruction subBody = compileConstraint(var,source,body);
+        return `buildConstraint(tail,source,buildLet(var,source,subBody));
+        //return newBody;
       }
 
       concConstraint(head,tail*) -> {

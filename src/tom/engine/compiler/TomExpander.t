@@ -114,13 +114,13 @@ public class TomExpander extends TomTask {
                 return t;
               }
 
-              RecordAppl[option=option,nameList=nameList,args=args] -> {
-                return expandRecordAppl(option,nameList,args);
+              RecordAppl[option=option,nameList=nameList,args=args,constraints=constraints] -> {
+                return expandRecordAppl(option,nameList,args,constraints);
               }
 
-              XMLAppl[option=optionList,nameList=nameList,attrList=list1,childList=list2,constraints=constraint] -> {
+              XMLAppl[option=optionList,nameList=nameList,attrList=list1,childList=list2,constraints=constraints] -> {
                 //System.out.println("expandXML in:\n" + subject);
-                return expandXMLAppl(optionList, nameList, list1, list2,constraint);
+                return expandXMLAppl(optionList, nameList, list1, list2,constraints);
               }
               
               _ -> {
@@ -262,7 +262,7 @@ public class TomExpander extends TomTask {
     }
   }
 
-  protected TomTerm expandRecordAppl(OptionList option, NameList nameList, TomList args) {
+  protected TomTerm expandRecordAppl(OptionList option, NameList nameList, TomList args, ConstraintList constraints) {
     TomSymbol tomSymbol = getSymbol(nameList.getHead().getString());
     SlotList slotList = tomSymbol.getSlotList();
     TomList subtermList = empty();
@@ -295,7 +295,7 @@ public class TomExpander extends TomTask {
       slotList = slotList.getTail();
     }
     
-    return `Appl(option,nameList,subtermList,concConstraint());
+    return `Appl(option,nameList,subtermList,constraints);
   }
 
   protected TomTerm expandBackQuoteAppl(TomTerm t) {
@@ -388,14 +388,14 @@ public class TomExpander extends TomTask {
 
   
   protected TomTerm expandXMLAppl(OptionList optionList, NameList nameList,
-                                  TomList attrList, TomList childList, ConstraintList constraint) {
+                                  TomList attrList, TomList childList, ConstraintList constraints) {
     boolean implicitAttribute = hasImplicitXMLAttribut(optionList);
     boolean implicitChild     = hasImplicitXMLChild(optionList);
     
     TomList newAttrList  = `emptyTomList();
     TomList newChildList = `emptyTomList();
 
-    TomTerm star = ast().makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",constraint);
+    TomTerm star = ast().makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",`concConstraint());
     if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
     if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 
@@ -469,7 +469,7 @@ public class TomExpander extends TomTask {
       PairSlotAppl(Name(Constants.SLOT_ATTRLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList,concConstraint())),
       PairSlotAppl(Name(Constants.SLOT_CHILDLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList,concConstraint())));
     
-    TomTerm result = `expandTomSyntax(RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs,constraint));
+    TomTerm result = `expandTomSyntax(RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs,constraints));
 
 
       //System.out.println("expandXML out:\n" + result);
