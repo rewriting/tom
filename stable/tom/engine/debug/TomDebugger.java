@@ -52,7 +52,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 
 import aterm.pure.PureFactory;
 
@@ -99,7 +100,7 @@ public class TomDebugger {
         name = file.getName();
         baseFileName[i] = name.substring(0, name.length() - (debugTableSuffix.length()))+".t";
         input = new FileInputStream(file);
-        TomSignatureFactory tsf = new TomSignatureFactory(new PureFactory(10));
+        Factory tsf = new Factory(new PureFactory(10));
         table = tsf.TomStructureTableFromFile(input);
         System.out.println("Analysing "+baseFileName[i]+"...");
         analyseStructure(table);
@@ -923,7 +924,7 @@ public class TomDebugger {
       TomTerm struct = list.getHead();
       if (struct.isMatch()) {
           // The only present option in the list is the orgTack
-        Option orgTrack = struct.getOption().getOptionList().getHead();
+        Option orgTrack = struct.getOption().getHead();
         String fileName = orgTrack.getFileName().getString();
         int line = orgTrack.getLine();
         String key = fileName+line;
@@ -937,7 +938,7 @@ public class TomDebugger {
         OptionList opList;
         while(!paList.isEmpty()) {
           pa = paList.getHead();
-          opList = pa.getOption().getOptionList();
+          opList = pa.getOption();
           patternText[i] = extractPatternText(opList);
           patternLine[i++] = extractPatternLine(opList);
           paList = paList.getTail();

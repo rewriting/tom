@@ -5,7 +5,7 @@
 SUBDIRS         = adt
 
 javadir         = ${prefix}/classes/jtom/runtime/xml
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(TSADT_STABLE):$(TNODEADT_STABLE):$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 JAVASOURCES     = ATermToXML.java XMLToATerm.java XmlTools.java
 

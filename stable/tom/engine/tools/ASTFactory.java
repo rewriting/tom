@@ -26,19 +26,20 @@
 package jtom.tools;
 
 import java.util.*;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.xml.*;
 import aterm.ATerm;
 
 public class ASTFactory {
 
-  private TomSignatureFactory tomSignatureFactory;
+  private Factory tomSignatureFactory;
   
-  public ASTFactory(TomSignatureFactory tomSignatureFactory) {
+  public ASTFactory(Factory tomSignatureFactory) {
     this.tomSignatureFactory = tomSignatureFactory;
   }
 
-  protected TomSignatureFactory tsf() {
+  protected Factory tsf() {
     return tomSignatureFactory;
   }
 
@@ -92,20 +93,30 @@ public class ASTFactory {
     }
     return list;
   }
-  
+
+  public NameList makeNameList(List argumentList) {
+    NameList list = tsf().makeNameList();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)argumentList.get(i);
+      TomName term = (TomName) elt;
+      list = tsf().makeNameList(term,list);
+    }
+    return list;
+  }
+
   public TomTerm makeVariable(String name, String type) {
     return makeVariable(makeOption(), name, type);      
   }
 
-  public TomTerm makeVariable(Option option, String name, String type) {
+  public TomTerm makeVariable(OptionList option, String name, String type) {
     return tsf().makeTomTerm_Variable(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type));  
   }
 
-  public TomTerm makeVariableStar(Option option, String name, String type) {
+  public TomTerm makeVariableStar(OptionList option, String name, String type) {
     return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type));  
   }
 
-  public TomTerm makeUnamedVariableStar(Option option, String type) {
+  public TomTerm makeUnamedVariableStar(OptionList option, String type) {
     return tsf().makeTomTerm_UnamedVariableStar(option, tsf().makeTomType_TomTypeAlone(type));  
   }
 
@@ -113,38 +124,33 @@ public class ASTFactory {
                               List optionList, TargetLanguage glFsym) {
     TomName name = tsf().makeTomName_Name(symbolName);
     TomType typesToType =  tsf().makeTomType_TypesToType(typeList, tsf().makeTomType_TomTypeAlone(resultType));
-    Option options = makeOption(makeOptionList(optionList));
+    OptionList options = makeOptionList(optionList);
     return tsf().makeTomSymbol_Symbol(name,typesToType,slotList,options,glFsym);
   }
 
-  public Option makeOption() {
-    OptionList list = tsf().makeOptionList();
-    return makeOption(list);
+  public OptionList makeOption() {
+    return tsf().makeOptionList();
   }
 
-  public Option makeOption(Option arg) {
+  public OptionList makeOption(Option arg) {
     OptionList list = tsf().makeOptionList();
     if(arg!= null) {
       list = tsf().makeOptionList(arg,list);
     }
-    return makeOption(list);
+    return list;
   }
 
-  public Option makeOption(Option arg, Option info) {
+  public OptionList makeOption(Option arg, Option info) {
     OptionList list = tsf().makeOptionList();
     if(arg!= null) {
       list = tsf().makeOptionList(arg,list);
     }
     list = tsf().makeOptionList(info,list);
-    return makeOption(list);
+    return list;
   }
 
-  public Option makeOption(OptionList argList) {   
-    return tsf().makeOption_Option(argList);
-  }
-
-  public Option makeOriginTracking(String name, String line , String fileName) {
-    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), Integer.parseInt(line),tsf().makeTomName_Name( fileName));
+   public Option makeOriginTracking(String name, int line , String fileName) {
+    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), line, tsf().makeTomName_Name( fileName));
   }
   
   public Declaration makeMakeDecl(String opname, TomType returnType, List argList, TargetLanguage tlcode, Option orgTrack) {
@@ -157,7 +163,7 @@ public class ASTFactory {
   }
 
   public TomType makeType(String typeNameTom, TargetLanguage tlType) {
-    TomType typeTom = tsf().makeTomType_TomType(typeNameTom);
+    TomType typeTom = tsf().makeTomType_ASTTomType(typeNameTom);
     TomType sortTL  = tsf().makeTomType_TLType(tlType);
     return tsf().makeTomType_Type(typeTom,sortTL);
   }
@@ -180,11 +186,12 @@ public class ASTFactory {
                             String equality_t1t2) {
     Declaration getFunSym, getSubterm;
     Declaration cmpFunSym, equals;
-    Option option = makeOption();
-    TomTerm variable_t = makeVariable(option,"t",sort);
-    TomTerm variable_t1 = makeVariable(option,"t1",sort);
-    TomTerm variable_t2 = makeVariable(option,"t2",sort);
-    TomTerm variable_n = makeVariable(option,"n","int");
+    Option option = tsf().makeOption_NoOption();
+    
+    TomTerm variable_t = makeVariable(makeOption(),"t",sort);
+    TomTerm variable_t1 = makeVariable(makeOption(),"t1",sort);
+    TomTerm variable_t2 = makeVariable(makeOption(),"t2",sort);
+    TomTerm variable_n = makeVariable(makeOption(),"n","int");
     getFunSym = tsf().makeDeclaration_GetFunctionSymbolDecl(
       variable_t,tsf().makeTargetLanguage_ITL("t"), option);
     getSubterm = tsf().makeDeclaration_GetSubtermDecl(
@@ -248,16 +255,18 @@ public class ASTFactory {
     /*
      * update the root of lhs: it becomes a defined symbol
      */
-  public void updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
+  public TomSymbol updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
     if(term.isAppl() || term.isRecordAppl()) {
-      String key = term.getAstName().getString();
+      String key = term.getNameList().getHead().getString();
       TomSymbol symbol = symbolTable.getSymbol(key);
       if (symbol != null) {
-        OptionList optionList = symbol.getOption().getOptionList();
+        OptionList optionList = symbol.getOption();
         optionList = (OptionList) optionList.append(tsf().makeOption_DefinedSymbol());
-        symbolTable.putSymbol(key,symbol.setOption(makeOption(optionList)));
+        symbolTable.putSymbol(key,symbol.setOption(optionList));
+        return symbol;
       }
     }
+    return null;
   }
 
   public TargetLanguage reworkTLCode(TargetLanguage code, boolean pretty) {
@@ -315,12 +324,15 @@ public class ASTFactory {
           TomType type = tomSymbol.getTypesToType().getCodomain();
             //System.out.println("type = " + type);
           if(type.isTomTypeAlone() && type.getString().equals("String")) {
-            Option info = makeOriginTracking(Constants.TEXT_NODE,"-1","??");
+            Option info = makeOriginTracking(Constants.TEXT_NODE,-1,"??");
             TomList list = tsf().makeTomList();
             list = tsf().makeTomList(term,list);
+						NameList nameList = tsf().makeNameList();
+						nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.TEXT_NODE));
             term = tsf().makeTomTerm_Appl(
               makeOption(info),
-              tsf().makeTomName_Name(Constants.TEXT_NODE),list);
+							nameList,
+							list);
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }

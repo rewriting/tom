@@ -2,8 +2,8 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)
-			     Nancy, France.
+    Copyright (C) 2000-2003 INRIA
+			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ package jtom.tools;
 
 import jtom.*;
 import java.util.*;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.xml.*;
 import aterm.*;
 
@@ -48,8 +49,8 @@ public class TomFactory extends TomBase {
   }
 
   public TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
-     {  TomList tom_match1_1 = null; tom_match1_1 = ( TomList) list;_match1_pattern1: { if(tom_is_fun_sym_emptyTomList(tom_match1_1)) {
-  return tom_make_emptyTomList() ; }}_match1_pattern2: {  TomTerm head = null;  TomList tail = null; if(tom_is_fun_sym_manyTomList(tom_match1_1)) {  TomTerm tom_match1_1_1 = null;  TomList tom_match1_1_2 = null; tom_match1_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match1_1); tom_match1_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match1_1); head = ( TomTerm) tom_match1_1_1; tail = ( TomList) tom_match1_1_2;
+     {  TomList tom_match1_1 = null; tom_match1_1 = ( TomList) list;_match1_pattern1: { if(tom_is_fun_sym_emptyTomList(tom_match1_1) ||  false ) {
+  return tom_make_emptyTomList() ; }}_match1_pattern2: {  TomTerm head = null;  TomList tail = null; if(tom_is_fun_sym_manyTomList(tom_match1_1) ||  false ) {  TomTerm tom_match1_1_1 = null;  TomList tom_match1_1_2 = null; tom_match1_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match1_1); tom_match1_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match1_1); head = ( TomTerm) tom_match1_1_1; tail = ( TomList) tom_match1_1_2;
  
         return tom_make_manyTomList(metaEncodeXMLAppl(symbolTable, head),metaEncodeTermList(symbolTable, tail))
  ;
@@ -64,13 +65,14 @@ public class TomFactory extends TomBase {
        * Appl(...,Name("string"),...) becomes
        * Appl(...,Name("\"string\""),...)
        */
-     {  TomTerm tom_match2_1 = null; tom_match2_1 = ( TomTerm) term;_match2_pattern1: {  String name = null; if(tom_is_fun_sym_Appl(tom_match2_1)) {  TomName tom_match2_1_2 = null; tom_match2_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match2_1); if(tom_is_fun_sym_Name(tom_match2_1_2)) {  String tom_match2_1_2_1 = null; tom_match2_1_2_1 = ( String) tom_get_slot_Name_string(tom_match2_1_2); name = ( String) tom_match2_1_2_1;
+    NameList newNameList = ( NameList) tom_make_empty_concTomName() ;
+     {  TomTerm tom_match2_1 = null; tom_match2_1 = ( TomTerm) term;_match2_pattern1: {  TomName tom_absvar1 = null; if(tom_is_fun_sym_Appl(tom_match2_1) ||  false ) {  NameList tom_match2_1_2 = null; tom_match2_1_2 = ( NameList) tom_get_slot_Appl_nameList(tom_match2_1); if(tom_is_fun_sym_concTomName(tom_match2_1_2) ||  false ) {  NameList tom_match2_1_2_begin1 = null;  NameList tom_match2_1_2_end1 = null;  NameList tom_match2_1_2_list1 = null; tom_match2_1_2_list1 = ( NameList) tom_match2_1_2; tom_match2_1_2_begin1 = ( NameList) tom_match2_1_2_list1; tom_match2_1_2_end1 = ( NameList) tom_match2_1_2_list1; do { if(!(tom_is_empty_NameList(tom_match2_1_2_list1))) { tom_absvar1 = ( TomName) tom_get_head_NameList(tom_match2_1_2_list1); tom_match2_1_2_list1 = ( NameList) tom_get_tail_NameList(tom_match2_1_2_list1); {  TomName tom_match3_1 = null; tom_match3_1 = ( TomName) tom_absvar1;_match3_pattern1: {  String name = null; if(tom_is_fun_sym_Name(tom_match3_1) ||  false ) {  String tom_match3_1_1 = null; tom_match3_1_1 = ( String) tom_get_slot_Name_string(tom_match3_1); name = ( String) tom_match3_1_1;
  
-        String tomName = encodeXMLString(symbolTable,name);
-        term = term.setAstName(tom_make_Name(tomName) );
-          //System.out.println("encodeXMLAppl = " + term);
-       } }} }
+        newNameList = (NameList)newNameList.append(tom_make_Name(encodeXMLString(symbolTable, name)) );
+       }} } } if(!(tom_is_empty_NameList(tom_match2_1_2_end1))) { tom_match2_1_2_end1 = ( NameList) tom_get_tail_NameList(tom_match2_1_2_end1); } tom_match2_1_2_list1 = ( NameList) tom_match2_1_2_end1; } while(!(tom_is_empty_NameList(tom_match2_1_2_list1))); } }} }
  
+    term = term.setNameList(newNameList);
+      //System.out.println("encodeXMLAppl = " + term);
     return term;
   }
 
@@ -80,20 +82,20 @@ public class TomFactory extends TomBase {
        * Appl(...,Name("\"string\""),...) becomes
        * Appl(...,Name("TextNode"),[Appl(...,Name("\"string\""),...)],...)
        */
-    System.out.println("metaEncode: " + term);
-     {  TomTerm tom_match3_1 = null; tom_match3_1 = ( TomTerm) term;_match3_pattern1: {  String tomName = null; if(tom_is_fun_sym_Appl(tom_match3_1)) {  TomName tom_match3_1_2 = null; tom_match3_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_2)) {  String tom_match3_1_2_1 = null; tom_match3_1_2_1 = ( String) tom_get_slot_Name_string(tom_match3_1_2); tomName = ( String) tom_match3_1_2_1;
+      //System.out.println("metaEncode: " + term);
+     {  TomTerm tom_match4_1 = null; tom_match4_1 = ( TomTerm) term;_match4_pattern1: {  TomName tom_absvar2 = null; if(tom_is_fun_sym_Appl(tom_match4_1) ||  false ) {  NameList tom_match4_1_2 = null; tom_match4_1_2 = ( NameList) tom_get_slot_Appl_nameList(tom_match4_1); if(tom_is_fun_sym_concTomName(tom_match4_1_2) ||  false ) {  NameList tom_match4_1_2_list1 = null; tom_match4_1_2_list1 = ( NameList) tom_match4_1_2; if(!(tom_is_empty_NameList(tom_match4_1_2_list1))) { tom_absvar2 = ( TomName) tom_get_head_NameList(tom_match4_1_2_list1); tom_match4_1_2_list1 = ( NameList) tom_get_tail_NameList(tom_match4_1_2_list1); if(tom_is_empty_NameList(tom_match4_1_2_list1)) { {  TomName tom_match5_1 = null; tom_match5_1 = ( TomName) tom_absvar2;_match5_pattern1: {  String tomName = null; if(tom_is_fun_sym_Name(tom_match5_1) ||  false ) {  String tom_match5_1_1 = null; tom_match5_1_1 = ( String) tom_get_slot_Name_string(tom_match5_1); tomName = ( String) tom_match5_1_1;
  
-        System.out.println("tomName = " + tomName);
+          //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbol(tomName);
         if(tomSymbol != null) {
           if(isStringOperator(tomSymbol)) {
-            Option info = ast().makeOriginTracking(Constants.TEXT_NODE,"-1","??");
-            term = tom_make_Appl(ast() .makeOption(info),tom_make_Name(Constants .TEXT_NODE),tom_make_insert_concTomTerm(term,( TomList) tom_make_empty_concTomTerm()))
+            Option info = ast().makeOriginTracking(Constants.TEXT_NODE,-1,"??");
+            term = tom_make_Appl(ast() .makeOption(info),tom_make_insert_concTomName(tom_make_Name(Constants .TEXT_NODE),( NameList) tom_make_empty_concTomName()),tom_make_insert_concTomTerm(term,( TomList) tom_make_empty_concTomTerm()))
  ;
-            System.out.println("metaEncodeXmlAppl = " + term);
+              //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
-       } }} }
+       }} } } } } }} }
  
     return term;
   }
@@ -101,10 +103,10 @@ public class TomFactory extends TomBase {
   public boolean isExplicitTermList(LinkedList childs) {
     if(childs.size() == 1) {
       TomTerm term = (TomTerm) childs.getFirst();
-       {  TomTerm tom_match4_1 = null; tom_match4_1 = ( TomTerm) term;_match4_pattern1: {  TomList args = null; if(tom_is_fun_sym_Appl(tom_match4_1)) {  TomName tom_match4_1_2 = null;  TomList tom_match4_1_3 = null; tom_match4_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match4_1); tom_match4_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match4_1); if(tom_is_fun_sym_Name(tom_match4_1_2)) {  String tom_match4_1_2_1 = null; tom_match4_1_2_1 = ( String) tom_get_slot_Name_string(tom_match4_1_2); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match4_1_2_1) , "")) { args = ( TomList) tom_match4_1_3;
+       {  TomTerm tom_match6_1 = null; tom_match6_1 = ( TomTerm) term;_match6_pattern1: {  TomList args = null;  TomName tom_absvar3 = null; if(tom_is_fun_sym_Appl(tom_match6_1) ||  false ) {  NameList tom_match6_1_2 = null;  TomList tom_match6_1_3 = null; tom_match6_1_2 = ( NameList) tom_get_slot_Appl_nameList(tom_match6_1); tom_match6_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match6_1); if(tom_is_fun_sym_concTomName(tom_match6_1_2) ||  false ) {  NameList tom_match6_1_2_list1 = null; tom_match6_1_2_list1 = ( NameList) tom_match6_1_2; if(!(tom_is_empty_NameList(tom_match6_1_2_list1))) { tom_absvar3 = ( TomName) tom_get_head_NameList(tom_match6_1_2_list1); tom_match6_1_2_list1 = ( NameList) tom_get_tail_NameList(tom_match6_1_2_list1); if(tom_is_empty_NameList(tom_match6_1_2_list1)) { args = ( TomList) tom_match6_1_3; {  TomName tom_match7_1 = null; tom_match7_1 = ( TomName) tom_absvar3;_match7_pattern1: { if(tom_is_fun_sym_Name(tom_match7_1) ||  false ) {  String tom_match7_1_1 = null; tom_match7_1_1 = ( String) tom_get_slot_Name_string(tom_match7_1); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match7_1_1) , "") ||  false ) {
  
           return true;
-         } } }} }
+         } }} } } } } }} }
  
     }
     return false;
@@ -112,14 +114,14 @@ public class TomFactory extends TomBase {
   
   public LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
-     {  TomTerm tom_match5_1 = null; tom_match5_1 = ( TomTerm) term;_match5_pattern1: {  TomList args = null; if(tom_is_fun_sym_Appl(tom_match5_1)) {  TomName tom_match5_1_2 = null;  TomList tom_match5_1_3 = null; tom_match5_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match5_1); tom_match5_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match5_1); if(tom_is_fun_sym_Name(tom_match5_1_2)) {  String tom_match5_1_2_1 = null; tom_match5_1_2_1 = ( String) tom_get_slot_Name_string(tom_match5_1_2); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match5_1_2_1) , "")) { args = ( TomList) tom_match5_1_3;
+     {  TomTerm tom_match8_1 = null; tom_match8_1 = ( TomTerm) term;_match8_pattern1: {  TomName tom_absvar4 = null;  TomList args = null; if(tom_is_fun_sym_Appl(tom_match8_1) ||  false ) {  NameList tom_match8_1_2 = null;  TomList tom_match8_1_3 = null; tom_match8_1_2 = ( NameList) tom_get_slot_Appl_nameList(tom_match8_1); tom_match8_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match8_1); if(tom_is_fun_sym_concTomName(tom_match8_1_2) ||  false ) {  NameList tom_match8_1_2_list1 = null; tom_match8_1_2_list1 = ( NameList) tom_match8_1_2; if(!(tom_is_empty_NameList(tom_match8_1_2_list1))) { tom_absvar4 = ( TomName) tom_get_head_NameList(tom_match8_1_2_list1); tom_match8_1_2_list1 = ( NameList) tom_get_tail_NameList(tom_match8_1_2_list1); if(tom_is_empty_NameList(tom_match8_1_2_list1)) { args = ( TomList) tom_match8_1_3; {  TomName tom_match9_1 = null; tom_match9_1 = ( TomName) tom_absvar4;_match9_pattern1: { if(tom_is_fun_sym_Name(tom_match9_1) ||  false ) {  String tom_match9_1_1 = null; tom_match9_1_1 = ( String) tom_get_slot_Name_string(tom_match9_1); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match9_1_1) , "") ||  false ) {
  
         while(!args.isEmpty()) {
           list.add(metaEncodeXMLAppl(symbolTable,args.getHead()));
           args = args.getTail();
         }
         return list;
-       } } }}_match5_pattern2: {
+       } }} } } } } }}_match8_pattern2: {
 
  
           //System.out.println("metaEncodeExplicitTermList: strange case: " + term);

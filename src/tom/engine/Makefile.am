@@ -4,7 +4,7 @@
 
 SUBDIRS         = runtime tools exception parser checker compiler backend debug xml
 
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 javadir         = ${prefix}/classes/jtom
 
@@ -12,8 +12,7 @@ stabledir 	= $(top_srcdir)/stable/jtom
 BOOTSOURCES	= Tom.java TomBase.java TomEnvironment.java
 java_JAVA       = $(BOOTSOURCES)
 
-JAVAROOT        = ${top_builddir}/src/
-
+JAVAROOT        = ${top_builddir}/src
 EXTRA_DIST 	= $(BOOTSOURCES) TomBase.t
 CLEANFILES 	= TomBase.java
 BUILT_SOURCES   = TomBase.java

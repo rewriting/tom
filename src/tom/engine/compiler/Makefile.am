@@ -3,14 +3,14 @@
 #
 
 javadir         = ${prefix}/classes/jtom/compiler
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/compiler
 BOOTSOURCES	= TomKernelCompiler.java TomKernelExpander.java\
                   TomCompiler.java TomExpander.java
 java_JAVA       = $(BOOTSOURCES)
 
-JAVAROOT        = ${top_builddir}/src/
+JAVAROOT        = ${top_builddir}/src
 
 CLEANFILES 	= TomKernelCompiler.java TomKernelExpander.java \
 		  TomCompiler.java TomExpander.java

@@ -3,7 +3,7 @@
 #
 
 javadir         = ${prefix}/classes/jtom/tools
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/tools
 BOOTSOURCES	= Tools.java OutputCode.java SingleLineOutputCode.java\
@@ -13,7 +13,7 @@ BOOTSOURCES	= Tools.java OutputCode.java SingleLineOutputCode.java\
 
 java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES) TomFactory.t
-JAVAROOT        = ${top_builddir}/src/
+JAVAROOT        = ${top_builddir}/src
 
 CLEANFILES      = TomFactory.java
 BUILT_SOURCES   = TomFactory.java

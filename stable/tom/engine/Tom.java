@@ -2,8 +2,8 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)
-			     Nancy, France.
+    Copyright (C) 2000-2003 INRIA
+			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,7 +34,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.backend.*;
 import jtom.checker.*;
 import jtom.compiler.*;
@@ -47,14 +48,14 @@ public class Tom {
 	//Necessary structure
 	private TomTask initialTask;
 	private TomTaskInput taskInput;
-	private TomSignatureFactory tomSignatureFactory;
+	private Factory tomSignatureFactory;
 	private TomEnvironment environment;
 	// potential tasks to be connected together to form the compiler chain
 
 	private static String version =
-		"\njtom 1.5gamma\n"
-			+ "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n"
-			+ "                         Nancy, France.\n";
+          "\njtom 1.5gamma\n"
+          + "\n"
+          + "Copyright (C) 2000-2003 INRIA, Nancy, France.\n";
 
 	private static String usage =
 		"Tom usage:"
@@ -90,19 +91,20 @@ public class Tom {
 	}
 
 	public Tom(String args[]) {
-		tomSignatureFactory = new TomSignatureFactory(new PureFactory());
-		taskInput = new TomTaskInput(tomSignatureFactory.makeTomErrorList());
-		modifyTaskInputFromArgs(args);
-		if (taskInput.isHelp() || taskInput.isVersion()) {
-			// no need to do further work
-			return;
-		}
-		initializeStructure();
-		createTaskChainFromInput();
+          PureFactory pureFactory = new PureFactory();
+          tomSignatureFactory = new Factory(pureFactory);
+          taskInput = new TomTaskInput(tomSignatureFactory.makeTomErrorList());
+          modifyTaskInputFromArgs(args);
+          if (taskInput.isHelp() || taskInput.isVersion()) {
+              // no need to do further work
+            return;
+          }
+          initializeStructure();
+          createTaskChainFromInput();
 	}
 
 	public Tom(TomTaskInput input) {
-		tomSignatureFactory = new TomSignatureFactory(new PureFactory());
+		tomSignatureFactory = new Factory(new PureFactory());
 		this.taskInput = input;
 		initializeStructure();
 		createTaskChainFromInput();
@@ -189,8 +191,7 @@ public class Tom {
 				} else if (args[i].equals("--noWarning")) {
 					taskInput.setNoWarning(true);
 				} else if (
-					args[i].equals("--noDeclaration")
-						|| args[i].equals("-D")) {
+					args[i].equals("--noDeclaration") || args[i].equals("-D")) {
 					taskInput.setGenDecl(false);
 				} else if (
 					args[i].equals("--pretty") || args[i].equals("-p")) {
@@ -408,7 +409,7 @@ public class Tom {
 		if (initialTask != null
 			&& !taskInput.isHelp()
 			&& !taskInput.isVersion()) {
-			initialTask.process(taskInput);
+			initialTask.startProcess(taskInput);
 			if (taskInput.isAtermStat()) {
 				System.out.println(
 					"\nStatistics:\n" + tomSignatureFactory.getPureFactory());

@@ -1,7 +1,7 @@
 #
 #    TOM - To One Matching Compiler
 
-SUBDIRS = jtom
+SUBDIRS = adt jtom
 
 JARFILE        = jtom.jar
 JARVERSIONFILE = jtom-${VERSION}.jar

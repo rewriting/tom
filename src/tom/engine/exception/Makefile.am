@@ -3,13 +3,13 @@
 #
 
 javadir         = ${prefix}/classes/jtom/exception
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/exception
 BOOTSOURCES	= TomException.java TomRuntimeException.java CheckWarningException.java CheckErrorException.java TomIncludeException.java
 java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES)
-JAVAROOT        = ${top_builddir}/src/
+JAVAROOT        = ${top_builddir}/src
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)

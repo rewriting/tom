@@ -3,13 +3,13 @@
 #
 
 javadir         = ${prefix}/classes/jtom/xml
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/xml
 BOOTSOURCES	= Constants.java 
 java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES)
-JAVAROOT        = ${top_builddir}/src/
+JAVAROOT        = ${top_builddir}/src
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)

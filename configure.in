@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.42 2003/12/03 11:35:47 moreau Exp $
+# $Id: configure.in,v 1.43 2003/12/04 12:57:53 moreau Exp $
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(jtom,1.5gamma)
@@ -7,7 +7,7 @@ AC_PREREQ(2.13)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.42 2003/12/03 11:35:47 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.43 2003/12/04 12:57:53 moreau Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -51,6 +51,13 @@ TNODEADT=${PWD}/src/adt/TNode-${VERSION}.jar:${prefix}/share/TNode-${VERSION}.ja
 AC_SUBST(TOMSIGNATURE)
 AC_SUBST(SETADT)
 AC_SUBST(TNODEADT)
+
+TSADT_STABLE=${PWD}/stable/adt/TomSignature-${VERSION}.jar
+SETADT_STABLE=${PWD}/stable/adt/set-${VERSION}.jar
+TNODEADT_STABLE=${PWD}/stable/adt/TNode-${VERSION}.jar
+AC_SUBST(TSADT_STABLE)
+AC_SUBST(SETADT_STABLE)
+AC_SUBST(TNODEADT_STABLE)
 
 AC_OUTPUT( \
 	Makefile \

@@ -302,30 +302,32 @@ public class Propp {
 				}
 
 				rappl(r,s,concSequent(p,pp)) -> {
-					if (s == goal) {
-						ListProof proof_p = buildProofTerm(p);
-						ListProof proof_pp = buildProofTerm(pp);
-						while(!proof_p.isEmpty()) {
-							while(!proof_pp.isEmpty()) {
-								tmpsol = `concProof(rule(r,goal,concProof(proof_p.getHead(),proof_pp.getHead())),tmpsol*);
-								proof_pp = proof_pp.getTail();
-							}
-							proof_p = proof_p.getTail();
-						}
-						/*// the matching version uses too much memory !!!
-						%match(ListProof proof_p) {
-							concProof(_*,elem,_*) -> {
-								%match(ListProof proof_pp) {
-									concProof(_*,elemn,_*) -> {
-										tmpsol = `concProof(rule(r,goal,concProof(elem,elemn)),tmpsol*);
-									}
-								}
-							}
-						}
-						*/
-					}
+                                  if (s == goal) {
+                                    ListProof proof_p = buildProofTerm(p);
+                                    ListProof proof_pp = buildProofTerm(pp);
+                                    
+                                    while(!proof_p.isEmpty()) {
+                                      while(!proof_pp.isEmpty()) {
+                                        tmpsol = `concProof(rule(r,goal,concProof(proof_p.getHead(),proof_pp.getHead())),tmpsol*);
+                                        proof_pp = proof_pp.getTail();
+                                      }
+                                      proof_p = proof_p.getTail();
+                                    }
+                                    
+                                      /*  // the matching version uses too much memory !!!
+                                    %match(ListProof proof_p) {
+                                      concProof(_*,elem,_*) -> {
+                                        %match(ListProof proof_pp) {
+                                          concProof(_*,elemn,_*) -> {
+                                            tmpsol = `concProof(rule(r,goal,concProof(elem,elemn)),tmpsol*);
+                                          }
+                                        }
+                                      }
+                                    }
+                                      */
+                                  }
 				}
-
+                                
 			}
 			//}}}
 		}
@@ -581,3 +583,6 @@ public class Propp {
 	//}}}
 
 }
+
+
+

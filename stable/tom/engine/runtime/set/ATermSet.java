@@ -2,8 +2,8 @@
   
     TOM - To One Matching Compiler
     
-    Copyright (C) 2000-2003  LORIA (CNRST, INPL, INRIA, UHP, U-Nancy 2)
-    Nancy, France.
+    Copyright (C) 2000-2003 INRIA
+                            Nancy, France.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,11 +32,10 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
 import jtom.runtime.Collect1;
 import jtom.runtime.GenericTraversal;
-import jtom.runtime.set.jgtreeset.JGTreeSet;
-import jtom.runtime.set.jgtreeset.SetFactory;
+import jtom.runtime.set.jgtreeset.set.*;
+import jtom.runtime.set.jgtreeset.set.types.*;
 import aterm.*;
 
 public abstract class ATermSet implements Collection {
@@ -52,7 +51,7 @@ public abstract class ATermSet implements Collection {
   protected static GenericTraversal traversal = new GenericTraversal();
 
   static protected JGTreeSet emptyTree;
-  static protected SetFactory factory = null;
+  static protected Factory factory = null;
   static protected int collisions = 0;
   static final protected int[] mask =
   { 1 << 0, 
@@ -95,7 +94,7 @@ public abstract class ATermSet implements Collection {
     return tree.getUniqueIdentifier();
   }
   
-  protected SetFactory getSetFactory() { 
+  protected Factory getSetFactory() { 
     return factory;
   }
   
@@ -255,7 +254,7 @@ public abstract class ATermSet implements Collection {
   }
   
   protected String topRepartition(JGTreeSet t) {
-     {  JGTreeSet tom_match1_1 = null; tom_match1_1 = ( JGTreeSet) t;_match1_pattern1: {  JGTreeSet r = null;  JGTreeSet l = null; if(tom_is_fun_sym_branch(tom_match1_1)) {  JGTreeSet tom_match1_1_1 = null;  JGTreeSet tom_match1_1_2 = null; tom_match1_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match1_1); tom_match1_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match1_1); l = ( JGTreeSet) tom_match1_1_1; r = ( JGTreeSet) tom_match1_1_2;
+     {  JGTreeSet tom_match1_1 = null; tom_match1_1 = ( JGTreeSet) t;_match1_pattern1: {  JGTreeSet r = null;  JGTreeSet l = null; if(tom_is_fun_sym_branch(tom_match1_1) ||  false ) {  JGTreeSet tom_match1_1_1 = null;  JGTreeSet tom_match1_1_2 = null; tom_match1_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match1_1); tom_match1_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match1_1); l = ( JGTreeSet) tom_match1_1_1; r = ( JGTreeSet) tom_match1_1_2;
   return "Left branch: "+size(l)+"\tright branch: "+size(r); }}_match1_pattern2: {
  return "topRepartition: No a branch";} }
  
@@ -347,12 +346,12 @@ public abstract class ATermSet implements Collection {
       Collect1 collect = new Collect1() {
           public boolean apply(ATerm t) {
             if(t instanceof JGTreeSet) {
-               {  JGTreeSet tom_match2_1 = null; tom_match2_1 = ( JGTreeSet) t;_match2_pattern1: { if(tom_is_fun_sym_emptySet(tom_match2_1)) {
- return false; }}_match2_pattern2: {  aterm.ATerm x = null; if(tom_is_fun_sym_singleton(tom_match2_1)) {  aterm.ATerm tom_match2_1_1 = null; tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match2_1); x = ( aterm.ATerm) tom_match2_1_1;
+               {  JGTreeSet tom_match2_1 = null; tom_match2_1 = ( JGTreeSet) t;_match2_pattern1: { if(tom_is_fun_sym_emptySet(tom_match2_1) ||  false ) {
+ return false; }}_match2_pattern2: {  aterm.ATerm x = null; if(tom_is_fun_sym_singleton(tom_match2_1) ||  false ) {  aterm.ATerm tom_match2_1_1 = null; tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match2_1); x = ( aterm.ATerm) tom_match2_1_1;
  
                   res.add(x);
                   return false;
-                 }}_match2_pattern3: {  aterm.ATerm x = null; if(tom_is_fun_sym_pair(tom_match2_1)) {  aterm.ATerm tom_match2_1_1 = null; tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match2_1); x = ( aterm.ATerm) tom_match2_1_1;
+                 }}_match2_pattern3: {  aterm.ATerm x = null; if(tom_is_fun_sym_pair(tom_match2_1) ||  false ) {  aterm.ATerm tom_match2_1_1 = null; tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match2_1); x = ( aterm.ATerm) tom_match2_1_1;
  
                   res.add(x);
                   return false;

@@ -3,7 +3,7 @@
 #
 
 javadir         = ${prefix}/classes/jtom/parser
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(TSADT_STABLE):$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 JAVASOURCES     = ASCII_UCodeESC_CharStream.java\
 		  JavaCharStream.java\

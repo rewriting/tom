@@ -5,7 +5,7 @@
 SUBDIRS         = strategies set xml
 
 javadir         = ${prefix}/classes/jtom/runtime
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(TSADT_STABLE):$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 JAVASOURCES     = GenericTraversal.java\
 		  CollectReach.java\

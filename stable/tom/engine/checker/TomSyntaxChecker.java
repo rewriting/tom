@@ -28,47 +28,30 @@
 package jtom.checker;
 
 import jtom.TomEnvironment;
-import jtom.tools.TomTaskInput;
 
 public class TomSyntaxChecker extends TomChecker {
 
   public TomSyntaxChecker(TomEnvironment env) {
-  	super(env);	
+  	super("Tom SyntaxChecker", env);
   }
-
-  public void process(TomTaskInput input) {
+	
+  public void process() {
     try {
-    	this.input = input;
-			strictType = input.isStrictType();
-			warningAll = input.isWarningAll();
-			noWarning = input.isNoWarning();
 			long startChrono = 0;
-			boolean verbose = input.isVerbose();
 			if(verbose) {
 				startChrono = System.currentTimeMillis();
 			}
-			checkSyntax(input.getTerm());
+			checkSyntax(getInput().getTerm());
+			
 	  	if(verbose) {
 		  	System.out.println("TOM syntax Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  	}
     } catch (Exception e) {
-			addError(input, "Exception occurs in TomSyntaxChecker"+e.getMessage(), input.getInputFileName(), 0, 0);
+			addError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
 			e.printStackTrace();
 			return;
     }
-		int nbError = getNumberFoundError();
-		if(nbError > 0 ) {
-		  for(int i=0 ; i<nbError ; i++) {
-				System.out.println(getMessage(i));
-		  }
-		  String msg = "Tom Checker:  Encountered " + nbError + " errors during verification phase.\nNo file generated.";
-		  System.out.println(msg);
-		  return;
-		}
-			//	Start next task
-    if(nextTask != null) {
-      nextTask.process(input);
-    }
+		
   }
 
 } // Class TomSyntaxChecker

@@ -3,7 +3,7 @@
 #
 
 #SUBDIRS         = adt
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TNODEADT):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TNODEADT):$$CLASSPATH
 
 javadir         = ${prefix}/classes/jtom/runtime/xml
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/xml

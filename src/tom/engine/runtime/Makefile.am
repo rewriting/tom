@@ -3,7 +3,7 @@
 #
 SUBDIRS		= strategies set xml
 javadir         = ${prefix}/classes/jtom/runtime
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/runtime
 BOOTSOURCES	= GenericTraversal.java\
@@ -16,7 +16,7 @@ java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES) ${JARFILE}
 data_DATA       = ${JARFILE}
 
-JAVAROOT        = ${top_builddir}/src/
+JAVAROOT        = ${top_builddir}/src
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)

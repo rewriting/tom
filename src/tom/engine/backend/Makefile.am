@@ -3,13 +3,13 @@
 #
 
 javadir         = ${prefix}/classes/jtom/backend
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/backend
 BOOTSOURCES	= TomGenerator.java TomOptimizer.java
 java_JAVA       = $(BOOTSOURCES)
 
-JAVAROOT        = ${top_builddir}/src/
+JAVAROOT        = ${top_builddir}/src
 
 CLEANFILES 	= TomGenerator.java TomOptimizer.java
 EXTRA_DIST 	= $(BOOTSOURCES) TomGenerator.t TomOptimizer.t

@@ -4,7 +4,7 @@
 
 javadir         = ${prefix}/test
 JAVAROOT        = ${top_builddir}/test
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(top_builddir)/src:$(top_builddir)/stable:$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(top_builddir)/src:$(top_builddir)/src/adt:$(top_builddir)/stable:$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 source_java     = Peano.t\
 		  List.t\
@@ -30,7 +30,7 @@ EXTRA_DIST      = $(source_java) $(source_c)
 %.java.test : %.java Makefile
 	@(echo '#! /bin/sh';\
 	 echo 'set -e';\
-	 echo 'CLASSPATH=${top_builddir}:${top_builddir}/src:${top_builddir}/stable:..:$(JAVA_ATERM):${SHARED_OBJECTS}:${CLASSPATH}';\
+	 echo 'CLASSPATH=${top_builddir}:${top_builddir}/src:${top_builddir}/src/adt:${top_builddir}/stable:..:$(JAVA_ATERM):${SHARED_OBJECTS}:${CLASSPATH}';\
 	 echo 'export CLASSPATH';\
 	 echo "java $* ${srcdir}";\
 	 echo "rm $*.java.test";\

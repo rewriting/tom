@@ -3,7 +3,7 @@
 #
 
 javadir         = ${prefix}/classes/jtom/parser
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/parser
 BOOTSOURCES	= JavaCharStream.java\
@@ -19,7 +19,7 @@ generated_java  = Token.java\
 
 java_JAVA       = $(BOOTSOURCES) $(generated_java)
 
-JAVAROOT        = ${top_builddir}/src/
+JAVAROOT        = ${top_builddir}/src
 
 JAVACC          = @JAVACC@
 

@@ -27,11 +27,16 @@
 package jtom.parser;
 import java.io.*;
 import java.util.*;
-import jtom.adt.*;
+import java.text.*;
+import jtom.TomEnvironment;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
+import jtom.adt.tomsignature.types.tomterm.RuleSet;
+import jtom.adt.tomsignature.types.tomterm.Match;
 import jtom.exception.*;
 import jtom.tools.*;
+import jtom.checker.TomCheckerMessage;
 import jtom.xml.Constants;
-import java.lang.Throwable;
 
 public class TomParserTokenManager implements TomParserConstants
 {

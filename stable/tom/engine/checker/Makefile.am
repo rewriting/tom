@@ -4,7 +4,7 @@
 
 
 javadir         = ${prefix}/classes/jtom/checker
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(TSADT_STABLE):$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 JAVASOURCES     = TomChecker.java TomSyntaxChecker.java TomTypeChecker.java
 java_JAVA       = $(JAVASOURCES)
