@@ -23,7 +23,7 @@
   <property name="examples.build" location="build"/>
 
   <!-- Examples to build and distribute -->
-  <property name="cell" value="Cell"/>
+  <property name="cell" value="cell"/>
   <property name="cell.dir" location="${examples.dir}/${cell}" />
 
   <property name="addressbook" value="addressbook"/>
@@ -245,6 +245,26 @@
       <classpath refid="tom.classpath"/>
       <include name="${builtin}/**/*.java"/>
     </javac>
+  </target>
+
+  <target name="caml" depends="init">
+		<mkdir dir="${examples.gen}/${caml}"/>
+    <!-- build tom -->
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}/${caml}"
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         options="--camlCode -I ${tom.home}/share/jtom">
+      <include name="${caml}/**/*.t"/>
+    </tom>
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${caml}">
+      <fileset dir="${examples.dir}/${caml}">
+        <include name="*.ml"/>
+        <include name="Makefile"/>
+        <include name="README"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="cell" depends="init">
@@ -688,12 +708,15 @@
       <target name="examples" 
               description="Builds the examples (at least some)"
               depends="xml, vas, tutorial, set, rbtree, propp, prodrule,
-              addressbook, apireach, boulderdash, builtin, dom,
+              addressbook, caml, apireach, boulderdash, builtin, dom,
               expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens">
       </target>
       
-      <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">
-        <tar tarfile="${examples.dist}/jtom-${version}-examples.tar.gz" compression="gzip">
+			<target name="dist.examples" 
+							description="Prepare a distribution of examples" 
+							depends="prepare.examples">
+        <tar tarfile="${examples.dist}/jtom-${version}-examples.tar.gz" 
+						 compression="gzip">
           <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
             <include name="README"/>
             <include name="build.xml"/>
@@ -722,7 +745,6 @@
             <include name="${caml}/README"/>
             <include name="${caml}/Makefile"/>
             <include name="${caml}/*.t"/>
-            <include name="${caml}/*.adt"/>
             <include name="${caml}/peanotype.ml"/>
             <include name="${caml}/tomExtension.ml"/>
             <include name="${caml}/tomList.ml"/>
