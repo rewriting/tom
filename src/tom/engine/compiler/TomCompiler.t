@@ -66,7 +66,7 @@ public class TomCompiler extends TomTask {
       boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate();
       if(verbose) { startChrono = System.currentTimeMillis();}
       
-      TomTerm preCompiledTerm = preProcessing(getInput().getTerm());
+      TomTerm preCompiledTerm = preProcessing(environment().getTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       
@@ -76,7 +76,7 @@ public class TomCompiler extends TomTask {
       if(intermediate) {
         Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().compiledSuffix, compiledTerm);
       }
-      getInput().setTerm(compiledTerm);
+      environment().setTerm(compiledTerm);
       
     } catch (Exception e) {
       addError("Exception occurs in TomCompiler: "+e.getMessage(), 

@@ -68,7 +68,7 @@ public abstract class TomTask extends TomBase {
 	
   public boolean checkNoErrors() {
     boolean res = true; 
-    TomErrorList errors = getInput().getErrors();
+    TomErrorList errors = environment().getErrors();
       //System.out.println(errors);
     int nbTotalError = errors.getLength();
     int nbWarning = 0, nbError=0;
@@ -105,7 +105,7 @@ public abstract class TomTask extends TomBase {
       //	Start next task
     if(nextTask != null) {
       if(!getInput().isEclipseMode()) {
-        getInput().setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
+        environment().setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
       } 
       nextTask.startProcess();
     } /*else { System.out.println("No more tasks"); }*/
@@ -137,7 +137,7 @@ public abstract class TomTask extends TomBase {
 				
   public void addError(String msg, String file, int line, int level) {
     TomError err = tsf().makeTomError_Error(msg,file,line,level);
-    getInput().setErrors(tsf().makeTomErrorList(err, getInput().getErrors()));
+    environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
   }
 		
 }

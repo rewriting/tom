@@ -31,12 +31,7 @@ import java.util.List;
 import jtom.exception.TomRuntimeException;
 import java.io.*;
 
-import jtom.adt.tomsignature.types.*;
-
 public class TomTaskInput {
-  private TomTerm term;
-  private TomErrorList errors;
-
     /*
      * Singleton pattern
      */
@@ -52,10 +47,9 @@ public class TomTaskInput {
     return instance;
   }
 
-  public static TomTaskInput create(TomErrorList errors) {
+  public static TomTaskInput create() {
     if(instance == null) {
       instance = new TomTaskInput();
-      instance.errors = errors;
       return instance;
     } else {
       throw new TomRuntimeException(new Throwable("cannot create two instances of TomTaskInput"));
@@ -84,6 +78,12 @@ public class TomTaskInput {
      * absolute name of the output file (with extension) 
      */
   private File outputFile;
+
+    /*
+     * userOutputFile
+     * absolute name of the output file (given in command line) 
+     */
+  private File userOutputFile;
 
     /*
      * packagePath
@@ -118,7 +118,6 @@ public class TomTaskInput {
   private boolean doVerify; // Compilation correctness verification
   private boolean help; // usage called
   private boolean version; //version called
-  private boolean userOutputFile; //to know if the the output file is given by the user 
 
   private String inputSuffix;
   private String outputSuffix;
@@ -143,7 +142,8 @@ public final static String debugTableSuffix = ".tfix.debug.table";
     language = JAVA;
     inputSuffix = ".t";
     outputSuffix = ".java";
-    
+    userOutputFile = null;
+
     needDebugExpansion = false;
     verbose = false;
     intermediate = false;
@@ -171,14 +171,6 @@ public final static String debugTableSuffix = ".tfix.debug.table";
     doVerify = false;
     help = false;
     version = false;
-    userOutputFile = false;
-  }
-  
-  public void setTerm(TomTerm term) {
-    this.term = term;
-  }
-  public TomTerm getTerm() {
-    return term;
   }
   
   public boolean getNeedDebugExpansion() {
@@ -351,13 +343,6 @@ public final static String debugTableSuffix = ".tfix.debug.table";
     atermStat = b;
   }
 
-  public TomErrorList getErrors() {
-    return errors;
-  }
-  public void setErrors(TomErrorList list) {
-    errors = list;
-  }
-
   public boolean isDoVerify() {
     return doVerify;
   }
@@ -505,11 +490,20 @@ public final static String debugTableSuffix = ".tfix.debug.table";
   }
 
   public boolean isUserOutputFile() {
-    return userOutputFile;
+    return userOutputFile != null;
   }
-  public void setUserOutputFile(boolean b) {
-    userOutputFile = b;
+
+  public void setUserOutputFile(String sUserOutputFile) {
+    try {
+      this.userOutputFile = new File(sUserOutputFile).getCanonicalFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + sUserOutputFile + "`");
+      e.printStackTrace();
+    }
   }
  
+	public File getUserOutputFile() {
+		return userOutputFile;
+	}
  
 } // class TomTaskInput

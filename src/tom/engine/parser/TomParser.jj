@@ -150,8 +150,8 @@ public class TomParser extends TomTask {
         Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().debugTableSuffix, getStructTable());	
       }
         
-  		// Update taskInput
-  		getInput().setTerm(parsedTerm);
+  		// Update environment
+  		environment().setTerm(parsedTerm);
       
     } catch (TokenMgrError e) {
   	  String msg = "Parsing exception catched in file '"+currentFile+"'\n" + e.getMessage();

@@ -44,7 +44,7 @@ public class TomSyntaxChecker extends TomChecker {
 			if(verbose) {
 				startChrono = System.currentTimeMillis();
 			}
-			checkSyntax(getInput().getTerm());
+			checkSyntax(environment().getTerm());
 			
 	  	if(verbose) {
 		  	System.out.println("TOM syntax Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");

@@ -28,11 +28,14 @@ package jtom;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.exception.TomRuntimeException;
+import jtom.adt.tomsignature.types.*;
 
 public class TomEnvironment {
 	private ASTFactory astFactory;
 	private Factory tomSignatureFactory;
 	private SymbolTable symbolTable;
+  private TomTerm term;
+  private TomErrorList errors;
 
   /*
    * Singleton pattern
@@ -65,6 +68,8 @@ public class TomEnvironment {
 
   public void init() {
     symbolTable.init();
+    errors = tomSignatureFactory.makeTomErrorList();
+    term = null;
   }
 
 	public ASTFactory getASTFactory() {
@@ -78,5 +83,20 @@ public class TomEnvironment {
 	public SymbolTable getSymbolTable() {
 		return symbolTable;
 	}
+
+  public void setTerm(TomTerm term) {
+    this.term = term;
+  }
+  public TomTerm getTerm() {
+    return term;
+  }
+  
+  public TomErrorList getErrors() {
+    return errors;
+  }
+  public void setErrors(TomErrorList list) {
+    errors = list;
+  }
+
 
 }

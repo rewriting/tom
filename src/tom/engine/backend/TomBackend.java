@@ -77,7 +77,7 @@ public class TomBackend extends TomTask {
       if(verbose) {
         startChrono = System.currentTimeMillis();
       }
-      generator.generate(defaultDeep, getInput().getTerm());
+      generator.generate(defaultDeep, environment().getTerm());
       if(verbose) {
         System.out.println("TOM generation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }

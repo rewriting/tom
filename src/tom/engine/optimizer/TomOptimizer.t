@@ -54,13 +54,13 @@ public class TomOptimizer extends TomTask {
       boolean verbose = getInput().isVerbose();
       if(verbose) { startChrono = System.currentTimeMillis();}
       
-      TomTerm renamedTerm = renameVariable(getInput().getTerm(),new HashSet());
+      TomTerm renamedTerm = renameVariable(environment().getTerm(),new HashSet());
       TomTerm optimizedTerm = optimize(renamedTerm);
       
       if(verbose) {
         System.out.println("TOM optimization phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
-      getInput().setTerm(optimizedTerm);
+      environment().setTerm(optimizedTerm);
       
     } catch (Exception e) {
       addError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
