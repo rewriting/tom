@@ -20,7 +20,7 @@ public class TNodeTool {
   }
 
 
-  public   Sequence collectData(TNode subject,final TNodeTester tester, final TNodeQualifier qualifier) 
+  public Sequence operatorSlashSlash(TNode subject,final TNodeTester tester, final TNodeQualifier qualifier) 
   {
 	GenericTraversal traversal = new GenericTraversal();
 	final Sequence sequence=new Sequence(); 
@@ -67,7 +67,7 @@ public class TNodeTool {
 	  //System.out.println(obj);
 	  
 
-	  if (tester.doTest(obj)) {
+	  if (tester.doTest(obj)!=null) {
 		if (!sequencetool.contain(output, obj, comparator)) {
 		  output.add(obj);
 		}
@@ -91,7 +91,7 @@ public class TNodeTool {
 	  %match (TNode subject) {
 		<_></_> -> {
 		   Object newNode = tester.doTest(subject);
-		   if (tester.doTest(newNode)) {
+		   if (newNode !=null ) {
 			 seq.addAll(qualifier.qualify(newNode));
 		   }
 		 }
