@@ -1,6 +1,0 @@
-
-Single list variable 'x*' is not allowed on left hand side of structure %rule declared line 16
--- Error occured at line: 18 in file: JRule4.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

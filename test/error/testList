@@ -195,28 +195,26 @@ Grammar {
 Test {
      JRuleRef.t
      JRule1.t
-	'_' is impossible on top of Rhs
-     JRule2.t
-	'_' is impossible on Rhs even in app structure
-     JRule3.t
-	Alone placeholder : Not allowed in left hand side
-     JRule4.t
-	Single list variable : Not allowed on top of %rule
-     JRule5.t
-	Bad number of arguments for method 'op':2 arguments are required but 1 are given
-     JRule6t
-	Left most symbol name 'op' expected, but 'op1' found in left hand side of structure %rule
-     JRule7.t
-	Single list variable 'x*' is not allowed in right hand side of structure %rule
-     JRule8.t
-	Alone variable or operator toto is not allowed on left hand side of structure %rule
-     JRule9.t
-	 Record 'op[...]' is not allowed on right part of structure %rule
-     JRule10.t
-	Alone variable 'y' has type 'type1' instead of type 'type2' in right part of %rule
-     JRule11.t
-        Bad right hand side type: `type2` instead of `type1`
-
+	 `_`: Impossible in rule left hand side
+	  `X*`: Impossible in rule left hand side
+	  `_*`: Impossible in rule left hand side
+	  `XML Construct a`: Impossible in rule left hand side
+	  `Disjunction`: Impossible in rule left hand side
+	  `Disjunction`: Impossible in rule left hand side}
+	  Rule head symbol `op2` has no `make` method: It is necessary to define one!!
+	  Rule head symbol name `op1` expected, but `op2` found
+	  Bad number of arguments for symbol `op1`: 2 argument(s) required but 0 found
+	  The symbol `op3` has type `type2` but type `type1` was required
+	  The symbol `op2` has type `type1` but type `type2` was required
+	  `_`: Impossible in rule right hand side
+	  `_*`: Impossible in rule right hand side
+	  `X*`: Impossible in rule right hand side
+	  `XML construct a`: Impossible in rule right hand side
+	  `Disjunction`: Impossible in rule right hand side
+	   `_`: Impossible in rule right hand side
+	   Bad number of arguments for symbol `op1`: 2 argument(s) required but 1 found
+	   Bad number of arguments for symbol `op1`: 2 argument(s) required but 1 found
+	   `op1[...]`: Impossible in rule right hand side
 	
 ////////////////////
 RECORD DECLARATION

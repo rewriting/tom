@@ -1,6 +1,0 @@
-
-Left most symbol name 'op' expected, but 'op1' found in left hand side of structure %rule declared line 23
--- Error occured at line: 25 in file: JRule6.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.
