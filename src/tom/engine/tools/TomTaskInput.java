@@ -27,6 +27,7 @@ package jtom.tools;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.*;
 
 import jtom.adt.tomsignature.types.*;
 
@@ -34,6 +35,39 @@ public class TomTaskInput {
   private TomTerm term;
   private TomErrorList errors;
   private List importList;
+
+  /* 
+   * destDir 
+   * absolute path where file are generated  
+   */ 
+  File destDir;
+ 
+  /*
+   * inputFile
+   * absolute name of the input file (with extension) 
+   */
+  File inputFile;
+
+  /*
+   * outputFile
+   * absolute name of the output file (with extension) 
+   */
+  File outputFile;
+
+
+  /*
+   * packagePath
+   * relative path which corresponds to the package defined in the input file (empty by default) 
+   */
+  String packagePath = ""; 
+
+  /*
+   * tomHome
+   * absolute path where Tom is installed (empty by default) 
+   */
+  File tomHome = null;   
+  
+
   private String inputFileName = "",
     baseInputFileName = "",
     outputFileName = "",
@@ -43,7 +77,7 @@ public class TomTaskInput {
 		inputSuffix = ".t",
 		rawFileName = "";
   public final static String 
-  parsedSuffix    = ".tfix.parsed",
+    parsedSuffix    = ".tfix.parsed",
     expandedSuffix  = ".tfix.expanded",
     compiledSuffix  = ".tfix.compiled",
     optimizedSuffix  = ".tfix.optimized",
