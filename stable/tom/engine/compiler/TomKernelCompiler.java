@@ -45,7 +45,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
 // ------------------------------------------------------------
-     
+    
 // ------------------------------------------------------------
 
     /* 
@@ -143,7 +143,7 @@ public class TomKernelCompiler extends TomBase {
         if(Flags.debugMode) {
           generatedMatch = hasGeneratedMatch(optionList);
           Option orgTrack = findOriginTracking(optionList);
-          currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+          currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
         }
         
         TomList patternList, actionList;

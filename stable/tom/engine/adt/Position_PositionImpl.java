@@ -51,24 +51,24 @@ extends Position
     return true;
   }
 
-  public Integer getLine()
+  public int getLine()
   {
-   return new Integer(((aterm.ATermInt) this.getArgument(index_line)).getInt());
+   return ((aterm.ATermInt) this.getArgument(index_line)).getInt();
   }
 
-  public Position setLine(Integer _line)
+  public Position setLine(int _line)
   {
-    return (Position) super.setArgument(getFactory().makeInt(_line.intValue()), index_line);
+    return (Position) super.setArgument(getFactory().makeInt(_line), index_line);
   }
 
-  public Integer getColumn()
+  public int getColumn()
   {
-   return new Integer(((aterm.ATermInt) this.getArgument(index_column)).getInt());
+   return ((aterm.ATermInt) this.getArgument(index_column)).getInt();
   }
 
-  public Position setColumn(Integer _column)
+  public Position setColumn(int _column)
   {
-    return (Position) super.setArgument(getFactory().makeInt(_column.intValue()), index_column);
+    return (Position) super.setArgument(getFactory().makeInt(_column), index_column);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {

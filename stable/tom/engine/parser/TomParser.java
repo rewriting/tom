@@ -41,8 +41,12 @@ import jtom.exception.TomException;
 import jtom.tools.ASTFactory;
 import jtom.tools.Flags;
 import jtom.tools.SymbolTable;
+import jtom.tools.Statistics;
+import jtom.tools.TomTask;
+import jtom.tools.TomTaskInput;
 
-public class TomParser implements TomParserConstants {
+
+public class TomParser implements TomTask, TomParserConstants {
 
   private int oldPos=0;
   private int oldLine=0;
@@ -50,16 +54,19 @@ public class TomParser implements TomParserConstants {
   private Position orgTrack;
   private TomBuffer tomBuffer;
   private SymbolTable symbolTable;
+  private Statistics stat;
   private jtom.TomEnvironment environment;
   private File importList[];
   private static HashSet includedFiles = new HashSet();
   private String currentFile;
   private ArrayList debuggedStructureList;
   private String text="";
+  private TomTask nextTask;
 
   public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, String fileName) {
     this(input);
     this.tomBuffer = input;
+    this.stat = environment.getStatistics();
     this.symbolTable = environment.getSymbolTable();
     this.environment = environment;
     this.importList = importList;
@@ -73,6 +80,27 @@ public class TomParser implements TomParserConstants {
       System.out.println("Re-entering included file forms a cycle. Breaking the parsing...");
       System.exit(1);
     }
+  }
+
+  public void addTask(TomTask task) {
+        this.nextTask = task;
+  }
+
+  public void process(TomTaskInput input) {
+        try {
+            System.out.println("Processing TomParser Task");
+                TomTerm parsedTerm = startParsing();
+                // Update taskInput
+                input.setTerm(parsedTerm);
+        } catch (Exception e) {
+        }
+        if(nextTask != null) {
+      nextTask.process(input);
+    }
+  }
+
+  public TomTask getTask() {
+        return nextTask;
   }
 
   public jtom.TomEnvironment environment() {
@@ -96,7 +124,7 @@ public class TomParser implements TomParserConstants {
   }
 
   private String savePosAndExtract() {
-    environment.getStatistics().numberStrangerBlocsRecognized++;
+    stat.numberStrangerBlocsRecognized++;
     return savePosAndExtract(0);
   }
 
@@ -135,7 +163,7 @@ public class TomParser implements TomParserConstants {
   }
 
   public Position makePosition(int line, int column) {
-    return  tsf().makePosition_Position(new Integer(line+includeOffSet), new Integer(column));
+    return  tsf().makePosition_Position(line+includeOffSet, column);
   }
 
   private TargetLanguage makeTL(String code) {
@@ -187,6 +215,7 @@ public class TomParser implements TomParserConstants {
       case TYPE:
       case TYPETERM:
       case TYPEINT:
+      case TYPEDOUBLE:
       case TYPESTRING:
       case TYPELIST:
       case TYPEARRAY:
@@ -205,60 +234,64 @@ public class TomParser implements TomParserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case MATCH:
         MatchConstruct(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case MATCHXML:
         MatchXMLConstruct(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case RULE:
         RuleConstruct(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case BACKQUOTE_TERM:
         BackQuoteTerm(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case INCLUDE:
         IncludeConstruct(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case VARIABLE:
         LocalVariableConstruct(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case OPERATOR:
         Operator(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case OPERATOR_LIST:
         OperatorList(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case OPERATOR_ARRAY:
         OperatorArray(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPE:
       case TYPETERM:
         TypeTerm(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPEINT:
         TypeInt(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
+        break;
+      case TYPEDOUBLE:
+        TypeDouble(blockList);
+                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPESTRING:
         TypeString(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPELIST:
         TypeList(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPEARRAY:
         TypeArray(blockList);
-                                           environment.getStatistics().numberTomBlocsRecognized++;
+                                           stat.numberTomBlocsRecognized++;
         break;
       case LBRACE:
         jj_consume_token(LBRACE);
@@ -277,7 +310,7 @@ public class TomParser implements TomParserConstants {
   }
 
   final public void MatchConstruct(ArrayList list) throws ParseException, TomException {
-  environment.getStatistics().numberMatchBlocsRecognized++;
+  stat.numberMatchBlocsRecognized++;
   ArrayList matchArgumentsList = new ArrayList();
   ArrayList patternActionList = new ArrayList();
   ArrayList optionList = new ArrayList();
@@ -285,7 +318,7 @@ public class TomParser implements TomParserConstants {
       addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
       optionList.add(orgTrack);
-      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
     jj_consume_token(TOM_LPAREN);
     MatchArguments(matchArgumentsList);
     jj_consume_token(TOM_RPAREN);
@@ -296,6 +329,7 @@ public class TomParser implements TomParserConstants {
       case TOM_UNDERSCORE:
       case TOM_INTEGER:
       case TOM_IDENTIFIER:
+      case TOM_DOUBLE:
       case TOM_STRING:
         ;
         break;
@@ -317,7 +351,7 @@ public class TomParser implements TomParserConstants {
   }
 
   final public void PatternAction(ArrayList list, String debugKey) throws ParseException, TomException {
-  environment.getStatistics().numberMatchRulesRecognized++;
+  stat.numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
   ArrayList listTextPattern = new ArrayList();
   ArrayList listOrgTrackPattern = new ArrayList();
@@ -504,6 +538,7 @@ public class TomParser implements TomParserConstants {
           case TOM_UNDERSCORE:
           case TOM_INTEGER:
           case TOM_IDENTIFIER:
+          case TOM_DOUBLE:
           case TOM_STRING:
             term = DotTerm();
                                        list.add(term);
@@ -567,6 +602,20 @@ public class TomParser implements TomParserConstants {
         tsf().makeTomName_Name(name.image),
         tsf().makeTomList());}
         break;
+      case TOM_DOUBLE:
+        // double
+            name = jj_consume_token(TOM_DOUBLE);
+      text += name.image;
+      if(annotedName!=null) { optionList.add(annotedName); }
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      ast().makeDoubleSymbol(symbolTable,name.image,optionList);
+
+      {if (true) return tsf().makeTomTerm_Appl(
+        option,
+        tsf().makeTomName_Name(name.image),
+        tsf().makeTomList());}
+        break;
       case TOM_STRING:
         // string
             name = jj_consume_token(TOM_STRING);
@@ -606,6 +655,7 @@ public class TomParser implements TomParserConstants {
       case TOM_UNDERSCORE:
       case TOM_INTEGER:
       case TOM_IDENTIFIER:
+      case TOM_DOUBLE:
       case TOM_STRING:
         // PlainTerm()
             term = PlainTerm(astAnnotedName);
@@ -662,7 +712,7 @@ public class TomParser implements TomParserConstants {
       list.add(makeTL(savePosAndExtract()));
       Option orgTrack = ast().makeOriginTracking("MatchXML",getLine(), currentFile);
       optionList.add(orgTrack);
-      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
     jj_consume_token(TOM_LPAREN);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
@@ -697,7 +747,7 @@ public class TomParser implements TomParserConstants {
   }
 
   final public void XMLPatternAction(ArrayList list, String debugKey) throws ParseException, TomException {
-    //environment.getStatistics().numberMatchRulesRecognized++;
+    //stat.numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
   ArrayList listTextPattern = new ArrayList();
   ArrayList listOrgTrackPattern = new ArrayList();
@@ -1058,7 +1108,7 @@ public class TomParser implements TomParserConstants {
   }
 
   final public void RuleConstruct(ArrayList list) throws ParseException, TomException {
-  environment.getStatistics().numberRuleBlocsRecognized++;
+  stat.numberRuleBlocsRecognized++;
   TomTerm lhs, rhs;
   TomTerm pattern, subject;
   TomRuleList ruleList = tsf().makeTomRuleList();
@@ -1078,6 +1128,7 @@ public class TomParser implements TomParserConstants {
       case TOM_UNDERSCORE:
       case TOM_INTEGER:
       case TOM_IDENTIFIER:
+      case TOM_DOUBLE:
       case TOM_STRING:
         ;
         break;
@@ -1155,7 +1206,7 @@ public class TomParser implements TomParserConstants {
         ;
       }
       Option orgTrack = ast().makeOriginTracking("Pattern",getLine(), currentFile);
-      environment.getStatistics().numberRuleRulesRecognized++;
+      stat.numberRuleRulesRecognized++;
       ArrayList optionList = new ArrayList();
       optionList.add(orgTrack);
       optionList.add(tsf().makeOption_OriginalText(orgText));
@@ -1542,6 +1593,13 @@ public class TomParser implements TomParserConstants {
       addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       switchToDefaultMode(); /* switch to DEFAULT mode */
       ast().makeIntegerDecl(list);
+  }
+
+  final public void TypeDouble(ArrayList list) throws ParseException, TomException {
+    jj_consume_token(TYPEDOUBLE);
+      addPreviousCode(list);
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      ast().makeDoubleDecl(list);
   }
 
   final public void TypeString(ArrayList list) throws ParseException, TomException {
@@ -2188,7 +2246,12 @@ public class TomParser implements TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
-  final private boolean jj_3_7() {
+  final private boolean jj_3R_23() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
     return false;
@@ -2197,29 +2260,6 @@ public class TomParser implements TomParserConstants {
   final private boolean jj_3_8() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_23() {
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_STAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
@@ -2244,6 +2284,24 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_7() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_STAR)) return true;
+    return false;
+  }
+
   public TomParserTokenManager token_source;
   JavaCharStream jj_input_stream;
   public Token token, jj_nt;
@@ -2263,13 +2321,13 @@ public class TomParser implements TomParserConstants {
       jj_la1_2();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x8003ffae,0x8003ffae,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x300,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x7ffae,0x7ffae,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x300,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x2,0x2,0x10000000,0x10000,0x10000,0x20000,0x20000,0x20000,0x0,0x20000,0x10000000,0x400000,0x10000000,0x10000000,0x200000,0x90000000,0x10000,0x10000,0x90000000,0x1000000,0x20000,0x90000000,0x20000,0x400000,0x90000000,0x40000000,0x10000000,0x10000,0x10000,0x0,0x0,0x0,0x20000,0x400000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20000,0x400000,0x400000,0x400000,};
+      jj_la1_1 = new int[] {0x5,0x5,0x20000000,0x20000,0x20000,0x40000,0x40000,0x40000,0x0,0x40000,0x20000000,0x800000,0x20000000,0x20000000,0x400000,0x20000000,0x20000,0x20000,0x20000000,0x2000000,0x40000,0x20000000,0x40000,0x800000,0x20000000,0x80000000,0x20000000,0x20000,0x20000,0x0,0x0,0x0,0x40000,0x800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x40000,0x800000,0x800000,0x800000,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x1300000,0x0,0x0,0x0,0x0,0x0,0x200000,0x0,0x1300000,0x0,0x1300000,0x1300000,0x0,0x200001,0x0,0x0,0x200001,0x0,0x0,0x200001,0x0,0x0,0x200001,0x200000,0x1300000,0x0,0x0,0x6,0x6,0x6,0x0,0x0,0x608,0x608,0x430,0x430,0x450,0x450,0x0,0x7800,0x7800,0x3f800,0x3f800,0xc7800,0xc7800,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0x8e00000,0x0,0x0,0x0,0x0,0x0,0x400000,0x0,0x8e00000,0x0,0x8e00000,0x8e00000,0x0,0x400003,0x0,0x0,0x400003,0x0,0x0,0x400003,0x0,0x0,0x400003,0x400000,0x8e00000,0x0,0x0,0xc,0xc,0xc,0x0,0x0,0xc10,0xc10,0x860,0x860,0x8a0,0x8a0,0x0,0xf000,0xf000,0x7f000,0x7f000,0x18f000,0x18f000,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[8];
   private boolean jj_rescan = false;
@@ -2440,8 +2498,8 @@ public class TomParser implements TomParserConstants {
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[89];
-    for (int i = 0; i < 89; i++) {
+    boolean[] la1tokens = new boolean[92];
+    for (int i = 0; i < 92; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -2463,7 +2521,7 @@ public class TomParser implements TomParserConstants {
         }
       }
     }
-    for (int i = 0; i < 89; i++) {
+    for (int i = 0; i < 92; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

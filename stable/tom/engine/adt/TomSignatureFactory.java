@@ -2067,8 +2067,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Option_OriginTracking makeOption_OriginTracking(TomName _astName, Integer _line, TomName _fileName) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, makeInt(_line.intValue()), _fileName};
+  public Option_OriginTracking makeOption_OriginTracking(TomName _astName, int _line, TomName _fileName) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, makeInt(_line), _fileName};
     return makeOption_OriginTracking( funOption_OriginTracking, args, empty);
   }
 
@@ -2077,7 +2077,7 @@ public class TomSignatureFactory extends PureFactory
     java.util.List children = trm.match(patternOption_OriginTracking);
 
     if (children != null) {
-      Option tmp = makeOption_OriginTracking(TomNameFromTerm( (aterm.ATerm) children.get(0)), (Integer) children.get(1), TomNameFromTerm( (aterm.ATerm) children.get(2)));
+      Option tmp = makeOption_OriginTracking(TomNameFromTerm( (aterm.ATerm) children.get(0)), ((Integer) children.get(1)).intValue(), TomNameFromTerm( (aterm.ATerm) children.get(2)));
       return tmp;
     }
     else {
@@ -2803,8 +2803,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Position_Position makePosition_Position(Integer _line, Integer _column) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeInt(_line.intValue()), makeInt(_column.intValue())};
+  public Position_Position makePosition_Position(int _line, int _column) {
+    aterm.ATerm[] args = new aterm.ATerm[] {makeInt(_line), makeInt(_column)};
     return makePosition_Position( funPosition_Position, args, empty);
   }
 
@@ -2813,7 +2813,7 @@ public class TomSignatureFactory extends PureFactory
     java.util.List children = trm.match(patternPosition_Position);
 
     if (children != null) {
-      Position tmp = makePosition_Position((Integer) children.get(0), (Integer) children.get(1));
+      Position tmp = makePosition_Position(((Integer) children.get(0)).intValue(), ((Integer) children.get(1)).intValue());
       return tmp;
     }
     else {
@@ -4480,8 +4480,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm_AssignedVariable makeTomTerm_AssignedVariable(String _varName, Expression _source, Integer _nbUse, Expression _usedInDoWhile, Expression _removable) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_varName, 0, true)), _source, makeInt(_nbUse.intValue()), _usedInDoWhile, _removable};
+  public TomTerm_AssignedVariable makeTomTerm_AssignedVariable(String _varName, Expression _source, int _nbUse, Expression _usedInDoWhile, Expression _removable) {
+    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_varName, 0, true)), _source, makeInt(_nbUse), _usedInDoWhile, _removable};
     return makeTomTerm_AssignedVariable( funTomTerm_AssignedVariable, args, empty);
   }
 
@@ -4490,7 +4490,7 @@ public class TomSignatureFactory extends PureFactory
     java.util.List children = trm.match(patternTomTerm_AssignedVariable);
 
     if (children != null) {
-      TomTerm tmp = makeTomTerm_AssignedVariable((String) children.get(0), ExpressionFromTerm( (aterm.ATerm) children.get(1)), (Integer) children.get(2), ExpressionFromTerm( (aterm.ATerm) children.get(3)), ExpressionFromTerm( (aterm.ATerm) children.get(4)));
+      TomTerm tmp = makeTomTerm_AssignedVariable((String) children.get(0), ExpressionFromTerm( (aterm.ATerm) children.get(1)), ((Integer) children.get(2)).intValue(), ExpressionFromTerm( (aterm.ATerm) children.get(3)), ExpressionFromTerm( (aterm.ATerm) children.get(4)));
       return tmp;
     }
     else {
@@ -4851,8 +4851,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomNumber_Number makeTomNumber_Number(Integer _integer) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeInt(_integer.intValue())};
+  public TomNumber_Number makeTomNumber_Number(int _integer) {
+    aterm.ATerm[] args = new aterm.ATerm[] {makeInt(_integer)};
     return makeTomNumber_Number( funTomNumber_Number, args, empty);
   }
 
@@ -4861,7 +4861,7 @@ public class TomSignatureFactory extends PureFactory
     java.util.List children = trm.match(patternTomNumber_Number);
 
     if (children != null) {
-      TomNumber tmp = makeTomNumber_Number((Integer) children.get(0));
+      TomNumber tmp = makeTomNumber_Number(((Integer) children.get(0)).intValue());
       return tmp;
     }
     else {

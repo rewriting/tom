@@ -98,12 +98,12 @@ abstract public class TomNumberImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomNumber has no Number");
   }
 
-  public Integer getInteger()
+  public int getInteger()
   {
      throw new RuntimeException("This TomNumber has no Integer");
   }
 
-  public TomNumber setInteger(Integer _integer)
+  public TomNumber setInteger(int _integer)
   {
      throw new RuntimeException("This TomNumber has no Integer");
   }

@@ -67,14 +67,14 @@ extends Option
     return (Option) super.setArgument(_astName, index_astName);
   }
 
-  public Integer getLine()
+  public int getLine()
   {
-   return new Integer(((aterm.ATermInt) this.getArgument(index_line)).getInt());
+   return ((aterm.ATermInt) this.getArgument(index_line)).getInt();
   }
 
-  public Option setLine(Integer _line)
+  public Option setLine(int _line)
   {
-    return (Option) super.setArgument(getFactory().makeInt(_line.intValue()), index_line);
+    return (Option) super.setArgument(getFactory().makeInt(_line), index_line);
   }
 
   public TomName getFileName()

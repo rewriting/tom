@@ -153,12 +153,12 @@ abstract public class OptionImpl extends TomSignatureConstructor
      throw new RuntimeException("This Option has no OptionList");
   }
 
-  public Integer getLine()
+  public int getLine()
   {
      throw new RuntimeException("This Option has no Line");
   }
 
-  public Option setLine(Integer _line)
+  public Option setLine(int _line)
   {
      throw new RuntimeException("This Option has no Line");
   }

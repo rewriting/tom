@@ -67,7 +67,7 @@ public class TomDebugEnvironment {
 
   public void addSubject(String name, Object trm) {
     subjects.add(new Substitution(name, trm));
-    if(subjects.size() == debugStructure.nbSubjects.intValue() && !failureLookup) {
+    if(subjects.size() == debugStructure.nbSubjects && !failureLookup) {
       System.out.println("Here is(are) the subject(s):");
       showSubjects();
       System.out.println();

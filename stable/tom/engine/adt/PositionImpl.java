@@ -38,22 +38,22 @@ abstract public class PositionImpl extends TomSignatureConstructor
     return false;
   }
 
-  public Integer getLine()
+  public int getLine()
   {
      throw new RuntimeException("This Position has no Line");
   }
 
-  public Position setLine(Integer _line)
+  public Position setLine(int _line)
   {
      throw new RuntimeException("This Position has no Line");
   }
 
-  public Integer getColumn()
+  public int getColumn()
   {
      throw new RuntimeException("This Position has no Column");
   }
 
-  public Position setColumn(Integer _column)
+  public Position setColumn(int _column)
   {
      throw new RuntimeException("This Position has no Column");
   }

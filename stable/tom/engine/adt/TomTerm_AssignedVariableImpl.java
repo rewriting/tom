@@ -89,14 +89,14 @@ extends TomTerm
     return (TomTerm) super.setArgument(_source, index_source);
   }
 
-  public Integer getNbUse()
+  public int getNbUse()
   {
-   return new Integer(((aterm.ATermInt) this.getArgument(index_nbUse)).getInt());
+   return ((aterm.ATermInt) this.getArgument(index_nbUse)).getInt();
   }
 
-  public TomTerm setNbUse(Integer _nbUse)
+  public TomTerm setNbUse(int _nbUse)
   {
-    return (TomTerm) super.setArgument(getFactory().makeInt(_nbUse.intValue()), index_nbUse);
+    return (TomTerm) super.setArgument(getFactory().makeInt(_nbUse), index_nbUse);
   }
 
   public Expression getUsedInDoWhile()

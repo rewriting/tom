@@ -793,12 +793,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Source");
   }
 
-  public Integer getNbUse()
+  public int getNbUse()
   {
      throw new RuntimeException("This TomTerm has no NbUse");
   }
 
-  public TomTerm setNbUse(Integer _nbUse)
+  public TomTerm setNbUse(int _nbUse)
   {
      throw new RuntimeException("This TomTerm has no NbUse");
   }

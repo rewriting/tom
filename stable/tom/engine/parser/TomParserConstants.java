@@ -39,66 +39,69 @@ public interface TomParserConstants {
   int TYPE = 8;
   int TYPETERM = 9;
   int TYPEINT = 10;
-  int TYPESTRING = 11;
-  int TYPELIST = 12;
-  int TYPEARRAY = 13;
-  int INCLUDE = 14;
-  int OPERATOR = 15;
-  int OPERATOR_LIST = 16;
-  int OPERATOR_ARRAY = 17;
-  int SINGLE_LINE_COMMENT = 26;
-  int FORMAL_COMMENT = 27;
-  int MULTI_LINE_COMMENT = 28;
-  int STRING_LITERAL = 30;
-  int LBRACE = 31;
-  int RBRACE = 32;
-  int OTHER = 33;
-  int TOM_SINGLE_LINE_COMMENT = 42;
-  int TOM_FORMAL_COMMENT = 43;
-  int TOM_MULTI_LINE_COMMENT = 44;
-  int TOM_ARROW = 46;
-  int TOM_DOUBLE_ARROW = 47;
-  int TOM_ALTERNATIVE = 48;
-  int TOM_COMMA = 49;
-  int TOM_COLON = 50;
-  int TOM_EQUAL = 51;
-  int TOM_AT = 52;
-  int TOM_DOT = 53;
-  int TOM_LPAREN = 54;
-  int TOM_RPAREN = 55;
-  int TOM_LBRACKET = 56;
-  int TOM_RBRACKET = 57;
-  int TOM_LBRACE = 58;
-  int TOM_RBRACE = 59;
-  int TOM_UNDERSCORE = 60;
-  int TOM_MINUS = 61;
-  int TOM_STAR = 62;
-  int TOM_SHARP = 63;
-  int TOM_AND = 64;
-  int TOM_WHERE = 65;
-  int TOM_IF = 66;
-  int TOM_MAKE = 67;
-  int TOM_MAKE_EMPTY = 68;
-  int TOM_MAKE_INSERT = 69;
-  int TOM_MAKE_APPEND = 70;
-  int TOM_IMPLEMENT = 71;
-  int TOM_FSYM = 72;
-  int TOM_GET_SLOT = 73;
-  int TOM_IS_FSYM = 74;
-  int TOM_GET_SUBTERM = 75;
-  int TOM_GET_FUN_SYM = 76;
-  int TOM_CMP_FUN_SYM = 77;
-  int TOM_EQUALS = 78;
-  int TOM_GET_HEAD = 79;
-  int TOM_GET_TAIL = 80;
-  int TOM_IS_EMPTY = 81;
-  int TOM_GET_ELEMENT = 82;
-  int TOM_GET_SIZE = 83;
-  int TOM_INTEGER = 84;
-  int TOM_IDENTIFIER = 85;
-  int TOM_LETTER = 86;
-  int TOM_DIGIT = 87;
-  int TOM_STRING = 88;
+  int TYPEDOUBLE = 11;
+  int TYPESTRING = 12;
+  int TYPELIST = 13;
+  int TYPEARRAY = 14;
+  int INCLUDE = 15;
+  int OPERATOR = 16;
+  int OPERATOR_LIST = 17;
+  int OPERATOR_ARRAY = 18;
+  int SINGLE_LINE_COMMENT = 27;
+  int FORMAL_COMMENT = 28;
+  int MULTI_LINE_COMMENT = 29;
+  int STRING_LITERAL = 31;
+  int LBRACE = 32;
+  int RBRACE = 33;
+  int OTHER = 34;
+  int TOM_SINGLE_LINE_COMMENT = 43;
+  int TOM_FORMAL_COMMENT = 44;
+  int TOM_MULTI_LINE_COMMENT = 45;
+  int TOM_ARROW = 47;
+  int TOM_DOUBLE_ARROW = 48;
+  int TOM_ALTERNATIVE = 49;
+  int TOM_COMMA = 50;
+  int TOM_COLON = 51;
+  int TOM_EQUAL = 52;
+  int TOM_AT = 53;
+  int TOM_DOT = 54;
+  int TOM_LPAREN = 55;
+  int TOM_RPAREN = 56;
+  int TOM_LBRACKET = 57;
+  int TOM_RBRACKET = 58;
+  int TOM_LBRACE = 59;
+  int TOM_RBRACE = 60;
+  int TOM_UNDERSCORE = 61;
+  int TOM_MINUS = 62;
+  int TOM_STAR = 63;
+  int TOM_SHARP = 64;
+  int TOM_AND = 65;
+  int TOM_WHERE = 66;
+  int TOM_IF = 67;
+  int TOM_MAKE = 68;
+  int TOM_MAKE_EMPTY = 69;
+  int TOM_MAKE_INSERT = 70;
+  int TOM_MAKE_APPEND = 71;
+  int TOM_IMPLEMENT = 72;
+  int TOM_FSYM = 73;
+  int TOM_GET_SLOT = 74;
+  int TOM_IS_FSYM = 75;
+  int TOM_GET_SUBTERM = 76;
+  int TOM_GET_FUN_SYM = 77;
+  int TOM_CMP_FUN_SYM = 78;
+  int TOM_EQUALS = 79;
+  int TOM_GET_HEAD = 80;
+  int TOM_GET_TAIL = 81;
+  int TOM_IS_EMPTY = 82;
+  int TOM_GET_ELEMENT = 83;
+  int TOM_GET_SIZE = 84;
+  int TOM_INTEGER = 85;
+  int TOM_IDENTIFIER = 86;
+  int TOM_DOUBLE = 87;
+  int EXPONENT = 88;
+  int TOM_LETTER = 89;
+  int TOM_DIGIT = 90;
+  int TOM_STRING = 91;
 
   int DEFAULT = 0;
   int IN_SINGLE_LINE_COMMENT = 1;
@@ -121,6 +124,7 @@ public interface TomParserConstants {
     "\"%type\"",
     "\"%typeterm\"",
     "\"%typeint\"",
+    "\"%typedouble\"",
     "\"%typestring\"",
     "\"%typelist\"",
     "\"%typearray\"",
@@ -134,12 +138,12 @@ public interface TomParserConstants {
     "\"\\r\"",
     "\"\\f\"",
     "\"//\"",
-    "<token of kind 24>",
+    "<token of kind 25>",
     "\"/*\"",
     "<SINGLE_LINE_COMMENT>",
     "\"*/\"",
     "\"*/\"",
-    "<token of kind 29>",
+    "<token of kind 30>",
     "<STRING_LITERAL>",
     "\"{\"",
     "\"}\"",
@@ -150,12 +154,12 @@ public interface TomParserConstants {
     "\"\\r\"",
     "\"\\f\"",
     "\"//\"",
-    "<token of kind 40>",
+    "<token of kind 41>",
     "\"/*\"",
     "<TOM_SINGLE_LINE_COMMENT>",
     "\"*/\"",
     "\"*/\"",
-    "<token of kind 45>",
+    "<token of kind 46>",
     "\"->\"",
     "\"=>\"",
     "\"|\"",
@@ -196,6 +200,8 @@ public interface TomParserConstants {
     "\"get_size\"",
     "<TOM_INTEGER>",
     "<TOM_IDENTIFIER>",
+    "<TOM_DOUBLE>",
+    "<EXPONENT>",
     "<TOM_LETTER>",
     "<TOM_DIGIT>",
     "<TOM_STRING>",

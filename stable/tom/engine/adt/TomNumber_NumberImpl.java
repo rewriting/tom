@@ -45,14 +45,14 @@ extends TomNumber
     return true;
   }
 
-  public Integer getInteger()
+  public int getInteger()
   {
-   return new Integer(((aterm.ATermInt) this.getArgument(index_integer)).getInt());
+   return ((aterm.ATermInt) this.getArgument(index_integer)).getInt();
   }
 
-  public TomNumber setInteger(Integer _integer)
+  public TomNumber setInteger(int _integer)
   {
-    return (TomNumber) super.setArgument(getFactory().makeInt(_integer.intValue()), index_integer);
+    return (TomNumber) super.setArgument(getFactory().makeInt(_integer), index_integer);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {

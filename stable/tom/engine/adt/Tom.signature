@@ -6,20 +6,20 @@
   equals(t1,t2) {t1.equals(t2)}
 }
 
-%typeterm Integer{
-  implement { Integer}
+%typeterm int{
+  implement { int}
   get_fun_sym(t) {t}
-  cmp_fun_sym(s1,s2) { s1.equals(s2)}
+  cmp_fun_sym(s1,s2) { (s1 == s2)}
   get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
+  equals(t1,t2) {(t1 == t2)}
 }
 
-%typeterm Double{
-  implement { Double}
+%typeterm double{
+  implement { double}
   get_fun_sym(t) {t}
-  cmp_fun_sym(s1,s2) { s1.equals(s2)}
+  cmp_fun_sym(s1,s2) { (s1 == s2)}
   get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
+  equals(t1,t2) {(t1 == t2)}
 }
 
 %typeterm ATerm{
@@ -314,7 +314,7 @@
   make() { getTomSignatureFactory().makeOption_WithDefaultProduction()}
 }
 
-%op Option OriginTracking(astName:TomName, line:Integer, fileName:TomName) {
+%op Option OriginTracking(astName:TomName, line:int, fileName:TomName) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isOriginTracking()}
   get_slot(astName,t) { t.getAstName()}
@@ -522,7 +522,7 @@
   equals(t1,t2) {t1.equals(t2)}
 }
 
-%op Position Position(line:Integer, column:Integer) {
+%op Position Position(line:int, column:int) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isPosition()}
   get_slot(line,t) { t.getLine()}
@@ -958,7 +958,7 @@
   make(t0) { getTomSignatureFactory().makeTomTerm_CompiledPattern(t0)}
 }
 
-%op TomTerm AssignedVariable(varName:String, source:Expression, nbUse:Integer, usedInDoWhile:Expression, removable:Expression) {
+%op TomTerm AssignedVariable(varName:String, source:Expression, nbUse:int, usedInDoWhile:Expression, removable:Expression) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isAssignedVariable()}
   get_slot(varName,t) { t.getVarName()}
@@ -1061,7 +1061,7 @@
   make(t0) { getTomSignatureFactory().makeTomNumber_End(t0)}
 }
 
-%op TomNumber Number(integer:Integer) {
+%op TomNumber Number(integer:int) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isNumber()}
   get_slot(integer,t) { t.getInteger()}
