@@ -73,31 +73,46 @@
 	 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
 	 rhoEngine.run();
      }
-     public void run() {
-	 //	RTerm subject = `app(abs(var("X"),var("X")),const("a"));
-	 //	RTerm subject = `app(struct(var("X"),var("X")),const("a"));
-	 RTerm subject = `app(abs(var("X"),var("X")),const("a"));
-	 VisitableVisitor rules = new ReductionRules();
-	 try {
-	     System.out.println("subject       = " + subject);
-	     System.out.println("onceBottomUp  = " + `OnceBottomUp(rules).visit(subject));
-	     System.out.println("innermost     = " + `Innermost(rules).visit(subject));
-	 } catch (VisitFailure e) {
-	     System.out.println("reduction failed on: " + subject);
-	 }
+     public void run(){
+      	 RTerm subject;
+     // 	 Visitable temp,sub;
+     VisitableVisitor rules = new ReductionRules();
+     VisitableVisitor print = new Print();
+     
+     String s;
+     System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\\n by Germain Faure and ...\n version 0.1. Devolp in few hours.Please use it with care \n ******************************************************************");
+     while(true){
 
+ 	     System.out.print("RomCal>");
+ 	     s = Clavier.lireLigne();
+ 	     subject = factory.RTermFromString(s);
+	     try{
+		 `Repeat(Sequence(OnceBottomUp(rules),Try(print))).visit(subject);
+	     } catch (VisitFailure e) {
+		 System.out.println("reduction failed on: " + subject);
+	     }
      }
-   public String test(String s){
-       RTerm subject =  factory.RTermFromString(s);
-       VisitableVisitor rules = new ReductionRules();
-        try {
-	    return `(Innermost(rules).visit(subject)).toString();
-	    //     return result.toString();
-	}
-	
-	catch (VisitFailure e) {
-	   return ("reduction failed on: " + subject);
-	}
+ }
+
+     public String test(String s){
+	 RTerm subject = factory.RTermFromString(s);
+	 VisitableVisitor rules = new ReductionRules();
+
+	 try{
+	     return "" + `(Innermost(rules).visit(subject));
+	 } catch (VisitFailure e) {
+	     return ("reduction failed on: " + subject);
+	 }
+	 
+     }
+   class Print extends rhotermVisitableFwd {
+	 public Print() {
+	     super(`Fail());
+	 }
+       public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
+	   System.out.println(arg);
+	     return arg;
+	 }
    }
      class ReductionRules extends rhotermVisitableFwd {
 	 public ReductionRules() {
@@ -154,6 +169,7 @@
 		     return `appS(andS(l*,result*),N);}
 		 //ATTENTION AU CAS n is 0
 		 //ALPHA-CONV!!
+		 appC((X*,match(f@const[],f),Y*),M) -> {return `appC(andC(X*,Y*),M);}
 
 	     }	    
 	     throw new VisitFailure();
@@ -166,7 +182,10 @@
 
 		 /* Patterns lineaires, pas besoin de la regle Idem */
 
-		 /* Decompose Algebriques */
+		 /* Decompose Algebriques n = 0 */
+		 (X*,match(f@const[],f),Y*) -> {return `andC(X*,Y*);}
+
+		 /* Decompose Algebriques n > 0 */
 		 l:(X*,m@match(app(A1,A2),app(B1,B2)),Y*) -> {
 		     ListConstraint head_is_constant = `headIsConstant(andC(m));
 		     %match(ListConstraint head_is_constant){

@@ -41,7 +41,6 @@ public class TestRho extends TestCase {
     private Rho interpreteur;
     private static rhotermFactory factory;
     private static int compteur = 0;
-    
     public static void main(String[] args) {
 	junit.textui.TestRunner.run(new TestSuite(TestRho.class));
     }
@@ -52,16 +51,21 @@ public class TestRho extends TestCase {
 	}
 	interpreteur = new Rho(factory);
     }
-    
     public rhotermFactory getSeqFactory() {
 	return factory;
     }
+    
     
     public void mytestBasic(String term, String resultat){
 	compteur++;
 	assertEquals(term,resultat, interpreteur.test(term));
     }
     public void testBasic1(){
-	mytestBasic("var(\"X\")","var(\"Y\")");
-    }	
+	mytestBasic("var(\"X\")","var(\"X\")");
+    } public void testBasic2(){
+	mytestBasic("const(\"a\")","const(\"a\")");
+    } 
+// public void testBasic3(){
+// 	mytestBasic("app(abs(const(\"a\"),const(\"b\")),const(\"a\"))", "const(\"b\")");
+//     } 
 }
