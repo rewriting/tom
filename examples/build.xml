@@ -822,7 +822,7 @@
         <pathelement location="${examples.build}"/>
       </classpath>
       <batchtest>
-        <fileset dir="${examples.gen}">
+        <fileset dir="${examples.dir}">
           <include name="minirho/**/Test*.java"/>
         </fileset>
       </batchtest>
