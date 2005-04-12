@@ -64,7 +64,7 @@ public class Rho {
 	    appS(su:ListSubst,term:RTerm) -> RTerm
 	    
 	    andC( Constraint* ) -> ListConstraint
-	    andS( Constraint* ) -> ListSubst
+	    andS( Subst* ) -> ListSubst
 	    match(lhs:RTerm,rhs:RTerm) -> Constraint 
 	    eq(var:RTerm,rhs:RTerm) -> Subst 
 	    
@@ -74,11 +74,14 @@ public class Rho {
 	rhoEngine.run();
     }
     public void run() {
+	//	RTerm subject = `app(abs(var("X"),var("X")),const("a"));
+	//	RTerm subject = `app(struct(var("X"),var("X")),const("a"));
 	RTerm subject = `app(abs(var("X"),var("X")),const("a"));
 	VisitableVisitor rules = new ReductionRules();
 	try {
 	    System.out.println("subject       = " + subject);
 	    System.out.println("onceBottomUp  = " + `OnceBottomUp(rules).visit(subject));
+	    System.out.println("innermost     = " + `Innermost(rules).visit(subject));
 	} catch (VisitFailure e) {
 	    System.out.println("reduction failed on: " + subject);
 	}
@@ -90,12 +93,58 @@ public class Rho {
 	}
 	public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
 	    %match(RTerm arg){
+		/*Rho*/
+		app(abs(P,M),N) -> {return `appC(andC(match(P,N)),M);}
+		
+		/*Delta*/
 		app(struct(M1,M2),N) -> {return `struct(app(M1,N),app(M2,N));}
 		
+		/*ToSubst*/
+		appC(andC(C*,match(X@var[],M),D*),N) -> {return `N;}//appC(andC(concListConstraint(C*,D*)),appS(andS(conc(eq(X,M))),N));}
+		
+		/*Id*/ 
+		appC(andC(),M) -> {return `M;}
+		 
+		/*Replace*/
+		appS(andS(_*,eq(X@var[],M),_*),X) -> {return `M;}
+		
+		/*Var*/
+		appS(_,Y@var[]) -> {return `Y;}
+		//cette regle est correcte sans condition de bord si
+		//on sait que on essaye toujours d'appliquer la regle
+		//Replace avant		
+
+		/*Const*/
+		appS(_,c@const[]) -> {return `c;}
+
+		/*Abs*/
+		appS(phi,abs(P,M)) -> {return `abs(P,appS(phi,M));}
+		//ALPHA-CONVERSION NECESSAIRE!
+
+		
+		/*App*/
+		appS(phi,app(M,N)) -> {return `app(appS(phi,M),appS(phi,N));}
+
+		/*Struct*/
+		appS(phi,struct(M,N)) -> {return `struct(appS(phi,M),appS(phi,N));}
+
+		/*Constraint*/
+		//		appS(phi,appC(andC(L),M)) -> {
+		    //		    return `appC(andC(map(L.reverse(),phi,makeListConstraint())),appS(phi,M));}
+		//ATTENTION AU CAS n is 0
+		//ALPHA-CONV!!
+		
+
 	    }	    
 	    throw new VisitFailure();
 	}
     }
-
+//     public ListConstraint map(list ListConstraint,phi Subst,result ListConstraint){
+// 	%match(ListConstraint list) {
+// 	    (match(P,M),_*) ->{
+// 		return `map(list.getTail(),phi,make_insert(match(P,appS(phi,M)),result));}
+// 	    () -> {return result;}
+// 	}	
+//     }    
 }
  
