@@ -406,8 +406,6 @@
   </target>
 
   <target name="minirho" depends="init">
-    <adtcompile example="${minirho}"
-                factory="term"/>
     <tomcompile example="${minirho}"/>
     <javacompile example="${minirho}"/>
   </target>
