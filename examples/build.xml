@@ -608,7 +608,7 @@
           caml, cell, dom, expression, gomoku, gtree, list, 
           nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, structure, 
-          tutorial, vas, xml">
+          tutorial, vas, xml, minirho">
   </target>
 
   <target name="dist.examples" 
@@ -802,11 +802,35 @@
         </fileset>
       </batchtest>
     </tomjunit>
-
     <fail if="tests.failed">
       ****************************************************
       ****************************************************
       One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+
+  <target name="minirho.junit" description="Runs junit acceptance tests for minirho" depends="minirho, initjunit">
+    <tomjunit printsummary="yes"
+              fork="true"
+              haltonfailure="false"
+              failureproperty="tests.failed"
+              showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest>
+        <fileset dir="${examples.gen}">
+          <include name="minirho/**/Test*.java"/>
+        </fileset>
+      </batchtest>
+    </tomjunit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed in minirho. Check the output...
       ****************************************************
       ****************************************************
     </fail>
