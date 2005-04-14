@@ -57,6 +57,7 @@
 	     abstract syntax
 	     var(na:String) -> RTerm
 	     const(na:String) -> RTerm
+	     stk() -> RTerm
 	     abs(lhs:RTerm,rhs:RTerm) -> RTerm
 	     app(lhs:RTerm,rhs:RTerm) -> RTerm
 	     struct(lhs:RTerm,rhs:RTerm) -> RTerm //structure is couple
@@ -66,6 +67,7 @@
 	     andC( Constraint* ) -> ListConstraint
 	     andS( Subst* ) -> ListSubst
 	     match(lhs:RTerm,rhs:RTerm) -> Constraint 
+	     matchKO() -> Constraint
 	     eq(var:RTerm,rhs:RTerm) -> Subst 
 
 	     }  
@@ -78,6 +80,7 @@
      // 	 Visitable temp,sub;
      VisitableVisitor rules = new ReductionRules();
      VisitableVisitor print = new Print();
+     VisitableVisitor myStrategy = `mu(MuVar("x"),RepeatId(Choice(SequenceId(SequenceId(rules,print),All(MuVar("x"))),All(MuVar("x")))));
      
      String s;
      System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\\n by Germain Faure and ...\n version 0.1. Devolp in few hours.Please use it with care \n ******************************************************************");
@@ -87,7 +90,7 @@
  	     s = Clavier.lireLigne();
  	     subject = factory.RTermFromString(s);
 	     try{
-		 `Repeat(Sequence(OnceBottomUp(rules),Try(print))).visit(subject);
+		 System.out.println(myStrategy.visit(subject));
 	     } catch (VisitFailure e) {
 		 System.out.println("reduction failed on: " + subject);
 	     }
@@ -97,14 +100,19 @@
      public String test(String s){
 	 RTerm subject = factory.RTermFromString(s);
 	 VisitableVisitor rules = new ReductionRules();
+	 	 VisitableVisitor myStrategy = `mu(MuVar("x"),RepeatId(Choice(SequenceId(rules,All(MuVar("x"))),All(MuVar("x")))));
 
 	 try{
-	     return "" + `(Innermost(rules).visit(subject));
+	     return "" + (myStrategy.visit(subject));
 	 } catch (VisitFailure e) {
 	     return ("reduction failed on: " + subject);
 	 }
 	 
      }
+  public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
+    return tom.library.strategy.mutraveler.MuVar.mu(var,v);
+  }
+
    class Print extends rhotermVisitableFwd {
 	 public Print() {
 	     super(`Fail());
@@ -120,6 +128,24 @@
 	 }
 	 public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
 	     %match(RTerm arg){
+		 /*NORMALISATION FAIBLE*/
+		 abs[] -> {return arg;}
+
+		 /*Compose */
+		 appS(phi@andS(l*),appS(andS(L*),N)) -> {
+		     ListSubst result = `mapS(((ListSubst)(L.reverse())),phi,andS());
+		     return `appS(andS(l*,result*),N);}
+		 //ATTENTION AU CAS n is 0
+		 //ALPHA-CONV!!
+
+ 
+		 /* Garbage collector */
+		 appC((matchKO()),_) -> {return `stk();}
+		 app(stk(),A) -> {return `stk();}
+		 struct(A,stk()) -> {return `A;}
+		 struct(stk(),A) -> {return `A;}
+		 
+		 
 		 /*Rho*/
 		 app(abs(P,M),N) -> {return `appC(andC(match(P,N)),M);}
 
@@ -163,46 +189,58 @@
 		 //ATTENTION AU CAS n is 0
 		 //ALPHA-CONV!!
 
-		 /*Compose */
-		 appS(phi@andS(l*),appS(andS(L*),N)) -> {
-		     ListSubst result = `mapS(((ListSubst)(L.reverse())),phi,andS());
-		     return `appS(andS(l*,result*),N);}
-		 //ATTENTION AU CAS n is 0
-		 //ALPHA-CONV!!
+
+		 
+		 /*ENCAPSULATIONS DES REGLES SUR LES CONTRAINTES */ 
 		 appC((X*,match(f@const[],f),Y*),M) -> {return `appC(andC(X*,Y*),M);}
 
-	     }	    
-	     throw new VisitFailure();
-	 }
-	 public ListConstraint visit_ListConstraint(ListConstraint l) throws VisitFailure {
-	     %match(ListConstraint l){
-		 /*Decompose Struct */
-		 (X*,match(struct(M1,M2),struct(N1,N2)),Y*) ->{
-		     return `andC(X*,match(M1,N1),match(M2,N2),Y*);}
-
-		 /* Patterns lineaires, pas besoin de la regle Idem */
-
-		 /* Decompose Algebriques n = 0 */
-		 (X*,match(f@const[],f),Y*) -> {return `andC(X*,Y*);}
-
-		 /* Decompose Algebriques n > 0 */
-		 l:(X*,m@match(app(A1,A2),app(B1,B2)),Y*) -> {
+		 l:appC((X*,m@match(app(A1,A2),app(B1,B2)),Y*),M) -> {
 		     ListConstraint head_is_constant = `headIsConstant(andC(m));
 		     %match(ListConstraint head_is_constant){
 			 (match[]) -> {break l;}
+			 (matchKO()) -> {return `appC(andC(X*,matchKO(),Y*),M);}
 		     }
 		     ListConstraint result = `computeMatch(andC(m));
-		     return `andC(X*,result*,Y*);
-		}
+		     return `appC(andC(X*,result*,Y*),M);
+		 }
+		 appC((X*,match(struct(M1,M2),struct(N1,N2)),Y*),M) ->{
+		     return `appC(andC(X*,match(M1,N1),match(M2,N2),Y*),M);}
+
+	     }	
+	     // return arg;
+	          throw new VisitFailure();
+	 }
+// 	 public ListConstraint visit_ListConstraint(ListConstraint l) throws VisitFailure {
+// 	     %match(ListConstraint l){
+// 		 /*Decompose Struct */
+// 		 (X*,match(struct(M1,M2),struct(N1,N2)),Y*) ->{
+// 		     return `andC(X*,match(M1,N1),match(M2,N2),Y*);}
+
+// 		 /* Patterns lineaires, pas besoin de la regle Idem */
+
+// 		 /* Decompose Algebriques n = 0 */
+// 		 (X*,match(f@const[],f),Y*) -> {return `andC(X*,Y*);}
+
+// 		 /* Decompose Algebriques n > 0 */
+	
 		
-	    }
-	    throw new VisitFailure();
-	}
+// 	    }
+// 	    throw new VisitFailure();
+// 	}
+
+// 	 public RTerm visit_RTerm_Abs(RT arg) throws VisitFailure{
+// 	     return arg;
+// 	 }
     }
      private ListConstraint headIsConstant (ListConstraint l){
 	 %match(ListConstraint l){
 	     (match(app(app(A1,B1),C1),app(app(A2,B2),C2))) -> {return `headIsConstant(andC(match(app(A1,B1),app(A2,B2))));}
-	     (match(app(f@const[],A1),app(f,A2))) -> {return `andC();}
+	     (match(app(const(f),A1),app(const(g),A2))) -> {
+		 if ( f.compareTo(g) == 0) {
+		     return `andC();}
+		 else { return `andC(matchKO());}
+		 }
+	     
 	     _ -> {return `l;}
 	 }
 
@@ -230,5 +268,5 @@
  	    _ -> {return `result;}
  	}	
      }    
-}
+     }
  
