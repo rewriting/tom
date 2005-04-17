@@ -1,4 +1,5 @@
-#!/usr/bin/env awk
+# use it with: 
+# ant -find build.xml -emacs | awk -f ${TOM_SRC_HOME}/utils/ant-tom.awk
 
 BEGIN {
    FS = ":";
