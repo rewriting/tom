@@ -28,15 +28,20 @@
   */
 
 
- package minirho;
+package minirho;
 
-  import aterm.*;
-  import aterm.pure.*;
-  import minirho.rho.rhoterm.*;
-  import minirho.rho.rhoterm.types.*;
+import aterm.*;
+import aterm.pure.*;
+import minirho.rho.rhoterm.*;
+import minirho.rho.rhoterm.types.*;
 
-  import jjtraveler.reflective.VisitableVisitor;
-  import jjtraveler.VisitFailure;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
+
+import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import jjtraveler.Visitable;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
  public class Rho {
      private rhotermFactory factory;
@@ -48,7 +53,10 @@
 	 return factory;
      }
 
+
      %include { mutraveler.tom }
+
+     
      %vas{
 	 module rhoterm
 	     imports 
@@ -71,6 +79,100 @@
 	     eq(var:RTerm,rhs:RTerm) -> Subst 
 
 	     }  
+     public class Choice_abs extends AbstractVisitableVisitor {
+	 protected final static int FIRST = 0;
+	 protected final static int THEN = 1;
+	 public Choice_abs(VisitableVisitor first, VisitableVisitor then) {
+	     init(first,then);
+	 }
+	 
+	 public Visitable visit(Visitable visitable) throws VisitFailure {
+	     RTerm test = (RTerm)getArgument(FIRST).visit(visitable);
+	     %match(RTerm test){
+		 abs[] -> {return test;}
+		 _ -> { return getArgument(THEN).visit(visitable);}
+		 
+
+	     }
+ // 	     try {
+// 		 return getArgument(FIRST).visit(visitable);
+// 	     }
+// 	     catch (VisitFailure f) {
+// 		 return getArgument(THEN).visit(visitable);
+// 	     }
+	 }
+     }
+     public class Sequence_abs extends AbstractVisitableVisitor {
+	 protected final static int FIRST = 0;
+	 protected final static int THEN = 1;
+	 public Sequence_abs(VisitableVisitor first, VisitableVisitor then) {
+	     init(first,then);
+	 }
+	 
+	 public Sequence_abs(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
+	     init(v1,new Sequence_abs(v2, v3));
+	 }
+	 
+	 public Visitable visit(Visitable any) throws VisitFailure {
+	     RTerm v = (RTerm)getArgument(FIRST).visit(any);
+	     %match(RTerm v){
+		 abs[] -> {return v;}
+		 _ -> {return getArgument(THEN).visit(v);}
+
+	     }
+		  
+	 }
+     }
+     public class One_abs extends AbstractVisitableVisitor {
+	 public One_abs(VisitableVisitor v) {
+	     init(v);
+	 }
+	 
+	 public Visitable visit(Visitable any) throws VisitFailure {
+	     int childCount = any.getChildCount();
+	     if (any instanceof RTerm) {
+		 %match(RTerm any){
+		     abs[] -> { throw new VisitFailure();}// return any;}
+		 } 
+	     }
+	     for (int i = 0; i < childCount; i++) {
+		 try {
+		     return any.setChildAt(i,getArgument(0).visit(any.getChildAt(i)));
+		 } catch(VisitFailure f) { }
+	     }
+	     throw new VisitFailure();
+	 }
+	 
+     }
+     
+     %op VisitableVisitor One_abs(VisitableVisitor) {
+	 fsym {}
+	 is_fsym(t) { (t instanceof One_abs) }
+	 make(v) { new One_abs((VisitableVisitor)v) }
+     }
+     
+     
+     %op VisitableVisitor Choice_abs(VisitableVisitor, VisitableVisitor) {
+	 fsym {}
+	 is_fsym(t) { (t instanceof Choice_abs) }
+	 make(first,then) { new Choice_abs((VisitableVisitor)first,(VisitableVisitor)then) }
+     }
+     %op VisitableVisitor Sequence_abs(VisitableVisitor, VisitableVisitor) {
+	 fsym {}
+	 is_fsym(t) { (t instanceof Sequence_abs) }
+	 make(first,then) { new Sequence_abs((VisitableVisitor)first,(VisitableVisitor)then) }
+     }
+     
+     %op VisitableVisitor Repeat_abs(VisitableVisitor) {
+	 fsym {}
+	 make(v) { `mu(MuVar("x"),Choice(Sequence_abs(v,MuVar("x")),Identity())) }
+     }
+//   %op VisitableVisitor RepeatId(VisitableVisitor) {
+//     fsym {}
+//     make(v) { `mu(MuVar("x"),SequenceId(v,MuVar("x"))) }
+//   }
+     
+
      public final static void main(String[] args) {
 	 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
 	 rhoEngine.run();
@@ -80,7 +182,9 @@
      // 	 Visitable temp,sub;
      VisitableVisitor rules = new ReductionRules();
      VisitableVisitor print = new Print();
-     VisitableVisitor myStrategy = `mu(MuVar("x"),RepeatId(Choice(SequenceId(SequenceId(rules,print),All(MuVar("x"))),All(MuVar("x")))));
+     //     VisitableVisitor myStrategy = `mu(MuVar("x"),Repeat(Choice_abs(rules,All(MuVar("x")))));
+	 VisitableVisitor myStrategy = `Repeat_abs(Sequence(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))),print));
+     //     VisitableVisitor myStrategy = `mu(MuVar("x"),RepeatId(Choice(SequenceId(SequenceId(rules,print),All(MuVar("x"))),All(MuVar("x")))));
      
      String s;
      System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\\n by Germain Faure and ...\n version 0.1. Devolp in few hours.Please use it with care \n ******************************************************************");
@@ -100,8 +204,12 @@
      public String test(String s){
 	 RTerm subject = factory.RTermFromString(s);
 	 VisitableVisitor rules = new ReductionRules();
-	 	 VisitableVisitor myStrategy = `mu(MuVar("x"),RepeatId(Choice(SequenceId(rules,All(MuVar("x"))),All(MuVar("x")))));
-
+	 VisitableVisitor print = new Print();
+	 //VisitableVisitor myStrategy = `mu(MuVar("x"),RepeatId(Choice(SequenceId(rules,All(MuVar("x"))),All(MuVar("x")))));
+	 //	 	 VisitableVisitor myStrategy = `mu(MuVar("x"),Choice(Repeat_abs(Sequence_abs(Sequence(rules,print),All(MuVar("x")))),Identity()));;
+	 //			 VisitableVisitor myStrategy = `Repeat(Sequence(rules,print));
+	 //	 VisitableVisitor myStrategy = `Repeat_abs(Sequence(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))),print));
+	 VisitableVisitor myStrategy = `Repeat_abs(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
 	 try{
 	     return "" + (myStrategy.visit(subject));
 	 } catch (VisitFailure e) {
@@ -118,7 +226,7 @@
 	     super(`Fail());
 	 }
        public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-	   System.out.println(arg);
+	   System.out.println("|-->>" + arg);
 	     return arg;
 	 }
    }
@@ -129,7 +237,7 @@
 	 public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
 	     %match(RTerm arg){
 		 /*NORMALISATION FAIBLE*/
-		 abs[] -> {return arg;}
+		 //		 		 abs[] -> {return arg;}
 
 		 /*Compose */
 		 appS(phi@andS(l*),appS(andS(L*),N)) -> {
@@ -140,7 +248,7 @@
 
  
 		 /* Garbage collector */
-		 appC((matchKO()),_) -> {return `stk();}
+		 appC((_*,matchKO(),_*),_) -> {return `stk();}
 		 app(stk(),A) -> {return `stk();}
 		 struct(A,stk()) -> {return `A;}
 		 struct(stk(),A) -> {return `A;}
@@ -160,7 +268,7 @@
 		 appC(andC(),M) -> {return `M;}
 
 		 /*Replace*/
-		 appS(andS(_*,eq(X@var[],M),_*),X) -> {return `M;}
+		 appS(andS(_*,eq(var(X),M),_*),var(X)) -> {return `M;}
 
 		 /*Var*/
 		 appS(_,Y@var[]) -> {return `Y;}
@@ -193,12 +301,19 @@
 		 
 		 /*ENCAPSULATIONS DES REGLES SUR LES CONTRAINTES */ 
 		 appC((X*,match(f@const[],f),Y*),M) -> {return `appC(andC(X*,Y*),M);}
+		 //si j'arrive dans la regle suivant c'est que les const sont diff
 
-		 l:appC((X*,m@match(app(A1,A2),app(B1,B2)),Y*),M) -> {
-		     ListConstraint head_is_constant = `headIsConstant(andC(m));
+		 appC((X*,match(const[],const[]),Y*),M) -> {return `appC(andC(X*,matchKO(),Y*),M);}
+
+		 l:appC((X*,m@match(app[],app[]),Y*),M)|appC((X*,m@match(app[],const[]),Y*),M)|appC((X*,m@match(const[],app[]),Y*),M) -> {
+		     ListConstraint head_is_constant = `headIsConstant(m);
 		     %match(ListConstraint head_is_constant){
-			 (match[]) -> {break l;}
-			 (matchKO()) -> {return `appC(andC(X*,matchKO(),Y*),M);}
+			 (match[]) -> {
+			     break l;
+			 }
+			 (matchKO()) -> {
+			     return `appC(andC(X*,matchKO(),Y*),M);
+			 }
 		     }
 		     ListConstraint result = `computeMatch(andC(m));
 		     return `appC(andC(X*,result*,Y*),M);
@@ -207,6 +322,7 @@
 		     return `appC(andC(X*,match(M1,N1),match(M2,N2),Y*),M);}
 
 	     }	
+
 	     // return arg;
 	          throw new VisitFailure();
 	 }
@@ -232,16 +348,22 @@
 // 	     return arg;
 // 	 }
     }
-     private ListConstraint headIsConstant (ListConstraint l){
-	 %match(ListConstraint l){
-	     (match(app(app(A1,B1),C1),app(app(A2,B2),C2))) -> {return `headIsConstant(andC(match(app(A1,B1),app(A2,B2))));}
-	     (match(app(const(f),A1),app(const(g),A2))) -> {
-		 if ( f.compareTo(g) == 0) {
-		     return `andC();}
-		 else { return `andC(matchKO());}
-		 }
-	     
-	     _ -> {return `l;}
+     private ListConstraint headIsConstant (Constraint l){
+	 %match(Constraint l){
+	     match(app(A1,B1),app(A2,B2)) ->{ 
+		 return `headIsConstant(match(A1,A2));
+	     }
+	     match(const(f),const(f)) -> {
+		 return `andC();
+	     }
+	     //si j'arrive dans le cas de la regle suivante alors les constantes sont forcement differentes
+	     match(const[],const[])   -> {
+		 return `andC(matchKO());
+	     }
+	     match(const[],app[]) | match(app[],const[]) -> {
+		 return `andC(matchKO());
+	     }
+	     _ -> {return `andC(l);}
 	 }
 
      }

@@ -60,14 +60,26 @@ public class TestRho extends TestCase {
 	compteur++;
 	assertEquals(term,resultat, interpreteur.test(term));
     }
-    public void testBasic1(){
-	mytestBasic("var(\"X\")","var(\"X\")");
-    } public void testBasic2(){
-	mytestBasic("const(\"a\")","const(\"a\")");
-    } 
-    public void testBasic3(){
- 	mytestBasic("app(abs(const(\"a\"),const(\"b\")),const(\"a\"))", "const(\"b\")");
-    } 	
+      public void testBasic1(){
+  	mytestBasic("var(\"X\")","var(\"X\")");
+      } public void testBasic2(){
+  	mytestBasic("const(\"a\")","const(\"a\")");
+      } 
+     public void testBasic3(){
+ 	 	mytestBasic("app(abs(const(\"a\"),const(\"b\")),const(\"a\"))", "const(\"b\")");
+     } 	
+     public void testBasic3b(){
+	 mytestBasic("app(abs(app(const(\"s\"),const(\"a\")),const(\"b\")),const(\"c\"))", "stk");
+     } 	
+     public void testBasic3t(){
+	 mytestBasic("app(abs(const(\"c\"),const(\"b\")),app(const(\"s\"),const(\"a\")))", "stk");
+     } 	
+//     public void testBasic3_context_ok(){
+//  	mytestBasic("app(var(\"x\"),app(abs(const(\"a\"),const(\"b\")),const(\"a\")))", "app(var(\"x\"),appC([match(const(\"a\"),const(\"a\"))],const(\"b\")))");
+//     } 	
+//     public void testBasic3_context_ko(){
+//  	mytestBasic("abs(var(\"x\"),app(abs(const(\"a\"),const(\"b\")),const(\"a\")))","abs(var(\"x\"),app(abs(const(\"a\"),const(\"b\")),const(\"a\")))");
+//     } 	
     public void testBasic4(){
 	mytestBasic("app(abs(var(\"X\"),var(\"X\")),const(\"a\"))","const(\"a\")");
     }	public void testBasic5(){
@@ -110,13 +122,40 @@ public class TestRho extends TestCase {
 		mytestBasic("app(struct(abs(app(app(const(\"f\"),var(\"X\")),var(\"Y\")),var(\"X\")),abs(app(app(const(\"f\"),var(\"X\")),var(\"Y\")),var(\"Y\"))),app(app(const(\"f\"),var(\"Z\")),var(\"H\")))","struct(var(\"Z\"),var(\"H\"))");
 	}	public void testBasic15(){
 //(h Z H h(g(I))  -> ((f X Y -> X, f X Y -> Y) f Z H)) h(h(a),h(b),h(g(b)))
-		mytestBasic("app(abs(app(app(app(const(\"h\"),var(\"Z\")),var(\"H\")),app(const(\"h\"),app(const(\"g\"),var(\"I\")))),app(struct(abs(app(app(const(\"f\"),var(\"X\")),var(\"Y\")),var(\"X\")),abs(app(app(const(\"f\"),var(\"X\")),var(\"Y\")),var(\"Y\"))),app(app(const(\"f\"),var(\"Z\")),var(\"H\")))),app(app(app(const(\"h\"),app(const(\"h\"),const(\"a\"))),app(const(\"h\"),const(\"b\"))),app(const(\"h\"),app(const(\"g\"),const(\"b\")))))","struct(app(const(\"h\"),const(\"a\")),app(const(\"h\"),const(\"b\")))");
-			}	public void testBasic16(){
+ 		mytestBasic("app(abs(app(app(app(const(\"h\"),var(\"Z\")),var(\"H\")),app(const(\"h\"),app(const(\"g\"),var(\"I\")))),app(struct(abs(app(app(const(\"f\"),var(\"X\")),var(\"Y\")),var(\"X\")),abs(app(app(const(\"f\"),var(\"X\")),var(\"Y\")),var(\"Y\"))),app(app(const(\"f\"),var(\"Z\")),var(\"H\")))),app(app(app(const(\"h\"),app(const(\"h\"),const(\"a\"))),app(const(\"h\"),const(\"b\"))),app(const(\"h\"),app(const(\"g\"),const(\"b\")))))","struct(app(const(\"h\"),const(\"a\")),app(const(\"h\"),const(\"b\")))");
+			}	
+public void testBasic16(){
 //(f X h(Y) g(h(Z)) -> (h(T) -> T)Y, (U,V -> U)X,Z) f a h(h(b)) g(h(a)
 		mytestBasic("app(abs(app(app(app(const(\"f\"),var(\"X\")),app(const(\"h\"),var(\"Y\"))),app(const(\"g\"), app(const(\"h\"),var(\"Z\")))),struct(app(abs(app(const(\"h\"),var(\"T\")),var(\"T\")),var(\"Y\")),app(abs(struct(var(\"U\"),var(\"V\")),var(\"U\")),struct(var(\"X\"),var(\"Z\"))))), app(app(app(const(\"f\"),const(\"a\")),app(const(\"h\"),app(const(\"h\"),const(\"b\")))),app(const(\"g\"),app(const(\"h\"),const(\"a\")))))","struct(const(\"b\"),const(\"a\"))");
-			}	public void testBasic17(){
+ 			}	
+public void testBasic17(){
 //(f X h(Y) g(h(Z)) -> (h(T) -> T)Y, (U,V -> i(U,V,Y))X,Z) f a h(h(b)) g(h(a)
-			mytestBasic("app(abs(app(app(app(const(\"f\"),var(\"X\")),app(const(\"h\"),var(\"Y\"))),app(const(\"g\"), app(const(\"h\"),var(\"Z\")))),struct(app(abs(app(const(\"h\"),var(\"T\")),var(\"T\")),var(\"Y\")),app(abs(struct(var(\"U\"),var(\"V\")),app(app(app(const(\"i\"),var(\"U\")),var(\"V\")),var(\"Y\"))),struct(var(\"X\"),var(\"Z\"))))), app(app(app(const(\"f\"),const(\"a\")),app(const(\"h\"),app(const(\"h\"),const(\"b\")))),app(const(\"g\"),app(const(\"h\"),const(\"a\")))))","struct(const(\"b\"),app(app(app(const(\"i\"),const(\"a\")),const(\"a\")),app(const(\"h\"),const(\"b\"))))");
- 			}
+ 			mytestBasic("app(abs(app(app(app(const(\"f\"),var(\"X\")),app(const(\"h\"),var(\"Y\"))),app(const(\"g\"), app(const(\"h\"),var(\"Z\")))),struct(app(abs(app(const(\"h\"),var(\"T\")),var(\"T\")),var(\"Y\")),app(abs(struct(var(\"U\"),var(\"V\")),app(app(app(const(\"i\"),var(\"U\")),var(\"V\")),var(\"Y\"))),struct(var(\"X\"),var(\"Z\"))))), app(app(app(const(\"f\"),const(\"a\")),app(const(\"h\"),app(const(\"h\"),const(\"b\")))),app(const(\"g\"),app(const(\"h\"),const(\"a\")))))","struct(const(\"b\"),app(app(app(const(\"i\"),const(\"a\")),const(\"a\")),app(const(\"h\"),const(\"b\"))))");
+  			}
 
+   	public void testAddition(){
+   		assertEquals("o + o", interpreteur.test("app(app(app(abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))),app(const(\"fix\"),abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))))),const(\"0\")),const(\"0\"))") ,"const(\"0\")");
+ 		assertEquals("one + o",
+ 								 interpreteur.test("app(app(app(abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))),app(const(\"fix\"),abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))))),app(const(\"s\"),const(\"0\"))),const(\"0\"))")
+ 								 ,"app(const(\"s\"),const(\"0\"))");
+
+ 		assertEquals("o + one",
+ 								 interpreteur.test("app(app(app(abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))),app(const(\"fix\"),abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))))),const(\"0\")),app(const(\"s\"),const(\"0\")))"),
+ 								 "app(const(\"s\"),const(\"0\"))");
+ 		assertEquals("one + one",
+ 								 interpreteur.test("app(app(app(abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))),app(const(\"fix\"),abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))))),app(const(\"s\"),const(\"0\"))),app(const(\"s\"),const(\"0\")))") ,"app(const(\"s\"),app(const(\"s\"),const(\"0\")))");
+ 		assertEquals("o + two",
+ 								 interpreteur.test("app(app(app(abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))),app(const(\"fix\"),abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))))),const(\"0\")),app(const(\"s\"),app(const(\"s\"),const(\"0\"))))")
+ ,"app(const(\"s\"),app(const(\"s\"),const(\"0\")))");
+
+ 			assertEquals("two + o",
+ 									 interpreteur.test("app(app(app(abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))),app(const(\"fix\"),abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))))),app(const(\"s\"),app(const(\"s\"),const(\"0\")))),const(\"0\"))")
+ ,"app(const(\"s\"),app(const(\"s\"),const(\"0\")))");
+
+			assertEquals("two + two",
+									 interpreteur.test("app(app(app(abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))),app(const(\"fix\"),abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))))),app(const(\"s\"),app(const(\"s\"),const(\"0\")))),app(const(\"s\"),app(const(\"s\"),const(\"0\"))))"),
+									 "app(const(\"s\"),app(const(\"s\"),app(const(\"s\"),app(const(\"s\"),const(\"0\")))))");
+
+
+ }
 }
