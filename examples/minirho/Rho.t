@@ -80,27 +80,6 @@ import jjtraveler.VisitFailure;
 	     eq(var:RTerm,rhs:RTerm) -> Subst 
 	     }  
      
-     public class Sequence_abs extends AbstractVisitableVisitor {
-	 protected final static int FIRST = 0;
-	 protected final static int THEN = 1;
-	 public Sequence_abs(VisitableVisitor first, VisitableVisitor then) {
-	     init(first,then);
-	 }
-	 
-	 public Sequence_abs(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
-	     init(v1,new Sequence_abs(v2, v3));
-	 }
-	 
-	 public Visitable visit(Visitable any) throws VisitFailure {
-	     RTerm v = (RTerm)getArgument(FIRST).visit(any);
-	     %match(RTerm v){
-		 abs[] -> {return v;}
-		 _ -> {return getArgument(THEN).visit(v);}
-		 
-	     }
-	     
-	 }
-     }
      public class One_abs extends AbstractVisitableVisitor {
 	 public One_abs(VisitableVisitor v) {
 	     init(v);
@@ -128,23 +107,11 @@ import jjtraveler.VisitFailure;
 	 is_fsym(t) { (t instanceof One_abs) }
 	 make(v) { new One_abs((VisitableVisitor)v) }
      }
-
-     %op VisitableVisitor Sequence_abs(VisitableVisitor, VisitableVisitor) {
-	 fsym {}
-	 is_fsym(t) { (t instanceof Sequence_abs) }
-	 make(first,then) { new Sequence_abs((VisitableVisitor)first,(VisitableVisitor)then) }
-     }
-     
-     %op VisitableVisitor Repeat_abs(VisitableVisitor) {
-	 fsym {}
-	 make(v) { `mu(MuVar("x"),Choice(Sequence_abs(v,MuVar("x")),Identity())) }
-     }
-
      VisitableVisitor rules = new ReductionRules();
      VisitableVisitor print = new Print();
-     //     VisitableVisitor myStrategy = `Repeat_abs(Sequence(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))),print));
-     VisitableVisitor myStrategy = `Repeat_abs(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
-
+     //STRATEGIE OK  VRAI OUTERMOST
+     VisitableVisitor oneStepWeakNormalisation = `mu(MuVar("x"),Choice(rules,One_abs(MuVar("x"))));
+     VisitableVisitor myStrategy = `Repeat(oneStepWeakNormalisation);
      public final static void main(String[] args) {
 	 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
 	 rhoEngine.run();
@@ -278,8 +245,8 @@ import jjtraveler.VisitFailure;
 // 		 /* Patterns lineaires, pas besoin de la regle Idem */
 		 
 	     }	
-	     
-	          throw new VisitFailure();
+	     //	     return arg;
+	     throw new VisitFailure();
 	 }
 // 	 public ListConstraint visit_ListConstraint(ListConstraint l) throws VisitFailure {
 // 	     %match(ListConstraint l){
