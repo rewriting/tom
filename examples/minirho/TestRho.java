@@ -128,12 +128,16 @@ public void testBasic16(){
 //(f X h(Y) g(h(Z)) -> (h(T) -> T)Y, (U,V -> U)X,Z) f a h(h(b)) g(h(a)
 		mytestBasic("app(abs(app(app(app(const(\"f\"),var(\"X\")),app(const(\"h\"),var(\"Y\"))),app(const(\"g\"), app(const(\"h\"),var(\"Z\")))),struct(app(abs(app(const(\"h\"),var(\"T\")),var(\"T\")),var(\"Y\")),app(abs(struct(var(\"U\"),var(\"V\")),var(\"U\")),struct(var(\"X\"),var(\"Z\"))))), app(app(app(const(\"f\"),const(\"a\")),app(const(\"h\"),app(const(\"h\"),const(\"b\")))),app(const(\"g\"),app(const(\"h\"),const(\"a\")))))","struct(const(\"b\"),const(\"a\"))");
  			}	
-public void testBasic17(){
-//(f X h(Y) g(h(Z)) -> (h(T) -> T)Y, (U,V -> i(U,V,Y))X,Z) f a h(h(b)) g(h(a)
- 			mytestBasic("app(abs(app(app(app(const(\"f\"),var(\"X\")),app(const(\"h\"),var(\"Y\"))),app(const(\"g\"), app(const(\"h\"),var(\"Z\")))),struct(app(abs(app(const(\"h\"),var(\"T\")),var(\"T\")),var(\"Y\")),app(abs(struct(var(\"U\"),var(\"V\")),app(app(app(const(\"i\"),var(\"U\")),var(\"V\")),var(\"Y\"))),struct(var(\"X\"),var(\"Z\"))))), app(app(app(const(\"f\"),const(\"a\")),app(const(\"h\"),app(const(\"h\"),const(\"b\")))),app(const(\"g\"),app(const(\"h\"),const(\"a\")))))","struct(const(\"b\"),app(app(app(const(\"i\"),const(\"a\")),const(\"a\")),app(const(\"h\"),const(\"b\"))))");
-  			}
+ public void testBasic17(){
+ //(f X h(Y) g(h(Z)) -> (h(T) -> T)Y, (U,V -> i(U,V,Y))X,Z) f a h(h(b)) g(h(a)
+  			mytestBasic("app(abs(app(app(app(const(\"f\"),var(\"X\")),app(const(\"h\"),var(\"Y\"))),app(const(\"g\"), app(const(\"h\"),var(\"Z\")))),struct(app(abs(app(const(\"h\"),var(\"T\")),var(\"T\")),var(\"Y\")),app(abs(struct(var(\"U\"),var(\"V\")),app(app(app(const(\"i\"),var(\"U\")),var(\"V\")),var(\"Y\"))),struct(var(\"X\"),var(\"Z\"))))), app(app(app(const(\"f\"),const(\"a\")),app(const(\"h\"),app(const(\"h\"),const(\"b\")))),app(const(\"g\"),app(const(\"h\"),const(\"a\")))))","struct(const(\"b\"),app(app(app(const(\"i\"),const(\"a\")),const(\"a\")),app(const(\"h\"),const(\"b\"))))");
+   			}
+    public void testAlphaConv(){
+	//x -> x -> x 2  
+		     mytestBasic("app(app(abs(var(\"X\"),abs(var(\"X\"),var(\"X\"))),const(\"2\")),const(\"3\"))","const(\"3\")");
 
-   	public void testAddition(){
+    }
+    	public void testAddition(){
    		assertEquals("o + o", interpreteur.test("app(app(app(abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))),app(const(\"fix\"),abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))))),const(\"0\")),const(\"0\"))") ,"const(\"0\")");
  		assertEquals("one + o",
  								 interpreteur.test("app(app(app(abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))),app(const(\"fix\"),abs(app(const(\"fix\"),var(\"Z\")),struct(abs(const(\"0\"),abs(var(\"Y\"),var(\"Y\"))),abs(app(const(\"s\"),var(\"X\")),abs(var(\"Y\"),app(const(\"s\"),app(app(app(var(\"Z\"),app(const(\"fix\"),var(\"Z\"))),var(\"X\")),var(\"Y\"))))))))),app(const(\"s\"),const(\"0\"))),const(\"0\"))")
