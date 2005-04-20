@@ -74,12 +74,6 @@ public class TestRho extends TestCase {
      public void testBasic3t(){
 	 mytestBasic("app(abs(const(\"c\"),const(\"b\")),app(const(\"s\"),const(\"a\")))", "stk");
      } 	
-//     public void testBasic3_context_ok(){
-//  	mytestBasic("app(var(\"x\"),app(abs(const(\"a\"),const(\"b\")),const(\"a\")))", "app(var(\"x\"),appC([match(const(\"a\"),const(\"a\"))],const(\"b\")))");
-//     } 	
-//     public void testBasic3_context_ko(){
-//  	mytestBasic("abs(var(\"x\"),app(abs(const(\"a\"),const(\"b\")),const(\"a\")))","abs(var(\"x\"),app(abs(const(\"a\"),const(\"b\")),const(\"a\")))");
-//     } 	
     public void testBasic4(){
 	mytestBasic("app(abs(var(\"X\"),var(\"X\")),const(\"a\"))","const(\"a\")");
     }	public void testBasic5(){
