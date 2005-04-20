@@ -55,8 +55,9 @@ import jjtraveler.VisitFailure;
 
 
      %include { mutraveler.tom }
-
-     
+     public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
+	 return tom.library.strategy.mutraveler.MuVar.mu(var,v);
+     }
      %vas{
 	 module rhoterm
 	     imports 
@@ -77,9 +78,8 @@ import jjtraveler.VisitFailure;
 	     match(lhs:RTerm,rhs:RTerm) -> Constraint 
 	     matchKO() -> Constraint
 	     eq(var:RTerm,rhs:RTerm) -> Subst 
-
 	     }  
-
+     
      public class Sequence_abs extends AbstractVisitableVisitor {
 	 protected final static int FIRST = 0;
 	 protected final static int THEN = 1;
@@ -96,9 +96,9 @@ import jjtraveler.VisitFailure;
 	     %match(RTerm v){
 		 abs[] -> {return v;}
 		 _ -> {return getArgument(THEN).visit(v);}
-
+		 
 	     }
-		  
+	     
 	 }
      }
      public class One_abs extends AbstractVisitableVisitor {
@@ -139,17 +139,20 @@ import jjtraveler.VisitFailure;
 	 fsym {}
 	 make(v) { `mu(MuVar("x"),Choice(Sequence_abs(v,MuVar("x")),Identity())) }
      }
+
      VisitableVisitor rules = new ReductionRules();
      VisitableVisitor print = new Print();
      VisitableVisitor myStrategy = `Repeat_abs(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
+
      public final static void main(String[] args) {
 	 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
 	 rhoEngine.run();
      }
+     
      public void run(){
       	 RTerm subject;
 	 String s;
-	 System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\\n by Germain Faure and ...\n version 0.1. Devolp in few hours.Please use it with care \n ******************************************************************");
+	 System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\\n by Germain Faure and ...\n version 0.1. Develop in few hours.Please use it with care \n ******************************************************************");
 	 while(true){
 	     
  	     System.out.print("RomCal>");
@@ -172,9 +175,6 @@ import jjtraveler.VisitFailure;
 	 }
 	 
      }
-     public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-	 return tom.library.strategy.mutraveler.MuVar.mu(var,v);
-     }
      
      class Print extends rhotermVisitableFwd {
 	 public Print() {
@@ -191,9 +191,6 @@ import jjtraveler.VisitFailure;
 	 }
 	 public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
 	     %match(RTerm arg){
-		 /*NORMALISATION FAIBLE*/
-		 //		 		 abs[] -> {return arg;}
-
 		 /*Compose */
 		 appS(phi@andS(l*),appS(andS(L*),N)) -> {
 		     ListSubst result = `mapS(((ListSubst)(L.reverse())),phi,andS());
@@ -251,15 +248,16 @@ import jjtraveler.VisitFailure;
 		     return `appC(andC(result*),appS(phi,M));}
 		 //ATTENTION AU CAS n is 0
 		 //ALPHA-CONV!!
-
-
 		 
 		 /*ENCAPSULATIONS DES REGLES SUR LES CONTRAINTES */ 
+		 /*Decompose n = m = 0*/
 		 appC((X*,match(f@const[],f),Y*),M) -> {return `appC(andC(X*,Y*),M);}
+		 
+		 /*Decompose_ng n = m = 0*/
 		 //si j'arrive dans la regle suivant c'est que les const sont diff
-
 		 appC((X*,match(const[],const[]),Y*),M) -> {return `appC(andC(X*,matchKO(),Y*),M);}
 
+		 /*Decompose et Decompose_ng min(n,m) > 0 */
 		 l:appC((X*,m@match(app[],app[]),Y*),M)|appC((X*,m@match(app[],const[]),Y*),M)|appC((X*,m@match(const[],app[]),Y*),M) -> {
 		     ListConstraint head_is_constant = `headIsConstant(m);
 		     %match(ListConstraint head_is_constant){
@@ -273,24 +271,21 @@ import jjtraveler.VisitFailure;
 		     ListConstraint result = `computeMatch(andC(m));
 		     return `appC(andC(X*,result*,Y*),M);
 		 }
+		 /*Decompose Struct */
 		 appC((X*,match(struct(M1,M2),struct(N1,N2)),Y*),M) ->{
-		     return `appC(andC(X*,match(M1,N1),match(M2,N2),Y*),M);}
-
+		     return `appC(andC(X*,match(M1,N1),match(M2,N2),Y*),M);
+		 }
+// 		 /* Patterns lineaires, pas besoin de la regle Idem */
+		 
 	     }	
-
-	     // return arg;
+	     
 	          throw new VisitFailure();
 	 }
 // 	 public ListConstraint visit_ListConstraint(ListConstraint l) throws VisitFailure {
 // 	     %match(ListConstraint l){
 // 		 /*Decompose Struct */
-// 		 (X*,match(struct(M1,M2),struct(N1,N2)),Y*) ->{
-// 		     return `andC(X*,match(M1,N1),match(M2,N2),Y*);}
-
-// 		 /* Patterns lineaires, pas besoin de la regle Idem */
 
 // 		 /* Decompose Algebriques n = 0 */
-// 		 (X*,match(f@const[],f),Y*) -> {return `andC(X*,Y*);}
 
 // 		 /* Decompose Algebriques n > 0 */
 	
@@ -298,12 +293,8 @@ import jjtraveler.VisitFailure;
 // 	    }
 // 	    throw new VisitFailure();
 // 	}
-
-// 	 public RTerm visit_RTerm_Abs(RT arg) throws VisitFailure{
-// 	     return arg;
-// 	 }
-    }
-     private ListConstraint headIsConstant (Constraint l){
+     }
+     protected ListConstraint headIsConstant (Constraint l){
 	 %match(Constraint l){
 	     match(app(A1,B1),app(A2,B2)) ->{ 
 		 return `headIsConstant(match(A1,A2));
@@ -322,7 +313,7 @@ import jjtraveler.VisitFailure;
 	 }
 
      }
-     private ListConstraint computeMatch(ListConstraint l){
+     protected ListConstraint computeMatch(ListConstraint l){
 	 %match(ListConstraint l){
 	     (match(app(f@const[],A),app(f,B))) -> {return `andC(match(A,B));}
 	     (match(app(A1,B1),app(A2,B2))) -> {
@@ -331,19 +322,19 @@ import jjtraveler.VisitFailure;
 	     _ -> {return `l;}
 	 }
      }
-     public ListConstraint mapC(ListConstraint list, ListSubst phi, ListConstraint result){
+     protected ListConstraint mapC(ListConstraint list, ListSubst phi, ListConstraint result){
  	%match(ListConstraint list) {
  	    (match(P,M),_*) ->{
  		return `mapC(list.getTail(),phi,andC(match(P,appS(phi,M)),result*));}
  	    _ -> {return `result;}
  	}	
      }    
-     public ListSubst mapS(ListSubst list, ListSubst phi, ListSubst result){
+     protected ListSubst mapS(ListSubst list, ListSubst phi, ListSubst result){
  	%match(ListSubst list) {
  	    (eq(X,M),_*) ->{
  		return `mapS(list.getTail(),phi,andS(eq(X,appS(phi,M)),result*));}
  	    _ -> {return `result;}
  	}	
      }    
-     }
+ }
  
