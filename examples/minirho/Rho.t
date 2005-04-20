@@ -79,29 +79,7 @@ import jjtraveler.VisitFailure;
 	     eq(var:RTerm,rhs:RTerm) -> Subst 
 
 	     }  
-     public class Choice_abs extends AbstractVisitableVisitor {
-	 protected final static int FIRST = 0;
-	 protected final static int THEN = 1;
-	 public Choice_abs(VisitableVisitor first, VisitableVisitor then) {
-	     init(first,then);
-	 }
-	 
-	 public Visitable visit(Visitable visitable) throws VisitFailure {
-	     RTerm test = (RTerm)getArgument(FIRST).visit(visitable);
-	     %match(RTerm test){
-		 abs[] -> {return test;}
-		 _ -> { return getArgument(THEN).visit(visitable);}
-		 
 
-	     }
- // 	     try {
-// 		 return getArgument(FIRST).visit(visitable);
-// 	     }
-// 	     catch (VisitFailure f) {
-// 		 return getArgument(THEN).visit(visitable);
-// 	     }
-	 }
-     }
      public class Sequence_abs extends AbstractVisitableVisitor {
 	 protected final static int FIRST = 0;
 	 protected final static int THEN = 1;
@@ -150,13 +128,7 @@ import jjtraveler.VisitFailure;
 	 is_fsym(t) { (t instanceof One_abs) }
 	 make(v) { new One_abs((VisitableVisitor)v) }
      }
-     
-     
-     %op VisitableVisitor Choice_abs(VisitableVisitor, VisitableVisitor) {
-	 fsym {}
-	 is_fsym(t) { (t instanceof Choice_abs) }
-	 make(first,then) { new Choice_abs((VisitableVisitor)first,(VisitableVisitor)then) }
-     }
+
      %op VisitableVisitor Sequence_abs(VisitableVisitor, VisitableVisitor) {
 	 fsym {}
 	 is_fsym(t) { (t instanceof Sequence_abs) }
@@ -167,29 +139,19 @@ import jjtraveler.VisitFailure;
 	 fsym {}
 	 make(v) { `mu(MuVar("x"),Choice(Sequence_abs(v,MuVar("x")),Identity())) }
      }
-//   %op VisitableVisitor RepeatId(VisitableVisitor) {
-//     fsym {}
-//     make(v) { `mu(MuVar("x"),SequenceId(v,MuVar("x"))) }
-//   }
-     
-
+     VisitableVisitor rules = new ReductionRules();
+     VisitableVisitor print = new Print();
+     VisitableVisitor myStrategy = `Repeat_abs(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
      public final static void main(String[] args) {
 	 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
 	 rhoEngine.run();
      }
      public void run(){
       	 RTerm subject;
-     // 	 Visitable temp,sub;
-     VisitableVisitor rules = new ReductionRules();
-     VisitableVisitor print = new Print();
-     //     VisitableVisitor myStrategy = `mu(MuVar("x"),Repeat(Choice_abs(rules,All(MuVar("x")))));
-	 VisitableVisitor myStrategy = `Repeat_abs(Sequence(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))),print));
-     //     VisitableVisitor myStrategy = `mu(MuVar("x"),RepeatId(Choice(SequenceId(SequenceId(rules,print),All(MuVar("x"))),All(MuVar("x")))));
-     
-     String s;
-     System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\\n by Germain Faure and ...\n version 0.1. Devolp in few hours.Please use it with care \n ******************************************************************");
-     while(true){
-
+	 String s;
+	 System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\\n by Germain Faure and ...\n version 0.1. Devolp in few hours.Please use it with care \n ******************************************************************");
+	 while(true){
+	     
  	     System.out.print("RomCal>");
  	     s = Clavier.lireLigne();
  	     subject = factory.RTermFromString(s);
@@ -198,18 +160,11 @@ import jjtraveler.VisitFailure;
 	     } catch (VisitFailure e) {
 		 System.out.println("reduction failed on: " + subject);
 	     }
+	 }
      }
- }
-
+     
      public String test(String s){
 	 RTerm subject = factory.RTermFromString(s);
-	 VisitableVisitor rules = new ReductionRules();
-	 VisitableVisitor print = new Print();
-	 //VisitableVisitor myStrategy = `mu(MuVar("x"),RepeatId(Choice(SequenceId(rules,All(MuVar("x"))),All(MuVar("x")))));
-	 //	 	 VisitableVisitor myStrategy = `mu(MuVar("x"),Choice(Repeat_abs(Sequence_abs(Sequence(rules,print),All(MuVar("x")))),Identity()));;
-	 //			 VisitableVisitor myStrategy = `Repeat(Sequence(rules,print));
-	 //	 VisitableVisitor myStrategy = `Repeat_abs(Sequence(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))),print));
-	 VisitableVisitor myStrategy = `Repeat_abs(mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
 	 try{
 	     return "" + (myStrategy.visit(subject));
 	 } catch (VisitFailure e) {
@@ -217,19 +172,19 @@ import jjtraveler.VisitFailure;
 	 }
 	 
      }
-  public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-    return tom.library.strategy.mutraveler.MuVar.mu(var,v);
-  }
-
-   class Print extends rhotermVisitableFwd {
+     public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
+	 return tom.library.strategy.mutraveler.MuVar.mu(var,v);
+     }
+     
+     class Print extends rhotermVisitableFwd {
 	 public Print() {
 	     super(`Fail());
 	 }
-       public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-	   System.out.println("|-->>" + arg);
+	 public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
+	     System.out.println("|-->>" + arg);
 	     return arg;
 	 }
-   }
+     }
      class ReductionRules extends rhotermVisitableFwd {
 	 public ReductionRules() {
 	     super(`Fail());
