@@ -6,17 +6,16 @@ BEGIN {
    OFS = ":";
 }
 
-/[a-zA-Z][a-zA-Z0-9]+\.java/ {
+$1~/.*\/[a-zA-Z][a-zA-Z0-9]*\.java/ {
   file = $1
-  sub("\.java",".t",file)
+  sub("\.java$",".t",file)
   sub("gen\/","",file)
   if (!system("test -f "file)) 
     {
       $1 = file
     }
-  print $0
 }
 
-(NF <= 1) {
+(NF >= 0) {
       print $0
  }
