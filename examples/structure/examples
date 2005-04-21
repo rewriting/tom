@@ -54,7 +54,7 @@
 # big example
 [[(a,b),-a,-b],[(c,[(a,b),-a]),-b,-c]]
 
-# more big example, that does not pass (but the three parts pass separately)
+# bigger example, that does not pass (but the three parts pass separately)
  [ [(a,b),-a,-b] , [(c,[(a,b),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
 
 # a hard example
