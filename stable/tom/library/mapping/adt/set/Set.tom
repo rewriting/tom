@@ -5,9 +5,6 @@
 %include { atermlist.tom }
 %typeterm JGTreeSet{
   implement { tom.library.adt.set.types.JGTreeSet}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getSetFactory().getPureFactory().makeList()) == getSetFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.library.adt.set.types.JGTreeSet)t.setAnnotation(getSetFactory().getPureFactory().makeList(),getSetFactory().getPureFactory().makeList())}
@@ -15,7 +12,6 @@
 }
 
 %op JGTreeSet branch(left:JGTreeSet, right:JGTreeSet) {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isBranch()}
   get_slot(left,t) { t.getLeft()}
   get_slot(right,t) { t.getRight()}
@@ -23,7 +19,6 @@
 }
 
 %op JGTreeSet pair(value:ATerm, multiplicity:int) {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isPair()}
   get_slot(value,t) { t.getValue()}
   get_slot(multiplicity,t) { t.getMultiplicity()}
@@ -31,14 +26,12 @@
 }
 
 %op JGTreeSet singleton(value:ATerm) {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isSingleton()}
   get_slot(value,t) { t.getValue()}
   make(t0) { getSetFactory().makeJGTreeSet_Singleton(t0)}
 }
 
 %op JGTreeSet emptySet {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isEmptySet()}
   make() { getSetFactory().makeJGTreeSet_EmptySet()}
 }

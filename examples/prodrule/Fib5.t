@@ -55,8 +55,6 @@ public class Fib5 {
     
   %typelist Space {
     implement { MyList }
-    get_fun_sym(t)   { ((t instanceof MyList)?factory.getPureFactory().makeAFun("concElement", 1, false):null) }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
     equals(l1,l2)      { l1.equals(l2) }
     get_head(l)        { (Element)l.getHead() }
     get_tail(l)        { (MyList)l.getTail() }
@@ -64,7 +62,7 @@ public class Fib5 {
   }
 
   %oplist Space concElement( Element* ) {
-    fsym             { factory.getPureFactory().makeAFun("concElement", 1, false) }
+    is_fsym(t) { t instanceof MyList }
     make_empty()     { new MyList() }
     make_insert(e,l) { new MyList(e,l) }
   }

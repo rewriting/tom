@@ -1,8 +1,8 @@
 module TomSignature
-imports TomName TomConstraint TomInstruction TomExpression TomDeclaration TomOption TomTerm 
+imports TomName TomConstraint TomInstruction TomExpression TomDeclaration TomOption TomTerm TomSlot
 
 public
-sorts TomSymbolTable SymbolList SlotList Position TomEntryList TargetLanguage NameList TomType TomRuleList TomRule TomStructureTable TomTypeList TomSymbol TomEntry PairNameDecl 
+sorts TomSymbolTable SymbolList Position TomEntryList TargetLanguage NameList TomType TomRuleList TomRule TomStructureTable TomTypeList TomSymbol TomEntry  
 
 abstract syntax
 
@@ -19,14 +19,12 @@ TLType(tl:TargetLanguage) -> TomType
 EmptyType() -> TomType
 RewriteRule(lhs:TomTerm,rhs:TomTerm,condList:InstructionList,option:OptionList) -> TomRule
 emptySymbol() -> TomSymbol
-Symbol(astName:TomName,typesToType:TomType,slotList:SlotList,option:OptionList,tlCode:TargetLanguage) -> TomSymbol
-Slot(slotName:TomName,slotDecl:Declaration) -> PairNameDecl
+Symbol(astName:TomName, typesToType:TomType, pairNameDeclList:PairNameDeclList, option:OptionList) -> TomSymbol
 Table(entryList:TomEntryList) -> TomSymbolTable
 Entry(strName:String,astSymbol:TomSymbol) -> TomEntry
 StructTable(structList:TomList) -> TomStructureTable
 concTomRule(TomRule*) -> TomRuleList
 concTomType(TomType*) -> TomTypeList
-concPairNameDecl(PairNameDecl*) -> SlotList
 concTomEntry(TomEntry*) -> TomEntryList
 concTomSymbol(TomSymbol*) -> SymbolList
 concTomName(TomName*) -> NameList

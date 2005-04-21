@@ -114,18 +114,18 @@ public class TomCompiler extends TomGenericPlugin {
               return `var;
             }    
 
-            BuildReducedTerm(Appl[nameList=(name@Name(tomName)),args=termArgs]) -> {
+            BuildReducedTerm(RecordAppl[nameList=(name@Name(tomName)),slots=termArgs]) -> {
               TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
-              TomList newTermArgs = (TomList) traversal().genericTraversal(`termArgs,replace_preProcessing_makeTerm);
+              SlotList newTermArgs = (SlotList) traversal().genericTraversal(`termArgs,replace_preProcessing_makeTerm);
               if(tomSymbol==null || isDefinedSymbol(tomSymbol)) {
-                return `FunctionCall(name,newTermArgs);
+                return `FunctionCall(name,slotListToTomList(newTermArgs));
               } else {
                 if(isListOperator(tomSymbol)) {
-                  return tomFactory.buildList(`name,newTermArgs);
+                  return tomFactory.buildList(`name,slotListToTomList(newTermArgs));
                 } else if(isArrayOperator(tomSymbol)) {
-                  return tomFactory.buildArray(`name,newTermArgs);
+                  return tomFactory.buildArray(`name,slotListToTomList(newTermArgs));
                 } else {
-                  return `BuildTerm(name,newTermArgs);
+                  return `BuildTerm(name,slotListToTomList(newTermArgs));
                 }
               }
             }
@@ -147,7 +147,6 @@ public class TomCompiler extends TomGenericPlugin {
                 matchBlock: {
                   %match(PatternInstruction elt) {
                     PatternInstruction(Pattern(termList,guardList),actionInst, option) -> {
-                      TomList newTermList = empty();
                       /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
                       TomList renamedTermList = linearizePattern(`termList,equalityCheck);
@@ -167,7 +166,7 @@ public class TomCompiler extends TomGenericPlugin {
                       /* abstract patterns */
                       ArrayList abstractedPattern  = new ArrayList();
                       ArrayList introducedVariable = new ArrayList();
-                      newTermList = abstractPatternList(renamedTermList, abstractedPattern, introducedVariable);
+                      TomList newTermList = abstractPatternList(renamedTermList, abstractedPattern, introducedVariable);
 
                       /* newPatternInstruction is overwritten when abstraction is performed */
                       if(abstractedPattern.size() > 0) {
@@ -211,32 +210,28 @@ public class TomCompiler extends TomGenericPlugin {
               return newMatch;
             }
 
-            RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
-              TomRuleList ruleList = `rl;
+            RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(RecordAppl[nameList=(Name(tomName))])],_), orgTrack) -> {
               TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
               TomName name = tomSymbol.getAstName();
-              TomTypeList typesList = tomSymbol.getTypesToType().getDomain();        
-              TomNumberList path = tsf().makeTomNumberList();
-              TomList matchArgumentsList = empty();
               PatternInstructionList patternInstructionList  = `concPatternInstruction();
-              TomTerm variable;
+
+              TomTypeList typesList = getSymbolDomain(tomSymbol);
+              TomList matchArgumentsList = empty();
+              TomNumberList path = `concTomNumber(RuleVar());
               int index = 0;
-            
-              path = (TomNumberList) path.append(`RuleVar());
-            
               while(!typesList.isEmpty()) {
                 TomType subtermType = typesList.getHead();
-                variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
+                TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
                 matchArgumentsList = append(variable,matchArgumentsList);
                 typesList = typesList.getTail();
                 index++;
               }
             
-              //boolean hasDefaultCase = false;
+              TomRuleList ruleList = `rl;
               while(!ruleList.isEmpty()) {
                 TomRule rule = ruleList.getHead();
                 %match(TomRule rule) {
-                  RewriteRule(Term(Appl[args=matchPatternsList]),
+                  RewriteRule(Term(RecordAppl[slots=matchPatternsList]),
                               Term(rhsTerm),
                               condList,
                               option) -> {
@@ -245,8 +240,9 @@ public class TomCompiler extends TomGenericPlugin {
                     Instruction newRhsInst = `buildCondition(condList,rhsInst);
                     TomList guardList = empty();
 
-                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(Pattern(matchPatternsList,guardList),newRhsInst, option));
-                    //hasDefaultCase = hasDefaultCase || (isDefaultCase(matchPatternsList) && condList.isEmpty());
+                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(Pattern(slotListToTomList(matchPatternsList),guardList),newRhsInst, option));
+
+
                   }
                 } 
                 ruleList = ruleList.getTail();
@@ -254,29 +250,13 @@ public class TomCompiler extends TomGenericPlugin {
             
               TomTerm subjectListAST = `SubjectList(matchArgumentsList);
               Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,subjectListAST);
-              ArrayList optionList = new ArrayList();
-              optionList.add(`orgTrack);
-              //optionList.add(tsf().makeOption_GeneratedMatch());
-              OptionList generatedOptions = getAstFactory().makeOptionList(optionList);
               Instruction matchAST = `Match(SubjectList(matchArgumentsList),
                                             patternInstructionList,
-                                            generatedOptions);
+                                            concOption(orgTrack));
 
-              Instruction buildAST;
-              //if(hasDefaultCase) {
-              //buildAST = `Nop();
-              //} else {
-                buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(matchArgumentsList,replace_preProcessing_makeTerm)));
-                //}
+              Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(matchArgumentsList,replace_preProcessing_makeTerm)));
 
-              InstructionList l;
-              l = `concInstruction(
-                                   makeFunctionBeginAST,
-                                   matchAST,
-                                   buildAST,
-                                   MakeFunctionEnd()
-                                   );
-            
+              InstructionList l = `concInstruction(makeFunctionBeginAST,matchAST,buildAST,MakeFunctionEnd());
               return preProcessingInstruction(`AbstractBlock(l));
             }
 
@@ -291,31 +271,20 @@ public class TomCompiler extends TomGenericPlugin {
       } // end apply
     };
 
-  /*  
-  private boolean isDefaultCase(TomList l) {
-    %match(TomList l) {
-      emptyTomList() -> {
-        return true;
-      }
-      manyTomList((UnamedVariable|UnamedVariableStar)[],tail) -> {
-        return isDefaultCase(tail);
-      }
-      manyTomList((Variable|VariableStar)[],tail) -> {
-        return isDefaultCase(tail);
-      }
-    }
-    return false;
-  }
-  */
-
-  Replace1 replace_preProcessing_makeTerm = new Replace1() {
+  private Replace1 replace_preProcessing_makeTerm = new Replace1() {
       public ATerm apply(ATerm t) {
-        return preProcessing(`BuildReducedTerm((TomTerm)t));
+        if(t instanceof TomTerm) {
+          //System.out.println("replace_preProcessing_makeTerm: " + t);
+          return preProcessing(`BuildReducedTerm((TomTerm)t));
+        } else {
+          //System.out.println("replace_preProcessing_makeTerm: *** " + t);
+          return traversal().genericTraversal(t,replace_preProcessing_makeTerm);
+        }
       }
     }; 
 
   private TomTerm preProcessing(TomTerm subject) {
-      //System.out.println("preProcessing subject: " + subject);
+    //System.out.println("preProcessing subject: " + subject);
     return (TomTerm) replace_preProcessing.apply(subject); 
   }
   
@@ -402,17 +371,17 @@ public class TomCompiler extends TomGenericPlugin {
         return renamedTerm;
       }
 
-      Appl[option=optionList, nameList=nameList, args=arguments, constraints=constraints] -> {
-        TomList args = `arguments;
-        TomList newArgs = empty();
+      RecordAppl[option=optionList, nameList=nameList, slots=arguments, constraints=constraints] -> {
+        SlotList args = `arguments;
+        SlotList newArgs = `emptySlotList();
         while(!args.isEmpty()) {
-          TomTerm elt = args.getHead();
-          TomTerm newElt = renameVariable(elt,multiplicityMap,equalityCheck);
-          newArgs = append(newElt,newArgs);
+          Slot elt = args.getHead();
+          TomTerm newElt = renameVariable(elt.getAppl(),multiplicityMap,equalityCheck);
+          newArgs = (SlotList) newArgs.append(`PairSlotAppl(elt.getSlotName(),newElt));
           args = args.getTail();
         }
         ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap,equalityCheck);
-        renamedTerm = `Appl(optionList,nameList,newArgs,newConstraintList);
+        renamedTerm = `RecordAppl(optionList,nameList,newArgs,newConstraintList);
         return renamedTerm;
       }
     }
@@ -455,17 +424,17 @@ public class TomCompiler extends TomGenericPlugin {
                                   ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(TomTerm subject) {
-      Appl[nameList=(Name(tomName),_*), args=arguments] -> {
-        TomList args = `arguments;
+      RecordAppl[nameList=(Name(tomName),_*), slots=arguments] -> {
         TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
         
-        TomList newArgs = empty();
+        SlotList newArgs = `emptySlotList();
         if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+          SlotList args = `arguments;
           while(!args.isEmpty()) {
-            TomTerm elt = args.getHead();
-            TomTerm newElt = elt;
-            %match(TomTerm elt) {
-              appl@Appl[nameList=(Name(tomName2),_*)] -> {
+            Slot elt = args.getHead();
+            TomTerm newElt = elt.getAppl();
+            %match(TomTerm newElt) {
+              appl@RecordAppl[nameList=(Name(tomName2),_*)] -> {
                 /*
                  * we no longer abstract syntactic subterm
                  * they are compiled by the TomKernelCompiler
@@ -491,13 +460,13 @@ public class TomCompiler extends TomGenericPlugin {
                 }
               }
             }
-            newArgs = append(newElt,newArgs);
+            newArgs = (SlotList) newArgs.append(`PairSlotAppl(elt.getSlotName(),newElt));
             args = args.getTail();
           }
         } else {
-          newArgs = abstractPatternList(args,abstractedPattern,introducedVariable);
+          newArgs = mergeTomListWithSlotList(abstractPatternList(slotListToTomList(arguments),abstractedPattern,introducedVariable),arguments);
         }
-        abstractedTerm = subject.setArgs(newArgs);
+        abstractedTerm = subject.setSlots(newArgs);
       }
     } // end match
     return abstractedTerm;
@@ -506,14 +475,14 @@ public class TomCompiler extends TomGenericPlugin {
   private TomList abstractPatternList(TomList subjectList,
                                       ArrayList abstractedPattern,
                                       ArrayList introducedVariable)  {
-    TomList newList = empty();
-    while(!subjectList.isEmpty()) {
-      TomTerm elt = subjectList.getHead();
-      TomTerm newElt = abstractPattern(elt,abstractedPattern,introducedVariable);
-      newList = append(newElt,newList);
-      subjectList = subjectList.getTail();
+    %match(TomList subjectList) {
+      emptyTomList() -> { return subjectList; }
+      manyTomList(head,tail) -> {
+        TomTerm newElt = abstractPattern(head,abstractedPattern,introducedVariable);
+        return `manyTomList(newElt,abstractPatternList(tail,abstractedPattern,introducedVariable));
+      }
     }
-    return newList;
+    throw new TomRuntimeException("abstractPatternList: " + subjectList);
   }
 
   private TomList attachConstraint(TomList subjectList,
@@ -561,31 +530,6 @@ public class TomCompiler extends TomGenericPlugin {
     return res;
   }
 
-  /*
-  private TomList intersection(TomList patternVariable, TomList constraintVariable) {
-    %match(TomList patternVariable, TomList constraintVariable) {
-      concTomTerm(PV1*,var@Variable[astName=name],PV2*), concTomTerm(CV1*,Variable[astName=name],CV2*) -> {
-        TomList inter = `intersection(concTomTerm(PV1*,PV2*), concTomTerm(CV1*,CV2*));
-        return `concTomTerm(var,inter*);
-      }
-      concTomTerm(PV1*,var@VariableStar[astName=name],PV2*), concTomTerm(CV1*,VariableStar[astName=name],CV2*) -> {
-        TomList inter = `intersection(concTomTerm(PV1*,PV2*), concTomTerm(CV1*,CV2*));
-        return `concTomTerm(var,inter*);
-      }
-    }
-    return `concTomTerm();
-  }
-
-  private TomList remove(TomList list, TomTerm element) {
-    %match(TomList list, TomTerm element) {
-      concTomTerm(C1*,x,C2*), x -> {
-        return `concTomTerm(C1*,C2*);
-      }
-    }
-    return list;
-  }
-  */
-
   protected Replace3 replace_attachConstraint = new Replace3() { 
       public ATerm apply(ATerm subject, Object arg1, Object arg2) {
         Set variableSet = (Set) arg1;
@@ -605,7 +549,7 @@ public class TomCompiler extends TomGenericPlugin {
               //return var;
             }
 
-            appl@Appl[constraints=constraintList] -> {
+            appl@RecordAppl[constraints=constraintList] -> {
               if(variableSet.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
                 return appl.setConstraints(newConstraintList);

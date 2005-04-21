@@ -51,34 +51,33 @@ public class PolySimple1 {
   }    
     // Everything is an Aterm:
   %typeterm term {
-    implement {
-      ATerm
-        }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
-    cmp_fun_sym(t1,t2)  { t1 == t2 }
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
+    implement { ATerm }
     equals(t1, t2)      { (t1.equals(t2)) }
   }
     
     // My operators
   %op term zero {
-    fsym { fzero }
+    is_fsym(t) { (((ATermAppl)t).getAFun())==fzero }
   }
   %op term one {
-    fsym { fone }
+    is_fsym(t) { (((ATermAppl)t).getAFun())==fone }
   }
   %op term a {
-    fsym { fa }
+    is_fsym(t) { (((ATermAppl)t).getAFun())==fa }
   }
   %op term X {
-    fsym { fX }
+    is_fsym(t) { (((ATermAppl)t).getAFun())==fX }
   }
-  %op term plus(term,term) {
-    fsym { fplus }
+  %op term plus(s1:term,s2:term) {
+    is_fsym(t) { (((ATermAppl)t).getAFun())==fplus }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0) }
+    get_slot(s2,t) { ((ATermAppl)t).getArgument(1) }
 		make(t1,t2) { plus(t1,t2)}
   }   
-  %op term mult(term, term) {
-    fsym        { fmult }
+  %op term mult(s1:term, s2:term) {
+    is_fsym(t)     { (((ATermAppl)t).getAFun())==fmult }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0) }
+    get_slot(s2,t) { ((ATermAppl)t).getArgument(1) }
 		make(t1,t2) { mult(t1,t2)}
   }
 

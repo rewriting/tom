@@ -46,7 +46,6 @@ public class BoulderDashCore {
   %include { boulder/boulder.tom }
  
   %op Bead beadRock(n:Bead, s:Bead, e:Bead, w:Bead) {
-    fsym { }
     is_fsym(t) { (t!=null) && t.isBead() && t.getValue() == rock && !marked.contains(t) }
     get_slot(n,t) { getNorthBead(t) }
     get_slot(s,t) { getSouthBead(t) }
@@ -55,7 +54,6 @@ public class BoulderDashCore {
   }
 
   %op Bead empty {
-    fsym { }
     is_fsym(t) { t==null }
     make { null }
   }

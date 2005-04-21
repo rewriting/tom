@@ -5,8 +5,6 @@
 %include { atermlist.tom }
 %typelist PlatformOptionList{
   implement { tom.platform.adt.platformoption.types.PlatformOptionList}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
   equals(t1,t2) {t1.equals(t2)}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
@@ -17,18 +15,15 @@
 }
 
 %oplist PlatformOptionList concPlatformOption(PlatformOption*) {
-  fsym { null }
   is_fsym(t) {(t!= null) && t.isSortPlatformOptionList()}
   make_empty() {getPlatformOptionFactory().makePlatformOptionList()}
   make_insert(e,l) {getPlatformOptionFactory().makePlatformOptionList(e,l)}
 }
 %op PlatformOptionList emptyPlatformOptionList{
-  fsym { null }
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {getPlatformOptionFactory().makePlatformOptionList()}
 }
 %op PlatformOptionList manyPlatformOptionList(head:PlatformOption, tail:PlatformOptionList) {
-  fsym { null }
   is_fsym(t) { (t!= null) && t.isMany()}
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
@@ -36,9 +31,6 @@
 }
 %typeterm PlatformBoolean{
   implement { tom.platform.adt.platformoption.types.PlatformBoolean}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformBoolean)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
@@ -46,22 +38,17 @@
 }
 
 %op PlatformBoolean False {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isFalse()}
   make() { getPlatformOptionFactory().makePlatformBoolean_False()}
 }
 
 %op PlatformBoolean True {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isTrue()}
   make() { getPlatformOptionFactory().makePlatformBoolean_True()}
 }
 
 %typeterm PlatformValue{
   implement { tom.platform.adt.platformoption.types.PlatformValue}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformValue)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
@@ -69,21 +56,18 @@
 }
 
 %op PlatformValue IntegerValue(integerValue:int) {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isIntegerValue()}
   get_slot(integerValue,t) { t.getIntegerValue()}
   make(t0) { getPlatformOptionFactory().makePlatformValue_IntegerValue(t0)}
 }
 
 %op PlatformValue StringValue(stringValue:String) {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isStringValue()}
   get_slot(stringValue,t) { t.getStringValue()}
   make(t0) { getPlatformOptionFactory().makePlatformValue_StringValue(t0)}
 }
 
 %op PlatformValue BooleanValue(booleanValue:PlatformBoolean) {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isBooleanValue()}
   get_slot(booleanValue,t) { t.getBooleanValue()}
   make(t0) { getPlatformOptionFactory().makePlatformValue_BooleanValue(t0)}
@@ -91,9 +75,6 @@
 
 %typeterm PlatformOption{
   implement { tom.platform.adt.platformoption.types.PlatformOption}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformOption)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
@@ -101,7 +82,6 @@
 }
 
 %op PlatformOption PluginOption(name:String, altName:String, description:String, value:PlatformValue, attrName:String) {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isPluginOption()}
   get_slot(name,t) { t.getName()}
   get_slot(altName,t) { t.getAltName()}

@@ -30,8 +30,6 @@ public class TestList extends TestCase {
 
   %typelist L {
     implement { ATermList }
-    get_fun_sym(t) { ((t instanceof ATermList)?factory.makeAFun("conc", 1, false):null) }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
     equals(l1,l2)  { l1.equals(l2) }
     get_head(l)    { ((ATermList)l).getFirst() }
     get_tail(l)    { ((ATermList)l).getNext() }
@@ -39,45 +37,47 @@ public class TestList extends TestCase {
   }
 
   %oplist L conc( E* ) {
-    fsym { factory.makeAFun("conc", 1, false) }
+    is_fsym(t) { t instanceof ATermList }
     make_empty()  { factory.makeList() }
     make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
   }
   
   %typeterm E {
     implement { ATerm }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
-    equals(t1, t2)      { (t1.equals(t2)) }
+    equals(t1, t2) { (t1.equals(t2)) }
   }
 
   %op E a {
-    fsym { factory.makeAFun("a", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "a" }
   }
   
   %op E b {
-    fsym { factory.makeAFun("b", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "b" }
   }
 
   %op E c {
-    fsym { factory.makeAFun("c", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "c" }
   }
 
-  %op E f(E) {
-    fsym { factory.makeAFun("f", 1, false) }
+  %op E f(s1:E) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "f" }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
   }
 
-  %op E g(E) {
-    fsym { factory.makeAFun("g", 1, false) }
+  %op E g(s1:E) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "g" }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
   }
 
-  %op E l(L) {
-    fsym { factory.makeAFun("l", 1, false) }
+  %op E l(s1:L) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "l" }
+    get_slot(s1,t) { (ATermList) ((ATermAppl)t).getArgument(0)  }
   }
 
-  %op E h(E,E) {
-    fsym { factory.makeAFun("h", 2, false) }
+  %op E h(s1:E,s2:E) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "h" }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
+    get_slot(s2,t) { ((ATermAppl)t).getArgument(1)  }
   }
 
 	static class TestData {

@@ -49,12 +49,12 @@ and fsuc  = get_fun_sym(Suc(Zero));;
 }
   
 %op peano zero {
-  fsym { fzero  }
+  is_fsym(t) { get_fun_sym(t) = fzero }
   make { Zero }
 }
 
 %op peano suc(pred:peano) {
-  fsym { fsuc }
+  is_fsym(t) { get_fun_sym(t) = fsuc }
   get_slot(pred,t) { get_subterm t 0 }
   make(t) { Suc t }
 }

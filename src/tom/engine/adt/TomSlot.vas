@@ -1,0 +1,14 @@
+module TomSlot
+imports TomSignature 
+
+public 
+sorts Slot SlotList 
+			PairNameDecl PairNameDeclList
+
+abstract syntax
+
+PairNameDecl(slotName:TomName,slotDecl:Declaration) -> PairNameDecl
+concPairNameDecl(PairNameDecl*) -> PairNameDeclList
+
+PairSlotAppl(slotName:TomName,appl:TomTerm) -> Slot
+concSlot(Slot*) -> SlotList

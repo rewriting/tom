@@ -31,13 +31,10 @@
 
 %typeterm any {
   implement          { dontcare (* not used *)     }
-  get_fun_sym(t)     { ()       (* not used ? *)   }
-  cmp_fun_sym(t1,t2) { true     (* is it used ? *) }
-  get_subterm (t,n)  { ()       (* not used *)     }
 }
 
 %oplist list conc( any* ){
-  fsym{ "conc" }
+  is_fsym(t) { true }
   make_empty() { [] }
   make_insert(e,l) { e::l }
 }

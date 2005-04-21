@@ -45,8 +45,6 @@ public class List1 {
 
   %typelist TomList {
     implement { ATermList }
-    get_fun_sym(t) { ((t instanceof ATermList)?factory.makeAFun("conc", 1, false):null) }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
     equals(l1,l2) { l1==l2 }
     get_head(l)   { (ATermAppl)l.getFirst() }
     get_tail(l)   { l.getNext() }
@@ -54,31 +52,28 @@ public class List1 {
   }
 
   %oplist TomList conc( TomTerm* ) {
-    fsym { factory.makeAFun("conc", 1, false) }
+    is_fsym(t) { t instanceof ATermList }
     make_empty()  { factory.makeList() }
     make_insert(e,l) { l.insert(e) }
   }
   
   %typeterm TomTerm {
     implement { ATermAppl }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
-    get_fun_sym(t)     { t.getAFun() }
-    get_subterm(t, n)  { t.getArgument(n) }
     equals(t1, t2)     { t1==t2 }
   }
 
   %op TomTerm a {
-    fsym { factory.makeAFun("a", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "a" }
     make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
   
   %op TomTerm b {
-    fsym { factory.makeAFun("b", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "b" }
     make() { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
 
   %op TomTerm c {
-    fsym { factory.makeAFun("c", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "c" }
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
   

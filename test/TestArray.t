@@ -17,44 +17,45 @@ public class TestArray extends TestCase {
 
   %typearray L {
     implement { ArrayList }
-    get_fun_sym(t)   { ((t instanceof ArrayList)?factory.makeAFun("conc", 1, false):null) }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
     equals(l1,l2)    { l1.equals(l2) }
     get_element(l,n) { ((ArrayList)l).get(n) }
     get_size(l)      { ((ArrayList)l).size() }
   }
 
   %oparray L conc( E* ) {
-    fsym             { factory.makeAFun("conc", 1, false) }
+    is_fsym(t)       { t instanceof ArrayList }
     make_empty(n)    { new ArrayList(n) }
     make_append(e,l) { myAdd(e,(ArrayList)l) }
   }
 
+  private ArrayList myAdd(Object e, ArrayList l) {
+    l.add(e);
+    return l;
+  }
+  
   %typeterm E {
     implement           { ATerm }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
-    cmp_fun_sym(t1,t2)  { t1 == t2 } 
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
     equals(t1, t2)      { (t1.equals(t2)) }
   }
 
   %op E a {
-    fsym { factory.makeAFun("a", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "a" }
     make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
   
   %op E b {
-    fsym { factory.makeAFun("b", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "b" }
     make() { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
 
   %op E c {
-    fsym { factory.makeAFun("c", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "c" }
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
 
-  %op L double3(L) {
-    fsym { factory.makeAFun("double3", 1, false) }
+  %op L double3(s1:L) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "double3" }
+    //get_slot(s1,t) { return null; }
     make(l) { double3(l) }
   }
 
@@ -96,11 +97,6 @@ public class TestArray extends TestCase {
 					
 	}
 
-  private ArrayList myAdd(Object e, ArrayList l) {
-    l.add(e);
-    return l;
-  }
-  
 	public void testSort1() {
 		assertEquals(
 			"sort1 should return a sorted list",

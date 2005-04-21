@@ -47,18 +47,16 @@ public class PeanoSimple1 {
 
 
   %typeterm term {
-    implement           { ATerm }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
-    cmp_fun_sym(t1,t2)  { t1 == t2 }
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
+    implement { ATerm }
   }
 
   %op term zero {
-    fsym { fzero }
+    is_fsym(t) { (((ATermAppl)t).getAFun())==fzero }
   }
   
-  %op term suc(term) {
-    fsym { fsuc }
+  %op term suc(p:term) {
+    is_fsym(t) { (((ATermAppl)t).getAFun())==fsuc }
+    get_slot(p,t) { (((ATermAppl)t).getArgument(0)) }
   }
 
   public ATerm suc(ATerm t) {

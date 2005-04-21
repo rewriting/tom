@@ -2,11 +2,16 @@ module TomTerm
 imports TomSignature 
 
 public
-sorts PatternInstruction TomTerm Pattern PatternList TomList PatternInstructionList 
+sorts TomTerm TomList 
+			Pattern PatternList 
+			Slot SlotList
+			PatternInstruction PatternInstructionList 
 
 abstract syntax
 
-Appl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList) -> TomTerm
+TermAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList) -> TomTerm
+ListAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList) -> TomTerm
+RecordAppl(option:OptionList,nameList:NameList,slots:SlotList,constraints:ConstraintList) -> TomTerm
 XMLAppl(option:OptionList,nameList:NameList,attrList:TomList,childList:TomList,constraints:ConstraintList) -> TomTerm
 Variable(option:OptionList,astName:TomName,astType:TomType,constraints:ConstraintList) -> TomTerm
 VariableStar(option:OptionList,astName:TomName,astType:TomType,constraints:ConstraintList) -> TomTerm
@@ -26,8 +31,6 @@ Tom(tomList:TomList) -> TomTerm
 BackQuoteAppl(option:OptionList,astName:TomName,args:TomList) -> TomTerm
 DoubleBackQuote(args:TomList) -> TomTerm
 Composite(args:TomList) -> TomTerm
-RecordAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList) -> TomTerm
-PairSlotAppl(slotName:TomName,appl:TomTerm) -> TomTerm
 SubjectList(tomList:TomList) -> TomTerm
 Term(tomTerm:TomTerm) -> TomTerm
 TLVar(strName:String,astType:TomType) -> TomTerm
@@ -49,3 +52,4 @@ Pattern(tomList:TomList,guards:TomList) -> Pattern
 concPatternInstruction(PatternInstruction*) -> PatternInstructionList
 concPattern(Pattern*) -> PatternList
 concTomTerm(TomTerm*) -> TomList
+

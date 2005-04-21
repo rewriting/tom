@@ -65,7 +65,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     }
   }
     // Different kind of structures
-  protected final static int APPL                    = 0;
+  protected final static int TERM_APPL               = 0;
   protected final static int UNAMED_APPL             = 1;
   protected final static int APPL_DISJUNCTION        = 2;
   protected final static int RECORD_APPL             = 3;
@@ -88,9 +88,9 @@ abstract public class TomChecker extends TomGenericPlugin {
  
   public int getClass(TomTerm term) {
     %match(TomTerm term) {
-      Appl[nameList=(Name(""))] -> { return UNAMED_APPL;}
-      Appl[nameList=(Name(_))] -> { return APPL;}
-      Appl[nameList=(Name(_), _*)] -> { return APPL_DISJUNCTION;}
+      TermAppl[nameList=(Name(""))] -> { return UNAMED_APPL;}
+      TermAppl[nameList=(Name(_))] -> { return TERM_APPL;}
+      TermAppl[nameList=(Name(_), _*)] -> { return APPL_DISJUNCTION;}
       RecordAppl[nameList=(Name(_))] -> { return RECORD_APPL;}
       RecordAppl[nameList=(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
       XMLAppl[] -> { return XML_APPL;}
@@ -104,8 +104,8 @@ abstract public class TomChecker extends TomGenericPlugin {
   public String getName(TomTerm term) {
     String dijunctionName = "";
     %match(TomTerm term) {
-      Appl[nameList=(Name(name))] -> { return `name;}
-      Appl[nameList=nameList] -> {
+      TermAppl[nameList=(Name(name))] -> { return `name;}
+      TermAppl[nameList=nameList] -> {
         String head;
         dijunctionName = `nameList.getHead().getString();
         while(!`nameList.isEmpty()) {

@@ -203,17 +203,6 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   }
 
 
-  protected void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException {
-    String s = (String)getSubtermMap.get(domain);
-    if(s == null) {
-      s = "tom_get_subterm_" + getTomType(domain) + "(";
-      getSubtermMap.put(domain,s);
-    }
-    output.write(s);
-    generate(deep,exp);
-    output.write(", " + number + ")");
-  }
-
   protected void genDecl(String returnType,
                          String declName,
                          String suffix,

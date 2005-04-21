@@ -34,18 +34,16 @@ exception Erreur of string ;;
 
 %typeterm term {
   implement { mlpeano }
-  get_fun_sym (t) { get_sym (t)} 
-  cmp_fun_sym (t1,t2) {t1=t2} 
-  get_subterm (t,n) {get_sub n t} 
   equals(t1,t2) {t1=t2}
 }
   
 %op term zero {
-  fsym { fzero }
+  is_fsym(t) { get_sym(t) = fzero }
 }
 
-%op term suc(term) {
-  fsym { fsuc }
+%op term suc(s1:term) {
+  is_fsym(t) { get_sym(t) = fsuc }
+  get_slot(s1,t) { get_sub 0 t }
 }
 
 let rec plus (t1,t2)= 

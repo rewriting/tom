@@ -1,3 +1,13 @@
+2005-04-21  pem  <pem@polly.loria.fr>
+  * big modifications:
+    - pattern matching compilation is based on RecordAppl instead of
+		  TermAppl (Appl has been renamed into TermAppl)
+	  - simplification of mapping:
+		  - fsym, get_fun_sym, and cmp_fun_sym do no longer exist (use is_fsym(t) instead)
+			- get_subterm does no longer exist (use get_slot(s,t) instead)
+			- slots are no longer optional
+    - verifier has to be upgraded
+
 2005-03-25  pem  <pem@polly.loria.fr>
 
 	* src/jtom/compiler/TomExpander.t: 

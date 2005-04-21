@@ -6,25 +6,17 @@
 
 %typeterm Nat {
   implement { int }
-  get_fun_sym(i)      { (void*)((i==0)?ZERO:SUC) }
-  cmp_fun_sym(t1,t2)  { (t1 == t2) }
-  get_subterm(i, n)   { (void*)(i-1) }
 }
 
 %op Nat zero {
-  fsym { 0 }
+  is_fsym(t) { t==0 }
 }
 
 %op Nat suc(p:Nat) {
-  fsym {  }
   is_fsym(t) { t>0 }
   get_slot(p,t) { t-1 }
   make(t) { t+1 }
 }
-
-//int suc(int t) {
-//  return t+1;
-//}
 
 int plus(int t1, int t2) {
   %match(Nat t1, Nat t2) {

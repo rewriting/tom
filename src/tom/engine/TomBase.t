@@ -196,32 +196,22 @@ public class TomBase {
     }
   }
 
-  protected String getSymbolCode(TomSymbol symbol) {
-    //%variable
-    %match(TomSymbol symbol) {
-      Symbol[tlCode=TL[code=tlCode]]  -> { return `tlCode; }
-      Symbol[tlCode=ITL[code=tlCode]] -> { return `tlCode; }
-      _ -> {
-        System.out.println("getSymbolCode error on term: " + symbol);
-        throw new TomRuntimeException("getSymbolCode error on term: " + symbol);
-      }
-    }
-  }
-
   private HashMap numberListToIdentifierMap = new HashMap();
 
   private String elementToIdentifier(TomNumber subject) {
     %match(TomNumber subject) {
-      Begin(Number(i)) -> { return "begin" + `i; }
-      End(Number(i)) -> { return "end" + `i; }
-      MatchNumber(Number(i)) -> { return "match" + `i; }
-      PatternNumber(Number(i)) -> { return "pattern" + `i; }
-      ListNumber(Number(i)) -> { return "list" + `i; }
-      IndexNumber(Number(i)) -> { return "index" + `i; }
-      AbsVar(Number(i)) -> { return "absvar" + `i; }
-      RenamedVar(Name(name)) -> { return "renamedvar_" + `name; }
-      RuleVar() -> { return "rulevar"; }
-      Number(i) -> { return "" + `i; }
+      Begin(Number(i)) -> { return "_begin" + `i; }
+      End(Number(i)) -> { return "_end" + `i; }
+      MatchNumber(Number(i)) -> { return "_match" + `i; }
+      PatternNumber(Number(i)) -> { return "_pattern" + `i; }
+      ListNumber(Number(i)) -> { return "_list" + `i; }
+      IndexNumber(Number(i)) -> { return "_index" + `i; }
+      AbsVar(Number(i)) -> { return "_absvar" + `i; }
+      RenamedVar(Name(name)) -> { return "_renamedvar_" + `name; }
+      NameNumber(Name(name)) -> { return "_" + `name; }
+      NameNumber(PositionName(numberList)) -> { return numberListToIdentifier(numberList); }
+      RuleVar() -> { return "_rulevar"; }
+      Number(i) -> { return "_" + `i; }
       _ -> { return subject.toString(); }
     }
   }
@@ -233,7 +223,7 @@ public class TomBase {
       StringBuffer buf = new StringBuffer(30);
       while(!l.isEmpty()) {
         TomNumber elt = l.getHead();
-        buf.append("_");
+        //buf.append("_");
         buf.append(elementToIdentifier(elt));
         l = l.getTail();
       }
@@ -361,8 +351,8 @@ public class TomBase {
               }
 
               // to collect annoted nodes but avoid collect variables in optionSymbol
-              Appl[args=subterms, constraints=constraintList] -> {
-                collectVariable(collection,`Tom(subterms));
+              RecordAppl[slots=subterms, constraints=constraintList] -> {
+                collectVariable(collection,`subterms);
                 annotedVariable = getAssignToVariable(`constraintList);
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
@@ -403,7 +393,7 @@ public class TomBase {
 
   protected boolean isAnnotedVariable(TomTerm t) {
     %match(TomTerm t) {
-      Appl[constraints=constraintList] |
+      RecordAppl[constraints=constraintList] |
         (Variable|VariableStar)[constraints=constraintList] |
         (UnamedVariable|UnamedVariableStar)[constraints=constraintList] 
         -> {
@@ -492,34 +482,45 @@ public class TomBase {
   } 
 
   protected TomName getSlotName(TomSymbol symbol, int number) {
-    SlotList slotList = symbol.getSlotList();
-    for(int index = 0; !slotList.isEmpty() && index<number ; index++) {
-      slotList = slotList.getTail();
+    PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
+    for(int index = 0; !pairNameDeclList.isEmpty() && index<number ; index++) {
+      pairNameDeclList = pairNameDeclList.getTail();
     }
-    if(slotList.isEmpty()) {
+    if(pairNameDeclList.isEmpty()) {
       System.out.println("getSlotName: bad index error");
       throw new TomRuntimeException("getSlotName: bad index error");
     }
 
-    Declaration decl = slotList.getHead().getSlotDecl();
+    Declaration decl = pairNameDeclList.getHead().getSlotDecl();
     %match(Declaration decl) {
       GetSlotDecl[slotName=name] -> { return `name; }
     }
     return null;
   }
 
-  protected int getSlotIndex(SlotList slotList, TomName slotName) {
+  protected int getSlotIndex(TomSymbol tomSymbol, TomName slotName) {
     int index = 0;
-    while(!slotList.isEmpty()) {
-      TomName name = slotList.getHead().getSlotName();
+    PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
+    while(!pairNameDeclList.isEmpty()) {
+      TomName name = pairNameDeclList.getHead().getSlotName();
       // System.out.println("index = " + index + " name = " + name);
       if(slotName.equals(name)) {
         return index; 
       }
-      slotList = slotList.getTail();
+      pairNameDeclList = pairNameDeclList.getTail();
       index++;
     }
     return -1;
+  }
+
+  protected TomType getSlotType(TomSymbol symbol, TomName slotName) {
+    %match(TomSymbol symbol) {
+      Symbol[typesToType=TypesToType(typeList,codomain)] -> {
+        int index = getSlotIndex(symbol,slotName);
+        return (TomType)typeList.elementAt(index);
+      }
+    }
+    throw new TomRuntimeException("getSlotType: bad slotName error");
   }
 
   protected boolean isDefinedSymbol(TomSymbol subject) {
@@ -574,7 +575,7 @@ public class TomBase {
 
   protected TomType getTermType(TomTerm t, SymbolTable symbolTable){
     %match(TomTerm t) {
-      Appl[nameList=(Name(tomName),_*)] -> {
+      RecordAppl[nameList=(Name(tomName),_*)] -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         return tomSymbol.getTypesToType().getCodomain();
       }
@@ -621,4 +622,40 @@ public class TomBase {
       }
     }
   }
+
+  protected SlotList tomListToSlotList(TomList tomList) {
+    return tomListToSlotList(tomList,1);
+  }
+
+  protected SlotList tomListToSlotList(TomList tomList, int index) {
+    %match(TomList tomList) {
+      emptyTomList() -> { return `emptySlotList(); }
+      manyTomList(head,tail) -> { 
+        TomName slotName = `PositionName(concTomNumber(Number(index)));
+        return `manySlotList(PairSlotAppl(slotName,head),tomListToSlotList(tail,index+1)); 
+      }
+    }
+    throw new TomRuntimeException("tomListToSlotList: " + tomList);
+  }
+
+  protected SlotList mergeTomListWithSlotList(TomList tomList, SlotList slotList) {
+    %match(TomList tomList, SlotList slotList) {
+      emptyTomList(), emptySlotList() -> { 
+        return `emptySlotList(); 
+      }
+      manyTomList(head,tail), manySlotList(PairSlotAppl[slotName=slotName],tailSlotList) -> { 
+        return `manySlotList(PairSlotAppl(slotName,head),mergeTomListWithSlotList(tail,tailSlotList)); 
+      }
+    }
+    throw new TomRuntimeException("mergeTomListWithSlotList: " + tomList + " and " + slotList);
+  }
+
+  protected TomList slotListToTomList(SlotList tomList) {
+    %match(SlotList tomList) {
+      emptySlotList() -> { return `emptyTomList(); }
+      manySlotList(PairSlotAppl[appl=head],tail) -> { return `manyTomList(head,slotListToTomList(tail)); }
+    }
+    throw new TomRuntimeException("slotListToTomList: " + tomList);
+  }
+
 } // class TomBase

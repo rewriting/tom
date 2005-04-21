@@ -11,29 +11,27 @@ public class TestWhen extends TestCase {
 
   %typeterm term {
     implement { ATerm }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
-    cmp_fun_sym(t1,t2)  { t1 == t2 }
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
     equals(t1, t2)      { t1 == t2}
   }
 
   %op term a {
-    fsym { factory.makeAFun("a", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "a" }
     make { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
 
   %op term b {
-    fsym { factory.makeAFun("b", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "b" }
     make { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
 
-  %op term f(term) {
-    fsym { factory.makeAFun("f" , 1, false) }
+  %op term f(s1:term) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "f" }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
     make(t) { factory.makeAppl(factory.makeAFun("f", 1, false),t) }
   }
 
-  %op boolean g(term) {
-    fsym { factory.makeAFun("g" , 1, false) }
+  %op boolean g(s1:term) {
+    is_fsym(t) { false }
     make(t) { g(t) }
   }
 

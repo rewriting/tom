@@ -40,25 +40,6 @@ import jtom.TomBase;
 import jtom.TomMessage;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.TomSignatureFactory;
-/*import jtom.adt.tomsignature.types.Constraint;
-import jtom.adt.tomsignature.types.ConstraintList;
-import jtom.adt.tomsignature.types.Declaration;
-import jtom.adt.tomsignature.types.Instruction;
-import jtom.adt.tomsignature.types.InstructionList;
-import jtom.adt.tomsignature.types.NameList;
-import jtom.adt.tomsignature.types.Option;
-import jtom.adt.tomsignature.types.OptionList;
-import jtom.adt.tomsignature.types.PairNameDecl;
-import jtom.adt.tomsignature.types.SlotList;
-import jtom.adt.tomsignature.types.TargetLanguage;
-import jtom.adt.tomsignature.types.TomList;
-import jtom.adt.tomsignature.types.TomName;
-import jtom.adt.tomsignature.types.TomRuleList;
-import jtom.adt.tomsignature.types.TomStructureTable;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.adt.tomsignature.types.TomType;
-import jtom.adt.tomsignature.types.TomTypeList;*/
 import jtom.exception.TomException;
 import jtom.tools.SymbolTable;
 import jtom.tools.TomFactory;
@@ -470,7 +451,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             name = headSymbol[optionList] 
             {
                 nameList = (NameList) nameList.append(name);
-                result = `Appl(
+                result = `TermAppl(
                         ast().makeOptionList(optionList),
                         nameList,
                         ast().makeList(list),
@@ -483,53 +464,57 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             {nameList = (NameList) nameList.append(name);}
             implicit = args[list,secondOptionList]
             {
-                if(list.isEmpty())
+              if(list.isEmpty()) {
                     optionList.add(`Constructor(nameList));
-                if(implicit)
+              }
+              if(implicit) {
                     result = `RecordAppl(
                         ast().makeOptionList(optionList),
                         nameList,
-                        ast().makeList(list),
+                        ast().makeSlotList(list),
                         ast().makeConstraintList(constraintList)
                     );
-                else 
-                    result = `Appl(
+              } else {
+                    result = `TermAppl(
                         ast().makeOptionList(optionList),
                         nameList,
                         ast().makeList(list),
                         ast().makeConstraintList(constraintList)
                     );
+              }
             }
             
         |   // (f|g...) 
             // ambiguity with the last rule so use a lookahead
             // if ALTERNATIVE then parse headSymbolList
         {LA(3) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
-            ( (args[null,null]) => implicit = args[list,secondOptionList] {withArgs = true;})?
+            ( (args[null,null]) => implicit = args[list, secondOptionList] {withArgs = true;})?
             {
-                if(withArgs && list.isEmpty())
+              if(withArgs && list.isEmpty()) {
                     optionList.add(`Constructor(nameList));
-                if(implicit)
+              }
+              if(implicit) {
                     result = `RecordAppl(
                         ast().makeOptionList(optionList),
                         nameList,
-                        ast().makeList(list),
+                        ast().makeSlotList(list),
                         ast().makeConstraintList(constraintList)
                     );
-                else 
-                    result = `Appl(
+              } else {
+                    result = `TermAppl(
                         ast().makeOptionList(optionList),
                         nameList,
                         ast().makeList(list),
                         ast().makeConstraintList(constraintList)
                     );
+              }
             }
         |   // (...)
             implicit = args[list,secondOptionList]
             {
                 nameList = `concTomName(Name(""));
                 optionList.addAll(secondOptionList);
-                result = `Appl(
+                result = `TermAppl(
                     ast().makeOptionList(optionList),
                     nameList,
                     ast().makeList(list),
@@ -627,7 +612,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 nameList = `concTomName(Name(keyword));
                 result = `RecordAppl(option,
                     nameList,
-                    ast().makeList(pairSlotList),
+                    ast().makeSlotList(pairSlotList),
                     constraint);
             }
         | // #COMMENT(...)
@@ -642,7 +627,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 nameList = `concTomName(Name(keyword));
                 result = `RecordAppl(option,
                     nameList,
-                    ast().makeList(pairSlotList),
+                    ast().makeSlotList(pairSlotList),
                     constraint);
             }
         | // #PROCESSING-INSTRUCTION(... , ...)
@@ -660,7 +645,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 nameList = `concTomName(Name(keyword));
                 result = `RecordAppl(option,
                     nameList,
-                    ast().makeList(pairSlotList),
+                    ast().makeSlotList(pairSlotList),
                     constraint);
             }
         )
@@ -712,7 +697,7 @@ xmlAttributeList [LinkedList list] returns [boolean result] throws TomException
 xmlAttribute returns [TomTerm result] throws TomException
 {
     result = null;
-    LinkedList list = new LinkedList();
+    LinkedList slotList = new LinkedList();
     TomTerm term = null;
     TomTerm termName = null;
     String name;
@@ -747,7 +732,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             {
                 name = tomFactory.encodeXMLString(symbolTable,id.getText());
                 nameList = `concTomName(Name(name));
-                termName = `Appl(ast().makeOption(),nameList,concTomTerm(),concConstraint());
+                termName = `TermAppl(ast().makeOption(),nameList,concTomTerm(),concConstraint());
             }
         | // [anno1@]_ = [anno2@](_|String|Identifier)
             (
@@ -772,12 +757,12 @@ xmlAttribute returns [TomTerm result] throws TomException
         {
             if (!varStar)
             {
-                list.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
+                slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
-                list.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
-                //list.add(tomFactory.metaEncodeXMLAppl(symbolTable,term));
+                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
+                //slotList.add(tomFactory.metaEncodeXMLAppl(symbolTable,term));
                 // no longer necessary ot metaEncode Strings in attributes
-                list.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
+                slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
                 optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile())));
                 option = ast().makeOptionList(optionList);            
                 constraint = ast().makeConstraintList(constraintList);
@@ -785,7 +770,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 nameList = `concTomName(Name(Constants.ATTRIBUTE_NODE));
                 result = `RecordAppl(option,
                     nameList,
-                    ast().makeList(list),
+                    ast().makeSlotList(slotList),
                     constraint);
             }   
         }
@@ -880,7 +865,7 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
             }
         )
         {
-            result = `Appl(option,nameList,concTomTerm(),concConstraint());
+            result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
         }
     ;
 
@@ -908,7 +893,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
                 optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),Name(currentFile())));
                 option = ast().makeOptionList(optionList);
                 nameList = `concTomName(Name(nameID.getText()));
-                result = `Appl(option,nameList,concTomTerm(),concConstraint());
+                result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
             }
         |
             nameString:STRING 
@@ -918,7 +903,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
                 option = ast().makeOptionList(optionList);
                 ast().makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
-                result = `Appl(option,nameList,concTomTerm(),concConstraint());
+                result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
             }
         )
     ;
@@ -1200,52 +1185,38 @@ operator returns [Declaration result] throws TomException
     TomTypeList types = `emptyTomTypeList();
     LinkedList options = new LinkedList();
     LinkedList slotNameList = new LinkedList();
-    SlotList slotList = `emptySlotList();
+    PairNameDeclList pairNameDeclList = `emptyPairNameDeclList();
     TomName astName = null;
     String stringSlotName = null;
     Declaration attribute;
-    TargetLanguage tlFsym;
-
+    int index=1;
     Map mapNameDecl = new HashMap();
 }
     :
-        type:ALL_ID name:ALL_ID 
+      type:ALL_ID name:ALL_ID 
         {
             ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
             options.add(ot);
         }
         (
-            LPAREN
-            { stringSlotName = ""; }
-            (
-               (ALL_ID COLON) => slotName:ALL_ID COLON
-                { stringSlotName = slotName.getText(); }
-            )? 
-            typeArg:ALL_ID 
+            LPAREN slotName:ALL_ID COLON typeArg:ALL_ID 
             {
+                stringSlotName = slotName.getText(); 
                 slotNameList.add(ast().makeName(stringSlotName)); 
                 types = (TomTypeList) types.append(`TomTypeAlone(typeArg.getText()));
             }
             (
                 COMMA
-                { stringSlotName = ""; }
-                (
-                    (ALL_ID COLON) => slotName2:ALL_ID COLON
-                    { stringSlotName = slotName2.getText(); }
-                )?
-                typeArg2:ALL_ID
+                slotName2:ALL_ID COLON typeArg2:ALL_ID
                 {
+                    stringSlotName = slotName2.getText(); 
                     astName = ast().makeName(stringSlotName);
-
-                    if (!stringSlotName.equals("")) {
-                        if(slotNameList.indexOf(astName) != -1) {
-                            String detailedMsg = TomMessage.getMessage("RepeatedSlotName", new Object[]{stringSlotName});
-                            String msg = TomMessage.getMessage("MainErrorMessage", 
-                                                               new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg});
-                            throw new TomException(msg);
-                        }
+                    if(slotNameList.indexOf(astName) != -1) {
+                        String detailedMsg = TomMessage.getMessage("RepeatedSlotName", new Object[]{stringSlotName});
+                        String msg = TomMessage.getMessage("MainErrorMessage", 
+                                                           new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg});
+                        throw new TomException(msg);
                     }
-
                     slotNameList.add(astName); 
                     types = (TomTypeList) types.append(`TomTypeAlone(typeArg2.getText()));
                 }
@@ -1253,7 +1224,6 @@ operator returns [Declaration result] throws TomException
             RPAREN
         )?
         LBRACE
-        tlFsym = keywordFsym
         {
             astName = `Name(name.getText());
         }
@@ -1262,9 +1232,9 @@ operator returns [Declaration result] throws TomException
             { options.add(attribute); }
 
         |   attribute = keywordGetSlot[astName,type.getText()]
-            {
+        {
                 TomName sName = attribute.getSlotName();
-                if (mapNameDecl.get(sName)==null) {
+                if(mapNameDecl.get(sName)==null) {
                     mapNameDecl.put(sName,attribute);
                 } else {
                   getLogger().log(new PlatformLogRecord(Level.WARNING,
@@ -1283,24 +1253,23 @@ operator returns [Declaration result] throws TomException
             for(int i=slotNameList.size()-1; i>=0 ; i--) {
                 TomName name1 = (TomName)slotNameList.get(i);
                 PairNameDecl pair = null;
-                Declaration emptyDeclaration = `EmptyDeclaration();
                 if(name1.isEmptyName()) {
-                    pair = `Slot(name1,emptyDeclaration);
+                  pair = `PairNameDecl(name1,EmptyDeclaration());
                 } else {
                     Declaration decl = (Declaration)mapNameDecl.get(name1);
                     if(decl == null) {
-                      getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningMissingSlotDecl",
-                          new Object[]{currentFile(), new Integer(ot.getLine()),
-                          "%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} ),
-                          currentFile(), getLine()));
-                        decl = emptyDeclaration;
+                      getLogger().log(new PlatformLogRecord(Level.WARNING, 
+                                                            TomMessage.getMessage("WarningMissingSlotDecl",
+                                                            new Object[]{currentFile(), new Integer(ot.getLine()),
+                                                            "%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} ),
+                                                            currentFile(), getLine()));
+                      pair = `PairNameDecl(name1,EmptyDeclaration());
+                    } else {
+                      mapNameDecl.remove(name1);
+                      pair = `PairNameDecl(name1,decl);
                     }
-                    else {
-                        mapNameDecl.remove(name1);
-                    }
-                    pair = `Slot(name1,decl);
                 }
-                slotList = `manySlotList(pair,slotList);
+                pairNameDeclList = `manyPairNameDeclList(pair,pairNameDeclList);
             }
             // Test if there are still declaration in mapNameDecl
             if ( !mapNameDecl.isEmpty()) {
@@ -1315,7 +1284,7 @@ operator returns [Declaration result] throws TomException
                 }
             }
             
-            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
+            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, pairNameDeclList, options);
             putSymbol(name.getText(),astSymbol);
 
             result = `SymbolDecl(astName);
@@ -1332,7 +1301,6 @@ operatorList returns [Declaration result] throws TomException
     TomTypeList types = `emptyTomTypeList();
     LinkedList options = new LinkedList();
     Declaration attribute = null;
-    TargetLanguage tlFsym;
 }
     :
         type:ALL_ID name:ALL_ID
@@ -1345,7 +1313,6 @@ operatorList returns [Declaration result] throws TomException
             types = (TomTypeList) types.append(`TomTypeAlone(typeArg.getText()));
         }
         LBRACE
-        tlFsym=keywordFsym
         (
             attribute = keywordMakeEmptyList[name.getText()]
             { options.add(attribute); }
@@ -1366,22 +1333,11 @@ operatorList returns [Declaration result] throws TomException
         )*
         t:RBRACE
         { 
-            SlotList slotList = `concPairNameDecl(Slot(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ast().makeSymbol(
-                name.getText(), 
-                type.getText(), 
-                types, 
-                slotList, 
-                options, 
-                tlFsym
-            );
-            
+            PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
+            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, pairNameDeclList, options);
             putSymbol(name.getText(),astSymbol);
-
             result = `ListSymbolDecl(Name(name.getText()));
-
             updatePosition(t.getLine(),t.getColumn());
-
             selector().pop(); 
         }
     ;
@@ -1392,7 +1348,6 @@ operatorArray returns [Declaration result] throws TomException
     TomTypeList types = `emptyTomTypeList();
     LinkedList options = new LinkedList();
     Declaration attribute = null;
-    TargetLanguage tlFsym;
 }
     :
         type:ALL_ID name:ALL_ID
@@ -1405,7 +1360,6 @@ operatorArray returns [Declaration result] throws TomException
             types = (TomTypeList) types.append(`TomTypeAlone(typeArg.getText()));
         }
         LBRACE
-        tlFsym = keywordFsym
         (
             attribute = keywordMakeEmptyArray[name.getText(),type.getText()]
             { options.add(attribute); }
@@ -1418,8 +1372,8 @@ operatorArray returns [Declaration result] throws TomException
         )*
         t:RBRACE
         { 
-            SlotList slotList = `concPairNameDecl(Slot(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
+            PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
+            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, pairNameDeclList, options);
             putSymbol(name.getText(),astSymbol);
 
             result = `ArraySymbolDecl(Name(name.getText()));
@@ -1447,16 +1401,7 @@ typeTerm returns [Declaration result] throws TomException
 
             implement = keywordImplement
             (
-                attribute = keywordGetFunSym[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetSubterm[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordCmpFunSym[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordEquals[type.getText()]
+                attribute = keywordEquals[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordCheckStamp[type.getText()]
@@ -1495,16 +1440,7 @@ typeList returns [Declaration result] throws TomException
             LBRACE
             implement = keywordImplement
             (
-                attribute = keywordGetFunSym[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetSubterm[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordCmpFunSym[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordEquals[type.getText()]
+                attribute = keywordEquals[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordGetHead[`EmptyName(), type.getText()]
@@ -1554,16 +1490,7 @@ typeArray returns [Declaration result] throws TomException
             LBRACE
             implement = keywordImplement
             (                
-                attribute = keywordGetFunSym[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetSubterm[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordCmpFunSym[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordEquals[type.getText()]
+                attribute = keywordEquals[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordGetElement[type.getText()]
@@ -1605,87 +1532,6 @@ keywordImplement returns [TargetLanguage tlCode] throws TomException
                 selector().push("targetlexer");
                 tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();
-            }
-        )
-    ;
-
-keywordGetFunSym [String type] returns [Declaration result] throws TomException
-{
-    result = null;
-    Option ot = null;
-}
-    :
-        (
-            t:GET_FUN_SYM 
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name:ALL_ID RPAREN
-            {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
-                OptionList option = `concOption(info);
-
-                selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
-                selector().pop();
-
-                result = `GetFunctionSymbolDecl(
-                    Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    tlCode,ot);
-            }
-        )
-    ;
-
-keywordGetSubterm[String type] returns [Declaration result] throws TomException
-{
-    result = null;
-    Option ot = null;
-}
-    :
-        (
-            t:GET_SUBTERM 
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-            LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
-            {
-                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(currentFile()));
-                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(currentFile()));
-                OptionList option1 = `concOption(info1);
-                OptionList option2 = `concOption(info2);
-                
-                selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
-                selector().pop(); 
-
-                result = `GetSubtermDecl(
-                    Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    Variable(option2,Name(name2.getText()),TomTypeAlone("int"),emptyConstraintList()),
-                    tlCode, ot);
-            }
-        )
-    ;
-
-keywordCmpFunSym [String type] returns [Declaration result] throws TomException
-{
-    result = null;
-    Option ot = null;
-}
-    :
-        (
-            t:CMP_FUN_SYM 
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
-            LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
-            {
-                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(currentFile()));
-                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(currentFile()));
-                OptionList option1 = `concOption(info1);
-                OptionList option2 = `concOption(info2);
-                
-                selector().push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
-                selector().pop(); 
-
-                result = `CompareFunctionSymbolDecl(
-                    Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    Variable(option2,Name(name2.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    tlCode, ot);
             }
         )
     ;
@@ -1847,19 +1693,6 @@ keywordGetSize[String type] returns [Declaration result] throws TomException
                     tlCode,ot);
             }
         )
-    ;
-
-keywordFsym returns [TargetLanguage tlCode] throws TomException
-{
-    tlCode = null;
-}
-    :
-        FSYM 
-        {
-            selector().push("targetlexer");
-            tlCode = targetparser.goalLanguage(new LinkedList());
-            selector().pop();
-        }
     ;
 
 keywordIsFsym [TomName astName, String typeString] returns [Declaration result] throws TomException
@@ -2162,16 +1995,12 @@ tokens {
     MAKE_EMPTY = "make_empty";
     MAKE_INSERT = "make_insert";
     MAKE_APPEND = "make_append";
-    FSYM = "fsym";
     MAKE = "make";
     GET_SLOT = "get_slot";
     IS_FSYM = "is_fsym";
     CHECK_STAMP = "check_stamp";
     SET_STAMP = "set_stamp";
     GET_IMPLEMENTATION = "get_implementation";
-    GET_FUN_SYM = "get_fun_sym";
-    GET_SUBTERM = "get_subterm";
-    CMP_FUN_SYM = "cmp_fun_sym";
     EQUALS = "equals";
     GET_HEAD = "get_head";
     GET_TAIL = "get_tail";

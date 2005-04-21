@@ -72,7 +72,7 @@ public class TomFactory extends TomBase {
        */
     NameList newNameList = `concTomName();
     %match(TomTerm term) {
-      Appl[nameList=(_*,Name(name),_*)] -> {
+      RecordAppl[nameList=(_*,Name(name),_*)] -> {
         newNameList = (NameList)newNameList.append(`Name(encodeXMLString(symbolTable,name)));
       }
     }
@@ -89,14 +89,14 @@ public class TomFactory extends TomBase {
        */
       //System.out.println("metaEncode: " + term);
     %match(TomTerm term) {
-      Appl[nameList=(Name(tomName))] -> {
+      RecordAppl[nameList=(Name(tomName))] -> {
           //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
           if(isStringOperator(tomSymbol)) {
             Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,Name("??"));
-            term = `Appl( getAstFactory().makeOption(info),
-                          concTomName(Name(Constants.TEXT_NODE)),concTomTerm(term),
+            term = `RecordAppl(getAstFactory().makeOption(info),
+                               concTomName(Name(Constants.TEXT_NODE)),concSlot(PairSlotAppl(Name(Constants.SLOT_DATA),term)),
                           tsf().makeConstraintList());
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
@@ -109,8 +109,12 @@ public class TomFactory extends TomBase {
   public boolean isExplicitTermList(LinkedList childs) {
     if(childs.size() == 1) {
       TomTerm term = (TomTerm) childs.getFirst();
+      //System.out.println("isExplicitTermList: " + term);
       %match(TomTerm term) {
-        Appl[nameList=(Name("")),args=args] -> {
+        RecordAppl[nameList=(Name(""))] -> { 
+          return true;
+        }
+        TermAppl[nameList=(Name(""))] -> { 
           return true;
         }
       }
@@ -121,7 +125,15 @@ public class TomFactory extends TomBase {
   public LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
     %match(TomTerm term) {
-      Appl[nameList=(Name("")),args=args] -> {
+      RecordAppl[nameList=(Name("")),slots=args] -> {
+        while(!`args.isEmpty()) {
+          list.add(metaEncodeXMLAppl(symbolTable,`args.getHead().getAppl()));
+          `args = `args.getTail();
+        }
+        return list;
+      }
+
+      TermAppl[nameList=(Name("")),args=args] -> {
         while(!`args.isEmpty()) {
           list.add(metaEncodeXMLAppl(symbolTable,`args.getHead()));
           `args = `args.getTail();

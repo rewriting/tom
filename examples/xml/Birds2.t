@@ -70,7 +70,7 @@ public class Birds2 {
                       System.out.println("Bingo catched bird");
                     }
 
-		    <Species Scientific_Name="Gavia adamsii">["Yellow-billed Loon."]</Species> -> {
+       <Species Scientific_Name="Gavia adamsii">[#TEXT("Yellow-billed Loon.")]</Species> -> {
                       System.out.println("Double bingo catched bird");
                     }
 

@@ -102,8 +102,7 @@ import jjtraveler.VisitFailure;
 	 
      }
      
-     %op VisitableVisitor One_abs(VisitableVisitor) {
-	 fsym {}
+   %op VisitableVisitor One_abs(s1:VisitableVisitor) {
 	 is_fsym(t) { (t instanceof One_abs) }
 	 make(v) { new One_abs((VisitableVisitor)v) }
      }

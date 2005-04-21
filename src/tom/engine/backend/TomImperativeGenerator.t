@@ -287,19 +287,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write(")");
   }
 
-  protected void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException {
-    TomType type = `TypesToType(concTomType(domain),codomain);
-    String s = (String)getSubtermMap.get(type);
-    if(s == null) {
-      s = "((" + getTLType(codomain) + ")tom_get_subterm_" + getTomType(domain) + "(";
-      //s = "tom_get_subterm_" + getTomType(domain) + "(";
-      getSubtermMap.put(type,s);
-    }
-    output.write(s);
-    generate(deep,exp);
-    output.write(", " + number + "))");
-  }
-
   protected void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException {
     output.write("((" + getTLType(codomain) + ")tom_get_element_" + getTomType(domain) + "(");
     generate(deep,varName);
@@ -308,18 +295,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write("))");
   }
   
-  protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
-    String args[];
-    if(! lazyMode) {
-      args = new String[] { getTLCode(tlType1), name1,
-                            getTLCode(tlType2), name2 };
-    } else {
-      args = new String[] { getTLType(getUniversalType()), name1,
-                            getTLCode(tlType2), name2 };
-    }
-    genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1, args, tlCode);
-  }
-
   protected void genDeclMake(String funName, TomType returnType, 
                              TomList argList, Instruction instr) throws IOException {
     String s = "";

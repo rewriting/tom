@@ -9,14 +9,11 @@ abstract syntax
 TypeTermDecl(astName:TomName,keywordList:TomList,orgTrack:Option) -> Declaration
 TypeListDecl(astName:TomName,keywordList:TomList,orgTrack:Option) -> Declaration
 TypeArrayDecl(astName:TomName,keywordList:TomList,orgTrack:Option) -> Declaration
-GetFunctionSymbolDecl(termArg:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
-GetSubtermDecl(termArg:TomTerm,variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 CheckStampDecl(variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 SetStampDecl(variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 GetImplementationDecl(variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 IsFsymDecl(astName:TomName,variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 GetSlotDecl(astName:TomName,slotName:TomName,variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
-CompareFunctionSymbolDecl(symbolArg1:TomTerm,symbolArg2:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 TermsEqualDecl(termArg1:TomTerm,termArg2:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 GetHeadDecl(opname:TomName, codomain:TomType,variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 GetTailDecl(opname:TomName, variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration

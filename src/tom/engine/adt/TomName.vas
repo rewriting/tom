@@ -9,6 +9,7 @@ abstract syntax
 Name(string:String) -> TomName
 PositionName(numberList:TomNumberList) -> TomName
 EmptyName() -> TomName
+
 MatchNumber(number:TomNumber) -> TomNumber
 PatternNumber(number:TomNumber) -> TomNumber
 ListNumber(number:TomNumber) -> TomNumber
@@ -18,5 +19,6 @@ End(number:TomNumber) -> TomNumber
 Number(integer:Int) -> TomNumber
 AbsVar(number:TomNumber) -> TomNumber
 RenamedVar(astName:TomName) -> TomNumber
+NameNumber(astName:TomName) -> TomNumber
 RuleVar() -> TomNumber
 concTomNumber(TomNumber*) -> TomNumberList

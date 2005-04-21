@@ -28,19 +28,7 @@ package jtom.backend;
 import java.io.IOException;
 
 import jtom.TomBase;
-import jtom.adt.tomsignature.types.Declaration;
-import jtom.adt.tomsignature.types.Expression;
-import jtom.adt.tomsignature.types.Instruction;
-import jtom.adt.tomsignature.types.InstructionList;
-import jtom.adt.tomsignature.types.Option;
-import jtom.adt.tomsignature.types.OptionList;
-import jtom.adt.tomsignature.types.SlotList;
-import jtom.adt.tomsignature.types.TargetLanguage;
-import jtom.adt.tomsignature.types.TomList;
-import jtom.adt.tomsignature.types.TomName;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.adt.tomsignature.types.TomType;
+import jtom.adt.tomsignature.types.*;
 import jtom.exception.TomRuntimeException;
 import jtom.tools.OutputCode;
 import jtom.tools.SymbolTable;
@@ -233,9 +221,17 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      EqualFunctionSymbol(type, exp,
-                          Appl[nameList=(Name(tomName))]) -> { // needs to be checked
-        buildEqualFunctionSymbol(deep, `type, `exp, `tomName);
+      EqualFunctionSymbol(type, exp, RecordAppl[nameList=(nameAST@Name(opName))]) -> { 
+        if(getSymbolTable().isBuiltinType(getTomType(type))) {
+          TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`opName);
+          if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+            generateExpression(deep,`IsFsym(nameAST,exp));
+          } else {
+            generateExpression(deep,`EqualTerm(type,BuildVariable(nameAST,emptyTomList()),exp));
+          }
+        } else {
+          generateExpression(deep,`IsFsym(nameAST,exp));
+        }
         return;
       }
 
@@ -251,11 +247,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       Cast(Type(_,tlType@TLType[]),exp) -> {
         buildExpCast(deep, `tlType, `exp);
-        return;
-      }
-
-      GetSubterm(codomain, exp, Number(number)) -> {
-        buildExpGetSubterm(deep, getTermType(`exp), `codomain, `exp, `number);
         return;
       }
 
@@ -278,7 +269,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         buildAddOne(deep, `exp);
         return;
       }
-
 
       GetSize(exp) -> {
         buildExpGetSize(deep, getTermType(`exp), `exp);
@@ -504,19 +494,12 @@ public abstract class TomAbstractGenerator extends TomBase {
       EmptyDeclaration() -> {
         return;
       }
+
       (SymbolDecl|ArraySymbolDecl|ListSymbolDecl)(Name(tomName)) -> {
         `buildSymbolDecl(deep, tomName);
         return ;
       }
 
-      GetFunctionSymbolDecl(Variable[astName=Name(name),
-                                     astType=Type(ASTTomType(type),tlType@TLType[])],
-                            tlCode, _) -> {
-        `buildGetFunctionSymbolDecl(deep, type, name, tlType, tlCode);
-        return;
-      }
-      
-      
       CheckStampDecl(Variable[astName=Name(name), 
                               astType=Type(ASTTomType(type),tlType@TLType[])], 
                      //astType=Type((type),tlType@TLType[])], 
@@ -539,13 +522,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetSubtermDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type1),tlType1@TLType[])],
-                     Variable[astName=Name(name2), astType=Type[tlType=tlType2@TLType[]]],
-                     tlCode, _) -> {
-        `buildGetSubtermDecl(deep, name1, name2, type1, tlType1, tlType2, tlCode);
-        return;
-      }
-      
       IsFsymDecl(Name(tomName),
        Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]], tlCode@TL[], _) -> {
         `buildIsFsymDecl(deep, tomName, name, tlType, tlCode);
@@ -557,13 +533,6 @@ public abstract class TomAbstractGenerator extends TomBase {
                   variable=Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]],
                   tlCode=tlCode@TL[]] -> {
         `buildGetSlotDecl(deep, tomName, name, tlType, tlCode, slotName);
-        return;
-      }
-
-      CompareFunctionSymbolDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type1),_)],
-                                Variable[astName=Name(name2), astType=Type(ASTTomType(type2),_)],
-                                tlCode, _) -> {
-        `buildCompareFunctionSymbolDecl(deep, name1, name2, type1, type2, tlCode);
         return;
       }
 
@@ -701,11 +670,11 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 
-  public void generateSlotList(int deep, SlotList slotList)
+  public void generatePairNameDeclList(int deep, PairNameDeclList pairNameDeclList)
     throws IOException {
-    while ( !slotList.isEmpty() ) {
-      generateDeclaration(deep, slotList.getHead().getSlotDecl());
-      slotList = slotList.getTail();
+    while ( !pairNameDeclList.isEmpty() ) {
+      generateDeclaration(deep, pairNameDeclList.getHead().getSlotDecl());
+      pairNameDeclList = pairNameDeclList.getTail();
     }
   }
   
@@ -746,11 +715,9 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpFalse(int deep) throws IOException;
   protected abstract void buildExpIsEmptyList(int deep, TomName opName, TomType type, TomTerm expList) throws IOException;
   protected abstract void buildExpIsEmptyArray(int deep, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException;
-  protected abstract void buildEqualFunctionSymbol(int deep, TomType type1, TomTerm var, String tomName) throws IOException;
   protected abstract void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2) throws IOException;
   protected abstract void buildExpIsFsym(int deep, String opname, TomTerm var) throws IOException;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp) throws IOException;
-  protected abstract void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException;
   protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm exp) throws IOException;
   protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
   protected abstract void buildExpGetTail(int deep, TomName opName, TomType type1, TomTerm var) throws IOException;
@@ -772,8 +739,6 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
   protected abstract void buildCheckStamp(int deep, TomType type, TomTerm variable) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName) throws IOException ;
-  protected abstract void buildGetFunctionSymbolDecl(int deep, String type, String name,
-                                                     TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildCheckStampDecl(int deep, String type, String name,
                                               TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildSetStampDecl(int deep, String type, String name,
@@ -781,14 +746,10 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildGetImplementationDecl(int deep, String type, String name,
                                               TomType tlType, TargetLanguage tlCode) throws IOException;
 
-  protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
-                                              TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
                                           TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
                                            TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException;
-  protected abstract void  buildCompareFunctionSymbolDecl(int deep, String name1,
-                                                          String name2, String type1, String type2, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTermsEqualDecl(int deep, String name1, String name2,
                                               String type1, String type2, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain,TargetLanguage tlCode) throws IOException;

@@ -30,25 +30,26 @@ struct term *suc(struct term *x) {
 
 %typeterm term {
   implement { struct term* }
-  get_fun_sym(t)      { (void*)t->fs }
-  cmp_fun_sym(t1,t2)  { t1 == t2 }
-  get_subterm(t, n)   { t->subt[n] }
 }
 
 %op term zero {
-  fsym { (void*)ZERO }
+  is_fsym(t) { (void*)t->fs == (void*)ZERO }
 }
   
-%op term suc(term) {
-  fsym { (void*)SUC }
+%op term suc(s1:term) {
+  is_fsym(t) { (void*)t->fs == (void*)SUC }
+  get_slot(s1,t) { t->subt[0] }
 }
 
-%op term plus(term,term) {
-  fsym { PLUS }
+%op term plus(s1:term,s2:term) {
+  is_fsym(t) { (void*)t->fs == (void*)PLUS }
+  get_slot(s1,t) { t->subt[0] }
+  get_slot(s2,t) { t->subt[1] }
 }
 
-%op term fib(term) {
-  fsym { FIB }
+%op term fib(s1:term) {
+  is_fsym(t) { (void*)t->fs == (void*)FIB }
+  get_slot(s1,t) { t->subt[0] }
 }
 
 struct term *plus(struct term *t1, struct term *t2) {

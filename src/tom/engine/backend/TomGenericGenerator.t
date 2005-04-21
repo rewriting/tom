@@ -28,27 +28,13 @@ package jtom.backend;
 import java.io.IOException;
 import java.util.HashMap;
 
-import jtom.adt.tomsignature.types.Declaration;
-import jtom.adt.tomsignature.types.Expression;
-import jtom.adt.tomsignature.types.Instruction;
-import jtom.adt.tomsignature.types.InstructionList;
-import jtom.adt.tomsignature.types.OptionList;
-import jtom.adt.tomsignature.types.SlotList;
-import jtom.adt.tomsignature.types.TargetLanguage;
-import jtom.adt.tomsignature.types.TomList;
-import jtom.adt.tomsignature.types.TomName;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.adt.tomsignature.types.TomType;
-import jtom.adt.tomsignature.types.TomTypeList;
+import jtom.adt.tomsignature.types.*;
 import jtom.tools.OutputCode;
 import jtom.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 public abstract class TomGenericGenerator extends TomAbstractGenerator {
   
-  protected HashMap getSubtermMap = new HashMap();
-  protected HashMap getFunSymMap = new HashMap();
   protected HashMap isFsymMap = new HashMap();
   protected boolean lazyMode;
 
@@ -84,7 +70,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
-  protected abstract void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException;
   protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
 
@@ -100,8 +85,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildUnamedBlock(int deep, InstructionList instList) throws IOException ;
   protected abstract void buildIf(int deep, Expression exp, Instruction succes) throws IOException ;
   protected abstract void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
-  protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
-TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException;
 
@@ -125,11 +108,11 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected void buildSymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
-    SlotList slotList = tomSymbol.getSlotList();
+    PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
       // inspect the optionList
     generateOptionList(deep, optionList);
       // inspect the slotlist
-    generateSlotList(deep, slotList);
+    generatePairNameDeclList(deep, pairNameDeclList);
   }
 
   protected void buildCompiledMatch(int deep, Instruction instruction) throws IOException {
@@ -168,31 +151,6 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
     output.write("tom_get_size_" + getTomType(type) + "(");
     generate(deep,expArray);
     output.write(")");
-  }
-
-  protected void buildEqualFunctionSymbol(int deep, TomType type, TomTerm exp, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
-    TomName termNameAST = tomSymbol.getAstName();
-    OptionList termOptionList = tomSymbol.getOption();
-    
-    Declaration isFsymDecl = getIsFsymDecl(termOptionList);
-    if(isFsymDecl != null) {
-      generateExpression(deep,`IsFsym(termNameAST,exp));
-    } else {
-      generateEqualFunctionSymbol(deep,type,exp,getSymbolCode(tomSymbol));
-    }
-  }
-
-  private void generateEqualFunctionSymbol(int deep, TomType type, TomTerm exp1, String exp2) throws IOException {
-    String s = (String)getFunSymMap.get(type);
-    if(s == null) {
-      s = "tom_cmp_fun_sym_" + getTomType(type) +
-        "(tom_get_fun_sym_" + getTomType(type) + "(";
-      getFunSymMap.put(type,s);
-    } 
-    output.write(s);
-    generate(deep,exp1);
-    output.write(") , " + exp2 + ")");
   }
 
   protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2) throws IOException {
@@ -355,7 +313,7 @@ TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
     
-    int slotIndex = getSlotIndex(tomSymbol.getSlotList(),slotName);
+    int slotIndex = getSlotIndex(tomSymbol,slotName);
     TomTypeList l = typesList;
     for(int index = 0; !l.isEmpty() && index<slotIndex ; index++) {
       l = l.getTail();

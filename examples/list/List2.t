@@ -46,15 +46,13 @@ public class List2 {
 
   %typearray TomList {
     implement { ArrayList }
-    get_fun_sym(t)   { ((t instanceof ArrayList)?factory.makeAFun("conc", 1, false):null) }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
     equals(l1,l2)      { l1.equals(l2) }
     get_element(l,n)   { l.get(n) }
     get_size(l)        { l.size() }
   }
 
   %oparray TomList conc( TomTerm* ) {
-    fsym            { factory.makeAFun("conc", 1, false) }
+    is_fsym(t)       { t instanceof ArrayList }
     make_empty(n)   { myEmpty(n) }
     make_append(e,l) { myAdd(e,(ArrayList)l) }
   }
@@ -71,24 +69,21 @@ public class List2 {
   
   %typeterm TomTerm {
     implement { ATermAppl }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
-    get_fun_sym(t)     { t.getAFun() }
-    get_subterm(t, n)  { t.getArgument(n) }
     equals(t1, t2)     { t1==t2 }
   }
 
   %op TomTerm a {
-    fsym { factory.makeAFun("a", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "a" }
     make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
   
   %op TomTerm b {
-    fsym { factory.makeAFun("b", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "b" }
     make() { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
 
   %op TomTerm c {
-    fsym { factory.makeAFun("c", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "c" }
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
   

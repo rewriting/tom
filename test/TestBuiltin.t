@@ -23,38 +23,35 @@ public class TestBuiltin extends TestCase {
 
   %typeterm E {
     implement { ATerm }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
     equals(t1, t2)      { (t1.equals(t2)) }
   }
 
   %op E string(stringSlot:String) {
-    fsym { factory.makeAFun("string", 1, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "string" }
     get_slot(stringSlot,t) { getString(t) }
     make(t) { makeString(t)  }
   }
 
   %op E char(charSlot:char) {
-    fsym { factory.makeAFun("char", 1, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "char" }
     get_slot(charSlot,t) { getChar(t) }
     make(t) { makeChar(t)  }
   }
 
   %op E int(intSlot:int) {
-    fsym { factory.makeAFun("int", 1, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "int" }
     get_slot(intSlot,t) { getInt(t) }
     make(t) { makeInt(t) }
   }
 
   %op E long(longSlot:long) {
-    fsym { factory.makeAFun("long", 1, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "long" }
     get_slot(longSlot,t) { getLong(t) }
     make(t) { makeLong(t) }
   }
 
   %op E double(doubleSlot:double) {
-    fsym { factory.makeAFun("double", 1, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "double" }
     get_slot(doubleSlot,t) { getDouble(t) }
     make(t) { makeDouble(t) }
   }

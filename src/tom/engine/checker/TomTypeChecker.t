@@ -125,7 +125,7 @@ public class TomTypeChecker extends TomChecker {
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
-              app@Appl[option=opts,args=[]] -> {
+              app@TermAppl[option=opts,args=[]] -> {
                 boolean isConstructor = false;
                 %match(OptionList opts) {
                   (_*,Constructor[],_*) -> {

@@ -9,64 +9,57 @@ public class Peano {
 
   %typeterm term {
     implement { ATerm }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
-    cmp_fun_sym(t1,t2)  { t1 == t2 }
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
     equals(t1, t2)      { t1 == t2}
   }
 
   %typeterm appl {
     implement { ATermAppl }
-    get_fun_sym(t)      { (t.getAFun()) }
-    cmp_fun_sym(t1,t2)  { t1 == t2 }
-    get_subterm(t, n)   { (t.getArgument(n)) }
     equals(t1, t2)      { t1 == t2}
   }
 
   %op term zero {
-    fsym { fzero }
+    is_fsym(t) { ((ATermAppl)t).getAFun() == fzero }
     make { factory.makeAppl(fzero) }
-    is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
   }
   
   %op term suc(pred:term) {
-    fsym { fsuc }
+    is_fsym(t) { ((ATermAppl)t).getAFun() == fsuc }
     get_slot(pred,t) { ((ATermAppl)t).getArgument(0)  }
     make(t) { factory.makeAppl(fsuc,t) }
   }
 
-  %op term plus1(term,term) {
-    fsym { }
+  %op term plus1(s1:term,s2:term) {
     make(t1,t2) { plus1(t1,t2) }
   }
 
-  %op term plus2(term,term) {
-    fsym { }
+  %op term plus2(s1:term,s2:term) {
     make(t1,t2) { plus2(t1,t2) }
   }
 
-  %op term fib1(term) {
-    fsym { factory.makeAFun("fib1" , 1, false) }
+  %op term fib1(s1:term) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "fib1" }
     make(t) { fib1(t) }
   }
 
-  %op term fib2(term) {
-    fsym { factory.makeAFun("fib2" , 1, false) }
+  %op term fib2(s1:term) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "fib2" }
     make(t) { fib2(t) }
   }
 
-  %op term fib5(term) {
-    fsym { factory.makeAFun("fib5" , 1, false) }
+  %op term fib5(s1:term) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "fib5" }
     make(t) { fib2(t) }
   }
   
-  %op appl term2appl(term) {
-    fsym { factory.makeAFun("term2appl" , 1, false) }
+  %op appl term2appl(s1:term) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "term2appl" }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0) }
     make(t) { factory.makeAppl(factory.makeAFun("term2appl",1,false),t) }
   }
 
-  %op term appl2term(appl) {
-    fsym { factory.makeAFun("appl2term" , 1, false) }
+  %op term appl2term(s1:appl) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "appl2term" }
+    get_slot(s1,t) { (ATermAppl) ((ATermAppl)t).getArgument(0) }
     make(t) { appl2term(t) }
   }
 

@@ -5,8 +5,6 @@
 %include { atermlist.tom }
 %typelist AlertList{
   implement { tom.platform.adt.platformalert.types.AlertList}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
   equals(t1,t2) {t1.equals(t2)}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
@@ -17,18 +15,15 @@
 }
 
 %oplist AlertList concAlert(Alert*) {
-  fsym { null }
   is_fsym(t) {(t!= null) && t.isSortAlertList()}
   make_empty() {getPlatformAlertFactory().makeAlertList()}
   make_insert(e,l) {getPlatformAlertFactory().makeAlertList(e,l)}
 }
 %op AlertList emptyAlertList{
-  fsym { null }
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {getPlatformAlertFactory().makeAlertList()}
 }
 %op AlertList manyAlertList(head:Alert, tail:AlertList) {
-  fsym { null }
   is_fsym(t) { (t!= null) && t.isMany()}
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
@@ -36,9 +31,6 @@
 }
 %typeterm Alert{
   implement { tom.platform.adt.platformalert.types.Alert}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getPlatformAlertFactory().getPureFactory().makeList()) == getPlatformAlertFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformalert.types.Alert)t.setAnnotation(getPlatformAlertFactory().getPureFactory().makeList(),getPlatformAlertFactory().getPureFactory().makeList())}
@@ -46,7 +38,6 @@
 }
 
 %op Alert Warning(message:String, file:String, line:int) {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isWarning()}
   get_slot(message,t) { t.getMessage()}
   get_slot(file,t) { t.getFile()}
@@ -55,7 +46,6 @@
 }
 
 %op Alert Error(message:String, file:String, line:int) {
-  fsym {}
   is_fsym(t) { (t!= null) && t.isError()}
   get_slot(message,t) { t.getMessage()}
   get_slot(file,t) { t.getFile()}

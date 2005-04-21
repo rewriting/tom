@@ -40,19 +40,14 @@ public class PeanoAdvanced1 {
 
   %typeterm term {
     implement           { ATermAppl }
-    get_fun_sym(t)      { null }
-    cmp_fun_sym(t1,t2)  { false }
-    get_subterm(t, n)   { null }
   }
 
   %op term zero {
-    fsym       { /* empty */ }
     is_fsym(t) { t.getAFun() == factory.makeAFun("zero",0,false) }
     make       { factory.makeAppl(factory.makeAFun("zero",0,false)) }
   }
   
   %op term suc(pred:term) {
-    fsym             { /* empty */ }
     is_fsym(t)       { t.getAFun() == factory.makeAFun("suc",1,false) }
     get_slot(pred,t) { (ATermAppl)t.getArgument(0) }
     make(t)          { factory.makeAppl(factory.makeAFun("suc",1,false),t) }

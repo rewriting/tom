@@ -7,51 +7,46 @@ public class TomList {
 
   %typelist L {
     implement { ATermList }
-    get_fun_sym(t) { ((t instanceof ATermList)?factory.makeAFun("conc", 1, false):null) }
-    cmp_fun_sym(t1,t2) { t1 == t2 }
-    equals(l1,l2)  { l1==l2 }
+    equals(l1,l2)  { l1.equals(l2) }
     get_head(l)    { ((ATermList)l).getFirst() }
     get_tail(l)    { ((ATermList)l).getNext() }
     is_empty(l)    { ((ATermList)l).isEmpty() }
   }
 
   %oplist L conc( E* ) {
-    fsym { factory.makeAFun("conc", 1, false) }
+    is_fsym(t) { t instanceof ATermList }
     make_empty()  { factory.makeList() }
     make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
   }
   
   %typeterm E {
     implement { ATerm }
-    cmp_fun_sym(t1,t2)  { t1 == t2 }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
-    equals(t1, t2)      { t1==t2 }
+    equals(t1, t2)      { (t1.equals(t2)) }
   }
 
   %op E a {
-    fsym { factory.makeAFun("a", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "a" }
     make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
   
   %op E b {
-    fsym { factory.makeAFun("b", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "b" }
     make() { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
 
   %op E c {
-    fsym { factory.makeAFun("c", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName() == "c" }
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
-  
-  %op L double3(L) {
-    fsym { factory.makeAFun("double3", 1, false) }
-    make(l) { double3(l) }
+
+  %op L id(s1:L) {
+    is_fsym(t) { false }
+    make(l) { l }
   }
 
-  %op L id(L) {
-    fsym { factory.makeAFun("id", 1, false) }
-    make(l) { l }
+  %op L double3(s1:L) {
+    is_fsym(t) { false }
+    make(l) { double3(l) }
   }
 
   %rule {

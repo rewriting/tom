@@ -36,61 +36,50 @@ public class RecordStrict {
   
   %typeterm Exp {
     implement { Exp }
-    get_fun_sym(t) {null}
-    cmp_fun_sym(s1,s2) { false}
-    get_subterm(t,n) {null}
     equals(t1,t2) {t1.equals(t2)}
   }
 
     // ------------------------------------------------------------
   
   %op Exp BinaryOperator(first:Exp, second:Exp) {
-    fsym {}
     is_fsym(t) { t instanceof BinaryOperator }
     get_slot(first,t) { ((BinaryOperator)t).first }
     get_slot(second,t) { ((BinaryOperator)t).second }
   }
 
   %op Exp UnaryOperator(first:Exp) {
-    fsym { }
     is_fsym(t) { t instanceof UnaryOperator }
     get_slot(first,t) { ((UnaryOperator)t).first }
   }
 
   %op Exp Plus(first:Exp, second:Exp) {
-    fsym { }
     is_fsym(t) { t instanceof Plus }
     get_slot(first,t) { ((Plus)t).first }
     get_slot(second,t) { ((Plus)t).second }
   }
 
   %op Exp Mult(first:Exp, second:Exp) {
-    fsym { }
     is_fsym(t) { t instanceof Mult }
     get_slot(first,t) { ((Mult)t).first }
     get_slot(second,t) { ((Mult)t).second }
   }
 
   %op Exp Uminus(first:Exp) {
-    fsym { } 
     is_fsym(t) { t instanceof Uminus }
     get_slot(first,t) { ((Uminus)t).first }
   }
 
   %op Exp CstExp {
-    fsym { } 
     is_fsym(t) { t instanceof CstExp }
   }
 
   %op Exp StringExp(value:String) {
-    fsym { } 
     is_fsym(t) { t instanceof StringExp }
     get_slot(value,t) { ((StringExp)t).value }
   }
 
 
   %op Exp IntExp(value:int) {
-    fsym { } 
     is_fsym(t) { t instanceof IntExp }
     get_slot(value,t) { ((IntExp)t).value }
   }

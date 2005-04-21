@@ -6,15 +6,13 @@ public class TestArray2 extends TestCase {
 
   %typearray jtList {
 	  implement { List }
- 	  get_fun_sym(t) { List.class }
-	  cmp_fun_sym(s1,s2) { s1 == s2 }
 	  equals(l1,l2) { l1.equals(l2) }
     get_element(l,n) { ((ArrayList)l).get(n) }
     get_size(l)      { ((ArrayList)l).size() }
   }
 	  
 	%oparray jtList conc(jtElement*){
-	  fsym { List.class }
+	  is_fsym(t) { t instanceof List }
     make_empty(n)    { new ArrayList(n) }
     make_append(e,l) { myAdd(e,(ArrayList)l) }
 	}
@@ -26,27 +24,21 @@ public class TestArray2 extends TestCase {
 
 	%typeterm jtElement {
     implement           { Element }
-    get_fun_sym(t)      { Element.class }
-    cmp_fun_sym(s1,s2)  { (s1==s2) }
-    get_subterm(t, n)   { null }
     equals(t1,t2)       { t1.equals(t2) }
   }
 	  
 	%op jtElement ListElement(v:jtList) {
-	  fsym { (t instanceof Element) && (t.getObject() instanceof List) }
-	  is_fsym(t) { true }
+	  is_fsym(t) { (t instanceof Element) && (t.getObject() instanceof List) }
 	  get_slot(v,e)  { (List)e.getObject() }
 	  make(v) { new Element(v) }
 	}
 
 	%op jtElement a {
-	  fsym { }
 	  is_fsym(t) { (t instanceof Element) && t.getObject().equals("a") }
 	  make() { new Element("a") }
 	}
 
 	%op jtElement b {
-	  fsym { }
 	  is_fsym(t) { (t instanceof Element) && t.getObject().equals("b") }
 	  make() { new Element("b") }
 	}

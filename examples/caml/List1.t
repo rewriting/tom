@@ -37,7 +37,7 @@ exception Res of int list
 %include { caml/list.tom }
 
 %oplist list conc( int* ) {
-  fsym { "conc" }
+  is_fsym(t) { true }
   make_empty()  { [] }
   make_insert(e,l) { e::l }
 }

@@ -68,88 +68,64 @@ public class Record {
 
     // ------------------------------------------------------------
   
-  private Object myGetSubterm(Object t, int n) {
-    try {
-        //System.out.println("fields[" + n + "] = " + (t.getClass().getFields()[n]));
-      return (t.getClass().getFields()[n]).get(t);
-    } catch (Exception e) {
-      return null;
-    }
-  }
-  
   %typeterm TomObject {
     implement { Object }
-    get_fun_sym(t)      { t.getClass() }
-    cmp_fun_sym(subjectFunSym,patternFunSym)  {
-      ((Class)patternFunSym).isAssignableFrom(((Class)subjectFunSym))
-        }
-    get_subterm(t, n)   { myGetSubterm(t,n) }
   }
 
   %typeterm TomExp {
     implement { Exp }
-    get_fun_sym(t)      { t.getClass() }
-    cmp_fun_sym(subjectFunSym,patternFunSym)  {
-      ((Class)patternFunSym).isAssignableFrom(((Class)subjectFunSym))
-        }
-    get_subterm(t, n)   { myGetSubterm(t,n) }
   }
 
   %typeterm TomBinaryOperator {
     implement { BinaryOperator }
-    get_fun_sym(t)      { t.getClass() }
-    cmp_fun_sym(subjectFunSym,patternFunSym)  {
-      ((Class)patternFunSym).isAssignableFrom(((Class)subjectFunSym))
-        }
-    get_subterm(t, n)   { (n==0)?((BinaryOperator)t).first:((BinaryOperator)t).second }
   }
   
   %typeterm TomUnaryOperator {
     implement { UnaryOperator }
-    get_fun_sym(t)      { t.getClass() }
-    cmp_fun_sym(subjectFunSym,patternFunSym)  {
-      ((Class)patternFunSym).isAssignableFrom(((Class)subjectFunSym))
-        }
-    get_subterm(t, n)   { ((UnaryOperator)t).first }
   }
 
   %typeterm TomCstExp {
     implement { CstExp }
-    get_fun_sym(t)      { t.getClass() }
-    cmp_fun_sym(subjectFunSym,patternFunSym)  {
-      ((Class)patternFunSym).isAssignableFrom(((Class)subjectFunSym))
-        }
-    get_subterm(t, n)   { ((CstExp)t).value }
   }
 
     // ------------------------------------------------------------
   
   %op TomBinaryOperator BinaryOperator(first:TomExp, second:TomExp) {
-    fsym { (new BinaryOperator(null,null)).getClass() }
+    is_fsym(t) { t instanceof BinaryOperator }
+    get_slot(first,t) { ((BinaryOperator)t).first }
+    get_slot(second,t) { ((BinaryOperator)t).second }
   }
 
   %op TomUnaryOperator UnaryOperator(first:TomExp) {
-    fsym { (new UnaryOperator(null)).getClass() }
+    is_fsym(t) { t instanceof UnaryOperator }
+    get_slot(first,t) { ((UnaryOperator)t).first }
   }
 
   %op TomBinaryOperator Plus(first:TomExp, second:TomExp) {
-    fsym { (new Plus(null,null)).getClass() }
+    is_fsym(t) { t instanceof Plus }
+    get_slot(first,t) { ((Plus)t).first }
+    get_slot(second,t) { ((Plus)t).second }
   }
 
   %op TomBinaryOperator Mult(first:TomExp, second:TomExp) {
-    fsym { (new Mult(null,null)).getClass() }
+    is_fsym(t) { t instanceof Mult }
+    get_slot(first,t) { ((Mult)t).first }
+    get_slot(second,t) { ((Mult)t).second }
   }
 
   %op TomUnaryOperator Uminus(first:TomExp) {
-    fsym { (new Uminus(null)).getClass() }
+    is_fsym(t) { t instanceof Uminus }
+    get_slot(first,t) { ((Uminus)t).first }
   }
 
   %op TomCstExp CstExp(value:TomObject) {
-    fsym { (new CstExp(null)).getClass() }
+    is_fsym(t) { t instanceof CstExp }
+    get_slot(value,t) { ((CstExp)t).value }
   }
 
   %op TomCstExp IntExp(value:TomInteger) {
-    fsym { (new IntExp(0)).getClass() }
+    is_fsym(t) { t instanceof IntExp }
+    get_slot(value,t) { (Integer)((IntExp)t).value }
   }
 
     // ------------------------------------------------------------
@@ -159,17 +135,15 @@ public class Record {
   
   %typeterm TomInteger {
     implement { Integer }
-    get_fun_sym(i)      { (((Integer)i).intValue()==0)?ZERO:SUC }
-    cmp_fun_sym(i1,i2)  { i1 == i2 }
-    get_subterm(i, n)   { new Integer(((Integer)i).intValue()-1) }
   }
 
   %op TomInteger zero {
-    fsym { ZERO }
+    is_fsym(t) { (((Integer)t).intValue()==0) }
   }
 
-  %op TomInteger suc(TomInteger) {
-    fsym { SUC }
+  %op TomInteger suc(p:TomInteger) {
+    is_fsym(t) { (((Integer)t).intValue()!=0) }
+    get_slot(p,t) { new Integer(((Integer)t).intValue()-1) }
   }
 
     // ------------------------------------------------------------

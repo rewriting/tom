@@ -27,13 +27,7 @@ package jtom.backend;
 
 import java.io.IOException;
 
-import jtom.adt.tomsignature.types.InstructionList;
-import jtom.adt.tomsignature.types.OptionList;
-import jtom.adt.tomsignature.types.SlotList;
-import jtom.adt.tomsignature.types.TomNumberList;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomType;
-import jtom.adt.tomsignature.types.TomTypeList;
+import jtom.adt.tomsignature.types.*;
 import jtom.tools.OutputCode;
 import jtom.tools.SymbolTable;
 import tom.platform.OptionManager;
@@ -70,7 +64,7 @@ public class TomCGenerator extends TomImperativeGenerator {
   protected void buildSymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
-    SlotList slotList = tomSymbol.getSlotList();
+    PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     TomTypeList l = getSymbolDomain(tomSymbol);
     TomType type1 = getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
@@ -126,14 +120,14 @@ public class TomCGenerator extends TomImperativeGenerator {
     // inspect the optionList
     generateOptionList(deep, optionList);
     // inspect the slotlist
-    generateSlotList(deep, slotList);
+    generatePairNameDeclList(deep, pairNameDeclList);
   }
 
 
   protected void buildArraySymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
-    SlotList slotList = tomSymbol.getSlotList();        
+    PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();        
     TomTypeList l = getSymbolDomain(tomSymbol);
     TomType type1 = getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
@@ -166,14 +160,14 @@ public class TomCGenerator extends TomImperativeGenerator {
     // inspect the optionList
     generateOptionList(deep, optionList);
     // inspect the slotlist
-    generateSlotList(deep, slotList);
+    generatePairNameDeclList(deep, pairNameDeclList);
   }
 
 
   protected void buildListSymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
-    SlotList slotList = tomSymbol.getSlotList();
+    PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     TomTypeList l = getSymbolDomain(tomSymbol);
     TomType type1 = getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
@@ -205,7 +199,7 @@ public class TomCGenerator extends TomImperativeGenerator {
     // inspect the optionList
     generateOptionList(deep, optionList);
     // inspect the slotlist
-    generateSlotList(deep, slotList);
+    generatePairNameDeclList(deep, pairNameDeclList);
   }
 
 } // class TomCGenerator

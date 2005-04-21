@@ -47,21 +47,19 @@ public class PeanoSimple3 {
 
   %typeterm term {
     implement           { ATermAppl }
-    get_fun_sym(t)      { t.getAFun() }
-    cmp_fun_sym(t1,t2)  { t1 == t2 }
-    get_subterm(t, n)   { t.getArgument(n) }
     check_stamp(t)      { if(t.getAnnotation(stamp) == tomstamp) return; else throw new RuntimeException("truand") }
     set_stamp(t)        { (ATermAppl)t.setAnnotation(stamp,tomstamp)  }
     get_implementation(t) { t }
   }
 
   %op term zero {
-    fsym { factory.makeAFun("zero",0,false) }
+    is_fsym(t) { t.getName() == "zero" }
     make { factory.makeAppl(factory.makeAFun("zero",0,false)) }
   }
   
-  %op term suc(term) {
-    fsym    { factory.makeAFun("suc",1,false) }
+  %op term suc(p:term) {
+    is_fsym(t) { t.getName() == "suc" }
+    get_slot(p,t) { (ATermAppl)t.getArgument(0) }
     make(t) { factory.makeAppl(factory.makeAFun("suc",1,false),t) }
   }
 

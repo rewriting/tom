@@ -46,52 +46,54 @@ public class PolySimple2 {
     // Everything is still an ATerm:
   %typeterm term {
     implement { ATerm }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
-    cmp_fun_sym(t1,t2)  { (t1 == t2) }
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
     equals(t1, t2)      { (t1.equals(t2)) }
   }
     
     // My operators with constructor allowing to use "`" symbol 
   %op term zero {
-    fsym { factory.makeAFun("0", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName()=="0" }
     make { factory.makeAppl(factory.makeAFun("0", 0, false)) }
   }
     
   %op term one {
-    fsym {  factory.makeAFun("1", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName()=="1" }
     make { factory.makeAppl(factory.makeAFun("1", 0, false)) }
   }
     
   %op term a {
-    fsym {  factory.makeAFun("a", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName()=="a" }
     make { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
   %op term b {
-    fsym {  factory.makeAFun("b", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName()=="b" }
     make { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
   %op term c {
-    fsym {  factory.makeAFun("c", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName()=="c" }
     make { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
   %op term X {
-    fsym {  factory.makeAFun("X", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName()=="X" }
     make { factory.makeAppl(factory.makeAFun("X", 0, false)) }
   }
   %op term Y {
-    fsym {  factory.makeAFun("Y", 0, false) }
+    is_fsym(t) { ((ATermAppl)t).getName()=="Y" }
     make { factory.makeAppl(factory.makeAFun("Y", 0, false)) }
   }
-    
-  %op term mult(term, term) {
-    fsym { fmult }
-    make(t1,t2) { factory.makeAppl(fmult,t1,t2) }
+
+  %op term plus(s1:term,s2:term) {
+    is_fsym(t) { (((ATermAppl)t).getAFun())==fplus }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0) }
+    get_slot(s2,t) { ((ATermAppl)t).getArgument(1) }
+		make(t1,t2) { factory.makeAppl(fplus,t1,t2)}
+  }   
+  %op term mult(s1:term, s2:term) {
+    is_fsym(t)     { (((ATermAppl)t).getAFun())==fmult }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0) }
+    get_slot(s2,t) { ((ATermAppl)t).getArgument(1) }
+		make(t1,t2) { factory.makeAppl(fmult,t1,t2)}
   }
-  %op term plus(term,term) {
-    fsym { fplus }
-    make(t1,t2) { factory.makeAppl(fplus,t1,t2) }
-  }
+
     
   public ATerm differentiate(ATerm poly, ATerm variable) {
     %match(term poly, term variable) {

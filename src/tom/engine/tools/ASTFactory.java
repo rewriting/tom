@@ -140,6 +140,16 @@ public class ASTFactory {
     return list;
   }
 
+  public SlotList makeSlotList(List argumentList) {
+    SlotList list = tsf().makeSlotList();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)argumentList.get(i);
+      Slot term = (Slot) elt;
+      list = tsf().makeSlotList(term,list);
+    }
+    return list;
+  }
+
   public PatternInstructionList makePatternInstructionList(List argumentList) {
     PatternInstructionList list = tsf().makePatternInstructionList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
@@ -183,12 +193,12 @@ public class ASTFactory {
     return tsf().makeTomTerm_UnamedVariableStar(option, tsf().makeTomType_TomTypeAlone(type),constraintList);  
   }
 
-  public TomSymbol makeSymbol(String symbolName, String resultType, TomTypeList typeList, SlotList slotList,
-                              List optionList, TargetLanguage glFsym) {
+  public TomSymbol makeSymbol(String symbolName, String resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
+                              List optionList) {
     TomName name = tsf().makeTomName_Name(symbolName);
     TomType typesToType =  tsf().makeTomType_TypesToType(typeList, tsf().makeTomType_TomTypeAlone(resultType));
     OptionList options = makeOptionList(optionList);
-    return tsf().makeTomSymbol_Symbol(name,typesToType,slotList,options,glFsym);
+    return tsf().makeTomSymbol_Symbol(name,typesToType,pairNameDeclList,options);
   }
 
   public OptionList makeOption() {
@@ -251,9 +261,8 @@ public class ASTFactory {
                              String sort,
                              String value, List optionList) {
     TomTypeList typeList = tsf().makeTomTypeList();
-    TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
-    SlotList slotList = tsf().makeSlotList();
-    TomSymbol astSymbol = makeSymbol(value,sort,typeList,slotList,optionList,tlFsym);
+    PairNameDeclList pairSlotDeclList = tsf().makePairNameDeclList();
+    TomSymbol astSymbol = makeSymbol(value,sort,typeList,pairSlotDeclList,optionList);
     symbolTable.putSymbol(value,astSymbol);
   }
   
@@ -305,7 +314,7 @@ public class ASTFactory {
      * update the root of lhs: it becomes a defined symbol
      */
   public TomSymbol updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
-    if(term.isAppl() || term.isRecordAppl()) {
+    if(term.isTermAppl() || term.isRecordAppl()) {
       String key = term.getNameList().getHead().getString();
       TomSymbol symbol = symbolTable.getSymbolFromName(key);
       if (symbol != null) {
@@ -349,7 +358,7 @@ public class ASTFactory {
        * Appl(...,Name("string"),...) becomes
        * Appl(...,Name("\"string\""),...)
        */
-    if(term.isAppl()) {
+    if(term.isTermAppl()) {
       TomName astName = term.getAstName();
       if(astName.isName()) {
         String tomName = encodeXMLString(symbolTable,astName.getString());
@@ -366,7 +375,7 @@ public class ASTFactory {
        * Appl(...,Name("\"string\""),...) becomes
        * Appl(...,Name("TextNode"),[Appl(...,Name("\"string\""),...)],...)
        */
-    if(term.isAppl()) {
+    if(term.isTermAppl()) {
       TomName astName = term.getAstName();
       if(astName.isName()) {
         String tomName = astName.getString();
@@ -380,7 +389,7 @@ public class ASTFactory {
             list = tsf().makeTomList(term,list);
             NameList nameList = tsf().makeNameList();
             nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.TEXT_NODE));
-            term = tsf().makeTomTerm_Appl(
+            term = tsf().makeTomTerm_TermAppl(
               makeOption(info),
               nameList,
               list,
