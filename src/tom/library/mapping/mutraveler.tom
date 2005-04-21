@@ -106,7 +106,7 @@
   }
 
   %op VisitableVisitor Innermost(s1:VisitableVisitor) {
-    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),Choice(Sequence(v,MuVar("x")),Identity))) }
+    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),Try(Sequence(v,MuVar("x"))))) }
   }
 
   %op VisitableVisitor Repeat(s1:VisitableVisitor) {

@@ -541,7 +541,6 @@ public class TomOptimizer extends TomGenericPlugin {
                  }
                }
              }
-           
 
           /* Fusion de 2 blocs Let contigus instanciant deux variables égales */
             

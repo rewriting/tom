@@ -310,7 +310,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
   public String pattern_to_string(TomTerm tomTerm) {
     %match(TomTerm tomTerm) {
-      Appl(_,concTomName(Name(name),_*),childrens,_) -> {
+      TermAppl(_,concTomName(Name(name),_*),childrens,_) -> {
         if (childrens.isEmpty()) {
           return name;
         } else {

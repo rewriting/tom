@@ -116,12 +116,24 @@ public class TomIlTools extends TomBase {
   
   public ZTerm tomTerm_to_ZTerm(TomTerm tomTerm, Map map) {
     %match(TomTerm tomTerm) {
-      Appl(_,concTomName(Name(name),_*),childrens,_) -> {
+      TermAppl(_,concTomName(Name(name),_*),childrens,_) -> {
         // builds children list
         ZTermList zchild = `concZTerm();
         TomTerm hd = null;
         while (!childrens.isEmpty()) {
           hd = childrens.getHead();
+          childrens = childrens.getTail();
+          zchild = `concZTerm(zchild*,tomTerm_to_ZTerm(hd,map));
+        }
+        // issue a warning here: this case is probably impossible
+        return `zappl(zsymbol(name),zchild);
+      }
+      RecordAppl(_,concTomName(Name(name),_*),childrens,_) -> {
+        // builds children list
+        ZTermList zchild = `concZTerm();
+        TomTerm hd = null;
+        while (!childrens.isEmpty()) {
+          hd = childrens.getHead().getAppl();
           childrens = childrens.getTail();
           zchild = `concZTerm(zchild*,tomTerm_to_ZTerm(hd,map));
         }
@@ -173,7 +185,7 @@ public class TomIlTools extends TomBase {
       ZTermList list = `concZTerm();
       ZExpr exists = null;
       %match(TomSymbol symbol) {
-        Symbol[slotList=slots] -> {
+        Symbol[pairNameDeclList=slots] -> {
           // process all slots
           int slotnumber = slots.getLength();
           for (int i = 0; i < slotnumber;i++) {
@@ -202,14 +214,14 @@ public class TomIlTools extends TomBase {
       TomSymbol symbol = getSymbolFromName(name,getSymbolTable());
       ZTermList list = `concZTerm();
       %match(TomSymbol symbol) {
-        Symbol[slotList=slots] -> {
+        Symbol[pairNameDeclList=slots] -> {
           // process all slots
           int slotnumber = slots.getLength();
           for (int i = 0; i < slotnumber;i++) {
             list = `concZTerm(list*,zvar("x"+i));
           }
-          %match(SlotList slots) {
-            concPairNameDecl(al*,Slot[slotName=Name(slname)],_*) -> {
+          %match(PairNameDeclList slots) {
+            concPairNameDecl(al*,PairNameDecl[slotName=Name(slname)],_*) -> {
               int index = `al.getLength();
               ZExpr axiom = `zeq(zvar("x"+index),
                                  zsl(zappl(zsymbol(name),list),slname));

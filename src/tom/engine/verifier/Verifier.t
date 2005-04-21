@@ -140,11 +140,11 @@ public class Verifier extends TomBase {
     %match(Expression expression) {
       TrueTL()  -> { return `true(); }
       FalseTL() -> { return `false(); }
-      EqualFunctionSymbol(type,Variable[astName=name],Appl[nameList=symbolName]) -> {
+      EqualFunctionSymbol(type,Variable[astName=name],RecordAppl[nameList=symbolName]) -> {
         Term term = build_Term_from_TomName(name);
         return `isfsym(term,fsymbol(extract_Name(symbolName)));
       }
-      EqualFunctionSymbol(type,term1,Appl[nameList=symbolName]) -> {
+      EqualFunctionSymbol(type,term1,RecordAppl[nameList=symbolName]) -> {
         return `isfsym(build_TermFromTomTerm(term1),fsymbol(extract_Name(symbolName)));
       }
       EqualTerm(type,t1,t2) -> {
@@ -702,7 +702,7 @@ public class Verifier extends TomBase {
   
   public String pattern_to_string(TomTerm tomTerm, Map map) {
     %match(TomTerm tomTerm) {
-      Appl(_,concTomName(Name(name),_*),childrens,_) -> {
+      TermAppl(_,concTomName(Name(name),_*),childrens,_) -> {
         if (childrens.isEmpty()) {
           return name;
         } else {
