@@ -2,6 +2,7 @@
 # ant -find build.xml -emacs | awk -f ${TOM_SRC_HOME}/utils/ant-tom.awk
 
 BEGIN {
+  # set field separator and output field separator to ':', to extract filenames
    FS = ":";
    OFS = ":";
 }
