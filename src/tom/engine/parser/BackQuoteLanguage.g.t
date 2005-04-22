@@ -679,12 +679,16 @@ options{ testLiterals = true; }
 protected
 BQ_MINUS_ID
     :
-        BQ_SIMPLE_ID BQ_MINUS ('a'..'z' | 'A'..'Z') 
-        ( 
-            BQ_MINUS ('a'..'z' | 'A'..'Z') 
-        |   BQ_SIMPLE_ID
-        )*
+        BQ_SIMPLE_ID BQ_MINUS BQ_SIMPLE_ID 
+        (BQ_MINUS_ID_PART)?
     ;
+
+protected
+BQ_MINUS_ID_PART :
+  (
+        BQ_MINUS BQ_SIMPLE_ID
+  )+ 
+;
 
 BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;
 
