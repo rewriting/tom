@@ -547,7 +547,6 @@ public class TomOptimizer extends TomGenericPlugin {
 
 
 
-
               if(compare(term1,term2)) {
                 if(compare(var1,var2)) {
                   return   tom_make_AbstractBlock(tom_append_list_concInstruction(X1,tom_cons_list_concInstruction(tom_make_Let(var1,term1,tom_make_AbstractBlock(tom_cons_list_concInstruction(body1,tom_cons_list_concInstruction(body2,tom_empty_list_concInstruction())))),tom_append_list_concInstruction(X2,tom_empty_list_concInstruction()))));
