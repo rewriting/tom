@@ -7,7 +7,7 @@ BEGIN {
    OFS = ":";
 }
 
-$1~/.*\/[a-zA-Z][a-zA-Z0-9]*\.java/ {
+$1~/.*\/[a-zA-Z][a-zA-Z0-9]*\.java$/ {
   file = $1
   sub("\.java$",".t",file)
   sub("gen\/","",file)
@@ -17,6 +17,15 @@ $1~/.*\/[a-zA-Z][a-zA-Z0-9]*\.java/ {
     }
 }
 
+$1~/.*\/[a-zA-Z][a-zA-Z0-9]*\.g$/ {
+  file = $1
+  sub("\.g$",".g.t",file)
+  sub("gen\/","",file)
+  if (!system("test -f "file)) 
+    {
+      $1 = file
+    }
+}
 (NF >= 0) {
       print $0
  }
