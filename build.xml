@@ -646,6 +646,7 @@
 
   <target name="clean.bootstrap">
     <delete dir="${bootstrap.dir}"/>
+	  <delete dir="${src.src}/bootcheck"/>
   </target>
 
   <target name="clean.test" description="Cleans acceptance tests directory">

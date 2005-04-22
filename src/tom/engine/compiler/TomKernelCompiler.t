@@ -31,6 +31,8 @@ import jtom.exception.TomRuntimeException;
 import jtom.tools.SymbolTable;
 import tom.library.traversal.Replace1;
 import aterm.ATerm;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TomKernelCompiler extends TomBase {
 
@@ -696,10 +698,18 @@ public class TomKernelCompiler extends TomBase {
           return body;
         } else {
           TomType subtermType = getSlotType(tomSymbol,`slotName);
-          Expression getSubtermAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
-          TomNumberList newPath  = (TomNumberList) path.append(`NameNumber(slotName));
-          TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concConstraint());
-          return `Let(newVariableAST,getSubtermAST,body);
+
+          //System.out.println("pairNameDeclList = " + tomSymbol.getPairNameDeclList());
+          if(isDefinedGetSlot(tomSymbol,`slotName)) {
+            Expression getSubtermAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
+            TomNumberList newPath  = (TomNumberList) path.append(`NameNumber(slotName));
+            TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concConstraint());
+            return `Let(newVariableAST,getSubtermAST,body);
+          } else {
+              Logger.getLogger(getClass().getName()).log( Level.SEVERE,
+                               "ErrorMissingSlotDecl",
+                               new Object[]{tomSymbol.getAstName().getString(),slotName.getString()});
+          }
         }
       }
 

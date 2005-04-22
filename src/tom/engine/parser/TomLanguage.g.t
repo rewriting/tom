@@ -1185,12 +1185,10 @@ operator returns [Declaration result] throws TomException
     TomTypeList types = `emptyTomTypeList();
     LinkedList options = new LinkedList();
     LinkedList slotNameList = new LinkedList();
-    PairNameDeclList pairNameDeclList = `emptyPairNameDeclList();
+    LinkedList pairNameDeclList = new LinkedList();
     TomName astName = null;
     String stringSlotName = null;
     Declaration attribute;
-    int index=1;
-    Map mapNameDecl = new HashMap();
 }
     :
       type:ALL_ID name:ALL_ID 
@@ -1202,7 +1200,9 @@ operator returns [Declaration result] throws TomException
             LPAREN slotName:ALL_ID COLON typeArg:ALL_ID 
             {
                 stringSlotName = slotName.getText(); 
-                slotNameList.add(ast().makeName(stringSlotName)); 
+                astName = `Name(stringSlotName);
+                slotNameList.add(astName); 
+                pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration())); 
                 types = (TomTypeList) types.append(`TomTypeAlone(typeArg.getText()));
             }
             (
@@ -1214,10 +1214,11 @@ operator returns [Declaration result] throws TomException
                     if(slotNameList.indexOf(astName) != -1) {
                         String detailedMsg = TomMessage.getMessage("RepeatedSlotName", new Object[]{stringSlotName});
                         String msg = TomMessage.getMessage("MainErrorMessage", 
-                                                           new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg});
+                                     new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg});
                         throw new TomException(msg);
                     }
                     slotNameList.add(astName); 
+                    pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),EmptyDeclaration())); 
                     types = (TomTypeList) types.append(`TomTypeAlone(typeArg2.getText()));
                 }
             )*
@@ -1232,66 +1233,51 @@ operator returns [Declaration result] throws TomException
             { options.add(attribute); }
 
         |   attribute = keywordGetSlot[astName,type.getText()]
-        {
-                TomName sName = attribute.getSlotName();
-                if(mapNameDecl.get(sName)==null) {
-                    mapNameDecl.put(sName,attribute);
-                } else {
-                  getLogger().log(new PlatformLogRecord(Level.WARNING,
-                      TomMessage.getMessage("WarningTwoSameSlotDecl",
-                              new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
-                                           "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ),
-                                           currentFile(), getLine()));
+            {
+              TomName sName = attribute.getSlotName();
+              /*
+               * ensure that sName appears in slotNameList, only once
+               * ensure that sName has not already been generated
+               */
+              //System.out.println("slotNameList = " + slotNameList);
+              //System.out.println("sName      = " + sName);
+
+              String msg = "";
+              int index = slotNameList.indexOf(sName);
+              if(index == -1) {
+                msg = "ErrorIncompatibleSlotDecl";
+              } else {
+                PairNameDecl pair = (PairNameDecl) pairNameDeclList.get(index);
+                %match(PairNameDecl pair) {
+                  PairNameDecl[slotDecl=decl] -> {
+                    if(decl!=`EmptyDeclaration()) {
+                      msg = "ErrorTwoSameSlotDecl";
+                    }
+                  }
                 }
-            }
-        
+              }
+              if(msg.length() > 0) {
+                getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage(msg,
+                                  new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
+                                  "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ),
+                                   currentFile(), getLine()));
+              } else {
+                pairNameDeclList.set(index,`PairNameDecl(sName,attribute));
+              }
+            }   
         |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(attribute); }
         )*
         t:RBRACE
         {
-            for(int i=slotNameList.size()-1; i>=0 ; i--) {
-                TomName name1 = (TomName)slotNameList.get(i);
-                PairNameDecl pair = null;
-                if(name1.isEmptyName()) {
-                  pair = `PairNameDecl(name1,EmptyDeclaration());
-                } else {
-                    Declaration decl = (Declaration)mapNameDecl.get(name1);
-                    if(decl == null) {
-                      getLogger().log(new PlatformLogRecord(Level.WARNING, 
-                                                            TomMessage.getMessage("WarningMissingSlotDecl",
-                                                            new Object[]{currentFile(), new Integer(ot.getLine()),
-                                                            "%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} ),
-                                                            currentFile(), getLine()));
-                      pair = `PairNameDecl(name1,EmptyDeclaration());
-                    } else {
-                      mapNameDecl.remove(name1);
-                      pair = `PairNameDecl(name1,decl);
-                    }
-                }
-                pairNameDeclList = `manyPairNameDeclList(pair,pairNameDeclList);
-            }
-            // Test if there are still declaration in mapNameDecl
-            if ( !mapNameDecl.isEmpty()) {
-                Iterator it = mapNameDecl.keySet().iterator();
-                while(it.hasNext()) {
-                    TomName remainingSlot = (TomName) it.next();
-                    getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningIncompatibleSlotDecl",
-                        new Object[]{currentFile(), 
-                        new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
-                        "%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} ),
-                        currentFile(), getLine()));
-                }
-            }
-            
-            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, pairNameDeclList, options);
-            putSymbol(name.getText(),astSymbol);
 
-            result = `SymbolDecl(astName);
+          //System.out.println("pairNameDeclList = " + pairNameDeclList);
 
-            updatePosition(t.getLine(),t.getColumn());
-
-            selector().pop(); 
+          TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, ast().makePairNameDeclList(pairNameDeclList), options);
+          putSymbol(name.getText(),astSymbol);
+          result = `SymbolDecl(astName);
+          updatePosition(t.getLine(),t.getColumn());
+          selector().pop(); 
         }
     ;
 

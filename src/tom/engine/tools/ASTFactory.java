@@ -150,6 +150,16 @@ public class ASTFactory {
     return list;
   }
 
+  public PairNameDeclList makePairNameDeclList(List argumentList) {
+    PairNameDeclList list = tsf().makePairNameDeclList();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)argumentList.get(i);
+      PairNameDecl term = (PairNameDecl) elt;
+      list = tsf().makePairNameDeclList(term,list);
+    }
+    return list;
+  }
+
   public PatternInstructionList makePatternInstructionList(List argumentList) {
     PatternInstructionList list = tsf().makePatternInstructionList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {

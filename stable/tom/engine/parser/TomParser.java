@@ -2318,12 +2318,10 @@ public TomParser(ParserSharedInputState state) {
 		TomTypeList types = tom_make_emptyTomTypeList();
 		LinkedList options = new LinkedList();
 		LinkedList slotNameList = new LinkedList();
-		PairNameDeclList pairNameDeclList = tom_make_emptyPairNameDeclList();
+		LinkedList pairNameDeclList = new LinkedList();
 		TomName astName = null;
 		String stringSlotName = null;
 		Declaration attribute;
-		int index=1;
-		Map mapNameDecl = new HashMap();
 		
 		
 		type = LT(1);
@@ -2349,7 +2347,9 @@ public TomParser(ParserSharedInputState state) {
 			if ( inputState.guessing==0 ) {
 				
 				stringSlotName = slotName.getText(); 
-				slotNameList.add(ast().makeName(stringSlotName)); 
+				astName = tom_make_Name(stringSlotName);
+				slotNameList.add(astName); 
+				pairNameDeclList.add(tom_make_PairNameDecl(astName,tom_make_EmptyDeclaration())); 
 				types = (TomTypeList) types.append(tom_make_TomTypeAlone(typeArg.getText()));
 				
 			}
@@ -2374,6 +2374,7 @@ public TomParser(ParserSharedInputState state) {
 						throw new TomException(msg);
 						}
 						slotNameList.add(astName); 
+						pairNameDeclList.add(tom_make_PairNameDecl(tom_make_Name(stringSlotName),tom_make_EmptyDeclaration())); 
 						types = (TomTypeList) types.append(tom_make_TomTypeAlone(typeArg2.getText()));
 						
 					}
@@ -2421,14 +2422,34 @@ public TomParser(ParserSharedInputState state) {
 				if ( inputState.guessing==0 ) {
 					
 					TomName sName = attribute.getSlotName();
-					if(mapNameDecl.get(sName)==null) {
-					mapNameDecl.put(sName,attribute);
+					/*
+					* ensure that sName appears in slotNameList, only once
+					* ensure that sName has not already been generated
+					*/
+					//System.out.println("slotNameList = " + slotNameList);
+					//System.out.println("sName      = " + sName);
+					
+					String msg = "";
+					int index = slotNameList.indexOf(sName);
+					if(index == -1) {
+					msg = "ErrorIncompatibleSlotDecl";
 					} else {
-					getLogger().log(new PlatformLogRecord(Level.WARNING,
-					TomMessage.getMessage("WarningTwoSameSlotDecl",
+					PairNameDecl pair = (PairNameDecl) pairNameDeclList.get(index);
+					{ jtom.adt.tomsignature.types.PairNameDecl tom_match1_1=(( jtom.adt.tomsignature.types.PairNameDecl)pair); if(tom_is_fun_sym_PairNameDecl(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.Declaration tom_match1_1_slotDecl=tom_get_slot_PairNameDecl_slotDecl(tom_match1_1); { jtom.adt.tomsignature.types.Declaration decl=tom_match1_1_slotDecl;
+					
+					if(decl!=tom_make_EmptyDeclaration()) {
+					msg = "ErrorTwoSameSlotDecl";
+					}
+					}} }}
+					
+					}
+					if(msg.length() > 0) {
+					getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage(msg,
 					new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
 					"%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ),
 					currentFile(), getLine()));
+					} else {
+					pairNameDeclList.set(index,tom_make_PairNameDecl(sName,attribute));
 					}
 					
 				}
@@ -2453,47 +2474,13 @@ public TomParser(ParserSharedInputState state) {
 		match(RBRACE);
 		if ( inputState.guessing==0 ) {
 			
-			for(int i=slotNameList.size()-1; i>=0 ; i--) {
-			TomName name1 = (TomName)slotNameList.get(i);
-			PairNameDecl pair = null;
-			if(name1.isEmptyName()) {
-			pair = tom_make_PairNameDecl(name1,tom_make_EmptyDeclaration());
-			} else {
-			Declaration decl = (Declaration)mapNameDecl.get(name1);
-			if(decl == null) {
-			getLogger().log(new PlatformLogRecord(Level.WARNING, 
-			TomMessage.getMessage("WarningMissingSlotDecl",
-			new Object[]{currentFile(), new Integer(ot.getLine()),
-			"%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} ),
-			currentFile(), getLine()));
-			pair = tom_make_PairNameDecl(name1,tom_make_EmptyDeclaration());
-			} else {
-			mapNameDecl.remove(name1);
-			pair = tom_make_PairNameDecl(name1,decl);
-			}
-			}
-			pairNameDeclList = tom_make_manyPairNameDeclList(pair,pairNameDeclList);
-			}
-			// Test if there are still declaration in mapNameDecl
-			if ( !mapNameDecl.isEmpty()) {
-			Iterator it = mapNameDecl.keySet().iterator();
-			while(it.hasNext()) {
-			TomName remainingSlot = (TomName) it.next();
-			getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningIncompatibleSlotDecl",
-			new Object[]{currentFile(), 
-			new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
-			"%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} ),
-			currentFile(), getLine()));
-			}
-			}
 			
-			TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, pairNameDeclList, options);
+			//System.out.println("pairNameDeclList = " + pairNameDeclList);
+			
+			TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, ast().makePairNameDeclList(pairNameDeclList), options);
 			putSymbol(name.getText(),astSymbol);
-			
 			result = tom_make_SymbolDecl(astName);
-			
 			updatePosition(t.getLine(),t.getColumn());
-			
 			selector().pop(); 
 			
 		}

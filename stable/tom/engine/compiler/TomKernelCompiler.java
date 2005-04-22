@@ -31,6 +31,8 @@ import jtom.exception.TomRuntimeException;
 import jtom.tools.SymbolTable;
 import tom.library.traversal.Replace1;
 import aterm.ATerm;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TomKernelCompiler extends TomBase {
 
@@ -698,10 +700,18 @@ public class TomKernelCompiler extends TomBase {
           return body;
         } else {
           TomType subtermType = getSlotType(tomSymbol,slotName);
-          Expression getSubtermAST = tom_make_GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
-          TomNumberList newPath  = (TomNumberList) path.append(tom_make_NameNumber(slotName));
-          TomTerm newVariableAST = tom_make_Variable(option(),tom_make_PositionName(newPath),subtermType,tom_empty_list_concConstraint());
-          return tom_make_Let(newVariableAST,getSubtermAST,body);
+
+          //System.out.println("pairNameDeclList = " + tomSymbol.getPairNameDeclList());
+          if(isDefinedGetSlot(tomSymbol,slotName)) {
+            Expression getSubtermAST = tom_make_GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
+            TomNumberList newPath  = (TomNumberList) path.append(tom_make_NameNumber(slotName));
+            TomTerm newVariableAST = tom_make_Variable(option(),tom_make_PositionName(newPath),subtermType,tom_empty_list_concConstraint());
+            return tom_make_Let(newVariableAST,getSubtermAST,body);
+          } else {
+              Logger.getLogger(getClass().getName()).log( Level.SEVERE,
+                               "ErrorMissingSlotDecl",
+                               new Object[]{tomSymbol.getAstName().getString(),slotName.getString()});
+          }
         }
       }}}}} }}} }}
 

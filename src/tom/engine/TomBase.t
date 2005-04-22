@@ -536,6 +536,22 @@ public class TomBase {
     return false;
   }
 
+  protected boolean isDefinedGetSlot(TomSymbol symbol, TomName slotName) {
+    if(symbol==null) {
+      System.out.println("isDefinedSymbol: symbol == null");
+      return false;
+    }
+    %match(TomSymbol symbol) {
+      Symbol[pairNameDeclList=concPairNameDecl(_*,PairNameDecl[slotName=name,slotDecl=decl],_*)] -> {
+        if(name==slotName && decl!=`EmptyDeclaration()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+
   // findOriginTracking(_) return the option containing OriginTracking information
   protected Option findOriginTracking(OptionList optionList) {
     if(optionList.isEmpty()) {
