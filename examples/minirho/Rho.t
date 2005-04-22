@@ -224,19 +224,34 @@ import jjtraveler.VisitFailure;
 		 appC((X*,match(const[],const[]),Y*),M) -> {return `appC(andC(X*,matchKO(),Y*),M);}
 
 		 /*Decompose et Decompose_ng min(n,m) > 0 */
-		 l:appC((X*,m@match(app[],app[]),Y*),M)|appC((X*,m@match(app[],const[]),Y*),M)|appC((X*,m@match(const[],app[]),Y*),M) -> {
-		     ListConstraint head_is_constant = `headIsConstant(m);
-		     %match(ListConstraint head_is_constant){
-			 (match[]) -> {
-			     break l;
-			 }
-			 (matchKO()) -> {
-			     return `appC(andC(X*,matchKO(),Y*),M);
-			 }
-		     }
-		     ListConstraint result = `computeMatch(andC(m));
-		     return `appC(andC(X*,result*,Y*),M);
+		 l:appC((X*,m@match(app[],app[]),Y*),M) -> {
+       ListConstraint head_is_constant = `headIsConstant(m);
+       %match(ListConstraint head_is_constant) {
+         (match[]) -> { break l; }
+         (matchKO()) -> { return `appC(andC(X*,matchKO(),Y*),M); }
+       }
+       ListConstraint result = `computeMatch(andC(m));
+       return `appC(andC(X*,result*,Y*),M);
 		 }
+       l:appC((X*,m@match(app[],const[]),Y*),M)  -> {
+       ListConstraint head_is_constant = `headIsConstant(m);
+       %match(ListConstraint head_is_constant) {
+         (match[]) -> { break l; }
+         (matchKO()) -> { return `appC(andC(X*,matchKO(),Y*),M); }
+       }
+       ListConstraint result = `computeMatch(andC(m));
+       return `appC(andC(X*,result*,Y*),M);
+		 }
+       l:appC((X*,m@match(const[],app[]),Y*),M) -> {
+       ListConstraint head_is_constant = `headIsConstant(m);
+       %match(ListConstraint head_is_constant) {
+         (match[]) -> { break l; }
+         (matchKO()) -> { return `appC(andC(X*,matchKO(),Y*),M); }
+       }
+       ListConstraint result = `computeMatch(andC(m));
+       return `appC(andC(X*,result*,Y*),M);
+		 }
+
 		 /*Decompose Struct */
 		 appC((X*,match(struct(M1,M2),struct(N1,N2)),Y*),M) ->{
 		     return `appC(andC(X*,match(M1,N1),match(M2,N2),Y*),M);
@@ -272,9 +287,8 @@ import jjtraveler.VisitFailure;
 	     match(const[],const[])   -> {
 		 return `andC(matchKO());
 	     }
-	     match(const[],app[]) | match(app[],const[]) -> {
-		 return `andC(matchKO());
-	     }
+	     match(const[],app[]) -> { return `andC(matchKO()); }
+       match(app[],const[]) -> { return `andC(matchKO()); }
 	     _ -> {return `andC(l);}
 	 }
 

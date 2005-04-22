@@ -48,7 +48,8 @@ public class PolyAdvanced2 {
     // Simplified version of differentiate
   public ATermAppl differentiate(ATermAppl poly, ATermAppl variable) {
     %match(term poly, term variable) {
-      X(), X() | Y(), Y() -> { return `one(); }
+      X(), X() -> { return `one(); }
+      Y(), Y() -> { return `one(); }
       plus(a1,a2), var  -> { return `plus(differentiate(a1, var),differentiate(a2, var)); }
       mult(a1,a2), var  -> { 
         ATermAppl res1, res2;
@@ -62,9 +63,12 @@ public class PolyAdvanced2 {
 
   public ATermAppl simplifyFunction(ATermAppl t) {
     %match(term t) {
-      plus(zero(),x) | plus(x,zero()) |
-      mult(one(),x)  | mult(x,one())  -> { return `x; }
-      mult(zero(),_) | mult(_,zero()) -> { return `zero(); }
+      plus(zero(),x) -> { return `x; }
+      plus(x,zero()) -> { return `x; }
+      mult(one(),x)  -> { return `x; }
+      mult(x,one())  -> { return `x; }
+      mult(zero(),_) -> { return `zero(); }
+      mult(_,zero()) -> { return `zero(); }
       _ -> { return (ATermAppl) traversal.genericTraversal(t,replace); }
     }
   }

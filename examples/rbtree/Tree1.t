@@ -110,12 +110,10 @@ public class Tree1 {
 
   public Tree balance(Color color, Tree lhs, ATerm elt, Tree rhs) {
     %match(Color color, Tree lhs, ATerm elt, Tree rhs) {
-      B(), node(R(),node(R(),a,x,b),y,c), z, d |
-      B(), node(R(),a,x,node(R(),b,y,c)), z, d |
-      B(), a, x, node(R(),node(R(),b,y,c),z,d) |
-      B(), a, x, node(R(),b,y,node(R(),c,z,d)) -> {
-        return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d));
-      }
+      B(), node(R(),node(R(),a,x,b),y,c), z, d -> { return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d)); }
+      B(), node(R(),a,x,node(R(),b,y,c)), z, d -> { return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d)); }
+      B(), a, x, node(R(),node(R(),b,y,c),z,d) -> { return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d)); }
+      B(), a, x, node(R(),b,y,node(R(),c,z,d)) -> { return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d)); }
     }
       // no balancing necessary
     return `node(color,lhs,elt,rhs);
@@ -124,9 +122,15 @@ public class Tree1 {
   public Tree balance2(Color color, Tree lhs, ATerm elt, Tree rhs) {
     %match(Color color, Tree lhs, ATerm elt, Tree rhs) {
         // color flip
-      B(), node(R(),a@node(R(),_,_,_),x,b), y, node(R(),c,z,d) |
-      B(), node(R(),a,x,b@node(R(),_,_,_)), y, node(R(),c,z,d) |
-      B(), node(R(),a,x,b), y, node(R(),c@node(R(),_,_,_),z,d) |
+      B(), node(R(),a@node(R(),_,_,_),x,b), y, node(R(),c,z,d) -> {
+        return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d));
+      }
+      B(), node(R(),a,x,b@node(R(),_,_,_)), y, node(R(),c,z,d) -> {
+        return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d));
+      }
+      B(), node(R(),a,x,b), y, node(R(),c@node(R(),_,_,_),z,d) -> {
+        return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d));
+      }
       B(), node(R(),a,x,b), y, node(R(),c,z,d@node(R(),_,_,_)) -> {
         return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d));
       }
@@ -134,7 +138,9 @@ public class Tree1 {
       B(), node(R(),a@node(R(),_,_,_),x,b), y, c -> { return `node(B(),a,x,node(R(),b,y,c)); }
       B(), a, x, node(R(),b,y,c@node(R(),_,_,_)) -> { return `node(B(),node(R(),a,x,b),y,c); }
         // double rotations
-      B(), node(R(),a,x,node(R(),b,y,c)), z, d |
+      B(), node(R(),a,x,node(R(),b,y,c)), z, d -> {
+        return `node(B(),node(R(),a,x,b),y,node(R(),c,z,d));
+      }
       B(), a, x, node(R(),node(R(),b,y,c),z,d) -> {
         return `node(B(),node(R(),a,x,b),y,node(R(),c,z,d));
       }

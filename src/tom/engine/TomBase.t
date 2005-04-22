@@ -393,10 +393,7 @@ public class TomBase {
 
   protected boolean isAnnotedVariable(TomTerm t) {
     %match(TomTerm t) {
-      RecordAppl[constraints=constraintList] |
-        (Variable|VariableStar)[constraints=constraintList] |
-        (UnamedVariable|UnamedVariableStar)[constraints=constraintList] 
-        -> {
+      (RecordAppl|Variable|VariableStar|UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
         return getAssignToVariable(`constraintList)!=null;
       }
     }
@@ -596,20 +593,15 @@ public class TomBase {
         return tomSymbol.getTypesToType().getCodomain();
       }
 
-      Variable[astType=type] |
-        VariableStar[astType=type] |
-        UnamedVariable[astType=type] |
-        UnamedVariableStar[astType=type] 
-        -> { return `type; }
+      (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[astType=type] -> { 
+        return `type; 
+      }
 
-      ExpressionToTomTerm(term) |
-        Ref(term)
-        -> { return getTermType(`term, symbolTable); }
+      Ref(term) -> { return getTermType(`term, symbolTable); }
 
-      TargetLanguageToTomTerm(TL[]) |
-        TargetLanguageToTomTerm(ITL[]) |
-        FunctionCall[]
-        -> { return `EmptyType(); }
+      TargetLanguageToTomTerm[tl=(TL|ITL)[]] -> { return `EmptyType(); }
+
+      FunctionCall[] -> { return `EmptyType(); }
 
       _ -> {
         System.out.println("getTermType error on term: " + t);
@@ -620,18 +612,13 @@ public class TomBase {
   
   protected TomType getTermType(Expression t, SymbolTable symbolTable){
     %match(Expression t) {
-      GetSubterm[codomain=type] |
-        GetHead[codomain=type] |
-        GetSlot[codomain=type] |
-        GetElement[codomain=type]
-        -> { return `type; }
+      (GetSubterm|GetHead|GetSlot|GetElement)[codomain=type] -> { return `type; }
 
-      TomTermToExpression(term) |
-        GetTail[variable=term] |
-        GetSliceList[variableBeginAST=term] |
-        GetSliceArray[subjectListName=term]
-        -> { return getTermType(`term, symbolTable); }
-
+      TomTermToExpression(term) -> { return getTermType(`term, symbolTable); }
+      GetTail[variable=term] -> { return getTermType(`term, symbolTable); }
+      GetSliceList[variableBeginAST=term] -> { return getTermType(`term, symbolTable); }
+      GetSliceArray[subjectListName=term] -> { return getTermType(`term, symbolTable); }
+        
       _ -> {
         System.out.println("getTermType error on term: " + t);
         throw new TomRuntimeException("getTermType error on term: " + t);

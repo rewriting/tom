@@ -230,12 +230,17 @@ public class Set1 {
   
   private JGSet intersection(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptyJGSet(), _ |
-        _, emptyJGSet() -> { 
-        return `emptyJGSet();
-      }
+      emptyJGSet(), _ -> { return `emptyJGSet(); }
+      _, emptyJGSet() -> { return `emptyJGSet(); }
       
-      s@singleton(y), x |
+      s@singleton(y), x -> {
+        if (`member(y, x, level)) {
+          return `s;
+        } else {
+          return `emptyJGSet();
+        }
+      }
+
       x, s@singleton(y) -> {
         if (`member(y, x, level)) {
           return `s;
@@ -254,10 +259,8 @@ public class Set1 {
   
   public JGSet restriction(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptyJGSet(), _ |
-      _, emptyJGSet() -> { 
-        return `emptyJGSet();
-      }
+      emptyJGSet(), _ -> { return `emptyJGSet(); }
+      _, emptyJGSet() -> { return `emptyJGSet(); }
       
       singleton(y), x -> {
         return `remove(y, x, level);

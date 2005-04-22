@@ -155,16 +155,17 @@ public class TomFactory extends TomBase {
         return `BuildEmptyList(name);
       }
 
-      manyTomList(head@VariableStar[],tail) |
-        manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
+      manyTomList(head@VariableStar[],tail) -> {
+        TomTerm subList = buildList(name,`tail);
+        return `BuildAppendList(name,head,subList);
+      }
+      
+      manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
         TomTerm subList = buildList(name,`tail);
         return `BuildAppendList(name,head,subList);
       }
 
-      manyTomList(head@BuildTerm[],tail) |
-      manyTomList(head@BuildVariable[],tail) |
-      manyTomList(head@Variable[],tail) |
-      manyTomList(head@Composite(_),tail) -> {
+      manyTomList(head@(BuildTerm|BuildVariable|Variable|Composite)[],tail) -> {
         TomTerm subList = buildList(name,`tail);
         return `BuildConsList(name,head,subList);
       }
@@ -190,24 +191,26 @@ public class TomFactory extends TomBase {
         return `BuildEmptyArray(name,size);
       }
 
-      manyTomList(head@VariableStar[],tail) |
+      manyTomList(head@VariableStar[],tail) -> {
+          /*System.out.println("head = " + head);*/
+        TomTerm subList = buildArray(name,`tail,size+1);
+        return `BuildAppendArray(name,head,subList);
+      }
+
       manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
           /*System.out.println("head = " + head);*/
         TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildAppendArray(name,head,subList);
       }
 
-      manyTomList(head@BuildTerm[],tail) |
-      manyTomList(head@BuildVariable[],tail) |
-      manyTomList(head@Variable[],tail) |
-      manyTomList(head@Composite(_),tail) -> {
+      manyTomList(head@(BuildTerm|BuildVariable|Variable|Composite)[],tail) -> {
         TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildConsArray(name,head,subList);
       }
 
       manyTomList(head@TargetLanguageToTomTerm[],tail) -> {
-  TomTerm subList = buildArray(name,`tail,size);
-  return subList;
+        TomTerm subList = buildArray(name,`tail,size);
+        return subList;
       }
 
     }

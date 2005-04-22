@@ -166,8 +166,7 @@ public class TomOptimizer extends TomGenericPlugin {
         Expression expression = (Expression) arg2;
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) { 
-            (Variable|VariableStar)[astName=name] |
-              BuildVariable[astName=name] -> {
+            (Variable|VariableStar|BuildVariable)[astName=name] -> {
               if(variableName == `name) {
                 return `ExpressionToTomTerm(expression);
               }
@@ -245,8 +244,7 @@ public class TomOptimizer extends TomGenericPlugin {
         public boolean apply(ATerm t) {
           if(t instanceof TomTerm) {
             %match(TomTerm t) { 
-              (Variable|VariableStar)[astName=name] |
-                BuildVariable[astName=name] -> {
+              (Variable|VariableStar|BuildVariable)[astName=name] -> {
                 if(variableName == `name) {
                   list.add(t);
                   return false;
@@ -347,8 +345,7 @@ public class TomOptimizer extends TomGenericPlugin {
         Set context = (Set) arg1;
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) {
-            var@(Variable|VariableStar)[option=option, astName=astName@Name(name)] |
-              var@BuildVariable[astName=astName@Name(name)]-> {
+            var@(Variable|VariableStar|BuildVariable)[astName=astName@Name(name)] -> {
               if(context.contains(`astName)) {
                 return `var.setAstName(`Name(getAstFactory().makeTomVariableName(name)));
               }

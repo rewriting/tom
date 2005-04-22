@@ -111,9 +111,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      l@BuildEmptyList[] |
-      l@BuildEmptyArray[] |
-      l@(BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[] -> {
+      l@(BuildEmptyList|BuildEmptyArray|BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[] -> {
         buildListOrArray(deep, `l);
         return;
       }

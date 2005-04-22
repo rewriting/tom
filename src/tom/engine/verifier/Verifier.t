@@ -425,7 +425,7 @@ public class Verifier extends TomBase {
           }
         }
       }
-      true() | false() -> {
+      (true|false)() -> {
         return `concExpr(ex);
       }
       _ -> { 

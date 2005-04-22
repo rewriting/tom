@@ -225,18 +225,6 @@ patternInstruction [LinkedList list] throws TomException
                 listTextPattern.add(text.toString());
                 clearText();
                 listOrgTrackPattern.add(option);
-            }
-            ( 
-                ALTERNATIVE option = matchPattern[matchPatternList] 
-                {
-                    listOfMatchPatternList.add(ast().makeList(matchPatternList));
-                    matchPatternList.clear();
-                    listTextPattern.add(text.toString());
-                    clearText();
-                    listOrgTrackPattern.add(option);
-                }
-            )* 
-            {
                 matchGuardsList.clear();
             }
             ( WHEN matchGuards[matchGuardsList] )?

@@ -45,9 +45,9 @@ public interface TomParserTokenTypes {
 	int ALL_ID = 15;
 	int BACKQUOTE = 16;
 	int COLON = 17;
-	int ALTERNATIVE = 18;
-	int WHEN = 19;
-	int ARROW = 20;
+	int WHEN = 18;
+	int ARROW = 19;
+	int ALTERNATIVE = 20;
 	int WHERE = 21;
 	int AFFECT = 22;
 	int IF = 23;

@@ -218,8 +218,7 @@ public class TomKernelCompiler extends TomBase {
         return action;
       } 
       
-      manySlotList(PairSlotAppl(slotName,var@Variable[option=optionList, astType=termType,constraints=constraints]),termTail) |
-      manySlotList(PairSlotAppl(slotName,var@UnamedVariable[option=optionList,astType=termType,constraints=constraints]),termTail) -> {
+      manySlotList(PairSlotAppl(slotName,var@(Variable|UnamedVariable)[option=optionList, astType=termType,constraints=constraints]),termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath);
         TomNumberList path  = (TomNumberList) rootpath.append(`NameNumber(slotName));
 
@@ -315,8 +314,7 @@ public class TomKernelCompiler extends TomBase {
         return `genCheckEmptyList(p.symbol, p.subjectListName, p.action, Nop());
       }
         
-      manySlotList(PairSlotAppl[appl=var@Variable[astType=termType]],termTail) |
-      manySlotList(PairSlotAppl[appl=var@UnamedVariable[astType=termType]],termTail) -> {
+      manySlotList(PairSlotAppl[appl=var@(Variable|UnamedVariable)[astType=termType]],termTail) -> {
           /*
            * get an element and store it
            */
@@ -340,8 +338,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementList(p.symbol, p.subjectListName, var, termType, subAction, ensureNotEmptyList);
       }
       
-      manySlotList(PairSlotAppl[appl=var@VariableStar[astType=termType]],termTail) |
-      manySlotList(PairSlotAppl[appl=var@UnamedVariableStar[astType=termType]],termTail) -> {
+      manySlotList(PairSlotAppl[appl=var@(VariableStar|UnamedVariableStar)[astType=termType]],termTail) -> {
           /*
            * 3 cases:
            * - tail = emptyList
@@ -440,8 +437,7 @@ public class TomKernelCompiler extends TomBase {
         return true;
       }
 
-      manySlotList(PairSlotAppl[appl=VariableStar[]],termTail) |
-      manySlotList(PairSlotAppl[appl=UnamedVariableStar[]],termTail) -> {
+      manySlotList(PairSlotAppl[appl=(VariableStar|UnamedVariableStar)[]],termTail) -> {
         return containOnlyVariableStar(`termTail);
       }
     }
@@ -518,8 +514,7 @@ public class TomKernelCompiler extends TomBase {
         return `genIsEmptyArray(p.subjectListName, p.subjectListIndex, p.action, Nop());
       }
 
-      manySlotList(PairSlotAppl[appl=var@Variable[option=optionList,astType=termType]],termTail) |
-      manySlotList(PairSlotAppl[appl=var@UnamedVariable[option=optionList,astType=termType]],termTail) -> {
+      manySlotList(PairSlotAppl[appl=var@(Variable|UnamedVariable)[option=optionList,astType=termType]],termTail) -> {
           /*
            * get an element and store it
            */
@@ -544,8 +539,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementArray(p.subjectListName, p.subjectListIndex, var, termType, subAction, ensureNotEmptyList);
       }
         
-      manySlotList(PairSlotAppl[appl=var@VariableStar[option=optionList,astType=termType]],termTail) |
-      manySlotList(PairSlotAppl[appl=var@UnamedVariableStar[option=optionList,astType=termType]],termTail) -> {
+      manySlotList(PairSlotAppl[appl=var@(VariableStar|UnamedVariableStar)[option=optionList,astType=termType]],termTail) -> {
           /*
            * 3 cases:
            * - tail = emptyList
@@ -700,16 +694,18 @@ public class TomKernelCompiler extends TomBase {
           TomType subtermType = getSlotType(tomSymbol,`slotName);
 
           //System.out.println("pairNameDeclList = " + tomSymbol.getPairNameDeclList());
-          if(isDefinedGetSlot(tomSymbol,`slotName)) {
-            Expression getSubtermAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
-            TomNumberList newPath  = (TomNumberList) path.append(`NameNumber(slotName));
-            TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concConstraint());
-            return `Let(newVariableAST,getSubtermAST,body);
-          } else {
-              Logger.getLogger(getClass().getName()).log( Level.SEVERE,
-                               "ErrorMissingSlotDecl",
-                               new Object[]{tomSymbol.getAstName().getString(),slotName.getString()});
+          if(!isDefinedGetSlot(tomSymbol,`slotName)) {
+            Logger.getLogger(getClass().getName()).log( Level.SEVERE,
+                             "ErrorMissingSlotDecl",
+                              new Object[]{tomSymbol.getAstName().getString(),slotName.getString()});
           }
+
+          Expression getSubtermAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
+          TomNumberList newPath  = (TomNumberList) path.append(`NameNumber(slotName));
+          TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concConstraint());
+          return `Let(newVariableAST,getSubtermAST,body);
+
+
         }
       }
 
