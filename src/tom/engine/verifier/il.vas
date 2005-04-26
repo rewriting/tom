@@ -2,7 +2,7 @@ module il
 imports
 
 public sorts 
-	Symbol Representation Variable Term Expr Instr 
+	Symbol Variable Term Expr Instr 
 	Substitution SubstitutionList Environment
 	Seq TermList ExprList AbsTerm
 	Deriv DerivTree InstrList
