@@ -3,7 +3,7 @@ imports
 
 public
 
-sorts Alet AlertList
+sorts Alert AlertList
 
 abstract syntax
 
