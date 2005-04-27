@@ -24,18 +24,18 @@ public class TestMatch extends TestCase {
     pattern5 = factory.parse("pattern5");
   }
 
-  %typelist L {
+  %typeterm L {
     implement { ATermList }
     equals(l1,l2)  { l1.equals(l2) }
-    get_head(l)    { ((ATermList)l).getFirst() }
-    get_tail(l)    { ((ATermList)l).getNext() }
-    is_empty(l)    { ((ATermList)l).isEmpty() }
   }
 
   %oplist L conc( E* ) {
     is_fsym(t) { t instanceof ATermList }
     make_empty()  { factory.makeList() }
     make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
+    get_head(l)    { ((ATermList)l).getFirst() }
+    get_tail(l)    { ((ATermList)l).getNext() }
+    is_empty(l)    { ((ATermList)l).isEmpty() }
   }
   
   %typeterm E {

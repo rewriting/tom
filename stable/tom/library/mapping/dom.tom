@@ -174,17 +174,17 @@ public static java.util.ArrayList tom_mapping_newTNodeList() {
   make(doc,t0) { ((org.w3c.dom.Document)doc).createCDATASection(t0) }
 }
 
-%typearray TNodeList {
+%typeterm TNodeList {
 	implement{ java.util.ArrayList }
 	equals(l1,l2) { l1.equals(l2) }
-	get_element(l,n) { l.get(n) }
-	get_size(l) { l.size() }
 }
 
 %oparray TNodeList concTNode( TNode* ) {
 	is_fsym(t) { (t!= null) && (t instanceof java.util.ArrayList) }
 	make_empty(n) { new java.util.ArrayList(n) }
 	make_append(e,l) { tom_mapping_add(e,(java.util.ArrayList)l)  }
+	get_element(l,n) { (org.w3c.dom.Node)l.get(n) }
+	get_size(l) { l.size() }
 }
 
 

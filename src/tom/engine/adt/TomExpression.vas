@@ -22,9 +22,9 @@ IsFsym(astName:TomName,variable:TomTerm) -> Expression
 GetHead(opname:TomName,codomain:TomType,variable:TomTerm) -> Expression
 GetTail(opname:TomName,variable:TomTerm) -> Expression
 IsEmptyList(opname:TomName,variable:TomTerm) -> Expression
-IsEmptyArray(variable:TomTerm,index:TomTerm) -> Expression
+IsEmptyArray(opname:TomName,variable:TomTerm,index:TomTerm) -> Expression
 AddOne(variable:TomTerm) -> Expression
-GetSize(variable:TomTerm) -> Expression
-GetElement(codomain:TomType,kid1:TomTerm,kid2:TomTerm) -> Expression
+GetSize(opname:TomName,variable:TomTerm) -> Expression
+GetElement(opname:TomName,codomain:TomType,kid1:TomTerm,kid2:TomTerm) -> Expression
 GetSliceList(astName:TomName,variableBeginAST:TomTerm,variableEndAST:TomTerm) -> Expression
 GetSliceArray(astName:TomName,subjectListName:TomTerm,variableBeginAST:TomTerm,variableEndAST:TomTerm) -> Expression

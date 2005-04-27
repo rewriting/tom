@@ -52,17 +52,17 @@ public class Fib3 {
       Fib(arg:Int, val:Element) -> Element
    }
 
-  %typearray Space {
+  %typeterm Space {
     implement { ArrayList }
     equals(l1,l2)      { l1.equals(l2) }
-    get_element(l,n)   { l.get(n) }
-    get_size(l)        { l.size() }
   }
 
   %oparray Space concElement( Element* ) {
     is_fsym(t) { t instanceof ArrayList }
     make_empty(n)   { myEmpty(n) }
     make_append(e,l) { myAdd(e,(ArrayList)l) }
+    get_element(l,n)   { (Element)l.get(n) }
+    get_size(l)        { l.size() }
   }
 
   private ArrayList myAdd(Object e,ArrayList l) {

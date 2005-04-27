@@ -30,12 +30,9 @@
  **/
 
 %include {char.tom}
-%typelist String {
+%typeterm String {
   implement           { String }
   equals(t1,t2)       { (t1.equals(t2)) }
-  get_head(s)         { s.charAt(0) }
-  get_tail(s)         { s.substring(1) }
-  is_empty(s)         { (s.length()==0) }
   check_stamp(s)      {}
   set_stamp(s)        { s }
 }
@@ -44,5 +41,8 @@
   is_fsym(t)       { (t!= null) && (t instanceof String) }
   make_empty()     { "" }
   make_insert(c,s) { (c+s) }
+  get_head(s)         { s.charAt(0) }
+  get_tail(s)         { s.substring(1) }
+  is_empty(s)         { (s.length()==0) }
 }
 

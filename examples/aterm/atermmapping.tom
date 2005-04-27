@@ -11,20 +11,14 @@
   %include { boolean.tom }
 
 
-  %typelist ATerm {
+  %typeterm ATerm {
     implement { ATerm }
     equals(t1, t2) { t1 == t2}
-    get_head(t) { ((ATermList)t).getFirst() }
-    get_tail(t) { ((ATermList)t).getNext() }
-    is_empty(t) { ((ATermList)t).isEmpty() } 
   }
     
-  %typelist ATermList {
+  %typeterm ATermList {
     implement { ATermList }
     equals(t1, t2) { t1 == t2}
-    get_head(t) { t.getFirst() }
-    get_tail(t) { t.getNext() }
-    is_empty(t) { t.isEmpty() } 
   }
   
   %typeterm AFun {
@@ -50,12 +44,18 @@
     is_fsym(t) { t instanceof ATermList } 
     make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
     make_insert(e,l) { ((ATermList)l).insert(e) }
+    get_head(t) { ((ATermList)t).getFirst() }
+    get_tail(t) { ((ATermList)t).getNext() }
+    is_empty(t) { ((ATermList)t).isEmpty() } 
   }
     
   %oplist ATermList concATerm (ATerm*){
     is_fsym(t) { t instanceof ATermList } 
     make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
     make_insert(e,l) { l.insert(e) }
+    get_head(t) { t.getFirst() }
+    get_tail(t) { t.getNext() }
+    is_empty(t) { t.isEmpty() } 
   }
   
     /** ATermInt  **/

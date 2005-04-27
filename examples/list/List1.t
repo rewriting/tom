@@ -43,18 +43,18 @@ public class List1 {
 		return factory;
 	}
 
-  %typelist TomList {
+  %typeterm TomList {
     implement { ATermList }
     equals(l1,l2) { l1==l2 }
-    get_head(l)   { (ATermAppl)l.getFirst() }
-    get_tail(l)   { l.getNext() }
-    is_empty(l)   { l.isEmpty() }
   }
 
   %oplist TomList conc( TomTerm* ) {
     is_fsym(t) { t instanceof ATermList }
     make_empty()  { factory.makeList() }
     make_insert(e,l) { l.insert(e) }
+    get_head(l)   { (ATermAppl)l.getFirst() }
+    get_tail(l)   { l.getNext() }
+    is_empty(l)   { l.isEmpty() }
   }
   
   %typeterm TomTerm {

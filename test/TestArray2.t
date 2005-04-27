@@ -4,17 +4,17 @@ import junit.framework.TestSuite;
 
 public class TestArray2 extends TestCase {
 
-  %typearray jtList {
+  %typeterm jtList {
 	  implement { List }
 	  equals(l1,l2) { l1.equals(l2) }
-    get_element(l,n) { ((ArrayList)l).get(n) }
-    get_size(l)      { ((ArrayList)l).size() }
   }
 	  
 	%oparray jtList conc(jtElement*){
 	  is_fsym(t) { t instanceof List }
     make_empty(n)    { new ArrayList(n) }
     make_append(e,l) { myAdd(e,(ArrayList)l) }
+    get_element(l,n) { (Element)((ArrayList)l).get(n) }
+    get_size(l)      { ((ArrayList)l).size() }
 	}
 
   private static ArrayList myAdd(Object e, ArrayList l) {

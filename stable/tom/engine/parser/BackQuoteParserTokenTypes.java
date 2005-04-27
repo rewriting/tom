@@ -54,8 +54,9 @@ public interface BackQuoteParserTokenTypes {
 	int XML_SKIP = 25;
 	int BQ_SIMPLE_ID = 26;
 	int BQ_MINUS_ID = 27;
-	int BQ_DIGIT = 28;
-	int BQ_UNDERSCORE = 29;
-	int BQ_ESC = 30;
-	int BQ_HEX_DIGIT = 31;
+	int BQ_MINUS_ID_PART = 28;
+	int BQ_DIGIT = 29;
+	int BQ_UNDERSCORE = 30;
+	int BQ_ESC = 31;
+	int BQ_HEX_DIGIT = 32;
 }

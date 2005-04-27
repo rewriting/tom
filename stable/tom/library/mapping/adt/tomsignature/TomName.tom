@@ -3,12 +3,9 @@
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
-%typelist TomNumberList{
+%typeterm TomNumberList{
   implement { jtom.adt.tomsignature.types.TomNumberList}
   equals(t1,t2) {t1.equals(t2)}
-  get_head(l) {l.getHead()}
-  get_tail(l) {l.getTail()}
-  is_empty(l) {l.isEmpty()}
   check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(jtom.adt.tomsignature.types.TomNumberList)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
@@ -18,6 +15,9 @@
   is_fsym(t) {(t!= null) && t.isSortTomNumberList()}
   make_empty() {getTomNameFactory().makeTomNumberList()}
   make_insert(e,l) {getTomNameFactory().makeTomNumberList(e,l)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
 }
 %op TomNumberList emptyTomNumberList{
   is_fsym(t) { (t!= null) && t.isEmpty()}

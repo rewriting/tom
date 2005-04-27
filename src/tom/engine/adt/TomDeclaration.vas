@@ -7,8 +7,6 @@ sorts Declaration
 abstract syntax
 
 TypeTermDecl(astName:TomName,keywordList:TomList,orgTrack:Option) -> Declaration
-TypeListDecl(astName:TomName,keywordList:TomList,orgTrack:Option) -> Declaration
-TypeArrayDecl(astName:TomName,keywordList:TomList,orgTrack:Option) -> Declaration
 CheckStampDecl(variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 SetStampDecl(variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 GetImplementationDecl(variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration

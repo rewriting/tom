@@ -15,15 +15,15 @@ public class TestArray extends TestCase {
 	private ArrayList listwithdoubles;
 	private ArrayList listwithoutdoubles;
 
-  %typearray L {
+  %typeterm L {
     implement { ArrayList }
     equals(l1,l2)    { l1.equals(l2) }
-    get_element(l,n) { ((ArrayList)l).get(n) }
-    get_size(l)      { ((ArrayList)l).size() }
   }
 
   %oparray L conc( E* ) {
     is_fsym(t)       { t instanceof ArrayList }
+    get_element(l,n) { (ATerm)((ArrayList)l).get(n) }
+    get_size(l)      { ((ArrayList)l).size() }
     make_empty(n)    { new ArrayList(n) }
     make_append(e,l) { myAdd(e,(ArrayList)l) }
   }

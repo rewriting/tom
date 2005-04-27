@@ -129,20 +129,20 @@ struct term *build_msg(struct term *data) {
 %op term f(term)             { fsym { F } }
 %op term msg(term,term,term) { fsym { MSG } }
 
-%typelist L {
+%typeterm L {
   implement          { struct list* }
   get_fun_sym(t)     { CONS }
   cmp_fun_sym(t1,t2) { (void*)t1 == (void*)t2 }
   equals(l1,l2)      { list_equal(l1,l2) }
-  get_head(l)        { l->head }
-  get_tail(l)        { (l==NULL)?l:l->tail }
-  is_empty(l)        { (l == NULL) }
 }
 
 %oplist L cons( term* ) {
   fsym          { CONS }
   make_empty()  { NULL }
   make_insert(e,l) { build_list(e,l) }
+  get_head(l)        { l->head }
+  get_tail(l)        { (l==NULL)?l:l->tail }
+  is_empty(l)        { (l == NULL) }
 }
 
 void print_term(struct term *tt) {

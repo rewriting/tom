@@ -3,12 +3,9 @@
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
-%typelist AlertList{
+%typeterm AlertList{
   implement { tom.platform.adt.platformalert.types.AlertList}
   equals(t1,t2) {t1.equals(t2)}
-  get_head(l) {l.getHead()}
-  get_tail(l) {l.getTail()}
-  is_empty(l) {l.isEmpty()}
   check_stamp(t) {if(t.getAnnotation(getPlatformAlertFactory().getPureFactory().makeList()) == getPlatformAlertFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformalert.types.AlertList)t.setAnnotation(getPlatformAlertFactory().getPureFactory().makeList(),getPlatformAlertFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
@@ -18,6 +15,9 @@
   is_fsym(t) {(t!= null) && t.isSortAlertList()}
   make_empty() {getPlatformAlertFactory().makeAlertList()}
   make_insert(e,l) {getPlatformAlertFactory().makeAlertList(e,l)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
 }
 %op AlertList emptyAlertList{
   is_fsym(t) { (t!= null) && t.isEmpty()}

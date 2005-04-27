@@ -56,8 +56,6 @@ public class TomSyntaxChecker extends TomChecker {
   private final static String OP_LIST     = "%oplist";
   private final static String TYPE        = "Type";  
   private final static String TYPE_TERM   = "%typeterm";
-  private final static String TYPE_ARRAY  = "%typearray";
-  private final static String TYPE_LIST   = "%typelist";
 
   /** type function symbols */
   private final static String EQUALS      = "equals";
@@ -83,18 +81,6 @@ public class TomSyntaxChecker extends TomChecker {
   private final static ArrayList TypeTermSignature =
     new ArrayList(
                   Arrays.asList(new String[]{ TomSyntaxChecker.EQUALS }));
-
-  private final static ArrayList TypeArraySignature =
-    new ArrayList(
-                  Arrays.asList(new String[]{TomSyntaxChecker.EQUALS,
-                                             TomSyntaxChecker.GET_ELEMENT,
-                                             TomSyntaxChecker.GET_SIZE}));
-  private final static ArrayList TypeListSignature =
-    new ArrayList(
-                  Arrays.asList(new String[]{TomSyntaxChecker.EQUALS,
-                                             TomSyntaxChecker.GET_HEAD,
-                                             TomSyntaxChecker.GET_TAIL,
-                                             TomSyntaxChecker.IS_EMPTY}));
   
   /** Constructor */
   public TomSyntaxChecker() {
@@ -194,14 +180,6 @@ public class TomSyntaxChecker extends TomChecker {
           `verifyTypeDecl(TomSyntaxChecker.TYPE_TERM, tomName, tomList, orgTrack);
           break matchblock;
         }
-        TypeListDecl(Name(tomName), tomList, orgTrack) -> {
-          `verifyTypeDecl(TomSyntaxChecker.TYPE_LIST, tomName, tomList, orgTrack);
-          break matchblock;
-        }
-        TypeArrayDecl(Name(tomName), tomList, orgTrack) -> {
-          `verifyTypeDecl(TomSyntaxChecker.TYPE_ARRAY, tomName, tomList, orgTrack);
-          break matchblock;
-        }
         // Symbols
         SymbolDecl(Name(tomName))      -> {
           `verifySymbol(TomSyntaxChecker.CONSTRUCTOR, getSymbolFromName(tomName));
@@ -227,14 +205,7 @@ public class TomSyntaxChecker extends TomChecker {
     // ensure first definition
     verifyMultipleDefinition(tomName, declType, TYPE);
     // verify Macro functions
-    ArrayList verifyList;
-    if(declType == TomSyntaxChecker.TYPE_TERM) {
-      verifyList = new ArrayList(TomSyntaxChecker.TypeTermSignature);
-    } else if(declType == TomSyntaxChecker.TYPE_ARRAY) {
-      verifyList = new ArrayList(TomSyntaxChecker.TypeArraySignature);
-    } else {//if(declType == TomSyntaxChecker.TYPE_LIST) {
-      verifyList = new ArrayList(TomSyntaxChecker.TypeListSignature);
-    }
+    ArrayList verifyList = new ArrayList(TomSyntaxChecker.TypeTermSignature);
     
     %match(TomList listOfDeclaration) {
       (_*, DeclarationToTomTerm(d), _*) -> { // for each Declaration

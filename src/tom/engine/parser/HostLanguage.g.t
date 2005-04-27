@@ -316,8 +316,6 @@ blockList [LinkedList list] throws TomException
         |   operatorArray[list] 
         |   includeConstruct[list]
         |   typeTerm[list] 
-        |   typeList[list] 
-        |   typeArray[list]
         |   STRING
         |   LBRACE blockList[list] RBRACE 
         )*
@@ -614,50 +612,6 @@ typeTerm [LinkedList list] throws TomException
 
     ;
 
-typeList [LinkedList list] throws TomException
-{
-    TargetLanguage code = null;
-    int line, column;
-}
-    :
-        t:TYPELIST
-        {
-            String textCode = getCode();
-            if(isCorrect(textCode)) {
-                code = `TL(
-                    textCode,
-                    TextPosition(currentLine,currentColumn),
-                    TextPosition(t.getLine(),t.getColumn()));
-                list.add(code);
-            }
-
-            Declaration listdecl = tomparser.typeList();
-            list.add(listdecl);
-        }
-    ;
-
-typeArray [LinkedList list] throws TomException
-{
-    TargetLanguage code = null;
-    int line, column;
-}
-    :
-        t:TYPEARRAY
-        {
-            String textCode = getCode();
-            if(isCorrect(textCode)) {
-                code = `TL(
-                    textCode,
-                    TextPosition(currentLine,currentColumn),
-                    TextPosition(t.getLine(),t.getColumn()));
-                list.add(code);
-            }
-
-            Declaration arraydecl = tomparser.typeArray();
-            list.add(arraydecl);
-        }
-    ;
-
 goalLanguage [LinkedList list] returns [TargetLanguage result] throws TomException
 {
     result =  null;
@@ -761,12 +715,6 @@ TYPE
 TYPETERM
     :   "%typeterm" {selector().push("tomlexer");}
     ;
-TYPELIST
-    :   "%typelist" {selector().push("tomlexer");}
-    ;
-TYPEARRAY
-    :   "%typearray" {selector().push("tomlexer");}
-    ;   
 OPERATORLIST
     :   "%oplist"   {
             selector().push("tomlexer");}

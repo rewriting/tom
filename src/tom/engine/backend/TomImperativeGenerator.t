@@ -287,12 +287,17 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write(")");
   }
 
-  protected void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException {
-    output.write("((" + getTLType(codomain) + ")tom_get_element_" + getTomType(domain) + "(");
+  protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException {
+    //output.write("((" + getTLType(codomain) + ")tom_get_element_" + getTomType(domain) + "(");
+    %match(TomName opNameAST) {
+      EmptyName() -> { output.write("tom_get_element_" + getTomType(domain) + "("); }
+      Name(opName) -> { output.write("tom_get_element_" + `opName + "_" + getTomType(domain) + "("); }
+    }
+
     generate(deep,varName);
     output.write(",");
     generate(deep,varIndex);
-    output.write("))");
+    output.write(")");
   }
   
   protected void genDeclMake(String funName, TomType returnType, 
@@ -359,12 +364,12 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
-    String is_empty = "tom_is_empty_" + tomType;
+    String is_empty = "tom_is_empty_" + name + "_" + tomType;
     String term_equal = "tom_terms_equal_" + tomType;
     String make_insert = listCast + "tom_cons_list_" + name;
     String make_empty = listCast + "tom_empty_list_" + name;
-    String get_head = eltCast + "tom_get_head_" + tomType;
-    String get_tail = listCast + "tom_get_tail_" + tomType;
+    String get_head = eltCast + "tom_get_head_" + name + "_" + tomType;
+    String get_tail = listCast + "tom_get_tail_" + name + "_" + tomType;
     String get_slice = listCast + "tom_get_slice_" + name;
 
     s+= modifier + utype + " tom_append_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n";
@@ -412,7 +417,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     String eltCast = "(" + getTLType(eltType) + ")";
     String make_empty = listCast + "tom_empty_array_" + name;
     String make_insert = listCast + "tom_cons_array_" + name;
-    String get_element = eltCast + "tom_get_element_" + tomType;
+    String get_element = eltCast + "tom_get_element_" + name +"_" + tomType;
+    String get_size = "tom_get_size_" + name +"_" + tomType;
     
     s = modifier + utype + " tom_get_slice_" + name +  "(" + utype + " subject, int begin, int end) {\n";
     s+= "   " + glType + " result = " + make_empty + "(end - begin);\n";
@@ -425,8 +431,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "\n";
     
     s+= modifier + utype + " tom_append_array_" + name +  "(" + utype + " l2, " + utype + " l1) {\n";
-    s+= "    int size1 = tom_get_size_" + tomType + "(l1);\n";
-    s+= "    int size2 = tom_get_size_" + tomType + "(l2);\n";
+    s+= "    int size1 = " + get_size + "(l1);\n";
+    s+= "    int size2 = " + get_size + "(l2);\n";
     s+= "    int index;\n";
     s+= "   " + glType + " result = " + make_empty + "(size1+size2);\n";
 

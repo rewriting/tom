@@ -10,17 +10,17 @@ public class Array {
   private AFun fzero, fsuc, fplus,ffib;
   public ATermAppl tzero;
 
-  %typearray L {
+  %typeterm L {
     implement { ArrayList }
     equals(l1,l2)    { l1.equals(l2) }
-    get_element(l,n) { ((ArrayList)l).get(n) }
-    get_size(l)      { ((ArrayList)l).size() }
   }
 
   %oparray L conc( E* ) {
     is_fsym(t)       { t instanceof ArrayList }
     make_empty(n)    { new ArrayList(n) }
     make_append(e,l) { myAdd(e,(ArrayList)l) }
+    get_element(l,n) { (ATerm)((ArrayList)l).get(n) }
+    get_size(l)      { ((ArrayList)l).size() }
   }
 
   private ArrayList myAdd(Object e, ArrayList l) {

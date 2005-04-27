@@ -481,17 +481,17 @@ public class TomKernelCompiler extends TomBase {
   }
   
   private Expression genGetHead(TomSymbol tomSymbol, TomType type, TomTerm var) {
-    TomName opNameAST = (hasGetHead(tomSymbol.getOption()))?tomSymbol.getAstName():`EmptyName();
+    TomName opNameAST = tomSymbol.getAstName();
     return `GetHead(opNameAST, type, var);
   }
 
   private Expression genGetTail(TomSymbol tomSymbol, TomTerm var) {
-    TomName opNameAST = (hasGetTail(tomSymbol.getOption()))?tomSymbol.getAstName():`EmptyName();
+    TomName opNameAST = tomSymbol.getAstName();
     return `GetTail(opNameAST, var);
   }
 
   private Expression genIsEmptyList(TomSymbol tomSymbol, TomTerm var) {
-    TomName opNameAST = (hasIsEmpty(tomSymbol.getOption()))?tomSymbol.getAstName():`EmptyName();
+    TomName opNameAST = tomSymbol.getAstName();
     return `IsEmptyList(opNameAST, var);
   }
 
@@ -512,7 +512,7 @@ public class TomKernelCompiler extends TomBase {
            * nothing to compile
            * just check that the subject is empty
            */
-        return `genIsEmptyArray(p.subjectListName, p.subjectListIndex, p.action, Nop());
+        return `genIsEmptyArray(p.symbol,p.subjectListName, p.subjectListIndex, p.action, Nop());
       }
 
       manySlotList(PairSlotAppl[appl=var@(Variable|UnamedVariable)[option=optionList,astType=termType]],termTail) -> {
@@ -520,7 +520,7 @@ public class TomKernelCompiler extends TomBase {
            * get an element and store it
            */
         Instruction subAction = genArrayMatchingAutomata(p,`termTail,indexTerm+1,true);
-        return genGetElementArray(p.subjectListName, p.subjectListIndex, `var, `termType, subAction, ensureNotEmptyList);
+        return genGetElementArray(p.symbol,p.subjectListName, p.subjectListIndex, `var, `termType, subAction, ensureNotEmptyList);
       }
 
       manySlotList(PairSlotAppl[appl=term@RecordAppl[nameList=nameList@(Name(tomName),_*)]],termTail)  -> {
@@ -537,7 +537,7 @@ public class TomKernelCompiler extends TomBase {
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
         TomTerm var =  `Variable(option(),PositionName(newPath),termType,concConstraint());
 
-        return genGetElementArray(p.subjectListName, p.subjectListIndex, var, termType, subAction, ensureNotEmptyList);
+        return genGetElementArray(p.symbol,p.subjectListName, p.subjectListIndex, var, termType, subAction, ensureNotEmptyList);
       }
         
       manySlotList(PairSlotAppl[appl=var@(VariableStar|UnamedVariableStar)[option=optionList,astType=termType]],termTail) -> {
@@ -557,7 +557,7 @@ public class TomKernelCompiler extends TomBase {
           Expression source = `GetSliceArray(p.symbol.getAstName(),
                                              Ref(p.subjectListName),
                                              Ref(p.subjectListIndex),
-                                             ExpressionToTomTerm(GetSize(p.subjectListName))
+                                             ExpressionToTomTerm(GetSize(p.symbol.getAstName(),p.subjectListName))
                                              );
           Instruction let = buildLet(`var, source, p.action);
           return let;
@@ -599,7 +599,7 @@ public class TomKernelCompiler extends TomBase {
             Instruction assign = `Assign(p.subjectListIndex,TomTermToExpression(Ref(variableEndAST)));
             
             loop = `DoWhile(UnamedBlock(concInstruction(let,increment,assign)),
-                            Negation(GreaterThan(TomTermToExpression(Ref(p.subjectListIndex)),GetSize(Ref(p.subjectListName)))));
+                            Negation(GreaterThan(TomTermToExpression(Ref(p.subjectListIndex)),GetSize(p.symbol.getAstName(),Ref(p.subjectListName)))));
             loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListIndex,TomTermToExpression(variableBeginAST),Nop())));
           } else {
             /*
@@ -613,7 +613,7 @@ public class TomKernelCompiler extends TomBase {
              * subjectIndex = begin_i
              */
             Instruction letAssign = `LetAssign(p.subjectListIndex,TomTermToExpression(Ref(variableEndAST)),UnamedBlock(concInstruction(let,increment)));
-            loop = `WhileDo(Negation(IsEmptyArray(Ref(p.subjectListName), Ref(variableEndAST))),
+            loop = `WhileDo(Negation(IsEmptyArray(p.symbol.getAstName(),Ref(p.subjectListName), Ref(variableEndAST))),
                             letAssign);
             loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListIndex,TomTermToExpression(variableBeginAST),Nop())));
           }
@@ -635,7 +635,8 @@ public class TomKernelCompiler extends TomBase {
     }
   }
 
-  private Instruction genIsEmptyArray(TomTerm subjectListName,
+  private Instruction genIsEmptyArray(TomSymbol tomSymbol,
+                                      TomTerm subjectListName,
                                       TomTerm subjectListIndex,
                                      Instruction succes, Instruction failure) {
       /*
@@ -645,11 +646,14 @@ public class TomKernelCompiler extends TomBase {
        *   ...
        * }
        */
-    return `If(IsEmptyArray(Ref(subjectListName),Ref(subjectListIndex)),succes,failure);
+    TomName opNameAST = tomSymbol.getAstName();
+    
+    return `If(IsEmptyArray(opNameAST,Ref(subjectListName),Ref(subjectListIndex)),succes,failure);
   }
 
 
-  private Instruction genGetElementArray(TomTerm subjectListName, 
+  private Instruction genGetElementArray(TomSymbol tomSymbol,
+                                         TomTerm subjectListName, 
                                          TomTerm subjectListIndex, 
                                          TomTerm var,
                                          TomType termType,
@@ -665,10 +669,10 @@ public class TomKernelCompiler extends TomBase {
        * }
        */
     Instruction body = `LetAssign(subjectListIndex,AddOne(Ref(subjectListIndex)),subAction);
-    Expression source = `GetElement(termType,subjectListName,subjectListIndex);
+    Expression source = `GetElement(tomSymbol.getAstName(),termType,subjectListName,subjectListIndex);
     Instruction let = buildLet(var, source, body);
     if(notEmptyList) {
-      return `genIsEmptyArray(subjectListName,subjectListIndex,Nop(),let);
+      return `genIsEmptyArray(tomSymbol,subjectListName,subjectListIndex,Nop(),let);
     } else {
       return let;
     }

@@ -71,7 +71,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
   protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
-  protected abstract void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
+  protected abstract void buildExpGetElement(int deep, TomName opNameAST,TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
 
   protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
   protected abstract void buildExpTrue(int deep) throws IOException;
@@ -145,10 +145,13 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.write(")");
   }
 
-  protected void buildExpIsEmptyArray(int deep, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException {
+  protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException {
     generate(deep,expIndex);
     output.write(" >= ");
-    output.write("tom_get_size_" + getTomType(type) + "(");
+    %match(TomName opNameAST) {
+      EmptyName() -> { output.write("tom_get_size_" + getTomType(type) + "("); }
+      Name(opName) -> { output.write("tom_get_size_" + `opName + "_" + getTomType(type) + "("); }
+    }
     generate(deep,expArray);
     output.write(")");
   }
@@ -194,8 +197,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.write(")");
   }
 
-  protected void buildExpGetSize(int deep, TomType type1, TomTerm var) throws IOException {
-    output.write("tom_get_size_" + getTomType(type1) + "(");
+  protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var) throws IOException {
+    %match(TomName opNameAST) {
+      EmptyName() -> { output.write("tom_get_size_" + getTomType(type) + "("); }
+      Name(opName) -> { output.write("tom_get_size_" + `opName + "_" + getTomType(type) + "("); }
+    }
     generate(deep,var);
     output.write(")");
   }
@@ -392,8 +398,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         
         Name(opName) -> {
           TomSymbol tomSymbol = getSymbolFromName(`opName);
-          returnType = getTLType(getSymbolCodomain(tomSymbol));
-          argType = getTLType(getSymbolDomain(tomSymbol).getHead());
+          argType = getTLType(getSymbolCodomain(tomSymbol));
+          returnType = getTLType(getSymbolDomain(tomSymbol).getHead());
         }
       }
     }
@@ -486,14 +492,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         
         Name(opName) -> {
           TomSymbol tomSymbol = getSymbolFromName(`opName);
-          returnType = getTLType(getSymbolCodomain(tomSymbol));
-          argType = getTLType(getSymbolDomain(tomSymbol).getHead());
+          argType = getTLType(getSymbolCodomain(tomSymbol));
+          returnType = getTLType(getSymbolDomain(tomSymbol).getHead());
         }
       }
     }
     
     genDecl(returnType,
-            "tom_get_element", type1,
+            functionName, type1,
             new String[] {
               argType, name1,
               getTLType(getSymbolTable().getIntType()), name2
@@ -535,14 +541,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generateDeclarationFromList(deep, declList);
   }
 
-  protected void buildTypeListDecl(int deep, TomList declList) throws IOException {
-    generateDeclarationFromList(deep, declList);
-  }
-
-  protected void buildTypeArrayDecl(int deep, TomList declList) throws IOException {
-    generateDeclarationFromList(deep, declList);
-  }
-  
   protected void generateDeclarationFromList(int deep, TomList declList) throws IOException {
     TomTerm term;
     while(!declList.isEmpty()) {

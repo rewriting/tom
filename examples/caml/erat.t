@@ -37,6 +37,9 @@
   is_fsym(t) { true }
   make_empty() { [] }
   make_insert(e,l) { e::l }
+  get_head(l)   { List.hd l }
+  get_tail(l)   { List.tl l }
+  is_empty(l)   { (l=[]) }
 }
 
 let rec genere = function

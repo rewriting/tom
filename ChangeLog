@@ -1,3 +1,8 @@
+2005-04-27  pem  <pem@polly.loria.fr>
+  * removed %typelist and %typearray
+    - get_head, get_tail, and is_empty have to be defined in %oplist
+    - get_element and get_size have to be defined in %oparray
+
 2005-04-21  pem  <pem@polly.loria.fr>
   * big modifications:
     - pattern matching compilation is based on RecordAppl instead of

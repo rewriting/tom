@@ -214,8 +214,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      IsEmptyArray(expArray, expIndex) -> {
-        buildExpIsEmptyArray(deep, getTermType(`expArray), `expIndex, `expArray);
+      IsEmptyArray(opNameAST, expArray, expIndex) -> {
+        buildExpIsEmptyArray(deep, opNameAST, getTermType(`expArray), `expIndex, `expArray);
         return;
       }
 
@@ -268,13 +268,13 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetSize(exp) -> {
-        buildExpGetSize(deep, getTermType(`exp), `exp);
+      GetSize(opNameAST,exp) -> {
+        buildExpGetSize(deep,opNameAST,getTermType(`exp), `exp);
         return;
       }
 
-      GetElement(codomain, varName, varIndex) -> {
-        buildExpGetElement(deep,getTermType(`varName),`codomain, `varName, `varIndex);
+      GetElement(opNameAST,codomain, varName, varIndex) -> {
+        buildExpGetElement(deep,opNameAST,getTermType(`varName),`codomain, `varName, `varIndex);
         return;
       }
 
@@ -623,16 +623,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      TypeListDecl[keywordList=declList] -> { 
-        `buildTypeListDecl(deep, declList);
-        return;
-      }
-
-      TypeArrayDecl[keywordList=declList] -> { 
-        `buildTypeArrayDecl(deep, declList);
-        return;
-      }
-      
       t -> {
         System.out.println("Cannot generate code for declaration: " + `t);
         throw new TomRuntimeException("Cannot generate code for declaration: " + `t);
@@ -714,15 +704,15 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
   protected abstract void buildExpIsEmptyList(int deep, TomName opName, TomType type, TomTerm expList) throws IOException;
-  protected abstract void buildExpIsEmptyArray(int deep, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException;
+  protected abstract void buildExpIsEmptyArray(int deep, TomName opName, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException;
   protected abstract void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2) throws IOException;
   protected abstract void buildExpIsFsym(int deep, String opname, TomTerm var) throws IOException;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp) throws IOException;
   protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm exp) throws IOException;
   protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
   protected abstract void buildExpGetTail(int deep, TomName opName, TomType type1, TomTerm var) throws IOException;
-  protected abstract void buildExpGetSize(int deep, TomType type1, TomTerm var) throws IOException;
-  protected abstract void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
+  protected abstract void buildExpGetSize(int deep, TomName opNameAST, TomType type1, TomTerm var) throws IOException;
+  protected abstract void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
   protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd) throws IOException;
   protected abstract void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd) throws IOException;
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException ;
@@ -761,8 +751,6 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
                                            TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTypeTermDecl(int deep, TomList declList) throws IOException;
-  protected abstract void buildTypeListDecl(int deep, TomList declList) throws IOException;
-  protected abstract void buildTypeArrayDecl(int deep, TomList declList) throws IOException;
   protected abstract void generateDeclarationFromList(int deep, TomList declList) throws IOException;
   
 } // class TomAbstractGenerator

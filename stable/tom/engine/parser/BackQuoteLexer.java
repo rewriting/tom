@@ -515,98 +515,14 @@ tryAgain:
 		
 		mBQ_SIMPLE_ID(false);
 		mBQ_MINUS(false);
+		mBQ_SIMPLE_ID(false);
 		{
-		switch ( LA(1)) {
-		case 'a':  case 'b':  case 'c':  case 'd':
-		case 'e':  case 'f':  case 'g':  case 'h':
-		case 'i':  case 'j':  case 'k':  case 'l':
-		case 'm':  case 'n':  case 'o':  case 'p':
-		case 'q':  case 'r':  case 's':  case 't':
-		case 'u':  case 'v':  case 'w':  case 'x':
-		case 'y':  case 'z':
-		{
-			matchRange('a','z');
-			break;
+		if ((LA(1)=='-')) {
+			mBQ_MINUS_ID_PART(false);
 		}
-		case 'A':  case 'B':  case 'C':  case 'D':
-		case 'E':  case 'F':  case 'G':  case 'H':
-		case 'I':  case 'J':  case 'K':  case 'L':
-		case 'M':  case 'N':  case 'O':  case 'P':
-		case 'Q':  case 'R':  case 'S':  case 'T':
-		case 'U':  case 'V':  case 'W':  case 'X':
-		case 'Y':  case 'Z':
-		{
-			matchRange('A','Z');
-			break;
+		else {
 		}
-		default:
-		{
-			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
-		}
-		}
-		}
-		{
-		_loop81:
-		do {
-			switch ( LA(1)) {
-			case '-':
-			{
-				mBQ_MINUS(false);
-				{
-				switch ( LA(1)) {
-				case 'a':  case 'b':  case 'c':  case 'd':
-				case 'e':  case 'f':  case 'g':  case 'h':
-				case 'i':  case 'j':  case 'k':  case 'l':
-				case 'm':  case 'n':  case 'o':  case 'p':
-				case 'q':  case 'r':  case 's':  case 't':
-				case 'u':  case 'v':  case 'w':  case 'x':
-				case 'y':  case 'z':
-				{
-					matchRange('a','z');
-					break;
-				}
-				case 'A':  case 'B':  case 'C':  case 'D':
-				case 'E':  case 'F':  case 'G':  case 'H':
-				case 'I':  case 'J':  case 'K':  case 'L':
-				case 'M':  case 'N':  case 'O':  case 'P':
-				case 'Q':  case 'R':  case 'S':  case 'T':
-				case 'U':  case 'V':  case 'W':  case 'X':
-				case 'Y':  case 'Z':
-				{
-					matchRange('A','Z');
-					break;
-				}
-				default:
-				{
-					throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
-				}
-				}
-				}
-				break;
-			}
-			case 'A':  case 'B':  case 'C':  case 'D':
-			case 'E':  case 'F':  case 'G':  case 'H':
-			case 'I':  case 'J':  case 'K':  case 'L':
-			case 'M':  case 'N':  case 'O':  case 'P':
-			case 'Q':  case 'R':  case 'S':  case 'T':
-			case 'U':  case 'V':  case 'W':  case 'X':
-			case 'Y':  case 'Z':  case 'a':  case 'b':
-			case 'c':  case 'd':  case 'e':  case 'f':
-			case 'g':  case 'h':  case 'i':  case 'j':
-			case 'k':  case 'l':  case 'm':  case 'n':
-			case 'o':  case 'p':  case 'q':  case 'r':
-			case 's':  case 't':  case 'u':  case 'v':
-			case 'w':  case 'x':  case 'y':  case 'z':
-			{
-				mBQ_SIMPLE_ID(false);
-				break;
-			}
-			default:
-			{
-				break _loop81;
-			}
-			}
-		} while (true);
+		
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
@@ -654,6 +570,52 @@ tryAgain:
 		_loop76:
 		do {
 			switch ( LA(1)) {
+			case 'A':  case 'B':  case 'C':  case 'D':
+			case 'E':  case 'F':  case 'G':  case 'H':
+			case 'I':  case 'J':  case 'K':  case 'L':
+			case 'M':  case 'N':  case 'O':  case 'P':
+			case 'Q':  case 'R':  case 'S':  case 'T':
+			case 'U':  case 'V':  case 'W':  case 'X':
+			case 'Y':  case 'Z':  case 'a':  case 'b':
+			case 'c':  case 'd':  case 'e':  case 'f':
+			case 'g':  case 'h':  case 'i':  case 'j':
+			case 'k':  case 'l':  case 'm':  case 'n':
+			case 'o':  case 'p':  case 'q':  case 'r':
+			case 's':  case 't':  case 'u':  case 'v':
+			case 'w':  case 'x':  case 'y':  case 'z':
+			{
+				{
+				switch ( LA(1)) {
+				case 'a':  case 'b':  case 'c':  case 'd':
+				case 'e':  case 'f':  case 'g':  case 'h':
+				case 'i':  case 'j':  case 'k':  case 'l':
+				case 'm':  case 'n':  case 'o':  case 'p':
+				case 'q':  case 'r':  case 's':  case 't':
+				case 'u':  case 'v':  case 'w':  case 'x':
+				case 'y':  case 'z':
+				{
+					matchRange('a','z');
+					break;
+				}
+				case 'A':  case 'B':  case 'C':  case 'D':
+				case 'E':  case 'F':  case 'G':  case 'H':
+				case 'I':  case 'J':  case 'K':  case 'L':
+				case 'M':  case 'N':  case 'O':  case 'P':
+				case 'Q':  case 'R':  case 'S':  case 'T':
+				case 'U':  case 'V':  case 'W':  case 'X':
+				case 'Y':  case 'Z':
+				{
+					matchRange('A','Z');
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+				}
+				}
+				}
+				break;
+			}
 			case '_':
 			{
 				mBQ_UNDERSCORE(false);
@@ -667,39 +629,7 @@ tryAgain:
 				break;
 			}
 			default:
-				if ((_tokenSet_2.member(LA(1))) && (true)) {
-					{
-					switch ( LA(1)) {
-					case 'a':  case 'b':  case 'c':  case 'd':
-					case 'e':  case 'f':  case 'g':  case 'h':
-					case 'i':  case 'j':  case 'k':  case 'l':
-					case 'm':  case 'n':  case 'o':  case 'p':
-					case 'q':  case 'r':  case 's':  case 't':
-					case 'u':  case 'v':  case 'w':  case 'x':
-					case 'y':  case 'z':
-					{
-						matchRange('a','z');
-						break;
-					}
-					case 'A':  case 'B':  case 'C':  case 'D':
-					case 'E':  case 'F':  case 'G':  case 'H':
-					case 'I':  case 'J':  case 'K':  case 'L':
-					case 'M':  case 'N':  case 'O':  case 'P':
-					case 'Q':  case 'R':  case 'S':  case 'T':
-					case 'U':  case 'V':  case 'W':  case 'X':
-					case 'Y':  case 'Z':
-					{
-						matchRange('A','Z');
-						break;
-					}
-					default:
-					{
-						throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
-					}
-					}
-					}
-				}
-			else {
+			{
 				break _loop76;
 			}
 			}
@@ -747,6 +677,33 @@ tryAgain:
 		int _saveIndex;
 		
 		match('-');
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	protected final void mBQ_MINUS_ID_PART(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = BQ_MINUS_ID_PART;
+		int _saveIndex;
+		
+		{
+		int _cnt81=0;
+		_loop81:
+		do {
+			if ((LA(1)=='-')) {
+				mBQ_MINUS(false);
+				mBQ_SIMPLE_ID(false);
+			}
+			else {
+				if ( _cnt81>=1 ) { break _loop81; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+			}
+			
+			_cnt81++;
+		} while (true);
+		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));

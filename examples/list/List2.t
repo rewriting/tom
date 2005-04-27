@@ -44,17 +44,17 @@ public class List2 {
 		return factory;
 	}
 
-  %typearray TomList {
+  %typeterm TomList {
     implement { ArrayList }
     equals(l1,l2)      { l1.equals(l2) }
-    get_element(l,n)   { l.get(n) }
-    get_size(l)        { l.size() }
   }
 
   %oparray TomList conc( TomTerm* ) {
     is_fsym(t)       { t instanceof ArrayList }
     make_empty(n)   { myEmpty(n) }
     make_append(e,l) { myAdd(e,(ArrayList)l) }
+    get_element(l,n)   { (ATermAppl)l.get(n) }
+    get_size(l)        { l.size() }
   }
 
   private ArrayList myAdd(Object e,ArrayList l) {

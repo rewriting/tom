@@ -457,6 +457,7 @@ public class TomBase {
     return false;
   } 
 
+  /*
   protected boolean hasGetHead(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,DeclarationToOption(GetHeadDecl[]),_*) -> { return true; }
@@ -477,6 +478,7 @@ public class TomBase {
     }
     return false;
   } 
+*/
 
   protected TomName getSlotName(TomSymbol symbol, int number) {
     PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();

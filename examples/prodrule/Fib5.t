@@ -53,18 +53,18 @@ public class Fib5 {
 	    }
 
     
-  %typelist Space {
+  %typeterm Space {
     implement { MyList }
     equals(l1,l2)      { l1.equals(l2) }
-    get_head(l)        { (Element)l.getHead() }
-    get_tail(l)        { (MyList)l.getTail() }
-    is_empty(l)        { l.isEmpty() }
   }
 
   %oplist Space concElement( Element* ) {
     is_fsym(t) { t instanceof MyList }
     make_empty()     { new MyList() }
     make_insert(e,l) { new MyList(e,l) }
+    get_head(l)        { (Element)l.getHead() }
+    get_tail(l)        { (MyList)l.getTail() }
+    is_empty(l)        { l.isEmpty() }
   }
       
   public Fib5(fibFactory factory) {
