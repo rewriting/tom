@@ -116,7 +116,8 @@ public class TomKernelCompiler extends TomBase {
                  * return the compiled Match construction
                  */
               InstructionList astAutomataList = automataListCompileMatchingList(automataList);
-              Instruction astAutomata = `collectVariableFromSubjectList(l1,1,rootpath,AbstractBlock(astAutomataList));
+              SlotList slots = tomListToSlotList(l1);
+              Instruction astAutomata = `collectVariableFromSubjectList(slots,rootpath,AbstractBlock(astAutomataList));
               return `CompiledMatch(astAutomata, optionList);
             }
               
@@ -140,24 +141,24 @@ public class TomKernelCompiler extends TomBase {
      * create a list of declaration/assignement: v1=t1 ... vn=tn in body
      * generate a check_stamp
      */
-  private Instruction collectVariableFromSubjectList(TomList subjectList, int index, TomNumberList path, Instruction body) {
-    %match(TomList subjectList) { 
-      emptyTomList() -> { return body; }
-      manyTomList(subjectVar@Variable[option=option,astType=variableType],tail) -> {
-        body = collectVariableFromSubjectList(`tail,index+1,path,body);
-        TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType,concConstraint());
+  private Instruction collectVariableFromSubjectList(SlotList subjectList, TomNumberList path, Instruction body) {
+    %match(SlotList subjectList) { 
+      emptySlotList() -> { return body; }
+      manySlotList(PairSlotAppl(slotName,subjectVar@Variable[option=option,astType=variableType]),tail) -> {
+        body = collectVariableFromSubjectList(`tail,path,body);
+        TomTerm variable = `Variable(option,PositionName(path.append(NameNumber(slotName))),variableType,concConstraint());
         Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
         Instruction checkStamp = `CheckStamp(variable);
           // the UnamedBlock encapsulation is needed for Caml
         return `Let(variable,source,AbstractBlock(concatInstruction(checkStamp,body)));
       }
 
-      manyTomList(subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_),tail) -> {
-        body = collectVariableFromSubjectList(`tail,index+1,path,body);
+      manySlotList(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_)),tail) -> {
+        body = collectVariableFromSubjectList(`tail,path,body);
 
         TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`tomName);
         TomType tomType = getSymbolCodomain(tomSymbol);
-        TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType, concConstraint());
+        TomTerm variable = `Variable(option(),PositionName(path.append(NameNumber(slotName))),tomType, concConstraint());
         Expression source = `TomTermToExpression(subjectVar);
         Instruction checkStamp = `CheckStamp(variable);
         return `Let(variable,source,AbstractBlock(concatInstruction(checkStamp,body)));
