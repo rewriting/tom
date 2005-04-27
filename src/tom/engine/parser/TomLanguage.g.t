@@ -160,17 +160,18 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
     OptionList optionList = `concOption(ot);
     LinkedList argumentList = new LinkedList();
     LinkedList patternInstructionList = new LinkedList();
+    TomList subjectList = null;
 }
   : (
             LPAREN matchArguments[argumentList] RPAREN 
-            LBRACE 
+            LBRACE { subjectList = ast().makeList(argumentList); }
             ( 
-                patternInstruction[patternInstructionList] 
+             patternInstruction[subjectList,patternInstructionList] 
             )* 
             t:RBRACE 
             { 
                 result = `Match(
-                    SubjectList(ast().makeList(argumentList)),
+                    SubjectList(subjectList),
                     ast().makePatternInstructionList(patternInstructionList),
                     optionList
                 );
@@ -202,7 +203,7 @@ matchArgument [LinkedList list]
         }        
     ;
 
-patternInstruction [LinkedList list] throws TomException
+patternInstruction [TomList subjectList, LinkedList list] throws TomException
 {
     LinkedList matchPatternList = new LinkedList();
     LinkedList listOfMatchPatternList = new LinkedList();
@@ -270,7 +271,7 @@ patternInstruction [LinkedList list] throws TomException
                     //System.out.println("pattern = " + `Pattern(patterns,ast().makeList(matchGuardsList)));
 
                     list.add(`PatternInstruction(
-                            Pattern(patterns,ast().makeList(matchGuardsList)),
+                            Pattern(subjectList,patterns,ast().makeList(matchGuardsList)),
                             RawAction(AbstractBlock(ast().makeInstructionList(blockList))),
                             optionList)
                     );
@@ -1343,6 +1344,11 @@ operatorArray returns [Declaration result] throws TomException
 
         |   attribute = keywordIsFsym[`Name(name.getText()),type.getText()]
             { options.add(attribute); }
+
+        |   attribute = keywordGetElement[`Name(name.getText()), type.getText()]
+            { options.add(attribute); }
+        |   attribute = keywordGetSize[`Name(name.getText()), type.getText()]
+            { options.add(attribute); }
         )*
         t:RBRACE
         { 
@@ -1377,7 +1383,6 @@ typeTerm returns [Declaration result] throws TomException
             (
                 attribute = keywordEquals[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
             |   attribute = keywordCheckStamp[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
             |   attribute = keywordSetStamp[type.getText()]
@@ -1391,11 +1396,8 @@ typeTerm returns [Declaration result] throws TomException
         {
             TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
             putType(type.getText(), astType);
-
             result = `TypeTermDecl(Name(type.getText()),blockList,ot);
-
             updatePosition(t.getLine(),t.getColumn());
-
             selector().pop();
         }
     ;
@@ -1440,11 +1442,8 @@ typeList returns [Declaration result] throws TomException
         {
             TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
             putType(type.getText(), astType);
-
             result = `TypeListDecl(Name(type.getText()),blockList,ot);
-
             updatePosition(t.getLine(),t.getColumn());
-
             selector().pop();
         }
     ;
@@ -1467,10 +1466,10 @@ typeArray returns [Declaration result] throws TomException
                 attribute = keywordEquals[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
-            |   attribute = keywordGetElement[type.getText()]
+            |   attribute = keywordGetElement[`EmptyName(), type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
-            |   attribute = keywordGetSize[type.getText()]
+            |   attribute = keywordGetSize[`EmptyName(), type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
             
             |   attribute = keywordCheckStamp[type.getText()]
@@ -1486,12 +1485,9 @@ typeArray returns [Declaration result] throws TomException
         {
             TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
             putType(type.getText(), astType);
-
             result = `TypeArrayDecl(Name(type.getText()),blockList,ot);
-            
             updatePosition(t.getLine(),t.getColumn());
-
-        selector().pop();
+            selector().pop();
         }
     ;
 
@@ -1616,7 +1612,7 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
         )
     ;
 
-keywordGetElement[String type] returns [Declaration result] throws TomException
+keywordGetElement[TomName opname, String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
@@ -1636,7 +1632,7 @@ keywordGetElement[String type] returns [Declaration result] throws TomException
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
                 
-                result = `GetElementDecl(
+                result = `GetElementDecl(opname,
                     Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
                     Variable(option2,Name(name2.getText()),TomTypeAlone("int"),emptyConstraintList()),
                     tlCode, ot);
@@ -1644,7 +1640,7 @@ keywordGetElement[String type] returns [Declaration result] throws TomException
         )
     ;
 
-keywordGetSize[String type] returns [Declaration result] throws TomException
+keywordGetSize[TomName opname, String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
@@ -1662,7 +1658,7 @@ keywordGetSize[String type] returns [Declaration result] throws TomException
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
 
-                result = `GetSizeDecl(
+                result = `GetSizeDecl(opname,
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
                     tlCode,ot);
             }

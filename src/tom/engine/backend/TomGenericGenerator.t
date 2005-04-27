@@ -39,14 +39,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected boolean lazyMode;
 
   public TomGenericGenerator(OutputCode output, OptionManager optionManager,
-                                SymbolTable symbolTable) {
+                             SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
     lazyMode = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
   }
 
-// ------------------------------------------------------------
+  // ------------------------------------------------------------
   %include { adt/tomsignature/TomSignature.tom }
-// ------------------------------------------------------------
+  // ------------------------------------------------------------
 
   protected abstract void genDecl(String returnType,
                                   String declName,
@@ -61,7 +61,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
   protected abstract void genDeclArray(String name, TomType listType, TomType eltType) throws IOException;
 
-//------------------------------------------------------------
+  //------------------------------------------------------------
  
   protected abstract void buildRef(int deep, TomTerm term) throws IOException;
   protected abstract void buildInstructionSequence(int deep, Instruction instruction) throws IOException;
@@ -109,9 +109,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-      // inspect the optionList
+    // inspect the optionList
     generateOptionList(deep, optionList);
-      // inspect the slotlist
+    // inspect the slotlist
     generatePairNameDeclList(deep, pairNameDeclList);
   }
 
@@ -173,16 +173,16 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var) throws IOException {
-      //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
-      //generate(deep,var);
-      //output.write(")");
-      output.write("tom_get_slot_");
-      output.write(opname);
-      output.writeUnderscore();
-      output.write(slotName);
-      output.writeOpenBrace();
-      generate(deep,var);
-      output.writeCloseBrace();
+    //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
+    //generate(deep,var);
+    //output.write(")");
+    output.write("tom_get_slot_");
+    output.write(opname);
+    output.writeUnderscore();
+    output.write(slotName);
+    output.writeOpenBrace();
+    generate(deep,var);
+    output.writeCloseBrace();
   }
 
   protected void buildExpGetTail(int deep, TomName opNameAST, TomType type, TomTerm var) throws IOException {
@@ -224,7 +224,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
-TomType tlType, TargetLanguage tlCode) throws IOException {
+                                            TomType tlType, TargetLanguage tlCode) throws IOException {
     String args[];
     if(lazyMode) {
       TomType argType = getUniversalType();
@@ -237,14 +237,14 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
     }
     
     TomType returnType = getUniversalType();
-      if(getSymbolTable().isBuiltinType(type)) {
-        returnType = getSymbolTable().getBuiltinType(type);
-      }
-      genDecl(getTLType(returnType),"tom_get_fun_sym", type,args,tlCode);
+    if(getSymbolTable().isBuiltinType(type)) {
+      returnType = getSymbolTable().getBuiltinType(type);
+    }
+    genDecl(getTLType(returnType),"tom_get_fun_sym", type,args,tlCode);
   }
 
   protected void buildCheckStampDecl(int deep, String type, String name,
-                                 TomType tlType, TargetLanguage tlCode) throws IOException {
+                                     TomType tlType, TargetLanguage tlCode) throws IOException {
     TomType returnType = getSymbolTable().getVoidType();
     String argType;
     if(!lazyMode) {
@@ -257,7 +257,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
   }
 
   protected void buildSetStampDecl(int deep, String type, String name,
-                                 TomType tlType, TargetLanguage tlCode) throws IOException {
+                                   TomType tlType, TargetLanguage tlCode) throws IOException {
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -273,7 +273,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
   }
 
   protected void buildGetImplementationDecl(int deep, String type, String name,
-                                 TomType tlType, TargetLanguage tlCode) throws IOException {
+                                            TomType tlType, TargetLanguage tlCode) throws IOException {
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -308,7 +308,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
   }
 
   protected void buildGetSlotDecl(int deep, String tomName, String name1,
-TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
+                                  TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
@@ -333,7 +333,7 @@ TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
   }
 
   protected void  buildCompareFunctionSymbolDecl(int deep, String name1,
-String name2, String type1, String type2, TargetLanguage tlCode) throws IOException {
+                                                 String name2, String type1, String type2, TargetLanguage tlCode) throws IOException {
     TomType argType1 = getUniversalType();
     if(getSymbolTable().isBuiltinType(type1)) {
       argType1 = getSymbolTable().getBuiltinType(type1);
@@ -352,7 +352,7 @@ String name2, String type1, String type2, TargetLanguage tlCode) throws IOExcept
   }
 
   protected void buildTermsEqualDecl(int deep, String name1, String name2,
-String type1, String type2, TargetLanguage tlCode) throws IOException {
+                                     String type1, String type2, TargetLanguage tlCode) throws IOException {
     TomType argType1 = getUniversalType();
     if(getSymbolTable().isBuiltinType(type1)) {
       argType1 = getSymbolTable().getBuiltinType(type1);
@@ -464,15 +464,32 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
             tlCode);
   }
 
-  protected void buildGetElementDecl(int deep, String name1, String name2,
-                                     String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
-    String returnType, argType;
-    if(!lazyMode) {
-      returnType = getTLType(getUniversalType());
-      argType = getTLCode(tlType1);
-    } else {
+  protected void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2,
+                                     String type1, TomType domain, TargetLanguage tlCode) throws IOException {
+    String returnType = null;
+    String argType = null;
+    String functionName = "tom_get_element";
+
+    %match(TomName opNameAST) {
+      Name(opName) -> { functionName = functionName + "_" + `opName; }
+    }
+
+    if(lazyMode) {
       returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
+    } else {
+      %match(TomName opNameAST) {
+        EmptyName() -> {
+          returnType = getTLType(getUniversalType());
+          argType = getTLCode(domain);
+        }
+        
+        Name(opName) -> {
+          TomSymbol tomSymbol = getSymbolFromName(`opName);
+          returnType = getTLType(getSymbolCodomain(tomSymbol));
+          argType = getTLType(getSymbolDomain(tomSymbol).getHead());
+        }
+      }
     }
     
     genDecl(returnType,
@@ -484,17 +501,32 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
             tlCode);
   }
 
-  protected void buildGetSizeDecl(int deep, String name1, String type,
-TomType tlType, TargetLanguage tlCode) throws IOException {
-    String argType;
-    if(!lazyMode) {
-      argType = getTLCode(tlType);
-    } else {
+  protected void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
+                                  TomType domain, TargetLanguage tlCode) throws IOException {
+    String argType = null;
+    String functionName = "tom_get_size";
+
+    %match(TomName opNameAST) {
+      Name(opName) -> { functionName = functionName + "_" + `opName; }
+    }
+
+    if(lazyMode) {
       argType = getTLType(getUniversalType());
+    } else {
+      %match(TomName opNameAST) {
+        EmptyName() -> {
+          argType = getTLCode(domain);
+        }
+        
+        Name(opName) -> {
+          TomSymbol tomSymbol = getSymbolFromName(`opName);
+          argType = getTLType(getSymbolCodomain(tomSymbol));
+        }
+      }
     }
     
     genDecl(getTLType(getSymbolTable().getIntType()),
-            "tom_get_size", type,
+            functionName, type,
             new String[] { argType, name1 },
             tlCode);
   }

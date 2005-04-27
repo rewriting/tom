@@ -579,16 +579,18 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetElementDecl(Variable[astName=Name(name1), astType=Type[tomType=ASTTomType(type1),tlType=tlType1@TLType[]]],
-                     Variable[astName=Name(name2)],
-                     tlCode@TL[], _) -> {
-        `buildGetElementDecl(deep, name1, name2, type1, tlType1, tlCode);
+      GetElementDecl[opname=opNameAST,
+                     variable=Variable[astName=Name(name1), astType=Type[tomType=ASTTomType(type1),tlType=tlType1@TLType[]]],
+                     index=Variable[astName=Name(name2)],
+                     tlCode=tlCode@TL[]] -> {
+        `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, tlCode);
         return;
       }
       
-      GetSizeDecl(Variable[astName=Name(name), astType=Type(ASTTomType(type),tlType@TLType[])],
-                  tlCode@TL[], _) -> {
-        `buildGetSizeDecl(deep, name, type, tlType, tlCode);
+      GetSizeDecl[opname=opNameAST,
+                  variable=Variable[astName=Name(name), astType=Type(ASTTomType(type),tlType@TLType[])],
+                  tlCode=tlCode@TL[]] -> {
+        `buildGetSizeDecl(deep, opNameAST, name, type, tlType, tlCode);
         return;
       }
       
@@ -754,9 +756,9 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
                                            TomType tlType, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildGetElementDecl(int deep, String name1, String name2,
+  protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2,
                                               String type1, TomType tlType1, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildGetSizeDecl(int deep, String name1, String type,
+  protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
                                            TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTypeTermDecl(int deep, TomList declList) throws IOException;
   protected abstract void buildTypeListDecl(int deep, TomList declList) throws IOException;

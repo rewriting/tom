@@ -146,11 +146,11 @@ public class TomCompiler extends TomGenericPlugin {
               
                 matchBlock: {
                   %match(PatternInstruction elt) {
-                    PatternInstruction(Pattern(termList,guardList),actionInst, option) -> {
+                    PatternInstruction(Pattern[subjectList=subjectList,tomList=termList,guards=guardList],actionInst, option) -> {
                       /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
                       TomList renamedTermList = linearizePattern(`termList,equalityCheck);
-                      newPatternInstruction = `PatternInstruction(Pattern(renamedTermList,guardList),actionInst, option);        
+                      newPatternInstruction = `PatternInstruction(Pattern(subjectList,renamedTermList,guardList),actionInst, option);        
                       /* attach guards to variables or applications*/
                       TomList constrainedTermList = renamedTermList;
                       TomList l = `guardList;
@@ -161,7 +161,7 @@ public class TomCompiler extends TomGenericPlugin {
                         l = l.getTail();
                       }
                       TomList emptyGuardList = `empty();
-                      newPatternInstruction = `PatternInstruction(Pattern(constrainedTermList,emptyGuardList),actionInst, option);        
+                      newPatternInstruction = `PatternInstruction(Pattern(subjectList,constrainedTermList,emptyGuardList),actionInst, option);        
 
                       /* abstract patterns */
                       ArrayList abstractedPattern  = new ArrayList();
@@ -172,18 +172,19 @@ public class TomCompiler extends TomGenericPlugin {
                       if(abstractedPattern.size() > 0) {
                         /* generate a new match construct */
                       
+                        TomList generatedSubjectList = `getAstFactory().makeList(introducedVariable);
                         PatternInstruction generatedPatternInstruction =
-                          `PatternInstruction(Pattern(getAstFactory().makeList(abstractedPattern),emptyGuardList),actionInst, concOption());        
+                          `PatternInstruction(Pattern(generatedSubjectList, getAstFactory().makeList(abstractedPattern),emptyGuardList),actionInst, concOption());        
                         /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
                         OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
                         Instruction generatedMatch =
-                          `Match(SubjectList(getAstFactory().makeList(introducedVariable)),
+                          `Match(SubjectList(generatedSubjectList),
                                  concPatternInstruction(generatedPatternInstruction),
                                  generatedMatchOptionList);
                         /*System.out.println("Generate new Match"+generatedMatch); */
                         generatedMatch = preProcessingInstruction(generatedMatch);
                         newPatternInstruction =
-                          `PatternInstruction(Pattern(newTermList,emptyGuardList),generatedMatch, option);
+                          `PatternInstruction(Pattern(subjectList,newTermList,emptyGuardList),generatedMatch, option);
                       
                         /*System.out.println("newPatternInstruction = " + newPatternInstruction); */
                       }
@@ -216,17 +217,17 @@ public class TomCompiler extends TomGenericPlugin {
               PatternInstructionList patternInstructionList  = `concPatternInstruction();
 
               TomTypeList typesList = getSymbolDomain(tomSymbol);
-              TomList matchArgumentsList = empty();
+              TomList subjectListAST = empty();
               TomNumberList path = `concTomNumber(RuleVar());
               int index = 0;
               while(!typesList.isEmpty()) {
                 TomType subtermType = typesList.getHead();
                 TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
-                matchArgumentsList = append(variable,matchArgumentsList);
+                subjectListAST = append(variable,subjectListAST);
                 typesList = typesList.getTail();
                 index++;
               }
-            
+
               TomRuleList ruleList = `rl;
               while(!ruleList.isEmpty()) {
                 TomRule rule = ruleList.getHead();
@@ -240,7 +241,7 @@ public class TomCompiler extends TomGenericPlugin {
                     Instruction newRhsInst = `buildCondition(condList,rhsInst);
                     TomList guardList = empty();
 
-                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(Pattern(slotListToTomList(matchPatternsList),guardList),newRhsInst, option));
+                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList),newRhsInst, option));
 
 
                   }
@@ -248,13 +249,12 @@ public class TomCompiler extends TomGenericPlugin {
                 ruleList = ruleList.getTail();
               }
             
-              TomTerm subjectListAST = `SubjectList(matchArgumentsList);
-              Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,subjectListAST);
-              Instruction matchAST = `Match(SubjectList(matchArgumentsList),
+              Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,SubjectList(subjectListAST));
+              Instruction matchAST = `Match(SubjectList(subjectListAST),
                                             patternInstructionList,
                                             concOption(orgTrack));
 
-              Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(matchArgumentsList,replace_preProcessing_makeTerm)));
+              Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(subjectListAST,replace_preProcessing_makeTerm)));
 
               InstructionList l = `concInstruction(makeFunctionBeginAST,matchAST,buildAST,MakeFunctionEnd());
               return preProcessingInstruction(`AbstractBlock(l));
@@ -265,7 +265,7 @@ public class TomCompiler extends TomGenericPlugin {
         } // end instanceof Instruction
 
           /*
-           * Defaul case: traversal
+           * Default case: traversal
            */
         return traversal().genericTraversal(subject,this);
       } // end apply
@@ -310,12 +310,13 @@ public class TomCompiler extends TomGenericPlugin {
         TomTerm newSubject = preProcessing(`BuildReducedTerm(subject));
         TomTerm introducedVariable = newSubject;
         TomList guardList = empty();
+        TomList generatedSubjectList = `cons(introducedVariable,empty()); 
         PatternInstruction generatedPatternInstruction =
-          `PatternInstruction(Pattern(cons(pattern,empty()),guardList),newAction, option());        
+          `PatternInstruction(Pattern(generatedSubjectList, cons(pattern,empty()),guardList),newAction, option());        
 
           // Warning: The options are not good
         Instruction generatedMatch =
-          `Match(SubjectList(cons(introducedVariable,empty())),
+          `Match(SubjectList(generatedSubjectList),
                  concPatternInstruction(generatedPatternInstruction),
                  option());
         return generatedMatch;

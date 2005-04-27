@@ -64,11 +64,7 @@ public class TomIlTools extends TomBase {
   /**
    * Methods used to translate a pattern and conditions in zenon signature
    */
-  public ZExpr pattern_to_ZExpr(ZTerm input, ATerm patternList, Map map) {
-    return pattern_to_ZExpr(input, (PatternList) patternList, map);
-  }
-
-  public ZExpr pattern_to_ZExpr(ZTerm input, PatternList patternList, Map map) {
+  public ZExpr pattern_to_ZExpr(PatternList patternList, Map map) {
     // do everything match the empty pattern ?
     ZExpr result = `ztrue();
     Pattern h = null;
@@ -76,40 +72,43 @@ public class TomIlTools extends TomBase {
     if(!tail.isEmpty()) {
       h = tail.getHead();
       tail = tail.getTail();
-      result = pattern_to_ZExpr(input, h,map);
+      result = pattern_to_ZExpr(h,map);
     }
 
     while(!tail.isEmpty()) {
       h = tail.getHead();
-      result = `zor(result,pattern_to_ZExpr(input, h,map));
+      result = `zor(result,pattern_to_ZExpr(h,map));
       tail = tail.getTail();
     }
     return result;
   }
 
-  public ZExpr pattern_to_ZExpr(ZTerm input, Pattern pattern, Map map) {
+  public ZExpr pattern_to_ZExpr(Pattern pattern, Map map) {
     %match(Pattern pattern) {
-      Pattern(tomList,guards) -> {
-          return pattern_to_ZExpr(input, tomList, map);
+      Pattern(subjectList,tomList,guards) -> {
+          return pattern_to_ZExpr(subjectList, tomList, map);
       }
     }
     throw new TomRuntimeException("pattern_to_ZExpr : strange pattern " + pattern);
   }
   
-  public ZExpr pattern_to_ZExpr(ZTerm input, TomList tomList, Map map) {
+  public ZExpr pattern_to_ZExpr(TomList subjectList, TomList tomList, Map map) {
     /* for each TomTerm: builds a zeq : pattern = first var in map */
     ZExpr res = null;
-    TomTerm h = null;
     TomList tail = tomList;    
     if(!tail.isEmpty()) {
-      h = tail.getHead();
+      TomTerm h = tail.getHead();
+      TomTerm subject = subjectList.getHead();
       tail = tail.getTail();
-      res = `zeq(tomTerm_to_ZTerm(h,map),input);
+      subjectList = subjectList.getTail();
+      res = `zeq(tomTerm_to_ZTerm(h,map),tomTerm_to_ZTerm(subject,map));
     }
     while(!tail.isEmpty()) {
-      h = tail.getHead();
+      TomTerm h = tail.getHead();
+      TomTerm subject = subjectList.getHead();
       tail = tail.getTail();
-      res = `zand(res,zeq(tomTerm_to_ZTerm(h,map),input));
+      subjectList = subjectList.getTail();
+      res = `zand(res,zeq(tomTerm_to_ZTerm(h,map),tomTerm_to_ZTerm(subject,map)));
     }
     return res;
   }

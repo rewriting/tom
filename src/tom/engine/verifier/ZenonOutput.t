@@ -94,17 +94,13 @@ public class ZenonOutput {
 
     ZExpr pattern = null;
     ZExpr negpattern = null;
-    ZTerm inputvar = null;
     // theorem to prove
     %match(DerivTree tree) {
-      derivrule(_,ebs(_,env(subsList@subs(is(_,t),_*),acc@accept(positive,negative))),_,_) -> {
-        inputvar = build_zenon_from_term(t);
-        pattern = tomiltools.pattern_to_ZExpr(inputvar,
-                                              positive,
+      derivrule(_,ebs(_,env(subsList,acc@accept(positive,negative))),_,_) -> {
+        pattern = tomiltools.pattern_to_ZExpr((PatternList)positive,
                                               build_zenon_varmap(subsList, new HashMap()));
-        negpattern = tomiltools.pattern_to_ZExpr(inputvar,
-                                              negative,
-                                              build_zenon_varmap(subsList, new HashMap()));
+        negpattern = tomiltools.pattern_to_ZExpr((PatternList)negative,
+                                                 build_zenon_varmap(subsList, new HashMap()));
       }
     }
     
@@ -147,6 +143,8 @@ public class ZenonOutput {
     // generates axioms for all subterm operations
     ZAxiomList subtermAxioms = tomiltools.subtermsDefinition(symbols);
 
+    System.out.println("MODIFY HERE");
+    ZTerm inputvar=null;
     ZSpec spec = `zthm(zforall(inputvar,ztype("T"),theorem),
                        zby(symbolsAxioms*,subtermAxioms*));
     // System.out.println(spec);

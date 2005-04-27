@@ -20,8 +20,8 @@ GetTailDecl(opname:TomName, variable:TomTerm,tlCode:TargetLanguage,orgTrack:Opti
 IsEmptyDecl(opname:TomName, variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 MakeEmptyList(astName:TomName,instr:Instruction,orgTrack:Option) -> Declaration
 MakeAddList(astName:TomName,varElt:TomTerm,varList:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-GetElementDecl(kid1:TomTerm,kid2:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
-GetSizeDecl(kid1:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
+GetElementDecl(opname:TomName, variable:TomTerm,index:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
+GetSizeDecl(opname:TomName, variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 MakeEmptyArray(astName:TomName,varSize:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
 MakeAddArray(astName:TomName,varElt:TomTerm,varList:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
 MakeDecl(astName:TomName,astType:TomType,args:TomList,instr:Instruction,orgTrack:Option) -> Declaration

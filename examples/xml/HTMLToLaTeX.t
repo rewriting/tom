@@ -171,9 +171,13 @@ public class HTMLToLaTeX {
                  write("img : "+`text);
                  return false;
                }
+               /*
                <li>data*</li> -> { write("\\item "); toLaTeX(`data); write("\n"); return false; }
                <dd>data*</dd> -> { write("\\item "); toLaTeX(`data); write("\n"); return false; }
                <dt>data*</dt> -> { write("\\item "); toLaTeX(`data); write("\n"); return false; }
+               */
+               <(li|dd|dt)>data*</(li|dd|dt)> -> { write("\\item "); toLaTeX(`data); write("\n"); return false; }
+
                <code>data*</code> -> {
                  write("{\\tt ");
                  toLaTeX(`data);

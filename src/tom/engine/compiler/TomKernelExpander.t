@@ -237,23 +237,23 @@ public class TomKernelExpander extends TomBase {
           } // end match
         } else if(subject instanceof Pattern) {
           %match(TomTerm contextSubject, Pattern subject) {
-            SubjectList(l1), Pattern(subjectList, guardList) -> {
-               //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
+            SubjectList(l1), Pattern(subjectList,termList, guardList) -> {
+               //System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
                 
                // process a list of subterms
                ArrayList list = new ArrayList();
-               while(!`subjectList.isEmpty()) {
-                 list.add(expandVariable(`l1.getHead(), `subjectList.getHead()));
-                 `subjectList = `subjectList.getTail();
+               while(!`termList.isEmpty()) {
+                 list.add(expandVariable(`l1.getHead(), `termList.getHead()));
+                 `termList = `termList.getTail();
                  `l1 = `l1.getTail();
                }
-               TomList newSubjectList = getAstFactory().makeList(list);
+               TomList newTermList = getAstFactory().makeList(list);
 
                // process a list of guards
                list.clear();
               // build the list of variables that occur in the lhs
               HashSet set = new HashSet();
-              collectVariable(set,newSubjectList);
+              collectVariable(set,newTermList);
               TomList varList = getAstFactory().makeList(set);
               //System.out.println("varList = " + varList);
                while(!`guardList.isEmpty()) {
@@ -262,7 +262,7 @@ public class TomKernelExpander extends TomBase {
                }
                TomList newGuardList = getAstFactory().makeList(list);
                //System.out.println("newGuardList = " + newGuardList);
-               return `Pattern(newSubjectList,newGuardList);
+               return `Pattern(subjectList,newTermList,newGuardList);
              }
           } // end match
         } else if(subject instanceof TomTerm) {

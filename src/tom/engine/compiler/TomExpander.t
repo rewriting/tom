@@ -410,7 +410,6 @@ public class TomExpander extends TomGenericPlugin {
     return (TomTerm) replaceSymbol.apply(t);
   }
 
-
   private TomList sortAttributeList(TomList attrList) {
     %match(TomList attrList) {
       concTomTerm() -> { return attrList; }

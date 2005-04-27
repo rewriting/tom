@@ -676,7 +676,7 @@ public class Verifier extends TomBase {
   public String pattern_to_string(Pattern pattern, Map map) {
     String result = "";
     %match(Pattern pattern) {
-      Pattern(tomList,guards) -> {
+      Pattern[tomList=tomList,guards=guards] -> {
           return pattern_to_string(tomList, map);
       }
     }

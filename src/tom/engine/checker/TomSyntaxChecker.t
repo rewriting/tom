@@ -260,7 +260,7 @@ public class TomSyntaxChecker extends TomChecker {
               break matchblock;
             }
             // Array specific Macro functions
-            GetElementDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack) -> { 
+            GetElementDecl[variable=Variable[astName=Name(name1)],index=Variable[astName=Name(name2)],orgTrack=orgTrack] -> { 
               `checkFieldAndLinearArgs(TomSyntaxChecker.GET_ELEMENT,verifyList,orgTrack,name1,name2, declType);
               break matchblock;
             }
@@ -522,7 +522,7 @@ public class TomSyntaxChecker extends TomChecker {
     int nbExpectedArgs = typeMatchArgs.size();
     // we now compare pattern to its definition
     %match(PatternInstructionList patternInstructionList) {
-      concPatternInstruction(_*, PatternInstruction[pattern=Pattern(terms,guards)], _*) -> {
+      concPatternInstruction(_*, PatternInstruction[pattern=Pattern[tomList=terms,guards=guards]], _*) -> {
         // control each pattern vs the match definition
         `verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
         `verifyWhenPattern(guards);
