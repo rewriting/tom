@@ -65,4 +65,4 @@ to do:
 
 (csh)
   set TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
-  setenv CLASSPATH $TOM_LIB:$CLASSPATH
+  setenv CLASSPATH ${TOM_LIB}:${CLASSPATH}
