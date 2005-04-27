@@ -64,7 +64,7 @@ public class TomIlTools extends TomBase {
   /**
    * Methods used to translate a pattern and conditions in zenon signature
    */
-  public ZExpr pattern_to_ZExpr(PatternList patternList, Map map) {
+  public ZExpr patternToZExpr(PatternList patternList, Map map) {
     // do everything match the empty pattern ?
     ZExpr result = `ztrue();
     Pattern h = null;
@@ -72,27 +72,39 @@ public class TomIlTools extends TomBase {
     if(!tail.isEmpty()) {
       h = tail.getHead();
       tail = tail.getTail();
-      result = pattern_to_ZExpr(h,map);
+      result = patternToZExpr(h,map);
     }
 
     while(!tail.isEmpty()) {
       h = tail.getHead();
-      result = `zor(result,pattern_to_ZExpr(h,map));
+      result = `zor(result,patternToZExpr(h,map));
       tail = tail.getTail();
     }
     return result;
   }
 
-  public ZExpr pattern_to_ZExpr(Pattern pattern, Map map) {
+  public void getZTermSubjectListFromPattern(Pattern pattern, List list, Map map) {
     %match(Pattern pattern) {
       Pattern(subjectList,tomList,guards) -> {
-          return pattern_to_ZExpr(subjectList, tomList, map);
+          while(!subjectList.isEmpty()) {
+            TomTerm head = subjectList.getHead();
+            subjectList = subjectList.getTail();
+            list.add(tomTermToZTerm(head,map));
+          }
       }
     }
-    throw new TomRuntimeException("pattern_to_ZExpr : strange pattern " + pattern);
+  }
+
+  public ZExpr patternToZExpr(Pattern pattern, Map map) {
+    %match(Pattern pattern) {
+      Pattern(subjectList,tomList,guards) -> {
+          return patternToZExpr(subjectList, tomList, map);
+      }
+    }
+    throw new TomRuntimeException("patternToZExpr : strange pattern " + pattern);
   }
   
-  public ZExpr pattern_to_ZExpr(TomList subjectList, TomList tomList, Map map) {
+  public ZExpr patternToZExpr(TomList subjectList, TomList tomList, Map map) {
     /* for each TomTerm: builds a zeq : pattern = first var in map */
     ZExpr res = null;
     TomList tail = tomList;    
@@ -101,19 +113,19 @@ public class TomIlTools extends TomBase {
       TomTerm subject = subjectList.getHead();
       tail = tail.getTail();
       subjectList = subjectList.getTail();
-      res = `zeq(tomTerm_to_ZTerm(h,map),tomTerm_to_ZTerm(subject,map));
+      res = `zeq(tomTermToZTerm(h,map),tomTermToZTerm(subject,map));
     }
     while(!tail.isEmpty()) {
       TomTerm h = tail.getHead();
       TomTerm subject = subjectList.getHead();
       tail = tail.getTail();
       subjectList = subjectList.getTail();
-      res = `zand(res,zeq(tomTerm_to_ZTerm(h,map),tomTerm_to_ZTerm(subject,map)));
+      res = `zand(res,zeq(tomTermToZTerm(h,map),tomTermToZTerm(subject,map)));
     }
     return res;
   }
   
-  public ZTerm tomTerm_to_ZTerm(TomTerm tomTerm, Map map) {
+  public ZTerm tomTermToZTerm(TomTerm tomTerm, Map map) {
     %match(TomTerm tomTerm) {
       TermAppl(_,concTomName(Name(name),_*),childrens,_) -> {
         // builds children list
@@ -122,7 +134,7 @@ public class TomIlTools extends TomBase {
         while (!childrens.isEmpty()) {
           hd = childrens.getHead();
           childrens = childrens.getTail();
-          zchild = `concZTerm(zchild*,tomTerm_to_ZTerm(hd,map));
+          zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map));
         }
         // issue a warning here: this case is probably impossible
         return `zappl(zsymbol(name),zchild);
@@ -134,7 +146,7 @@ public class TomIlTools extends TomBase {
         while (!childrens.isEmpty()) {
           hd = childrens.getHead().getAppl();
           childrens = childrens.getTail();
-          zchild = `concZTerm(zchild*,tomTerm_to_ZTerm(hd,map));
+          zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map));
         }
         return `zappl(zsymbol(name),zchild);
       }
@@ -150,8 +162,11 @@ public class TomIlTools extends TomBase {
       UnamedVariable[] -> {
         return `zvar("_");
       }
+      TLVar[strName=name] -> {
+        return `zvar(name);
+      }
     }
-    throw new TomRuntimeException("tomTerm_to_ZTerm Strange pattern: " + tomTerm);
+    throw new TomRuntimeException("tomTermToZTerm Strange pattern: " + tomTerm);
   }
 
   private Collect2 collect_symbols = new Collect2() {

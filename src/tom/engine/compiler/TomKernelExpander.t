@@ -224,7 +224,7 @@ public class TomKernelExpander extends TomBase {
                  PatternInstruction head = newPatternInstructionList.getHead();
                  %match(PatternInstruction head) {
                    PatternInstruction(pattern,RawAction(actionInst),piOption) -> {
-                     Instruction typedAction = `TypedAction(actionInst,concPattern(pattern),negativePattern);
+                     Instruction typedAction = `TypedAction(actionInst,pattern,negativePattern);
                      typedActionPatternInstructionList = (PatternInstructionList) typedActionPatternInstructionList.append(`PatternInstruction(pattern,typedAction,piOption));
                      negativePattern = (PatternList) negativePattern.append(pattern);
                    }

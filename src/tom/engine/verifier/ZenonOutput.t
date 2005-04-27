@@ -85,21 +85,23 @@ public class ZenonOutput {
   public ZSpec build_zenon(DerivTree tree) {
     
     Map variableset = new HashMap();
-    tree = collect_program_variables(tree,variableset);
+    tree = collectProgramVariables(tree,variableset);
 
     // Use a TreeMap to have the conditions sorted
     Map conditions = new TreeMap();
     collect_constraints(tree,conditions);            
     Map conds = new TreeMap();
 
+    List subjectList = new LinkedList();
     ZExpr pattern = null;
     ZExpr negpattern = null;
     // theorem to prove
     %match(DerivTree tree) {
       derivrule(_,ebs(_,env(subsList,acc@accept(positive,negative))),_,_) -> {
-        pattern = tomiltools.pattern_to_ZExpr((PatternList)positive,
+        pattern = tomiltools.patternToZExpr((Pattern)positive,
                                               build_zenon_varmap(subsList, new HashMap()));
-        negpattern = tomiltools.pattern_to_ZExpr((PatternList)negative,
+        tomiltools.getZTermSubjectListFromPattern((Pattern)positive,subjectList,new HashMap());
+        negpattern = tomiltools.patternToZExpr((PatternList)negative,
                                                  build_zenon_varmap(subsList, new HashMap()));
       }
     }
@@ -143,11 +145,12 @@ public class ZenonOutput {
     // generates axioms for all subterm operations
     ZAxiomList subtermAxioms = tomiltools.subtermsDefinition(symbols);
 
-    System.out.println("MODIFY HERE");
-    ZTerm inputvar=null;
-    ZSpec spec = `zthm(zforall(inputvar,ztype("T"),theorem),
-                       zby(symbolsAxioms*,subtermAxioms*));
-    // System.out.println(spec);
+    Iterator iter = subjectList.iterator();
+    while(iter.hasNext()) {
+      ZTerm input = (ZTerm)iter.next();
+      theorem = `zforall(input,ztype("T"),theorem);  
+    }
+    ZSpec spec = `zthm(theorem,zby(symbolsAxioms*,subtermAxioms*));
 
     return spec;
   }
@@ -156,7 +159,7 @@ public class ZenonOutput {
   /**
    * collects all variable names in the DerivTree, and give a name to _'s
    */
-  DerivTree collect_program_variables(DerivTree tree, Map variables) {
+  DerivTree collectProgramVariables(DerivTree tree, Map variables) {
     return (DerivTree) collect_prog_vars.apply(tree,variables);
   }
   private Replace2 collect_prog_vars = new Replace2() {

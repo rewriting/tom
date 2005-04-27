@@ -33,4 +33,4 @@ MakeFunctionEnd() -> Instruction
 CheckStamp(variable:TomTerm) -> Instruction
 concInstruction(Instruction*) -> InstructionList
 RawAction(astInstruction:Instruction) -> Instruction
-TypedAction(astInstruction:Instruction,positivePatternList:PatternList,negativePatternList:PatternList) -> Instruction
+TypedAction(astInstruction:Instruction,positivePattern:Pattern,negativePatternList:PatternList) -> Instruction

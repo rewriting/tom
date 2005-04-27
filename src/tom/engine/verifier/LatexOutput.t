@@ -118,7 +118,7 @@ public class LatexOutput {
     %match(DerivTree tree) {
       derivrule(_,ebs(_,env(subsList@subs(is(_,t),_*),accept(positive,_))),_,_) -> {
         result += "\\applysubs{" + build_latex_from_subslist(subsList);
-        result += "}{" + verifier.pattern_to_string(positive) + "}";
+        result += "}{" + verifier.patternToString(positive) + "}";
         result += " = " + build_latex_from_term(t) + "\\\\\n";
       }
     }
@@ -286,7 +286,7 @@ public class LatexOutput {
     String result = "";
     %match(Instr instr) {
       accept(positive,negative) -> {
-        result = "\\accept_{" + verifier.pattern_to_string(positive) + "}";
+        result = "\\accept_{" + verifier.patternToString(positive) + "}";
       }
       refuse() -> {
         result = "\\refuse ";

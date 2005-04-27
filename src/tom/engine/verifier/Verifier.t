@@ -171,8 +171,8 @@ public class Verifier extends TomBase {
 
   public Instr build_InstrFromAutomata(Instruction automata) {
     %match(Instruction automata) {
-      TypedAction(action,positivePatterns,negativePatterns) -> {
-        return `accept(positivePatterns,negativePatterns);
+      TypedAction(action,positivePattern,negativePatternList) -> {
+        return `accept(positivePattern,negativePatternList);
       }
 
       If(cond,ift,iff) -> {
@@ -221,7 +221,7 @@ public class Verifier extends TomBase {
 
     Environment startingenv = `env(subs(),
                                  build_InstrFromAutomata(automata));
-    Collection localAccepts = collect_accept(automata);
+    Collection localAccepts = collectAccept(automata);
 
     Iterator iter = localAccepts.iterator();
     Collection tree_list = new HashSet();
@@ -233,13 +233,13 @@ public class Verifier extends TomBase {
 
         // System.out.println("The derivation: " + startingderiv);
 
-        Collection tree_list_pre = apply_sem_rules(startingderiv);
+        Collection tree_list_pre = applySemanticsRules(startingderiv);
         // replace substitutions in trees
         Iterator it = tree_list_pre.iterator();
         while(it.hasNext()) {
             DerivTree tree = (DerivTree) it.next();
             SubstitutionList outputsubst = collect_subst(tree);
-            tree = replaceUndefSubst(tree,outputsubst);
+            tree = replaceUndefinedSubstitution(tree,outputsubst);
             tree_list.add(tree);
         }
     }
@@ -273,7 +273,7 @@ public class Verifier extends TomBase {
     return output.get();
   }
 
-  private Collect2 collect_accept = new Collect2() {
+  private Collect2 acceptCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
         if (subject instanceof Instruction) {
@@ -293,9 +293,9 @@ public class Verifier extends TomBase {
       }//end apply
     }; //end new
   
-  public Collection collect_accept(Instruction subject) {
+  public Collection collectAccept(Instruction subject) {
     Collection result = new HashSet();
-    traversal().genericCollect(subject,collect_accept,result);
+    traversal().genericCollect(subject,acceptCollector,result);
     return result;
   }
   
@@ -309,7 +309,7 @@ public class Verifier extends TomBase {
     TermList ded = `concTerm(sp);
     %match(Term sp) {
       appSubsT[] -> { 
-        TermList follow = apply_termRules(replaceVarsInTerm(sp));
+        TermList follow = apply_termRules(replaceVariablesInTerm(sp));
         ded = `concTerm(ded*,follow*); 
       }
     }
@@ -322,7 +322,7 @@ public class Verifier extends TomBase {
     ExprList ded = `concExpr(sp);
     %match(Expr sp) {
       appSubsE[] -> { 
-        ExprList follow = apply_exprRules(replaceVarsInExpr(sp));
+        ExprList follow = applyExprRules(replaceVariablesInExpr(sp));
         ded = `concExpr(ded*,follow*); 
       }
     }
@@ -393,7 +393,7 @@ public class Verifier extends TomBase {
     }
   }
 
-  protected ExprList apply_exprRules(Expr ex) {
+  protected ExprList applyExprRules(Expr ex) {
     %match(Expr ex) {
       eq(tau(tl),tau(tr)) -> {
         return `concExpr(ex,teq(tl,tr));
@@ -406,7 +406,7 @@ public class Verifier extends TomBase {
         Term reducedl = ((TermList)apply_termRules(`lt).reverse()).getHead();
         Term reducedr = ((TermList)apply_termRules(`rt).reverse()).getHead();
 
-        ExprList taill = `apply_exprRules(eq(reducedl,reducedr));
+        ExprList taill = `applyExprRules(eq(reducedl,reducedr));
         ExprList res = `concExpr(ex,taill*);
       }
       isfsym(t,symbol) -> {
@@ -420,7 +420,7 @@ public class Verifier extends TomBase {
         }
         %match(ExprList res) {
           concExpr(hl*,tail) -> {
-            ExprList taill = `apply_exprRules(tail);
+            ExprList taill = `applyExprRules(tail);
             return `concExpr(hl*,taill*);
           }
         }
@@ -434,14 +434,14 @@ public class Verifier extends TomBase {
     }
   }
 
-  protected Collection apply_sem_rules(Deriv post) {
+  protected Collection applySemanticsRules(Deriv post) {
     Collection c = new HashSet();
     %match(Deriv post) {
       ebs(env(e,sequence(semicolon(h,t*))),env(subs(undefsubs()),ip)) -> {
-        if(instruction_contains(`h,ip)) {
+        if(instructionContains(`h,ip)) {
           // continue the derivation
           Deriv up = `ebs(env(e,h),env(subs(undefsubs()),ip));
-          Collection pre_list = apply_sem_rules(up);
+          Collection pre_list = applySemanticsRules(up);
 
           Iterator it = pre_list.iterator();
           while(it.hasNext()) {
@@ -451,11 +451,11 @@ public class Verifier extends TomBase {
         } else {
           // continue the derivation with t
           Deriv up = `ebs(env(e,sequence(t*)),env(subs(undefsubs()),ip));
-          Collection post_list = apply_sem_rules(up);
+          Collection post_list = applySemanticsRules(up);
 
           if(camlsemantics) {
             up = `ebs(env(e,h),env(subs(undefsubs()),refuse()));
-            Collection pre_list = apply_sem_rules(up);
+            Collection pre_list = applySemanticsRules(up);
             Iterator it = pre_list.iterator();
             while(it.hasNext()) {
               DerivTree pre = (DerivTree) it.next();
@@ -491,7 +491,7 @@ public class Verifier extends TomBase {
             env(subs(e*,is(x,t)),i),
             env(subs(undefsubs()),ip)
             );
-        Collection pre_list = apply_sem_rules(up);
+        Collection pre_list = applySemanticsRules(up);
         Iterator it = pre_list.iterator();
         while(it.hasNext()) {
           DerivTree pre = (DerivTree) it.next();
@@ -506,7 +506,7 @@ public class Verifier extends TomBase {
         Deriv up = `ebs(env(e,ift),env(subs(undefsubs()),ip));
         String rulename = "iftrue";
         
-        Collection pre_list = apply_sem_rules(up);
+        Collection pre_list = applySemanticsRules(up);
         Iterator it = pre_list.iterator();
         while(it.hasNext()) {
           DerivTree pre = (DerivTree) it.next();
@@ -516,7 +516,7 @@ public class Verifier extends TomBase {
         up = `ebs(env(e,iff),env(subs(undefsubs()),ip));
         rulename = "iffalse";
         
-        pre_list = apply_sem_rules(up);
+        pre_list = applySemanticsRules(up);
         it = pre_list.iterator();
         while(it.hasNext()) {
           DerivTree pre = (DerivTree) it.next();
@@ -539,7 +539,7 @@ public class Verifier extends TomBase {
     return c;
   }
 
-  protected boolean instruction_contains(Instr i, Instr goal) {
+  protected boolean instructionContains(Instr i, Instr goal) {
     Collect3 collect_find = new Collect3() {
       public boolean apply(ATerm subject, Object astore, Object arg) {
         Collection c = (Collection) astore;
@@ -564,8 +564,7 @@ public class Verifier extends TomBase {
  * To replace undefsubst in tree by the computed value
  * which leads to axiom
  */
-
-  Replace2 replace_undefsubs = new Replace2() {
+  Replace2 replaceUndefsubs = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
         if (subject instanceof SubstitutionList) {
           %match(SubstitutionList subject) {
@@ -579,9 +578,9 @@ public class Verifier extends TomBase {
       } // end apply
     };
 
-  private DerivTree replaceUndefSubst(DerivTree subject, 
+  private DerivTree replaceUndefinedSubstitution(DerivTree subject, 
                                       SubstitutionList subs) {
-    return (DerivTree) replace_undefsubs.apply(subject,subs);
+    return (DerivTree) replaceUndefsubs.apply(subject,subs);
   }
 
   private class SubstRef {
@@ -601,7 +600,7 @@ public class Verifier extends TomBase {
  * These functions deals with substitution application
  */
 
-  Replace2 replace_VarbyTerm = new Replace2() {
+  Replace2 replaceVariableByTerm = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
         if (subject instanceof Term) {
           %match(Term subject) {
@@ -619,119 +618,36 @@ public class Verifier extends TomBase {
       } // end apply
     };
 
-  public Term replaceVarsInTerm(Term subject) {
+  public Term replaceVariablesInTerm(Term subject) {
     %match(Term subject) {
       appSubsT(sublist,term) -> {
-        Map map = build_varmap(sublist, new HashMap());
-        return (Term) replace_VarbyTerm.apply(term,map);
+        Map map = buildVariableMap(sublist, new HashMap());
+        return (Term) replaceVariableByTerm.apply(term,map);
       }
     }
     return subject;
   }
 
-  public Expr replaceVarsInExpr(Expr subject) {
+  public Expr replaceVariablesInExpr(Expr subject) {
     %match(Expr subject) {
       appSubsE(sublist,term) -> {
-        Map map = build_varmap(sublist, new HashMap());
-        return (Expr) replace_VarbyTerm.apply(term,map);
+        Map map = buildVariableMap(sublist, new HashMap());
+        return (Expr) replaceVariableByTerm.apply(term,map);
       }
     }
     return subject;
   }
 
-  private Map build_varmap(SubstitutionList sublist, Map map) {
+  private Map buildVariableMap(SubstitutionList sublist, Map map) {
     %match(SubstitutionList sublist) {
       ()                -> { return map; }
-      (undefsubs(),t*)  -> { return build_varmap(`t,map);}
+      (undefsubs(),t*)  -> { return buildVariableMap(`t,map);}
       (is(v,term),t*)   -> { 
         map.put(`v,`term);
-        return build_varmap(`t,map);
+        return buildVariableMap(`t,map);
       }
       _ -> { return null; }
     }
-  }
-
-  public String pattern_to_string(ATerm patternList, Map map) {
-    return pattern_to_string((PatternList) patternList, map);
-  }
-
-  public String pattern_to_string(PatternList patternList, Map map) {
-    String result = "";
-    Pattern h = null;
-    PatternList tail = patternList;
-    if(!tail.isEmpty()) {
-      h = tail.getHead();
-      tail = tail.getTail();
-      result = pattern_to_string(h,map);
-    }
-
-    while(!tail.isEmpty()) {
-      h = tail.getHead();
-      result = "," + pattern_to_string(h,map);
-      tail = tail.getTail();
-    }
-    return result;
-  }
-
-  public String pattern_to_string(Pattern pattern, Map map) {
-    String result = "";
-    %match(Pattern pattern) {
-      Pattern[tomList=tomList,guards=guards] -> {
-          return pattern_to_string(tomList, map);
-      }
-    }
-    return result;
-  }
-    public String pattern_to_string(TomList tomList, Map map) {
-    String result = "";
-    TomTerm h = null;
-    TomList tail = tomList;
-    if(!tail.isEmpty()) {
-      h = tail.getHead();
-      tail = tail.getTail();
-      result = pattern_to_string(h,map);
-    }
-
-    while(!tail.isEmpty()) {
-      h = tail.getHead();
-      result = "," + pattern_to_string(h,map);
-      tail = tail.getTail();
-    }
-    return result;
-  }
-  
-  public String pattern_to_string(TomTerm tomTerm, Map map) {
-    %match(TomTerm tomTerm) {
-      TermAppl(_,concTomName(Name(name),_*),childrens,_) -> {
-        if (childrens.isEmpty()) {
-          return name;
-        } else {
-          name = name + "(";
-          TomTerm head = childrens.getHead();
-          name += pattern_to_string(head,map);
-          TomList tail = childrens.getTail();
-          while(!tail.isEmpty()) {
-            head = tail.getHead();
-            name += "," + pattern_to_string(head,map);
-            tail = tail.getTail();
-          }
-          name += ")";
-          return name;
-        }
-      }
-      Variable(_,Name(name),_,_) -> {
-        if (map.containsKey(`var(name))) {
-          System.out.println("In map: "+ map.containsKey(`var(name)));
-          return (String) map.get(`var(name));
-        } else {
-          return name;
-        }
-      }
-      UnamedVariable[] -> {
-        return "\\_";
-      }
-    }
-    return "StrangePattern" + tomTerm;
   }
 
 }

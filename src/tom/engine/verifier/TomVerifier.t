@@ -82,7 +82,7 @@ public class TomVerifier extends TomGenericPlugin {
         filterAssociative(purified);
 
         Collection derivations = getDerivations(purified);
-        // System.out.println("Derivations : " + derivations);
+        System.out.println("Derivations : " + derivations);
 
         // the latex output stuff
         // String latex = output.build_latex(derivations);
@@ -260,55 +260,55 @@ public class TomVerifier extends TomGenericPlugin {
     return derivations;
   }
   
-  public String pattern_to_string(ATerm patternList) {
-    return pattern_to_string((PatternList) patternList);
+  public String patternToString(ATerm patternList) {
+    return patternToString((PatternList) patternList);
   }
 
-  public String pattern_to_string(PatternList patternList) {
+  public String patternToString(PatternList patternList) {
     String result = "";
     Pattern h = null;
     PatternList tail = patternList;
     if(!tail.isEmpty()) {
       h = tail.getHead();
       tail = tail.getTail();
-      result = pattern_to_string(h);
+      result = patternToString(h);
     }
 
     while(!tail.isEmpty()) {
       h = tail.getHead();
-      result = "," + pattern_to_string(h);
+      result = "," + patternToString(h);
       tail = tail.getTail();
     }
     return result;
   }
 
-  public String pattern_to_string(Pattern pattern) {
+  public String patternToString(Pattern pattern) {
     String result = "";
     %match(Pattern pattern) {
       Pattern[tomList=tomList, guards=guards] -> {
-        return pattern_to_string(tomList);
+        return patternToString(tomList);
       }
     }
     return result;
   }
-  public String pattern_to_string(TomList tomList) {
+  public String patternToString(TomList tomList) {
     String result = "";
     TomTerm h = null;
     TomList tail = tomList;
     if(!tail.isEmpty()) {
       h = tail.getHead();
       tail = tail.getTail();
-      result = pattern_to_string(h);
+      result = patternToString(h);
     }
 
     while(!tail.isEmpty()) {
       h = tail.getHead();
-      result = "," + pattern_to_string(h);
+      result = "," + patternToString(h);
       tail = tail.getTail();
     }
     return result;
   }
-  public String pattern_to_string(TomTerm tomTerm) {
+  public String patternToString(TomTerm tomTerm) {
     %match(TomTerm tomTerm) {
       TermAppl(_,concTomName(Name(name),_*),childrens,_) -> {
         if (childrens.isEmpty()) {
@@ -316,11 +316,11 @@ public class TomVerifier extends TomGenericPlugin {
         } else {
           name = name + "(";
           TomTerm head = childrens.getHead();
-          name += pattern_to_string(head);
+          name += patternToString(head);
           TomList tail = childrens.getTail();
           while(!tail.isEmpty()) {
             head = tail.getHead();
-            name += "," + pattern_to_string(head);
+            name += "," + patternToString(head);
             tail = tail.getTail();
           }
           name += ")";

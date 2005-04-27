@@ -110,7 +110,7 @@ public class TomBase {
   protected TomNumberList appendNumber(int n, TomNumberList path) {
     return (TomNumberList) path.append(makeNumber(n));
   }
-
+    
   protected TomList append(TomTerm t, TomList l) {
     if(l.isEmpty()) {
       return cons(t,l);
