@@ -13,93 +13,88 @@ import tom.library.traversal.*;
 
 public class Ted {
 
-    %include { ../atermmapping.tom }
-    %include { mutraveler.tom }
+  %include { ../atermmapping.tom }
+  %include { mutraveler.tom }
 
 
-    private static ATermFactory atermFactory = new PureFactory();
+  private static ATermFactory atermFactory = new PureFactory();
 
-    /* Ted symbol table */
-    private HashMap tds = new HashMap();
+  /* Ted symbol table */
+  private HashMap tds = new HashMap();
     
-    public boolean match(ATerm a1, ATerm a2) {
+  public boolean match(ATerm a1, ATerm a2) {
 
-	/* exact match case */
-	if (a1 == a2) return true;
+    /* exact match case */
+    if (a1 == a2) return true;
 
-	boolean ok = true;	    
+    boolean ok = true;	    
 
-	%match ( ATerm a1, ATerm a2 ) {
+    %match ( ATerm a1, ATerm a2 ) {
 	    
 	    ATermAppl(AFun(name,arity,_),args1), ATermAppl(AFun(name,arity,_),args2) -> { 
-		for (int i=0; i < arity; ++i)
-		    ok &= this.match(args1.elementAt(i), args2.elementAt(i));
-		return ok;
-	    }
-
+        return match(args1,args2);
+      }
 
 	    ATermList(_), ATermList(_) -> {
-
-		ATermList list1 = (ATermList) a1;
-		ATermList list2 = (ATermList) a2;
-
-		int len = list1.getLength();
-		if ( len != list2.getLength())
-		    return false;
+        ATermList l1 = (ATermList) a1;
+        ATermList l2 = (ATermList) a2;
+        if(l1.getLength() != l2.getLength()) {
+          return false;
+        }
    
-		for (int i = 0; i < len; ++i)
-		    ok &= this.match(list1.elementAt(i), list2.elementAt(i));
-		return ok;
+        for (int i = 0; i < l1.getLength(); ++i) {
+          ok &= this.match(l1.elementAt(i), l2.elementAt(i));
+        }
+        return ok;
 	    }
-
 
 	    ATermPlaceholder( ATermAppl(AFun(name,arity,_),_) ), _ -> {
 
-		if ( arity != 0 ) {
-		    System.err.println("Bad placeholder format");
-		    System.exit(1);
-		} 
+        if ( arity != 0 ) {
+          System.err.println("Bad placeholder format");
+          System.exit(1);
+        } 
 
-		if (name.equals("any")) {
-		    return true;
-		} else {
-		    if ( tds.containsKey(name) ) {
-			return match(((ATerm) tds.get(name)), a2);
-		    } else {
-			tds.put(name, a2);
-			return true;
-		    }
-		}
+        if (name.equals("any")) {
+          return true;
+        } else {
+          if ( tds.containsKey(name) ) {
+            return match(((ATerm) tds.get(name)), a2);
+          } else {
+            tds.put(name, a2);
+            return true;
+          }
+        }
 	    }
 
 
 	    /* Placeholder with wrong format */
 	    ATermPlaceholder(_), _ -> {
 
-		System.err.println("Bad placeholder format");
-		System.exit(1);
+        System.err.println("Bad placeholder format");
+        System.exit(1);
 	    }
-	} 
+    } 
 
-	return false;
-    }
+    return false;
+  }
 
-    public static void main (String[] argv) throws IOException {
+  public static void main (String[] argv) throws IOException {
 	
-	if (argv.length != 1) {
+    if (argv.length != 1) {
 	    System.out.println("Usage java Ted file");
 	    System.exit(1);
-	}
-
-	 BufferedReader in = new BufferedReader(new FileReader(argv[0]));
-	 ATerm at1 = atermFactory.parse(in.readLine());
-	 ATerm at2 = atermFactory.parse(in.readLine());
-
-	 Ted ted = new Ted();
-
-	 jjtraveler.Visitor vtor = new BottomUp(new TedVisitor(at1));
-	 try {
-	     vtor.visit(at2);
-	 } catch ( VisitFailure e) {}
     }
+
+    BufferedReader in = new BufferedReader(new FileReader(argv[0]));
+    ATerm at1 = atermFactory.parse(in.readLine());
+    ATerm at2 = atermFactory.parse(in.readLine());
+
+    Ted ted = new Ted();
+
+    jjtraveler.Visitor vtor = new BottomUp(new TedVisitor(at1));
+    try {
+      vtor.visit(at2);
+    } catch ( VisitFailure e) {}
+  }
 }
