@@ -89,7 +89,7 @@ public class ZenonOutput {
 
     // Use a TreeMap to have the conditions sorted
     Map conditions = new TreeMap();
-    collect_constraints(tree,conditions);            
+    collectConstraints(tree,conditions);            
     Map conds = new TreeMap();
 
     List subjectList = new LinkedList();
@@ -114,7 +114,7 @@ public class ZenonOutput {
       Seq value = (Seq) entry.getValue();
       if (value.isDedexpr()) {
         conds.put(((String) entry.getKey()),
-                  build_zenon_from_Seq(clean_Seq(value)));
+                  build_zenon_from_Seq(cleanSeq(value)));
       }
     }
     it = conds.entrySet().iterator();
@@ -187,7 +187,7 @@ public class ZenonOutput {
   ZTerm ztermFromTerm(Term term) {
     %match(Term term) {
       tau(absTerm) -> {
-        return build_zenon_from_absterm(`absTerm);
+        return ztermFromAbsTerm(`absTerm);
       }
       repr(name) -> {
         return `zvar("Error in ztermFromTerm repr");
@@ -206,30 +206,30 @@ public class ZenonOutput {
     return `zvar("match vide dans ztermFromTerm");
   }
 
-  ZExpr build_zenon_from_Expr(Expr expr) {
+  ZExpr zexprFromExpr(Expr expr) {
     %match(Expr expr) {
       true() -> { return `ztrue();}
       false() -> { return `zfalse();}
       isfsym(t,s) -> {
         // this should not occur
-        return `zisfsym(zvar("Error in build_zenon_from_Expr"),zsymbol("isfsym"));
+        return `zisfsym(zvar("Error in zexprFromExpr"),zsymbol("isfsym"));
       }
       eq(lt,rt) -> {
         // this should not occur
-        return `zeq(zvar("Error in build_zenon_from_Expr"),zvar("eq"));
+        return `zeq(zvar("Error in zexprFromExpr"),zvar("eq"));
       }
       tisfsym(absterm,s) -> {
-        return `zisfsym(build_zenon_from_absterm(absterm),build_zenon_from_symbol(s));
+        return `zisfsym(ztermFromAbsTerm(absterm),build_zenon_from_symbol(s));
       }
       teq(absterml,abstermr) -> {
-        return `zeq(build_zenon_from_absterm(absterml),build_zenon_from_absterm(abstermr));
+        return `zeq(ztermFromAbsTerm(absterml),ztermFromAbsTerm(abstermr));
       }
       appSubsE(subslist,e) -> {
         // this should not occur
-        return `zeq(zvar("Error in build_zenon_from_Expr"),zvar("appSubsE"));
+        return `zeq(zvar("Error in zexprFromExpr"),zvar("appSubsE"));
       }
     }
-    return `zeq(zvar("Error in build_zenon_from_Expr"),zvar("end"));
+    return `zeq(zvar("Error in zexprFromExpr"),zvar("end"));
   }
 
   ZSymbol build_zenon_from_symbol(Symbol symb) {
@@ -256,14 +256,14 @@ public class ZenonOutput {
       dedexpr(exprlist) -> {
         %match(ExprList exprlist) {
           concExpr(X*,t,true()) -> {
-              result = build_zenon_from_Expr(`t);
+              result = zexprFromExpr(`t);
           }
         }
       }
       dedexpr(exprlist) -> {
         %match(ExprList exprlist) {
           concExpr(X*,t,false()) -> {
-              result = `znot(build_zenon_from_Expr(t));
+              result = `znot(zexprFromExpr(t));
           }
         }
       }
@@ -271,22 +271,22 @@ public class ZenonOutput {
     return result;
   }
 
-  ZTerm build_zenon_from_absterm(AbsTerm absterm) {
+  ZTerm ztermFromAbsTerm(AbsTerm absterm) {
     %match(AbsTerm absterm) {
       absvar(var(name)) -> {
         return `zvar(name);
       }
       st(s,t,index) -> {
-        return `zst(build_zenon_from_absterm(t),index);
+        return `zst(ztermFromAbsTerm(t),index);
       }
       sl(s,t,name) -> {
-        return `zsl(build_zenon_from_absterm(t),name);
+        return `zsl(ztermFromAbsTerm(t),name);
       }
     }
-    return `zvar("Error in build_zenon_from_absterm");
+    return `zvar("Error in ztermFromAbsTerm");
   }
 
-  Seq clean_Seq(Seq seq) {
+  Seq cleanSeq(Seq seq) {
     %match(Seq seq) {
       seq() -> { return seq; }
       dedterm(concTerm(_*,t,v)) -> {
@@ -312,18 +312,18 @@ public class ZenonOutput {
     }
   }
 
-  public void collect_constraints(DerivTree tree, Map conditions) {
+  public void collectConstraints(DerivTree tree, Map conditions) {
     %match(DerivTree tree) {
       derivrule(name,post,pre,condition) -> {
         String condname = "" + (conditions.size()+1) + "";
         conditions.put(condname,condition);
-        collect_constraints(pre,conditions);
+        collectConstraints(pre,conditions);
       }
       derivrule2(name,post,pre,pre2,condition) -> {
         String condname = "" + (conditions.size()+1) + "";
         conditions.put(condname,condition);
-        collect_constraints(pre,conditions);
-        collect_constraints(pre2,conditions);
+        collectConstraints(pre,conditions);
+        collectConstraints(pre2,conditions);
       }
     }
   }

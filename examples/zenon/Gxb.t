@@ -38,7 +38,7 @@ class Gxb {
 
   void test() {
     /*
-    Hop test = `g(a(),b());
+       Hop test = `g(a(),b());
     %match(Hop test) {
       g(a(),b()) -> { System.out.println("un a et un b"); }
       g(x,b()) -> { System.out.println(`x); }
@@ -48,8 +48,14 @@ class Gxb {
     Hop test3 = `g(a(),b());
     %match(Hop test2, Hop test3) {
       g(a(),b()),f(x) -> { System.out.println("un a et un b"); }
-      g(x,b()),f(f(x)) -> { System.out.println(`x); }
-      g(x,b()),f(f(x)) -> { System.out.println(`x); }
+      g(x,b()),f(f(x)) -> { 
+        
+    %match(Hop x) {
+      f(f(f(y))) -> { System.out.println(`y); }
+    }
+        
+        System.out.println(`x); }
+      g(a(),x),f(f(x)) -> { System.out.println(`x); }
     }
     /*
     Hop essai = `f(f(f(a)));
