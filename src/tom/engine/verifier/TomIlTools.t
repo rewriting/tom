@@ -66,19 +66,11 @@ public class TomIlTools extends TomBase {
    */
   public ZExpr patternToZExpr(PatternList patternList, Map map) {
     // do everything match the empty pattern ?
-    ZExpr result = `ztrue();
-    Pattern h = null;
-    PatternList tail = patternList;
-    if(!tail.isEmpty()) {
-      h = tail.getHead();
-      tail = tail.getTail();
-      result = patternToZExpr(h,map);
-    }
-
-    while(!tail.isEmpty()) {
-      h = tail.getHead();
+    ZExpr result = `zfalse();
+    while(!patternList.isEmpty()) {
+      Pattern h = patternList.getHead();
       result = `zor(result,patternToZExpr(h,map));
-      tail = tail.getTail();
+      patternList = patternList.getTail();
     }
     return result;
   }
@@ -106,19 +98,11 @@ public class TomIlTools extends TomBase {
   
   public ZExpr patternToZExpr(TomList subjectList, TomList tomList, Map map) {
     /* for each TomTerm: builds a zeq : pattern = first var in map */
-    ZExpr res = null;
-    TomList tail = tomList;    
-    if(!tail.isEmpty()) {
-      TomTerm h = tail.getHead();
+    ZExpr res = `ztrue;
+    while(!tomList.isEmpty()) {
+      TomTerm h = tomList.getHead();
       TomTerm subject = subjectList.getHead();
-      tail = tail.getTail();
-      subjectList = subjectList.getTail();
-      res = `zeq(tomTermToZTerm(h,map),tomTermToZTerm(subject,map));
-    }
-    while(!tail.isEmpty()) {
-      TomTerm h = tail.getHead();
-      TomTerm subject = subjectList.getHead();
-      tail = tail.getTail();
+      tomList = tomList.getTail();
       subjectList = subjectList.getTail();
       res = `zand(res,zeq(tomTermToZTerm(h,map),tomTermToZTerm(subject,map)));
     }

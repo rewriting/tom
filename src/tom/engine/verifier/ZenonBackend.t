@@ -109,9 +109,21 @@ public class ZenonBackend {
         return "exists "+genZTerm(`v)+" : "+genZType(`type)+", "+genZExpr(`e);
       }
       zand(l,r) -> {
+        if(`l == `ztrue()) {
+          return "("+ genZExpr(`r) +")";
+        }
+        else if (`r == `ztrue()) {
+          return "("+ genZExpr(`l) +")";
+        }
         return "("+genZExpr(`l)+") /\\ ("+genZExpr(`r)+")";
       }
       zor(l,r) -> {
+        if(`l == `zfalse()) {
+          return "("+ genZExpr(`r) +")";
+        }
+        else if (`r == `zfalse()) {
+          return "("+ genZExpr(`l) +")";
+        }
         return "("+genZExpr(`l)+") \\/ ("+genZExpr(`r)+")";
       }
       znot(e) -> { return "~("+genZExpr(`e)+")"; }
