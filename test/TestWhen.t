@@ -11,7 +11,7 @@ public class TestWhen extends TestCase {
 
   %typeterm term {
     implement { ATerm }
-    equals(t1, t2)      { t1 == t2}
+    equals(t1, t2) { t1 == t2}
   }
 
   %op term a {
@@ -30,6 +30,12 @@ public class TestWhen extends TestCase {
     make(t) { factory.makeAppl(factory.makeAFun("f", 1, false),t) }
   }
 
+  %op term ff(s1:term) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "ff" }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
+    make(t) { factory.makeAppl(factory.makeAFun("ff", 1, false),t) }
+  }
+
   %op boolean g(s1:term) {
     is_fsym(t) { false }
     make(t) { g(t) }
@@ -45,7 +51,12 @@ public class TestWhen extends TestCase {
 
   public void testMatch() {
     assertTrue("Testing macth with when (1 arg) : ", 
-								match(`f(a())) == 5 );
+								match(`f(a())) == 11 );
+	}
+
+  public void testMatchBis() {
+    assertTrue("Testing macth in a match : ", 
+								matchBis(`f(a())) == 1 );
 	}
 
   public void testMatch2() {
@@ -55,22 +66,43 @@ public class TestWhen extends TestCase {
 
   public int match(ATerm t) {
     int result = 0;
+    String test = "toto";
     %match(term t) { 
       /* ok */
-      f(x) when g(x)    -> { result++; System.out.println("cas 1"); }
-
-      f(x@_) when g(x)    -> { result++; System.out.println("cas 1bis"); }
+      f(x) when g(x)      -> { result++; /*System.out.println("cas 1");*/ }
+      f(x@_) when g(x)    -> { result++; /*System.out.println("cas 2");*/ }
+      ff(x) when g(x)     -> { result++; /*System.out.println("nothing 1");*/ }
+      (f|ff)(x) when g(x) -> { result++; /*System.out.println("cas disjunction 1");*/ }
+      (ff|f)(x) when g(x) -> { result++; /*System.out.println("cas disjunction 2");*/ }
+      f(x) when constant(true)   -> { result++; /*System.out.println("cas constants 1");*/ }
+      f(x) when constant(5)      -> { result++; /*System.out.println("cas constants 2");*/ }
+      f(x) when constant("toto") -> { result++; /*System.out.println("cas constants 3");*/ }
+      f(x) when constant(result) -> { result++; /*System.out.println("cas constants 4");*/ }
+      //f(x) when constant(test.length()) ???
       /* warnings */
-      f(x) when g(h(x)) -> { result++; System.out.println("cas 2"); }
-      f(x) when g(a) -> { result++; System.out.println("cas 3"); }
-      f(x) when g(k()) -> { result++; System.out.println("cas 4"); }
-      f(x) when nol() -> { result++; System.out.println("cas 5"); }
-
+      f(x) when g(h(x))   -> { result++; /*System.out.println("cas 3");*/ }
+      f(x) when g(a)      -> { result++; /*System.out.println("cas 4");*/ }
+      f(x) when g(k())    -> { result++; /*System.out.println("cas 5");*/ }
+      f(x) when nol()     -> { result++; /*System.out.println("cas 6");*/ }
       /* errors */
-      //f(x) when g(h(y)) -> { System.out.println("cas 6"); }
-      //f(x) when f(x) -> { System.out.println("cas 7"); }
-      //f(x) when g(x,x) -> { System.out.println("cas 8"); }
-      //f(x) when h(x,g(x,x)) -> { System.out.println("cas 9"); }
+      //f(x) when g(h(y))   -> { System.out.println("cas 7"); }
+      //f(x) when f(x)      -> { System.out.println("cas 8"); }
+      //f(x) when g(x,x)    -> { System.out.println("cas 9"); }
+      //f(x) when h(x,g(x,x)) -> { System.out.println("cas 10"); }
+    } 
+    return result;
+  }
+
+  public int matchBis(ATerm t) {
+    int result = 0;
+    %match(term t) { 
+      /* ok */
+      f(x) when g(x)    -> {
+        %match(term x) {
+          a() -> { result++; /*System.out.println("cas bis a");*/ }
+          b() -> { result++; /*System.out.println("cas bis b");*/ }
+        }
+      }
     } 
     return result;
   }
@@ -79,11 +111,10 @@ public class TestWhen extends TestCase {
     int result = 0;
     %match(term t1,term t2) { 
       /* ok */
-      f(x),f(x) when g(x),g(x)    -> { result++; System.out.println("cas 2 1"); }
-      f(x),f(x@y) when g(x),g(y)    -> { result++; System.out.println("cas 2 2"); }
+      f(x),f(x) when g(x),g(x)   -> { result++; /*System.out.println("cas 2 1");*/ }
+      f(x),f(x@y) when g(x),g(y) -> { result++; /*System.out.println("cas 2 2");*/ }
       /* pas ok */
-      f(x),f(y) when no(x,y) -> { result++; System.out.println("cas bug"); }
-
+      f(x),f(y) when no(x,y)     -> { result++; /*System.out.println("cas 2 3");*/ }
     } 
     return result;
   }
@@ -110,6 +141,18 @@ public class TestWhen extends TestCase {
 
   boolean nol() {
     return false;
+  } 
+
+  boolean constant(boolean b) {
+    return b;
+  } 
+
+  boolean constant(int i) {
+    return i>0;
+  }
+
+  boolean constant(String s) {
+    return s.equals("toto");
   } 
 
   boolean no(ATerm t1,ATerm t2) {
