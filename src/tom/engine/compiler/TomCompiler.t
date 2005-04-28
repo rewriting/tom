@@ -114,20 +114,31 @@ public class TomCompiler extends TomGenericPlugin {
               return `var;
             }    
 
-            BuildReducedTerm(RecordAppl[nameList=(name@Name(tomName)),slots=termArgs]) -> {
+            BuildReducedTerm(RecordAppl[option=optionList,nameList=(name@Name(tomName)),slots=termArgs]) -> {
               TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
               SlotList newTermArgs = (SlotList) traversal().genericTraversal(`termArgs,replace_preProcessing_makeTerm);
-              if(tomSymbol==null || isDefinedSymbol(tomSymbol)) {
-                return `FunctionCall(name,slotListToTomList(newTermArgs));
-              } else {
+              TomList tomListArgs = slotListToTomList(newTermArgs);
+
+              if(tomSymbol != null) {
                 if(isListOperator(tomSymbol)) {
-                  return tomFactory.buildList(`name,slotListToTomList(newTermArgs));
+                  return tomFactory.buildList(`name,tomListArgs);
                 } else if(isArrayOperator(tomSymbol)) {
-                  return tomFactory.buildArray(`name,slotListToTomList(newTermArgs));
+                  return tomFactory.buildArray(`name,tomListArgs);
+                } else if(symbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol))) && 
+                          termArgs.isEmpty() && 
+                          !hasConstructor(`optionList)) {
+                  return `BuildVariable(name,emptyTomList());
+                } else if(isDefinedSymbol(tomSymbol)) {
+                  return `FunctionCall(name,tomListArgs);
                 } else {
-                  return `BuildTerm(name,slotListToTomList(newTermArgs));
+                  return `BuildTerm(name,tomListArgs);
                 }
+              } else if(termArgs.isEmpty() && !hasConstructor(`optionList)) {
+                return `BuildVariable(name,emptyTomList());
+              } else {
+                return `FunctionCall(name,tomListArgs);
               }
+
             }
 
           } // end match
@@ -543,11 +554,10 @@ public class TomCompiler extends TomGenericPlugin {
               //System.out.println("set1 = " + variableSet);
               //System.out.println("set2 = " + variableSet);
 
-              if(variableSet.remove(var)&&variableSet.isEmpty()) {
+              if(variableSet.remove(var) && variableSet.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
                 return var.setConstraints(newConstraintList);
               }
-              //return var;
             }
 
             appl@RecordAppl[constraints=constraintList] -> {
@@ -555,7 +565,6 @@ public class TomCompiler extends TomGenericPlugin {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
                 return appl.setConstraints(newConstraintList);
               }
-              //return appl;
             }
           }
         }

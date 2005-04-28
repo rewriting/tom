@@ -5,6 +5,11 @@ import java.util.*;
 public class TomList {
   private ATermFactory factory;
 
+  %typeterm E {
+    implement { ATerm }
+    equals(t1, t2) { (t1.equals(t2)) }
+  }
+
   %typeterm L {
     implement { ATermList }
     equals(l1,l2)  { l1.equals(l2) }
@@ -19,11 +24,6 @@ public class TomList {
     make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
   }
   
-  %typeterm E {
-    implement { ATerm }
-    equals(t1, t2)      { (t1.equals(t2)) }
-  }
-
   %op E a {
     is_fsym(t) { ((ATermAppl)t).getName() == "a" }
     make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }

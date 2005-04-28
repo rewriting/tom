@@ -93,7 +93,7 @@ public class TomFactory extends TomBase {
           //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
-          if(isStringOperator(tomSymbol)) {
+          if(symbolTable.isStringType(getTomType(getSymbolCodomain(tomSymbol)))) {
             Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,Name("??"));
             term = `RecordAppl(getAstFactory().makeOption(info),
                                concTomName(Name(Constants.TEXT_NODE)),concSlot(PairSlotAppl(Name(Constants.SLOT_DATA),term)),
