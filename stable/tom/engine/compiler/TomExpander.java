@@ -389,7 +389,9 @@ public class TomExpander extends TomGenericPlugin {
                     return tomFactory.buildList(name,args);
                   } else if(isArrayOperator(tomSymbol)) {
                     return tomFactory.buildArray(name,args);
-                  } else if(isStringOperator(tomSymbol)) {
+                  } else if(symbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol))) &&
+                            args.isEmpty() && 
+                            !hasConstructor(optionList)) {
                     return tom_make_BuildVariable(name,tom_make_emptyTomList());
                   } else if(isDefinedSymbol(tomSymbol)) {
                     return tom_make_FunctionCall(name,args);

@@ -56,8 +56,6 @@ public class TomSyntaxChecker extends TomChecker {
   private final static String OP_LIST     = "%oplist";
   private final static String TYPE        = "Type";  
   private final static String TYPE_TERM   = "%typeterm";
-  private final static String TYPE_ARRAY  = "%typearray";
-  private final static String TYPE_LIST   = "%typelist";
 
   /** type function symbols */
   private final static String EQUALS      = "equals";
@@ -83,18 +81,6 @@ public class TomSyntaxChecker extends TomChecker {
   private final static ArrayList TypeTermSignature =
     new ArrayList(
                   Arrays.asList(new String[]{ TomSyntaxChecker.EQUALS }));
-
-  private final static ArrayList TypeArraySignature =
-    new ArrayList(
-                  Arrays.asList(new String[]{TomSyntaxChecker.EQUALS,
-                                             TomSyntaxChecker.GET_ELEMENT,
-                                             TomSyntaxChecker.GET_SIZE}));
-  private final static ArrayList TypeListSignature =
-    new ArrayList(
-                  Arrays.asList(new String[]{TomSyntaxChecker.EQUALS,
-                                             TomSyntaxChecker.GET_HEAD,
-                                             TomSyntaxChecker.GET_TAIL,
-                                             TomSyntaxChecker.IS_EMPTY}));
   
   /** Constructor */
   public TomSyntaxChecker() {
@@ -193,14 +179,6 @@ public class TomSyntaxChecker extends TomChecker {
 
 ;
           break matchblock;
-        }}}} }}}} } if(tom_is_fun_sym_TypeListDecl(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match3_1_astName=tom_get_slot_TypeListDecl_astName(tom_match3_1); { jtom.adt.tomsignature.types.TomList tom_match3_1_keywordList=tom_get_slot_TypeListDecl_keywordList(tom_match3_1); { jtom.adt.tomsignature.types.Option tom_match3_1_orgTrack=tom_get_slot_TypeListDecl_orgTrack(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_astName) ||  false ) { { String  tom_match3_1_astName_string=tom_get_slot_Name_string(tom_match3_1_astName); { String  tomName=tom_match3_1_astName_string; { jtom.adt.tomsignature.types.TomList tomList=tom_match3_1_keywordList; { jtom.adt.tomsignature.types.Option orgTrack=tom_match3_1_orgTrack;verifyTypeDecl(TomSyntaxChecker.TYPE_LIST,tomName,tomList,orgTrack)
-
-;
-          break matchblock;
-        }}}} }}}} } if(tom_is_fun_sym_TypeArrayDecl(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match3_1_astName=tom_get_slot_TypeArrayDecl_astName(tom_match3_1); { jtom.adt.tomsignature.types.TomList tom_match3_1_keywordList=tom_get_slot_TypeArrayDecl_keywordList(tom_match3_1); { jtom.adt.tomsignature.types.Option tom_match3_1_orgTrack=tom_get_slot_TypeArrayDecl_orgTrack(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_astName) ||  false ) { { String  tom_match3_1_astName_string=tom_get_slot_Name_string(tom_match3_1_astName); { String  tomName=tom_match3_1_astName_string; { jtom.adt.tomsignature.types.TomList tomList=tom_match3_1_keywordList; { jtom.adt.tomsignature.types.Option orgTrack=tom_match3_1_orgTrack;verifyTypeDecl(TomSyntaxChecker.TYPE_ARRAY,tomName,tomList,orgTrack)
-
-;
-          break matchblock;
         }}}} }}}} } if(tom_is_fun_sym_SymbolDecl(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match3_1_astName=tom_get_slot_SymbolDecl_astName(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_astName) ||  false ) { { String  tom_match3_1_astName_string=tom_get_slot_Name_string(tom_match3_1_astName); { String  tomName=tom_match3_1_astName_string;verifySymbol(TomSyntaxChecker.CONSTRUCTOR,getSymbolFromName(tomName))
 
 
@@ -227,14 +205,7 @@ public class TomSyntaxChecker extends TomChecker {
     // ensure first definition
     verifyMultipleDefinition(tomName, declType, TYPE);
     // verify Macro functions
-    ArrayList verifyList;
-    if(declType == TomSyntaxChecker.TYPE_TERM) {
-      verifyList = new ArrayList(TomSyntaxChecker.TypeTermSignature);
-    } else if(declType == TomSyntaxChecker.TYPE_ARRAY) {
-      verifyList = new ArrayList(TomSyntaxChecker.TypeArraySignature);
-    } else {//if(declType == TomSyntaxChecker.TYPE_LIST) {
-      verifyList = new ArrayList(TomSyntaxChecker.TypeListSignature);
-    }
+    ArrayList verifyList = new ArrayList(TomSyntaxChecker.TypeTermSignature);
     
      { jtom.adt.tomsignature.types.TomList tom_match4_1=(( jtom.adt.tomsignature.types.TomList)listOfDeclaration); if(tom_is_fun_sym_concTomTerm(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match4_1_list1=tom_match4_1; { jtom.adt.tomsignature.types.TomList tom_match4_1_begin1=tom_match4_1_list1; { jtom.adt.tomsignature.types.TomList tom_match4_1_end1=tom_match4_1_list1;{ while (!(tom_is_empty_concTomTerm_TomList(tom_match4_1_end1))) {tom_match4_1_list1=tom_match4_1_end1;{ { jtom.adt.tomsignature.types.TomTerm tom_match4_1_2=tom_get_head_concTomTerm_TomList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concTomTerm_TomList(tom_match4_1_list1); if(tom_is_fun_sym_DeclarationToTomTerm(tom_match4_1_2) ||  false ) { { jtom.adt.tomsignature.types.Declaration tom_match4_1_2_astDeclaration=tom_get_slot_DeclarationToTomTerm_astDeclaration(tom_match4_1_2); { jtom.adt.tomsignature.types.Declaration d=tom_match4_1_2_astDeclaration;
  // for each Declaration

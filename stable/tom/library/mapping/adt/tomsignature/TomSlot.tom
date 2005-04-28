@@ -1625,22 +1625,6 @@
   make(t0, t1, t2) { getTomSlotFactory().makeDeclaration_CheckStampDecl(t0, t1, t2)}
 }
 
-%op Declaration TypeArrayDecl(astName:TomName, keywordList:TomList, orgTrack:Option) {
-  is_fsym(t) { (t!= null) && t.isTypeArrayDecl()}
-  get_slot(astName,t) { t.getAstName()}
-  get_slot(keywordList,t) { t.getKeywordList()}
-  get_slot(orgTrack,t) { t.getOrgTrack()}
-  make(t0, t1, t2) { getTomSlotFactory().makeDeclaration_TypeArrayDecl(t0, t1, t2)}
-}
-
-%op Declaration TypeListDecl(astName:TomName, keywordList:TomList, orgTrack:Option) {
-  is_fsym(t) { (t!= null) && t.isTypeListDecl()}
-  get_slot(astName,t) { t.getAstName()}
-  get_slot(keywordList,t) { t.getKeywordList()}
-  get_slot(orgTrack,t) { t.getOrgTrack()}
-  make(t0, t1, t2) { getTomSlotFactory().makeDeclaration_TypeListDecl(t0, t1, t2)}
-}
-
 %op Declaration TypeTermDecl(astName:TomName, keywordList:TomList, orgTrack:Option) {
   is_fsym(t) { (t!= null) && t.isTypeTermDecl()}
   get_slot(astName,t) { t.getAstName()}

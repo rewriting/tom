@@ -621,16 +621,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 
 ;
         return;
-      }} } if(tom_is_fun_sym_TypeListDecl(tom_match6_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match6_1_keywordList=tom_get_slot_TypeListDecl_keywordList(tom_match6_1); { jtom.adt.tomsignature.types.TomList declList=tom_match6_1_keywordList;buildTypeListDecl(deep,declList)
-
-
-;
-        return;
-      }} } if(tom_is_fun_sym_TypeArrayDecl(tom_match6_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match6_1_keywordList=tom_get_slot_TypeArrayDecl_keywordList(tom_match6_1); { jtom.adt.tomsignature.types.TomList declList=tom_match6_1_keywordList;buildTypeArrayDecl(deep,declList)
-
-
-;
-        return;
       }} } { jtom.adt.tomsignature.types.Declaration t=tom_match6_1;
 
 
@@ -761,8 +751,6 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
                                            TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTypeTermDecl(int deep, TomList declList) throws IOException;
-  protected abstract void buildTypeListDecl(int deep, TomList declList) throws IOException;
-  protected abstract void buildTypeArrayDecl(int deep, TomList declList) throws IOException;
   protected abstract void generateDeclarationFromList(int deep, TomList declList) throws IOException;
   
 } // class TomAbstractGenerator

@@ -541,14 +541,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generateDeclarationFromList(deep, declList);
   }
 
-  protected void buildTypeListDecl(int deep, TomList declList) throws IOException {
-    generateDeclarationFromList(deep, declList);
-  }
-
-  protected void buildTypeArrayDecl(int deep, TomList declList) throws IOException {
-    generateDeclarationFromList(deep, declList);
-  }
-  
   protected void generateDeclarationFromList(int deep, TomList declList) throws IOException {
     TomTerm term;
     while(!declList.isEmpty()) {
