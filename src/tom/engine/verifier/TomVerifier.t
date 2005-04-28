@@ -49,9 +49,7 @@ public class TomVerifier extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS = "<options><boolean name='verify' altName='' description='Verify correctness of match compilation' value='false'/></options>";
 
   protected Verifier verif;
-  protected LatexOutput output;
   protected ZenonOutput zenon;
-  protected StatOutput stats;
 
   public TomVerifier() {
     super("TomVerifier");
@@ -59,9 +57,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   void init () {
-    output = new LatexOutput(this);
     verif = new Verifier();
-    stats = new StatOutput(this);
   }
 
   public void run() {
@@ -82,9 +78,11 @@ public class TomVerifier extends TomGenericPlugin {
         filterAssociative(purified);
 
         Collection derivations = getDerivations(purified);
-        System.out.println("Derivations : " + derivations);
+        // System.out.println("Derivations : " + derivations);
 
         // the latex output stuff
+        // LatexOutput output;
+        // output = new LatexOutput(this);
         // String latex = output.build_latex(derivations);
         // System.out.println(latex);
 
@@ -100,6 +98,8 @@ public class TomVerifier extends TomGenericPlugin {
         }
 
         // The stats output stuff
+        // StatOutput stats;
+        // stats = new StatOutput(this);
         // String statistics = stats.build_stats(derivations);
         // System.out.println(statistics);
 
@@ -128,7 +128,7 @@ public class TomVerifier extends TomGenericPlugin {
     return getOptionBooleanValue("verify");
   }
   
-  private Collect2 collect_match = new Collect2() {
+  private Collect2 matchCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
         if (subject instanceof Instruction) {
@@ -150,7 +150,7 @@ public class TomVerifier extends TomGenericPlugin {
   
   public Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
-    traversal().genericCollect(subject,collect_match,result);
+    traversal().genericCollect(subject,matchCollector,result);
     return result;
   }
 
@@ -165,7 +165,7 @@ public class TomVerifier extends TomGenericPlugin {
     return purified;
   }
   
-  Replace1 replace_simplify_il = new Replace1() {
+  Replace1 ilSimplifier = new Replace1() {
       public ATerm apply(ATerm subject) {
         if (subject instanceof Expression) {
           %match(Expression subject) {
@@ -201,7 +201,7 @@ public class TomVerifier extends TomGenericPlugin {
     };//end new Replace1 simplify_il
   
   private Instruction simplify_il(Instruction subject) {
-    return (Instruction) replace_simplify_il.apply(subject);
+    return (Instruction) ilSimplifier.apply(subject);
   }
   
   void filterAssociative(Collection c) {
@@ -212,11 +212,11 @@ public class TomVerifier extends TomGenericPlugin {
 
   boolean containsAssociativeOperator(Instruction subject) {
     Collection result = new HashSet();
-    traversal().genericCollect(subject,collect_associativeOps,result);
+    traversal().genericCollect(subject,associativeOperatorCollector,result);
     return !result.isEmpty();   
   }
 
-  private Collect2 collect_associativeOps = new Collect2() {
+  private Collect2 associativeOperatorCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
         if (subject instanceof Instruction) {
@@ -234,7 +234,7 @@ public class TomVerifier extends TomGenericPlugin {
         } 
         else if (subject instanceof Expression) {
           %match(Expression subject) {
-            // we filters also patterns containing or() constructs (but we could handle it easily
+            // we filters also patterns containing or() constructs
             Or(_,_) -> {
               store.add(subject);
             }
@@ -291,6 +291,7 @@ public class TomVerifier extends TomGenericPlugin {
     }
     return result;
   }
+
   public String patternToString(TomList tomList) {
     String result = "";
     TomTerm h = null;

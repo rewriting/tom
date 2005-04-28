@@ -38,15 +38,15 @@ import jtom.verifier.il.types.*;
 public class StatOutput {
 
   // ------------------------------------------------------------
-  %include { il/il.tom }
+  %include { il/Il.tom }
   // ------------------------------------------------------------
 
-  protected jtom.verifier.il.ilFactory factory;
+  protected jtom.verifier.il.IlFactory factory;
   private GenericTraversal traversal;
   private TomVerifier verifier;
 
   public StatOutput(TomVerifier verifier) {
-    factory = ilFactory.getInstance(SingletonFactory.getInstance());
+    factory = IlFactory.getInstance(SingletonFactory.getInstance());
     this.traversal = new GenericTraversal();
     this.verifier = verifier;
   }
@@ -55,7 +55,7 @@ public class StatOutput {
     return this.traversal;
   }
   
-  protected final ilFactory getIlFactory() {
+  protected final IlFactory getIlFactory() {
     return factory;
   }
 

@@ -39,17 +39,17 @@ public class Verifier extends TomBase {
 
   // ------------------------------------------------------------
   %include { adt/tomsignature/TomSignature.tom }
-  %include { il/il.tom }
+  %include { il/Il.tom }
   // ------------------------------------------------------------
 
 
-  protected jtom.verifier.il.ilFactory factory;
+  protected jtom.verifier.il.IlFactory factory;
   private SymbolTable symbolTable;
   private boolean camlsemantics = false;
 
   public Verifier() {
     super();
-    factory = ilFactory.getInstance(getTomSignatureFactory().getPureFactory());
+    factory = IlFactory.getInstance(getTomSignatureFactory().getPureFactory());
   }
 
   public void setSymbolTable(SymbolTable symbolTable) {
@@ -64,7 +64,7 @@ public class Verifier extends TomBase {
     return camlsemantics;
   }
 
-  protected final ilFactory getIlFactory() {
+  protected final IlFactory getIlFactory() {
     return factory;
   }
 

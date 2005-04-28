@@ -41,18 +41,18 @@ import jtom.verifier.zenon.types.*;
 public class ZenonOutput {
 
   // ------------------------------------------------------------
-  %include { il/il.tom }
+  %include { il/Il.tom }
   %include { zenon/Zenon.tom }
   // ------------------------------------------------------------
 
-  protected jtom.verifier.il.ilFactory factory;
+  protected jtom.verifier.il.IlFactory factory;
   protected jtom.verifier.zenon.ZenonFactory zfactory;
   private GenericTraversal traversal;
   private Verifier verifier;
   private TomIlTools tomiltools;
 
   public ZenonOutput(Verifier verifier) {
-    factory = ilFactory.getInstance(SingletonFactory.getInstance());
+    factory = IlFactory.getInstance(SingletonFactory.getInstance());
     zfactory = ZenonFactory.getInstance(SingletonFactory.getInstance());
     this.traversal = new GenericTraversal();
     this.verifier = verifier;
@@ -63,7 +63,7 @@ public class ZenonOutput {
     return this.traversal;
   }
   
-  protected final ilFactory getIlFactory() {
+  protected final IlFactory getIlFactory() {
     return factory;
   }
 
