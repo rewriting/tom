@@ -111,7 +111,7 @@ public class TomIlTools extends TomBase {
   
   public ZTerm tomTermToZTerm(TomTerm tomTerm, Map map) {
     %match(TomTerm tomTerm) {
-      TermAppl(_,concTomName(Name(name),_*),childrens,_) -> {
+      TermAppl[nameList=concTomName(Name(name),_*),args=childrens] -> {
         // builds children list
         ZTermList zchild = `concZTerm();
         TomTerm hd = null;
@@ -123,7 +123,7 @@ public class TomIlTools extends TomBase {
         // issue a warning here: this case is probably impossible
         return `zappl(zsymbol(name),zchild);
       }
-      RecordAppl(_,concTomName(Name(name),_*),childrens,_) -> {
+      RecordAppl[nameList=concTomName(Name(name),_*),slots=childrens] -> {
         // builds children list
         ZTermList zchild = `concZTerm();
         TomTerm hd = null;
@@ -134,7 +134,7 @@ public class TomIlTools extends TomBase {
         }
         return `zappl(zsymbol(name),zchild);
       }
-      Variable(_,Name(name),_,_) -> {
+      Variable[astName=Name(name)] -> {
         if (map.containsKey(name)) {
           //System.out.println("In map: "+ map.containsKey(name));
           return (ZTerm) map.get(name);
