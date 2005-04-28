@@ -240,10 +240,11 @@ public class TomCompiler extends TomGenericPlugin {
               }
 
               TomRuleList ruleList = `rl;
+              PatternList negativePattern = `concPattern();
               while(!ruleList.isEmpty()) {
                 TomRule rule = ruleList.getHead();
                 %match(TomRule rule) {
-                  RewriteRule(Term(RecordAppl[slots=matchPatternsList]),
+                  RewriteRule(Term(lhsTerm@RecordAppl[slots=matchPatternsList]),
                               Term(rhsTerm),
                               condList,
                               option) -> {
@@ -251,10 +252,10 @@ public class TomCompiler extends TomGenericPlugin {
                     Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
                     Instruction newRhsInst = `buildCondition(condList,rhsInst);
                     TomList guardList = empty();
-
-                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList),newRhsInst, option));
-
-
+                    Pattern pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
+                    Instruction typedAction = `TypedAction(newRhsInst,pattern,negativePattern);
+                    negativePattern = (PatternList) negativePattern.append(pattern);
+                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(pattern,typedAction,option));
                   }
                 } 
                 ruleList = ruleList.getTail();
