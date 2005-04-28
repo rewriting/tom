@@ -87,7 +87,7 @@ public class TomVerifier extends TomGenericPlugin {
         // System.out.println(latex);
 
         // the zenon output stuff
-        Collection zen = zenon.build_zenon(derivations);
+        Collection zen = zenon.zspecSetFromDerivationTreeSet(derivations);
 
         ZenonBackend back = new ZenonBackend();
         Iterator zit = zen.iterator();

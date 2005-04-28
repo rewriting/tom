@@ -71,18 +71,18 @@ public class ZenonOutput {
     return zfactory;
   }
 
-  public Collection build_zenon(Collection derivationSet) {
+  public Collection zspecSetFromDerivationTreeSet(Collection derivationSet) {
     Collection resset = new HashSet();
     Iterator it = derivationSet.iterator();
     while(it.hasNext()) {
       DerivTree tree = (DerivTree) it.next();
-      ZSpec spec = build_zenon(tree);
+      ZSpec spec = zspecFromDerivationTree(tree);
       resset.add(spec);
     }
     return resset;
   }
 
-  public ZSpec build_zenon(DerivTree tree) {
+  public ZSpec zspecFromDerivationTree(DerivTree tree) {
     
     Map variableset = new HashMap();
     tree = collectProgramVariables(tree,variableset);
@@ -99,10 +99,10 @@ public class ZenonOutput {
     %match(DerivTree tree) {
       derivrule(_,ebs(_,env(subsList,acc@accept(positive,negative))),_,_) -> {
         pattern = tomiltools.patternToZExpr((Pattern)positive,
-                                              build_zenon_varmap(subsList, new HashMap()));
+                                            ztermVariableMapFromSubstitution(subsList, new HashMap()));
         tomiltools.getZTermSubjectListFromPattern((Pattern)positive,subjectList,new HashMap());
         negpattern = tomiltools.patternToZExpr((PatternList)negative,
-                                                 build_zenon_varmap(subsList, new HashMap()));
+                                               ztermVariableMapFromSubstitution(subsList, new HashMap()));
       }
     }
     
@@ -130,7 +130,6 @@ public class ZenonOutput {
       } else {
         theorem = `zequiv(pattern,constraints);
       }
-      // System.out.println(theorem);
     }
 
     // now we have to to build the axion list, starting from the
@@ -139,7 +138,6 @@ public class ZenonOutput {
     
     // collects symbols in pattern
     Collection symbols = tomiltools.collectSymbols(pattern);
-    // System.out.println("symbols: "+symbols);
     // generates the axioms for this set of symbols
     ZAxiomList symbolsAxioms = tomiltools.symbolsDefinition(symbols);
     // generates axioms for all subterm operations
@@ -154,18 +152,16 @@ public class ZenonOutput {
 
     return spec;
   }
-  
+
 
   /**
    * collects all variable names in the DerivTree, and give a name to _'s
    */
   DerivTree collectProgramVariables(DerivTree tree, Map variables) {
-    return (DerivTree) collect_prog_vars.apply(tree,variables);
-  }
-  private Replace2 collect_prog_vars = new Replace2() {
+    Replace2 programVariablesCollector = new Replace2() {
       public ATerm apply(ATerm subject, Object astore) {
         Map store = (Map) astore;
-        
+
         if (subject instanceof Variable) {
           %match(Variable subject) {
             var(name) -> {
@@ -185,38 +181,29 @@ public class ZenonOutput {
         return traversal().genericTraversal(subject,this,astore);
       }
     };
-
-
-  String build_zenon_from_var(Variable variable) {
-    String result = "";
-    %match(Variable variable) {
-      var(name) -> {
-        return " " + name + " ";
-      }
-    }
-    return result;
+    return (DerivTree) programVariablesCollector.apply(tree,variables);
   }
 
-  ZTerm build_zenon_from_term(Term term) {
+  ZTerm ztermFromTerm(Term term) {
     %match(Term term) {
       tau(absTerm) -> {
         return build_zenon_from_absterm(`absTerm);
       }
       repr(name) -> {
-        return `zvar("Error in build_zenon_from_term repr");
+        return `zvar("Error in ztermFromTerm repr");
       }
       subterm(s,t,index) -> {
-        return `zvar("Error in build_zenon_from_term subterm");
+        return `zvar("Error in ztermFromTerm subterm");
       }
       slot(s,t,name) -> {
-        return `zvar("Error in build_zenon_from_term slot");
+        return `zvar("Error in ztermFromTerm slot");
       }
       appSubsT(subst,t) -> {
         // probleme: la substitution devrait etre appliquee
-        return `zvar("Error in build_zenon_from_term appsubsT ");
+        return `zvar("Error in ztermFromTerm appsubsT ");
       }
     }
-    return `zvar("match vide dans build_zenon_from_term");
+    return `zvar("match vide dans ztermFromTerm");
   }
 
   ZExpr build_zenon_from_Expr(Expr expr) {
@@ -262,7 +249,7 @@ public class ZenonOutput {
       dedterm(termlist) -> {
         %match(TermList termlist) {
           concTerm(X*,tl,tr) -> {
-              result = `zeq(build_zenon_from_term(tl),build_zenon_from_term(tr));
+              result = `zeq(ztermFromTerm(tl),ztermFromTerm(tr));
           }
         }
       }
@@ -313,13 +300,13 @@ public class ZenonOutput {
     return seq;
   }
 
-  private Map build_zenon_varmap(SubstitutionList sublist, Map map) {
+  private Map ztermVariableMapFromSubstitution(SubstitutionList sublist, Map map) {
     %match(SubstitutionList sublist) {
       ()                -> { return map; }
-      (undefsubs(),t*)  -> { return build_zenon_varmap(`t,map);}
+      (undefsubs(),t*)  -> { return ztermVariableMapFromSubstitution(`t,map);}
       (is(var(name),term),t*)   -> { 
-        map.put(`name,build_zenon_from_term(`term));
-        return build_zenon_varmap(`t,map);
+        map.put(`name,ztermFromTerm(`term));
+        return ztermVariableMapFromSubstitution(`t,map);
       }
       _ -> { return null; }
     }
