@@ -44,12 +44,14 @@ public class TomIlTools extends TomBase {
   // ------------------------------------------------------------
 
   private SymbolTable symbolTable;
+  private Verifier verifier; 
 
   protected jtom.verifier.zenon.ZenonFactory zfactory;
 
-  public TomIlTools(SymbolTable symbolTable) {
+  public TomIlTools(Verifier verifier) {
     super();
-    this.symbolTable = symbolTable;
+    this.verifier = verifier;
+    this.symbolTable = verifier.getSymbolTable();
     zfactory = ZenonFactory.getInstance(getTomSignatureFactory().getPureFactory());
   }
 
@@ -97,7 +99,7 @@ public class TomIlTools extends TomBase {
   }
   
   public ZExpr patternToZExpr(TomList subjectList, TomList tomList, Map map) {
-    /* for each TomTerm: builds a zeq : pattern = first var in map */
+    /* for each TomTerm: builds a zeq : pattern = subject */
     ZExpr res = `ztrue;
     while(!tomList.isEmpty()) {
       TomTerm h = tomList.getHead();
@@ -136,13 +138,21 @@ public class TomIlTools extends TomBase {
       }
       Variable[astName=Name(name)] -> {
         if (map.containsKey(name)) {
-          //System.out.println("In map: "+ map.containsKey(name));
           return (ZTerm) map.get(name);
         } else {
-          System.out.println("Not in map: " + `name);
+          System.out.println("Not in map: " + `name + " map: " + map);
           return `zvar(name);
         }
       }
+      Variable[astName=PositionName(numberList)] -> {
+        String name = verifier.tomNumberListToString(numberList);
+        if (map.containsKey(name)) {
+          return (ZTerm) map.get(name);
+        } else {
+          System.out.println("Not in map: " + `name + " map: " + map);
+          return `zvar(name);
+        }
+      }      
       UnamedVariable[] -> {
         return `zvar("_");
       }

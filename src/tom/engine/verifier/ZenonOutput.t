@@ -56,7 +56,7 @@ public class ZenonOutput {
     zfactory = ZenonFactory.getInstance(SingletonFactory.getInstance());
     this.traversal = new GenericTraversal();
     this.verifier = verifier;
-    this.tomiltools = new TomIlTools(verifier.getSymbolTable());
+    this.tomiltools = new TomIlTools(verifier);
   }
 
   public GenericTraversal traversal() {
@@ -98,11 +98,10 @@ public class ZenonOutput {
     // theorem to prove
     %match(DerivTree tree) {
       derivrule(_,ebs(_,env(subsList,acc@accept(positive,negative))),_,_) -> {
-        pattern = tomiltools.patternToZExpr((Pattern)positive,
-                                            ztermVariableMapFromSubstitution(subsList, new HashMap()));
-        tomiltools.getZTermSubjectListFromPattern((Pattern)positive,subjectList,new HashMap());
-        negpattern = tomiltools.patternToZExpr((PatternList)negative,
-                                               ztermVariableMapFromSubstitution(subsList, new HashMap()));
+        Map variableMap = ztermVariableMapFromSubstitutionList(subsList, new HashMap());
+        pattern = tomiltools.patternToZExpr((Pattern)positive,variableMap);
+        tomiltools.getZTermSubjectListFromPattern((Pattern)positive,subjectList,variableMap);
+        negpattern = tomiltools.patternToZExpr((PatternList)negative,variableMap);
       }
     }
     
@@ -300,13 +299,13 @@ public class ZenonOutput {
     return seq;
   }
 
-  private Map ztermVariableMapFromSubstitution(SubstitutionList sublist, Map map) {
+  private Map ztermVariableMapFromSubstitutionList(SubstitutionList sublist, Map map) {
     %match(SubstitutionList sublist) {
       ()                -> { return map; }
-      (undefsubs(),t*)  -> { return ztermVariableMapFromSubstitution(`t,map);}
+      (undefsubs(),t*)  -> { return ztermVariableMapFromSubstitutionList(`t,map);}
       (is(var(name),term),t*)   -> { 
         map.put(`name,ztermFromTerm(`term));
-        return ztermVariableMapFromSubstitution(`t,map);
+        return ztermVariableMapFromSubstitutionList(`t,map);
       }
       _ -> { return null; }
     }

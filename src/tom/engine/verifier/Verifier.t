@@ -89,7 +89,7 @@ public class Verifier extends TomBase {
         return `var(stringname);
       }
       PositionName(numberlist) -> {
-        return `var(numberlist.toString());
+        return `var(tomNumberListToString(numberlist));
       }
       EmptyName() -> {
         return `var("emptyName");
@@ -97,7 +97,7 @@ public class Verifier extends TomBase {
     }
     return `var("error while building variable name");
   }
-
+  
   Term build_Term_from_TomName(TomName name) {
     return `tau(absvar(build_Variable_from_TomName(name)));
   }
@@ -215,12 +215,33 @@ public class Verifier extends TomBase {
     }
   }
 
+  private SubstitutionList abstractSubstitutionFromAccept(Instr instr) {
+    SubstitutionList substitution = `subs();
+    %match(Instr instr) {
+      accept(positive,negative) -> {
+        Pattern positivePattern = (Pattern) positive;
+        %match(Pattern positivePattern) {
+          Pattern[subjectList=subjectList] -> {
+            while(!subjectList.isEmpty()) {
+              TomTerm subject = subjectList.getHead();
+              subjectList=subjectList.getTail();
+              %match(TomTerm subject) {
+                Variable[astName=name] -> {
+                  substitution = `subs(substitution*,is(build_Variable_from_TomName(name),build_TermFromTomTerm(subject)));
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return substitution;
+  }
+
   public Collection build_tree(Instruction automata) {
-    // DerivTree tree = null;
     // System.out.println("Build derivation tree for: " + automata);
 
-    Environment startingenv = `env(subs(),
-                                 build_InstrFromAutomata(automata));
+    // collects the accept in the automata
     Collection localAccepts = collectAccept(automata);
 
     Iterator iter = localAccepts.iterator();
@@ -228,10 +249,13 @@ public class Verifier extends TomBase {
     while(iter.hasNext()) {
         Instr localAccept = (Instr) iter.next();
 
+        // builds the initial abstract substitution
+        SubstitutionList initialsubstitution = abstractSubstitutionFromAccept(localAccept);
+        Environment startingenv = `env(initialsubstitution,
+                                       build_InstrFromAutomata(automata));
+
         Deriv startingderiv = `ebs(startingenv,
                                    env(subs(undefsubs()),localAccept));
-
-        // System.out.println("The derivation: " + startingderiv);
 
         Collection tree_list_pre = applySemanticsRules(startingderiv);
         // replace substitutions in trees
@@ -305,7 +329,6 @@ public class Verifier extends TomBase {
  */
   
   protected Seq build_dedterm(Term sp) {
-    // TODO : implement the \mapequiv relation
     TermList ded = `concTerm(sp);
     %match(Term sp) {
       appSubsT[] -> { 
@@ -596,9 +619,9 @@ public class Verifier extends TomBase {
     }
   }
 
-/**
- * These functions deals with substitution application
- */
+  /**
+   * These functions deals with substitution application
+   */
 
   Replace2 replaceVariableByTerm = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
@@ -636,6 +659,29 @@ public class Verifier extends TomBase {
       }
     }
     return subject;
+  }
+
+  String tomNumberListToString(TomNumberList numberList) {
+    String result = "";
+    while(!numberList.isEmpty()) {
+      TomNumber number = numberList.getHead();
+      numberList = numberList.getTail();
+      %match(TomNumber number) {
+        Number(n) -> { 
+          result = result + "_" + Integer.toString(`n);
+        }
+        MatchNumber(Number(n)) -> {
+          result = result + "_" + Integer.toString(`n);
+        }
+        NameNumber(PositionName(numberlist)) -> {
+          result = result + "_" + tomNumberListToString(`numberlist);          
+        }
+        RuleVar() -> {
+          result = "RuleVar" + result;
+        }
+      }
+    }
+    return result;
   }
 
   private Map buildVariableMap(SubstitutionList sublist, Map map) {
