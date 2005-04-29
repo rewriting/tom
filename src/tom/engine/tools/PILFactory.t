@@ -93,7 +93,7 @@ public class PILFactory extends TomBase {
             Cast[source=e]          -> { return this.apply(`e); }
             Or[arg1=e,arg2=FalseTL()] -> { return this.apply(`e); }
             EqualFunctionSymbol(type,t1,appl@RecordAppl[slots=concSlot(x,_*)]) -> {
-              return this.apply(`EqualFunctionSymbol(type,t1,appl.setArgs(concTomTerm())));
+              return this.apply(`EqualFunctionSymbol(type,t1,appl.setSlots(concSlot())));
             } 
           }
         }
