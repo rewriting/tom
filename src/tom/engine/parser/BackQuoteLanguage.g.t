@@ -207,7 +207,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
              result = `VariableStar(concOption(ot),Name(name),TomTypeAlone("unknown type"),concConstraint());  
            }
                 
-           | /*ws*/ 
+           | ws /*ws*/ 
                 (
                  // `x(...)
                  {LA(1) == BQ_LPAREN}? BQ_LPAREN ws ( termList[blockList,list] )? BQ_RPAREN 
@@ -251,7 +251,7 @@ bqTerm [TomList context] returns [TomTerm result]
               result = `VariableStar(concOption(ot),Name(name),TomTypeAlone("unknown type"),concConstraint());      
             }
             
-            |  /*ws*/ 
+            |  ws /*ws*/ 
             // x(...)
             (
              {LA(1) == BQ_LPAREN}? BQ_LPAREN {arguments = true;} ws (termList[blockList,context])? BQ_RPAREN 

@@ -738,7 +738,13 @@ public class TomKernelCompiler extends TomBase {
                                Instruction body) {
       // Take care of constraints
     body = compileConstraint(dest,source,body);
-    return `Let(dest,source,body);
+    if(dest.isUnamedVariable() || dest.isUnamedVariableStar()) {
+      // This is an optimisation 
+      // Do not assign an UnamedVariable or an UnamedVariableStar
+      return body;
+    } else {
+      return `Let(dest,source,body);
+    }
   }
 
   private Instruction compileConstraint(TomTerm subject, Expression source, Instruction body) {
