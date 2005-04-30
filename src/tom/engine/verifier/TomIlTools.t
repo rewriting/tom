@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- * Antoine Reilles
+ * Antoine Reilles        e-mail: Antoine.Reilles@loria.fr
  *
  **/
 
@@ -46,7 +46,7 @@ public class TomIlTools extends TomBase {
   private SymbolTable symbolTable;
   private Verifier verifier; 
 
-  protected jtom.verifier.zenon.ZenonFactory zfactory;
+  protected ZenonFactory zfactory;
 
   public TomIlTools(Verifier verifier) {
     super();
@@ -117,9 +117,9 @@ public class TomIlTools extends TomBase {
         // builds children list
         ZTermList zchild = `concZTerm();
         TomTerm hd = null;
-        while (!childrens.isEmpty()) {
-          hd = childrens.getHead();
-          childrens = childrens.getTail();
+        while (!`childrens.isEmpty()) {
+          hd = `childrens.getHead();
+          `childrens = `childrens.getTail();
           zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map));
         }
         // issue a warning here: this case is probably impossible
@@ -129,27 +129,27 @@ public class TomIlTools extends TomBase {
         // builds children list
         ZTermList zchild = `concZTerm();
         TomTerm hd = null;
-        while (!childrens.isEmpty()) {
-          hd = childrens.getHead().getAppl();
-          childrens = childrens.getTail();
+        while (!`childrens.isEmpty()) {
+          hd = `childrens.getHead().getAppl();
+          `childrens = `childrens.getTail();
           zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map));
         }
         return `zappl(zsymbol(name),zchild);
       }
       Variable[astName=Name(name)] -> {
-        if (map.containsKey(name)) {
-          return (ZTerm) map.get(name);
+        if (map.containsKey(`name)) {
+          return (ZTerm) map.get(`name);
         } else {
           System.out.println("Not in map: " + `name + " map: " + map);
           return `zvar(name);
         }
       }
       Variable[astName=PositionName(numberList)] -> {
-        String name = verifier.tomNumberListToString(numberList);
+        String name = verifier.tomNumberListToString(`numberList);
         if (map.containsKey(name)) {
           return (ZTerm) map.get(name);
         } else {
-          System.out.println("Not in map: " + `name + " map: " + map);
+          System.out.println("Not in map: " + name + " map: " + map);
           return `zvar(name);
         }
       }      
@@ -169,7 +169,7 @@ public class TomIlTools extends TomBase {
         if (subject instanceof ZSymbol) {
           %match(ZSymbol subject) {
             zsymbol(name)  -> {
-              store.add(name);
+              store.add(`name);
             }
             _ -> { return true; }
           }
@@ -195,7 +195,7 @@ public class TomIlTools extends TomBase {
       %match(TomSymbol symbol) {
         Symbol[pairNameDeclList=slots] -> {
           // process all slots
-          int slotnumber = slots.getLength();
+          int slotnumber = `slots.getLength();
           for (int i = 0; i < slotnumber;i++) {
             list = `concZTerm(list*,zvar("x"+i));
           }
@@ -206,9 +206,8 @@ public class TomIlTools extends TomBase {
         }
       }
       ZExpr axiom = `zforall(zvar("t"),ztype("T"),
-                             zequiv(
-                               zisfsym(zvar("t"),
-                               zsymbol(name)),exists));
+                             zequiv(zisfsym(zvar("t"),
+                                            zsymbol(name)),exists));
       res=`zby(res*,zaxiom("symb_"+name,axiom));
     }
     return res;
@@ -224,7 +223,7 @@ public class TomIlTools extends TomBase {
       %match(TomSymbol symbol) {
         Symbol[pairNameDeclList=slots] -> {
           // process all slots
-          int slotnumber = slots.getLength();
+          int slotnumber = `slots.getLength();
           for (int i = 0; i < slotnumber;i++) {
             list = `concZTerm(list*,zvar("x"+i));
           }
@@ -246,4 +245,3 @@ public class TomIlTools extends TomBase {
   } 
 
 }
-

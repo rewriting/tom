@@ -137,7 +137,7 @@ public class ZenonBackend {
   public String genZAxiom(ZAxiom axiom) {
     %match(ZAxiom axiom) {
       zaxiom(name,ax) -> {
-        return "  "+`name+" :\n    "+genZExpr(`ax)+"\n";
+        return "  " + `name+" :\n    " + genZExpr(`ax) + "\n";
       }
     }
     return "errorZAxiom";
@@ -155,7 +155,7 @@ public class ZenonBackend {
   public String genZSpec(ZSpec spec) {
     %match(ZSpec spec) {
       zthm(thm,by) -> {
-        return "\n"+genZExpr(`thm)+"\n"+genZAxiomList(`by);
+        return "\n" + genZExpr(`thm) + "\n" + genZAxiomList(`by);
       }
     }
     return "errorZSpec";

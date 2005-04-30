@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- * Antoine Reilles
+ * Antoine Reilles        e-mail: Antoine.Reilles@loria.fr
  *
  **/
 
@@ -97,11 +97,17 @@ public class ZenonOutput {
     ZExpr negpattern = null;
     // theorem to prove
     %match(DerivTree tree) {
-      derivrule(_,ebs(_,env(subsList,acc@accept(positive,negative))),_,_) -> {
-        Map variableMap = ztermVariableMapFromSubstitutionList(subsList, new HashMap());
-        pattern = tomiltools.patternToZExpr((Pattern)positive,variableMap);
-        tomiltools.getZTermSubjectListFromPattern((Pattern)positive,subjectList,variableMap);
-        negpattern = tomiltools.patternToZExpr((PatternList)negative,variableMap);
+      (derivrule|derivrule2)
+        [post=ebs[rhs=env(subsList,accept(positive,negative))]] -> {
+        Pattern positivePattern = (Pattern)`positive;
+        PatternList negativePatternList = (PatternList)`negative;
+        Map variableMap = ztermVariableMapFromSubstitutionList(`subsList, 
+                                                               new HashMap());
+        pattern = tomiltools.patternToZExpr(positivePattern,variableMap);
+        tomiltools.getZTermSubjectListFromPattern(positivePattern,
+                                                  subjectList,
+                                                  variableMap);
+        negpattern = tomiltools.patternToZExpr(negativePatternList,variableMap);
       }
     }
     
@@ -113,7 +119,7 @@ public class ZenonOutput {
       Seq value = (Seq) entry.getValue();
       if (value.isDedexpr()) {
         conds.put(((String) entry.getKey()),
-                  build_zenon_from_Seq(cleanSeq(value)));
+                  zexprFromSeq(cleanSeq(value)));
       }
     }
     it = conds.entrySet().iterator();
@@ -131,7 +137,7 @@ public class ZenonOutput {
       }
     }
 
-    // now we have to to build the axion list, starting from the
+    // now we have to to build the axiom list, starting from the
     // signature. Again, the TomIlTools will be useful, it has access
     // to TomSignature and Zenon signature
     
@@ -160,18 +166,17 @@ public class ZenonOutput {
     Replace2 programVariablesCollector = new Replace2() {
       public ATerm apply(ATerm subject, Object astore) {
         Map store = (Map) astore;
-
         if (subject instanceof Variable) {
           %match(Variable subject) {
             var(name) -> {
-              String newname = name;
-              if (store.containsKey(name)){
-                newname = (String) store.get(name);
+              String newname = `name;
+              if (store.containsKey(`name)){
+                newname = (String) store.get(`name);
               } else {
-                if (name.startsWith("[") && name.endsWith("]")) {
+                if (name.startsWith("[") && `name.endsWith("]")) {
                   newname = "X_" + store.size();
                 }
-                store.put(name,newname);
+                store.put(`name,newname);
               }
               return `var(newname);
             }
@@ -209,6 +214,12 @@ public class ZenonOutput {
     %match(Expr expr) {
       true() -> { return `ztrue();}
       false() -> { return `zfalse();}
+      tisfsym(absterm,s) -> {
+        return `zisfsym(ztermFromAbsTerm(absterm),zsymbolFromSymbol(s));
+      }
+      teq(absterml,abstermr) -> {
+        return `zeq(ztermFromAbsTerm(absterml),ztermFromAbsTerm(abstermr));
+      }
       isfsym(t,s) -> {
         // this should not occur
         return `zisfsym(zvar("Error in zexprFromExpr"),zsymbol("isfsym"));
@@ -216,12 +227,6 @@ public class ZenonOutput {
       eq(lt,rt) -> {
         // this should not occur
         return `zeq(zvar("Error in zexprFromExpr"),zvar("eq"));
-      }
-      tisfsym(absterm,s) -> {
-        return `zisfsym(ztermFromAbsTerm(absterm),build_zenon_from_symbol(s));
-      }
-      teq(absterml,abstermr) -> {
-        return `zeq(ztermFromAbsTerm(absterml),ztermFromAbsTerm(abstermr));
       }
       appSubsE(subslist,e) -> {
         // this should not occur
@@ -231,43 +236,43 @@ public class ZenonOutput {
     return `zeq(zvar("Error in zexprFromExpr"),zvar("end"));
   }
 
-  ZSymbol build_zenon_from_symbol(Symbol symb) {
-    String n = "random";
+  ZSymbol zsymbolFromSymbol(Symbol symb) {
     %match(Symbol symb) {
       fsymbol(name) -> {
-        n = name;
+        return `zsymbol(name);
       }
     }
-    return `zsymbol(n);
+    return `zsymbol("random");
   }
 
-  ZExpr build_zenon_from_Seq(Seq seq) {
-    ZExpr result = `ztrue();
+  ZExpr zexprFromSeq(Seq seq) {
     %match(Seq seq) {
-      seq() -> { /* nothing */ }
+      seq() -> { 
+        return `ztrue();
+      }
       dedterm(termlist) -> {
-        %match(TermList termlist) {
+        %match(TermList `termlist) {
           concTerm(X*,tl,tr) -> {
-              result = `zeq(ztermFromTerm(tl),ztermFromTerm(tr));
+            return `zeq(ztermFromTerm(tl),ztermFromTerm(tr));
           }
         }
       }
       dedexpr(exprlist) -> {
         %match(ExprList exprlist) {
-          concExpr(X*,t,true()) -> {
-              result = zexprFromExpr(`t);
+          concExpr(_*,t,true()) -> {
+            return zexprFromExpr(`t);
           }
         }
       }
       dedexpr(exprlist) -> {
         %match(ExprList exprlist) {
-          concExpr(X*,t,false()) -> {
-              result = `znot(zexprFromExpr(t));
+          concExpr(_*,t,false()) -> {
+            return `znot(zexprFromExpr(t));
           }
         }
       }
     }
-    return result;
+    return `ztrue();
   }
 
   ZTerm ztermFromAbsTerm(AbsTerm absterm) {
@@ -291,7 +296,6 @@ public class ZenonOutput {
       dedterm(concTerm(_*,t,v)) -> {
           return `dedterm(concTerm(t,v));
       }
-      /* What happen in the "false" case ? */
       dedexpr(concExpr(_*,t,v)) -> {
         return `dedexpr(concExpr(t,v));
       }
@@ -313,16 +317,16 @@ public class ZenonOutput {
 
   public void collectConstraints(DerivTree tree, Map conditions) {
     %match(DerivTree tree) {
-      derivrule(name,post,pre,condition) -> {
-        String condname = "" + (conditions.size()+1) + "";
-        conditions.put(condname,condition);
-        collectConstraints(pre,conditions);
+      derivrule[pre=pre,cond=condition] -> {
+        String condname = Integer.toString(conditions.size()+1);
+        conditions.put(condname,`condition);
+        collectConstraints(`pre,conditions);
       }
-      derivrule2(name,post,pre,pre2,condition) -> {
-        String condname = "" + (conditions.size()+1) + "";
-        conditions.put(condname,condition);
-        collectConstraints(pre,conditions);
-        collectConstraints(pre2,conditions);
+      derivrule2[pre=pre,pre2=pre2,cond=condition] -> {
+        String condname = Integer.toString(conditions.size()+1);
+        conditions.put(condname,`condition);
+        collectConstraints(`pre,conditions);
+        collectConstraints(`pre2,conditions);
       }
     }
   }

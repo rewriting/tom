@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- * Antoine Reilles
+ * Antoine Reilles        e-mail: Antoine.Reilles@loria.fr
  *
  **/
 
@@ -43,7 +43,7 @@ public class Verifier extends TomBase {
   // ------------------------------------------------------------
 
 
-  protected jtom.verifier.il.IlFactory factory;
+  protected IlFactory factory;
   private SymbolTable symbolTable;
   private boolean camlsemantics = false;
 
@@ -68,22 +68,22 @@ public class Verifier extends TomBase {
     return factory;
   }
 
-  public Term build_TermFromTomTerm(TomTerm tomterm) {
+  public Term termFromTomTerm(TomTerm tomterm) {
     %match(TomTerm tomterm) {
       ExpressionToTomTerm(expr) -> {
-        return `build_TermFromExpression(expr);
+        return `termFromExpresssion(expr);
       }
       Variable(options,name,type,constraints) -> {
-        return `build_Term_from_TomName(name);
+        return `termFromTomName(name);
       }
       _ -> {
-        System.out.println("build_TermFromTomTerm don't know how to handle this: " + tomterm);
+        System.out.println("termFromTomTerm don't know how to handle this: " + tomterm);
         return `repr("foirade");
       }
     }
   }
 
-  Variable build_Variable_from_TomName(TomName name) {
+  Variable variableFromTomName(TomName name) {
     %match(TomName name) {
       Name(stringname) -> {
         return `var(stringname);
@@ -98,36 +98,36 @@ public class Verifier extends TomBase {
     return `var("error while building variable name");
   }
   
-  Term build_Term_from_TomName(TomName name) {
-    return `tau(absvar(build_Variable_from_TomName(name)));
+  Term termFromTomName(TomName name) {
+    return `tau(absvar(variableFromTomName(name)));
   }
 
-  public Term build_TermFromExpression(Expression expression) {
+  public Term termFromExpresssion(Expression expression) {
     %match(Expression expression) {
       GetSubterm(codomain,Variable[astName=name], Number(index)) -> {
         // we will need to find the head symbol
-        Term term = build_Term_from_TomName(name);
+        Term term = termFromTomName(name);
         return `subterm(fsymbol("empty"),term,index);
       }
       GetSlot(codomain,Name(symbolName),slotName,Variable[astName=name]) -> {
-        Term term = build_Term_from_TomName(name);
+        Term term = termFromTomName(name);
         return `slot(fsymbol(symbolName),term,slotName);
       }
       TomTermToExpression(Variable[astName=name]) -> {
-        Term term = build_Term_from_TomName(name);
+        Term term = termFromTomName(name);
         return `term;
       }
       Cast(type,expr) -> {
-        return build_TermFromExpression(expr);
+        return termFromExpresssion(expr);
       }
       _ -> {
-        System.out.println("build_TermFromExpression don't know how to handle this: " + expression);
+        System.out.println("termFromExpresssion don't know how to handle this: " + expression);
         return `repr("autre foirade avec " + expression);
       }
     }
   }
   
-  public String extract_Name(NameList nl) {
+  public String extractName(NameList nl) {
     %match(NameList nl) {
       (Name(name)) -> {
         return `name;
@@ -136,80 +136,80 @@ public class Verifier extends TomBase {
     return nl.toString();
   }
 
-  public Expr build_ExprFromExpression(Expression expression) {
+  public Expr exprFromExpression(Expression expression) {
     %match(Expression expression) {
       TrueTL()  -> { return `true(); }
       FalseTL() -> { return `false(); }
       EqualFunctionSymbol(type,Variable[astName=name],RecordAppl[nameList=symbolName]) -> {
-        Term term = build_Term_from_TomName(name);
-        return `isfsym(term,fsymbol(extract_Name(symbolName)));
+        Term term = termFromTomName(name);
+        return `isfsym(term,fsymbol(extractName(symbolName)));
       }
       EqualFunctionSymbol(type,term1,RecordAppl[nameList=symbolName]) -> {
-        return `isfsym(build_TermFromTomTerm(term1),fsymbol(extract_Name(symbolName)));
+        return `isfsym(termFromTomTerm(term1),fsymbol(extractName(symbolName)));
       }
       EqualTerm(type,t1,t2) -> {
-        return `eq(build_TermFromTomTerm(t1),build_TermFromTomTerm(t2));
+        return `eq(termFromTomTerm(t1),termFromTomTerm(t2));
       }
       _ -> {
-        System.out.println("build_ExprFromExpression don't know how to handle this: " + expression);
+        System.out.println("exprFromExpression don't know how to handle this: " + expression);
         return `false();
       }
     }
   }
 
-  public Instr build_InstrFromInstructionList(InstructionList instrlist) {
+  public Instr instrFromInstructionList(InstructionList instrlist) {
     InstrList list = `semicolon();
     while (!instrlist.isEmpty()) {
       Instruction i = (Instruction) instrlist.getHead();
       instrlist = instrlist.getTail();
       if (!i.isCheckStamp()) {
-        list = `semicolon(list*,build_InstrFromAutomata(i));
+        list = `semicolon(list*,instrFromInstruction(i));
       }
     }
     return `sequence(list);
   }
 
-  public Instr build_InstrFromAutomata(Instruction automata) {
+  public Instr instrFromInstruction(Instruction automata) {
     %match(Instruction automata) {
       TypedAction(action,positivePattern,negativePatternList) -> {
         return `accept(positivePattern,negativePatternList);
       }
 
       If(cond,ift,iff) -> {
-        return `ITE(build_ExprFromExpression(cond),
-                    build_InstrFromAutomata(ift),
-                    build_InstrFromAutomata(iff));
+        return `ITE(exprFromExpression(cond),
+                    instrFromInstruction(ift),
+                    instrFromInstruction(iff));
       }
       Let(Variable[astName=avar],expr,body) -> {
-        Variable thevar = build_Variable_from_TomName(avar);
+        Variable thevar = variableFromTomName(avar);
         return `ILLet(thevar,
-                      build_TermFromExpression(expr),
-                      build_InstrFromAutomata(body));
+                      termFromExpresssion(expr),
+                      instrFromInstruction(body));
       }
       LetAssign(Variable[astName=avar],expr,body) -> {
-        Variable thevar = build_Variable_from_TomName(avar);
+        Variable thevar = variableFromTomName(avar);
         return `ILLet(thevar,
-                      build_TermFromExpression(expr),
-                      build_InstrFromAutomata(body));
+                      termFromExpresssion(expr),
+                      instrFromInstruction(body));
       }
       (Let|LetAssign)(UnamedVariable[],expr,body) -> {
-        return build_InstrFromAutomata(`body);
+        return instrFromInstruction(`body);
       }
       CompiledPattern(patterns,instr) -> {
-        return build_InstrFromAutomata(`instr);
+        return instrFromInstruction(`instr);
       }
       AbstractBlock(concInstruction(CheckStamp[],instr)) -> {
-        return build_InstrFromAutomata(`instr);
+        return instrFromInstruction(`instr);
       }
       AbstractBlock(concInstruction(instrlist*)) -> {
-        return build_InstrFromInstructionList(`instrlist);
+        return instrFromInstructionList(`instrlist);
       }
       Nop() -> {
         // tom uses nop in the iffalse part of ITE
         return `refuse();
       }
       _ -> {
-        System.out.println("build_InstrFromAutomata don't know how to handle this : " + automata);
+        System.out.println("instrFromInstruction don't know how to handle this : " + automata);
         return `refuse();
       }
     }
@@ -227,7 +227,10 @@ public class Verifier extends TomBase {
               subjectList=subjectList.getTail();
               %match(TomTerm subject) {
                 Variable[astName=name] -> {
-                  substitution = `subs(substitution*,is(build_Variable_from_TomName(name),build_TermFromTomTerm(subject)));
+                  substitution = `subs(substitution*,
+                                       is(
+                                          variableFromTomName(name),
+                                          termFromTomTerm(subject)));
                 }
               }
             }
@@ -245,33 +248,33 @@ public class Verifier extends TomBase {
     Collection localAccepts = collectAccept(automata);
 
     Iterator iter = localAccepts.iterator();
-    Collection tree_list = new HashSet();
+    Collection treeList = new HashSet();
     while(iter.hasNext()) {
         Instr localAccept = (Instr) iter.next();
 
         // builds the initial abstract substitution
         SubstitutionList initialsubstitution = abstractSubstitutionFromAccept(localAccept);
         Environment startingenv = `env(initialsubstitution,
-                                       build_InstrFromAutomata(automata));
+                                       instrFromInstruction(automata));
 
         Deriv startingderiv = `ebs(startingenv,
                                    env(subs(undefsubs()),localAccept));
 
-        Collection tree_list_pre = applySemanticsRules(startingderiv);
+        Collection treeListPre = applySemanticsRules(startingderiv);
         // replace substitutions in trees
-        Iterator it = tree_list_pre.iterator();
+        Iterator it = treeListPre.iterator();
         while(it.hasNext()) {
             DerivTree tree = (DerivTree) it.next();
-            SubstitutionList outputsubst = collect_subst(tree);
+            SubstitutionList outputsubst = getOutputSubstitution(tree);
             tree = replaceUndefinedSubstitution(tree,outputsubst);
-            tree_list.add(tree);
+            treeList.add(tree);
         }
     }
 
-    return tree_list;
+    return treeList;
   }
   
-  private Collect2 collect_subst = new Collect2() {
+  private Collect2 outputSubstitutionCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         SubstRef outsubst = (SubstRef) astore;
         if (subject instanceof Deriv) {
@@ -279,8 +282,6 @@ public class Verifier extends TomBase {
             ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
               outsubst.set(`e);
             }
-            
-            // default rule
             _ -> {
               return true;
             }
@@ -291,9 +292,9 @@ public class Verifier extends TomBase {
       }//end apply
     }; //end new
   
-  public SubstitutionList collect_subst(DerivTree subject) {
+  public SubstitutionList getOutputSubstitution(DerivTree subject) {
     SubstRef output = new SubstRef();
-    traversal().genericCollect(subject,collect_subst,output);
+    traversal().genericCollect(subject,outputSubstitutionCollector,output);
     return output.get();
   }
 
@@ -305,8 +306,6 @@ public class Verifier extends TomBase {
             TypedAction(action,positive,negative)  -> {
               store.add(`accept(positive,negative));
             }
-            
-            // default rule
             _ -> {
               return true;
             }
@@ -324,24 +323,21 @@ public class Verifier extends TomBase {
   }
   
 
-/**
- * The axioms the mapping has to verify
- */
-  
-  protected Seq build_dedterm(Term sp) {
+  /**
+   * The axioms the mapping has to verify
+   */
+  protected Seq seqFromTerm(Term sp) {
     TermList ded = `concTerm(sp);
     %match(Term sp) {
       appSubsT[] -> { 
-        TermList follow = apply_termRules(replaceVariablesInTerm(sp));
+        TermList follow = applyMappingRules(replaceVariablesInTerm(sp));
         ded = `concTerm(ded*,follow*); 
       }
     }
-
-    // System.out.println("dedterm gives : " + ded);
     return `dedterm(concTerm(ded*));
   }
 
-  protected ExprList build_dedexpr(Expr sp) {
+  protected ExprList exprListFromExpr(Expr sp) {
     ExprList ded = `concExpr(sp);
     %match(Expr sp) {
       appSubsE[] -> { 
@@ -354,20 +350,19 @@ public class Verifier extends TomBase {
     return `ded;
   }
 
-  // need to be reworked : this IS a BAD way to do it !
-  protected TermList apply_termRules(Term trm) {
+  protected TermList applyMappingRules(Term trm) {
     %match(Term trm) {
       tau[] -> {
         return `concTerm(trm);
       }
       subterm(s,t@subterm[],index) -> {
         // first reduce the argument
-        TermList reduced = apply_termRules(`t);
+        TermList reduced = applyMappingRules(`t);
         TermList res = `concTerm(trm);
         while(!reduced.isEmpty()) {
           Term head = reduced.getHead();
           if (head.isTau()) {
-            TermList hl = apply_termRules(head);
+            TermList hl = applyMappingRules(head);
             while(!hl.isEmpty()) {
               Term h = hl.getHead();
               res = `concTerm(res*,subterm(s,h,index));           
@@ -382,12 +377,12 @@ public class Verifier extends TomBase {
       }
       slot(s,t@slot[],slotName) -> {
         // first reduce the argument
-        TermList reduced = apply_termRules(`t);
+        TermList reduced = applyMappingRules(`t);
         TermList res = `concTerm(trm);
         while(!reduced.isEmpty()) {
           Term head = reduced.getHead();
           if (head.isTau()) {
-            TermList hl = apply_termRules(head);
+            TermList hl = applyMappingRules(head);
             while(!hl.isEmpty()) {
               Term h = hl.getHead();
               res = `concTerm(res*,slot(s,h,slotName));           
@@ -426,15 +421,15 @@ public class Verifier extends TomBase {
       }
       eq(lt,rt) -> {
         // first reduce the argument
-        Term reducedl = ((TermList)apply_termRules(`lt).reverse()).getHead();
-        Term reducedr = ((TermList)apply_termRules(`rt).reverse()).getHead();
+        Term reducedl = ((TermList)applyMappingRules(`lt).reverse()).getHead();
+        Term reducedr = ((TermList)applyMappingRules(`rt).reverse()).getHead();
 
         ExprList taill = `applyExprRules(eq(reducedl,reducedr));
         ExprList res = `concExpr(ex,taill*);
       }
       isfsym(t,symbol) -> {
         // first reduce the argument
-        TermList reduced = apply_termRules(`t);
+        TermList reduced = applyMappingRules(`t);
         ExprList res = `concExpr(ex);
         while(!reduced.isEmpty()) {
           Term head = reduced.getHead();
@@ -500,13 +495,13 @@ public class Verifier extends TomBase {
       // let rule
       ebs(env(e,ILLet(x,u,i)),env(subs(undefsubs()),ip)) -> {
         // build condition
-        Seq cond = build_dedterm(`appSubsT(e,u));
+        Seq cond = seqFromTerm(`appSubsT(e,u));
         // find "t"
         Term t = null;
         %match(Seq cond) {
           dedterm(concTerm(_*,r)) -> { t = `r; }
             _ -> { if (t == null) { 
-              System.out.println("build_dedterm has a problem with " + cond);
+              System.out.println("seqFromTerm has a problem with " + cond);
             }
           }
         }
@@ -524,7 +519,7 @@ public class Verifier extends TomBase {
       // iftrue/iffalse rule
       ebs(env(e,ITE(exp,ift,iff)),env(subs(undefsubs()),ip)) -> {
         // build condition
-        ExprList cond = build_dedexpr(`appSubsE(e,exp));
+        ExprList cond = exprListFromExpr(`appSubsE(e,exp));
 
         Deriv up = `ebs(env(e,ift),env(subs(undefsubs()),ip));
         String rulename = "iftrue";

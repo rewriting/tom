@@ -20,7 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- * **/
+ * Antoine Reilles        e-mail: Antoine.Reilles@loria.fr
+ **/
 
 package jtom.verifier;
 
@@ -133,7 +134,7 @@ public class TomVerifier extends TomGenericPlugin {
         Collection store = (Collection)astore;
         if (subject instanceof Instruction) {
           %match(Instruction subject) {
-            CompiledMatch(automata, _)  -> {
+            CompiledMatch[automataInst=automata]  -> {
               store.add(subject);
             }
             
@@ -160,7 +161,7 @@ public class TomVerifier extends TomGenericPlugin {
     while (it.hasNext()) {
       Instruction cm = (Instruction)it.next();
       // simplify the IL automata
-      purified.add((simplify_il(cm)));
+      purified.add((simplifyIl(cm)));
     }
     return purified;
   }
@@ -183,11 +184,11 @@ public class TomVerifier extends TomGenericPlugin {
             (UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {
               return traversal().genericTraversal(`inst,this);
             }
-            (Let|LetRef|LetAssign)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
+            (Let|LetRef|LetAssign)[variable=(UnamedVariable|UnamedVariableStar)[],astInstruction=body] -> {
               return traversal().genericTraversal(`body,this);
             }
 
-            CompiledPattern(patterns,inst) -> {
+            CompiledPattern[automataInst=inst] -> {
               return traversal().genericTraversal(`inst,this);
             }
             
@@ -198,9 +199,9 @@ public class TomVerifier extends TomGenericPlugin {
          */
         return traversal().genericTraversal(subject,this);
       }//end apply
-    };//end new Replace1 simplify_il
+    };//end new Replace1 ilSimplifier
   
-  private Instruction simplify_il(Instruction subject) {
+  private Instruction simplifyIl(Instruction subject) {
     return (Instruction) ilSimplifier.apply(subject);
   }
   
@@ -251,7 +252,7 @@ public class TomVerifier extends TomGenericPlugin {
     while (it.hasNext()) {
       Instruction cm = (Instruction) it.next();
       %match(Instruction cm) {
-        CompiledMatch(automata, options)  -> {
+        CompiledMatch[automataInst=automata,option=options]  -> {
           Collection trees = verif.build_tree(automata);
           derivations.addAll(trees);
         }
@@ -311,25 +312,25 @@ public class TomVerifier extends TomGenericPlugin {
   }
   public String patternToString(TomTerm tomTerm) {
     %match(TomTerm tomTerm) {
-      TermAppl(_,concTomName(Name(name),_*),childrens,_) -> {
-        if (childrens.isEmpty()) {
-          return name;
+      TermAppl[nameList=concTomName(Name(name),_*),args=childrens] -> {
+        if (`childrens.isEmpty()) {
+          return `name;
         } else {
-          name = name + "(";
-          TomTerm head = childrens.getHead();
+          `name = `name + "(";
+          TomTerm head = `childrens.getHead();
           name += patternToString(head);
-          TomList tail = childrens.getTail();
+          TomList tail = `childrens.getTail();
           while(!tail.isEmpty()) {
             head = tail.getHead();
-            name += "," + patternToString(head);
+            `name += "," + patternToString(head);
             tail = tail.getTail();
           }
-          name += ")";
-          return name;
+          `name += ")";
+          return `name;
         }
       }
-      Variable(_,Name(name),_,_) -> {
-        return name;
+      Variable[astName=Name(name)] -> {
+        return `name;
       }
       UnamedVariable[] -> {
         return "\\_";
@@ -337,5 +338,5 @@ public class TomVerifier extends TomGenericPlugin {
     }
     return "StrangePattern" + tomTerm;
   }
-  
+
 } // class TomVerifier
