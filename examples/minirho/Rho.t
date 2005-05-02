@@ -104,9 +104,12 @@ public class Rho {
 //      }
      
 
-	%op VisitableVisitor One_abs(VisitableVisitor) {
-		fsym {}
-		make(v) {`Sequence(new Not_abs(),One(v)) }//new One_abs((VisitableVisitor)v)
+	%op VisitableVisitor Not_abs {
+		make() {new Not_abs() }
+	}
+
+	%op VisitableVisitor One_abs(strat:VisitableVisitor) {
+		make(v) {`Sequence(Not_abs(),One(v)) }//new One_abs((VisitableVisitor)v)
 	}
 	VisitableVisitor rules = new ReductionRules();
 	VisitableVisitor print = new Print();
@@ -323,7 +326,7 @@ public class Rho {
  	}
 	
 	
-	class Not_abs extends rhotermVisitableFwd {
+	public class Not_abs extends rhotermVisitableFwd {
 		public Not_abs() {
 			super(`Identity());
 		}
