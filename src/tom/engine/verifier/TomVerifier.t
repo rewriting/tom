@@ -91,11 +91,18 @@ public class TomVerifier extends TomGenericPlugin {
         Collection zen = zenon.zspecSetFromDerivationTreeSet(derivations);
 
         ZenonBackend back = new ZenonBackend();
+        int number=1;
         Iterator zit = zen.iterator();
         while (zit.hasNext()) {
           ZSpec sp = (ZSpec) zit.next();
           String out = back.genZSpec(sp);
+          System.out.println("\n%%begin-auto-proof");
+          System.out.println("%%location: []");
+          System.out.println("%%name: theorem"+number);
+          System.out.println("%%statement");
           System.out.println("\n"+out+"\n");          
+          System.out.println("%%end-auto-proof\n");
+          number = number+1;
         }
 
         // The stats output stuff

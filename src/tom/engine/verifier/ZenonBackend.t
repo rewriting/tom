@@ -137,14 +137,14 @@ public class ZenonBackend {
   public String genZAxiom(ZAxiom axiom) {
     %match(ZAxiom axiom) {
       zaxiom(name,ax) -> {
-        return "  " + `name+" :\n    " + genZExpr(`ax) + "\n";
+        return "Parameter " + `name+" :\n    " + genZExpr(`ax) + ".\n";
       }
     }
     return "errorZAxiom";
   }
 
   public String genZAxiomList(ZAxiomList axlist) {
-    String res = "By ";
+    String res = "";
     while (!axlist.isEmpty()) {
       res += genZAxiom(axlist.getHead());
       axlist = axlist.getTail();
