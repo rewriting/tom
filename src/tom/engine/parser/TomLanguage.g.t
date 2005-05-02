@@ -226,6 +226,23 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                 listTextPattern.add(text.toString());
                 clearText();
                 listOrgTrackPattern.add(option);
+            }
+            ( 
+                ALTERNATIVE option = matchPattern[matchPatternList] 
+                {
+                    listOfMatchPatternList.add(ast().makeList(matchPatternList));
+                    matchPatternList.clear();
+                    listTextPattern.add(text.toString());
+                    clearText();
+                    listOrgTrackPattern.add(option);
+
+                getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("DeprecatedDisjunction",
+                                new Object[]{currentFile(), new Integer(getLine())}),
+                                   currentFile(), getLine()));
+
+                }
+            )* 
+            {
                 matchGuardsList.clear();
             }
             ( WHEN matchGuards[matchGuardsList] )?
