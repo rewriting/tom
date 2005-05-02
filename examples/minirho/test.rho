@@ -5,13 +5,13 @@ var("X")
 const("a")
 
 //(a -> b)a |--> b
-app(abs(const(\"a\"),const(\"b\")),const(\"a\"))
+app(abs(const("a"),const("b")),const("a"))
 
 //(s(a) -> b)c |--> stk
-app(abs(app(const(\"s\"),const(\"a\")),const(\"b\")),const(\"c\"))
+app(abs(app(const("s"),const("a")),const("b")),const("c"))
 
 //(c -> b) s(a) |--> stk
-app(abs(const(\"c\"),const(\"b\")),app(const(\"s\"),const(\"a\")))
+app(abs(const("c"),const("b")),app(const("s"),const("a")))
 
 //(X -> X) a |--> a
 app(abs(var("X"),var("X")),const("a"))
@@ -27,7 +27,7 @@ app(abs(app(const("f"),var("X")),var("X")),app(const("f"),const("a")))
 app(abs(app(app(app(const("f"),var("X")),var("Y")),var("Z")),var("Y")),app(app(app(const("f"),const("a")),const("b")),const("c")))
 
 //Z -> ((f X Y -> X) f ab)
-abs(var("Z"),app(abs(app(app(const("f"),var("X")),var("Y")),var("X")),app(app(const("f"),const("a")),const("b"))))"
+abs(var("Z"),app(abs(app(app(const("f"),var("X")),var("Y")),var("X")),app(app(const("f"),const("a")),const("b"))))
 
 //(Z -> ((f X Y -> X) f ab) ) 3
 app(abs(var("Z"),app(abs(app(app(const("f"),var("X")),var("Y")),var("X")),app(app(const("f"),const("a")),const("b")))),const("3"))
@@ -56,15 +56,14 @@ app(struct(abs(app(app(const("f"),var("X")),var("Y")),var("X")),abs(app(app(cons
 
 //(h Z H h(g(I))  -> ((f X Y -> X, f X Y -> Y) f Z H)) h(h(a),h(b),h(g(b)))
 app(abs(app(app(app(const("h"),var("Z")),var("H")),app(const("h"),app(const("g"),var("I")))),app(struct(abs(app(app(const("f"),var("X")),var("Y")),var("X")),abs(app(app(const("f"),var("X")),var("Y")),var("Y"))),app(app(const("f"),var("Z")),var("H")))),app(app(app(const("h"),app(const("h"),const("a"))),app(const("h"),const("b"))),app(const("h"),app(const("g"),const("b")))))
-			}	
+
 
 //(f X h(Y) g(h(Z)) -> (h(T) -> T)Y, (U,V -> U)X,Z) f a h(h(b)) g(h(a)
 app(abs(app(app(app(const("f"),var("X")),app(const("h"),var("Y"))),app(const("g"), app(const("h"),var("Z")))),struct(app(abs(app(const("h"),var("T")),var("T")),var("Y")),app(abs(struct(var("U"),var("V")),var("U")),struct(var("X"),var("Z"))))), app(app(app(const("f"),const("a")),app(const("h"),app(const("h"),const("b")))),app(const("g"),app(const("h"),const("a")))))
- 			}	
 
  //(f X h(Y) g(h(Z)) -> (h(T) -> T)Y, (U,V -> i(U,V,Y))X,Z) f a h(h(b)) g(h(a)
 app(abs(app(app(app(const("f"),var("X")),app(const("h"),var("Y"))),app(const("g"), app(const("h"),var("Z")))),struct(app(abs(app(const("h"),var("T")),var("T")),var("Y")),app(abs(struct(var("U"),var("V")),app(app(app(const("i"),var("U")),var("V")),var("Y"))),struct(var("X"),var("Z"))))), app(app(app(const("f"),const("a")),app(const("h"),app(const("h"),const("b")))),app(const("g"),app(const("h"),const("a")))))
-   			}
+
 //x -> x -> x 2 3
 app(app(abs(var("X"),abs(var("X"),var("X"))),const("2")),const("3"))
 
