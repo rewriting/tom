@@ -240,9 +240,10 @@ public class TomCompiler extends TomGenericPlugin {
               }
 
               TomRuleList ruleList = rl;
+              PatternList negativePattern = tom_empty_list_concPattern();
               while(!ruleList.isEmpty()) {
                 TomRule rule = ruleList.getHead();
-                 { jtom.adt.tomsignature.types.TomRule tom_match4_1=(( jtom.adt.tomsignature.types.TomRule)rule); if(tom_is_fun_sym_RewriteRule(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_lhs=tom_get_slot_RewriteRule_lhs(tom_match4_1); { jtom.adt.tomsignature.types.TomTerm tom_match4_1_rhs=tom_get_slot_RewriteRule_rhs(tom_match4_1); { jtom.adt.tomsignature.types.InstructionList tom_match4_1_condList=tom_get_slot_RewriteRule_condList(tom_match4_1); { jtom.adt.tomsignature.types.OptionList tom_match4_1_option=tom_get_slot_RewriteRule_option(tom_match4_1); if(tom_is_fun_sym_Term(tom_match4_1_lhs) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_lhs_tomTerm=tom_get_slot_Term_tomTerm(tom_match4_1_lhs); if(tom_is_fun_sym_RecordAppl(tom_match4_1_lhs_tomTerm) ||  false ) { { jtom.adt.tomsignature.types.SlotList tom_match4_1_lhs_tomTerm_slots=tom_get_slot_RecordAppl_slots(tom_match4_1_lhs_tomTerm); { jtom.adt.tomsignature.types.SlotList matchPatternsList=tom_match4_1_lhs_tomTerm_slots; if(tom_is_fun_sym_Term(tom_match4_1_rhs) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_rhs_tomTerm=tom_get_slot_Term_tomTerm(tom_match4_1_rhs); { jtom.adt.tomsignature.types.TomTerm rhsTerm=tom_match4_1_rhs_tomTerm; { jtom.adt.tomsignature.types.InstructionList condList=tom_match4_1_condList; { jtom.adt.tomsignature.types.OptionList option=tom_match4_1_option;
+                 { jtom.adt.tomsignature.types.TomRule tom_match4_1=(( jtom.adt.tomsignature.types.TomRule)rule); if(tom_is_fun_sym_RewriteRule(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_lhs=tom_get_slot_RewriteRule_lhs(tom_match4_1); { jtom.adt.tomsignature.types.TomTerm tom_match4_1_rhs=tom_get_slot_RewriteRule_rhs(tom_match4_1); { jtom.adt.tomsignature.types.InstructionList tom_match4_1_condList=tom_get_slot_RewriteRule_condList(tom_match4_1); { jtom.adt.tomsignature.types.OptionList tom_match4_1_option=tom_get_slot_RewriteRule_option(tom_match4_1); if(tom_is_fun_sym_Term(tom_match4_1_lhs) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_lhs_tomTerm=tom_get_slot_Term_tomTerm(tom_match4_1_lhs); if(tom_is_fun_sym_RecordAppl(tom_match4_1_lhs_tomTerm) ||  false ) { { jtom.adt.tomsignature.types.TomTerm lhsTerm=tom_match4_1_lhs_tomTerm; { jtom.adt.tomsignature.types.SlotList tom_match4_1_lhs_tomTerm_slots=tom_get_slot_RecordAppl_slots(tom_match4_1_lhs_tomTerm); { jtom.adt.tomsignature.types.SlotList matchPatternsList=tom_match4_1_lhs_tomTerm_slots; if(tom_is_fun_sym_Term(tom_match4_1_rhs) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_rhs_tomTerm=tom_get_slot_Term_tomTerm(tom_match4_1_rhs); { jtom.adt.tomsignature.types.TomTerm rhsTerm=tom_match4_1_rhs_tomTerm; { jtom.adt.tomsignature.types.InstructionList condList=tom_match4_1_condList; { jtom.adt.tomsignature.types.OptionList option=tom_match4_1_option;
 
 
 
@@ -251,11 +252,11 @@ public class TomCompiler extends TomGenericPlugin {
                     Instruction rhsInst = tom_make_If(tom_make_TrueTL(),tom_make_Return(newRhs),tom_make_Nop());
                     Instruction newRhsInst = buildCondition(condList,rhsInst);
                     TomList guardList = empty();
-
-                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(tom_make_PatternInstruction(tom_make_Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList),newRhsInst,option));
-
-
-                  }}}} }}} }} }}}}} }}
+                    Pattern pattern = tom_make_Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
+                    Instruction typedAction = tom_make_TypedAction(newRhsInst,pattern,negativePattern);
+                    negativePattern = (PatternList) negativePattern.append(pattern);
+                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(tom_make_PatternInstruction(pattern,typedAction,option));
+                  }}}} }}}} }} }}}}} }}
  
                 ruleList = ruleList.getTail();
               }

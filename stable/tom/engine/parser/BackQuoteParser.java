@@ -255,6 +255,7 @@ public BackQuoteParser(ParserSharedInputState state) {
 				}
 			}
 			else if ((_tokenSet_0.member(LA(1)))) {
+				ws();
 				{
 				if (((LA(1)==BQ_LPAREN))&&(LA(1) == BQ_LPAREN)) {
 					match(BQ_LPAREN);
@@ -683,6 +684,7 @@ public BackQuoteParser(ParserSharedInputState state) {
 				}
 			}
 			else if ((_tokenSet_4.member(LA(1)))) {
+				ws();
 				{
 				if (((LA(1)==BQ_LPAREN))&&(LA(1) == BQ_LPAREN)) {
 					match(BQ_LPAREN);

@@ -43,12 +43,12 @@ public class PeanoAdvanced1 {
   }
 
   %op term zero {
-    is_fsym(t) { t.getAFun() == factory.makeAFun("zero",0,false) }
+    is_fsym(t) { t.getName().equals("zero") }
     make       { factory.makeAppl(factory.makeAFun("zero",0,false)) }
   }
   
   %op term suc(pred:term) {
-    is_fsym(t)       { t.getAFun() == factory.makeAFun("suc",1,false) }
+    is_fsym(t)       { t.getName().equals("suc") }
     get_slot(pred,t) { (ATermAppl)t.getArgument(0) }
     make(t)          { factory.makeAppl(factory.makeAFun("suc",1,false),t) }
   }
