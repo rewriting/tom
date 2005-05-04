@@ -134,6 +134,10 @@ public class PILFactory extends TomBase {
         LetAssign(variable,src,body) -> {
           return "letAssign " + prettyPrint(variable) + " = " + prettyPrint(src) + " in\n\t" + prettyPrint(body).replaceAll("\n","\n\t");
         }
+
+        Assign(variable,src) -> {
+          return "Assign " + prettyPrint(variable) + " = " + prettyPrint(src) ;
+        }
         
 
         DoWhile(doInst,condition) ->{
@@ -141,7 +145,7 @@ public class PILFactory extends TomBase {
         }
 
         WhileDo(condition,doInst) ->{
-          return "while "+ prettyPrint(condition)+"do\n\t " + prettyPrint(doInst).replaceAll("\n","\n\t");
+          return "while "+ prettyPrint(condition)+" do\n\t " + prettyPrint(doInst).replaceAll("\n","\n\t");
         }
   
 
@@ -164,6 +168,10 @@ public class PILFactory extends TomBase {
 
         UnamedBlock(instList) -> {
           return prettyPrint(`instList);
+        }
+
+        NamedBlock(name,instList) -> {
+          return name+" : "+prettyPrint(`instList);
         }
         
 
@@ -191,13 +199,30 @@ public class PILFactory extends TomBase {
         EqualFunctionSymbol(astType,exp1,exp2) -> {
           return "is_fun_sym("+prettyPrint(exp1)+","+prettyPrint(exp2)+")";
         }
+
+        Negation(exp) -> {
+          return "not "+prettyPrint(exp);
+        }
         
         IsEmptyList[variable=kid1] -> {
           return "is_empty("+prettyPrint(kid1)+")";
         }
 
+        EqualTerm(_,kid1,kid2) -> {
+          return "equal("+prettyPrint(kid1)+","+prettyPrint(kid2)+")";
+        }
+
+        GetSliceList(astName,variableBeginAST,variableEndAST) -> {
+          return "getSliceList("+prettyPrint(astName)+","+prettyPrint(variableBeginAST)+","+prettyPrint(variableEndAST)+")";
+        }
+
+
         GetHead[variable=variable] -> {
           return "getHead("+prettyPrint(variable)+")";
+        }
+        
+        GetTail[variable=variable] -> {
+          return "getTail("+prettyPrint(variable)+")";
         }
 
         GetSlot(codomain,astName,slotNameString,variable) -> {
@@ -226,20 +251,21 @@ public class PILFactory extends TomBase {
     } else if (subject instanceof TomName) {
       %match(TomName subject) {
         PositionName(number_list) -> {
-          return "t"+prettyPrint(number_list);
+          return "t"+ numberListToIdentifier(number_list);
         }
         Name(string) -> {
           return string;
         }
+      
       }
     } else if (subject instanceof TomNumber) {
       %match(TomNumber subject) {
         Number(n) -> {
-          return "_"+n;
+          return ""+n;
         }
 
-        MatchNumber(number) -> {
-          return prettyPrint(number);
+        NameNumber(name) -> {
+          return prettyPrint(`name);
         }
         
         ListNumber(number) -> {
