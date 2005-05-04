@@ -251,7 +251,7 @@ public class PILFactory extends TomBase {
     } else if (subject instanceof TomName) {
       %match(TomName subject) {
         PositionName(number_list) -> {
-          return "t"+ numberListToIdentifier(number_list);
+          return "t" + numberListToIdentifier(number_list);
         }
         Name(string) -> {
           return string;
