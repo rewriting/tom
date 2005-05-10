@@ -81,29 +81,6 @@ public class Rho {
 			eq(var:RTerm,rhs:RTerm) -> Subst 
 			}  
 	
-//      public class One_abs extends AbstractVisitableVisitor {
-// 			 public One_abs(VisitableVisitor v) {
-// 				 init(v);
-// 			 }
-			 
-// 			 public Visitable visit(Visitable any) throws VisitFailure {
-// 				 int childCount = any.getChildCount();
-// 				 if (any instanceof RTerm) {
-// 					 %match(RTerm any){
-// 						 abs[] -> { throw new VisitFailure();}// return any;}
-// 					 } 
-// 				 }
-// 				 for (int i = 0; i < childCount; i++) {
-// 					 try {
-// 						 return any.setChildAt(i,getArgument(0).visit(any.getChildAt(i)));
-// 					 } catch(VisitFailure f) { }
-// 				 }
-// 				 throw new VisitFailure();
-// 			 }
-			 
-//      }
-     
-
 	%op VisitableVisitor Not_abs {
 		make() {new Not_abs() }
 	}
@@ -111,11 +88,16 @@ public class Rho {
 	%op VisitableVisitor One_abs(strat:VisitableVisitor) {
 		make(v) {`Sequence(Not_abs(),One(v)) }//new One_abs((VisitableVisitor)v)
 	}
+	%op VisitableVisitor All_abs(strat:VisitableVisitor) {
+		make(v) {`Sequence(Not_abs(),All(v)) }//new One_abs((VisitableVisitor)v)
+	}
 	VisitableVisitor rules = new ReductionRules();
 	VisitableVisitor print = new Print();
-	//STRATEGIE OK  VRAI OUTERMOST
+	//STRATEGIE OUTERMOST
 	VisitableVisitor oneStepWeakNormalisation = `mu(MuVar("x"),Choice(rules,One_abs(MuVar("x"))));
 	VisitableVisitor myStrategy = `Repeat(oneStepWeakNormalisation);
+	//STRATEGIE INNERMOST (FAST)
+//	VisitableVisitor myStrategy = `mu(MuVar("x"),Sequence(All_abs(MuVar("x")),Choice(Sequence(rules,MuVar("x")),Identity)));
 	public final static void main(String[] args) {
 		Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
 		rhoEngine.run();
@@ -219,65 +201,14 @@ public class Rho {
 					return `appC(andC(result*),appS(phi,M));}
 				/* La regle est correcte pour n is 0 */
 				//ALPHA-CONV!!
-				
-// 				/*ENCAPSULATIONS DES REGLES SUR LES CONTRAINTES */
-// 				/*Decompose n = m = 0*/
-// 				appC((X*,match(f@const[],f),Y*),M) -> {return `appC(andC(X*,Y*),M);}
-				
-// 				/*Decompose_ng n = m = 0*/
-// 				//si j'arrive dans la regle suivant c'est que les const sont diff
-// 				appC((X*,match(const[],const[]),Y*),M) -> {return `appC(andC(X*,matchKO(),Y*),M);}
-				
-// 				/*Decompose et Decompose_ng min(n,m) > 0 */
-// 				l:appC((X*,m@match(app[],app[]),Y*),M) -> {
-// 					ListConstraint head_is_constant = `headIsConstant(m);
-// 					%match(ListConstraint head_is_constant) {
-// 						(match[]) -> { break l; }
-// 						(matchKO()) -> { return `appC(andC(X*,matchKO(),Y*),M); }
-// 					}
-// 					ListConstraint result = `computeMatch(andC(m));
-// 					return `appC(andC(X*,result*,Y*),M);
-// 				}
-// 				l:appC((X*,m@match(app[],const[]),Y*),M)  -> {
-// 					ListConstraint head_is_constant = `headIsConstant(m);
-// 					%match(ListConstraint head_is_constant) {
-// 						(match[]) -> { break l; }
-// 						(matchKO()) -> { return `appC(andC(X*,matchKO(),Y*),M); }
-// 					}
-// 					ListConstraint result = `computeMatch(andC(m));
-// 					return `appC(andC(X*,result*,Y*),M);
-// 				}
-// 				l:appC((X*,m@match(const[],app[]),Y*),M) -> {
-// 					ListConstraint head_is_constant = `headIsConstant(m);
-// 					%match(ListConstraint head_is_constant) {
-// 						(match[]) -> { break l; }
-// 						(matchKO()) -> { return `appC(andC(X*,matchKO(),Y*),M); }
-// 					}
-// 					ListConstraint result = `computeMatch(andC(m));
-// 					return `appC(andC(X*,result*,Y*),M);
-// 				}
-				
-// 				/*Decompose Struct */
-// 				appC((X*,match(struct(M1,M2),struct(N1,N2)),Y*),M) ->{
-// 					return `appC(andC(X*,match(M1,N1),match(M2,N2),Y*),M);
-// 				}
 				/* Patterns lineaires, pas besoin de la regle Idem */
 
 
 
 			 }
-			 //      return arg;
 			 throw new VisitFailure();
 
 		 }
-
-
-				 /* Patterns lineaires, pas besoin de la regle Idem */
-
-	
-// 			//	     return arg;
-// 			throw new VisitFailure();
-// 		}
  		public ListConstraint visit_ListConstraint(ListConstraint l) throws VisitFailure {
  			%match(ListConstraint l){
 				/*Decompose n = m = 0*/
