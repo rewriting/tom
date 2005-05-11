@@ -119,27 +119,34 @@ struct term *build_msg(struct term *data) {
 
 %typeterm term {
   implement { struct term* }
-  get_fun_sym(t)      { (void*)t->symbol }
-  cmp_fun_sym(t1,t2)  { (void*)t1 == (void*)t2 }
-  get_subterm(t, n)   { t->subterm[n] }
 }
 
-%op term a                   { fsym { A } }
-%op term b                   { fsym { B } }
-%op term f(term)             { fsym { F } }
-%op term msg(term,term,term) { fsym { MSG } }
+%op term a { 
+  is_fsym(t)          { (void*)t->symbol == A }
+}
+%op term b { 
+  is_fsym(t)          { (void*)t->symbol == B }
+}
+%op term f(sl:term) { 
+  is_fsym(t)          { (void*)t->symbol == F }
+  get_slot(sl,t)      { t->subterm[0] }
+}
+%op term msg(sl1:term,sl2:term,sl3:term) { 
+  is_fsym(t)          { (void*)t->symbol == MSG }
+  get_slot(sl1,t)     { t->subterm[0] }
+  get_slot(sl2,t)     { t->subterm[1] }
+  get_slot(sl3,t)     { t->subterm[2] }
+}
 
 %typeterm L {
   implement          { struct list* }
-  get_fun_sym(t)     { CONS }
-  cmp_fun_sym(t1,t2) { (void*)t1 == (void*)t2 }
   equals(l1,l2)      { list_equal(l1,l2) }
 }
 
 %oplist L cons( term* ) {
-  fsym          { CONS }
-  make_empty()  { NULL }
-  make_insert(e,l) { build_list(e,l) }
+  is_fsym(t)         { 1 }
+  make_empty()       { NULL }
+  make_insert(e,l)   { build_list(e,l) }
   get_head(l)        { l->head }
   get_tail(l)        { (l==NULL)?l:l->tail }
   is_empty(l)        { (l == NULL) }
