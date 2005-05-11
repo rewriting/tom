@@ -43,23 +43,21 @@ static AFun f_fib;
 
 %typeterm term {
   implement           { ATerm }
-  get_fun_sym(t)      { ATgetAFun(t) }
-  cmp_fun_sym(s1,s2)  { ATisEqualAFun(s1,s2) }
-  get_subterm(t, n)   { ATgetArgument(t,n) }
 }
 
 %op term zero {
-  fsym { f_zero }
+  is_fsym(t) { ATisEqualAFun(ATgetAFun(t),f_zero) }
 }
   
-%op term suc(term) {
-  fsym { f_suc }
+%op term suc(sl:term) {
+  is_fsym(t)     { ATisEqualAFun(ATgetAFun(t),f_suc) }
+  get_slot(sl,t) { ATgetArgument(t,0) }
 }
 
 ATerm odd(ATerm t) {
   %match(term t) {
-    zero        -> { return ATtrue; }
-    suc(zero)   -> { return ATfalse; }
+    zero()      -> { return ATtrue; }
+    suc(zero()) -> { return ATfalse; }
     suc(x)      -> { return not(odd(x)); }
   }
 }

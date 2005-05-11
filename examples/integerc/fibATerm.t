@@ -43,30 +43,31 @@ static AFun f_fib;
 
 %typeterm term {
   implement           { ATerm }
-  get_fun_sym(t)      { ATgetAFun(t) }
-  cmp_fun_sym(s1,s2)  { ATisEqualAFun(s1,s2) }
-  get_subterm(t, n)   { ATgetArgument(t,n) }
 }
 
 %op term zero {
-  fsym { f_zero }
+  is_fsym(t)     { ATisEqualAFun(ATgetAFun(t),f_zero) }
 }
   
-%op term suc(term) {
-  fsym { f_suc }
+%op term suc(sl:term) {
+  is_fsym(t)     { ATisEqualAFun(ATgetAFun(t),f_suc) }
+  get_slot(sl,t) { ATgetArgument(t,0) }
 }
 
-%op term plus(term,term) {
-  fsym { f_plus }
+%op term plus(sl1:term,sl2:term) {
+  is_fsym(t) { ATisEqualAFun(ATgetAFun(t),f_plus) }
+  get_slot(sl1,t) { ATgetArgument(t,0) }
+  get_slot(sl2,t) { ATgetArgument(t,1) }
 }
 
-%op term fib(term) {
-  fsym { f_fib }
+%op term fib(sl:term) {
+  is_fsym(t) { ATisEqualAFun(ATgetAFun(t),f_fib) }
+  get_slot(sl,t) { ATgetArgument(t,0) }
 }
 
 ATerm plus(ATerm t1, ATerm t2) {
   %match(term t1, term t2) {
-    x,zero   -> { return(x); }
+    x,zero() -> { return(x); }
     x,suc(suc(suc(suc(suc(y))))) -> {
       return(make_suc(make_suc(make_suc(make_suc(make_suc(plus(x,y)))))));
     }
@@ -76,8 +77,8 @@ ATerm plus(ATerm t1, ATerm t2) {
 
 ATerm fib(ATerm t) {
   %match(term t) {
-    zero        -> { return(make_suc(make_zero())); }
-    suc(zero)   -> { return(make_suc(make_zero())); }
+    zero()      -> { return(make_suc(make_zero())); }
+    suc(zero()) -> { return(make_suc(make_zero())); }
     suc(suc(x)) -> { return(plus(fib(x),fib(make_suc(x)))); }
   }
 }

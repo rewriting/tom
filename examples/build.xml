@@ -396,6 +396,12 @@
 
   <target name="integerc" depends="init">
     <mkdir dir="${examples.gen}/${integerc}"/>
+    <adt srcdir="${examples.dir}"
+      name="Peano" 
+      cCode="yes" 
+      destdir="${examples.gen}/${integerc}">
+      <include name="${integerc}/**/*.adt"/>
+    </adt>
     <tom config="${tomconfigfile}"
          srcdir="${examples.dir}" 
          destdir="${examples.gen}/${integerc}"         
@@ -404,9 +410,7 @@
          optimize2="${optimize2}"
          pretty="${pretty}"
          options="--cCode -I ${tom.home}/share/jtom">
-      <include name="${integerc}/**/bus.t"/>
-      <include name="${integerc}/**/cfib.t"/>
-      <include name="${integerc}/**/loulou.t"/>
+      <include name="${integerc}/**/*.t"/>
     </tom>
   </target>
   

@@ -44,36 +44,35 @@ static ATermInt tzero;
 
 %typeterm Nat {
   implement           { ATermInt }
-  get_fun_sym(t)      { ((t==tzero)?f_zero:f_suc) }
-  cmp_fun_sym(s1,s2)  { s1 == s2 }
-  get_subterm(t, n)   { ATmakeInt(ATgetInt(t)-1) }
 }
 
 %op Nat zero {
-  fsym { f_zero }
+  is_fsym(t)     { t==tzero }
 }
   
-%op Nat suc(Nat) {
-  fsym { f_suc }
+%op Nat suc(sl:Nat) {
+  is_fsym(t)     { t!=tzero }
+  get_slot(sl,t) { ATmakeInt(ATgetInt(t)-1) }
 }
 
 %typeterm Term {
   implement           { ATerm }
-  get_fun_sym(t)      { ATgetAFun(t) }
-  cmp_fun_sym(s1,s2)  { s1 == s2 }
-  get_subterm(t, n)   { ATgetArgument(t,n) }
 }
 
-%op Term nqueens(Nat,Term) {
-  fsym { f_nqueens }
+%op Term nqueens(sl:Nat,slt:Term) {
+  is_fsym(t)          { (ATgetAFun(t) == f_nqueens) }
+  get_slot(sl, t)     { ATgetArgument(t,0) }
+  get_slot(slt, t)    { ATgetArgument(t,1) }
 }
 
 %op Term empty {
-  fsym { f_empty }
+  is_fsym(t) { (ATgetAFun(t) == f_empty) }
 }
 
-%op Term cons(Nat,Term) {
-  fsym { f_cons }
+%op Term cons(sl:Nat,slt:Term) {
+  is_fsym(t) { (ATgetAFun(t) == f_cons) }
+  get_slot(sl, t)     { ATgetArgument(t,0) }
+  get_slot(slt, t)    { ATgetArgument(t,1) }
 }
 
 #define empty()             ((ATerm)ATmakeAppl0(f_empty))
@@ -113,7 +112,7 @@ int noattack(ATerm arg0, ATerm arg1, ATerm arg2) {
   int res = FALSE;
   
   %match(Term arg0, Term arg1, Term arg2) {
-    N1,N2,empty -> {
+    N1,N2,empty() -> {
       res = TRUE;
       goto end;
     }
@@ -138,7 +137,7 @@ ATerm nqueens_strat(ATerm arg0) {
 
     /* dk(nqueens-rule-0,nqueens-rule-N) */
   %match(Term v0) {
-    nqueens(zero,size) -> {
+    nqueens(zero(),size) -> {
       res = empty();
       goto stratLab;
     }
