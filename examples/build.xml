@@ -347,7 +347,6 @@
     </copy>
   </target>
 
-
   <target name="dom" depends="init">
     <tomcompile example="${dom}"/>
     <javacompile example="${dom}"/>
@@ -395,6 +394,22 @@
     <javacompile example="${gtree}"/>
   </target>
 
+  <target name="integerc" depends="init">
+    <mkdir dir="${examples.gen}/${integerc}"/>
+    <tom config="${tomconfigfile}"
+         srcdir="${examples.dir}" 
+         destdir="${examples.gen}/${integerc}"         
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         optimize2="${optimize2}"
+         pretty="${pretty}"
+         options="--cCode -I ${tom.home}/share/jtom">
+      <include name="${integerc}/**/bus.t"/>
+      <include name="${integerc}/**/cfib.t"/>
+      <include name="${integerc}/**/loulou.t"/>
+    </tom>
+  </target>
+  
   <target name="list" depends="init">
     <tomcompile example="${list}"/>
     <javacompile example="${list}"/>

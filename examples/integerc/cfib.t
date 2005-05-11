@@ -60,38 +60,39 @@ struct term *suc(struct term *x) {
 
 %typeterm term {
   implement { struct term* }
-  get_fun_sym(t)      { t->fs }
-  cmp_fun_sym(t1,t2)  { t1 == t2 }
-  get_subterm(t, n)   { t->subt[n] }
 }
 
 %op term zero {
-  fsym { ZERO }
+  is_fsym(t) { t->fs == ZERO }
 }
   
-%op term suc(term) {
-  fsym { SUC }
+%op term suc(sl:term) {
+  is_fsym(t)      { t->fs == SUC }
+  get_slot(sl, t) { t->subt[0] }
 }
 
-%op term plus(term,term) {
-  fsym { PLUS }
+%op term plus(sl1:term,sl2:term) {
+  is_fsym(t)       { t->fs == PLUS }
+  get_slot(sl1, t) { t->subt[0] }
+  get_slot(sl2, t) { t->subt[1] }
 }
 
-%op term fib(term) {
-  fsym { FIB }
+%op term fib(sl:term) {
+  is_fsym(t)      { t->fs == FIB }
+  get_slot(sl, t) { t->subt[0] }
 }
 
 struct term *plus(struct term *t1, struct term *t2) {
   %match(term t1, term t2) {
-    x,zero   -> { return x; }
+    x,zero() -> { return x; }
     x,suc(y) -> { return suc(plus(x,y)); }
   }
 }
 
 struct term *fib(struct term *t) {
   %match(term t) {
-    zero        -> { return suc(zero); }
-    suc(zero)   -> { return suc(zero); }
+    zero()      -> { return suc(zero); }
+    suc(zero()) -> { return suc(zero); }
     suc(suc(x)) -> { return plus(fib(x),fib(suc(x))); }
   }
 }
