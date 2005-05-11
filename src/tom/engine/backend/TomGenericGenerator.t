@@ -57,9 +57,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void genDeclMake(String funName, TomType returnType, 
                                       TomList argList, Instruction instr) throws IOException;
   
-  protected abstract void genDeclList(String name, TomType listType, TomType eltType) throws IOException;
+  protected abstract void genDeclList(String name) throws IOException;
 
-  protected abstract void genDeclArray(String name, TomType listType, TomType eltType) throws IOException;
+  protected abstract void genDeclArray(String name) throws IOException;
 
   //------------------------------------------------------------
  
@@ -537,19 +537,5 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             tlCode);
   }
 
-  protected void buildTypeTermDecl(int deep, TomList declList) throws IOException {
-    generateDeclarationFromList(deep, declList);
-  }
-
-  protected void generateDeclarationFromList(int deep, TomList declList) throws IOException {
-    TomTerm term;
-    while(!declList.isEmpty()) {
-      term = declList.getHead();
-      %match (TomTerm term){
-        DeclarationToTomTerm(declaration) -> {generateDeclaration(deep, `declaration);}
-      }
-      declList = declList.getTail();
-    }
-  }
-  
+ 
 } // class TomGenericGenerator

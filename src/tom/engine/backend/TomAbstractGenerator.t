@@ -155,11 +155,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      DeclarationToTomTerm(t) -> {
-        generateDeclaration(deep,`t);
-        return;
-      }
-
       ExpressionToTomTerm(t) -> {
         generateExpression(deep,`t);
         return;
@@ -167,6 +162,11 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       InstructionToTomTerm(t) -> {
         generateInstruction(deep,`t);
+        return;
+      }
+
+      DeclarationToTomTerm(t) -> {
+        generateDeclaration(deep,`t);
         return;
       }
 
@@ -493,8 +493,20 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      (SymbolDecl|ArraySymbolDecl|ListSymbolDecl)(Name(tomName)) -> {
+      SymbolDecl(Name(tomName)) -> {
         `buildSymbolDecl(deep, tomName);
+        return ;
+      }
+
+      ArraySymbolDecl(Name(tomName)) -> {
+        `buildSymbolDecl(deep, tomName);
+        `genDeclArray(tomName);
+        return ;
+      }
+
+      ListSymbolDecl(Name(tomName)) -> {
+        `buildSymbolDecl(deep, tomName);
+        `genDeclList(tomName);
         return ;
       }
 
@@ -575,7 +587,6 @@ public abstract class TomAbstractGenerator extends TomBase {
                   instr, _) -> {
         TomType returnType = fullListType;
         `genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), instr);
-        `genDeclList(opname, fullListType,fullEltType);
         return;
       }
 
@@ -609,7 +620,6 @@ public abstract class TomAbstractGenerator extends TomBase {
                    instr, _) -> {
         TomType returnType = fullArrayType;
         `genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), instr);
-        `genDeclArray(opname, fullArrayType, fullEltType);
         return;
       }
 
@@ -618,8 +628,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      TypeTermDecl[keywordList=declList] -> {
-        `buildTypeTermDecl(deep, declList);
+      TypeTermDecl[declarations=declList] -> {
+        generateDeclarationList(deep, `declList);
         return;
       }
 
@@ -660,6 +670,14 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 
+  public void generateDeclarationList(int deep, DeclarationList subject)
+    throws IOException {
+    while(!subject.isEmpty()) {
+      generateDeclaration(deep,subject.getHead());
+      subject = subject.getTail();
+    }
+  }
+
   public void generatePairNameDeclList(int deep, PairNameDeclList pairNameDeclList)
     throws IOException {
     while ( !pairNameDeclList.isEmpty() ) {
@@ -680,9 +698,9 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void genDeclMake(String funName, TomType returnType, 
                                       TomList argList, Instruction instr) throws IOException;
   
-  protected abstract void genDeclList(String name, TomType listType, TomType eltType) throws IOException;
+  protected abstract void genDeclList(String name) throws IOException;
 
-  protected abstract void genDeclArray(String name, TomType listType, TomType eltType) throws IOException;
+  protected abstract void genDeclArray(String name) throws IOException;
  
   // ------------------------------------------------------------
   
@@ -750,7 +768,5 @@ public abstract class TomAbstractGenerator extends TomBase {
                                               String type1, TomType tlType1, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
                                            TomType tlType, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildTypeTermDecl(int deep, TomList declList) throws IOException;
-  protected abstract void generateDeclarationFromList(int deep, TomList declList) throws IOException;
-  
+ 
 } // class TomAbstractGenerator

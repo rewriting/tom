@@ -218,9 +218,8 @@ options{
         file = null;
       }
     } else {
-      // StreamManage rshall find it
-      file = getStreamManager().findFile(new File(currentFile).getParentFile(),
-                                         fileName);
+      // StreamManager shall find it
+      file = getStreamManager().findFile(new File(currentFile).getParentFile(),fileName);
     }
     
     if(file == null) {

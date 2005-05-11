@@ -1385,9 +1385,9 @@ typeTerm returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TomList blockList = `emptyTomList();
     Declaration attribute = null;
     TargetLanguage implement = null;
+    DeclarationList declarationList = `emptyDeclarationList();
 }
     :   (
             type:ALL_ID
@@ -1399,23 +1399,22 @@ typeTerm returns [Declaration result] throws TomException
             implement = keywordImplement
             (
                 attribute = keywordEquals[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+                { declarationList = `manyDeclarationList(attribute,declarationList); }
             |   attribute = keywordCheckStamp[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+                { declarationList = `manyDeclarationList(attribute,declarationList); }
             |   attribute = keywordSetStamp[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
+                { declarationList = `manyDeclarationList(attribute,declarationList); }
             |   attribute = keywordGetImplementation[type.getText()]
-                {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
-
+                { declarationList = `manyDeclarationList(attribute,declarationList); }
             )*
             t:RBRACE
         )
         {
-            TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
-            putType(type.getText(), astType);
-            result = `TypeTermDecl(Name(type.getText()),blockList,ot);
-            updatePosition(t.getLine(),t.getColumn());
-            selector().pop();
+          TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
+          putType(type.getText(), astType);
+          result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
+          updatePosition(t.getLine(),t.getColumn());
+          selector().pop();
         }
     ;
 

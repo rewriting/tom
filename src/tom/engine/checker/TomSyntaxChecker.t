@@ -139,14 +139,10 @@ public class TomSyntaxChecker extends TomChecker {
   private void checkSyntax(TomTerm parsedTerm) {
     Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm subject) {
-          if(subject instanceof TomTerm) {
-            %match(TomTerm subject) {
-              DeclarationToTomTerm(declaration) -> {
-                // TOM Declaration
-                `verifyDeclaration(declaration);
-                return false;
-              }
-            }
+          if(subject instanceof Declaration) {
+            // TOM Declaration
+            `verifyDeclaration((Declaration)subject);
+            return false;
           } else if(subject instanceof Instruction) {
             %match(Instruction subject) {
               Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
@@ -176,8 +172,8 @@ public class TomSyntaxChecker extends TomChecker {
     matchblock:{
       %match (Declaration declaration) {
         // Types
-        TypeTermDecl(Name(tomName), tomList, orgTrack) -> {
-          `verifyTypeDecl(TomSyntaxChecker.TYPE_TERM, tomName, tomList, orgTrack);
+        TypeTermDecl(Name(tomName), declarationList, orgTrack) -> {
+          `verifyTypeDecl(TomSyntaxChecker.TYPE_TERM, tomName, declarationList, orgTrack);
           break matchblock;
         }
         // Symbols
@@ -200,15 +196,15 @@ public class TomSyntaxChecker extends TomChecker {
   ///////////////////////////////
   // TYPE DECLARATION CONCERNS //
   //////////////////////////////
-  private void verifyTypeDecl(String declType, String tomName, TomList listOfDeclaration, Option typeOrgTrack) {
+  private void verifyTypeDecl(String declType, String tomName, DeclarationList listOfDeclaration, Option typeOrgTrack) {
     currentTomStructureOrgTrack = typeOrgTrack;
     // ensure first definition
     verifyMultipleDefinition(tomName, declType, TYPE);
     // verify Macro functions
     ArrayList verifyList = new ArrayList(TomSyntaxChecker.TypeTermSignature);
     
-    %match(TomList listOfDeclaration) {
-      (_*, DeclarationToTomTerm(d), _*) -> { // for each Declaration
+    %match(DeclarationList listOfDeclaration) {
+      (_*, d, _*) -> { // for each Declaration
         Declaration decl=`d;
         matchblock:{
           %match(Declaration decl) {

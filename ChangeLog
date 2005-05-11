@@ -16,7 +16,7 @@
 2005-03-25  pem  <pem@polly.loria.fr>
 
 	* src/jtom/compiler/TomExpander.t: 
-    - allows to use backquote notation all make*() constructs
+    - allows to use backquote notation all make() constructs
 
 2005-03-24  pem  <pem@polly.loria.fr>
 
@@ -38,18 +38,21 @@
 
 	* src/jtom/compiler/TomCompiler.t: 
 	  - introduce the Ensure constraint
-	  - attach this constraint to the last instantiated variable (of the pattern) occuring in this constraint
+	  - attach this constraint to the last instantiated variable (of the
+      pattern) occuring in this constraint 
 	* src/jtom/compiler/TomKernelCompiler.t: 
 	  - generate IfThenElse for the ensure constraint
-
 
 2005-03-10  pem  <pem@polly.loria.fr>
 
 	* src/jtom/parser/TomJavaParser.g: 
 	  - allows definition of get_head, get_tail, and is_empty inside %oplist definitions
 	* src/jtom/compiler/TomKernelExpander.t: 
-	  - extend type-infrence algorithm to expand already instantiated
+	  - extend type-inference algorithm to expand already instantiated
 	    variables under an unknown operator
+
+2004-12-20  pem  <pem@becky.local>
+  * version 2.1 released
 
 2004-10-30  pem  <pem@becky.local>
 
@@ -127,7 +130,7 @@
   *  |--- platform             (the Tom Plugin Platform, known as Tom server)
   *           |--- adt     
 
-2004-05-07  julien guyon  <julien.guyon@loria.fr>
+2004-07-05  julien guyon  <julien.guyon@loria.fr>
   * bootinstall of version bumped to 3.0
   * new Design with plugins
 
@@ -145,6 +148,9 @@
 	* src/jtom/tools/SymbolTable.java: 
 	  - added builtin long type
 	  - not yet correctly implement for builtin constants
+
+2004-06-09  pem  <pem@becky.local>
+  * version 2.0 released
 	
 2004-06-07  pem  <pem@polly.loria.fr>
 

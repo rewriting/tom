@@ -347,7 +347,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write("; }");
   }
 
-  protected void genDeclList(String name, TomType listType, TomType eltType) throws IOException {
+  protected void genDeclList(String name) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(name);
+    TomType listType = getSymbolCodomain(tomSymbol);
+    TomType eltType = getSymbolDomain(tomSymbol).getHead();
+
     String s = "";
     if(nodeclMode) {
       return;
@@ -399,7 +403,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write(itl.getCode()); 
   }
 
-  protected void genDeclArray(String name, TomType listType, TomType eltType) throws IOException {
+  protected void genDeclArray(String name) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(name);
+    TomType listType = getSymbolCodomain(tomSymbol);
+    TomType eltType = getSymbolDomain(tomSymbol).getHead();
+
     String s = "";
     if(nodeclMode) {
       return;

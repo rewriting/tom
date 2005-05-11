@@ -2,11 +2,11 @@ module TomDeclaration
 imports TomSignature 
 
 public
-sorts Declaration 
+sorts Declaration DeclarationList 
 
 abstract syntax
 
-TypeTermDecl(astName:TomName,keywordList:TomList,orgTrack:Option) -> Declaration
+TypeTermDecl(astName:TomName,declarations:DeclarationList,orgTrack:Option) -> Declaration
 CheckStampDecl(variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 SetStampDecl(variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 GetImplementationDecl(variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
@@ -27,3 +27,5 @@ SymbolDecl(astName:TomName) -> Declaration
 ListSymbolDecl(astName:TomName) -> Declaration
 ArraySymbolDecl(astName:TomName) -> Declaration
 EmptyDeclaration() -> Declaration
+
+concDeclaration(Declaration*) -> DeclarationList
