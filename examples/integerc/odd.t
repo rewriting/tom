@@ -38,8 +38,10 @@ static AFun f_suc;
 static AFun f_plus;
 static AFun f_fib;
 
-#define make_zero() ((ATerm)ATmakeAppl0(f_zero))
-#define make_suc(x) ((ATerm)ATmakeAppl1(f_suc, x))
+#define make_zero()    ((ATerm)ATmakeAppl0(f_zero))
+#define make_suc(x)    ((ATerm)ATmakeAppl1(f_suc, x))
+#define not(x)         ((x==ATfalse)?ATtrue:ATfalse)
+#define ATboolToInt(x) ((x==ATfalse)?0:1)
 
 %typeterm term {
   implement           { ATerm }
@@ -54,7 +56,7 @@ static AFun f_fib;
   get_slot(sl,t) { ATgetArgument(t,0) }
 }
 
-ATerm odd(ATerm t) {
+ATbool odd(ATerm t) {
   %match(term t) {
     zero()      -> { return ATtrue; }
     suc(zero()) -> { return ATfalse; }
@@ -75,7 +77,7 @@ ATerm buildPeano(int n) {
 int main(int argc, char **argv) {
   ATerm     bottomOfStack;
   int n;
-  ATerm res;
+  ATbool res;
   int i;
 
   ATinit(argc, argv, &bottomOfStack);
@@ -87,5 +89,5 @@ int main(int argc, char **argv) {
   ATprotectAFun(f_suc);
 
   res = odd(buildPeano(10));
-  ATprintf("odd(%d) = %t\n", res);
+  printf("odd(%d) = %d\n", ATboolToInt(res));
 }
