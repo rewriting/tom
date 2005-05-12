@@ -115,7 +115,13 @@ public class TomParserPlugin extends TomGenericPlugin {
   public void setArgs(Object[] arg){
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
-      currentFileName = getStreamManager().getInputFile().getAbsolutePath();  
+      try {
+        currentFileName = getStreamManager().getInputFile().getCanonicalPath();  
+      } catch (IOException e) {
+        System.out.println("IO Exception when computing currentFileName");
+        e.printStackTrace();
+      }
+
     } else {
       getLogger().log(Level.SEVERE, "InvalidPluginArgument",
                       new Object[]{"TomParserPlugin", "[TomStreamManager]",

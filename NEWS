@@ -3,11 +3,11 @@ This document should be read in reverse order (from bottom to top).
 version 2.1:
   - introduced %vas syntax
   - new parser based on ANTLR
-	- new internal architecture based on plugins
+  - new internal architecture based on plugins
   - new library for defining traversal strategies
   - fixed two major bugs, related to completness, in list-matching
   - several bug fixed
-	- new library organization 
+  - new library organization 
     * tom
     *  |--- library
     *  |        |--- adt               (datatype definitions)

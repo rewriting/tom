@@ -124,10 +124,16 @@ public class TomStreamManager {
     // fills the local user import list
     String imports = (String)optionManager.getOptionValue("import");
     StringTokenizer st = new StringTokenizer(imports, ":"); // paths are separated by ':'
-    while( st.hasMoreTokens() ) {
-      String next = st.nextToken();
-      localUserImportList.add(new File(next).getAbsoluteFile());
+    try {
+      while( st.hasMoreTokens() ) {
+        String next = st.nextToken();
+        localUserImportList.add(new File(next).getCanonicalFile());
+      }
+    } catch (IOException e) {
+      System.out.println("IO Exception when computing importList");
+      e.printStackTrace();
     }
+
     // Setting importList
     setUserImportList(localUserImportList);
 
@@ -158,9 +164,14 @@ public class TomStreamManager {
     if(isUserOutputFile()) {
       setOutputFile(getUserOutputFile().getPath());
     } else {
-      String child = new File(getInputFileNameWithoutSuffix() + getOutputSuffix()).getName();
-      File out = new File(getDestDir(),child).getAbsoluteFile();
-      setOutputFile(out.getPath());
+      try {
+        String child = new File(getInputFileNameWithoutSuffix() + getOutputSuffix()).getName();
+        File out = new File(getDestDir(),child).getCanonicalFile();
+        setOutputFile(out.getPath());
+      } catch (IOException e) {
+        System.out.println("IO Exception when computing outputFile");
+        e.printStackTrace();
+      }
     }
   }
   

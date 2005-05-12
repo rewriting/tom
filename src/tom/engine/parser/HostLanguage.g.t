@@ -203,7 +203,7 @@ options{
     //  TomParser tomParser;
     HostParser parser = null;
     File file;
-    String fileAbsoluteName = "";
+    String fileCanonicalName = "";
     fileName = fileName.trim();
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
@@ -214,7 +214,14 @@ options{
     
     file = new File(fileName);
     if(file.isAbsolute()) {
-      if (!file.exists()) {
+      try {
+        file = file.getCanonicalFile();
+      } catch (IOException e) {
+        System.out.println("IO Exception when computing included file");
+        e.printStackTrace();
+      }
+
+      if(!file.exists()) {
         file = null;
       }
     } else {
@@ -227,14 +234,14 @@ options{
       throw new TomIncludeException(msg);
     }
     try {
-      fileAbsoluteName = file.getAbsolutePath();
-      if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
+      fileCanonicalName = file.getCanonicalPath();
+      if(testIncludedFile(fileCanonicalName, includedFileSet)) {
         String msg = TomMessage.getMessage("IncludedFileCycle", new Object[]{fileName, new Integer(getLine()), currentFile});
         throw new TomIncludeException(msg);
       }
       
       // if trying to include a file twice, but not in a cycle : discard
-      if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
+      if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet)) {    
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
           getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("IncludedFileAlreadyParsed", 
                           currentFile), fileName, getLine()));
@@ -242,7 +249,7 @@ options{
         return;
       }
       
-      parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet, getOptionManager(), getStreamManager());
+      parser = TomParserPlugin.newParser(fileCanonicalName,includedFileSet,alreadyParsedFileSet, getOptionManager(), getStreamManager());
       astTom = parser.input();
       astTom = `TomInclude(astTom.getTomList());
       list.add(astTom);
