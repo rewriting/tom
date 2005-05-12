@@ -123,7 +123,8 @@ public class TomStreamManager {
     
     // fills the local user import list
     String imports = (String)optionManager.getOptionValue("import");
-    StringTokenizer st = new StringTokenizer(imports, ":"); // paths are separated by ':'
+    // paths are separated by File.pathSeparator
+    StringTokenizer st = new StringTokenizer(imports, File.pathSeparator); 
     try {
       while( st.hasMoreTokens() ) {
         String next = st.nextToken();
