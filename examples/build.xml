@@ -409,6 +409,7 @@
          optimize="${optimize}"
          optimize2="${optimize2}"
          pretty="${pretty}"
+         stamp="off" 
          options="--cCode -I ${tom.home}/share/jtom">
       <include name="${integerc}/**/*.t"/>
     </tom>
@@ -745,7 +746,7 @@
 
         <include name="${strategy}/README"/>
         <include name="${strategy}/*.t"/>
-        <include name="${strategy}/*.adt"/>
+        <include name="${strategy}/*.vas"/>
 
         <include name="${strings}/README"/>
         <include name="${strings}/*.t"/>
@@ -757,6 +758,7 @@
 
         <include name="${tutorial}/README"/>
         <include name="${tutorial}/*.t"/>
+        <include name="${tutorial}/*.java"/>
         <include name="${tutorial}/*.xml"/>
 
         <include name="${vas}/README"/>
