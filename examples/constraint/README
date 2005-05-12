@@ -2,4 +2,4 @@
 
 *  adt-to-tom --input term.adt -n localsearch --javagen --package adt
 
-* jtom LocalSearch.t
+* tom LocalSearch.t

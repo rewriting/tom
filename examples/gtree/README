@@ -2,7 +2,7 @@
 
 *  adt-to-tom --input term.adt --nojar --name term --javagen --package adt.gtree
 
-* jtom GTree[12].t
+* tom GTree[12].t
 * javac Gtree[12].java
 * java Gtree
 

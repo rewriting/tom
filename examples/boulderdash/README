@@ -19,7 +19,7 @@ Coordonate system for Java 2D and used Topology:
 * boulder.adt describes the abstract data-type
 *  adt-to-tom -n boulder --nojar --input boulder.adt --javagen --package adt.boulder 
 
-* jtom BoulderDashCore.t
+* tom BoulderDashCore.t
 * javac *.java
 * java BoulderDash2D or appletviewer BoulderDash2d.java
 

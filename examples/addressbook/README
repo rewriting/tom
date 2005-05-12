@@ -2,7 +2,7 @@
 
 *  adt-to-tom -n data --nojar --input data.adt --javagen --package adt.address 
 
-* jtom AddressBook.t
+* tom AddressBook.t
 * javac AddressBook.java
 * java AddressBook
 

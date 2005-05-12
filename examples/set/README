@@ -2,7 +2,7 @@ This is the Jean Goubault implementation of set
 
 *  adt-to-tom -n set --input set.adt --nojar --package adt --javagen
 
-* jtom Set1.t
+* tom Set1.t
 * javac Set1.java
 * java Set1
 

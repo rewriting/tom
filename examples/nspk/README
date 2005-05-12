@@ -2,7 +2,7 @@
 
 *  adt-to-tom --input term.adt --nojar --name term --javagen --package adt.nsh
 
-* jtom Nsh.t
+* tom Nsh.t
 * javac Nsh.java
 * java Nsh
 

@@ -2,7 +2,7 @@
 
 *  adt-to-tom -n term --input term.adt --javagen --package adt.mgs
 
-* jtom BeadSort.t
+* tom BeadSort.t
 * javac BeadSort.java
 * java BeadSort
 

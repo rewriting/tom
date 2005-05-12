@@ -4,11 +4,11 @@ language.
 
 Depending on your background, Tom can be seen as:
  - a language to perform transformation of XML documents
- - a preprocessor which helps to describe a discrimination tree over a
-   complex data-structure
+ - a preprocessor which helps to perform discrimination over a complex
+   data-structure 
  - a tool to manipulate Abstract Syntax Trees
  - a backend for Rewrite Rule based languages
- - a first step toward a Rule based programming language
+ - a powerful Rule based programming language
 
 * How to start with Tom?
 ------------------------
@@ -20,6 +20,7 @@ If you come from the
       - peano
       - poly
       - apireach
+			- strategy
 
  - XML community
    => start with
@@ -37,12 +38,11 @@ If you come from the
       - integerc
       - peano
  
-* Note about ApiGen:
---------------------
+* Note about ApiGen/Vas:
+------------------------
   ApiGen is a system which take a many-sorted signature as input, and
   generates a concrete implementation for such an abstract data-type.
-  In addition, ApiGen (adt-to-tom) automatically generates a mapping
-  for Tom.
+  In addition, ApiGen/Vas automatically generates a mapping for Tom.
   This system is useful to manipulate Abstract Syntax Trees since it
   offers an efficient implementation (based on ATerms).
   The implementation supports maximal memory sharing, strong static
@@ -58,6 +58,14 @@ If you come from the
   Compute reachable terms (wrt. a rewrite system)
   Concept: apigen, complex generic traversal
 
+* applexml
+  Transformation of XML
+  Concept: XML pattern matching  
+
+* aterm
+  Example of complex mapping for ATerm
+  Concept: mapping, ATerm
+  
 * boulderdash
   Simulate how rocks go down in the boulder-dash game	
   Concept: apigen, virtual mapping 
@@ -69,6 +77,10 @@ If you come from the
 * caml
   Show how to use Tom with Caml  
   Concept: mapping, list-matching
+
+* cell
+	Cellular automata
+  Concept: pattern matching
 
 * dom
   XML manipulation based on DOM
@@ -96,9 +108,15 @@ If you come from the
 
 * lsystems
 
+* minirho
+  Rho-calculul implementation
+  Concept: vas, complex implementation, mutraveler strategies
+
 * nspk
   Verification of the Needham-Schroeder Public-Key protocol
   Concept: apigen, complex list-matching, exploration of a search space
+
+* p3p
 
 * peano
   Computation with Peano integers
@@ -108,13 +126,13 @@ If you come from the
   Parallel verification of the Needham-Schroeder Public-Key protocol
   Concept: apigen, parallel exploration of a search space, strategy library 
 
-* pqueens
-  Parallel version of the N-Queens problem
-  Concept: strategy library, complex mapping
-
 * poly
   Compute the derivative of a polynom
   Concept: mapping, apigen, generic traversal, rewrite system  
+
+* pqueens
+  Parallel version of the N-Queens problem
+  Concept: strategy library, complex mapping
 
 * prodrule
   Implementation of Fibonacci in a Production rule style
@@ -132,6 +150,10 @@ If you come from the
 	Tiny exemple base on string matching
 	Concept: string matching
 
+* structure
+  Calculus of strutures
+  Concept: complex list-matching, exploration strategies
+
 * tutorial
   Examples introduced in the tutorial
   Concept: string matching, XML
@@ -143,5 +165,5 @@ If you come from the
 * xml
   XML manipulation based on TNode
   Concept: XML, list-matching, TNode
-  
+
 

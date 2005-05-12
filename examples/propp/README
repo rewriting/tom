@@ -8,7 +8,7 @@ java antlr.Tool seq.g
 
 
 #end
-jtom Propp.t
+tom Propp.t
 javac Propp/Propp.java
 
 #type your goal
