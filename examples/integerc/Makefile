@@ -8,9 +8,6 @@ CFLAGS=-Wall -I${ATERM_HOME}/include -I.
 
 all: loulou bus cfib fibATerm odd PeanoTest
 
-Peano_dict.c: Peano.dict
-	${DICTTOC} -no-date -dict Peano.dict
-
 loulou: loulou.tom.c
 	${CC} -o loulou loulou.tom.c
 
@@ -31,8 +28,10 @@ nqueens: nqueens.tom.o
 	
 nqueens2: nqueens2.tom.o
 	${CC} -o $@ nqueens2.tom.o ${LDFLAGS}
-	
-Peano_dict.o: Peano_dict.c
+  
+PeanoTest: Peano_dict.c PeanoTest.tom.o Peano_dict.o Peano.o 
+	${CC} -o $@ PeanoTest.tom.o Peano_dict.o Peano.o ${LDFLAGS}
+  
+Peano_dict.c: Peano.dict
+	${DICTTOC} -no-date -dict Peano.dict
 
-PeanoTest: PeanoTest.tom.o Peano_dict.o
-	${CC} -o $@ PeanoTest.tom.o Peano_dict.o ${LDFLAGS}

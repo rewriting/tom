@@ -423,6 +423,7 @@
 
   <target name="integerc.make" if="aterm.home">
     <exec dir="${examples.gen}/${integerc}" 
+          failonerror="yes"
           executable="make">
       <arg line=""/>
       <env key="ATERM_HOME" value="${aterm.home}"/>
