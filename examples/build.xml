@@ -426,10 +426,22 @@
           failonerror="yes"
           executable="make">
       <arg line=""/>
-      <env key="ATERM_HOME" value="${aterm.home}"/>
+      <env key="LDFLAGS" value="-L${aterm.home}/lib -lATerm"/>
+      <env key="CFLAGS"  value="-I${aterm.home}/include -I."/>
     </exec>
+    <antcall target="integerc.make.cpl"/>
   </target>
   
+  <target name="integerc.make.cpl" if="cpl.home">
+    <exec dir="${examples.gen}/${integerc}" 
+          failonerror="yes"
+          executable="make">
+      <arg line="nqueens nqueens2"/>
+      <env key="LDFLAGS" value="-L${aterm.home}/lib -L${cpl.home}/lib -lATerm -lchoice"/>
+      <env key="CFLAGS"  value="-I${aterm.home}/include -I${cpl.home}/include -I."/>
+    </exec>
+  </target>
+
   <target name="list" depends="init">
     <tomcompile example="${list}"/>
     <javacompile example="${list}"/>

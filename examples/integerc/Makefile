@@ -3,8 +3,8 @@
 # aterm is installed
 CC=gcc
 DICTTOC=${ATERM_HOME}/bin/dicttoc
-LDFLAGS=-L${ATERM_HOME}/lib -lATerm
-CFLAGS=-Wall -I${ATERM_HOME}/include -I.
+#LDFLAGS=-L${ATERM_HOME}/lib -lATerm
+#CFLAGS=-Wall -I${ATERM_HOME}/include -I.
 
 all: loulou bus cfib fibATerm odd PeanoTest
 
@@ -25,10 +25,10 @@ odd: odd.tom.o
 	
 nqueens: nqueens.tom.o
 	${CC} -o $@ nqueens.tom.o ${LDFLAGS}
-	
+  
 nqueens2: nqueens2.tom.o
 	${CC} -o $@ nqueens2.tom.o ${LDFLAGS}
-  
+ 
 PeanoTest: Peano_dict.c PeanoTest.tom.o Peano_dict.o Peano.o 
 	${CC} -o $@ PeanoTest.tom.o Peano_dict.o Peano.o ${LDFLAGS}
   

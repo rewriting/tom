@@ -2,3 +2,8 @@
 # - where jtom-doc is
 
 tomdocdir       = {JTOMDOCPATH}
+
+# To build the C examples, you have to install the aterm library, and the cpl
+# library for the nqueens examples (located in integerc)
+aterm.home={ATERM_PREFIX}
+cpl.home={CPL_PREFIX}
