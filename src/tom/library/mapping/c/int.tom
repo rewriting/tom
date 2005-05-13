@@ -31,8 +31,5 @@
 
 %typeterm int {
   implement           { int }
-  get_fun_sym(t)      { t }
-  cmp_fun_sym(s1,s2)  { (s1==s2) }
-  get_subterm(t, n)   { 0 }
   equals(t1,t2)       { (t1==t2) }
 }

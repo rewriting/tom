@@ -31,16 +31,12 @@
 
 %typeterm ATerm {
   implement           { ATerm }
-  get_fun_sym(t)      { (void*)ATgetAFun(t) }
-  cmp_fun_sym(s1,s2)  { ATisEqualAFun(s1,s2) }
-  get_subterm(t, n)   { ATgetArgument(t,n) }
+  equals(t1,t2)       { (t1==t2) }
 }
 
 %typeterm ATermString {
   implement           { ATermAppl }
-  get_fun_sym(t)      { ATgetName(ATgetAFun(t)) }
-  cmp_fun_sym(s1,s2)  { !strcmp(s1,s2) }
-  get_subterm(t, n)   { NULL }
+  equals(t1,t2)       { (t1==t2) }
 }
 
 
