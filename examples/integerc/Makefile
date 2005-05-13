@@ -1,14 +1,18 @@
 
+# to be executed, you have to set the property aterm.home to the path where
+# aterm is installed
 CC=gcc
-DICTTOC=dicttoc
-LDFLAGS=-L/home/tonio/apps/lib -lATerm
-CFLAGS=-Wall -I/home/tonio/apps/include -I.
+DICTTOC=${ATERM_HOME}/bin/dicttoc
+LDFLAGS=-L${ATERM_HOME}/lib -lATerm
+CFLAGS=-Wall -I${ATERM_HOME}/include -I.
+
+all: loulou bus cfib fibATerm odd PeanoTest
 
 Peano_dict.c: Peano.dict
 	${DICTTOC} -no-date -dict Peano.dict
 
 loulou: loulou.tom.c
-	${CC} -o loulou loulou.c
+	${CC} -o loulou loulou.tom.c
 
 bus: bus.tom.c
 	${CC} -o bus bus.tom.c
