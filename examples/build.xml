@@ -426,6 +426,7 @@
           failonerror="yes"
           executable="make">
       <arg line=""/>
+      <env key="ATERM_HOME" value="${aterm.home}"/>
       <env key="LDFLAGS" value="-L${aterm.home}/lib -lATerm"/>
       <env key="CFLAGS"  value="-I${aterm.home}/include -I."/>
     </exec>
@@ -436,6 +437,7 @@
     <exec dir="${examples.gen}/${integerc}" 
           failonerror="yes"
           executable="make">
+      <env key="ATERM_HOME" value="${aterm.home}"/>
       <arg line="nqueens nqueens2"/>
       <env key="LDFLAGS" value="-L${aterm.home}/lib -L${cpl.home}/lib -lATerm -lchoice"/>
       <env key="CFLAGS"  value="-I${aterm.home}/include -I${cpl.home}/include -I."/>

@@ -243,9 +243,9 @@ int main(int argc, char **argv) {
 
   if(!setChoicePoint()) {
 
-      //res = range_strat((ATerm)ATmakeInt(4));
+    //res = range_strat((ATerm)ATmakeInt(4));
     res = start_nqueens(12);
-      //ATprintf("res = %t\n", res);
+    //ATprintf("res = %t\n", res);
 
     fail();
   }
