@@ -140,7 +140,7 @@ public class TomIlTools extends TomBase {
         if (map.containsKey(`name)) {
           return (ZTerm) map.get(`name);
         } else {
-          System.out.println("Not in map: " + `name + " map: " + map);
+          System.out.println("tomTermToZTerm 1 Not in map: " + `name + " map: " + map);
           return `zvar(name);
         }
       }
@@ -149,7 +149,7 @@ public class TomIlTools extends TomBase {
         if (map.containsKey(name)) {
           return (ZTerm) map.get(name);
         } else {
-          System.out.println("Not in map: " + name + " map: " + map);
+          System.out.println("tomTermToZTerm 2 Not in map: " + name + " map: " + map);
           return `zvar(name);
         }
       }      
@@ -191,10 +191,21 @@ public class TomIlTools extends TomBase {
       String name = (String) it.next();
       TomSymbol symbol = getSymbolFromName(name,getSymbolTable());
       ZTermList list = `concZTerm();
-      ZExpr exists = null;
+      ZTerm abstractVariable = `zvar("t");
+      //ZExpr exists = null;
       %match(TomSymbol symbol) {
         Symbol[pairNameDeclList=slots] -> {
           // process all slots
+          while(!`slots.isEmpty()) {
+            Declaration hd= `slots.getHead().getSlotDecl();
+            `slots = `slots.getTail();
+            %match(Declaration hd) {
+              GetSlotDecl[slotName=Name(slotName)] -> {
+                list = `concZTerm(list*,zsl(abstractVariable,slotName));
+              }
+            }
+          }
+          /*
           int slotnumber = `slots.getLength();
           for (int i = 0; i < slotnumber;i++) {
             list = `concZTerm(list*,zvar("x"+i));
@@ -203,11 +214,18 @@ public class TomIlTools extends TomBase {
           for (int i = 0; i < slotnumber;i++) {
             exists = `zexists(zvar("x"+i),ztype("T"),exists);
           }
+          */
         }
       }
-      ZExpr axiom = `zforall(zvar("t"),ztype("T"),
-                             zequiv(zisfsym(zvar("t"),
+      /*
+      ZExpr axiom = `zforall(abstractVariable,ztype("T"),
+                             zequiv(zisfsym(abstractVariable,
                                             zsymbol(name)),exists));
+                                            */
+      ZExpr axiom = `zforall(abstractVariable,ztype("T"),
+                             zequiv(
+                               zisfsym(abstractVariable,zsymbol(name)),
+                               zeq(abstractVariable,zappl(zsymbol(name),list))));
       res=`zby(res*,zaxiom("symb_"+name,axiom));
     }
     return res;

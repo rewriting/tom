@@ -103,11 +103,13 @@ public class ZenonOutput {
         PatternList negativePatternList = (PatternList)`negative;
         Map variableMap = ztermVariableMapFromSubstitutionList(`subsList, 
                                                                new HashMap());
-        pattern = tomiltools.patternToZExpr(positivePattern,variableMap);
         tomiltools.getZTermSubjectListFromPattern(positivePattern,
                                                   subjectList,
                                                   variableMap);
-        negpattern = tomiltools.patternToZExpr(negativePatternList,variableMap);
+        pattern = tomiltools.patternToZExpr(positivePattern,variableMap);
+        if (verifier.isCamlSemantics()) {
+          negpattern = tomiltools.patternToZExpr(negativePatternList,variableMap);
+        }
       }
     }
     

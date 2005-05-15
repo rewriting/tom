@@ -52,6 +52,7 @@ public class ZenonBackend {
   public String genZSymbol(ZSymbol symbol) {
     %match(ZSymbol symbol) {
       zsymbol(name) -> {
+        // TODO: manage builtins
         return `name+"_";
       }
     }
@@ -71,6 +72,7 @@ public class ZenonBackend {
     %match(ZTerm term) {
       zvar(name) -> { return `name; }
       zappl(zsymbol(name),tlist) -> { 
+        // TODO: manage builtins
         return "("+`name+" "+genZTermList(`tlist)+")"; 
       }
       zst(t,idx) -> { 
@@ -137,6 +139,7 @@ public class ZenonBackend {
   public String genZAxiom(ZAxiom axiom) {
     %match(ZAxiom axiom) {
       zaxiom(name,ax) -> {
+        // TODO: manage builtins
         return "Parameter " + `name+" :\n    " + genZExpr(`ax) + ".\n";
       }
     }
@@ -155,9 +158,28 @@ public class ZenonBackend {
   public String genZSpec(ZSpec spec) {
     %match(ZSpec spec) {
       zthm(thm,by) -> {
-        return "\n" + genZExpr(`thm) + "\n" + genZAxiomList(`by);
+        return "\n" 
+          + genZExpr(`thm) 
+          + "\n" 
+          + genZAxiomList(`by)+"\n";
       }
     }
     return "errorZSpec";
+  }
+
+  public String genZSpecCollection(Collection collection) {
+    int number=1;
+    StringBuffer out = new StringBuffer();
+    Iterator it = collection.iterator();
+    while (it.hasNext()) {
+      out.append("\n%%begin-auto-proof\n");
+      out.append("%%location: []\n");
+      out.append("%%name: theorem"+number+"\n");
+      out.append("%%statement\n");
+      out.append(genZSpec((ZSpec)it.next()));
+      out.append("%%end-auto-proof\n");
+      number++;
+    }
+    return out.toString();
   }
 }
