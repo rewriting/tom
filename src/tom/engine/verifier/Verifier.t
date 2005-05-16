@@ -663,13 +663,49 @@ public class Verifier extends TomBase {
       numberList = numberList.getTail();
       %match(TomNumber number) {
         Number(n) -> { 
-          result = result + "_" + Integer.toString(`n);
+          result = result + "Number" + Integer.toString(`n);
         }
         MatchNumber(Number(n)) -> {
-          result = result + "_" + Integer.toString(`n);
+          result = result + "Match" + Integer.toString(`n);
         }
-        NameNumber(PositionName(numberlist)) -> {
-          result = result + "_" + tomNumberListToString(`numberlist);          
+        PatternNumber(Number(n)) -> {
+          result = result + "Pattern" + Integer.toString(`n);
+        }
+        IndexNumber(Number(n)) -> {
+          result = result + "Index" + Integer.toString(`n);
+        }
+        Begin(Number(n)) -> {
+          result = result + "Begin" + Integer.toString(`n);
+        }
+        End(Number(n)) -> {
+          result = result + "End" + Integer.toString(`n);
+        }
+        AbsVar(Number(n)) -> {
+          result = result + "AbsVar" + Integer.toString(`n);
+        }
+        RenamedVar(tomName) -> {
+          String identifier = "Empty";
+          %match(TomName tomName) {
+            Name(name) -> { 
+              identifier = name; 
+            }
+            PositionName(localNumberList) -> {
+              identifier = tomNumberListToString(localNumberList);
+            }
+          }
+          result = result + "RenamedVar" + identifier;
+        }
+        NameNumber(tomName) -> {
+          String identifier = "Empty";
+          %match(TomName tomName) {
+            Name(name) -> { 
+              identifier = name; 
+            }
+            PositionName(localNumberList) -> {
+              identifier = tomNumberListToString(localNumberList);
+            }
+          }
+          result = result + "NameNumber" + identifier;
         }
         RuleVar() -> {
           result = "RuleVar" + result;
