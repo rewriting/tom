@@ -30,13 +30,13 @@ import jtom.*;
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import jtom.verifier.zenon.*;
-import jtom.verifier.zenon.types.*;
+import jtom.adt.zenon.*;
+import jtom.adt.zenon.types.*;
 
 public class ZenonBackend {
 
   // ------------------------------------------------------------
-  %include { zenon/Zenon.tom }
+  %include { adt/zenon/Zenon.tom }
   // ------------------------------------------------------------
 
   protected ZenonFactory zfactory;

@@ -334,6 +334,20 @@
       <include name="jtom/adt/TomSignature.vas"/>
     </vas>
 
+    <vas config="${stable.vasconfigfile}"
+         srcdir="${src.src}"
+         package="jtom.adt" 
+         destdir="${src.gen}">
+      <include name="jtom/adt/Il.vas"/>
+    </vas>
+
+    <vas config="${stable.vasconfigfile}"
+         srcdir="${src.src}"
+         package="jtom.adt" 
+         destdir="${src.gen}">
+      <include name="jtom/adt/Zenon.vas"/>
+    </vas>
+
 <!--
     <adt srcdir="${src.src}"
          package="jtom.adt" 
@@ -548,7 +562,7 @@
 
     <!-- tom library -->
     <jar jarfile="${src.dist.lib}/TomSignature-${src.version}.jar">
-      <fileset dir="${src.build}" includes="jtom/adt/tomsignature/**/*.class"/>
+      <fileset dir="${src.build}" includes="jtom/adt/**/*.class"/>
     </jar>
     <jar jarfile="${src.dist.lib}/Set-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>

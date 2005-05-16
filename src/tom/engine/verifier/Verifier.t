@@ -32,14 +32,14 @@ import java.util.*;
 import tom.library.traversal.*;
 import jtom.tools.SymbolTable;
 import jtom.adt.tomsignature.types.*;
-import jtom.verifier.il.*;
-import jtom.verifier.il.types.*;
+import jtom.adt.il.*;
+import jtom.adt.il.types.*;
 
 public class Verifier extends TomBase {
 
   // ------------------------------------------------------------
   %include { adt/tomsignature/TomSignature.tom }
-  %include { il/Il.tom }
+  %include { adt/il/Il.tom }
   // ------------------------------------------------------------
 
 

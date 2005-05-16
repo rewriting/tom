@@ -38,8 +38,8 @@ import tom.library.traversal.Replace1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
-import jtom.verifier.il.types.*;
-import jtom.verifier.zenon.types.*;
+import jtom.adt.il.types.*;
+import jtom.adt.zenon.types.*;
 /**
  * The TomVerifier plugin.
  */

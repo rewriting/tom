@@ -32,16 +32,16 @@ import aterm.pure.*;
 import java.util.*;
 import tom.library.traversal.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.verifier.il.*;
-import jtom.verifier.il.types.*;
+import jtom.adt.il.*;
+import jtom.adt.il.types.*;
 
 public class LatexOutput {
 
   // ------------------------------------------------------------
-  %include { il/Il.tom }
+  %include { adt/il/Il.tom }
   // ------------------------------------------------------------
 
-  protected jtom.verifier.il.IlFactory factory;
+  protected IlFactory factory;
   private GenericTraversal traversal;
   private TomVerifier verifier;
 

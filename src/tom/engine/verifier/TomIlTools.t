@@ -31,8 +31,8 @@ import aterm.*;
 import java.util.*;
 import tom.library.traversal.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.verifier.zenon.*;
-import jtom.verifier.zenon.types.*;
+import jtom.adt.zenon.*;
+import jtom.adt.zenon.types.*;
 import jtom.exception.TomRuntimeException;
 import jtom.tools.SymbolTable;
 
@@ -40,7 +40,7 @@ public class TomIlTools extends TomBase {
 
   // ------------------------------------------------------------
   %include { adt/tomsignature/TomSignature.tom }
-  %include { zenon/Zenon.tom }
+  %include { adt/zenon/Zenon.tom }
   // ------------------------------------------------------------
 
   private SymbolTable symbolTable;

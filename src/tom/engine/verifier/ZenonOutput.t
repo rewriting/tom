@@ -32,21 +32,21 @@ import aterm.pure.*;
 import java.util.*;
 import tom.library.traversal.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.verifier.il.*;
-import jtom.verifier.il.types.*;
-import jtom.verifier.zenon.*;
-import jtom.verifier.zenon.types.*;
+import jtom.adt.il.*;
+import jtom.adt.il.types.*;
+import jtom.adt.zenon.*;
+import jtom.adt.zenon.types.*;
 
 
 public class ZenonOutput {
 
   // ------------------------------------------------------------
-  %include { il/Il.tom }
-  %include { zenon/Zenon.tom }
+  %include { adt/il/Il.tom }
+  %include { adt/zenon/Zenon.tom }
   // ------------------------------------------------------------
 
-  protected jtom.verifier.il.IlFactory factory;
-  protected jtom.verifier.zenon.ZenonFactory zfactory;
+  protected IlFactory factory;
+  protected ZenonFactory zfactory;
   private GenericTraversal traversal;
   private Verifier verifier;
   private TomIlTools tomiltools;
