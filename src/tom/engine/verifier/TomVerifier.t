@@ -90,7 +90,7 @@ public class TomVerifier extends TomGenericPlugin {
         // the zenon output stuff
         Collection zen = zenon.zspecSetFromDerivationTreeSet(derivations);
 
-        ZenonBackend back = new ZenonBackend();
+        ZenonBackend back = new ZenonBackend(verif);
         System.out.println(back.genZSpecCollection(zen));
 
         // The stats output stuff

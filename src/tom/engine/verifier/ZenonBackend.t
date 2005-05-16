@@ -40,9 +40,13 @@ public class ZenonBackend {
   // ------------------------------------------------------------
 
   protected ZenonFactory zfactory;
+  private Verifier verifier;
+  private TomIlTools tomiltools;
 
-  public ZenonBackend() {
+  public ZenonBackend(Verifier verifier) {
     zfactory = ZenonFactory.getInstance(SingletonFactory.getInstance());
+    this.verifier = verifier;
+    this.tomiltools = new TomIlTools(verifier);
   }
 
   protected final ZenonFactory getZenonFactory() {
@@ -168,9 +172,66 @@ public class ZenonBackend {
   }
 
   public String genZSpecCollection(Collection collection) {
-    int number=1;
     StringBuffer out = new StringBuffer();
+
+    out.append("\nRequire Import zenon8.\n");
+    out.append("\nParameter T S : Set.\n");
+
+    // collects all used symbols
+    Collection symbols = new HashSet();
     Iterator it = collection.iterator();
+    while(it.hasNext()) {
+      ZSpec local = (ZSpec) it.next();
+      symbols.addAll(tomiltools.collectSymbolsFromZSpec(local));
+    }
+
+    // Generates types for symbols
+    it = symbols.iterator();
+    while(it.hasNext()) {
+      String symbolName = (String) it.next();
+      out.append("Parameter " + symbolName +" :");
+      // arity of the symbol ?
+      List names = tomiltools.subtermList(symbolName);
+      for(int i = 0; i<names.size();i++) {
+        out.append(" T ->");
+      }
+      out.append(" T.\n");
+      if(names.size() != 0) {
+        out.append("Parameter ");
+        Iterator nameIt = names.iterator();
+        while(nameIt.hasNext()) {
+          String localName = (String) nameIt.next();
+          out.append("_" + localName + " ");
+        }
+        out.append(": T -> T.\n");
+      }
+    }
+
+
+    out.append("Parameter symb : T -> S.\n");
+    // Generates types for symbols
+    it = symbols.iterator();
+    out.append("Parameter ");
+    while(it.hasNext()) {
+      String symbolName = (String) it.next();
+      out.append(symbolName +"_ ");
+    }
+    out.append(": S.\n");
+
+
+    // Generates the axioms for coq
+    ZAxiomList axiomsDef = tomiltools.symbolsDefinition(symbols);
+    ZAxiomList axiomsSub = tomiltools.subtermsDefinition(symbols);
+    ZAxiomList axioms = `zby(axiomsDef*,axiomsSub*);
+    while (!axioms.isEmpty()) {
+      out.append(genZAxiom(axioms.getHead()));
+      axioms = axioms.getTail();
+    }
+    
+
+    // Generates the different proof obligations
+    int number=1;
+    it = collection.iterator();
     while (it.hasNext()) {
       out.append("\n%%begin-auto-proof\n");
       out.append("%%location: []\n");

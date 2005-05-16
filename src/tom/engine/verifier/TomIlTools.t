@@ -178,7 +178,13 @@ public class TomIlTools extends TomBase {
         }
       }
     }; 
+
   public Collection collectSymbols(ZExpr subject) {
+    Collection result = new HashSet();
+    traversal().genericCollect(subject,collect_symbols,result);
+    return result;
+  }
+  public Collection collectSymbolsFromZSpec(ZSpec subject) {
     Collection result = new HashSet();
     traversal().genericCollect(subject,collect_symbols,result);
     return result;
@@ -260,6 +266,23 @@ public class TomIlTools extends TomBase {
       }
     }
     return res;
+  } 
+
+  public List subtermList(String symbolName) {
+    List nameList = new LinkedList();
+
+    TomSymbol symbol = getSymbolFromName(symbolName,getSymbolTable());
+    
+    %match(TomSymbol symbol) {
+      Symbol[pairNameDeclList=slots] -> {
+        %match(PairNameDeclList slots) {
+          concPairNameDecl(al*,PairNameDecl[slotName=Name(slname)],_*) -> {
+            nameList.add(`slname);
+          }
+        }
+      }
+    }
+    return nameList;
   } 
 
 }
