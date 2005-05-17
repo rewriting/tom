@@ -989,8 +989,6 @@
     <copy todir="${destination}/gen">
       <fileset dir="${src.gen}">
         <include name="**/adt/**/*"/>
-        <include name="**/verifier/il/**/*"/>
-        <include name="**/verifier/zenon/**/*"/>
       </fileset>
     </copy>
 
@@ -1062,7 +1060,7 @@
     <mkdir dir="${stable.src}/tom/platform/adt"/>
 
     <jar jarfile="${stable.src}/jtom/adt/TomSignature.jar">
-      <fileset dir="${src.build}" includes="jtom/adt/tomsignature/**/*.class"/>
+      <fileset dir="${src.build}" includes="jtom/adt/**/*.class"/>
     </jar>
     <jar jarfile="${stable.src}/tom/library/adt/Set.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>

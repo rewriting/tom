@@ -111,7 +111,7 @@ throw new TomRuntimeException("Invalid Term");}
         while(!nameList.isEmpty()) {
           head = nameList.getHead().getString();
           dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          nameList = nameList.getTail();
+          nameList= nameList.getTail();
         }
         return dijunctionName;
       }} } if(tom_is_fun_sym_RecordAppl(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match2_1_nameList=tom_get_slot_RecordAppl_nameList(tom_match2_1); if(tom_is_fun_sym_concTomName(tom_match2_1_nameList) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match2_1_nameList_list1=tom_match2_1_nameList; if(!(tom_is_empty_concTomName_NameList(tom_match2_1_nameList_list1))) { { jtom.adt.tomsignature.types.TomName tom_match2_1_nameList_1=tom_get_head_concTomName_NameList(tom_match2_1_nameList_list1);tom_match2_1_nameList_list1=tom_get_tail_concTomName_NameList(tom_match2_1_nameList_list1); if(tom_is_fun_sym_Name(tom_match2_1_nameList_1) ||  false ) { { String  tom_match2_1_nameList_1_string=tom_get_slot_Name_string(tom_match2_1_nameList_1); { String  name=tom_match2_1_nameList_1_string; if(tom_is_empty_concTomName_NameList(tom_match2_1_nameList_list1)) {
@@ -122,7 +122,7 @@ throw new TomRuntimeException("Invalid Term");}
         while(!nameList.isEmpty()) {
           head = nameList.getHead().getString();
           dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          nameList = nameList.getTail();
+          nameList= nameList.getTail();
         }
         return dijunctionName;
       }} } if(tom_is_fun_sym_XMLAppl(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match2_1_nameList=tom_get_slot_XMLAppl_nameList(tom_match2_1); if(tom_is_fun_sym_concTomName(tom_match2_1_nameList) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match2_1_nameList_list1=tom_match2_1_nameList; if(!(tom_is_empty_concTomName_NameList(tom_match2_1_nameList_list1))) { { jtom.adt.tomsignature.types.TomName tom_match2_1_nameList_1=tom_get_head_concTomName_NameList(tom_match2_1_nameList_list1);tom_match2_1_nameList_list1=tom_get_tail_concTomName_NameList(tom_match2_1_nameList_list1); if(tom_is_fun_sym_Name(tom_match2_1_nameList_1) ||  false ) { { String  tom_match2_1_nameList_1_string=tom_get_slot_Name_string(tom_match2_1_nameList_1); { String  name=tom_match2_1_nameList_1_string;
@@ -133,7 +133,7 @@ throw new TomRuntimeException("Invalid Term");}
         while(!nameList.isEmpty()) {
           head = nameList.getHead().getString();
           dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          nameList = nameList.getTail();
+          nameList= nameList.getTail();
         }
         return dijunctionName;
       }} } if(tom_is_fun_sym_Placeholder(tom_match2_1) ||  false ) {

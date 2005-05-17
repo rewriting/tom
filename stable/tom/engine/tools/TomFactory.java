@@ -128,7 +128,7 @@ public class TomFactory extends TomBase {
 
         while(!args.isEmpty()) {
           list.add(metaEncodeXMLAppl(symbolTable,args.getHead().getAppl()));
-          args = args.getTail();
+          args= args.getTail();
         }
         return list;
       } } }} }} }} }}} } if(tom_is_fun_sym_TermAppl(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match5_1_nameList=tom_get_slot_TermAppl_nameList(tom_match5_1); { jtom.adt.tomsignature.types.TomList tom_match5_1_args=tom_get_slot_TermAppl_args(tom_match5_1); if(tom_is_fun_sym_concTomName(tom_match5_1_nameList) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match5_1_nameList_list1=tom_match5_1_nameList; if(!(tom_is_empty_concTomName_NameList(tom_match5_1_nameList_list1))) { { jtom.adt.tomsignature.types.TomName tom_match5_1_nameList_1=tom_get_head_concTomName_NameList(tom_match5_1_nameList_list1);tom_match5_1_nameList_list1=tom_get_tail_concTomName_NameList(tom_match5_1_nameList_list1); if(tom_is_fun_sym_Name(tom_match5_1_nameList_1) ||  false ) { { String  tom_match5_1_nameList_1_string=tom_get_slot_Name_string(tom_match5_1_nameList_1); if(tom_terms_equal_String("", tom_match5_1_nameList_1_string) ||  false ) { if(tom_is_empty_concTomName_NameList(tom_match5_1_nameList_list1)) { { jtom.adt.tomsignature.types.TomList args=tom_match5_1_args;
@@ -136,7 +136,7 @@ public class TomFactory extends TomBase {
 
         while(!args.isEmpty()) {
           list.add(metaEncodeXMLAppl(symbolTable,args.getHead()));
-          args = args.getTail();
+          args= args.getTail();
         }
         return list;
       } } }} }} }} }}} }

@@ -57,9 +57,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void genDeclMake(String funName, TomType returnType, 
                                       TomList argList, Instruction instr) throws IOException;
   
-  protected abstract void genDeclList(String name, TomType listType, TomType eltType) throws IOException;
+  protected abstract void genDeclList(String name) throws IOException;
 
-  protected abstract void genDeclArray(String name, TomType listType, TomType eltType) throws IOException;
+  protected abstract void genDeclArray(String name) throws IOException;
 
   //------------------------------------------------------------
  
@@ -139,7 +139,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpIsEmptyList(int deep, TomName opNameAST, TomType type, TomTerm expList) throws IOException {
      { jtom.adt.tomsignature.types.TomName tom_match1_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match1_1) ||  false ) {
  output.write("tom_is_empty_" + getTomType(type) + "(");  } if(tom_is_fun_sym_Name(tom_match1_1) ||  false ) { { String  tom_match1_1_string=tom_get_slot_Name_string(tom_match1_1); { String  opName=tom_match1_1_string;
- output.write("tom_is_empty_" + opName + "_" + getTomType(type) + "("); }} }}
+ output.write("tom_is_empty_" + opName+ "_" + getTomType(type) + "("); }} }}
 
     generate(deep,expList);
     output.write(")");
@@ -150,7 +150,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.write(" >= ");
      { jtom.adt.tomsignature.types.TomName tom_match2_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match2_1) ||  false ) {
  output.write("tom_get_size_" + getTomType(type) + "(");  } if(tom_is_fun_sym_Name(tom_match2_1) ||  false ) { { String  tom_match2_1_string=tom_get_slot_Name_string(tom_match2_1); { String  opName=tom_match2_1_string;
- output.write("tom_get_size_" + opName + "_" + getTomType(type) + "("); }} }}
+ output.write("tom_get_size_" + opName+ "_" + getTomType(type) + "("); }} }}
 
     generate(deep,expArray);
     output.write(")");
@@ -191,7 +191,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpGetTail(int deep, TomName opNameAST, TomType type, TomTerm var) throws IOException {
      { jtom.adt.tomsignature.types.TomName tom_match3_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match3_1) ||  false ) {
  output.write("tom_get_tail_" + getTomType(type) + "(");  } if(tom_is_fun_sym_Name(tom_match3_1) ||  false ) { { String  tom_match3_1_string=tom_get_slot_Name_string(tom_match3_1); { String  opName=tom_match3_1_string;
- output.write("tom_get_tail_" + opName + "_" + getTomType(type) + "("); }} }}
+ output.write("tom_get_tail_" + opName+ "_" + getTomType(type) + "("); }} }}
 
     generate(deep,var); 
     output.write(")");
@@ -200,7 +200,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var) throws IOException {
      { jtom.adt.tomsignature.types.TomName tom_match4_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match4_1) ||  false ) {
  output.write("tom_get_size_" + getTomType(type) + "(");  } if(tom_is_fun_sym_Name(tom_match4_1) ||  false ) { { String  tom_match4_1_string=tom_get_slot_Name_string(tom_match4_1); { String  opName=tom_match4_1_string;
- output.write("tom_get_size_" + opName + "_" + getTomType(type) + "("); }} }}
+ output.write("tom_get_size_" + opName+ "_" + getTomType(type) + "("); }} }}
 
     generate(deep,var);
     output.write(")");
@@ -537,19 +537,5 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             tlCode);
   }
 
-  protected void buildTypeTermDecl(int deep, TomList declList) throws IOException {
-    generateDeclarationFromList(deep, declList);
-  }
-
-  protected void generateDeclarationFromList(int deep, TomList declList) throws IOException {
-    TomTerm term;
-    while(!declList.isEmpty()) {
-      term = declList.getHead();
-       { jtom.adt.tomsignature.types.TomTerm tom_match15_1=(( jtom.adt.tomsignature.types.TomTerm)term); if(tom_is_fun_sym_DeclarationToTomTerm(tom_match15_1) ||  false ) { { jtom.adt.tomsignature.types.Declaration tom_match15_1_astDeclaration=tom_get_slot_DeclarationToTomTerm_astDeclaration(tom_match15_1); { jtom.adt.tomsignature.types.Declaration declaration=tom_match15_1_astDeclaration;
-generateDeclaration(deep, declaration);}} }}
-
-      declList = declList.getTail();
-    }
-  }
-  
+ 
 } // class TomGenericGenerator

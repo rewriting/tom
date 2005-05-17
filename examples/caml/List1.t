@@ -49,7 +49,7 @@ let rec swapsort l =
 try (
    %match(list l) {
     conc(x1*,x,y,x2*) -> {
-      if (x>y) then raise (Res(swapsort(`conc(x1*,y,x,x2*))))
+      if (`x>`y) then raise (Res(swapsort(`conc(x1*,y,x,x2*))))
     }
 
     conc(x1*,x,x,x2*) -> {

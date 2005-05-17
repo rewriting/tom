@@ -34,6 +34,7 @@ import jtom.adt.tomsignature.types.OptionList;
 import jtom.adt.tomsignature.types.TargetLanguage;
 import jtom.adt.tomsignature.types.TomList;
 import jtom.adt.tomsignature.types.TomNumberList;
+import jtom.adt.tomsignature.types.TomSymbol;
 import jtom.adt.tomsignature.types.TomTerm;
 import jtom.adt.tomsignature.types.TomType;
 import jtom.exception.TomRuntimeException;
@@ -58,7 +59,11 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   
   protected void buildInstructionSequence(int deep, Instruction instruction) throws IOException {
     generateInstruction(deep,instruction);
-    //output.writeln(";");
+    /*
+     * buildInstructionSequence is used for CompiledPattern.
+     * Since a pattern should have type unit, we have to put a ";"
+     */
+    output.writeln(";");
     return;
   }
 
@@ -225,7 +230,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 
      { jtom.adt.tomsignature.types.TargetLanguage tom_match1_1=(( jtom.adt.tomsignature.types.TargetLanguage)tlCode); if(tom_is_fun_sym_TL(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.Position tom_match1_1_start=tom_get_slot_TL_start(tom_match1_1); { jtom.adt.tomsignature.types.Position tom_match1_1_end=tom_get_slot_TL_end(tom_match1_1); if(tom_is_fun_sym_TextPosition(tom_match1_1_start) ||  false ) { { int  tom_match1_1_start_line=tom_get_slot_TextPosition_line(tom_match1_1_start); { int  startLine=tom_match1_1_start_line; if(tom_is_fun_sym_TextPosition(tom_match1_1_end) ||  false ) { { int  tom_match1_1_end_line=tom_get_slot_TextPosition_line(tom_match1_1_end); { int  endLine=tom_match1_1_end_line;
 
-        output.write(s, startLine, endLine - startLine);
+        output.write(s, startLine, endLine- startLine);
         return;
       }} }}} }}} } if(tom_is_fun_sym_ITL(tom_match1_1) ||  false ) {
 
@@ -270,19 +275,23 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.write(" ");
   }
 
-  protected void genDeclList(String name, TomType listType, TomType eltType)  throws IOException {
+  protected void genDeclList(String name)  throws IOException {
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(name);
+    TomType listType = getSymbolCodomain(tomSymbol);
+    TomType eltType = getSymbolDomain(tomSymbol).getHead();
+
     String s = "";
     if(nodeclMode) {
       return;
     }
 
     String tomType = getTomType(listType);
-    String is_empty    = "tom_is_empty_" + tomType;
+    String is_empty    = "tom_is_empty_" + name + "_" + tomType;
     String term_equal  = "tom_terms_equal_" + tomType;
     String make_insert = "tom_cons_list_" + name;
     String make_empty  = "tom_empty_list_" + name;
-    String get_head    = "tom_get_head_" + tomType;
-    String get_tail    = "tom_get_tail_" + tomType;
+    String get_head    = "tom_get_head_" + name + "_" + tomType;
+    String get_tail    = "tom_get_tail_" + name + "_" + tomType;
     String get_slice   = "tom_get_slice_" + name;
     
     s+= "let rec tom_append_list_" + name +  "(l1,l2) =\n";

@@ -109,7 +109,13 @@ public class TomBackend extends TomGenericPlugin {
         return;
       }
       // set the generated File Name
-      generatedFileName = getStreamManager().getOutputFile().getAbsolutePath();
+      try {
+        generatedFileName = getStreamManager().getOutputFile().getCanonicalPath();
+      } catch (IOException e) {
+        System.out.println("IO Exception when computing generatedFileName");
+        e.printStackTrace();
+      }
+
     } else {
       // backend is desactivated
       getLogger().log(Level.INFO,"BackendInactivated");

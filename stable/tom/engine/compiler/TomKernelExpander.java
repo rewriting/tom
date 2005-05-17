@@ -127,7 +127,7 @@ public class TomKernelExpander extends TomBase {
                 newCondList = tom_make_manyInstructionList(newCond,newCondList);
                 collectVariable(set,newCond); 
                 varList = getAstFactory().makeList(set);
-                condList = condList.getTail();
+                condList= condList.getTail();
               }
 
               TomTerm newRhs = replaceInstantiatedVariable(varList,rhs);
@@ -195,7 +195,7 @@ public class TomKernelExpander extends TomBase {
                  type = getSymbolCodomain(rhsSymbol);
                } else {
                  // lhs and rhs have an unknown top symbol
-                 throw new TomRuntimeException("lhs and rhs have an unknown sort: " + lhsName + ",  " + rhsName);
+                 throw new TomRuntimeException("lhs and rhs have an unknown sort: " + lhsName+ ",  " + rhsName);
                }
               
                //System.out.println("EqualityCondition type = " + type);
@@ -244,8 +244,8 @@ public class TomKernelExpander extends TomBase {
                ArrayList list = new ArrayList();
                while(!termList.isEmpty()) {
                  list.add(expandVariable(l1.getHead(), termList.getHead()));
-                 termList = termList.getTail();
-                 l1 = l1.getTail();
+                 termList= termList.getTail();
+                 l1= l1.getTail();
                }
                TomList newTermList = getAstFactory().makeList(list);
 
@@ -258,7 +258,7 @@ public class TomKernelExpander extends TomBase {
               //System.out.println("varList = " + varList);
                while(!guardList.isEmpty()) {
                  list.add(replaceInstantiatedVariable(varList, guardList.getHead()));
-                 guardList = guardList.getTail();
+                 guardList= guardList.getTail();
                }
                TomList newGuardList = getAstFactory().makeList(list);
                //System.out.println("newGuardList = " + newGuardList);
@@ -272,7 +272,7 @@ public class TomKernelExpander extends TomBase {
                if(tomName.equals("")) {
                  if(contextSubject.hasAstType()) {
                    tomSymbol = getSymbolFromType(contextSubject.getAstType());
-                   nameList = tom_cons_list_concTomName(tomSymbol.getAstName(),tom_empty_list_concTomName());
+                   nameList= tom_cons_list_concTomName(tomSymbol.getAstName(),tom_empty_list_concTomName());
                    if(tomSymbol==null) {
                      throw new TomRuntimeException("No symbol found for type '" + contextSubject.getAstType() + "'");
                    } 

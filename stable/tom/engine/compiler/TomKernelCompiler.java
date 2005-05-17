@@ -109,7 +109,7 @@ public class TomKernelCompiler extends TomBase {
                   //System.out.println("automata = " + automata);
                   
                 automataList = append(automata,automataList);
-                patternInstructionList = patternInstructionList.getTail();
+                patternInstructionList= patternInstructionList.getTail();
               }
                 
                 /*
@@ -189,7 +189,7 @@ public class TomKernelCompiler extends TomBase {
              * if a label is assigned to a pattern (label:pattern -> action)
              * we generate corresponding labeled-block
              */
-          instruction = tom_make_NamedBlock(getLabel(optionList).getString(),tom_cons_list_concInstruction(instruction,tom_empty_list_concInstruction()))
+          instruction= tom_make_NamedBlock(getLabel(optionList).getString(),tom_cons_list_concInstruction(instruction,tom_empty_list_concInstruction()))
 ;
                      
         }
@@ -727,7 +727,7 @@ public class TomKernelCompiler extends TomBase {
           TomName name = nameList.getHead();
           Expression check = tom_make_EqualFunctionSymbol(termType,exp1,tom_make_RecordAppl(option,tom_cons_list_concTomName(name,tom_empty_list_concTomName()),l,tom_empty_list_concConstraint()));
           cond = tom_make_Or(check,cond);
-          nameList = nameList.getTail();
+          nameList= nameList.getTail();
         }
       }}}}}} }}}}}} }}
 

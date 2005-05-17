@@ -1448,6 +1448,32 @@
   make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_TermAppl(t0, t1, t2, t3)}
 }
 
+%typeterm DeclarationList{
+  implement { jtom.adt.tomsignature.types.DeclarationList}
+  equals(t1,t2) {t1.equals(t2)}
+  check_stamp(t) {if(t.getAnnotation(getTomSignatureFactory().getPureFactory().makeList()) == getTomSignatureFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.DeclarationList)t.setAnnotation(getTomSignatureFactory().getPureFactory().makeList(),getTomSignatureFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
+}
+
+%oplist DeclarationList concDeclaration(Declaration*) {
+  is_fsym(t) {(t!= null) && t.isSortDeclarationList()}
+  make_empty() {getTomSignatureFactory().makeDeclarationList()}
+  make_insert(e,l) {getTomSignatureFactory().makeDeclarationList(e,l)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
+}
+%op DeclarationList emptyDeclarationList{
+  is_fsym(t) { (t!= null) && t.isEmpty()}
+  make() {getTomSignatureFactory().makeDeclarationList()}
+}
+%op DeclarationList manyDeclarationList(head:Declaration, tail:DeclarationList) {
+  is_fsym(t) { (t!= null) && t.isMany()}
+  get_slot(head,t) { t.getHead()}
+  get_slot(tail,t) { t.getTail()}
+  make(e,l) {getTomSignatureFactory().makeDeclarationList(e,l)}
+}
 %typeterm Declaration{
   implement { jtom.adt.tomsignature.types.Declaration}
   equals(t1,t2) {t1.equals(t2)}
@@ -1625,10 +1651,10 @@
   make(t0, t1, t2) { getTomSignatureFactory().makeDeclaration_CheckStampDecl(t0, t1, t2)}
 }
 
-%op Declaration TypeTermDecl(astName:TomName, keywordList:TomList, orgTrack:Option) {
+%op Declaration TypeTermDecl(astName:TomName, declarations:DeclarationList, orgTrack:Option) {
   is_fsym(t) { (t!= null) && t.isTypeTermDecl()}
   get_slot(astName,t) { t.getAstName()}
-  get_slot(keywordList,t) { t.getKeywordList()}
+  get_slot(declarations,t) { t.getDeclarations()}
   get_slot(orgTrack,t) { t.getOrgTrack()}
   make(t0, t1, t2) { getTomSignatureFactory().makeDeclaration_TypeTermDecl(t0, t1, t2)}
 }

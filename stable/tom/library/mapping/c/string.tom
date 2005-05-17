@@ -31,8 +31,5 @@
 
 %typeterm String {
   implement           { char* }
-  get_fun_sym(t)      { t }
-  cmp_fun_sym(s1,s2)  { !strcmp(s1,s2) }
-  get_subterm(t, n)   { NULL }
   equals(t1,t2)       { !strcmp(t1,t2) }
 }

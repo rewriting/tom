@@ -201,7 +201,7 @@ public class TomTypeChecker extends TomChecker {
       
        { jtom.adt.tomsignature.types.InstructionList tom_match4_1=(( jtom.adt.tomsignature.types.InstructionList)condList); if(tom_is_fun_sym_concInstruction(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.InstructionList tom_match4_1_list1=tom_match4_1; { jtom.adt.tomsignature.types.InstructionList tom_match4_1_begin1=tom_match4_1_list1; { jtom.adt.tomsignature.types.InstructionList tom_match4_1_end1=tom_match4_1_list1;{ while (!(tom_is_empty_concInstruction_InstructionList(tom_match4_1_end1))) {tom_match4_1_list1=tom_match4_1_end1;{ { jtom.adt.tomsignature.types.Instruction cond=tom_get_head_concInstruction_InstructionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concInstruction_InstructionList(tom_match4_1_list1);
 
-          Instruction condition = cond ;
+          Instruction condition = cond;
            { jtom.adt.tomsignature.types.Instruction tom_match5_1=(( jtom.adt.tomsignature.types.Instruction)condition); if(tom_is_fun_sym_MatchingCondition(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match5_1_lhs=tom_get_slot_MatchingCondition_lhs(tom_match5_1); { jtom.adt.tomsignature.types.TomTerm tom_match5_1_rhs=tom_get_slot_MatchingCondition_rhs(tom_match5_1); { jtom.adt.tomsignature.types.TomTerm lhs=tom_match5_1_lhs; { jtom.adt.tomsignature.types.TomTerm p=lhs; { jtom.adt.tomsignature.types.TomTerm rhs=tom_match5_1_rhs; { jtom.adt.tomsignature.types.TomTerm c=rhs;
 
               // (i)
