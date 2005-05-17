@@ -255,6 +255,7 @@
   <target name="apireach" depends="init"> 
     <adtcompile example="${apireach}"
                 factory="reach"/>
+    <vascompile example="${apireach}"/>
     <tomcompile example="${apireach}"/>
     <javacompile example="${apireach}"/>
   </target>
