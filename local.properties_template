@@ -7,3 +7,4 @@ tomdocdir       = {JTOMDOCPATH}
 # library for the nqueens examples (located in integerc)
 aterm.home={ATERM_PREFIX}
 cpl.home={CPL_PREFIX}
+caml.home={CAML_PREFIX}

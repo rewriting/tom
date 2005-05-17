@@ -1,7 +1,4 @@
-all: peano tompeano list
-
-peano: peanotype.cmo tomExtension.cmo PeanoSimple1.cmo
-	ocamlc -o peano peanotype.cmo tomExtension.cmo PeanoSimple1.cmo
+all: tompeano list
 
 peanotype.cmo: peanotype.ml
 	ocamlc -c peanotype.ml
@@ -11,9 +8,6 @@ tomExtension.cmo: tomExtension.ml
 
 tomList.cmo: tomList.ml
 	ocamlc -c tomList.ml
-
-PeanoSimple1.cmo: PeanoSimple1.ml
-	ocamlc -c PeanoSimple1.ml
 
 PeanoSimple1.tom.cmo: PeanoSimple1.tom.ml
 	ocamlc -c PeanoSimple1.tom.ml

@@ -312,6 +312,16 @@
         <include name="README"/>
       </fileset>
     </copy>
+    <antcall target="caml.make"/>
+  </target>
+
+  <target name="caml.make" if="caml.home">
+    <exec dir="${examples.build}/${caml}" 
+          failonerror="yes"
+          executable="make">
+      <arg line=""/>
+      <env key="CAML_HOME" value="${caml.home}"/>
+    </exec>
   </target>
 
   <target name="cell" depends="init">
@@ -654,7 +664,7 @@
   <target name="examples" 
           description="Builds the examples (at least some)"
           depends="addressbook, adt, apireach, appletxml, boulderdash, builtin,
-          caml, cell, dom, expression, gomoku, gtree, list, 
+          caml, cell, dom, expression, gomoku, gtree, integerc, list, 
           nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, structure, 
           tutorial, vas, xml, minirho">
