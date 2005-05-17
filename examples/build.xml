@@ -316,7 +316,7 @@
     <antcall target="caml.make"/>
   </target>
 
-  <target name="caml.make" if="camlc.bin">
+  <target name="caml.make" if="camlc.bin" unless="optimize">
     <exec dir="${examples.build}/${caml}" 
           failonerror="yes"
           executable="make">
