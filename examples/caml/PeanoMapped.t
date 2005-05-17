@@ -42,9 +42,6 @@ and fsuc  = get_fun_sym(Suc(Zero));;
 
 %typeterm peano {
   implement { peano }
-  get_fun_sym(t) { get_fun_sym (t) } 
-  cmp_fun_sym (t1,t2) { t1=t2 } 
-  get_subterm (t,n) { get_subterm t n } 
   equals(t1,t2) { t1=t2 }
 }
   

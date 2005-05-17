@@ -1,6 +1,6 @@
 OCAMLC=${CAMLC}
 
-all: tompeano tomlist
+all: tompeano tomlist peanomapped
 
 peanotype.cmo: peanotype.ml
 	${OCAMLC} -c peanotype.ml
@@ -36,3 +36,5 @@ eratopt: erat.tom.ml
 	tom.src --camlCode -O erat.t
 	ocamlopt -o eratopt erat.tom.ml
 
+peanomapped: PeanoMapped.tom.ml
+	${OCAMLC} -o peanomapped PeanoMapped.tom.ml

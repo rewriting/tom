@@ -297,8 +297,6 @@
          optimize2="${optimize2}"
          options="--camlCode -I ${tom.home}/share/jtom">
       <include name="${caml}/**/*.t"/>
-      <!--<exclude name="${caml}/List1.t"/>-->
-      <exclude name="${caml}/PeanoMapped.t"/>
     </tom>
     <copy todir="${examples.build}/${caml}">
       <fileset dir="${examples.gen}/${caml}">
@@ -316,7 +314,7 @@
     <antcall target="caml.make"/>
   </target>
 
-  <target name="caml.make" if="camlc.bin" unless="optimize">
+  <target name="caml.make" if="camlc.bin">
     <exec dir="${examples.build}/${caml}" 
           failonerror="yes"
           executable="make">
