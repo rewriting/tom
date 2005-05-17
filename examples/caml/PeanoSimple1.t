@@ -5,14 +5,14 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met: 
- * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
- * 	- Redistributions in binary form must reproduce the above copyright
- * 	notice, this list of conditions and the following disclaimer in the
- * 	documentation and/or other materials provided with the distribution.
- * 	- Neither the name of the INRIA nor the names of its
- * 	contributors may be used to endorse or promote products derived from
- * 	this software without specific prior written permission.
+ *  - Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.  
+ *  - Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  - Neither the name of the INRIA nor the names of its
+ *  contributors may be used to endorse or promote products derived from
+ *  this software without specific prior written permission.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -49,12 +49,12 @@ exception Erreur of string ;;
 let rec plus (t1,t2)= 
   let res = ref None in (
   %match (term t1 , term t2 ) {
-    x,zero()    -> {res := Some `(x)}
-    x, suc(y) -> {res := Some (`suc(plus(x,y)))}
-  };	
+    x,zero()  -> {res := Some `(x);}
+    x, suc(y) -> {res := Some (`suc(plus(x,y)));}
+  };  
     
   match !res with 
-	      None -> raise (Erreur "rien n'a filtre")
+        None -> raise (Erreur "rien n'a filtre")
       | Some r -> r
   ;
   )
@@ -68,7 +68,7 @@ let run (n) =
   let n'  = make_peano (n) in
   let res = plus (n',n') in
     print_string ( "plus(" ^ (string_of_int n) ^ "," ^ (string_of_int n) ^
-		   ") = " ^ (string_of_peano res)  ^ "\n" );;
+       ") = " ^ (string_of_peano res)  ^ "\n" );;
 
 let main () =
 

@@ -1,39 +1,38 @@
-all: tompeano list
+OCAMLC=${CAMLC}
+
+all: tompeano tomlist
 
 peanotype.cmo: peanotype.ml
-	ocamlc -c peanotype.ml
+	${OCAMLC} -c peanotype.ml
 
 tomExtension.cmo: tomExtension.ml
-	ocamlc -c tomExtension.ml
+	${OCAMLC} -c tomExtension.ml
 
 tomList.cmo: tomList.ml
-	ocamlc -c tomList.ml
+	${OCAMLC} -c tomList.ml
 
 PeanoSimple1.tom.cmo: PeanoSimple1.tom.ml
-	ocamlc -c PeanoSimple1.tom.ml
+	${OCAMLC} -c PeanoSimple1.tom.ml
 
 tompeano: peanotype.cmo PeanoSimple1.tom.cmo
-	ocamlc -o tompeano peanotype.cmo PeanoSimple1.tom.cmo
+	${OCAMLC} -o tompeano peanotype.cmo PeanoSimple1.tom.cmo
 
 List1.cmo: List1.ml
-	ocamlc -c List1.ml
+	${OCAMLC} -c List1.ml
 
 List1.tom.cmo: List1.tom.ml
-	ocamlc -c List1.tom.ml
+	${OCAMLC} -c List1.tom.ml
 
 list: tomExtension.cmo tomList.cmo List1.cmo
-	ocamlc -o list tomExtension.cmo tomList.cmo List1.cmo
+	${OCAMLC} -o list tomExtension.cmo tomList.cmo List1.cmo
 
 tomlist: List1.tom.cmo
-	ocamlc -o tomlist List1.tom.cmo
+	${OCAMLC} -o tomlist List1.tom.cmo
 
-erat: erat.t
-	tom.src --camlCode erat.t
-	ocamlopt -o erat erat.tom.ml
+erat: erat.tom.ml
+	${OCAMLC} -o erat erat.tom.ml
 
-Eratopt: erat.t
+eratopt: erat.tom.ml
 	tom.src --camlCode -O erat.t
 	ocamlopt -o eratopt erat.tom.ml
 
-erat2: erat.tom.ml
-	ocamlopt -o erat erat.tom.ml

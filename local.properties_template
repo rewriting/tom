@@ -7,4 +7,5 @@ tomdocdir       = {JTOMDOCPATH}
 # library for the nqueens examples (located in integerc)
 aterm.home={ATERM_PREFIX}
 cpl.home={CPL_PREFIX}
-caml.home={CAML_PREFIX}
+# camlc.bin contains the path to the caml compiler to use (camlc or camlopt)
+camlc.bin={CAMLC_BIN}
