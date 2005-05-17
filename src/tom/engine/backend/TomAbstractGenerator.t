@@ -402,7 +402,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       TypedAction[astInstruction=inst] -> {
-        generateInstruction(deep,inst);
+        generateInstruction(deep, inst);
         return;
       }
 
@@ -429,7 +429,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       
       CompiledPattern(_,instruction) -> {
-        `buildInstructionSequence(deep,instruction);
+        `buildInstructionSequence(deep, instruction);
         return;
       }
 
