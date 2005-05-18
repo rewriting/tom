@@ -63,7 +63,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
      * buildInstructionSequence is used for CompiledPattern.
      * Since a pattern should have type unit, we have to put a ";"
      */
-    output.writeln(";");
+    output.writeln("(* end InstructionSequence *) ;");
     return;
   }
 
