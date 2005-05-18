@@ -86,6 +86,9 @@
   <property name="minirho" value="minirho"/>
   <property name="minirho.dir" location="${examples.dir}/${minirho}" />
 
+  <property name="mgs" value="mgs"/>
+  <property name="mgs.dir" location="${examples.dir}/${mgs}" />
+
   <property name="nspk" value="nspk"/>
   <property name="nspk.dir" location="${examples.dir}/${nspk}" />
 
@@ -468,6 +471,13 @@
     <javacompile example="${minirho}"/>
   </target>
   
+  <target name="mgs" depends="init">
+    <adtcompile example="${mgs}"
+                factory="term"/>
+    <tomcompile example="${mgs}"/>
+    <javacompile example="${mgs}"/>
+  </target>
+  
   <target name="nspk" depends="init">
     <adtcompile example="${nspk}"
                 factory="term"/>
@@ -663,7 +673,7 @@
   <target name="examples" 
           description="Builds the examples (at least some)"
           depends="addressbook, adt, apireach, appletxml, boulderdash, builtin,
-          caml, cell, dom, expression, gomoku, gtree, integerc, list, 
+          caml, cell, dom, expression, gomoku, gtree, integerc, list, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, structure, 
           tutorial, vas, xml, minirho">

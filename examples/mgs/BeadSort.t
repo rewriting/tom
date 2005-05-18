@@ -26,12 +26,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package mgs;
 
 import java.util.*;
 import aterm.*;
 import aterm.pure.*;
-import adt.mgs.term.*;
-import adt.mgs.term.types.*;
+import mgs.term.*;
+import mgs.term.types.*;
 
 public class BeadSort {
   private Factory factory;
@@ -42,7 +43,6 @@ public class BeadSort {
   %include { term/term.tom }
 
   %op Bead beadNS(n:Bead, s:Bead) {
-    fsym { }
     is_fsym(t) { (t!=null) && t.isBead() }
     make(n,s) { makeBead(n,s) }
     get_slot(n,t) { getNorthBead(t) }
@@ -50,7 +50,6 @@ public class BeadSort {
   }
 
   %op Bead empty {
-    fsym { }
     is_fsym(t) { t==null }
     make { null }
   }
@@ -109,7 +108,7 @@ public class BeadSort {
 
 
   public final static void main(String[] args) {
-    BeadSort test = new BeadSort(new Factory(new PureFactory()));
+    BeadSort test = new BeadSort(Factory.getInstance(SingletonFactory.getInstance()));
     test.run();
   }
 

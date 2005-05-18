@@ -26,12 +26,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package mgs;
 
 import java.util.*;
 import aterm.*;
 import aterm.pure.*;
-import adt.mgs.term.*;
-import adt.mgs.term.types.*;
+import mgs.term.*;
+import mgs.term.types.*;
 
 public class BoulderDash {
   private Factory factory;
@@ -44,7 +45,6 @@ public class BoulderDash {
   %include { term/term.tom }
 
   %op Bead beadRock(n:Bead, s:Bead, e:Bead, w:Bead) {
-    fsym { }
     is_fsym(t) { (t!=null) && t.isBead() && t.getValue() == rock && !marked.contains(t) }
     get_slot(n,t) { getNorthBead(t) }
     get_slot(s,t) { getSouthBead(t) }
@@ -53,7 +53,6 @@ public class BoulderDash {
   }
 
   %op Bead empty {
-    fsym { }
     is_fsym(t) { t==null }
     make { null }
   }
@@ -106,7 +105,7 @@ public class BoulderDash {
 
 
   public final static void main(String[] args) {
-    BoulderDash test = new BoulderDash(new Factory(new PureFactory()));
+    BoulderDash test = new BoulderDash(Factory.getInstance(SingletonFactory.getInstance()));
     test.run();
   }
 
