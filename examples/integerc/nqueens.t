@@ -108,10 +108,10 @@ int noattack(ATerm arg0, ATerm arg1, ATerm arg2) {
     
     N1,N2,cons(X,LX) -> {
       res =
-        neq(N2,X) &&
-        neq(minus(N2,X),N1) &&
-        neq(minus(X,N2),N1) &&
-        noattack(plus(N1,tone),N2,LX);
+        neq(`N2,`X) &&
+        neq(minus(`N2,`X),`N1) &&
+        neq(minus(`X,`N2),`N1) &&
+        noattack(plus(`N1,tone),`N2,`LX);
       goto end;
     }
   }
@@ -125,8 +125,8 @@ ATerm range_rule(ATerm arg0) {
   
   %match(Nat res) {
     N -> {
-      if(t2i(N) > 1) {
-        res = minus(N,tone);
+      if(t2i(`N) > 1) {
+        res = minus(`N,tone);
         goto end;
       }
     }
@@ -153,9 +153,9 @@ ATerm nqueens_rule(ATerm arg0) {
         goto myend;
       }
 
-      if(t2i(N) > 0) {
-        LX = nqueens_strat(nqueens(minus(N,tone),size));
-        X  = (ATerm)range_strat((ATerm)size);
+      if(t2i(`N) > 0) {
+        LX = nqueens_strat(nqueens(minus(`N,tone),`size));
+        X  = (ATerm)range_strat((ATerm)`size);
       
         if(noattack((ATerm)tone,X,LX)) {
           res = cons(X,LX);

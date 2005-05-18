@@ -47,39 +47,43 @@ static AFun f_fib;
 
 %op term zero {
   is_fsym(t)     { ATisEqualAFun(ATgetAFun(t),f_zero) }
+  make           { make_zero() }
 }
   
 %op term suc(sl:term) {
   is_fsym(t)     { ATisEqualAFun(ATgetAFun(t),f_suc) }
   get_slot(sl,t) { ATgetArgument(t,0) }
+  make(t1)       { make_suc(t1) }
 }
 
 %op term plus(sl1:term,sl2:term) {
   is_fsym(t) { ATisEqualAFun(ATgetAFun(t),f_plus) }
   get_slot(sl1,t) { ATgetArgument(t,0) }
   get_slot(sl2,t) { ATgetArgument(t,1) }
+  make(t1,t2)     { plus(t1,t2) }
 }
 
 %op term fib(sl:term) {
   is_fsym(t) { ATisEqualAFun(ATgetAFun(t),f_fib) }
   get_slot(sl,t) { ATgetArgument(t,0) }
+  make(t1)       { fib(t1) }
 }
 
 ATerm plus(ATerm t1, ATerm t2) {
   %match(term t1, term t2) {
-    x,zero() -> { return(x); }
+    x,zero() -> { return(`x); }
     x,suc(suc(suc(suc(suc(y))))) -> {
-      return(make_suc(make_suc(make_suc(make_suc(make_suc(plus(x,y)))))));
+      return(`suc(suc(suc(suc(suc(plus(x,y)))))));
     }
-    x,suc(y) -> { return(make_suc(plus(x,y))); }
+    x,suc(y) -> { return(`suc(plus(x,y))); }
   }
 }
 
 ATerm fib(ATerm t) {
   %match(term t) {
-    zero()      -> { return(make_suc(make_zero())); }
-    suc(zero()) -> { return(make_suc(make_zero())); }
-    suc(suc(x)) -> { return(plus(fib(x),fib(make_suc(x)))); }
+    zero()      -> { return(`suc(zero())); }
+    suc(zero()) -> { return(`suc(zero())); }
+    suc(suc(x)) -> { return(`plus(fib(x),fib(suc(x)))); }
   }
 }
 

@@ -60,7 +60,7 @@ ATbool odd(ATerm t) {
   %match(term t) {
     zero()      -> { return ATtrue; }
     suc(zero()) -> { return ATfalse; }
-    suc(x)      -> { return not(odd(x)); }
+    suc(x)      -> { return not(odd(`x)); }
   }
 }
 

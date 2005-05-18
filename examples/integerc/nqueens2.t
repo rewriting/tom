@@ -93,8 +93,8 @@ ATerm range_strat(ATerm subject) {
     /* Apply the strategy */
     %match(Nat subject) {
       suc(N) -> {
-        if(ATgetInt(N) > 0) {
-          res = (ATerm)N;
+        if(ATgetInt(`N) > 0) {
+          res = (ATerm)`N;
           goto stratLab;
         }
       }
@@ -118,10 +118,10 @@ int noattack(ATerm arg0, ATerm arg1, ATerm arg2) {
     }
     
     N1,N2,cons(X,LX) -> {
-      n1 = ATgetInt((ATermInt)N1);
-      n2 = ATgetInt((ATermInt)N2);
-      x  = ATgetInt((ATermInt)X);
-      res = n2!=x && n2-x!=n1 && x-n2!=n1 && noattack(i2t(n1+1),i2t(n2),LX);
+      n1 = ATgetInt((ATermInt)`N1);
+      n2 = ATgetInt((ATermInt)`N2);
+      x  = ATgetInt((ATermInt)`X);
+      res = n2!=x && n2-x!=n1 && x-n2!=n1 && noattack(i2t(n1+1),i2t(n2),`LX);
       goto end;
     }
   }
@@ -148,8 +148,8 @@ ATerm nqueens_strat(ATerm arg0) {
         goto myend;
       }
 
-      LX = nqueens_strat(make_nqueens(N,size));
-      X  = (ATerm)range_strat((ATerm)size);
+      LX = nqueens_strat(make_nqueens(`N,`size));
+      X  = (ATerm)range_strat((ATerm)`size);
       
       if(noattack(i2t(1),X,LX)) {
         res = cons(X,LX);
