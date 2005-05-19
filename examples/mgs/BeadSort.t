@@ -161,7 +161,7 @@ public class BeadSort {
       }
 
       bead[pos=p] -> {
-        newSpace.put(p,b);
+        newSpace.put(`p,b);
         return false;
       }
     }

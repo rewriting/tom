@@ -186,7 +186,7 @@ public class ArrayBeadSort {
       }
 
       bead[pos=pos(X,Y)] -> {
-        newSpace[X][Y] = true;
+        newSpace[`X][`Y] = true;
         return false;
       }
     }
