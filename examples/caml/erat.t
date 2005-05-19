@@ -52,7 +52,7 @@ let rec elim l=
 try(
 %match (list l) {
   conc(x*,e2,y*,e1,z*) -> {
-    if `e1 mod `e2 = 0
+    if `(e1) mod `(e2) = 0
     then raise (Result (elim(`conc(x*,e2,y*,z*))))
   } 
 }; l
