@@ -35,6 +35,7 @@ import tom.library.adt.tnode.types.*;
 import aterm.*;
 
 public class PersonSort {
+
   %include{ adt/tnode/TNode.tom }
 
   private XmlTools xtools;
