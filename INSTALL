@@ -42,7 +42,7 @@ Build
 	You can choose to only build the stable distribution, or the source
 	distribution.
 	$ ./build.sh -projecthelp
-	will lists all the available targets for the build.
+	will list all the available targets for the build.
 
 Setup
 -----

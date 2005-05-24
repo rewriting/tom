@@ -64,7 +64,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   //------------------------------------------------------------
  
   protected abstract void buildRef(int deep, TomTerm term) throws IOException;
-  protected abstract void buildInstructionSequence(int deep, Instruction instruction) throws IOException;
+  protected abstract void buildInstructionSequence(int deep, InstructionList instructionList) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
@@ -115,10 +115,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generatePairNameDeclList(deep, pairNameDeclList);
   }
 
-  protected void buildCompiledMatch(int deep, Instruction instruction) throws IOException {
-    generateInstruction(deep+1,instruction);
-  }
-  
   protected void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException {
     generateExpression(deep,exp1);
     output.write(" && ");

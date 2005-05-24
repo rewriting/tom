@@ -44,8 +44,7 @@ import tom.platform.OptionManager;
 
 public class TomCamlGenerator extends TomImperativeGenerator {
 
-  public TomCamlGenerator(OutputCode output, OptionManager optionManager,
-                       SymbolTable symbolTable) {
+  public TomCamlGenerator(OutputCode output, OptionManager optionManager, SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
   }
   
@@ -57,13 +56,23 @@ public class TomCamlGenerator extends TomImperativeGenerator {
    * the implementation of methods are here for caml 
    */
   
-  protected void buildInstructionSequence(int deep, Instruction instruction) throws IOException {
-    generateInstruction(deep,instruction);
-    /*
-     * buildInstructionSequence is used for CompiledPattern.
-     * Since a pattern should have type unit, we have to put a ";"
-     */
-    output.writeln("(* end InstructionSequence *) ;");
+  protected void buildInstructionSequence(int deep, InstructionList instructionList) throws IOException {
+    if(!instructionList.isEmpty()) {
+      generateInstruction(deep,instructionList.getHead());
+      instructionList = instructionList.getTail();
+    }
+
+    while(!instructionList.isEmpty()) {
+      output.write("(* end InstructionSequence *) ");
+      output.writeln(";");
+      generateInstruction(deep,instructionList.getHead());
+      /*
+       * buildInstructionSequence is used for CompiledPattern.
+       * Since a pattern should have type unit, we have to put a ";"
+       */
+
+      instructionList = instructionList.getTail();
+    }
     return;
   }
 
@@ -189,7 +198,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       generate(deep,variable);
       output.write(")");
     } else {
-      output.write("(* checkstamp *)");
+      output.write("(* checkstamp *) ()");
     }
   }
 

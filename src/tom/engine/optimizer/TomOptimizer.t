@@ -106,7 +106,7 @@ public class TomOptimizer extends TomGenericPlugin {
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
-        TomTerm renamedTerm   = renameVariable( (TomTerm)getWorkingTerm(), new HashSet() );
+        TomTerm renamedTerm   = renameIntoTomVariable( (TomTerm)getWorkingTerm(), new HashSet() );
       
         if(getOptionBooleanValue("optimize")) {
           renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
@@ -188,55 +188,6 @@ public class TomOptimizer extends TomGenericPlugin {
                                        Instruction subject) {
     return (Instruction) replace_inline.apply(subject,variable,expression); 
   }
-
-  /* renommer une variable dans un bloc en une autre 
-   */
-
-  Replace3 rename_variable = new Replace3() {
-      public ATerm apply(ATerm subject, Object arg1, Object arg2) {
-        TomTerm variable = (TomTerm) arg1;
-        TomTerm newVariable = (TomTerm) arg2;
-        TomName variableName = variable.getAstName();
-        TomName newVariableName = newVariable.getAstName();
-
-        if(subject instanceof TomTerm) {
-          %match(TomTerm subject) { 
-            Variable(option,astName,astType,constraints) -> {
-              if(variableName == `astName) {
-                return `Variable(option,newVariableName,astType,constraints);
-              }
-            }
-
-            VariableStar(option,astName,astType,constraints) -> {
-              if(variableName == `astName) {
-                return `VariableStar(option,newVariableName,astType,constraints);
-              }
-            }
-
-            BuildVariable(astName,args) -> {
-              if(variableName == `astName) {
-                return `BuildVariable(newVariableName,args);
-              }
-            }
-              
-          } // end match
-        } // end instanceof TomTerm
-
-          /*
-           * Defaul case: traversal
-           */
-        return traversal().genericTraversal(subject,this,arg1,arg2);
-      } // end apply
-    };
-
-
-
-
-  public Instruction renameVariable(TomTerm variable, TomTerm variable2,
-                                    Instruction subject) {
-    return (Instruction) rename_variable.apply(subject,variable,variable2); 
-  }
-
 
   private List computeOccurences(final TomName variableName, ATerm subject) {
     final List list = new ArrayList();
@@ -340,7 +291,10 @@ public class TomOptimizer extends TomGenericPlugin {
     traversal().genericCollect(subject, collect);
   }
 
-  Replace2 replace_renameVariable = new Replace2() {
+  /*
+   * add a prefix (tom_) to back-quoted variables which comes from the lhs
+   */
+  Replace2 replace_renameIntoTomVariable = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
         Set context = (Set) arg1;
         if(subject instanceof TomTerm) {
@@ -353,15 +307,19 @@ public class TomOptimizer extends TomGenericPlugin {
           }
         } else if(subject instanceof Expression) {
         } else if(subject instanceof Instruction) {
+          /*
+           * collect the set of variables that correspond
+           * to the lhs of this instruction
+           */
+
           %match(Instruction subject) {
             CompiledPattern(patternList,instruction) -> {
               Map map = collectMultiplicity(`patternList);
               Set newContext = new HashSet(map.keySet());
               newContext.addAll(context);
-              return renameVariableInstruction(`instruction,newContext);
+              return this.apply(`instruction,newContext);
             }
           }
-          
         } // end instanceof Instruction
 
           /*
@@ -372,20 +330,43 @@ public class TomOptimizer extends TomGenericPlugin {
     };
 
 
-  public TomTerm renameVariable(TomTerm subject, Set context) {
-    return (TomTerm) replace_renameVariable.apply(subject,context); 
+  private TomTerm renameIntoTomVariable(TomTerm subject, Set context) {
+    return (TomTerm) replace_renameIntoTomVariable.apply(subject,context); 
   }
 
-  public Instruction renameVariableInstruction(Instruction subject, Set context) {
-    return (Instruction) replace_renameVariable.apply(subject,context); 
+
+  /* 
+   * rename a variable into another one
+   */
+  public Instruction renameVariable(TomTerm variable, TomTerm variable2, Instruction subject) {
+    return (Instruction) rename_variable.apply(subject,variable,variable2); 
   }
 
+  Replace3 rename_variable = new Replace3() {
+      public ATerm apply(ATerm subject, Object arg1, Object arg2) {
+        TomName variableName = ((TomTerm) arg1).getAstName();
+        TomName newVariableName = ((TomTerm) arg2).getAstName();
+        if(subject instanceof TomTerm) {
+          %match(TomTerm subject) { 
+            var@(Variable|VariableStar|BuildVariable)[astName=astName] -> {
+              if(variableName == `astName) {
+                return `var.setAstName(newVariableName);
+              }
+            }
+          } // end match
+        } // end instanceof TomTerm
+
+          /*
+           * Defaul case: traversal
+           */
+        return traversal().genericTraversal(subject,this,arg1,arg2);
+      } // end apply
+    };
 
   public boolean compare (ATerm term1, ATerm term2){
     PILFactory factory = new PILFactory();
     return factory.remove(term1)==factory.remove(term2);
   }
-  
   
   public class RewriteSystem1 extends TomSignatureVisitableFwd {
 

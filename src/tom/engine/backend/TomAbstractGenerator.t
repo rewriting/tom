@@ -362,7 +362,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       AbstractBlock(instList) -> {
-        `generateInstructionList(deep, instList);
+        //`generateInstructionList(deep, instList);
+        `buildInstructionSequence(deep, instList);
         return;
       }
 
@@ -401,22 +402,15 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      TypedAction[astInstruction=AbstractBlock(instructionList)] -> {
+        `generateInstructionList(deep, instructionList);
+        return;
+      }
+
       TypedAction[astInstruction=inst] -> {
-        generateInstruction(deep, inst);
+        `generateInstruction(deep, inst);
         return;
       }
-
-      /*
-      Action(l) -> {
-        generateList(deep,l);
-        return;
-      }
-
-      GuardedAction(l) -> {
-        `buildIf(deep, TrueTL(),Action(l));
-        return;
-      }
-      */
 
       Return(exp) -> {
         `buildReturn(deep, exp);
@@ -424,12 +418,12 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       CompiledMatch(instruction, list) -> {
-        `buildCompiledMatch(deep, instruction);
+        `generateInstruction(deep, instruction);
         return;
       }
       
       CompiledPattern(_,instruction) -> {
-        `buildInstructionSequence(deep, instruction);
+        `generateInstruction(deep, instruction);
         return;
       }
 
@@ -704,7 +698,7 @@ public abstract class TomAbstractGenerator extends TomBase {
  
   // ------------------------------------------------------------
   
-  protected abstract void buildInstructionSequence(int deep, Instruction instruction) throws IOException;
+  protected abstract void buildInstructionSequence(int deep, InstructionList instructionList) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList) throws IOException;
   protected abstract void buildRef(int deep, TomTerm term) throws IOException;
@@ -715,7 +709,6 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
 
-  protected abstract void buildCompiledMatch(int deep, Instruction instruction) throws IOException;
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpGreaterThan(int deep, Expression exp1, Expression exp2) throws IOException;

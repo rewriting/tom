@@ -72,8 +72,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
    * the method implementations are here common to C and Java
    */
 
-  protected void buildInstructionSequence(int deep, Instruction instruction) throws IOException {
-    generateInstruction(deep, instruction);
+  protected void buildInstructionSequence(int deep, InstructionList instructionList) throws IOException {
+    generateInstructionList(deep, instructionList);
     return;
   }
 
