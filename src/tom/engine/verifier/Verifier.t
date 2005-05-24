@@ -273,6 +273,24 @@ public class Verifier extends TomBase {
 
     return treeList;
   }
+
+  public Collection getConstraints(Instruction automata) {
+    // collects the accept in the automata
+    Collection localAccepts = collectAccept(automata);
+
+    Iterator iter = localAccepts.iterator();
+    Collection constraintList = new HashSet();
+    while(iter.hasNext()) {
+        Instr localAccept = (Instr) iter.next();
+
+        // builds the initial abstract substitution
+        SubstitutionList initialsubstitution = abstractSubstitutionFromAccept(localAccept);
+
+        constraintList.add(buildConstraint(initialsubstitution,instrFromInstruction(automata),localAccept));
+    }
+    return constraintList;
+  }
+
   
   private Collect2 outputSubstitutionCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
@@ -450,6 +468,41 @@ public class Verifier extends TomBase {
         System.out.println("apply ExprRules : nothing applies to:" + ex);
         return `concExpr(ex); }
     }
+  }
+
+  protected Expr buildConstraint(SubstitutionList substitution, Instr pil,Instr goal) {
+    %match(Instr pil) {
+      sequence(semicolon(h,t*)) -> {
+        Expr goalFromHead = buildConstraint(substitution,`h,goal);
+        if (!`t.isEmpty()) {
+          Expr refuseFromHead = buildConstraint(substitution,`h,`refuse());
+          Expr goalFromTail = buildConstraint(substitution,`sequence(t),goal);
+          return `ilor(goalFromHead,iland(refuseFromHead,goalFromTail));
+        } else {
+          return goalFromHead;
+        }
+      }
+      ILLet(x,u,i) -> {
+        // update the substitution
+        substitution = `subs(substitution*,is(x,u));
+        return `iland(ileq(x,u),buildConstraint(substitution,i,goal));
+      }
+      ITE(exp,ift,iff) -> {
+        Expr closedExpr = replaceVariablesInExpr(`appSubsE(substitution,exp));
+        Expr constraintTrue  = `iland(closedExpr,buildConstraint(substitution,ift,goal));
+        Expr constraintFalse = `iland(ilnot(closedExpr),buildConstraint(substitution,iff,goal));
+        return `ilor(constraintTrue,constraintFalse);
+      }
+      (refuse|accept)[] -> {
+        if (pil == goal) {
+          return `true();
+        } else {
+          return `false();
+        }
+      }
+    }
+    // default case, should not happen
+    return `false();
   }
 
   protected Collection applySemanticsRules(Deriv post) {

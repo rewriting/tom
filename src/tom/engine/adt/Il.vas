@@ -26,6 +26,11 @@ abstract syntax
   eq(lt:Term,rt:Term)                        -> Expr
   tisfsym(abst:AbsTerm,symbol:Symbol)        -> Expr
   teq(labst:AbsTerm,rabst:AbsTerm)           -> Expr
+  ileq(var:Variable,term:Term)               -> Expr
+
+  iland(left:Expr,right:Expr)                -> Expr
+  ilor(left:Expr,right:Expr)                 -> Expr
+  ilnot(exp:Expr)                            -> Expr
 
   accept(positive:term,negative:term)        -> Instr
   refuse                                     -> Instr

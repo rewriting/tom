@@ -81,6 +81,9 @@ public class TomVerifier extends TomGenericPlugin {
         Collection derivations = getDerivations(purified);
         // System.out.println("Derivations : " + derivations);
 
+        Collection rawConstraints = getRawConstraints(purified);
+        System.out.println(rawConstraints);
+
         // the latex output stuff
         // LatexOutput output;
         // output = new LatexOutput(this);
@@ -254,6 +257,22 @@ public class TomVerifier extends TomGenericPlugin {
       }
     }
     return derivations;
+  }
+
+  public Collection getRawConstraints(Collection subject) {
+    Collection rawConstraints = new HashSet();
+    Iterator it = subject.iterator();
+    
+    while (it.hasNext()) {
+      Instruction cm = (Instruction) it.next();
+      %match(Instruction cm) {
+        CompiledMatch[automataInst=automata,option=options]  -> {
+          Collection trees = verif.getConstraints(automata);
+          rawConstraints.addAll(trees);
+        }
+      }
+    }
+    return rawConstraints;
   }
   
   public String patternToString(ATerm patternList) {
