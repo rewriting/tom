@@ -274,19 +274,21 @@ public class Verifier extends TomBase {
     return treeList;
   }
 
-  public Collection getConstraints(Instruction automata) {
+  public Map getConstraints(Instruction automata) {
     // collects the accept in the automata
     Collection localAccepts = collectAccept(automata);
 
     Iterator iter = localAccepts.iterator();
-    Collection constraintList = new HashSet();
+    Map constraintList = new HashMap();
     while(iter.hasNext()) {
         Instr localAccept = (Instr) iter.next();
 
         // builds the initial abstract substitution
         SubstitutionList initialsubstitution = abstractSubstitutionFromAccept(localAccept);
-
-        constraintList.add(buildConstraint(initialsubstitution,instrFromInstruction(automata),localAccept));
+        Expr constraints = buildConstraint(initialsubstitution,
+                                           instrFromInstruction(automata),
+                                           localAccept);
+        constraintList.put(localAccept,constraints);
     }
     return constraintList;
   }
@@ -366,6 +368,68 @@ public class Verifier extends TomBase {
 
     // System.out.println("dedexpr gives: " + ded);
     return `ded;
+  }
+
+  protected Expr reduceWithMappingRules(Expr ex) {
+    %match(Expr ex) {
+      eq(tau(tl),tau(tr)) -> {
+        return `teq(tl,tr);
+      }
+      isfsym(tau(t),symbol) -> {
+        return `tisfsym(t,symbol);
+      }
+      eq(lt,rt) -> {
+        // first reduce the argument
+        return reduceWithMappingRules(`eq(reduceTermWithMappingRules(lt),reduceTermWithMappingRules(rt)));
+      }
+      isfsym(t,symbol) -> {
+        return reduceWithMappingRules(`isfsym(reduceTermWithMappingRules(t),symbol));
+      }
+      ilnot(e) -> {
+        return `ilnot(reduceWithMappingRules(e));
+      }
+      (true|false)() -> {
+        return `ex;
+      }
+      iland(lt,rt) -> {
+        return `iland(reduceWithMappingRules(lt),reduceWithMappingRules(rt));
+      }
+      ilor(lt,rt) -> {
+        return `ilor(reduceWithMappingRules(lt),reduceWithMappingRules(rt));
+      }
+      _ -> { 
+        System.out.println("reduceWithMappingRules : nothing applies to:" + ex);
+        return `ex; 
+      }
+    }
+  }
+
+  protected Term reduceTermWithMappingRules(Term trm) {
+    %match(Term trm) {
+      tau[] -> {
+        return `trm;
+      }
+      subterm(s,t@subterm[],index) -> {
+        return `subterm(s,reduceTermWithMappingRules(t),index);
+      }
+      slot(s,t@slot[],slotName) -> {
+        return `slot(s,reduceTermWithMappingRules(t),slotName);
+      }
+      subterm(s,tau(t),index) -> {
+        // we shall test if term t has symbol s 
+        AbsTerm term = `st(s,t,index);
+        return `tau(term);
+      }
+      slot(s,tau(t),slotName) -> {
+        // we shall test if term t has symbol s 
+        AbsTerm term = `sl(s,t,slotName);
+        return `tau(term);
+      }
+      _ -> { 
+        System.out.println("reduceTermWithMappingRules : nothing applies to:" + trm);
+        return `trm; 
+      }
+    }
   }
 
   protected TermList applyMappingRules(Term trm) {
@@ -461,6 +525,16 @@ public class Verifier extends TomBase {
           }
         }
       }
+      ilnot(e) -> {
+        ExprList exprList = `applyExprRules(e);
+        ExprList newExprList = `concExpr(ex);
+        while(!exprList.isEmpty()) {
+          Expr localExpr = exprList.getHead();
+          exprList = exprList.getTail();
+          newExprList = `concExpr(newExprList*,ilnot(localExpr));
+        }
+        return newExprList;
+      }
       (true|false)() -> {
         return `concExpr(ex);
       }
@@ -484,8 +558,10 @@ public class Verifier extends TomBase {
       }
       ILLet(x,u,i) -> {
         // update the substitution
-        substitution = `subs(substitution*,is(x,u));
-        return `iland(ileq(x,u),buildConstraint(substitution,i,goal));
+        Term t = replaceVariablesInTerm(`appSubsT(substitution,u));
+        substitution = `subs(substitution*,is(x,t));
+        //return `iland(eq(tau(absvar(x)),u),buildConstraint(substitution,i,goal));
+        return `buildConstraint(substitution,i,goal);
       }
       ITE(exp,ift,iff) -> {
         Expr closedExpr = replaceVariablesInExpr(`appSubsE(substitution,exp));
@@ -780,4 +856,12 @@ public class Verifier extends TomBase {
     }
   }
 
+  public void mappingReduce(Map input) {
+    Iterator it = input.keySet().iterator();
+    while(it.hasNext()) {
+      Object key = it.next();
+      Expr value = (Expr) input.get(key);
+      input.put(key,reduceWithMappingRules(value));          
+    }
+  }
 }

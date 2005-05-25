@@ -25,9 +25,7 @@
 
 package jtom.verifier;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.logging.Level;
 
 import jtom.adt.tomsignature.*;
@@ -69,20 +67,19 @@ public class TomVerifier extends TomGenericPlugin {
     if(isActivated()) {
       long startChrono = System.currentTimeMillis();
       try {
-        // here the extraction stuff
-        Collection matchSet = collectMatch((TomTerm)getWorkingTerm());
 
-        Collection purified = purify(matchSet);
-        // System.out.println("Purified : " + purified);        
+        Collection matchingCode = getMatchingCode();
 
-        // removes all associative patterns
-        filterAssociative(purified);
-
-        Collection derivations = getDerivations(purified);
+        // Collection derivations = getDerivations(matchingCode);
         // System.out.println("Derivations : " + derivations);
 
-        Collection rawConstraints = getRawConstraints(purified);
-        System.out.println(rawConstraints);
+        Map rawConstraints = getRawConstraints(matchingCode);
+        //System.out.println(rawConstraints);
+
+        // reduce constraints
+        verif.mappingReduce(rawConstraints);
+
+        Collection zspecSet = zenon.zspecSetFromConstraintMap(rawConstraints);
 
         // the latex output stuff
         // LatexOutput output;
@@ -91,10 +88,11 @@ public class TomVerifier extends TomGenericPlugin {
         // System.out.println(latex);
 
         // the zenon output stuff
-        Collection zen = zenon.zspecSetFromDerivationTreeSet(derivations);
+        // Collection zen = zenon.zspecSetFromDerivationTreeSet(derivations);
 
         ZenonBackend back = new ZenonBackend(verif);
-        System.out.println(back.genZSpecCollection(zen));
+        //System.out.println(back.genZSpecCollection(zen));
+        System.out.println(back.genZSpecCollection(zspecSet));
 
         // The stats output stuff
         // StatOutput stats;
@@ -117,6 +115,19 @@ public class TomVerifier extends TomGenericPlugin {
       // Not active plugin
       getLogger().log(Level.INFO, "VerifierInactivated");
     }
+  }
+
+  protected Collection getMatchingCode() {
+        // here the extraction stuff
+        Collection matchSet = collectMatch((TomTerm)getWorkingTerm());
+
+        Collection purified = purify(matchSet);
+        // System.out.println("Purified : " + purified);        
+
+        // removes all associative patterns
+        filterAssociative(purified);
+
+        return purified;
   }
   
   public PlatformOptionList getDeclaredOptionList() {
@@ -259,16 +270,16 @@ public class TomVerifier extends TomGenericPlugin {
     return derivations;
   }
 
-  public Collection getRawConstraints(Collection subject) {
-    Collection rawConstraints = new HashSet();
+  public Map getRawConstraints(Collection subject) {
+    Map rawConstraints = new HashMap();
     Iterator it = subject.iterator();
     
     while (it.hasNext()) {
       Instruction cm = (Instruction) it.next();
       %match(Instruction cm) {
         CompiledMatch[automataInst=automata,option=options]  -> {
-          Collection trees = verif.getConstraints(automata);
-          rawConstraints.addAll(trees);
+          Map trees = verif.getConstraints(automata);
+          rawConstraints.putAll(trees);
         }
       }
     }

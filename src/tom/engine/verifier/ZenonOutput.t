@@ -82,6 +82,74 @@ public class ZenonOutput {
     return resset;
   }
 
+  public Collection zspecSetFromConstraintMap(Map constraintMap) {
+    Collection resset = new HashSet();
+    Iterator it = constraintMap.entrySet().iterator();
+    while(it.hasNext()) {
+      Map.Entry entry = (Map.Entry) it.next();
+      ZSpec spec = zspecFromMapEntry(entry);
+      resset.add(spec);
+    }
+    return resset;
+  }
+
+  public ZSpec zspecFromMapEntry(Map.Entry entry) {
+    Instr accept = (Instr) entry.getKey();
+    Expr constraint = (Expr) entry.getValue();
+    
+    List subjectList = new LinkedList();
+    ZExpr pattern = null;
+    ZExpr negpattern = null;
+
+    // theorem to prove
+    %match(Instr accept) {
+        accept(positive,negative) -> {
+        Pattern positivePattern = (Pattern)`positive;
+        PatternList negativePatternList = (PatternList)`negative;
+        // we may want to get the substitution back
+        Map variableMap = new HashMap();
+        tomiltools.getZTermSubjectListFromPattern(positivePattern,
+                                                  subjectList,
+                                                  variableMap);
+        pattern = tomiltools.patternToZExpr(positivePattern,variableMap);
+        if (verifier.isCamlSemantics()) {
+          negpattern = tomiltools.patternToZExpr(negativePatternList,variableMap);
+        }
+      }
+    }
+    
+    ZExpr zenonConstraint = zexprFromExpr(constraint);
+
+    ZExpr theorem = null;
+    if (pattern != null && zenonConstraint != null) {
+      if(verifier.isCamlSemantics() && negpattern != null) {
+        theorem = `zequiv(zand(pattern,znot(negpattern)),zenonConstraint);
+      } else {
+        theorem = `zequiv(pattern,zenonConstraint);
+      }
+    }
+
+    // now we have to to build the axiom list, starting from the
+    // signature. Again, the TomIlTools will be useful, it has access
+    // to TomSignature and Zenon signature
+    
+    // collects symbols in pattern
+    Collection symbols = tomiltools.collectSymbols(pattern);
+    // generates the axioms for this set of symbols
+    ZAxiomList symbolsAxioms = tomiltools.symbolsDefinition(symbols);
+    // generates axioms for all subterm operations
+    ZAxiomList subtermAxioms = tomiltools.subtermsDefinition(symbols);
+
+    Iterator iter = subjectList.iterator();
+    while(iter.hasNext()) {
+      ZTerm input = (ZTerm)iter.next();
+      theorem = `zforall(input,ztype("T"),theorem);  
+    }
+    ZSpec spec = `zthm(theorem,zby(symbolsAxioms*,subtermAxioms*));
+
+    return spec;
+  }
+
   public ZSpec zspecFromDerivationTree(DerivTree tree) {
     
     Map variableset = new HashMap();
@@ -234,8 +302,17 @@ public class ZenonOutput {
         // this should not occur
         return `zeq(zvar("Error in zexprFromExpr"),zvar("appSubsE"));
       }
+      iland(lt,rt) -> {
+        return `zand(zexprFromExpr(lt),zexprFromExpr(rt));
+      }
+      ilor(lt,rt) -> {
+        return `zor(zexprFromExpr(lt),zexprFromExpr(rt));
+      }
+      ilnot(nex) -> {
+        return `znot(zexprFromExpr(nex));
+      }
     }
-    return `zeq(zvar("Error in zexprFromExpr"),zvar("end"));
+    return `zeq(zvar("Error in zexprFromExpr"),zvar("end " + expr.toString()));
   }
 
   ZSymbol zsymbolFromSymbol(Symbol symb) {
