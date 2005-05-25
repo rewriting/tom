@@ -42,7 +42,6 @@ public class Verifier extends TomBase {
   %include { adt/il/Il.tom }
   // ------------------------------------------------------------
 
-
   protected IlFactory factory;
   private SymbolTable symbolTable;
   private boolean camlsemantics = false;
@@ -138,7 +137,7 @@ public class Verifier extends TomBase {
 
   public Expr exprFromExpression(Expression expression) {
     %match(Expression expression) {
-      TrueTL()  -> { return `true(); }
+      TrueTL()  -> { return `true(subs(undefsubs())); }
       FalseTL() -> { return `false(); }
       EqualFunctionSymbol(type,Variable[astName=name],RecordAppl[nameList=symbolName]) -> {
         Term term = termFromTomName(name);
@@ -293,6 +292,31 @@ public class Verifier extends TomBase {
     return constraintList;
   }
 
+  public SubstitutionList collectSubstitutionInConstraint(Expr expr) {
+    Collect2 substitutionCollector = new Collect2() {
+      public boolean apply(ATerm subject, Object astore) {
+        SubstRef outsubst = (SubstRef) astore;
+        if (subject instanceof Expr) {
+          %match(Expr subject) {
+            true(subs(undefsubs())) -> {
+              return false;
+            }
+            true(x) -> {
+              outsubst.set(`x);
+            }
+            _ -> {
+              return true;
+            }
+          }//end match
+        } else { 
+          return true;
+        }
+      }//end apply
+    }; //end new
+    SubstRef output = new SubstRef();
+    traversal().genericCollect(expr,substitutionCollector,output);
+    return output.get();
+  }
   
   private Collect2 outputSubstitutionCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
@@ -370,6 +394,22 @@ public class Verifier extends TomBase {
     return `ded;
   }
 
+  protected SubstitutionList reduceSubstitutionWithMappingRules(SubstitutionList subst) {
+    %match(SubstitutionList subst) {
+      subs() -> {
+        return subst;
+      }
+      subs(is(v,term),t*) -> {
+        SubstitutionList tail = reduceSubstitutionWithMappingRules(`t*);
+        return `subs(is(v,reduceTermWithMappingRules(term)),tail*);
+      }
+      subs(undefsubs(),t*) -> {
+        SubstitutionList tail = reduceSubstitutionWithMappingRules(`t*);
+        return `subs(undefsubs(),tail*);
+      }
+    }
+    return subst;
+  }
   protected Expr reduceWithMappingRules(Expr ex) {
     %match(Expr ex) {
       eq(tau(tl),tau(tr)) -> {
@@ -388,7 +428,10 @@ public class Verifier extends TomBase {
       ilnot(e) -> {
         return `ilnot(reduceWithMappingRules(e));
       }
-      (true|false)() -> {
+      true[subst=substitutionList] -> {
+        return `true(reduceSubstitutionWithMappingRules(substitutionList));
+      }
+      false[] -> {
         return `ex;
       }
       iland(lt,rt) -> {
@@ -535,7 +578,7 @@ public class Verifier extends TomBase {
         }
         return newExprList;
       }
-      (true|false)() -> {
+      (true|false)[] -> {
         return `concExpr(ex);
       }
       _ -> { 
@@ -569,9 +612,16 @@ public class Verifier extends TomBase {
         Expr constraintFalse = `iland(ilnot(closedExpr),buildConstraint(substitution,iff,goal));
         return `ilor(constraintTrue,constraintFalse);
       }
-      (refuse|accept)[] -> {
+      refuse[] -> {
         if (pil == goal) {
-          return `true();
+          return `true(subs(undefsubs()));
+        } else {
+          return `false();
+        }
+      }
+      accept[] -> {
+        if (pil == goal) {
+          return `true(substitution);
         } else {
           return `false();
         }
@@ -657,7 +707,7 @@ public class Verifier extends TomBase {
         Iterator it = pre_list.iterator();
         while(it.hasNext()) {
           DerivTree pre = (DerivTree) it.next();
-          c.add(`derivrule(rulename,post,pre,dedexpr(concExpr(cond*,true()))));
+          c.add(`derivrule(rulename,post,pre,dedexpr(concExpr(cond*,true(subs(undefsubs()))))));
         }
 
         up = `ebs(env(e,iff),env(subs(undefsubs()),ip));

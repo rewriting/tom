@@ -304,7 +304,7 @@ public class LatexOutput {
   String build_latex_from_Expr(Expr expr) {
     String result = "";
     %match(Expr expr) {
-      true() -> { return "\\true";}
+      true[] -> { return "\\true";}
       false() -> { return "\\false";}
       isfsym(t,s) -> {
         result = "\\isfsym{"+build_latex_from_term(t)+"}{"+build_latex_from_symbol(s)+"}";

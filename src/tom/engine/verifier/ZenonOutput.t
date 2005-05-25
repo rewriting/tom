@@ -106,8 +106,10 @@ public class ZenonOutput {
         accept(positive,negative) -> {
         Pattern positivePattern = (Pattern)`positive;
         PatternList negativePatternList = (PatternList)`negative;
-        // we may want to get the substitution back
-        Map variableMap = new HashMap();
+        // we need the substitution to generate the pattern part of the theorem
+        SubstitutionList subsList = verifier.collectSubstitutionInConstraint(constraint);
+        Map variableMap = ztermVariableMapFromSubstitutionList(subsList, 
+                                                               new HashMap());
         tomiltools.getZTermSubjectListFromPattern(positivePattern,
                                                   subjectList,
                                                   variableMap);
@@ -282,7 +284,7 @@ public class ZenonOutput {
 
   ZExpr zexprFromExpr(Expr expr) {
     %match(Expr expr) {
-      true() -> { return `ztrue();}
+      true[] -> { return `ztrue();}
       false() -> { return `zfalse();}
       tisfsym(absterm,s) -> {
         return `zisfsym(ztermFromAbsTerm(absterm),zsymbolFromSymbol(s));
@@ -338,7 +340,7 @@ public class ZenonOutput {
       }
       dedexpr(exprlist) -> {
         %match(ExprList exprlist) {
-          concExpr(_*,t,true()) -> {
+          concExpr(_*,t,true[]) -> {
             return zexprFromExpr(`t);
           }
         }

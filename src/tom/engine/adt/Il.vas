@@ -20,7 +20,7 @@ abstract syntax
   subterm(symbol:Symbol,t:Term,index:Int)    -> Term
   slot(symbol:Symbol,t:Term,name:String)     -> Term
 
-  true                                       -> Expr
+  true(subst:SubstitutionList)               -> Expr
   false                                      -> Expr
   isfsym(t:Term,symbol:Symbol)               -> Expr
   eq(lt:Term,rt:Term)                        -> Expr
