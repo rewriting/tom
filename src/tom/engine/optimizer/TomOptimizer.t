@@ -34,12 +34,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import jtom.adt.tomsignature.types.Expression;
-import jtom.adt.tomsignature.types.Instruction;
-import jtom.adt.tomsignature.types.Option;
-import jtom.adt.tomsignature.types.TomName;
-import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.*;
+
 import jtom.tools.TomGenericPlugin;
 import jtom.tools.PILFactory;
 import jtom.tools.Tools;
@@ -51,9 +48,6 @@ import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import aterm.*;
-
-import jtom.adt.tomsignature.types.instruction.*;
-import jtom.adt.tomsignature.*;
 
 
 import aterm.pure.PureFactory;
@@ -193,7 +187,16 @@ public class TomOptimizer extends TomGenericPlugin {
     final List list = new ArrayList();
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
-          if(t instanceof TomTerm) {
+          if(t instanceof Instruction) {
+            %match(Instruction t) { 
+              TypedAction[astInstruction=ast] -> {
+                traversal().genericCollect(ast, this);
+                return false;
+              }
+
+              _ -> { return true; }
+            }
+          } else if(t instanceof TomTerm) {
             %match(TomTerm t) { 
               (Variable|VariableStar|BuildVariable)[astName=name] -> {
                 if(variableName == `name) {
@@ -441,7 +444,7 @@ public class TomOptimizer extends TomGenericPlugin {
           Let(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
             List list  = computeOccurences(`name,`body);
             int mult = list.size();
-
+            
             if(mult == 0) {
               Option orgTrack = findOriginTracking(`var.getOption());
 
