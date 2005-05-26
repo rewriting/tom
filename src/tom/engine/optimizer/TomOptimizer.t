@@ -49,8 +49,6 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import aterm.*;
 
-
-import aterm.pure.PureFactory;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 

@@ -78,6 +78,7 @@ public class TomVerifier extends TomGenericPlugin {
 
         // reduce constraints
         verif.mappingReduce(rawConstraints);
+        verif.booleanReduce(rawConstraints);
 
         Collection zspecSet = zenon.zspecSetFromConstraintMap(rawConstraints);
 

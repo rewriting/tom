@@ -35,11 +35,15 @@ import jtom.adt.tomsignature.types.*;
 import jtom.adt.il.*;
 import jtom.adt.il.types.*;
 
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
+
 public class Verifier extends TomBase {
 
   // ------------------------------------------------------------
   %include { adt/tomsignature/TomSignature.tom }
   %include { adt/il/Il.tom }
+  %include{ mutraveler.tom }
   // ------------------------------------------------------------
 
   protected IlFactory factory;
@@ -914,4 +918,55 @@ public class Verifier extends TomBase {
       input.put(key,reduceWithMappingRules(value));          
     }
   }
+
+  public void booleanReduce(Map input) {
+    Iterator it = input.keySet().iterator();
+    while(it.hasNext()) {
+      Object key = it.next();
+      Expr value = (Expr) input.get(key);
+      input.put(key,booleanSimplify(value));          
+    }
+  }
+
+  public Expr booleanSimplify(Expr expr) {
+    VisitableVisitor booleanSimplifier = new BooleanSimplifier();
+    Expr res = `false();
+    try {
+      res = (Expr) `InnermostId(booleanSimplifier).visit(expr);
+    } catch (jjtraveler.VisitFailure e) {
+      System.out.println("humm");
+    }
+    return res;
+  }
+  
+  public class BooleanSimplifier extends IlVisitableFwd {
+    public BooleanSimplifier() {
+      super(`Identity());
+    }
+
+    public Expr visit_Expr(Expr arg) throws jjtraveler.VisitFailure {
+      %match(Expr arg) {
+        iland(false(),right) -> {
+          return `false(); 
+        }
+        iland(left,false()) -> {
+          return `false();  
+        }
+        ilor(lt@true[],right) -> {
+          return `lt; 
+        }
+        ilor(left,lt@true[]) -> {
+          return `lt;  
+        }
+        ilor(false(),right) -> {
+          return `right; 
+        }
+        ilor(left,false()) -> {
+          return `left;  
+        }
+      }
+      return (Expr) any.visit(arg);
+    }
+  }
+
 }
