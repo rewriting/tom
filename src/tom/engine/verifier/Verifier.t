@@ -598,7 +598,11 @@ public class Verifier extends TomBase {
         if (!`t.isEmpty()) {
           Expr refuseFromHead = buildConstraint(substitution,`h,`refuse());
           Expr goalFromTail = buildConstraint(substitution,`sequence(t),goal);
-          return `ilor(goalFromHead,iland(refuseFromHead,goalFromTail));
+          if(camlsemantics) {
+            return `ilor(goalFromHead,iland(refuseFromHead,goalFromTail));
+          } else {
+            return `ilor(goalFromHead,goalFromTail);
+          }
         } else {
           return goalFromHead;
         }
