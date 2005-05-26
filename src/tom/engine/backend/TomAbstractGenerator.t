@@ -210,17 +210,17 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       IsEmptyList(opNameAST, expList) -> {
-        buildExpIsEmptyList(deep, opNameAST, getTermType(`expList), `expList);
+        buildExpIsEmptyList(deep, `opNameAST, getTermType(`expList), `expList);
         return;
       }
 
       IsEmptyArray(opNameAST, expArray, expIndex) -> {
-        buildExpIsEmptyArray(deep, opNameAST, getTermType(`expArray), `expIndex, `expArray);
+        buildExpIsEmptyArray(deep, `opNameAST, getTermType(`expArray), `expIndex, `expArray);
         return;
       }
 
       EqualFunctionSymbol(type, exp, RecordAppl[nameList=(nameAST@Name(opName))]) -> { 
-        if(getSymbolTable().isBuiltinType(getTomType(type))) {
+        if(getSymbolTable().isBuiltinType(getTomType(`type))) {
           TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`opName);
           if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
             generateExpression(deep,`IsFsym(nameAST,exp));
@@ -259,7 +259,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       GetTail(opNameAST, exp) -> {
-        buildExpGetTail(deep, opNameAST, getTermType(`exp), `exp);
+        buildExpGetTail(deep, `opNameAST, getTermType(`exp), `exp);
         return;
       }
 
@@ -269,12 +269,12 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       GetSize(opNameAST,exp) -> {
-        buildExpGetSize(deep,opNameAST,getTermType(`exp), `exp);
+        buildExpGetSize(deep,`opNameAST,getTermType(`exp), `exp);
         return;
       }
 
       GetElement(opNameAST,codomain, varName, varIndex) -> {
-        buildExpGetElement(deep,opNameAST,getTermType(`varName),`codomain, `varName, `varIndex);
+        buildExpGetElement(deep,`opNameAST,getTermType(`varName),`codomain, `varName, `varIndex);
         return;
       }
 
@@ -579,7 +579,7 @@ public abstract class TomAbstractGenerator extends TomBase {
                   elt@Variable[astType=fullEltType@Type[tlType=tlType1@TLType[]]],
                   list@Variable[astType=fullListType@Type[tlType=tlType2@TLType[]]],
                   instr, _) -> {
-        TomType returnType = fullListType;
+        TomType returnType = `fullListType;
         `genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), instr);
         return;
       }
@@ -612,7 +612,7 @@ public abstract class TomAbstractGenerator extends TomBase {
                    elt@Variable[astType=fullEltType@Type[tlType=tlType1@TLType[]]],
                    list@Variable[astType=fullArrayType@Type[tlType=tlType2@TLType[]]],
                    instr, _) -> {
-        TomType returnType = fullArrayType;
+        TomType returnType = `fullArrayType;
         `genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), instr);
         return;
       }

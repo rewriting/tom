@@ -130,7 +130,7 @@ public class TomKernelExpander extends TomBase {
                 `condList = `condList.getTail();
               }
 
-              TomTerm newRhs = replaceInstantiatedVariable(`varList,rhs);
+              TomTerm newRhs = replaceInstantiatedVariable(`varList,`rhs);
               newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),newRhs));
               
               return `RewriteRule(newLhs,newRhs,newCondList,option);
@@ -226,7 +226,7 @@ public class TomKernelExpander extends TomBase {
                    PatternInstruction(pattern,RawAction(actionInst),piOption) -> {
                      Instruction typedAction = `TypedAction(actionInst,pattern,negativePattern);
                      typedActionPatternInstructionList = (PatternInstructionList) typedActionPatternInstructionList.append(`PatternInstruction(pattern,typedAction,piOption));
-                     negativePattern = (PatternList) negativePattern.append(pattern);
+                     negativePattern = (PatternList) negativePattern.append(`pattern);
                    }
                  }
                  newPatternInstructionList = newPatternInstructionList.getTail();
@@ -309,7 +309,7 @@ public class TomKernelExpander extends TomBase {
                    Tom(concTomTerm(_*,var@Variable[astName=Name(varName)],_*)) -> {
                      ConstraintList newConstraints = expandVariableConstraintList(`contextSubject,`constraints);
                      if(`slotList.isEmpty()  && !hasConstructor(`option) && `tomName==`varName) {
-                       return var;
+                       return `var;
                      } else {
                        SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
                        return `RecordAppl(option,nameList,subterm,newConstraints);
@@ -471,7 +471,7 @@ public class TomKernelExpander extends TomBase {
             }
           }
         } else {
-          TomType type = typeList.getHead();
+          TomType type = `typeList.getHead();
           return `manySlotList(PairSlotAppl(slotName,expandVariable(TomTypeToTomTerm(getSlotType(symb,slotName)), slotAppl)), expandVariableList(symbol,tail));
         }
       }
@@ -494,7 +494,7 @@ public class TomKernelExpander extends TomBase {
         if(subject instanceof TomTerm) {
           %match(TomList instantiatedVariable, TomTerm subject) {
             concTomTerm(_*,var@Variable[astName=opNameAST] ,_*), RecordAppl[nameList=(opNameAST),slots=concSlot()] -> {
-              return var;
+              return `var;
             }
           }
         }

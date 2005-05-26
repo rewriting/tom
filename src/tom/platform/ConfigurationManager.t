@@ -177,8 +177,8 @@ public class ConfigurationManager {
     List res = new ArrayList();
     %match(TNode node) {
       <platform><plugins><plugin [class=cp]/></plugins></platform> -> {
-         res.add(cp);
-         getLogger().log(Level.FINER, "ClassPathRead", cp);
+         res.add(`cp);
+         getLogger().log(Level.FINER, "ClassPathRead", `cp);
        }
     }
     return res;
@@ -199,7 +199,7 @@ public class ConfigurationManager {
     %match(TNode node) {
       <platform><optionmanager class=omclass>opt@<options></options></optionmanager></platform> -> {
         try {
-          Object omInstance = Class.forName(omclass).newInstance();
+          Object omInstance = Class.forName(`omclass).newInstance();
           if(omInstance instanceof OptionManager) {
             optionManager = (OptionManager)omInstance;
           } else {

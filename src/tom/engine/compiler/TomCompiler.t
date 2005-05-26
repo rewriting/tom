@@ -125,7 +125,7 @@ public class TomCompiler extends TomGenericPlugin {
                 } else if(isArrayOperator(tomSymbol)) {
                   return tomFactory.buildArray(`name,tomListArgs);
                 } else if(symbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol))) && 
-                          termArgs.isEmpty() && 
+                          `termArgs.isEmpty() && 
                           !hasConstructor(`optionList)) {
                   return `BuildVariable(name,emptyTomList());
                 } else if(isDefinedSymbol(tomSymbol)) {
@@ -133,7 +133,7 @@ public class TomCompiler extends TomGenericPlugin {
                 } else {
                   return `BuildTerm(name,tomListArgs);
                 }
-              } else if(termArgs.isEmpty() && !hasConstructor(`optionList)) {
+              } else if(`termArgs.isEmpty() && !hasConstructor(`optionList)) {
                 return `BuildVariable(name,emptyTomList());
               } else {
                 return `FunctionCall(name,tomListArgs);
@@ -147,12 +147,12 @@ public class TomCompiler extends TomGenericPlugin {
             Match(SubjectList(l1),patternInstructionList, matchOptionList)  -> {
               Option orgTrack = findOriginTracking(`matchOptionList);
               PatternInstructionList newPatternInstructionList = `concPatternInstruction();
-              while(!patternInstructionList.isEmpty()) {
+              while(!`patternInstructionList.isEmpty()) {
                 /*
                  * the call to preProcessing performs the recursive expansion
                  * of nested match constructs
                  */
-                PatternInstruction elt = preProcessingPatternInstruction(patternInstructionList.getHead());
+                PatternInstruction elt = preProcessingPatternInstruction(`patternInstructionList.getHead());
                 PatternInstruction newPatternInstruction = elt;
               
                 matchBlock: {
@@ -213,7 +213,7 @@ public class TomCompiler extends TomGenericPlugin {
                 } // end matchBlock
               
                 newPatternInstructionList = (PatternInstructionList) newPatternInstructionList.append(newPatternInstruction);
-                patternInstructionList = patternInstructionList.getTail();
+                `patternInstructionList = `patternInstructionList.getTail();
               }
             
               Instruction newMatch = `Match(SubjectList(l1),
@@ -477,7 +477,7 @@ public class TomCompiler extends TomGenericPlugin {
             args = args.getTail();
           }
         } else {
-          newArgs = mergeTomListWithSlotList(abstractPatternList(slotListToTomList(arguments),abstractedPattern,introducedVariable),arguments);
+          newArgs = mergeTomListWithSlotList(abstractPatternList(slotListToTomList(`arguments),abstractedPattern,introducedVariable),`arguments);
         }
         abstractedTerm = subject.setSlots(newArgs);
       }
@@ -491,7 +491,7 @@ public class TomCompiler extends TomGenericPlugin {
     %match(TomList subjectList) {
       emptyTomList() -> { return subjectList; }
       manyTomList(head,tail) -> {
-        TomTerm newElt = abstractPattern(head,abstractedPattern,introducedVariable);
+        TomTerm newElt = abstractPattern(`head,abstractedPattern,introducedVariable);
         return `manyTomList(newElt,abstractPatternList(tail,abstractedPattern,introducedVariable));
       }
     }
@@ -555,16 +555,16 @@ public class TomCompiler extends TomGenericPlugin {
               //System.out.println("set1 = " + variableSet);
               //System.out.println("set2 = " + variableSet);
 
-              if(variableSet.remove(var) && variableSet.isEmpty()) {
-                ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
-                return var.setConstraints(newConstraintList);
+              if(variableSet.remove(`var) && variableSet.isEmpty()) {
+                ConstraintList newConstraintList = (ConstraintList)`constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
+                return `var.setConstraints(newConstraintList);
               }
             }
 
             appl@RecordAppl[constraints=constraintList] -> {
               if(variableSet.isEmpty()) {
-                ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
-                return appl.setConstraints(newConstraintList);
+                ConstraintList newConstraintList = (ConstraintList)`constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
+                return `appl.setConstraints(newConstraintList);
               }
             }
           }

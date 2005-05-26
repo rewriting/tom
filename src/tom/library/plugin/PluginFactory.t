@@ -252,13 +252,13 @@ public class PluginFactory implements Plugin {
         
         %match(TNode fact) {
           ElementNode[childList = cl] -> { 
-            while(!(cl.isEmpty())) {
-              TNode pluginNode = cl.getHead();
+            while(!(`cl.isEmpty())) {
+              TNode pluginNode = `cl.getHead();
               
               %match(TNode pluginNode) {
-                <plugin [classpath = cp] /> -> { classPaths.add(cp);/*System.out.println(cp);*/ }
+                <plugin [classpath = cp] /> -> { classPaths.add(`cp);/*System.out.println(cp);*/ }
               }
-              cl = cl.getTail();
+              `cl = `cl.getTail();
             }
           }
         }

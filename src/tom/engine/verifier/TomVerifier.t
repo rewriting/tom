@@ -262,7 +262,7 @@ public class TomVerifier extends TomGenericPlugin {
       Instruction cm = (Instruction) it.next();
       %match(Instruction cm) {
         CompiledMatch[automataInst=automata,option=options]  -> {
-          Collection trees = verif.build_tree(automata);
+          Collection trees = verif.build_tree(`automata);
           derivations.addAll(trees);
         }
       }
@@ -278,7 +278,7 @@ public class TomVerifier extends TomGenericPlugin {
       Instruction cm = (Instruction) it.next();
       %match(Instruction cm) {
         CompiledMatch[automataInst=automata,option=options]  -> {
-          Map trees = verif.getConstraints(automata);
+          Map trees = verif.getConstraints(`automata);
           rawConstraints.putAll(trees);
         }
       }
@@ -312,7 +312,7 @@ public class TomVerifier extends TomGenericPlugin {
     String result = "";
     %match(Pattern pattern) {
       Pattern[tomList=tomList, guards=guards] -> {
-        return patternToString(tomList);
+        return patternToString(`tomList);
       }
     }
     return result;
@@ -343,7 +343,7 @@ public class TomVerifier extends TomGenericPlugin {
         } else {
           `name = `name + "(";
           TomTerm head = `childrens.getHead();
-          name += patternToString(head);
+          `name += patternToString(head);
           TomList tail = `childrens.getTail();
           while(!tail.isEmpty()) {
             head = tail.getHead();

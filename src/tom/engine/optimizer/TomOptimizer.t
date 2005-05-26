@@ -72,6 +72,11 @@ public class TomOptimizer extends TomGenericPlugin {
     "<boolean name='prettyPIL' altName='pil' description='PrettyPrint IL' value='false'/>" +
     "</options>";
 
+  public void optionChanged(String optionName, Object optionValue) {
+    if(optionName.equals("optimize2") && ((Boolean)optionValue).booleanValue() ) { 
+      setOptionValue("pretty", Boolean.TRUE);        
+    }
+  }
 
   private VisitableVisitor optRule1;
   private VisitableVisitor optRule2;
@@ -129,7 +134,7 @@ public class TomOptimizer extends TomGenericPlugin {
       // not active plugin
       getLogger().log(Level.INFO, "The optimizer is not activated and thus WILL NOT RUN.");
     }
-    if (getOptionBooleanValue("prettyPIL")) {
+    if(getOptionBooleanValue("prettyPIL")) {
       PILFactory fact = new PILFactory();
       System.out.println(fact.prettyPrintCompiledMatch(fact.reduce((TomTerm)getWorkingTerm())));
     }
@@ -175,11 +180,7 @@ public class TomOptimizer extends TomGenericPlugin {
       } // end apply
     };
 
-
-
-
-  public Instruction inlineInstruction(TomTerm variable, Expression expression,
-                                       Instruction subject) {
+  public Instruction inlineInstruction(TomTerm variable, Expression expression, Instruction subject) {
     return (Instruction) replace_inline.apply(subject,variable,expression); 
   }
 
@@ -190,7 +191,7 @@ public class TomOptimizer extends TomGenericPlugin {
           if(t instanceof Instruction) {
             %match(Instruction t) { 
               TypedAction[astInstruction=ast] -> {
-                traversal().genericCollect(ast, this);
+                traversal().genericCollect(`ast, this);
                 return false;
               }
 
@@ -377,7 +378,7 @@ public class TomOptimizer extends TomGenericPlugin {
       super(`Identity());
     }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure{
+    public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure{
 
       if(subject instanceof TomTerm) {
         %match(TomTerm subject) {
@@ -474,7 +475,7 @@ public class TomOptimizer extends TomGenericPlugin {
                                "DoNothing",
                                new Object[]{ new Integer(mult), `extractRealName(tomName) });
             }
-         }
+          }
 
         } // end match
       } // end instanceof Instruction
@@ -492,91 +493,105 @@ public class TomOptimizer extends TomGenericPlugin {
       super(new tom.library.strategy.mutraveler.Identity());
     }
     
-  public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure{
-
-    PILFactory fact = new PILFactory();
-    if(subject instanceof Expression){
-      return  (Expression) normStrategy.visit(subject);
+    public jtom.adt.tomsignature.types.Expression visit_Expression(jtom.adt.tomsignature.types.Expression subject)
+      throws jjtraveler.VisitFailure {
+      return (Expression) normStrategy.visit(subject);
     }
 
-    else{
-    if(subject instanceof Instruction) {
-      
+    public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
+      throws jjtraveler.VisitFailure{
 
+      Instruction newSubject = subject;
+      loop: do {
+        subject = newSubject;
         %match(Instruction subject) {
-
           AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-            return `AbstractBlock(concInstruction(C1*,L1*,C2*));
-            
+            //System.out.println("flatten");
+            newSubject = `AbstractBlock(concInstruction(C1*,L1*,C2*));
+            continue loop;
           }
 
           AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-            return `AbstractBlock(concInstruction(C1*,C2*));
-            
+            //System.out.println("nop-elim");
+            newSubject = `AbstractBlock(concInstruction(C1*,C2*));
+            continue loop;
           }  
+        }
+      } while(newSubject!=subject);
 
-          /* if-swapping */
-          
-           AbstractBlock(concInstruction(X1*,if1@If(cond1,_,Nop()),if2@If(cond2,_,Nop()),X2*)) -> 
-             {
-               if(cond1.toString().compareTo(cond2.toString()) > 0){
-                 Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
-                 if(compatible==`FalseTL()){
-                   return  `AbstractBlock(concInstruction(X1*,if2,if1,X2*));
-                 }
-               }
-             }
-
-          /* Fusion de 2 blocs Let contigus instanciant deux variables égales */
-            
-
-          AbstractBlock(concInstruction(X1*,Let(var1,term1,body1),Let(var2,term2,body2),X2*)) -> 
-            {
-              if(compare(term1,term2)) {
-                if(compare(var1,var2)) {
-                  return   `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
-                  
-                }
-                else{
-                  return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var1,var2,body2)))),X2*));
-                  
+      loop: do {
+        subject = newSubject;
+        %match(Instruction subject) {
+          AbstractBlock(concInstruction(X1*,I1,I2,X2*)) -> {
+            %match(Instruction I1, Instruction I2) {
+              /* if-swapping */
+              If(cond1,_,Nop()),If(cond2,_,Nop()) -> {
+                if(`cond1.toString().compareTo(`cond2.toString()) > 0) {
+                  //System.out.println("if-swapping");
+                  Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
+                  if(compatible==`FalseTL()) {
+                    newSubject = `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
+                    continue loop;
+                    //return newSubject;
+                  }
                 }
               }
-            }
-
-          /* Fusion de 2 blocs If gardés par la même condition */
-          
-          AbstractBlock(concInstruction(X1*,If(cond1,success1,failure1),If(cond2,success2,failure2),X2*)) -> 
-            {
-               if(compare(cond1,cond2)){
-                 return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));}
-            }
-
-          
-          /* on entrelace deux blocs incompatibles */
-          
-          AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),If(cond2,suc2,Nop()),X2*)) -> 
-            {
-                Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
-                if(compatible==`FalseTL()){
-                  return  `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
-                  
+                
+              /* Fusion de 2 blocs Let contigus instanciant deux variables égales */
+              Let(var1,term1,body1),Let(var2,term2,body2) -> {
+                if(`compare(term1,term2)) {
+                  if(`compare(var1,var2)) {
+                    //System.out.println("block-fusion1");
+                    newSubject = `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
+                    continue loop;
+                    //return newSubject;
+                  } else {
+                    //System.out.println("block-fusion2");
+                    newSubject = `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var1,var2,body2)))),X2*));
+                    continue loop;
+                    //return newSubject;
+                  }
                 }
-            }
+              }
+                
+              /* Fusion de 2 blocs If gardés par la même condition */
+              If(cond1,success1,failure1),If(cond2,success2,failure2) -> {
+                if(`compare(cond1,cond2)) {
+                  //System.out.println("if-fusion");
+                  //Instruction newCond = `If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2)));
+                  //newSubject = `AbstractBlock(concInstruction(X1*,newCond,X2*));
 
-
-      
+                  //System.out.println(fact.prettyPrint(fact.remove(newCond)));
+ 
+                  newSubject = `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
+                  continue loop;
+                  //return newSubject;
+                }
+              }
+                
+            } // end match
+          } // pattern
         } // end match
-      }} // end instanceof Instruction
+      } while(newSubject!=subject);
+        
+      %match(Instruction newSubject) {
+        /* on entrelace deux blocs incompatibles */
+        AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),If(cond2,suc2,Nop()),X2*)) -> {
+          Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
+          if(compatible==`FalseTL()) {
+            //System.out.println("inter-block");
+            newSubject = `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
+            return newSubject;
+          }
+        }
+      }
 
-          
       /*
        * Defaul case: traversal
        */
-
-          return subject;
+      return subject;
     }      
-      
+    
   }
 
 
@@ -585,48 +600,47 @@ public class TomOptimizer extends TomGenericPlugin {
     public NormExpr(){
       super(new tom.library.strategy.mutraveler.Identity());
     }
-
-  public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure {
-
-      if(subject instanceof Expression) {
-        %match(Expression subject) {
-          Or(t1,TrueTL()) -> {
+    
+    public jtom.adt.tomsignature.types.Expression visit_Expression(jtom.adt.tomsignature.types.Expression subject) 
+      throws jjtraveler.VisitFailure {
+      %match(Expression subject) {
+        Or(t1,TrueTL()) -> {
+          return `TrueTL();
+        }
+        Or(TrueTL(),t1) -> {
+          return `TrueTL();
+        }
+        Or(t1,FalseTL()) -> {
+          return `t1;
+        }
+        Or(FalseTL(),t1) -> {
+          return `t1;
+        }
+        And(TrueTL(),t1) -> {
+          return `t1;
+        }
+        And(t1,TrueTL()) -> {
+          return `t1;
+        }
+        And(FalseTL(),t1) -> {
+          return `FalseTL();
+        }
+        And(TrueTL(),t1) -> {
+          return `FalseTL();
+        }
+        ref@EqualTerm(_,kid1,kid2) -> {
+          if(`compare(kid1,kid2)){
             return `TrueTL();
+          } else {
+            return `ref;
           }
-          Or(TrueTL(),t1) -> {
-            return `TrueTL();
-          }
-          Or(t1,FalseTL()) -> {
-            return `t1;
-          }
-          Or(FalseTL(),t1) -> {
-            return `t1;
-          }
-          And(TrueTL(),t1) -> {
-            return `t1;
-          }
-          And(t1,TrueTL()) -> {
-            return `t1;
-          }
-          And(FalseTL(),t1) -> {
+        }
+        And(EqualFunctionSymbol(astType,exp,exp1),EqualFunctionSymbol(astType,exp,exp2)) -> {
+          if(compare(`GetSubterm(astType,exp1,Number(1)),`GetSubterm(astType,exp2,Number(1)))) {
+            return `EqualFunctionSymbol(astType,exp,exp1);
+          } else {
             return `FalseTL();
           }
-          And(TrueTL(),t1) -> {
-            return `FalseTL();
-          }
-          ref@EqualTerm(_,kid1,kid2) -> {
-            if(compare(kid1,kid2)){
-              return `TrueTL();
-            }else{
-              return `ref;
-            }
-          }
-          And(EqualFunctionSymbol(astType,exp,exp1),EqualFunctionSymbol(astType,exp,exp2)) -> {
-            if (compare(`GetSubterm(astType,exp1,Number(1)),`GetSubterm(astType,exp2,Number(1)))){
-              return `EqualFunctionSymbol(astType,exp,exp1);
-            }else{return `FalseTL();}
-          }
-
         }
       } 
       /*

@@ -186,13 +186,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
          }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_BooleanValue(tom_match1_1_value) ||  false ) { { tom.platform.adt.platformoption.types.PlatformBoolean tom_match1_1_value_booleanValue=tom_get_slot_BooleanValue_booleanValue(tom_match1_1_value); if(tom_is_fun_sym_False(tom_match1_1_value_booleanValue) ||  false ) {
  
           return Boolean.valueOf(false); 
-         }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_IntegerValue(tom_match1_1_value) ||  false ) { { int  tom_match1_1_value_integerValue=tom_get_slot_IntegerValue_integerValue(tom_match1_1_value); { int  value=tom_match1_1_value_integerValue;
+         }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_IntegerValue(tom_match1_1_value) ||  false ) { { int  tom_match1_1_value_integerValue=tom_get_slot_IntegerValue_integerValue(tom_match1_1_value);
  
-          return new Integer(value); 
-        }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_StringValue(tom_match1_1_value) ||  false ) { { String  tom_match1_1_value_stringValue=tom_get_slot_StringValue_stringValue(tom_match1_1_value); { String  value=tom_match1_1_value_stringValue;
+          return new Integer(tom_match1_1_value_integerValue); 
+        } }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_StringValue(tom_match1_1_value) ||  false ) { { String  tom_match1_1_value_stringValue=tom_get_slot_StringValue_stringValue(tom_match1_1_value);
  
-          return value; 
-        }} }} }}
+          return tom_match1_1_value_stringValue; 
+        } }} }}
 
     } else {
       getLogger().log(Level.SEVERE,"OptionNotFound",name);
@@ -248,12 +248,12 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       owner.setOptionManager((OptionManager)this);
       while(!list.isEmpty()) {
         PlatformOption option = list.getHead();
-         { tom.platform.adt.platformoption.types.PlatformOption tom_match2_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if(tom_is_fun_sym_PluginOption(tom_match2_1) ||  false ) { { String  tom_match2_1_name=tom_get_slot_PluginOption_name(tom_match2_1); { String  tom_match2_1_altName=tom_get_slot_PluginOption_altName(tom_match2_1); { String  name=tom_match2_1_name; { String  altName=tom_match2_1_altName;
+         { tom.platform.adt.platformoption.types.PlatformOption tom_match2_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if(tom_is_fun_sym_PluginOption(tom_match2_1) ||  false ) { { String  tom_match2_1_name=tom_get_slot_PluginOption_name(tom_match2_1); { String  tom_match2_1_altName=tom_get_slot_PluginOption_altName(tom_match2_1); { String  tom_name=tom_match2_1_name; { String  tom_altName=tom_match2_1_altName;
 
-            setOptionOwnerFromName(name, owner);
-            setOptionFromName(name, option);
-            if(altName.length() > 0) {
-              mapShortNameToName.put(altName,name);
+            setOptionOwnerFromName(tom_name, owner);
+            setOptionFromName(tom_name, option);
+            if(tom_altName.length() > 0) {
+              mapShortNameToName.put(tom_altName,tom_name);
             }
           }}}} }}
 
@@ -335,18 +335,18 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     Iterator it = treeMap.values().iterator();
     while(it.hasNext()) {
       PlatformOption h = (PlatformOption)it.next();
-       { tom.platform.adt.platformoption.types.PlatformOption tom_match3_1=(( tom.platform.adt.platformoption.types.PlatformOption)h); if(tom_is_fun_sym_PluginOption(tom_match3_1) ||  false ) { { String  tom_match3_1_name=tom_get_slot_PluginOption_name(tom_match3_1); { String  tom_match3_1_altName=tom_get_slot_PluginOption_altName(tom_match3_1); { String  tom_match3_1_description=tom_get_slot_PluginOption_description(tom_match3_1); { String  tom_match3_1_attrName=tom_get_slot_PluginOption_attrName(tom_match3_1); { String  name=tom_match3_1_name; { String  altName=tom_match3_1_altName; { String  description=tom_match3_1_description; { String  attrName=tom_match3_1_attrName;
+       { tom.platform.adt.platformoption.types.PlatformOption tom_match3_1=(( tom.platform.adt.platformoption.types.PlatformOption)h); if(tom_is_fun_sym_PluginOption(tom_match3_1) ||  false ) { { String  tom_match3_1_name=tom_get_slot_PluginOption_name(tom_match3_1); { String  tom_match3_1_altName=tom_get_slot_PluginOption_altName(tom_match3_1); { String  tom_match3_1_description=tom_get_slot_PluginOption_description(tom_match3_1); { String  tom_match3_1_attrName=tom_get_slot_PluginOption_attrName(tom_match3_1); { String  tom_altName=tom_match3_1_altName; { String  tom_attrName=tom_match3_1_attrName;
 
-          buffer.append("\t--" + name);
-          if(attrName.length() > 0) {
-            buffer.append(" <" + attrName+ ">");
+          buffer.append("\t--" + tom_match3_1_name);
+          if(tom_attrName.length() > 0) {
+            buffer.append(" <" + tom_attrName+ ">");
           }
-          if(altName.length() > 0) {
-            buffer.append(" | -" + altName);
+          if(tom_altName.length() > 0) {
+            buffer.append(" | -" + tom_altName);
           }
-          buffer.append(":\t" + description);
+          buffer.append(":\t" + tom_match3_1_description);
           buffer.append("\n");
-        }}}}}}}} }}
+        }}}}}} }}
      
     }
     System.out.println(buffer.toString());
@@ -371,23 +371,23 @@ public class TomOptionManager implements OptionManager, OptionOwner {
      { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1=(( tom.platform.adt.platformoption.types.PlatformOptionList)requiredOptions); if(tom_is_fun_sym_concPlatformOption(tom_match4_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1_list1=tom_match4_1; if(tom_is_empty_concPlatformOption_PlatformOptionList(tom_match4_1_list1)) {
 
         return true;
-       }} } if(tom_is_fun_sym_concPlatformOption(tom_match4_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1_list1=tom_match4_1; if(!(tom_is_empty_concPlatformOption_PlatformOptionList(tom_match4_1_list1))) { { tom.platform.adt.platformoption.types.PlatformOption tom_match4_1_1=tom_get_head_concPlatformOption_PlatformOptionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concPlatformOption_PlatformOptionList(tom_match4_1_list1); if(tom_is_fun_sym_PluginOption(tom_match4_1_1) ||  false ) { { String  tom_match4_1_1_name=tom_get_slot_PluginOption_name(tom_match4_1_1); { tom.platform.adt.platformoption.types.PlatformValue tom_match4_1_1_value=tom_get_slot_PluginOption_value(tom_match4_1_1); { String  name=tom_match4_1_1_name; { tom.platform.adt.platformoption.types.PlatformValue value=tom_match4_1_1_value; { tom.platform.adt.platformoption.types.PlatformOptionList tail=tom_match4_1_list1;
+       }} } if(tom_is_fun_sym_concPlatformOption(tom_match4_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1_list1=tom_match4_1; if(!(tom_is_empty_concPlatformOption_PlatformOptionList(tom_match4_1_list1))) { { tom.platform.adt.platformoption.types.PlatformOption tom_match4_1_1=tom_get_head_concPlatformOption_PlatformOptionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concPlatformOption_PlatformOptionList(tom_match4_1_list1); if(tom_is_fun_sym_PluginOption(tom_match4_1_1) ||  false ) { { String  tom_match4_1_1_name=tom_get_slot_PluginOption_name(tom_match4_1_1); { tom.platform.adt.platformoption.types.PlatformValue tom_match4_1_1_value=tom_get_slot_PluginOption_value(tom_match4_1_1); { String  tom_name=tom_match4_1_1_name; { tom.platform.adt.platformoption.types.PlatformValue tom_value=tom_match4_1_1_value;
 
 
-        PlatformOption option = getOptionFromName(name);
+        PlatformOption option = getOptionFromName(tom_name);
         if(option !=null) {
           PlatformValue localValue = option.getValue();
-          if(value!= localValue) {
-            getLogger().log(Level.SEVERE, "IncorrectOptionValue", new Object[]{name,value,getOptionValue(name)});
+          if(tom_value!= localValue) {
+            getLogger().log(Level.SEVERE, "IncorrectOptionValue", new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
             return false;
           } else {
-            return checkOptionDependency(tail);
+            return checkOptionDependency(tom_match4_1_list1);
           }
         } else {
-          getLogger().log(Level.SEVERE, "IncorrectOptionValue", new Object[]{name,value,getOptionValue(name)});
+          getLogger().log(Level.SEVERE, "IncorrectOptionValue", new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
           return false;
         }
-      }}}}} }} }} }}
+      }}}} }} }} }}
 
     return false;
   }

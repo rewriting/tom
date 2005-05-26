@@ -116,7 +116,7 @@ public class TomKernelCompiler extends TomBase {
                  * return the compiled Match construction
                  */
               InstructionList astAutomataList = automataListCompileMatchingList(automataList);
-              SlotList slots = tomListToSlotList(l1);
+              SlotList slots = tomListToSlotList(`l1);
               Instruction astAutomata = `collectVariableFromSubjectList(slots,rootpath,AbstractBlock(astAutomataList));
               return `CompiledMatch(astAutomata, optionList);
             }
@@ -702,7 +702,7 @@ public class TomKernelCompiler extends TomBase {
           if(!isDefinedGetSlot(tomSymbol,`slotName)) {
             Logger.getLogger(getClass().getName()).log( Level.SEVERE,
                              "ErrorMissingSlotDecl",
-                              new Object[]{tomSymbol.getAstName().getString(),slotName.getString()});
+                              new Object[]{tomSymbol.getAstName().getString(),`slotName.getString()});
           }
 
           Expression getSubtermAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);

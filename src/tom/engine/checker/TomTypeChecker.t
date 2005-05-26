@@ -133,10 +133,10 @@ public class TomTypeChecker extends TomChecker {
                   }
                 }
                 if(!isConstructor) {
-                  if((symbolTable().getSymbolFromName(getName(app)))==null) {
-                    messageError(findOriginTrackingLine(app.getOption()),
+                  if((symbolTable().getSymbolFromName(getName(`app)))==null) {
+                    messageError(findOriginTrackingLine(`app.getOption()),
                                  TomMessage.getMessage("UnknownVariableInWhen"),
-                                 new Object[]{getName(app)});
+                                 new Object[]{getName(`app)});
                   }
                   // else, it's actually app()
                 } // else, it's a unknown (ie : java) function

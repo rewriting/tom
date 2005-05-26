@@ -142,6 +142,26 @@
   make(t0, t1) { getIlFactory().makeExpr_AppSubsE(t0, t1)}
 }
 
+%op Expr ilnot(exp:Expr) {
+  is_fsym(t) { (t!= null) && t.isIlnot()}
+  get_slot(exp,t) { t.getExp()}
+  make(t0) { getIlFactory().makeExpr_Ilnot(t0)}
+}
+
+%op Expr ilor(left:Expr, right:Expr) {
+  is_fsym(t) { (t!= null) && t.isIlor()}
+  get_slot(left,t) { t.getLeft()}
+  get_slot(right,t) { t.getRight()}
+  make(t0, t1) { getIlFactory().makeExpr_Ilor(t0, t1)}
+}
+
+%op Expr iland(left:Expr, right:Expr) {
+  is_fsym(t) { (t!= null) && t.isIland()}
+  get_slot(left,t) { t.getLeft()}
+  get_slot(right,t) { t.getRight()}
+  make(t0, t1) { getIlFactory().makeExpr_Iland(t0, t1)}
+}
+
 %op Expr teq(labst:AbsTerm, rabst:AbsTerm) {
   is_fsym(t) { (t!= null) && t.isTeq()}
   get_slot(labst,t) { t.getLabst()}
@@ -175,9 +195,10 @@
   make() { getIlFactory().makeExpr_False()}
 }
 
-%op Expr true {
+%op Expr true(subst:SubstitutionList) {
   is_fsym(t) { (t!= null) && t.isTrue()}
-  make() { getIlFactory().makeExpr_True()}
+  get_slot(subst,t) { t.getSubst()}
+  make(t0) { getIlFactory().makeExpr_True(t0)}
 }
 
 %typeterm Term{

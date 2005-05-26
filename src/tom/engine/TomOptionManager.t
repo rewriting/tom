@@ -252,7 +252,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           PluginOption[name=name, altName=altName] -> {
             setOptionOwnerFromName(`name, owner);
             setOptionFromName(`name, option);
-            if(altName.length() > 0) {
+            if(`altName.length() > 0) {
               mapShortNameToName.put(`altName,`name);
             }
           }
@@ -338,10 +338,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       %match(PlatformOption h) {
         PluginOption[name=name, altName=altName, description=description, attrName=attrName] -> {
           buffer.append("\t--" + `name);
-          if(attrName.length() > 0) {
+          if(`attrName.length() > 0) {
             buffer.append(" <" + `attrName + ">");
           }
-          if(altName.length() > 0) {
+          if(`altName.length() > 0) {
             buffer.append(" | -" + `altName);
           }
           buffer.append(":\t" + `description);

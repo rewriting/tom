@@ -104,7 +104,7 @@ public class PILFactory extends TomBase {
       }
     };
 
-  public String prettyPrintCompiledMatch(TomTerm subject) {
+  public String prettyPrintCompiledMatch(ATerm subject) {
     String res = "";
     Collection matches = collectMatch(subject);
     Iterator it = matches.iterator();
@@ -124,37 +124,37 @@ public class PILFactory extends TomBase {
         
      
         Let(variable,src,body) -> {
-          return "let " + prettyPrint(variable) + " = " + prettyPrint(src) + " in\n\t" + prettyPrint(body).replaceAll("\n","\n\t");
+          return "let " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
         }
 
         LetRef(variable,src,body) -> {
-          return "letRef " + prettyPrint(variable) + " = " + prettyPrint(src) + " in\n\t" + prettyPrint(body).replaceAll("\n","\n\t");
+          return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
         }
 
         LetAssign(variable,src,body) -> {
-          return "letAssign " + prettyPrint(variable) + " = " + prettyPrint(src) + " in\n\t" + prettyPrint(body).replaceAll("\n","\n\t");
+          return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
         }
 
         Assign(variable,src) -> {
-          return "Assign " + prettyPrint(variable) + " = " + prettyPrint(src) ;
+          return "Assign " + prettyPrint(`variable) + " = " + prettyPrint(`src) ;
         }
         
 
         DoWhile(doInst,condition) ->{
-          return "do\n\t " + prettyPrint(doInst).replaceAll("\n","\n\t") +"while "+ prettyPrint(condition);
+          return "do\n\t " + prettyPrint(`doInst).replaceAll("\n","\n\t") +"while "+ prettyPrint(`condition);
         }
 
         WhileDo(condition,doInst) ->{
-          return "while "+ prettyPrint(condition)+" do\n\t " + prettyPrint(doInst).replaceAll("\n","\n\t");
+          return "while "+ prettyPrint(`condition)+" do\n\t " + prettyPrint(`doInst).replaceAll("\n","\n\t");
         }
   
 
         If(cond,success,Nop()) -> {
-          return  "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success).replaceAll("\n","\n\t"); 
+          return  "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t"); 
         }
 
         If(cond,success,failure) -> {
-          return "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(failure).replaceAll("\n","\n\t")+"\n";
+          return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replaceAll("\n","\n\t")+"\n";
         }
 
       
@@ -171,7 +171,7 @@ public class PILFactory extends TomBase {
         }
 
         NamedBlock(name,instList) -> {
-          return name+" : "+prettyPrint(`instList);
+          return `name + " : " + prettyPrint(`instList);
         }
         
 
@@ -193,40 +193,40 @@ public class PILFactory extends TomBase {
     } else if (subject instanceof Expression) {
       %match(Expression subject) {
         TomTermToExpression(astTerm) -> {
-          return prettyPrint(astTerm);
+          return prettyPrint(`astTerm);
         }
 
         EqualFunctionSymbol(astType,exp1,exp2) -> {
-          return "is_fun_sym("+prettyPrint(exp1)+","+prettyPrint(exp2)+")";
+          return "is_fun_sym(" + prettyPrint(`exp1) + "," + prettyPrint(`exp2) + ")";
         }
 
         Negation(exp) -> {
-          return "not "+prettyPrint(exp);
+          return "not " + prettyPrint(`exp);
         }
         
         IsEmptyList[variable=kid1] -> {
-          return "is_empty("+prettyPrint(kid1)+")";
+          return "is_empty(" + prettyPrint(`kid1) + ")";
         }
 
         EqualTerm(_,kid1,kid2) -> {
-          return "equal("+prettyPrint(kid1)+","+prettyPrint(kid2)+")";
+          return "equal(" + prettyPrint(`kid1) + "," + prettyPrint(`kid2) + ")";
         }
 
         GetSliceList(astName,variableBeginAST,variableEndAST) -> {
-          return "getSliceList("+prettyPrint(astName)+","+prettyPrint(variableBeginAST)+","+prettyPrint(variableEndAST)+")";
+          return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+")";
         }
 
 
         GetHead[variable=variable] -> {
-          return "getHead("+prettyPrint(variable)+")";
+          return "getHead("+prettyPrint(`variable)+")";
         }
         
         GetTail[variable=variable] -> {
-          return "getTail("+prettyPrint(variable)+")";
+          return "getTail("+prettyPrint(`variable)+")";
         }
 
         GetSlot(codomain,astName,slotNameString,variable) -> {
-          return "get_slot_"+prettyPrint(astName)+"_"+slotNameString+"("+prettyPrint(variable)+")";
+          return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
         }
       }
 
@@ -245,23 +245,23 @@ public class PILFactory extends TomBase {
         }
 
         RecordAppl(optionList,nameList,args,constraints) ->{
-          return prettyPrint(nameList); 
+          return prettyPrint(`nameList); 
         }
       }
     } else if (subject instanceof TomName) {
       %match(TomName subject) {
         PositionName(number_list) -> {
-          return "t"+ numberListToIdentifier(number_list);
+          return "t"+ numberListToIdentifier(`number_list);
         }
         Name(string) -> {
-          return string;
+          return `string;
         }
       
       }
     } else if (subject instanceof TomNumber) {
       %match(TomNumber subject) {
         Number(n) -> {
-          return ""+n;
+          return "" + `n;
         }
 
         NameNumber(name) -> {
@@ -269,15 +269,15 @@ public class PILFactory extends TomBase {
         }
         
         ListNumber(number) -> {
-          return "listNumber"+prettyPrint(number);
+          return "listNumber"+prettyPrint(`number);
         }
 
         Begin(number) -> {
-          return "begin"+prettyPrint(number);
+          return "begin"+prettyPrint(`number);
         }
 
         End(number) -> {
-          return "end"+prettyPrint(number);
+          return "end"+prettyPrint(`number);
         }
 
       }
@@ -324,7 +324,7 @@ public class PILFactory extends TomBase {
       }
     };
   
-  public Collection collectMatch(TomTerm subject) {
+  public Collection collectMatch(ATerm subject) {
     Collection result = new HashSet();
     traversal().genericCollect(subject,collect_match,result);
     return result;

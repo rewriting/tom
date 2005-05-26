@@ -94,70 +94,70 @@ public class ATermToXML {
   }
 
   public void atermToXML(TNode n) {
-     { tom.library.adt.tnode.types.TNode tom_match1_1=(( tom.library.adt.tnode.types.TNode)n); if(tom_is_fun_sym_DocumentNode(tom_match1_1) ||  false ) { { tom.library.adt.tnode.types.TNode tom_match1_1_docType=tom_get_slot_DocumentNode_docType(tom_match1_1); { tom.library.adt.tnode.types.TNode tom_match1_1_docElem=tom_get_slot_DocumentNode_docElem(tom_match1_1); { tom.library.adt.tnode.types.TNode docType=tom_match1_1_docType; { tom.library.adt.tnode.types.TNode docElem=tom_match1_1_docElem;
+     { tom.library.adt.tnode.types.TNode tom_match1_1=(( tom.library.adt.tnode.types.TNode)n); if(tom_is_fun_sym_DocumentNode(tom_match1_1) ||  false ) { { tom.library.adt.tnode.types.TNode tom_match1_1_docType=tom_get_slot_DocumentNode_docType(tom_match1_1); { tom.library.adt.tnode.types.TNode tom_match1_1_docElem=tom_get_slot_DocumentNode_docElem(tom_match1_1);
 
         write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        atermToXML(docType);
-        atermToXML(docElem);
+        atermToXML(tom_match1_1_docType);
+        atermToXML(tom_match1_1_docElem);
         write("\n");
         return;
-      }}}} } if(tom_is_fun_sym_DocumentTypeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_DocumentTypeNode_name(tom_match1_1); { String  tom_match1_1_publicId=tom_get_slot_DocumentTypeNode_publicId(tom_match1_1); { String  tom_match1_1_systemId=tom_get_slot_DocumentTypeNode_systemId(tom_match1_1); { String  tom_match1_1_internalSubset=tom_get_slot_DocumentTypeNode_internalSubset(tom_match1_1); { String  name=tom_match1_1_name; { String  publicId=tom_match1_1_publicId; { String  systemId=tom_match1_1_systemId; { String  internalSubset=tom_match1_1_internalSubset;
+      }} } if(tom_is_fun_sym_DocumentTypeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_DocumentTypeNode_name(tom_match1_1); { String  tom_match1_1_publicId=tom_get_slot_DocumentTypeNode_publicId(tom_match1_1); { String  tom_match1_1_systemId=tom_get_slot_DocumentTypeNode_systemId(tom_match1_1); { String  tom_match1_1_internalSubset=tom_get_slot_DocumentTypeNode_internalSubset(tom_match1_1); { String  tom_publicId=tom_match1_1_publicId; { String  tom_systemId=tom_match1_1_systemId; { String  tom_internalSubset=tom_match1_1_internalSubset;
 
-        write("<!DOCTYPE "+name);
-        if (!publicId.equals("UNDEF") && !systemId.equals("UNDEF"))
-          write(" PUBLIC \""+publicId+"\" \"");
-        else if (!systemId.equals("UNDEF") && publicId.equals("UNDEF"))
+        write("<!DOCTYPE "+tom_match1_1_name);
+        if (!tom_publicId.equals("UNDEF") && !tom_systemId.equals("UNDEF"))
+          write(" PUBLIC \""+tom_publicId+"\" \"");
+        else if (!tom_systemId.equals("UNDEF") && tom_publicId.equals("UNDEF"))
           write(" SYSTEM \"");
         else {
           System.out.println("Problem in DocumentTypeNode");
           throw new RuntimeException("Problem in DocumentTypeNode");
         }
-        write(systemId+"\"");
-        if (!internalSubset.equals("UNDEF")) 
-          write(" ["+internalSubset+"]");
+        write(tom_systemId+"\"");
+        if (!tom_internalSubset.equals("UNDEF")) 
+          write(" ["+tom_internalSubset+"]");
           write(">\n");
           return;
-      }}}}}}}} } if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_ElementNode_name(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_attrList=tom_get_slot_ElementNode_attrList(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList=tom_get_slot_ElementNode_childList(tom_match1_1); { String  name=tom_match1_1_name; { tom.library.adt.tnode.types.TNodeList attrList=tom_match1_1_attrList; if(tom_is_fun_sym_concTNode(tom_match1_1_childList) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_list1=tom_match1_1_childList; if(tom_is_empty_concTNode_TNodeList(tom_match1_1_childList_list1)) {
+      }}}}}}} } if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_ElementNode_name(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_attrList=tom_get_slot_ElementNode_attrList(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList=tom_get_slot_ElementNode_childList(tom_match1_1); if(tom_is_fun_sym_concTNode(tom_match1_1_childList) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_list1=tom_match1_1_childList; if(tom_is_empty_concTNode_TNodeList(tom_match1_1_childList_list1)) {
 
-        write("<"+name);
-        atermToXMLList(attrList);
+        write("<"+tom_match1_1_name);
+        atermToXMLList(tom_match1_1_attrList);
         write("/>");
         return;
-       }} }}}}}} } if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_ElementNode_name(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_attrList=tom_get_slot_ElementNode_attrList(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList=tom_get_slot_ElementNode_childList(tom_match1_1); { String  name=tom_match1_1_name; { tom.library.adt.tnode.types.TNodeList attrList=tom_match1_1_attrList; { tom.library.adt.tnode.types.TNodeList childList=tom_match1_1_childList;
+       }} }}}} } if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_ElementNode_name(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_attrList=tom_get_slot_ElementNode_attrList(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList=tom_get_slot_ElementNode_childList(tom_match1_1); { String  tom_name=tom_match1_1_name;
 
-        write("<"+name);
-        atermToXMLList(attrList);
+        write("<"+tom_name);
+        atermToXMLList(tom_match1_1_attrList);
         write(">");
-        atermToXMLList(childList);
-        write("</"+name+">");
+        atermToXMLList(tom_match1_1_childList);
+        write("</"+tom_name+">");
         return;
-      }}}}}} } if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_AttributeNode_name(tom_match1_1); { String  tom_match1_1_specified=tom_get_slot_AttributeNode_specified(tom_match1_1); { String  tom_match1_1_value=tom_get_slot_AttributeNode_value(tom_match1_1); { String  name=tom_match1_1_name; { String  specified=tom_match1_1_specified; { String  child=tom_match1_1_value;
+      }}}} } if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_AttributeNode_name(tom_match1_1); { String  tom_match1_1_specified=tom_get_slot_AttributeNode_specified(tom_match1_1); { String  tom_match1_1_value=tom_get_slot_AttributeNode_value(tom_match1_1);
 
-        if (specified.equals("true")) {
-          write(" " + name+ "=\"" + child+ "\"");
+        if (tom_match1_1_specified.equals("true")) {
+          write(" " + tom_match1_1_name+ "=\"" + tom_match1_1_value+ "\"");
         }
         return;
-      }}}}}} } if(tom_is_fun_sym_TextNode(tom_match1_1) ||  false ) { { String  tom_match1_1_data=tom_get_slot_TextNode_data(tom_match1_1); { String  data=tom_match1_1_data;
+      }}} } if(tom_is_fun_sym_TextNode(tom_match1_1) ||  false ) { { String  tom_match1_1_data=tom_get_slot_TextNode_data(tom_match1_1);
 
-        write(data);
+        write(tom_match1_1_data);
         return;
-      }} } if(tom_is_fun_sym_CommentNode(tom_match1_1) ||  false ) { { String  tom_match1_1_data=tom_get_slot_CommentNode_data(tom_match1_1); { String  data=tom_match1_1_data;
+      } } if(tom_is_fun_sym_CommentNode(tom_match1_1) ||  false ) { { String  tom_match1_1_data=tom_get_slot_CommentNode_data(tom_match1_1);
 
-        write("<!-- "+data+" -->");
+        write("<!-- "+tom_match1_1_data+" -->");
         return;
-      }} } if(tom_is_fun_sym_CDATASectionNode(tom_match1_1) ||  false ) { { String  tom_match1_1_data=tom_get_slot_CDATASectionNode_data(tom_match1_1); { String  data=tom_match1_1_data;
+      } } if(tom_is_fun_sym_CDATASectionNode(tom_match1_1) ||  false ) { { String  tom_match1_1_data=tom_get_slot_CDATASectionNode_data(tom_match1_1);
 
-        write("<![CDATA["+data+"]]>");
+        write("<![CDATA["+tom_match1_1_data+"]]>");
         return;
-      }} } if(tom_is_fun_sym_ProcessingInstructionNode(tom_match1_1) ||  false ) { { String  tom_match1_1_target=tom_get_slot_ProcessingInstructionNode_target(tom_match1_1); { String  tom_match1_1_data=tom_get_slot_ProcessingInstructionNode_data(tom_match1_1); { String  target=tom_match1_1_target; { String  data=tom_match1_1_data;
+      } } if(tom_is_fun_sym_ProcessingInstructionNode(tom_match1_1) ||  false ) { { String  tom_match1_1_target=tom_get_slot_ProcessingInstructionNode_target(tom_match1_1); { String  tom_match1_1_data=tom_get_slot_ProcessingInstructionNode_data(tom_match1_1);
 
-        write("<?"+target+" "+data+"?>");
+        write("<?"+tom_match1_1_target+" "+tom_match1_1_data+"?>");
         return;
-      }}}} } if(tom_is_fun_sym_EntityReferenceNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_EntityReferenceNode_name(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList=tom_get_slot_EntityReferenceNode_childList(tom_match1_1); { String  name=tom_match1_1_name; { tom.library.adt.tnode.types.TNodeList childList=tom_match1_1_childList;
+      }} } if(tom_is_fun_sym_EntityReferenceNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_EntityReferenceNode_name(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList=tom_get_slot_EntityReferenceNode_childList(tom_match1_1);
 
-        write("&"+name+";");
+        write("&"+tom_match1_1_name+";");
         return;
-      }}}} }
+      }} }
 
         System.out.println("Unknown type of TNode : "+n);
       }
