@@ -495,7 +495,11 @@ public class TomOptimizer extends TomGenericPlugin {
   public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure{
 
     PILFactory fact = new PILFactory();
+    if(subject instanceof Expression){
+      return  (Expression) normStrategy.visit(subject);
+    }
 
+    else{
     if(subject instanceof Instruction) {
       
 
@@ -563,7 +567,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
       
         } // end match
-      } // end instanceof Instruction
+      }} // end instanceof Instruction
 
           
       /*
@@ -610,11 +614,11 @@ public class TomOptimizer extends TomGenericPlugin {
           And(TrueTL(),t1) -> {
             return `FalseTL();
           }
-          EqualTerm(_,kid1,kid2) -> {
+          ref@EqualTerm(_,kid1,kid2) -> {
             if(compare(kid1,kid2)){
               return `TrueTL();
             }else{
-              return `FalseTL();
+              return `ref;
             }
           }
           And(EqualFunctionSymbol(astType,exp,exp1),EqualFunctionSymbol(astType,exp,exp2)) -> {
