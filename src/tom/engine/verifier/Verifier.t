@@ -405,6 +405,7 @@ public class Verifier extends TomBase {
       }
       subs(is(v,term),t*) -> {
         SubstitutionList tail = reduceSubstitutionWithMappingRules(`t*);
+        term = replaceVariablesInTerm(`appSubsT(tail*,term));
         return `subs(is(v,reduceTermWithMappingRules(term)),tail*);
       }
       subs(undefsubs(),t*) -> {
@@ -457,10 +458,10 @@ public class Verifier extends TomBase {
         return `trm;
       }
       subterm(s,t@subterm[],index) -> {
-        return `subterm(s,reduceTermWithMappingRules(t),index);
+        return `reduceTermWithMappingRules(subterm(s,reduceTermWithMappingRules(t),index));
       }
       slot(s,t@slot[],slotName) -> {
-        return `slot(s,reduceTermWithMappingRules(t),slotName);
+        return `reduceTermWithMappingRules(slot(s,reduceTermWithMappingRules(t),slotName));
       }
       subterm(s,tau(t),index) -> {
         // we shall test if term t has symbol s 

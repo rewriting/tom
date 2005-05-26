@@ -272,7 +272,7 @@ public class ZenonOutput {
         return `zvar("Error in ztermFromTerm subterm");
       }
       slot(s,t,name) -> {
-        return `zvar("Error in ztermFromTerm slot");
+        return `zvar("Error in ztermFromTerm "+ term +" slot");
       }
       appSubsT(subst,t) -> {
         // probleme: la substitution devrait etre appliquee
