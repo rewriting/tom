@@ -76,28 +76,29 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  private VisitableVisitor optRule1;
-  private VisitableVisitor optRule2;
   private VisitableVisitor optStrategy1;
   private VisitableVisitor optStrategy2;
-  private VisitableVisitor normRule;
   private VisitableVisitor normStrategy;
 
   /** Constructor */
   public TomOptimizer() {
     super("TomOptimizer");
-    optRule1 = new RewriteSystem1();
-    optRule2 = new RewriteSystem2();
-    
-    normRule = new NormExpr();
-        
   }
   
   public void run() {
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
       // Initialize strategies
+      
+      VisitableVisitor optRule1 = new RewriteSystem1();
       optStrategy1 = `InnermostId(optRule1);
-      optStrategy2 = `InnermostId(optRule2);
+
+      VisitableVisitor nopElimAndFlatten = new NopElimAndFlatten();
+      VisitableVisitor rewriteSystem2 = new RewriteSystem2();
+      VisitableVisitor interBlock = new InterBlock();
+
+      optStrategy2 = `InnermostId(ChoiceId(RepeatId(nopElimAndFlatten), ChoiceId(rewriteSystem2,interBlock)));
+
+      VisitableVisitor normRule = new NormExpr();
       normStrategy = `InnermostId(normRule);
 
       long startChrono = System.currentTimeMillis();
@@ -503,29 +504,12 @@ public class TomOptimizer extends TomGenericPlugin {
       loop: do {
         subject = newSubject;
         %match(Instruction subject) {
-          AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-            //System.out.println("flatten");
-            newSubject = `AbstractBlock(concInstruction(C1*,L1*,C2*));
-            continue loop;
-          }
-
-          AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-            //System.out.println("nop-elim");
-            newSubject = `AbstractBlock(concInstruction(C1*,C2*));
-            continue loop;
-          }  
-        }
-      } while(newSubject!=subject);
-
-      loop: do {
-        subject = newSubject;
-        %match(Instruction subject) {
           AbstractBlock(concInstruction(X1*,I1,I2,X2*)) -> {
             %match(Instruction I1, Instruction I2) {
               /* if-swapping */
               If(cond1,_,Nop()),If(cond2,_,Nop()) -> {
                 if(`cond1.toString().compareTo(`cond2.toString()) > 0) {
-                  //System.out.println("if-swapping");
+                  System.out.println("if-swapping");
                   Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
                   if(compatible==`FalseTL()) {
                     newSubject = `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
@@ -539,12 +523,12 @@ public class TomOptimizer extends TomGenericPlugin {
               Let(var1,term1,body1),Let(var2,term2,body2) -> {
                 if(`compare(term1,term2)) {
                   if(`compare(var1,var2)) {
-                    //System.out.println("block-fusion1");
+                    System.out.println("block-fusion1");
                     newSubject = `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
                     continue loop;
                     //return newSubject;
                   } else {
-                    //System.out.println("block-fusion2");
+                    System.out.println("block-fusion2");
                     newSubject = `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var1,var2,body2)))),X2*));
                     continue loop;
                     //return newSubject;
@@ -555,7 +539,7 @@ public class TomOptimizer extends TomGenericPlugin {
               /* Fusion de 2 blocs If gardés par la même condition */
               If(cond1,success1,failure1),If(cond2,success2,failure2) -> {
                 if(`compare(cond1,cond2)) {
-                  //System.out.println("if-fusion");
+                  System.out.println("if-fusion");
                   //Instruction newCond = `If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2)));
                   //newSubject = `AbstractBlock(concInstruction(X1*,newCond,X2*));
 
@@ -571,19 +555,6 @@ public class TomOptimizer extends TomGenericPlugin {
           } // pattern
         } // end match
       } while(newSubject!=subject);
-        
-      %match(Instruction newSubject) {
-        /* on entrelace deux blocs incompatibles */
-        AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),If(cond2,suc2,Nop()),X2*)) -> {
-          Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
-          if(compatible==`FalseTL()) {
-            //System.out.println("inter-block");
-            newSubject = `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
-            return newSubject;
-          }
-        }
-      }
-
       /*
        * Defaul case: traversal
        */
@@ -592,6 +563,64 @@ public class TomOptimizer extends TomGenericPlugin {
     
   }
 
+  public class NopElimAndFlatten extends TomSignatureVisitableFwd {
+
+    public NopElimAndFlatten() {
+      super(new tom.library.strategy.mutraveler.Identity());
+    }
+    
+    public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
+      throws jjtraveler.VisitFailure{
+      Instruction newSubject;
+      %match(Instruction subject) {
+        AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
+          System.out.println("flatten");
+          newSubject = `AbstractBlock(concInstruction(C1*,L1*,C2*));
+          //continue loop;
+          return newSubject;
+        }
+
+        AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
+          System.out.println("nop-elim");
+          newSubject = `AbstractBlock(concInstruction(C1*,C2*));
+          //continue loop;
+          return newSubject;
+        }  
+      }
+      /*
+       * Defaul case: traversal
+       */
+      return subject;
+    }      
+  }
+
+  public class InterBlock extends TomSignatureVisitableFwd {
+
+    public InterBlock() {
+      super(new tom.library.strategy.mutraveler.Identity());
+    }
+    
+    public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
+      throws jjtraveler.VisitFailure{
+      Instruction newSubject;
+      %match(Instruction subject) {
+        /* on entrelace deux blocs incompatibles */
+        AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),If(cond2,suc2,Nop()),X2*)) -> {
+          Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
+          if(compatible==`FalseTL()) {
+            System.out.println("inter-block");
+            newSubject = `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
+            //continue loop;
+            return newSubject;
+          }
+        }  
+      }
+      /*
+       * Defaul case: traversal
+       */
+      return subject;
+    }      
+  }
 
   public class NormExpr extends TomSignatureVisitableFwd {
 
