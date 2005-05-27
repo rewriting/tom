@@ -36,109 +36,41 @@
 
   <!-- Examples to build and distribute -->
   <property name="addressbook" value="addressbook"/>
-  <property name="addressbook.dir" location="${examples.dir}/${addressbook}" />
-
   <property name="adt" value="adt"/>
-  <property name="adt.dir" location="${examples.dir}/${adt}" />
-
   <property name="apireach" value="apireach"/>
-  <property name="apireach.dir" location="${examples.dir}/${apireach}" />
-
   <property name="appletxml" value="appletxml"/>
-  <property name="appletxml.dir" location="${examples.dir}/${appletxml}" />
-
   <property name="boulderdash" value="boulderdash"/>
-  <property name="boulderdash.dir" location="${examples.dir}/${boulderdash}" />
-
   <property name="builtin" value="builtin"/>
-  <property name="builtin.dir" location="${examples.dir}/${builtin}" />
-
   <property name="caml" value="caml"/>
-  <property name="caml.dir" location="${examples.dir}/${caml}" />
-
   <property name="cell" value="cell"/>
-  <property name="cell.dir" location="${examples.dir}/${cell}" />
-
   <property name="cril" value="cril"/>
-  <property name="cril.dir" location="${examples.dir}/${cril}" />
-
   <property name="dom" value="dom"/>
-  <property name="dom.dir" location="${examples.dir}/${dom}" />
-
   <property name="expression" value="expression"/>
-  <property name="expression.dir" location="${examples.dir}/${expression}" />
-
+  <property name="ferus" value="ferus"/>
   <property name="gomoku" value="gomoku"/>
-  <property name="gomoku.dir" location="${examples.dir}/${gomoku}" />
-
   <property name="gtree" value="gtree"/>
-  <property name="gtree.dir" location="${examples.dir}/${gtree}" />
-
   <property name="integerc" value="integerc"/>
-  <property name="integerc.dir" location="${examples.dir}/${integerc}" />
-
   <property name="list" value="list"/>
-  <property name="list.dir" location="${examples.dir}/${list}" />
-
   <property name="lsystem" value="lsystems"/>
-  <property name="lsystem.dir" location="${examples.dir}/${lsystem}" />
-
   <property name="minirho" value="minirho"/>
-  <property name="minirho.dir" location="${examples.dir}/${minirho}" />
-
   <property name="mgs" value="mgs"/>
-  <property name="mgs.dir" location="${examples.dir}/${mgs}" />
-
   <property name="nspk" value="nspk"/>
-  <property name="nspk.dir" location="${examples.dir}/${nspk}" />
-
   <property name="p3p" value="p3p"/>
-  <property name="p3p.dir" location="${examples.dir}/${p3p}" />
-
   <property name="peano" value="peano"/>
-  <property name="peano.dir" location="${examples.dir}/${peano}" />
-
   <property name="pnspk" value="pnspk"/>
-  <property name="pnspk.dir" location="${examples.dir}/${pnspk}" />
-
   <property name="poly" value="poly"/>
-  <property name="poly.dir" location="${examples.dir}/${poly}" />
-
   <property name="pqueens" value="pqueens"/>
-  <property name="pqueens.dir" location="${examples.dir}/${pqueens}" />
-
   <property name="prodrule" value="prodrule"/>
-  <property name="prodrule.dir" location="${examples.dir}/${prodrule}" />
-
   <property name="propp" value="propp"/>
-  <property name="propp.dir" location="${examples.dir}/${propp}" />
-
   <property name="rbtree" value="rbtree"/>
-  <property name="rbtree.dir" location="${examples.dir}/${rbtree}" />
-
   <property name="set" value="set"/>
-  <property name="set.dir" location="${examples.dir}/${set}" />
-
   <property name="strategy" value="strategy"/>
-  <property name="strategy.dir" location="${examples.dir}/${strategy}" />
-
   <property name="strings" value="strings"/>
-  <property name="strings.dir" location="${examples.dir}/${strings}" />
-
   <property name="structure" value="structure"/>
-  <property name="structure.dir" location="${examples.dir}/${structure}" />
-
   <property name="tutorial" value="tutorial"/>
-  <property name="tutorial.dir" location="${examples.dir}/${tutorial}" />
-
   <property name="vas" value="vas"/>
-  <property name="vas.dir" location="${examples.dir}/${vas}" />
-
   <property name="xml" value="xml"/>
-  <property name="xml.dir" location="${examples.dir}/${xml}" />
-
   <property name="xquery" value="xquery"/>
-  <property name="xquery.dir" location="${examples.dir}/${xquery}" />
 
   <target name="testdistexist">
     <available file="${tom.home}/lib" type="dir" property="distexist"/>
@@ -391,6 +323,44 @@
       <include name="${expression}/**/RecordStrict.t"/>
     </tom>
     <javacompile example="${expression}"/>
+  </target>
+
+  <target name="ferus" depends="init">
+    <mkdir dir="${examples.gen}/${ferus}"/>
+    <adt srcdir="${examples.dir}"
+      name="apisig" 
+      cCode="yes" 
+      destdir="${examples.gen}/${ferus}">
+      <include name="${ferus}/**/*.adt"/>
+    </adt>
+    <tom config="${tomconfigfile}"
+         srcdir="${examples.dir}" 
+         destdir="${examples.gen}/${ferus}"         
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         optimize2="${optimize2}"
+         pretty="${pretty}"
+         stamp="off"
+         options="--cCode -I ${tom.home}/share/jtom">
+      <include name="${ferus}/**/*.t"/>
+    </tom>
+    <copy todir="${examples.gen}/${ferus}">
+      <fileset dir="${examples.dir}/${ferus}">
+        <include name="Makefile"/>
+      </fileset>
+    </copy>
+    <antcall target="ferus.make"/>
+  </target>
+
+  <target name="ferus.make" if="aterm.home">
+    <exec dir="${examples.gen}/${ferus}" 
+          failonerror="yes"
+          executable="make">
+      <arg line="ferus"/>
+      <env key="ATERM_HOME" value="${aterm.home}"/>
+      <env key="LDFLAGS" value="-L${aterm.home}/lib -lATerm"/>
+      <env key="CFLAGS"  value="-I${aterm.home}/include -I."/>
+    </exec>
   </target>
 
   <target name="gomoku" depends="init">
