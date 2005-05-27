@@ -96,7 +96,7 @@ public class TomOptimizer extends TomGenericPlugin {
       VisitableVisitor rewriteSystem2 = new RewriteSystem2();
       VisitableVisitor interBlock = new InterBlock();
 
-      optStrategy2 = `InnermostId(ChoiceId(RepeatId(nopElimAndFlatten), ChoiceId(rewriteSystem2,interBlock)));
+      optStrategy2 = `InnermostId(ChoiceId(RepeatId(nopElimAndFlatten), ChoiceId(RepeatId(rewriteSystem2),interBlock)));
 
       VisitableVisitor normRule = new NormExpr();
       normStrategy = `InnermostId(normRule);
@@ -500,61 +500,68 @@ public class TomOptimizer extends TomGenericPlugin {
     public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
 
-      Instruction newSubject = subject;
-      loop: do {
-        subject = newSubject;
-        %match(Instruction subject) {
-          AbstractBlock(concInstruction(X1*,I1,I2,X2*)) -> {
-            %match(Instruction I1, Instruction I2) {
-              /* if-swapping */
-              If(cond1,_,Nop()),If(cond2,_,Nop()) -> {
-                if(`cond1.toString().compareTo(`cond2.toString()) > 0) {
-                  System.out.println("if-swapping");
-                  Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
-                  if(compatible==`FalseTL()) {
-                    newSubject = `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
-                    continue loop;
-                    //return newSubject;
-                  }
-                }
-              }
-                
-              /* Fusion de 2 blocs Let contigus instanciant deux variables égales */
-              Let(var1,term1,body1),Let(var2,term2,body2) -> {
-                if(`compare(term1,term2)) {
-                  if(`compare(var1,var2)) {
-                    System.out.println("block-fusion1");
-                    newSubject = `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
-                    continue loop;
-                    //return newSubject;
-                  } else {
-                    System.out.println("block-fusion2");
-                    newSubject = `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var1,var2,body2)))),X2*));
-                    continue loop;
-                    //return newSubject;
-                  }
-                }
-              }
-                
-              /* Fusion de 2 blocs If gardés par la même condition */
-              If(cond1,success1,failure1),If(cond2,success2,failure2) -> {
-                if(`compare(cond1,cond2)) {
-                  System.out.println("if-fusion");
-                  //Instruction newCond = `If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2)));
-                  //newSubject = `AbstractBlock(concInstruction(X1*,newCond,X2*));
+      %match(Instruction subject) {
+        AbstractBlock(concInstruction(X1*,I1,I2,X2*)) -> {
+          %match(Instruction I1, Instruction I2) {
+            /* if-swapping */
+            If(cond1,_,Nop()),If(cond2,_,Nop()) -> {
+              PILFactory factory = new PILFactory();
+              String s1 = factory.prettyPrint(factory.remove(`cond1));
+              String s2 = factory.prettyPrint(factory.remove(`cond2));
+              //System.out.println("s1 = " + s1);
+              //System.out.println("s2 = " + s2);
+              //System.out.println("cmp = " + s1.compareTo(s2));
 
-                  //System.out.println(fact.prettyPrint(fact.remove(newCond)));
- 
-                  newSubject = `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
-                  continue loop;
-                  //return newSubject;
+              if(s1.compareTo(s2) > 0) {
+                //System.out.println("if-swapping");
+                Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
+                if(compatible==`FalseTL()) {
+                  return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
                 }
               }
+            }
                 
-            } // end match
-          } // pattern
-        } // end match
-      } while(newSubject!=subject);
+            /* Fusion de 2 blocs Let contigus instanciant deux variables égales */
+            Let(var1,term1,body1),Let(var2,term2,body2) -> {
+              if(`compare(term1,term2)) {
+                if(`compare(var1,var2)) {
+                  //System.out.println("block-fusion1");
+                  return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
+                } else {
+                  //System.out.println("block-fusion2");
+                  return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var1,var2,body2)))),X2*));
+                }
+              }
+            }
+            
+            /* Fusion de 2 blocs If gardés par la même condition */
+            If(cond1,success1,Nop()),If(cond2,success2,Nop()) -> {
+              if(`compare(cond1,cond2)) {
+                //System.out.println("if-fusion");
+                //Instruction newCond = `If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2)));
+                //newSubject = `AbstractBlock(concInstruction(X1*,newCond,X2*));
+                
+                //System.out.println(fact.prettyPrint(fact.remove(newCond)));
+                
+                return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*));
+              }
+            }
+
+            If(cond1,success1,failure1),If(cond2,success2,failure2) -> {
+              if(`compare(cond1,cond2)) {
+                //System.out.println("if-fusion");
+                //Instruction newCond = `If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2)));
+                //newSubject = `AbstractBlock(concInstruction(X1*,newCond,X2*));
+                
+                //System.out.println(fact.prettyPrint(fact.remove(newCond)));
+                
+                return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
+              }
+            }
+                
+          } // end match
+        } // pattern
+      } // end match
       /*
        * Defaul case: traversal
        */
@@ -571,20 +578,20 @@ public class TomOptimizer extends TomGenericPlugin {
     
     public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
-      Instruction newSubject;
       %match(Instruction subject) {
         AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-          System.out.println("flatten");
-          newSubject = `AbstractBlock(concInstruction(C1*,L1*,C2*));
-          //continue loop;
-          return newSubject;
+          //          System.out.println("flatten");
+          return `AbstractBlock(concInstruction(C1*,L1*,C2*));
         }
 
         AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-          System.out.println("nop-elim");
-          newSubject = `AbstractBlock(concInstruction(C1*,C2*));
-          //continue loop;
-          return newSubject;
+          //        System.out.println("nop-elim");
+          return `AbstractBlock(concInstruction(C1*,C2*));
+        }  
+
+        AbstractBlock(concInstruction()) -> {
+          //  System.out.println("abstractblock-elim");
+          return `Nop();
         }  
       }
       /*
@@ -602,16 +609,14 @@ public class TomOptimizer extends TomGenericPlugin {
     
     public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
-      Instruction newSubject;
+
       %match(Instruction subject) {
         /* on entrelace deux blocs incompatibles */
         AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),If(cond2,suc2,Nop()),X2*)) -> {
           Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
           if(compatible==`FalseTL()) {
-            System.out.println("inter-block");
-            newSubject = `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
-            //continue loop;
-            return newSubject;
+            // System.out.println("inter-block");
+            return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
           }
         }  
       }
@@ -662,11 +667,15 @@ public class TomOptimizer extends TomGenericPlugin {
             return `ref;
           }
         }
-        And(EqualFunctionSymbol(astType,exp,exp1),EqualFunctionSymbol(astType,exp,exp2)) -> {
-          if(compare(`GetSubterm(astType,exp1,Number(1)),`GetSubterm(astType,exp2,Number(1)))) {
+    ref@And(EqualFunctionSymbol(astType,exp,exp1),EqualFunctionSymbol(astType,exp,exp2)) -> {
+          NameList l1 = `exp1.getNameList();
+          NameList l2 = `exp2.getNameList();
+          if (`exp1.getNameList()==`exp2.getNameList()){
             return `EqualFunctionSymbol(astType,exp,exp1);
+          } else if(l1.getLength()==1 && l2.getLength()==1) {
+              return `FalseTL();
           } else {
-            return `FalseTL();
+            return `ref;
           }
         }
       } 
