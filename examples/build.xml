@@ -501,7 +501,7 @@
                 factory="seq"/>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${propp}"/>
-    <tomantlr target="${propp.dir}/SeqParser.g"
+    <tomantlr target="${examples.dir}/${propp}/SeqParser.g"
               outputdirectory="${examples.gen}/${propp}">
       <classpath refid="tom.classpath"/>
     </tomantlr>

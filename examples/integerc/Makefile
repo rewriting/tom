@@ -22,16 +22,16 @@ fibATerm: fibATerm.tom.o
 
 odd: odd.tom.o
 	${CC} -o $@ odd.tom.o ${LDFLAGS}
-	
+
 nqueens: nqueens.tom.o
 	${CC} -o $@ nqueens.tom.o ${LDFLAGS}
-  
+
 nqueens2: nqueens2.tom.o
 	${CC} -o $@ nqueens2.tom.o ${LDFLAGS}
- 
+
 PeanoTest: Peano_dict.c PeanoTest.tom.o Peano_dict.o Peano.o 
 	${CC} -o $@ PeanoTest.tom.o Peano_dict.o Peano.o ${LDFLAGS}
-  
+
 Peano_dict.c: Peano.dict
 	${DICTTOC} -no-date -dict Peano.dict
 
