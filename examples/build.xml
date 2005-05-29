@@ -8,69 +8,69 @@
   <property file="../local.properties"/>
 
   <!-- current version of TOM -->
-  <property name="version" value="2.1"/>
+  <property name="version"        value="2.1"/>
 
-  <property name="nowarnings" value="false"/>
-  <property name="optimize" value="off"/>
-  <property name="optimize2" value="off"/>
-  <property name="pretty" value="off"/>
-  <property name="visitable" value="on"/>
-  <property name="stamp" value="off"/>
-  <property name="mutraveler" value="jjtraveler"/>
+  <property name="nowarnings"     value="false"/>
+  <property name="optimize"       value="off"/>
+  <property name="optimize2"      value="off"/>
+  <property name="pretty"         value="off"/>
+  <property name="visitable"      value="on"/>
+  <property name="stamp"          value="off"/>
+  <property name="mutraveler"     value="jjtraveler"/>
 
   <property environment="env" />
-  <property name="tom.home" value="${env.TOM_HOME}"/>
+  <property name="tom.home"       value="${env.TOM_HOME}"/>
   
   <!-- some used directory location -->
-  <property name="examples.dir" location="."/>
-  <property name="examples.dist" location="dist"/>
+  <property name="examples.dir"   location="."/>
+  <property name="examples.dist"  location="dist"/>
 
-  <property name="examples.lib" value="lib"/>
+  <property name="examples.lib"   value="lib"/>
 
   <!-- where the examples a build: javac destDir -->
-  <property name="examples.gen" location="gen"/>
+  <property name="examples.gen"   location="gen"/>
   <property name="examples.build" location="build"/>
 
-  <property name="tomconfigfile" location="${tom.home}/Tom.xml"/>
-  <property name="vasconfigfile" location="${tom.home}/Vas.xml"/>
+  <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
+  <property name="vasconfigfile"  location="${tom.home}/Vas.xml"/>
 
   <!-- Examples to build and distribute -->
-  <property name="addressbook" value="addressbook"/>
-  <property name="adt" value="adt"/>
-  <property name="apireach" value="apireach"/>
-  <property name="appletxml" value="appletxml"/>
-  <property name="boulderdash" value="boulderdash"/>
-  <property name="builtin" value="builtin"/>
-  <property name="caml" value="caml"/>
-  <property name="cell" value="cell"/>
-  <property name="cril" value="cril"/>
-  <property name="dom" value="dom"/>
-  <property name="expression" value="expression"/>
-  <property name="ferus" value="ferus"/>
-  <property name="gomoku" value="gomoku"/>
-  <property name="gtree" value="gtree"/>
-  <property name="integerc" value="integerc"/>
-  <property name="list" value="list"/>
-  <property name="lsystem" value="lsystems"/>
-  <property name="minirho" value="minirho"/>
-  <property name="mgs" value="mgs"/>
-  <property name="nspk" value="nspk"/>
-  <property name="p3p" value="p3p"/>
-  <property name="peano" value="peano"/>
-  <property name="pnspk" value="pnspk"/>
-  <property name="poly" value="poly"/>
-  <property name="pqueens" value="pqueens"/>
-  <property name="prodrule" value="prodrule"/>
-  <property name="propp" value="propp"/>
-  <property name="rbtree" value="rbtree"/>
-  <property name="set" value="set"/>
-  <property name="strategy" value="strategy"/>
-  <property name="strings" value="strings"/>
-  <property name="structure" value="structure"/>
-  <property name="tutorial" value="tutorial"/>
-  <property name="vas" value="vas"/>
-  <property name="xml" value="xml"/>
-  <property name="xquery" value="xquery"/>
+  <property name="addressbook"    value="addressbook"/>
+  <property name="adt"            value="adt"/>
+  <property name="apireach"       value="apireach"/>
+  <property name="appletxml"      value="appletxml"/>
+  <property name="boulderdash"    value="boulderdash"/>
+  <property name="builtin"        value="builtin"/>
+  <property name="caml"           value="caml"/>
+  <property name="cell"           value="cell"/>
+  <property name="cril"           value="cril"/>
+  <property name="dom"            value="dom"/>
+  <property name="expression"     value="expression"/>
+  <property name="ferus"          value="ferus"/>
+  <property name="gomoku"         value="gomoku"/>
+  <property name="gtree"          value="gtree"/>
+  <property name="integerc"       value="integerc"/>
+  <property name="list"           value="list"/>
+  <property name="lsystem"        value="lsystems"/>
+  <property name="minirho"        value="minirho"/>
+  <property name="mgs"            value="mgs"/>
+  <property name="nspk"           value="nspk"/>
+  <property name="p3p"            value="p3p"/>
+  <property name="peano"          value="peano"/>
+  <property name="pnspk"          value="pnspk"/>
+  <property name="poly"           value="poly"/>
+  <property name="pqueens"        value="pqueens"/>
+  <property name="prodrule"       value="prodrule"/>
+  <property name="propp"          value="propp"/>
+  <property name="rbtree"         value="rbtree"/>
+  <property name="set"            value="set"/>
+  <property name="strategy"       value="strategy"/>
+  <property name="strings"        value="strings"/>
+  <property name="structure"      value="structure"/>
+  <property name="tutorial"       value="tutorial"/>
+  <property name="vas"            value="vas"/>
+  <property name="xml"            value="xml"/>
+  <property name="xquery"         value="xquery"/>
 
   <target name="testdistexist">
     <available file="${tom.home}/lib" type="dir" property="distexist"/>
@@ -356,7 +356,7 @@
     <exec dir="${examples.gen}/${ferus}" 
           failonerror="yes"
           executable="make">
-      <arg line="ferus"/>
+      <arg line="ferus atermfib"/>
       <env key="ATERM_HOME" value="${aterm.home}"/>
       <env key="LDFLAGS" value="-L${aterm.home}/lib -lATerm"/>
       <env key="CFLAGS"  value="-I${aterm.home}/include -I."/>
@@ -643,7 +643,7 @@
   <target name="examples" 
           description="Builds the examples (at least some)"
           depends="addressbook, adt, apireach, appletxml, boulderdash, builtin,
-          caml, cell, dom, expression, gomoku, gtree, integerc, list, mgs,
+          caml, cell, dom, expression, ferus, gomoku, gtree, integerc, list, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, structure, 
           tutorial, vas, xml, minirho">
