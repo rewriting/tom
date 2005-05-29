@@ -703,6 +703,10 @@
         <include name="${expression}/*.t"/>
         <include name="${expression}/*.java"/>
 
+        <include name="${ferus}/*.t"/>
+        <include name="${ferus}/Makefile"/>
+        <include name="${ferus}/*.adt"/>
+
         <include name="${gomoku}/*.t"/>
         <include name="${gomoku}/*.vas"/>
 
@@ -712,6 +716,7 @@
 
         <include name="${integerc}/README"/>
         <include name="${integerc}/*.t"/>
+        <include name="${integerc}/Makefile"/>
         <include name="${integerc}/*.adt"/>
 
         <include name="${list}/README"/>
