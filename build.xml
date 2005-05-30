@@ -234,7 +234,7 @@
     <!--  compile without declaration -->
     <tomcomp srcdir="${src.src}" 
          destdir="${gen.destination}" 
-         options="-I ${src.mapping} --noDeclaration --optimize --pretty">
+         options="-I ${src.mapping} --noDeclaration --optimize">
       <exclude name="jtom/*.t"/>
       <exclude name="jtom/parser/*.g.t"/>
 

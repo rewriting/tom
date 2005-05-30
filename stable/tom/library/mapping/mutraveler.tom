@@ -129,6 +129,10 @@
     make(v) { `mu(MuVar("x"),ChoiceId(OneId(MuVar("x")),v)) }
   }
 
+  %op VisitableVisitor OnceTopDownId(s1:VisitableVisitor) {
+    make(v) { `mu(MuVar("x"),ChoiceId(v,OneId(MuVar("x")))) }
+  }
+
   %op VisitableVisitor InnermostId(s1:VisitableVisitor) {
     make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),SequenceId(v,MuVar("x")))) }
   }
