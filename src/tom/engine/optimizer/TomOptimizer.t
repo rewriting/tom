@@ -97,6 +97,7 @@ public class TomOptimizer extends TomGenericPlugin {
       VisitableVisitor blockFusion = new BlockFusion();
       VisitableVisitor ifFusion = new IfFusion();
       VisitableVisitor interBlock = new InterBlock();
+      VisitableVisitor normExpr = new NormExpr();
 
       /*
       VisitableVisitor optStrategy2 = `Sequence(InnermostId(nopElimAndFlatten),
@@ -106,7 +107,7 @@ public class TomOptimizer extends TomGenericPlugin {
       */
 
       VisitableVisitor optStrategy2 = `Sequence(
-                                                InnermostId(RepeatId(nopElimAndFlatten)),
+                                                InnermostId(ChoiceId(RepeatId((nopElimAndFlatten)),normExpr)),
                                                 InnermostId(
                                                             ChoiceId(
                                                                        Sequence(RepeatId(ifSwapping), RepeatId(SequenceId(ChoiceId(blockFusion,ifFusion),OnceTopDownId(nopElimAndFlatten)))),
@@ -114,9 +115,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
 )
                                                 );
-
-      VisitableVisitor normRule = new NormExpr();
-      normStrategy = `InnermostId(normRule);
+      normStrategy = `InnermostId(normExpr);
 
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
@@ -567,7 +566,9 @@ public class TomOptimizer extends TomGenericPlugin {
             AbstractBlock(l) -> {
               return (InstructionList) flatten(`l).concat(`tail);
             }
+            _ -> {return `manyInstructionList(head,flatten(tail));}
           }
+
         }
       }
       return list;
