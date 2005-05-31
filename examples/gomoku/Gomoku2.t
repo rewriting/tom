@@ -29,7 +29,7 @@ class Gomoku2 {
   }
   
   public final static void main(String[] args) {
-    int boardSize = 20;
+    int boardSize = 15;
     Gomoku2 test = getGomoku(boardSize,gomokuFactory.getInstance(new PureFactory()));
     test.run();
   }
@@ -78,6 +78,7 @@ class Gomoku2 {
     PawnListList dia = board.getDiagonalList();
     PawnListList reverseDia = mapReverse(dia);
 
+    for(int i=0 ; i<1 ; i++) {
     //Search horizontal
     searchPatterns(hor,white);
     //searchPatterns(hor,black);
@@ -93,6 +94,7 @@ class Gomoku2 {
     //searchPatterns(dia,black);
     searchPatterns(reverseDia,white);
     //searchPatterns(reverseDia,black);
+    }
 
     Pawn maxEmpty = board.getMaxEmpty();
     int x = maxEmpty.getX();
@@ -155,113 +157,25 @@ class Gomoku2 {
     int value6 = 15;
     int value7 = 1;
     %match(PawnListList pl) {
-      // 4 -> winning
-      // xxxx_
       concPawnList(_*,X,_*) -> {
         %match(PawnList X){
           concPawn(_*,X1,X2,X3,X4,X5,X6*) ->{
             %match(Pawn X1, Pawn X2, Pawn X3, Pawn X4, Pawn X5, PawnList X6) { 
-              pawn(c),pawn(c),pawn(c),pawn(c),empty(x,y),_ -> {
-                // `board.analyse(concPawn(_*,pawn(c),pawn(c),pawn(c),pawn(c),value(x,y,value1),_*));
-                //if(`c == patternColor)
-                board.addValue(`x,`y,value1);
-              }
-              // xxx_x
-              pawn(c),pawn(c),pawn(c),empty(x,y),pawn(c),_ -> {
-                //if(`c == patternColor)
-                board.addValue(`x,`y,value1);
-              }
-              // xx_xx
-              pawn(c),pawn(c),empty(x,y),pawn(c),pawn(c),_ -> {
-                //if(`c == patternColor)
-                board.addValue(`x,`y,value1);
-              }
-
-              // 3 -> winning
-              // _xxx__
-              empty[],pawn(c),pawn(c),pawn(c),empty(x,y),concPawn(empty[],_*) -> {
-                //if(`c == patternColor)
-                board.addValue(`x,`y,value2);
-              }
-              // _xx_x_
-              empty[],pawn(c),pawn(c),empty(x,y),pawn(c),concPawn(empty[],_*) -> {
-                //if(`c == patternColor)
-                board.addValue(`x,`y,value2);
-              }
-              // 3
-              // __xxx
-              empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),pawn(c),_ -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value4);
-                board.addValue(`x2,`y2,value4);
-                //}
-              }
-              // _x_xx
-              empty(x1,y1),pawn(c),empty(x2,y2),pawn(c),pawn(c),_ -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value4);
-                board.addValue(`x2,`y2,value4);
-                //}
-              }
-              // _xx_x
-              empty(x1,y1),pawn(c),pawn(c),empty(x2,y2),pawn(c),_ -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value4);
-                board.addValue(`x2,`y2,value4);
-                //}
-              }
-              // _xxx_
-              empty(x1,y1),pawn(c),pawn(c),pawn(c),empty(x2,y2),_ -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value4);
-                board.addValue(`x2,`y2,value4);
-                //}
-              }
-              // x__xx
-              pawn(c),empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),_ -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value4);
-                board.addValue(`x2,`y2,value4);
-                //}
-              }
-              // x_x_x
-              pawn(c),empty(x1,y1),pawn(c),empty(x2,y2),pawn(c),_ -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value4);
-                board.addValue(`x2,`y2,value4);
-                //}
-              }
-              // 2 in 6
-              // ___xx_
-              empty[],empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),concPawn(empty[],_*) -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value3);
-                board.addValue(`x2,`y2,value3);
-                //}
-              }
-              // __x_x_
-              empty[],empty(x1,y1),pawn(c),empty(x2,y2),pawn(c),concPawn(empty[],_*) -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value3);
-                board.addValue(`x2,`y2,value3);
-                //}
-              }
-              // _x__x_
-              empty[],pawn(c),empty(x1,y1),empty(x2,y2),pawn(c),concPawn(empty[],_*) -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value3);
-                board.addValue(`x2,`y2,value3);
-                //}
-              }
-              // __xx__
-              empty[],empty(x1,y1),pawn(c),pawn(c),empty(x2,y2),concPawn(empty[],_*) -> {
-                //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value3);
-                board.addValue(`x2,`y2,value3);
-                //}
-              }
-              // 2 in 5
-              // ___xx
+              pawn(c),pawn(c),pawn(c),pawn(c),empty(x5,y5),_ -> { board.addValue(`x5,`y5,value1); }
+              pawn(c),pawn(c),pawn(c),empty(x4,y4),pawn(c),_ -> { board.addValue(`x4,`y4,value1); }
+              pawn(c),pawn(c),empty(x3,y3),pawn(c),pawn(c),_ -> { board.addValue(`x3,`y3,value1); }
+              empty(tmpx1,tmpy1),pawn(c),pawn(c),pawn(c),empty(x5,y5),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x5,`y5,value2); }
+              empty(tmpx1,tmpy1),pawn(c),pawn(c),empty(x4,y4),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x4,`y4,value2); }
+              empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),pawn(c),_ -> { board.addValue(`x1,`y1,value4); board.addValue(`x2,`y2,value4); }
+              empty(x1,y1),pawn(c),empty(x3,y3),pawn(c),pawn(c),_ -> { board.addValue(`x1,`y1,value4); board.addValue(`x3,`y3,value4); }
+              empty(x1,y1),pawn(c),pawn(c),empty(x4,y4),pawn(c),_ -> { board.addValue(`x1,`y1,value4); board.addValue(`x4,`y4,value4); }
+              empty(x1,y1),pawn(c),pawn(c),pawn(c),empty(x5,y5),_ -> { board.addValue(`x1,`y1,value4); board.addValue(`x5,`y5,value4); }
+              pawn(c),empty(x2,y2),empty(x3,y3),pawn(c),pawn(c),_ -> { board.addValue(`x2,`y2,value4); board.addValue(`x3,`y3,value4); }
+              pawn(c),empty(x2,y2),pawn(c),empty(x4,y4),pawn(c),_ -> { board.addValue(`x2,`y2,value4); board.addValue(`x4,`y4,value4); }
+              empty(tmpx1,tmpy1),empty(x2,y2),empty(x3,y3),pawn(c),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x2,`y2,value3); board.addValue(`x3,`y3,value3); }
+              empty(tmpx1,tmpy1),empty(x2,y2),pawn(c),empty(x4,y4),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x2,`y2,value3); board.addValue(`x4,`y4,value3); }
+              empty(tmpx1,tmpy1),pawn(c),empty(x3,y3),empty(x4,y4),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x3,`y3,value3); board.addValue(`x4,`y4,value3); }
+              empty(tmpx1,tmpy1),empty(x2,y2),pawn(c),pawn(c),empty(x5,y5),concPawn(empty(tmpx2,tmpy2),_*) -> { board.addValue(`x2,`y2,value3); board.addValue(`x5,`y5,value3); }
               empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(c),pawn(c),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value5);
@@ -270,88 +184,88 @@ class Gomoku2 {
                 //}
               }
               // __x_x
-              empty(x1,y1),empty(x2,y2),pawn(c),empty(x3,y3),pawn(c),_ -> {
+              empty(x1,y1),empty(x2,y2),pawn(c),empty(x4,y4),pawn(c),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value5);
                 board.addValue(`x2,`y2,value5);
-                board.addValue(`x3,`y3,value5);
+                board.addValue(`x4,`y4,value5);
                 //}
               }
               // __xx_
-              empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),empty(x3,y3),_ -> {
+              empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),empty(x5,y5),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value5);
                 board.addValue(`x2,`y2,value5);
-                board.addValue(`x3,`y3,value5);
+                board.addValue(`x5,`y5,value5);
                 //}
               }
               // _x__x
-              empty(x1,y1),pawn(c),empty(x2,y2),empty(x3,y3),pawn(c),_ -> {
+              empty(x1,y1),pawn(c),empty(x3,y3),empty(x4,y4),pawn(c),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value5);
-                board.addValue(`x2,`y2,value5);
                 board.addValue(`x3,`y3,value5);
+                board.addValue(`x4,`y4,value5);
                 //}
               }
               // _x_x_
-              empty(x1,y1),pawn(c),empty(x2,y2),pawn(c),empty(x3,y3),_ -> {
+              empty(x1,y1),pawn(c),empty(x3,y3),pawn(c),empty(x5,y5),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value5);
-                board.addValue(`x2,`y2,value5);
                 board.addValue(`x3,`y3,value5);
+                board.addValue(`x5,`y5,value5);
                 //}
               }
               // x___x
-              pawn(c),empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(c),_ -> {
+              pawn(c),empty(x2,y2),empty(x3,y3),empty(x4,y4),pawn(c),_ -> {
                 //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value5);
                 board.addValue(`x2,`y2,value5);
                 board.addValue(`x3,`y3,value5);
+                board.addValue(`x4,`y4,value5);
                 //}
               }
               // 1 in 6
               // ____x_
-              empty[],empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(c),concPawn(empty[],_*) -> {
+              empty(tmpx1,tmpy1),empty(x2,y2),empty(x3,y3),empty(x4,y4),pawn(c),concPawn(empty(tmpx2,tmpy2),_*) -> {
                 //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value6);
                 board.addValue(`x2,`y2,value6);
                 board.addValue(`x3,`y3,value6);
+                board.addValue(`x4,`y4,value6);
                 //}
               }
               // ___x__
-              empty[],empty(x1,y1),empty(x2,y2),pawn(c),empty(x3,y3),concPawn(empty[],_*) -> {
+              empty(tmpx1,tmpy1),empty(x2,y2),empty(x3,y3),pawn(c),empty(x5,y5),concPawn(empty(tmpx2,tmpy2),_*) -> {
                 //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value6);
                 board.addValue(`x2,`y2,value6);
                 board.addValue(`x3,`y3,value6);
+                board.addValue(`x5,`y5,value6);
                 //}
               }
               //1 in 5
               // x____
-              pawn(c),empty(x1,y1),empty(x2,y2),empty(x3,y3),empty(x4,y4),_ -> {
+              pawn(c),empty(x2,y2),empty(x3,y3),empty(x4,y4),empty(x5,y5),_ -> {
                 //if(`c == patternColor) {
-                board.addValue(`x1,`y1,value7);
                 board.addValue(`x2,`y2,value7);
                 board.addValue(`x3,`y3,value7);
                 board.addValue(`x4,`y4,value7);
+                board.addValue(`x5,`y5,value7);
                 //}
               }
               // _x___
-              empty(x1,y1),pawn(c),empty(x2,y2),empty(x3,y3),empty(x4,y4),_ -> {
+              empty(x1,y1),pawn(c),empty(x3,y3),empty(x4,y4),empty(x5,y5),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value7);
-                board.addValue(`x2,`y2,value7);
                 board.addValue(`x3,`y3,value7);
                 board.addValue(`x4,`y4,value7);
+                board.addValue(`x5,`y5,value7);
                 //}
               }
               // __x__
-              empty(x1,y1),empty(x2,y2),pawn(c),empty(x3,y3),empty(x4,y4),_ -> {
+              empty(x1,y1),empty(x2,y2),pawn(c),empty(x4,y4),empty(x5,y5),_ -> {
                 //if(`c == patternColor) {
                 board.addValue(`x1,`y1,value7);
                 board.addValue(`x2,`y2,value7);
-                board.addValue(`x3,`y3,value7);
                 board.addValue(`x4,`y4,value7);
+                board.addValue(`x5,`y5,value7);
                 //}
               }
             }

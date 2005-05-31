@@ -137,3 +137,7 @@
     make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),SequenceId(v,MuVar("x")))) }
   }
 
+  %op VisitableVisitor OutermostId(s1:VisitableVisitor) {
+    make(v) { `mu(MuVar("x"),Sequence(SequenceId(v,MuVar("x")),All(MuVar("x")))) }
+  }
+

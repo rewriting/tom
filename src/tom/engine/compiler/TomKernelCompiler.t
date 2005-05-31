@@ -691,11 +691,18 @@ public class TomKernelCompiler extends TomBase {
       
       manySlotList(PairSlotAppl(slotName,subtermArg),tail) -> {
         body = collectSubtermFromSubjectList(`tail,tomSymbol,subjectVariableAST,path,body);
+        /*
+         * this optimisation is not good since it avoids some optimisations
+         * in particular, f(x,y) and f(x,_) cannot be merged
+         *
+         */
         if(`subtermArg.isUnamedVariable() && !isAnnotedVariable(`subtermArg)) {
             // This is an optimisation 
             // Do not assign the subterm: skip the subterm 
           return body;
-        } else {
+          } else
+        
+        {
           TomType subtermType = getSlotType(tomSymbol,`slotName);
 
           //System.out.println("pairNameDeclList = " + tomSymbol.getPairNameDeclList());
@@ -738,6 +745,12 @@ public class TomKernelCompiler extends TomBase {
                                Instruction body) {
       // Take care of constraints
     body = compileConstraint(dest,source,body);
+    //return `Let(dest,source,body);
+    /*
+     * this optimisation is not good since it avoids some optimisations
+     * in particular, f(x,y) and f(x,_) cannot be merged
+     *
+     */
     if(dest.isUnamedVariable() || dest.isUnamedVariableStar()) {
       // This is an optimisation 
       // Do not assign an UnamedVariable or an UnamedVariableStar
@@ -745,6 +758,7 @@ public class TomKernelCompiler extends TomBase {
     } else {
       return `Let(dest,source,body);
     }
+    
   }
 
   private Instruction compileConstraint(TomTerm subject, Expression source, Instruction body) {

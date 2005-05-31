@@ -122,15 +122,14 @@ public class TomOptimizer extends TomGenericPlugin {
       try {
         TomTerm renamedTerm   = renameIntoTomVariable( (TomTerm)getWorkingTerm(), new HashSet() );
       
-        if(getOptionBooleanValue("optimize")) {
-          renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
-        }
         if(getOptionBooleanValue("optimize2")) {
           //System.out.println(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
-          //System.out.println(renamedTerm);
         }
 
+        if(getOptionBooleanValue("optimize")) {
+          renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
+        }
         setWorkingTerm(renamedTerm);
 
         // verbose
@@ -357,10 +356,10 @@ public class TomOptimizer extends TomGenericPlugin {
 
 
   /* 
-   * rename a variable into another one
+   * rename variable1 into variable2
    */
-  public Instruction renameVariable(TomTerm variable, TomTerm variable2, Instruction subject) {
-    return (Instruction) rename_variable.apply(subject,variable,variable2); 
+  public Instruction renameVariable(TomTerm variable1, TomTerm variable2, Instruction subject) {
+    return (Instruction) rename_variable.apply(subject,variable1,variable2); 
   }
 
   Replace3 rename_variable = new Replace3() {
@@ -626,7 +625,10 @@ public class TomOptimizer extends TomGenericPlugin {
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
             } else {
               System.out.println("block-fusion2");
-              return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var1,var2,body2)))),X2*));
+              /*
+               * TODO: check that var1 does not appear in body2
+               */
+              return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var2,var1,body2)))),X2*));
             }
           }
         }
