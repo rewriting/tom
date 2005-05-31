@@ -56,8 +56,9 @@ public class ZenonBackend {
   public String genZSymbol(ZSymbol symbol) {
     %match(ZSymbol symbol) {
       zsymbol(name) -> {
-        // TODO: manage builtins
-        return `name+"_";
+        // manage builtins
+        String symbolName = tomiltools.replaceNumbersByString(`name);
+        return `symbolName + "_";
       }
     }
     return "errorZSymbol";
@@ -76,8 +77,9 @@ public class ZenonBackend {
     %match(ZTerm term) {
       zvar(name) -> { return `name; }
       zappl(zsymbol(name),tlist) -> { 
-        // TODO: manage builtins
-        return "("+`name+" "+genZTermList(`tlist)+")"; 
+        // manage builtins
+        String realName = tomiltools.replaceNumbersByString(`name);
+        return "(" + realName +" "+genZTermList(`tlist)+")"; 
       }
       zst(t,idx) -> { 
         return "(_"+`idx+" "+genZTerm(`t)+")";
@@ -143,8 +145,9 @@ public class ZenonBackend {
   public String genZAxiom(ZAxiom axiom) {
     %match(ZAxiom axiom) {
       zaxiom(name,ax) -> {
-        // TODO: manage builtins
-        return "Parameter " + `name+" :\n    " + genZExpr(`ax) + ".\n";
+        // manage builtins
+        String realName = tomiltools.replaceNumbersByString(`name);
+        return "Parameter " + realName +" :\n    " + genZExpr(`ax) + ".\n";
       }
     }
     return "errorZAxiom";
@@ -189,7 +192,7 @@ public class ZenonBackend {
     it = symbols.iterator();
     while(it.hasNext()) {
       String symbolName = (String) it.next();
-      out.append("Parameter " + symbolName +" :");
+      out.append("Parameter " + tomiltools.replaceNumbersByString(symbolName) +" :");
       // arity of the symbol ?
       List names = tomiltools.subtermList(symbolName);
       for(int i = 0; i<names.size();i++) {
@@ -214,7 +217,7 @@ public class ZenonBackend {
     out.append("Parameter ");
     while(it.hasNext()) {
       String symbolName = (String) it.next();
-      out.append(symbolName +"_ ");
+      out.append(genZSymbol(`zsymbol(symbolName)) +" ");
     }
     out.append(": S.\n");
 

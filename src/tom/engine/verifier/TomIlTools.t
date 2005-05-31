@@ -223,6 +223,7 @@ public class TomIlTools extends TomBase {
           */
         }
       }
+
       /*
       ZExpr axiom = `zforall(abstractVariable,ztype("T"),
                              zequiv(zisfsym(abstractVariable,
@@ -232,7 +233,7 @@ public class TomIlTools extends TomBase {
                              zequiv(
                                zisfsym(abstractVariable,zsymbol(name)),
                                zeq(abstractVariable,zappl(zsymbol(name),list))));
-      res=`zby(res*,zaxiom("symb_"+name,axiom));
+      res=`zby(res*,zaxiom("symb_"+replaceNumbersByString(name),axiom));
     }
     return res;
   } 
@@ -259,7 +260,7 @@ public class TomIlTools extends TomBase {
               for (int j = 0; j < slotnumber;j++) {
                 axiom = `zforall(zvar("x"+j),ztype("T"),axiom);
               }
-              res=`zby(res*,zaxiom("st_"+slname+"_"+name,axiom));
+              res=`zby(res*,zaxiom("st_"+slname+"_"+replaceNumbersByString(name),axiom));
             }
           }
         }
@@ -284,5 +285,20 @@ public class TomIlTools extends TomBase {
     }
     return nameList;
   } 
+
+  public String replaceNumbersByString(String input) {
+    String output = input;
+    output = output.replaceAll("0","zero");
+    output = output.replaceAll("1","one");
+    output = output.replaceAll("2","two");
+    output = output.replaceAll("3","three");
+    output = output.replaceAll("4","four");
+    output = output.replaceAll("5","five");
+    output = output.replaceAll("6","six");
+    output = output.replaceAll("7","seven");
+    output = output.replaceAll("8","eight");
+    output = output.replaceAll("9","nine");
+    return output;
+  }
 
 }
