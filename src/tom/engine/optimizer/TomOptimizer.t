@@ -599,7 +599,7 @@ public class TomOptimizer extends TomGenericPlugin {
           //System.out.println("s2 = " + s2);
           //System.out.println("cmp = " + s1.compareTo(s2));
           
-          if(s1.compareTo(s2) > 0) {
+          if(s1.compareTo(s2) < 0) {
             Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
             if(compatible==`FalseTL()) {
               System.out.println("if-swapping");
@@ -617,18 +617,22 @@ public class TomOptimizer extends TomGenericPlugin {
     public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
       %match(Instruction subject) {
-        AbstractBlock(concInstruction(X1*,Let(var1,term1,body1),Let(var2,term2,body2),X2*)) -> {
+        AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar|BuildVariable)[astName=name],term1,body1),Let(var2,term2,body2),X2*)) -> {
           /* Fusion de 2 blocs Let contigus instanciant deux variables égales */
           if(`compare(term1,term2)) {
             if(`compare(var1,var2)) {
               System.out.println("block-fusion1");
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
             } else {
-              System.out.println("block-fusion2");
-              /*
-               * TODO: check that var1 does not appear in body2
-               */
-              return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var2,var1,body2)))),X2*));
+              List list  = computeOccurences(`name,`body2);
+              int mult = list.size();
+              if(mult==0){
+                System.out.println("block-fusion2");
+                /*
+                 * TODO: check that var1 does not appear in body2
+                 */
+                return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var2,var1,body2)))),X2*));
+              }
             }
           }
         }
