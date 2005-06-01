@@ -507,8 +507,8 @@
       </fileset>
     </copy>
     <copy todir="${stable.dist.share}/contrib">
-      <fileset dir="${utils}">
-        <include name="*.vim"/>
+      <fileset dir="${utils}/contrib">
+        <include name="*"/>
       </fileset>
     </copy>
 
