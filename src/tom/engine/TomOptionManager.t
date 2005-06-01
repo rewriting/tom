@@ -179,26 +179,22 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
-    if(option != null) {
-      %match(PlatformOption option) {
-        PluginOption[value=BooleanValue(True())]  -> { 
-          return Boolean.valueOf(true); 
-        }
-        PluginOption[value=BooleanValue(False())] -> { 
-          return Boolean.valueOf(false); 
-        }
-        PluginOption[value=IntegerValue(value)]   -> { 
-          return new Integer(`value); 
-        }
-        PluginOption[value=StringValue(value)]    -> { 
-          return `value; 
-        }
+    %match(PlatformOption option) {
+      PluginOption[value=BooleanValue(True())]  -> { 
+        return Boolean.valueOf(true); 
       }
-    } else {
-      getLogger().log(Level.SEVERE,"OptionNotFound",name);
-      throw new RuntimeException();
+      PluginOption[value=BooleanValue(False())] -> { 
+        return Boolean.valueOf(false); 
+      }
+      PluginOption[value=IntegerValue(value)]   -> { 
+        return new Integer(`value); 
+      }
+      PluginOption[value=StringValue(value)]    -> { 
+        return `value; 
+      }
     }
-    return null;
+    getLogger().log(Level.SEVERE,"TomOptionManager: getOptionFromName did not return a PluginOption");
+    throw new RuntimeException();
   }
 
   /**
@@ -290,6 +286,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
       getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
+      throw new RuntimeException();
     }
     return option;
   }

@@ -25,6 +25,13 @@
 
 package jtom.verifier;
 
+import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 import java.util.*;
 import java.util.logging.Level;
 
@@ -47,6 +54,8 @@ public class TomVerifier extends TomGenericPlugin {
   
   public static final String DECLARED_OPTIONS = "<options><boolean name='verify' altName='' description='Verify correctness of match compilation' value='false'/></options>";
 
+  public static final String ZENON_SUFFIX = ".tom.zv";
+  
   protected Verifier verif;
   protected ZenonOutput zenon;
 
@@ -63,8 +72,8 @@ public class TomVerifier extends TomGenericPlugin {
     verif.setSymbolTable(this.symbolTable());
     // delay the zenonoutput creation, as it needs the verifiers
     // symboltable to be properly set
-    zenon = new ZenonOutput(verif);
     if(isActivated()) {
+      zenon = new ZenonOutput(verif);
       long startChrono = System.currentTimeMillis();
       try {
 
@@ -93,7 +102,19 @@ public class TomVerifier extends TomGenericPlugin {
 
         ZenonBackend back = new ZenonBackend(verif);
         //System.out.println(back.genZSpecCollection(zen));
-        System.out.println(back.genZSpecCollection(zspecSet));
+        String output = back.genZSpecCollection(zspecSet);
+        
+        try {
+          Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(
+                    getStreamManager().getOutputFileNameWithoutSuffix() + ZENON_SUFFIX
+                    ))));
+          writer.write(output);
+          writer.close();
+        } catch (IOException e) {
+          getLogger().log( Level.SEVERE, "BackendIOException",
+              new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
+          return;
+        }
 
         // The stats output stuff
         // StatOutput stats;

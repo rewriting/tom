@@ -70,9 +70,9 @@
   <property name="src.vasconfigfile"    location="${src.lib}/Vas.xml"/>    
 
   <!-- Aircube bundle -->
-  <property name="bundle.temp.dir" value="bundle"/>
-  <property name="aircubebundlesrc" value="aircube-bundle-src.jar"/>
-  <property name="aircubebundlestable" value="aircube-bundle-stable.jar"/>
+  <property name="bundle.temp.dir"      value="bundle"/>
+  <property name="aircubebundlesrc"     value="aircube-bundle-src.jar"/>
+  <property name="aircubebundlestable"  value="aircube-bundle-stable.jar"/>
 
   <!-- for bootstrap -->
   <property name="bootstrap.dir" location="${src.src}/bootstrap" />
