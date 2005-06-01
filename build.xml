@@ -612,8 +612,8 @@
       </fileset>
     </copy>
     <copy todir="${src.dist.share}/contrib">
-      <fileset dir="${utils}">
-        <include name="*.vim"/>
+      <fileset dir="${utils}/contrib">
+        <include name="*"/>
       </fileset>
     </copy>
 
