@@ -37,17 +37,17 @@
   <property name="stable.lib"     location="${stable.src}/lib"/>
 
   <!--some used directory location  for devel -->
-  <property name="src.src"      location="src"/>
-  <property name="src.adt"      location="${src.src}/jtom/adt"/>
-  <property name="src.mapping"  location="${src.src}/tom/library/mapping"/>
-  <property name="src.gen"      location="${src.src}/gen"/>   
-  <property name="src.build"    location="${src.src}/build"/>   
-  <property name="src.dist"     location="${src.src}/dist"/>
-  <property name="src.doc"      location="${src.src}/doc"/>
-  <property name="src.lib"      location="${src.src}/lib"/>
+  <property name="src.src"        location="src"/>
+  <property name="src.adt"        location="${src.src}/jtom/adt"/>
+  <property name="src.mapping"    location="${src.src}/tom/library/mapping"/>
+  <property name="src.gen"        location="${src.src}/gen"/>   
+  <property name="src.build"      location="${src.src}/build"/>   
+  <property name="src.dist"       location="${src.src}/dist"/>
+  <property name="src.doc"        location="${src.src}/doc"/>
+  <property name="src.lib"        location="${src.src}/lib"/>
   
   <!-- for distribution: top, stable and src -->
-  <property name="dist"         location="dist"/>
+  <property name="dist"           location="dist"/>
 
   <property name="stable.dist.bin"   location="${stable.dist}/bin"/>
   <property name="stable.dist.lib"   location="${stable.dist}/lib"/>
@@ -75,7 +75,7 @@
   <property name="aircubebundlestable"  value="aircube-bundle-stable.jar"/>
 
   <!-- for bootstrap -->
-  <property name="bootstrap.dir" location="${src.src}/bootstrap" />
+  <property name="bootstrap.dir"        location="${src.src}/bootstrap" />
 
   <!-- Properties for Javac compilation
        <property name="javacFailOnError" value="false"/>
@@ -185,17 +185,17 @@
   </target>
 
   <!-- 
-  make the tomcomp task call tom or tomsrc depending on withsource
+  make the tomcompile task call tom or tomsrc depending on withsource
   property
   -->
   <target name="-withstable" unless="withsource">
-    <presetdef name="tomcomp">
+    <presetdef name="tomcompile">
       <tom config="${stable.configfile}"/>
     </presetdef>
   </target> 
   
   <target name="-withsrc" if="withsource">
-    <presetdef name="tomcomp">
+    <presetdef name="tomcompile">
       <tomsrc config="${src.configfile}"/>
     </presetdef>
   </target> 
@@ -205,22 +205,22 @@
           depends="-withstable,-withsrc">
     
     <!--  compile in static mode -->
-    <tomcomp srcdir="${src.src}" 
+    <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
          options="--static -I ${src.mapping}">
       <include name="**/OptionParser.t"/>
-    </tomcomp>
+    </tomcompile>
     <!--  compile in protected mode -->
-    <tomcomp srcdir="${src.src}" 
+    <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
          options="--protected -I ${src.mapping}">
       <include name="**/TomBase.t"/>
       <include name="**/verifier/*.t"/>
       <exclude name="**/TomVerifier.t"/>
-    </tomcomp>
+    </tomcompile>
 
     <!--  compile in standard mode -->
-    <tomcomp srcdir="${src.src}" 
+    <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
          options="-I ${src.mapping} --optimize">
       <exclude name="**/TomBase.t"/>
@@ -230,32 +230,32 @@
       <include name="jtom/*.t"/> 
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
-    </tomcomp>
+    </tomcompile>
     <!--  compile without declaration -->
-    <tomcomp srcdir="${src.src}" 
+    <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
          options="-I ${src.mapping} --noDeclaration --optimize">
       <exclude name="jtom/*.t"/>
       <exclude name="jtom/parser/*.g.t"/>
 
       <include name="jtom/**/*.t"/> 
-    </tomcomp>
+    </tomcompile>
     <!-- Specific stuff for parser generation -->
-    <tomcomp srcdir="${src.src}"
+    <tomcompile srcdir="${src.src}"
          outputfile="${gen.destination}/jtom/parser/TomLanguage.g"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/TomLanguage.g.t"/>  
-    </tomcomp>
-    <tomcomp srcdir="${src.src}"
+    </tomcompile>
+    <tomcompile srcdir="${src.src}"
          outputfile="${gen.destination}/jtom/parser/HostLanguage.g"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/HostLanguage.g.t"/>  
-    </tomcomp>
-    <tomcomp srcdir="${src.src}"
+    </tomcompile>
+    <tomcompile srcdir="${src.src}"
          outputfile="${gen.destination}/jtom/parser/BackQuoteLanguage.g"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/BackQuoteLanguage.g.t"/>  
-    </tomcomp>
+    </tomcompile>
 
     <!--  rename *.g.java file
     <move todir="${gen.destination}/jtom/parser" includeemptydirs="false">
@@ -395,7 +395,7 @@
       <include name="jtom/**/*.java"/>
     </javac>
   </target>
-  
+
   <target name="build.stable" depends="stable"/>
   <target name="stable" description="compile the TOM stable sources"
           depends="prepare.stable">
@@ -417,6 +417,13 @@
       <classpath refid="stable.classpath"/>
     </javac>
   </target>  
+
+  <target name="dist.examples">
+    <ant dir="${examples}" target="dist.examples">
+      <property name="version" value="${stable.version}"/>
+    </ant>
+
+  </target>
 
   <!-- Prepare common part of distributions -->
   <target name="dist.common">
@@ -638,7 +645,7 @@
           description="Prepare stable and devel distributions" 
           depends="dist.all"/>
   <target name="dist.all" 
-          depends="clean.dist, dist.stable, dist.src"/>
+          depends="clean.dist, dist.stable, dist.src, dist.examples"/>
 
   <target name="clean.stable" description="Purges the generated stable files">
     <delete dir="${stable.build}"/>
@@ -1031,7 +1038,7 @@
     </javac>
   </target>
 
-  <target name="bootinstall" 
+  <target name="bootinstall"
           description="Install src tree into stable tree"
           depends="bootstrap"
           if="bootstrap.ok">

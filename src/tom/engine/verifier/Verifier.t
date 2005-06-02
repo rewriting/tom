@@ -645,7 +645,7 @@ public class Verifier extends TomBase {
     %match(Deriv post) {
       ebs(env(e,sequence(semicolon(h,t*))),env(subs(undefsubs()),ip)) -> {
         if(instructionContains(`h,ip)) {
-          // continue the derivation
+          // ends the derivation
           Deriv up = `ebs(env(e,h),env(subs(undefsubs()),ip));
           Collection pre_list = applySemanticsRules(up);
 

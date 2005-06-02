@@ -7,8 +7,7 @@
   <!-- set local properties for this build -->
   <property file="../local.properties"/>
 
-  <!-- current version of TOM -->
-  <property name="version"        value="2.1"/>
+  <!-- The current version of TOM, should be defined by -Dversion -->
 
   <property name="nowarnings"     value="false"/>
   <property name="optimize"       value="off"/>
@@ -18,7 +17,7 @@
   <property name="stamp"          value="off"/>
   <property name="mutraveler"     value="jjtraveler"/>
 
-  <property environment="env" />
+  <property environment="env"/>
   <property name="tom.home"       value="${env.TOM_HOME}"/>
   
   <!-- some used directory location -->
@@ -652,6 +651,15 @@
   <target name="dist.examples" 
           description="Prepare a distribution of examples" 
           depends="prepare.examples">
+    <fail unless="version">
+      ****************************************************
+      ****************************************************
+      You have to define the "version" property in order 
+      to builld the examples distribution
+      ****************************************************
+      ****************************************************
+    </fail>
+
     <tar tarfile="${examples.dist}/jtom-${version}-examples.tar.gz" 
          compression="gzip">
       <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
