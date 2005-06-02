@@ -12,6 +12,7 @@
   <property name="nowarnings"     value="false"/>
   <property name="optimize"       value="off"/>
   <property name="optimize2"      value="off"/>
+  <property name="verbose"        value="off"/>
   <property name="pretty"         value="off"/>
   <property name="visitable"      value="on"/>
   <property name="stamp"          value="off"/>
@@ -116,6 +117,7 @@
              nowarn="${nowarnings}"
              optimize="${optimize}"
              optimize2="${optimize2}"
+             verbose="${verbose}"
              pretty="${pretty}"
              options="-I ${tom.home}/share/jtom">
           <include name="@{example}/**/*.t"/>

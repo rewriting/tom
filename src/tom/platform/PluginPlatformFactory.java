@@ -72,10 +72,10 @@ public class PluginPlatformFactory {
   }
 
   /**
-   * Based on an array of string, the create method return a PLuginPlatform or null if
-   * something wrong occurs.
-   * The first argument shall contain a sequence of string -X and configFileName to be 
-   * able to create the PluginPlatform.
+   * Based on an array of string, the create method return a
+   * PluginPlatform or null if something wrong occurs.  The first
+   * argument shall contain a sequence of string -X and configFileName
+   * to be able to create the PluginPlatform.
    */
   public PluginPlatform create(String[] commandLine, String logRadical) {
     String confFileName = extractConfigFileName(commandLine);

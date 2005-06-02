@@ -26,11 +26,11 @@
 package jtom;
 
 
+import aterm.pure.PureFactory;
+import aterm.pure.SingletonFactory;
 import jtom.adt.tomsignature.TomSignatureFactory;
 import jtom.tools.ASTFactory;
 import tom.platform.adt.platformoption.PlatformOptionFactory;
-import aterm.pure.PureFactory;
-import aterm.pure.SingletonFactory;
 
 /**
  * The TomEnvironment class is a singleton for accessing all used factory
