@@ -52,7 +52,11 @@ public class TomVerifier extends TomGenericPlugin {
   
   %include{ adt/tomsignature/TomSignature.tom }
   
-  public static final String DECLARED_OPTIONS = "<options><boolean name='verify' altName='' description='Verify correctness of match compilation' value='false'/></options>";
+  public static final String DECLARED_OPTIONS = 
+    "<options>" +
+    "<boolean name='verify' altName='' description='Verify correctness of match compilation' value='false'/>" +
+    "<boolean name='noReduce' altName='' description='Do not simplify extracted constraints (depends on --verify)' value='false'/>" +
+    "</options>";
 
   public static final String ZENON_SUFFIX = ".tom.zv";
   
@@ -87,7 +91,9 @@ public class TomVerifier extends TomGenericPlugin {
 
         // reduce constraints
         verif.mappingReduce(rawConstraints);
-        verif.booleanReduce(rawConstraints);
+        if (!getOptionBooleanValue("noReduce")) {
+          verif.booleanReduce(rawConstraints);
+        }
 
         Collection zspecSet = zenon.zspecSetFromConstraintMap(rawConstraints);
 
