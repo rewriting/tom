@@ -11,6 +11,8 @@ _arguments -C -s \
     '-v' \
     '--intermediate[Generate intermediate files]' \
     '-i' \
+    '--destdir[Set output directory]:include path:_dirs -/' \
+    '-d:include path:_dirs -/' \
     '--output[Set output file name]:include path:_files -/' \
     '-o:include path:_files -/' \
     '--noDeclaration[Do not generate code for declarations]' \

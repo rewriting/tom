@@ -52,16 +52,12 @@ public class Tom {
   /** Log radical string*/
   public final static String LOG_RADICAL = "jtom";
   
-  /** Tom message ressource file name string*/
-  private final static String MESSAGE_RESOURCE = "jtom.TomMessageResources";
-  
   /** "java.util.logging.config.file" */
   private final static String LOGGING_PROPERTY_FILE =
     "java.util.logging.config.file";
 
   /** The root logger */
-  private static Logger logger = Logger.getLogger(Tom.LOG_RADICAL,
-                                                  Tom.MESSAGE_RESOURCE);
+  private static Logger logger = Logger.getLogger(Tom.LOG_RADICAL);
   
   /** the console handler that level can be changed dynamically */
   private static Handler consoleHandler = null;
@@ -74,8 +70,9 @@ public class Tom {
     try {
       initializeLogging();
     } catch(Exception e) {
-      System.err.println(TomMessage.getMessage("LoggingInitializationFailure",
-                                               new Object[]{e.getMessage()}));
+      System.err.println(
+        TomMessage.loggingInitializationFailure.getMessage(new Object[]{e.getMessage()})
+        );
       return 1;
     }
     PluginPlatform platform =

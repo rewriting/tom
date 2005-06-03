@@ -179,26 +179,22 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
-    if(option != null) {
-       { tom.platform.adt.platformoption.types.PlatformOption tom_match1_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_BooleanValue(tom_match1_1_value) ||  false ) { { tom.platform.adt.platformoption.types.PlatformBoolean tom_match1_1_value_booleanValue=tom_get_slot_BooleanValue_booleanValue(tom_match1_1_value); if(tom_is_fun_sym_True(tom_match1_1_value_booleanValue) ||  false ) {
+     { tom.platform.adt.platformoption.types.PlatformOption tom_match1_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_BooleanValue(tom_match1_1_value) ||  false ) { { tom.platform.adt.platformoption.types.PlatformBoolean tom_match1_1_value_booleanValue=tom_get_slot_BooleanValue_booleanValue(tom_match1_1_value); if(tom_is_fun_sym_True(tom_match1_1_value_booleanValue) ||  false ) {
  
-          return Boolean.valueOf(true); 
-         }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_BooleanValue(tom_match1_1_value) ||  false ) { { tom.platform.adt.platformoption.types.PlatformBoolean tom_match1_1_value_booleanValue=tom_get_slot_BooleanValue_booleanValue(tom_match1_1_value); if(tom_is_fun_sym_False(tom_match1_1_value_booleanValue) ||  false ) {
+        return Boolean.valueOf(true); 
+       }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_BooleanValue(tom_match1_1_value) ||  false ) { { tom.platform.adt.platformoption.types.PlatformBoolean tom_match1_1_value_booleanValue=tom_get_slot_BooleanValue_booleanValue(tom_match1_1_value); if(tom_is_fun_sym_False(tom_match1_1_value_booleanValue) ||  false ) {
  
-          return Boolean.valueOf(false); 
-         }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_IntegerValue(tom_match1_1_value) ||  false ) { { int  tom_match1_1_value_integerValue=tom_get_slot_IntegerValue_integerValue(tom_match1_1_value);
+        return Boolean.valueOf(false); 
+       }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_IntegerValue(tom_match1_1_value) ||  false ) { { int  tom_match1_1_value_integerValue=tom_get_slot_IntegerValue_integerValue(tom_match1_1_value);
  
-          return new Integer(tom_match1_1_value_integerValue); 
-        } }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_StringValue(tom_match1_1_value) ||  false ) { { String  tom_match1_1_value_stringValue=tom_get_slot_StringValue_stringValue(tom_match1_1_value);
+        return new Integer(tom_match1_1_value_integerValue); 
+      } }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_StringValue(tom_match1_1_value) ||  false ) { { String  tom_match1_1_value_stringValue=tom_get_slot_StringValue_stringValue(tom_match1_1_value);
  
-          return tom_match1_1_value_stringValue; 
-        } }} }}
+        return tom_match1_1_value_stringValue; 
+      } }} }}
 
-    } else {
-      getLogger().log(Level.SEVERE,"OptionNotFound",name);
-      throw new RuntimeException();
-    }
-    return null;
+    getLogger().log(Level.SEVERE,"TomOptionManager: getOptionFromName did not return a PluginOption");
+    throw new RuntimeException();
   }
 
   /**
@@ -272,7 +268,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     while(owners.hasNext()) {
       OptionOwner plugin = (OptionOwner)owners.next();
       if(!checkOptionDependency(plugin.getRequiredOptionList())) {
-        getLogger().log(Level.SEVERE, "PrerequisitesIssue", plugin.getClass().getName());
+        getLogger().log(Level.SEVERE, TomMessage.prerequisitesIssue.getMessage(), 
+                        plugin.getClass().getName());
         return 1;
       }
     }
@@ -289,7 +286,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private PlatformOption getOptionFromName(String name) {
     PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
-      getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
+      getLogger().log(Level.SEVERE,TomMessage.optionNotFound.getMessage(),getCanonicalName(name));
+      throw new RuntimeException();
     }
     return option;
   }
@@ -301,7 +299,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private OptionOwner getOptionOwnerFromName(String name) {
     OptionOwner plugin = (OptionOwner)mapNameToOwner.get(getCanonicalName(name));
     if(plugin == null) {
-      getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
+      getLogger().log(Level.SEVERE,TomMessage.optionNotFound.getMessage(),getCanonicalName(name));
     }
     return plugin;
   }
@@ -315,7 +313,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     if(option != null) {
       PlatformOption newOption = option.setValue(value);
       Object replaced = setOptionFromName(name, newOption);
-      getLogger().log(Level.FINER,"SetValue",new Object[]{name,value,replaced});
+      getLogger().log(Level.FINER,TomMessage.setValue.getMessage(),
+                      new Object[]{name,value,replaced});
     } else {
       throw new RuntimeException();
     }
@@ -378,13 +377,14 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         if(option !=null) {
           PlatformValue localValue = option.getValue();
           if(tom_value!= localValue) {
-            getLogger().log(Level.SEVERE, "IncorrectOptionValue", new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
+            getLogger().log(Level.SEVERE, TomMessage.incorrectOptionValue.getMessage(), new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
             return false;
           } else {
             return checkOptionDependency(tom_match4_1_list1);
           }
         } else {
-          getLogger().log(Level.SEVERE, "IncorrectOptionValue", new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
+          getLogger().log(Level.SEVERE, TomMessage.incorrectOptionValue.getMessage(), 
+                          new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
           return false;
         }
       }}}} }} }} }}
@@ -437,7 +437,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if(argument.equals("output") || argument.equals("o")) {
             if(outputEncountered) {
-              getLogger().log(Level.SEVERE, "OutputTwice");
+              getLogger().log(Level.SEVERE, TomMessage.outputTwice.getMessage());
               return null;
             } else {
               outputEncountered = true;
@@ -445,7 +445,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if(argument.equals("destdir") || argument.equals("d")) {
             if(destdirEncountered) {
-              getLogger().log(Level.SEVERE, "DestdirTwice");
+              getLogger().log(Level.SEVERE, TomMessage.destdirTwice.getMessage());
               return null;
             } else {
               destdirEncountered = true;
@@ -456,7 +456,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           OptionOwner owner = getOptionOwnerFromName(argument);
 
           if(option == null || owner == null) {// option not found
-            getLogger().log(Level.SEVERE, "InvalidOption", argument);
+            getLogger().log(Level.SEVERE, TomMessage.invalidOption.getMessage(), argument);
             displayHelp();
             return null;
           } else {
@@ -487,18 +487,18 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         } 
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      getLogger().log(Level.SEVERE, "IncompleteOption", argument);
+      getLogger().log(Level.SEVERE, TomMessage.incompleteOption.getMessage(), argument);
       return null;
     }
     
     setOptionValue("import",imports.toString());
     
     if(fileList.isEmpty()) {
-      getLogger().log(Level.SEVERE, "NoFileToCompile");
+      getLogger().log(Level.SEVERE, TomMessage.noFileToCompile.getMessage());
       displayHelp();
       return null;
     } else if(fileList.size() > 1 && outputEncountered) {
-      getLogger().log(Level.SEVERE, "OutputWithMultipleCompilation");
+      getLogger().log(Level.SEVERE, TomMessage.outputWithMultipleCompilation.getMessage());
       displayHelp();
       return null;
     }

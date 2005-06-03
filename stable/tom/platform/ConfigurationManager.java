@@ -100,7 +100,7 @@ public class ConfigurationManager {
     XmlTools xtools = new XmlTools();
     TNode configurationNode = (TNode)xtools.convertXMLToATerm(xmlConfigurationFileName);
     if(configurationNode == null) {
-      getLogger().log(Level.SEVERE, "ConfigFileNotXML", xmlConfigurationFileName);
+      getLogger().log(Level.SEVERE, PluginPlatformMessage.configFileNotXML.getMessage(), xmlConfigurationFileName);
       return 1;
     }
     if(createPlugins(configurationNode.getDocElem())==1) {
@@ -136,7 +136,7 @@ public class ConfigurationManager {
     List pluginsClassList = extractClassPaths(configurationNode);
     // if empty list this means there is a problem somewhere
     if(pluginsClassList.isEmpty()) {
-      getLogger().log(Level.SEVERE, "NoPluginFound", xmlConfigurationFileName);
+      getLogger().log(Level.SEVERE, PluginPlatformMessage.noPluginFound.getMessage(), xmlConfigurationFileName);
       pluginsList = null;
       return 1;
     }
@@ -149,17 +149,17 @@ public class ConfigurationManager {
         if(pluginInstance instanceof Plugin) {
           pluginsList.add(pluginInstance);
         } else {
-          getLogger().log(Level.SEVERE, "ClassNotAPlugin", pluginClass);
+          getLogger().log(Level.SEVERE, PluginPlatformMessage.classNotAPlugin.getMessage(), pluginClass);
           pluginsList = null;
           return 1;
         }
       } catch(ClassNotFoundException cnfe) {
-        getLogger().log(Level.WARNING, "ClassNotFound", pluginClass);
+        getLogger().log(Level.WARNING, PluginPlatformMessage.classNotFound.getMessage(), pluginClass);
         return 1;
       } catch(Exception e) {
         // adds the error message. this is too cryptic otherwise
         e.printStackTrace();
-        getLogger().log(Level.SEVERE, "InstantiationError", pluginClass);
+        getLogger().log(Level.SEVERE, PluginPlatformMessage.instantiationError.getMessage(), pluginClass);
         pluginsList = null;
         return 1;
       }
@@ -178,7 +178,7 @@ public class ConfigurationManager {
      { tom.library.adt.tnode.types.TNode tom_match1_1=(( tom.library.adt.tnode.types.TNode)node); if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_ElementNode_name(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_attrList=tom_get_slot_ElementNode_attrList(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList=tom_get_slot_ElementNode_childList(tom_match1_1); if(tom_terms_equal_String("platform", tom_match1_1_name) ||  false ) { if(tom_is_fun_sym_concTNode(tom_match1_1_attrList) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match1_1_attrList_list1=tom_match1_1_attrList; if(tom_is_fun_sym_concTNode(tom_match1_1_childList) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_list1=tom_match1_1_childList; { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_begin1=tom_match1_1_childList_list1; { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_end1=tom_match1_1_childList_list1;{ while (!(tom_is_empty_concTNode_TNodeList(tom_match1_1_childList_end1))) {tom_match1_1_childList_list1=tom_match1_1_childList_end1;{ { tom.library.adt.tnode.types.TNode tom_match1_1_childList_2=tom_get_head_concTNode_TNodeList(tom_match1_1_childList_list1);tom_match1_1_childList_list1=tom_get_tail_concTNode_TNodeList(tom_match1_1_childList_list1); if(tom_is_fun_sym_ElementNode(tom_match1_1_childList_2) ||  false ) { { String  tom_match1_1_childList_2_name=tom_get_slot_ElementNode_name(tom_match1_1_childList_2); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_attrList=tom_get_slot_ElementNode_attrList(tom_match1_1_childList_2); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList=tom_get_slot_ElementNode_childList(tom_match1_1_childList_2); if(tom_terms_equal_String("plugins", tom_match1_1_childList_2_name) ||  false ) { if(tom_is_fun_sym_concTNode(tom_match1_1_childList_2_attrList) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_attrList_list1=tom_match1_1_childList_2_attrList; if(tom_is_fun_sym_concTNode(tom_match1_1_childList_2_childList) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList_list1=tom_match1_1_childList_2_childList; { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList_begin1=tom_match1_1_childList_2_childList_list1; { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList_end1=tom_match1_1_childList_2_childList_list1;{ while (!(tom_is_empty_concTNode_TNodeList(tom_match1_1_childList_2_childList_end1))) {tom_match1_1_childList_2_childList_list1=tom_match1_1_childList_2_childList_end1;{ { tom.library.adt.tnode.types.TNode tom_match1_1_childList_2_childList_2=tom_get_head_concTNode_TNodeList(tom_match1_1_childList_2_childList_list1);tom_match1_1_childList_2_childList_list1=tom_get_tail_concTNode_TNodeList(tom_match1_1_childList_2_childList_list1); if(tom_is_fun_sym_ElementNode(tom_match1_1_childList_2_childList_2) ||  false ) { { String  tom_match1_1_childList_2_childList_2_name=tom_get_slot_ElementNode_name(tom_match1_1_childList_2_childList_2); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList_2_attrList=tom_get_slot_ElementNode_attrList(tom_match1_1_childList_2_childList_2); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList_2_childList=tom_get_slot_ElementNode_childList(tom_match1_1_childList_2_childList_2); if(tom_terms_equal_String("plugin", tom_match1_1_childList_2_childList_2_name) ||  false ) { if(tom_is_fun_sym_concTNode(tom_match1_1_childList_2_childList_2_attrList) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList_2_attrList_list1=tom_match1_1_childList_2_childList_2_attrList; { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList_2_attrList_begin1=tom_match1_1_childList_2_childList_2_attrList_list1; { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList_2_attrList_end1=tom_match1_1_childList_2_childList_2_attrList_list1;{ while (!(tom_is_empty_concTNode_TNodeList(tom_match1_1_childList_2_childList_2_attrList_end1))) {tom_match1_1_childList_2_childList_2_attrList_list1=tom_match1_1_childList_2_childList_2_attrList_end1;{ { tom.library.adt.tnode.types.TNode tom_match1_1_childList_2_childList_2_attrList_2=tom_get_head_concTNode_TNodeList(tom_match1_1_childList_2_childList_2_attrList_list1);tom_match1_1_childList_2_childList_2_attrList_list1=tom_get_tail_concTNode_TNodeList(tom_match1_1_childList_2_childList_2_attrList_list1); if(tom_is_fun_sym_AttributeNode(tom_match1_1_childList_2_childList_2_attrList_2) ||  false ) { { String  tom_match1_1_childList_2_childList_2_attrList_2_name=tom_get_slot_AttributeNode_name(tom_match1_1_childList_2_childList_2_attrList_2); { String  tom_match1_1_childList_2_childList_2_attrList_2_value=tom_get_slot_AttributeNode_value(tom_match1_1_childList_2_childList_2_attrList_2); if(tom_terms_equal_String("class", tom_match1_1_childList_2_childList_2_attrList_2_name) ||  false ) { { String  tom_cp=tom_match1_1_childList_2_childList_2_attrList_2_value; if(tom_is_fun_sym_concTNode(tom_match1_1_childList_2_childList_2_childList) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList_2_childList_2_childList_list1=tom_match1_1_childList_2_childList_2_childList; if(tom_is_empty_concTNode_TNodeList(tom_match1_1_childList_2_childList_2_childList_list1)) {
 
          res.add(tom_cp);
-         getLogger().log(Level.FINER, "ClassPathRead", tom_cp);
+         getLogger().log(Level.FINER, PluginPlatformMessage.classPathRead.getMessage(), tom_cp);
         }} }} }}} }}tom_match1_1_childList_2_childList_2_attrList_end1=tom_get_tail_concTNode_TNodeList(tom_match1_1_childList_2_childList_2_attrList_end1);} }tom_match1_1_childList_2_childList_2_attrList_list1=tom_match1_1_childList_2_childList_2_attrList_begin1;}}}} } }}}} }}tom_match1_1_childList_2_childList_end1=tom_get_tail_concTNode_TNodeList(tom_match1_1_childList_2_childList_end1);} }tom_match1_1_childList_2_childList_list1=tom_match1_1_childList_2_childList_begin1;}}}} }} } }}}} }}tom_match1_1_childList_end1=tom_get_tail_concTNode_TNodeList(tom_match1_1_childList_end1);} }tom_match1_1_childList_list1=tom_match1_1_childList_begin1;}}}} }} } }}}} }}
 
     return res;
@@ -203,17 +203,17 @@ public class ConfigurationManager {
           if(omInstance instanceof OptionManager) {
             optionManager = (OptionManager)omInstance;
           } else {
-            getLogger().log(Level.SEVERE, "ClassNotOptionManager", tom_omclass);
+            getLogger().log(Level.SEVERE, PluginPlatformMessage.classNotOptionManager.getMessage(), tom_omclass);
             return 1;
           }
         } catch(ClassNotFoundException cnfe) {
-          getLogger().log(Level.SEVERE, "ClassNotFound", tom_omclass);
+          getLogger().log(Level.SEVERE, PluginPlatformMessage.classNotFound.getMessage(), tom_omclass);
           optionManager = null;
           return 1;
         } catch (Exception e) {
           e.printStackTrace();
           System.out.println(e.getMessage());
-          getLogger().log(Level.SEVERE, "InstantiationError", tom_omclass);
+          getLogger().log(Level.SEVERE, PluginPlatformMessage.instantiationError.getMessage(), tom_omclass);
           optionManager = null;
           return 1;
         }

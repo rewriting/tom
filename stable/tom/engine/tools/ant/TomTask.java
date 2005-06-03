@@ -601,8 +601,8 @@ public class TomTask extends MatchingTask {
         }
         // Not usefull since the TomStreamManager already add the parent
         // in importList: clean and reinit for each input file
-        //File file = new File(filename);
-        //cmd_line = cmd_line.trim() + " -I " + file.getParent();
+        // File file = new File(filename);
+        // cmd_line = cmd_line.trim() + " -I " + file.getParent();
         
         cmd_line = cmd_line.trim() + " " + filename;
       }

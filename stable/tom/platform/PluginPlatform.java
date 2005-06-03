@@ -96,14 +96,14 @@ public class PluginPlatform {
       Object initArgument = input;
       boolean success = true;
       statusHandler.clear();
-      getLogger().log(Level.FINER, "NowCompiling", input);
+      getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
       // runs the plugins
       Iterator it = pluginsList.iterator();
       while(it.hasNext()) {
         Plugin plugin = (Plugin)it.next();
         plugin.setArgs(pluginArg);
         if(statusHandler.hasError()) {
-          getLogger().log(Level.SEVERE, "SettingArgError");
+          getLogger().log(Level.SEVERE, PluginPlatformMessage.settingArgError.getMessage());
           success = false;
           globalSuccess = false;
           globalNbOfErrors += statusHandler.nbOfErrors();
@@ -112,7 +112,7 @@ public class PluginPlatform {
         }
         plugin.run();
         if(statusHandler.hasError()) {
-          getLogger().log(Level.SEVERE, "ProcessingError",
+          getLogger().log(Level.SEVERE, PluginPlatformMessage.processingError.getMessage(),
                           new Object[]{plugin.getClass().getName(), initArgument});
           success = false;
           globalSuccess = false;
@@ -132,11 +132,11 @@ public class PluginPlatform {
 
     if(!globalSuccess) {
       // this is the highest possible level > will be printed no matter what 
-      getLogger().log(Level.SEVERE, "RunErrorMessage",
+      getLogger().log(Level.SEVERE, PluginPlatformMessage.runErrorMessage.getMessage(),
                       new Integer(globalNbOfErrors));
       return 1;
     } else if(globalNbOfWarnings>0) {
-      getLogger().log(Level.INFO, "RunWarningMessage",
+      getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),
                       new Integer(globalNbOfWarnings));
       return 0;
     }

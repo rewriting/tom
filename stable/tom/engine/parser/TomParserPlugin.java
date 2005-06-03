@@ -123,7 +123,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       }
 
     } else {
-      getLogger().log(Level.SEVERE, "InvalidPluginArgument",
+      getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(),
                       new Object[]{"TomParserPlugin", "[TomStreamManager]",
                                    getArgumentArrayString(arg)});
     }
@@ -158,14 +158,14 @@ public class TomParserPlugin extends TomGenericPlugin {
       // parsing
       setWorkingTerm(parser.input());
       // verbose
-      getLogger().log(Level.INFO, "TomParsingPhase",
+      getLogger().log(Level.INFO, TomMessage.tomParsingPhase.getMessage(),
                       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
     } catch (TokenStreamException e) {
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
-                      TomMessage.getMessage("TokenStreamException",sw.toString()),
+                      TomMessage.tokenStreamException.getMessage(sw.toString()),
                       currentFileName, getLineFromTomParser()));
       return;
     } catch (RecognitionException e){
@@ -173,7 +173,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
-                      TomMessage.getMessage("RecognitionException", sw.toString()),
+                      TomMessage.recognitionException.getMessage(sw.toString()),
                       currentFileName, getLineFromTomParser()));
       return;
     } catch (TomException e) {
@@ -181,13 +181,13 @@ public class TomParserPlugin extends TomGenericPlugin {
           currentFileName, getLineFromTomParser()));
       return;
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, TomMessage.getMessage("FileNotFound",currentFileName)); 
+      getLogger().log(Level.SEVERE, TomMessage.fileNotFound.getMessage(currentFileName)); 
       return;
     } catch (Exception e) {
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
-      getLogger().log(Level.SEVERE, "ExceptionMessage", 
+      getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.toString(), 
                       new Object[]{getClass().getName(), currentFileName, sw.toString()});
       return;
     }

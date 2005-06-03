@@ -27,6 +27,7 @@ package jtom.starter;
 
 import java.util.logging.Level;
 
+import jtom.TomMessage;
 import jtom.TomStreamManager;
 import jtom.tools.TomGenericPlugin;
 
@@ -55,7 +56,7 @@ public class TomStarter extends TomGenericPlugin {
     if (arg[0] instanceof String) {
       fileName = (String)arg[0];  
     } else {
-      getLogger().log(Level.SEVERE, "InvalidPluginArgument",
+      getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(),
                       new Object[]{"VasStarter", "[String]",
                                    getArgumentArrayString(arg)});
     }

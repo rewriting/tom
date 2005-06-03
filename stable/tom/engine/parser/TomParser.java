@@ -400,7 +400,7 @@ public TomParser(ParserSharedInputState state) {
 					clearText();
 					listOrgTrackPattern.add(option);
 					
-					getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("DeprecatedDisjunction",
+					getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.deprecatedDisjunction.getMessage(
 					new Object[]{currentFile(), new Integer(getLine())}),
 					currentFile(), getLine()));
 					
@@ -1050,7 +1050,7 @@ public TomParser(ParserSharedInputState state) {
 					closingNameList = closingNameList.getTail();
 					}
 					// TODO find the orgTrack of the match
-					String msg = TomMessage.getMessage("MalformedXMLTerm",
+					String msg = TomMessage.malformedXMLTerm.getMessage(
 					new Object[]{currentFile(), new Integer(getLine()), 
 					"match", expected.substring(1), found.substring(1)} );
 					throw new TomException();
@@ -2373,8 +2373,8 @@ public TomParser(ParserSharedInputState state) {
 						stringSlotName = slotName2.getText(); 
 						astName = ast().makeName(stringSlotName);
 						if(slotNameList.indexOf(astName) != -1) {
-						String detailedMsg = TomMessage.getMessage("RepeatedSlotName", new Object[]{stringSlotName});
-						String msg = TomMessage.getMessage("MainErrorMessage", 
+						String detailedMsg = TomMessage.repeatedSlotName.getMessage(new Object[]{stringSlotName});
+						String msg = TomMessage.mainErrorMessage.getMessage(
 						new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg});
 						throw new TomException(msg);
 						}
@@ -2434,22 +2434,22 @@ public TomParser(ParserSharedInputState state) {
 					//System.out.println("slotNameList = " + slotNameList);
 					//System.out.println("sName      = " + sName);
 					
-					String msg = "";
+					TomMessage msg = null;
 					int index = slotNameList.indexOf(sName);
 					if(index == -1) {
-					msg = "ErrorIncompatibleSlotDecl";
+					msg = TomMessage.errorIncompatibleSlotDecl;
 					} else {
 					PairNameDecl pair = (PairNameDecl) pairNameDeclList.get(index);
 					{ jtom.adt.tomsignature.types.PairNameDecl tom_match1_1=(( jtom.adt.tomsignature.types.PairNameDecl)pair); if(tom_is_fun_sym_PairNameDecl(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.Declaration tom_match1_1_slotDecl=tom_get_slot_PairNameDecl_slotDecl(tom_match1_1); { jtom.adt.tomsignature.types.Declaration decl=tom_match1_1_slotDecl;
 					
 					if(decl!=tom_make_EmptyDeclaration()) {
-					msg = "ErrorTwoSameSlotDecl";
+					msg = TomMessage.errorTwoSameSlotDecl;
 					}
 					}} }}
 					
 					}
-					if(msg.length() > 0) {
-					getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage(msg,
+					if(msg != null) {
+					getLogger().log(new PlatformLogRecord(Level.SEVERE, msg.getMessage(
 					new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
 					"%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ),
 					currentFile(), getLine()));
