@@ -100,7 +100,7 @@ public class ConfigurationManager {
     XmlTools xtools = new XmlTools();
     TNode configurationNode = (TNode)xtools.convertXMLToATerm(xmlConfigurationFileName);
     if(configurationNode == null) {
-      getLogger().log(Level.SEVERE, "ConfigFileNotXML", xmlConfigurationFileName);
+      getLogger().log(Level.SEVERE, PluginPlatformMessage.configFileNotXML.getMessage(), xmlConfigurationFileName);
       return 1;
     }
     if(createPlugins(configurationNode.getDocElem())==1) {
@@ -136,7 +136,7 @@ public class ConfigurationManager {
     List pluginsClassList = extractClassPaths(configurationNode);
     // if empty list this means there is a problem somewhere
     if(pluginsClassList.isEmpty()) {
-      getLogger().log(Level.SEVERE, "NoPluginFound", xmlConfigurationFileName);
+      getLogger().log(Level.SEVERE, PluginPlatformMessage.noPluginFound.getMessage(), xmlConfigurationFileName);
       pluginsList = null;
       return 1;
     }
@@ -149,17 +149,17 @@ public class ConfigurationManager {
         if(pluginInstance instanceof Plugin) {
           pluginsList.add(pluginInstance);
         } else {
-          getLogger().log(Level.SEVERE, "ClassNotAPlugin", pluginClass);
+          getLogger().log(Level.SEVERE, PluginPlatformMessage.classNotAPlugin.getMessage(), pluginClass);
           pluginsList = null;
           return 1;
         }
       } catch(ClassNotFoundException cnfe) {
-        getLogger().log(Level.WARNING, "ClassNotFound", pluginClass);
+        getLogger().log(Level.WARNING, PluginPlatformMessage.classNotFound.getMessage(), pluginClass);
         return 1;
       } catch(Exception e) {
         // adds the error message. this is too cryptic otherwise
         e.printStackTrace();
-        getLogger().log(Level.SEVERE, "InstantiationError", pluginClass);
+        getLogger().log(Level.SEVERE, PluginPlatformMessage.instantiationError.getMessage(), pluginClass);
         pluginsList = null;
         return 1;
       }
@@ -178,7 +178,7 @@ public class ConfigurationManager {
     %match(TNode node) {
       <platform><plugins><plugin [class=cp]/></plugins></platform> -> {
          res.add(`cp);
-         getLogger().log(Level.FINER, "ClassPathRead", `cp);
+         getLogger().log(Level.FINER, PluginPlatformMessage.classPathRead.getMessage(), `cp);
        }
     }
     return res;
@@ -203,17 +203,17 @@ public class ConfigurationManager {
           if(omInstance instanceof OptionManager) {
             optionManager = (OptionManager)omInstance;
           } else {
-            getLogger().log(Level.SEVERE, "ClassNotOptionManager", `omclass);
+            getLogger().log(Level.SEVERE, PluginPlatformMessage.classNotOptionManager.getMessage(), `omclass);
             return 1;
           }
         } catch(ClassNotFoundException cnfe) {
-          getLogger().log(Level.SEVERE, "ClassNotFound", `omclass);
+          getLogger().log(Level.SEVERE, PluginPlatformMessage.classNotFound.getMessage(), `omclass);
           optionManager = null;
           return 1;
         } catch (Exception e) {
           e.printStackTrace();
           System.out.println(e.getMessage());
-          getLogger().log(Level.SEVERE, "InstantiationError", `omclass);
+          getLogger().log(Level.SEVERE, PluginPlatformMessage.instantiationError.getMessage(), `omclass);
           optionManager = null;
           return 1;
         }

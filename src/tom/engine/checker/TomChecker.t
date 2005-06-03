@@ -162,7 +162,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected void ensureOriginTrackingLine(int line) {
     if(line < 0) {
       getLogger().log(Level.SEVERE,
-                      "FindOTL",
+                      TomMessage.findOTL.getMessage(),
                       getStreamManager().getInputFile().getName());
       //System.out.println("findOriginTrackingLine: not found ");
     }
@@ -180,7 +180,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected void messageError(int errorLine, String structInfo, String msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage("DetailedMessage",
+    getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.detailedMessage.getMessage(
                     new Object[]{structInfo, new Integer(structDeclLine),
                                  MessageFormat.format(msg,msgArgs)}),
                                  fileName, errorLine));
@@ -194,10 +194,11 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected void messageWarning(int errorLine, String structInfo, String msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("DetailedMessage",
-                    new Object[]{structInfo, new Integer(structDeclLine),
-                                 MessageFormat.format(msg,msgArgs)}),
-                                 fileName, errorLine));
+    getLogger().log(new PlatformLogRecord(Level.WARNING, 
+                                          TomMessage.detailedMessage.getMessage(
+                                          new Object[]{structInfo, new Integer(structDeclLine),
+                                                       MessageFormat.format(msg,msgArgs)}),
+                                          fileName, errorLine));
   }
   
 }  //Class TomChecker

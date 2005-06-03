@@ -30,6 +30,7 @@ import java.util.logging.Level;
 
 import jtom.adt.tomsignature.types.*;
 import jtom.exception.TomRuntimeException;
+import jtom.TomMessage;
 import jtom.tools.TomFactory;
 import jtom.tools.TomGenericPlugin;
 import jtom.tools.Tools;
@@ -76,11 +77,11 @@ public class TomCompiler extends TomGenericPlugin {
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       // verbose
-      getLogger().log( Level.INFO, "TomCompilationPhase",
+      getLogger().log( Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
                        new Integer((int)(System.currentTimeMillis()-startChrono)) );      
       setWorkingTerm(compiledTerm);
     } catch (Exception e) {
-      getLogger().log( Level.SEVERE, "ExceptionMessage",
+      getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                        new Object[]{getStreamManager().getInputFile().getName(), "TomCompiler", e.getMessage()} );
       e.printStackTrace();
     }

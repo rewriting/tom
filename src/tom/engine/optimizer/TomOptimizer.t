@@ -37,6 +37,7 @@ import java.util.logging.Level;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.*;
 
+import jtom.TomMessage;
 import jtom.tools.TomGenericPlugin;
 import jtom.tools.PILFactory;
 import jtom.tools.Tools;
@@ -133,10 +134,10 @@ public class TomOptimizer extends TomGenericPlugin {
         setWorkingTerm(renamedTerm);
 
         // verbose
-        getLogger().log(Level.INFO, "TomOptimizationPhase",
+        getLogger().log(Level.INFO, TomMessage.tomOptimizationPhase.getMessage(),
                         new Integer((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
-        getLogger().log( Level.SEVERE, "ExceptionMessage",
+        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                          new Object[]{"TomOptimizer", getStreamManager().getInputFile().getName(), e.getMessage()} );
         
         e.printStackTrace();
@@ -422,11 +423,11 @@ public class TomOptimizer extends TomGenericPlugin {
               Option orgTrack = findOriginTracking(`var.getOption());
                 
               getLogger().log( Level.WARNING,
-                               "UnusedVariable",
+                               TomMessage.unusedVariable.getMessage(),
                                new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
                                             `extractRealName(tomName)} );
               getLogger().log( Level.INFO,
-                               "Remove",
+                               TomMessage.remove.getMessage(),
                                new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
               return `body;
@@ -435,20 +436,20 @@ public class TomOptimizer extends TomGenericPlugin {
               if(expConstantInBody(`exp,`body)) {
 
                 getLogger().log( Level.INFO,
-                                 "Inline",
+                                 TomMessage.inline.getMessage(),
                                  new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
                 return inlineInstruction(`var,`exp,`body);
               } else {
                 getLogger().log( Level.INFO,
-                                 "NoInline",
+                                 TomMessage.noInline.getMessage(),
                                  new Object[]{ new Integer(mult), `extractRealName(tomName) });
               }
 
             } else {
               /* do nothing: traversal */
               getLogger().log( Level.INFO,
-                               "DoNothing",
+                               TomMessage.doNothing.getMessage(),
                                new Object[]{ new Integer(mult), `extractRealName(tomName) });
             }
           }
@@ -466,29 +467,29 @@ public class TomOptimizer extends TomGenericPlugin {
               Option orgTrack = findOriginTracking(`var.getOption());
 
               getLogger().log( Level.WARNING,
-                               "UnusedVariable",
+                               TomMessage.unusedVariable.getMessage(),
                                new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
                                             `extractRealName(tomName)} );
               getLogger().log( Level.INFO,
-                               "Remove",
+                               TomMessage.remove.getMessage(),
                                new Object[]{ new Integer(mult), `extractRealName(tomName) });
                 
               return `body; 
             } else if(mult == 1) {
               if(expConstantInBody(`exp,`body)) {
                 getLogger().log( Level.INFO,
-                                 "Inline",
+                                 TomMessage.inline.getMessage(),
                                  new Object[]{ new Integer(mult), `extractRealName(tomName) });
                 return inlineInstruction(`var,`exp,`body);
               } else {
                 getLogger().log( Level.INFO,
-                                 "NoInline",
+                                 TomMessage.noInline.getMessage(),
                                  new Object[]{ new Integer(mult), `extractRealName(tomName) });
               }
             } else {
               /* do nothing: traversal */
               getLogger().log( Level.INFO,
-                               "DoNothing",
+                               TomMessage.doNothing.getMessage(),
                                new Object[]{ new Integer(mult), `extractRealName(tomName) });
             }
           }

@@ -73,16 +73,16 @@ public class TomTypeChecker extends TomChecker {
         // perform analyse
         checkTypeInference( (TomTerm)getWorkingTerm() );
         // verbose
-        getLogger().log( Level.INFO, "TomTypeCheckingPhase",
+        getLogger().log( Level.INFO, TomMessage.tomTypeCheckingPhase.getMessage(),
                          new Integer((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
-        getLogger().log( Level.SEVERE, "ExceptionMessage",
+        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                          new Object[]{getClass().getName(), getStreamManager().getInputFile().getName(),e.getMessage()} );
         e.printStackTrace();
       }
     } else {
       // type checker desactivated    
-      getLogger().log(Level.INFO, "TypeCheckerInactivated");
+      getLogger().log(Level.INFO, TomMessage.typeCheckerInactivated.getMessage());
     }
   }
   
@@ -135,7 +135,7 @@ public class TomTypeChecker extends TomChecker {
                 if(!isConstructor) {
                   if((symbolTable().getSymbolFromName(getName(`app)))==null) {
                     messageError(findOriginTrackingLine(`app.getOption()),
-                                 TomMessage.getMessage("UnknownVariableInWhen"),
+                                 TomMessage.unknownVariableInWhen.getMessage(),
                                  new Object[]{getName(`app)});
                   }
                   // else, it's actually app()
@@ -214,7 +214,7 @@ public class TomTypeChecker extends TomChecker {
               // (ii)
               ArrayList cVar = new ArrayList();
               collectVariable(cVar, `c);
-              if(!areAllExistingVariableTest(cVar, variableTable, "DeclaredVariableIssueInWhere")) {
+              if(!areAllExistingVariableTest(cVar, variableTable, TomMessage.declaredVariableIssueInWhere)) {
                 // there is a fresh variable
                 break;
               }
@@ -229,14 +229,14 @@ public class TomTypeChecker extends TomChecker {
                // (iv)
               ArrayList pVar = new ArrayList();
               collectVariable(pVar, `p);
-              if(!areAllExistingVariableTest(pVar, variableTable, "DeclaredVariableIssueInIf")) {
+              if(!areAllExistingVariableTest(pVar, variableTable, TomMessage.declaredVariableIssueInIf)) {
                 // there is a fresh variable
                 break;
               }
               // (iv)
               ArrayList cVar = new ArrayList();
               collectVariable(cVar, `c);
-              if(!areAllExistingVariableTest(cVar, variableTable, "DeclaredVariableIssueInIf")) {
+              if(!areAllExistingVariableTest(cVar, variableTable, TomMessage.declaredVariableIssueInIf)) {
                 // there is a fresh variable
                 break;
               }
@@ -254,7 +254,7 @@ public class TomTypeChecker extends TomChecker {
       // (iii)
       ArrayList variableRhs = new ArrayList();
       collectVariable(variableRhs, ruleRhs);
-      areAllExistingVariableTest(variableRhs, variableTable, "UnknownRuleRhsVariable");
+      areAllExistingVariableTest(variableRhs, variableTable, TomMessage.unknownRuleRhsVariable);
       
       // next rewrite rule
       list = list.getTail();
@@ -276,7 +276,7 @@ public class TomTypeChecker extends TomChecker {
         TomType type2 = variable.getAstType();
         if(!(type==type2)) {
           messageError(findOriginTrackingLine(variable.getOption()),
-                       TomMessage.getMessage("IncoherentVariable"),
+                       TomMessage.incoherentVariable.getMessage(),
                        new Object[]{name.getString(), type.getTomType().getString(), type2.getTomType().getString()});
         }
       } else {
@@ -305,7 +305,7 @@ public class TomTypeChecker extends TomChecker {
         TomType type = (TomType)variableTable.get(nameVar);
         if(!(type==typeVar)) {
           messageError(findOriginTrackingLine(variable.getOption()),
-                       TomMessage.getMessage("IncoherentVariable"),
+                       TomMessage.incoherentVariable.getMessage(),
                        new Object[]{nameVar.getString(), type.getTomType().getString(), typeVar.getTomType().getString()});
           return false;
         }
@@ -326,8 +326,8 @@ public class TomTypeChecker extends TomChecker {
       TomName name = variable.getAstName();
       if(variableTable.containsKey(name)) {
         messageError(findOriginTrackingLine(variable.getOption()),
-                     TomMessage.getMessage("FreshVariableIssue"),
-                       new Object[]{name.getString()});
+                     TomMessage.freshVariableIssue.getMessage(),
+                     new Object[]{name.getString()});
          
         return false;
       }
@@ -336,14 +336,14 @@ public class TomTypeChecker extends TomChecker {
   }
 
   /** (ii) condition and (iii) at the end when varaibleTable is full */
-  private boolean areAllExistingVariableTest(ArrayList cVar, Hashtable variableTable, String message) {
+  private boolean areAllExistingVariableTest(ArrayList cVar, Hashtable variableTable, TomMessage message) {
     Iterator it = cVar.iterator();
     while(it.hasNext()) {
       TomTerm variable = (TomTerm)it.next();
       TomName name = variable.getAstName();
       if(!variableTable.containsKey(name)) {
         messageError(findOriginTrackingLine(variable.getOption()),
-                     TomMessage.getMessage(message),
+                     message.getMessage(),
                      new Object[]{name.getString()});             
         return false;
       }

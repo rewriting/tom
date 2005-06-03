@@ -32,6 +32,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.logging.Level;
 
+import jtom.TomMessage;
 import jtom.adt.tomsignature.types.TomTerm;
 import jtom.tools.OutputCode;
 import jtom.tools.TomGenericPlugin;
@@ -95,15 +96,15 @@ public class TomBackend extends TomGenericPlugin {
 
         generator.generate(defaultDeep, (TomTerm)getWorkingTerm());
         // verbose
-        getLogger().log(Level.INFO, "TomGenerationPhase",
+        getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
         writer.close();
       } catch (IOException e) {
-        getLogger().log( Level.SEVERE, "BackendIOException",
+        getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
                          new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
         return;
       } catch (Exception e) {
-        getLogger().log( Level.SEVERE, "ExceptionMessage",
+        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                          new Object[]{getStreamManager().getInputFile().getName(), "TomBackend", e.getMessage()} );
         e.printStackTrace();
         return;
@@ -118,7 +119,7 @@ public class TomBackend extends TomGenericPlugin {
 
     } else {
       // backend is desactivated
-      getLogger().log(Level.INFO,"BackendInactivated");
+      getLogger().log(Level.INFO,TomMessage.backendInactivated.getMessage());
     }
   }
 

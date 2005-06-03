@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import jtom.Tom;
 import jtom.TomBase;
+import jtom.TomMessage;
 import jtom.TomStreamManager;
 import jtom.adt.tomsignature.types.TomSymbol;
 import jtom.adt.tomsignature.types.TomTerm;
@@ -109,7 +110,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
       term = (TomTerm)arg[0];
       streamManager = (TomStreamManager)arg[1];
     } else {
-      getLogger().log(Level.SEVERE, "InvalidPluginArgument", new Object[]{"[TomTerm, TomStreamManager]", getArgumentArrayString(arg)});
+      getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(), new Object[]{"[TomTerm, TomStreamManager]", getArgumentArrayString(arg)});
     }
   }
 
@@ -117,7 +118,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     if (arg instanceof TomTerm) {
       term = (TomTerm)arg;
     } else {
-      getLogger().log(Level.SEVERE, "TomTermExpected", pluginName);
+      getLogger().log(Level.SEVERE, TomMessage.tomTermExpected.getMessage(), pluginName);
     }
   }
 

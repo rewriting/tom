@@ -36,9 +36,6 @@ import java.util.*;
  */
 public class PluginPlatformFactory {
 
-  /** PluginPlatformFactory message ressource file name */
-  private final static String MESSAGE_RESOURCE = "tom.platform.PluginPlatformResources";
-
   /** Log radical string*/
   public final static String LOG_RADICAL = "tom.platform";
   
@@ -47,7 +44,7 @@ public class PluginPlatformFactory {
     "java.util.logging.config.file";
   
   /** The root logger */
-  private static Logger logger = Logger.getLogger(LOG_RADICAL, MESSAGE_RESOURCE);
+  private static Logger logger = Logger.getLogger(LOG_RADICAL);
   
   /** the singleton instance*/
   private static PluginPlatformFactory instance = new PluginPlatformFactory();
@@ -111,18 +108,21 @@ public class PluginPlatformFactory {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      logger.log(Level.SEVERE, "IncompleteXOption", commandLine[--i]);
+      logger.log(Level.SEVERE, 
+                 PluginPlatformMessage.incompleteXOption.getMessage(), 
+                 commandLine[--i]);
       return null;
     }
     
     if(xmlConfigurationFile==null) { // lack of a configuration file
-      logger.log(Level.SEVERE, "ConfigFileNotSpecified");
+      logger.log(Level.SEVERE, PluginPlatformMessage.configFileNotSpecified.getMessage());
       return null;
     }
     
     File file = new File(xmlConfigurationFile);
     if(!file.exists()) { // the last specified configuration file doesn't exist
-      logger.log(Level.SEVERE, "ConfigFileNotFound", xmlConfigurationFile);
+      logger.log(Level.SEVERE, PluginPlatformMessage.configFileNotFound.getMessage(), 
+                 xmlConfigurationFile);
       return null;
     }
     // side effect on the commandLine since config information is no more needed

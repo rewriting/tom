@@ -37,6 +37,7 @@ import java.util.logging.Level;
 
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
+import jtom.TomMessage;
 import jtom.tools.TomGenericPlugin;
 import tom.library.traversal.Collect2;
 import tom.library.traversal.Replace1;
@@ -117,7 +118,7 @@ public class TomVerifier extends TomGenericPlugin {
           writer.write(output);
           writer.close();
         } catch (IOException e) {
-          getLogger().log( Level.SEVERE, "BackendIOException",
+          getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
               new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
           return;
         }
@@ -129,11 +130,11 @@ public class TomVerifier extends TomGenericPlugin {
         // System.out.println(statistics);
 
         // verbose
-        getLogger().log(Level.INFO, "TomVerificationPhase",
+        getLogger().log(Level.INFO, TomMessage.tomVerificationPhase.getMessage(),
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
         
       } catch (Exception e) {
-        getLogger().log(Level.SEVERE, "ExceptionMessage",
+        getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                          new Object[]{getClass().getName(),
                                       getStreamManager().getInputFile().getName(),
                                       e.getMessage()} );
@@ -141,7 +142,7 @@ public class TomVerifier extends TomGenericPlugin {
       }
     } else {      
       // Not active plugin
-      getLogger().log(Level.INFO, "VerifierInactivated");
+      getLogger().log(Level.INFO, TomMessage.verifierInactivated.getMessage());
     }
   }
 

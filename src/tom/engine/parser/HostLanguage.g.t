@@ -208,7 +208,7 @@ options{
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
     if(fileName.equals("")) {
-      String msg = TomMessage.getMessage("MissingIncludedFile", new Object[]{currentFile, new Integer(getLine())});
+      String msg = TomMessage.missingIncludedFile.getMessage(new Object[]{currentFile, new Integer(getLine())});
       throw new TomIncludeException(msg);
     }
     
@@ -230,21 +230,22 @@ options{
     }
     
     if(file == null) {
-      String msg = TomMessage.getMessage("IncludedFileNotFound", new Object[]{fileName, currentFile, new Integer(getLine()), currentFile});
+      String msg = TomMessage.includedFileNotFound.getMessage(new Object[]{fileName, currentFile, new Integer(getLine()), currentFile});
       throw new TomIncludeException(msg);
     }
     try {
       fileCanonicalName = file.getCanonicalPath();
       if(testIncludedFile(fileCanonicalName, includedFileSet)) {
-        String msg = TomMessage.getMessage("IncludedFileCycle", new Object[]{fileName, new Integer(getLine()), currentFile});
+        String msg = TomMessage.includedFileCycle.getMessage(new Object[]{fileName, new Integer(getLine()), currentFile});
         throw new TomIncludeException(msg);
       }
       
       // if trying to include a file twice, but not in a cycle : discard
       if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet)) {    
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
-          getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("IncludedFileAlreadyParsed", 
-                          currentFile), fileName, getLine()));
+          getLogger().log(new PlatformLogRecord(Level.WARNING,
+            TomMessage.includedFileAlreadyParsed.getMessage( 
+                                  currentFile), fileName, getLine()));
         }
         return;
       }
@@ -260,7 +261,7 @@ options{
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
-      String msg = TomMessage.getMessage("ErrorWhileIncludingFile",
+      String msg = TomMessage.errorWhileIncludingFile.getMessage(
                                          new Object[]{e.getClass(),
                                                       fileName,
                                                       currentFile,
@@ -425,17 +426,17 @@ signature [LinkedList list] throws TomException
     vasParams.add(subPackageName);
     PluginPlatform vasPlatform = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode));
     if(vasPlatform == null) {
-      throw new TomException(TomMessage.getMessage("VasPlatformFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
+      throw new TomException(TomMessage.vasPlatformFailure.getMessage(new Object[]{currentFile,new Integer(initialVasLine)}));
     }
     int vasResult = vasPlatform.run();
     if(vasResult != 0) {
       //System.out.println(platform.getAlertForInput().toString());
-      throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
+      throw new TomException(TomMessage.vasFailure.getMessage(new Object[]{currentFile,new Integer(initialVasLine)}));
     }
     
     generatedADTName = (String)vasPlatform.getLastGeneratedObjects().get(0);
     if(generatedADTName == null) {
-      throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
+      throw new TomException(TomMessage.vasFailure.getMessage(new Object[]{currentFile,new Integer(initialVasLine)}));
     }
     // Simulate the inclusion of generated Tom file
 
@@ -449,13 +450,13 @@ signature [LinkedList list] throws TomException
       file = new File(tomFileName);
       fileName = file.getCanonicalPath();
     } catch (IOException e) {
-      throw new TomException(TomMessage.getMessage("IOExceptionWithGeneratedTomFile",
+      throw new TomException(TomMessage.iOExceptionWithGeneratedTomFile.getMessage(
                                                           new Object[]{fileName, currentFile, e.getMessage()}));
     } catch (Exception e) {
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
-      throw new TomException(TomMessage.getMessage("ExceptionWithGeneratedTomFile",
+      throw new TomException(TomMessage.exceptionWithGeneratedTomFile.getMessage(
                                                           new Object[]{adtFileName, currentFile, sw.toString()}));
     }
     
