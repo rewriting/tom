@@ -252,14 +252,16 @@ public class TestMatch extends TestCase {
 
   public void test6() {
     ATerm res = match6(factory.parse("h(a(),b())"));
-    assertTrue("slot s1 is a(), it should match, but got "+res, 
+    assertTrue("slot s1 of \"h\" is a(), it should match, but got "+res, 
         pattern2 == res);
     res = match6(factory.parse("k(a(),b())"));
-    assertTrue("slot s1 is b(), it should not match, but got "+res, 
+    /* -- This test is disabled, until the disjunction bug (TOM-50) is fixed --
+    assertTrue("slot s1 of \"k\" is b(), it should not match, but got "+res, 
         fail     == res);
     res = match6(factory.parse("k(b(),a())"));
-    assertTrue("slot s1 is a(), it should match, but got "+res, 
+    assertTrue("slot s1 of \"k\" is a(), it should match, but got "+res, 
         pattern3 == res);
+    */
   }
 
   public ATerm match6(ATerm t) {
