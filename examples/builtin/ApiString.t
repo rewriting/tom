@@ -40,6 +40,10 @@ public class ApiString {
   
   %include { term/term.tom }
 
+  public ApiString() {
+    this.factory = Factory.getInstance(SingletonFactory.getInstance());
+  }
+
   public ApiString(Factory factory) {
     this.factory = factory;
   }
@@ -48,32 +52,34 @@ public class ApiString {
     return factory;
   }
 
-  public void run() {
-
+  public String run() {
+    String res = "";
     String n = "Roger";
     Term t = `Name("Albert");
 
     matchBlock1: {
       %match(Term t) {
-        Name("Albert") -> { System.out.println("Albert"); break matchBlock1; }
-        Name("Roger")  -> { System.out.println("Roger"); break matchBlock1;}
-        _ -> { System.out.println("Unknonw"); }
-      }
-    }
-    
-    matchBlock2: {
-      %match(String n) {
-        "Albert" -> { System.out.println("Albert"); break matchBlock2; }
-        "Roger"  -> { System.out.println("Roger"); break matchBlock2;}
-        _ -> { System.out.println("Unknonw"); }
+        Name("Albert") -> { res += "Albert"; break matchBlock1; }
+        Name("Roger")  -> { res += "Roger"; break matchBlock1;}
+        _ -> { res += "Unknonw"; }
       }
     }
 
+    res += "\n";
+    
+    matchBlock2: {
+      %match(String n) {
+        "Albert" -> { res += "Albert"; break matchBlock2; }
+        "Roger"  -> { res += "Roger"; break matchBlock2;}
+        _ -> { res += "Unknonw"; }
+      }
+    }
+    return res;
   }
   
   public final static void main(String[] args) {
-    ApiString test = new ApiString(Factory.getInstance(SingletonFactory.getInstance()));
-    test.run();
+    ApiString test = new ApiString();
+    System.out.println(test.run());
   }
   
 }

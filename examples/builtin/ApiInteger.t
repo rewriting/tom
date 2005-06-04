@@ -32,13 +32,17 @@ package builtin;
 import aterm.*;
 import builtin.term.*;
 import builtin.term.types.*;
-import aterm.pure.PureFactory;
+import aterm.pure.SingletonFactory;
 
 public class ApiInteger {
 
   private Factory factory;
   
   %include { term/term.tom }
+
+  public ApiInteger() {
+    this.factory = Factory.getInstance(SingletonFactory.getInstance());
+  }
 
   public ApiInteger(Factory factory) {
     this.factory = factory;
@@ -48,31 +52,33 @@ public class ApiInteger {
     return factory;
   }
 
-  public void run() {
-
+  public String run() {
+    String res = "";
     int n = 32;
     Term t = `Age(10);
 
     matchBlock1: {
       %match(Term t) {
-        Age(10) -> { System.out.println("10"); break matchBlock1; }
-        Age(32) -> { System.out.println("32"); break matchBlock1;}
-        _ -> { System.out.println("Unknown"); }
+        Age(10) -> { res += "10"; break matchBlock1; }
+        Age(32) -> { res += "32"; break matchBlock1;}
+        _       -> { res += "Unknown"; }
       }
     }
+    res += "\n";
     
     matchBlock2: {
       %match(int n) {
-        10 -> { System.out.println("10"); break matchBlock2; }
-        32 -> { System.out.println("32"); break matchBlock2;}
-        _ -> { System.out.println("Unknown"); }
+        10 -> { res += "10"; break matchBlock2; }
+        32 -> { res += "32"; break matchBlock2;}
+        _  -> { res += "Unknown"; }
       }
     }
+    return res;
   }
   
   public final static void main(String[] args) {
-    ApiInteger test = new ApiInteger(Factory.getInstance(new PureFactory(16)));
-    test.run();
+    ApiInteger test = new ApiInteger();
+    System.out.println(test.run());
   }
   
 }
