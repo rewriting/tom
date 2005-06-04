@@ -170,7 +170,7 @@ public class TomFactory extends TomBase {
         return `BuildConsList(name,head,subList);
       }
 
-      manyTomList(head@TargetLanguageToTomTerm[],tail) -> {
+      manyTomList(TargetLanguageToTomTerm[],tail) -> {
         TomTerm subList = buildList(name,`tail);
         return subList;
       }
@@ -208,7 +208,7 @@ public class TomFactory extends TomBase {
         return `BuildConsArray(name,head,subList);
       }
 
-      manyTomList(head@TargetLanguageToTomTerm[],tail) -> {
+      manyTomList(TargetLanguageToTomTerm[],tail) -> {
         TomTerm subList = buildArray(name,`tail,size);
         return subList;
       }

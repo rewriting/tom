@@ -92,7 +92,7 @@ public class PILFactory extends TomBase {
           %match(Expression subject) {
             Cast[source=e]          -> { return this.apply(`e); }
             Or[arg1=e,arg2=FalseTL()] -> { return this.apply(`e); }
-            EqualFunctionSymbol(type,t1,appl@RecordAppl[slots=concSlot(x,_*)]) -> {
+            EqualFunctionSymbol(type,t1,appl@RecordAppl[slots=concSlot(_,_*)]) -> {
               return this.apply(`EqualFunctionSymbol(type,t1,appl.setSlots(concSlot())));
             } 
           }
@@ -196,7 +196,7 @@ public class PILFactory extends TomBase {
           return prettyPrint(`astTerm);
         }
 
-        EqualFunctionSymbol(astType,exp1,exp2) -> {
+        EqualFunctionSymbol(_,exp1,exp2) -> {
           return "is_fun_sym(" + prettyPrint(`exp1) + "," + prettyPrint(`exp2) + ")";
         }
 
@@ -225,7 +225,7 @@ public class PILFactory extends TomBase {
           return "getTail("+prettyPrint(`variable)+")";
         }
 
-        GetSlot(codomain,astName,slotNameString,variable) -> {
+        GetSlot(_,astName,slotNameString,variable) -> {
           return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
         }
       }
@@ -244,7 +244,7 @@ public class PILFactory extends TomBase {
           return prettyPrint(`term);
         }
 
-        RecordAppl(optionList,nameList,args,constraints) ->{
+        RecordAppl(_,nameList,_,_) ->{
           return prettyPrint(`nameList); 
         }
       }
@@ -315,7 +315,7 @@ public class PILFactory extends TomBase {
         Collection store = (Collection)astore;
         if (subject instanceof Instruction) {
           %match(Instruction subject) {
-            CompiledMatch[automataInst=automata]  -> {
+            CompiledMatch[automataInst=_]  -> {
               store.add(subject);
             }
             _ -> { return true; }

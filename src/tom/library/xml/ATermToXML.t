@@ -154,7 +154,7 @@ public class ATermToXML {
         write("<?"+`target+" "+`data+"?>");
         return;
       }
-      EntityReferenceNode(name,childList) -> {
+      EntityReferenceNode(name,_) -> {
         write("&"+`name+";");
         return;
       }

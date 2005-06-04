@@ -283,7 +283,7 @@ public class XMLToATerm {
 
   private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
     %match(TNode elt, TNodeList list) {
-      AttributeNode[name=name1], emptyTNodeList() -> {
+      AttributeNode[name=_], emptyTNodeList() -> {
         return `manyTNodeList(elt,list);
       }
       

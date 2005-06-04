@@ -15,8 +15,8 @@ public class TestList extends TestCase {
 
   public void setUp() {
     factory = new PureFactory(16);
-    ok   = factory.parse("ok");
-    fail   = factory.parse("fail");
+    ok      = factory.parse("ok");
+    fail    = factory.parse("fail");
   }
 	
 	public TestList(String testMethodName) {
@@ -38,7 +38,7 @@ public class TestList extends TestCase {
     get_head(l)    { ((ATermList)l).getFirst() }
     get_tail(l)    { ((ATermList)l).getNext() }
     is_empty(l)    { ((ATermList)l).isEmpty() }
-    make_empty()  { factory.makeList() }
+    make_empty()   { factory.makeList() }
     make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
   }
   
@@ -102,6 +102,9 @@ public class TestList extends TestCase {
 		}
     suite.addTest(new TestList("testMatch4"));
     suite.addTest(new TestList("testMatch5"));
+		for (int i = 0; i<TESTS6.length;i++) {
+			suite.addTest(new TestList("testMatch6",i));
+		}
 		return suite;
 	}
 
@@ -227,9 +230,31 @@ public class TestList extends TestCase {
 				//System.out.println("R = " + `R* + " T = " + `T*+" X1 = " + `X1* + " X2 = " + `X2*+ " u = " + `u);
       }
     }
-
     assertTrue("TestMatch5",nbSol==6);
 	}
 
+	private static final TestData[] TESTS6 = new TestData[] {
+    new TestData("[]"                         , "fail"),
+    new TestData("[f(a)]"                     , "ok"),
+		new TestData("[f(a),f(b),f(a),f(c)]"      , "ok"),
+    new TestData("[g(f(a)),f(b),g(f(a)),f(c)]", "ok"),
+	};                                                            
+
+	public void testMatch6() {
+		TestData td = TESTS6[this.testNumber];
+		assertSame(
+               "TestMatch6 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
+               match6(factory.parse(td.question)), 
+               factory.parse(td.answer));
+	}
+
+	public ATerm match6(ATerm l) {
+		%match(L l) {
+      conc(_,_*) -> {
+        return factory.parse("ok");
+      }
+    }
+    return factory.parse("fail");
+	}
   
 }

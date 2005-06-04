@@ -81,7 +81,7 @@ public class TestWhen extends TestCase {
       //f(x) when constant(test.length()) ???
       /* warnings */
       f(x) when g(h(x))   -> { result++; /*System.out.println("cas 3");*/ }
-      f(x) when g(a)      -> { result++; /*System.out.println("cas 4");*/ }
+      f(x) when g(a())    -> { result++; /*System.out.println("cas 4");*/ }
       f(x) when g(k())    -> { result++; /*System.out.println("cas 5");*/ }
       f(x) when nol()     -> { result++; /*System.out.println("cas 6");*/ }
       /* errors */
