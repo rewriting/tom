@@ -30,8 +30,8 @@ public class TestMatch extends TestCase {
   }
 
   %oplist L conc( E* ) {
-    is_fsym(t) { t instanceof ATermList }
-    make_empty()  { factory.makeList() }
+    is_fsym(t)     { t instanceof ATermList }
+    make_empty()   { factory.makeList() }
     make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
     get_head(l)    { ((ATermList)l).getFirst() }
     get_tail(l)    { ((ATermList)l).getNext() }
@@ -40,7 +40,7 @@ public class TestMatch extends TestCase {
   
   %typeterm E {
     implement { ATerm }
-    equals(t1, t2)      { (t1.equals(t2)) }
+    equals(t1, t2) { (t1.equals(t2)) }
   }
 
   %op E a {
@@ -84,6 +84,12 @@ public class TestMatch extends TestCase {
     is_fsym(t) { ((ATermAppl)t).getName() == "h" }
     get_slot(s1,t) { ((ATermAppl)t).getArgument(0)  }
     get_slot(s2,t) { ((ATermAppl)t).getArgument(1)  }
+  }
+
+  %op E k(s2:E,s1:E) {
+    is_fsym(t) { ((ATermAppl)t).getName() == "k" }
+    get_slot(s2,t) { ((ATermAppl)t).getArgument(0)  }
+    get_slot(s1,t) { ((ATermAppl)t).getArgument(1)  }
   }
 
 	static class TestData {
@@ -243,5 +249,31 @@ public class TestMatch extends TestCase {
     } 
     return res;
   } 
+
+  public void test6() {
+    ATerm res = match6(factory.parse("h(a(),b())"));
+    assertTrue("slot s1 is a(), it should match, but got "+res, 
+        pattern2 == res);
+    res = match6(factory.parse("k(a(),b())"));
+    assertTrue("slot s1 is b(), it should not match, but got "+res, 
+        fail     == res);
+    res = match6(factory.parse("k(b(),a())"));
+    assertTrue("slot s1 is a(), it should match, but got "+res, 
+        pattern3 == res);
+  }
+
+  public ATerm match6(ATerm t) {
+    ATerm res = fail;
+    %match(E t) { 
+      (h|k)[s1=a()] -> { 
+        %match(E t) { 
+          h[s1=a()]     -> { return pattern2; }
+          k[s1=a()]     -> { return pattern3; }
+        } 
+        return pattern1;
+      }
+    } 
+    return res;
+  }
 
 }
