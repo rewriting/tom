@@ -67,15 +67,11 @@ public class TomVerifier extends TomGenericPlugin {
 
   public TomVerifier() {
     super("TomVerifier");
-    init();
-  }
-
-  void init () {
-    boolean camlsemantics = getOptionBooleanValue("camlSemantics");
-    verif = new Verifier(camlsemantics);
   }
 
   public void run() {
+    boolean camlsemantics = getOptionBooleanValue("camlSemantics");
+    verif = new Verifier(camlsemantics);
     verif.setSymbolTable(this.symbolTable());
     // delay the zenonoutput creation, as it needs the verifiers
     // symboltable to be properly set
