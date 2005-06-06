@@ -970,6 +970,12 @@ public class Verifier extends TomBase {
         ilor(left,false()) -> {
           return `left;  
         }
+        ilnot(true[]) -> {
+          return `false();
+        }
+        ilnot(false[]) -> {
+          return `true(subs());
+        }
       }
       return (Expr) any.visit(arg);
     }
