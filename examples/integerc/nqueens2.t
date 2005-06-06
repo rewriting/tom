@@ -157,9 +157,9 @@ ATerm nqueens_strat(ATerm arg0) {
       } else {
         fail();
       }
-      myend:
     }
   }
+myend:
   fail();
   stratLab:;
 

@@ -56,6 +56,7 @@ static AFun f_fib;
   make(t1)       { make_suc(t1) }
 }
 
+ATerm plus(ATerm t1, ATerm t2);
 %op term plus(sl1:term,sl2:term) {
   is_fsym(t) { ATisEqualAFun(ATgetAFun(t),f_plus) }
   get_slot(sl1,t) { ATgetArgument(t,0) }
@@ -63,6 +64,7 @@ static AFun f_fib;
   make(t1,t2)     { plus(t1,t2) }
 }
 
+ATerm fib(ATerm t);
 %op term fib(sl:term) {
   is_fsym(t) { ATisEqualAFun(ATgetAFun(t),f_fib) }
   get_slot(sl,t) { ATgetArgument(t,0) }

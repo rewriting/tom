@@ -162,9 +162,9 @@ ATerm nqueens_rule(ATerm arg0) {
           goto end;
         }
       }
-      myend:
     }
   }
+myend:
   fail();
   end:
   return res;
