@@ -50,8 +50,9 @@ public class Verifier extends TomBase {
   private SymbolTable symbolTable;
   private boolean camlsemantics = false;
 
-  public Verifier() {
+  public Verifier(boolean camlsemantics) {
     super();
+    this.camlsemantics = camlsemantics;
     factory = IlFactory.getInstance(getTomSignatureFactory().getPureFactory());
   }
 
@@ -599,7 +600,7 @@ public class Verifier extends TomBase {
         if (!`t.isEmpty()) {
           Expr refuseFromHead = buildConstraint(substitution,`h,`refuse());
           Expr goalFromTail = buildConstraint(substitution,`sequence(t),goal);
-          if(camlsemantics) {
+          if(this.isCamlSemantics()) {
             return `ilor(goalFromHead,iland(refuseFromHead,goalFromTail));
           } else {
             return `ilor(goalFromHead,goalFromTail);
@@ -659,7 +660,7 @@ public class Verifier extends TomBase {
           Deriv up = `ebs(env(e,sequence(t*)),env(subs(undefsubs()),ip));
           Collection post_list = applySemanticsRules(up);
 
-          if(camlsemantics) {
+          if(this.isCamlSemantics()) {
             up = `ebs(env(e,h),env(subs(undefsubs()),refuse()));
             Collection pre_list = applySemanticsRules(up);
             Iterator it = pre_list.iterator();

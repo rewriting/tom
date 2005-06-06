@@ -44,7 +44,7 @@ class Gxb {
     %match(Hop test) {
       g(a(),b()) -> { System.out.println("un a et un b"); }
       g(x,b()) -> { System.out.println(`x); }
-      g[left=x] -> { System.out.println(`x); }
+      /*g[left=x] -> { System.out.println(`x); }*/
     }
     /*
     %match(Hop test2, Hop test3) {

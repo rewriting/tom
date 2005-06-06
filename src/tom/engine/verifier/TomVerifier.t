@@ -57,6 +57,7 @@ public class TomVerifier extends TomGenericPlugin {
     "<options>" +
     "<boolean name='verify' altName='' description='Verify correctness of match compilation' value='false'/>" +
     "<boolean name='noReduce' altName='' description='Do not simplify extracted constraints (depends on --verify)' value='false'/>" +
+    "<boolean name='camlSemantics' altName='' description='Verify with caml semantics for match' value='false'/>" +
     "</options>";
 
   public static final String ZENON_SUFFIX = ".tom.zv";
@@ -70,7 +71,8 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   void init () {
-    verif = new Verifier();
+    boolean camlsemantics = getOptionBooleanValue("camlSemantics");
+    verif = new Verifier(camlsemantics);
   }
 
   public void run() {
