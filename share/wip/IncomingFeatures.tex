@@ -1,0 +1,84 @@
+\documentclass{article}
+
+\newcommand{\tom}{\textsc{Tom} }
+
+\title{Incoming Features}
+\author{Anne-Claire Lonchamp, Pierre-Etienne Moreau, Antoine Reilles}
+\date\today
+
+\begin{document}
+\maketitle
+
+\section{Namespaces XML}
+\verb$<n1:A></A>$
+
+\section{Less restrictions whith lists}
+\begin{verbatim}
+symbol(domain*) -> codomain
+\end{verbatim}
+We want to define several constructors such as :
+\begin{verbatim}
+and(bool*) -> bool
+or(bool*) -> bool
+\end{verbatim}
+Today, this limitation is due to Apigen which only allows one contructor per codomain for lists.
+A solution is to implement a new tool $vastojava$ which stand in Apigen.
+
+\section{Overloading}
+\subsection{Rules for overloading}
+\begin{itemize}
+\item Symbols with the same name should have the same codomain.
+\item Likewise, slots with the same name should have the same domain.
+\item When using the implicit notation (with []), the disjunction of overloaded functions only containts those who have all the slots used.
+\item When typing with explicit notation, if a variable or an underscore could have more than one type (after resolution of constraints, op \dots), this may through an error.
+\end{itemize}
+\subsection{Types inference problem}
+In order to avoid typing mistakes, brackets becames necessary for constants.
+\subsection{Overloading in backquotes}
+When there isn't any ambiguity, it still work the same way as before.
+Otherwise, we have something like this :
+\begin{verbatim}
+f(s:A) -> B
+f(s:B) -> B
+\end{verbatim}
+In \verb$`f(x)$, we can't predict wich $f$ should be use. It is necessary to cast the argument in \verb$`f((A)x)$ or \verb$`f((B)x)$. This cast will stay later in the host code.
+\subsection{\%fun}
+Before using Java function in algebric pattern, it's better to declare its profile with \verb$%fun$. It works as \%op and call the Java function in the make constructor.
+
+\section{Backquote with implicit notation}
+\begin{verbatim}
+f(s1:A,s2:A) -> B
+g(s1:A,s2:A,s3:A) -> B
+t@(f|g)[s2=a] -> `t@[s2=a]
+              -> `t@f[s2=a]
+\end{verbatim}
+\subsection{Rules}
+\begin{itemize}
+\item \verb$`t@[s2=a]$ stands for \verb$`t@(f|g)[s2=a]$
+\item Using a disjunction notation could be confusion. Indeed, \verb$t@(f|g|h)[s2=a] -> `t@[s2=a]$ cause a runtime error.
+\item The $t$ must be intenciated by a $@$ before. Otherwise, there is a problem :
+\begin{verbatim}
+t@(f|g)[...] -> match(t) {
+                     (f|h)[...] -> `t@f[...]
+             }
+\end{verbatim}
+\item \verb$t@g[s2=a]$ is forbidden. Indeed, we could only build terms that implement each slots contained in the intersection of slots of terms of the disjunction (i.e. : f < g).
+\end{itemize}
+\subsection{With overloading}
+It's in fact a hidden disjunction. All the slots have to be in the intersection of the generated disjunction For instance :
+\begin{verbatim}
+1. f(s1:A) -> B
+2. f(s1:A,s2:A) -> B
+3. f(s1:A,s2:A,s3:A) -> B
+
+t@f[s2=a] -> `t@[s2=a,s3=a]
+\end{verbatim}
+The disjunction should be :
+\begin{verbatim}
+t@(f2|f3)[s2=a] -> `t@[s2=a,s3=a] ??? \\ not sure
+\end{verbatim}
+Explicit notation don't make sense.
+\section{constraints}
+\dots
+
+\end{document}
