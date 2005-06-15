@@ -44,6 +44,7 @@
   <property name="caml"           value="caml"/>
   <property name="cell"           value="cell"/>
   <property name="cril"           value="cril"/>
+  <property name="csmaca"         value="csmaca"/>
   <property name="dom"            value="dom"/>
   <property name="expression"     value="expression"/>
   <property name="ferus"          value="ferus"/>
@@ -290,6 +291,11 @@
         <include name="*.xml"/>
       </fileset>
     </copy>
+  </target>
+
+  <target name="csmaca" depends="init">
+    <tomcompile example="${csmaca}"/>
+    <javacompile example="${csmaca}"/>
   </target>
 
   <target name="dom" depends="init">
@@ -703,6 +709,10 @@
         <include name="${cell}/*.t"/>
         <include name="${cell}/*.java"/>
         <include name="${cell}/*.gif"/>
+
+        <!-- not yet distribution ready
+        <include name="${csmaca}/*.t"/>
+        -->
 
         <include name="${dom}/README"/>
         <include name="${dom}/*.t"/>
