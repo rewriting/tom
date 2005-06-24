@@ -953,7 +953,7 @@ public class TomSyntaxChecker extends TomChecker {
           // WARNING consider as a symbol and not a variable
           String codomain = getTomType(getSymbolCodomain(symbol));
           if( !symbolTable().isBuiltinType(codomain) ) {
-            messageWarning(decLine, 
+            messageError(decLine, 
                          TomMessage.ambigousSymbolWithoutConstructor.getMessage(),
                            new Object[]{res});
           }

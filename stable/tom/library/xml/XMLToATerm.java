@@ -282,10 +282,10 @@ public class XMLToATerm {
   }
 
   private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
-     { tom.library.adt.tnode.types.TNode tom_match1_1=(( tom.library.adt.tnode.types.TNode)elt); { tom.library.adt.tnode.types.TNodeList tom_match1_2=(( tom.library.adt.tnode.types.TNodeList)list); if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_AttributeNode_name(tom_match1_1); if(tom_is_fun_sym_emptyTNodeList(tom_match1_2) ||  false ) {
+     { tom.library.adt.tnode.types.TNode tom_match1_1=(( tom.library.adt.tnode.types.TNode)elt); { tom.library.adt.tnode.types.TNodeList tom_match1_2=(( tom.library.adt.tnode.types.TNodeList)list); if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { if(tom_is_fun_sym_emptyTNodeList(tom_match1_2) ||  false ) {
 
         return tom_make_manyTNodeList(elt,list);
-       }} } if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_AttributeNode_name(tom_match1_1); if(tom_is_fun_sym_manyTNodeList(tom_match1_2) ||  false ) { { tom.library.adt.tnode.types.TNode tom_match1_2_head=tom_get_slot_manyTNodeList_head(tom_match1_2); { tom.library.adt.tnode.types.TNodeList tom_match1_2_tail=tom_get_slot_manyTNodeList_tail(tom_match1_2); if(tom_is_fun_sym_AttributeNode(tom_match1_2_head) ||  false ) { { String  tom_match1_2_head_name=tom_get_slot_AttributeNode_name(tom_match1_2_head);
+       } } if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_AttributeNode_name(tom_match1_1); if(tom_is_fun_sym_manyTNodeList(tom_match1_2) ||  false ) { { tom.library.adt.tnode.types.TNode tom_match1_2_head=tom_get_slot_manyTNodeList_head(tom_match1_2); { tom.library.adt.tnode.types.TNodeList tom_match1_2_tail=tom_get_slot_manyTNodeList_tail(tom_match1_2); if(tom_is_fun_sym_AttributeNode(tom_match1_2_head) ||  false ) { { String  tom_match1_2_head_name=tom_get_slot_AttributeNode_name(tom_match1_2_head);
 
 
         if(tom_match1_1_name.compareTo(tom_match1_2_head_name) >= 0) {

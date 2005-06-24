@@ -269,7 +269,7 @@ public class TomMessage {
   public static final TomMessage invalidVariableStarArgument=
     new TomMessage("{0} is not allowed in non list symbol ");
   public static final TomMessage ambigousSymbolWithoutConstructor=
-      new TomMessage("Ambiguous symbol name. Is `{0}` a variable or a constructor? Prefer `{0}()` if it is a constructor");
+      new TomMessage("{0} is a constructor and cannot be a variable. Add () to denote the constructor.");
 
   // rule
   public static final TomMessage incorrectRuleLHSClass   =

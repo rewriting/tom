@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.2rc1"/>
+  <property name="stable.version" value="2.2rc2"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
   
@@ -641,10 +641,8 @@
     </tar>
   </target>
 
-  <target name="dists" 
-          description="Prepare stable and devel distributions" 
-          depends="dist.all"/>
   <target name="dist.all" 
+          description="Prepare stable and devel distributions" 
           depends="clean.dist, dist.stable, dist.src, dist.examples"/>
 
   <target name="clean.stable" description="Purges the generated stable files">

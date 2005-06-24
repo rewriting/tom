@@ -194,11 +194,11 @@ public class PILFactory extends TomBase {
        { jtom.adt.tomsignature.types.Expression tom_match4_1=(( jtom.adt.tomsignature.types.Expression)subject); if(tom_is_fun_sym_TomTermToExpression(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_astTerm=tom_get_slot_TomTermToExpression_astTerm(tom_match4_1);
 
           return prettyPrint(tom_match4_1_astTerm);
-        } } if(tom_is_fun_sym_EqualFunctionSymbol(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match4_1_astType=tom_get_slot_EqualFunctionSymbol_astType(tom_match4_1); { jtom.adt.tomsignature.types.TomTerm tom_match4_1_exp1=tom_get_slot_EqualFunctionSymbol_exp1(tom_match4_1); { jtom.adt.tomsignature.types.TomTerm tom_match4_1_exp2=tom_get_slot_EqualFunctionSymbol_exp2(tom_match4_1);
+        } } if(tom_is_fun_sym_EqualFunctionSymbol(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_exp1=tom_get_slot_EqualFunctionSymbol_exp1(tom_match4_1); { jtom.adt.tomsignature.types.TomTerm tom_match4_1_exp2=tom_get_slot_EqualFunctionSymbol_exp2(tom_match4_1);
 
 
           return "is_fun_sym(" + prettyPrint(tom_match4_1_exp1) + "," + prettyPrint(tom_match4_1_exp2) + ")";
-        }}} } if(tom_is_fun_sym_Negation(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match4_1_arg=tom_get_slot_Negation_arg(tom_match4_1);
+        }} } if(tom_is_fun_sym_Negation(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match4_1_arg=tom_get_slot_Negation_arg(tom_match4_1);
 
 
           return "not " + prettyPrint(tom_match4_1_arg);
@@ -223,11 +223,11 @@ public class PILFactory extends TomBase {
 
 
           return "getTail("+prettyPrint(tom_match4_1_variable)+")";
-        } } if(tom_is_fun_sym_GetSlot(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match4_1_codomain=tom_get_slot_GetSlot_codomain(tom_match4_1); { jtom.adt.tomsignature.types.TomName tom_match4_1_astName=tom_get_slot_GetSlot_astName(tom_match4_1); { String  tom_match4_1_slotNameString=tom_get_slot_GetSlot_slotNameString(tom_match4_1); { jtom.adt.tomsignature.types.TomTerm tom_match4_1_variable=tom_get_slot_GetSlot_variable(tom_match4_1);
+        } } if(tom_is_fun_sym_GetSlot(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match4_1_astName=tom_get_slot_GetSlot_astName(tom_match4_1); { String  tom_match4_1_slotNameString=tom_get_slot_GetSlot_slotNameString(tom_match4_1); { jtom.adt.tomsignature.types.TomTerm tom_match4_1_variable=tom_get_slot_GetSlot_variable(tom_match4_1);
 
 
           return "get_slot_"+prettyPrint(tom_match4_1_astName)+"_"+tom_match4_1_slotNameString+"("+prettyPrint(tom_match4_1_variable)+")";
-        }}}} }}
+        }}} }}
 
 
     } else if (subject instanceof TomTerm) {
@@ -242,11 +242,11 @@ public class PILFactory extends TomBase {
 
 
           return prettyPrint(tom_match5_1_tomTerm);
-        } } if(tom_is_fun_sym_RecordAppl(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match5_1_option=tom_get_slot_RecordAppl_option(tom_match5_1); { jtom.adt.tomsignature.types.NameList tom_match5_1_nameList=tom_get_slot_RecordAppl_nameList(tom_match5_1); { jtom.adt.tomsignature.types.SlotList tom_match5_1_slots=tom_get_slot_RecordAppl_slots(tom_match5_1); { jtom.adt.tomsignature.types.ConstraintList tom_match5_1_constraints=tom_get_slot_RecordAppl_constraints(tom_match5_1);
+        } } if(tom_is_fun_sym_RecordAppl(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match5_1_nameList=tom_get_slot_RecordAppl_nameList(tom_match5_1);
 
 
           return prettyPrint(tom_match5_1_nameList); 
-        }}}} }}
+        } }}
 
     } else if (subject instanceof TomName) {
        { jtom.adt.tomsignature.types.TomName tom_match6_1=(( jtom.adt.tomsignature.types.TomName)subject); if(tom_is_fun_sym_PositionName(tom_match6_1) ||  false ) { { jtom.adt.tomsignature.types.TomNumberList tom_match6_1_numberList=tom_get_slot_PositionName_numberList(tom_match6_1);
@@ -314,10 +314,10 @@ public class PILFactory extends TomBase {
       public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
         if (subject instanceof Instruction) {
-           { jtom.adt.tomsignature.types.Instruction tom_match8_1=(( jtom.adt.tomsignature.types.Instruction)subject); if(tom_is_fun_sym_CompiledMatch(tom_match8_1) ||  false ) { { jtom.adt.tomsignature.types.Instruction tom_match8_1_automataInst=tom_get_slot_CompiledMatch_automataInst(tom_match8_1);
+           { jtom.adt.tomsignature.types.Instruction tom_match8_1=(( jtom.adt.tomsignature.types.Instruction)subject); if(tom_is_fun_sym_CompiledMatch(tom_match8_1) ||  false ) {
 
               store.add(subject);
-            } }
+             }
  return true; }
 
         } else { return true; }

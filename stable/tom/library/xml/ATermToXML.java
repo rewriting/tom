@@ -153,11 +153,11 @@ public class ATermToXML {
 
         write("<?"+tom_match1_1_target+" "+tom_match1_1_data+"?>");
         return;
-      }} } if(tom_is_fun_sym_EntityReferenceNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_EntityReferenceNode_name(tom_match1_1); { tom.library.adt.tnode.types.TNodeList tom_match1_1_childList=tom_get_slot_EntityReferenceNode_childList(tom_match1_1);
+      }} } if(tom_is_fun_sym_EntityReferenceNode(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_EntityReferenceNode_name(tom_match1_1);
 
         write("&"+tom_match1_1_name+";");
         return;
-      }} }
+      } }
 
         System.out.println("Unknown type of TNode : "+n);
       }
