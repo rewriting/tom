@@ -1095,6 +1095,41 @@
     <delete dir="${bundle.temp.dir}"/>
   </target>
 
+  <target name="prepare.plugin.src"
+          description="prepare the workspace to build tom eclipse plugin"
+          depends="bundle.src"
+          if="plugin.workspace.dir">
+     <!-- copy bundle -->
+     <copy file="${aircubebundlesrc}"
+           tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle"/>
+     <!-- copy config file -->
+     <copy file="${src.configfile}"
+           todir="${plugin.workspace.dir}/jtom-eclipse"/>
+     <!-- copy mappings -->
+     <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
+       <fileset dir="${src.dist.share}/jtom/">
+         <include name="*.tom"/>
+       </fileset>
+     </copy>
+  </target>
+
+  <target name="prepare.plugin.stable"
+          depends="bundle.stable"
+          if="plugin.workspace.dir">
+     <!-- copy bundle -->
+     <copy file="${aircubebundlestable}"
+           tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle"/>
+     <!-- copy config file -->
+     <copy file="${stable.configfile}"
+           todir="${plugin.workspace.dir}/jtom-eclipse"/>
+     <!-- copy mappings -->
+     <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
+       <fileset dir="${stable.dist.share}/jtom/">
+         <include name="*.tom"/>
+       </fileset>
+     </copy>
+  </target>
+
   <target name="bundle.stable" depends="dist.stable">
     <mkdir dir="${bundle.temp.dir}"/>
     <unjar dest="${bundle.temp.dir}">

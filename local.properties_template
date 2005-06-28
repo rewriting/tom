@@ -9,3 +9,7 @@ aterm.home={ATERM_PREFIX}
 cpl.home={CPL_PREFIX}
 # camlc.bin contains the path to the caml compiler to use (camlc or camlopt)
 camlc.bin={CAMLC_BIN}
+
+# plugin.workspace.dir contains the patch to the eclipse workspace used to
+# build the plugin. Usually, ${HOME}/workspace
+plugin.workspace.dir={WORKSPACE}
