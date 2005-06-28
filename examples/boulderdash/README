@@ -17,12 +17,15 @@ Coordonate system for Java 2D and used Topology:
  Y
 
 * boulder.adt describes the abstract data-type
-*  adt-to-tom -n boulder --nojar --input boulder.adt --javagen --package adt.boulder 
+*  adt-to-tom -n boulder --nojar --input boulder.adt --javagen --package boulderdash 
 
 * tom BoulderDashCore.t
 * javac *.java
 * java BoulderDash2D or appletviewer BoulderDash2d.java
 
-To run the applet needs to find classes for shared-objects, jjTraveler and ATerm-java... The jar file "boulder.jar" shall be used, see BoulderDashNTom.html .
+To run the applet needs to find classes for shared-objects, jjTraveler and ATerm-java... 
+The jar file "boulder.jar" shall be used, see BoulderDashNTom.html.
 
+To run boulderdash as a java application under eclipse, take care to set 
+the working directory to ${workspace_loc:jtom/examples} in the "Arguments" tab of the "run" window
 

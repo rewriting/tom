@@ -29,7 +29,6 @@
 
 package boulderdash;
 
-import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import boulderdash.boulder.*;

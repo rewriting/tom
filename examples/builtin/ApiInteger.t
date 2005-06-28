@@ -29,7 +29,6 @@
 
 package builtin;
 
-import aterm.*;
 import builtin.term.*;
 import builtin.term.types.*;
 import aterm.pure.SingletonFactory;

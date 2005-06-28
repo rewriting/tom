@@ -29,7 +29,6 @@
 
 package addressbook;
 
-import aterm.*;
 import aterm.pure.*;
 import addressbook.addressbookvas.person.*;
 import addressbook.addressbookvas.person.types.*;

@@ -29,8 +29,6 @@
 
 package builtin;
 
-import aterm.*;
-
 public class PathFinder {
 
   //%include {charlist.tom}

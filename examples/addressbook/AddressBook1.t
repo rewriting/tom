@@ -29,7 +29,6 @@
 
 package addressbook;
 
-import aterm.*;
 import aterm.pure.*;
 import addressbook.data.*;
 import addressbook.data.types.*;

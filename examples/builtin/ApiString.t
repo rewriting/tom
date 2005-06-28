@@ -30,7 +30,6 @@
 package builtin;
 
 import aterm.pure.*;
-import aterm.*;
 import builtin.term.*;
 import builtin.term.types.*;
 

@@ -1,6 +1,6 @@
 * term.adt describes the abstract data-type
 
-*  adt-to-tom -n term --nojar --input term.adt --javagen --package adt.builtin
+*  adt-to-tom -n term --nojar --input term.adt --javagen --package builtin
 
 * tom ApiString.t
 * tom ApiInteger.t

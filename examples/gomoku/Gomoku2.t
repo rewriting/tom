@@ -1,8 +1,6 @@
 package gomoku;
 
-import aterm.*;
 import aterm.pure.*;
-import java.util.*;
 import java.io.*;
 import gomoku.gomoku.*;
 import gomoku.gomoku.types.*;
