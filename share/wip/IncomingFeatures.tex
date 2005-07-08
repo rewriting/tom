@@ -10,7 +10,113 @@
 \maketitle
 
 \section{Namespaces XML}
-\verb$<n1:A></A>$
+It is desirable to deal with XML terms and patterns in \tom that contain namespace information, such as 
+\verb$<n1:A></n1:A>$. Namespaces apply both to a XML document's elements and attributes. 
+
+In the following example, the namespace prefix ``edi'' is bound to the URI ``http://ecommerce.org/schema'' (called namespace name). 
+
+\begin{verbatim}
+<x xmlns:edi='http://ecommerce.org/schema'>
+  <!-- the 'price' element's namespace is http://ecommerce.org/schema -->
+  <edi:price units='Euro'>32.18</edi:price>
+</x>
+\end{verbatim}
+
+In this way we can declare a namespace inside a specific tag, whose scope comprises the element where it is specified and all elements within the content of that element, unless overridden by another namespace declaration. 
+
+The use of a prefix before an element or attribute name specifies a qualified name.
+
+\begin{verbatim}
+QName 	 ::= 	(Prefix ':')? LocalPart
+Prefix 	::= 	NCName
+LocalPart 	::= 	NCName
+\end{verbatim}
+
+
+By their turn, qualified names appear in XML tags according to the grammar bellow:
+
+\begin{verbatim}
+ STag 	 ::= 	'<' QName (Attribute)* '>' 	 
+ ETag 	::= 	'</' QName '>' 	
+ EmptyElemTag 	::= 	'<' QName (Attribute)*  '/>' 	
+ Attribute 	 ::= 	NSAttName Eq AttValue
+			| QName Eq AttValue
+\end{verbatim}
+
+\subsection{Namespace Defaulting}
+
+
+A default namespace is considered to apply to the element where it is declared (if that element has no namespace prefix), and to all elements with no prefix within the content of that element. If the URI reference in a default namespace declaration is empty, then unprefixed elements in the scope of the declaration are not considered to be in any namespace. An important remark is that default namespaces do not apply directly to attributes. See the examples bellow:
+
+\begin{verbatim}
+<?xml version="1.0"?>
+<!-- elements are in the HTML namespace, in this case by default -->
+<html xmlns='http://www.w3.org/TR/REC-html40'>
+  <head><title>Frobnostication</title></head>
+  <body><p>Moved to 
+    <a href='http://frob.com'>here</a>.</p></body>
+</html>
+\end{verbatim}
+
+\begin{verbatim}
+<?xml version="1.0"?>
+<!-- unprefixed element types are from "books" -->
+<book xmlns='urn:loc.gov:books'
+      xmlns:isbn='urn:ISBN:0-395-36341-6'>
+    <title>Cheaper by the Dozen</title>
+    <isbn:number>1568491379</isbn:number>
+</book>
+\end{verbatim}
+
+
+\subsection{How it works for XQuery}
+
+When element or attribute names are compared, they are considered identical if the local parts and namespace URIs match on a codepoint basis. Namespace prefixes need not be identical for two names to match, as illustrated by the following example:
+
+\begin{verbatim}
+
+declare namespace xx = "http://example.org";
+
+let $i := <foo:bar xmlns:foo = "http://example.org">
+              <foo:bing> Lentils </foo:bing>
+          </foo:bar>
+return $i/xx:bing
+\end{verbatim}
+
+Although the namespace prefixes xx and foo differ, both are bound to the namespace URI "http://example.org". Since xx:bing and foo:bing have the same local name and the same namespace URI, they match. The output of the above query is as follows.
+
+\verb$<foo:bing xmlns:foo = "http://example.org"> Lentils </foo:bing>$
+
+\subsection{How it should work in \tom}
+
+If we take as basis the URI to which the prefix of a tag was bound, there is no much sense to use symbols to represent namespaces prefixes in XML patterns inside \tom programs. Mainly because the elements to be matched can have the same meaning, use a different prefix, but can be bound to the URI expected by the programmer. For example, the result of matching the  pattern \footnote{This example supposes a traversal scenario}  \verb$<title> x </title> -> ...$ against the following term:
+
+\begin{verbatim}
+<?xml version="1.0"?>
+<!-- initially, the default namespace is "books" -->
+<book xmlns='urn:loc.gov:books'
+      xmlns:isbn='urn:ISBN:0-395-36341-6'>
+    <title>Cheaper by the Dozen</title>
+    <isbn:number>1568491379</isbn:number>
+    <notes>
+      <!-- make HTML the default namespace for some commentary -->
+      <html xmlns='urn:w3-org-ns:HTML'>
+        <head> <title> Book notes </title> </head>
+        <body>
+          <p >
+             This is a <i>funny</i> book!
+         </p>
+       </body>
+      </html> 
+    </notes>
+</book>
+\end{verbatim}
+
+In order to get a correct result, the user must be able to specify to which namespace the terms to be matched have to be bound in \tom. For the example above, the pattern should not match the term, since the element ``title'' is not bound to a empty namespace as default (it is possible to assign empty with the declaration \verb$xmlns=''$). 
+
+In the case the user does not care about namespace associations, perhaps it is suitable to write something like \verb$<_:title> x </_:title> -> ...$. As result, both occurences of the node ``title'' would be filtered. On the other hand, It can be interesting for the user to capture sets of elements or attributes that belong to a certain namespace, consequently, the language has to provide a method to set the namespaces to be used in XML patterns. 
+
+Addtionally, the \tom parser must be adapted to store the namespace information considering their respective scopes.
 
 \section{Less restrictions whith lists}
 \begin{verbatim}
