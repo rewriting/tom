@@ -29,8 +29,7 @@
 
 package strategy;
 
-import aterm.*;
-import aterm.pure.PureFactory;
+import aterm.pure.SingletonFactory;
 
 import strategy.proba1.piece.*;
 import strategy.proba1.piece.types.*;
@@ -69,7 +68,7 @@ public class Proba1 {
   }
 
   public final static void main(String[] args) {
-    Proba1 test = new Proba1(PieceFactory.getInstance(new PureFactory()));
+    Proba1 test = new Proba1(PieceFactory.getInstance(SingletonFactory.getInstance()));
     test.run();
   }
 

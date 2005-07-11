@@ -1,7 +1,5 @@
 package tutorial;
 
-import java.util.*;
-
 public class Person {
 
   String firstname;

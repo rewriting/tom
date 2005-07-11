@@ -32,7 +32,6 @@ package tutorial;
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import aterm.*;
 
 public class P3PEvaluator1 {
    

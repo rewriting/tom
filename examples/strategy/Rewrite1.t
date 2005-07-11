@@ -29,8 +29,7 @@
 
 package strategy;
 
-import aterm.*;
-import aterm.pure.PureFactory;
+import aterm.pure.SingletonFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
@@ -52,7 +51,7 @@ public class Rewrite1 {
   %include { mutraveler.tom }
   
   public final static void main(String[] args) {
-    Rewrite1 test = new Rewrite1(termFactory.getInstance(new PureFactory()));
+    Rewrite1 test = new Rewrite1(termFactory.getInstance(SingletonFactory.getInstance()));
     test.run();
   }
 

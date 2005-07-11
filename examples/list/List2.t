@@ -30,7 +30,7 @@
 package list;
 
 import aterm.*;
-import aterm.pure.*;
+import aterm.pure.SingletonFactory;
 import java.util.*;
 
 public class List2 {
@@ -124,7 +124,7 @@ public class List2 {
   }
 
   public final static void main(String[] args) {
-    List2 test = new List2(new PureFactory(16));
+    List2 test = new List2(SingletonFactory.getInstance());
     test.run();
   }
 

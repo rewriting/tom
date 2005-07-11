@@ -29,8 +29,7 @@
 
 package strategy;
 
-import aterm.*;
-import aterm.pure.PureFactory;
+import aterm.pure.SingletonFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
@@ -57,7 +56,7 @@ public class Rewrite2 {
   }
 
   public final static void main(String[] args) {
-    Rewrite2 test = new Rewrite2(termFactory.getInstance(new PureFactory()));
+    Rewrite2 test = new Rewrite2(termFactory.getInstance(SingletonFactory.getInstance()));
     test.run();
   }
 

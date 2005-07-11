@@ -32,8 +32,8 @@ package list;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import aterm.*;
-import aterm.pure.*;
+import aterm.ATermList;
+import aterm.pure.SingletonFactory;
 
 public class TestList1 extends TestCase {
   private List1 test;
@@ -43,7 +43,7 @@ public class TestList1 extends TestCase {
   }
 
   public void setUp() {
-    test = new List1(new PureFactory());
+    test = new List1(SingletonFactory.getInstance());
   }
 
 	public void testMakeSubject() {

@@ -29,8 +29,7 @@
 
 package strategy;
 
-import aterm.*;
-import aterm.pure.PureFactory;
+import aterm.pure.SingletonFactory;
 
 import strategy.proba2.state.*;
 import strategy.proba2.state.types.*;
@@ -66,7 +65,7 @@ public class Proba2 {
   }
 
   public final static void main(String[] args) {
-    Proba2 test = new Proba2(StateFactory.getInstance(new PureFactory()));
+    Proba2 test = new Proba2(StateFactory.getInstance(SingletonFactory.getInstance()));
     test.run();
   }
 
