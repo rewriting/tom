@@ -1101,7 +1101,7 @@
           if="plugin.workspace.dir">
      <!-- copy bundle -->
      <copy file="${aircubebundlesrc}"
-           tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle"/>
+           tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle.jar"/>
      <!-- copy config file -->
      <copy file="${src.configfile}"
            todir="${plugin.workspace.dir}/jtom-eclipse"/>
@@ -1118,7 +1118,7 @@
           if="plugin.workspace.dir">
      <!-- copy bundle -->
      <copy file="${aircubebundlestable}"
-           tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle"/>
+           tofile="${plugin.workspace.dir}/aircube-eclipse/aircube-bundle.jar"/>
      <!-- copy config file -->
      <copy file="${stable.configfile}"
            todir="${plugin.workspace.dir}/jtom-eclipse"/>
