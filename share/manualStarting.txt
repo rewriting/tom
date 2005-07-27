@@ -1,0 +1,3 @@
+eclipse3.0/Eclipse.app/Contents/MacOS/java_swt -cp eclipse3.0/startup.jar org.eclipse.core.launcher.Main -os macosx -ws carbon -arch ppc
+
+
