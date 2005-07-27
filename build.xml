@@ -1108,7 +1108,7 @@
      <!-- copy mappings -->
      <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
        <fileset dir="${src.dist.share}/jtom/">
-         <include name="*.tom"/>
+         <include name="**/*.tom"/>
        </fileset>
      </copy>
   </target>
@@ -1125,7 +1125,7 @@
      <!-- copy mappings -->
      <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
        <fileset dir="${stable.dist.share}/jtom/">
-         <include name="*.tom"/>
+         <include name="**/*.tom"/>
        </fileset>
      </copy>
   </target>
