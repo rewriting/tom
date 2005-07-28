@@ -1,5 +1,6 @@
 package tom.library.strategy.mutraveler.reflective;
 
+import tom.library.strategy.mutraveler.Position;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 /**
@@ -10,17 +11,39 @@ import jjtraveler.Visitable;
 
 public abstract class AbstractVisitableVisitor implements VisitableVisitor {
   protected VisitableVisitor[] visitors;
+  private Position position;
 
-  public void init() {
+  protected void setPosition(Position pos) {
+    this.position = pos;
+  }
+
+  public Position getPosition() {
+    return position;
+  }
+
+  protected void initPosition(Position pos) {
+    setPosition(pos);
+    for(int i=0 ; i<getChildCount() ; i++) {
+      ((AbstractVisitableVisitor)getChildAt(i)).initPosition(pos); 
+    }
+  }
+
+  public VisitableVisitor init() {
+    Position pos = new Position();
+    initPosition(pos);
+    return this;
+  }
+  
+  protected void initSubterm() {
     visitors = new VisitableVisitor[] {};
   }
-  public void init(VisitableVisitor v1) {
+  protected void initSubterm(VisitableVisitor v1) {
     visitors = new VisitableVisitor[] {v1};
   }
-  public void init(VisitableVisitor v1, VisitableVisitor v2) {
+  protected void initSubterm(VisitableVisitor v1, VisitableVisitor v2) {
     visitors = new VisitableVisitor[] {v1,v2};
   }
-  public void init(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
+  protected void initSubterm(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
     visitors = new VisitableVisitor[] {v1,v2,v3};
   }
 

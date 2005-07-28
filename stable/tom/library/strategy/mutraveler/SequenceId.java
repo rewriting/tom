@@ -16,11 +16,11 @@ public class SequenceId extends AbstractVisitableVisitor {
 	protected final static int FIRST = 0;
 	protected final static int THEN = 1;
   public SequenceId(VisitableVisitor first, VisitableVisitor then) {
-    init(first,then);
+    initSubterm(first,then);
   }
 
   public SequenceId(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
-    init(v1,new SequenceId(v2, v3));
+    initSubterm(v1,new SequenceId(v2, v3));
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {

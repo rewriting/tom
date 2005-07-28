@@ -343,16 +343,21 @@ public class TomStreamManager {
 
   public File findFile(File parent, String fileName) {
     File file = new File(parent, fileName);
+    //System.out.println("look for: '" + fileName + "'");
     if(file.exists()) {
+      //System.out.println("found!"); 
       return file;
     }
     // Look for importList
     for(int i=0 ; i<getImportList().size() ; i++) {
+      //System.out.println("look in: '" + getImportList().get(i) + "'");
       file = new File((File)getImportList().get(i),fileName);
       if(file.exists()) {
+        //System.out.println("found!"); 
         return file;
       }
     }
+    //System.out.println("not found!"); 
     return null;
   }
 } //class TomStreamManager

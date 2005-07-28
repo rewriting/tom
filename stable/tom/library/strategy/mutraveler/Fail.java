@@ -20,7 +20,7 @@ public class Fail extends AbstractVisitableVisitor {
    * Construct Fail combinator with empty failure message.
    */
   public Fail() {
-    init();
+    initSubterm();
     this.message = ""; 
   }
   /**

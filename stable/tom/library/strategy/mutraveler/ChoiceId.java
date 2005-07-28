@@ -17,11 +17,11 @@ public class ChoiceId extends AbstractVisitableVisitor {
 	protected final static int FIRST = 0;
 	protected final static int THEN = 1;
   public ChoiceId(VisitableVisitor first, VisitableVisitor then) {
-    init(first,then);
+    initSubterm(first,then);
   }
 
   public ChoiceId(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
-    init(v1,new ChoiceId(v2, v3));
+    initSubterm(v1,new ChoiceId(v2, v3));
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {

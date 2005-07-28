@@ -11,7 +11,7 @@ import jjtraveler.VisitFailure;
 public abstract class VoidVisitor extends AbstractVisitableVisitor {
 
   public VoidVisitor() {
-    init();
+    initSubterm();
   }
   /**
    * Forward to <code>voidVisit()</code> and return the incoming
