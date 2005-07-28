@@ -20,7 +20,7 @@ public class Choice extends AbstractVisitableVisitor {
   protected final static int FIRST = 0;
   protected final static int THEN = 1;
   public Choice(VisitableVisitor first, VisitableVisitor then) {
-    init(first,then);
+    initSubterm(first,then);
   }
     
   public Visitable visit(Visitable visitable) throws VisitFailure {

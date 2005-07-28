@@ -25,6 +25,7 @@
 
 package jtom;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -433,7 +434,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
             continue;
           }
           if(argument.equals("import") || argument.equals("I")) {
-            imports.append(argumentList[++i] + ":");
+            imports.append(argumentList[++i] + File.pathSeparator);
           }
           if(argument.equals("output") || argument.equals("o")) {
             if(outputEncountered) {

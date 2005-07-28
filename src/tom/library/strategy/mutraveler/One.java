@@ -18,7 +18,7 @@ import jjtraveler.VisitFailure;
 
 public class One extends AbstractVisitableVisitor {
   public One(VisitableVisitor v) {
-    init(v);
+    initSubterm(v);
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {

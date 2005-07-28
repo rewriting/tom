@@ -13,7 +13,7 @@ import jjtraveler.Visitable;
 
 public class Identity extends AbstractVisitableVisitor {
   public Identity() {
-    init();
+    initSubterm();
   }
 
   public Visitable visit(Visitable x) {

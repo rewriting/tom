@@ -17,7 +17,7 @@ public class MuVar extends AbstractVisitableVisitor {
   protected String name;
   
   public MuVar(String name) {
-    init();
+    initSubterm();
     this.name = name;
   }
 

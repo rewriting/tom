@@ -26,7 +26,7 @@ public class Pselect extends AbstractVisitableVisitor {
   private static Random random = null;
 
   public Pselect(int p, int q,VisitableVisitor first, VisitableVisitor then) {
-    init(first,then);
+    initSubterm(first,then);
     this.p = p;
     this.q = q;
     if(random == null) {

@@ -11,11 +11,11 @@ public class IfThenElse extends AbstractVisitableVisitor {
   private final static int FALSE_CASE = 3;
 
   public IfThenElse(VisitableVisitor c, VisitableVisitor t, VisitableVisitor f) {
-    init(c,t,f);
+    initSubterm(c,t,f);
   }
 
   public IfThenElse(VisitableVisitor c, VisitableVisitor t) {
-    init(c,t, new Identity());
+    initSubterm(c,t, new Identity());
   }
 
 
