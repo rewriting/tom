@@ -13,7 +13,7 @@ public abstract class AbstractVisitableVisitor implements VisitableVisitor {
   protected VisitableVisitor[] visitors;
   private Position position;
 
-  protected void setPosition(Position pos) {
+  public void setPosition(Position pos) {
     this.position = pos;
   }
 
@@ -21,6 +21,7 @@ public abstract class AbstractVisitableVisitor implements VisitableVisitor {
     return position;
   }
 
+  /*
   protected void initPosition(Position pos) {
     setPosition(pos);
     for(int i=0 ; i<getChildCount() ; i++) {
@@ -33,7 +34,8 @@ public abstract class AbstractVisitableVisitor implements VisitableVisitor {
     initPosition(pos);
     return this;
   }
-  
+  */
+
   protected void initSubterm() {
     visitors = new VisitableVisitor[] {};
   }

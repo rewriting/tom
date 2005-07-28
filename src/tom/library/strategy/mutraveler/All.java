@@ -21,9 +21,24 @@ public class All extends AbstractVisitableVisitor {
     //System.out.println("All.visit(" + any.getClass() + ")");
     int childCount = any.getChildCount();
     Visitable result = any;
+    try {
     for (int i = 0; i < childCount; i++) {
       //System.out.println(" -> " + getArgument(0).getClass() + ".visit(" + result.getChildAt(i) + ")");
-      result = result.setChildAt(i, getArgument(0).visit(result.getChildAt(i)));
+      if(getPosition()!=null) {
+        //System.out.println("All.pos = " + getPosition());
+        getPosition().down(i);
+      }
+      Visitable newChild = getArgument(0).visit(result.getChildAt(i));
+      if(getPosition()!=null) {
+        getPosition().up();
+      }
+      result = result.setChildAt(i, newChild);
+    }
+    } catch(VisitFailure f) {
+      if(getPosition()!=null) {
+        getPosition().up();
+      }
+      throw new VisitFailure();
     }
     return result;
   }

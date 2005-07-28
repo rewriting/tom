@@ -16,4 +16,8 @@ public class Position {
   public void down(int subtree) {
     list.addLast(new Integer(subtree));
   }
+
+  public String toString() {
+    return list.toString();
+  }
 }

@@ -33,6 +33,8 @@ import aterm.pure.SingletonFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
+import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.Position;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
@@ -63,14 +65,15 @@ public class Rewrite1 {
     VisitableVisitor ruleId = new RewriteSystemId();
 
     try {
-      System.out.println("subject       = " + subject);
-      System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visit(subject));
-      System.out.println("onceBottomUpId= " + `OnceBottomUpId(ruleId).visit(subject));
-      System.out.println("bottomUp      = " + `BottomUp(Try(rule)).visit(subject));
-      System.out.println("bottomUpId    = " + `BottomUp(ruleId).visit(subject));
-      System.out.println("innermost     = " + `Innermost(rule).visit(subject));
-      System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).visit(subject));
-      System.out.println("innermostId   = " + `InnermostId(ruleId).visit(subject));
+      
+         System.out.println("subject       = " + subject);
+      System.out.println("onceBottomUp  = " + MuTraveler.init(`OnceBottomUp(rule)).visit(subject));
+      System.out.println("onceBottomUpId= " + MuTraveler.init(`OnceBottomUpId(ruleId)).visit(subject));
+      System.out.println("bottomUp      = " + MuTraveler.init(`BottomUp(Try(rule))).visit(subject));
+      System.out.println("bottomUpId    = " + MuTraveler.init(`BottomUp(ruleId)).visit(subject));
+      System.out.println("innermost     = " + MuTraveler.init(`Innermost(rule)).visit(subject));
+      System.out.println("innermostSlow = " + MuTraveler.init(`Repeat(OnceBottomUp(rule))).visit(subject));
+      System.out.println("innermostId   = " + MuTraveler.init(`InnermostId(ruleId)).visit(subject));
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
@@ -83,10 +86,12 @@ public class Rewrite1 {
     }
     
     public Term visit_Term(Term arg) throws VisitFailure { 
+
+
       %match(Term arg) {
-        a() -> { return `b(); }
-        b() -> { return `c(); }
-        g(c(),c()) -> { return `c(); }
+        a() -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
+        b() -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
+        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
       }
       return (Term)`Fail().visit(arg);
       //throw new VisitFailure();
