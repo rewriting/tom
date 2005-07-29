@@ -114,9 +114,9 @@ public class Rewrite1 {
     
     public Term visit_Term(Term arg) {
       %match(Term arg) {
-        a() -> { return `b(); }
-        b() -> { return `c(); }
-        g(c(),c()) -> { return `c(); }
+        a() -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
+        b() -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
+        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
       }
       return arg;
     }
