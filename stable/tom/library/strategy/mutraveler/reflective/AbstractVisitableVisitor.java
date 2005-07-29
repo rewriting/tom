@@ -13,14 +13,22 @@ public abstract class AbstractVisitableVisitor implements VisitableVisitor {
   protected VisitableVisitor[] visitors;
   private Position position;
 
-  protected void setPosition(Position pos) {
+  public void setPosition(Position pos) {
     this.position = pos;
   }
 
   public Position getPosition() {
-    return position;
+    if(hasPosition()) {
+      return position;
+    } else {
+      throw new RuntimeException("position not initialized");
+    }
   }
 
+  public boolean hasPosition() {
+    return position!=null;
+  }
+  /*
   protected void initPosition(Position pos) {
     setPosition(pos);
     for(int i=0 ; i<getChildCount() ; i++) {
@@ -33,7 +41,8 @@ public abstract class AbstractVisitableVisitor implements VisitableVisitor {
     initPosition(pos);
     return this;
   }
-  
+  */
+
   protected void initSubterm() {
     visitors = new VisitableVisitor[] {};
   }

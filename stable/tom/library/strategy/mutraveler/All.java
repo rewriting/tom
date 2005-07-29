@@ -12,7 +12,7 @@ import jjtraveler.VisitFailure;
  */
 
 public class All extends AbstractVisitableVisitor {
-    
+
   public All(VisitableVisitor v) {
     initSubterm(v);
   }
@@ -21,9 +21,25 @@ public class All extends AbstractVisitableVisitor {
     //System.out.println("All.visit(" + any.getClass() + ")");
     int childCount = any.getChildCount();
     Visitable result = any;
-    for (int i = 0; i < childCount; i++) {
-      //System.out.println(" -> " + getArgument(0).getClass() + ".visit(" + result.getChildAt(i) + ")");
-      result = result.setChildAt(i, getArgument(0).visit(result.getChildAt(i)));
+    if(!hasPosition()) {
+      for (int i = 0; i < childCount; i++) {
+        Visitable newChild = getArgument(0).visit(result.getChildAt(i));
+        result = result.setChildAt(i, newChild);
+      }
+    } else {
+      try {
+        for (int i = 0; i < childCount; i++) {
+          //System.out.println(" -> " + getArgument(0).getClass() + ".visit(" + result.getChildAt(i) + ")");
+          //System.out.println("All.pos = " + getPosition());
+          getPosition().down(i+1);
+          Visitable newChild = getArgument(0).visit(result.getChildAt(i));
+          getPosition().up();
+          result = result.setChildAt(i, newChild);
+        }
+      } catch(VisitFailure f) {
+        getPosition().up();
+        throw new VisitFailure();
+      }
     }
     return result;
   }
