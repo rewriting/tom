@@ -18,9 +18,16 @@ public abstract class AbstractVisitableVisitor implements VisitableVisitor {
   }
 
   public Position getPosition() {
-    return position;
+    if(hasPosition()) {
+      return position;
+    } else {
+      throw new RuntimeException("position not initialized");
+    }
   }
 
+  public boolean hasPosition() {
+    return position!=null;
+  }
   /*
   protected void initPosition(Position pos) {
     setPosition(pos);

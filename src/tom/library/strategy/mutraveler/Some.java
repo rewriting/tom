@@ -26,10 +26,17 @@ public class Some extends AbstractVisitableVisitor {
     int childCount = any.getChildCount();
     Visitable result = any;
     int successCount = 0;
-    if(getPosition()!=null) {
+    if(!hasPosition()) {
       for (int i = 0; i < childCount; i++) {
         try { 
-          getPosition().down(i);
+          result = result.setChildAt(i,getArgument(0).visit(any.getChildAt(i))); 
+          successCount++;
+        } catch(VisitFailure f) { }
+      }
+    } else {
+      for (int i = 0; i < childCount; i++) {
+        try { 
+          getPosition().down(i+1);
           Visitable newChild = getArgument(0).visit(any.getChildAt(i));
           getPosition().up();
           result = result.setChildAt(i,newChild); 
@@ -37,13 +44,6 @@ public class Some extends AbstractVisitableVisitor {
         } catch(VisitFailure f) { 
           getPosition().up();
         }
-      }
-    } else {
-      for (int i = 0; i < childCount; i++) {
-        try { 
-          result = result.setChildAt(i,getArgument(0).visit(any.getChildAt(i))); 
-          successCount++;
-        } catch(VisitFailure f) { }
       }
     }
     if (successCount == 0) {

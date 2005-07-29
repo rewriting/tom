@@ -23,18 +23,18 @@ public class OneId extends AbstractVisitableVisitor {
 
   public Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
-    if(getPosition()!=null) {
+    if(!hasPosition()) {
       for (int i = 0; i < childCount; i++) {
-        getPosition().down(i);
         Visitable newSubterm = getArgument(0).visit(any.getChildAt(i));
-        getPosition().up();
         if (newSubterm != any.getChildAt(i)) {
           return any.setChildAt(i,newSubterm);
         } 
       } 
     } else {
       for (int i = 0; i < childCount; i++) {
+        getPosition().down(i+1);
         Visitable newSubterm = getArgument(0).visit(any.getChildAt(i));
+        getPosition().up();
         if (newSubterm != any.getChildAt(i)) {
           return any.setChildAt(i,newSubterm);
         } 

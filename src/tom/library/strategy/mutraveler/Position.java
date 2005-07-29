@@ -1,7 +1,10 @@
 package tom.library.strategy.mutraveler;
 
-import java.util.LinkedList;
-import java.util.Iterator;
+import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import jjtraveler.Visitable;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
+import java.util.*;
 
 public class Position {
   private LinkedList list = null;
@@ -10,24 +13,42 @@ public class Position {
     this.list = new LinkedList();
   }
 
-  private boolean hasPosition() {
-    return list!=null;
+  protected boolean isEmpty() {
+    return list.isEmpty();
   }
   
-  public boolean isEmpty() {
-    return hasPosition() && list.isEmpty();
-  }
-  
-  public void up() {
+  protected void up() {
     list.removeLast();
   }
 
-  public void down(int subtree) {
-    list.addLast(new Integer(subtree));
+  protected void down(int subtree) {
+    if(subtree>0) {
+      list.addLast(new Integer(subtree));
+    }
   }
 
-  public Iterator iterator() {
-    return list.iterator();
+  public VisitableVisitor getOmega(VisitableVisitor v) {
+    VisitableVisitor res = v;
+    for(ListIterator it=list.listIterator(list.size()); it.hasPrevious() ;) {
+     int index = ((Integer)it.previous()).intValue();
+     res = new Omega(index,res);
+    }
+    return res;
+  }
+          
+  public VisitableVisitor getReplace(final Visitable subject) {
+   return this.getOmega(new Identity() { public Visitable visit(Visitable x) { return subject; }});
+  }
+  
+  public VisitableVisitor getSubterm() {
+   return new AbstractVisitableVisitor() { 
+     { initSubterm(); }
+     public Visitable visit(Visitable subject) throws VisitFailure {
+       final Visitable[] ref = new Visitable[1];
+       getOmega(new Identity() { public Visitable visit(Visitable x) { ref[0]=x; return x; }}).visit(subject);
+       return ref[0];
+     }
+   };
   }
 
   public String toString() {

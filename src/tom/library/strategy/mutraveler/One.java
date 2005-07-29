@@ -23,7 +23,7 @@ public class One extends AbstractVisitableVisitor {
 
   public Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
-    if(getPosition()==null) {
+    if(!hasPosition()) {
       for (int i = 0; i < childCount; i++) {
         Visitable newChild = getArgument(0).visit(any.getChildAt(i));
         return any.setChildAt(i,newChild);
@@ -32,7 +32,7 @@ public class One extends AbstractVisitableVisitor {
       for (int i = 0; i < childCount; i++) {
         try { 
           //System.out.println("One.pos = " + getPosition());
-          getPosition().down(i);
+          getPosition().down(i+1);
           Visitable newChild = getArgument(0).visit(any.getChildAt(i));
           getPosition().up();
           return any.setChildAt(i,newChild);

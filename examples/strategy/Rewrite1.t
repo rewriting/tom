@@ -35,7 +35,9 @@ import strategy.term.types.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 
 public class Rewrite1 {
@@ -67,8 +69,7 @@ public class Rewrite1 {
     VisitableVisitor ruleId = new RewriteSystemId();
 
     try {
-      
-         System.out.println("subject       = " + subject);
+      System.out.println("subject       = " + subject);
       System.out.println("onceBottomUp  = " + MuTraveler.init(`OnceBottomUp(rule)).visit(subject));
       System.out.println("onceBottomUpId= " + MuTraveler.init(`OnceBottomUpId(ruleId)).visit(subject));
       System.out.println("bottomUp      = " + MuTraveler.init(`BottomUp(Try(rule))).visit(subject));
@@ -95,8 +96,9 @@ public class Rewrite1 {
         a() -> { 
           Position pos = MuTraveler.getPosition(this);
           System.out.println("a -> b at " + pos);
-          System.out.println(globalSubject + " at " + pos + " = " + MuTraveler.getSubterm(globalSubject,pos));
-          System.out.println("rwr into: " + MuTraveler.replaceSubterm(globalSubject,pos,`b()));
+          System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
+          System.out.println("rwr into: " + pos.getReplace(`b()).visit(globalSubject));
+
           return `b();
         }
         b() -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
