@@ -57,9 +57,11 @@ public class Rewrite1 {
     test.run();
   }
 
+  private Term globalSubject = null;
   public void run() {
     //Term subject = `g(d,d);
     Term subject = `f(g(g(a,b),g(a,a)));
+    globalSubject = subject;
 
     VisitableVisitor rule = new RewriteSystem();
     VisitableVisitor ruleId = new RewriteSystemId();
@@ -89,7 +91,14 @@ public class Rewrite1 {
 
 
       %match(Term arg) {
-        a() -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
+        //a() -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
+        a() -> { 
+          Position pos = MuTraveler.getPosition(this);
+          System.out.println("a -> b at " + pos);
+          System.out.println(globalSubject + " at " + pos + " = " + MuTraveler.getSubterm(globalSubject,pos));
+          System.out.println("rwr into: " + MuTraveler.replaceSubterm(globalSubject,pos,`b()));
+          return `b();
+        }
         b() -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
         g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
       }

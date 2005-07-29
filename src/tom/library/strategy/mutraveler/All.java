@@ -12,7 +12,7 @@ import jjtraveler.VisitFailure;
  */
 
 public class All extends AbstractVisitableVisitor {
-    
+
   public All(VisitableVisitor v) {
     initSubterm(v);
   }
@@ -21,24 +21,25 @@ public class All extends AbstractVisitableVisitor {
     //System.out.println("All.visit(" + any.getClass() + ")");
     int childCount = any.getChildCount();
     Visitable result = any;
-    try {
-    for (int i = 0; i < childCount; i++) {
-      //System.out.println(" -> " + getArgument(0).getClass() + ".visit(" + result.getChildAt(i) + ")");
-      if(getPosition()!=null) {
-        //System.out.println("All.pos = " + getPosition());
-        getPosition().down(i);
+    if(getPosition()==null) {
+      for (int i = 0; i < childCount; i++) {
+        Visitable newChild = getArgument(0).visit(result.getChildAt(i));
+        result = result.setChildAt(i, newChild);
       }
-      Visitable newChild = getArgument(0).visit(result.getChildAt(i));
-      if(getPosition()!=null) {
+    } else {
+      try {
+        for (int i = 0; i < childCount; i++) {
+          //System.out.println(" -> " + getArgument(0).getClass() + ".visit(" + result.getChildAt(i) + ")");
+          //System.out.println("All.pos = " + getPosition());
+          getPosition().down(i);
+          Visitable newChild = getArgument(0).visit(result.getChildAt(i));
+          getPosition().up();
+          result = result.setChildAt(i, newChild);
+        }
+      } catch(VisitFailure f) {
         getPosition().up();
+        throw new VisitFailure();
       }
-      result = result.setChildAt(i, newChild);
-    }
-    } catch(VisitFailure f) {
-      if(getPosition()!=null) {
-        getPosition().up();
-      }
-      throw new VisitFailure();
     }
     return result;
   }

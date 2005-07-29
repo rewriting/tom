@@ -28,25 +28,48 @@ public class MuTraveler {
     return (Position) positionMap.get(v);
   }
 
-}
-
-  class MuInitializer extends Identity {
-    private Position position; 
-
-    public MuInitializer(Position position) {
-      super();
-      this.position = position;
+  public static Visitable getSubterm(Visitable v, Position p) {
+    Iterator it = p.iterator();
+    Visitable res = v;
+    while(it.hasNext()) {
+      int index = ((Integer)it.next()).intValue();
+      res = res.getChildAt(index);
     }
+    return res;
+  }
+  
+  public static Visitable replaceSubterm(Visitable subject, Position p, Visitable u) {
+    Iterator it = p.iterator();
+    return replaceSubterm(subject,it,u);
+  }
 
-    public Visitable visit(Visitable v) {
-      if(v instanceof AbstractVisitableVisitor) {
-        AbstractVisitableVisitor avv = (AbstractVisitableVisitor) v;
-        avv.setPosition(position);
-      } else if(v instanceof VisitableVisitor) {
-        MuTraveler.setPosition((VisitableVisitor)v,position);
-      } else {
-        throw new RuntimeException("cannot initialize: " + v);
-      }
-      return v;
+  private static Visitable replaceSubterm(Visitable subject, Iterator it, Visitable u) {
+    if(!it.hasNext()) {
+      return u;
+    } else {
+      int index = ((Integer)it.next()).intValue();
+      return subject.setChildAt(index,replaceSubterm(subject.getChildAt(index),it,u));
     }
   }
+}
+
+class MuInitializer extends Identity {
+  private Position position; 
+
+  public MuInitializer(Position position) {
+    super();
+    this.position = position;
+  }
+
+  public Visitable visit(Visitable v) {
+    if(v instanceof AbstractVisitableVisitor) {
+      AbstractVisitableVisitor avv = (AbstractVisitableVisitor) v;
+      avv.setPosition(position);
+    } else if(v instanceof VisitableVisitor) {
+      MuTraveler.setPosition((VisitableVisitor)v,position);
+    } else {
+      throw new RuntimeException("cannot initialize: " + v);
+    }
+    return v;
+  }
+}
