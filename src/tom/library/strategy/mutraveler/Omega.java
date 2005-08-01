@@ -10,8 +10,9 @@ import jjtraveler.VisitFailure;
  * Basic visitor combinator which applies v the i-th subterm
  * 0-th subterm is the term itself
  * 1-th subterm corresponds to the first subterm
+ * ...
+ * arity-th subterm corresponds to the last subterm
  * <p>
-
 */
 
 public class Omega extends AbstractVisitableVisitor {
@@ -23,10 +24,9 @@ public class Omega extends AbstractVisitableVisitor {
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
-    int childCount = any.getChildCount();
     if(position==0) {
       return any;
-    } else if(position>0 && position<=childCount) {
+    } else if(position>0 && position<=any.getChildCount()) {
       int childNumber = position-1;
       if(!hasPosition()) {
         Visitable newChild = getArgument(0).visit(any.getChildAt(childNumber));

@@ -61,6 +61,10 @@
     make(var,v) { tom.library.strategy.mutraveler.MuVar.mu(var,v) }
   }
 
+  %op VisitableVisitor Omega(position:int, s1:VisitableVisitor) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Omega) }
+    make(pos,v) { new tom.library.strategy.mutraveler.Omega(pos,(VisitableVisitor)v) }
+  }
 /*
  * basic operators with Id considered as a failure
  */
