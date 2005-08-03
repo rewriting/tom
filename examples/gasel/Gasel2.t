@@ -7,10 +7,10 @@ import org._3pq.jgrapht.graph.SimpleGraph;
 import java.util.*;
 
 import aterm.pure.*;
-import gasel1.data.*;
-import gasel1.data.types.*;
+import gasel2.data.*;
+import gasel2.data.types.*;
 
-public final class Gasel1 {
+public final class Gasel2 {
   private dataFactory factory;
   private Graph globalGraph;
 
@@ -19,7 +19,6 @@ public final class Gasel1 {
 	imports public
 
 	sorts Atom IntList Link 
-        // Radical RadicalList
       
 	abstract syntax		
 		C(n:int)   -> Atom
@@ -36,43 +35,35 @@ public final class Gasel1 {
 		double -> Link
 		triple -> Link
 		arom   -> Link
-
-		//rad(link:Link,symbol:Symbol,radList:RadicalList) -> Radical
-		//concRad( Radical* ) -> RadicalList
   }
 
-  %typeterm Radical {
-    implement { Object }
-    equals(t1,t2) { t1.equals(t2) } 
-  }
- 
-  %typeterm LinkRadicalList {
+  %typeterm LinkAtomList {
     implement { List }
     equals(t1,t2) { t1.equals(t2) } 
   }
 
-  %typeterm LinkRadical {
-    implement { LinkRadical }
+  %typeterm LinkAtom {
+    implement { LinkAtom }
     equals(t1,t2) { t1.equals(t2) } 
   }
  
-  %op LinkRadical linkrad(link:Link,rad:Radical) {
-    is_fsym(t)  { t instanceof LinkRadical }
-    get_slot(link,t) { ((LinkRadical)t).getLink() }
-    get_slot(rad,t)  { ((LinkRadical)t).getRadical() }
+  %op LinkAtom linkatom(link:Link,atom:Atom) {
+    is_fsym(t)  { t instanceof LinkAtom }
+    get_slot(link,t) { ((LinkAtom)t).getLink() }
+    get_slot(atom,t)  { ((LinkAtom)t).getAtom() }
   }
 
-  %op Radical rad(atom:Atom,subterm:LinkRadicalList) {
+  %op Atom rad(atom:Atom,subterm:LinkAtomList) {
     is_fsym(t)  { t instanceof Atom }
     get_slot(atom,t) { (Atom)t }
     get_slot(subterm,t)  { computeSuccessors(getGraph(), t) }
   }
  
-  %oparray LinkRadicalList conc( LinkRadical* ) {
+  %oparray LinkAtomList conc( LinkAtom* ) {
     is_fsym(t)       { t instanceof List }
     make_empty(n)    { new ArrayList(n)       }
     make_append(e,l) { myAdd(e,(ArrayList)l)   }
-    get_element(l,n) { (LinkRadical)l.get(n)        }
+    get_element(l,n) { (LinkAtom)l.get(n)        }
     get_size(l)      { l.size()                }
   }
 
@@ -89,7 +80,7 @@ public final class Gasel1 {
     } else {
       res = label;
     }
-    System.out.println("label( " + e + " ) = " + res); 
+    //System.out.println("label( " + e + " ) = " + res); 
     return res;
   }
 
@@ -98,12 +89,12 @@ public final class Gasel1 {
     List res = new LinkedList();
     for(Iterator it=edges.iterator() ; it.hasNext() ; ) {
       Edge e = (Edge)it.next();
-      res.add(new LinkRadical(getLink(e),(Atom)e.oppositeVertex(v)));
+      res.add(new LinkAtom(getLink(e),(Atom)e.oppositeVertex(v)));
     }
     return res;
   }
 
-  public Gasel1(dataFactory factory) {
+  public Gasel2(dataFactory factory) {
     this.factory = factory;
     this.globalGraph = new SimpleGraph();
   }
@@ -113,7 +104,7 @@ public final class Gasel1 {
   }
   
   public static void main( String[] args ) {
-    Gasel1 t = new Gasel1(dataFactory.getInstance(new PureFactory()));
+    Gasel2 t = new Gasel2(dataFactory.getInstance(new PureFactory()));
     t.run();
   }
 
@@ -126,7 +117,7 @@ public final class Gasel1 {
   private void addSimpleLink(Object v1, Object v2) {
     Edge e = new UndirectedEdge(v1,v2);
     labelMap.put(e,`simple());
-    System.out.println("add label( " + e + " ) = " + labelMap.get(e)); 
+    //System.out.println("add label( " + e + " ) = " + labelMap.get(e)); 
     getGraph().addEdge(e);
   }
 
@@ -158,22 +149,22 @@ public final class Gasel1 {
     System.out.println("edges of C3 = " + g.edgesOf(v3));
     System.out.println("successors of C3 = " + computeSuccessors(g,v3));
     
-    %match(Radical v1) {
+    %match(Atom v1) {
       // e C
-      rad(e[], conc(linkrad(simple(), rad(C[],subterm)) )) -> {
+      rad(e[], conc(linkatom(simple(), rad(C[],subterm)) )) -> {
         System.out.println("Bingo 1: " + subterm);
       }
       
       // e C C
-      rad(e[], conc(_*, linkrad(simple(),rad(C[],
-                          conc(_*, linkrad(simple(),rad(C[],subterm)),_*))),_*)) -> {
+      rad(e[], conc(_*, linkatom(simple(),rad(C[],
+                          conc(_*, linkatom(simple(),rad(C[],subterm)),_*))),_*)) -> {
         System.out.println("Bingo 2: " + subterm);
       }
       
       // e C C C
-      rad(e[], conc(_*, linkrad(simple(),rad(C[],
-                          conc(_*, linkrad(simple(),rad(C[],
-                          conc(_*, linkrad(simple(),rad(C[],subterm)),_*))),_*))),_*)) -> {
+      rad(e[], conc(_*, linkatom(simple(),rad(C[],
+                          conc(_*, linkatom(simple(),rad(C[],
+                          conc(_*, linkatom(simple(),rad(C[],subterm)),_*))),_*))),_*)) -> {
         System.out.println("Bingo 3: " + subterm);
       }
       
@@ -182,25 +173,25 @@ public final class Gasel1 {
   }
 }
 
-class LinkRadical {
+class LinkAtom {
   private Link link;
-  private Atom radical;
+  private Atom atom;
 
-  public LinkRadical(Link link, Atom rad) {
+  public LinkAtom(Link link, Atom atom) {
     this.link = link;
-    this.radical = rad;
+    this.atom = atom;
   }
 
   public Link getLink() {
     return link;
   }
 
-  public Atom getRadical() {
-    return radical;
+  public Atom getAtom() {
+    return atom;
   }
 
   public String toString() {
-    return "(" + getLink() + "," + getRadical() + ")";
+    return "(" + getLink() + "," + getAtom() + ")";
   }
 }
 
