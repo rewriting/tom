@@ -1,5 +1,5 @@
-import org._3pq.jgrapht.*;
-import org._3pq.jgrapht.edge.*;
+import org._3pq.jgrapht.Graph;
+//import org._3pq.jgrapht.edge.*;
 import org._3pq.jgrapht.graph.DefaultDirectedGraph;
 import org._3pq.jgrapht.graph.SimpleGraph;
 
@@ -35,7 +35,7 @@ public final class Gasel2 {
   module data
 	imports public
 
-	sorts Atom IntList Link 
+	sorts Atom BondType Bond BondList
       
 	abstract syntax	
     empty      -> Atom
@@ -45,14 +45,15 @@ public final class Gasel2 {
 		arO(n:int) -> Atom
 		H(n:int)   -> Atom
 		e(n:int)   -> Atom
-		
-		concInt( int* ) -> IntList  
+	
+    bond(bondType:BondType,source:Atom,target:Atom) -> Bond
+		concBond( Bond* ) -> BondList  
 
-		none   -> Link
-		simple -> Link
-		double -> Link
-		triple -> Link
-		arom   -> Link
+		none   -> BondType
+		simple -> BondType
+		double -> BondType
+		triple -> BondType
+		arom   -> BondType
   }
 
   %typeterm StateList {
@@ -65,18 +66,9 @@ public final class Gasel2 {
     equals(t1,t2) { t1.equals(t2) } 
   }
 
-  /*
-  %op State state(source:Atom,link:Link,atom:Atom) {
+  %op State rad(bondtype:BondType,atom:Atom,subterm:StateList) {
     is_fsym(t)  { t instanceof State }
-    get_slot(source,t) { ((State)t).getSource() }
-    get_slot(link,t) { ((State)t).getLink() }
-    get_slot(atom,t)  { ((State)t).getAtom() }
-  }
-*/
-
-  %op State rad(link:Link,atom:Atom,subterm:StateList) {
-    is_fsym(t)  { t instanceof State }
-    get_slot(link,t) { t.getLink() }
+    get_slot(bondtype,t) { t.getBondType() }
     get_slot(atom,t) { t.getAtom() }
     get_slot(subterm,t)  { computeSuccessors(getGraph(), t) }
   }
@@ -97,40 +89,42 @@ public final class Gasel2 {
   private Map labelMap = new HashMap();
 
   /*
-   * add a simple link to the graph
+   * add a simple bond to the graph
    * the label is stored in a hashmap
    */
-  private void addSimpleLink(Object v1, Object v2) {
-    Edge e = new UndirectedEdge(v1,v2);
-    labelMap.put(e,`simple());
+  private void addBond(Atom v1, Atom v2, BondType type) {
+    org._3pq.jgrapht.Edge e = new org._3pq.jgrapht.edge.UndirectedEdge(v1,v2);
+    labelMap.put(e,`bond(type,v1,v2));
     //System.out.println("add label( " + e + " ) = " + labelMap.get(e)); 
     getGraph().addEdge(e);
   }
 
-  private Link getLink(Edge e) {
-    Link label = (Link)labelMap.get(e);
-    Link res;
-    if(label==null) {
-      System.out.println("edge without label: " + e); 
-      res = `none();
-    } else {
-      res = label;
+  private Bond getBond(org._3pq.jgrapht.Edge e) {
+    Bond bond = (Bond)labelMap.get(e);
+    if(bond==null) {
+      throw new RuntimeException("no associated bond to: " + e); 
     }
-    //System.out.println("label( " + e + " ) = " + res); 
-    return res;
+    //System.out.println("label( " + e + " ) = " + bond); 
+    return bond;
+  }
+
+  private BondType getBondType(org._3pq.jgrapht.Edge e) {
+    return getBond(e).getBondType();
   }
 
   /*
-   * given a node, compute all its immediate successors with the link information
+   * given a node, compute all its immediate successors with the bond information
    */
   private List computeSuccessors(Graph g, State state) {
     Atom atom = state.getAtom();
+    BondList path = state.getPath();
     List res = new LinkedList();
     for(Iterator it=g.edgesOf(atom).iterator() ; it.hasNext() ; ) {
-      Edge e = (Edge)it.next();
-      Atom successor = (Atom)e.oppositeVertex(atom);
-      if(!successor.equals(state.getSource())) {
-        res.add(new State(atom,getLink(e),successor));
+      org._3pq.jgrapht.Edge e = (org._3pq.jgrapht.Edge)it.next();
+      Bond b = getBond(e);
+      if(path.indexOf(b,0) < 0) { // bond does not occur in path
+        Atom successor = (Atom)e.oppositeVertex(atom);
+        res.add(new State(`manyBondList(b,path),getBondType(e),successor));
       }
     }
     return res;
@@ -153,17 +147,17 @@ public final class Gasel2 {
     g.addVertex( v5 );
 
     // add edges to create a circuit
-    addSimpleLink( v1, v2 );
-    addSimpleLink( v2, v3 );
-    addSimpleLink( v3, v4 );
-    addSimpleLink( v4, v5 );
-    addSimpleLink( v5, v3 );
+    addBond( v1, v2, `simple() );
+    addBond( v2, v3, `simple() );
+    addBond( v3, v4, `simple() );
+    addBond( v4, v5, `simple() );
+    addBond( v5, v3, `simple() );
 
     System.out.println("g = " + g);
     System.out.println("edges of C3 = " + g.edgesOf(v3));
-    System.out.println("successors of C3 = " + computeSuccessors(g,new State(v2,`simple(),v3)));
+    System.out.println("successors of C3 = " + computeSuccessors(g,new State(`concBond(bond(simple(),v2,v3)),`simple(),v3)));
    
-    State state = new State(`empty(),`none(),v1);
+    State state = new State(`emptyBondList(),`none(),v1);
 
     %match(State state) {
       // e C
@@ -190,22 +184,22 @@ public final class Gasel2 {
 }
 
 class State {
-  private Atom source;
+  private BondList path;
   private Atom atom;
-  private Link link;
+  private BondType bond;
 
-  public State(Atom source, Link link, Atom atom) {
-    this.source = source; 
-    this.link = link;
+  public State(BondList path, BondType bond, Atom atom) {
+    this.path = path; 
+    this.bond = bond;
     this.atom = atom;
   }
 
-  public Link getLink() {
-    return link;
+  public BondType getBondType() {
+    return bond;
   }
 
-  public Atom getSource() {
-    return source;
+  public BondList getPath() {
+    return path;
   }
 
   public Atom getAtom() {
@@ -213,7 +207,7 @@ class State {
   }
 
   public String toString() {
-    return "(" + getSource() + "," + getLink() + "," + getAtom() + ")";
+    return "(" + getPath() + "," + getBondType() + "," + getAtom() + ")";
   }
 }
 
