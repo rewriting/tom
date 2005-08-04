@@ -1,4 +1,3 @@
-
 import org._3pq.jgrapht.*;
 import org._3pq.jgrapht.edge.*;
 import org._3pq.jgrapht.graph.DefaultDirectedGraph;
@@ -38,7 +37,8 @@ public final class Gasel2 {
 
 	sorts Atom IntList Link 
       
-	abstract syntax		
+	abstract syntax	
+    empty      -> Atom
 		C(n:int)   -> Atom
 		arC(n:int) -> Atom
 		O(n:int)   -> Atom
@@ -55,33 +55,37 @@ public final class Gasel2 {
 		arom   -> Link
   }
 
-  %typeterm LinkAtomList {
+  %typeterm StateList {
     implement { List }
     equals(t1,t2) { t1.equals(t2) } 
   }
 
-  %typeterm LinkAtom {
-    implement { LinkAtom }
+  %typeterm State {
+    implement { State }
     equals(t1,t2) { t1.equals(t2) } 
   }
- 
-  %op LinkAtom linkatom(link:Link,atom:Atom) {
-    is_fsym(t)  { t instanceof LinkAtom }
-    get_slot(link,t) { ((LinkAtom)t).getLink() }
-    get_slot(atom,t)  { ((LinkAtom)t).getAtom() }
-  }
 
-  %op Atom rad(atom:Atom,subterm:LinkAtomList) {
-    is_fsym(t)  { t instanceof Atom }
-    get_slot(atom,t) { (Atom)t }
+  /*
+  %op State state(source:Atom,link:Link,atom:Atom) {
+    is_fsym(t)  { t instanceof State }
+    get_slot(source,t) { ((State)t).getSource() }
+    get_slot(link,t) { ((State)t).getLink() }
+    get_slot(atom,t)  { ((State)t).getAtom() }
+  }
+*/
+
+  %op State rad(link:Link,atom:Atom,subterm:StateList) {
+    is_fsym(t)  { t instanceof State }
+    get_slot(link,t) { t.getLink() }
+    get_slot(atom,t) { t.getAtom() }
     get_slot(subterm,t)  { computeSuccessors(getGraph(), t) }
   }
  
-  %oparray LinkAtomList conc( LinkAtom* ) {
+  %oparray StateList conc( State* ) {
     is_fsym(t)       { t instanceof List }
     make_empty(n)    { new ArrayList(n)       }
     make_append(e,l) { myAdd(e,(ArrayList)l)   }
-    get_element(l,n) { (LinkAtom)l.get(n)        }
+    get_element(l,n) { (State)l.get(n)        }
     get_size(l)      { l.size()                }
   }
 
@@ -118,14 +122,16 @@ public final class Gasel2 {
 
   /*
    * given a node, compute all its immediate successors with the link information
-   * TODO: should not return the node from which we came 
    */
-  private List computeSuccessors(Graph g, Object v) {
-    List edges = g.edgesOf(v);
+  private List computeSuccessors(Graph g, State state) {
+    Atom atom = state.getAtom();
     List res = new LinkedList();
-    for(Iterator it=edges.iterator() ; it.hasNext() ; ) {
+    for(Iterator it=g.edgesOf(atom).iterator() ; it.hasNext() ; ) {
       Edge e = (Edge)it.next();
-      res.add(new LinkAtom(getLink(e),(Atom)e.oppositeVertex(v)));
+      Atom successor = (Atom)e.oppositeVertex(atom);
+      if(!successor.equals(state.getSource())) {
+        res.add(new State(atom,getLink(e),successor));
+      }
     }
     return res;
   }
@@ -155,24 +161,26 @@ public final class Gasel2 {
 
     System.out.println("g = " + g);
     System.out.println("edges of C3 = " + g.edgesOf(v3));
-    System.out.println("successors of C3 = " + computeSuccessors(g,v3));
-    
-    %match(Atom v1) {
+    System.out.println("successors of C3 = " + computeSuccessors(g,new State(v2,`simple(),v3)));
+   
+    State state = new State(`empty(),`none(),v1);
+
+    %match(State state) {
       // e C
-      rad(e[], conc(linkatom(simple(), rad(C[],subterm)) )) -> {
+      rad(_, e[], conc(_*,rad(simple(), C[],subterm),_*)) -> {
         System.out.println("Bingo 1: " + subterm);
       }
       
       // e C C
-      rad(e[], conc(_*, linkatom(simple(),rad(C[],
-                          conc(_*, linkatom(simple(),rad(C[],subterm)),_*))),_*)) -> {
+      rad(_,e[], conc(_*, rad(simple(),C[],
+                          conc(_*, rad(simple(),C[],subterm),_*)),_*)) -> {
         System.out.println("Bingo 2: " + subterm);
       }
       
       // e C C C
-      rad(e[], conc(_*, linkatom(simple(),rad(C[],
-                          conc(_*, linkatom(simple(),rad(C[],
-                          conc(_*, linkatom(simple(),rad(C[],subterm)),_*))),_*))),_*)) -> {
+      rad(_,e[], conc(_*, rad(simple(),C[],
+                          conc(_*, rad(simple(),C[],
+                          conc(_*, rad(simple(),C[],subterm),_*)),_*)),_*)) -> {
         System.out.println("Bingo 3: " + subterm);
       }
       
@@ -181,11 +189,13 @@ public final class Gasel2 {
   }
 }
 
-class LinkAtom {
-  private Link link;
+class State {
+  private Atom source;
   private Atom atom;
+  private Link link;
 
-  public LinkAtom(Link link, Atom atom) {
+  public State(Atom source, Link link, Atom atom) {
+    this.source = source; 
     this.link = link;
     this.atom = atom;
   }
@@ -194,12 +204,16 @@ class LinkAtom {
     return link;
   }
 
+  public Atom getSource() {
+    return source;
+  }
+
   public Atom getAtom() {
     return atom;
   }
 
   public String toString() {
-    return "(" + getLink() + "," + getAtom() + ")";
+    return "(" + getSource() + "," + getLink() + "," + getAtom() + ")";
   }
 }
 
