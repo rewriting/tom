@@ -14,6 +14,24 @@ public final class Gasel2 {
   private dataFactory factory;
   private Graph globalGraph;
 
+  public Gasel2(dataFactory factory) {
+    this.factory = factory;
+    this.globalGraph = new SimpleGraph();
+  }
+
+  public dataFactory getDataFactory() {
+    return factory;
+  }
+  
+  private Graph getGraph() {
+    return globalGraph;
+  }
+ 
+  public static void main( String[] args ) {
+    Gasel2 t = new Gasel2(dataFactory.getInstance(new PureFactory()));
+    t.run();
+  }
+
   %vas {
   module data
 	imports public
@@ -71,11 +89,25 @@ public final class Gasel2 {
     l.add(e);
     return l;
   }
+  
+  private Map labelMap = new HashMap();
+
+  /*
+   * add a simple link to the graph
+   * the label is stored in a hashmap
+   */
+  private void addSimpleLink(Object v1, Object v2) {
+    Edge e = new UndirectedEdge(v1,v2);
+    labelMap.put(e,`simple());
+    //System.out.println("add label( " + e + " ) = " + labelMap.get(e)); 
+    getGraph().addEdge(e);
+  }
 
   private Link getLink(Edge e) {
     Link label = (Link)labelMap.get(e);
     Link res;
     if(label==null) {
+      System.out.println("edge without label: " + e); 
       res = `none();
     } else {
       res = label;
@@ -84,6 +116,10 @@ public final class Gasel2 {
     return res;
   }
 
+  /*
+   * given a node, compute all its immediate successors with the link information
+   * TODO: should not return the node from which we came 
+   */
   private List computeSuccessors(Graph g, Object v) {
     List edges = g.edgesOf(v);
     List res = new LinkedList();
@@ -94,36 +130,8 @@ public final class Gasel2 {
     return res;
   }
 
-  public Gasel2(dataFactory factory) {
-    this.factory = factory;
-    this.globalGraph = new SimpleGraph();
-  }
-
-  public dataFactory getDataFactory() {
-    return factory;
-  }
-  
-  public static void main( String[] args ) {
-    Gasel2 t = new Gasel2(dataFactory.getInstance(new PureFactory()));
-    t.run();
-  }
-
-  private Graph getGraph() {
-    return globalGraph;
-  }
- 
-  private Map labelMap = new HashMap();
-
-  private void addSimpleLink(Object v1, Object v2) {
-    Edge e = new UndirectedEdge(v1,v2);
-    labelMap.put(e,`simple());
-    //System.out.println("add label( " + e + " ) = " + labelMap.get(e)); 
-    getGraph().addEdge(e);
-  }
-
   public void run() {
     Graph g = getGraph();
-
 
     Atom v1 = `e(1);
     Atom v2 = `C(2);
