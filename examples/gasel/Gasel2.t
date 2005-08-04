@@ -184,23 +184,39 @@ public final class Gasel2 {
 
     %match(State state) {
       // e C
-      rad(_, e[], conc(_*,rad(simple(), C[],subterm),_*)) -> {
+      rad(_, e[], conc(_*,
+      rad(simple(), C[],subterm),
+      _*)) -> {
         System.out.println("Bingo 1: " + subterm);
       }
       
       // e C C
-      rad(_,e[], conc(_*, rad(simple(),C[],
-                          conc(_*, rad(simple(),C[],subterm),_*)),_*)) -> {
+      rad(_,e[], conc(_*, 
+      rad(simple(),C[], conc(_*, 
+      rad(simple(),C[],subterm),
+      _*)),_*)) -> {
         System.out.println("Bingo 2: " + subterm);
       }
       
       // e C C C
-      rad(_,e[], conc(_*, rad(simple(),C[],
-                          conc(_*, rad(simple(),C[],
-                          conc(_*, rad(simple(),C[],subterm),_*)),_*)),_*)) -> {
+      rad(_,e[], conc(_*, 
+      rad(simple(),C[], conc(_*,
+      rad(simple(),C[], conc(_*, 
+      rad(simple(),C[],subterm),
+      _*)),_*)),_*)) -> {
         System.out.println("Bingo 3: " + subterm);
       }
       
+      // e C C C C C with a cycle
+      rad(_,e[], conc(_*, 
+      rad(b,C[], conc(_*,
+      rad(b,x@C[], conc(_*, 
+      rad(b,C[], conc(_*, 
+      rad(b,C[], conc(_*, 
+      rad(b,x@C[],subterm),
+      _*)),_*)),_*)),_*)),_*)) -> {
+        System.out.println("Bingo 4: " + `x);
+      }
     }
 
   }
