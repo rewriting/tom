@@ -11,7 +11,7 @@ import jjtraveler.reflective.VisitableVisitor;
  * strategy.
  */
 
-public class BottomUp extends Sequence {
+class BottomUp extends Sequence {
 
     /*
      * Since it is not allowed to reference `this' before the

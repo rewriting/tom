@@ -40,3 +40,20 @@
 # an more complex example for BVu, search < d ; e >
 [ - a ,[ < a ; < d ; - b > > , [ < b ; < e ; - c > > , c ] ] ]
 
+
+# From Sylvain
+[(<e;f>,a),<[<-e;d>,c];(-f,b)>,<l;-a>,<[g,k];-b>,([-l,-g,h],-c),([-h,-k],-d)]
+# localSearch: >2Go
+
+[(<e;f>,a),<[<-e;d>,c];(-f,b)>,<l;-a>,<(g,k);-b>,(<-l;[-g,h]>,-c),(-h,-k,-d)]
+# localSearch: >2Go
+
+[(<e;f>,a),<[<-e;d>,c,(g,k)];[(-f,b),-b]>,<l;-a>,(<-l;[-g,h]>,-c),(-h,-k,-d)]
+# localSearch: >2Go
+
+[(<e;f>,a),<[-e,-l];-f>,<l;-a>]
+# localSearch: proof = true in 13974 ms
+
+[<[<-e;d>,c];(-f,b)>,<[g,k];-b>,([-l,-g,h],-c),([-h,-k],-d),<(e,l);f>]
+# localSearch: >2Go (439000 states visited, 2611910 remaining)
+

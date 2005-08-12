@@ -271,7 +271,7 @@ public class TomKernelCompiler extends TomBase {
                                                           indexSubterm,
                                                           ensureNotEmptyList);
           Expression glZero = `TomTermToExpression(TargetLanguageToTomTerm(ITL("0")));
-          automataInstruction = `Let(newVariableIndexAST,glZero,
+          automataInstruction = `LetRef(newVariableIndexAST,glZero,
                                      Let(newVariableListAST,
                                          TomTermToExpression(subjectVariableAST),
                                          automata));
@@ -669,7 +669,7 @@ public class TomKernelCompiler extends TomBase {
        * }
        */
     Instruction body = `LetAssign(subjectListIndex,AddOne(Ref(subjectListIndex)),subAction);
-    Expression source = `GetElement(tomSymbol.getAstName(),termType,subjectListName,subjectListIndex);
+    Expression source = `GetElement(tomSymbol.getAstName(),termType,subjectListName,Ref(subjectListIndex));
     Instruction let = buildLet(var, source, body);
     if(notEmptyList) {
       return `genIsEmptyArray(tomSymbol,subjectListName,subjectListIndex,Nop(),let);

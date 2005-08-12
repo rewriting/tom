@@ -292,7 +292,7 @@ public class TomOptimizer extends TomGenericPlugin {
   protected void collectRefVariable(final Collection collection, ATerm subject) {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
-          //System.out.println("t = " + t);
+          // System.out.println("t = " + t);
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;
             %match(TomTerm t) { 

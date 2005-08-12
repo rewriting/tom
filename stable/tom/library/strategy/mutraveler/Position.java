@@ -13,20 +13,38 @@ public class Position {
     this.list = new LinkedList();
   }
 
+  private Position(LinkedList list) {
+    this.list = list;
+  }
+  
+  protected Object clone() {
+    return new Position((LinkedList)this.list.clone());
+  }
+  
   protected boolean isEmpty() {
     return list.isEmpty();
   }
-  
+ 
+  /*
+   * remove the last sub-position
+   */
   protected void up() {
     list.removeLast();
   }
 
-  protected void down(int subtree) {
-    if(subtree>0) {
-      list.addLast(new Integer(subtree));
+  /*
+   * add a sub-position n
+   */
+  protected void down(int n) {
+    if(n>0) {
+      list.addLast(new Integer(n));
     }
   }
 
+  /*
+   * create s=omega(v)
+   * such that s[subject] returns subject[ s[subject|omega] ]|omega
+   */
   public VisitableVisitor getOmega(VisitableVisitor v) {
     VisitableVisitor res = v;
     for(ListIterator it=list.listIterator(list.size()); it.hasPrevious() ;) {
@@ -35,11 +53,19 @@ public class Position {
     }
     return res;
   }
-          
-  public VisitableVisitor getReplace(final Visitable subject) {
-   return this.getOmega(new Identity() { public Visitable visit(Visitable x) { return subject; }});
+    
+  /*
+   * create s=omega(x->t)
+   * such that s[subject] returns subject[t]|omega
+   */
+  public VisitableVisitor getReplace(final Visitable t) {
+   return this.getOmega(new Identity() { public Visitable visit(Visitable x) { return t; }});
   }
-  
+
+  /*
+   * create s=x->t|omega
+   * such that s[subject] returns subject|omega
+   */
   public VisitableVisitor getSubterm() {
    return new AbstractVisitableVisitor() { 
      { initSubterm(); }

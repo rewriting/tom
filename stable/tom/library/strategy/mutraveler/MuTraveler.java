@@ -20,12 +20,12 @@ public class MuTraveler {
     return v;
   }
 
-  public static void setPosition(VisitableVisitor v, Position position) {
-    positionMap.put(v,position);
+  public static Position getPosition(VisitableVisitor v) {
+    return (Position) ((Position) positionMap.get(v)).clone();
   }
 
-  public static Position getPosition(VisitableVisitor v) {
-    return (Position) positionMap.get(v);
+  protected static void setPosition(VisitableVisitor v, Position position) {
+    positionMap.put(v,position);
   }
 
 }

@@ -115,6 +115,9 @@ public final class Gasel2 {
     return getBond(e).getBondType();
   }
 
+  /*
+   * This creates a graph by side-effect
+   */
   private State createState(Graph g, BondType bondType, Atom atom, List subterm) {
     if(!atom.isEmpty()) {
       g.addVertex(atom);
@@ -179,7 +182,14 @@ public final class Gasel2 {
                                      conc(rad(simple(), C(3),
                                      conc(rad(simple(), C(4),conc(rad(simple(), C(5),conc()))),
                                           rad(simple(), C(5),conc())))))));
-
+/*
+    State state = `rad(none(), e(1), conc(rad(simple(), C(2),
+                                     conc(
+                                      rad(simple(),C(6),conc(rad(simple(),C(7),conc(rad(simple(),C(3),conc()))))), 
+                                       rad(simple(), C(3),
+                                     conc(rad(simple(), C(4),conc(rad(simple(), C(5),conc()))),
+                                          rad(simple(), C(5),conc())))))));
+  */
     System.out.println("g = " + g);
 
     %match(State state) {
@@ -213,15 +223,21 @@ public final class Gasel2 {
       rad(b,x@C[], conc(_*, 
       rad(b,C[], conc(_*, 
       rad(b,C[], conc(_*, 
-      rad(b,x@C[],subterm),
+      rad(b,y@C[],subterm),
       _*)),_*)),_*)),_*)),_*)) -> {
-        System.out.println("Bingo 4: " + `x);
+        System.out.println("x = " + `x + " y = " + `y);
+        if(x.equals(y)) {
+          System.out.println("Bingo 4: " + `x);
+        }
       }
     }
 
   }
 }
 
+/*
+ * This classe stores an atom and the path from the root to this atom
+ */
 class State {
   private BondList path;
   private Atom atom;
