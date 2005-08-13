@@ -652,7 +652,7 @@
           depends="addressbook, adt, apireach, appletxml, boulderdash, builtin,
           caml, cell, dom, expression, ferus, gomoku, gtree, integerc, list, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens,
-          prodrule, propp, rbtree, set, strategy, strings, structure, 
+          prodrule, propp, rbtree, set, strategy, strings,  
           tutorial, vas, xml, minirho">
   </target>
 
