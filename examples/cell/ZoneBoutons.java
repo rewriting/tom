@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, INRIA
+ * Copyright (c) 2004, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -44,14 +44,15 @@ import javax.swing.event.*;
 class ZoneBoutons extends JPanel
 {
     Reglages r;
-    JTextField genDeb, genFin;
+    //JTextField genDeb, genFin;
+    JSpinner genDeb, genFin;
     JProgressBar progression;
 
     ZoneBoutons()
     {
-    	ImageIcon playIcon = new ImageIcon("cell/play.gif");
-    	ImageIcon stopIcon = new ImageIcon("cell/stop.gif");
-    	ImageIcon pauseIcon = new ImageIcon("cell/pause.gif");
+    	ImageIcon playIcon = new ImageIcon("Cell/play.gif");
+    	ImageIcon stopIcon = new ImageIcon("Cell/stop.gif");
+    	ImageIcon pauseIcon = new ImageIcon("Cell/pause.gif");
 	r = new Reglages();;
 	JSlider choixDelai;
 	JComboBox choixFigure;
@@ -117,7 +118,11 @@ class ZoneBoutons extends JPanel
 	p2.add(genDebL, gbc);
 
 	gbc.gridwidth=GridBagConstraints.REMAINDER;
-	genDeb = new JTextField((new Integer(r.generationDebut)).toString(), 3);
+	//genDeb = new JTextField((new Integer(r.generationDebut)).toString(), 3);
+	SpinnerModel ModelDebut = new SpinnerNumberModel(1, 1, 99990, 1);
+	// should the max be MAX_INT or is this value safe enough?
+	genDeb = new JSpinner(ModelDebut);
+	genDeb.setValue(new Integer(r.generationDebut));
 	p2.add(genDeb, gbc);
 
 	gbc.gridwidth=1;
@@ -125,7 +130,10 @@ class ZoneBoutons extends JPanel
 	p2.add(genFinL, gbc);
 
 	gbc.gridwidth=GridBagConstraints.REMAINDER;
-	genFin = new JTextField((new Integer(r.generationFin)).toString(), 3);
+	//genFin = new JTextField((new Integer(r.generationFin)).toString(), 3);
+	SpinnerModel ModelFin = new SpinnerNumberModel(1, 1, 99990, 1);
+	genFin = new JSpinner(ModelFin);
+	genFin.setValue(new Integer(r.generationFin));
 	p2.add(genFin, gbc);
 
 	add(p2, BorderLayout.CENTER);
@@ -154,7 +162,6 @@ class ZoneBoutons extends JPanel
     {
 	public void actionPerformed(ActionEvent e)
 	{
-    if(!r.pause) r.debutPause = System.currentTimeMillis();
 	    r.pause = true;
 	    r.lecture = false;
 	}
@@ -164,8 +171,6 @@ class ZoneBoutons extends JPanel
     {
 	public void actionPerformed(ActionEvent e)
 	{
-    r.debutPause =0;
-    r.finPause=0;
     r.pause = false;
     r.lecture = false;
     r.generationActuelle = r.generationDebut;
@@ -179,9 +184,12 @@ class ZoneBoutons extends JPanel
 	{
 		if (!r.lecture && !r.pause) // etat stop
 		{
-      r.startChrono =  System.currentTimeMillis();
-   		  int debut = (new Integer(genDeb.getText())).intValue();
-          int fin = (new Integer(genFin.getText())).intValue();
+
+   		  //int debut = (new Integer(genDeb.getText())).intValue();
+          //int fin = (new Integer(genFin.getText())).intValue();
+          int debut = ((Integer) genDeb.getValue()).intValue();
+          int fin = ((Integer) genFin.getValue()).intValue();
+          //System.out.println("[ZoneBoutons]\tLecture de " + debut + " à " + fin);
 	      if ( debut > fin || debut < 1)
 	 	  {
 		      JOptionPane erreur = new JOptionPane();
@@ -198,8 +206,6 @@ class ZoneBoutons extends JPanel
 
 	    if (!r.lecture && r.pause) // etat  pause
 	    {
-        r.finPause = System.currentTimeMillis();
-        r.startChrono =  r.startChrono+(r.finPause-r.debutPause);
 	    	r.lecture = true;
 	    	r.pause = false;
 	    }
@@ -232,5 +238,6 @@ class ZoneBoutons extends JPanel
 		}
 	}
     }
+    
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, INRIA
+ * Copyright (c) 2004, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,30 @@ package cell;
 public class LangtonSelf extends TwoDimCellularAutomaton {
 
 	%include {int.tom}	
+
+	public Matrice init() {
+		int[][] temp = { {0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0}, 
+				{2, 1, 7, 0, 1, 4, 0, 1, 4, 2, 0, 0, 0, 0, 0},
+				{2, 0, 2, 2, 2, 2, 2, 2, 0, 2, 0, 0, 0, 0, 0},
+				{2, 7, 2, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0},
+				{2, 1, 2, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0},
+				{2, 0, 2, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0},
+				{2, 7, 2, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0},
+				{2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 0},
+				{2, 0, 7, 1, 0, 7, 1, 0, 7, 1, 1, 1, 1, 1, 2},
+				{0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} };
+		int[][] bigone = new int[60][60];
+		int i, j;
+		for (i=0; i< 11; i++) {
+			for (j=0; j<15; j++) {
+				bigone[33+i][22+j] = temp[i][j];
+			}
+		}
+		Matrice config = new Matrice(bigone);
+		//Matrice config = new Matrice(temp);
+		return config;
+	}
 
 	public int nextGeneration(Matrice Neighbourhood) {
 		int N  = Neighbourhood.matrice[0][1];

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, INRIA
+ * Copyright (c) 2004, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -42,8 +42,6 @@ class Reglages
   int generationDebut;
   int generationFin;
   int generationActuelle;
-  long startChrono;
-  long debutPause,finPause;
   boolean grid, dd, td;
   boolean lecture, pause;
   int mode = 1;
@@ -52,9 +50,6 @@ class Reglages
   
 	Reglages()
 	{
-    startChrono = 0;
-    debutPause = 0;
-    finPause = 0;
 		delai = 1995;
 		generationDebut = 1;
 		generationActuelle = generationDebut;

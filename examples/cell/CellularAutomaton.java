@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, INRIA
+ * Copyright (c) 2004, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -41,5 +41,6 @@ public abstract class CellularAutomaton {
 public abstract int nextGeneration(int[] Neighbourhood) ;
 
 public abstract int[] nextGenerationConfig(int[] Config) ;
+public abstract int[] nextGenerationConfigAdapt(int[] Config) ;
 
 }

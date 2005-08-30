@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, INRIA
+ * Copyright (c) 2004, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -63,5 +63,81 @@ class Matrice
 	    nbcols = nbc;
 	    matrice = matrix;
     }
-}
 	
+	void grandit() {
+		int[][] m2 = new int[nblignes+2][nbcols+2];
+		for (int i=0; i<nblignes; i++) {
+			for (int j=0; j<nbcols; j++) {
+				m2[i+1][j+1] = matrice[i][j];
+			}
+		}
+		matrice = m2;
+		nblignes = nblignes + 2;
+		nbcols = nbcols + 2;
+	}
+
+	void rapetisse() {
+		int i;
+		boolean b = true;
+		// La première colonne est-elle vide ?
+		for (i=0; i<nblignes; i++) {
+			b = b && (matrice[i][0]==0);
+		}
+		if (b) {
+			nbcols -- ;
+			int [][] m2 = new int[nblignes][nbcols];
+			for (int j=0; j<nblignes; j++) {
+				for (int k=0; k<nbcols; k++) {
+					m2[j][k] = matrice[j][k+1];
+				}
+			}
+			matrice = m2;
+			//System.out.println("[Matrice]\trapetisse première colonne");
+		}
+
+		//la dernière colonne est-elle vide ?
+		b = true;
+		for (i=0; i<nblignes; i++) {
+			b = b && (matrice[i][nbcols-1]==0);
+		}
+		if (b) {
+			nbcols -- ;
+			int [][] m2 = new int[nblignes][nbcols];
+			for (int j=0; j<nblignes; j++) {
+				for (int k=0; k<nbcols; k++) {
+					m2[j][k] = matrice[j][k];
+				}
+			}
+			matrice = m2;
+			//System.out.println("[Matrice]\trapetisse dernière colonne");
+		}
+
+		//la première ligne est-elle vide ?
+		b = true;
+		for (i=0; i<nbcols; i++) {
+			b = b && (matrice[0][i] == 0);
+		} if (b) {
+			nblignes -- ;
+			int [][] m2 = new int[nblignes][nbcols];
+			for (i=0; i<nblignes; i++) {
+				m2[i] = matrice[i+1];
+			}
+			matrice = m2;
+			//System.out.println("[Matrice]\trapetisse première ligne");
+		}
+
+		//la dernière ligne est-elle vide ?
+		b = true;
+		for (i=0; i<nbcols; i++) {
+			b = b && (matrice[nblignes-1][i] == 0);
+		} if (b) {
+			nblignes -- ;
+			int [][] m2 = new int[nblignes][nbcols];
+			for (i=0; i<nblignes; i++) {
+				m2[i] = matrice[i];
+			}
+			matrice = m2;
+			//System.out.println("[Matrice]\trapetisse dernière ligne");
+		}
+	}
+}

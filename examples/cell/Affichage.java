@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, INRIA
+ * Copyright (c) 2004, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -39,8 +39,7 @@ package cell;
 import java.awt.event.*;
 import javax.swing.*;
 
-class Affichage implements ActionListener
-{
+class Affichage implements ActionListener {
   Timer timer;
   TDCA td;
   Etat e;
@@ -48,8 +47,8 @@ class Affichage implements ActionListener
   int debut, fin;
   Reglages reg;
   JProgressBar pb;
-  Affichage()
-  {
+
+	Affichage() {
     reg = TDCA.reglages;
     pb = TDCA.zb.progression;
     td = TDCA.auto;
@@ -63,27 +62,19 @@ class Affichage implements ActionListener
     timer.start();
   }
   
-  public void actionPerformed(ActionEvent ae )
-  {
-
+	public void actionPerformed(ActionEvent ae ) {
     timer.setDelay(reg.delai);
-    if (reg.lecture)
-      {
+		if (reg.lecture) {
         reg.generationActuelle++;
         pb.setMinimum(reg.generationDebut);
         pb.setMaximum(reg.generationFin);
         e.dessine();
         e.ChangeEtat(td.Suivant()); // passage à l'état suivant
-        if (reg.generationActuelle >= reg.generationFin){
+			if (reg.generationActuelle >= reg.generationFin)
           reg.lecture = false;
-          System.out.println(reg.generationActuelle + " state changes in " + (System.currentTimeMillis()-reg.startChrono)+ " ms");
-        }	
         debut = reg.generationActuelle; // étonnant non ?
-      }
-    else
-      {
-        if (reg.generationDebut != debut && !reg.pause)
-          {
+		} else {
+			if (reg.generationDebut != debut && !reg.pause) {
             e.ChangeEtat(td.Generation(reg.generationDebut));
             debut  = reg.generationDebut;
            }
@@ -91,14 +82,9 @@ class Affichage implements ActionListener
     pb.setValue(reg.generationActuelle);
     pb.setString(new Integer(reg.generationActuelle).toString());
     pb.setStringPainted(true);
-
-
-
   }
   
   public void redessine() {
       e.dessine();
     }
-			
 }
-	
