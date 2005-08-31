@@ -50,9 +50,9 @@ class ZoneBoutons extends JPanel
 
     ZoneBoutons()
     {
-    	ImageIcon playIcon = new ImageIcon("Cell/play.gif");
-    	ImageIcon stopIcon = new ImageIcon("Cell/stop.gif");
-    	ImageIcon pauseIcon = new ImageIcon("Cell/pause.gif");
+    	ImageIcon playIcon = new ImageIcon("cell/play.gif");
+    	ImageIcon stopIcon = new ImageIcon("cell/stop.gif");
+    	ImageIcon pauseIcon = new ImageIcon("cell/pause.gif");
 	r = new Reglages();;
 	JSlider choixDelai;
 	JComboBox choixFigure;
