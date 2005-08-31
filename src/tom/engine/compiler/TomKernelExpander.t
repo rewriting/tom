@@ -493,7 +493,10 @@ public class TomKernelExpander extends TomBase {
 
         if(subject instanceof TomTerm) {
           %match(TomList instantiatedVariable, TomTerm subject) {
-            concTomTerm(_*,var@Variable[astName=opNameAST] ,_*), RecordAppl[nameList=(opNameAST),slots=concSlot()] -> {
+            concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*), RecordAppl[nameList=(opNameAST),slots=concSlot()] -> {
+              return `var;
+            }
+            concTomTerm(_*,var@VariableStar[astName=opNameAST] ,_*), VariableStar[astName=opNameAST] -> {
               return `var;
             }
           }

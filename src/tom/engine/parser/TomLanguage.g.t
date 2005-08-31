@@ -285,7 +285,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                         OriginalText(Name(patternText))
                     );
 
-                    //System.out.println("pattern = " + `Pattern(patterns,ast().makeList(matchGuardsList)));
+                    //System.out.println("pattern = " + `Pattern(subjectList,patterns,ast().makeList(matchGuardsList)));
 
                     list.add(`PatternInstruction(
                             Pattern(subjectList,patterns,ast().makeList(matchGuardsList)),

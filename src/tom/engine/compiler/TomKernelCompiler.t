@@ -788,19 +788,19 @@ public class TomKernelCompiler extends TomBase {
       }
 
       concConstraint(Equal(var) ,tail*) -> {
-          //System.out.println("constraint: " + source + " EqualTo " + var);
+        //System.out.println("constraint: " + source + " EqualTo " + `var);
         Instruction subBody = compileConstraint(`var,source,body);
         return `buildConstraint(tail,source,If(EqualTerm(getTermType(var, getSymbolTable()),var,ExpressionToTomTerm(source)),subBody,Nop()));
       }
 
       concConstraint(AssignTo(var@(Variable|VariableStar)[]) ,tail*) -> {
-          //System.out.println("constraint: " + source + " AssignTo " + var);
+        //System.out.println("constraint: " + source + " AssignTo " + `var);
         Instruction subBody = compileConstraint(`var,source,body);
         return `buildConstraint(tail,source,Let(var,source,subBody));
       }
 
       concConstraint(Ensure(exp) ,tail*) -> {
-        //System.out.println("constraint: " + source + " Ensure " + exp);
+        //System.out.println("constraint: " + source + " Ensure " + `exp);
         //Instruction subBody = compileConstraint(`exp,source,body);
         TomType type = getSymbolTable().getBooleanType();
         Expression equality = `EqualTerm(type,ExpressionToTomTerm(TrueTL()),exp);
