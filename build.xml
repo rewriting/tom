@@ -124,6 +124,28 @@
     <path refid="src.classpath"/>
   </path>
 
+  <macrodef name="tomjavac">
+    <attribute name="destdir"/>
+    <attribute name="debug"   default="${javacDebugInfo}"/>
+    <attribute name="verbose" default="${javacVerbose}"/>
+    <attribute name="fork"    default="no"/>
+    <attribute name="target"  default="${javacTarget}"/>
+    <attribute name="source"  default="${javacSource}"/>
+    <attribute name="nowarn"  default="${nowarnings}"/>
+    <element name="srcelements" implicit="yes"/>
+    <sequential>
+      <javac destdir="@{destdir}" 
+             debug=  "@{debug}" 
+             verbose="@{verbose}"
+             fork=   "@{fork}"
+             target= "@{target}"
+             source= "@{source}"
+             nowarn= "@{nowarn}">
+        <srcelements/>
+      </javac>
+    </sequential>
+  </macrodef>
+
   <target name="prepare.src">
     <mkdir dir="${src.build}"/>
     <mkdir dir="${src.gen}"/>
@@ -385,19 +407,13 @@
     <replace dir="${src.gen}" token="@TOM_VERSION@" value="${src.version} (src)">
       <include name="jtom/Tom.java"/>
     </replace>
-    <javac destdir="${src.build}" 
-           debug="${javacDebugInfo}" 
-           verbose="${javacVerbose}"
-           target="${javacTarget}"
-           source="${javacSource}"
-           fork="yes"
-           nowarn="${nowarnings}">
+    <tomjavac destdir="${src.build}" fork="yes">
       <src path="${src.src}"/>
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
       <include name="jtom/**/*.java"/>
-    </javac>
+    </tomjavac>
   </target>
 
   <target name="build.stable" depends="stable"/>
@@ -409,19 +425,13 @@
       <include name="jtom/Tom.java"/>
     </replace>
     <!-- Compile the java code from ${stable} into ${build} -->
-    <javac destdir="${stable.build}" 
-           debug="${javacDebugInfo}"
-           verbose="${javacVerbose}"
-           target="${javacTarget}"
-           source="${javacSource}"
-           fork="yes"
-           nowarn="${nowarnings}">
+    <tomjavac destdir="${stable.build}" fork="yes">
       <src path="${stable.src}"/>
       <src path="${stable.gen}"/>
       <include name="tom/**/*.java"/>
       <include name="jtom/**/*.java"/>
       <classpath refid="stable.classpath"/>
-    </javac>
+    </tomjavac>
   </target>  
 
   <target name="dist.examples">
@@ -731,16 +741,11 @@
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
     </tomsrc>
-    <javac srcdir="${test.gen}" 
-           destdir="${test.build}" 
-           debug="${javacDebugInfo}" 
-           verbose="${javacVerbose}"
-           target="${javacTarget}"
-           source="${javacSource}"
-           nowarn="${nowarnings}">
+    <tomjavac destdir="${test.build}">
+      <src path="${test.gen}"/>
       <classpath refid="src.classpath"/>
       <exclude name="**/error/**"/>
-    </javac>
+    </tomjavac>
   </target>
 
   <target name="test.stable" description="Compile and run acceptance tests with stable" depends="initTaskDef,prepare.test">
@@ -762,16 +767,11 @@
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
     </tom>
-    <javac srcdir="${test.gen}" 
-           destdir="${test.build}" 
-           debug="${javacDebugInfo}"
-           verbose="${javacVerbose}"
-           target="${javacTarget}"
-           source="${javacSource}"
-           nowarn="${nowarnings}">
+    <tomjavac destdir="${test.build}">
+      <src path="${test.gen}"/>
       <classpath refid="tom.classpath"/>
       <exclude name="**/error/**"/>
-    </javac>
+    </tomjavac>
   </target>
 
   <target name="junit.stable"
@@ -1035,19 +1035,13 @@
       <classpath refid="src.classpath"/>
     </antlr>
 
-    <javac destdir="${destination}/build" 
-           debug="${javacDebugInfo}"
-           verbose="${javacVerbose}"
-           target="${javacTarget}"
-           source="${javacSource}"
-           fork="yes"
-           nowarn="${nowarnings}">
+    <tomjavac destdir="${destination}/build" fork="yes">
       <src path="${src.src}"/>
       <src path="${destination}/gen"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
       <include name="jtom/**/*.java"/>
-    </javac>
+    </tomjavac>
   </target>
 
   <target name="bootinstall"
