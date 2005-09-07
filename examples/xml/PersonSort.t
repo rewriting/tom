@@ -59,6 +59,7 @@ public class PersonSort {
     TNode newNode = `xml(<Persons><Person><FirstName>#TEXT("Juan")</FirstName></Person></Persons>); 
     searchJu(newNode);
     xtools.printXMLFromATerm(newNode);
+    System.out.println();
 
   }
    
