@@ -473,7 +473,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     if(nodeclMode) {
       return;
     }
-    s = modifier + returnType + " " + declName + "_" + suffix + "(";
+    s.append(modifier + returnType + " " + declName + "_" + suffix + "(");
     for(int i=0 ; i<args.length ; ) {
       s.append(args[i] + " " + args[i+1]);
       i+=2;
