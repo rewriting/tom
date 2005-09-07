@@ -75,10 +75,10 @@ public class TomStarter extends TomGenericPlugin {
   
   /**
    * inherited from plugin interface
-   * returns argTorelay initialized during run call
+   * returns argToRelay initialized during run call
    */
   public Object[] getArgs() {
-    return argToRelay;
+    return (Object[])argToRelay.clone();
   }
 
 } // class TomStarter

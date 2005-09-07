@@ -31,6 +31,10 @@ public class MuVar extends AbstractVisitableVisitor {
     return false;
   }
 
+  public int hashCode() {
+    return name.hashCode();
+  }
+  
   public Visitable visit(Visitable any) throws VisitFailure {
     if(instance != null) {
       return instance.visit(any);

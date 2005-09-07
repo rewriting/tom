@@ -222,20 +222,20 @@ public class TomCamlGenerator extends TomImperativeGenerator {
                          String suffix,
                          String args[],
                          TargetLanguage tlCode)  throws IOException {
-    String s = "";
+    StringBuffer s = new StringBuffer();
     if(nodeclMode) { 
       return; 
     }
-    s =  "let " + declName + "_" + suffix + "(";
+    s.append("let " + declName + "_" + suffix + "(");
     for(int i=0 ; i<args.length ; ) {
         // the first argument is the type, second the name 
-      s+= args[i+1];
+      s.append(args[i+1]);
       i+=2;
       if(i<args.length) {
-        s+= ", ";
+        s.append(", ");
       }
     } 
-    s += ") = " + tlCode.getCode() + " ";
+    s.append(") = " + tlCode.getCode() + " ");
 
     %match(TargetLanguage tlCode) {
       TL(_,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
@@ -252,18 +252,18 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 
   protected void genDeclMake(String funName, TomType returnType, 
                              TomList argList, Instruction instr)  throws IOException {
-    String s = "";
+    StringBuffer s = new StringBuffer();
     if(nodeclMode) { 
       return;
     }
-    s = "let " + funName + "(";
+    s.append("let " + funName + "(");
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {
         %match(TomTerm arg) {
             // in caml, we are not interested in the type of arguments
           Variable[astName=Name(name)] -> {
-            s += `name;
+            s.append(`name);
             break matchBlock;
           }
           
@@ -275,10 +275,10 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       }
       argList = argList.getTail();
       if(!argList.isEmpty()) {
-        s += ", ";
+        s.append(", ");
       }
     }
-    s += ") = ";
+    s.append(") = ");
     output.write(s);
     generateInstruction(0,instr);
     output.write(" ");

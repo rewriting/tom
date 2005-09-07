@@ -569,13 +569,14 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 t:XML_CLOSE  {text.append(">");}
                 {
                     if(!nameList.equals(closingNameList)) {
-                        String found="", expected ="";
+                        StringBuffer found = new StringBuffer();
+                        StringBuffer expected = new StringBuffer();
                         while(!nameList.isEmpty()) {
-                            expected += "|"+nameList.getHead().getString();
+                            expected.append("|"+nameList.getHead().getString());
                             nameList = nameList.getTail();
                         }
                         while(!closingNameList.isEmpty()) {
-                            found += "|"+closingNameList.getHead().getString();
+                            found.append("|"+closingNameList.getHead().getString());
                             closingNameList = closingNameList.getTail();
                         }
                         // TODO find the orgTrack of the match
@@ -1065,19 +1066,20 @@ variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm
                 optionList.add(`OriginTracking(Name(name),line,Name(currentFile())));
                 options = ast().makeOptionList(optionList);
                 constraints = ast().makeConstraintList(constraintList);
-                if(name1 == null)
+                if(name1 == null) {
                     result = `UnamedVariableStar(
                         options,
                         TomTypeAlone("unknown type"),
                         constraints
                     );
-                else
+                } else {
                     result = `VariableStar(
                         options,
                         Name(name),
                         TomTypeAlone("unknown type"),
                         constraints
                     );
+                }
             }
         )
     ;
@@ -1148,7 +1150,7 @@ headSymbol [LinkedList optionList] returns [TomName result]
                 line = i.getLine();
                 text.append(name);
             }
-        |   t = constant // add to symbol table
+        |   t=constant // add to symbol table
             {
                 name = t.getText();
                 line = t.getLine();
@@ -1163,19 +1165,19 @@ headSymbol [LinkedList optionList] returns [TomName result]
             if (t != null){
                 switch(t.getType()){
                 case NUM_INT:
-                    ast().makeIntegerSymbol(symbolTable,t.getText(),optionList);
+                    ast().makeIntegerSymbol(symbolTable,name,optionList);
                     break;
                 case NUM_LONG:
-                    ast().makeLongSymbol(symbolTable,t.getText(),optionList);
+                    ast().makeLongSymbol(symbolTable,name,optionList);
                     break;
                 case CHARACTER:
-                    ast().makeCharSymbol(symbolTable,t.getText(),optionList);
+                    ast().makeCharSymbol(symbolTable,name,optionList);
                     break;
                 case NUM_DOUBLE:
-                    ast().makeDoubleSymbol(symbolTable,t.getText(),optionList);
+                    ast().makeDoubleSymbol(symbolTable,name,optionList);
                     break;
                 case STRING:
-                    ast().makeStringSymbol(symbolTable,t.getText(),optionList);
+                    ast().makeStringSymbol(symbolTable,name,optionList);
                     break;
                 default:
                 }
@@ -2065,7 +2067,9 @@ protected ID_MINUS
 
 NUM_INT
   {boolean isDecimal=false; Token t=null;}
-    :   DOT
+    :   (MINUS)?
+    (
+    DOT
             ( ('0'..'9')+ (EXPONENT)? (f1:FLOAT_SUFFIX {t=f1;})?
                 {
         if (t != null && t.getText().toUpperCase().indexOf('F')>=0) {
@@ -2115,6 +2119,7 @@ NUM_INT
       }
       }
         )?
+    )
   ;
 protected MINUS         :   '-' ;
 protected PLUS          :   '+' ;

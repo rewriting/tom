@@ -790,7 +790,7 @@ public class Verifier extends TomBase {
     return (DerivTree) replaceUndefsubs.apply(subject,subs);
   }
 
-  private class SubstRef {
+  static private class SubstRef {
     private SubstitutionList sublist;
     public SubstRef() {
       sublist = null;

@@ -74,6 +74,9 @@ If you come from the
   Show how to use builtin integer and string  
   Concept: list-matching, string-matching
 
+* c_apigen
+  Show how to use apigen in a C environment
+
 * caml
   Show how to use Tom with Caml  
   Concept: mapping, list-matching
@@ -89,6 +92,9 @@ If you come from the
 * expression
   Simplification of algebraic expressions
   Concept: complex object mapping, lazy-type
+
+* ferus
+  Show how to use apigen in a C environment
 
 * gomoku
   Tiny go-moku game
@@ -138,6 +144,9 @@ If you come from the
   Implementation of Fibonacci in a Production rule style
   Concept: Production rule, Rete
 
+* propp
+  Propositional prover
+
 * rbtree
   Red-Black Tree algorithm
   Concept: apigen, disjunction of patterns
@@ -145,6 +154,9 @@ If you come from the
 * set
   Implementation of Set with maximal sharing
   Concept: apigen, ATerm with unique id
+
+* strategy
+  Show how to use the MuTraveler strategy language
 
 * strings
 	Tiny example base on string matching

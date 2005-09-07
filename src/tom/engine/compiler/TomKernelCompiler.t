@@ -816,7 +816,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
 
-  private class MatchingParameter {
+  static private class MatchingParameter {
       /*
        * This object is used by matching-algorithms to store common parameters
        * which are not modified during the matching process

@@ -310,21 +310,21 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   public String patternToString(PatternList patternList) {
-    String result = "";
+    StringBuffer result = new StringBuffer();
     Pattern h = null;
     PatternList tail = patternList;
     if(!tail.isEmpty()) {
       h = tail.getHead();
       tail = tail.getTail();
-      result = patternToString(h);
+      result.append(patternToString(h));
     }
 
     while(!tail.isEmpty()) {
       h = tail.getHead();
-      result = "," + patternToString(h);
+      result.append("," + patternToString(h));
       tail = tail.getTail();
     }
-    return result;
+    return result.toString();
   }
 
   public String patternToString(Pattern pattern) {
@@ -338,21 +338,21 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   public String patternToString(TomList tomList) {
-    String result = "";
+    StringBuffer result = new StringBuffer();
     TomTerm h = null;
     TomList tail = tomList;
     if(!tail.isEmpty()) {
       h = tail.getHead();
       tail = tail.getTail();
-      result = patternToString(h);
+      result.append(patternToString(h));
     }
 
     while(!tail.isEmpty()) {
       h = tail.getHead();
-      result = "," + patternToString(h);
+      result.append("," + patternToString(h));
       tail = tail.getTail();
     }
-    return result;
+    return result.toString();
   }
   public String patternToString(TomTerm tomTerm) {
     %match(TomTerm tomTerm) {

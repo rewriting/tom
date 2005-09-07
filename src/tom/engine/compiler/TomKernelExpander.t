@@ -272,10 +272,10 @@ public class TomKernelExpander extends TomBase {
                if(`tomName.equals("")) {
                  if(contextSubject.hasAstType()) {
                    tomSymbol = getSymbolFromType(contextSubject.getAstType());
-                   `nameList = `concTomName(tomSymbol.getAstName());
                    if(tomSymbol==null) {
                      throw new TomRuntimeException("No symbol found for type '" + contextSubject.getAstType() + "'");
                    } 
+                   `nameList = `concTomName(tomSymbol.getAstName());
                  }
                } else {
                  tomSymbol = getSymbolFromName(`tomName);
@@ -471,7 +471,7 @@ public class TomKernelExpander extends TomBase {
             }
           }
         } else {
-          TomType type = `typeList.getHead();
+          //TomType type = `typeList.getHead();
           return `manySlotList(PairSlotAppl(slotName,expandVariable(TomTypeToTomTerm(getSlotType(symb,slotName)), slotAppl)), expandVariableList(symbol,tail));
         }
       }
@@ -492,6 +492,8 @@ public class TomKernelExpander extends TomBase {
         }
 
         if(subject instanceof TomTerm) {
+          //System.out.println("instantiatedVariable = " + instantiatedVariable);
+          //System.out.println("subject = " + subject);
           %match(TomList instantiatedVariable, TomTerm subject) {
             concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*), RecordAppl[nameList=(opNameAST),slots=concSlot()] -> {
               return `var;

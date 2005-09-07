@@ -8,7 +8,8 @@
   <property file="../local.properties"/>
 
   <!-- The current version of TOM, should be defined by -Dversion -->
-
+  <property name="javacSource" value="1.4"/>
+  <property name="javacTarget" value="1.4"/>
   <property name="nowarnings"     value="false"/>
   <property name="optimize"       value="off"/>
   <property name="optimize2"      value="off"/>
@@ -153,7 +154,9 @@
       <attribute name="example"/>
       <sequential>
         <javac destdir="${examples.build}"
-               nowarn="${nowarnings}">
+          target="${javacTarget}"
+          source="${javacSource}"
+          nowarn="${nowarnings}">
           <src path="${examples.dir}"/>
           <src path="${examples.gen}"/>
           <classpath refid="tom.classpath"/>

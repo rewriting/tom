@@ -60,7 +60,7 @@ public class LatexOutput {
   }
 
   public String build_latex(Collection derivationSet) {
-    String result = "\n";
+    StringBuffer result = new StringBuffer("\n");
 //    String result = "\\documentclass{article}\n";
 //    result += "\\usepackage{proof}\n";
 //    result += "\\usepackage{xspace}\n";
@@ -71,11 +71,11 @@ public class LatexOutput {
     Iterator it = derivationSet.iterator();
     while(it.hasNext()) {
       DerivTree tree = (DerivTree) it.next();
-      result += build_latex(tree);  
-      result += "\n \\newpage\n";
+      result.append(build_latex(tree));  
+      result.append("\n \\newpage\n");
     }
 //    result += "\n\\end{document}";
-    return result;
+    return result.toString();
   }
 
   public String build_latex(DerivTree tree) {
@@ -154,16 +154,17 @@ public class LatexOutput {
     result += "\\]\n";
     return result;
   }
+  
   String make_two_cols_lines(Map linesList) {
-    String result = "";
+    StringBuffer result = new StringBuffer();
     Iterator it = linesList.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry entry = (Map.Entry) it.next();
-      result += ((String) entry.getKey()) + ": & ";
-      result += ((String) entry.getValue());
-      result += "\\\\\n";
+      result.append(((String) entry.getKey()) + ": & ");
+      result.append(((String) entry.getValue()));
+      result.append("\\\\\n");
     }
-    return result;
+    return result.toString();
   }
 
   DerivTree collect_program_variables(DerivTree tree, Map variables) {
@@ -353,16 +354,16 @@ public class LatexOutput {
   }
 
   String build_latex_from_Seq(Seq seq) {
-    String result = "";
+    StringBuffer result = new StringBuffer();
     %match(Seq seq) {
-      seq() -> { result = "\\textrm{emptySeq}"; }
+      seq() -> { result.append("\\textrm{emptySeq}"); }
       dedterm(termlist) -> {
         %match(TermList termlist) {
           concTerm(X*,t,_*) -> {
             if (`X.isEmpty()) {
-              result += build_latex_from_term(`t);
+              result.append(build_latex_from_term(`t));
             } else {
-              result += "\\mapequiv " + build_latex_from_term(`t);
+              result.append("\\mapequiv " + build_latex_from_term(`t));
             }
           }
         }
@@ -371,15 +372,15 @@ public class LatexOutput {
         %match(ExprList exprlist) {
           concExpr(X*,t,_*) -> {
             if (`X.isEmpty()) {
-              result += build_latex_from_Expr(`t);
+              result.append(build_latex_from_Expr(`t));
             } else {
-              result += "\\mapequiv " + build_latex_from_Expr(`t);
+              result.append("\\mapequiv " + build_latex_from_Expr(`t));
             }
           }
         }
       }
     }
-    return result;
+    return result.toString();
   }
 
   Seq clean_Seq(Seq seq) {

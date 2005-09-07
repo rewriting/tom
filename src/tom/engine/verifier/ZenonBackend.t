@@ -40,7 +40,7 @@ public class ZenonBackend {
   // ------------------------------------------------------------
 
   protected ZenonFactory zfactory;
-  private Verifier verifier;
+  private Verifier verifier; // is it useful ?
   private TomIlTools tomiltools;
 
   public ZenonBackend(Verifier verifier) {
@@ -92,12 +92,12 @@ public class ZenonBackend {
   }
 
   public String genZTermList(ZTermList tl) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     while (!tl.isEmpty()) {
-      res += " "+genZTerm(tl.getHead());
+      res.append(" "+genZTerm(tl.getHead()));
       tl = tl.getTail();
     }
-    return res;
+    return res.toString();
   }
 
   public String genZExpr(ZExpr expr) {
@@ -154,12 +154,12 @@ public class ZenonBackend {
   }
 
   public String genZAxiomList(ZAxiomList axlist) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     while (!axlist.isEmpty()) {
-      res += genZAxiom(axlist.getHead());
+      res.append(genZAxiom(axlist.getHead()));
       axlist = axlist.getTail();
     }
-    return res;
+    return res.toString();
   }
 
   public String genZSpec(ZSpec spec) {

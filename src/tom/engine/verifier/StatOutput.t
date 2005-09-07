@@ -43,7 +43,7 @@ public class StatOutput {
 
   protected IlFactory factory;
   private GenericTraversal traversal;
-  private TomVerifier verifier;
+  private TomVerifier verifier; // is it useful ?
 
   public StatOutput(TomVerifier verifier) {
     factory = IlFactory.getInstance(SingletonFactory.getInstance());
@@ -60,7 +60,7 @@ public class StatOutput {
   }
 
   public String build_stats(Collection derivationSet) {
-    String result = "\nStatistics for this run: \n";
+    StringBuffer result = new StringBuffer("\nStatistics for this run: \n");
 
     // collecting derivations size, number of constraints
     Map sizes = new HashMap();
@@ -82,27 +82,27 @@ public class StatOutput {
     while(it.hasNext()) {
       count += 1;
       MyCounter counter = (MyCounter) it.next();
-      result += "Derivation " + count + "\n";
-      result += "  Number of rules: " + counter.nbDerivRule + "\n";
+      result.append("Derivation " + count + "\n");
+      result.append("  Number of rules: " + counter.nbDerivRule + "\n");
       globalnbderiv += counter.nbDerivRule;
-      result += "  Number of constraints: " + counter.nbConstraints + "\n";
+      result.append("  Number of constraints: " + counter.nbConstraints + "\n");
       globalnbconstraints += counter.nbConstraints;
-      result += "  Number of interesting constraints: " + counter.nbExprConstraints + "\n";
+      result.append("  Number of interesting constraints: " + counter.nbExprConstraints + "\n");
       globalnbexprconst += counter.nbExprConstraints;
-      result += "  Number of deduction steps: " + counter.nbDedStep + "\n";
+      result.append("  Number of deduction steps: " + counter.nbDedStep + "\n");
       globalnbdedstep += counter.nbDedStep;
     }
 
-    result += "\nGlobal stats:\n";
-    result += "  Number of derivations = " + derivationSet.size() + "\n";
+    result.append("\nGlobal stats:\n");
+    result.append("  Number of derivations = " + derivationSet.size() + "\n");
     
-    result += "  Number of rules: " + globalnbderiv + "\n";
-    result += "  Number of constraints: " + globalnbconstraints + "\n";
-    result += "  Number of interesting constraints: " + globalnbexprconst + "\n";
-    result += "  Number of deduction steps: " + globalnbdedstep + "\n";
+    result.append("  Number of rules: " + globalnbderiv + "\n");
+    result.append("  Number of constraints: " + globalnbconstraints + "\n");
+    result.append("  Number of interesting constraints: " + globalnbexprconst + "\n");
+    result.append("  Number of deduction steps: " + globalnbdedstep + "\n");
     
-    result += "\n";
-    return result;
+    result.append("\n");
+    return result.toString();
   }
 
   private Collect2 count_derivrules = new Collect2() {
@@ -140,7 +140,7 @@ public class StatOutput {
     return (MyCounter) result;
   }
 
-  class MyCounter {
+  static class MyCounter {
     public int nbDerivRule;
     public int nbConstraints;
     public int nbExprConstraints;

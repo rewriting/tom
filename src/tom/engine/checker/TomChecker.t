@@ -46,7 +46,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   %include { adt/tomsignature/TomSignature.tom }
     // ------------------------------------------------------------
   
-  protected class TermDescription {
+  static protected class TermDescription {
     int termClass, decLine;
     String name ="";
     TomType tomType = null;

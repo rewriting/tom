@@ -184,6 +184,13 @@ public class TestBuiltin extends TestCase {
     }
   }
 
+  public int matchInt(int t) {
+    %match(int t) {
+      -1 -> { return t; }
+      -2 -> { return -2; }
+      _ -> { return 0; }
+    }
+  }
   public double matchDouble(double t) {
     %match(double t) {
         1.23 -> { return 1.23; }
@@ -288,4 +295,9 @@ public class TestBuiltin extends TestCase {
     assertTrue('-' == matchCharE(`char('k')));
   }
 
+  public void testInt() {
+    assertTrue(-1 == matchInt(`(-1)));
+    assertTrue(-2 == matchInt(`(-2)));
+    assertTrue(0 == matchInt(`(-3)));
+  }
 }

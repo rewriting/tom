@@ -168,7 +168,7 @@ public class TomCompiler extends TomGenericPlugin {
                       TomList l = `guardList;
                       while(!l.isEmpty()) {
                         TomTerm guard = l.getHead();
-                        //System.out.println("try to attach "+guard+" to "+constrainedTermList);
+                        //System.out.println("try to attach "+guard+"\nto "+constrainedTermList);
                         constrainedTermList = attachConstraint(constrainedTermList,guard);
                         l = l.getTail();
                       }

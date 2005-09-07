@@ -306,9 +306,9 @@ public class TomMessage {
 
 
   // Message level
-  public final static int TOM_INFO = 0;
+  public static final int TOM_INFO = 0;
   // Default error line
-  public static int DEFAULT_ERROR_LINE_NUMBER = 1; 
+  public static final int DEFAULT_ERROR_LINE_NUMBER = 1; 
   
   public String getMessage() {
     return message;

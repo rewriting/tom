@@ -302,21 +302,21 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   
   protected void genDeclMake(String funName, TomType returnType, 
                              TomList argList, Instruction instr) throws IOException {
-    String s = "";
-    String check = "";
+    StringBuffer s = new StringBuffer();
+    StringBuffer check = new StringBuffer();
     if( nodeclMode) {
       return;
     }
 
-    s = modifier + getTLType(returnType) + " " + funName + "(";
+    s.append(modifier + getTLType(returnType) + " " + funName + "(");
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {
         %match(TomTerm arg) {
           Variable[astName=Name(name), astType=Type[tomType=tomType,tlType=tlType@TLType[]]] -> {
-            s += getTLCode(`tlType) + " " + `name;
+            s.append(getTLCode(`tlType) + " " + `name);
             if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-              check += "tom_check_stamp_" + getTomType(`tomType) + "(" + `name + ");\n";
+              check.append("tom_check_stamp_" + getTomType(`tomType) + "(" + `name + ");\n");
             }
             break matchBlock;
           }
@@ -329,11 +329,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       }
       argList = argList.getTail();
       if(!argList.isEmpty()) {
-        s += ", ";
+        s.append(", ");
       }
     }
-    s += ") { ";
-    s += check;
+    s.append(") { ");
+    s.append(check);
 
     output.write(s);
     output.write("return ");
@@ -469,20 +469,20 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
                          String suffix,
                          String args[],
                          TargetLanguage tlCode) throws IOException {
-    String s = "";
+    StringBuffer s = new StringBuffer();
     if(nodeclMode) {
       return;
     }
     s = modifier + returnType + " " + declName + "_" + suffix + "(";
     for(int i=0 ; i<args.length ; ) {
-      s+= args[i] + " " + args[i+1];
+      s.append(args[i] + " " + args[i+1]);
       i+=2;
       if(i<args.length) {
-        s+= ", ";
+        s.append(", ");
       }
     } 
     String returnValue = getSymbolTable().isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
-    s += ") { " + returnValue + "; }";
+    s.append(") { " + returnValue + "; }");
 
     %match(TargetLanguage tlCode) {
       TL(_,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
