@@ -44,7 +44,7 @@ public class PersonSort {
   
   public static void main (String args[]) {
     PersonSort person = new PersonSort();
-    person.run("person.xml");
+    person.run("xml/person.xml");
   } 
 
  private void run(String filename){
@@ -54,6 +54,11 @@ public class PersonSort {
     searchJu(term.getDocElem());
     term = sort(term.getDocElem());
     xtools.printXMLFromATerm(term);
+
+    System.out.println("\nTesting with backquote");
+    TNode newNode = `xml(<Persons><Person><FirstName>#TEXT("Juan")</FirstName></Person></Persons>); 
+    searchJu(newNode);
+    xtools.printXMLFromATerm(newNode);
 
   }
    
