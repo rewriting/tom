@@ -81,6 +81,8 @@ public class ATermToXML {
   public void convert(ATerm term) {
     if (term instanceof TNode) {
       atermToXML((TNode) term);
+    } else if (term instanceof TNodeList) {
+      atermToXMLList((TNodeList) term);
     } else {
       System.out.println("ATermToXML can only convert TNode to XML");
     }
