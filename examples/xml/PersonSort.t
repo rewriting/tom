@@ -61,6 +61,15 @@ public class PersonSort {
     xtools.printXMLFromATerm(newNode);
     System.out.println();
 
+    String nage = "105";
+    TNode attr = `xml(<Persons><Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person></Persons>);
+    xtools.printXMLFromATerm(attr);
+    System.out.println();
+
+    TNodeList tnlist = `concTNode(<Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person>,<Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person>);
+
+    xtools.printXMLFromATerm(tnlist);
+    System.out.println();
   }
    
   private TNode sort(TNode subject) {
