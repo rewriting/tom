@@ -89,8 +89,6 @@ public class TomTask extends MatchingTask {
   private boolean listFiles = false;
   private File[] compileList = new File[0];
 
-  private File tmpDir;
-
   /**
    * Set the configuration file
    * @param  configFile the destination directory
@@ -515,7 +513,7 @@ public class TomTask extends MatchingTask {
    * @return the list of files as an array
    */
   public File[] getFileList() {
-    return compileList;
+    return (File[]) compileList.clone();
   }
 
   /**

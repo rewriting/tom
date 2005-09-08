@@ -89,7 +89,7 @@ public class PluginFactory implements Plugin {
   private PlatformOptionList allRequiredOptions;
   private Map flagOwners;
   private Object[] argToRelay;
-  private OptionManager optionManager;
+  private OptionManager optionManager; // it is never written!
   
   private String pluginName;
   private Logger logger;
@@ -153,14 +153,14 @@ public class PluginFactory implements Plugin {
    * From Plugin interface
    */
   public void setArgs(Object arg[]) {
-    argToRelay = arg;
+    argToRelay = (Object[]) arg.clone();
   }
 
   /**
    * From Plugin interface
    */
   public Object[] getArgs() {
-    return argToRelay;
+    return (Object[]) argToRelay.clone();
   }
 
   /**

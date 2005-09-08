@@ -302,21 +302,21 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   
   protected void genDeclMake(String funName, TomType returnType, 
                              TomList argList, Instruction instr) throws IOException {
-    String s = "";
-    String check = "";
+    StringBuffer s = new StringBuffer();
+    StringBuffer check = new StringBuffer();
     if( nodeclMode) {
       return;
     }
 
-    s = modifier + getTLType(returnType) + " " + funName + "(";
+    s.append(modifier + getTLType(returnType) + " " + funName + "(");
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {
          { jtom.adt.tomsignature.types.TomTerm tom_match5_1=(( jtom.adt.tomsignature.types.TomTerm)arg); if(tom_is_fun_sym_Variable(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match5_1_astName=tom_get_slot_Variable_astName(tom_match5_1); { jtom.adt.tomsignature.types.TomType tom_match5_1_astType=tom_get_slot_Variable_astType(tom_match5_1); if(tom_is_fun_sym_Name(tom_match5_1_astName) ||  false ) { { String  tom_match5_1_astName_string=tom_get_slot_Name_string(tom_match5_1_astName); { String  tom_name=tom_match5_1_astName_string; if(tom_is_fun_sym_Type(tom_match5_1_astType) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match5_1_astType_tomType=tom_get_slot_Type_tomType(tom_match5_1_astType); { jtom.adt.tomsignature.types.TomType tom_match5_1_astType_tlType=tom_get_slot_Type_tlType(tom_match5_1_astType); if(tom_is_fun_sym_TLType(tom_match5_1_astType_tlType) ||  false ) {
 
-            s += getTLCode(tom_match5_1_astType_tlType) + " " + tom_name;
+            s.append(getTLCode(tom_match5_1_astType_tlType) + " " + tom_name);
             if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-              check += "tom_check_stamp_" + getTomType(tom_match5_1_astType_tomType) + "(" + tom_name+ ");\n";
+              check.append("tom_check_stamp_" + getTomType(tom_match5_1_astType_tomType) + "(" + tom_name+ ");\n");
             }
             break matchBlock;
            }}} }}} }}} }
@@ -329,11 +329,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       }
       argList = argList.getTail();
       if(!argList.isEmpty()) {
-        s += ", ";
+        s.append(", ");
       }
     }
-    s += ") { ";
-    s += check;
+    s.append(") { ");
+    s.append(check);
 
     output.write(s);
     output.write("return ");
@@ -469,20 +469,20 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
                          String suffix,
                          String args[],
                          TargetLanguage tlCode) throws IOException {
-    String s = "";
+    StringBuffer s = new StringBuffer();
     if(nodeclMode) {
       return;
     }
-    s = modifier + returnType + " " + declName + "_" + suffix + "(";
+    s.append(modifier + returnType + " " + declName + "_" + suffix + "(");
     for(int i=0 ; i<args.length ; ) {
-      s+= args[i] + " " + args[i+1];
+      s.append(args[i] + " " + args[i+1]);
       i+=2;
       if(i<args.length) {
-        s+= ", ";
+        s.append(", ");
       }
     } 
     String returnValue = getSymbolTable().isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
-    s += ") { " + returnValue + "; }";
+    s.append(") { " + returnValue + "; }");
 
      { jtom.adt.tomsignature.types.TargetLanguage tom_match6_1=(( jtom.adt.tomsignature.types.TargetLanguage)tlCode); if(tom_is_fun_sym_TL(tom_match6_1) ||  false ) { { jtom.adt.tomsignature.types.Position tom_match6_1_start=tom_get_slot_TL_start(tom_match6_1); { jtom.adt.tomsignature.types.Position tom_match6_1_end=tom_get_slot_TL_end(tom_match6_1); if(tom_is_fun_sym_TextPosition(tom_match6_1_start) ||  false ) { { int  tom_match6_1_start_line=tom_get_slot_TextPosition_line(tom_match6_1_start); { int  tom_startLine=tom_match6_1_start_line; if(tom_is_fun_sym_TextPosition(tom_match6_1_end) ||  false ) { { int  tom_match6_1_end_line=tom_get_slot_TextPosition_line(tom_match6_1_end);
 

@@ -105,15 +105,15 @@ public class PILFactory extends TomBase {
     };
 
   public String prettyPrintCompiledMatch(ATerm subject) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     Collection matches = collectMatch(subject);
     Iterator it = matches.iterator();
     while(it.hasNext()) {
       Instruction cm = (Instruction) it.next();
-      res += prettyPrint(cm);
-      res += "\n";
+      res.append(prettyPrint(cm));
+      res.append("\n");
     }
-    return res;
+    return res.toString();
   }
   public String prettyPrint(ATerm subject) {
     if (subject instanceof Instruction) {

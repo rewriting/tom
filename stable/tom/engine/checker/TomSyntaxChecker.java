@@ -443,15 +443,15 @@ public class TomSyntaxChecker extends TomChecker {
   } //verifySymbolPairNameDeclList
    
   private void messageMissingMacroFunctions(String symbolType, ArrayList list) {
-    String listOfMissingMacros = "";
+    StringBuffer listOfMissingMacros = new StringBuffer();
     for(int i=0;i<list.size();i++) {
-      listOfMissingMacros+= list.get(i)+",  ";
-    }
-    listOfMissingMacros = listOfMissingMacros.substring(0, listOfMissingMacros.length()-3);
+      listOfMissingMacros.append(list.get(i) + ",  ");
+    } 
+    String stringListOfMissingMacros = listOfMissingMacros.substring(0, listOfMissingMacros.length()-3);
     messageError(currentTomStructureOrgTrack.getLine(), 
                  symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(),
                  TomMessage.missingMacroFunctions.getMessage(),
-                 new Object[]{listOfMissingMacros});
+                 new Object[]{stringListOfMissingMacros});
   } //messageMissingMacroFunctions
 
   //////////////////////////////// /
@@ -911,14 +911,14 @@ public class TomSyntaxChecker extends TomChecker {
                    new Object[]{expectedType.getString()});
       return null;
     } else if(!filteredList.getTail().isEmpty()) {
-      String symbolsString = "";
+      StringBuffer symbolsString = new StringBuffer();
       while(!filteredList.isEmpty()) {
-        symbolsString += " "+filteredList.getHead().getAstName().getString();
+        symbolsString .append(" " + filteredList.getHead().getAstName().getString());
         filteredList= filteredList.getTail();
       }
       messageError(decLine,
                    TomMessage.ambigousUnamedList.getMessage(),
-                   new Object[]{expectedType.getString(), symbolsString});
+                   new Object[]{expectedType.getString(), symbolsString.toString()});
       return null;
     } else { 
       return filteredList.getHead();

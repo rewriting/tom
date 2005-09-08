@@ -168,7 +168,7 @@ public class TomCompiler extends TomGenericPlugin {
                       TomList l = tom_guardList;
                       while(!l.isEmpty()) {
                         TomTerm guard = l.getHead();
-                        //System.out.println("try to attach "+guard+" to "+constrainedTermList);
+                        //System.out.println("try to attach "+guard+"\nto "+constrainedTermList);
                         constrainedTermList = attachConstraint(constrainedTermList,guard);
                         l = l.getTail();
                       }
@@ -499,30 +499,36 @@ public class TomCompiler extends TomGenericPlugin {
     throw new TomRuntimeException("abstractPatternList: " + subjectList);
   }
 
+
+  /***********************************/
+  /* functions related to the 'when' */
+  /***********************************/
+
+
+  /*
+   * attach the when contraint to the right variable
+  */
   private TomList attachConstraint(TomList subjectList,
                                    TomTerm constraint) {
     HashSet patternVariable = new HashSet();
     HashSet constraintVariable = new HashSet();
+
     collectVariable(patternVariable,subjectList);
     collectVariable(constraintVariable,constraint);
-    //patternVariable.retainAll(constraintVariable);
-
-    //TomList variableList = intersection(getAstFactory().makeList(patternVariable),getAstFactory().makeList(constraintVariable));
     Set variableSet = intersection(patternVariable,constraintVariable);
-    //System.out.println("variableList = " + variableList);
 
     //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);
     TomList newSubjectList = (TomList) replace_attachConstraint.apply(subjectList,variableSet,constraint); 
 
-    //System.out.println("newSubjectList = " + newSubjectList);
-
     return newSubjectList;
   }
 
-
+  /*
+   * build a set with all the variables in the intersection of two sets
+   * used by the when
+  */
   private Set intersection(Set patternVariable, Set constraintVariable) {
     Set res = new HashSet();
-
     for(Iterator it1 = patternVariable.iterator(); it1.hasNext() ; ) {
       TomTerm patternTerm = (TomTerm) it1.next();
       itBlock: {
@@ -544,6 +550,10 @@ public class TomCompiler extends TomGenericPlugin {
     return res;
   }
 
+  /*
+   * find the variable on which we should attach the constraint
+   * used by the when
+  */
   protected Replace3 replace_attachConstraint = new Replace3() { 
       public ATerm apply(ATerm subject, Object arg1, Object arg2) {
         Set variableSet = (Set) arg1;
@@ -551,10 +561,6 @@ public class TomCompiler extends TomGenericPlugin {
 
         if(subject instanceof TomTerm) {
            { jtom.adt.tomsignature.types.TomTerm tom_match12_1=(( jtom.adt.tomsignature.types.TomTerm)subject); if(tom_is_fun_sym_VariableStar(tom_match12_1) || tom_is_fun_sym_Variable(tom_match12_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_var=tom_match12_1; { jtom.adt.tomsignature.types.ConstraintList tom_match12_1_constraints=tom_get_slot_Variable_constraints(tom_match12_1);
-
-              //System.out.println("var = " + var);
-              //System.out.println("set1 = " + variableSet);
-              //System.out.println("set2 = " + variableSet);
 
               if(variableSet.remove(tom_var) && variableSet.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)tom_match12_1_constraints.append(tom_make_Ensure(preProcessing(tom_make_BuildReducedTerm(constraint))));

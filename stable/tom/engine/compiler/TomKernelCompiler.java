@@ -789,19 +789,19 @@ public class TomKernelCompiler extends TomBase {
        }} } if(tom_is_fun_sym_concConstraint(tom_match13_1) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList tom_match13_1_list1=tom_match13_1; if(!(tom_is_empty_concConstraint_ConstraintList(tom_match13_1_list1))) { { jtom.adt.tomsignature.types.Constraint tom_match13_1_1=tom_get_head_concConstraint_ConstraintList(tom_match13_1_list1);tom_match13_1_list1=tom_get_tail_concConstraint_ConstraintList(tom_match13_1_list1); if(tom_is_fun_sym_Equal(tom_match13_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match13_1_1_variable=tom_get_slot_Equal_variable(tom_match13_1_1); { jtom.adt.tomsignature.types.TomTerm tom_var=tom_match13_1_1_variable;
 
 
-          //System.out.println("constraint: " + source + " EqualTo " + var);
+        //System.out.println("constraint: " + source + " EqualTo " + `var);
         Instruction subBody = compileConstraint(tom_var,source,body);
         return buildConstraint(tom_match13_1_list1,source,tom_make_If(tom_make_EqualTerm(getTermType(tom_var,getSymbolTable()),tom_var,tom_make_ExpressionToTomTerm(source)),subBody,tom_make_Nop()));
       }} }} }} } if(tom_is_fun_sym_concConstraint(tom_match13_1) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList tom_match13_1_list1=tom_match13_1; if(!(tom_is_empty_concConstraint_ConstraintList(tom_match13_1_list1))) { { jtom.adt.tomsignature.types.Constraint tom_match13_1_1=tom_get_head_concConstraint_ConstraintList(tom_match13_1_list1);tom_match13_1_list1=tom_get_tail_concConstraint_ConstraintList(tom_match13_1_list1); if(tom_is_fun_sym_AssignTo(tom_match13_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match13_1_1_variable=tom_get_slot_AssignTo_variable(tom_match13_1_1); if(tom_is_fun_sym_VariableStar(tom_match13_1_1_variable) || tom_is_fun_sym_Variable(tom_match13_1_1_variable) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_var=tom_match13_1_1_variable;
 
 
-          //System.out.println("constraint: " + source + " AssignTo " + var);
+        //System.out.println("constraint: " + source + " AssignTo " + `var);
         Instruction subBody = compileConstraint(tom_var,source,body);
         return buildConstraint(tom_match13_1_list1,source,tom_make_Let(tom_var,source,subBody));
       } }} }} }} } if(tom_is_fun_sym_concConstraint(tom_match13_1) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList tom_match13_1_list1=tom_match13_1; if(!(tom_is_empty_concConstraint_ConstraintList(tom_match13_1_list1))) { { jtom.adt.tomsignature.types.Constraint tom_match13_1_1=tom_get_head_concConstraint_ConstraintList(tom_match13_1_list1);tom_match13_1_list1=tom_get_tail_concConstraint_ConstraintList(tom_match13_1_list1); if(tom_is_fun_sym_Ensure(tom_match13_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match13_1_1_variable=tom_get_slot_Ensure_variable(tom_match13_1_1);
 
 
-        //System.out.println("constraint: " + source + " Ensure " + exp);
+        //System.out.println("constraint: " + source + " Ensure " + `exp);
         //Instruction subBody = compileConstraint(`exp,source,body);
         TomType type = getSymbolTable().getBooleanType();
         Expression equality = tom_make_EqualTerm(type,tom_make_ExpressionToTomTerm(tom_make_TrueTL()),tom_match13_1_1_variable);
@@ -817,7 +817,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
 
-  private class MatchingParameter {
+  static private class MatchingParameter {
       /*
        * This object is used by matching-algorithms to store common parameters
        * which are not modified during the matching process

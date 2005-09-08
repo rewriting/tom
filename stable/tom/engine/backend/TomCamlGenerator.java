@@ -222,20 +222,20 @@ public class TomCamlGenerator extends TomImperativeGenerator {
                          String suffix,
                          String args[],
                          TargetLanguage tlCode)  throws IOException {
-    String s = "";
+    StringBuffer s = new StringBuffer();
     if(nodeclMode) { 
       return; 
     }
-    s =  "let " + declName + "_" + suffix + "(";
+    s.append("let " + declName + "_" + suffix + "(");
     for(int i=0 ; i<args.length ; ) {
         // the first argument is the type, second the name 
-      s+= args[i+1];
+      s.append(args[i+1]);
       i+=2;
       if(i<args.length) {
-        s+= ", ";
+        s.append(", ");
       }
     } 
-    s += ") = " + tlCode.getCode() + " ";
+    s.append(") = " + tlCode.getCode() + " ");
 
      { jtom.adt.tomsignature.types.TargetLanguage tom_match1_1=(( jtom.adt.tomsignature.types.TargetLanguage)tlCode); if(tom_is_fun_sym_TL(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.Position tom_match1_1_start=tom_get_slot_TL_start(tom_match1_1); { jtom.adt.tomsignature.types.Position tom_match1_1_end=tom_get_slot_TL_end(tom_match1_1); if(tom_is_fun_sym_TextPosition(tom_match1_1_start) ||  false ) { { int  tom_match1_1_start_line=tom_get_slot_TextPosition_line(tom_match1_1_start); { int  tom_startLine=tom_match1_1_start_line; if(tom_is_fun_sym_TextPosition(tom_match1_1_end) ||  false ) { { int  tom_match1_1_end_line=tom_get_slot_TextPosition_line(tom_match1_1_end);
 
@@ -252,18 +252,18 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 
   protected void genDeclMake(String funName, TomType returnType, 
                              TomList argList, Instruction instr)  throws IOException {
-    String s = "";
+    StringBuffer s = new StringBuffer();
     if(nodeclMode) { 
       return;
     }
-    s = "let " + funName + "(";
+    s.append("let " + funName + "(");
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {
          { jtom.adt.tomsignature.types.TomTerm tom_match2_1=(( jtom.adt.tomsignature.types.TomTerm)arg); if(tom_is_fun_sym_Variable(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match2_1_astName=tom_get_slot_Variable_astName(tom_match2_1); if(tom_is_fun_sym_Name(tom_match2_1_astName) ||  false ) { { String  tom_match2_1_astName_string=tom_get_slot_Name_string(tom_match2_1_astName);
 
 
-            s += tom_match2_1_astName_string;
+            s.append(tom_match2_1_astName_string);
             break matchBlock;
           } }} }
 
@@ -275,10 +275,10 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       }
       argList = argList.getTail();
       if(!argList.isEmpty()) {
-        s += ", ";
+        s.append(", ");
       }
     }
-    s += ") = ";
+    s.append(") = ");
     output.write(s);
     generateInstruction(0,instr);
     output.write(" ");

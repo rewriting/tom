@@ -34,7 +34,7 @@ import tom.platform.adt.platformalert.types.*;
 public class RuntimeAlert {
   
   private static PlatformAlertFactory platformAlertFactory = PlatformAlertFactory.getInstance(SingletonFactory.getInstance());
-  public static AlertList EMPTY_ALERT_LIST = platformAlertFactory.makeAlertList();
+  public static final AlertList EMPTY_ALERT_LIST = platformAlertFactory.makeAlertList();
 
   private AlertList errors;
   private AlertList warnings;

@@ -479,7 +479,7 @@ public TomParser(ParserSharedInputState state) {
 			
 			;
 			
-			//System.out.println("pattern = " + `Pattern(patterns,ast().makeList(matchGuardsList)));
+			//System.out.println("pattern = " + `Pattern(subjectList,patterns,ast().makeList(matchGuardsList)));
 			
 			list.add(tom_make_PatternInstruction(tom_make_Pattern(subjectList,patterns,ast().makeList(matchGuardsList)),tom_make_RawAction(tom_make_AbstractBlock(ast().makeInstructionList(blockList))),optionList)
 			
@@ -1040,13 +1040,14 @@ public TomParser(ParserSharedInputState state) {
 				if ( inputState.guessing==0 ) {
 					
 					if(!nameList.equals(closingNameList)) {
-					String found="", expected ="";
+					StringBuffer found = new StringBuffer();
+					StringBuffer expected = new StringBuffer();
 					while(!nameList.isEmpty()) {
-					expected += "|"+nameList.getHead().getString();
+					expected.append("|"+nameList.getHead().getString());
 					nameList = nameList.getTail();
 					}
 					while(!closingNameList.isEmpty()) {
-					found += "|"+closingNameList.getHead().getString();
+					found.append("|"+closingNameList.getHead().getString());
 					closingNameList = closingNameList.getTail();
 					}
 					// TODO find the orgTrack of the match
@@ -1232,19 +1233,20 @@ public TomParser(ParserSharedInputState state) {
 			optionList.add(tom_make_OriginTracking(tom_make_Name(name),line,tom_make_Name(currentFile())));
 			options = ast().makeOptionList(optionList);
 			constraints = ast().makeConstraintList(constraintList);
-			if(name1 == null)
+			if(name1 == null) {
 			result = tom_make_UnamedVariableStar(options,tom_make_TomTypeAlone("unknown type"),constraints)
 			
 			
 			
 			;
-			else
+			} else {
 			result = tom_make_VariableStar(options,tom_make_Name(name),tom_make_TomTypeAlone("unknown type"),constraints)
 			
 			
 			
 			
 			;
+			}
 			
 		}
 		}
@@ -1343,19 +1345,19 @@ public TomParser(ParserSharedInputState state) {
 			if (t != null){
 			switch(t.getType()){
 			case NUM_INT:
-			ast().makeIntegerSymbol(symbolTable,t.getText(),optionList);
+			ast().makeIntegerSymbol(symbolTable,name,optionList);
 			break;
 			case NUM_LONG:
-			ast().makeLongSymbol(symbolTable,t.getText(),optionList);
+			ast().makeLongSymbol(symbolTable,name,optionList);
 			break;
 			case CHARACTER:
-			ast().makeCharSymbol(symbolTable,t.getText(),optionList);
+			ast().makeCharSymbol(symbolTable,name,optionList);
 			break;
 			case NUM_DOUBLE:
-			ast().makeDoubleSymbol(symbolTable,t.getText(),optionList);
+			ast().makeDoubleSymbol(symbolTable,name,optionList);
 			break;
 			case STRING:
-			ast().makeStringSymbol(symbolTable,t.getText(),optionList);
+			ast().makeStringSymbol(symbolTable,name,optionList);
 			break;
 			default:
 			}

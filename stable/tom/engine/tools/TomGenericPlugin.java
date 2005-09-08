@@ -272,11 +272,12 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   }
 
   public String getArgumentArrayString(Object[] arg) {
-    String argString = "[";
+    StringBuffer argString = new StringBuffer("[");
     for(int i=0;i<arg.length;i++) {
-      argString += arg[i].getClass().getName();
+      argString.append(arg[i].getClass().getName());
     }
-    return argString+"]";
+    argString.append("]");
+    return argString.toString();
   }
   
 } // class TomGenericPlugin

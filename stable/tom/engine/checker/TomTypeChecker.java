@@ -274,6 +274,7 @@ public class TomTypeChecker extends TomChecker {
         TomTerm var = (TomTerm)map.get(name);
         TomType type = var.getAstType();
         TomType type2 = variable.getAstType();
+
         if(!(type==type2)) {
           messageError(findOriginTrackingLine(variable.getOption()),
                        TomMessage.incoherentVariable.getMessage(),

@@ -112,6 +112,26 @@ public class OutputCode {
     writeln();
   }
   
+  public void write(StringBuffer s) throws IOException {
+    write(s.toString());
+  }
+
+  public void write(int deep,StringBuffer s) throws IOException {
+    write(deep,s.toString());
+  }
+  
+  public void writeln(StringBuffer s) throws IOException {
+    writeln(s.toString());
+  }
+
+  public void writeln(int deep,StringBuffer s) throws IOException {
+    writeln(deep,s.toString());
+  }
+  
+  public void write(StringBuffer s, int line, int length) throws IOException {
+    write(s.toString(), line, length);
+  }
+
   public void write(String s, int line, int length) throws IOException {
     if(singleLine>0 && !((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
       s = s.replace('\n', ' ');
