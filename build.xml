@@ -596,14 +596,14 @@
     <jar jarfile="${src.dist.lib}/PlatformOption-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
     </jar>
+    <jar jarfile="${src.dist.lib}/MuTravelerADT-${src.version}.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/mutraveleradt/**/*.class"/>
+    </jar>
     <jar jarfile="${src.dist.lib}/PlatformAlert-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
     </jar>
     <jar jarfile="${src.dist.lib}/mutraveler-${src.version}.jar">
-      <fileset dir="${src.build}">
-        <include name="tom/library/strategy/mutraveler/**/*.class"/>
-        <include name="tom/library/adt/mutraveleradt/**/*.class" />
-      </fileset>
+      <fileset dir="${src.build}" includes="tom/library/strategy/mutraveler/**/*.class"/>
     </jar>
 
     <jar jarfile="${src.dist.lib}/tom-library-${src.version}.jar">
@@ -1081,6 +1081,9 @@
     </jar>
     <jar jarfile="${stable.src}/tom/library/adt/TNode.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable.src}/tom/library/adt/MuTravelerADT.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/mutraveleradt/**/*.class"/>
     </jar>
     <jar jarfile="${stable.src}/tom/platform/adt/PlatformOption.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
