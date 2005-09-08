@@ -5,7 +5,7 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 /**
- * <code>T(t1,..,ti,..,tN).accept(OneId(v)) = T(t1,...ti.accept(v),..,tN)</code>
+ * <code>T(t1,...,ti,...,tN).accept(OneId(v)) = T(t1,...,ti.accept(v),...,tN)</code>
  * if <code>ti</code> is the first child that is modified.
  * <p>
  * Basic visitor combinator with one visitor argument, that applies

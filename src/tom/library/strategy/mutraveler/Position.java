@@ -6,6 +6,10 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 import java.util.*;
 
+/**
+ * Object that represent a position in a term
+ */
+
 public class Position {
   private LinkedList list = null;
    
@@ -25,15 +29,16 @@ public class Position {
     return list.isEmpty();
   }
  
-  /*
+  /**
    * remove the last sub-position
    */
   protected void up() {
     list.removeLast();
   }
 
-  /*
+  /**
    * add a sub-position n
+   * @param n sub-position number. 1 is the first possible sub-position
    */
   protected void down(int n) {
     if(n>0) {
@@ -41,9 +46,11 @@ public class Position {
     }
   }
 
-  /*
+  /**
    * create s=omega(v)
+   * <p>
    * such that s[subject] returns subject[ s[subject|omega] ]|omega
+   @ @param v strategy subterm of the omega strategy
    */
   public VisitableVisitor getOmega(VisitableVisitor v) {
     VisitableVisitor res = v;
@@ -54,15 +61,15 @@ public class Position {
     return res;
   }
     
-  /*
-   * create s=omega(x->t)
+  /**
+   * create s=omega(x->t) <p>
    * such that s[subject] returns subject[t]|omega
    */
   public VisitableVisitor getReplace(final Visitable t) {
    return this.getOmega(new Identity() { public Visitable visit(Visitable x) { return t; }});
   }
 
-  /*
+  /**
    * create s=x->t|omega
    * such that s[subject] returns subject|omega
    */

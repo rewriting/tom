@@ -364,7 +364,7 @@ public class TomTask extends MatchingTask {
 
   /**
    * If true, compiles with optimization enabled.
-   * @param optimize if true compile with optimization enabled
+   * @param optimize if true compile with optimization level-1 enabled
    */
   public void setOptimize(boolean optimize) {
     this.optimize = optimize;
@@ -376,7 +376,7 @@ public class TomTask extends MatchingTask {
   
 	/**
 	 * If true, compiles with optimization enabled.
-	 * @param optimize2 if true compile with optimization enabled
+	 * @param optimize if true compile with optimization level-2 enabled
 	 */
 	public void setOptimize2(boolean optimize) {
 		this.optimize2 = optimize;
