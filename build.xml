@@ -1181,6 +1181,7 @@
       <fileset dir="${src.gen}">
         <include name="tom/**/*.java"/>
         <include name="jtom/**/*.java"/>
+        <exclude name="**/adt/**/*.java"/>
       </fileset>
     </javadoc>
   </target>
