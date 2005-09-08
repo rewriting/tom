@@ -162,6 +162,7 @@ public class ATermToXML {
         System.out.println("Unknown type of TNode : "+n);
       }
     }
+    write("\n");
   }
 
   private void atermToXMLList(TNodeList list) {
