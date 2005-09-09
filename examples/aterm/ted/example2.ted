@@ -1,2 +1,6 @@
-f(<any>)
-g(f(1),[a,h(f(2)),3])
+jjtraveler.BottomUp
+remove(g(<a>,b(1,2),<a>))
+
+jjtraveler.TopDown
+replace(a,replaced)
+

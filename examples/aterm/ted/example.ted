@@ -1,3 +1,2 @@
-f(<a>,b(1,2),<a>)
-f(f(1),b(1,2),f(1))
-
+jjtraveler.BottomUp
+replace(g(<a>,b(1,2),<a>), replaced)
