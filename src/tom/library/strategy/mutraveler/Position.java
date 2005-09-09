@@ -7,7 +7,7 @@ import jjtraveler.VisitFailure;
 import java.util.*;
 
 /**
- * Object that represent a position in a term
+ * Object that represents a position in a term
  */
 
 public class Position {
@@ -24,7 +24,12 @@ public class Position {
   protected Object clone() {
     return new Position((LinkedList)this.list.clone());
   }
-  
+ 
+  /**
+    * check if the position is empty
+    *
+    * @return true when the position is empty
+    */
   protected boolean isEmpty() {
     return list.isEmpty();
   }
@@ -38,6 +43,7 @@ public class Position {
 
   /**
    * add a sub-position n
+   *
    * @param n sub-position number. 1 is the first possible sub-position
    */
   protected void down(int n) {
@@ -48,9 +54,10 @@ public class Position {
 
   /**
    * create s=omega(v)
-   * <p>
    * such that s[subject] returns subject[ s[subject|omega] ]|omega
-   @ @param v strategy subterm of the omega strategy
+   *
+   * @param v strategy subterm of the omega strategy
+   * @return the omega strategy corresponding to the position
    */
   public VisitableVisitor getOmega(VisitableVisitor v) {
     VisitableVisitor res = v;
@@ -62,8 +69,11 @@ public class Position {
   }
     
   /**
-   * create s=omega(x->t) <p>
+   * create s=omega(x->t)
    * such that s[subject] returns subject[t]|omega
+   *
+   * @param t the constant term that should replace the subterm
+   * @return the omega strategy the performs the replacement
    */
   public VisitableVisitor getReplace(final Visitable t) {
    return this.getOmega(new Identity() { public Visitable visit(Visitable x) { return t; }});
@@ -72,6 +82,8 @@ public class Position {
   /**
    * create s=x->t|omega
    * such that s[subject] returns subject|omega
+   *
+   * @return the omega strategy that retrieves the corresponding subterm
    */
   public VisitableVisitor getSubterm() {
    return new AbstractVisitableVisitor() { 
@@ -84,6 +96,12 @@ public class Position {
    };
   }
 
+  /**
+    * Returns a <code>String</code> object representing the position. 
+    * The string representation consists of a list of elementary positions
+    *
+    * @return a string representation of this position
+    */
   public String toString() {
     return list.toString();
   }
