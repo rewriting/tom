@@ -70,6 +70,7 @@
   <property name="strategy"       value="strategy"/>
   <property name="strings"        value="strings"/>
   <property name="structure"      value="structure"/>
+  <property name="ted"            value="ted"/>
   <property name="tutorial"       value="tutorial"/>
   <property name="vas"            value="vas"/>
   <property name="xml"            value="xml"/>
@@ -611,6 +612,11 @@
     </copy>
   </target>
 
+  <target name="ted" depends="init"> 
+    <tomcompile example="${ted}"/>
+    <javacompile example="${ted}"/>
+  </target>
+
   <target name="tutorial" depends="init">
     <tomcompile example="${tutorial}"/>
     <javacompile example="${tutorial}"/>
@@ -661,7 +667,7 @@
           depends="addressbook, adt, apireach, appletxml, aterm, boulderdash,
           builtin, caml, cell, dom, expression, ferus, gomoku, gtree, integerc,
           list, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
-          prodrule, propp, rbtree, set, strategy, strings,  
+          prodrule, propp, rbtree, set, strategy, strings, ted, 
           tutorial, vas, xml, minirho">
   </target>
 
@@ -814,6 +820,13 @@
         <include name="${structure}/*.t"/>
         <include name="${structure}/*.vas"/>
         <include name="${structure}/*.tom"/>
+
+        <include name="${ted}/example.aterm"/>
+        <include name="${ted}/aterms"/>
+        <include name="${ted}/*.ted"/>
+        <include name="${ted}/*.t"/>
+        <include name="${ted}/*.tom"/>
+        <include name="${ted}/*.java"/>
 
         <include name="${tutorial}/README"/>
         <include name="${tutorial}/*.t"/>

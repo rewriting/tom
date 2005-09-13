@@ -1,0 +1,6 @@
+jjtraveler.BottomUp
+remove(g(<a>,b(1,2),<a>))
+
+jjtraveler.TopDown
+replace(a,replaced)
+

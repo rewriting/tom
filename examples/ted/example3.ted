@@ -1,0 +1,11 @@
+jjtraveler.TopDown
+remove(TextPosition(<any>,<any>))
+
+jjtraveler.TopDown
+replace(Name(<any>),THERE_WAS_A_NAME_HERE)
+
+jjtraveler.TopDown
+remove(TomInclude(<any>))
+
+jjtraveler.TopDown
+remove([])
