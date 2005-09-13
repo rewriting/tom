@@ -40,6 +40,7 @@
   <property name="adt"            value="adt"/>
   <property name="apireach"       value="apireach"/>
   <property name="appletxml"      value="appletxml"/>
+  <property name="aterm"          value="aterm"/>
   <property name="boulderdash"    value="boulderdash"/>
   <property name="builtin"        value="builtin"/>
   <property name="caml"           value="caml"/>
@@ -203,6 +204,11 @@
   <target name="appletxml" depends="init"> 
     <tomcompile example="${appletxml}"/>
     <javacompile example="${appletxml}"/>
+  </target>
+
+  <target name="aterm" depends="init"> 
+    <tomcompile example="${aterm}"/>
+    <javacompile example="${aterm}"/>
   </target>
 
   <target name="boulderdash" depends="init">
@@ -652,9 +658,9 @@
   
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="addressbook, adt, apireach, appletxml, boulderdash, builtin,
-          caml, cell, dom, expression, ferus, gomoku, gtree, integerc, list, mgs,
-          nspk, p3p, peano, pnspk, poly, pqueens,
+          depends="addressbook, adt, apireach, appletxml, aterm, boulderdash,
+          builtin, caml, cell, dom, expression, ferus, gomoku, gtree, integerc,
+          list, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings,  
           tutorial, vas, xml, minirho">
   </target>
@@ -690,6 +696,13 @@
         <include name="${appletxml}/README"/>
         <include name="${appletxml}/*.t"/>
         <include name="${appletxml}/*.java"/>
+
+        <include name="${aterm}/example.aterm"/>
+        <include name="${aterm}/ted/aterms"/>
+        <include name="${aterm}/**/*.ted"/>
+        <include name="${aterm}/**/*.t"/>
+        <include name="${aterm}/**/*.tom"/>
+        <include name="${aterm}/**/*.java"/>
 
         <include name="${boulderdash}/README"/>
         <include name="${boulderdash}/*.t"/>
