@@ -40,7 +40,7 @@ public class Ted {
     %match ( ATerm a1, ATerm a2 ) {
 
       ATermAppl(AFun(name,arity,_),args1), ATermAppl(AFun(name,arity,_), args2) -> {
-        return match(args1,args2,false);
+        return match(`args1,`args2,false);
       }
 
       ATermList(_*), ATermList(_*) -> {
@@ -57,17 +57,17 @@ public class Ted {
       }
 
       ATermPlaceholder( ATermAppl(AFun(name,arity,_),_) ), _ -> {
-        if( arity != 0 ) {
+        if( `arity != 0 ) {
           System.err.println("Bad placeholder format");
           System.exit(1);
         } 
-        if(name.equals("any")) {
+        if(`name.equals("any")) {
           return true;
         } else {
-          if(tds.containsKey(name)) {
-            return match(((ATerm) tds.get(name)), a2, false);
+          if(tds.containsKey(`name)) {
+            return match(((ATerm) tds.get(`name)), a2, false);
           } else {
-            tds.put(name, a2);
+            tds.put(`name, a2);
             return true;
           }
         }
@@ -115,12 +115,12 @@ public class Ted {
       %match(ATerm action) {
 
         ATermAppl_2(AFun[name="replace"], tomatch, replacement) -> {
-          try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new ReplaceVisitor(tomatch, replacement)} ); }
+          try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new ReplaceVisitor(`tomatch, `replacement)} ); }
           catch ( Exception e ) { e.printStackTrace(); }
         }
 
         ATermAppl_1(AFun[name="remove"], tomatch) -> {
-          try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new MatchAndRemoveVisitor(tomatch)}); }
+          try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new MatchAndRemoveVisitor(`tomatch)}); }
           catch ( Exception e ) { e.printStackTrace(); }
         }
       }
