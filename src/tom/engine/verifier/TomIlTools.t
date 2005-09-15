@@ -78,27 +78,36 @@ public class TomIlTools extends TomBase {
   }
 
   public void getZTermSubjectListFromPattern(Pattern pattern, List list, Map map) {
+    Set unamedVarSet = new HashSet();
     %match(Pattern pattern) {
       Pattern(subjectList,tomList,guards) -> {
           while(!subjectList.isEmpty()) {
             TomTerm head = subjectList.getHead();
             subjectList = subjectList.getTail();
-            list.add(tomTermToZTerm(head,map));
+            list.add(tomTermToZTerm(head,map,unamedVarSet));
           }
       }
     }
   }
 
   public ZExpr patternToZExpr(Pattern pattern, Map map) {
+    Set unamedVariableSet = new HashSet();
     %match(Pattern pattern) {
       Pattern(subjectList,tomList,guards) -> {
-          return patternToZExpr(subjectList, tomList, map);
+          ZExpr result = patternToZExpr(subjectList, tomList, map, unamedVariableSet);
+          // insert existential quantifiers for the unamed variables
+          Iterator it = unamedVariableSet.iterator();
+          while (it.hasNext()) {
+            ZTerm var = (ZTerm) it.next();
+            result = `zexists(var,ztype("T"),result);
+          }
+          return result;
       }
     }
     throw new TomRuntimeException("patternToZExpr : strange pattern " + pattern);
   }
   
-  public ZExpr patternToZExpr(TomList subjectList, TomList tomList, Map map) {
+  public ZExpr patternToZExpr(TomList subjectList, TomList tomList, Map map, Set unamedVariableSet) {
     /* for each TomTerm: builds a zeq : pattern = subject */
     ZExpr res = `ztrue;
     while(!tomList.isEmpty()) {
@@ -106,12 +115,12 @@ public class TomIlTools extends TomBase {
       TomTerm subject = subjectList.getHead();
       tomList = tomList.getTail();
       subjectList = subjectList.getTail();
-      res = `zand(res,zeq(tomTermToZTerm(h,map),tomTermToZTerm(subject,map)));
+      res = `zand(res,zeq(tomTermToZTerm(h,map,unamedVariableSet),tomTermToZTerm(subject,map,unamedVariableSet)));
     }
     return res;
   }
   
-  public ZTerm tomTermToZTerm(TomTerm tomTerm, Map map) {
+  public ZTerm tomTermToZTerm(TomTerm tomTerm, Map map, Set unamedVariableSet) {
     %match(TomTerm tomTerm) {
       TermAppl[nameList=concTomName(Name(name),_*),args=childrens] -> {
         // builds children list
@@ -120,7 +129,7 @@ public class TomIlTools extends TomBase {
         while (!`childrens.isEmpty()) {
           hd = `childrens.getHead();
           `childrens = `childrens.getTail();
-          zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map));
+          zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map,unamedVariableSet));
         }
         // issue a warning here: this case is probably impossible
         return `zappl(zsymbol(name),zchild);
@@ -132,7 +141,7 @@ public class TomIlTools extends TomBase {
         while (!`childrens.isEmpty()) {
           hd = `childrens.getHead().getAppl();
           `childrens = `childrens.getTail();
-          zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map));
+          zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map,unamedVariableSet));
         }
         return `zappl(zsymbol(name),zchild);
       }
@@ -154,7 +163,11 @@ public class TomIlTools extends TomBase {
         }
       }      
       UnamedVariable[] -> {
-        return `zvar("_");
+        // for unamed variables in a pattern, we generate an existential
+        // quantifier for a dummy name
+        ZTerm unamedVariable = `zvar(replaceNumbersByString("unamedVariable"+unamedVariableSet.size()));
+        unamedVariableSet.add(unamedVariable);
+        return unamedVariable;
       }
       TLVar[strName=name] -> {
         return `zvar(name);
@@ -211,24 +224,9 @@ public class TomIlTools extends TomBase {
               }
             }
           }
-          /*
-          int slotnumber = `slots.getLength();
-          for (int i = 0; i < slotnumber;i++) {
-            list = `concZTerm(list*,zvar("x"+i));
-          }
-          exists = `zeq(zvar("t"),zappl(zsymbol(name),list));
-          for (int i = 0; i < slotnumber;i++) {
-            exists = `zexists(zvar("x"+i),ztype("T"),exists);
-          }
-          */
         }
       }
 
-      /*
-      ZExpr axiom = `zforall(abstractVariable,ztype("T"),
-                             zequiv(zisfsym(abstractVariable,
-                                            zsymbol(name)),exists));
-                                            */
       ZExpr axiom = `zforall(abstractVariable,ztype("T"),
                              zequiv(
                                zisfsym(abstractVariable,zsymbol(name)),
