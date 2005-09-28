@@ -26,7 +26,6 @@
 package jtom;
 
 import tom.platform.PlatformMessage;
-import java.text.MessageFormat;
 
 /**
  * The TomMessage class is a container for error messages, using the

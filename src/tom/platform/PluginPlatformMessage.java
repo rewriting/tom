@@ -26,8 +26,6 @@
 
 package tom.platform;
 
-import java.text.MessageFormat;
-
 /**
  * The PluginPlatformMessage class is a container for error messages, using the
  * typesafe enum pattern
