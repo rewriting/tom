@@ -25,23 +25,33 @@
 
 package jtom.exception;
 
+import tom.platform.PlatformMessage;
+
 public class TomException extends Exception {
 
-  protected String msg="no message";
+  protected PlatformMessage msg=null;
+  protected Object[] detail;
 
-  public TomException() {
-  }
-  
-  public TomException(String message) {
+  public TomException(PlatformMessage message) {
     this.msg = message;
+    this.detail=new Object[]{};
   }
 
-  public String getMessage() {
+  public TomException(PlatformMessage message, Object[] detail) {
+    this.msg = message;
+    this.detail=detail;
+  }
+
+  public PlatformMessage getPlatformMessage() {
     return msg;
+  }
+
+  public Object[] getParameters() {
+    return detail;
   }
   
   public String toString() {
-    return msg;
+    return msg.getMessage();
   }
  }
 

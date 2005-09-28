@@ -25,11 +25,11 @@
 
 package jtom.exception;
 
-public class CheckErrorException extends TomException {
-  public CheckErrorException() {
-  }
+import tom.platform.PlatformMessage;
 
-  public CheckErrorException(String msg) {
+public class CheckErrorException extends TomException {
+
+  public CheckErrorException(PlatformMessage msg) {
     super(msg);
   }
 

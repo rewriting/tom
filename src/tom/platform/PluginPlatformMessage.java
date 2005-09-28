@@ -33,7 +33,7 @@ import java.text.MessageFormat;
  * typesafe enum pattern
  */
 
-public class PluginPlatformMessage {
+public class PluginPlatformMessage implements PlatformMessage {
   private final String message;
 
   private PluginPlatformMessage(String message) {
@@ -86,12 +86,4 @@ public class PluginPlatformMessage {
     return message;
   }
 
-  public String getMessage(Object detail) {
-    return MessageFormat.format(this.message, new Object[]{detail});
-  }
-
-  public String getMessage(Object[] details) {
-    return MessageFormat.format(this.message, details);
-  }
-
-} // class TomMessage
+} // class PluginPlatformMessage

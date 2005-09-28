@@ -165,7 +165,8 @@ public class TomParserPlugin extends TomGenericPlugin {
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
-                      TomMessage.tokenStreamException.getMessage(sw.toString()),
+                      TomMessage.tokenStreamException,
+                      sw.toString(),
                       currentFileName, getLineFromTomParser()));
       return;
     } catch (RecognitionException e){
@@ -173,21 +174,22 @@ public class TomParserPlugin extends TomGenericPlugin {
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
-                      TomMessage.recognitionException.getMessage(sw.toString()),
+                      TomMessage.recognitionException,
+                      sw.toString(),
                       currentFileName, getLineFromTomParser()));
       return;
     } catch (TomException e) {
-       getLogger().log(new PlatformLogRecord(Level.SEVERE, e.getMessage(),
+       getLogger().log(new PlatformLogRecord(Level.SEVERE, e.getPlatformMessage(),e.getParameters(),
           currentFileName, getLineFromTomParser()));
       return;
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, TomMessage.fileNotFound.getMessage(currentFileName)); 
+      getLogger().log(Level.SEVERE, TomMessage.fileNotFound.getMessage(),currentFileName); 
       return;
     } catch (Exception e) {
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
-      getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.toString(), 
+      getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(), 
                       new Object[]{getClass().getName(), currentFileName, sw.toString()});
       return;
     }

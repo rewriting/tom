@@ -37,6 +37,8 @@ import java.util.logging.MemoryHandler;
 import java.util.logging.SocketHandler;
 import java.util.logging.StreamHandler;
 
+import java.text.MessageFormat;
+
 import tom.platform.BasicFormatter;
 import tom.platform.PluginPlatform;
 import tom.platform.PluginPlatformFactory;
@@ -71,8 +73,9 @@ public class Tom {
       initializeLogging();
     } catch(Exception e) {
       System.err.println(
-        TomMessage.loggingInitializationFailure.getMessage(new Object[]{e.getMessage()})
-        );
+          MessageFormat.format(TomMessage.loggingInitializationFailure.getMessage(),
+            new Object[]{e.getMessage()})
+      );
       return 1;
     }
     PluginPlatform platform =
