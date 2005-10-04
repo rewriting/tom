@@ -64,7 +64,8 @@ public class Rewrite4 {
   private Term globalSubject = null;
   public void run() {
     //Term subject = `g(d,d);
-    Term subject = `f(g(g(a,b),g(a,a)));
+    //Term subject = `f(g(g(a,b),g(a,a)));
+    Term subject = `h(h(a,a,a),h(a,b,c),h(g(c,d),a,f(a)));
     globalSubject = subject;
 
     // find all leaf nodes
@@ -107,8 +108,12 @@ public class Rewrite4 {
       super(`Identity());
     }
     public Term visit_Term(Term arg) throws VisitFailure { 
-      System.out.println("s1: "+ arg.getName());
-      System.out.println("s1: position: "+ MuTraveler.getPosition(this));
+      int depth = MuTraveler.getPosition(this).depth();
+      String offset = "";
+      for (int i = 0; i<depth; i++){
+        offset += "  ";
+      }
+      System.out.println(offset + "s1: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
       return arg;
     }
   }
@@ -117,8 +122,12 @@ public class Rewrite4 {
       super(`Identity());
     }
     public Term visit_Term(Term arg) throws VisitFailure { 
-      System.out.println("s2: "+ arg.getName());
-      System.out.println("s2: position: "+ MuTraveler.getPosition(this));
+      int depth = MuTraveler.getPosition(this).depth();
+      String offset = "";
+      for (int i = 0; i<depth; i++){
+        offset += "--";
+      }
+      System.out.println(offset + "> s2: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
       return arg;
     }
   }
