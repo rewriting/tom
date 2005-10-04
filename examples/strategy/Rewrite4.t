@@ -67,9 +67,6 @@ public class Rewrite4 {
     Term subject = `f(g(g(a,b),g(a,a)));
     globalSubject = subject;
 
-    VisitableVisitor rule = new RewriteSystem();
-    VisitableVisitor ruleId = new RewriteSystemId();
-
     // find all leaf nodes
     Collection leaves = new HashSet();
     try {
@@ -90,13 +87,14 @@ public class Rewrite4 {
       VisitableVisitor eqPos = new EqPos(p);
       VisitableVisitor subPos = new SubPos(p);
 
-      VisitableVisitor xmastree = `mu(MuVar("x"),Sequence(s1,
+      VisitableVisitor xmastree = `mu(MuVar("x"),
+          Sequence(s1,
             All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1)))));
 
       try {
         System.out.println("----------------------");
         System.out.println("subject       = " + subject);
-        System.out.println("Omega p  = " + MuTraveler.init(p.getOmega(s1)).visit(subject));
+        System.out.println("position      = " + p);
         System.out.println("xmastree = " + MuTraveler.init(xmastree).visit(subject));
       } catch (VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
@@ -110,6 +108,7 @@ public class Rewrite4 {
     }
     public Term visit_Term(Term arg) throws VisitFailure { 
       System.out.println("s1: "+ arg.getName());
+      System.out.println("s1: position: "+ MuTraveler.getPosition(this));
       return arg;
     }
   }
@@ -119,6 +118,7 @@ public class Rewrite4 {
     }
     public Term visit_Term(Term arg) throws VisitFailure { 
       System.out.println("s2: "+ arg.getName());
+      System.out.println("s2: position: "+ MuTraveler.getPosition(this));
       return arg;
     }
   }
