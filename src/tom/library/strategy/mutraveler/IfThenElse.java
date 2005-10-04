@@ -6,9 +6,9 @@ import jjtraveler.VisitFailure;
 
 public class IfThenElse extends AbstractVisitableVisitor {
   
-  private final static int CONDITION = 1;
-  private final static int TRUE_CASE = 2;
-  private final static int FALSE_CASE = 3;
+  private final static int CONDITION = 0;
+  private final static int TRUE_CASE = 1;
+  private final static int FALSE_CASE = 2;
 
   public IfThenElse(VisitableVisitor c, VisitableVisitor t, VisitableVisitor f) {
     initSubterm(c,t,f);
