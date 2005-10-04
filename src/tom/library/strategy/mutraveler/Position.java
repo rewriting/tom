@@ -35,6 +35,42 @@ public class Position {
   }
  
   /**
+   * Tests if two positions are equals
+   */
+  public boolean equals(Object o) {
+    if (o instanceof Position) {
+      return this.list.equals(((Position)o).list);
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Tests is prefix
+   */
+  public boolean isPrefix(Position p) {
+    return this.list.equals(p.list.subList(0,this.list.size()));
+  }
+
+  
+  
+  /**
+   * get the current sub-position
+   * @return the current sub-position
+   */
+  protected int getSubPosition() {
+    return ((Integer)list.getLast()).intValue();
+  }
+
+  /**
+   * Get the depth of the position in the tree
+   * @return depth on the position
+   */
+  public int depth() {
+    return list.size();
+  }
+
+  /**
    * remove the last sub-position
    */
   protected void up() {
