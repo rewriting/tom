@@ -68,16 +68,14 @@ public class Rewrite4 {
     Term subject = `h(h(a,a,a),h(a,b,c),h(g(c,d),a,f(a)));
     globalSubject = subject;
 
-    // find all leaf nodes
+    // find all leaf nodes positions
     Collection leaves = new HashSet();
     try {
-      VisitableVisitor getleaves = new FindLeaves();
+      VisitableVisitor getleaves = new FindLeaves(leaves);
       MuTraveler.init(`BottomUp(getleaves)).visit(subject);
-      leaves = ((FindLeaves)getleaves).getLeaves();
     } catch (VisitFailure e) {
       System.out.println("Failed to get leaves" + subject);
     }
-    System.out.println("bag: "+leaves);
 
     Iterator it = leaves.iterator();
     while(it.hasNext()) {
@@ -133,19 +131,13 @@ public class Rewrite4 {
   }
   class FindLeaves extends strategy.term.termVisitableFwd {
     Collection bag;
-    public FindLeaves() {
+    public FindLeaves(Collection bag) {
       super(`Identity());
-      bag = new HashSet();
-    }
-    public Collection getLeaves() {
-      return bag;
+      this.bag = bag;
     }
     public Term visit_Term(Term arg) throws VisitFailure { 
-      %match(Term arg) {
-        a() -> { bag.add(MuTraveler.getPosition(this));}
-        b() -> { bag.add(MuTraveler.getPosition(this));}
-        c() -> { bag.add(MuTraveler.getPosition(this));}
-        d() -> { bag.add(MuTraveler.getPosition(this));}
+      if (arg.getArity() == 0) {
+        bag.add(MuTraveler.getPosition(this));
       }
       return arg;
     }
@@ -174,9 +166,8 @@ public class Rewrite4 {
     public Term visit_Term(Term arg) throws VisitFailure { 
       if (MuTraveler.getPosition(this).isPrefix(p)) {
         return arg;
-      } else {
-        return (Term)`Fail().visit(arg);
-      }
+      } 
+      return (Term)`Fail().visit(arg);
     }
   }
 
