@@ -542,6 +542,12 @@
   </target>
 
   <target name="strategy" depends="init">
+  <!-- copy resources in build -->
+    <copy todir="${examples.build}/${strategy}">
+      <fileset dir="${examples.dir}/${strategy}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
     <adtcompile example="${strategy}"
                 factory="term"/>
     <vascompile example="${strategy}"/>
