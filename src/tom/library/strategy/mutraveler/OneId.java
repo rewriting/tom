@@ -17,6 +17,8 @@ import jjtraveler.VisitFailure;
  */
 
 public class OneId extends AbstractVisitableVisitor {
+  protected final static int ARG = 0;
+
   public OneId(VisitableVisitor v) {
     initSubterm(v);
   }
@@ -25,7 +27,7 @@ public class OneId extends AbstractVisitableVisitor {
     int childCount = any.getChildCount();
     if(!hasPosition()) {
       for (int i = 0; i < childCount; i++) {
-        Visitable newSubterm = getArgument(0).visit(any.getChildAt(i));
+        Visitable newSubterm = getArgument(ARG).visit(any.getChildAt(i));
         if (newSubterm != any.getChildAt(i)) {
           return any.setChildAt(i,newSubterm);
         } 
@@ -33,7 +35,7 @@ public class OneId extends AbstractVisitableVisitor {
     } else {
       for (int i = 0; i < childCount; i++) {
         getPosition().down(i+1);
-        Visitable newSubterm = getArgument(0).visit(any.getChildAt(i));
+        Visitable newSubterm = getArgument(ARG).visit(any.getChildAt(i));
         getPosition().up();
         if (newSubterm != any.getChildAt(i)) {
           return any.setChildAt(i,newSubterm);

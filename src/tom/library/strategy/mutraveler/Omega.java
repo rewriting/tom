@@ -16,6 +16,7 @@ import jjtraveler.VisitFailure;
 */
 
 public class Omega extends AbstractVisitableVisitor {
+  protected final static int ARG = 0;
   protected int position;
   
   public Omega(int position, VisitableVisitor v) {
@@ -29,12 +30,12 @@ public class Omega extends AbstractVisitableVisitor {
     } else if(position>0 && position<=any.getChildCount()) {
       int childNumber = position-1;
       if(!hasPosition()) {
-        Visitable newChild = getArgument(0).visit(any.getChildAt(childNumber));
+        Visitable newChild = getArgument(ARG).visit(any.getChildAt(childNumber));
         return any.setChildAt(childNumber,newChild);
       } else {
         try { 
           getPosition().down(position);
-          Visitable newChild = getArgument(0).visit(any.getChildAt(childNumber));
+          Visitable newChild = getArgument(ARG).visit(any.getChildAt(childNumber));
           getPosition().up();
           return any.setChildAt(childNumber,newChild);
         } catch(VisitFailure f) {
