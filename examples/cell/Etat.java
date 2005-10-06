@@ -129,8 +129,8 @@ class Etat extends JPanel {
 		g.drawLine(x0 + x1, hauteur - (y0 + y1), x0 + x2, hauteur - (y0 + y2));
         }
 	private void nettoie(Graphics g, Color c) {
-		int largeur = getSize().width;
-		int hauteur = getSize().height;
+		largeur = getSize().width;
+		hauteur = getSize().height;
 		g.setColor(c);
 		g.fillRect(0, 0, largeur, y0);
 		g.fillRect(0, 0, x0, hauteur);
