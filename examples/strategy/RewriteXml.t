@@ -90,15 +90,13 @@ public class RewriteXml {
       VisitableVisitor subPos = new SubPos(p);
 
       VisitableVisitor xmastree = `mu(MuVar("x"),
-          Sequence(s1,
-            All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1)))));
+          All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1))));
 
       try {
         System.out.println("----------------------");
-        //System.out.println("subject       = " + subject);
         System.out.println("position      = " + p);
-        //System.out.println("goal          = " + MuTraveler.init(p.getSubterm()).visit(subject));
-        MuTraveler.init(xmastree).visit(subject);
+        xtools.printXMLFromATerm((TNode)MuTraveler.init(xmastree).visit(subject));
+        System.out.println("-----------------------");
       } catch (VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
@@ -109,26 +107,16 @@ public class RewriteXml {
       super(`Identity());
     }
     public TNode visit_TNode(TNode arg) throws VisitFailure { 
-      int depth = MuTraveler.getPosition(this).depth();
-      String offset = "";
-      for (int i = 0; i<depth; i++){
-        offset += "  ";
-      }
-      System.out.println(offset + "s1: position: "+ MuTraveler.getPosition(this));
       %match(TNode arg) {
-	<section><title_fr>#TEXT(title)</title_fr></section> -> {
-      System.out.println(offset + "s1: title= "+ `title);
-}
+        <section><title_fr>#TEXT(title)</title_fr></section> -> {
+          // prune the sub-lists: we keep only the title
+          return `xml(<section><title_fr>#TEXT(title)</title_fr></section>);
+        }
+        <subsection><title_fr>#TEXT(title)</title_fr></subsection> -> {
+          // prune the sub-lists: we keep only the title
+          return `xml(<subsection><title_fr>#TEXT(title)</title_fr></subsection>);
+        }
       }
-      return arg;
-    }
-    public TNodeList visit_TNodeList(TNodeList arg) throws VisitFailure { 
-      int depth = MuTraveler.getPosition(this).depth();
-      String offset = "";
-      for (int i = 0; i<depth; i++){
-        offset += "  ";
-      }
-      System.out.println(offset + "s1 list position: "+ MuTraveler.getPosition(this));
       return arg;
     }
   }
@@ -137,22 +125,7 @@ public class RewriteXml {
       super(`Identity());
     }
     public TNode visit_TNode(TNode arg) throws VisitFailure { 
-      int depth = MuTraveler.getPosition(this).depth();
-      String offset = "";
-      for (int i = 0; i<depth; i++){
-        offset += "--";
-      }
-      System.out.println(offset + "> s2: position: "+ MuTraveler.getPosition(this));
-      return arg;
-    }
-    public TNodeList visit_TNodeList(TNodeList arg) throws VisitFailure { 
-      int depth = MuTraveler.getPosition(this).depth();
-      String offset = "";
-      for (int i = 0; i<depth; i++){
-        offset += "--";
-      }
-      System.out.println(offset + "> s2 list position: "+ MuTraveler.getPosition(this));
-      return arg;
+      return `xml(<hilight>arg</hilight>);
     }
   }
 
