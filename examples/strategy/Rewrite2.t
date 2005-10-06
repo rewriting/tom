@@ -51,10 +51,6 @@ public class Rewrite2 {
   %include { string.tom }
   %include { mutraveler.tom }
 
-  public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-    return tom.library.strategy.mutraveler.MuVar.mu(var,v);
-  }
-
   public final static void main(String[] args) {
     Rewrite2 test = new Rewrite2(termFactory.getInstance(SingletonFactory.getInstance()));
     test.run();

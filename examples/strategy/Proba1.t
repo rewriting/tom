@@ -63,10 +63,6 @@ public class Proba1 {
     return factory;
   }
 
-  public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-    return tom.library.strategy.mutraveler.MuVar.mu(var,v);
-  }
-
   public final static void main(String[] args) {
     Proba1 test = new Proba1(PieceFactory.getInstance(SingletonFactory.getInstance()));
     test.run();

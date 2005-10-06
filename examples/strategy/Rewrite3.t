@@ -55,7 +55,7 @@ public class Rewrite3 {
   %include { mutraveler.tom }
 
   public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-    return tom.library.strategy.mutraveler.MuVar.mu(var,v);
+    return tom.library.strategy.mutraveler.MuTraveler.mu(var,v);
   }
 
   public final static void main(String[] args) {

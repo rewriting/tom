@@ -56,9 +56,6 @@ public class Rho {
 	
 	
 	%include { mutraveler.tom }
-	public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-		return tom.library.strategy.mutraveler.MuVar.mu(var,v);
-	}
 	%vas{
 		module rhoterm
 			imports 
