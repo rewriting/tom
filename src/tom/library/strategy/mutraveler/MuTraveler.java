@@ -20,6 +20,16 @@ public class MuTraveler {
     return v;
   }
 
+  public static VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
+    try {
+      VisitableVisitor muExpander = new BottomUp(new MuExpander(var,v));
+      return (VisitableVisitor) muExpander.visit((Visitable)v);
+    } catch (VisitFailure e) {
+      System.out.println("mu reduction failed");
+    }
+    return v;
+  }
+  
   public static Position getPosition(VisitableVisitor v) {
     return (Position) ((Position) positionMap.get(v)).clone();
   }
@@ -49,4 +59,71 @@ class MuInitializer extends Identity {
     }
     return v;
   }
+}
+
+class MuExpander implements VisitableVisitor {
+  VisitableVisitor variable;
+  VisitableVisitor instance;
+  public MuExpander(VisitableVisitor variable, VisitableVisitor instance) {
+    this.variable = variable;
+    this.instance = instance;
+  }
+    
+  public Visitable visit(Visitable v) throws VisitFailure { 
+    if(v instanceof MuVar) {
+      MuVar muV = (MuVar)v;
+      MuVar muVariable = (MuVar)variable;
+      if(muV.equals(muVariable)) {
+        muV.setInstance(instance);
+        muV.setName(null);
+      } 
+    }
+    return v;
+  }
+
+  public int getChildCount() {
+    return 2;
+  }
+
+  public Visitable getChildAt(int i) {
+    switch (i) {
+    case 0: return variable;
+    case 1: return instance;
+    default: throw new IndexOutOfBoundsException();
+    }
+  }
+
+  public Visitable setChildAt(int i, Visitable child) {
+    switch (i) {
+    case 0: variable = (VisitableVisitor)child; return this;
+    case 1: instance = (VisitableVisitor)child; return this;
+    default: throw new IndexOutOfBoundsException();
+    }
+  }
+
+}
+
+/**
+ * <code>BottomUp(v) = Sequence(All(BottomUp(v)),v)</code>
+ * <p>
+ * Visitor combinator with one visitor argument that applies this
+ * visitor exactly once to the current visitable and each of its
+ * descendants, following the bottomup (post-order) traversal
+ * strategy.
+ */
+
+class BottomUp extends Sequence {
+
+    /*
+     * Since it is not allowed to reference `this' before the
+     * super type constructor has been called, we can not
+     * write `super(All(this),v)'
+     * Instead, we set the first argument first to `null', and
+     * set it to its proper value afterwards.
+     */
+    public BottomUp(VisitableVisitor v) {
+      super(null,v);
+      setArgument(FIRST,new All(this));
+    }
+    
 }
