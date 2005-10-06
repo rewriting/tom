@@ -25,11 +25,11 @@
 
 package jtom.exception;
 
-public class CheckWarningException extends TomException {
-  public CheckWarningException() {
-  }
+import tom.platform.PlatformMessage;
 
-  public CheckWarningException(String msg) {
+public class CheckWarningException extends TomException {
+
+  public CheckWarningException(PlatformMessage msg) {
     super(msg);
   }
 

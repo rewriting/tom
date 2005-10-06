@@ -58,7 +58,7 @@
   }
 
   %op VisitableVisitor mu(s1:VisitableVisitor, s2:VisitableVisitor) {
-    make(var,v) { tom.library.strategy.mutraveler.MuVar.mu(var,v) }
+    make(var,v) { tom.library.strategy.mutraveler.MuTraveler.mu(var,v) }
   }
 
   %op VisitableVisitor Omega(position:int, s1:VisitableVisitor) {

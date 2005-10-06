@@ -25,12 +25,16 @@
 
 package jtom.exception;
 
+import tom.platform.PlatformMessage;
+
 public class TomIncludeException extends TomException {
-  public TomIncludeException() {
-  }
   
-  public TomIncludeException(String msg) {
+  public TomIncludeException(PlatformMessage msg) {
     super(msg);
+  }
+
+  public TomIncludeException(PlatformMessage message, Object[] detail) {
+    super(message, detail);
   }
 
 }

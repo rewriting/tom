@@ -129,7 +129,7 @@ public class XMLToATerm {
     return null;
   }
 
-    public Node convertToNode(InputStream is) {
+  public Node convertToNode(InputStream is) {
     try {
       DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       return db.parse(is);

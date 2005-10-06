@@ -400,8 +400,8 @@ public TomParser(ParserSharedInputState state) {
 					clearText();
 					listOrgTrackPattern.add(option);
 					
-					getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.deprecatedDisjunction.getMessage(
-					new Object[]{currentFile(), new Integer(getLine())}),
+					getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.deprecatedDisjunction,
+					new Object[]{currentFile(), new Integer(getLine())},
 					currentFile(), getLine()));
 					
 					
@@ -1051,10 +1051,9 @@ public TomParser(ParserSharedInputState state) {
 					closingNameList = closingNameList.getTail();
 					}
 					// TODO find the orgTrack of the match
-					String msg = TomMessage.malformedXMLTerm.getMessage(
+					throw new TomException(TomMessage.malformedXMLTerm,
 					new Object[]{currentFile(), new Integer(getLine()), 
-					"match", expected.substring(1), found.substring(1)} );
-					throw new TomException();
+					"match", expected.substring(1), found.substring(1)});
 					}
 					if(implicit) {
 					// Special case when XMLChilds() is reduced to a singleton
@@ -2375,10 +2374,9 @@ public TomParser(ParserSharedInputState state) {
 						stringSlotName = slotName2.getText(); 
 						astName = ast().makeName(stringSlotName);
 						if(slotNameList.indexOf(astName) != -1) {
-						String detailedMsg = TomMessage.repeatedSlotName.getMessage(new Object[]{stringSlotName});
-						String msg = TomMessage.mainErrorMessage.getMessage(
-						new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg});
-						throw new TomException(msg);
+						getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
+						new Object[]{stringSlotName},
+						currentFile(), getLine()));
 						}
 						slotNameList.add(astName); 
 						pairNameDeclList.add(tom_make_PairNameDecl(tom_make_Name(stringSlotName),tom_make_EmptyDeclaration())); 
@@ -2451,9 +2449,9 @@ public TomParser(ParserSharedInputState state) {
 					
 					}
 					if(msg != null) {
-					getLogger().log(new PlatformLogRecord(Level.SEVERE, msg.getMessage(
+					getLogger().log(new PlatformLogRecord(Level.SEVERE, msg,
 					new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
-					"%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ),
+					"%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ,
 					currentFile(), getLine()));
 					} else {
 					pairNameDeclList.set(index,tom_make_PairNameDecl(sName,attribute));

@@ -25,14 +25,14 @@
 
 package jtom;
 
-import java.text.MessageFormat;
+import tom.platform.PlatformMessage;
 
 /**
  * The TomMessage class is a container for error messages, using the
  * typesafe enum pattern
  */
 
-public class TomMessage {
+public class TomMessage implements PlatformMessage {
   private final String message;
 
   private TomMessage(String message) {
@@ -312,14 +312,6 @@ public class TomMessage {
   
   public String getMessage() {
     return message;
-  }
-  
-  public String getMessage(Object detail) {
-      return MessageFormat.format(this.message, new Object[]{detail});
-  }
-  
-  public String getMessage(Object[] details) {
-      return MessageFormat.format(this.message, details);
   }
   
 } // class TomMessage

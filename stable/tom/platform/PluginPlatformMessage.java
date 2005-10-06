@@ -26,14 +26,12 @@
 
 package tom.platform;
 
-import java.text.MessageFormat;
-
 /**
  * The PluginPlatformMessage class is a container for error messages, using the
  * typesafe enum pattern
  */
 
-public class PluginPlatformMessage {
+public class PluginPlatformMessage implements PlatformMessage {
   private final String message;
 
   private PluginPlatformMessage(String message) {
@@ -86,12 +84,4 @@ public class PluginPlatformMessage {
     return message;
   }
 
-  public String getMessage(Object detail) {
-    return MessageFormat.format(this.message, new Object[]{detail});
-  }
-
-  public String getMessage(Object[] details) {
-    return MessageFormat.format(this.message, details);
-  }
-
-} // class TomMessage
+} // class PluginPlatformMessage

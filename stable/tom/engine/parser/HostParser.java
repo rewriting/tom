@@ -215,8 +215,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
     if(fileName.equals("")) {
-      String msg = TomMessage.missingIncludedFile.getMessage(new Object[]{currentFile, new Integer(getLine())});
-      throw new TomIncludeException(msg);
+      throw new TomIncludeException(TomMessage.missingIncludedFile,new Object[]{currentFile, new Integer(getLine())});
     }
     
     file = new File(fileName);
@@ -237,22 +236,20 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
     }
     
     if(file == null) {
-      String msg = TomMessage.includedFileNotFound.getMessage(new Object[]{fileName, currentFile, new Integer(getLine()), currentFile});
-      throw new TomIncludeException(msg);
+      throw new TomIncludeException(TomMessage.includedFileNotFound,new Object[]{fileName, currentFile, new Integer(getLine()), currentFile});
     }
     try {
       fileCanonicalName = file.getCanonicalPath();
       if(testIncludedFile(fileCanonicalName, includedFileSet)) {
-        String msg = TomMessage.includedFileCycle.getMessage(new Object[]{fileName, new Integer(getLine()), currentFile});
-        throw new TomIncludeException(msg);
+        throw new TomIncludeException(TomMessage.includedFileCycle,new Object[]{fileName, new Integer(getLine()), currentFile});
       }
       
       // if trying to include a file twice, but not in a cycle : discard
       if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet)) {    
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
           getLogger().log(new PlatformLogRecord(Level.WARNING,
-            TomMessage.includedFileAlreadyParsed.getMessage( 
-                                  currentFile), fileName, getLine()));
+                TomMessage.includedFileAlreadyParsed,
+                currentFile, fileName, getLine()));
         }
         return;
       }
@@ -268,14 +265,13 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
-      String msg = TomMessage.errorWhileIncludingFile.getMessage(
-                                         new Object[]{e.getClass(),
-                                                      fileName,
-                                                      currentFile,
-                                                      new Integer(getLine()),
-                                                      sw.toString()
-                                         });
-      throw new TomException(msg);
+      throw new TomException(TomMessage.errorWhileIncludingFile,
+          new Object[]{e.getClass(),
+            fileName,
+            currentFile,
+            new Integer(getLine()),
+            sw.toString()
+          });
     }
   }
 
@@ -533,17 +529,17 @@ public HostParser(ParserSharedInputState state) {
 		vasParams.add(subPackageName);
 		PluginPlatform vasPlatform = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode));
 		if(vasPlatform == null) {
-		throw new TomException(TomMessage.vasPlatformFailure.getMessage(new Object[]{currentFile,new Integer(initialVasLine)}));
+		throw new TomException(TomMessage.vasPlatformFailure,new Object[]{currentFile,new Integer(initialVasLine)});
 		}
 		int vasResult = vasPlatform.run();
 		if(vasResult != 0) {
 		//System.out.println(platform.getAlertForInput().toString());
-		throw new TomException(TomMessage.vasFailure.getMessage(new Object[]{currentFile,new Integer(initialVasLine)}));
+		throw new TomException(TomMessage.vasFailure,new Object[]{currentFile,new Integer(initialVasLine)});
 		}
 		
 		generatedADTName = (String)vasPlatform.getLastGeneratedObjects().get(0);
 		if(generatedADTName == null) {
-		throw new TomException(TomMessage.vasFailure.getMessage(new Object[]{currentFile,new Integer(initialVasLine)}));
+		throw new TomException(TomMessage.vasFailure,new Object[]{currentFile,new Integer(initialVasLine)});
 		}
 		// Simulate the inclusion of generated Tom file
 		
@@ -557,14 +553,14 @@ public HostParser(ParserSharedInputState state) {
 		file = new File(tomFileName);
 		fileName = file.getCanonicalPath();
 		} catch (IOException e) {
-		throw new TomException(TomMessage.iOExceptionWithGeneratedTomFile.getMessage(
-		new Object[]{fileName, currentFile, e.getMessage()}));
+		throw new TomException(TomMessage.iOExceptionWithGeneratedTomFile,
+		new Object[]{fileName, currentFile, e.getMessage()});
 		} catch (Exception e) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
-		throw new TomException(TomMessage.exceptionWithGeneratedTomFile.getMessage(
-		new Object[]{adtFileName, currentFile, sw.toString()}));
+		throw new TomException(TomMessage.exceptionWithGeneratedTomFile, 
+		new Object[]{adtFileName, currentFile, sw.toString()});
 		}
 		
 		includeFile(fileName, list);

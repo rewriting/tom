@@ -83,38 +83,66 @@ public class XmlTools {
     return x2a.convertToNode(is);
   }
 
+  /**
+   * Returns all TNodes contained in TNode n
+   * @param n root to collect all TNodes in the tree
+   */
   public Collection getNodes(TNode n) {
     return x2a.getNodes(n);
   }
 
+  /**
+   * converts XML to ATerm
+   * @param filename input representing ATerm
+   */
   public ATerm convertXMLToATerm(String filename) {
     x2a.convert(filename);
     return x2a.getATerm();
   }
 
+  /**
+   * converts XML to ATerm
+   * @param is input representing ATerm
+   */
   public ATerm convertXMLToATerm(InputStream is) {
     x2a.convert(is);
     return x2a.getATerm();
   }
-  
+
+  /**
+   * print ATerm t in XML format, without any extra character (ie:\n)
+   * 
+   */
   public void printXMLFromATerm(ATerm t) {
     a2x.setWriter(null);
     a2x.setOutputStream(System.out);
     a2x.convert(t);
   }
     
+  /**
+   * given a filename, print ATerm in XML format, without any extra character (ie:\n)
+   * @param filename the filename, containing Aterm
+   */
   public void printXMLFromATermFile(String filename) {
     a2x.setWriter(null);
     a2x.setOutputStream(System.out);
     a2x.convert(filename);
   }
 
+  /**
+   * write ATerm in XML format, without any extra character (ie:\n)
+   * @see ATerm
+   */
   public void writeXMLFileFromATerm(Writer writer, ATerm t) {
     a2x.setWriter(writer);
     a2x.setOutputStream(null);
     a2x.convert(t);
   }
 
+  /**
+   * Constructs TNode in XML
+   * @param t this parameter can be either a TNode, a TNode list, or #TEXT("...").
+   */
   public String xml(TNode t) {
     return a2x.xml(t);
   }
