@@ -114,16 +114,16 @@ public class XMLToATerm {
       DocumentBuilder db = documentFactory.newDocumentBuilder();
       return db.parse(filename);
     } catch (SAXException e) {
-      System.err.println("XMLToATerm: "+ e.getMessage());
+      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (IOException e) {
-      System.err.println("XMLToATerm: "+ e.getMessage());
+      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (ParserConfigurationException e) {
-      System.err.println("XMLToATerm: "+ e.getMessage());
+      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (FactoryConfigurationError e) {
-      System.err.println("XMLToATerm: "+ e.getMessage());
+      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     }
     return null;
@@ -134,16 +134,16 @@ public class XMLToATerm {
       DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       return db.parse(is);
     } catch (SAXException e) {
-      System.err.println("XMLToATerm: "+ e.getMessage());
+      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (IOException e) {
-      System.err.println("XMLToATerm: "+ e.getMessage());
+      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (ParserConfigurationException e) {
-      System.err.println("XMLToATerm: "+ e.getMessage());
+      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (FactoryConfigurationError e) {
-      System.err.println("XMLToATerm: "+ e.getMessage());
+      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     }
     return null;
