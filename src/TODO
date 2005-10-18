@@ -1,3 +1,64 @@
+18/10/2005
+----------
+
+  class FindLeaves extends strategy.term.termVisitableFwd {
+    Collection bag;
+    public FindLeaves(Collection bag) {
+      super(`Identity());
+      this.bag = bag;
+    }
+    public Term visit_Term(Term arg) throws VisitFailure { 
+      if (arg.getArity() == 0) {
+        bag.add(MuTraveler.getPosition(this));
+      }
+      return arg;
+    }
+  }
+
+
+  %strat FindLeaves(bag:Collection) extends Identity() {
+    visit Term {
+      F(_) -> { ... }
+      x    -> { if(x.getArity()) ... this ... }
+    }  
+    
+    visit S2 {
+      G(_) -> { ... }
+      _   -> { ... }
+    }  
+  }
+
+- extends est suivi d'une expression back-quote dont on peut connaitre le codomaine
+- cela permet de generer le bon %op Codomaine FindLeave(bag:Collection) { ... }
+- chaque sorte doit definir son visitorForward
+- il est utilise pour generer le Java
+
+
+autres idees:
+
+  %strat FindLeaves(Collection bag) {
+    | Term(F())  -> { ... }
+    | Term(_)    -> { ... }
+    | S2(G())    -> { ... }
+    | S2(_)      -> { ... }
+    | x          -> { x }
+    | Identity
+  }
+
+
+  %strat FindLeaves(Collection bag) {
+    _    -> { Identity }
+  }
+
+  %strat Term FindLeaves(Collection bag) {
+    F()  -> { ... }
+    _    -> { ... }
+  }
+
+  %strat S2 FindLeaves(Collection bag) {
+    G()  -> { ... }
+    _    -> { ... }
+  }
 
 17/03/2004
 ----------
