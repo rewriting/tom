@@ -34,6 +34,8 @@
  * 	Main class
  */
 
+package cell;
+
 public class TDCA {
   static ZoneBoutons zb;
   static Reglages reglages;
