@@ -102,8 +102,8 @@ public class ZenonBackend {
 
   public String genZExpr(ZExpr expr) {
     %match(ZExpr expr) {
-      ztrue()  -> { return "true";}
-      zfalse() -> { return "false";}
+      ztrue()  -> { return "True";}
+      zfalse() -> { return "False";}
       zisfsym(t,s) -> {
         return "((symb "+genZTerm(`t)+") = "+genZSymbol(`s)+")";
       }
@@ -159,6 +159,9 @@ public class ZenonBackend {
       res.append(genZAxiom(axlist.getHead()));
       axlist = axlist.getTail();
     }
+    // XXX: Outputs the axiom for True (will disappear soon)
+    res.append("Parameter true_is_true : True.\n");
+    
     return res.toString();
   }
 
@@ -212,6 +215,8 @@ public class ZenonBackend {
 
 
     out.append("Parameter symb : T -> S.\n");
+    // XXX: define True
+    out.append("Parameter true_is_true : True.\n");
     // Generates types for symbols
     it = symbols.iterator();
     out.append("Parameter ");
@@ -230,7 +235,6 @@ public class ZenonBackend {
       out.append(genZAxiom(axioms.getHead()));
       axioms = axioms.getTail();
     }
-    
 
     // Generates the different proof obligations
     int number=1;

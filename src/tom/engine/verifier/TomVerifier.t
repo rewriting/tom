@@ -60,7 +60,7 @@ public class TomVerifier extends TomGenericPlugin {
     "<boolean name='camlSemantics' altName='' description='Verify with caml semantics for match' value='false'/>" +
     "</options>";
 
-  public static final String ZENON_SUFFIX = ".tom.zv";
+  public static final String ZENON_SUFFIX = ".zv";
   
   protected Verifier verif;
   protected ZenonOutput zenon;
