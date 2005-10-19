@@ -85,17 +85,16 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		int min = 33333;// MAXINT=33333
 		int res = 12345;// variable res might not have been initialized
 		for (int i=0; i<4; i++) {
-			int total = 1000*tableau[i]+100*tableau[i+1]+
-				10*tableau[i+2]+tableau[i+3];
+			int total = 1000*tableau[i]+100*tableau[i+1]+ 10*tableau[i+2]+tableau[i+3];
 			if (total < min) {
-			min = total;
-			res = 10000 * tableau[i]
-				+ 1000 * tableau[i+3]
-				+ 100 * C
-				+ 10 * tableau[i+1]
-				+ tableau[i+2];
-			}
-		}
+        min = total;
+        res = 10000 * tableau[i]
+          + 1000 * tableau[i+3]
+          + 100 * C
+          + 10 * tableau[i+1]
+          + tableau[i+2];
+      }
+    }
 		return res;
 	}
 	

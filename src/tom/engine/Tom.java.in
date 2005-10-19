@@ -105,6 +105,7 @@ public class Tom {
      */
     if(logger != null && newLevel.intValue() <= Level.WARNING.intValue()) {
       logger.setLevel(newLevel);
+      consoleHandler.setLevel(newLevel);
     } 
 
     if(consoleHandler != null && newLevel.intValue() >= Level.WARNING.intValue()) {

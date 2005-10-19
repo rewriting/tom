@@ -1,4 +1,4 @@
-(*
+/*
  * Copyright (c) 2004-2005, INRIA
  * All rights reserved.
  * 
@@ -25,75 +25,74 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *)
+ */
 
-(* vim: set filetype=ocaml : *)
+package list;
 
-exception Erreur of string ;;
+import aterm.*;
+import aterm.pure.SingletonFactory;
 
-%include { caml/metal.tom }
+public class Erat {
+  private ATermFactory factory;
 
-type peano =
-    Zero 
-  | Suc of peano ;;
+  %include { int.tom }
 
-let fzero = get_fun_sym(Zero)
-and fsuc  = get_fun_sym(Suc(Zero));;
+  public Erat(ATermFactory factory) {
+    this.factory = factory;
+  }
 
-%typeterm peano {
-  implement { peano }
-  equals(t1,t2) { t1=t2 }
-}
+	public ATermFactory getFactory() {
+		return factory;
+	}
+
+  %typeterm TomList {
+    implement { ATermList }
+    equals(l1,l2) { l1==l2 }
+  }
+
+  %oplist TomList conc( int* ) {
+    is_fsym(t) { t instanceof ATermList }
+    make_empty()  { factory.makeList() }
+    make_insert(e,l) { l.insert(factory.makeInt(e)) }
+    get_head(l)   { ((ATermInt)l.getFirst()).getInt() }
+    get_tail(l)   { l.getNext() }
+    is_empty(l)   { l.isEmpty() }
+  }
   
-%op peano zero {
-  is_fsym(t) { get_fun_sym(t) = fzero }
-  make { Zero }
+  %typeterm TomTerm {
+    implement { ATermAppl }
+    equals(t1, t2)     { t1==t2 }
+  }
+
+  public ATermList genere(int n) {
+    if(n>2) {
+      ATermList l = genere(n-1);
+      return l.insert(factory.makeInt(n));
+    } else {
+      return `conc(2);
+    }
+  }
+
+  public ATermList elim(ATermList l) {
+    %match(TomList l) {
+      conc(x*,e1,y*,e2,z*) -> {
+        if(`e2%`e1 == 0) {
+          return `elim(conc(x*,e1,y*,z*));
+        }
+      }
+    }
+    return l;
+  }
+
+  public void run() {
+    //System.out.println(" l = " + genere(100));
+    System.out.println(" l = " + elim(genere(100).reverse()));
+  }
+
+  public final static void main(String[] args) {
+    Erat test = new Erat(SingletonFactory.getInstance());
+    test.run();
+  }
+
 }
 
-%op peano suc(pred:peano) {
-  is_fsym(t) { get_fun_sym(t) = fsuc }
-  get_slot(pred,t) { get_subterm t 0 }
-  make(t) { Suc t }
-}
-
-exception Result of peano
-let rec plus (t1,t2)= 
-  try(
-  %match (peano t1 , peano t2 ) {
-    x, zero() -> { raise (Result(`x)) }
-    x, suc(y) -> { raise (Result(`suc(plus(x,y)))) }
-  };
-  assert false
-  ) with Result r -> r;;    
-      
-let rec fib (t1)= 
-  try(
-  %match (peano t1 ) {
-    zero() -> { raise (Result(`suc(zero))) }
-    suc(zero()) -> { raise (Result(`suc(zero))) }
-    suc(suc(x)) -> { raise (Result(`plus(fib(x),fib(suc(x))))) }
-  };
-  assert false
-  ) with Result r -> r;;    
-
-let rec make_peano = function
-    0 -> Zero
-  | n -> Suc (make_peano (n-1))
-
-let rec string_of_peano = function
-    Zero -> "Zero"
-  | Suc n -> "Suc(" ^ (string_of_peano n) ^")"
-
-let run (n) =
-  let n'  = make_peano (n) in
-  let res = plus (n',n') in
-    print_string ( "plus(" ^ (string_of_int n) ^ "," ^ (string_of_int n) ^
-		   ") = " ^ (string_of_peano res)  ^ "\n" );;
-
-let main () =
-  print_string "Bonjour :-) \n";
-  run (10);
-  for i=1 to 5 do (fib ( make_peano (18)) ; ()) done
-;;
-
-main();;

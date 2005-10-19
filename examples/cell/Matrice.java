@@ -34,7 +34,6 @@
  *	une matrice est un tableau et ses 2 dimensions.
  */
 
-package cell;
 
 class Matrice
 {

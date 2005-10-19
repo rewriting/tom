@@ -34,55 +34,60 @@
  * 	Main class
  */
 
-package cell;
-
 public class TDCA {
-        static ZoneBoutons zb;
-        static Reglages reglages;
-        static TwoDimCellularAutomaton automate;
-        Matrice config;
-        Matrice interm, tmp;
-        static TDCA auto;
-        static Affichage affiche;
-	boolean adapt = true;
+  static ZoneBoutons zb;
+  static Reglages reglages;
+  static TwoDimCellularAutomaton automate;
+  Matrice config;
+  Matrice interm, tmp;
+  static TDCA auto;
+  static Affichage affiche;
+  boolean adapt = true;
 
-        public static void main(String[] args) {
-		//automate = new Parabole(); // L'automate et sa fonction de transition
-		automate = new LangtonSelf(); // automate de Langton
-                zb = new ZoneBoutons();
-                reglages = zb.r;
-                auto = new TDCA();
-                affiche = new Affichage();
-                Fenetre f = new Fenetre(affiche);
-                f.setSize(600, 400);
-                f.setVisible(true);
-        }
-        
-        void init() {
-		config = automate.init();
-		interm = new Matrice(config.nblignes, config.nbcols);
-        }
+  public static void main(String[] args) {
+    //automate = new Parabole(); // L'automate et sa fonction de transition
+    automate = new LangtonSelf(); // automate de Langton
+    zb = new ZoneBoutons();
+    reglages = zb.r;
+    auto = new TDCA();
 
-        public Matrice Generation(int depart) {
-        		init();
-        		int i;
-        		for (i=1; i<depart; i++) {
-        			//automate.nextGenerationConfig(config, interm);
-        			//config = interm;
-        			Suivant();
-        		}
-                return config;
-        }
+    long startChrono  = System.currentTimeMillis();
+    auto.Generation(1000);
+    long stopChrono  = System.currentTimeMillis();
+    System.out.println("gen(1000) in " + (stopChrono-startChrono) + " ms");    
+    /*
+    affiche = new Affichage();
+    Fenetre f = new Fenetre(affiche);
+    f.setSize(600, 400);
+    f.setVisible(true);
+  */
+  }
 
-        public Matrice Suivant() {
-		if (!adapt) {
-                automate.nextGenerationConfig(config, interm);
-		} else {
-			automate.nextGenerationConfigAdapt(config, interm);
-		}
-		//tmp=interm; interm=config; config=tmp;
-								//config = interm;
-		config = new Matrice(interm.matrice);
-             	return interm;
-        }
+  void init() {
+    config = automate.init();
+    interm = new Matrice(config.nblignes, config.nbcols);
+  }
+
+  public Matrice Generation(int depart) {
+    init();
+    int i;
+    for (i=1; i<depart; i++) {
+      //automate.nextGenerationConfig(config, interm);
+      //config = interm;
+      Suivant();
+    }
+    return config;
+  }
+
+  public Matrice Suivant() {
+    if (!adapt) {
+      automate.nextGenerationConfig(config, interm);
+    } else {
+      automate.nextGenerationConfigAdapt(config, interm);
+    }
+    //tmp=interm; interm=config; config=tmp;
+    //config = interm;
+    config = new Matrice(interm.matrice);
+    return interm;
+  }
 }
