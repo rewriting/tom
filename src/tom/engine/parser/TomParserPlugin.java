@@ -26,6 +26,11 @@
 package jtom.parser;
 
 import java.io.DataInputStream;
+
+import java.io.BufferedReader;
+import java.io.Reader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -88,8 +93,10 @@ public class TomParserPlugin extends TomGenericPlugin {
                                         OptionManager optionManager,
                                         TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
+    // retreive the encoding option that is a string
+    String encoding = (String)optionManager.getOptionValue("encoding");
     // The input Stream
-    DataInputStream input = new DataInputStream(new FileInputStream(new File(fileName)));
+    Reader input = new BufferedReader(new InputStreamReader(new FileInputStream(fileName),encoding));
     // a selector to choose the lexer to use
     TokenStreamSelector selector = new TokenStreamSelector();
     // create a lexer for target mode

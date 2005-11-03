@@ -117,6 +117,10 @@
 			  			description="Specify where to place generated files"
 				  		value="."
 					  	attrName="dir"/>
+      <string name="encoding" altName="e"
+			  			description="Specify the character encoding"
+				  		value="UTF-8"
+							attrName="charset"/>
 		</options>
   </optionmanager>
 
