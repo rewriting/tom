@@ -105,6 +105,10 @@
     make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),v)) }
   }
 
+  %op VisitableVisitor TopDown(s1:VisitableVisitor) {
+    make(v) { `mu(MuVar("x"),Sequence(v,All(MuVar("x")))) }
+  }
+
   %op VisitableVisitor OnceBottomUp(s1:VisitableVisitor) {
     make(v) { `mu(MuVar("x"),Choice(One(MuVar("x")),v)) }
   }
