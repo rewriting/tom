@@ -13,10 +13,11 @@ Peano_dict.o: Peano_dict.c
 	gcc -c -I$(ELANDIR)/include Peano_dict.c
 
 PeanoTest.tom.c: PeanoTest.t Peano.t
-	jtom --noWarning -c PeanoTest.t
+	tom -c PeanoTest.t
 
 Peano.t: Peano.adt
-	adt-to-c -i Peano.adt -j -v
+	adt-to-c -i Peano.adt -n Peano
+	java apigen.gen.tom.c.Main -i Peano.adt -n Peano
 
 Peano.adt: Peano.sdf
 	sdf2-to-adt -i Peano.sdf -I -o Peano.adt

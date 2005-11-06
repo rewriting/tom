@@ -37,15 +37,15 @@
 
 Nat plus(Nat t1, Nat t2) {
   %match(Nat t1, Nat t2) {
-    x,consZero         -> { return x; }
+    x,consZero()         -> { return x; }
     x,consSuc[pred=y]  -> { return `consSuc(plus(x,y)); }
   }
 }
 
 Nat fib(Nat t) {
   %match(Nat t) {
-    consZero                           -> { return `consSuc(consZero); }
-    pred@consSuc[pred=consZero]        -> { return pred; }
+    consZero()                           -> { return `consSuc(consZero); }
+    pred@consSuc[pred=consZero()]        -> { return pred; }
     consSuc[pred=pred@consSuc[pred=x]] -> { return plus(fib(x),fib(pred)); }
   }
 }

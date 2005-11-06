@@ -51,25 +51,26 @@ public class PersonSort {
     xtools = new XmlTools();
     TNode term = (TNode)xtools.convertXMLToATerm(filename);
     
+    TNode result = sort(term.getDocElem());
+    xtools.printXMLFromATerm(result);
+
+    System.out.println();
     searchJu(term.getDocElem());
-    term = sort(term.getDocElem());
-    xtools.printXMLFromATerm(term);
 
-    System.out.println("\nTesting with backquote");
-    TNode newNode = `xml(<Persons><Person><FirstName>#TEXT("Juan")</FirstName></Person></Persons>); 
-    searchJu(newNode);
-    xtools.printXMLFromATerm(newNode);
-    System.out.println();
+    //System.out.println("\nTesting with backquote");
+    //TNode newNode = `xml(<Persons><Person><FirstName>#TEXT("Juan")</FirstName></Person></Persons>); 
+    //searchJu(newNode);
+    //xtools.printXMLFromATerm(newNode);
+    //System.out.println();
 
-    String nage = "105";
-    TNode attr = `xml(<Persons><Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person></Persons>);
-    xtools.printXMLFromATerm(attr);
-    System.out.println();
+    //String nage = "105";
+    //TNode attr = `xml(<Persons><Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person></Persons>);
+    //xtools.printXMLFromATerm(attr);
+    //System.out.println();
 
-    TNodeList tnlist = `concTNode(<Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person>,<Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person>);
-
-    xtools.printXMLFromATerm(tnlist);
-    System.out.println();
+    //TNodeList tnlist = `concTNode(<Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person>,<Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person>);
+    //xtools.printXMLFromATerm(tnlist);
+    //System.out.println();
   }
    
   private TNode sort(TNode subject) {
@@ -88,7 +89,7 @@ public class PersonSort {
     %match(TNode t1, TNode t2) {
       <Person Age=a1><FirstName>#TEXT(n1)</FirstName></Person>,
       <Person Age=a2><FirstName>#TEXT(n2)</FirstName></Person>
-      -> { return `n1.compareTo(`n2); }
+      -> { return `a1.compareTo(`a2); }
     }
     return 0;
   }
