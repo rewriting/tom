@@ -36,6 +36,7 @@ import jtom.adt.il.*;
 import jtom.adt.il.types.*;
 import jtom.adt.zenon.*;
 import jtom.adt.zenon.types.*;
+import jtom.exception.TomRuntimeException;
 
 
 public class ZenonOutput {
@@ -392,7 +393,9 @@ public class ZenonOutput {
         map.put(`name,ztermFromTerm(`term));
         return ztermVariableMapFromSubstitutionList(`t,map);
       }
-      _ -> { return null; }
+      _ -> {
+        throw new TomRuntimeException("verifier: strange substitution list: "+sublist);
+      }
     }
   }
 

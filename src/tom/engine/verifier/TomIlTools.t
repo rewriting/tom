@@ -115,7 +115,8 @@ public class TomIlTools extends TomBase {
       TomTerm subject = subjectList.getHead();
       tomList = tomList.getTail();
       subjectList = subjectList.getTail();
-      res = `zand(res,zeq(tomTermToZTerm(h,map,unamedVariableSet),tomTermToZTerm(subject,map,unamedVariableSet)));
+      res = `zand(res,zeq(tomTermToZTerm(h,map,unamedVariableSet),
+                          tomTermToZTerm(subject,map,unamedVariableSet)));
     }
     return res;
   }
@@ -135,13 +136,40 @@ public class TomIlTools extends TomBase {
         return `zappl(zsymbol(name),zchild);
       }
       RecordAppl[nameList=concTomName(Name(name),_*),slots=childrens] -> {
+        // builds a map: slotName / TomTerm
+        Map definedSlotMap = new HashMap();
+        Slot hd = null;
+        while (!`childrens.isEmpty()) {
+          hd = `childrens.getHead();
+          `childrens = `childrens.getTail();
+          definedSlotMap.put(hd.getSlotName(),hd.getAppl());
+        }
         // builds children list
         ZTermList zchild = `concZTerm();
-        TomTerm hd = null;
-        while (!`childrens.isEmpty()) {
-          hd = `childrens.getHead().getAppl();
-          `childrens = `childrens.getTail();
-          zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map,unamedVariableSet));
+        // take care to add unamedVariables for wildcards
+        TomSymbol symbol = getSymbolFromName(name,getSymbolTable());
+        // process all slots from symbol
+        %match(TomSymbol symbol) {
+          Symbol[pairNameDeclList=slots] -> {
+            // process all slots. If the slot is in childrens, use it
+            while(!`slots.isEmpty()) {
+              Declaration decl= `slots.getHead().getSlotDecl();
+              `slots = `slots.getTail();
+              %match(Declaration decl) {
+                GetSlotDecl[slotName=slotName] -> {
+                  if (definedSlotMap.containsKey(slotName)) {
+                    zchild = `concZTerm(zchild*,tomTermToZTerm((TomTerm)definedSlotMap.get(slotName),map,unamedVariableSet));
+                  } 
+                  else {
+                    // fake an UnamedVariable
+                    zchild = `concZTerm(zchild*,tomTermToZTerm(
+                          UnamedVariable(concOption(),EmptyType(),concConstraint()),
+                          map,unamedVariableSet));
+                  }
+                }
+              }
+            }
+          }
         }
         return `zappl(zsymbol(name),zchild);
       }
