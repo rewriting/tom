@@ -109,16 +109,19 @@ public class TomVerifier extends TomGenericPlugin {
         //System.out.println(back.genZSpecCollection(zen));
         String output = back.genZSpecCollection(zspecSet);
         
-        try {
-          Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(
-                    getStreamManager().getOutputFileNameWithoutSuffix() + ZENON_SUFFIX
-                    ))));
-          writer.write(output);
-          writer.close();
-        } catch (IOException e) {
-          getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
-              new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
-          return;
+        // do not generate a file if there is no proof to do
+        if (!zspecSet.isEmpty()) {
+          try {
+            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(
+                      getStreamManager().getOutputFileNameWithoutSuffix() + ZENON_SUFFIX
+                      ))));
+            writer.write(output);
+            writer.close();
+          } catch (IOException e) {
+            getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
+                new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
+            return;
+          }
         }
 
         // The stats output stuff
