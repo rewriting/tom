@@ -318,7 +318,7 @@ public class Verifier extends TomBase {
         }
       }//end apply
     }; //end new
-    SubstRef output = new SubstRef();
+    SubstRef output = new SubstRef(`subs());
     traversal().genericCollect(expr,substitutionCollector,output);
     return output.get();
   }
@@ -342,7 +342,7 @@ public class Verifier extends TomBase {
     }; //end new
   
   public SubstitutionList getOutputSubstitution(DerivTree subject) {
-    SubstRef output = new SubstRef();
+    SubstRef output = new SubstRef(`subs());
     traversal().genericCollect(subject,outputSubstitutionCollector,output);
     return output.get();
   }
@@ -792,8 +792,8 @@ public class Verifier extends TomBase {
 
   static private class SubstRef {
     private SubstitutionList sublist;
-    public SubstRef() {
-      sublist = null;
+    public SubstRef(SubstitutionList slist) {
+      sublist = slist;
     }
     public void set(SubstitutionList ssublist) {
       this.sublist = ssublist;
