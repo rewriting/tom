@@ -59,10 +59,8 @@
 						class="jtom.compiler.TomCompiler"/>
 		<plugin name="Optimizer"
 						class="jtom.optimizer.TomOptimizer"/>
-          <!--
 		<plugin name="Verifier"
 						class="jtom.verifier.TomVerifier"/>
-          -->
     <plugin  name="Backend"
 						 class="jtom.backend.TomBackend"/>
   </plugins>

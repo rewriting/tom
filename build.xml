@@ -472,7 +472,10 @@
     <!-- "tom binary" -->
     <copy todir="${stable.dist.bin}" file="${utils}/javac-tom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom.bat"/>
-    <copy todir="${stable.dist.bin}" file="${utils}/tom"/>
+    <copy tofile="${stable.dist.bin}/tom" file="${utils}/tom.in"/>
+    <replace dir="${stable.dist.bin}" token="@TOM_HOME@" value="TOM_HOME">
+      <include name="tom"/>
+    </replace>
     <copy todir="${stable.dist.bin}">
       <fileset dir="${utils}">
         <include name="adt-to-tom.*"/>
@@ -562,8 +565,14 @@
     <copy tofile="${src.dist}/Vas.xml" file="${src.vasconfigfile}"/>
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
-    <copy todir="${src.dist.bin}" file="${utils}/tom"/>
-    <copy todir="${src.dist.bin}" file="${utils}/tom.src"/>
+    <copy tofile="${src.dist.bin}/tom" file="${utils}/tom.in"/>
+    <copy tofile="${src.dist.bin}/tom.src" file="${utils}/tom.in"/>
+    <replace dir="${src.dist.bin}" token="@TOM_HOME@" value="TOM_HOME">
+      <include name="tom"/>
+    </replace>
+    <replace dir="${src.dist.bin}" token="@TOM_HOME@" value="TOM_SRC_HOME">
+      <include name="tom.src"/>
+    </replace>
     <copy todir="${src.dist.bin}">
       <fileset dir="${utils}">
         <include name="adt-to-tom.*"/>
