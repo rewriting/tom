@@ -18,23 +18,31 @@ import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 
 import javax.swing.JTree;
+import javax.swing.JButton;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
 
 import java.net.URL;
 import java.io.IOException;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 
-public class ATViewer extends JPanel {
+
+public class ATViewer extends JPanel implements ActionListener {
 
   %include { atermmapping.tom }
   %include { mutraveler.tom }
 
-  private JEditorPane htmlPane;
+  private JEditorPane commandPane;
+  private JPanel intermediate;
+  private ATerm[] inputaterms;
+  private JButton btnCommand;
   private static ATermFactory atermFactory = SingletonFactory.getInstance();
 
   public ATViewer(String[] filenames) {
@@ -44,18 +52,18 @@ public class ATViewer extends JPanel {
   
   public void run(String[] filenames) {
 
-    // aterm to modify
-    ATerm inputaterm = null; 
+    // aterms to modify
+    inputaterms = new ATerm[filenames.length]; 
     
-    JPanel intermediate = new JPanel();
+    intermediate = new JPanel();
     intermediate.setLayout(new java.awt.GridLayout(1,filenames.length));
     
     for (int i=0; i<filenames.length; i++){
     	
     	try {
-    	      inputaterm = atermFactory.readFromFile(filenames[i]);
+    	      inputaterms[i] = atermFactory.readFromFile(filenames[i]);
     	      
-    	      DefaultMutableTreeNode top = createTree(inputaterm);
+    	      DefaultMutableTreeNode top = createTree(inputaterms[i]);
     	      JTree tree = new JTree(top);
     	      tree.getSelectionModel().setSelectionMode
     	        (TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -72,10 +80,10 @@ public class ATViewer extends JPanel {
     JScrollPane treeView = new JScrollPane(intermediate);
 
     //Create the HTML viewing pane.
-    htmlPane = new JEditorPane();
-    htmlPane.setEditable(false);
+    commandPane = new JEditorPane();
+    commandPane.setEditable(true);
     // it will be nice to be able to run ted scripts typed in this area
-    JScrollPane htmlView = new JScrollPane(htmlPane);
+    JScrollPane htmlView = new JScrollPane(commandPane);
 
     //Add the scroll panes to a split pane.
     JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -83,8 +91,27 @@ public class ATViewer extends JPanel {
     splitPane.setBottomComponent(htmlView);
 
     //Add the split pane to this panel.
+    this.setLayout(new javax.swing.BoxLayout(this,javax.swing.BoxLayout.Y_AXIS));
     add(splitPane);
-
+    btnCommand = new JButton("Execute command");
+    btnCommand.addActionListener(this);
+    add(btnCommand);
+  }
+  
+  public void addTreesToPanel(){
+	  
+	  intermediate.removeAll();
+	  for (int i=0; i<inputaterms.length; i++){		  
+	  
+		  DefaultMutableTreeNode top = createTree(inputaterms[i]);
+	      JTree tree = new JTree(top);
+	      tree.getSelectionModel().setSelectionMode
+	        (TreeSelectionModel.SINGLE_TREE_SELECTION);
+	      
+	      intermediate.add(tree);
+	  }
+      this.validate();
+      this.repaint();
   }
 
   public DefaultMutableTreeNode createTree(ATerm at) {
@@ -146,6 +173,31 @@ public class ATViewer extends JPanel {
     //Display the window.
     frame.pack();
     frame.setVisible(true);    
+  }
+  
+  public void actionPerformed(ActionEvent e){ 
+	  
+	  try{
+		  String strategy = null ,action = null;
+		  int termNo;
+		  
+		  StringTokenizer st = new StringTokenizer(commandPane.getText());
+		  
+		  termNo = Integer.parseInt(st.nextToken());
+		  strategy = st.nextToken();
+		  action = st.nextToken();
+		  	  	  
+		  Ted ted = new Ted();
+		  String newTerm = ted.run(inputaterms[termNo].toString(),strategy,action);
+		  
+		  inputaterms[termNo] = atermFactory.parse(newTerm);
+		  
+		  addTreesToPanel();
+		  
+	  }catch(Exception ex){
+		  JOptionPane.showMessageDialog(this, "Usage: AtermNumber Strategy Action \n (" + 
+				  ex.getMessage() + ")");
+	  }
   }
 
   public static void main(String[] argv) {
