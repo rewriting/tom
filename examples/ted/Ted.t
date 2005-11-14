@@ -135,6 +135,45 @@ public class Ted {
     }
     System.out.println(res);
   }
+  
+  //same functionality as above, except for the input and output
+  public String run(String aTerm, String strategy, String actionStr) throws java.io.IOException {
+	    
+	// aterm to modify    
+    ATerm res = atermFactory.parse(aTerm);
+    
+    // strategy      
+    Constructor ctor = null;
+
+    try {
+	  Class strategy_class = Class.forName(strategy);
+	  ctor = strategy_class.getConstructor(new Class[] {jjtraveler.Visitor.class});
+  	}
+  	catch( Exception e ) { System.err.println("This strategy doesn't exist or has a bad signature : " + e.getMessage()); System.exit(1); }
+
+  	// action
+  	ATerm action = atermFactory.parse(actionStr);
+  	jjtraveler.Visitor vtor = null;
+
+  	%match(ATerm action) {
+
+	    ATermAppl_2(AFun[name="replace"], tomatch, replacement) -> {
+	      try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new ReplaceVisitor(`tomatch, `replacement)} ); }
+	      catch ( Exception e ) { e.printStackTrace(); }
+	    }
+	
+	    ATermAppl_1(AFun[name="remove"], tomatch) -> {
+	      try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new MatchAndRemoveVisitor(`tomatch)}); }
+	      catch ( Exception e ) { e.printStackTrace(); }
+	    }
+  	}
+
+  	// application
+  	try { res = (ATerm) vtor.visit(res);}
+  	catch (Exception e) {e.printStackTrace();}        
+    
+    return res.toString();
+  }
 
   public static void main (String[] argv) throws IOException {
     Ted ted = new Ted();
