@@ -85,7 +85,7 @@ public class ATViewer extends JPanel {
         return appendToTree(node,`arglist);
       }
       ATermInt(i) -> {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode("int: "+i);
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("int: "+`i);
         return node;
       }
       ATermPlaceholder( type@ATermAppl[fun=AFun[name=name]] ) -> {
