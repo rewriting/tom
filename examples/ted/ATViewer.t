@@ -6,7 +6,6 @@ import aterm.pure.SingletonFactory;
 import java.util.*;
 import java.lang.reflect.*;
 
-
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.*;
 import tom.library.traversal.*;
@@ -23,6 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import java.awt.Frame;
 
 import java.net.URL;
 import java.io.IOException;
@@ -34,33 +34,42 @@ public class ATViewer extends JPanel {
   %include { atermmapping.tom }
   %include { mutraveler.tom }
 
-  private JTree tree;
   private JEditorPane htmlPane;
   private static ATermFactory atermFactory = SingletonFactory.getInstance();
 
-  public ATViewer(String filename) {
+  public ATViewer(String[] filenames) {
     super(new GridLayout(1,0));
-    run(filename);
+    run(filenames);
   }
   
-  public void run(String filename) {
+  public void run(String[] filenames) {
 
     // aterm to modify
-    ATerm inputaterm = null;
-    try {
-      inputaterm = atermFactory.readFromFile(filename);
-    } catch (IOException e) {
-      System.err.println("Bad input");
-      System.exit(1);
+    ATerm inputaterm = null; 
+    
+    JPanel intermediate = new JPanel();
+    intermediate.setLayout(new java.awt.GridLayout(1,filenames.length));
+    
+    for (int i=0; i<filenames.length; i++){
+    	
+    	try {
+    	      inputaterm = atermFactory.readFromFile(filenames[i]);
+    	      
+    	      DefaultMutableTreeNode top = createTree(inputaterm);
+    	      JTree tree = new JTree(top);
+    	      tree.getSelectionModel().setSelectionMode
+    	        (TreeSelectionModel.SINGLE_TREE_SELECTION);
+    	      
+    	      intermediate.add(tree);
+    	      
+    	    } catch (IOException e) {
+    	      System.err.println("Bad input");
+    	      System.exit(1);
+    	    }	
     }
-    DefaultMutableTreeNode top = createTree(inputaterm);
-
-    tree = new JTree(top);
-    tree.getSelectionModel().setSelectionMode
-      (TreeSelectionModel.SINGLE_TREE_SELECTION);
-
+    
     //Create the scroll pane and add the tree to it. 
-    JScrollPane treeView = new JScrollPane(tree);
+    JScrollPane treeView = new JScrollPane(intermediate);
 
     //Create the HTML viewing pane.
     htmlPane = new JEditorPane();
@@ -121,31 +130,35 @@ public class ATViewer extends JPanel {
    * this method should be invoked from the
    * event-dispatching thread.
    */
-  private static void createAndShowGUI(String filename) {
+  private static void createAndShowGUI(String[] filenames) {
     //Make sure we have nice window decorations.
     JFrame.setDefaultLookAndFeelDecorated(true);
 
     //Create and set up the window.
     JFrame frame = new JFrame("ATViewer");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
 
     //Create and set up the content pane.
-    ATViewer newContentPane = new ATViewer(filename);
+    ATViewer newContentPane = new ATViewer(filenames);
     newContentPane.setOpaque(true); //content panes must be opaque
     frame.setContentPane(newContentPane);
 
     //Display the window.
     frame.pack();
-    frame.setVisible(true);
+    frame.setVisible(true);    
   }
 
   public static void main(String[] argv) {
-    final String filename = argv[0];
+    final String[] filenames = argv;
+    if (filenames.length < 1){
+    	System.out.println("At least one filename should be specified !");
+    	System.exit(0);
+    }
     //Schedule a job for the event-dispatching thread:
     //creating and showing this application's GUI.
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-        createAndShowGUI(filename);
+        createAndShowGUI(filenames);
         }
         });
   }
