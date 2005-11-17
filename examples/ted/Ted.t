@@ -20,9 +20,12 @@ public class Ted {
   %include { mutraveler.tom }
 
   private static ATermFactory atermFactory = new PureFactory();
+  //strategy      
+  private Constructor ctor = null;
 
   /* Ted symbol table */
   private HashMap tds = new HashMap();
+  //private HashMap globalTds = new HashMap();
 
   public boolean match(ATerm a1, ATerm a2) {
     return match(a1,a2,true);
@@ -56,18 +59,21 @@ public class Ted {
         return ok;
       }
 
-      ATermPlaceholder( ATermAppl(AFun(name,arity,_),_) ), _ -> {
-        if( `arity != 0 ) {
+      t@ATermPlaceholder( ATermAppl(AFun(name,arity,_),_) ), _ -> {
+        
+    	if( `arity != 0 ) {
           System.err.println("Bad placeholder format");
           System.exit(1);
-        } 
+        }   
+    	
         if(`name.equals("any")) {
           return true;
         } else {
-          if(tds.containsKey(`name)) {
-            return match(((ATerm) tds.get(`name)), a2, false);
-          } else {
-            tds.put(`name, a2);
+          if(tds.containsKey(`t)) {
+            return match(((ATerm) tds.get(`t)), a2, false);
+          } else {        	  
+            tds.put(`t, a2);
+            System.out.println("added:" + `t + " tds:" + tds);
             return true;
           }
         }
@@ -113,9 +119,6 @@ public class Ted {
   }
     
   public ATerm run(ATerm res, String strategy, ATerm action) throws java.io.IOException {
-    
-    // strategy      
-    Constructor ctor = null;
 
     try {
 	  Class strategy_class = Class.forName(strategy);
@@ -128,7 +131,7 @@ public class Ted {
   	%match(ATerm action) {
 
 	    ATermAppl_2(AFun[name="replace"], tomatch, replacement) -> {
-	      try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new ReplaceVisitor(`tomatch, `replacement)} ); }
+	      try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new ReplaceVisitor(`tomatch, `replacement, this)} ); }
 	      catch ( Exception e ) { e.printStackTrace(); }
 	    }
 	
@@ -148,9 +151,32 @@ public class Ted {
   //same functionality as above, except for the input and output
   public String run(String aTerm, String strategy, String actionStr) throws java.io.IOException {
 	
-	return (run(atermFactory.parse(aTerm),
-			strategy,atermFactory.parse(actionStr))).toString(); 
+	ATerm at = run(atermFactory.parse(aTerm),strategy,atermFactory.parse(actionStr));
 	
+	return at.toString();
+  }
+  
+  // will replace in the term the placeholders with 
+  // their initialization from tds
+  public ATerm modifyReplacement(ATerm term){
+	  
+    String termStr = term.toString();
+	  
+  	Iterator it = tds.keySet().iterator();
+  	
+	while (it.hasNext()){
+		
+		ATerm key = (ATerm)it.next();
+		String keyStr = key.toString();
+		
+		if (termStr.equals(keyStr)){
+			termStr = ((ATerm)tds.get(key)).toString();
+		}else{
+			termStr.replace(keyStr,((ATerm)tds.get(key)).toString());
+		}
+	}	
+	
+	return atermFactory.parse(termStr);
   }
 
   public static void main (String[] argv) throws IOException {
