@@ -72,8 +72,7 @@ public class Ted {
           if(tds.containsKey(`t)) {
             return match(((ATerm) tds.get(`t)), a2, false);
           } else {        	  
-            tds.put(`t, a2);
-            System.out.println("added:" + `t + " tds:" + tds);
+            tds.put(`t, a2);            
             return true;
           }
         }
