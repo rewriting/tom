@@ -192,6 +192,7 @@ class Matching1 {
      System.out.println("simplified = " + res1); 
 
     // res1 = (Constraint) MuTraveler.init( `Repeat(Choice(solveRule,Innermost(simplifyRule)))).visit(res1);
+     res1 = (Constraint) MuTraveler.init( `Repeat(Sequence(Try(solveRule),Innermost(simplifyRule)))).visit(res1);
      while(res1 != `True() && res1 != `False()){
     	 res1 = (Constraint) MuTraveler.init( solveRule).visit(res1);
     	 res1 = (Constraint) MuTraveler.init( `Innermost(simplifyRule)).visit(res1);
@@ -214,6 +215,7 @@ class Matching1 {
     public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
     	
       %match(Constraint arg) {
+        // AntiMatch
         Match(Anti(p),s) -> {
           return `Neg(Match(p,s));
         }
@@ -297,14 +299,14 @@ class Matching1 {
             solution.add(match); 
             VisitableVisitor rule = new ReplaceSystem(var,s);
             Constraint res = (Constraint) MuTraveler.init(`Innermost(rule)).visit(`And(concConstraint(X*,Y*)));
-            System.out.println("[solve2] -> [" + match + "," + res + "]");
+            System.out.println("[solve3] -> [" + match + "," + res + "]");
             return res;
         }
         Neg(And(concConstraint(X*,match@Match(var@Variable(name),s),Y*))) -> {
             solution.add(match); 
             VisitableVisitor rule = new ReplaceSystem(var,s);
             Constraint res = (Constraint) MuTraveler.init(`Innermost(rule)).visit(`Neg(And(concConstraint(X*,Y*))));
-            System.out.println("[solve2] -> [" + match + "," + res + "]");
+            System.out.println("[solve4] -> [" + match + "," + res + "]");
             return res;
         }
       }

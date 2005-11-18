@@ -38,6 +38,7 @@
   <!-- Examples to build and distribute -->
   <property name="addressbook"    value="addressbook"/>
   <property name="adt"            value="adt"/>
+  <property name="antipattern"    value="antipattern"/>
   <property name="apireach"       value="apireach"/>
   <property name="appletxml"      value="appletxml"/>
   <property name="boulderdash"    value="boulderdash"/>
@@ -191,6 +192,12 @@
     <vascompile example="${adt}"/>
     <tomcompile example="${adt}"/>
     <javacompile example="${adt}"/>
+  </target>
+
+  <target name="antipattern" depends="init"> 
+    <vascompile example="${antipattern}"/>
+    <tomcompile example="${antipattern}"/>
+    <javacompile example="${antipattern}"/>
   </target>
 
   <target name="apireach" depends="init"> 
@@ -671,7 +678,7 @@
   
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="addressbook, adt, apireach, appletxml, boulderdash,
+          depends="addressbook, adt, antipattern, apireach, appletxml, boulderdash,
           builtin, caml, cell, dom, expression, ferus, gomoku, gtree, integerc,
           list, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, ted, 
@@ -701,6 +708,10 @@
         <include name="${addressbook}/README"/>
         <include name="${addressbook}/*.t"/>
         <include name="${addressbook}/*.adt"/>
+
+        <include name="${antipattern}/README"/>
+        <include name="${antipattern}/*.t"/>
+        <include name="${antipattern}/*.vas"/>
 
         <include name="${apireach}/README"/>
         <include name="${apireach}/*.t"/>
