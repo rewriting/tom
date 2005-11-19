@@ -45,7 +45,7 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 
-class Matching1 {
+public class Matching1 {
   private TermFactory factory;
 
   //%include{ atermmapping.tom }
