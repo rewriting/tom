@@ -110,6 +110,7 @@ class Matching1 {
       "match(anti(f(X,anti(g(X)))), f(a,g(b)))",
       "match(anti(f(X,anti(g(X)))), f(b,g(b)))",
       "match(anti(f(X,anti(g(X)))), g(b))",
+      "match(anti(f(X,anti(g(Y)))), f(b,g(b)))",
     };
    
     for(int i=0 ; i<queries.length ; i++) {
@@ -191,21 +192,20 @@ class Matching1 {
      Constraint res1 = (Constraint) MuTraveler.init(`Innermost(simplifyRule)).visit(c);
      System.out.println("simplified = " + res1); 
 
-    // res1 = (Constraint) MuTraveler.init( `Repeat(Choice(solveRule,Innermost(simplifyRule)))).visit(res1);
-     res1 = (Constraint) MuTraveler.init( `Repeat(Sequence(Try(solveRule),Innermost(simplifyRule)))).visit(res1);
-     while(res1 != `True() && res1 != `False()){
-    	 res1 = (Constraint) MuTraveler.init( solveRule).visit(res1);
-    	 res1 = (Constraint) MuTraveler.init( `Innermost(simplifyRule)).visit(res1);
-     }
-     
-        System.out.println("--> normal form = " + res1 + " solution = " + solution); 
-         return res1;
+    // res1 = (Constraint) MuTraveler.init( `Repeat(Choice(solveRule,Innermost(simplifyRule)))).visit(res1);    
+     res1 = (Constraint) MuTraveler.init( `Repeat( 
+    				 Sequence(
+    						 solveRule,
+    						 Innermost(simplifyRule))
+    				 )).visit(res1);
+     System.out.println("--> normal form = " + res1 + " solution = " + solution); 
+     return res1;
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + c);
       //e.printStackTrace();
     }
    return `False();
-  }
+  } 
 
   class SimplifySystem extends antipattern.term.TermVisitableFwd {
     public SimplifySystem() {
@@ -310,6 +310,7 @@ class Matching1 {
             return res;
         }
       }
+      
       return (Constraint)`Fail().visit(arg);
     }
   
