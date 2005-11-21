@@ -27,9 +27,11 @@ package tom.platform;
 
 import java.util.*;
 import java.util.logging.*;
-
+import jtom.TomMessage;
 import aterm.*;
 import aterm.pure.*;
+import jtom.tools.TomGenericPlugin;
+import jtom.TomStreamManager;
 
 import tom.library.adt.tnode.*;
 
@@ -60,6 +62,9 @@ public class PluginPlatform {
   /** The status handler */
   private StatusHandler statusHandler;
 
+  /** The test handler */
+  private TestHandler testHandler;
+
   /** List of input arg */
   private List inputToCompileList;
 
@@ -69,7 +74,11 @@ public class PluginPlatform {
   /** Class Pluginplatform constructor */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
     statusHandler = new StatusHandler();
+    testHandler = new TestHandler();
+
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
+    Logger.getLogger(loggerRadical).addHandler(this.testHandler);
+
     pluginsList = confManager.getPluginsList();
     inputToCompileList = confManager.getOptionManager().getInputToCompileList();
   }
@@ -96,6 +105,11 @@ public class PluginPlatform {
       Object initArgument = input;
       boolean success = true;
       statusHandler.clear();
+      testHandler.clear();
+      if(input instanceof String && ((String)input).endsWith(".t")){
+        String inputWithoutSuffix = ((String)input).substring(0, ((String)input).length() - ".t".length());
+        testHandler.changeTomFile(inputWithoutSuffix);
+      }
       getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
       // runs the plugins
       Iterator it = pluginsList.iterator();
@@ -122,6 +136,7 @@ public class PluginPlatform {
         }
         pluginArg = plugin.getArgs();
       }
+
       if(success) {
         // save the first element of last plugin getArg response
         // this shall correspond to a generated file name
@@ -151,6 +166,14 @@ public class PluginPlatform {
     return statusHandler;
   }
 
+ /**
+   * An accessor method
+   * @return the test handler.
+   */
+  public TestHandler getTestHandler() {
+    return testHandler;
+  }
+
   /** return the list of last generated objects */
   public List getLastGeneratedObjects() {
     return lastGeneratedObjects;
@@ -164,5 +187,6 @@ public class PluginPlatform {
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
+
   
 } // class PluginPlatform

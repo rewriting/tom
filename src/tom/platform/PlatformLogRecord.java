@@ -59,5 +59,5 @@ public class PlatformLogRecord extends LogRecord {
   public PlatformMessage getPlatformMessage() {
     return message;
   }
-  
+
 } // class PlatformLogRecord
