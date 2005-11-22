@@ -14,6 +14,5 @@ module Term
     Neg(c:Constraint) -> Constraint
     Match(pattern:Term, subject:Term) -> Constraint
     And(cl:ConstraintList) -> Constraint
-    Or(cl:ConstraintList) -> Constraint
     concConstraint( Constraint* ) -> ConstraintList
 
