@@ -45,7 +45,7 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 
-public class Matching2 {
+public class Matching2 implements Matching {
   private TermFactory factory;
 
   //%include{ atermmapping.tom }
@@ -64,126 +64,10 @@ public class Matching2 {
     this(TermFactory.getInstance(SingletonFactory.getInstance()));;
   }
   
-  Matching2(TermFactory factory) {
+  public Matching2(TermFactory factory) {
     this.factory = factory;
   }
 
-  public static void main(String[] args) {
-    Matching2 test = new Matching2();
-    test.run();
-  }
-
-  public void run() {
-
-    String[] queries = {
-      "match(a, a)",
-      "match(a, b)",
-      "match(anti(a), a)",
-      "match(anti(a), b)",
-      "-",
-      "match(f(a,anti(b)), f(a,a))",
-      "match(f(a,anti(b)), f(a,c))",
-      "match(f(a,anti(b)), f(a,b))",
-      "match(f(a,anti(b)), f(b,c))",
-      "-",
-      "match(anti(f(a,anti(b))), f(a,a))",
-      "match(anti(f(a,anti(b))), f(a,c))",
-      "match(anti(f(a,anti(b))), f(a,b))",
-      "match(anti(f(a,anti(b))), f(b,c))",
-      "match(anti(f(a,anti(b))), g(b))",
-      "match(anti(f(a,anti(b))), f(a,b))",
-      "match(anti(f(a,anti(b))), f(b,b))",
-      "-",
-      "match(f(X,X), f(a,a))",
-      "match(f(X,X), f(a,b))",
-      "-",
-      "match(anti(f(X,X)), f(a,a))",
-      "match(anti(f(X,X)), f(a,b))",
-      "match(anti(f(X,X)), g(a))",
-      "-",
-      "match(f(X,anti(g(X))), f(a,b))",
-      "match(f(X,anti(g(X))), f(a,g(b)))",
-      "match(f(X,anti(g(X))), f(b,g(b)))",
-      "match(f(X,anti(g(X))), g(b))",
-      "-",
-      "match(anti(f(X,anti(g(X)))), f(a,b))",
-      "match(anti(f(X,anti(g(X)))), f(a,g(b)))",
-      "match(anti(f(X,anti(g(X)))), f(b,g(b)))",
-      "match(anti(f(X,anti(g(X)))), g(b))",
-      "match(anti(f(X,anti(g(Y)))), f(b,g(b)))",
-    };
-   
-    for(int i=0 ; i<queries.length ; i++) {
-      String s = queries[i];
-      if(s.equals("-")) {
-        System.out.println("---------------------------------------");
-      } else {
-        ATerm at = getPureFactory().parse(s);
-        Constraint c = atermToConstraint(at);
-        System.out.println(s);
-        Constraint simplifiedConstraint = simplifyAndSolve(c);
-        //System.out.println(" --> " + simplifiedConstraint);
-      }
-    }
-
-  }
-
-  private Term stringToTerm(String t) {
-    ATerm at = getPureFactory().parse(t);
-    Term res = atermToTerm(at);
-    System.out.println(t + " --> " + res);
-    return res;
-  }
-
-  private Term atermToTerm(ATerm at) {
-    if(at instanceof ATermAppl) {
-      ATermAppl appl = (ATermAppl) at;
-      AFun afun = appl.getAFun();
-      String name = afun.getName();
-      if(name.equals("anti") && afun.getArity()==1) {
-        ATerm subterm = appl.getArgument(0);
-        return `Anti(atermToTerm(subterm));
-      } else if(Character.isUpperCase(name.charAt(0)) && afun.getArity()==0) {
-        return `Variable(name);
-      } else {
-        return `Appl(name,atermListToTermList(appl.getArguments()));
-      }
-    }
-
-    throw new RuntimeException("error on: " + at);
-  }
-
-  private TermList atermListToTermList(ATerm at) {
-    if(at instanceof ATermList) {
-      ATermList atl = (ATermList) at;
-      TermList l = `emptyTermList();
-      while(!atl.isEmpty()) {
-        l = `manyTermList(atermToTerm(atl.getFirst()),l);
-        atl = atl.getNext();
-      }
-      return l;
-    }
-
-    throw new RuntimeException("error on: " + at);
-  }
-
-  private Constraint atermToConstraint(ATerm at) {
-    if(at instanceof ATermAppl) {
-      ATermAppl appl = (ATermAppl) at;
-      String name = appl.getName();
-      if(name.equals("match")) {
-        ATerm pattern = appl.getArgument(0);
-        ATerm subject = appl.getArgument(1);
-        return `Match(atermToTerm(pattern),atermToTerm(subject));
-      } else if(name.equals("neg")) {
-        ATerm term = appl.getArgument(0);
-        return `Neg(atermToConstraint(term));
-      } 
-    }
-
-    throw new RuntimeException("error on: " + at);
-  }  
- 
   public Constraint simplifyAndSolve(Constraint c) {
    VisitableVisitor simplifyRule = new SimplifySystem();
    Collection solution = new HashSet();
@@ -296,15 +180,15 @@ public class Matching2 {
         }
         And(concConstraint(X*,match@Match(var@Variable(name),s),Y*)) -> {
             solution.add(match); 
-            VisitableVisitor rule = new ReplaceSystem(var,s);
-            Constraint res = (Constraint) MuTraveler.init(`Innermost(rule)).visit(`And(concConstraint(X*,Y*)));
+            VisitableVisitor rule = new ReplaceSystemId(var,s);
+            Constraint res = (Constraint) MuTraveler.init(`InnermostId(rule)).visit(`And(concConstraint(X*,Y*)));
             System.out.println("[solve3] -> [" + match + "," + res + "]");
             return res;
         }
         Neg(And(concConstraint(X*,match@Match(var@Variable(name),s),Y*))) -> {
             solution.add(match); 
-            VisitableVisitor rule = new ReplaceSystem(var,s);
-            Constraint res = (Constraint) MuTraveler.init(`Innermost(rule)).visit(`Neg(And(concConstraint(X*,Y*))));
+            VisitableVisitor rule = new ReplaceSystemId(var,s);
+            Constraint res = (Constraint) MuTraveler.init(`InnermostId(rule)).visit(`Neg(And(concConstraint(X*,Y*))));
             System.out.println("[solve4] -> [" + match + "," + res + "]");
             return res;
         }
@@ -315,12 +199,12 @@ public class Matching2 {
   
   }    
  
-  class ReplaceSystem extends antipattern.term.TermVisitableFwd {
+  class ReplaceSystemId extends antipattern.term.TermVisitableFwd {
     private Term variable;
     private Term value;
 
-    public ReplaceSystem(Term variable, Term value) {
-      super(`Fail());
+    public ReplaceSystemId(Term variable, Term value) {
+      super(`Identity());
       this.variable = variable;
       this.value = value;
     }
@@ -329,7 +213,7 @@ public class Matching2 {
       if(arg==variable) {
         return value;
       } 
-      return (Term)`Fail().visit(arg);
+      return arg;
     }
   }    
 }
