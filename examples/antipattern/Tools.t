@@ -68,56 +68,31 @@ public class Tools {
   }
 
   public void run(Matching match) {
-
-    String[] queries = {
-      "match(a, a)",
-      "match(a, b)",
-      "match(anti(a), a)",
-      "match(anti(a), b)",
-      "-",
-      "match(f(a,anti(b)), f(a,a))",
-      "match(f(a,anti(b)), f(a,c))",
-      "match(f(a,anti(b)), f(a,b))",
-      "match(f(a,anti(b)), f(b,c))",
-      "-",
-      "match(anti(f(a,anti(b))), f(a,a))",
-      "match(anti(f(a,anti(b))), f(a,c))",
-      "match(anti(f(a,anti(b))), f(a,b))",
-      "match(anti(f(a,anti(b))), f(b,c))",
-      "match(anti(f(a,anti(b))), g(b))",
-      "match(anti(f(a,anti(b))), f(a,b))",
-      "match(anti(f(a,anti(b))), f(b,b))",
-      "-",
-      "match(f(X,X), f(a,a))",
-      "match(f(X,X), f(a,b))",
-      "-",
-      "match(anti(f(X,X)), f(a,a))",
-      "match(anti(f(X,X)), f(a,b))",
-      "match(anti(f(X,X)), g(a))",
-      "-",
-      "match(f(X,anti(g(X))), f(a,b))",
-      "match(f(X,anti(g(X))), f(a,g(b)))",
-      "match(f(X,anti(g(X))), f(b,g(b)))",
-      "match(f(X,anti(g(X))), g(b))",
-      "-",
-      "match(anti(f(X,anti(g(X)))), f(a,b))",
-      "match(anti(f(X,anti(g(X)))), f(a,g(b)))",
-      "match(anti(f(X,anti(g(X)))), f(b,g(b)))",
-      "match(anti(f(X,anti(g(X)))), g(b))",
-      "match(anti(f(X,anti(g(Y)))), f(b,g(b)))",
-    };
-   
-    for(int i=0 ; i<queries.length ; i++) {
-      String s = queries[i];
-      if(s.equals("-")) {
-        System.out.println("---------------------------------------");
-      } else {
-        ATerm at = getPureFactory().parse(s);
-        Constraint c = atermToConstraint(at);
-        System.out.println(s);
-        Constraint simplifiedConstraint = match.simplifyAndSolve(c);
-        //System.out.println(" --> " + simplifiedConstraint);
-      }
+	  
+	BufferedReader br = null;
+	try{  
+		br = new BufferedReader(new FileReader( 
+				match.getClass().getResource("input.txt").getFile()));
+	}catch(FileNotFoundException e){
+		System.out.println("Can't find the input file 'input.txt' :" + e.getMessage());
+		System.exit(0);
+	}
+    String s = null;
+    try{
+	    while((s = br.readLine()) != null ) {      
+	      if(s.equals("-")) {
+	        System.out.println("---------------------------------------");
+	      } else {
+	        ATerm at = getPureFactory().parse(s);	        
+	        Constraint c = atermToConstraint(at);
+	        System.out.println(s);
+	        Constraint simplifiedConstraint = match.simplifyAndSolve(c);
+	        //System.out.println(" --> " + simplifiedConstraint);
+	      }
+	    }
+    }catch(IOException e1){
+    	System.out.println("IOException: " + e1.getMessage());
+		System.exit(0);
     }
 
   }

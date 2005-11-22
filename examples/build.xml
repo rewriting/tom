@@ -198,6 +198,11 @@
     <vascompile example="${antipattern}"/>
     <tomcompile example="${antipattern}"/>
     <javacompile example="${antipattern}"/>
+  	<copy todir="${examples.build}/${antipattern}">
+      <fileset dir="${antipattern}">
+        <include name="*.txt"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="apireach" depends="init"> 
