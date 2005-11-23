@@ -42,6 +42,7 @@ public class Tools {
   private TermFactory factory;
 
   %include{ term/term.tom }
+  %include{ atermmapping.tom }
 
   private final TermFactory getTermFactory() {
     return factory;
@@ -61,18 +62,23 @@ public class Tools {
 
   public static void main(String[] args) {
     Tools tools = new Tools();
+    System.out.println("\nRunning Matching1: \n");
     Matching test1 = new Matching2(tools.getTermFactory());
-    tools.run(test1);
+    tools.run(test1,args[0]);
+    System.out.println("\nRunning Matching2: \n");
     Matching test2 = new Matching2(tools.getTermFactory());
-    tools.run(test2);
+    tools.run(test2,args[1]);
+    System.out.println("\nRunning Matching3: \n");
+    Matching test3 = new Matching3(tools.getTermFactory());
+    tools.run(test3,args[2]);
   }
 
-  public void run(Matching match) {
+  public void run(Matching match, String fileName) {
 	  
 	BufferedReader br = null;
 	try{  
 		br = new BufferedReader(new FileReader( 
-				match.getClass().getResource("input.txt").getFile()));
+				match.getClass().getResource(fileName).getFile()));
 	}catch(FileNotFoundException e){
 		System.out.println("Can't find the input file 'input.txt' :" + e.getMessage());
 		System.exit(0);
@@ -95,18 +101,11 @@ public class Tools {
 	      }
 	    }
     }catch(IOException e1){
-    	System.out.println("IOException: " + e1.getMessage());
+    	System.out.println("IOException: " + e1.getMessage()); 
 		System.exit(0);
     }
 
-  }
-
-  private Term stringToTerm(String t) {
-    ATerm at = getPureFactory().parse(t);
-    Term res = atermToTerm(at);
-    System.out.println(t + " --> " + res);
-    return res;
-  }
+  }  
 
   private Term atermToTerm(ATerm at) {
     if(at instanceof ATermAppl) {
@@ -117,10 +116,35 @@ public class Tools {
         ATerm subterm = appl.getArgument(0);
         return `Anti(atermToTerm(subterm));
       } else if(Character.isUpperCase(name.charAt(0)) && afun.getArity()==0) {
-        return `Variable(name);
+        return `Variable(name);        
       } else {
+    	  String strTmp = "cons";
+    	  ATermList args = appl.getArguments();
+    	  %match(ATermList args, String strTmp){
+    		  concATerm(s1*,ATermAppl(AFun(tmp,_,_),cs)),tmp ->{    		  
+    			  return `ApplCons(name,atermListToTermList(s1),
+    					  atermListToConstraintList(cs));
+    		  }
+    	  }
         return `Appl(name,atermListToTermList(appl.getArguments()));
       }
+    }else if(at instanceof ATermInt) {
+    	String intVal = ((ATermInt)at).getInt()+"";
+    	return `Appl( intVal,concTerm());
+    }
+
+    throw new RuntimeException("error on: " + at);
+  }
+  
+  private ConstraintList atermListToConstraintList(ATerm at) {
+    if(at instanceof ATermList) {
+      ATermList atl = (ATermList) at;
+      ConstraintList l = `emptyConstraintList();
+      while(!atl.isEmpty()) {
+        l = `manyConstraintList(atermToConstraint(atl.getFirst()),l);
+        atl = atl.getNext();
+      }
+      return l;
     }
 
     throw new RuntimeException("error on: " + at);
@@ -151,7 +175,19 @@ public class Tools {
       } else if(name.equals("neg")) {
         ATerm term = appl.getArgument(0);
         return `Neg(atermToConstraint(term));
-      } 
+      } else if(name.equals("gt")) {
+    	  ATermAppl term1 = (ATermAppl)appl.getArgument(0);
+    	  ATermInt term2 = (ATermInt)appl.getArgument(1);
+          return `GreaterThan(Variable(term1.getAFun().getName()),
+      			Appl(term2.getInt()+"",concTerm()));     		  
+        		  
+      } else if(name.equals("lt")) {
+          ATermAppl term1 = (ATermAppl)appl.getArgument(0);
+          ATermInt term2 = (ATermInt)appl.getArgument(1);
+          return `LessThan(Variable(term1.getAFun().getName()),
+        		  Appl(term2.getInt()+"",concTerm()));     		  
+        		  
+      }  
     }
 
     throw new RuntimeException("error on: " + at);
