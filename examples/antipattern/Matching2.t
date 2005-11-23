@@ -69,8 +69,8 @@ public class Matching2 implements Matching {
   }
 
   public Constraint simplifyAndSolve(Constraint c, Collection solution) {
-   VisitableVisitor simplifyRule = new SimplifySystem();
-   VisitableVisitor solveRule = new SolveSystem(solution);
+   VisitableVisitor simplifyRule = new SimplifySystem(`Identity());
+   VisitableVisitor solveRule = new SolveSystem(solution,`Identity());
    try { 
      return (Constraint) MuTraveler.init(
          `SequenceId(InnermostId(simplifyRule),
@@ -81,131 +81,5 @@ public class Matching2 implements Matching {
       //e.printStackTrace();
     }
    return `False();
-  } 
-
-  class SimplifySystem extends antipattern.term.TermVisitableFwd {
-    public SimplifySystem() {
-      super(`Identity());
-    }
-    
-    public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
-    	
-      %match(Constraint arg) {
-        // AntiMatch
-        Match(Anti(p),s) -> {
-          return `Neg(Match(p,s));
-        }
-        
-        // Delete
-        Match(Appl(name,concTerm()),Appl(name,concTerm())) -> {
-          return `True();
-        }
-
-        // Decompose
-        Match(Appl(name,args1),Appl(name,args2)) -> {
-          ConstraintList l = `emptyConstraintList();
-          while(!args1.isEmpty()) {
-            l = `manyConstraintList(Match(args1.getHead(),args2.getHead()),l);
-            args1 = args1.getTail();
-            args2 = args2.getTail();
-          }
-          return `And(l);
-        }
-        
-        // SymbolClash
-        Match(Appl(name1,args1),Appl(name2,args2)) -> {
-          if(name1 != name2) {
-            return `False();
-          }
-        }
-       
-        // PropagateClash
-        And(concConstraint(_*,False(),_*)) -> {
-          return `False();
-        }
-        
-        // PropagateSuccess
-        And(concConstraint()) -> {
-          return `True();
-        }
-        And(concConstraint(x)) -> {
-          return `x;
-        }
-        And(concConstraint(X*,True(),Y*)) -> {
-          return `And(concConstraint(X*,Y*));
-        }
-
-        // BooleanSimplification
-        Neg(Neg(x)) -> { return `x; }
-        Neg(True()) -> { return `False(); }
-        Neg(False()) -> { return `True(); }
-        And(concConstraint(X*,c,Y*,c,Z*)) -> {
-          return `And(concConstraint(X*,c,Y*,Z*));
-        }
-
-      }
-      return arg;
-    }
-  }
-  
-  class SolveSystem extends antipattern.term.TermVisitableFwd {
-    private Collection solution; 
-    public SolveSystem(Collection c) {
-      super(`Identity());
-      this.solution = c;
-    }
-   
-    public Constraint visit_Constraint(Constraint arg) throws VisitFailure {
-    	
-      %match(Constraint arg) {
-        match@Match(var@Variable(name),s) -> {
-            solution.add(match); 
-            Constraint res = `True();
-            //System.out.println("[solve1] -> [" + match + "," + res + "]");
-            return res;
-        }
-        Neg(match@Match(var@Variable(name),s)) -> {
-            solution.add(match); 
-            Constraint res = `False();
-            //System.out.println("[solve1] -> [" + match + "," + res + "]");
-            return res;
-        }
-        And(concConstraint(X*,match@Match(var@Variable(name),s),Y*)) -> {
-            solution.add(match); 
-            VisitableVisitor rule = new ReplaceSystemId(var,s);
-            Constraint res = (Constraint) MuTraveler.init(`InnermostId(rule)).visit(`And(concConstraint(X*,Y*)));
-            //System.out.println("[solve3] -> [" + match + "," + res + "]");
-            return res;
-        }
-        Neg(And(concConstraint(X*,match@Match(var@Variable(name),s),Y*))) -> {
-            solution.add(match); 
-            VisitableVisitor rule = new ReplaceSystemId(var,s);
-            Constraint res = (Constraint) MuTraveler.init(`InnermostId(rule)).visit(`Neg(And(concConstraint(X*,Y*))));
-            //System.out.println("[solve4] -> [" + match + "," + res + "]");
-            return res;
-        }
-      }
-      
-      return arg;
-    }
-  
-  }    
- 
-  class ReplaceSystemId extends antipattern.term.TermVisitableFwd {
-    private Term variable;
-    private Term value;
-
-    public ReplaceSystemId(Term variable, Term value) {
-      super(`Identity());
-      this.variable = variable;
-      this.value = value;
-    }
-   
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      if(arg==variable) {
-        return value;
-      } 
-      return arg;
-    }
-  }    
+  }  
 }
