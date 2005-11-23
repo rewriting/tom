@@ -31,7 +31,8 @@ package antipattern;
 
 import antipattern.term.*;
 import antipattern.term.types.*;
+import java.util.Collection;
 
 public interface Matching {
-  Constraint simplifyAndSolve(Constraint c);
+  Constraint simplifyAndSolve(Constraint constraint, Collection solution);
 }

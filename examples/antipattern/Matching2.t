@@ -68,22 +68,14 @@ public class Matching2 implements Matching {
     this.factory = factory;
   }
 
-  public Constraint simplifyAndSolve(Constraint c) {
+  public Constraint simplifyAndSolve(Constraint c, Collection solution) {
    VisitableVisitor simplifyRule = new SimplifySystem();
-   Collection solution = new HashSet();
    VisitableVisitor solveRule = new SolveSystem(solution);
    try { 
-     Constraint res1 = (Constraint) MuTraveler.init(`InnermostId(simplifyRule)).visit(c);
-     System.out.println("simplified = " + res1); 
-
-    // res1 = (Constraint) MuTraveler.init( `Repeat(Choice(solveRule,Innermost(simplifyRule)))).visit(res1);    
-     res1 = (Constraint) MuTraveler.init( `RepeatId( 
-    				 SequenceId(
-    						 solveRule,
-    						 InnermostId(simplifyRule))
-    				 )).visit(res1);
-     System.out.println("--> normal form = " + res1 + " solution = " + solution + "\n"); 
-     return res1;
+     return (Constraint) MuTraveler.init(
+         `SequenceId(InnermostId(simplifyRule),
+           RepeatId(SequenceId(solveRule, InnermostId(simplifyRule)))
+           )).visit(c);
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + c);
       //e.printStackTrace();
@@ -169,27 +161,27 @@ public class Matching2 implements Matching {
         match@Match(var@Variable(name),s) -> {
             solution.add(match); 
             Constraint res = `True();
-            System.out.println("[solve1] -> [" + match + "," + res + "]");
+            //System.out.println("[solve1] -> [" + match + "," + res + "]");
             return res;
         }
         Neg(match@Match(var@Variable(name),s)) -> {
             solution.add(match); 
             Constraint res = `False();
-            System.out.println("[solve1] -> [" + match + "," + res + "]");
+            //System.out.println("[solve1] -> [" + match + "," + res + "]");
             return res;
         }
         And(concConstraint(X*,match@Match(var@Variable(name),s),Y*)) -> {
             solution.add(match); 
             VisitableVisitor rule = new ReplaceSystemId(var,s);
             Constraint res = (Constraint) MuTraveler.init(`InnermostId(rule)).visit(`And(concConstraint(X*,Y*)));
-            System.out.println("[solve3] -> [" + match + "," + res + "]");
+            //System.out.println("[solve3] -> [" + match + "," + res + "]");
             return res;
         }
         Neg(And(concConstraint(X*,match@Match(var@Variable(name),s),Y*))) -> {
             solution.add(match); 
             VisitableVisitor rule = new ReplaceSystemId(var,s);
             Constraint res = (Constraint) MuTraveler.init(`InnermostId(rule)).visit(`Neg(And(concConstraint(X*,Y*))));
-            System.out.println("[solve4] -> [" + match + "," + res + "]");
+            //System.out.println("[solve4] -> [" + match + "," + res + "]");
             return res;
         }
       }

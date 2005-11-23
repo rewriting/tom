@@ -85,9 +85,13 @@ public class Tools {
 	      } else {
 	        ATerm at = getPureFactory().parse(s);	        
 	        Constraint c = atermToConstraint(at);
+          Collection solution = new HashSet();
 	        System.out.println(s);
-	        Constraint simplifiedConstraint = match.simplifyAndSolve(c);
-	        //System.out.println(" --> " + simplifiedConstraint);
+	        Constraint simplifiedConstraint = match.simplifyAndSolve(c,solution);
+	        System.out.println(" --> " + simplifiedConstraint);
+          if(simplifiedConstraint == `True()) {
+            System.out.println(" sol = " + solution);
+          }
 	      }
 	    }
     }catch(IOException e1){

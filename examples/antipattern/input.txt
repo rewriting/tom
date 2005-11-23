@@ -35,3 +35,6 @@ match(anti(f(X,anti(g(X)))), g(b))
 match(anti(f(X,anti(g(Y)))), f(b,g(b)))
 match(f(a,anti(g(Y))), f(b,g(b)))
 match(f(a,anti(g(Y))), f(a,b)) 
+-
+match(f(X,anti(X)), f(a,a))
+match(f(X,anti(X)), f(a,b))
