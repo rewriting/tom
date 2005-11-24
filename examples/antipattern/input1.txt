@@ -21,6 +21,11 @@ match(f(X,anti(g(X)),cons(gt(X,3),lt(X,7))),f(4,g(4)))
 match(f(X,anti(g(X)),cons(gt(X,3),lt(X,7))),f(4,g(5)))
 match(f(X,anti(g(X)),cons(gt(X,3),lt(X,7))),g(5))
 -
+match(f(X,anti(g(X,cons(gt(X,4)))),cons(gt(X,3),lt(X,7))),f(2,g(2)))
+match(f(X,anti(g(X,cons(gt(X,4)))),cons(gt(X,3),lt(X,7))),f(4,g(4)))
+match(f(X,anti(g(X,cons(gt(X,4)))),cons(gt(X,3),lt(X,7))),f(4,g(5)))
+match(f(X,anti(g(X,cons(gt(X,4)))),cons(gt(X,3),lt(X,7))),g(5))
+-
 match(anti(f(X,anti(g(X)),cons(gt(X,3),lt(X,7)))),f(2,g(2)))
 match(anti(f(X,anti(g(X)),cons(gt(X,3),lt(X,7)))),f(2,a))
 match(anti(f(X,anti(g(X)),cons(gt(X,3),lt(X,7)))),f(4,g(4)))
