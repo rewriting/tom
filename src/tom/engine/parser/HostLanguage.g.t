@@ -311,6 +311,7 @@ blockList [LinkedList list] throws TomException
         (
             // either a tom construct or everything else
             matchConstruct[list]
+        |   strategyConstruct[list]
         |   ruleConstruct[list] 
         |   signature[list]
         |   backquoteTerm[list]
@@ -322,6 +323,38 @@ blockList [LinkedList list] throws TomException
         |   STRING
         |   LBRACE blockList[list] RBRACE 
         )*
+    ;
+
+// the %strategy construct
+strategyConstruct [LinkedList list] throws TomException
+{
+    TargetLanguage code = null;
+}
+    :
+        t:STRATEGY // we switch the lexers here : we are in Tom mode
+        {     
+            // add the target code preceeding the construct
+            String textCode = getCode();
+
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(currentLine,currentColumn),
+                    TextPosition(t.getLine(),t.getColumn())
+                );
+                list.add(code);
+            }
+            
+            Option ot = `OriginTracking(
+                Name("Strategy"),
+                t.getLine(),
+                Name(currentFile)
+            );    
+            
+            // call the tomparser for the construct
+            Instruction strategy = tomparser.strategyConstruct(ot);
+            list.add(strategy);
+        }
     ;
 
 // the %rule construct
@@ -702,6 +735,9 @@ options {
 // when read, we switch lexers to tom
 BACKQUOTE
     :   "`" {selector().push("bqlexer");}
+    ;
+STRATEGY
+    :  "%strategy" {selector().push("tomlexer");}
     ;
 RULE
     :   "%rule" {selector().push("tomlexer");}

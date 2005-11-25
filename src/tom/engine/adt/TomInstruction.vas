@@ -23,6 +23,7 @@ UnamedBlock(instList:InstructionList) -> Instruction
 NamedBlock(blockName:String,instList:InstructionList) -> Instruction
 RuleSet(ruleList:TomRuleList,orgTrack:Option) -> Instruction
 Match(subjectList:TomTerm,astPatternInstructionList:PatternInstructionList,option:OptionList) -> Instruction
+Strategy(sName:TomName,args:TomList,extendsTerm:TomTerm,visitList:TomVisitList) -> Instruction
 CompiledMatch(automataInst:Instruction,option:OptionList) -> Instruction
 CompiledPattern(patternList:TomList,automataInst:Instruction) -> Instruction
 MatchingCondition(lhs:TomTerm,rhs:TomTerm) -> Instruction

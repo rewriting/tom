@@ -70,7 +70,8 @@ options{
     protected BackQuoteParser bqparser;
     private TomLexer tomlexer;
 
-    private StringBuffer text = new StringBuffer("");
+    //store information for the OriginalText contained in the OptionList
+    private StringBuffer text = new StringBuffer();
     
     private int lastLine; 
 
@@ -307,7 +308,7 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
             {
                 list.add(term);
                 result = `OriginTracking(Name("Pattern"),lastLine,Name(currentFile()));
-            }
+            } 
             ( 
                 COMMA {text.append('\n');}  
                 term = annotedTerm {list.add(term);}
@@ -330,6 +331,100 @@ matchGuards [LinkedList list] throws TomException
             )*
         )
     ;
+
+
+// The %strat construct
+strategyConstruct [Option orgTrack] returns [Instruction result] throws TomException
+{
+    result = null;
+    LinkedList visitList = new LinkedList();
+    TomVisitList astVisitList = `emptyTomVisitList();
+    LinkedList argumentList = new LinkedList();
+    TomList args = `emptyTomList();
+    TomName orgText = null;
+    TomTypeList types = `emptyTomTypeList();
+    LinkedList options = new LinkedList();
+    LinkedList slotNameList = new LinkedList();
+    LinkedList pairNameDeclList = new LinkedList();
+    TomName astName = null;
+    String stringSlotName = null;
+
+    clearText();
+}
+    :(
+        name:ALL_ID
+        (
+            LPAREN slotName:ALL_ID COLON typeArg:ALL_ID 
+            {
+                stringSlotName = slotName.getText(); 
+                astName = `Name(stringSlotName);
+                slotNameList.add(astName); 
+                pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration())); 
+                types = (TomTypeList) types.append(`TomTypeAlone(typeArg.getText()));
+            }
+            (
+                COMMA
+                slotName2:ALL_ID COLON typeArg2:ALL_ID
+                {
+                    stringSlotName = slotName2.getText(); 
+                    astName = ast().makeName(stringSlotName);
+                    if(slotNameList.indexOf(astName) != -1) {
+                      getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
+                        new Object[]{stringSlotName},
+                        currentFile(), getLine()));
+                    }
+                    slotNameList.add(astName); 
+                    pairNameDeclList.add(`PairNameDecl(Name(stringSlotName),EmptyDeclaration())); 
+                    types = (TomTypeList) types.append(`TomTypeAlone(typeArg2.getText()));
+                }
+            )*
+            RPAREN
+        )?
+    //EXTENDS BACKQUOTE extendsTerm:ALL_ID LPAREN RPAREN 
+        LBRACE
+        strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
+        t:RBRACE
+        {
+            
+            // update for new target block...
+            updatePosition(t.getLine(),t.getColumn());
+
+            result = `Strategy(Name(name.getText()),args,emptyTerm,astVisitList);
+
+            // %strat finished: go back in target parser.
+            selector().pop();
+        }
+     )
+    ;
+
+strategyVisitList [LinkedList list] throws TomException
+    :   ( strategyVisit[list] )* ;
+
+strategyVisit [LinkedList list] throws TomException
+{
+  LinkedList patternInstructionList = new LinkedList();
+  TomType vType = null;
+  TomList subjectList = `emptyTomList();
+
+  clearText();
+}
+    :   
+  (
+    VISIT
+    type:ALL_ID  LBRACE
+    {
+    vType = `TomTypeAlone(type.getText());
+    subjectList = `concTomTerm(TomTypeToTomTerm(vType));
+    }
+    (  
+      patternInstruction[subjectList,patternInstructionList] 
+    )* 
+    RBRACE
+  )
+  {
+  list.add(`VisitTerm(vType,ast().makePatternInstructionList(patternInstructionList)));
+  }
+;
 
 
 // The %rule construct
@@ -1889,6 +1984,8 @@ options {
 tokens { 
     WHERE="where";
     IF="if";
+    EXTENDS="extends";
+    VISIT="visit";
     MAKE_EMPTY = "make_empty";
     MAKE_INSERT = "make_insert";
     MAKE_APPEND = "make_append";
