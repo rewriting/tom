@@ -13,7 +13,7 @@ public class ReplaceSystem extends antipattern.term.TermVisitableFwd {
 	
 	private TermFactory factory;
 	
-	%include{ term/term.tom }
+	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 
 	private final TermFactory getTermFactory() {

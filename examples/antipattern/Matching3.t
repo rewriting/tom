@@ -49,7 +49,7 @@ public class Matching3 implements Matching {
   private TermFactory factory;
 
   // %include{ atermmapping.tom }
-  %include{ term/term.tom }
+  %include{ term/Term.tom }
   %include{ mutraveler.tom }
 
   private final TermFactory getTermFactory() {

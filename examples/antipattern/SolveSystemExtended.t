@@ -15,7 +15,7 @@ import tom.library.strategy.mutraveler.MuTraveler;
 
 public class SolveSystemExtended extends antipattern.SolveSystem {    
 	
-	%include{ term/term.tom }
+	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 	
     public SolveSystemExtended(Collection c,VisitableVisitor vis) {

@@ -12,7 +12,7 @@ import jjtraveler.reflective.VisitableVisitor;
 public class SimplifySystem extends antipattern.term.TermVisitableFwd {
 	protected TermFactory factory;
 	
-	%include{ term/term.tom }
+	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 
 	protected final TermFactory getTermFactory() {

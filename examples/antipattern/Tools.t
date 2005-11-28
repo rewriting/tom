@@ -41,7 +41,7 @@ import antipattern.term.types.*;
 public class Tools {
   private TermFactory factory;
 
-  %include{ term/term.tom }
+  %include{ term/Term.tom }
   %include{ atermmapping.tom }
 
   private final TermFactory getTermFactory() {

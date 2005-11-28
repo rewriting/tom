@@ -15,7 +15,7 @@ import tom.library.strategy.mutraveler.MuTraveler;
 
 public class SimplifySystemExtended extends antipattern.SimplifySystem {
 
-	%include{ term/term.tom }
+	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 	
 	public SimplifySystemExtended(VisitableVisitor vis) {
