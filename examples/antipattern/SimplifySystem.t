@@ -41,8 +41,10 @@ public class SimplifySystem extends antipattern.term.TermVisitableFwd {
         }
 
         // Decompose
-        Match(Appl(name,args1),Appl(name,args2)) -> {
+        Match(Appl(name,a1),Appl(name,a2)) -> {
           ConstraintList l = `emptyConstraintList();
+          TermList args1 = `a1;
+          TermList args2 = `a2;
           while(!args1.isEmpty()) {
             l = `manyConstraintList(Match(args1.getHead(),args2.getHead()),l);
             args1 = args1.getTail();
@@ -53,7 +55,7 @@ public class SimplifySystem extends antipattern.term.TermVisitableFwd {
         
         // SymbolClash
         Match(Appl(name1,args1),Appl(name2,args2)) -> {
-          if(name1 != name2) {
+          if(`name1 != `name2) {
             return `False();
           }
         }

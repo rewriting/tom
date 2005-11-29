@@ -47,10 +47,12 @@ public class SimplifySystemExtended extends antipattern.SimplifySystem {
       %match(Constraint arg) {
                 
         // Decompose the constraint pattern
-        Match(ApplCons(name,args1,argCons),Appl(name,args2)) -> {
-        	
+        Match(ApplCons(name,a1,constraint),Appl(name,a2)) -> {
+          TermList args1 = `a1;
+          TermList args2 = `a2;
+          ConstraintList argCons = `constraint;
           ConstraintList l = `emptyConstraintList();
-          while(!args2.isEmpty()) {
+          while(!`args2.isEmpty()) {
             l = `manyConstraintList(Match(args1.getHead(),args2.getHead()),l);
             args1 = args1.getTail();
             args2 = args2.getTail();
@@ -66,18 +68,18 @@ public class SimplifySystemExtended extends antipattern.SimplifySystem {
         
         // SymbolClash with ApplCons
         Match(ApplCons(name1,args1,argCons),Appl(name2,args2))-> {
-          if(name1 != name2) {
+          if(`name1 != `name2) {
             return `False();
           }
         }
        
         // PropagateSuccess
         And(concConstraint(X*,GreaterThan(Appl(var1,_),Appl(var2,_)),Y*)) ->{
-        	return (Integer.parseInt(var1) > Integer.parseInt(var2) ? 
+        	return (Integer.parseInt(`var1) > Integer.parseInt(`var2) ? 
         			`And(concConstraint(X*,Y*)):`False());
         }
         And(concConstraint(X*,LessThan(Appl(var1,_),Appl(var2,_)),Y*)) ->{
-        	return (Integer.parseInt(var1) < Integer.parseInt(var2) ? 
+        	return (Integer.parseInt(`var1) < Integer.parseInt(`var2) ? 
         			`And(concConstraint(X*,Y*)):`False());
         }
       }

@@ -47,28 +47,28 @@ public class SolveSystemExtended extends antipattern.SolveSystem {
       %match(Constraint arg) {   	  
     	      	        
         GreaterThan(Appl(var1,_),Appl(var2,_)) ->{
-        	if (Integer.parseInt(var1) > Integer.parseInt(var2)){
+        	if (Integer.parseInt(`var1) > Integer.parseInt(`var2)){
         		return `True();
         	}
         	
         	return `False();
         }
         Neg(GreaterThan(Appl(var1,_),Appl(var2,_))) ->{
-        	if (Integer.parseInt(var1) > Integer.parseInt(var2)){
+        	if (Integer.parseInt(`var1) > Integer.parseInt(`var2)){
         		return `False();
         	}
         	
         	return `True();
         }
         LessThan(Appl(var1,_),Appl(var2,_)) ->{
-        	if (Integer.parseInt(var1) < Integer.parseInt(var2)){
+        	if (Integer.parseInt(`var1) < Integer.parseInt(`var2)){
         		return `True();
         	}
         	
         	return `False();
         }        
         Neg(LessThan(Appl(var1,_),Appl(var2,_))) ->{
-        	if (Integer.parseInt(var1) < Integer.parseInt(var2)){
+        	if (Integer.parseInt(`var1) < Integer.parseInt(`var2)){
         		return `False();
         	}
         	
