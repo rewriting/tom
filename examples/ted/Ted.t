@@ -171,7 +171,7 @@ public class Ted {
 		if (termStr.equals(keyStr)){
 			termStr = ((ATerm)tds.get(key)).toString();
 		}else{
-			termStr.replace(keyStr,((ATerm)tds.get(key)).toString());
+			termStr.replaceAll(keyStr,((ATerm)tds.get(key)).toString());
 		}
 	}	
 	
