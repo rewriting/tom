@@ -70,15 +70,15 @@ public class PluginPlatform {
 
   /** List of generated object cleared before each run */
   private List lastGeneratedObjects;
-  
+
+  /** Radical of the logger */  
+  private String loggerRadical;
+
   /** Class Pluginplatform constructor */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
     statusHandler = new StatusHandler();
-    testHandler = new TestHandler();
-
+    this.loggerRadical = loggerRadical;
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
-    Logger.getLogger(loggerRadical).addHandler(this.testHandler);
-
     pluginsList = confManager.getPluginsList();
     inputToCompileList = confManager.getOptionManager().getInputToCompileList();
   }
@@ -105,11 +105,16 @@ public class PluginPlatform {
       Object initArgument = input;
       boolean success = true;
       statusHandler.clear();
-      testHandler.clear();
+      
+      if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);     
       if(input instanceof String && ((String)input).endsWith(".t")){
         String inputWithoutSuffix = ((String)input).substring(0, ((String)input).length() - ".t".length());
-        testHandler.changeTomFile(inputWithoutSuffix);
+        testHandler = new TestHandler(inputWithoutSuffix);
+        if(!testHandler.hasError()){
+          Logger.getLogger(loggerRadical).addHandler(this.testHandler);
+        }
       }
+      
       getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
       // runs the plugins
       Iterator it = pluginsList.iterator();
