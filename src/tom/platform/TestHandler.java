@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Emilie Balland  e-mail: Emilie.Balland@loria.fr
  *
  **/
 
@@ -129,22 +129,40 @@ public class TestHandler extends Handler {
    * @return true
    */
   public boolean isLoggable(LogRecord record) {
-    return true;
+   return true;
   }
 
+  /**
+   * This method tests if this current record was attempted by the test file
+   * by comparing the content of the message, the line, the filepath and paramaters.
+   * Currently, only the type of message is tested. It is insufficient because
+   * most of the messages are encapsulated in a message of type DetailedMessage
+   * 
+   * @param record a given LogRecord
+   * @return true if the message was attempted by the non regression test file
+   */
+  
   public void nonRegressionTest(PlatformLogRecord record){
-      //il doit y avoir exactemement les memes messages (erreurs ou warnings) et dans le meme ordre
-    if( ! record.getPlatformMessage().equals(mess_attempted.get(index))){
-      System.out.println(record.getMessage()+" ->Non regression test failed");
+    //The nonRegressionTest method verify that all structured log messages (of type PlatformLogRecord) were attempted in the same order and with the same parameters. The attempted messages are contained in a file with suffix .nrt. Currently, only the type of messages are compared. 
+
+    PlatformMessage message = record.getPlatformMessage();
+    
+    //TODO : comparing this elements
+    int line = record.getLine();  
+    String filePath = record.getFilePath();
+    Object[] parameters = record.getParameters();
+
+    if( ! message.equals(mess_attempted.get(index))){
+      System.out.println("Message obtained : "+record.getMessage()+"\n->Non regression test failed");
       publish(new LogRecord(Level.INFO, "The Non Regression Test has failed"));
     }
     else{
-      System.out.println(record.getMessage()+" ->Non regression test succeed");
+      System.out.println("Message obtained : "+record.getMessage()+"\n->Non regression test succeed");
       publish(new LogRecord(Level.INFO,record.getMessage()+" ->The Non Regression Test has succeeded"));
     }
     index++;
-    
-    //TODO : logger les differences pour debugger
+
+    //TODO : at the end of the file analysis, verify that all attempted messages have been checked. In cases of conflicts, log the differences between the two traces.
   }
   
 } // class TestHandler
