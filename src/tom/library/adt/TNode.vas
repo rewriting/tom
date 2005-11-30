@@ -7,6 +7,7 @@ sorts TNode TNodeList
 
 abstract syntax
 
+  EmptyNode() -> TNode
   CommentNode(data:str) -> TNode
   ProcessingInstructionNode(target:str,data:str) -> TNode
   TextNode(data:str) -> TNode

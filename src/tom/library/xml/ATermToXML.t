@@ -160,6 +160,9 @@ public class ATermToXML {
         write("&"+`name+";");
         return;
       }
+      EmptyNode() -> {
+        return;
+      }
       _ -> {
         System.out.println("Unknown type of TNode : "+n);
       }
