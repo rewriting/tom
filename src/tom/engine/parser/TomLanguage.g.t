@@ -1299,7 +1299,7 @@ operator returns [Declaration result] throws TomException
             options.add(ot);
         }
         (
-            LPAREN slotName:ALL_ID COLON typeArg:ALL_ID 
+            LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID 
             {
                 stringSlotName = slotName.getText(); 
                 astName = `Name(stringSlotName);
@@ -1323,7 +1323,7 @@ operator returns [Declaration result] throws TomException
                     types = (TomTypeList) types.append(`TomTypeAlone(typeArg2.getText()));
                 }
             )*
-            RPAREN
+            )? RPAREN
         )?
         LBRACE
         {

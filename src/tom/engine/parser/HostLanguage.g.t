@@ -743,7 +743,7 @@ RULE
     :   "%rule" {selector().push("tomlexer");}
     ;
 MATCH
-  : "%match" {selector().push("tomlexer");}
+    : "%match" {selector().push("tomlexer");}
     ;
 OPERATOR
     :   "%op"   {selector().push("tomlexer");}
