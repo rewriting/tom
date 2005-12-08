@@ -71,6 +71,9 @@ public class Tools {
     System.out.println("\nRunning Matching3: \n");
     Matching test3 = new Matching3(tools.getTermFactory());
     tools.run(test3,args[2]);
+    System.out.println("\nRunning Matching4: \n");
+    Matching test4 = new Matching4(tools.getTermFactory());
+    tools.run(test4,args[3]);
   }
 
   public void run(Matching match, String fileName) {
@@ -141,8 +144,8 @@ public class Tools {
       ATermList atl = (ATermList) at;
       ConstraintList l = `emptyConstraintList();
       while(!atl.isEmpty()) {
-        l = `manyConstraintList(atermToConstraint(atl.getFirst()),l);
-        atl = atl.getNext();
+        l = `manyConstraintList(atermToConstraint(atl.getLast()),l);
+        atl = atl.getPrefix();
       }
       return l;
     }
@@ -155,8 +158,8 @@ public class Tools {
       ATermList atl = (ATermList) at;
       TermList l = `emptyTermList();
       while(!atl.isEmpty()) {
-        l = `manyTermList(atermToTerm(atl.getFirst()),l);
-        atl = atl.getNext();
+        l = `manyTermList(atermToTerm(atl.getLast()),l);
+        atl = atl.getPrefix();
       }
       return l;
     }
