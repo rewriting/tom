@@ -55,6 +55,7 @@
   <property name="integerc"       value="integerc"/>
   <property name="list"           value="list"/>
   <property name="lsystem"        value="lsystems"/>
+  <property name="matching"       value="matching"/>
   <property name="minirho"        value="minirho"/>
   <property name="mgs"            value="mgs"/>
   <property name="nspk"           value="nspk"/>
@@ -459,6 +460,17 @@
     <javacompile example="${lsystem}"/>
   </target>
 
+  <target name="matching" depends="init"> 
+    <vascompile example="${matching}"/>
+    <tomcompile example="${matching}"/>
+    <javacompile example="${matching}"/>
+  	<copy todir="${examples.build}/${matching}">
+      <fileset dir="${matching}">
+        <include name="*.txt"/>
+      </fileset>
+    </copy>
+  </target>
+
   <target name="minirho" depends="init">
     <tomcompile example="${minirho}"/>
     <javacompile example="${minirho}"/>
@@ -685,9 +697,9 @@
           description="Builds the examples (at least some)"
           depends="addressbook, adt, antipattern, apireach, appletxml, boulderdash,
           builtin, caml, cell, dom, expression, ferus, gomoku, gtree, integerc,
-          list, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
+          list, matching, minirho, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, ted, 
-          tutorial, vas, xml, minirho">
+          tutorial, vas, xml">
   </target>
 
   <target name="dist.examples" 

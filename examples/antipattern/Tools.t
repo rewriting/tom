@@ -77,17 +77,16 @@ public class Tools {
   }
 
   public void run(Matching match, String fileName) {
-	  
-	BufferedReader br = null;
-	try{  
-		br = new BufferedReader(new FileReader( 
-				match.getClass().getResource(fileName).getFile()));
-	}catch(FileNotFoundException e){
-		System.out.println("Can't find the input file 'input.txt' :" + e.getMessage());
-		System.exit(0);
-	}
+    BufferedReader br = null;
+    try {  
+      br = new BufferedReader(new FileReader( 
+            match.getClass().getResource(fileName).getFile()));
+    } catch(FileNotFoundException e) {
+      System.out.println("Can't find the input file 'input.txt' :" + e.getMessage());
+      System.exit(0);
+    }
     String s = null;
-    try{
+    try {
 	    while((s = br.readLine()) != null ) {      
 	      if(s.equals("-")) {
 	        System.out.println("---------------------------------------");
@@ -103,7 +102,7 @@ public class Tools {
           }
 	      }
 	    }
-    }catch(IOException e1){
+    } catch(IOException e1) {
     	System.out.println("IOException: " + e1.getMessage()); 
 		System.exit(0);
     }

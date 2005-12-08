@@ -106,6 +106,12 @@ public class PolyApigen2 {
     System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
     res = simplify(res);
     System.out.println("Simplified form is:\n\t" + res);
+   
+    t = `mult(variable("X"),plus(variable("X"),constant("a")));
+    res = differentiate(t,res);  
+    System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
+    res = simplify(res);
+    System.out.println("Simplified form is:\n\t" + res);
   }
     
   public final static void main(String[] args) {
