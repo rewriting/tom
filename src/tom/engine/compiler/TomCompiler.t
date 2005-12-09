@@ -228,13 +228,16 @@ public class TomCompiler extends TomGenericPlugin {
               TomName name = tomSymbol.getAstName();
               PatternInstructionList patternInstructionList  = `concPatternInstruction();
 
+              //build variables list for lhs symbol
               TomTypeList typesList = getSymbolDomain(tomSymbol);
               TomList subjectListAST = empty();
               TomNumberList path = `concTomNumber(RuleVar());
-              int index = 0;
+              TomType subtermType;
+              TomTerm variable;
+              int index = 0; 
               while(!typesList.isEmpty()) {
-                TomType subtermType = typesList.getHead();
-                TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
+                subtermType = typesList.getHead();
+                variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
                 subjectListAST = append(variable,subjectListAST);
                 typesList = typesList.getTail();
                 index++;
@@ -242,19 +245,24 @@ public class TomCompiler extends TomGenericPlugin {
 
               TomRuleList ruleList = `rl;
               PatternList negativePattern = `concPattern();
+              TomRule rule;
+              TomTerm newRhs;
+              Instruction rhsInst,newRhsInst,typedAction;
+              Pattern pattern;
+              TomList guardList = empty();//no guardlist in pattern
               while(!ruleList.isEmpty()) {
-                TomRule rule = ruleList.getHead();
+                rule = ruleList.getHead();
                 %match(TomRule rule) {
                   RewriteRule(Term(lhsTerm@RecordAppl[slots=matchPatternsList]),
                               Term(rhsTerm),
                               condList,
                               option) -> {
-                    TomTerm newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
-                    Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
-                    Instruction newRhsInst = `buildCondition(condList,rhsInst);
-                    TomList guardList = empty();
-                    Pattern pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
-                    Instruction typedAction = `TypedAction(newRhsInst,pattern,negativePattern);
+                    //transform rhsTerm into Instruction to build PatternInstructionList
+                    newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
+                    rhsInst = `If(TrueTL(),Return(newRhs),Nop());
+                    newRhsInst = `buildCondition(condList,rhsInst);
+                    pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
+                    typedAction = `TypedAction(newRhsInst,pattern,negativePattern);
                     negativePattern = (PatternList) negativePattern.append(pattern);
                     patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(pattern,typedAction,option));
                   }
@@ -262,16 +270,43 @@ public class TomCompiler extends TomGenericPlugin {
                 ruleList = ruleList.getTail();
               }
             
-              Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,SubjectList(subjectListAST));
+              Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,EmptyType(),SubjectList(subjectListAST),EmptyType());
               Instruction matchAST = `Match(SubjectList(subjectListAST),
                                             patternInstructionList,
                                             concOption(orgTrack));
-
+              //return type `name(subjectListAST)
               Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(subjectListAST,replace_preProcessing_makeTerm)));
 
               InstructionList l = `concInstruction(makeFunctionBeginAST,matchAST,buildAST,MakeFunctionEnd());
               return preProcessingInstruction(`AbstractBlock(l));
             }
+
+           Strategy(name,args,_,visitList,orgTrack) -> {
+            InstructionList l = `concInstruction();//represents compiled Strategy
+
+            l = `concInstruction(l*,MakeClassBegin(name,SubjectList(args),emptyTerm,emptyTerm));
+            TomVisit visit;
+            TomVisitList jVisitList = `visitList;
+            InstructionList visitInstruction = `concInstruction();
+            TomTerm arg;//arg = subjectList
+            while (!jVisitList.isEmpty()){
+              visit = jVisitList.getHead();
+              %match(TomVisit visit) {
+                VisitTerm(visitType,patternInstructionList) -> {
+                  arg = `TLVar("arg",visitType);
+                  visitInstruction = `concInstruction(visitInstruction*,MakeFunctionBegin(name,visitType,arg,EmptyType()));
+                  visitInstruction = `concInstruction(visitInstruction*,Match(arg,
+                        patternInstructionList,                      
+                        concOption(orgTrack)));
+                  visitInstruction = `concInstruction(visitInstruction*,MakeFunctionEnd());
+                }
+              }
+              l = `concInstruction(l*,visitInstruction*);
+              jVisitList = jVisitList.getTail();
+            }
+            l = `concInstruction(l*,MakeClassEnd);
+            return preProcessingInstruction(`AbstractBlock(l));
+           }
 
           } // end match
 
