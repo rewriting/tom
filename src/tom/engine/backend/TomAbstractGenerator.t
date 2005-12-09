@@ -317,7 +317,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
+      MakeFunctionBegin(Name(tomName),returnType,SubjectList(varList),throwsType) -> {
         `buildFunctionBegin(deep, tomName, varList);
         return;
       }

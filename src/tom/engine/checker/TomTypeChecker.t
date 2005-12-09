@@ -104,6 +104,11 @@ public class TomTypeChecker extends TomChecker {
                 verifyMatchVariable(`patternInstructionList);
                 return false;
               }
+              Strategy(_,_,_,visitList,orgTrack) -> {
+                currentTomStructureOrgTrack = `orgTrack;
+                verifyStrategyVariable(`visitList);
+                return false;
+              }
               RuleSet(list, orgTrack) -> {
                 currentTomStructureOrgTrack = `orgTrack;
                 verifyRuleVariable(`list);
@@ -168,6 +173,18 @@ public class TomTypeChecker extends TomChecker {
     }
   } //verifyMatchVariable
   
+  private void verifyStrategyVariable(TomVisitList list) {
+    while(!list.isEmpty()) {
+      TomVisit visit = list.getHead();
+      %match(TomVisit visit) {
+        VisitTerm(_,patternInstructionList) -> {
+          verifyMatchVariable(`patternInstructionList);
+        }      
+      }
+      // next visit
+      list = list.getTail();
+  }
+}
   /**
    * The notion of conditional rewrite rule can be generalised with a sequence of conditions
    * as in lhs -> rhs where P1:=C1 ... where Pn:=Cn if Qj==Dj 

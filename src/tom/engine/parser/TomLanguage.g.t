@@ -333,7 +333,7 @@ matchGuards [LinkedList list] throws TomException
     ;
 
 
-// The %strat construct
+// The %strategy construct
 strategyConstruct [Option orgTrack] returns [Instruction result] throws TomException
 {
     result = null;
@@ -389,7 +389,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
             // update for new target block...
             updatePosition(t.getLine(),t.getColumn());
 
-            result = `Strategy(Name(name.getText()),args,emptyTerm,astVisitList);
+            result = `Strategy(Name(name.getText()),args,emptyTerm,astVisitList,orgTrack);
 
             // %strat finished: go back in target parser.
             selector().pop();

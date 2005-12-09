@@ -148,7 +148,12 @@ public class TomSyntaxChecker extends TomChecker {
               Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
                 /*  TOM MATCH STRUCTURE*/
                 `verifyMatch(matchArgsList, patternInstructionList, list);
-                return true;
+                return true;//case when nested %match
+              }
+              Strategy(sName,args, extendsTerm, visitList, orgTrack) -> {
+                /*  STRATEGY MATCH STRUCTURE*/
+                `verifyStrategy(sName, args, extendsTerm, visitList, orgTrack);
+                return true;//case when %match in %strategy
               }
               RuleSet(list, orgTrack) -> {
                 /*  TOM RULE STRUCTURE*/
@@ -536,6 +541,37 @@ public class TomSyntaxChecker extends TomChecker {
       concTomTerm(_*, term, _*) -> {
         // the type is boolean, no variablestar, toplevel and permisive
         `validateTerm(term, TomTypeAlone("boolean") , false, true, true);
+      }
+    }
+  }
+
+  ///////////////////////////////// 
+  //STRATEGY VERIFICATION CONCERNS /
+  /////////////////////////////////
+  private void verifyStrategy(TomName sName, TomList args, TomTerm extendsTerm, TomVisitList visitList, Option orgTrack) {
+    currentTomStructureOrgTrack = orgTrack;
+    while(!visitList.isEmpty()) {
+      TomVisit visit = visitList.getHead();
+      verifyVisit(visit);
+      // next visit
+      visitList = visitList.getTail();
+    }
+  }
+
+  private void verifyVisit(TomVisit visit){
+    ArrayList typeMatchArgs = new ArrayList();
+    %match(TomVisit visit) {
+      VisitTerm(type,patternInstructionList) -> {
+        typeMatchArgs.add(`type);
+        // we now compare pattern to its definition
+        %match(PatternInstructionList patternInstructionList) {
+          concPatternInstruction(_*, PatternInstruction[pattern=Pattern[tomList=terms,guards=guards]], _*) -> {
+            // control each pattern vs the match definition
+            //always 1 expected argument in visit
+            `verifyMatchPattern(terms, typeMatchArgs, 1);
+            `verifyWhenPattern(guards);
+          }      
+        }
       }
     }
   }
