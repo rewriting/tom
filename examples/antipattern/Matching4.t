@@ -74,10 +74,10 @@ public class Matching4 implements Matching {
 		VisitableVisitor negCleanRule = new NegativeCleaning(`Identity());
 		try {		
 		/*	return (Constraint) MuTraveler.init(
-					`RepeatId(SequenceId(InnermostId(simplifyRule),InnermostId(negCleanRule)))
+					`RepeatId(ChoiceId(InnermostId(simplifyRule),InnermostId(negCleanRule)))
 			).visit(c);*/
 			return (Constraint) MuTraveler.init(
-					`RepeatId(SequenceId(OutermostId(simplifyRule),OutermostId(negCleanRule)))
+					`RepeatId(ChoiceId(OutermostId(simplifyRule),OutermostId(negCleanRule)))
 			).visit(c);
 		} catch (VisitFailure e) {
 			System.out.println("reduction failed on: " + c);
