@@ -165,8 +165,13 @@ public class Tools {
 
     throw new RuntimeException("error on: " + at);
   }
+  
+  public Constraint atermToConstraint(String term) {
+	  
+      return atermToConstraint(getPureFactory().parse(term));
+  }
 
-  private Constraint atermToConstraint(ATerm at) {
+  public Constraint atermToConstraint(ATerm at) {
     if(at instanceof ATermAppl) {
       ATermAppl appl = (ATermAppl) at;
       String name = appl.getName();
