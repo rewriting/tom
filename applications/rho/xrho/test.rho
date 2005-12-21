@@ -1,0 +1,90 @@
+// If X denotes a variable then X is in nf
+var("X")
+
+//If a denotes a constant then a is in nf
+const("a")
+
+//(a -> b)a |--> b
+app(abs(const("a"),const("b")),const("a"))
+
+//(s(a) -> b)c |--> stk
+app(abs(app(const("s"),const("a")),const("b")),const("c"))
+
+//(c -> b) s(a) |--> stk
+app(abs(const("c"),const("b")),app(const("s"),const("a")))
+
+//(X -> X) a |--> a
+app(abs(var("X"),var("X")),const("a"))
+
+
+//(f X Y -> X) f a b
+app(abs(app(app(const("f"),var("X")),var("Y")),var("X")),app(app(const("f"),const("a")),const("b")))
+
+//(f X -> X) f a
+app(abs(app(const("f"),var("X")),var("X")),app(const("f"),const("a")))
+
+//(((f X) Y) Z -> Y) f a b c
+app(abs(app(app(app(const("f"),var("X")),var("Y")),var("Z")),var("Y")),app(app(app(const("f"),const("a")),const("b")),const("c")))
+
+//Z -> ((f X Y -> X) f ab)
+abs(var("Z"),app(abs(app(app(const("f"),var("X")),var("Y")),var("X")),app(app(const("f"),const("a")),const("b"))))
+
+//(Z -> ((f X Y -> X) f ab) ) 3
+app(abs(var("Z"),app(abs(app(app(const("f"),var("X")),var("Y")),var("X")),app(app(const("f"),const("a")),const("b")))),const("3"))
+
+//(Z -> ((f X Y -> X,Y,Z) f ab) ) 3
+app(abs(var("Z"),app(abs(app(app(const("f"),var("X")),var("Y")),struct(struct(var("X"),var("Y")),var("Z"))),app(app(const("f"),const("a")),const("b")))),const("3"))
+
+//(f X Y -> X,Y) f ab
+app(abs(app(app(const("f"),var("X")),var("Y")),struct(var("X"),var("Y"))),app(app(const("f"),const("a")),const("b")))
+
+
+//(f X Y -> Y,Y) f ab
+app(abs(app(app(const("f"),var("X")),var("Y")),struct(var("Y"),var("Y"))),app(app(const("f"),const("a")),const("b")))
+
+
+//(f X Y -> Y,Y,Y,X,X,X) f ab
+app(abs(app(app(const("f"),var("X")),var("Y")),struct(struct(struct(struct(struct(var("Y"),var("Y")),var("Y")),var("X")),var("X")),var("X"))),app(app(const("f"),const("a")),const("b")))
+
+
+//(f X Y -> X, f X Y -> Y) f ab
+app(struct(abs(app(app(const("f"),var("X")),var("Y")),var("X")),abs(app(app(const("f"),var("X")),var("Y")),var("Y"))),app(app(const("f"),const("a")),const("b")))
+
+//((f X Y -> X, f X Y -> Y) f Z H)
+app(struct(abs(app(app(const("f"),var("X")),var("Y")),var("X")),abs(app(app(const("f"),var("X")),var("Y")),var("Y"))),app(app(const("f"),var("Z")),var("H")))
+
+
+//(h Z H h(g(I))  -> ((f X Y -> X, f X Y -> Y) f Z H)) h(h(a),h(b),h(g(b)))
+app(abs(app(app(app(const("h"),var("Z")),var("H")),app(const("h"),app(const("g"),var("I")))),app(struct(abs(app(app(const("f"),var("X")),var("Y")),var("X")),abs(app(app(const("f"),var("X")),var("Y")),var("Y"))),app(app(const("f"),var("Z")),var("H")))),app(app(app(const("h"),app(const("h"),const("a"))),app(const("h"),const("b"))),app(const("h"),app(const("g"),const("b")))))
+
+
+//(f X h(Y) g(h(Z)) -> (h(T) -> T)Y, (U,V -> U)X,Z) f a h(h(b)) g(h(a)
+app(abs(app(app(app(const("f"),var("X")),app(const("h"),var("Y"))),app(const("g"), app(const("h"),var("Z")))),struct(app(abs(app(const("h"),var("T")),var("T")),var("Y")),app(abs(struct(var("U"),var("V")),var("U")),struct(var("X"),var("Z"))))), app(app(app(const("f"),const("a")),app(const("h"),app(const("h"),const("b")))),app(const("g"),app(const("h"),const("a")))))
+
+ //(f X h(Y) g(h(Z)) -> (h(T) -> T)Y, (U,V -> i(U,V,Y))X,Z) f a h(h(b)) g(h(a)
+app(abs(app(app(app(const("f"),var("X")),app(const("h"),var("Y"))),app(const("g"), app(const("h"),var("Z")))),struct(app(abs(app(const("h"),var("T")),var("T")),var("Y")),app(abs(struct(var("U"),var("V")),app(app(app(const("i"),var("U")),var("V")),var("Y"))),struct(var("X"),var("Z"))))), app(app(app(const("f"),const("a")),app(const("h"),app(const("h"),const("b")))),app(const("g"),app(const("h"),const("a")))))
+
+//x -> x -> x 2 3
+app(app(abs(var("X"),abs(var("X"),var("X"))),const("2")),const("3"))
+
+
+//o + o
+app(app(app(abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))),app(const("fix"),abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))))),const("0")),const("0"))
+
+//one + o
+app(app(app(abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))),app(const("fix"),abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))))),app(const("s"),const("0"))),const("0"))
+
+//o + one
+app(app(app(abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))),app(const("fix"),abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))))),const("0")),app(const("s"),const("0")))
+//one + one
+app(app(app(abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))),app(const("fix"),abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))))),app(const("s"),const("0"))),app(const("s"),const("0")))
+
+//o + two
+app(app(app(abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))),app(const("fix"),abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))))),const("0")),app(const("s"),app(const("s"),const("0"))))
+
+//two + o
+app(app(app(abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))),app(const("fix"),abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))))),app(const("s"),app(const("s"),const("0")))),const("0"))
+
+//two + two
+app(app(app(abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))),app(const("fix"),abs(app(const("fix"),var("Z")),struct(abs(const("0"),abs(var("Y"),var("Y"))),abs(app(const("s"),var("X")),abs(var("Y"),app(const("s"),app(app(app(var("Z"),app(const("fix"),var("Z"))),var("X")),var("Y"))))))))),app(const("s"),app(const("s"),const("0")))),app(const("s"),app(const("s"),const("0"))))
+
