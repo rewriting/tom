@@ -32,9 +32,9 @@ package minirho;
 
 import aterm.*;
 import aterm.pure.*;
-import minirho.rho.rhoterm.*;
-import minirho.rho.rhoterm.types.*;
-import minirho.rho.rhoterm.types.rterm.Abs;
+import minirho.rhoterm.*;
+import minirho.rhoterm.types.*;
+import minirho.rhoterm.types.rterm.Abs;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -45,38 +45,18 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class Rho {
-	private rhotermFactory factory;
+	private RhotermFactory factory;
 	
-	public Rho(rhotermFactory factory) {
+	public Rho(RhotermFactory factory) {
 		this.factory = factory;
 	}
-	public rhotermFactory getRhotermFactory() {
+	public RhotermFactory getRhotermFactory() {
 		return factory;
 	}
 	
 	
 	%include { mutraveler.tom }
-	%vas{
-		module rhoterm
-			imports 
-			public
-			sorts RTerm Constraint Subst ListConstraint ListSubst
-			abstract syntax
-			var(na:String) -> RTerm
-			const(na:String) -> RTerm
-			stk() -> RTerm
-			abs(lhs:RTerm,rhs:RTerm) -> RTerm
-			app(lhs:RTerm,rhs:RTerm) -> RTerm
-			struct(lhs:RTerm,rhs:RTerm) -> RTerm //structure is couple
-			appC(co:ListConstraint,term:RTerm) -> RTerm
-			appS(su:ListSubst,term:RTerm) -> RTerm
-			
-			andC( Constraint* ) -> ListConstraint
-			andS( Subst* ) -> ListSubst
-			match(lhs:RTerm,rhs:RTerm) -> Constraint 
-			matchKO() -> Constraint
-			eq(var:RTerm,rhs:RTerm) -> Subst 
-			}  
+	%include { rhoterm/Rhoterm.tom }
 	
 	%op VisitableVisitor Not_abs {
 		make() {new Not_abs() }
@@ -96,7 +76,7 @@ public class Rho {
 	//STRATEGIE INNERMOST (FAST)
 //	VisitableVisitor myStrategy = `mu(MuVar("x"),Sequence(All_abs(MuVar("x")),Choice(Sequence(rules,MuVar("x")),Identity)));
 	public final static void main(String[] args) {
-		Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
+		Rho rhoEngine = new Rho(RhotermFactory.getInstance(new PureFactory(16)));
 		rhoEngine.run();
 	}
 	
@@ -127,7 +107,7 @@ public class Rho {
 		
 	}
 	
-	class Print extends rhotermVisitableFwd {
+	class Print extends RhotermVisitableFwd {
 		public Print() {
 			super(`Fail());
 		}
@@ -136,7 +116,7 @@ public class Rho {
 			return arg;
 		}
 	}
-	class ReductionRules extends rhotermVisitableFwd {
+	class ReductionRules extends RhotermVisitableFwd {
 		public ReductionRules() {
 			super(`Fail());
 		}
@@ -254,7 +234,7 @@ public class Rho {
  	}
 	
 	
-	public class Not_abs extends rhotermVisitableFwd {
+	public class Not_abs extends RhotermVisitableFwd {
 		public Not_abs() {
 			super(`Identity());
 		}
