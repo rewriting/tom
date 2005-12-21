@@ -126,6 +126,7 @@
              pretty="${pretty}"
              options="-I ${tom.home}/share/jtom">
           <include name="@{example}/**/*.t"/>
+          <exclude name="@{example}/**/*.g.t"/>
         </tom>
       </sequential>
     </macrodef>
@@ -472,7 +473,23 @@
   </target>
 
   <target name="minirho" depends="init">
+    <vascompile example="${minirho}"/>
     <tomcompile example="${minirho}"/>
+    <tom config="${tomconfigfile}"
+	    srcdir="${examples.dir}" 
+	    nowarn="${nowarnings}"
+	    optimize="${optimize}"
+	    optimize2="${optimize2}"
+	    verbose="${verbose}"
+	    pretty="${pretty}"
+	    outputfile="${examples.gen}/${minirho}/RhoParser.g"
+	    options="-I ${examples.gen}/${minirho} -I ${tom.home}/share/jtom">
+	    <include name="${minirho}/*.g.t"/>
+    </tom>
+    <tomantlr target="${examples.gen}/${minirho}/RhoParser.g"
+              outputdirectory="${examples.gen}/${minirho}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
     <javacompile example="${minirho}"/>
   </target>
   
