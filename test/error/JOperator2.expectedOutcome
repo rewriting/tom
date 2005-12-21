@@ -1,5 +1,0 @@
-D:\workspace\jtom\test\error\JOperator2.t:23:Warning:In structure `%op type1` declared line 18, GetSlot declaration `get_slot(type,...)` is repeated. Consider only the first one!!
-D:\workspace\jtom\test\error\JOperator2.t:14:Warning:In structure `%op type1` declared line 10, Incompatible GetSlot declaration: `badslot` does not appears in symbol declaration
-D:\workspace\jtom\test\error\JOperator2.t:10:Warning:In structure `%op type1` declared line 10, GetSlot declaration `get_slot(slot2,...)` is missing. Generic getsubterm macro will be used!!
-Tom Task Parser: Encountered 3 warning(s).
-

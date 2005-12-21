@@ -1,8 +1,0 @@
-* term.adt describes the abstract data-type
-
-*  adt-to-tom -n term --input term.adt --javagen --package adt.mgs
-
-* tom BeadSort.t
-* javac BeadSort.java
-* java BeadSort
-

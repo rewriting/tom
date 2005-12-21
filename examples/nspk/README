@@ -1,8 +1,0 @@
-* term.adt describes the abstract data-type
-
-*  adt-to-tom --input term.adt --nojar --name term --javagen --package adt.nsh
-
-* tom Nsh.t
-* javac Nsh.java
-* java Nsh
-

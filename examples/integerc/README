@@ -1,4 +1,0 @@
-show how to describe addition over Peano integers in C,
-by defining a simple term data-structure and a Tom mapping 
-illustrate a tricky mapping between Peano and builtin integers
-show how to define a mapping for the C version of the ATerm Library

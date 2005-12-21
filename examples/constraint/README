@@ -1,5 +1,0 @@
-* term.adt describes the abstract data-type
-
-*  adt-to-tom --input term.adt -n localsearch --javagen --package adt
-
-* tom LocalSearch.t

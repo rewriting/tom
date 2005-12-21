@@ -1,3 +1,0 @@
-# run five minutes after 22, every day
-5 22 * * *       $HOME/bin/daily-cvs.sh >> $HOME/tmp/out 2>&1
-

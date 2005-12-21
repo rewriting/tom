@@ -1,4 +1,0 @@
-D:\workspace\jtom\test\error\JIncludeFile1.t:1:Error:Included file `JIncludeFile1.t` found at line 1 in file `D:\workspace\jtom\test\error\JIncludeFile1.t` forms a cycle
-Tom Task Parser: Encountered 1 error(s) and 0 warning(s)
-No file generated.
-
