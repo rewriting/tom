@@ -1,4 +1,4 @@
- /*
+  /*
   * Copyright (c) 2004-2006, INRIA
   * All rights reserved.
   * 
