@@ -56,7 +56,7 @@
   <property name="list"           value="list"/>
   <property name="lsystem"        value="lsystems"/>
   <property name="matching"       value="matching"/>
-  <property name="minirho"        value="minirho"/>
+  <property name="xrho"        value="xrho"/>
   <property name="mgs"            value="mgs"/>
   <property name="nspk"           value="nspk"/>
   <property name="p3p"            value="p3p"/>
@@ -472,9 +472,9 @@
     </copy>
   </target>
 
-  <target name="minirho" depends="init">
-    <vascompile example="${minirho}"/>
-    <tomcompile example="${minirho}"/>
+  <target name="xrho" depends="init">
+    <vascompile example="${xrho}"/>
+    <tomcompile example="${xrho}"/>
     <tom config="${tomconfigfile}"
 	    srcdir="${examples.dir}" 
 	    nowarn="${nowarnings}"
@@ -482,15 +482,15 @@
 	    optimize2="${optimize2}"
 	    verbose="${verbose}"
 	    pretty="${pretty}"
-	    outputfile="${examples.gen}/${minirho}/RhoParser.g"
-	    options="-I ${examples.gen}/${minirho} -I ${tom.home}/share/jtom">
-	    <include name="${minirho}/*.g.t"/>
+	    outputfile="${examples.gen}/${xrho}/RhoParser.g"
+	    options="-I ${examples.gen}/${xrho} -I ${tom.home}/share/jtom">
+	    <include name="${xrho}/*.g.t"/>
     </tom>
-    <tomantlr target="${examples.gen}/${minirho}/RhoParser.g"
-              outputdirectory="${examples.gen}/${minirho}">
+    <tomantlr target="${examples.gen}/${xrho}/RhoParser.g"
+              outputdirectory="${examples.gen}/${xrho}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
-    <javacompile example="${minirho}"/>
+    <javacompile example="${xrho}"/>
   </target>
   
   <target name="mgs" depends="init">
@@ -714,7 +714,7 @@
           description="Builds the examples (at least some)"
           depends="addressbook, adt, antipattern, apireach, appletxml, boulderdash,
           builtin, caml, cell, dom, expression, ferus, gomoku, gtree, integerc,
-          list, matching, minirho, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
+          list, matching, xrho, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, ted, 
           tutorial, vas, xml">
   </target>
@@ -936,7 +936,7 @@
         <fileset dir="${examples.dir}">
           <include name="**/Test*.java"/>
           <exclude name="gen/**/*"/>
-          <exclude name="minirho/**/*"/>
+          <exclude name="xrho/**/*"/>
         </fileset>
       </batchtest>
     </tomjunit>
@@ -949,7 +949,7 @@
     </fail>
   </target>
 
-  <target name="minirho.junit" description="Runs junit acceptance tests for minirho" depends="minirho, initjunit">
+  <target name="xrho.junit" description="Runs junit acceptance tests for xrho" depends="xrho, initjunit">
     <tomjunit printsummary="yes"
               fork="true"
               haltonfailure="false"
@@ -961,14 +961,14 @@
       </classpath>
       <batchtest>
         <fileset dir="${examples.dir}">
-          <include name="minirho/**/Test*.java"/>
+          <include name="xrho/**/Test*.java"/>
         </fileset>
       </batchtest>
     </tomjunit>
     <fail if="tests.failed">
       ****************************************************
       ****************************************************
-      One or more tests failed in minirho. Check the output...
+      One or more tests failed in xrho. Check the output...
       ****************************************************
       ****************************************************
     </fail>
