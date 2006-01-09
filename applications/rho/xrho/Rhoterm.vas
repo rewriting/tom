@@ -1,7 +1,7 @@
 module Rhoterm
   public
     sorts 
-      RTerm Constraint Subst ListConstraint ListSubst
+      RTerm Constraint Subst ListConstraint ListSubst ListRTerm
     abstract syntax
       var(na:String) -> RTerm
       const(na:String) -> RTerm
@@ -12,6 +12,7 @@ module Rhoterm
       appC(co:ListConstraint,term:RTerm) -> RTerm
       appS(su:ListSubst,term:RTerm) -> RTerm
       
+      and( RTerm* ) -> ListRTerm
       andC( Constraint* ) -> ListConstraint
       andS( Subst* ) -> ListSubst
       match(lhs:RTerm,rhs:RTerm) -> Constraint 

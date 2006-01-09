@@ -35,6 +35,7 @@ package xrho;
   import aterm.pure.SingletonFactory;
   import xrho.rhoterm.*;
   import xrho.rhoterm.types.*;
+	import java.util.Hashtable;
 }
 
 class RhoParser extends Parser;
@@ -42,26 +43,109 @@ options {
   k = 1;
 }
 {
+	Hashtable table = new	Hashtable();
   %include { rhoterm/Rhoterm.tom }
   private RhotermFactory factory = RhotermFactory.getInstance(SingletonFactory.getInstance());
   public RhotermFactory getRhotermFactory() {
     return factory;
   }
+//IL FAUT LA TRANSFORMER POUR QU'ELLE NE PRENNE QU'UN SEUL ARG
+ public  RTerm fromAlgebraicApplToFunctionalAppl(ListRTerm listArg, RTerm head){
+  	%match(ListRTerm listArg){
+ 		(x,XS*) -> {
+			return `fromAlgebraicApplToFunctionalAppl(XS,app(head,x));
+ 		}
+ 		_ -> {return head;}
+		}
+ }
+//TO BE COMPLETE
+//Le nom que je donne commence par un "!"
+ protected RTerm addName(String name,RTerm term){
+	 if (!table.containsKey(name)){
+		 table.put(name,term);
+		 return term;
+	 }
+	 else {
+		 System.out.println("Warning, the alias " + name + " was used before and was not modified");
+		 return (RTerm)table.get(name);
+
+	 }
+ }
+ protected RTerm getName(String name){
+	 if (!table.containsKey(name)){
+		 System.out.println("Error: alias undefined");
+	 }
+	 return (RTerm)table.get(name);
+ }
+
 }
+
+
 
 program returns [RTerm term]
 {
   term = null;
 }
-: term=rhoterm END
+:  term=assign END | term=rhoterm END
 ;
 
+// rhotermbis returns [RTerm term]
+// {
+//   term = `var("rhoterm");
+// }
+// : term=rhoterm (APPL^ rhoterm)* 
+// //: term=assign | term=substappl
+// //substappl //| term = algebraicappl
+// ;
 rhoterm returns [RTerm term]
 {
   term = `var("rhoterm");
 }
 : term=substappl
+//: term=assign | term=substappl
+//substappl //| term = algebraicappl
 ;
+
+
+//  algebraicappl returns [RTerm appl]
+// {
+//   appl=`var("algebraicappl");
+// 	RTerm fun=null;
+//   ListRTerm arguments =`and();
+// }
+// //MARCHE : fun=constant APPL arguments=argumentlist
+// :  AT   LALG arguments=argumentlist RALG
+
+// {	
+// 		appl = fromAlgebraicApplToFunctionalAppl(arguments);
+// } 
+// ;
+
+// argumentlist returns [ListRTerm list]
+// {
+//   list=`and();
+// 	ListRTerm sublist = `and();
+// 	RTerm head=null;
+// }
+// : head=substappl (COMMA sublist=argumentlist)?
+// { list=`and(head,sublist*); }
+// ;
+
+assign  returns [RTerm term]
+{
+	term=null;
+	RTerm rhs = null;
+}
+: name:DEF (ASSIGN rhs=substappl)?
+{
+	if (rhs != null){
+		term=addName(name.getText(),rhs);
+	}
+	else {
+		term=getName(name.getText());
+	}
+};
+
 
 substappl returns [RTerm appl]
 {
@@ -69,7 +153,7 @@ substappl returns [RTerm appl]
   ListSubst substitutions=`andS();
   RTerm term=null;
 }
-: (LSUBST substitutions=substitutionlist RSUBST)? term=constappl
+: (LBRACK substitutions=substitutionlist RBRACK)? term=constappl
 {
   if(substitutions!=`andS()) {
     appl = `appS(substitutions,term);
@@ -135,16 +219,19 @@ constraint returns [Constraint constraint]
 { constraint = `match(lhs,rhs); }
 ;
 
+
+
 functionalapp returns [RTerm appl]
 {
   appl=`var("functionalapp");
   RTerm lhs=null;
   RTerm rhs=null;
+	RTerm x=null;
 }
-: lhs=arrow (APPL rhs=arrow)?
+: lhs=arrow {rhs=lhs;} (APPL x=arrow {rhs=`app(rhs,x);})*
 {
-  if(rhs!=null) {
-    appl=`app(lhs,rhs);
+  if(x!=null) {
+		appl=rhs;
   } else {
     appl=lhs;
   }
@@ -169,27 +256,42 @@ arrow returns [RTerm appl]
 
 structure returns [RTerm appl]
 {
-  appl=null;
+  appl=`var("functionalapp");
   RTerm lhs=null;
   RTerm rhs=null;
+	RTerm x=null;
 }
-: lhs=atom (STRUCT rhs=atom)?
-{ 
-  if (rhs!=null) {
-    appl=`struct(lhs,rhs);
+: lhs=atom {rhs=lhs;} (STRUCT x=atom {rhs=`struct(rhs,x);})*
+{
+  if(x!=null) {
+		appl=rhs;
   } else {
     appl=lhs;
   }
 }
 ;
+// structure returns [RTerm appl]
+// {
+//   appl=null;
+//   RTerm lhs=null;
+//   RTerm rhs=null;
+// }
+// : lhs=atom (STRUCT rhs=atom)?
+// { 
+//   if (rhs!=null) {
+//     appl=`struct(lhs,rhs);
+//   } else {
+//     appl=lhs;
+//   }
+// }
+// ;
 
 atom returns [RTerm atom]
 {
   atom=null;
 }
-: atom=constant | atom=variable | LPAREN atom=rhoterm RPAREN
+: atom=constant | atom=variable | atom=def | LPAREN atom=rhoterm RPAREN
 ;
-
 
 constant returns [RTerm constant]
 {
@@ -200,6 +302,7 @@ constant returns [RTerm constant]
 {
   if ("stk".equals(constname.getText())) {
     constant = `stk();
+
   }
   else {
     constant=`const(constname.getText());
@@ -213,6 +316,14 @@ variable returns [RTerm var]
   //String varname="";
 }
 : varname:VAR {var=`var(varname.getText());}
+;
+
+def returns [RTerm def]
+{
+  def=null;
+  //String varname="";
+}
+: varname:DEF {def=getName(varname.getText());}
 ;
 
 class RhoLexer extends Lexer;
@@ -235,13 +346,22 @@ LPAREN : '(' ;
 RPAREN : ')' ;
 LBRACK : '[' ;
 RBRACK : ']' ;
-LSUBST : '{' ;
-RSUBST : '}' ;
+LALG : '{' ;
+RALG : '}' ;
 STRUCT : "|" ;
 MATCH : "<<" ;
 AND : '^' ;
 EQ : '=' ;
+AT : '@' ;
+COMMA : ',' ;
 END : ';' ;
+DEF options{ testLiterals = true; }: '!' 
+('A'..'Z'
+ |'a'..'z'
+ |'0'..'9'
+ )+
+;
+ASSIGN : ":=" ;
 
 CONST options{ testLiterals = true; }
 : 'a'..'z'

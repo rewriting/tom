@@ -61,9 +61,9 @@ public class TestRho extends TestCase {
     assertEquals(term,resultat, interpreteur.test(term));
   }
   public void testBasic1(){
-    mytestBasic("var(\"X\")","var(\"X\")");
+    mytestBasic("Y","Y");
   } public void testBasic2(){
-    mytestBasic("const(\"a\")","const(\"a\")");
+    mytestBasic("a","a");
   } 
   public void testBasic3(){
     mytestBasic("app(abs(const(\"a\"),const(\"b\")),const(\"a\"))", "const(\"b\")");
