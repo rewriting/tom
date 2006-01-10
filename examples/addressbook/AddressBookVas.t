@@ -88,7 +88,7 @@ public class AddressBookVas {
   public PersonList generateBook() {
     return `concPerson(
       person("John","Smith",date(1965,3,27)),
-      person("Marie","Muller",date(1986,3,26)),
+      person("Marie","Muller",date(1986,3,27)),
       person("Paul","Muller",date(2000,1,27))
       );
   }

@@ -16,7 +16,7 @@
   }
 
 
-  %strat FindLeaves(bag:Collection) extends Identity() {
+  %strat FindLeaves(bag:Collection) extends `Identity() {
     visit Term {
       F(_) -> { ... }
       x    -> { if(x.getArity()) ... this ... }

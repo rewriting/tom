@@ -26,8 +26,7 @@ public class Choice extends AbstractVisitableVisitor {
   public Visitable visit(Visitable visitable) throws VisitFailure {
     try {
       return getArgument(FIRST).visit(visitable);
-    }
-    catch (VisitFailure f) {
+    } catch (VisitFailure f) {
       return getArgument(THEN).visit(visitable);
     }
   }

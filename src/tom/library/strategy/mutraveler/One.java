@@ -26,12 +26,14 @@ public class One extends AbstractVisitableVisitor {
   public Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
     if(!hasPosition()) {
-      for (int i = 0; i < childCount; i++) {
-        Visitable newChild = getArgument(ARG).visit(any.getChildAt(i));
-        return any.setChildAt(i,newChild);
+      for(int i = 0; i < childCount; i++) {
+        try {
+          Visitable newChild = getArgument(ARG).visit(any.getChildAt(i));
+          return any.setChildAt(i,newChild);
+        } catch(VisitFailure f) { }
       }
     } else {
-      for (int i = 0; i < childCount; i++) {
+      for(int i = 0; i < childCount; i++) {
         try { 
           //System.out.println("One.pos = " + getPosition());
           getPosition().down(i+1);
