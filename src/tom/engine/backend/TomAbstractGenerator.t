@@ -317,13 +317,23 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      MakeFunctionBegin(Name(tomName),returnType,SubjectList(varList),throwsType) -> {
+      MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
         `buildFunctionBegin(deep, tomName, varList);
         return;
       }
 
       MakeFunctionEnd() -> {
         `buildFunctionEnd(deep);
+        return;
+      }
+
+      FunctionDef(Name(tomName),argList,codomain,throwsType,instruction) -> {
+        `buildFunctionDef(deep, tomName, argList, codomain, throwsType, instruction);
+        return;
+      }
+
+      Class(Name(tomName),varList,extendsType,instruction) -> {
+        `buildClass(deep, tomName, varList, extendsType,instruction);
         return;
       }
 
@@ -707,6 +717,10 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
+  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException; 
+
+  protected abstract void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException; 
+
   protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
 
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;

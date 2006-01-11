@@ -151,8 +151,9 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     String name = tomSymbol.getAstName().getString();
     
     output.write(deep,glType + " " + name + "(");
+    TomTerm localVar;
     while(!varList.isEmpty()) {
-      TomTerm localVar = varList.getHead();
+      localVar = varList.getHead();
       matchBlock: {
         %match(TomTerm localVar) {
           v@Variable[astType=type2] -> {
@@ -179,12 +180,73 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.writeln(deep,"}");
   }
   
+  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+    String glType = getTLType(getSymbolCodomain(tomSymbol));
+    String name = tomSymbol.getAstName().getString();
+    
+    output.write(deep,glType + " " + name + "(");
+    TomTerm localVar;
+    while(!varList.isEmpty()) {
+      localVar = varList.getHead();
+      matchBlock: {
+        %match(TomTerm localVar) {
+          v@Variable[astType=type2] -> {
+            output.write(deep,getTLType(`type2) + " ");
+            generate(deep,`v);
+            break matchBlock;
+          }
+          _ -> {
+            System.out.println("MakeFunction: strange term: " + localVar);
+            throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
+          }
+        }
+      }
+      varList = varList.getTail();
+      if(!varList.isEmpty()) {
+        output.write(deep,", ");
+        
+      }
+    }
+    output.writeln(deep,") {");
+  }
+
+  protected void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+    String name = tomSymbol.getAstName().getString();
+    
+    output.write(deep,"class " + name + "(");
+    TomTerm localVar;
+    while(!varList.isEmpty()) {
+      localVar = varList.getHead();
+      matchBlock: {
+        %match(TomTerm localVar) {
+          v@Variable[astType=type2] -> {
+            output.write(deep,getTLType(`type2) + " ");
+            generate(deep,`v);
+            break matchBlock;
+          }
+          _ -> {
+            System.out.println("MakeFunction: strange term: " + localVar);
+            throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
+          }
+        }
+      }
+      varList = varList.getTail();
+      if(!varList.isEmpty()) {
+        output.write(deep,", ");
+        
+      }
+    }
+    output.writeln(deep,") {");
+  }
+
   protected void buildExpNegation(int deep, Expression exp) throws IOException {
     output.write("!(");
     generateExpression(deep,exp);
     output.write(")");
   }
-
+ 
   protected void buildRef(int deep, TomTerm term) throws IOException {
     generate(deep,term);
   }
