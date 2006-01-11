@@ -29,10 +29,10 @@ CompiledPattern(patternList:TomList,automataInst:Instruction) -> Instruction
 MatchingCondition(lhs:TomTerm,rhs:TomTerm) -> Instruction
 TypedEqualityCondition(tomType:TomType,lhs:TomTerm,rhs:TomTerm) -> Instruction
 EqualityCondition(lhs:TomTerm,rhs:TomTerm) -> Instruction
-MakeFunctionBegin(astName:TomName,returnType:TomType,subjectListAST:TomTerm,throwsType:TomType) -> Instruction
+MakeFunctionBegin(astName:TomName,subjectListAST:TomTerm) -> Instruction
 MakeFunctionEnd() -> Instruction
-MakeClassBegin(astName:TomName,subjectListAST:TomTerm,extends:TomTerm,super:TomTerm) -> Instruction
-MakeClassEnd() -> Instruction
+FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType, instruction:Instruction) -> Instruction
+Class(astName:TomName,argumentList:TomList,extends:TomType,instruction:Instruction) -> Instruction
 CheckStamp(variable:TomTerm) -> Instruction
 concInstruction(Instruction*) -> InstructionList
 RawAction(astInstruction:Instruction) -> Instruction
