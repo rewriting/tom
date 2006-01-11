@@ -385,7 +385,9 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
         {
-            
+            //VisitableVisitor must be put as constant
+          TomSymbol astSymbol = ast().makeSymbol(name.getText(), "VisitableVisitor", types, ast().makePairNameDeclList(pairNameDeclList), options);
+          putSymbol(name.getText(),astSymbol);
             // update for new target block...
             updatePosition(t.getLine(),t.getColumn());
 
