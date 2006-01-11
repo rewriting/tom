@@ -253,7 +253,7 @@ public class TomCompiler extends TomGenericPlugin {
               while(!ruleList.isEmpty()) {
                 rule = ruleList.getHead();
                 %match(TomRule rule) {
-                  RewriteRule(Term(lhsTerm@RecordAppl[slots=matchPatternsList]),
+                  RewriteRule(Term(RecordAppl[slots=matchPatternsList]),//lhsTerm
                               Term(rhsTerm),
                               condList,
                               option) -> {
@@ -270,7 +270,7 @@ public class TomCompiler extends TomGenericPlugin {
                 ruleList = ruleList.getTail();
               }
             
-              Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,EmptyType(),SubjectList(subjectListAST),EmptyType());
+              Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,SubjectList(subjectListAST));
               Instruction matchAST = `Match(SubjectList(subjectListAST),
                                             patternInstructionList,
                                             concOption(orgTrack));
@@ -284,28 +284,24 @@ public class TomCompiler extends TomGenericPlugin {
            Strategy(name,args,_,visitList,orgTrack) -> {
             InstructionList l = `concInstruction();//represents compiled Strategy
 
-            l = `concInstruction(l*,MakeClassBegin(name,SubjectList(args),emptyTerm,emptyTerm));
             TomVisit visit;
             TomVisitList jVisitList = `visitList;
-            InstructionList visitInstruction = `concInstruction();
             TomTerm arg;//arg = subjectList
+            String funcName;
             while (!jVisitList.isEmpty()){
               visit = jVisitList.getHead();
               %match(TomVisit visit) {
                 VisitTerm(visitType,patternInstructionList) -> {
-                  arg = `TLVar("arg",visitType);
-                  visitInstruction = `concInstruction(visitInstruction*,MakeFunctionBegin(name,visitType,arg,EmptyType()));
-                  visitInstruction = `concInstruction(visitInstruction*,Match(arg,
-                        patternInstructionList,                      
-                        concOption(orgTrack)));
-                  visitInstruction = `concInstruction(visitInstruction*,MakeFunctionEnd());
+                  arg = `TLVar("arg",visitType);//one argument only in visit_Term
+                  funcName = "visit_" + `visitType.getName();//function signature is visit_Term(Term arg) throws...
+                  l = `concInstruction(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,EmptyType(),Match(arg,
+                        patternInstructionList, 
+                        concOption(orgTrack))));
                 }
               }
-              l = `concInstruction(l*,visitInstruction*);
               jVisitList = jVisitList.getTail();
             }
-            l = `concInstruction(l*,MakeClassEnd);
-            return preProcessingInstruction(`AbstractBlock(l));
+            return `Class(name,args,EmptyType(),AbstractBlock(l));
            }
 
           } // end match
