@@ -270,21 +270,21 @@ public class Rho {
 	public  String stringInfix(RTerm term){
 		//suis les priorites donnes par RhoParser.g.t
 		%match(RTerm term){
-			appS(substs,term1) -> {return "["+ stringInfix(substs)+"]" + "("+stringInfix(term1)+")";}
-			appC(constrainsts,term1) -> {return "["+ stringInfix(constrainsts)+"]" + "("+stringInfix(term1)+")";}
-			app(term1,term2) -> {return "("+stringInfix(term1)+"."+stringInfix(term2)+")";}
-			abs(term1,term2) -> {return "("+stringInfix(term1)+"->"+stringInfix(term2)+")";}
-			struct(term1,term2) -> {return "("+stringInfix(term1)+"|"+stringInfix(term2)+")";}
-			var(s) -> {return s;}
-			const(s) -> {return s;}
+			appS(substs,term1) -> {return "["+ stringInfix(`substs)+"]" + "("+stringInfix(`term1)+")";}
+			appC(constrainsts,term1) -> {return "["+ stringInfix(`constrainsts)+"]" + "("+stringInfix(`term1)+")";}
+			app(term1,term2) -> {return "("+stringInfix(`term1)+"."+stringInfix(`term2)+")";}
+			abs(term1,term2) -> {return "("+stringInfix(`term1)+"->"+stringInfix(`term2)+")";}
+			struct(term1,term2) -> {return "("+stringInfix(`term1)+"|"+stringInfix(`term2)+")";}
+			var(s) -> {return `s;}
+			const(s) -> {return `s;}
 			stk() -> {return "stk";}
 			_ -> {return "";}
 		}
 	}
 	public String stringInfix(ListSubst substs){
 		%match(ListSubst substs){
-			andS(eq(term1,term2),eq(term3,term4),Y*) -> {return stringInfix(term1)+"="+stringInfix(term2) +"^"+ stringInfix(term3)+"="+stringInfix(term4) +stringInfix(Y);}
-			andS(eq(term1,term2),X*) -> {return stringInfix(term1)+"="+stringInfix(term2);}
+			andS(eq(term1,term2),eq(term3,term4),Y*) -> {return stringInfix(`term1)+"="+stringInfix(`term2) +"^"+ stringInfix(`term3)+"="+stringInfix(`term4) +stringInfix(`Y);}
+			andS(eq(term1,term2),X*) -> {return stringInfix(`term1)+"="+stringInfix(`term2);}
 			_ -> {return "";}
 		}
 	}
@@ -301,8 +301,8 @@ public class Rho {
 	}
 	public String stringInfix(ListConstraint constraints){
 		%match(ListConstraint constraints){
-			andC(match(term1,term2),match(term3,term4),Y*) -> {return stringInfix(term1)+"<"+stringInfix(term2) +"^"+ stringInfix(term3)+"<"+stringInfix(term4) +stringInfix(Y);}
-			andC(match(term1,term2),X*) -> {return stringInfix(term1)+"<"+stringInfix(term2);}
+			andC(match(term1,term2),match(term3,term4),Y*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2) +"^"+ stringInfix(`term3)+"<"+stringInfix(`term4) +stringInfix(`Y);}
+			andC(match(term1,term2),X*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2);}
 			_ -> {return "";}
 		}
 	}	
