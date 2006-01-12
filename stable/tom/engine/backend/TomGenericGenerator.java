@@ -23,14 +23,14 @@
  *
  **/
 
-package jtom.backend;
+package tom.engine.backend;
 
 import java.io.IOException;
 import java.util.HashMap;
 
-import jtom.adt.tomsignature.types.*;
-import jtom.tools.OutputCode;
-import jtom.tools.SymbolTable;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.tools.OutputCode;
+import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 public abstract class TomGenericGenerator extends TomAbstractGenerator {
@@ -133,7 +133,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpIsEmptyList(int deep, TomName opNameAST, TomType type, TomTerm expList) throws IOException {
-     { jtom.adt.tomsignature.types.TomName tom_match1_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match1_1) ||  false ) {
+     { tom.engine.adt.tomsignature.types.TomName tom_match1_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match1_1) ||  false ) {
  output.write("tom_is_empty_" + getTomType(type) + "(");  } if(tom_is_fun_sym_Name(tom_match1_1) ||  false ) { { String  tom_match1_1_string=tom_get_slot_Name_string(tom_match1_1);
  output.write("tom_is_empty_" + tom_match1_1_string+ "_" + getTomType(type) + "("); } }}
 
@@ -144,7 +144,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException {
     generate(deep,expIndex);
     output.write(" >= ");
-     { jtom.adt.tomsignature.types.TomName tom_match2_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match2_1) ||  false ) {
+     { tom.engine.adt.tomsignature.types.TomName tom_match2_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match2_1) ||  false ) {
  output.write("tom_get_size_" + getTomType(type) + "(");  } if(tom_is_fun_sym_Name(tom_match2_1) ||  false ) { { String  tom_match2_1_string=tom_get_slot_Name_string(tom_match2_1);
  output.write("tom_get_size_" + tom_match2_1_string+ "_" + getTomType(type) + "("); } }}
 
@@ -185,7 +185,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpGetTail(int deep, TomName opNameAST, TomType type, TomTerm var) throws IOException {
-     { jtom.adt.tomsignature.types.TomName tom_match3_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match3_1) ||  false ) {
+     { tom.engine.adt.tomsignature.types.TomName tom_match3_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match3_1) ||  false ) {
  output.write("tom_get_tail_" + getTomType(type) + "(");  } if(tom_is_fun_sym_Name(tom_match3_1) ||  false ) { { String  tom_match3_1_string=tom_get_slot_Name_string(tom_match3_1);
  output.write("tom_get_tail_" + tom_match3_1_string+ "_" + getTomType(type) + "("); } }}
 
@@ -194,7 +194,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var) throws IOException {
-     { jtom.adt.tomsignature.types.TomName tom_match4_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match4_1) ||  false ) {
+     { tom.engine.adt.tomsignature.types.TomName tom_match4_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match4_1) ||  false ) {
  output.write("tom_get_size_" + getTomType(type) + "(");  } if(tom_is_fun_sym_Name(tom_match4_1) ||  false ) { { String  tom_match4_1_string=tom_get_slot_Name_string(tom_match4_1);
  output.write("tom_get_size_" + tom_match4_1_string+ "_" + getTomType(type) + "("); } }}
 
@@ -378,7 +378,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_get_head";
 
-     { jtom.adt.tomsignature.types.TomName tom_match5_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match5_1) ||  false ) { { String  tom_match5_1_string=tom_get_slot_Name_string(tom_match5_1);
+     { tom.engine.adt.tomsignature.types.TomName tom_match5_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match5_1) ||  false ) { { String  tom_match5_1_string=tom_get_slot_Name_string(tom_match5_1);
  functionName = functionName + "_" + tom_match5_1_string; } }}
 
 
@@ -386,7 +386,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
     } else {
-       { jtom.adt.tomsignature.types.TomName tom_match6_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match6_1) ||  false ) {
+       { tom.engine.adt.tomsignature.types.TomName tom_match6_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match6_1) ||  false ) {
 
           returnType = getTLCode(codomain);
           argType = getTLCode(domain);
@@ -410,7 +410,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_get_tail";
 
-     { jtom.adt.tomsignature.types.TomName tom_match7_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match7_1) ||  false ) { { String  tom_match7_1_string=tom_get_slot_Name_string(tom_match7_1);
+     { tom.engine.adt.tomsignature.types.TomName tom_match7_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match7_1) ||  false ) { { String  tom_match7_1_string=tom_get_slot_Name_string(tom_match7_1);
  functionName = functionName + "_" + tom_match7_1_string; } }}
 
 
@@ -418,7 +418,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
     } else {
-       { jtom.adt.tomsignature.types.TomName tom_match8_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match8_1) ||  false ) {
+       { tom.engine.adt.tomsignature.types.TomName tom_match8_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match8_1) ||  false ) {
 
           returnType = getTLCode(tlType);
           argType = returnType;
@@ -442,13 +442,13 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_is_empty";
 
-     { jtom.adt.tomsignature.types.TomName tom_match9_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match9_1) ||  false ) { { String  tom_match9_1_string=tom_get_slot_Name_string(tom_match9_1);
+     { tom.engine.adt.tomsignature.types.TomName tom_match9_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match9_1) ||  false ) { { String  tom_match9_1_string=tom_get_slot_Name_string(tom_match9_1);
  functionName = functionName + "_" + tom_match9_1_string; } }}
 
     if(lazyMode) {
       argType = getTLType(getUniversalType());
     } else {
-       { jtom.adt.tomsignature.types.TomName tom_match10_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match10_1) ||  false ) {
+       { tom.engine.adt.tomsignature.types.TomName tom_match10_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match10_1) ||  false ) {
 
           argType = getTLCode(tlType);
          } if(tom_is_fun_sym_Name(tom_match10_1) ||  false ) { { String  tom_match10_1_string=tom_get_slot_Name_string(tom_match10_1);
@@ -472,7 +472,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_get_element";
 
-     { jtom.adt.tomsignature.types.TomName tom_match11_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match11_1) ||  false ) { { String  tom_match11_1_string=tom_get_slot_Name_string(tom_match11_1);
+     { tom.engine.adt.tomsignature.types.TomName tom_match11_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match11_1) ||  false ) { { String  tom_match11_1_string=tom_get_slot_Name_string(tom_match11_1);
  functionName = functionName + "_" + tom_match11_1_string; } }}
 
 
@@ -480,7 +480,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
     } else {
-       { jtom.adt.tomsignature.types.TomName tom_match12_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match12_1) ||  false ) {
+       { tom.engine.adt.tomsignature.types.TomName tom_match12_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match12_1) ||  false ) {
 
           returnType = getTLType(getUniversalType());
           argType = getTLCode(domain);
@@ -508,14 +508,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_get_size";
 
-     { jtom.adt.tomsignature.types.TomName tom_match13_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match13_1) ||  false ) { { String  tom_match13_1_string=tom_get_slot_Name_string(tom_match13_1);
+     { tom.engine.adt.tomsignature.types.TomName tom_match13_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match13_1) ||  false ) { { String  tom_match13_1_string=tom_get_slot_Name_string(tom_match13_1);
  functionName = functionName + "_" + tom_match13_1_string; } }}
 
 
     if(lazyMode) {
       argType = getTLType(getUniversalType());
     } else {
-       { jtom.adt.tomsignature.types.TomName tom_match14_1=(( jtom.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match14_1) ||  false ) {
+       { tom.engine.adt.tomsignature.types.TomName tom_match14_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match14_1) ||  false ) {
 
           argType = getTLCode(domain);
          } if(tom_is_fun_sym_Name(tom_match14_1) ||  false ) { { String  tom_match14_1_string=tom_get_slot_Name_string(tom_match14_1);

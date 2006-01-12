@@ -23,13 +23,13 @@
  *
  **/
 
-package jtom;
+package tom.engine;
 
 
 import aterm.pure.PureFactory;
 import aterm.pure.SingletonFactory;
-import jtom.adt.tomsignature.TomSignatureFactory;
-import jtom.tools.ASTFactory;
+import tom.engine.adt.tomsignature.TomSignatureFactory;
+import tom.engine.tools.ASTFactory;
 import tom.platform.adt.platformoption.PlatformOptionFactory;
 
 /**

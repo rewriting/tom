@@ -22,7 +22,7 @@
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
-package jtom.debug;
+package tom.engine.debug;
 
 public abstract class TermHandler {
   String name = "no name";

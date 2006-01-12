@@ -24,7 +24,7 @@
  *
  **/
 
-package jtom.debug;
+package tom.engine.debug;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -50,13 +50,13 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import jtom.adt.tomsignature.TomSignatureFactory;
-import jtom.adt.tomsignature.types.Option;
-import jtom.adt.tomsignature.types.OptionList;
-import jtom.adt.tomsignature.types.TomList;
-import jtom.adt.tomsignature.types.TomStructureTable;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.exception.TomRuntimeException;
+import tom.engine.adt.tomsignature.TomSignatureFactory;
+import tom.engine.adt.tomsignature.types.Option;
+import tom.engine.adt.tomsignature.types.OptionList;
+import tom.engine.adt.tomsignature.types.TomList;
+import tom.engine.adt.tomsignature.types.TomStructureTable;
+import tom.engine.adt.tomsignature.types.TomTerm;
+import tom.engine.exception.TomRuntimeException;
 import aterm.pure.SingletonFactory;
 
 public class TomDebugger {

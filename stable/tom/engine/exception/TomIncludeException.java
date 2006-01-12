@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom.exception;
+package tom.engine.exception;
 
 import tom.platform.PlatformMessage;
 

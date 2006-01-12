@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom.parser;
+package tom.engine.parser;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -35,11 +35,11 @@ import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.logging.Level;
 
-import jtom.TomMessage;
-import jtom.TomStreamManager;
-import jtom.exception.TomException;
-import jtom.tools.TomGenericPlugin;
-import jtom.tools.Tools;
+import tom.engine.TomMessage;
+import tom.engine.TomStreamManager;
+import tom.engine.exception.TomException;
+import tom.engine.tools.TomGenericPlugin;
+import tom.engine.tools.Tools;
 import tom.platform.OptionManager;
 import tom.platform.OptionParser;
 import tom.platform.PlatformLogRecord;

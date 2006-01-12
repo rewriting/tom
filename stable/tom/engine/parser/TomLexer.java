@@ -25,7 +25,7 @@
  *
  **/
 
-package jtom.parser;
+package tom.engine.parser;
 
 
 import java.io.InputStream;

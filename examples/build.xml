@@ -100,10 +100,10 @@
     
     <!-- tasks for building -->
     <taskdef name="adt"
-             classname="jtom.tools.ant.ApigenTask"
+             classname="tom.engine.tools.ant.ApigenTask"
              classpathref="tom.classpath"/>
     <taskdef name="tom"
-             classname="jtom.tools.ant.TomTask"
+             classname="tom.engine.tools.ant.TomTask"
              classpathref="tom.classpath"/>
     <taskdef name="vas"
              classname="vas.ant.VasTask" 

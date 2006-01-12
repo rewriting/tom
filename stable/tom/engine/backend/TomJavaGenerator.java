@@ -23,13 +23,13 @@
  *
  **/
 
-package jtom.backend;
+package tom.engine.backend;
 
 import java.io.IOException;
 
-import jtom.adt.tomsignature.types.InstructionList;
-import jtom.tools.OutputCode;
-import jtom.tools.SymbolTable;
+import tom.engine.adt.tomsignature.types.InstructionList;
+import tom.engine.tools.OutputCode;
+import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 public class TomJavaGenerator extends TomImperativeGenerator {

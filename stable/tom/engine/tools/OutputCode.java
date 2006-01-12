@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom.tools;
+package tom.engine.tools;
 
 import java.io.IOException;
 import java.io.StringWriter;

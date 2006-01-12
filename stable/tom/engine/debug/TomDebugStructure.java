@@ -24,7 +24,7 @@
  *
  **/
 
-package jtom.debug;
+package tom.engine.debug;
 
 import java.util.HashSet;
 

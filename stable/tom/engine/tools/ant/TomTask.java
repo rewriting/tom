@@ -23,11 +23,11 @@
  *
  **/
 
-package jtom.tools.ant;
+package tom.engine.tools.ant;
 
 import java.io.*;
 import java.util.*;
-import jtom.*;
+import tom.engine.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;

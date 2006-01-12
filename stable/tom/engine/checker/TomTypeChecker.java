@@ -24,7 +24,7 @@
  *
  **/
 
-package jtom.checker;
+package tom.engine.checker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import jtom.TomMessage;
-import jtom.adt.tomsignature.types.*;
+import tom.engine.TomMessage;
+import tom.engine.adt.tomsignature.types.*;
 import tom.library.traversal.Collect1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
@@ -98,12 +98,12 @@ public class TomTypeChecker extends TomChecker {
     Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm term) {
           if(term instanceof Instruction) {
-             { jtom.adt.tomsignature.types.Instruction tom_match1_1=(( jtom.adt.tomsignature.types.Instruction)term); if(tom_is_fun_sym_Match(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.PatternInstructionList tom_match1_1_astPatternInstructionList=tom_get_slot_Match_astPatternInstructionList(tom_match1_1); { jtom.adt.tomsignature.types.OptionList tom_match1_1_option=tom_get_slot_Match_option(tom_match1_1);
+             { tom.engine.adt.tomsignature.types.Instruction tom_match1_1=(( tom.engine.adt.tomsignature.types.Instruction)term); if(tom_is_fun_sym_Match(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match1_1_astPatternInstructionList=tom_get_slot_Match_astPatternInstructionList(tom_match1_1); { tom.engine.adt.tomsignature.types.OptionList tom_match1_1_option=tom_get_slot_Match_option(tom_match1_1);
   
                 currentTomStructureOrgTrack = findOriginTracking(tom_match1_1_option);
                 verifyMatchVariable(tom_match1_1_astPatternInstructionList);
                 return false;
-              }} } if(tom_is_fun_sym_RuleSet(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomRuleList tom_match1_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match1_1); { jtom.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_RuleSet_orgTrack(tom_match1_1);
+              }} } if(tom_is_fun_sym_RuleSet(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match1_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_RuleSet_orgTrack(tom_match1_1);
 
                 currentTomStructureOrgTrack = tom_match1_1_orgTrack;
                 verifyRuleVariable(tom_match1_1_ruleList);
@@ -124,10 +124,10 @@ public class TomTypeChecker extends TomChecker {
     Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
-             { jtom.adt.tomsignature.types.TomTerm tom_match2_1=(( jtom.adt.tomsignature.types.TomTerm)term); if(tom_is_fun_sym_TermAppl(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_app=tom_match2_1; { jtom.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_TermAppl_option(tom_match2_1); { jtom.adt.tomsignature.types.TomList tom_match2_1_args=tom_get_slot_TermAppl_args(tom_match2_1); if(tom_is_fun_sym_concTomTerm(tom_match2_1_args) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match2_1_args_list1=tom_match2_1_args; if(tom_is_empty_concTomTerm_TomList(tom_match2_1_args_list1)) {
+             { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1=(( tom.engine.adt.tomsignature.types.TomTerm)term); if(tom_is_fun_sym_TermAppl(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_app=tom_match2_1; { tom.engine.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_TermAppl_option(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_args=tom_get_slot_TermAppl_args(tom_match2_1); if(tom_is_fun_sym_concTomTerm(tom_match2_1_args) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match2_1_args_list1=tom_match2_1_args; if(tom_is_empty_concTomTerm_TomList(tom_match2_1_args_list1)) {
 
                 boolean isConstructor = false;
-                 { jtom.adt.tomsignature.types.OptionList tom_match3_1=(( jtom.adt.tomsignature.types.OptionList)tom_match2_1_option); if(tom_is_fun_sym_concOption(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match3_1_list1=tom_match3_1; { jtom.adt.tomsignature.types.OptionList tom_match3_1_begin1=tom_match3_1_list1; { jtom.adt.tomsignature.types.OptionList tom_match3_1_end1=tom_match3_1_list1;{ while (!(tom_is_empty_concOption_OptionList(tom_match3_1_end1))) {tom_match3_1_list1=tom_match3_1_end1;{ { jtom.adt.tomsignature.types.Option tom_match3_1_2=tom_get_head_concOption_OptionList(tom_match3_1_list1);tom_match3_1_list1=tom_get_tail_concOption_OptionList(tom_match3_1_list1); if(tom_is_fun_sym_Constructor(tom_match3_1_2) ||  false ) {
+                 { tom.engine.adt.tomsignature.types.OptionList tom_match3_1=(( tom.engine.adt.tomsignature.types.OptionList)tom_match2_1_option); if(tom_is_fun_sym_concOption(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match3_1_list1=tom_match3_1; { tom.engine.adt.tomsignature.types.OptionList tom_match3_1_begin1=tom_match3_1_list1; { tom.engine.adt.tomsignature.types.OptionList tom_match3_1_end1=tom_match3_1_list1;{ while (!(tom_is_empty_concOption_OptionList(tom_match3_1_end1))) {tom_match3_1_list1=tom_match3_1_end1;{ { tom.engine.adt.tomsignature.types.Option tom_match3_1_2=tom_get_head_concOption_OptionList(tom_match3_1_list1);tom_match3_1_list1=tom_get_tail_concOption_OptionList(tom_match3_1_list1); if(tom_is_fun_sym_Constructor(tom_match3_1_2) ||  false ) {
 
                     isConstructor = true;
                    }}tom_match3_1_end1=tom_get_tail_concOption_OptionList(tom_match3_1_end1);} }tom_match3_1_list1=tom_match3_1_begin1;}}}} }}
@@ -199,10 +199,10 @@ public class TomTypeChecker extends TomChecker {
         break;
       }
       
-       { jtom.adt.tomsignature.types.InstructionList tom_match4_1=(( jtom.adt.tomsignature.types.InstructionList)condList); if(tom_is_fun_sym_concInstruction(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.InstructionList tom_match4_1_list1=tom_match4_1; { jtom.adt.tomsignature.types.InstructionList tom_match4_1_begin1=tom_match4_1_list1; { jtom.adt.tomsignature.types.InstructionList tom_match4_1_end1=tom_match4_1_list1;{ while (!(tom_is_empty_concInstruction_InstructionList(tom_match4_1_end1))) {tom_match4_1_list1=tom_match4_1_end1;{ { jtom.adt.tomsignature.types.Instruction tom_cond=tom_get_head_concInstruction_InstructionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concInstruction_InstructionList(tom_match4_1_list1);
+       { tom.engine.adt.tomsignature.types.InstructionList tom_match4_1=(( tom.engine.adt.tomsignature.types.InstructionList)condList); if(tom_is_fun_sym_concInstruction(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match4_1_list1=tom_match4_1; { tom.engine.adt.tomsignature.types.InstructionList tom_match4_1_begin1=tom_match4_1_list1; { tom.engine.adt.tomsignature.types.InstructionList tom_match4_1_end1=tom_match4_1_list1;{ while (!(tom_is_empty_concInstruction_InstructionList(tom_match4_1_end1))) {tom_match4_1_list1=tom_match4_1_end1;{ { tom.engine.adt.tomsignature.types.Instruction tom_cond=tom_get_head_concInstruction_InstructionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concInstruction_InstructionList(tom_match4_1_list1);
 
           Instruction condition = tom_cond;
-           { jtom.adt.tomsignature.types.Instruction tom_match5_1=(( jtom.adt.tomsignature.types.Instruction)condition); if(tom_is_fun_sym_MatchingCondition(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match5_1_lhs=tom_get_slot_MatchingCondition_lhs(tom_match5_1); { jtom.adt.tomsignature.types.TomTerm tom_match5_1_rhs=tom_get_slot_MatchingCondition_rhs(tom_match5_1);
+           { tom.engine.adt.tomsignature.types.Instruction tom_match5_1=(( tom.engine.adt.tomsignature.types.Instruction)condition); if(tom_is_fun_sym_MatchingCondition(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_lhs=tom_get_slot_MatchingCondition_lhs(tom_match5_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_rhs=tom_get_slot_MatchingCondition_rhs(tom_match5_1);
 
               // (i)
               ArrayList pVar = new ArrayList();
@@ -224,7 +224,7 @@ public class TomTypeChecker extends TomChecker {
                 // there are some coherence issues: same name but not same type
                 break;
               }
-            }} } if(tom_is_fun_sym_TypedEqualityCondition(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match5_1_lhs=tom_get_slot_TypedEqualityCondition_lhs(tom_match5_1); { jtom.adt.tomsignature.types.TomTerm tom_match5_1_rhs=tom_get_slot_TypedEqualityCondition_rhs(tom_match5_1);
+            }} } if(tom_is_fun_sym_TypedEqualityCondition(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_lhs=tom_get_slot_TypedEqualityCondition_lhs(tom_match5_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_rhs=tom_get_slot_TypedEqualityCondition_rhs(tom_match5_1);
 
                // (iv)
               ArrayList pVar = new ArrayList();

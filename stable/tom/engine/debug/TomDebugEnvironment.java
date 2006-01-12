@@ -24,7 +24,7 @@
  *
  **/
 
-package jtom.debug;
+package tom.engine.debug;
   
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -233,7 +233,7 @@ public class TomDebugEnvironment {
     } else if (str.equals("subst") || str.equals("S")) {
       showSubsts();
     } else if (str.equals("stack") || str.equals("ES")) {
-      jtom.debug.TomDebugger.debugger.showStack();
+      tom.engine.debug.TomDebugger.debugger.showStack();
     } else {
       System.out.println("Unknow command: please enter `?` to list available commands");
     }

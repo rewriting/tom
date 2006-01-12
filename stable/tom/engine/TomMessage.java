@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom;
+package tom.engine;
 
 import tom.platform.PlatformMessage;
 
@@ -77,7 +77,7 @@ public class TomMessage implements PlatformMessage {
 
   // TomPluginFactory
   public static final TomMessage classNotAPlugin       =
-    new TomMessage("{0}: Class {1} does not implement the jtom.TomPlugin interface as required");
+    new TomMessage("{0}: Class {1} does not implement the tom.engine.TomPlugin interface as required");
   public static final TomMessage classNotFound         =
     new TomMessage("{0}: Class {1} not found");
   public static final TomMessage instantiationError    =

@@ -29,7 +29,7 @@
   <!-- some used directory location for stable -->
   <property name="stable.src"     location="stable"/>
   <property name="stable.gen"     location="${stable.src}/gen"/>   
-  <property name="stable.adt"     location="${stable.src}/jtom/adt"/>
+  <property name="stable.adt"     location="${stable.src}/tom/engine/adt"/>
   <property name="stable.mapping" location="${stable.src}/tom/library/mapping"/>
   <property name="stable.build"   location="${stable.src}/build"/>
   <property name="stable.dist"    location="${stable.src}/dist"/>
@@ -94,7 +94,7 @@
 
   <path id="stable.classpath">
     <path refid="external.classpath"/>
-    <!-- ADT jar files from tom and jtom -->
+    <!-- ADT jar files from tom -->
     <fileset dir="${stable.src}">
       <include name="**/adt/*.jar"/>
     </fileset>
@@ -190,13 +190,13 @@
   <!-- tasks for building src -->
   <target name="initTaskDef" depends="stable">
     <taskdef name="adt" 
-             classname="jtom.tools.ant.ApigenTask" 
+             classname="tom.engine.tools.ant.ApigenTask" 
              classpathref="tom.classpath"/>
     <taskdef name="vas" 
              classname="vas.ant.VasTask" 
              classpathref="tom.classpath"/>
     <taskdef name="tom" 
-             classname="jtom.tools.ant.TomTask">
+             classname="tom.engine.tools.ant.TomTask">
       <classpath refid="tom.classpath"/>
     </taskdef>
   </target>
@@ -411,17 +411,16 @@
   <target name="build.stable" depends="stable"/>
   <target name="stable" description="compile the TOM stable sources"
           depends="prepare.stable">
-    <copy file="${stable.src}/jtom/Tom.java.in" 
-          tofile="${stable.gen}/jtom/Tom.java"/>
+    <copy file="${stable.src}/tom/engine/Tom.java.in" 
+	    tofile="${stable.gen}/tom/engine/Tom.java"/>
     <replace dir="${stable.gen}" token="@TOM_VERSION@" value="${stable.version}">
-      <include name="jtom/Tom.java"/>
+	    <include name="tom/engine/Tom.java"/>
     </replace>
     <!-- Compile the java code from ${stable} into ${build} -->
     <tomjavac destdir="${stable.build}" fork="yes">
       <src path="${stable.src}"/>
       <src path="${stable.gen}"/>
       <include name="tom/**/*.java"/>
-      <include name="jtom/**/*.java"/>
       <classpath refid="stable.classpath"/>
     </tomjavac>
   </target>  
@@ -502,12 +501,12 @@
       <fileset dir="${stable.src}" includes="tom/platform/**/*.properties"/>
     </jar>
     <jar jarfile="${stable.dist.lib}/jtom.jar">
-      <fileset dir="${stable.build}" includes="jtom/**/*.class"/>
-      <fileset dir="${stable.src}" includes="jtom/**/*.properties"/>
+	    <fileset dir="${stable.build}" includes="tom/engine/**/*.class"/>
+	    <fileset dir="${stable.src}" includes="tom/engine/**/*.properties"/>
     </jar>
 
     <copy todir="${stable.dist.lib}">
-      <fileset dir="${stable.src}/jtom/adt" includes="*.jar"/>
+	    <fileset dir="${stable.src}/tom/engine/adt" includes="*.jar"/>
       <fileset dir="${stable.src}/tom/library/adt" includes="*.jar"/>
       <fileset dir="${stable.src}/tom/platform/adt" includes="*.jar"/>
     </copy>
@@ -667,7 +666,7 @@
   <target name="clean.stable" description="Purges the generated stable files">
     <delete dir="${stable.build}"/>
     <delete dir="${stable.gen}"/>
-    <delete file="${stable.src}/jtom/Tom.java"/>
+    <delete file="${stable.src}/tom/engine/Tom.java"/>
   </target>
   
   <target name="clean.src" 
@@ -1161,7 +1160,6 @@
       <classpath refid="stable.classpath"/>
       <fileset dir="${stable.src}">
         <include name="tom/**/*.java"/>
-        <include name="jtom/**/*.java"/>
       </fileset>
     </javadoc>
   </target>

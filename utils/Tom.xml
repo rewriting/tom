@@ -46,26 +46,26 @@
 
 	<plugins>
 		<plugin name="Starter"
-			class="jtom.starter.TomStarter"/>
+			class="tom.engine.starter.TomStarter"/>
 		<plugin name="Parser"
-			class="jtom.parser.TomParserPlugin"/>
+			class="tom.engine.parser.TomParserPlugin"/>
 		<plugin name="Syntax checker"
-			class="jtom.checker.TomSyntaxChecker"/>
+			class="tom.engine.checker.TomSyntaxChecker"/>
 		<plugin name="Expander"
-			class="jtom.compiler.TomExpander"/>
+			class="tom.engine.compiler.TomExpander"/>
 		<plugin name="Type checker"
-			class="jtom.checker.TomTypeChecker"/>
+			class="tom.engine.checker.TomTypeChecker"/>
 		<plugin name="Compiler"
-			class="jtom.compiler.TomCompiler"/>
+			class="tom.engine.compiler.TomCompiler"/>
 		<plugin name="Optimizer"
-			class="jtom.optimizer.TomOptimizer"/>
+			class="tom.engine.optimizer.TomOptimizer"/>
 		<plugin name="Verifier"
-			class="jtom.verifier.TomVerifier"/>
+			class="tom.engine.verifier.TomVerifier"/>
 		<plugin  name="Backend"
-			class="jtom.backend.TomBackend"/>
+			class="tom.engine.backend.TomBackend"/>
 	</plugins>
 
-	<optionmanager class="jtom.TomOptionManager">
+	<optionmanager class="tom.engine.TomOptionManager">
 		<options>
 			<boolean name="help" altName="h"
 				description="Print this help"

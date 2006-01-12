@@ -24,7 +24,7 @@
  *
  **/
 
-package jtom.parser;
+package tom.engine.parser;
 
 
 import antlr.TokenBuffer;

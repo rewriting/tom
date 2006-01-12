@@ -23,19 +23,19 @@
  *
  **/
 
-package jtom.tools;
+package tom.engine.tools;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jtom.Tom;
-import jtom.TomBase;
-import jtom.TomMessage;
-import jtom.TomStreamManager;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.adt.tomsignature.types.TomType;
+import tom.engine.Tom;
+import tom.engine.TomBase;
+import tom.engine.TomMessage;
+import tom.engine.TomStreamManager;
+import tom.engine.adt.tomsignature.types.TomSymbol;
+import tom.engine.adt.tomsignature.types.TomTerm;
+import tom.engine.adt.tomsignature.types.TomType;
 import tom.platform.OptionManager;
 import tom.platform.Plugin;
 import tom.platform.StatusHandler;
