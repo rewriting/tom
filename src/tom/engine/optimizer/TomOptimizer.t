@@ -135,7 +135,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomOptimizationPhase.getMessage(),
-                        new Integer((int)(System.currentTimeMillis()-startChrono)) );
+            new Integer((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                          new Object[]{"TomOptimizer", getStreamManager().getInputFile().getName(), e.getMessage()} );
@@ -619,7 +619,7 @@ public class TomOptimizer extends TomGenericPlugin {
       throws jjtraveler.VisitFailure{
       %match(Instruction subject) {
         AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar|BuildVariable)[astName=name],term1,body1),Let(var2,term2,body2),X2*)) -> {
-          /* Fusion de 2 blocs Let contigus instanciant deux variables égales */
+          /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
           if(`compare(term1,term2)) {
             if(`compare(var1,var2)) {
               System.out.println("block-fusion1");
@@ -648,7 +648,7 @@ public class TomOptimizer extends TomGenericPlugin {
       throws jjtraveler.VisitFailure{
       %match(Instruction subject) {
         AbstractBlock(concInstruction(X1*,If(cond1,success1,failure1),If(cond2,success2,failure2),X2*)) -> {
-          /* Fusion de 2 blocs If gardés par la même condition */
+          /* Fusion de 2 blocs If gardes par la meme condition */
           if(`compare(cond1,cond2)) {
             if(`failure1.isNop() && `failure2.isNop()) {
               System.out.println("if-fusion1");
