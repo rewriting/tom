@@ -23,7 +23,7 @@
  * Antoine Reilles        e-mail: Antoine.Reilles@loria.fr
  **/
 
-package jtom.verifier;
+package tom.engine.verifier;
 
 import java.io.File;
 import java.io.BufferedWriter;
@@ -35,17 +35,17 @@ import java.io.Writer;
 import java.util.*;
 import java.util.logging.Level;
 
-import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
-import jtom.TomMessage;
-import jtom.tools.TomGenericPlugin;
+import tom.engine.adt.tomsignature.*;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.TomMessage;
+import tom.engine.tools.TomGenericPlugin;
 import tom.library.traversal.Collect2;
 import tom.library.traversal.Replace1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
-import jtom.adt.il.types.*;
-import jtom.adt.zenon.types.*;
+import tom.engine.adt.il.types.*;
+import tom.engine.adt.zenon.types.*;
 /**
  * The TomVerifier plugin.
  */

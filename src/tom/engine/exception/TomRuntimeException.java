@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom.exception;
+package tom.engine.exception;
 
 public class TomRuntimeException extends RuntimeException {
 

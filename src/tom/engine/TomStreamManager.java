@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom;
+package tom.engine;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import jtom.tools.SymbolTable;
-import jtom.exception.TomRuntimeException;
+import tom.engine.tools.SymbolTable;
+import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 
 /**

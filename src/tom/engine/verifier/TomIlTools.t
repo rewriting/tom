@@ -24,17 +24,17 @@
  *
  **/
 
-package jtom.verifier;
+package tom.engine.verifier;
 
-import jtom.*;
+import tom.engine.*;
 import aterm.*;
 import java.util.*;
 import tom.library.traversal.*;
-import jtom.adt.tomsignature.types.*;
-import jtom.adt.zenon.*;
-import jtom.adt.zenon.types.*;
-import jtom.exception.TomRuntimeException;
-import jtom.tools.SymbolTable;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.zenon.*;
+import tom.engine.adt.zenon.types.*;
+import tom.engine.exception.TomRuntimeException;
+import tom.engine.tools.SymbolTable;
 
 public class TomIlTools extends TomBase {
 

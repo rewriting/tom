@@ -24,7 +24,7 @@ header{
  *
  **/
 
-package jtom.parser;
+package tom.engine.parser;
 
 }
 
@@ -36,14 +36,14 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jtom.TomBase;
-import jtom.TomMessage;
-import jtom.adt.tomsignature.types.*;
-import jtom.adt.tomsignature.TomSignatureFactory;
-import jtom.exception.TomException;
-import jtom.tools.SymbolTable;
-import jtom.tools.TomFactory;
-import jtom.xml.Constants;
+import tom.engine.TomBase;
+import tom.engine.TomMessage;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomsignature.TomSignatureFactory;
+import tom.engine.exception.TomException;
+import tom.engine.tools.SymbolTable;
+import tom.engine.tools.TomFactory;
+import tom.engine.xml.Constants;
 import tom.platform.OptionManager;
 import tom.platform.PlatformLogRecord;
 import aterm.*;
@@ -97,7 +97,7 @@ options{
         return TomBase.getTomSignatureFactory();
     }
     
-    private jtom.tools.ASTFactory ast() {
+    private tom.engine.tools.ASTFactory ast() {
         return TomBase.getAstFactory();
     }
 

@@ -23,7 +23,7 @@ header{/*
  *
  **/
   
-package jtom.parser;
+package tom.engine.parser;
 
 }
 
@@ -34,14 +34,14 @@ import java.util.LinkedList;
 import java.util.logging.*;
 import java.io.*;
 
-import jtom.Tom;
-import jtom.TomStreamManager;
-import jtom.TomEnvironment;
-import jtom.TomMessage;
-import jtom.exception.*;
-import jtom.adt.tomsignature.TomSignatureFactory;
-import jtom.adt.tomsignature.types.*;
-import jtom.tools.SymbolTable;
+import tom.engine.Tom;
+import tom.engine.TomStreamManager;
+import tom.engine.TomEnvironment;
+import tom.engine.TomMessage;
+import tom.engine.exception.*;
+import tom.engine.adt.tomsignature.TomSignatureFactory;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.tools.SymbolTable;
 import aterm.*;
 import antlr.TokenStreamSelector;
 import tom.platform.OptionManager;
@@ -130,7 +130,7 @@ options{
     return TomEnvironment.getInstance().getTomSignatureFactory();
   }
   
-  private jtom.tools.ASTFactory ast() {
+  private tom.engine.tools.ASTFactory ast() {
     return TomEnvironment.getInstance().getAstFactory();
   }
   

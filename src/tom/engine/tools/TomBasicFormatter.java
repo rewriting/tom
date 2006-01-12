@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom.tools;
+package tom.engine.tools;
 
 import java.util.logging.Formatter;
 import java.util.logging.Level;

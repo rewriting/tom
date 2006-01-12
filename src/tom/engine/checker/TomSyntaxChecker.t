@@ -24,16 +24,16 @@
  *
  **/
 
-package jtom.checker;
+package tom.engine.checker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 
-import jtom.TomMessage;
-import jtom.adt.tomsignature.types.*;
-import jtom.exception.TomRuntimeException;
-import jtom.xml.Constants;
+import tom.engine.TomMessage;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.exception.TomRuntimeException;
+import tom.engine.xml.Constants;
 import tom.library.traversal.Collect1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;

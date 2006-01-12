@@ -23,19 +23,19 @@
 
 */
 
-package jtom.tools;
+package tom.engine.tools;
 
 import java.util.LinkedList;
 
-import jtom.TomBase;
-import jtom.adt.tomsignature.types.NameList;
-import jtom.adt.tomsignature.types.Option;
-import jtom.adt.tomsignature.types.TomList;
-import jtom.adt.tomsignature.types.TomName;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.exception.TomRuntimeException;
-import jtom.xml.Constants;
+import tom.engine.TomBase;
+import tom.engine.adt.tomsignature.types.NameList;
+import tom.engine.adt.tomsignature.types.Option;
+import tom.engine.adt.tomsignature.types.TomList;
+import tom.engine.adt.tomsignature.types.TomName;
+import tom.engine.adt.tomsignature.types.TomSymbol;
+import tom.engine.adt.tomsignature.types.TomTerm;
+import tom.engine.exception.TomRuntimeException;
+import tom.engine.xml.Constants;
 
 public class TomFactory extends TomBase {
 

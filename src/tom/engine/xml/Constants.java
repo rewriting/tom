@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom.xml;
+package tom.engine.xml;
 
 public class Constants {
   public final static String TNODE          = "TNode";

@@ -23,16 +23,16 @@
  *
  **/
 
-package jtom;
+package tom.engine;
 
 import java.util.*;
 
 import aterm.*;
 
-import jtom.tools.*;
-import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
-import jtom.exception.TomRuntimeException;
+import tom.engine.tools.*;
+import tom.engine.adt.tomsignature.*;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.exception.TomRuntimeException;
 
 import tom.platform.adt.platformoption.*;
 import tom.library.traversal.*;

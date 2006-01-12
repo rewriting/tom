@@ -23,13 +23,13 @@
  *
  **/
 
-package jtom.starter;
+package tom.engine.starter;
 
 import java.util.logging.Level;
 
-import jtom.TomMessage;
-import jtom.TomStreamManager;
-import jtom.tools.TomGenericPlugin;
+import tom.engine.TomMessage;
+import tom.engine.TomStreamManager;
+import tom.engine.tools.TomGenericPlugin;
 
 /**
  * The TomStarter "plugin". Only here to initialize the TomStreamManager

@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom;
+package tom.engine;
 
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;

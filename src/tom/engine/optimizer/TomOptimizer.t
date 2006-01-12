@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom.optimizer;
+package tom.engine.optimizer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,13 +34,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import jtom.adt.tomsignature.types.*;
-import jtom.adt.tomsignature.*;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomsignature.*;
 
-import jtom.TomMessage;
-import jtom.tools.TomGenericPlugin;
-import jtom.tools.PILFactory;
-import jtom.tools.Tools;
+import tom.engine.TomMessage;
+import tom.engine.tools.TomGenericPlugin;
+import tom.engine.tools.PILFactory;
+import tom.engine.tools.Tools;
 import tom.library.traversal.Collect1;
 import tom.library.traversal.Replace1;
 import tom.library.traversal.Replace2;
@@ -511,7 +511,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public class NopElimAndFlatten extends BaseId {
-    public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
+    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
       %match(Instruction subject) {
         
@@ -577,7 +577,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public class IfSwapping extends BaseId {
-    public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
+    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
 
       PILFactory factory = new PILFactory(); 
@@ -615,7 +615,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public class BlockFusion extends BaseId {
-    public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
+    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
       %match(Instruction subject) {
         AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar|BuildVariable)[astName=name],term1,body1),Let(var2,term2,body2),X2*)) -> {
@@ -644,7 +644,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public class IfFusion extends BaseId {
-    public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
+    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
       %match(Instruction subject) {
         AbstractBlock(concInstruction(X1*,If(cond1,success1,failure1),If(cond2,success2,failure2),X2*)) -> {
@@ -669,7 +669,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public class InterBlock extends BaseId {
-    public jtom.adt.tomsignature.types.Instruction visit_Instruction(jtom.adt.tomsignature.types.Instruction subject)
+    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
 
       %match(Instruction subject) {
@@ -688,7 +688,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public class NormExpr extends BaseId {
-    public jtom.adt.tomsignature.types.Expression visit_Expression(jtom.adt.tomsignature.types.Expression subject) 
+    public tom.engine.adt.tomsignature.types.Expression visit_Expression(tom.engine.adt.tomsignature.types.Expression subject) 
       throws jjtraveler.VisitFailure {
       %match(Expression subject) {
         Or(t1,TrueTL()) -> {

@@ -24,7 +24,7 @@
  *
  **/
 
-package jtom.checker;
+package tom.engine.checker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import jtom.TomMessage;
-import jtom.adt.tomsignature.types.*;
+import tom.engine.TomMessage;
+import tom.engine.adt.tomsignature.types.*;
 import tom.library.traversal.Collect1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;

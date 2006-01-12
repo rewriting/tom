@@ -23,15 +23,15 @@
  *
  **/
 
-package jtom.tools;
+package tom.engine.tools;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import jtom.adt.tomsignature.TomSignatureFactory;
-import jtom.adt.tomsignature.types.*;
-import jtom.xml.Constants;
+import tom.engine.adt.tomsignature.TomSignatureFactory;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.xml.Constants;
 import aterm.ATerm;
 
 public class ASTFactory {

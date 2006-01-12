@@ -23,21 +23,21 @@
  *
  **/
 
-package jtom.tools;
+package tom.engine.tools;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import jtom.adt.tomsignature.TomSignatureFactory;
-import jtom.adt.tomsignature.types.SymbolList;
-import jtom.adt.tomsignature.types.TomEntry;
-import jtom.adt.tomsignature.types.TomEntryList;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomSymbolTable;
-import jtom.adt.tomsignature.types.TomType;
-import jtom.exception.TomRuntimeException;
+import tom.engine.adt.tomsignature.TomSignatureFactory;
+import tom.engine.adt.tomsignature.types.SymbolList;
+import tom.engine.adt.tomsignature.types.TomEntry;
+import tom.engine.adt.tomsignature.types.TomEntryList;
+import tom.engine.adt.tomsignature.types.TomSymbol;
+import tom.engine.adt.tomsignature.types.TomSymbolTable;
+import tom.engine.adt.tomsignature.types.TomType;
+import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 
 public class SymbolTable {

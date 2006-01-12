@@ -23,16 +23,16 @@
  *
  **/
 
-package jtom.compiler;
+package tom.engine.compiler;
   
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import jtom.TomBase;
-import jtom.adt.tomsignature.types.*;
-import jtom.exception.TomRuntimeException;
-import jtom.tools.SymbolTable;
+import tom.engine.TomBase;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.exception.TomRuntimeException;
+import tom.engine.tools.SymbolTable;
 import tom.library.traversal.Replace2;
 import aterm.ATerm;
 

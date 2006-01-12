@@ -23,12 +23,12 @@
  *
  **/
 
-package jtom.compiler;
+package tom.engine.compiler;
 
-import jtom.TomBase;
-import jtom.adt.tomsignature.types.*;
-import jtom.exception.TomRuntimeException;
-import jtom.tools.SymbolTable;
+import tom.engine.TomBase;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.exception.TomRuntimeException;
+import tom.engine.tools.SymbolTable;
 import tom.library.traversal.Replace1;
 import aterm.ATerm;
 import java.util.logging.Level;

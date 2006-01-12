@@ -38,7 +38,7 @@
 
   <!--some used directory location  for devel -->
   <property name="src.src"        location="src"/>
-  <property name="src.adt"        location="${src.src}/jtom/adt"/>
+  <property name="src.adt"        location="${src.src}/tom/engine/adt"/>
   <property name="src.mapping"    location="${src.src}/tom/library/mapping"/>
   <property name="src.gen"        location="${src.src}/gen"/>   
   <property name="src.build"      location="${src.src}/build"/>   
@@ -203,7 +203,7 @@
 
   <!-- define task for running tom.src -->
   <target name="initsrc" depends="src">
-    <taskdef name="tomsrc" classname="jtom.tools.ant.TomTask">
+    <taskdef name="tomsrc" classname="tom.engine.tools.ant.TomTask">
       <classpath refid="tomsrc.classpath"/>
     </taskdef>
   </target>
@@ -249,9 +249,9 @@
          options="-I ${src.mapping} --optimize">
       <exclude name="**/TomBase.t"/>
       <exclude name="**/OptionParser.t"/>
-      <exclude name="jtom/parser/*.g.t"/>
+      <exclude name="tom/engine/parser/*.g.t"/>
 
-      <include name="jtom/*.t"/> 
+      <include name="tom/engine/*.t"/> 
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
     </tomcompile>
@@ -259,35 +259,27 @@
     <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
          options="-I ${src.mapping} --noDeclaration --optimize">
-      <exclude name="jtom/*.t"/>
-      <exclude name="jtom/parser/*.g.t"/>
+	 <exclude name="tom/engine/*.t"/>
+	 <exclude name="tom/engine/parser/*.g.t"/>
 
-      <include name="jtom/**/*.t"/> 
+	 <include name="tom/engine/**/*.t"/> 
     </tomcompile>
     <!-- Specific stuff for parser generation -->
     <tomcompile srcdir="${src.src}"
-         outputfile="${gen.destination}/jtom/parser/TomLanguage.g"
-         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+	    outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
+	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
       <include name="**/TomLanguage.g.t"/>  
     </tomcompile>
     <tomcompile srcdir="${src.src}"
-         outputfile="${gen.destination}/jtom/parser/HostLanguage.g"
-         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+	    outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
+	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
       <include name="**/HostLanguage.g.t"/>  
     </tomcompile>
     <tomcompile srcdir="${src.src}"
-         outputfile="${gen.destination}/jtom/parser/BackQuoteLanguage.g"
-         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+	    outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
+	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
       <include name="**/BackQuoteLanguage.g.t"/>  
     </tomcompile>
-
-    <!--  rename *.g.java file
-    <move todir="${gen.destination}/jtom/parser" includeemptydirs="false">
-      <fileset dir="${gen.destination}/jtom/parser">
-        <include name="**/*.g.java"/>
-      </fileset>
-      <mapper type="glob" from="*.g.java" to="*.g"/>
-    </move> -->
 
   </target> 
   
@@ -301,30 +293,30 @@
 
   <!-- builds the parser using antlr -->
   <target name="buildparser">
-    <mkdir dir="${src.gen}/jtom/parser"/>
+	  <mkdir dir="${src.gen}/tom/engine/parser"/>
     
-    <antlr target="${src.src}/jtom/parser/TomJavaParser.g"
-           outputdirectory="${src.gen}/jtom/parser">
+	  <antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
+		  outputdirectory="${src.gen}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
 
-    <antlr target="${src.gen}/jtom/parser/TomLanguage.g"
-           outputdirectory="${src.gen}/jtom/parser">
+    <antlr target="${src.gen}/tom/engine/parser/TomLanguage.g"
+	    outputdirectory="${src.gen}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
-    <antlr target="${src.gen}/jtom/parser/HostLanguage.g"
-           outputdirectory="${src.gen}/jtom/parser">
+    <antlr target="${src.gen}/tom/engine/parser/HostLanguage.g"
+	    outputdirectory="${src.gen}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
-    <antlr target="${src.gen}/jtom/parser/BackQuoteLanguage.g"
-           outputdirectory="${src.gen}/jtom/parser">
+    <antlr target="${src.gen}/tom/engine/parser/BackQuoteLanguage.g"
+	    outputdirectory="${src.gen}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
   </target>
 
   <target name="touchvas" 
           unless="vascompile.required">
-    <touch file="${src.src}/jtom/adt/TomSignature.vas"/>
+	  <touch file="${src.src}/tom/engine/adt/TomSignature.vas"/>
   </target>
 
   <!-- compile adt's -->
@@ -345,54 +337,54 @@
     </vas>
 
     <uptodate property="vascompile.required" 
-              targetfile="${src.gen}/jtom/adt/tomsignature/TomSignature.tom" >
-      <srcfiles dir= "${src.src}/jtom/adt" includes="*.vas"/>
+	    targetfile="${src.gen}/tom/engine/adt/tomsignature/TomSignature.tom" >
+	    <srcfiles dir= "${src.src}/tom/engine/adt" includes="*.vas"/>
     </uptodate>
     <antcall target="touchvas"/>
 
     <vas config="${stable.vasconfigfile}"
          srcdir="${src.src}"
-         package="jtom.adt" 
+         package="tom.engine.adt" 
          name="tomsignature" 
          destdir="${src.gen}">
-      <include name="jtom/adt/TomSignature.vas"/>
+	 <include name="tom/engine/adt/TomSignature.vas"/>
     </vas>
 
     <vas config="${stable.vasconfigfile}"
          srcdir="${src.src}"
-         package="jtom.adt" 
+         package="tom.engine.adt" 
          destdir="${src.gen}">
-      <include name="jtom/adt/Il.vas"/>
+	 <include name="tom/engine/adt/Il.vas"/>
     </vas>
 
     <vas config="${stable.vasconfigfile}"
          srcdir="${src.src}"
-         package="jtom.adt" 
+         package="tom.engine.adt" 
          destdir="${src.gen}">
-      <include name="jtom/adt/Zenon.vas"/>
+	 <include name="tom/engine/adt/Zenon.vas"/>
     </vas>
 
 <!--
     <adt srcdir="${src.src}"
-         package="jtom.adt" 
+         package="tom.engine.adt" 
          name="tomsignature" 
          destdir="${src.gen}">
-      <include name="jtom/adt/*.adt"/>
+	 <include name="tom/engine/adt/*.adt"/>
     </adt>
 -->
 
     <copy todir="${src.mapping}/adt">
       <fileset dir="${src.gen}/tom/library/adt" includes="**/*.tom"/>
       <fileset dir="${src.gen}/tom/platform/adt" includes="**/*.tom"/>
-      <fileset dir="${src.gen}/jtom/adt" includes="**/*.tom"/>
+      <fileset dir="${src.gen}/tom/engine/adt" includes="**/*.tom"/>
     </copy>
 
     <!-- adt for the verifier -->
     <vas config="${stable.vasconfigfile}"
          srcdir="${src.src}"
-         package="jtom.verifier" 
+	 package="tom.engine/verifier" 
          destdir="${src.gen}">
-      <include name="jtom/verifier/*.vas"/>
+	 <include name="tom/engine/verifier/*.vas"/>
     </vas>
   </target>
 
@@ -402,17 +394,17 @@
     <antcall target="buildparser"/>
     <!--<property name="unixpath" refid="src.classpath" />
          <echo>classpath = ${unixpath}</echo>-->
-    <copy file="${src.src}/jtom/Tom.java.in" 
-          tofile="${src.gen}/jtom/Tom.java"/>
+	 <copy file="${src.src}/tom/engine/Tom.java.in" 
+		 tofile="${src.gen}/tom/engine/Tom.java"/>
     <replace dir="${src.gen}" token="@TOM_VERSION@" value="${src.version} (src)">
-      <include name="jtom/Tom.java"/>
+	    <include name="tom/engine/Tom.java"/>
     </replace>
     <tomjavac destdir="${src.build}" fork="yes">
       <src path="${src.src}"/>
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
-      <include name="jtom/**/*.java"/>
+      <include name="tom/engine/**/*.java"/>
     </tomjavac>
   </target>
 
@@ -594,7 +586,7 @@
 
     <!-- tom library -->
     <jar jarfile="${src.dist.lib}/TomSignature-${src.version}.jar">
-      <fileset dir="${src.build}" includes="jtom/adt/**/*.class"/>
+	    <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
     </jar>
     <jar jarfile="${src.dist.lib}/Set-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>
@@ -626,11 +618,11 @@
                excludes="tom/platform/**/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="tom/platform/**/*.properties"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/jtom-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/tom-${src.version}.jar">
       <fileset dir="${src.build}" 
-               includes="jtom/**/*.class"
-               excludes="jtom/adt/**/*.class"/>
-      <fileset dir="${src.src}" includes="jtom/**/*.properties"/>
+	      includes="tom/engine/**/*.class"
+	      excludes="tom/engine/adt/**/*.class"/>
+      <fileset dir="${src.src}" includes="tom/engine/**/*.properties"/>
     </jar>
 
     <!-- tom share -->
@@ -652,7 +644,7 @@
     </copy>
 
     <!-- prepare tar file -->
-    <tar tarfile="${dist}/jtom-${src.version}.tar.gz" compression="gzip">
+    <tar tarfile="${dist}/tom-${src.version}.tar.gz" compression="gzip">
       <tarfileset dir="${src.dist}" prefix="jtom-${src.version}" mode="755">
         <include name="bin/*"/>
         <exclude name="bin/*.bat"/>
@@ -944,32 +936,32 @@
     <concat destfile="${src.src}/bootcheck/version1">
       <fileset dir="${bootstrap.dir}/build">
         <include name="**/*.class"/>
-        <exclude name="jtom/parser/*.class"/>
+	<exclude name="tom/engine/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${bootstrap.dir}/build">
-        <include name="jtom/parser/TomLexer.class"/>
-        <include name="jtom/parser/TomParser.class"/>
-        <include name="jtom/parser/HostLexer.class"/>
-        <include name="jtom/parser/HostParser.class"/>
-        <include name="jtom/parser/BackQuoteLexer.class"/>
-        <include name="jtom/parser/BackQuoteParser.class"/>
+	      <include name="tom/engine/parser/TomLexer.class"/>
+	      <include name="tom/engine/parser/TomParser.class"/>
+	      <include name="tom/engine/parser/HostLexer.class"/>
+	      <include name="tom/engine/parser/HostParser.class"/>
+	      <include name="tom/engine/parser/BackQuoteLexer.class"/>
+	      <include name="tom/engine/parser/BackQuoteParser.class"/>
       </fileset>
     </concat>
     <concat destfile="${src.src}/bootcheck/version2">
       <fileset dir="${src.build}">
         <include name="**/*.class"/>
-        <exclude name="jtom/parser/*.class"/>
-        <exclude name="jtom/Tom.class"/>
+	<exclude name="tom/engine/parser/*.class"/>
+	<exclude name="tom/engine/Tom.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${src.build}">
-        <include name="jtom/parser/TomLexer.class"/>
-        <include name="jtom/parser/TomParser.class"/>
-        <include name="jtom/parser/HostLexer.class"/>
-        <include name="jtom/parser/HostParser.class"/>
-        <include name="jtom/parser/BackQuoteLexer.class"/>
-        <include name="jtom/parser/BackQuoteParser.class"/>
+	      <include name="tom/engine/parser/TomLexer.class"/>
+	      <include name="tom/engine/parser/TomParser.class"/>
+	      <include name="tom/engine/parser/HostLexer.class"/>
+	      <include name="tom/engine/parser/HostParser.class"/>
+	      <include name="tom/engine/parser/BackQuoteLexer.class"/>
+				<include name="tom/engine/parser/BackQuoteParser.class"/>
       </fileset>
     </concat>
     <condition property="bootstrap.ok" value="true">
@@ -1025,22 +1017,22 @@
     </antcall>
 
     <!-- builds parser -->
-    <mkdir dir="${destination}/gen/jtom/parser"/>
+		<mkdir dir="${destination}/gen/tom/engine/parser"/>
     
-    <antlr target="${src.src}/jtom/parser/TomJavaParser.g"
-           outputdirectory="${destination}/gen/jtom/parser">
+		<antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
+						outputdirectory="${destination}/gen/tom/engine/parser">
       <classpath refid="src.classpath"/>
     </antlr>
-    <antlr target="${src.gen}/jtom/parser/TomLanguage.g"
-           outputdirectory="${destination}/gen/jtom/parser">
+		<antlr target="${src.gen}/tom/engine/parser/TomLanguage.g"
+						outputdirectory="${destination}/gen/tom/engine/parser">
       <classpath refid="src.classpath"/>
     </antlr>
-    <antlr target="${src.gen}/jtom/parser/HostLanguage.g"
-           outputdirectory="${destination}/gen/jtom/parser">
+		<antlr target="${src.gen}/tom/engine/parser/HostLanguage.g"
+						outputdirectory="${destination}/gen/tom/engine/parser">
       <classpath refid="src.classpath"/>
     </antlr>
-    <antlr target="${src.gen}/jtom/parser/BackQuoteLanguage.g"
-           outputdirectory="${destination}/gen/jtom/parser">
+		<antlr target="${src.gen}/tom/engine/parser/BackQuoteLanguage.g"
+						outputdirectory="${destination}/gen/tom/engine/parser">
       <classpath refid="src.classpath"/>
     </antlr>
 
@@ -1049,7 +1041,6 @@
       <src path="${destination}/gen"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
-      <include name="jtom/**/*.java"/>
     </tomjavac>
   </target>
 
@@ -1078,12 +1069,12 @@
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
     </copy>
 
-    <mkdir dir="${stable.src}/jtom/adt"/>
+		<mkdir dir="${stable.src}/tom/engine/adt"/>
     <mkdir dir="${stable.src}/tom/library/adt"/>
     <mkdir dir="${stable.src}/tom/platform/adt"/>
 
-    <jar jarfile="${stable.src}/jtom/adt/TomSignature.jar">
-      <fileset dir="${src.build}" includes="jtom/adt/**/*.class"/>
+		<jar jarfile="${stable.src}/tom/engine/adt/TomSignature.jar">
+						<fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
     </jar>
     <jar jarfile="${stable.src}/tom/library/adt/Set.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>
@@ -1185,11 +1176,9 @@
       <classpath refid="src.classpath"/>
       <fileset dir="${src.src}">
         <include name="tom/**/*.java"/>
-        <include name="jtom/**/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
         <include name="tom/**/*.java"/>
-        <include name="jtom/**/*.java"/>
         <exclude name="**/adt/**/*.java"/>
       </fileset>
     </javadoc>
@@ -1202,7 +1191,7 @@
   
   <!-- <target name="tags">
     <exec>
-    find /Volumes/Home/pem/workspace/jtom/src/jtom \( -name "*.t" -o
+    find /Volumes/Home/pem/workspace/jtom/src/tom \( -name "*.t" -o
     -name "*.java" \) | xargs etags - -language=java
     </exec>
     </target>

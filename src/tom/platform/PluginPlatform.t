@@ -27,11 +27,11 @@ package tom.platform;
 
 import java.util.*;
 import java.util.logging.*;
-import jtom.TomMessage;
+import tom.engine.TomMessage;
 import aterm.*;
 import aterm.pure.*;
-import jtom.tools.TomGenericPlugin;
-import jtom.TomStreamManager;
+import tom.engine.tools.TomGenericPlugin;
+import tom.engine.TomStreamManager;
 
 import tom.library.adt.tnode.*;
 

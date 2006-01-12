@@ -28,7 +28,7 @@ package tom.platform;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import jtom.TomMessage;
+import tom.engine.TomMessage;
 import java.util.*;
 import java.util.logging.*;
 

@@ -22,16 +22,16 @@
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  * **/
 
-package jtom.tools;
+package tom.engine.tools;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import jtom.TomBase;
-import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
-import jtom.tools.TomGenericPlugin;
+import tom.engine.TomBase;
+import tom.engine.adt.tomsignature.*;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.tools.TomGenericPlugin;
 import tom.library.traversal.Collect2;
 import tom.library.traversal.Replace1;
 import aterm.ATerm;

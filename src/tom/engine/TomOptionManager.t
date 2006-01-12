@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom;
+package tom.engine;
 
 import java.io.File;
 import java.util.ArrayList;

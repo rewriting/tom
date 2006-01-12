@@ -23,14 +23,14 @@
  *
  **/
 
-package jtom.backend;
+package tom.engine.backend;
 
 import java.io.IOException;
 import java.util.HashMap;
 
-import jtom.adt.tomsignature.types.*;
-import jtom.tools.OutputCode;
-import jtom.tools.SymbolTable;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.tools.OutputCode;
+import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 public abstract class TomGenericGenerator extends TomAbstractGenerator {

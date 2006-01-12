@@ -24,16 +24,16 @@
  *
  **/
 
-package jtom.verifier;
+package tom.engine.verifier;
 
-import jtom.*;
+import tom.engine.*;
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import tom.library.traversal.*;
-import jtom.adt.tomsignature.types.*;
-import jtom.adt.il.*;
-import jtom.adt.il.types.*;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.il.*;
+import tom.engine.adt.il.types.*;
 
 public class LatexOutput {
 

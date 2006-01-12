@@ -24,16 +24,16 @@
  *
  **/
 
-package jtom.verifier;
+package tom.engine.verifier;
 
-import jtom.*;
+import tom.engine.*;
 import aterm.*;
 import java.util.*;
 import tom.library.traversal.*;
-import jtom.tools.SymbolTable;
-import jtom.adt.tomsignature.types.*;
-import jtom.adt.il.*;
-import jtom.adt.il.types.*;
+import tom.engine.tools.SymbolTable;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.il.*;
+import tom.engine.adt.il.types.*;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;

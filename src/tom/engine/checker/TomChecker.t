@@ -24,19 +24,19 @@
  *
  **/
 
-package jtom.checker;
+package tom.engine.checker;
 
 import java.text.MessageFormat;
 import java.util.logging.Level;
 
-import jtom.TomMessage;
-import jtom.adt.tomsignature.types.Option;
-import jtom.adt.tomsignature.types.OptionList;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.adt.tomsignature.types.TomType;
-import jtom.exception.TomRuntimeException;
-import jtom.tools.TomGenericPlugin;
+import tom.engine.TomMessage;
+import tom.engine.adt.tomsignature.types.Option;
+import tom.engine.adt.tomsignature.types.OptionList;
+import tom.engine.adt.tomsignature.types.TomSymbol;
+import tom.engine.adt.tomsignature.types.TomTerm;
+import tom.engine.adt.tomsignature.types.TomType;
+import tom.engine.exception.TomRuntimeException;
+import tom.engine.tools.TomGenericPlugin;
 import tom.platform.PlatformLogRecord;
 
 

@@ -23,15 +23,15 @@
  *
  **/
 
-package jtom.backend;
+package tom.engine.backend;
 
 import java.io.IOException;
 
-import jtom.TomBase;
-import jtom.adt.tomsignature.types.*;
-import jtom.exception.TomRuntimeException;
-import jtom.tools.OutputCode;
-import jtom.tools.SymbolTable;
+import tom.engine.TomBase;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.exception.TomRuntimeException;
+import tom.engine.tools.OutputCode;
+import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
  
 public abstract class TomAbstractGenerator extends TomBase {

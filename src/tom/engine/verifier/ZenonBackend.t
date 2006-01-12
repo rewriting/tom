@@ -24,14 +24,14 @@
  *
  **/
 
-package jtom.verifier;
+package tom.engine.verifier;
 
-import jtom.*;
+import tom.engine.*;
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import jtom.adt.zenon.*;
-import jtom.adt.zenon.types.*;
+import tom.engine.adt.zenon.*;
+import tom.engine.adt.zenon.types.*;
 
 public class ZenonBackend {
 

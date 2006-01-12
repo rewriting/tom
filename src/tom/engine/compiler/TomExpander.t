@@ -23,18 +23,18 @@
  *
  **/
 
-package jtom.compiler;
+package tom.engine.compiler;
 
 import java.util.logging.Level;
 import java.util.Iterator;
 
-import jtom.adt.tomsignature.types.*;
-import jtom.exception.TomRuntimeException;
-import jtom.TomMessage;
-import jtom.tools.TomFactory;
-import jtom.tools.TomGenericPlugin;
-import jtom.tools.Tools;
-import jtom.xml.Constants;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.exception.TomRuntimeException;
+import tom.engine.TomMessage;
+import tom.engine.tools.TomFactory;
+import tom.engine.tools.TomGenericPlugin;
+import tom.engine.tools.Tools;
+import tom.engine.xml.Constants;
 import tom.library.traversal.Replace1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
