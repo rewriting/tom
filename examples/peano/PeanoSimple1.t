@@ -84,7 +84,6 @@ public class PeanoSimple1 {
     PeanoSimple1 test = new PeanoSimple1(new PureFactory());
     test.run(10);
   }
- 
 
 }
 
