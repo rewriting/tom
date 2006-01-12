@@ -50,7 +50,7 @@ public class PeanoSimple1 {
     implement { ATerm }
   }
 
-  %op term zero {
+  %op term zero() {
     is_fsym(t) { (((ATermAppl)t).getAFun())==fzero }
   }
   
