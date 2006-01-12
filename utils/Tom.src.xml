@@ -46,80 +46,80 @@
 
   <plugins>
     <plugin name="Starter"
-						class="tom.engine.starter.TomStarter"/>
-		<plugin name="Parser"
-						class="tom.engine.parser.TomParserPlugin"/>
-		<plugin name="Syntax checker"
-						class="tom.engine.checker.TomSyntaxChecker"/>
-		<plugin name="Expander"
-						class="tom.engine.compiler.TomExpander"/>
-		<plugin name="Type checker"
-						class="tom.engine.checker.TomTypeChecker"/>
-		<plugin name="Compiler"
-						class="tom.engine.compiler.TomCompiler"/>
-		<plugin name="Optimizer"
-						class="tom.engine.optimizer.TomOptimizer"/>
-		<plugin name="Verifier"
-						class="tom.engine.verifier.TomVerifier"/>
+            class="tom.engine.starter.TomStarter"/>
+    <plugin name="Parser"
+            class="tom.engine.parser.TomParserPlugin"/>
+    <plugin name="Syntax checker"
+            class="tom.engine.checker.TomSyntaxChecker"/>
+    <plugin name="Expander"
+            class="tom.engine.compiler.TomExpander"/>
+    <plugin name="Type checker"
+            class="tom.engine.checker.TomTypeChecker"/>
+    <plugin name="Compiler"
+            class="tom.engine.compiler.TomCompiler"/>
+    <plugin name="Optimizer"
+            class="tom.engine.optimizer.TomOptimizer"/>
+    <plugin name="Verifier"
+            class="tom.engine.verifier.TomVerifier"/>
     <plugin  name="Backend"
-						 class="tom.engine.backend.TomBackend"/>
+             class="tom.engine.backend.TomBackend"/>
   </plugins>
 
   <optionmanager class="tom.engine.TomOptionManager">
-		<options>
+    <options>
       <boolean name="help" altName="h"
-			   			 description="Print this help"
-						   value="false"/>
-		  <boolean name="version" altName="V"
-			  			 description="Print version"
-				  		 value="false"/>
-		  <boolean name="verbose" altName="v"
-		  				 description="Set verbose mode on"
-			  			 value="false"/>
+               description="Print this help"
+               value="false"/>
+      <boolean name="version" altName="V"
+               description="Print version"
+               value="false"/>
+      <boolean name="verbose" altName="v"
+               description="Set verbose mode on"
+               value="false"/>
       <boolean name="intermediate" altName="i"
-			  		   description="Generate intermediate files"
-			  		   value="false"/>
+               description="Generate intermediate files"
+               value="false"/>
       <boolean name="noDeclaration" altName="D"
-			  		 description="Do not generate code for declarations"
-			  		 value="false"/>
+               description="Do not generate code for declarations"
+               value="false"/>
       <boolean name="wall" altName="W"
-			  		 description="Print warning"
-			  		 value="false"/>
+               description="Print warning"
+               value="false"/>
       <boolean name="lazyType" altName="l"
-			  		 description="Use universal type"
-			  		 value="false"/>
+               description="Use universal type"
+               value="false"/>
       <boolean name="pretty" altName="p"
-			  			 description="Generate readable code"
-			  			 value="false"/>
+               description="Generate readable code"
+               value="false"/>
       <boolean name="static" altName=""
-			  		  description="Generate static functions"
-			  		  value="false"/>
+               description="Generate static functions"
+               value="false"/>
       <boolean name="protected" altName=""
-			  		  description="Generate protected functions"
-			  		  value="false"/>
+               description="Generate protected functions"
+               value="false"/>
       <boolean name="stamp" altName=""
-			  			 description="Use stamp to simulate concrete ADT"
-			  			 value="false"/>
+               description="Use stamp to simulate concrete ADT"
+               value="false"/>
       <boolean name="eclipse" altName=""
-			  			 description="Sets Eclipse mode"
-				  		 value="false"/>
+               description="Sets Eclipse mode"
+               value="false"/>
       <string name="import"	altName="I"
-			   			description="Path for %include"
-					  	value=""
-						  attrName="path"/>
+              description="Path for %include"
+              value=""
+              attrName="path"/>
       <string name="output"	altName="o"
-			  			description="Set output file name"
-				  		value=""
-						attrName="file"/>
+              description="Set output file name"
+              value=""
+              attrName="file"/>
       <string name="destdir" altName="d"
-			  			description="Specify where to place generated files"
-				  		value="."
-					  	attrName="dir"/>
+              description="Specify where to place generated files"
+              value="."
+              attrName="dir"/>
       <string name="encoding" altName="e"
-			  			description="Specify the character encoding"
-				  		value="UTF-8"
-							attrName="charset"/>
-		</options>
+              description="Specify the character encoding"
+              value="UTF-8"
+              attrName="charset"/>
+    </options>
   </optionmanager>
-
+  
 </platform>
