@@ -56,7 +56,8 @@
   <property name="list"           value="list"/>
   <property name="lsystem"        value="lsystems"/>
   <property name="matching"       value="matching"/>
-  <property name="xrho"        value="xrho"/>
+  <property name="master"         value="master"/>
+  <property name="xrho"           value="xrho"/>
   <property name="mgs"            value="mgs"/>
   <property name="nspk"           value="nspk"/>
   <property name="p3p"            value="p3p"/>
@@ -472,6 +473,17 @@
     </copy>
   </target>
 
+  <target name="master" depends="init"> 
+    <vascompile example="${master}"/>
+    <tomcompile example="${master}"/>
+    <javacompile example="${master}"/>
+  	<copy todir="${examples.build}/${master}">
+      <fileset dir="${master}">
+        <include name="*.txt"/>
+      </fileset>
+    </copy>
+  </target>
+
   <target name="xrho" depends="init">
     <vascompile example="${xrho}"/>
     <tomcompile example="${xrho}"/>
@@ -714,7 +726,7 @@
           description="Builds the examples (at least some)"
           depends="addressbook, adt, antipattern, apireach, appletxml, boulderdash,
           builtin, caml, cell, dom, expression, ferus, gomoku, gtree, integerc,
-          list, matching, xrho, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
+          list, matching, master, xrho, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, ted, 
           tutorial, vas, xml">
   </target>
