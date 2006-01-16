@@ -52,7 +52,7 @@ public class Tom {
   public final static String VERSION = "@TOM_VERSION@";
   
   /** Log radical string*/
-  public final static String LOG_RADICAL = "jtom";
+  public final static String LOG_RADICAL = "tom.engine";
   
   /** "java.util.logging.config.file" */
   private final static String LOGGING_PROPERTY_FILE =
@@ -88,7 +88,7 @@ public class Tom {
    
   /**
    * This method should be used to change the Level of logging, instead of
-   * directly accessing to the logger via Logger.getLogger("jtom").
+   * directly accessing to the logger via Logger.getLogger("tom.engine").
    * Indeed, this method respect the fact that the logger's Level should
    * never ever be set higher than Level.WARNING, because it would cause the 
    * StatusHandler to malfunction.
