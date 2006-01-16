@@ -2,14 +2,17 @@
 
 \newcommand{\tom}{\textsc{Tom} }
 
-\title{Incoming Features}
-\author{Anne-Claire Lonchamp, Pierre-Etienne Moreau, Antoine Reilles}
+\title{Incoming Features\\Work in Progress}
+\author{Tom Team}
 \date\today
 
 \begin{document}
 \maketitle
 
+\tableofcontents
+
 \section{Namespaces XML}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 It is desirable to deal with XML terms and patterns in \tom that contain namespace information, such as 
 \verb$<n1:A></n1:A>$. Namespaces apply both to a XML document's elements and attributes. 
 
@@ -118,7 +121,8 @@ In the case the user does not care about namespace associations, perhaps it is s
 
 Addtionally, the \tom parser must be adapted to store the namespace information considering their respective scopes.
 
-\section{Less restrictions whith lists}
+\section{Less restrictions with lists}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{verbatim}
 symbol(domain*) -> codomain
 \end{verbatim}
@@ -128,9 +132,10 @@ and(bool*) -> bool
 or(bool*) -> bool
 \end{verbatim}
 Today, this limitation is due to Apigen which only allows one contructor per codomain for lists.
-A solution is to implement a new tool $vastojava$ which stand in Apigen.
+A solution is to implement a new tool $vas-to-java$ which stands in Apigen.
 
 \section{Overloading}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Rules for overloading}
 \begin{itemize}
 \item Symbols with the same name should have the same codomain.
@@ -152,6 +157,7 @@ In \verb$`f(x)$, we can't predict wich $f$ should be use. It is necessary to cas
 Before using Java function in algebric pattern, it's better to declare its profile with \verb$%fun$. It works as \%op and call the Java function in the make constructor.
 
 \section{Backquote with implicit notation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{verbatim}
 f(s1:A,s2:A) -> B
 g(s1:A,s2:A,s3:A) -> B
