@@ -32,7 +32,7 @@ EqualityCondition(lhs:TomTerm,rhs:TomTerm) -> Instruction
 MakeFunctionBegin(astName:TomName,subjectListAST:TomTerm) -> Instruction
 MakeFunctionEnd() -> Instruction
 FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType, instruction:Instruction) -> Instruction
-Class(astName:TomName,argumentList:TomList,extends:TomType,instruction:Instruction) -> Instruction
+Class(astName:TomName,argumentList:TomList,extendsType:TomType,instruction:Instruction) -> Instruction
 CheckStamp(variable:TomTerm) -> Instruction
 concInstruction(Instruction*) -> InstructionList
 RawAction(astInstruction:Instruction) -> Instruction
