@@ -1,6 +1,14 @@
 #! /bin/sh
 
-TOM_ARGS=
+# This file is generated from utils/script.in by tom's build script
+# Keywords for substitutions:
+# @_TOM_HOME@ allow to specify the variable to be used as TOM_HOME (usefull for
+#   STABLE v.s. SRC)
+# @_MAIN_CLASS@ specify the class containing the main()
+# @_CONFIG_FILE@ specify the config file to use, relative to TOM_HOME
+# @_INCLUDES_DIR@ specify the path for includes (-I option), relative to TOM_HOME
+
+SCRIPT_ARGS=
 JAVA_ARGS=
 while [ $# -gt 0 ]; do
   case $1 in
@@ -8,7 +16,7 @@ while [ $# -gt 0 ]; do
 		JAVA_ARGS=$JAVA_ARGS" "$1
 		;;
 		*)
-		TOM_ARGS=$TOM_ARGS" "$1
+		SCRIPT_ARGS=$SCRIPT_ARGS" "$1
 		;;			
   esac
   shift
@@ -63,17 +71,15 @@ else
     LOCALCLASSPATH=$TOM_JAR:$EXTERNAL_JAR:$LOCALCLASSPATH
 fi
 
-TOM_INC="${@TOM_HOME@}/share/jtom"
-TOM_CONFIG_FILE="${@TOM_HOME@}/Tom.xml"
+SCRIPT_INC="${@TOM_HOME@}/@INCLUDES_DIR@"
+SCRIPT_CONFIG_FILE="${@TOM_HOME@}/@CONFIG_FILE@"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   @TOM_HOME@=`cygpath --windows "$@TOM_HOME@"`
-  TOM_INC=`cygpath --windows "$TOM_INC"`
+  SCRIPT_INC=`cygpath --windows "$SCRIPT_INC"`
   LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
-  TOM_CONFIG_FILE=`cygpath --windows "$TOM_CONFIG_FILE"`
+  SCRIPT_CONFIG_FILE=`cygpath --windows "$SCRIPT_CONFIG_FILE"`
 fi
 
-#echo $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$@TOM_HOME@ tom.engine.Tom -I $TOM_INC -X $TOM_CONFIG_FILE $TOM_ARGS
-
-exec $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$@TOM_HOME@ tom.engine.Tom -I $TOM_INC -X $TOM_CONFIG_FILE $TOM_ARGS
+exec $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$@TOM_HOME@ @MAIN_CLASS@ -I $SCRIPT_INC -X $SCRIPT_CONFIG_FILE $SCRIPT_ARGS

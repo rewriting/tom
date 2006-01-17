@@ -449,9 +449,12 @@
     <!-- "tom binary" -->
     <copy todir="${stable.dist.bin}" file="${utils}/javac-tom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom.bat"/>
-    <copy tofile="${stable.dist.bin}/tom" file="${utils}/tom.in"/>
-    <replace dir="${stable.dist.bin}" token="@TOM_HOME@" value="TOM_HOME">
-      <include name="tom"/>
+    <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
+    <replace file="${stable.dist.bin}/tom">
+	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/jtom"/>
     </replace>
     <copy todir="${stable.dist.bin}">
       <fileset dir="${utils}">
@@ -542,13 +545,19 @@
     <copy tofile="${src.dist}/Vas.xml" file="${src.vasconfigfile}"/>
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
-    <copy tofile="${src.dist.bin}/tom" file="${utils}/tom.in"/>
-    <copy tofile="${src.dist.bin}/tom.src" file="${utils}/tom.in"/>
-    <replace dir="${src.dist.bin}" token="@TOM_HOME@" value="TOM_HOME">
-      <include name="tom"/>
+    <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
+    <copy tofile="${src.dist.bin}/tom.src" file="${utils}/script.in"/>
+    <replace file="${src.dist.bin}/tom">
+	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/jtom"/>
     </replace>
-    <replace dir="${src.dist.bin}" token="@TOM_HOME@" value="TOM_SRC_HOME">
-      <include name="tom.src"/>
+    <replace file="${src.dist.bin}/tom.src">
+	    <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
+	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
+	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/jtom"/>
     </replace>
     <copy todir="${src.dist.bin}">
       <fileset dir="${utils}">
