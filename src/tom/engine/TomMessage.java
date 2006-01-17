@@ -101,6 +101,8 @@ public class TomMessage implements PlatformMessage {
   // parser.TomParser
   public static final TomMessage malformedXMLTerm      =
       new TomMessage("In file {0} at line {1,number,integer}: In structure {2}, malformed XML pattern: expecting {3} but got {4}");
+  public static final TomMessage malformedStrategy=
+      new TomMessage("In file {0} at line {1,number,integer}: In structure {2}, malformed strategy: expecting {3} but got {4}");
   public static final TomMessage errorTwoSameSlotDecl=
     new TomMessage("{0}:{1,number,integer}: In structure {2} declared line {3,number,integer}, get_slot({4},...) is repeated.");
   public static final TomMessage errorIncompatibleSlotDecl =

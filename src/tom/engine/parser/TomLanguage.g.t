@@ -412,7 +412,13 @@ strategyVisit [LinkedList list] throws TomException
 }
     :   
   (
-    VISIT
+    visit:ALL_ID { 
+      if (!"visit".equals(visit.getText())) {
+        throw new TomException(TomMessage.malformedStrategy,
+          new Object[]{currentFile(), new Integer(getLine()),
+          "strat","visit",visit.getText()});
+      }
+    }
     type:ALL_ID  LBRACE
     {
     vType = `TomTypeAlone(type.getText());
@@ -1987,7 +1993,6 @@ tokens {
     WHERE="where";
     IF="if";
     EXTENDS="extends";
-    VISIT="visit";
     MAKE_EMPTY = "make_empty";
     MAKE_INSERT = "make_insert";
     MAKE_APPEND = "make_append";

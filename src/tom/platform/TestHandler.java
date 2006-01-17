@@ -63,9 +63,9 @@ public class TestHandler extends Handler {
   }
 
   public boolean hasLog(Level level) {
-    Enumeration enum = records.elements();
-    while(enum.hasMoreElements()){
-      LogRecord record = (LogRecord) enum.nextElement();
+    Enumeration enumeration = records.elements();
+    while(enumeration.hasMoreElements()){
+      LogRecord record = (LogRecord) enumeration.nextElement();
       if(record.getLevel().equals(level)) return true;
     }
     return false;
@@ -81,9 +81,9 @@ public class TestHandler extends Handler {
   
   public int nbOfLogs(Level level) {
     int nb_rec =0;
-    Enumeration enum = records.elements();
-    while(enum.hasMoreElements()){
-      LogRecord record = (LogRecord) enum.nextElement();
+    Enumeration enumeration = records.elements();
+    while(enumeration.hasMoreElements()){
+      LogRecord record = (LogRecord) enumeration.nextElement();
       if(record.getLevel().equals(level)) nb_rec ++;
     }
     return nb_rec;
