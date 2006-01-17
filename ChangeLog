@@ -1,3 +1,17 @@
+2006-01-17  tonio <reilles@loria.fr>
+  * tom.engine.*
+    - move all jtom/* classes in the package tom.engine
+    - change all packages and imports to follow that change
+    	tom
+	|-library
+	|-platform
+	|-engine--compiler
+		|-parser
+		|-...
+  * build.xml, utils/script.in
+    - generate tom and tom.src executables from a generic script template
+  * bootinstall with the new package layout
+
 2005-04-27  pem  <pem@polly.loria.fr>
   * removed %typelist and %typearray
     - get_head, get_tail, and is_empty have to be defined in %oplist
