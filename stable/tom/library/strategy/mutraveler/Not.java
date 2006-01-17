@@ -9,6 +9,7 @@ import jjtraveler.VisitFailure;
  */
 
 public class Not extends AbstractVisitableVisitor {
+  protected final static int ARG = 0;
   
   public Not(VisitableVisitor v) {
     initSubterm(v);
@@ -16,7 +17,7 @@ public class Not extends AbstractVisitableVisitor {
 
   public Visitable visit(Visitable x) throws VisitFailure {
     try {
-      getArgument(0).visit(x);
+      getArgument(ARG).visit(x);
     } catch (VisitFailure f) {
       return x;
     }

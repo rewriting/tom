@@ -4,10 +4,10 @@
 %include { aterm.tom }
 %include { atermlist.tom }
 %typeterm DerivTree{
-  implement { jtom.adt.il.types.DerivTree}
+  implement { tom.engine.adt.il.types.DerivTree}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.DerivTree)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.DerivTree)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -36,10 +36,10 @@
 }
 
 %typeterm Deriv{
-  implement { jtom.adt.il.types.Deriv}
+  implement { tom.engine.adt.il.types.Deriv}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.Deriv)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.Deriv)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -51,10 +51,10 @@
 }
 
 %typeterm ExprList{
-  implement { jtom.adt.il.types.ExprList}
+  implement { tom.engine.adt.il.types.ExprList}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.ExprList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.ExprList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -77,10 +77,10 @@
   make(e,l) {getIlFactory().makeExprList(e,l)}
 }
 %typeterm Seq{
-  implement { jtom.adt.il.types.Seq}
+  implement { tom.engine.adt.il.types.Seq}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.Seq)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.Seq)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -102,10 +102,10 @@
 }
 
 %typeterm TermList{
-  implement { jtom.adt.il.types.TermList}
+  implement { tom.engine.adt.il.types.TermList}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.TermList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.TermList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -128,10 +128,10 @@
   make(e,l) {getIlFactory().makeTermList(e,l)}
 }
 %typeterm Expr{
-  implement { jtom.adt.il.types.Expr}
+  implement { tom.engine.adt.il.types.Expr}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.Expr)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.Expr)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -202,10 +202,10 @@
 }
 
 %typeterm Term{
-  implement { jtom.adt.il.types.Term}
+  implement { tom.engine.adt.il.types.Term}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.Term)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.Term)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -245,10 +245,10 @@
 }
 
 %typeterm Environment{
-  implement { jtom.adt.il.types.Environment}
+  implement { tom.engine.adt.il.types.Environment}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.Environment)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.Environment)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -260,10 +260,10 @@
 }
 
 %typeterm SubstitutionList{
-  implement { jtom.adt.il.types.SubstitutionList}
+  implement { tom.engine.adt.il.types.SubstitutionList}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.SubstitutionList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.SubstitutionList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -286,10 +286,10 @@
   make(e,l) {getIlFactory().makeSubstitutionList(e,l)}
 }
 %typeterm Substitution{
-  implement { jtom.adt.il.types.Substitution}
+  implement { tom.engine.adt.il.types.Substitution}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.Substitution)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.Substitution)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -306,10 +306,10 @@
 }
 
 %typeterm InstrList{
-  implement { jtom.adt.il.types.InstrList}
+  implement { tom.engine.adt.il.types.InstrList}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.InstrList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.InstrList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -332,10 +332,10 @@
   make(e,l) {getIlFactory().makeInstrList(e,l)}
 }
 %typeterm Instr{
-  implement { jtom.adt.il.types.Instr}
+  implement { tom.engine.adt.il.types.Instr}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.Instr)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.Instr)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -374,10 +374,10 @@
 }
 
 %typeterm AbsTerm{
-  implement { jtom.adt.il.types.AbsTerm}
+  implement { tom.engine.adt.il.types.AbsTerm}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.AbsTerm)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.AbsTerm)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -404,10 +404,10 @@
 }
 
 %typeterm Variable{
-  implement { jtom.adt.il.types.Variable}
+  implement { tom.engine.adt.il.types.Variable}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.Variable)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.Variable)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -418,10 +418,10 @@
 }
 
 %typeterm Symbol{
-  implement { jtom.adt.il.types.Symbol}
+  implement { tom.engine.adt.il.types.Symbol}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.il.types.Symbol)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.il.types.Symbol)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 

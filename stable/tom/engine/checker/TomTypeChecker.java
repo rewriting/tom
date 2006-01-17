@@ -103,6 +103,11 @@ public class TomTypeChecker extends TomChecker {
                 currentTomStructureOrgTrack = findOriginTracking(tom_match1_1_option);
                 verifyMatchVariable(tom_match1_1_astPatternInstructionList);
                 return false;
+              }} } if(tom_is_fun_sym_Strategy(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomVisitList tom_match1_1_visitList=tom_get_slot_Strategy_visitList(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_Strategy_orgTrack(tom_match1_1);
+
+                currentTomStructureOrgTrack = tom_match1_1_orgTrack;
+                verifyStrategyVariable(tom_match1_1_visitList);
+                return false;
               }} } if(tom_is_fun_sym_RuleSet(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match1_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_RuleSet_orgTrack(tom_match1_1);
 
                 currentTomStructureOrgTrack = tom_match1_1_orgTrack;
@@ -168,6 +173,18 @@ public class TomTypeChecker extends TomChecker {
     }
   } //verifyMatchVariable
   
+  private void verifyStrategyVariable(TomVisitList list) {
+    while(!list.isEmpty()) {
+      TomVisit visit = list.getHead();
+       { tom.engine.adt.tomsignature.types.TomVisit tom_match4_1=(( tom.engine.adt.tomsignature.types.TomVisit)visit); if(tom_is_fun_sym_VisitTerm(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match4_1_astPatternInstructionList=tom_get_slot_VisitTerm_astPatternInstructionList(tom_match4_1);
+
+          verifyMatchVariable(tom_match4_1_astPatternInstructionList);
+        } }}
+
+      // next visit
+      list = list.getTail();
+  }
+}
   /**
    * The notion of conditional rewrite rule can be generalised with a sequence of conditions
    * as in lhs -> rhs where P1:=C1 ... where Pn:=Cn if Qj==Dj 
@@ -199,21 +216,21 @@ public class TomTypeChecker extends TomChecker {
         break;
       }
       
-       { tom.engine.adt.tomsignature.types.InstructionList tom_match4_1=(( tom.engine.adt.tomsignature.types.InstructionList)condList); if(tom_is_fun_sym_concInstruction(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match4_1_list1=tom_match4_1; { tom.engine.adt.tomsignature.types.InstructionList tom_match4_1_begin1=tom_match4_1_list1; { tom.engine.adt.tomsignature.types.InstructionList tom_match4_1_end1=tom_match4_1_list1;{ while (!(tom_is_empty_concInstruction_InstructionList(tom_match4_1_end1))) {tom_match4_1_list1=tom_match4_1_end1;{ { tom.engine.adt.tomsignature.types.Instruction tom_cond=tom_get_head_concInstruction_InstructionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concInstruction_InstructionList(tom_match4_1_list1);
+       { tom.engine.adt.tomsignature.types.InstructionList tom_match5_1=(( tom.engine.adt.tomsignature.types.InstructionList)condList); if(tom_is_fun_sym_concInstruction(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match5_1_list1=tom_match5_1; { tom.engine.adt.tomsignature.types.InstructionList tom_match5_1_begin1=tom_match5_1_list1; { tom.engine.adt.tomsignature.types.InstructionList tom_match5_1_end1=tom_match5_1_list1;{ while (!(tom_is_empty_concInstruction_InstructionList(tom_match5_1_end1))) {tom_match5_1_list1=tom_match5_1_end1;{ { tom.engine.adt.tomsignature.types.Instruction tom_cond=tom_get_head_concInstruction_InstructionList(tom_match5_1_list1);tom_match5_1_list1=tom_get_tail_concInstruction_InstructionList(tom_match5_1_list1);
 
           Instruction condition = tom_cond;
-           { tom.engine.adt.tomsignature.types.Instruction tom_match5_1=(( tom.engine.adt.tomsignature.types.Instruction)condition); if(tom_is_fun_sym_MatchingCondition(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_lhs=tom_get_slot_MatchingCondition_lhs(tom_match5_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_rhs=tom_get_slot_MatchingCondition_rhs(tom_match5_1);
+           { tom.engine.adt.tomsignature.types.Instruction tom_match6_1=(( tom.engine.adt.tomsignature.types.Instruction)condition); if(tom_is_fun_sym_MatchingCondition(tom_match6_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match6_1_lhs=tom_get_slot_MatchingCondition_lhs(tom_match6_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match6_1_rhs=tom_get_slot_MatchingCondition_rhs(tom_match6_1);
 
               // (i)
               ArrayList pVar = new ArrayList();
-              collectVariable(pVar, tom_match5_1_lhs);
+              collectVariable(pVar, tom_match6_1_lhs);
               if(!areAllFreshVariableTest(pVar, variableTable)) {
                 // at least one no fresh variable
                 break;
               }
               // (ii)
               ArrayList cVar = new ArrayList();
-              collectVariable(cVar, tom_match5_1_rhs);
+              collectVariable(cVar, tom_match6_1_rhs);
               if(!areAllExistingVariableTest(cVar, variableTable, TomMessage.declaredVariableIssueInWhere)) {
                 // there is a fresh variable
                 break;
@@ -224,18 +241,18 @@ public class TomTypeChecker extends TomChecker {
                 // there are some coherence issues: same name but not same type
                 break;
               }
-            }} } if(tom_is_fun_sym_TypedEqualityCondition(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_lhs=tom_get_slot_TypedEqualityCondition_lhs(tom_match5_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_rhs=tom_get_slot_TypedEqualityCondition_rhs(tom_match5_1);
+            }} } if(tom_is_fun_sym_TypedEqualityCondition(tom_match6_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match6_1_lhs=tom_get_slot_TypedEqualityCondition_lhs(tom_match6_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match6_1_rhs=tom_get_slot_TypedEqualityCondition_rhs(tom_match6_1);
 
                // (iv)
               ArrayList pVar = new ArrayList();
-              collectVariable(pVar, tom_match5_1_lhs);
+              collectVariable(pVar, tom_match6_1_lhs);
               if(!areAllExistingVariableTest(pVar, variableTable, TomMessage.declaredVariableIssueInIf)) {
                 // there is a fresh variable
                 break;
               }
               // (iv)
               ArrayList cVar = new ArrayList();
-              collectVariable(cVar, tom_match5_1_rhs);
+              collectVariable(cVar, tom_match6_1_rhs);
               if(!areAllExistingVariableTest(cVar, variableTable, TomMessage.declaredVariableIssueInIf)) {
                 // there is a fresh variable
                 break;
@@ -248,7 +265,7 @@ public class TomTypeChecker extends TomChecker {
               }
             }} }}
 
-        }tom_match4_1_end1=tom_get_tail_concInstruction_InstructionList(tom_match4_1_end1);} }tom_match4_1_list1=tom_match4_1_begin1;}}}} }}
+        }tom_match5_1_end1=tom_get_tail_concInstruction_InstructionList(tom_match5_1_end1);} }tom_match5_1_list1=tom_match5_1_begin1;}}}} }}
 
       
       // (iii)

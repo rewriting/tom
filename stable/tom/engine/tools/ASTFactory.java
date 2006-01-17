@@ -171,6 +171,17 @@ public class ASTFactory {
     return list;
   }
 
+  public TomVisitList makeTomVisitList(List argumentList) {
+    TomVisitList list = tsf().makeTomVisitList();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)argumentList.get(i);
+      TomVisit term;
+      term = (TomVisit)elt;
+      list = tsf().makeTomVisitList(term,list);
+    }
+    return list;
+  }
+  
   public TomTerm makeVariable(String name, String type) {
     return makeVariable(makeOption(), name, type);      
   }

@@ -105,6 +105,7 @@ public class Tom {
      */
     if(logger != null && newLevel.intValue() <= Level.WARNING.intValue()) {
       logger.setLevel(newLevel);
+      consoleHandler.setLevel(newLevel);
     } 
 
     if(consoleHandler != null && newLevel.intValue() >= Level.WARNING.intValue()) {
@@ -138,7 +139,7 @@ public class Tom {
   /**
    * initTomRootLogger set thee useParentHandlers flad and
    * remove all pre-existing handlers that might exist from prior uses
-   * especially for multiple invication in the same VM
+   * especially for multiple invocation in the same VM
    */
   private static void initTomRootLogger(boolean useParentHandler) {
     logger.setUseParentHandlers(useParentHandler);

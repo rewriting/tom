@@ -162,6 +162,10 @@ tryAgain:
 						mOPERATOR(true);
 						theRetToken=_returnToken;
 					}
+					else if ((LA(1)=='%') && (LA(2)=='s')) {
+						mSTRATEGY(true);
+						theRetToken=_returnToken;
+					}
 					else if ((LA(1)=='%') && (LA(2)=='r')) {
 						mRULE(true);
 						theRetToken=_returnToken;
@@ -232,6 +236,20 @@ tryAgain:
 		
 		match("`");
 		selector().push("bqlexer");
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	public final void mSTRATEGY(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = STRATEGY;
+		int _saveIndex;
+		
+		match("%strategy");
+		selector().push("tomlexer");
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -403,7 +421,7 @@ tryAgain:
 		
 		match('"');
 		{
-		_loop32:
+		_loop34:
 		do {
 			if ((LA(1)=='\\')) {
 				mESC(false);
@@ -414,7 +432,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop32;
+				break _loop34;
 			}
 			
 		} while (true);
@@ -481,17 +499,17 @@ tryAgain:
 		case 'u':
 		{
 			{
-			int _cnt36=0;
-			_loop36:
+			int _cnt38=0;
+			_loop38:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt36>=1 ) { break _loop36; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt38>=1 ) { break _loop38; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt36++;
+				_cnt38++;
 			} while (true);
 			}
 			mHEX_DIGIT(false);
@@ -686,7 +704,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop50:
+		_loop52:
 		do {
 			if ((_tokenSet_1.member(LA(1)))) {
 				{
@@ -694,7 +712,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop50;
+				break _loop52;
 			}
 			
 		} while (true);
@@ -744,10 +762,10 @@ tryAgain:
 		
 		}
 		{
-		_loop56:
+		_loop58:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop56;
+			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop58;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -767,7 +785,7 @@ tryAgain:
 				newline();
 			}
 			else {
-				break _loop56;
+				break _loop58;
 			}
 			
 		} while (true);

@@ -118,3 +118,8 @@
   make(t0) { getTNodeFactory().makeTNode_CommentNode(t0)}
 }
 
+%op TNode EmptyNode {
+  is_fsym(t) { (t!= null) && t.isEmptyNode()}
+  make() { getTNodeFactory().makeTNode_EmptyNode()}
+}
+

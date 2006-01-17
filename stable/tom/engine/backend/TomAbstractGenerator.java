@@ -325,7 +325,17 @@ public abstract class TomAbstractGenerator extends TomBase {
 
 ;
         return;
-       } if(tom_is_fun_sym_AssignMatchSubject(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1_kid1=tom_get_slot_AssignMatchSubject_kid1(tom_match3_1); { tom.engine.adt.tomsignature.types.Expression tom_match3_1_source=tom_get_slot_AssignMatchSubject_source(tom_match3_1); if(tom_is_fun_sym_Variable(tom_match3_1_kid1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match3_1_kid1_option=tom_get_slot_Variable_option(tom_match3_1_kid1);buildAssignVar(deep,tom_match3_1_kid1,tom_match3_1_kid1_option,tom_match3_1_source)
+       } if(tom_is_fun_sym_FunctionDef(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_astName=tom_get_slot_FunctionDef_astName(tom_match3_1); { tom.engine.adt.tomsignature.types.TomList tom_match3_1_argumentList=tom_get_slot_FunctionDef_argumentList(tom_match3_1); { tom.engine.adt.tomsignature.types.TomType tom_match3_1_codomain=tom_get_slot_FunctionDef_codomain(tom_match3_1); { tom.engine.adt.tomsignature.types.TomType tom_match3_1_throwsType=tom_get_slot_FunctionDef_throwsType(tom_match3_1); { tom.engine.adt.tomsignature.types.Instruction tom_match3_1_instruction=tom_get_slot_FunctionDef_instruction(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_astName) ||  false ) { { String  tom_match3_1_astName_string=tom_get_slot_Name_string(tom_match3_1_astName);buildFunctionDef(deep,tom_match3_1_astName_string,tom_match3_1_argumentList,tom_match3_1_codomain,tom_match3_1_throwsType,tom_match3_1_instruction)
+
+
+;
+        return;
+      } }}}}}} } if(tom_is_fun_sym_Class(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_astName=tom_get_slot_Class_astName(tom_match3_1); { tom.engine.adt.tomsignature.types.TomList tom_match3_1_argumentList=tom_get_slot_Class_argumentList(tom_match3_1); { tom.engine.adt.tomsignature.types.TomType tom_match3_1_extendsType=tom_get_slot_Class_extendsType(tom_match3_1); { tom.engine.adt.tomsignature.types.Instruction tom_match3_1_instruction=tom_get_slot_Class_instruction(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_astName) ||  false ) { { String  tom_match3_1_astName_string=tom_get_slot_Name_string(tom_match3_1_astName);buildClass(deep,tom_match3_1_astName_string,tom_match3_1_argumentList,tom_match3_1_extendsType,tom_match3_1_instruction)
+
+
+;
+        return;
+      } }}}}} } if(tom_is_fun_sym_AssignMatchSubject(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1_kid1=tom_get_slot_AssignMatchSubject_kid1(tom_match3_1); { tom.engine.adt.tomsignature.types.Expression tom_match3_1_source=tom_get_slot_AssignMatchSubject_source(tom_match3_1); if(tom_is_fun_sym_Variable(tom_match3_1_kid1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match3_1_kid1_option=tom_get_slot_Variable_option(tom_match3_1_kid1);buildAssignVar(deep,tom_match3_1_kid1,tom_match3_1_kid1_option,tom_match3_1_source)
 
 
 ;
@@ -707,6 +717,10 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
+  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException; 
+
+  protected abstract void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException; 
+
   protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
 
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;

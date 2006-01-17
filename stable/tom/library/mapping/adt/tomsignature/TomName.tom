@@ -4,10 +4,10 @@
 %include { aterm.tom }
 %include { atermlist.tom }
 %typeterm TomNumberList{
-  implement { jtom.adt.tomsignature.types.TomNumberList}
+  implement { tom.engine.adt.tomsignature.types.TomNumberList}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.tomsignature.types.TomNumberList)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.tomsignature.types.TomNumberList)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -30,10 +30,10 @@
   make(e,l) {getTomNameFactory().makeTomNumberList(e,l)}
 }
 %typeterm TomNumber{
-  implement { jtom.adt.tomsignature.types.TomNumber}
+  implement { tom.engine.adt.tomsignature.types.TomNumber}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.tomsignature.types.TomNumber)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.tomsignature.types.TomNumber)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -103,10 +103,10 @@
 }
 
 %typeterm TomName{
-  implement { jtom.adt.tomsignature.types.TomName}
+  implement { tom.engine.adt.tomsignature.types.TomName}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.tomsignature.types.TomName)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.tomsignature.types.TomName)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 

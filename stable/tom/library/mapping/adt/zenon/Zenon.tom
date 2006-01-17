@@ -4,10 +4,10 @@
 %include { aterm.tom }
 %include { atermlist.tom }
 %typeterm ZSpec{
-  implement { jtom.adt.zenon.types.ZSpec}
+  implement { tom.engine.adt.zenon.types.ZSpec}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.zenon.types.ZSpec)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZSpec)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -19,10 +19,10 @@
 }
 
 %typeterm ZAxiomList{
-  implement { jtom.adt.zenon.types.ZAxiomList}
+  implement { tom.engine.adt.zenon.types.ZAxiomList}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.zenon.types.ZAxiomList)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZAxiomList)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -45,10 +45,10 @@
   make(e,l) {getZenonFactory().makeZAxiomList(e,l)}
 }
 %typeterm ZAxiom{
-  implement { jtom.adt.zenon.types.ZAxiom}
+  implement { tom.engine.adt.zenon.types.ZAxiom}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.zenon.types.ZAxiom)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZAxiom)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -60,10 +60,10 @@
 }
 
 %typeterm ZExpr{
-  implement { jtom.adt.zenon.types.ZExpr}
+  implement { tom.engine.adt.zenon.types.ZExpr}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.zenon.types.ZExpr)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZExpr)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -135,10 +135,10 @@
 }
 
 %typeterm ZType{
-  implement { jtom.adt.zenon.types.ZType}
+  implement { tom.engine.adt.zenon.types.ZType}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.zenon.types.ZType)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZType)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -149,10 +149,10 @@
 }
 
 %typeterm ZTermList{
-  implement { jtom.adt.zenon.types.ZTermList}
+  implement { tom.engine.adt.zenon.types.ZTermList}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.zenon.types.ZTermList)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZTermList)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -175,10 +175,10 @@
   make(e,l) {getZenonFactory().makeZTermList(e,l)}
 }
 %typeterm ZTerm{
-  implement { jtom.adt.zenon.types.ZTerm}
+  implement { tom.engine.adt.zenon.types.ZTerm}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.zenon.types.ZTerm)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZTerm)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 
@@ -210,10 +210,10 @@
 }
 
 %typeterm ZSymbol{
-  implement { jtom.adt.zenon.types.ZSymbol}
+  implement { tom.engine.adt.zenon.types.ZSymbol}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.zenon.types.ZSymbol)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZSymbol)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
   get_implementation(t) {t}
 }
 

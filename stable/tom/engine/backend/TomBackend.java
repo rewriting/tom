@@ -80,7 +80,8 @@ public class TomBackend extends TomGenericPlugin {
       Writer writer;
       long startChrono = System.currentTimeMillis();
       try {
-        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile())));
+        String encoding = getOptionStringValue("encoding");
+        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile()),encoding));
         OutputCode output = new OutputCode(writer, getOptionManager());
         if(getOptionBooleanValue("noOutput")) {
           throw new TomRuntimeException("Backend activated, but noOutput is set");
