@@ -1,7 +1,4 @@
 # This file predefines some proporties:
-# - where jtom-doc is
-
-tomdocdir       = {JTOMDOCPATH}
 
 # To build the C examples, you have to install the aterm library, and the cpl
 # library for the nqueens examples (located in integerc)

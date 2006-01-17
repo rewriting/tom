@@ -52,12 +52,10 @@
   <property name="stable.dist.bin"   location="${stable.dist}/bin"/>
   <property name="stable.dist.lib"   location="${stable.dist}/lib"/>
   <property name="stable.dist.share" location="${stable.dist}/share"/>
-  <property name="stable.dist.doc"   location="${stable.dist}/doc"/>
 
   <property name="src.dist.bin"      location="${src.dist}/bin"/>
   <property name="src.dist.lib"      location="${src.dist}/lib"/>
   <property name="src.dist.share"    location="${src.dist}/share"/>
-  <property name="src.dist.doc"      location="${src.dist}/doc"/>
 
   <!-- for test -->
   <property name="test.gen"     location="${test}/gen"/>    
@@ -168,7 +166,6 @@
     <mkdir dir="${stable.dist.lib}"/>
     <mkdir dir="${stable.dist.share}"/>
     <mkdir dir="${stable.dist.share}/contrib"/>
-    <mkdir dir="${stable.dist.doc}"/>
   </target>
 
   <target name="prepare.dist.src">
@@ -178,7 +175,6 @@
     <mkdir dir="${src.dist.lib}"/>
     <mkdir dir="${src.dist.share}"/>
     <mkdir dir="${src.dist.share}/contrib"/>
-    <mkdir dir="${src.dist.doc}"/>
   </target>
 
   <!-- target debug to help finding properties problems -->
@@ -434,21 +430,11 @@
 
   <!-- Prepare common part of distributions -->
   <target name="dist.common">
-    <fail unless="tomdocdir"
-          message="You have to specify tomdocdir in your local.properties
-          file in order to build distributions">
-    </fail>
     <!-- "tom README and INSTALL" -->
     <copy todir="${dest}" file="README"/>
     <copy todir="${dest}" file="${share}/INSTALL"/>
     <copy todir="${dest}" file="NEWS"/>
     <copy todir="${dest}" file="AUTHORS"/>
-    <!-- tom doc -->
-    <copy todir="${dest}/doc">
-      <fileset dir="${tomdocdir}">
-        <include name="**/*.pdf"/>
-      </fileset>
-    </copy>
   </target>
 
   <target name="dist.stable" 
