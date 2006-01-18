@@ -58,6 +58,19 @@ options {
  		_ -> {return head;}
 		}
  }
+// //TO BE COMPLETE
+// //Le nom que je donne commence par un "!"
+//  protected RTerm addName(String name,RTerm term){
+// 	 if (!table.containsKey(name)){
+// 		 table.put(name,term);
+// 		 return term;
+// 	 }
+// 	 else {
+// 		 System.out.println("Warning, the alias " + name + " was used before and was not modified");
+// 		 return (RTerm)table.get(name);
+
+// 	 }
+//  }
 //TO BE COMPLETE
 //Le nom que je donne commence par un "!"
  protected RTerm addName(String name,RTerm term){
@@ -290,7 +303,7 @@ atom returns [RTerm atom]
 {
   atom=null;
 }
-: atom=constant | atom=variable | atom=def | LPAREN atom=rhoterm RPAREN
+: atom=constant | atom=variable | atom=def | atom=chgeMode | LPAREN atom=rhoterm RPAREN
 ;
 
 constant returns [RTerm constant]
@@ -302,7 +315,6 @@ constant returns [RTerm constant]
 {
   if ("stk".equals(constname.getText())) {
     constant = `stk();
-
   }
   else {
     constant=`const(constname.getText());
@@ -316,6 +328,13 @@ variable returns [RTerm var]
   //String varname="";
 }
 : varname:VAR {var=`var(varname.getText());}
+;
+chgeMode returns [RTerm mode]
+{
+  mode=null;
+  //String varname="";
+}
+: WITHOUTPRINT {mode=`withoutPrint();} | WITHPRINT {mode=`withPrint();}
 ;
 
 def returns [RTerm def]
@@ -354,6 +373,8 @@ AND : '^' ;
 EQ : '=' ;
 AT : '@' ;
 COMMA : ',' ;
+WITHPRINT : "$$" ;
+WITHOUTPRINT : '$' ;
 END : ';' ;
 DEF options{ testLiterals = true; }: '!' 
 ('A'..'Z'

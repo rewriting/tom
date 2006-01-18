@@ -83,8 +83,10 @@ public class Rho {
 	VisitableVisitor onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rules));
 	VisitableVisitor print = new Print();
 	//STRATEGIE OUTERMOST
-	VisitableVisitor oneStepWeakNormalisation = `mu(MuVar("x"),Choice(rules,One_abs(MuVar("x"))));
-	VisitableVisitor myStrategy = MuTraveler.init(`Repeat(Sequence(oneStepWeakNormalisation,Try(print))));
+	VisitableVisitor oneStepWeakNormalisation = MuTraveler.init(`mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
+	VisitableVisitor weakNormalisation =MuTraveler.init(`mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
+	VisitableVisitor strategyWithAllPrint = MuTraveler.init(`Repeat(Sequence(oneStepWeakNormalisation,Try(print))));
+	VisitableVisitor strategyResult =MuTraveler.init(`Repeat(weakNormalisation));
 
 //	VisitableVisitor myStrategy = `Repeat(Sequence(rules,print));
 	//STRATEGIE INNERMOST (FAST)
@@ -97,6 +99,7 @@ public class Rho {
 
 	public void run(){
 		RTerm subject = `const("undefined");
+		VisitableVisitor currentStrategy = strategyResult;
 		String s;
 		System.out.println(" ******************************************************************\n xRho: an implementation  in Tom of the explicit rho-calculus \n with weak normalization and linear first-order patterns\n By Germain Faure\n version Beta. Please use it with care. \n ******************************************************************");
     RhoLexer lexer = new RhoLexer(System.in); // Create parser attached to lexer
@@ -105,13 +108,18 @@ public class Rho {
 			System.out.print("xRho>");
       try {
 				subject = parser.program();
-				System.out.println("Resultat du parsing: " + subject);
+//				System.out.println("Resultat du parsing: " + subject);
 			} catch (Exception e) {
 				System.out.println(e);
 				
 			}
 			try{
-				System.out.println(stringInfix((RTerm)myStrategy.visit(subject)));
+				%match(RTerm subject){
+					withPrint() -> {currentStrategy = strategyWithAllPrint;}
+					withoutPrint() -> {currentStrategy = strategyResult;}
+					_ -> 	 {System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
+				}
+
 			} catch(VisitFailure e) {
 				System.out.println("reduction failed on: " + subject);
 			}
@@ -121,6 +129,7 @@ public class Rho {
 
 	public String test(String s){
 		RTerm subject = `const("undefined");
+		
 		StringReader sr = new StringReader(s);
     RhoLexer lexer = new RhoLexer(sr); // Create parser attached to lexer
     RhoParser parser = new RhoParser(lexer);
@@ -131,24 +140,31 @@ public class Rho {
 			return e.toString();
 		}
 		try{
-			subject = (RTerm)myStrategy.visit(subject);
+			subject = (RTerm)strategyResult.visit(subject);
 			return stringInfix(subject);
 		} catch(VisitFailure e) {
 			return "reduction failed on: " + subject ;
 		}
 	}
-	public String testWithParser(String s){
-		String result = null;
-		return result;
-	}
+
 	
 	class Print extends RhotermVisitableFwd {
 		public Print() {
 			super(`Fail());
 		}
 		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-			System.out.println("|-->>" + arg);
+			System.out.println("=>"  + arg);
+//			System.out.println("=>" + (MuTraveler.getPosition(oneStepWeakNormalisation)).depth() + arg);
 			return arg;
+		}
+	}
+	class TransformToFixPoint extends RhotermVisitableFwd {
+		public TransformToFixPoint() {
+			super(`Fail());
+		}
+		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
+			%match(RTerm 
+			throw new VisitFailure();
 		}
 	}
 	class ReductionRules extends RhotermVisitableFwd {
