@@ -47,7 +47,7 @@ public class TestRho extends TestCase {
 
   public void setUp() {
     if (factory == null) {
-      factory = RhotermFactory.getInstance(new PureFactory());
+      factory = RhotermFactory.getInstance(SingletonFactory.getInstance());
     }
     interpreteur = new Rho(factory);
   }
