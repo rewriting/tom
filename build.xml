@@ -571,10 +571,10 @@
 
     <!-- some libraries -->
     <copy todir="${src.dist.lib}">
+	    <!-- we also copy the ant and junit jar which are not really needed
+	    by tom, but are needed by the applications -->
       <fileset dir="${src.lib}"> 
         <include name="*.jar"/>
-        <exclude name="junit.jar"/>
-        <exclude name="ant.jar"/>
       </fileset>
     </copy>
 
