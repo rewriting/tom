@@ -158,15 +158,15 @@ public class Rho {
 			return arg;
 		}
 	}
-	class TransformToFixPoint extends RhotermVisitableFwd {
-		public TransformToFixPoint() {
-			super(`Fail());
-		}
-		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-			%match(RTerm 
-			throw new VisitFailure();
-		}
-	}
+// 	class TransformToFixPoint extends RhotermVisitableFwd {
+// 		public TransformToFixPoint() {
+// 			super(`Fail());
+// 		}
+// 		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
+// 			%match(RTerm 
+// 			throw new VisitFailure();
+// 		}
+// 	}
 	class ReductionRules extends RhotermVisitableFwd {
 		public ReductionRules() {
 			super(`Fail());
