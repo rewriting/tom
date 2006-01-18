@@ -114,6 +114,37 @@
     <javacompile package="xrho"/>
   </target>
 
+  <target name="junit" description="Runs junit acceptance tests" depends="build, initjunit">
+    <tomjunit printsummary="yes"
+              fork="true"
+              haltonfailure="false"
+              failureproperty="tests.failed"
+              showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${rho.build}"/>
+      </classpath>
+      <batchtest>
+        <fileset dir="${rho.dir}">
+          <include name="xrho/**/Test*.java"/>
+        </fileset>
+      </batchtest>
+    </tomjunit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed in xrho. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+
+  <target name="initjunit" depends="init">
+	  <taskdef name="tomjunit"
+		  classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
+		  classpathref="tom.classpath"/>
+  </target>
+
   <target name="clean" description="make clean">
     <delete dir="${rho.gen}"/>
     <delete dir="${rho.build}"/>
