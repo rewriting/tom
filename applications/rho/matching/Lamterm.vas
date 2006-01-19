@@ -1,7 +1,7 @@
-module Rhoterm
+module LamTerm
   public
     sorts 
-      RTerm Constraint Subst ListConstraint ListSubst ListRTerm 
+      LamTerm Constraint Subst ListConstraint ListSubst ListLamTerm 
     abstract syntax
       var(na:String) -> RTerm
       const(na:String) -> RTerm
@@ -18,5 +18,8 @@ module Rhoterm
       match(lhs:RTerm,rhs:RTerm) -> Constraint 
       matchKO() -> Constraint
       eq(var:RTerm,rhs:RTerm) -> Subst 
-			withPrint() -> RTerm
-			withoutPrint() -> RTerm
+			withPrint() -> Command
+			withoutPrint() -> Command
+      Program(prog:RTerm) -> Program
+      Command(comm:Command) -> Program
+

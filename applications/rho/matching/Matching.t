@@ -28,13 +28,13 @@
   */
 
 
-package xrho;
+package matching;
 
 import aterm.*;
 import aterm.pure.*;
-import xrho.rhoterm.*;
-import xrho.rhoterm.types.*;
-import xrho.rhoterm.types.rterm.Abs;
+import matching.rhoterm.*;
+import matching.rhoterm.types.*;
+import matching.rhoterm.types.rterm.Abs;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -54,7 +54,7 @@ import jjtraveler.VisitFailure;
 
 import java.io.*;
 
-public class Rho {
+public class Matching {
 	private RhotermFactory factory;
 	
 	public Rho(RhotermFactory factory) {

@@ -27,7 +27,7 @@ header {
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   */
-package xrho;
+package matching;
 }
 
 {
@@ -38,7 +38,7 @@ package xrho;
 	import java.util.Hashtable;
 }
 
-class RhoParser extends Parser;
+class LamcalParser extends Parser;
 options {
   k = 1;
 }
@@ -345,7 +345,7 @@ def returns [RTerm def]
 : varname:DEF {def=getName(varname.getText());}
 ;
 
-class RhoLexer extends Lexer;
+class LamcalLexer extends Lexer;
 
 options {
   k=2;

@@ -93,7 +93,9 @@
     </macrodef>
   </target>
 
-  <target name="build" depends="init">
+  <target name="build" depends="build.xrho,build.matching"/>
+
+  <target name="build.xrho" depends="init">
     <vascompile package="xrho"/>
     <tomcompile package="xrho"/>
     <tom config="${tomconfigfile}"
@@ -114,7 +116,28 @@
     <javacompile package="xrho"/>
   </target>
 
-  <target name="junit" description="Runs junit acceptance tests" depends="build, initjunit">
+  <target name="build.matching" depends="init">
+    <vascompile package="matching"/>
+    <tomcompile package="matching"/>
+    <tom config="${tomconfigfile}"
+	    srcdir="${rho.dir}" 
+	    nowarn="${nowarnings}"
+	    optimize="${optimize}"
+	    optimize2="${optimize2}"
+	    verbose="${verbose}"
+	    pretty="${pretty}"
+	    outputfile="${rho.gen}/matching/LamcalParser.g"
+	    options="-I ${rho.gen}/matching -I ${tom.home}/share/jtom">
+	    <include name="matching/*.g.t"/>
+    </tom>
+    <tomantlr target="${rho.gen}/matching/LamcalParser.g"
+              outputdirectory="${rho.gen}/matching">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <javacompile package="matching"/>
+  </target>
+
+  <target name="junit" description="Runs junit acceptance tests for xrho" depends="build.xrho, initjunit">
     <tomjunit printsummary="yes"
               fork="true"
               haltonfailure="false"
