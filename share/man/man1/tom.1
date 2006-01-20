@@ -1,8 +1,9 @@
-.TH TOM 1
-.SH NAME
+.TH TOM 1 "tom-2.3rc0"
+.SH "NAME"
 tom \- a pattern matching compiler
 
-.SH SYNOPSIS
+.SH "SYNOPSIS"
+.IX Header "SYNOPSIS"
 .B tom
 .RI [ options ]
 .I sources[.t] ...
@@ -11,7 +12,8 @@ tom \- a pattern matching compiler
 .RI [ options ]
 .I sources[.t] ...
 
-.SH DESCRIPTION
+.SH "DESCRIPTION"
+.IX Header "DESCRIPTION"
 Tom is a pattern matching compiler, developed at INRIA. Tom is
 particularly well-suited for programming various transformations on
 trees/terms. The tool can be seen as a Yacc-like compiler translating
@@ -19,7 +21,8 @@ patterns into executable pattern matching automata. Similarly to Yacc,
 when a match is found, the corresponding semantic action (a sequence
 of instructions written in C or Java) is triggered and executed.
 
-.SH OPTIONS
+.SH "OPTIONS"
+.IX Header "OPTIONS"
 The options are used either to choose the action to be performed or to
 configure the building process. They are mostly the same in
 .B tom
@@ -42,6 +45,9 @@ Path for %include
 .BI -c,\ --cCode
 Generate C code
 .TP
+.BI -j,\ --jCode
+Generate Java code
+.TP
 .BI --camlCode
 Generate Caml code
 .TP
@@ -60,10 +66,7 @@ Generates intermediate files
 .BI --noOutput
 Do not generate code
 .TP
-.BI --noWarning
-Do not print warning
-.TP
-.BI --Wall
+.BI -W,\ --wall
 Print all warnings
 .TP
 .BI -O,\ --optimize
@@ -74,6 +77,9 @@ Set output file name
 .TP
 .BI -p,\ --pretty
 Generate readable code
+.TP
+.BI --protected
+Generate protected functions
 .TP
 .BI --noSyntaxCheck
 Do not perform syntax checking
@@ -87,16 +93,27 @@ Use universal type
 .BI -v,\ --verbose
 Set verbose mode on
 .TP
+.BI --verify
+Verify correctness of match compilation
+.TP
 .BI -V,\ --version
 Print version and exit.
 .PP
 
-.SH BUGS
+.SH "BUGS"
+.IX Header "BUGS"
 Report them all...
 
-This page documents TOM version 2.1-rc2alpha. 
+This page documents TOM version 2.3rc0
+
 The homepage for TOM can be found at http://tom.loria.fr.
 
-.SH SEE ALSO
-.BR javac (1),
-.BR java (1)
+.SH "SEE ALSO"
+.IX Header "SEE ALSO"
+\&\fIjavac\fR\|(1),
+\fIjava\fR\|(1)
+
+.SH "AUTHORS"
+.IX Header "AUTHORS"
+See the AUTHORS file in distribution, or <http://tom.loria.fr/contact/php>,
+for contributors to TOM.
