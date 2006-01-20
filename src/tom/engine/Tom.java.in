@@ -61,7 +61,7 @@ public class Tom {
   /** The root logger */
   private static Logger logger = Logger.getLogger(Tom.LOG_RADICAL);
   
-  /** the console handler that level can be changed dynamically */
+  /** the console handler those level can be changed dynamically */
   private static Handler consoleHandler = null;
   
   public static void main(String[] args) {

@@ -407,7 +407,6 @@ public class TomBase {
     %match(OptionList optionList) {
       concOption(_*,Debug(Name(str)),_*) -> { return `str; }
     }
-
     return null;
   }
 
