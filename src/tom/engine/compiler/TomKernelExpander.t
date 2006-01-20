@@ -214,25 +214,7 @@ public class TomKernelExpander extends TomBase {
                TomTerm newSubjectList = expandVariable(`context,`tomSubjectList);
                //System.out.println("newSubjectList = " + newSubjectList);
                PatternInstructionList newPatternInstructionList = expandVariablePatternInstructionList(newSubjectList,`patternInstructionList);
-
-               /*
-                * expansion of RawAction into TypedAction
-                */
-               PatternInstructionList typedActionPatternInstructionList = `concPatternInstruction();
-               PatternList negativePattern = `concPattern();
-               while(!newPatternInstructionList.isEmpty()) {
-                 PatternInstruction head = newPatternInstructionList.getHead();
-                 %match(PatternInstruction head) {
-                   PatternInstruction(pattern,RawAction(actionInst),piOption) -> {
-                     Instruction typedAction = `TypedAction(actionInst,pattern,negativePattern);
-                     typedActionPatternInstructionList = (PatternInstructionList) typedActionPatternInstructionList.append(`PatternInstruction(pattern,typedAction,piOption));
-                     negativePattern = (PatternList) negativePattern.append(`pattern);
-                   }
-                 }
-                 newPatternInstructionList = newPatternInstructionList.getTail();
-               }
-
-               return `Match(newSubjectList,typedActionPatternInstructionList, option);
+               return `Match(newSubjectList,newPatternInstructionList, option);
              }
           } // end match
         } else if(subject instanceof Pattern) {

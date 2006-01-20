@@ -148,6 +148,7 @@ public class TomCompiler extends TomGenericPlugin {
             Match(SubjectList(l1),patternInstructionList, matchOptionList)  -> {
               Option orgTrack = findOriginTracking(`matchOptionList);
               PatternInstructionList newPatternInstructionList = `concPatternInstruction();
+              PatternList negativePattern = `concPattern();
               while(!`patternInstructionList.isEmpty()) {
                 /*
                  * the call to preProcessing performs the recursive expansion
@@ -155,14 +156,23 @@ public class TomCompiler extends TomGenericPlugin {
                  */
                 PatternInstruction elt = preProcessingPatternInstruction(`patternInstructionList.getHead());
                 PatternInstruction newPatternInstruction = elt;
-              
+
                 matchBlock: {
                   %match(PatternInstruction elt) {
-                    PatternInstruction(Pattern[subjectList=subjectList,tomList=termList,guards=guardList],actionInst, option) -> {
+                    PatternInstruction(pattern@Pattern[subjectList=subjectList,tomList=termList,guards=guardList],actionInst, option) -> {
+                      Instruction newAction = `actionInst;
+                      /* expansion of RawAction into TypedAction */
+                      %match(Instruction actionInst) {
+                        RawAction(x) -> { 
+                          newAction=`TypedAction(x,pattern,negativePattern);
+                        }
+                      }
+                      negativePattern = (PatternList) negativePattern.append(`pattern);
+
                       /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
                       TomList renamedTermList = linearizePattern(`termList,equalityCheck);
-                      newPatternInstruction = `PatternInstruction(Pattern(subjectList,renamedTermList,guardList),actionInst, option);        
+                      newPatternInstruction = `PatternInstruction(Pattern(subjectList,renamedTermList,guardList),newAction, option);        
                       /* attach guards to variables or applications*/
                       TomList constrainedTermList = renamedTermList;
                       TomList l = `guardList;
@@ -173,7 +183,7 @@ public class TomCompiler extends TomGenericPlugin {
                         l = l.getTail();
                       }
                       TomList emptyGuardList = `empty();
-                      newPatternInstruction = `PatternInstruction(Pattern(subjectList,constrainedTermList,emptyGuardList),actionInst, option);        
+                      newPatternInstruction = `PatternInstruction(Pattern(subjectList,constrainedTermList,emptyGuardList),newAction, option);        
 
                       /* abstract patterns */
                       ArrayList abstractedPattern  = new ArrayList();
@@ -186,7 +196,7 @@ public class TomCompiler extends TomGenericPlugin {
                       
                         TomList generatedSubjectList = `getAstFactory().makeList(introducedVariable);
                         PatternInstruction generatedPatternInstruction =
-                          `PatternInstruction(Pattern(generatedSubjectList, getAstFactory().makeList(abstractedPattern),emptyGuardList),actionInst, concOption());        
+                          `PatternInstruction(Pattern(generatedSubjectList, getAstFactory().makeList(abstractedPattern),emptyGuardList),newAction, concOption());        
                         /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
                         OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
                         Instruction generatedMatch =
@@ -244,10 +254,9 @@ public class TomCompiler extends TomGenericPlugin {
               }
 
               TomRuleList ruleList = `rl;
-              PatternList negativePattern = `concPattern();
               TomRule rule;
               TomTerm newRhs;
-              Instruction rhsInst,newRhsInst,typedAction;
+              Instruction rhsInst,newRhsInst;
               Pattern pattern;
               TomList guardList = empty();//no guardlist in pattern
               while(!ruleList.isEmpty()) {
@@ -262,9 +271,7 @@ public class TomCompiler extends TomGenericPlugin {
                     rhsInst = `If(TrueTL(),Return(newRhs),Nop());
                     newRhsInst = `buildCondition(condList,rhsInst);
                     pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
-                    typedAction = `TypedAction(newRhsInst,pattern,negativePattern);
-                    negativePattern = (PatternList) negativePattern.append(pattern);
-                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(pattern,typedAction,option));
+                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(pattern,RawAction(newRhsInst),option));
                   }
                 } 
                 ruleList = ruleList.getTail();
@@ -355,6 +362,10 @@ public class TomCompiler extends TomGenericPlugin {
         TomTerm introducedVariable = newSubject;
         TomList guardList = empty();
         TomList generatedSubjectList = `cons(introducedVariable,empty()); 
+        /*
+         * we do not use RawAction nor TypedAction here because the generated match should not
+         * produce any proof obligation for the verifier
+         */
         PatternInstruction generatedPatternInstruction =
           `PatternInstruction(Pattern(generatedSubjectList, cons(pattern,empty()),guardList),newAction, option());        
 
