@@ -290,7 +290,7 @@ public class TomCompiler extends TomGenericPlugin {
 
            Strategy(name,args,_,visitList,orgTrack) -> {
             InstructionList l = `concInstruction();//represents compiled Strategy
-TomList subjectListAST = empty();
+	    TomList subjectListAST = empty();
             TomVisit visit;
             TomVisitList jVisitList = `visitList;
             TomTerm arg;//arg = subjectList
@@ -300,7 +300,7 @@ TomList subjectListAST = empty();
               %match(TomVisit visit) {
                 VisitTerm(visitType,patternInstructionList) -> {
                   arg = `Variable(option(),Name("arg"),visitType,concConstraint());//one argument only in visit_Term
-subjectListAST = append(arg,subjectListAST);
+		  subjectListAST = append(arg,subjectListAST);
                   funcName = "visit_" + getTomType(`visitType);//function signature is visit_Term(Term arg) throws...
                   l = `concInstruction(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,EmptyType(),Match(SubjectList(subjectListAST),
                         patternInstructionList, 
