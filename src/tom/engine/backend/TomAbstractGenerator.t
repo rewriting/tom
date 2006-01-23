@@ -150,6 +150,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      /*TLVar[strName=name] -> {
+	      output.write(`name);
+	      return;
+      }*/
+
       TargetLanguageToTomTerm(t) -> {
         generateTargetLanguage(deep,`t);
         return;

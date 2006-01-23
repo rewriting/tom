@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.tools.OutputCode;
+import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
@@ -202,4 +203,8 @@ public class TomCGenerator extends TomImperativeGenerator {
     generatePairNameDeclList(deep, pairNameDeclList);
   }
 
+  protected void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException {
+    System.out.println("Class not supported in Caml");
+    throw new TomRuntimeException("Class not supported in Caml");
+  }
 } // class TomCGenerator

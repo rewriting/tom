@@ -181,17 +181,18 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
   
   protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
-    String glType = getTLType(getSymbolCodomain(tomSymbol));
-    String name = tomSymbol.getAstName().getString();
-    
-    output.write(deep,glType + " " + name + "(");
+    output.write(deep,"public " + getTomType(`codomain) + " " + tomName + "(");
     TomTerm localVar;
     while(!varList.isEmpty()) {
       localVar = varList.getHead();
       matchBlock: {
         %match(TomTerm localVar) {
           v@Variable[astType=type2] -> {
+            output.write(deep,getTomType(`type2) + " ");
+            generate(deep,`v);
+            break matchBlock;
+          }
+          v@TLVar[astType=type2] -> {
             output.write(deep,getTLType(`type2) + " ");
             generate(deep,`v);
             break matchBlock;
@@ -209,12 +210,13 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       }
     }
     output.writeln(deep,") {");
+    generateInstruction(deep,instruction);
+    output.writeln(deep,") }");
   }
 
-  protected void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException {
+  /*protected void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     String name = tomSymbol.getAstName().getString();
-    
     output.write(deep,"class " + name + "(");
     TomTerm localVar;
     while(!varList.isEmpty()) {
@@ -238,8 +240,10 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
         
       }
     }
-    output.writeln(deep,") {");
-  }
+    output.write(deep,") {");
+    generateInstruction(deep,`instruction);
+    output.write(deep,"}");
+  }*/
 
   protected void buildExpNegation(int deep, Expression exp) throws IOException {
     output.write("!(");

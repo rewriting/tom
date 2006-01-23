@@ -343,6 +343,11 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     buildUnamedBlock(deep,instList);
   }
 
+  protected void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException {
+    System.out.println("Class not supported in Caml");
+    throw new TomRuntimeException("Class not supported in Caml");
+  }
+
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
     System.out.println(" Deprecated intermediate code : break is evil");
   }

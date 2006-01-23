@@ -290,7 +290,7 @@ public class TomCompiler extends TomGenericPlugin {
 
            Strategy(name,args,_,visitList,orgTrack) -> {
             InstructionList l = `concInstruction();//represents compiled Strategy
-
+TomList subjectListAST = empty();
             TomVisit visit;
             TomVisitList jVisitList = `visitList;
             TomTerm arg;//arg = subjectList
@@ -299,16 +299,17 @@ public class TomCompiler extends TomGenericPlugin {
               visit = jVisitList.getHead();
               %match(TomVisit visit) {
                 VisitTerm(visitType,patternInstructionList) -> {
-                  arg = `TLVar("arg",visitType);//one argument only in visit_Term
-                  funcName = "visit_" + `visitType.getName();//function signature is visit_Term(Term arg) throws...
-                  l = `concInstruction(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,EmptyType(),Match(arg,
+                  arg = `Variable(option(),Name("arg"),visitType,concConstraint());//one argument only in visit_Term
+subjectListAST = append(arg,subjectListAST);
+                  funcName = "visit_" + getTomType(`visitType);//function signature is visit_Term(Term arg) throws...
+                  l = `concInstruction(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,EmptyType(),Match(SubjectList(subjectListAST),
                         patternInstructionList, 
                         concOption(orgTrack))));
                 }
               }
               jVisitList = jVisitList.getTail();
             }
-            return `Class(name,args,EmptyType(),AbstractBlock(l));
+            return `Class(name,args,EmptyType(),preProcessingInstruction(AbstractBlock(l)));
            }
 
           } // end match

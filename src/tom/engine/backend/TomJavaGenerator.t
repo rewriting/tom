@@ -27,10 +27,16 @@ package tom.engine.backend;
 
 import java.io.IOException;
 
+import tom.engine.adt.tomsignature.types.Instruction;
 import tom.engine.adt.tomsignature.types.InstructionList;
+import tom.engine.adt.tomsignature.types.TomList;
+import tom.engine.adt.tomsignature.types.TomType;
+import tom.engine.adt.tomsignature.types.TomTerm;
+import tom.engine.adt.tomsignature.types.TomSymbol;
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
+import tom.engine.exception.TomRuntimeException;
 
 public class TomJavaGenerator extends TomImperativeGenerator {
    
@@ -62,4 +68,34 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.writeln("}");
   }
 
+  protected void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+    String name = tomSymbol.getAstName().getString();
+    output.write(deep,"class " + name + "(");
+    TomTerm localVar;
+    while(!varList.isEmpty()) {
+      localVar = varList.getHead();
+      matchBlock: {
+        %match(TomTerm localVar) {
+          v@Variable[astType=type2] -> {
+            output.write(deep,getTLType(`type2) + " ");
+            generate(deep,`v);
+            break matchBlock;
+          }
+          _ -> {
+            System.out.println("MakeFunction: strange term: " + localVar);
+            throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
+          }
+        }
+      }
+      varList = varList.getTail();
+      if(!varList.isEmpty()) {
+        output.write(deep,", ");
+        
+      }
+    }
+    output.write(deep,") {");
+    generateInstruction(deep,`instruction);
+    output.write(deep,"}");
+  }
 } // class TomJavaGenerator
