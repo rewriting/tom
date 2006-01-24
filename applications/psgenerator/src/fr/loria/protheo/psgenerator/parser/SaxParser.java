@@ -1,7 +1,7 @@
 /*
  * Created on 14-sept-2004
  *
- * Copyright (c) 2004-2005, Michael Moossen
+ * Copyright (c) 2004-2006, Michael Moossen
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
