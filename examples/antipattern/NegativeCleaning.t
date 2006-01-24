@@ -39,6 +39,14 @@ public class NegativeCleaning extends antipattern.term.TermVisitableFwd {
         Neg(Match(Variable(name),s)) -> {             
             return `False();
         }
+        //if the conjunction contains negative 
+        //then it shoudn't be replaced by false
+        Neg(And(concConstraint(X*,Neg(a),Y*))) -> {
+        	return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
+        }
+        Neg(And(concConstraint(X*))) -> {
+        	return `False();
+        }
       }
       
       return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
