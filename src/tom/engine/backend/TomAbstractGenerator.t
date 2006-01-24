@@ -337,8 +337,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Class(Name(tomName),varList,extendsType,instruction) -> {
-        `buildClass(deep, tomName, varList, extendsType,instruction);
+      Class(Name(tomName),extendsType,instruction) -> {
+        `buildClass(deep, tomName, extendsType,instruction);
         return;
       }
 
@@ -724,7 +724,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException; 
 
-  protected abstract void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException; 
+  protected abstract void buildClass(int deep, String tomName, TomType extendsType, Instruction instruction) throws IOException; 
 
   protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
 

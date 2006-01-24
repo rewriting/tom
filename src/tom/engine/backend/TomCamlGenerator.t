@@ -343,9 +343,14 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     buildUnamedBlock(deep,instList);
   }
 
-  protected void buildClass(int deep, String tomName, TomList varList, TomType extendsType, Instruction instruction) throws IOException {
+  protected void buildClass(int deep, String tomName, TomType extendsType, Instruction instruction) throws IOException {
     System.out.println("Class not supported in Caml");
     throw new TomRuntimeException("Class not supported in Caml");
+  }
+
+  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException {
+    System.out.println("Function not yet supported in Caml");
+    throw new TomRuntimeException("Function not yet supported in Caml");
   }
 
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {

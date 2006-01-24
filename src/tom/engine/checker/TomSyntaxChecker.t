@@ -150,9 +150,9 @@ public class TomSyntaxChecker extends TomChecker {
                 `verifyMatch(matchArgsList, patternInstructionList, list);
                 return true;//case when nested %match
               }
-              Strategy(sName,args, extendsTerm, visitList, orgTrack) -> {
+              Strategy(sName, extendsTerm, visitList, orgTrack) -> {
                 /*  STRATEGY MATCH STRUCTURE*/
-                `verifyStrategy(sName, args, extendsTerm, visitList, orgTrack);
+                `verifyStrategy(sName, extendsTerm, visitList, orgTrack);
                 return true;//case when %match in %strategy
               }
               RuleSet(list, orgTrack) -> {
@@ -548,7 +548,7 @@ public class TomSyntaxChecker extends TomChecker {
   ///////////////////////////////// 
   //STRATEGY VERIFICATION CONCERNS /
   /////////////////////////////////
-  private void verifyStrategy(TomName sName, TomList args, TomTerm extendsTerm, TomVisitList visitList, Option orgTrack) {
+  private void verifyStrategy(TomName sName, TomTerm extendsTerm, TomVisitList visitList, Option orgTrack) {
     currentTomStructureOrgTrack = orgTrack;
     while(!visitList.isEmpty()) {
       TomVisit visit = visitList.getHead();

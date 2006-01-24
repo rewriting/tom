@@ -104,7 +104,7 @@ public class TomTypeChecker extends TomChecker {
                 verifyMatchVariable(`patternInstructionList);
                 return false;
               }
-              Strategy(_,_,_,visitList,orgTrack) -> {
+              Strategy(_,_,visitList,orgTrack) -> {
                 currentTomStructureOrgTrack = `orgTrack;
                 verifyStrategyVariable(`visitList);
                 return false;

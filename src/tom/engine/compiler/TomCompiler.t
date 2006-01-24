@@ -288,7 +288,7 @@ public class TomCompiler extends TomGenericPlugin {
               return preProcessingInstruction(`AbstractBlock(l));
             }
 
-           Strategy(name,args,_,visitList,orgTrack) -> {
+           Strategy(name,_,visitList,orgTrack) -> {
             InstructionList l = `concInstruction();//represents compiled Strategy
 	    TomList subjectListAST = empty();
             TomVisit visit;
@@ -309,7 +309,7 @@ public class TomCompiler extends TomGenericPlugin {
               }
               jVisitList = jVisitList.getTail();
             }
-            return `Class(name,args,EmptyType(),preProcessingInstruction(AbstractBlock(l)));
+            return `Class(name,EmptyType(),preProcessingInstruction(AbstractBlock(l)));
            }
 
           } // end match

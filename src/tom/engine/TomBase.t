@@ -467,6 +467,12 @@ public class TomBase {
     return false;
   } 
 */
+  protected String getName(TomName name) {
+    %match(TomName name){
+    	Name(strName) -> { return strName; }	
+    }
+	return null;
+  }
 
   protected TomName getSlotName(TomSymbol symbol, int number) {
     PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
@@ -477,12 +483,14 @@ public class TomBase {
       System.out.println("getSlotName: bad index error");
       throw new TomRuntimeException("getSlotName: bad index error");
     }
+    PairNameDecl pairNameDecl = pairNameDeclList.getHead();
 
-    Declaration decl = pairNameDeclList.getHead().getSlotDecl();
+    Declaration decl = pairNameDecl.getSlotDecl();
     %match(Declaration decl) {
       GetSlotDecl[slotName=name] -> { return `name; }
     }
-    return null;
+
+    return pairNameDecl.getSlotName();
   }
 
   protected int getSlotIndex(TomSymbol tomSymbol, TomName slotName) {

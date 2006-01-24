@@ -340,7 +340,6 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
     LinkedList visitList = new LinkedList();
     TomVisitList astVisitList = `emptyTomVisitList();
     LinkedList argumentList = new LinkedList();
-    TomList args = `emptyTomList();
     TomName orgText = null;
     TomTypeList types = `emptyTomTypeList();
     LinkedList options = new LinkedList();
@@ -380,7 +379,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
             )*
             RPAREN
         )?
-    //EXTENDS BACKQUOTE extendsTerm:ALL_ID LPAREN RPAREN 
+	//EXTENDS BACKQUOTE extendsTerm:ALL_ID LPAREN RPAREN 
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
@@ -391,7 +390,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
             // update for new target block...
             updatePosition(t.getLine(),t.getColumn());
 
-            result = `Strategy(Name(name.getText()),args,emptyTerm,astVisitList,orgTrack);
+            result = `Strategy(Name(name.getText()),emptyTerm,astVisitList,orgTrack);
 
             // %strat finished: go back in target parser.
             selector().pop();
