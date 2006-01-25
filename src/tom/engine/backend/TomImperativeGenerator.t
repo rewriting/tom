@@ -77,6 +77,10 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     return;
   }
 
+  protected void buildSemiColon() throws IOException {
+    output.write(";");
+  }
+
   protected void buildComment(int deep, String text) throws IOException {
     output.writeln("/* " + text + " */");
     return;
@@ -497,6 +501,39 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       }
 
     }
+  }
+
+  protected void genDeclInstr(String returnType,
+                         String declName,
+                         String suffix,
+                         String args[],
+                         Instruction instr,
+                         int deep) throws IOException {
+    StringBuffer s = new StringBuffer();
+    if(nodeclMode) {
+      return;
+    }
+    s.append(modifier + returnType + " " + declName + "_" + suffix + "(");
+    for(int i=0 ; i<args.length ; ) {
+      s.append(args[i] + " " + args[i+1]);
+      i+=2;
+      if(i<args.length) {
+        s.append(", ");
+      }
+    } 
+
+    s.append(") { ");
+    output.write(s);
+    generateInstruction(deep,instr);
+    /*
+     * path to add a semi-colon for 'void instruction'
+     * This is the case of CheckStampDecl
+     */
+    if(instr.isTargetLanguageToInstruction()) {
+      buildSemiColon();
+    }
+    output.write("}");
+
   }
 
   

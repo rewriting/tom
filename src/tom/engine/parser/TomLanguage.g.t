@@ -1558,7 +1558,7 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 result = `TermsEqualDecl(
                     Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
                     Variable(option2,Name(name2.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    tlCode, ot);
+                    Return(TargetLanguageToTomTerm(tlCode)), ot);
             }
         )
     ;
@@ -1583,7 +1583,7 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
                 result = `GetHeadDecl(opname,
                     symbolTable.getUniversalType(),
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    tlCode,
+                    Return(TargetLanguageToTomTerm(tlCode)),
                     ot);
             }
         )
@@ -1609,7 +1609,7 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
 
                 result = `GetTailDecl(opname,
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    tlCode,
+                    Return(TargetLanguageToTomTerm(tlCode)),
                     ot);
             }
         )
@@ -1635,7 +1635,7 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
 
                 result = `IsEmptyDecl(opname,
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    tlCode,
+                    Return(TargetLanguageToTomTerm(tlCode)),
                     ot); 
             }
         )
@@ -1664,7 +1664,7 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
                 result = `GetElementDecl(opname,
                     Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
                     Variable(option2,Name(name2.getText()),TomTypeAlone("int"),emptyConstraintList()),
-                    tlCode, ot);
+                    Return(TargetLanguageToTomTerm(tlCode)), ot);
             }
         )
     ;
@@ -1689,7 +1689,7 @@ keywordGetSize[TomName opname, String type] returns [Declaration result] throws 
 
                 result = `GetSizeDecl(opname,
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    tlCode,ot);
+                    Return(TargetLanguageToTomTerm(tlCode)),ot);
             }
         )
     ;
@@ -1713,7 +1713,7 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
 
             result = `IsFsymDecl(astName,
                 Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
-                tlCode,ot);
+                Return(TargetLanguageToTomTerm(tlCode)),ot);
         }
     ;
 
@@ -1735,7 +1735,7 @@ keywordCheckStamp [String typeString] returns [Declaration result] throws TomExc
             selector().pop();
 
             result = `CheckStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
-                tlCode,ot);
+                TargetLanguageToInstruction(tlCode),ot);
         }
     ;
 
@@ -1757,7 +1757,7 @@ keywordSetStamp [String typeString] returns [Declaration result] throws TomExcep
             selector().pop();
 
             result = `SetStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
-                tlCode,ot);
+                Return(TargetLanguageToTomTerm(tlCode)),ot);
         }
     ;
 
@@ -1779,7 +1779,7 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
             selector().pop();
 
             result = `GetImplementationDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
-                tlCode,ot);
+                Return(TargetLanguageToTomTerm(tlCode)),ot);
         }
     ;
 
@@ -1805,7 +1805,7 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
                 result = `GetSlotDecl(astName,
                     Name(slotName.getText()),
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    tlCode, ot);
+                    Return(TargetLanguageToTomTerm(tlCode)), ot);
             }
         )
     ;

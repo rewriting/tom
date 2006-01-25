@@ -76,6 +76,10 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     return;
   }
 
+  protected void buildSemiColon() throws IOException {
+    // do nothing
+  }
+
   protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
     if(instList.isSingle()) {
       output.writeln(deep,"( (* begin unamed block*)");

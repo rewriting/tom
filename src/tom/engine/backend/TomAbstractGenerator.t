@@ -310,6 +310,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       TargetLanguageToInstruction(t) -> {
         `generateTargetLanguage(deep,t);
+
         return;
       }
 
@@ -522,65 +523,65 @@ public abstract class TomAbstractGenerator extends TomBase {
       CheckStampDecl(Variable[astName=Name(name), 
                               astType=Type(ASTTomType(type),tlType@TLType[])], 
                      //astType=Type((type),tlType@TLType[])], 
-                     tlCode, _) -> {
-        `buildCheckStampDecl(deep, type, name, tlType, tlCode);
+                     instr, _) -> {
+        `buildCheckStampDecl(deep, type, name, tlType, instr);
         return;
       }
       
       SetStampDecl(Variable[astName=Name(name), 
                               astType=Type(ASTTomType(type),tlType@TLType[])], 
-                     tlCode, _) -> {
-        `buildSetStampDecl(deep, type, name, tlType, tlCode);
+                     instr, _) -> {
+        `buildSetStampDecl(deep, type, name, tlType, instr);
         return;
       }
 
       GetImplementationDecl(Variable[astName=Name(name), 
                               astType=Type(ASTTomType(type),tlType@TLType[])], 
-                     tlCode, _) -> {
-        `buildGetImplementationDecl(deep, type, name, tlType, tlCode);
+                     instr, _) -> {
+        `buildGetImplementationDecl(deep, type, name, tlType, instr);
         return;
       }
 
       IsFsymDecl(Name(tomName),
-       Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]], tlCode@TL[], _) -> {
-        `buildIsFsymDecl(deep, tomName, name, tlType, tlCode);
+       Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]], instr, _) -> {
+        `buildIsFsymDecl(deep, tomName, name, tlType, instr);
         return;
       }
- 
+
       GetSlotDecl[astName=Name(tomName),
                   slotName=slotName,
                   variable=Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]],
-                  tlCode=tlCode@TL[]] -> {
-        `buildGetSlotDecl(deep, tomName, name, tlType, tlCode, slotName);
+                  instr=instr] -> {
+        `buildGetSlotDecl(deep, tomName, name, tlType, instr, slotName);
         return;
       }
 
       TermsEqualDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type1),_)],
                      Variable[astName=Name(name2), astType=Type(ASTTomType(type2),_)],
-                     tlCode, _) -> {
-        `buildTermsEqualDecl(deep, name1, name2, type1, type2, tlCode);
+                     instr, _) -> {
+        `buildTermsEqualDecl(deep, name1, name2, type1, type2, instr);
         return;
       }
       
       GetHeadDecl[opname=opNameAST,
                   codomain=Type[tlType=codomain], 
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(suffix),domain@TLType[])],
-                  tlCode=tlCode@TL[]] -> {
-        `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, tlCode);
+                  instr=instr] -> {
+        `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, instr);
         return;
       }
 
       GetTailDecl[opname=opNameAST,
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(type),tlType@TLType[])],
-                  tlCode=tlCode@TL[]] -> {
-        `buildGetTailDecl(deep, opNameAST, varName, type, tlType, tlCode);
+                  instr=instr] -> {
+        `buildGetTailDecl(deep, opNameAST, varName, type, tlType, instr);
         return;
       }
 
       IsEmptyDecl[opname=opNameAST,
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(type),tlType@TLType[])],
-                  tlCode=tlCode@TL[]] -> {
-        `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, tlCode);
+                  instr=instr] -> {
+        `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, instr);
         return;
       }
 
@@ -602,15 +603,15 @@ public abstract class TomAbstractGenerator extends TomBase {
       GetElementDecl[opname=opNameAST,
                      variable=Variable[astName=Name(name1), astType=Type[tomType=ASTTomType(type1),tlType=tlType1@TLType[]]],
                      index=Variable[astName=Name(name2)],
-                     tlCode=tlCode@TL[]] -> {
-        `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, tlCode);
+                     instr=instr] -> {
+        `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, instr);
         return;
       }
       
       GetSizeDecl[opname=opNameAST,
                   variable=Variable[astName=Name(name), astType=Type(ASTTomType(type),tlType@TLType[])],
-                  tlCode=tlCode@TL[]] -> {
-        `buildGetSizeDecl(deep, opNameAST, name, type, tlType, tlCode);
+                  instr=instr] -> {
+        `buildGetSizeDecl(deep, opNameAST, name, type, tlType, instr);
         return;
       }
       
@@ -694,7 +695,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       pairNameDeclList = pairNameDeclList.getTail();
     }
   }
-  
+   
   
     // ------------------------------------------------------------
   
@@ -703,6 +704,13 @@ public abstract class TomAbstractGenerator extends TomBase {
                                   String suffix,
                                   String args[],
                                   TargetLanguage tlCode) throws IOException;
+
+  protected abstract void genDeclInstr(String returnType,
+                                       String declName,
+                                       String suffix,
+                                       String args[],
+                                       Instruction instr,
+                                       int deep) throws IOException;
   
   protected abstract void genDeclMake(String funName, TomType returnType, 
                                       TomList argList, Instruction instr) throws IOException;
@@ -714,6 +722,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   // ------------------------------------------------------------
   
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList) throws IOException;
+  protected abstract void buildSemiColon() throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList) throws IOException;
   protected abstract void buildRef(int deep, TomTerm term) throws IOException;
@@ -760,25 +769,25 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildCheckStamp(int deep, TomType type, TomTerm variable) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName) throws IOException ;
   protected abstract void buildCheckStampDecl(int deep, String type, String name,
-                                              TomType tlType, TargetLanguage tlCode) throws IOException;
+                                              TomType tlType, Instruction instr) throws IOException;
   protected abstract void buildSetStampDecl(int deep, String type, String name,
-                                              TomType tlType, TargetLanguage tlCode) throws IOException;
+                                              TomType tlType, Instruction instr) throws IOException;
   protected abstract void buildGetImplementationDecl(int deep, String type, String name,
-                                              TomType tlType, TargetLanguage tlCode) throws IOException;
+                                              TomType tlType, Instruction instr) throws IOException;
 
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
-                                          TomType tlType, TargetLanguage tlCode) throws IOException;
+                                          TomType tlType, Instruction instr) throws IOException;
   protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
-                                           TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException;
+                                           TomType tlType, Instruction instr, TomName slotName) throws IOException;
   protected abstract void buildTermsEqualDecl(int deep, String name1, String name2,
-                                              String type1, String type2, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain,TargetLanguage tlCode) throws IOException;
-  protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, TargetLanguage tlCode) throws IOException;
+                                              String type1, String type2, Instruction instr) throws IOException;
+  protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Instruction instr) throws IOException;
+  protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Instruction instr) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
-                                           TomType tlType, TargetLanguage tlCode) throws IOException;
+                                           TomType tlType, Instruction instr) throws IOException;
   protected abstract void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2,
-                                              String type1, TomType tlType1, TargetLanguage tlCode) throws IOException;
+                                              String type1, TomType tlType1, Instruction instr) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
-                                           TomType tlType, TargetLanguage tlCode) throws IOException;
+                                           TomType tlType, Instruction instr) throws IOException;
  
 } // class TomAbstractGenerator

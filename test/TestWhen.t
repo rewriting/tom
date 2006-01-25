@@ -41,6 +41,11 @@ public class TestWhen extends TestCase {
     make(t) { g(t) }
   }
 
+  %op boolean glight(s1:term) {
+    //is_fsym(t) { false }
+    make(t) { g(t) }
+  }
+
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestWhen.class));
 	}
@@ -51,7 +56,7 @@ public class TestWhen extends TestCase {
 
   public void testMatch() {
     assertTrue("Testing macth with when (1 arg) : ", 
-								match(`f(a())) == 11 );
+								match(`f(a())) == 12 );
 	}
 
   public void testMatchBis() {
@@ -71,6 +76,7 @@ public class TestWhen extends TestCase {
       /* ok */
       f(x) when g(x)      -> { result++; /*System.out.println("cas 1");*/ }
       f(x@_) when g(x)    -> { result++; /*System.out.println("cas 2");*/ }
+      f(x) when glight(x)      -> { result++; /*System.out.println("cas 3");*/ }
       ff(x) when g(x)     -> { result++; /*System.out.println("nothing 1");*/ }
       (f|ff)(x) when g(x) -> { result++; /*System.out.println("cas disjunction 1");*/ }
       (ff|f)(x) when g(x) -> { result++; /*System.out.println("cas disjunction 2");*/ }
@@ -80,15 +86,15 @@ public class TestWhen extends TestCase {
       f(x) when constant(result) -> { result++; /*System.out.println("cas constants 4");*/ }
       //f(x) when constant(test.length()) ???
       /* warnings */
-      f(x) when g(h(x))   -> { result++; /*System.out.println("cas 3");*/ }
-      f(x) when g(a())    -> { result++; /*System.out.println("cas 4");*/ }
-      f(x) when g(k())    -> { result++; /*System.out.println("cas 5");*/ }
-      f(x) when nol()     -> { result++; /*System.out.println("cas 6");*/ }
+      f(x) when g(h(x))   -> { result++; /*System.out.println("cas warning 1");*/ }
+      f(x) when g(a())    -> { result++; /*System.out.println("cas warning 2");*/ }
+      f(x) when g(k())    -> { result++; /*System.out.println("cas warning 3");*/ }
+      f(x) when nol()     -> { result++; /*System.out.println("cas warning 4");*/ }
       /* errors */
-      //f(x) when g(h(y))   -> { System.out.println("cas 7"); }
-      //f(x) when f(x)      -> { System.out.println("cas 8"); }
-      //f(x) when g(x,x)    -> { System.out.println("cas 9"); }
-      //f(x) when h(x,g(x,x)) -> { System.out.println("cas 10"); }
+      //f(x) when g(h(y))   -> { System.out.println("cas error 1"); }
+      //f(x) when f(x)      -> { System.out.println("cas error 2"); }
+      //f(x) when g(x,x)    -> { System.out.println("cas error 3"); }
+      //f(x) when h(x,g(x,x)) -> { System.out.println("cas error 4"); }
     } 
     return result;
   }

@@ -27,6 +27,7 @@ package tom.engine.compiler;
 
 import java.util.logging.Level;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
@@ -110,7 +111,7 @@ public class TomExpander extends TomGenericPlugin {
    * this phase updates the symbolTable according to the typeTable
    * this is performed by recursively traversing each symbol
    * - backquote are expanded
-   * - each TomTypeAlone is replace by the corresponding TomType
+   * - each TomTypeAlone is replaced by the corresponding TomType
    */
   public void updateSymbolTable() {
     Iterator it = getStreamManager().getSymbolTable().keySymbolIterator();
@@ -118,6 +119,11 @@ public class TomExpander extends TomGenericPlugin {
       String tomName = (String)it.next();
       TomTerm emptyContext = `emptyTerm();
       TomSymbol tomSymbol = getSymbolFromName(tomName);
+      /*
+       * add default isFsym and make HERE
+       */ 
+      tomSymbol = defaultIsFSym(tomSymbol);
+
       tomSymbol = expandTermApplTomSyntax(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
       //System.out.println("symbol = " + tomSymbol);
       tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
@@ -125,6 +131,18 @@ public class TomExpander extends TomGenericPlugin {
     }
   }
   
+  private TomSymbol defaultIsFSym(TomSymbol tomSymbol) {
+    %match(TomSymbol tomSymbol) {
+      Symbol[option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
+        return tomSymbol;
+      }
+      Symbol(name,t@TypesToType(dom,codom),l,(b*,origin@OriginTracking(_,line,file),a*)) -> {
+        return `Symbol(name,t,l,concOption(b*,origin,DeclarationToOption(IsFsymDecl(name,Variable(concOption(OriginTracking(Name("t"),line,file)),Name("t"),codom,concConstraint()),Return(ExpressionToTomTerm(FalseTL())),OriginTracking(Name("is_fsym"),line,file))),a*));
+      }
+    }
+    return tomSymbol;
+  }
+
   /**
    * inherited from OptionOwner interface (plugin) 
    */
