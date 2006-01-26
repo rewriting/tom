@@ -467,12 +467,6 @@ public class TomBase {
     return false;
   } 
 */
-  protected String getName(TomName name) {
-    %match(TomName name){
-    	Name(strName) -> { return strName; }	
-    }
-	return null;
-  }
 
   protected TomName getSlotName(TomSymbol symbol, int number) {
     PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
