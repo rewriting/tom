@@ -88,14 +88,14 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.write(deep,"class " + tomName + "{");
     int args = names.size();
     //write Declarations
-    for (int i=0;i<args;i++){
+    for (int i = 0 ; i < args ; i++){
 	    output.write(deep, types.get(i) + " " + names.get(i) + "; ");
     }
 
     //write constructor
     output.write(deep, modifier + tomName + "(");
     //write constructor parameters
-    for (int i=0;i<args;i++){
+    for (int i = 0 ; i < args ; i++){
 	    output.write(deep,types.get(i) + " " + names.get(i));
 	    if (i+1<args) {//if many parameters
 		    output.write(deep,", ");
@@ -106,7 +106,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.write(deep,") { super(`Indentity());");
     //here index represents the parameter number
     String param;
-    for (int i=0;i<args;i++) {
+    for (int i = 0 ; i < args ; i++) {
 	    param = (String)names.get(i); 
 	    output.write(deep, "this." + param + "=" + param + ";");
     }
