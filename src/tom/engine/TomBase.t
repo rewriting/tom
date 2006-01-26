@@ -46,21 +46,14 @@ import jjtraveler.reflective.VisitableVisitor;
 public class TomBase {
 
   %include { adt/tomsignature/TomSignature.tom }
-  %include{ mutraveler.tom }
+  %include { mutraveler.tom }
 
-  public static final TomSignatureFactory getTomSignatureFactory() {
-    return TomEnvironment.getInstance().getTomSignatureFactory();
-  }
   /** shortcut */
   protected static TomSignatureFactory tsf() {
     return TomEnvironment.getInstance().getTomSignatureFactory();
   }
   
   %include { adt/platformoption/PlatformOption.tom }
-  
-  public static final PlatformOptionFactory getPlatformOptionFactory() {
-    return TomEnvironment.getInstance().getPlatformOptionFactory();
-  }
   
   public static final ASTFactory getAstFactory() {
     return TomEnvironment.getInstance().getAstFactory();
@@ -70,7 +63,7 @@ public class TomBase {
   private GenericTraversal traversal;
   
   public TomBase() {
-    this.empty = getTomSignatureFactory().makeTomList();
+    this.empty = tsf().makeTomList();
     this.traversal = new GenericTraversal();
   }
 

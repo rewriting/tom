@@ -46,15 +46,11 @@ public class ZenonOutput {
   %include { adt/zenon/Zenon.tom }
   // ------------------------------------------------------------
 
-  protected IlFactory factory;
-  protected ZenonFactory zfactory;
   private GenericTraversal traversal;
   private Verifier verifier;
   private TomIlTools tomiltools;
 
   public ZenonOutput(Verifier verifier) {
-    factory = IlFactory.getInstance(SingletonFactory.getInstance());
-    zfactory = ZenonFactory.getInstance(SingletonFactory.getInstance());
     this.traversal = new GenericTraversal();
     this.verifier = verifier;
     this.tomiltools = new TomIlTools(verifier);
@@ -64,14 +60,6 @@ public class ZenonOutput {
     return this.traversal;
   }
   
-  protected final IlFactory getIlFactory() {
-    return factory;
-  }
-
-  protected final ZenonFactory getZenonFactory() {
-    return zfactory;
-  }
-
   public Collection zspecSetFromDerivationTreeSet(Collection derivationSet) {
     Collection resset = new HashSet();
     Iterator it = derivationSet.iterator();

@@ -39,7 +39,6 @@ import java.util.logging.Logger;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.adt.tomsignature.types.*;
-import tom.engine.adt.tomsignature.TomSignatureFactory;
 import tom.engine.exception.TomException;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.TomFactory;
@@ -87,14 +86,6 @@ options{
         this.tomFactory = new TomFactory();
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
         this.symbolTable = target.getSymbolTable();
-    }
-    
-    private final TomSignatureFactory getTomSignatureFactory(){
-        return tsf();
-    }
-    
-    private TomSignatureFactory tsf(){
-        return TomBase.getTomSignatureFactory();
     }
     
     private tom.engine.tools.ASTFactory ast() {

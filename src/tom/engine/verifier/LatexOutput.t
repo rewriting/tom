@@ -41,12 +41,10 @@ public class LatexOutput {
   %include { adt/il/Il.tom }
   // ------------------------------------------------------------
 
-  protected IlFactory factory;
   private GenericTraversal traversal;
   private TomVerifier verifier;
 
   public LatexOutput(TomVerifier verifier) {
-    factory = IlFactory.getInstance(SingletonFactory.getInstance());
     this.traversal = new GenericTraversal();
     this.verifier = verifier;
   }
@@ -55,10 +53,6 @@ public class LatexOutput {
     return this.traversal;
   }
   
-  protected final IlFactory getIlFactory() {
-    return factory;
-  }
-
   public String build_latex(Collection derivationSet) {
     StringBuffer result = new StringBuffer("\n");
 //    String result = "\\documentclass{article}\n";

@@ -41,12 +41,10 @@ public class StatOutput {
   %include { adt/il/Il.tom }
   // ------------------------------------------------------------
 
-  protected IlFactory factory;
   private GenericTraversal traversal;
   private TomVerifier verifier; // is it useful ?
 
   public StatOutput(TomVerifier verifier) {
-    factory = IlFactory.getInstance(SingletonFactory.getInstance());
     this.traversal = new GenericTraversal();
     this.verifier = verifier;
   }
@@ -55,10 +53,6 @@ public class StatOutput {
     return this.traversal;
   }
   
-  protected final IlFactory getIlFactory() {
-    return factory;
-  }
-
   public String build_stats(Collection derivationSet) {
     StringBuffer result = new StringBuffer("\nStatistics for this run: \n");
 

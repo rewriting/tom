@@ -46,14 +46,12 @@ public class Verifier extends TomBase {
   %include{ mutraveler.tom }
   // ------------------------------------------------------------
 
-  protected IlFactory factory;
   private SymbolTable symbolTable;
   private boolean camlsemantics = false;
 
   public Verifier(boolean camlsemantics) {
     super();
     this.camlsemantics = camlsemantics;
-    factory = IlFactory.getInstance(getTomSignatureFactory().getPureFactory());
   }
 
   public void setSymbolTable(SymbolTable symbolTable) {
@@ -66,10 +64,6 @@ public class Verifier extends TomBase {
 
   public boolean isCamlSemantics() {
     return camlsemantics;
-  }
-
-  protected final IlFactory getIlFactory() {
-    return factory;
   }
 
   public Term termFromTomTerm(TomTerm tomterm) {

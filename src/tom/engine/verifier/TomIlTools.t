@@ -46,17 +46,11 @@ public class TomIlTools extends TomBase {
   private SymbolTable symbolTable;
   private Verifier verifier; 
 
-  protected ZenonFactory zfactory;
 
   public TomIlTools(Verifier verifier) {
     super();
     this.verifier = verifier;
     this.symbolTable = verifier.getSymbolTable();
-    zfactory = ZenonFactory.getInstance(getTomSignatureFactory().getPureFactory());
-  }
-
-  protected final ZenonFactory getZenonFactory() {
-    return zfactory;
   }
 
   private SymbolTable getSymbolTable() {

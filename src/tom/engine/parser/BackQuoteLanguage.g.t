@@ -32,7 +32,6 @@ import java.util.LinkedList;
 
 import tom.engine.TomBase;
 import tom.engine.TomEnvironment;
-import tom.engine.adt.tomsignature.TomSignatureFactory;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.xml.Constants;
 import antlr.TokenStreamSelector;
@@ -68,12 +67,6 @@ options{
       bqlexer = (BackQuoteLexer) selector().getStream("bqlexer");
     }
 
-    // --- methods for tom environment ---
-
-    private final TomSignatureFactory getTomSignatureFactory() {
-      return TomEnvironment.getInstance().getTomSignatureFactory();
-    }
-        
     private tom.engine.tools.ASTFactory ast() {
       return TomBase.getAstFactory();
     }

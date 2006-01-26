@@ -38,7 +38,6 @@ import java.util.logging.Logger;
 import tom.platform.ConfigurationManager;
 import tom.platform.OptionManager;
 import tom.platform.OptionOwner;
-import tom.platform.adt.platformoption.PlatformOptionFactory;
 import tom.platform.adt.platformoption.types.PlatformBoolean;
 import tom.platform.adt.platformoption.types.PlatformOption;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
@@ -46,7 +45,6 @@ import tom.platform.adt.platformoption.types.PlatformValue;
 import aterm.ATerm;
 import aterm.ATermAppl;
 import aterm.ATermList;
-import aterm.pure.SingletonFactory;
 
 /**
  * The TomOptionManager manages options of each plugin in the platform.
@@ -55,14 +53,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 
   %include{ adt/platformoption/PlatformOption.tom }
   
-  /**
-   * Accessor method necessary to include adt/platformoption/PlatformOption.tom
-   * @return a PlatformOptionFactory
-   */
-  private PlatformOptionFactory getPlatformOptionFactory() {
-    return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
-  }
-
   /** The global options */    
   private PlatformOptionList globalOptions;
   

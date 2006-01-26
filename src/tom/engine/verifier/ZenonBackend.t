@@ -39,18 +39,12 @@ public class ZenonBackend {
   %include { adt/zenon/Zenon.tom }
   // ------------------------------------------------------------
 
-  protected ZenonFactory zfactory;
   private Verifier verifier; // is it useful ?
   private TomIlTools tomiltools;
 
   public ZenonBackend(Verifier verifier) {
-    zfactory = ZenonFactory.getInstance(SingletonFactory.getInstance());
     this.verifier = verifier;
     this.tomiltools = new TomIlTools(verifier);
-  }
-
-  protected final ZenonFactory getZenonFactory() {
-    return zfactory;
   }
 
   public String genZSymbol(ZSymbol symbol) {

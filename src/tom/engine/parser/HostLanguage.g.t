@@ -39,7 +39,6 @@ import tom.engine.TomStreamManager;
 import tom.engine.TomEnvironment;
 import tom.engine.TomMessage;
 import tom.engine.exception.*;
-import tom.engine.adt.tomsignature.TomSignatureFactory;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.tools.SymbolTable;
 import aterm.*;
@@ -68,6 +67,10 @@ options{
   // the file to be parsed
   private String currentFile = null;
   
+  private tom.engine.tools.ASTFactory ast() {
+    return TomEnvironment.getInstance().getAstFactory();
+  }
+
   private HashSet includedFileSet = null;
   private HashSet alreadyParsedFileSet = null;
   
@@ -122,18 +125,6 @@ options{
     return currentFile;
   }
     
-  private final TomSignatureFactory getTomSignatureFactory(){
-    return TomEnvironment.getInstance().getTomSignatureFactory();
-  }
-    
-  private TomSignatureFactory tsf(){
-    return TomEnvironment.getInstance().getTomSignatureFactory();
-  }
-  
-  private tom.engine.tools.ASTFactory ast() {
-    return TomEnvironment.getInstance().getAstFactory();
-  }
-  
   public SymbolTable getSymbolTable() {
     return getStreamManager().getSymbolTable();
   }
