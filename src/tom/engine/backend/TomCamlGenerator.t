@@ -361,4 +361,40 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     System.out.println(" Deprecated intermediate code : break is evil");
   }
 
+  protected void genDeclInstr(String returnType,
+                         String declName,
+                         String suffix,
+                         String args[],
+                         Instruction instr,
+                         int deep) throws IOException {
+    StringBuffer s = new StringBuffer();
+    if(nodeclMode) {
+      return;
+    }
+    s.append("let " + modifier + " " + declName + "_" + suffix + "(");
+    for(int i=0 ; i<args.length ; ) {
+      // forget the type, caml will infer it
+      s.append(args[i+1]);
+      i+=2;
+      if(i<args.length) {
+        s.append(", ");
+      }
+    } 
+    s.append(") = ");
+    output.write(s);
+    generateInstruction(deep,instr);
+    /*
+     * path to add a semi-colon for 'void instruction'
+     * This is the case of CheckStampDecl
+     */
+    if(instr.isTargetLanguageToInstruction()) {
+      buildSemiColon();
+    }
+    output.write(";;");
+  }
+
+  protected void buildReturn(int deep, TomTerm exp) throws IOException {
+    generate(deep,exp);
+  }
+
 } // class TomCamlGenerator
