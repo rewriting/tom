@@ -31,25 +31,10 @@ package builtin;
 
 import builtin.term.*;
 import builtin.term.types.*;
-import aterm.pure.SingletonFactory;
 
 public class ApiInteger {
 
-  private Factory factory;
-  
   %include { term/term.tom }
-
-  public ApiInteger() {
-    this.factory = Factory.getInstance(SingletonFactory.getInstance());
-  }
-
-  public ApiInteger(Factory factory) {
-    this.factory = factory;
-  }
-
-  public Factory getTermFactory() {
-    return factory;
-  }
 
   public String run() {
     String res = "";

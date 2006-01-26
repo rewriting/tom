@@ -12,19 +12,14 @@ import jjtraveler.reflective.VisitableVisitor;
 import tom.library.strategy.mutraveler.MuTraveler;
 
 public class SimplifySystemModified extends antipattern.term.TermVisitableFwd {
-	protected TermFactory factory;
 	
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 	
-	protected final TermFactory getTermFactory() {
-		return factory;
-	}
 	protected boolean isIdentity;
 	
 	public SimplifySystemModified(VisitableVisitor vis) {
 		super(vis);
-		this.factory = TermFactory.getInstance(SingletonFactory.getInstance());
 		this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
 				true : false ); 
 	}

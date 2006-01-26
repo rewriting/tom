@@ -35,7 +35,6 @@ import boulderdash.boulder.*;
 import boulderdash.boulder.types.*;
 
 public class BoulderDashCore {
-  private Factory factory;
 
   private HashMap space;
   private HashSet marked;
@@ -93,17 +92,8 @@ public class BoulderDashCore {
     return (Bead) space.get(getWestPosition(b.getPos()));
   }
 
-
-  public BoulderDashCore(Factory factory) {
-    this.factory = factory;
-  }
-
-  public Factory getBoulderFactory() {
-    return factory;
-  }
-
   public final static void main(String[] args) {
-    BoulderDashCore test = new BoulderDashCore(Factory.getInstance(new PureFactory()));
+    BoulderDashCore test = new BoulderDashCore();
     test.run();
   }
   
@@ -275,6 +265,4 @@ public class BoulderDashCore {
     }
   }
 
-
 }
-

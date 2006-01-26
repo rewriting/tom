@@ -1,6 +1,6 @@
 import java.io.*;
 import aterm.*;
-import aterm.pure.PureFactory;
+import aterm.pure.SingletonFactory;
 import java.util.*;
 import java.lang.reflect.*;
 
@@ -17,7 +17,7 @@ public class Ted {
   %include { ../atermmapping.tom }
   %include { mutraveler.tom }
 
-  private static ATermFactory atermFactory = new PureFactory();
+  private static ATermFactory atermFactory = SingletonFactory.getInstance();
 
   /* Ted symbol table */
   private HashMap tds = new HashMap();

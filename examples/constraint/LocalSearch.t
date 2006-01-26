@@ -35,23 +35,16 @@ import adt.localsearch.types.*;
 
 public class LocalSearch {
   
-
-  private Factory factory;
   private GenericTraversal traversal;
 
 // ------------------------------------------------------------  
   %include { term/localsearch.tom }
 // ------------------------------------------------------------  
  
-  public LocalSearch(Factory factory) {
-    this.factory = factory;
+  public LocalSearch() {
     this.traversal = new GenericTraversal();
   }
 
-  public final Factory getLocalsearchFactory() {
-      return factory;
-  }
-  
   Csop createFirstNeighborg(Csop t) {
     %match(Csop t) {
       state(empty(),v,lc,lrhs,z,ln,lfn) -> {
@@ -211,8 +204,7 @@ public class LocalSearch {
   }
   
   public final static void main(String[] args) {
-    LocalSearch test = new LocalSearch(new Factory(new PureFactory()));
-    
+    LocalSearch test = new LocalSearch();
     
     test.run();
   }

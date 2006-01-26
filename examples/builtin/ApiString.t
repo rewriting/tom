@@ -35,21 +35,7 @@ import builtin.term.types.*;
 
 public class ApiString {
 
-  private Factory factory;
-  
   %include { term/term.tom }
-
-  public ApiString() {
-    this.factory = Factory.getInstance(SingletonFactory.getInstance());
-  }
-
-  public ApiString(Factory factory) {
-    this.factory = factory;
-  }
-
-  public Factory getTermFactory() {
-    return factory;
-  }
 
   public String run() {
     String res = "";

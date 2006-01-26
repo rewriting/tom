@@ -13,18 +13,8 @@ import tom.library.strategy.mutraveler.MuTraveler;
 
 public class SimplifySystemRule{
 	
-	protected TermFactory factory;
-	
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
-	
-	protected final TermFactory getTermFactory() {
-		return factory;
-	}
-	
-	public SimplifySystemRule(){
-		this.factory = TermFactory.getInstance(SingletonFactory.getInstance());   
-	}
 	
 	%op Constraint AreSymbolsEqual(s1:Term, s2:Term){
 		is_fsym(t) { false }
@@ -163,12 +153,6 @@ public class SimplifySystemRule{
 
 class ContainsTerm extends antipattern.term.TermVisitableFwd {
 	
-	private TermFactory factory;	
-	
-	private final TermFactory getTermFactory() {
-		return factory;
-	} 
-	
 	private boolean found = false;
 	private ATerm objToSearchFor = null;
 	
@@ -176,7 +160,6 @@ class ContainsTerm extends antipattern.term.TermVisitableFwd {
 		super(visitor);
 		this.objToSearchFor = obj;
 		this.found = false;
-		this.factory = TermFactory.getInstance(SingletonFactory.getInstance());      
 	}
 	
 	public Term visit_Term(Term arg) throws VisitFailure { 

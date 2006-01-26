@@ -15,20 +15,10 @@ import tom.library.strategy.mutraveler.MuTraveler;
 
 public class NegativeCleaningRule {
 	
-	protected TermFactory factory;
-	
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 	
-	protected final TermFactory getTermFactory() {
-		return factory;
-	}
-	
 	protected boolean isIdentity;
-	
-	public NegativeCleaningRule() {		
-		this.factory = TermFactory.getInstance(SingletonFactory.getInstance());		
-	}
 	
 	public Constraint applyRules(Constraint c){
 		return c;

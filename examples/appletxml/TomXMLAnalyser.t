@@ -43,10 +43,6 @@ public class TomXMLAnalyser {
   
   private XmlTools xtools;
 
-  private TNodeFactory getTNodeFactory() {
-    return xtools.getTNodeFactory();
-  }
-
   public static void main (String args[]) {
     TomXMLAnalyser test = new TomXMLAnalyser();
     try {

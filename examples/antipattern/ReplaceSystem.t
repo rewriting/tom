@@ -11,15 +11,9 @@ import jjtraveler.reflective.VisitableVisitor;
 
 public class ReplaceSystem extends antipattern.term.TermVisitableFwd {
 	
-	private TermFactory factory;
-	
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 
-	private final TermFactory getTermFactory() {
-		return factory;
-	} 
-      
     private Term variable;
     private Term value;
     private boolean isIdentity;
@@ -28,7 +22,6 @@ public class ReplaceSystem extends antipattern.term.TermVisitableFwd {
       super(visitor);
       this.variable = variable;
       this.value = value;
-      this.factory = TermFactory.getInstance(SingletonFactory.getInstance());      
       this.isIdentity = (visitor.getClass().equals(`Identity().getClass()) ? 
     		  true : false );       
     }

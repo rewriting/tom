@@ -29,7 +29,6 @@
 
 package antipattern;
 
-//import aterm.pure.SingletonFactory;
 import aterm.*;
 import aterm.pure.*;
 
@@ -47,26 +46,8 @@ import jjtraveler.VisitFailure;
 
 public class Matching5 implements Matching{
 	
-	private TermFactory factory;	
-	
 	%include{ mutraveler.tom }	
 	%include{ term/Term.tom }
-	
-	private final TermFactory getTermFactory() {
-		return factory;
-	}
-	
-	private final PureFactory getPureFactory() {
-		return factory.getPureFactory();
-	}
-	
-	Matching5() {
-		this(TermFactory.getInstance(SingletonFactory.getInstance()));;
-	}
-	
-	public Matching5(TermFactory factory) {
-		this.factory = factory;
-	}
 	
 	public Constraint simplifyAndSolve(Constraint c,Collection solution) {
 		
@@ -81,5 +62,3 @@ public class Matching5 implements Matching{
 	
 	
 }
-
-

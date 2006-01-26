@@ -10,19 +10,14 @@ import jjtraveler.VisitFailure;
 import jjtraveler.reflective.VisitableVisitor;
 
 public class SimplifySystem extends antipattern.term.TermVisitableFwd {
-	protected TermFactory factory;
 	
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 
-	protected final TermFactory getTermFactory() {
-		return factory;
-	}
 	protected boolean isIdentity;
 	
 	public SimplifySystem(VisitableVisitor vis) {
       super(vis);
-      this.factory = TermFactory.getInstance(SingletonFactory.getInstance());
       this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
     		  true : false ); 
     }

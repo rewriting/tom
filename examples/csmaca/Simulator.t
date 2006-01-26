@@ -39,7 +39,6 @@ import csmaca.simulator.network.types.*;
 import java.util.Random;
 
 public class Simulator {
-  private networkFactory factory;
 
   %vas {
     module network
@@ -55,16 +54,8 @@ public class Simulator {
       etat(x:Int, t:Int,y:Listes)                             -> Etat      
   }
  
-  public Simulator(networkFactory factory) {
-    this.factory = factory;
-  }
- 
-  public networkFactory getNetworkFactory() {
-    return factory;
-  }
-
   public final static void main(String[] args) {
-    Simulator test = new Simulator(networkFactory.getInstance(new PureFactory()));
+    Simulator test = new Simulator();
     test.run();
   }
 

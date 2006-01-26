@@ -37,21 +37,15 @@ import java.util.Iterator;
 import java.util.HashSet;
 
 public class AddressBook1 {
-  private Factory factory;
   private HashSet book;
    
   %include { data/data.tom }
  
-  public AddressBook1(Factory factory) {
-    this.factory = factory;
+  public AddressBook1() {
   }
  
-  public Factory getDataFactory() {
-    return factory;
-  }
-
   public final static void main(String[] args) {
-    AddressBook1 test = new AddressBook1(Factory.getInstance(new PureFactory()));
+    AddressBook1 test = new AddressBook1();
     test.run();
   }
   

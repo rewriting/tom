@@ -15,22 +15,15 @@ import tom.library.strategy.mutraveler.MuTraveler;
 
 public class SolveSystem extends antipattern.term.TermVisitableFwd {
     
-	protected TermFactory factory;
-	
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 
-	protected final TermFactory getTermFactory() {
-		return factory;
-	}
-	
 	protected Collection solution; 
 	protected boolean isIdentity;
 	
     public SolveSystem(Collection c,VisitableVisitor vis) {
       super(vis);
       this.solution = c;
-      this.factory = TermFactory.getInstance(SingletonFactory.getInstance());
       this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
   		  true : false );      
     }

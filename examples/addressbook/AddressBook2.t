@@ -35,20 +35,13 @@ import addressbook.data.types.*;
 
 
 public class AddressBook2 {
-  private Factory factory;
    
   %include { data/data.tom }
  
-  public AddressBook2(Factory factory) {
-    this.factory = factory;
-  }
+  public AddressBook2() { }
  
-  public Factory getDataFactory() {
-    return factory;
-  }
-
   public final static void main(String[] args) {
-    AddressBook2 test = new AddressBook2(Factory.getInstance(new PureFactory()));
+    AddressBook2 test = new AddressBook2();
     test.run();
   }
   

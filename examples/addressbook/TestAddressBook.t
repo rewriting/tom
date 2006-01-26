@@ -42,23 +42,18 @@ import java.util.HashSet;
 public class TestAddressBook extends TestCase {
   private AddressBook1 test;
   private HashSet book;
-  private Factory factory;
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestAddressBook.class));
   }
 
   public void setUp() {
-    factory = Factory.getInstance(SingletonFactory.getInstance());
-    test = new AddressBook1(factory);
+    test = new AddressBook1();
     book = new HashSet();
     test.generatePerson(book);
   }
 
   %include { data/data.tom }
-  public Factory getDataFactory() {
-    return factory;
-  }
 
   public void testBirthdate() {
     Iterator it = book.iterator();
@@ -74,4 +69,3 @@ public class TestAddressBook extends TestCase {
   }
     
 }
-

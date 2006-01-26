@@ -42,7 +42,6 @@ import antipattern.term.types.*;
 
 public class TestAntiPattern extends TestCase {
 	
-	private TermFactory factory;	
 	private Matching4 testM4;	
 	private Tools tools;
 	private Constraint cons;
@@ -54,15 +53,8 @@ public class TestAntiPattern extends TestCase {
 	}
 	
 	public void setUp() {
-		
-		factory = TermFactory.getInstance(SingletonFactory.getInstance());
-		testM4 = new Matching4(factory);
-		tools = new Tools(factory);
-	}
-	
-	public TermFactory getTermFactory() {
-		
-		return factory;
+		testM4 = new Matching4();
+		tools = new Tools();
 	}
 	
 	public void testMatching4_1() {		

@@ -39,40 +39,23 @@ import antipattern.term.*;
 import antipattern.term.types.*;
 
 public class Tools {
-  private TermFactory factory;
 
   %include{ term/Term.tom }
   %include{ atermmapping.tom }
 
-  private final TermFactory getTermFactory() {
-    return factory;
-  }
-  
-  private final PureFactory getPureFactory() {
-    return factory.getPureFactory();
-  }
-
-  Tools() {
-    this(TermFactory.getInstance(SingletonFactory.getInstance()));;
-  }
-  
-  Tools(TermFactory factory) {
-    this.factory = factory;
-  }
-
   public static void main(String[] args) {
     Tools tools = new Tools();
     System.out.println("\nRunning Matching1: \n");
-    Matching test1 = new Matching2(tools.getTermFactory());
+    Matching test1 = new Matching2();
     tools.run(test1,args[0]);
     System.out.println("\nRunning Matching2: \n");
-    Matching test2 = new Matching2(tools.getTermFactory());
+    Matching test2 = new Matching2();
     tools.run(test2,args[1]);
     System.out.println("\nRunning Matching3: \n");
-    Matching test3 = new Matching3(tools.getTermFactory());
+    Matching test3 = new Matching3();
     tools.run(test3,args[2]);
     System.out.println("\nRunning Matching4: \n");
-    Matching test4 = new Matching4(tools.getTermFactory());
+    Matching test4 = new Matching4();
     tools.run(test4,args[3]);
   }
 
@@ -91,7 +74,7 @@ public class Tools {
 	      if(s.equals("-")) {
 	        System.out.println("---------------------------------------");
 	      } else {
-	        ATerm at = getPureFactory().parse(s);	        
+	        ATerm at = SingletonFactory.getInstance().parse(s);	        
 	        Constraint c = atermToConstraint(at);
           Collection solution = new HashSet();
 	        System.out.println(s);
@@ -168,7 +151,7 @@ public class Tools {
   
   public Constraint atermToConstraint(String term) {
 	  
-      return atermToConstraint(getPureFactory().parse(term));
+      return atermToConstraint(SingletonFactory.getInstance().parse(term));
   }
 
   public Constraint atermToConstraint(ATerm at) {
