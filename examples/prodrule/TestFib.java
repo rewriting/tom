@@ -53,7 +53,7 @@ public class TestFib extends TestCase {
 
   public void setUp() {
 		if (pure == null) {
-			pure = new PureFactory();
+			pure = SingletonFactory.getInstance();
 		}
     fib1 = new Fib1(prodrule.fib1.fib.fibFactory.getInstance(pure));
     fib2 = new Fib2(prodrule.fib2.fib.fibFactory.getInstance(pure));

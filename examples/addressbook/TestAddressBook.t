@@ -49,7 +49,7 @@ public class TestAddressBook extends TestCase {
   }
 
   public void setUp() {
-    factory = Factory.getInstance(new PureFactory());
+    factory = Factory.getInstance(SingletonFactory.getInstance());
     test = new AddressBook1(factory);
     book = new HashSet();
     test.generatePerson(book);

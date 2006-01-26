@@ -48,7 +48,7 @@ public class TestNsh extends TestCase {
 
   public void setUp() {
 		if (factory == null) {
-			factory = Factory.getInstance(new PureFactory());
+			factory = Factory.getInstance(SingletonFactory.getInstance());
 		}
     test = new Nsh(factory);
   }
