@@ -39,20 +39,10 @@ import nspk.term.types.*;
 public class Nsh {
   private static boolean authVerif = true;
 
-  private Factory factory;
-
 // ------------------------------------------------------------  
   %include { term/term.tom }
 // ------------------------------------------------------------  
  
-  public Nsh(Factory factory) {
-    this.factory = factory;
-  }
-
-  public final Factory getTermFactory() {
-      return factory;
-  }
-  
   public void run(int nbAgent) {
     State initState = query(nbAgent,nbAgent);
     State search    = `ATTACK();
@@ -575,7 +565,7 @@ public class Nsh {
   private static int fire[] = new int[20];
 
   public final static void main(String[] args) {
-    Nsh test = new Nsh(Factory.getInstance(new PureFactory()));
+    Nsh test = new Nsh();
     int nbAgent = 1;
     //System.out.println("agent = " + `paul());
     try {

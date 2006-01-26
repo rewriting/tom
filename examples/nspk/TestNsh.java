@@ -40,17 +40,13 @@ import junit.framework.TestSuite;
 
 public class TestNsh extends TestCase {
   private Nsh test;
-  private static Factory factory;
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestNsh.class));
 	}
 
   public void setUp() {
-		if (factory == null) {
-			factory = Factory.getInstance(SingletonFactory.getInstance());
-		}
-    test = new Nsh(factory);
+    test = new Nsh();
   }
 
   public void testQuery() {
