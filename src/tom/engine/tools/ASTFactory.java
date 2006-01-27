@@ -216,8 +216,15 @@ public class ASTFactory {
 
   public TomSymbol makeSymbol(String symbolName, String resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
                               List optionList) {
+    TomType type;
     TomName name = tsf().makeTomName_Name(symbolName);
-    TomType typesToType =  tsf().makeTomType_TypesToType(typeList, tsf().makeTomType_TomTypeAlone(resultType));
+    if (resultType == null || resultType.length() == 0) {
+    type = tsf().makeTomType_EmptyType();//no result type
+    }
+    else {
+      type = tsf().makeTomType_TomTypeAlone(resultType);
+    }
+    TomType typesToType =  tsf().makeTomType_TypesToType(typeList,type); 
     OptionList options = makeOptionList(optionList);
     return tsf().makeTomSymbol_Symbol(name,typesToType,pairNameDeclList,options);
   }
