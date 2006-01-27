@@ -733,7 +733,13 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException; 
 
-  protected abstract void buildClass(int deep, String tomName, TomType extendsType, Instruction instruction) throws IOException; 
+  /*buildClass is not abstract since only Java backend supports class
+    only backends that supports Class should overload buildClass  
+   */
+  protected void buildClass(int deep, String tomName, TomType extendsType, Instruction instruction) throws IOException {
+    System.out.println("Backend does not support Class");
+    throw new TomRuntimeException("Backend does not support Class");
+  }
 
   protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
 

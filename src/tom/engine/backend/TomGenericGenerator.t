@@ -70,7 +70,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException; 
-  protected abstract void buildClass(int deep, String tomName, TomType extendsType, Instruction instruction) throws IOException; 
   protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
   protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomName opNameAST,TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
