@@ -32,9 +32,8 @@ package matching;
 
 import aterm.*;
 import aterm.pure.*;
-import matching.rhoterm.*;
-import matching.rhoterm.types.*;
-import matching.rhoterm.types.rterm.Abs;
+import matching.lamterm.*;
+import matching.lamterm.types.*;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -55,316 +54,71 @@ import jjtraveler.VisitFailure;
 import java.io.*;
 
 public class Matching {
-	private RhotermFactory factory;
 	
-	public Rho(RhotermFactory factory) {
+	private int comptVariable = 0;
+	private LamtermFactory factory;
+	
+	public Matching(LamtermFactory factory) {
 		this.factory = factory;
 	}
-	public RhotermFactory getRhotermFactory() {
+	public LamtermFactory getLamtermFactory() {
 		return factory;
 	}
 	
 	
 	%include { mutraveler.tom }
-	%include { rhoterm/Rhoterm.tom }
-	
-	%op VisitableVisitor Not_abs {
-		make() {new Not_abs() }
-	}
+	%include { lamterm/Lamterm.tom }
 
-	%op VisitableVisitor One_abs(strat:VisitableVisitor) {
-		make(v) {`Sequence(Not_abs(),One(v)) }//new One_abs((VisitableVisitor)v)
-	}
-	%op VisitableVisitor All_abs(strat:VisitableVisitor) {
-		make(v) {`Sequence(Not_abs(),All(v)) }//new One_abs((VisitableVisitor)v)
-	}
-
-	VisitableVisitor rules = new ReductionRules();
-	VisitableVisitor onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rules));
-	VisitableVisitor print = new Print();
-	//STRATEGIE OUTERMOST
-	VisitableVisitor oneStepWeakNormalisation = MuTraveler.init(`mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
-	VisitableVisitor weakNormalisation =MuTraveler.init(`mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
-	VisitableVisitor strategyWithAllPrint = MuTraveler.init(`Repeat(Sequence(oneStepWeakNormalisation,Try(print))));
-	VisitableVisitor strategyResult =MuTraveler.init(`Repeat(weakNormalisation));
-
-//	VisitableVisitor myStrategy = `Repeat(Sequence(rules,print));
-	//STRATEGIE INNERMOST (FAST)
-//	VisitableVisitor myStrategy = `mu(MuVar("x"),Sequence(All_abs(MuVar("x")),Choice(Sequence(rules,MuVar("x")),Identity)));
 	public final static void main(String[] args) {
-		Rho rhoEngine = new Rho(RhotermFactory.getInstance(SingletonFactory.getInstance()));
-		rhoEngine.run();
+		Matching matchingEngine = new Matching(LamtermFactory.getInstance(SingletonFactory.getInstance()));
+		matchingEngine.run();
 	}
 	
 
 	public void run(){
-		RTerm subject = `const("undefined");
-		VisitableVisitor currentStrategy = strategyResult;
-		String s;
-		System.out.println(" ******************************************************************\n xRho: an implementation  in Tom of the explicit rho-calculus \n with weak normalization and linear first-order patterns\n By Germain Faure\n version Beta. Please use it with care. \n ******************************************************************");
-    RhoLexer lexer = new RhoLexer(System.in); // Create parser attached to lexer
-    RhoParser parser = new RhoParser(lexer);
+	System.out.println(" ******************************************************************\n Computing matching modulo superdevelopments. \n ******************************************************************\n");
+    LamcalLexer lexer = new LamcalLexer(System.in); // Create parser attached to lexer
+    LamcalParser parser = new LamcalParser(lexer);
 		while(true){
-			System.out.print("xRho>");
+			System.out.print("mSD>");
       try {
-				subject = parser.program();
-//				System.out.println("Resultat du parsing: " + subject);
+				Equation subject = parser.matchingEquation();
+				System.out.println("Resultat du parsing: " + subject);
 			} catch (Exception e) {
 				System.out.println(e);
-				
 			}
-			try{
-				%match(RTerm subject){
-					withPrint() -> {currentStrategy = strategyWithAllPrint;}
-					withoutPrint() -> {currentStrategy = strategyResult;}
-					_ -> 	 {System.out.println(stringInfix((RTerm)currentStrategy.visit(subject)));}
-				}
-
-			} catch(VisitFailure e) {
-				System.out.println("reduction failed on: " + subject);
-			}
-		}
-	}
-
-
-	public String test(String s){
-		RTerm subject = `const("undefined");
-		
-		StringReader sr = new StringReader(s);
-    RhoLexer lexer = new RhoLexer(sr); // Create parser attached to lexer
-    RhoParser parser = new RhoParser(lexer);
-		try {
-			subject = parser.program();
-//				System.out.println("Resultat du parsing: " + subject);
-		} catch (Exception e) {
-			return e.toString();
-		}
-		try{
-			subject = (RTerm)strategyResult.visit(subject);
-			return stringInfix(subject);
-		} catch(VisitFailure e) {
-			return "reduction failed on: " + subject ;
-		}
-	}
-
-	
-	class Print extends RhotermVisitableFwd {
-		public Print() {
-			super(`Fail());
-		}
-		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-			System.out.println("=>"  + arg);
-//			System.out.println("=>" + (MuTraveler.getPosition(oneStepWeakNormalisation)).depth() + arg);
-			return arg;
-		}
-	}
-// 	class TransformToFixPoint extends RhotermVisitableFwd {
-// 		public TransformToFixPoint() {
-// 			super(`Fail());
-// 		}
-// 		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-// 			%match(RTerm 
-// 			throw new VisitFailure();
-// 		}
-// 	}
-	class ReductionRules extends RhotermVisitableFwd {
-		public ReductionRules() {
-			super(`Fail());
-		}
-		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-			%match(RTerm arg){
-				/*Compose */
-				appS(phi@andS(l*),appS(andS(L*),N)) -> {
-					ListSubst result = `mapS(((ListSubst)(L.reverse())),phi,andS());
-					return `appS(andS(l*,result*),N);}
-				//ALPHA-CONV
-				
-				
-				/* Garbage collector */
-				appC((_*,matchKO(),_*),_) -> {return `stk();}
-				app(stk(),A) -> {return `stk();}
-				struct(A,stk()) -> {return `A;}
-				struct(stk(),A) -> {return `A;}
-				
-				
-				/*Rho*/
-				app(abs(P,M),N) -> {return `appC(andC(match(P,N)),M);}
-				
-				/*Delta*/
-				app(struct(M1,M2),N) -> {return `struct(app(M1,N),app(M2,N));}
-				
-				/*ToSubst*/
-				appC(andC(C*,match(X@var[],M),D*),N) -> {return `appC(andC(C*,D*),appS(andS(eq(X,M)),N));}
-				//PATTERNS LINEAIRES
-				
-				/*Id*/ 
-				appC(andC(),M) -> {return `M;}
-				
-				/*Replace*/
-				appS(andS(_*,eq(var(X),M),_*),var(X)) -> {return `M;}
-				
-				/*Var*/
-				appS(_,Y@var[]) -> {return `Y;}
-				//cette regle est correcte sans condition de bord si
-				//on sait que on essaye toujours d'appliquer la regle
-				//Replace avant		
-				
-				/*Const*/
-				appS(_,c@const[]) -> {return `c;}
-				
-				/*Abs*/
-				appS(phi,abs(P,M)) -> {return `abs(P,appS(phi,M));}
-				//ALPHA-CONVERSION NECESSAIRE!
-				
-				
-				/*App*/
-				appS(phi,app(M,N)) -> {return `app(appS(phi,M),appS(phi,N));}
-				
-				/*Struct*/
-				appS(phi,struct(M,N)) -> {return `struct(appS(phi,M),appS(phi,N));}
-				
-				/*Constraint*/
-				appS(phi,appC(andC(L*),M)) -> {
-					ListConstraint result = `mapC(((ListConstraint)(L.reverse())),phi,andC());
-					return `appC(andC(result*),appS(phi,M));}
-				/* La regle est correcte pour n is 0 */
-				//ALPHA-CONV!!
-				/* Patterns lineaires, pas besoin de la regle Idem */
-
-
-
-			 }
-			 throw new VisitFailure();
-
-		 }
- 		public ListConstraint visit_ListConstraint(ListConstraint l) throws VisitFailure {
- 			%match(ListConstraint l){
-				/*Decompose n = m = 0*/
-				(X*,match(f@const[],f),Y*) -> {return `andC(X*,Y*);}
-				
-				/*Decompose_ng n = m = 0*/
-				//si j'arrive dans la regle suivant c'est que les const sont diff
-				(X*,match(const[],const[]),Y*) -> {return `andC(X*,matchKO(),Y*);}
-				
-				/*Decompose et Decompose_ng min(n,m) > 0 */
-				l:(X*,m@match(app[],app[]),Y*) -> {
-					ListConstraint head_is_constant = `headIsConstant(m);
-					%match(ListConstraint head_is_constant) {
-						(match[]) -> { break l; }
-						(matchKO()) -> { return `andC(X*,matchKO(),Y*); }
-					}
-					ListConstraint result = `computeMatch(andC(m));
-					return `andC(X*,result*,Y*);
-				}
-				l:(X*,m@match(app[],const[]),Y*)  -> {
-					ListConstraint head_is_constant = `headIsConstant(m);
-					%match(ListConstraint head_is_constant) {
-						(match[]) -> { break l; }
-						(matchKO()) -> { return `andC(X*,matchKO(),Y*); }
-					}
-					ListConstraint result = `computeMatch(andC(m));
-					return `andC(X*,result*,Y*);
-				}
-				l:(X*,m@match(const[],app[]),Y*) -> {
-					ListConstraint head_is_constant = `headIsConstant(m);
-					%match(ListConstraint head_is_constant) {
-						(match[]) -> { break l; }
-						(matchKO()) -> { return `andC(X*,matchKO(),Y*); }
-					}
-					ListConstraint result = `computeMatch(andC(m));
-					return `andC(X*,result*,Y*);
-				}
-				
-				/*Decompose Struct */
-				(X*,match(struct(M1,M2),struct(N1,N2)),Y*) ->{
-					return `andC(X*,match(M1,N1),match(M2,N2),Y*);
-				}
-			}
-			throw new VisitFailure();
- 		}
- 	}
-	public  String stringInfix(RTerm term){
-		//suis les priorites donnes par RhoParser.g.t
-		%match(RTerm term){
-			appS(substs,term1) -> {return "["+ stringInfix(`substs)+"]" + "("+stringInfix(`term1)+")";}
-			appC(constrainsts,term1) -> {return "["+ stringInfix(`constrainsts)+"]" + "("+stringInfix(`term1)+")";}
-			app(term1,term2) -> {return "("+stringInfix(`term1)+"."+stringInfix(`term2)+")";}
-			abs(term1,term2) -> {return "("+stringInfix(`term1)+"->"+stringInfix(`term2)+")";}
-			struct(term1,term2) -> {return "("+stringInfix(`term1)+"|"+stringInfix(`term2)+")";}
-			var(s) -> {return `s;}
-			const(s) -> {return `s;}
-			stk() -> {return "stk";}
-			_ -> {return "";}
-		}
-	}
-	public String stringInfix(ListSubst substs){
-		%match(ListSubst substs){
-			andS(eq(term1,term2),eq(term3,term4),Y*) -> {return stringInfix(`term1)+"="+stringInfix(`term2) +"^"+ stringInfix(`term3)+"="+stringInfix(`term4) +stringInfix(`Y);}
-			andS(eq(term1,term2),X*) -> {return stringInfix(`term1)+"="+stringInfix(`term2);}
-			_ -> {return "";}
-		}
-	}
-
-	public class Not_abs extends RhotermVisitableFwd {
-		public Not_abs() {
-			super(`Identity());
-		}
-		
-		public RTerm visit_RTerm_Abs(Abs arg) throws jjtraveler.VisitFailure {
-			throw new VisitFailure();
-		}
-		
-	}
-	public String stringInfix(ListConstraint constraints){
-		%match(ListConstraint constraints){
-			andC(match(term1,term2),match(term3,term4),Y*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2) +"^"+ stringInfix(`term3)+"<"+stringInfix(`term4) +stringInfix(`Y);}
-			andC(match(term1,term2),X*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2);}
-			_ -> {return "";}
-		}
-	}	
-	
-	protected ListConstraint headIsConstant (Constraint l){
-		%match(Constraint l){
-			match(app(A1,B1),app(A2,B2)) ->{ 
-				return `headIsConstant(match(A1,A2));
-			}
-	     match(const(f),const(f)) -> {
-				 return `andC();
-	     }
-	     //si j'arrive dans le cas de la regle suivante alors les constantes sont forcement differentes
-	     match(const[],const[])   -> {
-				 return `andC(matchKO());
-	     }
-
-	     match(const[],app[]) | match(app[],const[]) -> {
-				 return `andC(matchKO());
-	     }
-
-	     _ -> {return `andC(l);}
-		}
-		
-	}
-	protected ListConstraint computeMatch(ListConstraint l){
-		%match(ListConstraint l){
-			(match(app(f@const[],A),app(f,B))) -> {return `andC(match(A,B));}
-			(match(app(A1,B1),app(A2,B2))) -> {
-				ListConstraint result = `computeMatch(andC(match(A1,A2)));
-				return `andC(result*,match(B1,B2));}
-			_ -> {return `l;}
-		}
-	}
-	protected ListConstraint mapC(ListConstraint list, ListSubst phi, ListConstraint result){
-		%match(ListConstraint list) {
- 	    (match(P,M),_*) ->{
-				return `mapC(list.getTail(),phi,andC(match(P,appS(phi,M)),result*));}
- 	    _ -> {return `result;}
-		}	
-	}    
-	protected ListSubst mapS(ListSubst list, ListSubst phi, ListSubst result){
-		%match(ListSubst list) {
-			(eq(X,M),_*) ->{
-				return `mapS(list.getTail(),phi,andS(eq(X,appS(phi,M)),result*));}
- 	    _ -> {return `result;}
 		}	
 	}
+		class ReductionRules extends LamtermVisitableFwd {
+			public ReductionRules() {
+				super(`Fail());
+			}
+			public Systems visit_System(Systems s) throws  VisitFailure { 
+				%match(Systems s){
+					//Trivial
+					(X*,match(a@const[],a),Y*)-> {
+						return `and(X*,Y*);}
+					(X*,match(x@localVar[],x),Y*)-> {
+						return `and(X*,Y*);}
+					//Abs
+					(X*,match(abs(x@localVar[],A),abs(x@localVar[],B)),Y*) ->{
+						return `and(X*,match(A,B),Y*);}
+					//Subst
+//					(X*,match(),Y*) ->{
+					//					return `and(X*,Y*);}
+					//Decompose
+					(X*,match(app(A1,B1),app(A2,B2)),Y*) ->{
+						return `and(X*,match(A1,A2),match(B1,B2),Y*);}
+					//Proj
+					(X*,match(app(A1,B1),A2),Y*) ->{
+						return `and(X*,match(A1,abs(localVar("_x"+(++comptVariable)),A2)),Y*);
+					}
+					//Beta-exp
+					//	(X*,match(),Y*) ->{
+					//	return `and(X*,Y*);}
+
+				}
+				throw new VisitFailure();
+			}
+		}
 }

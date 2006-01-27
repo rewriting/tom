@@ -33,8 +33,8 @@ package matching;
 {
   import aterm.*;
   import aterm.pure.SingletonFactory;
-  import xrho.rhoterm.*;
-  import xrho.rhoterm.types.*;
+  import matching.lamterm.*;
+  import matching.lamterm.types.*;
 	import java.util.Hashtable;
 }
 
@@ -43,205 +43,45 @@ options {
   k = 1;
 }
 {
-	Hashtable table = new	Hashtable();
-  %include { rhoterm/Rhoterm.tom }
-  private RhotermFactory factory = RhotermFactory.getInstance(SingletonFactory.getInstance());
-  public RhotermFactory getRhotermFactory() {
+  %include { lamterm/Lamterm.tom }
+  private LamtermFactory factory = LamtermFactory.getInstance(SingletonFactory.getInstance());
+  public LamtermFactory getLamtermFactory() {
     return factory;
   }
-//IL FAUT LA TRANSFORMER POUR QU'ELLE NE PRENNE QU'UN SEUL ARG
- public  RTerm fromAlgebraicApplToFunctionalAppl(ListRTerm listArg, RTerm head){
-  	%match(ListRTerm listArg){
- 		(x,XS*) -> {
-			return `fromAlgebraicApplToFunctionalAppl(XS,app(head,x));
- 		}
- 		_ -> {return head;}
-		}
- }
-// //TO BE COMPLETE
-// //Le nom que je donne commence par un "!"
-//  protected RTerm addName(String name,RTerm term){
-// 	 if (!table.containsKey(name)){
-// 		 table.put(name,term);
-// 		 return term;
-// 	 }
-// 	 else {
-// 		 System.out.println("Warning, the alias " + name + " was used before and was not modified");
-// 		 return (RTerm)table.get(name);
-
-// 	 }
-//  }
-//TO BE COMPLETE
-//Le nom que je donne commence par un "!"
- protected RTerm addName(String name,RTerm term){
-	 if (!table.containsKey(name)){
-		 table.put(name,term);
-		 return term;
-	 }
-	 else {
-		 System.out.println("Warning, the alias " + name + " was used before and was not modified");
-		 return (RTerm)table.get(name);
-
-	 }
- }
- protected RTerm getName(String name){
-	 if (!table.containsKey(name)){
-		 System.out.println("Error: alias undefined");
-	 }
-	 return (RTerm)table.get(name);
- }
-
 }
 
 
 
-program returns [RTerm term]
+
+matchingEquation returns [Equation eq]
 {
-  term = null;
+
+  eq = null;
+  LamTerm lhs = null;
+	LamTerm rhs = null;
 }
-:  term=assign END | term=rhoterm END
-;
-
-// rhotermbis returns [RTerm term]
-// {
-//   term = `var("rhoterm");
-// }
-// : term=rhoterm (APPL^ rhoterm)* 
-// //: term=assign | term=substappl
-// //substappl //| term = algebraicappl
-// ;
-rhoterm returns [RTerm term]
+:   LBRACK lhs=lamterm MATCH rhs=lamterm RBRACK
 {
-  term = `var("rhoterm");
-}
-: term=substappl
-//: term=assign | term=substappl
-//substappl //| term = algebraicappl
-;
-
-
-//  algebraicappl returns [RTerm appl]
-// {
-//   appl=`var("algebraicappl");
-// 	RTerm fun=null;
-//   ListRTerm arguments =`and();
-// }
-// //MARCHE : fun=constant APPL arguments=argumentlist
-// :  AT   LALG arguments=argumentlist RALG
-
-// {	
-// 		appl = fromAlgebraicApplToFunctionalAppl(arguments);
-// } 
-// ;
-
-// argumentlist returns [ListRTerm list]
-// {
-//   list=`and();
-// 	ListRTerm sublist = `and();
-// 	RTerm head=null;
-// }
-// : head=substappl (COMMA sublist=argumentlist)?
-// { list=`and(head,sublist*); }
-// ;
-
-assign  returns [RTerm term]
-{
-	term=null;
-	RTerm rhs = null;
-}
-: name:DEF (ASSIGN rhs=substappl)?
-{
-	if (rhs != null){
-		term=addName(name.getText(),rhs);
-	}
-	else {
-		term=getName(name.getText());
-	}
-};
-
-
-substappl returns [RTerm appl]
-{
-  appl=`var("substappl");
-  ListSubst substitutions=`andS();
-  RTerm term=null;
-}
-: (LBRACK substitutions=substitutionlist RBRACK)? term=constappl
-{
-  if(substitutions!=`andS()) {
-    appl = `appS(substitutions,term);
-  } else {
-    appl=term;
-  }
+	eq = `match(lhs,rhs);
 }
 ;
 
-substitutionlist returns [ListSubst list]
+lamterm returns [LamTerm term]
 {
-  list=`andS();
-  Subst subst=null;
-  ListSubst sublist=`andS();
+  term = `var("lamterm");
 }
-: subst=substitution (AND sublist=substitutionlist)?
-{ list=`andS(subst,sublist*); }
-;
-
-substitution returns [Subst subst]
-{
-  subst = null;
-  RTerm thevar = null;
-  RTerm term = null;
-}
-: thevar=variable EQ term=rhoterm
-{ subst = `eq(thevar,term); }
-;
-
-constappl returns [RTerm appl]
-{
-  appl=null;
-  ListConstraint constraints=`andC();
-  RTerm term=null;
-}
-: (LBRACK constraints=constraintlist RBRACK)? term=functionalapp
-{
-  if(constraints!=`andC()) {
-    appl = `appC(constraints,term);
-  } else {
-    appl=term;
-  }
-}
-;
-
-constraintlist returns [ListConstraint list]
-{
-  list = `andC();
-  Constraint constraint = null;
-  ListConstraint sublist = `andC();
-}
-: constraint=constraint (AND sublist=constraintlist)?
-{ list=`andC(constraint,sublist*); }
-;
-
-constraint returns [Constraint constraint]
-{
-  constraint = null;
-  RTerm lhs = null;
-  RTerm rhs = null;
-}
-: lhs=rhoterm MATCH rhs=rhoterm
-{ constraint = `match(lhs,rhs); }
+: term=functionalapp
 ;
 
 
-
-functionalapp returns [RTerm appl]
+functionalapp returns [LamTerm appl]
 {
   appl=`var("functionalapp");
-  RTerm lhs=null;
-  RTerm rhs=null;
-	RTerm x=null;
+  LamTerm lhs=null;
+  LamTerm rhs=null;
+	LamTerm x=null;
 }
-: lhs=arrow {rhs=lhs;} (APPL x=arrow {rhs=`app(rhs,x);})*
+: lhs=abs {rhs=lhs;} (APPL x=abs {rhs=`app(rhs,x);})*
 {
   if(x!=null) {
 		appl=rhs;
@@ -251,13 +91,13 @@ functionalapp returns [RTerm appl]
 }
 ;
 
-arrow returns [RTerm appl]
+abs returns [LamTerm appl]
 {
   appl=null;
-  RTerm lhs=null;
-  RTerm rhs=null;
+  LamTerm lhs=null;
+  LamTerm rhs=null;
 }
-: lhs=structure (ARROW rhs=structure)?
+: lhs=atom (ABS rhs=atom)?
 {
   if(rhs!=null) {
     appl=`abs(lhs,rhs);
@@ -267,84 +107,31 @@ arrow returns [RTerm appl]
 }
 ;
 
-structure returns [RTerm appl]
-{
-  appl=`var("functionalapp");
-  RTerm lhs=null;
-  RTerm rhs=null;
-	RTerm x=null;
-}
-: lhs=atom {rhs=lhs;} (STRUCT x=atom {rhs=`struct(rhs,x);})*
-{
-  if(x!=null) {
-		appl=rhs;
-  } else {
-    appl=lhs;
-  }
-}
-;
-// structure returns [RTerm appl]
-// {
-//   appl=null;
-//   RTerm lhs=null;
-//   RTerm rhs=null;
-// }
-// : lhs=atom (STRUCT rhs=atom)?
-// { 
-//   if (rhs!=null) {
-//     appl=`struct(lhs,rhs);
-//   } else {
-//     appl=lhs;
-//   }
-// }
-// ;
-
-atom returns [RTerm atom]
+atom returns [LamTerm atom]
 {
   atom=null;
 }
-: atom=constant | atom=variable | atom=def | atom=chgeMode | LPAREN atom=rhoterm RPAREN
+: atom=constant | atom=variable  |LPAREN atom=lamterm RPAREN
 ;
 
-constant returns [RTerm constant]
+constant returns [LamTerm constant]
 {
   constant=null;
   //String constname="";
 }
 : constname:CONST 
 {
-  if ("stk".equals(constname.getText())) {
-    constant = `stk();
-  }
-  else {
     constant=`const(constname.getText());
-  }
 }
 ;
 
-variable returns [RTerm var]
+variable returns [LamTerm var]
 {
   var=null;
   //String varname="";
 }
 : varname:VAR {var=`var(varname.getText());}
 ;
-chgeMode returns [RTerm mode]
-{
-  mode=null;
-  //String varname="";
-}
-: WITHOUTPRINT {mode=`withoutPrint();} | WITHPRINT {mode=`withPrint();}
-;
-
-def returns [RTerm def]
-{
-  def=null;
-  //String varname="";
-}
-: varname:DEF {def=getName(varname.getText());}
-;
-
 class LamcalLexer extends Lexer;
 
 options {
@@ -359,30 +146,14 @@ WS
 { _ttype = Token.SKIP; }
 ;
 
-ARROW : "->" ;
+ABS : "->" ;
 APPL : "." ;
 LPAREN : '(' ;
 RPAREN : ')' ;
-LBRACK : '[' ;
-RBRACK : ']' ;
-LALG : '{' ;
-RALG : '}' ;
-STRUCT : "|" ;
+LBRACK : "[" ;
+RBRACK : "]" ;
 MATCH : "<<" ;
-AND : '^' ;
-EQ : '=' ;
-AT : '@' ;
-COMMA : ',' ;
-WITHPRINT : "$$" ;
-WITHOUTPRINT : '$' ;
 END : ';' ;
-DEF options{ testLiterals = true; }: '!' 
-('A'..'Z'
- |'a'..'z'
- |'0'..'9'
- )+
-;
-ASSIGN : ":=" ;
 
 CONST options{ testLiterals = true; }
 : 'a'..'z'

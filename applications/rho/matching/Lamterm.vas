@@ -1,25 +1,13 @@
-module LamTerm
+module Lamterm
   public
     sorts 
-      LamTerm Constraint Subst ListConstraint ListSubst ListLamTerm 
+      LamTerm Equation Systems
     abstract syntax
-      var(na:String) -> RTerm
-      const(na:String) -> RTerm
-      stk() -> RTerm
-      abs(lhs:RTerm,rhs:RTerm) -> RTerm
-      app(lhs:RTerm,rhs:RTerm) -> RTerm
-      struct(lhs:RTerm,rhs:RTerm) -> RTerm //structure is couple
-      appC(co:ListConstraint,term:RTerm) -> RTerm
-      appS(su:ListSubst,term:RTerm) -> RTerm
-      
-      and( RTerm* ) -> ListRTerm
-      andC( Constraint* ) -> ListConstraint
-      andS( Subst* ) -> ListSubst
-      match(lhs:RTerm,rhs:RTerm) -> Constraint 
-      matchKO() -> Constraint
-      eq(var:RTerm,rhs:RTerm) -> Subst 
-			withPrint() -> Command
-			withoutPrint() -> Command
-      Program(prog:RTerm) -> Program
-      Command(comm:Command) -> Program
+      localVar(na:String) -> LamTerm
+      const(na:String) -> LamTerm
+			matchVariable(na:String) -> LamTerm
+      abs(lhs:LamTerm,rhs:LamTerm) -> LamTerm
+      app(lhs:LamTerm,rhs:LamTerm) -> LamTerm
 
+			match(lhs:LamTerm,rhs:LamTerm) -> Equation
+			and(Equation*) -> Systems			
