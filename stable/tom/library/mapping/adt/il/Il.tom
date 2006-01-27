@@ -6,8 +6,8 @@
 %typeterm DerivTree{
   implement { tom.engine.adt.il.types.DerivTree}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.DerivTree)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.DerivTree)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -18,7 +18,7 @@
   get_slot(pre,t) { t.getPre()}
   get_slot(pre2,t) { t.getPre2()}
   get_slot(cond,t) { t.getCond()}
-  make(t0, t1, t2, t3, t4) { getIlFactory().makeDerivTree_Derivrule2(t0, t1, t2, t3, t4)}
+  make(t0, t1, t2, t3, t4) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDerivTree_Derivrule2(t0, t1, t2, t3, t4)}
 }
 
 %op DerivTree derivrule(name:String, post:Deriv, pre:DerivTree, cond:Seq) {
@@ -27,19 +27,19 @@
   get_slot(post,t) { t.getPost()}
   get_slot(pre,t) { t.getPre()}
   get_slot(cond,t) { t.getCond()}
-  make(t0, t1, t2, t3) { getIlFactory().makeDerivTree_Derivrule(t0, t1, t2, t3)}
+  make(t0, t1, t2, t3) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDerivTree_Derivrule(t0, t1, t2, t3)}
 }
 
 %op DerivTree endderiv {
   is_fsym(t) { (t!= null) && t.isEndderiv()}
-  make() { getIlFactory().makeDerivTree_Endderiv()}
+  make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDerivTree_Endderiv()}
 }
 
 %typeterm Deriv{
   implement { tom.engine.adt.il.types.Deriv}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.Deriv)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.Deriv)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -47,91 +47,91 @@
   is_fsym(t) { (t!= null) && t.isEbs()}
   get_slot(lhs,t) { t.getLhs()}
   get_slot(rhs,t) { t.getRhs()}
-  make(t0, t1) { getIlFactory().makeDeriv_Ebs(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeriv_Ebs(t0, t1)}
 }
 
 %typeterm ExprList{
   implement { tom.engine.adt.il.types.ExprList}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.ExprList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.ExprList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %oplist ExprList concExpr(Expr*) {
   is_fsym(t) {(t!= null) && t.isSortExprList()}
-  make_empty() {getIlFactory().makeExprList()}
-  make_insert(e,l) {getIlFactory().makeExprList(e,l)}
+  make_empty() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExprList()}
+  make_insert(e,l) {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExprList(e,l)}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
 %op ExprList emptyExprList{
   is_fsym(t) { (t!= null) && t.isEmpty()}
-  make() {getIlFactory().makeExprList()}
+  make() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExprList()}
 }
 %op ExprList manyExprList(head:Expr, tail:ExprList) {
   is_fsym(t) { (t!= null) && t.isMany()}
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
-  make(e,l) {getIlFactory().makeExprList(e,l)}
+  make(e,l) {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExprList(e,l)}
 }
 %typeterm Seq{
   implement { tom.engine.adt.il.types.Seq}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.Seq)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.Seq)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %op Seq dedexpr(exprs:ExprList) {
   is_fsym(t) { (t!= null) && t.isDedexpr()}
   get_slot(exprs,t) { t.getExprs()}
-  make(t0) { getIlFactory().makeSeq_Dedexpr(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSeq_Dedexpr(t0)}
 }
 
 %op Seq dedterm(terms:TermList) {
   is_fsym(t) { (t!= null) && t.isDedterm()}
   get_slot(terms,t) { t.getTerms()}
-  make(t0) { getIlFactory().makeSeq_Dedterm(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSeq_Dedterm(t0)}
 }
 
 %op Seq seq {
   is_fsym(t) { (t!= null) && t.isSeq()}
-  make() { getIlFactory().makeSeq_Seq()}
+  make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSeq_Seq()}
 }
 
 %typeterm TermList{
   implement { tom.engine.adt.il.types.TermList}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.TermList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.TermList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %oplist TermList concTerm(Term*) {
   is_fsym(t) {(t!= null) && t.isSortTermList()}
-  make_empty() {getIlFactory().makeTermList()}
-  make_insert(e,l) {getIlFactory().makeTermList(e,l)}
+  make_empty() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTermList()}
+  make_insert(e,l) {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTermList(e,l)}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
 %op TermList emptyTermList{
   is_fsym(t) { (t!= null) && t.isEmpty()}
-  make() {getIlFactory().makeTermList()}
+  make() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTermList()}
 }
 %op TermList manyTermList(head:Term, tail:TermList) {
   is_fsym(t) { (t!= null) && t.isMany()}
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
-  make(e,l) {getIlFactory().makeTermList(e,l)}
+  make(e,l) {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTermList(e,l)}
 }
 %typeterm Expr{
   implement { tom.engine.adt.il.types.Expr}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.Expr)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.Expr)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -139,73 +139,73 @@
   is_fsym(t) { (t!= null) && t.isAppSubsE()}
   get_slot(subs,t) { t.getSubs()}
   get_slot(e,t) { t.getE()}
-  make(t0, t1) { getIlFactory().makeExpr_AppSubsE(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_AppSubsE(t0, t1)}
 }
 
 %op Expr ilnot(exp:Expr) {
   is_fsym(t) { (t!= null) && t.isIlnot()}
   get_slot(exp,t) { t.getExp()}
-  make(t0) { getIlFactory().makeExpr_Ilnot(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_Ilnot(t0)}
 }
 
 %op Expr ilor(left:Expr, right:Expr) {
   is_fsym(t) { (t!= null) && t.isIlor()}
   get_slot(left,t) { t.getLeft()}
   get_slot(right,t) { t.getRight()}
-  make(t0, t1) { getIlFactory().makeExpr_Ilor(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_Ilor(t0, t1)}
 }
 
 %op Expr iland(left:Expr, right:Expr) {
   is_fsym(t) { (t!= null) && t.isIland()}
   get_slot(left,t) { t.getLeft()}
   get_slot(right,t) { t.getRight()}
-  make(t0, t1) { getIlFactory().makeExpr_Iland(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_Iland(t0, t1)}
 }
 
 %op Expr teq(labst:AbsTerm, rabst:AbsTerm) {
   is_fsym(t) { (t!= null) && t.isTeq()}
   get_slot(labst,t) { t.getLabst()}
   get_slot(rabst,t) { t.getRabst()}
-  make(t0, t1) { getIlFactory().makeExpr_Teq(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_Teq(t0, t1)}
 }
 
 %op Expr tisfsym(abst:AbsTerm, symbol:Symbol) {
   is_fsym(t) { (t!= null) && t.isTisfsym()}
   get_slot(abst,t) { t.getAbst()}
   get_slot(symbol,t) { t.getSymbol()}
-  make(t0, t1) { getIlFactory().makeExpr_Tisfsym(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_Tisfsym(t0, t1)}
 }
 
 %op Expr eq(lt:Term, rt:Term) {
   is_fsym(t) { (t!= null) && t.isEq()}
   get_slot(lt,t) { t.getLt()}
   get_slot(rt,t) { t.getRt()}
-  make(t0, t1) { getIlFactory().makeExpr_Eq(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_Eq(t0, t1)}
 }
 
 %op Expr isfsym(t:Term, symbol:Symbol) {
   is_fsym(t) { (t!= null) && t.isIsfsym()}
   get_slot(t,t) { t.getT()}
   get_slot(symbol,t) { t.getSymbol()}
-  make(t0, t1) { getIlFactory().makeExpr_Isfsym(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_Isfsym(t0, t1)}
 }
 
 %op Expr false {
   is_fsym(t) { (t!= null) && t.isFalse()}
-  make() { getIlFactory().makeExpr_False()}
+  make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_False()}
 }
 
 %op Expr true(subst:SubstitutionList) {
   is_fsym(t) { (t!= null) && t.isTrue()}
   get_slot(subst,t) { t.getSubst()}
-  make(t0) { getIlFactory().makeExpr_True(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_True(t0)}
 }
 
 %typeterm Term{
   implement { tom.engine.adt.il.types.Term}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.Term)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.Term)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -213,7 +213,7 @@
   is_fsym(t) { (t!= null) && t.isAppSubsT()}
   get_slot(subs,t) { t.getSubs()}
   get_slot(t,t) { t.getT()}
-  make(t0, t1) { getIlFactory().makeTerm_AppSubsT(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTerm_AppSubsT(t0, t1)}
 }
 
 %op Term slot(symbol:Symbol, t:Term, name:String) {
@@ -221,7 +221,7 @@
   get_slot(symbol,t) { t.getSymbol()}
   get_slot(t,t) { t.getT()}
   get_slot(name,t) { t.getName()}
-  make(t0, t1, t2) { getIlFactory().makeTerm_Slot(t0, t1, t2)}
+  make(t0, t1, t2) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTerm_Slot(t0, t1, t2)}
 }
 
 %op Term subterm(symbol:Symbol, t:Term, index:int) {
@@ -229,26 +229,26 @@
   get_slot(symbol,t) { t.getSymbol()}
   get_slot(t,t) { t.getT()}
   get_slot(index,t) { t.getIndex()}
-  make(t0, t1, t2) { getIlFactory().makeTerm_Subterm(t0, t1, t2)}
+  make(t0, t1, t2) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTerm_Subterm(t0, t1, t2)}
 }
 
 %op Term repr(term:String) {
   is_fsym(t) { (t!= null) && t.isRepr()}
   get_slot(term,t) { t.getTerm()}
-  make(t0) { getIlFactory().makeTerm_Repr(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTerm_Repr(t0)}
 }
 
 %op Term tau(abst:AbsTerm) {
   is_fsym(t) { (t!= null) && t.isTau()}
   get_slot(abst,t) { t.getAbst()}
-  make(t0) { getIlFactory().makeTerm_Tau(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTerm_Tau(t0)}
 }
 
 %typeterm Environment{
   implement { tom.engine.adt.il.types.Environment}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.Environment)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.Environment)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -256,40 +256,40 @@
   is_fsym(t) { (t!= null) && t.isEnv()}
   get_slot(subs,t) { t.getSubs()}
   get_slot(i,t) { t.getI()}
-  make(t0, t1) { getIlFactory().makeEnvironment_Env(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeEnvironment_Env(t0, t1)}
 }
 
 %typeterm SubstitutionList{
   implement { tom.engine.adt.il.types.SubstitutionList}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.SubstitutionList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.SubstitutionList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %oplist SubstitutionList subs(Substitution*) {
   is_fsym(t) {(t!= null) && t.isSortSubstitutionList()}
-  make_empty() {getIlFactory().makeSubstitutionList()}
-  make_insert(e,l) {getIlFactory().makeSubstitutionList(e,l)}
+  make_empty() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSubstitutionList()}
+  make_insert(e,l) {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSubstitutionList(e,l)}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
 %op SubstitutionList emptySubstitutionList{
   is_fsym(t) { (t!= null) && t.isEmpty()}
-  make() {getIlFactory().makeSubstitutionList()}
+  make() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSubstitutionList()}
 }
 %op SubstitutionList manySubstitutionList(head:Substitution, tail:SubstitutionList) {
   is_fsym(t) { (t!= null) && t.isMany()}
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
-  make(e,l) {getIlFactory().makeSubstitutionList(e,l)}
+  make(e,l) {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSubstitutionList(e,l)}
 }
 %typeterm Substitution{
   implement { tom.engine.adt.il.types.Substitution}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.Substitution)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.Substitution)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -297,52 +297,52 @@
   is_fsym(t) { (t!= null) && t.isIs()}
   get_slot(var,t) { t.getVar()}
   get_slot(term,t) { t.getTerm()}
-  make(t0, t1) { getIlFactory().makeSubstitution_Is(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSubstitution_Is(t0, t1)}
 }
 
 %op Substitution undefsubs {
   is_fsym(t) { (t!= null) && t.isUndefsubs()}
-  make() { getIlFactory().makeSubstitution_Undefsubs()}
+  make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSubstitution_Undefsubs()}
 }
 
 %typeterm InstrList{
   implement { tom.engine.adt.il.types.InstrList}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.InstrList)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.InstrList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %oplist InstrList semicolon(Instr*) {
   is_fsym(t) {(t!= null) && t.isSortInstrList()}
-  make_empty() {getIlFactory().makeInstrList()}
-  make_insert(e,l) {getIlFactory().makeInstrList(e,l)}
+  make_empty() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstrList()}
+  make_insert(e,l) {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstrList(e,l)}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
 %op InstrList emptyInstrList{
   is_fsym(t) { (t!= null) && t.isEmpty()}
-  make() {getIlFactory().makeInstrList()}
+  make() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstrList()}
 }
 %op InstrList manyInstrList(head:Instr, tail:InstrList) {
   is_fsym(t) { (t!= null) && t.isMany()}
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
-  make(e,l) {getIlFactory().makeInstrList(e,l)}
+  make(e,l) {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstrList(e,l)}
 }
 %typeterm Instr{
   implement { tom.engine.adt.il.types.Instr}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.Instr)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.Instr)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %op Instr sequence(instrlist:InstrList) {
   is_fsym(t) { (t!= null) && t.isSequence()}
   get_slot(instrlist,t) { t.getInstrlist()}
-  make(t0) { getIlFactory().makeInstr_Sequence(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstr_Sequence(t0)}
 }
 
 %op Instr ILLet(var:Variable, t:Term, body:Instr) {
@@ -350,7 +350,7 @@
   get_slot(var,t) { t.getVar()}
   get_slot(t,t) { t.getT()}
   get_slot(body,t) { t.getBody()}
-  make(t0, t1, t2) { getIlFactory().makeInstr_ILLet(t0, t1, t2)}
+  make(t0, t1, t2) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstr_ILLet(t0, t1, t2)}
 }
 
 %op Instr ITE(e:Expr, ift:Instr, iff:Instr) {
@@ -358,26 +358,26 @@
   get_slot(e,t) { t.getE()}
   get_slot(ift,t) { t.getIft()}
   get_slot(iff,t) { t.getIff()}
-  make(t0, t1, t2) { getIlFactory().makeInstr_ITE(t0, t1, t2)}
+  make(t0, t1, t2) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstr_ITE(t0, t1, t2)}
 }
 
 %op Instr refuse {
   is_fsym(t) { (t!= null) && t.isRefuse()}
-  make() { getIlFactory().makeInstr_Refuse()}
+  make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstr_Refuse()}
 }
 
 %op Instr accept(positive:ATerm, negative:ATerm) {
   is_fsym(t) { (t!= null) && t.isAccept()}
   get_slot(positive,t) { t.getPositive()}
   get_slot(negative,t) { t.getNegative()}
-  make(t0, t1) { getIlFactory().makeInstr_Accept(t0, t1)}
+  make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstr_Accept(t0, t1)}
 }
 
 %typeterm AbsTerm{
   implement { tom.engine.adt.il.types.AbsTerm}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.AbsTerm)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.AbsTerm)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -386,7 +386,7 @@
   get_slot(symbol,t) { t.getSymbol()}
   get_slot(abst,t) { t.getAbst()}
   get_slot(name,t) { t.getName()}
-  make(t0, t1, t2) { getIlFactory().makeAbsTerm_Sl(t0, t1, t2)}
+  make(t0, t1, t2) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAbsTerm_Sl(t0, t1, t2)}
 }
 
 %op AbsTerm st(symbol:Symbol, abst:AbsTerm, index:int) {
@@ -394,40 +394,40 @@
   get_slot(symbol,t) { t.getSymbol()}
   get_slot(abst,t) { t.getAbst()}
   get_slot(index,t) { t.getIndex()}
-  make(t0, t1, t2) { getIlFactory().makeAbsTerm_St(t0, t1, t2)}
+  make(t0, t1, t2) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAbsTerm_St(t0, t1, t2)}
 }
 
 %op AbsTerm absvar(varname:Variable) {
   is_fsym(t) { (t!= null) && t.isAbsvar()}
   get_slot(varname,t) { t.getVarname()}
-  make(t0) { getIlFactory().makeAbsTerm_Absvar(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAbsTerm_Absvar(t0)}
 }
 
 %typeterm Variable{
   implement { tom.engine.adt.il.types.Variable}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.Variable)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.Variable)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %op Variable var(name:String) {
   is_fsym(t) { (t!= null) && t.isVar()}
   get_slot(name,t) { t.getName()}
-  make(t0) { getIlFactory().makeVariable_Var(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeVariable_Var(t0)}
 }
 
 %typeterm Symbol{
   implement { tom.engine.adt.il.types.Symbol}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getIlFactory().getPureFactory().makeList()) == getIlFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.il.types.Symbol)t.setAnnotation(getIlFactory().getPureFactory().makeList(),getIlFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.il.types.Symbol)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %op Symbol fsymbol(name:String) {
   is_fsym(t) { (t!= null) && t.isFsymbol()}
   get_slot(name,t) { t.getName()}
-  make(t0) { getIlFactory().makeSymbol_Fsymbol(t0)}
+  make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSymbol_Fsymbol(t0)}
 }
 

@@ -149,12 +149,12 @@ public class TomSyntaxChecker extends TomChecker {
                 /*  TOM MATCH STRUCTURE*/
                 verifyMatch(tom_match1_1_subjectList_tomList,tom_match1_1_astPatternInstructionList,tom_match1_1_option);
                 return true;//case when nested %match
-              } }}}} } if(tom_is_fun_sym_Strategy(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match1_1_sName=tom_get_slot_Strategy_sName(tom_match1_1); { tom.engine.adt.tomsignature.types.TomList tom_match1_1_args=tom_get_slot_Strategy_args(tom_match1_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match1_1_extendsTerm=tom_get_slot_Strategy_extendsTerm(tom_match1_1); { tom.engine.adt.tomsignature.types.TomVisitList tom_match1_1_visitList=tom_get_slot_Strategy_visitList(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_Strategy_orgTrack(tom_match1_1);
+              } }}}} } if(tom_is_fun_sym_Strategy(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match1_1_sName=tom_get_slot_Strategy_sName(tom_match1_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match1_1_extendsTerm=tom_get_slot_Strategy_extendsTerm(tom_match1_1); { tom.engine.adt.tomsignature.types.TomVisitList tom_match1_1_visitList=tom_get_slot_Strategy_visitList(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_Strategy_orgTrack(tom_match1_1);
 
                 /*  STRATEGY MATCH STRUCTURE*/
-                verifyStrategy(tom_match1_1_sName,tom_match1_1_args,tom_match1_1_extendsTerm,tom_match1_1_visitList,tom_match1_1_orgTrack);
+                verifyStrategy(tom_match1_1_sName,tom_match1_1_extendsTerm,tom_match1_1_visitList,tom_match1_1_orgTrack);
                 return true;//case when %match in %strategy
-              }}}}} } if(tom_is_fun_sym_RuleSet(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match1_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_RuleSet_orgTrack(tom_match1_1);
+              }}}} } if(tom_is_fun_sym_RuleSet(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match1_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_RuleSet_orgTrack(tom_match1_1);
 
                 /*  TOM RULE STRUCTURE*/
                 verifyRule(tom_match1_1_ruleList,tom_match1_1_orgTrack);
@@ -548,7 +548,7 @@ public class TomSyntaxChecker extends TomChecker {
   ///////////////////////////////// 
   //STRATEGY VERIFICATION CONCERNS /
   /////////////////////////////////
-  private void verifyStrategy(TomName sName, TomList args, TomTerm extendsTerm, TomVisitList visitList, Option orgTrack) {
+  private void verifyStrategy(TomName sName, TomTerm extendsTerm, TomVisitList visitList, Option orgTrack) {
     currentTomStructureOrgTrack = orgTrack;
     while(!visitList.isEmpty()) {
       TomVisit visit = visitList.getHead();

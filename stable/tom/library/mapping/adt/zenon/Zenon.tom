@@ -6,8 +6,8 @@
 %typeterm ZSpec{
   implement { tom.engine.adt.zenon.types.ZSpec}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.zenon.types.ZSpec)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZSpec)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -15,40 +15,40 @@
   is_fsym(t) { (t!= null) && t.isZthm()}
   get_slot(thm,t) { t.getThm()}
   get_slot(by,t) { t.getBy()}
-  make(t0, t1) { getZenonFactory().makeZSpec_Zthm(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZSpec_Zthm(t0, t1)}
 }
 
 %typeterm ZAxiomList{
   implement { tom.engine.adt.zenon.types.ZAxiomList}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.zenon.types.ZAxiomList)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZAxiomList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %oplist ZAxiomList zby(ZAxiom*) {
   is_fsym(t) {(t!= null) && t.isSortZAxiomList()}
-  make_empty() {getZenonFactory().makeZAxiomList()}
-  make_insert(e,l) {getZenonFactory().makeZAxiomList(e,l)}
+  make_empty() {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZAxiomList()}
+  make_insert(e,l) {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZAxiomList(e,l)}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
 %op ZAxiomList emptyZAxiomList{
   is_fsym(t) { (t!= null) && t.isEmpty()}
-  make() {getZenonFactory().makeZAxiomList()}
+  make() {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZAxiomList()}
 }
 %op ZAxiomList manyZAxiomList(head:ZAxiom, tail:ZAxiomList) {
   is_fsym(t) { (t!= null) && t.isMany()}
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
-  make(e,l) {getZenonFactory().makeZAxiomList(e,l)}
+  make(e,l) {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZAxiomList(e,l)}
 }
 %typeterm ZAxiom{
   implement { tom.engine.adt.zenon.types.ZAxiom}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.zenon.types.ZAxiom)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZAxiom)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -56,14 +56,14 @@
   is_fsym(t) { (t!= null) && t.isZaxiom()}
   get_slot(name,t) { t.getName()}
   get_slot(ax,t) { t.getAx()}
-  make(t0, t1) { getZenonFactory().makeZAxiom_Zaxiom(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZAxiom_Zaxiom(t0, t1)}
 }
 
 %typeterm ZExpr{
   implement { tom.engine.adt.zenon.types.ZExpr}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.zenon.types.ZExpr)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZExpr)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -71,27 +71,27 @@
   is_fsym(t) { (t!= null) && t.isZequiv()}
   get_slot(lte,t) { t.getLte()}
   get_slot(rte,t) { t.getRte()}
-  make(t0, t1) { getZenonFactory().makeZExpr_Zequiv(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zequiv(t0, t1)}
 }
 
 %op ZExpr znot(nex:ZExpr) {
   is_fsym(t) { (t!= null) && t.isZnot()}
   get_slot(nex,t) { t.getNex()}
-  make(t0) { getZenonFactory().makeZExpr_Znot(t0)}
+  make(t0) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Znot(t0)}
 }
 
 %op ZExpr zor(lte:ZExpr, rte:ZExpr) {
   is_fsym(t) { (t!= null) && t.isZor()}
   get_slot(lte,t) { t.getLte()}
   get_slot(rte,t) { t.getRte()}
-  make(t0, t1) { getZenonFactory().makeZExpr_Zor(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zor(t0, t1)}
 }
 
 %op ZExpr zand(lte:ZExpr, rte:ZExpr) {
   is_fsym(t) { (t!= null) && t.isZand()}
   get_slot(lte,t) { t.getLte()}
   get_slot(rte,t) { t.getRte()}
-  make(t0, t1) { getZenonFactory().makeZExpr_Zand(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zand(t0, t1)}
 }
 
 %op ZExpr zexists(var:ZTerm, aztype:ZType, expr:ZExpr) {
@@ -99,7 +99,7 @@
   get_slot(var,t) { t.getVar()}
   get_slot(aztype,t) { t.getAztype()}
   get_slot(expr,t) { t.getExpr()}
-  make(t0, t1, t2) { getZenonFactory().makeZExpr_Zexists(t0, t1, t2)}
+  make(t0, t1, t2) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zexists(t0, t1, t2)}
 }
 
 %op ZExpr zforall(var:ZTerm, aztype:ZType, expr:ZExpr) {
@@ -107,78 +107,78 @@
   get_slot(var,t) { t.getVar()}
   get_slot(aztype,t) { t.getAztype()}
   get_slot(expr,t) { t.getExpr()}
-  make(t0, t1, t2) { getZenonFactory().makeZExpr_Zforall(t0, t1, t2)}
+  make(t0, t1, t2) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zforall(t0, t1, t2)}
 }
 
 %op ZExpr zeq(lt:ZTerm, rt:ZTerm) {
   is_fsym(t) { (t!= null) && t.isZeq()}
   get_slot(lt,t) { t.getLt()}
   get_slot(rt,t) { t.getRt()}
-  make(t0, t1) { getZenonFactory().makeZExpr_Zeq(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zeq(t0, t1)}
 }
 
 %op ZExpr zisfsym(t:ZTerm, symbol:ZSymbol) {
   is_fsym(t) { (t!= null) && t.isZisfsym()}
   get_slot(t,t) { t.getT()}
   get_slot(symbol,t) { t.getSymbol()}
-  make(t0, t1) { getZenonFactory().makeZExpr_Zisfsym(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zisfsym(t0, t1)}
 }
 
 %op ZExpr zfalse {
   is_fsym(t) { (t!= null) && t.isZfalse()}
-  make() { getZenonFactory().makeZExpr_Zfalse()}
+  make() { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zfalse()}
 }
 
 %op ZExpr ztrue {
   is_fsym(t) { (t!= null) && t.isZtrue()}
-  make() { getZenonFactory().makeZExpr_Ztrue()}
+  make() { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Ztrue()}
 }
 
 %typeterm ZType{
   implement { tom.engine.adt.zenon.types.ZType}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.zenon.types.ZType)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZType)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %op ZType ztype(tname:String) {
   is_fsym(t) { (t!= null) && t.isZtype()}
   get_slot(tname,t) { t.getTname()}
-  make(t0) { getZenonFactory().makeZType_Ztype(t0)}
+  make(t0) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZType_Ztype(t0)}
 }
 
 %typeterm ZTermList{
   implement { tom.engine.adt.zenon.types.ZTermList}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.zenon.types.ZTermList)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZTermList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %oplist ZTermList concZTerm(ZTerm*) {
   is_fsym(t) {(t!= null) && t.isSortZTermList()}
-  make_empty() {getZenonFactory().makeZTermList()}
-  make_insert(e,l) {getZenonFactory().makeZTermList(e,l)}
+  make_empty() {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZTermList()}
+  make_insert(e,l) {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZTermList(e,l)}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
 %op ZTermList emptyZTermList{
   is_fsym(t) { (t!= null) && t.isEmpty()}
-  make() {getZenonFactory().makeZTermList()}
+  make() {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZTermList()}
 }
 %op ZTermList manyZTermList(head:ZTerm, tail:ZTermList) {
   is_fsym(t) { (t!= null) && t.isMany()}
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
-  make(e,l) {getZenonFactory().makeZTermList(e,l)}
+  make(e,l) {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZTermList(e,l)}
 }
 %typeterm ZTerm{
   implement { tom.engine.adt.zenon.types.ZTerm}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.zenon.types.ZTerm)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZTerm)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -186,40 +186,40 @@
   is_fsym(t) { (t!= null) && t.isZsl()}
   get_slot(abst,t) { t.getAbst()}
   get_slot(name,t) { t.getName()}
-  make(t0, t1) { getZenonFactory().makeZTerm_Zsl(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZTerm_Zsl(t0, t1)}
 }
 
 %op ZTerm zst(abst:ZTerm, index:int) {
   is_fsym(t) { (t!= null) && t.isZst()}
   get_slot(abst,t) { t.getAbst()}
   get_slot(index,t) { t.getIndex()}
-  make(t0, t1) { getZenonFactory().makeZTerm_Zst(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZTerm_Zst(t0, t1)}
 }
 
 %op ZTerm zappl(zsymb:ZSymbol, termlist:ZTermList) {
   is_fsym(t) { (t!= null) && t.isZappl()}
   get_slot(zsymb,t) { t.getZsymb()}
   get_slot(termlist,t) { t.getTermlist()}
-  make(t0, t1) { getZenonFactory().makeZTerm_Zappl(t0, t1)}
+  make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZTerm_Zappl(t0, t1)}
 }
 
 %op ZTerm zvar(varname:String) {
   is_fsym(t) { (t!= null) && t.isZvar()}
   get_slot(varname,t) { t.getVarname()}
-  make(t0) { getZenonFactory().makeZTerm_Zvar(t0)}
+  make(t0) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZTerm_Zvar(t0)}
 }
 
 %typeterm ZSymbol{
   implement { tom.engine.adt.zenon.types.ZSymbol}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getZenonFactory().getPureFactory().makeList()) == getZenonFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.engine.adt.zenon.types.ZSymbol)t.setAnnotation(getZenonFactory().getPureFactory().makeList(),getZenonFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.zenon.types.ZSymbol)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
 %op ZSymbol zsymbol(name:String) {
   is_fsym(t) { (t!= null) && t.isZsymbol()}
   get_slot(name,t) { t.getName()}
-  make(t0) { getZenonFactory().makeZSymbol_Zsymbol(t0)}
+  make(t0) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZSymbol_Zsymbol(t0)}
 }
 

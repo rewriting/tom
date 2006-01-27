@@ -70,7 +70,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException; 
-  protected abstract void buildClass(int deep, String tomName, TomList varList, TomType extendsType,Instruction instruction) throws IOException; 
   protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
   protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomName opNameAST,TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
@@ -248,7 +247,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildCheckStampDecl(int deep, String type, String name,
-                                     TomType tlType, TargetLanguage tlCode) throws IOException {
+                                     TomType tlType, Instruction instr) throws IOException {
     TomType returnType = getSymbolTable().getVoidType();
     String argType;
     if(!lazyMode) {
@@ -257,11 +256,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       argType = getTLType(getUniversalType());
     }
     
-    genDecl(getTLType(returnType),"tom_check_stamp", type, new String[] { argType, name }, tlCode);
+    genDeclInstr(getTLType(returnType),"tom_check_stamp", type, new String[] { argType, name }, instr,deep);
   }
 
   protected void buildSetStampDecl(int deep, String type, String name,
-                                   TomType tlType, TargetLanguage tlCode) throws IOException {
+                                   TomType tlType, Instruction instr) throws IOException {
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -270,14 +269,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     String returnType = argType; /* TODO: use stamp type */
     
-    genDecl(returnType,
+    genDeclInstr(returnType,
             "tom_set_stamp", type,
             new String[] { argType, name },
-            tlCode);
+            instr,deep);
   }
 
   protected void buildGetImplementationDecl(int deep, String type, String name,
-                                            TomType tlType, TargetLanguage tlCode) throws IOException {
+                                            TomType tlType, Instruction instr) throws IOException {
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -286,14 +285,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     String returnType = argType; /* TODO: use stamp type */
     
-    genDecl(returnType,
+    genDeclInstr(returnType,
             "tom_get_implementation", type,
             new String[] { argType, name },
-            tlCode);
+            instr,deep);
   }
 
   protected void buildIsFsymDecl(int deep, String tomName, String name1,
-                                 TomType tlType, TargetLanguage tlCode) throws IOException {
+                                 TomType tlType, Instruction instr) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     
@@ -305,14 +304,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       argType = getTLType(getUniversalType());
     }
     
-    genDecl(getTLType(returnType),
+    genDeclInstr(getTLType(returnType),
             "tom_is_fun_sym", opname,
             new String[] { argType, name1 },
-            tlCode);
+            instr,deep);
   }
 
   protected void buildGetSlotDecl(int deep, String tomName, String name1,
-                                  TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
+                                  TomType tlType, Instruction instr, TomName slotName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
@@ -330,10 +329,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     } else {
       argType = getTLType(getUniversalType());
     }
-    genDecl(getTLType(returnType),
+    genDeclInstr(getTLType(returnType),
             "tom_get_slot", opname  + "_" + slotName.getString(),
             new String[] { argType, name1 },
-            tlCode);
+            instr,deep);
   }
 
   protected void  buildCompareFunctionSymbolDecl(int deep, String name1,
@@ -356,7 +355,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildTermsEqualDecl(int deep, String name1, String name2,
-                                     String type1, String type2, TargetLanguage tlCode) throws IOException {
+                                     String type1, String type2, Instruction instr) throws IOException {
     TomType argType1 = getUniversalType();
     if(getSymbolTable().isBuiltinType(type1)) {
       argType1 = getSymbolTable().getBuiltinType(type1);
@@ -366,15 +365,15 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       argType2 = getSymbolTable().getBuiltinType(type2);
     } 
     
-    genDecl(getTLType(getSymbolTable().getBooleanType()), "tom_terms_equal", type1,
+    genDeclInstr(getTLType(getSymbolTable().getBooleanType()), "tom_terms_equal", type1,
             new String[] {
               getTLType(argType1), name1,
               getTLType(argType2), name2
             },
-            tlCode);
+            instr,deep);
   }
 
-  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, TargetLanguage tlCode) 
+  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Instruction instr) 
     throws IOException {
     String returnType = null;
     String argType = null;
@@ -401,12 +400,12 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         } }}
 
     }
-    genDecl(returnType, functionName, suffix,
+    genDeclInstr(returnType, functionName, suffix,
             new String[] { argType, varName },
-            tlCode);
+            instr,deep);
   }
 
-  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, TargetLanguage tlCode) 
+  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Instruction instr) 
     throws IOException {
     String returnType = null;
     String argType = null;
@@ -434,13 +433,13 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
     }
 
-    genDecl(returnType, functionName, type,
+    genDeclInstr(returnType, functionName, type,
             new String[] { argType, varName },
-            tlCode);
+            instr,deep);
   }
 
   protected void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
-                                  TomType tlType, TargetLanguage tlCode) throws IOException {
+                                  TomType tlType, Instruction instr) throws IOException {
     String argType = null;
     String functionName = "tom_is_empty";
 
@@ -462,14 +461,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
     }
 
-    genDecl(getTLType(getSymbolTable().getBooleanType()),
+    genDeclInstr(getTLType(getSymbolTable().getBooleanType()),
             functionName, type,
             new String[] { argType, varName },
-            tlCode);
+            instr,deep);
   }
 
   protected void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2,
-                                     String type1, TomType domain, TargetLanguage tlCode) throws IOException {
+                                     String type1, TomType domain, Instruction instr) throws IOException {
     String returnType = null;
     String argType = null;
     String functionName = "tom_get_element";
@@ -496,17 +495,17 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
     }
     
-    genDecl(returnType,
+    genDeclInstr(returnType,
             functionName, type1,
             new String[] {
               argType, name1,
               getTLType(getSymbolTable().getIntType()), name2
             },
-            tlCode);
+            instr,deep);
   }
 
   protected void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
-                                  TomType domain, TargetLanguage tlCode) throws IOException {
+                                  TomType domain, Instruction instr) throws IOException {
     String argType = null;
     String functionName = "tom_get_size";
 
@@ -529,10 +528,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
     }
     
-    genDecl(getTLType(getSymbolTable().getIntType()),
+    genDeclInstr(getTLType(getSymbolTable().getIntType()),
             functionName, type,
             new String[] { argType, name1 },
-            tlCode);
+            instr,deep);
   }
 
  

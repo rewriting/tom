@@ -6,8 +6,8 @@
 %typeterm MuStrategy{
   implement { tom.library.adt.mutraveleradt.types.MuStrategy}
   equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getMuTravelerADTFactory().getPureFactory().makeList()) == getMuTravelerADTFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.library.adt.mutraveleradt.types.MuStrategy)t.setAnnotation(getMuTravelerADTFactory().getPureFactory().makeList(),getMuTravelerADTFactory().getPureFactory().makeList())}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.library.adt.mutraveleradt.types.MuStrategy)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
   get_implementation(t) {t}
 }
 
@@ -16,61 +16,61 @@
   get_slot(s1,t) { t.getS1()}
   get_slot(s2,t) { t.getS2()}
   get_slot(s3,t) { t.getS3()}
-  make(t0, t1, t2) { getMuTravelerADTFactory().makeMuStrategy_IfThenElse(t0, t1, t2)}
+  make(t0, t1, t2) { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_IfThenElse(t0, t1, t2)}
 }
 
 %op MuStrategy Some(s1:MuStrategy) {
   is_fsym(t) { (t!= null) && t.isSome()}
   get_slot(s1,t) { t.getS1()}
-  make(t0) { getMuTravelerADTFactory().makeMuStrategy_Some(t0)}
+  make(t0) { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Some(t0)}
 }
 
 %op MuStrategy All(s1:MuStrategy) {
   is_fsym(t) { (t!= null) && t.isAll()}
   get_slot(s1,t) { t.getS1()}
-  make(t0) { getMuTravelerADTFactory().makeMuStrategy_All(t0)}
+  make(t0) { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_All(t0)}
 }
 
 %op MuStrategy One(s1:MuStrategy) {
   is_fsym(t) { (t!= null) && t.isOne()}
   get_slot(s1,t) { t.getS1()}
-  make(t0) { getMuTravelerADTFactory().makeMuStrategy_One(t0)}
+  make(t0) { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_One(t0)}
 }
 
 %op MuStrategy Omega(position:int, s1:MuStrategy) {
   is_fsym(t) { (t!= null) && t.isOmega()}
   get_slot(position,t) { t.getPosition()}
   get_slot(s1,t) { t.getS1()}
-  make(t0, t1) { getMuTravelerADTFactory().makeMuStrategy_Omega(t0, t1)}
+  make(t0, t1) { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Omega(t0, t1)}
 }
 
 %op MuStrategy Choice(s1:MuStrategy, s2:MuStrategy) {
   is_fsym(t) { (t!= null) && t.isChoice()}
   get_slot(s1,t) { t.getS1()}
   get_slot(s2,t) { t.getS2()}
-  make(t0, t1) { getMuTravelerADTFactory().makeMuStrategy_Choice(t0, t1)}
+  make(t0, t1) { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Choice(t0, t1)}
 }
 
 %op MuStrategy Sequence(s1:MuStrategy, s2:MuStrategy) {
   is_fsym(t) { (t!= null) && t.isSequence()}
   get_slot(s1,t) { t.getS1()}
   get_slot(s2,t) { t.getS2()}
-  make(t0, t1) { getMuTravelerADTFactory().makeMuStrategy_Sequence(t0, t1)}
+  make(t0, t1) { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Sequence(t0, t1)}
 }
 
 %op MuStrategy Not(s1:MuStrategy) {
   is_fsym(t) { (t!= null) && t.isNot()}
   get_slot(s1,t) { t.getS1()}
-  make(t0) { getMuTravelerADTFactory().makeMuStrategy_Not(t0)}
+  make(t0) { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Not(t0)}
 }
 
 %op MuStrategy Fail {
   is_fsym(t) { (t!= null) && t.isFail()}
-  make() { getMuTravelerADTFactory().makeMuStrategy_Fail()}
+  make() { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Fail()}
 }
 
 %op MuStrategy Identity {
   is_fsym(t) { (t!= null) && t.isIdentity()}
-  make() { getMuTravelerADTFactory().makeMuStrategy_Identity()}
+  make() { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Identity()}
 }
 

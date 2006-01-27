@@ -26,11 +26,19 @@
 package tom.engine.backend;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
+import tom.engine.adt.tomsignature.types.Instruction;
 import tom.engine.adt.tomsignature.types.InstructionList;
+import tom.engine.adt.tomsignature.types.TomList;
+import tom.engine.adt.tomsignature.types.TomType;
+import tom.engine.adt.tomsignature.types.TomTypeList;
+import tom.engine.adt.tomsignature.types.TomTerm;
+import tom.engine.adt.tomsignature.types.TomSymbol;
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
+import tom.engine.exception.TomRuntimeException;
 
 public class TomJavaGenerator extends TomImperativeGenerator {
    
@@ -62,4 +70,83 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.writeln("}");
   }
 
+  protected void buildClass(int deep, String tomName, TomType extendsType, Instruction instruction) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+    TomTypeList tomTypes = getSymbolDomain(tomSymbol);
+    ArrayList names = new ArrayList();
+    ArrayList types = new ArrayList();
+    TomType type;
+    //initialize arrayList with argument names
+    int index = 0;
+    while(!tomTypes.isEmpty()) {
+	    type = tomTypes.getHead();
+	    types.add(getTomType(type));
+            names.add(getSlotName(tomSymbol, index).getString());
+	    tomTypes = tomTypes.getTail();
+	    index++;
+    }
+    output.write(deep,"class " + tomName + "{");
+    int args = names.size();
+    //write Declarations
+    for (int i = 0 ; i < args ; i++){
+	    output.write(deep, types.get(i) + " " + names.get(i) + "; ");
+    }
+
+    //write constructor
+    output.write(deep, modifier + tomName + "(");
+    //write constructor parameters
+    for (int i = 0 ; i < args ; i++){
+	    output.write(deep,types.get(i) + " " + names.get(i));
+	    if (i+1<args) {//if many parameters
+		    output.write(deep,", ");
+	    }
+    }
+
+    //write constructor initialization
+    output.write(deep,") { super(`Indentity());");
+    //here index represents the parameter number
+    String param;
+    for (int i = 0 ; i < args ; i++) {
+	    param = (String)names.get(i); 
+	    output.write(deep, "this." + param + "=" + param + ";");
+    }
+    output.write(deep,"}");
+
+    generateInstruction(deep,instruction);
+    output.write(deep,"}");
+  }
+
+  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException {
+    output.write(deep, modifier + getTomType(codomain) + " " + tomName + "(");
+    TomTerm localVar;
+    while(!varList.isEmpty()) {
+      localVar = varList.getHead();
+      matchBlock: {
+         { tom.engine.adt.tomsignature.types.TomTerm tom_match1_1=(( tom.engine.adt.tomsignature.types.TomTerm)localVar); if(tom_is_fun_sym_Variable(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match1_1_astType=tom_get_slot_Variable_astType(tom_match1_1);
+
+            output.write(deep,getTomType(tom_match1_1_astType) + " ");
+            generate(deep,tom_match1_1);
+            break matchBlock;
+          } } if(tom_is_fun_sym_TLVar(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match1_1_astType=tom_get_slot_TLVar_astType(tom_match1_1);
+
+            output.write(deep,getTLType(tom_match1_1_astType) + " ");
+            generate(deep,tom_match1_1);
+            break matchBlock;
+          } }
+
+            System.out.println("MakeFunction: strange term: " + localVar);
+            throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
+          }
+
+      }
+      varList = varList.getTail();
+      if(!varList.isEmpty()) {
+        output.write(deep,", ");
+        
+      }
+    }
+    output.writeln(deep,") {");
+    generateInstruction(deep,instruction);
+    output.writeln(deep,") }");
+  }
 } // class TomJavaGenerator

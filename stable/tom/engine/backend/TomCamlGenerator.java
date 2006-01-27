@@ -76,6 +76,10 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     return;
   }
 
+  protected void buildSemiColon() throws IOException {
+    // do nothing
+  }
+
   protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
     if(instList.isSingle()) {
       output.writeln(deep,"( (* begin unamed block*)");
@@ -343,8 +347,49 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     buildUnamedBlock(deep,instList);
   }
 
+  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException {
+    System.out.println("Function not yet supported in Caml");
+    throw new TomRuntimeException("Function not yet supported in Caml");
+  }
+
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
     System.out.println(" Deprecated intermediate code : break is evil");
+  }
+
+  protected void genDeclInstr(String returnType,
+                         String declName,
+                         String suffix,
+                         String args[],
+                         Instruction instr,
+                         int deep) throws IOException {
+    StringBuffer s = new StringBuffer();
+    if(nodeclMode) {
+      return;
+    }
+    s.append("let " + modifier + " " + declName + "_" + suffix + "(");
+    for(int i=0 ; i<args.length ; ) {
+      // forget the type, caml will infer it
+      s.append(args[i+1]);
+      i+=2;
+      if(i<args.length) {
+        s.append(", ");
+      }
+    } 
+    s.append(") = ");
+    output.write(s);
+    generateInstruction(deep,instr);
+    /*
+     * path to add a semi-colon for 'void instruction'
+     * This is the case of CheckStampDecl
+     */
+    if(instr.isTargetLanguageToInstruction()) {
+      buildSemiColon();
+    }
+    output.write(";;");
+  }
+
+  protected void buildReturn(int deep, TomTerm exp) throws IOException {
+    generate(deep,exp);
   }
 
 } // class TomCamlGenerator

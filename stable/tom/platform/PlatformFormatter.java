@@ -41,5 +41,4 @@ public class PlatformFormatter extends Formatter {
     }
     return "Platform_"+levelString+formatMessage(record)+"\n";
   }
-
 } // class PlatformFormatter
