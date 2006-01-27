@@ -43,24 +43,16 @@ import junit.framework.TestSuite;
 
 public class TestPropp extends TestCase {
   private Propp1 test;
-  private static Factory factory;
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestPropp.class));
 	}
 
   public void setUp() {
-		if (factory == null) {
-			factory = Factory.getInstance(SingletonFactory.getInstance());
-		}
-    test = new Propp1(factory);
+    test = new Propp1();
   }
 
   %include { seq/seq.tom }
-
-  public Factory getSeqFactory() {
-    return factory;
-  }
 
   public void testMakeQuery() {
 		assertEquals("makeQuery should builds the corresponding sequent tree",

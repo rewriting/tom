@@ -39,19 +39,9 @@ import antlr.CommonAST;
 
 public class RecPropp extends Propp1 {
 
-	private Factory factory;
-
 	// ------------------------------------------------------------  
 	%include { seq/seq.tom }
 	// ------------------------------------------------------------  
-
-	public RecPropp() {
-		this(Factory.getInstance(new PureFactory()));
-	}
-		
-	public RecPropp(Factory factory) {
-		this.factory = factory;
-	}
 
 	//{{{ public void run(String query)
 	public void run(String query) {
@@ -184,7 +174,7 @@ public class RecPropp extends Propp1 {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		RecPropp test = new RecPropp(Factory.getInstance(new PureFactory()));
+		RecPropp test = new RecPropp();
 
 		String query ="";
 		try {

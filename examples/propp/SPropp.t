@@ -46,21 +46,11 @@ import antlr.CommonAST;
 
 class SPropp extends Propp1 {
 
-	private Factory factory;
-
 	// ------------------------------------------------------------  
 	%include { seq/seq.tom }
   %include{ mutraveler.tom }
 	// ------------------------------------------------------------  
 
-	public SPropp() {
-		this(Factory.getInstance(SingletonFactory.getInstance()));
-	}
-		
-	public SPropp(Factory factory) {
-		this.factory = factory;
-	}
-	
 	//{{{ public void run(String query)
 	public void run(String query) {
 		Sequent initSeq = makeQuery(query);
@@ -225,7 +215,7 @@ class SPropp extends Propp1 {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		SPropp test = new SPropp(Factory.getInstance(SingletonFactory.getInstance()));
+		SPropp test = new SPropp();
 
 		String query ="";
 		try {

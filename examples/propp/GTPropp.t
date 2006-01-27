@@ -41,7 +41,6 @@ import antlr.CommonAST;
 
 public class GTPropp extends Propp1 {
 
-	private Factory factory;
 	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------  
@@ -49,15 +48,9 @@ public class GTPropp extends Propp1 {
 	// ------------------------------------------------------------  
 
 	public GTPropp() {
-		this(Factory.getInstance(SingletonFactory.getInstance()));
 		this.traversal = new GenericTraversal();
 	}
 		
-	public GTPropp(Factory factory) {
-		this.factory = factory;
-		this.traversal = new GenericTraversal();
-	}
-	
 	//{{{ public void run(String query)
 	public void run(String query) {
 		Sequent initSeq = makeQuery(query);
@@ -207,7 +200,7 @@ public class GTPropp extends Propp1 {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		GTPropp test = new GTPropp(Factory.getInstance(SingletonFactory.getInstance()));
+		GTPropp test = new GTPropp();
 
 		String query ="";
 		try {

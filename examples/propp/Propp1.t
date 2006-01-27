@@ -41,7 +41,6 @@ import antlr.CommonAST;
 
 public class Propp1 {
 
-	private Factory factory;
 	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------
@@ -49,17 +48,7 @@ public class Propp1 {
 	// ------------------------------------------------------------
 
 	public Propp1() {
-		this(Factory.getInstance(SingletonFactory.getInstance()));
 		this.traversal = new GenericTraversal();
-	}
-
-	public Propp1(Factory factory) {
-		this.factory = factory;
-		this.traversal = new GenericTraversal();
-	}
-
-	public final Factory getSeqFactory() {
-		return factory;
 	}
 
 	//{{{ public void run(String query)
@@ -104,7 +93,7 @@ public class Propp1 {
 
 	//{{{ public Sequent makeQuery(String input)
 	public Sequent makeQuery(String input) {
-		Sequent query = factory.SequentFromString(input);
+		Sequent query = Factory.getInstance(SingletonFactory.getInstance()).SequentFromString(input);
 		return query;
 	}
 	//}}}
@@ -581,7 +570,7 @@ public class Propp1 {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		Propp1 test = new Propp1(Factory.getInstance(new PureFactory()));
+		Propp1 test = new Propp1();
 
 		String query ="";
 		try {
