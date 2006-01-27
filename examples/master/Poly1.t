@@ -33,17 +33,31 @@ public class Poly1 {
 	}
 	
 	public Polynome simplify(Polynome p) {
+		Polynome res = oneStepSimplify(p);
+		if(p != res) {
+			res = simplify(res);
+		}
+		return res;
+	}
+
+	public Polynome oneStepSimplify(Polynome p) {
 		%match(Polynome p) {
 			plus(m(c1,"X",n),m(c2,"X",n)) -> { return `m(c1+c2,"X",n); }
-			plus(p1@m(c1,"X",n1),p2@m(c2,"X",n2)) -> {
+			plus(m1@m(c1,"X",n1),m2@m(c2,"X",n2)) -> {
 					if(n2>n1) {
-							return `plus(p2,p1);
+							return `plus(m2,m1);
 					}
 			}
 
-			plus(plus(m1,p1),p2) -> { return `plus(m1,plus(simplify(p1),simplify(p2))); }
-			//plus(p1,p2) -> { return `plus(simplify(p1),simplify(p2)); }
+			plus(m(c1,"X",n),plus(m(c2,"X",n),p2)) -> { return `plus(m(c1+c2,"X",n),p2); }
+			plus(m1@m(c1,"X",n1),plus(m2@m(c2,"X",n2),p2)) -> {
+					if(n2>n1) {
+							return `plus(m2,plus(m1,p2));
+					}
+			}
 
+			plus(plus(m1,p1),p2) -> { return `plus(m1,plus(p1,p2)); }
+			plus(p1,p2) -> { return `plus(simplify(p1),simplify(p2)); }
 		}
 		return p;
 	}
