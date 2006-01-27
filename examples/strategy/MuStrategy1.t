@@ -29,7 +29,6 @@
 
 package strategy;
 
-import aterm.pure.SingletonFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
@@ -44,28 +43,12 @@ import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 
 public class MuStrategy1 {
-  private termFactory tfactory;
-  private MuTravelerADTFactory mfactory;
-
-  public MuStrategy1(termFactory tfactory, MuTravelerADTFactory mfactory) {
-    this.tfactory = tfactory;
-    this.mfactory = mfactory;
-  }
-
-  public termFactory getTermFactory() {
-    return tfactory;
-  }
-
-  public MuTravelerADTFactory getMuTravelerADTFactory() {
-    return mfactory;
-  }
 
   %include { term/term.tom }
   %include { adt/mutraveleradt/MuTravelerADT.tom }
   
   public final static void main(String[] args) {
-    MuStrategy1 test = new MuStrategy1(termFactory.getInstance(SingletonFactory.getInstance()),
-                                       MuTravelerADTFactory.getInstance(SingletonFactory.getInstance()));
+    MuStrategy1 test = new MuStrategy1();
     test.run();
   }
 

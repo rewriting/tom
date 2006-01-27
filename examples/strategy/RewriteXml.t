@@ -29,8 +29,6 @@
 
 package strategy;
 
-import aterm.pure.SingletonFactory;
-
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
@@ -48,10 +46,6 @@ public class RewriteXml {
 
   private XmlTools xtools;
   private TNode globalSubject;
-
-  private TNodeFactory getTNodeFactory() {
-    return xtools.getTNodeFactory();
-  }
 
   %include { adt/tnode/TNode.tom }
   %include { mutraveler.tom }

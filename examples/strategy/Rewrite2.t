@@ -29,7 +29,6 @@
 
 package strategy;
 
-import aterm.pure.SingletonFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
@@ -37,22 +36,13 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class Rewrite2 {
-  private termFactory factory;
-
-  public Rewrite2(termFactory factory) {
-    this.factory = factory;
-  }
-
-  public termFactory getTermFactory() {
-    return factory;
-  }
 
   %include { term/term.tom }
   %include { string.tom }
   %include { mutraveler.tom }
 
   public final static void main(String[] args) {
-    Rewrite2 test = new Rewrite2(termFactory.getInstance(SingletonFactory.getInstance()));
+    Rewrite2 test = new Rewrite2();
     test.run();
   }
 

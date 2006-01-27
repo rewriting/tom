@@ -30,7 +30,6 @@
 package strategy;
 
 import aterm.*;
-import aterm.pure.PureFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
@@ -40,15 +39,6 @@ import jjtraveler.VisitFailure;
 import java.util.*;
 
 public class Rewrite3 {
-  private termFactory factory;
-
-  public Rewrite3(termFactory factory) {
-    this.factory = factory;
-  }
-
-  public termFactory getTermFactory() {
-    return factory;
-  }
 
   %include { term/term.tom }
   %include { string.tom }
@@ -59,7 +49,7 @@ public class Rewrite3 {
   }
 
   public final static void main(String[] args) {
-    Rewrite3 test = new Rewrite3(termFactory.getInstance(new PureFactory()));
+    Rewrite3 test = new Rewrite3();
     test.run();
   }
 

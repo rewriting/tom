@@ -29,8 +29,6 @@
 
 package strategy;
 
-import aterm.pure.SingletonFactory;
-
 import strategy.proba1.piece.*;
 import strategy.proba1.piece.types.*;
 
@@ -38,11 +36,6 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class Proba1 {
-  private PieceFactory factory;
-
-  public Proba1(PieceFactory factory) {
-    this.factory = factory;
-  }
 
   %vas {
     // extension of adt syntax
@@ -59,12 +52,8 @@ public class Proba1 {
 
   %include { mutraveler.tom }
 
-  public PieceFactory getPieceFactory() {
-    return factory;
-  }
-
   public final static void main(String[] args) {
-    Proba1 test = new Proba1(PieceFactory.getInstance(SingletonFactory.getInstance()));
+    Proba1 test = new Proba1();
     test.run();
   }
 
@@ -121,9 +110,3 @@ public class Proba1 {
   }
 
 }
-
- 
-
-
-
-
