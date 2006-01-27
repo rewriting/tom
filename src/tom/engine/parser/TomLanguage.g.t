@@ -324,10 +324,28 @@ matchGuards [LinkedList list] throws TomException
     ;
 
 
+backquoteTerm returns [TomTerm bqTerm] throws TomException
+{
+    TargetLanguage code = null;
+bqTerm = null;
+}
+    :
+        t:BACKQUOTE
+        {
+          selector().push("bqlexer");
+          bqTerm = bqparser.beginBackquote();
+            
+          // update position for new target block
+          //updatePosition();
+          return bqTerm;
+        }
+    ;
+
 // The %strategy construct
 strategyConstruct [Option orgTrack] returns [Instruction result] throws TomException
 {
     result = null;
+    TomTerm extendsTerm = null;
     LinkedList visitList = new LinkedList();
     TomVisitList astVisitList = `emptyTomVisitList();
     LinkedList argumentList = new LinkedList();
@@ -370,20 +388,20 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
             )*
             RPAREN
         )?
-	//EXTENDS BACKQUOTE extendsTerm:ALL_ID LPAREN RPAREN 
+	EXTENDS extendsTerm = backquoteTerm
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
         {
-            //VisitableVisitor must be put as constant
-          TomSymbol astSymbol = ast().makeSymbol(name.getText(), "VisitableVisitor", types, ast().makePairNameDeclList(pairNameDeclList), options);
+          //second parameter 'resultType' is equal to "" since a class does not return a type
+          TomSymbol astSymbol = ast().makeSymbol(name.getText(), "", types, ast().makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
-            // update for new target block...
-            updatePosition(t.getLine(),t.getColumn());
+          // update for new target block...
+          updatePosition(t.getLine(),t.getColumn());
 
-            result = `Strategy(Name(name.getText()),emptyTerm,astVisitList,orgTrack);
+          result = `Strategy(Name(name.getText()),extendsTerm,astVisitList,orgTrack);
 
-            // %strat finished: go back in target parser.
+          // %strat finished: go back in target parser.
             selector().pop();
         }
      )
