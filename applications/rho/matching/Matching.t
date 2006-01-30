@@ -118,11 +118,36 @@ public class Matching {
 				return c;
 			}
 			//Beta-exp
-			//	(X*,match(),Y*) ->{
-			//	return `and(X*,Y*);}
+				(X*,match(app(A1,B1),C),Y*) ->{
+					//1. Collection of all the subterms of C
+					Collection collSubTerm=getAllSubterm(C);
+					//2. For each subterm compute the set of position in which the considered subterm appears.
+					Iterator itSubTerm=c.iterator();
+					while(itSubTerm.hasNext()){
+
+						Collection collPosition=getAllPos(C,(LamTerm)itSubTerm.next());
+						List l=allSubCollection(c);
+						Iterator itListAllSubCollection=l.iterator();
+						//3. For each subset of the previous set do the replacement of the subterm by a fresh variable and then do decomposition.
+						while(itListAllSubCollection.hasNext()){
+							LamTerm x=`localVar("_x"+(++comptVariable));
+							LamTerm a2=C;
+							Collection subCollection=(Collection)itListAllSubCollection.next();
+							Iterator itSubCollection=subCollection.iterator();
+							while(itSubCollection.hasNext()){
+								VisitableVisitor subsitute=((Position)itSubCollection.next()).getReplace(x);
+								a2=(LamTerm)MuTraveler.init(subsitute).visit(a2);
+							}
+							c.add(`abs(x,a2));		
+						}
+					}
+
+					return `c;}
+				//NOUVELLE REGLE: si je ne peux rien faire alors c'est que ca a pas de sol donc je peux l'enlever
+				_ -> {return `c;
+				}
 			
 		}
-		throw new VisitFailure();
 	}
 	class ReductionRules extends LamtermVisitableFwd {
 		public ReductionRules() {
