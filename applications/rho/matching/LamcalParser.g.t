@@ -68,7 +68,7 @@ matchingEquation returns [Equation eq]
 
 lamterm returns [LamTerm term]
 {
-  term = `var("lamterm");
+  term = `localVar("lamterm");
 }
 : term=functionalapp
 ;
@@ -76,7 +76,7 @@ lamterm returns [LamTerm term]
 
 functionalapp returns [LamTerm appl]
 {
-  appl=`var("functionalapp");
+  appl=`localVar("functionalapp");
   LamTerm lhs=null;
   LamTerm rhs=null;
 	LamTerm x=null;
@@ -130,7 +130,7 @@ variable returns [LamTerm var]
   var=null;
   //String varname="";
 }
-: varname:VAR {var=`var(varname.getText());}
+: varname:VAR {var=`localVar(varname.getText());}
 ;
 class LamcalLexer extends Lexer;
 
