@@ -188,7 +188,46 @@ The disjunction should be :
 \begin{verbatim}
 t@(f2|f3)[s2=a] -> `t@[s2=a,s3=a] ??? \\ not sure
 \end{verbatim}
-Explicit notation don't make sense.
+Explicit notation does not make sense.
+
+\section{\%strategy}
+
+We would like to add an operator \%strategy in Tom in order to write strategy easier.
+
+\%strategy has this construction:
+\begin{verbatim}
+%strategy FindLeaves(bag:Collection) extends `Identity() {
+  visit_Term {
+  F(_) -> {return ...}
+  x    -> { if (x.getArity()) ... this ...}
+  }
+}
+\end{verbatim}
+it generates the following java class:
+\begin{verbatim}
+
+class FindLeaves extends strategy.term.termVisitableFwd {
+Collection bag;
+protected FindLeaves(Collection bag) {
+  super(`Identity());
+  this.bag = bag;
+}
+protected Term visit_Term (Term arg) throws VisitFailure {
+  %match(Term arg) {
+    F(_) -> {return ...}
+    x    -> { if (x.getArity()) ... this ...}
+  }
+}
+}
+\end{verbatim}
+
+Note that:
+\begin{itemize}
+\item{\%strategy can have arguments (here we pass "bag:Collection") to be able to pass variables to the corresponding java class.}
+\item{The corresponding java class extends a parent class, here termVisitableFwd, and more generally visit\_TypeVisitableFwd, which implements interface VisitableVisitor. The super constructor takes 'Identity() as parameter. To hide this mechanism to Tom users, we just write constructor \%strategy extends 'Identity().}
+\item{By default, we use java keyword 'private' for methods. To use 'protected', you must compile using option '--protected'.}
+\end{itemize}
+
 \section{constraints}
 \dots
 
