@@ -13,49 +13,25 @@ public class Peano2 {
       zero -> Nat
       suc(pred:Nat) -> Nat
       plus(x1:Nat, x2:Nat) -> Nat
-      mult(x1:Nat, x2:Nat) -> Nat
-      
-			fib(x:Nat) -> Nat
-
-			//fibint(n:int) -> int
    }
 
-    // rule plus
-  %rule {
-    plus(x, zero())    -> x
-    plus(x, suc(y))    -> suc(plus(x,y))
-  } // rule
-  %rule {
-    mult(x, zero())    -> zero()
-    mult(x, suc(y))    -> plus(x,mult(x,y))
-  } // rule
- 
-	/*
-	%rule {
-    fibint(0) -> 1
-    fib(1)    -> 1
-    fib(n)    -> fibint(n - 1) + fibint(n - 2) 
-  } 
-	*/
+	public Nat evaluate(Nat n) {
+		%match(Nat n) {
+      plus(x, zero())    -> { return `x; }
+      plus(x, suc(y))    -> { return `suc(plus(x,y));}
 
-	public int fibint(int n) {
-		%match(int n) {
-			0 -> { return 1; }
-			1 -> { return 1; }
-			x -> { 
-				if(`x>1) { 
-					return `fibint(x-1) + `fibint(x-2); 
-				} 
-			}
+      plus(x,y) -> { return `plus(x,evaluate(y));}
+      suc(x) -> { return `suc(evaluate(x));}
+      zero() -> { return `zero();}
 		}
+		return null;
 	}
 
-	%rule {
-    fib(zero())        -> suc(zero())
-    fib(suc(zero()))   -> suc(zero())
-    fib(suc(suc(x)))   -> plus(fib(x),fib(suc(x)))
-  }
-  
+//   %rule {
+//     mult(x, zero())    -> zero()
+//     mult(x, suc(y))    -> plus(x,mult(x,y))
+//   } // rule
+ 
   //-------------------------------------------------------
 
   public void run() {
@@ -63,10 +39,21 @@ public class Peano2 {
 		Nat one = `suc(zero());
 		Nat two = `suc(one);
 
-    System.out.println("plus(one,two) = " + `plus(one,two));
-    System.out.println("mult(two,two) = " + `mult(two,two));
-    System.out.println("fibint(4) = " + `fibint(4));
-    System.out.println("fib(four) = " + `fib(mult(two,two)));
+//     Nat init = `plus(two,two);
+//     Nat init = `plus(two,two);
+    Nat init = `plus(one,plus(one,plus(one,one)));
+//     Nat init = `plus(plus(one,one),plus(one,one));
+    boolean done=false;
+    System.out.println("Start = " + `init);
+    while(!done){
+      Nat res = `evaluate(init);
+      System.out.println("Step = " + `res);
+      if(res==init){
+        done=true;
+      } else {
+        init=res;
+      }
+    }
   }
   
   public final static void main(String[] args) {

@@ -10,11 +10,9 @@ public class Poly1 {
       sorts Polynome
       
     abstract syntax
-		m(coef:int,name:String,exp:int) -> Polynome
-		plus(p1:Polynome, p2:Polynome) -> Polynome
-		mult(p1:Polynome, p2:Polynome) -> Polynome
-		//deriv(p1:Polynome) -> Polynome
-
+      m(coef:int,name:String,exp:int) -> Polynome
+      plus(p1:Polynome, p2:Polynome) -> Polynome
+      mult(p1:Polynome, p2:Polynome) -> Polynome
    }
 
 	public Polynome deriv(Polynome p) {
@@ -57,6 +55,8 @@ public class Poly1 {
 			}
 
 			plus(plus(m1,p1),p2) -> { return `plus(m1,plus(p1,p2)); }
+
+      // congruence
 			plus(p1,p2) -> { return `plus(simplify(p1),simplify(p2)); }
 		}
 		return p;
