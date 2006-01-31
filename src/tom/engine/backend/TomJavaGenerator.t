@@ -117,7 +117,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   }
 
   protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException {
-    output.write(deep, modifier + getTomType(`codomain) + " " + tomName + "(");
+    output.write(deep, modifier + " " + getTomType(`codomain) + " " + tomName + "(");
     TomTerm localVar;
     while(!varList.isEmpty()) {
       localVar = varList.getHead();
@@ -145,7 +145,11 @@ public class TomJavaGenerator extends TomImperativeGenerator {
         
       }
     }
-    output.writeln(deep,") {");
+    output.writeln(deep,")"); 
+    if (!`throwsType.isEmptyType()) {
+      output.write(deep," throws " + `throwsType.getString());
+    }
+    output.writeln(" {");
     generateInstruction(deep,instruction);
     output.writeln(deep,") }");
   }

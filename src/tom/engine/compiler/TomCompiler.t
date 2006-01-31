@@ -302,7 +302,7 @@ public class TomCompiler extends TomGenericPlugin {
                   arg = `Variable(option(),Name("arg"),visitType,concConstraint());//one argument only in visit_Term
 		  subjectListAST = append(arg,subjectListAST);
                   funcName = "visit_" + getTomType(`visitType);//function signature is visit_Term(Term arg) throws...
-                  l = `concInstruction(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,EmptyType(),Match(SubjectList(subjectListAST),
+                  l = `concInstruction(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,TomTypeAlone("VisitFailure"),Match(SubjectList(subjectListAST),
                         patternInstructionList, 
                         concOption(orgTrack))));
                 }
