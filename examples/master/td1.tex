@@ -5,6 +5,9 @@
 \usepackage{aeguill}
 \usepackage{comment}
 
+%% \textwidth=5.5in
+\textheight=8in
+
 %% \includecomment{versionProf}
 \specialcomment{versionProf}
     {\begingroup\bf}{\endgroup}
@@ -34,8 +37,8 @@ ce TD seulement le filtrage syntaxique.
 On souhaite écrire le système de réécriture permettant de calculer la
 somme d'entiers de Peano. \\
 \textit{Rappel}: L'entier $n$ est représenté par le terme
-suc(suc(...(suc($0$)))) avec $n$ occurrence de «suc» et la somme est
-calculée en utilisant les égalités suivantes:
+suc(suc(...(suc($0$)))) avec $n$ occurrences de «suc» et la somme est
+calculée en utilisant les définitions suivantes:
 %
 \begin{itemize}
 \item[] x + zero = x
@@ -106,12 +109,13 @@ fib(n) -> fib(n-1)+fib(n-2)     if n>1
 
 \section{Polynômes}
 
-On considère des polynômes de la forme: $2X^3+4X^2+5X+1$ et on
-souhaite calculer leurs dérivés par rapport à $X$.
+On considère des polynômes à une variable avec de coefficients entiers
+naturels (par exemple, $2X^3+4X^2+5X+1$) et on souhaite calculer leur
+dérivée par rapport à $X$.
 
-\subsection{Dérivé}
-On souhaite calculer écrire le système de réécriture permettant de
-calculer la dérivé de tout polynôme en sachant que:
+\subsection{Dérivée}
+On souhaite écrire le système de réécriture permettant de calculer la
+dérivée de tout polynôme en sachant que:
 \begin{itemize}
 \item[] $deriv(n,X) = 0$
 \item[] $deriv(m*X^n,X) = m*n*X^{n-1}$
@@ -119,7 +123,7 @@ calculer la dérivé de tout polynôme en sachant que:
 \item[] $deriv(P1*P2,X) = deriv(P1,X) * P2 + deriv(P2,X) * P1$
 \end{itemize}
 
-Montrer les étapes de réduction pour obtenir la dérivé des polynômes
+Montrer les étapes de réduction pour obtenir la dérivée des polynômes
 $3*X^2+X+7$ et $5*X^2+3*X+4$ ainsi que de leur somme.
 
 \begin{versionProf}
@@ -136,8 +140,8 @@ $6*X+1 + 10*X+3$
 
 \subsection{Simplification}
 
-Le résultat obtenu à la question précédente ne respecte pas la forme
-demandée; c.a.d. un seul monôme pour chaque puissance de $X$ et les
+Le résultat obtenu à la question précédente n'est pas en forme
+canonique; c.a.d. un seul monôme pour chaque puissance de $X$ et les
 monômes triés par ordre décroissant.
 
 Proposez un système de réécriture permettant de résoudre ce
