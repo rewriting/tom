@@ -197,7 +197,7 @@ We would like to add an operator \%strategy in Tom in order to write strategy ea
 \%strategy has this construction:
 \begin{verbatim}
 %strategy FindLeaves(bag:Collection) extends `Identity() {
-  visit_Term {
+  visit Term {
   F(_) -> {return ...}
   x    -> { if (x.getArity()) ... this ...}
   }
