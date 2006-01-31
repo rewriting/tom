@@ -290,21 +290,22 @@ public class TomCompiler extends TomGenericPlugin {
 
            Strategy(name,_,visitList,orgTrack) -> {
             InstructionList l = `concInstruction();//represents compiled Strategy
-	    TomList subjectListAST = empty();
+            TomList subjectListAST;
             TomVisit visit;
             TomVisitList jVisitList = `visitList;
             TomTerm arg;//arg = subjectList
             String funcName;
             while (!jVisitList.isEmpty()){
+              subjectListAST = empty();
               visit = jVisitList.getHead();
               %match(TomVisit visit) {
                 VisitTerm(visitType,patternInstructionList) -> {
                   arg = `Variable(option(),Name("arg"),visitType,concConstraint());//one argument only in visit_Term
-		  subjectListAST = append(arg,subjectListAST);
-                  funcName = "visit_" + getTomType(`visitType);//function signature is visit_Term(Term arg) throws...
+                  subjectListAST = append(arg,subjectListAST);
+                  funcName = "visit_" + getTomType(`visitType);//function signature is visit_Term(Term arg) throws VisitFailure.
                   l = `concInstruction(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,TomTypeAlone("VisitFailure"),Match(SubjectList(subjectListAST),
-                        patternInstructionList, 
-                        concOption(orgTrack))));
+                          patternInstructionList, 
+                          concOption(orgTrack))));
                 }
               }
               jVisitList = jVisitList.getTail();
