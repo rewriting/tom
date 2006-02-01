@@ -80,13 +80,20 @@ public class Matching {
 	System.out.println(" ******************************************************************\n Computing matching modulo superdevelopments. \n ******************************************************************\n");
     LamcalLexer lexer = new LamcalLexer(System.in); // Create parser attached to lexer
     LamcalParser parser = new LamcalParser(lexer);
+//		VisitableVisitor reduce = new ReductionRules();
+//		VisitableVisitor strategyNormalize =MuTraveler.init(`Repeat(reduce));
+	
 		while(true){
+			Collection c=new HashSet();
 			System.out.print("mSD>");
       try {
 				Equation subject = parser.matchingEquation();
-				System.out.println("Resultat du parsing: " + subject);
+//				System.out.println("Resultat du parsing: " + subject);
+				c.add(`and(subject));
+				System.out.println(// "Resultat de la normalisation"+
+													  normalize_Collection(c));
 			} catch (Exception e) {
-				System.out.println(e);
+				e.printStackTrace();
 			}
 		}	
 	}
@@ -96,64 +103,161 @@ public class Matching {
 		%match(Systems s){
 			//Trivial
 			(X*,match(a@const[],a),Y*)-> {
-				c.add(`and(X*,Y*));
-				return c;}
+				c.add(`and(X*,Y*));}
 			(X*,match(x@localVar[],x),Y*)-> {
-				c.add(`and(X*,Y*));
-				return c;}
+				c.add(`and(X*,Y*));}
 			//Abs
 			(X*,match(abs(x@localVar[],A),abs(x@localVar[],B)),Y*) ->{
-				c.add(`and(X*,match(A,B),Y*));
-				return c;}
+				c.add(`and(X*,match(A,B),Y*));}
 			//Subst
-//					(X*,match(),Y*) ->{
-			//					return `and(X*,Y*);}
+			l:(X*,match(Z@matchVar[],A),Y*) ->{
+				if (!belongsTo(Z,`and(X*,Y*)) && doesNotContainFreeLocalVar(A)){
+					Systems s1=`substitute(Z,A,X*);
+					Systems s2=`substitute(Z,A,Y*);
+					c.add(`and(s1*,match(Z,A),s2*));
+				}
+				else{
+					break l;
+				}
+			}
 			//Decompose
 			(X*,match(app(A1,B1),app(A2,B2)),Y*) ->{
-				c.add(`and(X*,match(A1,A2),match(B1,B2),Y*));
-				return c;}
+				c.add(`and(X*,match(A1,A2),match(B1,B2),Y*));}
 			//Proj
 			(X*,match(app(A1,B1),A2),Y*) ->{
 				c.add(`and(X*,match(A1,abs(localVar("_x"+(++comptVariable)),A2)),Y*));
-				return c;
 			}
 			//Beta-exp
 				(X*,match(app(A1,B1),C),Y*) ->{
 					//1. Collection of all the subterms of C
 					Collection collSubTerm=getAllSubterm(C);
 					//2. For each subterm compute the set of position in which the considered subterm appears.
-					Iterator itSubTerm=c.iterator();
+					Iterator itSubTerm=collSubTerm.iterator();
 					while(itSubTerm.hasNext()){
-
-						Collection collPosition=getAllPos(C,(LamTerm)itSubTerm.next());
-						List l=allSubCollection(c);
+//								System.out.println("ici");
+						LamTerm B2=(LamTerm)itSubTerm.next();
+								System.out.println("la");
+						Collection collPosition=getAllPos(C,B2);
+						List l=allSubCollection(collPosition);
 						Iterator itListAllSubCollection=l.iterator();
 						//3. For each subset of the previous set do the replacement of the subterm by a fresh variable and then do decomposition.
 						while(itListAllSubCollection.hasNext()){
 							LamTerm x=`localVar("_x"+(++comptVariable));
-							LamTerm a2=C;
+							LamTerm A2=C;
+							//							System.out.println("ici");
 							Collection subCollection=(Collection)itListAllSubCollection.next();
 							Iterator itSubCollection=subCollection.iterator();
 							while(itSubCollection.hasNext()){
+//								System.out.println("ici");
 								VisitableVisitor subsitute=((Position)itSubCollection.next()).getReplace(x);
-								a2=(LamTerm)MuTraveler.init(subsitute).visit(a2);
+								//							System.out.println("ici");
+								A2=(LamTerm)MuTraveler.init(subsitute).visit(A2);
 							}
-							c.add(`abs(x,a2));		
+							c.add(`and(X*,match(A1,abs(x,A2)),match(B1,B2),Y*));		
 						}
 					}
 
-					return `c;}
-				//NOUVELLE REGLE: si je ne peux rien faire alors c'est que ca a pas de sol donc je peux l'enlever
-				_ -> {return `c;
 				}
-			
+		}
+		if (c.isEmpty()){
+			c.add(s);
+		}
+		return c;
+	}
+	public boolean belongsTo(LamTerm var,Systems s){
+		return freeLocalVar(s).contains(var);
+	}
+	public boolean doesNotContainFreeLocalVar(LamTerm t){
+		return freeLocalVar(t).isEmpty();
+	}
+	public Collection freeLocalVar(LamTerm t){
+		Collection c=new HashSet();
+		freeLocalVarAux(t,c);
+		return c;
+	}
+	public Collection freeLocalVar(Systems s){
+		Collection c=new HashSet();
+		freeLocalVarAux(s,c);
+		return c;
+	}
+	public Collection freeLocalVarAux(Systems s,Collection c){
+		%match(Systems s){
+			(X*,match(A,B),Y*) -> {
+				freeLocalVarAux(X,c);
+				freeLocalVarAux(Y,c);
+				freeLocalVarAux(A,c);
+			}
+		}
+		return c;
+	}
+	public void freeLocalVarAux(LamTerm t,Collection c){
+		%match(LamTerm t){
+			x@localVar[] -> {
+				if (!c.contains(t)) {
+					c.add(x);
+				}
+			}
+			app(A1,A2)->{
+				freeLocalVarAux(A1,c);
+				freeLocalVarAux(A2,c);
+			}
+			abs(x,A1)->{
+				freeLocalVarAux(A1,c);
+				c.remove(x);
+			}
 		}
 	}
-	class ReductionRules extends LamtermVisitableFwd {
-		public ReductionRules() {
-			super(`Fail());
+	public Systems substitute(LamTerm var, LamTerm subject, Systems s){
+		%match(Systems s){
+			(X*,match(A,B),Y*) -> {
+				Systems newX=`substitute(var,subject,X*);
+				Systems newY=`substitute(var,subject,Y*);
+				LamTerm newA=`substitute(var,subject,A);
+				return `and(newX*,match(newA,B),newY*);}
+			_ -> {return `s;}
+
 		}
-		public Collection visit_Collection(Collection start) throws VisitFailure{
+	}
+	public LamTerm substitute(LamTerm X, LamTerm subject, LamTerm t){
+		%match(LamTerm subject){
+			const[] -> {return `subject;}
+			localVar[] -> {return `subject;}
+			Y@matchVar[] -> {
+				if (X == Y){ return `t;}
+				else {return `subject;}
+			}
+			app(A1,A2) -> {return `app(substitute(X,subject,A1),substitute(X,subject,A2));}
+			abs(x,A1) -> {
+				LamTerm newx=`localVar("_x"+(++comptVariable));
+				return `abs(newx,substitute(X,subject,(substituteLocalVar(x,newx,A1))));
+			}
+		}
+		return `subject;
+	}
+	public LamTerm substituteLocalVar(LamTerm X, LamTerm subject, LamTerm t){
+		%match(LamTerm subject){
+			const[] -> {return `subject;}
+			matchVar[] -> {return `subject;}
+			Y@localVar[] -> {
+				if (X == Y){ return `t;}
+				else {return `subject;}
+			}
+			app(A1,A2) -> {return `app(substitute(X,subject,A1),substitute(X,subject,A2));}
+			abs(x,A1) -> {LamTerm newx=`localVar("_x"+(++comptVariable));
+			return `abs(newx,substituteLocalVar(X,subject,(substituteLocalVar(x,newx,A1))));
+			}
+		}
+		return `subject;
+	}
+	public Collection normalize_Collection(Collection start)  throws VisitFailure{
+		Collection result = visit_Collection(start);
+		if(!result.equals(start)){
+//			System.out.println(result);
+			result=normalize_Collection(result);
+		}
+		return result;
+	}
+	public Collection visit_Collection(Collection start) throws VisitFailure{
 			Collection c=new HashSet();
 			Iterator it=start.iterator();
 			while(it.hasNext()){
@@ -162,7 +266,7 @@ public class Matching {
 			}
 			return c;
 		}
-	}
+
 	//return a list of collection consisting of all the subCollection of a non-empty collection
 	public List allSubCollection(Collection c){
 		List result=new ArrayList();
@@ -192,7 +296,7 @@ public class Matching {
 	public Collection getAllSubterm(LamTerm subject) throws VisitFailure{
 		VisitableVisitor collect = new Collect();
  		VisitableVisitor getAll = `mu(MuVar("x"),
- 																	Sequence(collect,All(MuVar("x"))));		
+ 																	Sequence(collect,Try(All(MuVar("x")))));		
 		MuTraveler.init(getAll).visit(subject);
 		return ((Collect)collect).getBagSubTerm();
 	}
@@ -200,7 +304,7 @@ public class Matching {
 	public Collection getAllPos(LamTerm subject, LamTerm subTerm) throws VisitFailure{
  		VisitableVisitor getPos=new GetPos(subTerm);
  		VisitableVisitor getAllPos=`mu(MuVar("x"),
- 																	Sequence(getPos,All(MuVar("x"))));	 	
+ 																	Sequence(getPos,Try(All(MuVar("x")))));	 	
  		MuTraveler.init(getAllPos).visit(subject);
 		return ((GetPos)getPos).getBagPosition();
 	}
@@ -212,10 +316,8 @@ public class Matching {
 		public Collect() {
 			super(`Fail());
 		}
-		public LamTerm visit_Lamterm(LamTerm arg) throws VisitFailure { 
-			%match(LamTerm arg){
-				_ -> {bagSubTerm.add(arg);}
-			}
+		public LamTerm visit_LamTerm(LamTerm arg) throws VisitFailure { 
+			bagSubTerm.add(arg);
 			return arg;
 		}
 	}
@@ -229,7 +331,7 @@ public class Matching {
 			super(`Fail());
 			lookingFor=a;
 		}
-		public LamTerm visit_Term(LamTerm arg) throws VisitFailure { 
+		public LamTerm visit_LamTerm(LamTerm arg) throws VisitFailure { 
 			%match(LamTerm arg){
 				x -> {
 					if (arg == lookingFor) {

@@ -5,7 +5,7 @@ module Lamterm
     abstract syntax
       localVar(na:String) -> LamTerm
       const(na:String) -> LamTerm
-			matchVariable(na:String) -> LamTerm
+			matchVar(na:String) -> LamTerm
       abs(lhs:LamTerm,rhs:LamTerm) -> LamTerm
       app(lhs:LamTerm,rhs:LamTerm) -> LamTerm
 
