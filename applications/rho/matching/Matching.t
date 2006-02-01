@@ -101,21 +101,24 @@ public class Matching {
 		Iterator it=c.iterator();
 		String result="";
 		while(it.hasNext()){
-			Systems s=it.next();
-			result+=prettyPrinter(s)+"\n";
+			Systems s=(Systems)it.next();
+			result+="[";		
+			result+=prettyPrinter(s);
+			result+="]\n";
 		}
 		return result;
 	}
 	public String prettyPrinter(Systems s){
 		String result="";
+
 		%match(Systems s){
-			(X*,x,Y*){
-				result+=`prettyPrinter(X*);
-				result+=`prettyPrinter(x);
-				result+=`prettyPrinter(Y*);
+			(match(a,b),Y*)->{
+				result+=`prettyPrinter(a)+":="+prettyPrinter(b)+",";
+				result+=`prettyPrinter(Y);
 			}
-			_ -> {return result;}
 		}
+
+		return result;
 	}
 	public String prettyPrinter(LamTerm t){
 		%match(LamTerm t){
@@ -125,9 +128,6 @@ public class Matching {
 			localVar(s) -> {return `s;}
 			const(s) -> {return `s;}
 			_ -> {return "";}
-		}
-	}
-
 		}
 	}
 	public Collection reduce(Systems s) throws  VisitFailure { 
