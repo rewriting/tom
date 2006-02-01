@@ -1,3 +1,11 @@
+2006-02-01  pem
+  * dijunction of symbols is now compiled in a correct way
+	 - Bottom (null) is used to initialize variables
+	 - a boolean variable is used to know if a symbol matches the root symbol
+	 - assignments are compiled using LetRef and LetAssign
+	 - the classical schema is still used for (disjunction of) constants
+	   as well as non-disjunction
+
 2006-01-17  tonio <reilles@loria.fr>
   * tom.engine.*
     - move all jtom/* classes in the package tom.engine

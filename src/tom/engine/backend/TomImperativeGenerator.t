@@ -64,6 +64,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   // ------------------------------------------------------------
 
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException;
+  protected abstract void buildExpBottom(int deep) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
   
@@ -249,7 +250,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     generateInstruction(deep+1,succes);
     output.writeln(deep,"}");
   }
-
+  
   protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {
     output.write(deep,"if("); 
     generateExpression(deep,exp); 

@@ -212,33 +212,39 @@ public class TomKernelCompiler extends TomBase {
   Instruction genSyntacticMatchingAutomata(Instruction action,
                                            SlotList termList,
                                            TomNumberList rootpath) {
-    //TomNumberList path = appendNumber(indexTerm,rootpath);
-        
     %match(SlotList termList) {
       emptySlotList() -> { 
         return action;
       } 
-      
-      manySlotList(PairSlotAppl(slotName,var@(Variable|UnamedVariable)[option=optionList, astType=termType,constraints=constraints]),termTail) -> {
+      // X or _,...  
+      manySlotList(PairSlotAppl(slotName,
+                                var@(Variable|UnamedVariable)[option=optionList, astType=termType,constraints=constraints]),termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath);
         TomNumberList path  = (TomNumberList) rootpath.append(`NameNumber(slotName));
 
         Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType, concConstraint()));
         return buildLet(`var, source, subAction);
       }
-      
+     
+      // (f|g)[...]
       manySlotList(PairSlotAppl(slotName,
                    currentTerm@RecordAppl[option=optionList,nameList=nameList@(Name(tomName),_*),
                                           slots=termArgs,constraints=constraints]),termTail) -> {
+        // recursively call the algorithm on termTail
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath);
+        // find the codomain of (f|g) [* should be the same *]
         TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`tomName);
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         
-          // SUCCES
+          // perform the compilation, according to 3 cases:
+          // - (f|g) is a list operator
+          // - (f|g) is an array operator
+          // - (f|g) is a syntactic operator
         TomNumberList path  = (TomNumberList) rootpath.append(`NameNumber(slotName));
         TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),codomain,concConstraint());
         Instruction automataInstruction;
         if(isListOperator(tomSymbol)) {
+          // case: list operator
             /*
              * store the subject into an internal variable
              * call genListMatchingAutomata with the new internal variable
@@ -258,6 +264,7 @@ public class TomKernelCompiler extends TomBase {
                                         TomTermToExpression(subjectVariableAST),
                                         automata);
         } else if(isArrayOperator(tomSymbol)) {
+          // case: array operator
           int indexSubterm = 1;
           TomNumberList newPathList = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
           TomNumberList newPathIndex = (TomNumberList) path.append(`IndexNumber(makeNumber(indexSubterm)));
@@ -276,15 +283,22 @@ public class TomKernelCompiler extends TomBase {
                                          TomTermToExpression(subjectVariableAST),
                                          automata));
         } else {
+          // case: syntactic operator
           Instruction automata = genSyntacticMatchingAutomata(subAction,`termArgs,path);
           TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
-          automataInstruction = `collectSubtermFromSubjectList(termArgs,tomSymbol,subjectVariableAST,path,automata); 
+          if(`nameList.getLength()==1 || `termArgs.isEmpty()) {
+              automataInstruction = `collectSubtermFromTomSymbol(termArgs,tomSymbol,subjectVariableAST,path,automata); 
+          } else { 
+            // generate is_fsym(t,f) || is_fsym(t,g)
+            automataInstruction = `collectSubtermFromSubjectList(currentTerm,subjectVariableAST,path,automata); 
+            automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction);
+            return automataInstruction;
+          }
         }
-        automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction);
-
+        // generate is_fsym(t,f) || is_fsym(t,g)
         Expression cond = `expandDisjunction(EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm));
-        Instruction test = `If(cond,automataInstruction,Nop());
-        return test;
+        automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction);
+        return `If(cond,automataInstruction,Nop());
       }
       
       _ -> {
@@ -680,51 +694,138 @@ public class TomKernelCompiler extends TomBase {
 
 
     /*
+     * given a list of slots [s1=t1],...,[sn=tn]
+     * declare/assign internal matching variables: match_path_i = ti
+     */
+  private Instruction collectSubtermFromSubjectList(TomTerm currentTerm,
+                                                    TomTerm subjectVariableAST, 
+                                                    TomNumberList path, Instruction body) {
+    %match(TomTerm currentTerm) {
+      RecordAppl[nameList=nameList@(Name(tomName),_*), slots=termArgList] -> {
+        TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`tomName);
+
+        // check that variables are no longer Bottom 
+        TomType booleanType = getSymbolTable().getBooleanType();
+        TomTerm booleanVariable = `Variable(option(),PositionName(manyTomNumberList(NameNumber(Name("bool")),path)),booleanType,concConstraint());
+        Instruction ifBody = `collectSubtermIf(nameList,booleanVariable,currentTerm,termArgList,subjectVariableAST,path);
+        Instruction checkBody = `If(TomTermToExpression(booleanVariable),body,Nop()); 
+        Instruction newBody = `collectSubtermLetRefBottom(termArgList,tomSymbol,path,AbstractBlock(concatInstruction(ifBody,checkBody)));
+
+        return `LetRef(booleanVariable,FalseTL(),newBody);
+
+      }
+    }
+    return body;
+  }
+
+    /*
+     * given a list of symbol names
+     * generated nested if, for each symbol name
+     */
+  private Instruction collectSubtermIf(NameList nameList,
+                                       TomTerm booleanVariable,
+                                       TomTerm currentTerm,
+                                       SlotList termArgList,
+                                       TomTerm subjectVariableAST, 
+                                       TomNumberList path) {
+    %match(NameList nameList) {  
+      emptyNameList() -> {
+        return `Nop();
+      }
+
+      manyNameList(name@Name(tomName),tail) -> {
+        TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`tomName);
+        TomType codomain = tomSymbol.getTypesToType().getCodomain();
+        Instruction elseBody = `collectSubtermIf(tail,booleanVariable,currentTerm,termArgList,subjectVariableAST,path);
+        Instruction assign = `collectSubtermLetAssign(termArgList,tomSymbol,subjectVariableAST,path,Nop());
+        Expression cond = `EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm.setNameList(concTomName(name)));
+        return  `If(cond,LetAssign(booleanVariable,TrueTL(),assign),elseBody);
+      }
+    }
+    return `Nop();
+  }
+
+   /*
+    * given a list of slots
+    * generate assignements for each subterm
+    */
+  private Instruction collectSubtermLetAssign(SlotList termArgList,
+                                              TomSymbol tomSymbol,
+                                              TomTerm subjectVariableAST, 
+                                              TomNumberList path, Instruction body) {
+    TomName opNameAST = tomSymbol.getAstName();
+    %match(SlotList termArgList) { 
+      emptySlotList() -> { return body; }
+     
+      manySlotList(PairSlotAppl(slotName,_),tail) -> {
+        body = collectSubtermLetAssign(`tail,tomSymbol,subjectVariableAST,path,body);
+        TomType subtermType = getSlotType(tomSymbol,`slotName);
+
+        if(!isDefinedGetSlot(tomSymbol,`slotName)) {
+          Logger.getLogger(getClass().getName()).log( Level.SEVERE,
+              "ErrorMissingSlotDecl",
+              new Object[]{tomSymbol.getAstName().getString(),`slotName.getString()});
+        }
+
+        Expression getSlotAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
+        TomNumberList newPath  = (TomNumberList) path.append(`NameNumber(slotName));
+        TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concConstraint());
+        return `LetAssign(newVariableAST,getSlotAST,body);
+      }
+    }
+    return `Nop();
+  }
+ 
+  /*
+   * given a list of slot
+   * declare/initialize each slot to "bottom"
+   */
+  private Instruction collectSubtermLetRefBottom(SlotList termArgList,
+                                                 TomSymbol tomSymbol,
+                                                 TomNumberList path, Instruction body) {
+    %match(SlotList termArgList) { 
+      emptySlotList() -> {
+        return body;
+      }
+     
+      manySlotList(PairSlotAppl(slotName,subtermArg),tail) -> {
+        body = collectSubtermLetRefBottom(`tail,tomSymbol,path,body);
+        TomType subtermType = getSlotType(tomSymbol,`slotName);
+        TomNumberList newPath  = (TomNumberList) path.append(`NameNumber(slotName));
+        TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concConstraint());
+        return `LetRef(newVariableAST,Bottom(),body);
+      }
+    }
+    return `Nop();
+  }
+
+    /*
      * given a list of subject t1,...,tn
      * declare/assign internal matching variables: match_path_i = ti
      */
-  private Instruction collectSubtermFromSubjectList(SlotList termArgList, TomSymbol tomSymbol,TomTerm subjectVariableAST, 
+  private Instruction collectSubtermFromTomSymbol(SlotList termArgList, TomSymbol tomSymbol,TomTerm subjectVariableAST, 
                                                     TomNumberList path, Instruction body) {
     TomName opNameAST = tomSymbol.getAstName();
     %match(SlotList termArgList) { 
       emptySlotList() -> { return body; }
       
       manySlotList(PairSlotAppl(slotName,subtermArg),tail) -> {
-        body = collectSubtermFromSubjectList(`tail,tomSymbol,subjectVariableAST,path,body);
-        /*
-         * this optimisation is not good since it avoids some optimisations
-         * in particular, f(x,y) and f(x,_) cannot be merged
-         *
-         */
-        if(`subtermArg.isUnamedVariable() && !isAnnotedVariable(`subtermArg)) {
-            // This is an optimisation 
-            // Do not assign the subterm: skip the subterm 
-          return body;
-          } else
-        
-        {
-          TomType subtermType = getSlotType(tomSymbol,`slotName);
-
-          //System.out.println("pairNameDeclList = " + tomSymbol.getPairNameDeclList());
-          if(!isDefinedGetSlot(tomSymbol,`slotName)) {
-            Logger.getLogger(getClass().getName()).log( Level.SEVERE,
-                             "ErrorMissingSlotDecl",
-                              new Object[]{tomSymbol.getAstName().getString(),`slotName.getString()});
-          }
-
-          Expression getSubtermAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
-          TomNumberList newPath  = (TomNumberList) path.append(`NameNumber(slotName));
-          TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concConstraint());
-          return `Let(newVariableAST,getSubtermAST,body);
-
-
+        body = collectSubtermFromTomSymbol(`tail,tomSymbol,subjectVariableAST,path,body);
+        TomType subtermType = getSlotType(tomSymbol,`slotName);
+        if(!isDefinedGetSlot(tomSymbol,`slotName)) {
+          Logger.getLogger(getClass().getName()).log( Level.SEVERE,
+              "ErrorMissingSlotDecl",
+              new Object[]{tomSymbol.getAstName().getString(),`slotName.getString()});
         }
-      }
 
+        Expression getSubtermAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
+        TomNumberList newPath  = (TomNumberList) path.append(`NameNumber(slotName));
+        TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concConstraint());
+        return `Let(newVariableAST,getSubtermAST,body);
+      }
     }
     return `Nop();
   }
-
   private Expression expandDisjunction(Expression exp) {
     Expression cond = `FalseTL();
     %match(Expression exp) {

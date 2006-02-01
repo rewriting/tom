@@ -1,11 +1,11 @@
 For developers only
 
-Getting TOM
+Getting Tom
 ===========
 
 TODO
 
-Installing TOM
+Installing Tom
 ==============
 
 The sourse distribution of Tom consists of the following directory layout:
@@ -15,7 +15,9 @@ The sourse distribution of Tom consists of the following directory layout:
    |
    +--- src      // contains the development branch
    |
-   +--- examples // contains examples of tom use
+   +--- examples // contains examples of Tom use
+   |
+   +--- application // contains main applications written in Tom
    |
    +--- test     // the test set (used by junit)
 
@@ -28,13 +30,13 @@ Prepare for the build
 	jtom to local.properties, and edit it to reflect your setup:
 		tomdocdir has to point to the directory containing the jtom documentation
 	(usually, the root of the cvs module jtom-doc). If you don't mind producing
-	complete distribution sets for tom, you can simply set tomdocdir="stable".
+	complete distribution sets for Tom, you can simply set tomdocdir="stable".
 	
 Build
 -----
-	To compile tom, you have to use the build.sh script.
+	To compile Tom, you have to use the build.sh script.
 	$ ./build.sh all
-	will compile tom stable, then compile tom src, run acceptance tests, produce
+	will compile Tom stable, then compile Tom src, run acceptance tests, produce
 	distributions sets for both stable and src. It then compiles examples with
 	stable and source, with and without optimizations, and tests some examples.
 	(this may take some time)
@@ -49,10 +51,10 @@ Setup
 Before you can run Tom there is some additional set up you will need
 to do:
   - Add the stable/dist/bin and src/dist/bin directories to your path.
-		They contains the tom and tom.src scripts, to use tom.
+		They contains the Tom and Tom.src scripts, to use Tom.
 	- Set the TOM_HOME environment variable to either the stable/dist directory
 	  orthe src/dist directory. Using stable/dist is the safest option. If you
-		use src/dist, the tom command will be equivalent to the tom.src command,
+		use src/dist, the Tom command will be equivalent to the Tom.src command,
 		and the souce version will always be used. (this is optional. If you do not
 		set TOM_HOME, stable/dist will be the default).
   - Optionally, set the JAVA_HOME environment variable. 

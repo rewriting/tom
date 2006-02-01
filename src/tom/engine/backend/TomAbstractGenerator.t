@@ -204,6 +204,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      Bottom() -> {
+        buildExpBottom(deep);
+        return;
+      }
+      
       TrueTL() -> {
         buildExpTrue(deep);
         return;
@@ -746,6 +751,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpGreaterThan(int deep, Expression exp1, Expression exp2) throws IOException;
+  protected abstract void buildExpBottom(int deep) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
   protected abstract void buildExpIsEmptyList(int deep, TomName opName, TomType type, TomTerm expList) throws IOException;

@@ -1,5 +1,24 @@
 This document should be read in reverse order (from bottom to top).
 
+since version 2.2:
+  - new organization
+    * tom
+    *  |--- engine
+    *  |      |--- adt               (datatype definitions)
+    *  |      |--- backend
+    *  |      |--- checker
+    *  |      |--- compiler
+    *  |      |--- exception
+    *  |      |--- optimizer
+    *  |      |--- parser
+    *  |      |--- starter
+    *  |      |--- tools
+    *  |      |--- verifier
+    *  |      |--- xml
+    *  |--- library
+    *  |--- platform
+
+
 version 2.2:
   - this version is not 100% compatible with version 2.1. 
     see User Guide, section migration, for details.
