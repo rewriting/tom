@@ -237,6 +237,7 @@ public class ZenonBackend {
       out.append("\n%%begin-auto-proof\n");
       out.append("%%location: []\n");
       out.append("%%name: theorem"+number+"\n");
+      out.append("%%syntax: tom\n");
       out.append("%%statement\n");
       out.append(genZSpec((ZSpec)it.next()));
       out.append("%%end-auto-proof\n");
