@@ -91,13 +91,45 @@ public class Matching {
 //				System.out.println("Resultat du parsing: " + subject);
 				c.add(`and(subject));
 				System.out.println(// "Resultat de la normalisation"+
-													  normalize_Collection(c));
+													  prettyPrinter(normalize_Collection(c)));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}	
 	}
+	public String prettyPrinter(Collection c){
+		Iterator it=c.iterator();
+		String result="";
+		while(it.hasNext()){
+			Systems s=it.next();
+			result+=prettyPrinter(s)+"\n";
+		}
+		return result;
+	}
+	public String prettyPrinter(Systems s){
+		String result="";
+		%match(Systems s){
+			(X*,x,Y*){
+				result+=`prettyPrinter(X*);
+				result+=`prettyPrinter(x);
+				result+=`prettyPrinter(Y*);
+			}
+			_ -> {return result;}
+		}
+	}
+	public String prettyPrinter(LamTerm t){
+		%match(LamTerm t){
+			app(term1,term2) -> {return "("+prettyPrinter(`term1)+"."+prettyPrinter(`term2)+")";}
+			abs(term1,term2) -> {return "("+prettyPrinter(`term1)+"->"+prettyPrinter(`term2)+")";}
+			matchVar(s) -> {return `s;}
+			localVar(s) -> {return `s;}
+			const(s) -> {return `s;}
+			_ -> {return "";}
+		}
+	}
 
+		}
+	}
 	public Collection reduce(Systems s) throws  VisitFailure { 
 		Collection c = new HashSet();
 		%match(Systems s){
@@ -136,7 +168,7 @@ public class Matching {
 					while(itSubTerm.hasNext()){
 //								System.out.println("ici");
 						LamTerm B2=(LamTerm)itSubTerm.next();
-								System.out.println("la");
+//								System.out.println("la");
 						Collection collPosition=getAllPos(C,B2);
 						List l=allSubCollection(collPosition);
 						Iterator itListAllSubCollection=l.iterator();
