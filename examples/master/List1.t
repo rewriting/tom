@@ -1,3 +1,5 @@
+package master;
+
 import aterm.pure.SingletonFactory;
 import list1.list.*;
 import list1.list.types.*;

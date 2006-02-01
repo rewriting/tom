@@ -1,3 +1,4 @@
+package master;
 
 import aterm.pure.SingletonFactory;
 import matching.term.*;

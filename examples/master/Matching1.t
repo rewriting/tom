@@ -1,3 +1,5 @@
+package master;
+
 import matching4.peano.*;
 import matching4.peano.types.*;
 

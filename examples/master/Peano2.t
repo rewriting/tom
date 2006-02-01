@@ -1,3 +1,5 @@
+package master;
+
 import peano2.peano.*;
 import peano2.peano.types.*;
 

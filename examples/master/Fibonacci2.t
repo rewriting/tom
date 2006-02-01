@@ -1,3 +1,5 @@
+package master;
+
 import fibonacci2.peano.*;
 import fibonacci2.peano.types.*;
 

@@ -1,3 +1,5 @@
+package master;
+
 import poly1.poly.*;
 import poly1.poly.types.*;
 

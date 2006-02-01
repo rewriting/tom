@@ -1,3 +1,5 @@
+package master;
+
 import aterm.pure.SingletonFactory;
 import matching2.term.*;
 import matching2.term.types.*;
