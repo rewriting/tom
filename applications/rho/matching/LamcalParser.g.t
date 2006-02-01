@@ -156,7 +156,7 @@ MATCH : "<<" ;
 END : ';' ;
 
 CONST options{ testLiterals = true; }
-: 'a'..'z'
+: 'a'..'c'
 ('A'..'Z'
  |'a'..'z'
  |'0'..'9'

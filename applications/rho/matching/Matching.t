@@ -77,7 +77,11 @@ public class Matching {
 	
 
 	public void run(){
-	System.out.println(" ******************************************************************\n Computing matching modulo superdevelopments. \n ******************************************************************\n");
+	System.out.println(" ******************************************************************\n Computing matching modulo superdevelopments. \n
+constants begin with a,b,c...w\n
+local variable are not in capital letters and cannot begin with letters used for constants\n
+matching variables are in capital letters\n
+ ******************************************************************\n");
     LamcalLexer lexer = new LamcalLexer(System.in); // Create parser attached to lexer
     LamcalParser parser = new LamcalParser(lexer);
 //		VisitableVisitor reduce = new ReductionRules();
