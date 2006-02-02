@@ -139,13 +139,9 @@ public class TomKernelExpander extends TomBase {
         } else if(subject instanceof TomVisit) {
           %match(TomVisit subject) {
             VisitTerm(type,patternInstructionList) -> {
-              TomTerm subjectList = `TomTypeToTomTerm(type);
-              TomTerm newSubjectList = expandVariable(`contextSubject,`subjectList);
-              PatternInstructionList newPatternInstructionList = expandVariablePatternInstructionList(newSubjectList,`patternInstructionList);
-              //we have no expandType(), so I used expandVariable() instead and then I retrieve type in a %match
-              %match(TomTerm newSubjectList) {
-                TomTypeToTomTerm(newType) -> { return `VisitTerm(newType, newPatternInstructionList); }
-              }            
+              TomType newType = `expandType(contextSubject,type);
+              PatternInstructionList newPatternInstructionList = `expandVariablePatternInstructionList(TomTypeToTomTerm(newType),patternInstructionList);
+              return `VisitTerm(newType, newPatternInstructionList);
             }
           } //end match
         } else if(subject instanceof Instruction) {
@@ -373,6 +369,10 @@ public class TomKernelExpander extends TomBase {
 
   protected TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
     return (TomTerm) replace_expandVariable.apply(subject,contextSubject); 
+  }
+  
+  protected TomType expandType(TomTerm contextSubject, TomType subject) {
+    return (TomType) replace_expandVariable.apply(subject,contextSubject); 
   }
 
   private Instruction expandVariableInstruction(TomTerm contextSubject, Instruction subject) {
