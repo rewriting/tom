@@ -79,7 +79,7 @@ options {
 		 return term;
 	 }
 	 else {
-		 System.out.println("Warning, the alias " + name + " was used before and was not modified");
+		 System.out.println("Warning, the alias " + name + " was used before. Redefinition is impossible.");
 		 return (RTerm)table.get(name);
 
 	 }
@@ -389,7 +389,8 @@ CONST options{ testLiterals = true; }
 ('A'..'Z'
  |'a'..'z'
  |'0'..'9'
- )*
+ )* 
+| ('0'..'9')+
 ;
 
 VAR options{ testLiterals = true; }

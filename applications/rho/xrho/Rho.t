@@ -153,7 +153,7 @@ public class Rho {
 			super(`Fail());
 		}
 		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-			System.out.println("=>"  + arg);
+			System.out.println("=>"  + stringInfix(arg));
 //			System.out.println("=>" + (MuTraveler.getPosition(oneStepWeakNormalisation)).depth() + arg);
 			return arg;
 		}
@@ -319,6 +319,7 @@ public class Rho {
 		%match(ListConstraint constraints){
 			andC(match(term1,term2),match(term3,term4),Y*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2) +"^"+ stringInfix(`term3)+"<"+stringInfix(`term4) +stringInfix(`Y);}
 			andC(match(term1,term2),X*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2);}
+			andC(matchKO(),X*) -> {return "KO";}
 			_ -> {return "";}
 		}
 	}	
