@@ -1,9 +1,10 @@
+
 This is an experimental implementation of an explicit version of the
 rho-calculus. It is under development and is definitevely not stable
 nor deliverable.
 
 Here are some remarks:
-	- 
+	- syntax error implies exception and are not catch by our program (and thus we provide no guarantee).
 
 Here are some conventions:
 	- small letters denotes constants 
@@ -17,3 +18,4 @@ second "$$;"
 	- you can use macro definitions. but you are not use redefinition
 (this is well-known that otherwise you allow to "program" with this
 feature, something we do not want)
+

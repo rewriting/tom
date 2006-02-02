@@ -1,6 +1,6 @@
 Some examples are taken from Luigi Liquori iRho.
 
-(*Heating: pure rho-terms using the priority operators given in CFK05*)
+(*Heating: pure rho-terms*)
 
 X;
 
@@ -40,13 +40,9 @@ Z -> ((f.X.Y) -> X|Y|Z. (f.a.b)) . c;
 
 ((f.X.Y) -> X) | ((f.X.Y) -> Y ). (f.a.b);
 
-((f.X.Y) -> X) | ((f.X.Y) -> Y ). (f.Z.H)
 
-(h.Z.H.(h.(g.I))) -> (((f.X.Y) -> X) | ((f.X.Y) -> Y ). (f.Z.H)) . (h.(h.a).(h.b).(h.(g.b)));
 
-(f.X.(h.Y).(g.(h.Z))) -> (((h.T) -> T . Y)| ((U|V) -> U . (X|Z))) . (f.a.(h.(h.b)).(g.(h.a)));
 
-(f.X.(h.Y).(g.(h.Z))) -> (((h.T) -> T . Y)| ((U|V) -> (i.U.V.Y) . (X|Z))) . (f.a.(h.(h.b)).(g.(h.a)));
 
 X -> (X -> X) .a .b;
 
@@ -84,3 +80,11 @@ X -> (X -> X) .a .b;
 !addition:=X -> (Y -> ((!plus).(!plus).(add.X.Y)));
 (!addition).(!zero).(!zero);
 (!addition).(!six).(!six);
+
+((f.X.Y) -> X) | ((f.X.Y) -> Y ). (f.Z.H);
+
+(h.Z.H.(h.(g.I))) -> (((f.X.Y) -> X) | ((f.X.Y) -> Y ). (f.Z.H)) . (h.(h.a).(h.b).(h.(g.b)));
+
+(f.X.(h.Y).(g.(h.Z))) -> (((h.T) -> T . Y)| ((U|V) -> U . (X|Z))) . (f.a.(h.(h.b)).(g.(h.a)));
+
+(f.X.(h.Y).(g.(h.Z))) -> (((h.T) -> T . Y)| ((U|V) -> (i.U.V.Y) . (X|Z))) . (f.a.(h.(h.b)).(g.(h.a)));
