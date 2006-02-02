@@ -101,8 +101,7 @@ public class Rho {
 		RTerm subject = `const("undefined");
 		VisitableVisitor currentStrategy = strategyResult;
 		String s;
-		System.out.println(" ******************************************************************\n xRho: an implementation  in Tom of the explicit rho-calculus \n with weak normalization and linear first-order patterns\n By Germain Faure\n 
-This is an experimental implementation of an explicit version of the rho-calculus. It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
+		System.out.println(" ******************************************************************\n xRho: an experimental implementation  in Tom of the explicit rho-calculus \n with weak normalization and linear first-order patterns\n By Germain Faure\n  It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
     RhoLexer lexer = new RhoLexer(System.in); // Create parser attached to lexer
     RhoParser parser = new RhoParser(lexer);
 		while(true){
