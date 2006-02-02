@@ -155,6 +155,6 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
     output.writeln(" {");
     generateInstruction(deep,instruction);
-    output.writeln(deep,") }");
+    output.writeln(deep," }");
   }
 } // class TomJavaGenerator
