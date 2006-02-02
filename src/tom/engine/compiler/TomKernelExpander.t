@@ -136,6 +136,18 @@ public class TomKernelExpander extends TomBase {
               return `RewriteRule(newLhs,newRhs,newCondList,option);
             }
           } // end match
+        } else if(subject instanceof TomVisit) {
+          %match(TomVisit subject) {
+            VisitTerm(type,patternInstructionList) -> {
+              TomTerm subjectList = `TomTypeToTomTerm(type);
+              TomTerm newSubjectList = expandVariable(`contextSubject,`subjectList);
+              PatternInstructionList newPatternInstructionList = expandVariablePatternInstructionList(newSubjectList,`patternInstructionList);
+              //we have no expandType(), so I used expandVariable() instead and then I retrieve type in a %match
+              %match(TomTerm newSubjectList) {
+                TomTypeToTomTerm(newType) -> { return `VisitTerm(newType, newPatternInstructionList); }
+              }            
+            }
+          } //end match
         } else if(subject instanceof Instruction) {
           %match(TomTerm contextSubject, Instruction subject) {
             context, MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName))],
