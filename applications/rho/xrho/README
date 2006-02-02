@@ -1,1 +1,19 @@
-This is an experimental implementation of an explicit version of the rho-calculus. It is under development and is definitevely not stable nor deliverable.
+This is an experimental implementation of an explicit version of the
+rho-calculus. It is under development and is definitevely not stable
+nor deliverable.
+
+Here are some remarks:
+	- 
+
+Here are some conventions:
+	- small letters denotes constants 
+	- capital letters denotes variables
+	- the priorities of the operator follows those of CKF05 (journal version HOSC).
+
+Some goodies
+	- you can switch from two modes (get the result) or get the full
+detail of the computation in xrho. In the first case, type "$;" in the
+second "$$;"
+	- you can use macro definitions. but you are not use redefinition
+(this is well-known that otherwise you allow to "program" with this
+feature, something we do not want)
