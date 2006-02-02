@@ -1,9 +1,8 @@
 package master;
+import matching1.peano.*;
+import matching1.peano.types.*;
 
-import matching4.peano.*;
-import matching4.peano.types.*;
-
-public class Matching4 {
+public class Matching1 {
 
   %vas {
     module Peano
@@ -92,7 +91,7 @@ public class Matching4 {
   }
   
   public final static void main(String[] args) {
-    Matching4 test = new Matching4();
+    Matching1 test = new Matching1();
     test.run();
   }
 
