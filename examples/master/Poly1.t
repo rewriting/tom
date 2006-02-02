@@ -1,7 +1,7 @@
 package master;
 
-import poly1.poly.*;
-import poly1.poly.types.*;
+import master.poly1.poly.*;
+import master.poly1.poly.types.*;
 
 public class Poly1 {
 
@@ -21,7 +21,7 @@ public class Poly1 {
 		%match(Polynome p) {
 			m(_,"X",0) -> { return `m(0,"X",0); }
 			m(c,"X",n) -> { 
-				if(n>0) {
+				if(`n>0) {
 					return `m(c * n,"X",n-1); 
 				}
 			}
@@ -44,14 +44,14 @@ public class Poly1 {
 		%match(Polynome p) {
 			plus(m(c1,"X",n),m(c2,"X",n)) -> { return `m(c1+c2,"X",n); }
 			plus(m1@m(c1,"X",n1),m2@m(c2,"X",n2)) -> {
-					if(n2>n1) {
+					if(`n2>`n1) {
 							return `plus(m2,m1);
 					}
 			}
 
 			plus(m(c1,"X",n),plus(m(c2,"X",n),p2)) -> { return `plus(m(c1+c2,"X",n),p2); }
 			plus(m1@m(c1,"X",n1),plus(m2@m(c2,"X",n2),p2)) -> {
-					if(n2>n1) {
+					if(`n2>`n1) {
 							return `plus(m2,plus(m1,p2));
 					}
 			}

@@ -1,8 +1,8 @@
 package master;
 
 import aterm.pure.SingletonFactory;
-import matching2.term.*;
-import matching2.term.types.*;
+import master.matching2.term.*;
+import master.matching2.term.types.*;
 
 class Matching2 {
   private TermFactory factory;
@@ -29,7 +29,7 @@ class Matching2 {
     %match(TermList l1, TermList l2) {
       conc(),conc() -> { return `conc(True()); }
       conc(h1,t1*),conc(h2,t2*) -> {
-        TermList t3 = decomposeList(t1,t2);
+        TermList t3 = `decomposeList(t1,t2);
         return `conc(Match(h1,h2),t3*);
       }
     }

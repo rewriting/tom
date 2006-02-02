@@ -1,7 +1,7 @@
 package master;
 
-import fibonacci2.peano.*;
-import fibonacci2.peano.types.*;
+import master.fibonacci2.peano.*;
+import master.fibonacci2.peano.types.*;
 
 public class Fibonacci2 {
 

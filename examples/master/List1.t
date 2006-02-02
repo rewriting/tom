@@ -1,8 +1,8 @@
 package master;
 
 import aterm.pure.SingletonFactory;
-import list1.list.*;
-import list1.list.types.*;
+import master.list1.list.*;
+import master.list1.list.types.*;
 
 public class List1 {
   private ListFactory factory;
@@ -33,7 +33,7 @@ public class List1 {
   public L swapSort(L l) {
     %match(L l) {
       f(X*,e1,e2,Y*) -> {
-        if(gt(e1,e2)) {
+        if(`gt(e1,e2)) {
           return `swapSort(f(X*,e2,e1,Y*));
         }
       }

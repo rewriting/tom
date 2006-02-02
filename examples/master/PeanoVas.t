@@ -1,8 +1,8 @@
 package master;
 
 import aterm.pure.SingletonFactory;
-import peanovas.peano.*;
-import peanovas.peano.types.*;
+import master.peanovas.peano.*;
+import master.peanovas.peano.types.*;
 
 class PeanoVas {
   private PeanoFactory factory;

@@ -1,7 +1,7 @@
 package master;
 
-import matching3.peano.*;
-import matching3.peano.types.*;
+import master.matching3.peano.*;
+import master.matching3.peano.types.*;
 
 public class Matching3 {
 
@@ -64,24 +64,24 @@ public class Matching3 {
 
     // MergingFail
       And(Match(var(x),X),Match(var(x),Y)) -> { 
-        if(X!=Y){
+        if(`X!=`Y){
           return `False() ;
         }
       }
       And(Match(var(x),X),And(Match(var(x),Y),P)) -> { 
-        if(X!=Y){
+        if(`X!=`Y){
           return `False() ;
         }
       }
 
     // Sort
       And(Match(var(x),X),Match(var(y),Y)) -> { 
-        if(x.compareTo(y)<0){
+        if(`x.compareTo(`y)<0){
           return `And(Match(var(y),Y),Match(var(x),X)) ;
         }
       }
       And(Match(var(x),X),And(Match(var(y),Y),P)) -> { 
-        if(x.compareTo(y)<0){
+        if(`x.compareTo(`y)<0){
           return `And(Match(var(y),Y),And(Match(var(x),X),P)) ;
         }
       }

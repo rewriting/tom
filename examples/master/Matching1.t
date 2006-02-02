@@ -1,6 +1,6 @@
 package master;
-import matching1.peano.*;
-import matching1.peano.types.*;
+import master.matching1.peano.*;
+import master.matching1.peano.types.*;
 
 public class Matching1 {
 

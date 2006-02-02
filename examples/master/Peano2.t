@@ -1,7 +1,7 @@
 package master;
 
-import peano2.peano.*;
-import peano2.peano.types.*;
+import master.peano2.peano.*;
+import master.peano2.peano.types.*;
 
 public class Peano2 {
 

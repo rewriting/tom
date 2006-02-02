@@ -1,8 +1,8 @@
 package master;
 
 import aterm.pure.SingletonFactory;
-import matching.term.*;
-import matching.term.types.*;
+import master.matching.term.*;
+import master.matching.term.types.*;
 
 class Matching {
   private TermFactory factory;
