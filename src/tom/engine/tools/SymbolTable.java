@@ -139,7 +139,11 @@ public class SymbolTable {
 
   public TomType getType(String name) {
     TomTypeDefinition def = (TomTypeDefinition) mapTypeName.get(name);
-    return def.getTomType();
+    TomType result = def.getTomType();
+    if (result != null) {
+      return result;
+    }
+    else { return tsf().makeTomType_EmptyType(); } 
   }
   
   public TomForwardType getForwardType(String name) {
