@@ -1,5 +1,5 @@
 module TomType
-imports
+imports TomSignature
 
 public 
 sorts TomType TomTypeDefinition TomForwardType TomTypeList 
