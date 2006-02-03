@@ -57,6 +57,9 @@ public class Tools {
     System.out.println("\nRunning Matching4: \n");
     Matching test4 = new Matching4();
     tools.run(test4,args[3]);
+    System.out.println("\nRunning MatchingDifferences: \n");
+    Matching test5 = new MatchingDifferences();
+    tools.run(test5,args[3]);
   }
 
   public void run(Matching match, String fileName) {

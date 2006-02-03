@@ -8,7 +8,8 @@ module Term
     Appl(name:String, args:TermList) -> Term
     ApplCons(name:String, args:TermList, cons:ConstraintList)			-> Term    
     Anti(pattern:Term) -> Term
-    concTerm( Term* ) -> TermList
+    TermDiff(term1:Term, term2:Term) -> Term
+    concTerm( Term* ) -> TermList    
 
     True 																-> Constraint
     False 																-> Constraint

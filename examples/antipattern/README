@@ -17,7 +17,9 @@ Problems:
 	to run another rule.   	
 	- when a strategy applies, the modified term will not fire the rules. 		
 			
-
+MatchingDifferences
+- another algorithm for anti-pattern matching based on set differences, but it only responds `True or `False,
+without giving the substitution when it exists
 
 
 
