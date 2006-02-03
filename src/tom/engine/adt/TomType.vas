@@ -1,0 +1,21 @@
+module TomType
+import
+
+public sorts
+TomType TomTypeDefinition TomForwardType
+
+abstract syntax
+
+Type(tomType:TomType,tlType:TomType) -> TomType
+TomTypeAlone(string:String) -> TomType
+
+ASTTomType(string:String) -> TomType
+TypesToType(domain:TomTypeList,codomain:TomType) -> TomType
+TLType(tl:TargetLanguage) -> TomType
+EmptyType() -> TomType
+
+TLForward(tl:TargetLanguage) -> TomForwardType
+EmptyForward() -> TomForwardType
+
+TypeDefinition(type:TomType, forward:TomForwardType) -> TomTypeDefinition
+
