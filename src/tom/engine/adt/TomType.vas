@@ -1,8 +1,8 @@
 module TomType
-import
+imports
 
-public sorts
-TomType TomTypeDefinition TomForwardType
+public 
+sorts TomType TomTypeDefinition TomForwardType
 
 abstract syntax
 

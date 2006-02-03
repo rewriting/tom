@@ -37,6 +37,8 @@ import tom.engine.adt.tomsignature.types.TomEntryList;
 import tom.engine.adt.tomsignature.types.TomSymbol;
 import tom.engine.adt.tomsignature.types.TomSymbolTable;
 import tom.engine.adt.tomsignature.types.TomType;
+import tom.engine.adt.tomsignature.types.TomForwardType;
+import tom.engine.adt.tomsignature.types.TomTypeDefinition;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 

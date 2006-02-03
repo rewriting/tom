@@ -1,5 +1,5 @@
 module TomSignature
-imports TomName TomConstraint TomInstruction TomExpression TomDeclaration TomOption TomTerm TomSlot TomType
+imports TomName TomType TomConstraint TomInstruction TomExpression TomDeclaration TomOption TomTerm TomSlot
 
 public
 sorts TomSymbolTable SymbolList Position TomEntryList TargetLanguage NameList TomRuleList TomRule TomVisitList TomVisit TomStructureTable TomTypeList TomSymbol TomEntry  
