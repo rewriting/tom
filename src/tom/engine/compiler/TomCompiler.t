@@ -288,7 +288,7 @@ public class TomCompiler extends TomGenericPlugin {
               return preProcessingInstruction(`AbstractBlock(l));
             }
 
-           Strategy(name,_,visitList,orgTrack) -> {
+           Strategy(name,visitList,orgTrack) -> {
             InstructionList l = `concInstruction();//represents compiled Strategy
             TomList subjectListAST;
             TomVisit visit;

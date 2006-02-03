@@ -111,6 +111,8 @@ public class ASTFactory {
         term = tsf().makeOption_TomNameToOption((TomName)elt);
       } else if(elt instanceof Declaration) {
         term = tsf().makeOption_DeclarationToOption((Declaration)elt);
+      } else if(elt instanceof TomTerm) {
+        term = tsf().makeOption_TomTermToOption((TomTerm)elt);
       } else {
         term = (Option)elt;
       }

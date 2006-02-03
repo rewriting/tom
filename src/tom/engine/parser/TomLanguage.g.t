@@ -388,7 +388,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
             )*
             RPAREN
         )?
-	EXTENDS extendsTerm = backquoteTerm
+	EXTENDS extendsTerm = backquoteTerm {options.add(extendsTerm);}
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
@@ -399,7 +399,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
 
-          result = `Strategy(Name(name.getText()),extendsTerm,astVisitList,orgTrack);
+          result = `Strategy(Name(name.getText()),astVisitList,orgTrack);
 
           // %strat finished: go back in target parser.
             selector().pop();
