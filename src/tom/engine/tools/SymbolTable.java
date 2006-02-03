@@ -148,7 +148,11 @@ public class SymbolTable {
   
   public TomForwardType getForwardType(String name) {
     TomTypeDefinition def = (TomTypeDefinition) mapTypeName.get(name);
-    return def.getForward();
+    TomForwardType result = def.getForward();
+    if (result != null) {
+      return result;
+    }
+    else { return tsf().makeTomForwardType_EmptyForward(); } 
   }
 
   public TomType getIntType() {
