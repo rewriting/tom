@@ -2,7 +2,7 @@ module TomType
 imports
 
 public 
-sorts TomType TomTypeDefinition TomForwardType
+sorts TomType TomTypeDefinition TomForwardType TomTypeList 
 
 abstract syntax
 
@@ -17,5 +17,7 @@ EmptyType() -> TomType
 TLForward(tl:TargetLanguage) -> TomForwardType
 EmptyForward() -> TomForwardType
 
-TypeDefinition(type:TomType, forward:TomForwardType) -> TomTypeDefinition
+//slot 1 must be different from "type" otherwise it will overload method "int getType()" in aterm.pure.ATerm
+TypeDefinition(tomType:TomType, forward:TomForwardType) -> TomTypeDefinition
 
+concTomType(TomType*) -> TomTypeList
