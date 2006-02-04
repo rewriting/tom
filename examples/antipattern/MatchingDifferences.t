@@ -93,7 +93,7 @@ public class MatchingDifferences implements Matching {
 			}
 			
 			TermDiff(f,s)->{
-				return isInDifference(t,f,s);
+				return `isInDifference(t,f,s);
 			}
 		}	
 		
@@ -118,7 +118,7 @@ public class MatchingDifferences implements Matching {
 			
 			TermDiff(dif1,dif2),TermDiff(dif3,dif4)->{	
 				
-				if (isInDifference(subject,dif1,dif2) == `True() && isInDifference(subject,dif3,dif4) == `False()){
+				if(`isInDifference(subject,dif1,dif2) == `True() && `isInDifference(subject,dif3,dif4) == `False()){
 					return `True();
 				}
 				
@@ -127,7 +127,7 @@ public class MatchingDifferences implements Matching {
 			
 			TermDiff(dif1,dif2),Appl(_,_)->{	
 				
-				if (isInDifference(subject,dif1,dif2) == `True() && termMatch(subject,second) == `False()){
+				if(`isInDifference(subject,dif1,dif2) == `True() && `termMatch(subject,second) == `False()){
 					return `True();
 				}
 				
@@ -156,7 +156,7 @@ public class MatchingDifferences implements Matching {
 			
 			Variable(_),TermDiff(dif1,dif2)->{	
 				
-				if (isInDifference(subject,`dif1,`dif2) == `False()){
+				if(`isInDifference(subject,dif1,dif2) == `False()){
 					return `True();
 				}
 				

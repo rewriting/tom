@@ -76,7 +76,7 @@ public class ClassicalPatternMatching extends antipattern.term.TermVisitableFwd 
         
         //new introduced variables
         Match(Variable(name),_) ->{
-        	if (name.startsWith("x_")){
+        	if (`name.startsWith("x_")){
         		return `True();
         	}
         }
