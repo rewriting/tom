@@ -323,24 +323,6 @@ matchGuards [LinkedList list] throws TomException
         )
     ;
 
-
-backquoteTerm returns [TomTerm bqTerm] throws TomException
-{
-    TargetLanguage code = null;
-bqTerm = null;
-}
-    :
-        t:BACKQUOTE
-        {
-          selector().push("bqlexer");
-          bqTerm = bqparser.beginBackquote();
-            
-          // update position for new target block
-          //updatePosition();
-          return bqTerm;
-        }
-    ;
-
 // The %strategy construct
 strategyConstruct [Option orgTrack] returns [Instruction result] throws TomException
 {
@@ -388,7 +370,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
             )*
             RPAREN
         )?
-	EXTENDS extendsTerm = backquoteTerm {options.add(extendsTerm);}
+	EXTENDS extendsTerm = annotedTerm {options.add(extendsTerm);}
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE

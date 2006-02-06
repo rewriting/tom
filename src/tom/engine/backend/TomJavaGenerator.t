@@ -29,8 +29,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import tom.engine.adt.tomsignature.types.Instruction;
+import tom.engine.adt.tomsignature.types.Option;
 import tom.engine.adt.tomsignature.types.InstructionList;
 import tom.engine.adt.tomsignature.types.TomList;
+import tom.engine.adt.tomsignature.types.Slot;
+import tom.engine.adt.tomsignature.types.SlotList;
+import tom.engine.adt.tomsignature.types.OptionList;
 import tom.engine.adt.tomsignature.types.TomType;
 import tom.engine.adt.tomsignature.types.TomTypeList;
 import tom.engine.adt.tomsignature.types.TomTerm;
@@ -76,6 +80,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 
   protected void buildClass(int deep, String tomName, TomType extendsType, Instruction instruction) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+
+    OptionList options = tomSymbol.getOption();
+    Option op = options.getHead();
+    TomTerm extendsTerm = op.getAstTerm();
     TomTypeList tomTypes = getSymbolDomain(tomSymbol);
     ArrayList names = new ArrayList();
     ArrayList types = new ArrayList();
@@ -107,7 +115,21 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
 
     //write constructor initialization
-    output.write(deep,") { super(`Indentity());");
+    output.write(deep,") { super(`" + extendsTerm.getNameList().getHead().getString() + "(");
+
+    //write constructor parameters
+    SlotList slots = extendsTerm.getSlots();
+    Slot slot;
+    while(!slots.isEmpty()) {
+      slot = slots.getHead();
+      output.write(deep, slot.getAppl().getNameList().getHead().getString());
+      slots = slots.getTail();
+      if (!slots.isEmpty()) {
+        output.write(deep,",");
+      }
+    }
+    output.write("));");
+
     //here index represents the parameter number
     String param;
     for (int i = 0 ; i < args ; i++) {
