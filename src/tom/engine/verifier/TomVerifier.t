@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomMessage;
+import tom.engine.tools.Tools;
 import tom.engine.tools.TomGenericPlugin;
 import tom.library.traversal.Collect2;
 import tom.library.traversal.Replace1;
@@ -61,6 +62,7 @@ public class TomVerifier extends TomGenericPlugin {
     "</options>";
 
   public static final String ZENON_SUFFIX = ".zv";
+  public static final String INTERMEDIATE_SUFFIX = ".tfix.zenon";
   
   protected Verifier verif;
   protected ZenonOutput zenon;
@@ -71,6 +73,7 @@ public class TomVerifier extends TomGenericPlugin {
 
   public void run() {
     boolean camlsemantics = getOptionBooleanValue("camlSemantics");
+    boolean intermediate = getOptionBooleanValue("intermediate");
     verif = new Verifier(camlsemantics);
     verif.setSymbolTable(this.symbolTable());
     // delay the zenonoutput creation, as it needs the verifiers
@@ -95,6 +98,9 @@ public class TomVerifier extends TomGenericPlugin {
         }
 
         Collection zspecSet = zenon.zspecSetFromConstraintMap(rawConstraints);
+        if(intermediate) {
+          Tools.generateOutputFromCollection(getStreamManager().getOutputFileNameWithoutSuffix() + INTERMEDIATE_SUFFIX, zspecSet);
+        }
 
         // the latex output stuff
         // LatexOutput output;

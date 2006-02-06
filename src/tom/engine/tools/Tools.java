@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Collection;
 
 import aterm.ATerm;
 
@@ -48,4 +49,16 @@ public class Tools {
     }
   }
 
+  public static void generateOutputFromCollection(String outputFileName, Collection collection) {
+    try {
+      OutputStream output = new FileOutputStream(outputFileName);
+      Writer writer = new BufferedWriter(new OutputStreamWriter(output));
+      writer.write(collection.toString());
+      writer.flush();
+      writer.close();
+    } catch(IOException e) {
+      System.out.println("write error");
+      e.printStackTrace();
+    }
+  }
 }

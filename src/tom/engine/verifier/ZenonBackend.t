@@ -252,11 +252,14 @@ public class ZenonBackend {
 
       // Generates types for symbol functions
       // (otherwise, zenon can not know T is not empty)
+      // also adds a Parameter fake : T. to make sure zenon knows T is
+      // not empty
       Iterator symbIt = symbols.iterator();
       while(symbIt.hasNext()) {
         String symbolName = (String) symbIt.next();
         out.append(genFunctionSymbolDeclaration(symbolName));
       }
+      out.append("Parameter tom_fake : T.\n");
     
       out.append("%%end-auto-proof\n");
       number++;
