@@ -76,6 +76,7 @@
   <property name="vas"            value="vas"/>
   <property name="xml"            value="xml"/>
   <property name="xquery"         value="xquery"/>
+  <property name="zenon"          value="zenon"/>
 
   <target name="testdistexist">
     <available file="${tom.home}/lib" type="dir" property="distexist"/>
@@ -697,7 +698,31 @@
         <include name="*.html"/>
       </fileset>
     </copy>
+  </target>
 
+  <target name="zenon" depends="init">
+    <tom config="${tomconfigfile}"
+         srcdir="${examples.dir}" 
+         destdir="${examples.gen}"         
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         optimize2="${optimize2}"
+         verbose="${verbose}"
+         pretty="${pretty}"
+         options="-I ${tom.home}/share/jtom --verify">
+      <include name="${zenon}/**/*.t"/>
+      <exclude name="${zenon}/**/*.g.t"/>
+    </tom>
+    <javacompile example="${zenon}"/>
+    <apply dir="${examples.gen}/${zenon}" 
+          failonerror="yes"
+          executable="zvtov">
+      <srcfile/>
+      <fileset dir="${examples.gen}">
+        <include name="${zenon}/**/*.zv"/>
+      </fileset>
+      <mapper type="glob" from="*.zv" to="*.v"/>
+    </apply>
   </target>
   
   <target name="examples" 
