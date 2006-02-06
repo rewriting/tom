@@ -153,9 +153,6 @@ public class ZenonBackend {
       res.append(genZAxiom(axlist.getHead()));
       axlist = axlist.getTail();
     }
-    // XXX: Outputs the axiom for True (will disappear soon)
-    res.append("Parameter true_is_true : True.\n");
-    
     return res.toString();
   }
 
@@ -171,10 +168,23 @@ public class ZenonBackend {
     return "errorZSpec";
   }
 
+  public String genFunctionSymbolDeclaration(String symbolName) {
+    StringBuffer res = new StringBuffer();
+    res.append("Parameter ");
+    res.append(tomiltools.replaceNumbersByString(symbolName)+" :");
+    // take care of the arity
+    List names = tomiltools.subtermList(symbolName);
+    for(int i = 0; i<names.size();i++) {
+      res.append(" T ->");
+    }
+    res.append(" T.\n");
+    return res.toString();
+  }
+
   public String genZSpecCollection(Collection collection) {
     StringBuffer out = new StringBuffer();
 
-    out.append("\nRequire Import zenon8.\n");
+    out.append("\nRequire Import zenon.\n");
     out.append("\nParameter T S : Set.\n");
 
     // collects all used symbols
@@ -185,17 +195,13 @@ public class ZenonBackend {
       symbols.addAll(tomiltools.collectSymbolsFromZSpec(local));
     }
 
-    // Generates types for symbols
+    // Generates types for symbol functions
     it = symbols.iterator();
     while(it.hasNext()) {
       String symbolName = (String) it.next();
-      out.append("Parameter " + tomiltools.replaceNumbersByString(symbolName) +" :");
-      // arity of the symbol ?
+      out.append(genFunctionSymbolDeclaration(symbolName));
+      // declares the subterm functions if necessary
       List names = tomiltools.subtermList(symbolName);
-      for(int i = 0; i<names.size();i++) {
-        out.append(" T ->");
-      }
-      out.append(" T.\n");
       if(names.size() != 0) {
         out.append("Parameter ");
         Iterator nameIt = names.iterator();
@@ -235,11 +241,23 @@ public class ZenonBackend {
     it = collection.iterator();
     while (it.hasNext()) {
       out.append("\n%%begin-auto-proof\n");
-      out.append("%%location: []\n");
+      //out.append("%%location: []\n");
       out.append("%%name: theorem"+number+"\n");
-      out.append("%%syntax: tom\n");
-      out.append("%%statement\n");
+      //out.append("%%syntax: tom\n");
+      //out.append("%%statement\n");
       out.append(genZSpec((ZSpec)it.next()));
+
+      // XXX: Outputs the axiom for True (will disappear soon)
+      out.append("Parameter true_is_true : True.\n");
+
+      // Generates types for symbol functions
+      // (otherwise, zenon can not know T is not empty)
+      Iterator symbIt = symbols.iterator();
+      while(symbIt.hasNext()) {
+        String symbolName = (String) symbIt.next();
+        out.append(genFunctionSymbolDeclaration(symbolName));
+      }
+    
       out.append("%%end-auto-proof\n");
       number++;
     }
