@@ -27,12 +27,8 @@ package tom.platform;
 
 import java.util.*;
 import java.util.logging.*;
-import tom.engine.TomMessage;
 import aterm.*;
 import aterm.pure.*;
-import tom.engine.tools.TomGenericPlugin;
-import tom.engine.TomStreamManager;
-
 import tom.library.adt.tnode.*;
 
 /**
@@ -112,7 +108,7 @@ public class PluginPlatform {
         testHandler = new TestHandler(inputWithoutSuffix);
         if(!testHandler.hasError()){
           Logger.getLogger(loggerRadical).addHandler(this.testHandler);
-        }
+          }
       }
       
       getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
