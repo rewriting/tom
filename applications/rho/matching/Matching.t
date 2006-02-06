@@ -77,7 +77,7 @@ public class Matching {
 	
 
 	public void run(){
-	System.out.println(" ******************************************************************\n Computing matching modulo superdevelopments. \n constants begin with a,b,c...w\n local variable are not in capital letters and cannot begin with letters used for constants\n matching variables are in capital letters\n  ******************************************************************\n");
+	System.out.println(" ******************************************************************\n Computing matching modulo superdevelopments. \n constants begin with a,b,c...w\n local variable begin with x,y or z\n matching variables are in capital letters\n  ******************************************************************\n");
     LamcalLexer lexer = new LamcalLexer(System.in); // Create parser attached to lexer
     LamcalParser parser = new LamcalParser(lexer);
 //		VisitableVisitor reduce = new ReductionRules();
@@ -88,7 +88,7 @@ public class Matching {
 			System.out.print("mSD>");
       try {
 				Equation subject = parser.matchingEquation();
-//				System.out.println("Resultat du parsing: " + subject);
+				System.out.println("Resultat du parsing: " + subject);
 				c.add(`and(subject));
 				System.out.println(// "Resultat de la normalisation"+
 													  prettyPrinter(normalize_Collection(c)));
@@ -143,12 +143,24 @@ public class Matching {
 				c.add(`and(X*,match(A,B),Y*));}
 			//Subst
 			l:(X*,match(Z@matchVar[],A),Y*) ->{
-				if (!belongsTo(Z,`and(X*,Y*)) && doesNotContainFreeLocalVar(A)){
+				System.out.println("subst");
+				boolean b1=belongsTo(Z,`and(X*,Y*));
+				System.out.println("b1="+b1);
+				System.out.println("subst1");
+				boolean b2=doesNotContainFreeLocalVar(A);
+				System.out.println("b2="+b2);
+				System.out.println("subst2");
+				if (b1 && b2){
+				System.out.println("subst in if");
 					Systems s1=`substitute(Z,A,X*);
+				System.out.println("subst in if1"+Y);
 					Systems s2=`substitute(Z,A,Y*);
+					
+				System.out.println("subst in if2"+2);
 					c.add(`and(s1*,match(Z,A),s2*));
 				}
 				else{
+				System.out.println("bye.bye.subst");
 					break l;
 				}
 			}
@@ -157,18 +169,20 @@ public class Matching {
 				c.add(`and(X*,match(A1,A2),match(B1,B2),Y*));}
 			//Proj
 			(X*,match(app(A1,B1),A2),Y*) ->{
+				System.out.println("Proj");
 				c.add(`and(X*,match(A1,abs(localVar("_x"+(++comptVariable)),A2)),Y*));
 			}
 			//Beta-exp
 				(X*,match(app(A1,B1),C),Y*) ->{
+				System.out.println("Beta-exp");
 					//1. Collection of all the subterms of C
 					Collection collSubTerm=getAllSubterm(C);
 					//2. For each subterm compute the set of position in which the considered subterm appears.
 					Iterator itSubTerm=collSubTerm.iterator();
 					while(itSubTerm.hasNext()){
-//								System.out.println("ici");
+								System.out.println("ici1");
 						LamTerm B2=(LamTerm)itSubTerm.next();
-//								System.out.println("la");
+								System.out.println("la2");
 						Collection collPosition=getAllPos(C,B2);
 						List l=allSubCollection(collPosition);
 						Iterator itListAllSubCollection=l.iterator();
@@ -176,14 +190,15 @@ public class Matching {
 						while(itListAllSubCollection.hasNext()){
 							LamTerm x=`localVar("_x"+(++comptVariable));
 							LamTerm A2=C;
-							//							System.out.println("ici");
+							System.out.println("ici3");
 							Collection subCollection=(Collection)itListAllSubCollection.next();
 							Iterator itSubCollection=subCollection.iterator();
 							while(itSubCollection.hasNext()){
-//								System.out.println("ici");
+								System.out.println("ici4");
 								VisitableVisitor subsitute=((Position)itSubCollection.next()).getReplace(x);
-								//							System.out.println("ici");
+								System.out.println("ici4");
 								A2=(LamTerm)MuTraveler.init(subsitute).visit(A2);
+								System.out.println("ici5");
 							}
 							c.add(`and(X*,match(A1,abs(x,A2)),match(B1,B2),Y*));		
 						}
@@ -196,8 +211,59 @@ public class Matching {
 		}
 		return c;
 	}
+	
+	public boolean testSolvedForm(Systems s){
+		%match(Systems s){
+			(X*,match(matchVar[],A),Y*)->{
+				boolean b1=`testSolvedForm(X*);
+				boolean b2=`testSolvedForm(Y*);
+				return b1&&doesNotContainFreeLocalVar(A)&&b2;
+			}
+			(X*,match[],Y*)->{
+				return false;
+			}
+		}
+		return true;
+	}
+	public Collection eraseUnsolvedForm(Collection start){
+		Collection result=new HashSet();
+		Iterator it=start.iterator();
+		while(it.hasNext()){
+			Systems s=(Systems)it.next();
+			if(testSolvedForm(s)){
+				result.add(s);
+			}
+			
+		}
+		return result;
+	}
 	public boolean belongsTo(LamTerm var,Systems s){
-		return freeLocalVar(s).contains(var);
+		%match(Systems s){
+			() -> {return false;}
+			(X*,match(A,B),Y*)->{
+				boolean resultX=`belongsTo(var,X*);
+				boolean resultY=`belongsTo(var,Y*);
+				return resultX ||belongsTo(var,A)||resultY;
+			}
+		}
+		return false;
+	}
+	public boolean belongsTo(LamTerm var,LamTerm term){
+		%match(LamTerm term){
+			localVar[] -> {return false;}
+			const[] -> {return false;}
+			X@matchVar[] -> {
+				if (X == var){
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+			abs(_,A) -> {return belongsTo(var,A);}
+			app(A,B) -> {return belongsTo(var,A)||belongsTo(var,B);}
+		}
+		return false;
 	}
 	public boolean doesNotContainFreeLocalVar(LamTerm t){
 		return freeLocalVar(t).isEmpty();
@@ -282,19 +348,32 @@ public class Matching {
 		return `subject;
 	}
 	public Collection normalize_Collection(Collection start)  throws VisitFailure{
+			System.out.println("etape1");
 		Collection result = visit_Collection(start);
+			System.out.println("etape2");
 		if(!result.equals(start)){
-//			System.out.println(result);
+			System.out.println("etape3");
 			result=normalize_Collection(result);
+			System.out.println("etape4");
 		}
-		return result;
+			System.out.println("etape5");
+		return eraseUnsolvedForm(result);
 	}
 	public Collection visit_Collection(Collection start) throws VisitFailure{
 			Collection c=new HashSet();
 			Iterator it=start.iterator();
+			System.out.println("1");
 			while(it.hasNext()){
+				System.out.println("2");
 				Systems s=(Systems)it.next();
-				c.addAll(reduce(s));
+//				if (!s.isEmpty()){
+				System.out.println("3");
+				System.out.println(s);
+				Collection tmp=reduce(s);
+				System.out.println("4");
+				c.addAll(tmp);
+//				c.addAll(reduce(s));
+				System.out.println("5");
 			}
 			return c;
 		}

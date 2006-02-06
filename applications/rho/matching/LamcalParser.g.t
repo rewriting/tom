@@ -111,8 +111,8 @@ atom returns [LamTerm atom]
 {
   atom=null;
 }
-//: atom=constant | atom=matchingvariable |atom=localvariable |LPAREN atom=lamterm RPAREN
-: atom=constant | atom=variable |LPAREN atom=lamterm RPAREN
+: atom=constant | atom=matchVariable |atom=localVariable |LPAREN atom=lamterm RPAREN
+//: atom=constant | atom=variable |LPAREN atom=lamterm RPAREN
 ;
 
 constant returns [LamTerm constant]
@@ -126,12 +126,20 @@ constant returns [LamTerm constant]
 }
 ;
 
-variable returns [LamTerm var]
+matchVariable returns [LamTerm var]
 {
   var=null;
   //String varname="";
 }
-: varname:VAR {var=`localVar(varname.getText());}
+: varname:MATCHVAR {var=`matchVar(varname.getText());}
+;
+
+localVariable returns [LamTerm var]
+{
+  var=null;
+  //String varname="";
+}
+: varname:LOCALVAR {var=`localVar(varname.getText());}
 ;
 
 class LamcalLexer extends Lexer;
@@ -164,15 +172,15 @@ CONST options{ testLiterals = true; }
  |'0'..'9'
  )*
 ;
-// LOCALVAR options{ testLiterals = true; }
-// : 'a'..'z'
-// ('A'..'Z'
-//  |'a'..'z'
-//  |'0'..'9'
-//  )*
-// ;
 
-MATCHINGVAR options{ testLiterals = true; }
+LOCALVAR options{ testLiterals = true; }
+: 'x'..'z'
+('A'..'Z'
+ |'a'..'z'
+ |'0'..'9'
+ )*
+;
+MATCHVAR options{ testLiterals = true; }
 : 'A'..'Z'
 ('A'..'Z'
  |'a'..'z'
