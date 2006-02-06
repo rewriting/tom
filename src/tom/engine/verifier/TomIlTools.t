@@ -319,6 +319,8 @@ public class TomIlTools extends TomBase {
     output = output.replaceAll("8","eight");
     output = output.replaceAll("9","nine");
     output = output.replaceAll("\\\"","_sd_");
+    output = output.replaceAll("True","z_true");
+    output = output.replaceAll("False","z_false");
     return output;
   }
 
