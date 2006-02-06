@@ -1,9 +1,7 @@
-// package master;
+package master;
 
-// import master.poly2.poly.*;
-// import master.poly2.poly.types.*;
-import poly2.poly.*;
-import poly2.poly.types.*;
+import master.poly2.poly.*;
+import master.poly2.poly.types.*;
 
 public class Poly2 {
 
