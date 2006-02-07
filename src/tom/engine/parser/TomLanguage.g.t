@@ -1480,6 +1480,8 @@ typeTerm returns [Declaration result] throws TomException
     Option ot = null;
     Declaration attribute = null;
     TargetLanguage implement = null;
+    TargetLanguage visitorFwd = null;
+    TomForwardType tomFwdType;
     DeclarationList declarationList = `emptyDeclarationList();
 }
     :   (
@@ -1491,7 +1493,8 @@ typeTerm returns [Declaration result] throws TomException
 
             implement = keywordImplement
             (
-                attribute = keywordEquals[type.getText()]
+                visitorFwd = keywordVisitorFwd
+            |   attribute = keywordEquals[type.getText()]
                 { declarationList = `manyDeclarationList(attribute,declarationList); }
             |   attribute = keywordCheckStamp[type.getText()]
                 { declarationList = `manyDeclarationList(attribute,declarationList); }
@@ -1502,9 +1505,15 @@ typeTerm returns [Declaration result] throws TomException
             )*
             t:RBRACE
         )
-        {
-          TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
-          putType(type.getText(), astType, `EmptyForward());
+{
+  if (visitorFwd == null) {
+    tomFwdType = `EmptyForward();
+  }
+  else {
+    tomFwdType = `TLForward(visitorFwd);
+  }
+  TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
+          putType(type.getText(), astType,tomFwdType); 
           result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
           updatePosition(t.getLine(),t.getColumn());
           selector().pop();
@@ -1526,6 +1535,21 @@ keywordImplement returns [TargetLanguage tlCode] throws TomException
         )
     ;
 
+keywordVisitorFwd returns [TargetLanguage tlCode] throws TomException
+{
+  tlCode = null;
+}
+    :
+        (
+           VISITOR_FWD 
+            {
+                selector().push("targetlexer");
+                tlCode = targetparser.goalLanguage(new LinkedList());
+                selector().pop();
+            }
+        )
+    ;
+  
 keywordEquals[String type] returns [Declaration result] throws TomException
 {
     result = null;
@@ -1997,6 +2021,7 @@ tokens {
     GET_TAIL = "get_tail";
     IS_EMPTY = "is_empty";
     IMPLEMENT = "implement";
+    VISITOR_FWD = "visitor_fwd";
     STAMP = "stamp";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
