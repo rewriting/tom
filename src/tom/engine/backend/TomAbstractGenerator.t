@@ -343,8 +343,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Class(Name(tomName),extendsType,instruction) -> {
-        `buildClass(deep, tomName, extendsType,instruction);
+      Class(Name(tomName),extendsFwdType,instruction) -> {
+        `buildClass(deep, tomName, extendsFwdType,instruction);
         return;
       }
 
@@ -741,7 +741,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   /*buildClass is not abstract since only Java backend supports class
     only backends that supports Class should overload buildClass  
    */
-  protected void buildClass(int deep, String tomName, TomType extendsType, Instruction instruction) throws IOException {
+  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Instruction instruction) throws IOException {
     System.out.println("Backend does not support Class");
     throw new TomRuntimeException("Backend does not support Class");
   }

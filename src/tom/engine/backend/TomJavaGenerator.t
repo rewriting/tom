@@ -36,6 +36,7 @@ import tom.engine.adt.tomsignature.types.Slot;
 import tom.engine.adt.tomsignature.types.SlotList;
 import tom.engine.adt.tomsignature.types.OptionList;
 import tom.engine.adt.tomsignature.types.TomType;
+import tom.engine.adt.tomsignature.types.TomForwardType;
 import tom.engine.adt.tomsignature.types.TomTypeList;
 import tom.engine.adt.tomsignature.types.TomTerm;
 import tom.engine.adt.tomsignature.types.TomSymbol;
@@ -78,7 +79,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.writeln("}");
   }
 
-  protected void buildClass(int deep, String tomName, TomType extendsType, Instruction instruction) throws IOException {
+  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Instruction instruction) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
 
     OptionList options = tomSymbol.getOption();

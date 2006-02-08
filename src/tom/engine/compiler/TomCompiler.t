@@ -289,17 +289,21 @@ public class TomCompiler extends TomGenericPlugin {
             }
 
            Strategy(name,visitList,orgTrack) -> {
-            InstructionList l = `concInstruction();//represents compiled Strategy
+             InstructionList l = `concInstruction();//represents compiled Strategy
             TomList subjectListAST;
             TomVisit visit;
             TomVisitList jVisitList = `visitList;
             TomTerm arg;//arg = subjectList
             String funcName;
+            TomForwardType visitorFwd = null;
             while (!jVisitList.isEmpty()){
               subjectListAST = empty();
               visit = jVisitList.getHead();
               %match(TomVisit visit) {
                 VisitTerm(visitType,patternInstructionList) -> {
+                  if (visitorFwd == null) {//first time in loop
+                    visitorFwd = symbolTable().getForwardType(`visitType.getTomType().getString());//do the job only once
+                  }
                   arg = `Variable(option(),Name("arg"),visitType,concConstraint());//one argument only in visit_Term
                   subjectListAST = append(arg,subjectListAST);
                   funcName = "visit_" + getTomType(`visitType);//function signature is visit_Term(Term arg) throws VisitFailure.
@@ -310,7 +314,7 @@ public class TomCompiler extends TomGenericPlugin {
               }
               jVisitList = jVisitList.getTail();
             }
-            return `Class(name,EmptyType(),preProcessingInstruction(AbstractBlock(l)));
+            return `Class(name,visitorFwd,preProcessingInstruction(AbstractBlock(l)));
            }
 
           } // end match
