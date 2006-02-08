@@ -25,6 +25,8 @@
   * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	*
+  * by Germain Faure
   */
 
 
@@ -86,11 +88,8 @@ public class Rho {
 	VisitableVisitor oneStepWeakNormalisation = MuTraveler.init(`mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
 	VisitableVisitor weakNormalisation =MuTraveler.init(`mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
 	VisitableVisitor strategyWithAllPrint = MuTraveler.init(`Repeat(Sequence(oneStepWeakNormalisation,Try(print))));
-	VisitableVisitor strategyResult =MuTraveler.init(`Repeat(weakNormalisation));
+	VisitableVisitor strategyResult =MuTraveler.init(`Repeat(oneStepWeakNormalisation));
 
-//	VisitableVisitor myStrategy = `Repeat(Sequence(rules,print));
-	//STRATEGIE INNERMOST (FAST)
-//	VisitableVisitor myStrategy = `mu(MuVar("x"),Sequence(All_abs(MuVar("x")),Choice(Sequence(rules,MuVar("x")),Identity)));
 	public final static void main(String[] args) {
 		Rho rhoEngine = new Rho(RhotermFactory.getInstance(SingletonFactory.getInstance()));
 		rhoEngine.run();
@@ -108,7 +107,6 @@ public class Rho {
 			System.out.print("xRho>");
       try {
 				subject = parser.program();
-//				System.out.println("Resultat du parsing: " + subject);
 			} catch (Exception e) {
 				System.out.println(e);
 				
@@ -127,15 +125,30 @@ public class Rho {
 	}
 
 
+	public String test(String s,RhoParser parser){
+//		System.out.println("s="+s);
+		RTerm subject = `const("undefined");
+
+		try {
+			subject = parser.program();
+		} catch (Exception e) {
+			return e.toString();
+		}
+		try{
+			subject = (RTerm)strategyResult.visit(subject);
+			return stringInfix(subject);
+		} catch(VisitFailure e) {
+			return "reduction failed on: " + subject ;
+		}
+	}
+
 	public String test(String s){
 		RTerm subject = `const("undefined");
-		
 		StringReader sr = new StringReader(s);
     RhoLexer lexer = new RhoLexer(sr); // Create parser attached to lexer
     RhoParser parser = new RhoParser(lexer);
 		try {
 			subject = parser.program();
-//				System.out.println("Resultat du parsing: " + subject);
 		} catch (Exception e) {
 			return e.toString();
 		}
@@ -154,19 +167,9 @@ public class Rho {
 		}
 		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
 			System.out.println("=>"  + stringInfix(arg));
-//			System.out.println("=>" + (MuTraveler.getPosition(oneStepWeakNormalisation)).depth() + arg);
 			return arg;
 		}
 	}
-// 	class TransformToFixPoint extends RhotermVisitableFwd {
-// 		public TransformToFixPoint() {
-// 			super(`Fail());
-// 		}
-// 		public RTerm visit_RTerm(RTerm arg) throws  VisitFailure { 
-// 			%match(RTerm 
-// 			throw new VisitFailure();
-// 		}
-// 	}
 	class ReductionRules extends RhotermVisitableFwd {
 		public ReductionRules() {
 			super(`Fail());

@@ -84,14 +84,14 @@ public class Matching {
 //		VisitableVisitor strategyNormalize =MuTraveler.init(`Repeat(reduce));
 	
 		while(true){
-			Collection c=new HashSet();
+//			Collection c=new HashSet();
 			System.out.print("mSD>");
       try {
 				Equation subject = parser.matchingEquation();
-				System.out.println("Resultat du parsing: " + subject);
-				c.add(`and(subject));
+//				System.out.println("Resultat du parsing: " + subject);
+				Systems s=`and(subject);
 				System.out.println(// "Resultat de la normalisation"+
-													  prettyPrinter(normalize_Collection(c)));
+													  prettyPrinter(normalize_Systems(s)));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -106,7 +106,7 @@ public class Matching {
 			result+=prettyPrinter(s);
 			result+="]\n";
 		}
-		return result;
+		return result+"size of the bag"+c.size();
 	}
 	public String prettyPrinter(Systems s){
 		String result="";
@@ -130,7 +130,7 @@ public class Matching {
 			_ -> {return "";}
 		}
 	}
-	public Collection reduce(Systems s) throws  VisitFailure { 
+	public Collection reduce(Systems s) throws VisitFailure { 
 		Collection c = new HashSet();
 		%match(Systems s){
 			//Trivial
@@ -143,24 +143,24 @@ public class Matching {
 				c.add(`and(X*,match(A,B),Y*));}
 			//Subst
 			l:(X*,match(Z@matchVar[],A),Y*) ->{
-				System.out.println("subst");
+//				System.out.println("subst");
 				boolean b1=belongsTo(Z,`and(X*,Y*));
-				System.out.println("b1="+b1);
-				System.out.println("subst1");
+//				System.out.println("b1="+b1);
+//				System.out.println("subst1");
 				boolean b2=doesNotContainFreeLocalVar(A);
-				System.out.println("b2="+b2);
-				System.out.println("subst2");
+				//			System.out.println("b2="+b2);
+//				System.out.println("subst2");
 				if (b1 && b2){
-				System.out.println("subst in if");
+					//			System.out.println("subst in if");
 					Systems s1=`substitute(Z,A,X*);
-				System.out.println("subst in if1"+Y);
+//				System.out.println("subst in if1"+Y);
 					Systems s2=`substitute(Z,A,Y*);
 					
-				System.out.println("subst in if2"+2);
+					//			System.out.println("subst in if2"+2);
 					c.add(`and(s1*,match(Z,A),s2*));
 				}
 				else{
-				System.out.println("bye.bye.subst");
+//				System.out.println("bye.bye.subst");
 					break l;
 				}
 			}
@@ -169,20 +169,20 @@ public class Matching {
 				c.add(`and(X*,match(A1,A2),match(B1,B2),Y*));}
 			//Proj
 			(X*,match(app(A1,B1),A2),Y*) ->{
-				System.out.println("Proj");
+				//			System.out.println("Proj");
 				c.add(`and(X*,match(A1,abs(localVar("_x"+(++comptVariable)),A2)),Y*));
 			}
 			//Beta-exp
 				(X*,match(app(A1,B1),C),Y*) ->{
-				System.out.println("Beta-exp");
+//				System.out.println("Beta-exp");
 					//1. Collection of all the subterms of C
 					Collection collSubTerm=getAllSubterm(C);
 					//2. For each subterm compute the set of position in which the considered subterm appears.
 					Iterator itSubTerm=collSubTerm.iterator();
 					while(itSubTerm.hasNext()){
-								System.out.println("ici1");
+//								System.out.println("ici1");
 						LamTerm B2=(LamTerm)itSubTerm.next();
-								System.out.println("la2");
+						//							System.out.println("la2");
 						Collection collPosition=getAllPos(C,B2);
 						List l=allSubCollection(collPosition);
 						Iterator itListAllSubCollection=l.iterator();
@@ -190,15 +190,15 @@ public class Matching {
 						while(itListAllSubCollection.hasNext()){
 							LamTerm x=`localVar("_x"+(++comptVariable));
 							LamTerm A2=C;
-							System.out.println("ici3");
+//							System.out.println("ici3");
 							Collection subCollection=(Collection)itListAllSubCollection.next();
 							Iterator itSubCollection=subCollection.iterator();
 							while(itSubCollection.hasNext()){
-								System.out.println("ici4");
+								//							System.out.println("ici4");
 								VisitableVisitor subsitute=((Position)itSubCollection.next()).getReplace(x);
-								System.out.println("ici4");
+//								System.out.println("ici4");
 								A2=(LamTerm)MuTraveler.init(subsitute).visit(A2);
-								System.out.println("ici5");
+								//							System.out.println("ici5");
 							}
 							c.add(`and(X*,match(A1,abs(x,A2)),match(B1,B2),Y*));		
 						}
@@ -225,15 +225,10 @@ public class Matching {
 		}
 		return true;
 	}
-	public Collection eraseUnsolvedForm(Collection start){
+	public Collection eraseUnsolvedForm(Systems s){
 		Collection result=new HashSet();
-		Iterator it=start.iterator();
-		while(it.hasNext()){
-			Systems s=(Systems)it.next();
-			if(testSolvedForm(s)){
-				result.add(s);
-			}
-			
+		if(testSolvedForm(s)){
+			result.add(s);
 		}
 		return result;
 	}
@@ -347,36 +342,52 @@ public class Matching {
 		}
 		return `subject;
 	}
-	public Collection normalize_Collection(Collection start)  throws VisitFailure{
-			System.out.println("etape1");
-		Collection result = visit_Collection(start);
-			System.out.println("etape2");
-		if(!result.equals(start)){
-			System.out.println("etape3");
-			result=normalize_Collection(result);
-			System.out.println("etape4");
+	public Collection normalize_Systems(Systems s) throws  VisitFailure{
+		Collection singletonS=new HashSet();singletonS.add(s);
+		Collection oneStep=reduce(s);
+		if (oneStep.equals(singletonS)){//if I do not reduce somethg
+			return eraseUnsolvedForm(s);
 		}
-			System.out.println("etape5");
-		return eraseUnsolvedForm(result);
-	}
-	public Collection visit_Collection(Collection start) throws VisitFailure{
-			Collection c=new HashSet();
-			Iterator it=start.iterator();
-			System.out.println("1");
-			while(it.hasNext()){
-				System.out.println("2");
-				Systems s=(Systems)it.next();
-//				if (!s.isEmpty()){
-				System.out.println("3");
-				System.out.println(s);
-				Collection tmp=reduce(s);
-				System.out.println("4");
-				c.addAll(tmp);
-//				c.addAll(reduce(s));
-				System.out.println("5");
+		else{
+			Collection result=new HashSet();
+			Iterator it=oneStep.iterator();
+			while (it.hasNext()){
+				Systems next=(Systems)it.next();
+				result.addAll(normalize_Systems(next));
 			}
-			return c;
+			return result;//it must be the union of clean syste
 		}
+	}
+// 	public Collection normalize_Collection(Collection start)  throws VisitFailure{
+// //			System.out.println("etape1");
+// 		Collection result = visit_Collection(start);
+// //			System.out.println("etape2");
+// 		if(!result.equals(start)){
+// //			System.out.println("etape3");
+// 			result=normalize_Collection(result);
+// //			System.out.println("etape4");
+// 		}
+// 		//		System.out.println("etape5");
+// 		return eraseUnsolvedForm(result);
+// 	}
+// 	public Collection visit_Collection(Collection start) throws VisitFailure{
+// 			Collection c=new HashSet();
+// 			Iterator it=start.iterator();
+// //			System.out.println("1");
+// 			while(it.hasNext()){
+// 				//			System.out.println("2");
+// 				Systems s=(Systems)it.next();
+// //				if (!s.isEmpty()){
+// //				System.out.println("3");
+// 				//			System.out.println(s);
+// 				Collection tmp=reduce(s);
+// //				System.out.println("4");
+// 				c.addAll(tmp);
+// //				c.addAll(reduce(s));
+// 				//			System.out.println("5");
+// 			}
+// 			return c;
+// 		}
 
 	//return a list of collection consisting of all the subCollection of a non-empty collection
 	public List allSubCollection(Collection c){

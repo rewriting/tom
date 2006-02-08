@@ -26,6 +26,8 @@ header {
   * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	*
+	* by Germain Faure
   */
 package xrho;
 }
@@ -58,19 +60,6 @@ options {
  		_ -> {return head;}
 		}
  }
-// //TO BE COMPLETE
-// //Le nom que je donne commence par un "!"
-//  protected RTerm addName(String name,RTerm term){
-// 	 if (!table.containsKey(name)){
-// 		 table.put(name,term);
-// 		 return term;
-// 	 }
-// 	 else {
-// 		 System.out.println("Warning, the alias " + name + " was used before and was not modified");
-// 		 return (RTerm)table.get(name);
-
-// 	 }
-//  }
 //TO BE COMPLETE
 //Le nom que je donne commence par un "!"
  protected RTerm addName(String name,RTerm term){
@@ -102,47 +91,13 @@ program returns [RTerm term]
 :  term=assign END | term=rhoterm END
 ;
 
-// rhotermbis returns [RTerm term]
-// {
-//   term = `var("rhoterm");
-// }
-// : term=rhoterm (APPL^ rhoterm)* 
-// //: term=assign | term=substappl
-// //substappl //| term = algebraicappl
-// ;
+
 rhoterm returns [RTerm term]
 {
   term = `var("rhoterm");
 }
 : term=substappl
-//: term=assign | term=substappl
-//substappl //| term = algebraicappl
 ;
-
-
-//  algebraicappl returns [RTerm appl]
-// {
-//   appl=`var("algebraicappl");
-// 	RTerm fun=null;
-//   ListRTerm arguments =`and();
-// }
-// //MARCHE : fun=constant APPL arguments=argumentlist
-// :  AT   LALG arguments=argumentlist RALG
-
-// {	
-// 		appl = fromAlgebraicApplToFunctionalAppl(arguments);
-// } 
-// ;
-
-// argumentlist returns [ListRTerm list]
-// {
-//   list=`and();
-// 	ListRTerm sublist = `and();
-// 	RTerm head=null;
-// }
-// : head=substappl (COMMA sublist=argumentlist)?
-// { list=`and(head,sublist*); }
-// ;
 
 assign  returns [RTerm term]
 {
@@ -283,22 +238,6 @@ structure returns [RTerm appl]
   }
 }
 ;
-// structure returns [RTerm appl]
-// {
-//   appl=null;
-//   RTerm lhs=null;
-//   RTerm rhs=null;
-// }
-// : lhs=atom (STRUCT rhs=atom)?
-// { 
-//   if (rhs!=null) {
-//     appl=`struct(lhs,rhs);
-//   } else {
-//     appl=lhs;
-//   }
-// }
-// ;
-
 atom returns [RTerm atom]
 {
   atom=null;
@@ -309,7 +248,6 @@ atom returns [RTerm atom]
 constant returns [RTerm constant]
 {
   constant=null;
-  //String constname="";
 }
 : constname:CONST 
 {
@@ -325,14 +263,12 @@ constant returns [RTerm constant]
 variable returns [RTerm var]
 {
   var=null;
-  //String varname="";
 }
 : varname:VAR {var=`var(varname.getText());}
 ;
 chgeMode returns [RTerm mode]
 {
   mode=null;
-  //String varname="";
 }
 : WITHOUTPRINT {mode=`withoutPrint();} | WITHPRINT {mode=`withPrint();}
 ;
@@ -340,7 +276,6 @@ chgeMode returns [RTerm mode]
 def returns [RTerm def]
 {
   def=null;
-  //String varname="";
 }
 : varname:DEF {def=getName(varname.getText());}
 ;
