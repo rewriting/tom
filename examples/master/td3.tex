@@ -1,0 +1,154 @@
+\documentclass[11pt]{article}
+\usepackage[latin1]{inputenc}
+%% \usepackage{fullpage}
+\usepackage{color}
+\usepackage{aeguill}
+\usepackage{comment}
+
+%% \includecomment{versionProf}
+\specialcomment{versionProf}
+    {\begingroup\bf}{\endgroup}
+
+%% UNCOMMENT IF YOU WANT THE SHORT VERSION
+%% \excludecomment{versionProf}
+
+\title{Réécriture equationnelle}
+\date{2005-2006}
+\author{M1}
+
+
+\begin{document}
+
+\maketitle
+
+Ce TD a pour but de vous familiariser la réécriture equationnelle.
+
+\section{Arithmétique  de Peano}
+
+On considère le système de réécriture permettant de calculer la somme
+d'entiers de Peano:
+%
+\begin{itemize}
+\item[] $x + zero \rightarrow x$
+\item[] $x + suc(y) \rightarrow suc(x + y)$
+\item[] $x * zero \rightarrow zero$
+\item[] $x * suc(y) \rightarrow x + (x*y)$
+\end{itemize}
+%
+L'opérateur $+$ est associatif et commutatif.
+
+En utilisant le système obtenu calculer les sommes $0+2$ et $0*2$. 
+
+\begin{versionProf}
+$0+2 \longrightarrow 2$
+\end{versionProf}
+
+\section{Polynômes}
+
+On considère le système de réécriture permettant de calculer la
+dérivée de tout polynôme en sachant que:
+\begin{itemize}
+\item[] $deriv(n,X) \rightarrow 0$
+\item[] $deriv(m*X^n,X) \rightarrow m*n*X^{n-1}$
+\item[] $deriv(P1+P2,X) \rightarrow deriv(P1,X) + deriv(P2,X)$
+\item[] $deriv(P1*P2,X) \rightarrow deriv(P1,X) * P2 + deriv(P2,X) * P1$
+\end{itemize}
+%
+Nous avons vu que le résultat obtenu en appliquant ce système de
+réécriture n'est pas en forme canonique.
+
+Proposez un système de réécriture équationnelle permettant de résoudre
+ce problème. Précisez les règles de réécriture utilisées ainsi que les
+équations des différents symboles.
+
+\begin{versionProf}
+Les opérateurs $+$ et $*$ sont associatifs et commutatifs mais il
+suffit de les considérer associatifs pour la simplification.
+%
+\begin{itemize}
+\item[] $simplify(m_1 X^n +_{A} m_2 X^n) \rightarrow (m_1+_{A}m_2) X^n$
+\item[] $simplify(m_1 X^{n_1} +_{A} m_2 X^{n_2}) \rightarrow m_2 X^{n_2} +_{A} m_1 X^{n_1}$
+  ~~~~~~if $n_1 < n_2$
+\end{itemize}
+\end{versionProf}
+
+
+\section{Filtrage syntaxique}
+
+Proposez un système de réécriture équationnelle permettant de résoudre
+des problèmes non-linéaires de filtrage syntaxique sur les entiers de
+Peano.  Précisez les règles de réécriture utilisées ainsi que les
+équations des différents symboles.
+
+\begin{versionProf}
+// Delete
+$$Match(zero(),zero()) \rightarrow True()$$
+      
+// Decompose
+$$Match(suc(x),suc(y)) \rightarrow Match(x,y)$$
+$$Match(plus(x1,x2),plus(y1,y2)) \rightarrow And(Match(x1,y1),Match(x2,y2))$$
+        
+// SymbolClash
+$$Match(suc(\_),zero()) \rightarrow False()$$
+$$Match(plus(\_,\_),zero()) \rightarrow False()$$ 
+$$Match(suc(\_),plus(\_,\_)) \rightarrow False()$$ 
+
+// PropagateClash
+$$And(False(),\_) \rightarrow False()$$
+
+// PropagateSuccess
+$$And(True(),X) \rightarrow X$$
+
+// Merging
+$$And(X,X) \rightarrow X$$
+
+// MergingFail
+$$And(Match(var(x),X),Match(var(x),Y)) \rightarrow False()  ~~~if(X!=Y)$$
+\end{versionProf}
+
+\section{Prouveur de prédicats}
+
+\section{Vérification de protocoles cryptographiques}
+
+On souhaite analyser le protocole NSPK a été proposé en '78 par
+Needham et Schroeder.  Le protocole est utilisé pour établir une
+authentification mutuelle entre deux agents communicant via un réseau
+qui n'est pas sécurisé.
+
+\newcommand{\encMes}[2]{{\{#1\}}_{K(#2)}}
+\newcommand{\nonce}[1]{{N}_{#1}}
+\begin{tabbing}
+indent \=  3.~~~ \= $A \rightarrow B$: \= \kill
+\>  1. \> $A \rightarrow B$: \> $\encMes{\nonce{A},A}{B}$
+\\
+\>  2. \> $B \rightarrow A$: \> $\encMes{\nonce{A},\nonce{B}}{A}$
+\\
+\>  3. \> $A \rightarrow B$: \> $\encMes{\nonce{B}}{B}$
+\end{tabbing}
+
+On souhaite écrire le système de réécriture permettant de vérifier le
+protocole en présence d'un intrus qui peut intercepter tous les
+messages qui passent pas le réseau (à l'exception des messages qu'il a
+engendrés) et les mémorise ou les décrypte (si encryptés avec sa clé).
+Il peut également utiliser les nonces obtenus pour générer des faux
+messages qui sont envoyés à tous les agents.
+
+On souhaite vérifier:
+\begin{itemize}
+\item l'authenticité du répondeur~: si un initiateur $x$ a commité
+  avec un répondeur $y$, alors $y$ a vraiment participé au protocole.
+%
+\item l'authenticité de l'initiateur~: si un répondeur
+  $y$ a commité avec un initiateur $x$, alors
+  l'initiateur a également commité avec $y$.
+\end{itemize}
+
+
+\begin{versionProf}
+$A \rightarrow B$: $\encMes{\nonce{A},A}{B}$\\
+x+SLEEP+resp  || E <> D || w+SLEEP+DN <> w\#l\#ll <> ls\\
+=> \\
+x+WAIT+N(x,y) || E <> D <> w\#l\#ll <> x-->y:K(y)[N(x,y),DN,A(x)] \& ls 
+\end{versionProf}
+
+\end{document}
