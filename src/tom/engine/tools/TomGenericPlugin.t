@@ -275,6 +275,9 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     StringBuffer argString = new StringBuffer("[");
     for(int i=0;i<arg.length;i++) {
       argString.append(arg[i].getClass().getName());
+      if (i < arg.length -1) {
+        argString.append(",");
+      }
     }
     argString.append("]");
     return argString.toString();
