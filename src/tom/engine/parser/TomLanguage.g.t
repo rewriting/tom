@@ -370,7 +370,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
             )*
             RPAREN
         )?
-	EXTENDS extendsTerm = annotedTerm {options.add(extendsTerm);}
+	EXTENDS extendsTerm = plainTerm[null,0] {options.add(extendsTerm);}
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
