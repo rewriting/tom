@@ -141,24 +141,18 @@ public class SymbolTable {
     TomTypeDefinition def = (TomTypeDefinition) mapTypeName.get(name);
     if (def != null) {
       TomType result = def.getTomType();
-      if (result != null) {
-        return result;
-      }
-      else { return tsf().makeTomType_EmptyType(); } 
+      return result;
     }
-    else { return tsf().makeTomType_EmptyType(); } 
+    else { return null; } 
   }
-  
+
   public TomForwardType getForwardType(String name) {
     TomTypeDefinition def = (TomTypeDefinition) mapTypeName.get(name);
     if (def != null) {
       TomForwardType result = def.getForward();
-      if (result != null) {
-        return result;
-      }
-      else { return tsf().makeTomForwardType_EmptyForward(); } 
+      return result;
     }
-    else { return tsf().makeTomForwardType_EmptyForward(); } 
+    else { return null; } 
   }
 
   public TomType getIntType() {
