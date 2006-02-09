@@ -19,8 +19,6 @@ public class Poly2 {
    }
 
 	public Poly deriv(Poly p) {
-    System.out.println("P= "+p);
-
 		%match(Poly p) {
 			m(_,"X",0) -> { return `m(0,"X",0); }
 			m(c,"X",n) -> { 
@@ -29,22 +27,28 @@ public class Poly2 {
 				}
 			}
 
-			plus(conc(A*,p1@m(_,_,_),B*)) -> { 
-        System.out.println("PP= "+p);
-        return `plus(conc(deriv(p1),deriv(plus(conc(A*,B*))))); 
+			plus(conc(A*)) -> {
+        return `plus(deriv(A*)); 
       }
-			mult(conc(A*,p1@m(_,_,_),B*)) -> { 
-        return `plus(conc(mult(conc(deriv(p1),mult(conc(A*,B*)))),
-                          mult(conc(p1,deriv(mult(conc(A*,B*))))))); 
-      }
+			mult(conc(A,B*)) -> { 
+        Poly da = `deriv(A);
+        PolyList db = `deriv(B*);
+        return `plus(conc(mult(conc(da,B*)),
+                        mult(conc(db*,A))));
 
-// 			plus(conc(A*,p1,B*)) -> { 
-//         return `plus(conc(deriv(p1),deriv(plus(conc(A*,B*))))); 
-//       }
-// 			mult(conc(A*,p1,B*)) -> { return `plus(conc(mult(conc(deriv(p1),mult(conc(A*,B*)))),
-//                                                   mult(conc(p1,deriv(mult(conc(A*,B*))))))); }
+      }
 		}
 		return `p;
+	}
+	
+	public PolyList deriv(PolyList pl) {
+		%match(PolyList pl) {
+      conc(h,p*) -> { 
+        PolyList dp = `deriv(p*);
+        return `conc(deriv(h),dp*); 
+      }
+		}
+		return `pl;
 	}
 	
 	public Poly simplify(Poly p) {
