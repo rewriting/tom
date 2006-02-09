@@ -29,7 +29,88 @@
 \maketitle
 
 Ce deuxième TD a pour but de vous familiariser avec le langage de programmation Tom.
-Nous abordons dans ce TD ;utilisation de \verb|%vas|, \verb|%rule|, \verb|%match| et '\verb|`|'.
+Nous abordons dans ce TD l'utilisation de \verb|%vas|, \verb|%rule|, \verb|%match| et '\verb|`|'.
 
-\section{}
+L'objectif est d'implanter un interpréteur ainsi qu'un optimiseur pour un pico-langage.
+
+\section{Expression booléennes}
+Dans un premier temps, on veut pouvoir construire et évaluer des expressions de la forme \verb|Not(True())|, \verb|And(Or(True(),False()),True())|, etc.
+
+Proposer un grammaire ainsi qu'un système de simplification.
+
+\begin{versionProf}
+\begin{verbatim}
+    module Term
+    imports 
+    public
+    sorts Inst Expr Bool
+      
+    abstract syntax
+		True -> Bool
+		False -> Bool
+		Not(b:Bool) -> Bool
+		Or(b1:Bool, b2:Bool) -> Bool
+		And(b1:Bool, b2:Bool) -> Bool
+\end{verbatim}
+
+\begin{verbatim}
+	public Bool evalBool(Map env,Bool bool) {
+		%match(Bool bool) {	
+			Not(True()) -> { return `False(); }
+			Not(False()) -> { return `True(); }
+			Not(b) -> { return `evalBool(env,Not(evalBool(env,b))); }
+
+			Or(True(),b2) -> { return `True(); }
+			Or(b1,True()) -> { return `True(); }
+			Or(False(),b2) -> { return `b2; }
+			Or(b1,False()) -> { return `b1; }
+			And(True(),b2) -> { return `b2; }
+			And(b1,True()) -> { return `b1; }
+			And(False(),b2) -> { return `False(); }
+			And(b1,False()) -> { return `False(); }
+    + congruence pour Or et And
+
+			x -> { return x; }
+		}
+	}
+
+\end{verbatim}
+\end{versionProf}
+
+\section{Mini pico langage}
+On considère un premier langage permettant de mémoriser des valeurs dans des variables. Sa grammaire est la suivante :
+\begin{verbatim}
+  <Inst> ::= Skip
+           | Assign(<String>,<int>)
+           | Print(<String>)
+           | <Inst> ; <Inst>
+\end{verbatim}
+
+Proposer une signature ainsi qu'une fonction permettant d'évaluer de tels programmes.
+
+\section{Pico langage}
+On considère maintenant une extension de ce langage dont la grammaire est la suivante :
+
+\begin{verbatim}
+  <Inst> ::= Skip
+           | Assign(<String>,<Exp>)
+           | Print(<Exp>)
+           | <Inst> ; <Inst>
+           | If(<Bool>,<Inst>,<Inst>)
+           | While(<Bool>,<Inst>)
+  <Bool> ::= True
+           | False
+           | Not(<Bool>)
+           | Or(<Bool>,<Bool>)
+           | And(<Bool>,<Bool>)
+           | Eq(<Expr>,<Expr>)
+  <Expr> ::= Cst(<int>)
+           | Var(<String>)
+           | Plus(<Expr>,<Expr>)
+           | Mult(<Expr>,<Expr>)
+\end{verbatim}
+Donner les fonctions d'évaluation d'un tel langage
+
+\section{Optimisation}
+On désire maintenant décrire une fonction qui élimine les instruction inutiles (\texttt{Skip}) et optimise les tests de la forme \texttt{If(Not(...),...)} 
 \end{document}
