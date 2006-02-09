@@ -98,7 +98,12 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 	    tomTypes = tomTypes.getTail();
 	    index++;
     }
-    output.write(deep,"class " + tomName + "{");
+    output.write(deep,"class " + tomName);
+    //write extends
+    if (extendsFwdType != `EmptyForward) {
+      output.write(deep," extends " + extendsFwdType);
+    }
+    output.write(deep," {");
     int args = names.size();
     //write Declarations
     for (int i = 0 ; i < args ; i++){
