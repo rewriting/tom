@@ -143,24 +143,24 @@ public class Matching {
 				c.add(`and(X*,match(A,B),Y*));}
 			//Subst
 			l:(X*,match(Z@matchVar[],A),Y*) ->{
-				System.out.println("subst with X: "+X+"and Y: "+Y);
+//				System.out.println("subst with X: "+X+"and Y: "+Y);
 				boolean b1=belongsTo(Z,`and(X*,Y*));
 //				System.out.println("b1="+b1);
 //				System.out.println("subst1");
 				boolean b2=doesNotContainFreeLocalVar(A);
 				//			System.out.println("b2="+b2);
-				System.out.println("subst2");
+				//			System.out.println("subst2");
 				if (b1 && b2){
-								System.out.println("subst in if");
+//								System.out.println("subst in if");
 								
 					Systems s1=`substitute(Z,A,X*);
-				System.out.println("subst in if1: Z: "+Z+"by A: "+A +"in: "+Y);
+					//			System.out.println("subst in if1: Z: "+Z+"by A: "+A +"in: "+Y);
 					Systems s2=`substitute(Z,A,Y*);
-					System.out.println("subst in if2"+2);
+//					System.out.println("subst in if2"+2);
 					c.add(`and(s1*,match(Z,A),s2*));
 				}
 				else{
-				System.out.println("bye.bye.subst");
+					//			System.out.println("bye.bye.subst");
 					break l;
 				}
 			}
@@ -303,13 +303,13 @@ public class Matching {
 	public Systems substitute(LamTerm var, LamTerm subject, Systems s){
 		%match(Systems s){
 			(X*,match(A,B),Y*) -> {
-				System.out.println("premiere subst");
+//				System.out.println("premiere subst");
 				Systems newX=`substitute(var,subject,X*);
-				System.out.println("deuxieme subst");
+//				System.out.println("deuxieme subst");
 				Systems newY=`substitute(var,subject,Y*);
-				System.out.println("troisieme subst"+var+subject+`A);
+				//			System.out.println("troisieme subst"+var+subject+`A);
 				LamTerm newA=substitute(var,subject,`A);
-				System.out.println("construction du resultat");
+//				System.out.println("construction du resultat");
 				return `and(newX*,match(newA,B),newY*);}
 			_ -> {return `s;}
 
@@ -317,7 +317,7 @@ public class Matching {
 	}
 	//[X\subject]t
 	public LamTerm substitute(LamTerm X, LamTerm subject, LamTerm t){
-		System.out.println("here");
+//		System.out.println("here");
 		%match(LamTerm t){
 			const[] -> {return `t;}
 			localVar[] -> {return `t;}
