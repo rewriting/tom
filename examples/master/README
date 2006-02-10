@@ -9,6 +9,9 @@
   generic syntactic matching implemented with rules, and associative operator
 * Matching3.t
   specialized matching for Peano, with match, and mergingClash
+* Matching4.t
+  specialized matching for Peano, with match, and mergingClash, and
+	 associative operator --> stack overflow
 * Peano1.t
 * Peano2.t
 * PeanoVas.t
