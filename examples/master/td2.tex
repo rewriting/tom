@@ -86,7 +86,9 @@ On considère un premier langage permettant de mémoriser des valeurs dans des var
            | <Inst> ; <Inst>
 \end{verbatim}
 
-Proposer une signature ainsi qu'une fonction permettant d'évaluer de tels programmes.
+\begin{enumerate}
+\item Proposer une signature ainsi qu'une fonction permettant d'évaluer de tels programmes.
+\item Simplifier \texttt{And(Or(Not(False),False),And(True,False))}
 
 \section{Pico langage}
 On considère maintenant une extension de ce langage dont la grammaire est la suivante :
@@ -109,8 +111,14 @@ On considère maintenant une extension de ce langage dont la grammaire est la sui
            | Plus(<Expr>,<Expr>)
            | Mult(<Expr>,<Expr>)
 \end{verbatim}
-Donner les fonctions d'évaluation d'un tel langage
+
+\begin{enumerate}
+\item Ecrire le programme \texttt{a:=1 ; b:=a+2 ; Print(b)}} dans la syntaxe de Pico
+\item Ecrire un programme qui affiche les entiers de 0 à 9.
+\item Donner la signature et les fonctions d'évaluation d'un tel langage
+\end{enumerate}
 
 \section{Optimisation}
-On désire maintenant décrire une fonction qui élimine les instruction inutiles (\texttt{Skip}) et optimise les tests de la forme \texttt{If(Not(...),...)} 
+On désire maintenant décrire une fonction qui élimine les instructions inutiles (\texttt{Skip}) et optimise les tests de la forme \texttt{If(Not(...),...)} 
+
 \end{document}

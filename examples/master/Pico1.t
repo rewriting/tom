@@ -25,6 +25,7 @@ class Pico1 {
     Cst(val:int) -> Expr
 		Plus(e1:Expr, e2:Expr) -> Expr
 		Mult(e1:Expr, e2:Expr) -> Expr
+		Mod(e1:Expr, e2:Expr) -> Expr
 
 		Skip() -> Inst
     Assign(name:String, e:Expr) -> Inst
@@ -109,9 +110,11 @@ class Pico1 {
 			Var(n) -> { return (Expr)env.get(n); }
 			Plus(Cst(v1),Cst(v2)) -> { return `Cst(v1 + v2); }
 			Mult(Cst(v1),Cst(v2)) -> { return `Cst(v1 * v2); }
+			Mod(Cst(v1),Cst(v2)) -> { return `Cst(v1 % v2); }
 			
 			Plus(e1,e2) -> { return `evalExpr(env,Plus(evalExpr(env,e1),evalExpr(env,e2))); }
 			Mult(e1,e2) -> { return `evalExpr(env,Mult(evalExpr(env,e1),evalExpr(env,e2))); }
+			Mod(e1,e2) -> { return `evalExpr(env,Mod(evalExpr(env,e1),evalExpr(env,e2))); }
 			
 			x -> { return `x; }
 		}
@@ -130,10 +133,7 @@ class Pico1 {
 		}
 	}
 		
-
   //-------------------------------------------------------
-  public Pico1() {
-  } 
 
   public void run() {
 		Map env = new HashMap();
@@ -160,6 +160,24 @@ class Pico1 {
 										     Seq(Print(Var("i")), Assign("i",Plus(Var("i"),Cst(1)))),Skip())));
     System.out.println("p4: " + p4);
     System.out.println("opti(p4): " + opti(p4));
+		
+		Inst p5 = `Seq(Assign("n",Cst(2)),
+				           While(Not(Eq(Var("n"),Cst(100))),
+									 Seq(Assign("i",Cst(2)),
+									 Seq(Assign("p",Cst(1)),
+									 Seq(While(Not(Eq(Var("i"),Var("n"))),
+											 Seq(If(Eq(Mod(Var("n"),Var("i")),Cst(0)),Assign("p",Cst(0)),Skip()),
+											 Assign("i",Plus(Var("i"),Cst(1)))
+											 )),
+									 Seq(If(Not(Eq(Var("p"),Cst(0))),Print(Var("n")),Skip()),
+									 Assign("n",Plus(Var("n"),Cst(1)))
+									 ))))));
+
+
+    //System.out.println("p5: " + p5);
+		//eval(env,p5);
+    System.out.println("opti(p5): " + opti(p5));
+		eval(env,opti(p5));
   }
   
   public final static void main(String[] args) {
