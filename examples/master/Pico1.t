@@ -68,7 +68,7 @@ class Pico1 {
 				//System.out.println("cond = " + cond);
 				if(cond==`True()) {
 					eval(env,`i);
-					eval(env,w);
+					eval(env,`w);
 				}
 				return;
 			}
@@ -96,18 +96,18 @@ class Pico1 {
 			And(b1,False()) -> { return `False(); }
 			
 			Eq(e1,e2) -> { 
-				Expr x=evalExpr(env,e1);
-				Expr y=evalExpr(env,e2);
+				Expr x=`evalExpr(env,e1);
+				Expr y=`evalExpr(env,e2);
 				return (x==y)?`True():`False();
 			}
 
-			x -> { return x; }
+			x -> { return `x; }
 		}
 	}
 	
 	public Expr evalExpr(Map env,Expr expr) {
 		%match(Expr expr) {	
-			Var(n) -> { return (Expr)env.get(n); }
+			Var(n) -> { return (Expr)env.get(`n); }
 			Plus(Cst(v1),Cst(v2)) -> { return `Cst(v1 + v2); }
 			Mult(Cst(v1),Cst(v2)) -> { return `Cst(v1 * v2); }
 			Mod(Cst(v1),Cst(v2)) -> { return `Cst(v1 % v2); }
