@@ -328,6 +328,8 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
 {
     result = null;
     TomTerm extendsTerm = null;
+    String codomain = "";
+    TomSymbol extendsSymbol = null; 
     LinkedList visitList = new LinkedList();
     TomVisitList astVisitList = `emptyTomVisitList();
     LinkedList argumentList = new LinkedList();
@@ -370,13 +372,21 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
             )*
             RPAREN
         )?
-	EXTENDS extendsTerm = plainTerm[null,0] {options.add(extendsTerm);}
+	EXTENDS extendsTerm = plainTerm[null,0]
+  {
+    options.add(extendsTerm);
+
+    //get strategy codomain
+    extendsSymbol = symbolTable.getSymbolFromName(extendsTerm.getNameList().getHead().getString());
+    if (extendsSymbol != null) {
+      codomain = extendsSymbol.getTypesToType().getCodomain().getString();
+    }
+  }
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
         {
-          //second parameter 'resultType' is equal to "" since a class does not return a type
-          TomSymbol astSymbol = ast().makeSymbol(name.getText(), "", types, ast().makePairNameDeclList(pairNameDeclList), options);
+          TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomain, types, ast().makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
