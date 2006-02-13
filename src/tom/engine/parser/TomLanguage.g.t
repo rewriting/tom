@@ -371,7 +371,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
                 }
             )*
             RPAREN
-        )?
+        )
 	EXTENDS extendsTerm = plainTerm[null,0]
   {
     options.add(extendsTerm);
