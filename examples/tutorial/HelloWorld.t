@@ -40,8 +40,8 @@ public class HelloWorld {
   public String getWord(String t) {
     %match(String t) {
       "World"  -> { return "World";}
-      _        -> { return "Unknown"; }
     }
+		return "Unknown"; 
   }
 
   public void revisited(String t) {

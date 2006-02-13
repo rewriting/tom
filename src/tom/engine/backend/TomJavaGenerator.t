@@ -179,11 +179,11 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     if(getSymbolTable().isBuiltinType(typeName)) {
 			generateInstruction(deep,instruction);
 		} else {
-			//output.write(deep,"if("); 
-			//generateExpression(deep,exp); 
-			//output.writeln(" instanceof " + getTLCode(tlType) + ") {");
+			output.write(deep,"if("); 
+			generateExpression(deep,exp); 
+			output.writeln(" instanceof " + getTLCode(tlType) + ") {");
 			generateInstruction(deep+1,instruction);
-			//output.writeln(deep,"}");
+			output.writeln(deep,"}");
 		}
 	}
 } // class TomJavaGenerator

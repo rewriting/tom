@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package list;
+package tutorial;
 
 import aterm.*;
 import aterm.pure.*;
@@ -92,11 +92,12 @@ public class List {
       conc(X1*,x,X2*,y,X3*) -> {
         String xname = `x.getName();
         String yname = `y.getName();
-        if(xname.compareTo(yname) > 0) 
-            return `swapSort(conc(X1*,y,X2*,x,X3*));     
+        if(xname.compareTo(yname) > 0) {
+					return `swapSort(conc(X1*,y,X2*,x,X3*));     
+				}
       }
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ArrayList removeDouble(ArrayList l) {
@@ -105,9 +106,8 @@ public class List {
         return `removeDouble(conc(X1*,x,X2*));
         
       }
-
-      _ -> { return l; }
     }
+		return l; 
   }
 
 	public ArrayList makeSubject() {

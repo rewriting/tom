@@ -69,17 +69,17 @@ public class PolyAdvanced2 {
       mult(x,one())  -> { return `x; }
       mult(zero(),_) -> { return `zero(); }
       mult(_,zero()) -> { return `zero(); }
-      _ -> { return (ATermAppl) traversal.genericTraversal(t,replace); }
     }
+		return (ATermAppl) traversal.genericTraversal(t,replace); 
   }
 
-  Replace1 replace = new Replace1() {
-      public ATerm apply(ATerm t) {
-        return simplifyFunction((ATermAppl)t);
-      }
-    };
+	Replace1 replace = new Replace1() {
+		public ATerm apply(ATerm t) {
+			return simplifyFunction((ATermAppl)t);
+		}
+	};
 
-    // Simplification using a traversal function
+	// Simplification using a traversal function
   public ATermAppl simplify(ATermAppl t) {
     ATermAppl res = (ATermAppl)replace.apply(t);
     if(res != t) {

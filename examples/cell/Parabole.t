@@ -104,5 +104,6 @@ public class Parabole extends TwoDimCellularAutomaton {
 			_, _, _,
 			_, _, _	-> {return C;}			
 		}
+		return C;
 	}
 }

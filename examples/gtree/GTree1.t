@@ -88,6 +88,7 @@ public class GTree1 {
         p, 0 -> { return `p+1; }
         p, x -> { return ack(`p-1,ack(`p,`x-1)); }
       }
+			return 0;
     }
   
   public final static void main(String[] args) {

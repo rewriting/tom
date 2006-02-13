@@ -160,11 +160,15 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   }
 
   protected void buildIf(int deep, Expression exp, Instruction succes) throws IOException {
-    output.write(deep,"(if "); 
-    generateExpression(deep,exp); 
-    output.writeln(" then ");
-    generateInstruction(deep+1,succes);
-    output.writeln(deep,")");
+		if(exp.isTrueTL()) {
+			generateInstruction(deep,succes);
+		} else {
+			output.write(deep,"(if "); 
+			generateExpression(deep,exp); 
+			output.writeln(" then ");
+			generateInstruction(deep+1,succes);
+			output.writeln(deep,")");
+		}
   }
 
   protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {

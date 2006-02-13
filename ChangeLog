@@ -1,3 +1,9 @@
+2006-02-13  pem
+  * added () to constant %op
+	* in Java:
+	  - %match generates an 'instanceof' to check that the subject has the correct type
+	  - -> {...} are guarded by a condition to avoid "unreachable statement" error
+	
 2006-02-01  pem
   * dijunction of symbols is now compiled in a correct way
 	 - Bottom (null) is used to initialize variables

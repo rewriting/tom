@@ -86,9 +86,8 @@ public class List1 {
           return `swapSort(conc(X1*,y,X2*,x,X3*));
         }
       }
-
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ATermList removeDouble(ATermList l) {
@@ -96,9 +95,8 @@ public class List1 {
       conc(X1*,x,x,X2*) -> {
         return `removeDouble(conc(X1*,x,X2*));
       }
-
-      _ -> { return l; }
     }
+		return l; 
   }
 
 	public ATermList makeSubject() {

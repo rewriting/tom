@@ -103,7 +103,6 @@ public class Array {
     assertTrue(double5(sort2(l)).equals(res));
   }
 
-
   public ArrayList sort1(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
@@ -118,10 +117,8 @@ public class Array {
           return sort1(result);
         }
       }
-        
-      _ -> { return l; }
     }
-    
+		return l; 
   }
 
   public ArrayList double1(ArrayList l) {
@@ -133,9 +130,8 @@ public class Array {
         result.addAll(`X3);
         return double1(result);
       }
-      
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ArrayList sort2(ArrayList l) {
@@ -147,10 +143,8 @@ public class Array {
           return `sort2(conc(X1*,y,X2*,x,X3*));
         }
       }
-        
-      _ -> { return l; }
     }
-    
+		return l; 
   }
 
   public ArrayList double2(ArrayList l) {
@@ -158,17 +152,16 @@ public class Array {
       conc(X1*,x,X2*,x,X3*) -> {
         return `double2(conc(X1*,X2*,x,X3*));
       }
-      
-      _ -> { return l; }
     }
+		return l; 
   }
 
 
   public ArrayList double4(ArrayList l) {
     %match(L l) {
       conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*)); }
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ArrayList double5(ArrayList l) {
@@ -176,8 +169,8 @@ public class Array {
       conc(X1*,x@a(),X2*,x@a(),X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
       conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
       conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
-      _ -> { return l; }
     }
+		return l; 
   }
 
   static void  assertTrue(boolean condition) {

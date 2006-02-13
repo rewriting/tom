@@ -78,6 +78,7 @@ class Pico1 {
 				return;
 			}
 		}
+		throw new RuntimeException("strange term: " + inst);
 	}
  
 	public Bool evalBool(Map env,Bool bool) {
@@ -103,6 +104,7 @@ class Pico1 {
 
 			x -> { return `x; }
 		}
+		throw new RuntimeException("strange term: " + bool);
 	}
 	
 	public Expr evalExpr(Map env,Expr expr) {
@@ -118,6 +120,7 @@ class Pico1 {
 			
 			x -> { return `x; }
 		}
+		throw new RuntimeException("strange term: " + expr);
 	}
 
 	public Inst opti(Inst inst) {
@@ -129,8 +132,8 @@ class Pico1 {
 			Seq(i1,i2) -> { return `Seq(opti(i1),opti(i2)); }
 			While(b,i) -> { return `While(b,opti(i)); }
 			x -> { return `x; }
-			
 		}
+		throw new RuntimeException("strange term: " + inst);
 	}
 		
   //-------------------------------------------------------

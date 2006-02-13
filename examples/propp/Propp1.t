@@ -403,10 +403,8 @@ public class Propp1 {
 			mark(p) -> {
 				return "\\textcolor{red}{" + predToTex(`p) + "}";
 			}
-			_ -> {
-				return pred.toString();
-			}
 		}
+		return pred.toString();
 	}
 	//}}}
 

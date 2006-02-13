@@ -117,6 +117,7 @@ public class TestBuiltin extends TestCase {
       1 -> { return 1; }
       n -> { return fib(`n - 1) + fib(`n - 2); }
     }
+		return -1;
   }
 
   public int fibE(ATerm t) {
@@ -137,6 +138,7 @@ public class TestBuiltin extends TestCase {
       1L -> { return 1; }
       n -> { return fibLong(`n - 1) + fibLong(`n - 2); }
     }
+		return -1;
   }
 
   public long fibLongE(ATerm t) {
@@ -155,8 +157,8 @@ public class TestBuiltin extends TestCase {
     %match(String t) {
         "Albert" -> { return "Albert"; }
         "Roger"  -> { return "Roger"; }
-        _ -> { return "Unknown"; }
     }
+		return "Unknown"; 
   }
 
   public String matchStringE(ATerm t) {
@@ -164,47 +166,47 @@ public class TestBuiltin extends TestCase {
         string("Albert") -> { return "Albert"; }
         string("Roger")  -> { return "Roger"; }
         string(_)        -> { return "Unknown"; }
-        _ -> { return "Unknown"; }
     }
+		return "Unknown"; 
   }
 
   public char matchChar(char t) {
     %match(char t) {
       'a' -> { return 'a'; }
       'b' -> { return 'b'; }
-      _ -> { return '-'; }
     }
+		return '-'; 
   }
 
   public char matchCharE(ATerm t) {
     %match(E t) {
       char('a') -> { return 'a'; }
       char('b') -> { return 'b'; }
-      _ -> { return '-'; }
     }
+		return '-'; 
   }
 
   public int matchInt(int t) {
     %match(int t) {
       -1 -> { return t; }
       -2 -> { return -2; }
-      _ -> { return 0; }
     }
+		return 0; 
   }
   public double matchDouble(double t) {
     %match(double t) {
         1.23 -> { return 1.23; }
         3.14 -> { return 3.14; }
-        _ -> { return 0; }
     }
+		return 0; 
   }
 
   public double matchDoubleE(ATerm t) {
     %match(E t) {
         double(1.23) -> { return 1.23; }
         double(3.14) -> { return 3.14; }
-        _ -> { return 0; }
     }
+		return 0; 
   }
 
   public void test1() {

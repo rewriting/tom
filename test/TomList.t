@@ -80,9 +80,8 @@ public class TomList {
             );
         }
       }
-
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ATermList double1(ATermList l) {
@@ -95,9 +94,8 @@ public class TomList {
           .concat(`X3)
           );
       }
-      
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ATermList sort2(ATermList l) {
@@ -109,9 +107,8 @@ public class TomList {
           return `sort2(conc(X1*,y,x,X2*));
         }
       }
-
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ATermList double2(ATermList l) {
@@ -119,16 +116,15 @@ public class TomList {
       (X1*,x,X2*,x,X3*) -> {
         return `double2(id( conc(X1*,X2*,x,X3*) ));
       }
-      
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ATermList double4(ATermList l) {
     %match(L l) {
       conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*)); }
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ATermList double5(ATermList l) {
@@ -136,8 +132,8 @@ public class TomList {
       conc(X1*,x@a(),X2*,x@a(),X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
       conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
       conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public void testList1() {

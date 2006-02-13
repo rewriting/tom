@@ -483,7 +483,8 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		  0,
 		2,7,2,
 		  7	-> {return 0;}
-		_,_,_,_,_ -> {return C;}
+		//_,_,_,_,_ -> {return C;}
 		}
+		return C;
 	}
 }

@@ -44,8 +44,9 @@ public class Jstring {
     %match(String s) {
       "coucou" -> { return "coucou"; }
       "hello"  -> { return "hello"; }
-      _ -> { return "unknown"; }
     }
+
+		return "unknown";
   }
 
 }

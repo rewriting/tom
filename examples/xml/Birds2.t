@@ -36,53 +36,49 @@ import aterm.*;
 import tom.library.traversal.*;
 
 public class Birds2 {
-  
-  %include{ adt/tnode/TNode.tom }
-    
-  private XmlTools xtools;
-  private GenericTraversal traversal = new GenericTraversal();
-  private TNodeFactory getTNodeFactory() {
-      return xtools.getTNodeFactory();
-  }
 
-  public static void main (String args[]) {
-    Birds2 birds = new Birds2();
-    birds.run("birds.xml");
-  }
+	%include{ adt/tnode/TNode.tom }
 
-  private void run(String filename){
-    xtools = new XmlTools();
-    ATerm term = xtools.convertXMLToATerm(filename);
-    term = replace(term);
-      //xtools.printXMLFromATerm(term);
-  }
-    
-  private ATerm replace(ATerm subject) {
-    Replace1 replace = new Replace1 () {
-	public ATerm apply(ATerm t) {
-	    if (t instanceof TNode) {
-		%match(TNode t) {
-		    <Species>#TEXT(data)</Species> -> {
-                      System.out.println("catched birds '" + `data + "'");
-                    }
+	private XmlTools xtools;
+	private GenericTraversal traversal = new GenericTraversal();
+	private TNodeFactory getTNodeFactory() {
+		return xtools.getTNodeFactory();
+	}
 
-		    <Species>#TEXT("Yellow-billed Loon.")</Species> -> {
-                      System.out.println("Bingo catched bird");
-                    }
+	public static void main (String args[]) {
+		Birds2 birds = new Birds2();
+		birds.run("birds.xml");
+	}
 
-       <Species Scientific_Name="Gavia adamsii">[#TEXT("Yellow-billed Loon.")]</Species> -> {
-                      System.out.println("Double bingo catched bird");
-                    }
+	private void run(String filename){
+		xtools = new XmlTools();
+		ATerm term = xtools.convertXMLToATerm(filename);
+		term = replace(term);
+		//xtools.printXMLFromATerm(term);
+	}
 
+	private ATerm replace(ATerm subject) {
+		Replace1 replace = new Replace1 () {
+			public ATerm apply(ATerm t) {
+				if (t instanceof TNode) {
+					%match(TNode t) {
+						<Species>#TEXT(data)</Species> -> {
+							System.out.println("catched birds '" + `data + "'");
+						}
 
-                    _ -> {
-			return traversal.genericTraversal(t,this);
-		    }
-		} // match 
-	    } else 
-		return traversal.genericTraversal(t,this);
-	} //apply
-	};
-    return replace.apply(subject);
-    }
+						<Species>#TEXT("Yellow-billed Loon.")</Species> -> {
+							System.out.println("Bingo catched bird");
+						}
+
+						<Species Scientific_Name="Gavia adamsii">[#TEXT("Yellow-billed Loon.")]</Species> -> {
+							System.out.println("Double bingo catched bird");
+						}
+					} // match 
+					return traversal.genericTraversal(t,this);
+				} else 
+					return traversal.genericTraversal(t,this);
+			} //apply
+		};
+		return replace.apply(subject);
+	}
 }

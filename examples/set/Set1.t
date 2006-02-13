@@ -190,8 +190,8 @@ public class Set1 {
             branch(s@singleton(_), emptyJGSet()) -> {return `s;}
             branch(e@emptyJGSet(), emptyJGSet()) -> {return `e;}
             branch(l1, l2) -> {return `branch(reworkJGSet(l1), reworkJGSet(l2));}
-            _ -> { return traversal.genericTraversal(t,this); }
           }
+					return traversal.genericTraversal(t,this); 
         }
       };
     

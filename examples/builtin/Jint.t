@@ -46,6 +46,7 @@ public class Jint {
       1 -> { return 1; }
       n -> { return fib(`n-1) + fib(`n-2); }
     }
+		return 0;
   }
 
 }

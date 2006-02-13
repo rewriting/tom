@@ -129,8 +129,8 @@ public class TestWhen extends TestCase {
     %match(term t) { 
       a() -> { return `true(); }
       b() -> { return `true(); }
-      _   -> { return `false(); }
     } 
+		return `false(); 
   }
 
   ATerm h(ATerm x) {

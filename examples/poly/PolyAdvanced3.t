@@ -74,8 +74,8 @@ public class PolyAdvanced3 {
             mult(x,one())  -> { return `x; }
             mult(zero(),_) -> { return `zero(); }
             mult(_,zero()) -> { return `zero(); }
-            _ -> { return traversal.genericTraversal(t,this); }
           }
+					return traversal.genericTraversal(t,this); 
         }
       };
 

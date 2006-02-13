@@ -95,8 +95,8 @@ public class List2 {
         if(xname.compareTo(yname) > 0) 
             return `swapSort(conc(X1*,y,X2*,x,X3*));     
       }
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public ArrayList removeDouble(ArrayList l) {
@@ -105,9 +105,8 @@ public class List2 {
         return `removeDouble(conc(X1*,x,X2*));
         
       }
-
-      _ -> { return l; }
     }
+		return l; 
   }
 
 	public ArrayList makeSubject() {

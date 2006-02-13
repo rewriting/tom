@@ -165,9 +165,8 @@ public class RecPropp extends Propp1 {
 			}
 			//}}}
 
-			_ -> { return `concSequent(END()); }
-
 		}// end %match
+		return `concSequent(END()); 
 
 	}
 	//}}}

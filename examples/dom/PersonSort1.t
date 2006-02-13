@@ -67,9 +67,8 @@ public class PersonSort1 {
           return sort(`xml(dom,<Persons>X1* p2 X2* p1 X3*</Persons>));
         }	
       }
-      
-      _ -> { return subject; }     
     }
+		return subject;
   }
   
   private int compare(Node t1, Node t2) {

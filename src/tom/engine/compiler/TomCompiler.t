@@ -164,7 +164,7 @@ public class TomCompiler extends TomGenericPlugin {
                       /* expansion of RawAction into TypedAction */
                       %match(Instruction actionInst) {
                         RawAction(x) -> { 
-                          newAction=`TypedAction(x,pattern,negativePattern);
+                          newAction=`TypedAction(If(TrueTL(),x,Nop()),pattern,negativePattern);
                         }
                       }
                       negativePattern = (PatternList) negativePattern.append(`pattern);

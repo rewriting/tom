@@ -80,9 +80,8 @@ public class PersonSort {
           return sort(`xml(<Persons>X1* p2 X2* p1 X3*</Persons>));
         }	
       }
-      
-      _ -> { return subject; }     
     } 
+		return subject;
   }
   	 
   private int compare(TNode t1, TNode t2) {

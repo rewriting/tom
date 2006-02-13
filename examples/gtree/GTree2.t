@@ -89,8 +89,8 @@ public class GTree2 {
     %match(Tree tree) {
       supT(ackT(t1),ackT(t2)) -> { return `ackT(supT(t1,t2)); }
 
-      _ -> { return (Tree) traversal.genericTraversal(tree,replace); }
     }
+		return (Tree) traversal.genericTraversal(tree,replace); 
     
   }
   
@@ -121,6 +121,7 @@ public class GTree2 {
         p, 0 -> { return `p+1; }
         p, x -> { return ack(`p-1,ack(`p,`x-1)); }
       }
+			return 0;
     }
   
   public final static void main(String[] args) {

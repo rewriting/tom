@@ -295,11 +295,8 @@ public class HTMLToLaTeX {
                  write("% "+`text);
                  return false;
                }
-                
-               _ -> {
-                 return true;
-               }
             } // match 
+						return true;
           } else {
             return true;
           }
@@ -332,10 +329,8 @@ public class HTMLToLaTeX {
                }
                <td/> -> { currentMax++; return false; }
                <th/> -> { currentMax++; return false; }
-               _ -> {
-                 return true;
-               }
-            }
+            }// end match
+						return true;
           } else {
             return true;
           }

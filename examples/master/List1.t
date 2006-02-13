@@ -37,9 +37,8 @@ public class List1 {
           return `swapSort(f(X*,e2,e1,Y*));
         }
       }
-
-      _ -> { return l; }
     }
+		return l; 
   }
 
   private boolean gt(E e1, E e2) {
@@ -51,9 +50,8 @@ public class List1 {
       f(X1*,x,x,X2*) -> {
         return `removeDouble(f(X1*,x,X2*));
       }
-
-      _ -> { return l; }
     }
+		return l; 
   }
 
   public void run() {
