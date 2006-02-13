@@ -19,7 +19,7 @@ public class TestPeano extends TestCase {
     equals(t1, t2)      { t1 == t2}
   }
 
-  %op term zero {
+  %op term zero() {
     is_fsym(t) { ((ATermAppl)t).getAFun() == fzero }
     make { factory.makeAppl(fzero) }
   }
