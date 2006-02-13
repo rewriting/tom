@@ -346,7 +346,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
     :(
         name:ALL_ID
         (
-            LPAREN slotName:ALL_ID COLON typeArg:ALL_ID 
+            LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID 
             {
                 stringSlotName = slotName.getText(); 
                 astName = `Name(stringSlotName);
@@ -370,7 +370,7 @@ strategyConstruct [Option orgTrack] returns [Instruction result] throws TomExcep
                     types = (TomTypeList) types.append(`TomTypeAlone(typeArg2.getText()));
                 }
             )*
-            RPAREN
+            )? RPAREN
         )
 	EXTENDS extendsTerm = plainTerm[null,0]
   {
