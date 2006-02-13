@@ -47,8 +47,7 @@
   <property name="src.lib"        location="${src.src}/lib"/>
   
   <!-- for distribution: top, stable and src -->
-  <property name="dist"           location="dist"/>
-
+  <property name="dist"              location="dist"/>
   <property name="stable.dist.bin"   location="${stable.dist}/bin"/>
   <property name="stable.dist.lib"   location="${stable.dist}/lib"/>
   <property name="stable.dist.share" location="${stable.dist}/share"/>
@@ -58,12 +57,13 @@
   <property name="src.dist.share"    location="${src.dist}/share"/>
 
   <!-- for test -->
-  <property name="test.gen"     location="${test}/gen"/>    
-  <property name="test.build"   location="${test}/build"/>
+  <property name="test.gen"          location="${test}/gen"/>    
+  <property name="test.build"        location="${test}/build"/>
 
   <!-- the configuration files -->
   <property name="src.configfile"       location="${utils}/Tom.src.xml"/>    
   <property name="stable.configfile"    location="${utils}/Tom.xml"/>    
+  <property name="src.gomconfigfile"    location="${utils}/Gom.xml"/>    
   <property name="stable.vasconfigfile" location="${stable.lib}/Vas.xml"/>    
   <property name="src.vasconfigfile"    location="${src.lib}/Vas.xml"/>    
 
@@ -77,8 +77,6 @@
 
   <!-- Properties for Javac compilation
        <property name="javacFailOnError" value="false"/>
-       <property name="javacSource" value="1.3"/>
-       <property name="javacTarget" value="1.2"/>
   -->
   <property name="javacSource" value="1.4"/>
   <property name="javacTarget" value="1.4"/>
@@ -250,6 +248,9 @@
       <include name="tom/engine/*.t"/> 
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
+
+      <include name="tom/gom/**/*.t"/>
+      <exclude name="tom/gom/**/GomParser.g.t"/>
     </tomcompile>
     <!--  compile without declaration -->
     <tomcompile srcdir="${src.src}" 
@@ -277,6 +278,12 @@
       <include name="**/BackQuoteLanguage.g.t"/>  
     </tomcompile>
 
+    <!-- gom parser -->
+    <tomcompile srcdir="${src.src}"
+	    outputfile="${gen.destination}/tom/gom/parser/GomParser.g"
+	    options="-I ${src.mapping} -I ${gen.destination}">
+      <include name="tom/gom/**/GomParser.g.t"/>
+    </tomcompile>
   </target> 
   
   <!-- compile tom files in src.src with tom.stable -->
@@ -289,24 +296,30 @@
 
   <!-- builds the parser using antlr -->
   <target name="buildparser">
-	  <mkdir dir="${src.gen}/tom/engine/parser"/>
+    <mkdir dir="${src.gen}/tom/engine/parser"/>
     
-	  <antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
-		  outputdirectory="${src.gen}/tom/engine/parser">
+    <antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
+           outputdirectory="${src.gen}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
 
     <antlr target="${src.gen}/tom/engine/parser/TomLanguage.g"
-	    outputdirectory="${src.gen}/tom/engine/parser">
+           outputdirectory="${src.gen}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
     <antlr target="${src.gen}/tom/engine/parser/HostLanguage.g"
-	    outputdirectory="${src.gen}/tom/engine/parser">
+           outputdirectory="${src.gen}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
     <antlr target="${src.gen}/tom/engine/parser/BackQuoteLanguage.g"
-	    outputdirectory="${src.gen}/tom/engine/parser">
+           outputdirectory="${src.gen}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
+    </antlr>
+    
+    <mkdir dir="${src.gen}/tom/gom/parser"/>
+    <antlr target="${src.gen}/tom/gom/parser/GomParser.g"
+           outputdirectory="${src.gen}/tom/gom/parser">
+      <classpath refid="tom.classpath"/>
     </antlr>
   </target>
 
@@ -360,7 +373,7 @@
 	 <include name="tom/engine/adt/Zenon.vas"/>
     </vas>
 
-<!--
+<!-- how to build adt from adt instead of vas
     <adt srcdir="${src.src}"
          package="tom.engine.adt" 
          name="tomsignature" 
@@ -382,6 +395,14 @@
          destdir="${src.gen}">
 	 <include name="tom/engine/verifier/*.vas"/>
     </vas>
+
+    <!-- adt for gom -->
+    <vas config="${stable.vasconfigfile}"
+	 srcdir="${src.src}"
+	 package="tom.gom.adt"
+	 destdir="${src.gen}">
+	 <include name="tom/gom/adt/*.vas"/>
+    </vas>
   </target>
 
   <target name="build.src" depends="src"/>
@@ -389,9 +410,9 @@
     <antcall target="buildtom"/>
     <antcall target="buildparser"/>
     <!--<property name="unixpath" refid="src.classpath" />
-         <echo>classpath = ${unixpath}</echo>-->
-	 <copy file="${src.src}/tom/engine/Tom.java.in" 
-		 tofile="${src.gen}/tom/engine/Tom.java"/>
+    <echo>classpath = ${unixpath}</echo>-->
+    <copy file="${src.src}/tom/engine/Tom.java.in" 
+	  tofile="${src.gen}/tom/engine/Tom.java"/>
     <replace dir="${src.gen}" token="@TOM_VERSION@" value="${src.version} (src)">
 	    <include name="tom/engine/Tom.java"/>
     </replace>
@@ -400,7 +421,6 @@
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
-      <include name="tom/engine/**/*.java"/>
     </tomjavac>
   </target>
 
@@ -425,7 +445,6 @@
     <ant dir="${examples}" target="dist.examples">
       <property name="version" value="${stable.version}"/>
     </ant>
-
   </target>
 
   <!-- Prepare common part of distributions -->
@@ -543,6 +562,7 @@
     <!-- "tom config file" -->
     <copy tofile="${src.dist}/Tom.xml" file="${src.configfile}"/>
     <copy tofile="${src.dist}/Vas.xml" file="${src.vasconfigfile}"/>
+    <copy tofile="${src.dist}/Gom.xml" file="${src.gomconfigfile}"/>
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
     <copy tofile="${src.dist.bin}/tom" file="${utils}/script.in"/>
@@ -558,6 +578,20 @@
 	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
 	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
 	    <replaceFilter token="@INCLUDES_DIR@" value="share/jtom"/>
+    </replace>
+    <copy tofile="${src.dist.bin}/gom" file="${utils}/script.in"/>
+    <copy tofile="${src.dist.bin}/gom.src" file="${utils}/script.in"/>
+    <replace file="${src.dist.bin}/gom">
+	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+	    <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+    </replace>
+    <replace file="${src.dist.bin}/gom.src">
+	    <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
+	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+	    <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
     <copy todir="${src.dist.bin}">
       <fileset dir="${utils}">
@@ -617,6 +651,16 @@
 	      includes="tom/engine/**/*.class"
 	      excludes="tom/engine/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="tom/engine/**/*.properties"/>
+    </jar>
+    <!-- gom jar (follow tom's version)-->
+    <jar jarfile="${src.dist.lib}/gom-${src.version}.jar">
+      <fileset dir="${src.build}" 
+	      includes="tom/gom/**/*.class"
+	      excludes="tom/gom/adt/**/*.class"/>
+      <fileset dir="${src.src}" includes="gom/**/*.properties"/>
+    </jar>
+    <jar jarfile="${src.dist.lib}/GomADT-${src.version}.jar">
+      <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>
     </jar>
 
     <!-- tom share -->
@@ -717,7 +761,8 @@
     </taskdef>
   </target>-->
   
-  <target name="test" description="Compile and run acceptance tests" depends="initsrc, prepare.test">
+  <target name="test" description="Compile and run acceptance tests" 
+          depends="initsrc, prepare.test">
     <tomsrc config="${src.configfile}"
             srcdir="${test}"
             destdir="${test.gen}" 
@@ -743,7 +788,8 @@
     </tomjavac>
   </target>
 
-  <target name="test.stable" description="Compile and run acceptance tests with stable" depends="initTaskDef,prepare.test">
+  <target name="test.stable" description="Compile and run acceptance tests with stable"
+          depends="initTaskDef,prepare.test">
     <tom config="${stable.configfile}"
          srcdir="${test}"
          destdir="${test.gen}"
@@ -955,7 +1001,7 @@
 	      <include name="tom/engine/parser/HostLexer.class"/>
 	      <include name="tom/engine/parser/HostParser.class"/>
 	      <include name="tom/engine/parser/BackQuoteLexer.class"/>
-				<include name="tom/engine/parser/BackQuoteParser.class"/>
+              <include name="tom/engine/parser/BackQuoteParser.class"/>
       </fileset>
     </concat>
     <condition property="bootstrap.ok" value="true">
@@ -1011,23 +1057,30 @@
     </antcall>
 
     <!-- builds parser -->
-		<mkdir dir="${destination}/gen/tom/engine/parser"/>
+    <mkdir dir="${destination}/gen/tom/engine/parser"/>
     
-		<antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
-						outputdirectory="${destination}/gen/tom/engine/parser">
+    <antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
+           outputdirectory="${destination}/gen/tom/engine/parser">
       <classpath refid="src.classpath"/>
     </antlr>
-		<antlr target="${src.gen}/tom/engine/parser/TomLanguage.g"
-						outputdirectory="${destination}/gen/tom/engine/parser">
+    <antlr target="${src.gen}/tom/engine/parser/TomLanguage.g"
+           outputdirectory="${destination}/gen/tom/engine/parser">
       <classpath refid="src.classpath"/>
     </antlr>
-		<antlr target="${src.gen}/tom/engine/parser/HostLanguage.g"
-						outputdirectory="${destination}/gen/tom/engine/parser">
+    <antlr target="${src.gen}/tom/engine/parser/HostLanguage.g"
+           outputdirectory="${destination}/gen/tom/engine/parser">
       <classpath refid="src.classpath"/>
     </antlr>
-		<antlr target="${src.gen}/tom/engine/parser/BackQuoteLanguage.g"
-						outputdirectory="${destination}/gen/tom/engine/parser">
+    <antlr target="${src.gen}/tom/engine/parser/BackQuoteLanguage.g"
+           outputdirectory="${destination}/gen/tom/engine/parser">
       <classpath refid="src.classpath"/>
+    </antlr>
+    
+    <!-- Gom parser-->
+    <mkdir dir="${src.gen}/tom/gom/parser"/>
+    <antlr target="${src.gen}/tom/gom/parser/GomParser.g"
+           outputdirectory="${src.gen}/tom/gom/parser">
+      <classpath refid="tom.classpath"/>
     </antlr>
 
     <tomjavac destdir="${destination}/build" fork="yes">
@@ -1063,12 +1116,12 @@
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
     </copy>
 
-		<mkdir dir="${stable.src}/tom/engine/adt"/>
+    <mkdir dir="${stable.src}/tom/engine/adt"/>
     <mkdir dir="${stable.src}/tom/library/adt"/>
     <mkdir dir="${stable.src}/tom/platform/adt"/>
 
-		<jar jarfile="${stable.src}/tom/engine/adt/TomSignature.jar">
-						<fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
+    <jar jarfile="${stable.src}/tom/engine/adt/TomSignature.jar">
+      <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
     </jar>
     <jar jarfile="${stable.src}/tom/library/adt/Set.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>
