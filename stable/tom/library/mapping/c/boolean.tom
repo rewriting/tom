@@ -32,12 +32,12 @@
   equals(t1,t2)       { (t1==t2) || (t1!=0 && t2!=0) }
 }
 
-%op boolean true {
+%op boolean true() {
   is_fsym(t) { t!=0 }
   make { 1 }
 }
 
-%op boolean false {
+%op boolean false() {
   is_fsym(t) { t==0 }
   make { 0 }
 }

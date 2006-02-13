@@ -7,12 +7,12 @@
  * basic operators
  */
 
-  %op VisitableVisitor Identity {
+  %op VisitableVisitor Identity() {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Identity) }
     make() { new tom.library.strategy.mutraveler.Identity() }
   }
 
-  %op VisitableVisitor Fail {
+  %op VisitableVisitor Fail() {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Fail) }
     make() { new tom.library.strategy.mutraveler.Fail() }
   }

@@ -52,7 +52,7 @@ public class BoulderDash {
     get_slot(w,t) { getWestBead(t) }
   }
 
-  %op Bead empty {
+  %op Bead empty() {
     is_fsym(t) { t==null }
     make { null }
   }

@@ -89,6 +89,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException;
+  protected abstract void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction) throws IOException ;
 
   /*
    * Implementation of functions whose definition is

@@ -46,7 +46,7 @@ static ATermInt tzero;
   implement           { ATermInt }
 }
 
-%op Nat zero {
+%op Nat zero() {
   is_fsym(t)     { t==tzero }
 }
   
@@ -65,7 +65,7 @@ static ATermInt tzero;
   get_slot(slt, t)    { ATgetArgument(t,1) }
 }
 
-%op Term empty {
+%op Term empty() {
   is_fsym(t) { (ATgetAFun(t) == f_empty) }
 }
 

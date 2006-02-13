@@ -42,7 +42,7 @@ public class Peano1 {
     implement { ATermAppl }
   }
 
-  %op Nat zero {
+  %op Nat zero() {
     is_fsym(t) { t.getName().equals("zero") }
     make       { factory.makeAppl(factory.makeAFun("zero",0,false)) }
   }

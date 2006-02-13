@@ -52,7 +52,7 @@ public class PeanoSimple3 {
     get_implementation(t) { t }
   }
 
-  %op term zero {
+  %op term zero() {
     is_fsym(t) { t.getName() == "zero" }
     make { factory.makeAppl(factory.makeAFun("zero",0,false)) }
   }

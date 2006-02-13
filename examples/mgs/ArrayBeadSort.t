@@ -49,7 +49,7 @@ public class ArrayBeadSort {
     get_slot(s,t) { getSouthBead(t) }
   }
 
-  %op Bead empty {
+  %op Bead empty() {
     is_fsym(t) { t==null }
     make { null }
   }

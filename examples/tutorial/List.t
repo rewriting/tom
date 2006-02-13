@@ -72,17 +72,17 @@ public class List {
     equals(t1, t2)     { t1==t2 }
   }
 
-  %op Element a {
+  %op Element a() {
     is_fsym(t) { ((ATermAppl)t).getName() == "a" }
     make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
   
-  %op Element b {
+  %op Element b() {
     is_fsym(t) { ((ATermAppl)t).getName() == "b" }
     make() { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
 
-  %op Element c {
+  %op Element c() {
     is_fsym(t) { ((ATermAppl)t).getName() == "c" }
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }

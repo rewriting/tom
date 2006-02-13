@@ -28,18 +28,7 @@ package tom.engine.backend;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import tom.engine.adt.tomsignature.types.Instruction;
-import tom.engine.adt.tomsignature.types.Option;
-import tom.engine.adt.tomsignature.types.InstructionList;
-import tom.engine.adt.tomsignature.types.TomList;
-import tom.engine.adt.tomsignature.types.Slot;
-import tom.engine.adt.tomsignature.types.SlotList;
-import tom.engine.adt.tomsignature.types.OptionList;
-import tom.engine.adt.tomsignature.types.TomType;
-import tom.engine.adt.tomsignature.types.TomForwardType;
-import tom.engine.adt.tomsignature.types.TomTypeList;
-import tom.engine.adt.tomsignature.types.TomTerm;
-import tom.engine.adt.tomsignature.types.TomSymbol;
+import tom.engine.adt.tomsignature.types.*;
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
@@ -185,4 +174,16 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     generateInstruction(deep,instruction);
     output.writeln(deep," }");
   }
+	
+	protected void buildCheckInstance(int deep, String typeName, TomType tlType, Expression exp, Instruction instruction) throws IOException {
+    if(getSymbolTable().isBuiltinType(typeName)) {
+			generateInstruction(deep,instruction);
+		} else {
+			//output.write(deep,"if("); 
+			//generateExpression(deep,exp); 
+			//output.writeln(" instanceof " + getTLCode(tlType) + ") {");
+			generateInstruction(deep+1,instruction);
+			//output.writeln(deep,"}");
+		}
+	}
 } // class TomJavaGenerator

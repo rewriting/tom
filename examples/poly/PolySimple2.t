@@ -50,33 +50,34 @@ public class PolySimple2 {
   }
     
     // My operators with constructor allowing to use "`" symbol 
-  %op term zero {
+  %op term zero() {
     is_fsym(t) { ((ATermAppl)t).getName()=="0" }
     make { factory.makeAppl(factory.makeAFun("0", 0, false)) }
   }
     
-  %op term one {
+  %op term one() {
     is_fsym(t) { ((ATermAppl)t).getName()=="1" }
     make { factory.makeAppl(factory.makeAFun("1", 0, false)) }
   }
     
-  %op term a {
+  %op term a() {
     is_fsym(t) { ((ATermAppl)t).getName()=="a" }
     make { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
-  %op term b {
+
+  %op term b() {
     is_fsym(t) { ((ATermAppl)t).getName()=="b" }
     make { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
-  %op term c {
+  %op term c() {
     is_fsym(t) { ((ATermAppl)t).getName()=="c" }
     make { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
-  %op term X {
+  %op term X() {
     is_fsym(t) { ((ATermAppl)t).getName()=="X" }
     make { factory.makeAppl(factory.makeAFun("X", 0, false)) }
   }
-  %op term Y {
+  %op term Y() {
     is_fsym(t) { ((ATermAppl)t).getName()=="Y" }
     make { factory.makeAppl(factory.makeAFun("Y", 0, false)) }
   }

@@ -35,10 +35,18 @@ FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:Tom
 Class(astName:TomName,extendsType:TomForwardType,instruction:Instruction) -> Instruction
 CheckStamp(variable:TomTerm) -> Instruction
 concInstruction(Instruction*) -> InstructionList
+
+/*
+ * In Java only: check that source is an instance of astType, and then execute inst
+ * Otherwise: perform inst 
+ */
+CheckInstance(astType:TomType,source:Expression,instruction:Instruction) -> Instruction
+
 /*
  * a RawAction is an action that comes from the original program 
  */
 RawAction(astInstruction:Instruction) -> Instruction
+
 /*
  * a TypeAction knows the pattern to which it is attached (positivePattern),
  * and also the list a previously tried patterns, which are called negativePattern

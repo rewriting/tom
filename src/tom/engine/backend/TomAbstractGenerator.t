@@ -452,6 +452,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         `buildCheckStamp(deep, getTermType(variable), variable);
         return;
       }
+      
+			CheckInstance(Type[tomType=ASTTomType(typeName),tlType=tlType@TLType[]], exp, instruction) -> {
+        `buildCheckInstance(deep,typeName,tlType,exp,instruction); 
+        return;
+      }
 
       t -> {
         System.out.println("Cannot generate code for instruction: " + `t);
@@ -779,6 +784,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildAddOne(int deep, TomTerm var) throws IOException;
   protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
   protected abstract void buildCheckStamp(int deep, TomType type, TomTerm variable) throws IOException ;
+  protected abstract void buildCheckInstance(int deep, String typeName,TomType type, Expression exp, Instruction instruction) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName) throws IOException ;
   protected abstract void buildCheckStampDecl(int deep, String type, String name,
                                               TomType tlType, Instruction instr) throws IOException;

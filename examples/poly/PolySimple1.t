@@ -56,16 +56,16 @@ public class PolySimple1 {
   }
     
     // My operators
-  %op term zero {
+  %op term zero() {
     is_fsym(t) { (((ATermAppl)t).getAFun())==fzero }
   }
-  %op term one {
+  %op term one() {
     is_fsym(t) { (((ATermAppl)t).getAFun())==fone }
   }
-  %op term a {
+  %op term a() {
     is_fsym(t) { (((ATermAppl)t).getAFun())==fa }
   }
-  %op term X {
+  %op term X() {
     is_fsym(t) { (((ATermAppl)t).getAFun())==fX }
   }
   %op term plus(s1:term,s2:term) {

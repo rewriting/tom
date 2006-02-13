@@ -210,6 +210,14 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     generateExpression(deep,exp);
     output.write(")");
   }
+ 
+	/*
+	 * By default, generate code for instruction
+	 * This method is overloaded in the Java backend
+	 */
+	protected void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction) throws IOException {
+		generateInstruction(deep,instruction);
+	}
   
   protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {

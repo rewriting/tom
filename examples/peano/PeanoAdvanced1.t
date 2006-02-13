@@ -42,7 +42,7 @@ public class PeanoAdvanced1 {
     implement           { ATermAppl }
   }
 
-  %op term zero {
+  %op term zero() {
     is_fsym(t) { t.getName().equals("zero") }
     make       { factory.makeAppl(factory.makeAFun("zero",0,false)) }
   }

@@ -47,7 +47,7 @@ static AFun f_fib;
   implement           { ATerm }
 }
 
-%op term zero {
+%op term zero() {
   is_fsym(t) { ATisEqualAFun(ATgetAFun(t),f_zero) }
 }
   

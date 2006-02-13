@@ -148,9 +148,10 @@ public class TomKernelCompiler extends TomBase {
         body = collectVariableFromSubjectList(`tail,path,body);
         TomTerm variable = `Variable(option,PositionName(path.append(NameNumber(slotName))),variableType,concConstraint());
         Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
-        Instruction checkStamp = `CheckStamp(variable);
           // the UnamedBlock encapsulation is needed for Caml
-        return `Let(variable,source,AbstractBlock(concatInstruction(checkStamp,body)));
+				Instruction let = `Let(variable,source,AbstractBlock(concatInstruction(CheckStamp(variable),body)));
+				// If is the variable has the correct type
+        return `CheckInstance(variableType,TomTermToExpression(subjectVar),let);
       }
 
       manySlotList(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_)),tail) -> {
