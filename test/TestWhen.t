@@ -14,12 +14,12 @@ public class TestWhen extends TestCase {
     equals(t1, t2) { t1 == t2}
   }
 
-  %op term a {
+  %op term a() {
     is_fsym(t) { ((ATermAppl)t).getName() == "a" }
     make { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
 
-  %op term b {
+  %op term b() {
     is_fsym(t) { ((ATermAppl)t).getName() == "b" }
     make { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }

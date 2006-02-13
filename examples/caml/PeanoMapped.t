@@ -45,7 +45,7 @@ and fsuc  = get_fun_sym(Suc(Zero));;
   equals(t1,t2) { t1=t2 }
 }
   
-%op peano zero {
+%op peano zero() {
   is_fsym(t) { get_fun_sym(t) = fzero }
   make { Zero }
 }

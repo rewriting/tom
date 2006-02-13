@@ -137,7 +137,7 @@ public class Record {
     implement { Integer }
   }
 
-  %op TomInteger zero {
+  %op TomInteger zero() {
     is_fsym(t) { (((Integer)t).intValue()==0) }
   }
 

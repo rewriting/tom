@@ -47,15 +47,15 @@ public class TestList extends TestCase {
     equals(t1, t2) { (t1.equals(t2)) }
   }
 
-  %op E a {
+  %op E a() {
     is_fsym(t) { ((ATermAppl)t).getName() == "a" }
   }
   
-  %op E b {
+  %op E b() {
     is_fsym(t) { ((ATermAppl)t).getName() == "b" }
   }
 
-  %op E c {
+  %op E c() {
     is_fsym(t) { ((ATermAppl)t).getName() == "c" }
   }
 

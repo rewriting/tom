@@ -188,7 +188,7 @@ public static java.util.ArrayList tom_mapping_newTNodeList() {
 }
 
 
-%op TNodeList emptyTNodeList{
+%op TNodeList emptyTNodeList(){
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() { tom_mapping_newTNodeList() }
 }

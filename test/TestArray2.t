@@ -33,12 +33,12 @@ public class TestArray2 extends TestCase {
 	  make(v) { new Element(v) }
 	}
 
-	%op jtElement a {
+	%op jtElement a() {
 	  is_fsym(t) { (t instanceof Element) && t.getObject().equals("a") }
 	  make() { new Element("a") }
 	}
 
-	%op jtElement b {
+	%op jtElement b() {
 	  is_fsym(t) { (t instanceof Element) && t.getObject().equals("b") }
 	  make() { new Element("b") }
 	}

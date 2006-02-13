@@ -1332,7 +1332,7 @@ operator returns [Declaration result] throws TomException
                 }
             )*
             )? RPAREN
-        )?
+        )
         LBRACE
         {
             astName = `Name(name.getText());

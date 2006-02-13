@@ -37,7 +37,7 @@
   implement { int }
 }
 
-%op Nat zero {
+%op Nat zero() {
   is_fsym(i)        { (i==ZERO) }
 }
 

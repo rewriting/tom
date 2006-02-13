@@ -37,7 +37,7 @@ exception Erreur of string ;;
   equals(t1,t2) {t1=t2}
 }
   
-%op term zero {
+%op term zero() {
   is_fsym(t) { get_sym(t) = fzero }
 }
 

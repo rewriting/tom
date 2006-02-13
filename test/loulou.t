@@ -8,7 +8,7 @@
   implement { int }
 }
 
-%op Nat zero {
+%op Nat zero() {
   is_fsym(t) { t==0 }
 }
 

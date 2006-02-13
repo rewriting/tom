@@ -62,7 +62,7 @@ struct term *suc(struct term *x) {
   implement { struct term* }
 }
 
-%op term zero {
+%op term zero() {
   is_fsym(t) { t->fs == ZERO }
 }
   

@@ -21,7 +21,7 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op type0 op0 {
+%op type0 op0() {
   fsym { fzero }
   make() { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }

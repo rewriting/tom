@@ -45,7 +45,7 @@ public class PeanoTestTom {
     equals(t1, t2)      { (t1.equals(t2)) }
   }
 
-  %op Nat Nat_ConsZero {
+  %op Nat Nat_ConsZero() {
     fsym { fzero }
     make { factory.makeAppl(fzero) }
   }

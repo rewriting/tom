@@ -32,7 +32,7 @@ struct term *suc(struct term *x) {
   implement { struct term* }
 }
 
-%op term zero {
+%op term zero() {
   is_fsym(t) { (void*)t->fs == (void*)ZERO }
 }
   

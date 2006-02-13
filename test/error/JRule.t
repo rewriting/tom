@@ -27,13 +27,13 @@
   get_slot(type,t) { t.getType() }
 }
 
-%op type1 op3 {
+%op type1 op3() {
   fsym { fzero }
   make() { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
 }
 
-%op type1 op4 {
+%op type1 op4() {
   fsym { fzero }
   make() { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }

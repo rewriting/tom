@@ -121,10 +121,10 @@ struct term *build_msg(struct term *data) {
   implement { struct term* }
 }
 
-%op term a { 
+%op term a() { 
   is_fsym(t)          { (void*)t->symbol == A }
 }
-%op term b { 
+%op term b() { 
   is_fsym(t)          { (void*)t->symbol == B }
 }
 %op term f(sl:term) { 

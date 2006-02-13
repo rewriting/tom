@@ -69,7 +69,7 @@ public class RecordStrict {
     get_slot(first,t) { ((Uminus)t).first }
   }
 
-  %op Exp CstExp {
+  %op Exp CstExp() {
     is_fsym(t) { t instanceof CstExp }
   }
 
