@@ -70,58 +70,56 @@ public class TomKernelCompiler extends TomBase {
 
   private Replace1 replace_compileMatching = new Replace1() {
       public ATerm apply(ATerm subject) {
-        if(subject instanceof Instruction) {
-          %match(Instruction subject) {
-            Match(SubjectList(l1),patternInstructionList, optionList)  -> {
-              TomNumberList rootpath = tsf().makeTomNumberList();
-              matchNumber++;
-              rootpath = (TomNumberList) rootpath.append(`MatchNumber(makeNumber(matchNumber)));
-                
-                /*
-                 * for each pattern action (<term>,...,<term> -> <action>)
-                 * build a matching automata
-                 */
-              TomList automataList = empty();
-              int actionNumber = 0;
-              while(!`patternInstructionList.isEmpty()) {
-                actionNumber++;
-                PatternInstruction pa = `patternInstructionList.getHead();
-                SlotList patternList = tomListToSlotList(pa.getPattern().getTomList());
-                Instruction actionInst = pa.getAction();
-                if(patternList==null || actionInst==null) {
-                  System.out.println("TomKernelCompiler: null value");
-                  throw new TomRuntimeException("TomKernelCompiler: null value");
-                }
-                  
-                  /*
-                   * compile nested match constructs
-                   * given a list of pattern: we build a matching automaton
-                   */
-                actionInst = (Instruction) this.apply(actionInst);
-                Instruction matchingAutomata = genSyntacticMatchingAutomata(actionInst,patternList,rootpath);
-                OptionList automataOptionList = `concOption();
-                TomName label = getLabel(pa.getOption());
-                if(label != null) {
-                  automataOptionList = `manyOptionList(Label(label),automataOptionList);
-                }
-                TomNumberList numberList = (TomNumberList) rootpath.append(`PatternNumber(makeNumber(actionNumber)));
-                TomTerm automata = `Automata(automataOptionList,slotListToTomList(patternList),numberList,matchingAutomata);
-                  //System.out.println("automata = " + automata);
-                  
-                automataList = append(automata,automataList);
-                `patternInstructionList = `patternInstructionList.getTail();
-              }
-                
-                /*
-                 * return the compiled Match construction
-                 */
-              InstructionList astAutomataList = automataListCompileMatchingList(automataList);
-              SlotList slots = tomListToSlotList(`l1);
-              Instruction astAutomata = `collectVariableFromSubjectList(slots,rootpath,AbstractBlock(astAutomataList));
-              return `CompiledMatch(astAutomata, optionList);
-            }
-          } // end match
-        } 
+				%match(Instruction subject) {
+					Match(SubjectList(l1),patternInstructionList, optionList)  -> {
+						TomNumberList rootpath = tsf().makeTomNumberList();
+						matchNumber++;
+						rootpath = (TomNumberList) rootpath.append(`MatchNumber(makeNumber(matchNumber)));
+
+						/*
+						 * for each pattern action (<term>,...,<term> -> <action>)
+						 * build a matching automata
+						 */
+						TomList automataList = empty();
+						int actionNumber = 0;
+						while(!`patternInstructionList.isEmpty()) {
+							actionNumber++;
+							PatternInstruction pa = `patternInstructionList.getHead();
+							SlotList patternList = tomListToSlotList(pa.getPattern().getTomList());
+							Instruction actionInst = pa.getAction();
+							if(patternList==null || actionInst==null) {
+								System.out.println("TomKernelCompiler: null value");
+								throw new TomRuntimeException("TomKernelCompiler: null value");
+							}
+
+							/*
+							 * compile nested match constructs
+							 * given a list of pattern: we build a matching automaton
+							 */
+							actionInst = (Instruction) this.apply(actionInst);
+							Instruction matchingAutomata = genSyntacticMatchingAutomata(actionInst,patternList,rootpath);
+							OptionList automataOptionList = `concOption();
+							TomName label = getLabel(pa.getOption());
+							if(label != null) {
+								automataOptionList = `manyOptionList(Label(label),automataOptionList);
+							}
+							TomNumberList numberList = (TomNumberList) rootpath.append(`PatternNumber(makeNumber(actionNumber)));
+							TomTerm automata = `Automata(automataOptionList,slotListToTomList(patternList),numberList,matchingAutomata);
+							//System.out.println("automata = " + automata);
+
+							automataList = append(automata,automataList);
+							`patternInstructionList = `patternInstructionList.getTail();
+						}
+
+						/*
+						 * return the compiled Match construction
+						 */
+						InstructionList astAutomataList = automataListCompileMatchingList(automataList);
+						SlotList slots = tomListToSlotList(`l1);
+						Instruction astAutomata = `collectVariableFromSubjectList(slots,rootpath,AbstractBlock(astAutomataList));
+						return `CompiledMatch(astAutomata, optionList);
+					}
+				} // end match
 				return traversal().genericTraversal(subject,this);
       } // end apply
     }; // end new

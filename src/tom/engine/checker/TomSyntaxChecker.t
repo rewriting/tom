@@ -143,25 +143,24 @@ public class TomSyntaxChecker extends TomChecker {
             // TOM Declaration
             `verifyDeclaration((Declaration)subject);
             return false;
-          } else if(subject instanceof Instruction) {
-            %match(Instruction subject) {
-              Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
-                /*  TOM MATCH STRUCTURE*/
-                `verifyMatch(matchArgsList, patternInstructionList, list);
-                return true;//case when nested %match
-              }
-              Strategy(sName, visitList, orgTrack) -> {
-                /*  STRATEGY MATCH STRUCTURE*/
-                `verifyStrategy(sName, visitList, orgTrack);
-                return true;//case when %match in %strategy
-              }
-              RuleSet(list, orgTrack) -> {
-                /*  TOM RULE STRUCTURE*/
-                `verifyRule(list, orgTrack);
-                return false;
-              }
-            }
           } 
+					%match(Instruction subject) {
+						Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
+							/*  TOM MATCH STRUCTURE*/
+							`verifyMatch(matchArgsList, patternInstructionList, list);
+							return true;//case when nested %match
+						}
+						Strategy(sName, visitList, orgTrack) -> {
+							/*  STRATEGY MATCH STRUCTURE*/
+							`verifyStrategy(sName, visitList, orgTrack);
+							return true;//case when %match in %strategy
+						}
+						RuleSet(list, orgTrack) -> {
+							/*  TOM RULE STRUCTURE*/
+							`verifyRule(list, orgTrack);
+							return false;
+						}
+					}
           return true;
         }
       }; // end new Collect1()

@@ -201,13 +201,11 @@ public class TomIlTools extends TomBase {
   private Collect2 collect_symbols = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
-        if (subject instanceof ZSymbol) {
-          %match(ZSymbol subject) {
-            zsymbol(name)  -> {
-              store.add(`name);
-            }
-          }
-        } 
+				%match(ZSymbol subject) {
+					zsymbol(name)  -> {
+						store.add(`name);
+					}
+				}
 				return true;
       }
     }; 

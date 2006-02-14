@@ -300,40 +300,36 @@ public class TomBase {
   protected void collectVariable(final Collection collection, ATerm subject) {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
-          if(t instanceof TomTerm) {
-            TomTerm annotedVariable = null;
-            %match(TomTerm t) { 
-              (Variable|VariableStar)[constraints=constraintList] -> {
-                collection.add(t);
-                annotedVariable = getAssignToVariable(`constraintList);
-                if(annotedVariable!=null) {
-                  collection.add(annotedVariable);
-                }
-                return false;
-              }
-                
-              (UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
-                annotedVariable = getAssignToVariable(`constraintList);
-                if(annotedVariable!=null) {
-                  collection.add(annotedVariable);
-                }
-                return false;
-              }
+					TomTerm annotedVariable = null;
+					%match(TomTerm t) {
+						(Variable|VariableStar)[constraints=constraintList] -> {
+							collection.add(t);
+							annotedVariable = getAssignToVariable(`constraintList);
+							if(annotedVariable!=null) {
+								collection.add(annotedVariable);
+							}
+							return false;
+						}
 
-              // to collect annoted nodes but avoid collect variables in optionSymbol
-              RecordAppl[slots=subterms, constraints=constraintList] -> {
-                collectVariable(collection,`subterms);
-                annotedVariable = getAssignToVariable(`constraintList);
-                if(annotedVariable!=null) {
-                  collection.add(annotedVariable);
-                }
-                return false;
-              }
-            }
-						return true;
-          } else {
-            return true;
-          }
+						(UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
+							annotedVariable = getAssignToVariable(`constraintList);
+							if(annotedVariable!=null) {
+								collection.add(annotedVariable);
+							}
+							return false;
+						}
+
+						// to collect annoted nodes but avoid collect variables in optionSymbol
+						RecordAppl[slots=subterms, constraints=constraintList] -> {
+							collectVariable(collection,`subterms);
+							annotedVariable = getAssignToVariable(`constraintList);
+							if(annotedVariable!=null) {
+								collection.add(annotedVariable);
+							}
+							return false;
+						}
+					}
+					return true;
         } // end apply
       }; // end new
 

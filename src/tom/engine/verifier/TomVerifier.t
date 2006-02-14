@@ -177,13 +177,11 @@ public class TomVerifier extends TomGenericPlugin {
   private Collect2 matchCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
-        if (subject instanceof Instruction) {
-          %match(Instruction subject) {
-            CompiledMatch[automataInst=automata]  -> {
-              store.add(`automata);
-            }
-          }//end match
-        }
+				%match(Instruction subject) {
+					CompiledMatch[automataInst=automata]  -> {
+						store.add(`automata);
+					}
+				}//end match
 				return true;
       }//end apply
     }; //end new
@@ -207,32 +205,28 @@ public class TomVerifier extends TomGenericPlugin {
   
   Replace1 ilSimplifier = new Replace1() {
       public ATerm apply(ATerm subject) {
-        if (subject instanceof Expression) {
-          %match(Expression subject) {
-            Or(cond,FalseTL()) -> {
-              return traversal().genericTraversal(`cond,this);
-            }
-          }
-        } // end instanceof Expression
-        else if (subject instanceof Instruction) {
-          // the checkstamp should be managed another way 
-          %match(Instruction subject) {
-            If(TrueTL(),success,Nop()) -> {
-              return traversal().genericTraversal(`success,this);
-            }
-            (UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {
-              return traversal().genericTraversal(`inst,this);
-            }
-            (Let|LetRef|LetAssign)[variable=(UnamedVariable|UnamedVariableStar)[],astInstruction=body] -> {
-              return traversal().genericTraversal(`body,this);
-            }
+				%match(Expression subject) {
+					Or(cond,FalseTL()) -> {
+						return traversal().genericTraversal(`cond,this);
+					}
+				}
+				// the checkstamp should be managed another way 
+				%match(Instruction subject) {
+					If(TrueTL(),success,Nop()) -> {
+						return traversal().genericTraversal(`success,this);
+					}
+					(UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {
+						return traversal().genericTraversal(`inst,this);
+					}
+					(Let|LetRef|LetAssign)[variable=(UnamedVariable|UnamedVariableStar)[],astInstruction=body] -> {
+						return traversal().genericTraversal(`body,this);
+					}
 
-            CompiledPattern[automataInst=inst] -> {
-              return traversal().genericTraversal(`inst,this);
-            }
-            
-          }
-        } // end instanceof Instruction
+					CompiledPattern[automataInst=inst] -> {
+						return traversal().genericTraversal(`inst,this);
+					}
+
+				}
         /*
          * Default case : Traversal
          */
@@ -259,26 +253,22 @@ public class TomVerifier extends TomGenericPlugin {
   private Collect2 associativeOperatorCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
-        if (subject instanceof Instruction) {
-          %match(Instruction subject) {
-            LetRef[]  -> {
-              store.add(subject);
-            }
-            WhileDo[] -> {
-              store.add(subject);
-            }
-            DoWhile[] -> {
-              store.add(subject);
-            }
-          }//end match
-        } 
-        else if (subject instanceof Expression) {
-          %match(Expression subject) {
-            // we filters also patterns containing or() constructs
-            Or(_,_) -> {
-              store.add(subject);
-            }
-          }
+				%match(Instruction subject) {
+					LetRef[]  -> {
+						store.add(subject);
+					}
+					WhileDo[] -> {
+						store.add(subject);
+					}
+					DoWhile[] -> {
+						store.add(subject);
+					}
+				}//end match
+				%match(Expression subject) {
+					// we filters also patterns containing or() constructs
+					Or(_,_) -> {
+						store.add(subject);
+					}
         }
         return true;
       }//end apply

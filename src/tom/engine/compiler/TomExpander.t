@@ -165,25 +165,22 @@ public class TomExpander extends TomGenericPlugin {
   public TomTerm expandTermApplTomSyntax(TomTerm subject) {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
-          if(subject instanceof TomTerm) {
-            %match(TomTerm subject) {
+					%match(TomTerm subject) {
+						backQuoteTerm@BackQuoteAppl[] -> {
+							TomTerm t = expandBackQuoteAppl(`backQuoteTerm);
+							//System.out.println("t = " + t);
+							return t;
+						}
 
-              backQuoteTerm@BackQuoteAppl[] -> {
-                TomTerm t = expandBackQuoteAppl(`backQuoteTerm);
-                //System.out.println("t = " + t);
-                return t;
-              }
+						TermAppl[option=option,nameList=nameList,args=args,constraints=constraints] -> {
+							return expandTermAppl(`option,`nameList,`args,`constraints);
+						}
 
-              TermAppl[option=option,nameList=nameList,args=args,constraints=constraints] -> {
-                return expandTermAppl(`option,`nameList,`args,`constraints);
-              }
-
-              XMLAppl[option=optionList,nameList=nameList,attrList=list1,childList=list2,constraints=constraints] -> {
-                //System.out.println("expandXML in:\n" + subject);
-                return expandXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
-              }
-            } // end match
-          }
+						XMLAppl[option=optionList,nameList=nameList,attrList=list1,childList=list2,constraints=constraints] -> {
+							//System.out.println("expandXML in:\n" + subject);
+							return expandXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
+						}
+					} // end match
 					return traversal().genericTraversal(subject,this);
         } // end apply
       }; // end new
@@ -198,39 +195,37 @@ public class TomExpander extends TomGenericPlugin {
   private TomTerm updateCodomain(TomTerm subject) {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
-          if(subject instanceof Declaration) {
-            %match(Declaration subject) {
-              GetHeadDecl[opname=Name(opName)] -> {
-                TomSymbol tomSymbol = getSymbolFromName(`opName);
-                TomTypeList codomain = getSymbolDomain(tomSymbol);
-                if(codomain.isSingle()) {
-                  Declaration t = (Declaration)subject;
-                  t = t.setCodomain(codomain.getHead());
-                  return t;
-                } else {
-                  throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
-                }
-              }
-            
-              GetHeadDecl[variable=Variable[astType=domain]] -> {
-                TomSymbol tomSymbol = getSymbolFromType(`domain);
-                if(tomSymbol != null) {
-                  TomTypeList codomain = getSymbolDomain(tomSymbol);
-                  //System.out.println("tomSymbol = " + tomSymbol);
-                  //System.out.println("domain    = " + domain);
-                  //System.out.println("codomain  = " + codomain);
-                  
-                  if(codomain.isSingle()) {
-                    Declaration t = (Declaration)subject;
-                    t = t.setCodomain(codomain.getHead());
-                    return t;
-                  } else {
-                    throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
-                  }
-                }
-              }
-            } // end match
-          } 
+					%match(Declaration subject) {
+						GetHeadDecl[opname=Name(opName)] -> {
+							TomSymbol tomSymbol = getSymbolFromName(`opName);
+							TomTypeList codomain = getSymbolDomain(tomSymbol);
+							if(codomain.isSingle()) {
+								Declaration t = (Declaration)subject;
+								t = t.setCodomain(codomain.getHead());
+								return t;
+							} else {
+								throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
+							}
+						}
+
+						GetHeadDecl[variable=Variable[astType=domain]] -> {
+							TomSymbol tomSymbol = getSymbolFromType(`domain);
+							if(tomSymbol != null) {
+								TomTypeList codomain = getSymbolDomain(tomSymbol);
+								//System.out.println("tomSymbol = " + tomSymbol);
+								//System.out.println("domain    = " + domain);
+								//System.out.println("codomain  = " + codomain);
+
+								if(codomain.isSingle()) {
+									Declaration t = (Declaration)subject;
+									t = t.setCodomain(codomain.getHead());
+									return t;
+								} else {
+									throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
+								}
+							}
+						}
+					} // end match
 					return traversal().genericTraversal(subject,this);
         } // end apply
       }; // end new
@@ -244,23 +239,21 @@ public class TomExpander extends TomGenericPlugin {
   private TomTerm expandString(TomTerm subject) {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
-          if(subject instanceof TomTerm) {
-            %match(TomTerm subject) {
-              appl@RecordAppl[nameList=(Name(tomName),_*),slots=args] -> {
-                TomSymbol tomSymbol = getSymbolFromName(`tomName);
-                //System.out.println("appl = " + subject);
-                if(tomSymbol != null) {
-                  if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
-                    //System.out.println("appl = " + subject);
-                    SlotList newArgs = expandChar(`args);
-                    if(newArgs!=`args) {
-                      return `appl.setSlots(newArgs);
-                    }
-                  }
-                }
-              }
-            } // end match
-          } 
+					%match(TomTerm subject) {
+						appl@RecordAppl[nameList=(Name(tomName),_*),slots=args] -> {
+							TomSymbol tomSymbol = getSymbolFromName(`tomName);
+							//System.out.println("appl = " + subject);
+							if(tomSymbol != null) {
+								if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+									//System.out.println("appl = " + subject);
+									SlotList newArgs = expandChar(`args);
+									if(newArgs!=`args) {
+										return `appl.setSlots(newArgs);
+									}
+								}
+							}
+						}
+					} // end match
 					return traversal().genericTraversal(subject,this);
         } // end apply
       }; // end new
@@ -369,37 +362,35 @@ public class TomExpander extends TomGenericPlugin {
   protected TomTerm expandBackQuoteAppl(TomTerm t) {
     Replace1 replaceSymbol = new Replace1() {
         public ATerm apply(ATerm t) {
-          if(t instanceof TomTerm) {
-            %match(TomTerm t) {
-              BackQuoteAppl[option=optionList,astName=name@Name(tomName),args=l] -> {
-                TomSymbol tomSymbol = getSymbolFromName(`tomName);
-                TomList args  = (TomList) traversal().genericTraversal(`l,this);
-                
-                //System.out.println("BackQuoteTerm: " + `tomName);
-                //System.out.println("tomSymbol: " + tomSymbol);
+					%match(TomTerm t) {
+						BackQuoteAppl[option=optionList,astName=name@Name(tomName),args=l] -> {
+							TomSymbol tomSymbol = getSymbolFromName(`tomName);
+							TomList args  = (TomList) traversal().genericTraversal(`l,this);
 
-                if(tomSymbol != null) {
-                  if(isListOperator(tomSymbol)) {
-                    return tomFactory.buildList(`name,args);
-                  } else if(isArrayOperator(tomSymbol)) {
-                    return tomFactory.buildArray(`name,args);
-                  } else if(symbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol))) &&
-                            args.isEmpty() && 
-                            !hasConstructor(`optionList)) {
-                    return `BuildVariable(name,emptyTomList());
-                  } else if(isDefinedSymbol(tomSymbol)) {
-                    return `FunctionCall(name,args);
-                  } else {
-                    return `BuildTerm(name,args);
-                  }
-                } else if(args.isEmpty() && !hasConstructor(`optionList)) {
-                  return `BuildVariable(name,emptyTomList());
-                } else {
-                  return `FunctionCall(name,args);
-                }
-              }
-            } // end match 
-          }
+							//System.out.println("BackQuoteTerm: " + `tomName);
+							//System.out.println("tomSymbol: " + tomSymbol);
+
+							if(tomSymbol != null) {
+								if(isListOperator(tomSymbol)) {
+									return tomFactory.buildList(`name,args);
+								} else if(isArrayOperator(tomSymbol)) {
+									return tomFactory.buildArray(`name,args);
+								} else if(symbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol))) &&
+										args.isEmpty() && 
+										!hasConstructor(`optionList)) {
+									return `BuildVariable(name,emptyTomList());
+								} else if(isDefinedSymbol(tomSymbol)) {
+									return `FunctionCall(name,args);
+								} else {
+									return `BuildTerm(name,args);
+								}
+							} else if(args.isEmpty() && !hasConstructor(`optionList)) {
+								return `BuildVariable(name,emptyTomList());
+							} else {
+								return `FunctionCall(name,args);
+							}
+						}
+					} // end match 
           return traversal().genericTraversal(t,this);
         } // end apply
       }; // end replaceSymbol

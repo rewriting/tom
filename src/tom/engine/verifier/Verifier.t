@@ -287,16 +287,14 @@ public class Verifier extends TomBase {
     Collect2 substitutionCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         SubstRef outsubst = (SubstRef) astore;
-        if (subject instanceof Expr) {
-          %match(Expr subject) {
-            true(subs(undefsubs())) -> {
-              return false;
-            }
-            true(x) -> {
-              outsubst.set(`x);
-            }
-          }//end match
-        }
+				%match(Expr subject) {
+					true(subs(undefsubs())) -> {
+						return false;
+					}
+					true(x) -> {
+						outsubst.set(`x);
+					}
+				}//end match
 				return true;
       }//end apply
     }; //end new
@@ -308,13 +306,11 @@ public class Verifier extends TomBase {
   private Collect2 outputSubstitutionCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         SubstRef outsubst = (SubstRef) astore;
-        if (subject instanceof Deriv) {
-          %match(Deriv subject) {
-            ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
-              outsubst.set(`e);
-            }
-          }//end match
-        } 
+				%match(Deriv subject) {
+					ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
+						outsubst.set(`e);
+					}
+				}//end match
 				return true;
       }//end apply
     }; //end new
@@ -328,11 +324,9 @@ public class Verifier extends TomBase {
   private Collect2 acceptCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
-        if (subject instanceof Instruction) {
-          %match(Instruction subject) {
-            TypedAction(action,positive,negative)  -> {
-              store.add(`accept(positive,negative));
-            }
+				%match(Instruction subject) {
+					TypedAction(action,positive,negative)  -> {
+						store.add(`accept(positive,negative));
 					}
         }
 				return true;
@@ -741,12 +735,10 @@ public class Verifier extends TomBase {
  */
   Replace2 replaceUndefsubs = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
-        if (subject instanceof SubstitutionList) {
-          %match(SubstitutionList subject) {
-            (undefsubs()) -> {
-              return (SubstitutionList)arg1;
-            }
-          }
+				%match(SubstitutionList subject) {
+					(undefsubs()) -> {
+						return (SubstitutionList)arg1;
+					}
         }
         /* Default case : Traversal */
         return traversal().genericTraversal(subject,this,arg1);
@@ -777,16 +769,14 @@ public class Verifier extends TomBase {
 
   Replace2 replaceVariableByTerm = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
-        if (subject instanceof Term) {
-          %match(Term subject) {
-            tau(absvar(v@var(name))) -> {
-              Map map = (Map) arg1;
-              if (map.containsKey(v)) {
-                return (Term)map.get(v);
-              }
-              return (Term)subject;
-            }
-          }
+				%match(Term subject) {
+					tau(absvar(v@var(name))) -> {
+						Map map = (Map) arg1;
+						if (map.containsKey(v)) {
+							return (Term)map.get(v);
+						}
+						return (Term)subject;
+					}
         } 
         /* Default case : Traversal */
         return traversal().genericTraversal(subject,this,arg1);

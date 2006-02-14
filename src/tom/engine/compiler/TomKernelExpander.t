@@ -83,286 +83,277 @@ public class TomKernelExpander extends TomBase {
         }
 
           //System.out.println("expandVariable:\n\t" + subject );
-        if(subject instanceof Option) {
-          %match(Option subject) {
-            OriginTracking[] -> { return subject; }
-          }
-        } else if(subject instanceof TargetLanguage) {
-          %match(TargetLanguage subject) {
-            TL[] -> { return subject; }
-            ITL[] -> { return subject; }
-            Comment[] -> { return subject; }
-          }
-        } else if(subject instanceof TomType) {
-          %match(TomType subject) {
-            TomTypeAlone(tomType) -> {
-              TomType type = getType(`tomType);
-              if(type != null) {
-                return type;
-              } else {
-                return subject; // useful for TomTypeAlone("unknown type")
-              }
-            }
-          }
-        } else if(subject instanceof TomRule) {
-          %match(TomRule subject) {
-            RewriteRule(Term(lhs@RecordAppl[nameList=(Name(tomName))]),
-                        Term(rhs),
-                        condList,
-                        option)  -> { 
-              TomSymbol tomSymbol = getSymbolFromName(`tomName);
-              TomType symbolType = getSymbolCodomain(tomSymbol);
-              TomTerm newLhs = `Term(expandVariable(contextSubject,lhs));
-              // build the list of variables that occur in the lhs
-              HashSet set = new HashSet();
-              collectVariable(set,newLhs);
-              TomList varList = getAstFactory().makeList(set);
-              InstructionList newCondList = `emptyInstructionList();
-              while(!`condList.isEmpty()) {
-                Instruction cond = `condList.getHead();
+				%match(Option subject) {
+					OriginTracking[] -> { return subject; }
+				}
+				%match(TargetLanguage subject) {
+					TL[] -> { return subject; }
+					ITL[] -> { return subject; }
+					Comment[] -> { return subject; }
+				}
+				%match(TomType subject) {
+					TomTypeAlone(tomType) -> {
+						TomType type = getType(`tomType);
+						if(type != null) {
+							return type;
+						} else {
+							return subject; // useful for TomTypeAlone("unknown type")
+						}
+					}
+				}
+				%match(TomRule subject) {
+					RewriteRule(Term(lhs@RecordAppl[nameList=(Name(tomName))]),
+							Term(rhs),
+							condList,
+							option)  -> { 
+						TomSymbol tomSymbol = getSymbolFromName(`tomName);
+						TomType symbolType = getSymbolCodomain(tomSymbol);
+						TomTerm newLhs = `Term(expandVariable(contextSubject,lhs));
+						// build the list of variables that occur in the lhs
+						HashSet set = new HashSet();
+						collectVariable(set,newLhs);
+						TomList varList = getAstFactory().makeList(set);
+						InstructionList newCondList = `emptyInstructionList();
+						while(!`condList.isEmpty()) {
+							Instruction cond = `condList.getHead();
 
-                Instruction newCond = replaceInstantiatedVariableInstruction(`varList,cond);
-                newCond = expandVariableInstruction(contextSubject,newCond);
+							Instruction newCond = replaceInstantiatedVariableInstruction(`varList,cond);
+							newCond = expandVariableInstruction(contextSubject,newCond);
 
-                newCondList = `manyInstructionList(newCond,newCondList);
-                collectVariable(set,newCond); 
-                varList = getAstFactory().makeList(set);
-                `condList = `condList.getTail();
-              }
+							newCondList = `manyInstructionList(newCond,newCondList);
+							collectVariable(set,newCond); 
+							varList = getAstFactory().makeList(set);
+							`condList = `condList.getTail();
+						}
 
-              TomTerm newRhs = replaceInstantiatedVariable(`varList,`rhs);
-              newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),newRhs));
-              
-              return `RewriteRule(newLhs,newRhs,newCondList,option);
-            }
-          } // end match
-        } else if(subject instanceof TomVisit) {
-          %match(TomVisit subject) {
-            VisitTerm(type,patternInstructionList) -> {
-              TomType newType = `expandType(contextSubject,type);
-              PatternInstructionList newPatternInstructionList = `expandVariablePatternInstructionList(TomTypeToTomTerm(newType),patternInstructionList);
-              return `VisitTerm(newType, newPatternInstructionList);
-            }
-          } //end match
-        } else if(subject instanceof Instruction) {
-          %match(Instruction subject) {
-             MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(_))],
-                                       rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
-              // rhs is a variable
-              TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
-              return `MatchingCondition(newLhs,rhs);
-            }
+						TomTerm newRhs = replaceInstantiatedVariable(`varList,`rhs);
+						newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),newRhs));
 
-            MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName),_*)],
-                                       rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
-               TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
-               TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
-               TomType type;
-               // rhs is an application
-               if(lhsSymbol != null) {
-                 type = getSymbolCodomain(lhsSymbol);
-               } else if(rhsSymbol != null) {
-                 type = getSymbolCodomain(rhsSymbol);
-               } else {
-                 // lhs is a variable, but rhs has an unknown top symbol
-                 // since lhs is a fresh variable, we look for rhs type
-                 throw new TomRuntimeException("rhs has an unknown sort: " + `rhsName);
-               }
-              
-               TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
-               TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
-               return `MatchingCondition(newLhs,newRhs);
-            }
+						return `RewriteRule(newLhs,newRhs,newCondList,option);
+					}
+				} // end match
+				%match(TomVisit subject) {
+					VisitTerm(type,patternInstructionList) -> {
+						TomType newType = `expandType(contextSubject,type);
+						PatternInstructionList newPatternInstructionList = `expandVariablePatternInstructionList(TomTypeToTomTerm(newType),patternInstructionList);
+						return `VisitTerm(newType, newPatternInstructionList);
+					}
+				} //end match
+				%match(Instruction subject) {
+					MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(_))],
+						rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
+							// rhs is a variable
+							TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+							return `MatchingCondition(newLhs,rhs);
+						}
 
-            EqualityCondition[lhs=lhs@Variable[astName=Name(_), astType=type],
-                                       rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
-              return `TypedEqualityCondition(type,lhs,rhs);
-            }
+					MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName),_*)],
+						rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
+							TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
+							TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
+							TomType type;
+							// rhs is an application
+							if(lhsSymbol != null) {
+								type = getSymbolCodomain(lhsSymbol);
+							} else if(rhsSymbol != null) {
+								type = getSymbolCodomain(rhsSymbol);
+							} else {
+								// lhs is a variable, but rhs has an unknown top symbol
+								// since lhs is a fresh variable, we look for rhs type
+								throw new TomRuntimeException("rhs has an unknown sort: " + `rhsName);
+							}
 
-            EqualityCondition[lhs=lhs@Variable[astName=Name(_), astType=type],
-                                       rhs=rhs@RecordAppl[nameList=(Name(_))]] -> {
-              TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
-              return `TypedEqualityCondition(type,lhs,newRhs);
-            }
+							TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+							TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
+							return `MatchingCondition(newLhs,newRhs);
+						}
 
-            EqualityCondition[lhs=lhs@RecordAppl[nameList=(Name(_))],
-                                       rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
-              TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
-              return `TypedEqualityCondition(type,newLhs,rhs);
-            }
-            
-            EqualityCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName))],
-                                            rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
-               TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
-               TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
-               TomType type;
-              
-               if(lhsSymbol != null) {
-                 type = getSymbolCodomain(lhsSymbol);
-               } else if(rhsSymbol != null) {
-                 type = getSymbolCodomain(rhsSymbol);
-               } else {
-                 // lhs and rhs have an unknown top symbol
-                 throw new TomRuntimeException("lhs and rhs have an unknown sort: " + `lhsName + ",  " + `rhsName);
-               }
-              
-               //System.out.println("EqualityCondition type = " + type);
-              
-               TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
-               TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
-                
-               //System.out.println("lhs    = " + lhs);
-               //System.out.println("newLhs = " + newLhs);
-              
-               return `TypedEqualityCondition(type,newLhs,newRhs);
-             }
+					EqualityCondition[lhs=lhs@Variable[astName=Name(_), astType=type],
+						rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
+							return `TypedEqualityCondition(type,lhs,rhs);
+						}
 
-            Match(tomSubjectList,patternInstructionList, option) -> {
-               //System.out.println("tomSubjectList = " + tomSubjectList);
-               TomTerm newSubjectList = expandVariable(contextSubject,`tomSubjectList);
-               //System.out.println("newSubjectList = " + newSubjectList);
-               PatternInstructionList newPatternInstructionList = expandVariablePatternInstructionList(newSubjectList,`patternInstructionList);
-               return `Match(newSubjectList,newPatternInstructionList, option);
-             }
-          } // end match
-        } else if(subject instanceof Pattern) {
-          %match(TomTerm contextSubject, Pattern subject) {
-            SubjectList(l1), Pattern(subjectList,termList, guardList) -> {
-               //System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
-                
-               // process a list of subterms
-               ArrayList list = new ArrayList();
-               while(!`termList.isEmpty()) {
-                 list.add(expandVariable(`l1.getHead(), `termList.getHead()));
-                 `termList = `termList.getTail();
-                 `l1 = `l1.getTail();
-               }
-               TomList newTermList = getAstFactory().makeList(list);
+					EqualityCondition[lhs=lhs@Variable[astName=Name(_), astType=type],
+						rhs=rhs@RecordAppl[nameList=(Name(_))]] -> {
+							TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
+							return `TypedEqualityCondition(type,lhs,newRhs);
+						}
 
-               // process a list of guards
-               list.clear();
-              // build the list of variables that occur in the lhs
-              HashSet set = new HashSet();
-              collectVariable(set,newTermList);
-              TomList varList = getAstFactory().makeList(set);
-              //System.out.println("varList = " + varList);
-               while(!`guardList.isEmpty()) {
-                 list.add(replaceInstantiatedVariable(`varList, `guardList.getHead()));
-                 `guardList = `guardList.getTail();
-               }
-               TomList newGuardList = getAstFactory().makeList(list);
-               //System.out.println("newGuardList = " + newGuardList);
-               return `Pattern(subjectList,newTermList,newGuardList);
-             }
-          } // end match
-        } else if(subject instanceof TomTerm) {
-          %match(TomTerm contextSubject, TomTerm subject) {
-            _, RecordAppl[option=option,nameList=nameList@(Name(tomName),_*),slots=slotList,constraints=constraints] -> {
-               TomSymbol tomSymbol = null;
-               if(`tomName.equals("")) {
-                 if(contextSubject.hasAstType()) {
-                   tomSymbol = getSymbolFromType(contextSubject.getAstType());
-                   if(tomSymbol==null) {
-                     throw new TomRuntimeException("No symbol found for type '" + contextSubject.getAstType() + "'");
-                   } 
-                   `nameList = `concTomName(tomSymbol.getAstName());
-                 }
-               } else {
-                 tomSymbol = getSymbolFromName(`tomName);
-               }
+					EqualityCondition[lhs=lhs@RecordAppl[nameList=(Name(_))],
+						rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
+							TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+							return `TypedEqualityCondition(type,newLhs,rhs);
+						}
 
-               if(tomSymbol != null) {
-                 SlotList subterm = expandVariableList(tomSymbol, `slotList);
-                 ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),`constraints);
-                 return `RecordAppl(option,nameList,subterm,newConstraints);
-               } else {
-                 %match(TomTerm contextSubject) {
-                   TomTypeToTomTerm(type@Type[]) -> {
-                     if(`slotList.isEmpty()  && !hasConstructor(`option)) {
-                       ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
-                       return `Variable(option,nameList.getHead(),type,newConstraints);
-                     } else {
-                       SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
-                       ConstraintList newConstraints = expandVariableConstraintList(`emptyTerm(),`constraints);
-                       return `RecordAppl(option,nameList,subterm,newConstraints);
-                     }
-                   }
-                   Variable[astType=type] -> {
-                     ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
-                     if(`slotList.isEmpty()  && !hasConstructor(`option)) {
-                       return `Variable(option,nameList.getHead(),type,newConstraints);
-                     } else {
-                       SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
-                       return `RecordAppl(option,nameList,subterm,newConstraints);
-                     }
-                   }
-                   Tom(concTomTerm(_*,var@Variable[astName=Name(varName)],_*)) -> {
-                     ConstraintList newConstraints = expandVariableConstraintList(`contextSubject,`constraints);
-                     if(`slotList.isEmpty()  && !hasConstructor(`option) && `tomName==`varName) {
-                       return `var;
-                     } else {
-                       SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
-                       return `RecordAppl(option,nameList,subterm,newConstraints);
-                     }
-                   }
+					EqualityCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName))],
+						rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
+							TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
+							TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
+							TomType type;
 
-                   _ -> {
-                     // do nothing
-                     
-                     //System.out.println("contextSubject = " + contextSubject);
-                     //System.out.println("subject        = " + subject);
+							if(lhsSymbol != null) {
+								type = getSymbolCodomain(lhsSymbol);
+							} else if(rhsSymbol != null) {
+								type = getSymbolCodomain(rhsSymbol);
+							} else {
+								// lhs and rhs have an unknown top symbol
+								throw new TomRuntimeException("lhs and rhs have an unknown sort: " + `lhsName + ",  " + `rhsName);
+							}
 
-                   }
-                 }
-               }
-             }
+							//System.out.println("EqualityCondition type = " + type);
+
+							TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+							TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
+
+							//System.out.println("lhs    = " + lhs);
+							//System.out.println("newLhs = " + newLhs);
+
+							return `TypedEqualityCondition(type,newLhs,newRhs);
+						}
+
+					Match(tomSubjectList,patternInstructionList, option) -> {
+						//System.out.println("tomSubjectList = " + tomSubjectList);
+						TomTerm newSubjectList = expandVariable(contextSubject,`tomSubjectList);
+						//System.out.println("newSubjectList = " + newSubjectList);
+						PatternInstructionList newPatternInstructionList = expandVariablePatternInstructionList(newSubjectList,`patternInstructionList);
+						return `Match(newSubjectList,newPatternInstructionList, option);
+					}
+				} // end match
+				%match(TomTerm contextSubject, Pattern subject) {
+					SubjectList(l1), Pattern(subjectList,termList, guardList) -> {
+						//System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
+
+						// process a list of subterms
+						ArrayList list = new ArrayList();
+						while(!`termList.isEmpty()) {
+							list.add(expandVariable(`l1.getHead(), `termList.getHead()));
+							`termList = `termList.getTail();
+							`l1 = `l1.getTail();
+						}
+						TomList newTermList = getAstFactory().makeList(list);
+
+						// process a list of guards
+						list.clear();
+						// build the list of variables that occur in the lhs
+						HashSet set = new HashSet();
+						collectVariable(set,newTermList);
+						TomList varList = getAstFactory().makeList(set);
+						//System.out.println("varList = " + varList);
+						while(!`guardList.isEmpty()) {
+							list.add(replaceInstantiatedVariable(`varList, `guardList.getHead()));
+							`guardList = `guardList.getTail();
+						}
+						TomList newGuardList = getAstFactory().makeList(list);
+						//System.out.println("newGuardList = " + newGuardList);
+						return `Pattern(subjectList,newTermList,newGuardList);
+					}
+				} // end match
+				%match(TomTerm contextSubject, TomTerm subject) {
+					_, RecordAppl[option=option,nameList=nameList@(Name(tomName),_*),slots=slotList,constraints=constraints] -> {
+						TomSymbol tomSymbol = null;
+						if(`tomName.equals("")) {
+							if(contextSubject.hasAstType()) {
+								tomSymbol = getSymbolFromType(contextSubject.getAstType());
+								if(tomSymbol==null) {
+									throw new TomRuntimeException("No symbol found for type '" + contextSubject.getAstType() + "'");
+								} 
+								`nameList = `concTomName(tomSymbol.getAstName());
+							}
+						} else {
+							tomSymbol = getSymbolFromName(`tomName);
+						}
+
+						if(tomSymbol != null) {
+							SlotList subterm = expandVariableList(tomSymbol, `slotList);
+							ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),`constraints);
+							return `RecordAppl(option,nameList,subterm,newConstraints);
+						} else {
+							%match(TomTerm contextSubject) {
+								TomTypeToTomTerm(type@Type[]) -> {
+									if(`slotList.isEmpty()  && !hasConstructor(`option)) {
+										ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
+										return `Variable(option,nameList.getHead(),type,newConstraints);
+									} else {
+										SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
+										ConstraintList newConstraints = expandVariableConstraintList(`emptyTerm(),`constraints);
+										return `RecordAppl(option,nameList,subterm,newConstraints);
+									}
+								}
+								Variable[astType=type] -> {
+									ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
+									if(`slotList.isEmpty()  && !hasConstructor(`option)) {
+										return `Variable(option,nameList.getHead(),type,newConstraints);
+									} else {
+										SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
+										return `RecordAppl(option,nameList,subterm,newConstraints);
+									}
+								}
+								Tom(concTomTerm(_*,var@Variable[astName=Name(varName)],_*)) -> {
+									ConstraintList newConstraints = expandVariableConstraintList(`contextSubject,`constraints);
+									if(`slotList.isEmpty()  && !hasConstructor(`option) && `tomName==`varName) {
+										return `var;
+									} else {
+										SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
+										return `RecordAppl(option,nameList,subterm,newConstraints);
+									}
+								}
+
+								_ -> {
+									// do nothing
+
+									//System.out.println("contextSubject = " + contextSubject);
+									//System.out.println("subject        = " + subject);
+
+								}
+							}
+						}
+					}
 
 
-            context@TomTypeToTomTerm(type@Type[]), Variable[option=option,astName=astName,astType=TomTypeAlone[],constraints=constraints] -> {
-               // create a variable
-               return `Variable(option,astName,type,expandVariableConstraintList(context,constraints));
-             }
+					context@TomTypeToTomTerm(type@Type[]), Variable[option=option,astName=astName,astType=TomTypeAlone[],constraints=constraints] -> {
+						// create a variable
+						return `Variable(option,astName,type,expandVariableConstraintList(context,constraints));
+					}
 
-            _, Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType),constraints=constraints] -> {
-               // create a variable
-               TomType localType = getType(`tomType);
-               if(localType != null) {
-                 return `Variable(option,Name(strName),localType,constraints);
-               } else {
-                 // do nothing
-               }
-             }
-          
-            TomTypeToTomTerm(type@Type[]) ,Placeholder[option=option,constraints=constraints] -> {
-               ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
-               // create an unamed variable
-               return `UnamedVariable(option,type,newConstraints);
-             } 
+					_, Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType),constraints=constraints] -> {
+						// create a variable
+						TomType localType = getType(`tomType);
+						if(localType != null) {
+							return `Variable(option,Name(strName),localType,constraints);
+						} else {
+							// do nothing
+						}
+					}
 
-            Variable[astType=type1] , Placeholder[option=option,constraints=constraints] -> {
-               ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type1),`constraints);
-               // create an unamed variable
-               return `UnamedVariable(option,type1,newConstraints);
-             } 
+					TomTypeToTomTerm(type@Type[]) ,Placeholder[option=option,constraints=constraints] -> {
+						ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
+						// create an unamed variable
+						return `UnamedVariable(option,type,newConstraints);
+					} 
 
-            _, TLVar(strName,TomTypeAlone(tomType)) -> {
-               // create a variable: its type is ensured by checker
-               TomType localType = getType(`tomType);
-               OptionList option = getAstFactory().makeOption();
-               return `Variable(option,Name(strName),localType,concConstraint());
-             }
-              
-            _, TLVar(strName,localType@Type[]) -> {
-               // create a variable: its type is ensured by checker
-               OptionList option = getAstFactory().makeOption();
-               return `Variable(option,Name(strName),localType,concConstraint());
-             }
+					Variable[astType=type1] , Placeholder[option=option,constraints=constraints] -> {
+						ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type1),`constraints);
+						// create an unamed variable
+						return `UnamedVariable(option,type1,newConstraints);
+					} 
 
-          } // end match
-        } // end instanceof TomTerm
-          //System.out.println("TomKernelCompiler.expandVariable default:\n\t" + subject );
-          //System.out.println("subject: " + subject);
-          //System.out.println("context: " + contextSubject);
+					_, TLVar(strName,TomTypeAlone(tomType)) -> {
+						// create a variable: its type is ensured by checker
+						TomType localType = getType(`tomType);
+						OptionList option = getAstFactory().makeOption();
+						return `Variable(option,Name(strName),localType,concConstraint());
+					}
+
+					_, TLVar(strName,localType@Type[]) -> {
+						// create a variable: its type is ensured by checker
+						OptionList option = getAstFactory().makeOption();
+						return `Variable(option,Name(strName),localType,concConstraint());
+					}
+
+				} // end match
+				//System.out.println("TomKernelCompiler.expandVariable default:\n\t" + subject );
+				//System.out.println("subject: " + subject);
+				//System.out.println("context: " + contextSubject);
         return traversal().genericTraversal(subject,this,contextSubject);
       } // end apply
     }; // end new
@@ -482,18 +473,16 @@ public class TomKernelExpander extends TomBase {
           throw new TomRuntimeException("replaceInstantiatedVariable: null instantiatedVariable");
         }
 
-        if(subject instanceof TomTerm) {
-          //System.out.println("instantiatedVariable = " + instantiatedVariable);
-          //System.out.println("subject = " + subject);
-          %match(TomList instantiatedVariable, TomTerm subject) {
-            concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*), RecordAppl[nameList=(opNameAST),slots=concSlot()] -> {
-              return `var;
-            }
-            concTomTerm(_*,var@VariableStar[astName=opNameAST] ,_*), VariableStar[astName=opNameAST] -> {
-              return `var;
-            }
-          }
-        }
+				//System.out.println("instantiatedVariable = " + instantiatedVariable);
+				//System.out.println("subject = " + subject);
+				%match(TomList instantiatedVariable, TomTerm subject) {
+					concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*), RecordAppl[nameList=(opNameAST),slots=concSlot()] -> {
+						return `var;
+					}
+					concTomTerm(_*,var@VariableStar[astName=opNameAST] ,_*), VariableStar[astName=opNameAST] -> {
+						return `var;
+					}
+				}
 
         return traversal().genericTraversal(subject,this,instantiatedVariable);
       } // end apply

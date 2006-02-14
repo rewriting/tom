@@ -102,28 +102,25 @@ public class StatOutput {
   private Collect2 count_derivrules = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         MyCounter store = (MyCounter)astore;
-        if (subject instanceof DerivTree) {
-          %match(DerivTree subject) {
-            derivrule(name,post,pre,cond)  -> {
-              store.nbDerivRule += 1;
-            }
-          }//end match
-        } else if (subject instanceof Seq) { 
-          %match(Seq subject) {
-            seq() -> {
-              // i font count the empty conditions
-            }
-            dedterm(termlist) -> {
-              store.nbConstraints += 1;
-              store.nbDedStep += `termlist.getLength();
-            }
-            dedexpr(termlist) -> {
-              store.nbConstraints += 1;
-              store.nbExprConstraints += 1;
-              store.nbDedStep += `termlist.getLength();
-            }
-          }
-        }
+				%match(DerivTree subject) {
+					derivrule(name,post,pre,cond)  -> {
+						store.nbDerivRule += 1;
+					}
+				}//end match
+				%match(Seq subject) {
+					seq() -> {
+						// i font count the empty conditions
+					}
+					dedterm(termlist) -> {
+						store.nbConstraints += 1;
+						store.nbDedStep += `termlist.getLength();
+					}
+					dedexpr(termlist) -> {
+						store.nbConstraints += 1;
+						store.nbExprConstraints += 1;
+						store.nbDedStep += `termlist.getLength();
+					}
+				}
         return true;
       }//end apply
     }; //end new

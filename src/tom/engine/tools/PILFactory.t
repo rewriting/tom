@@ -115,200 +115,197 @@ public class PILFactory extends TomBase {
     }
     return res.toString();
   }
-  public String prettyPrint(ATerm subject) {
-    if (subject instanceof Instruction) {
-      %match(Instruction subject) {
-        CompiledMatch(automata,_) -> { 
-          return prettyPrint(`automata); 
-        }
-        
-     
-        Let(variable,src,body) -> {
-          return "let " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
-        }
+	
+	public String prettyPrint(ATerm subject) {
+		%match(Instruction subject) {
+			CompiledMatch(automata,_) -> { 
+				return prettyPrint(`automata); 
+			}
 
-        LetRef(variable,src,body) -> {
-          return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
-        }
+			Let(variable,src,body) -> {
+				return "let " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
+			}
 
-        LetAssign(variable,src,body) -> {
-          return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
-        }
+			LetRef(variable,src,body) -> {
+				return "letRef " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
+			}
 
-        Assign(variable,src) -> {
-          return "Assign " + prettyPrint(`variable) + " = " + prettyPrint(`src) ;
-        }
-        
+			LetAssign(variable,src,body) -> {
+				return "letAssign " + prettyPrint(`variable) + " = " + prettyPrint(`src) + " in\n\t" + prettyPrint(`body).replaceAll("\n","\n\t");
+			}
 
-        DoWhile(doInst,condition) ->{
-          return "do\n\t " + prettyPrint(`doInst).replaceAll("\n","\n\t") +"while "+ prettyPrint(`condition);
-        }
-
-        WhileDo(condition,doInst) ->{
-          return "while "+ prettyPrint(`condition)+" do\n\t " + prettyPrint(`doInst).replaceAll("\n","\n\t");
-        }
-  
-
-        If(cond,success,Nop()) -> {
-          return  "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t"); 
-        }
-
-        If(cond,success,failure) -> {
-          return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replaceAll("\n","\n\t")+"\n";
-        }
-
-      
-        AbstractBlock(concInstruction(x*,Nop(),y*)) -> {
-          return prettyPrint(`AbstractBlock(concInstruction(x*,y*)));
-        }
-  
-        AbstractBlock(instList) -> {
-          return prettyPrint(`instList);
-        }
-
-        UnamedBlock(instList) -> {
-          return prettyPrint(`instList);
-        }
-
-        NamedBlock(name,instList) -> {
-          return `name + " : " + prettyPrint(`instList);
-        }
-        
-
-       TypedAction(_,_,_) -> {
-         return "targetLanguageInstructions";
-        }
-
-        CompiledPattern(_,automata) -> { 
-          return prettyPrint(`automata); 
-        }
-        
-        CheckStamp(_) -> {
-          return "";
-        }
-                   
-      }
+			Assign(variable,src) -> {
+				return "Assign " + prettyPrint(`variable) + " = " + prettyPrint(`src) ;
+			}
 
 
-    } else if (subject instanceof Expression) {
-      %match(Expression subject) {
-        TomTermToExpression(astTerm) -> {
-          return prettyPrint(`astTerm);
-        }
+			DoWhile(doInst,condition) ->{
+				return "do\n\t " + prettyPrint(`doInst).replaceAll("\n","\n\t") +"while "+ prettyPrint(`condition);
+			}
 
-        EqualFunctionSymbol(_,exp1,exp2) -> {
-          return "is_fun_sym(" + prettyPrint(`exp1) + "," + prettyPrint(`exp2) + ")";
-        }
-
-        Negation(exp) -> {
-          return "not " + prettyPrint(`exp);
-        }
-        
-        IsEmptyList[variable=kid1] -> {
-          return "is_empty(" + prettyPrint(`kid1) + ")";
-        }
-
-        EqualTerm(_,kid1,kid2) -> {
-          return "equal(" + prettyPrint(`kid1) + "," + prettyPrint(`kid2) + ")";
-        }
-
-        GetSliceList(astName,variableBeginAST,variableEndAST) -> {
-          return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+")";
-        }
+			WhileDo(condition,doInst) ->{
+				return "while "+ prettyPrint(`condition)+" do\n\t " + prettyPrint(`doInst).replaceAll("\n","\n\t");
+			}
 
 
-        GetHead[variable=variable] -> {
-          return "getHead("+prettyPrint(`variable)+")";
-        }
-        
-        GetTail[variable=variable] -> {
-          return "getTail("+prettyPrint(`variable)+")";
-        }
+			If(cond,success,Nop()) -> {
+				return  "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t"); 
+			}
 
-        GetSlot(_,astName,slotNameString,variable) -> {
-          return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
-        }
-      }
+			If(cond,success,failure) -> {
+				return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replaceAll("\n","\n\t")+"\n";
+			}
 
-    } else if (subject instanceof TomTerm) {
-      %match(TomTerm subject) {
-        Variable(_,name,_,_) -> {
-          return prettyPrint(`name);
-        }
+			CheckInstance[instruction=instruction] -> {
+				return "checkInstance\n\t" + prettyPrint(`instruction).replaceAll("\n","\n\t");
+			}
 
-        VariableStar(_,name,_,_) -> {
-          return prettyPrint(`name);
-        }
+			AbstractBlock(concInstruction(x*,Nop(),y*)) -> {
+				return prettyPrint(`AbstractBlock(concInstruction(x*,y*)));
+			}
 
-        Ref(term) -> {
-          return prettyPrint(`term);
-        }
+			AbstractBlock(instList) -> {
+				return prettyPrint(`instList);
+			}
 
-        RecordAppl(_,nameList,_,_) ->{
-          return prettyPrint(`nameList); 
-        }
-      }
-    } else if (subject instanceof TomName) {
-      %match(TomName subject) {
-        PositionName(number_list) -> {
-          return "t"+ numberListToIdentifier(`number_list);
-        }
-        Name(string) -> {
-          return `string;
-        }
-      
-      }
-    } else if (subject instanceof TomNumber) {
-      %match(TomNumber subject) {
-        Number(n) -> {
-          return "" + `n;
-        }
+			UnamedBlock(instList) -> {
+				return prettyPrint(`instList);
+			}
 
-        NameNumber(name) -> {
-          return prettyPrint(`name);
-        }
-        
-        ListNumber(number) -> {
-          return "listNumber"+prettyPrint(`number);
-        }
+			NamedBlock(name,instList) -> {
+				return `name + " : " + prettyPrint(`instList);
+			}
 
-        Begin(number) -> {
-          return "begin"+prettyPrint(`number);
-        }
 
-        End(number) -> {
-          return "end"+prettyPrint(`number);
-        }
+			TypedAction(_,_,_) -> {
+				return "targetLanguageInstructions";
+			}
 
-      }
-      
-    } else if(subject instanceof InstructionList) {
-      ATermList list = (ATermList)subject;
-      if(list.isEmpty()) {
-        return "";
-      } else {
-        return prettyPrint(list.getFirst()) + "\n" + prettyPrint(list.getNext());
-      }
-    }  else if(subject instanceof TomNumberList) {
-      ATermList list = (ATermList)subject;
-      if(list.isEmpty()) {
-        return "";
-      } else {
-        return prettyPrint(list.getFirst()) + prettyPrint(list.getNext());
-      }
-    }
-    else if(subject instanceof ATermList) {
-      ATermList list = (ATermList)subject;
-      if(list.isEmpty()) {
-        return "";
-      } else {
-        return prettyPrint(list.getFirst()) + " " + prettyPrint(list.getNext());
-      }
-    }
+			CompiledPattern(_,automata) -> { 
+				return prettyPrint(`automata); 
+			}
 
-    return subject.toString();
+			CheckStamp(_) -> {
+				return "";
+			}
 
-  }
+		}
+
+		%match(Expression subject) {
+			TomTermToExpression(astTerm) -> {
+				return prettyPrint(`astTerm);
+			}
+
+			EqualFunctionSymbol(_,exp1,exp2) -> {
+				return "is_fun_sym(" + prettyPrint(`exp1) + "," + prettyPrint(`exp2) + ")";
+			}
+
+			Negation(exp) -> {
+				return "not " + prettyPrint(`exp);
+			}
+
+			IsEmptyList[variable=kid1] -> {
+				return "is_empty(" + prettyPrint(`kid1) + ")";
+			}
+
+			EqualTerm(_,kid1,kid2) -> {
+				return "equal(" + prettyPrint(`kid1) + "," + prettyPrint(`kid2) + ")";
+			}
+
+			GetSliceList(astName,variableBeginAST,variableEndAST) -> {
+				return "getSliceList("+prettyPrint(`astName)+","+prettyPrint(`variableBeginAST)+","+prettyPrint(`variableEndAST)+")";
+			}
+
+
+			GetHead[variable=variable] -> {
+				return "getHead("+prettyPrint(`variable)+")";
+			}
+
+			GetTail[variable=variable] -> {
+				return "getTail("+prettyPrint(`variable)+")";
+			}
+
+			GetSlot(_,astName,slotNameString,variable) -> {
+				return "get_slot_"+prettyPrint(`astName)+"_"+`slotNameString+"("+prettyPrint(`variable)+")";
+			}
+		}
+
+		%match(TomTerm subject) {
+			Variable(_,name,_,_) -> {
+				return prettyPrint(`name);
+			}
+
+			VariableStar(_,name,_,_) -> {
+				return prettyPrint(`name);
+			}
+
+			Ref(term) -> {
+				return prettyPrint(`term);
+			}
+
+			RecordAppl(_,nameList,_,_) ->{
+				return prettyPrint(`nameList); 
+			}
+		}
+
+		%match(TomName subject) {
+			PositionName(number_list) -> {
+				return "t"+ numberListToIdentifier(`number_list);
+			}
+			Name(string) -> {
+				return `string;
+			}
+
+		}
+
+		%match(TomNumber subject) {
+			Number(n) -> {
+				return "" + `n;
+			}
+
+			NameNumber(name) -> {
+				return prettyPrint(`name);
+			}
+
+			ListNumber(number) -> {
+				return "listNumber"+prettyPrint(`number);
+			}
+
+			Begin(number) -> {
+				return "begin"+prettyPrint(`number);
+			}
+
+			End(number) -> {
+				return "end"+prettyPrint(`number);
+			}
+
+		}
+
+		if(subject instanceof InstructionList) {
+			ATermList list = (ATermList)subject;
+			if(list.isEmpty()) {
+				return "";
+			} else {
+				return prettyPrint(list.getFirst()) + "\n" + prettyPrint(list.getNext());
+			}
+		}  else if(subject instanceof TomNumberList) {
+			ATermList list = (ATermList)subject;
+			if(list.isEmpty()) {
+				return "";
+			} else {
+				return prettyPrint(list.getFirst()) + prettyPrint(list.getNext());
+			}
+		} else if(subject instanceof ATermList) {
+			ATermList list = (ATermList)subject;
+			if(list.isEmpty()) {
+				return "";
+			} else {
+				return prettyPrint(list.getFirst()) + " " + prettyPrint(list.getNext());
+			}
+		}
+
+		return subject.toString();
+	}
 
   private Collect2 collect_match = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {

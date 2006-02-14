@@ -180,15 +180,13 @@ public class TomOptimizer extends TomGenericPlugin {
         TomTerm variable = (TomTerm) arg1;
         TomName variableName = variable.getAstName();
         Expression expression = (Expression) arg2;
-        if(subject instanceof TomTerm) {
-          %match(TomTerm subject) { 
-            (Variable|VariableStar|BuildVariable)[astName=name] -> {
-              if(variableName == `name) {
-                return `ExpressionToTomTerm(expression);
-              }
-            }
-          } // end match
-        } // end instanceof TomTerm
+				%match(TomTerm subject) {
+					(Variable|VariableStar|BuildVariable)[astName=name] -> {
+						if(variableName == `name) {
+							return `ExpressionToTomTerm(expression);
+						}
+					}
+				} // end match
 
           /*
            * Defaul case: traversal
@@ -205,25 +203,20 @@ public class TomOptimizer extends TomGenericPlugin {
     final List list = new ArrayList();
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
-          if(t instanceof Instruction) {
-            %match(Instruction t) { 
-              TypedAction[astInstruction=ast] -> {
-                traversal().genericCollect(`ast, this);
-                return false;
-              }
-
-              _ -> { return true; }
-            }
-          } else if(t instanceof TomTerm) {
-            %match(TomTerm t) { 
-              (Variable|VariableStar|BuildVariable)[astName=name] -> {
-                if(variableName == `name) {
-                  list.add(t);
-                  return false;
-                }
-              }
-            }
-          } 
+					%match(Instruction t) { 
+						TypedAction[astInstruction=ast] -> {
+							traversal().genericCollect(`ast, this);
+							return false;
+						}
+					}
+					%match(TomTerm t) { 
+						(Variable|VariableStar|BuildVariable)[astName=name] -> {
+							if(variableName == `name) {
+								list.add(t);
+								return false;
+							}
+						}
+					}
 					return true;
         } // end apply
       }; // end new
@@ -238,23 +231,21 @@ public class TomOptimizer extends TomGenericPlugin {
         public boolean apply(ATerm t) {
 
           //System.out.println("isAssigned(" + variableName + "): " + t);
-          if(t instanceof Instruction) {
-            %match(Instruction t) { 
-              Assign[variable=(Variable|VariableStar)[astName=name]] -> {
-                if(variableName == `name) {
-                  list.add(t);
-                  return false;
-                }
-              }
-              
-              LetAssign[variable=(Variable|VariableStar)[astName=name]] -> {
-                if(variableName == `name) {
-                  list.add(t);
-                  return false;
-                }
-              }
-            }
-          } 
+					%match(Instruction t) {
+						Assign[variable=(Variable|VariableStar)[astName=name]] -> {
+							if(variableName == `name) {
+								list.add(t);
+								return false;
+							}
+						}
+
+						LetAssign[variable=(Variable|VariableStar)[astName=name]] -> {
+							if(variableName == `name) {
+								list.add(t);
+								return false;
+							}
+						}
+					}
 					return true;
         } // end apply
       }; // end new
@@ -287,14 +278,11 @@ public class TomOptimizer extends TomGenericPlugin {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
           // System.out.println("t = " + t);
-          if(t instanceof TomTerm) {
-            TomTerm annotedVariable = null;
-            %match(TomTerm t) { 
-              Ref((Variable|VariableStar)[astName=name])  -> {
-                collection.add(`name);
-                return false;
-              }
-            }
+					%match(TomTerm t) {
+						Ref((Variable|VariableStar)[astName=name])  -> {
+							collection.add(`name);
+							return false;
+						}
           }
 					return true;
         } // end apply
@@ -309,30 +297,26 @@ public class TomOptimizer extends TomGenericPlugin {
   Replace2 replace_renameIntoTomVariable = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
         Set context = (Set) arg1;
-        if(subject instanceof TomTerm) {
-          %match(TomTerm subject) {
-            var@(Variable|VariableStar|BuildVariable)[astName=astName@Name(name)] -> {
-              if(context.contains(`astName)) {
-                return `var.setAstName(`Name(getAstFactory().makeTomVariableName(name)));
-              }
-            }
-          }
-        } else if(subject instanceof Expression) {
-        } else if(subject instanceof Instruction) {
-          /*
-           * collect the set of variables that correspond
-           * to the lhs of this instruction
-           */
+				%match(TomTerm subject) {
+					var@(Variable|VariableStar|BuildVariable)[astName=astName@Name(name)] -> {
+						if(context.contains(`astName)) {
+							return `var.setAstName(`Name(getAstFactory().makeTomVariableName(name)));
+						}
+					}
+				}
+				/*
+				 * collect the set of variables that correspond
+				 * to the lhs of this instruction
+				 */
 
-          %match(Instruction subject) {
-            CompiledPattern(patternList,instruction) -> {
-              Map map = collectMultiplicity(`patternList);
-              Set newContext = new HashSet(map.keySet());
-              newContext.addAll(context);
-              return this.apply(`instruction,newContext);
-            }
-          }
-        } // end instanceof Instruction
+				%match(Instruction subject) {
+					CompiledPattern(patternList,instruction) -> {
+						Map map = collectMultiplicity(`patternList);
+						Set newContext = new HashSet(map.keySet());
+						newContext.addAll(context);
+						return this.apply(`instruction,newContext);
+					}
+				}
 
           /*
            * Defaul case: traversal
@@ -358,15 +342,13 @@ public class TomOptimizer extends TomGenericPlugin {
       public ATerm apply(ATerm subject, Object arg1, Object arg2) {
         TomName variableName = ((TomTerm) arg1).getAstName();
         TomName newVariableName = ((TomTerm) arg2).getAstName();
-        if(subject instanceof TomTerm) {
-          %match(TomTerm subject) { 
-            var@(Variable|VariableStar|BuildVariable)[astName=astName] -> {
-              if(variableName == `astName) {
-                return `var.setAstName(newVariableName);
-              }
-            }
-          } // end match
-        } // end instanceof TomTerm
+				%match(TomTerm subject) {
+					var@(Variable|VariableStar|BuildVariable)[astName=astName] -> {
+						if(variableName == `astName) {
+							return `var.setAstName(newVariableName);
+						}
+					}
+				} // end match
 
           /*
            * Defaul case: traversal
@@ -388,105 +370,101 @@ public class TomOptimizer extends TomGenericPlugin {
 
     public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure{
 
-      if(subject instanceof TomTerm) {
-        %match(TomTerm subject) {
-          ExpressionToTomTerm(TomTermToExpression(t)) -> {
-            return `t;
-          }
-        }
-      } else if(subject instanceof Expression) {
-        %match(Expression subject) {
-          TomTermToExpression(ExpressionToTomTerm(t)) -> {
-            return `t;
-          }
-        }
-      } else if(subject instanceof Instruction) {
-        %match(Instruction subject) {
+			%match(TomTerm subject) {
+				ExpressionToTomTerm(TomTermToExpression(t)) -> {
+					return `t;
+				}
+			}
+			%match(Expression subject) {
+				TomTermToExpression(ExpressionToTomTerm(t)) -> {
+					return `t;
+				}
+			}
+			%match(Instruction subject) {
 
-          /*
-           * 
-           * LetRef x where x is used 0 or 1 ==> eliminate
-           */
-          (LetRef|LetAssign)(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
-            List list  = computeOccurences(`name,`body);
-            int mult = list.size();
-            if(mult == 0) {
-              Option orgTrack = findOriginTracking(`var.getOption());
-                
-              getLogger().log( Level.WARNING,
-                               TomMessage.unusedVariable.getMessage(),
-                               new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
-                                            `extractRealName(tomName)} );
-              getLogger().log( Level.INFO,
-                               TomMessage.remove.getMessage(),
-                               new Object[]{ new Integer(mult), `extractRealName(tomName) });
+				/*
+				 * 
+				 * LetRef x where x is used 0 or 1 ==> eliminate
+				 */
+				(LetRef|LetAssign)(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
+					List list  = computeOccurences(`name,`body);
+					int mult = list.size();
+					if(mult == 0) {
+						Option orgTrack = findOriginTracking(`var.getOption());
 
-              return `body;
+						getLogger().log( Level.WARNING,
+								TomMessage.unusedVariable.getMessage(),
+								new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+								`extractRealName(tomName)} );
+						getLogger().log( Level.INFO,
+								TomMessage.remove.getMessage(),
+								new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
-            } else if(mult == 1) {
-              if(expConstantInBody(`exp,`body)) {
+						return `body;
 
-                getLogger().log( Level.INFO,
-                                 TomMessage.inline.getMessage(),
-                                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
+					} else if(mult == 1) {
+						if(expConstantInBody(`exp,`body)) {
 
-                return inlineInstruction(`var,`exp,`body);
-              } else {
-                getLogger().log( Level.INFO,
-                                 TomMessage.noInline.getMessage(),
-                                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
-              }
+							getLogger().log( Level.INFO,
+									TomMessage.inline.getMessage(),
+									new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
-            } else {
-              /* do nothing: traversal */
-              getLogger().log( Level.INFO,
-                               TomMessage.doNothing.getMessage(),
-                               new Object[]{ new Integer(mult), `extractRealName(tomName) });
-            }
-          }
-            
+							return inlineInstruction(`var,`exp,`body);
+						} else {
+							getLogger().log( Level.INFO,
+									TomMessage.noInline.getMessage(),
+									new Object[]{ new Integer(mult), `extractRealName(tomName) });
+						}
 
-          Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
-            return `body; 
-          } 
+					} else {
+						/* do nothing: traversal */
+						getLogger().log( Level.INFO,
+								TomMessage.doNothing.getMessage(),
+								new Object[]{ new Integer(mult), `extractRealName(tomName) });
+					}
+				}
 
-          Let(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
-            List list  = computeOccurences(`name,`body);
-            int mult = list.size();
-            
-            if(mult == 0) {
-              Option orgTrack = findOriginTracking(`var.getOption());
 
-              getLogger().log( Level.WARNING,
-                               TomMessage.unusedVariable.getMessage(),
-                               new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
-                                            `extractRealName(tomName)} );
-              getLogger().log( Level.INFO,
-                               TomMessage.remove.getMessage(),
-                               new Object[]{ new Integer(mult), `extractRealName(tomName) });
-                
-              return `body; 
-            } else if(mult == 1) {
-              if(expConstantInBody(`exp,`body)) {
-                getLogger().log( Level.INFO,
-                                 TomMessage.inline.getMessage(),
-                                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
-                return inlineInstruction(`var,`exp,`body);
-              } else {
-                getLogger().log( Level.INFO,
-                                 TomMessage.noInline.getMessage(),
-                                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
-              }
-            } else {
-              /* do nothing: traversal */
-              getLogger().log( Level.INFO,
-                               TomMessage.doNothing.getMessage(),
-                               new Object[]{ new Integer(mult), `extractRealName(tomName) });
-            }
-          }
+				Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
+					return `body; 
+				} 
 
-        } // end match
-      } // end instanceof Instruction
+				Let(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
+					List list  = computeOccurences(`name,`body);
+					int mult = list.size();
+
+					if(mult == 0) {
+						Option orgTrack = findOriginTracking(`var.getOption());
+
+						getLogger().log( Level.WARNING,
+								TomMessage.unusedVariable.getMessage(),
+								new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+								`extractRealName(tomName)} );
+						getLogger().log( Level.INFO,
+								TomMessage.remove.getMessage(),
+								new Object[]{ new Integer(mult), `extractRealName(tomName) });
+
+						return `body; 
+					} else if(mult == 1) {
+						if(expConstantInBody(`exp,`body)) {
+							getLogger().log( Level.INFO,
+									TomMessage.inline.getMessage(),
+									new Object[]{ new Integer(mult), `extractRealName(tomName) });
+							return inlineInstruction(`var,`exp,`body);
+						} else {
+							getLogger().log( Level.INFO,
+									TomMessage.noInline.getMessage(),
+									new Object[]{ new Integer(mult), `extractRealName(tomName) });
+						}
+					} else {
+						/* do nothing: traversal */
+						getLogger().log( Level.INFO,
+								TomMessage.doNothing.getMessage(),
+								new Object[]{ new Integer(mult), `extractRealName(tomName) });
+					}
+				}
+
+			} // end match
       /*
        * Defaul case: traversal
        */

@@ -167,23 +167,20 @@ public class LatexOutput {
   private Replace2 collect_prog_vars = new Replace2() {
       public ATerm apply(ATerm subject, Object astore) {
         Map store = (Map) astore;
-        
-        if (subject instanceof Variable) {
-          %match(Variable subject) {
-            var(name) -> {
-              String newname = name;
-              if (store.containsKey(name)){
-                newname = (String) store.get(name);
-              } else {
-                if (name.startsWith("[") && name.endsWith("]")) {
-                  newname = "X_" + store.size();
-                }
-                store.put(name,newname);
-              }
-              return `var(newname);
-            }
-          }
-        }
+				%match(Variable subject) {
+					var(name) -> {
+						String newname = name;
+						if (store.containsKey(name)){
+							newname = (String) store.get(name);
+						} else {
+							if (name.startsWith("[") && name.endsWith("]")) {
+								newname = "X_" + store.size();
+							}
+							store.put(name,newname);
+						}
+						return `var(newname);
+					}
+				}
         return traversal().genericTraversal(subject,this,astore);
       }
     };

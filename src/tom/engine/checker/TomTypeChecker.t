@@ -97,25 +97,23 @@ public class TomTypeChecker extends TomChecker {
   private void checkTypeInference(TomTerm expandedTerm) {
     Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm term) {
-          if(term instanceof Instruction) {
-            %match(Instruction term) {
-              Match(_, patternInstructionList, oplist) -> {  
-                currentTomStructureOrgTrack = findOriginTracking(`oplist);
-                verifyMatchVariable(`patternInstructionList);
-                return false;
-              }
-              Strategy(_,visitList,orgTrack) -> {
-                currentTomStructureOrgTrack = `orgTrack;
-                verifyStrategyVariable(`visitList);
-                return false;
-              }
-              RuleSet(list, orgTrack) -> {
-                currentTomStructureOrgTrack = `orgTrack;
-                verifyRuleVariable(`list);
-                return false;
-              }
-            }
-          } 
+					%match(Instruction term) {
+						Match(_, patternInstructionList, oplist) -> {  
+							currentTomStructureOrgTrack = findOriginTracking(`oplist);
+							verifyMatchVariable(`patternInstructionList);
+							return false;
+						}
+						Strategy(_,visitList,orgTrack) -> {
+							currentTomStructureOrgTrack = `orgTrack;
+							verifyStrategyVariable(`visitList);
+							return false;
+						}
+						RuleSet(list, orgTrack) -> {
+							currentTomStructureOrgTrack = `orgTrack;
+							verifyRuleVariable(`list);
+							return false;
+						}
+					}
           return true;
         }// end apply
       }; // end new
@@ -128,26 +126,24 @@ public class TomTypeChecker extends TomChecker {
   private void collectUnknownsAppls(ArrayList unknownsApplsInWhen, TomList guards) {
     Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm term) {
-          if(term instanceof TomTerm) {
-            %match(TomTerm term) {
-              app@TermAppl[option=opts,args=[]] -> {
-                boolean isConstructor = false;
-                %match(OptionList opts) {
-                  (_*,Constructor[],_*) -> {
-                    isConstructor = true;
-                  }
-                }
-                if(!isConstructor) {
-                  if((symbolTable().getSymbolFromName(getName(`app)))==null) {
-                    messageError(findOriginTrackingLine(`app.getOption()),
-                                 TomMessage.unknownVariableInWhen.getMessage(),
-                                 new Object[]{getName(`app)});
-                  }
-                  // else, it's actually app()
-                } // else, it's a unknown (ie : java) function
-                return true;
-              }
-            }
+					%match(TomTerm term) {
+						app@TermAppl[option=opts,args=[]] -> {
+							boolean isConstructor = false;
+							%match(OptionList opts) {
+								(_*,Constructor[],_*) -> {
+									isConstructor = true;
+								}
+							}
+							if(!isConstructor) {
+								if((symbolTable().getSymbolFromName(getName(`app)))==null) {
+									messageError(findOriginTrackingLine(`app.getOption()),
+											TomMessage.unknownVariableInWhen.getMessage(),
+											new Object[]{getName(`app)});
+								}
+								// else, it's actually app()
+							} // else, it's a unknown (ie : java) function
+							return true;
+						}
           } 
           return true;
         }// end apply
