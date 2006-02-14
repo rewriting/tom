@@ -1,0 +1,7 @@
+module Ying
+imports Yang
+
+public
+sorts Moon
+abstract syntax
+	ping(sl:Sun) -> Moon

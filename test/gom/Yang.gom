@@ -1,0 +1,7 @@
+module Yang
+imports Ying
+public
+sorts Sun
+abstract syntax
+	pong(st:Moon) -> Sun
+	shi -> Sun
