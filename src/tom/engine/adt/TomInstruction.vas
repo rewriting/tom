@@ -30,7 +30,6 @@ TypedEqualityCondition(tomType:TomType,lhs:TomTerm,rhs:TomTerm) -> Instruction
 EqualityCondition(lhs:TomTerm,rhs:TomTerm) -> Instruction
 MakeFunctionBegin(astName:TomName,subjectListAST:TomTerm) -> Instruction
 MakeFunctionEnd() -> Instruction
-FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction) -> Instruction
 CheckStamp(variable:TomTerm) -> Instruction
 concInstruction(Instruction*) -> InstructionList
 

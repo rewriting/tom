@@ -290,7 +290,7 @@ matchBlock: {
           
       %match(Declaration subject) {
         Strategy(name,visitList,orgTrack) -> {
-          InstructionList l = `concInstruction();//represents compiled Strategy
+          DeclarationList l = `concDeclaration();//represents compiled Strategy
           TomList subjectListAST;
           TomVisit visit;
           TomVisitList jVisitList = `visitList;
@@ -308,14 +308,14 @@ matchBlock: {
                 arg = `Variable(option(),Name("arg"),visitType,concConstraint());//one argument only in visit_Term
                 subjectListAST = append(arg,subjectListAST);
                 funcName = "visit_" + getTomType(`visitType);//function signature is visit_Term(Term arg) throws VisitFailure.
-                l = `concInstruction(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,TomTypeAlone("VisitFailure"),Match(SubjectList(subjectListAST),
+                l = `concDeclaration(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,TomTypeAlone("VisitFailure"),Match(SubjectList(subjectListAST),
                         patternInstructionList, 
                         concOption(orgTrack))));
               }
             }
             jVisitList = jVisitList.getTail();
           }
-          return `Class(name,visitorFwd,preProcessingInstruction(AbstractBlock(l)));
+          return `Class(name,visitorFwd,preProcessingDeclaration(AbstractDecl(l)));
         }
       }//end match
 
@@ -346,6 +346,11 @@ matchBlock: {
   private Instruction preProcessingInstruction(Instruction subject) {
       //System.out.println("preProcessing subject: " + subject);
     return (Instruction) replace_preProcessing.apply(subject); 
+  }
+
+  private Declaration preProcessingDeclaration(Declaration subject) {
+      //System.out.println("preProcessing subject: " + subject);
+    return (Declaration) replace_preProcessing.apply(subject); 
   }
 
   private PatternInstruction preProcessingPatternInstruction(PatternInstruction subject) {

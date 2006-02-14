@@ -25,11 +25,13 @@ MakeAddArray(astName:TomName,varElt:TomTerm,varList:TomTerm,instr:Instruction,or
 MakeDecl(astName:TomName,astType:TomType,args:TomList,instr:Instruction,orgTrack:Option) -> Declaration
 
 Strategy(sName:TomName,visitList:TomVisitList,orgTrack:Option) -> Declaration
-Class(astName:TomName,extendsType:TomForwardType,instruction:Instruction) -> Declaration 
+FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction) -> Declaration 
+Class(astName:TomName,extendsType:TomForwardType,declaration:Declaration) -> Declaration 
 
 SymbolDecl(astName:TomName) -> Declaration
 ListSymbolDecl(astName:TomName) -> Declaration
 ArraySymbolDecl(astName:TomName) -> Declaration
 EmptyDeclaration() -> Declaration
 
+AbstractDecl(declList:DeclarationList) -> Declaration
 concDeclaration(Declaration*) -> DeclarationList

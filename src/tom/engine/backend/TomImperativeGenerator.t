@@ -30,6 +30,7 @@ import java.io.IOException;
 import tom.engine.adt.tomsignature.types.Expression;
 import tom.engine.adt.tomsignature.types.Instruction;
 import tom.engine.adt.tomsignature.types.InstructionList;
+import tom.engine.adt.tomsignature.types.DeclarationList;
 import tom.engine.adt.tomsignature.types.OptionList;
 import tom.engine.adt.tomsignature.types.TargetLanguage;
 import tom.engine.adt.tomsignature.types.TomList;
@@ -72,6 +73,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   /*
    * the method implementations are here common to C and Java
    */
+
+  protected void buildDeclarationSequence(int deep, DeclarationList declarationList) throws IOException {
+    generateDeclarationList(deep, declarationList);
+    return;
+  }
 
   protected void buildInstructionSequence(int deep, InstructionList instructionList) throws IOException {
     generateInstructionList(deep, instructionList);

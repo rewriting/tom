@@ -68,7 +68,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.writeln("}");
   }
 
-  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Instruction instruction) throws IOException {
+  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Declaration declaration) throws IOException {
     TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
 
     OptionList options = tomSymbol.getOption();
@@ -133,7 +133,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
     output.write(deep,"}");
 
-    generateInstruction(deep,`instruction);
+    generateDeclaration(deep,`declaration);
     output.write(deep,"}");
   }
 

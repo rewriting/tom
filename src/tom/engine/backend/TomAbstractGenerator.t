@@ -338,11 +338,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      FunctionDef(Name(tomName),argList,codomain,throwsType,instruction) -> {
-        `buildFunctionDef(deep, tomName, argList, codomain, throwsType, instruction);
-        return;
-      }
-
       AssignMatchSubject(var@Variable[option=option],exp) -> {
         `buildAssignVar(deep, var, option, exp);
         return;
@@ -508,8 +503,19 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Class(Name(tomName),extendsFwdType,instruction) -> {
-        `buildClass(deep, tomName, extendsFwdType,instruction);
+      AbstractDecl(declList) -> {
+        //`generateInstructionList(deep, instList);
+        `buildDeclarationSequence(deep, declList);
+        return;
+      }
+
+      FunctionDef(Name(tomName),argList,codomain,throwsType,instruction) -> {
+        `buildFunctionDef(deep, tomName, argList, codomain, throwsType, instruction);
+        return;
+      }
+
+      Class(Name(tomName),extendsFwdType,declaration) -> {
+        `buildClass(deep, tomName, extendsFwdType,declaration);
         return;
       }
 
@@ -731,6 +737,7 @@ public abstract class TomAbstractGenerator extends TomBase {
  
   // ------------------------------------------------------------
   
+  protected abstract void buildDeclarationSequence(int deep, DeclarationList declarationList) throws IOException;
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList) throws IOException;
   protected abstract void buildSemiColon() throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
@@ -746,7 +753,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   /*buildClass is not abstract since only Java backend supports class
     only backends that supports Class should overload buildClass  
    */
-  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Instruction instruction) throws IOException {
+  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Declaration declaration) throws IOException {
     System.out.println("Backend does not support Class");
     throw new TomRuntimeException("Backend does not support Class");
   }
