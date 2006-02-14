@@ -24,6 +24,9 @@ MakeEmptyArray(astName:TomName,varSize:TomTerm,instr:Instruction,orgTrack:Option
 MakeAddArray(astName:TomName,varElt:TomTerm,varList:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
 MakeDecl(astName:TomName,astType:TomType,args:TomList,instr:Instruction,orgTrack:Option) -> Declaration
 
+Strategy(sName:TomName,visitList:TomVisitList,orgTrack:Option) -> Declaration
+Class(astName:TomName,extendsType:TomForwardType,instruction:Instruction) -> Declaration 
+
 SymbolDecl(astName:TomName) -> Declaration
 ListSymbolDecl(astName:TomName) -> Declaration
 ArraySymbolDecl(astName:TomName) -> Declaration

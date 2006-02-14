@@ -96,27 +96,29 @@ public class TomTypeChecker extends TomChecker {
    */
   private void checkTypeInference(TomTerm expandedTerm) {
     Collect1 collectAndVerify = new Collect1() {  
-        public boolean apply(ATerm term) {
-					%match(Instruction term) {
-						Match(_, patternInstructionList, oplist) -> {  
-							currentTomStructureOrgTrack = findOriginTracking(`oplist);
-							verifyMatchVariable(`patternInstructionList);
-							return false;
-						}
-						Strategy(_,visitList,orgTrack) -> {
-							currentTomStructureOrgTrack = `orgTrack;
-							verifyStrategyVariable(`visitList);
-							return false;
-						}
-						RuleSet(list, orgTrack) -> {
-							currentTomStructureOrgTrack = `orgTrack;
-							verifyRuleVariable(`list);
-							return false;
-						}
-					}
-          return true;
-        }// end apply
-      }; // end new
+      public boolean apply(ATerm term) {
+        %match(Instruction term) {
+          Match(_, patternInstructionList, oplist) -> {  
+            currentTomStructureOrgTrack = findOriginTracking(`oplist);
+            verifyMatchVariable(`patternInstructionList);
+            return false;
+          }
+          RuleSet(list, orgTrack) -> {
+            currentTomStructureOrgTrack = `orgTrack;
+            verifyRuleVariable(`list);
+            return false;
+          }
+        }
+        %match(Declaration term) {
+          Strategy(_,visitList,orgTrack) -> {
+            currentTomStructureOrgTrack = `orgTrack;
+            verifyStrategyVariable(`visitList);
+            return false;
+          }
+        }
+        return true;
+      }// end apply
+    }; // end new
     traversal().genericCollect(expandedTerm, collectAndVerify);
   } //checkTypeInference
 

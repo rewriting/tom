@@ -343,11 +343,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Class(Name(tomName),extendsFwdType,instruction) -> {
-        `buildClass(deep, tomName, extendsFwdType,instruction);
-        return;
-      }
-
       AssignMatchSubject(var@Variable[option=option],exp) -> {
         `buildAssignVar(deep, var, option, exp);
         return;
@@ -510,6 +505,11 @@ public abstract class TomAbstractGenerator extends TomBase {
   public void generateDeclaration(int deep, Declaration subject) throws IOException {
     %match(Declaration subject) {
       EmptyDeclaration() -> {
+        return;
+      }
+
+      Class(Name(tomName),extendsFwdType,instruction) -> {
+        `buildClass(deep, tomName, extendsFwdType,instruction);
         return;
       }
 

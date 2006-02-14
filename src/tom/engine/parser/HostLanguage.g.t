@@ -343,7 +343,7 @@ strategyConstruct [LinkedList list] throws TomException
             );    
             
             // call the tomparser for the construct
-            Instruction strategy = tomparser.strategyConstruct(ot);
+            Declaration strategy = tomparser.strategyConstruct(ot);
             list.add(strategy);
         }
     ;

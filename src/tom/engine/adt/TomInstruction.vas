@@ -23,7 +23,6 @@ UnamedBlock(instList:InstructionList) -> Instruction
 NamedBlock(blockName:String,instList:InstructionList) -> Instruction
 RuleSet(ruleList:TomRuleList,orgTrack:Option) -> Instruction
 Match(subjectList:TomTerm,astPatternInstructionList:PatternInstructionList,option:OptionList) -> Instruction
-Strategy(sName:TomName,visitList:TomVisitList,orgTrack:Option) -> Instruction
 CompiledMatch(automataInst:Instruction,option:OptionList) -> Instruction
 CompiledPattern(patternList:TomList,automataInst:Instruction) -> Instruction
 MatchingCondition(lhs:TomTerm,rhs:TomTerm) -> Instruction
@@ -32,7 +31,6 @@ EqualityCondition(lhs:TomTerm,rhs:TomTerm) -> Instruction
 MakeFunctionBegin(astName:TomName,subjectListAST:TomTerm) -> Instruction
 MakeFunctionEnd() -> Instruction
 FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction) -> Instruction
-Class(astName:TomName,extendsType:TomForwardType,instruction:Instruction) -> Instruction
 CheckStamp(variable:TomTerm) -> Instruction
 concInstruction(Instruction*) -> InstructionList
 

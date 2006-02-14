@@ -324,7 +324,7 @@ matchGuards [LinkedList list] throws TomException
     ;
 
 // The %strategy construct
-strategyConstruct [Option orgTrack] returns [Instruction result] throws TomException
+strategyConstruct [Option orgTrack] returns [Declaration result] throws TomException
 {
     result = null;
     TomTerm extendsTerm = null;

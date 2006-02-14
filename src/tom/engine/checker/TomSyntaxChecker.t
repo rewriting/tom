@@ -138,64 +138,51 @@ public class TomSyntaxChecker extends TomChecker {
    */
   private void checkSyntax(TomTerm parsedTerm) {
     Collect1 collectAndVerify = new Collect1() {  
-        public boolean apply(ATerm subject) {
-          if(subject instanceof Declaration) {
-            // TOM Declaration
-            `verifyDeclaration((Declaration)subject);
+      public boolean apply(ATerm subject) {
+        %match(Declaration subject) {
+          Strategy(sName, visitList, orgTrack) -> {
+            /*  STRATEGY MATCH STRUCTURE*/
+            `verifyStrategy(sName, visitList, orgTrack);
+            return true;//case when %match in %strategy
+          }
+          // Types
+          TypeTermDecl(Name(tomName), declarationList, orgTrack) -> {
+            `verifyTypeDecl(TomSyntaxChecker.TYPE_TERM, tomName, declarationList, orgTrack);
             return false;
-          } 
-					%match(Instruction subject) {
-						Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
-							/*  TOM MATCH STRUCTURE*/
-							`verifyMatch(matchArgsList, patternInstructionList, list);
-							return true;//case when nested %match
-						}
-						Strategy(sName, visitList, orgTrack) -> {
-							/*  STRATEGY MATCH STRUCTURE*/
-							`verifyStrategy(sName, visitList, orgTrack);
-							return true;//case when %match in %strategy
-						}
-						RuleSet(list, orgTrack) -> {
-							/*  TOM RULE STRUCTURE*/
-							`verifyRule(list, orgTrack);
-							return false;
-						}
-					}
-          return true;
+          }
+          // Symbols
+          SymbolDecl(Name(tomName))      -> {
+            `verifySymbol(TomSyntaxChecker.CONSTRUCTOR, getSymbolFromName(tomName));
+            return false; 
+          }
+          ArraySymbolDecl(Name(tomName)) -> {
+            `verifySymbol(TomSyntaxChecker.OP_ARRAY, getSymbolFromName(tomName));
+            return false; 
+          }
+          ListSymbolDecl(Name(tomName))  -> {
+            `verifySymbol(TomSyntaxChecker.OP_LIST, getSymbolFromName(tomName));
+            return false; 
+          }
         }
-      }; // end new Collect1()
+        %match(Instruction subject) {
+          Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
+            /*  TOM MATCH STRUCTURE*/
+            `verifyMatch(matchArgsList, patternInstructionList, list);
+            return true;//case when nested %match
+          }
+          RuleSet(list, orgTrack) -> {
+            /*  TOM RULE STRUCTURE*/
+            `verifyRule(list, orgTrack);
+            return false;
+          }
+        } 
+        return true;
+      }
+    }; // end new Collect1()
     
     // use a traversal to get all interesting subtree
     traversal().genericCollect(parsedTerm, collectAndVerify);   
   } //checkSyntax
-  
-  /*
-   *  SYMBOL AND TYPE CONCERNS STARTS
-   */
-  private void verifyDeclaration(Declaration declaration) { 
-    matchblock:{
-      %match (Declaration declaration) {
-        // Types
-        TypeTermDecl(Name(tomName), declarationList, orgTrack) -> {
-          `verifyTypeDecl(TomSyntaxChecker.TYPE_TERM, tomName, declarationList, orgTrack);
-          break matchblock;
-        }
-        // Symbols
-        SymbolDecl(Name(tomName))      -> {
-          `verifySymbol(TomSyntaxChecker.CONSTRUCTOR, getSymbolFromName(tomName));
-          break matchblock;
-        }
-        ArraySymbolDecl(Name(tomName)) -> {
-          `verifySymbol(TomSyntaxChecker.OP_ARRAY, getSymbolFromName(tomName));
-          break matchblock;
-        }
-        ListSymbolDecl(Name(tomName))  -> {
-          `verifySymbol(TomSyntaxChecker.OP_LIST, getSymbolFromName(tomName));
-          break matchblock;
-        }
-      }
-    }
-  } //verifyDeclaration
   
   ///////////////////////////////
   // TYPE DECLARATION CONCERNS //
