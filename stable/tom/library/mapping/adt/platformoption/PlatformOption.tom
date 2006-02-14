@@ -19,7 +19,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op PlatformOptionList emptyPlatformOptionList{
+%op PlatformOptionList emptyPlatformOptionList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformOptionList()}
 }
@@ -37,12 +37,12 @@
   get_implementation(t) {t}
 }
 
-%op PlatformBoolean False {
+%op PlatformBoolean False() {
   is_fsym(t) { (t!= null) && t.isFalse()}
   make() { tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformBoolean_False()}
 }
 
-%op PlatformBoolean True {
+%op PlatformBoolean True() {
   is_fsym(t) { (t!= null) && t.isTrue()}
   make() { tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformBoolean_True()}
 }

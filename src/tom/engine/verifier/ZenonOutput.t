@@ -381,10 +381,8 @@ public class ZenonOutput {
         map.put(`name,ztermFromTerm(`term));
         return ztermVariableMapFromSubstitutionList(`t,map);
       }
-      _ -> {
-        throw new TomRuntimeException("verifier: strange substitution list: "+sublist);
-      }
     }
+		throw new TomRuntimeException("verifier: strange substitution list: "+sublist);
   }
 
   public void collectConstraints(DerivTree tree, Map conditions) {

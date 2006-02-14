@@ -706,7 +706,8 @@ public class TomSyntaxChecker extends TomChecker {
   public TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
     String termName = "emptyName";
     TomType type = null;
-    int termClass, decLine;
+    int termClass=-1;
+		int decLine=-1;
     Option orgTrack;
     matchblock:{
       %match(TomTerm term) {
@@ -856,31 +857,28 @@ public class TomSyntaxChecker extends TomChecker {
           }
           break matchblock;
         }
-        
-        _ -> {
-          System.out.println("Strange term in pattern "+term);
-          throw new TomRuntimeException("Strange Term "+term);
-        }
       }
+			System.out.println("Strange term in pattern "+term);
+			throw new TomRuntimeException("Strange Term "+term);
     }
     return new TermDescription(termClass, termName, decLine, type); 
   }
   
   private void validateTermThrough(TomTerm term, boolean permissive) {
     %match(TomTerm term) {
-        app@TermAppl[option=options, nameList=nameList, args=arguments] -> {
-          TomList args = `arguments;
-          while(!args.isEmpty()) {
-            TomTerm child = args.getHead();
-            TomSymbol sym = getSymbolFromName(getName(child));
-            if(sym != null) {
-              validateTerm(child,sym.getTypesToType().getCodomain(),false,false,permissive);
-            } else {
-              validateTermThrough(child,permissive);
-            }
-            args = args.getTail();
-          }
-        }
+			TermAppl[args=arguments] -> {
+				TomList args = `arguments;
+				while(!args.isEmpty()) {
+					TomTerm child = args.getHead();
+					TomSymbol sym = getSymbolFromName(getName(child));
+					if(sym != null) {
+						validateTerm(child,sym.getTypesToType().getCodomain(),false,false,permissive);
+					} else {
+						validateTermThrough(child,permissive);
+					}
+					args = args.getTail();
+				}
+			}
     }
   }
 
@@ -922,11 +920,9 @@ public class TomSyntaxChecker extends TomChecker {
         UnamedVariableStar[option=options] -> {
           return new TermDescription(UNAMED_VARIABLE_STAR, "_*", findOriginTrackingLine(`options),  null);
         }
-        _ -> {
-          System.out.println("Strange term "+term);
-          throw new TomRuntimeException("Strange Term "+term);
-        }
       }
+			System.out.println("Strange term "+term);
+			throw new TomRuntimeException("Strange Term "+term);
     }
   }
 

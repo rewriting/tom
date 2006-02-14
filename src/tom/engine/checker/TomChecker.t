@@ -97,8 +97,8 @@ abstract public class TomChecker extends TomGenericPlugin {
       Placeholder[] -> { return PLACE_HOLDER;}
       VariableStar[] -> { return VARIABLE_STAR;}
       UnamedVariableStar[] -> { return UNAMED_VARIABLE_STAR;}
-      _ -> {throw new TomRuntimeException("Invalid Term");}
     }
+		throw new TomRuntimeException("Invalid Term");
   }
   
   public String getName(TomTerm term) {
@@ -140,8 +140,8 @@ abstract public class TomChecker extends TomGenericPlugin {
       Placeholder[]               ->{ return "_";}
       VariableStar[astName=Name(name)]              ->{ return `name+"*";}
       UnamedVariableStar[] ->{ return "_*";}
-      _                               ->{throw new TomRuntimeException("Invalid Term");}
     }
+		throw new TomRuntimeException("Invalid Term");
   }
   
   /**

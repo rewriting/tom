@@ -74,11 +74,9 @@ public class Verifier extends TomBase {
       Variable(options,name,type,constraints) -> {
         return `termFromTomName(name);
       }
-      _ -> {
-        System.out.println("termFromTomTerm don't know how to handle this: " + tomterm);
-        return `repr("foirade");
-      }
     }
+		System.out.println("termFromTomTerm don't know how to handle this: " + tomterm);
+		return `repr("foirade");
   }
 
   Variable variableFromTomName(TomName name) {
@@ -118,11 +116,9 @@ public class Verifier extends TomBase {
       Cast(type,expr) -> {
         return termFromExpresssion(expr);
       }
-      _ -> {
-        System.out.println("termFromExpresssion don't know how to handle this: " + expression);
-        return `repr("autre foirade avec " + expression);
-      }
     }
+		System.out.println("termFromExpresssion don't know how to handle this: " + expression);
+		return `repr("autre foirade avec " + expression);
   }
   
   public String extractName(NameList nl) {
@@ -148,11 +144,9 @@ public class Verifier extends TomBase {
       EqualTerm(type,t1,t2) -> {
         return `eq(termFromTomTerm(t1),termFromTomTerm(t2));
       }
-      _ -> {
-        System.out.println("exprFromExpression don't know how to handle this: " + expression);
-        return `false();
-      }
     }
+		System.out.println("exprFromExpression don't know how to handle this: " + expression);
+		return `false();
   }
 
   public Instr instrFromInstructionList(InstructionList instrlist) {
@@ -206,11 +200,9 @@ public class Verifier extends TomBase {
         // tom uses nop in the iffalse part of ITE
         return `refuse();
       }
-      _ -> {
-        System.out.println("instrFromInstruction don't know how to handle this : " + automata);
-        return `refuse();
-      }
     }
+		System.out.println("instrFromInstruction don't know how to handle this : " + automata);
+		return `refuse();
   }
 
   private SubstitutionList abstractSubstitutionFromAccept(Instr instr) {
@@ -303,13 +295,9 @@ public class Verifier extends TomBase {
             true(x) -> {
               outsubst.set(`x);
             }
-            _ -> {
-              return true;
-            }
           }//end match
-        } else { 
-          return true;
         }
+				return true;
       }//end apply
     }; //end new
     SubstRef output = new SubstRef(`subs());
@@ -325,13 +313,9 @@ public class Verifier extends TomBase {
             ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
               outsubst.set(`e);
             }
-            _ -> {
-              return true;
-            }
           }//end match
-        } else { 
-          return true;
-        }
+        } 
+				return true;
       }//end apply
     }; //end new
   
@@ -349,13 +333,9 @@ public class Verifier extends TomBase {
             TypedAction(action,positive,negative)  -> {
               store.add(`accept(positive,negative));
             }
-            _ -> {
-              return true;
-            }
-          }//end match
-        } else { 
-          return true;
+					}
         }
+				return true;
       }//end apply
     }; //end new
   
@@ -440,11 +420,9 @@ public class Verifier extends TomBase {
       ilor(lt,rt) -> {
         return `ilor(reduceWithMappingRules(lt),reduceWithMappingRules(rt));
       }
-      _ -> { 
-        System.out.println("reduceWithMappingRules : nothing applies to:" + ex);
-        return `ex; 
-      }
     }
+		System.out.println("reduceWithMappingRules : nothing applies to:" + ex);
+		return `ex; 
   }
 
   protected Term reduceTermWithMappingRules(Term trm) {
@@ -468,11 +446,9 @@ public class Verifier extends TomBase {
         AbsTerm term = `sl(s,t,slotName);
         return `tau(term);
       }
-      _ -> { 
-        System.out.println("reduceTermWithMappingRules : nothing applies to:" + trm);
-        return `trm; 
-      }
     }
+		System.out.println("reduceTermWithMappingRules : nothing applies to:" + trm);
+		return `trm; 
   }
 
   protected TermList applyMappingRules(Term trm) {
@@ -530,10 +506,9 @@ public class Verifier extends TomBase {
         AbsTerm term = `sl(s,t,slotName);
         return `concTerm(trm,tau(term));
       }
-      _ -> { 
-        System.out.println("apply TermRules : nothing applies to:" + trm);
-        return `concTerm(trm); }
     }
+		System.out.println("apply TermRules : nothing applies to:" + trm);
+		return `concTerm(trm); 
   }
 
   protected ExprList applyExprRules(Expr ex) {
@@ -581,10 +556,9 @@ public class Verifier extends TomBase {
       (true|false)[] -> {
         return `concExpr(ex);
       }
-      _ -> { 
-        System.out.println("apply ExprRules : nothing applies to:" + ex);
-        return `concExpr(ex); }
     }
+		System.out.println("apply ExprRules : nothing applies to:" + ex);
+		return `concExpr(ex); 
   }
 
   protected Expr buildConstraint(SubstitutionList substitution, Instr pil,Instr goal) {
@@ -906,8 +880,8 @@ public class Verifier extends TomBase {
         map.put(`v,`term);
         return buildVariableMap(`t,map);
       }
-      _ -> { return null; }
     }
+		return null; 
   }
 
   public void mappingReduce(Map input) {

@@ -34,7 +34,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op ZAxiomList emptyZAxiomList{
+%op ZAxiomList emptyZAxiomList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZAxiomList()}
 }
@@ -124,12 +124,12 @@
   make(t0, t1) { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zisfsym(t0, t1)}
 }
 
-%op ZExpr zfalse {
+%op ZExpr zfalse() {
   is_fsym(t) { (t!= null) && t.isZfalse()}
   make() { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Zfalse()}
 }
 
-%op ZExpr ztrue {
+%op ZExpr ztrue() {
   is_fsym(t) { (t!= null) && t.isZtrue()}
   make() { tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZExpr_Ztrue()}
 }
@@ -164,7 +164,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op ZTermList emptyZTermList{
+%op ZTermList emptyZTermList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.engine.adt.zenon.ZenonFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeZTermList()}
 }

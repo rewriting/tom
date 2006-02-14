@@ -438,7 +438,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      CompiledMatch(instruction, list) -> {
+      CompiledMatch(instruction, _) -> {
         `generateInstruction(deep, instruction);
         return;
       }
@@ -602,8 +602,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeAddList(Name(opname),
-                  elt@Variable[astType=fullEltType@Type[tlType=tlType1@TLType[]]],
-                  list@Variable[astType=fullListType@Type[tlType=tlType2@TLType[]]],
+                  elt@Variable[astType=Type[tlType=TLType[]]],
+                  list@Variable[astType=fullListType@Type[tlType=TLType[]]],
                   instr, _) -> {
         TomType returnType = `fullListType;
         `genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), instr);
@@ -626,7 +626,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       
       MakeEmptyArray(Name(opname),
-                     Variable[option=option,astName=name,astType=type, constraints=constraints],
+                     Variable[option=option,astName=name,constraints=constraints],
                      instr, _) -> {
         TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
         TomTerm newVar = `Variable(option, name, getSymbolTable().getIntType(), constraints);
@@ -635,8 +635,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeAddArray(Name(opname),
-                   elt@Variable[astType=fullEltType@Type[tlType=tlType1@TLType[]]],
-                   list@Variable[astType=fullArrayType@Type[tlType=tlType2@TLType[]]],
+                   elt@Variable[astType=Type[tlType=TLType[]]],
+                   list@Variable[astType=fullArrayType@Type[tlType=TLType[]]],
                    instr, _) -> {
         TomType returnType = `fullArrayType;
         `genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), instr);

@@ -392,11 +392,8 @@ public class TomCompiler extends TomGenericPlugin {
         Instruction generatedTest = `If(equality,newAction,Nop());
         return generatedTest;
       }
-      
-      _ -> {
-        throw new TomRuntimeException("buildCondition strange term: " + condList);
-      }
     }
+		throw new TomRuntimeException("buildCondition strange term: " + condList);
   }
   
   private TomTerm renameVariable(TomTerm subject,

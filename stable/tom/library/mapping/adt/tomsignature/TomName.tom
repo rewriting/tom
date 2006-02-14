@@ -19,7 +19,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op TomNumberList emptyTomNumberList{
+%op TomNumberList emptyTomNumberList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.engine.adt.tomsignature.TomNameFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomNumberList()}
 }
@@ -37,7 +37,7 @@
   get_implementation(t) {t}
 }
 
-%op TomNumber RuleVar {
+%op TomNumber RuleVar() {
   is_fsym(t) { (t!= null) && t.isRuleVar()}
   make() { tom.engine.adt.tomsignature.TomNameFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomNumber_RuleVar()}
 }
@@ -110,7 +110,7 @@
   get_implementation(t) {t}
 }
 
-%op TomName EmptyName {
+%op TomName EmptyName() {
   is_fsym(t) { (t!= null) && t.isEmptyName()}
   make() { tom.engine.adt.tomsignature.TomNameFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomName_EmptyName()}
 }

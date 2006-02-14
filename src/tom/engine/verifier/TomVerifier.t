@@ -182,15 +182,9 @@ public class TomVerifier extends TomGenericPlugin {
             CompiledMatch[automataInst=automata]  -> {
               store.add(`automata);
             }
-            
-            // default rule
-            _ -> {
-              return true;
-            }
           }//end match
-        } else { 
-          return true;
         }
+				return true;
       }//end apply
     }; //end new
   

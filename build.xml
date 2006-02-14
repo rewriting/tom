@@ -83,6 +83,8 @@
   <property name="javacDebugInfo" value="on"/>
   <property name="javacVerbose" value="false"/>
   <property name="nowarnings" value="false" />  
+  <property name="memoryInitSize" value="128m" />  
+  <property name="memoryMaxSize" value="512m" />  
   
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">
@@ -128,6 +130,8 @@
     <attribute name="target"  default="${javacTarget}"/>
     <attribute name="source"  default="${javacSource}"/>
     <attribute name="nowarn"  default="${nowarnings}"/>
+    <attribute name="memoryInitialSize"  default="${memoryInitSize}"/>
+    <attribute name="memoryMaximumSize"  default="${memoryMaxSize}"/>
     <element name="srcelements" implicit="yes"/>
     <sequential>
       <javac destdir="@{destdir}" 
@@ -136,6 +140,8 @@
              fork=   "@{fork}"
              target= "@{target}"
              source= "@{source}"
+             memoryInitialSize= "@{memoryInitialSize}"
+             memoryMaximumSize= "@{memoryMaximumSize}"
              nowarn= "@{nowarn}">
         <srcelements/>
       </javac>
@@ -1092,9 +1098,9 @@
   </target>
 
   <target name="bootinstall"
-          description="Install src tree into stable tree"
-          depends="bootstrap"
-          if="bootstrap.ok">
+		description="Install src tree into stable tree"
+		depends="bootstrap"
+		if="bootstrap.ok" >
     <copy todir="${stable.src}" overwrite="true">
       <fileset dir="${src.src}">
         <include name="**/*.java.in"/>

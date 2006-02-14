@@ -206,11 +206,9 @@ public class TomIlTools extends TomBase {
             zsymbol(name)  -> {
               store.add(`name);
             }
-            _ -> { return true; }
           }
-        } else { 
-          return true;
-        }
+        } 
+				return true;
       }
     }; 
 

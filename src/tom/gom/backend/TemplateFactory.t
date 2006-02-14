@@ -114,24 +114,24 @@ public class TemplateFactory extends TemplateClass {
       OperatorClass[className=opName,sortName=sortName] -> {
         return "fun_"+className(`sortName)+"_"+className(`opName);
       }
-      _ -> { throw new GomRuntimeException("TemplateFactory gor a strange operatorclass: "+op); }
     }
+		throw new GomRuntimeException("TemplateFactory gor a strange operatorclass: "+op); 
   }
   private String proto(GomClass op) {
     %match(GomClass op) {
       OperatorClass[className=opName,sortName=sortName] -> {
         return "proto_"+className(`sortName)+"_"+className(`opName);
       }
-      _ -> { throw new GomRuntimeException("TemplateFactory got a strange operatorclass: "+op); }
     }
+		throw new GomRuntimeException("TemplateFactory got a strange operatorclass: "+op); 
   }
   private String pattern(GomClass op) {
     %match(GomClass op) {
       OperatorClass[className=opName,sortName=sortName] -> {
         return "pattern_"+className(`sortName)+"_"+className(`opName);
       }
-      _ -> { throw new GomRuntimeException("TemplateFactory got a strange operatorclass: "+op); }
     }
+		throw new GomRuntimeException("TemplateFactory got a strange operatorclass: "+op); 
   }
   private String atermPattern(GomClass op) {
     return "\"\""; // TODO
@@ -141,7 +141,7 @@ public class TemplateFactory extends TemplateClass {
       OperatorClass[className=opName,sortName=sortName] -> {
         return "\"_"+className(`sortName)+"_"+className(`opName)+"\", 0, false";
       }
-      _ -> { throw new GomRuntimeException("TemplateFactory got a strange operatorclass: "+op); }
     }
+		throw new GomRuntimeException("TemplateFactory got a strange operatorclass: "+op); 
   }
 }

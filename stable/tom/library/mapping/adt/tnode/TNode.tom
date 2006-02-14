@@ -19,7 +19,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op TNodeList emptyTNodeList{
+%op TNodeList emptyTNodeList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.library.adt.tnode.TNodeFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTNodeList()}
 }
@@ -118,7 +118,7 @@
   make(t0) { tom.library.adt.tnode.TNodeFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTNode_CommentNode(t0)}
 }
 
-%op TNode EmptyNode {
+%op TNode EmptyNode() {
   is_fsym(t) { (t!= null) && t.isEmptyNode()}
   make() { tom.library.adt.tnode.TNodeFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTNode_EmptyNode()}
 }

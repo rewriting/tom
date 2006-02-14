@@ -19,7 +19,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op AlertList emptyAlertList{
+%op AlertList emptyAlertList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.platform.adt.platformalert.PlatformAlertFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAlertList()}
 }

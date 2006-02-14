@@ -36,7 +36,10 @@ L'objectif est d'implanter un interpréteur ainsi qu'un optimiseur pour un pico-l
 \section{Expression booléennes}
 Dans un premier temps, on veut pouvoir construire et évaluer des expressions de la forme \verb|Not(True())|, \verb|And(Or(True(),False()),True())|, etc.
 
-Proposer un grammaire ainsi qu'un système de simplification.
+\begin{enumerate}
+\item proposer une grammaire ainsi qu'un système de simplification.
+\item simplifier \texttt{And(Or(Not(False),False),And(True,False))}
+\end{enumerate}
 
 \begin{versionProf}
 \begin{verbatim}
@@ -88,7 +91,6 @@ On considère un premier langage permettant de mémoriser des valeurs dans des var
 
 \begin{enumerate}
 \item proposer une signature ainsi qu'une fonction permettant d'évaluer de tels programmes.
-\item simplifier \texttt{And(Or(Not(False),False),And(True,False))}
 \end{enumerate}
 
 \section{Pico langage}

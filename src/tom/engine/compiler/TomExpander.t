@@ -136,7 +136,7 @@ public class TomExpander extends TomGenericPlugin {
       Symbol[option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return tomSymbol;
       }
-      Symbol(name,t@TypesToType(dom,codom),l,(b*,origin@OriginTracking(_,line,file),a*)) -> {
+      Symbol(name,t@TypesToType(_,codom),l,(b*,origin@OriginTracking(_,line,file),a*)) -> {
         return `Symbol(name,t,l,concOption(b*,origin,DeclarationToOption(IsFsymDecl(name,Variable(concOption(OriginTracking(Name("t"),line,file)),Name("t"),codom,concConstraint()),Return(ExpressionToTomTerm(FalseTL())),OriginTracking(Name("is_fsym"),line,file))),a*));
       }
     }
@@ -182,14 +182,9 @@ public class TomExpander extends TomGenericPlugin {
                 //System.out.println("expandXML in:\n" + subject);
                 return expandXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
               }
-              
-              _ -> {
-                return traversal().genericTraversal(subject,this);
-              }
             } // end match
-          } else {
-            return traversal().genericTraversal(subject,this);
           }
+					return traversal().genericTraversal(subject,this);
         } // end apply
       }; // end new
 
@@ -234,17 +229,9 @@ public class TomExpander extends TomGenericPlugin {
                   }
                 }
               }
-            
-              // default rule
-              _ -> {
-                return traversal().genericTraversal(subject,this);
-              }
             } // end match
-          } else {
-            // not instance of Declaration
-            return traversal().genericTraversal(subject,this);
-          }
-        
+          } 
+					return traversal().genericTraversal(subject,this);
         } // end apply
       }; // end new
   
@@ -272,17 +259,9 @@ public class TomExpander extends TomGenericPlugin {
                   }
                 }
               }
-
-              // default rule
-              _ -> {
-                return traversal().genericTraversal(subject,this);
-              }
             } // end match
-          } else {
-            // not instance of Declaration
-            return traversal().genericTraversal(subject,this);
-          }
-
+          } 
+					return traversal().genericTraversal(subject,this);
         } // end apply
       }; // end new
 
@@ -327,12 +306,8 @@ public class TomExpander extends TomGenericPlugin {
             }
           }
         }
-
-        _ -> {
-          return `manySlotList(head,tail);
-        }
       }
-
+			return `manySlotList(head,tail);
     }
   }
 

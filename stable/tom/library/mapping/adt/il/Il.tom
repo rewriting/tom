@@ -30,7 +30,7 @@
   make(t0, t1, t2, t3) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDerivTree_Derivrule(t0, t1, t2, t3)}
 }
 
-%op DerivTree endderiv {
+%op DerivTree endderiv() {
   is_fsym(t) { (t!= null) && t.isEndderiv()}
   make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDerivTree_Endderiv()}
 }
@@ -66,7 +66,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op ExprList emptyExprList{
+%op ExprList emptyExprList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExprList()}
 }
@@ -96,7 +96,7 @@
   make(t0) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSeq_Dedterm(t0)}
 }
 
-%op Seq seq {
+%op Seq seq() {
   is_fsym(t) { (t!= null) && t.isSeq()}
   make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSeq_Seq()}
 }
@@ -117,7 +117,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op TermList emptyTermList{
+%op TermList emptyTermList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTermList()}
 }
@@ -190,7 +190,7 @@
   make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_Isfsym(t0, t1)}
 }
 
-%op Expr false {
+%op Expr false() {
   is_fsym(t) { (t!= null) && t.isFalse()}
   make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeExpr_False()}
 }
@@ -275,7 +275,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op SubstitutionList emptySubstitutionList{
+%op SubstitutionList emptySubstitutionList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSubstitutionList()}
 }
@@ -300,7 +300,7 @@
   make(t0, t1) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSubstitution_Is(t0, t1)}
 }
 
-%op Substitution undefsubs {
+%op Substitution undefsubs() {
   is_fsym(t) { (t!= null) && t.isUndefsubs()}
   make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeSubstitution_Undefsubs()}
 }
@@ -321,7 +321,7 @@
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
 }
-%op InstrList emptyInstrList{
+%op InstrList emptyInstrList() {
   is_fsym(t) { (t!= null) && t.isEmpty()}
   make() {tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstrList()}
 }
@@ -361,7 +361,7 @@
   make(t0, t1, t2) { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstr_ITE(t0, t1, t2)}
 }
 
-%op Instr refuse {
+%op Instr refuse() {
   is_fsym(t) { (t!= null) && t.isRefuse()}
   make() { tom.engine.adt.il.IlFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstr_Refuse()}
 }

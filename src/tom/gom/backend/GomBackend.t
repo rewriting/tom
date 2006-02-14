@@ -111,10 +111,8 @@ public class GomBackend {
         System.out.println(factory.generate());
         return 1;
       }
-      _ -> {
-        throw new GomRuntimeException("Trying to generate code for a strange class: "+gomclass);
-      }
     }
+		throw new GomRuntimeException("Trying to generate code for a strange class: "+gomclass);
   }
 
 }

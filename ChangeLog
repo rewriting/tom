@@ -3,6 +3,8 @@
 	* in Java:
 	  - %match generates an 'instanceof' to check that the subject has the correct type
 	  - -> {...} are guarded by a condition to avoid "unreachable statement" error
+	* removed warning
+	* bootinstall
 	
 2006-02-01  pem
   * dijunction of symbols is now compiled in a correct way

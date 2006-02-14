@@ -64,12 +64,12 @@
   make(t0) { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Not(t0)}
 }
 
-%op MuStrategy Fail {
+%op MuStrategy Fail() {
   is_fsym(t) { (t!= null) && t.isFail()}
   make() { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Fail()}
 }
 
-%op MuStrategy Identity {
+%op MuStrategy Identity() {
   is_fsym(t) { (t!= null) && t.isIdentity()}
   make() { tom.library.adt.mutraveleradt.MuTravelerADTFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeMuStrategy_Identity()}
 }

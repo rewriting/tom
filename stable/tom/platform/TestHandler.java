@@ -28,7 +28,6 @@ package tom.platform;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import tom.engine.TomMessage;
 import java.util.*;
 import java.util.logging.*;
 
@@ -48,18 +47,23 @@ public class TestHandler extends Handler {
       BufferedReader reader = new BufferedReader(new FileReader(new File(fileName+".nrt")));
       String line = reader.readLine();
       while(line != null){
-        TomMessage message = (TomMessage)((Class.forName("jtom.TomMessage")).getField(line)).get(null);
-        mess_attempted.add(message);
+        // On specifie sur chaque ligne les erreurs attendues 
+        // par le nom de la classe de messages (TomMessage,PluginPlatformMessage,...) suivi de " : ",
+        // puis par le nom du champs correspondant au message attendu.
+        String className = line.substring(0,line.indexOf(" : "));
+        String fieldName = line.substring(line.indexOf(" : ")+3);
+        mess_attempted.add( (Class.forName(className)).getField(fieldName).get(null));
         line  = reader.readLine();
       }
     }catch(java.io.IOException e)
       {publish(new LogRecord(Level.SEVERE, "No Non Regression Test file : <file-name>+\".nrt\""));}
-    catch(java.lang.NoSuchFieldException e)
-      {publish(new LogRecord(Level.SEVERE, e.getMessage()));}
-    catch(java.lang.ClassNotFoundException e)
-      {publish(new LogRecord(Level.SEVERE, e.getMessage()));}
-    catch(java.lang.IllegalAccessException e)
-      {publish(new LogRecord(Level.SEVERE, e.getMessage()));}
+     catch(java.lang.NoSuchFieldException e)
+       {publish(new LogRecord(Level.SEVERE, e.getMessage()));}
+     catch(java.lang.ClassNotFoundException e)
+       {publish(new LogRecord(Level.SEVERE, e.getMessage()));}
+     catch(java.lang.IllegalAccessException e)
+       {publish(new LogRecord(Level.SEVERE, e.getMessage()));}
+
   }
 
   public boolean hasLog(Level level) {
@@ -144,14 +148,12 @@ public class TestHandler extends Handler {
   
   public void nonRegressionTest(PlatformLogRecord record){
     //The nonRegressionTest method verify that all structured log messages (of type PlatformLogRecord) were attempted in the same order and with the same parameters. The attempted messages are contained in a file with suffix .nrt. Currently, only the type of messages are compared. 
-
     PlatformMessage message = record.getPlatformMessage();
-    
     //TODO : comparing this elements
     int line = record.getLine();  
     String filePath = record.getFilePath();
     Object[] parameters = record.getParameters();
-
+    System.out.println("Message attempted : "+mess_attempted.get(index));
     if( ! message.equals(mess_attempted.get(index))){
       System.out.println("Message obtained : "+record.getMessage()+"\n->Non regression test failed");
       publish(new LogRecord(Level.INFO, "The Non Regression Test has failed"));

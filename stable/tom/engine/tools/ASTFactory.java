@@ -111,6 +111,8 @@ public class ASTFactory {
         term = tsf().makeOption_TomNameToOption((TomName)elt);
       } else if(elt instanceof Declaration) {
         term = tsf().makeOption_DeclarationToOption((Declaration)elt);
+      } else if(elt instanceof TomTerm) {
+        term = tsf().makeOption_TomTermToOption((TomTerm)elt);
       } else {
         term = (Option)elt;
       }
@@ -216,8 +218,10 @@ public class ASTFactory {
 
   public TomSymbol makeSymbol(String symbolName, String resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
                               List optionList) {
+    TomType type;
     TomName name = tsf().makeTomName_Name(symbolName);
-    TomType typesToType =  tsf().makeTomType_TypesToType(typeList, tsf().makeTomType_TomTypeAlone(resultType));
+    type = tsf().makeTomType_TomTypeAlone(resultType);
+    TomType typesToType =  tsf().makeTomType_TypesToType(typeList,type); 
     OptionList options = makeOptionList(optionList);
     return tsf().makeTomSymbol_Symbol(name,typesToType,pairNameDeclList,options);
   }

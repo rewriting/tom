@@ -318,9 +318,9 @@ public class PILFactory extends TomBase {
             CompiledMatch[automataInst=_]  -> {
               store.add(subject);
             }
-            _ -> { return true; }
           }
-        } else { return true; }
+        } 
+				return true; 
       }
     };
   

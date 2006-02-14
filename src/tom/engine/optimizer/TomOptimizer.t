@@ -222,12 +222,9 @@ public class TomOptimizer extends TomGenericPlugin {
                   return false;
                 }
               }
-              
-              _ -> { return true; }
             }
-          } else {
-            return true;
-          }
+          } 
+					return true;
         } // end apply
       }; // end new
     
@@ -256,12 +253,9 @@ public class TomOptimizer extends TomGenericPlugin {
                   return false;
                 }
               }
-
-              _ -> { return true; }
             }
-          } else {
-            return true;
-          }
+          } 
+					return true;
         } // end apply
       }; // end new
     
@@ -300,12 +294,9 @@ public class TomOptimizer extends TomGenericPlugin {
                 collection.add(`name);
                 return false;
               }
-
-              _ -> { return true; }
             }
-          } else {
-            return true;
           }
+					return true;
         } // end apply
       }; // end new
     
@@ -455,7 +446,7 @@ public class TomOptimizer extends TomGenericPlugin {
           }
             
 
-          Let((UnamedVariable|UnamedVariableStar)[],exp,body) -> {
+          Let((UnamedVariable|UnamedVariableStar)[],_,body) -> {
             return `body; 
           } 
 
@@ -691,10 +682,10 @@ public class TomOptimizer extends TomGenericPlugin {
     public tom.engine.adt.tomsignature.types.Expression visit_Expression(tom.engine.adt.tomsignature.types.Expression subject) 
       throws jjtraveler.VisitFailure {
       %match(Expression subject) {
-        Or(t1,TrueTL()) -> {
+        Or(_,TrueTL()) -> {
           return `TrueTL();
         }
-        Or(TrueTL(),t1) -> {
+        Or(TrueTL(),_) -> {
           return `TrueTL();
         }
         Or(t1,FalseTL()) -> {
@@ -709,10 +700,10 @@ public class TomOptimizer extends TomGenericPlugin {
         And(t1,TrueTL()) -> {
           return `t1;
         }
-        And(FalseTL(),t1) -> {
+        And(FalseTL(),_) -> {
           return `FalseTL();
         }
-        And(TrueTL(),t1) -> {
+        And(TrueTL(),_) -> {
           return `FalseTL();
         }
         ref@EqualTerm(_,kid1,kid2) -> {

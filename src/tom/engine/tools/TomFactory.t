@@ -140,13 +140,10 @@ public class TomFactory extends TomBase {
         }
         return list;
       }
-
-      _ -> {
-          //System.out.println("metaEncodeExplicitTermList: strange case: " + term);
-        list.add(term);
-        return list;
-      }
     }
+		//System.out.println("metaEncodeExplicitTermList: strange case: " + term);
+		list.add(term);
+		return list;
   }
 
   public TomTerm buildList(TomName name,TomList args) {

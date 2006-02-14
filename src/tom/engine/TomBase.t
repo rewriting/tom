@@ -143,32 +143,26 @@ public class TomBase {
       TomTypeAlone(s) -> {return `s;}
       Type(ASTTomType(s),_) -> {return `s;}
       EmptyType() -> {return null;}
-      _ -> {
-        System.out.println("getTomType error on term: " + type);
-        throw new TomRuntimeException("getTomType error on term: " + type);
-      }
     }
+		System.out.println("getTomType error on term: " + type);
+		throw new TomRuntimeException("getTomType error on term: " + type);
   }
 
   protected String getTLType(TomType type) {
     %match(TomType type) {
       TLType[]  -> { return getTLCode(type); }
       Type[tlType=tlType] -> { return getTLCode(`tlType); }
-      _ -> {
-        throw new TomRuntimeException("getTLType error on term: " + type);
-      }
     }
+		throw new TomRuntimeException("getTLType error on term: " + type);
   }
 
   protected String getTLCode(TomType type) {
     %match(TomType type) {
       TLType(TL[code=tlType])  -> { return `tlType; }
       TLType(ITL[code=tlType]) -> { return `tlType; }
-      _ -> {
-        System.out.println("getTLCode error on term: " + type);
-        throw new TomRuntimeException("getTLCode error on term: " + type);
-      }
     }
+		System.out.println("getTLCode error on term: " + type);
+		throw new TomRuntimeException("getTLCode error on term: " + type);
   }
 
   protected TomType getSymbolCodomain(TomSymbol symbol) {
@@ -205,8 +199,8 @@ public class TomBase {
       NameNumber(PositionName(numberList)) -> { return numberListToIdentifier(numberList); }
       RuleVar() -> { return "_rulevar"; }
       Number(i) -> { return "_" + `i; }
-      _ -> { return subject.toString(); }
     }
+		return subject.toString(); 
   }
 
   protected String numberListToIdentifier(TomNumberList l) {
@@ -243,12 +237,9 @@ public class TomBase {
         }
         return false;
       }
-
-      _ -> {
-        System.out.println("isListOperator: strange case: '" + subject + "'");
-        throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
-      }
     }
+		System.out.println("isListOperator: strange case: '" + subject + "'");
+		throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
   }
 
   protected boolean isArrayOperator(TomSymbol subject) {
@@ -269,12 +260,9 @@ public class TomBase {
         }
         return false;
       }
-
-      _ -> {
-        System.out.println("isArrayOperator: strange case: '" + subject + "'");
-        throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
-      }
     }
+		System.out.println("isArrayOperator: strange case: '" + subject + "'");
+		throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
   }
 
   protected TomList tomListMap(TomList subject, Replace1 replace) {
@@ -341,9 +329,8 @@ public class TomBase {
                 }
                 return false;
               }
-
-              _ -> { return true; }
             }
+						return true;
           } else {
             return true;
           }
@@ -587,12 +574,9 @@ public class TomBase {
       TargetLanguageToTomTerm[tl=(TL|ITL)[]] -> { return `EmptyType(); }
 
       FunctionCall[] -> { return `EmptyType(); }
-
-      _ -> {
-        System.out.println("getTermType error on term: " + t);
-        throw new TomRuntimeException("getTermType error on term: " + t);
-      }
     }
+		System.out.println("getTermType error on term: " + t);
+		throw new TomRuntimeException("getTermType error on term: " + t);
   }
   
   protected TomType getTermType(Expression t, SymbolTable symbolTable){
@@ -603,12 +587,9 @@ public class TomBase {
       GetTail[variable=term] -> { return getTermType(`term, symbolTable); }
       GetSliceList[variableBeginAST=term] -> { return getTermType(`term, symbolTable); }
       GetSliceArray[subjectListName=term] -> { return getTermType(`term, symbolTable); }
-        
-      _ -> {
-        System.out.println("getTermType error on term: " + t);
-        throw new TomRuntimeException("getTermType error on term: " + t);
-      }
     }
+		System.out.println("getTermType error on term: " + t);
+		throw new TomRuntimeException("getTermType error on term: " + t);
   }
 
   protected SlotList tomListToSlotList(TomList tomList) {

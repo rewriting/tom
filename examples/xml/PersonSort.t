@@ -54,25 +54,11 @@ public class PersonSort {
     TNode result = sort(term.getDocElem());
     xtools.printXMLFromATerm(result);
 
-    System.out.println();
-    searchJu(term.getDocElem());
-
-    //System.out.println("\nTesting with backquote");
-    //TNode newNode = `xml(<Persons><Person><FirstName>#TEXT("Juan")</FirstName></Person></Persons>); 
-    //searchJu(newNode);
-    //xtools.printXMLFromATerm(newNode);
     //System.out.println();
+    //searchJu(term.getDocElem());
 
-    //String nage = "105";
-    //TNode attr = `xml(<Persons><Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person></Persons>);
-    //xtools.printXMLFromATerm(attr);
-    //System.out.println();
-
-    //TNodeList tnlist = `concTNode(<Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person>,<Person age=nage><FirstName>#TEXT("Juan")</FirstName></Person>);
-    //xtools.printXMLFromATerm(tnlist);
-    //System.out.println();
   }
-   
+  
   private TNode sort(TNode subject) {
     %match(TNode subject) {
      <Persons>(X1*,p1,X2*,p2,X3*)</Persons> -> {
@@ -90,11 +76,7 @@ public class PersonSort {
       <Person Age=a2><FirstName>#TEXT(n2)</FirstName></Person>
       -> { 
           int res = `a1.compareTo(`a2); 
-          if(res==0) {
-              return `n1.compareTo(`n2);
-          } else {
-            return res;
-          }
+					return res;
       }
     }
     return 0;

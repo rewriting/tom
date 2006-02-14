@@ -31,7 +31,7 @@
   make(t0) { tom.library.adt.set.SetFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeJGTreeSet_Singleton(t0)}
 }
 
-%op JGTreeSet emptySet {
+%op JGTreeSet emptySet() {
   is_fsym(t) { (t!= null) && t.isEmptySet()}
   make() { tom.library.adt.set.SetFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeJGTreeSet_EmptySet()}
 }

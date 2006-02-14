@@ -106,7 +106,7 @@ public class TomKernelExpander extends TomBase {
           }
         } else if(subject instanceof TomRule) {
           %match(TomRule subject) {
-            RewriteRule(Term(lhs@RecordAppl[option=optionList,nameList=(Name(tomName))]),
+            RewriteRule(Term(lhs@RecordAppl[nameList=(Name(tomName))]),
                         Term(rhs),
                         condList,
                         option)  -> { 
@@ -145,15 +145,15 @@ public class TomKernelExpander extends TomBase {
             }
           } //end match
         } else if(subject instanceof Instruction) {
-          %match(TomTerm contextSubject, Instruction subject) {
-            context, MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName))],
-                                       rhs=rhs@Variable[astName=Name(rhsName), astType=type]] -> {
+          %match(Instruction subject) {
+             MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(_))],
+                                       rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
               // rhs is a variable
               TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
               return `MatchingCondition(newLhs,rhs);
             }
 
-            context, MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName),_*)],
+            MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName),_*)],
                                        rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
                TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
                TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
@@ -174,24 +174,24 @@ public class TomKernelExpander extends TomBase {
                return `MatchingCondition(newLhs,newRhs);
             }
 
-            context, EqualityCondition[lhs=lhs@Variable[astName=Name(lhsName), astType=type],
-                                       rhs=rhs@Variable[astName=Name(rhsName), astType=type]] -> {
+            EqualityCondition[lhs=lhs@Variable[astName=Name(_), astType=type],
+                                       rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
               return `TypedEqualityCondition(type,lhs,rhs);
             }
 
-            context, EqualityCondition[lhs=lhs@Variable[astName=Name(lhsName), astType=type],
-                                       rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
+            EqualityCondition[lhs=lhs@Variable[astName=Name(_), astType=type],
+                                       rhs=rhs@RecordAppl[nameList=(Name(_))]] -> {
               TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
               return `TypedEqualityCondition(type,lhs,newRhs);
             }
 
-            context, EqualityCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName))],
-                                       rhs=rhs@Variable[astName=Name(rhsName), astType=type]] -> {
+            EqualityCondition[lhs=lhs@RecordAppl[nameList=(Name(_))],
+                                       rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
               TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
               return `TypedEqualityCondition(type,newLhs,rhs);
             }
             
-            context, EqualityCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName))],
+            EqualityCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName))],
                                             rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
                TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
                TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
@@ -217,9 +217,9 @@ public class TomKernelExpander extends TomBase {
                return `TypedEqualityCondition(type,newLhs,newRhs);
              }
 
-            context, Match(tomSubjectList,patternInstructionList, option) -> {
+            Match(tomSubjectList,patternInstructionList, option) -> {
                //System.out.println("tomSubjectList = " + tomSubjectList);
-               TomTerm newSubjectList = expandVariable(`context,`tomSubjectList);
+               TomTerm newSubjectList = expandVariable(contextSubject,`tomSubjectList);
                //System.out.println("newSubjectList = " + newSubjectList);
                PatternInstructionList newPatternInstructionList = expandVariablePatternInstructionList(newSubjectList,`patternInstructionList);
                return `Match(newSubjectList,newPatternInstructionList, option);
@@ -257,7 +257,7 @@ public class TomKernelExpander extends TomBase {
           } // end match
         } else if(subject instanceof TomTerm) {
           %match(TomTerm contextSubject, TomTerm subject) {
-            context, RecordAppl[option=option,nameList=nameList@(Name(tomName),_*),slots=slotList,constraints=constraints] -> {
+            _, RecordAppl[option=option,nameList=nameList@(Name(tomName),_*),slots=slotList,constraints=constraints] -> {
                TomSymbol tomSymbol = null;
                if(`tomName.equals("")) {
                  if(contextSubject.hasAstType()) {
@@ -323,7 +323,7 @@ public class TomKernelExpander extends TomBase {
                return `Variable(option,astName,type,expandVariableConstraintList(context,constraints));
              }
 
-            context, var@Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType),constraints=constraints] -> {
+            _, Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType),constraints=constraints] -> {
                // create a variable
                TomType localType = getType(`tomType);
                if(localType != null) {
@@ -333,26 +333,26 @@ public class TomKernelExpander extends TomBase {
                }
              }
           
-            TomTypeToTomTerm(type@Type[]) ,p@Placeholder[option=option,constraints=constraints] -> {
+            TomTypeToTomTerm(type@Type[]) ,Placeholder[option=option,constraints=constraints] -> {
                ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
                // create an unamed variable
                return `UnamedVariable(option,type,newConstraints);
              } 
 
-            Variable[option=option1,astName=name1,astType=type1] , p@Placeholder[option=option,constraints=constraints] -> {
+            Variable[astType=type1] , Placeholder[option=option,constraints=constraints] -> {
                ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type1),`constraints);
                // create an unamed variable
                return `UnamedVariable(option,type1,newConstraints);
              } 
 
-            context, TLVar(strName,TomTypeAlone(tomType)) -> {
+            _, TLVar(strName,TomTypeAlone(tomType)) -> {
                // create a variable: its type is ensured by checker
                TomType localType = getType(`tomType);
                OptionList option = getAstFactory().makeOption();
                return `Variable(option,Name(strName),localType,concConstraint());
              }
               
-            context, TLVar(strName,localType@Type[]) -> {
+            _, TLVar(strName,localType@Type[]) -> {
                // create a variable: its type is ensured by checker
                OptionList option = getAstFactory().makeOption();
                return `Variable(option,Name(strName),localType,concConstraint());
@@ -398,9 +398,9 @@ public class TomKernelExpander extends TomBase {
          throw new TomRuntimeException("getTypeFromVariableList. Stange case '" + name + "' not found");
        }
 
-      varName, manyTomList(Variable[astName=varName,astType=type@Type[]],tail) -> { return `type; }
-      varName, manyTomList(VariableStar[astName=varName,astType=type@Type[]],tail) -> { return `type; }
-      _, manyTomList(t,tail) -> { return getTypeFromVariableList(name,`tail); }
+      varName, manyTomList(Variable[astName=varName,astType=type@Type[]],_) -> { return `type; }
+      varName, manyTomList(VariableStar[astName=varName,astType=type@Type[]],_) -> { return `type; }
+      _, manyTomList(_,tail) -> { return getTypeFromVariableList(name,`tail); }
       
     }
     return null;
@@ -429,7 +429,7 @@ public class TomKernelExpander extends TomBase {
         return `manySlotList(PairSlotAppl(slotName,expandVariable(emptyTerm(),slotAppl)), expandVariableList(symbol,tail));
       }
 
-      symb@Symbol[typesToType=TypesToType(typeList,codomain), pairNameDeclList=pairNameDeclList], 
+      symb@Symbol[typesToType=TypesToType(typeList,codomain)], 
            manySlotList(PairSlotAppl(slotName,slotAppl),tail) -> {
         // process a list of subterms and a list of types
         if(isListOperator(`symb) || isArrayOperator(`symb)) {
@@ -469,12 +469,9 @@ public class TomKernelExpander extends TomBase {
           return `manySlotList(PairSlotAppl(slotName,expandVariable(TomTypeToTomTerm(getSlotType(symb,slotName)), slotAppl)), expandVariableList(symbol,tail));
         }
       }
-
-      _, _ -> {
-        System.out.println("expandVariableList: strange case: '" + symbol + "'");
-        throw new TomRuntimeException("expandVariableList: strange case: '" + symbol + "'");
-      }
     }
+		System.out.println("expandVariableList: strange case: '" + symbol + "'");
+		throw new TomRuntimeException("expandVariableList: strange case: '" + symbol + "'");
   }
 
   protected Replace2 replace_replaceInstantiatedVariable = new Replace2() { 
