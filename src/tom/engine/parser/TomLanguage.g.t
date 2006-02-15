@@ -381,6 +381,8 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     if (extendsSymbol != null) {
       codomain = extendsSymbol.getTypesToType().getCodomain().getString();
     }
+    //since we want a non-linear parser, codomain should be updated later on, 
+    //or retrieved after parsing (this is tough since we put symbol at parsing)
     else {codomain = "unknown type";}
   }
         LBRACE
