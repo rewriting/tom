@@ -328,7 +328,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 {
     result = null;
     TomTerm extendsTerm = null;
-    String codomain = "";
+    String codomain = null;
     TomSymbol extendsSymbol = null; 
     LinkedList visitList = new LinkedList();
     TomVisitList astVisitList = `emptyTomVisitList();
@@ -381,6 +381,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     if (extendsSymbol != null) {
       codomain = extendsSymbol.getTypesToType().getCodomain().getString();
     }
+    else {codomain = "unknown type";}
   }
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
