@@ -70,7 +70,7 @@ public class Rho {
 	%include { mutraveler.tom }
 	%include { rhoterm/Rhoterm.tom }
 	
-	%op VisitableVisitor Not_abs {
+	%op VisitableVisitor Not_abs() {
 		make() {new Not_abs() }
 	}
 
