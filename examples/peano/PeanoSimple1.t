@@ -59,16 +59,6 @@ public class PeanoSimple1 {
     get_slot(p,t) { (((ATermAppl)t).getArgument(0)) }
   }
 
-  %op term zoro(p:term) {
-    is_fsym(t) { (((ATermAppl)t).getAFun())== factory.makeAFun("zoro" , 1, false) }
-    get_slot(p,t) { (((ATermAppl)t).getArgument(0)) }
-    make(p) {zoro(p)}
-  }
-
-  public ATerm zoro(ATerm t) {
-    return suc(t);
-  }
-
   public ATerm suc(ATerm t) {
     return factory.makeAppl(fsuc,t);
   }
@@ -82,10 +72,6 @@ public class PeanoSimple1 {
   }
 
   public void run(int n) {
-    ATerm z = `zoro(tzero);
-    %match(term z) {
-      zoro(tadam) -> { System.out.println(`tadam); }
-    }
 
     ATerm N = tzero;
     for(int i=0 ; i<n ; i++) {
