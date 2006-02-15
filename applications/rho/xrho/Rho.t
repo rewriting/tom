@@ -299,6 +299,8 @@ public class Rho {
 			stk() -> {return "stk";}
 			_ -> {return "";}
 		}
+    //default return statement is mandatory for Java, but obviously useless
+    return "";
 	}
 	public String stringInfix(ListSubst substs){
 		%match(ListSubst substs){
@@ -306,6 +308,7 @@ public class Rho {
 			andS(eq(term1,term2),X*) -> {return stringInfix(`term1)+"="+stringInfix(`term2);}
 			_ -> {return "";}
 		}
+    return "";
 	}
 
 	public class Not_abs extends RhotermVisitableFwd {
@@ -325,6 +328,7 @@ public class Rho {
 			andC(matchKO(),X*) -> {return "KO";}
 			_ -> {return "";}
 		}
+    return "";
 	}	
 	
 	protected ListConstraint headIsConstant (Constraint l){
@@ -346,7 +350,7 @@ public class Rho {
 
 	     _ -> {return `andC(l);}
 		}
-		
+    return `andC(l);
 	}
 	protected ListConstraint computeMatch(ListConstraint l){
 		%match(ListConstraint l){
@@ -356,19 +360,23 @@ public class Rho {
 				return `andC(result*,match(B1,B2));}
 			_ -> {return `l;}
 		}
+    return `l;
+
 	}
 	protected ListConstraint mapC(ListConstraint list, ListSubst phi, ListConstraint result){
 		%match(ListConstraint list) {
  	    (match(P,M),_*) ->{
 				return `mapC(list.getTail(),phi,andC(match(P,appS(phi,M)),result*));}
  	    _ -> {return `result;}
-		}	
-	}    
+		}
+    return `result;
+	} 
 	protected ListSubst mapS(ListSubst list, ListSubst phi, ListSubst result){
 		%match(ListSubst list) {
 			(eq(X,M),_*) ->{
 				return `mapS(list.getTail(),phi,andS(eq(X,appS(phi,M)),result*));}
  	    _ -> {return `result;}
-		}	
-	}
+    }	 
+    return `result;
+  }
 }
