@@ -52,129 +52,130 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
                                   String declName,
                                   String suffix,
                                   String args[],
-                                  TargetLanguage tlCode) throws IOException;
+                                  TargetLanguage tlCode,
+                                  String moduleName) throws IOException;
   
   protected abstract void genDeclMake(String funName, TomType returnType, 
-                                      TomList argList, Instruction instr) throws IOException;
+                                      TomList argList, Instruction instr, String moduleName) throws IOException;
   
-  protected abstract void genDeclList(String name) throws IOException;
+  protected abstract void genDeclList(String name, String moduleName) throws IOException;
 
-  protected abstract void genDeclArray(String name) throws IOException;
+  protected abstract void genDeclArray(String name, String moduleName) throws IOException;
 
   //------------------------------------------------------------
  
-  protected abstract void buildRef(int deep, TomTerm term) throws IOException;
-  protected abstract void buildInstructionSequence(int deep, InstructionList instructionList) throws IOException;
+  protected abstract void buildRef(int deep, TomTerm term, String moduleName) throws IOException;
+  protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
-  protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
-  protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
+  protected abstract void buildFunctionCall(int deep, String name, TomList argList, String moduleName)  throws IOException;
+  protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList, String moduleName) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
-  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException; 
-  protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
-  protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
-  protected abstract void buildExpGetElement(int deep, TomName opNameAST,TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
+  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException; 
+  protected abstract void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException;
+  protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException;
+  protected abstract void buildExpGetElement(int deep, TomName opNameAST,TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException;
 
-  protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
+  protected abstract void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException ;
   protected abstract void buildExpBottom(int deep) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
-  protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException ;
-  protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body) throws IOException ;
-  protected abstract void buildExpCast(int deep, TomType type, Expression exp) throws IOException;
-  protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
-  protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
-  protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException ;
-  protected abstract void buildUnamedBlock(int deep, InstructionList instList) throws IOException ;
-  protected abstract void buildIf(int deep, Expression exp, Instruction succes) throws IOException ;
-  protected abstract void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
-  protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
-  protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException;
-  protected abstract void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction) throws IOException ;
+  protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
+  protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildExpCast(int deep, TomType type, Expression exp, String moduleName) throws IOException;
+  protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
+  protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException ;
+  protected abstract void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException ;
+  protected abstract void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException ;
+  protected abstract void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException ;
+  protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException;
+  protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException;
+  protected abstract void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction, String moduleName) throws IOException ;
 
   /*
    * Implementation of functions whose definition is
    * independant of the target language
    */
  
-  protected void buildTerm(int deep, String name, TomList argList) throws IOException {
-    buildFunctionCall(deep, "tom_make_"+name, argList);
+  protected void buildTerm(int deep, String name, TomList argList, String moduleName) throws IOException {
+    buildFunctionCall(deep, "tom_make_"+name, argList, moduleName);
   }
 
-  protected void buildCheckStamp(int deep, TomType type, TomTerm variable) throws IOException {
+  protected void buildCheckStamp(int deep, TomType type, TomTerm variable, String moduleName) throws IOException {
     if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
       output.write("tom_check_stamp_" + getTomType(type) + "(");
-      generate(deep,variable);
+      generate(deep,variable,moduleName);
       output.write(");");
     }
   }
 
-  protected void buildSymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+  protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     // inspect the optionList
-    generateOptionList(deep, optionList);
+    generateOptionList(deep, optionList, moduleName);
     // inspect the slotlist
-    generatePairNameDeclList(deep, pairNameDeclList);
+    generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
-  protected void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException {
-    generateExpression(deep,exp1);
+  protected void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+    generateExpression(deep,exp1,moduleName);
     output.write(" && ");
-    generateExpression(deep,exp2);
+    generateExpression(deep,exp2,moduleName);
   }
-  protected void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException {
-    generateExpression(deep,exp1);
+  protected void buildExpOr(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+    generateExpression(deep,exp1,moduleName);
     output.write(" || ");
-    generateExpression(deep,exp2);
+    generateExpression(deep,exp2,moduleName);
   }
 
-  protected void buildExpGreaterThan(int deep, Expression exp1, Expression exp2) throws IOException {
-    generateExpression(deep,exp1);
+  protected void buildExpGreaterThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+    generateExpression(deep,exp1,moduleName);
     output.write(" > ");
-    generateExpression(deep,exp2);
+    generateExpression(deep,exp2,moduleName);
   }
 
-  protected void buildExpIsEmptyList(int deep, TomName opNameAST, TomType type, TomTerm expList) throws IOException {
+  protected void buildExpIsEmptyList(int deep, TomName opNameAST, TomType type, TomTerm expList, String moduleName) throws IOException {
     %match(TomName opNameAST) {
       EmptyName() -> { output.write("tom_is_empty_" + getTomType(type) + "("); }
       Name(opName) -> { output.write("tom_is_empty_" + `opName + "_" + getTomType(type) + "("); }
     }
-    generate(deep,expList);
+    generate(deep,expList,moduleName);
     output.write(")");
   }
 
-  protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException {
-    generate(deep,expIndex);
+  protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException {
+    generate(deep,expIndex,moduleName);
     output.write(" >= ");
     %match(TomName opNameAST) {
       EmptyName() -> { output.write("tom_get_size_" + getTomType(type) + "("); }
       Name(opName) -> { output.write("tom_get_size_" + `opName + "_" + getTomType(type) + "("); }
     }
-    generate(deep,expArray);
+    generate(deep,expArray,moduleName);
     output.write(")");
   }
 
-  protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2) throws IOException {
+  protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
     output.write("tom_terms_equal_" + getTomType(type) + "(");
-    generate(deep,exp1);
+    generate(deep,exp1,moduleName);
     output.write(", ");
-    generate(deep,exp2);
+    generate(deep,exp2,moduleName);
     output.write(")");
   }
 
-  protected void buildExpIsFsym(int deep, String opname, TomTerm exp) throws IOException {
+  protected void buildExpIsFsym(int deep, String opname, TomTerm exp, String moduleName) throws IOException {
     String s = (String)isFsymMap.get(opname);
     if(s == null) {
       s = "tom_is_fun_sym_" + opname + "(";
       isFsymMap.put(opname,s);
     } 
     output.write(s);
-    generate(deep,exp);
+    generate(deep,exp,moduleName);
     output.write(")");
   }
 
-  protected void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var) throws IOException {
+  protected void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var, String moduleName) throws IOException {
     //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
     //generate(deep,var);
     //output.write(")");
@@ -183,58 +184,58 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.writeUnderscore();
     output.write(slotName);
     output.writeOpenBrace();
-    generate(deep,var);
+    generate(deep,var,moduleName);
     output.writeCloseBrace();
   }
 
-  protected void buildExpGetTail(int deep, TomName opNameAST, TomType type, TomTerm var) throws IOException {
+  protected void buildExpGetTail(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
     %match(TomName opNameAST) {
       EmptyName() -> { output.write("tom_get_tail_" + getTomType(type) + "("); }
       Name(opName) -> { output.write("tom_get_tail_" + `opName + "_" + getTomType(type) + "("); }
     }
-    generate(deep,var); 
+    generate(deep,var,moduleName); 
     output.write(")");
   }
 
-  protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var) throws IOException {
+  protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
     %match(TomName opNameAST) {
       EmptyName() -> { output.write("tom_get_size_" + getTomType(type) + "("); }
       Name(opName) -> { output.write("tom_get_size_" + `opName + "_" + getTomType(type) + "("); }
     }
-    generate(deep,var);
+    generate(deep,var,moduleName);
     output.write(")");
   }
 
-  protected void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd) throws IOException {
+  protected void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd, String moduleName) throws IOException {
     output.write("tom_get_slice_" + name + "(");
-    generate(deep,varBegin);
+    generate(deep,varBegin,moduleName);
     output.write(",");
-    generate(deep,varEnd);
+    generate(deep,varEnd,moduleName);
     output.write(")");
   }
 
-  protected void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd) throws IOException {
+  protected void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd, String moduleName) throws IOException {
     output.write("tom_get_slice_" + name + "(");
-    generate(deep,varArray);
+    generate(deep,varArray,moduleName);
     output.write(",");
-    generate(deep,varBegin);
+    generate(deep,varBegin,moduleName);
     output.write(",");
-    generate(deep,expEnd);
+    generate(deep,expEnd,moduleName);
     output.write(")");
   }
 
-  protected void buildAddOne(int deep, TomTerm var) throws IOException {
-    generate(deep,var);
+  protected void buildAddOne(int deep, TomTerm var, String moduleName) throws IOException {
+    generate(deep,var,moduleName);
     output.write(" + 1");
   }
 
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
-                                            TomType tlType, TargetLanguage tlCode) throws IOException {
+                                            TomType tlType, TargetLanguage tlCode, String moduleName) throws IOException {
     String args[];
     if(lazyMode) {
       TomType argType = getUniversalType();
-      if(getSymbolTable().isBuiltinType(type)) {
-        argType = getSymbolTable().getBuiltinType(type);
+      if(getSymbolTable(moduleName).isBuiltinType(type)) {
+        argType = getSymbolTable(moduleName).getBuiltinType(type);
       }
       args = new String[] { getTLType(argType), name };
     } else {
@@ -242,15 +243,15 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     
     TomType returnType = getUniversalType();
-    if(getSymbolTable().isBuiltinType(type)) {
-      returnType = getSymbolTable().getBuiltinType(type);
+    if(getSymbolTable(moduleName).isBuiltinType(type)) {
+      returnType = getSymbolTable(moduleName).getBuiltinType(type);
     }
-    genDecl(getTLType(returnType),"tom_get_fun_sym", type,args,tlCode);
+    genDecl(getTLType(returnType),"tom_get_fun_sym", type,args,tlCode, moduleName);
   }
 
   protected void buildCheckStampDecl(int deep, String type, String name,
-                                     TomType tlType, Instruction instr) throws IOException {
-    TomType returnType = getSymbolTable().getVoidType();
+                                     TomType tlType, Instruction instr, String moduleName) throws IOException {
+    TomType returnType = getSymbolTable(moduleName).getVoidType();
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -258,11 +259,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       argType = getTLType(getUniversalType());
     }
     
-    genDeclInstr(getTLType(returnType),"tom_check_stamp", type, new String[] { argType, name }, instr,deep);
+    genDeclInstr(getTLType(returnType),"tom_check_stamp", type, new String[] { argType, name }, instr, deep, moduleName);
   }
 
   protected void buildSetStampDecl(int deep, String type, String name,
-                                   TomType tlType, Instruction instr) throws IOException {
+                                   TomType tlType, Instruction instr, String moduleName) throws IOException {
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -274,11 +275,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     genDeclInstr(returnType,
             "tom_set_stamp", type,
             new String[] { argType, name },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
   protected void buildGetImplementationDecl(int deep, String type, String name,
-                                            TomType tlType, Instruction instr) throws IOException {
+                                            TomType tlType, Instruction instr, String moduleName) throws IOException {
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -290,15 +291,15 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     genDeclInstr(returnType,
             "tom_get_implementation", type,
             new String[] { argType, name },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
   protected void buildIsFsymDecl(int deep, String tomName, String name1,
-                                 TomType tlType, Instruction instr) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+                                 TomType tlType, Instruction instr, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     
-    TomType returnType = getSymbolTable().getBooleanType();
+    TomType returnType = getSymbolTable(moduleName).getBooleanType();
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -309,12 +310,12 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     genDeclInstr(getTLType(returnType),
             "tom_is_fun_sym", opname,
             new String[] { argType, name1 },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
   protected void buildGetSlotDecl(int deep, String tomName, String name1,
-                                  TomType tlType, Instruction instr, TomName slotName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+                                  TomType tlType, Instruction instr, TomName slotName, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
     
@@ -334,48 +335,48 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     genDeclInstr(getTLType(returnType),
             "tom_get_slot", opname  + "_" + slotName.getString(),
             new String[] { argType, name1 },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
-  protected void  buildCompareFunctionSymbolDecl(int deep, String name1,
-                                                 String name2, String type1, String type2, TargetLanguage tlCode) throws IOException {
+  protected void  buildCompareFunctionSymbolDecl(int deep, String name1, String name2,
+                                                 String type1, String type2, TargetLanguage tlCode, String moduleName) throws IOException {
     TomType argType1 = getUniversalType();
-    if(getSymbolTable().isBuiltinType(type1)) {
-      argType1 = getSymbolTable().getBuiltinType(type1);
+    if(getSymbolTable(moduleName).isBuiltinType(type1)) {
+      argType1 = getSymbolTable(moduleName).getBuiltinType(type1);
     }
     TomType argType2 = getUniversalType();
-    if(getSymbolTable().isBuiltinType(type2)) {
-      argType2 = getSymbolTable().getBuiltinType(type2);
+    if(getSymbolTable(moduleName).isBuiltinType(type2)) {
+      argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
     } 
     
-    genDecl(getTLType(getSymbolTable().getBooleanType()), "tom_cmp_fun_sym", type1,
+    genDecl(getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_cmp_fun_sym", type1,
             new String[] {
               getTLType(argType1), name1,
               getTLType(argType2), name2
             },
-            tlCode);
+            tlCode, moduleName);
   }
 
   protected void buildTermsEqualDecl(int deep, String name1, String name2,
-                                     String type1, String type2, Instruction instr) throws IOException {
+                                     String type1, String type2, Instruction instr, String moduleName) throws IOException {
     TomType argType1 = getUniversalType();
-    if(getSymbolTable().isBuiltinType(type1)) {
-      argType1 = getSymbolTable().getBuiltinType(type1);
+    if(getSymbolTable(moduleName).isBuiltinType(type1)) {
+      argType1 = getSymbolTable(moduleName).getBuiltinType(type1);
     } 
     TomType argType2 = getUniversalType();
-    if(getSymbolTable().isBuiltinType(type2)) {
-      argType2 = getSymbolTable().getBuiltinType(type2);
+    if(getSymbolTable(moduleName).isBuiltinType(type2)) {
+      argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
     } 
     
-    genDeclInstr(getTLType(getSymbolTable().getBooleanType()), "tom_terms_equal", type1,
+    genDeclInstr(getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_terms_equal", type1,
             new String[] {
               getTLType(argType1), name1,
               getTLType(argType2), name2
             },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
-  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Instruction instr) 
+  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Instruction instr, String moduleName) 
     throws IOException {
     String returnType = null;
     String argType = null;
@@ -404,10 +405,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     }
     genDeclInstr(returnType, functionName, suffix,
             new String[] { argType, varName },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
-  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Instruction instr) 
+  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Instruction instr, String moduleName) 
     throws IOException {
     String returnType = null;
     String argType = null;
@@ -437,11 +438,11 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
     genDeclInstr(returnType, functionName, type,
             new String[] { argType, varName },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
   protected void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
-                                  TomType tlType, Instruction instr) throws IOException {
+                                  TomType tlType, Instruction instr, String moduleName) throws IOException {
     String argType = null;
     String functionName = "tom_is_empty";
 
@@ -463,14 +464,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
     }
 
-    genDeclInstr(getTLType(getSymbolTable().getBooleanType()),
+    genDeclInstr(getTLType(getSymbolTable(moduleName).getBooleanType()),
             functionName, type,
             new String[] { argType, varName },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
   protected void buildGetElementDecl(int deep, TomName opNameAST, String name1, String name2,
-                                     String type1, TomType domain, Instruction instr) throws IOException {
+                                     String type1, TomType domain, Instruction instr, String moduleName) throws IOException {
     String returnType = null;
     String argType = null;
     String functionName = "tom_get_element";
@@ -501,13 +502,13 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             functionName, type1,
             new String[] {
               argType, name1,
-              getTLType(getSymbolTable().getIntType()), name2
+              getTLType(getSymbolTable(moduleName).getIntType()), name2
             },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
   protected void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
-                                  TomType domain, Instruction instr) throws IOException {
+                                  TomType domain, Instruction instr, String moduleName) throws IOException {
     String argType = null;
     String functionName = "tom_get_size";
 
@@ -530,10 +531,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       }
     }
     
-    genDeclInstr(getTLType(getSymbolTable().getIntType()),
+    genDeclInstr(getTLType(getSymbolTable(moduleName).getIntType()),
             functionName, type,
             new String[] { argType, name1 },
-            instr,deep);
+            instr,deep,moduleName);
   }
 
  

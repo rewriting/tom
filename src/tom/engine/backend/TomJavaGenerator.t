@@ -62,14 +62,14 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.write(" false ");
   }
    
-  protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
+  protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
     output.writeln(blockName + ": {");
-    generateInstructionList(deep+1,instList);
+    generateInstructionList(deep+1,instList,moduleName);
     output.writeln("}");
   }
 
-  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Declaration declaration) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Declaration declaration, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
 
     OptionList options = tomSymbol.getOption();
     Option op = options.getHead();
@@ -133,11 +133,11 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
     output.write(deep,"}");
 
-    generateDeclaration(deep,`declaration);
+    generateDeclaration(deep,`declaration,moduleName);
     output.write(deep,"}");
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     output.write(deep, modifier + " " + getTomType(`codomain) + " " + tomName + "(");
     TomTerm localVar;
     while(!varList.isEmpty()) {
@@ -146,12 +146,12 @@ public class TomJavaGenerator extends TomImperativeGenerator {
         %match(TomTerm localVar) {
           v@Variable[astType=type2] -> {
             output.write(deep,getTomType(`type2) + " ");
-            generate(deep,`v);
+            generate(deep,`v,moduleName);
             break matchBlock;
           }
           v@TLVar[astType=type2] -> {
             output.write(deep,getTLType(`type2) + " ");
-            generate(deep,`v);
+            generate(deep,`v,moduleName);
             break matchBlock;
           }
           _ -> {
@@ -171,18 +171,18 @@ public class TomJavaGenerator extends TomImperativeGenerator {
       output.write(deep," throws " + `throwsType.getString());
     }
     output.writeln(" {");
-    generateInstruction(deep,instruction);
+    generateInstruction(deep,instruction,moduleName);
     output.writeln(deep," }");
   }
 	
-	protected void buildCheckInstance(int deep, String typeName, TomType tlType, Expression exp, Instruction instruction) throws IOException {
-    if(getSymbolTable().isBuiltinType(typeName)) {
-			generateInstruction(deep,instruction);
+	protected void buildCheckInstance(int deep, String typeName, TomType tlType, Expression exp, Instruction instruction, String moduleName) throws IOException {
+    if(getSymbolTable(moduleName).isBuiltinType(typeName)) {
+			generateInstruction(deep,instruction,moduleName);
 		} else {
 			output.write(deep,"if("); 
-			generateExpression(deep,exp); 
+			generateExpression(deep,exp,moduleName); 
 			output.writeln(" instanceof " + getTLCode(tlType) + ") {");
-			generateInstruction(deep+1,instruction);
+			generateInstruction(deep+1,instruction,moduleName);
 			output.writeln(deep,"}");
 		}
 	}
