@@ -110,7 +110,8 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
 
     //write constructor initialization
-    output.write(deep,") { super(`" + extendsTerm.getNameList().getHead().getString() + "(");
+//tom_make_ExtendsTerms: corresponds to `ExtendsTerm translated into Java. Beware: it is very bad to use 'tom_make_' as a constant since it could change later on... 
+    output.write(deep,") { super(tom_make_" + extendsTerm.getNameList().getHead().getString() + "(");
 
     //write constructor parameters
     SlotList slots = extendsTerm.getSlots();
