@@ -1,13 +1,13 @@
 \documentclass[11pt]{article}
 \usepackage[latin1]{inputenc}
-%% \usepackage{fullpage}
+\usepackage{fullpage}
 \usepackage{color}
 \usepackage{aeguill}
 \usepackage{comment}
 
 %% \includecomment{versionProf}
 \specialcomment{versionProf}
-    {\begingroup\bf}{\endgroup}
+    {\begingroup\bf\color{red}}{\endgroup}
 
 %% UNCOMMENT IF YOU WANT THE SHORT VERSION
 %% \excludecomment{versionProf}
@@ -21,8 +21,6 @@
 
 \maketitle
 
-Ce TD a pour but de vous familiariser la réécriture equationnelle.
-
 \section{Arithmétique  de Peano}
 
 On considère le système de réécriture permettant de calculer la somme
@@ -31,8 +29,8 @@ d'entiers de Peano:
 \begin{itemize}
 \item[] $x + zero \rightarrow x$
 \item[] $x + suc(y) \rightarrow suc(x + y)$
-\item[] $x * zero \rightarrow zero$
-\item[] $x * suc(y) \rightarrow x + (x*y)$
+%% \item[] $x * zero \rightarrow zero$
+%% \item[] $x * suc(y) \rightarrow x + (x*y)$
 \end{itemize}
 %
 L'opérateur $+$ est associatif et commutatif.
@@ -51,7 +49,7 @@ dérivée de tout polynôme en sachant que:
 \item[] $deriv(n,X) \rightarrow 0$
 \item[] $deriv(m*X^n,X) \rightarrow m*n*X^{n-1}$
 \item[] $deriv(P1+P2,X) \rightarrow deriv(P1,X) + deriv(P2,X)$
-\item[] $deriv(P1*P2,X) \rightarrow deriv(P1,X) * P2 + deriv(P2,X) * P1$
+%% \item[] $deriv(P1*P2,X) \rightarrow deriv(P1,X) * P2 + deriv(P2,X) * P1$
 \end{itemize}
 %
 Nous avons vu que le résultat obtenu en appliquant ce système de
@@ -62,12 +60,17 @@ ce problème. Précisez les règles de réécriture utilisées ainsi que les
 équations des différents symboles.
 
 \begin{versionProf}
-Les opérateurs $+$ et $*$ sont associatifs et commutatifs mais il
-suffit de les considérer associatifs pour la simplification.
+Si l'opérateur $+$ est associatif et commutatif:
 %
 \begin{itemize}
-\item[] $simplify(m_1 X^n +_{A} m_2 X^n) \rightarrow (m_1+_{A}m_2) X^n$
-\item[] $simplify(m_1 X^{n_1} +_{A} m_2 X^{n_2}) \rightarrow m_2 X^{n_2} +_{A} m_1 X^{n_1}$
+\item[] $simplify(m_1 X^n +_{AC} m_2 X^n) \rightarrow (m_1+_{AC}m_2) X^n$
+\end{itemize}
+%
+
+Si l'opérateur $+$ est associatif:
+\begin{itemize}
+\item[] $simplify(m_1 X^n +_{A} P +_{A} m_2 X^n) \rightarrow (m_1+_{A}m_2) X^n+_{A} P$
+\item[] $simplify(m_1 X^{n_1} +_{A} P +_{A} m_2 X^{n_2}) \rightarrow m_2 X^{n_2} +_{A} m_1 X^{n_1} +_{A} P$
   ~~~~~~if $n_1 < n_2$
 \end{itemize}
 \end{versionProf}
@@ -82,38 +85,39 @@ Peano.  Précisez les règles de réécriture utilisées ainsi que les
 
 \begin{versionProf}
 // Delete
-$$Match(zero(),zero()) \rightarrow True()$$
+$$zero \ll zero \rightarrow True$$
       
 // Decompose
-$$Match(suc(x),suc(y)) \rightarrow Match(x,y)$$
-$$Match(plus(x1,x2),plus(y1,y2)) \rightarrow And(Match(x1,y1),Match(x2,y2))$$
+$$suc(x) \ll suc(y) \rightarrow x \ll y$$
+$$plus(x1,x2) \ll plus(y1,y2)) \rightarrow And((x1\ll y1) \wedge (x2 \ll y2))$$
         
 // SymbolClash
-$$Match(suc(\_),zero()) \rightarrow False()$$
-$$Match(plus(\_,\_),zero()) \rightarrow False()$$ 
-$$Match(suc(\_),plus(\_,\_)) \rightarrow False()$$ 
+$$suc(x) \ll zero \rightarrow False$$
+$$zero \ll suc(x) -> False$$
+$$plus(x,y) \ll zero \rightarrow False$$ 
+$$zero \ll plus(x,y) -> False$$
+$$suc(x) \ll plus(y,z) \rightarrow False$$ 
+$$plus(x,y) \ll suc(z) -> False$$
 
 // PropagateClash
-$$And(False(),\_) \rightarrow False()$$
+$$False \wedge M \rightarrow False$$
 
 // PropagateSuccess
-$$And(True(),X) \rightarrow X$$
+$$True() \wedge M \rightarrow M$$
 
 // Merging
-$$And(X,X) \rightarrow X$$
+$$M \wedge M \rightarrow M$$
 
 // MergingFail
-$$And(Match(var(x),X),Match(var(x),Y)) \rightarrow False()  ~~~if(X!=Y)$$
+$$(var(x)\ll X) \wedge (var(x)\ll Y) \rightarrow False  ~~~if(X!=Y)$$
 \end{versionProf}
-
-\section{Prouveur de prédicats}
 
 \section{Vérification de protocoles cryptographiques}
 
-On souhaite analyser le protocole NSPK a été proposé en '78 par
-Needham et Schroeder.  Le protocole est utilisé pour établir une
-authentification mutuelle entre deux agents communicant via un réseau
-qui n'est pas sécurisé.
+On souhaite analyser le protocole NSPK proposé en '78 par Needham et
+Schroeder.  Le protocole est utilisé pour établir une authentification
+mutuelle entre deux agents communicant via un réseau qui n'est pas
+sécurisé.
 
 \newcommand{\encMes}[2]{{\{#1\}}_{K(#2)}}
 \newcommand{\nonce}[1]{{N}_{#1}}
@@ -128,27 +132,367 @@ indent \=  3.~~~ \= $A \rightarrow B$: \= \kill
 
 On souhaite écrire le système de réécriture permettant de vérifier le
 protocole en présence d'un intrus qui peut intercepter tous les
-messages qui passent pas le réseau (à l'exception des messages qu'il a
+messages qui passent par le réseau (à l'exception des messages qu'il a
 engendrés) et les mémorise ou les décrypte (si encryptés avec sa clé).
-Il peut également utiliser les nonces obtenus pour générer des faux
+Il peut également utiliser les nonces obtenus pour générer de faux
 messages qui sont envoyés à tous les agents.
 
 On souhaite vérifier:
 \begin{itemize}
-\item l'authenticité du répondeur~: si un initiateur $x$ a commité
-  avec un répondeur $y$, alors $y$ a vraiment participé au protocole.
+\item l'authenticité du répondeur~: si un initiateur $x$ a établie une
+  session avec un répondeur $y$, alors $y$ a vraiment participé au
+  protocole.
 %
-\item l'authenticité de l'initiateur~: si un répondeur
-  $y$ a commité avec un initiateur $x$, alors
-  l'initiateur a également commité avec $y$.
+\item l'authenticité de l'initiateur~: si un répondeur $y$ a établie
+  une session avec un initiateur $x$, alors l'initiateur a également
+  commité avec $y$.
 \end{itemize}
 
 
 \begin{versionProf}
-$A \rightarrow B$: $\encMes{\nonce{A},A}{B}$\\
-x+SLEEP+resp  || E <> D || w+SLEEP+DN <> w\#l\#ll <> ls\\
-=> \\
-x+WAIT+N(x,y) || E <> D <> w\#l\#ll <> x-->y:K(y)[N(x,y),DN,A(x)] \& ls 
+\noindent
+---------------------------------------------------------------------------\\
+\textbf{$A \rightarrow B$: $\encMes{\nonce{A},A}{B}$}\\
+- sender creates message \\
+- sender waits a message from \texttt{y} (or I) with the nonce N(x,y)(or N(x,I))
+\begin{verbatim}
+x+SLEEP+resp * E  <> y+std+init * D <> I <> ls => 
+x+WAIT+N(x,y) * E <> y+std+init * D <> I <> x-->y:K(y)[N(x,y),DN,A(x)] & ls 
+     if sizeMess(ls) < MaxMessagesInNetwork
+
+[initiator_1]
+x+SLEEP+resp * E  <> D <> w#l#ll <> ls  => 
+x+WAIT+N(x,w) * E <> D <> w#l#ll <> x-->w:K(w)[N(x,w),DN,A(x)] & ls 
+     if sizeMess(ls) < MaxMessagesInNetwork
+\end{verbatim}
+
+\noindent
+---------------------------------------------------------------------------\\
+\textbf{$B \rightarrow A$: $\encMes{\nonce{A},\nonce{B}}{A}$}\\
+--receiver checks if \\
+ --- y is the dest \\
+ --- message encrypted with K(y) \\
+--receiver sends \\
+ --- to n2 (identifier of sender; normally N(n1,n3)==N(n2,n4)) \\
+ --- received nonce (N(n1,n3)) and its nonce (N(y,z)) \\
+--receiver waits a message from n1 with the nonce N(y,z)
+\begin{verbatim}
+[responder_1]
+E <> y+SLEEP+init * D  <> w#l#ll <> w-->y:K(y)[N(n1,n3),N(n2,n4),A(z)] & ls  => 
+E <> y+WAIT+N(y,z) * D <> w#l#ll <> y-->z:K(z)[N(n1,n3),N(y,z),A(y)] & ls 
+\end{verbatim}
+
+\noindent
+---------------------------------------------------------------------------\\
+$A \rightarrow B$: $\encMes{\nonce{B}}{B}$\\
+--sender checks if  \\
+  --- x is the dest \\
+  --- message encrypted with K(x) \\
+  --- nonce is N(x,v) --> if not: ERROR \\
+  --- ?? (possibly checks address : A(v) ) ?? \\
+--sender sends a message  \\
+  --- to the the initial receiver (stored in N(x,v)->v) \\
+  --- with the received nonce 
+\begin{verbatim}
+[initiator_2]
+x+WAIT+N(x,v) * E   <> D <> w#l#ll <> w-->x:K(x)[N(n1,n3),N(n2,n4),A(z)] & ls  =>
+x+COMMIT+N(x,v) * E <> D <> w#l#ll <> x-->v:K(v)[N(n2,n4),DN,DA] & ls 
+          if x==n1 and v==n3
+          if not(AuthVerif) or v==z //---- Lowe's correction ----//
+
+[initiator_2]
+x+WAIT+N(x,v) * E <> D <> I <> w-->x:K(x)[N(n1,n3),N(n2,n4),A(z)] & ls  =>
+ERROR
+          if x!=n1 or v!=n3
+          if not(AuthVerif) or v!=z //---- Lowe's correction ----//
+\end{verbatim}
+
+\noindent
+---------------------------------------------------------------------------\\
+$B$ \\
+--receiver checks if \\
+ --- y is the dest \\
+ --- message encrypted with K(y) \\
+ --- nonce is N(y,x) --> if not: ERROR
+\begin{verbatim}
+[responder_2] 
+E <> y+WAIT+N(y,x) * D   <> w#l#ll <> w-->y:K(y)[N(n1,n3),N(n2,n4),A(v)] & ls =>
+E <> y+COMMIT+N(y,x) * D <> w#l#ll <> ls 
+          if x==n3 and y==n1
+
+[responder_2] 
+E <> y+WAIT+N(y,x) * D <> w#l#ll <> w-->y:K(y)[N(n1,n3),N(n2,n4),A(v)] & ls  =>
+ERROR
+          if y!=n1 or x!=n3
+\end{verbatim}
+
+\noindent
+---------------------------------------------------------------------------\\
+// intruder intercepts message encrypted with its key
+\begin{verbatim}
+[intruder_1]
+E <> D <> w#l#ll <> z-->x:K(w)[N(n1,n3),N(n2,n4),A(v)] & ls  =>
+E <> D <> w#N(n1,n3) | N(n2,n4) | l#ll <> ls 
+     if w!=z      // not its messages
+\end{verbatim}
+
+
+\noindent
+---------------------------------------------------------------------------\\
+// learn messages
+// intruder should check if has not already intercepted it
+\begin{verbatim}
+[intruder_2] 
+E <> D <> w#l#ll <> z-->x:K(y)[N(n1,n3),N(n2,n4),A(v)] & ls  =>
+E <> D <> w#l#z-->x:K(y)[N(n1,n3),N(n2,n4),A(v)] & ll <> ls 
+     if w!=z  // not its messages
+     if w!=y      // not encrypted with its key 
+\end{verbatim}
+
+\noindent
+---------------------------------------------------------------------------\\
+// intruder sends (random) stored messages to \\
+//            (random) agents from E and D \\
+// !! allow dupplicates in the network (in the list version) \\
+\begin{verbatim}
+[intruder_3]
+E <> D <> w#l# x-->y:K(z)[N(n1,n3),N(n2,n4),A(v)] & ll <> ls  =>
+E <> D <> w#l# x-->y:K(z)[N(n1,n3),N(n2,n4),A(v)] & ll <> w-->t:K(z)[N(n1,n3),N(n2,n4),A(v)] & ls 
+     if sizeMess(ls) < MaxMessagesInNetwork
+     where (Agent)t+std+dn :=(extAgent) elemIA(D * E)
+     if not(existMess(w-->t:K(z)[N(n1,n3),N(n2,n4),A(v)],ls))
+\end{verbatim}
+
+\noindent
+---------------------------------------------------------------------------\\
+// intruder sends mnessages starting from the  \\
+//          (random) nonces it knows with --> resp, init \\
+//            (random) destination   --> y \\
+//            (random) nonce1 --> resp \\
+//            (random) nonce2 --> init \\
+//            (random) address --> A(xadd) \\
+// !! allow dupplicates in the network  (in the list version) \\
+\begin{verbatim}
+[intruder_4]
+E <> D <> w # resp | l # ll <> ls  =>
+E <> D <> w # resp | l # ll <> w-->y:K(y)[resp,resp,A(xadd)] & ls 
+     if sizeMess(ls) < MaxMessagesInNetwork
+     where (Agent)y+std+dn :=(extAgent) elemIA(D * E)
+     where (Agent)xadd+std1+dn1 :=(extAgent) elemIA(D * E) //---- Lowe's correction
+     if not(existMess(w-->y:K(y)[resp,resp,A(xadd)],ls))
+
+[intruder_4]
+E <> D <> w # resp | init | l # ll <> ls =>
+E <> D <> w # resp | init | l # ll <> w-->y:K(y)[resp,init,A(xadd)] & ls 
+     if sizeMess(ls) < MaxMessagesInNetwork
+     where (Agent)y+std+dn :=(extAgent) elemIA(D * E)
+     where (Agent)xadd+std1+dn1 :=(extAgent) elemIA(D * E) //---- Lowe's correction
+     if not(existMess(w-->y:K(y)[resp,init,A(xadd)],ls))
+\end{verbatim}
+
+\noindent
+---------------------------------------------------------------------------\\
+// attack on the receiver \\
+\begin{verbatim}
+[attack_1]
+x+COMMIT+N(x,y) * E <> D <> w#l#ll <> ls  => 
+ATTACK
+     if y!=w
+     if not(existAgent(y+WAIT+N(y,x),D)) and
+        not(existAgent(y+COMMIT+N(y,x),D))  
+\end{verbatim}
+
+\noindent
+---------------------------------------------------------------------------\\
+// attack on the sender \\
+\begin{verbatim}
+[attack_2]
+E <> y+COMMIT+N(y,x) * D <> w#l#ll <> ls => 
+ATTACK
+     if x!=w
+     if not(existAgent(x+COMMIT+N(x,y),E))
+end
+\end{verbatim}
+
+
+%% \noindent
+%% ---------------------------------------------------------------------------\\
+%% \begin{verbatim}
+%% \end{verbatim}
+
+\end{versionProf}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\HS}[0]{\hspace{1mm}}
+\newcommand{\THh}[0]{$\vdash$\hspace{1mm}}
+\newcommand{\NOTh}[0]{$\neg$}
+\newcommand{\ANDh}[0]{$\wedge$\hspace{1mm}}
+\newcommand{\ORh}[0]{$\vee$\hspace{1mm}}
+\newcommand{\IMPLh}[0]{$\Rightarrow$\hspace{1mm}}
+\newcommand{\EQUIVh}[0]{$\Leftrightarrow$\hspace{1mm}}
+\newcommand{\ALLh}[0]{$\forall$\hspace{1mm}}
+\newcommand{\EXTh}[0]{$\exists$\hspace{1mm}}
+
+\section{Prouveur de prédicats}
+
+On souhaite écrire un système de réécriture permettant de prouver des
+propositions construites en utilisant les symboles \ANDh (et), \ORh
+(ou), \IMPLh (implication), \EQUIVh (équivalence), \NOTh
+(négation). 
+
+Les conjectures à prouver sont décrites par des sequents qui consiste
+en un certain nombre d'hypothèses $Hyps$ et un but $P$ et sont représentés
+sous la forme:
+\begin{center}
+$Hyps \vdash P$
+\end{center}
+Les règles d'inference utilisées pour prouver un  sequent ont la forme:
+\[\frac{S_1  S_2 ... S_n}
+        %
+        {S}
+\]
+où les sequents $S_1, S_2, ... S_n $ sont appelés les
+\textit{antecedents} de la règle et le sequent \textit{S} est appelé
+le \textit{consequent}. Ce type de règle indique que la preuve du
+consequent peut être réduite aux preuves de ses antecedents. On
+utilise par la suite la représentation suivante des règles
+d'inference:
+%
+\begin{center}
+\begin{tabular}{|c|c|c|}\hline 
+  & Antecedents &             Consequent \\ \hline \hline
+  RuleName & $S_1,  S_2, ... S_n $ & S \\ \hline 
+\end{tabular}
+\end{center}
+%% où $S_i$ sont les antecedents qui peuvent être des sequents de la
+%% forme $H \vdash P$. 
+Les règles sans sequents dans les
+antecedents sont des axiomes.
+
+On considère les règles d'inférence:
+
+%% \begin{small}
+\begin{tabular}{|c||l|l|}\hline 
+  & Antecedents & Consequent \\ 
+  \hline \hline 
+  AND1 & H \HS \THh \HS \NOTh Q \IMPLh R & H \HS \THh \HS \NOTh(P \ANDh \HS Q)\IMPLh R\\ 
+       & H \HS \THh \HS \NOTh P \IMPLh R &  \\   \hline 
+  AND2 & H \HS \THh \HS P \IMPLh \NOTh Q & H \HS \THh \HS \NOTh (P \ANDh \HS Q)\\  \hline
+  AND3 & H \HS \THh \HS P \IMPLh (Q \IMPLh R) & H \HS \THh \HS (P \ANDh \HS Q) \IMPLh R\\   \hline
+  AND4 & H \HS \THh \HS Q & H \HS \THh \HS P \ANDh \HS Q \\ 
+       & H \HS \THh \HS P &  \\   \hline  \hline 
+  OR1 & H \HS \THh \HS \NOTh P \IMPLh (\NOTh Q \IMPLh R) 
+       & H \HS \THh \HS \NOTh(P \ORh \HS Q)\IMPLh R\\ \hline 
+  OR2 & H \HS \THh \HS \NOTh Q & H \HS \THh \HS \NOTh (P \ORh \HS Q)\\ 
+      & H \HS \THh \HS \NOTh P & \\ \hline 
+  OR3 & H \HS \THh \HS Q \IMPLh R & H \HS \THh \HS (P \ORh \HS Q) \IMPLh R\\ 
+      & H \HS \THh \HS P \IMPLh R & \\ \hline 
+  OR4 & H \HS \THh \HS \NOTh P \IMPLh Q & H \HS \THh \HS P \ORh \HS Q \\ \hline  \hline 
+  IMP1 & H \HS \THh \HS P \IMPLh (\NOTh Q \IMPLh R) 
+       & H \HS \THh \HS \NOTh(P \IMPLh \HS Q)\IMPLh R\\ \hline 
+  IMP2 & H \HS \THh \HS \NOTh Q & H \HS \THh \HS \NOTh (P \IMPLh \HS Q)\\ 
+       & H \HS \THh \HS P & \\ \hline 
+  IMP3 & H \HS \THh \HS Q \IMPLh R & H \HS \THh \HS (P \IMPLh \HS Q) \IMPLh R\\ 
+       & H \HS \THh \HS \NOTh P \IMPLh R & \\ \hline 
+  IMP4 & H \ANDh P \HS \THh \HS Q & H \HS \THh \HS P \IMPLh \HS Q \\ \hline \hline 
+  EQUIV1 & H \HS \THh \HS P \IMPLh (\NOTh Q \IMPLh R) 
+           & H \HS \THh \HS \NOTh(P \EQUIVh \HS Q)\IMPLh R\\ 
+       & H \HS \THh \HS \NOTh P \IMPLh (Q \IMPLh R) &  \\ \hline 
+  EQUIV2 & H \HS \THh \HS P \IMPLh \NOTh Q & H \HS \THh \HS \NOTh (P \EQUIVh \HS Q)\\ 
+         & H \HS \THh \HS \NOTh Q \IMPLh P & \\ \hline 
+  EQUIV3 & H \HS \THh \HS P \IMPLh (Q \IMPLh R) & H \HS \THh \HS (P \EQUIVh \HS Q) \IMPLh R\\ 
+         & H \HS \THh \HS \NOTh P \IMPLh (\NOTh Q \IMPLh R) & \\ \hline 
+  EQIV4 & H \HS \THh \HS P \IMPLh Q & H \HS \THh \HS P \EQUIVh \HS Q \\  
+       & H \HS \THh \HS Q \IMPLh P & \\ \hline  \hline 
+  NOT1 & H \HS \THh \HS P \IMPLh R & H \HS \THh \HS \NOTh \NOTh P \IMPLh R\\ \hline 
+  NOT2 & H \HS \THh \HS P & H \HS \THh \HS \NOTh \NOTh P  \\ \hline \hline 
+  AXM1 & Valide & H \ANDh \NOTh P \HS \THh \HS P \IMPLh \HS Q \\ \hline 
+  AXM2 & Valide & H \ANDh P \HS \THh \HS \NOTh P \IMPLh \HS Q \\ \hline 
+  AXM3 & Valide & H \ANDh P \HS \THh \HS P \\ \hline  \hline 
+\end{tabular}
+%% \end{small}
+
+\newpage
+
+\begin{versionProf}
+\begin{verbatim}
+//--------------------------------------------------------------------------------------
+//AND-rules 
+  [] H |- ^(P && Q) |=> R     =>  H |- ^Q |=> R  :: H |- ^P |=> R          end
+  [] H |- ^(P && Q)           =>  H |- P |=> ^Q          end
+  [] H |-  (P && Q) |=> R     =>  H |- P |=> (Q |=> R)           end
+  [] H |-  (P && Q)           =>  H |- Q :: H |- P          end
+//--------------------------------------------------------------------------------------
+//OR-rules
+  [] H |- ^(P or Q) |=> R     =>  H |- ^P |=> (^Q |=> R)           end
+  [] H |- ^(P or Q)           =>  H |- ^Q :: H |- ^P          end
+  [] H |-  (P or Q) |=> R     =>  H |- Q |=> R :: H |- P |=> R     end
+  [] H |-  (P or Q)           =>  H |- ^P |=> Q               end
+//--------------------------------------------------------------------------------------
+//IMP-rules
+  [] H |- ^(P |=> Q) |=> R   =>  H |- P |=> (^Q |=> R)           end
+  [] H |- ^(P |=> Q)         =>  H |- ^Q :: H |- P               end
+  [] H |-  (P |=> Q) |=> R   =>  H |- Q |=> R :: H |- ^P |=> R     end 
+  [] H |-  (Pp |=> Q)        =>  H && Pp |- Q               end
+  [] H |-  (^Pp |=> Q)       =>  H && ^Pp |- Q               end
+//--------------------------------------------------------------------------------------
+//EQV-rules
+  [] H |- ^(P <=> Q) |=> R    => S1 :: S2
+         where S1 := () H |- P |=> (^Q |=> R)
+         where S2 := () H |- ^P |=> (Q |=> R)          end
+  [] H |- ^(P <=> Q)          => S1 :: S2
+         where S1 := () H |- P |=> ^Q 
+         where S2 := () H |- ^Q |=> P         end
+  [] H |-  (P <=> Q) |=> R    => S1 :: S2
+         where S1 := () H |- P |=> (Q |=> R)
+         where S2 := () H |- ^P |=> (^Q |=> R)          end
+  [] H |-  (P <=> Q)          => S1 :: S2
+         where S1 := () H |- P |=> Q
+         where S2 := () H |- Q |=> P         end
+//--------------------------------------------------------------------------------------
+//NOT-rules
+  [] H |-  ^^P |=> R     => H |- P |=> R         end
+  [] H |-  ^^P           => H |- P         end
+//--------------------------------------------------------------------------------------
+//AXM-axioms
+  [] H && ^P |- P |=> Q    => $         end
+  [] H && P  |- ^P |=> Q   => $         end
+  [] H && P  |- P          => $         end
+  [] H && P && ^P |- Q     => $          end
+//----------------------------------------------------------------------------
+//AXM-aux
+  [] H && R |- P |=> R            => $          end
+  [] H && ^Q  |- P |=> (Q |=> R)  => $          end
+  [] H && Q  |- P |=> (^Q |=> R)  => $          end
+  [] H |- P     |=> P             => $          end
+  [] H |- P && R |=> R            => $          end
+//-----------------------------------------------------------------------------
+//AND-aux
+  [] H |- P && a && (a |=>  b) |=> R     =>  H |- P && a && b |=> R      end
+//--------------------------------------------------------------------------------------
+//TRUE-rules
+  [] H |- ^TRUE |=> R      => $              end
+  [] H |- ^TRUE            => H |- FALSE          end
+  [] H |-  TRUE |=> R      => H |- R          end
+  [] H |-  TRUE            => $              end
+//--------------------------------------------------------------------------------------
+//FALSE-rules
+  [] H |- ^FALSE |=> R      => H |- R         end
+  [] H |- ^FALSE            => $              end
+  [] H |-  FALSE |=> R      => $               end
+//--------------------------------------------------------------------------------------
+//STOP-rules
+  [] H |- Pp      => H |- ^Pp |=> FALSE
+              if neq_Prop(Pp,FALSE)          end
+  [] H |- ^Pp     => H |- ^^Pp |=> FALSE
+              if neq_Prop(Pp,FALSE)          end
+//--------------------------------------------------------------------------------------
+//Built-in
+     [] $ :: S           => S                   end
+//hypothese unique
+     [] R && R && P |- Q      => R && P |- Q         end
+\end{verbatim}
 \end{versionProf}
 
 \end{document}
