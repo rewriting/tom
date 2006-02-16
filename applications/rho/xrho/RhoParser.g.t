@@ -59,6 +59,7 @@ options {
  		}
  		_ -> {return head;}
 		}
+    return head;
  }
 //TO BE COMPLETE
 //Le nom que je donne commence par un "!"

@@ -129,6 +129,7 @@ public class Matching {
 			const(s) -> {return `s;}
 			_ -> {return "";}
 		}
+    return "";
 	}
 	public Collection reduce(Systems s) throws VisitFailure { 
 		Collection c = new HashSet();
@@ -312,8 +313,8 @@ public class Matching {
 //				System.out.println("construction du resultat");
 				return `and(newX*,match(newA,B),newY*);}
 			_ -> {return `s;}
-
 		}
+    return `s;
 	}
 	//[X\subject]t
 	public LamTerm substitute(LamTerm X, LamTerm subject, LamTerm t){
