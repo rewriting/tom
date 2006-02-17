@@ -39,11 +39,11 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   public TomJavaGenerator(OutputCode output, OptionManager optionManager,
                        SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
-    if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
+    /*if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
       this.modifier += "protected " ;
     } else {
       this.modifier += "private " ;
-    }
+    }*/
   }
 
 // ------------------------------------------------------------
@@ -100,7 +100,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
 
     //write constructor
-    output.write(deep, modifier + tomName + "(");
+    output.write(deep, "public " + tomName + "(");
     //write constructor parameters
     for (int i = 0 ; i < args ; i++){
 	    output.write(deep,types.get(i) + " " + names.get(i));
@@ -139,7 +139,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   }
 
   protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
-    output.write(deep, modifier + " " + getTomType(`codomain) + " " + tomName + "(");
+    output.write(deep,"public " + getTomType(`codomain) + " " + tomName + "(");
     TomTerm localVar;
     while(!varList.isEmpty()) {
       localVar = varList.getHead();
