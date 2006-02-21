@@ -25,19 +25,22 @@
 
 package tom.gom.backend;
 
-import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 
-public class TemplateVoidFwd extends TemplateClass {
+public class TemplateFwd extends TemplateClass {
   ClassName visitor;
   ClassName abstractType;
-  ClassNameList sortList;
+  GomClassList sortClasses;
+  GomClassList operatorClasses;
 
-  TemplateVoidFwd(ClassName className, ClassName visitor, ClassName abstractType, ClassNameList sortList) {
+	%include { ../adt/objects/Objects.tom}
+
+  TemplateFwd(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList operatorClasses) {
     super(className);
     this.visitor = visitor;
     this.abstractType = abstractType;
-    this.sortList = sortList;
+    this.sortClasses = sortClasses;
+    this.operatorClasses = operatorClasses;
   }
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
@@ -46,14 +49,14 @@ public class TemplateVoidFwd extends TemplateClass {
 
     out.append("package "+getPackage()+";\n");
     out.append("\n");
-    out.append("public class "+className()+" extends jjtraveler.VoidVisitor implements "+className(visitor) + ", jjtraveler.Visitor {\n");
+    out.append("public class "+className()+" implements "+className(visitor) + ", jjtraveler.Visitor {\n");
     out.append("\tprotected jjtraveler.Visitor any;\n");
     out.append("\n");
     out.append("\tpublic "+className()+"(jjtraveler.Visitor v) {\n");
     out.append("\t\tthis.any = v;\n");
     out.append("\t}\n");
     out.append("\n");
-    out.append("\tpublic void voidVisit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {\n");
+    out.append("\tpublic jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {\n");
     out.append("\t\tif (v instanceof "+fullClassName(abstractType)+") {\n");
     out.append("\t\t\treturn (("+fullClassName(abstractType)+") v).accept(this);\n");
     out.append("\t\t} else {\n");
@@ -62,14 +65,24 @@ public class TemplateVoidFwd extends TemplateClass {
     out.append("\t}\n");
     
     // generate a visit for each sort
-    while (!sortList.isEmpty()) {
-      ClassName sortName = sortList.getHead();
-      sortList = sortList.getTail();
+    %match(GomClassList sortClasses) {
+      concGomClass(_*,SortClass[className=sortName],_*) -> {    
 
-      out.append("\tpublic "+fullClassName(sortName)+" visit_"+className(sortName)+"("+fullClassName(sortName)+" arg) throws jjtraveler.VisitFailure {\n");
-      out.append("\t\treturn ("+fullClassName(sortName)+") any.visit(arg);\n");
-      out.append("\t}\n");
-      out.append("\n");
+        out.append("\tpublic "+fullClassName(`sortName)+" visit_"+className(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure {\n");
+        out.append("\t\treturn ("+fullClassName(`sortName)+") any.visit(arg);\n");
+        out.append("\t}\n");
+        out.append("\n");
+      }
+    }
+
+    // generate a visit for each operator
+    %match(GomClassList operatorClasses) {
+      concGomClass(_*,OperatorClass[className=opName,sortName=sortName],_*) -> {    
+        out.append("\tpublic "+fullClassName(`sortName)+" visit_"+className(`sortName)+"_"+className(`opName)+"("+fullClassName(`opName)+" arg) throws jjtraveler.VisitFailure {\n");
+        out.append("\t\treturn visit_"+className(`sortName)+"(arg);\n");
+        out.append("\t}\n");
+        out.append("\n");
+      }
     }
 
     out.append("}");

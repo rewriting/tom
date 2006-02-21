@@ -93,21 +93,6 @@ public class GomCompiler {
       GomClass abstracttype = `AbstractTypeClass(abstractTypeName,factoryName,visitorName,classSortList);
       classList = `concGomClass(abstracttype,classList*);
 
-      /* create a Fwd class */
-      ClassName fwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"Fwd");
-      GomClass fwdclass = `FwdClass(fwdName,visitorName,factoryName,classSortList);
-      classList = `concGomClass(fwdclass,classList*);
-
-      /* create a VoidFwd class */
-      ClassName voidfwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"FwdVoid");
-      GomClass voidfwdclass = `VoidFwdClass(voidfwdName,visitorName,factoryName,classSortList);
-      classList = `concGomClass(voidfwdclass,classList*);
-
-      /* create a VisitableFwd class */
-      ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"VisitableFwd");
-      GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,fwdclass);
-      classList = `concGomClass(visitablefwdclass,classList*);
-      
     }
 
     /* For each sort, create a sort implementation, and operator implementations
@@ -217,13 +202,29 @@ public class GomCompiler {
         }
       }
       
-      // late creation of the visitor, since it has to know all operators
+      GomClass factoryClass = `FactoryClass(factoryClassName,importedFactories,allSortClasses,allOperatorClasses);
+      classList = `concGomClass(factoryClass,classList*);
+
+      // late creation of the visitors, since it has to know all operators
       ClassName visitorName = (ClassName) visitorNameForModule.get(moduleDecl);
       GomClass visitorclass = `VisitorClass(visitorName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(visitorclass,classList*);
 
-      GomClass factoryClass = `FactoryClass(factoryClassName,importedFactories,allSortClasses,allOperatorClasses);
-      classList = `concGomClass(factoryClass,classList*);
+      /* create a Fwd class */
+      ClassName fwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"Fwd");
+      GomClass fwdclass = `FwdClass(fwdName,visitorName,factoryClassName,allSortClasses,allOperatorClasses);
+      classList = `concGomClass(fwdclass,classList*);
+
+      /* create a VoidFwd class */
+      ClassName voidfwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"FwdVoid");
+      GomClass voidfwdclass = `VoidFwdClass(voidfwdName,visitorName,factoryClassName,allSortClasses,allOperatorClasses);
+      classList = `concGomClass(voidfwdclass,classList*);
+
+      /* create a VisitableFwd class */
+      ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"VisitableFwd");
+      GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,fwdclass);
+      classList = `concGomClass(visitablefwdclass,classList*);
+      
     }
 
     return classList;

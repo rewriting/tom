@@ -6,8 +6,6 @@ sorts GomClass ClassName GomClassList ClassNameList SlotField SlotFieldList
 
 abstract syntax
 
-FwdClass(className:ClassName,visitor:ClassName,abstractType:ClassName,sortList:ClassNameList) -> GomClass
-VoidFwdClass(className:ClassName,visitor:ClassName,abstractType:ClassName,sortList:ClassNameList) -> GomClass
 VisitableFwdClass(className:ClassName,fwd:GomClass) -> GomClass
 
 AbstractTypeClass(className:ClassName,factoryName:ClassName,visitor:ClassName,sortList:ClassNameList) -> GomClass
@@ -17,6 +15,8 @@ OperatorClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,s
 // pass the full operator classes, so we get the factory and sort for each operator
 FactoryClass(className:ClassName,importedFactories:ClassNameList,sortClasses:GomClassList,operatorClasses:GomClassList)  -> GomClass
 VisitorClass(className:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
+FwdClass(className:ClassName,visitor:ClassName,abstractType:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
+VoidFwdClass(className:ClassName,visitor:ClassName,abstractType:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 
 ClassName(pkg:String,name:String)  -> ClassName
 concClassName(ClassName*)          -> ClassNameList

@@ -70,13 +70,13 @@ public class GomBackend {
    */
   public int generateClass(GomClass gomclass) {
     %match(GomClass gomclass) {
-      FwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortList=sortList] -> {
-        TemplateClass fwd = new TemplateFwd(`className,`visitorClass,`abstractType,`sortList);
+      FwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortClasses=sortClasses,operatorClasses=ops] -> {
+        TemplateClass fwd = new TemplateFwd(`className,`visitorClass,`abstractType,`sortClasses,`ops);
         fwd.generateFile();
         return 1;
       }
-      VoidFwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortList=sortList] -> {
-        TemplateClass voidfwd = new TemplateVoidFwd(`className,`visitorClass,`abstractType,`sortList);
+      VoidFwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortClasses=sortClasses,operatorClasses=ops] -> {
+        TemplateClass voidfwd = new TemplateVoidFwd(`className,`visitorClass,`abstractType,`sortClasses,`ops);
         voidfwd.generateFile();
         return 1;
       }
