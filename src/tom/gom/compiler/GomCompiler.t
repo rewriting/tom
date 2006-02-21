@@ -225,6 +225,11 @@ public class GomCompiler {
       ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"VisitableFwd");
       GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,fwdclass);
       classList = `concGomClass(visitablefwdclass,classList*);
+
+      /* create a TomMapping */
+      ClassName tomMappingName = `ClassName(packagePrefix(moduleDecl),moduleName);
+      GomClass tommappingclass = `TomMapping(tomMappingName,allSortClasses,allOperatorClasses);
+      classList = `concGomClass(tommappingclass,classList*);
       
     }
 

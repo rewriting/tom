@@ -70,6 +70,11 @@ public class GomBackend {
    */
   public int generateClass(GomClass gomclass) {
     %match(GomClass gomclass) {
+      TomMapping[className=className,sortClasses=sortClasses,operatorClasses=ops] -> {
+        TemplateClass mapping = new TemplateMapping(`className,`sortClasses,`ops);
+        mapping.generateFile();
+        return 1;
+      }
       FwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortClasses=sortClasses,operatorClasses=ops] -> {
         TemplateClass fwd = new TemplateFwd(`className,`visitorClass,`abstractType,`sortClasses,`ops);
         fwd.generateFile();

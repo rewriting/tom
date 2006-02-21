@@ -128,10 +128,14 @@ public abstract class TemplateClass {
     throw new GomRuntimeException("TemplateClass:className got a strange ClassName");
   }
 
+  protected String fileName() {
+    return fullClassName().replace('.',File.separatorChar)+".java";
+  }
+
   public int generateFile() {
     GomStreamManager stream = GomEnvironment.getInstance().getStreamManager();
     try {
-       File output = new File(stream.getDestDir(),fullClassName().replace('.',File.separatorChar)+".java");      
+       File output = new File(stream.getDestDir(),fileName());      
        // make sure the directory exists
        output.getParentFile().mkdirs();
        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));

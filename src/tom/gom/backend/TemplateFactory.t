@@ -143,7 +143,7 @@ public class TemplateFactory extends TemplateClass {
 
     // methods for the sorts
     %match(GomClassList sorts) {
-      concGomClass(_*,sort@SortClass[className=sortName,operators=sortOperators],_*) -> {
+      concGomClass(_*,SortClass[className=sortName,operators=sortOperators],_*) -> {
         out.append("\tpublic "+fullClassName(`sortName)+" "+makesortfromterm(`sortName)+"(aterm.ATerm trm) {\n");
         out.append("\t\t"+fullClassName(`sortName)+" tmp;\n");
         
@@ -205,7 +205,7 @@ public class TemplateFactory extends TemplateClass {
           SlotField head = slotList.getHead();
           slotList = slotList.getTail();
           %match(SlotField head) {
-            SlotField[domain=domain] -> {
+            SlotField[] -> {
               if (!args.equals("")) {
                 args+= ", ";
               }
