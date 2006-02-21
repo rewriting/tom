@@ -85,11 +85,9 @@ public class GomCompiler {
       // get all classnames for all sorts (in the module or imported)
       ClassNameList classSortList = sortClassNames(sortList);
 
-      /* create a Visitor class */
+      /* create a Visitor class name */
       ClassName visitorName = `ClassName(packagePrefix(moduleDecl),moduleName+"Visitor");
       visitorNameForModule.put(moduleDecl,visitorName);
-      GomClass visitorclass = `VisitorClass(visitorName,classSortList);
-      classList = `concGomClass(visitorclass,classList*);
 
       abstractTypeNameForModule.put(moduleDecl,abstractTypeName); 
       GomClass abstracttype = `AbstractTypeClass(abstractTypeName,factoryName,visitorName,classSortList);
@@ -219,6 +217,11 @@ public class GomCompiler {
         }
       }
       
+      // late creation of the visitor, since it has to know all operators
+      ClassName visitorName = (ClassName) visitorNameForModule.get(moduleDecl);
+      GomClass visitorclass = `VisitorClass(visitorName,allSortClasses,allOperatorClasses);
+      classList = `concGomClass(visitorclass,classList*);
+
       GomClass factoryClass = `FactoryClass(factoryClassName,importedFactories,allSortClasses,allOperatorClasses);
       classList = `concGomClass(factoryClass,classList*);
     }
