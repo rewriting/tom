@@ -72,7 +72,7 @@ public class TemplateOperator extends TemplateClass {
 
     out.append("\tpublic boolean equivalent(shared.SharedObject peer) {\n");
     out.append("\t\tif (peer instanceof "+className()+") {\n");
-    out.append("\t\t\treturn super.isEqual(peer);\n");
+    out.append("\t\t\treturn super.equivalent(peer);\n");
     out.append("\t\t}\n");
     out.append("\t\treturn false;\n");
     out.append("\t}\n");
