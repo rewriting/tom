@@ -79,7 +79,7 @@ public class TemplateOperator extends TemplateClass {
     out.append("\n");
 
     out.append("\tprotected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {\n");
-    out.append("\t\treturn get"+className(factoryName)+"().make"+className()+"_"+className()+"(fun, args, annos);\n");
+    out.append("\t\treturn get"+className(factoryName)+"().make"+className(sortName)+"_"+className()+"(fun, args, annos);\n");
     out.append("\t}\n");
     out.append("\n");
 

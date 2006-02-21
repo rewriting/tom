@@ -28,11 +28,15 @@ package tom.gom.backend;
 import tom.gom.adt.objects.types.*;
 
 public class TemplateVisitor extends TemplateClass {
-  ClassNameList sortList;
+  GomClassList sortClasses;
+  GomClassList operatorClasses;
 
-  TemplateVisitor(ClassName className, ClassNameList sortList) {
+	%include { ../adt/objects/Objects.tom}
+
+  TemplateVisitor(ClassName className, GomClassList sortClasses, GomClassList operatorClasses) {
     super(className);
-    this.sortList = sortList;
+    this.sortClasses = sortClasses;
+    this.operatorClasses = operatorClasses;
   }
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
@@ -45,11 +49,17 @@ public class TemplateVisitor extends TemplateClass {
     out.append("\n");
     
     // generate a visit for each sort
-    while (!sortList.isEmpty()) {
-      ClassName sortName = sortList.getHead();
-      sortList = sortList.getTail();
+    %match(GomClassList sortClasses) {
+      concGomClass(_*,SortClass[className=sortName],_*) -> {    
+        out.append("\tpublic abstract "+fullClassName(`sortName)+" visit_"+className(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure;\n");
+      }
+    }
 
-      out.append("\tpublic abstract "+fullClassName(sortName)+" visit_"+className(sortName)+"("+fullClassName(sortName)+" arg) throws jjtraveler.VisitFailure;\n");
+    // generate a visit for each operator
+    %match(GomClassList operatorClasses) {
+      concGomClass(_*,OperatorClass[className=opName,sortName=sortName],_*) -> {    
+        out.append("\tpublic abstract "+fullClassName(`sortName)+" visit_"+className(`sortName)+"_"+className(`opName)+"("+fullClassName(`opName)+" arg) throws jjtraveler.VisitFailure;\n");
+      }
     }
 
     out.append("\n");

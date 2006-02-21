@@ -85,8 +85,8 @@ public class GomBackend {
         visitablefwd.generateFile();
         return 1;
       }
-      VisitorClass[className=className,sortList=sortList] -> {
-        TemplateClass visitor = new TemplateVisitor(`className,`sortList);
+      VisitorClass[className=className,sortClasses=sortClasses,operatorClasses=ops] -> {
+        TemplateClass visitor = new TemplateVisitor(`className,`sortClasses,`ops);
         visitor.generateFile();
         return 1;
       }
