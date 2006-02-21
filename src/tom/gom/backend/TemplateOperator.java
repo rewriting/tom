@@ -66,7 +66,7 @@ public class TemplateOperator extends TemplateClass {
     out.append("\tpublic shared.SharedObject duplicate() {\n");
     out.append("\t\t"+className()+" clone = new "+className()+"(get"+className(factoryName)+"());\n");
     out.append("\t\tclone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());\n");
-    out.append("\t\treturn clone();\n");
+    out.append("\t\treturn clone;\n");
     out.append("\t}\n");
     out.append("\n");
 
@@ -132,26 +132,31 @@ public class TemplateOperator extends TemplateClass {
     // create the setArgument method
     // XXX: special treatment for builtins
     out.append("\tpublic aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {\n");
-    out.append("\t\tswitch(i) {\n");
-    out.append("\t\n");
-    consum = slotList;
-    while (!consum.isEmpty()) {
-      SlotField slot = consum.getHead();
-      consum = consum.getTail();
+    if (slotList.isEmpty()) {
+      out.append("\t\tthrow new RuntimeException(\""+className()+" has no arguments\");\n");
+    } else {
+      out.append("\t\tswitch(i) {\n");
+      out.append("\t\n");
+      consum = slotList;
+      while (!consum.isEmpty()) {
+        SlotField slot = consum.getHead();
+        consum = consum.getTail();
 
-      out.append("\t\t\tcase "+index(slot)+":\n");
-      out.append("\t\t\t\tif(! (arg instanceof "+slotDomain(slot)+")) {\n");
-      out.append("\t\t\t\t\tthrow new RuntimeException(\"Argument "+slot.getName()+" of a "+className()+" should have type "+slotDomain(slot)+"\");\n");
-      out.append("\t\t\t\t}\n");
-      out.append("\t\t\t\tbreak;\n");
+        out.append("\t\t\tcase "+index(slot)+":\n");
+        out.append("\t\t\t\tif(! (arg instanceof "+slotDomain(slot)+")) {\n");
+        out.append("\t\t\t\t\tthrow new RuntimeException(\"Argument "+slot.getName()+" of a "+className()+" should have type "+slotDomain(slot)+"\");\n");
+        out.append("\t\t\t\t}\n");
+        out.append("\t\t\t\tbreak;\n");
+      }
+      out.append("\t\t\tdefault: throw new RuntimeException(\""+className()+" does not have an argument at \" + i);\n");
+      out.append("\t\t}\n");
+      out.append("\t\treturn super.setArgument(arg, i);\n");
     }
-    out.append("\t\t\tdefault: throw new RuntimeException(\""+className()+" does not have an argument at \" + i);\n");
-    out.append("\t\t}\n");
-    out.append("\t\treturn super.setArgument(arg, i);\n");
     out.append("\t}\n");
 
     out.append("}");
     
+    // XXX HashFunction !!!
     return out.toString();
   }
 }
