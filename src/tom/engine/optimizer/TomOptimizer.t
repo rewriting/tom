@@ -485,22 +485,26 @@ public class TomOptimizer extends TomGenericPlugin {
       %match(Instruction subject) {
         
         AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-          System.out.println("flatten");
+          getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        "flatten");     
           return `AbstractBlock(concInstruction(C1*,L1*,C2*));
         }
 
         AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-          System.out.println("nop-elim");
+          getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        "nop-elim");     
           return `AbstractBlock(concInstruction(C1*,C2*));
         }  
 
         AbstractBlock(concInstruction()) -> {
-          System.out.println("abstractblock-elim1");
+           getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        "abstractblock-elim1");     
           return `Nop();
         } 
 
         AbstractBlock(concInstruction(i)) -> {
-          System.out.println("abstractblock-elim2");
+           getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        "abstractblock-elim2");     
           return `i;
         }
 
@@ -572,7 +576,8 @@ public class TomOptimizer extends TomGenericPlugin {
           if(s1.compareTo(s2) < 0) {
             Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
             if(compatible==`FalseTL()) {
-              System.out.println("if-swapping");
+                        getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        new Object[]{"if-swapping"});     
               return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
             }
           }
@@ -591,13 +596,15 @@ public class TomOptimizer extends TomGenericPlugin {
           /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
           if(`compare(term1,term2)) {
             if(`compare(var1,var2)) {
-              System.out.println("block-fusion1");
+                        getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        new Object[]{"block-fusion1"});     
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
             } else {
               List list  = computeOccurences(`name,`body2);
               int mult = list.size();
               if(mult==0){
-                System.out.println("block-fusion2");
+                         getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                         new Object[]{"block-fusion2"});     
                 /*
                  * TODO: check that var1 does not appear in body2
                  */
@@ -620,13 +627,15 @@ public class TomOptimizer extends TomGenericPlugin {
           /* Fusion de 2 blocs If gardes par la meme condition */
           if(`compare(cond1,cond2)) {
             if(`failure1.isNop() && `failure2.isNop()) {
-              System.out.println("if-fusion1");
+        getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        new Object[]{"if-fusion1"});
               Instruction res = `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*));
               //System.out.println(res);
 
               return res;
             } else {
-              System.out.println("if-fusion2");
+         getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                       new Object[]{ "if-fusion2"});
               return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
             }
           }
@@ -646,7 +655,8 @@ public class TomOptimizer extends TomGenericPlugin {
         AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),If(cond2,suc2,Nop()),X2*)) -> {
           Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
           if(compatible==`FalseTL()) {
-            System.out.println("inter-block");
+          getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        new Object[]{"inter-block"});
             return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
           }
         }  
