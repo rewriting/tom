@@ -1,0 +1,8 @@
+module Minimal
+
+public
+	sorts Nop
+abstract syntax
+	EmptyNop() -> Nop
+	UnaryNop(slot:Nop) -> Nop
+	BinaryNop(ls:Nop,rs:Nop) -> Nop
