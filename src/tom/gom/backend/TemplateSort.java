@@ -61,7 +61,7 @@ public class TemplateSort extends TemplateClass {
     out.append("\t}\n");
     out.append("\n");
     out.append("\tpublic boolean isEqual("+className()+" peer) {\n");
-    out.append("\t\treturn super().isEqual(peer);\n");
+    out.append("\t\treturn super.isEqual(peer);\n");
     out.append("\t}\n");
     out.append("\n");
     // we shall use a particular method in TemplateClass to generate this

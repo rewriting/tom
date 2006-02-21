@@ -66,13 +66,13 @@ public class TemplateOperator extends TemplateClass {
     out.append("\tpublic shared.SharedObject duplicate() {\n");
     out.append("\t\t"+className()+" clone = new "+className()+"(get"+className(factoryName)+"());\n");
     out.append("\t\tclone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());\n");
-    out.append("\t\treturn clone()\n");
+    out.append("\t\treturn clone();\n");
     out.append("\t}\n");
     out.append("\n");
 
     out.append("\tpublic boolean equivalent(shared.SharedObject peer) {\n");
     out.append("\t\tif (peer instanceof "+className()+") {\n");
-    out.append("\t\t\treturn super().isEqual(peer);\n");
+    out.append("\t\t\treturn super.isEqual(peer);\n");
     out.append("\t\t}\n");
     out.append("\t\treturn false;\n");
     out.append("\t}\n");
@@ -85,7 +85,7 @@ public class TemplateOperator extends TemplateClass {
 
     out.append("\tpublic aterm.ATerm toTerm() {\n");
     out.append("\t\tif (term == null) {\n");
-    out.append("\t\t\tterm = get"+className(factoryName)+"().toTerm(this)\n");
+    out.append("\t\t\tterm = get"+className(factoryName)+"().toTerm(this);\n");
     out.append("\t\t}\n");
     out.append("\t\treturn term;\n");
     out.append("\t}\n");

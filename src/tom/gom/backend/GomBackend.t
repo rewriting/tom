@@ -72,43 +72,42 @@ public class GomBackend {
     %match(GomClass gomclass) {
       FwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortList=sortList] -> {
         TemplateClass fwd = new TemplateFwd(`className,`visitorClass,`abstractType,`sortList);
-        System.out.println(fwd.generate());
+        fwd.generateFile();
         return 1;
       }
       VoidFwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortList=sortList] -> {
         TemplateClass voidfwd = new TemplateVoidFwd(`className,`visitorClass,`abstractType,`sortList);
-        System.out.println(voidfwd.generate());
+        voidfwd.generateFile();
         return 1;
       }
       VisitableFwdClass[className=className,fwd=FwdClass[className=fwdClass]] -> {
         TemplateClass visitablefwd = new TemplateVisitableFwd(`className,`fwdClass);
-        System.out.println(visitablefwd.generate());
+        visitablefwd.generateFile();
         return 1;
       }
       VisitorClass[className=className,sortList=sortList] -> {
         TemplateClass visitor = new TemplateVisitor(`className,`sortList);
-        System.out.println(visitor.generate());
+        visitor.generateFile();
         return 1;
       }
       AbstractTypeClass[className=className,factoryName=factory,visitor=visitorName,sortList=sortList] -> {
         TemplateClass abstracttype = new TemplateAbstractType(`className,`factory,`visitorName,`sortList);
-        System.out.println(abstracttype.generate());
         abstracttype.generateFile();
         return 1;
       }
       SortClass[className=className,factoryName=factory,abstractType=abstracttype,operators=ops,slots=slots] -> {
         TemplateClass sort = new TemplateSort(`className,`factory,`abstracttype,`ops,`slots);
-        System.out.println(sort.generate());
+        sort.generateFile();
         return 1;
       }
       OperatorClass[className=className,factoryName=factory,abstractType=abstracttype,sortName=sort,visitor=visitorName,slots=slots] -> {
         TemplateClass operator = new TemplateOperator(`className,`factory,`abstracttype,`sort,`visitorName,`slots);
-        System.out.println(operator.generate());
+        operator.generateFile();
         return 1;
       }
-      FactoryClass[className=className,importedFactories=factories,operatorClasses=operators] -> {
-        TemplateClass factory = new TemplateFactory(`className,`factories,`operators);
-        System.out.println(factory.generate());
+      FactoryClass[className=className,importedFactories=factories,sortClasses=sorts,operatorClasses=operators] -> {
+        TemplateClass factory = new TemplateFactory(`className,`factories,`sorts,`operators);
+        factory.generateFile();
         return 1;
       }
     }

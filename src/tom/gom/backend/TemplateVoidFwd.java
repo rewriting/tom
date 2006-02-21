@@ -57,7 +57,7 @@ public class TemplateVoidFwd extends TemplateClass {
     out.append("\t\tif (v instanceof "+fullClassName(abstractType)+") {\n");
     out.append("\t\t\treturn (("+fullClassName(abstractType)+") v).accept(this);\n");
     out.append("\t\t} else {\n");
-    out.append("\t\t\treturn any.visit(v)\n");
+    out.append("\t\t\treturn any.visit(v);\n");
     out.append("\t\t}\n");
     out.append("\t}\n");
     

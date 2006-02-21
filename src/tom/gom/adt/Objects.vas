@@ -16,7 +16,7 @@ SortClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,opera
 OperatorClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList) -> GomClass
 
 // pass the full operator classes, so we get the factory and sort for each operator
-FactoryClass(className:ClassName,importedFactories:ClassNameList,operatorClasses:GomClassList)  -> GomClass
+FactoryClass(className:ClassName,importedFactories:ClassNameList,sortClasses:GomClassList,operatorClasses:GomClassList)  -> GomClass
 
 ClassName(pkg:String,name:String)  -> ClassName
 concClassName(ClassName*)          -> ClassNameList

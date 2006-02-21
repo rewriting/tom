@@ -181,13 +181,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    */
   public PlatformOptionList getRequiredOptionList() {
     PlatformOptionList prerequisites = `emptyPlatformOptionList();
-    
-    // options destdir and output are incompatible
-    if(!((String)getOptionValue("destdir")).equals(".")) {
-      prerequisites = `concPlatformOption(PluginOption("output", "", "", StringValue(""), ""), prerequisites*);
-      // destdir is not set at its default value -> it has been changed
-      // -> we want output at its default value
-    }
+    // for now, there is no incompatibilities or requirements on options
     return prerequisites;
   }
 

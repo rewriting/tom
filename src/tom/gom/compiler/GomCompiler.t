@@ -65,6 +65,7 @@ public class GomCompiler {
     Map factoryNameForModule = new HashMap();
     Map visitorNameForModule = new HashMap();
     Map sortClassNameForSortDecl = new HashMap();
+    Map sortGomClassForSortDecl = new HashMap();
     Map classForOperatorDecl = new HashMap();
     /* For each module */
     Iterator it = getModuleDeclSet(sortList).iterator(); 
@@ -143,7 +144,8 @@ public class GomCompiler {
           ClassNameList allOperators = `concClassName();
           %match(OperatorDeclList `oplist) {
             concOperator(_*,opdecl@OperatorDecl[name=opname,sort=SortDecl[name=sortName],prod=typedproduction],_*) -> {
-              ClassName operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortName,opname);
+              String sortNamePackage = `sortName.toLowerCase();
+              ClassName operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
               SlotFieldList slots = `concSlotField();
               %match(TypedProduction typedproduction) {
                 Variadic[sort=domain] -> {
@@ -166,6 +168,7 @@ public class GomCompiler {
           }
           // create the sort class and add it to the list
           GomClass sortClass = `SortClass(sortClassName,factoryName,abstracttypeName,allOperators,allSortSlots);
+          sortGomClassForSortDecl.put(`sortDecl,sortClass);
           classList = `concGomClass(sortClass,classList*);
         }
       }
@@ -191,11 +194,23 @@ public class GomCompiler {
         }
       }
       GomClassList allOperatorClasses = `concGomClass();
+      GomClassList allSortClasses = `concGomClass();
       modlist = environment().getModuleDependency(moduleDecl);
       while(!modlist.isEmpty()) {
         ModuleDecl imported = modlist.getHead();
         modlist = modlist.getTail();
         SortList moduleSorts = getSortForModule(imported,sortList);
+        SortList sortconsum = moduleSorts;
+        while(!sortconsum.isEmpty()) {
+          Sort sort = sortconsum.getHead();
+          sortconsum = sortconsum.getTail();
+          %match(Sort sort) {
+            Sort[decl=sortDecl] -> {
+              GomClass sortClass = (GomClass) sortGomClassForSortDecl.get(`sortDecl);
+              allSortClasses = `concGomClass(sortClass,allSortClasses*);
+            }
+          }
+        }
         %match(SortList moduleSorts) {
           concSort(_*,Sort[operators=concOperator(_*,opDecl,_*)],_*) -> {
             GomClass opClass = (GomClass) classForOperatorDecl.get(`opDecl);
@@ -204,7 +219,7 @@ public class GomCompiler {
         }
       }
       
-      GomClass factoryClass = `FactoryClass(factoryClassName,importedFactories,allOperatorClasses);
+      GomClass factoryClass = `FactoryClass(factoryClassName,importedFactories,allSortClasses,allOperatorClasses);
       classList = `concGomClass(factoryClass,classList*);
     }
 
@@ -217,7 +232,7 @@ public class GomCompiler {
       concSort(_*,
           Sort[decl=SortDecl[name=sortname,moduleDecl=moduledecl]]
           ,_*) -> {
-        classNames = `concClassName(ClassName(packagePrefix(moduledecl),sortname),classNames*);
+        classNames = `concClassName(ClassName(packagePrefix(moduledecl)+".types",sortname),classNames*);
       }
     }
     return classNames;
@@ -278,6 +293,6 @@ public class GomCompiler {
         }
       }
     }
-    return pkgPrefix;
+    return pkgPrefix.toLowerCase();
   }
 }
