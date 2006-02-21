@@ -59,9 +59,9 @@ public class TemplateVoidFwd extends TemplateClass {
     out.append("\n");
     out.append("\tpublic void voidVisit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {\n");
     out.append("\t\tif (v instanceof "+fullClassName(abstractType)+") {\n");
-    out.append("\t\t\treturn (("+fullClassName(abstractType)+") v).accept(this);\n");
+    out.append("\t\t\t(("+fullClassName(abstractType)+") v).accept(this);\n");
     out.append("\t\t} else {\n");
-    out.append("\t\t\treturn any.visit(v);\n");
+    out.append("\t\t\tany.visit(v);\n");
     out.append("\t\t}\n");
     out.append("\t}\n");
     

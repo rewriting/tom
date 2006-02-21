@@ -274,7 +274,7 @@ public class TemplateFactory extends TemplateClass {
   private String make(GomClass op) {
     %match(GomClass op) {
       OperatorClass[className=opName,sortName=sortName] -> {
-        return "make"+className(`opName)+"_"+className(`sortName);
+        return "make"+className(`sortName)+"_"+className(`opName);
       }
     }
 		throw new GomRuntimeException("TemplateFactory:make got a strange operatorclass: "+op); 

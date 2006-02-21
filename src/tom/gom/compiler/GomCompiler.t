@@ -164,7 +164,6 @@ public class GomCompiler {
       ModuleDecl moduleDecl = (ModuleDecl) it.next();
       String moduleName = moduleDecl.getModuleName().getName();
 
-      ClassName factoryClassName = (ClassName)factoryNameForModule.get(moduleDecl);
       // We get all Operator Classes for this module, and all modules imported by this one
       ClassNameList importedFactories = `concClassName();
       ModuleDeclList modlist = environment().getModuleDependency(moduleDecl);
@@ -202,6 +201,8 @@ public class GomCompiler {
         }
       }
       
+      ClassName factoryClassName = (ClassName)factoryNameForModule.get(moduleDecl);
+      ClassName abstractTypeClassName = (ClassName)abstractTypeNameForModule.get(moduleDecl);
       GomClass factoryClass = `FactoryClass(factoryClassName,importedFactories,allSortClasses,allOperatorClasses);
       classList = `concGomClass(factoryClass,classList*);
 
@@ -212,12 +213,12 @@ public class GomCompiler {
 
       /* create a Fwd class */
       ClassName fwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"Fwd");
-      GomClass fwdclass = `FwdClass(fwdName,visitorName,factoryClassName,allSortClasses,allOperatorClasses);
+      GomClass fwdclass = `FwdClass(fwdName,visitorName,abstractTypeClassName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(fwdclass,classList*);
 
       /* create a VoidFwd class */
       ClassName voidfwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"FwdVoid");
-      GomClass voidfwdclass = `VoidFwdClass(voidfwdName,visitorName,factoryClassName,allSortClasses,allOperatorClasses);
+      GomClass voidfwdclass = `VoidFwdClass(voidfwdName,visitorName,abstractTypeClassName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(voidfwdclass,classList*);
 
       /* create a VisitableFwd class */
