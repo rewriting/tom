@@ -282,7 +282,6 @@ matchBlock: {
 							concOption(orgTrack));
 					//return type `name(subjectListAST)
 					Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(subjectListAST,replace_preProcessing_makeTerm)));
-
 					InstructionList l = `concInstruction(makeFunctionBeginAST,matchAST,buildAST,MakeFunctionEnd());
 					return preProcessingInstruction(`AbstractBlock(l));
 				}
@@ -295,7 +294,7 @@ matchBlock: {
           TomVisit visit;
           TomVisitList jVisitList = `visitList;
           TomTerm arg;//arg = subjectList
-          String funcName;
+          String funcName;//function name
           TomForwardType visitorFwd = null;
           while (!jVisitList.isEmpty()){
             subjectListAST = empty();
@@ -307,10 +306,11 @@ matchBlock: {
                 }
                 arg = `Variable(option(),Name("arg"),visitType,concConstraint());//one argument only in visit_Term
                 subjectListAST = append(arg,subjectListAST);
-                funcName = "visit_" + getTomType(`visitType);//function signature is visit_Term(Term arg) throws VisitFailure.
-                l = `concDeclaration(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,TomTypeAlone("VisitFailure"),Match(SubjectList(subjectListAST),
-                        patternInstructionList, 
-                        concOption(orgTrack))));
+                funcName = "visit_" + getTomType(`visitType);
+                Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
+                Instruction returnStatement = `Return(FunctionCall(Name(funcName),subjectListAST));
+                InstructionList instructions = `concInstruction(matchStatement, returnStatement);
+                l = `concDeclaration(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,TomTypeAlone("VisitFailure"),AbstractBlock(instructions)));
               }
             }
             jVisitList = jVisitList.getTail();
