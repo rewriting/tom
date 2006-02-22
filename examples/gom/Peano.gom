@@ -1,0 +1,10 @@
+module Peano
+imports 
+
+public
+sorts Nat 
+
+abstract syntax
+
+Zero() -> Nat
+Suc(pred:Nat) -> Nat

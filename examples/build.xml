@@ -34,6 +34,7 @@
 
   <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
   <property name="vasconfigfile"  location="${tom.home}/Vas.xml"/>
+  <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
 
   <!-- Examples to build and distribute -->
   <property name="addressbook"    value="addressbook"/>
@@ -50,6 +51,7 @@
   <property name="dom"            value="dom"/>
   <property name="expression"     value="expression"/>
   <property name="ferus"          value="ferus"/>
+  <property name="gom"            value="gom"/>
   <property name="gomoku"         value="gomoku"/>
   <property name="gtree"          value="gtree"/>
   <property name="integerc"       value="integerc"/>
@@ -109,6 +111,9 @@
     <taskdef name="vas"
              classname="vas.ant.VasTask" 
              classpathref="tom.classpath"/>
+    <taskdef name="gom"
+             classname="tom.gom.tools.ant.GomTask"
+             classpathref="tom.classpath"/>
     <taskdef name="tomantlr" 
              classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
       <classpath refid="tom.classpath"/>
@@ -148,11 +153,22 @@
       <attribute name="example"/>
       <sequential>
         <vas config="${vasconfigfile}"
-				     srcdir="${examples.dir}"
+             srcdir="${examples.dir}"
              package="@{example}" 
              destdir="${examples.gen}">
           <include name="@{example}/**/*.vas"/>
         </vas>
+      </sequential>
+    </macrodef>
+    <macrodef name="gomcompile">
+      <attribute name="example"/>
+      <sequential>
+        <gom config="${gomconfigfile}"
+             srcdir="${examples.dir}"
+             package="@{example}" 
+             destdir="${examples.gen}">
+          <include name="@{example}/**/*.gom"/>
+        </gom>
       </sequential>
     </macrodef>
     <macrodef name="javacompile">
@@ -387,6 +403,12 @@
       <env key="LDFLAGS" value="-L${aterm.home}/lib -lATerm"/>
       <env key="CFLAGS"  value="-I${aterm.home}/include -I."/>
     </exec>
+  </target>
+
+  <target name="gom" depends="init">
+    <gomcompile example="${gom}"/>
+    <tomcompile example="${gom}"/>
+    <javacompile example="${gom}"/>
   </target>
 
   <target name="gomoku" depends="init">
