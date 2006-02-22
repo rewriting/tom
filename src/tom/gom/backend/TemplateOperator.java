@@ -117,11 +117,11 @@ public class TemplateOperator extends TemplateClass {
       
       // XXX: special treatment for builtin String and int
       out.append("\tpublic "+slotDomain(slot)+" "+getMethod(slot)+"() {\n");
-      out.append("\t\treturn ((aterm.ATermAppl) getArgument("+index(slot)+"));\n");
+      out.append("\t\treturn (("+slotDomain(slot)+") getArgument("+index(slot)+"));\n");
       out.append("\t}\n");
       out.append("\n");
 
-      out.append("\tpublic "+className()+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
+      out.append("\tpublic "+slotDomain(slot)+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
       out.append("\t\treturn ("+fullClassName()+") super.setArgument(_arg, "+index(slot)+");\n");
       out.append("\t}\n");
       out.append("\n");

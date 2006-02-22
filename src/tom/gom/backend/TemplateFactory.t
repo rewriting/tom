@@ -265,8 +265,8 @@ public class TemplateFactory extends TemplateClass {
   }
   private String atermFunArgs(GomClass op) {
     %match(GomClass op) {
-      OperatorClass[className=opName,sortName=sortName] -> {
-        return "\"_"+className(`sortName)+"_"+className(`opName)+"\", 0, false";
+      OperatorClass[className=opName,sortName=sortName,slots=slotList] -> {
+        return "\"_"+className(`sortName)+"_"+className(`opName)+"\", "+`slotList.getLength()+", false";
       }
     }
 		throw new GomRuntimeException("TemplateFactory:atermFunArgs got a strange operatorclass: "+op); 
