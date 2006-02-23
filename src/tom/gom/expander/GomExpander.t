@@ -75,7 +75,8 @@ public class GomExpander {
 				GomModuleName moduleNameName = (GomModuleName)it.next();
 				String moduleName = moduleNameName.getName();
 
-				if(!isReservedModule(moduleName) && !alreadyParsedModule.contains(moduleNameName)) {
+				if(!environment().isBuiltin(moduleName) 
+            && !alreadyParsedModule.contains(moduleNameName)) {
           GomModule importedModule = parse(moduleName);
           if(importedModule == null) {
             return null;
@@ -107,18 +108,6 @@ public class GomExpander {
 		return moduleToAnalyse;
 	}
   
-  /**
-   * List of builtin module names: they are not parsed, since they only declare
-   * operators for the tom signature, with no support
-   */
-	private boolean isReservedModule(String moduleName) {
-		return (moduleName.equals("int") ||
-						moduleName.equals("String") ||
-						moduleName.equals("double") ||
-						moduleName.equals("aterm") ||
-						moduleName.equals("atermlist"));
-	}
-	
 	private GomModule parse(String moduleName) {
 		GomModule result = null;
 		File importedModuleFile = findModuleFile(moduleName);

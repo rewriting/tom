@@ -144,6 +144,9 @@ public class GomTypeExpander {
         "GomTypeExpander::getOperatorDecl: wrong Production?");
   }
   private SortDecl declFromTypename(String typename, SortDeclList sortDeclList) {
+    if (environment().isBuiltin(typename)) {
+      return environment().builtinSort(typename);
+    }
     %match(SortDeclList sortDeclList) {
       concSortDecl(_*,sortdecl@SortDecl[name=name],_*) -> {
         if (typename.equals(`name)) {
@@ -211,15 +214,17 @@ public class GomTypeExpander {
     return result;
   }
 
-  // get directly imported modules
+  // get directly imported modules. Skip builtins
   private Collection getImportedModules(GomModule module) {
     Set imports = new HashSet();
     %match(GomModule module) {
       GomModule(moduleName,sectionList) -> {
         imports.add(`moduleName);
         %match(SectionList sectionList) {
-          concSection(_*,Imports(concImportedModule(_*,Import(modname),_*)),_*) -> {
-            imports.add(`modname);
+          concSection(_*,Imports(concImportedModule(_*,Import(modname@GomModuleName(name)),_*)),_*) -> {
+            if (!environment().isBuiltin(`name)) {
+              imports.add(`modname);
+            }
           }
         }
       }

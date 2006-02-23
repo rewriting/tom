@@ -27,11 +27,13 @@ package tom.gom.tools;
 import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
 import java.util.*;
 
 public class GomEnvironment {
   
+	%include { ../adt/gom/Gom.tom}
   /** 
    * GomEnvironment uses the Singleton pattern.
    * Unique instance of the GomEnvironment
@@ -42,7 +44,9 @@ public class GomEnvironment {
   /** 
    * A private constructor method to defeat instantiation
    */
-  private GomEnvironment() { }
+  private GomEnvironment() { 
+    initBuiltins();
+  }
   
   /**
    * Part of the Singleton pattern, get the instance or create it.
@@ -70,4 +74,30 @@ public class GomEnvironment {
   public GomStreamManager getStreamManager() {
     return streamManager;
   }
+
+  private Map builtinSorts = new HashMap();
+  private void initBuiltins() {
+    builtinSorts.put("int",`BuiltinSortDecl("int"));
+    builtinSorts.put("String",`BuiltinSortDecl("String"));
+    builtinSorts.put("double",`BuiltinSortDecl("double"));
+    builtinSorts.put("aterm",`BuiltinSortDecl("aterm"));
+    builtinSorts.put("atermlist",`BuiltinSortDecl("atermlist"));
+  }
+
+  /**
+   * Check is the argument is a builtin module name
+   * Those are not parsed, since they only declare
+   * operators for the tom signature, with no support
+   */
+  public boolean isBuiltin(String moduleName) {
+    return builtinSorts.containsKey(moduleName);
+  }
+  public SortDecl builtinSort(String sortname) {
+    if (isBuiltin(sortname)) {
+      return `BuiltinSortDecl(sortname);
+    } else {
+      throw new GomRuntimeException("Not a builtin sort: "+sortname);
+    }
+  }
+
 }

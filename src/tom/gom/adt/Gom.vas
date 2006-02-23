@@ -33,6 +33,7 @@ concGomModule(GomModule*)           -> GomModuleList
 
 ModuleDecl(moduleName:GomModuleName,pkg:String)              -> ModuleDecl
 SortDecl(name:String,moduleDecl:ModuleDecl)                  -> SortDecl
+BuiltinSortDecl(name:String)                                 -> SortDecl
 OperatorDecl(name:String,sort:SortDecl,prod:TypedProduction) -> OperatorDecl
 Slots(slots:SlotList)                                        -> TypedProduction
 Variadic(sort:SortDecl)                                      -> TypedProduction
