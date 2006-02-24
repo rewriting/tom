@@ -238,6 +238,8 @@ public class TemplateFactory extends TemplateClass {
               } else {
                 if (`domain.equals(`ClassName("","int"))) {
                   res+= "(aterm.ATerm) factory.makeInt(_"+`name+")";
+                } else if (`domain.equals(`ClassName("","String"))) { 
+                  res+= "(aterm.ATerm) factory.makeAppl(factory.makeAFun(_"+`name+",0 , true))";
                 } else {
                   throw new GomRuntimeException("Builtin " + `domain + " not supported");
                 }
@@ -319,6 +321,8 @@ public class TemplateFactory extends TemplateClass {
               } else {
                 if (`domain.equals(`ClassName("","int"))) {
                   res+= "((Integer) "+list+".get("+index+")).intValue()";
+                } else if (`domain.equals(`ClassName("","String"))) { 
+                  res+= "(String) "+list+".get("+index+")";
                 } else {
                   throw new GomRuntimeException("Builtin " + `domain + " not supported");
                 }
@@ -353,6 +357,8 @@ public class TemplateFactory extends TemplateClass {
           } else {
             if ((`head.getDomain()).equals(`ClassName("","int"))) {
               res+= list+".add(new Integer("+arg+"."+getMethod(head)+"()));\n";
+            } else if (`head.getDomain().equals(`ClassName("","String"))) { 
+              res+= list+".add("+arg+"."+getMethod(head)+"());\n";
             } else {
               throw new GomRuntimeException("Builtin " + `head.getDomain() + " not supported");
             }
