@@ -17,7 +17,7 @@ public class BenchCons {
   }
 
   %oplist TomList conc( int* ) {
-    is_fsym(t) { t instanceof Cons }
+    is_fsym(t) { (t instanceof Cons) || (t instanceof Empty) }
     make_empty()  { factory.makeEmpty() }
     make_insert(e,l) { factory.makeCons(factory.makeInt(e),l) }
     get_head(l)   { ((Int)((Cons)l).getHead()).getValue() }
@@ -61,8 +61,7 @@ public class BenchCons {
   public void run(int max) {
     //System.out.println(" l = " + genere(100));
     long startChrono = System.currentTimeMillis();
-
-    //System.out.println(" l = " + elim(reverse(genere(100))));
+    
     elim(reverse(genere(max)));
     
     System.out.println(max + " " + (System.currentTimeMillis()-startChrono));
