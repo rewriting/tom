@@ -39,6 +39,7 @@ public class Builtin {
     String res = "";
     int n = 32;
     Wrapper t = `Int(10);
+    Wrapper nm = `Name("Germain");
 
     matchBlock1: {
       %match(Wrapper t) {
@@ -56,6 +57,14 @@ public class Builtin {
       %match(int n) {
         10 -> { res += "10"; break matchBlock2; }
         32 -> { res += "32"; break matchBlock2;}
+        _  -> { res += "Unknown"; }
+      }
+    }
+
+    matchBlock3: {
+      %match(Wrapper nm) {
+        Name("Pem") -> { res += " pem"; break matchBlock3; }
+        Name("Germain") -> { res += " G"; break matchBlock3;}
         _  -> { res += "Unknown"; }
       }
     }

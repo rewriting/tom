@@ -5,4 +5,4 @@ public
 	sorts Wrapper
 abstract syntax
 	Int(i:int) -> Wrapper
-
+	Name(n:String) -> Wrapper
