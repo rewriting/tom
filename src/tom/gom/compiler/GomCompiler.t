@@ -60,11 +60,11 @@ public class GomCompiler {
   public GomClassList compile(SortList sortList) {
     GomClassList classList = `concGomClass();
 
-    // XXX: We will need to pupulate those Maps to take into account builtin types
+    // XXX: We will need to populate those Maps to take into account builtin types
     Map abstractTypeNameForModule = new HashMap();
     Map factoryNameForModule = new HashMap();
     Map visitorNameForModule = new HashMap();
-    Map sortClassNameForSortDecl = new HashMap();
+    Map sortClassNameForSortDecl = environment().builtinSortClassMap();
     Map sortGomClassForSortDecl = new HashMap();
     Map classForOperatorDecl = new HashMap();
     /* For each module */

@@ -25,8 +25,8 @@
 package tom.gom.tools;
 
 import tom.gom.GomStreamManager;
-import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
+import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
 import java.util.*;
@@ -34,6 +34,7 @@ import java.util.*;
 public class GomEnvironment {
   
 	%include { ../adt/gom/Gom.tom}
+	%include { ../adt/objects/Objects.tom}
   /** 
    * GomEnvironment uses the Singleton pattern.
    * Unique instance of the GomEnvironment
@@ -77,11 +78,11 @@ public class GomEnvironment {
 
   private Map builtinSorts = new HashMap();
   private void initBuiltins() {
-    builtinSorts.put("int",`BuiltinSortDecl("int"));
-    builtinSorts.put("String",`BuiltinSortDecl("String"));
-    builtinSorts.put("double",`BuiltinSortDecl("double"));
-    builtinSorts.put("aterm",`BuiltinSortDecl("aterm"));
-    builtinSorts.put("atermlist",`BuiltinSortDecl("atermlist"));
+    builtinSorts.put("int",`ClassName("","int"));
+    builtinSorts.put("String",`ClassName("","String"));
+    builtinSorts.put("double",`ClassName("","double"));
+    builtinSorts.put("aterm",`ClassName("aterm","ATerm"));
+    builtinSorts.put("atermlist",`ClassName("aterm","ATermList"));
   }
 
   /**
@@ -92,6 +93,9 @@ public class GomEnvironment {
   public boolean isBuiltin(String moduleName) {
     return builtinSorts.containsKey(moduleName);
   }
+  public boolean isBuiltinClass(ClassName className) {
+    return builtinSorts.containsValue(className);
+  }
   public SortDecl builtinSort(String sortname) {
     if (isBuiltin(sortname)) {
       return `BuiltinSortDecl(sortname);
@@ -99,5 +103,13 @@ public class GomEnvironment {
       throw new GomRuntimeException("Not a builtin sort: "+sortname);
     }
   }
-
+  public Map builtinSortClassMap() {
+    Map sortClass = new HashMap();
+    Iterator it = builtinSorts.keySet().iterator();
+    while(it.hasNext()) {
+      String name = (String) it.next();
+      sortClass.put(`BuiltinSortDecl(name),(ClassName)builtinSorts.get(name));
+    }
+    return sortClass;
+  }
 }

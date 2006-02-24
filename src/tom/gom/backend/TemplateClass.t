@@ -61,7 +61,11 @@ public abstract class TemplateClass {
   public String fullClassName(ClassName clsName) {
     %match(ClassName clsName) {
       ClassName[pkg=pkgPrefix,name=name] -> {
-        return `pkgPrefix+"."+`name;
+        if(`pkgPrefix.equals("")) {
+          return `name;
+        } else {
+          return `pkgPrefix+"."+`name;
+        }
       }
     }
     throw new GomRuntimeException("TemplateClass:fullClassName got a strange ClassName "+clsName);

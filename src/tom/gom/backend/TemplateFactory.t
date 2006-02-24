@@ -25,6 +25,7 @@
 
 package tom.gom.backend;
 
+import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
@@ -228,11 +229,19 @@ public class TemplateFactory extends TemplateClass {
           SlotField head = slotList.getHead();
           slotList = slotList.getTail();
           %match(SlotField head) {
-            SlotField[name=name] -> {
+            SlotField[name=name,domain=domain] -> {
               if (!res.equals("")) {
                 res+= ", ";
               }
-              res+= "_"+`name;
+              if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+                res+= "_"+`name;
+              } else {
+                if (`domain.equals(`ClassName("","int"))) {
+                  res+= "(aterm.ATerm) factory.makeInt(_"+`name+")";
+                } else {
+                  throw new GomRuntimeException("Builtin " + `domain + " not supported");
+                }
+              }
             }
           }
         }
@@ -305,7 +314,15 @@ public class TemplateFactory extends TemplateClass {
               if (!res.equals("")) {
                 res+= ", ";
               }
-              res+= makesortfromterm(`domain) + "((aterm.ATerm) "+list+".get("+index+"))";
+              if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+                res+= makesortfromterm(`domain) + "((aterm.ATerm) "+list+".get("+index+"))";
+              } else {
+                if (`domain.equals(`ClassName("","int"))) {
+                  res+= "((Integer) "+list+".get("+index+")).intValue()";
+                } else {
+                  throw new GomRuntimeException("Builtin " + `domain + " not supported");
+                }
+              }
               index++;
             }
           }
@@ -331,7 +348,15 @@ public class TemplateFactory extends TemplateClass {
         while(!slotList.isEmpty()) {
           SlotField head = slotList.getHead();
           slotList = slotList.getTail();
-          res+= list+".add("+arg+"."+getMethod(head)+"().toTerm());\n";
+          if(!GomEnvironment.getInstance().isBuiltinClass(`head.getDomain())) {
+            res+= list+".add("+arg+"."+getMethod(head)+"().toTerm());\n";
+          } else {
+            if ((`head.getDomain()).equals(`ClassName("","int"))) {
+              res+= list+".add(new Integer("+arg+"."+getMethod(head)+"()));\n";
+            } else {
+              throw new GomRuntimeException("Builtin " + `head.getDomain() + " not supported");
+            }
+          }
         }
         return res;
       }
