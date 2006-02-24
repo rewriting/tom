@@ -55,18 +55,15 @@ public class Cons extends List  {
 	}
 
   protected int hashFunction() {
-    int initval = 0; /* the previous hash value */
-    int a, b, c, len;
+    int a, b, c;
 
     /* Set up the internal state */
-    len = getArity();
     a = b = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    c = initval; /* the previous hash value */
+    c = getArity();
     /*---------------------------------------- handle most of the key */
 
     /*------------------------------------- handle the last 11 bytes */
-    c += len;
-    b += (stringHashFunction(getName(),getArity()) << 8);
+    //b += (stringHashFunction(getName(),getArity()) << 8);
 
 		a += (head.hashCode() << 8);
 		a += (tail.hashCode());

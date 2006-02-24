@@ -60,11 +60,13 @@ public class BenchCons {
 
   public void run(int max) {
     //System.out.println(" l = " + genere(100));
+
     long startChrono = System.currentTimeMillis();
     
     elim(reverse(genere(max)));
     
     System.out.println(max + " " + (System.currentTimeMillis()-startChrono));
+    System.out.println(factory);
   }
 
   public final static void main(String[] args) {
