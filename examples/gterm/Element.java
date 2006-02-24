@@ -7,4 +7,7 @@ public abstract class Element extends AbstractType {
 		return false;
 	}
   
+	public int getValue() {
+    throw new UnsupportedOperationException("This Element has no value");
+	}
 }

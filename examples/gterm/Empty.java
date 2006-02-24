@@ -4,6 +4,9 @@ public class Empty extends List {
 	public boolean isEmpty() {
 		return true;
 	}
+  public boolean isCons() {
+    return true;
+  }
 
   protected void init(int hashCode) {
     this.hashCode = hashCode;

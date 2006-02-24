@@ -4,6 +4,7 @@ public class Main {
 		Factory factory = new Factory();
 
 		Empty e1 = factory.makeEmpty();
+    System.out.println("e1.isEmpty() = "+e1.isEmpty());
 
 		System.out.println("e1 = " + e1);
 		System.out.println("e1.name = " + e1.getName());

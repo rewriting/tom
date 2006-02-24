@@ -17,11 +17,11 @@ public class BenchCons {
   }
 
   %oplist TomList conc( int* ) {
-    is_fsym(t) { (t instanceof Cons) || (t instanceof Empty) }
+    is_fsym(t) { t instanceof Cons || t instanceof Empty }
     make_empty()  { factory.makeEmpty() }
     make_insert(e,l) { factory.makeCons(factory.makeInt(e),l) }
-    get_head(l)   { ((Int)((Cons)l).getHead()).getValue() }
-    get_tail(l)   { ((Cons)l).getTail() }
+    get_head(l)   { l.getHead().getValue() }
+    get_tail(l)   { l.getTail() }
     is_empty(l)   { l.isEmpty() }
   }
   
