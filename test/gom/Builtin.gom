@@ -1,0 +1,8 @@
+module Builtin
+imports int
+
+public 
+	sorts Wrapper
+abstract syntax
+	Int(i:int) -> Wrapper
+
