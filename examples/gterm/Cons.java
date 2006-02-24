@@ -54,6 +54,26 @@ public class Cons extends List  {
 		return tail;
 	}
 
+  public int getChildCount() {
+    return getArity();
+  }
+
+	public jjtraveler.Visitable getChildAt(int index) {
+		switch(index) {
+			case 0: return getHead();
+			case 1: return getTail();
+			default: throw new IndexOutOfBoundsException();
+		}
+  }
+
+  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
+		switch(index) {
+			case 0: return Factory.getInstance().makeCons((Element)v,getTail());
+			case 1: return Factory.getInstance().makeCons(getHead(),(List)v);
+			default: throw new IndexOutOfBoundsException();
+		}
+  }
+
   protected int hashFunction() {
     int a, b, c;
 

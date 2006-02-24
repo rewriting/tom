@@ -2,17 +2,25 @@ import shared.SharedObjectFactory;
 
 public class Factory extends SharedObjectFactory {
   private static int DEFAULT_TERM_TABLE_SIZE = 16; // means 2^16 entries
+  private static Factory instance = null;
 
 	private Empty protoEmpty;
 	private Cons protoCons;
 	private Plop protoPlop;
 	private Int protoInt;
 
-  public Factory() {
+	public static Factory getInstance() {
+		if(instance == null) {
+			instance = new Factory();
+		}
+		return instance;
+	}
+	
+  private Factory() {
     this(DEFAULT_TERM_TABLE_SIZE);
   }
 
-  public Factory(int termTableSize) {
+  private Factory(int termTableSize) {
     super(termTableSize);
 
     protoEmpty = new Empty();

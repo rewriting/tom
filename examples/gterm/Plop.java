@@ -38,6 +38,22 @@ public class Plop extends Element {
     return 0;
   }
 
+  public int getChildCount() {
+    return getArity();
+  }
+
+	public jjtraveler.Visitable getChildAt(int index) {
+		switch(index) {
+			default: throw new IndexOutOfBoundsException();
+		}
+  }
+
+  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
+		switch(index) {
+			default: throw new IndexOutOfBoundsException();
+		}
+  }
+	
   protected int hashFunction() {
     int a, b, c;
 

@@ -1,4 +1,26 @@
-public abstract class AbstractType implements shared.SharedObject {
+public abstract class AbstractType implements shared.SharedObject, jjtraveler.Visitable {
+
+	public abstract String getName();
+	public abstract int getArity();
+
+	private aterm.ATermFactory getATermFactory() {
+		return aterm.pure.SingletonFactory.getInstance();
+	}
+	
+	public aterm.ATerm toATerm() {
+		if(this instanceof Int) {
+			System.out.println("strange: ");
+		}
+		aterm.ATermList args = getATermFactory().makeList();
+		for(int i=getArity()-1; i>=0 ; i--) {
+			args = args.insert(((AbstractType)this.getChildAt(i)).toATerm());
+		}
+		return getATermFactory().makeApplList(getATermFactory().makeAFun(getName(),getArity(),false),args);
+	}
+
+	//public String toString() {
+		//return toATerm().toString();
+	//}
 
 	public int stringHashFunction(String name, int arity) {
     int a, b, c;

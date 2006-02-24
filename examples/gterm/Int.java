@@ -47,6 +47,21 @@ public class Int extends Element {
     return 1;
   }
 
+  public int getChildCount() {
+    return 0;
+  }
+
+	public aterm.ATerm toATerm() {
+		return aterm.pure.SingletonFactory.getInstance().makeInt(getValue());
+	}
+	
+	public jjtraveler.Visitable getChildAt(int index) {
+		throw new RuntimeException("no children!");
+  }
+
+  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
+		throw new RuntimeException("no children!");
+  }
   protected int hashFunction() {
     int a, b, c;
 
