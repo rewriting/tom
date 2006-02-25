@@ -36,7 +36,7 @@ public abstract class TemplateClass {
 
   private ClassName className;
 
-  TemplateClass(ClassName className) {
+  public TemplateClass(ClassName className) {
     this.className = className;
   }
 

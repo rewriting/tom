@@ -23,8 +23,9 @@
  * 
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.apigen;
 
+import tom.gom.backend.TemplateClass;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
@@ -34,9 +35,9 @@ public class TemplateFactory extends TemplateClass {
   GomClassList sorts;
   GomClassList operators;
 
-	%include { ../adt/objects/Objects.tom}
+	%include { ../../adt/objects/Objects.tom}
 
-  TemplateFactory(ClassName className, ClassNameList factories, GomClassList sorts, GomClassList operators) {
+  public TemplateFactory(ClassName className, ClassNameList factories, GomClassList sorts, GomClassList operators) {
     super(className);
     this.factories = factories;
     this.sorts = sorts;

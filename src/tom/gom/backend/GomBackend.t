@@ -44,6 +44,8 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
+import tom.gom.backend.apigen.*;
+
 public class GomBackend {
 
 	%include { ../adt/objects/Objects.tom}

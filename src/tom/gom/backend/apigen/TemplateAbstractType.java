@@ -23,8 +23,9 @@
  * 
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.apigen;
 
+import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
 
 public class TemplateAbstractType extends TemplateClass {
@@ -32,7 +33,7 @@ public class TemplateAbstractType extends TemplateClass {
   ClassName visitor;
   ClassNameList sortList;
 
-  TemplateAbstractType(ClassName className, ClassName factoryName, ClassName visitor, ClassNameList sortList) {
+  public TemplateAbstractType(ClassName className, ClassName factoryName, ClassName visitor, ClassNameList sortList) {
     super(className);
     this.factoryName = factoryName;
     this.visitor = visitor;

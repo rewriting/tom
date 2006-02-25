@@ -23,22 +23,19 @@
  * 
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.apigen;
 
+import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
 
-public class TemplateFwd extends TemplateClass {
-  ClassName visitor;
-  ClassName abstractType;
+public class TemplateVisitor extends TemplateClass {
   GomClassList sortClasses;
   GomClassList operatorClasses;
 
-	%include { ../adt/objects/Objects.tom}
+	%include { ../../adt/objects/Objects.tom}
 
-  TemplateFwd(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList operatorClasses) {
+  public TemplateVisitor(ClassName className, GomClassList sortClasses, GomClassList operatorClasses) {
     super(className);
-    this.visitor = visitor;
-    this.abstractType = abstractType;
     this.sortClasses = sortClasses;
     this.operatorClasses = operatorClasses;
   }
@@ -49,42 +46,24 @@ public class TemplateFwd extends TemplateClass {
 
     out.append("package "+getPackage()+";\n");
     out.append("\n");
-    out.append("public class "+className()+" implements "+className(visitor) + ", jjtraveler.Visitor {\n");
-    out.append("\tprotected jjtraveler.Visitor any;\n");
+    out.append("public interface "+className()+" {\n");
     out.append("\n");
-    out.append("\tpublic "+className()+"(jjtraveler.Visitor v) {\n");
-    out.append("\t\tthis.any = v;\n");
-    out.append("\t}\n");
-    out.append("\n");
-    out.append("\tpublic jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {\n");
-    out.append("\t\tif (v instanceof "+fullClassName(abstractType)+") {\n");
-    out.append("\t\t\treturn (("+fullClassName(abstractType)+") v).accept(this);\n");
-    out.append("\t\t} else {\n");
-    out.append("\t\t\treturn any.visit(v);\n");
-    out.append("\t\t}\n");
-    out.append("\t}\n");
     
     // generate a visit for each sort
     %match(GomClassList sortClasses) {
       concGomClass(_*,SortClass[className=sortName],_*) -> {    
-
-        out.append("\tpublic "+fullClassName(`sortName)+" visit_"+className(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure {\n");
-        out.append("\t\treturn ("+fullClassName(`sortName)+") any.visit(arg);\n");
-        out.append("\t}\n");
-        out.append("\n");
+        out.append("\tpublic abstract "+fullClassName(`sortName)+" visit_"+className(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure;\n");
       }
     }
 
     // generate a visit for each operator
     %match(GomClassList operatorClasses) {
       concGomClass(_*,OperatorClass[className=opName,sortName=sortName],_*) -> {    
-        out.append("\tpublic "+fullClassName(`sortName)+" visit_"+className(`sortName)+"_"+className(`opName)+"("+fullClassName(`opName)+" arg) throws jjtraveler.VisitFailure {\n");
-        out.append("\t\treturn visit_"+className(`sortName)+"(arg);\n");
-        out.append("\t}\n");
-        out.append("\n");
+        out.append("\tpublic abstract "+fullClassName(`sortName)+" visit_"+className(`sortName)+"_"+className(`opName)+"("+fullClassName(`opName)+" arg) throws jjtraveler.VisitFailure;\n");
       }
     }
 
+    out.append("\n");
     out.append("}");
     
     return out.toString();

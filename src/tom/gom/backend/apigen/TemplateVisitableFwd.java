@@ -23,15 +23,16 @@
  * 
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.apigen;
 
+import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 
 public class TemplateVisitableFwd extends TemplateClass {
   ClassName fwd;
 
-  TemplateVisitableFwd(ClassName className, ClassName fwd) {
+  public TemplateVisitableFwd(ClassName className, ClassName fwd) {
     super(className);
     this.fwd = fwd;
   }

@@ -23,8 +23,9 @@
  * 
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.apigen;
 
+import tom.gom.backend.TemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 
@@ -32,9 +33,9 @@ public class TemplateMapping extends TemplateClass {
   GomClassList sortClasses;
   GomClassList operatorClasses;
 
-  %include { ../adt/objects/Objects.tom}
+  %include { ../../adt/objects/Objects.tom}
 
-  TemplateMapping(ClassName className, GomClassList sortClasses, GomClassList operatorClasses) {
+  public TemplateMapping(ClassName className, GomClassList sortClasses, GomClassList operatorClasses) {
     super(className);
     this.sortClasses = sortClasses;
     this.operatorClasses = operatorClasses;

@@ -23,8 +23,9 @@
  * 
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.apigen;
 
+import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
 
 public class TemplateSort extends TemplateClass {
@@ -33,7 +34,7 @@ public class TemplateSort extends TemplateClass {
   ClassNameList operatorList;
   SlotFieldList slotList;
 
-  TemplateSort(ClassName className, ClassName factoryName, ClassName abstractType, ClassNameList operatorList, SlotFieldList slots) {
+  public TemplateSort(ClassName className, ClassName factoryName, ClassName abstractType, ClassNameList operatorList, SlotFieldList slots) {
     super(className);
     this.factoryName = factoryName;
     this.abstractType = abstractType;

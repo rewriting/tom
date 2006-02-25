@@ -23,20 +23,20 @@
  * 
  **/
 
-package tom.gom.backend;
+package tom.gom.backend.apigen;
 
-import tom.gom.adt.objects.*;
+import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
 
-public class TemplateVoidFwd extends TemplateClass {
+public class TemplateFwd extends TemplateClass {
   ClassName visitor;
   ClassName abstractType;
   GomClassList sortClasses;
   GomClassList operatorClasses;
 
-	%include { ../adt/objects/Objects.tom}
+	%include { ../../adt/objects/Objects.tom}
 
-  TemplateVoidFwd(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList operatorClasses) {
+  public TemplateFwd(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList operatorClasses) {
     super(className);
     this.visitor = visitor;
     this.abstractType = abstractType;
@@ -50,18 +50,18 @@ public class TemplateVoidFwd extends TemplateClass {
 
     out.append("package "+getPackage()+";\n");
     out.append("\n");
-    out.append("public class "+className()+" extends jjtraveler.VoidVisitor implements "+className(visitor) + ", jjtraveler.Visitor {\n");
+    out.append("public class "+className()+" implements "+className(visitor) + ", jjtraveler.Visitor {\n");
     out.append("\tprotected jjtraveler.Visitor any;\n");
     out.append("\n");
     out.append("\tpublic "+className()+"(jjtraveler.Visitor v) {\n");
     out.append("\t\tthis.any = v;\n");
     out.append("\t}\n");
     out.append("\n");
-    out.append("\tpublic void voidVisit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {\n");
+    out.append("\tpublic jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {\n");
     out.append("\t\tif (v instanceof "+fullClassName(abstractType)+") {\n");
-    out.append("\t\t\t(("+fullClassName(abstractType)+") v).accept(this);\n");
+    out.append("\t\t\treturn (("+fullClassName(abstractType)+") v).accept(this);\n");
     out.append("\t\t} else {\n");
-    out.append("\t\t\tany.visit(v);\n");
+    out.append("\t\t\treturn any.visit(v);\n");
     out.append("\t\t}\n");
     out.append("\t}\n");
     
