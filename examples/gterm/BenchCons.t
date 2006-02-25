@@ -70,7 +70,7 @@ public class BenchCons {
   }
 
   public final static void main(String[] args) {
-    BenchCons test = new BenchCons(new Factory());
+    BenchCons test = new BenchCons(Factory.getInstance());
     int max = 100;
     try {
       max = Integer.parseInt(args[0]);

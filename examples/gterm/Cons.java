@@ -33,7 +33,8 @@ public class Cons extends List  {
 	public boolean equivalent(shared.SharedObject obj) {
 		if(obj instanceof Cons) {
 			Cons peer = (Cons) obj;
-			return head.equivalent(peer.getHead()) && tail.equivalent(peer.getTail());
+			//return head.equals(peer.getHead()) && tail.equals(peer.getTail());
+			return head==peer.getHead() && tail==peer.getTail();
 		}
 		return false;
   }
