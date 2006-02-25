@@ -19,7 +19,7 @@ public class Plop extends Element {
 	
   public shared.SharedObject duplicate() {
     Plop clone = new Plop();
-    clone.init(hashCode());
+    clone.init(hashCode);
     return clone;
   }
   
@@ -37,6 +37,12 @@ public class Plop extends Element {
   public int getArity() {
     return 0;
   }
+
+	public aterm.ATerm toATerm() {
+		return ATFactory.makeAppl(
+				ATFactory.makeAFun(getName(),getArity(),false), 
+				new aterm.ATerm[] {});
+	}
 
   public int getChildCount() {
     return getArity();

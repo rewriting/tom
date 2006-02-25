@@ -22,7 +22,7 @@ public class Empty extends List {
 	
   public shared.SharedObject duplicate() {
     Empty clone = new Empty();
-    clone.init(hashCode());
+    clone.init(hashCode);
     return clone;
   }
   
@@ -40,6 +40,12 @@ public class Empty extends List {
   public int getArity() {
     return 0;
   }
+
+	public aterm.ATerm toATerm() {
+		return ATFactory.makeAppl(
+				ATFactory.makeAFun(getName(),getArity(),false), 
+				new aterm.ATerm[] {});
+	}
 
   public int getChildCount() {
     return getArity();

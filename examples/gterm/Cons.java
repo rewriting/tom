@@ -26,7 +26,7 @@ public class Cons extends List  {
 	
   public shared.SharedObject duplicate() {
     Cons clone = new Cons();
-    clone.init(head,tail,hashCode());
+    clone.init(head,tail,hashCode);
     return clone;
   }
   
@@ -53,6 +53,12 @@ public class Cons extends List  {
 
 	public List getTail() {
 		return tail;
+	}
+	
+	public aterm.ATerm toATerm() {
+		return ATFactory.makeAppl(
+				ATFactory.makeAFun(getName(),getArity(),false), 
+				new aterm.ATerm[] {getHead().toATerm(), getTail().toATerm()});
 	}
 
   public int getChildCount() {

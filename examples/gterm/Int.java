@@ -23,7 +23,7 @@ public class Int extends Element {
 	
   public shared.SharedObject duplicate() {
     Int clone = new Int();
-    clone.init(value,hashCode());
+    clone.init(value,hashCode);
     return clone;
   }
   
@@ -52,7 +52,7 @@ public class Int extends Element {
   }
 
 	public aterm.ATerm toATerm() {
-		return aterm.pure.SingletonFactory.getInstance().makeInt(getValue());
+		return ATFactory.makeInt(getValue());
 	}
 	
 	public jjtraveler.Visitable getChildAt(int index) {
