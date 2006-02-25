@@ -1,0 +1,8 @@
+module List
+imports int
+
+public 
+	sorts List
+abstract syntax
+	Empty() -> List
+	Cons(head:int,tail:List) -> List
