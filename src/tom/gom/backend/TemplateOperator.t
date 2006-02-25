@@ -25,6 +25,8 @@
 
 package tom.gom.backend;
 
+import tom.gom.tools.GomEnvironment;
+import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
 public class TemplateOperator extends TemplateClass {
@@ -33,6 +35,8 @@ public class TemplateOperator extends TemplateClass {
   ClassName sortName;
   ClassName visitor;
   SlotFieldList slotList;
+
+	%include { ../adt/objects/Objects.tom}
 
   TemplateOperator(ClassName className, ClassName factoryName, ClassName abstractType, ClassName sortName, ClassName visitor, SlotFieldList slots) {
     super(className);
@@ -115,22 +119,50 @@ public class TemplateOperator extends TemplateClass {
       out.append("\t}\n");
       out.append("\n");
       
-      // XXX: special treatment for builtin String and int
-      out.append("\tpublic "+slotDomain(slot)+" "+getMethod(slot)+"() {\n");
-      out.append("\t\treturn (("+slotDomain(slot)+") getArgument("+index(slot)+"));\n");
-      out.append("\t}\n");
+      // special treatment for builtin String and int
+      if(!GomEnvironment.getInstance().isBuiltinClass(slot.getDomain())) {
+        out.append("\tpublic "+slotDomain(slot)+" "+getMethod(slot)+"() {\n");
+        out.append("\t\treturn (("+slotDomain(slot)+") getArgument("+index(slot)+"));\n");
+        out.append("\t}\n");
+      } else {
+        if ((slot.getDomain()).equals(`ClassName("","int"))) {
+          out.append("\tpublic "+slotDomain(slot)+" "+getMethod(slot)+"() {\n");
+          out.append("\t\treturn ((aterm.ATermInt) getArgument("+index(slot)+")).getInt();\n");
+          out.append("\t}\n");
+        } else if ((slot.getDomain()).equals(`ClassName("","String"))) {
+          out.append("\tpublic "+slotDomain(slot)+" "+getMethod(slot)+"() {\n");
+          out.append("\t\treturn ((aterm.ATermAppl) getArgument("+index(slot)+")).getAFun().getName();\n");
+          out.append("\t}\n");
+        } else {
+          throw new GomRuntimeException("Builtin " + slot.getDomain() + " not supported");
+        }
+      }
       out.append("\n");
 
-      out.append("\tpublic "+slotDomain(slot)+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
-      out.append("\t\treturn ("+fullClassName()+") super.setArgument(_arg, "+index(slot)+");\n");
-      out.append("\t}\n");
+      if(!GomEnvironment.getInstance().isBuiltinClass(slot.getDomain())) {
+        out.append("\tpublic "+fullClassName(sortName)+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
+        out.append("\t\treturn ("+fullClassName(sortName)+") super.setArgument(_arg, "+index(slot)+");\n");
+        out.append("\t}\n");
+      } else {
+        if ((slot.getDomain()).equals(`ClassName("","int"))) {
+          out.append("\tpublic "+fullClassName(sortName)+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
+          out.append("\t\treturn ("+fullClassName(sortName)+") super.setArgument(getFactory().makeInt(_arg), "+index(slot)+");\n");
+          out.append("\t}\n");
+        } else if ((slot.getDomain()).equals(`ClassName("","String"))) {
+          out.append("\tpublic "+fullClassName(sortName)+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
+          out.append("\t\treturn ("+fullClassName(sortName)+") super.setArgument(getFactory().makeAppl(getFactory().makeAFun(_arg, 0, true)), "+index(slot)+");\n");
+          out.append("\t}\n");
+        } else {
+          throw new GomRuntimeException("Builtin " + slot.getDomain() + " not supported");
+        }
+      }
       out.append("\n");
 
       count++;
     }
 
     // create the setArgument method
-    // XXX: special treatment for builtins
+    // special treatment for builtins
     out.append("\tpublic aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {\n");
     if (slotList.isEmpty()) {
       out.append("\t\tthrow new RuntimeException(\""+className()+" has no arguments\");\n");
@@ -141,9 +173,19 @@ public class TemplateOperator extends TemplateClass {
       while (!consum.isEmpty()) {
         SlotField slot = consum.getHead();
         consum = consum.getTail();
+        String realType = slotDomain(slot);
+        if(GomEnvironment.getInstance().isBuiltinClass(slot.getDomain())) {
+          if ((slot.getDomain()).equals(`ClassName("","int"))) {
+            realType = "aterm.ATermInt";
+          } else if ((slot.getDomain()).equals(`ClassName("","String"))) {
+            realType = "aterm.ATermAppl";
+          } else {
+            throw new GomRuntimeException("Builtin " + slot.getDomain() + " not supported");
+          }
+        }
 
         out.append("\t\t\tcase "+index(slot)+":\n");
-        out.append("\t\t\t\tif(! (arg instanceof "+slotDomain(slot)+")) {\n");
+        out.append("\t\t\t\tif(! (arg instanceof "+realType+")) {\n");
         out.append("\t\t\t\t\tthrow new RuntimeException(\"Argument "+slot.getName()+" of a "+className()+" should have type "+slotDomain(slot)+"\");\n");
         out.append("\t\t\t\t}\n");
         out.append("\t\t\t\tbreak;\n");
