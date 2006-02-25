@@ -111,9 +111,6 @@
     <taskdef name="vas"
              classname="vas.ant.VasTask" 
              classpathref="tom.classpath"/>
-    <taskdef name="gom"
-             classname="tom.gom.tools.ant.GomTask"
-             classpathref="tom.classpath"/>
     <taskdef name="tomantlr" 
              classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
       <classpath refid="tom.classpath"/>
@@ -185,6 +182,12 @@
         </javac>
       </sequential>
     </macrodef>
+  </target>
+
+  <target name="init.gom.task">
+    <taskdef name="gom"
+             classname="tom.gom.tools.ant.GomTask"
+             classpathref="tom.classpath"/>
   </target>
   
   <target name="prepare.examples">
@@ -405,7 +408,7 @@
     </exec>
   </target>
 
-  <target name="gom" depends="init">
+  <target name="gom" depends="init, init.gom.task">
     <gomcompile example="${gom}"/>
     <tomcompile example="${gom}"/>
     <javacompile example="${gom}"/>
