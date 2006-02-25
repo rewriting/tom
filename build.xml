@@ -806,6 +806,7 @@
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="**/error/**"/>
+      <exclude name="**/gom/**"/>
     </tom>
     <tom config="${stable.configfile}"
          srcdir="${test}"
