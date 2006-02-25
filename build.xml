@@ -778,6 +778,7 @@
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="**/error/**"/>
+      <exclude name="**/gom/**"/>
     </tomsrc>
     <tomsrc config="${src.configfile}"
             srcdir="${test}"
