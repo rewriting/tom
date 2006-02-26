@@ -28,12 +28,12 @@ package tom.gom.backend.shared;
 import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
 
-public class TemplateAbstractType extends TemplateClass {
+public class AbstractTypeTemplate extends TemplateClass {
   ClassName factoryName;
   ClassName visitor;
   ClassNameList sortList;
 
-  public TemplateAbstractType(ClassName className, ClassName factoryName, ClassName visitor, ClassNameList sortList) {
+  public AbstractTypeTemplate(ClassName className, ClassName factoryName, ClassName visitor, ClassNameList sortList) {
     super(className);
     this.factoryName = factoryName;
     this.visitor = visitor;

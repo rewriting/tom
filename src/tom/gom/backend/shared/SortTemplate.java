@@ -27,13 +27,13 @@ package tom.gom.backend.shared;
 import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
 
-public class TemplateSort extends TemplateClass {
+public class SortTemplate extends TemplateClass {
   ClassName factoryName;
   ClassName abstractType;
   ClassNameList operatorList;
   SlotFieldList slotList;
 
-  public TemplateSort(ClassName className, ClassName factoryName, ClassName abstractType, ClassNameList operatorList, SlotFieldList slots) {
+  public SortTemplate(ClassName className, ClassName factoryName, ClassName abstractType, ClassNameList operatorList, SlotFieldList slots) {
     super(className);
     this.factoryName = factoryName;
     this.abstractType = abstractType;

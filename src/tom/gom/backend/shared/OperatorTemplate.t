@@ -29,7 +29,7 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
-public class TemplateOperator extends TemplateClass {
+public class OperatorTemplate extends TemplateClass {
   ClassName factoryName;
   ClassName abstractType;
   ClassName sortName;
@@ -38,7 +38,7 @@ public class TemplateOperator extends TemplateClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public TemplateOperator(ClassName className, ClassName factoryName, ClassName abstractType, ClassName sortName, ClassName visitor, SlotFieldList slots) {
+  public OperatorTemplate(ClassName className, ClassName factoryName, ClassName abstractType, ClassName sortName, ClassName visitor, SlotFieldList slots) {
     super(className);
     this.factoryName = factoryName;
     this.abstractType = abstractType;
