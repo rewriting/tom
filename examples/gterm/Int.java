@@ -48,20 +48,30 @@ public class Int extends Element {
   }
 
   public int getChildCount() {
-    return 0;
+    return 1;
   }
 
+	/*
+	 * meme remarque que dans Factory: construire le constructeur Int ici
+	 */
 	public aterm.ATerm toATerm() {
 		return ATFactory.makeInt(getValue());
 	}
 	
 	public jjtraveler.Visitable getChildAt(int index) {
-		throw new RuntimeException("no children!");
+		switch(index) {
+			case 0:	throw new RuntimeException("no children!"); // special case for builtin argument
+			default: throw new IndexOutOfBoundsException();
+		}
   }
 
   public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
-		throw new RuntimeException("no children!");
+		switch(index) {
+			case 0:	throw new RuntimeException("no children!"); // special case for builtin argument
+			default: throw new IndexOutOfBoundsException();
+		}
   }
+
   protected int hashFunction() {
     int a, b, c;
 
@@ -73,7 +83,8 @@ public class Int extends Element {
     /*------------------------------------- handle the last 11 bytes */
     //b += (stringHashFunction(getName(),getArity()) << 8);
     
-		a += value;
+		a += value; // special case for builtin argument
+
 		/* case 0: nothing left to add */
     a -= b;
     a -= c;

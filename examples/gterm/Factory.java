@@ -114,7 +114,7 @@ public class Factory extends SharedObjectFactory {
 			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
 			if(appl.getName().equals(protoConsInt.getName())) {
 				return makeConsInt(
-						((aterm.ATermInt)appl.getArgument(0)).getInt(),
+						((aterm.ATermInt)appl.getArgument(0)).getInt(), // special case for builtin argument
 						ListFromTerm(appl.getArgument(1))
 						);
 			}
@@ -147,6 +147,11 @@ public class Factory extends SharedObjectFactory {
 		return null;
   }
 
+	/*
+	 * je suis pour voir Int comme un constructeur ayant un fils builtin
+	 * et non comme un cas special correspondant aux ATermInt
+	 * il faudrait donc modifier le code suivant
+	 */
 	protected Element Element_IntFromTerm(aterm.ATerm trm) {
 		if(trm instanceof aterm.ATermInt) {
 			aterm.ATermInt atint = (aterm.ATermInt) trm;

@@ -33,7 +33,6 @@ public class ConsInt extends List  {
 	public boolean equivalent(shared.SharedObject obj) {
 		if(obj instanceof ConsInt) {
 			ConsInt peer = (ConsInt) obj;
-			//return headint.equals(peer.getHeadInt()) && tail.equals(peer.getTail());
 			return headint==peer.getHeadInt() && tail==peer.getTail();
 		}
 		return false;
@@ -58,7 +57,9 @@ public class ConsInt extends List  {
 	public aterm.ATerm toATerm() {
 		return ATFactory.makeAppl(
 				ATFactory.makeAFun(getName(),getArity(),false), 
-				new aterm.ATerm[] {ATFactory.makeInt(getHeadInt()), getTail().toATerm()});
+				new aterm.ATerm[] {
+					ATFactory.makeInt(getHeadInt()), // special case for builtin argument
+					 getTail().toATerm()});
 	}
 
   public int getChildCount() {
@@ -67,7 +68,7 @@ public class ConsInt extends List  {
 
 	public jjtraveler.Visitable getChildAt(int index) {
 		switch(index) {
-			case 0:	throw new RuntimeException("no children!");
+			case 0:	throw new RuntimeException("no children!"); // special case for builtin argument
 			case 1: return getTail();
 			default: throw new IndexOutOfBoundsException();
 		}
@@ -75,7 +76,7 @@ public class ConsInt extends List  {
 
   public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
 		switch(index) {
-			case 0:	throw new RuntimeException("no children!");
+			case 0:	throw new RuntimeException("no children!"); // special case for builtin argument
 			case 1: return Factory.getInstance().makeConsInt(getHeadInt(),(List)v);
 			default: throw new IndexOutOfBoundsException();
 		}
@@ -92,7 +93,7 @@ public class ConsInt extends List  {
     /*------------------------------------- handle the last 11 bytes */
     //b += (stringHashFunction(getName(),getArity()) << 8);
 
-		a += (headint << 8);
+		a += (headint << 8); // special case for builtin argument
 		a += (tail.hashCode());
     
 		/* case 0: nothing left to add */
