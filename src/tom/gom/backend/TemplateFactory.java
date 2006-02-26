@@ -34,6 +34,8 @@ public abstract class TemplateFactory {
   public static TemplateFactory getFactory(String mode) {
     if (mode.equals("apigen")) {
       return new ApigenTemplateFactory();
+    } else if (mode.equals("shared")) {
+      return new SharedTemplateFactory();
     } else {
       throw new GomRuntimeException("Output mode "+mode+" not supported");
     }
@@ -79,5 +81,36 @@ class ApigenTemplateFactory extends TemplateFactory {
   }
   public TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses) {
     return new tom.gom.backend.apigen.TemplateFactory(className,importedFactories,sortClasses,operatorClasses);
+  }
+}
+
+class SharedTemplateFactory extends TemplateFactory {
+
+  public TemplateClass makeTomMappingTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses) {
+    return new tom.gom.backend.shared.NullTemplate(className);
+  }
+  public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses) {
+    return new tom.gom.backend.shared.NullTemplate(className);
+  }
+  public TemplateClass makeForwardVoidTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses) {
+    return new tom.gom.backend.shared.NullTemplate(className);
+  }
+  public TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward) {
+    return new tom.gom.backend.shared.NullTemplate(className);
+  }
+  public TemplateClass makeVisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses) {
+    return new tom.gom.backend.shared.NullTemplate(className);
+  }
+  public TemplateClass makeAbstractTypeTemplate(ClassName className, ClassName factory, ClassName visitor, ClassNameList sortList) {
+    return new tom.gom.backend.shared.NullTemplate(className);
+  }
+  public TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassNameList operators, SlotFieldList slots) {
+    return new tom.gom.backend.shared.NullTemplate(className);
+  }
+  public TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots) {
+    return new tom.gom.backend.shared.NullTemplate(className);
+  }
+  public TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses) {
+    return new tom.gom.backend.shared.NullTemplate(className);
   }
 }

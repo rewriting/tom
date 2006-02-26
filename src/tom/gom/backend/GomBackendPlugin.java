@@ -27,6 +27,9 @@ package tom.gom.backend;
 import java.util.logging.Level;
 
 import tom.platform.PlatformLogRecord;
+import tom.platform.OptionParser;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomGenericPlugin;
@@ -46,6 +49,19 @@ public class GomBackendPlugin extends GomGenericPlugin {
     super("GomBackend");
   }
   
+  /** the declared options string */
+  public static final String DECLARED_OPTIONS = 
+    "<options>" +
+    "<string name='generator' altName='g' description='Select Generator' value='apigen' attrName='type' />" + 
+    "</options>";
+
+  /**
+   * inherited from OptionOwner interface (plugin) 
+   */
+  public PlatformOptionList getDeclaredOptionList() {
+    return OptionParser.xmlToOptionList(GomBackendPlugin.DECLARED_OPTIONS);
+  }
+
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
@@ -70,7 +86,8 @@ public class GomBackendPlugin extends GomGenericPlugin {
     getLogger().log(Level.INFO, "Start compilation");
     // make sure the environment has the correct streamManager
     environment().setStreamManager(getStreamManager());
-    GomBackend backend = new GomBackend();
+    String backendType = getOptionStringValue("generator");
+    GomBackend backend = new GomBackend(TemplateFactory.getFactory(backendType));
     backend.generate(classList);
     if(classList == null) {
       getLogger().log(Level.SEVERE, 
@@ -89,5 +106,4 @@ public class GomBackendPlugin extends GomGenericPlugin {
   public Object[] getArgs() {
     return new Object[]{getStreamManager()};
   }
-
 }

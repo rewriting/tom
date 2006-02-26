@@ -1,6 +1,5 @@
 /*
- *
- * GOM
+ * Gom
  *
  * Copyright (C) 2006 INRIA
  * Nancy, France.
@@ -45,10 +44,14 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class GomBackend {
+  TemplateFactory templatefactory;
 
 	%include { ../adt/objects/Objects.tom}
-
   %include { mutraveler.tom }
+
+  GomBackend(TemplateFactory templatefactory) {
+    this.templatefactory = templatefactory;
+  }
 
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();
@@ -69,7 +72,6 @@ public class GomBackend {
    * Create template classes for the different classes to generate
    */
   public int generateClass(GomClass gomclass) {
-    TemplateFactory templatefactory = TemplateFactory.getFactory("apigen");
     %match(GomClass gomclass) {
       TomMapping[className=className,sortClasses=sortClasses,operatorClasses=ops] -> {
         TemplateClass mapping = templatefactory.makeTomMappingTemplate(`className,`sortClasses,`ops);
