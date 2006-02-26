@@ -58,7 +58,7 @@ public class TestStrat {
     }
   }
   
-	class RewriteSystem extends VisitableForward {
+	class RewriteSystem extends BasicStrategy {
     public RewriteSystem() {
       super(`Fail());
     }

@@ -6,8 +6,8 @@ public class VisitorForward implements jjtraveler.Visitor {
   }
 
   public jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {
-    if (v instanceof AbstractType) {
-      return ((AbstractType) v).accept(this);
+    if (v instanceof VisitorAccept) {
+      return ((VisitorAccept) v).accept(this);
     } else {
       return any.visit(v);
     }

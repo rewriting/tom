@@ -1,4 +1,4 @@
-public class VisitableForward extends VisitorForward implements jjtraveler.reflective.VisitableVisitor {
+public class BasicStrategy extends VisitorForward implements jjtraveler.reflective.VisitableVisitor {
 public int getChildCount() {
     return 1;
   }
@@ -17,7 +17,7 @@ public int getChildCount() {
     }
   }
 
-  public VisitableForward(jjtraveler.reflective.VisitableVisitor any) {
+  public BasicStrategy(jjtraveler.reflective.VisitableVisitor any) {
     super(any);
   }
 }
