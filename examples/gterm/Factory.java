@@ -8,6 +8,7 @@ public class Factory extends SharedObjectFactory {
 	private Cons protoCons;
 	private Plop protoPlop;
 	private Int protoInt;
+	private ConsInt protoConsInt;
 
 	public static Factory getInstance() {
 		if(instance == null) {
@@ -27,6 +28,7 @@ public class Factory extends SharedObjectFactory {
     protoCons = new Cons();
     protoPlop = new Plop();
     protoInt = new Int();
+    protoConsInt = new ConsInt();
   }
 
 	public Empty makeEmpty() {
@@ -51,9 +53,16 @@ public class Factory extends SharedObjectFactory {
 	}
 	
 	public Int makeInt(int value) {
-    synchronized (protoCons) {
+    synchronized (protoInt) {
       protoInt.initHashCode(value);
       return (Int) build(protoInt);
+    }
+	}
+	
+	public ConsInt makeConsInt(int headint, List tail) {
+    synchronized (protoConsInt) {
+      protoConsInt.initHashCode(headint,tail);
+      return (ConsInt) build(protoConsInt);
     }
 	}
 
@@ -65,6 +74,11 @@ public class Factory extends SharedObjectFactory {
     }
 
     tmp = List_ConsFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+    
+		tmp = List_ConsIntFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
@@ -88,6 +102,19 @@ public class Factory extends SharedObjectFactory {
 			if(appl.getName().equals(protoCons.getName())) {
 				return makeCons(
 						ElementFromTerm(appl.getArgument(0)),
+						ListFromTerm(appl.getArgument(1))
+						);
+			}
+		}
+		return null;
+  }
+	
+	protected List List_ConsIntFromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermAppl) {
+			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+			if(appl.getName().equals(protoConsInt.getName())) {
+				return makeConsInt(
+						((aterm.ATermInt)appl.getArgument(0)).getInt(),
 						ListFromTerm(appl.getArgument(1))
 						);
 			}

@@ -7,6 +7,10 @@ public abstract class List extends AbstractType {
 	public boolean isCons() {
 		return false;
 	}
+	
+	public boolean isConsInt() {
+		return false;
+	}
 
 	public Element getHead() {
     throw new UnsupportedOperationException("This List has no head");
@@ -14,5 +18,9 @@ public abstract class List extends AbstractType {
 
 	public List getTail() {
     throw new UnsupportedOperationException("This List has no tail");
+	}
+	
+	public int getHeadInt() {
+    throw new UnsupportedOperationException("This List has no head");
 	}
 }
