@@ -45,7 +45,7 @@ public class Plop extends Element {
 	}
 
   public int getChildCount() {
-    return getArity();
+    return 0;
   }
 
 	public jjtraveler.Visitable getChildAt(int index) {
@@ -60,6 +60,10 @@ public class Plop extends Element {
 		}
   }
 	
+	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
+    return v.visit_Element_Plop(this);
+  }
+
   protected int hashFunction() {
     int a, b, c;
 

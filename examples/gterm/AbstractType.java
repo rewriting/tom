@@ -2,7 +2,8 @@ public abstract class AbstractType implements shared.SharedObject, jjtraveler.Vi
 
 	protected static aterm.ATermFactory ATFactory = aterm.pure.SingletonFactory.getInstance();
 	public abstract aterm.ATerm toATerm();
-	
+	public abstract AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure;
+
 	public String toString() {
 		return toATerm().toString();
 	}

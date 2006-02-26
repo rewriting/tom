@@ -80,6 +80,10 @@ public class Cons extends List  {
 			default: throw new IndexOutOfBoundsException();
 		}
   }
+	
+	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
+    return v.visit_List_Cons(this);
+  }
 
   protected int hashFunction() {
     int a, b, c;

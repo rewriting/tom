@@ -1,15 +1,7 @@
 public class BenchConsInt {
-  private Factory factory;
+  private static Factory factory = Factory.getInstance();
 
   %include { int.tom }
-
-  public BenchConsInt(Factory factory) {
-    this.factory = factory;
-  }
-
-	public Factory getFactory() {
-		return factory;
-	}
 
   %typeterm TomList {
     implement { List }
@@ -70,7 +62,7 @@ public class BenchConsInt {
   }
 
   public final static void main(String[] args) {
-    BenchConsInt test = new BenchConsInt(Factory.getInstance());
+    BenchConsInt test = new BenchConsInt();
     int max = 100;
     try {
       max = Integer.parseInt(args[0]);

@@ -48,7 +48,7 @@ public class Empty extends List {
 	}
 
   public int getChildCount() {
-    return getArity();
+    return 0;
   }
 
 	public jjtraveler.Visitable getChildAt(int index) {
@@ -61,6 +61,10 @@ public class Empty extends List {
 		switch(index) {
 			default: throw new IndexOutOfBoundsException();
 		}
+  }
+	
+	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
+    return v.visit_List_Empty(this);
   }
 	
   protected int hashFunction() {

@@ -1,4 +1,4 @@
-public class ConsInt extends List  {
+public class ConsInt extends List {
 	private int hashCode;
 
 	private int headint;
@@ -63,23 +63,28 @@ public class ConsInt extends List  {
 	}
 
   public int getChildCount() {
-    return getArity();
+    //return getArity();
+		return 1; // skip arg0:builtin
   }
 
 	public jjtraveler.Visitable getChildAt(int index) {
 		switch(index) {
-			case 0:	throw new RuntimeException("no children!"); // special case for builtin argument
-			case 1: return getTail();
+			// skip arg0:builtin
+			case 0: return getTail();
 			default: throw new IndexOutOfBoundsException();
 		}
   }
 
   public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
 		switch(index) {
-			case 0:	throw new RuntimeException("no children!"); // special case for builtin argument
-			case 1: return Factory.getInstance().makeConsInt(getHeadInt(),(List)v);
+			// skip arg0:builtin
+			case 0: return Factory.getInstance().makeConsInt(getHeadInt(),(List)v);
 			default: throw new IndexOutOfBoundsException();
 		}
+  }
+
+	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
+    return v.visit_List_ConsInt(this);
   }
 
   protected int hashFunction() {

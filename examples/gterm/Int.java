@@ -48,7 +48,7 @@ public class Int extends Element {
   }
 
   public int getChildCount() {
-    return 1;
+    return 0;
   }
 
 	/*
@@ -60,16 +60,20 @@ public class Int extends Element {
 	
 	public jjtraveler.Visitable getChildAt(int index) {
 		switch(index) {
-			case 0:	throw new RuntimeException("no children!"); // special case for builtin argument
+			// skip arg0:builtin
 			default: throw new IndexOutOfBoundsException();
 		}
   }
 
   public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
 		switch(index) {
-			case 0:	throw new RuntimeException("no children!"); // special case for builtin argument
+			// skip arg0:builtin
 			default: throw new IndexOutOfBoundsException();
 		}
+  }
+	
+	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
+    return v.visit_Element_Int(this);
   }
 
   protected int hashFunction() {
