@@ -225,7 +225,9 @@ public class TomVerifier extends TomGenericPlugin {
 					CompiledPattern[automataInst=inst] -> {
 						return traversal().genericTraversal(`inst,this);
 					}
-
+          CheckInstance[instruction=inst] -> {
+						return traversal().genericTraversal(`inst,this);
+          }
 				}
         /*
          * Default case : Traversal
