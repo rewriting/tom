@@ -56,4 +56,76 @@ public class Factory extends SharedObjectFactory {
       return (Int) build(protoInt);
     }
 	}
+
+  public List ListFromTerm(aterm.ATerm trm) {
+    List tmp;
+    tmp = List_EmptyFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = List_ConsFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    throw new IllegalArgumentException("This is not a List: " + trm);
+  }
+  
+	protected List List_EmptyFromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermAppl) {
+			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+			if(appl.getName().equals(protoEmpty.getName())) {
+				return makeEmpty();
+			}
+		}
+		return null;
+  }
+
+	protected List List_ConsFromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermAppl) {
+			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+			if(appl.getName().equals(protoCons.getName())) {
+				return makeCons(
+						ElementFromTerm(appl.getArgument(0)),
+						ListFromTerm(appl.getArgument(1))
+						);
+			}
+		}
+		return null;
+  }
+
+  public Element ElementFromTerm(aterm.ATerm trm) {
+    Element tmp;
+    tmp = Element_PlopFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = Element_IntFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    throw new IllegalArgumentException("This is not a Element: " + trm);
+  }
+  
+	protected Element Element_PlopFromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermAppl) {
+			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+			if(appl.getName().equals(protoPlop.getName())) {
+				return makePlop();
+			}
+		}
+		return null;
+  }
+
+	protected Element Element_IntFromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermInt) {
+			aterm.ATermInt atint = (aterm.ATermInt) trm;
+			return makeInt( atint.getInt() );
+		}
+		return null;
+  }
+	
 }

@@ -28,5 +28,9 @@ public class Main {
 		List l4 = factory.makeCons(i2,l2);
 		System.out.println("l3 = " + l3.toATerm().toString());
 		System.out.println("l3==l4: " + (l3==l4));
+
+		List l5 = factory.ListFromTerm(l4.toATerm());
+		System.out.println("l3==l4: " + (l3==l5));
+		System.out.println("l5 = " + l5.toString());
 	}
 }
