@@ -44,8 +44,6 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-import tom.gom.backend.apigen.*;
-
 public class GomBackend {
 
 	%include { ../adt/objects/Objects.tom}
@@ -71,49 +69,50 @@ public class GomBackend {
    * Create template classes for the different classes to generate
    */
   public int generateClass(GomClass gomclass) {
+    TemplateFactory templatefactory = TemplateFactory.getFactory("apigen");
     %match(GomClass gomclass) {
       TomMapping[className=className,sortClasses=sortClasses,operatorClasses=ops] -> {
-        TemplateClass mapping = new TemplateMapping(`className,`sortClasses,`ops);
+        TemplateClass mapping = templatefactory.makeTomMappingTemplate(`className,`sortClasses,`ops);
         mapping.generateFile();
         return 1;
       }
       FwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortClasses=sortClasses,operatorClasses=ops] -> {
-        TemplateClass fwd = new TemplateFwd(`className,`visitorClass,`abstractType,`sortClasses,`ops);
+        TemplateClass fwd = templatefactory.makeForwardTemplate(`className,`visitorClass,`abstractType,`sortClasses,`ops);
         fwd.generateFile();
         return 1;
       }
       VoidFwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortClasses=sortClasses,operatorClasses=ops] -> {
-        TemplateClass voidfwd = new TemplateVoidFwd(`className,`visitorClass,`abstractType,`sortClasses,`ops);
+        TemplateClass voidfwd = templatefactory.makeForwardVoidTemplate(`className,`visitorClass,`abstractType,`sortClasses,`ops);
         voidfwd.generateFile();
         return 1;
       }
       VisitableFwdClass[className=className,fwd=FwdClass[className=fwdClass]] -> {
-        TemplateClass visitablefwd = new TemplateVisitableFwd(`className,`fwdClass);
+        TemplateClass visitablefwd = templatefactory.makeVisitableForwardTemplate(`className,`fwdClass);
         visitablefwd.generateFile();
         return 1;
       }
       VisitorClass[className=className,sortClasses=sortClasses,operatorClasses=ops] -> {
-        TemplateClass visitor = new TemplateVisitor(`className,`sortClasses,`ops);
+        TemplateClass visitor = templatefactory.makeVisitorTemplate(`className,`sortClasses,`ops);
         visitor.generateFile();
         return 1;
       }
       AbstractTypeClass[className=className,factoryName=factory,visitor=visitorName,sortList=sortList] -> {
-        TemplateClass abstracttype = new TemplateAbstractType(`className,`factory,`visitorName,`sortList);
+        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(`className,`factory,`visitorName,`sortList); 
         abstracttype.generateFile();
         return 1;
       }
       SortClass[className=className,factoryName=factory,abstractType=abstracttype,operators=ops,slots=slots] -> {
-        TemplateClass sort = new TemplateSort(`className,`factory,`abstracttype,`ops,`slots);
+        TemplateClass sort = templatefactory.makeSortTemplate(`className,`factory,`abstracttype,`ops,`slots);
         sort.generateFile();
         return 1;
       }
       OperatorClass[className=className,factoryName=factory,abstractType=abstracttype,sortName=sort,visitor=visitorName,slots=slots] -> {
-        TemplateClass operator = new TemplateOperator(`className,`factory,`abstracttype,`sort,`visitorName,`slots);
+        TemplateClass operator = templatefactory.makeOperatorTemplate(`className,`factory,`abstracttype,`sort,`visitorName,`slots);
         operator.generateFile();
         return 1;
       }
       FactoryClass[className=className,importedFactories=factories,sortClasses=sorts,operatorClasses=operators] -> {
-        TemplateClass factory = new TemplateFactory(`className,`factories,`sorts,`operators);
+        TemplateClass factory = templatefactory.makeFactoryTemplate(`className,`factories,`sorts,`operators);
         factory.generateFile();
         return 1;
       }
