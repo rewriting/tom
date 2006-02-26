@@ -739,9 +739,13 @@
       <exclude name="${zenon}/**/*.g.t"/>
     </tom>
     <javacompile example="${zenon}"/>
+    <antcall target="zenon.make"/>
+  </target>
+  <target name="zenon.make" if="zvtov.bin">
     <apply dir="${examples.gen}/${zenon}" 
+          dest="${examples.gen}/${zenon}"
           failonerror="yes"
-          executable="zvtov">
+	  executable="${zvtov.bin}">
       <srcfile/>
       <fileset dir="${examples.gen}">
         <include name="${zenon}/**/*.zv"/>
@@ -756,7 +760,7 @@
           builtin, caml, cell, dom, expression, ferus, gomoku, gtree, integerc,
           list, matching, master, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, ted, 
-          tutorial, vas, xml">
+          tutorial, vas, xml, zenon">
   </target>
 
   <target name="dist.examples" 
