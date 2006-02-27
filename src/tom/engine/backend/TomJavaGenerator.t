@@ -70,7 +70,6 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 
   protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-
     OptionList options = tomSymbol.getOption();
     Option op = options.getHead();
     TomTerm extendsTerm = op.getAstTerm();
@@ -89,7 +88,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
     output.write(deep, modifier +"class " + tomName);
     //write extends
-    if (extendsFwdType != `EmptyForward) {
+    if (extendsFwdType != `EmptyForward()) {
       output.write(deep," extends " + getTLCode(extendsFwdType));
     }
     output.write(deep," {");
@@ -110,26 +109,13 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
 
     //write constructor initialization
-//tom_make_ExtendsTerms: corresponds to `ExtendsTerm translated into Java. Beware: it is very bad to use 'tom_make_' as a constant since it could change later on... 
-    output.write(deep,") { super(tom_make_" + extendsTerm.getNameList().getHead().getString() + "(");
-
-    //write constructor parameters
-    SlotList slots = extendsTerm.getSlots();
-    Slot slot;
-    while(!slots.isEmpty()) {
-      slot = slots.getHead();
-      output.write(deep, slot.getAppl().getNameList().getHead().getString());
-      slots = slots.getTail();
-      if (!slots.isEmpty()) {
-        output.write(deep,",");
-      }
-    }
-    output.write("));");
-
+    output.write(deep,") { super(");
+    generate(deep,extendsTerm,moduleName);
+    output.write(deep,");");
+    
     //here index represents the parameter number
-    String param;
     for (int i = 0 ; i < args ; i++) {
-	    param = (String)names.get(i); 
+	    String param = (String)names.get(i); 
 	    output.write(deep, "this." + param + "=" + param + ";");
     }
     output.write(deep,"}");
