@@ -1,6 +1,5 @@
 /*
- *
- * GOM
+ * Gom
  *
  * Copyright (C) 2006 INRIA
  * Nancy, France.
@@ -90,16 +89,16 @@ class SharedTemplateFactory extends TemplateFactory {
     return new tom.gom.backend.shared.NullTemplate(className);
   }
   public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.shared.NullTemplate(className);
+    return new tom.gom.backend.shared.ForwardTemplate(className, visitor, abstractType, sortClasses, opClasses);
   }
   public TemplateClass makeForwardVoidTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.shared.NullTemplate(className);
+    return new tom.gom.backend.shared.NullTemplate(className); // do not generate, as it is not used
   }
   public TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward) {
-    return new tom.gom.backend.shared.NullTemplate(className);
+    return new tom.gom.backend.shared.BasicStrategyTemplate(className,forward);
   }
   public TemplateClass makeVisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.shared.NullTemplate(className);
+    return new tom.gom.backend.shared.VisitorTemplate(className,sortClasses,opClasses);
   }
   public TemplateClass makeAbstractTypeTemplate(ClassName className, ClassName factory, ClassName visitor, ClassNameList sortList) {
     return new tom.gom.backend.shared.AbstractTypeTemplate(className, factory, visitor, sortList);
@@ -111,6 +110,6 @@ class SharedTemplateFactory extends TemplateFactory {
     return new tom.gom.backend.shared.OperatorTemplate(className,factory,abstractType,sort,visitor,slots);
   }
   public TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses) {
-    return new tom.gom.backend.shared.FactoryTemplate(className, importedFactories, sortClasses, operatorClasses);
+    return new tom.gom.backend.shared.NullTemplate(className); // no need to generate a factory in this mode
   }
 }

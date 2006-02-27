@@ -152,4 +152,8 @@ public abstract class TemplateClass {
     }
     return 0;
   }
+
+  public String visitMethod(ClassName sortName) {
+    return "visit_"+className(sortName);
+  }
 }

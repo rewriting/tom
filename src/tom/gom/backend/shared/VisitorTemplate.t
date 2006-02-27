@@ -27,37 +27,38 @@ package tom.gom.backend.shared;
 import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
 
-public class AbstractTypeTemplate extends TemplateClass {
-  ClassName factoryName;
-  ClassName visitor;
-  ClassNameList sortList;
+public class VisitorTemplate extends TemplateClass {
+  GomClassList sortClasses;
+  GomClassList operatorClasses;
 
-  public AbstractTypeTemplate(ClassName className, ClassName factoryName, ClassName visitor, ClassNameList sortList) {
+	%include { ../../adt/objects/Objects.tom}
+
+  public VisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList operatorClasses) {
     super(className);
-    this.factoryName = factoryName;
-    this.visitor = visitor;
-    this.sortList = sortList;
+    this.sortClasses = sortClasses;
+    this.operatorClasses = operatorClasses;
   }
 
+  /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
   public String generate() {
     StringBuffer out = new StringBuffer();
 
     out.append("package "+getPackage()+";\n");
     out.append("\n");
-    out.append("public abstract class "+className()+" implements shared.SharedObject, jjtraveler.Visitable {\n");
+    out.append("public interface "+className()+" {\n");
+    out.append("\n");
     
-    out.append("\n");
-    out.append("\tpublic abstract aterm.ATerm toATerm();\n");
-    out.append("\n");
-    out.append("\tpublic String toString() {;\n");
-    out.append("\t\treturn toATerm().toString();\n");
-    out.append("\t}\n");
+    // generate a visit for each sort
+    %match(GomClassList sortClasses) {
+      concGomClass(_*,SortClass[className=sortName],_*) -> {    
+        out.append("\tpublic "+fullClassName(`sortName)+" "+visitMethod(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure;\n");
+      }
+    }
 
-    // generate the accept abstract method. This will have to be put in a specific accept class
-    out.append("\tabstract public "+className()+" accept("+fullClassName(visitor)+" v) throws jjtraveler.VisitFailure;\n");
-    
+    out.append("\n");
     out.append("}");
     
     return out.toString();
   }
+
 }
