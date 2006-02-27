@@ -46,7 +46,7 @@ public abstract class TemplateFactory {
   public abstract TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward);
   public abstract TemplateClass makeVisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses);
   public abstract TemplateClass makeAbstractTypeTemplate(ClassName className, ClassName factory, ClassName visitor, ClassNameList sortList);
-  public abstract TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassNameList operators, SlotFieldList slots);
+  public abstract TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName visitor, ClassNameList operators, SlotFieldList slots);
   public abstract TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots);
   public abstract TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses);
 
@@ -72,8 +72,8 @@ class ApigenTemplateFactory extends TemplateFactory {
   public TemplateClass makeAbstractTypeTemplate(ClassName className, ClassName factory, ClassName visitor, ClassNameList sortList) {
     return new tom.gom.backend.apigen.TemplateAbstractType(className,factory,visitor,sortList);
   }
-  public TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassNameList operators, SlotFieldList slots) {
-    return new tom.gom.backend.apigen.TemplateSort(className,factory,abstractType,operators,slots);
+  public TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName visitor, ClassNameList operators, SlotFieldList slots) {
+    return new tom.gom.backend.apigen.TemplateSort(className,factory,abstractType,visitor,operators,slots);
   }
   public TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots) {
     return new tom.gom.backend.apigen.TemplateOperator(className,factory,abstractType,sort,visitor,slots);
@@ -103,8 +103,8 @@ class SharedTemplateFactory extends TemplateFactory {
   public TemplateClass makeAbstractTypeTemplate(ClassName className, ClassName factory, ClassName visitor, ClassNameList sortList) {
     return new tom.gom.backend.shared.AbstractTypeTemplate(className, factory, visitor, sortList);
   }
-  public TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassNameList operators, SlotFieldList slots) {
-    return new tom.gom.backend.shared.SortTemplate(className,factory,abstractType,operators,slots);
+  public TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName visitor, ClassNameList operators, SlotFieldList slots) {
+    return new tom.gom.backend.shared.SortTemplate(className,factory,abstractType,visitor,operators,slots);
   }
   public TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots) {
     return new tom.gom.backend.shared.OperatorTemplate(className,factory,abstractType,sort,visitor,slots);

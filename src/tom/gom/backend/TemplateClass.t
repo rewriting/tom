@@ -1,6 +1,5 @@
 /*
- *
- * GOM
+ * Gom
  *
  * Copyright (C) 2006 INRIA
  * Nancy, France.
@@ -34,7 +33,7 @@ import java.io.*;
 
 public abstract class TemplateClass {
 
-  private ClassName className;
+  protected ClassName className;
 
   public TemplateClass(ClassName className) {
     this.className = className;
@@ -155,5 +154,8 @@ public abstract class TemplateClass {
 
   public String visitMethod(ClassName sortName) {
     return "visit_"+className(sortName);
+  }
+  public String isOperatorMethod(ClassName opName) {
+    return "is"+className(opName);
   }
 }

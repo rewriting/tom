@@ -30,13 +30,20 @@ import tom.gom.adt.objects.types.*;
 public class SortTemplate extends TemplateClass {
   ClassName factoryName;
   ClassName abstractType;
+  ClassName visitor;
   ClassNameList operatorList;
   SlotFieldList slotList;
 
-  public SortTemplate(ClassName className, ClassName factoryName, ClassName abstractType, ClassNameList operatorList, SlotFieldList slots) {
+  public SortTemplate(ClassName className,
+                      ClassName factoryName,
+                      ClassName abstractType,
+                      ClassName visitor,
+                      ClassNameList operatorList,
+                      SlotFieldList slots) {
     super(className);
     this.factoryName = factoryName;
     this.abstractType = abstractType;
+    this.visitor = visitor;
     this.operatorList = operatorList;
     this.slotList = slots;
   }
@@ -49,12 +56,17 @@ public class SortTemplate extends TemplateClass {
     out.append("public abstract class "+className()+" extends "+fullClassName(abstractType)+" {\n");
     out.append("\n");
     
-    // methods for each operator
-    while (!operatorList.isEmpty()) {
-      ClassName operatorName = operatorList.getHead();
-      operatorList = operatorList.getTail();
+    out.append("\tpublic "+fullClassName(abstractType)+" accept("+fullClassName(visitor)+" v) throws jjtraveler.VisitFailure {\n");
+    out.append("\t\treturn v."+visitMethod(className)+"(this);\n");
+    out.append("\t}\n");
 
-      out.append("\tpublic boolean is"+className(operatorName)+"() {\n");
+    // methods for each operator
+    ClassNameList consum = operatorList;
+    while (!consum.isEmpty()) {
+      ClassName operatorName = operatorList.getHead();
+      consum = consum.getTail();
+
+      out.append("\tpublic boolean "+isOperatorMethod(operatorName)+"() {\n");
       out.append("\t\treturn false;\n");
       out.append("\t}\n");
       out.append("\n");
@@ -64,21 +76,42 @@ public class SortTemplate extends TemplateClass {
       SlotField slot = slotList.getHead();
       slotList = slotList.getTail();
 
+      /* Do not generate "hasOp" methods for now
       out.append("\tpublic boolean "+hasMethod(slot)+"() {\n");
       out.append("\t\treturn false;\n");
       out.append("\t}\n");
       out.append("\n");
+      */
 
       out.append("\tpublic "+slotDomain(slot)+" "+getMethod(slot)+"() {\n");
       out.append("\t\tthrow new UnsupportedOperationException(\"This "+className()+" has no "+slot.getName()+"\");\n");
       out.append("\t}\n");
       out.append("\n");
 
+      /* Do not generate "setSlot" methods for now
       out.append("\tpublic "+className()+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
       out.append("\t\tthrow new IllegalArgumentException(\"Illegal argument: \" + _arg);\n");
       out.append("\t}\n");
       out.append("\n");
+      */
+
     }
+
+    /* fromTerm method, dispatching to operator classes */
+    out.append("\tpublic static "+fullClassName()+" fromTerm(aterm.ATerm trm) {\n");
+    out.append("\t\t"+fullClassName()+" tmp;\n");
+        
+    consum = operatorList;
+    while (!consum.isEmpty()) {
+      ClassName operatorName = operatorList.getHead();
+      consum = consum.getTail();
+      out.append("\t\ttmp = "+fullClassName(operatorName)+".fromTerm(trm);\n");
+      out.append("\t\tif (tmp != null) {\n");
+      out.append("\t\t\treturn tmp;\n");
+      out.append("\t\t}\n");
+    }
+    out.append("\t\tthrow new IllegalArgumentException(\"This is not a "+className()+"\" + trm);\n");
+    out.append("\t}\n");
 
     out.append("}");
     

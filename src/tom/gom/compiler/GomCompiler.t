@@ -150,7 +150,7 @@ public class GomCompiler {
             }
           }
           // create the sort class and add it to the list
-          GomClass sortClass = `SortClass(sortClassName,factoryName,abstracttypeName,allOperators,allSortSlots);
+          GomClass sortClass = `SortClass(sortClassName,factoryName,abstracttypeName,visitorName,allOperators,allSortSlots);
           sortGomClassForSortDecl.put(`sortDecl,sortClass);
           classList = `concGomClass(sortClass,classList*);
         }

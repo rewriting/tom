@@ -34,7 +34,12 @@ public class TemplateSort extends TemplateClass {
   ClassNameList operatorList;
   SlotFieldList slotList;
 
-  public TemplateSort(ClassName className, ClassName factoryName, ClassName abstractType, ClassNameList operatorList, SlotFieldList slots) {
+  public TemplateSort(ClassName className,
+                      ClassName factoryName,
+                      ClassName abstractType,
+                      ClassName visitor, // not used in this class
+                      ClassNameList operatorList,
+                      SlotFieldList slots) {
     super(className);
     this.factoryName = factoryName;
     this.abstractType = abstractType;
