@@ -758,10 +758,7 @@ OPERATORARRAY
 // do not need to switch lexers
 INCLUDE
     :   "%include" 
-    ;/*
-VARIABLE
-    :   "%variable" 
-  ;*/
+    ;
 VAS
     :   "%vas"  
     ;
@@ -891,8 +888,25 @@ ML_COMMENT
         {target.append($getText);}
   ;
 
+protected
+CODE
+    :
+        "%[["        
+        (
+            options {
+                greedy=false;  // make it exit upon "*/"
+                generateAmbigWarnings=false; // shut off newline errors
+            }
+        : '\r' '\n' {newline();}
+        | '\r'    {newline();}
+        | '\n'    {newline();}
+        | ~('\n'|'\r')
+        )*
+        "]]%"
+        {target.append($getText);}
+  ;
 
-// the rule for the filter : just append the text to the buffer
+// the rule for the filter: just append the text to the buffer
 protected 
 TARGET
     :

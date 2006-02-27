@@ -103,8 +103,8 @@ public class GomBackend {
         abstracttype.generateFile();
         return 1;
       }
-      SortClass[className=className,factoryName=factory,abstractType=abstracttype,operators=ops,slots=slots] -> {
-        TemplateClass sort = templatefactory.makeSortTemplate(`className,`factory,`abstracttype,`ops,`slots);
+      SortClass[className=className,factoryName=factory,abstractType=abstracttype,visitor=visitorName,operators=ops,slots=slots] -> {
+        TemplateClass sort = templatefactory.makeSortTemplate(`className,`factory,`abstracttype,`visitorName,`ops,`slots);
         sort.generateFile();
         return 1;
       }
