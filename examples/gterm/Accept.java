@@ -1,3 +1,3 @@
 public interface Accept {
-	public AbstractType accept(Forward v) throws jjtraveler.VisitFailure;
+	public AbstractType accept(Visitor v) throws jjtraveler.VisitFailure;
 }

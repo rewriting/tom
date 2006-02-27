@@ -1,6 +1,6 @@
 public abstract class Element extends AbstractType {
   
-  public AbstractType accept(Forward v) throws jjtraveler.VisitFailure {
+  public AbstractType accept(Visitor v) throws jjtraveler.VisitFailure {
     return v.visit_Element(this);
   }
 

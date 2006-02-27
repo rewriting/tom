@@ -1,6 +1,6 @@
 public abstract class List extends AbstractType {
 
-  public AbstractType accept(Forward v) throws jjtraveler.VisitFailure {
+  public AbstractType accept(Visitor v) throws jjtraveler.VisitFailure {
     return v.visit_List(this);
   }
 
