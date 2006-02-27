@@ -1,22 +1,34 @@
 public class Plop extends Element {
+  private static Plop proto = new Plop();
 	private int hashCode;
+  private Plop() {}
 
-	public boolean isPlop() {
-		return true;
+	public static Plop make() {
+    proto.initHashCode();
+    return (Plop) shared.SingletonSharedObjectFactory.getInstance().build(proto);
 	}
 
-  protected void init(int hashCode) {
+  private void init(int hashCode) {
     this.hashCode = hashCode;
   }
 
-  protected void initHashCode() {
+  private void initHashCode() {
     this.hashCode = this.hashFunction();
   }
 
+  private String getName() {
+    return "Plop";
+  }
+
+  private int getArity() {
+    return 0;
+  }
+
+  /* shared.SharedObject */
 	public int hashCode() {
 		return this.hashCode;
 	}
-	
+
   public shared.SharedObject duplicate() {
     Plop clone = new Plop();
     clone.init(hashCode);
@@ -30,20 +42,29 @@ public class Plop extends Element {
 		return false;
   }
 
-  public String getName() {
-    return "Plop";
-  }
+  /* List */
+	public boolean isPlop() {
+		return true;
+	}
 
-  public int getArity() {
-    return 0;
-  }
-
+  /* AbstractType */
 	public aterm.ATerm toATerm() {
-		return ATFactory.makeAppl(
-				ATFactory.makeAFun(getName(),getArity(),false), 
+		return aterm.pure.SingletonFactory.getInstance().makeAppl(
+				aterm.pure.SingletonFactory.getInstance().makeAFun(getName(),getArity(),false), 
 				new aterm.ATerm[] {});
 	}
 
+	public static Element fromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermAppl) {
+			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+			if(proto.getName().equals(appl.getName())) {
+				return make();
+			}
+		}
+		return null;
+  }
+
+  /* jjtraveler.Visitable */
   public int getChildCount() {
     return 0;
   }
@@ -59,12 +80,9 @@ public class Plop extends Element {
 			default: throw new IndexOutOfBoundsException();
 		}
   }
-	
-	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
-    return v.visit_Element_Plop(this);
-  }
 
-  protected int hashFunction() {
+  /* internal use */
+  private int hashFunction() {
     int a, b, c;
 
     /* Set up the internal state */

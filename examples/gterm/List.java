@@ -1,5 +1,9 @@
 public abstract class List extends AbstractType {
 
+  public AbstractType accept(Forward v) throws jjtraveler.VisitFailure {
+    return v.visit_List(this);
+  }
+
 	public boolean isEmpty() {
 		return false;
 	}
@@ -21,6 +25,26 @@ public abstract class List extends AbstractType {
 	}
 	
 	public int getHeadInt() {
-    throw new UnsupportedOperationException("This List has no head");
+    throw new UnsupportedOperationException("This List has no headint");
 	}
+	
+  public static List fromTerm(aterm.ATerm trm) {
+    List tmp;
+    tmp = Empty.fromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = Cons.fromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+    
+		tmp = ConsInt.fromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    throw new IllegalArgumentException("This is not a List: " + trm);
+  }
 }

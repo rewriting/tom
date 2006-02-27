@@ -1,6 +1,9 @@
 public class Empty extends List {
+  private static Empty proto = new Empty();
 	private int hashCode;
 
+  private Empty() {}
+  
 	public boolean isEmpty() {
 		return true;
 	}
@@ -8,11 +11,16 @@ public class Empty extends List {
     return true;
   }
 
-  protected void init(int hashCode) {
+	public static Empty make() {
+    proto.initHashCode();
+    return (Empty) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+	}
+	
+  private void init(int hashCode) {
     this.hashCode = hashCode;
   }
 
-  protected void initHashCode() {
+  private void initHashCode() {
     this.hashCode = this.hashFunction();
   }
 
@@ -42,10 +50,20 @@ public class Empty extends List {
   }
 
 	public aterm.ATerm toATerm() {
-		return ATFactory.makeAppl(
-				ATFactory.makeAFun(getName(),getArity(),false), 
+		return aterm.pure.SingletonFactory.getInstance().makeAppl(
+				aterm.pure.SingletonFactory.getInstance().makeAFun(getName(),getArity(),false), 
 				new aterm.ATerm[] {});
 	}
+
+	public static List fromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermAppl) {
+			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+			if(proto.getName().equals(appl.getName())) {
+				return make();
+			}
+		}
+		return null;
+  }
 
   public int getChildCount() {
     return 0;
@@ -61,10 +79,6 @@ public class Empty extends List {
 		switch(index) {
 			default: throw new IndexOutOfBoundsException();
 		}
-  }
-	
-	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
-    return v.visit_List_Empty(this);
   }
 	
   protected int hashFunction() {

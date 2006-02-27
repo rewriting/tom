@@ -1,18 +1,26 @@
 public class Int extends Element {
+  private static Int proto = new Int();
 	private int hashCode;
 
 	private int value;
+
+  private Int() {}
 
 	public boolean isInt() {
 		return true;
 	}
 
-  protected void init(int value,int hashCode) {
+	public static Int make(int value) {
+      proto.initHashCode(value);
+      return (Int) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+	}
+
+  private void init(int value,int hashCode) {
 		this.value = value;
     this.hashCode = hashCode;
   }
 
-  protected void initHashCode(int value) {
+  private void initHashCode(int value) {
 		this.value = value;
     this.hashCode = this.hashFunction();
   }
@@ -51,13 +59,26 @@ public class Int extends Element {
     return 0;
   }
 
-	/*
-	 * meme remarque que dans Factory: construire le constructeur Int ici
-	 */
 	public aterm.ATerm toATerm() {
-		return ATFactory.makeInt(getValue());
+		return aterm.pure.SingletonFactory.getInstance().makeAppl(
+				aterm.pure.SingletonFactory.getInstance().makeAFun(getName(),getArity(),false), 
+				new aterm.ATerm[] {
+					aterm.pure.SingletonFactory.getInstance().makeInt(getValue()) // special case for builtin argument
+        });
 	}
 	
+	public static Element fromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermAppl) {
+			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+			if(proto.getName().equals(appl.getName())) {
+				return make(
+						((aterm.ATermInt)appl.getArgument(0)).getInt() // special case for builtin argument
+						);
+			}
+		}
+		return null;
+  }
+
 	public jjtraveler.Visitable getChildAt(int index) {
 		switch(index) {
 			// skip arg0:builtin
@@ -70,10 +91,6 @@ public class Int extends Element {
 			// skip arg0:builtin
 			default: throw new IndexOutOfBoundsException();
 		}
-  }
-	
-	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
-    return v.visit_Element_Int(this);
   }
 
   protected int hashFunction() {

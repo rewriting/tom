@@ -1,25 +1,38 @@
 public class ConsInt extends List {
-	private int hashCode;
+  private static ConsInt proto = new ConsInt();
+  private int hashCode;
+  private ConsInt() {}
 
 	private int headint;
 	private List tail;
 
-	public boolean isConsInt() {
-		return true;
+	public static ConsInt make(int headint, List tail) {
+      proto.initHashCode(headint,tail);
+      return (ConsInt) shared.SingletonSharedObjectFactory.getInstance().build(proto);
 	}
 
-  protected void init(int headint, List tail,int hashCode) {
+  private void init(int headint, List tail,int hashCode) {
 		this.headint = headint;
 		this.tail = tail;
     this.hashCode = hashCode;
   }
 
-  protected void initHashCode(int headint, List tail) {
+  private void initHashCode(int headint, List tail) {
 		this.headint = headint;
 		this.tail = tail;
     this.hashCode = this.hashFunction();
   }
 
+
+  private String getName() {
+    return "ConsInt";
+  }
+
+  private int getArity() {
+    return 2;
+  }
+
+  /* shared.SharedObject */
 	public int hashCode() {
 		return this.hashCode;
 	}
@@ -38,14 +51,10 @@ public class ConsInt extends List {
 		return false;
   }
 
-  public String getName() {
-    return "ConsInt";
-  }
-
-  public int getArity() {
-    return 2;
-  }
-
+  /* List */
+	public boolean isConsInt() {
+		return true;
+	}
 	public int getHeadInt() {
 		return headint;
 	}
@@ -54,16 +63,30 @@ public class ConsInt extends List {
 		return tail;
 	}
 	
+  /* AbstractType */
 	public aterm.ATerm toATerm() {
-		return ATFactory.makeAppl(
-				ATFactory.makeAFun(getName(),getArity(),false), 
+		return aterm.pure.SingletonFactory.getInstance().makeAppl(
+				aterm.pure.SingletonFactory.getInstance().makeAFun(getName(),getArity(),false), 
 				new aterm.ATerm[] {
-					ATFactory.makeInt(getHeadInt()), // special case for builtin argument
+					aterm.pure.SingletonFactory.getInstance().makeInt(getHeadInt()), // special case for builtin argument
 					 getTail().toATerm()});
 	}
 
+	public static List fromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermAppl) {
+			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+			if(proto.getName().equals(appl.getName())) {
+				return make(
+						((aterm.ATermInt)appl.getArgument(0)).getInt(), // special case for builtin argument
+						List.fromTerm(appl.getArgument(1))
+						);
+			}
+		}
+		return null;
+  }
+
+  /* jjtraveler.Visitable */
   public int getChildCount() {
-    //return getArity();
 		return 1; // skip arg0:builtin
   }
 
@@ -78,15 +101,12 @@ public class ConsInt extends List {
   public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
 		switch(index) {
 			// skip arg0:builtin
-			case 0: return Factory.getInstance().makeConsInt(getHeadInt(),(List)v);
+			case 0: return make(getHeadInt(),(List)v);
 			default: throw new IndexOutOfBoundsException();
 		}
   }
 
-	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
-    return v.visit_List_ConsInt(this);
-  }
-
+  /* internal use */
   protected int hashFunction() {
     int a, b, c;
 

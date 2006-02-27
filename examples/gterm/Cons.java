@@ -1,20 +1,28 @@
 public class Cons extends List  {
+  private static Cons proto = new Cons();
 	private int hashCode;
 
 	private Element head;
 	private List tail;
 
+  private Cons() {}
+
 	public boolean isCons() {
 		return true;
 	}
 
-  protected void init(Element head, List tail,int hashCode) {
+	public static Cons make(Element head, List tail) {
+    proto.initHashCode(head,tail);
+    return (Cons) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+	}
+
+  private void init(Element head, List tail,int hashCode) {
 		this.head = head;
 		this.tail = tail;
     this.hashCode = hashCode;
   }
 
-  protected void initHashCode(Element head, List tail) {
+  private void initHashCode(Element head, List tail) {
 		this.head = head;
 		this.tail = tail;
     this.hashCode = this.hashFunction();
@@ -56,10 +64,23 @@ public class Cons extends List  {
 	}
 	
 	public aterm.ATerm toATerm() {
-		return ATFactory.makeAppl(
-				ATFactory.makeAFun(getName(),getArity(),false), 
+		return aterm.pure.SingletonFactory.getInstance().makeAppl(
+				aterm.pure.SingletonFactory.getInstance().makeAFun(getName(),getArity(),false), 
 				new aterm.ATerm[] {getHead().toATerm(), getTail().toATerm()});
 	}
+
+	public static List fromTerm(aterm.ATerm trm) {
+		if(trm instanceof aterm.ATermAppl) {
+			aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+			if(proto.getName().equals(appl.getName())) {
+				return make(
+						Element.fromTerm(appl.getArgument(0)),
+						List.fromTerm(appl.getArgument(1))
+						);
+			}
+		}
+		return null;
+  }
 
   public int getChildCount() {
     return getArity();
@@ -75,16 +96,12 @@ public class Cons extends List  {
 
   public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
 		switch(index) {
-			case 0: return Factory.getInstance().makeCons((Element)v,getTail());
-			case 1: return Factory.getInstance().makeCons(getHead(),(List)v);
+			case 0: return make((Element)v,getTail());
+			case 1: return make(getHead(),(List)v);
 			default: throw new IndexOutOfBoundsException();
 		}
   }
-	
-	public AbstractType accept(VisitorForward v) throws jjtraveler.VisitFailure {
-    return v.visit_List_Cons(this);
-  }
-
+    
   protected int hashFunction() {
     int a, b, c;
 

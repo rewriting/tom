@@ -5,8 +5,6 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
 
 public class TestStrat {
-  private static Factory factory = Factory.getInstance();
-
   %include { int.tom }
   %include { mutraveler.tom }
 
@@ -17,8 +15,8 @@ public class TestStrat {
 
   %oplist TomList conc( int* ) {
     is_fsym(t) { t instanceof ConsInt || t instanceof Empty }
-    make_empty()  { factory.makeEmpty() }
-    make_insert(e,l) { factory.makeConsInt(e,l) }
+    make_empty()  { Empty.make() }
+    make_insert(e,l) { ConsInt.make(e,l) }
     get_head(l)   { l.getHeadInt() }
     get_tail(l)   { l.getTail() }
     is_empty(l)   { l.isEmpty() }

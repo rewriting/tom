@@ -1,4 +1,4 @@
-public Hash {
+public class Hash {
 	public static int stringHashFunction(String name, int arity) {
     int a, b, c;
     /* Set up the internal state */

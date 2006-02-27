@@ -1,6 +1,4 @@
 public class BenchCons {
-  private static Factory factory = Factory.getInstance();
-
   %include { int.tom }
 
   %typeterm TomList {
@@ -10,8 +8,8 @@ public class BenchCons {
 
   %oplist TomList conc( int* ) {
     is_fsym(t) { t instanceof Cons || t instanceof Empty }
-    make_empty()  { factory.makeEmpty() }
-    make_insert(e,l) { factory.makeCons(factory.makeInt(e),l) }
+    make_empty()  { Empty.make() }
+    make_insert(e,l) { Cons.make(Int.make(e),l) }
     get_head(l)   { l.getHead().getValue() }
     get_tail(l)   { l.getTail() }
     is_empty(l)   { l.isEmpty() }
@@ -58,7 +56,7 @@ public class BenchCons {
     elim(reverse(genere(max)));
     
     System.out.println(max + " " + (System.currentTimeMillis()-startChrono));
-    System.out.println(factory);
+    //System.out.println(factory);
   }
 
   public final static void main(String[] args) {
