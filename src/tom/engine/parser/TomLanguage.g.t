@@ -323,6 +323,19 @@ matchGuards [LinkedList list] throws TomException
         )
     ;
 
+extendsBqTerm returns [TomTerm bqTerm] throws TomException
+{
+  bqTerm = null;
+}
+  :
+    EXTENDS BACKQUOTE
+    {
+    selector().push("bqlexer");
+    bqTerm = bqparser.beginBackquote();
+    //selector().pop();
+    }
+;
+
 // The %strategy construct
 strategyConstruct [Option orgTrack] returns [Declaration result] throws TomException
 {
@@ -340,7 +353,9 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     LinkedList pairNameDeclList = new LinkedList();
     TomName astName = null;
     String stringSlotName = null;
-
+    Option makeOption = null;
+    String makeTlCode = null;//used for tlCode in make
+    
     clearText();
 }
     :(
@@ -372,12 +387,11 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
             )*
             )? RPAREN
         )
-	EXTENDS extendsTerm = plainTerm[null,0]
+        extendsTerm = extendsBqTerm
   {
     options.add(extendsTerm);
-
     //get strategy codomain
-    extendsSymbol = symbolTable.getSymbolFromName(extendsTerm.getNameList().getHead().getString());
+    extendsSymbol = symbolTable.getSymbolFromName(extendsTerm.getArgs().getHead().getAstName().getString());
     if (extendsSymbol != null) {
       codomain = extendsSymbol.getTypesToType().getCodomain().getString();
     }
@@ -389,7 +403,14 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
         {
-          TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomain, types, ast().makePairNameDeclList(pairNameDeclList), options);
+          makeTlCode = "return new " + name.getText() + "(";
+          for (int i=0;i<types.getLength();i++) {
+
+          }
+          makeTlCode = makeTlCode.concat(")");
+          makeOption = `OriginTracking(Name(name.getText()),t.getLine(),Name(currentFile()));
+          //Declaration makeDecl = `MakeDecl(Name(name.getText()), TomTypeAlone(codomain), types, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
+      TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomain, types, ast().makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
