@@ -47,6 +47,7 @@ public class ForwardTemplate extends TemplateClass {
   public String generate() {
     StringBuffer out = new StringBuffer();
 
+    /*
     out.append("package "+getPackage()+";\n");
     out.append("\n");
     out.append("public class "+className()+" implements "+className(visitor) + ", jjtraveler.Visitor {\n");
@@ -63,20 +64,54 @@ public class ForwardTemplate extends TemplateClass {
     out.append("\t\t\treturn any.visit(v);\n");
     out.append("\t\t}\n");
     out.append("\t}\n");
+    */
+
+    out.append(%"
+package "%+getPackage()+%";
+
+public class "%+className()+%" implements "%+ className(visitor) +%", jjtraveler.Visitor {
+  protected jjtraveler.Visitor any;
+
+  public "%+className()+%"(jjtraveler.Visitor v) {
+    this.any = v;
+  }
+
+  public jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {
+    if (v instanceof "%+fullClassName(abstractType)+%") {
+      return (("%+fullClassName(abstractType)+%") v).accept(this);
+    } else {
+      return any.visit(v);
+    }
+  }
+
+"%+generateVisitMethods()+%"
+
+}"%);
     
+    return out.toString();
+  }
+  private String generateVisitMethods() {
+    StringBuffer out = new StringBuffer();
     // generate a visit for each sort
     %match(GomClassList sortClasses) {
       concGomClass(_*,SortClass[className=sortName],_*) -> {    
 
+        /*
         out.append("\tpublic "+fullClassName(`sortName)+" "+visitMethod(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure {\n");
         out.append("\t\treturn ("+fullClassName(`sortName)+") any.visit(arg);\n");
         out.append("\t}\n");
         out.append("\n");
+        */
+        ClassName localSortName=`sortName;
+        
+        out.append(%"
+  public "%+fullClassName(localSortName)+%" "%+visitMethod(localSortName)+%"("%+fullClassName(localSortName)+%" arg) throws jjtraveler.VisitFailure {
+    return ("%+fullClassName(localSortName)+%") any.visit(arg);
+  }
+"%);
       }
     }
-
-    out.append("}");
-    
     return out.toString();
   }
+
 }
