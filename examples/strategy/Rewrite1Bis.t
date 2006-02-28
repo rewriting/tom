@@ -45,7 +45,7 @@ public class Rewrite1Bis {
   %include { mutraveler.tom }
   
   public final static void main(String[] args) {
-    Rewrite1 test = new Rewrite1();
+    Rewrite1Bis test = new Rewrite1Bis();
     test.run();
   }
 
