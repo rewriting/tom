@@ -39,11 +39,13 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   public TomJavaGenerator(OutputCode output, OptionManager optionManager,
                        SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
-    /*if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
+    /* Even if this field is not used here, we /must/ initialize it correctly,
+     * as it is used by ImperativeGenerator */
+    if( ((Boolean)optionManager.getOptionValue("protected")).booleanValue() ) {
       this.modifier += "protected " ;
     } else {
       this.modifier += "private " ;
-    }*/
+    }
   }
 
 // ------------------------------------------------------------
