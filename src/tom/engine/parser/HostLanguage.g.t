@@ -844,7 +844,7 @@ WS  : ( ' '
 // comments
 COMMENT 
     :
-        ( SL_COMMENT | ML_COMMENT )
+        ( SL_COMMENT | ML_COMMENT | CODE)
         { $setType(Token.SKIP);}
   ;
 
@@ -892,6 +892,9 @@ protected
 CODE
     :
         '%' '"'
+        ( { LA(2)!='%' }? '"' 
+        |
+        )
         (
             options {
                 greedy=false;  // make it exit upon "*/"
