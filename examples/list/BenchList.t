@@ -67,7 +67,7 @@ public class BenchList {
   public ATermList genere(int n) {
     if(n>2) {
       ATermList l = genere(n-1);
-      return l.insert(factory.makeInt(n));
+      return `conc(n,l*);
     } else {
       return `conc(2);
     }
@@ -92,6 +92,7 @@ public class BenchList {
     elim(genere(max).reverse());
 
     System.out.println(max + " " + (System.currentTimeMillis()-startChrono));
+    System.out.println(factory);
   }
 
   public final static void main(String[] args) {

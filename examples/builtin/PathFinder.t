@@ -65,7 +65,7 @@ public class PathFinder {
   public int doubleB(String s) {
     int count = 0;
     %match(String s) {
-      (_*,'b',X2*,'b',_*) -> {
+      (_*,'b',_*,'b',_*) -> {
         count++; 
       }
     }
@@ -75,7 +75,7 @@ public class PathFinder {
   public int doubleBwhen(String s) {
     int count = 0;
     %match(String s) {
-      (_*,x,X2*,x,_*)  when equalsChar(x) -> {
+      (_*,x,_*,x,_*)  when equalsChar(x) -> {
         count++; 
       }
     }

@@ -29,12 +29,12 @@ public class List1 {
       f( E* ) -> L
    }
 
-  
   public L swapSort(L l) {
     %match(L l) {
-      f(X*,e1,e2,Y*) -> {
+      f(X*,e1,_*,e2,Y*) -> {
         if(`gt(e1,e2)) {
           return `swapSort(f(X*,e2,e1,Y*));
+					//System.out.println("("+`e1+","+`e2+")");
         }
       }
     }
@@ -48,7 +48,7 @@ public class List1 {
   public L removeDouble(L l) {
     %match(L l) {
       f(X1*,x,x,X2*) -> {
-        return `removeDouble(f(X1*,x,X2*));
+        return removeDouble(`f(X1*,x,X2*));
       }
     }
 		return l; 

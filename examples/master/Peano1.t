@@ -19,7 +19,7 @@ public class Peano1 {
 
     // rule plus
   %rule {
-    plus(x, zero())    -> x
+    plus(x, zero())    -> x 
     plus(x, suc(y))    -> suc(plus(x,y))
   } // rule
   

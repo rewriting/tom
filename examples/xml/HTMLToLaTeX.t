@@ -343,7 +343,6 @@ public class HTMLToLaTeX {
   private String outFilter(String s) {
     String result;
     result = s.replaceAll("$","\\$");
-    //result = result.replaceAll("%","\\%");
     return result;
   }
 
