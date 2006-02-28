@@ -135,12 +135,6 @@ tryAgain:
 					theRetToken=_returnToken;
 					break;
 				}
-				case '/':
-				{
-					mCOMMENT(true);
-					theRetToken=_returnToken;
-					break;
-				}
 				default:
 					if ((LA(1)=='%') && (LA(2)=='t') && (LA(3)=='y') && (LA(4)=='p') && (LA(5)=='e') && (LA(6)=='t')) {
 						mTYPETERM(true);
@@ -180,6 +174,10 @@ tryAgain:
 					}
 					else if ((LA(1)=='%') && (LA(2)=='v')) {
 						mVAS(true);
+						theRetToken=_returnToken;
+					}
+					else if ((LA(1)=='%'||LA(1)=='/') && (LA(2)=='"'||LA(2)=='*'||LA(2)=='/')) {
+						mCOMMENT(true);
 						theRetToken=_returnToken;
 					}
 				else {
@@ -684,6 +682,9 @@ tryAgain:
 		else if ((LA(1)=='/') && (LA(2)=='*')) {
 			mML_COMMENT(false);
 		}
+		else if ((LA(1)=='%')) {
+			mCODE(false);
+		}
 		else {
 			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
 		}
@@ -807,10 +808,21 @@ tryAgain:
 		match('%');
 		match('"');
 		{
-		_loop62:
+		if (((LA(1)=='"') && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && (true) && (true) && (true))&&( LA(2)!='%' )) {
+			match('"');
+		}
+		else if (((LA(1) >= '\u0000' && LA(1) <= '\uffff')) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && (true) && (true) && (true) && (true)) {
+		}
+		else {
+			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+		}
+		
+		}
+		{
+		_loop63:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='"') && (LA(2)=='%') && (true)) break _loop62;
+			if ((LA(1)=='"') && (LA(2)=='%') && (true)) break _loop63;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -830,7 +842,7 @@ tryAgain:
 				newline();
 			}
 			else {
-				break _loop62;
+				break _loop63;
 			}
 			
 		} while (true);
