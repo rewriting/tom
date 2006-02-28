@@ -208,8 +208,8 @@ public class OutputCode {
 	public String encodeCode(String subject) {
 		StringBuffer sb = new StringBuffer();
 
-		String startCode = "%[[";
-		String endCode = "]]%";
+		String startCode = "%"+"\"";
+		String endCode = "\""+"%";
 
 		//System.out.println("subject: " + subject);
 		int oldIndex=0;

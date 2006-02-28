@@ -891,7 +891,7 @@ ML_COMMENT
 protected
 CODE
     :
-        "%[["        
+        '%' '"'
         (
             options {
                 greedy=false;  // make it exit upon "*/"
@@ -902,7 +902,7 @@ CODE
         | '\n'    {newline();}
         | ~('\n'|'\r')
         )*
-        "]]%"
+        '"' '%'
         {target.append($getText);}
   ;
 

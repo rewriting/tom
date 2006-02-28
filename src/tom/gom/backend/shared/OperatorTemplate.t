@@ -48,18 +48,24 @@ public class OperatorTemplate extends TemplateClass {
   }
 
   public String generate() {
+
+    String classBody = %"
+package "%+getPackage()+%";
+
+  public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
+    private static "%+className()+%" proto = new "%+className()+%"();
+    private int hashCode;
+    private "%+className()+%"() {};
+    
+    "%+generateMembers()+%"
+
+}"%;
+    
+    return classBody;
+  }
+
+  private String generateBody() {
     StringBuffer out = new StringBuffer();
-
-    out.append("package "+getPackage()+";\n");
-    out.append("\n");
-    out.append("public class "+className()+" extends "+fullClassName(sortName)+" {\n");
-    out.append("\tprivate static "+className()+" proto = new "+className()+"();\n");
-    out.append("\tprivate int hashCode;\n");
-    out.append("\tprivate "+className()+"() {};\n");
-    out.append("\n");
-    generateMembers(out);
-    out.append("\n");
-
     /* static constructor */
     out.append("\tpublic static "+className()+" make("+childListWithType()+") {\n");
     out.append("\t\tproto.initHashCode("+childList()+");\n");
@@ -113,18 +119,17 @@ public class OperatorTemplate extends TemplateClass {
 
 
     // TODO !!
-
-    out.append("}");
-    
     return out.toString();
   }
 
-  private void generateMembers(StringBuffer out) {
+  private String generateMembers() {
+    String res="";
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=fieldName,domain=domainClass],_*) -> {
-        out.append("\tprivate "+fullClassName(`domainClass)+" "+fieldName(`fieldName)+";\n");
+        res += "\tprivate "+fullClassName(`domainClass)+" "+fieldName(`fieldName)+";\n";
       }
     }
+    return res;
   }
   private void generateMembersInit(StringBuffer out) {
     %match(SlotFieldList slotList) {
