@@ -76,7 +76,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     return ("%+className()+%") shared.SingletonSharedObjectFactory.getInstance().build(proto);
   }
   
-  private void init("%+childListWithType()+%", int hashCode) {
+  private void init("%+childListWithType() + (slotList.isEmpty()?"":", ") +%"int hashCode) {
 "%+generateMembersInit()+%"
     this.hashCode = hashCode;
   }
@@ -102,7 +102,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
 
   public shared.SharedObject duplicate() {
     "%+className()+%" clone = new "%+className()+%"();
-    clone.init("%+childList()+%", hashCode);
+    clone.init("%+childList() + (slotList.isEmpty()?"":", ") +%"hashCode);
     return clone;
   }
 
@@ -113,11 +113,67 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     }
     return false;
   }
+  
+  /* "%+className(sortName)+%" interface */
+  public boolean "%+isOperatorMethod(className)+%"() {
+    return true;
+  }
+
+"%+generateGetters()+%"
 
     "%);
 
+    out.append(%"
+  /* AbstractType */
+  public aterm.ATerm toATerm() {
+    return aterm.pure.SingletonFactory.getInstance().makeAppl(
+      aterm.pure.SingletonFactory.getInstance().makeAFun(getName(),getArity(),false),
+      new aterm.ATerm[] {"%+generateToATermChilds()+%"});
+  }
 
+  public static "%+fullClassName(sortName)+%" fromTerm(aterm.ATerm trm) {
+    if(trm instanceof aterm.ATermAppl) {
+      aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+      if(proto.getName().equals(appl.getName())) {
+        return make(
+"%+generatefromATermChilds()+%"
+        );
+      }
+    }
+    return null;
+  }
+
+    "%);
+
+    out.append(%"
+  /* jjtraveler.Visitable */
+  public int getChildCount() {
+    return "%+nonBuiltinChildCount()+%";
+  }
+
+  public jjtraveler.Visitable getChildAt(int index) {
+    switch(index) {
+"%+nonBuiltinsGetCases()+%"
+      default: throw new IndexOutOfBoundsException();
+    }
+  }
+
+  public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
+    switch(index) {
+"%+nonBuiltinMakeCases("v")+%"
+      default: throw new IndexOutOfBoundsException();
+    }
+  }
+
+    "%);
+
+    out.append(%"
+      /* internal use */
+  protected int hashFunction() {
     // TODO !!
+    return 0;
+  }
+    "%);
     return out.toString();
   }
 
@@ -139,6 +195,50 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     }
     return res;
   }
+
+  private String generateGetters() {
+    String res = "";
+    SlotFieldList slots = slotList;
+    while(!slots.isEmpty()) {
+      SlotField head = slots.getHead();
+      slots = slots.getTail();
+      res+= %"
+  public "%+slotDomain(head)+%" "%+getMethod(head)+%"() {
+    throw new UnsupportedOperationException("This "%+className()+%" has no "%+head.getName()+%"");
+  }"%;
+    }
+    return res;
+  }
+
+  private String generateToATermChilds() {
+    String res = "";
+    SlotFieldList slots = slotList;
+    while(!slots.isEmpty()) {
+      SlotField head = slots.getHead();
+      slots = slots.getTail();
+      if (!res.equals("")) {
+        res+= ", ";
+      }
+      res+= getMethod(head)+"().toATerm()"; // XXX: handle builtins here
+    }
+    return res;
+  }
+
+  private String generatefromATermChilds() {
+    String res = "";
+    int index = 0;
+    SlotFieldList slots = slotList;
+    while(!slots.isEmpty()) {
+      SlotField head = slots.getHead();
+      slots = slots.getTail();
+      if (!res.equals("")) {
+        res+= ", ";
+      }
+      res+= fullClassName(head.getDomain()) + ".fromTerm(appl.getArgument("+index+"))"; // XXX: handle builtins here
+      index++;
+    }
+    return res;
+  }
   private String fieldName(String fieldName) {
     return "_"+fieldName;
   }
@@ -146,7 +246,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     String res = "";
     SlotFieldList slots = slotList;
     while(!slots.isEmpty()) {
-      SlotField head = slotList.getHead();
+      SlotField head = slots.getHead();
       slots = slots.getTail();
       %match(SlotField head) {
         SlotField[name=name, domain=domain] -> {
@@ -163,7 +263,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     String res = "";
     SlotFieldList slots = slotList;
     while(!slots.isEmpty()) {
-      SlotField head = slotList.getHead();
+      SlotField head = slots.getHead();
       slots = slots.getTail();
       %match(SlotField head) {
         SlotField[name=name, domain=domain] -> {
@@ -186,7 +286,66 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
         res += fieldName(`fieldName)+"=="+peer+"."+getMethod(`slot)+"()";
       }
     }
+    res += " && true"; // to handle the "no childs" case
+    return res;
+  }
+  private int nonBuiltinChildCount() {
+    int count = 0;
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,SlotField[domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  private String nonBuiltinsGetCases() {
+    String res = "";
+    int index = 0;
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,slot@SlotField[domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res += "      case "+index+": return "+getMethod(`slot)+"();\n";
+          index++;
+        }
+      }
+    }
     return res;
   }
 
+  private String nonBuiltinMakeCases(String argName) {
+    String res = "";
+    int index = 0;
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,SlotField[domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res += "      case "+index+": return make("+generateMakeArgsFor(index, argName)+");\n";
+          index++;
+        }
+      }
+    }
+    return res;
+  }
+  private String generateMakeArgsFor(int argIndex, String argName) {
+    String res = "";
+    int index = 0;
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,slot@SlotField[domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          if (!res.equals("")) {
+            res+= ", ";
+          }
+          if (index != argIndex) {
+            res += getMethod(`slot)+"()";
+          } else {
+            res += "("+fullClassName(`domain)+") " + argName;
+          }
+          index++;
+        }
+      }
+    }
+    return res;
+  }
 }

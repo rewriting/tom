@@ -63,7 +63,7 @@ public class SortTemplate extends TemplateClass {
     // methods for each operator
     ClassNameList consum = operatorList;
     while (!consum.isEmpty()) {
-      ClassName operatorName = operatorList.getHead();
+      ClassName operatorName = consum.getHead();
       consum = consum.getTail();
 
       out.append("\tpublic boolean "+isOperatorMethod(operatorName)+"() {\n");
@@ -103,7 +103,7 @@ public class SortTemplate extends TemplateClass {
         
     consum = operatorList;
     while (!consum.isEmpty()) {
-      ClassName operatorName = operatorList.getHead();
+      ClassName operatorName = consum.getHead();
       consum = consum.getTail();
       out.append("\t\ttmp = "+fullClassName(operatorName)+".fromTerm(trm);\n");
       out.append("\t\tif (tmp != null) {\n");

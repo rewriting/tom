@@ -102,11 +102,10 @@ public class "%+className()+%" implements "%+ className(visitor) +%", jjtraveler
         out.append("\t}\n");
         out.append("\n");
         */
-        ClassName localSortName=`sortName;
-        
+       
         out.append(%"
-  public "%+fullClassName(localSortName)+%" "%+visitMethod(localSortName)+%"("%+fullClassName(localSortName)+%" arg) throws jjtraveler.VisitFailure {
-    return ("%+fullClassName(localSortName)+%") any.visit(arg);
+  public "%+ fullClassName(`sortName) +%" "%+visitMethod(`sortName)+%"("%+fullClassName(`sortName)+%" arg) throws jjtraveler.VisitFailure {
+    return ("%+fullClassName(`sortName)+%") any.visit(arg);
   }
 "%);
       }
