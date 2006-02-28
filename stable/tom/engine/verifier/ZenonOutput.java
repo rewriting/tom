@@ -227,22 +227,20 @@ public class ZenonOutput {
     Replace2 programVariablesCollector = new Replace2() {
       public ATerm apply(ATerm subject, Object astore) {
         Map store = (Map) astore;
-        if (subject instanceof Variable) {
-           if(subject instanceof  tom.engine.adt.il.types.Variable) { { tom.engine.adt.il.types.Variable tom_match3_1=(( tom.engine.adt.il.types.Variable)subject); if(tom_is_fun_sym_var(tom_match3_1) ||  false ) { { String  tom_match3_1_name=tom_get_slot_var_name(tom_match3_1); { String  name=tom_match3_1_name; if( true ) {
+				 if(subject instanceof  tom.engine.adt.il.types.Variable) { { tom.engine.adt.il.types.Variable tom_match3_1=(( tom.engine.adt.il.types.Variable)subject); if(tom_is_fun_sym_var(tom_match3_1) ||  false ) { { String  tom_match3_1_name=tom_get_slot_var_name(tom_match3_1); { String  name=tom_match3_1_name; if( true ) {
 
-              String newname = name;
-              if (store.containsKey(name)){
-                newname = (String) store.get(name);
-              } else {
-                if (name.startsWith("[") && name.endsWith("]")) {
-                  newname = "X_" + store.size();
-                }
-                store.put(name,newname);
-              }
-              return tom_make_var(newname);
-             }}} }} }
+						String newname = name;
+						if (store.containsKey(name)){
+							newname = (String) store.get(name);
+						} else {
+							if (name.startsWith("[") && name.endsWith("]")) {
+								newname = "X_" + store.size();
+							}
+							store.put(name,newname);
+						}
+						return tom_make_var(newname);
+					 }}} }} }
 
-        }
         return traversal().genericTraversal(subject,this,astore);
       }
     };

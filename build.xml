@@ -1117,6 +1117,7 @@
       </fileset>
       <fileset dir="${src.gen}">
         <include name="**/*.java"/>
+        <exclude name="**/Tom.java"/>
         <exclude name="**/adt/**/*.java"/>
       </fileset>
     </copy>

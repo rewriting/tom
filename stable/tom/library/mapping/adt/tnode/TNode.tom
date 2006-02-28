@@ -5,6 +5,7 @@
 %include { atermlist.tom }
 %typeterm TNodeList{
   implement { tom.library.adt.tnode.types.TNodeList}
+  visitor_fwd { tom.library.adt.tnode.TNodeVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.library.adt.tnode.types.TNodeList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -31,6 +32,7 @@
 }
 %typeterm TNode{
   implement { tom.library.adt.tnode.types.TNode}
+  visitor_fwd { tom.library.adt.tnode.TNodeVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.library.adt.tnode.types.TNode)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}

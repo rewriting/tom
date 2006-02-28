@@ -50,5 +50,6 @@ public interface HostParserTokenTypes {
 	int COMMENT = 21;
 	int SL_COMMENT = 22;
 	int ML_COMMENT = 23;
-	int TARGET = 24;
+	int CODE = 24;
+	int TARGET = 25;
 }

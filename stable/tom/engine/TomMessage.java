@@ -164,6 +164,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("In symbol {0}, get_slot for {1} is missing.");
 
   // optimizer.TomOptimizer
+  public static final TomMessage tomOptimizationType =
+    new TomMessage("optimization of type {0}");
   public static final TomMessage unusedVariable        =
     new TomMessage("{0}:{1,number,integer}: Variable `{2}` is never used");
   public static final TomMessage remove                =

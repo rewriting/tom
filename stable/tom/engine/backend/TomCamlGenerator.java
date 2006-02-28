@@ -56,16 +56,16 @@ public class TomCamlGenerator extends TomImperativeGenerator {
    * the implementation of methods are here for caml 
    */
   
-  protected void buildInstructionSequence(int deep, InstructionList instructionList) throws IOException {
+  protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
     if(!instructionList.isEmpty()) {
-      generateInstruction(deep,instructionList.getHead());
+      generateInstruction(deep,instructionList.getHead(), moduleName);
       instructionList = instructionList.getTail();
     }
 
     while(!instructionList.isEmpty()) {
       output.write("(* end InstructionSequence *) ");
       output.writeln(";");
-      generateInstruction(deep,instructionList.getHead());
+      generateInstruction(deep,instructionList.getHead(), moduleName);
       /*
        * buildInstructionSequence is used for CompiledPattern.
        * Since a pattern should have type unit, we have to put a ";"
@@ -80,15 +80,15 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     // do nothing
   }
 
-  protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
+  protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
     if(instList.isSingle()) {
       output.writeln(deep,"( (* begin unamed block*)");
-      generateInstruction(deep+1,instList.getHead());
+      generateInstruction(deep+1,instList.getHead(), moduleName);
       output.writeln(deep,") (* end unamed block*)");
     } else {
       output.writeln(deep,"( (* begin unamed block*)");
       while(!instList.isEmpty()) {
-        generateInstruction(deep+1,instList.getHead());
+        generateInstruction(deep+1,instList.getHead(), moduleName);
         output.writeln("; (* from unamed block*)");
         instList = instList.getTail();
       }
@@ -101,126 +101,126 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     return;
   }
 
-  protected void buildExpNegation(int deep, Expression exp) throws IOException {
+  protected void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException {
     output.write("not(");
-    generateExpression(deep,exp);
+    generateExpression(deep,exp,moduleName);
     output.write(")");
   }
 
-  protected void buildRef(int deep, TomTerm term) throws IOException {
+  protected void buildRef(int deep, TomTerm term, String moduleName) throws IOException {
     output.write("!");
-    generate(deep,term);
+    generate(deep,term,moduleName);
   }
 
-  protected void buildExpCast(int deep, TomType tlType, Expression exp) throws IOException {
-    generateExpression(deep,exp);
+  protected void buildExpCast(int deep, TomType tlType, Expression exp, String moduleName) throws IOException {
+    generateExpression(deep,exp,moduleName);
   }
 
   protected void buildLet(int deep, TomTerm var, OptionList optionList,
                           TomType tlType, 
-                          Expression exp, Instruction body) throws IOException {
+                          Expression exp, Instruction body, String moduleName) throws IOException {
 
     output.indent(deep);
     output.write("let ");
-    generate(deep,var);
+    generate(deep,var,moduleName);
     output.write(" = ");
-    generateExpression(deep,exp);
+    generateExpression(deep,exp,moduleName);
     output.writeln(" in ");
-    generateInstruction(deep,body);
+    generateInstruction(deep,body,moduleName);
   }
 
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList,
                              TomType tlType, 
-                             Expression exp, Instruction body) throws IOException {
+                             Expression exp, Instruction body, String moduleName) throws IOException {
     output.indent(deep);
     output.write("let ");
-    generate(deep,var);
+    generate(deep,var,moduleName);
     output.write(" = ref ");
-    generateExpression(deep,exp);
+    generateExpression(deep,exp,moduleName);
     output.writeln(" in ");
-    generateInstruction(deep,body);
+    generateInstruction(deep,body,moduleName);
   }
 
-  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException {
+  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException {
     output.indent(deep);
-    generate(deep,var);
+    generate(deep,var,moduleName);
     output.write(" := ");
-    generateExpression(deep,exp);
+    generateExpression(deep,exp,moduleName);
   }
 
-  protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body) throws IOException {
+  protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException {
     output.writeln(deep,"( (* begin let assign*)");
-    generate(deep+1,var);
+    generate(deep+1,var,moduleName);
     output.write(" := ");
-    generateExpression(deep+1,exp);
+    generateExpression(deep+1,exp,moduleName);
     output.writeln("; (* from let assign *)");
-    generateInstruction(deep+1,body);
+    generateInstruction(deep+1,body,moduleName);
     output.writeln(deep,") (* end let assign*)");
 
   }
 
-  protected void buildIf(int deep, Expression exp, Instruction succes) throws IOException {
+  protected void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
 		if(exp.isTrueTL()) {
-			generateInstruction(deep,succes);
+			generateInstruction(deep,succes,moduleName);
 		} else {
 			output.write(deep,"(if "); 
-			generateExpression(deep,exp); 
+			generateExpression(deep,exp,moduleName); 
 			output.writeln(" then ");
-			generateInstruction(deep+1,succes);
+			generateInstruction(deep+1,succes,moduleName);
 			output.writeln(deep,")");
 		}
   }
 
-  protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {
+  protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException {
     output.write(deep,"if "); 
-    generateExpression(deep,exp); 
+    generateExpression(deep,exp,moduleName); 
     output.writeln(" then ");
-    generateInstruction(deep+1,succes);
+    generateInstruction(deep+1,succes,moduleName);
     output.writeln(deep," else ");
-    generateInstruction(deep+1,failure);
+    generateInstruction(deep+1,failure,moduleName);
     output.writeln(deep," (* endif *)");
   }
 
-  protected void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException {
+  protected void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException {
     output.writeln(deep,"let tom_internal_cond = ref true in");
     output.writeln(deep,"while !tom_internal_cond do");
-    generateInstruction(deep+1,succes);
+    generateInstruction(deep+1,succes,moduleName);
     output.writeln(deep+1,"; tom_internal_cond := ");
-    generateExpression(deep,exp);
+    generateExpression(deep,exp,moduleName);
     output.writeln();
     output.writeln(deep,"done");
   }
 
-  protected void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException {
+  protected void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
     output.write(deep,"while ");
-    generateExpression(deep,exp);
+    generateExpression(deep,exp,moduleName);
     output.writeln(" do");
-    generateInstruction(deep+1,succes);
+    generateInstruction(deep+1,succes,moduleName);
     output.writeln();
     output.writeln(deep,"done");
   }
 
-  protected void buildCheckStamp(int deep, TomType type, TomTerm variable) throws IOException {
+  protected void buildCheckStamp(int deep, TomType type, TomTerm variable, String moduleName) throws IOException {
     if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
       output.write("tom_check_stamp_" + getTomType(type) + "(");
-      generate(deep,variable);
+      generate(deep,variable,moduleName);
       output.write(")");
     } else {
       output.write("(* checkstamp *) ()");
     }
   }
 
-  protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException {
+  protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
     output.write("tom_get_head_" + getTomType(domain) + "(");
-    generate(deep,var);
+    generate(deep,var,moduleName);
     output.write(")");
   }
 
-  protected void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException {
+  protected void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
     output.write("tom_get_element_" + getTomType(domain) + "(");
-    generate(deep,varName);
+    generate(deep,varName,moduleName);
     output.write(",");
-    generate(deep,varIndex);
+    generate(deep,varIndex,moduleName);
     output.write(")");
   }
 
@@ -229,7 +229,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
                          String declName,
                          String suffix,
                          String args[],
-                         TargetLanguage tlCode)  throws IOException {
+                         TargetLanguage tlCode,
+                         String moduleName)  throws IOException {
     StringBuffer s = new StringBuffer();
     if(nodeclMode) { 
       return; 
@@ -259,7 +260,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   }
 
   protected void genDeclMake(String funName, TomType returnType, 
-                             TomList argList, Instruction instr)  throws IOException {
+                             TomList argList, Instruction instr, String moduleName)  throws IOException {
     StringBuffer s = new StringBuffer();
     if(nodeclMode) { 
       return;
@@ -288,12 +289,12 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     }
     s.append(") = ");
     output.write(s);
-    generateInstruction(0,instr);
+    generateInstruction(0,instr,moduleName);
     output.write(" ");
   }
 
-  protected void genDeclList(String name)  throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(name);
+  protected void genDeclList(String name, String moduleName)  throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
     TomType listType = getSymbolCodomain(tomSymbol);
     TomType eltType = getSymbolDomain(tomSymbol).getHead();
 
@@ -330,9 +331,9 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.write(itl.getCode()); 
   }
   
-  protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {
+  protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType, String moduleName) throws IOException {
     output.write(deep,"let ");
-    generate(deep,var);
+    generate(deep,var,moduleName);
     System.out.println("buildDeclaration : this is a deprecated code");
     output.writeln(" = ref None in");
   }
@@ -350,12 +351,12 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   }
 
 
-  protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
+  protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
     System.out.println(" Named block not supported in Caml: ");
-    buildUnamedBlock(deep,instList);
+    buildUnamedBlock(deep,instList,moduleName);
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     System.out.println("Function not yet supported in Caml");
     throw new TomRuntimeException("Function not yet supported in Caml");
   }
@@ -369,7 +370,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
                          String suffix,
                          String args[],
                          Instruction instr,
-                         int deep) throws IOException {
+                         int deep,
+                         String moduleName) throws IOException {
     StringBuffer s = new StringBuffer();
     if(nodeclMode) {
       return;
@@ -385,7 +387,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     } 
     s.append(") = ");
     output.write(s);
-    generateInstruction(deep,instr);
+    generateInstruction(deep,instr,moduleName);
     /*
      * path to add a semi-colon for 'void instruction'
      * This is the case of CheckStampDecl
@@ -396,8 +398,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.write(";;");
   }
 
-  protected void buildReturn(int deep, TomTerm exp) throws IOException {
-    generate(deep,exp);
+  protected void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException {
+    generate(deep,exp,moduleName);
   }
 
 } // class TomCamlGenerator

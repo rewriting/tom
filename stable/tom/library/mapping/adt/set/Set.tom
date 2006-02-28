@@ -5,6 +5,7 @@
 %include { atermlist.tom }
 %typeterm JGTreeSet{
   implement { tom.library.adt.set.types.JGTreeSet}
+  visitor_fwd { tom.library.adt.set.SetVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.library.adt.set.types.JGTreeSet)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}

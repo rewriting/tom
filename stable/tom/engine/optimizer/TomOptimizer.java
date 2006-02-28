@@ -183,15 +183,13 @@ public class TomOptimizer extends TomGenericPlugin {
         TomTerm variable = (TomTerm) arg1;
         TomName variableName = variable.getAstName();
         Expression expression = (Expression) arg2;
-        if(subject instanceof TomTerm) {
-           if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match1_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); {boolean tom_bool_match1_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match1_1_astName= null ; if(tom_is_fun_sym_Variable(tom_match1_1)) {tom_bool_match1_1= true ;tom_match1_1_astName=tom_get_slot_Variable_astName(tom_match1_1); } else { if(tom_is_fun_sym_VariableStar(tom_match1_1)) {tom_bool_match1_1= true ;tom_match1_1_astName=tom_get_slot_VariableStar_astName(tom_match1_1); } else { if(tom_is_fun_sym_BuildVariable(tom_match1_1)) {tom_bool_match1_1= true ;tom_match1_1_astName=tom_get_slot_BuildVariable_astName(tom_match1_1); } } } if(tom_bool_match1_1) { if( true ) {
+				 if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match1_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); {boolean tom_bool_match1_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match1_1_astName= null ; if(tom_is_fun_sym_Variable(tom_match1_1)) {tom_bool_match1_1= true ;tom_match1_1_astName=tom_get_slot_Variable_astName(tom_match1_1); } else { if(tom_is_fun_sym_VariableStar(tom_match1_1)) {tom_bool_match1_1= true ;tom_match1_1_astName=tom_get_slot_VariableStar_astName(tom_match1_1); } else { if(tom_is_fun_sym_BuildVariable(tom_match1_1)) {tom_bool_match1_1= true ;tom_match1_1_astName=tom_get_slot_BuildVariable_astName(tom_match1_1); } } } if(tom_bool_match1_1) { if( true ) {
 
-              if(variableName == tom_match1_1_astName) {
-                return tom_make_ExpressionToTomTerm(expression);
-              }
-             } }}}} }
+						if(variableName == tom_match1_1_astName) {
+							return tom_make_ExpressionToTomTerm(expression);
+						}
+					 } }}}} }
  // end match
-        } // end instanceof TomTerm
 
           /*
            * Defaul case: traversal
@@ -208,25 +206,20 @@ public class TomOptimizer extends TomGenericPlugin {
     final List list = new ArrayList();
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
-          if(t instanceof Instruction) {
-             if(t instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match2_1=(( tom.engine.adt.tomsignature.types.Instruction)t); if(tom_is_fun_sym_TypedAction(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.Instruction tom_match2_1_astInstruction=tom_get_slot_TypedAction_astInstruction(tom_match2_1); if( true ) {
+					 if(t instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match2_1=(( tom.engine.adt.tomsignature.types.Instruction)t); if(tom_is_fun_sym_TypedAction(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.Instruction tom_match2_1_astInstruction=tom_get_slot_TypedAction_astInstruction(tom_match2_1); if( true ) {
 
-                traversal().genericCollect(tom_match2_1_astInstruction, this);
-                return false;
-               }} } if( true ) {
+							traversal().genericCollect(tom_match2_1_astInstruction, this);
+							return false;
+						 }} }} } if(t instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1=(( tom.engine.adt.tomsignature.types.TomTerm)t); {boolean tom_bool_match3_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match3_1_astName= null ; if(tom_is_fun_sym_Variable(tom_match3_1)) {tom_bool_match3_1= true ;tom_match3_1_astName=tom_get_slot_Variable_astName(tom_match3_1); } else { if(tom_is_fun_sym_VariableStar(tom_match3_1)) {tom_bool_match3_1= true ;tom_match3_1_astName=tom_get_slot_VariableStar_astName(tom_match3_1); } else { if(tom_is_fun_sym_BuildVariable(tom_match3_1)) {tom_bool_match3_1= true ;tom_match3_1_astName=tom_get_slot_BuildVariable_astName(tom_match3_1); } } } if(tom_bool_match3_1) { if( true ) {
 
- return true;  }} }
 
-          } else if(t instanceof TomTerm) {
-             if(t instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1=(( tom.engine.adt.tomsignature.types.TomTerm)t); {boolean tom_bool_match3_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match3_1_astName= null ; if(tom_is_fun_sym_Variable(tom_match3_1)) {tom_bool_match3_1= true ;tom_match3_1_astName=tom_get_slot_Variable_astName(tom_match3_1); } else { if(tom_is_fun_sym_VariableStar(tom_match3_1)) {tom_bool_match3_1= true ;tom_match3_1_astName=tom_get_slot_VariableStar_astName(tom_match3_1); } else { if(tom_is_fun_sym_BuildVariable(tom_match3_1)) {tom_bool_match3_1= true ;tom_match3_1_astName=tom_get_slot_BuildVariable_astName(tom_match3_1); } } } if(tom_bool_match3_1) { if( true ) {
 
-                if(variableName == tom_match3_1_astName) {
-                  list.add(t);
-                  return false;
-                }
-               } }}}} }
+							if(variableName == tom_match3_1_astName) {
+								list.add(t);
+								return false;
+							}
+						 } }}}} }
 
-          } 
 					return true;
         } // end apply
       }; // end new
@@ -241,23 +234,21 @@ public class TomOptimizer extends TomGenericPlugin {
         public boolean apply(ATerm t) {
 
           //System.out.println("isAssigned(" + variableName + "): " + t);
-          if(t instanceof Instruction) {
-             if(t instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match4_1=(( tom.engine.adt.tomsignature.types.Instruction)t); if(tom_is_fun_sym_Assign(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match4_1_variable=tom_get_slot_Assign_variable(tom_match4_1); {boolean tom_bool_match4_1_variable= false ; { tom.engine.adt.tomsignature.types.TomName tom_match4_1_variable_astName= null ; if(tom_is_fun_sym_Variable(tom_match4_1_variable)) {tom_bool_match4_1_variable= true ;tom_match4_1_variable_astName=tom_get_slot_Variable_astName(tom_match4_1_variable); } else { if(tom_is_fun_sym_VariableStar(tom_match4_1_variable)) {tom_bool_match4_1_variable= true ;tom_match4_1_variable_astName=tom_get_slot_VariableStar_astName(tom_match4_1_variable); } } if(tom_bool_match4_1_variable) { if( true ) {
+					 if(t instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match4_1=(( tom.engine.adt.tomsignature.types.Instruction)t); if(tom_is_fun_sym_Assign(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match4_1_variable=tom_get_slot_Assign_variable(tom_match4_1); {boolean tom_bool_match4_1_variable= false ; { tom.engine.adt.tomsignature.types.TomName tom_match4_1_variable_astName= null ; if(tom_is_fun_sym_Variable(tom_match4_1_variable)) {tom_bool_match4_1_variable= true ;tom_match4_1_variable_astName=tom_get_slot_Variable_astName(tom_match4_1_variable); } else { if(tom_is_fun_sym_VariableStar(tom_match4_1_variable)) {tom_bool_match4_1_variable= true ;tom_match4_1_variable_astName=tom_get_slot_VariableStar_astName(tom_match4_1_variable); } } if(tom_bool_match4_1_variable) { if( true ) {
 
-                if(variableName == tom_match4_1_variable_astName) {
-                  list.add(t);
-                  return false;
-                }
-               } }}}} } if(tom_is_fun_sym_LetAssign(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match4_1_variable=tom_get_slot_LetAssign_variable(tom_match4_1); {boolean tom_bool_match4_1_variable= false ; { tom.engine.adt.tomsignature.types.TomName tom_match4_1_variable_astName= null ; if(tom_is_fun_sym_Variable(tom_match4_1_variable)) {tom_bool_match4_1_variable= true ;tom_match4_1_variable_astName=tom_get_slot_Variable_astName(tom_match4_1_variable); } else { if(tom_is_fun_sym_VariableStar(tom_match4_1_variable)) {tom_bool_match4_1_variable= true ;tom_match4_1_variable_astName=tom_get_slot_VariableStar_astName(tom_match4_1_variable); } } if(tom_bool_match4_1_variable) { if( true ) {
+							if(variableName == tom_match4_1_variable_astName) {
+								list.add(t);
+								return false;
+							}
+						 } }}}} } if(tom_is_fun_sym_LetAssign(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match4_1_variable=tom_get_slot_LetAssign_variable(tom_match4_1); {boolean tom_bool_match4_1_variable= false ; { tom.engine.adt.tomsignature.types.TomName tom_match4_1_variable_astName= null ; if(tom_is_fun_sym_Variable(tom_match4_1_variable)) {tom_bool_match4_1_variable= true ;tom_match4_1_variable_astName=tom_get_slot_Variable_astName(tom_match4_1_variable); } else { if(tom_is_fun_sym_VariableStar(tom_match4_1_variable)) {tom_bool_match4_1_variable= true ;tom_match4_1_variable_astName=tom_get_slot_VariableStar_astName(tom_match4_1_variable); } } if(tom_bool_match4_1_variable) { if( true ) {
 
 
-                if(variableName == tom_match4_1_variable_astName) {
-                  list.add(t);
-                  return false;
-                }
-               } }}}} }} }
+							if(variableName == tom_match4_1_variable_astName) {
+								list.add(t);
+								return false;
+							}
+						 } }}}} }} }
 
-          } 
 					return true;
         } // end apply
       }; // end new
@@ -290,15 +281,12 @@ public class TomOptimizer extends TomGenericPlugin {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
           // System.out.println("t = " + t);
-          if(t instanceof TomTerm) {
-            TomTerm annotedVariable = null;
-             if(t instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1=(( tom.engine.adt.tomsignature.types.TomTerm)t); if(tom_is_fun_sym_Ref(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_tomTerm=tom_get_slot_Ref_tomTerm(tom_match5_1); {boolean tom_bool_match5_1_tomTerm= false ; { tom.engine.adt.tomsignature.types.TomName tom_match5_1_tomTerm_astName= null ; if(tom_is_fun_sym_Variable(tom_match5_1_tomTerm)) {tom_bool_match5_1_tomTerm= true ;tom_match5_1_tomTerm_astName=tom_get_slot_Variable_astName(tom_match5_1_tomTerm); } else { if(tom_is_fun_sym_VariableStar(tom_match5_1_tomTerm)) {tom_bool_match5_1_tomTerm= true ;tom_match5_1_tomTerm_astName=tom_get_slot_VariableStar_astName(tom_match5_1_tomTerm); } } if(tom_bool_match5_1_tomTerm) { if( true ) {
+					 if(t instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1=(( tom.engine.adt.tomsignature.types.TomTerm)t); if(tom_is_fun_sym_Ref(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1_tomTerm=tom_get_slot_Ref_tomTerm(tom_match5_1); {boolean tom_bool_match5_1_tomTerm= false ; { tom.engine.adt.tomsignature.types.TomName tom_match5_1_tomTerm_astName= null ; if(tom_is_fun_sym_Variable(tom_match5_1_tomTerm)) {tom_bool_match5_1_tomTerm= true ;tom_match5_1_tomTerm_astName=tom_get_slot_Variable_astName(tom_match5_1_tomTerm); } else { if(tom_is_fun_sym_VariableStar(tom_match5_1_tomTerm)) {tom_bool_match5_1_tomTerm= true ;tom_match5_1_tomTerm_astName=tom_get_slot_VariableStar_astName(tom_match5_1_tomTerm); } } if(tom_bool_match5_1_tomTerm) { if( true ) {
 
-                collection.add(tom_match5_1_tomTerm_astName);
-                return false;
-               } }}}} }} }
+							collection.add(tom_match5_1_tomTerm_astName);
+							return false;
+						 } }}}} }} }
 
-          }
 					return true;
         } // end apply
       }; // end new
@@ -312,30 +300,26 @@ public class TomOptimizer extends TomGenericPlugin {
   Replace2 replace_renameIntoTomVariable = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
         Set context = (Set) arg1;
-        if(subject instanceof TomTerm) {
-           if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match6_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); { tom.engine.adt.tomsignature.types.TomTerm tom_var=tom_match6_1; {boolean tom_bool_match6_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match6_1_astName= null ; if(tom_is_fun_sym_Variable(tom_match6_1)) {tom_bool_match6_1= true ;tom_match6_1_astName=tom_get_slot_Variable_astName(tom_match6_1); } else { if(tom_is_fun_sym_VariableStar(tom_match6_1)) {tom_bool_match6_1= true ;tom_match6_1_astName=tom_get_slot_VariableStar_astName(tom_match6_1); } else { if(tom_is_fun_sym_BuildVariable(tom_match6_1)) {tom_bool_match6_1= true ;tom_match6_1_astName=tom_get_slot_BuildVariable_astName(tom_match6_1); } } } if(tom_bool_match6_1) { if(tom_is_fun_sym_Name(tom_match6_1_astName) ||  false ) { { String  tom_match6_1_astName_string=tom_get_slot_Name_string(tom_match6_1_astName); if( true ) {
+				 if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match6_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); { tom.engine.adt.tomsignature.types.TomTerm tom_var=tom_match6_1; {boolean tom_bool_match6_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match6_1_astName= null ; if(tom_is_fun_sym_Variable(tom_match6_1)) {tom_bool_match6_1= true ;tom_match6_1_astName=tom_get_slot_Variable_astName(tom_match6_1); } else { if(tom_is_fun_sym_VariableStar(tom_match6_1)) {tom_bool_match6_1= true ;tom_match6_1_astName=tom_get_slot_VariableStar_astName(tom_match6_1); } else { if(tom_is_fun_sym_BuildVariable(tom_match6_1)) {tom_bool_match6_1= true ;tom_match6_1_astName=tom_get_slot_BuildVariable_astName(tom_match6_1); } } } if(tom_bool_match6_1) { if(tom_is_fun_sym_Name(tom_match6_1_astName) ||  false ) { { String  tom_match6_1_astName_string=tom_get_slot_Name_string(tom_match6_1_astName); if( true ) {
 
-              if(context.contains(tom_match6_1_astName)) {
-                return tom_var.setAstName(tom_make_Name(getAstFactory().makeTomVariableName(tom_match6_1_astName_string)));
-              }
-             }} } }}}}} }
+						if(context.contains(tom_match6_1_astName)) {
+							return tom_var.setAstName(tom_make_Name(getAstFactory().makeTomVariableName(tom_match6_1_astName_string)));
+						}
+					 }} } }}}}} }
 
-        } else if(subject instanceof Expression) {
-        } else if(subject instanceof Instruction) {
-          /*
-           * collect the set of variables that correspond
-           * to the lhs of this instruction
-           */
+				/*
+				 * collect the set of variables that correspond
+				 * to the lhs of this instruction
+				 */
 
-           if(subject instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match7_1=(( tom.engine.adt.tomsignature.types.Instruction)subject); if(tom_is_fun_sym_CompiledPattern(tom_match7_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match7_1_patternList=tom_get_slot_CompiledPattern_patternList(tom_match7_1); { tom.engine.adt.tomsignature.types.Instruction tom_match7_1_automataInst=tom_get_slot_CompiledPattern_automataInst(tom_match7_1); if( true ) {
+				 if(subject instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match7_1=(( tom.engine.adt.tomsignature.types.Instruction)subject); if(tom_is_fun_sym_CompiledPattern(tom_match7_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match7_1_patternList=tom_get_slot_CompiledPattern_patternList(tom_match7_1); { tom.engine.adt.tomsignature.types.Instruction tom_match7_1_automataInst=tom_get_slot_CompiledPattern_automataInst(tom_match7_1); if( true ) {
 
-              Map map = collectMultiplicity(tom_match7_1_patternList);
-              Set newContext = new HashSet(map.keySet());
-              newContext.addAll(context);
-              return this.apply(tom_match7_1_automataInst,newContext);
-             }}} }} }
+						Map map = collectMultiplicity(tom_match7_1_patternList);
+						Set newContext = new HashSet(map.keySet());
+						newContext.addAll(context);
+						return this.apply(tom_match7_1_automataInst,newContext);
+					 }}} }} }
 
-        } // end instanceof Instruction
 
           /*
            * Defaul case: traversal
@@ -361,15 +345,13 @@ public class TomOptimizer extends TomGenericPlugin {
       public ATerm apply(ATerm subject, Object arg1, Object arg2) {
         TomName variableName = ((TomTerm) arg1).getAstName();
         TomName newVariableName = ((TomTerm) arg2).getAstName();
-        if(subject instanceof TomTerm) {
-           if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match8_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); { tom.engine.adt.tomsignature.types.TomTerm tom_var=tom_match8_1; {boolean tom_bool_match8_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match8_1_astName= null ; if(tom_is_fun_sym_Variable(tom_match8_1)) {tom_bool_match8_1= true ;tom_match8_1_astName=tom_get_slot_Variable_astName(tom_match8_1); } else { if(tom_is_fun_sym_VariableStar(tom_match8_1)) {tom_bool_match8_1= true ;tom_match8_1_astName=tom_get_slot_VariableStar_astName(tom_match8_1); } else { if(tom_is_fun_sym_BuildVariable(tom_match8_1)) {tom_bool_match8_1= true ;tom_match8_1_astName=tom_get_slot_BuildVariable_astName(tom_match8_1); } } } if(tom_bool_match8_1) { if( true ) {
+				 if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match8_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); { tom.engine.adt.tomsignature.types.TomTerm tom_var=tom_match8_1; {boolean tom_bool_match8_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match8_1_astName= null ; if(tom_is_fun_sym_Variable(tom_match8_1)) {tom_bool_match8_1= true ;tom_match8_1_astName=tom_get_slot_Variable_astName(tom_match8_1); } else { if(tom_is_fun_sym_VariableStar(tom_match8_1)) {tom_bool_match8_1= true ;tom_match8_1_astName=tom_get_slot_VariableStar_astName(tom_match8_1); } else { if(tom_is_fun_sym_BuildVariable(tom_match8_1)) {tom_bool_match8_1= true ;tom_match8_1_astName=tom_get_slot_BuildVariable_astName(tom_match8_1); } } } if(tom_bool_match8_1) { if( true ) {
 
-              if(variableName == tom_match8_1_astName) {
-                return tom_var.setAstName(newVariableName);
-              }
-             } }}}}} }
+						if(variableName == tom_match8_1_astName) {
+							return tom_var.setAstName(newVariableName);
+						}
+					 } }}}}} }
  // end match
-        } // end instanceof TomTerm
 
           /*
            * Defaul case: traversal
@@ -391,105 +373,101 @@ public class TomOptimizer extends TomGenericPlugin {
 
     public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure{
 
-      if(subject instanceof TomTerm) {
-         if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match9_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); if(tom_is_fun_sym_ExpressionToTomTerm(tom_match9_1) ||  false ) { { tom.engine.adt.tomsignature.types.Expression tom_match9_1_astExpression=tom_get_slot_ExpressionToTomTerm_astExpression(tom_match9_1); if(tom_is_fun_sym_TomTermToExpression(tom_match9_1_astExpression) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match9_1_astExpression_astTerm=tom_get_slot_TomTermToExpression_astTerm(tom_match9_1_astExpression); if( true ) {
+			 if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match9_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); if(tom_is_fun_sym_ExpressionToTomTerm(tom_match9_1) ||  false ) { { tom.engine.adt.tomsignature.types.Expression tom_match9_1_astExpression=tom_get_slot_ExpressionToTomTerm_astExpression(tom_match9_1); if(tom_is_fun_sym_TomTermToExpression(tom_match9_1_astExpression) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match9_1_astExpression_astTerm=tom_get_slot_TomTermToExpression_astTerm(tom_match9_1_astExpression); if( true ) {
 
-            return tom_match9_1_astExpression_astTerm;
-           }} }} }} }
+					return tom_match9_1_astExpression_astTerm;
+				 }} }} }} } if(subject instanceof  tom.engine.adt.tomsignature.types.Expression) { { tom.engine.adt.tomsignature.types.Expression tom_match10_1=(( tom.engine.adt.tomsignature.types.Expression)subject); if(tom_is_fun_sym_TomTermToExpression(tom_match10_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match10_1_astTerm=tom_get_slot_TomTermToExpression_astTerm(tom_match10_1); if(tom_is_fun_sym_ExpressionToTomTerm(tom_match10_1_astTerm) ||  false ) { { tom.engine.adt.tomsignature.types.Expression tom_match10_1_astTerm_astExpression=tom_get_slot_ExpressionToTomTerm_astExpression(tom_match10_1_astTerm); if( true ) {
 
-      } else if(subject instanceof Expression) {
-         if(subject instanceof  tom.engine.adt.tomsignature.types.Expression) { { tom.engine.adt.tomsignature.types.Expression tom_match10_1=(( tom.engine.adt.tomsignature.types.Expression)subject); if(tom_is_fun_sym_TomTermToExpression(tom_match10_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match10_1_astTerm=tom_get_slot_TomTermToExpression_astTerm(tom_match10_1); if(tom_is_fun_sym_ExpressionToTomTerm(tom_match10_1_astTerm) ||  false ) { { tom.engine.adt.tomsignature.types.Expression tom_match10_1_astTerm_astExpression=tom_get_slot_ExpressionToTomTerm_astExpression(tom_match10_1_astTerm); if( true ) {
 
-            return tom_match10_1_astTerm_astExpression;
-           }} }} }} }
 
-      } else if(subject instanceof Instruction) {
-         if(subject instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match11_1=(( tom.engine.adt.tomsignature.types.Instruction)subject); {boolean tom_bool_match11_1= false ; { tom.engine.adt.tomsignature.types.TomTerm tom_match11_1_variable= null ; { tom.engine.adt.tomsignature.types.Expression tom_match11_1_source= null ; { tom.engine.adt.tomsignature.types.Instruction tom_match11_1_astInstruction= null ; if(tom_is_fun_sym_LetRef(tom_match11_1)) {tom_bool_match11_1= true ;tom_match11_1_variable=tom_get_slot_LetRef_variable(tom_match11_1);tom_match11_1_source=tom_get_slot_LetRef_source(tom_match11_1);tom_match11_1_astInstruction=tom_get_slot_LetRef_astInstruction(tom_match11_1); } else { if(tom_is_fun_sym_LetAssign(tom_match11_1)) {tom_bool_match11_1= true ;tom_match11_1_variable=tom_get_slot_LetAssign_variable(tom_match11_1);tom_match11_1_source=tom_get_slot_LetAssign_source(tom_match11_1);tom_match11_1_astInstruction=tom_get_slot_LetAssign_astInstruction(tom_match11_1); } } if(tom_bool_match11_1) { { tom.engine.adt.tomsignature.types.TomTerm tom_var=tom_match11_1_variable; {boolean tom_bool_match11_1_variable= false ; { tom.engine.adt.tomsignature.types.TomName tom_match11_1_variable_astName= null ; if(tom_is_fun_sym_Variable(tom_match11_1_variable)) {tom_bool_match11_1_variable= true ;tom_match11_1_variable_astName=tom_get_slot_Variable_astName(tom_match11_1_variable); } else { if(tom_is_fun_sym_VariableStar(tom_match11_1_variable)) {tom_bool_match11_1_variable= true ;tom_match11_1_variable_astName=tom_get_slot_VariableStar_astName(tom_match11_1_variable); } } if(tom_bool_match11_1_variable) { if(tom_is_fun_sym_Name(tom_match11_1_variable_astName) ||  false ) { { String  tom_match11_1_variable_astName_string=tom_get_slot_Name_string(tom_match11_1_variable_astName); { String  tom_tomName=tom_match11_1_variable_astName_string; { tom.engine.adt.tomsignature.types.Expression tom_exp=tom_match11_1_source; { tom.engine.adt.tomsignature.types.Instruction tom_body=tom_match11_1_astInstruction; if( true ) {
+					return tom_match10_1_astTerm_astExpression;
+				 }} }} }} } if(subject instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match11_1=(( tom.engine.adt.tomsignature.types.Instruction)subject); {boolean tom_bool_match11_1= false ; { tom.engine.adt.tomsignature.types.TomTerm tom_match11_1_variable= null ; { tom.engine.adt.tomsignature.types.Expression tom_match11_1_source= null ; { tom.engine.adt.tomsignature.types.Instruction tom_match11_1_astInstruction= null ; if(tom_is_fun_sym_LetRef(tom_match11_1)) {tom_bool_match11_1= true ;tom_match11_1_variable=tom_get_slot_LetRef_variable(tom_match11_1);tom_match11_1_source=tom_get_slot_LetRef_source(tom_match11_1);tom_match11_1_astInstruction=tom_get_slot_LetRef_astInstruction(tom_match11_1); } else { if(tom_is_fun_sym_LetAssign(tom_match11_1)) {tom_bool_match11_1= true ;tom_match11_1_variable=tom_get_slot_LetAssign_variable(tom_match11_1);tom_match11_1_source=tom_get_slot_LetAssign_source(tom_match11_1);tom_match11_1_astInstruction=tom_get_slot_LetAssign_astInstruction(tom_match11_1); } } if(tom_bool_match11_1) { { tom.engine.adt.tomsignature.types.TomTerm tom_var=tom_match11_1_variable; {boolean tom_bool_match11_1_variable= false ; { tom.engine.adt.tomsignature.types.TomName tom_match11_1_variable_astName= null ; if(tom_is_fun_sym_Variable(tom_match11_1_variable)) {tom_bool_match11_1_variable= true ;tom_match11_1_variable_astName=tom_get_slot_Variable_astName(tom_match11_1_variable); } else { if(tom_is_fun_sym_VariableStar(tom_match11_1_variable)) {tom_bool_match11_1_variable= true ;tom_match11_1_variable_astName=tom_get_slot_VariableStar_astName(tom_match11_1_variable); } } if(tom_bool_match11_1_variable) { if(tom_is_fun_sym_Name(tom_match11_1_variable_astName) ||  false ) { { String  tom_match11_1_variable_astName_string=tom_get_slot_Name_string(tom_match11_1_variable_astName); { String  tom_tomName=tom_match11_1_variable_astName_string; { tom.engine.adt.tomsignature.types.Expression tom_exp=tom_match11_1_source; { tom.engine.adt.tomsignature.types.Instruction tom_body=tom_match11_1_astInstruction; if( true ) {
 
 
 
 
 
 
-            List list  = computeOccurences(tom_match11_1_variable_astName,tom_body);
-            int mult = list.size();
-            if(mult == 0) {
-              Option orgTrack = findOriginTracking(tom_var.getOption());
-                
-              getLogger().log( Level.WARNING,
-                               TomMessage.unusedVariable.getMessage(),
-                               new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
-                                            extractRealName(tom_tomName)} );
-              getLogger().log( Level.INFO,
-                               TomMessage.remove.getMessage(),
-                               new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
-
-              return tom_body;
-
-            } else if(mult == 1) {
-              if(expConstantInBody(tom_exp,tom_body)) {
-
-                getLogger().log( Level.INFO,
-                                 TomMessage.inline.getMessage(),
-                                 new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
-
-                return inlineInstruction(tom_var,tom_exp,tom_body);
-              } else {
-                getLogger().log( Level.INFO,
-                                 TomMessage.noInline.getMessage(),
-                                 new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
-              }
-
-            } else {
-              /* do nothing: traversal */
-              getLogger().log( Level.INFO,
-                               TomMessage.doNothing.getMessage(),
-                               new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
-            }
-           }}}}} } }}}} }}}}} if(tom_is_fun_sym_Let(tom_match11_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match11_1_variable=tom_get_slot_Let_variable(tom_match11_1); { tom.engine.adt.tomsignature.types.Expression tom_match11_1_source=tom_get_slot_Let_source(tom_match11_1); { tom.engine.adt.tomsignature.types.Instruction tom_match11_1_astInstruction=tom_get_slot_Let_astInstruction(tom_match11_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match11_1_variable) || tom_is_fun_sym_UnamedVariable(tom_match11_1_variable) ||  false ) { if( true ) {
 
 
+					List list  = computeOccurences(tom_match11_1_variable_astName,tom_body);
+					int mult = list.size();
+					if(mult == 0) {
+						Option orgTrack = findOriginTracking(tom_var.getOption());
 
-            return tom_match11_1_astInstruction; 
-           } }}}} } if(tom_is_fun_sym_Let(tom_match11_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match11_1_variable=tom_get_slot_Let_variable(tom_match11_1); { tom.engine.adt.tomsignature.types.Expression tom_match11_1_source=tom_get_slot_Let_source(tom_match11_1); { tom.engine.adt.tomsignature.types.Instruction tom_match11_1_astInstruction=tom_get_slot_Let_astInstruction(tom_match11_1); { tom.engine.adt.tomsignature.types.TomTerm tom_var=tom_match11_1_variable; {boolean tom_bool_match11_1_variable= false ; { tom.engine.adt.tomsignature.types.TomName tom_match11_1_variable_astName= null ; if(tom_is_fun_sym_Variable(tom_match11_1_variable)) {tom_bool_match11_1_variable= true ;tom_match11_1_variable_astName=tom_get_slot_Variable_astName(tom_match11_1_variable); } else { if(tom_is_fun_sym_VariableStar(tom_match11_1_variable)) {tom_bool_match11_1_variable= true ;tom_match11_1_variable_astName=tom_get_slot_VariableStar_astName(tom_match11_1_variable); } } if(tom_bool_match11_1_variable) { if(tom_is_fun_sym_Name(tom_match11_1_variable_astName) ||  false ) { { String  tom_match11_1_variable_astName_string=tom_get_slot_Name_string(tom_match11_1_variable_astName); { String  tom_tomName=tom_match11_1_variable_astName_string; { tom.engine.adt.tomsignature.types.Expression tom_exp=tom_match11_1_source; { tom.engine.adt.tomsignature.types.Instruction tom_body=tom_match11_1_astInstruction; if( true ) {
+						getLogger().log( Level.WARNING,
+								TomMessage.unusedVariable.getMessage(),
+								new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+								extractRealName(tom_tomName)} );
+						getLogger().log( Level.INFO,
+								TomMessage.remove.getMessage(),
+								new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
+
+						return tom_body;
+
+					} else if(mult == 1) {
+						if(expConstantInBody(tom_exp,tom_body)) {
+
+							getLogger().log( Level.INFO,
+									TomMessage.inline.getMessage(),
+									new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
+
+							return inlineInstruction(tom_var,tom_exp,tom_body);
+						} else {
+							getLogger().log( Level.INFO,
+									TomMessage.noInline.getMessage(),
+									new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
+						}
+
+					} else {
+						/* do nothing: traversal */
+						getLogger().log( Level.INFO,
+								TomMessage.doNothing.getMessage(),
+								new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
+					}
+				 }}}}} } }}}} }}}}} if(tom_is_fun_sym_Let(tom_match11_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match11_1_variable=tom_get_slot_Let_variable(tom_match11_1); { tom.engine.adt.tomsignature.types.Expression tom_match11_1_source=tom_get_slot_Let_source(tom_match11_1); { tom.engine.adt.tomsignature.types.Instruction tom_match11_1_astInstruction=tom_get_slot_Let_astInstruction(tom_match11_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match11_1_variable) || tom_is_fun_sym_UnamedVariable(tom_match11_1_variable) ||  false ) { if( true ) {
 
 
-            List list  = computeOccurences(tom_match11_1_variable_astName,tom_body);
-            int mult = list.size();
-            
-            if(mult == 0) {
-              Option orgTrack = findOriginTracking(tom_var.getOption());
 
-              getLogger().log( Level.WARNING,
-                               TomMessage.unusedVariable.getMessage(),
-                               new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
-                                            extractRealName(tom_tomName)} );
-              getLogger().log( Level.INFO,
-                               TomMessage.remove.getMessage(),
-                               new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
-                
-              return tom_body; 
-            } else if(mult == 1) {
-              if(expConstantInBody(tom_exp,tom_body)) {
-                getLogger().log( Level.INFO,
-                                 TomMessage.inline.getMessage(),
-                                 new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
-                return inlineInstruction(tom_var,tom_exp,tom_body);
-              } else {
-                getLogger().log( Level.INFO,
-                                 TomMessage.noInline.getMessage(),
-                                 new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
-              }
-            } else {
-              /* do nothing: traversal */
-              getLogger().log( Level.INFO,
-                               TomMessage.doNothing.getMessage(),
-                               new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
-            }
-           }}}}} } }}}}}}} }} }
+					return tom_match11_1_astInstruction; 
+				 } }}}} } if(tom_is_fun_sym_Let(tom_match11_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match11_1_variable=tom_get_slot_Let_variable(tom_match11_1); { tom.engine.adt.tomsignature.types.Expression tom_match11_1_source=tom_get_slot_Let_source(tom_match11_1); { tom.engine.adt.tomsignature.types.Instruction tom_match11_1_astInstruction=tom_get_slot_Let_astInstruction(tom_match11_1); { tom.engine.adt.tomsignature.types.TomTerm tom_var=tom_match11_1_variable; {boolean tom_bool_match11_1_variable= false ; { tom.engine.adt.tomsignature.types.TomName tom_match11_1_variable_astName= null ; if(tom_is_fun_sym_Variable(tom_match11_1_variable)) {tom_bool_match11_1_variable= true ;tom_match11_1_variable_astName=tom_get_slot_Variable_astName(tom_match11_1_variable); } else { if(tom_is_fun_sym_VariableStar(tom_match11_1_variable)) {tom_bool_match11_1_variable= true ;tom_match11_1_variable_astName=tom_get_slot_VariableStar_astName(tom_match11_1_variable); } } if(tom_bool_match11_1_variable) { if(tom_is_fun_sym_Name(tom_match11_1_variable_astName) ||  false ) { { String  tom_match11_1_variable_astName_string=tom_get_slot_Name_string(tom_match11_1_variable_astName); { String  tom_tomName=tom_match11_1_variable_astName_string; { tom.engine.adt.tomsignature.types.Expression tom_exp=tom_match11_1_source; { tom.engine.adt.tomsignature.types.Instruction tom_body=tom_match11_1_astInstruction; if( true ) {
+
+
+					List list  = computeOccurences(tom_match11_1_variable_astName,tom_body);
+					int mult = list.size();
+
+					if(mult == 0) {
+						Option orgTrack = findOriginTracking(tom_var.getOption());
+
+						getLogger().log( Level.WARNING,
+								TomMessage.unusedVariable.getMessage(),
+								new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+								extractRealName(tom_tomName)} );
+						getLogger().log( Level.INFO,
+								TomMessage.remove.getMessage(),
+								new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
+
+						return tom_body; 
+					} else if(mult == 1) {
+						if(expConstantInBody(tom_exp,tom_body)) {
+							getLogger().log( Level.INFO,
+									TomMessage.inline.getMessage(),
+									new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
+							return inlineInstruction(tom_var,tom_exp,tom_body);
+						} else {
+							getLogger().log( Level.INFO,
+									TomMessage.noInline.getMessage(),
+									new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
+						}
+					} else {
+						/* do nothing: traversal */
+						getLogger().log( Level.INFO,
+								TomMessage.doNothing.getMessage(),
+								new Object[]{ new Integer(mult), extractRealName(tom_tomName) });
+					}
+				 }}}}} } }}}}}}} }} }
 
  // end match
-      } // end instanceof Instruction
       /*
        * Defaul case: traversal
        */
@@ -510,22 +488,26 @@ public class TomOptimizer extends TomGenericPlugin {
        if(subject instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match12_1=(( tom.engine.adt.tomsignature.types.Instruction)subject); if(tom_is_fun_sym_AbstractBlock(tom_match12_1) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList=tom_get_slot_AbstractBlock_instList(tom_match12_1); if(tom_is_fun_sym_concInstruction(tom_match12_1_instList) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList_list1=tom_match12_1_instList; { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList_begin1=tom_match12_1_instList_list1; { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList_end1=tom_match12_1_instList_list1;{ while (!(tom_is_empty_concInstruction_InstructionList(tom_match12_1_instList_end1))) {tom_match12_1_instList_list1=tom_match12_1_instList_end1;{ { tom.engine.adt.tomsignature.types.Instruction tom_match12_1_instList_2=tom_get_head_concInstruction_InstructionList(tom_match12_1_instList_list1);tom_match12_1_instList_list1=tom_get_tail_concInstruction_InstructionList(tom_match12_1_instList_list1); if(tom_is_fun_sym_AbstractBlock(tom_match12_1_instList_2) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList_2_instList=tom_get_slot_AbstractBlock_instList(tom_match12_1_instList_2); if( true ) {
 
 
-          System.out.println("flatten");
+          getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        "flatten");     
           return tom_make_AbstractBlock(tom_append_list_concInstruction(tom_get_slice_concInstruction(tom_match12_1_instList_begin1,tom_match12_1_instList_end1),tom_append_list_concInstruction(tom_match12_1_instList_2_instList,tom_append_list_concInstruction(tom_match12_1_instList_list1,tom_empty_list_concInstruction()))));
          }} }}tom_match12_1_instList_end1=tom_get_tail_concInstruction_InstructionList(tom_match12_1_instList_end1);} }tom_match12_1_instList_list1=tom_match12_1_instList_begin1;}}}} }} } if(tom_is_fun_sym_AbstractBlock(tom_match12_1) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList=tom_get_slot_AbstractBlock_instList(tom_match12_1); if(tom_is_fun_sym_concInstruction(tom_match12_1_instList) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList_list1=tom_match12_1_instList; { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList_begin1=tom_match12_1_instList_list1; { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList_end1=tom_match12_1_instList_list1;{ while (!(tom_is_empty_concInstruction_InstructionList(tom_match12_1_instList_end1))) {tom_match12_1_instList_list1=tom_match12_1_instList_end1;{ { tom.engine.adt.tomsignature.types.Instruction tom_match12_1_instList_2=tom_get_head_concInstruction_InstructionList(tom_match12_1_instList_list1);tom_match12_1_instList_list1=tom_get_tail_concInstruction_InstructionList(tom_match12_1_instList_list1); if(tom_is_fun_sym_Nop(tom_match12_1_instList_2) ||  false ) { if( true ) {
 
 
-          System.out.println("nop-elim");
+          getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        "nop-elim");     
           return tom_make_AbstractBlock(tom_append_list_concInstruction(tom_get_slice_concInstruction(tom_match12_1_instList_begin1,tom_match12_1_instList_end1),tom_append_list_concInstruction(tom_match12_1_instList_list1,tom_empty_list_concInstruction())));
          } }}tom_match12_1_instList_end1=tom_get_tail_concInstruction_InstructionList(tom_match12_1_instList_end1);} }tom_match12_1_instList_list1=tom_match12_1_instList_begin1;}}}} }} } if(tom_is_fun_sym_AbstractBlock(tom_match12_1) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList=tom_get_slot_AbstractBlock_instList(tom_match12_1); if(tom_is_fun_sym_concInstruction(tom_match12_1_instList) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList_list1=tom_match12_1_instList; if(tom_is_empty_concInstruction_InstructionList(tom_match12_1_instList_list1)) { if( true ) {
 
 
-          System.out.println("abstractblock-elim1");
+           getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        "abstractblock-elim1");     
           return tom_make_Nop();
          } }} }} } if(tom_is_fun_sym_AbstractBlock(tom_match12_1) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList=tom_get_slot_AbstractBlock_instList(tom_match12_1); if(tom_is_fun_sym_concInstruction(tom_match12_1_instList) ||  false ) { { tom.engine.adt.tomsignature.types.InstructionList tom_match12_1_instList_list1=tom_match12_1_instList; if(!(tom_is_empty_concInstruction_InstructionList(tom_match12_1_instList_list1))) { { tom.engine.adt.tomsignature.types.Instruction tom_i=tom_get_head_concInstruction_InstructionList(tom_match12_1_instList_list1);tom_match12_1_instList_list1=tom_get_tail_concInstruction_InstructionList(tom_match12_1_instList_list1); if(tom_is_empty_concInstruction_InstructionList(tom_match12_1_instList_list1)) { if( true ) {
 
 
-          System.out.println("abstractblock-elim2");
+           getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        "abstractblock-elim2");     
           return tom_i;
          } }} }} }} }} }
 
@@ -597,7 +579,8 @@ return tom_make_manyInstructionList(tom_head,flatten(tom_tail)); }} }
           if(s1.compareTo(s2) < 0) {
             Expression compatible = (Expression) normStrategy.visit(tom_make_And(tom_cond1,tom_cond2));
             if(compatible==tom_make_FalseTL()) {
-              System.out.println("if-swapping");
+                        getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        new Object[]{"if-swapping"});     
               return tom_make_AbstractBlock(tom_append_list_concInstruction(tom_get_slice_concInstruction(tom_match15_1_instList_begin1,tom_match15_1_instList_end1),tom_cons_list_concInstruction(tom_match15_1_instList_3,tom_cons_list_concInstruction(tom_match15_1_instList_2,tom_append_list_concInstruction(tom_match15_1_instList_list1,tom_empty_list_concInstruction())))));
             }
           }
@@ -616,13 +599,15 @@ return tom_make_manyInstructionList(tom_head,flatten(tom_tail)); }} }
           /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
           if(compare(tom_term1,tom_match16_1_instList_3_source)) {
             if(compare(tom_var1,tom_var2)) {
-              System.out.println("block-fusion1");
+                        getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        new Object[]{"block-fusion1"});     
               return tom_make_AbstractBlock(tom_append_list_concInstruction(tom_X1,tom_cons_list_concInstruction(tom_make_Let(tom_var1,tom_term1,tom_make_AbstractBlock(tom_cons_list_concInstruction(tom_body1,tom_cons_list_concInstruction(tom_body2,tom_empty_list_concInstruction())))),tom_append_list_concInstruction(tom_X2,tom_empty_list_concInstruction()))));
             } else {
               List list  = computeOccurences(tom_match16_1_instList_2_variable_astName,tom_body2);
               int mult = list.size();
               if(mult==0){
-                System.out.println("block-fusion2");
+                         getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                         new Object[]{"block-fusion2"});     
                 /*
                  * TODO: check that var1 does not appear in body2
                  */
@@ -645,13 +630,15 @@ return tom_make_manyInstructionList(tom_head,flatten(tom_tail)); }} }
           /* Fusion de 2 blocs If gardes par la meme condition */
           if(compare(tom_cond1,tom_match17_1_instList_3_condition)) {
             if(tom_failure1.isNop() && tom_failure2.isNop()) {
-              System.out.println("if-fusion1");
+        getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        new Object[]{"if-fusion1"});
               Instruction res = tom_make_AbstractBlock(tom_append_list_concInstruction(tom_X1,tom_cons_list_concInstruction(tom_make_If(tom_cond1,tom_make_AbstractBlock(tom_cons_list_concInstruction(tom_success1,tom_cons_list_concInstruction(tom_success2,tom_empty_list_concInstruction()))),tom_make_Nop()),tom_append_list_concInstruction(tom_X2,tom_empty_list_concInstruction()))));
               //System.out.println(res);
 
               return res;
             } else {
-              System.out.println("if-fusion2");
+         getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                       new Object[]{ "if-fusion2"});
               return tom_make_AbstractBlock(tom_append_list_concInstruction(tom_X1,tom_cons_list_concInstruction(tom_make_If(tom_cond1,tom_make_AbstractBlock(tom_cons_list_concInstruction(tom_success1,tom_cons_list_concInstruction(tom_success2,tom_empty_list_concInstruction()))),tom_make_AbstractBlock(tom_cons_list_concInstruction(tom_failure1,tom_cons_list_concInstruction(tom_failure2,tom_empty_list_concInstruction())))),tom_append_list_concInstruction(tom_X2,tom_empty_list_concInstruction()))));
             }
           }
@@ -671,7 +658,8 @@ return tom_make_manyInstructionList(tom_head,flatten(tom_tail)); }} }
 
           Expression compatible = (Expression) normStrategy.visit(tom_make_And(tom_cond1,tom_cond2));
           if(compatible==tom_make_FalseTL()) {
-            System.out.println("inter-block");
+          getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                        new Object[]{"inter-block"});
             return tom_make_AbstractBlock(tom_append_list_concInstruction(tom_get_slice_concInstruction(tom_match18_1_instList_begin1,tom_match18_1_instList_end1),tom_cons_list_concInstruction(tom_make_If(tom_cond1,tom_match18_1_instList_2_succesInst,tom_make_AbstractBlock(tom_cons_list_concInstruction(tom_match18_1_instList_2_failureInst,tom_cons_list_concInstruction(tom_make_If(tom_cond2,tom_match18_1_instList_3_succesInst,tom_make_Nop()),tom_empty_list_concInstruction())))),tom_append_list_concInstruction(tom_match18_1_instList_list1,tom_empty_list_concInstruction()))));
           }
          } }}}}} }} }}}}} }}tom_match18_1_instList_end1=tom_get_tail_concInstruction_InstructionList(tom_match18_1_instList_end1);} }tom_match18_1_instList_list1=tom_match18_1_instList_begin1;}}}} }} }} }

@@ -165,25 +165,22 @@ public class TomExpander extends TomGenericPlugin {
   public TomTerm expandTermApplTomSyntax(TomTerm subject) {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
-          if(subject instanceof TomTerm) {
-             if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); if(tom_is_fun_sym_BackQuoteAppl(tom_match2_1) ||  false ) { if( true ) {
+					 if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); if(tom_is_fun_sym_BackQuoteAppl(tom_match2_1) ||  false ) { if( true ) {
+
+							TomTerm t = expandBackQuoteAppl(tom_match2_1);
+							//System.out.println("t = " + t);
+							return t;
+						 } } if(tom_is_fun_sym_TermAppl(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_TermAppl_option(tom_match2_1); { tom.engine.adt.tomsignature.types.NameList tom_match2_1_nameList=tom_get_slot_TermAppl_nameList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_args=tom_get_slot_TermAppl_args(tom_match2_1); { tom.engine.adt.tomsignature.types.ConstraintList tom_match2_1_constraints=tom_get_slot_TermAppl_constraints(tom_match2_1); if( true ) {
 
 
-                TomTerm t = expandBackQuoteAppl(tom_match2_1);
-                //System.out.println("t = " + t);
-                return t;
-               } } if(tom_is_fun_sym_TermAppl(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_TermAppl_option(tom_match2_1); { tom.engine.adt.tomsignature.types.NameList tom_match2_1_nameList=tom_get_slot_TermAppl_nameList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_args=tom_get_slot_TermAppl_args(tom_match2_1); { tom.engine.adt.tomsignature.types.ConstraintList tom_match2_1_constraints=tom_get_slot_TermAppl_constraints(tom_match2_1); if( true ) {
+							return expandTermAppl(tom_match2_1_option,tom_match2_1_nameList,tom_match2_1_args,tom_match2_1_constraints);
+						 }}}}} } if(tom_is_fun_sym_XMLAppl(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_XMLAppl_option(tom_match2_1); { tom.engine.adt.tomsignature.types.NameList tom_match2_1_nameList=tom_get_slot_XMLAppl_nameList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_attrList=tom_get_slot_XMLAppl_attrList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_childList=tom_get_slot_XMLAppl_childList(tom_match2_1); { tom.engine.adt.tomsignature.types.ConstraintList tom_match2_1_constraints=tom_get_slot_XMLAppl_constraints(tom_match2_1); if( true ) {
 
 
-                return expandTermAppl(tom_match2_1_option,tom_match2_1_nameList,tom_match2_1_args,tom_match2_1_constraints);
-               }}}}} } if(tom_is_fun_sym_XMLAppl(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_XMLAppl_option(tom_match2_1); { tom.engine.adt.tomsignature.types.NameList tom_match2_1_nameList=tom_get_slot_XMLAppl_nameList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_attrList=tom_get_slot_XMLAppl_attrList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_childList=tom_get_slot_XMLAppl_childList(tom_match2_1); { tom.engine.adt.tomsignature.types.ConstraintList tom_match2_1_constraints=tom_get_slot_XMLAppl_constraints(tom_match2_1); if( true ) {
-
-
-                //System.out.println("expandXML in:\n" + subject);
-                return expandXMLAppl(tom_match2_1_option, tom_match2_1_nameList, tom_match2_1_attrList, tom_match2_1_childList,tom_match2_1_constraints);
-               }}}}}} }} }
+							//System.out.println("expandXML in:\n" + subject);
+							return expandXMLAppl(tom_match2_1_option, tom_match2_1_nameList, tom_match2_1_attrList, tom_match2_1_childList,tom_match2_1_constraints);
+						 }}}}}} }} }
  // end match
-          }
 					return traversal().genericTraversal(subject,this);
         } // end apply
       }; // end new
@@ -198,39 +195,37 @@ public class TomExpander extends TomGenericPlugin {
   private TomTerm updateCodomain(TomTerm subject) {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
-          if(subject instanceof Declaration) {
-             if(subject instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match3_1=(( tom.engine.adt.tomsignature.types.Declaration)subject); if(tom_is_fun_sym_GetHeadDecl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_opname=tom_get_slot_GetHeadDecl_opname(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_opname) ||  false ) { { String  tom_match3_1_opname_string=tom_get_slot_Name_string(tom_match3_1_opname); if( true ) {
+					 if(subject instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match3_1=(( tom.engine.adt.tomsignature.types.Declaration)subject); if(tom_is_fun_sym_GetHeadDecl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_opname=tom_get_slot_GetHeadDecl_opname(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_opname) ||  false ) { { String  tom_match3_1_opname_string=tom_get_slot_Name_string(tom_match3_1_opname); if( true ) {
 
-                TomSymbol tomSymbol = getSymbolFromName(tom_match3_1_opname_string);
-                TomTypeList codomain = getSymbolDomain(tomSymbol);
-                if(codomain.isSingle()) {
-                  Declaration t = (Declaration)subject;
-                  t = t.setCodomain(codomain.getHead());
-                  return t;
-                } else {
-                  throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
-                }
-               }} }} } if(tom_is_fun_sym_GetHeadDecl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1_variable=tom_get_slot_GetHeadDecl_variable(tom_match3_1); if(tom_is_fun_sym_Variable(tom_match3_1_variable) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match3_1_variable_astType=tom_get_slot_Variable_astType(tom_match3_1_variable); if( true ) {
+							TomSymbol tomSymbol = getSymbolFromName(tom_match3_1_opname_string);
+							TomTypeList codomain = getSymbolDomain(tomSymbol);
+							if(codomain.isSingle()) {
+								Declaration t = (Declaration)subject;
+								t = t.setCodomain(codomain.getHead());
+								return t;
+							} else {
+								throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
+							}
+						 }} }} } if(tom_is_fun_sym_GetHeadDecl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1_variable=tom_get_slot_GetHeadDecl_variable(tom_match3_1); if(tom_is_fun_sym_Variable(tom_match3_1_variable) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match3_1_variable_astType=tom_get_slot_Variable_astType(tom_match3_1_variable); if( true ) {
 
 
-                TomSymbol tomSymbol = getSymbolFromType(tom_match3_1_variable_astType);
-                if(tomSymbol != null) {
-                  TomTypeList codomain = getSymbolDomain(tomSymbol);
-                  //System.out.println("tomSymbol = " + tomSymbol);
-                  //System.out.println("domain    = " + domain);
-                  //System.out.println("codomain  = " + codomain);
-                  
-                  if(codomain.isSingle()) {
-                    Declaration t = (Declaration)subject;
-                    t = t.setCodomain(codomain.getHead());
-                    return t;
-                  } else {
-                    throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
-                  }
-                }
-               }} }} }} }
+							TomSymbol tomSymbol = getSymbolFromType(tom_match3_1_variable_astType);
+							if(tomSymbol != null) {
+								TomTypeList codomain = getSymbolDomain(tomSymbol);
+								//System.out.println("tomSymbol = " + tomSymbol);
+								//System.out.println("domain    = " + domain);
+								//System.out.println("codomain  = " + codomain);
+
+								if(codomain.isSingle()) {
+									Declaration t = (Declaration)subject;
+									t = t.setCodomain(codomain.getHead());
+									return t;
+								} else {
+									throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
+								}
+							}
+						 }} }} }} }
  // end match
-          } 
 					return traversal().genericTraversal(subject,this);
         } // end apply
       }; // end new
@@ -244,23 +239,21 @@ public class TomExpander extends TomGenericPlugin {
   private TomTerm expandString(TomTerm subject) {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
-          if(subject instanceof TomTerm) {
-             if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match4_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); if(tom_is_fun_sym_RecordAppl(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match4_1_nameList=tom_get_slot_RecordAppl_nameList(tom_match4_1); { tom.engine.adt.tomsignature.types.SlotList tom_match4_1_slots=tom_get_slot_RecordAppl_slots(tom_match4_1); if(tom_is_fun_sym_concTomName(tom_match4_1_nameList) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match4_1_nameList_list1=tom_match4_1_nameList; if(!(tom_is_empty_concTomName_NameList(tom_match4_1_nameList_list1))) { { tom.engine.adt.tomsignature.types.TomName tom_match4_1_nameList_1=tom_get_head_concTomName_NameList(tom_match4_1_nameList_list1);tom_match4_1_nameList_list1=tom_get_tail_concTomName_NameList(tom_match4_1_nameList_list1); if(tom_is_fun_sym_Name(tom_match4_1_nameList_1) ||  false ) { { String  tom_match4_1_nameList_1_string=tom_get_slot_Name_string(tom_match4_1_nameList_1); { tom.engine.adt.tomsignature.types.SlotList tom_args=tom_match4_1_slots; if( true ) {
+					 if(subject instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match4_1=(( tom.engine.adt.tomsignature.types.TomTerm)subject); if(tom_is_fun_sym_RecordAppl(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match4_1_nameList=tom_get_slot_RecordAppl_nameList(tom_match4_1); { tom.engine.adt.tomsignature.types.SlotList tom_match4_1_slots=tom_get_slot_RecordAppl_slots(tom_match4_1); if(tom_is_fun_sym_concTomName(tom_match4_1_nameList) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match4_1_nameList_list1=tom_match4_1_nameList; if(!(tom_is_empty_concTomName_NameList(tom_match4_1_nameList_list1))) { { tom.engine.adt.tomsignature.types.TomName tom_match4_1_nameList_1=tom_get_head_concTomName_NameList(tom_match4_1_nameList_list1);tom_match4_1_nameList_list1=tom_get_tail_concTomName_NameList(tom_match4_1_nameList_list1); if(tom_is_fun_sym_Name(tom_match4_1_nameList_1) ||  false ) { { String  tom_match4_1_nameList_1_string=tom_get_slot_Name_string(tom_match4_1_nameList_1); { tom.engine.adt.tomsignature.types.SlotList tom_args=tom_match4_1_slots; if( true ) {
 
-                TomSymbol tomSymbol = getSymbolFromName(tom_match4_1_nameList_1_string);
-                //System.out.println("appl = " + subject);
-                if(tomSymbol != null) {
-                  if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
-                    //System.out.println("appl = " + subject);
-                    SlotList newArgs = expandChar(tom_args);
-                    if(newArgs!=tom_args) {
-                      return tom_match4_1.setSlots(newArgs);
-                    }
-                  }
-                }
-               }}} }} }} }}} }} }
+							TomSymbol tomSymbol = getSymbolFromName(tom_match4_1_nameList_1_string);
+							//System.out.println("appl = " + subject);
+							if(tomSymbol != null) {
+								if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+									//System.out.println("appl = " + subject);
+									SlotList newArgs = expandChar(tom_args);
+									if(newArgs!=tom_args) {
+										return tom_match4_1.setSlots(newArgs);
+									}
+								}
+							}
+						 }}} }} }} }}} }} }
  // end match
-          } 
 					return traversal().genericTraversal(subject,this);
         } // end apply
       }; // end new
@@ -369,37 +362,35 @@ public class TomExpander extends TomGenericPlugin {
   protected TomTerm expandBackQuoteAppl(TomTerm t) {
     Replace1 replaceSymbol = new Replace1() {
         public ATerm apply(ATerm t) {
-          if(t instanceof TomTerm) {
-             if(t instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match6_1=(( tom.engine.adt.tomsignature.types.TomTerm)t); if(tom_is_fun_sym_BackQuoteAppl(tom_match6_1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match6_1_option=tom_get_slot_BackQuoteAppl_option(tom_match6_1); { tom.engine.adt.tomsignature.types.TomName tom_match6_1_astName=tom_get_slot_BackQuoteAppl_astName(tom_match6_1); { tom.engine.adt.tomsignature.types.TomList tom_match6_1_args=tom_get_slot_BackQuoteAppl_args(tom_match6_1); { tom.engine.adt.tomsignature.types.OptionList tom_optionList=tom_match6_1_option; if(tom_is_fun_sym_Name(tom_match6_1_astName) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_name=tom_match6_1_astName; { String  tom_match6_1_astName_string=tom_get_slot_Name_string(tom_match6_1_astName); if( true ) {
+					 if(t instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match6_1=(( tom.engine.adt.tomsignature.types.TomTerm)t); if(tom_is_fun_sym_BackQuoteAppl(tom_match6_1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match6_1_option=tom_get_slot_BackQuoteAppl_option(tom_match6_1); { tom.engine.adt.tomsignature.types.TomName tom_match6_1_astName=tom_get_slot_BackQuoteAppl_astName(tom_match6_1); { tom.engine.adt.tomsignature.types.TomList tom_match6_1_args=tom_get_slot_BackQuoteAppl_args(tom_match6_1); { tom.engine.adt.tomsignature.types.OptionList tom_optionList=tom_match6_1_option; if(tom_is_fun_sym_Name(tom_match6_1_astName) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_name=tom_match6_1_astName; { String  tom_match6_1_astName_string=tom_get_slot_Name_string(tom_match6_1_astName); if( true ) {
 
-                TomSymbol tomSymbol = getSymbolFromName(tom_match6_1_astName_string);
-                TomList args  = (TomList) traversal().genericTraversal(tom_match6_1_args,this);
-                
-                //System.out.println("BackQuoteTerm: " + `tomName);
-                //System.out.println("tomSymbol: " + tomSymbol);
+							TomSymbol tomSymbol = getSymbolFromName(tom_match6_1_astName_string);
+							TomList args  = (TomList) traversal().genericTraversal(tom_match6_1_args,this);
 
-                if(tomSymbol != null) {
-                  if(isListOperator(tomSymbol)) {
-                    return tomFactory.buildList(tom_name,args);
-                  } else if(isArrayOperator(tomSymbol)) {
-                    return tomFactory.buildArray(tom_name,args);
-                  } else if(symbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol))) &&
-                            args.isEmpty() && 
-                            !hasConstructor(tom_optionList)) {
-                    return tom_make_BuildVariable(tom_name,tom_make_emptyTomList());
-                  } else if(isDefinedSymbol(tomSymbol)) {
-                    return tom_make_FunctionCall(tom_name,args);
-                  } else {
-                    return tom_make_BuildTerm(tom_name,args);
-                  }
-                } else if(args.isEmpty() && !hasConstructor(tom_optionList)) {
-                  return tom_make_BuildVariable(tom_name,tom_make_emptyTomList());
-                } else {
-                  return tom_make_FunctionCall(tom_name,args);
-                }
-               }}} }}}}} }} }
+							//System.out.println("BackQuoteTerm: " + `tomName);
+							//System.out.println("tomSymbol: " + tomSymbol);
+
+							if(tomSymbol != null) {
+								if(isListOperator(tomSymbol)) {
+									return tomFactory.buildList(tom_name,args);
+								} else if(isArrayOperator(tomSymbol)) {
+									return tomFactory.buildArray(tom_name,args);
+								} else if(symbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol))) &&
+										args.isEmpty() && 
+										!hasConstructor(tom_optionList)) {
+									return tom_make_BuildVariable(tom_name,tom_make_emptyTomList());
+								} else if(isDefinedSymbol(tomSymbol)) {
+									return tom_make_FunctionCall(tom_name,args);
+								} else {
+									return tom_make_BuildTerm(tom_name,args);
+								}
+							} else if(args.isEmpty() && !hasConstructor(tom_optionList)) {
+								return tom_make_BuildVariable(tom_name,tom_make_emptyTomList());
+							} else {
+								return tom_make_FunctionCall(tom_name,args);
+							}
+						 }}} }}}}} }} }
  // end match 
-          }
           return traversal().genericTraversal(t,this);
         } // end apply
       }; // end replaceSymbol

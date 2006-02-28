@@ -5,6 +5,7 @@
 %include { atermlist.tom }
 %typeterm PlatformOptionList{
   implement { tom.platform.adt.platformoption.types.PlatformOptionList}
+  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformOptionList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -31,6 +32,7 @@
 }
 %typeterm PlatformBoolean{
   implement { tom.platform.adt.platformoption.types.PlatformBoolean}
+  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformBoolean)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -49,6 +51,7 @@
 
 %typeterm PlatformValue{
   implement { tom.platform.adt.platformoption.types.PlatformValue}
+  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformValue)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -75,6 +78,7 @@
 
 %typeterm PlatformOption{
   implement { tom.platform.adt.platformoption.types.PlatformOption}
+  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformOption)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}

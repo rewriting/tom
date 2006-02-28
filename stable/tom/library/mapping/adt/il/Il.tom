@@ -5,6 +5,7 @@
 %include { atermlist.tom }
 %typeterm DerivTree{
   implement { tom.engine.adt.il.types.DerivTree}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.DerivTree)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -37,6 +38,7 @@
 
 %typeterm Deriv{
   implement { tom.engine.adt.il.types.Deriv}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.Deriv)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -52,6 +54,7 @@
 
 %typeterm ExprList{
   implement { tom.engine.adt.il.types.ExprList}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.ExprList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -78,6 +81,7 @@
 }
 %typeterm Seq{
   implement { tom.engine.adt.il.types.Seq}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.Seq)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -103,6 +107,7 @@
 
 %typeterm TermList{
   implement { tom.engine.adt.il.types.TermList}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.TermList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -129,6 +134,7 @@
 }
 %typeterm Expr{
   implement { tom.engine.adt.il.types.Expr}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.Expr)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -203,6 +209,7 @@
 
 %typeterm Term{
   implement { tom.engine.adt.il.types.Term}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.Term)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -246,6 +253,7 @@
 
 %typeterm Environment{
   implement { tom.engine.adt.il.types.Environment}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.Environment)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -261,6 +269,7 @@
 
 %typeterm SubstitutionList{
   implement { tom.engine.adt.il.types.SubstitutionList}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.SubstitutionList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -287,6 +296,7 @@
 }
 %typeterm Substitution{
   implement { tom.engine.adt.il.types.Substitution}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.Substitution)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -307,6 +317,7 @@
 
 %typeterm InstrList{
   implement { tom.engine.adt.il.types.InstrList}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.InstrList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -333,6 +344,7 @@
 }
 %typeterm Instr{
   implement { tom.engine.adt.il.types.Instr}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.Instr)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -375,6 +387,7 @@
 
 %typeterm AbsTerm{
   implement { tom.engine.adt.il.types.AbsTerm}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.AbsTerm)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -405,6 +418,7 @@
 
 %typeterm Variable{
   implement { tom.engine.adt.il.types.Variable}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.Variable)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -419,6 +433,7 @@
 
 %typeterm Symbol{
   implement { tom.engine.adt.il.types.Symbol}
+  visitor_fwd { tom.engine.adt.il.IlVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.il.types.Symbol)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}

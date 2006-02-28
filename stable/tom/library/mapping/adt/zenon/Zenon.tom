@@ -5,6 +5,7 @@
 %include { atermlist.tom }
 %typeterm ZSpec{
   implement { tom.engine.adt.zenon.types.ZSpec}
+  visitor_fwd { tom.engine.adt.zenon.ZenonVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.zenon.types.ZSpec)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -20,6 +21,7 @@
 
 %typeterm ZAxiomList{
   implement { tom.engine.adt.zenon.types.ZAxiomList}
+  visitor_fwd { tom.engine.adt.zenon.ZenonVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.zenon.types.ZAxiomList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -46,6 +48,7 @@
 }
 %typeterm ZAxiom{
   implement { tom.engine.adt.zenon.types.ZAxiom}
+  visitor_fwd { tom.engine.adt.zenon.ZenonVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.zenon.types.ZAxiom)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -61,6 +64,7 @@
 
 %typeterm ZExpr{
   implement { tom.engine.adt.zenon.types.ZExpr}
+  visitor_fwd { tom.engine.adt.zenon.ZenonVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.zenon.types.ZExpr)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -136,6 +140,7 @@
 
 %typeterm ZType{
   implement { tom.engine.adt.zenon.types.ZType}
+  visitor_fwd { tom.engine.adt.zenon.ZenonVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.zenon.types.ZType)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -150,6 +155,7 @@
 
 %typeterm ZTermList{
   implement { tom.engine.adt.zenon.types.ZTermList}
+  visitor_fwd { tom.engine.adt.zenon.ZenonVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.zenon.types.ZTermList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -176,6 +182,7 @@
 }
 %typeterm ZTerm{
   implement { tom.engine.adt.zenon.types.ZTerm}
+  visitor_fwd { tom.engine.adt.zenon.ZenonVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.zenon.types.ZTerm)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -211,6 +218,7 @@
 
 %typeterm ZSymbol{
   implement { tom.engine.adt.zenon.types.ZSymbol}
+  visitor_fwd { tom.engine.adt.zenon.ZenonVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.engine.adt.zenon.types.ZSymbol)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}

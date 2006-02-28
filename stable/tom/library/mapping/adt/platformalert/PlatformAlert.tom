@@ -5,6 +5,7 @@
 %include { atermlist.tom }
 %typeterm AlertList{
   implement { tom.platform.adt.platformalert.types.AlertList}
+  visitor_fwd { tom.platform.adt.platformalert.PlatformAlertVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformalert.types.AlertList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
@@ -31,6 +32,7 @@
 }
 %typeterm Alert{
   implement { tom.platform.adt.platformalert.types.Alert}
+  visitor_fwd { tom.platform.adt.platformalert.PlatformAlertVisitableFwd}
   equals(t1,t2) {t1.equals(t2)}
   check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
   set_stamp(t) {(tom.platform.adt.platformalert.types.Alert)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}

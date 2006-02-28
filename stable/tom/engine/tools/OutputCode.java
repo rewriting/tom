@@ -204,5 +204,48 @@ public class OutputCode {
       e.printStackTrace();
     }
   }
+
+	public String encodeCode(String subject) {
+		StringBuffer sb = new StringBuffer();
+
+		String startCode = "%"+"\"";
+		String endCode = "\""+"%";
+
+		//System.out.println("subject: " + subject);
+		int oldIndex=0;
+		int index=0;
+		while(index>=0 && index<subject.length()) {
+			index = subject.indexOf(startCode,index);
+			if(index >= 0) {
+				String extract = subject.substring(oldIndex,index);
+				//System.out.println("extract '" + extract + "'");
+				sb.append(extract);
+			} else {
+				break;
+			}
+			int end = subject.indexOf(endCode,index);
+			//System.out.println("from " + index + " to " + end);
+			String code = subject.substring(index+startCode.length(),end);
+			code = code.replaceAll("\\\"","\\\\\"");
+			code = code.replaceAll("\\\\n","\\\\\\\\n");
+			code = code.replaceAll("\\\\t","\\\\\\\\t");
+			code = code.replaceAll("\\\\r","\\\\\\\\r");
+
+			code = code.replaceAll("\n","\\\\n");
+			code = code.replaceAll("\r","\\\\r");
+			code = code.replaceAll("\t","\\\\t");
+			code = code.replaceAll("\"","\\\"");
+			
+			//System.out.println("code '" + code + "'");
+			sb.append("\"" + code + "\"");
+			index = end;
+			oldIndex = end+endCode.length();
+		}
+
+		String extract = subject.substring(oldIndex,subject.length());
+		sb.append(extract);
+
+		return sb.toString() ;
+	}
   
 }

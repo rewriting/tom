@@ -56,9 +56,9 @@ public class TomCGenerator extends TomImperativeGenerator {
     output.write(" 0 ");
   }
 
-  protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
+  protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
     output.writeln("{");
-    generateInstructionList(deep+1,instList);
+    generateInstructionList(deep+1,instList, moduleName);
     output.writeln("}" + blockName +  ":;");
   }
 
@@ -66,8 +66,8 @@ public class TomCGenerator extends TomImperativeGenerator {
     output.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
   }
 
-  protected void buildSymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+  protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     TomTypeList l = getSymbolDomain(tomSymbol);
@@ -123,14 +123,14 @@ public class TomCGenerator extends TomImperativeGenerator {
     } 
 
     // inspect the optionList
-    generateOptionList(deep, optionList);
+    generateOptionList(deep, optionList, moduleName);
     // inspect the slotlist
-    generatePairNameDeclList(deep, pairNameDeclList);
+    generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
 
-  protected void buildArraySymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+  protected void buildArraySymbolDecl(int deep, String tomName, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();        
     TomTypeList l = getSymbolDomain(tomSymbol);
@@ -163,14 +163,14 @@ public class TomCGenerator extends TomImperativeGenerator {
     output.writeln();
     
     // inspect the optionList
-    generateOptionList(deep, optionList);
+    generateOptionList(deep, optionList, moduleName);
     // inspect the slotlist
-    generatePairNameDeclList(deep, pairNameDeclList);
+    generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
 
-  protected void buildListSymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
+  protected void buildListSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
+    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     TomTypeList l = getSymbolDomain(tomSymbol);
@@ -202,12 +202,12 @@ public class TomCGenerator extends TomImperativeGenerator {
     output.writeln();
     
     // inspect the optionList
-    generateOptionList(deep, optionList);
+    generateOptionList(deep, optionList, moduleName);
     // inspect the slotlist
-    generatePairNameDeclList(deep, pairNameDeclList);
+    generatePairNameDeclList(deep, pairNameDeclList, moduleName);
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction) throws IOException {
+  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     System.out.println("Function not yet supported in Caml");
     throw new TomRuntimeException("Function not yet supported in Caml");
   }

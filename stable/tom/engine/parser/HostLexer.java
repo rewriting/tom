@@ -799,6 +799,52 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
+	protected final void mCODE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = CODE;
+		int _saveIndex;
+		
+		match('%');
+		match('"');
+		{
+		_loop62:
+		do {
+			// nongreedy exit test
+			if ((LA(1)=='"') && (LA(2)=='%') && (true)) break _loop62;
+			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
+				match('\r');
+				match('\n');
+				newline();
+			}
+			else if ((LA(1)=='\r') && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && (true) && (true) && (true)) {
+				match('\r');
+				newline();
+			}
+			else if ((_tokenSet_1.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff'))) {
+				{
+				match(_tokenSet_1);
+				}
+			}
+			else if ((LA(1)=='\n')) {
+				match('\n');
+				newline();
+			}
+			else {
+				break _loop62;
+			}
+			
+		} while (true);
+		}
+		match('"');
+		match('%');
+		target.append(new String(text.getBuffer(),_begin,text.length()-_begin));
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
 	protected final void mTARGET(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = TARGET;

@@ -70,58 +70,56 @@ public class TomKernelCompiler extends TomBase {
 
   private Replace1 replace_compileMatching = new Replace1() {
       public ATerm apply(ATerm subject) {
-        if(subject instanceof Instruction) {
-           if(subject instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match2_1=(( tom.engine.adt.tomsignature.types.Instruction)subject); if(tom_is_fun_sym_Match(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1_subjectList=tom_get_slot_Match_subjectList(tom_match2_1); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match2_1_astPatternInstructionList=tom_get_slot_Match_astPatternInstructionList(tom_match2_1); { tom.engine.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_Match_option(tom_match2_1); if(tom_is_fun_sym_SubjectList(tom_match2_1_subjectList) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match2_1_subjectList_tomList=tom_get_slot_SubjectList_tomList(tom_match2_1_subjectList); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_patternInstructionList=tom_match2_1_astPatternInstructionList; if( true ) {
+				 if(subject instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match2_1=(( tom.engine.adt.tomsignature.types.Instruction)subject); if(tom_is_fun_sym_Match(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1_subjectList=tom_get_slot_Match_subjectList(tom_match2_1); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match2_1_astPatternInstructionList=tom_get_slot_Match_astPatternInstructionList(tom_match2_1); { tom.engine.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_Match_option(tom_match2_1); if(tom_is_fun_sym_SubjectList(tom_match2_1_subjectList) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match2_1_subjectList_tomList=tom_get_slot_SubjectList_tomList(tom_match2_1_subjectList); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_patternInstructionList=tom_match2_1_astPatternInstructionList; if( true ) {
 
-              TomNumberList rootpath = tsf().makeTomNumberList();
-              matchNumber++;
-              rootpath = (TomNumberList) rootpath.append(tom_make_MatchNumber(makeNumber(matchNumber)));
-                
-                /*
-                 * for each pattern action (<term>,...,<term> -> <action>)
-                 * build a matching automata
-                 */
-              TomList automataList = empty();
-              int actionNumber = 0;
-              while(!tom_patternInstructionList.isEmpty()) {
-                actionNumber++;
-                PatternInstruction pa = tom_patternInstructionList.getHead();
-                SlotList patternList = tomListToSlotList(pa.getPattern().getTomList());
-                Instruction actionInst = pa.getAction();
-                if(patternList==null || actionInst==null) {
-                  System.out.println("TomKernelCompiler: null value");
-                  throw new TomRuntimeException("TomKernelCompiler: null value");
-                }
-                  
-                  /*
-                   * compile nested match constructs
-                   * given a list of pattern: we build a matching automaton
-                   */
-                actionInst = (Instruction) this.apply(actionInst);
-                Instruction matchingAutomata = genSyntacticMatchingAutomata(actionInst,patternList,rootpath);
-                OptionList automataOptionList = tom_empty_list_concOption();
-                TomName label = getLabel(pa.getOption());
-                if(label != null) {
-                  automataOptionList = tom_make_manyOptionList(tom_make_Label(label),automataOptionList);
-                }
-                TomNumberList numberList = (TomNumberList) rootpath.append(tom_make_PatternNumber(makeNumber(actionNumber)));
-                TomTerm automata = tom_make_Automata(automataOptionList,slotListToTomList(patternList),numberList,matchingAutomata);
-                  //System.out.println("automata = " + automata);
-                  
-                automataList = append(automata,automataList);
-                tom_patternInstructionList= tom_patternInstructionList.getTail();
-              }
-                
-                /*
-                 * return the compiled Match construction
-                 */
-              InstructionList astAutomataList = automataListCompileMatchingList(automataList);
-              SlotList slots = tomListToSlotList(tom_match2_1_subjectList_tomList);
-              Instruction astAutomata = collectVariableFromSubjectList(slots,rootpath,tom_make_AbstractBlock(astAutomataList));
-              return tom_make_CompiledMatch(astAutomata,tom_match2_1_option);
-             }}} }}}} }} }
+						TomNumberList rootpath = tsf().makeTomNumberList();
+						matchNumber++;
+						rootpath = (TomNumberList) rootpath.append(tom_make_MatchNumber(makeNumber(matchNumber)));
+
+						/*
+						 * for each pattern action (<term>,...,<term> -> <action>)
+						 * build a matching automata
+						 */
+						TomList automataList = empty();
+						int actionNumber = 0;
+						while(!tom_patternInstructionList.isEmpty()) {
+							actionNumber++;
+							PatternInstruction pa = tom_patternInstructionList.getHead();
+							SlotList patternList = tomListToSlotList(pa.getPattern().getTomList());
+							Instruction actionInst = pa.getAction();
+							if(patternList==null || actionInst==null) {
+								System.out.println("TomKernelCompiler: null value");
+								throw new TomRuntimeException("TomKernelCompiler: null value");
+							}
+
+							/*
+							 * compile nested match constructs
+							 * given a list of pattern: we build a matching automaton
+							 */
+							actionInst = (Instruction) this.apply(actionInst);
+							Instruction matchingAutomata = genSyntacticMatchingAutomata(actionInst,patternList,rootpath);
+							OptionList automataOptionList = tom_empty_list_concOption();
+							TomName label = getLabel(pa.getOption());
+							if(label != null) {
+								automataOptionList = tom_make_manyOptionList(tom_make_Label(label),automataOptionList);
+							}
+							TomNumberList numberList = (TomNumberList) rootpath.append(tom_make_PatternNumber(makeNumber(actionNumber)));
+							TomTerm automata = tom_make_Automata(automataOptionList,slotListToTomList(patternList),numberList,matchingAutomata);
+							//System.out.println("automata = " + automata);
+
+							automataList = append(automata,automataList);
+							tom_patternInstructionList= tom_patternInstructionList.getTail();
+						}
+
+						/*
+						 * return the compiled Match construction
+						 */
+						InstructionList astAutomataList = automataListCompileMatchingList(automataList);
+						SlotList slots = tomListToSlotList(tom_match2_1_subjectList_tomList);
+						Instruction astAutomata = collectVariableFromSubjectList(slots,rootpath,tom_make_AbstractBlock(astAutomataList));
+						return tom_make_CompiledMatch(astAutomata,tom_match2_1_option);
+					 }}} }}}} }} }
  // end match
-        } 
 				return traversal().genericTraversal(subject,this);
       } // end apply
     }; // end new
