@@ -86,7 +86,7 @@ class ApigenTemplateFactory extends TemplateFactory {
 class SharedTemplateFactory extends TemplateFactory {
 
   public TemplateClass makeTomMappingTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.shared.NullTemplate(className);
+    return new tom.gom.backend.shared.MappingTemplate(className,sortClasses,opClasses);
   }
   public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses) {
     return new tom.gom.backend.shared.ForwardTemplate(className, visitor, abstractType, sortClasses, opClasses);
