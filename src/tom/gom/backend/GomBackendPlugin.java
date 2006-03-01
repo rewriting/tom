@@ -52,7 +52,7 @@ public class GomBackendPlugin extends GomGenericPlugin {
   /** the declared options string */
   public static final String DECLARED_OPTIONS = 
     "<options>" +
-    "<string name='generator' altName='g' description='Select Generator' value='apigen' attrName='type' />" + 
+    "<string name='generator' altName='g' description='Select Generator' value='shared' attrName='type' />" + 
     "</options>";
 
   /**
