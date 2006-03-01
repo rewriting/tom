@@ -170,8 +170,51 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     out.append(%"
       /* internal use */
   protected int hashFunction() {
-    // TODO !!
-    return 0;
+    int a, b, c;
+
+    /* Set up the internal state */
+    a = b = 0x9e3779b9; /* the golden ratio; an arbitrary value */
+    c = getArity();
+    /*---------------------------------------- handle most of the key */
+
+    /*------------------------------------- handle the last 11 bytes */
+    //b += (stringHashFunction(getName(),getArity()) << 8);
+
+"%+generateHashArgs("a")+%"
+		//a += (headint << 8); // special case for builtin argument
+		//a += (tail.hashCode());
+    
+		/* case 0: nothing left to add */
+    a -= b;
+    a -= c;
+    a ^= (c >> 13);
+    b -= c;
+    b -= a;
+    b ^= (a << 8);
+    c -= a;
+    c -= b;
+    c ^= (b >> 13);
+    a -= b;
+    a -= c;
+    a ^= (c >> 12);
+    b -= c;
+    b -= a;
+    b ^= (a << 16);
+    c -= a;
+    c -= b;
+    c ^= (b >> 5);
+    a -= b;
+    a -= c;
+    a ^= (c >> 3);
+    b -= c;
+    b -= a;
+    b ^= (a << 10);
+    c -= a;
+    c -= b;
+    c ^= (b >> 15);
+
+    /*-------------------------------------------- report the result */
+    return c;
   }
     "%);
     return out.toString();
@@ -280,13 +323,11 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     String res = "";
     %match(SlotFieldList slotList) {
       concSlotField(_*,slot@SlotField[name=fieldName],_*) -> {
-        if (!res.equals("")) {
-          res+= " && ";
-        }
         res += fieldName(`fieldName)+"=="+peer+"."+getMethod(`slot)+"()";
+        res+= " && ";
       }
     }
-    res += " && true"; // to handle the "no childs" case
+    res += "true"; // to handle the "no childs" case
     return res;
   }
   private int nonBuiltinChildCount() {
@@ -343,6 +384,18 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
             res += "("+fullClassName(`domain)+") " + argName;
           }
           index++;
+        }
+      }
+    }
+    return res;
+  }
+  private String generateHashArgs(String accum) {
+    String res = "";
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,slot@SlotField[name=slotName,domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          // handle builtins here
+          res += "    "+accum+" += ("+fieldName(`slotName)+".hashCode());\n";
         }
       }
     }
