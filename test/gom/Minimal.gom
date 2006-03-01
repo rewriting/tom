@@ -7,3 +7,4 @@ abstract syntax
 	UnaryNop(slot:Nop) -> Nop
 	BinaryNop(ls:Nop,rs:Nop) -> Nop
 	TertiaryNop(ls:Nop,cs:Nop,rs:Nop) -> Nop
+	Vary(Nop*) -> Nop

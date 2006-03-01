@@ -1,0 +1,6 @@
+module List
+
+public
+	sorts List
+abstract syntax
+	conc(int*) -> List
