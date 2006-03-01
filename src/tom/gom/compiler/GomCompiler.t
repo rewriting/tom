@@ -123,7 +123,8 @@ public class GomCompiler {
           ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDecl);
 
           // create operator classes. Also, store a list of all operators for the sort class
-          SlotFieldList allSortSlots = `concSlotField();
+          // use a Set to collect slots and avoid duplicates
+          Set allSortSlots = new HashSet();
           ClassNameList allOperators = `concClassName();
           %match(OperatorDeclList `oplist) {
             concOperator(_*,opdecl@OperatorDecl[name=opname,sort=SortDecl[name=sortName],prod=typedproduction],_*) -> {
@@ -135,14 +136,17 @@ public class GomCompiler {
                   ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
                   SlotField slotHead = `SlotField("Head",clsName);
                   SlotField slotTail = `SlotField("Tail",sortClassName);
+                  allSortSlots.add(`slotHead);
+                  allSortSlots.add(`slotTail);
                   slots = `concSlotField(slotHead,slotTail);
                 }
                 Slots(concSlot(_*,Slot[name=slotname,sort=domain],_*)) -> {
                   ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
-                  slots = `concSlotField(SlotField(slotname,clsName),slots*);
+                  SlotField slotfield = `SlotField(slotname,clsName);
+                  allSortSlots.add(slotfield);
+                  slots = `concSlotField(slots*,slotfield);
                 }
               }
-              allSortSlots = `concSlotField(slots*,allSortSlots*);
               allOperators = `concClassName(operatorClassName,allOperators*);
               GomClass operatorClass = `OperatorClass(operatorClassName,factoryName,abstracttypeName ,sortClassName,visitorName,slots);
               classForOperatorDecl.put(`opdecl,operatorClass); 
@@ -150,7 +154,12 @@ public class GomCompiler {
             }
           }
           // create the sort class and add it to the list
-          GomClass sortClass = `SortClass(sortClassName,factoryName,abstracttypeName,visitorName,allOperators,allSortSlots);
+          GomClass sortClass = `SortClass(sortClassName,
+                                          factoryName,
+                                          abstracttypeName,
+                                          visitorName,
+                                          allOperators,
+                                          slotFieldListFromSet(allSortSlots));
           sortGomClassForSortDecl.put(`sortDecl,sortClass);
           classList = `concGomClass(sortClass,classList*);
         }
@@ -304,5 +313,14 @@ public class GomCompiler {
       }
     }
     return pkgPrefix.toLowerCase();
+  }
+  private SlotFieldList slotFieldListFromSet(Set slotFieldSet) {
+    Iterator it = slotFieldSet.iterator();
+    SlotFieldList list = `concSlotField();
+    while(it.hasNext()) {
+      SlotField slot = (SlotField) it.next();
+      list = `concSlotField(list*,slot);
+    }
+    return list;
   }
 }
