@@ -37,8 +37,8 @@ public class BenchCons {
 
   %oplist List conc( int* ) {
     is_fsym(t) { (t!=null) && (t.isCons() || t.isEmpty()) }
-    make_empty()  { gom.list.ListFactory.getInstance().makeList_Empty() }
-    make_insert(e,l) { gom.list.ListFactory.getInstance().makeList_Cons(l, e) }
+    make_empty()  { gom.list.types.list.Empty.make() }
+    make_insert(e,l) { gom.list.types.list.Cons.make(e, l) }
     get_head(l)   { l.gethead() }
     get_tail(l)   { l.gettail() }
     is_empty(l)   { (l!=null) && l.isEmpty() }
@@ -100,4 +100,3 @@ public class BenchCons {
   }
 
 }
-
