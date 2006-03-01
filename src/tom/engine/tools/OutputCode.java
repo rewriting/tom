@@ -205,27 +205,7 @@ public class OutputCode {
     }
   }
 
-	public String encodeCode(String subject) {
-		StringBuffer sb = new StringBuffer();
-
-		String startCode = "%"+"\"";
-		String endCode = "\""+"%";
-
-		//System.out.println("subject: " + subject);
-		int oldIndex=0;
-		int index=0;
-		while(index>=0 && index<subject.length()) {
-			index = subject.indexOf(startCode,index);
-			if(index >= 0) {
-				String extract = subject.substring(oldIndex,index);
-				//System.out.println("extract '" + extract + "'");
-				sb.append(extract);
-			} else {
-				break;
-			}
-			int end = subject.indexOf(endCode,index);
-			//System.out.println("from " + index + " to " + end);
-			String code = subject.substring(index+startCode.length(),end);
+	private static String metaEncodeCode(String code) {
 			code = code.replaceAll("\\\"","\\\\\"");
 			code = code.replaceAll("\\\\n","\\\\\\\\n");
 			code = code.replaceAll("\\\\t","\\\\\\\\t");
@@ -235,17 +215,57 @@ public class OutputCode {
 			code = code.replaceAll("\r","\\\\r");
 			code = code.replaceAll("\t","\\\\t");
 			code = code.replaceAll("\"","\\\"");
-			
-			//System.out.println("code '" + code + "'");
-			sb.append("\"" + code + "\"");
-			index = end;
+
+			return "\"" + code + "\"";
+	}
+	
+	public static String tomSplitter(String subject) {
+		String startCode = "@";
+		String endCode   = "@";
+		String firstExtract = "";
+		String tomExtract = "";
+		String lastExtract = "";
+
+		//System.out.println("subject: '" + subject + "'");
+		int oldIndex=0;
+		int index=0;
+		while(index>=0 && index<subject.length()) {
+			// search startCode
+			index = subject.indexOf(startCode,index);
+			if(index == -1) {
+				//System.out.println("no delimiter found");
+				break;
+			} else {
+				// extract first part
+				firstExtract = subject.substring(oldIndex,index);
+				//System.out.println("first extract '" + firstExtract + "'");
+			}
+			// search endCode
+			int end = subject.indexOf(endCode,index+1);
+			if(end == -1) {
+				//System.out.println("second delimiter not found");
+				firstExtract = "";
+				break;
+			} else {
+				//System.out.println("from " + index + " to " + end);
+				tomExtract = subject.substring(index+startCode.length(),end);
+				//System.out.println("call Tom on '" + tomExtract + "'");
+			}
+
+			index = end+1;
 			oldIndex = end+endCode.length();
 		}
+		// extract last part
+		lastExtract = subject.substring(oldIndex,subject.length());
+		//System.out.println("second extract '" + lastExtract + "'");
 
-		String extract = subject.substring(oldIndex,subject.length());
-		sb.append(extract);
-
-		return sb.toString() ;
+		if(firstExtract.length()>0) {
+			firstExtract = metaEncodeCode(firstExtract);
+		}
+		if(lastExtract.length()>0) {
+			lastExtract = metaEncodeCode(lastExtract);
+		}
+		
+		return firstExtract + tomExtract + lastExtract;
 	}
-  
 }

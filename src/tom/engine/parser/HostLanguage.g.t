@@ -55,7 +55,6 @@ options{
   defaultErrorHandler = false;
 }
 
-
 {
   //--------------------------
     %include{ adt/tomsignature/TomSignature.tom }
@@ -897,16 +896,25 @@ CODE
         )
         (
             options {
-                greedy=false;  // make it exit upon "*/"
+                greedy=false; 
                 generateAmbigWarnings=false; // shut off newline errors
             }
         : '\r' '\n' {newline();}
         | '\r'    {newline();}
         | '\n'    {newline();}
+//				| '@' ( '\r' '\n' {newline();} | '\r' {newline();} | '\n' {newline();}~('\n'|'\r') ) '@'
+//				  { System.out.println("'" + $getText + "'"); }
         | ~('\n'|'\r')
         )*
         '"' '%'
-        {target.append($getText);}
+        {
+					//String newBegin = new String(new char[] {'%','[','['});
+					//String newEnd   = new String(new char[] {']',']','%'});
+					//String code = newBegin + $getText.substring(2,$getText.length()-2) + newEnd;
+					
+					String code = $getText.substring(2,$getText.length()-2);
+					target.append(tom.engine.tools.OutputCode.tomSplitter(code));
+				}
   ;
 
 // the rule for the filter: just append the text to the buffer
