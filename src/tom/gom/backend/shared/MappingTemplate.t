@@ -72,14 +72,13 @@ public class MappingTemplate extends TemplateClass {
     // generate a %op for each operator
     %match(GomClassList operatorClasses) {
       concGomClass(_*,
-          OperatorClass[
+          (OperatorClass|VariadicOperatorClass)[
           className=opName,
-          factoryName=factory,
           sortName=sortName,
           slots=slotList],
           _*) -> {    
         out.append("%op "+className(`sortName)+" "+className(`opName)+"("+slotDecl(`slotList)+") {\n");
-        out.append("  is_fsym(t) { (t!=null) && t.is"+className(`opName)+"() }\n");
+        out.append("  is_fsym(t) { (t!=null) && t."+isOperatorMethod(`opName)+"() }\n");
         %match(SlotFieldList `slotList) {
           concSlotField(_*,slot@SlotField[name=slotName],_*) -> {
             out.append("  get_slot("+`slotName+", t) ");
@@ -89,6 +88,29 @@ public class MappingTemplate extends TemplateClass {
         out.append("  make("+slotArgs(`slotList)+") { "+fullClassName(`opName)+".make("+slotArgs(`slotList)+")}\n");
         out.append("}\n");
         out.append("\n");
+      }
+    }
+
+    // generate a %oplist for each variadic operator
+    %match(GomClassList operatorClasses) {
+      concGomClass(_*,
+          VariadicOperatorClass[
+          className=opName,
+          sortName=sortName,
+          slots=concSlotField(head@SlotField[domain=headDomain],tail),
+          empty=emptyClass,
+          operator=operatorName],
+          _*) -> {    
+        out.append(%"
+%oplist "%+className(`sortName)+%" "%+`operatorName+%"("%+className(`headDomain)+%"*) {
+  is_fsym(t) { t instanceof "%+fullClassName(`opName)+%" || t instanceof "%+fullClassName(`emptyClass)+%" }
+  make_empty() { "%+fullClassName(`emptyClass)+%".make() }
+  make_insert(e,l) { "%+fullClassName(`opName)+%".make(e,l) }
+  get_head(l) { l."%+getMethod(`head)+%"() }
+  get_tail(l) { l."%+getMethod(`tail)+%"() }
+  is_empty(l) { l."%+isOperatorMethod(`emptyClass)+%"() }
+}
+"%);
       }
     }
 

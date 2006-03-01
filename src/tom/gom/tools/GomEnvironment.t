@@ -70,7 +70,7 @@ public class GomEnvironment {
     importedModules.put(module,imported);
   }
   public void setStreamManager(GomStreamManager stream) {
-    this.streamManager = stream;
+    GomEnvironment.streamManager = stream;
   }
   public GomStreamManager getStreamManager() {
     return streamManager;

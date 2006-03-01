@@ -11,6 +11,7 @@ VisitableFwdClass(className:ClassName,fwd:GomClass) -> GomClass
 AbstractTypeClass(className:ClassName,factoryName:ClassName,visitor:ClassName,sortList:ClassNameList) -> GomClass
 SortClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,visitor:ClassName,operators:ClassNameList,slots:SlotFieldList) -> GomClass
 OperatorClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList) -> GomClass
+VariadicOperatorClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList,empty:ClassName,operator:String) -> GomClass
 
 // pass the full operator classes, so we get the factory and sort for each operator
 FactoryClass(className:ClassName,importedFactories:ClassNameList,sortClasses:GomClassList,operatorClasses:GomClassList)  -> GomClass

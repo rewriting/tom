@@ -130,23 +130,23 @@ public class GomCompiler {
               String sortNamePackage = `sortName.toLowerCase();
               ClassName operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
               SlotFieldList slots = `concSlotField();
+              ClassName empty = null;
               %match(TypedProduction typedproduction) {
                 Variadic[sort=domain] -> {
                   ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
-                  SlotField slotHead = `SlotField("Head",clsName);
-                  SlotField slotTail = `SlotField("Tail",sortClassName);
+                  SlotField slotHead = `SlotField(opname+"Head",clsName);
+                  SlotField slotTail = `SlotField(opname+"Tail",sortClassName);
                   allSortSlots.add(`slotHead);
                   allSortSlots.add(`slotTail);
                   slots = `concSlotField(slotHead,slotTail);
                   // as the operator is varyadic, add a Cons and an Empty
-                  ClassName empty = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Empty");
+                  empty = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Empty");
                   operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Cons");
 
                   allOperators = `concClassName(empty,allOperators*);
                   GomClass emptyClass = `OperatorClass(empty,factoryName,abstracttypeName,sortClassName,visitorName,concSlotField());
                   classForOperatorDecl.put(`opdecl,emptyClass); 
                   classList = `concGomClass(emptyClass,classList*);
-                  // XXX a way to note empty is neutral element
                 }
                 Slots(concSlot(_*,Slot[name=slotname,sort=domain],_*)) -> {
                   ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
@@ -155,8 +155,22 @@ public class GomCompiler {
                   slots = `concSlotField(slots*,slotfield);
                 }
               }
+              GomClass operatorClass;
               allOperators = `concClassName(operatorClassName,allOperators*);
-              GomClass operatorClass = `OperatorClass(operatorClassName,factoryName,abstracttypeName ,sortClassName,visitorName,slots);
+              if (empty!= null) {
+                operatorClass = `VariadicOperatorClass(operatorClassName,
+                                                       factoryName,
+                                                       abstracttypeName,
+                                                       sortClassName,
+                                                       visitorName,
+                                                       slots,empty,opname);
+              } else {
+                operatorClass = `OperatorClass(operatorClassName,
+                                               factoryName,
+                                               abstracttypeName,
+                                               sortClassName,
+                                               visitorName,slots);
+              }
               classForOperatorDecl.put(`opdecl,operatorClass); 
               classList = `concGomClass(operatorClass,classList*);
             }

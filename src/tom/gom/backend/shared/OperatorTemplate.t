@@ -411,21 +411,21 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     int index = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,slot@SlotField[domain=domain],_*) -> {
-        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          if (!res.equals("")) {
-            res+= ", ";
-          }
+        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res += getMethod(`slot)+"(), ";
+        } else {
           if (index != argIndex) {
-            res += getMethod(`slot)+"()";
+            res += getMethod(`slot)+"(), ";
           } else {
-            res += "("+fullClassName(`domain)+") " + argName;
+            res += "("+fullClassName(`domain)+") " + argName+", ";
           }
           index++;
         }
       }
     }
-    return res;
+    return res.substring(0,res.length()-2);
   }
+
   private String generateHashArgs(String accum) {
     String res = "";
     int index = 0;
