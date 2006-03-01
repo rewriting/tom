@@ -136,7 +136,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
       if(proto.getName().equals(appl.getName())) {
         return make(
-"%+generatefromATermChilds()+%"
+"%+generatefromATermChilds("appl")+%"
         );
       }
     }
@@ -286,8 +286,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     return res;
   }
 
-  // XXX: the "appl": string should not be hardcoded in the following funtions
-  private String generatefromATermChilds() {
+  private String generatefromATermChilds(String appl) {
     String res = "";
     int index = 0;
     SlotFieldList slots = slotList;
@@ -297,22 +296,22 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
       if (!res.equals("")) {
         res+= ", ";
       }
-      res+= fromATermSlotField(head,index);
+      res+= fromATermSlotField(head, appl, index);
       index++;
     }
     return res;
   }
-  private String fromATermSlotField(SlotField slot, int index) {
+  private String fromATermSlotField(SlotField slot, String appl, int index) {
     String res = "";
     %match(SlotField slot) {
       SlotField[domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res+= fullClassName(`domain)+".fromTerm(appl.getArgument("+index+"))";
+          res+= fullClassName(`domain)+".fromTerm("+appl+".getArgument("+index+"))";
         } else {
           if (`domain.equals(`ClassName("","int"))) {
-            res+= "((aterm.ATermInt)appl.getArgument("+index+")).getInt()";
+            res+= "((aterm.ATermInt)"+appl+".getArgument("+index+")).getInt()";
           } else if (`domain.equals(`ClassName("","String"))) { 
-            res+= "(String)appl.getArgument("+index+")";
+            res+= "(String)"+appl+".getArgument("+index+")";
           } else {
             throw new GomRuntimeException("Builtin " + `domain + " not supported");
           }
