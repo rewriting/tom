@@ -60,7 +60,6 @@ public class GomCompiler {
   public GomClassList compile(SortList sortList) {
     GomClassList classList = `concGomClass();
 
-    // XXX: We will need to populate those Maps to take into account builtin types
     Map abstractTypeNameForModule = new HashMap();
     Map factoryNameForModule = new HashMap();
     Map visitorNameForModule = new HashMap();
@@ -139,6 +138,15 @@ public class GomCompiler {
                   allSortSlots.add(`slotHead);
                   allSortSlots.add(`slotTail);
                   slots = `concSlotField(slotHead,slotTail);
+                  // as the operator is varyadic, add a Cons and an Empty
+                  ClassName empty = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Empty");
+                  operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Cons");
+
+                  allOperators = `concClassName(empty,allOperators*);
+                  GomClass emptyClass = `OperatorClass(empty,factoryName,abstracttypeName,sortClassName,visitorName,concSlotField());
+                  classForOperatorDecl.put(`opdecl,emptyClass); 
+                  classList = `concGomClass(emptyClass,classList*);
+                  // XXX a way to note empty is neutral element
                 }
                 Slots(concSlot(_*,Slot[name=slotname,sort=domain],_*)) -> {
                   ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
