@@ -262,11 +262,31 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
       if (!res.equals("")) {
         res+= ", ";
       }
-      res+= getMethod(head)+"().toATerm()"; // XXX: handle builtins here
+      res+= toATermSlotField(head);
+    }
+    return res;
+  }
+  private String toATermSlotField(SlotField slot) {
+    String res = "";
+    %match(SlotField slot) {
+      SlotField[domain=domain] -> {
+        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res+= getMethod(slot)+"().toATerm()";
+        } else {
+          if (`domain.equals(`ClassName("","int"))) {
+            res+= "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt("+getMethod(slot)+")";
+          } else if (`domain.equals(`ClassName("","String"))) { 
+            res+= "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(factory.makeAFun("+getMethod(slot)+",0 , true))";
+          } else {
+            throw new GomRuntimeException("Builtin " + `domain + " not supported");
+          }
+        }
+      }
     }
     return res;
   }
 
+  // XXX: the "appl": string should not be hardcoded in the following funtions
   private String generatefromATermChilds() {
     String res = "";
     int index = 0;
@@ -277,11 +297,31 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
       if (!res.equals("")) {
         res+= ", ";
       }
-      res+= fullClassName(head.getDomain()) + ".fromTerm(appl.getArgument("+index+"))"; // XXX: handle builtins here
+      res+= fromATermSlotField(head,index);
       index++;
     }
     return res;
   }
+  private String fromATermSlotField(SlotField slot, int index) {
+    String res = "";
+    %match(SlotField slot) {
+      SlotField[domain=domain] -> {
+        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res+= fullClassName(`domain)+".fromTerm(appl.getArgument("+index+"))";
+        } else {
+          if (`domain.equals(`ClassName("","int"))) {
+            res+= "((aterm.ATermInt)appl.getArgument("+index+")).getInt()";
+          } else if (`domain.equals(`ClassName("","String"))) { 
+            res+= "(String)appl.getArgument("+index+")";
+          } else {
+            throw new GomRuntimeException("Builtin " + `domain + " not supported");
+          }
+        }
+      }
+    }
+    return res;
+  }
+
   private String fieldName(String fieldName) {
     return "_"+fieldName;
   }
@@ -394,7 +434,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     %match(SlotFieldList slotList) {
       concSlotField(_*,slot@SlotField[name=slotName,domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          // handle builtins here
+          // XXX: handle builtins here
           res += "    "+accum+" += ("+fieldName(`slotName)+".hashCode());\n";
         }
       }
