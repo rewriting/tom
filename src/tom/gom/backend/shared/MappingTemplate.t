@@ -52,7 +52,7 @@ public class MappingTemplate extends TemplateClass {
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
-    "%);
+"%);
 
     // generate a %typeterm for each class
     %match(GomClassList sortClasses) {

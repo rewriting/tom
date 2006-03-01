@@ -121,7 +121,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
 
 "%+generateGetters()+%"
 
-    "%);
+"%);
 
     out.append(%"
   /* AbstractType */
@@ -143,7 +143,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     return null;
   }
 
-    "%);
+"%);
 
     out.append(%"
   /* jjtraveler.Visitable */
@@ -165,7 +165,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     }
   }
 
-    "%);
+"%);
 
     out.append(%"
       /* internal use */
@@ -178,13 +178,9 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     /*---------------------------------------- handle most of the key */
 
     /*------------------------------------- handle the last 11 bytes */
-    //b += (stringHashFunction(getName(),getArity()) << 8);
 
 "%+generateHashArgs("a")+%"
-		//a += (headint << 8); // special case for builtin argument
-		//a += (tail.hashCode());
     
-		/* case 0: nothing left to add */
     a -= b;
     a -= c;
     a ^= (c >> 13);
@@ -216,7 +212,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     /*-------------------------------------------- report the result */
     return c;
   }
-    "%);
+"%);
     return out.toString();
   }
 
@@ -430,12 +426,26 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
   }
   private String generateHashArgs(String accum) {
     String res = "";
+    int index = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,slot@SlotField[name=slotName,domain=domain],_*) -> {
+        res += "    "+accum+" += (";
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          // XXX: handle builtins here
-          res += "    "+accum+" += ("+fieldName(`slotName)+".hashCode());\n";
+          res += fieldName(`slotName)+".hashCode()";
+        } else {
+          if (`domain.equals(`ClassName("","int"))) {
+            res+= fieldName(`slotName);
+          } else if (`domain.equals(`ClassName("","String"))) { 
+            // Use the java hashCode for String. This may be a bad choice
+            res+= fieldName(`slotName)+".hashCode()";
+          } else {
+            throw new GomRuntimeException("generateHashArgs:Builtin " + `domain + " not supported");
+          }
         }
+        index = index % 4;
+        if (index!=0) { res += " << "+(index*8); }
+        res += ");\n";
+        index++;
       }
     }
     return res;
