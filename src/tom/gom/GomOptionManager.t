@@ -278,7 +278,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     }
   }
   
-    /**
+  /**
    * Self-explanatory. Displays an help message indicating how to use the compiler.
    */
   private void displayHelp() {

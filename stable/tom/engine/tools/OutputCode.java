@@ -205,27 +205,7 @@ public class OutputCode {
     }
   }
 
-	public String encodeCode(String subject) {
-		StringBuffer sb = new StringBuffer();
-
-		String startCode = "%"+"\"";
-		String endCode = "\""+"%";
-
-		//System.out.println("subject: " + subject);
-		int oldIndex=0;
-		int index=0;
-		while(index>=0 && index<subject.length()) {
-			index = subject.indexOf(startCode,index);
-			if(index >= 0) {
-				String extract = subject.substring(oldIndex,index);
-				//System.out.println("extract '" + extract + "'");
-				sb.append(extract);
-			} else {
-				break;
-			}
-			int end = subject.indexOf(endCode,index);
-			//System.out.println("from " + index + " to " + end);
-			String code = subject.substring(index+startCode.length(),end);
+	private static String metaEncodeCode(String code) {
 			code = code.replaceAll("\\\"","\\\\\"");
 			code = code.replaceAll("\\\\n","\\\\\\\\n");
 			code = code.replaceAll("\\\\t","\\\\\\\\t");
@@ -235,17 +215,45 @@ public class OutputCode {
 			code = code.replaceAll("\r","\\\\r");
 			code = code.replaceAll("\t","\\\\t");
 			code = code.replaceAll("\"","\\\"");
-			
-			//System.out.println("code '" + code + "'");
-			sb.append("\"" + code + "\"");
-			index = end;
-			oldIndex = end+endCode.length();
+
+			return "\"" + code + "\"";
+	}
+
+
+	/*
+	 * this function receives a string that comes from %" ... "%
+	 * @@ corresponds to the char '@', so they a encoded into "% (which cannot appear in the string)
+	 * then, the string is split around the delimiter @
+	 * alternatively, each string correspond either to a metaString, or a string to parse
+	 * the @@ encoded by "% is put back as a single '@' in the metaString
+	 */
+	public static String tomSplitter(String subject) {
+
+		String metaChar = "\"%";
+		String escapeChar = "@";
+
+		//System.out.println("initial subject: '" + subject + "'");
+		subject = subject.replaceAll(escapeChar+escapeChar,metaChar);
+		//System.out.println("subject: '" + subject + "'");
+
+		String split[] = subject.split(escapeChar);
+		boolean metaMode = true;
+		String res = "";
+		for(int i=0 ; i<split.length ; i++) {
+			if(metaMode) {
+				// put back escapeChar instead of metaChar
+				String code = metaEncodeCode(split[i].replaceAll(metaChar,escapeChar));
+				metaMode = false;
+				//System.out.println("metaString: '" + code + "'");
+				res += code;
+			} else {
+				String code = split[i];
+				metaMode = true;
+				//System.out.println("prg to parse: '" + code + "'");
+				res += code;
+			}
 		}
 
-		String extract = subject.substring(oldIndex,subject.length());
-		sb.append(extract);
-
-		return sb.toString() ;
+		return res;
 	}
-  
 }

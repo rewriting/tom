@@ -518,11 +518,16 @@
 	    <fileset dir="${stable.build}" includes="tom/engine/**/*.class"/>
 	    <fileset dir="${stable.src}" includes="tom/engine/**/*.properties"/>
     </jar>
+    <jar jarfile="${stable.dist.lib}/gom.jar">
+	    <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
+	    <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
+    </jar>
 
     <copy todir="${stable.dist.lib}">
-	    <fileset dir="${stable.src}/tom/engine/adt" includes="*.jar"/>
+      <fileset dir="${stable.src}/tom/engine/adt" includes="*.jar"/>
       <fileset dir="${stable.src}/tom/library/adt" includes="*.jar"/>
       <fileset dir="${stable.src}/tom/platform/adt" includes="*.jar"/>
+      <fileset dir="${stable.src}/tom/gom/adt" includes="*.jar"/>
     </copy>
 
     <!-- tom share -->
@@ -1132,6 +1137,7 @@
     <mkdir dir="${stable.src}/tom/engine/adt"/>
     <mkdir dir="${stable.src}/tom/library/adt"/>
     <mkdir dir="${stable.src}/tom/platform/adt"/>
+    <mkdir dir="${stable.src}/tom/gom/adt"/>
 
     <jar jarfile="${stable.src}/tom/engine/adt/TomSignature.jar">
       <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
@@ -1150,6 +1156,9 @@
     </jar>
     <jar jarfile="${stable.src}/tom/platform/adt/PlatformAlert.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable.src}/tom/gom/adt/GomADT.jar">
+      <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>
     </jar>
     <antcall target="clean.bootstrap"/>
   </target>

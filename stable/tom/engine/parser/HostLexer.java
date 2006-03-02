@@ -849,7 +849,14 @@ tryAgain:
 		}
 		match('"');
 		match('%');
-		target.append(new String(text.getBuffer(),_begin,text.length()-_begin));
+		
+							//String newBegin = new String(new char[] {'%','[','['});
+							//String newEnd   = new String(new char[] {']',']','%'});
+							//String code = newBegin + $getText.substring(2,$getText.length()-2) + newEnd;
+							
+							String code = new String(text.getBuffer(),_begin,text.length()-_begin).substring(2,new String(text.getBuffer(),_begin,text.length()-_begin).length()-2);
+							target.append(tom.engine.tools.OutputCode.tomSplitter(code));
+						
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));

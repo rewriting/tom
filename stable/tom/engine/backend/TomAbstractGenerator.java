@@ -494,12 +494,12 @@ public abstract class TomAbstractGenerator extends TomBase {
   public void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {
      if(subject instanceof  tom.engine.adt.tomsignature.types.TargetLanguage) { { tom.engine.adt.tomsignature.types.TargetLanguage tom_match4_1=(( tom.engine.adt.tomsignature.types.TargetLanguage)subject); if(tom_is_fun_sym_TL(tom_match4_1) ||  false ) { { String  tom_match4_1_code=tom_get_slot_TL_code(tom_match4_1); { tom.engine.adt.tomsignature.types.Position tom_match4_1_start=tom_get_slot_TL_start(tom_match4_1); { tom.engine.adt.tomsignature.types.Position tom_match4_1_end=tom_get_slot_TL_end(tom_match4_1); if(tom_is_fun_sym_TextPosition(tom_match4_1_start) ||  false ) { { int  tom_match4_1_start_line=tom_get_slot_TextPosition_line(tom_match4_1_start); { int  tom_startLine=tom_match4_1_start_line; if(tom_is_fun_sym_TextPosition(tom_match4_1_end) ||  false ) { { int  tom_match4_1_end_line=tom_get_slot_TextPosition_line(tom_match4_1_end); if( true ) {
 
-        output.write(output.encodeCode(tom_match4_1_code), tom_startLine, tom_match4_1_end_line- tom_startLine);
+        output.write(tom_match4_1_code, tom_startLine, tom_match4_1_end_line- tom_startLine);
         return;
        }} }}} }}}} } if(tom_is_fun_sym_ITL(tom_match4_1) ||  false ) { { String  tom_match4_1_code=tom_get_slot_ITL_code(tom_match4_1); if( true ) {
 
 
-        output.write(output.encodeCode(tom_match4_1_code));
+        output.write(tom_match4_1_code);
         return;
        }} } if(tom_is_fun_sym_Comment(tom_match4_1) ||  false ) { { String  tom_match4_1_code=tom_get_slot_Comment_code(tom_match4_1); if( true ) {buildComment(deep,tom_match4_1_code)
 
