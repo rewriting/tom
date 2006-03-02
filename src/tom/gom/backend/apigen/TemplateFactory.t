@@ -1,6 +1,5 @@
 /*
- *
- * GOM
+ * Gom
  *
  * Copyright (C) 2006 INRIA
  * Nancy, France.
@@ -62,13 +61,15 @@ public class TemplateFactory extends TemplateClass {
       out.append("\tprivate "+fullClassName(factoryName)+" "+fieldName(factoryName)+";\n");
     }
 
-    // protos
+    // protos: no protos for operators with different factories
     %match(GomClassList operators) {
-      concGomClass(_*,op@OperatorClass[sortName=sortName],_*) -> {
-        out.append("\n");
-        out.append("\tprivate aterm.AFun "+fun(`op)+";\n");
-        out.append("\tprivate "+fullClassName(`sortName)+" "+proto(`op)+";\n");
-        out.append("\tprivate aterm.ATerm "+pattern(`op)+";\n");
+      concGomClass(_*,op@OperatorClass[sortName=sortName,factoryName=factory],_*) -> {
+        if (`factory == this.className) {
+          out.append("\n");
+          out.append("\tprivate aterm.AFun "+fun(`op)+";\n");
+          out.append("\tprivate "+fullClassName(`sortName)+" "+proto(`op)+";\n");
+          out.append("\tprivate aterm.ATerm "+pattern(`op)+";\n");
+        }
       }
     }
 
@@ -93,51 +94,74 @@ public class TemplateFactory extends TemplateClass {
     // initialization
     out.append("\tprivate void initialize() {\n");
     out.append("\n");
+    /* initialize factories */
+    consum = factories;
+    while(!consum.isEmpty()) {
+      ClassName factoryName = consum.getHead();
+      consum = consum.getTail();
+      out.append("\t\tthis."+fieldName(factoryName)+" = "+fullClassName(factoryName)+".getInstance();\n");
+    }
     %match(GomClassList operators) {
-      concGomClass(_*,op@OperatorClass[className=opName],_*) -> {
-        out.append("\t\t"+pattern(`op)+" = factory.parse("+atermPattern(`op)+");\n");
-        out.append("\t\t"+fun(`op)+" = factory.makeAFun("+atermFunArgs(`op)+");\n");
-        out.append("\t\t"+proto(`op)+" = new "+fullClassName(`opName)+"(this);\n");
-        out.append("\n");
+      concGomClass(_*,op@OperatorClass[className=opName,factoryName=factory],_*) -> {
+        if (`factory == this.className) {
+          out.append("\t\t"+pattern(`op)+" = factory.parse("+atermPattern(`op)+");\n");
+          out.append("\t\t"+fun(`op)+" = factory.makeAFun("+atermFunArgs(`op)+");\n");
+          out.append("\t\t"+proto(`op)+" = new "+fullClassName(`opName)+"(this);\n");
+          out.append("\n");
+        }
       }
     }
     out.append("\t}\n");
 
     // methods to make operators
     %match(GomClassList operators) {
-      concGomClass(_*,op@OperatorClass[className=opName,sortName=sortName],_*) -> {
+      concGomClass(_*,op@OperatorClass[className=opName,factoryName=factory,sortName=sortName],_*) -> {
         out.append("\tpublic "+fullClassName(`sortName)+" "+make(`op)+"(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {\n");
-        out.append("\t\tsynchronized ("+proto(`op)+") {\n");
-        out.append("\t\t\t"+proto(`op)+".initHashCode(annos, fun, args);\n");
-        out.append("\t\t\treturn ("+fullClassName(`sortName)+") factory.build("+proto(`op)+");\n");
-        out.append("\t\t}\n");
+        if (`factory == this.className) {
+          out.append("\t\tsynchronized ("+proto(`op)+") {\n");
+          out.append("\t\t\t"+proto(`op)+".initHashCode(annos, fun, args);\n");
+          out.append("\t\t\treturn ("+fullClassName(`sortName)+") factory.build("+proto(`op)+");\n");
+          out.append("\t\t}\n");
+        } else { /* trampoline*/
+          out.append("\t\treturn "+fieldName(`factory)+"."+make(`op)+"(fun, args, annos);\n");
+        }
         out.append("\t}\n");
         out.append("\n");
 
         out.append("\tpublic "+fullClassName(`sortName)+" "+make(`op)+"("+childArgsListWithType(`op)+") {\n");
-        out.append("\t\taterm.ATerm[] args = new aterm.ATerm[] {"+childArgsList(`op)+"};\n");
-        out.append("\t\treturn "+make(`op)+"("+fun(`op)+", args, factory.getEmpty());\n");
+        if (`factory == this.className) {
+          out.append("\t\taterm.ATerm[] args = new aterm.ATerm[] {"+childArgsList(`op)+"};\n");
+          out.append("\t\treturn "+make(`op)+"("+fun(`op)+", args, factory.getEmpty());\n");
+        } else { /* trampoline*/
+          out.append("\t\treturn "+fieldName(`factory)+"."+make(`op)+"("+childArgsList(`op)+");\n");
+        }
         out.append("\t}\n");
         out.append("\n");
 
-        out.append("\tprotected "+fullClassName(`sortName)+" "+makefromterm(`op)+"(aterm.ATerm trm) {\n");
-        out.append("\t\tjava.util.List children = trm.match("+pattern(`op)+");\n");
-        out.append("\n");
-        out.append("\t\tif(children != null) {\n");
-        out.append("\t\t\treturn "+make(`op)+"(\n");
-        out.append("\t\t\t"+fromTermChilds(`op,"children")+"\n");
-        out.append("\t\t\t);\n");
-        out.append("\t\t}\n");
-        out.append("\t\telse {\n");
-        out.append("\t\treturn null;\n");
-        out.append("\t\t}\n");
-        out.append("\t}\n");
-        out.append("\n");
+        if (`factory == this.className) {
+          out.append("\tprotected "+fullClassName(`sortName)+" "+makefromterm(`op)+"(aterm.ATerm trm) {\n");
+          out.append("\t\tjava.util.List children = trm.match("+pattern(`op)+");\n");
+          out.append("\n");
+          out.append("\t\tif(children != null) {\n");
+          out.append("\t\t\treturn "+make(`op)+"(\n");
+          out.append("\t\t\t"+fromTermChilds(`op,"children")+"\n");
+          out.append("\t\t\t);\n");
+          out.append("\t\t}\n");
+          out.append("\t\telse {\n");
+          out.append("\t\treturn null;\n");
+          out.append("\t\t}\n");
+          out.append("\t}\n");
+          out.append("\n");
+        } else { /* no need of trampoline for opFromTerm */ }
 
         out.append("\tpublic aterm.ATerm toTerm("+fullClassName(`opName)+" arg) {\n");
-        out.append("\t\tjava.util.List args = new java.util.LinkedList();\n");
-        out.append("\t\t"+toTermChilds(`op,"args", "arg"));
-        out.append("\t\treturn factory.make("+pattern(`op)+", args);\n");
+        if (`factory == this.className) {
+          out.append("\t\tjava.util.List args = new java.util.LinkedList();\n");
+          out.append("\t\t"+toTermChilds(`op,"args", "arg"));
+          out.append("\t\treturn factory.make("+pattern(`op)+", args);\n");
+        } else { /* trampoline */
+          out.append("\t\treturn "+fieldName(`factory)+".toTerm(arg);\n");
+        }
         out.append("\t}\n");
         out.append("\n");
       }
@@ -145,19 +169,23 @@ public class TemplateFactory extends TemplateClass {
 
     // methods for the sorts
     %match(GomClassList sorts) {
-      concGomClass(_*,SortClass[className=sortName,operators=sortOperators],_*) -> {
+      concGomClass(_*,SortClass[className=sortName,factoryName=factory,operators=sortOperators],_*) -> {
         out.append("\tpublic "+fullClassName(`sortName)+" "+makesortfromterm(`sortName)+"(aterm.ATerm trm) {\n");
-        out.append("\t\t"+fullClassName(`sortName)+" tmp;\n");
-        
-        while(!`sortOperators.isEmpty()) {
-          ClassName operatorName = `sortOperators.getHead();
-          `sortOperators = `sortOperators.getTail();
-          out.append("\t\ttmp = "+makefromterm(`sortName,operatorName)+"(trm);\n");
-          out.append("\t\tif (tmp != null) {\n");
-          out.append("\t\t\treturn tmp;\n");
-          out.append("\t\t}\n");
+        if (`factory == this.className) {
+          out.append("\t\t"+fullClassName(`sortName)+" tmp;\n");
+
+          while(!`sortOperators.isEmpty()) {
+            ClassName operatorName = `sortOperators.getHead();
+            `sortOperators = `sortOperators.getTail();
+            out.append("\t\ttmp = "+makefromterm(`sortName,operatorName)+"(trm);\n");
+            out.append("\t\tif (tmp != null) {\n");
+            out.append("\t\t\treturn tmp;\n");
+            out.append("\t\t}\n");
+          }
+          out.append("\t\tthrow new IllegalArgumentException(\"This is not a "+className(`sortName)+"\");\n");
+        } else { /* trampoline */
+          out.append("\t\treturn "+fieldName(`factory)+"."+makesortfromterm(`sortName)+"(trm);\n");
         }
-        out.append("\t\tthrow new IllegalArgumentException(\"This is not a "+className(`sortName)+"\");\n");
         out.append("\t}\n");
         out.append("\n");
       }
