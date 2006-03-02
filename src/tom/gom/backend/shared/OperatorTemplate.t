@@ -350,7 +350,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
       SlotField head = slots.getHead();
       slots = slots.getTail();
       %match(SlotField head) {
-        SlotField[name=name, domain=domain] -> {
+        SlotField[name=name] -> {
           if (!res.equals("")) {
             res+= ", ";
           }
@@ -434,7 +434,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     String res = "";
     int index = slotList.getLength() - 1;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,slot@SlotField[name=slotName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
         int shift = (index % 4) * 8;
         String accum = ""+"aaaabbbbcccc".toCharArray()[index % 12];
         res += "    "+accum+" += (";
