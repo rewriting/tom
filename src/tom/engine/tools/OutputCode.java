@@ -218,54 +218,42 @@ public class OutputCode {
 
 			return "\"" + code + "\"";
 	}
-	
+
+
+	/*
+	 * this function receives a string that comes from %" ... "%
+	 * @@ corresponds to the char '@', so they a encoded into "% (which cannot appear in the string)
+	 * then, the string is split around the delimiter @
+	 * alternatively, each string correspond either to a metaString, or a string to parse
+	 * the @@ encoded by "% is put back as a single '@' in the metaString
+	 */
 	public static String tomSplitter(String subject) {
-		String startCode = "@";
-		String endCode   = "@";
-		String firstExtract = "";
-		String tomExtract = "";
-		String lastExtract = "";
 
+		String metaChar = "\"%";
+		String escapeChar = "@";
+
+		//System.out.println("initial subject: '" + subject + "'");
+		subject = subject.replaceAll(escapeChar+escapeChar,metaChar);
 		//System.out.println("subject: '" + subject + "'");
-		int oldIndex=0;
-		int index=0;
-		while(index>=0 && index<subject.length()) {
-			// search startCode
-			index = subject.indexOf(startCode,index);
-			if(index == -1) {
-				//System.out.println("no delimiter found");
-				break;
-			} else {
-				// extract first part
-				firstExtract = subject.substring(oldIndex,index);
-				//System.out.println("first extract '" + firstExtract + "'");
-			}
-			// search endCode
-			int end = subject.indexOf(endCode,index+1);
-			if(end == -1) {
-				//System.out.println("second delimiter not found");
-				firstExtract = "";
-				break;
-			} else {
-				//System.out.println("from " + index + " to " + end);
-				tomExtract = subject.substring(index+startCode.length(),end);
-				//System.out.println("call Tom on '" + tomExtract + "'");
-			}
 
-			index = end+1;
-			oldIndex = end+endCode.length();
+		String split[] = subject.split(escapeChar);
+		boolean metaMode = true;
+		String res = "";
+		for(int i=0 ; i<split.length ; i++) {
+			if(metaMode) {
+				// put back escapeChar instead of metaChar
+				String code = metaEncodeCode(split[i].replaceAll(metaChar,escapeChar));
+				metaMode = false;
+				//System.out.println("metaString: '" + code + "'");
+				res += code;
+			} else {
+				String code = split[i];
+				metaMode = true;
+				//System.out.println("prg to parse: '" + code + "'");
+				res += code;
+			}
 		}
-		// extract last part
-		lastExtract = subject.substring(oldIndex,subject.length());
-		//System.out.println("second extract '" + lastExtract + "'");
 
-		if(firstExtract.length()>0) {
-			firstExtract = metaEncodeCode(firstExtract);
-		}
-		if(lastExtract.length()>0) {
-			lastExtract = metaEncodeCode(lastExtract);
-		}
-		
-		return firstExtract + tomExtract + lastExtract;
+		return res;
 	}
 }

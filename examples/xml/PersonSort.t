@@ -55,7 +55,7 @@ public class PersonSort {
     xtools.printXMLFromATerm(result);
 
     //System.out.println();
-    //searchJu(term.getDocElem());
+    searchJu(term.getDocElem());
 
   }
   
@@ -75,7 +75,7 @@ public class PersonSort {
       <Person Age=a1><FirstName>#TEXT(n1)</FirstName></Person>,
       <Person Age=a2><FirstName>#TEXT(n2)</FirstName></Person>
       -> { 
-          int res = `a1.compareTo(`a2); 
+          int res = `n1.compareTo(`n2); 
 					return res;
       }
     }
@@ -84,7 +84,8 @@ public class PersonSort {
 
   private void searchJu(TNode subject) {
     %match(TNode subject) {
-      <Persons><Person><FirstName>#TEXT((_*,'Ju',X*))</FirstName></Person></Persons> -> {
+      <Persons><Person><FirstName>#TEXT(Z@(_*,'Ju',X*))</FirstName></Person></Persons> -> {
+        System.out.println("Z = " + `Z); 
         System.out.println("Hello Mr Ju" + `X); 
       }
     }
