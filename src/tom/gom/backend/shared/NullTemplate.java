@@ -40,12 +40,11 @@ public class NullTemplate extends TemplateClass {
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
   public String generate() {
-    StringBuffer out = new StringBuffer();
-
-    return out.toString();
+    return "";
   }
 
-  protected String fileName() {
-    return fullClassName().replace('.',File.separatorChar)+".null";
+  public int generateFile() {
+    // Do nothing, we don't need to generate empty files
+    return 0;
   }
 }
