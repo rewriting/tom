@@ -228,8 +228,12 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
   private String generateMembersInit() {
     String res = "";
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domainClass],_*) -> {
-        res += "    this."+fieldName(`fieldName)+" = "+fieldName(`fieldName)+";\n";
+      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+        if (GomEnvironment.getInstance().isBuiltinClass(`domain) && `domain.equals(`ClassName("","String"))) {
+          res += "    this."+fieldName(`fieldName)+" = "+fieldName(`fieldName)+".intern();\n";
+        } else {
+          res += "    this."+fieldName(`fieldName)+" = "+fieldName(`fieldName)+";\n";
+        }
       }
     }
     return res;
