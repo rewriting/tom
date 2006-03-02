@@ -72,23 +72,7 @@ public class OptionParser {
   
   %include{ adt/tnode/TNode.tom }
   
-  /**
-   * Accessor method necessary when including adt/tnode/TNode.tom 
-   * @return a TNodeFactory
-   */
-  private static TNodeFactory getTNodeFactory() {
-    return TNodeFactory.getInstance(SingletonFactory.getInstance());
-  }
-  
   %include{ adt/platformoption/PlatformOption.tom }
-  
-  /**
-   * Accessor method necessary to include adt/platformoption/PlatformOption.tom
-   * @return a PlatformOptionFactory
-   */
-  private static PlatformOptionFactory getPlatformOptionFactory() {
-    return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
-  }
   
   /**
    * An XMLTools for doing the stuff
@@ -128,4 +112,4 @@ public class OptionParser {
     return list;
   }
 
-} // class optionParser
+}

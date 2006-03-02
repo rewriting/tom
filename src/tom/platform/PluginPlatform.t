@@ -35,7 +35,7 @@ import tom.library.adt.tnode.*;
  * The PluginPlatform manages plugins defined in an xml configuration file.
  * (which plugins are used and how they are ordered) with the intermediate
  * of a ConfigurationManager objet
- * It is main role is to run the plugins in the specified order and make some 
+ * Its main role is to run the plugins in the specified order and make some 
  * error management.
  *
  */
@@ -44,14 +44,6 @@ public class PluginPlatform {
   /** Used to analyse xml configuration file */
   %include{ adt/tnode/TNode.tom }
 
-  /**
-   * Accessor method necessary when including adt/tnode/TNode.tom
-   * @return a TNodeFactory
-   */  
-  public TNodeFactory getTNodeFactory() {
-    return TNodeFactory.getInstance(SingletonFactory.getInstance());
-  }
-    
   /** The List of reference to plugins. */
   private List pluginsList;
     
@@ -167,7 +159,7 @@ public class PluginPlatform {
     return statusHandler;
   }
 
- /**
+  /**
    * An accessor method
    * @return the test handler.
    */
@@ -189,5 +181,4 @@ public class PluginPlatform {
     return Logger.getLogger(getClass().getName());
   }
 
-  
-} // class PluginPlatform
+}

@@ -33,8 +33,7 @@ import tom.platform.adt.platformalert.types.*;
 
 public class RuntimeAlert {
   
-  private static PlatformAlertFactory platformAlertFactory = PlatformAlertFactory.getInstance(SingletonFactory.getInstance());
-  public static final AlertList EMPTY_ALERT_LIST = platformAlertFactory.makeAlertList();
+  %include { adt/platformalert/PlatformAlert.tom }
 
   private AlertList errors;
   private AlertList warnings;
@@ -42,21 +41,21 @@ public class RuntimeAlert {
   private int nbWarnings;
 
   public RuntimeAlert() {
-    errors = EMPTY_ALERT_LIST;
-    warnings = EMPTY_ALERT_LIST;
+    errors = `concAlert();
+    warnings = `concAlert();
     nbErrors = 0;
     nbWarnings = 0;
   }
 
   public void addWarning(String message, String file, int line) {
-    Alert entry = platformAlertFactory.makeAlert_Warning(message, file, line);
-    warnings = platformAlertFactory.append(warnings, entry);
+    Alert entry = `Warning(message, file, line);
+    warnings = `concAlert(entry,warnings*);
     nbWarnings++;
   }
   
   public void addError(String message, String file, int line) {
-    Alert entry = platformAlertFactory.makeAlert_Error(message, file, line);
-    errors = platformAlertFactory.append(errors, entry);
+    Alert entry = `Error(message, file, line);
+    errors = `concAlert(entry,errors*);
     nbErrors++;
   }
   
@@ -85,12 +84,14 @@ public class RuntimeAlert {
   }
   
   public void concat(RuntimeAlert newErrors) {
-    if(newErrors.getErrors() != EMPTY_ALERT_LIST) {
-      errors = platformAlertFactory.concat(errors, newErrors.getErrors());
+    if(newErrors.getErrors() != `concAlert()) {
+      AlertList newAlerts = newErrors.getErrors();
+      errors = `concAlert(newAlerts*,errors*);
       nbErrors += newErrors.getNbErrors();      
     }
-    if(newErrors.getWarnings() != EMPTY_ALERT_LIST) {
-      warnings = platformAlertFactory.concat(warnings, newErrors.getWarnings());
+    if(newErrors.getWarnings() != `concAlert()) {
+      AlertList newAlerts = newErrors.getWarnings();
+      warnings = `concAlert(newAlerts*,warnings*);
       nbWarnings += newErrors.getNbWarnings();
     }
   }
