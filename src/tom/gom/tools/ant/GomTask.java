@@ -1,5 +1,4 @@
 /*
- *   
  * Gom
  * 
  * Copyright (c) 2005-2006, INRIA
@@ -219,7 +218,7 @@ public class GomTask extends MatchingTask {
       String cmd[] = split(str_command);
       if(compileList.length > 0) {
         int err = -1;
-        err = vas.Vas.exec(cmd);
+        err = tom.gom.Gom.exec(cmd);
         if(err != 0) {
           if(failOnError) {
             throw new BuildException("gom returned: " + err, getLocation());

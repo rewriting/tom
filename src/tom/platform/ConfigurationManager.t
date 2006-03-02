@@ -28,7 +28,6 @@ package tom.platform;
 import java.util.*;
 import java.util.logging.*;
 
-
 import aterm.*;
 import aterm.pure.*;
 
@@ -40,10 +39,10 @@ import tom.platform.adt.platformoption.types.*;
 
 /**
  * This class is a wrapper for the platform XML configuration files.
- * It extract the plugins information and create an ordered list of
- * of instances. It extract the Option Management information and based
+ * It extracts the plugins information and create an ordered list of
+ * of instances. Extracts the Option Management information and based
  * on it create and initialize the corresponding OptionManager.
- * The instantiation of a Configuration is not sfficient since it need to
+ * The instantiation of a Configuration is not sufficient since it need to
  * be initialized with an execution commandLine.
  *
  */
@@ -52,22 +51,7 @@ public class ConfigurationManager {
   /** Used to analyse xml configuration file*/
   %include{ adt/tnode/TNode.tom }
   
-  /**
-   * Accessor method necessary when including adt/tnode/TNode.tom 
-   * @return a TNodeFactory
-   */
-  private TNodeFactory getTNodeFactory() {
-    return TNodeFactory.getInstance(SingletonFactory.getInstance());
-  }
-
   %include{ adt/platformoption/PlatformOption.tom }
-  /**
-   * Accessor method necessary to include adt/platformoption/PlatformOption.tom
-   * @return a PlatformOptionFactory
-   */
-  private PlatformOptionFactory getPlatformOptionFactory() {
-    return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
-  }
   
   /** configuration file name */
   private String xmlConfigurationFileName;
@@ -230,4 +214,4 @@ public class ConfigurationManager {
     return Logger.getLogger(getClass().getName());
   }
 
-} // class ConfigurationManager
+}
