@@ -985,15 +985,17 @@
       <fileset dir="${bootstrap.dir}/build">
         <include name="**/*.class"/>
 	<exclude name="tom/engine/parser/*.class"/>
+	<exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${bootstrap.dir}/build">
-	      <include name="tom/engine/parser/TomLexer.class"/>
-	      <include name="tom/engine/parser/TomParser.class"/>
-	      <include name="tom/engine/parser/HostLexer.class"/>
-	      <include name="tom/engine/parser/HostParser.class"/>
-	      <include name="tom/engine/parser/BackQuoteLexer.class"/>
-	      <include name="tom/engine/parser/BackQuoteParser.class"/>
+        <include name="tom/engine/parser/TomLexer.class"/>
+        <include name="tom/engine/parser/TomParser.class"/>
+        <include name="tom/engine/parser/HostLexer.class"/>
+        <include name="tom/engine/parser/HostParser.class"/>
+        <include name="tom/engine/parser/BackQuoteLexer.class"/>
+        <include name="tom/engine/parser/BackQuoteParser.class"/>
+        <include name="tom/gom/parser/GomParserPlugin.class"/>
       </fileset>
     </concat>
     <concat destfile="${src.src}/bootcheck/version2">
@@ -1001,15 +1003,17 @@
         <include name="**/*.class"/>
 	<exclude name="tom/engine/parser/*.class"/>
 	<exclude name="tom/engine/Tom.class"/>
+	<exclude name="tom/gom/parser/*.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${src.build}">
-	      <include name="tom/engine/parser/TomLexer.class"/>
-	      <include name="tom/engine/parser/TomParser.class"/>
-	      <include name="tom/engine/parser/HostLexer.class"/>
-	      <include name="tom/engine/parser/HostParser.class"/>
-	      <include name="tom/engine/parser/BackQuoteLexer.class"/>
-              <include name="tom/engine/parser/BackQuoteParser.class"/>
+        <include name="tom/engine/parser/TomLexer.class"/>
+        <include name="tom/engine/parser/TomParser.class"/>
+        <include name="tom/engine/parser/HostLexer.class"/>
+        <include name="tom/engine/parser/HostParser.class"/>
+        <include name="tom/engine/parser/BackQuoteLexer.class"/>
+        <include name="tom/engine/parser/BackQuoteParser.class"/>
+        <include name="tom/gom/parser/GomParserPlugin.class"/>
       </fileset>
     </concat>
     <condition property="bootstrap.ok" value="true">
