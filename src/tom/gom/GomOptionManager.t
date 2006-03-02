@@ -111,13 +111,22 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * @param optionValue the option's desired value
    */
   public void optionChanged(String optionName, Object optionValue) {
-    if(optionName.equals("verbose")) {
+    String canonicalOptionName = getCanonicalName(optionName);
+    if(canonicalOptionName.equals("verbose")) {
       if( ((Boolean)optionValue).booleanValue() ) { 
         Gom.changeLogLevel(Level.INFO);
       }
-    } else if(optionName.equals("wall")) {
+    } else if(canonicalOptionName.equals("wall")) {
       if( ((Boolean)optionValue).booleanValue() ) { 
         Gom.changeLogLevel(Level.WARNING);
+      }
+    } else if(canonicalOptionName.equals("debug")) {
+      if( ((Boolean)optionValue).booleanValue() ) { 
+        Gom.changeLogLevel(Level.FINE);
+      }
+    } else if(canonicalOptionName.equals("verbosedebug")) {
+      if( ((Boolean)optionValue).booleanValue() ) { 
+        Gom.changeLogLevel(Level.FINER);
       }
     }
   }

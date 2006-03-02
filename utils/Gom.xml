@@ -74,6 +74,14 @@
                altName='v'
                description='Display compilation information'
                value='false'/>
+      <boolean name='debug'
+               altName='vv'
+               description='Display debugging info'
+               value='false'/>
+      <boolean name='verbosedebug'
+               altName='vvv'
+               description='Display even more debugging info'
+               value='false'/>
       <string name='package'
               altName='p'
               description='Specify package name (optional)'
