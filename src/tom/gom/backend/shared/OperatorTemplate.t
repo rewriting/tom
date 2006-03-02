@@ -179,7 +179,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
 
     /*------------------------------------- handle the last 11 bytes */
 
-"%+generateHashArgs("a")+%"
+"%+generateHashArgs()+%"
     
     a -= b;
     a -= c;
@@ -426,11 +426,13 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     return res.substring(0,res.length()-2);
   }
 
-  private String generateHashArgs(String accum) {
+  private String generateHashArgs() {
     String res = "";
-    int index = 0;
+    int index = slotList.getLength() - 1;
     %match(SlotFieldList slotList) {
       concSlotField(_*,slot@SlotField[name=slotName,domain=domain],_*) -> {
+        int shift = (index % 4) * 8;
+        String accum = ""+"aaaabbbbcccc".toCharArray()[index % 12];
         res += "    "+accum+" += (";
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += fieldName(`slotName)+".hashCode()";
@@ -438,16 +440,15 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
           if (`domain.equals(`ClassName("","int"))) {
             res+= fieldName(`slotName);
           } else if (`domain.equals(`ClassName("","String"))) { 
-            // Use the java hashCode for String. This may be a bad choice
-            res+= fieldName(`slotName)+".hashCode()";
+            // Use the string hashFunction for Strings, and pass index as arity
+            res+= "shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")";
           } else {
             throw new GomRuntimeException("generateHashArgs: Builtin " + `domain + " not supported");
           }
         }
-        index = index % 4;
-        if (index!=0) { res += " << "+(index*8); }
+        if (shift!=0) { res += " << "+(shift); }
         res += ");\n";
-        index++;
+        index--;
       }
     }
     return res;
