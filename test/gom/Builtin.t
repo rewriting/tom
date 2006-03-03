@@ -39,7 +39,13 @@ public class Builtin {
     String res = "";
     int n = 32;
     Wrapper t = `Int(10);
+    String a = "Germain";
+    String b = new String("Germain");
+    System.out.println("a == b: "+ (a == b));
     Wrapper nm = `Name("Germain");
+    Wrapper na = `Name(a);
+    Wrapper nb = `Name(b);
+    System.out.println("na == nb: "+ (na == nb));
 
     matchBlock1: {
       %match(Wrapper t) {
