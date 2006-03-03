@@ -23,11 +23,11 @@ header {
    * 
    **/
   package tom.gom.parser;
-} 
+}
 
 {
   import java.util.LinkedList;
-  import java.util.Iterator;	
+  import java.util.Iterator;
   import java.util.logging.Logger;
   import java.util.logging.Level;
 
@@ -42,10 +42,10 @@ options {
   defaultErrorHandler = false;
 }
 {
-	%include { tom/gom/adt/gom/Gom.tom}
+  %include { tom/gom/adt/gom/Gom.tom}
 
-	private static final String REAL ="real";
-	private static final String DOUBLE ="double";
+  private static final String REAL ="real";
+  private static final String DOUBLE ="double";
 
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();
@@ -54,24 +54,24 @@ options {
 
 module returns [GomModule module]
 {
-	module = null;
-	GomModuleName gomModuleName = null;
-	ImportList impor = `concImportedModule();
+  module = null;
+  GomModuleName gomModuleName = null;
+  ImportList impor = `concImportedModule();
   Section parsedsection = null;
 }
 : MODULE moduleName:IDENTIFIER
-{	gomModuleName = `GomModuleName(moduleName.getText()); }
+{ gomModuleName = `GomModuleName(moduleName.getText()); }
 (impor = imports)?
   parsedsection = section
 {
   module = `GomModule(gomModuleName,
-      concSection(Imports(impor),parsedsection)) ;
+      concSection(Imports(impor),parsedsection));
 }
 ;
-		
+
 imports returns [ImportList imports]
 {
-	imports = `concImportedModule();
+  imports = `concImportedModule();
 }
 : IMPORTS 
   (importedModuleName:IDENTIFIER
@@ -81,7 +81,7 @@ imports returns [ImportList imports]
    }
    )*
 ;
-	
+
 section returns [Section parsedsection]
 {
   parsedsection = null;
@@ -123,11 +123,11 @@ sortdef returns [GomTypeList definedSorts]
 ;
 
 type returns [String id]
-{ id=null; }		 
+{ id=null; }
 : i:IDENTIFIER {
   if(i.getText().equals(DOUBLE)) {
     id=REAL;
-    Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+    Logger.getLogger(getClass().getName()).log(Level.WARNING,
         "Please prefer to use real in place of double\nAutomatic conversion done since double is a reserved word");
   } else {
     id=i.getText();
@@ -158,7 +158,7 @@ production returns [Production prod]
 }
 : id:IDENTIFIER { opName = id.getText(); }
 (
- LEFT_BRACE (field = field 
+ LEFT_BRACE (field = field
    { fieldList = `concField(fieldList*,field); }
    ( COMMA field = field
      { fieldList = `concField(fieldList*,field); }
@@ -229,9 +229,9 @@ ML_COMMENT
      }
      :
     { LA(2)!='/' }? '*'
-     |       '\r' '\n'        {newline();}
-     |       '\r'             {newline();}
-     |       '\n'             {newline();}
+     |       '\r' '\n' {newline();}
+     |       '\r'      {newline();}
+     |       '\n'      {newline();}
      |       ~('*'|'\n'|'\r')
      )*
     "*/"
