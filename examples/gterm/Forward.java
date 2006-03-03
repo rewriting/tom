@@ -1,3 +1,5 @@
+package gterm;
+
 public class Forward implements Visitor, jjtraveler.Visitor {
   protected jjtraveler.Visitor any;
 

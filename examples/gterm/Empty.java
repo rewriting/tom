@@ -1,3 +1,5 @@
+package gterm;
+
 public class Empty extends List {
   private static Empty proto = new Empty();
 	private int hashCode;

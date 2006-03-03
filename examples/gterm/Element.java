@@ -1,3 +1,5 @@
+package gterm;
+
 public abstract class Element extends AbstractType {
   
   public AbstractType accept(Visitor v) throws jjtraveler.VisitFailure {

@@ -53,6 +53,7 @@
   <property name="ferus"          value="ferus"/>
   <property name="gom"            value="gom"/>
   <property name="gomoku"         value="gomoku"/>
+  <property name="gterm"          value="gterm"/>
   <property name="gtree"          value="gtree"/>
   <property name="integerc"       value="integerc"/>
   <property name="list"           value="list"/>
@@ -420,6 +421,11 @@
     <javacompile example="${gomoku}"/>
   </target>
 
+  <target name="gterm" depends="init">
+    <tomcompile example="${gterm}"/>
+    <javacompile example="${gterm}"/>
+  </target>
+
   <target name="gtree" depends="init">
     <adtcompile example="${gtree}"
                 factory="term"/>
@@ -756,11 +762,11 @@
   
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="addressbook, adt, antipattern, apireach, appletxml, boulderdash,
-          builtin, caml, cell, dom, expression, ferus, gomoku, gtree, integerc,
-          list, matching, master, mgs, nspk, p3p, peano, pnspk, poly, pqueens,
-          prodrule, propp, rbtree, set, strategy, strings, ted, 
-          tutorial, vas, xml, zenon">
+	  depends="addressbook, adt, antipattern, apireach, appletxml,
+	  boulderdash, builtin, caml, cell, dom, expression, ferus, gomoku,
+	  gterm, gtree, integerc, list, matching, master, mgs, nspk, p3p,
+	  peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set, strategy,
+	  strings, ted, tutorial, vas, xml, zenon">
   </target>
 
   <target name="dist.examples" 
@@ -844,6 +850,9 @@
 
         <include name="${gomoku}/*.t"/>
         <include name="${gomoku}/*.vas"/>
+
+        <include name="${gterm}/*.t"/>
+        <include name="${gterm}/*.java"/>
 
         <include name="${gtree}/README"/>
         <include name="${gtree}/*.t"/>

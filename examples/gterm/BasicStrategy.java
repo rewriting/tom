@@ -1,3 +1,5 @@
+package gterm;
+
 public class BasicStrategy extends Forward implements jjtraveler.reflective.VisitableVisitor {
   public int getChildCount() {
     return 1;

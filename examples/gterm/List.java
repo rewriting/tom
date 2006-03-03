@@ -1,3 +1,5 @@
+package gterm;
+
 public abstract class List extends AbstractType {
 
   public AbstractType accept(Visitor v) throws jjtraveler.VisitFailure {

@@ -1,3 +1,5 @@
+package gterm;
+
 public class Int extends Element {
   private static Int proto = new Int();
 	private int hashCode;

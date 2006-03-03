@@ -1,3 +1,5 @@
+package gterm;
+
 public class Plop extends Element {
   private static Plop proto = new Plop();
 	private int hashCode;

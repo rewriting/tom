@@ -1,3 +1,5 @@
+package gterm;
+
 public class BenchConsInt {
   %include { int.tom }
 
