@@ -42,22 +42,23 @@ public class AbstractTypeTemplate extends TemplateClass {
   public String generate() {
     StringBuffer out = new StringBuffer();
 
-    out.append("package "+getPackage()+";\n");
-    out.append("\n");
-    out.append("public abstract class "+className()+" implements shared.SharedObject, jjtraveler.Visitable {\n");
-    
-    out.append("\n");
-    out.append("\tpublic abstract aterm.ATerm toATerm();\n");
-    out.append("\n");
-    out.append("\tpublic String toString() {;\n");
-    out.append("\t\treturn toATerm().toString();\n");
-    out.append("\t}\n");
+    out.append(
+%"
+package "%+getPackage()+%";
 
-    // generate the accept abstract method. This will have to be put in a specific accept class
-    out.append("\tabstract public "+className()+" accept("+fullClassName(visitor)+" v) throws jjtraveler.VisitFailure;\n");
-    
-    out.append("}");
-    
+public abstract class "%+className()+%" implements shared.SharedObject, jjtraveler.Visitable {
+
+  public abstract aterm.ATerm toATerm();
+
+  public String toString() {
+    return toATerm().toString();
+  }
+
+  abstract public "%+className()+%" accept("%+fullClassName(visitor)+%" v) throws jjtraveler.VisitFailure;
+
+}
+"%);
+
     return out.toString();
   }
 }
