@@ -46,12 +46,12 @@ import antlr.TokenStreamException;
  * Get the input file from GomStreamManger and parse
  */
 public class GomParserPlugin extends GomGenericPlugin {
-  
+
   public static final String PARSED_SUFFIX = ".tfix.gom.parsed";
   /** input stream */
   private DataInputStream inputStream;
   private String inputFileName;
-  
+
   /** the parsed module */
   private GomModule module;
 
@@ -59,7 +59,7 @@ public class GomParserPlugin extends GomGenericPlugin {
   public GomParserPlugin() {
     super("GomParser");
   }
-  
+
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
@@ -72,9 +72,9 @@ public class GomParserPlugin extends GomGenericPlugin {
       // (they will be named using inputFileName, and passed by the streamManager)
       // ideally, the inputFileName will only be a key to get a stream from the
       // streamManager
-	    inputStream = streamFromFile(inputFileName);
+      inputStream = streamFromFile(inputFileName);
     } else {
-      getLogger().log(Level.SEVERE, 
+      getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{"GomParser", "[GomStreamManager]",
             getArgumentArrayString(arg)});
@@ -87,12 +87,12 @@ public class GomParserPlugin extends GomGenericPlugin {
       stream = new DataInputStream(new FileInputStream(new File(fileName)));
     } catch (FileNotFoundException e) {
       getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
-          new Object[]{fileName}); 
+          new Object[]{fileName});
       return null;
     }      
     return stream;
   }
-  
+
   /**
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
@@ -108,37 +108,37 @@ public class GomParserPlugin extends GomGenericPlugin {
     try {
       module = parser.module();
     } catch (RecognitionException re) {
-    	StringWriter sw = new StringWriter();
+      StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       re.printStackTrace(pw);
-      getLogger().log(new PlatformLogRecord(Level.SEVERE, 
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.parseException,sw.toString(),
             inputFileName, lexer.getLine()));
       return;
     } catch(TokenStreamException streamException) {
-    	StringWriter stringwriter = new StringWriter();
+      StringWriter stringwriter = new StringWriter();
       PrintWriter printwriter = new PrintWriter(stringwriter);
       streamException.printStackTrace(printwriter);
-      getLogger().log(new PlatformLogRecord(Level.SEVERE, 
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.parseException,stringwriter.toString(),
             inputFileName, lexer.getLine()));
       return;
     } catch (Exception e) {
-    	StringWriter stringwriter = new StringWriter();
+      StringWriter stringwriter = new StringWriter();
       PrintWriter printwriter = new PrintWriter(stringwriter);
       e.printStackTrace(printwriter);
-      getLogger().log(Level.SEVERE, GomMessage.exceptionMessage.getMessage(), 
+      getLogger().log(Level.SEVERE, GomMessage.exceptionMessage.getMessage(),
                       new Object[]{getClass().getName(), inputFileName, stringwriter.toString()});
       return;
     }
-    
+
     getLogger().log(Level.INFO, "Parsing succeeds");
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
                            + PARSED_SUFFIX, (aterm.ATerm)module);
     }
   }
-  
+
   /**
    * inherited from plugin interface
    * returns an array containing the parsed module and the streamManager
