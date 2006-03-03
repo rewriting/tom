@@ -51,14 +51,24 @@ public class SortTemplate extends TemplateClass {
   public String generate() {
     StringBuffer out = new StringBuffer();
 
-    out.append("package "+getPackage()+";\n");
-    out.append("\n");
-    out.append("public abstract class "+className()+" extends "+fullClassName(abstractType)+" {\n");
-    out.append("\n");
+    out.append(%"
+package "%+getPackage()+%";        
 
-    out.append("\tpublic "+fullClassName(abstractType)+" accept("+fullClassName(visitor)+" v) throws jjtraveler.VisitFailure {\n");
-    out.append("\t\treturn v."+visitMethod(className)+"(this);\n");
-    out.append("\t}\n");
+public abstract class "%+className()+%" extends "%+fullClassName(abstractType)+%" {
+
+  public "%+fullClassName(abstractType)+%" accept("%+fullClassName(visitor)+%" v) throws jjtraveler.VisitFailure {
+    return v."%+visitMethod(className)+%"(this);
+  }
+
+"%+generateBody()+%"
+
+}
+"%);
+    return out.toString();
+  }
+
+  public String generateBody() {
+    StringBuffer out = new StringBuffer();
 
     // methods for each operator
     ClassNameList consum = operatorList;
@@ -66,10 +76,12 @@ public class SortTemplate extends TemplateClass {
       ClassName operatorName = consum.getHead();
       consum = consum.getTail();
 
-      out.append("\tpublic boolean "+isOperatorMethod(operatorName)+"() {\n");
-      out.append("\t\treturn false;\n");
-      out.append("\t}\n");
-      out.append("\n");
+      out.append(%"
+  public boolean "%+isOperatorMethod(operatorName)+%"() {
+    return false;
+  }
+
+"%);
     }
     // methods for each slot
     while (!slotList.isEmpty()) {
@@ -83,10 +95,12 @@ public class SortTemplate extends TemplateClass {
       out.append("\n");
       */
 
-      out.append("\tpublic "+slotDomain(slot)+" "+getMethod(slot)+"() {\n");
-      out.append("\t\tthrow new UnsupportedOperationException(\"This "+className()+" has no "+slot.getName()+"\");\n");
-      out.append("\t}\n");
-      out.append("\n");
+      out.append(%"
+  public "%+slotDomain(slot)+%" "%+getMethod(slot)+%"() {
+    throw new UnsupportedOperationException("This "%+className()+%" has no "%+slot.getName()+%"");
+  }
+
+"%);
 
       /* Do not generate "setSlot" methods for now
       out.append("\tpublic "+className()+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
@@ -98,23 +112,31 @@ public class SortTemplate extends TemplateClass {
     }
 
     /* fromTerm method, dispatching to operator classes */
-    out.append("\tpublic static "+fullClassName()+" fromTerm(aterm.ATerm trm) {\n");
-    out.append("\t\t"+fullClassName()+" tmp;\n");
+    out.append(%"
+  public static "%+fullClassName()+%" fromTerm(aterm.ATerm trm) {
+    "%+fullClassName()+%" tmp;
+"%+generateFromTerm("trm","tmp")+%"
+    throw new IllegalArgumentException("This is not a "%+className()+%"" + trm);
+  }
 
-    consum = operatorList;
+"%);
+
+    return out.toString();
+  }
+  
+  private String generateFromTerm(String trm, String tmp) {
+    StringBuffer out = new StringBuffer();
+    ClassNameList consum = operatorList;
     while (!consum.isEmpty()) {
       ClassName operatorName = consum.getHead();
       consum = consum.getTail();
-      out.append("\t\ttmp = "+fullClassName(operatorName)+".fromTerm(trm);\n");
-      out.append("\t\tif (tmp != null) {\n");
-      out.append("\t\t\treturn tmp;\n");
-      out.append("\t\t}\n");
+      out.append(%"
+    "%+tmp+%" = "%+fullClassName(operatorName)+%".fromTerm("%+trm+%");
+    if ("%+tmp+%" != null) {
+      return tmp;
     }
-    out.append("\t\tthrow new IllegalArgumentException(\"This is not a "+className()+"\" + trm);\n");
-    out.append("\t}\n");
-
-    out.append("}");
-
+"%);
+    }
     return out.toString();
   }
 }
