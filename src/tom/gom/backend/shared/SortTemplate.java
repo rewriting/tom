@@ -3,23 +3,23 @@
  *
  * Copyright (C) 2006 INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
- * 
+ *
  **/
 
 package tom.gom.backend.shared;
@@ -55,7 +55,7 @@ public class SortTemplate extends TemplateClass {
     out.append("\n");
     out.append("public abstract class "+className()+" extends "+fullClassName(abstractType)+" {\n");
     out.append("\n");
-    
+
     out.append("\tpublic "+fullClassName(abstractType)+" accept("+fullClassName(visitor)+" v) throws jjtraveler.VisitFailure {\n");
     out.append("\t\treturn v."+visitMethod(className)+"(this);\n");
     out.append("\t}\n");
@@ -100,7 +100,7 @@ public class SortTemplate extends TemplateClass {
     /* fromTerm method, dispatching to operator classes */
     out.append("\tpublic static "+fullClassName()+" fromTerm(aterm.ATerm trm) {\n");
     out.append("\t\t"+fullClassName()+" tmp;\n");
-        
+
     consum = operatorList;
     while (!consum.isEmpty()) {
       ClassName operatorName = consum.getHead();
@@ -114,7 +114,7 @@ public class SortTemplate extends TemplateClass {
     out.append("\t}\n");
 
     out.append("}");
-    
+
     return out.toString();
   }
 }

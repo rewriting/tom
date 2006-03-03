@@ -38,7 +38,7 @@ import tom.gom.tools.GomGenericPlugin;
  * produce an abstract view of the Gom input with type information
  */
 public class GomTypeExpanderPlugin extends GomGenericPlugin {
-  
+
   public static final String TYPED_SUFFIX = ".tfix.gom.typed";
 
   /** the list of included modules */
@@ -48,23 +48,23 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
   public GomTypeExpanderPlugin() {
     super("GomTypeExpander");
   }
-  
+
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
    */
   public void setArgs(Object arg[]) {
     if (arg[0] instanceof GomModuleList) {
-	    moduleList = (GomModuleList)arg[0];
+      moduleList = (GomModuleList)arg[0];
       setStreamManager((GomStreamManager)arg[1]);
     } else {
-      getLogger().log(Level.SEVERE, 
+      getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{"GomTypeExpander", "[GomModuleList,GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
-  
+
   /**
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
@@ -88,7 +88,7 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
       }
     }
   }
-  
+
   /**
    * inherited from plugin interface
    * returns an array containing the parsed module and the streamManager

@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Antoine Reilles     			e-mail: Antoine.Reilles@loria.fr
+ * Antoine Reilles       e-mail: Antoine.Reilles@loria.fr
  *
  **/
 
@@ -156,7 +156,7 @@ public class GomTask extends MatchingTask {
     m.setTo("\\1" + protectedFileSeparator +"\\L\\2" + protectedFileSeparator + "\\2.tom");
     SourceFileScanner sfs = new SourceFileScanner(this);
     File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
-    
+
     if (newFiles.length > 0) {
       File[] newCompileList
         = new File[compileList.length + newFiles.length];
@@ -184,7 +184,7 @@ public class GomTask extends MatchingTask {
                                    + srcDir.getPath()
                                    + "\" does not exist!", getLocation());
         }
-        
+
         DirectoryScanner ds = this.getDirectoryScanner(srcDir);
         String[] files = ds.getIncludedFiles();
 
@@ -255,7 +255,7 @@ public class GomTask extends MatchingTask {
   public File getConfig() {
     return configFile;
   }
-  
+
   /**
    * Set the package name
    * @param packagePrefix the package name
@@ -315,7 +315,7 @@ public class GomTask extends MatchingTask {
     File result = new File(getDestdir(),getPackagePath());
     try {
       result = result.getCanonicalFile();
-    } 
+    }
     catch (IOException e) {
       System.out.println("Problem with Package Path " + result);
     }

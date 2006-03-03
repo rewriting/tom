@@ -48,8 +48,8 @@ import jjtraveler.VisitFailure;
 
 public class GomCompiler {
 
-	%include { ../adt/gom/Gom.tom}
-	%include { ../adt/objects/Objects.tom}
+  %include { ../adt/gom/Gom.tom}
+  %include { ../adt/objects/Objects.tom}
 
   %include { mutraveler.tom }
 
@@ -67,7 +67,7 @@ public class GomCompiler {
     Map sortGomClassForSortDecl = new HashMap();
     Map classForOperatorDecl = new HashMap();
     /* For each module */
-    Iterator it = getModuleDeclSet(sortList).iterator(); 
+    Iterator it = getModuleDeclSet(sortList).iterator();
     while(it.hasNext()) {
       ModuleDecl moduleDecl = (ModuleDecl) it.next();
       String moduleName = moduleDecl.getModuleName().getName();
@@ -79,7 +79,7 @@ public class GomCompiler {
       ClassName factoryName = `ClassName(
           packagePrefix(moduleDecl),
           moduleName+"Factory");
-      factoryNameForModule.put(moduleDecl,factoryName); 
+      factoryNameForModule.put(moduleDecl,factoryName);
 
       // get all classnames for all sorts (in the module or imported)
       ClassNameList classSortList = sortClassNames(sortList);
@@ -88,7 +88,7 @@ public class GomCompiler {
       ClassName visitorName = `ClassName(packagePrefix(moduleDecl),moduleName+"Visitor");
       visitorNameForModule.put(moduleDecl,visitorName);
 
-      abstractTypeNameForModule.put(moduleDecl,abstractTypeName); 
+      abstractTypeNameForModule.put(moduleDecl,abstractTypeName);
       GomClass abstracttype = `AbstractTypeClass(abstractTypeName,factoryName,visitorName,classSortList);
       classList = `concGomClass(abstracttype,classList*);
 
@@ -105,7 +105,7 @@ public class GomCompiler {
       %match(Sort sort) {
         Sort[decl=decl@SortDecl[name=sortname,moduleDecl=moduleDecl]] -> {
           ClassName sortClassName = `ClassName(packagePrefix(moduleDecl)+".types",sortname);
-          sortClassNameForSortDecl.put(`decl,sortClassName); 
+          sortClassNameForSortDecl.put(`decl,sortClassName);
         }
       }
     }
@@ -171,7 +171,7 @@ public class GomCompiler {
                                                sortClassName,
                                                visitorName,slots);
               }
-              classForOperatorDecl.put(`opdecl,operatorClass); 
+              classForOperatorDecl.put(`opdecl,operatorClass);
               classList = `concGomClass(operatorClass,classList*);
             }
           }
@@ -227,11 +227,11 @@ public class GomCompiler {
         %match(SortList moduleSorts) {
           concSort(_*,Sort[operators=concOperator(_*,opDecl,_*)],_*) -> {
             GomClass opClass = (GomClass) classForOperatorDecl.get(`opDecl);
-            allOperatorClasses = `concGomClass(opClass,allOperatorClasses*); 
+            allOperatorClasses = `concGomClass(opClass,allOperatorClasses*);
           }
         }
       }
-      
+
       ClassName factoryClassName = (ClassName)factoryNameForModule.get(moduleDecl);
       ClassName abstractTypeClassName = (ClassName)abstractTypeNameForModule.get(moduleDecl);
       GomClass factoryClass = `FactoryClass(factoryClassName,importedFactories,allSortClasses,allOperatorClasses);
@@ -261,7 +261,7 @@ public class GomCompiler {
       ClassName tomMappingName = `ClassName(packagePrefix(moduleDecl),moduleName);
       GomClass tommappingclass = `TomMapping(tomMappingName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(tommappingclass,classList*);
-      
+
     }
 
     return classList;
@@ -336,6 +336,7 @@ public class GomCompiler {
     }
     return pkgPrefix.toLowerCase();
   }
+
   private SlotFieldList slotFieldListFromSet(Set slotFieldSet) {
     Iterator it = slotFieldSet.iterator();
     SlotFieldList list = `concSlotField();

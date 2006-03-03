@@ -48,9 +48,9 @@ import antlr.TokenStreamException;
 public class GomExpander {
   private GomStreamManager streamManager;
 
-	%include { ../adt/gom/Gom.tom}
+  %include { ../adt/gom/Gom.tom}
 
-	public GomExpander(GomStreamManager streamManager) {
+  public GomExpander(GomStreamManager streamManager) {
     this.streamManager = streamManager;
   }
 
@@ -61,98 +61,98 @@ public class GomExpander {
   /*
    * Compute the transitive closure of imported modules
    */
-	public GomModuleList expand(GomModule module) {
-		GomModuleList result = `concGomModule(module);
-		Set alreadyParsedModule = new HashSet();
-		alreadyParsedModule.add(module.getModuleName());
-		Set moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
-    
-		while (!moduleToAnalyse.isEmpty()) {
-			HashSet newModuleToAnalyse = new HashSet();
-			Iterator it = moduleToAnalyse.iterator();
+  public GomModuleList expand(GomModule module) {
+    GomModuleList result = `concGomModule(module);
+    Set alreadyParsedModule = new HashSet();
+    alreadyParsedModule.add(module.getModuleName());
+    Set moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
 
-			while(it.hasNext()) {
-				GomModuleName moduleNameName = (GomModuleName)it.next();
-				String moduleName = moduleNameName.getName();
+    while (!moduleToAnalyse.isEmpty()) {
+      HashSet newModuleToAnalyse = new HashSet();
+      Iterator it = moduleToAnalyse.iterator();
 
-				if(!environment().isBuiltin(moduleName) 
+      while(it.hasNext()) {
+        GomModuleName moduleNameName = (GomModuleName)it.next();
+        String moduleName = moduleNameName.getName();
+
+        if(!environment().isBuiltin(moduleName) 
             && !alreadyParsedModule.contains(moduleNameName)) {
           GomModule importedModule = parse(moduleName);
           if(importedModule == null) {
             return null;
-					}
-					result = `concGomModule(result*, importedModule);
-					alreadyParsedModule.add(moduleNameName);
-					newModuleToAnalyse.addAll(generateModuleToAnalyseSet(module, alreadyParsedModule));
-				}
-			}
-			moduleToAnalyse = newModuleToAnalyse;
-		}
-		return result;
-	}
-  
+          }
+          result = `concGomModule(result*, importedModule);
+          alreadyParsedModule.add(moduleNameName);
+          newModuleToAnalyse.addAll(generateModuleToAnalyseSet(module, alreadyParsedModule));
+        }
+      }
+      moduleToAnalyse = newModuleToAnalyse;
+    }
+    return result;
+  }
+
   /*
    * Compute immediate imported modules where already parsed modules are removed
    */
-	private Set generateModuleToAnalyseSet(GomModule module, Set alreadyParsedModule) {
-		HashSet moduleToAnalyse = new HashSet();
-		ImportList importedModules = getImportList(module);
-		while(!importedModules.isEmpty()) {
-			GomModuleName name = importedModules.getHead().getModuleName();
-			if(!alreadyParsedModule.contains(name)) {
-				moduleToAnalyse.add(name);
-			}
-			importedModules = importedModules.getTail();
-		}
+  private Set generateModuleToAnalyseSet(GomModule module, Set alreadyParsedModule) {
+    HashSet moduleToAnalyse = new HashSet();
+    ImportList importedModules = getImportList(module);
+    while(!importedModules.isEmpty()) {
+      GomModuleName name = importedModules.getHead().getModuleName();
+      if(!alreadyParsedModule.contains(name)) {
+        moduleToAnalyse.add(name);
+      }
+      importedModules = importedModules.getTail();
+    }
     //System.out.println("*** generateModuleToAnalyseSet = " + moduleToAnalyse);
-		return moduleToAnalyse;
-	}
-  
-	private GomModule parse(String moduleName) {
-		GomModule result = null;
-		File importedModuleFile = findModuleFile(moduleName);
+    return moduleToAnalyse;
+  }
+
+  private GomModule parse(String moduleName) {
+    GomModule result = null;
+    File importedModuleFile = findModuleFile(moduleName);
     if(importedModuleFile == null) {
-      getLogger().log(Level.SEVERE, 
-          GomMessage.moduleNotFound.getMessage(), 
+      getLogger().log(Level.SEVERE,
+          GomMessage.moduleNotFound.getMessage(),
           new Object[]{moduleName});
       return null;
     }
-		InputStream inputStream = null;
-		try {
-    		inputStream = new FileInputStream(importedModuleFile);
+    InputStream inputStream = null;
+    try {
+      inputStream = new FileInputStream(importedModuleFile);
     } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, 
-          GomMessage.fileNotFound.getMessage(), 
+      getLogger().log(Level.SEVERE,
+          GomMessage.fileNotFound.getMessage(),
           new Object[]{moduleName+".gom"});
-			return null;
+      return null;
     }
-		GomLexer lexer = new GomLexer(inputStream);
-  	GomParser parser = new GomParser(lexer);
+    GomLexer lexer = new GomLexer(inputStream);
+    GomParser parser = new GomParser(lexer);
     try {
       result = parser.module();
     } catch (RecognitionException re) {
       getLogger().log(Level.SEVERE, GomMessage.parseException.getMessage(),
-                      new Object[]{moduleName+".gom",
-                                   new Integer(lexer.getLine()),
-                                   re.getMessage()});
+          new Object[]{moduleName+".gom",
+          new Integer(lexer.getLine()),
+          re.getMessage()});
       return null;
     } catch(TokenStreamException tse) {
       getLogger().log(Level.SEVERE, GomMessage.parseException.getMessage(),
-                      new Object[]{moduleName+".gom",
-                                   new Integer(lexer.getLine()),
-                                   tse.getMessage()});
+          new Object[]{moduleName+".gom",
+          new Integer(lexer.getLine()),
+          tse.getMessage()});
       return null;
     }
     return result;
-	} 
+  }
 
   /**
    * find a module locally or thanks to the stream manager import list
    */
-	private File findModuleFile(String moduleName) {
+  private File findModuleFile(String moduleName) {
     String extendedModuleName = moduleName+".gom";
     File f = new File(extendedModuleName);
-		if(f.exists()) {
+    if(f.exists()) {
       return f;
     }
     return streamManager.findModuleFile(extendedModuleName);
@@ -164,7 +164,7 @@ public class GomExpander {
   }
 
   public ImportList getImportList(GomModule module) {
-    ImportList imports = `concImportedModule(); 
+    ImportList imports = `concImportedModule();
     %match(GomModule module) {
       GomModule(_,concSection(_*,Imports(importList),_*)) -> {
         imports = `concImportedModule(importList*,imports*);

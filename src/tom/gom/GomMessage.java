@@ -38,16 +38,16 @@ public class GomMessage implements PlatformMessage {
     this.message = message;
   }
 
-  public static final GomMessage loggingInitializationFailure = 
+  public static final GomMessage loggingInitializationFailure =
     new GomMessage("Error during Gom logging module initialization:{0}");
 
-  public static final GomMessage simpleMessage         =
+  public static final GomMessage simpleMessage =
     new GomMessage("{0}:{1,number,integer}: {2}");
-  public static final GomMessage exceptionMessage      =
+  public static final GomMessage exceptionMessage =
     new GomMessage("{0}: Unhandled exception occurs with input {1}: See stacktrace\n+++++++++++++++++++++++++\n{2}+++++++++++++++++++++++++");
 
   // GomOptionManager error messages
-  public static final GomMessage optionNotFound        =
+  public static final GomMessage optionNotFound =
     new GomMessage("GomOptionManager: Option `{0}` not found");
   public static final GomMessage prerequisitesIssue =
     new GomMessage("GomOptionManager: {0} can't run : prerequisites not met");
@@ -55,7 +55,7 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("GomOptionManager: No file to compile");
   public static final GomMessage incompleteOption =
     new GomMessage("GomOptionManager: Expecting information after option `{0}`");
-  public static final GomMessage incorrectOptionValue	=
+  public static final GomMessage incorrectOptionValue =
     new GomMessage("GomOptionManager: Option `{0}` was expected with value `{1}`, but `{2}` was found instead");
   public static final GomMessage destdirTwice =
     new GomMessage("GomOptionManager: Destination directory specified twice");
@@ -65,9 +65,9 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage setValue =
     new GomMessage("GomOptionManager: Set `{0}` to `{1}` (old value : `{2}`)");
   // GomPluginFactory
-  public static final GomMessage classNotFound         =
+  public static final GomMessage classNotFound =
     new GomMessage("{0}: Class {1} not found");
-  public static final GomMessage instantiationError    =
+  public static final GomMessage instantiationError =
     new GomMessage("{0}: An error occured during the instantiation of class {1}");
 
   // Plugings
@@ -75,7 +75,7 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("{0}.setArg expecting {1} but {2} argument");
 
   // parser.GomParserPlugin
-  public static final GomMessage fileNotFound          =
+  public static final GomMessage fileNotFound =
     new GomMessage("File {0} not found");
   public static final GomMessage tokenStreamException  =
     new GomMessage("TokenStreamException catched: See stacktrace\n\n{0}");
@@ -95,16 +95,16 @@ public class GomMessage implements PlatformMessage {
 
 
   // verbose messages
-  public static final GomMessage gomParsingPhase       =
+  public static final GomMessage gomParsingPhase =
     new GomMessage("Gom parsing phase ({0,number,integer} ms)");
 
   // Main messages
-  public static final GomMessage mainErrorMessage      =
+  public static final GomMessage mainErrorMessage =
     new GomMessage("{0}:{1,number,integer}:Error:{2}");
-  public static final GomMessage mainWarningMessage    =
+  public static final GomMessage mainWarningMessage =
     new GomMessage("{0}:{1,number,integer}:Warning:{2}");
 
-  public static final GomMessage iOException           =
+  public static final GomMessage iOException =
     new GomMessage("IO Exception reading file `{0}`\n{1}");
 
   // GomExpander
@@ -128,7 +128,7 @@ public class GomMessage implements PlatformMessage {
   // Message level
   public static final int GOM_INFO = 0;
   // Default error line
-  public static final int DEFAULT_ERROR_LINE_NUMBER = 1; 
+  public static final int DEFAULT_ERROR_LINE_NUMBER = 1;
 
   public String getMessage() {
     return message;

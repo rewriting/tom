@@ -3,23 +3,23 @@
  *
  * Copyright (C) 2006 INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
- * 
+ *
  **/
 
 package tom.gom.backend.shared;
@@ -56,13 +56,13 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
   private static "%+className()+%" proto = new "%+className()+%"();
   private int hashCode;
   private "%+className()+%"() {};
-    
+
 "%+generateMembers()+%"
 
 "%+generateBody()+%"
 
 }"%;
-    
+
     return classBody;
   }
 
@@ -75,7 +75,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     proto.initHashCode("%+childList()+%");
     return ("%+className()+%") shared.SingletonSharedObjectFactory.getInstance().build(proto);
   }
-  
+
   private void init("%+childListWithType() + (slotList.isEmpty()?"":", ") +%"int hashCode) {
 "%+generateMembersInit()+%"
     this.hashCode = hashCode;
@@ -113,7 +113,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     }
     return false;
   }
-  
+
   /* "%+className(sortName)+%" interface */
   public boolean "%+isOperatorMethod(className)+%"() {
     return true;
@@ -180,7 +180,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     /*------------------------------------- handle the last 11 bytes */
 
 "%+generateHashArgs()+%"
-    
+
     a -= b;
     a -= c;
     a ^= (c >> 13);
@@ -275,7 +275,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
         } else {
           if (`domain.equals(`ClassName("","int"))) {
             res+= "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt("+getMethod(slot)+"())";
-          } else if (`domain.equals(`ClassName("","String"))) { 
+          } else if (`domain.equals(`ClassName("","String"))) {
             res+= "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(";
             res += "aterm.pure.SingletonFactory.getInstance().makeAFun(";
             res += getMethod(slot)+"() ,0 , true))";
@@ -312,7 +312,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
         } else {
           if (`domain.equals(`ClassName("","int"))) {
             res+= "((aterm.ATermInt)"+appl+".getArgument("+index+")).getInt()";
-          } else if (`domain.equals(`ClassName("","String"))) { 
+          } else if (`domain.equals(`ClassName("","String"))) {
             res+= "(String)"+appl+".getArgument("+index+").toString()";
           } else {
             throw new GomRuntimeException("Builtin " + `domain + " not supported");
@@ -342,7 +342,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
       }
     }
     return res;
-  }     
+  }
   private String childList() {
     String res = "";
     SlotFieldList slots = slotList;
@@ -359,7 +359,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
       }
     }
     return res;
-  }     
+  }
   private String generateMembersEqualityTest(String peer) {
     String res = "";
     %match(SlotFieldList slotList) {
@@ -443,7 +443,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
         } else {
           if (`domain.equals(`ClassName("","int"))) {
             res+= fieldName(`slotName);
-          } else if (`domain.equals(`ClassName("","String"))) { 
+          } else if (`domain.equals(`ClassName("","String"))) {
             // Use the string hashFunction for Strings, and pass index as arity
             res+= "shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")";
           } else {

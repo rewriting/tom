@@ -38,7 +38,7 @@ import tom.gom.tools.error.GomRuntimeException;
 
 public class GomTypeExpander {
 
-	%include { ../adt/gom/Gom.tom}
+  %include { ../adt/gom/Gom.tom}
 
   private String packagePath;
   private GomEnvironment environment() {
@@ -51,7 +51,7 @@ public class GomTypeExpander {
   /**
     * We try here to get full sort definitions for each constructs
     */
-	public SortList expand(GomModuleList moduleList) {
+  public SortList expand(GomModuleList moduleList) {
 
     /* put a map giving all imported modules for each module in the path */
     buildDependencyMap(moduleList);
@@ -66,7 +66,7 @@ public class GomTypeExpander {
       Collection decls = getSortDeclarations(module);
       Collection implicitdecls = getSortDeclarationInCodomain(module);
 
-      /* Check that there are no implicit sort declarations 
+      /* Check that there are no implicit sort declarations
        * Also, check that declared sorts have at least an operator
        */
       if(!decls.containsAll(implicitdecls)) {
@@ -100,7 +100,7 @@ public class GomTypeExpander {
               _*)) -> {
           // we may want to pass modulename to help resolve ambiguities with modules
          getOperatorDecl(`prod,sortDeclList,operatorsForSort);
-          
+
         }
       }
     }
@@ -112,10 +112,10 @@ public class GomTypeExpander {
     while(it.hasNext()) {
       SortDecl decl = (SortDecl) it.next();
       OperatorDeclList opdecl = (OperatorDeclList) operatorsForSort.get(decl);
-      sortList = `concSort(Sort(decl,opdecl),sortList*); 
+      sortList = `concSort(Sort(decl,opdecl),sortList*);
     }
     return sortList;
-	}
+  }
 
     /*
      * Get an OperatorDecl from a Production, using the list of sort declarations
@@ -198,7 +198,7 @@ public class GomTypeExpander {
     }
     return result;
   }
-  
+
   /*
    * Get all sort uses in a module (as codomain of an operator)
    */
@@ -231,6 +231,7 @@ public class GomTypeExpander {
     }
     return imports;
   }
+  
   private GomModule getModule(GomModuleName modname, GomModuleList list) {
     %match(GomModuleList list) {
       concGomModule(_*,module@GomModule[moduleName=name],_*) -> {
@@ -241,6 +242,7 @@ public class GomTypeExpander {
     }
     throw new GomRuntimeException("Module "+ modname +" not present");
   }
+
   private Collection getTransitiveClosureImports(GomModule module, GomModuleList moduleList) {
     Set imported = new HashSet();
     imported.addAll(getImportedModules(module));
@@ -257,6 +259,7 @@ public class GomTypeExpander {
     }
     return newSet;
   }
+
   private void buildDependencyMap(GomModuleList moduleList) {
     %match(GomModuleList moduleList) {
       concGomModule(_*,module@GomModule[moduleName=name],_*) -> {
@@ -265,6 +268,7 @@ public class GomTypeExpander {
       }
     }
   }
+
   private ModuleDeclList namesToModuleDecl(Collection names) {
     ModuleDeclList res = `concModuleDecl();
     Iterator it = names.iterator();

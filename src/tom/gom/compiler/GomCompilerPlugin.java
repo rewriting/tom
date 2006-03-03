@@ -61,16 +61,16 @@ public class GomCompilerPlugin extends GomGenericPlugin {
    */
   public void setArgs(Object arg[]) {
     if (arg[0] instanceof SortList) {
-	    sortList = (SortList)arg[0];
+      sortList = (SortList)arg[0];
       setStreamManager((GomStreamManager)arg[1]);
     } else {
-      getLogger().log(Level.SEVERE, 
+      getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{"GomCompiler", "[SortList,GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
-  
+
   /**
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
@@ -94,7 +94,7 @@ public class GomCompilerPlugin extends GomGenericPlugin {
       }
     }
   }
-  
+
   /**
    * inherited from plugin interface
    * returns an array containing the compiled classes and the streamManager

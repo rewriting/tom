@@ -32,23 +32,23 @@ import tom.gom.tools.error.GomRuntimeException;
 import java.util.*;
 
 public class GomEnvironment {
-  
-	%include { ../adt/gom/Gom.tom}
-	%include { ../adt/objects/Objects.tom}
-  /** 
+
+  %include { ../adt/gom/Gom.tom}
+  %include { ../adt/objects/Objects.tom}
+  /**
    * GomEnvironment uses the Singleton pattern.
    * Unique instance of the GomEnvironment
    */
   private static GomEnvironment instance;
   private static GomStreamManager streamManager;
-  
-  /** 
+
+  /**
    * A private constructor method to defeat instantiation
    */
   private GomEnvironment() { 
     initBuiltins();
   }
-  
+
   /**
    * Part of the Singleton pattern, get the instance or create it.
    * @returns the instance of the GomEnvironment

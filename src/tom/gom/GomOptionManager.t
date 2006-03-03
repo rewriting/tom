@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Antoine Reilles						e-mail: Antoine.Reilles@loria.fr
+ * Antoine Reilles       e-mail: Antoine.Reilles@loria.fr
  *
  **/
 
@@ -43,19 +43,19 @@ import aterm.ATermList;
 public class GomOptionManager implements OptionManager, OptionOwner {
 
   %include{ adt/platformoption/PlatformOption.tom }
-  
-  /** The global options */    
+
+  /** The global options */
   private PlatformOptionList globalOptions;
   
   /**  map the name of an option to the plugin which defines this option */
   private Map mapNameToOptionOwner;
-  
+
   /** map the name of an option to the option itself */
   private Map mapNameToOption;
 
   /** map a shortname of an option to its full name */
   private Map mapShortNameToName;
-  
+
   /** the list of input files extract from the commandLine */
   private List inputFileList;
 
@@ -103,7 +103,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   public List getInputToCompileList() {
     return inputFileList;
   }
-  
+
   /**
    * An option has changed
    * 
@@ -113,15 +113,15 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   public void optionChanged(String optionName, Object optionValue) {
     String canonicalOptionName = getCanonicalName(optionName);
     if(canonicalOptionName.equals("verbose")) {
-      if( ((Boolean)optionValue).booleanValue() ) { 
+      if( ((Boolean)optionValue).booleanValue() ) {
         Gom.changeLogLevel(Level.INFO);
       }
     } else if(canonicalOptionName.equals("wall")) {
-      if( ((Boolean)optionValue).booleanValue() ) { 
+      if( ((Boolean)optionValue).booleanValue() ) {
         Gom.changeLogLevel(Level.WARNING);
       }
     } else if(canonicalOptionName.equals("debug")) {
-      if( ((Boolean)optionValue).booleanValue() ) { 
+      if( ((Boolean)optionValue).booleanValue() ) {
         Gom.changeLogLevel(Level.FINE);
       }
     } else if(canonicalOptionName.equals("verbosedebug")) {
@@ -130,7 +130,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
       }
     }
   }
-  
+
   /**
    * Sets an option to the desired value.
    */
@@ -152,7 +152,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     OptionOwner owner = getOptionOwnerFromName(optionName);
     owner.optionChanged(optionName, optionValue);
   }
-  
+
   /**
    * Returns the value of an option. Returns an Object which is a Boolean,
    * a String or an Integer depending on what the option type is.
@@ -183,7 +183,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   public PlatformOptionList getDeclaredOptionList() {
     return globalOptions;
   }
-  
+
   /**
    * From OptionOwner Interface
    * @return the prerequisites
@@ -220,7 +220,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
       }
     }
   }
-  
+
   /**
    * Checks if every plugin's needs are fulfilled
    */
@@ -250,11 +250,11 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     }
     return option;
   }
-  
+
   private PlatformOption setOptionFromName(String name, PlatformOption option) {
     return (PlatformOption)mapNameToOption.put(getCanonicalName(name),option);
   }
-  
+
   private OptionOwner getOptionOwnerFromName(String name) {
     OptionOwner plugin = (OptionOwner)mapNameToOptionOwner.get(getCanonicalName(name));
     if(plugin == null) {
@@ -266,7 +266,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   private void setOptionOwnerFromName(String name, OptionOwner plugin) {
     mapNameToOptionOwner.put(getCanonicalName(name),plugin);
   }
-  
+
   private void setOptionPlatformValue(String name, PlatformValue value) {
     PlatformOption option = getOptionFromName(name);
     if(option != null) {
@@ -277,14 +277,14 @@ public class GomOptionManager implements OptionManager, OptionOwner {
       throw new RuntimeException();
     }
   }
-  
+
   /**
    * Self-explanatory. Displays an help message indicating how to use the compiler.
    */
   private void displayHelp() {
     String beginning = "usage :"
-	    + "\n\tgom [options] file [... file_n]"
-	    + "\noptions :";
+      + "\n\tgom [options] file [... file_n]"
+      + "\noptions :";
     StringBuffer buffer = new StringBuffer(beginning);
 
     buffer.append("\n\t-X <file>:\tDefines an alternate XML configuration file\n");
@@ -303,9 +303,9 @@ public class GomOptionManager implements OptionManager, OptionOwner {
           buffer.append(":\t" + `description);
           buffer.append("\n");
         }
-      }			
+      }
     }
-	
+
     System.out.println(buffer.toString());
   }
 
@@ -316,7 +316,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     System.out.println("Gom " + Gom.VERSION + "\n\n"
                        + "Copyright (c) 2005-2006, INRIA, Nancy, France.\n");
   }
-  
+
   /**
    * Checks if all the options a plugin needs are here.
    * 
@@ -347,7 +347,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     }
     return false;
   }
-    
+
   /** logger accessor in case of logging needs*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
@@ -379,7 +379,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
           if(argument.startsWith("-")) { // if there's another one
             argument = argument.substring(1);   // crops the second '-'
           }
-          
+
           if(argument.equals("X")) {
             // if we're here, the PluginPlatform has already handled the "-X" option
             // and all errors that might occur
@@ -387,7 +387,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
             i++;
             continue;
           }
-          
+
           if(argument.equals("help") || argument.equals("h")) {
             displayHelp();
             return null;
@@ -408,7 +408,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
               destdirEncountered = true;
             }
           }
-          
+
           OptionOwner plugin = getOptionOwnerFromName(argument);
           PlatformOption option = getOptionFromName(argument);
           
@@ -421,12 +421,12 @@ public class GomOptionManager implements OptionManager, OptionOwner {
               PluginOption[value=BooleanValue[]] -> {
                 setOptionValue(argument, Boolean.TRUE);
               }
-              
+
               PluginOption[value=IntegerValue[]] -> {
                 String t = argumentList[++i];
                 setOptionValue(argument, new Integer(t));
               }
-              
+
               PluginOption[value=StringValue[]] -> {
                 if ( !( argument.equals("import") || argument.equals("I") ) ) {
                   // "import" is handled in the end
@@ -435,22 +435,22 @@ public class GomOptionManager implements OptionManager, OptionOwner {
                 }
               }
             }
-          }     				
-        }	
+          }
+        }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
       getLogger().log(Level.SEVERE, GomMessage.incompleteOption.getMessage(), argument);
       displayHelp();
       return null;
     }
-    
+
     setOptionValue("import",imports.toString());
 
     if(inputFiles.isEmpty()) {
       getLogger().log(Level.SEVERE, GomMessage.noFileToCompile.getMessage());
       displayHelp();
       return null;
-    } 
+    }
     return inputFiles;
   }
 }

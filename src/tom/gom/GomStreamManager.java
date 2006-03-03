@@ -36,13 +36,13 @@ import java.util.logging.Logger;
 import tom.platform.OptionManager;
 
 public class GomStreamManager {
-  
+
   /** List of import paths. */
   private List userImportList;
 
-  /** Absolute path where the file is generated. */ 
+  /** Absolute path where the file is generated. */
   private File destDirFile;
- 
+
   /** Absolute name of the input file (with extension). */
   private File inputFile;
 
@@ -58,7 +58,7 @@ public class GomStreamManager {
   public GomStreamManager() {
     clear();
   }
-  
+
   /** Reinitializes the GomEnvironment instance. */
   public void clear() {
     userImportList = new ArrayList();
@@ -67,7 +67,7 @@ public class GomStreamManager {
     packagePath = "";
     inputSuffix = ".gom";
   }
-  
+
   public void initializeFromOptionManager(OptionManager optionManager) {
     // fills the local user import list
     String imports = (String)optionManager.getOptionValue("import");
@@ -89,7 +89,7 @@ public class GomStreamManager {
       setPackagePath(pack);
     }
   }
-  
+
   public void prepareForInputFile(String localInputFileName) {
     // update Input file
     if(!localInputFileName.endsWith(getInputSuffix())) {
@@ -97,7 +97,6 @@ public class GomStreamManager {
     }
     setInputFile(localInputFileName);
   }
-  
 
   /**
    * compute the list of imported files:
@@ -127,7 +126,7 @@ public class GomStreamManager {
   public List getUserImportList() {
     return userImportList;
   }
-  
+
   public void setUserImportList(List list) {
     userImportList = list;
   }
