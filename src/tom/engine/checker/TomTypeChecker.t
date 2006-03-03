@@ -178,7 +178,7 @@ public class TomTypeChecker extends TomChecker {
       TomVisit visit = list.getHead();
       %match(TomVisit visit) {
         VisitTerm(visitType,patternInstructionList) -> {
-          currentVisitorFwd = symbolTable().getForwardType(`visitType.getTomType().getString());//do the job only once
+          currentVisitorFwd = symbolTable().getForwardType(`visitType.getTomType().getString());
           if (visitorFwd == null) {//first visit 
             visitorFwd = currentVisitorFwd;
           }
