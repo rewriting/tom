@@ -46,21 +46,14 @@ public class GomStreamManager {
   /** Absolute name of the input file (with extension). */
   private File inputFile;
 
-  /** Absolute name of the output file (with extension). */
-  private File outputFile;
-
   /** 
    * Relative path which corresponds to the package where to generate the java
    * classes (empty by default).
    * */
-  private String packagePath; 
+  private String packagePath;
 
-  /** the module name */
-  private String moduleName;
-  
   /** Suffixes */
   private String inputSuffix;
-  private String outputSuffix;
   
   public GomStreamManager() {
     clear();
@@ -71,11 +64,8 @@ public class GomStreamManager {
     userImportList = new ArrayList();
     destDirFile = null;
     inputFile = null;
-    outputFile = null;
     packagePath = "";
-    moduleName = "";
     inputSuffix = ".gom";
-    outputSuffix = ".java";
   }
   
   public void initializeFromOptionManager(OptionManager optionManager) {
@@ -100,22 +90,12 @@ public class GomStreamManager {
     }
   }
   
-  /*
-   * update the outputFile by inserting the packagePath
-   * between the destDirFile and the fileName
-   */
   public void prepareForInputFile(String localInputFileName) {
-    // update Input/Output files
-    // compute inputFile : add a suffix if necessary
+    // update Input file
     if(!localInputFileName.endsWith(getInputSuffix())) {
       localInputFileName += getInputSuffix();
     }
     setInputFile(localInputFileName);
-    
-    String child = new File(getInputFileNameWithoutSuffix() + getOutputSuffix()).getName();
-    File out = new File(getDestDir(), getPackagePath());
-    out = new File(out, child);
-    setOutputFile(out.getPath());
   }
   
 
@@ -154,7 +134,8 @@ public class GomStreamManager {
 
   public File getDestDir() {
     return destDirFile;
-  } 
+  }
+
   public void setDestDir(String destDirName) {
     try {
       this.destDirFile = new File(destDirName).getCanonicalFile();
@@ -172,25 +153,14 @@ public class GomStreamManager {
 
   public File getInputFile() {
     return inputFile;
-  }  
+  }
+
   public void setInputFile(String sInputFile) {
     try {
       this.inputFile = new File(sInputFile).getCanonicalFile();
     } catch (IOException e) {
       getLogger().log(Level.SEVERE, "IOExceptionManipulation",
                       new Object[]{sInputFile, e.getMessage()});
-    }
-  }
-
-  public File getOutputFile() {
-    return outputFile;
-  }  
-  public void setOutputFile(String sOutputFile) {
-    try {
-      this.outputFile = new File(sOutputFile).getCanonicalFile();
-    } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "IOExceptionManipulation",
-                       new Object[]{sOutputFile, e.getMessage()});
     }
   }
 
@@ -201,22 +171,6 @@ public class GomStreamManager {
     this.inputSuffix = inputSuffix;
   }
 
-  public String getOutputSuffix() {
-    return outputSuffix;
-  }
-  public void setOutputSuffix(String string) {
-    outputSuffix = string;
-  }
-
-  /*
-   * update the outputFile by inserting the packagePath
-   * between the destDirFile and the fileName
-   */
-  public void updateOutputFile() {
-    File out = new File(getOutputFile().getParentFile(),getPackagePath());
-    setOutputFile(new File(out, getOutputFile().getName()).getPath());
-  }
-  
   public String getPackagePath() {
     return packagePath;
   }  
@@ -224,23 +178,6 @@ public class GomStreamManager {
     this.packagePath = packagePath.replace('.',File.separatorChar);
   }
 
-  public String getModuleName() {
-    return moduleName;
-  }
-  public void setModuleName(String smoduleName) {
-    this.moduleName = smoduleName;
-    uponModuleNameChanged(smoduleName);
-  }
-  
-  public void uponModuleNameChanged(String smoduleName) {
-    String child;
-    child = new File(smoduleName + getOutputSuffix()).getName();
-    File out = new File(getDestDir(),child).getAbsoluteFile();
-    setOutputFile(out.getPath());
-    // take into account the package information 
-    updateOutputFile();
-  }
-  
   public File findModuleFile(String extendedModuleName) {
     // look for import list
     File f = null;
@@ -256,27 +193,6 @@ public class GomStreamManager {
     return f;
   }
 
-  public void cleanOutput() {
-    File foutputFile = getOutputFile();
-    // try to delete previously generated code
-    if(foutputFile.exists()) {
-      foutputFile.delete();
-    }
-    File topAPIGenerationDir = new File(getDestDir().getPath());
-    File tomGeneratedFile;
-    //delete destDir+ package
-    topAPIGenerationDir = new File(topAPIGenerationDir, getPackagePath());
-    // delete destDir + apiname
-    topAPIGenerationDir = new File(topAPIGenerationDir, getModuleName());
-    tomGeneratedFile = new File(getDestDir(), getModuleName()+".tom");
-    if(topAPIGenerationDir.exists()) {
-    	topAPIGenerationDir.delete();
-    }
-    if(tomGeneratedFile.exists()) {
-      tomGeneratedFile.delete();
-    }
-  }
-  
   /** the class logger instance*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());

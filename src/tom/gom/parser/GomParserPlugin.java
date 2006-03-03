@@ -119,8 +119,6 @@ public class GomParserPlugin extends GomGenericPlugin {
       return;
     }
     
-    // We put the moduleName on streamManager
-    getStreamManager().setModuleName(module.getModuleName().getName());
     getLogger().log(Level.INFO, "Parsing succeeds");
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
