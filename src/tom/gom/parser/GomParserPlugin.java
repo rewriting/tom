@@ -48,7 +48,8 @@ import antlr.TokenStreamException;
 public class GomParserPlugin extends GomGenericPlugin {
   
   public static final String PARSED_SUFFIX = ".tfix.gom.parsed";
-  /** input file name*/
+  /** input stream */
+  private DataInputStream inputStream;
   private String inputFileName;
   
   /** the parsed module */
@@ -66,13 +67,30 @@ public class GomParserPlugin extends GomGenericPlugin {
   public void setArgs(Object arg[]) {
     if (arg[0] instanceof GomStreamManager) {
       setStreamManager((GomStreamManager)arg[0]);
-	    inputFileName = getStreamManager().getInputFile().getAbsolutePath();  
+      inputFileName = getStreamManager().getInputFile().getAbsolutePath();
+      // we shall handle here the cases of input that are streams
+      // (they will be named using inputFileName, and passed by the streamManager)
+      // ideally, the inputFileName will only be a key to get a stream from the
+      // streamManager
+	    inputStream = streamFromFile(inputFileName);
     } else {
       getLogger().log(Level.SEVERE, 
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{"GomParser", "[GomStreamManager]",
             getArgumentArrayString(arg)});
     }
+  }
+
+  private DataInputStream streamFromFile(String fileName) {
+    DataInputStream stream = null;
+    try {
+      stream = new DataInputStream(new FileInputStream(new File(fileName)));
+    } catch (FileNotFoundException e) {
+      getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
+          new Object[]{fileName}); 
+      return null;
+    }      
+    return stream;
   }
   
   /**
@@ -81,16 +99,11 @@ public class GomParserPlugin extends GomGenericPlugin {
    */
   public void run() {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    DataInputStream inputStream;
-    try {
-      inputStream = new DataInputStream(new FileInputStream(new File(inputFileName)));
-    } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
-                      new Object[]{inputFileName}); 
+
+    if (inputStream == null)
       return;
-    }      
-    GomLexer lexer = new GomLexer(inputStream);;
-    GomParser parser =new GomParser(lexer);;
+    GomLexer lexer = new GomLexer(inputStream);
+    GomParser parser = new GomParser(lexer);
     getLogger().log(Level.INFO, "Start parsing");
     try {
       module = parser.module();

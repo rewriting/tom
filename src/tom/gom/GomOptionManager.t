@@ -374,7 +374,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
         if(!argument.startsWith("-")) {
           // input file name, should never start with '-'
           inputFiles.add(argument);
-        } else {                  // s does start with '-', thus is -or at least should be- an option
+        } else { // s does start with '-', thus is -or at least should be- an option
           argument = argument.substring(1);     // crops the '-'
           if(argument.startsWith("-")) { // if there's another one
             argument = argument.substring(1);   // crops the second '-'
