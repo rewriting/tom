@@ -1,24 +1,24 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -52,19 +52,19 @@ import aterm.ATermList;
 public class TomOptionManager implements OptionManager, OptionOwner {
 
   %include{ adt/platformoption/PlatformOption.tom }
-  
-  /** The global options */    
+
+  /** The global options */
   private PlatformOptionList globalOptions;
-  
+
   /**  map the name of an option to the plugin which defines this option */
   private Map mapNameToOwner;
-  
+
   /** map the name of an option to the option itself */
   private Map mapNameToOption;
 
   /** map a shortname of an option to its full name */
   private Map mapShortNameToName;
-  
+
   /** the list of input files extract from the commandLine */
   private List inputFileList;
 
@@ -116,26 +116,26 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   public List getInputToCompileList() {
     return inputFileList;
   }
-  
+
   /**
    *  An option has changed
-   * 
+   *
    * @param optionName the option's name
    * @param optionValue the option's desired value
    */
   public void optionChanged(String optionName, Object optionValue) {
     //optionName = getCanonicalName(optionName);
     if(optionName.equals("verbose")) {
-      if( ((Boolean)optionValue).booleanValue() ) { 
+      if( ((Boolean)optionValue).booleanValue() ) {
         Tom.changeLogLevel(Level.INFO);
       }
     } else if(optionName.equals("wall")) {
-      if( ((Boolean)optionValue).booleanValue() ) { 
+      if( ((Boolean)optionValue).booleanValue() ) {
         Tom.changeLogLevel(Level.WARNING);
       }
     }
   }
-  
+
   /**
    * Sets an option to the desired value.
    * @param optionName the name of the option to set
@@ -160,28 +160,28 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     OptionOwner owner = getOptionOwnerFromName(optionName);
     owner.optionChanged(getCanonicalName(optionName), optionValue);
   }
-  
+
   /**
    * Returns the value of an option. Returns an Object which is a Boolean,
    * a String or an Integer depending on what the option type is.
-   * 
+   *
    * @param name the name of the option whose value is seeked
    * @return an Object containing the option's value
    */
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
     %match(PlatformOption option) {
-      PluginOption[value=BooleanValue(True())]  -> { 
-        return Boolean.valueOf(true); 
+      PluginOption[value=BooleanValue(True())]  -> {
+        return Boolean.valueOf(true);
       }
-      PluginOption[value=BooleanValue(False())] -> { 
-        return Boolean.valueOf(false); 
+      PluginOption[value=BooleanValue(False())] -> {
+        return Boolean.valueOf(false);
       }
-      PluginOption[value=IntegerValue(value)]   -> { 
-        return new Integer(`value); 
+      PluginOption[value=IntegerValue(value)]   -> {
+        return new Integer(`value);
       }
-      PluginOption[value=StringValue(value)]    -> { 
-        return `value; 
+      PluginOption[value=StringValue(value)]    -> {
+        return `value;
       }
     }
     getLogger().log(Level.SEVERE,"TomOptionManager: getOptionFromName did not return a PluginOption");
@@ -195,7 +195,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   public PlatformOptionList getDeclaredOptionList() {
     return globalOptions;
   }
-  
+
   /**
    * From OptionOwner Interface
    * @return the prerequisites
@@ -220,10 +220,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   /**
    * The TomOptionManager does no need to retain the OptionManager
    * since it is the OptionManager.
-   * @param om which is not used 
+   * @param om which is not used
    */
   public void setOptionManager(OptionManager om) {}
-  
+
   /**
    * collects and initializes the options/services provided by each plugin
    */
@@ -248,7 +248,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       }
     }
   }
-  
+
   /**
    * Checks if every plugin's needs are fulfilled.
    * @param optionownerlist the list of option owners to check
@@ -259,7 +259,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     while(owners.hasNext()) {
       OptionOwner plugin = (OptionOwner)owners.next();
       if(!checkOptionDependency(plugin.getRequiredOptionList())) {
-        getLogger().log(Level.SEVERE, TomMessage.prerequisitesIssue.getMessage(), 
+        getLogger().log(Level.SEVERE, TomMessage.prerequisitesIssue.getMessage(),
                         plugin.getClass().getName());
         return 1;
       }
@@ -282,11 +282,11 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     }
     return option;
   }
-  
+
   private PlatformOption setOptionFromName(String name, PlatformOption option) {
     return (PlatformOption)mapNameToOption.put(getCanonicalName(name),option);
   }
-  
+
   private OptionOwner getOptionOwnerFromName(String name) {
     OptionOwner plugin = (OptionOwner)mapNameToOwner.get(getCanonicalName(name));
     if(plugin == null) {
@@ -298,7 +298,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private void setOptionOwnerFromName(String name, OptionOwner plugin) {
     mapNameToOwner.put(getCanonicalName(name),plugin);
   }
-  
+
   private void setOptionPlatformValue(String name, PlatformValue value) {
     PlatformOption option = getOptionFromName(name);
     if(option != null) {
@@ -310,7 +310,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       throw new RuntimeException();
     }
   }
-  
+
   /**
    * Displays an help message indicating how to use the compiler.
    */
@@ -337,11 +337,11 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           buffer.append(":\t" + `description);
           buffer.append("\n");
         }
-      }     
+      }
     }
     System.out.println(buffer.toString());
   }
-  
+
   /**
    * Displays the current version of the TOM compiler.
    */
@@ -349,10 +349,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     System.out.println("\njtom " + Tom.VERSION + "\n" +
                        "Copyright (c) 2000-2006, INRIA, Nancy, France.\n");
   }
-  
+
   /**
    * Checks if all the options a plugin needs are here.
-   * 
+   *
    * @param requiredOptions a list of options that must be found with
    * the right value
    * @return true if every option was found with the right value
@@ -374,7 +374,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
             return checkOptionDependency(`tail*);
           }
         } else {
-          getLogger().log(Level.SEVERE, TomMessage.incorrectOptionValue.getMessage(), 
+          getLogger().log(Level.SEVERE, TomMessage.incorrectOptionValue.getMessage(),
                           new Object[]{`name,`value,getOptionValue(`name)});
           return false;
         }
@@ -382,11 +382,11 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     }
     return false;
   }
-  
+
   /**
    * This method takes the arguments given by the user and deduces the options
    * to set, then sets them.
-   * 
+   *
    * @param argumentList
    * @return an array containing the name of the input files
    */
@@ -474,16 +474,16 @@ public class TomOptionManager implements OptionManager, OptionOwner {
                 }
               }
             }
-          }             
-        } 
+          }
+        }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
       getLogger().log(Level.SEVERE, TomMessage.incompleteOption.getMessage(), argument);
       return null;
     }
-    
+
     setOptionValue("import",imports.toString());
-    
+
     if(fileList.isEmpty()) {
       getLogger().log(Level.SEVERE, TomMessage.noFileToCompile.getMessage());
       displayHelp();
@@ -493,13 +493,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       displayHelp();
       return null;
     }
-    
+
     return fileList;
   }
-  
+
   /** logger accessor in case of logging needs*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
-  
+
 } // class TomOptionManager.t
