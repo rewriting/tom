@@ -14,7 +14,7 @@ TypesToType(domain:TomTypeList,codomain:TomType) -> TomType
 TLType(tl:TargetLanguage) -> TomType
 EmptyType() -> TomType
 
-TLForward(tl:TargetLanguage) -> TomForwardType
+TLForward(string:String) -> TomForwardType
 EmptyForward() -> TomForwardType
 
 //slot 1 must be different from "type" otherwise it will overload method "int getType()" in aterm.pure.ATerm

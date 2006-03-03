@@ -326,7 +326,6 @@ public class Rho {
 			andC(match(term1,term2),match(term3,term4),Y*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2) +"^"+ stringInfix(`term3)+"<"+stringInfix(`term4) +stringInfix(`Y);}
 			andC(match(term1,term2),X*) -> {return stringInfix(`term1)+"<"+stringInfix(`term2);}
 			andC(matchKO(),X*) -> {return "KO";}
-			_ -> {return "";}
 		}
     return "";
 	}	
@@ -348,7 +347,6 @@ public class Rho {
 				 return `andC(matchKO());
 	     }
 
-	     _ -> {return `andC(l);}
 		}
     return `andC(l);
 	}

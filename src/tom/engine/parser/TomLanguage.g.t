@@ -1514,9 +1514,9 @@ typeTerm returns [Declaration result] throws TomException
     Option ot = null;
     Declaration attribute = null;
     TargetLanguage implement = null;
-    TargetLanguage visitorFwd = null;
-    TomForwardType tomFwdType;
+    TomForwardType tomFwdType = `EmptyForward();
     DeclarationList declarationList = `emptyDeclarationList();
+		String s;
 }
     :   (
             type:ALL_ID
@@ -1526,8 +1526,8 @@ typeTerm returns [Declaration result] throws TomException
             LBRACE
 
             implement = keywordImplement
-            (
-                visitorFwd = keywordVisitorFwd
+            (    s = keywordVisitorFwd
+								{ tomFwdType = `TLForward(s); }
             |   attribute = keywordEquals[type.getText()]
                 { declarationList = `manyDeclarationList(attribute,declarationList); }
             |   attribute = keywordCheckStamp[type.getText()]
@@ -1540,14 +1540,8 @@ typeTerm returns [Declaration result] throws TomException
             t:RBRACE
         )
 {
-  if (visitorFwd == null) {
-    tomFwdType = `EmptyForward();
-  }
-  else {
-    tomFwdType = `TLForward(visitorFwd);
-  }
   TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
-          putType(type.getText(), astType,tomFwdType); 
+          putType(type.getText(), astType, tomFwdType); 
           result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
           updatePosition(t.getLine(),t.getColumn());
           selector().pop();
@@ -1569,16 +1563,16 @@ keywordImplement returns [TargetLanguage tlCode] throws TomException
         )
     ;
 
-keywordVisitorFwd returns [TargetLanguage tlCode] throws TomException
+keywordVisitorFwd returns [String code] throws TomException
 {
-  tlCode = null;
+  code = "";
 }
     :
         (
            VISITOR_FWD 
             {
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                code = targetparser.goalLanguage(new LinkedList()).getCode();
                 selector().pop();
             }
         )

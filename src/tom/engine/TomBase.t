@@ -164,13 +164,6 @@ public class TomBase {
 		System.out.println("getTLCode error on term: " + type);
 		throw new TomRuntimeException("getTLCode error on term: " + type);
   }
-  protected String getTLCode(TomForwardType type) {
-    %match(TomForwardType type) {
-      TLForward(TL[code=tlType])  -> { return `tlType; }
-    }
-		System.out.println("getTLCode error on term: " + type);
-		throw new TomRuntimeException("getTLCode error on term: " + type);
-  }
 
   protected TomType getSymbolCodomain(TomSymbol symbol) {
     if(symbol!=null) {

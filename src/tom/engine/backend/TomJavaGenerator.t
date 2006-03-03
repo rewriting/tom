@@ -90,8 +90,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
     output.write(deep, modifier +"class " + tomName);
     //write extends
-    if (extendsFwdType != `EmptyForward()) {
-      output.write(deep," extends " + getTLCode(extendsFwdType));
+		%match(TomForwardType extendsFwdType) {
+			TLForward(code) -> { 
+				output.write(deep," extends " + `code);
+			}
     }
     output.write(deep," {");
     int args = names.size();
