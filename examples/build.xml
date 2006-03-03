@@ -789,11 +789,14 @@
 
         <include name="${antipattern}/README"/>
         <include name="${antipattern}/*.t"/>
+        <include name="${antipattern}/Matching.java"/>
         <include name="${antipattern}/*.vas"/>
+        <include name="${antipattern}/atermmapping.tom"/>
 
         <include name="${apireach}/README"/>
         <include name="${apireach}/*.t"/>
         <include name="${apireach}/*.adt"/>
+        <include name="${apireach}/*.vas"/>
 
         <include name="${appletxml}/README"/>
         <include name="${appletxml}/*.t"/>
@@ -837,6 +840,7 @@
         <include name="${ferus}/*.t"/>
         <include name="${ferus}/Makefile"/>
         <include name="${ferus}/*.adt"/>
+        <include name="${ferus}/*.vas"/>
 
         <include name="${gomoku}/*.t"/>
         <include name="${gomoku}/*.vas"/>
@@ -854,6 +858,14 @@
         <include name="${list}/*.t"/>
         <include name="${list}/*.adt"/>
 
+        <include name="${master}/README"/>
+        <include name="${master}/*.t"/>
+				<include name="${master}/*.vas"/>
+
+        <include name="${matching}/README"/>
+        <include name="${matching}/*.t"/>
+				<include name="${matching}/*.vas"/>
+				
         <include name="${nspk}/README"/>
         <include name="${nspk}/*.t"/>
         <include name="${nspk}/*.adt"/>
@@ -864,6 +876,7 @@
 
         <include name="${peano}/README"/>
         <include name="${peano}/*.adt"/>
+        <include name="${peano}/*.vas"/>
         <include name="${peano}/*.t"/>
 
         <include name="${pnspk}/README"/>

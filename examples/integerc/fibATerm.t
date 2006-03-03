@@ -125,5 +125,5 @@ int main(int argc, char **argv) {
     n = 25;
     res = fib(buildPeano(n));
   }
-    //ATprintf("fib %d = %t\n", n, res);
+   // ATprintf("fib %d = %t\n", n, res);
 }

@@ -31,14 +31,14 @@ public class List1 {
 
   public L swapSort(L l) {
     %match(L l) {
-      f(X*,e1,e2,Y*) -> {
+      f(X*,e1,Z*,e2,Y*) -> {
         if(`gt(e1,e2)) {
-          return `swapSort(f(X*,e2,e1,Y*));
+          return `swapSort(f(X*,e2,Z*,e1,Y*));
 					//System.out.println("("+`e1+","+`e2+")");
         }
       }
     }
-		return l; 
+		return l;
   }
 
   private boolean gt(E e1, E e2) {
@@ -61,6 +61,7 @@ public class List1 {
     System.out.println(" l       = " + l);
     System.out.println("sorted l = " + res1);
     System.out.println("single l = " + res2);
+
   }
 
   public final static void main(String[] args) {

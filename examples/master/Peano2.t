@@ -46,7 +46,7 @@ public class Peano2 {
     Nat init = `plus(one,plus(one,plus(one,one)));
 //     Nat init = `plus(plus(one,one),plus(one,one));
     boolean done=false;
-    System.out.println("Start = " + `init);
+    System.out.println("Start = " + init);
     while(!done){
       Nat res = `evaluate(init);
       System.out.println("Step = " + `res);
