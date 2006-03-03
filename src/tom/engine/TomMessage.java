@@ -275,6 +275,10 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage ambigousSymbolWithoutConstructor=
       new TomMessage("{0} is a constructor and cannot be a variable. Add () to denote the constructor.");
 
+  //strategy
+  public static final TomMessage    differentVisitorForward =
+      new TomMessage("All visited sorts in same %strategy must have same visitorForward: `{0}` is different from `{1}`");
+  
   // rule
   public static final TomMessage incorrectRuleLHSClass   =
       new TomMessage("`{0}`: Impossible in rule left hand side");

@@ -172,17 +172,31 @@ public class TomTypeChecker extends TomChecker {
   } //verifyMatchVariable
   
   private void verifyStrategyVariable(TomVisitList list) {
+    TomForwardType visitorFwd = null;
+    TomForwardType currentVisitorFwd = null;
     while(!list.isEmpty()) {
       TomVisit visit = list.getHead();
       %match(TomVisit visit) {
-        VisitTerm(_,patternInstructionList) -> {
+        VisitTerm(visitType,patternInstructionList) -> {
+          currentVisitorFwd = symbolTable().getForwardType(`visitType.getTomType().getString());//do the job only once
+          if (visitorFwd == null) {//first visit 
+            visitorFwd = currentVisitorFwd;
+          }
+          else {//check if current visitor equals to previous visitor
+            if (currentVisitorFwd != visitorFwd){ 
+              messageError(`visitType.getTlType().getTl().getStart().getLine(),
+                  TomMessage.differentVisitorForward.getMessage(),
+                  new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
+            }
+          }
           verifyMatchVariable(`patternInstructionList);
         }      
       }
       // next visit
       list = list.getTail();
+    }
   }
-}
+
   /**
    * The notion of conditional rewrite rule can be generalised with a sequence of conditions
    * as in lhs -> rhs where P1:=C1 ... where Pn:=Cn if Qj==Dj 
