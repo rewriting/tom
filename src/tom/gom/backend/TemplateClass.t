@@ -135,10 +135,15 @@ public abstract class TemplateClass {
     return fullClassName().replace('.',File.separatorChar)+".java";
   }
 
-  public int generateFile() {
+  protected File fileToGenerate() {
     GomStreamManager stream = GomEnvironment.getInstance().getStreamManager();
+    File output = new File(stream.getDestDir(),fileName());
+    return output;
+  }
+
+  public int generateFile() {
     try {
-       File output = new File(stream.getDestDir(),fileName());
+       File output = fileToGenerate();
        // make sure the directory exists
        output.getParentFile().mkdirs();
        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));

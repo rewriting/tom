@@ -42,6 +42,7 @@ public class GomEnvironment {
   private static GomEnvironment instance;
   private static GomStreamManager streamManager;
 
+  private static String lastGeneratedMapping;
   /**
    * A private constructor method to defeat instantiation
    */
@@ -111,5 +112,13 @@ public class GomEnvironment {
       sortClass.put(`BuiltinSortDecl(name),(ClassName)builtinSorts.get(name));
     }
     return sortClass;
+  }
+
+  public String getLastGeneratedMapping() {
+    return lastGeneratedMapping;
+  }
+
+  public void setLastGeneratedMapping(String fileName) {
+    lastGeneratedMapping = fileName;
   }
 }

@@ -24,6 +24,8 @@
 
 package tom.gom.backend.shared;
 
+import tom.gom.GomStreamManager;
+import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.TemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
@@ -147,5 +149,17 @@ public class MappingTemplate extends TemplateClass {
 
   protected String fileName() {
     return fullClassName().replace('.',File.separatorChar)+".tom";
+  }
+
+  protected File fileToGenerate() {
+    GomStreamManager stream = GomEnvironment.getInstance().getStreamManager();
+    File output = new File(stream.getDestDir(),fileName());
+    // log the generated mapping file name
+    try {
+      GomEnvironment.getInstance().setLastGeneratedMapping(output.getCanonicalPath());
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
+    return output;
   }
 }
