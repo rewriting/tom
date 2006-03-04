@@ -83,7 +83,7 @@ public class GomExpanderPlugin extends GomGenericPlugin {
     if(modules == null) {
       getLogger().log(Level.SEVERE, 
           GomMessage.expansionIssue.getMessage(),
-          streamManager.getInputFile().getName());
+          streamManager.getInputFileName());
     } else {
       getLogger().log(Level.FINE, "Imported Modules: "+modules);
       getLogger().log(Level.INFO, "Expansion succeeds");

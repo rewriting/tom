@@ -371,13 +371,14 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     try {
       for(; i < argumentList.length; i++) {
         argument = argumentList[i];
-        if(!argument.startsWith("-")) {
-          // input file name, should never start with '-'
+        getLogger().log(Level.FINER, "GomOptionManager: processing argument "+i+" \""+argument+"\"");
+        if(!argument.startsWith("-") || (argument.equals("-")) ) {
+          // input file name, should never start with '-' (except for System.in)
           inputFiles.add(argument);
         } else { // s does start with '-', thus is -or at least should be- an option
-          argument = argument.substring(1);     // crops the '-'
+          argument = argument.substring(1); // crops the '-'
           if(argument.startsWith("-")) { // if there's another one
-            argument = argument.substring(1);   // crops the second '-'
+            argument = argument.substring(1); // crops the second '-'
           }
 
           if(argument.equals("X")) {

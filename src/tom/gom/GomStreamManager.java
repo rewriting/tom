@@ -25,6 +25,10 @@
 package tom.gom;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +47,11 @@ public class GomStreamManager {
   /** Absolute path where the file is generated. */
   private File destDirFile;
 
-  /** Absolute name of the input file (with extension). */
-  private File inputFile;
+  /** The input file name (relative path, or -) */
+  private String inputFileName;
+  
+  /** The input stream */
+  private InputStream inputStream;
 
   /** 
    * Relative path which corresponds to the package where to generate the java
@@ -63,7 +70,8 @@ public class GomStreamManager {
   public void clear() {
     userImportList = new ArrayList();
     destDirFile = null;
-    inputFile = null;
+    inputFileName = "";
+    inputStream = null;
     packagePath = "";
     inputSuffix = ".gom";
   }
@@ -92,7 +100,7 @@ public class GomStreamManager {
 
   public void prepareForInputFile(String localInputFileName) {
     // update Input file
-    if(!localInputFileName.endsWith(getInputSuffix())) {
+    if ((!localInputFileName.endsWith(getInputSuffix())) && (!localInputFileName.equals("-"))) {
       localInputFileName += getInputSuffix();
     }
     setInputFile(localInputFileName);
@@ -110,7 +118,7 @@ public class GomStreamManager {
       importList.add(it.next());
     }
     try {
-      importList.add(getInputFile().getParentFile().getCanonicalFile());
+      importList.add(getInputParent());
       String gomHome = System.getProperty("tom.home");
       if(gomHome != null) {
         File file = new File(gomHome,"share/share");
@@ -145,22 +153,47 @@ public class GomStreamManager {
   }
 
   public String getInputFileNameWithoutSuffix() {
-    String inputFileName = getInputFile().getPath();
     String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
     return res;
   }
 
-  public File getInputFile() {
-    return inputFile;
+  public String getInputFileName() {
+    return inputFileName;
   }
 
   public void setInputFile(String sInputFile) {
+    this.inputFileName = sInputFile;
+  }
+
+  public InputStream getInputStream() {
     try {
-      this.inputFile = new File(sInputFile).getCanonicalFile();
+      if (!inputFileName.equals("-")) {
+        inputStream = new DataInputStream(
+            new FileInputStream(
+              new File(inputFileName).getCanonicalFile()));
+      } else {
+        getLogger().log(Level.FINER, "gom will use System.in as input");
+        inputStream = System.in;
+      }
+    } catch (FileNotFoundException e) {
+      getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
+          new Object[]{inputFileName});
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "IOExceptionManipulation",
-                      new Object[]{sInputFile, e.getMessage()});
+      getLogger().log(Level.SEVERE, "getInputStream:IOExceptionManipulation",
+                      new Object[]{inputFileName, e.getMessage()});
     }
+    return inputStream;
+  }
+
+  public File getInputParent() {
+    File parent = null;
+    try {
+      parent = ((new File(inputFileName)).getParentFile()).getCanonicalFile();
+    } catch (IOException e) {
+      getLogger().log(Level.SEVERE, "getInputParent:IOExceptionManipulation",
+                      new Object[]{inputFileName, e.getMessage()});
+    }
+    return parent;
   }
 
   public String getInputSuffix() {
@@ -172,7 +205,8 @@ public class GomStreamManager {
 
   public String getPackagePath() {
     return packagePath;
-  }  
+  }
+
   public void setPackagePath(String packagePath) {
     this.packagePath = packagePath.replace('.',File.separatorChar);
   }

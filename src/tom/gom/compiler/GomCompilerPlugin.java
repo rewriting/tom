@@ -84,7 +84,7 @@ public class GomCompilerPlugin extends GomGenericPlugin {
     if(classList == null) {
       getLogger().log(Level.SEVERE, 
           GomMessage.compilationIssue.getMessage(),
-          streamManager.getInputFile().getName());
+          streamManager.getInputFileName());
     } else {
       getLogger().log(Level.FINE, "Compiled Modules: "+classList);
       getLogger().log(Level.INFO, "Compilation succeeds");

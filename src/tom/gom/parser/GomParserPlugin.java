@@ -24,6 +24,7 @@
 
 package tom.gom.parser;
 
+import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +50,7 @@ public class GomParserPlugin extends GomGenericPlugin {
 
   public static final String PARSED_SUFFIX = ".tfix.gom.parsed";
   /** input stream */
-  private DataInputStream inputStream;
+  private InputStream inputStream;
   private String inputFileName;
 
   /** the parsed module */
@@ -67,30 +68,13 @@ public class GomParserPlugin extends GomGenericPlugin {
   public void setArgs(Object arg[]) {
     if (arg[0] instanceof GomStreamManager) {
       setStreamManager((GomStreamManager)arg[0]);
-      inputFileName = getStreamManager().getInputFile().getAbsolutePath();
-      // we shall handle here the cases of input that are streams
-      // (they will be named using inputFileName, and passed by the streamManager)
-      // ideally, the inputFileName will only be a key to get a stream from the
-      // streamManager
-      inputStream = streamFromFile(inputFileName);
+      inputStream = getStreamManager().getInputStream();
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{"GomParser", "[GomStreamManager]",
             getArgumentArrayString(arg)});
     }
-  }
-
-  private DataInputStream streamFromFile(String fileName) {
-    DataInputStream stream = null;
-    try {
-      stream = new DataInputStream(new FileInputStream(new File(fileName)));
-    } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
-          new Object[]{fileName});
-      return null;
-    }      
-    return stream;
   }
 
   /**

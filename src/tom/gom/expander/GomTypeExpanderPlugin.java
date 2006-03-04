@@ -78,7 +78,7 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
     if(typedModuleList == null) {
       getLogger().log(Level.SEVERE, 
           GomMessage.expansionIssue.getMessage(),
-          streamManager.getInputFile().getName());
+          streamManager.getInputFileName());
     } else {
       getLogger().log(Level.FINE, "Typed Modules: "+typedModuleList);
       getLogger().log(Level.INFO, "Expansion succeeds");

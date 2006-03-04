@@ -92,7 +92,7 @@ public class GomBackendPlugin extends GomGenericPlugin {
     if(classList == null) {
       getLogger().log(Level.SEVERE,
           GomMessage.generationIssue.getMessage(),
-          streamManager.getInputFile().getName());
+          streamManager.getInputFileName());
     } else {
       getLogger().log(Level.INFO, "Code generation succeeds");
     }
