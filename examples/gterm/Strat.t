@@ -6,7 +6,7 @@ import jjtraveler.VisitFailure;
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
 
-public class TestStrat {
+public class Strat {
   %include { int.tom }
   %include { mutraveler.tom }
 
@@ -48,12 +48,12 @@ public class TestStrat {
   }
 
   public final static void main(String[] args) {
-    TestStrat test = new TestStrat();
+    Strat test = new Strat();
     try {
       int max = Integer.parseInt(args[0]);
 			test.run(max);
     } catch (Exception e) {
-      System.out.println("Usage: java list.TestStrat <max>");
+      System.out.println("Usage: java list.Strat <max>");
       return;
     }
   }
