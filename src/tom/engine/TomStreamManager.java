@@ -219,7 +219,7 @@ public class TomStreamManager {
       importList.add(getInputFile().getParentFile().getCanonicalFile());
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
-        File file = new File(new File(tom_home,"jtom"),"share");
+        File file = new File(new File(tom_home,"share"),"jtom");
         importList.add(file.getCanonicalFile());
         //System.out.println(" extend import list with: " + file.getPath());
       }
