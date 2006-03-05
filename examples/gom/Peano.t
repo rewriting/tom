@@ -29,60 +29,43 @@
 
 package gom;
 
-import gom.peanogom.peano.*;
-import gom.peanogom.peano.types.*;
+import gom.peano.types.*;
 
-class PeanoGom {
+public class Peano {
 
-  %gom {
-    module Peano
-
-    public
-      sorts Nat
-      
-    abstract syntax
-      zero -> Nat
-      suc(pred:Nat) -> Nat
-      fib(val:Nat)  -> Nat
-      plus(x1:Nat, x2:Nat) -> Nat
-   }
-
-    // rule fib
-  %rule {
-    fib(zero())        -> suc(zero())
-    fib(suc(zero()))   -> suc(zero())
-    fib(suc(suc(x)))   -> plus(fib(x),fib(suc(x)))
+  %include { peano/Peano.tom }
+  
+  public Nat plus(Nat t1, Nat t2) {
+    %match(Nat t1, Nat t2) {
+      x, Zero() -> { return `x; }
+      x, Suc(y) -> { return `Suc(plus(x,y)); }
+    }
+    return null;
   }
 
-    // rule plus
-  %rule {
-    plus(x, zero())    -> x
-    plus(x, suc(y))    -> suc(plus(x,y))
-  } // rule
-  
-  public void run() {
-    System.out.println("running...");
-    System.out.println(fib(`suc(suc(suc(suc(suc(zero())))))));
+  public Nat fib(Nat t) {
+    %match(Nat t) {
+      Zero()      -> { return `Suc(Zero()); }
+      Suc(Zero()) -> { return `Suc(Zero()); }
+      Suc(Suc(x)) -> { return `plus(fib(x),fib(Suc(x))); }
+    }
+    return null;
   }
-  
+
+  public void run(int n) {
+    Nat N = `Zero();
+    for(int i=0 ; i<n ; i++) {
+      N = `Suc(N);
+    }
+
+    Nat res = fib(N);
+    System.out.println("fib(" + n + ") =  " + res);
+  }
+
   public final static void main(String[] args) {
-    PeanoGom test = new PeanoGom();
-    test.run();
+    Peano test = new Peano();
+    test.run(10);
   }
 
-  public Nat getFive() {
-    return `suc(suc(suc(suc(suc(zero())))));
-  }
-
-  public Nat getEight() {
-    return `suc(suc(suc(suc(suc(suc(suc(suc(zero()))))))));
-  }
-
-/*
-  %rule {
-    mult(x, zero())    -> zero()
-    mult(x, suc(y))    -> plus(x,mult(x,y))
-  }
-*/
 
 }
