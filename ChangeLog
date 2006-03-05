@@ -1,3 +1,11 @@
+2006-03-05  Antoine Reilles <reilles@loria.fr>
+  * added %gom { gomCode } construct
+    - calls Gom with gomCode
+    - includes the generated ton mapping
+    - To call gom properly, it uses the "tom.home" property. This property is
+    passed by the "tom" script, and inherited from the ant project when using
+    tom's ant task
+
 2006-02-13  pem
   * added () to constant %op
 	* in Java:

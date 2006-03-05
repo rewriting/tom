@@ -563,6 +563,14 @@ public class TomTask extends MatchingTask {
         System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
         System.setProperty("java.util.logging.config.file",logPropertiesFile);
       }
+
+      /* If "tom.home" is defined in the ant project, pass it to tom */
+      String tom_home = getProject().getProperty("tom.home");
+      if (tom_home != null) {
+        System.setProperty("tom.home",tom_home);
+      } else {
+        log("\"tom.home\" is not defined, some features may not work");
+      }
       
       String cmd_line = "";
       if(options != null && getOptions().trim().length() > 0) {

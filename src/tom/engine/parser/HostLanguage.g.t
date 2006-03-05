@@ -304,6 +304,7 @@ blockList [LinkedList list] throws TomException
         |   strategyConstruct[list]
         |   ruleConstruct[list] 
         |   signature[list]
+        |   gomsignature[list]
         |   backquoteTerm[list]
         |   operator[list] 
         |   operatorList[list] 
@@ -402,6 +403,72 @@ matchConstruct [LinkedList list] throws TomException
             list.add(match);
         }
     ;
+
+gomsignature [LinkedList list] throws TomException
+{
+  int initialGomLine;
+  TargetLanguage gomTL = null, code = null;
+  LinkedList blockList = new LinkedList();
+  String gomCode = null;
+}
+:
+  t:GOM
+  {   
+    initialGomLine = t.getLine();
+  
+    String textCode = getCode();
+    if(isCorrect(textCode)) {
+      code = `TL(textCode,
+                 TextPosition(currentLine,currentColumn),
+                 TextPosition(t.getLine(),t.getColumn()));
+      list.add(code);
+    } 
+  }
+  gomTL = goalLanguage[blockList]
+  {
+    gomCode = gomTL.getCode().trim();
+    String destDir = getStreamManager().getDestDir().getPath();
+
+    String config_xml = System.getProperty("tom.home") + "/Gom.xml";
+    try {
+      File file = new File(config_xml);
+      config_xml = file.getCanonicalPath();
+    } catch (IOException e) {
+      getLogger().log(Level.FINER,"Failed to get canonical path for "+config_xml);
+    }
+    
+    String packageName = getStreamManager().getPackagePath().replace(File.separatorChar, '.');
+    String inputFileNameWithoutExtension = getStreamManager().getRawFileName().toLowerCase();
+    String subPackageName = "";
+    if(packageName.equals("")) {
+      subPackageName = inputFileNameWithoutExtension;
+    } else {
+      subPackageName = packageName + "." + inputFileNameWithoutExtension;
+    }
+    getLogger().log(Level.FINE,"Calling gom with: -X "+config_xml+" --destdir "+destDir+" --package "+subPackageName+" -");
+    String[] params = {"-X",config_xml,"--destdir",destDir,"--package",subPackageName,"-"};
+
+    InputStream backupIn = System.in;
+    System.setIn(new DataInputStream(new StringBufferInputStream(gomCode)));
+
+    int res = tom.gom.Gom.exec(params);
+    System.setIn(backupIn);
+    if (res != 0 ) {
+      throw new TomException(TomMessage.gomFailure,new Object[]{currentFile,new Integer(initialGomLine)});
+    }
+    String generatedMapping = tom.gom.tools.GomEnvironment.getInstance().getLastGeneratedMapping();
+
+    // Simulate the inclusion of generated Tom file
+    /*
+     * We shall not need to test the validity of the generatedMapping file name
+     * as gom returned <> 0 if it is not valid
+     */
+    includeFile(generatedMapping, list);
+    
+    updatePosition();
+  }
+
+;
 
 signature [LinkedList list] throws TomException
 {
@@ -760,6 +827,9 @@ INCLUDE
     ;
 VAS
     :   "%vas"  
+    ;
+GOM
+    :   "%gom"  
     ;
 
 // basic tokens
