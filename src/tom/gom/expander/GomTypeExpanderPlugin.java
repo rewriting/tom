@@ -24,6 +24,7 @@
 
 package tom.gom.expander;
 
+import java.io.File;
 import java.util.logging.Level;
 
 import tom.platform.PlatformLogRecord;
@@ -73,7 +74,8 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
 
     getLogger().log(Level.INFO, "Start typing");
-    GomTypeExpander typer = new GomTypeExpander(streamManager.getPackagePath());
+    String packagePrefix= streamManager.getPackagePath().replace(File.separatorChar,'.');
+    GomTypeExpander typer = new GomTypeExpander(packagePrefix);
     typedModuleList = typer.expand(moduleList);
     if(typedModuleList == null) {
       getLogger().log(Level.SEVERE, 
