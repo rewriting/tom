@@ -272,7 +272,9 @@ public class GomTask extends MatchingTask {
   }
 
   public String getPackagePath() {
-    return getPackage().replace('.',File.separatorChar);
+    if (getPackage() != null)
+      return getPackage().replace('.',File.separatorChar);
+    return "";
   }
 
   /**
