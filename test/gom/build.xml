@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Tests for Gom" default="build" basedir=".">
+  <description>
+    Build script for Gom unit tests
+    It allows to build Gom examples, and the correspondinf tests, 
+    and to run them.
+    This script uses the tom.home property to find the
+    necessary classes
+  </description>
+
+  <property name="src"   location="."/>
+  <property name="gen"   location="gen"/>
+  <property name="build" location="build"/>
+
+  <target name="init">
+    <fail unless="tom.home" message="Property tom.home has to be defined"/>
+    <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
+    <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
+    <path id="tom.classpath">
+      <fileset dir="${tom.home}/lib">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+
+    <taskdef name="tom"
+             classname="tom.engine.tools.ant.TomTask"
+             classpathref="tom.classpath"/>
+    <taskdef name="gom"
+             classname="tom.gom.tools.ant.GomTask"
+             classpathref="tom.classpath"/>
+  </target>
+
+  <target name="prepare">
+    <mkdir dir="${gen}"/>
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="build" depends="init,prepare">
+    <gom config="${gomconfigfile}"
+         srcdir="${src}"
+         package="b.u.i.l.t.i.n" 
+         destdir="${gen}">
+         <include name="Builtin.gom"/>
+    </gom>
+    <tom config="${tomconfigfile}"
+         srcdir="${src}" 
+         destdir="${gen}"         
+         optimize="no"
+         optimize2="no"
+         verbose="no"
+         pretty="no">
+      <include name="${src}/*.t"/>
+    </tom>
+    <javac destdir="${build}">
+      <src path="${gen}"/>
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="clean">
+    <delete dir="${gen}"/>
+    <delete dir="${build}"/>
+  </target>
+</project>
