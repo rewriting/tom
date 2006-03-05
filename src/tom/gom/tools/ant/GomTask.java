@@ -1,23 +1,23 @@
 /*
  * Gom
- * 
+ *
  * Copyright (c) 2005-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles       e-mail: Antoine.Reilles@loria.fr
  *
  **/
@@ -106,7 +106,7 @@ public class GomTask extends MatchingTask {
 
   /**
    * Resets the file list. Make it empty.
-   */    
+   */
   protected void resetFileLists() {
     compileList = new File[0];
   }
@@ -151,9 +151,10 @@ public class GomTask extends MatchingTask {
   }
 
   protected void scanDir(File srcDir, File destDir, String[] files) {
+
     TomRegexpPatternMapper m = new TomRegexpPatternMapper();
-    m.setFrom("(.*)"+ protectedFileSeparator +"(\\w+)\\.gom");
-    m.setTo("\\1" + protectedFileSeparator +"\\L\\2" + protectedFileSeparator + "\\2.tom");
+    m.setFrom("(\\w+)\\.gom");
+    m.setTo("\\L\\1" + protectedFileSeparator + "\\1.tom");
     SourceFileScanner sfs = new SourceFileScanner(this);
     File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
 
@@ -176,9 +177,9 @@ public class GomTask extends MatchingTask {
       // scan sourcedir, build list
       String[] list = src.list();
       for (int i = 0; i < list.length; i++) {
-        
+
         File srcDir = getProject().resolveFile(list[i]);
-        
+
         if (!srcDir.exists()) {
           throw new BuildException("srcdir \""
                                    + srcDir.getPath()
@@ -188,7 +189,7 @@ public class GomTask extends MatchingTask {
         DirectoryScanner ds = this.getDirectoryScanner(srcDir);
         String[] files = ds.getIncludedFiles();
 
-        scanDir(srcDir,destdir,files);
+        scanDir(srcDir,getDestdirWithPackage(),files);
       }
       printCompileList(compileList);
       String str_command = "";
@@ -199,7 +200,7 @@ public class GomTask extends MatchingTask {
       if(getPackage() != null && getPackage().length() > 0) {
           str_command = str_command.trim() + " --package " + getPackage();
       }
-      
+
       if(getOptions() != null && getOptions().trim().length() > 0) {
         str_command = str_command.trim() + " " + getOptions().trim();
       }

@@ -70,7 +70,7 @@
       <attribute name="package"/>
       <sequential>
         <vas config="${vasconfigfile}"
-	     srcdir="${rho.dir}"
+             srcdir="${rho.dir}"
              package="@{package}" 
              destdir="${rho.gen}">
           <include name="@{package}/**/*.vas"/>
