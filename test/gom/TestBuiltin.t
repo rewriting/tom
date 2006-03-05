@@ -29,57 +29,51 @@
  * Antoine Reilles   e-mail: Antoine.Reilles@loria.fr
  */
 
-import builtin.types.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import b.u.i.l.t.i.n.builtin.types.*;
 
-public class Builtin {
+public class TestBuiltin extends TestCase {
 
-  %include { builtin/Builtin.tom }
+  %include { b/u/i/l/t/i/n/builtin/Builtin.tom }
 
-  public String run() {
-    String res = "";
-    int n = 32;
-    Wrapper t = `Int(10);
+  public void testInt() {
+    Wrapper t1 = `Int(10);
+    Wrapper t2 = `Int(10);
+    assertTrue(t1 == t2);
+  }
+
+  public void testString() {
     String a = "Germain";
     String b = new String("Germain");
-    System.out.println("a == b: "+ (a == b));
-    Wrapper nm = `Name("Germain");
+    assertFalse(a == b);
     Wrapper na = `Name(a);
     Wrapper nb = `Name(b);
-    System.out.println("na == nb: "+ (na == nb));
-
-    matchBlock1: {
-      %match(Wrapper t) {
-        Int(10) -> { res += "10"; break matchBlock1; }
-        Int(32) -> { res += "32"; break matchBlock1;}
-        _       -> { res += "Unknown"; }
-      }
-    }
-    res += "\n";
-    if (t == `Int(10)) {
-      res += "true\n";
-    }
-
-    matchBlock2: {
-      %match(int n) {
-        10 -> { res += "10"; break matchBlock2; }
-        32 -> { res += "32"; break matchBlock2;}
-        _  -> { res += "Unknown"; }
-      }
-    }
-
-    matchBlock3: {
-      %match(Wrapper nm) {
-        Name("Pem") -> { res += " pem"; break matchBlock3; }
-        Name("Germain") -> { res += " G"; break matchBlock3;}
-        _  -> { res += "Unknown"; }
-      }
-    }
-    return res;
+    assertTrue(na == nb);
   }
-  
+
+  public void testMatchInt() {
+    String res = "";
+    Wrapper t = `Int(32);
+    %match(Wrapper t) {
+      Int(10) -> { res += "10"; }
+      Int(32) -> { res += "32"; }
+    }
+    assertTrue(res.equals("32"));
+  }
+
+  public void testMatchString() {
+    String res = "";
+    Wrapper nm = `Name("Germain");
+    %match(Wrapper nm) {
+      Name("Pem") -> { res += "pem"; }
+      Name("Germain") -> { res += "G"; }
+    }
+    assertTrue(res.equals("G"));
+  }
+
   public final static void main(String[] args) {
-    Builtin test = new Builtin();
-    System.out.println(test.run());
+    junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
   }
   
 }

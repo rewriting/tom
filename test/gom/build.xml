@@ -2,7 +2,7 @@
 <project name="Tests for Gom" default="build" basedir=".">
   <description>
     Build script for Gom unit tests
-    It allows to build Gom examples, and the correspondinf tests, 
+    It allows to build Gom examples, and the correspondinf tests,
     and to run them.
     This script uses the tom.home property to find the
     necessary classes
@@ -38,18 +38,18 @@
   <target name="build" depends="init,prepare">
     <gom config="${gomconfigfile}"
          srcdir="${src}"
-         package="b.u.i.l.t.i.n" 
+         package="b.u.i.l.t.i.n"
          destdir="${gen}">
          <include name="Builtin.gom"/>
     </gom>
     <tom config="${tomconfigfile}"
-         srcdir="${src}" 
-         destdir="${gen}"         
+         srcdir="${src}"
+         destdir="${gen}"
          optimize="no"
          optimize2="no"
          verbose="no"
          pretty="no">
-      <include name="${src}/*.t"/>
+      <include name="TestBuiltin.t"/>
     </tom>
     <javac destdir="${build}">
       <src path="${gen}"/>
