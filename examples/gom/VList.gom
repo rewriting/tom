@@ -1,0 +1,7 @@
+module VList
+imports int
+
+public 
+	sorts VList
+abstract syntax
+	conc( int* ) -> VList
