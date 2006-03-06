@@ -35,6 +35,7 @@ header {
   import tom.gom.tools.error.GomRuntimeException;
   import tom.gom.adt.gom.*;
   import tom.gom.adt.gom.types.*;
+  import antlr.TokenStreamSelector;
 }
 class BlockParser extends Parser;
 options {
@@ -45,15 +46,22 @@ options {
   private static final String REAL ="real";
   private static final String DOUBLE ="double";
 
+  private TokenStreamSelector selector = null;
   private BlockLexer lexer = null;
   private String message = "";
 
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();
   }
-  public BlockParser(BlockLexer lexer, String message) {
-    super(lexer,1);
-    this.lexer = lexer;
+
+  private TokenStreamSelector selector(){
+    return selector;
+  }
+
+  public BlockParser(TokenStreamSelector selector, String message) {
+    this(selector);
+    this.selector = selector;
+    this.lexer = (BlockLexer) selector().getStream("blocklexer");
     this.message = message;
   }
 }
@@ -62,7 +70,9 @@ block returns [String block]
 { block = "?"; }
 : LBRACE rawblocklist RBRACE
 { 
-  block = lexer.target.toString(); }
+  block = lexer.target.toString();
+  selector().pop(); 
+}
 ;
 
 rawblocklist
@@ -101,18 +111,18 @@ options {
 
 
 // basic tokens
-LBRACE  
-    :   '{' 
-        {
-            target.append($getText);
-        }  
-    ;
+LBRACE 
+: '{' 
+{
+  target.append($getText);
+}  
+;
 RBRACE  
-    :   '}' 
-        {
-            target.append($getText);
-        }  
-    ;
+: '}' 
+{
+  target.append($getText);
+}  
+;
 
 STRING
   : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'

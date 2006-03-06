@@ -36,6 +36,7 @@ header {
   import tom.gom.tools.error.GomRuntimeException;
   import tom.gom.adt.gom.*;
   import tom.gom.adt.gom.types.*;
+  import antlr.TokenStreamSelector;
 }
 class GomParser extends Parser;
 options {
@@ -48,8 +49,17 @@ options {
   private static final String REAL ="real";
   private static final String DOUBLE ="double";
 
+  private String name = "";// mainly for disambiguing constructor
+  private TokenStreamSelector selector = null;
+
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();
+  }
+
+  public GomParser(TokenStreamSelector selector, String name) {
+    this(selector);
+    this.selector=selector;
+    this.name=name;
   }
 }
 
@@ -179,6 +189,7 @@ hook returns [Production prod]
   String opName=null;
   Hookkind hooktype = null;
   ArgList argList = `concArg();
+  String code = "";
 }
 : id:IDENTIFIER { opName = id.getText(); } COLON hooktype = hooktype
 (
@@ -190,8 +201,13 @@ hook returns [Production prod]
  RIGHT_BRACE
  )
 // add here the code
+{ 
+  selector.push("blocklexer");
+  BlockParser blockparser = new BlockParser(selector,"blockparser");
+  code = blockparser.block();
+}
 {
-  prod = `Hook(opName,hooktype,argList,"");
+  prod = `Hook(opName,hooktype,argList,code);
 }
 ;
 
@@ -218,10 +234,11 @@ goalLanguage returns [String code]
 }
 :
 t1:LBRACE 
-st:STRING { code = st.getText(); }
-t2:RBRACE
 {
+  BlockParser blockparser = new BlockParser(selector,"blockparser");
+  code = blockparser.block();
 }
+t2:RBRACE
 ;
 
 field returns [Field field]
@@ -235,10 +252,14 @@ field returns [Field field]
 { field = `NamedField(id.getText(),GomType(t)); }
 ;
 
+{
+  import antlr.TokenStreamSelector;
+}
 class GomLexer extends Lexer;
 options {
   k = 2; // \r and \r\n
 }
+
 tokens{
   MODULE   = "module";
   IMPORTS  = "imports";
@@ -248,6 +269,16 @@ tokens{
   ABSTRACT = "abstract";
   SYNTAX   = "syntax";
 }
+{
+  private TokenStreamSelector selector;
+  private TokenStreamSelector selector() {
+    return selector;
+  }
+  public void setSelector(TokenStreamSelector sel) {
+    this.selector = sel;
+  }
+
+}
 
 ARROW       : "->";
 COLON       : ':';
@@ -255,6 +286,14 @@ COMMA       : ',';
 LEFT_BRACE  : '(';
 RIGHT_BRACE : ')';
 STAR        : '*';
+
+LBRACE
+: '{'  {selector().push("blocklexer");}
+;
+
+RBRACE
+: '}'
+;
 
 WS          : ( ' '
                 | '\t'

@@ -41,6 +41,7 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
+import antlr.TokenStreamSelector;
 
 /**
  * The responsability of the GomParser plugin is to parse the input Gom file
@@ -86,8 +87,15 @@ public class GomParserPlugin extends GomGenericPlugin {
 
     if (inputStream == null)
       return;
-    GomLexer lexer = new GomLexer(inputStream);
-    GomParser parser = new GomParser(lexer);
+    // this stuff should go in a distinct (static?) method...
+    TokenStreamSelector selector = new TokenStreamSelector();
+    GomLexer gomlexer = new GomLexer(inputStream);
+    gomlexer.setSelector(selector);
+    selector.addInputStream(gomlexer,"gomlexer");
+    selector.select("gomlexer");
+    BlockLexer blocklexer = new BlockLexer(gomlexer.getInputState());
+    selector.addInputStream(blocklexer,"blocklexer");
+    GomParser parser = new GomParser(selector,"GomParser");
     getLogger().log(Level.INFO, "Start parsing");
     try {
       module = parser.module();
@@ -97,7 +105,7 @@ public class GomParserPlugin extends GomGenericPlugin {
       re.printStackTrace(pw);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.parseException,sw.toString(),
-            inputFileName, lexer.getLine()));
+            inputFileName, gomlexer.getLine()));
       return;
     } catch(TokenStreamException streamException) {
       StringWriter stringwriter = new StringWriter();
@@ -105,7 +113,7 @@ public class GomParserPlugin extends GomGenericPlugin {
       streamException.printStackTrace(printwriter);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.parseException,stringwriter.toString(),
-            inputFileName, lexer.getLine()));
+            inputFileName, gomlexer.getLine()));
       return;
     } catch (Exception e) {
       StringWriter stringwriter = new StringWriter();
