@@ -33,6 +33,7 @@ header {
 
   import aterm.*;
   import tom.gom.tools.GomEnvironment;
+  import tom.gom.tools.error.GomRuntimeException;
   import tom.gom.adt.gom.*;
   import tom.gom.adt.gom.types.*;
 }
@@ -143,9 +144,10 @@ syntax returns [ProductionList prods]
 : ABSTRACT SYNTAX
 (
  prod = production
- {
- prods = `concProduction(prod,prods*);
- }
+ { prods = `concProduction(prod,prods*); }
+ | 
+ prod = hook
+ { prods = `concProduction(prod,prods*); }
  )*
 ;
 
@@ -164,10 +166,61 @@ production returns [Production prod]
      { fieldList = `concField(fieldList*,field); }
      )* )?
  RIGHT_BRACE
- )?
+ )
 ARROW typeName = type
 {
   prod = `Production(opName,fieldList,GomType(typeName));
+}
+;
+
+hook returns [Production prod]
+{
+  prod = null;
+  String opName=null;
+  Hookkind hooktype = null;
+  ArgList argList = `concArg();
+}
+: id:IDENTIFIER { opName = id.getText(); } COLON hooktype = hooktype
+(
+ LEFT_BRACE (arg:IDENTIFIER
+   { argList = `concArg(argList*,Arg(arg.getText())); }
+   ( COMMA supplarg:IDENTIFIER
+     { argList = `concArg(argList*,Arg(supplarg.getText())); }
+     )* )?
+ RIGHT_BRACE
+ )
+// add here the code
+{
+  prod = `Hook(opName,hooktype,argList,"");
+}
+;
+
+hooktype returns [Hookkind type]
+{
+  type = null;
+  String typeName = null;
+}
+: tp:IDENTIFIER { typeName = tp.getText(); }
+{
+  if (typeName.equals("make")) {
+    type = `MakeHook();
+  } else if (typeName.equals("make_insert")) {
+    type = `MakeinsertHook();
+  } else {
+    throw new GomRuntimeException("parsing problem");
+  }
+};
+
+// we have here to use a special lexer for host code
+goalLanguage returns [String code]
+{
+  code = null;
+}
+:
+t1:LBRACE 
+st:STRING { code = st.getText(); }
+t2:RBRACE
+{
 }
 ;
 
@@ -219,7 +272,6 @@ SLCOMMENT
   newline();
 }
 ;
-
 
 ML_COMMENT
   :       "/*"

@@ -323,7 +323,7 @@ strategyConstruct [LinkedList list] throws TomException
 }
     :
         t:STRATEGY // we switch the lexers here : we are in Tom mode
-        {     
+        {
             // add the target code preceeding the construct
             String textCode = getCode();
 

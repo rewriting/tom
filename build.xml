@@ -327,6 +327,10 @@
            outputdirectory="${src.gen}/tom/gom/parser">
       <classpath refid="tom.classpath"/>
     </antlr>
+    <antlr target="${src.src}/tom/gom/parser/BlockParser.g"
+           outputdirectory="${src.gen}/tom/gom/parser">
+      <classpath refid="tom.classpath"/>
+    </antlr>
   </target>
 
   <target name="touchvas" 

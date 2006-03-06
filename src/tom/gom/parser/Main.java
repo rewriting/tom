@@ -31,6 +31,11 @@ import tom.gom.adt.gom.types.*;
 
 public class Main {
   public static void main(String[] args) throws FileNotFoundException {
+    if (args[0].equals("block")) {
+      // we will test the block parsr on System.in
+      runBlockParser();
+      return;
+    }
     File file = new File(args[0]);
 
     DataInputStream input = new DataInputStream(new FileInputStream(file));
@@ -39,10 +44,23 @@ public class Main {
     GomLexer lexer = new GomLexer(input); // Create parser attached to lexer
     GomParser parser = new GomParser(lexer);
     // start up the parser by calling the rule
-    // at which you want to begin parsing. parser.series(); 
+    // at which you want to begin parsing.
     try {
       GomModule mod = parser.module();
       System.out.println(mod);
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void runBlockParser() {
+    BlockLexer lexer = new BlockLexer(System.in);
+    BlockParser parser = new BlockParser(lexer,"glutton");
+    try {
+      String code = parser.block();
+      System.out.println("------\n");
+      System.out.println(code);
+      System.out.println("------\n");
     } catch(Exception e) {
       e.printStackTrace();
     }

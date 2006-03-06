@@ -8,6 +8,7 @@ sorts GomModule GomModuleName GomType Section SectionList Field  FieldList
 
       SortDecl OperatorDecl TypedProduction Slot SlotList OperatorDeclList Sort
       SortList SortDeclList ModuleDecl ModuleDeclList
+      Hookkind Arg ArgList
 
 abstract syntax
 
@@ -18,6 +19,11 @@ Import(moduleName:GomModuleName)                             -> ImportedModule
 Grammar(productionList:ProductionList)                       -> Grammar
 Sorts(typeList:GomTypeList)                                  -> Grammar
 Production(name:String, domain:FieldList, codomain:GomType)  -> Production
+Hook(name:String, hookType:Hookkind, args:ArgList, code:String)  -> Production
+MakeHook()                                                   -> Hookkind
+MakeinsertHook()                                             -> Hookkind
+concArg(Arg*)                                                -> ArgList
+Arg(name:String)                                             -> Arg
 StaredField(fieldType:GomType)                               -> Field
 NamedField(name:String,fieldType:GomType)                    -> Field
 GomModuleName(name:String)                                   -> GomModuleName
