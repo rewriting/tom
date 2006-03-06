@@ -41,7 +41,7 @@ class PeanoGom {
       sorts Nat
       
     abstract syntax
-      zero -> Nat
+      zero() -> Nat
       suc(pred:Nat) -> Nat
       fib(val:Nat)  -> Nat
       plus(x1:Nat, x2:Nat) -> Nat
