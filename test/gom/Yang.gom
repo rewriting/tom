@@ -4,4 +4,4 @@ public
 sorts Sun
 abstract syntax
 	pong(st:Moon) -> Sun
-	shi -> Sun
+	shi() -> Sun
