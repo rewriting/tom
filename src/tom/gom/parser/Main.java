@@ -55,7 +55,7 @@ public class Main {
 
   public static void runBlockParser() {
     BlockLexer lexer = new BlockLexer(System.in);
-    BlockParser parser = new BlockParser(lexer,"glutton");
+    BlockParser parser = new BlockParser(lexer);
     try {
       String code = parser.block();
       System.out.println("------\n");
