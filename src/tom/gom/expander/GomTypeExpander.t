@@ -103,6 +103,19 @@ public class GomTypeExpander {
 
         }
       }
+
+      /* 
+       * now that we have the definitions of all operators, we can attache them
+       * the hooks
+       */
+      %match(GomModule module) {
+        GomModule(_,concSection(_*,
+              Public(concGrammar(_*,Grammar(concProduction(_*,hook@Hook[],_*)),_*)),
+              _*)) -> {
+          // we may want to pass modulename to help resolve ambiguities with modules
+         attachHook(`hook,operatorsForSort);
+        }
+      }
     }
     // build the sort list using the map
     // since we already checked that the declared and used sorts do match, we
@@ -117,11 +130,101 @@ public class GomTypeExpander {
     return sortList;
   }
 
-    /*
-     * Get an OperatorDecl from a Production, using the list of sort declarations
-     * XXX: There is a huge room for efficiency improvement, as we could use a map
-     * sortName -> sortDeclList instead of a simple list
-     */
+  private void attachHook(Production prod,
+      Map operatorsForSort) {
+    /* Find the operator corresponding to the hook, and attach its hook */
+    %match(Production prod) {
+      Hook[name=hookName,hookType=hookType] -> {
+
+        Iterator it = operatorsForSort.keySet().iterator();
+        while(it.hasNext()) {
+          SortDecl decl = (SortDecl) it.next();
+          OperatorDeclList opdecl = (OperatorDeclList) operatorsForSort.get(decl);
+          %match(OperatorDeclList opdecl) {
+            concOperator(L1*,operator@OperatorDecl[name=opName],L2*) -> {
+              if (`opName.equals(`hookName)) {
+                OperatorDecl newOp = typeOperatorHook(`operator,prod);
+                OperatorDeclList newList = `concOperator(L1*,newOp,L2*);
+                operatorsForSort.put(decl,newList);
+                return; // our job is finished
+              }
+            }
+          }
+        }
+      }
+    }
+    System.out.println("XXX: no operator found for the Hook");
+    return;
+  }
+
+  private OperatorDecl typeOperatorHook(OperatorDecl operator, Production prod) {
+    OperatorDecl newOperator = operator;
+    %match(Production prod) {
+      Hook(hname,hkind,hargs,hcode) -> {
+        %match(OperatorDecl operator) {
+          OperatorDecl(oname,osort,oprod,ohooks) -> {
+            SlotList typedArgs = typedArguments(`hargs,`hkind,`oprod, `osort);
+            Hook newHook = `MakeHook(typedArgs,hcode);
+            newOperator = `OperatorDecl(oname,osort,oprod,concHook(newHook,ohooks*));
+          }
+        }
+      }
+    }
+    return newOperator;
+  }
+  private SlotList recArgSlots(ArgList args, SlotList slots) {
+    %match(ArgList args, SlotList slots) {
+      concArg(),concSlot() -> {
+        return `concSlot();
+      }
+      concArg(Arg[name=argName],ta*),concSlot(Slot[sort=slotSort],ts*) -> {
+        SlotList tail = recArgSlots(`ta,`ts);
+        return `concSlot(Slot(argName,slotSort),tail*);
+      }
+    }
+    throw new GomRuntimeException("XXX:recArgSlots "+args+" "+slots);
+  }
+  private SlotList typedArguments(ArgList args, Hookkind kind,
+                                  TypedProduction tprod, SortDecl sort) {
+    %match(Hookkind kind) {
+      KindMakeHook() -> {
+        // the TypedProduction has to be Slots
+        %match(TypedProduction tprod) {
+          Slots(slotList) -> {
+            return recArgSlots(args,`slotList);
+          }
+          _ -> { 
+            //XXX this is an error
+          }
+        }
+      }
+      KindMakeinsertHook() -> {
+        // the TypedProduction has to be Variadic
+        %match(TypedProduction tprod) {
+          Variadic(sortDecl) -> {
+            // for a make_insert hook, there are two arguments: head, tail
+            %match(ArgList args) {
+              concArg(Arg(head),Arg(tail)) -> {
+                return `concSlot(Slot(head,sortDecl),Slot(tail,sort));
+              }
+              _ -> { /* XXX: this is an error too ! */ }
+            }
+          }
+          _ -> { 
+            //XXX this is an error
+          }
+        }
+      }
+    }
+    // XXX: hookkind not known, error
+    throw new GomRuntimeException("XXX: Hum, problem...");
+  }
+
+  /*
+   * Get an OperatorDecl from a Production, using the list of sort declarations
+   * XXX: There is a huge room for efficiency improvement, as we could use a map
+   * sortName -> sortDeclList instead of a simple list
+   */
   private OperatorDecl getOperatorDecl(Production prod,
       SortDeclList sortDeclList,
       Map operatorsForSort) {
@@ -130,7 +233,7 @@ public class GomTypeExpander {
       Production(name,domain,GomType(codomain)) -> {
         SortDecl codomainSort = declFromTypename(`codomain,sortDeclList);
         TypedProduction domainSorts = typedProduction(`domain,sortDeclList);
-        OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts);
+        OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts, concHook());
         if (operatorsForSort.containsKey(codomainSort)) {
           OperatorDeclList list = (OperatorDeclList) operatorsForSort.get(codomainSort);
           operatorsForSort.put(codomainSort,`concOperator(decl,list*));

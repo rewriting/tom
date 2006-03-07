@@ -219,9 +219,9 @@ hooktype returns [Hookkind type]
 : tp:IDENTIFIER { typeName = tp.getText(); }
 {
   if (typeName.equals("make")) {
-    type = `MakeHook();
+    type = `KindMakeHook();
   } else if (typeName.equals("make_insert")) {
-    type = `MakeinsertHook();
+    type = `KindMakeinsertHook();
   } else {
     throw new GomRuntimeException("parsing problem");
   }
