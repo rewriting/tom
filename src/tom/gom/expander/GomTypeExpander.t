@@ -151,10 +151,10 @@ public class GomTypeExpander {
             }
           }
         }
+        getLogger().log(Level.SEVERE, GomMessage.orphanedHook.getMessage(), new Object[]{prod.getName()});
+        return;
       }
     }
-    System.out.println("XXX: no operator found for the Hook");
-    return;
   }
 
   private OperatorDecl typeOperatorHook(OperatorDecl operator, Production prod) {
@@ -380,5 +380,10 @@ public class GomTypeExpander {
       res = `concModuleDecl(ModuleDecl(name,packagePath),res*);
     }
     return res;
+  }
+
+  /** the class logger instance*/
+  private Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
   }
 }

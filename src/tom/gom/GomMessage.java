@@ -113,6 +113,10 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage expansionIssue =
     new GomMessage("Problems encountered expanding module {0}");
 
+  // GomTypeExpander
+  public static final GomMessage orphanedHook =
+    new GomMessage("The operator {0} is not declared, but used for a hook");
+
   // GomCompiler
   public static final GomMessage compilationIssue =
     new GomMessage("Problems encountered compiling module {0}");
