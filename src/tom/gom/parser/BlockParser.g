@@ -71,6 +71,7 @@ block returns [String block]
 : LBRACE rawblocklist RBRACE
 { 
   block = lexer.target.toString();
+  lexer.clearTarget();
   selector().pop(); 
 }
 ;
