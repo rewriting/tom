@@ -77,19 +77,16 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
   private String generateBody() {
     StringBuffer out = new StringBuffer();
 
-    /* static constructor */
     out.append(%"
-  public static "%+className()+%" make("%+childListWithType()+%") {
-    proto.initHashCode("%+childList()+%");
-    return ("%+className()+%") shared.SingletonSharedObjectFactory.getInstance().build(proto);
-  }
+    /* static constructor */
+"%+generateConstructor()+%"
 
-  private void init("%+childListWithType() + (slotList.isEmpty()?"":", ") +%"int hashCode) {
+  private void init("%+childListWithType(slotList) + (slotList.isEmpty()?"":", ") +%"int hashCode) {
 "%+generateMembersInit()+%"
     this.hashCode = hashCode;
   }
 
-  private void initHashCode("%+childListWithType()+%") {
+  private void initHashCode("%+childListWithType(slotList)+%") {
 "%+generateMembersInit()+%"
   this.hashCode = this.hashFunction();
   }
@@ -334,9 +331,8 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
   private String fieldName(String fieldName) {
     return "_"+fieldName;
   }
-  private String childListWithType() {
+  private String childListWithType(SlotFieldList slots) {
     String res = "";
-    SlotFieldList slots = slotList;
     while(!slots.isEmpty()) {
       SlotField head = slots.getHead();
       slots = slots.getTail();
@@ -464,5 +460,44 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
       }
     }
     return res;
+  }
+
+  public String generateConstructor() {
+    StringBuffer out = new StringBuffer();
+    if (hooks.isEmpty()) {
+      out.append(%"
+  public static "%+className()+%" make("%+childListWithType(slotList)+%") {
+    proto.initHashCode("%+childList()+%");
+    return ("%+className()+%") shared.SingletonSharedObjectFactory.getInstance().build(proto);
+  }
+
+"%);
+    } else { // we have to generate an hidden "real" make
+      out.append(%"
+  private static "%+className()+%" realMake("%+childListWithType(slotList)+%") {
+    proto.initHashCode("%+childList()+%");
+    return ("%+className()+%") shared.SingletonSharedObjectFactory.getInstance().build(proto);
+  }
+
+"%);
+      if(hooks.getLength() > 1) {
+        throw new GomRuntimeException("Support for multiple hooks for an operator not implemented yet");
+      }
+      // then a make function calling it
+      %match(HookList hooks) {
+        concHook(MakeHook(args,code)) -> {
+          // replace the inner make call
+          out.append(%"
+  public static "%+className()+%" make("%+childListWithType(`args)+%") {
+    "%+`code+%"
+  }
+
+"%);
+
+        }
+      }
+
+    }
+    return out.toString();
   }
 }
