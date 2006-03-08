@@ -164,6 +164,12 @@ public class GomTypeExpander {
         %match(OperatorDecl operator) {
           OperatorDecl(oname,osort,oprod,ohooks) -> {
             SlotList typedArgs = typedArguments(`hargs,`hkind,`oprod, `osort);
+            if (typedArgs == null) {
+              String hookName = `hname;
+              getLogger().log(Level.SEVERE, GomMessage.discardedHook.getMessage(), 
+                  new Object[]{hookName});
+              return operator;
+            }
             Hook newHook = `MakeHook(typedArgs,hcode);
             newOperator = `OperatorDecl(oname,osort,oprod,concHook(newHook,ohooks*));
           }
@@ -182,7 +188,7 @@ public class GomTypeExpander {
         return `concSlot(Slot(argName,slotSort),tail*);
       }
     }
-    throw new GomRuntimeException("XXX:recArgSlots "+args+" "+slots);
+    throw new GomRuntimeException("GomTypeExpander:recArgSlots failed "+args+" "+slots);
   }
   private SlotList typedArguments(ArgList args, Hookkind kind,
                                   TypedProduction tprod, SortDecl sort) {
@@ -191,10 +197,18 @@ public class GomTypeExpander {
         // the TypedProduction has to be Slots
         %match(TypedProduction tprod) {
           Slots(slotList) -> {
+            if (args.getLength() != `slotList.getLength()) { // tests the arguments number
+              SlotList slist = `slotList;
+              getLogger().log(Level.SEVERE, GomMessage.mismatchedMakeArguments.getMessage(), 
+                  new Object[]{args,slist });
+              return null;
+            }
             return recArgSlots(args,`slotList);
           }
           _ -> { 
-            //XXX this is an error
+            getLogger().log(Level.SEVERE, GomMessage.unsupportedHookAlgebraic.getMessage(), 
+                new Object[]{kind});
+            return null;
           }
         }
       }
@@ -207,17 +221,22 @@ public class GomTypeExpander {
               concArg(Arg(head),Arg(tail)) -> {
                 return `concSlot(Slot(head,sortDecl),Slot(tail,sort));
               }
-              _ -> { /* XXX: this is an error too ! */ }
+              _ -> {
+                getLogger().log(Level.SEVERE, GomMessage.badMakeInsertArguments.getMessage(), 
+                    new Object[]{new Integer(args.getLength())});
+                return null;
+              }
             }
           }
           _ -> { 
-            //XXX this is an error
+            getLogger().log(Level.SEVERE, GomMessage.unsupportedHookVariadic.getMessage(), 
+                new Object[]{kind});
+            return null;
           }
         }
       }
     }
-    // XXX: hookkind not known, error
-    throw new GomRuntimeException("XXX: Hum, problem...");
+    throw new GomRuntimeException("Hook kind "+kind+" not supported");
   }
 
   /*

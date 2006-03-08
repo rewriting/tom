@@ -116,6 +116,16 @@ public class GomMessage implements PlatformMessage {
   // GomTypeExpander
   public static final GomMessage orphanedHook =
     new GomMessage("The operator {0} is not declared, but used for a hook");
+  public static final GomMessage mismatchedMakeArguments =
+    new GomMessage("Arguments list {0} does not match expected arguments {1}");
+  public static final GomMessage discardedHook =
+    new GomMessage("Hook for operator {0} discarded");
+  public static final GomMessage unsupportedHookAlgebraic =
+    new GomMessage("Hook type {0} not supported for non algebraic operator");
+  public static final GomMessage badMakeInsertArguments =
+    new GomMessage("Bad arguments for make_insert: expecting 2, but got {0}");
+  public static final GomMessage unsupportedHookVariadic =
+    new GomMessage("Hook type {0} not supported for non variadic operator");
 
   // GomCompiler
   public static final GomMessage compilationIssue =
