@@ -104,7 +104,7 @@ public class GomTypeExpander {
         }
       }
 
-      /* 
+      /*
        * now that we have the definitions of all operators, we can attache them
        * the hooks
        */
@@ -166,7 +166,7 @@ public class GomTypeExpander {
             SlotList typedArgs = typedArguments(`hargs,`hkind,`oprod, `osort);
             if (typedArgs == null) {
               String hookName = `hname;
-              getLogger().log(Level.SEVERE, GomMessage.discardedHook.getMessage(), 
+              getLogger().log(Level.SEVERE, GomMessage.discardedHook.getMessage(),
                   new Object[]{hookName});
               return operator;
             }
@@ -199,14 +199,14 @@ public class GomTypeExpander {
           Slots(slotList) -> {
             if (args.getLength() != `slotList.getLength()) { // tests the arguments number
               SlotList slist = `slotList;
-              getLogger().log(Level.SEVERE, GomMessage.mismatchedMakeArguments.getMessage(), 
+              getLogger().log(Level.SEVERE, GomMessage.mismatchedMakeArguments.getMessage(),
                   new Object[]{args,slist });
               return null;
             }
             return recArgSlots(args,`slotList);
           }
-          _ -> { 
-            getLogger().log(Level.SEVERE, GomMessage.unsupportedHookAlgebraic.getMessage(), 
+          _ -> {
+            getLogger().log(Level.SEVERE, GomMessage.unsupportedHookAlgebraic.getMessage(),
                 new Object[]{kind});
             return null;
           }
@@ -222,14 +222,14 @@ public class GomTypeExpander {
                 return `concSlot(Slot(head,sortDecl),Slot(tail,sort));
               }
               _ -> {
-                getLogger().log(Level.SEVERE, GomMessage.badMakeInsertArguments.getMessage(), 
+                getLogger().log(Level.SEVERE, GomMessage.badMakeInsertArguments.getMessage(),
                     new Object[]{new Integer(args.getLength())});
                 return null;
               }
             }
           }
-          _ -> { 
-            getLogger().log(Level.SEVERE, GomMessage.unsupportedHookVariadic.getMessage(), 
+          _ -> {
+            getLogger().log(Level.SEVERE, GomMessage.unsupportedHookVariadic.getMessage(),
                 new Object[]{kind});
             return null;
           }

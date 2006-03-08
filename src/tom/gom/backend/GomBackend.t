@@ -108,8 +108,14 @@ public class GomBackend {
         sort.generateFile();
         return 1;
       }
-      (OperatorClass|VariadicOperatorClass)[className=className,factoryName=factory,abstractType=abstracttype,sortName=sort,visitor=visitorName,slots=slots] -> {
-        TemplateClass operator = templatefactory.makeOperatorTemplate(`className,`factory,`abstracttype,`sort,`visitorName,`slots);
+      (OperatorClass|VariadicOperatorClass)[className=className,
+                                            factoryName=factory,
+                                            abstractType=abstracttype,
+                                            sortName=sort,
+                                            visitor=visitorName,
+                                            slots=slots,
+                                            hooks=hooks] -> {
+        TemplateClass operator = templatefactory.makeOperatorTemplate(`className,`factory,`abstracttype,`sort,`visitorName,`slots,`hooks);
         operator.generateFile();
         return 1;
       }
