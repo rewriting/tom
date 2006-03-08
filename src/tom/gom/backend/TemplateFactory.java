@@ -107,7 +107,7 @@ class SharedTemplateFactory extends TemplateFactory {
     return new tom.gom.backend.shared.SortTemplate(className,factory,abstractType,visitor,operators,slots);
   }
   public TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks) {
-    return new tom.gom.backend.shared.OperatorTemplate(className,factory,abstractType,sort,visitor,slots);
+    return new tom.gom.backend.shared.OperatorTemplate(className,factory,abstractType,sort,visitor,slots,hooks);
   }
   public TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses) {
     return new tom.gom.backend.shared.NullTemplate(className); // no need to generate a factory in this mode

@@ -35,16 +35,24 @@ public class OperatorTemplate extends TemplateClass {
   ClassName sortName;
   ClassName visitor;
   SlotFieldList slotList;
+  HookList hooks;
 
   %include { ../../adt/objects/Objects.tom}
 
-  public OperatorTemplate(ClassName className, ClassName factoryName, ClassName abstractType, ClassName sortName, ClassName visitor, SlotFieldList slots) {
+  public OperatorTemplate(ClassName className,
+                          ClassName factoryName,
+                          ClassName abstractType,
+                          ClassName sortName,
+                          ClassName visitor,
+                          SlotFieldList slots,
+                          HookList hooks) {
     super(className);
     this.factoryName = factoryName;
     this.abstractType = abstractType;
     this.sortName = sortName;
     this.visitor = visitor;
     this.slotList = slots;
+    this.hooks = hooks;
   }
 
   public String generate() {
