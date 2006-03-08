@@ -178,12 +178,22 @@ public class TomTypeChecker extends TomChecker {
       TomVisit visit = list.getHead();
       %match(TomVisit visit) {
         VisitTerm(visitType,patternInstructionList) -> {
+
+          //check that all visitType have same visitorFwd
           currentVisitorFwd = symbolTable().getForwardType(`visitType.getTomType().getString());
-          if (visitorFwd == null) {//first visit 
+          //noVisitorFwd defined for visitType
+          if (currentVisitorFwd == null || currentVisitorFwd == `EmptyForward()){ 
+            messageError(`visitType.getTlType().getTl().getStart().getLine(),
+                TomMessage.noVisitorForward.getMessage(),
+                new Object[]{`visitType.getTomType().getString()});
+          }
+          else if (visitorFwd == null) {//first visit 
             visitorFwd = currentVisitorFwd;
           }
           else {//check if current visitor equals to previous visitor
             if (currentVisitorFwd != visitorFwd){ 
+              System.out.println(`visitorFwd);
+              System.out.println(`currentVisitorFwd);
               messageError(`visitType.getTlType().getTl().getStart().getLine(),
                   TomMessage.differentVisitorForward.getMessage(),
                   new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
