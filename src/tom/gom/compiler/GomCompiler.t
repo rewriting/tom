@@ -57,13 +57,14 @@ public class GomCompiler {
     return GomEnvironment.getInstance();
   }
 
+  Map sortClassNameForSortDecl = environment().builtinSortClassMap();
+
   public GomClassList compile(SortList sortList) {
     GomClassList classList = `concGomClass();
 
     Map abstractTypeNameForModule = new HashMap();
     Map factoryNameForModule = new HashMap();
     Map visitorNameForModule = new HashMap();
-    Map sortClassNameForSortDecl = environment().builtinSortClassMap();
     Map sortGomClassForSortDecl = new HashMap();
     Map classForOperatorDecl = new HashMap();
     /* For each module */
@@ -149,7 +150,7 @@ public class GomCompiler {
                   operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Cons");
 
                   allOperators = `concClassName(empty,allOperators*);
-                  GomClass emptyClass = `OperatorClass(empty,factoryName,abstracttypeName,sortClassName,visitorName,concSlotField());
+                  GomClass emptyClass = `OperatorClass(empty,factoryName,abstracttypeName,sortClassName,visitorName,concSlotField(),concHook());
                   classForOperatorDecl.put(`opdecl,emptyClass); 
                   classList = `concGomClass(emptyClass,classList*);
                 }
@@ -162,19 +163,22 @@ public class GomCompiler {
               }
               GomClass operatorClass;
               allOperators = `concClassName(operatorClassName,allOperators*);
+              HookList operatorHooks = makeHooksFromHookDecls(`hookList);
               if (empty!= null) { // We just processed a variadic operator
                 operatorClass = `VariadicOperatorClass(operatorClassName,
                                                        factoryName,
                                                        abstracttypeName,
                                                        sortClassName,
                                                        visitorName,
-                                                       slots,empty,opname);
+                                                       slots,empty,opname,
+                                                       operatorHooks);
               } else {
                 operatorClass = `OperatorClass(operatorClassName,
                                                factoryName,
                                                abstracttypeName,
                                                sortClassName,
-                                               visitorName,slots);
+                                               visitorName,slots,
+                                               operatorHooks);
               }
               classForOperatorDecl.put(`opdecl,operatorClass);
               classList = `concGomClass(operatorClass,classList*);
@@ -350,5 +354,31 @@ public class GomCompiler {
       list = `concSlotField(list*,slot);
     }
     return list;
+  }
+
+  private HookList makeHooksFromHookDecls(HookDeclList declList) {
+    HookList list = `concHook();
+    %match(HookDeclList declList) {
+      concHookDecl(_*,MakeHookDecl[slotargs=slotArgs,code=hookCode],_*) -> {
+        SlotFieldList newArgs = makeSlotFieldListFromSlotList(`slotArgs);
+        list = `concHook(list*,MakeHook(newArgs,hookCode));
+      }
+    }
+    return list;
+  }
+  private SlotFieldList makeSlotFieldListFromSlotList(SlotList args) {
+    SlotFieldList newArgs = `concSlotField();
+    while(!args.isEmpty()) {
+      Slot arg = args.getHead();
+      args = args.getTail();
+      %match(Slot arg) {
+        Slot[name=slotName,sort=sortDecl] -> {
+          ClassName slotClassName = (ClassName) sortClassNameForSortDecl.get(`sortDecl);
+          newArgs = `concSlotField(newArgs*,SlotField(slotName,slotClassName));
+        }
+
+      }
+    }
+    return newArgs;
   }
 }

@@ -10,8 +10,8 @@ VisitableFwdClass(className:ClassName,fwd:GomClass) -> GomClass
 
 AbstractTypeClass(className:ClassName,factoryName:ClassName,visitor:ClassName,sortList:ClassNameList) -> GomClass
 SortClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,visitor:ClassName,operators:ClassNameList,slots:SlotFieldList) -> GomClass
-OperatorClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList) -> GomClass
-VariadicOperatorClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList,empty:ClassName,operator:String) -> GomClass
+OperatorClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList,hooks:HookList) -> GomClass
+VariadicOperatorClass(className:ClassName,factoryName:ClassName,abstractType:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList,empty:ClassName,operator:String,hooks:HookList) -> GomClass
 
 // pass the full operator classes, so we get the factory and sort for each operator
 FactoryClass(className:ClassName,importedFactories:ClassNameList,sortClasses:GomClassList,operatorClasses:GomClassList)  -> GomClass
@@ -25,7 +25,7 @@ concClassName(ClassName*)          -> ClassNameList
 
 SlotField(name:String,domain:ClassName) -> SlotField
 concSlotField(SlotField*) -> SlotFieldList
-MakeHook(arguments:SlotFieldList,code:String) -> Hook
+MakeHook(hookArguments:SlotFieldList,code:String) -> Hook
 
 concGomClass(GomClass*)            -> GomClassList
 concHook(Hook*)                    -> HookList

@@ -134,7 +134,7 @@ public class GomTypeExpander {
       Map operatorsForSort) {
     /* Find the operator corresponding to the hook, and attach its hook */
     %match(Production prod) {
-      Hook[name=hookName,hookType=hookType] -> {
+      Hook[name=hookName] -> {
 
         Iterator it = operatorsForSort.keySet().iterator();
         while(it.hasNext()) {
