@@ -170,8 +170,8 @@ public class GomTypeExpander {
                   new Object[]{hookName});
               return operator;
             }
-            Hook newHook = `MakeHook(typedArgs,hcode);
-            newOperator = `OperatorDecl(oname,osort,oprod,concHook(newHook,ohooks*));
+            HookDecl newHook = `MakeHookDecl(typedArgs,hcode);
+            newOperator = `OperatorDecl(oname,osort,oprod,concHookDecl(newHook,ohooks*));
           }
         }
       }
@@ -252,7 +252,7 @@ public class GomTypeExpander {
       Production(name,domain,GomType(codomain)) -> {
         SortDecl codomainSort = declFromTypename(`codomain,sortDeclList);
         TypedProduction domainSorts = typedProduction(`domain,sortDeclList);
-        OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts, concHook());
+        OperatorDecl decl = `OperatorDecl(name,codomainSort, domainSorts, concHookDecl());
         if (operatorsForSort.containsKey(codomainSort)) {
           OperatorDeclList list = (OperatorDeclList) operatorsForSort.get(codomainSort);
           operatorsForSort.put(codomainSort,`concOperator(decl,list*));

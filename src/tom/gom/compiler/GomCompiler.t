@@ -126,7 +126,12 @@ public class GomCompiler {
           Set allSortSlots = new HashSet();
           ClassNameList allOperators = `concClassName();
           %match(OperatorDeclList `oplist) {
-            concOperator(_*,opdecl@OperatorDecl[name=opname,sort=SortDecl[name=sortName],prod=typedproduction],_*) -> {
+            concOperator(_*,
+                         opdecl@OperatorDecl[name=opname,
+                                             sort=SortDecl[name=sortName],
+                                             prod=typedproduction,
+                                             hooks=hookList],
+                         _*) -> {
               String sortNamePackage = `sortName.toLowerCase();
               ClassName operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
               SlotFieldList slots = `concSlotField();
@@ -157,7 +162,7 @@ public class GomCompiler {
               }
               GomClass operatorClass;
               allOperators = `concClassName(operatorClassName,allOperators*);
-              if (empty!= null) {
+              if (empty!= null) { // We just processed a variadic operator
                 operatorClass = `VariadicOperatorClass(operatorClassName,
                                                        factoryName,
                                                        abstracttypeName,

@@ -8,7 +8,7 @@ sorts GomModule GomModuleName GomType Section SectionList Field  FieldList
 
       SortDecl OperatorDecl TypedProduction Slot SlotList OperatorDeclList Sort
       SortList SortDeclList ModuleDecl ModuleDeclList
-      Hookkind Arg ArgList Hook HookList
+      Hookkind Arg ArgList HookDecl HookDeclList
 
 abstract syntax
 
@@ -40,7 +40,7 @@ concGomModule(GomModule*)           -> GomModuleList
 ModuleDecl(moduleName:GomModuleName,pkg:String)              -> ModuleDecl
 SortDecl(name:String,moduleDecl:ModuleDecl)                  -> SortDecl
 BuiltinSortDecl(name:String)                                 -> SortDecl
-OperatorDecl(name:String,sort:SortDecl,prod:TypedProduction,hooks:HookList) -> OperatorDecl
+OperatorDecl(name:String,sort:SortDecl,prod:TypedProduction,hooks:HookDeclList) -> OperatorDecl
 Slots(slots:SlotList)                                        -> TypedProduction
 Variadic(sort:SortDecl)                                      -> TypedProduction
 Slot(name:String,sort:SortDecl)                              -> Slot
@@ -48,7 +48,7 @@ concSlot(Slot*)                                              -> SlotList
 Sort(decl:SortDecl,operators:OperatorDeclList)               -> Sort
 concOperator(OperatorDecl*)                                  -> OperatorDeclList
 concSort(Sort*)                                              -> SortList
-concHook(Hook*)                                              -> HookList
-MakeHook(arguments:SlotList,code:String)                     -> Hook
+concHookDecl(HookDecl*)                                      -> HookDeclList
+MakeHookDecl(slotargs:SlotList,code:String)                  -> HookDecl
 concSortDecl(SortDecl*)                                      -> SortDeclList
 concModuleDecl(ModuleDecl*)                                  -> ModuleDeclList
