@@ -347,6 +347,22 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     }
     return res;
   }
+  private String unprotectedChildListWithType(SlotFieldList slots) {
+    String res = "";
+    while(!slots.isEmpty()) {
+      SlotField head = slots.getHead();
+      slots = slots.getTail();
+      %match(SlotField head) {
+        SlotField[name=name, domain=domain] -> {
+          if (!res.equals("")) {
+            res+= ", ";
+          }
+          res+= fullClassName(`domain) + " "+`name;
+        }
+      }
+    }
+    return res;
+  }
   private String childList() {
     String res = "";
     SlotFieldList slots = slotList;
@@ -488,7 +504,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
         concHook(MakeHook(args,code)) -> {
           // replace the inner make call
           out.append(%"
-  public static "%+className()+%" make("%+childListWithType(`args)+%") {
+  public static "%+className()+%" make("%+unprotectedChildListWithType(`args)+%") {
     "%+`code+%"
   }
 
