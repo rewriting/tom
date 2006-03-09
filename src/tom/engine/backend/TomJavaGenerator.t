@@ -78,11 +78,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     TomTypeList tomTypes = getSymbolDomain(tomSymbol);
     ArrayList names = new ArrayList();
     ArrayList types = new ArrayList();
-    TomType type;
     //initialize arrayList with argument names
     int index = 0;
     while(!tomTypes.isEmpty()) {
-	    type = tomTypes.getHead();
+	    TomType type = tomTypes.getHead();
 	    types.add(getTomType(type));
       names.add(getSlotName(tomSymbol, index).getString());
 	    tomTypes = tomTypes.getTail();
@@ -130,9 +129,8 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 
   protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     output.write(deep,"public " + getTLType(`codomain) + " " + tomName + "(");
-    TomTerm localVar;
     while(!varList.isEmpty()) {
-      localVar = varList.getHead();
+      TomTerm localVar = varList.getHead();
       matchBlock: {
         %match(TomTerm localVar) {
           v@Variable[astType=type2] -> {
