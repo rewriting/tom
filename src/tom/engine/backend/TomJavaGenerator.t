@@ -156,9 +156,13 @@ public class TomJavaGenerator extends TomImperativeGenerator {
       }
     }
     output.writeln(deep,")"); 
-    if (!`throwsType.isEmptyType()) {
-      output.write(deep," throws " + `throwsType.getString());
+
+    %match(TomType throwsType){
+      TomTypeAlone(throws) -> {
+        output.write(deep," throws " + `throws);
+      }
     }
+
     output.writeln(" {");
     generateInstruction(deep,instruction,moduleName);
     output.writeln(deep," }");
