@@ -222,6 +222,8 @@ hooktype returns [Hookkind type]
     type = `KindMakeHook();
   } else if (typeName.equals("make_insert")) {
     type = `KindMakeinsertHook();
+  } else if (typeName.equals("make_before")) {
+    type = `KindMakeBeforeHook();
   } else {
     throw new GomRuntimeException("parsing problem");
   }
@@ -247,7 +249,7 @@ field returns [Field field]
   String t=null;
 }
 : t=type STAR 
-{ field = `StaredField(GomType(t)); }
+{ field = `StarredField(GomType(t)); }
 | id:IDENTIFIER COLON t=type
 { field = `NamedField(id.getText(),GomType(t)); }
 ;

@@ -26,6 +26,7 @@ concClassName(ClassName*)          -> ClassNameList
 SlotField(name:String,domain:ClassName) -> SlotField
 concSlotField(SlotField*) -> SlotFieldList
 MakeHook(hookArguments:SlotFieldList,code:String) -> Hook
+MakeBeforeHook(hookArguments:SlotFieldList,code:String) -> Hook
 
 concGomClass(GomClass*)            -> GomClassList
 concHook(Hook*)                    -> HookList

@@ -22,9 +22,10 @@ Production(name:String, domain:FieldList, codomain:GomType)  -> Production
 Hook(name:String, hookType:Hookkind, args:ArgList, code:String) -> Production
 KindMakeHook()                                               -> Hookkind
 KindMakeinsertHook()                                         -> Hookkind
+KindMakeBeforeHook()                                         -> Hookkind
 concArg(Arg*)                                                -> ArgList
 Arg(name:String)                                             -> Arg
-StaredField(fieldType:GomType)                               -> Field
+StarredField(fieldType:GomType)                               -> Field
 NamedField(name:String,fieldType:GomType)                    -> Field
 GomModuleName(name:String)                                   -> GomModuleName
 GomType(name:String)                                         -> GomType
@@ -50,5 +51,6 @@ concOperator(OperatorDecl*)                                  -> OperatorDeclList
 concSort(Sort*)                                              -> SortList
 concHookDecl(HookDecl*)                                      -> HookDeclList
 MakeHookDecl(slotargs:SlotList,code:String)                  -> HookDecl
+MakeBeforeHookDecl(slotargs:SlotList,code:String)            -> HookDecl
 concSortDecl(SortDecl*)                                      -> SortDeclList
 concModuleDecl(ModuleDecl*)                                  -> ModuleDeclList

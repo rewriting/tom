@@ -107,7 +107,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
 
   public shared.SharedObject duplicate() {
     "%+className()+%" clone = new "%+className()+%"();
-    clone.init("%+childList() + (slotList.isEmpty()?"":", ") +%"hashCode);
+    clone.init("%+childList(slotList) + (slotList.isEmpty()?"":", ") +%"hashCode);
     return clone;
   }
 
@@ -363,9 +363,8 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     }
     return res;
   }
-  private String childList() {
+  private String childList(SlotFieldList slots) {
     String res = "";
-    SlotFieldList slots = slotList;
     while(!slots.isEmpty()) {
       SlotField head = slots.getHead();
       slots = slots.getTail();
@@ -375,6 +374,22 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
             res+= ", ";
           }
           res+= " "+fieldName(`name);
+        }
+      }
+    }
+    return res;
+  }
+  private String unprotectedChildList(SlotFieldList slots) {
+    String res = "";
+    while(!slots.isEmpty()) {
+      SlotField head = slots.getHead();
+      slots = slots.getTail();
+      %match(SlotField head) {
+        SlotField[name=name] -> {
+          if (!res.equals("")) {
+            res+= ", ";
+          }
+          res+= " "+`name;
         }
       }
     }
@@ -483,7 +498,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     if (hooks.isEmpty()) {
       out.append(%"
   public static "%+className()+%" make("%+childListWithType(slotList)+%") {
-    proto.initHashCode("%+childList()+%");
+    proto.initHashCode("%+childList(slotList)+%");
     return ("%+className()+%") shared.SingletonSharedObjectFactory.getInstance().build(proto);
   }
 
@@ -491,7 +506,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     } else { // we have to generate an hidden "real" make
       out.append(%"
   private static "%+className()+%" realMake("%+childListWithType(slotList)+%") {
-    proto.initHashCode("%+childList()+%");
+    proto.initHashCode("%+childList(slotList)+%");
     return ("%+className()+%") shared.SingletonSharedObjectFactory.getInstance().build(proto);
   }
 
@@ -506,6 +521,16 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
           out.append(%"
   public static "%+className()+%" make("%+unprotectedChildListWithType(`args)+%") {
     "%+`code+%"
+  }
+
+"%);
+        }
+        concHook(MakeBeforeHook(args,code)) -> {
+          // replace the inner make call
+          out.append(%"
+  public static "%+className()+%" make("%+unprotectedChildListWithType(`args)+%") {
+    "%+`code+%"
+    return realMake("%+unprotectedChildList(`args)+%");
   }
 
 "%);

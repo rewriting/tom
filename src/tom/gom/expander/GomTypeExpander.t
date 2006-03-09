@@ -170,7 +170,15 @@ public class GomTypeExpander {
                   new Object[]{hookName});
               return operator;
             }
-            HookDecl newHook = `MakeHookDecl(typedArgs,hcode);
+            HookDecl newHook = null;
+            %match(Hookkind `hkind) {
+              (KindMakeHook| KindMakeinsertHook)[] -> {
+                newHook = `MakeHookDecl(typedArgs,hcode);
+              }
+              KindMakeBeforeHook() -> {
+                newHook = `MakeBeforeHookDecl(typedArgs,hcode);
+              }
+            }
             newOperator = `OperatorDecl(oname,osort,oprod,concHookDecl(newHook,ohooks*));
           }
         }
@@ -193,7 +201,7 @@ public class GomTypeExpander {
   private SlotList typedArguments(ArgList args, Hookkind kind,
                                   TypedProduction tprod, SortDecl sort) {
     %match(Hookkind kind) {
-      KindMakeHook() -> {
+      (KindMakeHook|KindMakeBeforeHook)[] -> {
         // the TypedProduction has to be Slots
         %match(TypedProduction tprod) {
           Slots(slotList) -> {
@@ -212,7 +220,7 @@ public class GomTypeExpander {
           }
         }
       }
-      KindMakeinsertHook() -> {
+      KindMakeinsertHook[] -> {
         // the TypedProduction has to be Variadic
         %match(TypedProduction tprod) {
           Variadic(sortDecl) -> {
@@ -236,12 +244,12 @@ public class GomTypeExpander {
         }
       }
     }
-    throw new GomRuntimeException("Hook kind "+kind+" not supported");
+    throw new GomRuntimeException("Hook kind \""+kind+"\" not supported");
   }
 
   /*
    * Get an OperatorDecl from a Production, using the list of sort declarations
-   * XXX: There is a huge room for efficiency improvement, as we could use a map
+   * XXX: There is huge room for efficiency improvement, as we could use a map
    * sortName -> sortDeclList instead of a simple list
    */
   private OperatorDecl getOperatorDecl(Production prod,
@@ -281,7 +289,7 @@ public class GomTypeExpander {
   }
   TypedProduction typedProduction(FieldList domain, SortDeclList sortDeclList) {
     %match(FieldList domain) {
-      concField(StaredField(GomType(typename))) -> {
+      concField(StarredField(GomType(typename))) -> {
         return `Variadic(declFromTypename(typename,sortDeclList));
       }
       concField(fieldList*) -> {

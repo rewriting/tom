@@ -359,9 +359,25 @@ public class GomCompiler {
   private HookList makeHooksFromHookDecls(HookDeclList declList) {
     HookList list = `concHook();
     %match(HookDeclList declList) {
-      concHookDecl(_*,MakeHookDecl[slotargs=slotArgs,code=hookCode],_*) -> {
-        SlotFieldList newArgs = makeSlotFieldListFromSlotList(`slotArgs);
-        list = `concHook(list*,MakeHook(newArgs,hookCode));
+      concHookDecl(_*,
+          hook,
+          _*) -> {
+        SlotFieldList newArgs = null;
+        Hook newHook = null;
+        %match(HookDecl `hook) {
+          MakeHookDecl[slotargs=slotArgs,code=hookCode] -> {
+            newArgs = makeSlotFieldListFromSlotList(`slotArgs);
+            newHook = `MakeHook(newArgs,hookCode);
+          }
+          MakeBeforeHookDecl[slotargs=slotArgs,code=hookCode] -> {
+            newArgs = makeSlotFieldListFromSlotList(`slotArgs);
+            newHook = `MakeBeforeHook(newArgs,hookCode);
+          }
+        }
+        if (newHook == null || newArgs == null) {
+          throw new GomRuntimeException("Hook declaration "+`hook+" not processed");
+        }
+        list = `concHook(list*,newHook);
       }
     }
     return list;
