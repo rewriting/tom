@@ -1,0 +1,39 @@
+
+module language
+ imports 
+public
+  sorts Instruction InstructionList Expression Variable Term Node
+
+abstract syntax
+If(condition:Expression,succesInst:Instruction,failureInst:Instruction) -> Instruction
+WhileDo(condition:Expression,doInst:Instruction) -> Instruction
+Let(variable:Variable,term:Term,instr:Instruction) -> Instruction
+LetRef(variable:Variable,term:Term,instr:Instruction) -> Instruction
+LetAssign(variable:Variable,term:Term,instr:Instruction) -> Instruction
+concInstruction(Instruction*) -> InstructionList
+Nop() -> Instruction
+
+Negation(arg:Expression) -> Expression
+And(arg1:Expression,arg2:Expression) -> Expression
+Or(arg1:Expression,arg2:Expression) -> Expression
+True() -> Expression
+False() -> Expression
+EqualTerm(kid1:Term,kid2:Term) -> Expression
+
+
+Name(string:String) -> Variable
+
+a()->Term
+b() ->Term 	
+f(arg1: Term, arg2:Term) -> Term
+g(arg:Term) -> Term
+
+beginIf(expr:Expression) -> Node
+affect(var:Variable,term:Term) -> Node
+free(var:Variable) -> Node
+endIf() -> Node
+beginWhile(expr:Expression) -> Node
+endWhile() -> Node
+failWhile() -> Node
+Nil()-> Node
+
