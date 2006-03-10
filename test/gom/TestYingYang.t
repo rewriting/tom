@@ -11,7 +11,7 @@ public class TestYingYang extends TestCase {
 
   public void testToString() {
     Moon m = `ping(pong(ping(shi()))); 
-    assertTrue("ping(pong(ping(shi())))".equals(m.toString()));
+    assertEquals("ping(pong(ping(shi)))",m.toString());
   }
   
   public static void main(String[] args) {
