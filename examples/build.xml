@@ -255,6 +255,16 @@
         <include name="*.html"/>
       </fileset>
     </copy>
+    <!-- Create a jar for the applet -->
+    <jar jarfile="${examples.build}/${boulderdash}/boulder.jar">
+      <fileset dir="${examples.build}">
+        <include name="${boulderdash}/**/*.class"/>
+        <include name="${boulderdash}/**/*.gif"/>
+      </fileset>
+      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/aterm.jar"/>
+      <zipfileset src="${tom.home}/lib/jjtraveler.jar"/>
+    </jar>
   </target>
 
   <target name="builtin" depends="init">

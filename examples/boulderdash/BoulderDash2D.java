@@ -152,7 +152,7 @@ public class BoulderDash2D extends JApplet implements ActionListener {
     if (appMode) {
         sourceImage = this.getToolkit().getImage("boulderdash/images.gif");
     } else {
-      sourceImage = getImage(getCodeBase(),"boulderdash/images.gif");
+      sourceImage = getImage(this.getClass().getResource("images.gif"));
     }
     tracker.addImage(sourceImage,0);
     Image[] img;
