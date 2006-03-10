@@ -82,7 +82,7 @@ public class TomCompiler extends TomGenericPlugin {
       setWorkingTerm(compiledTerm);
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-                       new Object[]{getStreamManager().getInputFile().getName(), "TomCompiler", e.getMessage()} );
+                       new Object[]{getStreamManager().getInputFileName(), "TomCompiler", e.getMessage()} );
       e.printStackTrace();
     }
     if(intermediate) {

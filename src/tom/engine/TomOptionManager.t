@@ -401,8 +401,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       for(; i < argumentList.length; i++) {
         argument = argumentList[i];
 
-        if(!argument.startsWith("-")) {
-          // input file name, should never start with '-'
+        if(!argument.startsWith("-") || (argument.equals("-"))) {
+          // input file name, should never start with '-' (except for System.in)
           fileList.add(argument);
         } else {
           // argument does start with '-', thus is -or at least should be- an option

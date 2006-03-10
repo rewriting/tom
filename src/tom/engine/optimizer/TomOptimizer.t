@@ -138,7 +138,7 @@ public class TomOptimizer extends TomGenericPlugin {
             new Integer((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-                         new Object[]{"TomOptimizer", getStreamManager().getInputFile().getName(), e.getMessage()} );
+                         new Object[]{"TomOptimizer", getStreamManager().getInputFileName(), e.getMessage()} );
         
         e.printStackTrace();
         return;

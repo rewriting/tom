@@ -236,8 +236,10 @@ options{
         }
         return;
       }
-      
-      parser = TomParserPlugin.newParser(fileCanonicalName,includedFileSet,alreadyParsedFileSet, getOptionManager(), getStreamManager());
+      Reader fileReader = new BufferedReader(new FileReader(fileCanonicalName));
+      parser = TomParserPlugin.newParser(fileReader,fileCanonicalName,
+                                         includedFileSet,alreadyParsedFileSet,
+                                         getOptionManager(), getStreamManager());
       astTom = parser.input();
       astTom = `TomInclude(astTom.getTomList());
       list.add(astTom);
