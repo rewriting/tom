@@ -296,17 +296,17 @@ matchBlock: {
             TomList subjectListAST = empty();
             TomVisit visit = jVisitList.getHead();
             %match(TomVisit visit) {
-              VisitTerm(visitType,patternInstructionList) -> {
+              VisitTerm(vType@Type[tomType = ASTTomType(type)],patternInstructionList) -> {
                 if (visitorFwd == null) {//first time in loop
-                  visitorFwd = symbolTable().getForwardType(`visitType.getTomType().getString());//do the job only once
+                  visitorFwd = symbolTable().getForwardType(`type);//do the job only once
                 }
-                TomTerm arg = `Variable(option(),Name("arg"),visitType,concConstraint());//arg subjectList
+                TomTerm arg = `Variable(option(),Name("arg"),vType,concConstraint());//arg subjectList
                 subjectListAST = append(arg,subjectListAST);
-                String funcName = "visit_" + getTomType(`visitType);//function name
+                String funcName = "visit_" + `type;//function name
                 Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
                 Instruction returnStatement = `Return(FunctionCall(Name(funcName),subjectListAST));
                 InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-                l = `concDeclaration(l*,FunctionDef(Name(funcName),concTomTerm(arg),visitType,TomTypeAlone("VisitFailure"),AbstractBlock(instructions)));
+                l = `concDeclaration(l*,FunctionDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("VisitFailure"),AbstractBlock(instructions)));
               }
             }
             jVisitList = jVisitList.getTail();
