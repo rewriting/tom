@@ -25,9 +25,10 @@
 package tom.gom;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
+import java.io.Reader;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class GomStreamManager {
   private String inputFileName;
   
   /** The input stream */
-  private InputStream inputStream;
+  private Reader inputReader;
 
   /** 
    * Relative path which corresponds to the package where to generate the java
@@ -71,7 +72,7 @@ public class GomStreamManager {
     userImportList = new ArrayList();
     destDirFile = null;
     inputFileName = "";
-    inputStream = null;
+    inputReader = null;
     packagePath = "";
     inputSuffix = ".gom";
   }
@@ -165,24 +166,24 @@ public class GomStreamManager {
     this.inputFileName = sInputFile;
   }
 
-  public InputStream getInputStream() {
+  public Reader getInputReader() {
     try {
       if (!inputFileName.equals("-")) {
-        inputStream = new DataInputStream(
-            new FileInputStream(
+        inputReader = new BufferedReader(
+            new FileReader(
               new File(inputFileName).getCanonicalFile()));
       } else {
         getLogger().log(Level.FINER, "gom will use System.in as input");
-        inputStream = System.in;
+        inputReader = new BufferedReader(new InputStreamReader(System.in));
       }
     } catch (FileNotFoundException e) {
       getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
           new Object[]{inputFileName});
     } catch (IOException e) {
-      getLogger().log(Level.SEVERE, "getInputStream:IOExceptionManipulation",
+      getLogger().log(Level.SEVERE, "getInputReader:IOExceptionManipulation",
                       new Object[]{inputFileName, e.getMessage()});
     }
-    return inputStream;
+    return inputReader;
   }
 
   public File getInputParent() {

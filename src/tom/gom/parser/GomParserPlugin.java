@@ -24,10 +24,7 @@
 
 package tom.gom.parser;
 
-import java.io.InputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.Reader;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -51,7 +48,7 @@ public class GomParserPlugin extends GomGenericPlugin {
 
   public static final String PARSED_SUFFIX = ".tfix.gom.parsed";
   /** input stream */
-  private InputStream inputStream;
+  private Reader inputReader;
   private String inputFileName;
 
   /** the parsed module */
@@ -69,7 +66,7 @@ public class GomParserPlugin extends GomGenericPlugin {
   public void setArgs(Object arg[]) {
     if (arg[0] instanceof GomStreamManager) {
       setStreamManager((GomStreamManager)arg[0]);
-      inputStream = getStreamManager().getInputStream();
+      inputReader = getStreamManager().getInputReader();
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
@@ -85,11 +82,11 @@ public class GomParserPlugin extends GomGenericPlugin {
   public void run() {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
 
-    if (inputStream == null)
+    if (inputReader == null)
       return;
     // this stuff should go in a distinct (static?) method...
     TokenStreamSelector selector = new TokenStreamSelector();
-    GomLexer gomlexer = new GomLexer(inputStream);
+    GomLexer gomlexer = new GomLexer(inputReader);
     gomlexer.setSelector(selector);
     selector.addInputStream(gomlexer,"gomlexer");
     selector.select("gomlexer");
