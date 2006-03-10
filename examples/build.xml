@@ -11,10 +11,10 @@
   <property name="javacSource" value="1.4"/>
   <property name="javacTarget" value="1.4"/>
   <property name="nowarnings"     value="false"/>
-  <property name="optimize"       value="off"/>
-  <property name="optimize2"      value="off"/>
+  <property name="optimize"       value="on"/>
+  <property name="optimize2"      value="on"/>
   <property name="verbose"        value="off"/>
-  <property name="pretty"         value="off"/>
+  <property name="pretty"         value="on"/>
   <property name="visitable"      value="on"/>
   <property name="stamp"          value="off"/>
   <property name="mutraveler"     value="jjtraveler"/>
@@ -80,6 +80,8 @@
   <property name="xml"            value="xml"/>
   <property name="xquery"         value="xquery"/>
   <property name="zenon"          value="zenon"/>
+  <property name="analysis"       value="analysis"/>
+
 
   <target name="testdistexist">
     <available file="${tom.home}/lib" type="dir" property="distexist"/>
@@ -759,6 +761,21 @@
       <mapper type="glob" from="*.zv" to="*.v"/>
     </apply>
   </target>
+
+
+  <target name="analysis" depends="init">
+  <!-- copy resources in build -->
+    <copy todir="${examples.build}/${analysis}">
+      <fileset dir="${examples.dir}/${analysis}">
+      </fileset>
+    </copy>
+    <adtcompile example="${analysis}"
+                factory="language"/>
+    <vascompile example="${analysis}"/>
+    <tomcompile example="${analysis}"/>
+    <javacompile example="${analysis}"/>
+  </target>
+
   
   <target name="examples" 
           description="Builds the examples (at least some)"
@@ -958,6 +975,10 @@
         <include name="${xquery}/*.xml"/>
         <include name="${xquery}/*.xquery"/>
         <include name="${xquery}/*.html"/>
+
+        <include name="${analysis}/*.t"/>
+        <include name="${analysis}/*.vas"/>
+
 
         <not>
           <present targetdir="${examples.dir}">
