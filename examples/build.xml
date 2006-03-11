@@ -712,7 +712,19 @@
   </target>
 
   <target name="ted" depends="init"> 
-    <tomcompile example="${ted}"/>
+    <!-- <tomcompile example="${ted}"/> -->
+    <tom config="${tomconfigfile}"
+         srcdir="${examples.dir}" 
+         destdir="${examples.gen}"         
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         optimize2="no"
+         verbose="${verbose}"
+         pretty="${pretty}"
+         options="-I ${tom.home}/share/jtom">
+      <include name="${ted}/**/*.t"/>
+      <exclude name="${ted}/**/*.g.t"/>
+    </tom>
     <javacompile example="${ted}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${ted}">
