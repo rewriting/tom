@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Learning TOM technology: XML example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+      <meta name="description" content="TOM: A Pattern Matching Compiler" />
+	<meta name="keywords" content="tom, pattern, matching, compiler,
+	  rewriting, programming language, program transformation,
+	  pattern matching" />
+	  <link href="styles/mainstyle.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="page">
+      <h1>TOM and XML in action</h1>
+      Here is the simple java code for extracting mail information:
+<pre>
+  private String extractEMail(TNode authors) {
+    String res = "";
+    %match(TNode authors) {
+      &lt;authors domain=thedomain&gt; 
+        &lt;author firstname=fnval lastname=lnval/&gt;
+        &lt;/authors&gt; -> {
+        res += fnval+"."+lnval+"@"+thedomain+"\n";
+      }
+    }
+    return res;
+  }
+</pre>
+
+      <applet codebase="." code="appletxml.XMLConverter.class" archive="xmlconverter.jar" width="550" height="400">
+      </applet>
+
+<br />
+	Source Code: <a href="appletxml.XMLConverter.java">The Applet</a> and the <a href="TomXMLAnalyser.t">TOM code</a> 
+    </div>
+  </body>
+</html>

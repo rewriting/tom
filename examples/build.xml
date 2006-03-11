@@ -241,6 +241,31 @@
   <target name="appletxml" depends="init"> 
     <tomcompile example="${appletxml}"/>
     <javacompile example="${appletxml}"/>
+    <!-- Create a jar for the applet -->
+    <!-- ugly hacks to find the TNode and tom-library jars -->
+    <path id="tnode.path">
+      <fileset dir="${tom.home}/lib">
+        <include name="TNode-*.jar"/>
+      </fileset>
+    </path>
+    <property name="tnode.jar" refid="tnode.path"/>
+    <path id="tom-library.path"> <!-- ugly hack to find the TNode jar -->
+      <fileset dir="${tom.home}/lib">
+        <include name="tom-library-*.jar"/>
+      </fileset>
+    </path>
+    <property name="tom-library.jar" refid="tom-library.path"/>
+    <jar jarfile="${examples.build}/${appletxml}/xmlconverter.jar">
+      <fileset dir="${examples.build}">
+        <include name="${appletxml}/**/*.class"/>
+      </fileset>
+      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
+      <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/Visit*"/>
+      <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
+      <zipfileset src="${tnode.jar}"/>
+    </jar>
+
   </target>
 
   <target name="boulderdash" depends="init">
