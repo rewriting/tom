@@ -103,7 +103,7 @@ public class MatchingDifferences implements Matching {
 	//checks to see if subjects in contained in first\second
 	private Constraint isInDifference(Term subject, Term first, Term second){
 		
-//		System.out.println("Is in difference (subject/first/second):" + subject + " " + first + " " + second);
+    /* System.out.println("Is in difference (subject/first/second):" + subject + " " + first + " " + second); */
 		
 		%match(Term first, Term second){
 			
@@ -136,8 +136,8 @@ public class MatchingDifferences implements Matching {
 			
 			Appl(_,_),Appl(_,_)->{	
 				
-				//if the subject is in the first, but is not in the second, then
-				//it means that it belongs to the difference
+				/* if the subject is in the first, but is not in the second, then
+           it means that it belongs to the difference */
 				if (termMatch(subject,first) == `True() && termMatch(subject,second) == `False()){
 					return `True();
 				}
@@ -165,19 +165,19 @@ public class MatchingDifferences implements Matching {
 		}
 		
 		throw new RuntimeException("isInDifference: Should never get here");
-		//return `False();
+		/* return `False(); */
 	}
 	
-	//matches two simple terms
+	/* matches two simple terms */
 	private Constraint termMatch(Term subject, Term pattern){
 		
 		VisitableVisitor matchRule = new ClassicalPatternMatching(`Identity());
 		
 		try {
-//			System.out.println("Got:" + pattern + ", " + subject);
+      /* System.out.println("Got:" + pattern + ", " + subject);*/
 			Constraint result = (Constraint) MuTraveler.init(`InnermostId(matchRule)).visit(`Match(pattern, subject));
-//			System.out.println("Result:" + result);
-			//if the result is a Match or an And, then this means success
+      /* System.out.println("Result:" + result);
+			if the result is a Match or an And, then this means success */
 			%match(Constraint result){
 				Match(_,_) | And(_) ->{
 					System.out.println("Part of solution:" + result);

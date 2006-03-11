@@ -34,13 +34,13 @@ public class SolveSystem extends antipattern.term.TermVisitableFwd {
         match@Match(var@Variable(name),s) -> {
             solution.add(`match); 
             Constraint res = `True();
-            //System.out.println("[solve1] -> [" + match + "," + res + "]");
+            /* System.out.println("[solve1] -> [" + match + "," + res + "]"); */
             return res;
         }
         Neg(match@Match(var@Variable(name),s)) -> {
             solution.add(`match); 
             Constraint res = `False();
-            //System.out.println("[solve1] -> [" + match + "," + res + "]");
+            /* System.out.println("[solve1] -> [" + match + "," + res + "]"); */
             return res;
         }
         And(concConstraint(X*,match@Match(var@Variable(name),s),Y*)) -> {
@@ -54,7 +54,7 @@ public class SolveSystem extends antipattern.term.TermVisitableFwd {
             	ruleStrategy = `Innermost(rule);
             }            
             Constraint res = (Constraint) MuTraveler.init(ruleStrategy).visit(`And(concConstraint(X*,Y*)));
-            //System.out.println("[solve3] -> [" + match + "," + res + "]");
+            /* System.out.println("[solve3] -> [" + match + "," + res + "]"); */
             return res;
         }
         Neg(And(concConstraint(X*,match@Match(var@Variable(name),s),Y*))) -> {
@@ -68,7 +68,7 @@ public class SolveSystem extends antipattern.term.TermVisitableFwd {
             	ruleStrategy = `Innermost(rule);
             }
             Constraint res = (Constraint) MuTraveler.init(ruleStrategy).visit(`Neg(And(concConstraint(X*,Y*))));
-            //System.out.println("[solve4] -> [" + match + "," + res + "]");
+            /* System.out.println("[solve4] -> [" + match + "," + res + "]"); */
             return res;
         }
       }
@@ -76,4 +76,4 @@ public class SolveSystem extends antipattern.term.TermVisitableFwd {
       return (isIdentity ? arg : (Constraint)`Fail().visit(arg));
     }
   
-  }
+}
