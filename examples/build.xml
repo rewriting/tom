@@ -14,7 +14,7 @@
   <property name="optimize"       value="on"/>
   <property name="optimize2"      value="on"/>
   <property name="verbose"        value="off"/>
-  <property name="pretty"         value="on"/>
+  <property name="pretty"         value="off"/>
   <property name="visitable"      value="on"/>
   <property name="stamp"          value="off"/>
   <property name="mutraveler"     value="jjtraveler"/>
@@ -265,7 +265,6 @@
       <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
       <zipfileset src="${tnode.jar}"/>
     </jar>
-
   </target>
 
   <target name="boulderdash" depends="init">
