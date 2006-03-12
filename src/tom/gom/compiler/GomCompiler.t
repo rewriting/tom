@@ -145,7 +145,7 @@ public class GomCompiler {
                   allSortSlots.add(`slotHead);
                   allSortSlots.add(`slotTail);
                   slots = `concSlotField(slotHead,slotTail);
-                  // as the operator is varyadic, add a Cons and an Empty
+                  // as the operator is variadic, add a Cons and an Empty
                   empty = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Empty");
                   operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Cons");
 
