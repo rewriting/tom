@@ -119,21 +119,26 @@
       <classpath refid="tom.classpath"/>
     </taskdef>
 
+    <presetdef name="tom.preset">
+      <tom config="${tomconfigfile}"
+           srcdir="${examples.dir}" 
+           destdir="${examples.gen}"         
+           nowarn="${nowarnings}"
+           optimize="${optimize}"
+           optimize2="${optimize2}"
+           verbose="${verbose}"
+           pretty="${pretty}"
+           options="-I ${tom.home}/share/jtom">
+      </tom>
+    </presetdef>
+
     <macrodef name="tomcompile">
       <attribute name="example"/>
       <sequential>
-        <tom config="${tomconfigfile}"
-             srcdir="${examples.dir}" 
-             destdir="${examples.gen}"         
-             nowarn="${nowarnings}"
-             optimize="${optimize}"
-             optimize2="${optimize2}"
-             verbose="${verbose}"
-             pretty="${pretty}"
-             options="-I ${tom.home}/share/jtom">
+        <tom.preset>
           <include name="@{example}/**/*.t"/>
           <exclude name="@{example}/**/*.g.t"/>
-        </tom>
+        </tom.preset>
       </sequential>
     </macrodef>
     <macrodef name="adtcompile">
@@ -301,15 +306,10 @@
   <target name="caml" depends="init">
     <mkdir dir="${examples.gen}/${caml}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         destdir="${examples.gen}/${caml}"
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         options="--camlCode -I ${tom.home}/share/jtom">
+    <tom.preset destdir="${examples.gen}/${caml}"
+                options="--camlCode -I ${tom.home}/share/jtom">
       <include name="${caml}/**/*.t"/>
-    </tom>
+    </tom.preset>
     <copy todir="${examples.build}/${caml}">
       <fileset dir="${examples.gen}/${caml}">
         <include name="*.ml"/>
@@ -386,24 +386,12 @@
   
   <target name="expression" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         options="-I ${tom.home}/share/jtom --lazyType">
+    <tom.preset options="-I ${tom.home}/share/jtom --lazyType">
       <include name="${expression}/**/Record.t"/>
-    </tom>
-    <tom config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize2="${optimize2}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
+    </tom.preset>
+    <tom.preset>
       <include name="${expression}/**/RecordStrict.t"/>
-    </tom>
+    </tom.preset>
     <javacompile example="${expression}"/>
   </target>
 
@@ -415,17 +403,11 @@
       destdir="${examples.gen}/${ferus}">
       <include name="${ferus}/**/*.adt"/>
     </adt>
-    <tom config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         destdir="${examples.gen}/${ferus}"         
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         pretty="${pretty}"
-         stamp="off"
-         options="--cCode -I ${tom.home}/share/jtom">
+    <tom.preset destdir="${examples.gen}/${ferus}"         
+                stamp="off"
+                options="--cCode -I ${tom.home}/share/jtom">
       <include name="${ferus}/**/*.t"/>
-    </tom>
+    </tom.preset>
     <copy todir="${examples.gen}/${ferus}">
       <fileset dir="${examples.dir}/${ferus}">
         <include name="Makefile"/>
@@ -477,17 +459,11 @@
       destdir="${examples.gen}/${integerc}">
       <include name="${integerc}/**/*.adt"/>
     </adt>
-    <tom config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         destdir="${examples.gen}/${integerc}"         
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         pretty="${pretty}"
-         stamp="off" 
-         options="--cCode -I ${tom.home}/share/jtom">
+    <tom.preset destdir="${examples.gen}/${integerc}"         
+                stamp="off" 
+                options="--cCode -I ${tom.home}/share/jtom">
       <include name="${integerc}/**/*.t"/>
-    </tom>
+    </tom.preset>
     <copy todir="${examples.gen}/${integerc}">
       <fileset dir="${examples.dir}/${integerc}">
         <include name="Makefile"/>
@@ -671,30 +647,15 @@
     </vas> 
 -->
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         pretty="${pretty}"
-         stamp="off" 
-         options="-I ${tom.home}/share/jtom">
+    <tom.preset>
       <!-- stamp not yet ready for apigen list -->
       <include name="${structure}/**/*.t"/>
       <exclude name="${structure}/**/StructParser.g.t"/>
       <!--      <exclude name="${structure}/**/StructureCDT.t"/> -->
-    </tom>
-    <tom config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         stamp="off" 
-         options="-I ${tom.home}/share/jtom"
-         outputfile="${examples.gen}/${structure}/StructParser.g">
+    </tom.preset>
+    <tom.preset outputfile="${examples.gen}/${structure}/StructParser.g">
       <include name="${structure}/**/StructParser.g.t"/>
-    </tom>
+    </tom.preset>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${structure}"/>
     <tomantlr target="${examples.gen}/${structure}/StructParser.g"
@@ -713,18 +674,10 @@
 
   <target name="ted" depends="init"> 
     <!-- <tomcompile example="${ted}"/> -->
-    <tom config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         destdir="${examples.gen}"         
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="no"
-         verbose="${verbose}"
-         pretty="${pretty}"
-         options="-I ${tom.home}/share/jtom">
+    <tom.preset optimize2="no">
       <include name="${ted}/**/*.t"/>
       <exclude name="${ted}/**/*.g.t"/>
-    </tom>
+    </tom.preset>
     <javacompile example="${ted}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${ted}">
@@ -742,7 +695,7 @@
 
   <target name="vas" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
+    <tom.preset config="${tomconfigfile}"
          srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
@@ -751,7 +704,7 @@
          stamp="off"
          options="-I ${tom.home}/share/jtom">
       <include name="${vas}/**/*.t"/>
-    </tom>
+    </tom.preset>
     <javacompile example="${vas}"/>
   </target>
 
@@ -780,18 +733,10 @@
   </target>
 
   <target name="zenon" depends="init">
-    <tom config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         destdir="${examples.gen}"         
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         verbose="${verbose}"
-         pretty="${pretty}"
-         options="-I ${tom.home}/share/jtom --verify">
+    <tom.preset options="-I ${tom.home}/share/jtom --verify">
       <include name="${zenon}/**/*.t"/>
       <exclude name="${zenon}/**/*.g.t"/>
-    </tom>
+    </tom.preset>
     <javacompile example="${zenon}"/>
     <antcall target="zenon.make"/>
   </target>
