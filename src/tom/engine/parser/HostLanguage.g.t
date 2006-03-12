@@ -1,28 +1,28 @@
 header{/*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
-  
+
 package tom.engine.parser;
 
 }
@@ -59,44 +59,44 @@ options{
   //--------------------------
     %include{ adt/tomsignature/TomSignature.tom }
   //--------------------------
-  
+
   // the lexer selector
   private TokenStreamSelector selector = null;
-  
+
   // the file to be parsed
   private String currentFile = null;
-  
+
   private tom.engine.tools.ASTFactory ast() {
     return TomEnvironment.getInstance().getAstFactory();
   }
 
   private HashSet includedFileSet = null;
   private HashSet alreadyParsedFileSet = null;
-  
+
   // the parser for tom constructs
-  TomParser tomparser; 
-  
+  TomParser tomparser;
+
   // the lexer for target language
   HostLexer targetlexer = null;
 
   BackQuoteParser bqparser;
 
   OptionManager optionManager;
-  
+
   TomStreamManager streamManager;
-  
+
   // locations of target language blocks
   private int currentLine = 1;
   private int currentColumn = 1;
-  
+
   public HostParser(TokenStreamSelector selector, String currentFile,
-                    HashSet includedFiles, HashSet alreadyParsedFiles, 
+                    HashSet includedFiles, HashSet alreadyParsedFiles,
                     OptionManager optionManager, TomStreamManager streamManager){
     this(selector);
     this.selector = selector;
     this.currentFile = currentFile;
     this.optionManager = optionManager;
-    this.streamManager = streamManager;        
+    this.streamManager = streamManager;
     this.targetlexer = (HostLexer) selector.getStream("targetlexer");
     targetlexer.setParser(this);
     this.includedFileSet = new HashSet(includedFiles);
@@ -115,28 +115,28 @@ options{
   private TomStreamManager getStreamManager() {
     return streamManager;
   }
-    
+
   public TokenStreamSelector getSelector(){
     return selector;
   }
-    
+
   public String getCurrentFile(){
     return currentFile;
   }
-    
+
   public SymbolTable getSymbolTable() {
     return getStreamManager().getSymbolTable();
   }
-  
+
   public void updatePosition(){
     updatePosition(getLine(),getColumn());
   }
-    
+
   public void updatePosition(int i, int j){
     currentLine = i;
     currentColumn = j;
   }
-    
+
   public int currentLine(){
     return currentLine;
   }
@@ -149,7 +149,7 @@ options{
   private String cleanCode(String code){
     return code.substring(code.indexOf('{')+1,code.lastIndexOf('}'));
   }
-    
+
   // remove the last right-brace of a code block
   private String removeLastBrace(String code){
     return code.substring(0,code.lastIndexOf("}"));
@@ -179,13 +179,13 @@ options{
   public int getLine(){
     return targetlexer.getLine();
   }
-    
+
   // returns the current column number
   public int getColumn(){
     return targetlexer.getColumn();
   }
 
-  private void includeFile(String fileName, LinkedList list) 
+  private void includeFile(String fileName, LinkedList list)
     throws TomException, TomIncludeException {
     TomTerm astTom;
     InputStream input;
@@ -200,7 +200,7 @@ options{
     if(fileName.equals("")) {
       throw new TomIncludeException(TomMessage.missingIncludedFile,new Object[]{currentFile, new Integer(getLine())});
     }
-    
+
     file = new File(fileName);
     if(file.isAbsolute()) {
       try {
@@ -217,7 +217,7 @@ options{
       // StreamManager shall find it
       file = getStreamManager().findFile(new File(currentFile).getParentFile(),fileName);
     }
-    
+
     if(file == null) {
       throw new TomIncludeException(TomMessage.includedFileNotFound,new Object[]{fileName, currentFile, new Integer(getLine()), currentFile});
     }
@@ -226,9 +226,9 @@ options{
       if(testIncludedFile(fileCanonicalName, includedFileSet)) {
         throw new TomIncludeException(TomMessage.includedFileCycle,new Object[]{fileName, new Integer(getLine()), currentFile});
       }
-      
+
       // if trying to include a file twice, but not in a cycle : discard
-      if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet)) {    
+      if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet)) {
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
           getLogger().log(new PlatformLogRecord(Level.WARNING,
                 TomMessage.includedFileAlreadyParsed,
@@ -264,16 +264,15 @@ options{
     // !(true) if the set did not already contain the specified element.
     return !fileSet.add(fileName);
   }
-    
+
   void p(String s){
     System.out.println(s);
   }
-  
+
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
-} 
-
+}
 
 // The grammar starts here
 
@@ -281,7 +280,7 @@ input returns [TomTerm result] throws TomException
 {
     result = null;
     LinkedList list = new LinkedList();
-}   
+}
   :
   blockList[list] t:EOF
         {
@@ -291,7 +290,7 @@ input returns [TomTerm result] throws TomException
                                                getCode(),
                                                TextPosition(currentLine(),currentColumn()),
                                                TextPosition(t.getLine(), t.getColumn()))));
-            String comment = 
+            String comment =
             "Generated by TOM (version " + Tom.VERSION + "): Do not edit this file";
             list.addFirst(`TargetLanguageToTomTerm(Comment(comment)));
             result = `Tom(ast().makeList(list));
@@ -304,17 +303,17 @@ blockList [LinkedList list] throws TomException
             // either a tom construct or everything else
             matchConstruct[list]
         |   strategyConstruct[list]
-        |   ruleConstruct[list] 
+        |   ruleConstruct[list]
         |   signature[list]
         |   gomsignature[list]
         |   backquoteTerm[list]
-        |   operator[list] 
-        |   operatorList[list] 
-        |   operatorArray[list] 
+        |   operator[list]
+        |   operatorList[list]
+        |   operatorArray[list]
         |   includeConstruct[list]
-        |   typeTerm[list] 
+        |   typeTerm[list]
         |   STRING
-        |   LBRACE blockList[list] RBRACE 
+        |   LBRACE blockList[list] RBRACE
         )*
     ;
 
@@ -337,13 +336,13 @@ strategyConstruct [LinkedList list] throws TomException
                 );
                 list.add(code);
             }
-            
+
             Option ot = `OriginTracking(
                 Name("Strategy"),
                 t.getLine(),
                 Name(currentFile)
-            );    
-            
+            );
+
             // call the tomparser for the construct
             Declaration strategy = tomparser.strategyConstruct(ot);
             list.add(strategy);
@@ -357,7 +356,7 @@ ruleConstruct [LinkedList list] throws TomException
 }
     :
         t:RULE // we switch the lexers here : we are in Tom mode
-        {     
+        {
             // add the target code preceeding the construct
             String textCode = getCode();
 
@@ -369,13 +368,13 @@ ruleConstruct [LinkedList list] throws TomException
                 );
                 list.add(code);
             }
-            
+
             Option ot = `OriginTracking(
                 Name("Rule"),
                 t.getLine(),
                 Name(currentFile)
-            );    
-            
+            );
+
             // call the tomparser for the construct
             Instruction ruleSet = tomparser.ruleConstruct(ot);
             list.add(ruleSet);
@@ -387,8 +386,8 @@ matchConstruct [LinkedList list] throws TomException
     TargetLanguage code = null;
 }
   :
-        t:MATCH 
-        {        
+        t:MATCH
+        {
             String textCode = getCode();
             if(isCorrect(textCode)) {
                 code = `TL(
@@ -397,10 +396,10 @@ matchConstruct [LinkedList list] throws TomException
                     TextPosition(t.getLine(),t.getColumn())
                 );
                 list.add(code);
-            } 
+            }
 
             Option ot = `OriginTracking(Name("Match"),t.getLine(), Name(currentFile));
-            
+
             Instruction match = tomparser.matchConstruct(ot);
             list.add(match);
         }
@@ -415,16 +414,16 @@ gomsignature [LinkedList list] throws TomException
 }
 :
   t:GOM
-  {   
+  {
     initialGomLine = t.getLine();
-  
+
     String textCode = getCode();
     if(isCorrect(textCode)) {
       code = `TL(textCode,
                  TextPosition(currentLine,currentColumn),
                  TextPosition(t.getLine(),t.getColumn()));
       list.add(code);
-    } 
+    }
   }
   gomTL = goalLanguage[blockList]
   {
@@ -438,7 +437,7 @@ gomsignature [LinkedList list] throws TomException
     } catch (IOException e) {
       getLogger().log(Level.FINER,"Failed to get canonical path for "+config_xml);
     }
-    
+
     String packageName = getStreamManager().getPackagePath().replace(File.separatorChar, '.');
     String inputFileNameWithoutExtension = getStreamManager().getRawFileName().toLowerCase();
     String subPackageName = "";
@@ -466,7 +465,7 @@ gomsignature [LinkedList list] throws TomException
      * as gom returned <> 0 if it is not valid
      */
     includeFile(generatedMapping, list);
-    
+
     updatePosition();
   }
 
@@ -481,17 +480,17 @@ signature [LinkedList list] throws TomException
   File file = null;
 }
 :
-  t:VAS 
-  {   
+  t:VAS
+  {
     initialVasLine = t.getLine();
-  
+
     String textCode = getCode();
     if(isCorrect(textCode)) {
       code = `TL(textCode,
                  TextPosition(currentLine,currentColumn),
                  TextPosition(t.getLine(),t.getColumn()));
       list.add(code);
-    } 
+    }
   }
   vasTL = goalLanguage[blockList]
   {
@@ -521,7 +520,7 @@ signature [LinkedList list] throws TomException
       //System.out.println(platform.getAlertForInput().toString());
       throw new TomException(TomMessage.vasFailure,new Object[]{currentFile,new Integer(initialVasLine)});
     }
-    
+
     generatedADTName = (String)vasPlatform.getLastGeneratedObjects().get(0);
     if(generatedADTName == null) {
       throw new TomException(TomMessage.vasFailure,new Object[]{currentFile,new Integer(initialVasLine)});
@@ -544,12 +543,12 @@ signature [LinkedList list] throws TomException
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
-      throw new TomException(TomMessage.exceptionWithGeneratedTomFile, 
+      throw new TomException(TomMessage.exceptionWithGeneratedTomFile,
           new Object[]{adtFileName, currentFile, sw.toString()});
     }
-    
+
     includeFile(fileName, list);
-    
+
     // the vas construct is over : a new target block begins
     updatePosition();
   }
@@ -571,11 +570,11 @@ backquoteTerm [LinkedList list]
                        TextPosition(t.getLine(),t.getColumn())
                        );
             list.add(code);
-          } 
-            
+          }
+
           Option ot = `OriginTracking(Name("Backquote"),t.getLine(), Name(currentFile));
           TomTerm bqTerm = bqparser.beginBackquote();
-            
+
           // update position for new target block
           updatePosition();
           list.add(bqTerm);
@@ -608,7 +607,7 @@ operatorList [LinkedList list] throws TomException
     TargetLanguage code = null;
 }
     :
-        t:OPERATORLIST 
+        t:OPERATORLIST
         {
             String textCode = pureCode(getCode());
             if(isCorrect(textCode)) {
@@ -667,7 +666,7 @@ includeConstruct [LinkedList list] throws TomException
         {
             includeFile(tlCode.getCode(),list);
             updatePosition();
-        }   
+        }
     ;
 
 typeTerm [LinkedList list] throws TomException
@@ -677,7 +676,7 @@ typeTerm [LinkedList list] throws TomException
 }
     :
         (
-            tt:TYPETERM 
+            tt:TYPETERM
             {
                 line = tt.getLine();
                 column = tt.getColumn();
@@ -702,7 +701,7 @@ typeTerm [LinkedList list] throws TomException
 
             list.add(termdecl);
 
-            
+
         }
 
     ;
@@ -712,12 +711,12 @@ goalLanguage [LinkedList list] returns [TargetLanguage result] throws TomExcepti
     result =  null;
 }
     :
-        t1:LBRACE 
+        t1:LBRACE
         {
             updatePosition(t1.getLine(),t1.getColumn());
         }
         blockList[list]
-        t2:RBRACE 
+        t2:RBRACE
         {
           result = `TL(cleanCode(getCode()),
                        TextPosition(currentLine(),currentColumn()),
@@ -777,7 +776,7 @@ options {
     public void setParser(HostParser parser){
         this.parser = parser;
     }
-    
+
     // clear the buffer
     public void clearTarget(){
         target.delete(0,target.length());
@@ -785,6 +784,62 @@ options {
 
     private TokenStreamSelector selector(){
         return parser.getSelector();
+    }
+
+    /*
+     * this function receives a string that comes from %" ... "%
+     * @@ corresponds to the char '@', so they a encoded into "% (which cannot
+     * appear in the string)
+     * then, the string is split around the delimiter @
+     * alternatively, each string correspond either to a metaString, or a string
+     * to parse the @@ encoded by "% is put back as a single '@' in the metaString
+     */
+    public static String tomSplitter(String subject) {
+
+      String metaChar = "\"%";
+      String escapeChar = "@";
+
+      //System.out.println("initial subject: '" + subject + "'");
+      subject = subject.replaceAll(escapeChar+escapeChar,metaChar);
+      //System.out.println("subject: '" + subject + "'");
+
+      String split[] = subject.split(escapeChar);
+      boolean metaMode = true;
+      String res = "";
+      for(int i=0 ; i<split.length ; i++) {
+        if(metaMode) {
+          // put back escapeChar instead of metaChar
+          String code = metaEncodeCode(split[i].replaceAll(metaChar,escapeChar));
+          metaMode = false;
+          //System.out.println("metaString: '" + code + "'");
+          res += code;
+        } else {
+          String code = split[i];
+          metaMode = true;
+          //System.out.println("prg to parse: '" + code + "'");
+          /* We should parse this part, and get the parse tree back
+          Reader codeReader = new BufferedReader(new StringReader(code));
+          parser = TomParserPlugin.newParser(codeReader,"XXX:find back the file name",
+              getOptionManager(), getStreamManager());
+           */
+          res += code;
+        }
+      }
+      return res;
+    }
+
+    private static String metaEncodeCode(String code) {
+      code = code.replaceAll("\\\"","\\\\\"");
+      code = code.replaceAll("\\\\n","\\\\\\\\n");
+      code = code.replaceAll("\\\\t","\\\\\\\\t");
+      code = code.replaceAll("\\\\r","\\\\\\\\r");
+
+      code = code.replaceAll("\n","\\\\n");
+      code = code.replaceAll("\r","\\\\r");
+      code = code.replaceAll("\t","\\\\t");
+      code = code.replaceAll("\"","\\\"");
+
+      return "\"" + code + "\"";
     }
 }
 
@@ -820,39 +875,38 @@ OPERATORLIST
 OPERATORARRAY
     :   "%oparray"  {selector().push("tomlexer");}
     ;
-    
 
 // following tokens are keyword for tom constructs
 // do not need to switch lexers
 INCLUDE
-    :   "%include" 
+    :   "%include"
     ;
 VAS
-    :   "%vas"  
+    :   "%vas"
     ;
 GOM
-    :   "%gom"  
+    :   "%gom"
     ;
 
 // basic tokens
-LBRACE  
-    :   '{' 
+LBRACE
+    :   '{'
         {
             target.append($getText);
-        }  
+        }
     ;
-RBRACE  
-    :   '}' 
+RBRACE
+    :   '}'
         {
             target.append($getText);
-        }  
+        }
     ;
 
 STRING
   : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
         {
             target.append($getText);
-        } 
+        }
   ;
 
 protected
@@ -906,21 +960,21 @@ WS  : ( ' '
       )
       { newline(); }
     )
-        {  
+        {
             target.append($getText);
             $setType(Token.SKIP);
         }
     ;
 
 // comments
-COMMENT 
+COMMENT
     :
         ( SL_COMMENT | ML_COMMENT | CODE)
         { $setType(Token.SKIP);}
   ;
 
 protected
-SL_COMMENT 
+SL_COMMENT
     :
         "//"
         ( ~('\n'|'\r') )*
@@ -934,15 +988,15 @@ SL_COMMENT
         )
         {
             target.append($getText);
-            newline(); 
+            newline();
         }
   ;
 
 protected
-ML_COMMENT 
+ML_COMMENT
     :
-        "/*"        
-        ( { LA(2)!='/' }? '*' 
+        "/*"
+        ( { LA(2)!='/' }? '*'
         |
         )
         (
@@ -963,34 +1017,34 @@ protected
 CODE
     :
         '%' '"'
-        ( { LA(2)!='%' }? '"' 
+        ( { LA(2)!='%' }? '"'
         |
         )
         (
             options {
-                greedy=false; 
+                greedy=false;
                 generateAmbigWarnings=false; // shut off newline errors
             }
         : '\r' '\n' {newline();}
         | '\r'    {newline();}
         | '\n'    {newline();}
-//				| '@' ( '\r' '\n' {newline();} | '\r' {newline();} | '\n' {newline();}~('\n'|'\r') ) '@'
-//				  { System.out.println("'" + $getText + "'"); }
+        //| '@' ( '\r' '\n' {newline();} | '\r' {newline();} | '\n' {newline();}~('\n'|'\r') ) '@'
+        //  { System.out.println("'" + $getText + "'"); }
         | ~('\n'|'\r')
         )*
         '"' '%'
         {
-					//String newBegin = new String(new char[] {'%','[','['});
-					//String newEnd   = new String(new char[] {']',']','%'});
-					//String code = newBegin + $getText.substring(2,$getText.length()-2) + newEnd;
-					
-					String code = $getText.substring(2,$getText.length()-2);
-					target.append(tom.engine.tools.OutputCode.tomSplitter(code));
-				}
-  ;
+          //String newBegin = new String(new char[] {'%','[','['});
+          //String newEnd   = new String(new char[] {']',']','%'});
+          //String code = newBegin + $getText.substring(2,$getText.length()-2) + newEnd;
+
+          String code = $getText.substring(2,$getText.length()-2);
+          target.append(tomSplitter(code));
+        }
+;
 
 // the rule for the filter: just append the text to the buffer
-protected 
+protected
 TARGET
     :
         ( . )
