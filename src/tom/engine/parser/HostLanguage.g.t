@@ -265,8 +265,67 @@ options{
     return !fileSet.add(fileName);
   }
 
-  void p(String s){
-    System.out.println(s);
+  /*
+   * this function receives a string that comes from %" ... "%
+   * @@ corresponds to the char '@', so they a encoded into "% (which cannot
+   * appear in the string)
+   * then, the string is split around the delimiter @
+   * alternatively, each string correspond either to a metaString, or a string
+   * to parse the @@ encoded by "% is put back as a single '@' in the metaString
+   */
+  public String tomSplitter(String subject, LinkedList list) {
+
+    String metaChar = "\"%";
+    String escapeChar = "@";
+
+    //System.out.println("initial subject: '" + subject + "'");
+    subject = subject.replaceAll(escapeChar+escapeChar,metaChar);
+    //System.out.println("subject: '" + subject + "'");
+
+    String split[] = subject.split(escapeChar);
+    boolean metaMode = true;
+    String res = "";
+    for(int i=0 ; i<split.length ; i++) {
+      if(metaMode) {
+        // put back escapeChar instead of metaChar
+        String code = metaEncodeCode(split[i].replaceAll(metaChar,escapeChar));
+        metaMode = false;
+        //System.out.println("metaString: '" + code + "'");
+        //res += code;
+        list.add(`ITL(code));
+      } else {
+        String code = "+"+split[i]+"+";
+        metaMode = true;
+        //System.out.println("prg to parse: '" + code + "'");
+        //res += code;
+        try {
+        Reader codeReader = new BufferedReader(new StringReader(code));
+        HostParser parser = TomParserPlugin.newParser(codeReader,"XXX:find back the file name",
+            getOptionManager(), getStreamManager());
+        TomTerm astTom = parser.input();
+        list.add(astTom); 
+        } catch (IOException e) {
+          throw new TomRuntimeException("IOException catched in tomSplitter");
+        } catch (Exception e) {
+          throw new TomRuntimeException("Exception catched in tomSplitter");
+        }
+      }
+    }
+    return res;
+  }
+
+  private static String metaEncodeCode(String code) {
+    code = code.replaceAll("\\\"","\\\\\"");
+    code = code.replaceAll("\\\\n","\\\\\\\\n");
+    code = code.replaceAll("\\\\t","\\\\\\\\t");
+    code = code.replaceAll("\\\\r","\\\\\\\\r");
+
+    code = code.replaceAll("\n","\\\\n");
+    code = code.replaceAll("\r","\\\\r");
+    code = code.replaceAll("\t","\\\\t");
+    code = code.replaceAll("\"","\\\"");
+
+    return "\"" + code + "\"";
   }
 
   private Logger getLogger() {
@@ -312,6 +371,7 @@ blockList [LinkedList list] throws TomException
         |   operatorArray[list]
         |   includeConstruct[list]
         |   typeTerm[list]
+        |   code[list]
         |   STRING
         |   LBRACE blockList[list] RBRACE
         )*
@@ -669,6 +729,28 @@ includeConstruct [LinkedList list] throws TomException
         }
     ;
 
+code [LinkedList list] throws TomException
+{
+  TargetLanguage code = null;
+}
+: t:CODE
+{
+  String textCode = getCode();
+  if(isCorrect(textCode)) {
+    code = `TL(
+        textCode,
+        TextPosition(currentLine,currentColumn),
+        TextPosition(t.getLine(),t.getColumn())
+        );
+    list.add(code);
+  }
+  textCode = t.getText();
+  String metacode = textCode.substring(2,textCode.length()-2);
+  tomSplitter(metacode, list);
+  updatePosition(targetlexer.getInputState().getLine(),targetlexer.getInputState().getColumn());
+}
+;
+
 typeTerm [LinkedList list] throws TomException
 {
     TargetLanguage code = null;
@@ -786,61 +868,6 @@ options {
         return parser.getSelector();
     }
 
-    /*
-     * this function receives a string that comes from %" ... "%
-     * @@ corresponds to the char '@', so they a encoded into "% (which cannot
-     * appear in the string)
-     * then, the string is split around the delimiter @
-     * alternatively, each string correspond either to a metaString, or a string
-     * to parse the @@ encoded by "% is put back as a single '@' in the metaString
-     */
-    public static String tomSplitter(String subject) {
-
-      String metaChar = "\"%";
-      String escapeChar = "@";
-
-      //System.out.println("initial subject: '" + subject + "'");
-      subject = subject.replaceAll(escapeChar+escapeChar,metaChar);
-      //System.out.println("subject: '" + subject + "'");
-
-      String split[] = subject.split(escapeChar);
-      boolean metaMode = true;
-      String res = "";
-      for(int i=0 ; i<split.length ; i++) {
-        if(metaMode) {
-          // put back escapeChar instead of metaChar
-          String code = metaEncodeCode(split[i].replaceAll(metaChar,escapeChar));
-          metaMode = false;
-          //System.out.println("metaString: '" + code + "'");
-          res += code;
-        } else {
-          String code = split[i];
-          metaMode = true;
-          //System.out.println("prg to parse: '" + code + "'");
-          /* We should parse this part, and get the parse tree back
-          Reader codeReader = new BufferedReader(new StringReader(code));
-          parser = TomParserPlugin.newParser(codeReader,"XXX:find back the file name",
-              getOptionManager(), getStreamManager());
-           */
-          res += code;
-        }
-      }
-      return res;
-    }
-
-    private static String metaEncodeCode(String code) {
-      code = code.replaceAll("\\\"","\\\\\"");
-      code = code.replaceAll("\\\\n","\\\\\\\\n");
-      code = code.replaceAll("\\\\t","\\\\\\\\t");
-      code = code.replaceAll("\\\\r","\\\\\\\\r");
-
-      code = code.replaceAll("\n","\\\\n");
-      code = code.replaceAll("\r","\\\\r");
-      code = code.replaceAll("\t","\\\\t");
-      code = code.replaceAll("\"","\\\"");
-
-      return "\"" + code + "\"";
-    }
 }
 
 // here begins tokens definition
@@ -969,7 +996,7 @@ WS  : ( ' '
 // comments
 COMMENT
     :
-        ( SL_COMMENT | ML_COMMENT | CODE)
+        ( SL_COMMENT | ML_COMMENT )
         { $setType(Token.SKIP);}
   ;
 
@@ -1013,7 +1040,6 @@ ML_COMMENT
         {target.append($getText);}
   ;
 
-protected
 CODE
     :
         '%' '"'
@@ -1033,14 +1059,6 @@ CODE
         | ~('\n'|'\r')
         )*
         '"' '%'
-        {
-          //String newBegin = new String(new char[] {'%','[','['});
-          //String newEnd   = new String(new char[] {']',']','%'});
-          //String code = newBegin + $getText.substring(2,$getText.length()-2) + newEnd;
-
-          String code = $getText.substring(2,$getText.length()-2);
-          target.append(tomSplitter(code));
-        }
 ;
 
 // the rule for the filter: just append the text to the buffer

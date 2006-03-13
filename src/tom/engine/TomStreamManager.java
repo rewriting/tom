@@ -307,7 +307,14 @@ public class TomStreamManager {
   }
 
   public File getInputParentFile() {
-    return (new File(getInputFileName())).getParentFile();
+    File parent = null;
+    try {
+      parent = (new File(getInputFileName())).getCanonicalFile().getParentFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + getInputFileName() + "`");
+      e.printStackTrace();
+    }
+    return parent;
   }
 
   public String getInputFileNameWithoutSuffix() {
