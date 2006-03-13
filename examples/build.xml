@@ -250,13 +250,13 @@
     <!-- ugly hacks to find the TNode and tom-library jars -->
     <path id="tnode.path">
       <fileset dir="${tom.home}/lib">
-        <include name="TNode-*.jar"/>
+        <include name="TNode*.jar"/>
       </fileset>
     </path>
     <property name="tnode.jar" refid="tnode.path"/>
     <path id="tom-library.path"> <!-- ugly hack to find the TNode jar -->
       <fileset dir="${tom.home}/lib">
-        <include name="tom-library-*.jar"/>
+        <include name="tom-library*.jar"/>
       </fileset>
     </path>
     <property name="tom-library.jar" refid="tom-library.path"/>
