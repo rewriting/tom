@@ -82,7 +82,7 @@ public class TomCompiler extends TomGenericPlugin {
       setWorkingTerm(compiledTerm);
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-                       new Object[]{getStreamManager().getInputFile().getName(), "TomCompiler", e.getMessage()} );
+                       new Object[]{getStreamManager().getInputFileName(), "TomCompiler", e.getMessage()} );
       e.printStackTrace();
     }
     if(intermediate) {
@@ -290,28 +290,24 @@ matchBlock: {
        if(subject instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match6_1=(( tom.engine.adt.tomsignature.types.Declaration)subject); if(tom_is_fun_sym_Strategy(tom_match6_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match6_1_sName=tom_get_slot_Strategy_sName(tom_match6_1); { tom.engine.adt.tomsignature.types.TomVisitList tom_match6_1_visitList=tom_get_slot_Strategy_visitList(tom_match6_1); { tom.engine.adt.tomsignature.types.Option tom_match6_1_orgTrack=tom_get_slot_Strategy_orgTrack(tom_match6_1); if( true ) {
 
           DeclarationList l = tom_empty_list_concDeclaration();//represents compiled Strategy
-          TomList subjectListAST;
-          TomVisit visit;
           TomVisitList jVisitList = tom_match6_1_visitList;
-          TomTerm arg;//arg = subjectList
-          String funcName;//function name
           TomForwardType visitorFwd = null;
           while (!jVisitList.isEmpty()){
-            subjectListAST = empty();
-            visit = jVisitList.getHead();
-             if(visit instanceof  tom.engine.adt.tomsignature.types.TomVisit) { { tom.engine.adt.tomsignature.types.TomVisit tom_match7_1=(( tom.engine.adt.tomsignature.types.TomVisit)visit); if(tom_is_fun_sym_VisitTerm(tom_match7_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match7_1_vNode=tom_get_slot_VisitTerm_vNode(tom_match7_1); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match7_1_astPatternInstructionList=tom_get_slot_VisitTerm_astPatternInstructionList(tom_match7_1); { tom.engine.adt.tomsignature.types.TomType tom_visitType=tom_match7_1_vNode; if( true ) {
+            TomList subjectListAST = empty();
+            TomVisit visit = jVisitList.getHead();
+             if(visit instanceof  tom.engine.adt.tomsignature.types.TomVisit) { { tom.engine.adt.tomsignature.types.TomVisit tom_match7_1=(( tom.engine.adt.tomsignature.types.TomVisit)visit); if(tom_is_fun_sym_VisitTerm(tom_match7_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match7_1_vNode=tom_get_slot_VisitTerm_vNode(tom_match7_1); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match7_1_astPatternInstructionList=tom_get_slot_VisitTerm_astPatternInstructionList(tom_match7_1); if(tom_is_fun_sym_Type(tom_match7_1_vNode) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_vType=tom_match7_1_vNode; { tom.engine.adt.tomsignature.types.TomType tom_match7_1_vNode_tomType=tom_get_slot_Type_tomType(tom_match7_1_vNode); if(tom_is_fun_sym_ASTTomType(tom_match7_1_vNode_tomType) ||  false ) { { String  tom_match7_1_vNode_tomType_string=tom_get_slot_ASTTomType_string(tom_match7_1_vNode_tomType); { String  tom_type=tom_match7_1_vNode_tomType_string; if( true ) {
 
                 if (visitorFwd == null) {//first time in loop
-                  visitorFwd = symbolTable().getForwardType(tom_visitType.getTomType().getString());//do the job only once
+                  visitorFwd = symbolTable().getForwardType(tom_type);//do the job only once
                 }
-                arg = tom_make_Variable(option(),tom_make_Name("arg"),tom_visitType,tom_empty_list_concConstraint());//one argument only in visit_Term
+                TomTerm arg = tom_make_Variable(option(),tom_make_Name("arg"),tom_vType,tom_empty_list_concConstraint());//arg subjectList
                 subjectListAST = append(arg,subjectListAST);
-                funcName = "visit_" + getTomType(tom_visitType);
+                String funcName = "visit_" + tom_type;//function name
                 Instruction matchStatement = tom_make_Match(tom_make_SubjectList(subjectListAST),tom_match7_1_astPatternInstructionList,tom_cons_list_concOption(tom_match6_1_orgTrack,tom_empty_list_concOption()));
                 Instruction returnStatement = tom_make_Return(tom_make_FunctionCall(tom_make_Name(funcName),subjectListAST));
                 InstructionList instructions = tom_cons_list_concInstruction(matchStatement,tom_cons_list_concInstruction(returnStatement,tom_empty_list_concInstruction()));
-                l = tom_append_list_concDeclaration(l,tom_cons_list_concDeclaration(tom_make_FunctionDef(tom_make_Name(funcName),tom_cons_list_concTomTerm(arg,tom_empty_list_concTomTerm()),tom_visitType,tom_make_TomTypeAlone("VisitFailure"),tom_make_AbstractBlock(instructions)),tom_empty_list_concDeclaration()));
-               }}}} }} }
+                l = tom_append_list_concDeclaration(l,tom_cons_list_concDeclaration(tom_make_FunctionDef(tom_make_Name(funcName),tom_cons_list_concTomTerm(arg,tom_empty_list_concTomTerm()),tom_vType,tom_make_TomTypeAlone("VisitFailure"),tom_make_AbstractBlock(instructions)),tom_empty_list_concDeclaration()));
+               }}} }}} }}} }} }
 
             jVisitList = jVisitList.getTail();
           }

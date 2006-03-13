@@ -110,7 +110,7 @@ public class TomBackend extends TomGenericPlugin {
         return;
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-                         new Object[]{getStreamManager().getInputFile().getName(), "TomBackend", e.getMessage()} );
+                         new Object[]{getStreamManager().getInputFileName(), "TomBackend", e.getMessage()} );
         e.printStackTrace();
         return;
       }

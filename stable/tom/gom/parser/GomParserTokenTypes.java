@@ -39,10 +39,12 @@ public interface GomParserTokenTypes {
 	int COMMA = 12;
 	int RIGHT_BRACE = 13;
 	int ARROW = 14;
-	int STAR = 15;
-	int COLON = 16;
-	int PRIVATE = 17;
-	int WS = 18;
-	int SLCOMMENT = 19;
-	int ML_COMMENT = 20;
+	int COLON = 15;
+	int LBRACE = 16;
+	int RBRACE = 17;
+	int STAR = 18;
+	int PRIVATE = 19;
+	int WS = 20;
+	int SLCOMMENT = 21;
+	int ML_COMMENT = 22;
 }

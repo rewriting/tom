@@ -77,7 +77,7 @@ public class TomTypeChecker extends TomChecker {
                          new Integer((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-                         new Object[]{getClass().getName(), getStreamManager().getInputFile().getName(),e.getMessage()} );
+                         new Object[]{getClass().getName(), getStreamManager().getInputFileName(),e.getMessage()} );
         e.printStackTrace();
       }
     } else {
@@ -172,17 +172,41 @@ public class TomTypeChecker extends TomChecker {
   } //verifyMatchVariable
   
   private void verifyStrategyVariable(TomVisitList list) {
+    TomForwardType visitorFwd = null;
+    TomForwardType currentVisitorFwd = null;
     while(!list.isEmpty()) {
       TomVisit visit = list.getHead();
-       if(visit instanceof  tom.engine.adt.tomsignature.types.TomVisit) { { tom.engine.adt.tomsignature.types.TomVisit tom_match5_1=(( tom.engine.adt.tomsignature.types.TomVisit)visit); if(tom_is_fun_sym_VisitTerm(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match5_1_vNode=tom_get_slot_VisitTerm_vNode(tom_match5_1); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match5_1_astPatternInstructionList=tom_get_slot_VisitTerm_astPatternInstructionList(tom_match5_1); if( true ) {
+       if(visit instanceof  tom.engine.adt.tomsignature.types.TomVisit) { { tom.engine.adt.tomsignature.types.TomVisit tom_match5_1=(( tom.engine.adt.tomsignature.types.TomVisit)visit); if(tom_is_fun_sym_VisitTerm(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match5_1_vNode=tom_get_slot_VisitTerm_vNode(tom_match5_1); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match5_1_astPatternInstructionList=tom_get_slot_VisitTerm_astPatternInstructionList(tom_match5_1); { tom.engine.adt.tomsignature.types.TomType tom_visitType=tom_match5_1_vNode; if( true ) {
 
+
+          //check that all visitType have same visitorFwd
+          currentVisitorFwd = symbolTable().getForwardType(tom_visitType.getTomType().getString());
+          //noVisitorFwd defined for visitType
+          if (currentVisitorFwd == null || currentVisitorFwd == tom_make_EmptyForward()){ 
+            messageError(tom_visitType.getTlType().getTl().getStart().getLine(),
+                TomMessage.noVisitorForward.getMessage(),
+                new Object[]{tom_visitType.getTomType().getString()});
+          }
+          else if (visitorFwd == null) {//first visit 
+            visitorFwd = currentVisitorFwd;
+          }
+          else {//check if current visitor equals to previous visitor
+            if (currentVisitorFwd != visitorFwd){ 
+              System.out.println(visitorFwd);
+              System.out.println(currentVisitorFwd);
+              messageError(tom_visitType.getTlType().getTl().getStart().getLine(),
+                  TomMessage.differentVisitorForward.getMessage(),
+                  new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
+            }
+          }
           verifyMatchVariable(tom_match5_1_astPatternInstructionList);
-         }}} }} }
+         }}}} }} }
 
       // next visit
       list = list.getTail();
+    }
   }
-}
+
   /**
    * The notion of conditional rewrite rule can be generalised with a sequence of conditions
    * as in lhs -> rhs where P1:=C1 ... where Pn:=Cn if Qj==Dj 

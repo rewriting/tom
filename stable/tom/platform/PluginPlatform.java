@@ -95,7 +95,7 @@ public class PluginPlatform {
       statusHandler.clear();
       
       if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);     
-      if(input instanceof String && ((String)input).endsWith(".t")){
+      if(input instanceof String && ((String)input).endsWith(".t")) {
         String inputWithoutSuffix = ((String)input).substring(0, ((String)input).length() - ".t".length());
         testHandler = new TestHandler(inputWithoutSuffix);
         if(!testHandler.hasError()){

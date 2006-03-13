@@ -163,7 +163,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     if(line < 0) {
       getLogger().log(Level.SEVERE,
                       TomMessage.findOTL.getMessage(),
-                      getStreamManager().getInputFile().getName());
+                      getStreamManager().getInputFileName());
       //System.out.println("findOriginTrackingLine: not found ");
     }
   }

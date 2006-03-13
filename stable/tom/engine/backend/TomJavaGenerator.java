@@ -78,11 +78,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     TomTypeList tomTypes = getSymbolDomain(tomSymbol);
     ArrayList names = new ArrayList();
     ArrayList types = new ArrayList();
-    TomType type;
     //initialize arrayList with argument names
     int index = 0;
     while(!tomTypes.isEmpty()) {
-	    type = tomTypes.getHead();
+	    TomType type = tomTypes.getHead();
 	    types.add(getTomType(type));
       names.add(getSlotName(tomSymbol, index).getString());
 	    tomTypes = tomTypes.getTail();
@@ -90,9 +89,11 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
     output.write(deep, modifier +"class " + tomName);
     //write extends
-    if (extendsFwdType != tom_make_EmptyForward()) {
-      output.write(deep," extends " + getTLCode(extendsFwdType));
-    }
+		 if(extendsFwdType instanceof  tom.engine.adt.tomsignature.types.TomForwardType) { { tom.engine.adt.tomsignature.types.TomForwardType tom_match1_1=(( tom.engine.adt.tomsignature.types.TomForwardType)extendsFwdType); if(tom_is_fun_sym_TLForward(tom_match1_1) ||  false ) { { String  tom_match1_1_string=tom_get_slot_TLForward_string(tom_match1_1); if( true ) {
+ 
+				output.write(deep," extends " + tom_match1_1_string);
+			 }} }} }
+
     output.write(deep," {");
     int args = names.size();
     //write Declarations
@@ -128,19 +129,18 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 
   protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
     output.write(deep,"public " + getTLType(codomain) + " " + tomName + "(");
-    TomTerm localVar;
     while(!varList.isEmpty()) {
-      localVar = varList.getHead();
+      TomTerm localVar = varList.getHead();
       matchBlock: {
-         if(localVar instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match1_1=(( tom.engine.adt.tomsignature.types.TomTerm)localVar); if(tom_is_fun_sym_Variable(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match1_1_astType=tom_get_slot_Variable_astType(tom_match1_1); if( true ) {
+         if(localVar instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1=(( tom.engine.adt.tomsignature.types.TomTerm)localVar); if(tom_is_fun_sym_Variable(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match2_1_astType=tom_get_slot_Variable_astType(tom_match2_1); if( true ) {
 
-            output.write(deep,getTLType(tom_match1_1_astType) + " ");
-            generate(deep,tom_match1_1,moduleName);
+            output.write(deep,getTLType(tom_match2_1_astType) + " ");
+            generate(deep,tom_match2_1,moduleName);
             break matchBlock;
-           }} } if(tom_is_fun_sym_TLVar(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match1_1_astType=tom_get_slot_TLVar_astType(tom_match1_1); if( true ) {
+           }} } if(tom_is_fun_sym_TLVar(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match2_1_astType=tom_get_slot_TLVar_astType(tom_match2_1); if( true ) {
 
-            output.write(deep,getTLType(tom_match1_1_astType) + " ");
-            generate(deep,tom_match1_1,moduleName);
+            output.write(deep,getTLType(tom_match2_1_astType) + " ");
+            generate(deep,tom_match2_1,moduleName);
             break matchBlock;
            }} } if( true ) {
 
@@ -156,9 +156,13 @@ public class TomJavaGenerator extends TomImperativeGenerator {
       }
     }
     output.writeln(deep,")"); 
-    if (!throwsType.isEmptyType()) {
-      output.write(deep," throws " + throwsType.getString());
-    }
+
+     if(throwsType instanceof  tom.engine.adt.tomsignature.types.TomType) { { tom.engine.adt.tomsignature.types.TomType tom_match3_1=(( tom.engine.adt.tomsignature.types.TomType)throwsType); if(tom_is_fun_sym_TomTypeAlone(tom_match3_1) ||  false ) { { String  tom_match3_1_string=tom_get_slot_TomTypeAlone_string(tom_match3_1); if( true ) {
+
+        output.write(deep," throws " + tom_match3_1_string);
+       }} }} }
+
+
     output.writeln(" {");
     generateInstruction(deep,instruction,moduleName);
     output.writeln(deep," }");

@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -37,7 +37,7 @@ public class OutputCode {
 
   private int lineCounter = 1;
   private int singleLine = 0;
-  
+
   public OutputCode(Writer file, OptionManager optionManager) {
     this.file = file;
     this.optionManager = optionManager;
@@ -50,15 +50,15 @@ public class OutputCode {
   public void setSingleLine() {
     this.singleLine++;
   }
-  
+
   public void unsetSingleLine() {
     this.singleLine--;
   }
-  
+
   public Writer getFile() {
     return file;
   }
-  
+
   public void writeSpace() throws IOException {
     file.write(' ');
   }
@@ -77,7 +77,7 @@ public class OutputCode {
   public void writeUnderscore() throws IOException {
     file.write('_');
   }
-  
+
   public void write(String s) throws IOException {
     try {
       file.write(s);
@@ -86,32 +86,32 @@ public class OutputCode {
       e.printStackTrace();
     }
   }
-  
+
   public void write(int n) throws IOException {
     write(Integer.toString(n));
   }
-  
+
   public void write(int deep,String s) throws IOException {
     indent(deep);
     write(s);
   }
-  
+
   public void writeln() throws IOException {
     if(((Boolean)optionManager.getOptionValue("pretty")).booleanValue()) {
       file.write('\n');
     }
   }
-  
+
   public void writeln(String s) throws IOException {
     write(s);
     writeln();
   }
-  
+
   public void writeln(int deep,String s) throws IOException {
     write(deep,s);
     writeln();
   }
-  
+
   public void write(StringBuffer s) throws IOException {
     write(s.toString());
   }
@@ -119,7 +119,7 @@ public class OutputCode {
   public void write(int deep,StringBuffer s) throws IOException {
     write(deep,s.toString());
   }
-  
+
   public void writeln(StringBuffer s) throws IOException {
     writeln(s.toString());
   }
@@ -127,7 +127,7 @@ public class OutputCode {
   public void writeln(int deep,StringBuffer s) throws IOException {
     writeln(deep,s.toString());
   }
-  
+
   public void write(StringBuffer s, int line, int length) throws IOException {
     write(s.toString(), line, length);
   }
@@ -162,8 +162,8 @@ public class OutputCode {
       lineCounter+= length;
     }
     write(s);
-  } 
-  
+  }
+
   public void close() {
     try {
       file.flush();
@@ -173,7 +173,7 @@ public class OutputCode {
       e.printStackTrace();
     }
   }
-  
+
   public String stringDump() {
     try {
       if(file instanceof StringWriter) {
@@ -188,7 +188,7 @@ public class OutputCode {
       return null;
     }
   }
-  
+
   public void indent(int deep) {
     try {
       if(((Boolean)optionManager.getOptionValue("pretty")).booleanValue()) {
@@ -205,55 +205,4 @@ public class OutputCode {
     }
   }
 
-	private static String metaEncodeCode(String code) {
-			code = code.replaceAll("\\\"","\\\\\"");
-			code = code.replaceAll("\\\\n","\\\\\\\\n");
-			code = code.replaceAll("\\\\t","\\\\\\\\t");
-			code = code.replaceAll("\\\\r","\\\\\\\\r");
-
-			code = code.replaceAll("\n","\\\\n");
-			code = code.replaceAll("\r","\\\\r");
-			code = code.replaceAll("\t","\\\\t");
-			code = code.replaceAll("\"","\\\"");
-
-			return "\"" + code + "\"";
-	}
-
-
-	/*
-	 * this function receives a string that comes from %" ... "%
-	 * @@ corresponds to the char '@', so they a encoded into "% (which cannot appear in the string)
-	 * then, the string is split around the delimiter @
-	 * alternatively, each string correspond either to a metaString, or a string to parse
-	 * the @@ encoded by "% is put back as a single '@' in the metaString
-	 */
-	public static String tomSplitter(String subject) {
-
-		String metaChar = "\"%";
-		String escapeChar = "@";
-
-		//System.out.println("initial subject: '" + subject + "'");
-		subject = subject.replaceAll(escapeChar+escapeChar,metaChar);
-		//System.out.println("subject: '" + subject + "'");
-
-		String split[] = subject.split(escapeChar);
-		boolean metaMode = true;
-		String res = "";
-		for(int i=0 ; i<split.length ; i++) {
-			if(metaMode) {
-				// put back escapeChar instead of metaChar
-				String code = metaEncodeCode(split[i].replaceAll(metaChar,escapeChar));
-				metaMode = false;
-				//System.out.println("metaString: '" + code + "'");
-				res += code;
-			} else {
-				String code = split[i];
-				metaMode = true;
-				//System.out.println("prg to parse: '" + code + "'");
-				res += code;
-			}
-		}
-
-		return res;
-	}
 }

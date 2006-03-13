@@ -117,7 +117,7 @@ public class TomSyntaxChecker extends TomChecker {
       } catch (Exception e) {
         getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                         new Object[]{getClass().getName(),
-                                     getStreamManager().getInputFile().getName(),
+                                     getStreamManager().getInputFileName(),
                                      e.getMessage() });
         e.printStackTrace();
       }

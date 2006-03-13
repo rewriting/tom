@@ -24,18 +24,7 @@
 
 package tom.gom;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
@@ -56,27 +45,27 @@ import tom.platform.PluginPlatformFactory;
 import tom.gom.GomMessage;
 
 public class Gom {
-  
+
   /** The current version of the Gom compiler. */
   public final static String VERSION = "0.01";
-  
+
   /** Log radical string*/
   public final static String LOGRADICAL = "tom.gom";
-    
+
   /** "java.util.logging.config.file" */
   private final static String LOGGINGPROPERTYFILE =
     "java.util.logging.config.file";
 
   /** The root logger */
   private final static Logger logger = Logger.getLogger(Gom.LOGRADICAL);
-  
+
   /** the console handler that level can be changed dynamically */
   private static Handler consoleHandler;
-  
+
   public static void main(String[] args) {
     exec(args);
   }
-  
+
   public static int exec(String[] commandLine) {
     try {
       initializeLogging();
@@ -87,18 +76,18 @@ public class Gom {
       );
       return 1;
     }
-    PluginPlatform platform = PluginPlatformFactory.getInstance().create(commandLine, Gom.LOGRADICAL); 
+    PluginPlatform platform = PluginPlatformFactory.getInstance().create(commandLine, Gom.LOGRADICAL);
     if(platform == null) {
       return 1;
     }
     return platform.run();
   }
-  
+
   /**
    * This method should be used to change the Level of logging, instead of
    * directly accessing to the logger via Logger.getLogger(tom.gom).
    * Indeed, this method respect the fact that the logger's Level should
-   * never ever be set higher than Level.WARNING, because it would cause the 
+   * never ever be set higher than Level.WARNING, because it would cause the
    * StatusHandler to malfunction. The StatusHandler won't
    * see warnings that's why the noWarning option is handled by changing the
    * ConsoleHandler's level while the verbose option lowers the rootLogger's
@@ -115,7 +104,7 @@ public class Gom {
       consoleHandler.setLevel(newLevel);
     }
   }
-  
+
   private static void initializeLogging()
     throws InstantiationException,ClassNotFoundException,
            IllegalAccessException, IOException {
@@ -135,7 +124,7 @@ public class Gom {
       refreshTopLoggerHandlers();
     }
   }
-  
+
   /**
    * initGomRootLogger set thee useParentHandlers flad and
    * remove all pre-existing handlers that might exist from prior uses
@@ -148,7 +137,7 @@ public class Gom {
       logger.removeHandler(handlers[i]);
     }
   }
-  
+
   private static void refreshTopLoggerHandlers()
     throws InstantiationException,ClassNotFoundException,
            IllegalAccessException {
@@ -186,5 +175,5 @@ public class Gom {
       }
     }
   }
-  
+
 }

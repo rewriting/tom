@@ -25,8 +25,6 @@
 
 package tom.engine.parser;
 
-import java.io.DataInputStream;
-
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.InputStreamReader;
@@ -69,8 +67,9 @@ public class TomParserPlugin extends TomGenericPlugin {
   /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options><boolean name='parse' altName='' description='Parser (activated by default)' value='true'/></options>";
   
-  /** input file name*/
+  /** input file name and stream */
   private String currentFileName;
+  private Reader currentReader;
   
   /** the main HostParser */
   private HostParser parser = null;
@@ -81,26 +80,27 @@ public class TomParserPlugin extends TomGenericPlugin {
   }
   
   //creating a new Host parser
-  protected static HostParser newParser(String fileName, OptionManager optionManager, TomStreamManager tomStreamManager)
+  protected static HostParser newParser(Reader reader, String fileName,
+                                        OptionManager optionManager,
+                                        TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
     HashSet includedFiles = new HashSet();
     HashSet alreadyParsedFiles = new HashSet();
-    return newParser(fileName,includedFiles,alreadyParsedFiles, optionManager, tomStreamManager);
+    return newParser(reader,fileName,
+                     includedFiles,alreadyParsedFiles,
+                     optionManager, tomStreamManager);
   }
   
-  protected static HostParser newParser(String fileName,HashSet includedFiles,
+  protected static HostParser newParser(Reader reader,String fileName,
+                                        HashSet includedFiles,
                                         HashSet alreadyParsedFiles,
                                         OptionManager optionManager,
                                         TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
-    // retreive the encoding option that is a string
-    String encoding = (String)optionManager.getOptionValue("encoding");
-    // The input Stream
-    Reader input = new BufferedReader(new InputStreamReader(new FileInputStream(fileName),encoding));
     // a selector to choose the lexer to use
     TokenStreamSelector selector = new TokenStreamSelector();
     // create a lexer for target mode
-    HostLexer targetlexer = new HostLexer(input);
+    HostLexer targetlexer = new HostLexer(reader);
     // create a lexer for tom mode
     TomLexer tomlexer = new TomLexer(targetlexer.getInputState());
     // create a lexer for backquote mode
@@ -122,13 +122,8 @@ public class TomParserPlugin extends TomGenericPlugin {
   public void setArgs(Object[] arg){
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
-      try {
-        currentFileName = getStreamManager().getInputFile().getCanonicalPath();  
-      } catch (IOException e) {
-        System.out.println("IO Exception when computing currentFileName");
-        e.printStackTrace();
-      }
-
+      currentFileName = getStreamManager().getInputFileName();  
+      currentReader = getStreamManager().getInputReader();
     } else {
       getLogger().log(Level.SEVERE, TomMessage.invalidPluginArgument.getMessage(),
                       new Object[]{"TomParserPlugin", "[TomStreamManager]",
@@ -147,12 +142,13 @@ public class TomParserPlugin extends TomGenericPlugin {
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
     try {
       // looking for java package
-      if(java) {
+      if(java && (!currentFileName.equals("-"))) {
         //         TomJavaLexer javaLexer = new TomJavaLexer(new BufferedReader(new FileReader(new File(currentFileName))));
         //         Token token = javaLexer.nextToken();
         //         System.out.println("token = '" + token + "'");
         //         String packageName = "";
 
+        /* Do not exhaust the stream !! */
         TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
         String packageName = javaParser.javaPackageDeclaration();
         //System.out.println("packageName = '" +packageName + "'");
@@ -161,7 +157,7 @@ public class TomParserPlugin extends TomGenericPlugin {
         getStreamManager().setPackagePath(packageName);
       }
       // getting a parser 
-      parser = newParser(currentFileName, getOptionManager(), getStreamManager());
+      parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
       // parsing
       setWorkingTerm(parser.input());
       // verbose
@@ -191,6 +187,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       return;
     } catch (FileNotFoundException e) {
       getLogger().log(Level.SEVERE, TomMessage.fileNotFound.getMessage(),currentFileName); 
+      e.printStackTrace();
       return;
     } catch (Exception e) {
       StringWriter sw = new StringWriter();
@@ -202,7 +199,7 @@ public class TomParserPlugin extends TomGenericPlugin {
     }
     // Some extra stuff
     if(eclipse) {
-      String outputFileName = getStreamManager().getInputFile().getParent()+
+      String outputFileName = getStreamManager().getInputParentFile()+
         File.separator + "."+
         getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
       Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm());

@@ -3,23 +3,23 @@
  *
  * Copyright (C) 2006 INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
- * 
+ *
  **/
 
 package tom.gom.backend;
@@ -47,7 +47,7 @@ public abstract class TemplateFactory {
   public abstract TemplateClass makeVisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses);
   public abstract TemplateClass makeAbstractTypeTemplate(ClassName className, ClassName factory, ClassName visitor, ClassNameList sortList);
   public abstract TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName visitor, ClassNameList operators, SlotFieldList slots);
-  public abstract TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots);
+  public abstract TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks);
   public abstract TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses);
 
 }
@@ -75,7 +75,7 @@ class ApigenTemplateFactory extends TemplateFactory {
   public TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName visitor, ClassNameList operators, SlotFieldList slots) {
     return new tom.gom.backend.apigen.TemplateSort(className,factory,abstractType,visitor,operators,slots);
   }
-  public TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots) {
+  public TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks) {
     return new tom.gom.backend.apigen.TemplateOperator(className,factory,abstractType,sort,visitor,slots);
   }
   public TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses) {
@@ -106,8 +106,8 @@ class SharedTemplateFactory extends TemplateFactory {
   public TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName visitor, ClassNameList operators, SlotFieldList slots) {
     return new tom.gom.backend.shared.SortTemplate(className,factory,abstractType,visitor,operators,slots);
   }
-  public TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots) {
-    return new tom.gom.backend.shared.OperatorTemplate(className,factory,abstractType,sort,visitor,slots);
+  public TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks) {
+    return new tom.gom.backend.shared.OperatorTemplate(className,factory,abstractType,sort,visitor,slots,hooks);
   }
   public TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses) {
     return new tom.gom.backend.shared.NullTemplate(className); // no need to generate a factory in this mode

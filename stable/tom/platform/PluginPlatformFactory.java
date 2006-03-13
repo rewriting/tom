@@ -25,10 +25,9 @@
 
 package tom.platform;
 
-import java.util.logging.*;
 import java.io.*;
 import java.util.*;
-
+import java.util.logging.*;
 
 /**
  * The PluginPlatform factory is a singleton class that is responsable for the

@@ -36,7 +36,7 @@ import tom.gom.tools.GomGenericPlugin;
  * and to initalize the plugin platform set/getargs process with it
  */
 public class GomStarter extends GomGenericPlugin {
-  
+
   /** The args to set during run and to return */
   private Object[] argToRelay;
   /** Saved information during setArgs */
@@ -45,22 +45,22 @@ public class GomStarter extends GomGenericPlugin {
   public GomStarter() {
     super("GomStarter");
   }
-  
+
   /**
    * inherited from plugin interface
    * arg[0] should contain the input file name
    */
   public void setArgs(Object[] arg) {
     if (arg[0] instanceof String) {
-      fileName = (String)arg[0];  
+      fileName = (String)arg[0];
     } else {
-      getLogger().log(Level.SEVERE, 
+      getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{"GomStarter", "[String]",
             getArgumentArrayString(arg)});
     }
   }
-  
+
   /**
    * inherited from plugin interface
    * Create the GomStreamManager as input for next plugin
@@ -71,7 +71,7 @@ public class GomStarter extends GomGenericPlugin {
     newStreamManager.prepareForInputFile(fileName);
     argToRelay = new Object[]{newStreamManager};
   }
-  
+
   /**
    * inherited from plugin interface
    * returns argTorelay initialized during run call

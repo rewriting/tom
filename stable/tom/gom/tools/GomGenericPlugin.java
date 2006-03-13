@@ -36,11 +36,8 @@ import tom.gom.Gom;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 
-/**
- *
- */
 public abstract class GomGenericPlugin implements Plugin {
-  
+
   public GomGenericPlugin(String name) {
     pluginName = name;
   }
@@ -79,10 +76,10 @@ public abstract class GomGenericPlugin implements Plugin {
     }
     return statusHandler;
   }
-  
+
   protected GomEnvironment environment() {
     return GomEnvironment.getInstance();
-  } 
+  }
 
   public GomStreamManager getStreamManager() {
     return streamManager;
@@ -99,28 +96,28 @@ public abstract class GomGenericPlugin implements Plugin {
   public abstract void setArgs(Object[] arg);
 
   /**
-   * From Plugin interface 
+   * From Plugin interface
    * The run() method is not implemented in GomGenericPlugin.
    * The plugin should implement its own run() method itself.
    */
   public abstract void run();
 
   /**
-   * From Plugin interface 
+   * From Plugin interface
    * @return the Object "term"
    */
   public abstract Object[] getArgs();
-  
+
   /**
-   * From Plugin interface 
+   * From Plugin interface
    * The setOptionManager save the reference to the OM.
    */
   public void setOptionManager(OptionManager optionManager) {
     this.optionManager = optionManager;
   }
-  
+
   /**
-   * From OptionOwner interface 
+   * From OptionOwner interface
    * Returns an empty PlatformOptionList. By default, the plugin is considered
    * to declare no options.
    *
@@ -129,9 +126,9 @@ public abstract class GomGenericPlugin implements Plugin {
   public PlatformOptionList getDeclaredOptionList() {
     return tom_make_emptyPlatformOptionList();
   }
-  
+
   /**
-   * From OptionOwner interface 
+   * From OptionOwner interface
    * Returns an empty PlatformOptionList. By default, the plugin is considered
    * to have no prerequisites.
    *
@@ -140,9 +137,9 @@ public abstract class GomGenericPlugin implements Plugin {
   public PlatformOptionList getRequiredOptionList() {
     return tom_make_emptyPlatformOptionList();
   }
-  
+
   /**
-   * From OptionOwner interface 
+   * From OptionOwner interface
    * By default, no further work is done. Sometimes though, a plugin might need
    * to do more work
    * (for instance if altering the value entails a change in another).
@@ -152,7 +149,7 @@ public abstract class GomGenericPlugin implements Plugin {
    */
   public void optionChanged(String optionName, Object optionValue) {
   }
- 
+
   private void findStatusHandler() {
     Handler[] handlers = Logger.getLogger(Gom.LOGRADICAL).getHandlers();
     for(int i=0;i<handlers.length;i++) {
@@ -162,7 +159,7 @@ public abstract class GomGenericPlugin implements Plugin {
       }
     }
   }
-  
+
   public OptionManager getOptionManager() {
     return optionManager;
   }
@@ -194,7 +191,7 @@ public abstract class GomGenericPlugin implements Plugin {
   public int getOptionIntegerValue(String optionName) {
     return ((Integer)getOptionValue(optionName)).intValue();
   }
-    
+
   /**
    * Returns the value of a string option.
    * 

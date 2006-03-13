@@ -26,13 +26,20 @@
 package tom.engine;
 
 import java.io.File;
+import java.io.Reader;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
@@ -57,8 +64,11 @@ public class TomStreamManager {
   /** Absolute path where file are generated. */ 
   private File destDir;
 
-  /** Absolute name of the input/output file (with extension). */
-  private File inputFile;
+  /** the input file name */
+  private String inputFileName;
+  private String encoding;
+
+  /** Absolute name of the output file (with extension). */
   private File outputFile;
 
   /** Absolute name of the output file (given in command line). */
@@ -91,7 +101,8 @@ public class TomStreamManager {
    */
   private void clear() {
     destDir = null;
-    inputFile = null;
+    inputFileName = null;
+    encoding = null;
     outputFile = null;
     userOutputFile = null;
     packagePath = "";
@@ -142,6 +153,8 @@ public class TomStreamManager {
     localDestDir = (String)optionManager.getOptionValue("destdir");
     setDestDir(localDestDir);
 
+    encoding = (String)optionManager.getOptionValue("encoding");
+
     String commandLineUserOutputFile = (String)optionManager.getOptionValue("output");
     if(commandLineUserOutputFile.length() > 0) {
       setUserOutputFile(commandLineUserOutputFile);
@@ -151,7 +164,7 @@ public class TomStreamManager {
   public void prepareForInputFile(String localInputFileName) { // updateInputOutputFiles + init
     // compute inputFile:
     //  - add a suffix if necessary
-    if(!localInputFileName.endsWith(getInputSuffix())) {
+    if((!localInputFileName.endsWith(getInputSuffix())) && (!localInputFileName.equals("-"))) {
       localInputFileName += getInputSuffix();
     }
     setInputFile(localInputFileName);
@@ -162,6 +175,11 @@ public class TomStreamManager {
     //    the outputDir
     //    [the packagePath] will be updated by the parser
     //    and reuse the inputFileName with a good suffix
+    /* if using stdin, --output is mandatory */
+    if (!isUserOutputFile() && (localInputFileName.equals("-"))) {
+      getLogger().log(Level.SEVERE,"Expecting use of \"-o file\" when using stdin");
+      return;
+    }
     if(isUserOutputFile()) {
       setOutputFile(getUserOutputFile().getPath());
     } else {
@@ -216,10 +234,10 @@ public class TomStreamManager {
     try {
       File destAndPackage = new File(getDestDir(),getPackagePath());
       importList.add(destAndPackage.getCanonicalFile());
-      importList.add(getInputFile().getParentFile().getCanonicalFile());
+      importList.add(getInputParentFile().getCanonicalFile());
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
-        File file = new File(new File(tom_home,"jtom"),"share");
+        File file = new File(new File(tom_home,"share"),"jtom");
         importList.add(file.getCanonicalFile());
         //System.out.println(" extend import list with: " + file.getPath());
       }
@@ -262,20 +280,44 @@ public class TomStreamManager {
   }
 
   public void setInputFile(String sInputFile) {
-    try {
-      this.inputFile = new File(sInputFile).getCanonicalFile();
-    } catch (IOException e) {
-      System.out.println("IO Exception using file `" + sInputFile + "`");
-      e.printStackTrace();
-    }  
+    this.inputFileName = sInputFile;
   }
   
-  public File getInputFile() {
-    return inputFile;
+  public String getInputFileName() {
+    return inputFileName;
+  }
+
+  public Reader getInputReader() {
+    try {
+      if (!inputFileName.equals("-")) {
+        return new BufferedReader(new InputStreamReader(
+              new FileInputStream(
+                new File(inputFileName).getCanonicalFile()),encoding));
+      } else {
+        return new BufferedReader(new InputStreamReader(System.in));
+      }
+    } catch (FileNotFoundException e) {
+      getLogger().log(Level.SEVERE, TomMessage.fileNotFound.getMessage(),
+          new Object[]{inputFileName});
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + inputFileName + "`");
+      e.printStackTrace();
+    }
+    throw new TomRuntimeException("Stopped.");
+  }
+
+  public File getInputParentFile() {
+    File parent = null;
+    try {
+      parent = (new File(getInputFileName())).getCanonicalFile().getParentFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + getInputFileName() + "`");
+      e.printStackTrace();
+    }
+    return parent;
   }
 
   public String getInputFileNameWithoutSuffix() {
-    String inputFileName = getInputFile().getPath();
     String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
     //System.out.println("IFNWS : " +res);
     return res;
@@ -331,8 +373,8 @@ public class TomStreamManager {
   }
   
   public String getRawFileName() {
-    String inputFileName = getInputFile().getName();
-    String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
+    String rawInputFileName = new File(getInputFileName()).getName();
+    String res = rawInputFileName.substring(0, rawInputFileName.length() - getInputSuffix().length());
     //System.out.println("Raw file name : " + res);
     return res;
   }
@@ -360,4 +402,9 @@ public class TomStreamManager {
     //System.out.println("not found!"); 
     return null;
   }
-} //class TomStreamManager
+
+  /** the class logger instance*/
+  private Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
+  }
+}

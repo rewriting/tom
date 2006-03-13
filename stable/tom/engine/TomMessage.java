@@ -118,6 +118,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Included file {0} has already been parsed");
   public static final TomMessage errorWhileIncludingFile=
       new TomMessage("Exception {0} occurs in parsing file `{1}` included in file {2} at line {3,number,integer}: See stacktrace\n\n{4}");
+  public static final TomMessage gomFailure =
+      new TomMessage("An error occurs dealing with %gom input in {0} at line {1,number,integer}");
   public static final TomMessage vasPlatformFailure    =
       new TomMessage("Fail to obtain a Vas PluginPlatform in {0} at line {1,number,integer}");
   public static final TomMessage vasFailure            =
@@ -275,6 +277,12 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage ambigousSymbolWithoutConstructor=
       new TomMessage("{0} is a constructor and cannot be a variable. Add () to denote the constructor.");
 
+  //strategy
+  public static final TomMessage differentVisitorForward =
+      new TomMessage("All visited sorts in same %strategy must have same visitorForward: `{0}` is different from `{1}`");
+  public static final TomMessage noVisitorForward =
+      new TomMessage("no visitorForward defined for type `{0}`");
+  
   // rule
   public static final TomMessage incorrectRuleLHSClass   =
       new TomMessage("`{0}`: Impossible in rule left hand side");

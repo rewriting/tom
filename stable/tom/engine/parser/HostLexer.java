@@ -1,29 +1,29 @@
 // $ANTLR 2.7.5 (20050128): "HostLanguage.g" -> "HostLexer.java"$
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
-  
+
 package tom.engine.parser;
 
 
@@ -66,7 +66,7 @@ public class HostLexer extends antlr.CharScanner implements HostParserTokenTypes
     public void setParser(HostParser parser){
         this.parser = parser;
     }
-    
+
     // clear the buffer
     public void clearTarget(){
         target.delete(0,target.length());
@@ -75,6 +75,7 @@ public class HostLexer extends antlr.CharScanner implements HostParserTokenTypes
     private TokenStreamSelector selector(){
         return parser.getSelector();
     }
+
 public HostLexer(InputStream in) {
 	this(new ByteBuffer(in));
 }
@@ -135,6 +136,12 @@ tryAgain:
 					theRetToken=_returnToken;
 					break;
 				}
+				case '/':
+				{
+					mCOMMENT(true);
+					theRetToken=_returnToken;
+					break;
+				}
 				default:
 					if ((LA(1)=='%') && (LA(2)=='t') && (LA(3)=='y') && (LA(4)=='p') && (LA(5)=='e') && (LA(6)=='t')) {
 						mTYPETERM(true);
@@ -176,8 +183,12 @@ tryAgain:
 						mVAS(true);
 						theRetToken=_returnToken;
 					}
-					else if ((LA(1)=='%'||LA(1)=='/') && (LA(2)=='"'||LA(2)=='*'||LA(2)=='/')) {
-						mCOMMENT(true);
+					else if ((LA(1)=='%') && (LA(2)=='g')) {
+						mGOM(true);
+						theRetToken=_returnToken;
+					}
+					else if ((LA(1)=='%') && (LA(2)=='"')) {
+						mCODE(true);
 						theRetToken=_returnToken;
 					}
 				else {
@@ -380,6 +391,19 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
+	public final void mGOM(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = GOM;
+		int _saveIndex;
+		
+		match("%gom");
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
 	public final void mLBRACE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = LBRACE;
@@ -419,7 +443,7 @@ tryAgain:
 		
 		match('"');
 		{
-		_loop34:
+		_loop37:
 		do {
 			if ((LA(1)=='\\')) {
 				mESC(false);
@@ -430,7 +454,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop34;
+				break _loop37;
 			}
 			
 		} while (true);
@@ -497,17 +521,17 @@ tryAgain:
 		case 'u':
 		{
 			{
-			int _cnt38=0;
-			_loop38:
+			int _cnt41=0;
+			_loop41:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt38>=1 ) { break _loop38; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt41>=1 ) { break _loop41; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt38++;
+				_cnt41++;
 			} while (true);
 			}
 			mHEX_DIGIT(false);
@@ -682,9 +706,6 @@ tryAgain:
 		else if ((LA(1)=='/') && (LA(2)=='*')) {
 			mML_COMMENT(false);
 		}
-		else if ((LA(1)=='%')) {
-			mCODE(false);
-		}
 		else {
 			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
 		}
@@ -705,7 +726,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop52:
+		_loop55:
 		do {
 			if ((_tokenSet_1.member(LA(1)))) {
 				{
@@ -713,7 +734,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop52;
+				break _loop55;
 			}
 			
 		} while (true);
@@ -736,7 +757,7 @@ tryAgain:
 		}
 		
 		target.append(new String(text.getBuffer(),_begin,text.length()-_begin));
-		newline(); 
+		newline();
 		
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
@@ -763,10 +784,10 @@ tryAgain:
 		
 		}
 		{
-		_loop58:
+		_loop61:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop58;
+			if ((LA(1)=='*') && (LA(2)=='/') && (true)) break _loop61;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -786,7 +807,7 @@ tryAgain:
 				newline();
 			}
 			else {
-				break _loop58;
+				break _loop61;
 			}
 			
 		} while (true);
@@ -800,7 +821,7 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	protected final void mCODE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+	public final void mCODE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = CODE;
 		int _saveIndex;
@@ -819,10 +840,10 @@ tryAgain:
 		
 		}
 		{
-		_loop63:
+		_loop66:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='"') && (LA(2)=='%') && (true)) break _loop63;
+			if ((LA(1)=='"') && (LA(2)=='%') && (true)) break _loop66;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -842,21 +863,13 @@ tryAgain:
 				newline();
 			}
 			else {
-				break _loop63;
+				break _loop66;
 			}
 			
 		} while (true);
 		}
 		match('"');
 		match('%');
-		
-							//String newBegin = new String(new char[] {'%','[','['});
-							//String newEnd   = new String(new char[] {']',']','%'});
-							//String code = newBegin + $getText.substring(2,$getText.length()-2) + newEnd;
-							
-							String code = new String(text.getBuffer(),_begin,text.length()-_begin).substring(2,new String(text.getBuffer(),_begin,text.length()-_begin).length()-2);
-							target.append(tom.engine.tools.OutputCode.tomSplitter(code));
-						
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));

@@ -24,9 +24,7 @@
 
 package tom.gom.parser;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.Reader;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -40,17 +38,19 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
+import antlr.TokenStreamSelector;
 
 /**
  * The responsability of the GomParser plugin is to parse the input Gom file
  * Get the input file from GomStreamManger and parse
  */
 public class GomParserPlugin extends GomGenericPlugin {
-  
+
   public static final String PARSED_SUFFIX = ".tfix.gom.parsed";
-  /** input file name*/
+  /** input stream */
+  private Reader inputReader;
   private String inputFileName;
-  
+
   /** the parsed module */
   private GomModule module;
 
@@ -58,7 +58,7 @@ public class GomParserPlugin extends GomGenericPlugin {
   public GomParserPlugin() {
     super("GomParser");
   }
-  
+
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
@@ -66,68 +66,68 @@ public class GomParserPlugin extends GomGenericPlugin {
   public void setArgs(Object arg[]) {
     if (arg[0] instanceof GomStreamManager) {
       setStreamManager((GomStreamManager)arg[0]);
-	    inputFileName = getStreamManager().getInputFile().getAbsolutePath();  
+      inputReader = getStreamManager().getInputReader();
     } else {
-      getLogger().log(Level.SEVERE, 
+      getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
           new Object[]{"GomParser", "[GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
-  
+
   /**
    * inherited from plugin interface
    * Create the initial GomModule parsed from the input file
    */
   public void run() {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-    DataInputStream inputStream;
-    try {
-      inputStream = new DataInputStream(new FileInputStream(new File(inputFileName)));
-    } catch (FileNotFoundException e) {
-      getLogger().log(Level.SEVERE, GomMessage.fileNotFound.getMessage(),
-                      new Object[]{inputFileName}); 
+
+    if (inputReader == null)
       return;
-    }      
-    GomLexer lexer = new GomLexer(inputStream);;
-    GomParser parser =new GomParser(lexer);;
+    // this stuff should go in a distinct (static?) method...
+    TokenStreamSelector selector = new TokenStreamSelector();
+    GomLexer gomlexer = new GomLexer(inputReader);
+    gomlexer.setSelector(selector);
+    selector.addInputStream(gomlexer,"gomlexer");
+    selector.select("gomlexer");
+    BlockLexer blocklexer = new BlockLexer(gomlexer.getInputState());
+    selector.addInputStream(blocklexer,"blocklexer");
+    GomParser parser = new GomParser(selector,"GomParser");
     getLogger().log(Level.INFO, "Start parsing");
     try {
       module = parser.module();
     } catch (RecognitionException re) {
-    	StringWriter sw = new StringWriter();
+      StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       re.printStackTrace(pw);
-      getLogger().log(new PlatformLogRecord(Level.SEVERE, 
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.parseException,sw.toString(),
-            inputFileName, lexer.getLine()));
+            inputFileName, gomlexer.getLine()));
       return;
     } catch(TokenStreamException streamException) {
-    	StringWriter stringwriter = new StringWriter();
+      StringWriter stringwriter = new StringWriter();
       PrintWriter printwriter = new PrintWriter(stringwriter);
       streamException.printStackTrace(printwriter);
-      getLogger().log(new PlatformLogRecord(Level.SEVERE, 
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.parseException,stringwriter.toString(),
-            inputFileName, lexer.getLine()));
+            inputFileName, gomlexer.getLine()));
       return;
     } catch (Exception e) {
-    	StringWriter stringwriter = new StringWriter();
+      StringWriter stringwriter = new StringWriter();
       PrintWriter printwriter = new PrintWriter(stringwriter);
       e.printStackTrace(printwriter);
-      getLogger().log(Level.SEVERE, GomMessage.exceptionMessage.getMessage(), 
+      getLogger().log(Level.SEVERE, GomMessage.exceptionMessage.getMessage(),
                       new Object[]{getClass().getName(), inputFileName, stringwriter.toString()});
       return;
     }
-    
-    // We put the moduleName on streamManager
-    getStreamManager().setModuleName(module.getModuleName().getName());
+
     getLogger().log(Level.INFO, "Parsing succeeds");
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
                            + PARSED_SUFFIX, (aterm.ATerm)module);
     }
   }
-  
+
   /**
    * inherited from plugin interface
    * returns an array containing the parsed module and the streamManager

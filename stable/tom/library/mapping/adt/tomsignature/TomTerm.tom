@@ -1128,9 +1128,9 @@
   make() { tom.engine.adt.tomsignature.TomTermFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomForwardType_EmptyForward()}
 }
 
-%op TomForwardType TLForward(tl:TargetLanguage) {
+%op TomForwardType TLForward(string:String) {
   is_fsym(t) { (t!= null) && t.isTLForward()}
-  get_slot(tl,t) { t.getTl()}
+  get_slot(string,t) { t.getString()}
   make(t0) { tom.engine.adt.tomsignature.TomTermFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomForwardType_TLForward(t0)}
 }
 

@@ -49,8 +49,19 @@ import antlr.LexerSharedInputState;
 import antlr.collections.impl.BitSet;
 import antlr.SemanticException;
 
+  import antlr.TokenStreamSelector;
+
 public class GomLexer extends antlr.CharScanner implements GomParserTokenTypes, TokenStream
  {
+
+  private TokenStreamSelector selector;
+  private TokenStreamSelector selector() {
+    return selector;
+  }
+  public void setSelector(TokenStreamSelector sel) {
+    this.selector = sel;
+  }
+
 public GomLexer(InputStream in) {
 	this(new ByteBuffer(in));
 }
@@ -67,7 +78,7 @@ public GomLexer(LexerSharedInputState state) {
 	literals = new Hashtable();
 	literals.put(new ANTLRHashString("imports", this), new Integer(6));
 	literals.put(new ANTLRHashString("abstract", this), new Integer(9));
-	literals.put(new ANTLRHashString("private", this), new Integer(17));
+	literals.put(new ANTLRHashString("private", this), new Integer(19));
 	literals.put(new ANTLRHashString("module", this), new Integer(4));
 	literals.put(new ANTLRHashString("public", this), new Integer(7));
 	literals.put(new ANTLRHashString("syntax", this), new Integer(10));
@@ -117,6 +128,18 @@ tryAgain:
 				case '*':
 				{
 					mSTAR(true);
+					theRetToken=_returnToken;
+					break;
+				}
+				case '{':
+				{
+					mLBRACE(true);
+					theRetToken=_returnToken;
+					break;
+				}
+				case '}':
+				{
+					mRBRACE(true);
 					theRetToken=_returnToken;
 					break;
 				}
@@ -257,6 +280,33 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
+	public final void mLBRACE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = LBRACE;
+		int _saveIndex;
+		
+		match('{');
+		selector().push("blocklexer");
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	public final void mRBRACE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = RBRACE;
+		int _saveIndex;
+		
+		match('}');
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
 	public final void mWS(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = WS;
@@ -315,7 +365,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop36:
+		_loop45:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				{
@@ -323,7 +373,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop36;
+				break _loop45;
 			}
 			
 		} while (true);
@@ -371,7 +421,7 @@ tryAgain:
 		
 		match("/*");
 		{
-		_loop42:
+		_loop51:
 		do {
 			switch ( LA(1)) {
 			case '\n':
@@ -432,7 +482,7 @@ tryAgain:
 					newline();
 				}
 			else {
-				break _loop42;
+				break _loop51;
 			}
 			}
 		} while (true);
@@ -482,7 +532,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop46:
+		_loop55:
 		do {
 			switch ( LA(1)) {
 			case 'a':  case 'b':  case 'c':  case 'd':
@@ -526,7 +576,7 @@ tryAgain:
 			}
 			default:
 			{
-				break _loop46;
+				break _loop55;
 			}
 			}
 		} while (true);
