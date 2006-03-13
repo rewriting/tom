@@ -43,10 +43,10 @@ public class AbstractTypeTemplate extends TemplateClass {
     StringBuffer out = new StringBuffer();
 
     out.append(
-%"
-package "%+getPackage()+%";
+%[
+package @getPackage()@;
 
-public abstract class "%+className()+%" implements shared.SharedObject, jjtraveler.Visitable {
+public abstract class @className()@ implements shared.SharedObject, jjtraveler.Visitable {
 
   public abstract aterm.ATerm toATerm();
 
@@ -54,10 +54,10 @@ public abstract class "%+className()+%" implements shared.SharedObject, jjtravel
     return toATerm().toString();
   }
 
-  abstract public "%+className()+%" accept("%+fullClassName(visitor)+%" v) throws jjtraveler.VisitFailure;
+  abstract public @className()@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure;
 
 }
-"%);
+]%);
 
     return out.toString();
   }

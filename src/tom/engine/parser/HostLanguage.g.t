@@ -266,16 +266,16 @@ options{
   }
 
   /*
-   * this function receives a string that comes from %" ... "%
-   * @@ corresponds to the char '@', so they a encoded into "% (which cannot
+   * this function receives a string that comes from %[ ... ]%
+   * @@ corresponds to the char '@', so they a encoded into ]% (which cannot
    * appear in the string)
    * then, the string is split around the delimiter @
    * alternatively, each string correspond either to a metaString, or a string
-   * to parse the @@ encoded by "% is put back as a single '@' in the metaString
+   * to parse the @@ encoded by ]% is put back as a single '@' in the metaString
    */
   public String tomSplitter(String subject, LinkedList list) {
 
-    String metaChar = "\"%";
+    String metaChar = "]%";
     String escapeChar = "@";
 
     //System.out.println("initial subject: '" + subject + "'");
@@ -875,44 +875,44 @@ options {
 // the following tokens are keywords for tom constructs
 // when read, we switch lexers to tom
 BACKQUOTE
-    :   "`" {selector().push("bqlexer");}
+    : "`" {selector().push("bqlexer");}
     ;
 STRATEGY
-    :  "%strategy" {selector().push("tomlexer");}
+    : "%strategy" {selector().push("tomlexer");}
     ;
 RULE
-    :   "%rule" {selector().push("tomlexer");}
+    : "%rule" {selector().push("tomlexer");}
     ;
 MATCH
     : "%match" {selector().push("tomlexer");}
     ;
 OPERATOR
-    :   "%op"   {selector().push("tomlexer");}
+    : "%op"   {selector().push("tomlexer");}
     ;
 TYPE
-    :   "%type" {selector().push("tomlexer");}
+    : "%type" {selector().push("tomlexer");}
     ;
 TYPETERM
-    :   "%typeterm" {selector().push("tomlexer");}
+    : "%typeterm" {selector().push("tomlexer");}
     ;
 OPERATORLIST
-    :   "%oplist"   {
+    : "%oplist"   {
             selector().push("tomlexer");}
     ;
 OPERATORARRAY
-    :   "%oparray"  {selector().push("tomlexer");}
+    : "%oparray"  {selector().push("tomlexer");}
     ;
 
 // following tokens are keyword for tom constructs
 // do not need to switch lexers
 INCLUDE
-    :   "%include"
+    : "%include"
     ;
 VAS
-    :   "%vas"
+    : "%vas"
     ;
 GOM
-    :   "%gom"
+    : "%gom"
     ;
 
 // basic tokens
@@ -1042,8 +1042,8 @@ ML_COMMENT
 
 CODE
     :
-        '%' '"'
-        ( { LA(2)!='%' }? '"'
+        '%' '['
+        ( { LA(2)!='%' }? ']'
         |
         )
         (
@@ -1058,7 +1058,7 @@ CODE
         //  { System.out.println("'" + $getText + "'"); }
         | ~('\n'|'\r')
         )*
-        '"' '%'
+        ']' '%'
 ;
 
 // the rule for the filter: just append the text to the buffer

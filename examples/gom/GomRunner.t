@@ -10,13 +10,13 @@ import java.io.StringBufferInputStream;
 class GomRunner {
 
   public static void main(String[] args) {
-    String module = %"
+    String module = %[
       module Allo
       public
         sorts Huile
       abstract syntax
         Clock() -> Huile
-      "%;
+      ]%;
 
     String[] params = {"-X","/Users/tonio/workspace/jtom/src/dist/Gom.xml","-d", "gom/coin", "-"};
     InputStream tmpIn = System.in;

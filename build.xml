@@ -913,7 +913,7 @@
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${stable.dist}"/>
       <property name="optimize" value="on"/>
-      <property name="optimize2" value="on"/>
+      <property name="optimize2" value="off"/>
       <property name="tomconfigfile" location="${stable.dist}/Tom.xml"/>
     </ant>
   </target>
@@ -937,7 +937,7 @@
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
       <property name="optimize" value="on"/>
-      <property name="optimize2" value="on"/>
+      <property name="optimize2" value="off"/>
       <property name="tomconfigfile" location="${src.dist}/Tom.xml"/>
     </ant>
   </target>

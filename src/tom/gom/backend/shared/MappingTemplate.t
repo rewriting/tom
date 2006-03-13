@@ -48,26 +48,26 @@ public class MappingTemplate extends TemplateClass {
   public String generate() {
     StringBuffer out = new StringBuffer();
 
-    out.append(%"
+    out.append(%[
 %include { string.tom }
 %include { int.tom }
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
-"%);
+]%);
 
     // generate a %typeterm for each class
     %match(GomClassList sortClasses) {
       concGomClass(_*,
           SortClass[className=sortName],
           _*) -> {
-        out.append(%"
-%typeterm "%+className(`sortName)+%" {
-  implement { "%+fullClassName(`sortName)+%" }
+        out.append(%[
+%typeterm @className(`sortName)@ {
+  implement { @fullClassName(`sortName)@ }
   equals(t1,t2) { t1.equals(t2) }
 }
 
-"%);
+]%);
       }
     }
 
@@ -103,16 +103,16 @@ public class MappingTemplate extends TemplateClass {
           empty=emptyClass,
           operator=operatorName],
           _*) -> {
-        out.append(%"
-%oplist "%+className(`sortName)+%" "%+`operatorName+%"("%+className(`headDomain)+%"*) {
-  is_fsym(t) { t instanceof "%+fullClassName(`opName)+%" || t instanceof "%+fullClassName(`emptyClass)+%" }
-  make_empty() { "%+fullClassName(`emptyClass)+%".make() }
-  make_insert(e,l) { "%+fullClassName(`opName)+%".make(e,l) }
-  get_head(l) { l."%+getMethod(`head)+%"() }
-  get_tail(l) { l."%+getMethod(`tail)+%"() }
-  is_empty(l) { l."%+isOperatorMethod(`emptyClass)+%"() }
+        out.append(%[
+%oplist @className(`sortName)@ @`operatorName@(@className(`headDomain)@*) {
+  is_fsym(t) { t instanceof @fullClassName(`opName)@ || t instanceof @fullClassName(`emptyClass)@ }
+  make_empty() { @fullClassName(`emptyClass)@.make() }
+  make_insert(e,l) { @fullClassName(`opName)@.make(e,l) }
+  get_head(l) { l.@getMethod(`head)@() }
+  get_tail(l) { l.@getMethod(`tail)@() }
+  is_empty(l) { l.@isOperatorMethod(`emptyClass)@() }
 }
-"%);
+]%);
       }
     }
 

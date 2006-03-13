@@ -51,19 +51,19 @@ public class SortTemplate extends TemplateClass {
   public String generate() {
     StringBuffer out = new StringBuffer();
 
-    out.append(%"
-package "%+getPackage()+%";        
+    out.append(%[
+package @getPackage()@;        
 
-public abstract class "%+className()+%" extends "%+fullClassName(abstractType)+%" {
+public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
-  public "%+fullClassName(abstractType)+%" accept("%+fullClassName(visitor)+%" v) throws jjtraveler.VisitFailure {
-    return v."%+visitMethod(className)+%"(this);
+  public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure {
+    return v.@visitMethod(className)@(this);
   }
 
-"%+generateBody()+%"
+@generateBody()@
 
 }
-"%);
+]%);
     return out.toString();
   }
 
@@ -76,12 +76,12 @@ public abstract class "%+className()+%" extends "%+fullClassName(abstractType)+%
       ClassName operatorName = consum.getHead();
       consum = consum.getTail();
 
-      out.append(%"
-  public boolean "%+isOperatorMethod(operatorName)+%"() {
+      out.append(%[
+  public boolean @isOperatorMethod(operatorName)@() {
     return false;
   }
 
-"%);
+]%);
     }
     // methods for each slot
     while (!slotList.isEmpty()) {
@@ -95,12 +95,12 @@ public abstract class "%+className()+%" extends "%+fullClassName(abstractType)+%
       out.append("\n");
       */
 
-      out.append(%"
-  public "%+slotDomain(slot)+%" "%+getMethod(slot)+%"() {
-    throw new UnsupportedOperationException("This "%+className()+%" has no "%+slot.getName()+%"");
+      out.append(%[
+  public @slotDomain(slot)@ @getMethod(slot)@() {
+    throw new UnsupportedOperationException("This @className()@ has no @slot.getName()@");
   }
 
-"%);
+]%);
 
       /* Do not generate "setSlot" methods for now
       out.append("\tpublic "+className()+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
@@ -112,14 +112,14 @@ public abstract class "%+className()+%" extends "%+fullClassName(abstractType)+%
     }
 
     /* fromTerm method, dispatching to operator classes */
-    out.append(%"
-  public static "%+fullClassName()+%" fromTerm(aterm.ATerm trm) {
-    "%+fullClassName()+%" tmp;
-"%+generateFromTerm("trm","tmp")+%"
-    throw new IllegalArgumentException("This is not a "%+className()+%"" + trm);
+    out.append(%[
+  public static @fullClassName()@ fromTerm(aterm.ATerm trm) {
+    @fullClassName()@ tmp;
+@generateFromTerm("trm","tmp")@
+    throw new IllegalArgumentException("This is not a @className()@" + trm);
   }
 
-"%);
+]%);
 
     return out.toString();
   }
@@ -130,12 +130,12 @@ public abstract class "%+className()+%" extends "%+fullClassName(abstractType)+%
     while (!consum.isEmpty()) {
       ClassName operatorName = consum.getHead();
       consum = consum.getTail();
-      out.append(%"
-    "%+tmp+%" = "%+fullClassName(operatorName)+%".fromTerm("%+trm+%");
-    if ("%+tmp+%" != null) {
+      out.append(%[
+    @tmp@ = @fullClassName(operatorName)@.fromTerm(@trm@);
+    if (@tmp@ != null) {
       return tmp;
     }
-"%);
+]%);
     }
     return out.toString();
   }

@@ -66,27 +66,27 @@ public class ForwardTemplate extends TemplateClass {
     out.append("\t}\n");
     */
 
-    out.append(%"
-package "%+getPackage()+%";
+    out.append(%[
+package @getPackage()@;
 
-public class "%+className()+%" implements "%+ className(visitor) +%", jjtraveler.Visitor {
+public class @className()@ implements @ className(visitor) @, jjtraveler.Visitor {
   protected jjtraveler.Visitor any;
 
-  public "%+className()+%"(jjtraveler.Visitor v) {
+  public @className()@(jjtraveler.Visitor v) {
     this.any = v;
   }
 
   public jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {
-    if (v instanceof "%+fullClassName(abstractType)+%") {
-      return (("%+fullClassName(abstractType)+%") v).accept(this);
+    if (v instanceof @fullClassName(abstractType)@) {
+      return ((@fullClassName(abstractType)@) v).accept(this);
     } else {
       return any.visit(v);
     }
   }
 
-"%+generateVisitMethods()+%"
+@generateVisitMethods()@
 
-}"%);
+}]%);
 
     return out.toString();
   }
@@ -103,11 +103,11 @@ public class "%+className()+%" implements "%+ className(visitor) +%", jjtraveler
         out.append("\n");
         */
 
-        out.append(%"
-  public "%+ fullClassName(`sortName) +%" "%+visitMethod(`sortName)+%"("%+fullClassName(`sortName)+%" arg) throws jjtraveler.VisitFailure {
-    return ("%+fullClassName(`sortName)+%") any.visit(arg);
+        out.append(%[
+  public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg) throws jjtraveler.VisitFailure {
+    return (@fullClassName(`sortName)@) any.visit(arg);
   }
-"%);
+]%);
       }
     }
     return out.toString();

@@ -57,19 +57,19 @@ public class OperatorTemplate extends TemplateClass {
 
   public String generate() {
 
-    String classBody = %"
-package "%+getPackage()+%";
+    String classBody = %[
+package @getPackage()@;
 
-public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
-  private static "%+className()+%" proto = new "%+className()+%"();
+public class @className()@ extends @fullClassName(sortName)@ {
+  private static @className()@ proto = new @className()@();
   private int hashCode;
-  private "%+className()+%"() {};
+  private @className()@() {};
 
-"%+generateMembers()+%"
+@generateMembers()@
 
-"%+generateBody()+%"
+@generateBody()@
 
-}"%;
+}]%;
 
     return classBody;
   }
@@ -77,27 +77,27 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
   private String generateBody() {
     StringBuffer out = new StringBuffer();
 
-    out.append(%"
+    out.append(%[
     /* static constructor */
-"%+generateConstructor()+%"
+@generateConstructor()@
 
-  private void init("%+childListWithType(slotList) + (slotList.isEmpty()?"":", ") +%"int hashCode) {
-"%+generateMembersInit()+%"
+  private void init(@childListWithType(slotList) + (slotList.isEmpty()?"":", ") @int hashCode) {
+@generateMembersInit()@
     this.hashCode = hashCode;
   }
 
-  private void initHashCode("%+childListWithType(slotList)+%") {
-"%+generateMembersInit()+%"
+  private void initHashCode(@childListWithType(slotList)@) {
+@generateMembersInit()@
   this.hashCode = this.hashFunction();
   }
 
   /* private name and arity */
   private String getName() {
-    return ""%+className()+%"";
+    return "@className()@";
   }
 
   private int getArity() {
-    return "%+slotList.getLength()+%";
+    return @slotList.getLength()@;
   }
 
   /* shared.SharedObject */
@@ -106,73 +106,73 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
   }
 
   public shared.SharedObject duplicate() {
-    "%+className()+%" clone = new "%+className()+%"();
-    clone.init("%+childList(slotList) + (slotList.isEmpty()?"":", ") +%"hashCode);
+    @className()@ clone = new @className()@();
+    clone.init(@childList(slotList) + (slotList.isEmpty()?"":", ") @hashCode);
     return clone;
   }
 
   public boolean equivalent(shared.SharedObject obj) {
-    if(obj instanceof "%+className()+%") {
-      "%+className()+%" peer = ("%+className()+%") obj;
-      return "%+generateMembersEqualityTest("peer")+%";
+    if(obj instanceof @className()@) {
+      @className()@ peer = (@className()@) obj;
+      return @generateMembersEqualityTest("peer")@;
     }
     return false;
   }
 
-  /* "%+className(sortName)+%" interface */
-  public boolean "%+isOperatorMethod(className)+%"() {
+  /* @className(sortName)@ interface */
+  public boolean @isOperatorMethod(className)@() {
     return true;
   }
 
-"%+generateGetters()+%"
+@generateGetters()@
 
-"%);
+]%);
 
-    out.append(%"
+    out.append(%[
   /* AbstractType */
   public aterm.ATerm toATerm() {
     return aterm.pure.SingletonFactory.getInstance().makeAppl(
       aterm.pure.SingletonFactory.getInstance().makeAFun(getName(),getArity(),false),
-      new aterm.ATerm[] {"%+generateToATermChilds()+%"});
+      new aterm.ATerm[] {@generateToATermChilds()@});
   }
 
-  public static "%+fullClassName(sortName)+%" fromTerm(aterm.ATerm trm) {
+  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm) {
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
       if(proto.getName().equals(appl.getName())) {
         return make(
-"%+generatefromATermChilds("appl")+%"
+@generatefromATermChilds("appl")@
         );
       }
     }
     return null;
   }
 
-"%);
+]%);
 
-    out.append(%"
+    out.append(%[
   /* jjtraveler.Visitable */
   public int getChildCount() {
-    return "%+nonBuiltinChildCount()+%";
+    return @nonBuiltinChildCount()@;
   }
 
   public jjtraveler.Visitable getChildAt(int index) {
     switch(index) {
-"%+nonBuiltinsGetCases()+%"
+@nonBuiltinsGetCases()@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
   public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable v) {
     switch(index) {
-"%+nonBuiltinMakeCases("v")+%"
+@nonBuiltinMakeCases("v")@
       default: throw new IndexOutOfBoundsException();
     }
   }
 
-"%);
+]%);
 
-    out.append(%"
+    out.append(%[
       /* internal use */
   protected int hashFunction() {
     int a, b, c;
@@ -184,7 +184,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
 
     /*------------------------------------- handle the last 11 bytes */
 
-"%+generateHashArgs()+%"
+@generateHashArgs()@
 
     a -= b;
     a -= c;
@@ -217,7 +217,7 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     /*-------------------------------------------- report the result */
     return c;
   }
-"%);
+]%);
     return out.toString();
   }
 
@@ -250,10 +250,10 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
     while(!slots.isEmpty()) {
       SlotField head = slots.getHead();
       slots = slots.getTail();
-      res+= %"
-  public "%+slotDomain(head)+%" "%+getMethod(head)+%"() {
-    return "%+fieldName(head.getName())+%";
-  }"%;
+      res+= %[
+  public @slotDomain(head)@ @getMethod(head)@() {
+    return @fieldName(head.getName())@;
+  }]%;
     }
     return res;
   }
@@ -496,21 +496,21 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
   public String generateConstructor() {
     StringBuffer out = new StringBuffer();
     if (hooks.isEmpty()) {
-      out.append(%"
-  public static "%+className()+%" make("%+childListWithType(slotList)+%") {
-    proto.initHashCode("%+childList(slotList)+%");
-    return ("%+className()+%") shared.SingletonSharedObjectFactory.getInstance().build(proto);
+      out.append(%[
+  public static @className()@ make(@childListWithType(slotList)@) {
+    proto.initHashCode(@childList(slotList)@);
+    return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
   }
 
-"%);
+]%);
     } else { // we have to generate an hidden "real" make
-      out.append(%"
-  private static "%+className()+%" realMake("%+childListWithType(slotList)+%") {
-    proto.initHashCode("%+childList(slotList)+%");
-    return ("%+className()+%") shared.SingletonSharedObjectFactory.getInstance().build(proto);
+      out.append(%[
+  private static @className()@ realMake(@childListWithType(slotList)@) {
+    proto.initHashCode(@childList(slotList)@);
+    return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
   }
 
-"%);
+]%);
       if(hooks.getLength() > 1) {
         throw new GomRuntimeException("Support for multiple hooks for an operator not implemented yet");
       }
@@ -518,22 +518,22 @@ public class "%+className()+%" extends "%+fullClassName(sortName)+%" {
       %match(HookList hooks) {
         concHook(MakeHook(args,code)) -> {
           // replace the inner make call
-          out.append(%"
-  public static "%+className()+%" make("%+unprotectedChildListWithType(`args)+%") {
-    "%+`code+%"
+          out.append(%[
+  public static @className()@ make(@unprotectedChildListWithType(`args)@) {
+    @`code@
   }
 
-"%);
+]%);
         }
         concHook(MakeBeforeHook(args,code)) -> {
           // replace the inner make call
-          out.append(%"
-  public static "%+className()+%" make("%+unprotectedChildListWithType(`args)+%") {
-    "%+`code+%"
-    return realMake("%+unprotectedChildList(`args)+%");
+          out.append(%[
+  public static @className()@ make(@unprotectedChildListWithType(`args)@) {
+    @`code@
+    return realMake(@unprotectedChildList(`args)@);
   }
 
-"%);
+]%);
 
         }
       }

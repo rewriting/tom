@@ -283,7 +283,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
    */
   public String tomSplitter(String subject, LinkedList list) {
 
-    String metaChar = "\"%";
+    String metaChar = "]%";
     String escapeChar = "@";
 
     //System.out.println("initial subject: '" + subject + "'");

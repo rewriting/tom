@@ -187,7 +187,7 @@ tryAgain:
 						mGOM(true);
 						theRetToken=_returnToken;
 					}
-					else if ((LA(1)=='%') && (LA(2)=='"')) {
+					else if ((LA(1)=='%') && (LA(2)=='[')) {
 						mCODE(true);
 						theRetToken=_returnToken;
 					}
@@ -827,10 +827,10 @@ tryAgain:
 		int _saveIndex;
 		
 		match('%');
-		match('"');
+		match('[');
 		{
-		if (((LA(1)=='"') && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && (true) && (true) && (true))&&( LA(2)!='%' )) {
-			match('"');
+		if (((LA(1)==']') && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && (true) && (true) && (true))&&( LA(2)!='%' )) {
+			match(']');
 		}
 		else if (((LA(1) >= '\u0000' && LA(1) <= '\uffff')) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && (true) && (true) && (true) && (true)) {
 		}
@@ -843,7 +843,7 @@ tryAgain:
 		_loop66:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='"') && (LA(2)=='%') && (true)) break _loop66;
+			if ((LA(1)==']') && (LA(2)=='%') && (true)) break _loop66;
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
@@ -868,7 +868,7 @@ tryAgain:
 			
 		} while (true);
 		}
-		match('"');
+		match(']');
 		match('%');
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
