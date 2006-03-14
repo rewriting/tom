@@ -59,13 +59,13 @@ public class MappingTemplate extends TemplateClass {
     // generate a %typeterm for each class
     %match(GomClassList sortClasses) {
       concGomClass(_*,
-          SortClass[className=sortName,visitor=visitorName],
+          SortClass[className=sortName,forward=basicStrategy],
           _*) -> {
         out.append(%[
 %typeterm @className(`sortName)@ {
   implement { @fullClassName(`sortName)@ }
   equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { @fullClassName(`visitorName)@ }
+  visitor_fwd { @fullClassName(`basicStrategy)@ }
 }
 
 ]%);

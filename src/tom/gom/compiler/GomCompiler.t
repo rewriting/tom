@@ -65,6 +65,7 @@ public class GomCompiler {
     Map abstractTypeNameForModule = new HashMap();
     Map factoryNameForModule = new HashMap();
     Map visitorNameForModule = new HashMap();
+    Map visitableForwardNameForModule = new HashMap();
     Map sortGomClassForSortDecl = new HashMap();
     Map classForOperatorDecl = new HashMap();
     /* For each module */
@@ -88,6 +89,9 @@ public class GomCompiler {
       /* create a Visitor class name */
       ClassName visitorName = `ClassName(packagePrefix(moduleDecl),moduleName+"Visitor");
       visitorNameForModule.put(moduleDecl,visitorName);
+
+      ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"BasicStrategy");
+      visitableForwardNameForModule.put(moduleDecl,visitablefwdName);
 
       abstractTypeNameForModule.put(moduleDecl,abstractTypeName);
       GomClass abstracttype = `AbstractTypeClass(abstractTypeName,factoryName,visitorName,classSortList);
@@ -121,6 +125,7 @@ public class GomCompiler {
           ClassName abstracttypeName = (ClassName)abstractTypeNameForModule.get(`moduleDecl);
           ClassName factoryName = (ClassName)factoryNameForModule.get(`moduleDecl);
           ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDecl);
+          ClassName visitableforwardName = (ClassName)visitableForwardNameForModule.get(`moduleDecl);
 
           // create operator classes. Also, store a list of all operators for the sort class
           // use a Set to collect slots and avoid duplicates
@@ -189,6 +194,7 @@ public class GomCompiler {
                                           factoryName,
                                           abstracttypeName,
                                           visitorName,
+                                          visitableforwardName,
                                           allOperators,
                                           slotFieldListFromSet(allSortSlots));
           sortGomClassForSortDecl.put(`sortDecl,sortClass);
@@ -252,17 +258,17 @@ public class GomCompiler {
       classList = `concGomClass(visitorclass,classList*);
 
       /* create a Fwd class */
-      ClassName fwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"Fwd");
+      ClassName fwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"Forward");
       GomClass fwdclass = `FwdClass(fwdName,visitorName,abstractTypeClassName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(fwdclass,classList*);
 
       /* create a VoidFwd class */
-      ClassName voidfwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"FwdVoid");
+      ClassName voidfwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"ForwardVoid");
       GomClass voidfwdclass = `VoidFwdClass(voidfwdName,visitorName,abstractTypeClassName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(voidfwdclass,classList*);
 
       /* create a VisitableFwd class */
-      ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"VisitableFwd");
+      ClassName visitablefwdName = (ClassName) visitableForwardNameForModule.get(moduleDecl);
       GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,fwdclass);
       classList = `concGomClass(visitablefwdclass,classList*);
 
