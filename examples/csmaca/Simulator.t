@@ -32,26 +32,23 @@
  */
 package csmaca; 
 
-import aterm.*; 
-import aterm.pure.*;
-import csmaca.simulator.network.*;
 import csmaca.simulator.network.types.*;
 import java.util.Random;
 
 public class Simulator {
 
-  %vas {
+  %gom {
     module network
-      imports int str
+    imports 
       
     public
       sorts Sender List Listes Etat
       
     abstract syntax      
-      sender(eta:Int,tatt:Int,nbmess:Int,cback:Int,write:Int) -> Sender
+      sender(eta:int,tatt:int,nbmess:int,cback:int,write:int) -> Sender
       concSender(Sender*)                                     -> List
       concList(x:List,y:List)                                 -> Listes
-      etat(x:Int, t:Int,y:Listes)                             -> Etat      
+      etat(x:int, t:int,y:Listes)                             -> Etat      
   }
  
   public final static void main(String[] args) {
@@ -98,11 +95,11 @@ public class Simulator {
   }
 	
   public int getchamp(Sender s,int i) {
-   %match (Sender s) {sender(x1,x2,x3,x4,x5) -> {if(i==1) return x1;}
-                      sender(x1,x2,x3,x4,x5) -> {if(i==2) return x2;}
-	              sender(x1,x2,x3,x4,x5) -> {if(i==3) return x3;}
-                      sender(x1,x2,x3,x4,x5) -> {if(i==4) return x4;}
-		      sender(x1,x2,x3,x4,x5) -> {if(i==5) return x5;}
+   %match (Sender s) {sender(x1,x2,x3,x4,x5) -> {if(i==1) return `x1;}
+                      sender(x1,x2,x3,x4,x5) -> {if(i==2) return `x2;}
+	              sender(x1,x2,x3,x4,x5) -> {if(i==3) return `x3;}
+                      sender(x1,x2,x3,x4,x5) -> {if(i==4) return `x4;}
+		      sender(x1,x2,x3,x4,x5) -> {if(i==5) return `x5;}
 	             }
     return 0;
   }
@@ -120,12 +117,12 @@ public class Simulator {
   public boolean  mediumfree(Listes l) {
     %match(Listes l) { 
        concList(concSender(),concSender())                            -> {return true; } 
-       concList(concSender(sender(x1,x2,x3,x4,x5)),concSender())      -> { return (x5==0);
+       concList(concSender(sender(x1,x2,x3,x4,x5)),concSender())      -> { return (`x5==0);
 						                            			
               			                                           }
        concList(concSender(sender(x1,x2,x3,x4,x5)),concSender(C1,C2*))-> 
            {
-             return ( (x5==0) && (`mediumfree(concList(concSender(C1),concSender(C2*)))) ); 
+             return ( (`x5==0) && (`mediumfree(concList(concSender(C1),concSender(C2*)))) ); 
              }
        }
     return true;
@@ -133,7 +130,7 @@ public class Simulator {
 
 
   public Sender argmindate(Etat e) {
-    %match (Etat e) {etat(t,x,l) -> {return argmindatelist(l);}
+    %match (Etat e) {etat(t,x,l) -> {return argmindatelist(`l);}
                     }
     return `sender(0,0,0,0,0);
   }
@@ -144,7 +141,7 @@ public class Simulator {
        concList(concSender(C@sender(eta,tatt,nbmess,cback,write)),concSender())       -> {return `C;}
 
        concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2,C3*))->{
-          if(tatt<= `getchamp( argmindatelist(concList(concSender(C2),concSender(C3*))),2 )  ) return C1;}
+          if(`tatt<= `getchamp( argmindatelist(concList(concSender(C2),concSender(C3*))),2 )  ) return `C1;}
 
        concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2,C3*))  -> {
           return `argmindatelist(concList( concSender(C2),concSender(C3*) ));}      
@@ -157,9 +154,9 @@ public class Simulator {
   public int getminTnonNul(Listes l) {
     %match (Listes l) { 
       concList(concSender(),concSender()) -> {return 0;}
-      concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2*))    -> {if(tatt > 0) return tatt;}
+      concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2*))    -> {if(`tatt > 0) return `tatt;}
       concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2,C3*)) -> {
-        if(tatt==0) return `getminTnonNul(concList(concSender(C2),concSender(C3*)));	       
+        if(`tatt==0) return `getminTnonNul(concList(concSender(C2),concSender(C3*)));	       
                    }
       }
   return -1;
@@ -175,17 +172,17 @@ public Etat insertsenderdate(Sender s,Etat e){
 
     C1@sender(eta1,tatt1,nbmess1,cback1,write1),
     etat(t,x,concList(concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2)),concSender(C3*))) -> {
-      if((tatt1 < tatt2) && (nbmess1>0) && (nbmess2>0)) 
+      if((`tatt1 < `tatt2) && (`nbmess1>0) && (`nbmess2>0)) 
         return `etat(t,x,concList(concSender(C1),concSender(C2,C3*)));}
 
     C1@sender(eta1,tatt1,nbmess1,cback1,write1),
     etat(t,x,concList(concSender(C2@sender(eta2,tatt,nbmess2,cback2,write2)),concSender(C3*))) -> {
-      if((nbmess1==0) && (nbmess2==0)) 
+      if((`nbmess1==0) && (`nbmess2==0)) 
         return `etat(t,x,concList(concSender(C1),concSender(C2,C3*)));}
 
     C1@sender(eta1,tatt1,nbmess1,cback1,write1),
     etat(t,x,concList(concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2)),concSender(C3*))) ->{ 
-      if((tatt1 >= tatt2) && (nbmess1>0) &&(nbmess2>0))
+      if((`tatt1 >= `tatt2) && (`nbmess1>0) && (`nbmess2>0))
             return `etat(t,x,
                     concList(concSender(C2),
                     insertsenderdatelist(C1,C3*)
@@ -208,20 +205,20 @@ public Etat insertsenderdate(Sender s,Etat e){
        C1@sender(eta,tatt,nbmess,cback,write),concSender() -> {return `concSender(C1);}
     
        C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->
-          {if((tatt1<tatt2)&&(nbmess1>0)&&(nbmess2>0))     return `concSender(C1,C2,C3*); }
+          {if((`tatt1<`tatt2)&&(`nbmess1>0)&&(`nbmess2>0))     return `concSender(C1,C2,C3*); }
     
 
        C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->
-          {if((tatt1>=tatt2)&&(nbmess1>0)&&(nbmess2>0)) return `con(concSender(C2) ,insertsenderdatelist(C1,C3*)   );}
+          {if((`tatt1>=`tatt2)&&(`nbmess1>0)&&(`nbmess2>0)) return `con(concSender(C2) ,insertsenderdatelist(C1,C3*)   );}
        
        C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->{
-           if((nbmess1>0)&&(nbmess2==0))  return `concSender(C1,C2,C3*);}
+           if((`nbmess1>0)&&(`nbmess2==0))  return `concSender(C1,C2,C3*);}
        
        C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->
-          {if((nbmess1==0)&&(nbmess2>0)) return `con(concSender(C2) ,insertsenderdatelist(C1,C3*));}
+          {if((`nbmess1==0)&&(`nbmess2>0)) return `con(concSender(C2) ,insertsenderdatelist(C1,C3*));}
 
        C1@sender(eta1,tatt1,nbmess1,cback1,write1),concSender(C2@sender(eta2,tatt2,nbmess2,cback2,write2),C3*) ->
-          {if((nbmess1==0)&&(nbmess2==0)) return   `concSender(C1,C2,C3*);}
+          {if((`nbmess1==0)&&(`nbmess2==0)) return   `concSender(C1,C2,C3*);}
 }
    return `concSender();
    }
@@ -231,7 +228,7 @@ public Etat insertsenderdate(Sender s,Etat e){
     %match (Etat e) {
        etat(t,x,concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2*))) -> {
          afficheEtat(e);
-         if((nbmess>0) && (t>0))
+         if((`nbmess>0) && (`t>0))
            return `simul(etat(
                          t-1,x+tatt,
                          prendrefirst(
@@ -243,7 +240,7 @@ public Etat insertsenderdate(Sender s,Etat e){
                         )));
          }
        etat(t,x,concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2*))) -> {
-         if((nbmess==0)||(t==0))
+         if((`nbmess==0)||(`t==0))
            return `etat(t,x+tatt,
                         concList(concSender(C1),concSender(C2*)));
          }
@@ -289,10 +286,10 @@ public Etat insertsenderdate(Sender s,Etat e){
   public Listes majdatelist(int x,Listes l) {
     %match( Listes l) {
        concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender())	 -> {
-         return `concList(concSender(sender(eta,tatt-x,nbmess,cback,write)),concSender());}
+         return `concList(concSender(sender(eta,tatt - x,nbmess,cback,write)),concSender());}
       
        concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2,C3*)) -> {
-         return `converLLsLs(concSender(sender(eta,tatt-x,nbmess,cback,write)),
+         return `converLLsLs(concSender(sender(eta,tatt - x,nbmess,cback,write)),
                           majdatelist(x,concList(concSender(C2),concSender(C3*))) );}
        }
     return `concList(concSender(),concSender());
@@ -310,17 +307,17 @@ public Etat insertsenderdate(Sender s,Etat e){
 //les methodes
   public boolean jobleft(Etat e) {
     %match (Etat e) {
-       etat(t,x,concList(concSender(sender(eta,tatt,nbmess,cback,write)),concSender())) -> { if(nbmess != 0) return true;}
+       etat(t,x,concList(concSender(sender(eta,tatt,nbmess,cback,write)),concSender())) -> { if(`nbmess != 0) return true;}
 
-       etat(t,x,concList(concSender(sender(eta,tatt,nbmess,cback,write)),concSender())) -> { if(nbmess == 0) return false;}
+       etat(t,x,concList(concSender(sender(eta,tatt,nbmess,cback,write)),concSender())) -> { if(`nbmess == 0) return false;}
 
        etat(t,x,concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2,C3*))) -> { 
-           if((nbmess != 0) || (jobleft( `etat(t,x,concList(concSender(C2),concSender(C3*)))))) return true;}
+           if((`nbmess != 0) || (jobleft( `etat(t,x,concList(concSender(C2),concSender(C3*)))))) return true;}
 
         etat(t,x,concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2,C3*))) -> { 
-           if((nbmess == 0) && (jobleft( `etat(t,x,concList(concSender(C2),concSender(C3*))))==false  )) return false;}
+           if((`nbmess == 0) && (jobleft( `etat(t,x,concList(concSender(C2),concSender(C3*))))==false  )) return false;}
 
-       etat(t,x,concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2*))) -> { if(nbmess == 0) return true;}
+       etat(t,x,concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2*))) -> { if(`nbmess == 0) return true;}
           }
   return false;
   }
@@ -359,7 +356,7 @@ public Etat insertsenderdate(Sender s,Etat e){
   public int recivects(Listes l) {
     %match (Listes l) {
        concList(concSender(),concSender()) -> {return 1;}
-       concList(concSender(sender(eta,tatt,nbmess,cback,write)),concSender())-> {if((eta==0) ||(eta==1) || (eta==2)) return 1;}
+       concList(concSender(sender(eta,tatt,nbmess,cback,write)),concSender())-> {if((`eta==0) ||(`eta==1) || (`eta==2)) return 1;}
        concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2,C3*)) -> {
            return `(recivects(concList(concSender(C1),concSender()))*recivects(concList(concSender(C2),concSender(C3*))));
          }
@@ -373,10 +370,10 @@ public Etat insertsenderdate(Sender s,Etat e){
     %match (Listes l) {
        concList(concSender(C1@sender(eta,tatt,nbmess,cback,write)),concSender(C2,C3*)) -> {
 //regle 1
-  if((write==0)&&(eta==0)) 
+  if((`write==0)&&(`eta==0)) 
     return `concList(concSender(sender(1,3+backoff(cback),nbmess,cback,write)),concSender(C2,C3*));
 //regle 2 
-  if((eta==0)&&(write!=0)) 
+  if((`eta==0)&&`(write!=0)) 
     return 
       `concList(concSender(sender(eta,
                                   getminTnonNul(concList(concSender(C2),concSender(C3*))),
@@ -387,12 +384,12 @@ public Etat insertsenderdate(Sender s,Etat e){
                 concSender(C2,C3*)
                );
 //regle 3
-  if((eta==1)&&(write==0)) 
+  if((`eta==1)&&(`write==0)) 
     return `concList(concSender(sender(2,1,nbmess,cback,1)),
                      markwritten(concList(concSender(C2),concSender(C3*)))
                     );
 //regle 4
-  if((eta==1)&&(write==2)) 
+  if((`eta==1)&&(`write==2)) 
     return `concList(concSender(sender(0,
                                        getminTnonNul(concList(concSender(C2),concSender(C3*))
                                                      ),
@@ -403,7 +400,7 @@ public Etat insertsenderdate(Sender s,Etat e){
                      concSender(C2,C3*)
                     );
 //regle 5
-  if((eta==2)&&(write==1)) 
+  if((`eta==2)&&(`write==1)) 
     return `concList(concSender(sender(3,
                                        1,
                                        nbmess,
@@ -417,43 +414,43 @@ public Etat insertsenderdate(Sender s,Etat e){
                      concSender(C2,C3*)
                     );
 //regle 6
-  if((eta==2)&&(write==2)) 
+  if((`eta==2)&&(`write==2)) 
     return `concList(concSender(sender(0,0,nbmess,cback+1,0)),
                      concSender(C2,C3*));
 //regle 7
-  if((eta==3)&&(write==1)) 
+  if((`eta==3)&&(`write==1)) 
     return `concList(concSender(sender(4,0,nbmess,cback,0)),
                      concSender(C2,C3*)
                     );
 //regle 8
-  if((eta==3)&&(write==0)) 
+  if((`eta==3)&&(`write==0)) 
     return `concList(concSender(sender(0,2,nbmess,cback+1,0)),
                      concSender(C2,C3*)
                     );
 //regle 9
-  if((eta==3)&&(write==2)) 
+  if((`eta==3)&&(`write==2)) 
     return `concList(concSender(sender(0,0,nbmess,cback+1,0)),
                      concSender(C2,C3*)
                     );
 //regle 10
-  if(eta==4) 
+  if(`eta==4) 
     return `concList(concSender(sender(5,5,nbmess,cback,1)),
                      markwritten(concList(concSender(C2),concSender(C3*)))
                     );
 //regle 11
-  if(eta==5) 
+  if(`eta==5) 
     return `concList(concSender(sender(6,1,nbmess,cback,0)),
                      concSender(C2,C3*));
 //regle 12
-  if((eta==6)&&(write==2)) 
+  if((`eta==6)&&(`write==2)) 
     return `concList(concSender(sender(0,0,nbmess,cback+1,write)),
                      concSender(C2,C3*));
 //regle 13 
-  if((eta==6)&&(write==0)) 
+  if((`eta==6)&&(`write==0)) 
     return `concList(concSender(sender(0,0,nbmess-1,0,0)),
                      concSender(C2,C3*));
 //regle 14
-  if((eta==6)&&(write==3)) 
+  if((`eta==6)&&(`write==3)) 
     return `concList(concSender(sender(0,2,nbmess,cback+1,0)),
                      concSender(C2,C3*));}
     }
@@ -468,7 +465,7 @@ public Etat insertsenderdate(Sender s,Etat e){
 //afficher un vecteur			   
    public void afficheElement (Sender s){
      %match(Sender s){
-        sender(x1,x2,x3,x4,x5) -> {System.out.println("("+`x1+","+`x2+","+`x3+","+x4+","+x5+")");}
+        sender(x1,x2,x3,x4,x5) -> {System.out.println("("+`x1+","+`x2+","+`x3+","+`x4+","+`x5+")");}
 	             }
    }
 //afficher une list de vexteur
@@ -501,8 +498,8 @@ public Etat insertsenderdate(Sender s,Etat e){
   public void  afficheEtat(Etat e) {
     %match (Etat e ) { 
        etat(x,t,l) -> {
-          System.out.println( "(" + x + "," + t + "," ); 
-          afficheListes(l);
+          System.out.println( "(" + `x + "," + `t + "," ); 
+          afficheListes(`l);
           System.out.println(  ")" ); 
    }
           }

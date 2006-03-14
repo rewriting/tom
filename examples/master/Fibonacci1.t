@@ -1,18 +1,17 @@
 package master;
 
-import master.fibonacci1.peano.*;
 import master.fibonacci1.peano.types.*;
 
 public class Fibonacci1 {
 
-  %vas {
+  %gom {
     module Peano
     imports 
     public
       sorts Nat
       
     abstract syntax
-      zero -> Nat
+      zero() -> Nat
       suc(pred:Nat) -> Nat
       plus(x1:Nat, x2:Nat) -> Nat
       mult(x1:Nat, x2:Nat) -> Nat

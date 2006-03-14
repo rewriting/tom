@@ -1,18 +1,15 @@
 package master;
 
-//import peano1.peano.*;
-//import peano1.peano.types.*;
-
 public class Peano1 {
 
-  %vas {
+  %gom {
     module Peano
     imports 
     public
       sorts Nat
       
     abstract syntax
-      zero -> Nat
+      zero() -> Nat
       suc(pred:Nat) -> Nat
       plus(x1:Nat, x2:Nat) -> Nat
    }

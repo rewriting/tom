@@ -1,13 +1,9 @@
 package master;
 
-import aterm.pure.SingletonFactory;
-import master.matching2.term.*;
 import master.matching2.term.types.*;
 
 class Matching2 {
-  private TermFactory factory;
-
-  %vas {
+  %gom {
     module Term
     imports 
     public
@@ -17,8 +13,8 @@ class Matching2 {
     Variable(name:String)               -> Term
     Appl(name:String, args:TermList)    -> Term
     conc( Term* )                       -> TermList
-    True 																-> Term
-    False																-> Term
+    True()  																-> Term
+    False() 																-> Term
     Match(pattern:Term, subject:Term) 	-> Term
     And(l:TermList)       							-> Term
     //decomposeList(l1:TermList, l2:TermList) -> TermList
@@ -63,13 +59,6 @@ class Matching2 {
   }
 
   //-------------------------------------------------------
-  public Matching2() {
-    this.factory = TermFactory.getInstance(SingletonFactory.getInstance());
-  } 
-
-  public TermFactory getTermFactory() {
-    return factory;
-  }
 
   public void run() {
     Term p1 = `Appl("f",conc(Variable("x")));

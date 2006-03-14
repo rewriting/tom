@@ -1,21 +1,18 @@
 package master;
-
-import aterm.pure.SingletonFactory;
-import master.pico1.term.*;
 import master.pico1.term.types.*;
 
 import java.util.*;
 
 class Pico1 {
-  %vas {
+  %gom {
     module Term
     imports 
     public
     sorts Inst Expr Bool
       
     abstract syntax
-		True -> Bool
-		False -> Bool
+		True() -> Bool
+		False() -> Bool
 		Not(b:Bool) -> Bool
 		Or(b1:Bool, b2:Bool) -> Bool
 		And(b1:Bool, b2:Bool) -> Bool

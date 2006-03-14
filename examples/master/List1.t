@@ -1,21 +1,9 @@
 package master;
 
-import aterm.pure.SingletonFactory;
-import master.list1.list.*;
 import master.list1.list.types.*;
 
 public class List1 {
-  private ListFactory factory;
-
-  public List1() {
-    this.factory = ListFactory.getInstance(SingletonFactory.getInstance());
-  } 
-
-  public ListFactory getListFactory() {
-    return factory;
-  }
-  
-  %vas {
+  %gom {
     // extension of adt syntax
     module List
     imports 
@@ -23,9 +11,9 @@ public class List1 {
       sorts E L
       
     abstract syntax
-      a -> E
-      b -> E
-      c -> E
+      a() -> E
+      b() -> E
+      c() -> E
       f( E* ) -> L
    }
 
@@ -42,7 +30,7 @@ public class List1 {
   }
 
   private boolean gt(E e1, E e2) {
-    return e1.getName().compareTo(e2.getName()) > 0;
+    return e1.toString().compareTo(e2.toString()) > 0;
   }
   
   public L removeDouble(L l) {

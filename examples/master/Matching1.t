@@ -1,10 +1,9 @@
 package master;
-import master.matching1.peano.*;
 import master.matching1.peano.types.*;
 
 public class Matching1 {
 
-  %vas {
+  %gom {
     module Peano
     imports 
     public
@@ -14,11 +13,11 @@ public class Matching1 {
 //       xx -> Nat
 //       yy -> Nat
       var(n:String) -> Nat
-      zero -> Nat
+      zero() -> Nat
       suc(pred:Nat) -> Nat
       plus(x1:Nat, x2:Nat) -> Nat
-      True  -> Nat
-      False -> Nat
+      True()   -> Nat
+      False()  -> Nat
       Match(pattern:Nat, subject:Nat) 	-> Nat
       And(n1:Nat,n2:Nat) -> Nat
    }

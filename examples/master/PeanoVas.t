@@ -1,12 +1,8 @@
 package master;
 
-import aterm.pure.SingletonFactory;
-import master.peanovas.peano.*;
 import master.peanovas.peano.types.*;
 
 class PeanoVas {
-  private PeanoFactory factory;
-
   %vas {
     // extension of adt syntax
     module Peano
@@ -15,21 +11,15 @@ class PeanoVas {
       sorts Nat
       
     abstract syntax
-      zero -> Nat
-      one -> Nat
-      two -> Nat
+      zero() -> Nat
+      one() -> Nat
+      two() -> Nat
       suc(pred:Nat) -> Nat
       plus(x1:Nat, x2:Nat) -> Nat
       fib(val:Nat)  -> Nat
       plusInt(x1:Nat, x2:Nat) -> int
    }
 
-  /*
-  %op int plusInt(x1:Nat, x2:Nat) {
-    is_fsym(t) { false }
-    make(t1,t2) { plusInt(t1,t2) }
-  }*/
- 
   %rule {
      one() -> suc(zero())
   }
@@ -65,14 +55,6 @@ class PeanoVas {
   private int increment(int a) { return a+1; }
 
   //-------------------------------------------------------
-  public PeanoVas() {
-    this.factory = PeanoFactory.getInstance(SingletonFactory.getInstance());
-  } 
-
-  public PeanoFactory getPeanoFactory() {
-    return factory;
-  }
- 
 
   public void run() {
     vOne = `suc(zero());

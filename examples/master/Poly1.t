@@ -1,11 +1,10 @@
 package master;
 
-import master.poly1.poly.*;
 import master.poly1.poly.types.*;
 
 public class Poly1 {
 
-  %vas {
+  %gom {
     module Poly
     imports 
     public
