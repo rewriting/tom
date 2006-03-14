@@ -53,7 +53,7 @@ public class TestAddressBook extends TestCase {
     test.generatePerson(book);
   }
 
-  %include { data/data.tom }
+  %include { data/Data.tom }
 
   public void testBirthdate() {
     Iterator it = book.iterator();

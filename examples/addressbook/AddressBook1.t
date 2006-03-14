@@ -37,7 +37,7 @@ import java.util.HashSet;
 public class AddressBook1 {
   private HashSet book;
    
-  %include { data/data.tom }
+  %include { data/Data.tom }
  
   public AddressBook1() {
   }
