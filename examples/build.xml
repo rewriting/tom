@@ -235,10 +235,9 @@
     </copy>
   </target>
 
-  <target name="apireach" depends="init"> 
-    <adtcompile example="${apireach}"
-                factory="reach"/>
-    <vascompile example="${apireach}"/>
+  <target name="apireach" depends="init, init.gom.task"> 
+    <adtcompile example="${apireach}" factory="reach"/>
+    <gomcompile example="${apireach}"/>
     <tomcompile example="${apireach}"/>
     <javacompile example="${apireach}"/>
   </target>
@@ -810,7 +809,7 @@
         <include name="${apireach}/README"/>
         <include name="${apireach}/*.t"/>
         <include name="${apireach}/*.adt"/>
-        <include name="${apireach}/*.vas"/>
+        <include name="${apireach}/*.gom"/>
 
         <include name="${appletxml}/README"/>
         <include name="${appletxml}/*.t"/>
