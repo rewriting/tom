@@ -24,6 +24,8 @@
 
 package tom.gom.backend.shared;
 
+import java.io.*;
+import java.util.logging.*;
 import tom.gom.backend.TemplateClass;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
@@ -540,5 +542,59 @@ public class @className()@ extends @fullClassName(sortName)@ {
 
     }
     return out.toString();
+  }
+
+  /*
+   * The function for generating the file is extended, to be able to call Tom if necessary
+   * (i.e. if there are user defined hooks)
+   */
+  public int generateFile() {
+    if (hooks.isEmpty()) {
+      try {
+         File output = fileToGenerate();
+         // make sure the directory exists
+         output.getParentFile().mkdirs();
+         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
+         writer.write(generate());
+         writer.flush();
+         writer.close();
+      } catch(Exception e) {
+        e.printStackTrace();
+        return 1;
+      }
+    } else { /* We need to call gom to generate the file */
+      String config_xml = System.getProperty("tom.home") + "/Tom.xml";
+      try {
+        File file = new File(config_xml);
+        config_xml = file.getCanonicalPath();
+      } catch (IOException e) {
+        getLogger().log(Level.FINER,"Failed to get canonical path for "+config_xml);
+      }
+      String file_path = null;
+      try {
+        File output = fileToGenerate();
+        file_path = output.getCanonicalPath();
+      } catch (IOException e) {
+        getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
+      }
+      String[] params = {"-X",config_xml,"--static","--output",file_path,"-"};
+
+      String gen = generate();
+
+      InputStream backupIn = System.in;
+      System.setIn(new DataInputStream(new StringBufferInputStream(gen)));
+      int res = tom.engine.Tom.exec(params);
+      System.setIn(backupIn);
+      if (res != 0 ) {
+        getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
+        return res;
+      }
+    }
+    return 0;
+  }
+
+  /** the class logger instance*/
+  private Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
   }
 }
