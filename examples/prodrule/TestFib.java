@@ -31,15 +31,12 @@ package prodrule;
 
 import java.util.*;
 import java.io.*;
-import aterm.*;
-import aterm.pure.*;
 import prodrule.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class TestFib extends TestCase {
-	private static PureFactory pure;
   private Fib1 fib1;
   private Fib2 fib2;
   private Fib3 fib3;
@@ -52,14 +49,11 @@ public class TestFib extends TestCase {
 	}
 
   public void setUp() {
-		if (pure == null) {
-			pure = SingletonFactory.getInstance();
-		}
-    fib1 = new Fib1(prodrule.fib1.fib.fibFactory.getInstance(pure));
-    fib2 = new Fib2(prodrule.fib2.fib.fibFactory.getInstance(pure));
-    fib3 = new Fib3(prodrule.fib3.fib.fibFactory.getInstance(pure));
-    fib4 = new Fib4(prodrule.fib4.fib.fibFactory.getInstance(pure));
-    fib5 = new Fib5(prodrule.fib5.fib.fibFactory.getInstance(pure));
+    fib1 = new Fib1();
+    fib2 = new Fib2();
+    fib3 = new Fib3();
+    fib4 = new Fib4();
+    fib5 = new Fib5();
     n = 50;
   }
 

@@ -29,15 +29,10 @@
 
 package prodrule;
 
-import aterm.*;
-import aterm.pure.*;
-import prodrule.fib1.fib.*;
 import prodrule.fib1.fib.types.*;
 
 public class Fib1 {
-  private fibFactory factory;
-
-  %vas {
+  %gom {
     // extension of adt syntax
     module fib
     imports
@@ -46,20 +41,12 @@ public class Fib1 {
       sorts Element Space
       
     abstract syntax
-      Undef -> Element
-      Nat( value:Int ) -> Element
-      Fib(arg:Int, val:Element) -> Element
+      Undef() -> Element
+      Nat( value:int ) -> Element
+      Fib(arg:int, val:Element) -> Element
       concElement( Element* ) -> Space
    }
 
-  public Fib1(fibFactory factory) {
-    this.factory = factory;
-  } 
-
-  public fibFactory getFibFactory() {
-    return factory;
-  }
-  
   public int run(int n) {
     long startChrono = System.currentTimeMillis();
     System.out.println("running...");
@@ -81,7 +68,7 @@ public class Fib1 {
   } 
 
   public final static void main(String[] args) {
-    Fib1 test = new Fib1(fibFactory.getInstance(new PureFactory(16)));
+    Fib1 test = new Fib1();
 
     try {
       test.run(Integer.parseInt(args[0]));
@@ -95,7 +82,7 @@ public class Fib1 {
     %match(Space s) {
       concElement(S1*, Fib[arg=n,val=Undef()], S2*) -> {
         if(`n >2 && !occursFib(`concElement(S1*,S2*),`n-1)) {
-          return `manySpace(Fib(n-1,Undef),s);
+          return `concElement(Fib(n-1,Undef),s*);
         }
       }
     }
@@ -114,7 +101,7 @@ public class Fib1 {
                 concElement(_*,Fib[arg=n2,val=Nat(v2)] , _*) -> {
                   if(`n2+1 == `n1) {
                     int modulo = `(v1+v2)%1000000;
-                    return `manySpace(Fib(n,Nat(modulo)),s12);
+                    return `concElement(Fib(n,Nat(modulo)),s12*);
                   }
                 }
               }

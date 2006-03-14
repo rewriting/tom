@@ -29,15 +29,10 @@
 
 package prodrule;
 
-import aterm.*;
-import aterm.pure.*;
-import prodrule.fib2.fib.*;
 import prodrule.fib2.fib.types.*;
 
 public class Fib2 {
-  private fibFactory factory;
-
-  %vas {
+  %gom {
     // extension of adt syntax
     module fib
     imports
@@ -46,20 +41,12 @@ public class Fib2 {
       sorts Element Space
       
     abstract syntax
-      Undef -> Element
-      Nat( value:Int ) -> Element
-      Fib(arg:Int, val:Element) -> Element
+      Undef() -> Element
+      Nat( value:int ) -> Element
+      Fib(arg:int, val:Element) -> Element
       concElement( Element* ) -> Space
    }
 
-  public Fib2(fibFactory factory) {
-    this.factory = factory;
-  } 
-
-  public fibFactory getFibFactory() {
-    return factory;
-  }
-  
   public int run(int n) {
     long startChrono = System.currentTimeMillis();
     System.out.println("running...");
@@ -80,7 +67,7 @@ public class Fib2 {
   }
 
   public final static void main(String[] args) {
-    Fib2 test = new Fib2(fibFactory.getInstance(new PureFactory(16)));
+    Fib2 test = new Fib2();
     try {
       test.run(Integer.parseInt(args[0]));
     } catch (Exception e) {
@@ -93,7 +80,7 @@ public class Fib2 {
     %match(Space s) {
       concElement(S1*, Fib[arg=n,val=Undef()], S2*) -> {
         if(`n >2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1)) {
-          return `manySpace(Fib(n-1,Undef),s);
+          return `concElement(Fib(n-1,Undef),s*);
         }
       }
     }

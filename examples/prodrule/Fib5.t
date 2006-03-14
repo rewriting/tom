@@ -29,16 +29,10 @@
 
 package prodrule;
 
-import aterm.*;
-import aterm.pure.*;
-import prodrule.fib5.fib.*;
 import prodrule.fib5.fib.types.*;
-//import java.util.*;
 
 public class Fib5 {
-  private fibFactory factory;
-
-  %vas {
+  %gom {
     // extension of adt syntax
     module fib
     imports
@@ -47,9 +41,9 @@ public class Fib5 {
 	    sorts Element
       
 	    abstract syntax
-	    Undef -> Element
-      Nat( value:Int ) -> Element
-	    Fib(arg:Int, val:Element) -> Element
+	    Undef() -> Element
+      Nat( value:int ) -> Element
+	    Fib(arg:int, val:Element) -> Element
 	    }
 
     
@@ -67,13 +61,6 @@ public class Fib5 {
     is_empty(l)        { l.isEmpty() }
   }
       
-  public Fib5(fibFactory factory) {
-    this.factory = factory;
-  } 
-
-  public fibFactory getFibFactory() {
-    return factory;
-  }
   
   private static boolean opt = true;
   private static int fire=0;
@@ -99,7 +86,7 @@ public class Fib5 {
   }
 
   public final static void main(String[] args) {
-    Fib5 test = new Fib5(fibFactory.getInstance(new PureFactory(16)));
+    Fib5 test = new Fib5();
 
     try {
       test.run(Integer.parseInt(args[0]));

@@ -29,15 +29,10 @@
 
 package prodrule;
 
-import aterm.*;
-import aterm.pure.*;
-import prodrule.fib3.fib.*;
 import prodrule.fib3.fib.types.*;
 import java.util.*;
 
 public class Fib3 {
-  private fibFactory factory;
-
   %vas {
     // extension of adt syntax
     module fib
@@ -47,9 +42,9 @@ public class Fib3 {
       sorts Element
       
     abstract syntax
-      Undef -> Element
-      Nat( value:Int ) -> Element
-      Fib(arg:Int, val:Element) -> Element
+      Undef() -> Element
+      Nat( value:int ) -> Element
+      Fib(arg:int, val:Element) -> Element
    }
 
   %typeterm Space {
@@ -75,14 +70,6 @@ public class Fib3 {
     return res;
   }
 
-  public Fib3(fibFactory factory) {
-    this.factory = factory;
-  } 
-
-  public fibFactory getFibFactory() {
-    return factory;
-  }
-  
   public int run(int n) {
     long startChrono = System.currentTimeMillis();
     System.out.println("running...");
@@ -103,7 +90,7 @@ public class Fib3 {
   }
 
   public final static void main(String[] args) {
-    Fib3 test = new Fib3(fibFactory.getInstance(new PureFactory(16)));
+    Fib3 test = new Fib3();
     try {
       test.run(Integer.parseInt(args[0]));
     } catch (Exception e) {

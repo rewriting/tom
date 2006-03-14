@@ -29,16 +29,11 @@
 
 package prodrule;
 
-import aterm.*;
-import aterm.pure.*;
-import prodrule.fib4.fib.*;
 import prodrule.fib4.fib.types.*;
 import java.util.*;
 
 public class Fib4 {
-  private fibFactory factory;
-
-  %vas {
+  %gom {
     // extension of adt syntax
     module fib
     imports
@@ -47,10 +42,10 @@ public class Fib4 {
 	    sorts Element
       
 	    abstract syntax
-	    Undef -> Element
-	    Nat( value:Int ) -> Element
-	    Fib(arg:Int, val:Element) -> Element
-	    }
+	    Undef() -> Element
+	    Nat( value:int ) -> Element
+	    Fib(arg:int, val:Element) -> Element
+	}
 
     
   %typeterm Space {
@@ -77,14 +72,6 @@ public class Fib4 {
     return res;
   }
 
-  public Fib4(fibFactory factory) {
-    this.factory = factory;
-  } 
-
-  public fibFactory getFibFactory() {
-    return factory;
-  }
-  
   private static boolean opt = true;
   private static int fire=0;
   public int run(int n) {
@@ -109,7 +96,7 @@ public class Fib4 {
   }
 
   public final static void main(String[] args) {
-    Fib4 test = new Fib4(fibFactory.getInstance(new PureFactory(16)));
+    Fib4 test = new Fib4();
     try {
       test.run(Integer.parseInt(args[0]));
     } catch (Exception e) {
