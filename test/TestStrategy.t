@@ -61,7 +61,7 @@ public class TestStrategy extends TestCase {
     //VisitableVisitor rule4 = new S4();
     VisitableVisitor rule5 = new S5();
     //VisitableVisitor rule6 = new S6();
-    VisitableVisitor rule7 = new S7();
+    //VisitableVisitor rule7 = new S7();
     
     try{
       assertSame("g(a,a) return a", MuTraveler.init(`rule0).visit(`g(a,a)), `a);
