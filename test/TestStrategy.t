@@ -115,30 +115,6 @@ public class TestStrategy extends TestCase {
     }
   }
 
-  //with many visits but same sorts
-//should say: impossible to declare 2 visits with same sort
-/*
-  %strategy S6() extends `Identity() {
-    visit Term {
-      g(x,x)            -> { return `x; }
-    }
-    visit Term {
-      g(x,x)            -> { return `x; }
-    }
-  }
-*/
-
-  //with many visits but different visitor_fwd
-  //must fail
-  %strategy S7() extends `Identity() {
-    visit Term {
-      g(x,x)            -> { return `x; }
-    }
-    visit L {
-      concTerm(a())            -> { return `concTerm(); }
-    }
-  }
-
 //with empty visit
 
 //with underscore only
