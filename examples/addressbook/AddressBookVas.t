@@ -29,24 +29,22 @@
 
 package addressbook;
 
-import aterm.pure.*;
-import addressbook.addressbookvas.person.*;
 import addressbook.addressbookvas.person.types.*;
 
 public class AddressBookVas {
 
-  %vas {
+  %gom {
       //
       // extension of adt syntax
       //
     module person
-      imports int str
+      imports //int str
       
     public
       sorts Date Person PersonList
 
     abstract syntax
-      date( year:Int, month:Int, day:Int ) -> Date
+      date( year:int, month:int, day:int ) -> Date
       person(firstname:String,lastname:String, birthdate:Date) -> Person
       concPerson( Person* ) -> PersonList
       bob -> Person

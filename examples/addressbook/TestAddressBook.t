@@ -59,7 +59,7 @@ public class TestAddressBook extends TestCase {
     Iterator it = book.iterator();
     while(it.hasNext()) {
       Person p = (Person) it.next();
-      Date d = p.getBirthdate();
+      Date d = p.getbirthdate();
       %match(Person p, Date d) {
         person(_, _ ,date(_,month1,day1)), date(_,month2,day2) -> {
            assertTrue((`month1==`month2) && (`day1==`day2));

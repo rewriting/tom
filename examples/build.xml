@@ -212,8 +212,8 @@
     <delete dir="${examples.build}"/>
   </target>
 
-  <target name="addressbook" depends="init">
-    <adtcompile example="${addressbook}" factory="data"/>
+  <target name="addressbook" depends="init, init.gom.task">
+    <gomcompile example="${addressbook}"/>
     <tomcompile example="${addressbook}"/>
     <javacompile example="${addressbook}"/>
   </target>
@@ -799,7 +799,7 @@
 
         <include name="${addressbook}/README"/>
         <include name="${addressbook}/*.t"/>
-        <include name="${addressbook}/*.adt"/>
+        <include name="${addressbook}/*.gom"/>
 
         <include name="${antipattern}/README"/>
         <include name="${antipattern}/*.t"/>
@@ -855,6 +855,9 @@
         <include name="${ferus}/Makefile"/>
         <include name="${ferus}/*.adt"/>
         <include name="${ferus}/*.vas"/>
+
+        <include name="${gom}/*.t"/>
+				<include name="${gom}/*.gom"/>
 
         <include name="${gomoku}/*.t"/>
         <include name="${gomoku}/*.vas"/>

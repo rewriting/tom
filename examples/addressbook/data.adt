@@ -1,6 +1,0 @@
-[
-constructor(Date,date,date(<year(int)>,<month(int)>,<day(int)>)),
-constructor(Date,date2,date2(<year(int)>,<month(int)>,<day(int)>)),
-constructor(Person,person,person(<firstname(str)>,<lastname(str)>,<birthdate(Date)>)),
-named-list(concPerson, PersonList, Person)
-]

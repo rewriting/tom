@@ -1,0 +1,9 @@
+module Data
+imports
+
+public 
+sorts Date Person PersonList
+abstract syntax
+date(year:int, month:int, day:int) -> Date
+person(firstname:String, lastname:String, birthdate:Date) -> Person
+concPerson( Person* ) -> PersonList

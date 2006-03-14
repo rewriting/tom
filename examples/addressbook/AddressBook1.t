@@ -29,8 +29,6 @@
 
 package addressbook;
 
-import aterm.pure.*;
-import addressbook.data.*;
 import addressbook.data.types.*;
 
 import java.util.Iterator;
