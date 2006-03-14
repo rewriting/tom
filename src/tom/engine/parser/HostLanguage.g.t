@@ -291,19 +291,17 @@ options{
         String code = metaEncodeCode(split[i].replaceAll(metaChar,escapeChar));
         metaMode = false;
         //System.out.println("metaString: '" + code + "'");
-        //res += code;
         list.add(`ITL(code));
       } else {
         String code = "+"+split[i]+"+";
         metaMode = true;
         //System.out.println("prg to parse: '" + code + "'");
-        //res += code;
         try {
-        Reader codeReader = new BufferedReader(new StringReader(code));
-        HostParser parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
-            getOptionManager(), getStreamManager());
-        TomTerm astTom = parser.input();
-        list.add(astTom); 
+          Reader codeReader = new BufferedReader(new StringReader(code));
+          HostParser parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
+              getOptionManager(), getStreamManager());
+          TomTerm astTom = parser.input();
+          list.add(astTom); 
         } catch (IOException e) {
           throw new TomRuntimeException("IOException catched in tomSplitter");
         } catch (Exception e) {
