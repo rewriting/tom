@@ -300,7 +300,7 @@ options{
         //res += code;
         try {
         Reader codeReader = new BufferedReader(new StringReader(code));
-        HostParser parser = TomParserPlugin.newParser(codeReader,"XXX:find back the file name",
+        HostParser parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
             getOptionManager(), getStreamManager());
         TomTerm astTom = parser.input();
         list.add(astTom); 
