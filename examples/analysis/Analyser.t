@@ -47,8 +47,16 @@ public class Analyser{
 
   %include {mutraveler.tom }
   %include {language/language.tom}
-  
+
+
+//Définition des types
+ 
   %typeterm GraphList {
+    implement { List }
+    equals(t1,t2) { t1.equals(t2) } 
+  }
+
+ %typeterm VariableList {
     implement { List }
     equals(t1,t2) { t1.equals(t2) } 
   }
@@ -57,6 +65,14 @@ public class Analyser{
     implement {ControlFlowGraph}
     equals(t1,t2) { t1.equals(t2) } 
   }
+
+
+  %typeterm NodeEmilie {
+    implement {NodeEmilie}
+    equals(t1,t2) { t1.equals(t2) } 
+  }
+
+//Définition des constructeurs
 
   %op Graph conc(root:Graph,subterm:GraphList) {
     is_fsym(t)  { t instanceof ControlFlowGraph }
@@ -79,21 +95,26 @@ public class Analyser{
     get_size(l)      { l.size()               }
   }
 
-  private List myAdd(Object e,List l) {
-    l.add(e);
-    return l;
+  %oparray VariableList varList( Variable* ) {
+    is_fsym(t)       { t instanceof List }
+    make_empty(n)    { new ArrayList(n)       }
+    make_append(e,l) { myAdd(e,(ArrayList)l)  }
+    get_element(l,n) { (Variable)(l.get(n))  }
+    get_size(l)      { l.size()               }
   }
 
 
-  %typeterm NodeEmilie {
-    implement {NodeEmilie}
-    equals(t1,t2) { t1.equals(t2) } 
-  }
 
   %op NodeEmilie NodeEmilie(node:Node){
 	  is_fsym(t)  { t instanceof NodeEmilie }
     	  make(node) { new NodeEmilie(node) }
   }
+
+
+/**
+Classe provisoire d'encapsulation des Node
+pour éviter le partage maximale des ATerms
+*/
 
 public class NodeEmilie{ 
   private Node node ;
@@ -104,6 +125,11 @@ public class NodeEmilie{
 
   public Node getNode(){return node;}
 }
+
+/**
+Repérsentation du graphe de flot de contrôle
+en utilisant la bibliothèque jgrapht
+*/
 
 class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
 
@@ -141,7 +167,6 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
       NodeEmilie rootNeighbour = (NodeEmilie)(((Edge)iter.next()).getTarget());
       subterms.add(subGraph(rootNeighbour));
     }
-    System.out.println(subterms);
   }
 
 
@@ -204,10 +229,15 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
 
 }
 
+
+// Main de la classe
+
   public final static void main(String[] args) {
    Analyser test = new Analyser();
     test.run();
   }
+
+// Méthode de test des stratégies
 
   public void run() {
     InstructionList subject = `concInstruction(If(True,Nop(),Let(Name("y"),g(a),Nop())),Let(Name("x"),f(a,b),Nop()));
@@ -224,7 +254,59 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
 
   }
   
-class DeadCode extends languageVisitableFwd {
+// Méthode d'ajout d'un élément dans une liste (utilisée dans la définition des constructeurs de liste)
+
+  private List myAdd(Object e,List l) {
+    l.add(e);
+    return l;
+  }
+
+/**
+ Définition des prédicats sur un node
+---------------------------------------------------------
+*/
+
+// Prédicat isUsed(v:Variable) qui teste si une variable est utilisé à un noeud du cfg
+
+class IsUsed extends languageBasicStrategy {
+
+    Variable v;
+
+    public IsUsed(Variable v) {
+         super(`Fail());
+	 this.v=v;
+    }
+    
+    public Visitable visitNode(Node arg) throws VisitFailure { 
+      %match(Node arg) {
+/** 
+	beginIf(expr:Expression) -> Node
+	affect(var:Variable,term:Term) -> Node
+	free(var:Variable) -> Node
+	hostcode(list:VariableList) -> Node
+	beginWhile(expr:Expression) -> Node
+	endWhile() -> Node
+	failWhile() -> Node
+	Nil()-> Node	
+*/
+      } 
+      return `Fail().visit(arg);
+      //throw new VisitFailure();
+    }
+
+
+   public Visitable visitTerm(Term arg) throws VisitFailure { 
+      %match(Term arg) {
+ 	
+
+	} 
+      return `Fail().visit(arg);
+      //throw new VisitFailure();
+   }
+
+}
+  
+class DeadCode extends languageBasicStrategy{
     public DeadCode() {
       super(`Identity());
     }
@@ -233,16 +315,17 @@ class DeadCode extends languageVisitableFwd {
       %match(Graph arg) {
  	graph(node) -> {
 	  Node n = `node.getNode();
-	  System.out.println("visit "+n);
 	} 
       }
       return `Identity().visit(arg);
       //throw new VisitFailure();
     }
-  }
+}
 
 
-class Cfg extends languageVisitableFwd{
+//Construction du CFG à partir de l'AST
+
+class Cfg extends languageBasicStrategy{
     public Cfg() {
       super(`Fail());
     }
