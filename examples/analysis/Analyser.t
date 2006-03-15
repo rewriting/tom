@@ -64,8 +64,9 @@ public class Analyser{
   }
 
 
-  %op Graph graph(node:Node){
+  %op Graph graph(node:NodeEmilie){
     is_fsym(t)  { t instanceof ControlFlowGraph }
+    get_slot(node,t) { t.getRoot() }
     make(node) { new ControlFlowGraph(node) }
   }
 
@@ -84,9 +85,29 @@ public class Analyser{
   }
 
 
+  %typeterm NodeEmilie {
+    implement {NodeEmilie}
+    equals(t1,t2) { t1.equals(t2) } 
+  }
+
+  %op NodeEmilie NodeEmilie(node:Node){
+	  is_fsym(t)  { t instanceof NodeEmilie }
+    	  make(node) { new NodeEmilie(node) }
+  }
+
+public class NodeEmilie{ 
+  private Node node ;
+  
+  public NodeEmilie(Node node){this.node=node;}
+
+  public String toString(){return node.toString();}
+
+  public Node getNode(){return node;}
+}
+
 class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
 
-  private Node root;
+  private NodeEmilie root;
   private List subterms;
 
   public ControlFlowGraph(ControlFlowGraph first, List graphList)  {
@@ -100,7 +121,7 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
     Iterator iter = first.vertexSet().iterator();
     ArrayList leaves = new ArrayList();
     while(iter.hasNext()){
-      Node vertex = (Node) (iter.next());
+      NodeEmilie vertex = (NodeEmilie) (iter.next());
       if (first.outDegreeOf(vertex)==0) leaves.add(vertex) ;
     }
    iter = graphList.iterator();
@@ -117,18 +138,54 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
     iter = outgoingEdgesOf(root).iterator();
     subterms = new ArrayList();
     while(iter.hasNext()){
-      subterms.add(((Edge)iter.next()).getTarget()) ;
+      NodeEmilie rootNeighbour = (NodeEmilie)(((Edge)iter.next()).getTarget());
+      subterms.add(subGraph(rootNeighbour));
     }
+    System.out.println(subterms);
   }
 
-  public ControlFlowGraph(Node node){
+
+  public ControlFlowGraph subGraph(NodeEmilie startNode){
+       ControlFlowGraph cfg = new ControlFlowGraph(startNode);
+       cfg.addAllVertices(connectedNodes(startNode));
+       cfg.addAllEdges(connectedEdges(startNode));
+       return cfg;
+
+  }
+
+  public List connectedNodes(NodeEmilie startNode){
+    Iterator iter = outgoingEdgesOf(startNode).iterator();
+    List connectedNodes = new ArrayList();
+    while(iter.hasNext()){
+      NodeEmilie rootNeighbour = (NodeEmilie)(((Edge)iter.next()).getTarget());
+     if(! connectedNodes.contains(rootNeighbour)){
+	connectedNodes.add(rootNeighbour);
+      	connectedNodes.addAll(connectedNodes(rootNeighbour));
+    	}
+    }
+    return connectedNodes;
+  }
+
+  public List connectedEdges(NodeEmilie startNode){
+    List connectedEdges = new ArrayList();
+    List connectedNodes = connectedNodes(startNode);
+    ListIterator iter = connectedNodes.listIterator();
+    while(iter.hasNext()){
+	NodeEmilie n = (NodeEmilie) iter.next();
+        connectedEdges.addAll(outgoingEdgesOf(n));
+   }
+   return connectedEdges;
+  }
+
+  public ControlFlowGraph(NodeEmilie node){
 	super();
 	root = node;
 	addVertex(node);
+	subterms = new ArrayList();
   }
 
  
-  public Node getRoot(){
+  public NodeEmilie getRoot(){
      return root;
   }  
 
@@ -137,7 +194,7 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
   }
 
   public Visitable getChildAt(int i) {
-   return (Node) subterms.get(i);
+   return (ControlFlowGraph) subterms.get(i);
   }
 
   public Visitable setChildAt(int i, Visitable child) {
@@ -155,10 +212,12 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
   public void run() {
     InstructionList subject = `concInstruction(If(True,Nop(),Let(Name("y"),g(a),Nop())),Let(Name("x"),f(a,b),Nop()));
     VisitableVisitor rule = new Cfg();
-
+    VisitableVisitor deadcode = new DeadCode(); 
     try {
       System.out.println("subject          = " + subject);
       System.out.println("correpsonding cfg = " + rule.visit(subject));
+      ControlFlowGraph cfg = (ControlFlowGraph)(rule.visit(subject));
+      System.out.println("deadcode = " + MuTraveler.init(`BottomUp(deadcode)).visit(cfg));
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
@@ -167,16 +226,21 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
   
 class DeadCode extends languageVisitableFwd {
     public DeadCode() {
-      super(`Fail());
+      super(`Identity());
     }
     
     public Visitable visit(Visitable arg) throws VisitFailure { 
       %match(Graph arg) {
+ 	graph(node) -> {
+	  Node n = `node.getNode();
+	  System.out.println("visit "+n);
+	} 
       }
-      return (Term)`Fail().visit(arg);
+      return `Identity().visit(arg);
       //throw new VisitFailure();
     }
   }
+
 
 class Cfg extends languageVisitableFwd{
     public Cfg() {
@@ -185,31 +249,42 @@ class Cfg extends languageVisitableFwd{
     
     public  Visitable visit(Visitable arg) throws VisitFailure { 
       %match(Instruction arg) {
-	
 	If(cond,succesInst,failureInst) -> { 
 		ControlFlowGraph suc = (ControlFlowGraph)(visit(`succesInst));
 		ControlFlowGraph fail= (ControlFlowGraph)(visit(`failureInst));
-		ControlFlowGraph succesGraph  = `conc(suc,list(graph(endIf)));
-		ControlFlowGraph failureGraph = `conc(fail,list(graph(endIf)));
-		return `conc(graph(beginIf(cond)),list(succesGraph,failureGraph));} 
+		NodeEmilie end = new NodeEmilie(`endIf());
+		NodeEmilie beginIfNode = new NodeEmilie(`beginIf(cond));
+		ControlFlowGraph succesGraph  = `conc(suc,list(graph(end)));
+		ControlFlowGraph failureGraph = `conc(fail,list(graph(end)));
+		return `conc(graph(beginIfNode),list(succesGraph,failureGraph));} 
 
+	
 	WhileDo(cond,doInst) -> {
 		ControlFlowGraph instrGraph = (ControlFlowGraph)(visit(`doInst));
-		return `conc(graph(beginWhile(cond)),list(conc(instrGraph,list(conc(graph(endWhile()),list()))),graph(failWhile())));}
+		NodeEmilie beginWhileNode = new NodeEmilie(`beginWhile(cond));
+		NodeEmilie endWhileNode = new NodeEmilie(`endWhile());
+		NodeEmilie failWhileNode = new NodeEmilie(`failWhile());
+		ControlFlowGraph cfg = `conc(graph(beginWhileNode),list(conc(instrGraph,list(conc(graph(endWhileNode),list()))),graph(failWhileNode)));
+		cfg.addEdge(new DirectedEdge(endWhileNode,beginWhileNode));
+		return cfg;}
 
 	Let(var,term,instr) -> {
 		ControlFlowGraph instrGraph = (ControlFlowGraph)(visit(`instr));
-		return `conc(graph(affect(var,term)),list(conc(instrGraph,list(graph(free(var))))));}
+		NodeEmilie n1 = new NodeEmilie(`affect(var,term));
+		NodeEmilie n2 = new NodeEmilie(`free(var));
+		return `conc(graph(n1),list(conc(instrGraph,list(graph(n2)))));}
 
 	LetRef(var,term,instr) -> {
 		ControlFlowGraph instrGraph = (ControlFlowGraph)(visit(`instr));
-		return `conc(graph(affect(var,term)),list(instrGraph));}
+		NodeEmilie n = new NodeEmilie(`affect(var,term));
+		return `conc(graph(n),list(instrGraph));}
 
 	LetAssign(var,term,instr) -> {	
 		ControlFlowGraph instrGraph = (ControlFlowGraph)(visit(`instr));
-		return `conc(graph(affect(var,term)),list(instrGraph));}
+		NodeEmilie n = new NodeEmilie(`affect(var,term));
+		return `conc(graph(n),list(instrGraph));}
 
-	Nop() -> {return `graph(Nil());}
+	Nop() -> {NodeEmilie n = new NodeEmilie(`Nil()); return `graph(n);}
 
 	}
 
@@ -219,19 +294,14 @@ class Cfg extends languageVisitableFwd{
 		ControlFlowGraph tailGraph = (ControlFlowGraph)(visit(`tail));
 		return `conc(instrGraph,list(tailGraph));}
         
-	concInstruction() -> {return `graph(Nil());}
+	concInstruction() -> {NodeEmilie n = new NodeEmilie(`Nil()); return `graph(n);}
 	}
 
       return (Instruction)`Fail().visit(arg);
       //throw new VisitFailure();
     }
-  }
-
-
-
 
 }
 
- 
 
-
+}
