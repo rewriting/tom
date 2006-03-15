@@ -53,6 +53,7 @@
          destdir="${gen}">
          <include name="Ying.gom"/>
          <include name="JavaHook.gom"/>
+         <include name="Bool.gom"/>
     </gom>
     <tom config="${tomconfigfile}"
          srcdir="${src}"
