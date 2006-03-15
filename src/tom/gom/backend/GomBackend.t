@@ -46,7 +46,7 @@ import jjtraveler.VisitFailure;
 public class GomBackend {
   TemplateFactory templatefactory;
 
-  %include { ../adt/objects/Objects.tom}
+  %include { ../adt/objects/Objects.tom }
   %include { mutraveler.tom }
 
   GomBackend(TemplateFactory templatefactory) {
@@ -57,8 +57,16 @@ public class GomBackend {
     return GomEnvironment.getInstance();
   }
 
+  private Map mappingForMappingName = new HashMap();
+
   public int generate(GomClassList classList) {
     int errno = 0;
+    // populate the mappingForMappingName Map
+    %match(GomClassList classList) {
+      concGomClass(_*,mapping@TomMapping[className=mappingName],_*) -> {
+        mappingForMappingName.put(`mappingName,`mapping);
+      }
+    }
     // generate a class for each element of the list
     while (!classList.isEmpty()) {
       GomClass gomclass = classList.getHead();
@@ -111,11 +119,13 @@ public class GomBackend {
       (OperatorClass|VariadicOperatorClass)[className=className,
                                             factoryName=factory,
                                             abstractType=abstracttype,
+                                            mapping=mapping,
                                             sortName=sort,
                                             visitor=visitorName,
                                             slots=slots,
                                             hooks=hooks] -> {
-        TemplateClass operator = templatefactory.makeOperatorTemplate(`className,`factory,`abstracttype,`sort,`visitorName,`slots,`hooks);
+        GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
+        TemplateClass operator = templatefactory.makeOperatorTemplate(`className,`factory,`abstracttype,`sort,`visitorName,`slots,`hooks,getMappingTemplate(mappingClass));
         operator.generateFile();
         return 1;
       }
@@ -128,4 +138,13 @@ public class GomBackend {
     throw new GomRuntimeException("Trying to generate code for a strange class: "+gomclass);
   }
 
+  public TemplateClass getMappingTemplate(GomClass mapping) {
+    TemplateClass mappingTemplate = null;
+    %match(GomClass mapping) {
+      TomMapping[className=mappingName,sortClasses=sortClasses,operatorClasses=ops] -> {
+        mappingTemplate = templatefactory.makeTomMappingTemplate(`mappingName,`sortClasses,`ops);
+      }
+    }
+    return mappingTemplate;
+  }
 }

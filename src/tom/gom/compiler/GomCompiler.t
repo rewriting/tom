@@ -66,6 +66,7 @@ public class GomCompiler {
     Map factoryNameForModule = new HashMap();
     Map visitorNameForModule = new HashMap();
     Map visitableForwardNameForModule = new HashMap();
+    Map tomMappingNameForModule = new HashMap();
     Map sortGomClassForSortDecl = new HashMap();
     Map classForOperatorDecl = new HashMap();
     /* For each module */
@@ -92,6 +93,9 @@ public class GomCompiler {
 
       ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"BasicStrategy");
       visitableForwardNameForModule.put(moduleDecl,visitablefwdName);
+
+      ClassName tomMappingName = `ClassName(packagePrefix(moduleDecl),moduleName);
+      tomMappingNameForModule.put(moduleDecl,tomMappingName);
 
       abstractTypeNameForModule.put(moduleDecl,abstractTypeName);
       GomClass abstracttype = `AbstractTypeClass(abstractTypeName,factoryName,visitorName,classSortList);
@@ -126,6 +130,7 @@ public class GomCompiler {
           ClassName factoryName = (ClassName)factoryNameForModule.get(`moduleDecl);
           ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDecl);
           ClassName visitableforwardName = (ClassName)visitableForwardNameForModule.get(`moduleDecl);
+          ClassName mappingName = (ClassName)tomMappingNameForModule.get(`moduleDecl);
 
           // create operator classes. Also, store a list of all operators for the sort class
           // use a Set to collect slots and avoid duplicates
@@ -155,7 +160,7 @@ public class GomCompiler {
                   operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Cons");
 
                   allOperators = `concClassName(empty,allOperators*);
-                  GomClass emptyClass = `OperatorClass(empty,factoryName,abstracttypeName,sortClassName,visitorName,concSlotField(),concHook());
+                  GomClass emptyClass = `OperatorClass(empty,factoryName,abstracttypeName,mappingName,sortClassName,visitorName,concSlotField(),concHook());
                   classForOperatorDecl.put(`opdecl,emptyClass); 
                   classList = `concGomClass(emptyClass,classList*);
                 }
@@ -173,6 +178,7 @@ public class GomCompiler {
                 operatorClass = `VariadicOperatorClass(operatorClassName,
                                                        factoryName,
                                                        abstracttypeName,
+                                                       mappingName,
                                                        sortClassName,
                                                        visitorName,
                                                        slots,empty,opname,
@@ -181,6 +187,7 @@ public class GomCompiler {
                 operatorClass = `OperatorClass(operatorClassName,
                                                factoryName,
                                                abstracttypeName,
+                                               mappingName,
                                                sortClassName,
                                                visitorName,slots,
                                                operatorHooks);
@@ -273,7 +280,7 @@ public class GomCompiler {
       classList = `concGomClass(visitablefwdclass,classList*);
 
       /* create a TomMapping */
-      ClassName tomMappingName = `ClassName(packagePrefix(moduleDecl),moduleName);
+      ClassName tomMappingName = (ClassName) tomMappingNameForModule.get(moduleDecl);
       GomClass tommappingclass = `TomMapping(tomMappingName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(tommappingclass,classList*);
 

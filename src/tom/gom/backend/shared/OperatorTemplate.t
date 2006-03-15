@@ -38,6 +38,7 @@ public class OperatorTemplate extends TemplateClass {
   ClassName visitor;
   SlotFieldList slotList;
   HookList hooks;
+  TemplateClass mapping;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -47,7 +48,8 @@ public class OperatorTemplate extends TemplateClass {
                           ClassName sortName,
                           ClassName visitor,
                           SlotFieldList slots,
-                          HookList hooks) {
+                          HookList hooks,
+                          TemplateClass mapping) {
     super(className);
     this.factoryName = factoryName;
     this.abstractType = abstractType;
@@ -55,6 +57,7 @@ public class OperatorTemplate extends TemplateClass {
     this.visitor = visitor;
     this.slotList = slots;
     this.hooks = hooks;
+    this.mapping = mapping;
   }
 
   public String generate() {
@@ -521,7 +524,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
         concHook(MakeHook(args,code)) -> {
           // replace the inner make call
           out.append(%[
-  public static @className()@ make(@unprotectedChildListWithType(`args)@) {
+  public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
     @`code@
   }
 
@@ -530,7 +533,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
         concHook(MakeBeforeHook(args,code)) -> {
           // replace the inner make call
           out.append(%[
-  public static @className()@ make(@unprotectedChildListWithType(`args)@) {
+  public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
     @`code@
     return realMake(@unprotectedChildList(`args)@);
   }
@@ -539,7 +542,8 @@ public class @className()@ extends @fullClassName(sortName)@ {
 
         }
       }
-
+      // also generate the tom mapping
+     out.append(mapping.generate()); 
     }
     return out.toString();
   }
