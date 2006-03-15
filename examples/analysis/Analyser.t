@@ -33,6 +33,7 @@ import analysis.language.*;
 import analysis.language.types.*;
 
 import tom.library.strategy.mutraveler.*;
+
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
@@ -51,7 +52,7 @@ public class Analyser{
 
 //Définition des types
  
-  %typeterm GraphList {
+  %typeterm ControlFlowGraphList {
     implement { List }
     equals(t1,t2) { t1.equals(t2) } 
   }
@@ -61,7 +62,7 @@ public class Analyser{
     equals(t1,t2) { t1.equals(t2) } 
   }
 
-  %typeterm Graph {
+  %typeterm ControlFlowGraph {
     implement {ControlFlowGraph}
     equals(t1,t2) { t1.equals(t2) } 
   }
@@ -74,20 +75,20 @@ public class Analyser{
 
 //Définition des constructeurs
 
-  %op Graph conc(root:Graph,subterm:GraphList) {
+  %op ControlFlowGraph conc(root:ControlFlowGraph,subterm:ControlFlowGraphList) {
     is_fsym(t)  { t instanceof ControlFlowGraph }
     make(root,subterm) { new ControlFlowGraph(root, subterm) }
   }
 
 
-  %op Graph graph(node:NodeEmilie){
+  %op ControlFlowGraph graph(node:NodeEmilie){
     is_fsym(t)  { t instanceof ControlFlowGraph }
     get_slot(node,t) { t.getRoot() }
     make(node) { new ControlFlowGraph(node) }
   }
 
  
-  %oparray GraphList list( Graph* ) {
+  %oparray ControlFlowGraphList list( ControlFlowGraph* ) {
     is_fsym(t)       { t instanceof List }
     make_empty(n)    { new ArrayList(n)       }
     make_append(e,l) { myAdd(e,(ArrayList)l)  }
@@ -174,9 +175,18 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
        ControlFlowGraph cfg = new ControlFlowGraph(startNode);
        cfg.addAllVertices(connectedNodes(startNode));
        cfg.addAllEdges(connectedEdges(startNode));
+       Iterator iter = outgoingEdgesOf(startNode).iterator();
+       List l = new ArrayList();
+       while(iter.hasNext()){
+         NodeEmilie rootNeighbour = (NodeEmilie)(((Edge)iter.next()).getTarget());
+         l.add(subGraph(rootNeighbour));
+       }
+       cfg.setSubterms(l);
        return cfg;
 
   }
+
+  public void setSubterms(List l){subterms=l;}
 
   public List connectedNodes(NodeEmilie startNode){
     Iterator iter = outgoingEdgesOf(startNode).iterator();
@@ -227,6 +237,14 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
     return this;  
   }
 
+
+  public boolean verify(VisitableVisitor temporalCond,NodeEmilie n){
+	try{
+	  MuTraveler.init(temporalCond).visit(subGraph(n));
+	  return true;
+	}catch(VisitFailure e){return false;}
+  }
+
 }
 
 
@@ -240,15 +258,36 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
 // Méthode de test des stratégies
 
   public void run() {
-    InstructionList subject = `concInstruction(If(True,Nop(),Let(Name("y"),g(a),Nop())),Let(Name("x"),f(a,b),Nop()));
+    Variable var_x = `Name("x");
+    Variable var_y = `Name("y");
+    Variable var_z = `Name("z");
+
+    InstructionList subject = `concInstruction(If(True,Nop(),Let(var_x,g(a),Let(var_y,g(Var(var_x)),Nop()))),Let(var_z,f(a,b),Nop()));
     VisitableVisitor rule = new Cfg();
-    VisitableVisitor deadcode = new DeadCode(); 
+
     try {
       System.out.println("subject          = " + subject);
-      System.out.println("correpsonding cfg = " + rule.visit(subject));
       ControlFlowGraph cfg = (ControlFlowGraph)(rule.visit(subject));
-      System.out.println("deadcode = " + MuTraveler.init(`BottomUp(deadcode)).visit(cfg));
-    } catch (VisitFailure e) {
+      System.out.println("correpsonding cfg = " + cfg);
+      System.out.println("deadcode detection...........");
+
+      // On recherche les noeuds qui correspondent a des assign
+      Iterator iter = cfg.vertexSet().iterator();
+      while(iter.hasNext()){
+	NodeEmilie n = (NodeEmilie) (iter.next());
+	Node nn = n.getNode();
+	%match(Node nn){
+	  affect(var,_) -> {
+	    VisitableVisitor isNotUsedStrat = new IsNotUsed(`var);
+	    VisitableVisitor freeStrat = new Free(`var);
+	    //test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
+            if(cfg.verify(`mu(MuVar("x"),Choice(freeStrat,Sequence(isNotUsedStrat,All(MuVar("x"))))),n)) System.out.println("Variable "+`var+" not used");
+          }
+        }	
+      } 	
+   
+
+     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 
@@ -266,60 +305,102 @@ class ControlFlowGraph extends DefaultDirectedGraph implements Visitable {
 ---------------------------------------------------------
 */
 
-// Prédicat isUsed(v:Variable) qui teste si une variable est utilisé à un noeud du cfg
+// Prédicat isUsed(v:Variable) qui teste si une variable est utilisée au noeud racine d'un cfg
 
-class IsUsed extends languageBasicStrategy {
+class IsNotUsed extends languageBasicStrategy {
 
     Variable v;
 
-    public IsUsed(Variable v) {
+    public IsNotUsed(Variable v) {
+         super(`Identity());
+	 this.v=v;
+    }
+    
+    public Visitable visit(Visitable arg) throws VisitFailure {
+if(arg instanceof ControlFlowGraph){
+       visit(((ControlFlowGraph)arg).getRoot().getNode());
+} 
+if(arg instanceof Node){
+      %match(Node arg) {
+
+	beginIf(expr) -> {
+		visit(`expr);
+	} 
+	affect(var,term) -> {
+		visit(`term);
+	}
+	beginWhile(expr) -> {
+		visit(`expr);
+	}
+	
+      }
+}
+if(arg instanceof Term){
+     %match(Term arg) {	
+	f(arg1 , arg2) -> {
+		visit(`arg1);
+		visit(`arg2);
+	} 
+
+	g(arg) -> {
+		visit(`arg);
+	}
+
+	Var(var) -> {
+		if(`var.equals(v)) return `Fail().visit(arg);
+	}
+	
+     } 
+}
+if(arg instanceof Expression){
+   %match(Expression arg) {
+	Negation(arg) -> {
+		visit(`arg);
+	}
+
+	And(arg1,arg2) -> {
+		visit(`arg1);
+		visit(`arg2);
+	}
+	Or(arg1,arg2) -> {
+		visit(`arg1);
+		visit(`arg2);
+	}
+	EqualTerm(kid1,kid2) -> {
+		visit(`kid1);
+		visit(`kid2);
+	}
+   }
+} 
+ return `Identity().visit(arg);
+   }
+
+
+}
+// Prédicat Free(v:Variable) qui teste si une variable est libéré au noeud racine d'un cfg
+
+class Free extends languageBasicStrategy {
+
+    Variable v;
+
+    public Free(Variable v) {
          super(`Fail());
 	 this.v=v;
     }
     
-    public Visitable visitNode(Node arg) throws VisitFailure { 
+    public Visitable visit(Visitable arg) throws VisitFailure {
+if(arg instanceof ControlFlowGraph){
+       visit(((ControlFlowGraph)arg).getRoot().getNode());
+} 
+if(arg instanceof Node){
       %match(Node arg) {
-/** 
-	beginIf(expr:Expression) -> Node
-	affect(var:Variable,term:Term) -> Node
-	free(var:Variable) -> Node
-	hostcode(list:VariableList) -> Node
-	beginWhile(expr:Expression) -> Node
-	endWhile() -> Node
-	failWhile() -> Node
-	Nil()-> Node	
-*/
-      } 
-      return `Fail().visit(arg);
-      //throw new VisitFailure();
-    }
-
-
-   public Visitable visitTerm(Term arg) throws VisitFailure { 
-      %match(Term arg) {
- 	
-
-	} 
-      return `Fail().visit(arg);
-      //throw new VisitFailure();
+	free(var) -> {if (`var.equals(v))return `Identity().visit(arg);}	
+      }
+}
+ return `Fail().visit(arg);
    }
 
-}
-  
-class DeadCode extends languageBasicStrategy{
-    public DeadCode() {
-      super(`Identity());
-    }
-    
-    public Visitable visit(Visitable arg) throws VisitFailure { 
-      %match(Graph arg) {
- 	graph(node) -> {
-	  Node n = `node.getNode();
-	} 
-      }
-      return `Identity().visit(arg);
-      //throw new VisitFailure();
-    }
+
 }
 
 
@@ -380,8 +461,7 @@ class Cfg extends languageBasicStrategy{
 	concInstruction() -> {NodeEmilie n = new NodeEmilie(`Nil()); return `graph(n);}
 	}
 
-      return (Instruction)`Fail().visit(arg);
-      //throw new VisitFailure();
+      return `Fail().visit(arg);
     }
 
 }

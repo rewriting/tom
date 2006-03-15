@@ -13,6 +13,7 @@ LetAssign(variable:Variable,term:Term,instr:Instruction) -> Instruction
 concInstruction(Instruction*) -> InstructionList
 Nop() -> Instruction
 
+
 Negation(arg:Expression) -> Expression
 And(arg1:Expression,arg2:Expression) -> Expression
 Or(arg1:Expression,arg2:Expression) -> Expression
@@ -22,11 +23,11 @@ EqualTerm(kid1:Term,kid2:Term) -> Expression
 
 
 Name(string:String) -> Variable
-
 a()->Term
 b() ->Term 	
 f(arg1: Term, arg2:Term) -> Term
 g(arg:Term) -> Term
+Var(v:Variable) -> Term
 
 beginIf(expr:Expression) -> Node
 affect(var:Variable,term:Term) -> Node
@@ -36,4 +37,6 @@ beginWhile(expr:Expression) -> Node
 endWhile() -> Node
 failWhile() -> Node
 Nil()-> Node
+
+
 
