@@ -81,7 +81,14 @@ public class Rewrite3 {
 
   }
 
-  class RewriteSystem extends strategy.term.termVisitableFwd {
+  %strategy RewriteSystem(collection:Collection) extends `Fail() {
+
+    visit Term {
+        g(x,b()) -> { collection.add(`x); }
+    }
+  }
+
+  /*class RewriteSystem extends strategy.term.termVisitableFwd {
     Collection collection;
     public RewriteSystem(Collection c) {
       super(`Fail());
@@ -97,7 +104,7 @@ public class Rewrite3 {
       return arg;
       //throw new VisitFailure();
     }
-  }
+  }*/
 
 
   /*
