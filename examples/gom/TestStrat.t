@@ -60,7 +60,7 @@ public class TestStrat extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(TestStrat.class));
   }
 
-  class RewriteSystem extends gom.vlist.VListVisitableFwd {
+  class RewriteSystem extends gom.vlist.VListBasicStrategy {
     public RewriteSystem() {
       super(`Fail());
     }

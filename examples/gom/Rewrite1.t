@@ -73,7 +73,7 @@ public class Rewrite1 {
 
   }
   
-  class RewriteSystem extends gom.term.termVisitableFwd {
+  class RewriteSystem extends gom.term.termBasicStrategy {
     public RewriteSystem() {
       super(`Fail());
     }
@@ -99,7 +99,7 @@ public class Rewrite1 {
     }
   }
 
-  class RewriteSystemId extends gom.term.termVisitableFwd {
+  class RewriteSystemId extends gom.term.termBasicStrategy {
     public RewriteSystemId() {
       super(`Identity());
     }
