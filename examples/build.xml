@@ -753,15 +753,13 @@
   </target>
 
 
-  <target name="analysis" depends="init">
+  <target name="analysis" depends="init,init.gom.task">
   <!-- copy resources in build -->
     <copy todir="${examples.build}/${analysis}">
       <fileset dir="${examples.dir}/${analysis}">
       </fileset>
     </copy>
-    <adtcompile example="${analysis}"
-                factory="language"/>
-    <vascompile example="${analysis}"/>
+    <gomcompile example="${analysis}"/>
     <tomcompile example="${analysis}"/>
     <javacompile example="${analysis}"/>
   </target>
