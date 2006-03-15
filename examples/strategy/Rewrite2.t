@@ -66,7 +66,17 @@ public class Rewrite2 {
 
   }
   
-  class RewriteSystem extends strategy.term.termVisitableFwd {
+  %strategy RewriteSystem() extends `Fail() {
+
+    visit Term { 
+        a() -> { return `b(); }
+        b() -> { return `c(); }
+        g(c(),c()) -> { return `c(); }
+      }
+    }
+    
+
+  /*class RewriteSystem extends strategy.term.termVisitableFwd {
     public RewriteSystem() {
       super(new tom.library.strategy.mutraveler.Fail());
     }
@@ -84,5 +94,5 @@ public class Rewrite2 {
 
   }
 
-
+*/
 }

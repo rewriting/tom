@@ -55,7 +55,7 @@ public class Rewrite1 {
     Term subject = `f(g(g(a,b),g(a,a)));
     globalSubject = subject;
 
-    VisitableVisitor rule = new RewriteSystem();
+   VisitableVisitor rule = new RewriteSystem();
     VisitableVisitor ruleId = new RewriteSystemId();
 
     try {
@@ -72,57 +72,28 @@ public class Rewrite1 {
     }
 
   }
-  
-  class RewriteSystem extends strategy.term.termVisitableFwd {
-    public RewriteSystem() {
-      super(`Fail());
-    }
-    
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      %match(Term arg) {
-				a() -> { 
-					/*
-						 Position pos = MuTraveler.getPosition(this);
-						 System.out.println("a -> b at " + pos);
-						 System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
-						 System.out.println("rwr into: " + pos.getReplace(`b()).visit(globalSubject));
-					 */
-					return `b();
-        }
-				b() -> { 
-					//System.out.println("b -> c at " + MuTraveler.getPosition(this)); 
-					return `c();
-				}
-				g(c(),c()) -> { 
-					//	System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this));
-					return `c();
-				}
+
+  %strategy RewriteSystem() extends `Fail() {
+    visit Term {
+      a()        -> { 
+        Position pos = MuTraveler.getPosition(this);
+        System.out.println("a -> b at " + pos);
+        System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
+        System.out.println("rwr into: " + pos.getReplace(`b()).visit(globalSubject));
+
+        return `b();
       }
-      return (Term)`Fail().visit(arg);
-      //throw new VisitFailure();
+      b()        -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
+      g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
+      _          ->  { return (Term)`Fail().visit(arg); }
     }
   }
 
-  class RewriteSystemId extends strategy.term.termVisitableFwd {
-    public RewriteSystemId() {
-      super(`Identity());
-    }
-    
-    public Term visit_Term(Term arg) {
-      %match(Term arg) {
-        a() -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
-        b() -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
-        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
-      }
-      return arg;
+  %strategy RewriteSystemId() extends `Identity() {
+    visit Term {
+      a()        -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
+      b()        -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
+      g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
     }
   }
-
-
-}
-
- 
-
-
-
-
+} 
