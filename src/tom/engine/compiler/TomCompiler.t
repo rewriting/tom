@@ -304,7 +304,8 @@ matchBlock: {
                 subjectListAST = append(arg,subjectListAST);
                 String funcName = "visit_" + `type;//function name
                 Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
-                Instruction returnStatement = `Return(FunctionCall(Name(funcName),subjectListAST));
+                //return default strategy.visit(arg)
+                Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),subjectListAST));
                 InstructionList instructions = `concInstruction(matchStatement, returnStatement);
                 l = `concDeclaration(l*,FunctionDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("VisitFailure"),AbstractBlock(instructions)));
               }
