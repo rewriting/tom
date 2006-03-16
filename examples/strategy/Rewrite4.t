@@ -91,7 +91,20 @@ public class Rewrite4 {
     }
   }
 
-  class S1 extends strategy.term.termVisitableFwd {
+  %strategy S1() extends `Identity() { 
+    visit Term {
+      _ -> {
+        int depth = MuTraveler.getPosition(this).depth();
+        String offset = "";
+        for (int i = 0; i<depth; i++){
+          offset += "  ";
+        }
+        System.out.println(offset + "s1: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
+      }
+    }
+  }
+
+ /* class S1 extends strategy.term.termVisitableFwd {
     public S1() {
       super(`Identity());
     }
@@ -104,8 +117,23 @@ public class Rewrite4 {
       System.out.println(offset + "s1: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
       return arg;
     }
+  }*/
+
+  %strategy S2() extends `Identity() { 
+
+    visit Term {
+      _ -> {
+        int depth = MuTraveler.getPosition(this).depth();
+        String offset = "";
+        for (int i = 0; i<depth; i++){
+          offset += "--";
+        }
+        System.out.println(offset + "> s2: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
+      }
+    }
   }
-  class S2 extends strategy.term.termVisitableFwd {
+
+  /*class S2 extends strategy.term.termVisitableFwd {
     public S2() {
       super(`Identity());
     }
@@ -118,8 +146,20 @@ public class Rewrite4 {
       System.out.println(offset + "> s2: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
       return arg;
     }
+  }*/
+
+  %strategy FindLeaves(bag:Collection) extends `Identity() { 
+
+    visit Term {
+      _ -> {
+        if (arg.getArity() == 0) {
+          bag.add(MuTraveler.getPosition(this));
+        }
+      }
+    }
   }
-  class FindLeaves extends strategy.term.termVisitableFwd {
+
+  /*class FindLeaves extends strategy.term.termVisitableFwd {
     Collection bag;
     public FindLeaves(Collection bag) {
       super(`Identity());
@@ -131,9 +171,37 @@ public class Rewrite4 {
       }
       return arg;
     }
+  }*/
+
+/*
+%strategy with use of when --not yet stable--
+*/
+/*
+  private boolean eqPosWhen(VisitableVisitor v,Position p) {
+    return MuTraveler.getPosition(v).equals(p);
   }
 
-  class EqPos extends strategy.term.termVisitableFwd {
+  %strategy EqPos(p:Position) extends `Fail() { 
+
+    visit Term {
+      _ when eqPosWhen(this,p) -> {return arg;}
+    }
+  }
+*/
+
+
+  %strategy EqPos(p:Position) extends `Fail() { 
+
+    visit Term {
+      _ -> {
+        if (MuTraveler.getPosition(this).equals(p)) {
+          return arg;
+        }
+      }
+    }
+  }
+
+  /*class EqPos extends strategy.term.termVisitableFwd {
     Position p;
     public EqPos(Position p) {
       super(`Fail());
@@ -146,8 +214,20 @@ public class Rewrite4 {
         return (Term)`Fail().visit(arg);
       }
     }
+  }*/
+
+  %strategy SubPos(p:Position) extends `Fail() {
+
+    visit Term {
+      _ -> {
+        if (MuTraveler.getPosition(this).isPrefix(p)) {
+          return arg;
+        } 
+      }
+    }
   }
-  class SubPos extends strategy.term.termVisitableFwd {
+
+/*  class SubPos extends strategy.term.termVisitableFwd {
     Position p;
     public SubPos(Position p) {
       super(`Fail());
@@ -159,6 +239,6 @@ public class Rewrite4 {
       } 
       return (Term)`Fail().visit(arg);
     }
-  }
+  }*/
 
 }
