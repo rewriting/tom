@@ -1,26 +1,26 @@
 header {
   /*
    * Gom
-   * 
+   *
    * Copyright (c) 2005-2006, INRIA
    * Nancy, France.
-   * 
+   *
    * This program is free software; you can redistribute it and/or modify
    * it under the terms of the GNU General Public License as published by
    * the Free Software Foundation; either version 2 of the License, or
    * (at your option) any later version.
-   * 
+   *
    * This program is distributed in the hope that it will be useful,
    * but WITHOUT ANY WARRANTY; without even the implied warranty of
    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    * GNU General Public License for more details.
-   * 
+   *
    * You should have received a copy of the GNU General Public License
    * along with this program; if not, write to the Free Software
    * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-   * 
+   *
    * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
-   * 
+   *
    **/
   package tom.gom.parser;
 }
@@ -79,7 +79,7 @@ imports returns [ImportList imports]
 {
   imports = `concImportedModule();
 }
-: IMPORTS 
+: IMPORTS
   (importedModuleName:IDENTIFIER
    {
    imports = `concImportedModule(
@@ -94,7 +94,7 @@ section returns [Section parsedsection]
   GrammarList grammarlist = `concGrammar();
 }
 : PUBLIC
-(grammarlist = grammar) 
+(grammarlist = grammar)
 {
   parsedsection = `Public(grammarlist);
 }
@@ -106,10 +106,10 @@ grammar returns [GrammarList grammars]
   ProductionList prods = `concProduction();
   GomTypeList sorts = `concGomType();
 }
-: ( sorts = sortdef 
+: ( sorts = sortdef
     { grammars = `concGrammar(grammars*,Sorts(sorts)); }
     |
-    prods = syntax 
+    prods = syntax
     { grammars = `concGrammar(grammars*,Grammar(prods)); }
   )+
 ;
@@ -119,9 +119,9 @@ sortdef returns [GomTypeList definedSorts]
   definedSorts = `concGomType();
   String sortName = null;
 }
-: SORTS 
+: SORTS
 (
- sortName = type 
+ sortName = type
  {
  definedSorts = `concGomType(GomType(sortName), definedSorts*);
  }
@@ -145,14 +145,18 @@ syntax returns [ProductionList prods]
 {
   prods = `concProduction();
   Production prod = null;
+  ProductionList productions = null;
 }
 : ABSTRACT SYNTAX
 (
  prod = production
  { prods = `concProduction(prod,prods*); }
- | 
+ |
  prod = hook
  { prods = `concProduction(prod,prods*); }
+ |
+ productions = typedecl
+ { prods = `concProduction(productions*,prods*); }
  )*
 ;
 
@@ -161,27 +165,58 @@ production returns [Production prod]
   prod = null;
   String opName=null, typeName =null;
   FieldList fieldList = `emptyFieldList();
-  Field field = null;
 }
 : id:IDENTIFIER { opName = id.getText(); }
-(
- LEFT_BRACE (field = field
-   { fieldList = `concField(fieldList*,field); }
-   ( COMMA field = field
-     { fieldList = `concField(fieldList*,field); }
-     )* )?
- RIGHT_BRACE
- )
-ARROW typeName = type
+  fieldList = fieldlist
+  ARROW typeName = type
 {
   prod = `Production(opName,fieldList,GomType(typeName));
 }
 ;
 
+typedecl returns [ProductionList list]
+{
+  list = null;
+  String sortName = null;
+}
+: id:IDENTIFIER { sortName = id.getText(); }
+  EQUALS
+  list = alternatives[`GomType(sortName)]
+;
+
+alternatives [GomType type] returns [ProductionList list]
+{
+  list = `concProduction();
+  String opName = null;
+  FieldList fieldList = null;
+}
+: (ALT)? id:IDENTIFIER { opName = id.getText(); }
+  fieldList = fieldlist
+{ list = `concProduction(Production(opName,fieldList,type),list*); }
+( ALT altid:IDENTIFIER { opName = altid.getText(); }
+ fieldList = fieldlist
+ { list = `concProduction(Production(opName,fieldList,type),list*); }
+ )*
+SEMI?
+;
+
+fieldlist returns [FieldList list]
+{
+  list = `concField();
+  Field field = null;
+}
+: LEFT_BRACE (field = field
+    { list = `concField(list*,field); }
+    ( COMMA field = field
+      { list = `concField(list*,field); }
+    )* )?
+RIGHT_BRACE
+;
+
 hook returns [Production prod]
 {
   prod = null;
-  String opName=null;
+  String opName = null;
   Hookkind hooktype = null;
   ArgList argList = `concArg();
   String code = "";
@@ -195,7 +230,7 @@ hook returns [Production prod]
      )* )?
  RIGHT_BRACE
  )
-{ 
+{
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
 }
@@ -227,7 +262,7 @@ field returns [Field field]
   field = null;
   String t=null;
 }
-: t=type STAR 
+: t=type STAR
 { field = `StarredField(GomType(t)); }
 | id:IDENTIFIER COLON t=type
 { field = `NamedField(id.getText(),GomType(t)); }
@@ -257,6 +292,10 @@ COMMA       : ',';
 LEFT_BRACE  : '(';
 RIGHT_BRACE : ')';
 STAR        : '*';
+EQUALS      : '=';
+ALT         : '|';
+SEMI        : ";;";
+
 
 LBRACE
 : '{'
