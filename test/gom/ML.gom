@@ -1,0 +1,24 @@
+module Expr
+public sorts Bool Expr
+abstract syntax
+
+Bool = True()
+     | False()
+     | Not(b:Bool)
+     | And(l:Bool,r:Bool)
+     | Or(l:Bool,r:Bool)
+     | Eq(e1:Expr,e2:Expr)
+Not:make_before(b) {
+  %match(Bool b) {
+    And(l,r) -> { return `Or(Not(l),Not(r)); }
+    Or(l,r)  -> { return `And(Not(l),Not(r)); }
+    True()   -> { return `False(); }
+    False()  -> { return `True(); }
+  }
+}
+
+Expr = | Var(name:String)
+       | Cst(val:int)
+       | Plus(e1:Expr, e2:Expr)
+       | Mult(e1:Expr, e2:Expr)
+       | Mod(e1:Expr, e2:Expr)

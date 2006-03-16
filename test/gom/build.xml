@@ -54,6 +54,7 @@
          <include name="Ying.gom"/>
          <include name="JavaHook.gom"/>
          <include name="Bool.gom"/>
+         <include name="ML.gom"/>
     </gom>
     <tom config="${tomconfigfile}"
          srcdir="${src}"
@@ -71,7 +72,8 @@
     </javac>
   </target>
 
-  <target name="junit" description="Runs junit acceptance tests" depends="build, initjunit">
+  <target name="junit" description="Runs junit acceptance tests"
+          depends="build, initjunit">
     <tomjunit printsummary="yes"
               fork="true"
               haltonfailure="false"
