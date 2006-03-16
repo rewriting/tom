@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "HostLanguage.g" -> "HostParser.java"$
+// $ANTLR 2.7.6 (2005-12-22): "HostLanguage.g" -> "HostParser.java"$
 /*
  *
  * TOM - To One Matching Compiler
@@ -25,7 +25,6 @@
  **/
 
 package tom.engine.parser;
-
 
 public interface HostParserTokenTypes {
 	int EOF = 1;

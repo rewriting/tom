@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "BlockParser.g" -> "BlockParser.java"$
+// $ANTLR 2.7.6 (2005-12-22): "BlockParser.g" -> "BlockParser.java"$
 
   /*
    * Gom
@@ -48,7 +48,7 @@ import antlr.collections.impl.BitSet;
   import tom.gom.tools.error.GomRuntimeException;
   import tom.gom.adt.gom.*;
   import tom.gom.adt.gom.types.*;
-  import antlr.TokenStreamSelector;
+  import antlr.LexerSharedInputState;
 
 public class BlockParser extends antlr.LLkParser       implements BlockParserTokenTypes
  {
@@ -56,23 +56,16 @@ public class BlockParser extends antlr.LLkParser       implements BlockParserTok
   private static final String REAL ="real";
   private static final String DOUBLE ="double";
 
-  private TokenStreamSelector selector = null;
   private BlockLexer lexer = null;
-  private String message = "";
 
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
+  public static BlockParser makeBlockParser(LexerSharedInputState state) {
+    return new BlockParser(new BlockLexer(state),"BlockParser");
   }
 
-  private TokenStreamSelector selector(){
-    return selector;
-  }
-
-  public BlockParser(TokenStreamSelector selector, String message) {
-    this(selector);
-    this.selector = selector;
-    this.lexer = (BlockLexer) selector().getStream("blocklexer");
-    this.message = message;
+  public BlockParser(BlockLexer lexer, String message) {
+    this(lexer);
+    /* the message attribute is used for constructor disambiguation */
+    this.lexer = lexer;
   }
 
 protected BlockParser(TokenBuffer tokenBuf, int k) {
@@ -104,12 +97,15 @@ public BlockParser(ParserSharedInputState state) {
 		block = "?";
 		
 		match(LBRACE);
+		/* Verify there was nothing more than only a LBRACE in the input */ 
+		if (!lexer.target.toString().trim().equals("{"))
+		throw new RecognitionException("Expecting \"{\", found \""+lexer.target.toString()+"\"");
+		
 		rawblocklist();
 		match(RBRACE);
 		
 		block = lexer.target.toString();
 		lexer.clearTarget();
-		selector().pop(); 
 		
 		return block;
 	}

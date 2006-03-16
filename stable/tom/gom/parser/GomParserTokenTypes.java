@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "GomParser.g" -> "GomParser.java"$
+// $ANTLR 2.7.6 (2005-12-22): "GomParser.g" -> "GomParser.java"$
 
   /*
    * Gom
@@ -40,10 +40,10 @@ public interface GomParserTokenTypes {
 	int RIGHT_BRACE = 13;
 	int ARROW = 14;
 	int COLON = 15;
-	int LBRACE = 16;
-	int RBRACE = 17;
-	int STAR = 18;
-	int PRIVATE = 19;
+	int STAR = 16;
+	int PRIVATE = 17;
+	int LBRACE = 18;
+	int RBRACE = 19;
 	int WS = 20;
 	int SLCOMMENT = 21;
 	int ML_COMMENT = 22;

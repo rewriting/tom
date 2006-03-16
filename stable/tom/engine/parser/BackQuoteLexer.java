@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "BackQuoteLanguage.g" -> "BackQuoteLexer.java"$
+// $ANTLR 2.7.6 (2005-12-22): "BackQuoteLanguage.g" -> "BackQuoteLexer.java"$
 /*
  * 
  * TOM - To One Matching Compiler
@@ -487,7 +487,7 @@ tryAgain:
 				synPredMatched71 = false;
 			}
 			rewind(_m71);
-			inputState.guessing--;
+inputState.guessing--;
 		}
 		if ( synPredMatched71 ) {
 			mBQ_MINUS_ID(false);

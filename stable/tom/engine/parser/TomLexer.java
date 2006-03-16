@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "TomLanguage.g" -> "TomLexer.java"$
+// $ANTLR 2.7.6 (2005-12-22): "TomLanguage.g" -> "TomLexer.java"$
 
 /*
  * 
@@ -1120,7 +1120,7 @@ tryAgain:
 				synPredMatched235 = false;
 			}
 			rewind(_m235);
-			inputState.guessing--;
+inputState.guessing--;
 		}
 		if ( synPredMatched235 ) {
 			mID_MINUS(false);
@@ -1508,7 +1508,7 @@ tryAgain:
 							synPredMatched262 = false;
 						}
 						rewind(_m262);
-						inputState.guessing--;
+inputState.guessing--;
 					}
 					if ( synPredMatched262 ) {
 						{

@@ -174,6 +174,14 @@ public class GomTask extends MatchingTask {
       checkParameters();
       resetFileLists();
 
+      /* If "tom.home" is defined in the ant project, pass it to Gom */
+      String tom_home = getProject().getProperty("tom.home");
+      if (tom_home != null) {
+        System.setProperty("tom.home",tom_home);
+      } else {
+        log("\"tom.home\" is not defined, Tom hooks may not work");
+      }
+
       // scan sourcedir, build list
       String[] list = src.list();
       for (int i = 0; i < list.length; i++) {

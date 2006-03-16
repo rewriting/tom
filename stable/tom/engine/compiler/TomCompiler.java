@@ -304,7 +304,8 @@ matchBlock: {
                 subjectListAST = append(arg,subjectListAST);
                 String funcName = "visit_" + tom_type;//function name
                 Instruction matchStatement = tom_make_Match(tom_make_SubjectList(subjectListAST),tom_match7_1_astPatternInstructionList,tom_cons_list_concOption(tom_match6_1_orgTrack,tom_empty_list_concOption()));
-                Instruction returnStatement = tom_make_Return(tom_make_FunctionCall(tom_make_Name(funcName),subjectListAST));
+                //return default strategy.visit(arg)
+                Instruction returnStatement = tom_make_Return(tom_make_FunctionCall(tom_make_Name("super." + funcName),subjectListAST));
                 InstructionList instructions = tom_cons_list_concInstruction(matchStatement,tom_cons_list_concInstruction(returnStatement,tom_empty_list_concInstruction()));
                 l = tom_append_list_concDeclaration(l,tom_cons_list_concDeclaration(tom_make_FunctionDef(tom_make_Name(funcName),tom_cons_list_concTomTerm(arg,tom_empty_list_concTomTerm()),tom_vType,tom_make_TomTypeAlone("VisitFailure"),tom_make_AbstractBlock(instructions)),tom_empty_list_concDeclaration()));
                }}} }}} }}} }} }

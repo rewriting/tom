@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "GomParser.g" -> "GomLexer.java"$
+// $ANTLR 2.7.6 (2005-12-22): "GomParser.g" -> "GomLexer.java"$
 
   /*
    * Gom
@@ -53,15 +53,6 @@ import antlr.SemanticException;
 
 public class GomLexer extends antlr.CharScanner implements GomParserTokenTypes, TokenStream
  {
-
-  private TokenStreamSelector selector;
-  private TokenStreamSelector selector() {
-    return selector;
-  }
-  public void setSelector(TokenStreamSelector sel) {
-    this.selector = sel;
-  }
-
 public GomLexer(InputStream in) {
 	this(new ByteBuffer(in));
 }
@@ -78,7 +69,7 @@ public GomLexer(LexerSharedInputState state) {
 	literals = new Hashtable();
 	literals.put(new ANTLRHashString("imports", this), new Integer(6));
 	literals.put(new ANTLRHashString("abstract", this), new Integer(9));
-	literals.put(new ANTLRHashString("private", this), new Integer(19));
+	literals.put(new ANTLRHashString("private", this), new Integer(17));
 	literals.put(new ANTLRHashString("module", this), new Integer(4));
 	literals.put(new ANTLRHashString("public", this), new Integer(7));
 	literals.put(new ANTLRHashString("syntax", this), new Integer(10));
@@ -286,7 +277,6 @@ tryAgain:
 		int _saveIndex;
 		
 		match('{');
-		selector().push("blocklexer");
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -365,7 +355,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop45:
+		_loop44:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				{
@@ -373,7 +363,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop45;
+				break _loop44;
 			}
 			
 		} while (true);
@@ -421,7 +411,7 @@ tryAgain:
 		
 		match("/*");
 		{
-		_loop51:
+		_loop50:
 		do {
 			switch ( LA(1)) {
 			case '\n':
@@ -482,7 +472,7 @@ tryAgain:
 					newline();
 				}
 			else {
-				break _loop51;
+				break _loop50;
 			}
 			}
 		} while (true);
@@ -532,7 +522,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop55:
+		_loop54:
 		do {
 			switch ( LA(1)) {
 			case 'a':  case 'b':  case 'c':  case 'd':
@@ -576,7 +566,7 @@ tryAgain:
 			}
 			default:
 			{
-				break _loop55;
+				break _loop54;
 			}
 			}
 		} while (true);

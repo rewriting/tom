@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "HostLanguage.g" -> "HostParser.java"$
+// $ANTLR 2.7.6 (2005-12-22): "HostLanguage.g" -> "HostParser.java"$
 /*
  *
  * TOM - To One Matching Compiler
@@ -25,7 +25,6 @@
  **/
 
 package tom.engine.parser;
-
 
 import antlr.TokenBuffer;
 import antlr.TokenStreamException;
@@ -274,12 +273,12 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
   }
 
   /*
-   * this function receives a string that comes from %" ... "%
-   * @@ corresponds to the char '@', so they a encoded into "% (which cannot
+   * this function receives a string that comes from %[ ... ]%
+   * @@ corresponds to the char '@', so they a encoded into ]% (which cannot
    * appear in the string)
    * then, the string is split around the delimiter @
    * alternatively, each string correspond either to a metaString, or a string
-   * to parse the @@ encoded by "% is put back as a single '@' in the metaString
+   * to parse the @@ encoded by ]% is put back as a single '@' in the metaString
    */
   public String tomSplitter(String subject, LinkedList list) {
 
@@ -299,19 +298,17 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
         String code = metaEncodeCode(split[i].replaceAll(metaChar,escapeChar));
         metaMode = false;
         //System.out.println("metaString: '" + code + "'");
-        //res += code;
         list.add(tom_make_ITL(code));
       } else {
         String code = "+"+split[i]+"+";
         metaMode = true;
         //System.out.println("prg to parse: '" + code + "'");
-        //res += code;
         try {
-        Reader codeReader = new BufferedReader(new StringReader(code));
-        HostParser parser = TomParserPlugin.newParser(codeReader,"XXX:find back the file name",
-            getOptionManager(), getStreamManager());
-        TomTerm astTom = parser.input();
-        list.add(astTom); 
+          Reader codeReader = new BufferedReader(new StringReader(code));
+          HostParser parser = TomParserPlugin.newParser(codeReader,getCurrentFile(),
+              getOptionManager(), getStreamManager());
+          TomTerm astTom = parser.input();
+          list.add(astTom); 
         } catch (IOException e) {
           throw new TomRuntimeException("IOException catched in tomSplitter");
         } catch (Exception e) {
@@ -700,9 +697,10 @@ public HostParser(ParserSharedInputState state) {
 		list.add(code);
 		}
 		
-		gomTL=goalLanguage(blockList);
 		
-		gomCode = gomTL.getCode().trim();
+		tom.gom.parser.BlockParser blockparser = 
+		tom.gom.parser.BlockParser.makeBlockParser(targetlexer.getInputState());
+		gomCode = cleanCode(blockparser.block().trim());
 		String destDir = getStreamManager().getDestDir().getPath();
 		
 		String config_xml = System.getProperty("tom.home") + "/Gom.xml";

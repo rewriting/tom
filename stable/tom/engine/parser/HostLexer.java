@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "HostLanguage.g" -> "HostLexer.java"$
+// $ANTLR 2.7.6 (2005-12-22): "HostLanguage.g" -> "HostLexer.java"$
 /*
  *
  * TOM - To One Matching Compiler
@@ -25,7 +25,6 @@
  **/
 
 package tom.engine.parser;
-
 
 import java.io.InputStream;
 import antlr.TokenStreamException;

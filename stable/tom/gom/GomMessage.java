@@ -134,6 +134,8 @@ public class GomMessage implements PlatformMessage {
   // GomBackend
   public static final GomMessage generationIssue =
     new GomMessage("Problems encountered in code generation for module {0}");
+  public static final GomMessage tomFailure =
+    new GomMessage("An error occured running Tom when generating {0}");
 
   public String toString() {
     return message;

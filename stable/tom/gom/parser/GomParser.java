@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "GomParser.g" -> "GomParser.java"$
+// $ANTLR 2.7.6 (2005-12-22): "GomParser.g" -> "GomParser.java"$
 
   /*
    * Gom
@@ -49,7 +49,7 @@ import antlr.collections.impl.BitSet;
   import tom.gom.tools.error.GomRuntimeException;
   import tom.gom.adt.gom.*;
   import tom.gom.adt.gom.types.*;
-  import antlr.TokenStreamSelector;
+  import antlr.LexerSharedInputState;
 
 public class GomParser extends antlr.LLkParser       implements GomParserTokenTypes
  {
@@ -59,17 +59,12 @@ public class GomParser extends antlr.LLkParser       implements GomParserTokenTy
   private static final String REAL ="real";
   private static final String DOUBLE ="double";
 
-  private String name = "";// mainly for disambiguing constructor
-  private TokenStreamSelector selector = null;
+  private LexerSharedInputState lexerstate = null;
 
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
-  }
-
-  public GomParser(TokenStreamSelector selector, String name) {
-    this(selector);
-    this.selector=selector;
-    this.name=name;
+  public GomParser(GomLexer lexer, String name) {
+    this(lexer);
+    /* the name attribute is used for constructor disambiguation */
+    this.lexerstate = lexer.getInputState();
   }
 
 protected GomParser(TokenBuffer tokenBuf, int k) {
@@ -412,8 +407,7 @@ public GomParser(ParserSharedInputState state) {
 		match(RIGHT_BRACE);
 		}
 		
-		selector.push("blocklexer");
-		BlockParser blockparser = new BlockParser(selector,"blockparser");
+		BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
 		code = blockparser.block();
 		
 		
@@ -476,26 +470,6 @@ public GomParser(ParserSharedInputState state) {
 		return type;
 	}
 	
-	public final String  goalLanguage() throws RecognitionException, TokenStreamException {
-		String code;
-		
-		Token  t1 = null;
-		Token  t2 = null;
-		
-		code = null;
-		
-		
-		t1 = LT(1);
-		match(LBRACE);
-		
-		BlockParser blockparser = new BlockParser(selector,"blockparser");
-		code = blockparser.block();
-		
-		t2 = LT(1);
-		match(RBRACE);
-		return code;
-	}
-	
 	
 	public static final String[] _tokenNames = {
 		"<0>",
@@ -514,10 +488,10 @@ public GomParser(ParserSharedInputState state) {
 		"RIGHT_BRACE",
 		"ARROW",
 		"COLON",
-		"LBRACE",
-		"RBRACE",
 		"STAR",
 		"\"private\"",
+		"LBRACE",
+		"RBRACE",
 		"WS",
 		"SLCOMMENT",
 		"ML_COMMENT"

@@ -1,4 +1,4 @@
-// $ANTLR 2.7.5 (20050128): "TomLanguage.g" -> "TomParser.java"$
+// $ANTLR 2.7.6 (2005-12-22): "TomLanguage.g" -> "TomParser.java"$
 
 /*
  * 
@@ -354,7 +354,7 @@ public TomParser(ParserSharedInputState state) {
 				synPredMatched18 = false;
 			}
 			rewind(_m18);
-			inputState.guessing--;
+inputState.guessing--;
 		}
 		if ( synPredMatched18 ) {
 			label = LT(1);
@@ -626,7 +626,7 @@ public TomParser(ParserSharedInputState state) {
 				synPredMatched55 = false;
 			}
 			rewind(_m55);
-			inputState.guessing--;
+inputState.guessing--;
 		}
 		if ( synPredMatched55 ) {
 			name = LT(1);
@@ -698,8 +698,8 @@ public TomParser(ParserSharedInputState state) {
 		LinkedList pairNameDeclList = new LinkedList();
 		TomName astName = null;
 		String stringSlotName = null;
-		Option makeOption = null;
-		String makeTlCode = null;//used for tlCode in make
+		//Option makeOption = null;
+		//String makeTlCode = null;//used for tlCode in make
 		
 		clearText();
 		
@@ -795,13 +795,14 @@ public TomParser(ParserSharedInputState state) {
 		match(RBRACE);
 		if ( inputState.guessing==0 ) {
 			
-			makeTlCode = "return new " + name.getText() + "(";
+			/*makeTlCode = "return new " + name.getText() + "(";
 			for (int i=0;i<types.getLength();i++) {
 			
 			}
 			makeTlCode = makeTlCode.concat(")");
-			makeOption = tom_make_OriginTracking(tom_make_Name(name.getText()),t.getLine(),tom_make_Name(currentFile()));
-			//Declaration makeDecl = `MakeDecl(Name(name.getText()), TomTypeAlone(codomain), types, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
+			makeOption = `OriginTracking(Name(name.getText()),t.getLine(),Name(currentFile()));
+			Declaration makeDecl = `MakeDecl(Name(name.getText()), TomTypeAlone(codomain), types, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
+			*/
 			TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomain, types, ast().makePairNameDeclList(pairNameDeclList), options);
 			putSymbol(name.getText(),astSymbol);
 			// update for new target block...
@@ -1069,7 +1070,7 @@ public TomParser(ParserSharedInputState state) {
 					synPredMatched59 = false;
 				}
 				rewind(_m59);
-				inputState.guessing--;
+inputState.guessing--;
 			}
 			if ( synPredMatched59 ) {
 				result=variableStar(optionList,constraintList);
@@ -1140,7 +1141,7 @@ public TomParser(ParserSharedInputState state) {
 						synPredMatched62 = false;
 					}
 					rewind(_m62);
-					inputState.guessing--;
+inputState.guessing--;
 				}
 				if ( synPredMatched62 ) {
 					implicit=args(list, secondOptionList);
