@@ -35,14 +35,14 @@ Prepare for the build
 Build
 -----
 	To compile Tom, you have to use the build.sh script.
-	$ ./build.sh all
-	will compile Tom stable, then compile Tom src, run acceptance tests, produce
-	distributions sets for both stable and src. It then compiles examples with
-	stable and source, with and without optimizations, and tests some examples.
+	$ ./build.sh src.all
+	will compile Tom src, run acceptance tests, produce distributions sets, and
+	then compile examples with and without optimizations.
 	(this may take some time)
 
-	You can choose to only build the stable distribution, or the source
-	distribution.
+	You can choose to only build the stable distribution only:
+	$ ./build.sh dist.stable
+	
 	$ ./build.sh -projecthelp
 	will list all the available targets for the build.
 
