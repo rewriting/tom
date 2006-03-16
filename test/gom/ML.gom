@@ -1,5 +1,5 @@
 module Expr
-public sorts Bool Expr
+sorts Bool Expr
 abstract syntax
 
 Bool = True()
