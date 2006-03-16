@@ -24,7 +24,6 @@ header{/*
  **/
 
 package tom.engine.parser;
-
 }
 
 {
@@ -483,9 +482,10 @@ gomsignature [LinkedList list] throws TomException
       list.add(code);
     }
   }
-  gomTL = goalLanguage[blockList]
   {
-    gomCode = gomTL.getCode().trim();
+    tom.gom.parser.BlockParser blockparser = 
+      tom.gom.parser.BlockParser.makeBlockParser(targetlexer.getInputState());
+    gomCode = cleanCode(blockparser.block().trim());
     String destDir = getStreamManager().getDestDir().getPath();
 
     String config_xml = System.getProperty("tom.home") + "/Gom.xml";
@@ -802,7 +802,7 @@ goalLanguage [LinkedList list] returns [TargetLanguage result] throws TomExcepti
                        TextPosition(currentLine(),currentColumn()),
                        TextPosition(t2.getLine(),t2.getColumn())
                        );
-            targetlexer.clearTarget();
+          targetlexer.clearTarget();
         }
     ;
 

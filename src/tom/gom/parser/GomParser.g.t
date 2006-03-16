@@ -196,7 +196,6 @@ hook returns [Production prod]
  RIGHT_BRACE
  )
 { 
-  //selector.push("blocklexer");
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
 }
