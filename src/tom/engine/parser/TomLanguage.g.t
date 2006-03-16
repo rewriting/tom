@@ -353,8 +353,8 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     LinkedList pairNameDeclList = new LinkedList();
     TomName astName = null;
     String stringSlotName = null;
-    Option makeOption = null;
-    String makeTlCode = null;//used for tlCode in make
+    //Option makeOption = null;
+    //String makeTlCode = null;//used for tlCode in make
     
     clearText();
 }
@@ -403,13 +403,14 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
         {
-          makeTlCode = "return new " + name.getText() + "(";
+          /*makeTlCode = "return new " + name.getText() + "(";
           for (int i=0;i<types.getLength();i++) {
 
           }
           makeTlCode = makeTlCode.concat(")");
           makeOption = `OriginTracking(Name(name.getText()),t.getLine(),Name(currentFile()));
-          //Declaration makeDecl = `MakeDecl(Name(name.getText()), TomTypeAlone(codomain), types, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
+          Declaration makeDecl = `MakeDecl(Name(name.getText()), TomTypeAlone(codomain), types, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
+           */
       TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomain, types, ast().makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           // update for new target block...
