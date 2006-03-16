@@ -36,7 +36,7 @@ header {
   import tom.gom.tools.error.GomRuntimeException;
   import tom.gom.adt.gom.*;
   import tom.gom.adt.gom.types.*;
-  import antlr.TokenStreamSelector;
+  import antlr.LexerSharedInputState;
 }
 class GomParser extends Parser;
 options {
@@ -49,17 +49,12 @@ options {
   private static final String REAL ="real";
   private static final String DOUBLE ="double";
 
-  private String name = "";// mainly for disambiguing constructor
-  private TokenStreamSelector selector = null;
+  private LexerSharedInputState lexerstate = null;
 
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
-  }
-
-  public GomParser(TokenStreamSelector selector, String name) {
-    this(selector);
-    this.selector=selector;
-    this.name=name;
+  public GomParser(GomLexer lexer, String name) {
+    this(lexer);
+    /* the name attribute is used for constructor disambiguation */
+    this.lexerstate = lexer.getInputState();
   }
 }
 
@@ -200,10 +195,9 @@ hook returns [Production prod]
      )* )?
  RIGHT_BRACE
  )
-// add here the code
 { 
-  selector.push("blocklexer");
-  BlockParser blockparser = new BlockParser(selector,"blockparser");
+  //selector.push("blocklexer");
+  BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
 }
 {
@@ -228,20 +222,6 @@ hooktype returns [Hookkind type]
     throw new GomRuntimeException("parsing problem");
   }
 };
-
-// we have here to use a special lexer for host code
-goalLanguage returns [String code]
-{
-  code = null;
-}
-:
-t1:LBRACE 
-{
-  BlockParser blockparser = new BlockParser(selector,"blockparser");
-  code = blockparser.block();
-}
-t2:RBRACE
-;
 
 field returns [Field field]
 {
@@ -271,16 +251,6 @@ tokens{
   ABSTRACT = "abstract";
   SYNTAX   = "syntax";
 }
-{
-  private TokenStreamSelector selector;
-  private TokenStreamSelector selector() {
-    return selector;
-  }
-  public void setSelector(TokenStreamSelector sel) {
-    this.selector = sel;
-  }
-
-}
 
 ARROW       : "->";
 COLON       : ':';
@@ -290,7 +260,7 @@ RIGHT_BRACE : ')';
 STAR        : '*';
 
 LBRACE
-: '{'  {selector().push("blocklexer");}
+: '{'
 ;
 
 RBRACE

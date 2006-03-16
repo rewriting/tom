@@ -35,7 +35,7 @@ header {
   import tom.gom.tools.error.GomRuntimeException;
   import tom.gom.adt.gom.*;
   import tom.gom.adt.gom.types.*;
-  import antlr.TokenStreamSelector;
+  import antlr.LexerSharedInputState;
 }
 class BlockParser extends Parser;
 options {
@@ -46,33 +46,30 @@ options {
   private static final String REAL ="real";
   private static final String DOUBLE ="double";
 
-  private TokenStreamSelector selector = null;
   private BlockLexer lexer = null;
-  private String message = "";
 
-  private GomEnvironment environment() {
-    return GomEnvironment.getInstance();
+  public static BlockParser makeBlockParser(LexerSharedInputState state) {
+    return new BlockParser(new BlockLexer(state),"BlockParser");
   }
 
-  private TokenStreamSelector selector(){
-    return selector;
-  }
-
-  public BlockParser(TokenStreamSelector selector, String message) {
-    this(selector);
-    this.selector = selector;
-    this.lexer = (BlockLexer) selector().getStream("blocklexer");
-    this.message = message;
+  public BlockParser(BlockLexer lexer, String message) {
+    this(lexer);
+    /* the message attribute is used for constructor disambiguation */
+    this.lexer = lexer;
   }
 }
 
 block returns [String block]
 { block = "?"; }
-: LBRACE rawblocklist RBRACE
+: LBRACE { /* Verify there was nothing more than only a LBRACE in the input */ 
+  if (!lexer.target.toString().trim().equals("{"))
+    throw new RecognitionException("Expecting \"{\", found \""+lexer.target.toString()+"\"");
+} 
+  rawblocklist
+  RBRACE
 { 
   block = lexer.target.toString();
   lexer.clearTarget();
-  selector().pop(); 
 }
 ;
 

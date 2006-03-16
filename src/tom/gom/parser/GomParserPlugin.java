@@ -84,15 +84,9 @@ public class GomParserPlugin extends GomGenericPlugin {
 
     if (inputReader == null)
       return;
-    // this stuff should go in a distinct (static?) method...
-    TokenStreamSelector selector = new TokenStreamSelector();
     GomLexer gomlexer = new GomLexer(inputReader);
-    gomlexer.setSelector(selector);
-    selector.addInputStream(gomlexer,"gomlexer");
-    selector.select("gomlexer");
-    BlockLexer blocklexer = new BlockLexer(gomlexer.getInputState());
-    selector.addInputStream(blocklexer,"blocklexer");
-    GomParser parser = new GomParser(selector,"GomParser");
+    //BlockLexer blocklexer = new BlockLexer(gomlexer.getInputState());
+    GomParser parser = new GomParser(gomlexer,"GomParser");
     getLogger().log(Level.INFO, "Start parsing");
     try {
       module = parser.module();
