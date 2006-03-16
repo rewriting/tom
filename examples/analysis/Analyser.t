@@ -55,22 +55,26 @@ public class Analyser{
 	%typeterm ControlFlowGraphList {
 		implement { List }
 		equals(t1,t2) { t1.equals(t2) } 
+		visitor_fwd { analysis.language.languageBasicStrategy }
 	}
 
 	%typeterm VariableList {
 		implement { List }
 		equals(t1,t2) { t1.equals(t2) } 
+		visitor_fwd { analysis.language.languageBasicStrategy }
 	}
 
 	%typeterm ControlFlowGraph {
 		implement {ControlFlowGraph}
 		equals(t1,t2) { t1.equals(t2) } 
+		visitor_fwd { analysis.language.languageBasicStrategy }
 	}
 
 
 	%typeterm NodeEmilie {
 		implement {NodeEmilie}
 		equals(t1,t2) { t1.equals(t2) } 
+		visitor_fwd { analysis.language.languageBasicStrategy }
 	}
 
 	//Définition des constructeurs
@@ -378,7 +382,23 @@ public class Analyser{
 
 	}
 	// Prédicat Free(v:Variable) qui teste si une variable est libéré au noeud racine d'un cfg
+/*
+	%strategy Free(v:Variable) extends `Fail() {
+		visit ControlFlowGraph {
+			cfg -> {
+				Node node = `cfg.getRoot().getNode();
+				%match(Node node) {
+					free(var) -> {
+						if(`var.equals(v)) {
+							return `cfg;
+						}
+					}	
+				}
+			}
+		}
 
+	}
+*/
 	class Free extends languageBasicStrategy {
 
 		Variable v;
@@ -399,8 +419,6 @@ public class Analyser{
 			}
 			return `Fail().visit(arg);
 		}
-
-
 	}
 
 
