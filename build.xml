@@ -61,11 +61,12 @@
   <property name="test.build"        location="${test}/build"/>
 
   <!-- the configuration files -->
-  <property name="src.configfile"       location="${utils}/Tom.src.xml"/>    
-  <property name="stable.configfile"    location="${utils}/Tom.xml"/>    
-  <property name="src.gomconfigfile"    location="${utils}/Gom.xml"/>    
-  <property name="stable.vasconfigfile" location="${stable.lib}/Vas.xml"/>    
-  <property name="src.vasconfigfile"    location="${src.lib}/Vas.xml"/>    
+  <property name="stable.configfile"    location="${utils}/Tom.xml"/>
+  <property name="src.configfile"       location="${utils}/Tom.src.xml"/>
+  <property name="stable.gomconfigfile" location="${utils}/Gom.xml"/>
+  <property name="src.gomconfigfile"    location="${utils}/Gom.xml"/>
+  <property name="stable.vasconfigfile" location="${stable.lib}/Vas.xml"/>
+  <property name="src.vasconfigfile"    location="${src.lib}/Vas.xml"/>
 
   <!-- Aircube bundle -->
   <property name="bundle.temp.dir"      value="bundle"/>
@@ -475,6 +476,7 @@
     <!-- Tom config file -->
     <copy tofile="${stable.dist}/Tom.xml" file="${stable.configfile}"/>
     <copy tofile="${stable.dist}/Vas.xml" file="${stable.vasconfigfile}"/>
+    <copy tofile="${stable.dist}/Gom.xml" file="${stable.gomconfigfile}"/>
     <!-- "tom binary" -->
     <copy todir="${stable.dist.bin}" file="${utils}/javac-tom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom.bat"/>
