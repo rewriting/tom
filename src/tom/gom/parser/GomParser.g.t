@@ -93,7 +93,7 @@ section returns [Section parsedsection]
   parsedsection = null;
   GrammarList grammarlist = `concGrammar();
 }
-: PUBLIC
+: (PUBLIC)?
 (grammarlist = grammar)
 {
   parsedsection = `Public(grammarlist);
@@ -197,7 +197,7 @@ alternatives [GomType type] returns [ProductionList list]
  fieldList = fieldlist
  { list = `concProduction(Production(opName,fieldList,type),list*); }
  )*
-SEMI?
+(SEMI)?
 ;
 
 fieldlist returns [FieldList list]
