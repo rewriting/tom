@@ -1,6 +1,6 @@
 2006-03-13 Antoine Reilles <reilles@loria.fr>
   * updated antlr to 2.7.6
-  * The "meta-quote" construct forks with @
+  * The "meta-quote" construct works with @
   * Bootinstall
 
 2006-03-05  Antoine Reilles <reilles@loria.fr>
