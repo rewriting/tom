@@ -20,12 +20,14 @@ since version 2.2:
 
 
 version 2.2:
-  - this version is not 100% compatible with version 2.1. 
+  - this version is not 100% compatible with version 2.1.
     see User Guide, section migration, for details.
   - %typelist and %typearray have been removed: use %typeterm instead
-  - access functions (get_head, get_tail, etc.) have to be defined in %oplist and %oparray
+  - access functions (get_head, get_tail, etc.) have to be defined in %oplist
+    and %oparray
   - fixed a completeness bug in array version of list-matching
-  - a new optimizer has been developped (-O2): this improves pattern matching efficiency
+  - a new optimizer has been developped (-O2): this improves pattern matching
+    efficiency
   - backquote notation can be used in make(...) { ... }
 
 version 2.1:
@@ -33,9 +35,9 @@ version 2.1:
   - new parser based on ANTLR
   - new internal architecture based on plugins
   - new library for defining traversal strategies
-  - fixed two major bugs, related to completness, in list-matching
+  - fixed two major bugs, related to completeness, in list-matching
   - several bug fixed
-  - new library organization 
+  - new library organization
     * tom
     *  |--- library
     *  |        |--- adt               (datatype definitions)
@@ -47,9 +49,9 @@ version 2.1:
     *  |               |--- concurrent (to support parallel strategy)
     *  |        |--- traversal         (generic traversal)
     *  |        |--- xml               (xml tools)
-    *  |        
+    *  |
     *  |--- platform                   (the Tom Plugin Platform, known as Tom server)
-    *           |--- adt     
+    *           |--- adt
 
 version 2.0:
   - support for Caml
@@ -57,14 +59,14 @@ version 2.0:
   - added an optimizer which performs inlining and improves the
     efficiency of the generated code
   - support for builtin char and builtin string (seen as list of
-    char)  
+    char)
   - a better XML support (backquote notation, anonymous nodes)
   - re-designed kernel compiler (with better algorithms)
   - re-designed list-matching
   - annoted variables and non-linear variable are compiled into constraints
   - syntactic patterns are no longer abstracted, but compiled in list-matching
   - several bugs fixed (improved the sortAttributeList method, major
-    bug in the Type Expander)  
+    bug in the Type Expander)
   - removed %typeint, %typedouble and %typestring (use predefined mapping instead)
 
 version 1.5:
@@ -105,7 +107,7 @@ version 1.2:
   - several bugs fixed
 
 version 1.1:
-  - new debbuging facilities:
+  - new debuging facilities:
     Tom source and the generated code are now synchronized
   - backquote support for typelist and typearray
     make_add renamed into make_insert (for oplist)
@@ -114,18 +116,18 @@ version 1.1:
   - builtin-integers supported
   - tutorial
 
-version 1.0: 
+version 1.0:
   - new stable version based on ApiGen
   - efficiency bottleneck found
   - import option added: path extension for includes
   - noDeclaration flags added: do not generate declarations
 
-version 0.7: 
+version 0.7:
   - bootstrap with ApiGen (6 types)
 
-version 0.6: 
+version 0.6:
   - use a cache to improve the generator
   - backquote mechanism introduced
 
-version 0.5: 
+version 0.5:
   - front-end improved by adding a type checker.
