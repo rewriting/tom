@@ -192,8 +192,6 @@ public class TomTypeChecker extends TomChecker {
           }
           else {//check if current visitor equals to previous visitor
             if (currentVisitorFwd != visitorFwd){ 
-              System.out.println(`visitorFwd);
-              System.out.println(`currentVisitorFwd);
               messageError(`visitType.getTlType().getTl().getStart().getLine(),
                   TomMessage.differentVisitorForward.getMessage(),
                   new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
