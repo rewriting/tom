@@ -35,6 +35,8 @@ import poly.expression.*;
 import poly.expression.types.*;
 
 import tom.library.strategy.mutraveler.Identity;
+
+import jjtraveler.VisitFailure;
 import jjtraveler.reflective.VisitableVisitor;
 
 public class PolyTraveler1 {
@@ -70,7 +72,22 @@ public class PolyTraveler1 {
     test.run();
   }
 
-  class SimplifyPlus extends poly.expression.VisitableFwd {
+  %strategy SimplifyPlus() extends `Identity() { 
+
+    visit Expression {
+      plus(a1,a2) -> {
+        System.out.println("plus = " + `plus(a1,a2));
+        return `plus(a1,a2);
+      }
+      zero() -> {
+        System.out.println("zero = " + `zero());
+        return `zero();
+      } 
+    }
+  }
+
+
+/*  class SimplifyPlus extends poly.expression.VisitableFwd {
     private ATerm term;
     public void setTerm(ATerm t) {
       term =t;
@@ -95,7 +112,7 @@ public class PolyTraveler1 {
     }
 
   }
-
+*/
 
 }
 
