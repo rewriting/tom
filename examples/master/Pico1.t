@@ -6,31 +6,28 @@ import java.util.*;
 class Pico1 {
   %gom {
     module Term
-    imports 
-    public
     sorts Inst Expr Bool
       
     abstract syntax
-		True() -> Bool
-		False() -> Bool
-		Not(b:Bool) -> Bool
-		Or(b1:Bool, b2:Bool) -> Bool
-		And(b1:Bool, b2:Bool) -> Bool
-		Eq(e1:Expr, e2:Expr) -> Bool
+		Bool = True() 
+		     | False() 
+		     | Not(b:Bool)
+		     | Or(b1:Bool, b2:Bool) 
+		     | And(b1:Bool, b2:Bool) 
+		     | Eq(e1:Expr, e2:Expr) 
 
-    Var(name:String) -> Expr
-    Cst(val:int) -> Expr
-		Plus(e1:Expr, e2:Expr) -> Expr
-		Mult(e1:Expr, e2:Expr) -> Expr
-		Mod(e1:Expr, e2:Expr) -> Expr
+    Expr = Var(name:String) 
+         | Cst(val:int) 
+		     | Plus(e1:Expr, e2:Expr) 
+		     | Mult(e1:Expr, e2:Expr) 
+		     | Mod(e1:Expr, e2:Expr) 
 
-		Skip() -> Inst
-    Assign(name:String, e:Expr) -> Inst
-		Seq(i1:Inst, i2:Inst) -> Inst
-		If(cond:Bool, i1:Inst, i2:Inst) -> Inst
-		While(cond:Bool, i:Inst) -> Inst
-		Print(e:Expr) -> Inst
-
+		Inst = Skip() 
+         | Assign(name:String, e:Expr) 
+		     | Seq(i1:Inst, i2:Inst) 
+		     | If(cond:Bool, i1:Inst, i2:Inst) 
+		     | While(cond:Bool, i:Inst) 
+		     | Print(e:Expr) 
   }
 
 	public void eval(Map env, Inst inst) {
