@@ -83,7 +83,22 @@ public class Proba1 {
 
   }
   
-  class PileSystem extends strategy.proba1.piece.PieceVisitableFwd {
+  %strategy PileSystem() extends `Fail(){ 
+
+    visit Piece {
+      nothing() -> { return `pile(); }
+    }
+  }
+
+  %strategy FaceSystem() extends `Fail(){ 
+
+    visit Piece {
+      nothing() -> { return `face(); }
+    }
+  }
+
+
+/*  class PileSystem extends strategy.proba1.piece.PieceVisitableFwd {
     public PileSystem() {
       super(`Fail());
     }
@@ -108,5 +123,5 @@ public class Proba1 {
       throw new VisitFailure();
     }
   }
-
+*/
 }

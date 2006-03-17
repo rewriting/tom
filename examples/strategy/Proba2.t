@@ -91,7 +91,19 @@ public class Proba2 {
 
   }
 
-  class Transition extends strategy.proba2.state.StateVisitableFwd {
+  %strategy Transition(s1:State,s2:State) extends `Fail() { 
+
+    visit State {
+      state -> {
+        if(`state == s1) {
+          System.out.println(s1 + " -> " + s2); 
+          return s2; 
+        }      
+      }
+    }
+  }
+
+  /*class Transition extends strategy.proba2.state.StateVisitableFwd {
     State s1;
     State s2;
     public Transition(State s1, State s2) { 
@@ -107,12 +119,8 @@ public class Proba2 {
       }
       throw new VisitFailure();
     }
-  }
+  }*/
 
 }
 
  
-
-
-
-
