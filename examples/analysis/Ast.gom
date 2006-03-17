@@ -1,0 +1,37 @@
+
+module Ast
+ imports 
+public
+  sorts Instruction InstructionList Expression Variable Term 
+
+abstract syntax
+
+
+
+Instruction = If(condition:Expression,succesInst:Instruction,failureInst:Instruction) 
+	    | WhileDo(condition:Expression,doInst:Instruction) 
+	    | Let(variable:Variable,term:Term,instr:Instruction)
+	    | LetRef(variable:Variable,term:Term,instr:Instruction)
+	    | LetAssign(variable:Variable,term:Term,instr:Instruction)
+	    | Nop()
+
+InstructionList = concInstruction(Instruction*)
+
+Expression = Negation(arg:Expression)
+	   | And(arg1:Expression,arg2:Expression)
+	   | Or(arg1:Expression,arg2:Expression)
+	   | True() 
+	   | False()
+	   | EqualTerm(kid1:Term,kid2:Term) 
+
+
+Variable = Name(string:String)
+
+
+Term = a()
+     | b() 
+     | f(arg1: Term, arg2:Term)
+     | g(arg:Term)
+     | Var(v:Variable)
+
+
