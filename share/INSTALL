@@ -39,10 +39,14 @@ to do:
 
 Windows
 -------
-Assume Tom is installed in c:\jtom\. The following sets up the
-environment:
-  set TOM_HOME=c:\jtom
-  set PATH=%PATH%;%TOM_HOME%\bin
+We assume that Tom is installed in c:\jtom\. The following steps are needed 
+for setting up the environment:
+	- set environment variable TOM_HOME=c:\jtom
+	- add %TOM_HOME%\bin to the PATH
+
+For a detailed description of setting environment variables in Windows, 
+please refer to Windows documentation. For Windows XP, some information 
+can be found here : http://support.microsoft.com/default.aspx?scid=kb;en-us;310519&sd=tech
 
 Unix
 ----
