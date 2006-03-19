@@ -126,6 +126,10 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Bad arguments for make_insert: expecting 2, but got {0}");
   public static final GomMessage unsupportedHookVariadic =
     new GomMessage("Hook type {0} not supported for non variadic operator");
+  public static final GomMessage undeclaredSorts =
+    new GomMessage("Some sorts were not declared: {0}");
+  public static final GomMessage emptySorts =
+    new GomMessage("Some sorts are empty: {0}");
 
   // GomCompiler
   public static final GomMessage compilationIssue =

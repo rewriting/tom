@@ -71,13 +71,20 @@ public class GomTypeExpander {
        */
       if(!decls.containsAll(implicitdecls)) {
         // whine about non declared sorts
-        System.out.println("XXX: whine about non declared sorts");
-        // XXX: TODO
+        Collection undeclaredSorts = new HashSet();
+        undeclaredSorts.addAll(implicitdecls);
+        undeclaredSorts.removeAll(decls);
+        getLogger().log(Level.WARNING, GomMessage.undeclaredSorts.getMessage(),
+            new Object[]{showSortList(undeclaredSorts)});
       }
       if(!implicitdecls.containsAll(decls)) {
-        // whine about sorts without operators
-        System.out.println("XXX: whine about sorts without operators");
-        // XXX: TODO
+        // whine about sorts without operators: this is a real error
+        Collection emptySorts = new HashSet();
+        emptySorts.addAll(decls);
+        emptySorts.removeAll(implicitdecls);
+        getLogger().log(Level.SEVERE, GomMessage.emptySorts.getMessage(),
+            new Object[]{showSortList(emptySorts)});
+        return `concSort();
       }
       Iterator it = implicitdecls.iterator();
       while(it.hasNext()) {
@@ -407,6 +414,20 @@ public class GomTypeExpander {
       res = `concModuleDecl(ModuleDecl(name,packagePath),res*);
     }
     return res;
+  }
+
+  private String showSortList(Collection decls) {
+    String sorts = "";
+    Iterator it = decls.iterator();
+    if(it.hasNext()) {
+      SortDecl decl = (SortDecl)it.next();
+      sorts += decl.getName();
+    }
+    while(it.hasNext()) {
+      SortDecl decl = (SortDecl)it.next();
+      sorts += ", "+decl.getName();
+    }
+    return sorts;
   }
 
   /** the class logger instance*/
