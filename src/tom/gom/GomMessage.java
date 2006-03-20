@@ -130,6 +130,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Some sorts were not declared: {0}");
   public static final GomMessage emptySorts =
     new GomMessage("Some sorts are empty: {0}");
+  public static final GomMessage malformedProduction =
+    new GomMessage("Ill formed production, invalid fields: {0}");
 
   // GomCompiler
   public static final GomMessage compilationIssue =

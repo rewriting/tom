@@ -316,8 +316,8 @@ public class GomTypeExpander {
         return `concSlot(Slot(name,declFromTypename(typename,sortDeclList)),newtail*);
       }
     }
-    // XXX: TODO whine about malformed production
-    System.out.println("XXX: malformed production");
+    getLogger().log(Level.SEVERE, GomMessage.malformedProduction.getMessage(),
+        new Object[]{fields.toString()});
     return `concSlot();
   }
 
