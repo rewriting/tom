@@ -77,6 +77,11 @@ public class Analyser{
 		visitor_fwd { analysis.ast.AstBasicStrategy }
 	}
 
+
+  %op VisitableVisitor ControlFlowGraphBasicStrategy(v:VisitableVisitor){
+    make(v){new ControlFlowGraphBasicStrategy(v)}
+  }
+
 	//Définition des constructeurs
 
 	%op ControlFlowGraph conc(root:ControlFlowGraph,subterm:ControlFlowGraphList) {
@@ -115,7 +120,6 @@ public class Analyser{
 		make(node) { new Vertex(node) }
 	}
 
-
 	public final static void main(String[] args) {
 		Analyser test = new Analyser();
 		test.run();
@@ -143,10 +147,10 @@ public class Analyser{
 				Node nn = n.getNode();
 				%match(Node nn){
 					affect(var,_) -> {
-						VisitableVisitor NotUsedStrat = new NotUsed(`var);
+						VisitableVisitor notUsedStrat = new NotUsed(`var);
 						VisitableVisitor freeStrat = new Free(`var);
 						//test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
-						if(cfg.verify(`mu(MuVar("x"),Choice(freeStrat,Sequence(NotUsedStrat,All(MuVar("x"))))),n)) System.out.println("Variable "+`var+" not used");
+						if(cfg.verify(`mu(MuVar("x"),Choice(freeStrat,Sequence(notUsedStrat,All(MuVar("x"))))),n)) System.out.println("Variable "+`var+" not used");
 					}
 				}	
 			}	
@@ -168,29 +172,23 @@ public class Analyser{
 	  Définition des prédicats 	 	 
 	*/
 
-	// Prédicat NotUsed(v:Variable) qui teste si une variable est utilisée a la racine du cfg
 
-	%strategy NotUsed(v:Variable) extends `Identity(){
-		visit ControlFlowGraph { 
-			cfg ->{
-				Node node = `cfg.getRoot().getNode();
-				VisitableVisitor use = new NotUsedAst(v);
-				MuTraveler.init(`TopDown(use)).visit(node);
-				return `cfg;
-			}
-		}
-	}
-
-	// Prédicat NotUsedAst(v:Variable) qui teste si une variable est utilisée dans un terme
-
-	%strategy NotUsedAst(v:Variable) extends `Identity(){
-		visit Term {
+	// Prédicat Used(v:Variable) qui teste si une variable est utilisée dans un terme
+  
+	%strategy NotUsed(v:Variable) extends `ControlFlowGraphBasicStrategy(Identity()){
+   visit Node {
+      n -> {
+        return (Node) MuTraveler.init(`TopDown(this)).visit(`n);
+      }
+   }
+   visit Term {
 			t@Var(var) -> {
-				if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(`t);
+        if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(`t);
 			}
 		}
-	}
 
+   
+  }
 
 
 	//remarque : on est obligé d'avoir deux stratégies car les types gom et ceux écrits à la main n'ont pas le même VisitorFwd

@@ -45,6 +45,10 @@ public class Vertex{
 	public String toString(){return node.toString();}
 
 	public Node getNode(){return node;}
+
+ 	public void setNode(Node node){this.node=node;}
+
+ 
 }
 
 

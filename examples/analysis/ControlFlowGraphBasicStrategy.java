@@ -33,6 +33,7 @@ import analysis.node.types.*;
 
 public class ControlFlowGraphBasicStrategy extends analysis.node.NodeBasicStrategy {
 
+
   public ControlFlowGraphBasicStrategy(jjtraveler.reflective.VisitableVisitor v) {
     super(v);
   }
@@ -47,7 +48,11 @@ public class ControlFlowGraphBasicStrategy extends analysis.node.NodeBasicStrate
 
 
   public ControlFlowGraph visit_ControlFlowGraph(ControlFlowGraph arg) throws jjtraveler.VisitFailure {
-    return (ControlFlowGraph) any.visit(arg);
+    Node root = arg.getRoot().getNode();
+    Node result = (Node) visit(root);
+    System.out.println("root "+result);
+    arg.getRoot().setNode(result);
+    return arg;
   }
 
 }
