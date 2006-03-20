@@ -26,6 +26,7 @@ header {
 }
 
 {
+  import java.util.List;
   import java.util.LinkedList;
   import java.util.Iterator;
   import java.util.logging.Logger;
@@ -55,6 +56,16 @@ options {
     this(lexer);
     /* the name attribute is used for constructor disambiguation */
     this.lexerstate = lexer.getInputState();
+  }
+
+  private GomTypeList typeListFromList(List list) {
+    GomTypeList typeList = `concGomType();
+    Iterator it = list.iterator();
+    while(it.hasNext()) {
+      GomType type = (GomType) it.next();
+      typeList = `concGomType(type,typeList*);
+    }
+    return typeList;
   }
 }
 
@@ -105,12 +116,19 @@ grammar returns [GrammarList grammars]
   grammars = `concGrammar();
   ProductionList prods = `concProduction();
   GomTypeList sorts = `concGomType();
+  List sortList = new LinkedList();
 }
 : ( sorts = sortdef
     { grammars = `concGrammar(grammars*,Sorts(sorts)); }
     |
-    prods = syntax
-    { grammars = `concGrammar(grammars*,Grammar(prods)); }
+    prods = syntax[sortList]
+    { 
+    if(!sortList.isEmpty()) {
+      sorts = typeListFromList(sortList);
+      grammars = `concGrammar(grammars*,Sorts(sorts));
+    }
+    grammars = `concGrammar(grammars*,Grammar(prods));
+    }
   )+
 ;
 
@@ -141,7 +159,7 @@ type returns [String id]
 }
 ;
 
-syntax returns [ProductionList prods]
+syntax [List sortlist] returns [ProductionList prods]
 {
   prods = `concProduction();
   Production prod = null;
@@ -155,7 +173,7 @@ syntax returns [ProductionList prods]
  prod = hook
  { prods = `concProduction(prod,prods*); }
  |
- productions = typedecl
+ productions = typedecl[sortlist]
  { prods = `concProduction(productions*,prods*); }
  )*
 ;
@@ -174,14 +192,15 @@ production returns [Production prod]
 }
 ;
 
-typedecl returns [ProductionList list]
+typedecl [List sortList] returns [ProductionList list]
 {
   list = null;
-  String sortName = null;
+  GomType type = null;
 }
-: id:IDENTIFIER { sortName = id.getText(); }
+: id:IDENTIFIER 
+  { type=`GomType(id.getText()); sortList.add(type); }
   EQUALS
-  list = alternatives[`GomType(sortName)]
+  list = alternatives[type]
 ;
 
 alternatives [GomType type] returns [ProductionList list]
