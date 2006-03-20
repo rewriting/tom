@@ -133,10 +133,10 @@ public class TomKernelExpander extends TomBase {
 					}
 				} // end match
 				%match(TomVisit subject) {
-					VisitTerm(type,patternInstructionList) -> {
+					VisitTerm(type,patternInstructionList,options) -> {
 						TomType newType = `expandType(contextSubject,type);
 						PatternInstructionList newPatternInstructionList = `expandVariablePatternInstructionList(TomTypeToTomTerm(newType),patternInstructionList);
-						return `VisitTerm(newType, newPatternInstructionList);
+						return `VisitTerm(newType, newPatternInstructionList,options);
 					}
 				} //end match
 				%match(Instruction subject) {

@@ -432,6 +432,8 @@ strategyVisit [LinkedList list] throws TomException
   LinkedList patternInstructionList = new LinkedList();
   TomType vType = null;
   TomList subjectList = `emptyTomList();
+  OptionList options = `concOption();
+  LinkedList optionList = new LinkedList();
 
   clearText();
 }
@@ -455,7 +457,9 @@ strategyVisit [LinkedList list] throws TomException
     RBRACE
   )
   {
-  list.add(`VisitTerm(vType,ast().makePatternInstructionList(patternInstructionList)));
+    optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),Name(currentFile())));
+    options = ast().makeOptionList(optionList);
+    list.add(`VisitTerm(vType,ast().makePatternInstructionList(patternInstructionList),options));
   }
 ;
 

@@ -177,35 +177,47 @@ public class TomTypeChecker extends TomChecker {
     while(!list.isEmpty()) {
       TomVisit visit = list.getHead();
       %match(TomVisit visit) {
-        VisitTerm(visitType,patternInstructionList) -> {
-
-          //check that all visitType have same visitorFwd
-          currentVisitorFwd = symbolTable().getForwardType(`visitType.getTomType().getString());
-          //noVisitorFwd defined for visitType
-          if (currentVisitorFwd == null || currentVisitorFwd == `EmptyForward()){ 
-            messageError(`visitType.getTlType().getTl().getStart().getLine(),
-                TomMessage.noVisitorForward.getMessage(),
-                new Object[]{`visitType.getTomType().getString()});
-          }
-          else if (visitorFwd == null) {//first visit 
-            visitorFwd = currentVisitorFwd;
-          }
-          else {//check if current visitor equals to previous visitor
-            if (currentVisitorFwd != visitorFwd){ 
-              messageError(`visitType.getTlType().getTl().getStart().getLine(),
-                  TomMessage.differentVisitorForward.getMessage(),
-                  new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
+        VisitTerm(visitType,patternInstructionList,options) -> {
+          %match(TomType visitType) {
+            TomTypeAlone(strVisitType) -> {
+              messageError(findOriginTrackingLine(`options),
+                  TomMessage.unknownVisitedType.getMessage(),
+                  new Object[]{`(strVisitType)});
             }
+            Type(ASTTomType(ASTVisitType),TLType(TLVisitType)) -> {
+              //check that all visitType have same visitorFwd
+
+              currentVisitorFwd = symbolTable().getForwardType(`ASTVisitType);
+
+              //noVisitorFwd defined for visitType
+              if (currentVisitorFwd == null || currentVisitorFwd == `EmptyForward()){ 
+                messageError(`TLVisitType.getStart().getLine(),
+                    TomMessage.noVisitorForward.getMessage(),
+                    new Object[]{`(ASTVisitType)});
+              }
+              else if (visitorFwd == null) {
+                //first visit 
+                visitorFwd = currentVisitorFwd;
+              }
+              else {
+                //check if current visitor equals to previous visitor
+                if (currentVisitorFwd != visitorFwd){ 
+                  messageError(`TLVisitType.getStart().getLine(),
+                      TomMessage.differentVisitorForward.getMessage(),
+                      new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
+                }
+              }
+              verifyMatchVariable(`patternInstructionList);
+            } 
           }
-          verifyMatchVariable(`patternInstructionList);
-        }      
+        }
       }
       // next visit
       list = list.getTail();
     }
   }
 
-  /**
+/**
    * The notion of conditional rewrite rule can be generalised with a sequence of conditions
    * as in lhs -> rhs where P1:=C1 ... where Pn:=Cn if Qj==Dj 
    * (i) Var(Pi) inter (var(lhs) U var(P1) U ... U var(Pi-1)) = empty

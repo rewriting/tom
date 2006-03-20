@@ -547,7 +547,7 @@ public class TomSyntaxChecker extends TomChecker {
   private void verifyVisit(TomVisit visit){
     ArrayList typeMatchArgs = new ArrayList();
     %match(TomVisit visit) {
-      VisitTerm(type,patternInstructionList) -> {
+      VisitTerm(type,patternInstructionList,_) -> {
         typeMatchArgs.add(`type);
         // we now compare pattern to its definition
         %match(PatternInstructionList patternInstructionList) {

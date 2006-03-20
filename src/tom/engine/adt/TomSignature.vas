@@ -12,7 +12,7 @@ Comment(code:String) -> TargetLanguage
 noTL() -> TargetLanguage
 TextPosition(line:Int,column:Int) -> Position
 RewriteRule(lhs:TomTerm,rhs:TomTerm,condList:InstructionList,option:OptionList) -> TomRule
-VisitTerm(vNode:TomType,astPatternInstructionList:PatternInstructionList) -> TomVisit
+VisitTerm(vNode:TomType,astPatternInstructionList:PatternInstructionList,option:OptionList) -> TomVisit
 emptySymbol() -> TomSymbol
 Symbol(astName:TomName, typesToType:TomType, pairNameDeclList:PairNameDeclList, option:OptionList) -> TomSymbol
 Table(entryList:TomEntryList) -> TomSymbolTable

@@ -296,7 +296,7 @@ matchBlock: {
             TomList subjectListAST = empty();
             TomVisit visit = jVisitList.getHead();
             %match(TomVisit visit) {
-              VisitTerm(vType@Type[tomType = ASTTomType(type)],patternInstructionList) -> {
+              VisitTerm(vType@Type[tomType = ASTTomType(type)],patternInstructionList,_) -> {
                 if (visitorFwd == null) {//first time in loop
                   visitorFwd = symbolTable().getForwardType(`type);//do the job only once
                 }
