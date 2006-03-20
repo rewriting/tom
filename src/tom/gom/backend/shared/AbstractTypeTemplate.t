@@ -50,6 +50,8 @@ public abstract class @className()@ implements shared.SharedObject, jjtraveler.V
 
   public abstract aterm.ATerm toATerm();
 
+  public abstract String getName();
+
   public String toString() {
     return toATerm().toString();
   }

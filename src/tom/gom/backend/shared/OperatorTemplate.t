@@ -96,8 +96,8 @@ public class @className()@ extends @fullClassName(sortName)@ {
   this.hashCode = this.hashFunction();
   }
 
-  /* private name and arity */
-  private String getName() {
+  /* name and arity */
+  public String getName() {
     return "@className()@";
   }
 
