@@ -644,11 +644,10 @@ public class StructureGom {
         }
       }
     }
-    // For now, i'm too lazy to implement it properly
     String s1 = t1.toString();
     String s2 = t2.toString();
     int res = s1.compareTo(s2);
-    //System.out.println(s1 + ((res==0)?" = ":((res<0)?" < ":" > "))  + s2);
+    System.out.println(s1 + ((res==0)?" = ":((res<0)?" < ":" > "))  + s2);
     return res;
   }
 
