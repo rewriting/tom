@@ -1,26 +1,25 @@
 /*
- *
- * GOM
+ * Gom
  *
  * Copyright (C) 2006 INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
- * 
+ *
  **/
 
 package tom.gom.compiler;
@@ -161,7 +160,7 @@ public class GomCompiler {
 
                   allOperators = `concClassName(empty,allOperators*);
                   GomClass emptyClass = `OperatorClass(empty,factoryName,abstracttypeName,mappingName,sortClassName,visitorName,concSlotField(),concHook());
-                  classForOperatorDecl.put(`opdecl,emptyClass); 
+                  classForOperatorDecl.put(`opdecl,emptyClass);
                   classList = `concGomClass(emptyClass,classList*);
                 }
                 Slots(concSlot(_*,Slot[name=slotname,sort=domain],_*)) -> {
@@ -212,7 +211,7 @@ public class GomCompiler {
 
     // Create the factories in the end, so that we know all names
     // For each module
-    it = getModuleDeclSet(sortList).iterator(); 
+    it = getModuleDeclSet(sortList).iterator();
     while(it.hasNext()) {
       ModuleDecl moduleDecl = (ModuleDecl) it.next();
       String moduleName = moduleDecl.getModuleName().getName();
@@ -281,7 +280,7 @@ public class GomCompiler {
 
       /* create a TomMapping */
       ClassName tomMappingName = (ClassName) tomMappingNameForModule.get(moduleDecl);
-      GomClass tommappingclass = `TomMapping(tomMappingName,allSortClasses,allOperatorClasses);
+      GomClass tommappingclass = `TomMapping(tomMappingName,visitablefwdName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(tommappingclass,classList*);
 
     }

@@ -18,7 +18,7 @@ FactoryClass(className:ClassName,importedFactories:ClassNameList,sortClasses:Gom
 VisitorClass(className:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 FwdClass(className:ClassName,visitor:ClassName,abstractType:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 VoidFwdClass(className:ClassName,visitor:ClassName,abstractType:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
-TomMapping(className:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
+TomMapping(className:ClassName,basicStrategy:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 
 ClassName(pkg:String,name:String)  -> ClassName
 concClassName(ClassName*)          -> ClassNameList

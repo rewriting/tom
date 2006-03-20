@@ -40,7 +40,7 @@ public abstract class TemplateFactory {
     }
   }
 
-  public abstract TemplateClass makeTomMappingTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses);
+  public abstract TemplateClass makeTomMappingTemplate(ClassName className, ClassName basicStrategy, GomClassList sortClasses, GomClassList opClasses);
   public abstract TemplateClass makeForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses);
   public abstract TemplateClass makeForwardVoidTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses);
   public abstract TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward);
@@ -54,7 +54,7 @@ public abstract class TemplateFactory {
 
 class ApigenTemplateFactory extends TemplateFactory {
 
-  public TemplateClass makeTomMappingTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses) {
+  public TemplateClass makeTomMappingTemplate(ClassName className, ClassName basicStrategy, GomClassList sortClasses, GomClassList opClasses) {
     return new tom.gom.backend.apigen.TemplateMapping(className,sortClasses,opClasses);
   }
   public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses) {
@@ -85,8 +85,8 @@ class ApigenTemplateFactory extends TemplateFactory {
 
 class SharedTemplateFactory extends TemplateFactory {
 
-  public TemplateClass makeTomMappingTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.shared.MappingTemplate(className,sortClasses,opClasses);
+  public TemplateClass makeTomMappingTemplate(ClassName className, ClassName basicStrategy, GomClassList sortClasses, GomClassList opClasses) {
+    return new tom.gom.backend.shared.MappingTemplate(className,basicStrategy,sortClasses,opClasses);
   }
   public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses) {
     return new tom.gom.backend.shared.ForwardTemplate(className, visitor, abstractType, sortClasses, opClasses);

@@ -31,15 +31,18 @@ import java.io.*;
 import tom.gom.adt.objects.types.*;
 
 public class MappingTemplate extends TemplateClass {
+  ClassName basicStrategy;
   GomClassList sortClasses;
   GomClassList operatorClasses;
 
   %include { ../../adt/objects/Objects.tom}
 
   public MappingTemplate(ClassName className,
+                         ClassName basicStrategy,
                          GomClassList sortClasses,
                          GomClassList operatorClasses) {
     super(className);
+    this.basicStrategy = basicStrategy;
     this.sortClasses = sortClasses;
     this.operatorClasses = operatorClasses;
   }
@@ -59,13 +62,13 @@ public class MappingTemplate extends TemplateClass {
     // generate a %typeterm for each class
     %match(GomClassList sortClasses) {
       concGomClass(_*,
-          SortClass[className=sortName,forward=basicStrategy],
+          SortClass[className=sortName],
           _*) -> {
         out.append(%[
 %typeterm @className(`sortName)@ {
   implement { @fullClassName(`sortName)@ }
   equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { @fullClassName(`basicStrategy)@ }
+  visitor_fwd { @fullClassName(basicStrategy)@ }
 }
 
 ]%);

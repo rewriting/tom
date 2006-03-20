@@ -81,8 +81,8 @@ public class GomBackend {
    */
   public int generateClass(GomClass gomclass) {
     %match(GomClass gomclass) {
-      TomMapping[className=className,sortClasses=sortClasses,operatorClasses=ops] -> {
-        TemplateClass mapping = templatefactory.makeTomMappingTemplate(`className,`sortClasses,`ops);
+      TomMapping[className=className,basicStrategy=basicStrategy,sortClasses=sortClasses,operatorClasses=ops] -> {
+        TemplateClass mapping = templatefactory.makeTomMappingTemplate(`className,`basicStrategy,`sortClasses,`ops);
         mapping.generateFile();
         return 1;
       }
@@ -141,8 +141,8 @@ public class GomBackend {
   public TemplateClass getMappingTemplate(GomClass mapping) {
     TemplateClass mappingTemplate = null;
     %match(GomClass mapping) {
-      TomMapping[className=mappingName,sortClasses=sortClasses,operatorClasses=ops] -> {
-        mappingTemplate = templatefactory.makeTomMappingTemplate(`mappingName,`sortClasses,`ops);
+      TomMapping[className=mappingName,basicStrategy=basicStrategy,sortClasses=sortClasses,operatorClasses=ops] -> {
+        mappingTemplate = templatefactory.makeTomMappingTemplate(`mappingName,`basicStrategy,`sortClasses,`ops);
       }
     }
     return mappingTemplate;
