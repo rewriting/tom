@@ -70,3 +70,14 @@ concPar:make_insert(e,l) {
   }
   return realMake(e,l);
 }
+neg:make_before(a) {
+  %match(Struc a) {
+    neg(s) -> { return `s; }
+    par(concPar(h,t*)) -> { 
+      return `cop(concCop(neg(h),neg(par(t*))));
+    }
+    cop(concCop(h,t*)) -> { 
+      return `par(concPar(neg(h),neg(cop(t*))));
+    }
+  }
+}

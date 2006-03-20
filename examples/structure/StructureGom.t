@@ -657,8 +657,8 @@ public class StructureGom {
   public String prettyPrint(StructuresAbstractType t) {
     %match(Struc t) {
       neg(s) -> { return "-" + prettyPrint(`s);}
-      cop(l) -> { return "[" + prettyPrint(`l) + "]";}
-      par(l) -> { return "(" + prettyPrint(`l) + ")";}
+      par(l) -> { return "[" + prettyPrint(`l) + "]";}
+      cop(l) -> { return "(" + prettyPrint(`l) + ")";}
       seq(l) -> { return "<" + prettyPrint(`l) + ">";}
       x      -> { return `x.toString();}
     }
