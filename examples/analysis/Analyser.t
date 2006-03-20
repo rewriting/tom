@@ -147,7 +147,7 @@ public class Analyser{
 				Node nn = n.getNode();
 				%match(Node nn){
 					affect(var,_) -> {
-						VisitableVisitor notUsedStrat = new NotUsed(`var);
+						VisitableVisitor notUsedStrat = `NotUsed(var);
 						VisitableVisitor freeStrat = new Free(`var);
 						//test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
 						if(cfg.verify(`mu(MuVar("x"),Choice(freeStrat,Sequence(notUsedStrat,All(MuVar("x"))))),n)) System.out.println("Variable "+`var+" not used");
@@ -175,7 +175,7 @@ public class Analyser{
 
 	// Prédicat Used(v:Variable) qui teste si une variable est utilisée dans un terme
   
-	%strategy NotUsed(v:Variable) extends `ControlFlowGraphBasicStrategy(Identity()){
+	%strategy InnerNotUsed(v:Variable) extends `Identity(){
    visit Node {
       n -> {
         return (Node) MuTraveler.init(`TopDown(this)).visit(`n);
@@ -186,8 +186,9 @@ public class Analyser{
         if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(`t);
 			}
 		}
-
-   
+  }
+  %op VisitableVisitor NotUsed(v:Variable) {
+    make(v) { new ControlFlowGraphBasicStrategy(new InnerNotUsed(v))}
   }
 
 
