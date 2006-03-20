@@ -29,8 +29,8 @@
 
 package structure;
 
-import aterm.*;
-import aterm.pure.*;
+//import aterm.*;
+//import aterm.pure.*;
 
 import java.io.*;
 import java.util.*;
@@ -141,11 +141,11 @@ public class StructureGom {
   public boolean localSearch(Struc start, Struc end) {
     Comparator comparator = new Comparator() {
         public int compare(Object o1, Object o2) {
-          Struc s1 = (Struc)o1;
-          Struc s2 = (Struc)o2;
-          if(s1==s2) {
+          if(o1==o2) {
             return 0;
           }
+          Struc s1 = (Struc)o1;
+          Struc s2 = (Struc)o2;
 
           double v1 = weight(s1);
           double v2 = weight(s2);
@@ -161,15 +161,12 @@ public class StructureGom {
               System.out.println("wrong order");
               System.out.println("s1 = " + s1);
               System.out.println("s2 = " + s2);
-              
               System.exit(0);
             } 
             return res;
           }
         }
-
       };
-
     TreeSet c1 = new TreeSet(comparator);
     c1.add(start);
 
@@ -261,7 +258,7 @@ public class StructureGom {
   public void collectOneStep(final Collection collection, Struc subject) {
     try {
       VisitableVisitor oneStep = new OneStep(subject,collection);
-      MuTraveler.init(`BottomUp(oneStep)).visit(subject);
+      MuTraveler.init(`TopDown(oneStep)).visit(subject);
       //System.out.println(collection);
     } catch (VisitFailure e) {
       System.out.println("Failed to get successors " + subject);
@@ -414,9 +411,9 @@ public class StructureGom {
     int res = 0;
     block: {
       %match(Struc t) {
-        cop(ll) -> { res =  length(`ll); break block; }
-        par(ll) -> { res =  length(`ll); break block; }
-        seq(ll) -> { res =  2+length(`ll); break block; }
+        cop(l) -> { res =  length(`l); break block; }
+        par(l) -> { res =  length(`l); break block; }
+        seq(l) -> { res =  2+length(`l); break block; }
         _      -> { res =  1; break block; }
       }
       %match(StrucPar t) {
@@ -443,7 +440,8 @@ public class StructureGom {
     int l = length(subject);
     int n = numberOfPair(subject);
     double w = (l*l)/(1.0+n);
-    //System.out.println("l = " + l + "\t#pair = " + n + "\tw = " + w);
+    // System.out.println(prettyPrint(subject));
+    // System.out.println("l = " + l + "\t#pair = " + n + "\tw = " + w);
     return w;
   }
 
@@ -451,7 +449,7 @@ public class StructureGom {
     final Collection collection = new ArrayList();
     try {
       VisitableVisitor countPairs = new CountPairs(collection);
-      MuTraveler.init(`BottomUp(countPairs)).visit(subject);
+      MuTraveler.init(`TopDown(countPairs)).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to count pairs" + subject);
     }
@@ -528,9 +526,9 @@ public class StructureGom {
   }
   %strategy FindAtoms(positive:HashSet,negative:HashSet) extends `Identity() {
     visit Struc {
-      s@cop(ll) -> { return `s; }
-      s@par(ll) -> { return `s; }
-      s@seq(ll) -> { return `s; }
+      s@cop(_) -> { return `s; }
+      s@par(_) -> { return `s; }
+      s@seq(_) -> { return `s; }
       neg(s) -> { negative.add(`s); return `s; } 
       s -> { positive.add(`s); return `s; }
     }
