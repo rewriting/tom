@@ -10,14 +10,14 @@
   <!-- The current version of TOM, should be defined by -Dversion -->
   <property name="javacSource" value="1.4"/>
   <property name="javacTarget" value="1.4"/>
-  <property name="nowarnings"     value="false"/>
-  <property name="optimize"       value="on"/>
-  <property name="optimize2"      value="on"/>
-  <property name="verbose"        value="off"/>
-  <property name="pretty"         value="off"/>
-  <property name="visitable"      value="on"/>
-  <property name="stamp"          value="off"/>
-  <property name="mutraveler"     value="jjtraveler"/>
+  <property name="nowarnings"  value="false"/>
+  <property name="optimize"    value="on"/>
+  <property name="optimize2"   value="on"/>
+  <property name="verbose"     value="off"/>
+  <property name="pretty"      value="off"/>
+  <property name="visitable"   value="on"/>
+  <property name="stamp"       value="off"/>
+  <property name="mutraveler"  value="jjtraveler"/>
 
   <property environment="env"/>
   <property name="tom.home"       value="${env.TOM_HOME}"/>
@@ -634,30 +634,46 @@
     <javacompile example="${strings}"/>
   </target>
 
-  <target name="structure" depends="init">
+  <target name="structure" depends="init,init.gom.task">
     <!-- build adt -->    
     <vascompile example="${structure}"/>
-<!--
-    <vas config="${vasconfigfile}"
-				 srcdir="${examples.dir}/${structure}/Struct.vas"
-				 package="${structure}" 
-         destdir="${examples.gen}">
-				 <include name="${examples.dir}/${structure}/Struct.vas"/>
-    </vas> 
--->
+    <gomcompile example="${structure}"/>
     <!-- build tom -->
     <tom.preset>
       <!-- stamp not yet ready for apigen list -->
       <include name="${structure}/**/*.t"/>
       <exclude name="${structure}/**/StructParser.g.t"/>
+      <exclude name="${structure}/**/StructuresParser.g.t"/>
       <!--      <exclude name="${structure}/**/StructureCDT.t"/> -->
     </tom.preset>
-    <tom.preset outputfile="${examples.gen}/${structure}/StructParser.g">
+    <tom config="${tomconfigfile}"
+	 outputfile="${examples.gen}/${structure}/StructParser.g"
+	 srcdir="${examples.dir}" 
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         optimize2="${optimize2}"
+         verbose="${verbose}"
+	 pretty="${pretty}">
       <include name="${structure}/**/StructParser.g.t"/>
-    </tom.preset>
+      </tom>
+    <tom config="${tomconfigfile}"
+	 outputfile="${examples.gen}/${structure}/StructuresParser.g"
+	 srcdir="${examples.dir}" 
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         optimize2="${optimize2}"
+         verbose="${verbose}"
+	 pretty="${pretty}"
+	 options="-I ${examples.gen}/${structure}">
+      <include name="${structure}/**/StructuresParser.g.t"/>
+      </tom>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${structure}"/>
     <tomantlr target="${examples.gen}/${structure}/StructParser.g"
+              outputdirectory="${examples.gen}/${structure}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <tomantlr target="${examples.gen}/${structure}/StructuresParser.g"
               outputdirectory="${examples.gen}/${structure}">
       <classpath refid="tom.classpath"/>
     </tomantlr>

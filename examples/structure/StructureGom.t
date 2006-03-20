@@ -560,6 +560,92 @@ public class StructureGom {
   }
 
   public static int compareStruc(StructuresAbstractType t1, StructuresAbstractType t2) {
+    if(t1 == t2) {
+      return 0;
+    }
+
+    if(t1 instanceof Struc && t2 instanceof Struc) {
+      Struc s1 = (Struc) t1;
+      Struc s2 = (Struc) t2;
+      String sym1 = s1.getName();
+      String sym2 = s2.getName();
+      int res = sym1.compareTo(sym2);
+      if(res != 0) {
+        return res;
+      } else { /* here we are sure there is at least one child */
+        res = compareStruc((StructuresAbstractType)s1.getChildAt(0), (StructuresAbstractType)s2.getChildAt(0));
+        if(res != 0) {
+          return res;
+        }
+      }
+
+    } else if(t1 instanceof StrucCop && t2 instanceof StrucCop) {
+      StrucCop l1 = (StrucCop) t1;
+      StrucCop l2 = (StrucCop) t2;
+      if(l1.isconcCopEmpty()) {
+        if(l2.isconcCopEmpty()) {
+          System.out.println("bad case2");
+          System.exit(0);
+        } else {
+          return -1;
+        }
+      } else {
+        if(l2.isconcCopEmpty()) {
+          return 1;
+        } else {
+          int res = compareStruc(l1.getconcCopHead(),l2.getconcCopHead());
+          if(res != 0) {
+            return res;
+          } else {
+            return compareStruc(l1.getconcCopTail(),l2.getconcCopTail());
+          }
+        }
+      }
+    } else if(t1 instanceof StrucPar && t2 instanceof StrucPar) {
+      StrucPar l1 = (StrucPar) t1;
+      StrucPar l2 = (StrucPar) t2;
+      if(l1.isconcParEmpty()) {
+        if(l2.isconcParEmpty()) {
+          System.out.println("bad case2");
+          System.exit(0);
+        } else {
+          return -1;
+        }
+      } else {
+        if(l2.isconcParEmpty()) {
+          return 1;
+        } else {
+          int res = compareStruc(l1.getconcParHead(),l2.getconcParHead());
+          if(res != 0) {
+            return res;
+          } else {
+            return compareStruc(l1.getconcParTail(),l2.getconcParTail());
+          }
+        }
+      }
+    } else if(t1 instanceof StrucSeq && t2 instanceof StrucSeq) {
+      StrucSeq l1 = (StrucSeq) t1;
+      StrucSeq l2 = (StrucSeq) t2;
+      if(l1.isconcSeqEmpty()) {
+        if(l2.isconcSeqEmpty()) {
+          System.out.println("bad case2");
+          System.exit(0);
+        } else {
+          return -1;
+        }
+      } else {
+        if(l2.isconcSeqEmpty()) {
+          return 1;
+        } else {
+          int res = compareStruc(l1.getconcSeqHead(),l2.getconcSeqHead());
+          if(res != 0) {
+            return res;
+          } else {
+            return compareStruc(l1.getconcSeqTail(),l2.getconcSeqTail());
+          }
+        }
+      }
+    }
     // For now, i'm too lazy to implement it properly
     String s1 = t1.toString();
     String s2 = t2.toString();
