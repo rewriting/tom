@@ -11,18 +11,33 @@ import java.util.*;
  */
 
 public class Position {
-  private LinkedList list = null;
+  private static final int DEFAULT_LENGTH = 8;
+  private int size;
+  private int[] data;
    
   public Position() {
-    this.list = new LinkedList();
+    this(DEFAULT_LENGTH);
   }
 
-  private Position(LinkedList list) {
-    this.list = list;
+  private Position(int length) {
+    data = new int[length];
+		size = 0;
   }
   
+  private void ensureLength(int minLength) {
+		int current = data.length;
+		if (minLength > current) {
+			int[] newData = new int[Math.max(current * 2, minLength)];
+			System.arraycopy(data, 0, newData, 0, size);
+			data = newData;
+		}
+	}
+
   protected Object clone() {
-    return new Position((LinkedList)this.list.clone());
+		Position clone = new Position(data.length);
+		clone.size = size;
+		System.arraycopy(data, 0, clone.data, 0, size);
+		return clone;
   }
  
   /**
@@ -31,7 +46,7 @@ public class Position {
     * @return true when the position is empty
     */
   protected boolean isEmpty() {
-    return list.isEmpty();
+    return size == 0;
   }
  
   /**
@@ -39,7 +54,8 @@ public class Position {
    */
   public boolean equals(Object o) {
     if (o instanceof Position) {
-      return this.list.equals(((Position)o).list);
+			Position p = (Position)o;
+			return size==p.size && data.equals(p.data);
     } else {
       return false;
     }
@@ -49,17 +65,23 @@ public class Position {
    * Tests is prefix
    */
   public boolean isPrefix(Position p) {
-    return this.list.equals(p.list.subList(0,this.list.size()));
+		if(p.size < size) {
+			return false;
+		}
+		for(int i=0 ; i<size ; i++) {
+			if(data[i] != p.data[i]) {
+				return false;
+			}
+		}
+		return true;
   }
 
-  
-  
   /**
    * get the current sub-position
    * @return the current sub-position
    */
   protected int getSubPosition() {
-    return ((Integer)list.getLast()).intValue();
+		return data[size];
   }
 
   /**
@@ -67,14 +89,14 @@ public class Position {
    * @return depth on the position
    */
   public int depth() {
-    return list.size();
+    return size;
   }
 
   /**
    * remove the last sub-position
    */
   protected void up() {
-    list.removeLast();
+		size--;
   }
 
   /**
@@ -84,8 +106,11 @@ public class Position {
    */
   protected void down(int n) {
     if(n>0) {
-      list.addLast(new Integer(n));
-    }
+			if (size == data.length) {
+				ensureLength(size+1);
+			}
+			data[size++] = n;
+		}
   }
 
   /**
@@ -97,10 +122,9 @@ public class Position {
    */
   public VisitableVisitor getOmega(VisitableVisitor v) {
     VisitableVisitor res = v;
-    for(ListIterator it=list.listIterator(list.size()); it.hasPrevious() ;) {
-     int index = ((Integer)it.previous()).intValue();
-     res = new Omega(index,res);
-    }
+		for(int i = size-1 ; i>=0 ; i--) {
+     res = new Omega(data[i],res);
+		}
     return res;
   }
     
@@ -139,6 +163,14 @@ public class Position {
     * @return a string representation of this position
     */
   public String toString() {
-    return list.toString();
+    StringBuffer r = new StringBuffer("[");
+		for(int i=0 ; i<size ; i++) {
+			r.append(data[i]);
+			if(i<size-1) {
+				r.append(", ");
+			}
+		}
+		r.append("]");
+    return r.toString();
   }
 }

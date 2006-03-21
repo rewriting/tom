@@ -65,7 +65,7 @@ public class StructureGom {
   }
 
   public void run(Struc initStruc) {
-    // Struc initStruc = `par(concPar(cop(concCop(c,par(concPar(cop(concCop(a,b)),neg(a))))),neg(b),neg(c)));
+		initStruc = `par(concPar(cop(concCop(seq(concSeq(d1(),d2())),a())), seq(concSeq(par(concPar(neg(d1()),neg(b()))),neg(d2()))),seq(concSeq(b(),neg(a())))));
     System.out.println("Starting with: " + prettyPrint(initStruc));
     //System.out.println("length = " + length(initStruc));
     //System.out.println("pairs  = " + numberOfPair(initStruc));
@@ -206,6 +206,8 @@ public class StructureGom {
       if(i%step == 0) {
         System.out.print("iteration " + i + ":");
         System.out.print("\t#c1 = " + c1.size());
+        System.out.print("\t#weight call = " + weightCall);
+        System.out.print("\t#weight = " + weightMap.size());
         System.out.print("\t~weight = " + (int)(weight/step));
         System.out.println();
         System.out.print("\t#deduced = " + nc2);
@@ -216,6 +218,9 @@ public class StructureGom {
         nc1 = 0;
         nremoved = 0;
         weight = 0.0;
+        if(weightMap.size() > 200000) {
+          weightMap.clear();
+        }
       }
 
       // System.out.println("------------------------------------------------------------");
@@ -236,8 +241,9 @@ public class StructureGom {
   public static void main(String[] args) {
     StructureGom test = new StructureGom();
 
-    Struc query;
+    Struc query= null;
     try {
+				/*
       while(true) {
         System.out.println("Enter a structure:");
         StructuresLexer lexer = new StructuresLexer(new DataInputStream(System.in));
@@ -245,6 +251,8 @@ public class StructureGom {
         query = parser.struc();
         test.run(query);
       }
+*/
+        test.run(query);
     } catch (Exception e) {
       System.out.println("Exiting because " + e);
       e.printStackTrace();
@@ -434,7 +442,13 @@ public class StructureGom {
     return res;
   }
 
+  private WeakHashMap weightMap = new WeakHashMap();
+	private static int weightCall = 0;
   public double weight(StructuresAbstractType subject) {
+		weightCall++;
+    if(weightMap.containsKey(subject)) {
+      return ((Double)weightMap.get(subject)).doubleValue();
+    }
     //double l = (double)length(subject);
     //double n = (double)numberOfPair(subject);
     int l = length(subject);
@@ -442,6 +456,7 @@ public class StructureGom {
     double w = (l*l)/(1.0+n);
     // System.out.println(prettyPrint(subject));
     // System.out.println("l = " + l + "\t#pair = " + n + "\tw = " + w);
+    weightMap.put(subject,new Double(w));
     return w;
   }
 
@@ -449,12 +464,13 @@ public class StructureGom {
     final Collection collection = new ArrayList();
     try {
       VisitableVisitor countPairs = new CountPairs(collection);
-      MuTraveler.init(`TopDown(countPairs)).visit(subject);
+      `TopDown(countPairs).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to count pairs" + subject);
     }
     return collection.size();
   }
+
   %strategy CountPairs(bag:Collection) extends `Identity() {
     visit StrucPar {
       concPar(_*,x,_*,neg(x),_*) -> {
@@ -516,10 +532,12 @@ public class StructureGom {
     return false;
   }
 
+
   private void collectAtom(StructuresAbstractType subject, final HashSet positive, final HashSet negative) {
     try {
       VisitableVisitor findAtoms = new FindAtoms(positive,negative);
-      MuTraveler.init(`BottomUp(findAtoms)).visit(subject);
+      //MuTraveler.init(`BottomUp(findAtoms)).visit(subject);
+      `BottomUp(findAtoms).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to get atoms" + subject);
     }
