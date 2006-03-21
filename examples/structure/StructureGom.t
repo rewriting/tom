@@ -53,6 +53,13 @@ public class StructureGom {
   %include { structures/Structures.tom }
   %include { mutraveler.tom }
 
+  %typeterm Collection {
+    implement { Collection }
+  }
+  %typeterm HashSet {
+    implement { HashSet }
+  }
+
   StructureGom() {
     this(new GenericTraversal());
   }
@@ -109,7 +116,6 @@ public class StructureGom {
 
   private final static int MAXLOCALITER = 1000000;
   private final static int step = 1000;
-  public boolean localSearch(Struc start, Struc end) {
     Comparator comparator = new Comparator() {
         public int compare(Object o1, Object o2) {
           if(o1==o2) {
@@ -138,6 +144,7 @@ public class StructureGom {
           }
         }
       };
+  public boolean localSearch(Struc start, Struc end) {
     TreeSet c1 = new TreeSet(comparator);
     c1.add(start);
 
@@ -208,10 +215,9 @@ public class StructureGom {
     //return false; 
   }
 
-  public List testOneStep() {
-    Struc initStruc = `par(concPar(cop(concCop(seq(concSeq(d1(),d2())),a())),
-          seq(concSeq(par(concPar(neg(d1()),neg(b()))),neg(d2()))),seq(concSeq(b(),neg(a())))));
-    Collection col = new HashSet();
+  public List testOneStep(String input) {
+    Struc initStruc = strucFromPretty(input);
+    Collection col = new TreeSet(comparator);
     collectOneStep(col,initStruc);
 
     List result = new ArrayList(col.size());
@@ -241,6 +247,20 @@ public class StructureGom {
       System.out.println("Exiting because " + e);
       e.printStackTrace();
     }
+  }
+
+  public Struc strucFromPretty(String s) {
+    Struc query= null;
+    try {
+      StructuresLexer lexer = new StructuresLexer(new StringReader(s));
+      StructuresParser parser = new StructuresParser(lexer);
+      query = parser.struc();
+      return query;
+    } catch (Exception e) {
+      System.out.println("Exiting because " + e);
+      e.printStackTrace();
+    }
+    return query;
   }
 
   /*
@@ -458,13 +478,11 @@ public class StructureGom {
   %strategy CountPairs(bag:Collection) extends `Identity() {
     visit StrucPar {
       concPar(_*,x,_*,neg(x),_*) -> {
-        //System.out.println("pair found: " + t);
         bag.add(`x);
       }
     }
     visit StrucCop {
       concCop(_*,x,_*,neg(x),_*) -> {
-        //System.out.println("pair found: " + t);
         bag.add(`x);
       }
     }
