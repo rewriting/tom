@@ -69,7 +69,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 
   protected TomType getTermType(TomTerm t) {
-    return  getTermType(t, symbolTable);
+    return getTermType(t, symbolTable);
   }
 
   protected TomType getUniversalType() {
