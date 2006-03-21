@@ -16,6 +16,7 @@ Constructor(nameList:NameList) -> Option
 OriginalText(astName:TomName) -> Option
 Label(astName:TomName) -> Option
 Debug(astName:TomName) -> Option
+ModuleName(string:String) -> Option
 ImplicitXMLAttribut() -> Option
 ImplicitXMLChild() -> Option
 noOption() -> Option

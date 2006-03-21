@@ -378,6 +378,13 @@ public class TomBase {
     }
     return null;
   }
+  
+	protected String getModuleName(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,ModuleName(moduleName),_*) -> { return `moduleName; }
+    }
+    return null;
+  }
 
   protected String getDebug(OptionList optionList) {
     %match(OptionList optionList) {

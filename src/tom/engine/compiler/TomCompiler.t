@@ -131,7 +131,9 @@ public class TomCompiler extends TomGenericPlugin {
 						} else if(isDefinedSymbol(tomSymbol)) {
 							return `FunctionCall(name,tomListArgs);
 						} else {
-							return `BuildTerm(name,tomListArgs);
+							// TODO: BAD
+							String moduleName = "default";
+							return `BuildTerm(name,tomListArgs,moduleName);
 						}
 					} else if(`termArgs.isEmpty() && !hasConstructor(`optionList)) {
 						return `BuildVariable(name,emptyTomList());
@@ -232,9 +234,10 @@ matchBlock: {
 					return newMatch;
 				}
 
-				RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(RecordAppl[nameList=(Name(tomName))])],_), orgTrack) -> {
+				RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(RecordAppl[nameList=(Name(tomName))])],_),optionList) -> {
 					TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
 					TomName name = tomSymbol.getAstName();
+					String moduleName = getModuleName(`optionList);
 					PatternInstructionList patternInstructionList  = `concPatternInstruction();
 
 					//build variables list for lhs symbol
@@ -278,10 +281,9 @@ matchBlock: {
 
 					Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,SubjectList(subjectListAST));
 					Instruction matchAST = `Match(SubjectList(subjectListAST),
-							patternInstructionList,
-							concOption(orgTrack));
+							patternInstructionList, optionList);
 					//return type `name(subjectListAST)
-					Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(subjectListAST,replace_preProcessing_makeTerm)));
+					Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(subjectListAST,replace_preProcessing_makeTerm),moduleName));
 					InstructionList l = `concInstruction(makeFunctionBeginAST,matchAST,buildAST,MakeFunctionEnd());
 					return preProcessingInstruction(`AbstractBlock(l));
 				}

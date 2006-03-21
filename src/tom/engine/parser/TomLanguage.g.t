@@ -56,6 +56,7 @@ options{
 }
 
     {
+			private final static String DEFAULT_MODULE_NAME = "default";
     //--------------------------
     %include{ adt/tomsignature/TomSignature.tom }
     //--------------------------
@@ -149,7 +150,7 @@ constant returns [Token result]
 matchConstruct [Option ot] returns [Instruction result] throws TomException
 { 
     result = null;
-    OptionList optionList = `concOption(ot);
+    OptionList optionList = `concOption(ot,ModuleName(DEFAULT_MODULE_NAME));
     LinkedList argumentList = new LinkedList();
     LinkedList patternInstructionList = new LinkedList();
     TomList subjectList = null;
@@ -484,7 +485,7 @@ strategyVisit [LinkedList list] throws TomException
 
 
 // The %rule construct
-ruleConstruct [Option orgTrack] returns [Instruction result] throws TomException
+ruleConstruct [Option ot] returns [Instruction result] throws TomException
 {
     result = null;
     TomRuleList ruleList = `emptyTomRuleList();
@@ -492,7 +493,7 @@ ruleConstruct [Option orgTrack] returns [Instruction result] throws TomException
     TomList listOfLhs = `emptyTomList();
     InstructionList conditionList = `emptyInstructionList();
     TomName orgText = null;
-
+    OptionList optionList = `concOption(ot,ModuleName(DEFAULT_MODULE_NAME));
     clearText();
 }
     :
@@ -515,12 +516,12 @@ ruleConstruct [Option orgTrack] returns [Instruction result] throws TomException
             {
                 // get the last token's line
                 int line = lastLine;
-                Option ot = `OriginTracking(
+                Option ot2 = `OriginTracking(
                     Name("Pattern"),
                     line,
                     Name(currentFile())
                 );
-                OptionList optionList = `concOption(ot,OriginalText(orgText));
+                OptionList optionList2 = `concOption(ot2,OriginalText(orgText));
                 
                 while(! listOfLhs.isEmpty()){
                     ruleList = (TomRuleList) ruleList.append(
@@ -528,7 +529,7 @@ ruleConstruct [Option orgTrack] returns [Instruction result] throws TomException
                             Term(listOfLhs.getHead()),
                             Term(rhs),
                             conditionList,
-                            optionList
+                            optionList2
                         )
                     );
                     listOfLhs = listOfLhs.getTail();
@@ -544,7 +545,7 @@ ruleConstruct [Option orgTrack] returns [Instruction result] throws TomException
             // update for new target block...
             updatePosition(t.getLine(),t.getColumn());
 
-            result = `RuleSet(ruleList,orgTrack);
+            result = `RuleSet(ruleList,optionList);
 
             // %rule finished: go back in target parser.
             selector().pop();

@@ -38,7 +38,7 @@ Ref(tomTerm:TomTerm) -> TomTerm
 BuildReducedTerm(kid1:TomTerm) -> TomTerm
 FunctionCall(astName:TomName,args:TomList) -> TomTerm
 BuildVariable(astName:TomName,args:TomList) -> TomTerm
-BuildTerm(astName:TomName,args:TomList) -> TomTerm
+BuildTerm(astName:TomName,args:TomList,moduleName:String) -> TomTerm
 BuildEmptyList(astName:TomName) -> TomTerm
 BuildConsList(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm) -> TomTerm
 BuildAppendList(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm) -> TomTerm

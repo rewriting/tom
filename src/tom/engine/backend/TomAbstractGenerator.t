@@ -141,8 +141,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
   
-      BuildTerm(Name(name), argList) -> {
-        buildTerm(deep, `name, `argList, moduleName);
+      BuildTerm(Name(name), argList, myModuleName) -> {
+        `buildTerm(deep, name, argList, myModuleName);
         return;
       }
 
@@ -618,29 +618,29 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      GetHeadDecl[opname=opNameAST@Name(name),
+      GetHeadDecl[opname=opNameAST@Name(opname),
                   codomain=Type[tlType=codomain], 
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(suffix),domain@TLType[])],
                   instr=instr] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
           `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, instr, moduleName);
         }
         return;
       }
 
-    GetTailDecl[opname=opNameAST@Name(name),
+    GetTailDecl[opname=opNameAST@Name(opname),
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(type),tlType@TLType[])],
                   instr=instr] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
           `buildGetTailDecl(deep, opNameAST, varName, type, tlType, instr, moduleName);
         }
         return;
       }
 
-      IsEmptyDecl[opname=opNameAST@Name(name),
+      IsEmptyDecl[opname=opNameAST@Name(opname),
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(type),tlType@TLType[])],
                   instr=instr] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
           `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, instr, moduleName);
         }
         return;
@@ -665,25 +665,26 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetElementDecl[opname=opNameAST@Name(name),
+      GetElementDecl[opname=opNameAST@Name(opname),
                      variable=Variable[astName=Name(name1), astType=Type[tomType=ASTTomType(type1),tlType=tlType1@TLType[]]],
                      index=Variable[astName=Name(name2)],
                      instr=instr] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
           `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, instr, moduleName);
         }
         return;
       }
       
-      GetSizeDecl[opname=opNameAST@Name(name),
-                  variable=Variable[astName=Name(name), astType=Type(ASTTomType(type),tlType@TLType[])],
-                  instr=instr] -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
-          `buildGetSizeDecl(deep, opNameAST, name, type, tlType, instr, moduleName);
-        }
-        return;
-      }
-      
+      GetSizeDecl[opname=opNameAST@Name(opname),
+				          variable=Variable[astName=Name(name), 
+									astType=Type(ASTTomType(type),tlType@TLType[])],
+				instr=instr] -> {
+					if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
+						`buildGetSizeDecl(deep, opNameAST, name, type, tlType, instr, moduleName);
+					}
+					return;
+			}
+
       MakeEmptyArray(Name(opname),
                      Variable[option=option,astName=name,constraints=constraints],
                      instr, _) -> {

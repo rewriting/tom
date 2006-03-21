@@ -183,6 +183,7 @@ public class SymbolTable {
 	}
 	
 	public void setUsedSymbolDestructor(TomSymbol symbol) {
+		//System.out.println("setUsedDestructor: " + symbol.getAstName());
     TomSymbol result = (TomSymbol) mapSymbolName.put(tsf().makeKeyEntry_UsedSymbolDestructor(symbol),symbol);
 	}
 	

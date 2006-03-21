@@ -21,7 +21,7 @@ Nop() -> Instruction
 AbstractBlock(instList:InstructionList) -> Instruction
 UnamedBlock(instList:InstructionList) -> Instruction
 NamedBlock(blockName:String,instList:InstructionList) -> Instruction
-RuleSet(ruleList:TomRuleList,orgTrack:Option) -> Instruction
+RuleSet(ruleList:TomRuleList,option:OptionList) -> Instruction
 Match(subjectList:TomTerm,astPatternInstructionList:PatternInstructionList,option:OptionList) -> Instruction
 CompiledMatch(automataInst:Instruction,option:OptionList) -> Instruction
 CompiledPattern(patternList:TomList,automataInst:Instruction) -> Instruction

@@ -170,9 +170,9 @@ public class TomSyntaxChecker extends TomChecker {
             `verifyMatch(matchArgsList, patternInstructionList, list);
             return true;//case when nested %match
           }
-          RuleSet(list, orgTrack) -> {
+          RuleSet(list, optionList) -> {
             /*  TOM RULE STRUCTURE*/
-            `verifyRule(list, orgTrack);
+            `verifyRule(list, optionList);
             return false;
           }
         } 
@@ -565,9 +565,9 @@ public class TomSyntaxChecker extends TomChecker {
   ///////////////////////////////// 
   // RULE VERIFICATION CONCERNS ///
   /////////////////////////////////
-  private void verifyRule(TomRuleList ruleList, Option orgTrack) {
+  private void verifyRule(TomRuleList ruleList, OptionList optionList) {
     int ruleNumber = 0;
-    currentTomStructureOrgTrack = orgTrack;
+    currentTomStructureOrgTrack = findOriginTracking(optionList);
     String headSymbolName = "Unknown return type";
     %match(TomRuleList ruleList) {  // for each rewrite rule
       b1: concTomRule(_*, RewriteRule(Term(lhs),Term(rhs),_,_),_*) -> {

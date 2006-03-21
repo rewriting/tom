@@ -103,8 +103,8 @@ public class TomTypeChecker extends TomChecker {
             verifyMatchVariable(`patternInstructionList);
             return false;
           }
-          RuleSet(list, orgTrack) -> {
-            currentTomStructureOrgTrack = `orgTrack;
+          RuleSet(list, optionList) -> {
+            currentTomStructureOrgTrack = findOriginTracking(`optionList);
             verifyRuleVariable(`list);
             return false;
           }

@@ -47,6 +47,8 @@ options{
 }
 
 {
+	private final static String DEFAULT_MODULE_NAME = "default";
+	private final static String TNODE_MODULE_NAME = "tnode";
     %include{ adt/tomsignature/TomSignature.tom }
     
     // the lexer for backquote language
@@ -82,7 +84,7 @@ options{
     }
     
    private TomTerm buildBqAppl(Token id, LinkedList blockList, TomTerm term, boolean composite) {
-     OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),Name(currentFile())));
+     OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),Name(currentFile())),ModuleName(DEFAULT_ MODULE_NAME));
      TomList target = (term==null)?
        `emptyTomList():
        `concTomTerm(TargetLanguageToTomTerm(ITL(".")),term);
@@ -213,8 +215,8 @@ mainBqTerm [TomList context] returns [TomTerm result]
                    //System.out.println("targetCode = " + t);
                    addTargetCode(t);
                    String name = id.getText();
-                   Option ot = `OriginTracking(Name(name), id.getLine(), Name(currentFile()));
-                   result = `BackQuoteAppl(concOption(ot),Name(name),concTomTerm());
+                   OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), Name(currentFile())), ModuleName(DEFAULT_MODULE_NAME));
+                   result = `BackQuoteAppl(ol,Name(name),concTomTerm());
                  }
                 )
             )
@@ -461,12 +463,12 @@ xmlAttribute [TomList context] returns [TomTerm result]
                     
                     if(context == null){
                         result = `BackQuoteAppl(
-                            emptyOptionList(),
+                            concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.ATTRIBUTE_NODE),
                             args);
                     } else {
                         result = `BackQuoteAppl(
-                            emptyOptionList(),
+                            concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.ATTRIBUTE_NODE),
                             concTomTerm(
                                 context*,
@@ -541,17 +543,17 @@ xmlTerm[TomList context] returns [TomTerm result]
                 {
                     TomList args = `concTomTerm(
                         BackQuoteAppl(
-                            emptyOptionList(),
+                            concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
                             emptyTomList()
                         ),
                         BackQuoteAppl(
-                            emptyOptionList(),
+                            concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.CONC_TNODE),
                             attributeTomList
                         ),
                         BackQuoteAppl(
-                            emptyOptionList(),
+                            concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.CONC_TNODE),
                             childrenTomList
                         )
@@ -559,17 +561,17 @@ xmlTerm[TomList context] returns [TomTerm result]
                     
                     if(context == null){
                         result = `BackQuoteAppl(
-                            emptyOptionList(),
+                            concOption(ModuleName(TNODE_MODULE_NAME)),
                             Name(Constants.ELEMENT_NODE),
                             args
                         );
                     } else {
-                    result = `BackQuoteAppl(
-                            emptyOptionList(),
-                            Name(Constants.ELEMENT_NODE),
-                            concTomTerm(
-                                context*,
-                                args*)
+											result = `BackQuoteAppl(
+													concOption(ModuleName(TNODE_MODULE_NAME)),
+													Name(Constants.ELEMENT_NODE),
+													concTomTerm(
+														context*,
+														args*)
                         );
                     }
 
@@ -578,7 +580,7 @@ xmlTerm[TomList context] returns [TomTerm result]
         |   XML_TEXT BQ_LPAREN term = bqTerm[context] BQ_RPAREN
             {
                 result = `BackQuoteAppl(
-                    emptyOptionList(),
+										concOption(ModuleName(TNODE_MODULE_NAME)),
                     Name(Constants.TEXT_NODE),
                     concTomTerm(
                         context*,

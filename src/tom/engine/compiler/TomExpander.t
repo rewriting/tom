@@ -365,6 +365,7 @@ public class TomExpander extends TomGenericPlugin {
 					%match(TomTerm t) {
 						BackQuoteAppl[option=optionList,astName=name@Name(tomName),args=l] -> {
 							TomSymbol tomSymbol = getSymbolFromName(`tomName);
+							String moduleName = getModuleName(`optionList);
 							TomList args  = (TomList) traversal().genericTraversal(`l,this);
 
 							//System.out.println("BackQuoteTerm: " + `tomName);
@@ -382,7 +383,7 @@ public class TomExpander extends TomGenericPlugin {
 								} else if(isDefinedSymbol(tomSymbol)) {
 									return `FunctionCall(name,args);
 								} else {
-									return `BuildTerm(name,args);
+									return `BuildTerm(name,args,moduleName);
 								}
 							} else if(args.isEmpty() && !hasConstructor(`optionList)) {
 								return `BuildVariable(name,emptyTomList());

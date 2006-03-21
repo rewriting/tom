@@ -99,7 +99,8 @@ public class TomBackend extends TomGenericPlugin {
         String defaultModule = "default";
         ////////
         ////////
-        generator.generate(defaultDeep, generator.operatorsTogenerate((TomTerm)getWorkingTerm()),defaultModule);
+				TomTerm pilCode = (TomTerm) getWorkingTerm();
+        generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),defaultModule);
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
