@@ -22,11 +22,11 @@
 # proofSearch: proof = true in 61035 ms
 
 #5
-[ < [ < [ d , e , a ]; f > , < - d ; [ - e , - f , b ] > ] ; c > ,
+[ < [ < [ d , d1 , a ]; f > , < - d ; [ - d1 , - f , b ] > ] ; c > ,
        < - a ; [ < [ h , k , - b ] ; l > ,  < - h ; [ k , l , c] > ] > ]
 
 #6
-[ < c ; [ - a , d ]  > , ( a , b ) , e , < - e ; [ - c , ( - b , - d ) ] > ]
+[ < c ; [ - a , d ]  > , ( a , b ) , d1 , < - d1 ; [ - c , ( - b , - d ) ] > ]
 # localSearch: >1024Mo
 
 # simple example for BVu
@@ -37,23 +37,23 @@
 [- c,[< a ; (c,- b) >,< - a ; b >]]
 # localSearch: proof = true in 24 ms
 
-# a more complex example for BVu, search < d ; e >
-[ - a ,[ < a ; < d ; - b > > , [ < b ; < e ; - c > > , c ] ] ]
+# a more complex example for BVu, search < d ; d1 >
+[ - a ,[ < a ; < d ; - b > > , [ < b ; < d1 ; - c > > , c ] ] ]
 
 
 # From Sylvain
-[(<e;f>,a),<[<-e;d>,c];(-f,b)>,<l;-a>,<[g,k];-b>,([-l,-g,h],-c),([-h,-k],-d)]
+[(<d1;f>,a),<[<-d1;d>,c];(-f,b)>,<l;-a>,<[g,k];-b>,([-l,-g,h],-c),([-h,-k],-d)]
 # localSearch: >2Go
 
-[(<e;f>,a),<[<-e;d>,c];(-f,b)>,<l;-a>,<(g,k);-b>,(<-l;[-g,h]>,-c),(-h,-k,-d)]
+[(<d1;f>,a),<[<-d1;d>,c];(-f,b)>,<l;-a>,<(g,k);-b>,(<-l;[-g,h]>,-c),(-h,-k,-d)]
 # localSearch: >2Go
 
-[(<e;f>,a),<[<-e;d>,c,(g,k)];[(-f,b),-b]>,<l;-a>,(<-l;[-g,h]>,-c),(-h,-k,-d)]
+[(<d1;f>,a),<[<-d1;d>,c,(g,k)];[(-f,b),-b]>,<l;-a>,(<-l;[-g,h]>,-c),(-h,-k,-d)]
 # localSearch: >2Go
 
-[(<e;f>,a),<[-e,-l];-f>,<l;-a>]
+[(<d1;a1>,a),<[-d1,-b1];-a1>,<b1;-a>]
 # localSearch: proof = true in 13974 ms
 
-[<[<-e;d>,c];(-f,b)>,<[g,k];-b>,([-l,-g,h],-c),([-h,-k],-d),<(e,l);f>]
+[<[<-d1;d>,c];(-f,b)>,<[g,k];-b>,([-l,-g,h],-c),([-h,-k],-d),<(d1,l);f>]
 # localSearch: >2Go (439000 states visited, 2611910 remaining)
 
