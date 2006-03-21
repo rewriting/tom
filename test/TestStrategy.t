@@ -12,7 +12,7 @@ import jjtraveler.VisitFailure;
 
 import teststrategy.term.types.*;
 
-import java.util.*;
+//import java.util.*;
 
 public class TestStrategy extends TestCase {
 
@@ -49,14 +49,16 @@ public class TestStrategy extends TestCase {
 
   public void testS1(){
     
-    ArrayList arrayList = new ArrayList();
-    LinkedList linkedList = new LinkedList();
+    //ArrayList arrayList = new ArrayList();
+    //LinkedList linkedList = new LinkedList();
+    boolean b = true;
+    long l = 1;
     String string = new String();
     int i = 0;
     
     VisitableVisitor rule0 = new S0();
-    VisitableVisitor rule1 = new S1(linkedList);
-    VisitableVisitor rule2 = new S2(arrayList,string);
+    VisitableVisitor rule1 = new S1(b);
+    VisitableVisitor rule2 = new S2(l,string);
     VisitableVisitor rule3 = new S3(i);
     //VisitableVisitor rule4 = new S4();
     VisitableVisitor rule5 = new S5();
@@ -81,14 +83,14 @@ public class TestStrategy extends TestCase {
   }
 
   //with parameter
-  %strategy S1(l:LinkedList) extends `Identity() {
+  %strategy S1(b:boolean) extends `Identity() {
     visit Term {
       a()          -> { return `b; }
     }
   }
 
   //with 2 parameters
-  %strategy S2(a:ArrayList,v:String) extends `Identity() {
+  %strategy S2(l:long,s:String) extends `Identity() {
     visit Term {
       g(x,x)            -> { return `x; }
     }
