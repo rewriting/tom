@@ -116,6 +116,7 @@ public class StructureGom {
 
   private final static int MAXLOCALITER = 1000000;
   private final static int step = 1000;
+  public boolean localSearch(Struc start, Struc end) {
     Comparator comparator = new Comparator() {
         public int compare(Object o1, Object o2) {
           if(o1==o2) {
@@ -144,7 +145,6 @@ public class StructureGom {
           }
         }
       };
-  public boolean localSearch(Struc start, Struc end) {
     TreeSet c1 = new TreeSet(comparator);
     c1.add(start);
 
@@ -217,7 +217,7 @@ public class StructureGom {
 
   public List testOneStep(String input) {
     Struc initStruc = strucFromPretty(input);
-    Collection col = new TreeSet(comparator);
+    Collection col = new HashSet();
     collectOneStep(col,initStruc);
 
     List result = new ArrayList(col.size());
