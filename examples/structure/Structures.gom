@@ -45,13 +45,11 @@ concCop:make_insert(e,l) {
     cop(concCop(L*)) -> { return `concCop(L*,l*); }
   }
 
-  if ((e != null) && (l != null)) {
-    if(!l.isconcCopEmpty()) {
-      if(!(structure.StructureGom.compareStruc(e, l.getconcCopHead()) < 0)) {
-        structure.structures.types.StrucCop newTail = l.getconcCopTail();
-        newTail = `concCop(e,newTail*);
-        return realMake(l.getconcCopHead(), newTail);
-      }
+  if(!l.isconcCopEmpty()) {
+    if (!(structure.StructureGom.compareStruc(e, l.getconcCopHead()) < 0)) {
+      structure.structures.types.StrucCop newTail = l.getconcCopTail();
+      newTail = `concCop(e,newTail*);
+      return realMake(l.getconcCopHead(), newTail);
     }
   }
   return realMake(e,l);

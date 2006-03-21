@@ -29,9 +29,6 @@
 
 package structure;
 
-//import aterm.*;
-//import aterm.pure.*;
-
 import java.io.*;
 import java.util.*;
 

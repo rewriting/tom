@@ -37,7 +37,7 @@
 [- c,[< a ; (c,- b) >,< - a ; b >]]
 # localSearch: proof = true in 24 ms
 
-# an more complex example for BVu, search < d ; e >
+# a more complex example for BVu, search < d ; e >
 [ - a ,[ < a ; < d ; - b > > , [ < b ; < e ; - c > > , c ] ] ]
 
 
