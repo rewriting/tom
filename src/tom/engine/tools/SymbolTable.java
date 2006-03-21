@@ -164,15 +164,18 @@ public class SymbolTable {
   }
 
 	public boolean isUsedSymbolConstructor(TomSymbol symbol) {
-		return (mapSymbolName.get(tsf().makeKeyEntry_UsedSymbolConstructor(symbol)) != null);
+		//return (mapSymbolName.get(tsf().makeKeyEntry_UsedSymbolConstructor(symbol)) != null);
+		return true;
 	}
 	
 	public boolean isUsedSymbolDestructor(TomSymbol symbol) {
-		return (mapSymbolName.get(tsf().makeKeyEntry_UsedSymbolDestructor(symbol)) != null);
+		//return (mapSymbolName.get(tsf().makeKeyEntry_UsedSymbolDestructor(symbol)) != null);
+		return true;
 	}
 	
 	public boolean isUsedTypeDefinition(TomTypeDefinition type) {
-		return (mapTypeName.get(tsf().makeKeyEntry_UsedTypeDefinition(type)) != null);
+		//return (mapTypeName.get(tsf().makeKeyEntry_UsedTypeDefinition(type)) != null);
+		return true;
 	}
  
 	public void setUsedSymbolConstructor(TomSymbol symbol) {
