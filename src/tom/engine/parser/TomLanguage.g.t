@@ -92,8 +92,8 @@ options{
         return TomBase.getAstFactory();
     }
 
-    private void putType(String name, TomType type, TomForwardType forward) {
-        symbolTable.putType(name,type,forward);
+    private void putTypeDefinition(String name, TomType type, TomForwardType forward) {
+        symbolTable.putTypeDefinition(name,type,forward);
     }
 
     private void putSymbol(String name, TomSymbol symbol) {
@@ -1546,7 +1546,7 @@ typeTerm returns [Declaration result] throws TomException
         )
 {
   TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
-          putType(type.getText(), astType, tomFwdType); 
+          putTypeDefinition(type.getText(), astType, tomFwdType); 
           result = `TypeTermDecl(Name(type.getText()),declarationList,ot);
           updatePosition(t.getLine(),t.getColumn());
           selector().pop();

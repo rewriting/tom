@@ -2,7 +2,7 @@ module TomSignature
 imports TomName TomType TomConstraint TomInstruction TomExpression TomDeclaration TomOption TomTerm TomSlot
 
 public
-sorts TomSymbolTable SymbolList Position TomEntryList TargetLanguage NameList TomRuleList TomRule TomVisitList TomVisit TomStructureTable TomSymbol TomEntry  
+sorts TomSymbolTable SymbolList Position TomEntryList TargetLanguage NameList TomRuleList TomRule TomVisitList TomVisit TomStructureTable TomSymbol TomEntry KeyEntry
 
 abstract syntax
 
@@ -23,3 +23,7 @@ concTomVisit(TomVisit*) -> TomVisitList
 concTomEntry(TomEntry*) -> TomEntryList
 concTomSymbol(TomSymbol*) -> SymbolList
 concTomName(TomName*) -> NameList
+
+UsedSymbolConstructor(symbol:TomSymbol) -> KeyEntry
+UsedSymbolDestructor(symbol:TomSymbol) -> KeyEntry
+UsedTypeDefinition(typedef:TomTypeDefinition) -> KeyEntry
