@@ -29,10 +29,11 @@
 
 package analysis;
 
-import analysis.ast.*;
-import analysis.ast.types.*;
 import analysis.node.*;
 import analysis.node.types.*;
+import analysis.ast.*;
+import analysis.ast.types.*;
+
 
 
 import tom.library.strategy.mutraveler.*;
@@ -76,13 +77,7 @@ public class Analyser{
 		equals(t1,t2) { t1.equals(t2) } 
 		visitor_fwd { analysis.ast.AstBasicStrategy }
 	}
-
-
-  %op VisitableVisitor ControlFlowGraphBasicStrategy(v:VisitableVisitor){
-    make(v){new ControlFlowGraphBasicStrategy(v)}
-  }
-
-	//Définition des constructeurs
+  //Définition des constructeurs
 
 	%op ControlFlowGraph conc(root:ControlFlowGraph,subterm:ControlFlowGraphList) {
 		is_fsym(t)  { t instanceof ControlFlowGraph }
@@ -120,6 +115,10 @@ public class Analyser{
 		make(node) { new Vertex(node) }
 	}
 
+
+
+  
+
 	public final static void main(String[] args) {
 		Analyser test = new Analyser();
 		test.run();
@@ -132,7 +131,18 @@ public class Analyser{
 		Variable var_y = `Name("y");
 		Variable var_z = `Name("z");
 
-		InstructionList subject = `concInstruction(If(True,Nop(),Let(var_x,g(a),Let(var_y,g(Var(var_x)),Nop()))),Let(var_z,f(a,b),Nop()));
+		InstructionList subject = `concInstruction(
+        If(True,
+           concInstruction(),
+           concInstruction(
+             LetRef(var_x,g(a),concInstruction(
+                 Let(var_y,g(Var(var_x)),concInstruction())
+                 )
+             )
+           )
+        ),
+        Let(var_z,f(a,b),concInstruction())
+    );
 
 		System.out.println("subject          = " + subject);
 		try{
@@ -147,11 +157,45 @@ public class Analyser{
 				Node nn = n.getNode();
 				%match(Node nn){
 					affect(var,_) -> {
-						VisitableVisitor notUsedStrat = `NotUsed(var);
-						VisitableVisitor freeStrat = new Free(`var);
 						//test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
-						if(cfg.verify(`mu(MuVar("x"),Choice(freeStrat,Sequence(notUsedStrat,All(MuVar("x"))))),n)) System.out.println("Variable "+`var+" not used");
-					}
+            //s1 = notUsed(var)
+            VisitableVisitor s1 = `NotUsed(var);
+            //s2 = free(var)
+            VisitableVisitor s2 = `Free(var);
+            VisitableVisitor notUsedCond = `mu(MuVar("x"),
+                Choice(s2,
+                       Sequence(s1,One(MuVar("x")))
+                       )
+                );
+            if(cfg.verify(notUsedCond,n)) System.out.println("Variable "+`var+" not used");
+           //teste si une variable n'est utilisé qu'une seule fois
+            //AX(A(not(modified(var)U(used(var) and AX(notUsedCond(var)))
+
+
+            //s1 = not(modified(var)
+            s1 = `Not(Modified(var));
+              
+            //s2 = (used(var) and AX(notUsedCond(var)
+            s2 =  
+                    `Sequence(
+                      Not(NotUsed(var)),
+                      All(mu(MuVar("y"),
+                          Choice(
+                            Free(var),
+                            Sequence(NotUsed(var),All(MuVar("y")))
+                            )
+                          )
+                        )
+                      );
+            //onceUsedCond AX(A(s1 U s2))  
+            VisitableVisitor onceUsedCond = 
+            
+              `All(mu(MuVar("x"),Choice(s2,Sequence(s1,One(MuVar("x"))))));
+            
+            if(cfg.verify(onceUsedCond,n)) System.out.println("Variable "+`var+" used once");
+
+         
+          }
 				}	
 			}	
 
@@ -173,44 +217,80 @@ public class Analyser{
 	*/
 
 
-	// Prédicat Used(v:Variable) qui teste si une variable est utilisée dans un terme
+	// Prédicat NotUsed(v:Variable) qui teste si une variable n'est pas utilisée au noeud racine d'un cfg 
   
-	%strategy InnerNotUsed(v:Variable) extends `Identity(){
-   visit Node {
-      n -> {
-        return (Node) MuTraveler.init(`TopDown(this)).visit(`n);
-      }
-   }
-   visit Term {
-			t@Var(var) -> {
-        if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(`t);
-			}
-		}
-  }
   %op VisitableVisitor NotUsed(v:Variable) {
-    make(v) { new ControlFlowGraphBasicStrategy(new InnerNotUsed(v))}
+    make(v) {new ControlFlowGraphBasicStrategy(tom_make_TopDown(new InnerNotUsed(v)))}
   }
 
+  
+/**
+   %strategy InnerNotUsed(v:Variable) extends `Identity(){
+	  visit Term {
+			t@Var(var) -> {
+				if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(`t);
+ 			}
+    }
+   }
+*/
+   
 
-	//remarque : on est obligé d'avoir deux stratégies car les types gom et ceux écrits à la main n'ont pas le même VisitorFwd
+  // en attendant que le bug dans NodeForward soit fixé (ensuite on utilisera la strategie InnerNotUsed)
+  class InnerNotUsed extends NodeBasicStrategy{
+
+
+    Variable v;
+
+    public InnerNotUsed(Variable v) {
+      super(`Identity());
+      this.v=v;
+    }
+
+    public Visitable visit(Visitable arg) throws VisitFailure {
+      if(arg instanceof Term){
+        %match(Term arg){
+          Var(var) -> {
+            if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(arg);
+          }
+        }
+      }
+
+      return super.visit(arg);
+    }
+  } 
+	
+  
 
 	// Prédicat Free(v:Variable) qui teste si une variable est libéré au noeud racine d'un cfg
-
-	%strategy Free(v:Variable) extends `Fail() {
-		visit ControlFlowGraph {
-			cfg -> {
-				Node node = `cfg.getRoot().getNode();
-				%match(Node node) {
-					free(var) -> {
+	%strategy InnerFree(v:Variable) extends `Fail() {
+			visit Node{
+					n@free(var) -> {
 						if(`var.equals(v)) {
-							return `cfg;
-						}
-					}	
-				}
-			}
-		}
+							return `n;
+            }
+          }
+      }
+  }
+  
+  %op VisitableVisitor Free(v:Variable) {
+    make(v) { new ControlFlowGraphBasicStrategy(new InnerFree(v))}
+  }
 
-	}
+
+	// Prédicat Modified(v:Variable) qui teste si une variable est modifié (affected) au noeud racine d'un cfg
+	%strategy InnerModified(v:Variable) extends `Fail() {
+			visit Node{
+					n@affect(var,_) -> {
+						if(`var.equals(v)) {
+							return `n;
+            }
+          }
+      }
+  }
+  
+  %op VisitableVisitor Modified(v:Variable) {
+    make(v) { new ControlFlowGraphBasicStrategy(new InnerModified(v))}
+  }
 
 	//Construction du CFG à partir de l'Ast
 	public  ControlFlowGraph constructCFG(AstAbstractType arg) throws Exception{ 
@@ -245,14 +325,14 @@ public class Analyser{
 
 			LetRef(var,term,instr) -> {
 				ControlFlowGraph instrGraph = constructCFG(`instr);
-				Vertex n = new Vertex(`affect(var,term));
-				return `conc(graph(n),list(instrGraph));
+				Vertex n1 = new Vertex(`affect(var,term));
+			  Vertex n2 = new Vertex(`free(var));
+				return `conc(graph(n1),list(conc(instrGraph,list(graph(n2)))));
 			}
 
-			LetAssign(var,term,instr) -> {	
-				ControlFlowGraph instrGraph = constructCFG(`instr);
+			LetAssign(var,term) -> {	
 				Vertex n = new Vertex(`affect(var,term));
-				return `conc(graph(n),list(instrGraph));
+				return `graph(n);
 			}
 
 			Nop() -> {Vertex n = new Vertex(`nil()); return `graph(n);

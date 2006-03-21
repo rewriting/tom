@@ -8,11 +8,11 @@ abstract syntax
 
 
 
-Instruction = If(condition:Expression,succesInst:Instruction,failureInst:Instruction) 
-	    | WhileDo(condition:Expression,doInst:Instruction) 
-	    | Let(variable:Variable,term:Term,instr:Instruction)
-	    | LetRef(variable:Variable,term:Term,instr:Instruction)
-	    | LetAssign(variable:Variable,term:Term,instr:Instruction)
+Instruction = If(condition:Expression,succesInst:InstructionList,failureInst:InstructionList) 
+	    | WhileDo(condition:Expression,doInst:InstructionList) 
+	    | Let(variable:Variable,term:Term,instr:InstructionList)
+	    | LetRef(variable:Variable,term:Term,instr:InstructionList)
+	    | LetAssign(variable:Variable,term:Term)
 	    | Nop()
 
 InstructionList = concInstruction(Instruction*)
