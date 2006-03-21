@@ -340,6 +340,7 @@ extendsBqTerm returns [TomTerm bqTerm] throws TomException
 strategyConstruct [Option orgTrack] returns [Declaration result] throws TomException
 {
     result = null;
+    Option ot = null;
     TomTerm extendsTerm = null;
     String codomain = null;
     TomSymbol extendsSymbol = null; 
@@ -353,13 +354,18 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     LinkedList pairNameDeclList = new LinkedList();
     TomName astName = null;
     String stringSlotName = null;
-    //Option makeOption = null;
-    //String makeTlCode = null;//used for tlCode in make
-    
+    Option makeOption = null;
+    String makeTlCode = null;//used for tlCode in make
+    TomList makeList = `concTomTerm();//types for make 
+
     clearText();
 }
     :(
         name:ALL_ID
+        {
+        ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+        options.add(ot);
+        }
         (
             LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID 
             {
@@ -389,7 +395,6 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
         )
         extendsTerm = extendsBqTerm
   {
-    options.add(extendsTerm);
     //get strategy codomain
     extendsSymbol = symbolTable.getSymbolFromName(extendsTerm.getArgs().getHead().getAstName().getString());
     if (extendsSymbol != null) {
@@ -402,21 +407,35 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
-        {
-          /*makeTlCode = "return new " + name.getText() + "(";
-          for (int i=0;i<types.getLength();i++) {
-
-          }
+       {
+         makeTlCode = "new " + name.getText() + "(";
+         //initialize arrayList with argument names
+         int index = 0;
+         TomTypeList makeTypes = types;//keep a copy of types
+         while(!makeTypes.isEmpty()) {
+           TomType type = makeTypes.getHead();
+           //add java variables
+           if (index>0) {//if many parameters
+             makeTlCode = makeTlCode.concat(",");
+           }
+           makeTlCode = makeTlCode.concat(((TomName)slotNameList.get(index)).getString());
+           //build makeList from type and slotNameList
+           TomTerm arg = `Variable(concOption(),(TomName)slotNameList.get(index),type,concConstraint());
+           makeList = `concTomTerm(makeList*,arg);
+           makeTypes = makeTypes.getTail();
+           index++;
+         }
           makeTlCode = makeTlCode.concat(")");
           makeOption = `OriginTracking(Name(name.getText()),t.getLine(),Name(currentFile()));
-          Declaration makeDecl = `MakeDecl(Name(name.getText()), TomTypeAlone(codomain), types, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
-           */
-      TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomain, types, ast().makePairNameDeclList(pairNameDeclList), options);
+          Declaration makeDecl = `MakeDecl(Name(name.getText()), TomTypeAlone(codomain), makeList, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
+          options.add(makeDecl); 
+
+          TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomain, types, ast().makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
 
-          result = `Strategy(Name(name.getText()),astVisitList,orgTrack);
+          result = `AbstractDecl(concDeclaration(Strategy(Name(name.getText()),extendsTerm,astVisitList,orgTrack),SymbolDecl(Name(name.getText()))));
 
           // %strat finished: go back in target parser.
             selector().pop();
