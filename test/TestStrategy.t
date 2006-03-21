@@ -56,12 +56,12 @@ public class TestStrategy extends TestCase {
     String string = new String();
     int i = 0;
     
-    VisitableVisitor rule0 = new S0();
-    VisitableVisitor rule1 = new S1(b);
-    VisitableVisitor rule2 = new S2(l,string);
-    VisitableVisitor rule3 = new S3(i);
+    VisitableVisitor rule0 = `S0();
+    VisitableVisitor rule1 = `S1(b);
+    VisitableVisitor rule2 = `S2(l,string);
+    VisitableVisitor rule3 = `S3(i);
     //VisitableVisitor rule4 = new S4();
-    VisitableVisitor rule5 = new S5();
+    VisitableVisitor rule5 = `S5();
     //VisitableVisitor rule6 = new S6();
     //VisitableVisitor rule7 = new S7();
     
