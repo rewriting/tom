@@ -155,6 +155,7 @@ public class StructureGom {
       result.add(subject);
      
       weight += weight(subject);
+      weightMap.remove(subject); // memory optimization
 
       HashSet c2 = new HashSet();
       collectOneStep(c2,subject);
@@ -249,7 +250,7 @@ public class StructureGom {
   public void collectOneStep(final Collection collection, Struc subject) {
     try {
       VisitableVisitor oneStep = new OneStep(subject,collection);
-      MuTraveler.init(`TopDown(oneStep)).visit(subject);
+      MuTraveler.init(`BottomUp(oneStep)).visit(subject);
       //System.out.println(collection);
     } catch (VisitFailure e) {
       System.out.println("Failed to get successors " + subject);
