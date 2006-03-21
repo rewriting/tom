@@ -162,11 +162,13 @@ public class Analyser{
             VisitableVisitor s1 = `NotUsed(var);
             //s2 = free(var)
             VisitableVisitor s2 = `Free(var);
-            VisitableVisitor notUsedCond = `mu(MuVar("x"),
-                Choice(s2,
-                       Sequence(s1,One(MuVar("x")))
-                       )
-                );
+            VisitableVisitor notUsedCond =
+                `Sequence(
+                  mu(MuVar("x"),Choice(s2,
+                       Sequence(s1,All(MuVar("x")))
+                       )),
+                   Not(mu(MuVar("x"),Sequence(s2,All(MuVar("x")))))
+                  );
             if(cfg.verify(notUsedCond,n)) System.out.println("Variable "+`var+" not used");
            //teste si une variable n'est utilisé qu'une seule fois
             //AX(A(not(modified(var)U(used(var) and AX(notUsedCond(var)))
@@ -179,10 +181,10 @@ public class Analyser{
             s2 =  
                     `Sequence(
                       Not(NotUsed(var)),
-                      All(mu(MuVar("y"),
+                      All(mu(MuVar("x"),
                           Choice(
                             Free(var),
-                            Sequence(NotUsed(var),All(MuVar("y")))
+                            Sequence(NotUsed(var),All(MuVar("x")))
                             )
                           )
                         )
@@ -190,7 +192,7 @@ public class Analyser{
             //onceUsedCond AX(A(s1 U s2))  
             VisitableVisitor onceUsedCond = 
             
-              `All(mu(MuVar("x"),Choice(s2,Sequence(s1,One(MuVar("x"))))));
+              `All(Sequence(mu(MuVar("x"),Choice(s2,Sequence(s1,All(MuVar("x"))))),Not(mu(MuVar("x"),Sequence(Not(s2),All(MuVar("x")))))));
             
             if(cfg.verify(onceUsedCond,n)) System.out.println("Variable "+`var+" used once");
 
