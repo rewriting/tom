@@ -595,7 +595,9 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       IsFsymDecl(Name(tomName),
        Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]], instr, _) -> {
-        `buildIsFsymDecl(deep, tomName, name, tlType, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+          `buildIsFsymDecl(deep, tomName, name, tlType, instr, moduleName);
+        }
         return;
       }
 
@@ -603,7 +605,9 @@ public abstract class TomAbstractGenerator extends TomBase {
                   slotName=slotName,
                   variable=Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]],
                   instr=instr] -> {
-        `buildGetSlotDecl(deep, tomName, name, tlType, instr, slotName, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+          `buildGetSlotDecl(deep, tomName, name, tlType, instr, slotName, moduleName);
+        }
         return;
       }
 
@@ -614,31 +618,39 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      GetHeadDecl[opname=opNameAST,
+      GetHeadDecl[opname=opNameAST@Name(name),
                   codomain=Type[tlType=codomain], 
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(suffix),domain@TLType[])],
                   instr=instr] -> {
-        `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+          `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, instr, moduleName);
+        }
         return;
       }
 
-      GetTailDecl[opname=opNameAST,
+    GetTailDecl[opname=opNameAST@Name(name),
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(type),tlType@TLType[])],
                   instr=instr] -> {
-        `buildGetTailDecl(deep, opNameAST, varName, type, tlType, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+          `buildGetTailDecl(deep, opNameAST, varName, type, tlType, instr, moduleName);
+        }
         return;
       }
 
-      IsEmptyDecl[opname=opNameAST,
+      IsEmptyDecl[opname=opNameAST@Name(name),
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(type),tlType@TLType[])],
                   instr=instr] -> {
-        `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+          `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, instr, moduleName);
+        }
         return;
       }
 
       MakeEmptyList(Name(opname), instr, _) -> {
         TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
-        `genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
+          `genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), instr, moduleName);
+        }
         return;
       }
 
@@ -647,22 +659,28 @@ public abstract class TomAbstractGenerator extends TomBase {
                   list@Variable[astType=fullListType@Type[tlType=TLType[]]],
                   instr, _) -> {
         TomType returnType = `fullListType;
-        `genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
+          `genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), instr, moduleName);
+        }
         return;
       }
 
-      GetElementDecl[opname=opNameAST,
+      GetElementDecl[opname=opNameAST@Name(name),
                      variable=Variable[astName=Name(name1), astType=Type[tomType=ASTTomType(type1),tlType=tlType1@TLType[]]],
                      index=Variable[astName=Name(name2)],
                      instr=instr] -> {
-        `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+          `buildGetElementDecl(deep, opNameAST, name1, name2, type1, tlType1, instr, moduleName);
+        }
         return;
       }
       
-      GetSizeDecl[opname=opNameAST,
+      GetSizeDecl[opname=opNameAST@Name(name),
                   variable=Variable[astName=Name(name), astType=Type(ASTTomType(type),tlType@TLType[])],
                   instr=instr] -> {
-        `buildGetSizeDecl(deep, opNameAST, name, type, tlType, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+          `buildGetSizeDecl(deep, opNameAST, name, type, tlType, instr, moduleName);
+        }
         return;
       }
       
@@ -671,7 +689,9 @@ public abstract class TomAbstractGenerator extends TomBase {
                      instr, _) -> {
         TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
         TomTerm newVar = `Variable(option, name, getSymbolTable(moduleName).getIntType(), constraints);
-        `genDeclMake("tom_empty_array_" + opname, returnType, concTomTerm(newVar), instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
+          `genDeclMake("tom_empty_array_" + opname, returnType, concTomTerm(newVar), instr, moduleName);
+        }
         return;
       }
 
@@ -680,12 +700,16 @@ public abstract class TomAbstractGenerator extends TomBase {
                    list@Variable[astType=fullArrayType@Type[tlType=TLType[]]],
                    instr, _) -> {
         TomType returnType = `fullArrayType;
-        `genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
+          `genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), instr, moduleName);
+        }
         return;
       }
 
       MakeDecl(Name(opname), returnType, argList, instr, _) -> {
-        `genDeclMake("tom_make_" + opname, returnType, argList, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {
+          `genDeclMake("tom_make_" + opname, returnType, argList, instr, moduleName);
+        }
         return;
       }
       
