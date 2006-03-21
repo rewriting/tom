@@ -51,14 +51,14 @@ public class TestStrategy extends TestCase {
     
     //ArrayList arrayList = new ArrayList();
     //LinkedList linkedList = new LinkedList();
-    boolean b = true;
-    long l = 1;
+    boolean bool = true;
+    long along = 1;
     String string = new String();
     int i = 0;
     
     VisitableVisitor rule0 = `S0();
-    VisitableVisitor rule1 = `S1(b);
-    VisitableVisitor rule2 = `S2(l,string);
+    VisitableVisitor rule1 = `S1(bool);
+    VisitableVisitor rule2 = `S2(along,string);
     VisitableVisitor rule3 = `S3(i);
     //VisitableVisitor rule4 = new S4();
     VisitableVisitor rule5 = `S5();
