@@ -3,11 +3,11 @@
 # proofSearch : proof = true in 164 ms
    
 #2
-[ < [ a , ( b , - a ) ] ; ( c , d ) > , -e, ( e , < - b ; - c >) , - d ]
+[ < [ a , ( b , - a ) ] ; ( c , d ) > , -d1, ( d1 , < - b ; - c >) , - d ]
 # localSearch: true in 5584 ms
 
 #3 
-[ - a , < a ; d ; - b > , < b ; e ; - c > , c , < - d ; - e > ]
+[ - a , < a ; d ; - b > , < b ; d1 ; - c > , c , < - d ; - d1 > ]
 # localSearch: proof = true in 1033501 ms
 # proofSearch: >512Mo
 

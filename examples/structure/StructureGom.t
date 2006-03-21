@@ -62,7 +62,7 @@ public class StructureGom {
   }
 
   public void run(Struc initStruc) {
-		initStruc = `par(concPar(cop(concCop(seq(concSeq(d1(),d2())),a())), seq(concSeq(par(concPar(neg(d1()),neg(b()))),neg(d2()))),seq(concSeq(b(),neg(a())))));
+		//initStruc = `par(concPar(cop(concCop(seq(concSeq(d1(),d2())),a())), seq(concSeq(par(concPar(neg(d1()),neg(b()))),neg(d2()))),seq(concSeq(b(),neg(a())))));
     System.out.println("Starting with: " + prettyPrint(initStruc));
     //System.out.println("length = " + length(initStruc));
     //System.out.println("pairs  = " + numberOfPair(initStruc));
@@ -73,32 +73,6 @@ public class StructureGom {
     long stopChrono  = System.currentTimeMillis();
 
     System.out.println("proof = "+res+" in "+(stopChrono-startChrono)+" ms");
-  }
-
-  public String eval(String initString) {
-    
-    String result ="";
-    Struc initStruc = null;
-    try {
-      StructuresLexer lexer = new StructuresLexer(new StringReader(initString));
-      StructuresParser parser = new StructuresParser(lexer);
-      initStruc = parser.struc();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    result+="Starting with: " + initStruc+"\n";
-    //System.out.println("length = " + length(initStruc));
-    //System.out.println("pairs  = " + numberOfPair(initStruc));
-
-    long startChrono = System.currentTimeMillis();
-    //boolean res      = localSearch(initStruc, `o());
-    boolean res      = proofSearch(initStruc, `o());
-    long stopChrono  = System.currentTimeMillis();
-
-    result+="proof = "+res+" in "+(stopChrono-startChrono)+" ms"+"\n";
-
-    return result;
   }
 
   static final int MAXITER = 25;
@@ -233,6 +207,21 @@ public class StructureGom {
     //return false; 
   }
 
+  public List testOneStep() {
+    Struc initStruc = `par(concPar(cop(concCop(seq(concSeq(d1(),d2())),a())),
+          seq(concSeq(par(concPar(neg(d1()),neg(b()))),neg(d2()))),seq(concSeq(b(),neg(a())))));
+    Collection col = new HashSet();
+    collectOneStep(col,initStruc);
+
+    List result = new ArrayList(col.size());
+    Iterator it = col.iterator();
+    while(it.hasNext()) {
+      Struc item = (Struc) it.next();
+      result.add(prettyPrint(item));
+    }
+    return result;
+  }
+
   private static boolean canonical = true;
 
   public static void main(String[] args) {
@@ -240,7 +229,6 @@ public class StructureGom {
 
     Struc query= null;
     try {
-				/*
       while(true) {
         System.out.println("Enter a structure:");
         StructuresLexer lexer = new StructuresLexer(new DataInputStream(System.in));
@@ -248,8 +236,6 @@ public class StructureGom {
         query = parser.struc();
         test.run(query);
       }
-*/
-        test.run(query);
     } catch (Exception e) {
       System.out.println("Exiting because " + e);
       e.printStackTrace();
