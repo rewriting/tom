@@ -334,14 +334,17 @@ public class StructureGom {
            [R,T] -> <T;R> */
         par(concPar(X1*,R,X2*,T,X3*)) -> {
           StrucPar context = `concPar(X1*,X2*,X3*);
-          c.add(MuTraveler.getPosition(this).getReplace(`par(concPar(seq(concSeq(R,T)),context*))).visit(subject));
-          c.add(MuTraveler.getPosition(this).getReplace(`par(concPar(seq(concSeq(T,R)),context*))).visit(subject));
+          c.add(MuTraveler.getPosition(this).getReplace(
+                `par(concPar(seq(concSeq(R,T)),context*))).visit(subject));
+          c.add(MuTraveler.getPosition(this).getReplace(
+                `par(concPar(seq(concSeq(T,R)),context*))).visit(subject));
         }
 
         /* [<R;U>,<T;V>] -> <[R,T];[U,V]>
            [<R;U>,<T;V>] -> <[U,V];[R,T]> */
         par(concPar(X1*,seq(concSeq(R*,U*)),X2*,seq(concSeq(T*,V*)),X3*)) -> {
-          if(`R*.isconcSeqEmpty() || `U*.isconcSeqEmpty() || `T*.isconcSeqEmpty() || `V*.isconcSeqEmpty()) {
+          if(`R*.isconcSeqEmpty() || `U*.isconcSeqEmpty()
+              || `T*.isconcSeqEmpty() || `V*.isconcSeqEmpty()) {
           } else {
             if(!optim || (!canReact(`U,`T) && !canReact(`R,`V))) {
               if(!optim2 || (canReact(`R,`T) && canReact(`U,`V))) {
@@ -371,12 +374,16 @@ public class StructureGom {
             StrucPar context = `concPar(X1*,X2*,X3*);
             if(!optim2 || canReact(`R,`T)) {
               StrucPar parT = seq2par(`T*);
-              c.add(MuTraveler.getPosition(this).getReplace(`par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))).visit(subject));
+              c.add(MuTraveler.getPosition(this).getReplace(
+                    `par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))
+                    ).visit(subject));
             }
 
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parU = seq2par(`U*);
-              c.add(MuTraveler.getPosition(this).getReplace(`par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))).visit(subject));
+              c.add(MuTraveler.getPosition(this).getReplace(
+                    `par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))
+                    ).visit(subject));
             }
           }
         }
@@ -390,12 +397,16 @@ public class StructureGom {
 
             if(!optim2 || canReact(`R,`T)) {
               StrucPar parT = seq2par(`T*);
-              c.add(MuTraveler.getPosition(this).getReplace(`par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))).visit(subject));
+              c.add(MuTraveler.getPosition(this).getReplace(
+                    `par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))
+                    ).visit(subject));
             }
 
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parU = seq2par(`U*);
-              c.add(MuTraveler.getPosition(this).getReplace(`par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))).visit(subject));
+              c.add(MuTraveler.getPosition(this).getReplace(
+                    `par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))
+                    ).visit(subject));
             }
           }
         }
