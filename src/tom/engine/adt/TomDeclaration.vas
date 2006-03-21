@@ -24,9 +24,12 @@ MakeEmptyArray(astName:TomName,varSize:TomTerm,instr:Instruction,orgTrack:Option
 MakeAddArray(astName:TomName,varElt:TomTerm,varList:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
 MakeDecl(astName:TomName,astType:TomType,args:TomList,instr:Instruction,orgTrack:Option) -> Declaration
 
-Strategy(sName:TomName,visitList:TomVisitList,orgTrack:Option) -> Declaration
+Strategy(sName:TomName,extendsTerm:TomTerm,visitList:TomVisitList,orgTrack:Option) -> Declaration
 FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction) -> Declaration 
-Class(astName:TomName,extendsType:TomForwardType,declaration:Declaration) -> Declaration 
+/*
+super is the parameter given to the function super. For instance: super(`Identity());
+*/
+Class(astName:TomName,extendsType:TomForwardType,superTerm:TomTerm,declaration:Declaration) -> Declaration 
 
 SymbolDecl(astName:TomName) -> Declaration
 ListSymbolDecl(astName:TomName) -> Declaration

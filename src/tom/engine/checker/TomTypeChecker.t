@@ -110,7 +110,7 @@ public class TomTypeChecker extends TomChecker {
           }
         }
         %match(Declaration term) {
-          Strategy(_,visitList,orgTrack) -> {
+          Strategy(_,_,visitList,orgTrack) -> {
             currentTomStructureOrgTrack = `orgTrack;
             verifyStrategyVariable(`visitList);
             return false;

@@ -288,7 +288,7 @@ matchBlock: {
       } // end match
           
       %match(Declaration subject) {
-        Strategy(name,visitList,orgTrack) -> {
+        Strategy(name,extendsTerm,visitList,orgTrack) -> {
           DeclarationList l = `concDeclaration();//represents compiled Strategy
           TomVisitList jVisitList = `visitList;
           TomForwardType visitorFwd = null;
@@ -312,7 +312,7 @@ matchBlock: {
             }
             jVisitList = jVisitList.getTail();
           }
-          return `Class(name,visitorFwd,preProcessingDeclaration(AbstractDecl(l)));
+          return `Class(name,visitorFwd,extendsTerm,preProcessingDeclaration(AbstractDecl(l)));
         }
       }//end match
 
