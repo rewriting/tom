@@ -1,0 +1,42 @@
+
+  %op VisitableVisitor AU(s1:VisitableVisitor, s2:VisitableVisitor) {
+    make(s1,s2) { `mu(MuVar("x"),Choice((VisitableVisitor)s2,Sequence(Sequence((VisitableVisitor)s1,All(MuVar("x"))),One(Identity()))))}
+  }
+
+  %op VisitableVisitor EU(s1:VisitableVisitor, s2:VisitableVisitor) {
+    make(s1,s2) { `mu(MuVar("x"),Choice((VisitableVisitor)s2,Sequence(Sequence((VisitableVisitor)s1,One(MuVar("x"))),One(Identity()))))}
+  }
+
+  %op VisitableVisitor TrueCtl(){
+    make() {`Identity() }
+  }
+
+
+  %op VisitableVisitor FalseCtl(){
+    make() {`Fail() }
+  }
+
+  %op VisitableVisitor AndCtl(s1:VisitableVisitor, s2:VisitableVisitor) {
+    make(s1,s2) {`Sequence((VisitableVisitor)s1,(VisitableVisitor)s2) }
+  }
+  
+  %op VisitableVisitor OrCtl(s1:VisitableVisitor, s2:VisitableVisitor) {
+    make(s1,s2) {`Choice((VisitableVisitor)s1,(VisitableVisitor)s2)}
+  }
+  
+  %op VisitableVisitor AF(s:VisitableVisitor) {
+    make(s) {`AU(Identity(),(VisitableVisitor)s) }
+  }
+
+  %op VisitableVisitor EF(s:VisitableVisitor) {
+    make(s) {`EU(Identity(),(VisitableVisitor)s) }
+  }
+
+  %op VisitableVisitor AX(s:VisitableVisitor) {
+    make(s) { `All((VisitableVisitor)s) }
+  }
+
+  %op VisitableVisitor EX(s:VisitableVisitor) {
+    make(s) {`One((VisitableVisitor)s) }
+  }
+

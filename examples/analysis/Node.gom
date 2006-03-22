@@ -6,7 +6,7 @@ abstract syntax
 Node = 	beginIf(expr:Expression)
      |	affect(var:Variable,term:Term)
      |	free(var:Variable)
-     |	endIf()a
+     |	endIf()
      |	beginWhile(expr:Expression)
      |	endWhile()
      |  failWhile()

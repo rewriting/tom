@@ -49,7 +49,7 @@ public class Analyser{
 
 	%include {mutraveler.tom }
 	%include {node/Node.tom}
-
+  %include {Ctl.tom}
 
 	//Définition des types
 
@@ -164,8 +164,8 @@ public class Analyser{
             VisitableVisitor s1 = `NotUsed(var);
             //s2 = free(var)
             VisitableVisitor s2 = `Free(var);
-            VisitableVisitor notUsedCond =
-                  `mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity)))));
+            VisitableVisitor notUsedCond = `AU(s1,s2);
+            //      `mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity)))));
             if(cfg.verify(notUsedCond,n)) System.out.println("Variable "+`var+" with the value "+`term+" is not used");
            //teste si une variable n'est utilisé qu'une seule fois
             //AX(A(not(modified(var)U(used(var) and AX(notUsedCond(var)))
@@ -187,9 +187,9 @@ public class Analyser{
                         )
                       );
             //onceUsedCond AX(A(s1 U s2))  
-            VisitableVisitor onceUsedCond = 
+            VisitableVisitor onceUsedCond = `AX(AU(s1,s2));
             
-              `All(mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity))))));
+            //  `All(mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity))))));
             
             if(cfg.verify(onceUsedCond,n)) System.out.println("Variable "+`var+" with the value "+`term+" is used once");
 
