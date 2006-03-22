@@ -346,8 +346,8 @@ public class Set1 {
           return `branch(t, singleton(elt));
           
         }
-        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(override(elt, t, lev), emptyJGSet);}
-        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptyJGSet, override(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(override(elt, t, lev), emptyJGSet());}
+        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptyJGSet(), override(elt, t, lev));}
         else if ( isBitZero(elt, level) && isBitOne(`x, level) ) { return `branch(singleton(elt), t);}
         else if ( isBitOne(elt, level)  && isBitZero(`x, level) ){ return `branch(t, singleton(elt));}
       }
@@ -376,8 +376,8 @@ public class Set1 {
 
       singleton(x)   -> {
         if(`x == elt) {  return t;}
-        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(underride(elt, t, lev), emptyJGSet);}
-        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptyJGSet, underride(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(underride(elt, t, lev), emptyJGSet());}
+        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptyJGSet(), underride(elt, t, lev));}
         else if ( isBitZero(elt, level) && isBitOne(`x, level) ) { return `branch(singleton(elt), t);}
         else if ( isBitOne(elt, level)  && isBitZero(`x, level) ){ return `branch(t, singleton(elt));}
       }
