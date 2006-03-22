@@ -44,6 +44,14 @@ public class Rewrite3 {
   %include { string.tom }
   %include { mutraveler.tom }
 
+  %typeterm Collection {
+    implement {Collection}
+  }
+
+  %typeterm HashSet {
+    implement {HashSet}
+  } 
+
   public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
     return tom.library.strategy.mutraveler.MuTraveler.mu(var,v);
   }
@@ -58,7 +66,7 @@ public class Rewrite3 {
 
     try {
       Collection collection = new HashSet();
-      VisitableVisitor rule = new RewriteSystem(collection);
+      VisitableVisitor rule = `RewriteSystem(collection);
       Term subject = `f(g(g(a,b),g(a,b)));
       `Try(BottomUp(rule)).visit(subject);
       System.out.println("collect : " + collection);

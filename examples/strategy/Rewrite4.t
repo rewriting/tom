@@ -45,7 +45,15 @@ public class Rewrite4 {
 
   %include { term/term.tom }
   %include { mutraveler.tom }
-  
+
+  %typeterm Collection {
+    implement {Collection}
+  }
+
+  %typeterm Position {
+    implement {Position}
+  }
+
   public final static void main(String[] args) {
     Rewrite4 test = new Rewrite4();
     test.run();
@@ -61,7 +69,7 @@ public class Rewrite4 {
     // find all leaf nodes positions
     Collection leaves = new HashSet();
     try {
-      VisitableVisitor getleaves = new FindLeaves(leaves);
+      VisitableVisitor getleaves = `FindLeaves(leaves);
       MuTraveler.init(`BottomUp(getleaves)).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to get leaves" + subject);
@@ -71,10 +79,10 @@ public class Rewrite4 {
     while(it.hasNext()) {
       Position p = (Position)it.next();
 
-      VisitableVisitor s1 = new S1();
-      VisitableVisitor s2 = new S2();
-      VisitableVisitor eqPos = new EqPos(p);
-      VisitableVisitor subPos = new SubPos(p);
+      VisitableVisitor s1 = `S1();
+      VisitableVisitor s2 = `S2();
+      VisitableVisitor eqPos = `EqPos(p);
+      VisitableVisitor subPos = `SubPos(p);
 
       VisitableVisitor xmastree = `mu(MuVar("x"),
           Sequence(s1,

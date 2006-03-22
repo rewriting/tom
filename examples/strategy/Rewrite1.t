@@ -55,8 +55,8 @@ public class Rewrite1 {
     Term subject = `f(g(g(a,b),g(a,a)));
     globalSubject = subject;
 
-   VisitableVisitor rule = new RewriteSystem();
-    VisitableVisitor ruleId = new RewriteSystemId();
+   VisitableVisitor rule = `RewriteSystem();
+   VisitableVisitor ruleId = `RewriteSystemId();
 
     try {
       System.out.println("subject       = " + subject);

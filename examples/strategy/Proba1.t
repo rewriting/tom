@@ -60,7 +60,7 @@ public class Proba1 {
   public void run() {
     Piece subject = `nothing();
 
-    VisitableVisitor pileS = new PileSystem();
+    VisitableVisitor pileS = `PileSystem();
     VisitableVisitor faceS = new FaceSystem();
     VisitableVisitor probS = `Pselect(1,3,pileS,faceS);
 

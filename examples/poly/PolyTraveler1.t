@@ -55,7 +55,7 @@ public class PolyTraveler1 {
     
   public void run() {
     Expression t    = `mult(variable("x"),plus(variable("x"),constant("a")));
-    VisitableVisitor v = new SimplifyPlus();
+    VisitableVisitor v = `SimplifyPlus();
     //v.setTerm(t);
     VisitableVisitor bu = `BottomUp(v);
     try {
