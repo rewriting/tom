@@ -71,11 +71,11 @@ public class Matching1 {
 		Nat two = `suc(one);
 
     Nat pxy = `plus(xx,yy);
-    Nat px0 = `plus(xx,zero);
+    Nat px0 = `plus(xx,zero());
     Nat px1 = `plus(xx,one);
-    Nat py0 = `plus(yy,zero);
-    Nat p00 = `plus(zero,zero);
-    Nat p01 = `plus(zero,one);
+    Nat py0 = `plus(yy,zero());
+    Nat p00 = `plus(zero(),zero());
+    Nat p01 = `plus(zero(),one);
     Nat px2 = `plus(xx,two);
     Nat p22 = `plus(two,two);
     Nat p1p1p11 = `plus(one,plus(one,plus(one,one)));

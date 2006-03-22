@@ -60,14 +60,14 @@ public class Nsh {
   public State query(int nbSenders, int nbReceivers) {
     ListAgent s = `concAgent();
     for(int index=0 ; index<nbSenders ; index++) {
-        s = s.insert(`agent(sender(index),SLEEP,N(sender(index),sender(index))));
+        s = s.insert(`agent(sender(index),SLEEP(),N(sender(index),sender(index))));
     }
     ListAgent r = `concAgent();
     for(int index=0 ; index<nbReceivers ; index++) {
-        r = r.insert(`agent(receiver(index),SLEEP,N(receiver(index),receiver(index))));
+        r = r.insert(`agent(receiver(index),SLEEP(),N(receiver(index),receiver(index))));
     }
     State state =
-      `state(s,r,intruder(devil,concNonce(),concMessage()),concMessage());
+      `state(s,r,intruder(devil(),concNonce(),concMessage()),concMessage());
     return state;
   }
   
@@ -246,11 +246,11 @@ public class Nsh {
   }
      
   public Nonce DN() {
-    return `N(dai,dai);
+    return `N(dai(),dai());
   }
 
   public Address DA() {
-    return `A(dai);
+    return `A(dai());
   }
 
   public boolean existAgent(Agent agent, ListAgent list) {
@@ -296,7 +296,7 @@ public class Nsh {
               M) -> {
               if(sizeMessage(`M) < maxMessagesInNetwork) {
                 State state = `state(
-                  concAgent(E1*,agent(x,WAIT,N(x,y)),E2*),
+                  concAgent(E1*,agent(x,WAIT(),N(x,y)),E2*),
                   dst,I,
                   insertMessage(msg(x,y,K(y),N(x,y),DN(),A(x)),M));
                 c.add(state);

@@ -110,11 +110,11 @@ public class List2 {
   }
 
 	public ArrayList makeSubject() {
-		return `conc(a,b,c,a,b,c,a);
+		return `conc(a(),b(),c(),a(),b(),c(),a());
 	}
 
   public void run() {
-    ArrayList l    = `conc(a,b,c,a,b,c,a,c);
+    ArrayList l    = `conc(a(),b(),c(),a(),b(),c(),a(),c());
     ArrayList res1 = swapSort(l);
     ArrayList res2 = removeDouble(res1);
     System.out.println(" l       = " + l);

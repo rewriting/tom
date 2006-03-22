@@ -108,10 +108,10 @@ public class Matching3 {
 
     Nat pxy = `plus(xx,yy);
     Nat pzx = `plus(zz,xx);
-    Nat px0 = `plus(xx,zero);
-    Nat py0 = `plus(yy,zero);
-    Nat p00 = `plus(zero,zero);
-    Nat p01 = `plus(zero,one);
+    Nat px0 = `plus(xx,zero());
+    Nat py0 = `plus(yy,zero());
+    Nat p00 = `plus(zero(),zero());
+    Nat p01 = `plus(zero(),one);
     Nat px2 = `plus(xx,two);
     Nat p22 = `plus(two,two);
     Nat p1p1p11 = `plus(one,plus(one,plus(one,one)));
@@ -128,15 +128,15 @@ public class Matching3 {
     start = `solve(Match(t1,t2));
     System.out.println("Match("+`t1+","+`t2+") = " + `start);
     t1 = `plus(yy,pxy);
-    t2 = `plus(zero,p00);
+    t2 = `plus(zero(),p00);
     start = `solve(Match(t1,t2));
     System.out.println("Match("+`t1+","+`t2+") = " + `start);
     t1 = `plus(xx,pxy);
-    t2 = `plus(zero,p00);
+    t2 = `plus(zero(),p00);
     start = `solve(Match(t1,t2));
     System.out.println("Match("+`t1+","+`t2+") = " + `start);
     t1 = `plus(xx,xx);
-    t2 = `plus(zero,one);
+    t2 = `plus(zero(),one);
     start = `solve(Match(t1,t2));
     System.out.println("Match("+`t1+","+`t2+") = " + `start);
   }

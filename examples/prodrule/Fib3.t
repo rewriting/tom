@@ -73,7 +73,7 @@ public class Fib3 {
   public int run(int n) {
     long startChrono = System.currentTimeMillis();
     System.out.println("running...");
-    ArrayList space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef));
+    ArrayList space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef()));
     space = loop(space);
     System.out.println("fib(" + n + ") = " + result(space,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
     return result(space,n);
@@ -105,7 +105,7 @@ public class Fib3 {
         if( `(n>2 && !occursFib(S1*,n-1) && !occursFib(S2*,n-1)) ) {
           //if( `n>2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1))  {
           //  if( `n>2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1) ) {
-          return `concElement(Fib(n-1,Undef),s*);
+          return `concElement(Fib(n-1,Undef()),s*);
         }
 	    }
     }

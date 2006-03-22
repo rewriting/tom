@@ -80,7 +80,7 @@ public class Fib4 {
     System.out.println("running...");
     WM.add(`Fib(0,Nat(1)));
     WM.add(`Fib(1,Nat(1)));
-    WM.add(`Fib(n,Undef));
+    WM.add(`Fib(n,Undef()));
     loop(WM);
     System.out.println("fib(" + n + ") = " + result(WM,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
     System.out.println("fire = " + fire);
@@ -109,7 +109,7 @@ public class Fib4 {
     %match(Space WM) {
 	    concElement(_*, Fib[arg=n,val=Undef()], _*) -> {
         if(`n>2 && !`occursFib(WM,n-1)) {
-          WM.add(0,`Fib(n-1,Undef));
+          WM.add(0,`Fib(n-1,Undef()));
           fire++;
           return (true);
         }

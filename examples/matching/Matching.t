@@ -52,14 +52,14 @@ class Matching {
   //-------------------------------------------------------
 
   public void run() {
-    Term p1 = `Appl("f",cons(Variable("x"),nil));
-    Term s1 = `Appl("f",cons(Appl("a",nil),nil));
+    Term p1 = `Appl("f",cons(Variable("x"),nil()));
+    Term s1 = `Appl("f",cons(Appl("a",nil()),nil()));
     
-    Term p2 = `Appl("f",cons(Variable("x"),cons(Appl("g",cons(Variable("y"),nil)),nil)));
-    Term s2 = `Appl("f",cons(Appl("a",nil),cons(Appl("g",cons(Appl("b",nil),nil)),nil)));
+    Term p2 = `Appl("f",cons(Variable("x"),cons(Appl("g",cons(Variable("y"),nil())),nil())));
+    Term s2 = `Appl("f",cons(Appl("a",nil()),cons(Appl("g",cons(Appl("b",nil()),nil())),nil())));
 
-    Term p3 = `Appl("f",cons(Appl("a",nil),cons(Appl("g",cons(Variable("y"),nil)),nil)));
-    Term s3 = `Appl("f",cons(Appl("b",nil),cons(Appl("g",cons(Appl("b",nil),nil)),nil)));
+    Term p3 = `Appl("f",cons(Appl("a",nil()),cons(Appl("g",cons(Variable("y"),nil())),nil())));
+    Term s3 = `Appl("f",cons(Appl("b",nil()),cons(Appl("g",cons(Appl("b",nil()),nil())),nil())));
 
     System.out.println("running...");
     System.out.println("p1 = " + p1);

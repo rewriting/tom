@@ -52,9 +52,9 @@ public class GTree2 {
   }
 
   public void run(int n) {
-      //Tree query = `supT(ackT(node(nil,4,nil)),ackT(node(nil,3,nil)));
+      //Tree query = `supT(ackT(node(nil(),4,nil())),ackT(node(nil(),3,nil())));
 
-    Tree query = `ackT(node(node(node(node(nil,3,nil),3,node(nil,3,nil)),3,node(node(nil,3,nil),3,node(nil,3,nil))),3,node(node(node(nil,3,nil),3,node(nil,3,nil)),3,node(node(nil,3,nil),3,node(nil,3,nil)))));
+    Tree query = `ackT(node(node(node(node(nil(),3,nil()),3,node(nil(),3,nil())),3,node(node(nil(),3,nil()),3,node(nil(),3,nil()))),3,node(node(node(nil(),3,nil()),3,node(nil(),3,nil())),3,node(node(nil(),3,nil()),3,node(nil(),3,nil())))));
 
     long startChrono = System.currentTimeMillis();
     Tree res         = normalize(query);

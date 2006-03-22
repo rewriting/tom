@@ -100,11 +100,11 @@ public class List1 {
   }
 
 	public ATermList makeSubject() {
-		return `conc(a,b,c,a,b,c,a);
+		return `conc(a(),b(),c(),a(),b(),c(),a());
 	}
 
   public void run() {
-    ATermList l = `conc(a,b,c,a,b,c,a);
+    ATermList l = `conc(a(),b(),c(),a(),b(),c(),a());
     ATermList res1 = swapSort(l);
     ATermList res2 = removeDouble(res1);
     System.out.println(" l       = " + l);
