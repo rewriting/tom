@@ -54,8 +54,8 @@ public class MuStrategy1 {
 
   private Term globalSubject = null;
   public void run() {
-    //Term subject = `g(d,d);
-    Term subject = `f(g(g(a,b),g(a,a)));
+    //Term subject = `g(d(),d());
+    Term subject = `f(g(g(a(),b()),g(a(),a())));
     globalSubject = subject;
 
     VisitableVisitor rule = new RewriteSystem();
@@ -76,8 +76,6 @@ public class MuStrategy1 {
     }
     
     public Term visit_Term(Term arg) throws VisitFailure { 
-
-
       %match(Term arg) {
         //a() -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
         a() -> { 
@@ -95,12 +93,4 @@ public class MuStrategy1 {
       throw new VisitFailure();
     }
   }
-
-
 }
-
- 
-
-
-
-

@@ -61,9 +61,9 @@ public class Rewrite4 {
 
   private Term globalSubject = null;
   public void run() {
-    //Term subject = `g(d,d);
-    //Term subject = `f(g(g(a,b),g(a,a)));
-    Term subject = `h(h(a,a,a),h(a,b,c),h(g(c,d),a,f(a)));
+    //Term subject = `g(d(),d());
+    //Term subject = `f(g(g(a(),b()),g(a(),a())));
+    Term subject = `h(h(a(),a(),a()),h(a(),b(),c()),h(g(c(),d()),a(),f(a())));
     globalSubject = subject;
 
     // find all leaf nodes positions

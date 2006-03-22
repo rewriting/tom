@@ -47,13 +47,13 @@ public class Rewrite2 {
   }
 
   public void run() {
-    //Term subject = `g(c,c);
-    Term subject = `f(g(g(a,b),g(a,a)));
+    //Term subject = `g(c(),c());
+    Term subject = `f(g(g(a(),b()),g(a(),a())));
 
     VisitableVisitor rule = `RewriteSystem();
     VisitableVisitor onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rule));
     VisitableVisitor innermostSlow = `mu(MuVar("y"),Choice(Sequence(onceBottomUp,MuVar("y")),Identity()));
-    VisitableVisitor innermost = `mu(MuVar("x"),Sequence(All(MuVar("x")),Choice(Sequence(rule,MuVar("x")),Identity)));
+    VisitableVisitor innermost = `mu(MuVar("x"),Sequence(All(MuVar("x")),Choice(Sequence(rule,MuVar("x")),Identity())));
     try {
       System.out.println("subject       = " + subject);
       System.out.println("onceBottomUp  = " + onceBottomUp.visit(subject));
@@ -76,7 +76,8 @@ public class Rewrite2 {
     }
     
 
-  /*class RewriteSystem extends strategy.term.termVisitableFwd {
+  /*
+  class RewriteSystem extends strategy.term.termVisitableFwd {
     public RewriteSystem() {
       super(new tom.library.strategy.mutraveler.Fail());
     }
@@ -89,10 +90,6 @@ public class Rewrite2 {
       }
       throw new VisitFailure();
     }
-    
-
-
   }
-
-*/
+   */
 }

@@ -51,8 +51,8 @@ public class Rewrite1 {
 
   private Term globalSubject = null;
   public void run() {
-    //Term subject = `g(d,d);
-    Term subject = `f(g(g(a,b),g(a,a)));
+    //Term subject = `g(d(),d());
+    Term subject = `f(g(g(a(),b()),g(a(),a())));
     globalSubject = subject;
 
    VisitableVisitor rule = `RewriteSystem();
@@ -75,7 +75,7 @@ public class Rewrite1 {
 
   %strategy RewriteSystem() extends `Fail() {
     visit Term {
-      a()        -> { 
+      a() -> { 
         Position pos = MuTraveler.getPosition(this);
         System.out.println("a -> b at " + pos);
         System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
@@ -83,17 +83,33 @@ public class Rewrite1 {
 
         return `b();
       }
-      b()        -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
-      g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
-      _          ->  { return (Term)`Fail().visit(arg); }
+      b() -> {
+        System.out.println("b -> c at " + MuTraveler.getPosition(this));
+        return `c();
+      }
+      g(c(),c()) -> {
+        System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this));
+        return `c(); }
+      _ ->  {
+        return (Term)`Fail().visit(arg);
+      }
     }
   }
 
   %strategy RewriteSystemId() extends `Identity() {
     visit Term {
-      a()        -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
-      b()        -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
-      g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
+      a() -> {
+        System.out.println("a -> b at " + MuTraveler.getPosition(this));
+        return `b();
+      }
+      b() -> {
+        System.out.println("b -> c at " + MuTraveler.getPosition(this));
+        return `c();
+      }
+      g(c(),c()) -> {
+        System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this));
+        return `c();
+      }
     }
   }
 } 

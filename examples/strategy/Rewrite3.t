@@ -67,12 +67,12 @@ public class Rewrite3 {
     try {
       Collection collection = new HashSet();
       VisitableVisitor rule = `RewriteSystem(collection);
-      Term subject = `f(g(g(a,b),g(a,b)));
+      Term subject = `f(g(g(a(),b()),g(a(),b())));
       `Try(BottomUp(rule)).visit(subject);
       System.out.println("collect : " + collection);
       
       collection.clear();
-      subject = `f(g(g(a,b),g(c,b)));
+      subject = `f(g(g(a(),b()),g(c(),b())));
       `Try(BottomUp(rule)).visit(subject);
       System.out.println("collect : " + collection);
     } catch (VisitFailure e) {
@@ -80,8 +80,8 @@ public class Rewrite3 {
     }
 
 
-    System.out.println("occursTerm: " + occursTerm(`g(c,c), `f(g(g(a,b),g(a,b))) ));
-    System.out.println("occursTerm: " + occursTerm(`g(c,c), `f(g(g(a,b),g(c,c))) ));
+    System.out.println("occursTerm: " + occursTerm(`g(c(),c()), `f(g(g(a(),b()),g(a(),b()))) ));
+    System.out.println("occursTerm: " + occursTerm(`g(c(),c()), `f(g(g(a(),b()),g(c(),c()))) ));
 
   }
   
@@ -137,11 +137,4 @@ public class Rewrite3 {
     }
   }
  
-
 }
-
- 
-
-
-
-

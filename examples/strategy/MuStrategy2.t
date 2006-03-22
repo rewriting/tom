@@ -51,8 +51,8 @@ public class MuStrategy2 {
 
   private Term globalSubject = null;
   public void run() {
-    //Term subject = `g(d,d);
-    Term subject = `g(g(a,a),g(a,b));
+    //Term subject = `g(d(),d());
+    Term subject = `g(g(a(),a()),g(a(),b()));
     globalSubject = subject;
 
     VisitableVisitor rule = new RewriteSystem();
