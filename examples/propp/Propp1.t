@@ -174,7 +174,7 @@ public class Propp1 {
 						match = true;
 						Sequent prod = `seq(concPred(X*,Z),concPred(Y*,R*));
 						c.add(prod);
-						rules_appl.add(`rappl(negd,subject,concSequent(prod)));
+						rules_appl.add(`rappl(negd(),subject,concSequent(prod)));
 					}
 					// }}}
 
@@ -186,7 +186,7 @@ public class Propp1 {
 						match = true;
 						Sequent prod = `seq(concPred(X*),concPred(Y*,Z,R,S*));
 						c.add(prod);
-						rules_appl.add(`rappl(disjd,subject,concSequent(prod)));
+						rules_appl.add(`rappl(disjd(),subject,concSequent(prod)));
 					}
 					//}}}			
 
@@ -195,7 +195,7 @@ public class Propp1 {
 						match = true;
 						Sequent prod = `seq(concPred(X*,Y),concPred(S*,Z,R*));
 						c.add(prod);
-						rules_appl.add(`rappl(impd,subject,concSequent(prod)));
+						rules_appl.add(`rappl(impd(),subject,concSequent(prod)));
 					}
 					//}}}
 
@@ -204,7 +204,7 @@ public class Propp1 {
 						match = true;
 						Sequent prod = `seq(concPred(X*,S*),concPred(Y,Z*));
 						c.add(prod);
-						rules_appl.add(`rappl(negg,subject,concSequent(prod)));
+						rules_appl.add(`rappl(negg(),subject,concSequent(prod)));
 					}
 					//}}}
 
@@ -213,7 +213,7 @@ public class Propp1 {
 						match = true;
 						Sequent prod = `seq(concPred(X*,Y,Z,S*),concPred(R*));
 						c.add(prod);
-						rules_appl.add(`rappl(conjg,subject,concSequent(prod)));
+						rules_appl.add(`rappl(conjg(),subject,concSequent(prod)));
 					}
 					//}}}
 
@@ -225,7 +225,7 @@ public class Propp1 {
 
 						Sequent prod2 = `seq(concPred(X*,Z,S*),concPred(R*));
 						c.add(prod2);
-						rules_appl.add(`rappl(disjg,subject,concSequent(prod,prod2)));
+						rules_appl.add(`rappl(disjg(),subject,concSequent(prod,prod2)));
 					}
 					//}}}
 
@@ -237,7 +237,7 @@ public class Propp1 {
 
 						Sequent prod2 = `seq(concPred(R*),concPred(X*,Z,S*));
 						c.add(prod2);
-						rules_appl.add(`rappl(conjd,subject,concSequent(prod,prod2)));
+						rules_appl.add(`rappl(conjd(),subject,concSequent(prod,prod2)));
 					}
 					//}}}
 
@@ -249,7 +249,7 @@ public class Propp1 {
 
 						Sequent prod2 = `seq(concPred(X*,Z,S*),concPred(R*));
 						c.add(prod2);
-						rules_appl.add(`rappl(impg,subject,concSequent(prod,prod2)));
+						rules_appl.add(`rappl(impg(),subject,concSequent(prod,prod2)));
 					}
 					//}}}
 
@@ -259,7 +259,7 @@ public class Propp1 {
 							match = true;
 							Sequent prod = `PROOF();
 							c.add(prod);
-							rules_appl.add(`rappl(axiom,subject,concSequent()));
+							rules_appl.add(`rappl(axiom(),subject,concSequent()));
 						}
 					}
 					//}}}

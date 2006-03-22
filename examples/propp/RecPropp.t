@@ -85,7 +85,7 @@ public class RecPropp extends Propp1 {
 			// {{{	negd
 			seq(concPred(X*),concPred(Y*,neg(Z),R*)) -> {
 				Sequent prod = `seq(concPred(X*,Z),concPred(Y*,R*));
-				rules_appl.add(`rappl(negd,subject,concSequent(prod)));
+				rules_appl.add(`rappl(negd(),subject,concSequent(prod)));
 				return Step(prod);
 			}
 			// }}}
@@ -93,7 +93,7 @@ public class RecPropp extends Propp1 {
 			//{{{ disjd
 			seq(concPred(X*),concPred(Y*,vee(Z,R),S*)) -> {
 				Sequent prod = `seq(concPred(X*),concPred(Y*,Z,R,S*));
-				rules_appl.add(`rappl(disjd,subject,concSequent(prod)));
+				rules_appl.add(`rappl(disjd(),subject,concSequent(prod)));
 				return Step(prod);
 			}
 			//}}}			
@@ -101,7 +101,7 @@ public class RecPropp extends Propp1 {
 			//{{{ impd
 			seq(concPred(X*),concPred(S*,impl(Y,Z),R*)) -> {
 				Sequent prod = `seq(concPred(X*,Y),concPred(S*,Z,R*));
-				rules_appl.add(`rappl(impd,subject,concSequent(prod)));
+				rules_appl.add(`rappl(impd(),subject,concSequent(prod)));
 				return Step(prod);
 			}
 			//}}}
@@ -109,7 +109,7 @@ public class RecPropp extends Propp1 {
 			//{{{ negg
 			seq(concPred(X*,neg(Y),S*),concPred(Z*)) -> {
 				Sequent prod = `seq(concPred(X*,S*),concPred(Y,Z*));
-				rules_appl.add(`rappl(negg,subject,concSequent(prod)));
+				rules_appl.add(`rappl(negg(),subject,concSequent(prod)));
 				return Step(prod);
 			}
 			//}}}
@@ -117,7 +117,7 @@ public class RecPropp extends Propp1 {
 			//{{{ conjg
 			seq(concPred(X*,wedge(Y,Z),S*),concPred(R*)) -> {
 				Sequent prod = `seq(concPred(X*,Y,Z,S*),concPred(R*));		
-				rules_appl.add(`rappl(conjg,subject,concSequent(prod)));
+				rules_appl.add(`rappl(conjg(),subject,concSequent(prod)));
 				return Step(prod);
 			}
 			//}}}
@@ -128,7 +128,7 @@ public class RecPropp extends Propp1 {
 				Sequent s2 = `seq(concPred(X*,Z,S*),concPred(R*));
 				ListSequent l1 = Step(s1);
 				ListSequent l2 = Step(s2);
-				rules_appl.add(`rappl(disjg,subject,concSequent(s1,s2)));
+				rules_appl.add(`rappl(disjg(),subject,concSequent(s1,s2)));
 				return `concSequent(l1*,l2*);
 			}
 			//}}}
@@ -139,7 +139,7 @@ public class RecPropp extends Propp1 {
 				Sequent s2 = `seq(concPred(R*),concPred(X*,Z,S*));
 				ListSequent l1 = Step(s1);	
 				ListSequent l2 = Step(s2);	
-				rules_appl.add(`rappl(conjd,subject,concSequent(s1,s2)));
+				rules_appl.add(`rappl(conjd(),subject,concSequent(s1,s2)));
 				return `concSequent(l1*,l2*);
 			}
 			//}}}
@@ -150,7 +150,7 @@ public class RecPropp extends Propp1 {
 				Sequent s2 = `seq(concPred(X*,Z,S*),concPred(R*));
 				ListSequent l1 = Step(s1);
 				ListSequent l2 = Step(s2);
-				rules_appl.add(`rappl(impg,subject,concSequent(s1,s2)));
+				rules_appl.add(`rappl(impg(),subject,concSequent(s1,s2)));
 				return `concSequent(l1*,l2*);
 			}
 			//}}}
@@ -159,7 +159,7 @@ public class RecPropp extends Propp1 {
 			seq(concPred(_*,X,_*),concPred(_*,X,_*)) -> {
 				if (`X != `EmptyP()) {
 					Sequent prod = `PROOF();
-					rules_appl.add(`rappl(axiom,subject,concSequent()));
+					rules_appl.add(`rappl(axiom(),subject,concSequent()));
 					return `concSequent(prod);
 				}
 			}

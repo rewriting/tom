@@ -56,7 +56,7 @@ public class TestPropp extends TestCase {
 
   public void testMakeQuery() {
 		assertEquals("makeQuery should builds the corresponding sequent tree",
-								 `seq(concPred(impl(A,wedge(B,C))),concPred(vee(C,D))),
+								 `seq(concPred(impl(A(),wedge(B(),C()))),concPred(vee(C(),D()))),
 								 test.makeQuery("seq([impl(A,wedge(B,C))],[vee(C,D)])"));
   }
 

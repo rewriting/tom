@@ -115,7 +115,7 @@ class SPropp extends Propp1 {
 						seq(concPred(X*),concPred(Y*,neg(Z),R*)) -> {
 							Proof prod = `hyp(seq(concPred(X*,Z),concPred(Y*,R*)));
 							return `rule(
-								negd,
+								negd(),
 								seq(concPred(X*),concPred(Y*,mark(neg(Z)),R*)),
 								concProof(prod));
 						}
@@ -125,7 +125,7 @@ class SPropp extends Propp1 {
 						seq(concPred(X*),concPred(Y*,vee(Z,R),S*)) -> {
 							Proof prod = `hyp(seq(concPred(X*),concPred(Y*,Z,R,S*)));
 							return `rule(
-								disjd,
+								disjd(),
 								seq(concPred(X*),concPred(Y*,mark(vee(Z,R)),S*)),
 								concProof(prod));
 						}
@@ -135,7 +135,7 @@ class SPropp extends Propp1 {
 						seq(concPred(X*),concPred(S*,impl(Y,Z),R*)) -> {
 							Proof prod = `hyp(seq(concPred(X*,Y),concPred(S*,Z,R*)));
 							return `rule(
-								impd,
+								impd(),
 								seq(concPred(X*),concPred(S*,mark(impl(Y,Z)),R*)),
 								concProof(prod));
 						}
@@ -145,7 +145,7 @@ class SPropp extends Propp1 {
 						seq(concPred(X*,neg(Y),S*),concPred(Z*)) -> {
 							Proof prod = `hyp(seq(concPred(X*,S*),concPred(Y,Z*)));
 							return `rule(
-								negg,
+								negg(),
 								seq(concPred(X*,mark(neg(Y)),S*),concPred(Z*)),
 								concProof(prod));
 						}
@@ -155,7 +155,7 @@ class SPropp extends Propp1 {
 						seq(concPred(X*,wedge(Y,Z),S*),concPred(R*)) -> {
 							Proof prod = `hyp(seq(concPred(X*,Y,Z,S*),concPred(R*)));
 							return `rule(
-								conjg,
+								conjg(),
 								seq(concPred(X*,mark(wedge(Y,Z)),S*),concPred(R*)),
 								concProof(prod));
 						}
@@ -166,7 +166,7 @@ class SPropp extends Propp1 {
 							Proof s1 = `hyp(seq(concPred(X*,Y,S*),concPred(R*)));
 							Proof s2 = `hyp(seq(concPred(X*,Z,S*),concPred(R*)));
 							return `rule(
-								disjg,
+								disjg(),
 								seq(concPred(X*,mark(vee(Y,Z)),S*),concPred(R*)),
 								concProof(s1,s2));
 						}
@@ -177,7 +177,7 @@ class SPropp extends Propp1 {
 							Proof s1 = `hyp(seq(concPred(R*),concPred(X*,Y,S*)));
 							Proof s2 = `hyp(seq(concPred(R*),concPred(X*,Z,S*)));
 							return `rule(
-								conjd,
+								conjd(),
 								seq(concPred(R*),concPred(X*,mark(wedge(Y,Z)),S*)),
 								concProof(s1,s2));
 						}
@@ -188,7 +188,7 @@ class SPropp extends Propp1 {
 							Proof s1 = `hyp(seq(concPred(X*,S*),concPred(R*,Y)));
 							Proof s2 = `hyp(seq(concPred(X*,Z,S*),concPred(R*)));
 							return `rule(
-								impg,
+								impg(),
 								seq(concPred(X*,mark(impl(Y,Z)),S*),concPred(R*)),
 								concProof(s1,s2));
 						}
@@ -198,7 +198,7 @@ class SPropp extends Propp1 {
 						seq(concPred(L1*,X,L2*),concPred(L3*,X,L4*)) -> {
 							if (`X != `EmptyP()) {
 								return `rule(
-									axiom,
+									axiom(),
 									seq(concPred(L1*,mark(X),L2*),concPred(L3*,mark(X),L4*)),
 									concProof());
 							}
