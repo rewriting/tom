@@ -72,9 +72,6 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 
   protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-    //OptionList options = tomSymbol.getOption();
-    //Option op = options.getHead();
-    //TomTerm extendsTerm = op.getAstTerm();
     TomTypeList tomTypes = getSymbolDomain(tomSymbol);
     ArrayList names = new ArrayList();
     ArrayList types = new ArrayList();
