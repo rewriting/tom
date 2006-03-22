@@ -23,7 +23,7 @@
 
 #5
 [ < [ < [ d , d1 , a ]; a1 > , < - d ; [ - d1 , - a1 , b ] > ] ; c > ,
-       < - a ; [ < [ h , k , - b ] ; l > ,  < - h ; [ k , l , c] > ] > ]
+       < - a ; [ < [ a2 , k , - b ] ; l > ,  < - a2 ; [ k , l , c] > ] > ]
 
 #6
 [ < c ; [ - a , d ]  > , ( a , b ) , d1 , < - d1 ; [ - c , ( - b , - d ) ] > ]
@@ -42,18 +42,18 @@
 
 
 # From Sylvain
-[(<d1;f>,a),<[<-d1;d>,c];(-f,b)>,<l;-a>,<[g,k];-b>,([-l,-g,h],-c),([-h,-k],-d)]
+[(<d1;f>,a),<[<-d1;d>,c];(-f,b)>,<l;-a>,<[g,k];-b>,([-l,-g,a2],-c),([-a2,-k],-d)]
 # localSearch: >2Go
 
-[(<d1;f>,a),<[<-d1;d>,c];(-f,b)>,<l;-a>,<(g,k);-b>,(<-l;[-g,h]>,-c),(-h,-k,-d)]
+[(<d1;f>,a),<[<-d1;d>,c];(-f,b)>,<l;-a>,<(g,k);-b>,(<-l;[-g,a2]>,-c),(-a2,-k,-d)]
 # localSearch: >2Go
 
-[(<d1;f>,a),<[<-d1;d>,c,(g,k)];[(-f,b),-b]>,<l;-a>,(<-l;[-g,h]>,-c),(-h,-k,-d)]
+[(<d1;f>,a),<[<-d1;d>,c,(g,k)];[(-f,b),-b]>,<l;-a>,(<-l;[-g,a2]>,-c),(-a2,-k,-d)]
 # localSearch: >2Go
 
 [(<d1;a1>,a),<[-d1,-b1];-a1>,<b1;-a>]
 # localSearch: proof = true in 13974 ms
 
-[<[<-d1;d>,c];(-f,b)>,<[g,k];-b>,([-l,-g,h],-c),([-h,-k],-d),<(d1,l);f>]
+[<[<-d1;d>,c];(-f,b)>,<[g,k];-b>,([-l,-g,a2],-c),([-a2,-k],-d),<(d1,l);f>]
 # localSearch: >2Go (439000 states visited, 2611910 remaining)
 
