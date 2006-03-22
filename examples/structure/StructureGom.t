@@ -115,8 +115,7 @@ public class StructureGom {
   }
 
   private final static int MAXLOCALITER = 1000000;
-  private final static int step = 1000;
-  public boolean localSearch(Struc start, Struc end) {
+  private final static int step = 100;
     Comparator comparator = new Comparator() {
         public int compare(Object o1, Object o2) {
           Struc s1 = (Struc)o1;
@@ -127,8 +126,6 @@ public class StructureGom {
 
           int v1 = weight(s1);
           int v2 = weight(s2);
-          //System.out.println("v1 = " + v1 + " " + s1);
-          //System.out.println("v2 = " + v2 + " " + s2);
           if(v1<v2) {
             return -1;
           } else if(v1>v2) {
@@ -145,6 +142,7 @@ public class StructureGom {
           }
         }
       };
+  public boolean localSearch(Struc start, Struc end) {
     TreeSet c1 = new TreeSet(comparator);
     c1.add(start);
 
@@ -217,7 +215,7 @@ public class StructureGom {
 
   public List testOneStep(String input) {
     Struc initStruc = strucFromPretty(input);
-    Collection col = new HashSet();
+    Collection col = new TreeSet(comparator);
     collectOneStep(col,initStruc);
 
     List result = new ArrayList(col.size());
