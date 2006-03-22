@@ -119,16 +119,16 @@ public class StructureGom {
   public boolean localSearch(Struc start, Struc end) {
     Comparator comparator = new Comparator() {
         public int compare(Object o1, Object o2) {
-          if(o1==o2) {
-            return 0;
-          }
           Struc s1 = (Struc)o1;
           Struc s2 = (Struc)o2;
+          if(s1==s2) {
+            return 0;
+          }
 
-          double v1 = weight(s1);
-          double v2 = weight(s2);
-          //System.out.println("v1 = " + v1);
-          //System.out.println("v2 = " + v2);
+          int v1 = weight(s1);
+          int v2 = weight(s2);
+          //System.out.println("v1 = " + v1 + " " + s1);
+          //System.out.println("v2 = " + v2 + " " + s2);
           if(v1<v2) {
             return -1;
           } else if(v1>v2) {
@@ -153,7 +153,7 @@ public class StructureGom {
     int nc2 = 0;
     int nc1 = 0;
     int nremoved = 0;
-    double weight = 0.0;
+    int weight = 0;
     while(true) {
       i++;
 
@@ -196,7 +196,7 @@ public class StructureGom {
         nc2 = 0;
         nc1 = 0;
         nremoved = 0;
-        weight = 0.0;
+        weight = 0;
         if(weightMap.size() > 200000) {
           weightMap.clear();
         }
@@ -459,10 +459,10 @@ public class StructureGom {
 
   private WeakHashMap weightMap = new WeakHashMap();
 	private static int weightCall = 0;
-  public double weight(StructuresAbstractType subject) {
+  public int weight(StructuresAbstractType subject) {
 		weightCall++;
     if(weightMap.containsKey(subject)) {
-      return ((Double)weightMap.get(subject)).doubleValue();
+      return ((Integer)weightMap.get(subject)).intValue();
     }
     //double l = (double)length(subject);
     //double n = (double)numberOfPair(subject);
@@ -471,8 +471,8 @@ public class StructureGom {
     double w = (l*l)/(1.0+n);
     // System.out.println(prettyPrint(subject));
     // System.out.println("l = " + l + "\t#pair = " + n + "\tw = " + w);
-    weightMap.put(subject,new Double(w));
-    return w;
+    weightMap.put(subject,new Integer((int)w));
+    return (int)w;
   }
 
   public int numberOfPair(StructuresAbstractType subject) {
