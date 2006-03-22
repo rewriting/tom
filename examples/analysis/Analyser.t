@@ -136,6 +136,8 @@ public class Analyser{
            concInstruction(),
            concInstruction(
              LetRef(var_x,g(a),concInstruction(
+                 LetAssign(var_x,g(b)),
+                 LetAssign(var_x,f(a,b)),
                  Let(var_y,g(Var(var_x)),concInstruction())
                  )
              )
@@ -156,20 +158,15 @@ public class Analyser{
 				Vertex n = (Vertex) (iter.next());
 				Node nn = n.getNode();
 				%match(Node nn){
-					affect(var,_) -> {
+					affect(var,term) -> {
 						//test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
             //s1 = notUsed(var)
             VisitableVisitor s1 = `NotUsed(var);
             //s2 = free(var)
             VisitableVisitor s2 = `Free(var);
             VisitableVisitor notUsedCond =
-                `Sequence(
-                  mu(MuVar("x"),Choice(s2,
-                       Sequence(s1,All(MuVar("x")))
-                       )),
-                   Not(mu(MuVar("x"),Sequence(s2,All(MuVar("x")))))
-                  );
-            if(cfg.verify(notUsedCond,n)) System.out.println("Variable "+`var+" not used");
+                  `mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity)))));
+            if(cfg.verify(notUsedCond,n)) System.out.println("Variable "+`var+" with the value "+`term+" is not used");
            //teste si une variable n'est utilisé qu'une seule fois
             //AX(A(not(modified(var)U(used(var) and AX(notUsedCond(var)))
 
@@ -192,14 +189,14 @@ public class Analyser{
             //onceUsedCond AX(A(s1 U s2))  
             VisitableVisitor onceUsedCond = 
             
-              `All(Sequence(mu(MuVar("x"),Choice(s2,Sequence(s1,All(MuVar("x"))))),Not(mu(MuVar("x"),Sequence(Not(s2),All(MuVar("x")))))));
+              `All(mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity))))));
             
-            if(cfg.verify(onceUsedCond,n)) System.out.println("Variable "+`var+" used once");
+            if(cfg.verify(onceUsedCond,n)) System.out.println("Variable "+`var+" with the value "+`term+" is used once");
 
          
           }
 				}	
-			}	
+			}
 
 		}catch(Exception e){
 			System.out.println(e);
