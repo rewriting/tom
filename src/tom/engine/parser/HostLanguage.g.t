@@ -1052,8 +1052,6 @@ CODE
         : '\r' '\n' {newline();}
         | '\r'    {newline();}
         | '\n'    {newline();}
-        //| '@' ( '\r' '\n' {newline();} | '\r' {newline();} | '\n' {newline();}~('\n'|'\r') ) '@'
-        //  { System.out.println("'" + $getText + "'"); }
         | ~('\n'|'\r')
         )*
         ']' '%'

@@ -129,21 +129,14 @@ public class TomTypeChecker extends TomChecker {
     Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm term) {
 					%match(TomTerm term) {
-						app@TermAppl[option=opts,args=[]] -> {
-							boolean isConstructor = false;
-							%match(OptionList opts) {
-								(_*,Constructor[],_*) -> {
-									isConstructor = true;
-								}
+						app@TermAppl[] -> {
+							if((symbolTable().getSymbolFromName(getName(`app)))==null) {
+								messageError(findOriginTrackingLine(`app.getOption()),
+										TomMessage.unknownVariableInWhen.getMessage(),
+										new Object[]{getName(`app)});
 							}
-							if(!isConstructor) {
-								if((symbolTable().getSymbolFromName(getName(`app)))==null) {
-									messageError(findOriginTrackingLine(`app.getOption()),
-											TomMessage.unknownVariableInWhen.getMessage(),
-											new Object[]{getName(`app)});
-								}
-								// else, it's actually app()
-							} // else, it's a unknown (ie : java) function
+							// else, it's actually app()
+							// else, it's a unknown (ie : java) function
 							return true;
 						}
           } 

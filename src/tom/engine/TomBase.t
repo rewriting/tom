@@ -393,16 +393,16 @@ public class TomBase {
     return null;
   }
 
-  protected boolean hasConstructor(OptionList optionList) {
+  protected boolean hasGeneratedMatch(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(_*,Constructor[],_*) -> { return true; }
+      concOption(_*,GeneratedMatch(),_*) -> { return true; }
     }
     return false;
   }
 
-  protected boolean hasGeneratedMatch(OptionList optionList) {
+  protected boolean hasConstant(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(_*,GeneratedMatch(),_*) -> { return true; }
+      concOption(_*,Constant[],_*) -> { return true; }
     }
     return false;
   }

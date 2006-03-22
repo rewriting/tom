@@ -370,23 +370,19 @@ public class TomExpander extends TomGenericPlugin {
 
 							//System.out.println("BackQuoteTerm: " + `tomName);
 							//System.out.println("tomSymbol: " + tomSymbol);
-
-							if(tomSymbol != null) {
+							if(hasConstant(`optionList)) {
+									// special case for builtin such as String
+									return `BuildVariable(name,emptyTomList());
+							} else if(tomSymbol != null) {
 								if(isListOperator(tomSymbol)) {
 									return tomFactory.buildList(`name,args);
 								} else if(isArrayOperator(tomSymbol)) {
 									return tomFactory.buildArray(`name,args);
-								} else if(symbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol))) &&
-										args.isEmpty() && 
-										!hasConstructor(`optionList)) {
-									return `BuildVariable(name,emptyTomList());
 								} else if(isDefinedSymbol(tomSymbol)) {
 									return `FunctionCall(name,args);
 								} else {
 									return `BuildTerm(name,args,moduleName);
 								}
-							} else if(args.isEmpty() && !hasConstructor(`optionList)) {
-								return `BuildVariable(name,emptyTomList());
 							} else {
 								return `FunctionCall(name,args);
 							}

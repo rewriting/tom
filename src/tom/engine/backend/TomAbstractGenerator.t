@@ -523,7 +523,6 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       OriginTracking[] -> { return; }
       DefinedSymbol() -> { return; }
-      Constructor[] -> { return; }
 
       t -> {
         System.out.println("Cannot generate code for option: " + `t);

@@ -235,6 +235,8 @@ public class TomKernelCompiler extends TomBase {
         // find the codomain of (f|g) [* should be the same *]
 
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
+				//System.out.println("name: " + `tomName);
+				//System.out.println("symb: " + tomSymbol);
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         
           // perform the compilation, according to 3 cases:

@@ -119,15 +119,14 @@ public class TomCompiler extends TomGenericPlugin {
 					SlotList newTermArgs = (SlotList) traversal().genericTraversal(`termArgs,replace_preProcessing_makeTerm);
 					TomList tomListArgs = slotListToTomList(newTermArgs);
 
-					if(tomSymbol != null) {
+					if(hasConstant(`optionList)) {
+						// special case for builtin such as String
+						return `BuildVariable(name,emptyTomList());
+					} else if(tomSymbol != null) {
 						if(isListOperator(tomSymbol)) {
 							return tomFactory.buildList(`name,tomListArgs);
 						} else if(isArrayOperator(tomSymbol)) {
 							return tomFactory.buildArray(`name,tomListArgs);
-						} else if(symbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol))) && 
-								`termArgs.isEmpty() && 
-								!hasConstructor(`optionList)) {
-							return `BuildVariable(name,emptyTomList());
 						} else if(isDefinedSymbol(tomSymbol)) {
 							return `FunctionCall(name,tomListArgs);
 						} else {
@@ -135,8 +134,6 @@ public class TomCompiler extends TomGenericPlugin {
 							String moduleName = "default";
 							return `BuildTerm(name,tomListArgs,moduleName);
 						}
-					} else if(`termArgs.isEmpty() && !hasConstructor(`optionList)) {
-						return `BuildVariable(name,emptyTomList());
 					} else {
 						return `FunctionCall(name,tomListArgs);
 					}

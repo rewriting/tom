@@ -619,6 +619,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             name = headConstant[optionList] 
             {
                 nameList = (NameList) nameList.append(name);
+								optionList.add(`Constant());
                 result = `TermAppl(
                         ast().makeOptionList(optionList),
                         nameList,
@@ -634,9 +635,6 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             {nameList = (NameList) nameList.append(name);}
             implicit = args[list,secondOptionList]
             {
-              if(list.isEmpty()) {
-                    optionList.add(`Constructor(nameList));
-              }
               if(implicit) {
                     result = `RecordAppl(
                         ast().makeOptionList(optionList),
@@ -662,9 +660,6 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             implicit = args[list, secondOptionList] 
             {
 							withArgs = true;
-              if(withArgs && list.isEmpty()) {
-                    optionList.add(`Constructor(nameList));
-              }
               if(implicit) {
                     result = `RecordAppl(
                         ast().makeOptionList(optionList),
@@ -892,9 +887,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             {LA(2) == EQUAL}?
             id:ALL_ID EQUAL {text.append(id.getText()+"=");}
             (
-
-                {LA(2) == AT}?
-                anno2:ALL_ID AT
+                {LA(2) == AT}? anno2:ALL_ID AT
                 {
                     text.append(anno2.getText()+"@");
                     optionListAnno2.add(`Name(anno2.getText()));
@@ -917,8 +910,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             termName = placeHolder[optionList,constraintList]
             e:EQUAL {text.append("=");}
             (
-                {LA(2) == AT}?
-                anno3:ALL_ID AT
+                {LA(2) == AT}? anno3:ALL_ID AT
                 {
                     text.append(anno3.getText()+"@");
                     optionListAnno2.add(`Name(anno3.getText()));
@@ -927,8 +919,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             term = unamedVariableOrTermStringIdentifier[optionListAnno2]
         )
         {
-            if (!varStar)
-            {
+            if (!varStar) {
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
@@ -1064,8 +1055,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
                 text.append(nameID.getText());
                 optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),Name(currentFile())));
                 option = ast().makeOptionList(optionList);
-                nameList = `concTomName(Name(nameID.getText()));
-                result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
+                result = `Variable(option,Name(nameID.getText()),TomTypeAlone("unknown type"),concConstraint());
             }
         |
             nameString:STRING 
@@ -1341,24 +1331,24 @@ headConstant [LinkedList optionList] returns [TomName result]
 	result = `Name(name);
 	optionList.add(`OriginTracking(result,line, Name(currentFile())));
 
-	switch(t.getType()){
-							case NUM_INT:
-								ast().makeIntegerSymbol(symbolTable,name,optionList);
-								break;
-							case NUM_LONG:
-								ast().makeLongSymbol(symbolTable,name,optionList);
-								break;
-							case CHARACTER:
-								ast().makeCharSymbol(symbolTable,name,optionList);
-								break;
-							case NUM_DOUBLE:
-								ast().makeDoubleSymbol(symbolTable,name,optionList);
-								break;
-							case STRING:
-								ast().makeStringSymbol(symbolTable,name,optionList);
-								break;
-							default:
-						}
+	switch(t.getType()) {
+		case NUM_INT:
+			ast().makeIntegerSymbol(symbolTable,name,optionList);
+			break;
+		case NUM_LONG:
+			ast().makeLongSymbol(symbolTable,name,optionList);
+			break;
+		case CHARACTER:
+			ast().makeCharSymbol(symbolTable,name,optionList);
+			break;
+		case NUM_DOUBLE:
+			ast().makeDoubleSymbol(symbolTable,name,optionList);
+			break;
+		case STRING:
+			ast().makeStringSymbol(symbolTable,name,optionList);
+			break;
+		default:
+	}
         }
 ;
 

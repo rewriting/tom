@@ -90,7 +90,6 @@ options{
        `concTomTerm(TargetLanguageToTomTerm(ITL(".")),term);
 
      if(composite) {
-			 option = `concOption(Constructor(concTomName(Name(id.getText()))),option*);
 			 TomList list = ast().makeList(blockList);
 			 return `Composite(concTomTerm(BackQuoteAppl(option,Name(id.getText()),list),target*));
      } else {
@@ -388,12 +387,12 @@ xmlAttribute [TomList context] returns [TomTerm result]
                 {
                     TomList args = `concTomTerm(
                         BackQuoteAppl(
-                            emptyOptionList(),
+                            concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
                             emptyTomList()
                         ),
                         BackQuoteAppl(
-                            emptyOptionList(),
+                            concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name("\"true\""),
                             emptyTomList()
                         ),
@@ -482,7 +481,7 @@ xmlTerm[TomList context] returns [TomTerm result]
                 {
                     TomList args = `concTomTerm(
                         BackQuoteAppl(
-                            concOption(ModuleName(TNODE_MODULE_NAME)),
+                            concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
                             emptyTomList()
                         ),

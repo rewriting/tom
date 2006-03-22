@@ -721,7 +721,7 @@ public class TomSyntaxChecker extends TomChecker {
           decLine = findOriginTrackingLine(`options);
           termClass = TERM_APPL;
           
-          TomSymbol symbol = ensureValidApplDisjunction(`nameList, expectedType, decLine,hasConstructor(`options), args.isEmpty(), permissive, topLevel);
+          TomSymbol symbol = ensureValidApplDisjunction(`nameList, expectedType, decLine, args.isEmpty(), permissive, topLevel);
           if(symbol == null) {
             validateTermThrough(term,permissive);
             break matchblock;
@@ -955,7 +955,7 @@ public class TomSyntaxChecker extends TomChecker {
   }
   
   private TomSymbol ensureValidApplDisjunction(NameList nameList, TomType expectedType, int decLine,
-                                               boolean constructor, boolean emptyChilds, boolean permissive, boolean topLevel) {
+                                               boolean emptyChilds, boolean permissive, boolean topLevel) {
     TomTypeList domainReference = null, currentDomain = null;
     TomSymbol symbol = null;
     
@@ -963,7 +963,7 @@ public class TomSyntaxChecker extends TomChecker {
       String res = nameList.getHead().getString();
       symbol  =  getSymbolFromName(res);
       if (symbol == null ) {
-        if((constructor || !emptyChilds)) {
+        if(!emptyChilds) {
             // this correspond to aterm like 'unknown()' or unknown(s1, s2, ...)
           if(!permissive) {
             messageError(decLine,
@@ -976,17 +976,6 @@ public class TomSyntaxChecker extends TomChecker {
           }
         }
       } else { //known symbol     
-        if(emptyChilds && !constructor ) { // this correspond to: known
-          //  we know the symbol but it is not called has a constructor and argsList is empty
-          // it is a builtin type (String, int, char, double, ...)
-          // WARNING consider as a symbol and not a variable
-          String codomain = getTomType(getSymbolCodomain(symbol));
-          if( !symbolTable().isBuiltinType(codomain) ) {
-            messageError(decLine, 
-                         TomMessage.ambigousSymbolWithoutConstructor.getMessage(),
-                           new Object[]{res});
-          }
-        }
         if ( strictType  || !topLevel ) {
           if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, decLine)) {
             return null;
@@ -1068,7 +1057,7 @@ public class TomSyntaxChecker extends TomChecker {
       }
       return symbol;
     } else {
-      return ensureValidApplDisjunction(nameList, expectedType, decLine, false, false, false, topLevel);
+      return ensureValidApplDisjunction(nameList, expectedType, decLine, false, false, topLevel);
     }
   }
 

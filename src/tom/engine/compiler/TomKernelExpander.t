@@ -300,32 +300,19 @@ public class TomKernelExpander extends TomBase {
 						} else {
 							%match(TomTerm contextSubject) {
 								TomTypeToTomTerm(type@Type[]) -> {
-									if(`slotList.isEmpty()  && !hasConstructor(`option)) {
-										ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
-										return `Variable(option,nameList.getHead(),type,newConstraints);
-									} else {
-										SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
-										ConstraintList newConstraints = expandVariableConstraintList(`emptyTerm(),`constraints);
-										return `RecordAppl(option,nameList,subterm,newConstraints);
-									}
+									SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
+									ConstraintList newConstraints = expandVariableConstraintList(`emptyTerm(),`constraints);
+									return `RecordAppl(option,nameList,subterm,newConstraints);
 								}
 								Variable[astType=type] -> {
 									ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
-									if(`slotList.isEmpty()  && !hasConstructor(`option)) {
-										return `Variable(option,nameList.getHead(),type,newConstraints);
-									} else {
-										SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
-										return `RecordAppl(option,nameList,subterm,newConstraints);
-									}
+									SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
+									return `RecordAppl(option,nameList,subterm,newConstraints);
 								}
 								Tom(concTomTerm(_*,var@Variable[astName=Name(varName)],_*)) -> {
 									ConstraintList newConstraints = expandVariableConstraintList(`contextSubject,`constraints);
-									if(`slotList.isEmpty()  && !hasConstructor(`option) && `tomName==`varName) {
-										return `var;
-									} else {
-										SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
-										return `RecordAppl(option,nameList,subterm,newConstraints);
-									}
+									SlotList subterm = expandVariableList(`emptySymbol(), `slotList);
+									return `RecordAppl(option,nameList,subterm,newConstraints);
 								}
 
 								_ -> {

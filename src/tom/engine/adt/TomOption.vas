@@ -12,8 +12,8 @@ TomTermToOption(astTerm:TomTerm) -> Option
 DefinedSymbol() -> Option
 GeneratedMatch() -> Option
 OriginTracking(astName:TomName,line:Int,fileName:TomName) -> Option
-Constructor(nameList:NameList) -> Option
 OriginalText(astName:TomName) -> Option
+Constant() -> Option
 Label(astName:TomName) -> Option
 Debug(astName:TomName) -> Option
 ModuleName(string:String) -> Option
