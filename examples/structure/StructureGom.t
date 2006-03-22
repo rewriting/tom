@@ -485,13 +485,11 @@ public class StructureGom {
   }
 
   %strategy CountPairs(bag:Collection) extends `Identity() {
-    visit StrucPar {
-      concPar(_*,x,_*,neg(x),_*) -> {
+    visit Struc {
+      par(concPar(_*,x,_*,neg(x),_*)) -> {
         bag.add(`x);
       }
-    }
-    visit StrucCop {
-      concCop(_*,x,_*,neg(x),_*) -> {
+      cop(concCop(_*,x,_*,neg(x),_*)) -> {
         bag.add(`x);
       }
     }
