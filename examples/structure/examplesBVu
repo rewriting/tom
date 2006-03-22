@@ -22,7 +22,7 @@
 # proofSearch: proof = true in 61035 ms
 
 #5
-[ < [ < [ d , d1 , a ]; f > , < - d ; [ - d1 , - f , b ] > ] ; c > ,
+[ < [ < [ d , d1 , a ]; a1 > , < - d ; [ - d1 , - a1 , b ] > ] ; c > ,
        < - a ; [ < [ h , k , - b ] ; l > ,  < - h ; [ k , l , c] > ] > ]
 
 #6
