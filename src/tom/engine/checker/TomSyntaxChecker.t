@@ -656,7 +656,7 @@ public class TomSyntaxChecker extends TomChecker {
    */
   private void verifyRhsRuleStructure(TomTerm rhs, String lhsHeadSymbolName) {
     int termClass = getClass(rhs); //TermDescription termDesc = analyseTerm(lhs);
-    if(  termClass != TERM_APPL) {
+    if(termClass != TERM_APPL && termClass != VARIABLE) {
       String termName;
       if (termClass == XML_APPL) { 
         termName = "XML construct "+getName(rhs);
@@ -816,6 +816,14 @@ public class TomSyntaxChecker extends TomChecker {
           break matchblock;
         }
         
+        Variable[option=options, astName=Name(name)] -> { 
+          termClass = VARIABLE;
+          decLine = findOriginTrackingLine(`options);
+          type = null;     
+          termName = `name;
+          break matchblock;
+        }
+
         VariableStar[option=options, astName=Name(name)] -> { 
           termClass = VARIABLE_STAR;
           decLine = findOriginTrackingLine(`options);
@@ -899,6 +907,9 @@ public class TomSyntaxChecker extends TomChecker {
         }
         Placeholder[option=options] -> {
           return new TermDescription(PLACE_HOLDER, "_", findOriginTrackingLine(`options),  null);
+        }
+        Variable[option=options, astName=Name(name)] -> { 
+          return new TermDescription(VARIABLE, `name, findOriginTrackingLine(`options),  null);
         }
         VariableStar[option=options, astName=Name(name)] -> { 
           return new TermDescription(VARIABLE_STAR, `name+"*", findOriginTrackingLine(`options),  null);

@@ -400,10 +400,11 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     extendsSymbol = symbolTable.getSymbolFromName(extendsTerm.getArgs().getHead().getAstName().getString());
     if (extendsSymbol != null) {
       codomain = extendsSymbol.getTypesToType().getCodomain().getString();
-    }
-    //since we want a non-linear parser, codomain should be updated later on, 
-    //or retrieved after parsing (this is tough since we put symbol at parsing)
-    else {codomain = "unknown type";}
+    } else {
+			//since we want a non-linear parser, codomain should be updated later on, 
+			//or retrieved after parsing (this is tough since we put symbol at parsing)
+			codomain = "unknown type";
+		}
   }
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
@@ -608,6 +609,15 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             {LA(2) != LPAREN && LA(2) != LBRACKET}? 
             name = headSymbol[optionList] 
             {
+						    result = `Variable(ast().makeOptionList(optionList),name,
+									TomTypeAlone("unknown type"),ast().makeConstraintList(constraintList));
+            }
+
+        |   // for a single constant. 
+            // ambiguous with the next rule so :
+            {LA(2) != LPAREN && LA(2) != LBRACKET}? 
+            name = headConstant[optionList] 
+            {
                 nameList = (NameList) nameList.append(name);
                 result = `TermAppl(
                         ast().makeOptionList(optionList),
@@ -616,6 +626,8 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                         ast().makeConstraintList(constraintList)
                     );
             }
+
+
 
         |   // f(...) or f[...]
             name = headSymbol[optionList] 
@@ -646,8 +658,10 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             // ambiguity with the last rule so use a lookahead
             // if ALTERNATIVE then parse headSymbolList
         {LA(3) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
-            ( (args[null,null]) => implicit = args[list, secondOptionList] {withArgs = true;})?
+            //( (args[null,null]) => implicit = args[list, secondOptionList] {withArgs = true;})?
+            implicit = args[list, secondOptionList] 
             {
+							withArgs = true;
               if(withArgs && list.isEmpty()) {
                     optionList.add(`Constructor(nameList));
               }
@@ -1267,16 +1281,16 @@ headSymbolList [LinkedList optionList] returns [NameList result]
     :  
         (
             LPAREN {text.append('(');}
-            name = headSymbol[optionList] 
+            name = headSymbolOrConstant[optionList] 
             {result = (NameList) result.append(name);}
 
             ALTERNATIVE {text.append('|');}
-            name = headSymbol[optionList] 
+            name = headSymbolOrConstant[optionList] 
             {result = (NameList) result.append(name);}
 
             ( 
                 ALTERNATIVE {text.append('|');} 
-                name = headSymbol[optionList] 
+                name = headSymbolOrConstant[optionList] 
                 {result = (NameList) result.append(name);}
             )* 
             t:RPAREN 
@@ -1287,54 +1301,66 @@ headSymbolList [LinkedList optionList] returns [NameList result]
         )
     ;
 
+headSymbolOrConstant [LinkedList optionList] returns [TomName result]
+{
+  result = null;
+} : (
+    result = headSymbol[optionList]
+		|
+    result = headConstant[optionList]
+		);
+
 headSymbol [LinkedList optionList] returns [TomName result]
 { 
     result = null; 
-    int line = 0;
-    String name = null;
-    Token t = null;
 }
-    :   (
-            i:ALL_ID 
-            {
-                name = i.getText();
-                line = i.getLine();
-                text.append(name);
-            }
-        |   t=constant // add to symbol table
-            {
-                name = t.getText();
-                line = t.getLine();
-                text.append(name);
-            }
-        )
-        {
-            setLastLine(line);
-            result = `Name(name);
-            optionList.add(`OriginTracking(result,line, Name(currentFile())));
+: 
+  (i:ALL_ID 
+  {
+		String name = i.getText();
+		int line = i.getLine();
+		text.append(name);
+		setLastLine(line);
+		result = `Name(name);
+		optionList.add(`OriginTracking(result,line, Name(currentFile())));
+	}
+	)
+;
 
-            if (t != null){
-                switch(t.getType()){
-                case NUM_INT:
-                    ast().makeIntegerSymbol(symbolTable,name,optionList);
-                    break;
-                case NUM_LONG:
-                    ast().makeLongSymbol(symbolTable,name,optionList);
-                    break;
-                case CHARACTER:
-                    ast().makeCharSymbol(symbolTable,name,optionList);
-                    break;
-                case NUM_DOUBLE:
-                    ast().makeDoubleSymbol(symbolTable,name,optionList);
-                    break;
-                case STRING:
-                    ast().makeStringSymbol(symbolTable,name,optionList);
-                    break;
-                default:
-                }
-            }
+headConstant [LinkedList optionList] returns [TomName result]
+{ 
+    result = null; 
+		Token t;
+} : 
+        t=constant // add to symbol table
+{
+	String name = t.getText();
+	int line = t.getLine();
+	text.append(name);
+	setLastLine(line);
+	result = `Name(name);
+	optionList.add(`OriginTracking(result,line, Name(currentFile())));
+
+	switch(t.getType()){
+							case NUM_INT:
+								ast().makeIntegerSymbol(symbolTable,name,optionList);
+								break;
+							case NUM_LONG:
+								ast().makeLongSymbol(symbolTable,name,optionList);
+								break;
+							case CHARACTER:
+								ast().makeCharSymbol(symbolTable,name,optionList);
+								break;
+							case NUM_DOUBLE:
+								ast().makeDoubleSymbol(symbolTable,name,optionList);
+								break;
+							case STRING:
+								ast().makeStringSymbol(symbolTable,name,optionList);
+								break;
+							default:
+						}
         }
-    ;
+;
 
 // Operator Declaration
 operator returns [Declaration result] throws TomException

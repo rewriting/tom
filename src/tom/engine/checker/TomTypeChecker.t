@@ -312,26 +312,27 @@ public class TomTypeChecker extends TomChecker {
   
   private void verifyVariableTypeListCoherence(ArrayList list) {
     // compute multiplicities
-    HashSet set = new HashSet();
+		//System.out.println("list = " + list);
     HashMap map = new HashMap();
     Iterator it = list.iterator();
     while(it.hasNext()) {
       TomTerm variable = (TomTerm)it.next();
       TomName name = variable.getAstName();
       
-      if(set.contains(name.getString())) {
+      if(map.containsKey(name)) {
         TomTerm var = (TomTerm)map.get(name);
-        TomType type = var.getAstType();
+        TomType type1 = var.getAstType();
         TomType type2 = variable.getAstType();
 
-        if(!(type==type2)) {
+				//System.out.println("var1 = " + var);
+				//System.out.println("var2 = " + variable);
+        if(!(type1==type2)) {
           messageError(findOriginTrackingLine(variable.getOption()),
                        TomMessage.incoherentVariable.getMessage(),
-                       new Object[]{name.getString(), type.getTomType().getString(), type2.getTomType().getString()});
+                       new Object[]{name.getString(), type1.getTomType().getString(), type2.getTomType().getString()});
         }
       } else {
         map.put(name, variable);
-        set.add(name.getString());
       }
     }
   }  //verifyVariableTypeListCoherence  

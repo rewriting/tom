@@ -66,11 +66,11 @@ public class TestStrategy extends TestCase {
     //VisitableVisitor rule7 = new S7();
     
     try{
-      assertSame("g(a,a) return a", MuTraveler.init(`rule0).visit(`g(a,a)), `a);
-      assertSame("a return b", MuTraveler.init(`rule1).visit(`a), `b);
-      assertSame("g(a,a) return a", MuTraveler.init(`rule2).visit(`g(a,a)), `a);
-      assertSame("g(a,a) return a", MuTraveler.init(`rule3).visit(`g(a,a)), `a);
-      assertSame("g(a,a) return a", MuTraveler.init(`rule5).visit(`g(a,a)), `a);
+      assertSame("g(a,a) return a", MuTraveler.init(`rule0).visit(`g(a(),a())), `a());
+      assertSame("a return b", MuTraveler.init(`rule1).visit(`a()), `b());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule2).visit(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule3).visit(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule5).visit(`g(a(),a())), `a());
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
@@ -85,7 +85,7 @@ public class TestStrategy extends TestCase {
   //with parameter
   %strategy S1(b:boolean) extends `Identity() {
     visit Term {
-      a()          -> { return `b; }
+      a()          -> { return `b(); }
     }
   }
 
@@ -113,7 +113,7 @@ public class TestStrategy extends TestCase {
       g(x,x)            -> { return `x; }
     }
     visit Term1 {
-      e()            -> { return `e; }
+      e()            -> { return `e(); }
     }
   }
 

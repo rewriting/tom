@@ -82,7 +82,8 @@ public class TomKernelExpander extends TomBase {
           throw new TomRuntimeException("expandVariable: null contextSubject");
         }
 
-          //System.out.println("expandVariable:\n\t" + subject );
+				//System.out.println("expandVariable: " + subject );
+				//System.out.println("contextSubject: " + contextSubject);
 				%match(Option subject) {
 					OriginTracking[] -> { return subject; }
 				}
@@ -140,15 +141,44 @@ public class TomKernelExpander extends TomBase {
 					}
 				} //end match
 				%match(Instruction subject) {
-					MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(_))],
-						rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
-							// rhs is a variable
-							TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+					MatchingCondition[lhs=lhs@Variable[astName=Name(_), astType=lhsType],
+						                rhs=rhs@Variable[astName=Name(_), astType=rhsType]] -> {
+							TomTerm newLhs = `expandVariable(TomTypeToTomTerm(rhsType),lhs);
 							return `MatchingCondition(newLhs,rhs);
 						}
 
+					MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName))],
+						                rhs=rhs@Variable[astName=Name(_), astType=rhsType]] -> {
+							TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
+							TomType type;
+							if(lhsSymbol != null) {
+								type = getSymbolCodomain(lhsSymbol);
+							} else {
+								throw new TomRuntimeException("lhs has an unknown sort: " + `lhsName);
+							}
+
+							TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+							TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
+							return `MatchingCondition(newLhs,newRhs);
+						}
+					
+					MatchingCondition[lhs=lhs@Variable[astName=Name(_), astType=lhsType],
+						                rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
+							TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
+							TomType type;
+							if(rhsSymbol != null) {
+								type = getSymbolCodomain(rhsSymbol);
+							} else {
+								throw new TomRuntimeException("rhs has an unknown sort: " + `rhsName);
+							}
+
+							TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+							TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
+							return `MatchingCondition(newLhs,newRhs);
+						}
+
 					MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName),_*)],
-						rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
+						                rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
 							TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
 							TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
 							TomType type;
@@ -314,6 +344,12 @@ public class TomKernelExpander extends TomBase {
 						// create a variable
 						return `Variable(option,astName,type,expandVariableConstraintList(context,constraints));
 					}
+					
+					Variable[astType=type1] , Variable[option=option,astName=astName,astType=TomTypeAlone[],constraints=constraints] -> {
+						ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type1),`constraints);
+						// create a variable
+						return `Variable(option,astName,type1,newConstraints);
+					} 
 
 					_, Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType),constraints=constraints] -> {
 						// create a variable
@@ -477,6 +513,9 @@ public class TomKernelExpander extends TomBase {
 				//System.out.println("subject = " + subject);
 				%match(TomList instantiatedVariable, TomTerm subject) {
 					concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*), RecordAppl[nameList=(opNameAST),slots=concSlot()] -> {
+						return `var;
+					}
+					concTomTerm(_*,var@Variable[astName=opNameAST] ,_*), Variable[astName=opNameAST] -> {
 						return `var;
 					}
 					concTomTerm(_*,var@VariableStar[astName=opNameAST] ,_*), VariableStar[astName=opNameAST] -> {

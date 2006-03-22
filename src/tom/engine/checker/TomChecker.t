@@ -74,6 +74,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected final static int VARIABLE_STAR           = 6;
   protected final static int UNAMED_VARIABLE_STAR    = 7;
   protected final static int PLACE_HOLDER            = 8;
+  protected final static int VARIABLE                = 9;
   
   protected boolean strictType = false;
   protected Option currentTomStructureOrgTrack;
@@ -96,6 +97,7 @@ abstract public class TomChecker extends TomGenericPlugin {
       XMLAppl[] -> { return XML_APPL;}
       Placeholder[] -> { return PLACE_HOLDER;}
       VariableStar[] -> { return VARIABLE_STAR;}
+      Variable[] -> { return VARIABLE;}
       UnamedVariableStar[] -> { return UNAMED_VARIABLE_STAR;}
     }
 		throw new TomRuntimeException("Invalid Term");
@@ -138,7 +140,7 @@ abstract public class TomChecker extends TomGenericPlugin {
         return dijunctionName;
       }
       Placeholder[]               ->{ return "_";}
-      VariableStar[astName=Name(name)]              ->{ return `name+"*";}
+      (Variable|VariableStar)[astName=Name(name)]              ->{ return `name+"*";}
       UnamedVariableStar[] ->{ return "_*";}
     }
 		throw new TomRuntimeException("Invalid Term");

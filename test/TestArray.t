@@ -92,8 +92,8 @@ public class TestArray extends TestCase {
 		res.add(tc);
 		this.sortedlist = res;
 					
-		this.listwithdoubles = `conc(a,b,c,a,b,c,a);
-		this.listwithoutdoubles = `conc(a,b,c);
+		this.listwithdoubles = `conc(a(),b(),c(),a(),b(),c(),a());
+		this.listwithoutdoubles = `conc(a(),b(),c());
 					
 	}
 
@@ -211,7 +211,7 @@ public class TestArray extends TestCase {
 
   public void testVariableStar1() {
     int nbSol = 0;
-    ArrayList l = `conc(a,b);
+    ArrayList l = `conc(a(),b());
 		%match(L l) {
       conc(X1*,X2*,X3*) -> {
         nbSol++;

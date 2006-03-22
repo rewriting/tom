@@ -98,7 +98,7 @@
  */
 
   %op VisitableVisitor Try(s1:VisitableVisitor) {
-    make(v) { `Choice(v,Identity) }
+    make(v) { `Choice(v,Identity()) }
   }
 
   %op VisitableVisitor TopDown(s1:VisitableVisitor) {

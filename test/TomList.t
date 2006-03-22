@@ -155,8 +155,8 @@ public class TomList {
   }
  
   public void testList2() {
-    ATermList l   = `conc(a,b,c,a,b,c,a);
-    ATermList res = `conc(a,b,c);
+    ATermList l   = `conc(a(),b(),c(),a(),b(),c(),a());
+    ATermList res = `conc(a(),b(),c());
     
     assertTrue(double1(sort1(l)) == res);
 

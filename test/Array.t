@@ -93,8 +93,8 @@ public class Array {
   }
 
   public void testArray2() {
-    ArrayList l   = `conc(a,b,c,a,b,c,a);
-    ArrayList res = `conc(a,b,c);
+    ArrayList l   = `conc(a(),b(),c(),a(),b(),c(),a());
+    ArrayList res = `conc(a(),b(),c());
     
     assertTrue(double1(sort1(l)).equals(res));
     assertTrue(double2(sort2(l)).equals(res));
