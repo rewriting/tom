@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 public class Collections {
 
-  %include {ArrayList.tom}
+  %include { java/util/ArrayList.tom }
 
   public final static void main(String[] args) {
     Collections test = new Collections();

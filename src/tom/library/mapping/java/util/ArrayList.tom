@@ -47,11 +47,16 @@
  * We use shallow copy for the get_tail operation, so be cautious about side
  * effects
  */
-%oplist ArrayList concArrayList(Object*) {
+%oparray ArrayList concArrayList(Object*) {
   is_fsym(l)       { (l!= null) && (l instanceof java.util.ArrayList) }
-  make_empty()     { new java.util.ArrayList() }
-  make_insert(o,l) { l.add(o) }
-  get_head(l)      { l.get(0) }
-  get_tail(l)      { l.clone().remove(0) }
-  is_empty(l)      { (s.size()==0) }
+  make_empty(n)    { new java.util.ArrayList(n) }
+  make_append(o,l) { concArrayListAppend(o,l) }
+  get_element(l,n) { l.get(n) }
+  get_size(l)      { l.size() }
+}
+
+private static ArrayList concArrayListAppend(Object o, ArrayList l) {
+  ArrayList res = (ArrayList)l.clone();
+	res.add(o);
+	return res;
 }
