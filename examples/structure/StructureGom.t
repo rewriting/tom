@@ -505,7 +505,7 @@ public class StructureGom {
     final HashSet negative = new HashSet();
     collectAtom(subject, positive,negative);
 
-    if(subject == `o) {
+    if(subject == `o()) {
       return true;
     } else if(positive.size() != negative.size()) {
       //System.out.print("#pos = " + positive.size());
