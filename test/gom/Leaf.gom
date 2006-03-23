@@ -1,0 +1,4 @@
+module Leaf
+abstract syntax
+Leaf = Leaf()
+     | Label(s:String)

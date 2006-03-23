@@ -23,14 +23,14 @@ public class TestImport extends TestCase {
   }
 
   public void testStrat() {
-    Out test = `Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())));
+    Out test = `Loop(Loop(Pack(Atom()),LeafSlot(Leaf())),Element(Element(Atom())));
     Collection set = new ArrayList(); /* Make sure we count all inserts */
     try {
       `BottomUp(Count(set)).visit(test);
     } catch (Exception e) {
       fail(e + " catched");
     }
-    assertEquals(5,set.size());
+    assertEquals(4,set.size());
   }
 
   %strategy Count(col:Collection) extends `Identity() {
