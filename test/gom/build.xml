@@ -55,6 +55,7 @@
          <include name="JavaHook.gom"/>
          <include name="Bool.gom"/>
          <include name="ML.gom"/>
+         <include name="Importing.gom"/>
     </gom>
     <tom config="${tomconfigfile}"
          srcdir="${src}"

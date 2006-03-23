@@ -1,4 +1,4 @@
-module Expr
+module ML
 sorts Bool Expr
 abstract syntax
 
