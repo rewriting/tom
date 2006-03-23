@@ -43,10 +43,15 @@ public class Collections {
 
   public ArrayList run() {
     ArrayList list = `concArrayList();
+    ArrayList res = `concArrayList();
 
-    list = `concArrayList("one","two","three");
+    list = `concArrayList("one","two","three","four");
 
-    return list;
+    %match(ArrayList list) {
+      (_*,x,_*)   -> { res = `concArrayList((String)x+" thing",res*); }
+    }
+
+    return res;
   }
 
 }
