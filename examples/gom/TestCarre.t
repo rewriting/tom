@@ -22,6 +22,9 @@ public class TestCarre extends TestCase {
   %include { mutraveler.tom }
   %include { rond/Rond.tom }
 
+  %typeterm ArrayList {
+    implement { ArrayList }
+  }
   %typeterm Carre {
     implement { gom.Carre }
     equals(t1,t2) { t1.equals(t2) }

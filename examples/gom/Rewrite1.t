@@ -51,8 +51,8 @@ public class Rewrite1 {
 
   private Term globalSubject = null;
   public void run() {
-    //Term subject = `g(d,d);
-    Term subject = `f(g(g(a,b),g(a,a)));
+    //Term subject = `g(d(),d());
+    Term subject = `f(g(g(a(),b()),g(a(),a())));
     globalSubject = subject;
 
     VisitableVisitor rule = new RewriteSystem();
