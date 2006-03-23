@@ -106,12 +106,22 @@ public class GomBackend {
         visitor.generateFile();
         return 1;
       }
-      AbstractTypeClass[className=className,factoryName=factory,visitor=visitorName,acceptableVisitors=acceptableVisitors,sortList=sortList] -> {
+      AbstractTypeClass[className=className,
+                        factoryName=factory,
+                        visitor=visitorName,
+                        acceptableVisitors=acceptableVisitors,
+                        sortList=sortList] -> {
         TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(`className,`factory,`visitorName,`acceptableVisitors,`sortList);
         abstracttype.generateFile();
         return 1;
       }
-      SortClass[className=className,factoryName=factory,abstractType=abstracttype,visitor=visitorName,visitorsToAccept=acceptableVisitors,operators=ops,slots=slots] -> {
+      SortClass[className=className,
+                factoryName=factory,
+                abstractType=abstracttype,
+                visitor=visitorName,
+                visitorsToAccept=acceptableVisitors,
+                operators=ops,
+                slots=slots] -> {
         TemplateClass sort = templatefactory.makeSortTemplate(`className,`factory,`abstracttype,`visitorName,`acceptableVisitors,`ops,`slots);
         sort.generateFile();
         return 1;
@@ -141,7 +151,10 @@ public class GomBackend {
   public TemplateClass getMappingTemplate(GomClass mapping) {
     TemplateClass mappingTemplate = null;
     %match(GomClass mapping) {
-      TomMapping[className=mappingName,basicStrategy=basicStrategy,sortClasses=sortClasses,operatorClasses=ops] -> {
+      TomMapping[className=mappingName,
+                 basicStrategy=basicStrategy,
+                 sortClasses=sortClasses,
+                 operatorClasses=ops] -> {
         mappingTemplate = templatefactory.makeTomMappingTemplate(`mappingName,`basicStrategy,`sortClasses,`ops);
       }
     }
