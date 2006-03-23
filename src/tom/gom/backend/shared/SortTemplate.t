@@ -28,7 +28,6 @@ import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
 
 public class SortTemplate extends TemplateClass {
-  ClassName factoryName;
   ClassName abstractType;
   ClassName visitor;
   ClassNameList visitorsToAccept;
@@ -36,14 +35,12 @@ public class SortTemplate extends TemplateClass {
   SlotFieldList slotList;
 
   public SortTemplate(ClassName className,
-                      ClassName factoryName,
                       ClassName abstractType,
                       ClassName visitor,
                       ClassNameList visitorsToAccept,
                       ClassNameList operatorList,
                       SlotFieldList slots) {
     super(className);
-    this.factoryName = factoryName;
     this.abstractType = abstractType;
     this.visitor = visitor;
     this.visitorsToAccept = visitorsToAccept;

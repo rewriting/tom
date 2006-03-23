@@ -32,7 +32,6 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
 public class OperatorTemplate extends TemplateClass {
-  ClassName factoryName;
   ClassName abstractType;
   ClassName sortName;
   ClassName visitor;
@@ -43,7 +42,6 @@ public class OperatorTemplate extends TemplateClass {
   %include { ../../adt/objects/Objects.tom}
 
   public OperatorTemplate(ClassName className,
-                          ClassName factoryName,
                           ClassName abstractType,
                           ClassName sortName,
                           ClassName visitor,
@@ -51,7 +49,6 @@ public class OperatorTemplate extends TemplateClass {
                           HookList hooks,
                           TemplateClass mapping) {
     super(className);
-    this.factoryName = factoryName;
     this.abstractType = abstractType;
     this.sortName = sortName;
     this.visitor = visitor;

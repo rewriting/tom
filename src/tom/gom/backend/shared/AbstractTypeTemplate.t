@@ -28,14 +28,12 @@ import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
 
 public class AbstractTypeTemplate extends TemplateClass {
-  ClassName factoryName;
   ClassName visitor;
   ClassNameList acceptableVisitors;
   ClassNameList sortList;
 
-  public AbstractTypeTemplate(ClassName className, ClassName factoryName, ClassName visitor, ClassNameList acceptableVisitors, ClassNameList sortList) {
+  public AbstractTypeTemplate(ClassName className, ClassName visitor, ClassNameList acceptableVisitors, ClassNameList sortList) {
     super(className);
-    this.factoryName = factoryName;
     this.visitor = visitor;
     this.acceptableVisitors = acceptableVisitors;
     this.sortList = sortList;

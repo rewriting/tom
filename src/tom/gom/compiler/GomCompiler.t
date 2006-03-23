@@ -62,7 +62,6 @@ public class GomCompiler {
     GomClassList classList = `concGomClass();
 
     Map abstractTypeNameForModule = new HashMap();
-    Map factoryNameForModule = new HashMap();
     Map visitorNameForModule = new HashMap();
     Map visitableForwardNameForModule = new HashMap();
     Map tomMappingNameForModule = new HashMap();
@@ -78,10 +77,6 @@ public class GomCompiler {
       ClassName abstractTypeName = `ClassName(
           packagePrefix(moduleDecl),
           moduleName+"AbstractType");
-      ClassName factoryName = `ClassName(
-          packagePrefix(moduleDecl),
-          moduleName+"Factory");
-      factoryNameForModule.put(moduleDecl,factoryName);
 
       ClassName visitorName = `ClassName(packagePrefix(moduleDecl),moduleName+"Visitor");
       visitorNameForModule.put(moduleDecl,visitorName);
@@ -120,7 +115,6 @@ public class GomCompiler {
         Sort[decl=sortDecl@SortDecl[moduleDecl=moduleDecl],operators=oplist] -> {
           ClassName sortClassName = (ClassName)sortClassNameForSortDecl.get(`sortDecl);
           ClassName abstracttypeName = (ClassName)abstractTypeNameForModule.get(`moduleDecl);
-          ClassName factoryName = (ClassName)factoryNameForModule.get(`moduleDecl);
           ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDecl);
           ClassName visitableforwardName = (ClassName)visitableForwardNameForModule.get(`moduleDecl);
           ClassName mappingName = (ClassName)tomMappingNameForModule.get(`moduleDecl);
@@ -153,7 +147,7 @@ public class GomCompiler {
                   operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Cons");
 
                   allOperators = `concClassName(empty,allOperators*);
-                  GomClass emptyClass = `OperatorClass(empty,factoryName,abstracttypeName,mappingName,sortClassName,visitorName,concSlotField(),concHook());
+                  GomClass emptyClass = `OperatorClass(empty,abstracttypeName,mappingName,sortClassName,visitorName,concSlotField(),concHook());
                   classForOperatorDecl.put(`opdecl,emptyClass);
                   classList = `concGomClass(emptyClass,classList*);
                 }
@@ -169,7 +163,6 @@ public class GomCompiler {
               HookList operatorHooks = makeHooksFromHookDecls(`hookList);
               if (empty!= null) { // We just processed a variadic operator
                 operatorClass = `VariadicOperatorClass(operatorClassName,
-                                                       factoryName,
                                                        abstracttypeName,
                                                        mappingName,
                                                        sortClassName,
@@ -178,7 +171,6 @@ public class GomCompiler {
                                                        operatorHooks);
               } else {
                 operatorClass = `OperatorClass(operatorClassName,
-                                               factoryName,
                                                abstracttypeName,
                                                mappingName,
                                                sortClassName,
@@ -191,7 +183,6 @@ public class GomCompiler {
           }
           // create the sort class and add it to the list
           GomClass sortClass = `SortClass(sortClassName,
-                                          factoryName,
                                           abstracttypeName,
                                           visitorName,
                                           allClassForImports(visitorNameForModule,moduleDecl),
@@ -204,27 +195,14 @@ public class GomCompiler {
       }
     }
 
-    // Create the factories in the end, so that we know all names
-    // For each module
     it = getModuleDeclSet(sortList).iterator();
     while(it.hasNext()) {
       ModuleDecl moduleDecl = (ModuleDecl) it.next();
       String moduleName = moduleDecl.getModuleName().getName();
 
-      // We get all Operator Classes for this module, and all modules imported by this one
-      ClassNameList importedFactories = `concClassName();
-      ModuleDeclList modlist = environment().getModuleDependency(moduleDecl);
-      while(!modlist.isEmpty()) {
-        ModuleDecl imported = modlist.getHead();
-        modlist = modlist.getTail();
-        if (!imported.equals(moduleDecl)) {
-          ClassName importedclass = (ClassName)factoryNameForModule.get(imported);
-          importedFactories = `concClassName(importedclass,importedFactories*);
-        }
-      }
       GomClassList allOperatorClasses = `concGomClass();
       GomClassList allSortClasses = `concGomClass();
-      modlist = environment().getModuleDependency(moduleDecl);
+      ModuleDeclList modlist = environment().getModuleDependency(moduleDecl);
       while(!modlist.isEmpty()) {
         ModuleDecl imported = modlist.getHead();
         modlist = modlist.getTail();
@@ -248,10 +226,7 @@ public class GomCompiler {
         }
       }
 
-      ClassName factoryClassName = (ClassName)factoryNameForModule.get(moduleDecl);
       ClassName abstractTypeClassName = (ClassName)abstractTypeNameForModule.get(moduleDecl);
-      GomClass factoryClass = `FactoryClass(factoryClassName,importedFactories,allSortClasses,allOperatorClasses);
-      classList = `concGomClass(factoryClass,classList*);
 
       // late creation of the visitors, since it has to know all operators
       ClassName visitorName = (ClassName) visitorNameForModule.get(moduleDecl);
@@ -288,7 +263,7 @@ public class GomCompiler {
       ClassNameList classSortList = sortClassNames(sortList);
       ClassNameList visitorsToAccept = allClassForImports(visitorNameForModule,moduleDecl);
       ClassName abstractTypeName = (ClassName) abstractTypeNameForModule.get(moduleDecl);
-      GomClass abstracttype = `AbstractTypeClass(abstractTypeName,factoryClassName,visitorName,visitorsToAccept,classSortList);
+      GomClass abstracttype = `AbstractTypeClass(abstractTypeName,visitorName,visitorsToAccept,classSortList);
       classList = `concGomClass(abstracttype,classList*);
 
       /* create a TomMapping */
