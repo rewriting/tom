@@ -32,177 +32,180 @@ import java.io.Writer;
 import tom.platform.OptionManager;
 
 public class OutputCode {
-  protected Writer file;
-  private OptionManager optionManager;
+	protected Writer file;
+	private OptionManager optionManager;
 
-  private int lineCounter = 1;
-  private int singleLine = 0;
+	private int lineCounter = 1;
+	private int singleLine = 0;
 
-  public OutputCode(Writer file, OptionManager optionManager) {
-    this.file = file;
-    this.optionManager = optionManager;
-  }
+	private boolean pretty = false;
 
-  public OutputCode() {
-    this.file = new StringWriter();
-  }
+	public OutputCode(Writer file, OptionManager optionManager) {
+		this.file = file;
+		this.optionManager = optionManager; 
+		this.pretty = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
+	}
 
-  public void setSingleLine() {
-    this.singleLine++;
-  }
+	public OutputCode() {
+		this.file = new StringWriter();
+	}
 
-  public void unsetSingleLine() {
-    this.singleLine--;
-  }
+	public void setSingleLine() {
+		this.singleLine++;
+	}
 
-  public Writer getFile() {
-    return file;
-  }
+	public void unsetSingleLine() {
+		this.singleLine--;
+	}
 
-  public void writeSpace() throws IOException {
-    file.write(' ');
-  }
-  public void writeOpenBrace() throws IOException {
-    file.write('(');
-  }
-  public void writeCloseBrace() throws IOException {
-    file.write(')');
-  }
-  public void writeComa() throws IOException {
-    file.write(',');
-  }
-  public void writeSemiColon() throws IOException {
-    file.write(';');
-  }
-  public void writeUnderscore() throws IOException {
-    file.write('_');
-  }
+	public Writer getFile() {
+		return file;
+	}
 
-  public void write(String s) throws IOException {
-    try {
-      file.write(s);
-    } catch (IOException e) {
-      System.out.println("write error");
-      e.printStackTrace();
-    }
-  }
+	public void writeSpace() throws IOException {
+		file.write(' ');
+	}
+	public void writeOpenBrace() throws IOException {
+		file.write('(');
+	}
+	public void writeCloseBrace() throws IOException {
+		file.write(')');
+	}
+	public void writeComa() throws IOException {
+		file.write(',');
+	}
+	public void writeSemiColon() throws IOException {
+		file.write(';');
+	}
+	public void writeUnderscore() throws IOException {
+		file.write('_');
+	}
 
-  public void write(int n) throws IOException {
-    write(Integer.toString(n));
-  }
+	public void write(String s) throws IOException {
+		try {
+			file.write(s);
+		} catch (IOException e) {
+			System.out.println("write error");
+			e.printStackTrace();
+		}
+	}
 
-  public void write(int deep,String s) throws IOException {
-    indent(deep);
-    write(s);
-  }
+	public void write(int n) throws IOException {
+		write(Integer.toString(n));
+	}
 
-  public void writeln() throws IOException {
-    if(((Boolean)optionManager.getOptionValue("pretty")).booleanValue()) {
-      file.write('\n');
-    }
-  }
+	public void write(int deep,String s) throws IOException {
+		indent(deep);
+		write(s);
+	}
 
-  public void writeln(String s) throws IOException {
-    write(s);
-    writeln();
-  }
+	public void writeln() throws IOException {
+		if(pretty) {
+			file.write('\n');
+		}
+	}
 
-  public void writeln(int deep,String s) throws IOException {
-    write(deep,s);
-    writeln();
-  }
+	public void writeln(String s) throws IOException {
+		write(s);
+		writeln();
+	}
 
-  public void write(StringBuffer s) throws IOException {
-    write(s.toString());
-  }
+	public void writeln(int deep,String s) throws IOException {
+		write(deep,s);
+		writeln();
+	}
 
-  public void write(int deep,StringBuffer s) throws IOException {
-    write(deep,s.toString());
-  }
+	public void write(StringBuffer s) throws IOException {
+		write(s.toString());
+	}
 
-  public void writeln(StringBuffer s) throws IOException {
-    writeln(s.toString());
-  }
+	public void write(int deep,StringBuffer s) throws IOException {
+		write(deep,s.toString());
+	}
 
-  public void writeln(int deep,StringBuffer s) throws IOException {
-    writeln(deep,s.toString());
-  }
+	public void writeln(StringBuffer s) throws IOException {
+		writeln(s.toString());
+	}
 
-  public void write(StringBuffer s, int line, int length) throws IOException {
-    write(s.toString(), line, length);
-  }
+	public void writeln(int deep,StringBuffer s) throws IOException {
+		writeln(deep,s.toString());
+	}
 
-  public void write(String s, int line, int length) throws IOException {
-    if(singleLine>0 && !((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
-      s = s.replace('\n', ' ');
-      s = s.replace('\r', ' ');
-      s = s.replace('\t', ' ');
-      write(s);
-      return;
-    }
-    if (!((Boolean)optionManager.getOptionValue("pretty")).booleanValue()) {
-      if(lineCounter > line) {
-        if(((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
-          String s1 = "\n#line "+line+"\n";
-            // writeln(deep,s);
-          s = s1+s;
-        } else { // Java Stuff
-          length = 0;
-          s = s.replace('\n', ' ');
-          s = s.replace('\r', ' ');
-          s = s.replace('\t', ' ');
-            //System.out.println("remove:"+s);
-        }
-      } else if(lineCounter < line) {
-        while(lineCounter < line) {
-          write("\n");
-          lineCounter++;
-        }
-      }
-      lineCounter+= length;
-    }
-    write(s);
-  }
+	public void write(StringBuffer s, int line, int length) throws IOException {
+		write(s.toString(), line, length);
+	}
 
-  public void close() {
-    try {
-      file.flush();
-      file.close();
-    } catch (IOException e) {
-      System.out.println("close error");
-      e.printStackTrace();
-    }
-  }
+	public void write(String s, int line, int length) throws IOException {
+		if(singleLine>0 && !((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
+			s = s.replace('\n', ' ');
+			s = s.replace('\r', ' ');
+			s = s.replace('\t', ' ');
+			write(s);
+			return;
+		}
+		if (!pretty){
+			if(lineCounter > line) {
+				if(((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
+					String s1 = "\n#line "+line+"\n";
+					// writeln(deep,s);
+					s = s1+s;
+				} else { // Java Stuff
+					length = 0;
+					s = s.replace('\n', ' ');
+					s = s.replace('\r', ' ');
+					s = s.replace('\t', ' ');
+					//System.out.println("remove:"+s);
+				}
+			} else if(lineCounter < line) {
+				while(lineCounter < line) {
+					write("\n");
+					lineCounter++;
+				}
+			}
+			lineCounter+= length;
+		}
+		write(s);
+	}
 
-  public String stringDump() {
-    try {
-      if(file instanceof StringWriter) {
-  file.flush();
-  return file.toString();
-      } else {
-  throw new InternalError("OutputCode does not contain any string");
-      }
-    } catch (IOException e) {
-      System.out.println("stringDump error");
-      e.printStackTrace();
-      return null;
-    }
-  }
+	public void close() {
+		try {
+			file.flush();
+			file.close();
+		} catch (IOException e) {
+			System.out.println("close error");
+			e.printStackTrace();
+		}
+	}
 
-  public void indent(int deep) {
-    try {
-      if(((Boolean)optionManager.getOptionValue("pretty")).booleanValue()) {
-        for(int i=0 ; i<deep ; i++) {
-          file.write(' ');
-          file.write(' ');
-        }
-      } else {
-        file.write(' ');
-      }
-    } catch (IOException e) {
-      System.out.println("write error");
-      e.printStackTrace();
-    }
-  }
+	public String stringDump() {
+		try {
+			if(file instanceof StringWriter) {
+				file.flush();
+				return file.toString();
+			} else {
+				throw new InternalError("OutputCode does not contain any string");
+			}
+		} catch (IOException e) {
+			System.out.println("stringDump error");
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void indent(int deep) {
+		try {
+			if(pretty) {
+				for(int i=0 ; i<deep ; i++) {
+					file.write(' ');
+					file.write(' ');
+				}
+			} else {
+				file.write(' ');
+			}
+		} catch (IOException e) {
+			System.out.println("write error");
+			e.printStackTrace();
+		}
+	}
 
 }
