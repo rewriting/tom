@@ -232,20 +232,10 @@ public class GomCompiler {
       GomClass visitorclass = `VisitorClass(visitorName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(visitorclass,classList*);
 
-      // We get all AbstractType Classes for this module, and those from imported modules
-      ClassNameList importedAbstractType = `concClassName();
-      ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDecl);
-      while(!importedModulelist.isEmpty()) {
-        ModuleDecl imported = importedModulelist.getHead();
-        importedModulelist = importedModulelist.getTail();
-        if (!imported.equals(moduleDecl)) {
-          ClassName importedclass = (ClassName)abstractTypeNameForModule.get(imported);
-          importedAbstractType = `concClassName(importedclass,importedAbstractType*);
-        }
-      }
       /* create a Fwd class */
       ClassNameList importedVisitors = allClassForImports(visitorNameForModule,moduleDecl);
       ClassName fwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"Forward");
+      ClassNameList importedAbstractType = allClassForImports(abstractTypeNameForModule,moduleDecl);
       GomClass fwdclass = `FwdClass(fwdName,visitorName,importedVisitors,abstractTypeClassName,importedAbstractType,allSortClasses,allOperatorClasses);
       classList = `concGomClass(fwdclass,classList*);
 
