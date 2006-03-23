@@ -1,6 +1,5 @@
 /*
- *
- * GOM
+ * Gom
  *
  * Copyright (C) 2006 INRIA
  * Nancy, France.
@@ -66,6 +65,8 @@ public class GomExpander {
     Set alreadyParsedModule = new HashSet();
     alreadyParsedModule.add(module.getModuleName());
     Set moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
+    getLogger().log(Level.FINER, "GomExpander:moduleToAnalyse {0}",
+        new Object[]{moduleToAnalyse});
 
     while (!moduleToAnalyse.isEmpty()) {
       HashSet newModuleToAnalyse = new HashSet();
@@ -83,7 +84,7 @@ public class GomExpander {
           }
           result = `concGomModule(result*, importedModule);
           alreadyParsedModule.add(moduleNameName);
-          newModuleToAnalyse.addAll(generateModuleToAnalyseSet(module, alreadyParsedModule));
+          newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
         }
       }
       moduleToAnalyse = newModuleToAnalyse;
@@ -109,6 +110,8 @@ public class GomExpander {
   }
 
   private GomModule parse(String moduleName) {
+    getLogger().log(Level.FINE, "Seeking for file {0}",
+        new Object[]{moduleName});
     GomModule result = null;
     File importedModuleFile = findModuleFile(moduleName);
     if(importedModuleFile == null) {
