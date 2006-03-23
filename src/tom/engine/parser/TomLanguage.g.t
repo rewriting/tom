@@ -880,12 +880,9 @@ xmlAttribute returns [TomTerm result] throws TomException
         (
             // _* | X*
             {LA(2) == STAR}?
-            result = variableStar[optionList,constraintList]
-            {varStar = true;}
-            //(variableStar[null,null]) => result = variableStar[optionList,constraintList]
+            result = variableStar[optionList,constraintList] {varStar = true;}
         |   // name = [anno2@](_|String|Identifier)
-            {LA(2) == EQUAL}?
-            id:ALL_ID EQUAL {text.append(id.getText()+"=");}
+            {LA(2) == EQUAL}?  id:ALL_ID EQUAL {text.append(id.getText()+"=");}
             (
                 {LA(2) == AT}? anno2:ALL_ID AT
                 {
@@ -923,7 +920,6 @@ xmlAttribute returns [TomTerm result] throws TomException
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
-                //slotList.add(tomFactory.metaEncodeXMLAppl(symbolTable,term));
                 // no longer necessary ot metaEncode Strings in attributes
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
                 optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile())));
@@ -1015,7 +1011,7 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
                 text.append(nameID.getText());
                 optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),Name(currentFile())));
                 option = ast().makeOptionList(optionList);
-                nameList = `concTomName(Name(nameID.getText()));
+                result = `Variable(option,Name(nameID.getText()),TomTypeAlone("unknown type"),concConstraint());
             }
         |
             nameString:STRING
@@ -1025,11 +1021,9 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
                 option = ast().makeOptionList(optionList);
                 ast().makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
+								result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
             }
         )
-        {
-            result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
-        }
     ;
 
 
