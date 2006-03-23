@@ -31,9 +31,7 @@ import tom.gom.adt.objects.types.*;
 public abstract class TemplateFactory {
 
   public static TemplateFactory getFactory(String mode) {
-    if (mode.equals("apigen")) {
-      return new ApigenTemplateFactory();
-    } else if (mode.equals("shared")) {
+    if (mode.equals("shared")) {
       return new SharedTemplateFactory();
     } else {
       throw new GomRuntimeException("Output mode "+mode+" not supported");
@@ -49,38 +47,6 @@ public abstract class TemplateFactory {
   public abstract TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName visitor, ClassNameList visitorsToAccept, ClassNameList operators, SlotFieldList slots);
   public abstract TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks,TemplateClass mapping);
   public abstract TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses);
-
-}
-
-class ApigenTemplateFactory extends TemplateFactory {
-
-  public TemplateClass makeTomMappingTemplate(ClassName className, ClassName basicStrategy, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.apigen.TemplateMapping(className,sortClasses,opClasses);
-  }
-  public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, ClassNameList importedAbstract, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.apigen.TemplateFwd(className, visitor, abstractType, sortClasses, opClasses);
-  }
-  public TemplateClass makeForwardVoidTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.apigen.TemplateVoidFwd(className, visitor, abstractType, sortClasses, opClasses);
-  }
-  public TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward) {
-    return new tom.gom.backend.apigen.TemplateVisitableFwd(className,forward);
-  }
-  public TemplateClass makeVisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.apigen.TemplateVisitor(className,sortClasses,opClasses);
-  }
-  public TemplateClass makeAbstractTypeTemplate(ClassName className, ClassName factory, ClassName visitor, ClassNameList acceptableVisitors, ClassNameList sortList) {
-    return new tom.gom.backend.apigen.TemplateAbstractType(className,factory,visitor,sortList);
-  }
-  public TemplateClass makeSortTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName visitor, ClassNameList visitorsToAccept, ClassNameList operators, SlotFieldList slots) {
-    return new tom.gom.backend.apigen.TemplateSort(className,factory,abstractType,visitor,operators,slots);
-  }
-  public TemplateClass makeOperatorTemplate(ClassName className, ClassName factory, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks, TemplateClass mapping) {
-    return new tom.gom.backend.apigen.TemplateOperator(className,factory,abstractType,sort,visitor,slots);
-  }
-  public TemplateClass makeFactoryTemplate(ClassName className, ClassNameList importedFactories, GomClassList sortClasses, GomClassList operatorClasses) {
-    return new tom.gom.backend.apigen.TemplateFactory(className,importedFactories,sortClasses,operatorClasses);
-  }
 }
 
 class SharedTemplateFactory extends TemplateFactory {
