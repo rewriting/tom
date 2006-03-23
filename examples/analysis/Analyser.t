@@ -132,18 +132,18 @@ public class Analyser{
 		Variable var_z = `Name("z");
 
 		InstructionList subject = `concInstruction(
-        If(True,
+        If(True(),
            concInstruction(),
            concInstruction(
-             LetRef(var_x,g(a),concInstruction(
-                 LetAssign(var_x,g(b)),
-                 LetAssign(var_x,f(a,b)),
+             LetRef(var_x,g(a()),concInstruction(
+                 LetAssign(var_x,g(b())),
+                 LetAssign(var_x,f(a(),b())),
                  Let(var_y,g(Var(var_x)),concInstruction())
                  )
              )
            )
         ),
-        Let(var_z,f(a,b),concInstruction())
+        Let(var_z,f(a(),b()),concInstruction())
     );
 
 		System.out.println("subject          = " + subject);
@@ -223,7 +223,6 @@ public class Analyser{
   }
 
   
-/**
    %strategy InnerNotUsed(v:Variable) extends `Identity(){
 	  visit Term {
 			t@Var(var) -> {
@@ -231,11 +230,10 @@ public class Analyser{
  			}
     }
    }
-*/
    
 
   // en attendant que le bug dans NodeForward soit fixé (ensuite on utilisera la strategie InnerNotUsed)
-  class InnerNotUsed extends NodeBasicStrategy{
+  /* class InnerNotUsed extends NodeBasicStrategy{
 
 
     Variable v;
@@ -256,7 +254,7 @@ public class Analyser{
 
       return super.visit(arg);
     }
-  } 
+  }*/ 
 	
   
 
