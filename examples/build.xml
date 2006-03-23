@@ -12,7 +12,7 @@
   <property name="javacTarget" value="1.4"/>
   <property name="nowarnings"  value="false"/>
   <property name="optimize"    value="on"/>
-  <property name="optimize2"   value="on"/>
+  <property name="optimize2"   value="off"/>
   <property name="verbose"     value="off"/>
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
