@@ -787,7 +787,7 @@
 	  boulderdash, builtin, caml, cell, dom, expression, ferus, gomoku,
 	  gterm, gtree, integerc, list, matching, master, mgs, nspk, p3p,
 	  peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set, strategy,
-	  strings, ted, tutorial, vas, xml, zenon">
+	  structure, strings, ted, tutorial, vas, xml, zenon">
   </target>
 
   <target name="dist.examples" 
