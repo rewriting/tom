@@ -249,11 +249,6 @@ public class GomCompiler {
       GomClass fwdclass = `FwdClass(fwdName,visitorName,importedVisitors,abstractTypeClassName,importedAbstractType,allSortClasses,allOperatorClasses);
       classList = `concGomClass(fwdclass,classList*);
 
-      /* create a VoidFwd class */
-      ClassName voidfwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"ForwardVoid");
-      GomClass voidfwdclass = `VoidFwdClass(voidfwdName,visitorName,abstractTypeClassName,allSortClasses,allOperatorClasses);
-      classList = `concGomClass(voidfwdclass,classList*);
-
       /* create a VisitableFwd class */
       ClassName visitablefwdName = (ClassName) visitableForwardNameForModule.get(moduleDecl);
       GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,fwdclass);

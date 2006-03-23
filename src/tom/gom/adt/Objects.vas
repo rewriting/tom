@@ -15,7 +15,6 @@ VariadicOperatorClass(className:ClassName,abstractType:ClassName,mapping:ClassNa
 
 VisitorClass(className:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 FwdClass(className:ClassName,visitor:ClassName,importedVisitors:ClassNameList,abstractType:ClassName,importedAbstractTypes:ClassNameList,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
-VoidFwdClass(className:ClassName,visitor:ClassName,abstractType:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 TomMapping(className:ClassName,basicStrategy:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 
 ClassName(pkg:String,name:String)  -> ClassName

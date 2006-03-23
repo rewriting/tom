@@ -38,7 +38,6 @@ public abstract class TemplateFactory {
 
   public abstract TemplateClass makeTomMappingTemplate(ClassName className, ClassName basicStrategy, GomClassList sortClasses, GomClassList opClasses);
   public abstract TemplateClass makeForwardTemplate(ClassName className, ClassName visitor, ClassNameList importedVisitors, ClassName abstractType, ClassNameList importedAbstract, GomClassList sortClasses, GomClassList opClasses);
-  public abstract TemplateClass makeForwardVoidTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses);
   public abstract TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward);
   public abstract TemplateClass makeVisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses);
   public abstract TemplateClass makeAbstractTypeTemplate(ClassName className, ClassName visitor, ClassNameList sortList);
@@ -53,9 +52,6 @@ class SharedTemplateFactory extends TemplateFactory {
   }
   public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor,ClassNameList importedVisitors, ClassName abstractType, ClassNameList importedAbstract,  GomClassList sortClasses, GomClassList opClasses) {
     return new tom.gom.backend.shared.ForwardTemplate(className, visitor, importedVisitors, abstractType, importedAbstract, sortClasses, opClasses);
-  }
-  public TemplateClass makeForwardVoidTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.shared.NullTemplate(className); // do not generate, as it is not used
   }
   public TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward) {
     return new tom.gom.backend.shared.BasicStrategyTemplate(className,forward);

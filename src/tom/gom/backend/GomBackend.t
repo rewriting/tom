@@ -97,11 +97,6 @@ public class GomBackend {
         fwd.generateFile();
         return 1;
       }
-      VoidFwdClass[className=className,visitor=visitorClass,abstractType=abstractType,sortClasses=sortClasses,operatorClasses=ops] -> {
-        TemplateClass voidfwd = templatefactory.makeForwardVoidTemplate(`className,`visitorClass,`abstractType,`sortClasses,`ops);
-        voidfwd.generateFile();
-        return 1;
-      }
       VisitableFwdClass[className=className,fwd=FwdClass[className=fwdClass]] -> {
         TemplateClass visitablefwd = templatefactory.makeVisitableForwardTemplate(`className,`fwdClass);
         visitablefwd.generateFile();
