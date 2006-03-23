@@ -100,7 +100,7 @@ public class GomTypeExpander {
       GomModule module = consum.getHead();
       consum = consum.getTail();
 
-      // iterate on the productions
+      // iterate through the productions
       %match(GomModule module) {
         GomModule(_,concSection(_*,
               Public(concGrammar(_*,Grammar(concProduction(_*,prod@Production[],_*)),_*)),
@@ -112,7 +112,7 @@ public class GomTypeExpander {
       }
 
       /*
-       * now that we have the definitions of all operators, we can attache them
+       * now that we have the definitions of all operators, we can attach them
        * the hooks
        */
       %match(GomModule module) {
@@ -138,11 +138,10 @@ public class GomTypeExpander {
   }
 
   private void attachHook(Production prod,
-      Map operatorsForSort) {
+                          Map operatorsForSort) {
     /* Find the operator corresponding to the hook, and attach its hook */
     %match(Production prod) {
       Hook[name=hookName] -> {
-
         Iterator it = operatorsForSort.keySet().iterator();
         while(it.hasNext()) {
           SortDecl decl = (SortDecl) it.next();
@@ -158,7 +157,8 @@ public class GomTypeExpander {
             }
           }
         }
-        getLogger().log(Level.SEVERE, GomMessage.orphanedHook.getMessage(), new Object[]{prod.getName()});
+        getLogger().log(Level.SEVERE, GomMessage.orphanedHook.getMessage(),
+            new Object[]{prod.getName()});
         return;
       }
     }
@@ -185,6 +185,10 @@ public class GomTypeExpander {
               KindMakeBeforeHook() -> {
                 newHook = `MakeBeforeHookDecl(typedArgs,hcode);
               }
+            }
+            if (newHook == null) {
+              throw new GomRuntimeException(
+                  "GomTypeExpander:typeOperatorHook unknown Hookkind: "+`hkind);
             }
             newOperator = `OperatorDecl(oname,osort,oprod,concHookDecl(newHook,ohooks*));
           }
@@ -358,7 +362,11 @@ public class GomTypeExpander {
       GomModule(moduleName,sectionList) -> {
         imports.add(`moduleName);
         %match(SectionList sectionList) {
-          concSection(_*,Imports(concImportedModule(_*,Import(modname@GomModuleName(name)),_*)),_*) -> {
+          concSection(_*,
+              Imports(concImportedModule(_*,
+                  Import(modname@GomModuleName(name)),
+                  _*)),
+              _*) -> {
             if (!environment().isBuiltin(`name)) {
               imports.add(`modname);
             }
@@ -400,20 +408,16 @@ public class GomTypeExpander {
   private void buildDependencyMap(GomModuleList moduleList) {
     %match(GomModuleList moduleList) {
       concGomModule(_*,module@GomModule[moduleName=name],_*) -> {
-        Collection imports = getTransitiveClosureImports(`module,moduleList);
-        environment().addModuleDependency(`ModuleDecl(name,packagePath),namesToModuleDecl(imports));
+        ModuleDeclList importsModuleDeclList = `concModuleDecl();
+        Iterator it = getTransitiveClosureImports(`module,moduleList).iterator();
+        while(it.hasNext()) {
+          GomModuleName importedModuleName = (GomModuleName) it.next();
+          importsModuleDeclList = `concModuleDecl(ModuleDecl(importedModuleName,packagePath),
+                                                  importsModuleDeclList*);
+        }
+        environment().addModuleDependency(`ModuleDecl(name,packagePath),importsModuleDeclList);
       }
     }
-  }
-
-  private ModuleDeclList namesToModuleDecl(Collection names) {
-    ModuleDeclList res = `concModuleDecl();
-    Iterator it = names.iterator();
-    while(it.hasNext()) {
-      GomModuleName name = (GomModuleName) it.next();
-      res = `concModuleDecl(ModuleDecl(name,packagePath),res*);
-    }
-    return res;
   }
 
   private String showSortList(Collection decls) {
@@ -430,7 +434,6 @@ public class GomTypeExpander {
     return sorts;
   }
 
-  /** the class logger instance*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }

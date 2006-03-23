@@ -393,6 +393,6 @@ public class GomCompiler {
         importedList = `concClassName(importedclass,importedList*);
       }
     }
-    return importedList; 
+    return importedList;
   }
 }
