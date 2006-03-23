@@ -83,10 +83,6 @@ public class GomCompiler {
           moduleName+"Factory");
       factoryNameForModule.put(moduleDecl,factoryName);
 
-      // get all classnames for all sorts (in the module or imported)
-      ClassNameList classSortList = sortClassNames(sortList);
-
-      /* create a Visitor class name */
       ClassName visitorName = `ClassName(packagePrefix(moduleDecl),moduleName+"Visitor");
       visitorNameForModule.put(moduleDecl,visitorName);
 
@@ -97,8 +93,6 @@ public class GomCompiler {
       tomMappingNameForModule.put(moduleDecl,tomMappingName);
 
       abstractTypeNameForModule.put(moduleDecl,abstractTypeName);
-      GomClass abstracttype = `AbstractTypeClass(abstractTypeName,factoryName,visitorName,classSortList);
-      classList = `concGomClass(abstracttype,classList*);
 
     }
 
@@ -200,6 +194,7 @@ public class GomCompiler {
                                           factoryName,
                                           abstracttypeName,
                                           visitorName,
+                                          allClassForImports(visitorNameForModule,moduleDecl),
                                           visitableforwardName,
                                           allOperators,
                                           slotFieldListFromSet(allSortSlots));
@@ -263,9 +258,20 @@ public class GomCompiler {
       GomClass visitorclass = `VisitorClass(visitorName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(visitorclass,classList*);
 
+      // We get all AbstractType Classes for this module, and those from imported modules
+      ClassNameList importedAbstractType = `concClassName();
+      ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDecl);
+      while(!importedModulelist.isEmpty()) {
+        ModuleDecl imported = importedModulelist.getHead();
+        importedModulelist = importedModulelist.getTail();
+        if (!imported.equals(moduleDecl)) {
+          ClassName importedclass = (ClassName)abstractTypeNameForModule.get(imported);
+          importedAbstractType = `concClassName(importedclass,importedAbstractType*);
+        }
+      }
       /* create a Fwd class */
       ClassName fwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"Forward");
-      GomClass fwdclass = `FwdClass(fwdName,visitorName,abstractTypeClassName,allSortClasses,allOperatorClasses);
+      GomClass fwdclass = `FwdClass(fwdName,visitorName,abstractTypeClassName,importedAbstractType,allSortClasses,allOperatorClasses);
       classList = `concGomClass(fwdclass,classList*);
 
       /* create a VoidFwd class */
@@ -277,6 +283,13 @@ public class GomCompiler {
       ClassName visitablefwdName = (ClassName) visitableForwardNameForModule.get(moduleDecl);
       GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,fwdclass);
       classList = `concGomClass(visitablefwdclass,classList*);
+
+      /* create the abstractType */
+      ClassNameList classSortList = sortClassNames(sortList);
+      ClassNameList visitorsToAccept = allClassForImports(visitorNameForModule,moduleDecl);
+      ClassName abstractTypeName = (ClassName) abstractTypeNameForModule.get(moduleDecl);
+      GomClass abstracttype = `AbstractTypeClass(abstractTypeName,factoryClassName,visitorName,visitorsToAccept,classSortList);
+      classList = `concGomClass(abstracttype,classList*);
 
       /* create a TomMapping */
       ClassName tomMappingName = (ClassName) tomMappingNameForModule.get(moduleDecl);
@@ -408,5 +421,19 @@ public class GomCompiler {
       }
     }
     return newArgs;
+  }
+
+  private ClassNameList allClassForImports(Map classMap, ModuleDecl moduleDecl) {
+    ClassNameList importedList = `concClassName();
+    ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDecl);
+    while(!importedModulelist.isEmpty()) {
+      ModuleDecl imported = importedModulelist.getHead();
+      importedModulelist = importedModulelist.getTail();
+      if (!imported.equals(moduleDecl)) {
+        ClassName importedclass = (ClassName)classMap.get(imported);
+        importedList = `concClassName(importedclass,importedList*);
+      }
+    }
+    return importedList; 
   }
 }

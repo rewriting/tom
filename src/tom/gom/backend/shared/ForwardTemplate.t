@@ -30,15 +30,17 @@ import tom.gom.adt.objects.types.*;
 public class ForwardTemplate extends TemplateClass {
   ClassName visitor;
   ClassName abstractType;
+  ClassNameList importedAbstractTypes;
   GomClassList sortClasses;
   GomClassList operatorClasses;
 
   %include { ../../adt/objects/Objects.tom}
 
-  public ForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, GomClassList sortClasses, GomClassList operatorClasses) {
+  public ForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, ClassNameList importedAbstract, GomClassList sortClasses, GomClassList operatorClasses) {
     super(className);
     this.visitor = visitor;
     this.abstractType = abstractType;
+    this.importedAbstractTypes = importedAbstract;
     this.sortClasses = sortClasses;
     this.operatorClasses = operatorClasses;
   }
@@ -46,25 +48,6 @@ public class ForwardTemplate extends TemplateClass {
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
   public String generate() {
     StringBuffer out = new StringBuffer();
-
-    /*
-    out.append("package "+getPackage()+";\n");
-    out.append("\n");
-    out.append("public class "+className()+" implements "+className(visitor) + ", jjtraveler.Visitor {\n");
-    out.append("\tprotected jjtraveler.Visitor any;\n");
-    out.append("\n");
-    out.append("\tpublic "+className()+"(jjtraveler.Visitor v) {\n");
-    out.append("\t\tthis.any = v;\n");
-    out.append("\t}\n");
-    out.append("\n");
-    out.append("\tpublic jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {\n");
-    out.append("\t\tif (v instanceof "+fullClassName(abstractType)+") {\n");
-    out.append("\t\t\treturn (("+fullClassName(abstractType)+") v).accept(this);\n");
-    out.append("\t\t} else {\n");
-    out.append("\t\t\treturn any.visit(v);\n");
-    out.append("\t\t}\n");
-    out.append("\t}\n");
-    */
 
     out.append(%[
 package @getPackage()@;
@@ -79,7 +62,9 @@ public class @className()@ implements @ className(visitor) @, jjtraveler.Visitor
   public jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {
     if (v instanceof @fullClassName(abstractType)@) {
       return ((@fullClassName(abstractType)@) v).accept(this);
-    } else {
+    }
+@generateDispatch(importedAbstractTypes)@
+    else {
       return any.visit(v);
     }
   }
@@ -96,13 +81,6 @@ public class @className()@ implements @ className(visitor) @, jjtraveler.Visitor
     %match(GomClassList sortClasses) {
       concGomClass(_*,SortClass[className=sortName],_*) -> {
 
-        /*
-        out.append("\tpublic "+fullClassName(`sortName)+" "+visitMethod(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure {\n");
-        out.append("\t\treturn ("+fullClassName(`sortName)+") any.visit(arg);\n");
-        out.append("\t}\n");
-        out.append("\n");
-        */
-
         out.append(%[
   public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg) throws jjtraveler.VisitFailure {
     return (@fullClassName(`sortName)@) any.visit(arg);
@@ -113,4 +91,14 @@ public class @className()@ implements @ className(visitor) @, jjtraveler.Visitor
     return out.toString();
   }
 
+  private String generateDispatch(ClassNameList types) {
+    StringBuffer out = new StringBuffer();
+    while(!types.isEmpty()) {
+      out.append(%[    else if (v instanceof @fullClassName(types.getHead())@) {
+      return ((@fullClassName(types.getHead())@) v).accept(this);
+    }]%);
+      types = types.getTail();
+    }
+    return out.toString();
+  }
 }

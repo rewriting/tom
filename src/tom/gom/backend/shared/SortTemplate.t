@@ -31,6 +31,7 @@ public class SortTemplate extends TemplateClass {
   ClassName factoryName;
   ClassName abstractType;
   ClassName visitor;
+  ClassNameList visitorsToAccept;
   ClassNameList operatorList;
   SlotFieldList slotList;
 
@@ -38,12 +39,14 @@ public class SortTemplate extends TemplateClass {
                       ClassName factoryName,
                       ClassName abstractType,
                       ClassName visitor,
+                      ClassNameList visitorsToAccept,
                       ClassNameList operatorList,
                       SlotFieldList slots) {
     super(className);
     this.factoryName = factoryName;
     this.abstractType = abstractType;
     this.visitor = visitor;
+    this.visitorsToAccept = visitorsToAccept;
     this.operatorList = operatorList;
     this.slotList = slots;
   }
@@ -59,6 +62,7 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
   public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure {
     return v.@visitMethod(className)@(this);
   }
+@generateAcceptMethods(visitorsToAccept)@
 
 @generateBody()@
 
@@ -137,6 +141,20 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
     }
 ]%);
     }
+    return out.toString();
+  }
+
+  private String generateAcceptMethods(ClassNameList visitorList) {
+    StringBuffer out = new StringBuffer();
+    while(!visitorList.isEmpty()) {
+      ClassName visitorName = visitorList.getHead();
+      visitorList = visitorList.getTail();
+      out.append(%[
+  public @fullClassName(abstractType)@ accept(@fullClassName(visitorName)@ v) throws jjtraveler.VisitFailure {
+    return v.@visitMethod(className)@(this);
+  }]%);
+    }
+
     return out.toString();
   }
 }
