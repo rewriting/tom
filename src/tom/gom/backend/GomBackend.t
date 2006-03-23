@@ -86,8 +86,14 @@ public class GomBackend {
         mapping.generateFile();
         return 1;
       }
-      FwdClass[className=className,visitor=visitorClass,abstractType=abstractType,importedAbstractTypes=imported,sortClasses=sortClasses,operatorClasses=ops] -> {
-        TemplateClass fwd = templatefactory.makeForwardTemplate(`className,`visitorClass,`abstractType,`imported,`sortClasses,`ops);
+      FwdClass[className=className,
+               visitor=visitorClass,
+               importedVisitors=importedVisitors,
+               abstractType=abstractType,
+               importedAbstractTypes=imported,
+               sortClasses=sortClasses,
+               operatorClasses=ops] -> {
+        TemplateClass fwd = templatefactory.makeForwardTemplate(`className,`visitorClass,`importedVisitors,`abstractType,`imported,`sortClasses,`ops);
         fwd.generateFile();
         return 1;
       }
@@ -108,19 +114,17 @@ public class GomBackend {
       }
       AbstractTypeClass[className=className,
                         visitor=visitorName,
-                        acceptableVisitors=acceptableVisitors,
                         sortList=sortList] -> {
-        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(`className,`visitorName,`acceptableVisitors,`sortList);
+        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(`className,`visitorName,`sortList);
         abstracttype.generateFile();
         return 1;
       }
       SortClass[className=className,
                 abstractType=abstracttype,
                 visitor=visitorName,
-                visitorsToAccept=acceptableVisitors,
                 operators=ops,
                 slots=slots] -> {
-        TemplateClass sort = templatefactory.makeSortTemplate(`className,`abstracttype,`visitorName,`acceptableVisitors,`ops,`slots);
+        TemplateClass sort = templatefactory.makeSortTemplate(`className,`abstracttype,`visitorName,`ops,`slots);
         sort.generateFile();
         return 1;
       }

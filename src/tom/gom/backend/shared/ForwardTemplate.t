@@ -29,6 +29,7 @@ import tom.gom.adt.objects.types.*;
 
 public class ForwardTemplate extends TemplateClass {
   ClassName visitor;
+  ClassNameList importedVisitors;
   ClassName abstractType;
   ClassNameList importedAbstractTypes;
   GomClassList sortClasses;
@@ -36,23 +37,33 @@ public class ForwardTemplate extends TemplateClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public ForwardTemplate(ClassName className, ClassName visitor, ClassName abstractType, ClassNameList importedAbstract, GomClassList sortClasses, GomClassList operatorClasses) {
+  public ForwardTemplate(ClassName className,
+                         ClassName visitor,
+                         ClassNameList importedVisitors,
+                         ClassName abstractType,
+                         ClassNameList importedAbstract,
+                         GomClassList sortClasses,
+                         GomClassList operatorClasses) {
     super(className);
     this.visitor = visitor;
+    this.importedVisitors = importedVisitors;
     this.abstractType = abstractType;
     this.importedAbstractTypes = importedAbstract;
     this.sortClasses = sortClasses;
     this.operatorClasses = operatorClasses;
   }
 
-  /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
+  /* 
+   * We may want to return the stringbuffer itself in the future, or directly
+   * write to a Stream
+   */
   public String generate() {
     StringBuffer out = new StringBuffer();
 
     out.append(%[
 package @getPackage()@;
 
-public class @className()@ implements @ className(visitor) @, jjtraveler.Visitor {
+public class @className()@ implements @ className(visitor)+importedVisitorList(importedVisitors) @, jjtraveler.Visitor {
   protected jjtraveler.Visitor any;
 
   public @className()@(jjtraveler.Visitor v) {
@@ -98,6 +109,14 @@ public class @className()@ implements @ className(visitor) @, jjtraveler.Visitor
       return ((@fullClassName(types.getHead())@) v).accept(this);
     }]%);
       types = types.getTail();
+    }
+    return out.toString();
+  }
+  String importedVisitorList(ClassNameList list) {
+    StringBuffer out = new StringBuffer();
+    while(!list.isEmpty()) {
+      out.append(", "+fullClassName(list.getHead()));
+      list = list.getTail();
     }
     return out.toString();
   }

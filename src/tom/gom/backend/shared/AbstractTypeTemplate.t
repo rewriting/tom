@@ -29,13 +29,13 @@ import tom.gom.adt.objects.types.*;
 
 public class AbstractTypeTemplate extends TemplateClass {
   ClassName visitor;
-  ClassNameList acceptableVisitors;
   ClassNameList sortList;
 
-  public AbstractTypeTemplate(ClassName className, ClassName visitor, ClassNameList acceptableVisitors, ClassNameList sortList) {
+  public AbstractTypeTemplate(ClassName className,
+                              ClassName visitor,
+                              ClassNameList sortList) {
     super(className);
     this.visitor = visitor;
-    this.acceptableVisitors = acceptableVisitors;
     this.sortList = sortList;
   }
 
@@ -57,21 +57,9 @@ public abstract class @className()@ implements shared.SharedObject, jjtraveler.V
   }
 
   abstract public @className()@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure;
-@generateAcceptMethods(acceptableVisitors)@
 }
 ]%);
 
-    return out.toString();
-  }
-
-  private String generateAcceptMethods(ClassNameList visitorList) {
-    StringBuffer out = new StringBuffer();
-    while(!visitorList.isEmpty()) {
-      ClassName visitorName = visitorList.getHead();
-      visitorList = visitorList.getTail();
-      out.append(%[
-  abstract public @className()@ accept(@fullClassName(`visitorName)@ v) throws jjtraveler.VisitFailure;]%);
-    }
     return out.toString();
   }
 }

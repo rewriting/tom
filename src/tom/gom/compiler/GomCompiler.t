@@ -185,7 +185,6 @@ public class GomCompiler {
           GomClass sortClass = `SortClass(sortClassName,
                                           abstracttypeName,
                                           visitorName,
-                                          allClassForImports(visitorNameForModule,moduleDecl),
                                           visitableforwardName,
                                           allOperators,
                                           slotFieldListFromSet(allSortSlots));
@@ -245,8 +244,9 @@ public class GomCompiler {
         }
       }
       /* create a Fwd class */
+      ClassNameList importedVisitors = allClassForImports(visitorNameForModule,moduleDecl);
       ClassName fwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"Forward");
-      GomClass fwdclass = `FwdClass(fwdName,visitorName,abstractTypeClassName,importedAbstractType,allSortClasses,allOperatorClasses);
+      GomClass fwdclass = `FwdClass(fwdName,visitorName,importedVisitors,abstractTypeClassName,importedAbstractType,allSortClasses,allOperatorClasses);
       classList = `concGomClass(fwdclass,classList*);
 
       /* create a VoidFwd class */
@@ -261,9 +261,8 @@ public class GomCompiler {
 
       /* create the abstractType */
       ClassNameList classSortList = sortClassNames(sortList);
-      ClassNameList visitorsToAccept = allClassForImports(visitorNameForModule,moduleDecl);
       ClassName abstractTypeName = (ClassName) abstractTypeNameForModule.get(moduleDecl);
-      GomClass abstracttype = `AbstractTypeClass(abstractTypeName,visitorName,visitorsToAccept,classSortList);
+      GomClass abstracttype = `AbstractTypeClass(abstractTypeName,visitorName,classSortList);
       classList = `concGomClass(abstracttype,classList*);
 
       /* create a TomMapping */

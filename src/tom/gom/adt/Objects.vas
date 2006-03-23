@@ -8,13 +8,13 @@ abstract syntax
 
 VisitableFwdClass(className:ClassName,fwd:GomClass) -> GomClass
 
-AbstractTypeClass(className:ClassName,visitor:ClassName,acceptableVisitors:ClassNameList,sortList:ClassNameList) -> GomClass
-SortClass(className:ClassName,abstractType:ClassName,visitor:ClassName,visitorsToAccept:ClassNameList,forward:ClassName,operators:ClassNameList,slots:SlotFieldList) -> GomClass 
+AbstractTypeClass(className:ClassName,visitor:ClassName,sortList:ClassNameList) -> GomClass
+SortClass(className:ClassName,abstractType:ClassName,visitor:ClassName,forward:ClassName,operators:ClassNameList,slots:SlotFieldList) -> GomClass 
 OperatorClass(className:ClassName,abstractType:ClassName,mapping:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList,hooks:HookList) -> GomClass 
 VariadicOperatorClass(className:ClassName,abstractType:ClassName,mapping:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList,empty:ClassName,operator:String,hooks:HookList) -> GomClass
 
 VisitorClass(className:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
-FwdClass(className:ClassName,visitor:ClassName,abstractType:ClassName,importedAbstractTypes:ClassNameList,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
+FwdClass(className:ClassName,visitor:ClassName,importedVisitors:ClassNameList,abstractType:ClassName,importedAbstractTypes:ClassNameList,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 VoidFwdClass(className:ClassName,visitor:ClassName,abstractType:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 TomMapping(className:ClassName,basicStrategy:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList) -> GomClass
 
