@@ -1,0 +1,67 @@
+<project name="imported" basedir="." default="...">
+
+  <property name="javacSource" value="1.4"/>
+  <property name="javacTarget" value="1.4"/>
+  <property name="nowarnings"  value="false"/>
+  <property name="optimize"    value="on"/>
+  <property name="optimize2"   value="off"/>
+  <property name="verbose"     value="off"/>
+  <property name="pretty"      value="off"/>
+  <property name="visitable"   value="on"/>
+  <property name="stamp"       value="off"/>
+
+  <property environment="env"/>
+  <property name="tom.home"    value="${env.TOM_HOME}"/>
+
+  <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
+  <property name="vasconfigfile"  location="${tom.home}/Vas.xml"/>
+  <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
+
+  <target name="tom.init">
+    <fail unless="env.TOM_HOME"
+          message="TOM_HOME has to be defined in your environment, 
+          to find the Tom classes"/>
+    <!-- Define the classpath to run tom and related tools -->
+    <path id="tom.classpath">
+      <fileset dir="${tom.home}/lib">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+    
+    <taskdef name="adt"
+             classname="tom.engine.tools.ant.ApigenTask"
+             classpathref="tom.classpath"/>
+    <taskdef name="tom"
+             classname="tom.engine.tools.ant.TomTask"
+             classpathref="tom.classpath"/>
+    <taskdef name="vas"
+             classname="vas.ant.VasTask" 
+             classpathref="tom.classpath"/>
+    <taskdef name="tomantlr" 
+             classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+    <taskdef name="gom"
+             classname="tom.gom.tools.ant.GomTask"
+             classpathref="tom.classpath"/>
+
+    <presetdef name="tom.preset">
+      <tom config="${tomconfigfile}"
+           nowarn="${nowarnings}"
+           optimize="${optimize}"
+           optimize2="${optimize2}"
+           verbose="${verbose}"
+           pretty="${pretty}">
+      </tom>
+    </presetdef>
+
+    <presetdef name="javac.preset">
+      <javac target="${javacTarget}"
+             source="${javacSource}"
+             nowarn="${nowarnings}">
+        <classpath refid="tom.classpath"/>
+      </javac>
+    </presetdef>
+  </target>
+
+</project>

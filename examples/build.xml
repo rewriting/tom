@@ -7,20 +7,10 @@
   <!-- set local properties for this build -->
   <property file="../local.properties"/>
 
-  <!-- The current version of TOM, should be defined by -Dversion -->
-  <property name="javacSource" value="1.4"/>
-  <property name="javacTarget" value="1.4"/>
-  <property name="nowarnings"  value="false"/>
-  <property name="optimize"    value="on"/>
-  <property name="optimize2"   value="off"/>
-  <property name="verbose"     value="off"/>
-  <property name="pretty"      value="off"/>
-  <property name="visitable"   value="on"/>
-  <property name="stamp"       value="off"/>
-  <property name="mutraveler"  value="jjtraveler"/>
-
   <property environment="env"/>
-  <property name="tom.home"       value="${env.TOM_HOME}"/>
+  <property name="tom.home"    value="${env.TOM_HOME}"/>
+  <property name="tom.common.path" value="${tom.home}/lib"/>
+  <import file="${tom.common.path}/tom-common.xml"/>
   
   <!-- some used directory location -->
   <property name="examples.dir"   location="."/>
@@ -31,10 +21,6 @@
   <!-- where the examples a build: javac destDir -->
   <property name="examples.gen"   location="gen"/>
   <property name="examples.build" location="build"/>
-
-  <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
-  <property name="vasconfigfile"  location="${tom.home}/Vas.xml"/>
-  <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
 
   <!-- Examples to build and distribute -->
   <property name="addressbook"    value="addressbook"/>
@@ -83,60 +69,24 @@
   <property name="zenon"          value="zenon"/>
   <property name="analysis"       value="analysis"/>
 
-
-  <target name="testdistexist">
-    <available file="${tom.home}/lib" type="dir" property="distexist"/>
-  </target>
-  
-  <target name="init" if="examples.build">
+  <target name="init" depends="tom.init">
     <fail unless="env.TOM_HOME"
           message="TOM_HOME has to be defined in your environment, 
           to find the Tom classes"/>
     <mkdir dir="${examples.build}"/>
     <mkdir dir="${examples.gen}"/>
-    <!-- Define classpath for building stable and source  -->
-    <path id="tom.classpath">
+    <path id="tom.examples.classpath">
       <fileset dir="${examples.dir}/${examples.lib}">
         <include name="*.jar"/>
       </fileset>
-      <fileset dir="${tom.home}/lib">
-        <include name="*.jar"/>
-      </fileset>
-
+      <pathelement path="${tom.classpath}"/>
     </path>
-    
-    <!-- tasks for building -->
-    <taskdef name="adt"
-             classname="tom.engine.tools.ant.ApigenTask"
-             classpathref="tom.classpath"/>
-    <taskdef name="tom"
-             classname="tom.engine.tools.ant.TomTask"
-             classpathref="tom.classpath"/>
-    <taskdef name="vas"
-             classname="vas.ant.VasTask" 
-             classpathref="tom.classpath"/>
-    <taskdef name="tomantlr" 
-             classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
-      <classpath refid="tom.classpath"/>
-    </taskdef>
-
-    <presetdef name="tom.preset">
-      <tom config="${tomconfigfile}"
-           srcdir="${examples.dir}" 
-           destdir="${examples.gen}"         
-           nowarn="${nowarnings}"
-           optimize="${optimize}"
-           optimize2="${optimize2}"
-           verbose="${verbose}"
-           pretty="${pretty}"
-           options="-I ${tom.home}/share/jtom">
-      </tom>
-    </presetdef>
 
     <macrodef name="tomcompile">
       <attribute name="example"/>
       <sequential>
-        <tom.preset>
+        <tom.preset srcdir="${examples.dir}"
+                    destdir="${examples.gen}">          
           <include name="@{example}/**/*.t"/>
           <exclude name="@{example}/**/*.g.t"/>
         </tom.preset>
@@ -180,25 +130,16 @@
     <macrodef name="javacompile">
       <attribute name="example"/>
       <sequential>
-        <javac destdir="${examples.build}"
-          target="${javacTarget}"
-          source="${javacSource}"
-          nowarn="${nowarnings}">
+        <javac.preset destdir="${examples.build}">
           <src path="${examples.dir}"/>
           <src path="${examples.gen}"/>
-          <classpath refid="tom.classpath"/>
+          <classpath refid="tom.examples.classpath"/>
           <include name="@{example}/**/*.java"/>
-        </javac>
+        </javac.preset>
       </sequential>
     </macrodef>
   </target>
 
-  <target name="init.gom.task">
-    <taskdef name="gom"
-             classname="tom.gom.tools.ant.GomTask"
-             classpathref="tom.classpath"/>
-  </target>
-  
   <target name="prepare.examples">
     <mkdir dir="${examples.dist}"/>
   </target>
@@ -213,7 +154,7 @@
     <delete dir="${examples.build}"/>
   </target>
 
-  <target name="addressbook" depends="init, init.gom.task">
+  <target name="addressbook" depends="init">
     <gomcompile example="${addressbook}"/>
     <tomcompile example="${addressbook}"/>
     <javacompile example="${addressbook}"/>
@@ -236,7 +177,7 @@
     </copy>
   </target>
 
-  <target name="apireach" depends="init, init.gom.task"> 
+  <target name="apireach" depends="init"> 
     <adtcompile example="${apireach}" factory="reach"/>
     <gomcompile example="${apireach}"/>
     <tomcompile example="${apireach}"/>
@@ -307,6 +248,7 @@
     <mkdir dir="${examples.gen}/${caml}"/>
     <!-- build tom -->
     <tom.preset destdir="${examples.gen}/${caml}"
+	        srcdir="${examples.dir}"
                 options="--camlCode -I ${tom.home}/share/jtom">
       <include name="${caml}/**/*.t"/>
     </tom.preset>
@@ -386,10 +328,11 @@
   
   <target name="expression" depends="init">
     <!-- build tom -->
-    <tom.preset options="-I ${tom.home}/share/jtom --lazyType">
+    <tom.preset srcdir="${examples.dir}"
+	        options="-I ${tom.home}/share/jtom --lazyType">
       <include name="${expression}/**/Record.t"/>
     </tom.preset>
-    <tom.preset>
+    <tom.preset srcdir="${examples.dir}">
       <include name="${expression}/**/RecordStrict.t"/>
     </tom.preset>
     <javacompile example="${expression}"/>
@@ -404,6 +347,7 @@
       <include name="${ferus}/**/*.adt"/>
     </adt>
     <tom.preset destdir="${examples.gen}/${ferus}"         
+	        srcdir="${examples.dir}"
                 stamp="off"
                 options="--cCode -I ${tom.home}/share/jtom">
       <include name="${ferus}/**/*.t"/>
@@ -427,7 +371,7 @@
     </exec>
   </target>
 
-  <target name="gom" depends="init, init.gom.task">
+  <target name="gom" depends="init">
     <gomcompile example="${gom}"/>
     <tomcompile example="${gom}"/>
     <javacompile example="${gom}"/>
@@ -459,7 +403,8 @@
       destdir="${examples.gen}/${integerc}">
       <include name="${integerc}/**/*.adt"/>
     </adt>
-    <tom.preset destdir="${examples.gen}/${integerc}"         
+    <tom.preset srcdir="${examples.dir}"
+	        destdir="${examples.gen}/${integerc}"         
                 stamp="off" 
                 options="--cCode -I ${tom.home}/share/jtom">
       <include name="${integerc}/**/*.t"/>
@@ -640,12 +585,12 @@
     <javacompile example="${strings}"/>
   </target>
 
-  <target name="structure" depends="init,init.gom.task">
+  <target name="structure" depends="init">
     <!-- build adt -->    
     <vascompile example="${structure}"/>
     <gomcompile example="${structure}"/>
     <!-- build tom -->
-    <tom.preset>
+    <tom.preset srcdir="${examples.dir}">
       <!-- stamp not yet ready for apigen list -->
       <include name="${structure}/**/*.t"/>
       <exclude name="${structure}/**/StructParser.g.t"/>
@@ -695,7 +640,8 @@
 
   <target name="ted" depends="init"> 
     <!-- <tomcompile example="${ted}"/> -->
-    <tom.preset optimize2="no">
+    <tom.preset srcdir="${examples.dir}"
+	        optimize2="no">
       <include name="${ted}/**/*.t"/>
       <exclude name="${ted}/**/*.g.t"/>
     </tom.preset>
@@ -754,7 +700,8 @@
   </target>
 
   <target name="zenon" depends="init">
-    <tom.preset options="-I ${tom.home}/share/jtom --verify">
+	  <tom.preset srcdir="${examples.dir}"
+		      options="-I ${tom.home}/share/jtom --verify">
       <include name="${zenon}/**/*.t"/>
       <exclude name="${zenon}/**/*.g.t"/>
     </tom.preset>
@@ -775,7 +722,7 @@
   </target>
 
 
-  <target name="analysis" depends="init,init.gom.task">
+  <target name="analysis" depends="init">
   <!-- copy resources in build -->
     <copy todir="${examples.build}/${analysis}">
       <fileset dir="${examples.dir}/${analysis}">
