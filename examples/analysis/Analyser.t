@@ -47,307 +47,295 @@ import org._3pq.jgrapht.edge.*;
 
 public class Analyser{
 
-	%include {mutraveler.tom }
-	%include {node/Node.tom}
+  %include {mutraveler.tom }
+  %include {node/Node.tom}
   %include {Ctl.tom}
 
-	//Définition des types
+  //Définition des types
 
-	%typeterm ControlFlowGraphList {
-		implement { List }
-		equals(t1,t2) { t1.equals(t2) } 
-		visitor_fwd { CFGVisitor }
-	}
+  %typeterm ControlFlowGraphList {
+    implement { List }
+    equals(t1,t2) { t1.equals(t2) } 
+    visitor_fwd { CFGVisitor }
+  }
 
-	%typeterm VariableList {
-		implement { List }
-		equals(t1,t2) { t1.equals(t2) } 
-		visitor_fwd { analysis.node.NodeBasicStrategy }
-	}
+  %typeterm VariableList {
+    implement { List }
+    equals(t1,t2) { t1.equals(t2) } 
+    visitor_fwd { analysis.node.NodeBasicStrategy }
+  }
 
-	%typeterm ControlFlowGraph {
-		implement {ControlFlowGraph}
-		equals(t1,t2) { t1.equals(t2) } 
-		visitor_fwd { analysis.ControlFlowGraphBasicStrategy }
-	}
+  %typeterm ControlFlowGraph {
+    implement {ControlFlowGraph}
+    equals(t1,t2) { t1.equals(t2) } 
+    visitor_fwd { analysis.ControlFlowGraphBasicStrategy }
+  }
 
 
-	%typeterm Vertex {
-		implement {Vertex}
-		equals(t1,t2) { t1.equals(t2) } 
-		visitor_fwd { analysis.ast.AstBasicStrategy }
-	}
+  %typeterm Vertex {
+    implement {Vertex}
+    equals(t1,t2) { t1.equals(t2) } 
+    visitor_fwd { analysis.ast.AstBasicStrategy }
+  }
   //Définition des constructeurs
 
-	%op ControlFlowGraph conc(root:ControlFlowGraph,subterm:ControlFlowGraphList) {
-		is_fsym(t)  { t instanceof ControlFlowGraph }
-		make(root,subterm) { new ControlFlowGraph(root, subterm) }
-	}
+  %op ControlFlowGraph conc(root:ControlFlowGraph,subterm:ControlFlowGraphList) {
+    is_fsym(t)  { t instanceof ControlFlowGraph }
+    make(root,subterm) { new ControlFlowGraph(root, subterm) }
+  }
 
 
-	%op ControlFlowGraph graph(node:Vertex){
-		is_fsym(t)  { t instanceof ControlFlowGraph }
-		get_slot(node,t) { t.getRoot() }
-		make(node) { new ControlFlowGraph(node) }
-	}
+  %op ControlFlowGraph graph(node:Vertex){
+    is_fsym(t)  { t instanceof ControlFlowGraph }
+    get_slot(node,t) { t.getRoot() }
+    make(node) { new ControlFlowGraph(node) }
+  }
 
 
-	%oparray ControlFlowGraphList list( ControlFlowGraph* ) {
-		is_fsym(t)       { t instanceof List }
-		make_empty(n)    { new ArrayList(n)       }
-		make_append(e,l) { myAdd(e,(ArrayList)l)  }
-		get_element(l,n) { (ControlFlowGraph)(l.get(n))  }
-		get_size(l)      { l.size()               }
-	}
+  %oparray ControlFlowGraphList list( ControlFlowGraph* ) {
+    is_fsym(t)       { t instanceof List }
+    make_empty(n)    { new ArrayList(n)       }
+    make_append(e,l) { myAdd(e,(ArrayList)l)  }
+    get_element(l,n) { (ControlFlowGraph)(l.get(n))  }
+    get_size(l)      { l.size()               }
+  }
 
-	%oparray VariableList varList( Variable* ) {
-		is_fsym(t)       { t instanceof List }
-		make_empty(n)    { new ArrayList(n)       }
-		make_append(e,l) { myAdd(e,(ArrayList)l)  }
-		get_element(l,n) { (Variable)(l.get(n))  }
-		get_size(l)      { l.size()               }
-	}
-
-
-
-	%op Vertex Vertex(node:Node){
-		is_fsym(t)  { t instanceof Vertex }
-		make(node) { new Vertex(node) }
-	}
+  %oparray VariableList varList( Variable* ) {
+    is_fsym(t)       { t instanceof List }
+    make_empty(n)    { new ArrayList(n)       }
+    make_append(e,l) { myAdd(e,(ArrayList)l)  }
+    get_element(l,n) { (Variable)(l.get(n))  }
+    get_size(l)      { l.size()               }
+  }
 
 
 
-  
+  %op Vertex Vertex(node:Node){
+    is_fsym(t)  { t instanceof Vertex }
+    make(node) { new Vertex(node) }
+  }
 
-	public final static void main(String[] args) {
-		Analyser test = new Analyser();
-		test.run();
-	}
 
-	// Méthode de test des stratégies
+ // Méthode d'ajout d'un élément dans une liste (utilisée dans la définition des constructeurs de liste)
 
-	public void run() {
-		Variable var_x = `Name("x");
-		Variable var_y = `Name("y");
-		Variable var_z = `Name("z");
+  private List myAdd(Object e,List l) {
+    l.add(e);
+    return l;
+  }
 
-		InstructionList subject = `concInstruction(
-        If(True(),
-           concInstruction(),
-           concInstruction(
-             LetRef(var_x,g(a()),concInstruction(
-                 LetAssign(var_x,g(b())),
-                 LetAssign(var_x,f(a(),b())),
-                 Let(var_y,g(Var(var_x)),concInstruction())
-                 )
-             )
-           )
-        ),
-        Let(var_z,f(a(),b()),concInstruction())
-    );
+  /**
+    Définition des prédicats 	 	 
+   */
 
-		System.out.println("subject          = " + subject);
-		try{
-			ControlFlowGraph cfg = constructCFG(subject);
-			System.out.println("correpsonding cfg = " + cfg);
-			System.out.println("deadcode detection...........");
 
-			// On recherche les noeuds qui correspondent a des assign
-			Iterator iter = cfg.vertexSet().iterator();
-			while(iter.hasNext()){
-				Vertex n = (Vertex) (iter.next());
-				Node nn = n.getNode();
-				%match(Node nn){
-					affect(var,term) -> {
-						//test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
+  // Prédicat NotUsed(v:Variable) qui teste si une variable n'est pas utilisée au noeud racine d'un cfg 
+
+  %op VisitableVisitor NotUsed(v:Variable) {
+    make(v) {new ControlFlowGraphBasicStrategy(`TopDown(InnerNotUsed(v)))}
+  }
+
+
+  %strategy InnerNotUsed(v:Variable) extends `Identity(){
+    visit Term {
+      t@Var(var) -> {
+        if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(`t);
+      }
+    }
+  }
+  // en attendant que le bug dans NodeForward soit fixé (ensuite on utilisera la strategie InnerNotUsed)
+  /* class InnerNotUsed extends NodeBasicStrategy{
+
+
+     Variable v;
+
+     public InnerNotUsed(Variable v) {
+     super(`Identity());
+     this.v=v;
+     }
+
+     public Visitable visit(Visitable arg) throws VisitFailure {
+     if(arg instanceof Term){
+     %match(Term arg){
+     Var(var) -> {
+     if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(arg);
+     }
+     }
+     }
+
+     return super.visit(arg);
+     }
+     }*/ 
+
+
+  // Prédicat Free(v:Variable) qui teste si une variable est libéré au noeud racine d'un cfg
+  %strategy InnerFree(v:Variable) extends `Fail() {
+    visit Node{
+      n@free(var) -> {
+        if(`var.equals(v)) {
+          return `n;
+        }
+      }
+    }
+  }
+
+  %op VisitableVisitor Free(v:Variable) {
+    make(v) { new ControlFlowGraphBasicStrategy(`InnerFree(v))}
+  }
+
+
+  // Prédicat Modified(v:Variable) qui teste si une variable est modifié (affected) au noeud racine d'un cfg
+  %strategy InnerModified(v:Variable) extends `Fail() {
+    visit Node{
+      n@affect(var,_) -> {
+        if(`var.equals(v)) {
+          return `n;
+        }
+      }
+    }
+  }
+
+  %op VisitableVisitor Modified(v:Variable) {
+    make(v) { new ControlFlowGraphBasicStrategy(new InnerModified(v))}
+  }
+
+  //Construction du CFG à partir de l'Ast
+  public  ControlFlowGraph constructCFG(AstAbstractType arg) throws Exception{ 
+    %match(Instruction arg) {
+      If(cond,succesInst,failureInst) -> { 
+        ControlFlowGraph suc = constructCFG(`succesInst);
+        ControlFlowGraph fail= constructCFG(`failureInst);
+        Vertex end = new Vertex(`endIf());
+        Vertex beginIfNode = new Vertex(`beginIf(cond));
+        ControlFlowGraph succesGraph  = `conc(suc,list(graph(end)));
+        ControlFlowGraph failureGraph = `conc(fail,list(graph(end)));
+        return `conc(graph(beginIfNode),list(succesGraph,failureGraph));
+      } 
+
+
+      WhileDo(cond,doInst) -> {
+        ControlFlowGraph instrGraph = constructCFG(`doInst);
+        Vertex beginWhileNode = new Vertex(`beginWhile(cond));
+        Vertex endWhileNode = new Vertex(`endWhile());
+        Vertex failWhileNode = new Vertex(`failWhile());
+        ControlFlowGraph cfg = `conc(graph(beginWhileNode),list(conc(instrGraph,list(conc(graph(endWhileNode),list()))),graph(failWhileNode)));
+        cfg.addEdge(new DirectedEdge(endWhileNode,beginWhileNode));
+        return cfg;
+      }
+
+      Let(var,term,instr) -> {
+        ControlFlowGraph instrGraph = constructCFG(`instr);
+        Vertex n1 = new Vertex(`affect(var,term));
+        Vertex n2 = new Vertex(`free(var));
+        return `conc(graph(n1),list(conc(instrGraph,list(graph(n2)))));
+      }
+
+      LetRef(var,term,instr) -> {
+        ControlFlowGraph instrGraph = constructCFG(`instr);
+        Vertex n1 = new Vertex(`affect(var,term));
+        Vertex n2 = new Vertex(`free(var));
+        return `conc(graph(n1),list(conc(instrGraph,list(graph(n2)))));
+      }
+
+      LetAssign(var,term) -> {	
+        Vertex n = new Vertex(`affect(var,term));
+        return `graph(n);
+      }
+
+      Nop() -> {Vertex n = new Vertex(`nil()); return `graph(n);
+      }
+
+    }
+
+    %match(InstructionList arg){
+      concInstruction(instr,tail*) -> {
+        ControlFlowGraph instrGraph = constructCFG(`instr);
+        ControlFlowGraph tailGraph = constructCFG(`tail);
+        return `conc(instrGraph,list(tailGraph));}
+
+        concInstruction() -> {Vertex n = new Vertex(`nil()); return `graph(n);}
+    }
+
+    throw new Exception("Error during Cfg construction");
+  }
+
+
+
+
+  public List notUsedAffectations(ControlFlowGraph cfg){
+    List l = new ArrayList();
+    try{
+      Iterator iter = cfg.vertexSet().iterator();
+      while(iter.hasNext()){
+        Vertex n = (Vertex) (iter.next());
+        Node nn = n.getNode();
+        %match(Node nn){
+          affect(var,term) -> {
+            //test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
             //s1 = notUsed(var)
             VisitableVisitor s1 = `NotUsed(var);
             //s2 = free(var)
             VisitableVisitor s2 = `Free(var);
             VisitableVisitor notUsedCond = `AU(s1,s2);
             //      `mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity)))));
-            if(cfg.verify(notUsedCond,n)) System.out.println("Variable "+`var+" with the value "+`term+" is not used");
-           //teste si une variable n'est utilisé qu'une seule fois
+            if(cfg.verify(notUsedCond,n)) {
+              System.out.println("Variable "+`var+" with the value "+`term+" is not used");
+              l.add(n);
+            }
+          }
+        }	
+      }
+
+    }catch(Exception e){
+      System.out.println(e);
+    }
+    return l ;
+  }
+
+  public List onceUsedAffectations(ControlFlowGraph cfg){
+    List l = new ArrayList();
+    try{
+      Iterator iter = cfg.vertexSet().iterator();
+      while(iter.hasNext()){
+        Vertex n = (Vertex) (iter.next());
+        Node nn = n.getNode();
+        %match(Node nn){
+          affect(var,term) -> {
+            //teste si une variable n'est utilisé qu'une seule fois
             //AX(A(not(modified(var)U(used(var) and AX(notUsedCond(var)))
 
 
             //s1 = not(modified(var)
-            s1 = `Not(Modified(var));
-              
+            VisitableVisitor s1 = `Not(Modified(var));
+
             //s2 = (used(var) and AX(notUsedCond(var)
-            s2 =  
-                    `Sequence(
-                      Not(NotUsed(var)),
-                      All(mu(MuVar("x"),
-                          Choice(
-                            Free(var),
-                            Sequence(NotUsed(var),All(MuVar("x")))
-                            )
-                          )
+            VisitableVisitor s2 =  
+              `Sequence(
+                  Not(NotUsed(var)),
+                  All(mu(MuVar("x"),
+                      Choice(
+                        Free(var),
+                        Sequence(NotUsed(var),All(MuVar("x")))
                         )
-                      );
+                      )
+                    )
+                  );
             //onceUsedCond AX(A(s1 U s2))  
             VisitableVisitor onceUsedCond = `AX(AU(s1,s2));
-            
+
             //  `All(mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity))))));
-            
-            if(cfg.verify(onceUsedCond,n)) System.out.println("Variable "+`var+" with the value "+`term+" is used once");
 
-         
-          }
-				}	
-			}
-
-		}catch(Exception e){
-			System.out.println(e);
-		}
-
-	}
-
-	// Méthode d'ajout d'un élément dans une liste (utilisée dans la définition des constructeurs de liste)
-
-	private List myAdd(Object e,List l) {
-		l.add(e);
-		return l;
-	}
-
-	/**
-	  Définition des prédicats 	 	 
-	*/
-
-
-	// Prédicat NotUsed(v:Variable) qui teste si une variable n'est pas utilisée au noeud racine d'un cfg 
-  
-  %op VisitableVisitor NotUsed(v:Variable) {
-    make(v) {new ControlFlowGraphBasicStrategy(tom_make_TopDown(new InnerNotUsed(v)))}
-  }
-
-  
-   %strategy InnerNotUsed(v:Variable) extends `Identity(){
-	  visit Term {
-			t@Var(var) -> {
-				if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(`t);
- 			}
-    }
-   }
-   
-
-  // en attendant que le bug dans NodeForward soit fixé (ensuite on utilisera la strategie InnerNotUsed)
-  /* class InnerNotUsed extends NodeBasicStrategy{
-
-
-    Variable v;
-
-    public InnerNotUsed(Variable v) {
-      super(`Identity());
-      this.v=v;
-    }
-
-    public Visitable visit(Visitable arg) throws VisitFailure {
-      if(arg instanceof Term){
-        %match(Term arg){
-          Var(var) -> {
-            if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(arg);
-          }
-        }
-      }
-
-      return super.visit(arg);
-    }
-  }*/ 
-	
-  
-
-	// Prédicat Free(v:Variable) qui teste si une variable est libéré au noeud racine d'un cfg
-	%strategy InnerFree(v:Variable) extends `Fail() {
-			visit Node{
-					n@free(var) -> {
-						if(`var.equals(v)) {
-							return `n;
+            if(cfg.verify(onceUsedCond,n)){
+              System.out.println("Variable "+`var+" with the value "+`term+" is used once");
+              l.add(n);
             }
           }
+        }	
       }
+
+    }catch(Exception e){
+      System.out.println(e);
+    }
+    return l;
   }
-  
-  %op VisitableVisitor Free(v:Variable) {
-    make(v) { new ControlFlowGraphBasicStrategy(new InnerFree(v))}
-  }
-
-
-	// Prédicat Modified(v:Variable) qui teste si une variable est modifié (affected) au noeud racine d'un cfg
-	%strategy InnerModified(v:Variable) extends `Fail() {
-			visit Node{
-					n@affect(var,_) -> {
-						if(`var.equals(v)) {
-							return `n;
-            }
-          }
-      }
-  }
-  
-  %op VisitableVisitor Modified(v:Variable) {
-    make(v) { new ControlFlowGraphBasicStrategy(new InnerModified(v))}
-  }
-
-	//Construction du CFG à partir de l'Ast
-	public  ControlFlowGraph constructCFG(AstAbstractType arg) throws Exception{ 
-		%match(Instruction arg) {
-			If(cond,succesInst,failureInst) -> { 
-				ControlFlowGraph suc = constructCFG(`succesInst);
-				ControlFlowGraph fail= constructCFG(`failureInst);
-				Vertex end = new Vertex(`endIf());
-				Vertex beginIfNode = new Vertex(`beginIf(cond));
-				ControlFlowGraph succesGraph  = `conc(suc,list(graph(end)));
-				ControlFlowGraph failureGraph = `conc(fail,list(graph(end)));
-				return `conc(graph(beginIfNode),list(succesGraph,failureGraph));
-			} 
-
-
-			WhileDo(cond,doInst) -> {
-				ControlFlowGraph instrGraph = constructCFG(`doInst);
-				Vertex beginWhileNode = new Vertex(`beginWhile(cond));
-				Vertex endWhileNode = new Vertex(`endWhile());
-				Vertex failWhileNode = new Vertex(`failWhile());
-				ControlFlowGraph cfg = `conc(graph(beginWhileNode),list(conc(instrGraph,list(conc(graph(endWhileNode),list()))),graph(failWhileNode)));
-				cfg.addEdge(new DirectedEdge(endWhileNode,beginWhileNode));
-				return cfg;
-			}
-
-			Let(var,term,instr) -> {
-				ControlFlowGraph instrGraph = constructCFG(`instr);
-				Vertex n1 = new Vertex(`affect(var,term));
-				Vertex n2 = new Vertex(`free(var));
-				return `conc(graph(n1),list(conc(instrGraph,list(graph(n2)))));
-			}
-
-			LetRef(var,term,instr) -> {
-				ControlFlowGraph instrGraph = constructCFG(`instr);
-				Vertex n1 = new Vertex(`affect(var,term));
-			  Vertex n2 = new Vertex(`free(var));
-				return `conc(graph(n1),list(conc(instrGraph,list(graph(n2)))));
-			}
-
-			LetAssign(var,term) -> {	
-				Vertex n = new Vertex(`affect(var,term));
-				return `graph(n);
-			}
-
-			Nop() -> {Vertex n = new Vertex(`nil()); return `graph(n);
-			}
-
-		}
-
-		%match(InstructionList arg){
-			concInstruction(instr,tail*) -> {
-				ControlFlowGraph instrGraph = constructCFG(`instr);
-				ControlFlowGraph tailGraph = constructCFG(`tail);
-				return `conc(instrGraph,list(tailGraph));}
-
-				concInstruction() -> {Vertex n = new Vertex(`nil()); return `graph(n);}
-		}
-
-		throw new Exception("Error during Cfg construction");
-	}
-
 
 }
