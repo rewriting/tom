@@ -62,7 +62,7 @@ public class TestStrategy extends TestCase {
     VisitableVisitor rule3 = `S3(i);
     //VisitableVisitor rule4 = new S4();
     VisitableVisitor rule5 = `S5();
-    //VisitableVisitor rule6 = new S6();
+    VisitableVisitor rule6 = `S6();
     //VisitableVisitor rule7 = new S7();
     
     try{
@@ -71,6 +71,7 @@ public class TestStrategy extends TestCase {
       assertSame("g(a,a) return a", MuTraveler.init(`rule2).visit(`g(a(),a())), `a());
       assertSame("g(a,a) return a", MuTraveler.init(`rule3).visit(`g(a(),a())), `a());
       assertSame("g(a,a) return a", MuTraveler.init(`rule5).visit(`g(a(),a())), `a());
+      assertSame("g(a,a) return a", MuTraveler.init(`rule6).visit(`g(a(),a())), `a());
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
@@ -116,6 +117,18 @@ public class TestStrategy extends TestCase {
       e()            -> { return `e(); }
     }
   }
+  //with visits in reverse order
+  //try ro reproduce Emilie's bug
+  %strategy S6() extends `Identity() {
+    visit Term1 {
+      e()            -> { return `e(); }
+    }
+ 
+    visit Term {
+      g(x,x)            -> { return `x; }
+    }
+ }
+
 
 //with empty visit
 
