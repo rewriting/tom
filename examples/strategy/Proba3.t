@@ -34,6 +34,10 @@ import strategy.proba3.term.types.*;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
+import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.Position;
+
+import java.util.*;
 
 public class Proba3 {
 
@@ -49,13 +53,21 @@ public class Proba3 {
 
   %include { mutraveler.tom }
 
-  public final static void main(String[] args) {
-    Proba3 test = new Proba3();
-    test.run();
-  }
+	%typeterm Collection {
+		implement { Collection }
+	}
+	
+	private static Random random = new Random();
+
+	public final static void main(String[] args) {
+		Proba3 test = new Proba3();
+		test.run();
+	}
 
   public void run() {
     Term subject = `f(a(),f(b(),c()));
+
+		List c = new ArrayList();
 
 
     //VisitableVisitor S  = `OmegaU(R1(), Fail());
@@ -66,16 +78,51 @@ public class Proba3 {
       System.out.println("subject       = " + subject);
       Term s = (Term) S.visit(subject);
       System.out.println("s = " + s);
+
+			MuTraveler.init(`TopDown(GetPosition(c))).visit(subject);
+			System.out.println("set[pos] = " + c);
+			int index = Math.abs(random.nextInt()) % c.size();
+			Position pos = (Position)c.get(index);
+			Term pTerm = (Term)pos.getSubterm().visit(subject);
+			System.out.println("pos = " + pos + " --> " + pTerm);
+			
     } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 
+
+      System.out.println("----------------------");
+		
+      System.out.println("subject       = " + subject);
+			Term result = pRewriteSubterm(subject, `Try(R1()));
+      System.out.println("result        = " + result);
+
   }
 
+	public Term pRewriteSubterm(Term subject, VisitableVisitor v) {
+		List c = new ArrayList();
+		try {
+			MuTraveler.init(`TopDown(GetPosition(c))).visit(subject);
+			Position pos = (Position)c.get(Math.abs(random.nextInt()) % c.size());
+			Term res = (Term)pos.getOmega(v).visit(subject);
+			System.out.println("selected pos = " + pos);
+			return res;	
+		} catch(VisitFailure e) {
+      System.out.println("reduction failed on: " + subject);
+		}
+		return subject;
+	}
+	
   %strategy R1() extends `Fail() { 
     visit Term {
 			a() -> { return `b(); } 
 			b() -> { return `c(); } 
+		}
+	}
+  
+	%strategy GetPosition(c:Collection) extends `Identity() { 
+    visit Term {
+			_ -> { c.add(MuTraveler.getPosition(this)); }
 		}
 	}
 
