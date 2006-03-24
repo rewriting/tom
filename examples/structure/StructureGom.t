@@ -41,6 +41,7 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
+import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
 
 
 public class StructureGom {
@@ -268,7 +269,8 @@ public class StructureGom {
   public void collectOneStep(final Collection collection, Struc subject) {
     try {
       VisitableVisitor oneStep = new OneStep(subject,collection);
-      MuTraveler.init(`BottomUp(oneStep)).visit(subject);
+      //MuTraveler.init(`BottomUp(oneStep)).visit(subject);
+      MuTraveler.init(new CompiledBottomUpWithPositions(oneStep)).visit(subject);
       //System.out.println(collection);
     } catch (VisitFailure e) {
       System.out.println("Failed to get successors " + subject);
@@ -477,7 +479,8 @@ public class StructureGom {
     final Collection collection = new ArrayList();
     try {
       VisitableVisitor countPairs = new CountPairs(collection);
-      `TopDown(countPairs).visit(subject);
+      //`BottomUp(countPairs).visit(subject);
+      new CompiledBottomUp(countPairs).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to count pairs" + subject);
     }
@@ -545,8 +548,8 @@ public class StructureGom {
   private void collectAtom(StructuresAbstractType subject, final HashSet positive, final HashSet negative) {
     try {
       VisitableVisitor findAtoms = new FindAtoms(positive,negative);
-      //MuTraveler.init(`BottomUp(findAtoms)).visit(subject);
-      `BottomUp(findAtoms).visit(subject);
+      //`BottomUp(findAtoms).visit(subject);
+      new CompiledBottomUp(findAtoms).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to get atoms" + subject);
     }
@@ -711,5 +714,46 @@ public class StructureGom {
       }
     }
     return t.toString();
+  }
+
+  class CompiledBottomUp extends AbstractVisitableVisitor {
+    protected final static int ARG = 0;
+    public CompiledBottomUp(VisitableVisitor v) {
+      initSubterm(v);
+    }
+    public Visitable visit(Visitable any) throws VisitFailure {
+      // Compile All("x")
+      int childCount = any.getChildCount();
+      Visitable result = any;
+      for (int i = 0; i < childCount; i++) {
+        Visitable newChild = this.visit(result.getChildAt(i));
+        result = result.setChildAt(i, newChild);
+      }
+      
+      // Compile v
+      return getArgument(ARG).visit(result);
+    }
+  }
+
+  class CompiledBottomUpWithPositions extends AbstractVisitableVisitor {
+    protected final static int ARG = 0;
+    public CompiledBottomUpWithPositions(VisitableVisitor v) {
+      initSubterm(v);
+    }
+    public Visitable visit(Visitable any) throws VisitFailure {
+      // Compile All("x")
+      int childCount = any.getChildCount();
+      Visitable result = any;
+      for (int i = 0; i < childCount; i++) {
+        getPosition().down(i+1);
+        Visitable newChild = this.visit(result.getChildAt(i));
+        /* no failure possible, so do not try {} catch */
+        getPosition().up();
+        result = result.setChildAt(i, newChild);
+      }
+      
+      // Compile v
+      return getArgument(ARG).visit(result);
+    }
   }
 }
