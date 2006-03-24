@@ -3,6 +3,11 @@
     equals(t1,t2) {t1.equals(t2)}
   }
 
+  %typeterm Visitable{
+    implement { jjtraveler.Visitable}
+    equals(t1,t2) {t1.equals(t2)}
+  }
+
 /*
  * basic operators
  */
@@ -60,7 +65,7 @@
   %op VisitableVisitor mu(s1:VisitableVisitor, s2:VisitableVisitor) {
     make(var,v) { tom.library.strategy.mutraveler.MuTraveler.mu(var,v) }
   }
-
+  
   %op VisitableVisitor Omega(position:int, s1:VisitableVisitor) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Omega) }
     make(pos,v) { new tom.library.strategy.mutraveler.Omega(pos,(jjtraveler.reflective.VisitableVisitor)v) }
@@ -91,6 +96,11 @@
   %op VisitableVisitor Pselect(p1:int, p2:int, s1:VisitableVisitor, s2:VisitableVisitor) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Pselect) }
     make(p,q,first,then) { new tom.library.strategy.mutraveler.Pselect(p,q,(jjtraveler.reflective.VisitableVisitor)first,(jjtraveler.reflective.VisitableVisitor)then) }
+  }
+
+  %op VisitableVisitor OmegaU(s1:VisitableVisitor, defaultStrategy:VisitableVisitor) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.OmegaU) }
+    make(v,d) { new tom.library.strategy.mutraveler.OmegaU((jjtraveler.reflective.VisitableVisitor)v,(jjtraveler.reflective.VisitableVisitor)d) }
   }
 
 /*
