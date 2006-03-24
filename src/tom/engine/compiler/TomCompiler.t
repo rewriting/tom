@@ -241,35 +241,29 @@ matchBlock: {
 					TomTypeList typesList = getSymbolDomain(tomSymbol);
 					TomList subjectListAST = empty();
 					TomNumberList path = `concTomNumber(RuleVar());
-					TomType subtermType;
-					TomTerm variable;
-					int index = 0; 
+          int index = 0; 
 					while(!typesList.isEmpty()) {
-						subtermType = typesList.getHead();
-						variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
+						TomType subtermType = typesList.getHead();
+						TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
 						subjectListAST = append(variable,subjectListAST);
 						typesList = typesList.getTail();
 						index++;
 					}
 
 					TomRuleList ruleList = `rl;
-					TomRule rule;
-					TomTerm newRhs;
-					Instruction rhsInst,newRhsInst;
-					Pattern pattern;
 					TomList guardList = empty();//no guardlist in pattern
 					while(!ruleList.isEmpty()) {
-						rule = ruleList.getHead();
+						TomRule rule = ruleList.getHead();
 						%match(TomRule rule) {
 							RewriteRule(Term(RecordAppl[slots=matchPatternsList]),//lhsTerm
 									Term(rhsTerm),
 									condList,
 									option) -> {
 								//transform rhsTerm into Instruction to build PatternInstructionList
-								newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
-								rhsInst = `If(TrueTL(),Return(newRhs),Nop());
-								newRhsInst = `buildCondition(condList,rhsInst);
-								pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
+								TomTerm newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
+								Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
+								Instruction newRhsInst = `buildCondition(condList,rhsInst);
+								Pattern pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
 								patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(pattern,RawAction(newRhsInst),option));
 							}
 						} 
