@@ -56,6 +56,10 @@ public class MuTraveler {
     positionMap.put(v,position);
   }
 
+	public static VisitableVisitor getReplace(VisitableVisitor v, final Visitable t) {
+    return ((Position) positionMap.get(v)).getReplace(t);
+	}
+
 }
 
 class MuInitializer extends Identity {

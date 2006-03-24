@@ -90,7 +90,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
 
   private void initHashCode(@childListWithType(slotList)@) {
 @generateMembersInit()@
-  this.hashCode = this.hashFunction();
+  this.hashCode = hashFunction();
   }
 
   /* name and arity */
@@ -103,8 +103,8 @@ public class @className()@ extends @fullClassName(sortName)@ {
   }
 
   /* shared.SharedObject */
-  public int hashCode() {
-    return this.hashCode;
+  public final int hashCode() {
+    return hashCode;
   }
 
   public shared.SharedObject duplicate() {
@@ -113,7 +113,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
     return clone;
   }
 
-  public boolean equivalent(shared.SharedObject obj) {
+  public final boolean equivalent(shared.SharedObject obj) {
     if(obj instanceof @className()@) {
       @className()@ peer = (@className()@) obj;
       return @generateMembersEqualityTest("peer")@;
@@ -400,8 +400,8 @@ public class @className()@ extends @fullClassName(sortName)@ {
   private String generateMembersEqualityTest(String peer) {
     String res = "";
     %match(SlotFieldList slotList) {
-      concSlotField(_*,slot@SlotField[name=fieldName],_*) -> {
-        res += fieldName(`fieldName)+"=="+peer+"."+getMethod(`slot)+"()";
+      concSlotField(_*,SlotField[name=fieldName],_*) -> {
+        res += fieldName(`fieldName)+"=="+peer+"."+fieldName(`fieldName);
         res+= " && ";
       }
     }
@@ -424,9 +424,9 @@ public class @className()@ extends @fullClassName(sortName)@ {
     String res = "";
     int index = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,slot@SlotField[domain=domain],_*) -> {
+      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += "      case "+index+": return "+getMethod(`slot)+"();\n";
+          res += "      case "+index+": return "+fieldName(`fieldName)+";\n";
           index++;
         }
       }
@@ -451,12 +451,12 @@ public class @className()@ extends @fullClassName(sortName)@ {
     String res = "";
     int index = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,slot@SlotField[domain=domain],_*) -> {
+      concSlotField(_*,slot@SlotField[name=fieldName,domain=domain],_*) -> {
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += getMethod(`slot)+"(), ";
         } else {
           if (index != argIndex) {
-            res += getMethod(`slot)+"(), ";
+            res += fieldName(`fieldName)+", ";
           } else {
             res += "("+fullClassName(`domain)+") " + argName+", ";
           }

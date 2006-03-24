@@ -116,15 +116,15 @@ public class StructureGom {
   }
 
   private final static int MAXLOCALITER = 1000000;
-  private final static int step = 100;
+  private final static int step = 1000;
     Comparator comparator = new Comparator() {
         public int compare(Object o1, Object o2) {
-          Struc s1 = (Struc)o1;
-          Struc s2 = (Struc)o2;
-          if(s1==s2) {
+          if(o1==o2) {
             return 0;
           }
 
+          Struc s1 = (Struc)o1;
+          Struc s2 = (Struc)o2;
           int v1 = weight(s1);
           int v2 = weight(s2);
           if(v1<v2) {
@@ -291,14 +291,16 @@ public class StructureGom {
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parR = cop2par(`R*);
               Struc elt1 = `par(concPar(cop(concCop(par(concPar(parR*,U)),T*)),context*));
-              c.add(MuTraveler.getPosition(this).getReplace(elt1).visit(subject));
+              //c.add(MuTraveler.getPosition(this).getReplace(elt1).visit(subject));
+              c.add(MuTraveler.getReplace(this,elt1).visit(subject));
             }
           }
           if(!optim3 || !canReact(`R,`U)) {
             if(!optim2 || canReact(`T,`U)) {
               StrucPar parT = cop2par(`T*);
               Struc elt2 = `par(concPar(cop(concCop(par(concPar(parT*,U)),R*)),context*));
-              c.add(MuTraveler.getPosition(this).getReplace(elt2).visit(subject));
+              //c.add(MuTraveler.getPosition(this).getReplace(elt2).visit(subject));
+              c.add(MuTraveler.getReplace(this,elt2).visit(subject));
             }
           }
         }
@@ -316,7 +318,8 @@ public class StructureGom {
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parR = cop2par(`R*);
               Struc elt3 = `par(concPar(cop(concCop(par(concPar(parR*,U)),T*)),context*));
-              c.add(MuTraveler.getPosition(this).getReplace(elt3).visit(subject));
+              //c.add(MuTraveler.getPosition(this).getReplace(elt3).visit(subject));
+              c.add(MuTraveler.getReplace(this,elt3).visit(subject));
             }
           }
 
@@ -324,7 +327,8 @@ public class StructureGom {
             if(!optim2 || canReact(`T,`U)) {
               StrucPar parT = cop2par(`T*);
               Struc elt4 = `par(concPar(cop(concCop(par(concPar(parT*,U)),R*)),context*));
-              c.add(MuTraveler.getPosition(this).getReplace(elt4).visit(subject));
+              //c.add(MuTraveler.getPosition(this).getReplace(elt4).visit(subject));
+              c.add(MuTraveler.getReplace(this,elt4).visit(subject));
             }
           }
         }
@@ -334,9 +338,11 @@ public class StructureGom {
            [R,T] -> <T;R> */
         par(concPar(X1*,R,X2*,T,X3*)) -> {
           StrucPar context = `concPar(X1*,X2*,X3*);
-          c.add(MuTraveler.getPosition(this).getReplace(
+          //c.add(MuTraveler.getPosition(this).getReplace(
+          c.add(MuTraveler.getReplace(this,
                 `par(concPar(seq(concSeq(R,T)),context*))).visit(subject));
-          c.add(MuTraveler.getPosition(this).getReplace(
+          //c.add(MuTraveler.getPosition(this).getReplace(
+          c.add(MuTraveler.getReplace(this,
                 `par(concPar(seq(concSeq(T,R)),context*))).visit(subject));
         }
 
@@ -355,10 +361,12 @@ public class StructureGom {
                 StrucPar parU = seq2par(`U*);
                 StrucPar parT = seq2par(`T*);
                 StrucPar parV = seq2par(`V*);
-                c.add(MuTraveler.getPosition(this).getReplace(
+                //c.add(MuTraveler.getPosition(this).getReplace(
+								c.add(MuTraveler.getReplace(this,
                       `par(concPar(seq(concSeq(par(concPar(parR*,parT*)),par(concPar(parU*,parV*)))),context*))
                       ).visit(subject));
-                c.add(MuTraveler.getPosition(this).getReplace(
+                //c.add(MuTraveler.getPosition(this).getReplace(
+								c.add(MuTraveler.getReplace(this,
                       `par(concPar(seq(concSeq(par(concPar(parU*,parV*)),par(concPar(parR*,parT*)))),context*))
                       ).visit(subject));
               }
@@ -374,14 +382,16 @@ public class StructureGom {
             StrucPar context = `concPar(X1*,X2*,X3*);
             if(!optim2 || canReact(`R,`T)) {
               StrucPar parT = seq2par(`T*);
-              c.add(MuTraveler.getPosition(this).getReplace(
+              //c.add(MuTraveler.getPosition(this).getReplace(
+							c.add(MuTraveler.getReplace(this,
                     `par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))
                     ).visit(subject));
             }
 
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parU = seq2par(`U*);
-              c.add(MuTraveler.getPosition(this).getReplace(
+              //c.add(MuTraveler.getPosition(this).getReplace(
+							c.add(MuTraveler.getReplace(this,
                     `par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))
                     ).visit(subject));
             }
@@ -397,14 +407,16 @@ public class StructureGom {
 
             if(!optim2 || canReact(`R,`T)) {
               StrucPar parT = seq2par(`T*);
-              c.add(MuTraveler.getPosition(this).getReplace(
+              //c.add(MuTraveler.getPosition(this).getReplace(
+							c.add(MuTraveler.getReplace(this,
                     `par(concPar(seq(concSeq(par(concPar(R,parT*)),U*)),context*))
                     ).visit(subject));
             }
 
             if(!optim2 || canReact(`R,`U)) {
               StrucPar parU = seq2par(`U*);
-              c.add(MuTraveler.getPosition(this).getReplace(
+              //c.add(MuTraveler.getPosition(this).getReplace(
+							c.add(MuTraveler.getReplace(this,
                     `par(concPar(seq(concSeq(T*,par(concPar(R,parU*)))),context*))
                     ).visit(subject));
             }
@@ -414,12 +426,14 @@ public class StructureGom {
         /* [X,-X] -> o */
         par(concPar(X1*,x,X2*,neg(x),X3*)) -> {
           Struc elt5 = `par(concPar(X1*,X2*,X3*));
-          c.add(MuTraveler.getPosition(this).getReplace(elt5).visit(subject));
+          //c.add(MuTraveler.getPosition(this).getReplace(elt5).visit(subject));
+					c.add(MuTraveler.getReplace(this,elt5).visit(subject));
         }
         /* [-X,X] -> o */
         par(concPar(X1*,neg(x),X2*,x,X3*)) -> {
           Struc elt6 = `par(concPar(X1*,X2*,X3*));
-          c.add(MuTraveler.getPosition(this).getReplace(elt6).visit(subject));
+          //c.add(MuTraveler.getPosition(this).getReplace(elt6).visit(subject));
+					c.add(MuTraveler.getReplace(this,elt6).visit(subject));
         }
       }
     }
@@ -587,98 +601,78 @@ public class StructureGom {
     return null;
   }
 
-  public static int compareStruc(StructuresAbstractType t1, StructuresAbstractType t2) {
-    if(t1 == t2) {
-      return 0;
-    }
+  public final static int compareStruc(StructuresAbstractType t1, StructuresAbstractType t2) {
+		while(true) {
+			if(t1 == t2) {
+				return 0;
+			}
 
-    if(t1 instanceof Struc && t2 instanceof Struc) {
-      Struc s1 = (Struc) t1;
-      Struc s2 = (Struc) t2;
-      String sym1 = s1.symbolName();
-      String sym2 = s2.symbolName();
-      int res = sym1.compareTo(sym2);
-      if(res != 0) {
-        return res;
-      } else { /* here we are sure there is at least one child */
-        res = compareStruc((StructuresAbstractType)s1.getChildAt(0), (StructuresAbstractType)s2.getChildAt(0));
-        if(res != 0) {
-          return res;
-        }
-      }
-
-    } else if(t1 instanceof StrucCop && t2 instanceof StrucCop) {
-      StrucCop l1 = (StrucCop) t1;
-      StrucCop l2 = (StrucCop) t2;
-      if(l1.isconcCopEmpty()) {
-        if(l2.isconcCopEmpty()) {
-          System.out.println("bad case2");
-          System.exit(0);
-        } else {
-          return -1;
-        }
-      } else {
-        if(l2.isconcCopEmpty()) {
-          return 1;
-        } else {
-          int res = compareStruc(l1.getconcCopHead(),l2.getconcCopHead());
-          if(res != 0) {
-            return res;
-          } else {
-            return compareStruc(l1.getconcCopTail(),l2.getconcCopTail());
-          }
-        }
-      }
-    } else if(t1 instanceof StrucPar && t2 instanceof StrucPar) {
-      StrucPar l1 = (StrucPar) t1;
-      StrucPar l2 = (StrucPar) t2;
-      if(l1.isconcParEmpty()) {
-        if(l2.isconcParEmpty()) {
-          System.out.println("bad case2");
-          System.exit(0);
-        } else {
-          return -1;
-        }
-      } else {
-        if(l2.isconcParEmpty()) {
-          return 1;
-        } else {
-          int res = compareStruc(l1.getconcParHead(),l2.getconcParHead());
-          if(res != 0) {
-            return res;
-          } else {
-            return compareStruc(l1.getconcParTail(),l2.getconcParTail());
-          }
-        }
-      }
-    } else if(t1 instanceof StrucSeq && t2 instanceof StrucSeq) {
-      StrucSeq l1 = (StrucSeq) t1;
-      StrucSeq l2 = (StrucSeq) t2;
-      if(l1.isconcSeqEmpty()) {
-        if(l2.isconcSeqEmpty()) {
-          System.out.println("bad case2");
-          System.exit(0);
-        } else {
-          return -1;
-        }
-      } else {
-        if(l2.isconcSeqEmpty()) {
-          return 1;
-        } else {
-          int res = compareStruc(l1.getconcSeqHead(),l2.getconcSeqHead());
-          if(res != 0) {
-            return res;
-          } else {
-            return compareStruc(l1.getconcSeqTail(),l2.getconcSeqTail());
-          }
-        }
-      }
-    }
-    String s1 = t1.toString();
-    String s2 = t2.toString();
-    int res = s1.compareTo(s2);
-    System.out.println(s1 + ((res==0)?" = ":((res<0)?" < ":" > "))  + s2);
-    return res;
+			if(t1 instanceof Struc && t2 instanceof Struc) {
+				Struc s1 = (Struc) t1;
+				Struc s2 = (Struc) t2;
+				String sym1 = s1.symbolName();
+				String sym2 = s2.symbolName();
+				int res = sym1.compareTo(sym2);
+				if(res != 0) {
+					return res;
+				} else { /* here we are sure there is at least one child */
+					t1 = (StructuresAbstractType)s1.getChildAt(0);
+					t2 = (StructuresAbstractType)s2.getChildAt(0);
+					continue;
+				}
+			} else if(t1 instanceof StrucCop && t2 instanceof StrucCop) {
+				StrucCop l1 = (StrucCop) t1;
+				StrucCop l2 = (StrucCop) t2;
+				if(l1.isconcCopEmpty()) {
+					return -1;
+				} else if(l2.isconcCopEmpty()) {
+					return 1;
+				} else {
+					int res = compareStruc(l1.getconcCopHead(),l2.getconcCopHead());
+					if(res != 0) {
+						return res;
+					} else {
+						t1 = l1.getconcCopTail();
+						t2 = l2.getconcCopTail();
+						continue;
+					}
+				}
+			} else if(t1 instanceof StrucPar && t2 instanceof StrucPar) {
+				StrucPar l1 = (StrucPar) t1;
+				StrucPar l2 = (StrucPar) t2;
+				if(l1.isconcParEmpty()) {
+					return -1;
+				} else if(l2.isconcParEmpty()) {
+					return 1;
+				} else {
+					int res = compareStruc(l1.getconcParHead(),l2.getconcParHead());
+					if(res != 0) {
+						return res;
+					} else {
+						t1 = l1.getconcParTail();
+						t2 = l2.getconcParTail();
+						continue;
+					}
+				}
+			} else if(t1 instanceof StrucSeq && t2 instanceof StrucSeq) {
+				StrucSeq l1 = (StrucSeq) t1;
+				StrucSeq l2 = (StrucSeq) t2;
+				if(l1.isconcSeqEmpty()) {
+					return -1;
+				} else if(l2.isconcSeqEmpty()) {
+					return 1;
+				} else {
+					int res = compareStruc(l1.getconcSeqHead(),l2.getconcSeqHead());
+					if(res != 0) {
+						return res;
+					} else {
+						t1 = l1.getconcSeqTail();
+						t2 = l2.getconcSeqTail();
+						continue;
+					}
+				}
+			} 
+		}
   }
 
   public String prettyPrint(StructuresAbstractType t) {
