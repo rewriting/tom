@@ -592,8 +592,8 @@ public class StructureGom {
     if(t1 instanceof Struc && t2 instanceof Struc) {
       Struc s1 = (Struc) t1;
       Struc s2 = (Struc) t2;
-      String sym1 = s1.getName();
-      String sym2 = s2.getName();
+      String sym1 = s1.symbolName();
+      String sym2 = s2.symbolName();
       int res = sym1.compareTo(sym2);
       if(res != 0) {
         return res;
