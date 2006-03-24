@@ -35,6 +35,7 @@ import tom.engine.TomMessage;
 import tom.engine.tools.TomFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
+import tom.engine.tools.SymbolTable;
 import tom.engine.xml.Constants;
 import tom.library.traversal.Replace1;
 import tom.platform.OptionParser;
@@ -114,15 +115,22 @@ public class TomExpander extends TomGenericPlugin {
    * - each TomTypeAlone is replaced by the corresponding TomType
    */
   public void updateSymbolTable() {
-    Iterator it = getStreamManager().getSymbolTable().keySymbolIterator();
+		SymbolTable symbolTable = getStreamManager().getSymbolTable();
+    Iterator it = symbolTable.keySymbolIterator();
     while(it.hasNext()) {
       String tomName = (String)it.next();
       TomTerm emptyContext = `emptyTerm();
       TomSymbol tomSymbol = getSymbolFromName(tomName);
+
+			/*
+			 * we update codomains which a constrained by a symbolName
+			 * (come from the %strategy operator)
+			 */
+			tomSymbol = updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
       /*
        * add default isFsym and make HERE
        */ 
-      tomSymbol = defaultIsFSym(tomSymbol);
+      tomSymbol = addDefaultIsFSym(tomSymbol);
 
       tomSymbol = expandTermApplTomSyntax(`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
       //System.out.println("symbol = " + tomSymbol);
@@ -130,8 +138,35 @@ public class TomExpander extends TomGenericPlugin {
       getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
-  
-  private TomSymbol defaultIsFSym(TomSymbol tomSymbol) {
+ 
+	private TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
+		%match(TomSymbol symbol) {
+      Symbol(name,t@TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
+				//System.out.println("update codomain: " + `name);
+				//System.out.println("depend from : " + `opName);
+				TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
+				//System.out.println("1st depend codomain: " + getSymbolCodomain(dependSymbol));
+				dependSymbol = updateConstrainedSymbolCodomain(dependSymbol,symbolTable);
+				TomType codomain = getSymbolCodomain(dependSymbol);
+				//System.out.println("2nd depend codomain: " + getSymbolCodomain(dependSymbol));
+				OptionList newOptions = `options;
+				%match(OptionList options) {
+					concOption(O1*,DeclarationToOption(m@MakeDecl[astType=Codomain[]]),O2*) -> {
+						Declaration newMake = `m.setAstType(codomain);
+						//System.out.println("newMake: " + newMake);
+						newOptions = `concOption(O1*,O2*,DeclarationToOption(newMake));
+					}
+				}
+				TomSymbol newSymbol = `Symbol(name,TypesToType(domain,codomain),slots,newOptions);
+				//System.out.println("newSymbol: " + newSymbol);
+				symbolTable.putSymbol(`name.getString(),newSymbol);
+				return newSymbol;
+			}
+		}
+		return symbol;
+	}
+	
+  private TomSymbol addDefaultIsFSym(TomSymbol tomSymbol) {
     %match(TomSymbol tomSymbol) {
       Symbol[option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return tomSymbol;

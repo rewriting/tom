@@ -79,7 +79,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     int index = 0;
     while(!tomTypes.isEmpty()) {
 	    TomType type = tomTypes.getHead();
-	    types.add(getTomType(type));
+	    types.add(getTLType(type));
       names.add(getSlotName(tomSymbol, index).getString());
 	    tomTypes = tomTypes.getTail();
 	    index++;

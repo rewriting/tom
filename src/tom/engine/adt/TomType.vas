@@ -8,6 +8,7 @@ abstract syntax
 
 Type(tomType:TomType,tlType:TomType) -> TomType
 TomTypeAlone(string:String) -> TomType
+Codomain(astName:TomName) -> TomType
 
 ASTTomType(string:String) -> TomType
 TypesToType(domain:TomTypeList,codomain:TomType) -> TomType

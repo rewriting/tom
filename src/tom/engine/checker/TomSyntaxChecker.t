@@ -289,7 +289,7 @@ public class TomSyntaxChecker extends TomChecker {
     
       // ensure first definition then Codomain, Domain, Macros and Slots (Simple operator)
     verifyMultipleDefinition(symbStrName, symbolType, TomSyntaxChecker.OPERATOR);
-    verifySymbolCodomain(getSymbolCodomain(tomSymbol).getString(), symbStrName, symbolType);
+    verifySymbolCodomain(getSymbolCodomain(tomSymbol), symbStrName, symbolType);
     domainLength = verifySymbolDomain(getSymbolDomain(tomSymbol), symbStrName, symbolType);
     verifySymbolMacroFunctions(optionList, domainLength, symbolType);
       /*if(symbolType == CONSTRUCTOR) {
@@ -297,13 +297,28 @@ public class TomSyntaxChecker extends TomChecker {
         }*/
   } //verifySymbol
 
-  private void verifySymbolCodomain(String codomain, String symbName, String symbolType) {
-    if(!testTypeExistence(codomain)) {
-      messageError(currentTomStructureOrgTrack.getLine(), 
-                   symbolType+" "+symbName, 
-                   TomMessage.symbolCodomainError.getMessage(),
-                   new Object[]{symbName, codomain});
-    }
+	private void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
+		%match(TomType codomain) {
+			Codomain(Name(opName)) -> {
+				if(symbolTable().getSymbolFromName(`opName) != null) {
+					return;
+				} else {
+					messageError(currentTomStructureOrgTrack.getLine(), 
+							symbolType+" "+symbName, 
+							TomMessage.symbolCodomainError.getMessage(),
+							new Object[]{symbName, codomain});
+				}
+			}
+
+			_ -> {
+				if(!testTypeExistence(codomain.getString())) {
+					messageError(currentTomStructureOrgTrack.getLine(), 
+							symbolType+" "+symbName, 
+							TomMessage.symbolCodomainError.getMessage(),
+							new Object[]{symbName, codomain});
+				}
+			}
+		}
   } //verifySymbolCodomain
    
   private int verifySymbolDomain(TomTypeList args, String symbName, String symbolType) {

@@ -341,37 +341,31 @@ extendsBqTerm returns [TomTerm bqTerm] throws TomException
 strategyConstruct [Option orgTrack] returns [Declaration result] throws TomException
 {
     result = null;
-    Option ot = null;
     TomTerm extendsTerm = null;
-    String codomain = null;
-    TomSymbol extendsSymbol = null; 
+    TomType codomainType = null;
     LinkedList visitList = new LinkedList();
     TomVisitList astVisitList = `emptyTomVisitList();
-    LinkedList argumentList = new LinkedList();
     TomName orgText = null;
     TomTypeList types = `emptyTomTypeList();
     LinkedList options = new LinkedList();
     LinkedList slotNameList = new LinkedList();
     LinkedList pairNameDeclList = new LinkedList();
-    TomName astName = null;
     String stringSlotName = null;
     Option makeOption = null;
-    String makeTlCode = null;//used for tlCode in make
-    TomList makeList = `concTomTerm();//types for make 
 
     clearText();
 }
     :(
         name:ALL_ID
         {
-        ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+				Option ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
         options.add(ot);
         }
         (
             LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID 
             {
                 stringSlotName = slotName.getText(); 
-                astName = `Name(stringSlotName);
+                TomName astName = `Name(stringSlotName);
                 slotNameList.add(astName); 
                 pairNameDeclList.add(`PairNameDecl(astName,EmptyDeclaration())); 
                 types = (TomTypeList) types.append(`TomTypeAlone(typeArg.getText()));
@@ -381,7 +375,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 slotName2:ALL_ID COLON typeArg2:ALL_ID
                 {
                     stringSlotName = slotName2.getText(); 
-                    astName = ast().makeName(stringSlotName);
+                    TomName astName = ast().makeName(stringSlotName);
                     if(slotNameList.indexOf(astName) != -1) {
                       getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
                         new Object[]{stringSlotName},
@@ -395,44 +389,50 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
             )? RPAREN
         )
         extendsTerm = extendsBqTerm
-  {
-    //get strategy codomain
-    extendsSymbol = symbolTable.getSymbolFromName(extendsTerm.getArgs().getHead().getAstName().getString());
-    if (extendsSymbol != null) {
-      codomain = extendsSymbol.getTypesToType().getCodomain().getString();
-    } else {
-			//since we want a non-linear parser, codomain should be updated later on, 
-			//or retrieved after parsing (this is tough since we put symbol at parsing)
-			codomain = "unknown type";
-		}
-  }
+        {
+        matchBlock: {
+					%match(TomTerm extendsTerm) {
+						Composite(concTomTerm(BackQuoteAppl[astName=astName],_*)) -> {
+							codomainType = `Codomain(astName);
+							break matchBlock;
+						}
+						_ -> {
+							throw new TomException(TomMessage.malformedStrategy,
+									new Object[]{currentFile(), new Integer(getLine()),
+									"strat","a composite",extendsTerm.toString()});
+						}
+					}
+										}
+				}
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
        {
-         makeTlCode = "new " + name.getText() + "(";
          //initialize arrayList with argument names
+				 TomList makeArgs = `concTomTerm();
          int index = 0;
          TomTypeList makeTypes = types;//keep a copy of types
+				 String makeTlCode = "new " + name.getText() + "(";
          while(!makeTypes.isEmpty()) {
-           TomType type = makeTypes.getHead();
-           //add java variables
+					 String argName = "t"+index;
            if (index>0) {//if many parameters
              makeTlCode = makeTlCode.concat(",");
            }
-           makeTlCode = makeTlCode.concat(((TomName)slotNameList.get(index)).getString());
-           //build makeList from type and slotNameList
-           TomTerm arg = `Variable(concOption(),(TomName)slotNameList.get(index),type,concConstraint());
-           makeList = `concTomTerm(makeList*,arg);
-           makeTypes = makeTypes.getTail();
+					 makeTlCode += argName;
+
+           TomTerm arg = `Variable(concOption(),Name(argName),makeTypes.getHead(),concConstraint());
+           makeArgs = `concTomTerm(makeArgs*,arg);
+           
+					 makeTypes = makeTypes.getTail();
            index++;
          }
-          makeTlCode = makeTlCode.concat(")");
-          makeOption = `OriginTracking(Name(name.getText()),t.getLine(),Name(currentFile()));
-          Declaration makeDecl = `MakeDecl(Name(name.getText()), TomTypeAlone(codomain), makeList, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
+				 makeTlCode += ")";
+
+				 makeOption = `OriginTracking(Name(name.getText()),t.getLine(),Name(currentFile()));
+				 Declaration makeDecl = `MakeDecl(Name(name.getText()), codomainType,makeArgs, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
           options.add(makeDecl); 
 
-          TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomain, types, ast().makePairNameDeclList(pairNameDeclList), options);
+          TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomainType, types, ast().makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
@@ -1441,7 +1441,7 @@ operator returns [Declaration result] throws TomException
 
           //System.out.println("pairNameDeclList = " + pairNameDeclList);
 
-          TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, ast().makePairNameDeclList(pairNameDeclList), options);
+          TomSymbol astSymbol = ast().makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, ast().makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
           updatePosition(t.getLine(),t.getColumn());
@@ -1488,7 +1488,7 @@ operatorList returns [Declaration result] throws TomException
         t:RBRACE
         { 
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, pairNameDeclList, options);
+            TomSymbol astSymbol = ast().makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
             putSymbol(name.getText(),astSymbol);
             result = `ListSymbolDecl(Name(name.getText()));
             updatePosition(t.getLine(),t.getColumn());
@@ -1532,7 +1532,7 @@ operatorArray returns [Declaration result] throws TomException
         t:RBRACE
         { 
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, pairNameDeclList, options);
+            TomSymbol astSymbol = ast().makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
             putSymbol(name.getText(),astSymbol);
 
             result = `ArraySymbolDecl(Name(name.getText()));
