@@ -60,6 +60,7 @@
   <property name="lsystem"        value="lsystems"/>
   <property name="matching"       value="matching"/>
   <property name="master"         value="master"/>
+  <property name="meta"           value="meta"/>
   <property name="mgs"            value="mgs"/>
   <property name="nspk"           value="nspk"/>
   <property name="p3p"            value="p3p"/>
@@ -526,6 +527,11 @@
     </copy>
   </target>
 
+  <target name="meta" depends="init"> 
+    <tomcompile example="${meta}"/>
+    <javacompile example="${meta}"/>
+  </target>
+
   <target name="mgs" depends="init">
     <adtcompile example="${mgs}"
                 factory="term"/>
@@ -785,7 +791,7 @@
           description="Builds the examples (at least some)"
 	  depends="addressbook, adt, antipattern, apireach, appletxml,
 	  boulderdash, builtin, caml, cell, dom, expression, ferus, gomoku,
-	  gterm, gtree, integerc, list, matching, master, mgs, nspk, p3p,
+	  gterm, gtree, integerc, list, matching, master, meta, mgs, nspk, p3p,
 	  peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set, strategy,
 	  structure, strings, ted, tutorial, vas, xml, zenon">
   </target>
@@ -893,11 +899,13 @@
 
         <include name="${master}/README"/>
         <include name="${master}/*.t"/>
-				<include name="${master}/*.vas"/>
+	<include name="${master}/*.vas"/>
+
+        <include name="${meta}/*.t"/>
 
         <include name="${matching}/README"/>
         <include name="${matching}/*.t"/>
-				<include name="${matching}/*.vas"/>
+	<include name="${matching}/*.vas"/>
 				
         <include name="${nspk}/README"/>
         <include name="${nspk}/*.t"/>
@@ -986,7 +994,6 @@
         <include name="${analysis}/*.t"/>
         <include name="${analysis}/*.vas"/>
 
-
         <not>
           <present targetdir="${examples.dir}">
             <mapper type="glob" 
@@ -1041,6 +1048,5 @@
       ****************************************************
     </fail>
   </target>
-
   
 </project>
