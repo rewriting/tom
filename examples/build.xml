@@ -8,7 +8,7 @@
   <property file="../local.properties"/>
 
   <property environment="env"/>
-  <property name="tom.home"    value="${env.TOM_HOME}"/>
+  <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>
   <import file="${tom.common.path}/tom-common.xml"/>
   
@@ -590,7 +590,8 @@
     <vascompile example="${structure}"/>
     <gomcompile example="${structure}"/>
     <!-- build tom -->
-    <tom.preset srcdir="${examples.dir}">
+    <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}">
       <!-- stamp not yet ready for apigen list -->
       <include name="${structure}/**/*.t"/>
       <exclude name="${structure}/**/StructParser.g.t"/>
