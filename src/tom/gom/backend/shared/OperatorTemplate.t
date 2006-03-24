@@ -94,7 +94,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
   }
 
   /* name and arity */
-  public String getName() {
+  public String symbolName() {
     return "@className()@";
   }
 
@@ -134,14 +134,14 @@ public class @className()@ extends @fullClassName(sortName)@ {
   /* AbstractType */
   public aterm.ATerm toATerm() {
     return aterm.pure.SingletonFactory.getInstance().makeAppl(
-      aterm.pure.SingletonFactory.getInstance().makeAFun(getName(),getArity(),false),
+      aterm.pure.SingletonFactory.getInstance().makeAFun(symbolName(),getArity(),false),
       new aterm.ATerm[] {@generateToATermChilds()@});
   }
 
   public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm) {
     if(trm instanceof aterm.ATermAppl) {
       aterm.ATermAppl appl = (aterm.ATermAppl) trm;
-      if(proto.getName().equals(appl.getName())) {
+      if(proto.symbolName().equals(appl.getName())) {
         return make(
 @generatefromATermChilds("appl")@
         );
