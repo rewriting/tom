@@ -351,7 +351,6 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     LinkedList slotNameList = new LinkedList();
     LinkedList pairNameDeclList = new LinkedList();
     String stringSlotName = null;
-    Option makeOption = null;
 
     clearText();
 }
@@ -428,7 +427,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
          }
 				 makeTlCode += ")";
 
-				 makeOption = `OriginTracking(Name(name.getText()),t.getLine(),Name(currentFile()));
+				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),Name(currentFile()));
 				 Declaration makeDecl = `MakeDecl(Name(name.getText()), codomainType,makeArgs, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
           options.add(makeDecl); 
 
@@ -453,8 +452,6 @@ strategyVisit [LinkedList list] throws TomException
   LinkedList patternInstructionList = new LinkedList();
   TomType vType = null;
   TomList subjectList = `emptyTomList();
-  OptionList options = `concOption();
-  LinkedList optionList = new LinkedList();
 
   clearText();
 }
@@ -478,8 +475,9 @@ strategyVisit [LinkedList list] throws TomException
     RBRACE
   )
   {
+    LinkedList optionList = new LinkedList();
     optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),Name(currentFile())));
-    options = ast().makeOptionList(optionList);
+    OptionList options = ast().makeOptionList(optionList);
     list.add(`VisitTerm(vType,ast().makePatternInstructionList(patternInstructionList),options));
   }
 ;

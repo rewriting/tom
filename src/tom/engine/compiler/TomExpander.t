@@ -141,7 +141,7 @@ public class TomExpander extends TomGenericPlugin {
  
 	private TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
 		%match(TomSymbol symbol) {
-      Symbol(name,t@TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
+      Symbol(name,TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
 				//System.out.println("update codomain: " + `name);
 				//System.out.println("depend from : " + `opName);
 				TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
