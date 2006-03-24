@@ -94,8 +94,10 @@ public class Position {
 
   /**
    * remove the last sub-position
+   * Up and down are made public to allow to write compiled strategies by hand
+   * This may be a BAD idea
    */
-  protected void up() {
+  public void up() {
 		size--;
   }
 
@@ -104,7 +106,7 @@ public class Position {
    *
    * @param n sub-position number. 1 is the first possible sub-position
    */
-  protected void down(int n) {
+  public void down(int n) {
     if(n>0) {
 			if (size == data.length) {
 				ensureLength(size+1);
