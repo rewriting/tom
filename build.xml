@@ -196,6 +196,9 @@
     <taskdef name="vas" 
              classname="vas.ant.VasTask" 
              classpathref="tom.classpath"/>
+    <taskdef name="gom"
+             classname="tom.gom.tools.ant.GomTask"
+             classpathref="tom.classpath"/>
     <taskdef name="tom" 
              classname="tom.engine.tools.ant.TomTask">
       <classpath refid="tom.classpath"/>
@@ -413,7 +416,13 @@
 	 package="tom.gom.adt"
 	 destdir="${src.gen}">
 	 <include name="tom/gom/adt/*.vas"/>
-    </vas>
+       </vas>
+    <!--<gom config="${stable.gomconfigfile}"
+	 srcdir="${src.src}"
+	 package="tom.gom.adt"
+	 destdir="${src.gen}">
+	 <include name="tom/gom/adt/*.gom"/>
+    </gom>-->
   </target>
 
   <target name="build.src" depends="src"/>

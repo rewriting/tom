@@ -282,6 +282,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("All visited sorts in same %strategy must have same visitorForward: `{0}` is different from `{1}`");
   public static final TomMessage noVisitorForward =
       new TomMessage("no visitorForward defined for type `{0}`");
+  public static final TomMessage unknownVisitedType =
+      new TomMessage("Visited Type `{0}` is unknown.");
   
   // rule
   public static final TomMessage incorrectRuleLHSClass   =

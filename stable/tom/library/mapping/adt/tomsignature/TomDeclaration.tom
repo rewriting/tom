@@ -269,10 +269,10 @@
   make(t0, t1, t2) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstruction_Match(t0, t1, t2)}
 }
 
-%op Instruction RuleSet(ruleList:TomRuleList, orgTrack:Option) {
+%op Instruction RuleSet(ruleList:TomRuleList, option:OptionList) {
   is_fsym(t) { (t!= null) && t.isRuleSet()}
   get_slot(ruleList,t) { t.getRuleList()}
-  get_slot(orgTrack,t) { t.getOrgTrack()}
+  get_slot(option,t) { t.getOption()}
   make(t0, t1) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstruction_RuleSet(t0, t1)}
 }
 
@@ -405,6 +405,33 @@
   get_slot(tail,t) { t.getTail()}
   make(e,l) {tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstructionList(e,l)}
 }
+%typeterm KeyEntry{
+  implement { tom.engine.adt.tomsignature.types.KeyEntry}
+  visitor_fwd { tom.engine.adt.tomsignature.TomDeclarationVisitableFwd}
+  equals(t1,t2) {t1.equals(t2)}
+  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.engine.adt.tomsignature.types.KeyEntry)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
+  get_implementation(t) {t}
+}
+
+%op KeyEntry UsedTypeDefinition(typedef:TomTypeDefinition) {
+  is_fsym(t) { (t!= null) && t.isUsedTypeDefinition()}
+  get_slot(typedef,t) { t.getTypedef()}
+  make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeKeyEntry_UsedTypeDefinition(t0)}
+}
+
+%op KeyEntry UsedSymbolDestructor(symbol:TomSymbol) {
+  is_fsym(t) { (t!= null) && t.isUsedSymbolDestructor()}
+  get_slot(symbol,t) { t.getSymbol()}
+  make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeKeyEntry_UsedSymbolDestructor(t0)}
+}
+
+%op KeyEntry UsedSymbolConstructor(symbol:TomSymbol) {
+  is_fsym(t) { (t!= null) && t.isUsedSymbolConstructor()}
+  get_slot(symbol,t) { t.getSymbol()}
+  make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeKeyEntry_UsedSymbolConstructor(t0)}
+}
+
 %typeterm NameList{
   implement { tom.engine.adt.tomsignature.types.NameList}
   visitor_fwd { tom.engine.adt.tomsignature.TomDeclarationVisitableFwd}
@@ -618,11 +645,12 @@
   get_implementation(t) {t}
 }
 
-%op TomVisit VisitTerm(vNode:TomType, astPatternInstructionList:PatternInstructionList) {
+%op TomVisit VisitTerm(vNode:TomType, astPatternInstructionList:PatternInstructionList, option:OptionList) {
   is_fsym(t) { (t!= null) && t.isVisitTerm()}
   get_slot(vNode,t) { t.getVNode()}
   get_slot(astPatternInstructionList,t) { t.getAstPatternInstructionList()}
-  make(t0, t1) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomVisit_VisitTerm(t0, t1)}
+  get_slot(option,t) { t.getOption()}
+  make(t0, t1, t2) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomVisit_VisitTerm(t0, t1, t2)}
 }
 
 %typeterm TomRule{
@@ -1011,6 +1039,12 @@
   make() { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeOption_ImplicitXMLAttribut()}
 }
 
+%op Option ModuleName(string:String) {
+  is_fsym(t) { (t!= null) && t.isModuleName()}
+  get_slot(string,t) { t.getString()}
+  make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeOption_ModuleName(t0)}
+}
+
 %op Option Debug(astName:TomName) {
   is_fsym(t) { (t!= null) && t.isDebug()}
   get_slot(astName,t) { t.getAstName()}
@@ -1023,16 +1057,15 @@
   make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeOption_Label(t0)}
 }
 
+%op Option Constant() {
+  is_fsym(t) { (t!= null) && t.isConstant()}
+  make() { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeOption_Constant()}
+}
+
 %op Option OriginalText(astName:TomName) {
   is_fsym(t) { (t!= null) && t.isOriginalText()}
   get_slot(astName,t) { t.getAstName()}
   make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeOption_OriginalText(t0)}
-}
-
-%op Option Constructor(nameList:NameList) {
-  is_fsym(t) { (t!= null) && t.isConstructor()}
-  get_slot(nameList,t) { t.getNameList()}
-  make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeOption_Constructor(t0)}
 }
 
 %op Option OriginTracking(astName:TomName, line:int, fileName:TomName) {
@@ -1165,6 +1198,12 @@
   is_fsym(t) { (t!= null) && t.isASTTomType()}
   get_slot(string,t) { t.getString()}
   make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomType_ASTTomType(t0)}
+}
+
+%op TomType Codomain(astName:TomName) {
+  is_fsym(t) { (t!= null) && t.isCodomain()}
+  get_slot(astName,t) { t.getAstName()}
+  make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomType_Codomain(t0)}
 }
 
 %op TomType TomTypeAlone(string:String) {
@@ -1364,11 +1403,12 @@
   make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomTerm_BuildEmptyList(t0)}
 }
 
-%op TomTerm BuildTerm(astName:TomName, args:TomList) {
+%op TomTerm BuildTerm(astName:TomName, args:TomList, moduleName:String) {
   is_fsym(t) { (t!= null) && t.isBuildTerm()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(args,t) { t.getArgs()}
-  make(t0, t1) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomTerm_BuildTerm(t0, t1)}
+  get_slot(moduleName,t) { t.getModuleName()}
+  make(t0, t1, t2) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomTerm_BuildTerm(t0, t1, t2)}
 }
 
 %op TomTerm BuildVariable(astName:TomName, args:TomList) {
@@ -1638,12 +1678,13 @@
   make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_SymbolDecl(t0)}
 }
 
-%op Declaration Class(astName:TomName, extendsType:TomForwardType, declaration:Declaration) {
+%op Declaration Class(astName:TomName, extendsType:TomForwardType, superTerm:TomTerm, declaration:Declaration) {
   is_fsym(t) { (t!= null) && t.isClass()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(extendsType,t) { t.getExtendsType()}
+  get_slot(superTerm,t) { t.getSuperTerm()}
   get_slot(declaration,t) { t.getDeclaration()}
-  make(t0, t1, t2) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_Class(t0, t1, t2)}
+  make(t0, t1, t2, t3) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_Class(t0, t1, t2, t3)}
 }
 
 %op Declaration FunctionDef(astName:TomName, argumentList:TomList, codomain:TomType, throwsType:TomType, instruction:Instruction) {
@@ -1656,12 +1697,13 @@
   make(t0, t1, t2, t3, t4) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_FunctionDef(t0, t1, t2, t3, t4)}
 }
 
-%op Declaration Strategy(sName:TomName, visitList:TomVisitList, orgTrack:Option) {
+%op Declaration Strategy(sName:TomName, extendsTerm:TomTerm, visitList:TomVisitList, orgTrack:Option) {
   is_fsym(t) { (t!= null) && t.isStrategy()}
   get_slot(sName,t) { t.getSName()}
+  get_slot(extendsTerm,t) { t.getExtendsTerm()}
   get_slot(visitList,t) { t.getVisitList()}
   get_slot(orgTrack,t) { t.getOrgTrack()}
-  make(t0, t1, t2) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_Strategy(t0, t1, t2)}
+  make(t0, t1, t2, t3) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_Strategy(t0, t1, t2, t3)}
 }
 
 %op Declaration MakeDecl(astName:TomName, astType:TomType, args:TomList, instr:Instruction, orgTrack:Option) {

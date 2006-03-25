@@ -1,5 +1,4 @@
 package tom.library.strategy.mutraveler;
-import java.util.Random;
 
 import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
 import jjtraveler.Visitable;
@@ -23,14 +22,14 @@ public class Pselect extends AbstractVisitableVisitor {
   protected final static int THEN = 1;
   private int p;
   private int q;
-  private static Random random = null;
+  private static java.util.Random random = null;
 
   public Pselect(int p, int q,VisitableVisitor first, VisitableVisitor then) {
     initSubterm(first,then);
     this.p = p;
     this.q = q;
     if(random == null) {
-      random = new Random();
+      random = new java.util.Random();
     }
   }
     

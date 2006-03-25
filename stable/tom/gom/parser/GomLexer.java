@@ -2,26 +2,26 @@
 
   /*
    * Gom
-   * 
+   *
    * Copyright (c) 2005-2006, INRIA
    * Nancy, France.
-   * 
+   *
    * This program is free software; you can redistribute it and/or modify
    * it under the terms of the GNU General Public License as published by
    * the Free Software Foundation; either version 2 of the License, or
    * (at your option) any later version.
-   * 
+   *
    * This program is distributed in the hope that it will be useful,
    * but WITHOUT ANY WARRANTY; without even the implied warranty of
    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    * GNU General Public License for more details.
-   * 
+   *
    * You should have received a copy of the GNU General Public License
    * along with this program; if not, write to the Free Software
    * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-   * 
+   *
    * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
-   * 
+   *
    **/
   package tom.gom.parser;
 
@@ -69,7 +69,7 @@ public GomLexer(LexerSharedInputState state) {
 	literals = new Hashtable();
 	literals.put(new ANTLRHashString("imports", this), new Integer(6));
 	literals.put(new ANTLRHashString("abstract", this), new Integer(9));
-	literals.put(new ANTLRHashString("private", this), new Integer(17));
+	literals.put(new ANTLRHashString("private", this), new Integer(20));
 	literals.put(new ANTLRHashString("module", this), new Integer(4));
 	literals.put(new ANTLRHashString("public", this), new Integer(7));
 	literals.put(new ANTLRHashString("syntax", this), new Integer(10));
@@ -119,6 +119,24 @@ tryAgain:
 				case '*':
 				{
 					mSTAR(true);
+					theRetToken=_returnToken;
+					break;
+				}
+				case '=':
+				{
+					mEQUALS(true);
+					theRetToken=_returnToken;
+					break;
+				}
+				case '|':
+				{
+					mALT(true);
+					theRetToken=_returnToken;
+					break;
+				}
+				case ';':
+				{
+					mSEMI(true);
 					theRetToken=_returnToken;
 					break;
 				}
@@ -271,6 +289,45 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
+	public final void mEQUALS(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = EQUALS;
+		int _saveIndex;
+		
+		match('=');
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	public final void mALT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = ALT;
+		int _saveIndex;
+		
+		match('|');
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	public final void mSEMI(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = SEMI;
+		int _saveIndex;
+		
+		match(";;");
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
 	public final void mLBRACE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = LBRACE;
@@ -355,7 +412,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop44:
+		_loop54:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				{
@@ -363,7 +420,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop44;
+				break _loop54;
 			}
 			
 		} while (true);
@@ -411,7 +468,7 @@ tryAgain:
 		
 		match("/*");
 		{
-		_loop50:
+		_loop60:
 		do {
 			switch ( LA(1)) {
 			case '\n':
@@ -472,7 +529,7 @@ tryAgain:
 					newline();
 				}
 			else {
-				break _loop50;
+				break _loop60;
 			}
 			}
 		} while (true);
@@ -522,7 +579,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop54:
+		_loop64:
 		do {
 			switch ( LA(1)) {
 			case 'a':  case 'b':  case 'c':  case 'd':
@@ -566,7 +623,7 @@ tryAgain:
 			}
 			default:
 			{
-				break _loop54;
+				break _loop64;
 			}
 			}
 		} while (true);

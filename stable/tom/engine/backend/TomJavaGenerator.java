@@ -70,11 +70,8 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.writeln("}");
   }
 
-  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, Declaration declaration, String moduleName) throws IOException {
+  protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-    OptionList options = tomSymbol.getOption();
-    Option op = options.getHead();
-    TomTerm extendsTerm = op.getAstTerm();
     TomTypeList tomTypes = getSymbolDomain(tomSymbol);
     ArrayList names = new ArrayList();
     ArrayList types = new ArrayList();
@@ -82,7 +79,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     int index = 0;
     while(!tomTypes.isEmpty()) {
 	    TomType type = tomTypes.getHead();
-	    types.add(getTomType(type));
+	    types.add(getTLType(type));
       names.add(getSlotName(tomSymbol, index).getString());
 	    tomTypes = tomTypes.getTail();
 	    index++;
@@ -113,7 +110,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 
     //write constructor initialization
     output.write(deep,") { super(");
-    generate(deep,extendsTerm,moduleName);
+    generate(deep,superTerm,moduleName);
     output.write(deep,");");
     
     //here index represents the parameter number

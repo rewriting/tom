@@ -235,6 +235,8 @@ public class TomKernelCompiler extends TomBase {
         // find the codomain of (f|g) [* should be the same *]
 
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tom_match6_1_head_appl_nameList_1_string);
+				//System.out.println("name: " + `tomName);
+				//System.out.println("symb: " + tomSymbol);
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         
           // perform the compilation, according to 3 cases:
@@ -289,7 +291,7 @@ public class TomKernelCompiler extends TomBase {
           Instruction automata = genSyntacticMatchingAutomata(subAction,tom_termArgs,path,moduleName);
           TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
           if(tom_match6_1_head_appl_nameList.getLength()==1 || tom_termArgs.isEmpty()) {
-              automataInstruction = collectSubtermFromTomSymbol(tom_termArgs,tomSymbol,subjectVariableAST,path,automata); 
+              automataInstruction = collectSubtermFromTomSymbol(tom_termArgs,tomSymbol,subjectVariableAST,path,automata,moduleName); 
           } else { 
             // generate is_fsym(t,f) || is_fsym(t,g)
             automataInstruction = collectSubtermFromSubjectList(tom_currentTerm,subjectVariableAST,path,automata,moduleName); 
@@ -298,7 +300,7 @@ public class TomKernelCompiler extends TomBase {
           }
         }
         // generate is_fsym(t,f) || is_fsym(t,g)
-        Expression cond = expandDisjunction(tom_make_EqualFunctionSymbol(codomain,subjectVariableAST,tom_currentTerm));
+        Expression cond = expandDisjunction(tom_make_EqualFunctionSymbol(codomain,subjectVariableAST,tom_currentTerm),moduleName);
         automataInstruction = compileConstraint(tom_currentTerm,tom_make_TomTermToExpression(subjectVariableAST),automataInstruction,moduleName);
         return tom_make_If(cond,automataInstruction,tom_make_Nop());
        }}} }} }} }}}} }}} }}} }} }
@@ -319,7 +321,7 @@ public class TomKernelCompiler extends TomBase {
                                       int indexTerm,
                                       boolean ensureNotEmptyList,
                                       String moduleName) {
-
+		//getSymbolTable(moduleName).setUsedSymbolDestructor(p.symbol);
      if(termList instanceof  tom.engine.adt.tomsignature.types.SlotList) { { tom.engine.adt.tomsignature.types.SlotList tom_match7_1=(( tom.engine.adt.tomsignature.types.SlotList)termList); if(tom_is_fun_sym_emptySlotList(tom_match7_1) ||  false ) { if( true ) {
 
           /*
@@ -518,6 +520,7 @@ public class TomKernelCompiler extends TomBase {
                                        int indexTerm,
                                        boolean ensureNotEmptyList,
                                        String moduleName) {
+		//getSymbolTable(moduleName).setUsedSymbolDestructor(p.symbol);
      if(termList instanceof  tom.engine.adt.tomsignature.types.SlotList) { { tom.engine.adt.tomsignature.types.SlotList tom_match9_1=(( tom.engine.adt.tomsignature.types.SlotList)termList); if(tom_is_fun_sym_emptySlotList(tom_match9_1) ||  false ) { if( true ) {
 
           /*
@@ -734,7 +737,7 @@ public class TomKernelCompiler extends TomBase {
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tom_match11_1_head_string);
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         Instruction elseBody = collectSubtermIf(tom_match11_1_tail,booleanVariable,currentTerm,termArgList,subjectVariableAST,path,moduleName);
-        Instruction assign = collectSubtermLetAssign(termArgList,tomSymbol,subjectVariableAST,path,tom_make_Nop());
+        Instruction assign = collectSubtermLetAssign(termArgList,tomSymbol,subjectVariableAST,path,tom_make_Nop(),moduleName);
         Expression cond = tom_make_EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm.setNameList(tom_cons_list_concTomName(tom_match11_1_head,tom_empty_list_concTomName())));
         return  tom_make_If(cond,tom_make_LetAssign(booleanVariable,tom_make_TrueTL(),assign),elseBody);
        }} }}} }} }
@@ -749,13 +752,14 @@ public class TomKernelCompiler extends TomBase {
   private Instruction collectSubtermLetAssign(SlotList termArgList,
                                               TomSymbol tomSymbol,
                                               TomTerm subjectVariableAST, 
-                                              TomNumberList path, Instruction body) {
+                                              TomNumberList path, Instruction body,
+																							String moduleName) {
     TomName opNameAST = tomSymbol.getAstName();
      if(termArgList instanceof  tom.engine.adt.tomsignature.types.SlotList) { { tom.engine.adt.tomsignature.types.SlotList tom_match12_1=(( tom.engine.adt.tomsignature.types.SlotList)termArgList); if(tom_is_fun_sym_emptySlotList(tom_match12_1) ||  false ) { if( true ) {
  return body;  } } if(tom_is_fun_sym_manySlotList(tom_match12_1) ||  false ) { { tom.engine.adt.tomsignature.types.Slot tom_match12_1_head=tom_get_slot_manySlotList_head(tom_match12_1); { tom.engine.adt.tomsignature.types.SlotList tom_match12_1_tail=tom_get_slot_manySlotList_tail(tom_match12_1); if(tom_is_fun_sym_PairSlotAppl(tom_match12_1_head) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match12_1_head_slotName=tom_get_slot_PairSlotAppl_slotName(tom_match12_1_head); { tom.engine.adt.tomsignature.types.TomTerm tom_match12_1_head_appl=tom_get_slot_PairSlotAppl_appl(tom_match12_1_head); { tom.engine.adt.tomsignature.types.TomName tom_slotName=tom_match12_1_head_slotName; if( true ) {
 
 
-        body = collectSubtermLetAssign(tom_match12_1_tail,tomSymbol,subjectVariableAST,path,body);
+        body = collectSubtermLetAssign(tom_match12_1_tail,tomSymbol,subjectVariableAST,path,body,moduleName);
         TomType subtermType = getSlotType(tomSymbol,tom_slotName);
 
         if(!isDefinedGetSlot(tomSymbol,tom_slotName)) {
@@ -765,6 +769,9 @@ public class TomKernelCompiler extends TomBase {
         }
 
         Expression getSlotAST = tom_make_GetSlot(subtermType,opNameAST,tom_slotName.getString(),subjectVariableAST);
+				// to mark the symbol as alive
+				//getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
+				
         TomNumberList newPath  = (TomNumberList) path.append(tom_make_NameNumber(tom_slotName));
         TomTerm newVariableAST = tom_make_Variable(option(),tom_make_PositionName(newPath),subtermType,tom_empty_list_concConstraint());
         return tom_make_LetAssign(newVariableAST,getSlotAST,body);
@@ -800,14 +807,14 @@ public class TomKernelCompiler extends TomBase {
      * given a list of subject t1,...,tn
      * declare/assign internal matching variables: match_path_i = ti
      */
-  private Instruction collectSubtermFromTomSymbol(SlotList termArgList, TomSymbol tomSymbol,TomTerm subjectVariableAST, 
-                                                    TomNumberList path, Instruction body) {
+  private Instruction collectSubtermFromTomSymbol(SlotList termArgList, TomSymbol tomSymbol,
+			TomTerm subjectVariableAST, TomNumberList path, Instruction body, String moduleName) {
     TomName opNameAST = tomSymbol.getAstName();
      if(termArgList instanceof  tom.engine.adt.tomsignature.types.SlotList) { { tom.engine.adt.tomsignature.types.SlotList tom_match14_1=(( tom.engine.adt.tomsignature.types.SlotList)termArgList); if(tom_is_fun_sym_emptySlotList(tom_match14_1) ||  false ) { if( true ) {
  return body;  } } if(tom_is_fun_sym_manySlotList(tom_match14_1) ||  false ) { { tom.engine.adt.tomsignature.types.Slot tom_match14_1_head=tom_get_slot_manySlotList_head(tom_match14_1); { tom.engine.adt.tomsignature.types.SlotList tom_match14_1_tail=tom_get_slot_manySlotList_tail(tom_match14_1); if(tom_is_fun_sym_PairSlotAppl(tom_match14_1_head) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match14_1_head_slotName=tom_get_slot_PairSlotAppl_slotName(tom_match14_1_head); { tom.engine.adt.tomsignature.types.TomTerm tom_match14_1_head_appl=tom_get_slot_PairSlotAppl_appl(tom_match14_1_head); { tom.engine.adt.tomsignature.types.TomName tom_slotName=tom_match14_1_head_slotName; if( true ) {
 
 
-        body = collectSubtermFromTomSymbol(tom_match14_1_tail,tomSymbol,subjectVariableAST,path,body);
+        body = collectSubtermFromTomSymbol(tom_match14_1_tail,tomSymbol,subjectVariableAST,path,body,moduleName);
         TomType subtermType = getSlotType(tomSymbol,tom_slotName);
         if(!isDefinedGetSlot(tomSymbol,tom_slotName)) {
           Logger.getLogger(getClass().getName()).log( Level.SEVERE,
@@ -816,6 +823,8 @@ public class TomKernelCompiler extends TomBase {
         }
 
         Expression getSubtermAST = tom_make_GetSlot(subtermType,opNameAST,tom_slotName.getString(),subjectVariableAST);
+				// to mark the symbol as alive
+				//getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
         TomNumberList newPath  = (TomNumberList) path.append(tom_make_NameNumber(tom_slotName));
         TomTerm newVariableAST = tom_make_Variable(option(),tom_make_PositionName(newPath),subtermType,tom_empty_list_concConstraint());
         return tom_make_Let(newVariableAST,getSubtermAST,body);
@@ -823,13 +832,16 @@ public class TomKernelCompiler extends TomBase {
 
     return tom_make_Nop();
   }
-  private Expression expandDisjunction(Expression exp) {
+
+  private Expression expandDisjunction(Expression exp, String moduleName) {
     Expression cond = tom_make_FalseTL();
      if(exp instanceof  tom.engine.adt.tomsignature.types.Expression) { { tom.engine.adt.tomsignature.types.Expression tom_match15_1=(( tom.engine.adt.tomsignature.types.Expression)exp); if(tom_is_fun_sym_EqualFunctionSymbol(tom_match15_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match15_1_astType=tom_get_slot_EqualFunctionSymbol_astType(tom_match15_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match15_1_exp1=tom_get_slot_EqualFunctionSymbol_exp1(tom_match15_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match15_1_exp2=tom_get_slot_EqualFunctionSymbol_exp2(tom_match15_1); if(tom_is_fun_sym_RecordAppl(tom_match15_1_exp2) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match15_1_exp2_option=tom_get_slot_RecordAppl_option(tom_match15_1_exp2); { tom.engine.adt.tomsignature.types.NameList tom_match15_1_exp2_nameList=tom_get_slot_RecordAppl_nameList(tom_match15_1_exp2); { tom.engine.adt.tomsignature.types.SlotList tom_match15_1_exp2_slots=tom_get_slot_RecordAppl_slots(tom_match15_1_exp2); { tom.engine.adt.tomsignature.types.NameList tom_nameList=tom_match15_1_exp2_nameList; if( true ) {
 
         while(!tom_nameList.isEmpty()) {
           TomName name = tom_nameList.getHead();
           Expression check = tom_make_EqualFunctionSymbol(tom_match15_1_astType,tom_match15_1_exp1,tom_make_RecordAppl(tom_match15_1_exp2_option,tom_cons_list_concTomName(name,tom_empty_list_concTomName()),tom_match15_1_exp2_slots,tom_empty_list_concConstraint()));
+					// to mark the symbol as alive
+					//getSymbolTable(moduleName).setUsedSymbolDestructor(name.getString());
           cond = tom_make_Or(check,cond);
           tom_nameList= tom_nameList.getTail();
         }

@@ -74,6 +74,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected final static int VARIABLE_STAR           = 6;
   protected final static int UNAMED_VARIABLE_STAR    = 7;
   protected final static int PLACE_HOLDER            = 8;
+  protected final static int VARIABLE                = 9;
   
   protected boolean strictType = false;
   protected Option currentTomStructureOrgTrack;
@@ -95,7 +96,8 @@ abstract public class TomChecker extends TomGenericPlugin {
  return RECORD_APPL_DISJUNCTION; }} }} }} }} } if(tom_is_fun_sym_XMLAppl(tom_match1_1) ||  false ) { if( true ) {
  return XML_APPL; } } if(tom_is_fun_sym_Placeholder(tom_match1_1) ||  false ) { if( true ) {
  return PLACE_HOLDER; } } if(tom_is_fun_sym_VariableStar(tom_match1_1) ||  false ) { if( true ) {
- return VARIABLE_STAR; } } if(tom_is_fun_sym_UnamedVariableStar(tom_match1_1) ||  false ) { if( true ) {
+ return VARIABLE_STAR; } } if(tom_is_fun_sym_Variable(tom_match1_1) ||  false ) { if( true ) {
+ return VARIABLE; } } if(tom_is_fun_sym_UnamedVariableStar(tom_match1_1) ||  false ) { if( true ) {
  return UNAMED_VARIABLE_STAR; } }} }
 
 		throw new TomRuntimeException("Invalid Term");
@@ -137,8 +139,8 @@ abstract public class TomChecker extends TomGenericPlugin {
         }
         return dijunctionName;
        }}} } if(tom_is_fun_sym_Placeholder(tom_match2_1) ||  false ) { if( true ) {
- return "_"; } } if(tom_is_fun_sym_VariableStar(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match2_1_astName=tom_get_slot_VariableStar_astName(tom_match2_1); if(tom_is_fun_sym_Name(tom_match2_1_astName) ||  false ) { { String  tom_match2_1_astName_string=tom_get_slot_Name_string(tom_match2_1_astName); if( true ) {
- return tom_match2_1_astName_string+"*"; }} }} } if(tom_is_fun_sym_UnamedVariableStar(tom_match2_1) ||  false ) { if( true ) {
+ return "_"; } } {boolean tom_bool_match2_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match2_1_astName= null ; if(tom_is_fun_sym_Variable(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_astName=tom_get_slot_Variable_astName(tom_match2_1); } else { if(tom_is_fun_sym_VariableStar(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_astName=tom_get_slot_VariableStar_astName(tom_match2_1); } } if(tom_bool_match2_1) { if(tom_is_fun_sym_Name(tom_match2_1_astName) ||  false ) { { String  tom_match2_1_astName_string=tom_get_slot_Name_string(tom_match2_1_astName); if( true ) {
+ return tom_match2_1_astName_string+"*"; }} } }}} if(tom_is_fun_sym_UnamedVariableStar(tom_match2_1) ||  false ) { if( true ) {
  return "_*"; } }} }
 
 		throw new TomRuntimeException("Invalid Term");

@@ -216,11 +216,11 @@ public class ASTFactory {
     return tsf().makeTomTerm_UnamedVariableStar(option, tsf().makeTomType_TomTypeAlone(type),constraintList);  
   }
 
-  public TomSymbol makeSymbol(String symbolName, String resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
+  public TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
                               List optionList) {
     TomType type;
     TomName name = tsf().makeTomName_Name(symbolName);
-    type = tsf().makeTomType_TomTypeAlone(resultType);
+    type = resultType;
     TomType typesToType =  tsf().makeTomType_TypesToType(typeList,type); 
     OptionList options = makeOptionList(optionList);
     return tsf().makeTomSymbol_Symbol(name,typesToType,pairNameDeclList,options);
@@ -287,7 +287,7 @@ public class ASTFactory {
                              String value, List optionList) {
     TomTypeList typeList = tsf().makeTomTypeList();
     PairNameDeclList pairSlotDeclList = tsf().makePairNameDeclList();
-    TomSymbol astSymbol = makeSymbol(value,sort,typeList,pairSlotDeclList,optionList);
+    TomSymbol astSymbol = makeSymbol(value,tsf().makeTomType_TomTypeAlone(sort),typeList,pairSlotDeclList,optionList);
     symbolTable.putSymbol(value,astSymbol);
   }
   

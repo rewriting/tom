@@ -54,6 +54,7 @@ public class SymbolTable {
 
   private Map mapSymbolName = null;
   private Map mapTypeName = null;
+  
   private ASTFactory astFactory;
   public SymbolTable(ASTFactory astFactory) {
     this.astFactory = astFactory;
@@ -62,36 +63,36 @@ public class SymbolTable {
   public void init(OptionManager optionManager) {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
-
+	
     TomForwardType emptyForward = tsf().makeTomForwardType_EmptyForward();
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
-      putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"),emptyForward);
-      putType(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"int"),emptyForward);
-      putType(TYPE_INT, ast().makeType(TYPE_INT,"int"),emptyForward);
-      putType(TYPE_LONG, ast().makeType(TYPE_LONG,"long"),emptyForward);
-      putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"),emptyForward);
-      putType(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"),emptyForward);
-      putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"),emptyForward);
-      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"),emptyForward);
+      putTypeDefinition(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"),emptyForward);
+      putTypeDefinition(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"int"),emptyForward);
+      putTypeDefinition(TYPE_INT, ast().makeType(TYPE_INT,"int"),emptyForward);
+      putTypeDefinition(TYPE_LONG, ast().makeType(TYPE_LONG,"long"),emptyForward);
+      putTypeDefinition(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"),emptyForward);
+      putTypeDefinition(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"),emptyForward);
+      putTypeDefinition(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"),emptyForward);
+      putTypeDefinition(TYPE_VOID, ast().makeType(TYPE_VOID,"void"),emptyForward);
     } else if( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
-      putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"),emptyForward);
-      putType(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"boolean"),emptyForward);
-      putType(TYPE_INT, ast().makeType(TYPE_INT,"int"),emptyForward);
-      putType(TYPE_LONG, ast().makeType(TYPE_LONG,"long"),emptyForward);
-      putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"),emptyForward);
-      putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"),emptyForward);
-      putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"),emptyForward);
-      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"),emptyForward);
+      putTypeDefinition(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"),emptyForward);
+      putTypeDefinition(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"boolean"),emptyForward);
+      putTypeDefinition(TYPE_INT, ast().makeType(TYPE_INT,"int"),emptyForward);
+      putTypeDefinition(TYPE_LONG, ast().makeType(TYPE_LONG,"long"),emptyForward);
+      putTypeDefinition(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"),emptyForward);
+      putTypeDefinition(TYPE_STRING, ast().makeType(TYPE_STRING,"String"),emptyForward);
+      putTypeDefinition(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"),emptyForward);
+      putTypeDefinition(TYPE_VOID, ast().makeType(TYPE_VOID,"void"),emptyForward);
     } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) { // this is really bad, will need to be improved
-      putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"),emptyForward);
-      putType(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"bool"),emptyForward);
-      putType(TYPE_INT, ast().makeType(TYPE_INT,"int"),emptyForward);
-      putType(TYPE_LONG, ast().makeType(TYPE_LONG,"long"),emptyForward);
-      putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"),emptyForward);
-      putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"),emptyForward);
-      putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"None"),emptyForward);
-      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"unit"),emptyForward);
+      putTypeDefinition(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"),emptyForward);
+      putTypeDefinition(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"bool"),emptyForward);
+      putTypeDefinition(TYPE_INT, ast().makeType(TYPE_INT,"int"),emptyForward);
+      putTypeDefinition(TYPE_LONG, ast().makeType(TYPE_LONG,"long"),emptyForward);
+      putTypeDefinition(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"),emptyForward);
+      putTypeDefinition(TYPE_STRING, ast().makeType(TYPE_STRING,"String"),emptyForward);
+      putTypeDefinition(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"None"),emptyForward);
+      putTypeDefinition(TYPE_VOID, ast().makeType(TYPE_VOID,"unit"),emptyForward);
     }
   }
 
@@ -131,29 +132,109 @@ public class SymbolTable {
     }
     return res;
   }
-  
-  public void putType(String name, TomType astType, TomForwardType fwdType) {
+
+  public void putTypeDefinition(String name, TomType astType, TomForwardType fwdType) {
     TomTypeDefinition typeDef = tsf().makeTomTypeDefinition_TypeDefinition(astType,fwdType);
     mapTypeName.put(name,typeDef);
   }
 
-  public TomType getType(String name) {
+  public TomTypeDefinition getTypeDefinition(String name) {
     TomTypeDefinition def = (TomTypeDefinition) mapTypeName.get(name);
+		return def;
+  }
+	
+  public TomType getType(String name) {
+    TomTypeDefinition def = getTypeDefinition(name);
     if (def != null) {
       TomType result = def.getTomType();
       return result;
-    }
-    else { return null; } 
+    } else {
+			return null;
+		} 
   }
 
   public TomForwardType getForwardType(String name) {
-    TomTypeDefinition def = (TomTypeDefinition) mapTypeName.get(name);
+    TomTypeDefinition def = getTypeDefinition(name);
     if (def != null) {
       TomForwardType result = def.getForward();
       return result;
-    }
-    else { return null; } 
+    } else { 
+			return null;
+		} 
   }
+
+	public boolean isUsedSymbolConstructor(TomSymbol symbol) {
+		//return (mapSymbolName.get(tsf().makeKeyEntry_UsedSymbolConstructor(symbol)) != null);
+		return true;
+	}
+	
+	public boolean isUsedSymbolDestructor(TomSymbol symbol) {
+		//return (mapSymbolName.get(tsf().makeKeyEntry_UsedSymbolDestructor(symbol)) != null);
+		return true;
+	}
+	
+	public boolean isUsedTypeDefinition(TomTypeDefinition type) {
+		//return (mapTypeName.get(tsf().makeKeyEntry_UsedTypeDefinition(type)) != null);
+		return true;
+	}
+ 
+	public void setUsedSymbolConstructor(TomSymbol symbol) {
+    TomSymbol result = (TomSymbol) mapSymbolName.put(tsf().makeKeyEntry_UsedSymbolConstructor(symbol),symbol);
+	}
+	
+	public void setUsedSymbolDestructor(TomSymbol symbol) {
+		//System.out.println("setUsedDestructor: " + symbol.getAstName());
+    TomSymbol result = (TomSymbol) mapSymbolName.put(tsf().makeKeyEntry_UsedSymbolDestructor(symbol),symbol);
+	}
+	
+	public void setUsedTypeDefinition(TomTypeDefinition type) {
+    TomTypeDefinition result = (TomTypeDefinition) mapTypeName.put(tsf().makeKeyEntry_UsedTypeDefinition(type),type);
+	}
+
+	public void setUsedSymbolConstructor(String name) {
+		TomSymbol symbol = getSymbolFromName(name);
+		if(symbol!=null) {
+			setUsedSymbolConstructor(symbol);
+		}
+	}
+	
+	public void setUsedSymbolDestructor(String name) {
+		TomSymbol symbol = getSymbolFromName(name);
+		if(symbol!=null) {
+			setUsedSymbolDestructor(symbol);
+		}
+	}
+	
+	public void setUsedTypeDefinition(String name) {
+		TomTypeDefinition type = getTypeDefinition(name);
+		if(type!=null) {
+			setUsedTypeDefinition(type);
+		}
+	}
+	
+	public boolean isUsedSymbolConstructor(String name) {
+		TomSymbol symbol = getSymbolFromName(name);
+		if(symbol!=null) {
+			return isUsedSymbolConstructor(symbol);
+		}
+		return false;
+	}
+	
+	public boolean isUsedSymbolDestructor(String name) {
+		TomSymbol symbol = getSymbolFromName(name);
+		if(symbol!=null) {
+			return isUsedSymbolDestructor(symbol);
+		}
+		return false;
+	}
+	
+	public boolean isUsedTypeDefinition(String name) {
+		TomTypeDefinition type = getTypeDefinition(name);
+		if(type!=null) {
+			return isUsedTypeDefinition(type);
+		}
+		return false;
+	}
 
   public TomType getIntType() {
     return getType(TYPE_INT);
@@ -257,10 +338,13 @@ public class SymbolTable {
     TomEntryList list = tsf().makeTomEntryList();
     Iterator it = keySymbolIterator();
     while(it.hasNext()) {
-      String name = (String)it.next();
-      TomSymbol symbol = getSymbolFromName(name);
-      TomEntry entry = tsf().makeTomEntry_Entry(name,symbol);
-      list = tsf().makeTomEntryList(entry,list);
+			Object key = it.next();
+			if(key instanceof String) {
+				String name = (String)key;
+				TomSymbol symbol = getSymbolFromName(name);
+				TomEntry entry = tsf().makeTomEntry_Entry(name,symbol);
+				list = tsf().makeTomEntryList(entry,list);
+			}
     }
     return tsf().makeTomSymbolTable_Table(list);
   }

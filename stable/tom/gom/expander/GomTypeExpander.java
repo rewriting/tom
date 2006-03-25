@@ -71,13 +71,20 @@ public class GomTypeExpander {
        */
       if(!decls.containsAll(implicitdecls)) {
         // whine about non declared sorts
-        System.out.println("XXX: whine about non declared sorts");
-        // XXX: TODO
+        Collection undeclaredSorts = new HashSet();
+        undeclaredSorts.addAll(implicitdecls);
+        undeclaredSorts.removeAll(decls);
+        getLogger().log(Level.WARNING, GomMessage.undeclaredSorts.getMessage(),
+            new Object[]{showSortList(undeclaredSorts)});
       }
       if(!implicitdecls.containsAll(decls)) {
-        // whine about sorts without operators
-        System.out.println("XXX: whine about sorts without operators");
-        // XXX: TODO
+        // whine about sorts without operators: this is a real error
+        Collection emptySorts = new HashSet();
+        emptySorts.addAll(decls);
+        emptySorts.removeAll(implicitdecls);
+        getLogger().log(Level.SEVERE, GomMessage.emptySorts.getMessage(),
+            new Object[]{showSortList(emptySorts)});
+        return tom_empty_list_concSort();
       }
       Iterator it = implicitdecls.iterator();
       while(it.hasNext()) {
@@ -93,7 +100,7 @@ public class GomTypeExpander {
       GomModule module = consum.getHead();
       consum = consum.getTail();
 
-      // iterate on the productions
+      // iterate through the productions
        if(module instanceof  tom.gom.adt.gom.types.GomModule) { { tom.gom.adt.gom.types.GomModule tom_match1_1=(( tom.gom.adt.gom.types.GomModule)module); if(tom_is_fun_sym_GomModule(tom_match1_1) ||  false ) { { tom.gom.adt.gom.types.GomModuleName tom_match1_1_moduleName=tom_get_slot_GomModule_moduleName(tom_match1_1); { tom.gom.adt.gom.types.SectionList tom_match1_1_sectionList=tom_get_slot_GomModule_sectionList(tom_match1_1); if(tom_is_fun_sym_concSection(tom_match1_1_sectionList) ||  false ) { { tom.gom.adt.gom.types.SectionList tom_match1_1_sectionList_list1=tom_match1_1_sectionList; { tom.gom.adt.gom.types.SectionList tom_match1_1_sectionList_begin1=tom_match1_1_sectionList_list1; { tom.gom.adt.gom.types.SectionList tom_match1_1_sectionList_end1=tom_match1_1_sectionList_list1;{ while (!(tom_is_empty_concSection_SectionList(tom_match1_1_sectionList_end1))) {tom_match1_1_sectionList_list1=tom_match1_1_sectionList_end1;{ { tom.gom.adt.gom.types.Section tom_match1_1_sectionList_2=tom_get_head_concSection_SectionList(tom_match1_1_sectionList_list1);tom_match1_1_sectionList_list1=tom_get_tail_concSection_SectionList(tom_match1_1_sectionList_list1); if(tom_is_fun_sym_Public(tom_match1_1_sectionList_2) ||  false ) { { tom.gom.adt.gom.types.GrammarList tom_match1_1_sectionList_2_grammarList=tom_get_slot_Public_grammarList(tom_match1_1_sectionList_2); if(tom_is_fun_sym_concGrammar(tom_match1_1_sectionList_2_grammarList) ||  false ) { { tom.gom.adt.gom.types.GrammarList tom_match1_1_sectionList_2_grammarList_list1=tom_match1_1_sectionList_2_grammarList; { tom.gom.adt.gom.types.GrammarList tom_match1_1_sectionList_2_grammarList_begin1=tom_match1_1_sectionList_2_grammarList_list1; { tom.gom.adt.gom.types.GrammarList tom_match1_1_sectionList_2_grammarList_end1=tom_match1_1_sectionList_2_grammarList_list1;{ while (!(tom_is_empty_concGrammar_GrammarList(tom_match1_1_sectionList_2_grammarList_end1))) {tom_match1_1_sectionList_2_grammarList_list1=tom_match1_1_sectionList_2_grammarList_end1;{ { tom.gom.adt.gom.types.Grammar tom_match1_1_sectionList_2_grammarList_2=tom_get_head_concGrammar_GrammarList(tom_match1_1_sectionList_2_grammarList_list1);tom_match1_1_sectionList_2_grammarList_list1=tom_get_tail_concGrammar_GrammarList(tom_match1_1_sectionList_2_grammarList_list1); if(tom_is_fun_sym_Grammar(tom_match1_1_sectionList_2_grammarList_2) ||  false ) { { tom.gom.adt.gom.types.ProductionList tom_match1_1_sectionList_2_grammarList_2_productionList=tom_get_slot_Grammar_productionList(tom_match1_1_sectionList_2_grammarList_2); if(tom_is_fun_sym_concProduction(tom_match1_1_sectionList_2_grammarList_2_productionList) ||  false ) { { tom.gom.adt.gom.types.ProductionList tom_match1_1_sectionList_2_grammarList_2_productionList_list1=tom_match1_1_sectionList_2_grammarList_2_productionList; { tom.gom.adt.gom.types.ProductionList tom_match1_1_sectionList_2_grammarList_2_productionList_begin1=tom_match1_1_sectionList_2_grammarList_2_productionList_list1; { tom.gom.adt.gom.types.ProductionList tom_match1_1_sectionList_2_grammarList_2_productionList_end1=tom_match1_1_sectionList_2_grammarList_2_productionList_list1;{ while (!(tom_is_empty_concProduction_ProductionList(tom_match1_1_sectionList_2_grammarList_2_productionList_end1))) {tom_match1_1_sectionList_2_grammarList_2_productionList_list1=tom_match1_1_sectionList_2_grammarList_2_productionList_end1;{ { tom.gom.adt.gom.types.Production tom_match1_1_sectionList_2_grammarList_2_productionList_2=tom_get_head_concProduction_ProductionList(tom_match1_1_sectionList_2_grammarList_2_productionList_list1);tom_match1_1_sectionList_2_grammarList_2_productionList_list1=tom_get_tail_concProduction_ProductionList(tom_match1_1_sectionList_2_grammarList_2_productionList_list1); if(tom_is_fun_sym_Production(tom_match1_1_sectionList_2_grammarList_2_productionList_2) ||  false ) { if( true ) {
 
 
@@ -105,7 +112,7 @@ public class GomTypeExpander {
 
 
       /*
-       * now that we have the definitions of all operators, we can attache them
+       * now that we have the definitions of all operators, we can attach them
        * the hooks
        */
        if(module instanceof  tom.gom.adt.gom.types.GomModule) { { tom.gom.adt.gom.types.GomModule tom_match2_1=(( tom.gom.adt.gom.types.GomModule)module); if(tom_is_fun_sym_GomModule(tom_match2_1) ||  false ) { { tom.gom.adt.gom.types.GomModuleName tom_match2_1_moduleName=tom_get_slot_GomModule_moduleName(tom_match2_1); { tom.gom.adt.gom.types.SectionList tom_match2_1_sectionList=tom_get_slot_GomModule_sectionList(tom_match2_1); if(tom_is_fun_sym_concSection(tom_match2_1_sectionList) ||  false ) { { tom.gom.adt.gom.types.SectionList tom_match2_1_sectionList_list1=tom_match2_1_sectionList; { tom.gom.adt.gom.types.SectionList tom_match2_1_sectionList_begin1=tom_match2_1_sectionList_list1; { tom.gom.adt.gom.types.SectionList tom_match2_1_sectionList_end1=tom_match2_1_sectionList_list1;{ while (!(tom_is_empty_concSection_SectionList(tom_match2_1_sectionList_end1))) {tom_match2_1_sectionList_list1=tom_match2_1_sectionList_end1;{ { tom.gom.adt.gom.types.Section tom_match2_1_sectionList_2=tom_get_head_concSection_SectionList(tom_match2_1_sectionList_list1);tom_match2_1_sectionList_list1=tom_get_tail_concSection_SectionList(tom_match2_1_sectionList_list1); if(tom_is_fun_sym_Public(tom_match2_1_sectionList_2) ||  false ) { { tom.gom.adt.gom.types.GrammarList tom_match2_1_sectionList_2_grammarList=tom_get_slot_Public_grammarList(tom_match2_1_sectionList_2); if(tom_is_fun_sym_concGrammar(tom_match2_1_sectionList_2_grammarList) ||  false ) { { tom.gom.adt.gom.types.GrammarList tom_match2_1_sectionList_2_grammarList_list1=tom_match2_1_sectionList_2_grammarList; { tom.gom.adt.gom.types.GrammarList tom_match2_1_sectionList_2_grammarList_begin1=tom_match2_1_sectionList_2_grammarList_list1; { tom.gom.adt.gom.types.GrammarList tom_match2_1_sectionList_2_grammarList_end1=tom_match2_1_sectionList_2_grammarList_list1;{ while (!(tom_is_empty_concGrammar_GrammarList(tom_match2_1_sectionList_2_grammarList_end1))) {tom_match2_1_sectionList_2_grammarList_list1=tom_match2_1_sectionList_2_grammarList_end1;{ { tom.gom.adt.gom.types.Grammar tom_match2_1_sectionList_2_grammarList_2=tom_get_head_concGrammar_GrammarList(tom_match2_1_sectionList_2_grammarList_list1);tom_match2_1_sectionList_2_grammarList_list1=tom_get_tail_concGrammar_GrammarList(tom_match2_1_sectionList_2_grammarList_list1); if(tom_is_fun_sym_Grammar(tom_match2_1_sectionList_2_grammarList_2) ||  false ) { { tom.gom.adt.gom.types.ProductionList tom_match2_1_sectionList_2_grammarList_2_productionList=tom_get_slot_Grammar_productionList(tom_match2_1_sectionList_2_grammarList_2); if(tom_is_fun_sym_concProduction(tom_match2_1_sectionList_2_grammarList_2_productionList) ||  false ) { { tom.gom.adt.gom.types.ProductionList tom_match2_1_sectionList_2_grammarList_2_productionList_list1=tom_match2_1_sectionList_2_grammarList_2_productionList; { tom.gom.adt.gom.types.ProductionList tom_match2_1_sectionList_2_grammarList_2_productionList_begin1=tom_match2_1_sectionList_2_grammarList_2_productionList_list1; { tom.gom.adt.gom.types.ProductionList tom_match2_1_sectionList_2_grammarList_2_productionList_end1=tom_match2_1_sectionList_2_grammarList_2_productionList_list1;{ while (!(tom_is_empty_concProduction_ProductionList(tom_match2_1_sectionList_2_grammarList_2_productionList_end1))) {tom_match2_1_sectionList_2_grammarList_2_productionList_list1=tom_match2_1_sectionList_2_grammarList_2_productionList_end1;{ { tom.gom.adt.gom.types.Production tom_match2_1_sectionList_2_grammarList_2_productionList_2=tom_get_head_concProduction_ProductionList(tom_match2_1_sectionList_2_grammarList_2_productionList_list1);tom_match2_1_sectionList_2_grammarList_2_productionList_list1=tom_get_tail_concProduction_ProductionList(tom_match2_1_sectionList_2_grammarList_2_productionList_list1); if(tom_is_fun_sym_Hook(tom_match2_1_sectionList_2_grammarList_2_productionList_2) ||  false ) { if( true ) {
@@ -131,10 +138,9 @@ public class GomTypeExpander {
   }
 
   private void attachHook(Production prod,
-      Map operatorsForSort) {
+                          Map operatorsForSort) {
     /* Find the operator corresponding to the hook, and attach its hook */
      if(prod instanceof  tom.gom.adt.gom.types.Production) { { tom.gom.adt.gom.types.Production tom_match3_1=(( tom.gom.adt.gom.types.Production)prod); if(tom_is_fun_sym_Hook(tom_match3_1) ||  false ) { { String  tom_match3_1_name=tom_get_slot_Hook_name(tom_match3_1); if( true ) {
-
 
         Iterator it = operatorsForSort.keySet().iterator();
         while(it.hasNext()) {
@@ -151,7 +157,8 @@ public class GomTypeExpander {
              }} }}tom_match4_1_end1=tom_get_tail_concOperator_OperatorDeclList(tom_match4_1_end1);} }tom_match4_1_list1=tom_match4_1_begin1;}}}} }} }
 
         }
-        getLogger().log(Level.SEVERE, GomMessage.orphanedHook.getMessage(), new Object[]{prod.getName()});
+        getLogger().log(Level.SEVERE, GomMessage.orphanedHook.getMessage(),
+            new Object[]{prod.getName()});
         return;
        }} }} }
 
@@ -179,6 +186,10 @@ public class GomTypeExpander {
                 newHook = tom_make_MakeBeforeHookDecl(typedArgs,tom_hcode);
                } }} }
 
+            if (newHook == null) {
+              throw new GomRuntimeException(
+                  "GomTypeExpander:typeOperatorHook unknown Hookkind: "+tom_hkind);
+            }
             newOperator = tom_make_OperatorDecl(tom_match6_1_name,tom_osort,tom_oprod,tom_cons_list_concHookDecl(newHook,tom_append_list_concHookDecl(tom_match6_1_hooks,tom_empty_list_concHookDecl())));
            }}}}}}} }} }
 
@@ -309,8 +320,8 @@ public class GomTypeExpander {
         return tom_cons_list_concSlot(tom_make_Slot(tom_match16_1_1_name,declFromTypename(tom_match16_1_1_fieldType_name,sortDeclList)),tom_append_list_concSlot(newtail,tom_empty_list_concSlot()));
        }} }}} }} }} }} }
 
-    // XXX: TODO whine about malformed production
-    System.out.println("XXX: malformed production");
+    getLogger().log(Level.SEVERE, GomMessage.malformedProduction.getMessage(),
+        new Object[]{fields.toString()});
     return tom_empty_list_concSlot();
   }
 
@@ -351,6 +362,10 @@ public class GomTypeExpander {
 
         imports.add(tom_match19_1_moduleName);
          if(tom_sectionList instanceof  tom.gom.adt.gom.types.SectionList) { { tom.gom.adt.gom.types.SectionList tom_match20_1=(( tom.gom.adt.gom.types.SectionList)tom_sectionList); if(tom_is_fun_sym_concSection(tom_match20_1) ||  false ) { { tom.gom.adt.gom.types.SectionList tom_match20_1_list1=tom_match20_1; { tom.gom.adt.gom.types.SectionList tom_match20_1_begin1=tom_match20_1_list1; { tom.gom.adt.gom.types.SectionList tom_match20_1_end1=tom_match20_1_list1;{ while (!(tom_is_empty_concSection_SectionList(tom_match20_1_end1))) {tom_match20_1_list1=tom_match20_1_end1;{ { tom.gom.adt.gom.types.Section tom_match20_1_2=tom_get_head_concSection_SectionList(tom_match20_1_list1);tom_match20_1_list1=tom_get_tail_concSection_SectionList(tom_match20_1_list1); if(tom_is_fun_sym_Imports(tom_match20_1_2) ||  false ) { { tom.gom.adt.gom.types.ImportList tom_match20_1_2_importList=tom_get_slot_Imports_importList(tom_match20_1_2); if(tom_is_fun_sym_concImportedModule(tom_match20_1_2_importList) ||  false ) { { tom.gom.adt.gom.types.ImportList tom_match20_1_2_importList_list1=tom_match20_1_2_importList; { tom.gom.adt.gom.types.ImportList tom_match20_1_2_importList_begin1=tom_match20_1_2_importList_list1; { tom.gom.adt.gom.types.ImportList tom_match20_1_2_importList_end1=tom_match20_1_2_importList_list1;{ while (!(tom_is_empty_concImportedModule_ImportList(tom_match20_1_2_importList_end1))) {tom_match20_1_2_importList_list1=tom_match20_1_2_importList_end1;{ { tom.gom.adt.gom.types.ImportedModule tom_match20_1_2_importList_2=tom_get_head_concImportedModule_ImportList(tom_match20_1_2_importList_list1);tom_match20_1_2_importList_list1=tom_get_tail_concImportedModule_ImportList(tom_match20_1_2_importList_list1); if(tom_is_fun_sym_Import(tom_match20_1_2_importList_2) ||  false ) { { tom.gom.adt.gom.types.GomModuleName tom_match20_1_2_importList_2_moduleName=tom_get_slot_Import_moduleName(tom_match20_1_2_importList_2); if(tom_is_fun_sym_GomModuleName(tom_match20_1_2_importList_2_moduleName) ||  false ) { { String  tom_match20_1_2_importList_2_moduleName_name=tom_get_slot_GomModuleName_name(tom_match20_1_2_importList_2_moduleName); if( true ) {
+
+
+
+
 
             if (!environment().isBuiltin(tom_match20_1_2_importList_2_moduleName_name)) {
               imports.add(tom_match20_1_2_importList_2_moduleName);
@@ -393,23 +408,32 @@ public class GomTypeExpander {
   private void buildDependencyMap(GomModuleList moduleList) {
      if(moduleList instanceof  tom.gom.adt.gom.types.GomModuleList) { { tom.gom.adt.gom.types.GomModuleList tom_match22_1=(( tom.gom.adt.gom.types.GomModuleList)moduleList); if(tom_is_fun_sym_concGomModule(tom_match22_1) ||  false ) { { tom.gom.adt.gom.types.GomModuleList tom_match22_1_list1=tom_match22_1; { tom.gom.adt.gom.types.GomModuleList tom_match22_1_begin1=tom_match22_1_list1; { tom.gom.adt.gom.types.GomModuleList tom_match22_1_end1=tom_match22_1_list1;{ while (!(tom_is_empty_concGomModule_GomModuleList(tom_match22_1_end1))) {tom_match22_1_list1=tom_match22_1_end1;{ { tom.gom.adt.gom.types.GomModule tom_match22_1_2=tom_get_head_concGomModule_GomModuleList(tom_match22_1_list1);tom_match22_1_list1=tom_get_tail_concGomModule_GomModuleList(tom_match22_1_list1); if(tom_is_fun_sym_GomModule(tom_match22_1_2) ||  false ) { { tom.gom.adt.gom.types.GomModuleName tom_match22_1_2_moduleName=tom_get_slot_GomModule_moduleName(tom_match22_1_2); if( true ) {
 
-        Collection imports = getTransitiveClosureImports(tom_match22_1_2,moduleList);
-        environment().addModuleDependency(tom_make_ModuleDecl(tom_match22_1_2_moduleName,packagePath),namesToModuleDecl(imports));
+        ModuleDeclList importsModuleDeclList = tom_empty_list_concModuleDecl();
+        Iterator it = getTransitiveClosureImports(tom_match22_1_2,moduleList).iterator();
+        while(it.hasNext()) {
+          GomModuleName importedModuleName = (GomModuleName) it.next();
+          importsModuleDeclList = tom_cons_list_concModuleDecl(tom_make_ModuleDecl(importedModuleName,packagePath),tom_append_list_concModuleDecl(importsModuleDeclList,tom_empty_list_concModuleDecl()))
+;
+        }
+        environment().addModuleDependency(tom_make_ModuleDecl(tom_match22_1_2_moduleName,packagePath),importsModuleDeclList);
        }} }}tom_match22_1_end1=tom_get_tail_concGomModule_GomModuleList(tom_match22_1_end1);} }tom_match22_1_list1=tom_match22_1_begin1;}}}} }} }
 
   }
 
-  private ModuleDeclList namesToModuleDecl(Collection names) {
-    ModuleDeclList res = tom_empty_list_concModuleDecl();
-    Iterator it = names.iterator();
-    while(it.hasNext()) {
-      GomModuleName name = (GomModuleName) it.next();
-      res = tom_cons_list_concModuleDecl(tom_make_ModuleDecl(name,packagePath),tom_append_list_concModuleDecl(res,tom_empty_list_concModuleDecl()));
+  private String showSortList(Collection decls) {
+    String sorts = "";
+    Iterator it = decls.iterator();
+    if(it.hasNext()) {
+      SortDecl decl = (SortDecl)it.next();
+      sorts += decl.getName();
     }
-    return res;
+    while(it.hasNext()) {
+      SortDecl decl = (SortDecl)it.next();
+      sorts += ", "+decl.getName();
+    }
+    return sorts;
   }
 
-  /** the class logger instance*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }

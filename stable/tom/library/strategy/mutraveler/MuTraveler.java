@@ -29,7 +29,25 @@ public class MuTraveler {
     }
     return v;
   }
-  
+ 
+	/**
+	 * Basic function which build Omega(i,v) such that
+	 * i in [1..arity] with a uniform probability
+	 * i.e. with probability 1/getChildCount
+	 * <p>
+	 */
+/*	
+  public static VisitableVisitor lawUniform(VisitableVisitor v, VisitableVisitor defaultStrategy, Visitable subject) {
+		int arity = subject.getchildCount();
+    int randomInt = Math.abs(random.nextInt());
+		if(arity==0) {
+			return defaultStrategy;
+		} else {
+			int selectedSubterm = (randomInt%arity)+1;
+			return new Omega(selectedSubterm,v);
+    }
+  }
+*/
   public static Position getPosition(VisitableVisitor v) {
     return (Position) ((Position) positionMap.get(v)).clone();
   }
@@ -37,6 +55,10 @@ public class MuTraveler {
   protected static void setPosition(VisitableVisitor v, Position position) {
     positionMap.put(v,position);
   }
+
+	public static VisitableVisitor getReplace(VisitableVisitor v, final Visitable t) {
+    return ((Position) positionMap.get(v)).getReplace(t);
+	}
 
 }
 

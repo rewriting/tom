@@ -2,26 +2,26 @@
 
   /*
    * Gom
-   * 
+   *
    * Copyright (c) 2005-2006, INRIA
    * Nancy, France.
-   * 
+   *
    * This program is free software; you can redistribute it and/or modify
    * it under the terms of the GNU General Public License as published by
    * the Free Software Foundation; either version 2 of the License, or
    * (at your option) any later version.
-   * 
+   *
    * This program is distributed in the hope that it will be useful,
    * but WITHOUT ANY WARRANTY; without even the implied warranty of
    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    * GNU General Public License for more details.
-   * 
+   *
    * You should have received a copy of the GNU General Public License
    * along with this program; if not, write to the Free Software
    * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-   * 
+   *
    * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
-   * 
+   *
    **/
   package tom.gom.parser;
 
@@ -39,6 +39,7 @@ import antlr.SemanticException;
 import antlr.ParserSharedInputState;
 import antlr.collections.impl.BitSet;
 
+  import java.util.List;
   import java.util.LinkedList;
   import java.util.Iterator;
   import java.util.logging.Logger;
@@ -65,6 +66,16 @@ public class GomParser extends antlr.LLkParser       implements GomParserTokenTy
     this(lexer);
     /* the name attribute is used for constructor disambiguation */
     this.lexerstate = lexer.getInputState();
+  }
+
+  private GomTypeList typeListFromList(List list) {
+    GomTypeList typeList = tom_empty_list_concGomType();
+    Iterator it = list.iterator();
+    while(it.hasNext()) {
+      GomType type = (GomType) it.next();
+      typeList = tom_cons_list_concGomType(type,tom_append_list_concGomType(typeList,tom_empty_list_concGomType()));
+    }
+    return typeList;
   }
 
 protected GomParser(TokenBuffer tokenBuf, int k) {
@@ -113,6 +124,8 @@ public GomParser(ParserSharedInputState state) {
 			break;
 		}
 		case PUBLIC:
+		case SORTS:
+		case ABSTRACT:
 		{
 			break;
 		}
@@ -167,7 +180,24 @@ public GomParser(ParserSharedInputState state) {
 		GrammarList grammarlist = tom_empty_list_concGrammar();
 		
 		
-		match(PUBLIC);
+		{
+		switch ( LA(1)) {
+		case PUBLIC:
+		{
+			match(PUBLIC);
+			break;
+		}
+		case SORTS:
+		case ABSTRACT:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
 		{
 		grammarlist=grammar();
 		}
@@ -184,11 +214,12 @@ public GomParser(ParserSharedInputState state) {
 		grammars = tom_empty_list_concGrammar();
 		ProductionList prods = tom_empty_list_concProduction();
 		GomTypeList sorts = tom_empty_list_concGomType();
+		List sortList = new LinkedList();
 		
 		
 		{
-		int _cnt10=0;
-		_loop10:
+		int _cnt11=0;
+		_loop11:
 		do {
 			switch ( LA(1)) {
 			case SORTS:
@@ -199,16 +230,22 @@ public GomParser(ParserSharedInputState state) {
 			}
 			case ABSTRACT:
 			{
-				prods=syntax();
+				prods=syntax(sortList);
+				
+				if(!sortList.isEmpty()) {
+				sorts = typeListFromList(sortList);
+				grammars = tom_append_list_concGrammar(grammars,tom_cons_list_concGrammar(tom_make_Sorts(sorts),tom_empty_list_concGrammar()));
+				}
 				grammars = tom_append_list_concGrammar(grammars,tom_cons_list_concGrammar(tom_make_Grammar(prods),tom_empty_list_concGrammar()));
+				
 				break;
 			}
 			default:
 			{
-				if ( _cnt10>=1 ) { break _loop10; } else {throw new NoViableAltException(LT(1), getFilename());}
+				if ( _cnt11>=1 ) { break _loop11; } else {throw new NoViableAltException(LT(1), getFilename());}
 			}
 			}
-			_cnt10++;
+			_cnt11++;
 		} while (true);
 		}
 		return grammars;
@@ -224,7 +261,7 @@ public GomParser(ParserSharedInputState state) {
 		
 		match(SORTS);
 		{
-		_loop13:
+		_loop14:
 		do {
 			if ((LA(1)==IDENTIFIER)) {
 				sortName=type();
@@ -233,7 +270,7 @@ public GomParser(ParserSharedInputState state) {
 				
 			}
 			else {
-				break _loop13;
+				break _loop14;
 			}
 			
 		} while (true);
@@ -241,18 +278,21 @@ public GomParser(ParserSharedInputState state) {
 		return definedSorts;
 	}
 	
-	public final ProductionList  syntax() throws RecognitionException, TokenStreamException {
+	public final ProductionList  syntax(
+		List sortlist
+	) throws RecognitionException, TokenStreamException {
 		ProductionList prods;
 		
 		
 		prods = tom_empty_list_concProduction();
 		Production prod = null;
+		ProductionList productions = null;
 		
 		
 		match(ABSTRACT);
 		match(SYNTAX);
 		{
-		_loop17:
+		_loop18:
 		do {
 			if ((LA(1)==IDENTIFIER) && (LA(2)==LEFT_BRACE)) {
 				prod=production();
@@ -262,8 +302,12 @@ public GomParser(ParserSharedInputState state) {
 				prod=hook();
 				prods = tom_cons_list_concProduction(prod,tom_append_list_concProduction(prods,tom_empty_list_concProduction()));
 			}
+			else if ((LA(1)==IDENTIFIER) && (LA(2)==EQUALS)) {
+				productions=typedecl(sortlist);
+				prods = tom_append_list_concProduction(productions,tom_append_list_concProduction(prods,tom_empty_list_concProduction()));
+			}
 			else {
-				break _loop17;
+				break _loop18;
 			}
 			
 		} while (true);
@@ -299,48 +343,12 @@ public GomParser(ParserSharedInputState state) {
 		prod = null;
 		String opName=null, typeName =null;
 		FieldList fieldList = tom_make_emptyFieldList();
-		Field field = null;
 		
 		
 		id = LT(1);
 		match(IDENTIFIER);
 		opName = id.getText();
-		{
-		match(LEFT_BRACE);
-		{
-		switch ( LA(1)) {
-		case IDENTIFIER:
-		{
-			field=field();
-			fieldList = tom_append_list_concField(fieldList,tom_cons_list_concField(field,tom_empty_list_concField()));
-			{
-			_loop22:
-			do {
-				if ((LA(1)==COMMA)) {
-					match(COMMA);
-					field=field();
-					fieldList = tom_append_list_concField(fieldList,tom_cons_list_concField(field,tom_empty_list_concField()));
-				}
-				else {
-					break _loop22;
-				}
-				
-			} while (true);
-			}
-			break;
-		}
-		case RIGHT_BRACE:
-		{
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
-		}
-		match(RIGHT_BRACE);
-		}
+		fieldList=fieldlist();
 		match(ARROW);
 		typeName=type();
 		
@@ -357,7 +365,7 @@ public GomParser(ParserSharedInputState state) {
 		Token  supplarg = null;
 		
 		prod = null;
-		String opName=null;
+		String opName = null;
 		Hookkind hooktype = null;
 		ArgList argList = tom_empty_list_concArg();
 		String code = "";
@@ -378,7 +386,7 @@ public GomParser(ParserSharedInputState state) {
 			match(IDENTIFIER);
 			argList = tom_append_list_concArg(argList,tom_cons_list_concArg(tom_make_Arg(arg.getText()),tom_empty_list_concArg()));
 			{
-			_loop27:
+			_loop34:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -387,7 +395,7 @@ public GomParser(ParserSharedInputState state) {
 					argList = tom_append_list_concArg(argList,tom_cons_list_concArg(tom_make_Arg(supplarg.getText()),tom_empty_list_concArg()));
 				}
 				else {
-					break _loop27;
+					break _loop34;
 				}
 				
 			} while (true);
@@ -414,6 +422,145 @@ public GomParser(ParserSharedInputState state) {
 		prod = tom_make_Hook(opName,hooktype,argList,code);
 		
 		return prod;
+	}
+	
+	public final ProductionList  typedecl(
+		List sortList
+	) throws RecognitionException, TokenStreamException {
+		ProductionList list;
+		
+		Token  id = null;
+		
+		list = null;
+		GomType type = null;
+		
+		
+		id = LT(1);
+		match(IDENTIFIER);
+		type=tom_make_GomType(id.getText()); sortList.add(type);
+		match(EQUALS);
+		list=alternatives(type);
+		return list;
+	}
+	
+	public final FieldList  fieldlist() throws RecognitionException, TokenStreamException {
+		FieldList list;
+		
+		
+		list = tom_empty_list_concField();
+		Field field = null;
+		
+		
+		match(LEFT_BRACE);
+		{
+		switch ( LA(1)) {
+		case IDENTIFIER:
+		{
+			field=field();
+			list = tom_append_list_concField(list,tom_cons_list_concField(field,tom_empty_list_concField()));
+			{
+			_loop29:
+			do {
+				if ((LA(1)==COMMA)) {
+					match(COMMA);
+					field=field();
+					list = tom_append_list_concField(list,tom_cons_list_concField(field,tom_empty_list_concField()));
+				}
+				else {
+					break _loop29;
+				}
+				
+			} while (true);
+			}
+			break;
+		}
+		case RIGHT_BRACE:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		match(RIGHT_BRACE);
+		return list;
+	}
+	
+	public final ProductionList  alternatives(
+		GomType type
+	) throws RecognitionException, TokenStreamException {
+		ProductionList list;
+		
+		Token  id = null;
+		Token  altid = null;
+		
+		list = tom_empty_list_concProduction();
+		String opName = null;
+		FieldList fieldList = null;
+		
+		
+		{
+		switch ( LA(1)) {
+		case ALT:
+		{
+			match(ALT);
+			break;
+		}
+		case IDENTIFIER:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		id = LT(1);
+		match(IDENTIFIER);
+		opName = id.getText();
+		fieldList=fieldlist();
+		list = tom_cons_list_concProduction(tom_make_Production(opName,fieldList,type),tom_append_list_concProduction(list,tom_empty_list_concProduction()));
+		{
+		_loop24:
+		do {
+			if ((LA(1)==ALT)) {
+				match(ALT);
+				altid = LT(1);
+				match(IDENTIFIER);
+				opName = altid.getText();
+				fieldList=fieldlist();
+				list = tom_cons_list_concProduction(tom_make_Production(opName,fieldList,type),tom_append_list_concProduction(list,tom_empty_list_concProduction()));
+			}
+			else {
+				break _loop24;
+			}
+			
+		} while (true);
+		}
+		{
+		switch ( LA(1)) {
+		case SEMI:
+		{
+			match(SEMI);
+			break;
+		}
+		case EOF:
+		case IDENTIFIER:
+		case SORTS:
+		case ABSTRACT:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		return list;
 	}
 	
 	public final Field  field() throws RecognitionException, TokenStreamException {
@@ -483,10 +630,13 @@ public GomParser(ParserSharedInputState state) {
 		"\"sorts\"",
 		"\"abstract\"",
 		"\"syntax\"",
+		"ARROW",
+		"EQUALS",
+		"ALT",
+		"SEMI",
 		"LEFT_BRACE",
 		"COMMA",
 		"RIGHT_BRACE",
-		"ARROW",
 		"COLON",
 		"STAR",
 		"\"private\"",

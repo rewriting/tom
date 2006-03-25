@@ -102,19 +102,19 @@ public class TomTypeChecker extends TomChecker {
             currentTomStructureOrgTrack = findOriginTracking(tom_match1_1_option);
             verifyMatchVariable(tom_match1_1_astPatternInstructionList);
             return false;
-           }}}} } if(tom_is_fun_sym_RuleSet(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match1_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_RuleSet_orgTrack(tom_match1_1); if( true ) {
+           }}}} } if(tom_is_fun_sym_RuleSet(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match1_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match1_1); { tom.engine.adt.tomsignature.types.OptionList tom_match1_1_option=tom_get_slot_RuleSet_option(tom_match1_1); if( true ) {
 
-            currentTomStructureOrgTrack = tom_match1_1_orgTrack;
+            currentTomStructureOrgTrack = findOriginTracking(tom_match1_1_option);
             verifyRuleVariable(tom_match1_1_ruleList);
             return false;
-           }}} }} } if(term instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match2_1=(( tom.engine.adt.tomsignature.types.Declaration)term); if(tom_is_fun_sym_Strategy(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match2_1_sName=tom_get_slot_Strategy_sName(tom_match2_1); { tom.engine.adt.tomsignature.types.TomVisitList tom_match2_1_visitList=tom_get_slot_Strategy_visitList(tom_match2_1); { tom.engine.adt.tomsignature.types.Option tom_match2_1_orgTrack=tom_get_slot_Strategy_orgTrack(tom_match2_1); if( true ) {
+           }}} }} } if(term instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match2_1=(( tom.engine.adt.tomsignature.types.Declaration)term); if(tom_is_fun_sym_Strategy(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match2_1_sName=tom_get_slot_Strategy_sName(tom_match2_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1_extendsTerm=tom_get_slot_Strategy_extendsTerm(tom_match2_1); { tom.engine.adt.tomsignature.types.TomVisitList tom_match2_1_visitList=tom_get_slot_Strategy_visitList(tom_match2_1); { tom.engine.adt.tomsignature.types.Option tom_match2_1_orgTrack=tom_get_slot_Strategy_orgTrack(tom_match2_1); if( true ) {
 
 
 
             currentTomStructureOrgTrack = tom_match2_1_orgTrack;
             verifyStrategyVariable(tom_match2_1_visitList);
             return false;
-           }}}} }} }
+           }}}}} }} }
 
         return true;
       }// end apply
@@ -128,24 +128,17 @@ public class TomTypeChecker extends TomChecker {
   private void collectUnknownsAppls(ArrayList unknownsApplsInWhen, TomList guards) {
     Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm term) {
-					 if(term instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1=(( tom.engine.adt.tomsignature.types.TomTerm)term); if(tom_is_fun_sym_TermAppl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_app=tom_match3_1; { tom.engine.adt.tomsignature.types.OptionList tom_match3_1_option=tom_get_slot_TermAppl_option(tom_match3_1); { tom.engine.adt.tomsignature.types.TomList tom_match3_1_args=tom_get_slot_TermAppl_args(tom_match3_1); { tom.engine.adt.tomsignature.types.OptionList tom_opts=tom_match3_1_option; if(tom_is_fun_sym_concTomTerm(tom_match3_1_args) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match3_1_args_list1=tom_match3_1_args; if(tom_is_empty_concTomTerm_TomList(tom_match3_1_args_list1)) { if( true ) {
+					 if(term instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1=(( tom.engine.adt.tomsignature.types.TomTerm)term); if(tom_is_fun_sym_TermAppl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomTerm tom_app=tom_match3_1; if( true ) {
 
-							boolean isConstructor = false;
-							 if(tom_opts instanceof  tom.engine.adt.tomsignature.types.OptionList) { { tom.engine.adt.tomsignature.types.OptionList tom_match4_1=(( tom.engine.adt.tomsignature.types.OptionList)tom_opts); if(tom_is_fun_sym_concOption(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match4_1_list1=tom_match4_1; { tom.engine.adt.tomsignature.types.OptionList tom_match4_1_begin1=tom_match4_1_list1; { tom.engine.adt.tomsignature.types.OptionList tom_match4_1_end1=tom_match4_1_list1;{ while (!(tom_is_empty_concOption_OptionList(tom_match4_1_end1))) {tom_match4_1_list1=tom_match4_1_end1;{ { tom.engine.adt.tomsignature.types.Option tom_match4_1_2=tom_get_head_concOption_OptionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concOption_OptionList(tom_match4_1_list1); if(tom_is_fun_sym_Constructor(tom_match4_1_2) ||  false ) { if( true ) {
-
-									isConstructor = true;
-								 } }}tom_match4_1_end1=tom_get_tail_concOption_OptionList(tom_match4_1_end1);} }tom_match4_1_list1=tom_match4_1_begin1;}}}} }} }
-
-							if(!isConstructor) {
-								if((symbolTable().getSymbolFromName(getName(tom_app)))==null) {
-									messageError(findOriginTrackingLine(tom_app.getOption()),
-											TomMessage.unknownVariableInWhen.getMessage(),
-											new Object[]{getName(tom_app)});
-								}
-								// else, it's actually app()
-							} // else, it's a unknown (ie : java) function
+							if((symbolTable().getSymbolFromName(getName(tom_app)))==null) {
+								messageError(findOriginTrackingLine(tom_app.getOption()),
+										TomMessage.unknownVariableInWhen.getMessage(),
+										new Object[]{getName(tom_app)});
+							}
+							// else, it's actually app()
+							// else, it's a unknown (ie : java) function
 							return true;
-						 } }} }}}}} }} }
+						 }} }} }
  
           return true;
         }// end apply
@@ -176,38 +169,48 @@ public class TomTypeChecker extends TomChecker {
     TomForwardType currentVisitorFwd = null;
     while(!list.isEmpty()) {
       TomVisit visit = list.getHead();
-       if(visit instanceof  tom.engine.adt.tomsignature.types.TomVisit) { { tom.engine.adt.tomsignature.types.TomVisit tom_match5_1=(( tom.engine.adt.tomsignature.types.TomVisit)visit); if(tom_is_fun_sym_VisitTerm(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match5_1_vNode=tom_get_slot_VisitTerm_vNode(tom_match5_1); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match5_1_astPatternInstructionList=tom_get_slot_VisitTerm_astPatternInstructionList(tom_match5_1); { tom.engine.adt.tomsignature.types.TomType tom_visitType=tom_match5_1_vNode; if( true ) {
+       if(visit instanceof  tom.engine.adt.tomsignature.types.TomVisit) { { tom.engine.adt.tomsignature.types.TomVisit tom_match4_1=(( tom.engine.adt.tomsignature.types.TomVisit)visit); if(tom_is_fun_sym_VisitTerm(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match4_1_vNode=tom_get_slot_VisitTerm_vNode(tom_match4_1); { tom.engine.adt.tomsignature.types.PatternInstructionList tom_match4_1_astPatternInstructionList=tom_get_slot_VisitTerm_astPatternInstructionList(tom_match4_1); { tom.engine.adt.tomsignature.types.OptionList tom_match4_1_option=tom_get_slot_VisitTerm_option(tom_match4_1); { tom.engine.adt.tomsignature.types.TomType tom_visitType=tom_match4_1_vNode; if( true ) { if(tom_visitType instanceof  tom.engine.adt.tomsignature.types.TomType) { { tom.engine.adt.tomsignature.types.TomType tom_match5_1=(( tom.engine.adt.tomsignature.types.TomType)tom_visitType); if(tom_is_fun_sym_TomTypeAlone(tom_match5_1) ||  false ) { { String  tom_match5_1_string=tom_get_slot_TomTypeAlone_string(tom_match5_1); if( true ) {
 
 
-          //check that all visitType have same visitorFwd
-          currentVisitorFwd = symbolTable().getForwardType(tom_visitType.getTomType().getString());
-          //noVisitorFwd defined for visitType
-          if (currentVisitorFwd == null || currentVisitorFwd == tom_make_EmptyForward()){ 
-            messageError(tom_visitType.getTlType().getTl().getStart().getLine(),
-                TomMessage.noVisitorForward.getMessage(),
-                new Object[]{tom_visitType.getTomType().getString()});
-          }
-          else if (visitorFwd == null) {//first visit 
-            visitorFwd = currentVisitorFwd;
-          }
-          else {//check if current visitor equals to previous visitor
-            if (currentVisitorFwd != visitorFwd){ 
-              System.out.println(visitorFwd);
-              System.out.println(currentVisitorFwd);
-              messageError(tom_visitType.getTlType().getTl().getStart().getLine(),
-                  TomMessage.differentVisitorForward.getMessage(),
-                  new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
-            }
-          }
-          verifyMatchVariable(tom_match5_1_astPatternInstructionList);
-         }}}} }} }
+
+              messageError(findOriginTrackingLine(tom_match4_1_option),
+                  TomMessage.unknownVisitedType.getMessage(),
+                  new Object[]{(tom_match5_1_string)});
+             }} } if(tom_is_fun_sym_Type(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match5_1_tomType=tom_get_slot_Type_tomType(tom_match5_1); { tom.engine.adt.tomsignature.types.TomType tom_match5_1_tlType=tom_get_slot_Type_tlType(tom_match5_1); if(tom_is_fun_sym_ASTTomType(tom_match5_1_tomType) ||  false ) { { String  tom_match5_1_tomType_string=tom_get_slot_ASTTomType_string(tom_match5_1_tomType); { String  tom_ASTVisitType=tom_match5_1_tomType_string; if(tom_is_fun_sym_TLType(tom_match5_1_tlType) ||  false ) { { tom.engine.adt.tomsignature.types.TargetLanguage tom_match5_1_tlType_tl=tom_get_slot_TLType_tl(tom_match5_1_tlType); { tom.engine.adt.tomsignature.types.TargetLanguage tom_TLVisitType=tom_match5_1_tlType_tl; if( true ) {
+
+              //check that all visitType have same visitorFwd
+
+              currentVisitorFwd = symbolTable().getForwardType(tom_ASTVisitType);
+
+              //noVisitorFwd defined for visitType
+              if (currentVisitorFwd == null || currentVisitorFwd == tom_make_EmptyForward()){ 
+                messageError(tom_TLVisitType.getStart().getLine(),
+                    TomMessage.noVisitorForward.getMessage(),
+                    new Object[]{(tom_ASTVisitType)});
+              }
+              else if (visitorFwd == null) {
+                //first visit 
+                visitorFwd = currentVisitorFwd;
+              }
+              else {
+                //check if current visitor equals to previous visitor
+                if (currentVisitorFwd != visitorFwd){ 
+                  messageError(tom_TLVisitType.getStart().getLine(),
+                      TomMessage.differentVisitorForward.getMessage(),
+                      new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
+                }
+              }
+              verifyMatchVariable(tom_match4_1_astPatternInstructionList);
+             }}} }}} }}} }} }
+
+         }}}}} }} }
 
       // next visit
       list = list.getTail();
     }
   }
 
-  /**
+/**
    * The notion of conditional rewrite rule can be generalised with a sequence of conditions
    * as in lhs -> rhs where P1:=C1 ... where Pn:=Cn if Qj==Dj 
    * (i) Var(Pi) inter (var(lhs) U var(P1) U ... U var(Pi-1)) = empty
@@ -302,26 +305,27 @@ public class TomTypeChecker extends TomChecker {
   
   private void verifyVariableTypeListCoherence(ArrayList list) {
     // compute multiplicities
-    HashSet set = new HashSet();
+		//System.out.println("list = " + list);
     HashMap map = new HashMap();
     Iterator it = list.iterator();
     while(it.hasNext()) {
       TomTerm variable = (TomTerm)it.next();
       TomName name = variable.getAstName();
       
-      if(set.contains(name.getString())) {
+      if(map.containsKey(name)) {
         TomTerm var = (TomTerm)map.get(name);
-        TomType type = var.getAstType();
+        TomType type1 = var.getAstType();
         TomType type2 = variable.getAstType();
 
-        if(!(type==type2)) {
+				//System.out.println("var1 = " + var);
+				//System.out.println("var2 = " + variable);
+        if(!(type1==type2)) {
           messageError(findOriginTrackingLine(variable.getOption()),
                        TomMessage.incoherentVariable.getMessage(),
-                       new Object[]{name.getString(), type.getTomType().getString(), type2.getTomType().getString()});
+                       new Object[]{name.getString(), type1.getTomType().getString(), type2.getTomType().getString()});
         }
       } else {
         map.put(name, variable);
-        set.add(name.getString());
       }
     }
   }  //verifyVariableTypeListCoherence  
