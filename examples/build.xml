@@ -704,6 +704,7 @@
 
   <target name="zenon" depends="init">
 	  <tom.preset srcdir="${examples.dir}"
+                      destdir="${examples.gen}"
 		      options="-I ${tom.home}/share/jtom --verify">
       <include name="${zenon}/**/*.t"/>
       <exclude name="${zenon}/**/*.g.t"/>
@@ -713,9 +714,9 @@
   </target>
   <target name="zenon.make" if="zvtov.bin">
     <apply dir="${examples.gen}/${zenon}" 
-          dest="${examples.gen}/${zenon}"
-          failonerror="yes"
-	  executable="${zvtov.bin}">
+           dest="${examples.gen}/${zenon}"
+           failonerror="yes"
+	   executable="${zvtov.bin}">
       <srcfile/>
       <fileset dir="${examples.gen}">
         <include name="${zenon}/**/*.zv"/>
