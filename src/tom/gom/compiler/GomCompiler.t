@@ -137,14 +137,14 @@ public class GomCompiler {
               %match(TypedProduction typedproduction) {
                 Variadic[sort=domain] -> {
                   ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
-                  SlotField slotHead = `SlotField(opname+"Head",clsName);
-                  SlotField slotTail = `SlotField(opname+"Tail",sortClassName);
+                  SlotField slotHead = `SlotField("Head"+opname,clsName);
+                  SlotField slotTail = `SlotField("Tail"+opname,sortClassName);
                   allSortSlots.add(`slotHead);
                   allSortSlots.add(`slotTail);
                   slots = `concSlotField(slotHead,slotTail);
                   // as the operator is variadic, add a Cons and an Empty
-                  empty = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Empty");
-                  operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname+"Cons");
+                  empty = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Empty"+opname);
+                  operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Cons"+opname);
 
                   allOperators = `concClassName(empty,allOperators*);
                   GomClass emptyClass = `OperatorClass(empty,abstracttypeName,mappingName,sortClassName,visitorName,concSlotField(),concHook());
