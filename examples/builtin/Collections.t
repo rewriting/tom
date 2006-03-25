@@ -29,29 +29,39 @@
 package builtin;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Collections {
 
-  %include { java/util/ArrayList.tom }
-
   public final static void main(String[] args) {
     Collections test = new Collections();
-    ArrayList res = test.run();
 
-    System.out.println("res = " + res);
+    ArrayList res = test.testArrayList();
+    System.out.println("ArrayList = " + res);
+
+    LinkedList resLinked = test.testLinkedList();
+    System.out.println("LinkedList = " + resLinked);
   }
 
-  public ArrayList run() {
+  %include { java/util/ArrayList.tom }
+  public ArrayList testArrayList() {
     ArrayList list = `concArrayList();
     ArrayList res = `concArrayList();
-
     list = `concArrayList("one","two","three","four");
-
     %match(ArrayList list) {
       (_*,x,_*)   -> { res = `concArrayList((String)x+" thing",res*); }
     }
-
     return res;
   }
 
+  %include { java/util/LinkedList.tom }
+  public LinkedList testLinkedList() {
+    LinkedList list = `concLinkedList();
+    LinkedList res = `concLinkedList();
+    list = `concLinkedList("one","two","three","four");
+    %match(LinkedList list) {
+      (_*,x,_*)   -> { res = `concLinkedList((String)x+" thing",res*); }
+    }
+    return res;
+  }
 }
