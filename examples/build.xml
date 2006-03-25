@@ -644,6 +644,7 @@
   <target name="ted" depends="init"> 
     <!-- <tomcompile example="${ted}"/> -->
     <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}"
 	        optimize2="no">
       <include name="${ted}/**/*.t"/>
       <exclude name="${ted}/**/*.g.t"/>
