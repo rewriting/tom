@@ -638,7 +638,7 @@ public class Verifier extends TomBase {
             Iterator it = post_list.iterator();
             while(it.hasNext()) {
               DerivTree pre = (DerivTree) it.next();
-              c.add(`derivrule2("seqb",post,endderiv,pre,seq()));
+              c.add(`derivrule2("seqb",post,endderiv(),pre,seq()));
             }
           }
         }

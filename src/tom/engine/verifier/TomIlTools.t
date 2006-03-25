@@ -103,7 +103,7 @@ public class TomIlTools extends TomBase {
   
   public ZExpr patternToZExpr(TomList subjectList, TomList tomList, Map map, Set unamedVariableSet) {
     /* for each TomTerm: builds a zeq : pattern = subject */
-    ZExpr res = `ztrue;
+    ZExpr res = `ztrue();
     while(!tomList.isEmpty()) {
       TomTerm h = tomList.getHead();
       TomTerm subject = subjectList.getHead();
