@@ -45,11 +45,11 @@ concCop:make_insert(e,l) {
     cop(concCop(L*)) -> { return `concCop(L*,l*); }
   }
 
-  if(!l.isconcCopEmpty()) {
-    if (!(structure.StructureGom.compareStruc(e, l.getconcCopHead()) < 0)) {
-      structure.structures.types.StrucCop newTail = l.getconcCopTail();
+  if(!l.isEmptyconcCop()) {
+    if (!(structure.StructureGom.compareStruc(e, l.getHeadconcCop()) < 0)) {
+      structure.structures.types.StrucCop newTail = l.getTailconcCop();
       newTail = `concCop(e,newTail*);
-      return realMake(l.getconcCopHead(), newTail);
+      return realMake(l.getHeadconcCop(), newTail);
     }
   }
   return realMake(e,l);
@@ -60,10 +60,10 @@ concPar:make_insert(e,l) {
     o() -> { return l; }
     par(concPar(L*)) -> { return `concPar(L*,l*); }
   }
-  if(!l.isconcParEmpty()) {
-    if(!(structure.StructureGom.compareStruc(e, l.getconcParHead()) < 0)) {
-      structure.structures.types.StrucPar newTail = l.getconcParTail();
-      return realMake(l.getconcParHead(), `concPar(e,newTail*));
+  if(!l.isEmptyconcPar()) {
+    if(!(structure.StructureGom.compareStruc(e, l.getHeadconcPar()) < 0)) {
+      structure.structures.types.StrucPar newTail = l.getTailconcPar();
+      return realMake(l.getHeadconcPar(), `concPar(e,newTail*));
     }
   }
   return realMake(e,l);

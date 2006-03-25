@@ -283,7 +283,7 @@ public class StructureGom {
          [(R,T),U] -> ([T,U],R) */
       par(concPar(X1*,cop(concCop(R*,T*)),X2*,U,X3*)) -> {
 
-        if(`T*.isconcCopEmpty() || `R*.isconcCopEmpty() ) { 
+        if(`T*.isEmptyconcCop() || `R*.isEmptyconcCop() ) { 
         } else {
           StrucPar context = `concPar(X1*,X2*,X3*);
 
@@ -309,7 +309,7 @@ public class StructureGom {
       /* [U,(R,T)] -> ([R,U],T)
          [U,(R,T)] -> ([T,U],R) */
       par(concPar(X1*,U,X2*,cop(concCop(R*,T*)),X3*)) -> {
-        if(`T*.isconcCopEmpty() || `R*.isconcCopEmpty()) { 
+        if(`T*.isEmptyconcCop() || `R*.isEmptyconcCop()) { 
 
         } else {
           StrucPar context = `concPar(X1*,X2*,X3*);
@@ -349,8 +349,8 @@ public class StructureGom {
         /* [<R;U>,<T;V>] -> <[R,T];[U,V]>
            [<R;U>,<T;V>] -> <[U,V];[R,T]> */
         par(concPar(X1*,seq(concSeq(R*,U*)),X2*,seq(concSeq(T*,V*)),X3*)) -> {
-          if(`R*.isconcSeqEmpty() || `U*.isconcSeqEmpty()
-              || `T*.isconcSeqEmpty() || `V*.isconcSeqEmpty()) {
+          if(`R*.isEmptyconcSeq() || `U*.isEmptyconcSeq()
+              || `T*.isEmptyconcSeq() || `V*.isEmptyconcSeq()) {
           } else {
             if(!optim || (!canReact(`U,`T) && !canReact(`R,`V))) {
               if(!optim2 || (canReact(`R,`T) && canReact(`U,`V))) {
@@ -377,7 +377,7 @@ public class StructureGom {
         /* [R,<T;U>] -> <[R,T];U>
            [R,<T;U>] -> <T;[R,U]> */
         par(concPar(X1*,R,X2*,seq(concSeq(T*,U*)),X3*)) -> {
-          if(`T*.isconcSeqEmpty() || `U*.isconcSeqEmpty()) {
+          if(`T*.isEmptyconcSeq() || `U*.isEmptyconcSeq()) {
           } else {
             StrucPar context = `concPar(X1*,X2*,X3*);
             if(!optim2 || canReact(`R,`T)) {
@@ -401,7 +401,7 @@ public class StructureGom {
         /* [<T;U>,R] -> <[R,T];U>
            [<T;U>,R] -> <T;[R,U]> */
         par(concPar(X1*,seq(concSeq(T*,U*)),X2*,R,X3*)) -> {
-          if(`T*.isconcSeqEmpty() || `U*.isconcSeqEmpty()) {
+          if(`T*.isEmptyconcSeq() || `U*.isEmptyconcSeq()) {
           } else {
             StrucPar context = `concPar(X1*,X2*,X3*);
 
@@ -623,51 +623,51 @@ public class StructureGom {
 			} else if(t1 instanceof StrucCop && t2 instanceof StrucCop) {
 				StrucCop l1 = (StrucCop) t1;
 				StrucCop l2 = (StrucCop) t2;
-				if(l1.isconcCopEmpty()) {
+				if(l1.isEmptyconcCop()) {
 					return -1;
-				} else if(l2.isconcCopEmpty()) {
+				} else if(l2.isEmptyconcCop()) {
 					return 1;
 				} else {
-					int res = compareStruc(l1.getconcCopHead(),l2.getconcCopHead());
+					int res = compareStruc(l1.getHeadconcCop(),l2.getHeadconcCop());
 					if(res != 0) {
 						return res;
 					} else {
-						t1 = l1.getconcCopTail();
-						t2 = l2.getconcCopTail();
+						t1 = l1.getTailconcCop();
+						t2 = l2.getTailconcCop();
 						continue;
 					}
 				}
 			} else if(t1 instanceof StrucPar && t2 instanceof StrucPar) {
 				StrucPar l1 = (StrucPar) t1;
 				StrucPar l2 = (StrucPar) t2;
-				if(l1.isconcParEmpty()) {
+				if(l1.isEmptyconcPar()) {
 					return -1;
-				} else if(l2.isconcParEmpty()) {
+				} else if(l2.isEmptyconcPar()) {
 					return 1;
 				} else {
-					int res = compareStruc(l1.getconcParHead(),l2.getconcParHead());
+					int res = compareStruc(l1.getHeadconcPar(),l2.getHeadconcPar());
 					if(res != 0) {
 						return res;
 					} else {
-						t1 = l1.getconcParTail();
-						t2 = l2.getconcParTail();
+						t1 = l1.getTailconcPar();
+						t2 = l2.getTailconcPar();
 						continue;
 					}
 				}
 			} else if(t1 instanceof StrucSeq && t2 instanceof StrucSeq) {
 				StrucSeq l1 = (StrucSeq) t1;
 				StrucSeq l2 = (StrucSeq) t2;
-				if(l1.isconcSeqEmpty()) {
+				if(l1.isEmptyconcSeq()) {
 					return -1;
-				} else if(l2.isconcSeqEmpty()) {
+				} else if(l2.isEmptyconcSeq()) {
 					return 1;
 				} else {
-					int res = compareStruc(l1.getconcSeqHead(),l2.getconcSeqHead());
+					int res = compareStruc(l1.getHeadconcSeq(),l2.getHeadconcSeq());
 					if(res != 0) {
 						return res;
 					} else {
-						t1 = l1.getconcSeqTail();
-						t2 = l2.getconcSeqTail();
+						t1 = l1.getTailconcSeq();
+						t2 = l2.getTailconcSeq();
 						continue;
 					}
 				}
