@@ -329,10 +329,12 @@
   <target name="expression" depends="init">
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}"
 	        options="-I ${tom.home}/share/jtom --lazyType">
       <include name="${expression}/**/Record.t"/>
     </tom.preset>
-    <tom.preset srcdir="${examples.dir}">
+    <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}">
       <include name="${expression}/**/RecordStrict.t"/>
     </tom.preset>
     <javacompile example="${expression}"/>
