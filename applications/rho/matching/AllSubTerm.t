@@ -63,8 +63,8 @@ public class AllSubTerm {
   }
 
   public void run() {
-		Term subject = `f(f(a));
-		Term subTerm = `f(b);
+		Term subject = `f(f(a()));
+		Term subTerm = `f(b());
 		VisitableVisitor collect = new Collect();
 		VisitableVisitor getAll = `mu(MuVar("x"),
 																	Sequence(collect,All(MuVar("x"))));

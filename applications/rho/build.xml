@@ -4,66 +4,29 @@
     The rho interpreter
   </description>
 
-  <property name="javacSource"  value="1.4"/>
-  <property name="javacTarget"  value="1.4"/>
-  <property name="nowarnings"   value="false"/>
-  <property name="optimize"     value="off"/>
-  <property name="optimize2"    value="off"/>
-  <property name="verbose"      value="off"/>
-  <property name="pretty"       value="off"/>
-  <property name="visitable"    value="on"/>
-  <property name="stamp"        value="off"/>
-
   <property environment="env"/>
   <property name="tom.home"     value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
 
   <property name="rho.dir"      location="."/>
   <property name="rho.gen"      location="gen"/>
   <property name="rho.build"    location="build"/>
 
-  <property name="tomconfigfile"  location="${tom.home}/Tom.xml"/>
-  <property name="vasconfigfile"  location="${tom.home}/Vas.xml"/>
-
-  <target name="init">
+  <target name="init" depends="tom.init">
     <fail unless="env.TOM_HOME"
           message="TOM_HOME has to be defined in your environment, 
           to find the Tom classes"/>
     <mkdir dir="${rho.build}"/>
     <mkdir dir="${rho.gen}"/>
-    <!-- Define classpath for building stable and source  -->
-    <path id="tom.classpath">
-      <fileset dir="${tom.home}/lib">
-        <include name="*.jar"/>
-      </fileset>
-    </path>
     
-    <!-- tasks for building -->
-    <taskdef name="tom"
-             classname="tom.engine.tools.ant.TomTask"
-             classpathref="tom.classpath"/>
-    <taskdef name="vas"
-             classname="vas.ant.VasTask" 
-             classpathref="tom.classpath"/>
-    <taskdef name="tomantlr" 
-             classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
-      <classpath refid="tom.classpath"/>
-    </taskdef>
-
     <macrodef name="tomcompile">
       <attribute name="package"/>
       <sequential>
-        <tom config="${tomconfigfile}"
-             srcdir="${rho.dir}" 
-             destdir="${rho.gen}"         
-             nowarn="${nowarnings}"
-             optimize="${optimize}"
-             optimize2="${optimize2}"
-             verbose="${verbose}"
-             pretty="${pretty}"
-             options="-I ${tom.home}/share/jtom">
+        <tom.preset srcdir="${rho.dir}" 
+                    destdir="${rho.gen}">
           <include name="@{package}/**/*.t"/>
           <exclude name="@{package}/**/*.g.t"/>
-        </tom>
+        </tom.preset>
       </sequential>
     </macrodef>
     <macrodef name="vascompile">
@@ -80,15 +43,11 @@
     <macrodef name="javacompile">
       <attribute name="package"/>
       <sequential>
-        <javac destdir="${rho.build}"
-          target="${javacTarget}"
-          source="${javacSource}"
-          nowarn="${nowarnings}">
+        <javac.preset destdir="${rho.build}">
           <src path="${rho.dir}"/>
           <src path="${rho.gen}"/>
-          <classpath refid="tom.classpath"/>
           <include name="@{package}/**/*.java"/>
-        </javac>
+        </javac.preset>
       </sequential>
     </macrodef>
   </target>
@@ -98,17 +57,11 @@
   <target name="build.xrho" depends="init">
     <vascompile package="xrho"/>
     <tomcompile package="xrho"/>
-    <tom config="${tomconfigfile}"
-	    srcdir="${rho.dir}" 
-	    nowarn="${nowarnings}"
-	    optimize="${optimize}"
-	    optimize2="${optimize2}"
-	    verbose="${verbose}"
-	    pretty="${pretty}"
+    <tom.preset srcdir="${rho.dir}" 
 	    outputfile="${rho.gen}/xrho/RhoParser.g"
-	    options="-I ${rho.gen}/xrho -I ${tom.home}/share/jtom">
+	    options="-I ${rho.gen}/xrho">
 	    <include name="xrho/*.g.t"/>
-    </tom>
+    </tom.preset>
     <tomantlr target="${rho.gen}/xrho/RhoParser.g"
               outputdirectory="${rho.gen}/xrho">
       <classpath refid="tom.classpath"/>
@@ -119,17 +72,11 @@
   <target name="build.matching" depends="init">
     <vascompile package="matching"/>
     <tomcompile package="matching"/>
-    <tom config="${tomconfigfile}"
-	    srcdir="${rho.dir}" 
-	    nowarn="${nowarnings}"
-	    optimize="${optimize}"
-	    optimize2="${optimize2}"
-	    verbose="${verbose}"
-	    pretty="${pretty}"
+    <tom.preset srcdir="${rho.dir}" 
 	    outputfile="${rho.gen}/matching/LamcalParser.g"
-	    options="-I ${rho.gen}/matching -I ${tom.home}/share/jtom">
+	    options="-I ${rho.gen}/matching">
 	    <include name="matching/*.g.t"/>
-    </tom>
+    </tom.preset>
     <tomantlr target="${rho.gen}/matching/LamcalParser.g"
               outputdirectory="${rho.gen}/matching">
       <classpath refid="tom.classpath"/>
@@ -137,7 +84,7 @@
     <javacompile package="matching"/>
   </target>
 
-  <target name="junit" description="Runs junit acceptance tests for xrho" depends="build.xrho, initjunit">
+  <target name="junit" description="Runs junit acceptance tests for xrho" depends="build.xrho, init">
     <tomjunit printsummary="yes"
               fork="true"
               haltonfailure="false"
@@ -160,12 +107,6 @@
       ****************************************************
       ****************************************************
     </fail>
-  </target>
-
-  <target name="initjunit" depends="init">
-	  <taskdef name="tomjunit"
-		  classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
-		  classpathref="tom.classpath"/>
   </target>
 
   <target name="clean" description="make clean">

@@ -145,10 +145,10 @@ public class Matching {
 			//Subst
 			l:(X*,match(Z@matchVar[],A),Y*) ->{
 //				System.out.println("subst with X: "+X+"and Y: "+Y);
-				boolean b1=belongsTo(Z,`and(X*,Y*));
+				boolean b1=belongsTo(`Z,`and(X*,Y*));
 //				System.out.println("b1="+b1);
 //				System.out.println("subst1");
-				boolean b2=doesNotContainFreeLocalVar(A);
+				boolean b2=doesNotContainFreeLocalVar(`A);
 				//			System.out.println("b2="+b2);
 				//			System.out.println("subst2");
 				if (b1 && b2){
@@ -177,20 +177,20 @@ public class Matching {
 				(X*,match(app(A1,B1),C),Y*) ->{
 //				System.out.println("Beta-exp");
 					//1. Collection of all the subterms of C
-					Collection collSubTerm=getAllSubterm(C);
+					Collection collSubTerm=getAllSubterm(`C);
 					//2. For each subterm compute the set of position in which the considered subterm appears.
 					Iterator itSubTerm=collSubTerm.iterator();
 					while(itSubTerm.hasNext()){
 //								System.out.println("ici1");
 						LamTerm B2=(LamTerm)itSubTerm.next();
 						//							System.out.println("la2");
-						Collection collPosition=getAllPos(C,B2);
+						Collection collPosition=getAllPos(`C,B2);
 						List l=allSubCollection(collPosition);
 						Iterator itListAllSubCollection=l.iterator();
 						//3. For each subset of the previous set do the replacement of the subterm by a fresh variable and then do decomposition.
 						while(itListAllSubCollection.hasNext()){
 							LamTerm x=`localVar("_x"+(++comptVariable));
-							LamTerm A2=C;
+							LamTerm A2=`C;
 //							System.out.println("ici3");
 							Collection subCollection=(Collection)itListAllSubCollection.next();
 							Iterator itSubCollection=subCollection.iterator();
@@ -218,7 +218,7 @@ public class Matching {
 			(X*,match(matchVar[],A),Y*)->{
 				boolean b1=`testSolvedForm(X*);
 				boolean b2=`testSolvedForm(Y*);
-				return b1&&doesNotContainFreeLocalVar(A)&&b2;
+				return b1&&doesNotContainFreeLocalVar(`A)&&b2;
 			}
 			(X*,match[],Y*)->{
 				return false;
@@ -239,7 +239,7 @@ public class Matching {
 			(X*,match(A,B),Y*)->{
 				boolean resultX=`belongsTo(var,X*);
 				boolean resultY=`belongsTo(var,Y*);
-				return resultX ||belongsTo(var,A)||resultY;
+				return resultX ||belongsTo(var,`A)||resultY;
 			}
 		}
 		return false;
@@ -249,15 +249,15 @@ public class Matching {
 			localVar[] -> {return false;}
 			const[] -> {return false;}
 			X@matchVar[] -> {
-				if (X == var){
+				if (`X == var){
 					return true;
 				}
 				else{
 					return false;
 				}
 			}
-			abs(_,A) -> {return belongsTo(var,A);}
-			app(A,B) -> {return belongsTo(var,A)||belongsTo(var,B);}
+			abs(_,A) -> {return belongsTo(var,`A);}
+			app(A,B) -> {return belongsTo(var,`A)||belongsTo(var,`B);}
 		}
 		return false;
 	}
@@ -277,9 +277,9 @@ public class Matching {
 	public Collection freeLocalVarAux(Systems s,Collection c){
 		%match(Systems s){
 			(X*,match(A,B),Y*) -> {
-				freeLocalVarAux(X,c);
-				freeLocalVarAux(Y,c);
-				freeLocalVarAux(A,c);
+				freeLocalVarAux(`X,c);
+				freeLocalVarAux(`Y,c);
+				freeLocalVarAux(`A,c);
 			}
 		}
 		return c;
@@ -288,16 +288,16 @@ public class Matching {
 		%match(LamTerm t){
 			x@localVar[] -> {
 				if (!c.contains(t)) {
-					c.add(x);
+					c.add(`x);
 				}
 			}
 			app(A1,A2)->{
-				freeLocalVarAux(A1,c);
-				freeLocalVarAux(A2,c);
+				freeLocalVarAux(`A1,c);
+				freeLocalVarAux(`A2,c);
 			}
 			abs(x,A1)->{
-				freeLocalVarAux(A1,c);
-				c.remove(x);
+				freeLocalVarAux(`A1,c);
+				c.remove(`x);
 			}
 		}
 	}
@@ -325,7 +325,7 @@ public class Matching {
 			matchVar(name) -> {
 				%match(LamTerm X){
 					matchVar(nameSubject)-> {
-						if (name.equals(nameSubject)){
+						if (`name.equals(`nameSubject)){
 							return `subject;
 						}
 					}
@@ -347,7 +347,7 @@ public class Matching {
 			const[] -> {return `t;}
 			matchVar[] -> {return `t;}
 			Y@localVar[] -> {
-				if (X == Y){ return `subject;}
+				if (X == `Y){ return `subject;}
 				else {return `t;}
 			}
 			app(A1,A2) -> {return `app(substitute(X,subject,A1),substitute(X,subject,A2));}
