@@ -1,0 +1,57 @@
+/*
+ *
+ * Copyright (c) 2006, Antoine Reilles
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met: 
+ * 	- Redistributions of source code must retain the above copyright
+ * 	notice, this list of conditions and the following disclaimer.  
+ * 	- Redistributions in binary form must reproduce the above copyright
+ * 	notice, this list of conditions and the following disclaimer in the
+ * 	documentation and/or other materials provided with the distribution.
+ * 	- Neither the name of the INRIA nor the names of its
+ * 	contributors may be used to endorse or promote products derived from
+ * 	this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ **/
+
+%include { Object.tom }
+
+%typeterm ArrayList {
+  implement      { java.util.ArrayList }
+  equals(l1,l2)  { l1.equals(l2) }
+  check_stamp(l) {}
+  set_stamp(l)   { l }
+}
+
+/*
+ * We use shallow copy for the get_tail operation, so be cautious about side
+ * effects
+ */
+%oparray ArrayList concArrayList(Object*) {
+  is_fsym(l)       { (l!= null) && (l instanceof java.util.ArrayList) }
+  make_empty(n)    { new java.util.ArrayList(n) }
+  make_append(o,l) { concArrayListAppend(o,l) }
+  get_element(l,n) { l.get(n) }
+  get_size(l)      { l.size() }
+}
+
+private static ArrayList concArrayListAppend(Object o, ArrayList l) {
+  ArrayList res = (ArrayList)l.clone();
+  res.add(o);
+  return res;
+}
