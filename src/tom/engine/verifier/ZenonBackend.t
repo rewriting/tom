@@ -247,7 +247,7 @@ public class ZenonBackend {
       //out.append("%%statement\n");
       out.append(genZSpec((ZSpec)it.next()));
 
-      // XXX: Outputs the axiom for True (will disappear soon)
+      // XXX: Outputs the axiom for True (Newer versions of zenon may remove this need)
       out.append("Parameter true_is_true : True.\n");
 
       // Generates types for symbol functions

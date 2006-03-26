@@ -692,7 +692,7 @@ public class Verifier extends TomBase {
           c.add(`derivrule(rulename,post,pre,dedexpr(concExpr(cond*,false()))));
         }
       }
-      // axioms !
+      // axioms
       ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
         c.add(`derivrule("axiom_accept",post,endderiv(),seq()));
       }
@@ -701,7 +701,7 @@ public class Verifier extends TomBase {
       }
       _ -> { 
         if (c.isEmpty()) {
-            //System.out.println("Ratai ! " + post);
+            //System.out.println("Error " + post);
         }
       }
     }
