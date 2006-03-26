@@ -11,18 +11,12 @@ class Board {
   private final static int white = -2;
   private int size;
 
-  private gomokuFactory factory;
   private int[][] board;
 
-  public Board(int size, gomokuFactory factory) {
+  public Board(int size) {
     this.size = size;
     this.board = new int[size][size];
-    this.factory = factory;
   } 
-
-  public gomokuFactory getGomokuFactory() {
-    return factory;
-  }
 
   public int getWhite() {
     return white;
@@ -154,7 +148,7 @@ class Board {
           tmp = `concPawn();
         }
       }
-      if(!tmp.isEmpty()) {
+      if(!tmp.isEmptyconcPawn()) {
         list = `concPawnList(list*,tmp);
         tmp = `concPawn();
       }
@@ -172,7 +166,7 @@ class Board {
           tmp = `concPawn();
         }
       }
-      if(!tmp.isEmpty()) {
+      if(!tmp.isEmptyconcPawn()) {
         list = `concPawnList(list*,tmp);
         tmp = `concPawn();
       }

@@ -6,7 +6,6 @@ import gomoku.gomoku.*;
 import gomoku.gomoku.types.*;
 
 class Gomoku2 {
-  private gomokuFactory factory;
   private Board board;
   private int size;
   private final static int black = -1;
@@ -14,21 +13,16 @@ class Gomoku2 {
 
   %include { gomoku/gomoku.tom }
   
-  public static Gomoku2 getGomoku(int size, gomokuFactory factory) {
+  public static Gomoku2 getGomoku(int size) {
     Gomoku2 gomoku = new Gomoku2();
-    gomoku.factory = factory;
     gomoku.size = size;
-    gomoku.board = new Board(size,factory);
+    gomoku.board = new Board(size);
     return gomoku;
   } 
 
-  public gomokuFactory getGomokuFactory() {
-    return factory;
-  }
-  
   public final static void main(String[] args) {
     int boardSize = 15;
-    Gomoku2 test = getGomoku(boardSize,gomokuFactory.getInstance(new PureFactory()));
+    Gomoku2 test = getGomoku(boardSize);
     test.run();
   }
 
@@ -95,8 +89,8 @@ class Gomoku2 {
     }
 
     Pawn maxEmpty = board.getMaxEmpty();
-    int x = maxEmpty.getX();
-    int y = maxEmpty.getY();
+    int x = maxEmpty.getx();
+    int y = maxEmpty.gety();
     //    System.out.println("Computer play on line: "+(x)+" column: "+(y));
     try {
       board.play(color,x,y);
