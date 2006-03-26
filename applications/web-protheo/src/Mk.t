@@ -49,10 +49,10 @@ public class Mk {
     if(!(conf == null)) {
       conf = tools.removeComments(conf.getDocElem());
       %match(TNode conf) {
-        <conf><contentDir>#TEXT(d)</contentDir></conf> -> { contentDir = d; }
-        <conf><w3Dir>#TEXT(d)</w3Dir></conf> -> { w3Dir = d; }
-        <conf><bibDir>#TEXT(d)</bibDir></conf> -> { bibDir = d; }
-        <conf><tmpDir>#TEXT(d)</tmpDir></conf> -> { tmpDir = d; }
+        <conf><contentDir>#TEXT(d)</contentDir></conf> -> { contentDir = `d; }
+        <conf><w3Dir>#TEXT(d)</w3Dir></conf> -> { w3Dir = `d; }
+        <conf><bibDir>#TEXT(d)</bibDir></conf> -> { bibDir = `d; }
+        <conf><tmpDir>#TEXT(d)</tmpDir></conf> -> { tmpDir = `d; }
       }
     } else {
       System.err.println("config.xml doesn't exists.");
@@ -110,7 +110,7 @@ public class Mk {
             %match(TNode subject) {
               <link>#TEXT(lk)</link> -> {
                 // If link is not an anchor in the page but a standalone page
-                if(!lk.startsWith("#")) {
+                if(!`lk.startsWith("#")) {
                   writeHTML(`lk,Translator.IN_ENGLISH);
                   writeHTML(`lk,Translator.IN_FRENCH);
                 }

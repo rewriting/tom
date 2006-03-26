@@ -166,7 +166,7 @@ public class Publi {
       %match(TNode arg) {
         <author>#TEXT(a)</author> -> {
           // Must be surrouded by blanks (don't split name 'Brand' for instance)
-          String authArray[] = a.split(" and ");
+          String authArray[] = `a.split(" and ");
           // For each author
           String last,first;
           for (int i=0 ; i<(Array.getLength(authArray)) ; i++) {
@@ -212,7 +212,7 @@ public class Publi {
     public TNode visit_TNode(TNode arg) throws VisitFailure {
       %match(TNode arg) {
         <person><firstname>#TEXT(fn)</firstname><lastname>#TEXT(ln)</lastname><status>#TEXT(s)</status></person> -> {
-          members.put(ln + fn, new Author(fn,ln,s));
+          members.put(`ln + `fn, new Author(`fn,`ln,`s));
         }
       }  
       return arg;

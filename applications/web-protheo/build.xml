@@ -1,28 +1,20 @@
 <project name="ProtheoWebsite" default="dist" basedir=".">
-    <description>
-        the Protheo team website
+  <description>
+    The Protheo team website
     
     Please create a copy of local.properties_template to file
     local.properties and complete it with valid information.
 
     To use this build file, install ant,
     and just run ./build.sh in the current directory.
+  </description>
 
-		</description>
-
-<!-- The current version of TOM, should be defined by -Dversion -->
-  <property name="javacSource"    value="1.4"/>
-  <property name="javacTarget"    value="1.4"/>
-  <property name="nowarnings"     value="false"/>
-  <property name="optimize"       value="off"/>
-  <property name="optimize2"      value="off"/>
-  <property name="verbose"        value="off"/>
-  <property name="pretty"         value="off"/>
-  <property name="visitable"      value="on"/>
-  <property name="stamp"          value="off"/>
+  <!-- disable optimization for now -->
+  <property name="optimize"    value="off"/>
 
   <property environment="env"/>
-  <property name="tom.home"       value="${env.TOM_HOME}"/>
+  <property name="tom.home"     value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
 
   <!-- some used directory location -->
   <property name="web-protheo.src"   location="src"/>
@@ -31,47 +23,34 @@
   <property name="web-protheo.build" location="build"/>
   <property name="web-protheo.dist"  location="dist"/>
   <property name="bib"               location="biblio/"/>
-  <property name="javacDebugInfo"    value="on"/>
 
-<property name="tomconfigfile"       location="${tom.home}/Tom.xml"/>
-
-  <path id="tom.classpath">
-      <fileset dir="${tom.home}/lib">
-        <include name="*.jar"/>
-      </fileset>
-  </path>
-  
-  <path id="build.classpath">
-      <path refid="tom.classpath"/>
-  </path>
-
-  <target name="init">
+  <target name="init" depends="tom.init">
     <!-- Create the time stamp -->
     <tstamp/>
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${web-protheo.gen}"/>
     <mkdir dir="${web-protheo.build}"/>
+    <path id="build.classpath">
+      <path refid="tom.classpath"/>
+    </path>
   </target>
 
-  <target name="tom" depends="init,initaskdef"
+  <target name="tom" depends="init"
         description="compile the Tom source " >
-    <tom config="${tomconfigfile}"
-         srcdir="${web-protheo.src}"
-         destdir="${web-protheo.gen}"
-         options="-I ${tom.home}/share/jtom">
+    <tom.preset srcdir="${web-protheo.src}"
+                destdir="${web-protheo.gen}">
       <include name="*.t"/>
-    </tom>
+    </tom.preset>
   </target>
 
   <target name="javac" depends="tom"
         description="compile the Java source " >
-    <javac destdir="${web-protheo.build}"
-		debug="${javacDebugInfo}" >
-		<src path="${web-protheo.src}"/>
-    <src path="${web-protheo.gen}"/>
-		<include name="*.java"/>
-    <classpath refid="build.classpath"/>
-		</javac>
+        <javac.preset destdir="${web-protheo.build}">
+          <src path="${web-protheo.src}"/>
+          <src path="${web-protheo.gen}"/>
+          <include name="*.java"/>
+          <classpath refid="build.classpath"/>
+        </javac.preset>
   </target>
 
   <target name="dist" depends="javac"
@@ -90,23 +69,17 @@
     </jar>
   </target>
   
-	<target name="clean"
-        description="clean up" >
+  <target name="clean"
+          description="clean up" >
     <!-- Delete the ${gen} and ${build} directory trees -->
     <delete dir="${web-protheo.gen}"/>
   </target>
 
-	<target name="dist.clean"
-        description="clean up dist dir" >
+  <target name="dist.clean"
+          description="clean up dist dir" >
     <delete>
      <fileset dir="${web-protheo.dist}" includes="*.*"/>
     </delete>
-  </target>
-
-  <target name="initaskdef">
-    <taskdef name="tom" classname="tom.engine.tools.ant.TomTask">
-      <classpath refid="tom.classpath"/>
-    </taskdef>
   </target>
 
 </project>

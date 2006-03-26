@@ -50,7 +50,7 @@ public class Patch {
       %match(TNode arg) {
         <author>#TEXT(a)</author> -> {
           String first="", last = "";
-          String authArray[] = a.split(" and ");//must be surrouded by blanks (don't split name 'Brand' for instance)
+          String authArray[] = `a.split(" and ");//must be surrouded by blanks (don't split name 'Brand' for instance)
           for (int i=0;i<(Array.getLength(authArray));i++) {//for each author
             String current_a[] = authArray[i].split(",");
             last = current_a[0].trim();
@@ -74,12 +74,11 @@ public class Patch {
     public TNode visit_TNode(TNode arg) throws VisitFailure {
       %match(TNode arg) {
         <person><firstname>#TEXT(first)</firstname><lastname>#TEXT(last)</lastname><status>#TEXT(s)</status></person> -> {
-          members.add(last + " " + first + " <<<<<<<<");
+          members.add(`last + " " + `first + " <<<<<<<<");
         }
       }  
       return arg;
     }
   }
 }
-
 // sed s/moi/toi/g fich.moi > fich.toi

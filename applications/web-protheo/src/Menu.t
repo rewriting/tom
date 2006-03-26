@@ -181,13 +181,13 @@ public class Menu {
     public TNode visit_TNode(TNode arg) throws VisitFailure {
       %match(TNode arg) {
         <section>tag@<(title_fr|title_en)>title</(title_fr|title_en)>s*<link>#TEXT(ln)</link>sub*</section> -> {
-          if((tag.getName()).endsWith(lang)&&!hasAnchor(`s)) {
+          if((`tag.getName()).endsWith(lang)&&!hasAnchor(`s)) {
             String link = `ln+"_"+lang+".html";
             return arg = `xml(<li><a href=link>title</a>sub*</li>);
           }
         }
         <section>tag@<(title_fr|title_en)>title</(title_fr|title_en)><anchor>#TEXT(an)</anchor><link>#TEXT(ln)</link>sub*</section> -> {
-          if((tag.getName()).endsWith(lang)) {
+          if((`tag.getName()).endsWith(lang)) {
             String link = `ln+"_"+lang+".html"+`an;
             return arg = `xml(<li><a href=link>title</a>sub*</li>);
           }
@@ -250,14 +250,14 @@ public class Menu {
       %match(TNode arg) {
         <section>(t*,l@<anchor>#TEXT(ln)</anchor>,sub*)</section> -> {
           VisitableVisitor s1 = new S1();
-          TNodeList tList = (TNodeList)MuTraveler.init(`BottomUp(s1)).visit(sub);
+          TNodeList tList = (TNodeList)MuTraveler.init(`BottomUp(s1)).visit(`sub);
           link = `ln;
           return `xml(<section>t* l tList*</section>);
         }
         <section>(t*,l@<link>#TEXT(ln)</link>,sub*)</section> -> {
           if(!hasAnchor(`t)) {
             VisitableVisitor s1 = new S1();
-            TNodeList tList = (TNodeList)MuTraveler.init(`BottomUp(s1)).visit(sub);
+            TNodeList tList = (TNodeList)MuTraveler.init(`BottomUp(s1)).visit(`sub);
             link = `ln;
             return `xml(<section>t* l tList*</section>);
           }

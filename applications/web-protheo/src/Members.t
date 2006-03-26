@@ -68,13 +68,13 @@ public class Members {
           return arg = `xml(<div id="members">g*</div>);
         }
         <group class=x>(_*,tag@<(title_fr|title_en)>title</(title_fr|title_en)>,p*)</group> -> {
-          if((tag.getName()).endsWith(lang)) {
+          if((`tag.getName()).endsWith(lang)) {
             return arg = `xml(<div id=x><h3><a name=x>#TEXT("")</a>title</h3>p*</div>);
           }
         }
         tag@<(title_fr|title_en)>title</(title_fr|title_en)> -> {
           // Remove bad title
-          if(!(tag.getName()).endsWith(lang)) {
+          if(!(`tag.getName()).endsWith(lang)) {
             return arg = `xml(#TEXT(""));
           }
         }
@@ -98,7 +98,7 @@ public class Members {
               tags = `concTNode(<a href=home>tags*</a>);
             }
           }
-          return  `xml(<div class="person">tags*</div>);
+          return `xml(<div class="person">tags*</div>);
         }
       }
       return arg;
@@ -106,4 +106,3 @@ public class Members {
   }
 
 }
-  
