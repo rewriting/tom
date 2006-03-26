@@ -40,6 +40,8 @@
 # a more complex example for BVu, search < d ; d1 >
 [ - a ,[ < a ; < d ; - b > > , [ < b ; < d1 ; - c > > , c ] ] ]
 
+# this one was proben true instead of false du to a bug n genericCollectReach
+[c,(a,-b),<(b,-a);-c>]
 
 # From Sylvain
 [(<d1;f>,a),<[<-d1;d>,c];(-f,b)>,<l;-a>,<[g,k];-b>,([-l,-g,a2],-c),([-a2,-k],-d)]
