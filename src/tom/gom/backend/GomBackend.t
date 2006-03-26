@@ -68,9 +68,9 @@ public class GomBackend {
       }
     }
     // generate a class for each element of the list
-    while (!classList.isEmpty()) {
-      GomClass gomclass = classList.getHead();
-      classList = classList.getTail();
+    while (!classList.isEmptyconcGomClass()) {
+      GomClass gomclass = classList.getHeadconcGomClass();
+      classList = classList.getTailconcGomClass();
       errno += generateClass(gomclass);
     }
     return 1;

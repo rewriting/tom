@@ -125,9 +125,9 @@ public class MappingTemplate extends TemplateClass {
 
   private String slotDecl(SlotFieldList slotList) {
     String res = "";
-    while(!slotList.isEmpty()) {
-      SlotField slot = slotList.getHead();
-      slotList = slotList.getTail();
+    while(!slotList.isEmptyconcSlotField()) {
+      SlotField slot = slotList.getHeadconcSlotField();
+      slotList = slotList.getTailconcSlotField();
       if (!res.equals("")) { res += ", "; }
       %match(SlotField slot) {
         SlotField[name=slotName,domain=ClassName[name=domainName]] -> {
@@ -141,9 +141,9 @@ public class MappingTemplate extends TemplateClass {
   private String slotArgs(SlotFieldList slotList) {
     String res = "";
     int index = 0;
-    while(!slotList.isEmpty()) {
-      SlotField slot = slotList.getHead();
-      slotList = slotList.getTail();
+    while(!slotList.isEmptyconcSlotField()) {
+      SlotField slot = slotList.getHeadconcSlotField();
+      slotList = slotList.getTailconcSlotField();
       if (!res.equals("")) { res += ", "; }
       res += "t"+index;
       index++;

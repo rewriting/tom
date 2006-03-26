@@ -69,9 +69,9 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
     // methods for each operator
     ClassNameList consum = operatorList;
-    while (!consum.isEmpty()) {
-      ClassName operatorName = consum.getHead();
-      consum = consum.getTail();
+    while (!consum.isEmptyconcClassName()) {
+      ClassName operatorName = consum.getHeadconcClassName();
+      consum = consum.getTailconcClassName();
 
       out.append(%[
   public boolean @isOperatorMethod(operatorName)@() {
@@ -81,9 +81,9 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
 ]%);
     }
     // methods for each slot
-    while (!slotList.isEmpty()) {
-      SlotField slot = slotList.getHead();
-      slotList = slotList.getTail();
+    while (!slotList.isEmptyconcSlotField()) {
+      SlotField slot = slotList.getHeadconcSlotField();
+      slotList = slotList.getTailconcSlotField();
 
       /* Do not generate "hasOp" methods for now
       out.append("\tpublic boolean "+hasMethod(slot)+"() {\n");
@@ -94,7 +94,7 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
       out.append(%[
   public @slotDomain(slot)@ @getMethod(slot)@() {
-    throw new UnsupportedOperationException("This @className()@ has no @slot.getName()@");
+    throw new UnsupportedOperationException("This @className()@ has no @slot.getname()@");
   }
 
 ]%);
@@ -124,9 +124,9 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
   private String generateFromTerm(String trm, String tmp) {
     StringBuffer out = new StringBuffer();
     ClassNameList consum = operatorList;
-    while (!consum.isEmpty()) {
-      ClassName operatorName = consum.getHead();
-      consum = consum.getTail();
+    while (!consum.isEmptyconcClassName()) {
+      ClassName operatorName = consum.getHeadconcClassName();
+      consum = consum.getTailconcClassName();
       out.append(%[
     @tmp@ = @fullClassName(operatorName)@.fromTerm(@trm@);
     if (@tmp@ != null) {

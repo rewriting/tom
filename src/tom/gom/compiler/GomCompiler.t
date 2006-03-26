@@ -71,7 +71,7 @@ public class GomCompiler {
     Iterator it = getModuleDeclSet(sortList).iterator();
     while(it.hasNext()) {
       ModuleDecl moduleDecl = (ModuleDecl) it.next();
-      String moduleName = moduleDecl.getModuleName().getName();
+      String moduleName = moduleDecl.getmoduleName().getname();
 
       /* create an AbstractType class */
       ClassName abstractTypeName = `ClassName(
@@ -95,9 +95,9 @@ public class GomCompiler {
        (we don't need to do that per module, since each operator and sort knows
        to which module it belongs) */
     SortList consum = sortList;
-    while(!consum.isEmpty()) {
-      Sort sort = consum.getHead();
-      consum=consum.getTail();
+    while(!consum.isEmptyconcSort()) {
+      Sort sort = consum.getHeadconcSort();
+      consum=consum.getTailconcSort();
       // get the class name for the sort
       %match(Sort sort) {
         Sort[decl=decl@SortDecl[name=sortname,moduleDecl=moduleDecl]] -> {
@@ -107,9 +107,9 @@ public class GomCompiler {
       }
     }
     consum = sortList;
-    while(!consum.isEmpty()) {
-      Sort sort = consum.getHead();
-      consum=consum.getTail();
+    while(!consum.isEmptyconcSort()) {
+      Sort sort = consum.getHeadconcSort();
+      consum=consum.getTailconcSort();
       // get the class name for the sort
       %match(Sort sort) {
         Sort[decl=sortDecl@SortDecl[moduleDecl=moduleDecl],operators=oplist] -> {
@@ -197,19 +197,19 @@ public class GomCompiler {
     it = getModuleDeclSet(sortList).iterator();
     while(it.hasNext()) {
       ModuleDecl moduleDecl = (ModuleDecl) it.next();
-      String moduleName = moduleDecl.getModuleName().getName();
+      String moduleName = moduleDecl.getmoduleName().getname();
 
       GomClassList allOperatorClasses = `concGomClass();
       GomClassList allSortClasses = `concGomClass();
       ModuleDeclList modlist = environment().getModuleDependency(moduleDecl);
-      while(!modlist.isEmpty()) {
-        ModuleDecl imported = modlist.getHead();
-        modlist = modlist.getTail();
+      while(!modlist.isEmptyconcModuleDecl()) {
+        ModuleDecl imported = modlist.getHeadconcModuleDecl();
+        modlist = modlist.getTailconcModuleDecl();
         SortList moduleSorts = getSortForModule(imported,sortList);
         SortList sortconsum = moduleSorts;
-        while(!sortconsum.isEmpty()) {
-          Sort sort = sortconsum.getHead();
-          sortconsum = sortconsum.getTail();
+        while(!sortconsum.isEmptyconcSort()) {
+          Sort sort = sortconsum.getHeadconcSort();
+          sortconsum = sortconsum.getTailconcSort();
           %match(Sort sort) {
             Sort[decl=sortDecl] -> {
               GomClass sortClass = (GomClass) sortGomClassForSortDecl.get(`sortDecl);
@@ -273,7 +273,7 @@ public class GomCompiler {
   }
 
   private Collection getModuleDeclSet(SortList sortList) {
-    class CollectModuleDecls extends GomVisitableFwd {
+    class CollectModuleDecls extends GomBasicStrategy {
       Collection bag;
       CollectModuleDecls(Collection bag) {
         super(`Identity());
@@ -368,15 +368,14 @@ public class GomCompiler {
   }
   private SlotFieldList makeSlotFieldListFromSlotList(SlotList args) {
     SlotFieldList newArgs = `concSlotField();
-    while(!args.isEmpty()) {
-      Slot arg = args.getHead();
-      args = args.getTail();
+    while(!args.isEmptyconcSlot()) {
+      Slot arg = args.getHeadconcSlot();
+      args = args.getTailconcSlot();
       %match(Slot arg) {
         Slot[name=slotName,sort=sortDecl] -> {
           ClassName slotClassName = (ClassName) sortClassNameForSortDecl.get(`sortDecl);
           newArgs = `concSlotField(newArgs*,SlotField(slotName,slotClassName));
         }
-
       }
     }
     return newArgs;
@@ -385,9 +384,9 @@ public class GomCompiler {
   private ClassNameList allClassForImports(Map classMap, ModuleDecl moduleDecl) {
     ClassNameList importedList = `concClassName();
     ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDecl);
-    while(!importedModulelist.isEmpty()) {
-      ModuleDecl imported = importedModulelist.getHead();
-      importedModulelist = importedModulelist.getTail();
+    while(!importedModulelist.isEmptyconcModuleDecl()) {
+      ModuleDecl imported = importedModulelist.getHeadconcModuleDecl();
+      importedModulelist = importedModulelist.getTailconcModuleDecl();
       if (!imported.equals(moduleDecl)) {
         ClassName importedclass = (ClassName)classMap.get(imported);
         importedList = `concClassName(importedclass,importedList*);

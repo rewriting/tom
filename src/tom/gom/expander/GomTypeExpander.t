@@ -59,9 +59,9 @@ public class GomTypeExpander {
     /* collect all sort declarations, both explicit and implicit */
     SortDeclList sortDeclList = `concSortDecl();
     GomModuleList consum = moduleList;
-    while(!consum.isEmpty()) {
-      GomModule module = consum.getHead();
-      consum = consum.getTail();
+    while(!consum.isEmptyconcGomModule()) {
+      GomModule module = consum.getHeadconcGomModule();
+      consum = consum.getTailconcGomModule();
 
       Collection decls = getSortDeclarations(module);
       Collection implicitdecls = getSortDeclarationInCodomain(module);
@@ -96,9 +96,9 @@ public class GomTypeExpander {
     /* now get all operators for each sort */
     Map operatorsForSort = new HashMap();
     consum = moduleList;
-    while(!consum.isEmpty()) {
-      GomModule module = consum.getHead();
-      consum = consum.getTail();
+    while(!consum.isEmptyconcGomModule()) {
+      GomModule module = consum.getHeadconcGomModule();
+      consum = consum.getTailconcGomModule();
 
       // iterate through the productions
       %match(GomModule module) {
@@ -158,7 +158,7 @@ public class GomTypeExpander {
           }
         }
         getLogger().log(Level.SEVERE, GomMessage.orphanedHook.getMessage(),
-            new Object[]{prod.getName()});
+            new Object[]{prod.getname()});
         return;
       }
     }
@@ -216,7 +216,7 @@ public class GomTypeExpander {
         // the TypedProduction has to be Slots
         %match(TypedProduction tprod) {
           Slots(slotList) -> {
-            if (args.getLength() != `slotList.getLength()) { // tests the arguments number
+            if (getLength(args) != getLength(`slotList)) { // tests the arguments number
               SlotList slist = `slotList;
               getLogger().log(Level.SEVERE, GomMessage.mismatchedMakeArguments.getMessage(),
                   new Object[]{args,slist });
@@ -242,7 +242,7 @@ public class GomTypeExpander {
               }
               _ -> {
                 getLogger().log(Level.SEVERE, GomMessage.badMakeInsertArguments.getMessage(),
-                    new Object[]{new Integer(args.getLength())});
+                    new Object[]{new Integer(getLength(args))});
                 return null;
               }
             }
@@ -425,13 +425,28 @@ public class GomTypeExpander {
     Iterator it = decls.iterator();
     if(it.hasNext()) {
       SortDecl decl = (SortDecl)it.next();
-      sorts += decl.getName();
+      sorts += decl.getname();
     }
     while(it.hasNext()) {
       SortDecl decl = (SortDecl)it.next();
-      sorts += ", "+decl.getName();
+      sorts += ", "+decl.getname();
     }
     return sorts;
+  }
+
+  private int getLength(ArgList list) {
+    %match(ArgList list) {
+      concArg() -> { return 0; }
+      concArg(h,t*) -> { return getLength(`t*)+1; }
+    }
+    return -1;
+  }
+  private int getLength(SlotList list) {
+    %match(SlotList list) {
+      concSlot() -> { return 0; }
+      concSlot(h,t*) -> { return getLength(`t*)+1; }
+    }
+    return -1;
   }
 
   private Logger getLogger() {

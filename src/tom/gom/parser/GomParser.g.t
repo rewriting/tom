@@ -182,7 +182,7 @@ production returns [Production prod]
 {
   prod = null;
   String opName=null, typeName =null;
-  FieldList fieldList = `emptyFieldList();
+  FieldList fieldList = `concField();
 }
 : id:IDENTIFIER { opName = id.getText(); }
   fieldList = fieldlist

@@ -104,19 +104,19 @@ public class @className()@ implements @ className(visitor)+importedVisitorList(i
 
   private String generateDispatch(ClassNameList types) {
     StringBuffer out = new StringBuffer();
-    while(!types.isEmpty()) {
-      out.append(%[    else if (v instanceof @fullClassName(types.getHead())@) {
-      return ((@fullClassName(types.getHead())@) v).accept(this);
+    while(!types.isEmptyconcClassName()) {
+      out.append(%[    else if (v instanceof @fullClassName(types.getHeadconcClassName())@) {
+      return ((@fullClassName(types.getHeadconcClassName())@) v).accept(this);
     }]%);
-      types = types.getTail();
+      types = types.getTailconcClassName();
     }
     return out.toString();
   }
   String importedVisitorList(ClassNameList list) {
     StringBuffer out = new StringBuffer();
-    while(!list.isEmpty()) {
-      out.append(", "+fullClassName(list.getHead()));
-      list = list.getTail();
+    while(!list.isEmptyconcClassName()) {
+      out.append(", "+fullClassName(list.getHeadconcClassName()));
+      list = list.getTailconcClassName();
     }
     return out.toString();
   }

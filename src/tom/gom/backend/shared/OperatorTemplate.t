@@ -83,7 +83,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
     /* static constructor */
 @generateConstructor()@
 
-  private void init(@childListWithType(slotList) + (slotList.isEmpty()?"":", ") @int hashCode) {
+  private void init(@childListWithType(slotList) + (slotList.isEmptyconcSlotField()?"":", ") @int hashCode) {
 @generateMembersInit()@
     this.hashCode = hashCode;
   }
@@ -99,7 +99,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
   }
 
   private int getArity() {
-    return @slotList.getLength()@;
+    return @getLength(slotList)@;
   }
 
   /* shared.SharedObject */
@@ -109,7 +109,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
 
   public shared.SharedObject duplicate() {
     @className()@ clone = new @className()@();
-    clone.init(@childList(slotList) + (slotList.isEmpty()?"":", ") @hashCode);
+    clone.init(@childList(slotList) + (slotList.isEmptyconcSlotField()?"":", ") @hashCode);
     return clone;
   }
 
@@ -249,12 +249,12 @@ public class @className()@ extends @fullClassName(sortName)@ {
   private String generateGetters() {
     String res = "";
     SlotFieldList slots = slotList;
-    while(!slots.isEmpty()) {
-      SlotField head = slots.getHead();
-      slots = slots.getTail();
+    while(!slots.isEmptyconcSlotField()) {
+      SlotField head = slots.getHeadconcSlotField();
+      slots = slots.getTailconcSlotField();
       res+= %[
   public @slotDomain(head)@ @getMethod(head)@() {
-    return @fieldName(head.getName())@;
+    return @fieldName(head.getname())@;
   }]%;
     }
     return res;
@@ -263,9 +263,9 @@ public class @className()@ extends @fullClassName(sortName)@ {
   private String generateToATermChilds() {
     String res = "";
     SlotFieldList slots = slotList;
-    while(!slots.isEmpty()) {
-      SlotField head = slots.getHead();
-      slots = slots.getTail();
+    while(!slots.isEmptyconcSlotField()) {
+      SlotField head = slots.getHeadconcSlotField();
+      slots = slots.getTailconcSlotField();
       if (!res.equals("")) {
         res+= ", ";
       }
@@ -299,9 +299,9 @@ public class @className()@ extends @fullClassName(sortName)@ {
     String res = "";
     int index = 0;
     SlotFieldList slots = slotList;
-    while(!slots.isEmpty()) {
-      SlotField head = slots.getHead();
-      slots = slots.getTail();
+    while(!slots.isEmptyconcSlotField()) {
+      SlotField head = slots.getHeadconcSlotField();
+      slots = slots.getTailconcSlotField();
       if (!res.equals("")) {
         res+= ", ";
       }
@@ -335,9 +335,9 @@ public class @className()@ extends @fullClassName(sortName)@ {
   }
   private String childListWithType(SlotFieldList slots) {
     String res = "";
-    while(!slots.isEmpty()) {
-      SlotField head = slots.getHead();
-      slots = slots.getTail();
+    while(!slots.isEmptyconcSlotField()) {
+      SlotField head = slots.getHeadconcSlotField();
+      slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name, domain=domain] -> {
           if (!res.equals("")) {
@@ -351,9 +351,9 @@ public class @className()@ extends @fullClassName(sortName)@ {
   }
   private String unprotectedChildListWithType(SlotFieldList slots) {
     String res = "";
-    while(!slots.isEmpty()) {
-      SlotField head = slots.getHead();
-      slots = slots.getTail();
+    while(!slots.isEmptyconcSlotField()) {
+      SlotField head = slots.getHeadconcSlotField();
+      slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name, domain=domain] -> {
           if (!res.equals("")) {
@@ -367,9 +367,9 @@ public class @className()@ extends @fullClassName(sortName)@ {
   }
   private String childList(SlotFieldList slots) {
     String res = "";
-    while(!slots.isEmpty()) {
-      SlotField head = slots.getHead();
-      slots = slots.getTail();
+    while(!slots.isEmptyconcSlotField()) {
+      SlotField head = slots.getHeadconcSlotField();
+      slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name] -> {
           if (!res.equals("")) {
@@ -383,9 +383,9 @@ public class @className()@ extends @fullClassName(sortName)@ {
   }
   private String unprotectedChildList(SlotFieldList slots) {
     String res = "";
-    while(!slots.isEmpty()) {
-      SlotField head = slots.getHead();
-      slots = slots.getTail();
+    while(!slots.isEmptyconcSlotField()) {
+      SlotField head = slots.getHeadconcSlotField();
+      slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name] -> {
           if (!res.equals("")) {
@@ -469,7 +469,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
 
   private String generateHashArgs() {
     String res = "";
-    int index = slotList.getLength() - 1;
+    int index = getLength(slotList) - 1;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
         int shift = (index % 4) * 8;
@@ -497,7 +497,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
 
   public String generateConstructor() {
     StringBuffer out = new StringBuffer();
-    if (hooks.isEmpty()) {
+    if (hooks.isEmptyconcHook()) {
       out.append(%[
   public static @className()@ make(@childListWithType(slotList)@) {
     proto.initHashCode(@childList(slotList)@);
@@ -513,7 +513,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
   }
 
 ]%);
-      if(hooks.getLength() > 1) {
+      if(getLength(hooks) > 1) {
         throw new GomRuntimeException("Support for multiple hooks for an operator not implemented yet");
       }
       // then a make function calling it
@@ -550,7 +550,7 @@ public class @className()@ extends @fullClassName(sortName)@ {
    * (i.e. if there are user defined hooks)
    */
   public int generateFile() {
-    if (hooks.isEmpty()) {
+    if (hooks.isEmptyconcHook()) {
       try {
          File output = fileToGenerate();
          // make sure the directory exists
@@ -592,6 +592,21 @@ public class @className()@ extends @fullClassName(sortName)@ {
       }
     }
     return 0;
+  }
+
+  private int getLength(SlotFieldList list) {
+    %match(SlotFieldList list) {
+      concSlotField()     -> { return 0; }
+      concSlotField(_,t*) -> { return getLength(`t*)+1; }
+    }
+    return -1;
+  }
+  private int getLength(HookList list) {
+    %match(HookList list) {
+      concHook()     -> { return 0; }
+      concHook(_,t*) -> { return getLength(`t*)+1; }
+    }
+    return -1;
   }
 
   /** the class logger instance*/
