@@ -322,11 +322,20 @@ termList [LinkedList list,TomList context]
         )*
     ;
 
-termStringIdentifier returns [TomTerm result]
+xmlAttributeStringOrVariable returns [TomTerm result]
   { result = null; } : 
   (
-     id:BQ_ID { result = `TargetLanguageToTomTerm(ITL(id.getText())); }
-   | string:BQ_STRING { result = `TargetLanguageToTomTerm(ITL(string.getText())); }
+     id:BQ_ID 
+		 {
+       String name = id.getText();
+       OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), Name(currentFile())), ModuleName(DEFAULT_MODULE_NAME));
+       result = `Variable(ol,Name(name),TomTypeAlone("unknown type"),concConstraint());
+		   //result = `TargetLanguageToTomTerm(ITL(id.getText())); 
+		 }
+   | string:BQ_STRING
+	   {
+		   result = `TargetLanguageToTomTerm(ITL(string.getText()));
+		 }
   )
     ;
 
@@ -382,7 +391,7 @@ xmlAttribute [TomList context] returns [TomTerm result]
         (
             id:BQ_ID
             (
-                ws XML_EQUAL ws value = termStringIdentifier
+                ws XML_EQUAL ws value = xmlAttributeStringOrVariable
                 {
                     TomList args = `concTomTerm(
                         BackQuoteAppl(
