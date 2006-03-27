@@ -118,9 +118,9 @@ public class TomCompiler extends TomGenericPlugin {
 					TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
 					SlotList newTermArgs = (SlotList) traversal().genericTraversal(`termArgs,replace_preProcessing_makeTerm);
 					TomList tomListArgs = slotListToTomList(newTermArgs);
+					String moduleName = getModuleName(`optionList);
 
 					if(hasConstant(`optionList)) {
-						// special case for builtin such as String
 						return `BuildConstant(name);
 					} else if(tomSymbol != null) {
 						if(isListOperator(tomSymbol)) {
@@ -130,8 +130,6 @@ public class TomCompiler extends TomGenericPlugin {
 						} else if(isDefinedSymbol(tomSymbol)) {
 							return `FunctionCall(name,tomListArgs);
 						} else {
-							// TODO: BAD
-							String moduleName = "default";
 							return `BuildTerm(name,tomListArgs,moduleName);
 						}
 					} else {

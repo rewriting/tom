@@ -31,14 +31,19 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.logging.Level;
+import java.util.Stack;
 
 import tom.engine.TomMessage;
-import tom.engine.adt.tomsignature.types.TomTerm;
+import tom.engine.adt.tomsignature.types.*;
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
+
+import tom.library.strategy.mutraveler.MuTraveler;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
 
 /**
@@ -50,6 +55,7 @@ public class TomBackend extends TomGenericPlugin {
   
   %include { adt/tomsignature/TomSignature.tom }
   %include { adt/platformoption/PlatformOption.tom }
+  %include { mutraveler.tom }
 
   /** the tabulation starting value */
   private final static int defaultDeep = 2;
@@ -100,6 +106,9 @@ public class TomBackend extends TomGenericPlugin {
         ////////
         ////////
 				TomTerm pilCode = (TomTerm) getWorkingTerm();
+
+				markUsedConstructorDestructor(pilCode);
+
         generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),defaultModule);
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
@@ -162,5 +171,34 @@ public class TomBackend extends TomGenericPlugin {
   public Object[] getArgs() {
     return new Object[]{generatedFileName};
   }
+
+	private void markUsedConstructorDestructor(TomTerm pilCode) {}
+	/*
+	private void markUsedConstructorDestructor(TomTerm pilCode) {
+		Stack stack = new Stack();
+		try {
+			VisitableVisitor v = MuTraveler.init(`TopDown(Collector(stack)));
+			v.visit(pilCode);
+		} catch (VisitFailure e) {
+      System.out.println("reduction failed on: " + pilCode);
+		}
+	}
+
+	%typeterm Stack {
+		implement { Stack }
+	}
+
+	%strategy Collector(stack:Stack) extends `Identity() {
+    visit Instruction {
+			m@CompiledMatch[automataInst=inst, option=optionList] -> {
+				String moduleName = getModuleName(`optionList);
+				System.out.println("moduleName = " + moduleName);
+				stack.push(moduleName);
+				this.visit(`inst);
+				stack.pop();
+			}
+		}
+	}
+*/
 
 } // class TomBackend

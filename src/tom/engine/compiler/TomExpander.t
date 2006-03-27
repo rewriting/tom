@@ -406,8 +406,7 @@ public class TomExpander extends TomGenericPlugin {
 							//System.out.println("BackQuoteTerm: " + `tomName);
 							//System.out.println("tomSymbol: " + tomSymbol);
 							if(hasConstant(`optionList)) {
-									// special case for builtin such as String
-									return `BuildConstant(name);
+								return `BuildConstant(name);
 							} else if(tomSymbol != null) {
 								if(isListOperator(tomSymbol)) {
 									return tomFactory.buildList(`name,args);
