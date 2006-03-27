@@ -9,9 +9,6 @@
     and just run ./build.sh in the current directory.
   </description>
 
-  <!-- disable optimization for now -->
-  <property name="optimize"    value="off"/>
-
   <property environment="env"/>
   <property name="tom.home"     value="${env.TOM_HOME}"/>
   <import file="${tom.home}/lib/tom-common.xml"/>
