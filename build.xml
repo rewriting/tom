@@ -113,9 +113,6 @@
     <pathelement location="${src.src}"/>
   </path>
 
-  <path id="tomsrc.classpath">
-    <path refid="src.classpath"/>
-  </path>
 
   <macrodef name="tomjavac">
     <attribute name="destdir"/>
@@ -167,7 +164,7 @@
     <mkdir dir="${stable.dist.share}/contrib"/>
   </target>
 
-  <target name="prepare.dist.src">
+  <target name="prepare.src.dist">
     <mkdir dir="${dist}"/>
     <mkdir dir="${src.dist}"/>
     <mkdir dir="${src.dist.bin}"/>
@@ -183,7 +180,7 @@
 
   <!-- builds and defines the custom tasks -->
   <!-- tasks for building src -->
-  <target name="initTaskDef" depends="stable.dist">
+  <target name="init.task.stable" depends="stable.dist">
     <path id="tom.classpath">
       <fileset dir="${stable.dist.lib}">
         <include name="*.jar"/>
@@ -200,16 +197,24 @@
              classname="tom.gom.tools.ant.GomTask"
              classpathref="tom.classpath"/>
     <taskdef name="tom" 
-             classname="tom.engine.tools.ant.TomTask">
-      <classpath refid="tom.classpath"/>
-    </taskdef>
+             classname="tom.engine.tools.ant.TomTask"
+             classpathref="tom.classpath"/>
   </target>
 
   <!-- define task for running tom.src -->
-  <target name="initsrc" depends="src">
-    <taskdef name="tomsrc" classname="tom.engine.tools.ant.TomTask">
-      <classpath refid="tomsrc.classpath"/>
-    </taskdef>
+  <target name="init.task.src" depends="src">
+    <path id="tomsrc.classpath">
+      <fileset dir="${src.dist.lib}">
+        <include name="*.jar"/>
+      </fileset>
+		</path>
+
+		<taskdef name="gomsrc" 
+			       classname="tom.gom.tools.ant.GomTask"
+             classpathref="tomsrc.classpath"/>
+		<taskdef name="tomsrc"
+					   classname="tom.engine.tools.ant.TomTask"
+             classpathref="tomsrc.classpath"/>
   </target>
 
   <!-- 
@@ -297,7 +302,7 @@
   </target> 
   
   <!-- compile tom files in src.src with tom.stable -->
-  <target name="buildtom" depends="initTaskDef, buildadt">
+  <target name="buildtom" depends="init.task.stable, buildadt">
 
     <antcall target="buildtom.common">
       <param name="gen.destination" value="${src.gen}"/>
@@ -344,7 +349,7 @@
   </target>
 
   <!-- compile adt's -->
-  <target name="buildadt" depends="initTaskDef, prepare.src">
+  <target name="buildadt" depends="init.task.stable, prepare.src">
 
     <vas config="${stable.vasconfigfile}"
          srcdir="${src.src}"
@@ -426,7 +431,6 @@
     </gom>
   </target>
 
-  <target name="build.src" depends="src"/>
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
     <antcall target="buildtom"/>
     <antcall target="buildparser"/>
@@ -445,7 +449,6 @@
     </tomjavac>
   </target>
 
-  <target name="build.stable" depends="stable"/>
   <target name="stable" description="compile the TOM stable sources"
           depends="prepare.stable">
     <copy file="${stable.src}/tom/engine/Tom.java.in" 
@@ -479,7 +482,7 @@
 
   <target name="stable.dist" 
           description="Prepare a distribution ready stable package" 
-          depends="clean.stable.dist, stable, prepare.stable.dist">
+          depends="clean.stable.dist, prepare.stable.dist, stable">
     <antcall target="dist.common">
       <param name="dest" value="${stable.dist}"/>
     </antcall>
@@ -589,7 +592,7 @@
 
   <target name="dist.src" 
           description="Prepare a distribution ready source package" 
-          depends="clean.dist.src, src, prepare.dist.src">
+          depends="clean.dist.src, src, prepare.src.dist">
     <antcall target="dist.common">
       <param name="dest" value="${src.dist}"/>
     </antcall>
@@ -770,8 +773,7 @@
           <!--<ant dir="${examples}" target="clean"/>-->
   </target> 
 
-  <target name="clean.dist" description="Mr proper" depends="clean,
-          clean.dist.src, clean.stable.dist">
+  <target name="clean.dist" description="Mr proper" depends="clean.dist.src, clean.stable.dist">
     <delete dir="${dist}"/>
     <ant dir="${examples}" target="clean.dist"/>
   </target>
@@ -780,13 +782,13 @@
     <delete dir="${src.dist}"/>
   </target>
 
-  <target name="clean.stable.dist" description="Remove the stable distribution" depends="clean">
+  <target name="clean.stable.dist" description="Remove the stable distribution">
     <delete dir="${stable.dist}"/>
   </target>
 
 <!--  <target name="init.junit">
     <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
-      <classpath refid="tomsrc.classpath"/>
+      <classpath refid="src.classpath"/>
     </taskdef>
   </target> -->
   
@@ -797,11 +799,11 @@
   </target>-->
   
   <target name="test" description="Compile and run acceptance tests" 
-          depends="initsrc, prepare.test">
+          depends="dist.src,init.task.src, prepare.test">
     <tomsrc config="${src.configfile}"
             srcdir="${test}"
-            destdir="${test.gen}" 
-            options="-I ${src.mapping} -I ${src.adt}">
+						destdir="${test.gen}"> 
+						<!--options="-I ${src.mapping} -I ${src.adt}"-->
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
       <exclude name="Record.t"/>
@@ -812,7 +814,7 @@
     <tomsrc config="${src.configfile}"
             srcdir="${test}"
             destdir="${test.gen}"
-            options="-I ${src.mapping} -I ${src.adt} --lazyType">
+            options="--lazyType">
       <include name="Record.t"/>
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
@@ -825,7 +827,7 @@
   </target>
 
   <target name="test.stable" description="Compile and run acceptance tests with stable"
-          depends="initTaskDef,prepare.test">
+          depends="init.task.stable,prepare.test">
     <tom config="${stable.configfile}"
          srcdir="${test}"
          destdir="${test.gen}"
@@ -1084,7 +1086,7 @@
 
 
   <!-- compile tom files in src.src with tom.src -->      
-  <target name="bootstep" depends="initsrc" if="destination">
+  <target name="bootstep" depends="init.task.src" if="destination">
 
     <mkdir dir="${destination}/gen"/>
     <mkdir dir="${destination}/build"/>
@@ -1266,7 +1268,7 @@
 
   <target name="doc.src" 
           description="Build javadoc for src"
-          depends="build.src">
+          depends="src">
     <mkdir dir="${src.doc}"/>   
     <javadoc destdir="${src.doc}"
              windowtitle="TOM documentation"
