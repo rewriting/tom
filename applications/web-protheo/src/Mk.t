@@ -94,35 +94,31 @@ public class Mk {
     menu = new Menu(mn,tools,xtools);
     publi = new Publi(mb,bib,tools,xtools);
     members = new Members(mb,xtools);
-    
-    genHTML(mn);
+
+    VisitableVisitor genHTML = `GenHTML();
+
+    try{
+      MuTraveler.init(`BottomUp(genHTML)).visit(`mn);
+    } catch (VisitFailure e){
+      System.out.println("VisitFailure");
+    }
   }
 
   /*********************************************************************************************************************/
-
   /**
    * For each link in the menu, write its corresponding HTML page if the link is a standalone page
    */
-  protected void genHTML(TNode subject) {
-    Collect1 collect = new Collect1() { 
-        public boolean apply(ATerm subject) {
-          if(subject instanceof TNode) {
-            %match(TNode subject) {
-              <link>#TEXT(lk)</link> -> {
-                // If link is not an anchor in the page but a standalone page
-                if(!`lk.startsWith("#")) {
-                  writeHTML(`lk,Translator.IN_ENGLISH);
-                  writeHTML(`lk,Translator.IN_FRENCH);
-                }
-                return false;
-              }
-            }
-          }
-         return true;
+  %strategy GenHTML() extends `Identity(){
+    visit TNode{
+      <link>#TEXT(lk)</link> -> {
+        // If link is not an anchor in the page but a standalone page
+        if(!`lk.startsWith("#")) {
+          writeHTML(`lk,Translator.IN_ENGLISH);
+          writeHTML(`lk,Translator.IN_FRENCH);
         }
-      };
-    traversal.genericCollect(subject,collect);
-  }
+      }
+    }
+}
 
   public void writeHTML(String link, String lang) {
     TNode content;
