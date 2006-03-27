@@ -131,16 +131,18 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      BuildVariable[astName=Name(name)] -> {
+      BuildConstant[astName=Name(name)] -> {
         output.write(`name);
         return;
       }
 
+			/*
       BuildVariable[astName=PositionName(l)] -> {
         output.write("tom" + numberListToIdentifier(`l));
         return;
       }
-  
+			 */
+
       BuildTerm(Name(name), argList, myModuleName) -> {
         `buildTerm(deep, name, argList, myModuleName);
         return;
@@ -270,7 +272,7 @@ public abstract class TomAbstractGenerator extends TomBase {
           if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
             generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
           } else {
-            generateExpression(deep,`EqualTerm(type,BuildVariable(nameAST,emptyTomList()),exp), moduleName);
+            generateExpression(deep,`EqualTerm(type,BuildConstant(nameAST),exp), moduleName);
           }
         } else {
           generateExpression(deep,`IsFsym(nameAST,exp), moduleName);

@@ -37,7 +37,7 @@ TLVar(strName:String,astType:TomType) -> TomTerm
 Ref(tomTerm:TomTerm) -> TomTerm
 BuildReducedTerm(kid1:TomTerm) -> TomTerm
 FunctionCall(astName:TomName,args:TomList) -> TomTerm
-BuildVariable(astName:TomName,args:TomList) -> TomTerm
+BuildConstant(astName:TomName) -> TomTerm
 BuildTerm(astName:TomName,args:TomList,moduleName:String) -> TomTerm
 BuildEmptyList(astName:TomName) -> TomTerm
 BuildConsList(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm) -> TomTerm

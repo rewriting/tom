@@ -181,7 +181,7 @@ public class TomOptimizer extends TomGenericPlugin {
         TomName variableName = variable.getAstName();
         Expression expression = (Expression) arg2;
 				%match(TomTerm subject) {
-					(Variable|VariableStar|BuildVariable)[astName=name] -> {
+					(Variable|VariableStar)[astName=name] -> {
 						if(variableName == `name) {
 							return `ExpressionToTomTerm(expression);
 						}
@@ -210,7 +210,7 @@ public class TomOptimizer extends TomGenericPlugin {
 						}
 					}
 					%match(TomTerm t) { 
-						(Variable|VariableStar|BuildVariable)[astName=name] -> {
+						(Variable|VariableStar)[astName=name] -> {
 							if(variableName == `name) {
 								list.add(t);
 								return false;
@@ -298,7 +298,7 @@ public class TomOptimizer extends TomGenericPlugin {
       public ATerm apply(ATerm subject, Object arg1) {
         Set context = (Set) arg1;
 				%match(TomTerm subject) {
-					var@(Variable|VariableStar|BuildVariable)[astName=astName@Name(name)] -> {
+					var@(Variable|VariableStar)[astName=astName@Name(name)] -> {
 						if(context.contains(`astName)) {
 							return `var.setAstName(`Name(getAstFactory().makeTomVariableName(name)));
 						}
@@ -343,7 +343,7 @@ public class TomOptimizer extends TomGenericPlugin {
         TomName variableName = ((TomTerm) arg1).getAstName();
         TomName newVariableName = ((TomTerm) arg2).getAstName();
 				%match(TomTerm subject) {
-					var@(Variable|VariableStar|BuildVariable)[astName=astName] -> {
+					var@(Variable|VariableStar)[astName=astName] -> {
 						if(variableName == `astName) {
 							return `var.setAstName(newVariableName);
 						}
@@ -592,7 +592,7 @@ public class TomOptimizer extends TomGenericPlugin {
     public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
       throws jjtraveler.VisitFailure{
       %match(Instruction subject) {
-        AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar|BuildVariable)[astName=name],term1,body1),Let(var2,term2,body2),X2*)) -> {
+        AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar)[astName=name],term1,body1),Let(var2,term2,body2),X2*)) -> {
           /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
           if(`compare(term1,term2)) {
             if(`compare(var1,var2)) {

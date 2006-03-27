@@ -121,7 +121,7 @@ public class TomCompiler extends TomGenericPlugin {
 
 					if(hasConstant(`optionList)) {
 						// special case for builtin such as String
-						return `BuildVariable(name,emptyTomList());
+						return `BuildConstant(name);
 					} else if(tomSymbol != null) {
 						if(isListOperator(tomSymbol)) {
 							return tomFactory.buildList(`name,tomListArgs);

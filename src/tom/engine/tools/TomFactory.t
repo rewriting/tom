@@ -162,7 +162,7 @@ public class TomFactory extends TomBase {
         return `BuildAppendList(name,head,subList);
       }
 
-      manyTomList(head@(BuildTerm|BuildVariable|Variable|Composite)[],tail) -> {
+      manyTomList(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail) -> {
         TomTerm subList = buildList(name,`tail);
         return `BuildConsList(name,head,subList);
       }
@@ -200,7 +200,7 @@ public class TomFactory extends TomBase {
         return `BuildAppendArray(name,head,subList);
       }
 
-      manyTomList(head@(BuildTerm|BuildVariable|Variable|Composite)[],tail) -> {
+      manyTomList(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail) -> {
         TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildConsArray(name,head,subList);
       }

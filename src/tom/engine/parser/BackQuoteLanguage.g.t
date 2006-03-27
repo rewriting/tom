@@ -382,8 +382,7 @@ xmlAttribute [TomList context] returns [TomTerm result]
         (
             id:BQ_ID
             (
-                ws XML_EQUAL ws 
-                value = termStringIdentifier
+                ws XML_EQUAL ws value = termStringIdentifier
                 {
                     TomList args = `concTomTerm(
                         BackQuoteAppl(
@@ -398,31 +397,22 @@ xmlAttribute [TomList context] returns [TomTerm result]
                         ),
                         value
                     );
-                    
-                    if(context == null){
-                        result = `BackQuoteAppl(
-                            concOption(ModuleName(TNODE_MODULE_NAME)),
-                            Name(Constants.ATTRIBUTE_NODE),
-                            args);
-                    } else {
-                        result = `BackQuoteAppl(
-                            concOption(ModuleName(TNODE_MODULE_NAME)),
-                            Name(Constants.ATTRIBUTE_NODE),
-                            concTomTerm(
-                                context*,
-                                args*)
-                        );
-                    }
+										if(context != null) {
+										  args = `concTomTerm(context*,args*);
+										}
+										result = `BackQuoteAppl(
+											concOption(ModuleName(TNODE_MODULE_NAME)),
+											Name(Constants.ATTRIBUTE_NODE),
+											args);
                 }
-            |   BQ_STAR
-                {
-                    result = `VariableStar(
-                        emptyOptionList(),
-                        Name(id.getText()),
-                        TomTypeAlone("unknown type"),
-                        emptyConstraintList()
-                    );
-                }
+            | BQ_STAR
+              {
+								result = `VariableStar(
+										emptyOptionList(),
+										Name(id.getText()),
+										TomTypeAlone("unknown type"),
+										emptyConstraintList());
+              }
             )
         )
     ;
