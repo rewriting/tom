@@ -592,7 +592,7 @@
 
   <target name="dist.src" 
           description="Prepare a distribution ready source package" 
-          depends="clean.dist.src, src, prepare.src.dist">
+          depends="clean.src.dist, src, prepare.src.dist">
     <antcall target="dist.common">
       <param name="dest" value="${src.dist}"/>
     </antcall>
@@ -773,12 +773,12 @@
           <!--<ant dir="${examples}" target="clean"/>-->
   </target> 
 
-  <target name="clean.dist" description="Mr proper" depends="clean.dist.src, clean.stable.dist">
+  <target name="clean.dist" description="Mr proper" depends="clean.src.dist, clean.stable.dist">
     <delete dir="${dist}"/>
     <ant dir="${examples}" target="clean.dist"/>
   </target>
 
-  <target name="clean.dist.src" description="Remove the src distribution">
+  <target name="clean.src.dist" description="Remove the src distribution">
     <delete dir="${src.dist}"/>
   </target>
 
@@ -940,7 +940,7 @@
     </ant>
   </target>
 
-  <target name="src.all" description="cleans, build, test junit" depends="clean.src, clean.dist.src">
+  <target name="src.all" description="cleans, build, test junit" depends="clean.src, clean.src.dist">
     <antcall target="dist.src"/>
     <antcall target="clean.test"/>
     <antcall target="junit.src"/>
