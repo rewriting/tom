@@ -28,10 +28,11 @@
  *
  * Antoine Reilles   e-mail: Antoine.Reilles@loria.fr
  */
+package gom;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import b.u.i.l.t.i.n.builtin.types.*;
+import gom.b.u.i.l.t.i.n.builtin.types.*;
 
 public class TestBuiltin extends TestCase {
 

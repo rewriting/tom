@@ -1,7 +1,9 @@
+package gom;
+
 import java.io.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import testtomhook.bool.types.*;
+import gom.testtomhook.bool.types.*;
 
 public class TestTomHook extends TestCase {
 

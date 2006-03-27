@@ -1,4 +1,6 @@
-import list.types.*;
+package gom;
+
+import gom.list.types.*;
 
 public class BenchConsGom {
   %include { list/List.tom }

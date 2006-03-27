@@ -1,9 +1,11 @@
+package gom;
+
 import java.io.*;
 import java.util.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import importing.types.*;
-import imported.types.*;
+import gom.importing.types.*;
+import gom.imported.types.*;
 
 public class TestImport extends TestCase {
 

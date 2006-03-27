@@ -1,7 +1,9 @@
+package gom;
+
 import java.io.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import bool.types.*;
+import gom.bool.types.*;
 
 public class TestBool extends TestCase {
 

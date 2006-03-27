@@ -1,7 +1,9 @@
+package gom;
+
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import java.io.*;
-import javahook.types.*;
+import gom.javahook.types.*;
 
 public class TestJavaHook extends TestCase {
 
@@ -58,9 +60,9 @@ public class TestJavaHook extends TestCase {
         "Empty()\n"+
         "Empty()\n"+
         "Empty()\n"+
-        "Vary(Empty, VaryEmpty)\n"+
-        "Vary(Empty, VaryCons(Empty,VaryEmpty))\n"+
-        "Vary(Empty, VaryCons(Empty,VaryCons(Empty,VaryEmpty)))\n"+
-        "Vary(Empty, VaryCons(Empty,VaryCons(Empty,VaryCons(Empty,VaryEmpty))))\n");
+        "Vary(Empty, EmptyVary)\n"+
+        "Vary(Empty, ConsVary(Empty,EmptyVary))\n"+
+        "Vary(Empty, ConsVary(Empty,ConsVary(Empty,EmptyVary)))\n"+
+        "Vary(Empty, ConsVary(Empty,ConsVary(Empty,ConsVary(Empty,EmptyVary))))\n");
   }
 }

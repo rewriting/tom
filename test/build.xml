@@ -31,6 +31,23 @@
   </target>
 
   <target name="build" depends="init,prepare">
+    <gom config="${gomconfigfile}"
+         srcdir="${test.src}/gom"
+         package="gom.b.u.i.l.t.i.n"
+         destdir="${test.gen}">
+         <include name="Builtin.gom"/>
+    </gom>
+    <gom config="${gomconfigfile}"
+         srcdir="${test.src}"
+         package="gom"
+         destdir="${test.gen}">
+         <include name="gom/Ying.gom"/>
+         <include name="gom/JavaHook.gom"/>
+         <include name="gom/Bool.gom"/>
+         <include name="gom/ML.gom"/>
+         <include name="gom/Importing.gom"/>
+         <include name="gom/List.gom"/>
+    </gom>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"> 
       <exclude name="cfib1.t"/>
@@ -38,7 +55,6 @@
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="**/error/**"/>
-      <exclude name="**/gom/**"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
@@ -52,7 +68,6 @@
       <src path="${test.gen}"/>
       <exclude name="**/error/**"/>
       <exclude name="gen/**"/>
-      <exclude name="gom/**"/>
     </javac.preset>
   </target>
 
@@ -74,7 +89,6 @@
         <fileset dir="${test.src}">
           <include name="**/Test*.java"/>
           <exclude name="gen/**/*"/>
-          <exclude name="gom/**/*"/>
         </fileset>
       </batchtest>
     </tomjunit>

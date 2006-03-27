@@ -1,6 +1,7 @@
+package gom;
 
-import ying.types.*;
-import yang.types.*;
+import gom.ying.types.*;
+import gom.yang.types.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
