@@ -41,7 +41,6 @@ import java.util.*;
 public class Rewrite3 {
 
   %include { term/term.tom }
-  %include { string.tom }
   %include { mutraveler.tom }
 
   %typeterm Collection {
