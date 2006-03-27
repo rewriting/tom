@@ -535,11 +535,17 @@
   </target>
 
   <target name="propp" depends="init">
-    <adtcompile example="${propp}"
-                factory="seq"/>
+    <!--<adtcompile example="${propp}"
+      factory="seq"/>-->
+    <gomcompile example="${propp}"/>
     <!-- build parser -->
+    <tom.preset outputfile="${examples.gen}/${propp}/SeqParser.g"
+                options="-I ${examples.gen}/${propp}"
+                srcdir="${examples.dir}"> 
+      <include name="${propp}/**/SeqParser.g.t"/>
+    </tom.preset>
     <mkdir dir="${examples.gen}/${propp}"/>
-    <tomantlr target="${examples.dir}/${propp}/SeqParser.g"
+    <tomantlr target="${examples.gen}/${propp}/SeqParser.g"
               outputdirectory="${examples.gen}/${propp}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
@@ -600,27 +606,15 @@
       <exclude name="${structure}/**/StructuresParser.g.t"/>
       <!--      <exclude name="${structure}/**/StructureCDT.t"/> -->
     </tom.preset>
-    <tom config="${tomconfigfile}"
-	 outputfile="${examples.gen}/${structure}/StructParser.g"
-	 srcdir="${examples.dir}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         verbose="${verbose}"
-	 pretty="${pretty}">
+    <tom.preset outputfile="${examples.gen}/${structure}/StructParser.g"
+                srcdir="${examples.dir}">
       <include name="${structure}/**/StructParser.g.t"/>
-      </tom>
-    <tom config="${tomconfigfile}"
-	 outputfile="${examples.gen}/${structure}/StructuresParser.g"
-	 srcdir="${examples.dir}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         verbose="${verbose}"
-	 pretty="${pretty}"
-	 options="-I ${examples.gen}/${structure}">
+    </tom.preset>
+    <tom.preset outputfile="${examples.gen}/${structure}/StructuresParser.g"
+                options="-I ${examples.gen}/${structure}"
+                srcdir="${examples.dir}"> 
       <include name="${structure}/**/StructuresParser.g.t"/>
-      </tom>
+    </tom.preset>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${structure}"/>
     <tomantlr target="${examples.gen}/${structure}/StructParser.g"

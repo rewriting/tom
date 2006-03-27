@@ -42,23 +42,17 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class TestPropp extends TestCase {
-  private Propp1 test;
+  private SPropp test;
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestPropp.class));
 	}
 
   public void setUp() {
-    test = new Propp1();
+    test = new SPropp();
   }
 
   %include { seq/seq.tom }
-
-  public void testMakeQuery() {
-		assertEquals("makeQuery should builds the corresponding sequent tree",
-								 `seq(concPred(impl(A(),wedge(B(),C()))),concPred(vee(C(),D()))),
-								 test.makeQuery("seq([impl(A,wedge(B,C))],[vee(C,D)])"));
-  }
 
 	public void testComparePair1() {
 		assertEquals("pair(3,\"something\") is greater than pair(2,\"anything\")",

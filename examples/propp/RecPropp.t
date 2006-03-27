@@ -30,26 +30,24 @@
 /* From Propositional prover by H. Cirstea */
 package propp;
 
-import aterm.*;
-import aterm.pure.*;
 import propp.seq.*;
 import propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
-public class RecPropp extends Propp1 {
+public class RecPropp extends SPropp {
 
 	// ------------------------------------------------------------  
 	%include { seq/seq.tom }
 	// ------------------------------------------------------------  
 
-	//{{{ public void run(String query)
-	public void run(String query) {
-		Sequent initSeq = makeQuery(query);
+	//{{{ public void run(Sequent query)
+	public void run(Sequent query) {
+		Sequent initSeq = query;
 		Sequent search    = `PROOF();
 
 		long startChrono = System.currentTimeMillis();
-		ATerm res = Step(initSeq);
+		ListSequent res = Step(initSeq);
 		//boolean res      = proofSearch(initSeq,search);
 		//boolean res      = breadthSearch(initSeq,search);
 		//boolean res      = depthSearch(initSeq,search);
@@ -175,20 +173,12 @@ public class RecPropp extends Propp1 {
 	public static void main(String[] args) {
 		RecPropp test = new RecPropp();
 
-		String query ="";
+		Sequent query = null;
 		try {
 			//query = args[0];
 			SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
 			SeqParser parser = new SeqParser(lexer);
-			// Parse the input expression
-			parser.seq();
-			CommonAST t = (CommonAST)parser.getAST();
-			// Print the resulting tree out in LISP notation
-			// System.out.println(t.toStringList());
-			// System.out.println("Applying treewalker");
-			SeqTreeWalker walker = new SeqTreeWalker();
-			// Traverse the tree created by the parser
-			query = walker.seq(t);
+			query = parser.seq();
 			System.out.println("Query : "+query);
 		} catch (Exception e) {
 			System.err.println("exception: "+e);
