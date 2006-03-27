@@ -80,6 +80,9 @@ public class TomStreamManager {
   /* in/out suffixes */
   private String inputSuffix;
   private String outputSuffix;
+  
+  /* subdir added to the import search path */
+	private String importLanguageSubdir;
 
   /** list of non managed imported file */
   private Collection importsToDiscard;
@@ -108,6 +111,7 @@ public class TomStreamManager {
     packagePath = "";
     inputSuffix = ".t";
     outputSuffix = ".java";
+		importLanguageSubdir = "java";
   }
 
   public void initializeFromOptionManager(OptionManager optionManager) {
@@ -122,12 +126,15 @@ public class TomStreamManager {
     if ( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.c";
+			importLanguageSubdir = "c";
     } else if ( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.ml";
+			importLanguageSubdir = "caml";
     } else if ( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".java";
+			importLanguageSubdir = "java";
     } else { 
       throw new TomRuntimeException("No code generator selected");
     }
@@ -225,6 +232,7 @@ public class TomStreamManager {
    *  - destDir/packagePath
    *  - inputFile.getParent
    *  - TOM_HOME/share/jtom
+   *  - TOM_HOME/share/jtom/importLanguageSubdir (i.e [java|c|caml])
    */
   public List getImportList() {
     List importList = new ArrayList(getUserImportList().size()+3);
@@ -238,8 +246,11 @@ public class TomStreamManager {
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
         File file = new File(new File(tom_home,"share"),"jtom");
-        importList.add(file.getCanonicalFile());
         //System.out.println(" extend import list with: " + file.getPath());
+        importList.add(file.getCanonicalFile());
+        file = new File(file,importLanguageSubdir);
+        //System.out.println(" extend import list with: " + file.getPath());
+        importList.add(file.getCanonicalFile());
       }
       //System.out.println("importList = " + importList);
     } catch (IOException e) {
