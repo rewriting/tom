@@ -56,10 +56,6 @@
   <property name="src.dist.lib"      location="${src.dist}/lib"/>
   <property name="src.dist.share"    location="${src.dist}/share"/>
 
-  <!-- for test -->
-  <property name="test.gen"          location="${test}/gen"/>    
-  <property name="test.build"        location="${test}/build"/>
-
   <!-- the configuration files -->
   <property name="stable.configfile"    location="${utils}/Tom.xml"/>
   <property name="src.configfile"       location="${utils}/Tom.src.xml"/>
@@ -148,11 +144,6 @@
   <target name="prepare.stable">
     <mkdir dir="${stable.build}"/>
     <mkdir dir="${stable.gen}"/>
-  </target>
-
-  <target name="prepare.test">
-    <mkdir dir="${test.gen}"/>
-    <mkdir dir="${test.build}"/>
   </target>
 
   <target name="prepare.stable.dist">
@@ -516,7 +507,6 @@
     <copy todir="${stable.dist.lib}">
       <fileset dir="${stable.lib}"> 
         <include name="*.jar"/>
-        <exclude name="junit.jar"/>
         <exclude name="ant.jar"/>
       </fileset>
     </copy>
@@ -764,8 +754,10 @@
   </target>
 
   <target name="clean.test" description="Cleans acceptance tests directory">
-    <delete dir="${test.gen}"/>
-    <delete dir="${test.build}"/>
+     <ant dir="${test}" target="clean">
+       <property name="tom.home" value="${stable.dist}"/>
+       <property name="tom.common.path" location="${stable.lib}"/>
+     </ant>
   </target>
 
   <target name="clean" description="Cleans everything in the project"
@@ -786,134 +778,38 @@
     <delete dir="${stable.dist}"/>
   </target>
 
-<!--  <target name="init.junit">
-    <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
-      <classpath refid="src.classpath"/>
-    </taskdef>
-  </target> -->
-  
-<!--  <target name="init.junit.stable">
-    <taskdef name="tomjunitstable" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
-      <classpath refid="tom.classpath"/>
-    </taskdef>
-  </target>-->
-  
   <target name="test" description="Compile and run acceptance tests" 
-          depends="dist.src,init.task.src, prepare.test">
-    <tomsrc config="${src.configfile}"
-            srcdir="${test}"
-						destdir="${test.gen}"> 
-						<!--options="-I ${src.mapping} -I ${src.adt}"-->
-      <exclude name="cfib1.t"/>
-      <exclude name="loulou.t"/>
-      <exclude name="Record.t"/>
-      <exclude name="TestRecord.t"/>
-      <exclude name="**/error/**"/>
-      <exclude name="**/gom/**"/>
-    </tomsrc>
-    <tomsrc config="${src.configfile}"
-            srcdir="${test}"
-            destdir="${test.gen}"
-            options="--lazyType">
-      <include name="Record.t"/>
-      <include name="TestRecord.t"/>
-      <exclude name="**/error/**"/>
-    </tomsrc>
-    <tomjavac destdir="${test.build}">
-      <src path="${test.gen}"/>
-      <classpath refid="src.classpath"/>
-      <exclude name="**/error/**"/>
-    </tomjavac>
+          depends="dist.src">
+     <ant dir="${test}" target="build">
+       <property name="tom.home" value="${src.dist}"/>
+     </ant>
   </target>
 
   <target name="test.stable" description="Compile and run acceptance tests with stable"
-          depends="init.task.stable,prepare.test">
-    <tom config="${stable.configfile}"
-         srcdir="${test}"
-         destdir="${test.gen}"
-         options="-I ${stable.mapping}">
-      <exclude name="cfib1.t"/>
-      <exclude name="loulou.t"/>
-      <exclude name="Record.t"/>
-      <exclude name="TestRecord.t"/>
-      <exclude name="**/error/**"/>
-      <exclude name="**/gom/**"/>
-    </tom>
-    <tom config="${stable.configfile}"
-         srcdir="${test}"
-         destdir="${test.gen}"
-         options="-I ${stable.mapping} --lazyType">
-      <include name="Record.t"/>
-      <include name="TestRecord.t"/>
-      <exclude name="**/error/**"/>
-    </tom>
-    <tomjavac destdir="${test.build}">
-      <src path="${test.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <exclude name="**/error/**"/>
-    </tomjavac>
+          depends="stable.dist">
+     <ant dir="${test}" target="build">
+       <property name="tom.home" value="${stable.dist}"/>
+     </ant>
   </target>
 
   <target name="junit.stable"
           description="Runs junit acceptance tests compiled with stable" 
-          depends="clean.test, test.stable"><!--, init.junit.stable">-->
-    
-    <!--<tomjunitstable printsummary="on"-->
-    <junit printsummary="on"
-           fork="false"
-           haltonfailure="false"
-           failureproperty="tests.failed"
-           showoutput="true">
-      <classpath>
-        <path refid="tom.classpath"/>
-        <pathelement location="${test.build}"/>
-      </classpath>
-      <batchtest>
-        <fileset dir="${test.gen}">
-          <include name="**/Test*.java"/>
-          <!--<exclude name="**/error/**"/>-->
-        </fileset>
-      </batchtest>
-    </junit>
-
-    <fail if="tests.failed">
-      ****************************************************
-      ****************************************************
-      One or more tests failed. Check the output...
-      ****************************************************
-      ****************************************************
-    </fail>
+          depends="clean.test, test.stable">
+     <ant dir="${test}" target="junit">
+       <property name="tom.home" value="${stable.dist}"/>
+     </ant>
   </target>
 
   <target name="junit.src" depends="junit"/>
-  <target name="junit" description="Runs junit acceptance tests" depends="clean.test, test"><!--, init.junit">-->
-    <junit printsummary="on"
-           fork="true"
-           haltonfailure="false"
-           failureproperty="tests.failed"
-           showoutput="true">
-      <classpath>
-        <path refid="src.classpath"/>
-        <pathelement location="${test.build}"/>
-      </classpath>
-      <batchtest>
-        <fileset dir="${test.gen}">
-          <include name="**/Test*.java"/>
-          <!--<exclude name="**/error/**"/>-->
-        </fileset>
-      </batchtest>
-    </junit>
-
-    <fail if="tests.failed">
-      ****************************************************
-      ****************************************************
-      One or more tests failed. Check the output...
-      ****************************************************
-      ****************************************************
-    </fail>
+  <target name="junit" description="Runs junit acceptance tests"
+          depends="clean.test, test">
+     <ant dir="${test}" target="junit">
+       <property name="tom.home" value="${src.dist}"/>
+     </ant>
   </target>
 
-  <target name="all" description="cleans, build, test all" depends="stable.all, src.all">
+  <target name="all" description="cleans, build, test all"
+          depends="stable.all, src.all">
   </target>
 
   <target name="stable.all" description="cleans, build, test all" depends="clean.stable, clean.stable.dist">
