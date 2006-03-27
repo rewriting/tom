@@ -41,8 +41,8 @@ import jjtraveler.VisitFailure;
 public class Verifier extends TomBase {
 
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
-  %include { adt/il/Il.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../adt/il/Il.tom }
   %include{ mutraveler.tom }
   // ------------------------------------------------------------
 

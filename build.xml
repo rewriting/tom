@@ -113,12 +113,6 @@
     <pathelement location="${src.src}"/>
   </path>
 
-  <path id="tom.classpath">
-    <path refid="stable.classpath"/>
-    <pathelement location="${stable.build}"/>
-    <pathelement location="${stable.src}"/>
-  </path>
-
   <path id="tomsrc.classpath">
     <path refid="src.classpath"/>
   </path>
@@ -164,7 +158,7 @@
     <mkdir dir="${test.build}"/>
   </target>
 
-  <target name="prepare.dist.stable">
+  <target name="prepare.stable.dist">
     <mkdir dir="${dist}"/>
     <mkdir dir="${stable.dist}"/>
     <mkdir dir="${stable.dist.bin}"/>
@@ -189,7 +183,13 @@
 
   <!-- builds and defines the custom tasks -->
   <!-- tasks for building src -->
-  <target name="initTaskDef" depends="stable">
+  <target name="initTaskDef" depends="stable.dist">
+    <path id="tom.classpath">
+      <fileset dir="${stable.dist.lib}">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+
     <taskdef name="adt" 
              classname="tom.engine.tools.ant.ApigenTask" 
              classpathref="tom.classpath"/>
@@ -235,13 +235,13 @@
     <!--  compile in static mode -->
     <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
-         options="--static -I ${src.mapping}">
+         options="--static">
       <include name="**/OptionParser.t"/>
     </tomcompile>
     <!--  compile in protected mode -->
     <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
-         options="--protected -I ${src.mapping}">
+         options="--protected">
       <include name="**/TomBase.t"/>
       <include name="**/verifier/*.t"/>
       <exclude name="**/TomVerifier.t"/>
@@ -301,6 +301,7 @@
 
     <antcall target="buildtom.common">
       <param name="gen.destination" value="${src.gen}"/>
+      <param name="tom.home" value="${stable.dist}"/>
     </antcall>
   </target>
 
@@ -329,11 +330,11 @@
     <mkdir dir="${src.gen}/tom/gom/parser"/>
     <antlr target="${src.gen}/tom/gom/parser/GomParser.g"
            outputdirectory="${src.gen}/tom/gom/parser">
-      <classpath refid="tom.classpath"/>
+      <classpath refid="stable.classpath"/>
     </antlr>
     <antlr target="${src.src}/tom/gom/parser/BlockParser.g"
            outputdirectory="${src.gen}/tom/gom/parser">
-      <classpath refid="tom.classpath"/>
+      <classpath refid="stable.classpath"/>
     </antlr>
   </target>
 
@@ -476,9 +477,9 @@
     <copy todir="${dest}" file="AUTHORS"/>
   </target>
 
-  <target name="dist.stable" 
+  <target name="stable.dist" 
           description="Prepare a distribution ready stable package" 
-          depends="clean.dist.stable, stable, prepare.dist.stable">
+          depends="clean.stable.dist, stable, prepare.stable.dist">
     <antcall target="dist.common">
       <param name="dest" value="${stable.dist}"/>
     </antcall>
@@ -518,24 +519,29 @@
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${stable.dist.lib}/mutraveler.jar">
+    <jar jarfile="${stable.dist.lib}/mutraveler.jar"
+         update="yes">
       <fileset dir="${stable.build}" 
                includes="tom/library/strategy/mutraveler/**/*.class"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/tom-library.jar">
+    <jar jarfile="${stable.dist.lib}/tom-library.jar"
+         update="yes">
       <fileset dir="${stable.build}" 
                includes="tom/library/**/*.class"
                excludes="tom/library/strategy/mutraveler/**/*.class"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/plugin-platform.jar">
+    <jar jarfile="${stable.dist.lib}/plugin-platform.jar"
+         update="yes">
       <fileset dir="${stable.build}" includes="tom/platform/**/*.class"/>
       <fileset dir="${stable.src}" includes="tom/platform/**/*.properties"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/jtom.jar">
+    <jar jarfile="${stable.dist.lib}/jtom.jar"
+         update="yes">
 	    <fileset dir="${stable.build}" includes="tom/engine/**/*.class"/>
 	    <fileset dir="${stable.src}" includes="tom/engine/**/*.properties"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/gom.jar">
+    <jar jarfile="${stable.dist.lib}/gom.jar"
+         update="yes">
 	    <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
 	    <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
     </jar>
@@ -729,7 +735,7 @@
 
   <target name="dist.all" 
           description="Prepare stable and devel distributions" 
-          depends="clean.dist, dist.stable, dist.src, dist.examples"/>
+          depends="clean.dist, stable.dist, dist.src, dist.examples"/>
 
   <target name="clean.stable" description="Purges the generated stable files">
     <delete dir="${stable.build}"/>
@@ -765,7 +771,7 @@
   </target> 
 
   <target name="clean.dist" description="Mr proper" depends="clean,
-          clean.dist.src, clean.dist.stable">
+          clean.dist.src, clean.stable.dist">
     <delete dir="${dist}"/>
     <ant dir="${examples}" target="clean.dist"/>
   </target>
@@ -774,7 +780,7 @@
     <delete dir="${src.dist}"/>
   </target>
 
-  <target name="clean.dist.stable" description="Remove the stable distribution" depends="clean">
+  <target name="clean.stable.dist" description="Remove the stable distribution" depends="clean">
     <delete dir="${stable.dist}"/>
   </target>
 
@@ -852,10 +858,10 @@
     
     <!--<tomjunitstable printsummary="on"-->
     <junit printsummary="on"
-                    fork="false"
-                    haltonfailure="false"
-                    failureproperty="tests.failed"
-                    showoutput="true">
+           fork="false"
+           haltonfailure="false"
+           failureproperty="tests.failed"
+           showoutput="true">
       <classpath>
         <path refid="tom.classpath"/>
         <pathelement location="${test.build}"/>
@@ -908,8 +914,8 @@
   <target name="all" description="cleans, build, test all" depends="stable.all, src.all">
   </target>
 
-  <target name="stable.all" description="cleans, build, test all" depends="clean.stable, clean.dist.stable">
-    <antcall target="dist.stable"/>
+  <target name="stable.all" description="cleans, build, test all" depends="clean.stable, clean.stable.dist">
+    <antcall target="stable.dist"/>
     <antcall target="clean.test"/>
     <antcall target="junit.stable"/>
 
@@ -958,7 +964,7 @@
 
   <target name="examples.stable" 
           description="Build and test examples with jtom-stable" 
-          depends="dist.stable">
+          depends="stable.dist">
     <ant dir="${examples}" target="clean"/>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${stable.dist}"/>
@@ -1234,7 +1240,7 @@
      </copy>
   </target>
 
-  <target name="bundle.stable" depends="dist.stable">
+  <target name="bundle.stable" depends="stable.dist">
     <mkdir dir="${bundle.temp.dir}"/>
     <unjar dest="${bundle.temp.dir}">
       <fileset dir="${stable.dist.lib}">

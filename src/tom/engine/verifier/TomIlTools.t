@@ -39,8 +39,8 @@ import tom.engine.tools.SymbolTable;
 public class TomIlTools extends TomBase {
 
   // ------------------------------------------------------------
-  %include { adt/tomsignature/TomSignature.tom }
-  %include { adt/zenon/Zenon.tom }
+  %include { ../adt/tomsignature/TomSignature.tom }
+  %include { ../adt/zenon/Zenon.tom }
   // ------------------------------------------------------------
 
   private SymbolTable symbolTable;
