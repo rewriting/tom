@@ -98,11 +98,6 @@
     make(p,q,first,then) { new tom.library.strategy.mutraveler.Pselect(p,q,(jjtraveler.reflective.VisitableVisitor)first,(jjtraveler.reflective.VisitableVisitor)then) }
   }
 
-  %op VisitableVisitor OmegaU(s1:VisitableVisitor, defaultStrategy:VisitableVisitor) {
-    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.OmegaU) }
-    make(v,d) { new tom.library.strategy.mutraveler.OmegaU((jjtraveler.reflective.VisitableVisitor)v,(jjtraveler.reflective.VisitableVisitor)d) }
-  }
-
 /*
  * strategies
  */
