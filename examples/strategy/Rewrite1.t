@@ -90,9 +90,6 @@ public class Rewrite1 {
       g(c(),c()) -> {
         System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this));
         return `c(); }
-      _ ->  {
-        return (Term)`Fail().visit(arg);
-      }
     }
   }
 

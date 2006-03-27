@@ -101,13 +101,13 @@ public class Rewrite4 {
 
   %strategy S1() extends `Identity() { 
     visit Term {
-      _ -> {
+      subject -> {
         int depth = MuTraveler.getPosition(this).depth();
         String offset = "";
         for (int i = 0; i<depth; i++){
           offset += "  ";
         }
-        System.out.println(offset + "s1: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
+        System.out.println(offset + "s1: "+ `subject.getName() + " position: "+ MuTraveler.getPosition(this));
       }
     }
   }
@@ -130,13 +130,13 @@ public class Rewrite4 {
   %strategy S2() extends `Identity() { 
 
     visit Term {
-      _ -> {
+      subject -> {
         int depth = MuTraveler.getPosition(this).depth();
         String offset = "";
         for (int i = 0; i<depth; i++){
           offset += "--";
         }
-        System.out.println(offset + "> s2: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
+        System.out.println(offset + "> s2: "+ `subject.getName() + " position: "+ MuTraveler.getPosition(this));
       }
     }
   }
@@ -159,8 +159,8 @@ public class Rewrite4 {
   %strategy FindLeaves(bag:Collection) extends `Identity() { 
 
     visit Term {
-      _ -> {
-        if (arg.getArity() == 0) {
+      subject -> {
+        if (`subject.getArity() == 0) {
           bag.add(MuTraveler.getPosition(this));
         }
       }
@@ -201,9 +201,9 @@ public class Rewrite4 {
   %strategy EqPos(p:Position) extends `Fail() { 
 
     visit Term {
-      _ -> {
+      subject -> {
         if (MuTraveler.getPosition(this).equals(p)) {
-          return arg;
+          return `subject;
         }
       }
     }
@@ -227,9 +227,9 @@ public class Rewrite4 {
   %strategy SubPos(p:Position) extends `Fail() {
 
     visit Term {
-      _ -> {
+      subject-> {
         if (MuTraveler.getPosition(this).isPrefix(p)) {
-          return arg;
+          return `subject;
         } 
       }
     }

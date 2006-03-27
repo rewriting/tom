@@ -293,7 +293,7 @@ matchBlock: {
                 if (visitorFwd == null) {//first time in loop
                   visitorFwd = symbolTable().getForwardType(`type);//do the job only once
                 }
-                TomTerm arg = `Variable(option(),Name("arg"),vType,concConstraint());//arg subjectList
+                TomTerm arg = `Variable(option(),Name("tom__arg"),vType,concConstraint());//arg subjectList
                 subjectListAST = append(arg,subjectListAST);
                 String funcName = "visit_" + `type;//function name
                 Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
