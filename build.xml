@@ -171,7 +171,7 @@
 
   <!-- builds and defines the custom tasks -->
   <!-- tasks for building src -->
-  <target name="init.task.stable" depends="stable.dist">
+	<target name="init.task.stable"> <!-- depends="stable.dist"-->
     <path id="tom.classpath">
       <fileset dir="${stable.dist.lib}">
         <include name="*.jar"/>
@@ -440,7 +440,7 @@
     </tomjavac>
   </target>
 
-  <target name="stable" description="compile the TOM stable sources"
+  <target name="build.stable" description="compile the TOM stable sources"
           depends="prepare.stable">
     <copy file="${stable.src}/tom/engine/Tom.java.in" 
 	    tofile="${stable.gen}/tom/engine/Tom.java"/>
@@ -471,9 +471,10 @@
     <copy todir="${dest}" file="AUTHORS"/>
   </target>
 
+	<target name="stable" depends="stable.dist"/>
   <target name="stable.dist" 
           description="Prepare a distribution ready stable package" 
-          depends="clean.stable.dist, prepare.stable.dist, stable">
+          depends="clean.stable.dist, prepare.stable.dist, build.stable">
     <antcall target="dist.common">
       <param name="dest" value="${stable.dist}"/>
     </antcall>
@@ -580,7 +581,7 @@
     </tar>
   </target>
 
-  <target name="dist.src" 
+  <target name="src.dist" 
           description="Prepare a distribution ready source package" 
           depends="clean.src.dist, src, prepare.src.dist">
     <antcall target="dist.common">
@@ -728,7 +729,7 @@
 
   <target name="dist.all" 
           description="Prepare stable and devel distributions" 
-          depends="clean.dist, stable.dist, dist.src, dist.examples"/>
+          depends="clean.dist, stable.dist, src.dist, dist.examples"/>
 
   <target name="clean.stable" description="Purges the generated stable files">
     <delete dir="${stable.build}"/>
@@ -779,7 +780,7 @@
   </target>
 
   <target name="test" description="Compile and run acceptance tests" 
-          depends="dist.src">
+          depends="src.dist">
      <ant dir="${test}" target="build">
        <property name="tom.home" value="${src.dist}"/>
      </ant>
@@ -837,7 +838,7 @@
   </target>
 
   <target name="src.all" description="cleans, build, test junit" depends="clean.src, clean.src.dist">
-    <antcall target="dist.src"/>
+    <antcall target="src.dist"/>
     <antcall target="clean.test"/>
     <antcall target="junit.src"/>
 
@@ -875,7 +876,7 @@
           depends="examples.src"/>
 
   <target name="examples.src" 
-          depends="dist.src">
+          depends="src.dist">
     <ant dir="${examples}" target="clean"/>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
@@ -1091,7 +1092,7 @@
     <antcall target="clean.bootstrap"/>
   </target>
   
-  <target name="bundle.src" depends="dist.src">
+  <target name="bundle.src" depends="src.dist">
     <mkdir dir="${bundle.temp.dir}"/>
     <unjar dest="${bundle.temp.dir}">
       <fileset dir="${src.dist.lib}">
