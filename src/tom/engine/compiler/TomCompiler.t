@@ -30,6 +30,7 @@ import java.util.logging.Level;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.tools.TomFactory;
 import tom.engine.tools.TomGenericPlugin;
@@ -118,7 +119,6 @@ public class TomCompiler extends TomGenericPlugin {
 					TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
 					SlotList newTermArgs = (SlotList) traversal().genericTraversal(`termArgs,replace_preProcessing_makeTerm);
 					TomList tomListArgs = slotListToTomList(newTermArgs);
-					String moduleName = getModuleName(`optionList);
 
 					if(hasConstant(`optionList)) {
 						return `BuildConstant(name);
@@ -130,6 +130,10 @@ public class TomCompiler extends TomGenericPlugin {
 						} else if(isDefinedSymbol(tomSymbol)) {
 							return `FunctionCall(name,tomListArgs);
 						} else {
+							String moduleName = getModuleName(`optionList);
+							if(moduleName==null) {
+								moduleName = TomBase.DEFAULT_MODULE_NAME;
+							}
 							return `BuildTerm(name,tomListArgs,moduleName);
 						}
 					} else {

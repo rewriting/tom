@@ -56,7 +56,6 @@ options{
 }
 
     {
-			private final static String DEFAULT_MODULE_NAME = "default";
     //--------------------------
     %include{ adt/tomsignature/TomSignature.tom }
     //--------------------------
@@ -150,7 +149,7 @@ constant returns [Token result]
 matchConstruct [Option ot] returns [Instruction result] throws TomException
 { 
     result = null;
-    OptionList optionList = `concOption(ot,ModuleName(DEFAULT_MODULE_NAME));
+    OptionList optionList = `concOption(ot,ModuleName(TomBase.DEFAULT_MODULE_NAME));
     LinkedList argumentList = new LinkedList();
     LinkedList patternInstructionList = new LinkedList();
     TomList subjectList = null;
@@ -492,7 +491,7 @@ ruleConstruct [Option ot] returns [Instruction result] throws TomException
     TomList listOfLhs = `emptyTomList();
     InstructionList conditionList = `emptyInstructionList();
     TomName orgText = null;
-    OptionList optionList = `concOption(ot,ModuleName(DEFAULT_MODULE_NAME));
+    OptionList optionList = `concOption(ot,ModuleName(TomBase.DEFAULT_MODULE_NAME));
     clearText();
 }
     :
@@ -520,8 +519,7 @@ ruleConstruct [Option ot] returns [Instruction result] throws TomException
                     line,
                     Name(currentFile())
                 );
-                OptionList optionList2 = `concOption(ot2,OriginalText(orgText));
-                
+                OptionList optionList2 = `concOption(ot2,OriginalText(orgText),ModuleName(TomBase.DEFAULT_MODULE_NAME));
                 while(! listOfLhs.isEmpty()){
                     ruleList = (TomRuleList) ruleList.append(
                         `RewriteRule(

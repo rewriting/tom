@@ -48,6 +48,9 @@ public class TomBase {
   %include { adt/tomsignature/TomSignature.tom }
   %include { mutraveler.tom }
 
+ public final static String DEFAULT_MODULE_NAME = "default"; 
+  
+  
   /** shortcut */
   protected static TomSignatureFactory tsf() {
     return TomEnvironment.getInstance().getTomSignatureFactory();

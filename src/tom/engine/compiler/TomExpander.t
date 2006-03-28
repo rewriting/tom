@@ -31,6 +31,7 @@ import java.util.ArrayList;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.tools.TomFactory;
 import tom.engine.tools.TomGenericPlugin;
@@ -400,7 +401,6 @@ public class TomExpander extends TomGenericPlugin {
 					%match(TomTerm t) {
 						BackQuoteAppl[option=optionList,astName=name@Name(tomName),args=l] -> {
 							TomSymbol tomSymbol = getSymbolFromName(`tomName);
-							String moduleName = getModuleName(`optionList);
 							TomList args  = (TomList) traversal().genericTraversal(`l,this);
 
 							//System.out.println("BackQuoteTerm: " + `tomName);
@@ -415,6 +415,10 @@ public class TomExpander extends TomGenericPlugin {
 								} else if(isDefinedSymbol(tomSymbol)) {
 									return `FunctionCall(name,args);
 								} else {
+									String moduleName = getModuleName(`optionList);
+									if(moduleName==null) {
+										moduleName = TomBase.DEFAULT_MODULE_NAME;
+									}
 									return `BuildTerm(name,args,moduleName);
 								}
 							} else {
