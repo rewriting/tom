@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Ant for TOM application" default="all" basedir=".">
+  <description>
+    This build script allows to build tom applications
+  </description>
+
+  <target name="all"
+          description="Build all applications"
+          depends="rho,web-protheo">
+  </target>
+
+  <target name="clean" description="Cleans all applications">
+    <ant dir="rho"         target="clean"/>
+    <ant dir="web-protheo" target="clean"/>
+  </target>
+
+  <target name="rho">
+    <ant dir="rho" target="build"/>
+  </target>
+
+  <target name="web-protheo">
+    <ant dir="web-protheo" target="dist"/>
+  </target>
+
+</project>
