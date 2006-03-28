@@ -13,7 +13,7 @@
   <property environment="env"/>
   <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>
-  <import file="${tom.common.path}/tom-common.xml"/>
+  <import   file="${tom.common.path}/tom-common.xml"/>
 
   <target name="init" depends="tom.init">
     <fail unless="tom.home" message="Property tom.home has to be defined"/>
