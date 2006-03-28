@@ -111,14 +111,11 @@ public class Mk {
   %strategy GenHTML() extends `Identity(){
     visit TNode{
       <link>#TEXT(lk)</link> -> {
-        // If link is not an anchor in the page but a standalone page
-        if(!`lk.startsWith("#")) {
-          writeHTML(`lk,Translator.IN_ENGLISH);
-          writeHTML(`lk,Translator.IN_FRENCH);
-        }
+        writeHTML(`lk,Translator.IN_ENGLISH);
+        writeHTML(`lk,Translator.IN_FRENCH);
       }
     }
-}
+  }
 
   public void writeHTML(String link, String lang) {
     TNode content;
