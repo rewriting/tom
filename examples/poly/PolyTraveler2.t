@@ -61,7 +61,7 @@ public class PolyTraveler2 {
     //Expression res = `mult(plus(var,zero()),one());
     Expression t = `mult(one(),exp(var));
 
-    VisitableVisitor v = new SimplifyPlus();
+    VisitableVisitor v = `SimplifyPlus();
     //VisitableVisitor bu = `OnceBottomUp(v);
     VisitableVisitor bu = `BottomUp(Try(v));
     try {
@@ -74,7 +74,20 @@ public class PolyTraveler2 {
 
   }
   
-  class SimplifyPlus extends poly.expression.VisitableFwd {
+  %strategy SimplifyPlus() extends `Fail() {
+
+    visit Expression {
+      exp(zero())    -> { return `one(); }
+      plus(zero(),x) -> { return `x; }
+      plus(x,zero()) -> { return `x; }
+      mult(one(),x)  -> { return `x; }
+      mult(x,one())  -> { return `x; }
+      mult(zero(),_) -> { return `zero(); }
+      mult(_,zero()) -> { return `zero(); }
+    }
+  }
+
+  /*class SimplifyPlus extends poly.expression.VisitableFwd {
     public SimplifyPlus() {
       //super(new Identity());
       super(new Fail());
@@ -97,7 +110,7 @@ public class PolyTraveler2 {
     }
 
   }
-
+*/
 
 }
 

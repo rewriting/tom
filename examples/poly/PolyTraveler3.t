@@ -74,7 +74,7 @@ public class PolyTraveler3 {
     Expression resSymplify = simplify(t);
     System.out.println("simplify in " + (System.currentTimeMillis()-startChrono)+ " ms");
 
-    VisitableVisitor v = new SimplifyExpression();
+    VisitableVisitor v = `SimplifyExpression();
     VisitableVisitor bottomUp = `BottomUp(Try(v));
     VisitableVisitor innermost = `Innermost(v);
     VisitableVisitor repeatOnce = `Repeat(OnceBottomUp(v));
@@ -149,7 +149,20 @@ public class PolyTraveler3 {
     return res;
   }
 
-  class SimplifyExpression extends poly.expression.VisitableFwd {
+  %strategy SimplifyExpression() extends `Fail() { 
+
+    visit Expression {
+      exp(zero())    -> { return `one(); }
+      plus(zero(),x) -> { return `x; }
+      plus(x,zero()) -> { return `x; }
+      mult(one(),x)  -> { return `x; }
+      mult(x,one())  -> { return `x; }
+      mult(zero(),_) -> { return `zero(); }
+      mult(_,zero()) -> { return `zero(); }
+    }
+  }
+
+  /*class SimplifyExpression extends poly.expression.VisitableFwd {
     public SimplifyExpression() {
       super(new Fail());
     }
@@ -168,7 +181,7 @@ public class PolyTraveler3 {
       throw new jjtraveler.VisitFailure();
     }
    
-  }
+  }*/
 
 
 }
