@@ -145,18 +145,18 @@ public class TestStrategy extends TestCase {
     }
   }
 
-  %strategy S7() extends `S8() {
+  %strategy S7() extends `S8(bool) {
     visit Term {
       g(x,x)            -> { return `x; }
     }
   }
-  %strategy S8() extends `S9() {
+  %strategy S8(b:boolean) extends `S9(3) {
     visit Term {
       g(x,x)            -> { return `x; }
     }
   }
 
-  %strategy S9() extends `Identity() {
+  %strategy S9(i:int) extends `Identity() {
     visit Term {
       g(x,x)            -> { return `x; }
     }
