@@ -20,9 +20,6 @@ public class Patch {
 
   private XmlTools xtools;
   private List members;
-  private TNodeFactory getTNodeFactory() {
-    return xtools.getTNodeFactory();
-  }
 
   public Patch(TNode mbrs,TNode bib){
     xtools = new XmlTools();
