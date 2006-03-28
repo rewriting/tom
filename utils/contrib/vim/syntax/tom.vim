@@ -33,6 +33,7 @@ syn match   tomOperator         "%oplist"
 syn match   tomOperator         "%oparray"
 syn match   tomMatch            "%match"
 syn match   tomRule             "%rule"
+syn match   tomStrat            "%strategy"
 syn match   tomType             "%typeterm"
 syn match   tomType             "%typelist"
 syn match   tomType             "%typeint"
@@ -60,6 +61,7 @@ if version >= 508 || !exists("did_tom_syn_inits")
   HiLink tomExternal   Include
   HiLink tomOperator   javaScopeDecl
   HiLink tomMatch      javaScopeDecl
+  HiLink tomStrat      javaScopeDecl
   HiLink tomRule       javaScopeDecl
   HiLink tomType       Type
   HiLink tomArrow      Statement
