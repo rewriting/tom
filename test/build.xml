@@ -19,12 +19,6 @@
     <fail unless="tom.home" message="Property tom.home has to be defined"/>
   </target>
 
-  <target name="initjunit" depends="init">
-    <taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
-      <classpath refid="tom.classpath"/>
-    </taskdef>
-  </target>
-
   <target name="prepare">
     <mkdir dir="${test.gen}"/>
     <mkdir dir="${test.build}"/>
@@ -72,12 +66,12 @@
   </target>
 
   <target name="junit" description="Runs junit acceptance tests"
-          depends="build, initjunit">
-    <tomjunit printsummary="yes"
-              fork="true"
-              haltonfailure="false"
-              failureproperty="tests.failed"
-              showoutput="true">
+          depends="build">
+    <tom.junit printsummary="yes"
+               fork="true"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
       <classpath>
         <path refid="tom.classpath"/>
         <pathelement location="${test.build}"/>
@@ -91,7 +85,7 @@
           <exclude name="gen/**/*"/>
         </fileset>
       </batchtest>
-    </tomjunit>
+    </tom.junit>
     <fail if="tests.failed">
       ****************************************************
       ****************************************************
