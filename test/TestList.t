@@ -10,7 +10,7 @@ public class TestList extends TestCase {
 	private int testNumber;
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestList.class));
+		junit.textui.TestRunner.run(suite());
 	}
 
   public void setUp() {
