@@ -48,6 +48,8 @@ public class TestStrategy extends TestCase {
     implement { LinkedList }
   }
 
+    boolean bool0 = true;
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestStrategy.class));
   }
@@ -145,7 +147,7 @@ public class TestStrategy extends TestCase {
     }
   }
 
-  %strategy S7() extends `S8(bool) {
+  %strategy S7() extends `S8(bool0) {
     visit Term {
       g(x,x)            -> { return `x; }
     }
