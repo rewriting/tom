@@ -85,11 +85,11 @@
   </target>
 
   <target name="junit" description="Runs junit acceptance tests for xrho" depends="build.xrho, init">
-    <tomjunit printsummary="yes"
-              fork="true"
-              haltonfailure="false"
-              failureproperty="tests.failed"
-              showoutput="true">
+    <tom.junit printsummary="yes"
+               fork="true"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
       <classpath>
         <path refid="tom.classpath"/>
         <pathelement location="${rho.build}"/>
@@ -99,7 +99,7 @@
           <include name="xrho/**/Test*.java"/>
         </fileset>
       </batchtest>
-    </tomjunit>
+    </tom.junit>
     <fail if="tests.failed">
       ****************************************************
       ****************************************************
