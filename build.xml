@@ -19,7 +19,7 @@
   <property name="stable.version" value="2.3rc0"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
-  
+
   <!-- some used directory location -->
   <property name="test"           location="test"/>
   <property name="examples"       location="examples"/>
@@ -72,9 +72,6 @@
   <!-- for bootstrap -->
   <property name="bootstrap.dir"        location="${src.src}/bootstrap" />
 
-  <!-- Properties for Javac compilation
-       <property name="javacFailOnError" value="false"/>
-  -->
   <property name="javacSource" value="1.4"/>
   <property name="javacTarget" value="1.4"/>
   <property name="javacDebugInfo" value="on"/>
@@ -108,7 +105,6 @@
     <pathelement location="${src.build}"/>
     <pathelement location="${src.src}"/>
   </path>
-
 
   <macrodef name="tomjavac">
     <attribute name="destdir"/>
@@ -171,7 +167,7 @@
 
   <!-- builds and defines the custom tasks -->
   <!-- tasks for building src -->
-	<target name="init.task.stable"> <!-- depends="stable.dist"-->
+  <target name="init.task.stable"> <!-- depends="stable.dist"-->
     <path id="tom.classpath">
       <fileset dir="${stable.dist.lib}">
         <include name="*.jar"/>
@@ -198,13 +194,13 @@
       <fileset dir="${src.dist.lib}">
         <include name="*.jar"/>
       </fileset>
-		</path>
+    </path>
 
-		<taskdef name="gomsrc" 
-			       classname="tom.gom.tools.ant.GomTask"
+    <taskdef name="gomsrc" 
+             classname="tom.gom.tools.ant.GomTask"
              classpathref="tomsrc.classpath"/>
-		<taskdef name="tomsrc"
-					   classname="tom.engine.tools.ant.TomTask"
+    <taskdef name="tomsrc"
+             classname="tom.engine.tools.ant.TomTask"
              classpathref="tomsrc.classpath"/>
   </target>
 
