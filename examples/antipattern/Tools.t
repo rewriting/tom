@@ -81,6 +81,10 @@ public class Tools {
 	        Constraint c = atermToConstraint(at);
           Collection solution = new HashSet();
 	        System.out.println(s);
+	        if (match instanceof Matching4) {
+	        	Constraint reversedPattern = ((Matching4)match).checkReverse(c,solution);	        	
+	        	System.out.println(" !!!!--> " + reversedPattern);
+	        }
 	        Constraint simplifiedConstraint = match.simplifyAndSolve(c,solution);
 	        System.out.println(" --> " + simplifiedConstraint);
           if(simplifiedConstraint == `True()) {

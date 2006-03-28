@@ -50,6 +50,20 @@ public class Matching4 implements Matching {
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 	
+	public Constraint checkReverse(Constraint c, Collection solution) {	
+		VisitableVisitor simplifyRule = new SimplifySystemModified(`Identity());
+		VisitableVisitor reverseEngRule = new ReverseEngAp(`Identity());
+		try {		
+			return (Constraint) MuTraveler.init(
+					`SequenceId(RepeatId(OutermostId(simplifyRule)),RepeatId(OutermostId(reverseEngRule)))
+			).visit(c);
+		} catch (VisitFailure e) {
+			System.out.println("reduction failed on: " + c);
+			// e.printStackTrace();
+		}
+		return `False();
+	}
+	
 	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
 		//System.out.println("Problem to solve:" + c);
 		VisitableVisitor simplifyRule = new SimplifySystemModified(`Identity());
@@ -57,7 +71,7 @@ public class Matching4 implements Matching {
 		try {		
 		/*	return (Constraint) MuTraveler.init(
 					`RepeatId(ChoiceId(InnermostId(simplifyRule),InnermostId(negCleanRule)))
-			).visit(c);*/
+			).visit(c);*/			
 			return (Constraint) MuTraveler.init(
 					`RepeatId(SequenceId(OutermostId(simplifyRule),OutermostId(negCleanRule)))
 			).visit(c);
