@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?> 
 <project name="Ant for TOM" default="stable" basedir=".">
   <description>
     Build script using Ant offering checks, dists,
@@ -23,6 +23,8 @@
   <!-- some used directory location -->
   <property name="test"           location="test"/>
   <property name="examples"       location="examples"/>
+	<property name="examples.gen"   location="${examples}/gen"/>
+	<property name="examples.build" location="${examples}/build"/>
   <property name="utils"          location="utils"/>
   <property name="share"          location="share"/>
 
@@ -763,10 +765,15 @@
           <!--<ant dir="${examples}" target="clean"/>-->
   </target> 
 
-  <target name="clean.dist" description="Mr proper" depends="clean.src.dist, clean.stable.dist">
+  <target name="clean.dist" description="Mr proper" depends="clean.examples, clean.src.dist, clean.stable.dist">
     <delete dir="${dist}"/>
-    <ant dir="${examples}" target="clean.dist"/>
   </target>
+
+  <target name="clean.examples" description="Clean the examples">
+		<!-- <ant dir="${examples}" target="clean.dist"/> -->
+    <delete dir="${examples.gen}"/>
+    <delete dir="${examples.build}"/>
+	</target>
 
   <target name="clean.src.dist" description="Remove the src distribution">
     <delete dir="${src.dist}"/>
@@ -834,7 +841,7 @@
     </ant>
   </target>
 
-  <target name="src.all" description="cleans, build, test junit" depends="clean.src, clean.src.dist">
+  <target name="src.all" description="cleans, build, test junit" depends="clean, clean.dist, stable.dist">
     <antcall target="src.dist"/>
     <antcall target="clean.test"/>
     <antcall target="junit.src"/>
