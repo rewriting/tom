@@ -131,11 +131,11 @@ public class OutputCode {
 		writeln(deep,s.toString());
 	}
 
-	public void write(StringBuffer s, int line, int length) throws IOException {
-		write(s.toString(), line, length);
+	public void write(int deep, StringBuffer s, int line, int length) throws IOException {
+		write(deep, s.toString(), line, length);
 	}
 
-	public void write(String s, int line, int length) throws IOException {
+	public void write(int deep, String s, int line, int length) throws IOException {
 		if(singleLine>0 && !((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
 			s = s.replace('\n', ' ');
 			s = s.replace('\r', ' ');
@@ -163,8 +163,14 @@ public class OutputCode {
 				}
 			}
 			lineCounter+= length;
+			write(s);
+		} else {
+		    String[] lines = s.split("\n");
+		    for (int i=0; i<lines.length-1; i++) {
+			writeln(deep, lines[i]);
+		    }
+		    write(deep, lines[lines.length-1]);
 		}
-		write(s);
 	}
 
 	public void close() {

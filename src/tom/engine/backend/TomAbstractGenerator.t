@@ -42,6 +42,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected OutputCode output;
   protected OptionManager optionManager;
   protected SymbolTable symbolTable;
+  protected boolean prettyMode;
 
   private GenericTraversal traversal;
 
@@ -50,6 +51,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     this.symbolTable = symbolTable;
     this.optionManager = optionManager;
     this.output = output;
+    this.prettyMode = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
     this.traversal = new GenericTraversal();
   }
   
@@ -352,7 +354,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       TargetLanguageToInstruction(t) -> {
         `generateTargetLanguage(deep, t, moduleName);
-
         return;
       }
 
@@ -496,7 +497,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   public void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {
     %match(TargetLanguage subject) {
       TL(t,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
-        output.write(`t, `startLine, `endLine - `startLine);
+        output.write(deep, `t, `startLine, `endLine - `startLine);
         return;
       }
       
@@ -754,6 +755,9 @@ public abstract class TomAbstractGenerator extends TomBase {
     while(!subject.isEmpty()) {
       generateInstruction(deep,subject.getHead(), moduleName);
       subject = subject.getTail();
+    }
+    if(prettyMode) {
+	output.writeln();
     }
   }
 

@@ -47,13 +47,12 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
   protected String modifier = "";
   protected boolean nodeclMode;
-  protected boolean prettyMode;
+
 
   public TomImperativeGenerator(OutputCode output, OptionManager optionManager,
                                 SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
-    prettyMode = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
     
     if(((Boolean)optionManager.getOptionValue("static")).booleanValue()) {
       this.modifier += "static " ;
@@ -230,7 +229,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write(deep,"{" + getTLCode(tlType) + " ");
     buildAssignVar(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
-    output.writeln("}");
+    output.writeln(deep,"}");
   }
 
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
@@ -252,13 +251,13 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
-    output.writeln("{");
+    output.writeln(deep, "{");
     generateInstructionList(deep+1,instList, moduleName);
-    output.writeln("}");
+    output.writeln(deep, "}");
   }
 
   protected void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
-    output.write(deep,"if("); 
+    output.write(deep,"if ("); 
     generateExpression(deep,exp, moduleName); 
     output.writeln(") {");
     generateInstruction(deep+1,succes, moduleName);
@@ -266,7 +265,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
   
   protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException {
-    output.write(deep,"if("); 
+    output.write(deep,"if ("); 
     generateExpression(deep,exp,moduleName); 
     output.writeln(") {");
     generateInstruction(deep+1,succes,moduleName);
@@ -453,7 +452,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "    while( begin != end ) {\n";
     s+= "      result = " + make_insert + "(" + get_element + "(subject, begin),result);\n";
     s+= "      begin++;\n";
-    s+="     }\n";
+    s+= "     }\n";
     s+= "    return result;\n";
     s+= "  }\n";
     s+= "\n";
@@ -507,7 +506,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
     %match(TargetLanguage tlCode) {
       TL(_,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
-        output.write(s, `startLine, `endLine - `startLine);
+        output.write(0,s, `startLine, `endLine - `startLine);
         return;
       }
 
@@ -546,7 +545,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
      * This is the case of CheckStampDecl
      */
     if(instr.isTargetLanguageToInstruction()) {
-      buildSemiColon();
+      buildSemiColon();  
     }
     output.write("}");
 
