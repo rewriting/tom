@@ -90,7 +90,7 @@ public class GomCompilerPlugin extends GomGenericPlugin {
       getLogger().log(Level.INFO, "Compilation succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
-            + COMPILED_SUFFIX, (aterm.ATerm) classList);
+            + COMPILED_SUFFIX, (aterm.ATerm)classList.toATerm());
       }
     }
   }

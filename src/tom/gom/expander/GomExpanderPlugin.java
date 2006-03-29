@@ -89,7 +89,7 @@ public class GomExpanderPlugin extends GomGenericPlugin {
       getLogger().log(Level.INFO, "Expansion succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
-            + EXPANDED_SUFFIX, (aterm.ATerm)modules);
+            + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());
       }
     }
   }

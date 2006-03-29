@@ -86,7 +86,7 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
       getLogger().log(Level.INFO, "Expansion succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
-            + TYPED_SUFFIX, (aterm.ATerm)typedModuleList);
+            + TYPED_SUFFIX, (aterm.ATerm)typedModuleList.toATerm());
       }
     }
   }
