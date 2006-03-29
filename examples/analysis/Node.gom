@@ -1,7 +1,6 @@
 module Node 
- imports Ast 
+imports Ast 
 public
-  sorts Node
 abstract syntax
 Node = 	beginIf(expr:Expression)
      |	affect(var:Variable,term:Term)
