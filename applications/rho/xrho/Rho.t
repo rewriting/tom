@@ -36,14 +36,9 @@ import aterm.*;
 import aterm.pure.*;
 import xrho.rhoterm.*;
 import xrho.rhoterm.types.*;
-import xrho.rhoterm.types.rterm.Abs;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
-
-
-//import tom.library.adt.mutraveleradt.*;
-//import tom.library.adt.mutraveleradt.types.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Position;
@@ -57,15 +52,6 @@ import jjtraveler.VisitFailure;
 import java.io.*;
 
 public class Rho {
-	private RhotermFactory factory;
-	
-	public Rho(RhotermFactory factory) {
-		this.factory = factory;
-	}
-	public RhotermFactory getRhotermFactory() {
-		return factory;
-	}
-	
 	
 	%include { mutraveler.tom }
 	%include { rhoterm/Rhoterm.tom }
@@ -91,13 +77,13 @@ public class Rho {
 	VisitableVisitor strategyResult =MuTraveler.init(`Repeat(oneStepWeakNormalisation));
 
 	public final static void main(String[] args) {
-		Rho rhoEngine = new Rho(RhotermFactory.getInstance(SingletonFactory.getInstance()));
+		Rho rhoEngine = new Rho();
 		rhoEngine.run();
 	}
 	
 
 	public void run(){
-		RTerm subject = `const("undefined");
+		RTerm subject = `Const("undefined");
 		VisitableVisitor currentStrategy = strategyResult;
 		String s;
 		System.out.println(" ******************************************************************\n xRho: an experimental implementation  in Tom of the explicit rho-calculus \n with weak normalization and linear first-order patterns\n By Germain Faure\n  It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
@@ -127,7 +113,7 @@ public class Rho {
 
 	public String test(String s,RhoParser parser){
 //		System.out.println("s="+s);
-		RTerm subject = `const("undefined");
+		RTerm subject = `Const("undefined");
 
 		try {
 			subject = parser.program();
@@ -143,7 +129,7 @@ public class Rho {
 	}
 
 	public String test(String s){
-		RTerm subject = `const("undefined");
+		RTerm subject = `Const("undefined");
 		StringReader sr = new StringReader(s);
     RhoLexer lexer = new RhoLexer(sr); // Create parser attached to lexer
     RhoParser parser = new RhoParser(lexer);
@@ -161,7 +147,7 @@ public class Rho {
 	}
 
 	
-	class Print extends RhotermVisitableFwd {
+	class Print extends RhotermBasicStrategy {
 		public Print() {
 			super(`Fail());
 		}
@@ -170,7 +156,7 @@ public class Rho {
 			return arg;
 		}
 	}
-	class ReductionRules extends RhotermVisitableFwd {
+	class ReductionRules extends RhotermBasicStrategy {
 		public ReductionRules() {
 			super(`Fail());
 		}
@@ -178,7 +164,7 @@ public class Rho {
 			%match(RTerm arg){
 				/*Compose */
 				appS(phi@andS(l*),appS(andS(L*),N)) -> {
-					ListSubst result = `mapS(((ListSubst)(L.reverse())),phi,andS());
+					ListSubst result = `mapS(((ListSubst)(reverse(L))),phi,andS());
 					return `appS(andS(l*,result*),N);}
 				//ALPHA-CONV
 				
@@ -213,7 +199,7 @@ public class Rho {
 				//Replace avant		
 				
 				/*Const*/
-				appS(_,c@const[]) -> {return `c;}
+				appS(_,c@Const[]) -> {return `c;}
 				
 				/*Abs*/
 				appS(phi,abs(P,M)) -> {return `abs(P,appS(phi,M));}
@@ -228,7 +214,7 @@ public class Rho {
 				
 				/*Constraint*/
 				appS(phi,appC(andC(L*),M)) -> {
-					ListConstraint result = `mapC(((ListConstraint)(L.reverse())),phi,andC());
+					ListConstraint result = `mapC(((ListConstraint)(reverse(L))),phi,andC());
 					return `appC(andC(result*),appS(phi,M));}
 				/* La regle est correcte pour n is 0 */
 				//ALPHA-CONV!!
@@ -243,11 +229,11 @@ public class Rho {
  		public ListConstraint visit_ListConstraint(ListConstraint l) throws VisitFailure {
  			%match(ListConstraint l){
 				/*Decompose n = m = 0*/
-				(X*,match(f@const[],f),Y*) -> {return `andC(X*,Y*);}
+				(X*,match(f@Const[],f),Y*) -> {return `andC(X*,Y*);}
 				
 				/*Decompose_ng n = m = 0*/
-				//si j'arrive dans la regle suivant c'est que les const sont diff
-				(X*,match(const[],const[]),Y*) -> {return `andC(X*,matchKO(),Y*);}
+				//si j'arrive dans la regle suivant c'est que les Const sont diff
+				(X*,match(Const[],Const[]),Y*) -> {return `andC(X*,matchKO(),Y*);}
 				
 				/*Decompose et Decompose_ng min(n,m) > 0 */
 				l:(X*,m@match(app[],app[]),Y*) -> {
@@ -259,7 +245,7 @@ public class Rho {
 					ListConstraint result = `computeMatch(andC(m));
 					return `andC(X*,result*,Y*);
 				}
-				l:(X*,m@match(app[],const[]),Y*)  -> {
+				l:(X*,m@match(app[],Const[]),Y*)  -> {
 					ListConstraint head_is_constant = `headIsConstant(m);
 					%match(ListConstraint head_is_constant) {
 						(match[]) -> { break l; }
@@ -268,7 +254,7 @@ public class Rho {
 					ListConstraint result = `computeMatch(andC(m));
 					return `andC(X*,result*,Y*);
 				}
-				l:(X*,m@match(const[],app[]),Y*) -> {
+				l:(X*,m@match(Const[],app[]),Y*) -> {
 					ListConstraint head_is_constant = `headIsConstant(m);
 					%match(ListConstraint head_is_constant) {
 						(match[]) -> { break l; }
@@ -295,7 +281,7 @@ public class Rho {
 			abs(term1,term2) -> {return "("+stringInfix(`term1)+"->"+stringInfix(`term2)+")";}
 			struct(term1,term2) -> {return "("+stringInfix(`term1)+"|"+stringInfix(`term2)+")";}
 			var(s) -> {return `s;}
-			const(s) -> {return `s;}
+			Const(s) -> {return `s;}
 			stk() -> {return "stk";}
 			_ -> {return "";}
 		}
@@ -311,13 +297,18 @@ public class Rho {
     return "";
 	}
 
-	public class Not_abs extends RhotermVisitableFwd {
+	public class Not_abs extends RhotermBasicStrategy {
 		public Not_abs() {
 			super(`Identity());
 		}
 		
-		public RTerm visit_RTerm_Abs(Abs arg) throws jjtraveler.VisitFailure {
-			throw new VisitFailure();
+		public RTerm visit_RTerm(RTerm arg) throws jjtraveler.VisitFailure {
+      %match(RTerm arg) {
+        abs[] -> {
+          throw new VisitFailure();
+        }
+      }
+      return arg;
 		}
 		
 	}
@@ -335,15 +326,15 @@ public class Rho {
 			match(app(A1,B1),app(A2,B2)) ->{ 
 				return `headIsConstant(match(A1,A2));
 			}
-	     match(const(f),const(f)) -> {
+	     match(Const(f),Const(f)) -> {
 				 return `andC();
 	     }
 	     //si j'arrive dans le cas de la regle suivante alors les constantes sont forcement differentes
-	     match(const[],const[])   -> {
+	     match(Const[],Const[])   -> {
 				 return `andC(matchKO());
 	     }
 
-	     match(const[],app[]) | match(app[],const[]) -> {
+	     match(Const[],app[]) | match(app[],Const[]) -> {
 				 return `andC(matchKO());
 	     }
 
@@ -352,7 +343,7 @@ public class Rho {
 	}
 	protected ListConstraint computeMatch(ListConstraint l){
 		%match(ListConstraint l){
-			(match(app(f@const[],A),app(f,B))) -> {return `andC(match(A,B));}
+			(match(app(f@Const[],A),app(f,B))) -> {return `andC(match(A,B));}
 			(match(app(A1,B1),app(A2,B2))) -> {
 				ListConstraint result = `computeMatch(andC(match(A1,A2)));
 				return `andC(result*,match(B1,B2));}
@@ -364,7 +355,7 @@ public class Rho {
 	protected ListConstraint mapC(ListConstraint list, ListSubst phi, ListConstraint result){
 		%match(ListConstraint list) {
  	    (match(P,M),_*) ->{
-				return `mapC(list.getTail(),phi,andC(match(P,appS(phi,M)),result*));}
+				return `mapC(list.getTailandC(),phi,andC(match(P,appS(phi,M)),result*));}
  	    _ -> {return `result;}
 		}
     return `result;
@@ -372,9 +363,29 @@ public class Rho {
 	protected ListSubst mapS(ListSubst list, ListSubst phi, ListSubst result){
 		%match(ListSubst list) {
 			(eq(X,M),_*) ->{
-				return `mapS(list.getTail(),phi,andS(eq(X,appS(phi,M)),result*));}
+				return `mapS(list.getTailandS(),phi,andS(eq(X,appS(phi,M)),result*));}
  	    _ -> {return `result;}
     }	 
     return `result;
+  }
+  protected ListSubst reverse(ListSubst l) {
+    %match(ListSubst l) {
+      andS() -> { return l; }
+      andS(h,t*) -> {
+        ListSubst rtail = reverse(`t*);
+        return `andS(rtail*,h);
+      }
+    }
+    return l;
+  }
+  protected ListConstraint reverse(ListConstraint l) {
+    %match(ListConstraint l) {
+      andC() -> { return l; }
+      andC(h,t*) -> {
+        ListConstraint rtail = reverse(`t*);
+        return `andC(rtail*,h);
+      }
+    }
+    return l;
   }
 }

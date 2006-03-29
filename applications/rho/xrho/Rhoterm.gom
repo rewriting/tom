@@ -1,0 +1,19 @@
+module Rhoterm
+abstract syntax
+RTerm = var(na:String)
+      | Const(na:String)
+      | stk()
+      | abs(lhs:RTerm,rhs:RTerm)
+      | app(lhs:RTerm,rhs:RTerm)
+      | struct(lhs:RTerm,rhs:RTerm) //structure is couple
+      | appC(co:ListConstraint,term:RTerm)
+      | appS(su:ListSubst,term:RTerm)
+      | withPrint()
+      | withoutPrint()
+Constraint = match(lhs:RTerm,rhs:RTerm)
+           | matchKO()
+
+ListRTerm = and( RTerm* )
+ListConstraint = andC( Constraint* )
+ListSubst = andS( Subst* )
+Subst = eq(var:RTerm,rhs:RTerm)

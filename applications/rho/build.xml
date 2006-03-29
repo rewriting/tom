@@ -55,7 +55,13 @@
   <target name="build" depends="build.xrho,build.matching"/>
 
   <target name="build.xrho" depends="init">
-    <vascompile package="xrho"/>
+    <!--<vascompile package="xrho"/>-->
+    <gom config="${gomconfigfile}"
+         srcdir="${rho.dir}"
+         package="xrho" 
+         destdir="${rho.gen}">
+      <include name="xrho/**/*.gom"/>
+    </gom>
     <tomcompile package="xrho"/>
     <tom.preset srcdir="${rho.dir}" 
 	    outputfile="${rho.gen}/xrho/RhoParser.g"

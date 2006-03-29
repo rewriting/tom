@@ -47,10 +47,6 @@ options {
 {
 	Hashtable table = new	Hashtable();
   %include { rhoterm/Rhoterm.tom }
-  private RhotermFactory factory = RhotermFactory.getInstance(SingletonFactory.getInstance());
-  public RhotermFactory getRhotermFactory() {
-    return factory;
-  }
 //IL FAUT LA TRANSFORMER POUR QU'ELLE NE PRENNE QU'UN SEUL ARG
  public  RTerm fromAlgebraicApplToFunctionalAppl(ListRTerm listArg, RTerm head){
   	%match(ListRTerm listArg){
@@ -256,7 +252,7 @@ constant returns [RTerm constant]
     constant = `stk();
   }
   else {
-    constant=`const(constname.getText());
+    constant=`Const(constname.getText());
   }
 }
 ;
