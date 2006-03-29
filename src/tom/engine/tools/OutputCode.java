@@ -166,16 +166,14 @@ public class OutputCode {
 			write(s);
 		} else {
 		    String[] lines = s.split("\n");
-		    String first = lines[0];
-		    
-		    for (int i=1; i<lines.length-1; i++) {
-			String line = lines[i];
-			line = line.replaceFirst("^\\s",""); // removes spaces at the beginning of the line
-			writeln(deep, line);
+		    for (int i=0; i<lines.length-1; i++) {
+			String ln = lines[i];
+			ln = ln.replaceFirst("^\\s+",""); // removes spaces at the beginning of the line
+			writeln(deep, ln);
 		    }
-		    String line = lines[lines.length-1];
-		    line = line.replaceFirst("^\\s","");
-		    write(deep, line);
+		    String ln = lines[lines.length-1];
+		    ln = ln.replaceFirst("^\\s+","");
+		    write(deep, ln);
 		}
 	}
 
