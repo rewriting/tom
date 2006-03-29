@@ -2,7 +2,10 @@
 " Language:    Gom
 " Maintainer:  Emmanuel Hainry <Emmanuel.Hainry@loria.fr>
 " URL:         http://tom-server.loria.fr/confluence/display/Tom/tips
-" Last modified: Mar 28, 2006  11:38
+" Last modified: Mar 29, 2006  19:55
+" new version fixes 2 problems:
+" 	* de-indent when a Structure definition ends
+" 	* not de-indent too much for closing brackets
 
 " Only load this indent file when no other was loaded.
 if exists("b:did_indent")
@@ -36,22 +39,23 @@ function GetGomIndent()
 	let pind= indent(pnum)
 	let line = getline(lnum)
 	let pline= getline(pnum)
-	if line =~ '^\s*|'
-		if pline =~ '^\s*|'
+	let re_fistpipe = '^\s*|'
+	if line =~ re_fistpipe
+		if pline =~ re_fistpipe
 			return pind
 		elseif pline =~ '='
 			return match(pline, '=')
 		else
 			return ind + &sw
 		endif
+	elseif pline =~ re_fistpipe
+		return 0
 	endif
 	if pline =~ '{[^}]*$'
 		return pind + &sw
-	"elseif pline =~ '[^{]*}\s*$'
-	"	let pind = pind - &sw
 	endif
 	if line =~ '^\s*}'
-		return ind - &sw
+		return pind - &sw
 	endif
 	if line =~ '[ 	/]*\*'
 		return ind
