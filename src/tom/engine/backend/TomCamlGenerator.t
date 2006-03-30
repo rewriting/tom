@@ -248,7 +248,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 
     %match(TargetLanguage tlCode) {
       TL(_,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
-        output.write(s, `startLine, `endLine - `startLine);
+        output.write(0,s, `startLine, `endLine - `startLine);
         return;
       }
 

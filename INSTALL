@@ -8,7 +8,7 @@ TODO
 Installing Tom
 ==============
 
-The sourse distribution of Tom consists of the following directory layout:
+The source distribution of Tom consists of the following directory layout:
 
   jtom
    +--- stable   // contains the stable version
