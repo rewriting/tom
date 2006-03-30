@@ -26,8 +26,6 @@
 
 package tom.platform;
 
-import java.text.MessageFormat;
-
 /**
  * The PlatformMessage interface defines messages used by the platform LogRecord
  */
