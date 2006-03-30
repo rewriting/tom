@@ -300,14 +300,13 @@ public class TomSyntaxChecker extends TomChecker {
 	private void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
 		%match(TomType codomain) {
 			Codomain(Name(opName)) -> {
-				if(symbolTable().getSymbolFromName(`opName) != null) {
-					return;
-				} else {
+				if(symbolTable().getSymbolFromName(`opName) == null) {
 					messageError(currentTomStructureOrgTrack.getLine(), 
 							symbolType+" "+symbName, 
 							TomMessage.symbolCodomainError,
 							new Object[]{symbName, codomain});
 				}
+        return;
 			}
 
 			_ -> {
