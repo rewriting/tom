@@ -132,7 +132,7 @@ public class TomTypeChecker extends TomChecker {
 						app@TermAppl[] -> {
 							if((symbolTable().getSymbolFromName(getName(`app)))==null) {
 								messageError(findOriginTrackingLine(`app.getOption()),
-										TomMessage.unknownVariableInWhen.getMessage(),
+										TomMessage.unknownVariableInWhen,
 										new Object[]{getName(`app)});
 							}
 							// else, it's actually app()
@@ -174,7 +174,7 @@ public class TomTypeChecker extends TomChecker {
           %match(TomType visitType) {
             TomTypeAlone(strVisitType) -> {
               messageError(findOriginTrackingLine(`options),
-                  TomMessage.unknownVisitedType.getMessage(),
+                  TomMessage.unknownVisitedType,
                   new Object[]{`(strVisitType)});
             }
             Type(ASTTomType(ASTVisitType),TLType(TLVisitType)) -> {
@@ -185,7 +185,7 @@ public class TomTypeChecker extends TomChecker {
               //noVisitorFwd defined for visitType
               if (currentVisitorFwd == null || currentVisitorFwd == `EmptyForward()){ 
                 messageError(`TLVisitType.getStart().getLine(),
-                    TomMessage.noVisitorForward.getMessage(),
+                    TomMessage.noVisitorForward,
                     new Object[]{`(ASTVisitType)});
               }
               else if (visitorFwd == null) {
@@ -196,7 +196,7 @@ public class TomTypeChecker extends TomChecker {
                 //check if current visitor equals to previous visitor
                 if (currentVisitorFwd != visitorFwd){ 
                   messageError(`TLVisitType.getStart().getLine(),
-                      TomMessage.differentVisitorForward.getMessage(),
+                      TomMessage.differentVisitorForward,
                       new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
                 }
               }
@@ -321,7 +321,7 @@ public class TomTypeChecker extends TomChecker {
 				//System.out.println("var2 = " + variable);
         if(!(type1==type2)) {
           messageError(findOriginTrackingLine(variable.getOption()),
-                       TomMessage.incoherentVariable.getMessage(),
+                       TomMessage.incoherentVariable,
                        new Object[]{name.getString(), type1.getTomType().getString(), type2.getTomType().getString()});
         }
       } else {
@@ -349,7 +349,7 @@ public class TomTypeChecker extends TomChecker {
         TomType type = (TomType)variableTable.get(nameVar);
         if(!(type==typeVar)) {
           messageError(findOriginTrackingLine(variable.getOption()),
-                       TomMessage.incoherentVariable.getMessage(),
+                       TomMessage.incoherentVariable,
                        new Object[]{nameVar.getString(), type.getTomType().getString(), typeVar.getTomType().getString()});
           return false;
         }
@@ -370,7 +370,7 @@ public class TomTypeChecker extends TomChecker {
       TomName name = variable.getAstName();
       if(variableTable.containsKey(name)) {
         messageError(findOriginTrackingLine(variable.getOption()),
-                     TomMessage.freshVariableIssue.getMessage(),
+                     TomMessage.freshVariableIssue,
                      new Object[]{name.getString()});
          
         return false;
@@ -387,7 +387,7 @@ public class TomTypeChecker extends TomChecker {
       TomName name = variable.getAstName();
       if(!variableTable.containsKey(name)) {
         messageError(findOriginTrackingLine(variable.getOption()),
-                     message.getMessage(),
+                     message,
                      new Object[]{name.getString()});             
         return false;
       }

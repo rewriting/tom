@@ -31,7 +31,10 @@ public class PlatformLogRecord extends LogRecord {
   private int line;
   private String filePath;
   private PlatformMessage message;
-  
+  private boolean detailed;
+  private int structDeclLine;
+  private String structInfo;
+
   public PlatformLogRecord(Level level, PlatformMessage message, String filePath, int line) {
     this(level, message, new Object[]{} , filePath, line);
   }
@@ -46,14 +49,38 @@ public class PlatformLogRecord extends LogRecord {
     this.filePath =filePath;
     this.line = line;
     this.message = message;
+    this.detailed=false;
   }
-  
+
+  public PlatformLogRecord(Level level, PlatformMessage message, Object[] detail, String filePath, int line,int structDeclLine,String structInfo) {
+    super(level, message.getMessage());
+    super.setParameters(detail);
+    this.filePath =filePath;
+    this.line = line;
+    this.message = message;
+    this.structDeclLine= structDeclLine;
+    this.structInfo= structInfo;
+    this.detailed = true;
+  }
+
+
   public int getLine() {
     return line;
   }
-  
+
+  public int getStructDeclLine() {
+    return structDeclLine;
+  }
+
   public String getFilePath() {
     return filePath;
+  }
+
+  public boolean isDetailed(){
+    return detailed;
+  }
+  public String getStructInfo() {
+    return structInfo;
   }
 
   public PlatformMessage getPlatformMessage() {
