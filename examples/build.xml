@@ -520,6 +520,7 @@
   <target name="poly" depends="init">
     <adtcompile example="${poly}"
                 factory="expression"/>
+    <gomcompile example="${poly}"/>
     <tomcompile example="${poly}"/>
     <javacompile example="${poly}"/>
   </target>

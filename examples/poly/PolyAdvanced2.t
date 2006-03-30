@@ -33,19 +33,38 @@ import aterm.*;
 import aterm.pure.*;
 import tom.library.traversal.*;
 
-public class PolyAdvanced2 {
-    
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+public class PolyAdvanced2 extends TestCase {
+ 
   private ATermFactory factory;
   private GenericTraversal traversal;
-  
+
+  ATermAppl t;
+  ATermAppl var1;
+  ATermAppl var2;
+  ATermAppl res;
+
+  public PolyAdvanced2() {
+    t    = `mult(X(),plus(X(),a()));
+    var1 = `X();
+    var2 = `Y();
+    this.factory = new PureFactory();
+    this.traversal = new GenericTraversal();
+  }
+
   public PolyAdvanced2(ATermFactory factory) {
+    t    = `mult(X(),plus(X(),a()));
+    var1 = `X();
+    var2 = `Y();
     this.factory = factory;
     this.traversal = new GenericTraversal();
   }
 
   %include { Poly.signature }
   
-    // Simplified version of differentiate
+  // Simplified version of differentiate
   public ATermAppl differentiate(ATermAppl poly, ATermAppl variable) {
     %match(term poly, term variable) {
       X(), X() -> { return `one(); }
@@ -81,32 +100,35 @@ public class PolyAdvanced2 {
 
 	// Simplification using a traversal function
   public ATermAppl simplify(ATermAppl t) {
-    ATermAppl res = (ATermAppl)replace.apply(t);
-    if(res != t) {
-      res = simplify(res);
+    ATermAppl result = (ATermAppl)replace.apply(t);
+    if(result != t) {
+      result = simplify(result);
     }
-    return res;
+    return result;
   }
   
-  public void run() {
-    ATermAppl t    = `mult(X(),plus(X(),a()));
-    ATermAppl var1 = `X();
-    ATermAppl var2 = `Y();
-    ATermAppl res;
+  public void testX() {
+
     res = differentiate(t,var1);
+    assertSame("diffentiate(mult(X(),plus(X(),a()),X())) is plus(mult(X,plus(1,0)),mult(plus(X,a),1))",res, `plus(mult(X(),plus(one(),zero())),mult(plus(X(),a()),one())));
     System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
     res = simplify(res);
+    assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1)) is plus(X,plus(X,a))",res, `plus(X(),plus(X(),a())));
     System.out.println("Simplified form is:\n\t" + res);
-    
+}
+
+  public void testY() {
+
     res = differentiate(t,var2);
+    assertSame("differentiate(mult(X(),plus(X(),a()),Y())) is plus(mult(X,plus(0,0)),mult(plus(X,a),0))", res, `plus(mult(X(),plus(zero(),zero())),mult(plus(X(),a()),zero())));
     System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
     res = simplify(res);
+    assertSame("simplify(mult(X(),plus(X(),a()),Y())) is 0", res, `zero());
     System.out.println("Simplified form is:\n\t" + res);
   }
-  
-  public final static void main(String[] args) {
-    PolyAdvanced2 test = new  PolyAdvanced2(new PureFactory());
-    test.run();
+
+  public static void main(String[] args) {
+    junit.textui.TestRunner.run(new TestSuite(PolyAdvanced2.class));
   }
 }
 
