@@ -44,6 +44,8 @@ Build
 
   To list all the available targets for the build:
   $ ./build.sh -projecthelp
+  
+  NOTE: for Windows, just use "build.bat" instead of "build.sh"
 
 Setup
 -----
@@ -67,3 +69,7 @@ to do:
 (csh)
   set TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
   setenv CLASSPATH ${TOM_LIB}:${CLASSPATH}
+
+(windows)
+  The TOM_LIB variable is automatically set by the script "tom.bat" to contain all the jars 
+  in the "%TOM_HOME%\lib" folder.	  
