@@ -26,7 +26,7 @@ syn match gomOperator "%match"
 syn region gomType start="\w" end=/=/me=s-1 oneline
 syn region gomBrackets start="{" end="}" contains=gomArrow,gomOperator,gomBackquote
 
-syn keyword gomHook make_before make_insert 
+syn keyword gomHook make make_before make_insert 
 syn region gomType start=":"ms=e+1 end=/[),]/me=s-1 contains=ALLBUT,gomHook
 
 highlight link gomPreproc   Preproc
