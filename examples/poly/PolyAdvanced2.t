@@ -29,49 +29,43 @@
 
 package poly;
 
-import aterm.*;
-import aterm.pure.*;
-import tom.library.traversal.*;
+import poly.poly.*;
+import poly.poly.types.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.Identity;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
+
 public class PolyAdvanced2 extends TestCase {
  
-  private ATermFactory factory;
-  private GenericTraversal traversal;
-
-  ATermAppl t;
-  ATermAppl var1;
-  ATermAppl var2;
-  ATermAppl res;
+  Term t;
+  Term var1;
+  Term var2;
+  Term res;
+  VisitableVisitor rule;
 
   public PolyAdvanced2() {
     t    = `mult(X(),plus(X(),a()));
     var1 = `X();
     var2 = `Y();
-    this.factory = new PureFactory();
-    this.traversal = new GenericTraversal();
+    rule = `Simplify();
   }
 
-  public PolyAdvanced2(ATermFactory factory) {
-    t    = `mult(X(),plus(X(),a()));
-    var1 = `X();
-    var2 = `Y();
-    this.factory = factory;
-    this.traversal = new GenericTraversal();
-  }
-
-  %include { Poly.signature }
+  %include { poly/Poly.tom }
+  %include { mutraveler.tom }
   
   // Simplified version of differentiate
-  public ATermAppl differentiate(ATermAppl poly, ATermAppl variable) {
-    %match(term poly, term variable) {
+  public Term differentiate(Term poly, Term variable) {
+    %match(Term poly, Term variable) {
       X(), X() -> { return `one(); }
       Y(), Y() -> { return `one(); }
       plus(a1,a2), var  -> { return `plus(differentiate(a1, var),differentiate(a2, var)); }
       mult(a1,a2), var  -> { 
-        ATermAppl res1, res2;
+        Term res1, res2;
         res1 =`mult(a1, differentiate(a2, var));
         res2 =`mult(a2, differentiate(a1, var));
         return `plus(res1,res2);
@@ -80,31 +74,16 @@ public class PolyAdvanced2 extends TestCase {
     return `zero();
   }
 
-  public ATermAppl simplifyFunction(ATermAppl t) {
-    %match(term t) {
-      plus(zero(),x) -> { return `x; }
-      plus(x,zero()) -> { return `x; }
-      mult(one(),x)  -> { return `x; }
-      mult(x,one())  -> { return `x; }
-      mult(zero(),_) -> { return `zero(); }
-      mult(_,zero()) -> { return `zero(); }
-    }
-		return (ATermAppl) traversal.genericTraversal(t,replace); 
-  }
+  %strategy Simplify() extends `Identity() {
 
-	Replace1 replace = new Replace1() {
-		public ATerm apply(ATerm t) {
-			return simplifyFunction((ATermAppl)t);
-		}
-	};
-
-	// Simplification using a traversal function
-  public ATermAppl simplify(ATermAppl t) {
-    ATermAppl result = (ATermAppl)replace.apply(t);
-    if(result != t) {
-      result = simplify(result);
+    visit Term {
+      plus(zero(),x) -> { return `x;}
+      plus(x,zero()) -> { return `x;}
+      mult(one(),x)  -> { return `x;}
+      mult(x,one())  -> { return `x;}
+      mult(zero(),_) -> { return `zero();}
+      mult(_,zero()) -> { return `zero();}
     }
-    return result;
   }
   
   public void testX() {
@@ -112,17 +91,28 @@ public class PolyAdvanced2 extends TestCase {
     res = differentiate(t,var1);
     assertSame("diffentiate(mult(X(),plus(X(),a()),X())) is plus(mult(X,plus(1,0)),mult(plus(X,a),1))",res, `plus(mult(X(),plus(one(),zero())),mult(plus(X(),a()),one())));
     System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
-    res = simplify(res);
+
+    try{
+      res = (Term)MuTraveler.init(`BottomUp(rule)).visit(res);
+    } catch (VisitFailure e) {
+      System.out.println("reduction failed on: " + res);
+    }
     assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1)) is plus(X,plus(X,a))",res, `plus(X(),plus(X(),a())));
     System.out.println("Simplified form is:\n\t" + res);
-}
+  }
 
   public void testY() {
 
     res = differentiate(t,var2);
     assertSame("differentiate(mult(X(),plus(X(),a()),Y())) is plus(mult(X,plus(0,0)),mult(plus(X,a),0))", res, `plus(mult(X(),plus(zero(),zero())),mult(plus(X(),a()),zero())));
     System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
-    res = simplify(res);
+
+    try{
+      res = (Term)MuTraveler.init(`BottomUp(rule)).visit(res);
+    } catch (VisitFailure e) {
+      System.out.println("reduction failed on: " + res);
+    }
+
     assertSame("simplify(mult(X(),plus(X(),a()),Y())) is 0", res, `zero());
     System.out.println("Simplified form is:\n\t" + res);
   }
