@@ -135,6 +135,11 @@ If you come from the
 * poly
   Compute the derivative of a polynom
   Concept: mapping, apigen, generic traversal, rewrite system  
+  Examples:
+    _Simple:   Show how to differentiate a polynom.
+    _Advanced: Extended version with non-linearity and disjunction. 
+    _Apigen:   Same as before, but based on ApiGen.
+	             Also introduce the notion of rewrite rule system.
 
 * pqueens
   Parallel version of the N-Queens problem
