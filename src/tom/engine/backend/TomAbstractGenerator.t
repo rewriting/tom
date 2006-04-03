@@ -366,16 +366,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
-        `buildFunctionBegin(deep, tomName, varList, moduleName);
-        return;
-      }
-
-      MakeFunctionEnd() -> {
-        `buildFunctionEnd(deep);
-        return;
-      }
-
       AssignMatchSubject(var@Variable[option=option],exp) -> {
         `buildAssignVar(deep, var, option, exp, moduleName);
         return;
@@ -813,8 +803,6 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException;
 
   protected abstract void buildFunctionCall(int deep, String name, TomList argList, String moduleName)  throws IOException;
-  protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList, String moduleName) throws IOException; 
-  protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException; 
 
   /*buildClass is not abstract since only Java backend supports class

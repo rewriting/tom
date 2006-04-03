@@ -155,41 +155,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.writeCloseBrace();
   }
 
-  protected void buildFunctionBegin(int deep, String tomName, TomList varList, String moduleName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-    String glType = getTLType(getSymbolCodomain(tomSymbol));
-    String name = tomSymbol.getAstName().getString();
-    
-    output.write(deep,glType + " " + name + "(");
-    TomTerm localVar;
-    while(!varList.isEmpty()) {
-      localVar = varList.getHead();
-      matchBlock: {
-        %match(TomTerm localVar) {
-          v@Variable[astType=type2] -> {
-            output.write(deep,getTLType(`type2) + " ");
-            generate(deep,`v,moduleName);
-            break matchBlock;
-          }
-          _ -> {
-            System.out.println("MakeFunction: strange term: " + localVar);
-            throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
-          }
-        }
-      }
-      varList = varList.getTail();
-      if(!varList.isEmpty()) {
-        output.write(deep,", ");
-        
-      }
-    }
-    output.writeln(deep,") {");
-  }
-  
-  protected void buildFunctionEnd(int deep) throws IOException {
-    output.writeln(deep,"}");
-  }
-
   protected void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException {
     output.write("!(");
     generateExpression(deep,exp,moduleName);

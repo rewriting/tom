@@ -433,7 +433,7 @@ ruleConstruct [LinkedList list] throws TomException
             );
 
             // call the tomparser for the construct
-            Instruction ruleSet = tomparser.ruleConstruct(ot);
+            Declaration ruleSet = tomparser.ruleConstruct(ot);
             list.add(ruleSet);
         }
     ;

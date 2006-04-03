@@ -145,6 +145,11 @@ public class TomSyntaxChecker extends TomChecker {
             `verifyStrategy(sName, extendsTerm, visitList, orgTrack);
             return true;//case when %match in %strategy
           }
+          RuleSet(list, optionList) -> {
+            /*  TOM RULE STRUCTURE*/
+            `verifyRule(list, optionList);
+            return false;
+          }
           // Types
           TypeTermDecl(Name(tomName), declarationList, orgTrack) -> {
             `verifyTypeDecl(TomSyntaxChecker.TYPE_TERM, tomName, declarationList, orgTrack);
@@ -169,11 +174,6 @@ public class TomSyntaxChecker extends TomChecker {
             /*  TOM MATCH STRUCTURE*/
             `verifyMatch(matchArgsList, patternInstructionList, list);
             return true;//case when nested %match
-          }
-          RuleSet(list, optionList) -> {
-            /*  TOM RULE STRUCTURE*/
-            `verifyRule(list, optionList);
-            return false;
           }
         } 
         return true;

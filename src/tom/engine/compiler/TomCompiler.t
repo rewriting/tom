@@ -233,6 +233,36 @@ matchBlock: {
 					return newMatch;
 				}
 
+      } // end match
+          
+      %match(Declaration subject) {
+        Strategy(name,extendsTerm,visitList,orgTrack) -> {
+          DeclarationList l = `concDeclaration();//represents compiled Strategy
+          TomVisitList jVisitList = `visitList;
+          TomForwardType visitorFwd = null;
+          while (!jVisitList.isEmpty()){
+            TomList subjectListAST = empty();
+            TomVisit visit = jVisitList.getHead();
+            %match(TomVisit visit) {
+              VisitTerm(vType@Type[tomType = ASTTomType(type)],patternInstructionList,_) -> {
+                if (visitorFwd == null) {//first time in loop
+                  visitorFwd = symbolTable().getForwardType(`type);//do the job only once
+                }
+                TomTerm arg = `Variable(option(),Name("tom__arg"),vType,concConstraint());//arg subjectList
+                subjectListAST = append(arg,subjectListAST);
+                String funcName = "visit_" + `type;//function name
+                Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
+                //return default strategy.visit(arg)
+                Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),subjectListAST));
+                InstructionList instructions = `concInstruction(matchStatement, returnStatement);
+                l = `concDeclaration(l*,FunctionDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("jjtraveler.VisitFailure"),AbstractBlock(instructions)));
+              }
+            }
+            jVisitList = jVisitList.getTail();
+          }
+          return `Class(name,visitorFwd,extendsTerm,preProcessingDeclaration(AbstractDecl(l)));
+        }
+
 				RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(RecordAppl[nameList=(Name(tomName))])],_),optionList) -> {
 					TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
 					TomName name = tomSymbol.getAstName();
@@ -272,43 +302,17 @@ matchBlock: {
 						ruleList = ruleList.getTail();
 					}
 
-					Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,SubjectList(subjectListAST));
 					Instruction matchAST = `Match(SubjectList(subjectListAST),
 							patternInstructionList, optionList);
 					//return type `name(subjectListAST)
 					Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(subjectListAST,replace_preProcessing_makeTerm),moduleName));
-					InstructionList l = `concInstruction(makeFunctionBeginAST,matchAST,buildAST,MakeFunctionEnd());
-					return preProcessingInstruction(`AbstractBlock(l));
+					Instruction functionBody = preProcessingInstruction(`AbstractBlock(concInstruction(matchAST,buildAST)));
+
+          //find codomain    
+          TomType codomain = getSymbolCodomain(tomSymbol);
+
+					return `FunctionDef(name,subjectListAST,codomain,EmptyType(),functionBody);
 				}
-      } // end match
-          
-      %match(Declaration subject) {
-        Strategy(name,extendsTerm,visitList,orgTrack) -> {
-          DeclarationList l = `concDeclaration();//represents compiled Strategy
-          TomVisitList jVisitList = `visitList;
-          TomForwardType visitorFwd = null;
-          while (!jVisitList.isEmpty()){
-            TomList subjectListAST = empty();
-            TomVisit visit = jVisitList.getHead();
-            %match(TomVisit visit) {
-              VisitTerm(vType@Type[tomType = ASTTomType(type)],patternInstructionList,_) -> {
-                if (visitorFwd == null) {//first time in loop
-                  visitorFwd = symbolTable().getForwardType(`type);//do the job only once
-                }
-                TomTerm arg = `Variable(option(),Name("tom__arg"),vType,concConstraint());//arg subjectList
-                subjectListAST = append(arg,subjectListAST);
-                String funcName = "visit_" + `type;//function name
-                Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
-                //return default strategy.visit(arg)
-                Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),subjectListAST));
-                InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-                l = `concDeclaration(l*,FunctionDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("jjtraveler.VisitFailure"),AbstractBlock(instructions)));
-              }
-            }
-            jVisitList = jVisitList.getTail();
-          }
-          return `Class(name,visitorFwd,extendsTerm,preProcessingDeclaration(AbstractDecl(l)));
-        }
       }//end match
 
 			/*

@@ -483,7 +483,7 @@ strategyVisit [LinkedList list] throws TomException
 
 
 // The %rule construct
-ruleConstruct [Option ot] returns [Instruction result] throws TomException
+ruleConstruct [Option ot] returns [Declaration result] throws TomException
 {
     result = null;
     TomRuleList ruleList = `emptyTomRuleList();
