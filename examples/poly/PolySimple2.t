@@ -32,16 +32,35 @@ package poly;
 import aterm.*;
 import aterm.pure.*;
 
-public class PolySimple2 {
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+public class PolySimple2 extends TestCase {
     
   private ATermFactory factory;
   private AFun fplus, fmult;
 
-  public PolySimple2(ATermFactory factory) {
-    this.factory = factory;
-    fmult = factory.makeAFun("mult", 2, false);
-    fplus = factory.makeAFun("plus", 2, false);	   
-  }
+    ATerm t;
+    ATerm var1;
+    ATerm var2;
+    ATerm res;
+
+    public PolySimple2() {
+      this.factory = new PureFactory();
+      fmult = factory.makeAFun("mult", 2, false);
+      fplus = factory.makeAFun("plus", 2, false);	   
+      t = `mult(X(),plus(X(),a()));
+      var1 = `X();
+      var2 = `Y();
+    }
+    public PolySimple2(ATermFactory factory) {
+      this.factory = factory;
+      fmult = factory.makeAFun("mult", 2, false);
+      fplus = factory.makeAFun("plus", 2, false);	   
+      t = `mult(X(),plus(X(),a()));
+      var1 = `X();
+      var2 = `Y();
+    }
 
     // Everything is still an ATerm:
   %typeterm term {
@@ -134,26 +153,26 @@ public class PolySimple2 {
     return t;
   }
 
-  public void run() {
-    ATerm t = `mult(X(),plus(X(),a()));
-    ATerm var1 = `X();
-    ATerm var2 = `Y();
-    ATerm res = null;
+  public void testX() {
 	
     res = differentiate(t, var1 );
     System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
+    assertSame("differentiate(mult(X,plus(X,a)),X) is plus(mult(X,plus(1,0)),mult(plus(X,a),1))",`plus(mult(X(),plus(one(),zero())),mult(plus(X(),a()),one())),res);
     res = simplify(res);
     System.out.println("Simplified form is:\n\t" + res);
-
-    res = differentiate(t, var2 );
+    assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1))) is plus(mult(X,1),plus(X,a))",`plus(mult(X(),one()),plus(X(),a())),res);
+}
+  public void testY() {
+    res = differentiate(t, var2);
     System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
+    assertSame("differentiate(mult(X,plus(X,a)),Y) is plus(mult(X,plus(0,0)),mult(plus(X,a),0))",`plus(mult(X(),plus(zero(),zero())),mult(plus(X(),a()),zero())),res);
     res = simplify(res);
     System.out.println("Simplified form is:\n\t" + res);
+    assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1))) is plus(mult(X,0),0)",`plus(mult(X(),zero()),zero()),res);
   }
     
   public final static void main(String[] args) {
-    PolySimple2 test = new  PolySimple2(new PureFactory());
-    test.run();
+    junit.textui.TestRunner.run(new TestSuite(PolyAdvanced1.class));
   }
 }
 
