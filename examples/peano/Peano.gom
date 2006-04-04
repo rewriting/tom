@@ -1,0 +1,8 @@
+  module Peano
+    imports 
+    public
+      
+    abstract syntax
+      Nat = zero()
+          | suc(pred:Nat) 
+
