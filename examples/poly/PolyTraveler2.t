@@ -29,51 +29,23 @@
 
 package poly;
 
-import aterm.*;
-import aterm.pure.PureFactory;
 import poly.expression.*;
 import poly.expression.types.*;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import tom.library.strategy.mutraveler.Fail;
 import jjtraveler.reflective.VisitableVisitor;
 
-public class PolyTraveler2 {
+public class PolyTraveler2 extends TestCase {
 
-  private Factory factory;
-
-  public PolyTraveler2(Factory factory) {
-    this.factory = factory;
-  }
-  public Factory getExpressionFactory() {
-    return factory;
+  public PolyTraveler2() {
   }
 
   %include { expression/expression.tom }
   %include{ mutraveler.tom }
 
-  public final static void main(String[] args) {
-    PolyTraveler2 test = new PolyTraveler2(Factory.getInstance(new PureFactory()));
-    test.run();
-  }
-
-  public void run() {
-    Expression var = `variable("X");
-    //Expression res = `mult(plus(var,zero()),one());
-    Expression t = `mult(one(),exp(var));
-
-    VisitableVisitor v = `SimplifyPlus();
-    //VisitableVisitor bu = `OnceBottomUp(v);
-    VisitableVisitor bu = `BottomUp(Try(v));
-    try {
-      System.out.println(" bu.visit(" + t + ")");
-      Expression res = (Expression)bu.visit(t);
-      System.out.println("Simplified form is " + res);
-    } catch (jjtraveler.VisitFailure e) {
-      System.out.println("WARNING: VisitFailure: " + e.getMessage());
-    }
-
-  }
-  
   %strategy SimplifyPlus() extends `Fail() {
 
     visit Expression {
@@ -87,35 +59,26 @@ public class PolyTraveler2 {
     }
   }
 
-  /*class SimplifyPlus extends poly.expression.VisitableFwd {
-    public SimplifyPlus() {
-      //super(new Identity());
-      super(new Fail());
-    }
-    
-    public poly.expression.types.Expression visit_Expression(poly.expression.types.Expression arg) throws jjtraveler.VisitFailure { 
-      //System.out.println("arg = " + arg);
-      %match(Expression arg) {
-        exp(zero())    -> { return `one(); }
-        plus(zero(),x) -> { return `x; }
-        plus(x,zero()) -> { return `x; }
-        mult(one(),x)  -> { return `x; }
-        mult(x,one())  -> { return `x; }
-        mult(zero(),_) -> { return `zero(); }
-        mult(_,zero()) -> { return `zero(); }
-      }
-      //System.out.println("default: " + arg);
-      //return arg;
-      throw new jjtraveler.VisitFailure("default");
-    }
+  public void testSimplifyPlus() {
+    Expression var = `variable("X");
+    //Expression res = `mult(plus(var,zero()),one());
+    Expression t = `mult(one(),exp(var));
 
+    VisitableVisitor v = `SimplifyPlus();
+    //VisitableVisitor bu = `OnceBottomUp(v);
+    VisitableVisitor bu = `BottomUp(Try(v));
+    try {
+      System.out.println(" bu.visit(" + t + ")");
+      Expression res = (Expression)bu.visit(t);
+      System.out.println("Simplified form is " + res);
+      assertSame("bu.visit(mult(one,exp(variable(\"X\")))) is exp(variable(\"X\"))",`exp(variable("X")),res);
+    } catch (jjtraveler.VisitFailure e) {
+      System.out.println("WARNING: VisitFailure: " + e.getMessage());
+    }
   }
-*/
-
+  
+  public final static void main(String[] args) {
+    junit.textui.TestRunner.run(new TestSuite(PolyTraveler2.class));
+  }
 }
-
- 
-
-
-
 

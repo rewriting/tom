@@ -29,49 +29,25 @@
 
 package poly;
 
-import aterm.*;
-import aterm.pure.PureFactory;
 import poly.expression.*;
 import poly.expression.types.*;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import tom.library.strategy.mutraveler.Identity;
 
 import jjtraveler.VisitFailure;
 import jjtraveler.reflective.VisitableVisitor;
 
-public class PolyTraveler1 {
+public class PolyTraveler1 extends TestCase {
 
-  private Factory factory;
-
-  public PolyTraveler1(Factory factory) {
-    this.factory = factory;
-  }
-  public Factory getExpressionFactory() {
-    return factory;
+  public PolyTraveler1() {
   }
 
   %include { expression/expression.tom }
   %include{ mutraveler.tom }
     
-  public void run() {
-    Expression t    = `mult(variable("x"),plus(variable("x"),constant("a")));
-    VisitableVisitor v = `SimplifyPlus();
-    //v.setTerm(t);
-    VisitableVisitor bu = `BottomUp(v);
-    try {
-    System.out.println(" bu.visit(" + t + ")");
-    bu.visit(t);
-    } catch (jjtraveler.VisitFailure e) {
-      System.out.println("WARNING: VisitFailure: " + e.getMessage());
-    }
-
-  }
-  
-  public final static void main(String[] args) {
-    PolyTraveler1 test = new PolyTraveler1(Factory.getInstance(new PureFactory()));
-    test.run();
-  }
-
   %strategy SimplifyPlus() extends `Identity() { 
 
     visit Expression {
@@ -85,37 +61,22 @@ public class PolyTraveler1 {
       } 
     }
   }
-
-
-/*  class SimplifyPlus extends poly.expression.VisitableFwd {
-    private ATerm term;
-    public void setTerm(ATerm t) {
-      term =t;
+  public void testSimplifyPlus() {
+    Expression t    = `mult(variable("x"),plus(variable("x"),constant("a")));
+    VisitableVisitor v = `SimplifyPlus();
+    //v.setTerm(t);
+    VisitableVisitor bu = `BottomUp(v);
+    try {
+    System.out.println(" bu.visit(" + t + ")");
+    bu.visit(t);
+    } catch (jjtraveler.VisitFailure e) {
+      System.out.println("WARNING: VisitFailure: " + e.getMessage());
     }
-
-    public ATerm getTerm() {
-      return term;
-    }
-
-    public SimplifyPlus() {
-      super(new Identity());
-    }
-
-    public poly.expression.types.Expression visit_Expression_Plus(poly.expression.types.expression.Plus arg) { //throws jjtraveler.VisitFailure {
-      System.out.println("plus = " + arg);
-      return arg;
-    }
-
-    public poly.expression.types.Expression visit_Expression_Zero(poly.expression.types.expression.Zero arg) { 
-      System.out.println("zero = " + arg);
-      return arg;
-    }
-
+    assertSame("does nothing so nothing to assert",`mult(variable("x"),plus(variable("x"),constant("a"))),t);
   }
-*/
-
+  
+  public final static void main(String[] args) {
+    junit.textui.TestRunner.run(new TestSuite(PolyTraveler1.class));
+  }
 }
-
-
-
 
