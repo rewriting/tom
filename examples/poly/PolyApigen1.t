@@ -29,15 +29,19 @@
 
 package poly;
 
-import aterm.*;
-import aterm.pure.*;
 import poly.expression.*;
 import poly.expression.types.*;
 
-public class PolyApigen1 {
-  private Factory factory;
-  public PolyApigen1(Factory factory) {
-    this.factory = factory;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+public class PolyApigen1 extends TestCase {
+
+//modify it to change the complexity of t 
+//beware: if you change this constant, junit tests have to be modified as well.
+private final static int COMPLEXITY = 2;
+
+  public PolyApigen1() {
   }
 
   /*
@@ -59,10 +63,7 @@ public class PolyApigen1 {
       number(integer:int)                    -> Expression
   }
   */
-  public Factory getExpressionFactory() {
-    return factory;
-  }
- 
+
   %include { expression/expression.tom }
 
   public Expression differentiate(Expression e, Expression v) {
@@ -104,28 +105,26 @@ public class PolyApigen1 {
     return res;
   }
 
-  public void run(int n) {
-      // a literal string cannot be used in backquoted terms
-    String X = "X";
-    Expression var = `variable(X);
+  public void testDerivation() {
+    Expression var = `variable("X");
     Expression t = var;
       // build a tower of exponential
-    for(int i=0 ; i<n ; i++) {
+    for(int i=0 ; i<COMPLEXITY ; i++) {
       t = `exp(t);
     }
       // compute the n-th derivative form
     Expression res = t;
-    for(int i=0 ; i<n ; i++) {
+    for(int i=0 ; i<COMPLEXITY ; i++) {
       res = differentiate(res,var);
     }
-    
+    assertSame("Derivative form of exp(exp(variable(\"X\"))) wrt. variable(\"X\") ",`plus(mult(mult(one(),exp(variable("X"))),mult(mult(one(),exp(variable("X"))),exp(exp(variable("X"))))),mult(exp(exp(variable("X"))),plus(mult(one(),mult(one(),exp(variable("X")))),mult(exp(variable("X")),zero())))),res);
     System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
     res = simplify(res);
+    assertSame("Simplified form is:",`plus(mult(exp(variable("X")),mult(exp(variable("X")),exp(exp(variable("X"))))),mult(exp(exp(variable("X"))),exp(variable("X")))),res);
     System.out.println("Simplified form is:\n\t" + res);
   }
     
   public final static void main(String[] args) {
-    PolyApigen1 test = new  PolyApigen1(Factory.getInstance(new PureFactory()));
-    test.run(2);
+    junit.textui.TestRunner.run(new TestSuite(PolyApigen1.class));
   }
 }

@@ -29,19 +29,19 @@
 
 package poly;
 
-import aterm.*;
-import aterm.pure.*;
 import poly.expression.*;
 import poly.expression.types.*;
 
-public class PolyApigen2 {
-  private Factory factory;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-  public PolyApigen2(Factory factory) {
-    this.factory = factory;
-  }
-  public Factory getExpressionFactory() {
-    return factory;
+public class PolyApigen2 extends TestCase {
+
+//modify it to change the complexity of t 
+//beware: if you change this constant, junit tests have to be modified as well.
+private final static int COMPLEXITY = 2;
+
+  public PolyApigen2() {
   }
 
   %include { expression/expression.tom }
@@ -88,34 +88,36 @@ public class PolyApigen2 {
     return res;
   }
 
-  public void run(int n) {
-      // a literal string cannot be used in backquoted terms
-    String X = "X";
-    Expression var = `variable(X);
+  public void testX() {
+    Expression var = `variable("X");
     Expression t = var;
+
       // build a tower of exponential
-    for(int i=0 ; i<n ; i++) {
+    for(int i=0 ; i<COMPLEXITY ; i++) {
       t = `exp(t);
     }
       // compute the n-th derivative form
     Expression res = t;
-    for(int i=0 ; i<n ; i++) {
+    for(int i=0 ; i<COMPLEXITY ; i++) {
       res = differentiate(res,var);
     }
     
     System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
+    assertSame("Derivative form of exp(exp(variable(\"X\"))) wrt. variable(\"X\") is:",`plus(mult(mult(one(),exp(variable("X"))),mult(mult(one(),exp(variable("X"))),exp(exp(variable("X"))))),mult(exp(exp(variable("X"))),plus(mult(one(),mult(one(),exp(variable("X")))),mult(exp(variable("X")),zero())))),res);
     res = simplify(res);
     System.out.println("Simplified form is:\n\t" + res);
+    assertSame("Simplified form is:", `plus(mult(exp(variable("X")),mult(exp(variable("X")),exp(exp(variable("X"))))),mult(exp(exp(variable("X"))),exp(variable("X")))),res);
    
     t = `mult(variable("X"),plus(variable("X"),constant("a")));
     res = differentiate(t,res);  
     System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
+    assertSame("Derivative form of mult(variable(\"X\"),plus(variable(\"X\"),constant(\"a\"))) wrt. variable(\"X\") is:        plus(mult(variable(\"X\"),plus(zero,zero)),mult(plus(variable(\"X\"),constant(\"a\")),zero))",`plus(mult(variable("X"),plus(zero(),zero())),mult(plus(variable("X"),constant("a")),zero())),res);
     res = simplify(res);
     System.out.println("Simplified form is:\n\t" + res);
+assertSame("Simplified form is: zero",`zero(),res);
   }
     
   public final static void main(String[] args) {
-    PolyApigen2 test = new  PolyApigen2(Factory.getInstance(new PureFactory()));
-    test.run(2);
+    junit.textui.TestRunner.run(new TestSuite(PolyApigen2.class));
   }
 }
