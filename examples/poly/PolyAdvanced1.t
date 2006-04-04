@@ -29,44 +29,35 @@
 
 package poly;
 
-import aterm.*;
-import aterm.pure.*;
+import poly.poly.*;
+import poly.poly.types.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class PolyAdvanced1 extends TestCase {
     
-  private ATermFactory factory;
-  ATermAppl t;
-  ATermAppl var1;
-  ATermAppl var2;
-  ATermAppl res;
-
-  public PolyAdvanced1(ATermFactory factory) {
-    this.factory = factory;
-    t    = `mult(X(),plus(X(),a()));
-    var1 = `X();
-    var2 = `Y();
-  }
+  Term t;
+  Term var1;
+  Term var2;
+  Term res;
 
   public PolyAdvanced1() {
-    this.factory = new PureFactory();
     t    = `mult(X(),plus(X(),a()));
     var1 = `X();
     var2 = `Y();
   }
 
-  %include { Poly.signature }
+  %include { poly/Poly.tom }
   
-    // Everything is now AtermAppl to avoid casting:
-  public ATermAppl differentiate(ATermAppl poly, ATermAppl variable) {
-    %match(term poly, term variable) {
+    // Everything is now of type Term to avoid casting:
+  public Term differentiate(Term poly, Term variable) {
+    %match(Term poly, Term variable) {
       X(), X() -> { return `one(); }
       Y(), Y() -> { return `one(); }
       plus(a1,a2), var  -> { return `plus(differentiate(a1, var),differentiate(a2, var)); }
       mult(a1,a2), var  -> { 
-        ATermAppl res1, res2;
+        Term res1, res2;
         res1 =`mult(a1, differentiate(a2, var));
         res2 =`mult(a2, differentiate(a1, var));
         return `plus(res1,res2);
@@ -80,10 +71,10 @@ public class PolyAdvanced1 extends TestCase {
   }
     
     // Improved simplification
-  public ATermAppl simplify(ATermAppl t) {
-    ATermAppl result = t;
+  public Term simplify(Term t) {
+    Term result = t;
     block:{
-      %match(term t) {
+      %match(Term t) {
         plus(zero(), x) -> { result = simplify(`x);  break block; }
         plus(x, zero()) -> { result = simplify(`x);  break block; }
         mult(one(), x)  -> { result = simplify(`x);  break block; }
