@@ -38,7 +38,7 @@ public class AddressBookVas {
       // extension of adt syntax
       //
     module person
-      imports //int str
+      imports int String
       
     public
       sorts Date Person PersonList

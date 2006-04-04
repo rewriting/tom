@@ -1,9 +1,7 @@
 module Data
-imports
+imports int String
 
-public 
-sorts Date Person PersonList
 abstract syntax
-date(year:int, month:int, day:int) -> Date
-person(firstname:String, lastname:String, birthdate:Date) -> Person
-concPerson( Person* ) -> PersonList
+Date = date(year:int, month:int, day:int)
+Person = person(firstname:String, lastname:String, birthdate:Date)
+PersonList = concPerson( Person* )
