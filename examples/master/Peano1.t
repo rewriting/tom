@@ -4,14 +4,10 @@ public class Peano1 {
 
   %gom {
     module Peano
-    imports 
-    public
-      sorts Nat
-      
     abstract syntax
-      zero() -> Nat
-      suc(pred:Nat) -> Nat
-      plus(x1:Nat, x2:Nat) -> Nat
+    Nat = zero()
+        | suc(pred:Nat)
+        | plus(x1:Nat, x2:Nat)
    }
 
     // rule plus

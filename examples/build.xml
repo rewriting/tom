@@ -504,8 +504,7 @@
   </target>
 
   <target name="peano" depends="init">
-    <adtcompile example="${peano}"
-                factory="${peano}"/>
+    <gomcompile example="${peano}"/>
     <tomcompile example="${peano}"/>
     <javacompile example="${peano}"/>
   </target>
@@ -863,8 +862,7 @@
         <include name="${p3p}/*.xml"/>
 
         <include name="${peano}/README"/>
-        <include name="${peano}/*.adt"/>
-        <include name="${peano}/*.vas"/>
+        <include name="${peano}/*.gom"/>
         <include name="${peano}/*.t"/>
 
         <include name="${pnspk}/README"/>
