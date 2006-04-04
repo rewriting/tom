@@ -1,5 +1,5 @@
 module Ast
-imports 
+imports String 
 public
 
 abstract syntax
