@@ -85,6 +85,8 @@ public class GomExpander {
           result = `concGomModule(result*, importedModule);
           alreadyParsedModule.add(moduleNameName);
           newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
+        } else {
+          environment().markUsedBuiltin(moduleName); 
         }
       }
       moduleToAnalyse = newModuleToAnalyse;

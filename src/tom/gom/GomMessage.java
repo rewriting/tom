@@ -132,6 +132,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Some sorts are empty: {0}");
   public static final GomMessage malformedProduction =
     new GomMessage("Ill formed production, invalid fields: {0}");
+  public static final GomMessage unknownSort =
+    new GomMessage("Sort {0} not found: missing include ?");
 
   // GomCompiler
   public static final GomMessage compilationIssue =

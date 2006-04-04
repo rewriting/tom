@@ -85,17 +85,28 @@ public class GomEnvironment {
     builtinSorts.put("aterm",`ClassName("aterm","ATerm"));
     builtinSorts.put("atermlist",`ClassName("aterm","ATermList"));
   }
+  private Map usedBuiltinSorts = new HashMap();
 
   /**
    * Check is the argument is a builtin module name
    * Those are not parsed, since they only declare
    * operators for the tom signature, with no support
    */
+  public void markUsedBuiltin(String moduleName) {
+    if (builtinSorts.containsKey(moduleName)) {
+      usedBuiltinSorts.put(moduleName,builtinSorts.get(moduleName));
+    } else {
+      throw new GomRuntimeException("Not a builtin module: "+moduleName);
+    }
+  }
   public boolean isBuiltin(String moduleName) {
     return builtinSorts.containsKey(moduleName);
   }
+  public boolean isBuiltinSort(String sortName) {
+    return usedBuiltinSorts.containsKey(sortName);
+  }
   public boolean isBuiltinClass(ClassName className) {
-    return builtinSorts.containsValue(className);
+    return usedBuiltinSorts.containsValue(className);
   }
   public SortDecl builtinSort(String sortname) {
     if (isBuiltin(sortname)) {
@@ -104,16 +115,22 @@ public class GomEnvironment {
       throw new GomRuntimeException("Not a builtin sort: "+sortname);
     }
   }
+
   public Map builtinSortClassMap() {
     Map sortClass = new HashMap();
-    Iterator it = builtinSorts.keySet().iterator();
+    Iterator it = usedBuiltinSorts.keySet().iterator();
     while(it.hasNext()) {
       String name = (String) it.next();
-      sortClass.put(`BuiltinSortDecl(name),(ClassName)builtinSorts.get(name));
+      sortClass.put(`BuiltinSortDecl(name),(ClassName)usedBuiltinSorts.get(name));
     }
     return sortClass;
   }
 
+  /**
+   * Keep track of the file name (full canonical path) of the last Tom mapping
+   * Gom generated. This is used to allow Tom to include this mapping when
+   * using %gom
+   */
   public String getLastGeneratedMapping() {
     return lastGeneratedMapping;
   }

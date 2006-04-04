@@ -285,7 +285,7 @@ public class GomTypeExpander {
         "GomTypeExpander::getOperatorDecl: wrong Production?");
   }
   private SortDecl declFromTypename(String typename, SortDeclList sortDeclList) {
-    if (environment().isBuiltin(typename)) {
+    if (environment().isBuiltinSort(typename)) {
       return environment().builtinSort(typename);
     }
     %match(SortDeclList sortDeclList) {
@@ -295,8 +295,10 @@ public class GomTypeExpander {
         }
       }
     }
-    throw new GomRuntimeException(
-        "GomTypeExpander::declFromTypename: type name not found");
+    getLogger().log(Level.SEVERE, GomMessage.unknownSort.getMessage(),
+        new Object[]{typename});
+    /* If the sort is not known, assume it is a builtin */
+    return `BuiltinSortDecl(typename);
   }
   TypedProduction typedProduction(FieldList domain, SortDeclList sortDeclList) {
     %match(FieldList domain) {
@@ -388,7 +390,8 @@ public class GomTypeExpander {
     throw new GomRuntimeException("Module "+ modname +" not present");
   }
 
-  private Collection getTransitiveClosureImports(GomModule module, GomModuleList moduleList) {
+  private Collection getTransitiveClosureImports(GomModule module,
+                                                 GomModuleList moduleList) {
     Set imported = new HashSet();
     imported.addAll(getImportedModules(module));
 
@@ -412,10 +415,12 @@ public class GomTypeExpander {
         Iterator it = getTransitiveClosureImports(`module,moduleList).iterator();
         while(it.hasNext()) {
           GomModuleName importedModuleName = (GomModuleName) it.next();
-          importsModuleDeclList = `concModuleDecl(ModuleDecl(importedModuleName,packagePath),
-                                                  importsModuleDeclList*);
+          importsModuleDeclList = 
+            `concModuleDecl(ModuleDecl(importedModuleName,packagePath),
+                            importsModuleDeclList*);
         }
-        environment().addModuleDependency(`ModuleDecl(name,packagePath),importsModuleDeclList);
+        environment().addModuleDependency(
+            `ModuleDecl(name,packagePath),importsModuleDeclList);
       }
     }
   }
@@ -437,14 +442,14 @@ public class GomTypeExpander {
   private int getLength(ArgList list) {
     %match(ArgList list) {
       concArg() -> { return 0; }
-      concArg(h,t*) -> { return getLength(`t*)+1; }
+      concArg(_,t*) -> { return getLength(`t*)+1; }
     }
     return -1;
   }
   private int getLength(SlotList list) {
     %match(SlotList list) {
       concSlot() -> { return 0; }
-      concSlot(h,t*) -> { return getLength(`t*)+1; }
+      concSlot(_,t*) -> { return getLength(`t*)+1; }
     }
     return -1;
   }
