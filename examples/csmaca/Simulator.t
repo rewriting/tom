@@ -39,16 +39,13 @@ public class Simulator {
 
   %gom {
     module network
-    imports 
-      
-    public
-      sorts Sender List Listes Etat
+    imports int 
       
     abstract syntax      
-      sender(eta:int,tatt:int,nbmess:int,cback:int,write:int) -> Sender
-      concSender(Sender*)                                     -> List
-      concList(x:List,y:List)                                 -> Listes
-      etat(x:int, t:int,y:Listes)                             -> Etat      
+      Sender = sender(eta:int,tatt:int,nbmess:int,cback:int,write:int)
+      List = concSender(Sender*)
+      Listes = concList(x:List,y:List)
+      Etat = etat(x:int, t:int,y:Listes)
   }
  
   public final static void main(String[] args) {
