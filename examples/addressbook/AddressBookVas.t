@@ -40,15 +40,12 @@ public class AddressBookVas {
     module person
       imports int String
       
-    public
-      sorts Date Person PersonList
-
     abstract syntax
-      date( year:int, month:int, day:int ) -> Date
-      person(firstname:String,lastname:String, birthdate:Date) -> Person
-      concPerson( Person* ) -> PersonList
-      bob -> Person
-      alice -> Person
+      Date = date( year:int, month:int, day:int )
+      Person = person(firstname:String,lastname:String, birthdate:Date)
+             | bob()
+             | alice()
+      PersonList = concPerson( Person* )
   }
  
   public AddressBookVas() { }
