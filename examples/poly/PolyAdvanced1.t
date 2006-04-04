@@ -32,11 +32,29 @@ package poly;
 import aterm.*;
 import aterm.pure.*;
 
-public class PolyAdvanced1 {
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+public class PolyAdvanced1 extends TestCase {
     
   private ATermFactory factory;
+  ATermAppl t;
+  ATermAppl var1;
+  ATermAppl var2;
+  ATermAppl res;
+
   public PolyAdvanced1(ATermFactory factory) {
     this.factory = factory;
+    t    = `mult(X(),plus(X(),a()));
+    var1 = `X();
+    var2 = `Y();
+  }
+
+  public PolyAdvanced1() {
+    this.factory = new PureFactory();
+    t    = `mult(X(),plus(X(),a()));
+    var1 = `X();
+    var2 = `Y();
   }
 
   %include { Poly.signature }
@@ -63,44 +81,45 @@ public class PolyAdvanced1 {
     
     // Improved simplification
   public ATermAppl simplify(ATermAppl t) {
-    ATermAppl res = t;
+    ATermAppl result = t;
     block:{
       %match(term t) {
-        plus(zero(), x) -> { res = simplify(`x);  break block; }
-        plus(x, zero()) -> { res = simplify(`x);  break block; }
-        mult(one(), x)  -> { res = simplify(`x);  break block; }
-        mult(x, one())  -> { res = simplify(`x);  break block; }
-        mult(zero(), _) -> { res = `zero();       break block; }
-        mult(_, zero()) -> { res = `zero();       break block; }
-        plus(x,y) -> { res = `plus( simplify(x), simplify(y) ); break block; }
-        mult(x,y) -> { res = `mult( simplify(x), simplify(y) ); break block; }
+        plus(zero(), x) -> { result = simplify(`x);  break block; }
+        plus(x, zero()) -> { result = simplify(`x);  break block; }
+        mult(one(), x)  -> { result = simplify(`x);  break block; }
+        mult(x, one())  -> { result = simplify(`x);  break block; }
+        mult(zero(), _) -> { result = `zero();       break block; }
+        mult(_, zero()) -> { result = `zero();       break block; }
+        plus(x,y) -> { result = `plus( simplify(x), simplify(y) ); break block; }
+        mult(x,y) -> { result = `mult( simplify(x), simplify(y) ); break block; }
       }
     }
-    if(t != res) {
-      res = simplify(res);
+    if(t != result) {
+      result = simplify(result);
     }
-    return res;
+    return result;
   }
 
-  public void run() {
-    ATermAppl t    = `mult(X(),plus(X(),a()));
-    ATermAppl var1 = `X();
-    ATermAppl var2 = `Y();
-    ATermAppl res;
+  public void testX() {
     res = differentiate(t,var1);
     System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
+    assertSame("differentiate(mult(X,plus(X,a)),X) is plus(mult(X,plus(1,0)),mult(plus(X,a),1))",`plus(mult(X(),plus(one(),zero())),mult(plus(X(),a()),one())),res);
     res = simplify(res);
+    assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1))) is plus(X(),plus(X,a))",`plus(X(),plus(X(),a())),res);
     System.out.println("Simplified form is:\n\t" + res);
-    
+   } 
+
+  public void testY() {
     res = differentiate(t,var2);
     System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
+    assertSame("differentiate(mult(X,plus(X,a)),Y) is plus(mult(X,plus(0,0)),mult(plus(X,a),0))",`plus(mult(X(),plus(zero(),zero())),mult(plus(X(),a()),zero())),res);
     res = simplify(res);
     System.out.println("Simplified form is:\n\t" + res);
+    assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1))) is 0",`zero(),res);
   }
   
   public final static void main(String[] args) {
-    PolyAdvanced1 test = new  PolyAdvanced1(new PureFactory());
-    test.run();
+    junit.textui.TestRunner.run(new TestSuite(PolyAdvanced1.class));
   }
 }
 
