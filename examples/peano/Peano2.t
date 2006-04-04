@@ -29,63 +29,42 @@
 
 package peano;
 
-import aterm.*;
-import aterm.pure.*;
+import peano.peano.*;
+import peano.peano.types.*;
 
-
-public class PeanoSimple3 {
-  ATermFactory factory;
-  ATerm stamp = null;
-  ATerm tomstamp = null;
-  public PeanoSimple3(ATermFactory factory) {
-    this.factory = factory;
-    //this.stamp = factory.makeAppl(factory.makeAFun("stamp",0,false));
-    //this.tomstamp = factory.makeAppl(factory.makeAFun("tomstamp",0,false));
-    this.stamp = factory.makeList();
-    this.tomstamp = factory.makeList();
+public class Peano2 {
+  %include { peano/peano.tom }
+  public Nat plus(Nat t1, Nat t2) {
+    %match(Nat t1, Nat t2) {
+      x, zero() -> { return `x; }
+      x, suc(y) -> { return `suc(plus(x,y)); }
+    }
+    return null;
   }
 
-  %typeterm term {
-    implement           { ATermAppl }
-    check_stamp(t)      { if(t.getAnnotation(stamp) == tomstamp) return; else throw new RuntimeException("truand") }
-    set_stamp(t)        { (ATermAppl)t.setAnnotation(stamp,tomstamp)  }
-    get_implementation(t) { t }
-  }
-
-  %op term zero() {
-    is_fsym(t) { t.getName() == "zero" }
-    make { factory.makeAppl(factory.makeAFun("zero",0,false)) }
-  }
-  
-  %op term suc(p:term) {
-    is_fsym(t) { t.getName() == "suc" }
-    get_slot(p,t) { (ATermAppl)t.getArgument(0) }
-    make(t) { factory.makeAppl(factory.makeAFun("suc",1,false),t) }
-  }
-
-  public ATermAppl plus(ATermAppl t1, ATermAppl t2) {
-    %match(term t1, term t2) {
-      x,zero() -> { return `x; }
-      x,suc(y) -> { return `suc(plus(x,y)); }
+  public Nat fib(Nat t) {
+    %match(Nat t) {
+      y@zero()      -> { return `suc(y); }
+      y@suc(zero()) -> { return `y; }
+      suc(y@suc(x)) -> { return `plus(fib(x),fib(y)); }
     }
     return null;
   }
 
   public void run(int n) {
-    //ATermAppl N = factory.makeAppl(factory.makeAFun("zero",0,false));
-    ATermAppl N = `zero();
+    Nat N = `zero();
     for(int i=0 ; i<n ; i++) {
       N = `suc(N);
     }
-    ATermAppl res = plus(N,N);
-    System.out.println("plus(" + n + "," + n + ") = " + res);
+
+    Nat res = fib(N);
+    System.out.println("fib(" + n + ") =  " + res);
   }
 
   public final static void main(String[] args) {
-    PeanoSimple3 test = new PeanoSimple3(new PureFactory());
+    Peano2 test = new Peano2();
     test.run(10);
   }
- 
 
 }
 

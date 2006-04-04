@@ -29,8 +29,6 @@
 
 package peano;
 
-import aterm.*;
-import aterm.pure.SingletonFactory;
 import peano.peano.*;
 import peano.peano.types.*;
 
@@ -40,18 +38,12 @@ import junit.framework.TestSuite;
 public class TestPeano extends TestCase {
   private Nat ten;
   private Nat fibten;
-  private static Factory factory;
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestPeano.class));
 	}
   
   public void setUp() {
-
-		if (factory == null) {
-			factory = Factory.getInstance(SingletonFactory.getInstance());
-		}
-
     Nat N = zero();
     for(int i=0 ; i<10 ; i++) {
       N = suc(N);
@@ -66,24 +58,24 @@ public class TestPeano extends TestCase {
   }
 
   Nat zero() {
-    return factory.makeNat_Zero();
+    return peano.peano.types.nat.zero.make();
   }
 
   Nat suc(Nat n) {
-    return factory.makeNat_Suc(n);
+    return peano.peano.types.nat.suc.make(n);
   }
 
-  public void testPeanoApigen1() {
-    PeanoApigen1 test;
-    test = new PeanoApigen1(factory);
+  public void testPeano1() {
+    Peano1 test;
+    test = new Peano1();
   
     assertEquals("fib(10) should be 89",
                  fibten,test.fib(ten));
   }
 
-  public void testPeanoApigen2() {
-    PeanoApigen2 test;
-    test = new PeanoApigen2(factory);
+  public void testPeano2() {
+    Peano2 test;
+    test = new Peano2();
   
     assertEquals("fib(10) should be 89",
                  fibten,test.fib(ten));

@@ -29,62 +29,44 @@
 
 package peano;
 
-import aterm.*;
-import aterm.pure.*;
+import peano.peano.*;
+import peano.peano.types.*;
 
-public class PeanoSimple1 {
-
-  ATermFactory factory;
-  AFun fzero, fsuc;
-  ATerm tzero;
-
-  public PeanoSimple1(ATermFactory factory) {
-    this.factory = factory;
-    fzero = factory.makeAFun("zero", 0, false);
-    fsuc  = factory.makeAFun("suc" , 1, false);
-    tzero = factory.makeAppl(fzero);
-  }
-
-
-  %typeterm term {
-    implement { ATerm }
-  }
-
-  %op term zero() {
-    is_fsym(t) { (((ATermAppl)t).getAFun())==fzero }
-  }
+public class Peano1 {
+  %include { peano/peano.tom }
   
-  %op term suc(p:term) {
-    is_fsym(t) { (((ATermAppl)t).getAFun())==fsuc }
-    get_slot(p,t) { (((ATermAppl)t).getArgument(0)) }
+  public Nat plus(Nat t1, Nat t2) {
+    %match(Nat t1, Nat t2) {
+      x, zero() -> { return `x; }
+      x, suc(y) -> { return `suc(plus(x,y)); }
+    }
+    return null;
   }
 
-  public ATerm suc(ATerm t) {
-    return factory.makeAppl(fsuc,t);
-  }
-  
-  public ATerm plus(ATerm t1, ATerm t2) {
-    %match(term t1, term t2) {
-      x,zero() -> { return `x; }
-      x,suc(y) -> { return suc(plus(`x,`y)); }
+  public Nat fib(Nat t) {
+    %match(Nat t) {
+      zero()      -> { return `suc(zero()); }
+      suc(zero()) -> { return `suc(zero()); }
+      suc(suc(x)) -> { return `plus(fib(x),fib(suc(x))); }
     }
     return null;
   }
 
   public void run(int n) {
-
-    ATerm N = tzero;
+    Nat N = `zero();
     for(int i=0 ; i<n ; i++) {
-      N = suc(N);
+      N = `suc(N);
     }
-    ATerm res = plus(N,N);
-    System.out.println("plus(" + n + "," + n + ") = " + res);
+
+    Nat res = fib(N);
+    System.out.println("fib(" + n + ") =  " + res);
   }
 
   public final static void main(String[] args) {
-    PeanoSimple1 test = new PeanoSimple1(new PureFactory());
+    Peano1 test = new Peano1();
     test.run(10);
   }
+
 
 }
 
