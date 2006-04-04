@@ -29,99 +29,34 @@
 
 package poly;
 
-import aterm.*;
-import aterm.pure.*;
+import poly.poly.*;
+import poly.poly.types.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class PolySimple2 extends TestCase {
-    
-  private ATermFactory factory;
-  private AFun fplus, fmult;
 
-    ATerm t;
-    ATerm var1;
-    ATerm var2;
-    ATerm res;
+  %include { poly/Poly.tom }
 
-    public PolySimple2() {
-      this.factory = new PureFactory();
-      fmult = factory.makeAFun("mult", 2, false);
-      fplus = factory.makeAFun("plus", 2, false);	   
+  private Term t;
+  private Term var1;
+  private Term var2;
+  private Term res;
+
+  public PolySimple2() {
       t = `mult(X(),plus(X(),a()));
       var1 = `X();
       var2 = `Y();
     }
-    public PolySimple2(ATermFactory factory) {
-      this.factory = factory;
-      fmult = factory.makeAFun("mult", 2, false);
-      fplus = factory.makeAFun("plus", 2, false);	   
-      t = `mult(X(),plus(X(),a()));
-      var1 = `X();
-      var2 = `Y();
-    }
-
-    // Everything is still an ATerm:
-  %typeterm term {
-    implement { ATerm }
-    equals(t1, t2)      { (t1.equals(t2)) }
-  }
     
-    // My operators with constructor allowing to use "`" symbol 
-  %op term zero() {
-    is_fsym(t) { ((ATermAppl)t).getName()=="0" }
-    make { factory.makeAppl(factory.makeAFun("0", 0, false)) }
-  }
-    
-  %op term one() {
-    is_fsym(t) { ((ATermAppl)t).getName()=="1" }
-    make { factory.makeAppl(factory.makeAFun("1", 0, false)) }
-  }
-    
-  %op term a() {
-    is_fsym(t) { ((ATermAppl)t).getName()=="a" }
-    make { factory.makeAppl(factory.makeAFun("a", 0, false)) }
-  }
-
-  %op term b() {
-    is_fsym(t) { ((ATermAppl)t).getName()=="b" }
-    make { factory.makeAppl(factory.makeAFun("b", 0, false)) }
-  }
-  %op term c() {
-    is_fsym(t) { ((ATermAppl)t).getName()=="c" }
-    make { factory.makeAppl(factory.makeAFun("c", 0, false)) }
-  }
-  %op term X() {
-    is_fsym(t) { ((ATermAppl)t).getName()=="X" }
-    make { factory.makeAppl(factory.makeAFun("X", 0, false)) }
-  }
-  %op term Y() {
-    is_fsym(t) { ((ATermAppl)t).getName()=="Y" }
-    make { factory.makeAppl(factory.makeAFun("Y", 0, false)) }
-  }
-
-  %op term plus(s1:term,s2:term) {
-    is_fsym(t) { (((ATermAppl)t).getAFun())==fplus }
-    get_slot(s1,t) { ((ATermAppl)t).getArgument(0) }
-    get_slot(s2,t) { ((ATermAppl)t).getArgument(1) }
-		make(t1,t2) { factory.makeAppl(fplus,t1,t2)}
-  }   
-  %op term mult(s1:term, s2:term) {
-    is_fsym(t)     { (((ATermAppl)t).getAFun())==fmult }
-    get_slot(s1,t) { ((ATermAppl)t).getArgument(0) }
-    get_slot(s2,t) { ((ATermAppl)t).getArgument(1) }
-		make(t1,t2) { factory.makeAppl(fmult,t1,t2)}
-  }
-
-    
-  public ATerm differentiate(ATerm poly, ATerm variable) {
-    %match(term poly, term variable) {
+  public Term differentiate(Term poly, Term variable) {
+    %match(Term poly, Term variable) {
       X(), X() -> { return `one(); }
       Y(), Y() -> { return `one(); }
       plus(arg1,arg2), var  -> { return `plus(differentiate(arg1, var),differentiate(arg2, var)); }
       mult(arg1,arg2), var  -> { 
-        ATerm res1, res2;
+        Term res1, res2;
         res1 = `mult(arg1, differentiate(arg2, var));
         res2 = `mult(arg2, differentiate(arg1, var));
         return `plus(res1,res2);
@@ -138,8 +73,8 @@ public class PolySimple2 extends TestCase {
   }
     
     // Very basic simplification
-  public ATerm simplify(ATerm t) {
-    %match(term t) {
+  public Term simplify(Term t) {
+    %match(Term t) {
       plus(zero(), x) -> { return simplify(`x); }
       plus(x, zero()) -> { return simplify(`x); }
       mult(one(), x)  -> { return simplify(`x); }
@@ -154,14 +89,14 @@ public class PolySimple2 extends TestCase {
   }
 
   public void testX() {
-	
     res = differentiate(t, var1 );
     System.out.println("Derivative form of " + t + " wrt. " + var1 + " is:\n\t" + res);
     assertSame("differentiate(mult(X,plus(X,a)),X) is plus(mult(X,plus(1,0)),mult(plus(X,a),1))",`plus(mult(X(),plus(one(),zero())),mult(plus(X(),a()),one())),res);
     res = simplify(res);
     System.out.println("Simplified form is:\n\t" + res);
     assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1))) is plus(mult(X,1),plus(X,a))",`plus(mult(X(),one()),plus(X(),a())),res);
-}
+  }
+
   public void testY() {
     res = differentiate(t, var2);
     System.out.println("Derivative form of " + t + " wrt. " + var2 + " is:\n\t" + res);
@@ -170,7 +105,7 @@ public class PolySimple2 extends TestCase {
     System.out.println("Simplified form is:\n\t" + res);
     assertSame("simplify(plus(mult(X,plus(1,0)),mult(plus(X,a),1))) is plus(mult(X,0),0)",`plus(mult(X(),zero()),zero()),res);
   }
-    
+
   public final static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(PolyAdvanced1.class));
   }
