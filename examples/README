@@ -3,12 +3,12 @@ C, Java or Caml. Therefore, Tom is a multi-purpose programming
 language. 
 
 Depending on your background, Tom can be seen as:
- - a language to perform transformation of XML documents
+ - a language to perform transformation of XML documents.
  - a preprocessor which helps to perform discrimination over a complex
-   data-structure 
- - a tool to manipulate Abstract Syntax Trees
- - a backend for Rewrite Rule based languages
- - a powerful Rule based programming language
+   data-structure.
+ - a tool to manipulate Abstract Syntax Trees.
+ - a backend for Rewrite Rule based languages.
+ - a powerful Rule based programming language.
 
 * How to start with Tom?
 ------------------------
@@ -37,6 +37,20 @@ If you come from the
    => start with:
       - integerc
       - peano
+
+
+* Running the examples:
+------------------------
+  Compilation:
+    _To compile all examples, run the script 'build.sh' from directory 'examples', 
+    assuming Ant is installed. To compile a specific example, specify the example name.
+    For instance, to compile example 'peano' only, run 'build.sh peano' (without
+    the trailing backslash at the end of peano).
+
+  Execution:
+    _To run a specific example, go to directory examples/build/ and execute the java class
+    of your choice using your Java Virtual Mashine. For instance, to run 'PeanoSimple1',
+    simply run 'java peano/PeanoSimple1'.
  
 * Note about ApiGen/Vas:
 ------------------------
@@ -51,7 +65,7 @@ If you come from the
 * Included examples:
 --------------------
 * addressbook
-  Small implementation of a data-base
+  Small implementation of a database
   Concepts: apigen, list-matching, vas
 
 * apireach
@@ -59,7 +73,7 @@ If you come from the
   Concept: apigen, complex generic traversal
 
 * applexml
-  Transformation of XML
+  XML Transformation
   Concept: XML pattern matching  
 
 * aterm
