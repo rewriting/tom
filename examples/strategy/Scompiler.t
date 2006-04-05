@@ -67,21 +67,29 @@ public class Scompiler {
     test.benchCompiledBottomUp(10,10);
     test.benchTopDown(10,10);
     test.benchCompiledTopDown(10,10);
+    test.benchInnermost(10,10);
+    test.benchCompiledInnermost(10,10);
 
     test.benchBottomUp(10,200);
     test.benchCompiledBottomUp(10,200);
     test.benchTopDown(10,200);
     test.benchCompiledTopDown(10,200);
+    test.benchInnermost(10,200);
+    test.benchCompiledInnermost(10,200);
 
     test.benchBottomUp(12,10);
     test.benchCompiledBottomUp(12,10);
     test.benchTopDown(12,10);
     test.benchCompiledTopDown(12,10);
+    test.benchInnermost(12,10);
+    test.benchCompiledInnermost(12,10);
 
     test.benchBottomUp(17,10);
-    test.benchCompiledBottomUp(16,10);
+    test.benchCompiledBottomUp(17,10);
     test.benchTopDown(17,10);
-    test.benchCompiledTopDown(16,10);
+    test.benchCompiledTopDown(17,10);
+    test.benchInnermost(17,10);
+    test.benchCompiledInnermost(17,10);
   }
 
   public void run() {
@@ -157,6 +165,39 @@ public class Scompiler {
 		System.out.println("...\t" + (stopChrono-startChrono) + " ms");
   }
 
+  public void benchInnermost(int baobabHeight, int count) {
+    Term subject = baobab(baobabHeight);
+    System.out.print("Running benchInnermost with "+baobabHeight+" "+count);
+		long startChrono = System.currentTimeMillis();
+    for(int i=0; i<count; i++) {
+      List c = new ArrayList();
+      try {
+        VisitableVisitor S1 = `Innermost(Reduce());
+        S1.visit(subject);
+      } catch(VisitFailure e) {
+        System.out.println("reduction failed on: " + subject);
+      }
+    }
+		long stopChrono = System.currentTimeMillis();
+		System.out.println("...\t" + (stopChrono-startChrono) + " ms");
+  }
+
+  public void benchCompiledInnermost(int baobabHeight, int count) {
+    Term subject = baobab(baobabHeight);
+    System.out.print("Running benchCompiledInnermost with "+baobabHeight+" "+count);
+		long startChrono = System.currentTimeMillis();
+    for(int i=0; i<count; i++) {
+      List c = new ArrayList();
+      try {
+        VisitableVisitor S1 = new CompiledInnermost(`Reduce());
+        S1.visit(subject);
+      } catch(VisitFailure e) {
+        System.out.println("reduction failed on: " + subject);
+      }
+    }
+		long stopChrono = System.currentTimeMillis();
+		System.out.println("...\t" + (stopChrono-startChrono) + " ms");
+  }
   public void benchCompiledTopDown(int baobabHeight, int count) {
     Term subject = baobab(baobabHeight);
     System.out.print("Running benchCompiledTopDown with "+baobabHeight+" "+count);
@@ -259,4 +300,12 @@ public class Scompiler {
     }
   }
 
+  %strategy Reduce() extends `Fail() {
+    visit Term { 
+        a() -> { return `b(); }
+        b() -> { return `c(); }
+        g(c()) -> { return `c(); }
+        f(c(),c()) -> { return `c(); }
+      }
+    }
 }
