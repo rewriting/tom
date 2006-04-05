@@ -62,8 +62,18 @@ public class Scompiler {
   public final static void main(String[] args) {
     Scompiler test = new Scompiler();
     test.run();
-    test.benchStrat();
-    test.benchCompiledStrat();
+
+    test.benchBottomUp(10,10);
+    test.benchCompiledBottomUp(10,10);
+
+    test.benchBottomUp(10,200);
+    test.benchCompiledBottomUp(10,200);
+
+    test.benchBottomUp(12,10);
+    test.benchCompiledBottomUp(12,10);
+
+    test.benchBottomUp(16,10);
+    test.benchCompiledBottomUp(16,10);
   }
 
   public void run() {
@@ -81,10 +91,11 @@ public class Scompiler {
     }
   }
 
-  public void benchStrat() {
-    Term subject = baobab(20);
+  public void benchBottomUp(int baobabHeight, int count) {
+    Term subject = baobab(baobabHeight);
+    System.out.print("Running benchBottomUp with "+baobabHeight+" "+count);
 		long startChrono = System.currentTimeMillis();
-    for(int i=0; i<10; i++) {
+    for(int i=0; i<count; i++) {
       List c = new ArrayList();
       try {
         VisitableVisitor S1 = `BottomUp(GetPosition(c));
@@ -94,13 +105,14 @@ public class Scompiler {
       }
     }
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("baobab " + (stopChrono-startChrono) + " ms");
+		System.out.println("...\t" + (stopChrono-startChrono) + " ms");
   }
 
-  public void benchCompiledStrat() {
-    Term subject = baobab(20);
+  public void benchCompiledBottomUp(int baobabHeight, int count) {
+    Term subject = baobab(baobabHeight);
+    System.out.print("Running benchCompiledBottomUp with "+baobabHeight+" "+count);
 		long startChrono = System.currentTimeMillis();
-    for(int i=0; i<10; i++) {
+    for(int i=0; i<count; i++) {
       List c = new ArrayList();
       try {
         VisitableVisitor S2 = new CompiledBottomUp(`GetPosition(c));
@@ -110,7 +122,7 @@ public class Scompiler {
       }
     }
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("compiled baobab " + (stopChrono-startChrono) + " ms");
+		System.out.println("...\t" + (stopChrono-startChrono) + " ms");
   }
 
   %strategy GetPosition(c:Collection) extends `Identity() { 
