@@ -222,6 +222,34 @@ public class Scompiler {
     }
   }
 
+  //Innermost(v) = `mu(MuVar("x"),Sequence(All(MuVar("x")),Try(Sequence(v,MuVar("x")))))
+  class CompiledInnermost extends AbstractVisitableVisitor {
+    protected final static int ARG = 0;
+    public CompiledInnermost(VisitableVisitor v) {
+      initSubterm(v);
+    }
+    public Visitable visit(Visitable any) throws VisitFailure {
+      Visitable result = any;
+      // Compile All("x")
+      int childCount = any.getChildCount();
+      for (int i = 0; i < childCount; i++) {
+        Visitable newChild = this.visit(result.getChildAt(i));
+        result = result.setChildAt(i, newChild);
+      }
+      // compile Try(Sequence(v,MuVar("x"))) =
+      // Choice(Sequence(v,MuVar("x")),Identity())
+      try {
+        // Compile Sequence(v,MuVar("x"))
+        result = getArgument(ARG).visit(result);
+        this.visit(result);
+      } catch (VisitFailure f) {
+        // Compile Identity()
+        return result;
+      }
+      return result; 
+    }
+  }
+
   Term baobab(int height) {
     if (height < 1) {
       return `g(a());
