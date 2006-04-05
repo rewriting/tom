@@ -1,7 +1,5 @@
 module Ast
 imports String 
-public
-
 abstract syntax
 Instruction = If(condition:Expression,succesInst:InstructionList,failureInst:InstructionList)
             | WhileDo(condition:Expression,doInst:InstructionList) 

@@ -1,6 +1,5 @@
 module Node 
 imports Ast 
-public
 abstract syntax
 Node = 	beginIf(expr:Expression)
      |	affect(var:Variable,term:Term)
