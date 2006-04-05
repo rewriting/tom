@@ -109,6 +109,9 @@ public class Scompiler {
       S2 = new CompiledTopDown(`GetPosition(c));
       S2.visit(subject);
       System.out.println("set[pos] = " + c);
+
+      S1 = `Innermost(Reduce());
+      System.out.println("Innermost(Reduce()) : "+S1.visit(subject));
     } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
