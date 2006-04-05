@@ -46,44 +46,78 @@ public class Scompiler {
   %gom {
     module Term
     abstract syntax
-		Term = a()
-		     | b()
-				 | c()
-				 | d()
-				 | f(s1:Term, s2:Term)
-				 | g(s1:Term)
+    Term = a()
+         | b()
+         | c()
+         | d()
+         | f(s1:Term, s2:Term)
+         | g(s1:Term)
    }
 
-	%typeterm Collection {
-		implement { Collection }
-	}
+  %typeterm Collection {
+    implement { Collection }
+  }
   %include { mutraveler.tom }
 
-	public final static void main(String[] args) {
-		Scompiler test = new Scompiler();
-		test.run();
-	}
+  public final static void main(String[] args) {
+    Scompiler test = new Scompiler();
+    test.run();
+    test.benchStrat();
+    test.benchCompiledStrat();
+  }
 
   public void run() {
     Term subject = `f(f(a(),b()),f(c(),d()));
-		List c = new ArrayList();
+    List c = new ArrayList();
     try {
       System.out.println("subject       = " + subject);
-			VisitableVisitor S1 = `BottomUp(GetPosition(c));
+      VisitableVisitor S1 = `BottomUp(GetPosition(c));
       S1.visit(subject);
-			VisitableVisitor S2 = new CompiledBottomUp(`GetPosition(c));
+      VisitableVisitor S2 = new CompiledBottomUp(`GetPosition(c));
       S2.visit(subject);
-			System.out.println("set[pos] = " + c);
+      System.out.println("set[pos] = " + c);
     } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
   }
 
-	%strategy GetPosition(c:Collection) extends `Identity() { 
+  public void benchStrat() {
+    Term subject = baobab(20);
+		long startChrono = System.currentTimeMillis();
+    for(int i=0; i<10; i++) {
+      List c = new ArrayList();
+      try {
+        VisitableVisitor S1 = `BottomUp(GetPosition(c));
+        S1.visit(subject);
+      } catch(VisitFailure e) {
+        System.out.println("reduction failed on: " + subject);
+      }
+    }
+		long stopChrono = System.currentTimeMillis();
+		System.out.println("baobab " + (stopChrono-startChrono) + " ms");
+  }
+
+  public void benchCompiledStrat() {
+    Term subject = baobab(20);
+		long startChrono = System.currentTimeMillis();
+    for(int i=0; i<10; i++) {
+      List c = new ArrayList();
+      try {
+        VisitableVisitor S2 = new CompiledBottomUp(`GetPosition(c));
+        S2.visit(subject);
+      } catch(VisitFailure e) {
+        System.out.println("reduction failed on: " + subject);
+      }
+    }
+		long stopChrono = System.currentTimeMillis();
+		System.out.println("compiled baobab " + (stopChrono-startChrono) + " ms");
+  }
+
+  %strategy GetPosition(c:Collection) extends `Identity() { 
     visit Term {
-			x -> { c.add(`x); }
-		}
-	}
+      x -> { c.add(`x); }
+    }
+  }
 
   //BottomUp(v) = `mu(MuVar("x"),Sequence(All(MuVar("x")),v))
   class CompiledBottomUp extends AbstractVisitableVisitor {
@@ -104,6 +138,14 @@ public class Scompiler {
       return getArgument(ARG).visit(result);
     }
   }
-}
 
- 
+  Term baobab(int height) {
+    if (height < 1) {
+      return `g(a());
+    } else {
+      Term sub = baobab(height-1);
+      return `f(sub,sub);
+    }
+  }
+
+}
