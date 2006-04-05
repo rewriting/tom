@@ -83,7 +83,7 @@ class SPropp {
 
 	public Proof solve(Proof init) {
 
-		VisitableVisitor myrule = new CalculusRules();
+		VisitableVisitor myrule = `CalculusRules();
 		VisitableVisitor bottomUp = `BottomUp(myrule);
 
 		Proof res = null;
@@ -100,13 +100,9 @@ class SPropp {
 
   Collection rules_appl = new HashSet();
 
-	class CalculusRules extends propp.seq.SeqBasicStrategy {
-		public CalculusRules() {
-			super(new Identity());
-		}
-		
-		public Proof visit_Proof(Proof subject) throws jjtraveler.VisitFailure {
-			%match(Proof subject) {
+	%strategy CalculusRules() extends `Identity() { 
+    
+	visit Proof {
 				hyp(arg) -> {
 					%match(Sequent arg) {
 
@@ -207,8 +203,6 @@ class SPropp {
 					}// end %match
 				}
 			}
-			return subject;
-		}
 	}
 
 	Map proofterm_pool = new HashMap();
