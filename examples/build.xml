@@ -56,6 +56,7 @@
   <property name="pqueens"        value="pqueens"/>
   <property name="prodrule"       value="prodrule"/>
   <property name="propp"          value="propp"/>
+  <property name="parsingTests"          value="parsingTests"/>
   <property name="rbtree"         value="rbtree"/>
   <property name="set"            value="set"/>
   <property name="strategy"       value="strategy"/>
@@ -559,6 +560,36 @@
       </fileset>
     </copy>
   </target>
+	
+  <target name="parsingTests" depends="clean,init">
+    <!--<adtcompile example="${propp}"
+      factory="seq"/>-->
+    <gomcompile example="${parsingTests}"/>
+    <!-- build parser -->
+    <tom.preset outputfile="${examples.gen}/${parsingTests}/SeqWalker.g"
+                options="-I ${examples.gen}/${parsingTests}"
+                srcdir="${examples.dir}"> 
+      <include name="${parsingTests}/**/SeqWalker.g.t"/>
+    </tom.preset>
+    <mkdir dir="${examples.gen}/${parsingTests}"/>
+    <tomantlr target="${parsingTests}/SeqParser.g"
+              outputdirectory="${examples.gen}/${parsingTests}">
+ 		<classpath refid="tom.classpath"/>
+    </tomantlr>
+    <tomantlr target="${examples.gen}/${parsingTests}/SeqWalker.g"
+              outputdirectory="${examples.gen}/${parsingTests}">
+    	<classpath refid="tom.classpath"/>	    	
+    </tomantlr>
+	<tomcompile example="${parsingTests}"/>
+    <javacompile example="${parsingTests}"/>
+    <!-- copy resources -->
+    <copy todir="${examples.build}/${parsingTests}">
+      <fileset dir="${examples.dir}/${parsingTests}">
+        <include name="ex_current"/>
+      </fileset>
+    </copy>
+  </target>
+
 
   <target name="rbtree" depends="init">
     <adtcompile example="${rbtree}"
