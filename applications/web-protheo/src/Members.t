@@ -79,23 +79,30 @@ public class Members {
           }
         }
         <person>(p*)</person> -> {
-          String name = "";
-          String home = "";
-          String photo = "";
+          String name;
+          String home;
+          String photo;
           TNodeList tags = `concTNode();
           %match(TNodeList p) {
-            (_*,<photo>#TEXT(x)</photo>,_*) -> {
-              photo =  "images/trombi/"+`x;
-              tags = `concTNode(tags*,<img src=photo alt=name />);
-              tags = `concTNode(tags*,<br />);
-             }
-            (_*,<firstname>#TEXT(x)</firstname>, _*,<lastname>#TEXT(y)</lastname>,_*) -> {
-              name = `x+" "+`y;
-              tags= `concTNode(tags*,#TEXT(name));
-            }
-            (_*,<homepage>#TEXT(x)</homepage>,_*) -> {
-              home = `x;
-              tags = `concTNode(<a href=home>tags*</a>);
+            (_*,<firstname>#TEXT(first)</firstname>, _*,<lastname>#TEXT(last)</lastname>,_*) -> {
+              name = `first+" "+`last;
+              %match(TNodeList p) {
+                //photo attribute is optional
+                (_*,<photo>#TEXT(t_photo)</photo>,_*) -> {
+                  photo =  "images/trombi/"+`t_photo;
+                  tags = `concTNode(tags*,<img src=photo alt=name />);
+                  tags = `concTNode(tags*,<br />);
+                }
+              }
+              //name attribute is mandatory
+              tags = `concTNode(tags*,#TEXT(name));
+              //homepage attribute is optional
+              %match(TNodeList p) {
+                (_*,<homepage>#TEXT(t_home)</homepage>,_*) -> {
+                  home = `t_home;
+                  tags = `concTNode(<a href=home>tags*</a>);
+                }
+              }
             }
           }
           return `xml(<div class="person">tags*</div>);
