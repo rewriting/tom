@@ -79,17 +79,14 @@ public class Members {
           }
         }
         <person>(p*)</person> -> {
-          String name;
-          String home;
-          String photo;
           TNodeList tags = `concTNode();
           %match(TNodeList p) {
             (_*,<firstname>#TEXT(first)</firstname>, _*,<lastname>#TEXT(last)</lastname>,_*) -> {
-              name = `first+" "+`last;
+              String name = `first+" "+`last;
               %match(TNodeList p) {
                 //photo attribute is optional
                 (_*,<photo>#TEXT(t_photo)</photo>,_*) -> {
-                  photo =  "images/trombi/"+`t_photo;
+                  String photo =  "images/trombi/"+`t_photo;
                   tags = `concTNode(tags*,<img src=photo alt=name />);
                   tags = `concTNode(tags*,<br />);
                 }
@@ -99,7 +96,7 @@ public class Members {
               //homepage attribute is optional
               %match(TNodeList p) {
                 (_*,<homepage>#TEXT(t_home)</homepage>,_*) -> {
-                  home = `t_home;
+                  String home = `t_home;
                   tags = `concTNode(<a href=home>tags*</a>);
                 }
               }
