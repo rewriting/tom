@@ -1,4 +1,5 @@
 module Seq
+imports String int
 abstract syntax
 
 RuleR = negd()
