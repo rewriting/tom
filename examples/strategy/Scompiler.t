@@ -88,8 +88,10 @@ public class Scompiler {
     test.benchCompiledBottomUp(17,10);
     test.benchTopDown(17,10);
     test.benchCompiledTopDown(17,10);
+    test.benchHardCompiledInnermost(17,10);
     test.benchInnermost(17,10);
     test.benchCompiledInnermost(17,10);
+
   }
 
   public void run() {
@@ -201,6 +203,23 @@ public class Scompiler {
 		long stopChrono = System.currentTimeMillis();
 		System.out.println("...\t" + (stopChrono-startChrono) + " ms");
   }
+
+  public void benchHardCompiledInnermost(int baobabHeight, int count) {
+    Term subject = baobab(baobabHeight);
+    System.out.print("Running benchHardCompiledInnermost with "+baobabHeight+" "+count);
+		long startChrono = System.currentTimeMillis();
+    for(int i=0; i<count; i++) {
+      List c = new ArrayList();
+      try {
+        VisitableVisitor S1 = new HardCompiledInnermost();
+        S1.visit(subject);
+      } catch(VisitFailure e) {
+        System.out.println("reduction failed on: " + subject);
+      }
+    }
+		long stopChrono = System.currentTimeMillis();
+		System.out.println("...\t" + (stopChrono-startChrono) + " ms");
+  }
   public void benchCompiledTopDown(int baobabHeight, int count) {
     Term subject = baobab(baobabHeight);
     System.out.print("Running benchCompiledTopDown with "+baobabHeight+" "+count);
@@ -251,11 +270,11 @@ public class Scompiler {
       initSubterm(v);
     }
     public Visitable visit(Visitable any) throws VisitFailure {
-      // Compile v
       Visitable result = any;
+      // Compile v
       result = getArgument(ARG).visit(result);
 
-      // Compile All("x")
+      // Compile All(MuVar("x"))
       int childCount = any.getChildCount();
       for (int i = 0; i < childCount; i++) {
         Visitable newChild = this.visit(result.getChildAt(i));
@@ -285,13 +304,41 @@ public class Scompiler {
       try {
         // Compile Sequence(v,MuVar("x"))
         result = getArgument(ARG).visit(result);
-        this.visit(result);
+        result = this.visit(result);
       } catch (VisitFailure f) {
         // Compile Identity()
         return result;
       }
       return result; 
     }
+  }
+
+  class HardCompiledInnermost implements jjtraveler.reflective.VisitableVisitor {
+    private VisitableVisitor v = new Reduce();
+    public HardCompiledInnermost() { }
+    public Visitable visit(Visitable any) throws VisitFailure {
+      Visitable result = any;
+      // Compile All("x")
+      int childCount = any.getChildCount();
+      for (int i = 0; i < childCount; i++) {
+        Visitable newChild = this.visit(result.getChildAt(i));
+        result = result.setChildAt(i, newChild);
+      }
+      // compile Try(Sequence(v,MuVar("x"))) =
+      // Choice(Sequence(v,MuVar("x")),Identity())
+      try {
+        // Compile Sequence(v,MuVar("x"))
+        result = v.visit(result);
+        result = this.visit(result);
+      } catch (VisitFailure f) {
+        // Compile Identity()
+        return result;
+      }
+      return result; 
+    }
+    public int getChildCount() { return 0; }
+    public Visitable getChildAt(int i) { return null; }
+    public Visitable setChildAt(int i, Visitable child) { return null; }
   }
 
   Term baobab(int height) {
