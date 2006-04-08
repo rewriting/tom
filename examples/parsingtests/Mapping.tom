@@ -14,7 +14,7 @@
   }
   
   %op ATerm NodeInfo(text:String,line:int,column:int) {
-    is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",2,false) }
+    is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",3,false) }
     get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }
     get_slot(line, t) { ((ATermInt)((ATermAppl)t).getArgument(1)).getInt() }
     get_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }
