@@ -56,7 +56,7 @@
   <property name="pqueens"        value="pqueens"/>
   <property name="prodrule"       value="prodrule"/>
   <property name="propp"          value="propp"/>
-  <property name="parsingTests"          value="parsingTests"/>
+  <property name="parsingtests"   value="parsingtests"/>
   <property name="rbtree"         value="rbtree"/>
   <property name="set"            value="set"/>
   <property name="strategy"       value="strategy"/>
@@ -561,30 +561,30 @@
     </copy>
   </target>
 	
-  <target name="parsingTests" depends="clean,init">
+  <target name="parsingtests" depends="init">
     <!--<adtcompile example="${propp}"
       factory="seq"/>-->
-    <gomcompile example="${parsingTests}"/>
+    <gomcompile example="${parsingtests}"/>
     <!-- build parser -->
-    <tom.preset outputfile="${examples.gen}/${parsingTests}/SeqWalker.g"
-                options="-I ${examples.gen}/${parsingTests}"
+    <tom.preset outputfile="${examples.gen}/${parsingtests}/SeqWalker.g"
+                options="-I ${examples.gen}/${parsingtests}"
                 srcdir="${examples.dir}"> 
-      <include name="${parsingTests}/**/SeqWalker.g.t"/>
+      <include name="${parsingtests}/**/SeqWalker.g.t"/>
     </tom.preset>
-    <mkdir dir="${examples.gen}/${parsingTests}"/>
-    <tomantlr target="${parsingTests}/SeqParser.g"
-              outputdirectory="${examples.gen}/${parsingTests}">
+    <mkdir dir="${examples.gen}/${parsingtests}"/>
+    <tomantlr target="${parsingtests}/SeqParser.g"
+              outputdirectory="${examples.gen}/${parsingtests}">
  		<classpath refid="tom.classpath"/>
     </tomantlr>
-    <tomantlr target="${examples.gen}/${parsingTests}/SeqWalker.g"
-              outputdirectory="${examples.gen}/${parsingTests}">
+    <tomantlr target="${examples.gen}/${parsingtests}/SeqWalker.g"
+              outputdirectory="${examples.gen}/${parsingtests}">
     	<classpath refid="tom.classpath"/>	    	
     </tomantlr>
-	<tomcompile example="${parsingTests}"/>
-    <javacompile example="${parsingTests}"/>
+    <tomcompile example="${parsingtests}"/>
+    <javacompile example="${parsingtests}"/>
     <!-- copy resources -->
-    <copy todir="${examples.build}/${parsingTests}">
-      <fileset dir="${examples.dir}/${parsingTests}">
+    <copy todir="${examples.build}/${parsingtests}">
+      <fileset dir="${examples.dir}/${parsingtests}">
         <include name="ex_current"/>
       </fileset>
     </copy>
