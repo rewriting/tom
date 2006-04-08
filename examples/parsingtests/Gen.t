@@ -33,6 +33,7 @@ public class Gen {
     }
     System.out.println(tokenMap);
     generateTable(tokenMap);
+    generateTomMapping(tokenMap);
   }
 
   void generateTable(Map tokenMap) {
@@ -58,6 +59,7 @@ public class TokenTable {
 }
 
 ]%);
+    System.out.println("TokenTable");
     System.out.println(out.toString());
   }
 
@@ -73,4 +75,39 @@ public class TokenTable {
     return out.toString();
   }
 
+  void generateTomMapping(Map tokMap) {
+    StringBuffer out = new StringBuffer();
+
+    out.append(%[
+  %include{ int.tom }
+  %include{ string.tom }
+  %include{ aterm.tom }
+  %include{ atermlist.tom }
+  
+  %op ATerm NodeInfo(text:String,line:int,column:int) {
+    is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",2,false) }
+    get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(1)).getAFun().getName() }
+    get_slot(line, t) { ((ATermInt)((ATermInt)t).getArgument(2)).getInt() }
+    get_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }
+    make(t,l,c) { factory.makeAppl(factory.makeAFun("NodeInfo",3,false),factory.makeAppl(factory.makeAFun(t,0,true)),factory.makeInt(l),factory.makeInt(c)) }
+  }
+  
+  ]%);
+
+    Iterator it = tokMap.keySet().iterator();
+    while(it.hasNext()) {
+      Integer key = (Integer)it.next();
+      String value = (String)tokMap.get(key);
+      out.append(%[
+  %op ATerm @value@(info:ATerm,childs:ATermList) {
+    is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("@value@",2,false) }
+    get_slot(info, t) { ((ATermAppl)t).getArgument(1) }
+    get_slot(childs, t) { ((ATermAppl)t).getArgument(2) }
+    make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(@value@,2,false),i,c) }
+  }]%);
+    }
+
+    System.out.println("TomMapping");
+    System.out.println(out.toString());
+  }
 }
