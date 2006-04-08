@@ -93,14 +93,14 @@ public class TokenTable {
   %include{ atermlist.tom }
 
   %oplist ATermList concATerm (ATerm*){
-    is_fsym(t) { t instanceof ATermList } 
+    is_fsym(t) { t instanceof ATermList }
     make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
     make_insert(e,l) { l.insert(e) }
     get_head(t) { t.getFirst() }
     get_tail(t) { t.getNext() }
-    is_empty(t) { t.isEmpty() } 
+    is_empty(t) { t.isEmpty() }
   }
-  
+
   %op ATerm NodeInfo(text:String,line:int,column:int) {
     is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",3,false) }
     get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }
@@ -108,7 +108,7 @@ public class TokenTable {
     get_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }
     make(t,l,c) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("NodeInfo",3,false),SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(t,0,true)),SingletonFactory.getInstance().makeInt(l),SingletonFactory.getInstance().makeInt(c)) }
   }
-  
+
   ]%);
 
     Iterator it = tokMap.keySet().iterator();

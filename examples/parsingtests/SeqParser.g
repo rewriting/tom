@@ -9,22 +9,17 @@ options {
   //k = 1;
 }
 //tokens {
-//	IDENT;
+//  IDENT;
 //}
-seq: list_pred SEQ^ list_pred END!
-  ;
+seq: list_pred SEQ^ list_pred END! ;
 
-list_pred: pred (LIST^ pred)*
-  ;
+list_pred: pred (LIST^ pred)* ;
 
-pred: andpred (IMPL^ andpred)?
-  ;
+pred: andpred (IMPL^ andpred)? ;
 
-andpred: orpred (AND^ orpred)*
-  ;
+andpred: orpred (AND^ orpred)* ;
 
-orpred: atom (OR^ atom)*
-  ;
+orpred: atom (OR^ atom)* ;
 
 atom: LPAREN! pred RPAREN!
   | NOT^ atom
@@ -48,38 +43,23 @@ WS
     { _ttype = Token.SKIP; }
   ;
 
-LPAREN  
-  : '(' ;
-RPAREN
-  : ')' ;
-SEQ     
-  : "|-";
-IMPL    
-  : "=>"
-  | "|=>"
-  ;
-OR
-  : "or"
-  | "\\/";
-AND
-  : "&&"
-  | "/\\";
-LIST
-  : ':' ;
-NOT 
-  : '!' 
-  | '^'
-  | '~'
-  ;
-END
-  : ';'
-  ;
+LPAREN : '(' ;
+RPAREN : ')' ;
+SEQ : "|-";
+IMPL : "=>"
+     | "|=>" ;
+OR : "or"
+   | "\\/" ;
+AND : "&&"
+    | "/\\" ;
+LIST : ':' ;
+NOT : '!'
+    | '^'
+    | '~' ;
+END : ';' ;
 
-ID
-  : ('A'..'Z'
-    |'a'..'n'
-    |'p'..'z'
-    )+
-  ;
-//}}}   
-
+ID : ('A'..'Z'
+   |'a'..'n'
+   |'p'..'z'
+   )+ ;
+//}}}
