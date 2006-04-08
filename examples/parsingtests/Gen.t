@@ -43,24 +43,32 @@ public class Gen {
 package parsingtests;
 
 public class TokenTable {
-  private static Map tokenMap = null;
+  private static java.util.HashMap tokenMap = null;
 
-  private Map initTokenMap() {
-    tokenMap = new HashMap();
+  private static java.util.HashMap initTokenMap() {
+    tokenMap = new java.util.HashMap();
 @initMap("tokenMap",tokenMap)@
+    return tokenMap;
   }
-  public static Map getTokenMap() {
+  public static java.util.Map getTokenMap() {
     if (tokenMap == null) {
       tokenMap = initTokenMap();
     }
-    return tokenMap.clone();
+    return (java.util.Map)tokenMap.clone();
   }
 
 }
 
 ]%);
-    System.out.println("TokenTable");
-    System.out.println(out.toString());
+    try {
+      Writer writer = new BufferedWriter(
+          new FileWriter("parsingtests/TokenTable.java"));
+      writer.write(out.toString());
+      writer.close();
+    } catch (Exception e) {
+      System.out.println("Write failed "+e);
+      e.printStackTrace();
+    }
   }
 
   private String initMap(String mapName, Map tokMap) {
@@ -70,7 +78,7 @@ public class TokenTable {
       Integer key = (Integer)it.next();
       String value = (String)tokMap.get(key);
       out.append(%[
-  @mapName@.put(new Integer(@key.intValue()@),"@value@");]%);
+    @mapName@.put(new Integer(@key.intValue()@),"@value@");]%);
     }
     return out.toString();
   }
@@ -83,13 +91,22 @@ public class TokenTable {
   %include{ string.tom }
   %include{ aterm.tom }
   %include{ atermlist.tom }
+
+  %oplist ATermList concATerm (ATerm*){
+    is_fsym(t) { t instanceof ATermList } 
+    make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
+    make_insert(e,l) { l.insert(e) }
+    get_head(t) { t.getFirst() }
+    get_tail(t) { t.getNext() }
+    is_empty(t) { t.isEmpty() } 
+  }
   
   %op ATerm NodeInfo(text:String,line:int,column:int) {
-    is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",2,false) }
-    get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(1)).getAFun().getName() }
-    get_slot(line, t) { ((ATermInt)((ATermInt)t).getArgument(2)).getInt() }
+    is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",3,false) }
+    get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }
+    get_slot(line, t) { ((ATermInt)((ATermAppl)t).getArgument(1)).getInt() }
     get_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }
-    make(t,l,c) { factory.makeAppl(factory.makeAFun("NodeInfo",3,false),factory.makeAppl(factory.makeAFun(t,0,true)),factory.makeInt(l),factory.makeInt(c)) }
+    make(t,l,c) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("NodeInfo",3,false),SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(t,0,true)),SingletonFactory.getInstance().makeInt(l),SingletonFactory.getInstance().makeInt(c)) }
   }
   
   ]%);
@@ -101,13 +118,20 @@ public class TokenTable {
       out.append(%[
   %op ATerm @value@(info:ATerm,childs:ATermList) {
     is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("@value@",2,false) }
-    get_slot(info, t) { ((ATermAppl)t).getArgument(1) }
-    get_slot(childs, t) { ((ATermAppl)t).getArgument(2) }
-    make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(@value@,2,false),i,c) }
+    get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+    get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+    make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("@value@",2,false),i,c) }
   }]%);
     }
 
-    System.out.println("TomMapping");
-    System.out.println(out.toString());
+    try {
+      Writer writer = new BufferedWriter(
+          new FileWriter("parsingtests/Mapping.tom"));
+      writer.write(out.toString());
+      writer.close();
+    } catch (Exception e) {
+      System.out.println("Write failed "+e);
+      e.printStackTrace();
+    }
   }
 }

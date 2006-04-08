@@ -39,7 +39,7 @@ Proof = hyp(seq:Sequent)
 ListProof = concProof(Proof*)
 
 Sequent = PROOF()
-        | END()
+        | end()
         | seq(left:ListPred,right:ListPred)
 ListPred = concPred(Pred*)
 ListSequent = concSequent(Sequent*)

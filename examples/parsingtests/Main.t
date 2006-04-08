@@ -45,6 +45,9 @@ public class Main {
 			
 			
 			System.out.println("TTT:" + t.genATermFromAST(hm));
+
+			Variant1Gom v1g = new Variant1Gom();
+			System.out.println("Result from variant 1 GOM : " + v1g.genFinalTree(t));
 			
 /*			SeqTreeParser treeParser = new SeqTreeParser();
 			treeWalkerResult = treeParser.seq(t);
