@@ -68,87 +68,131 @@ If you come from the
   Small implementation of a database
   Concepts: apigen, list-matching, vas
 
+* analysis
+  Flow analysis on a simple language
+  Translation of temporal logic formulas into strategies
+  Concepts: strategies
+
+* antipattern
+  Solving anti-pattern matching problems
+  Concepts: TODO
+
 * apireach
   Compute reachable terms (wrt. a rewrite system)
-  Concept: apigen, complex generic traversal
+  Concepts: apigen, complex generic traversal
 
 * applexml
   XML Transformation
-  Concept: XML pattern matching  
-
-* aterm
-  Example of complex mapping for ATerm
-  Concept: mapping, ATerm
+  Concepts: XML pattern matching  
   
 * boulderdash
   Simulate how rocks go down in the boulder-dash game	
-  Concept: apigen, virtual mapping 
+  Concepts: apigen, virtual mapping 
 
 * builtin
   Show how to use builtin integer and string  
-  Concept: list-matching, string-matching
+  Concepts: list-matching, string-matching
 
 * c_apigen
   Show how to use apigen in a C environment
 
 * caml
   Show how to use Tom with Caml  
-  Concept: mapping, list-matching
+  Concepts: mapping, list-matching
 
 * cell
-	Cellular automata
-  Concept: pattern matching
+  Cellular automata
+  Concepts: pattern matching
+
+* constraint
+  TODO
+  Concepts: TODO
+
+* csmaca
+  TODO
+  Concepts: TODO
 
 * dom
   XML manipulation based on DOM
-  Concept: XML, list-matching, DOM
+  Concepts: XML, list-matching, DOM
 
 * expression
   Simplification of algebraic expressions
-  Concept: complex object mapping, lazy-type
+  Concepts: complex object mapping, lazy-type
 
 * ferus
   Show how to use apigen in a C environment
 
+* fgen_imploded
+  TODO
+  Concepts: TODO
+
+* gasel
+  TODO
+  Concepts: TODO
+
+* gom
+  gom usage demonstration
+  Concepts: gom
+
 * gomoku
   Tiny go-moku game
-  Concept: list-matching, vas
+  Concepts: list-matching, vas
+
+* gterm
+  TODO
+  Concepts: TODO
 
 * gtree
   Tiny example of tree manipulation
-  Concept: apigen
+  Concepts: apigen
 
 * integerc
   Show how to use Tom with C
-  Concept: mapping, complex mapping on builtin
+  Concepts: mapping, complex mapping on builtin
   
 * list
   Introduction to list-matching  
-  Concept: list-matching, mapping to the ATerm library 
+  Concepts: list-matching, mapping to the ATerm library 
 
 * lsystems
+  implementation of the Lindenmayer systems (plants simulation)
 
-* minirho
-  Rho-calculul implementation
-  Concept: vas, complex implementation, mutraveler strategies
+* master
+  Various basic rewriting usage examples
+  Peano, Fibonacci, polynom derivation, pattern matching
+
+* matching
+  Another implementation of pattern matching in tom
+
+* meta
+  meta quote usage example
+  Concepts: meta quote
+
+* mgs
+  dynamical systems simulations
+  (collaboration with the MGS group)
+  ArrayBeadSort, BeadSort and  BoulderDash
 
 * nspk
   Verification of the Needham-Schroeder Public-Key protocol
-  Concept: apigen, complex list-matching, exploration of a search space
+  Concepts: apigen, complex list-matching, exploration of a search space
 
 * p3p
+  TODO
+  Concepts: TODO
 
 * peano
   Computation with Peano integers
-  Concept: simple mapping, apigen, Tom notation 
+  Concepts: simple mapping, apigen, Tom notation 
 
 * pnspk
   Parallel verification of the Needham-Schroeder Public-Key protocol
-  Concept: apigen, parallel exploration of a search space, strategy library 
+  Concepts: apigen, parallel exploration of a search space, strategy library 
 
 * poly
   Compute the derivative of a polynom
-  Concept: mapping, apigen, generic traversal, rewrite system  
+  Concepts: mapping, apigen, generic traversal, rewrite system  
   Examples:
     _Simple:   Show how to differentiate a polynom.
     _Advanced: Extended version with non-linearity and disjunction. 
@@ -157,44 +201,55 @@ If you come from the
 
 * pqueens
   Parallel version of the N-Queens problem
-  Concept: strategy library, complex mapping
+  Concepts: strategy library, complex mapping
 
 * prodrule
   Implementation of Fibonacci in a Production rule style
-  Concept: Production rule, Rete
+  Concepts: Production rule, Rete
 
 * propp
   Propositional prover
+  Concepts: using ANTLR with tom
 
 * rbtree
   Red-Black Tree algorithm
-  Concept: apigen, disjunction of patterns
+  Concepts: apigen, disjunction of patterns
 
 * set
   Implementation of Set with maximal sharing
-  Concept: apigen, ATerm with unique id
+  Concepts: apigen, ATerm with unique id
 
 * strategy
   Show how to use the MuTraveler strategy language
+  Concepts: strategies
 
 * strings
-	Tiny example base on string matching
-	Concept: string matching
+  Tiny example base on string matching
+  Concepts: string matching
 
 * structure
   Calculus of strutures
-  Concept: complex list-matching, exploration strategies
+  Concepts: complex list-matching, exploration strategies
+
+* ted
+  Toolbox for live aterms manipulation/representation
+  Concepts: mapping to pedefined java type
 
 * tutorial
   Examples introduced in the tutorial
-  Concept: string matching, XML
+  Concepts: string matching, XML
 
 * vas
   Introduction to the VAS abstract syntax
-  Concept: vas
+  Concepts: vas
 
 * xml
   XML manipulation based on TNode
-  Concept: XML, list-matching, TNode
+  Concepts: XML, list-matching, TNode
 
+* xquery
+  XQuery use cases
+
+* zenon
+  certification of tom's output using zenon and coq
 
