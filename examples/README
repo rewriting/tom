@@ -20,7 +20,7 @@ If you come from the
       - peano
       - poly
       - apireach
-			- strategy
+      - strategy
 
  - XML community
    => start with
@@ -49,18 +49,21 @@ If you come from the
 
   Execution:
     _To run a specific example, go to directory examples/build/ and execute the java class
-    of your choice using your Java Virtual Mashine. For instance, to run 'PeanoSimple1',
-    simply run 'java peano/PeanoSimple1'.
+    of your choice using your Java Virtual Machine. For instance, to run 'PeanoSimple1',
+    simply run 'java peano.PeanoSimple1'.
  
-* Note about ApiGen/Vas:
+* Note about ApiGen/Vas/Gom:
 ------------------------
   ApiGen is a system which take a many-sorted signature as input, and
   generates a concrete implementation for such an abstract data-type.
-  In addition, ApiGen/Vas automatically generates a mapping for Tom.
+  In addition, ApiGen/Vas/Gom automatically generate a mapping for Tom.
   This system is useful to manipulate Abstract Syntax Trees since it
   offers an efficient implementation (based on ATerms).
   The implementation supports maximal memory sharing, strong static
-  typing as well as parsers and pretty-printers. 
+  typing as well as parsers and pretty-printers.
+
+  Vas is build on top of apigen and both are deprecated. You may now use
+  Gom for all your applications (see user manual).
 
 * Included examples:
 --------------------
