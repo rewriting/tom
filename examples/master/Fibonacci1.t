@@ -7,6 +7,7 @@ public class Fibonacci1 {
   %gom {
     module Peano
     imports 
+      int
     public
       sorts Nat
       

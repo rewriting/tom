@@ -6,7 +6,8 @@ import java.util.*;
 class Pico1 {
   %gom {
     module Term
-    sorts Inst Expr Bool
+    imports
+        int String
       
     abstract syntax
 		Bool = True() 

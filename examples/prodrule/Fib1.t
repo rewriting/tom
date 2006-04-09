@@ -36,7 +36,7 @@ public class Fib1 {
     // extension of adt syntax
     module fib
     imports
-      
+      int
     public
       sorts Element Space
       

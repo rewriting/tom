@@ -7,6 +7,7 @@ public class Matching4 {
   %gom {
     module Peano
     imports 
+      String
     public
       sorts Nat Mat MatList
       

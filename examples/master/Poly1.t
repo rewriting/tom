@@ -7,6 +7,7 @@ public class Poly1 {
   %gom {
     module Poly
     imports 
+      int String
     public
       sorts Polynome
       

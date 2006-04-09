@@ -33,7 +33,7 @@ import peano.peano.*;
 import peano.peano.types.*;
 
 public class Peano1 {
-  %include { peano/peano.tom }
+  %include { peano/Peano.tom }
   
   public Nat plus(Nat t1, Nat t2) {
     %match(Nat t1, Nat t2) {

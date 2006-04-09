@@ -7,6 +7,7 @@ class Matching {
     // ...
     module Term
     imports 
+      String
     public
     sorts Term TermList
       
