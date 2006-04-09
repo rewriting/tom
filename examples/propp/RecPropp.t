@@ -38,7 +38,7 @@ import antlr.CommonAST;
 public class RecPropp extends SPropp {
 
 	// ------------------------------------------------------------  
-	%include { seq/seq.tom }
+	%include { seq/Seq.tom }
 	// ------------------------------------------------------------  
 
 	//{{{ public void run(Sequent query)

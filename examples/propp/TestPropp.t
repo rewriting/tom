@@ -52,7 +52,7 @@ public class TestPropp extends TestCase {
     test = new SPropp();
   }
 
-  %include { seq/seq.tom }
+  %include { seq/Seq.tom }
 
 	public void testComparePair1() {
 		assertEquals("pair(3,\"something\") is greater than pair(2,\"anything\")",
