@@ -1,4 +1,5 @@
 module gomoku
+imports int
 abstract syntax
   Pawn = pawn(color:int)
        | empty(x:int,y:int)
