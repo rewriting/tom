@@ -19,6 +19,8 @@ The binary distribution of Tom consists of the following directory layout:
          |     +--- c
          |     |
          |     +--- caml
+         |     |
+         |     +--- java
          |
          +--- man
 
