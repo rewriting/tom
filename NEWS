@@ -79,7 +79,7 @@ version 1.5:
   - sort attribute names by alphabetic order
   - new XML parser
   - fix undetected error
-  - optimization in matching: do not assigned UnamedVariable when
+  - optimization in matching: do not assign UnamedVariable when
     they are not annotated
   - fix a bug in linearization of annoted variables
   - allow UnamedVariable and UnamedVariableStar in list-matching
