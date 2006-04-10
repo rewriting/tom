@@ -40,7 +40,6 @@
   <property name="gom"            value="gom"/>
   <property name="gomoku"         value="gomoku"/>
   <property name="gterm"          value="gterm"/>
-  <property name="gtree"          value="gtree"/>
   <property name="integerc"       value="integerc"/>
   <property name="list"           value="list"/>
   <property name="lsystem"        value="lsystems"/>
@@ -389,13 +388,6 @@
   <target name="gterm" depends="init">
     <tomcompile example="${gterm}"/>
     <javacompile example="${gterm}"/>
-  </target>
-
-  <target name="gtree" depends="init">
-    <adtcompile example="${gtree}"
-                factory="term"/>
-    <tomcompile example="${gtree}"/>
-    <javacompile example="${gtree}"/>
   </target>
 
   <target name="integerc" depends="init">
@@ -768,7 +760,7 @@
           description="Builds the examples (at least some)"
 	  depends="addressbook, adt, antipattern, apireach, appletxml,
 	  boulderdash, builtin, caml, cell, dom, expression, ferus, gomoku,
-	  gterm, gtree, integerc, list, matching, master, meta, mgs, nspk, p3p,
+	  gterm, integerc, list, matching, master, meta, mgs, nspk, p3p,
 	  peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set, strategy,
 	  structure, strings, ted, tutorial, vas, xml, zenon">
   </target>
@@ -780,7 +772,8 @@
       ****************************************************
       ****************************************************
       You have to define the "version" property in order 
-      to builld the examples distribution
+			to build the examples distribution
+			> ./build.sh -Dversion="xxx"
       ****************************************************
       ****************************************************
     </fail>
@@ -860,10 +853,6 @@
 
         <include name="${gterm}/*.t"/>
         <include name="${gterm}/*.java"/>
-
-        <include name="${gtree}/README"/>
-        <include name="${gtree}/*.t"/>
-        <include name="${gtree}/*.adt"/>
 
         <include name="${integerc}/README"/>
         <include name="${integerc}/*.t"/>

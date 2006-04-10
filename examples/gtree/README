@@ -1,8 +1,0 @@
-* term.adt describes the abstract data-type
-
-*  adt-to-tom --input term.adt --nojar --name term --javagen --package adt.gtree
-
-* tom GTree[12].t
-* javac Gtree[12].java
-* java Gtree
-

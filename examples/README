@@ -169,10 +169,6 @@ If you come from the
   TODO
   Concepts: TODO
 
-* gtree
-  Tiny example of tree manipulation
-  Concepts: apigen
-
 * integerc
   Show how to use Tom with C
   Concepts: mapping, complex mapping on builtin
