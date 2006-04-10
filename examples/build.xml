@@ -759,10 +759,10 @@
   <target name="examples" 
           description="Builds the examples (at least some)"
 	  depends="addressbook, adt, antipattern, apireach, appletxml,
-	  boulderdash, builtin, caml, cell, dom, expression, ferus, gomoku,
-	  gterm, integerc, list, matching, master, meta, mgs, nspk, p3p,
-	  peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set, strategy,
-	  structure, strings, ted, tutorial, vas, xml, zenon">
+          boulderdash, builtin, caml, cell, dom, expression, ferus, gom,
+          gomoku, gterm, integerc, list, matching, master, meta, mgs, nspk,
+          p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set,
+          strategy, structure, strings, ted, tutorial, vas, xml, zenon">
   </target>
 
   <target name="dist.examples" 
