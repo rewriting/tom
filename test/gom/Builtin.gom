@@ -1,5 +1,5 @@
 module Builtin
-imports int
+imports int String
 
 public 
 	sorts Wrapper
