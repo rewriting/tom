@@ -62,7 +62,7 @@ public class OperatorTemplate extends TemplateClass {
     String classBody = %[
 package @getPackage()@;
 
-public class @className()@ extends @fullClassName(sortName)@ {
+public class @className()@ extends @fullClassName(sortName)@ implements tom.library.strategy.mutraveler.MuVisitable {
   private static @className()@ proto = new @className()@();
   private int hashCode;
   private @className()@() {};
@@ -169,6 +169,14 @@ public class @className()@ extends @fullClassName(sortName)@ {
     switch(index) {
 @nonBuiltinMakeCases("v")@
       default: throw new IndexOutOfBoundsException();
+    }
+  }
+
+  public jjtraveler.Visitable setChilds(jjtraveler.Visitable[] childs) {
+    if (childs.length == @nonBuiltinChildCount()@) {
+      return @nonBuiltinArrayMake("childs")@;
+    } else {
+      throw new IndexOutOfBoundsException();
     }
   }
 
@@ -434,6 +442,27 @@ public class @className()@ extends @fullClassName(sortName)@ {
     return res;
   }
 
+  private String nonBuiltinArrayMake(String arrayName) {
+    String res = "make(";
+    int index = 0;
+    int fullindex = 0;
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,slot@SlotField[domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res += "("+fullClassName(`domain)+") "+arrayName+"["+index+"], ";
+          index++;
+        } else {
+          res += getMethod(`slot)+"(), ";
+        }
+        fullindex++;
+      }
+    }
+    if (fullindex>0) {
+      res = res.substring(0,res.length()-2);
+    }
+    res += ")";
+    return res;
+  }
   private String nonBuiltinMakeCases(String argName) {
     String res = "";
     int index = 0;
