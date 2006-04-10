@@ -119,9 +119,6 @@ If you come from the
   Show how to use builtin integer and string  
   Concepts: list-matching, string-matching
 
-* c_apigen
-  Show how to use apigen in a C environment
-
 * caml
   Show how to use Tom with Caml  
   Concepts: mapping, list-matching
