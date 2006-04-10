@@ -7,6 +7,10 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.StringBufferInputStream;
 
+/**
+  * This example shows how gom can be run using a string as input in a program
+  * This is what Tom does when processing a %gom construct
+  */
 class GomRunner {
 
   public static void main(String[] args) {
