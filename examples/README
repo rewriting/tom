@@ -78,7 +78,30 @@ If you come from the
 
 * antipattern
   Solving anti-pattern matching problems
-  Concepts: TODO
+  Concepts: anti-patterns, strategies, rule construct
+  Files' description:
+	Matching1
+		- an algorithm for solving anti-pattern matching problems
+	Matching2
+		- same algorithm, but with the strategy Id instead of fail
+	Matching3
+		- modification of the algorithm to allow guards on rules 
+	Matching4
+		- another algorithm, a more correct one
+	Matching5
+		- same algorithm as 4, but implemented using %rule
+		- is is not working properly because of the problems with %rule
+		Problems: 
+			- if the construct of terms is in a file, and the rules in another, 
+					tom won't apply the rules
+			- you cannot control whether a rule should apply or not. For example 
+			if you need some rules to apply, and only after they have been applied,
+			to run another rule.   	
+			- when a strategy applies, the modified term will not fire the rules. 		
+					
+	MatchingDifferences
+		- another algorithm for anti-pattern matching based on set differences, but it only responds `True or `False,
+		without giving the substitution when it exists
 
 * apireach
   Compute reachable terms (wrt. a rewrite system)
