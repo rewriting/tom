@@ -3,36 +3,24 @@
 
 _arguments -C -s \
     '-X[Defines an alternate XML configuration file]:include path:_files -/' \
-    '--help' \
-    '-h' \
-    '--version[Print version]' \
-    '-V' \
-    '--verbose[Set verbose mode on]' \
-    '-v' \
-    '--intermediate[Generate intermediate files]' \
-    '-i' \
-    '--destdir[Set output directory]:include path:_dirs -/' \
-    '-d:include path:_dirs -/' \
-    '--output[Set output file name]:include path:_files -/' \
-    '-o:include path:_files -/' \
-    '--noDeclaration[Do not generate code for declarations]' \
-    '-D' \
-    '--wall[Print all warnings]' \
-    '-W' \
-    '--lazyType[Use universal type]' \
-    '-l' \
-    '--import[Path for %include]:include path:_files -/' \
-    '-I:include path:_files -/' \
+    {-h,--help}'[Print help]' \
+    {-V,--version}'[Print version]' \
+    {-v,--verbose}'[Set verbose mode on]' \
+    {-i,--intermediate}'[Generate intermediate files]' \
+    {-d,--destdir}'[Set output directory]:include path:_dirs -/' \
+    {-o,--output}'[Set output file name]:include path:_files -/' \
+    {-D,--noDeclaration}'[Do not generate code for declarations]' \
+    {-W,--wall}'[Print all warnings]' \
+    {-l,--lazyType}'[Use universal type]' \
+    {-I,--import}'[Path for %include]:include path:_files -/' \
     '--protected[Generate protected functions]' \
     '--static[Generate static functions]' \
-    '--optimize[Optimized generated code]' \
-    '-O' \
-    '--optimize2[Optimized generated code]' \
-    '-O2' \
+    {-O,--optimize}'[Optimized generated code]' \
+    {-O2,--optimize2}'[Optimized generated code]' \
     '--debug[Generate debug primitives]' \
     '--memory[Add memory management while debugging]' \
-    '--pretty[Pretty print code, losing file numbers]' \
-    '-p' \
+    {-p,--pretty}'[Pretty print code, losing file numbers]' \
     '--verify[Generates correctness proof obligations]' \
-    '*:tom_files:_files -g \*.\(\#i\)\(t\|tom\)' \
-&& return 0
+    '*:tom_files:_files -g \*.\(t\|tom\)'
+
+return 0

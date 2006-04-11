@@ -2,22 +2,14 @@
 #
 
 _arguments -C -s \
-    '-X[Defines an alternate XML configuration file]:include path:_files -/' \
-    '--help' \
-    '-h' \
-    '--version[Print version]' \
-    '-V' \
-    '--verbose[Set verbose mode on]' \
-    '-v' \
-    '--debug[Outputs more debug info]' \
-    '-vv' \
-    '--intermediate[Generate intermediate files]' \
-    '-i' \
-    '--destdir[Set output directory]:include path:_dirs -/' \
-    '-d:include path:_dirs -/' \
-    '--wall[Print all warnings]' \
-    '-W' \
-    '--import[Path for %include]:include path:_files -/' \
-    '-I:include path:_files -/' \
-    '*:gom_files:_files -g \*.\(\#i\)\(gom\)' \
-&& return 0
+	'-X[Defines an alternate XML configuration file]:include path:_files -/' \
+	{-h,--help} \
+	{-V,--version}'[Print version]' \
+	{-v,--verbose}'[Set verbose mode on]' \
+	{-vv,--debug}'[Outputs more debug info]' \
+	{-i,--intermediate}'[Generate intermediate files]' \
+	{-W,--wall}'[Print all warnings]' \
+	{-I,--import}'[Path for included modules]:include path:_files -/' \
+	'*:gom file:_files -g "*.gom"'
+
+return 0
