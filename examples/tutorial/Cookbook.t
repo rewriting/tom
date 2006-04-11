@@ -56,8 +56,6 @@ public class Cookbook {
       
       concRoom(Room*) -> House
       room(name: str, furniture: Furniture) -> Room
-      test(name: str, furniture: Furniture) -> Room
-      //testInt()->Int
       concPieceOfFurniture(PieceOfFurniture*) -> Furniture
       bed() -> PieceOfFurniture
       chair() -> PieceOfFurniture
