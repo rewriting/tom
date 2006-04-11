@@ -559,7 +559,8 @@
     </copy>
     <copy todir="${stable.dist.share}/contrib">
       <fileset dir="${utils}/contrib">
-        <include name="*"/>
+        <include name="**/*"/>
+        <exclude name="**/CVS/**/*"/>
       </fileset>
     </copy>
 
@@ -705,7 +706,8 @@
     </copy>
     <copy todir="${src.dist.share}/contrib">
       <fileset dir="${utils}/contrib">
-        <include name="*"/>
+        <include name="**/*"/>
+        <exclude name="**/CVS/**/*"/>
       </fileset>
     </copy>
 
