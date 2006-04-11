@@ -45,21 +45,20 @@ public class Cookbook {
   public Cookbook() {
   }
   
-  %vas { 
+  %gom { 
     module House
-      imports str
+      imports String 
       
     public
-      sorts House Room PieceOfFurniture Furniture
       abstract syntax
       
-      concRoom(Room*) -> House
-      room(name: str, furniture: Furniture) -> Room
-      concPieceOfFurniture(PieceOfFurniture*) -> Furniture
-      bed() -> PieceOfFurniture
-      chair() -> PieceOfFurniture
-      armchair() -> PieceOfFurniture
-      fridge() -> PieceOfFurniture
+      House = concRoom(Room*)
+      Room = room(name: String, furniture: Furniture)
+      Furniture = concPieceOfFurniture(PieceOfFurniture*)
+      PieceOfFurniture = bed()
+      | chair()
+      | armchair()
+      | fridge()
   }
 
   %include { mutraveler.tom }
