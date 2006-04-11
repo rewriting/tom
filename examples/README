@@ -127,10 +127,6 @@ If you come from the
   Cellular automata
   Concepts: pattern matching
 
-* constraint
-  TODO
-  Concepts: TODO
-
 * csmaca
   TODO
   Concepts: TODO
@@ -146,13 +142,9 @@ If you come from the
 * ferus
   Show how to use apigen in a C environment
 
-* fgen_imploded
-  TODO
-  Concepts: TODO
-
 * gasel
-  TODO
-  Concepts: TODO
+  Look for a pattern in a graph
+  Concepts: complex user-defined mapping
 
 * gom
   gom usage demonstration
@@ -163,8 +155,8 @@ If you come from the
   Concepts: list-matching, vas
 
 * gterm
-  TODO
-  Concepts: TODO
+  hand-written classes for gom
+  Concepts: shared-objects
 
 * integerc
   Show how to use Tom with C
@@ -198,8 +190,8 @@ If you come from the
   Concepts: apigen, complex list-matching, exploration of a search space
 
 * p3p
-  TODO
-  Concepts: TODO
+  Implementation of a web policy, using XML
+  Concepts: XML
 
 * peano
   Computation with Peano integers
