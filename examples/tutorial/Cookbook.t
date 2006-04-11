@@ -33,7 +33,6 @@ import tutorial.cookbook.house.*;
 import tutorial.cookbook.house.types.*;
 
 import java.util.*;
-import tom.library.traversal.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
