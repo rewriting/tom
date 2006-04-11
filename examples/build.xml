@@ -677,6 +677,7 @@
   </target>
 
   <target name="tutorial" depends="init">
+    <vascompile example="${tutorial}"/>
     <tomcompile example="${tutorial}"/>
     <javacompile example="${tutorial}"/>
   </target>
