@@ -1,4 +1,5 @@
 module Gom
+imports String
 abstract syntax
 
 GomModule = GomModule(moduleName:GomModuleName, sectionList:SectionList)

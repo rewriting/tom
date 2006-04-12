@@ -1,4 +1,5 @@
 module Objects
+imports String
 
 abstract syntax
 
