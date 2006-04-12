@@ -292,7 +292,10 @@
   </target> 
   
   <!-- compile tom files in src.src with tom.stable -->
-  <target name="buildtom" depends="init.task.stable, buildadt">
+  <target name="buildtom" depends="init.task.stable">
+    <antcall target="buildadt">
+      <param name="tom.home" value="${stable.dist}"/>
+    </antcall>
     <antcall target="buildtom.common">
       <param name="gen.destination" value="${src.gen}"/>
       <param name="tom.home" value="${stable.dist}"/>
@@ -1012,7 +1015,9 @@
     <mkdir dir="${destination}/dist"/>
 
     <!-- rebuild and copy adt -->
-    <antcall target="buildadt"/>
+    <antcall target="buildadt">
+      <param name="tom.home" value="${src.dist}"/>
+    </antcall>
     <copy todir="${destination}/gen">
       <fileset dir="${src.gen}">
         <include name="**/adt/**/*"/>
