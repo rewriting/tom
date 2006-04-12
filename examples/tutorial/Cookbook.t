@@ -32,8 +32,6 @@ package tutorial;
 import tutorial.cookbook.house.*;
 import tutorial.cookbook.house.types.*;
 
-import java.util.*;
-
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
