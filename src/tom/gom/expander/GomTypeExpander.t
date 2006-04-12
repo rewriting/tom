@@ -132,7 +132,10 @@ public class GomTypeExpander {
     while(it.hasNext()) {
       SortDecl decl = (SortDecl) it.next();
       OperatorDeclList opdecl = (OperatorDeclList) operatorsForSort.get(decl);
-      sortList = `concSort(Sort(decl,opdecl),sortList*);
+      Sort fullSort = `Sort(decl,opdecl);
+      if(checkSortValidity(fullSort)) {
+        sortList = `concSort(fullSort,sortList*);
+      }
     }
     return sortList;
   }
@@ -423,6 +426,31 @@ public class GomTypeExpander {
             `ModuleDecl(name,packagePath),importsModuleDeclList);
       }
     }
+  }
+
+  private boolean checkSortValidity(Sort sort) {
+    boolean valid = true;
+    // check if the same slot name is used with different types
+    Map mapNameType = new HashMap();
+    %match(Sort sort) {
+      Sort[operators=concOperator(_*,
+          OperatorDecl[prod=Slots[slots=concSlot(_*,
+            Slot[name=slotName,sort=slotSort],
+            _*)]],
+          _*)] -> {
+        if(!mapNameType.containsKey(`slotName)) {
+          mapNameType.put(`slotName,`slotSort);
+        } else {
+          SortDecl prevSort = (SortDecl) mapNameType.get(`slotName);
+          if (!prevSort.equals(`slotSort)) {
+            getLogger().log(Level.SEVERE, GomMessage.slotIncompatibleTypes.getMessage(),
+                new Object[]{`(slotName),prevSort.getname(),`(slotSort).getname()});
+          }
+          valid = false;
+        }
+      }
+    }
+    return valid;
   }
 
   private String showSortList(Collection decls) {

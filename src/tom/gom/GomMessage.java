@@ -134,6 +134,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Ill formed production, invalid fields: {0}");
   public static final GomMessage unknownSort =
     new GomMessage("Sort {0} not found: missing include ?");
+  public static final GomMessage slotIncompatibleTypes =
+    new GomMessage("Incompatible types for slot {0}: {1}, {2}. Two slots with the same name in the same sort should have same type");
 
   // GomCompiler
   public static final GomMessage compilationIssue =
