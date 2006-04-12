@@ -293,42 +293,47 @@
   
   <!-- compile tom files in src.src with tom.stable -->
   <target name="buildtom" depends="init.task.stable, buildadt">
-
     <antcall target="buildtom.common">
       <param name="gen.destination" value="${src.gen}"/>
       <param name="tom.home" value="${stable.dist}"/>
     </antcall>
   </target>
 
-  <!-- builds the parser using antlr -->
   <target name="buildparser">
-    <mkdir dir="${src.gen}/tom/engine/parser"/>
+    <antcall target="buildparser.common">
+      <param name="gen.destination" value="${src.gen}"/>
+    </antcall>
+  </target>
+  <!-- builds the parser using antlr -->
+  <target name="buildparser.common"
+          if="gen.destination">
+    <mkdir dir="${gen.destination}/tom/engine/parser"/>
     
     <antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
-           outputdirectory="${src.gen}/tom/engine/parser">
+           outputdirectory="${gen.destination}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
 
-    <antlr target="${src.gen}/tom/engine/parser/TomLanguage.g"
-           outputdirectory="${src.gen}/tom/engine/parser">
+    <antlr target="${gen.destination}/tom/engine/parser/TomLanguage.g"
+           outputdirectory="${gen.destination}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
-    <antlr target="${src.gen}/tom/engine/parser/HostLanguage.g"
-           outputdirectory="${src.gen}/tom/engine/parser">
+    <antlr target="${gen.destination}/tom/engine/parser/HostLanguage.g"
+           outputdirectory="${gen.destination}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
-    <antlr target="${src.gen}/tom/engine/parser/BackQuoteLanguage.g"
-           outputdirectory="${src.gen}/tom/engine/parser">
+    <antlr target="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
+           outputdirectory="${gen.destination}/tom/engine/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
     
-    <mkdir dir="${src.gen}/tom/gom/parser"/>
-    <antlr target="${src.gen}/tom/gom/parser/GomParser.g"
-           outputdirectory="${src.gen}/tom/gom/parser">
+    <mkdir dir="${gen.destination}/tom/gom/parser"/>
+    <antlr target="${gen.destination}/tom/gom/parser/GomParser.g"
+           outputdirectory="${gen.destination}/tom/gom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
     <antlr target="${src.src}/tom/gom/parser/BlockParser.g"
-           outputdirectory="${src.gen}/tom/gom/parser">
+           outputdirectory="${gen.destination}/tom/gom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
   </target>
@@ -753,7 +758,7 @@
 
   <target name="clean.bootstrap">
     <delete dir="${bootstrap.dir}"/>
-	  <delete dir="${src.src}/bootcheck"/>
+    <delete dir="${src.src}/bootcheck"/>
   </target>
 
   <target name="clean.test" description="Cleans acceptance tests directory">
@@ -1003,6 +1008,7 @@
 
     <mkdir dir="${destination}/gen"/>
     <mkdir dir="${destination}/build"/>
+    <mkdir dir="${destination}/dist"/>
 
     <!-- rebuild and copy adt -->
     <antcall target="buildadt"/>
@@ -1019,32 +1025,12 @@
     </antcall>
 
     <!-- builds parser -->
+    <antcall target="buildparser">
+      <param name="gen.destination" value="${destination}/gen"/>
+    </antcall>
+
     <mkdir dir="${destination}/gen/tom/engine/parser"/>
     
-    <antlr target="${src.src}/tom/engine/parser/TomJavaParser.g"
-           outputdirectory="${destination}/gen/tom/engine/parser">
-      <classpath refid="src.classpath"/>
-    </antlr>
-    <antlr target="${src.gen}/tom/engine/parser/TomLanguage.g"
-           outputdirectory="${destination}/gen/tom/engine/parser">
-      <classpath refid="src.classpath"/>
-    </antlr>
-    <antlr target="${src.gen}/tom/engine/parser/HostLanguage.g"
-           outputdirectory="${destination}/gen/tom/engine/parser">
-      <classpath refid="src.classpath"/>
-    </antlr>
-    <antlr target="${src.gen}/tom/engine/parser/BackQuoteLanguage.g"
-           outputdirectory="${destination}/gen/tom/engine/parser">
-      <classpath refid="src.classpath"/>
-    </antlr>
-    
-    <!-- Gom parser-->
-    <mkdir dir="${src.gen}/tom/gom/parser"/>
-    <antlr target="${src.gen}/tom/gom/parser/GomParser.g"
-           outputdirectory="${src.gen}/tom/gom/parser">
-      <classpath refid="tom.classpath"/>
-    </antlr>
-
     <tomjavac destdir="${destination}/build" fork="yes">
       <src path="${src.src}"/>
       <src path="${destination}/gen"/>
