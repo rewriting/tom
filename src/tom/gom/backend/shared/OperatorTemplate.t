@@ -552,20 +552,10 @@ public class @className()@ extends @fullClassName(sortName)@ implements tom.libr
           out.append(%[
   public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
     @`code@
-  }
-
-]%);
-        }
-        concHook(MakeBeforeHook(args,code)) -> {
-          // replace the inner make call
-          out.append(%[
-  public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
-    @`code@
     return realMake(@unprotectedChildList(`args)@);
   }
 
 ]%);
-
         }
       }
       // also generate the tom mapping

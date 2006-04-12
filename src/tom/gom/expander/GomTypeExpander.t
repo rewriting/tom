@@ -185,9 +185,6 @@ public class GomTypeExpander {
               (KindMakeHook| KindMakeinsertHook)[] -> {
                 newHook = `MakeHookDecl(typedArgs,hcode);
               }
-              KindMakeBeforeHook() -> {
-                newHook = `MakeBeforeHookDecl(typedArgs,hcode);
-              }
             }
             if (newHook == null) {
               throw new GomRuntimeException(
@@ -215,20 +212,22 @@ public class GomTypeExpander {
   private SlotList typedArguments(ArgList args, Hookkind kind,
                                   TypedProduction tprod, SortDecl sort) {
     %match(Hookkind kind) {
-      (KindMakeHook|KindMakeBeforeHook)[] -> {
+      KindMakeHook[] -> {
         // the TypedProduction has to be Slots
         %match(TypedProduction tprod) {
           Slots(slotList) -> {
             if (getLength(args) != getLength(`slotList)) { // tests the arguments number
               SlotList slist = `slotList;
-              getLogger().log(Level.SEVERE, GomMessage.mismatchedMakeArguments.getMessage(),
+              getLogger().log(Level.SEVERE,
+                  GomMessage.mismatchedMakeArguments.getMessage(),
                   new Object[]{args,slist });
               return null;
             }
             return recArgSlots(args,`slotList);
           }
           _ -> {
-            getLogger().log(Level.SEVERE, GomMessage.unsupportedHookAlgebraic.getMessage(),
+            getLogger().log(Level.SEVERE,
+                GomMessage.unsupportedHookAlgebraic.getMessage(),
                 new Object[]{kind});
             return null;
           }
@@ -244,14 +243,16 @@ public class GomTypeExpander {
                 return `concSlot(Slot(head,sortDecl),Slot(tail,sort));
               }
               _ -> {
-                getLogger().log(Level.SEVERE, GomMessage.badMakeInsertArguments.getMessage(),
+                getLogger().log(Level.SEVERE,
+                    GomMessage.badMakeInsertArguments.getMessage(),
                     new Object[]{new Integer(getLength(args))});
                 return null;
               }
             }
           }
           _ -> {
-            getLogger().log(Level.SEVERE, GomMessage.unsupportedHookVariadic.getMessage(),
+            getLogger().log(Level.SEVERE,
+                GomMessage.unsupportedHookVariadic.getMessage(),
                 new Object[]{kind});
             return null;
           }

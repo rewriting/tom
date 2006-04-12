@@ -353,10 +353,6 @@ public class GomCompiler {
             newArgs = makeSlotFieldListFromSlotList(`slotArgs);
             newHook = `MakeHook(newArgs,hookCode);
           }
-          MakeBeforeHookDecl[slotargs=slotArgs,code=hookCode] -> {
-            newArgs = makeSlotFieldListFromSlotList(`slotArgs);
-            newHook = `MakeBeforeHook(newArgs,hookCode);
-          }
         }
         if (newHook == null || newArgs == null) {
           throw new GomRuntimeException("Hook declaration "+`hook+" not processed");

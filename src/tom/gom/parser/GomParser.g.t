@@ -269,8 +269,6 @@ hooktype returns [Hookkind type]
     type = `KindMakeHook();
   } else if (typeName.equals("make_insert")) {
     type = `KindMakeinsertHook();
-  } else if (typeName.equals("make_before")) {
-    type = `KindMakeBeforeHook();
   } else {
     throw new GomRuntimeException("parsing problem");
   }
