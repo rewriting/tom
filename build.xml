@@ -302,6 +302,7 @@
   <target name="buildparser">
     <antcall target="buildparser.common">
       <param name="gen.destination" value="${src.gen}"/>
+      <param name="tom.home" value="${stable.dist}"/>
     </antcall>
   </target>
   <!-- builds the parser using antlr -->
@@ -467,7 +468,7 @@
   </target>
 
   <!-- Prepare common part of distributions -->
-  <target name="dist.common">
+  <target name="dist.common" if="dest">
     <!-- "tom README and INSTALL" -->
     <copy todir="${dest}" file="README"/>
     <copy todir="${dest}" file="${share}/INSTALL"/>
@@ -475,7 +476,7 @@
     <copy todir="${dest}" file="AUTHORS"/>
   </target>
 
-	<target name="stable" depends="stable.dist"/>
+  <target name="stable" depends="stable.dist"/>
   <target name="stable.dist" 
           description="Prepare a distribution ready stable package" 
           depends="clean.stable.dist, prepare.stable.dist, build.stable">
@@ -1004,7 +1005,7 @@
 
 
   <!-- compile tom files in src.src with tom.src -->      
-  <target name="bootstep" depends="init.task.src" if="destination">
+  <target name="bootstep" depends="init.task.src,src.dist" if="destination">
 
     <mkdir dir="${destination}/gen"/>
     <mkdir dir="${destination}/build"/>
@@ -1022,11 +1023,13 @@
     <antcall target="buildtom.common">
       <param name="gen.destination" value="${destination}/gen"/>
       <param name="withsource" value="yes"/>
+      <param name="tom.home" value="${src.dist}"/>
     </antcall>
 
     <!-- builds parser -->
-    <antcall target="buildparser">
+    <antcall target="buildparser.common">
       <param name="gen.destination" value="${destination}/gen"/>
+      <param name="tom.home" value="${src.dist}"/>
     </antcall>
 
     <mkdir dir="${destination}/gen/tom/engine/parser"/>
