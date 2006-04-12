@@ -248,7 +248,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 
      if(tlCode instanceof  tom.engine.adt.tomsignature.types.TargetLanguage) { { tom.engine.adt.tomsignature.types.TargetLanguage tom_match1_1=(( tom.engine.adt.tomsignature.types.TargetLanguage)tlCode); if(tom_is_fun_sym_TL(tom_match1_1) ||  false ) { { String  tom_match1_1_code=tom_get_slot_TL_code(tom_match1_1); { tom.engine.adt.tomsignature.types.Position tom_match1_1_start=tom_get_slot_TL_start(tom_match1_1); { tom.engine.adt.tomsignature.types.Position tom_match1_1_end=tom_get_slot_TL_end(tom_match1_1); if(tom_is_fun_sym_TextPosition(tom_match1_1_start) ||  false ) { { int  tom_match1_1_start_line=tom_get_slot_TextPosition_line(tom_match1_1_start); { int  tom_startLine=tom_match1_1_start_line; if(tom_is_fun_sym_TextPosition(tom_match1_1_end) ||  false ) { { int  tom_match1_1_end_line=tom_get_slot_TextPosition_line(tom_match1_1_end); if( true ) {
 
-        output.write(s, tom_startLine, tom_match1_1_end_line- tom_startLine);
+        output.write(0,s, tom_startLine, tom_match1_1_end_line- tom_startLine);
         return;
        }} }}} }}}} } if(tom_is_fun_sym_ITL(tom_match1_1) ||  false ) { { String  tom_match1_1_code=tom_get_slot_ITL_code(tom_match1_1); if( true ) {
 

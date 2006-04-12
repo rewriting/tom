@@ -174,33 +174,26 @@ abstract public class TomChecker extends TomGenericPlugin {
      * Message Functions
      */
 
-  protected void messageError(int errorLine, String msg, Object[] msgArg) {
+  protected void messageError(int errorLine, TomMessage msg, Object[] msgArgs) {
     String structName = currentTomStructureOrgTrack.getAstName().getString();
-    messageError(errorLine, structName, msg, msgArg);
+    messageError(errorLine, structName, msg, msgArgs);
   }
   
-  protected void messageError(int errorLine, String structInfo, String msg, Object[] msgArgs) {
+  protected void messageError(int errorLine, String structInfo, TomMessage msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.detailedMessage,
-          new Object[]{structInfo, new Integer(structDeclLine),
-          MessageFormat.format(msg,msgArgs)},
-          fileName, errorLine));
+    getLogger().log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine, structDeclLine, structInfo));
   }
   
-  protected void messageWarning(int errorLine, String msg, Object[] msgArg) {
+  protected void messageWarning(int errorLine, TomMessage msg, Object[] msgArgs) {
     String structName = currentTomStructureOrgTrack.getAstName().getString();
-    messageWarning(errorLine, structName, msg, msgArg);
+    messageWarning(errorLine, structName, msg, msgArgs);
   }
   
-  protected void messageWarning(int errorLine, String structInfo, String msg, Object[] msgArgs) {
+  protected void messageWarning(int errorLine, String structInfo, TomMessage msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    getLogger().log(new PlatformLogRecord(Level.WARNING, 
-                                          TomMessage.detailedMessage,
-                                          new Object[]{structInfo, new Integer(structDeclLine),
-                                          MessageFormat.format(msg,msgArgs)},
-                                          fileName, errorLine));
+    getLogger().log(new PlatformLogRecord(Level.WARNING,msg,msgArgs,fileName, errorLine,structDeclLine,structInfo));
   }
   
 }  //Class TomChecker

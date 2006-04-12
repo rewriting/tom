@@ -31,6 +31,7 @@ import java.util.ArrayList;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.tools.TomFactory;
 import tom.engine.tools.TomGenericPlugin;
@@ -400,14 +401,12 @@ public class TomExpander extends TomGenericPlugin {
 					 if(t instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match8_1=(( tom.engine.adt.tomsignature.types.TomTerm)t); if(tom_is_fun_sym_BackQuoteAppl(tom_match8_1) ||  false ) { { tom.engine.adt.tomsignature.types.OptionList tom_match8_1_option=tom_get_slot_BackQuoteAppl_option(tom_match8_1); { tom.engine.adt.tomsignature.types.TomName tom_match8_1_astName=tom_get_slot_BackQuoteAppl_astName(tom_match8_1); { tom.engine.adt.tomsignature.types.TomList tom_match8_1_args=tom_get_slot_BackQuoteAppl_args(tom_match8_1); { tom.engine.adt.tomsignature.types.OptionList tom_optionList=tom_match8_1_option; if(tom_is_fun_sym_Name(tom_match8_1_astName) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_name=tom_match8_1_astName; { String  tom_match8_1_astName_string=tom_get_slot_Name_string(tom_match8_1_astName); if( true ) {
 
 							TomSymbol tomSymbol = getSymbolFromName(tom_match8_1_astName_string);
-							String moduleName = getModuleName(tom_optionList);
 							TomList args  = (TomList) traversal().genericTraversal(tom_match8_1_args,this);
 
 							//System.out.println("BackQuoteTerm: " + `tomName);
 							//System.out.println("tomSymbol: " + tomSymbol);
 							if(hasConstant(tom_optionList)) {
-									// special case for builtin such as String
-									return tom_make_BuildVariable(tom_name,tom_make_emptyTomList());
+								return tom_make_BuildConstant(tom_name);
 							} else if(tomSymbol != null) {
 								if(isListOperator(tomSymbol)) {
 									return tomFactory.buildList(tom_name,args);
@@ -416,6 +415,10 @@ public class TomExpander extends TomGenericPlugin {
 								} else if(isDefinedSymbol(tomSymbol)) {
 									return tom_make_FunctionCall(tom_name,args);
 								} else {
+									String moduleName = getModuleName(tom_optionList);
+									if(moduleName==null) {
+										moduleName = TomBase.DEFAULT_MODULE_NAME;
+									}
 									return tom_make_BuildTerm(tom_name,args,moduleName);
 								}
 							} else {

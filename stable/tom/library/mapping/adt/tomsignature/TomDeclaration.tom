@@ -213,18 +213,6 @@
   make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstruction_CheckStamp(t0)}
 }
 
-%op Instruction MakeFunctionEnd() {
-  is_fsym(t) { (t!= null) && t.isMakeFunctionEnd()}
-  make() { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstruction_MakeFunctionEnd()}
-}
-
-%op Instruction MakeFunctionBegin(astName:TomName, subjectListAST:TomTerm) {
-  is_fsym(t) { (t!= null) && t.isMakeFunctionBegin()}
-  get_slot(astName,t) { t.getAstName()}
-  get_slot(subjectListAST,t) { t.getSubjectListAST()}
-  make(t0, t1) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstruction_MakeFunctionBegin(t0, t1)}
-}
-
 %op Instruction EqualityCondition(lhs:TomTerm, rhs:TomTerm) {
   is_fsym(t) { (t!= null) && t.isEqualityCondition()}
   get_slot(lhs,t) { t.getLhs()}
@@ -267,13 +255,6 @@
   get_slot(astPatternInstructionList,t) { t.getAstPatternInstructionList()}
   get_slot(option,t) { t.getOption()}
   make(t0, t1, t2) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstruction_Match(t0, t1, t2)}
-}
-
-%op Instruction RuleSet(ruleList:TomRuleList, option:OptionList) {
-  is_fsym(t) { (t!= null) && t.isRuleSet()}
-  get_slot(ruleList,t) { t.getRuleList()}
-  get_slot(option,t) { t.getOption()}
-  make(t0, t1) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeInstruction_RuleSet(t0, t1)}
 }
 
 %op Instruction NamedBlock(blockName:String, instList:InstructionList) {
@@ -1411,11 +1392,10 @@
   make(t0, t1, t2) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomTerm_BuildTerm(t0, t1, t2)}
 }
 
-%op TomTerm BuildVariable(astName:TomName, args:TomList) {
-  is_fsym(t) { (t!= null) && t.isBuildVariable()}
+%op TomTerm BuildConstant(astName:TomName) {
+  is_fsym(t) { (t!= null) && t.isBuildConstant()}
   get_slot(astName,t) { t.getAstName()}
-  get_slot(args,t) { t.getArgs()}
-  make(t0, t1) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomTerm_BuildVariable(t0, t1)}
+  make(t0) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomTerm_BuildConstant(t0)}
 }
 
 %op TomTerm FunctionCall(astName:TomName, args:TomList) {
@@ -1695,6 +1675,13 @@
   get_slot(throwsType,t) { t.getThrowsType()}
   get_slot(instruction,t) { t.getInstruction()}
   make(t0, t1, t2, t3, t4) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_FunctionDef(t0, t1, t2, t3, t4)}
+}
+
+%op Declaration RuleSet(ruleList:TomRuleList, option:OptionList) {
+  is_fsym(t) { (t!= null) && t.isRuleSet()}
+  get_slot(ruleList,t) { t.getRuleList()}
+  get_slot(option,t) { t.getOption()}
+  make(t0, t1) { tom.engine.adt.tomsignature.TomDeclarationFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_RuleSet(t0, t1)}
 }
 
 %op Declaration Strategy(sName:TomName, extendsTerm:TomTerm, visitList:TomVisitList, orgTrack:Option) {

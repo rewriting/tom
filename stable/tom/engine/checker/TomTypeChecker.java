@@ -102,19 +102,19 @@ public class TomTypeChecker extends TomChecker {
             currentTomStructureOrgTrack = findOriginTracking(tom_match1_1_option);
             verifyMatchVariable(tom_match1_1_astPatternInstructionList);
             return false;
-           }}}} } if(tom_is_fun_sym_RuleSet(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match1_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match1_1); { tom.engine.adt.tomsignature.types.OptionList tom_match1_1_option=tom_get_slot_RuleSet_option(tom_match1_1); if( true ) {
-
-            currentTomStructureOrgTrack = findOriginTracking(tom_match1_1_option);
-            verifyRuleVariable(tom_match1_1_ruleList);
-            return false;
-           }}} }} } if(term instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match2_1=(( tom.engine.adt.tomsignature.types.Declaration)term); if(tom_is_fun_sym_Strategy(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match2_1_sName=tom_get_slot_Strategy_sName(tom_match2_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1_extendsTerm=tom_get_slot_Strategy_extendsTerm(tom_match2_1); { tom.engine.adt.tomsignature.types.TomVisitList tom_match2_1_visitList=tom_get_slot_Strategy_visitList(tom_match2_1); { tom.engine.adt.tomsignature.types.Option tom_match2_1_orgTrack=tom_get_slot_Strategy_orgTrack(tom_match2_1); if( true ) {
+           }}}} }} } if(term instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match2_1=(( tom.engine.adt.tomsignature.types.Declaration)term); if(tom_is_fun_sym_Strategy(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match2_1_sName=tom_get_slot_Strategy_sName(tom_match2_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1_extendsTerm=tom_get_slot_Strategy_extendsTerm(tom_match2_1); { tom.engine.adt.tomsignature.types.TomVisitList tom_match2_1_visitList=tom_get_slot_Strategy_visitList(tom_match2_1); { tom.engine.adt.tomsignature.types.Option tom_match2_1_orgTrack=tom_get_slot_Strategy_orgTrack(tom_match2_1); if( true ) {
 
 
 
             currentTomStructureOrgTrack = tom_match2_1_orgTrack;
             verifyStrategyVariable(tom_match2_1_visitList);
             return false;
-           }}}}} }} }
+           }}}}} } if(tom_is_fun_sym_RuleSet(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match2_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match2_1); { tom.engine.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_RuleSet_option(tom_match2_1); if( true ) {
+
+            currentTomStructureOrgTrack = findOriginTracking(tom_match2_1_option);
+            verifyRuleVariable(tom_match2_1_ruleList);
+            return false;
+           }}} }} }
 
         return true;
       }// end apply
@@ -132,7 +132,7 @@ public class TomTypeChecker extends TomChecker {
 
 							if((symbolTable().getSymbolFromName(getName(tom_app)))==null) {
 								messageError(findOriginTrackingLine(tom_app.getOption()),
-										TomMessage.unknownVariableInWhen.getMessage(),
+										TomMessage.unknownVariableInWhen,
 										new Object[]{getName(tom_app)});
 							}
 							// else, it's actually app()
@@ -174,7 +174,7 @@ public class TomTypeChecker extends TomChecker {
 
 
               messageError(findOriginTrackingLine(tom_match4_1_option),
-                  TomMessage.unknownVisitedType.getMessage(),
+                  TomMessage.unknownVisitedType,
                   new Object[]{(tom_match5_1_string)});
              }} } if(tom_is_fun_sym_Type(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match5_1_tomType=tom_get_slot_Type_tomType(tom_match5_1); { tom.engine.adt.tomsignature.types.TomType tom_match5_1_tlType=tom_get_slot_Type_tlType(tom_match5_1); if(tom_is_fun_sym_ASTTomType(tom_match5_1_tomType) ||  false ) { { String  tom_match5_1_tomType_string=tom_get_slot_ASTTomType_string(tom_match5_1_tomType); { String  tom_ASTVisitType=tom_match5_1_tomType_string; if(tom_is_fun_sym_TLType(tom_match5_1_tlType) ||  false ) { { tom.engine.adt.tomsignature.types.TargetLanguage tom_match5_1_tlType_tl=tom_get_slot_TLType_tl(tom_match5_1_tlType); { tom.engine.adt.tomsignature.types.TargetLanguage tom_TLVisitType=tom_match5_1_tlType_tl; if( true ) {
 
@@ -185,7 +185,7 @@ public class TomTypeChecker extends TomChecker {
               //noVisitorFwd defined for visitType
               if (currentVisitorFwd == null || currentVisitorFwd == tom_make_EmptyForward()){ 
                 messageError(tom_TLVisitType.getStart().getLine(),
-                    TomMessage.noVisitorForward.getMessage(),
+                    TomMessage.noVisitorForward,
                     new Object[]{(tom_ASTVisitType)});
               }
               else if (visitorFwd == null) {
@@ -196,7 +196,7 @@ public class TomTypeChecker extends TomChecker {
                 //check if current visitor equals to previous visitor
                 if (currentVisitorFwd != visitorFwd){ 
                   messageError(tom_TLVisitType.getStart().getLine(),
-                      TomMessage.differentVisitorForward.getMessage(),
+                      TomMessage.differentVisitorForward,
                       new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
                 }
               }
@@ -321,7 +321,7 @@ public class TomTypeChecker extends TomChecker {
 				//System.out.println("var2 = " + variable);
         if(!(type1==type2)) {
           messageError(findOriginTrackingLine(variable.getOption()),
-                       TomMessage.incoherentVariable.getMessage(),
+                       TomMessage.incoherentVariable,
                        new Object[]{name.getString(), type1.getTomType().getString(), type2.getTomType().getString()});
         }
       } else {
@@ -349,7 +349,7 @@ public class TomTypeChecker extends TomChecker {
         TomType type = (TomType)variableTable.get(nameVar);
         if(!(type==typeVar)) {
           messageError(findOriginTrackingLine(variable.getOption()),
-                       TomMessage.incoherentVariable.getMessage(),
+                       TomMessage.incoherentVariable,
                        new Object[]{nameVar.getString(), type.getTomType().getString(), typeVar.getTomType().getString()});
           return false;
         }
@@ -370,7 +370,7 @@ public class TomTypeChecker extends TomChecker {
       TomName name = variable.getAstName();
       if(variableTable.containsKey(name)) {
         messageError(findOriginTrackingLine(variable.getOption()),
-                     TomMessage.freshVariableIssue.getMessage(),
+                     TomMessage.freshVariableIssue,
                      new Object[]{name.getString()});
          
         return false;
@@ -387,7 +387,7 @@ public class TomTypeChecker extends TomChecker {
       TomName name = variable.getAstName();
       if(!variableTable.containsKey(name)) {
         messageError(findOriginTrackingLine(variable.getOption()),
-                     message.getMessage(),
+                     message,
                      new Object[]{name.getString()});             
         return false;
       }

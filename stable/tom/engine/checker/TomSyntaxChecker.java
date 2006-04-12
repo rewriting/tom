@@ -144,7 +144,12 @@ public class TomSyntaxChecker extends TomChecker {
             /*  STRATEGY MATCH STRUCTURE*/
             verifyStrategy(tom_match1_1_sName,tom_match1_1_extendsTerm,tom_match1_1_visitList,tom_match1_1_orgTrack);
             return true;//case when %match in %strategy
-           }}}}} } if(tom_is_fun_sym_TypeTermDecl(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match1_1_astName=tom_get_slot_TypeTermDecl_astName(tom_match1_1); { tom.engine.adt.tomsignature.types.DeclarationList tom_match1_1_declarations=tom_get_slot_TypeTermDecl_declarations(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_TypeTermDecl_orgTrack(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_astName) ||  false ) { { String  tom_match1_1_astName_string=tom_get_slot_Name_string(tom_match1_1_astName); if( true ) {verifyTypeDecl(TomSyntaxChecker.TYPE_TERM,tom_match1_1_astName_string,tom_match1_1_declarations,tom_match1_1_orgTrack)
+           }}}}} } if(tom_is_fun_sym_RuleSet(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match1_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match1_1); { tom.engine.adt.tomsignature.types.OptionList tom_match1_1_option=tom_get_slot_RuleSet_option(tom_match1_1); if( true ) {
+
+            /*  TOM RULE STRUCTURE*/
+            verifyRule(tom_match1_1_ruleList,tom_match1_1_option);
+            return false;
+           }}} } if(tom_is_fun_sym_TypeTermDecl(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match1_1_astName=tom_get_slot_TypeTermDecl_astName(tom_match1_1); { tom.engine.adt.tomsignature.types.DeclarationList tom_match1_1_declarations=tom_get_slot_TypeTermDecl_declarations(tom_match1_1); { tom.engine.adt.tomsignature.types.Option tom_match1_1_orgTrack=tom_get_slot_TypeTermDecl_orgTrack(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_astName) ||  false ) { { String  tom_match1_1_astName_string=tom_get_slot_Name_string(tom_match1_1_astName); if( true ) {verifyTypeDecl(TomSyntaxChecker.TYPE_TERM,tom_match1_1_astName_string,tom_match1_1_declarations,tom_match1_1_orgTrack)
 
 
 ;
@@ -169,12 +174,7 @@ public class TomSyntaxChecker extends TomChecker {
             /*  TOM MATCH STRUCTURE*/
             verifyMatch(tom_match2_1_subjectList_tomList,tom_match2_1_astPatternInstructionList,tom_match2_1_option);
             return true;//case when nested %match
-           }} }}}} } if(tom_is_fun_sym_RuleSet(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomRuleList tom_match2_1_ruleList=tom_get_slot_RuleSet_ruleList(tom_match2_1); { tom.engine.adt.tomsignature.types.OptionList tom_match2_1_option=tom_get_slot_RuleSet_option(tom_match2_1); if( true ) {
-
-            /*  TOM RULE STRUCTURE*/
-            verifyRule(tom_match2_1_ruleList,tom_match2_1_option);
-            return false;
-           }}} }} }
+           }} }}}} }} }
  
         return true;
       }
@@ -249,7 +249,7 @@ public class TomSyntaxChecker extends TomChecker {
     if(list.contains(name)) {
       messageError(currentTomStructureOrgTrack.getLine(), 
                    symbolType+" "+name, 
-                   TomMessage.multipleSymbolDefinitionError.getMessage(),
+                   TomMessage.multipleSymbolDefinitionError,
                    new Object[]{name});
     } else {
       list.add(name);
@@ -262,7 +262,7 @@ public class TomSyntaxChecker extends TomChecker {
     } else {
       messageError(orgTrack.getLine(), 
                    "structure "+symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
-                   TomMessage.macroFunctionRepeated.getMessage(),
+                   TomMessage.macroFunctionRepeated,
                    new Object[]{function});
     }
   } //checkField
@@ -272,7 +272,7 @@ public class TomSyntaxChecker extends TomChecker {
     if(name1.equals(name2)) {
       messageError(orgTrack.getLine(), 
                    symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
-                   TomMessage.nonLinearMacroFunction.getMessage(),
+                   TomMessage.nonLinearMacroFunction,
                    new Object[]{function, name1});
     }
   } //checkFieldAndLinearArgs
@@ -300,21 +300,20 @@ public class TomSyntaxChecker extends TomChecker {
 	private void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
 		 if(codomain instanceof  tom.engine.adt.tomsignature.types.TomType) { { tom.engine.adt.tomsignature.types.TomType tom_match5_1=(( tom.engine.adt.tomsignature.types.TomType)codomain); if(tom_is_fun_sym_Codomain(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match5_1_astName=tom_get_slot_Codomain_astName(tom_match5_1); if(tom_is_fun_sym_Name(tom_match5_1_astName) ||  false ) { { String  tom_match5_1_astName_string=tom_get_slot_Name_string(tom_match5_1_astName); if( true ) {
 
-				if(symbolTable().getSymbolFromName(tom_match5_1_astName_string) != null) {
-					return;
-				} else {
+				if(symbolTable().getSymbolFromName(tom_match5_1_astName_string) == null) {
 					messageError(currentTomStructureOrgTrack.getLine(), 
 							symbolType+" "+symbName, 
-							TomMessage.symbolCodomainError.getMessage(),
+							TomMessage.symbolCodomainError,
 							new Object[]{symbName, codomain});
 				}
+        return;
 			 }} }} } if( true ) {
 
 
 				if(!testTypeExistence(codomain.getString())) {
 					messageError(currentTomStructureOrgTrack.getLine(), 
 							symbolType+" "+symbName, 
-							TomMessage.symbolCodomainError.getMessage(),
+							TomMessage.symbolCodomainError,
 							new Object[]{symbName, codomain});
 				}
 			 }} }
@@ -329,7 +328,7 @@ public class TomSyntaxChecker extends TomChecker {
           if(!testTypeExistence(tom_typeName)) {
             messageError(currentTomStructureOrgTrack.getLine(), 
                          symbolType+" "+symbName, 
-                         TomMessage.symbolDomainError.getMessage(),
+                         TomMessage.symbolDomainError,
                          new Object[]{new Integer(position), symbName, (tom_typeName)});
           }
           position++;
@@ -342,7 +341,7 @@ public class TomSyntaxChecker extends TomChecker {
           if(!testTypeExistence(tom_typeName)) {
             messageError(currentTomStructureOrgTrack.getLine(), 
                          symbolType+" "+symbName, 
-                         TomMessage.listSymbolDomainError.getMessage(),
+                         TomMessage.listSymbolDomainError,
                          new Object[]{symbName, (tom_typeName)});
           }
          } }}} }} }} }} }
@@ -394,7 +393,7 @@ public class TomSyntaxChecker extends TomChecker {
               } else {
                 messageError(tom_orgTrack.getLine(), 
                              symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
-                             TomMessage.macroFunctionRepeated.getMessage(),
+                             TomMessage.macroFunctionRepeated,
                              new Object[]{TomSyntaxChecker.MAKE});
               }
               break matchblock;
@@ -417,7 +416,7 @@ public class TomSyntaxChecker extends TomChecker {
         if(listVar.contains(tom_name)) {
           messageError(orgTrack.getLine(), 
                        symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
-                       TomMessage.nonLinearMacroFunction.getMessage(),
+                       TomMessage.nonLinearMacroFunction,
                        new Object[]{TomSyntaxChecker.MAKE, (tom_name)});
         } else {
           listVar.add(tom_name);
@@ -428,7 +427,7 @@ public class TomSyntaxChecker extends TomChecker {
     if(nbArgs != domainLength) {
       messageError(orgTrack.getLine(), 
                    symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
-                   TomMessage.badMakeDefinition.getMessage(),
+                   TomMessage.badMakeDefinition,
                    new Object[]{new Integer(nbArgs), new Integer(domainLength)});     
     }
   } //verifyMakeDeclArgs
@@ -456,7 +455,7 @@ public class TomSyntaxChecker extends TomChecker {
     String stringListOfMissingMacros = listOfMissingMacros.substring(0, listOfMissingMacros.length()-3);
     messageError(currentTomStructureOrgTrack.getLine(), 
                  symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(),
-                 TomMessage.missingMacroFunctions.getMessage(),
+                 TomMessage.missingMacroFunctions,
                  new Object[]{stringListOfMissingMacros});
   } //messageMissingMacroFunctions
 
@@ -476,7 +475,7 @@ public class TomSyntaxChecker extends TomChecker {
  // for each Match args
         if (!testTypeExistence(tom_type)) {
           messageError(currentTomStructureOrgTrack.getLine(),
-                       TomMessage.unknownMatchArgumentTypeInSignature.getMessage(),
+                       TomMessage.unknownMatchArgumentTypeInSignature,
                        new Object[]{tom_name, (tom_type)});
           typeMatchArgs.add(null);
         } else {
@@ -487,7 +486,7 @@ public class TomSyntaxChecker extends TomChecker {
         } else {
           // Maybe its an error to have the 2 same name variable in the match definition: warn the user
           messageWarning(currentTomStructureOrgTrack.getLine(),
-                         TomMessage.repeatedMatchArgumentName.getMessage(),
+                         TomMessage.repeatedMatchArgumentName,
                          new Object[]{(tom_name)});
         }
        }}} }}}} }}tom_match12_1_end1=tom_get_tail_concTomTerm_TomList(tom_match12_1_end1);} }tom_match12_1_list1=tom_match12_1_begin1;}}}} }} }
@@ -508,7 +507,7 @@ public class TomSyntaxChecker extends TomChecker {
     int nbFoundArgs = termList.getLength();
     if(nbFoundArgs != nbExpectedArgs) {
       messageError(findOriginTrackingLine(termList.getHead().getOption()),
-                   TomMessage.badMatchNumberArgument.getMessage(),
+                   TomMessage.badMatchNumberArgument,
                    new Object[]{new Integer(nbExpectedArgs), new Integer(nbFoundArgs)});
       // we can not continue because we will use the fact that each element of the pattern
       // has the expected type declared in the Match definition
@@ -522,7 +521,7 @@ public class TomSyntaxChecker extends TomChecker {
         TermDescription termDesc = analyseTerm(tom_term);
         if(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR) {
           messageError(termDesc.decLine, 
-                       TomMessage.incorrectVariableStarInMatch.getMessage(), 
+                       TomMessage.incorrectVariableStarInMatch, 
                        new Object[]{termDesc.name});
         } else {    // Analyse of the term if expectedType != null  
           expectedType = (TomType)typeMatchArgs.get(counter);
@@ -610,7 +609,7 @@ public class TomSyntaxChecker extends TomChecker {
         termName = getName(lhs);
       } 
       messageError(findOriginTrackingLine(lhs.getOption()), 
-                   TomMessage.incorrectRuleLHSClass.getMessage(), new Object[]{termName});
+                   TomMessage.incorrectRuleLHSClass, new Object[]{termName});
       return null;
     }
     
@@ -620,7 +619,7 @@ public class TomSyntaxChecker extends TomChecker {
       symbol = getAstFactory().updateDefinedSymbol(symbolTable(),lhs);
       if( symbol == null ) {
         messageError(findOriginTrackingLine(lhs.getOption()),
-                     TomMessage.unknownSymbol.getMessage(), 
+                     TomMessage.unknownSymbol, 
                      new Object[]{currentHeadSymbolName});
         // We can not continue anymore
         return null;
@@ -628,13 +627,13 @@ public class TomSyntaxChecker extends TomChecker {
       //ensure we are able to construct this symbol
       if ( !findMakeDecl(symbol.getOption())) {
         messageError(findOriginTrackingLine(lhs.getOption()),
-                     TomMessage.noRuleMakeDecl.getMessage(), 
+                     TomMessage.noRuleMakeDecl, 
                      new Object[]{currentHeadSymbolName});
       }
       
       if(alreadyStudiedRule.contains(currentHeadSymbolName)) {
         messageError(currentTomStructureOrgTrack.getLine(),
-                     TomMessage.multipleRuleDefinition.getMessage(),
+                     TomMessage.multipleRuleDefinition,
                      new Object[]{currentHeadSymbolName});
         return null;
       } else {
@@ -645,7 +644,7 @@ public class TomSyntaxChecker extends TomChecker {
       String newName = getName(lhs);
       if (!headSymbolName.equals(currentHeadSymbolName)) {
         messageError(findOriginTrackingLine(lhs.getOption()),
-                     TomMessage.differentRuleConstructor.getMessage(), 
+                     TomMessage.differentRuleConstructor, 
                      new Object[]{headSymbolName, currentHeadSymbolName}); 
       }
     }
@@ -683,7 +682,7 @@ public class TomSyntaxChecker extends TomChecker {
         termName = getName(rhs);
       } 
       messageError(findOriginTrackingLine(rhs.getOption()), 
-                   TomMessage.incorrectRuleRHSClass.getMessage(), new Object[]{termName});
+                   TomMessage.incorrectRuleRHSClass, new Object[]{termName});
       return;
     }
     
@@ -696,7 +695,7 @@ public class TomSyntaxChecker extends TomChecker {
         String rhsTypeName;
         if(rhsType.isEmptyType()) {rhsTypeName = "Not Type Found";} else {rhsTypeName = rhsType.getString();}
         messageError(findOriginTrackingLine(rhs.getOption()), 
-                     TomMessage.incorrectRuleRHSType.getMessage(), new Object[]{rhsTypeName, lhsType.getString()});
+                     TomMessage.incorrectRuleRHSType, new Object[]{rhsTypeName, lhsType.getString()});
       }
     }
   }
@@ -754,7 +753,7 @@ public class TomSyntaxChecker extends TomChecker {
             int nbArgs = args.getLength();
             int nbExpectedArgs = types.getLength();
             if(nbArgs != nbExpectedArgs) {
-              messageError(decLine, TomMessage.symbolNumberArgument.getMessage(), 
+              messageError(decLine, TomMessage.symbolNumberArgument, 
                            new Object[]{termName, new Integer(nbExpectedArgs), new Integer(nbArgs)});
               break matchblock;
             }
@@ -770,7 +769,7 @@ public class TomSyntaxChecker extends TomChecker {
 
 
           if(permissive) {
-            messageError(findOriginTrackingLine(tom_options), TomMessage.incorrectRuleRHSClass.getMessage(), 
+            messageError(findOriginTrackingLine(tom_options), TomMessage.incorrectRuleRHSClass, 
                          new Object[]{getName(tom_match20_1)+"[...]"});
           }
           decLine = findOriginTrackingLine(tom_options);
@@ -825,7 +824,7 @@ public class TomSyntaxChecker extends TomChecker {
           type = null;     
           termName = "_";
           if(permissive) {
-            messageError(decLine, TomMessage.incorrectRuleRHSClass.getMessage(), 
+            messageError(decLine, TomMessage.incorrectRuleRHSClass, 
                          new Object[]{termName});
           }
           break matchblock;
@@ -845,7 +844,7 @@ public class TomSyntaxChecker extends TomChecker {
           type = null;     
           termName = tom_match20_1_astName_string+"*";
           if(!listSymbol) {
-            messageError(decLine, TomMessage.invalidVariableStarArgument.getMessage(), 
+            messageError(decLine, TomMessage.invalidVariableStarArgument, 
                          new Object[]{termName});
           }
           break matchblock;
@@ -857,11 +856,11 @@ public class TomSyntaxChecker extends TomChecker {
           type = null;     
           termName = "_*";
           if(!listSymbol) {
-            messageError(decLine, TomMessage.invalidVariableStarArgument.getMessage(), 
+            messageError(decLine, TomMessage.invalidVariableStarArgument, 
                          new Object[]{termName});
           }
           if(permissive) {
-            messageError(decLine, TomMessage.incorrectRuleRHSClass.getMessage(), 
+            messageError(decLine, TomMessage.incorrectRuleRHSClass, 
                          new Object[]{termName});
           }
           break matchblock;
@@ -951,7 +950,7 @@ public class TomSyntaxChecker extends TomChecker {
     
     if(filteredList.isEmpty()) {
       messageError(decLine,
-                   TomMessage.unknownUnamedList.getMessage(),
+                   TomMessage.unknownUnamedList,
                    new Object[]{expectedType.getString()});
       return null;
     } else if(!filteredList.getTail().isEmpty()) {
@@ -961,7 +960,7 @@ public class TomSyntaxChecker extends TomChecker {
         filteredList= filteredList.getTail();
       }
       messageError(decLine,
-                   TomMessage.ambigousUnamedList.getMessage(),
+                   TomMessage.ambigousUnamedList,
                    new Object[]{expectedType.getString(), symbolsString.toString()});
       return null;
     } else { 
@@ -982,11 +981,11 @@ public class TomSyntaxChecker extends TomChecker {
             // this correspond to aterm like 'unknown()' or unknown(s1, s2, ...)
           if(!permissive) {
             messageError(decLine,
-                         TomMessage.unknownSymbol.getMessage(),
+                         TomMessage.unknownSymbol,
                          new Object[]{res});
           } else {
             messageWarning(decLine,
-                         TomMessage.unknownPermissiveSymbol.getMessage(),
+                         TomMessage.unknownPermissiveSymbol,
                            new Object[]{res});
           }
         }
@@ -1002,7 +1001,7 @@ public class TomSyntaxChecker extends TomChecker {
       //  this is a disjunction
     if(permissive) { 
       messageError(decLine, 
-                   TomMessage.impossiblePermissiveAndDisjunction.getMessage(),
+                   TomMessage.impossiblePermissiveAndDisjunction,
                    new Object[]{});
     }
    
@@ -1014,7 +1013,7 @@ public class TomSyntaxChecker extends TomChecker {
         if (symbol == null) {
             // In disjunction we can only have known symbols
           messageError(decLine,
-                       TomMessage.unknownSymbolInDisjunction.getMessage(),
+                       TomMessage.unknownSymbolInDisjunction,
                        new Object[]{(tom_dijName)});
           return null;
         }
@@ -1031,7 +1030,7 @@ public class TomSyntaxChecker extends TomChecker {
           first = false;
           if(currentDomain != domainReference) {
             messageError(decLine, 
-                         TomMessage.invalidDisjunctionDomain.getMessage(),
+                         TomMessage.invalidDisjunctionDomain,
                          new Object[]{(tom_dijName)});
             return null;
           }
@@ -1045,7 +1044,7 @@ public class TomSyntaxChecker extends TomChecker {
     if(currentCodomain != expectedType) {
       //System.out.println(currentCodomain+"!="+expectedType);
       messageError(decLine, 
-                   msg.getMessage(),
+                   msg,
                    new Object[]{symbolName, currentCodomain.getString(), expectedType.getString()});
       return false;
     }
@@ -1059,7 +1058,7 @@ public class TomSyntaxChecker extends TomChecker {
       if (symbol == null ) { // this correspond to: unknown[]
           // it is not correct to use Record an unknown symbols
         messageError(decLine,
-                     TomMessage.unknownSymbol.getMessage(),
+                     TomMessage.unknownSymbol,
                      new Object[]{res});
         return null;    
       } else { // known symbol
@@ -1087,14 +1086,14 @@ public class TomSyntaxChecker extends TomChecker {
         // list operator with [] no allowed
       if(slotList.isEmpty() && (isListOperator(symbol) ||  isArrayOperator(symbol)) ) {
         messageError(decLine,
-                     TomMessage.bracketOnListSymbol.getMessage(),
+                     TomMessage.bracketOnListSymbol,
                      new Object[]{tomName});
       }
         // TODO verify type
       verifyRecordSlots(slotList,symbol, getSymbolDomain(symbol), tomName, decLine);
     } else {
       messageError(decLine,
-                   TomMessage.unknownSymbol.getMessage(),
+                   TomMessage.unknownSymbol,
                    new Object[]{tomName});
     }
   }
@@ -1124,7 +1123,7 @@ public class TomSyntaxChecker extends TomChecker {
           }
         }
         messageError(decLine,
-                     TomMessage.badSlotName.getMessage(), 
+                     TomMessage.badSlotName, 
                      new Object[]{pairSlotName.getString(), methodName, listOfPossibleSlot.toString()});
         return; //break analyses
       } else { // then check for repeated good slot name
@@ -1132,7 +1131,7 @@ public class TomSyntaxChecker extends TomChecker {
         if(studiedSlotIndexList.contains(integerIndex)) {
             // Error: repeated slot
           messageError(decLine,
-                       TomMessage.slotRepeated.getMessage(),
+                       TomMessage.slotRepeated,
                        new Object[]{methodName, pairSlotName.getString()});
           return; //break analyses
         }

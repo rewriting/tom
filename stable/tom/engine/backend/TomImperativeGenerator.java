@@ -47,13 +47,12 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
   protected String modifier = "";
   protected boolean nodeclMode;
-  protected boolean prettyMode;
+
 
   public TomImperativeGenerator(OutputCode output, OptionManager optionManager,
                                 SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
-    prettyMode = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
     
     if(((Boolean)optionManager.getOptionValue("static")).booleanValue()) {
       this.modifier += "static " ;
@@ -156,41 +155,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.writeCloseBrace();
   }
 
-  protected void buildFunctionBegin(int deep, String tomName, TomList varList, String moduleName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
-    String glType = getTLType(getSymbolCodomain(tomSymbol));
-    String name = tomSymbol.getAstName().getString();
-    
-    output.write(deep,glType + " " + name + "(");
-    TomTerm localVar;
-    while(!varList.isEmpty()) {
-      localVar = varList.getHead();
-      matchBlock: {
-         if(localVar instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1=(( tom.engine.adt.tomsignature.types.TomTerm)localVar); if(tom_is_fun_sym_Variable(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match2_1_astType=tom_get_slot_Variable_astType(tom_match2_1); if( true ) {
-
-            output.write(deep,getTLType(tom_match2_1_astType) + " ");
-            generate(deep,tom_match2_1,moduleName);
-            break matchBlock;
-           }} } if( true ) {
-
-            System.out.println("MakeFunction: strange term: " + localVar);
-            throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
-           }} }
-
-      }
-      varList = varList.getTail();
-      if(!varList.isEmpty()) {
-        output.write(deep,", ");
-        
-      }
-    }
-    output.writeln(deep,") {");
-  }
-  
-  protected void buildFunctionEnd(int deep) throws IOException {
-    output.writeln(deep,"}");
-  }
-
   protected void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException {
     output.write("!(");
     generateExpression(deep,exp,moduleName);
@@ -230,7 +194,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write(deep,"{" + getTLCode(tlType) + " ");
     buildAssignVar(deep,var,optionList,exp,moduleName);
     generateInstruction(deep,body,moduleName);
-    output.writeln("}");
+    output.writeln(deep,"}");
   }
 
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
@@ -252,13 +216,13 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
-    output.writeln("{");
+    output.writeln(deep, "{");
     generateInstructionList(deep+1,instList, moduleName);
-    output.writeln("}");
+    output.writeln(deep, "}");
   }
 
   protected void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException {
-    output.write(deep,"if("); 
+    output.write(deep,"if ("); 
     generateExpression(deep,exp, moduleName); 
     output.writeln(") {");
     generateInstruction(deep+1,succes, moduleName);
@@ -266,7 +230,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
   
   protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException {
-    output.write(deep,"if("); 
+    output.write(deep,"if ("); 
     generateExpression(deep,exp,moduleName); 
     output.writeln(") {");
     generateInstruction(deep+1,succes,moduleName);
@@ -299,9 +263,9 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
   protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
     //output.write("((" + getTLType(codomain) + ")tom_get_head_" + getTomType(domain) + "(");
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match3_1) ||  false ) { if( true ) {
- output.write("tom_get_head_" + getTomType(domain) + "(");  } } if(tom_is_fun_sym_Name(tom_match3_1) ||  false ) { { String  tom_match3_1_string=tom_get_slot_Name_string(tom_match3_1); if( true ) {
- output.write("tom_get_head_" + tom_match3_1_string+ "_" + getTomType(domain) + "(");  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match2_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match2_1) ||  false ) { if( true ) {
+ output.write("tom_get_head_" + getTomType(domain) + "(");  } } if(tom_is_fun_sym_Name(tom_match2_1) ||  false ) { { String  tom_match2_1_string=tom_get_slot_Name_string(tom_match2_1); if( true ) {
+ output.write("tom_get_head_" + tom_match2_1_string+ "_" + getTomType(domain) + "(");  }} }} }
 
     generate(deep,var,moduleName);
     output.write(")");
@@ -309,9 +273,9 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
   protected void buildExpGetElement(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
     //output.write("((" + getTLType(codomain) + ")tom_get_element_" + getTomType(domain) + "(");
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match4_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match4_1) ||  false ) { if( true ) {
- output.write("tom_get_element_" + getTomType(domain) + "(");  } } if(tom_is_fun_sym_Name(tom_match4_1) ||  false ) { { String  tom_match4_1_string=tom_get_slot_Name_string(tom_match4_1); if( true ) {
- output.write("tom_get_element_" + tom_match4_1_string+ "_" + getTomType(domain) + "(");  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match3_1) ||  false ) { if( true ) {
+ output.write("tom_get_element_" + getTomType(domain) + "(");  } } if(tom_is_fun_sym_Name(tom_match3_1) ||  false ) { { String  tom_match3_1_string=tom_get_slot_Name_string(tom_match3_1); if( true ) {
+ output.write("tom_get_element_" + tom_match3_1_string+ "_" + getTomType(domain) + "(");  }} }} }
 
 
     generate(deep,varName,moduleName);
@@ -332,11 +296,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {
-         if(arg instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match5_1=(( tom.engine.adt.tomsignature.types.TomTerm)arg); if(tom_is_fun_sym_Variable(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match5_1_astName=tom_get_slot_Variable_astName(tom_match5_1); { tom.engine.adt.tomsignature.types.TomType tom_match5_1_astType=tom_get_slot_Variable_astType(tom_match5_1); if(tom_is_fun_sym_Name(tom_match5_1_astName) ||  false ) { { String  tom_match5_1_astName_string=tom_get_slot_Name_string(tom_match5_1_astName); { String  tom_name=tom_match5_1_astName_string; if(tom_is_fun_sym_Type(tom_match5_1_astType) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match5_1_astType_tomType=tom_get_slot_Type_tomType(tom_match5_1_astType); { tom.engine.adt.tomsignature.types.TomType tom_match5_1_astType_tlType=tom_get_slot_Type_tlType(tom_match5_1_astType); if(tom_is_fun_sym_TLType(tom_match5_1_astType_tlType) ||  false ) { if( true ) {
+         if(arg instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match4_1=(( tom.engine.adt.tomsignature.types.TomTerm)arg); if(tom_is_fun_sym_Variable(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match4_1_astName=tom_get_slot_Variable_astName(tom_match4_1); { tom.engine.adt.tomsignature.types.TomType tom_match4_1_astType=tom_get_slot_Variable_astType(tom_match4_1); if(tom_is_fun_sym_Name(tom_match4_1_astName) ||  false ) { { String  tom_match4_1_astName_string=tom_get_slot_Name_string(tom_match4_1_astName); { String  tom_name=tom_match4_1_astName_string; if(tom_is_fun_sym_Type(tom_match4_1_astType) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match4_1_astType_tomType=tom_get_slot_Type_tomType(tom_match4_1_astType); { tom.engine.adt.tomsignature.types.TomType tom_match4_1_astType_tlType=tom_get_slot_Type_tlType(tom_match4_1_astType); if(tom_is_fun_sym_TLType(tom_match4_1_astType_tlType) ||  false ) { if( true ) {
 
-            s.append(getTLCode(tom_match5_1_astType_tlType) + " " + tom_name);
+            s.append(getTLCode(tom_match4_1_astType_tlType) + " " + tom_name);
             if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-              check.append("tom_check_stamp_" + getTomType(tom_match5_1_astType_tomType) + "(" + tom_name+ ");\n");
+              check.append("tom_check_stamp_" + getTomType(tom_match4_1_astType_tomType) + "(" + tom_name+ ");\n");
             }
             break matchBlock;
            } }}} }}} }}} } if( true ) {
@@ -453,7 +417,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "    while( begin != end ) {\n";
     s+= "      result = " + make_insert + "(" + get_element + "(subject, begin),result);\n";
     s+= "      begin++;\n";
-    s+="     }\n";
+    s+= "     }\n";
     s+= "    return result;\n";
     s+= "  }\n";
     s+= "\n";
@@ -505,11 +469,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
     s.append(") { " + returnValue + "; }");
 
-     if(tlCode instanceof  tom.engine.adt.tomsignature.types.TargetLanguage) { { tom.engine.adt.tomsignature.types.TargetLanguage tom_match6_1=(( tom.engine.adt.tomsignature.types.TargetLanguage)tlCode); if(tom_is_fun_sym_TL(tom_match6_1) ||  false ) { { String  tom_match6_1_code=tom_get_slot_TL_code(tom_match6_1); { tom.engine.adt.tomsignature.types.Position tom_match6_1_start=tom_get_slot_TL_start(tom_match6_1); { tom.engine.adt.tomsignature.types.Position tom_match6_1_end=tom_get_slot_TL_end(tom_match6_1); if(tom_is_fun_sym_TextPosition(tom_match6_1_start) ||  false ) { { int  tom_match6_1_start_line=tom_get_slot_TextPosition_line(tom_match6_1_start); { int  tom_startLine=tom_match6_1_start_line; if(tom_is_fun_sym_TextPosition(tom_match6_1_end) ||  false ) { { int  tom_match6_1_end_line=tom_get_slot_TextPosition_line(tom_match6_1_end); if( true ) {
+     if(tlCode instanceof  tom.engine.adt.tomsignature.types.TargetLanguage) { { tom.engine.adt.tomsignature.types.TargetLanguage tom_match5_1=(( tom.engine.adt.tomsignature.types.TargetLanguage)tlCode); if(tom_is_fun_sym_TL(tom_match5_1) ||  false ) { { String  tom_match5_1_code=tom_get_slot_TL_code(tom_match5_1); { tom.engine.adt.tomsignature.types.Position tom_match5_1_start=tom_get_slot_TL_start(tom_match5_1); { tom.engine.adt.tomsignature.types.Position tom_match5_1_end=tom_get_slot_TL_end(tom_match5_1); if(tom_is_fun_sym_TextPosition(tom_match5_1_start) ||  false ) { { int  tom_match5_1_start_line=tom_get_slot_TextPosition_line(tom_match5_1_start); { int  tom_startLine=tom_match5_1_start_line; if(tom_is_fun_sym_TextPosition(tom_match5_1_end) ||  false ) { { int  tom_match5_1_end_line=tom_get_slot_TextPosition_line(tom_match5_1_end); if( true ) {
 
-        output.write(s, tom_startLine, tom_match6_1_end_line- tom_startLine);
+        output.write(0,s, tom_startLine, tom_match5_1_end_line- tom_startLine);
         return;
-       }} }}} }}}} } if(tom_is_fun_sym_ITL(tom_match6_1) ||  false ) { { String  tom_match6_1_code=tom_get_slot_ITL_code(tom_match6_1); if( true ) {
+       }} }}} }}}} } if(tom_is_fun_sym_ITL(tom_match5_1) ||  false ) { { String  tom_match5_1_code=tom_get_slot_ITL_code(tom_match5_1); if( true ) {
 
   // pas de \n donc pas besoin de reworkTL
         output.write(s);
@@ -546,7 +510,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
      * This is the case of CheckStampDecl
      */
     if(instr.isTargetLanguageToInstruction()) {
-      buildSemiColon();
+      buildSemiColon();  
     }
     output.write("}");
 

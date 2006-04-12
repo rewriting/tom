@@ -236,8 +236,12 @@ public class GomTask extends MatchingTask {
       }
     }
     catch(Exception e){
-      e.printStackTrace();
-      throw new BuildException("Gom generation failed");
+      if (e instanceof BuildException) {
+        throw (BuildException)e;
+      } else {
+        e.printStackTrace();
+        throw new BuildException("Gom generation failed");
+      }
     }
   }
 

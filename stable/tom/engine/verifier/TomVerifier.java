@@ -102,15 +102,6 @@ public class TomVerifier extends TomGenericPlugin {
           Tools.generateOutputFromCollection(getStreamManager().getOutputFileNameWithoutSuffix() + INTERMEDIATE_SUFFIX, zspecSet);
         }
 
-        // the latex output stuff
-        // LatexOutput output;
-        // output = new LatexOutput(this);
-        // String latex = output.build_latex(derivations);
-        // System.out.println(latex);
-
-        // the zenon output stuff
-        // Collection zen = zenon.zspecSetFromDerivationTreeSet(derivations);
-
         ZenonBackend back = new ZenonBackend(verif);
         //System.out.println(back.genZSpecCollection(zen));
         String output = back.genZSpecCollection(zspecSet);
@@ -130,12 +121,6 @@ public class TomVerifier extends TomGenericPlugin {
           }
         }
 
-        // The stats output stuff
-        // StatOutput stats;
-        // stats = new StatOutput(this);
-        // String statistics = stats.build_stats(derivations);
-        // System.out.println(statistics);
-
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomVerificationPhase.getMessage(),
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
@@ -148,7 +133,6 @@ public class TomVerifier extends TomGenericPlugin {
         e.printStackTrace();
       }
     } else {      
-      // Not active plugin
       getLogger().log(Level.INFO, TomMessage.verifierInactivated.getMessage());
     }
   }
@@ -184,7 +168,7 @@ public class TomVerifier extends TomGenericPlugin {
 //end match
 				return true;
       }//end apply
-    }; //end new
+    };//end new
   
   public Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
@@ -377,5 +361,4 @@ public class TomVerifier extends TomGenericPlugin {
 
     return "StrangePattern" + tomTerm;
   }
-
-} // class TomVerifier
+}

@@ -118,7 +118,7 @@ public class GomParserPlugin extends GomGenericPlugin {
     getLogger().log(Level.INFO, "Parsing succeeds");
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
-                           + PARSED_SUFFIX, (aterm.ATerm)module);
+                           + PARSED_SUFFIX, (aterm.ATerm)module.toATerm());
     }
   }
 

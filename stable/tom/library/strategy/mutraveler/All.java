@@ -19,27 +19,80 @@ public class All extends AbstractVisitableVisitor {
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
-    //System.out.println("All.visit(" + any.getClass() + ")");
     int childCount = any.getChildCount();
     Visitable result = any;
-    if(!hasPosition()) {
-      for (int i = 0; i < childCount; i++) {
-        Visitable newChild = getArgument(ARG).visit(result.getChildAt(i));
-        result = result.setChildAt(i, newChild);
+    if (any instanceof MuVisitable) {
+      boolean updated = false;
+      Visitable[] childs = null;
+
+      if(!hasPosition()) {
+        for (int i = 0; i < childCount; i++) {
+          //childs[i] = getArgument(ARG).visit(any.getChildAt(i));
+          Visitable oldChild = any.getChildAt(i);
+          Visitable newChild = getArgument(ARG).visit(oldChild);
+          if (updated || (newChild != oldChild)) {
+            if (!updated) {
+              updated = true;
+              // allocate the array, and fill it
+              childs = new Visitable[childCount];
+              for (int j = i-1; j >= 0; j--) {
+                  System.out.println("All nopos:"+i+", "+j+", "+any);
+                childs[j] = any.getChildAt(j);
+              }
+            }
+            childs[i] = newChild;
+          }
+        }
+      } else {
+        try {
+          for (int i = 0; i < childCount; i++) {
+            //childs[i] = getArgument(ARG).visit(any.getChildAt(i));
+            Visitable oldChild = any.getChildAt(i);
+            getPosition().down(i+1);
+            Visitable newChild = getArgument(ARG).visit(oldChild);
+            getPosition().up();
+            if (updated || (newChild != oldChild)) {
+              if (!updated) {
+                updated = true;
+                // allocate the array, and fill it
+                childs = new Visitable[childCount];
+                for (int j = i-1; j >= 0; j--) {
+                  System.out.println("All pos:"+i+", "+j+", "+any);
+                  childs[j] = any.getChildAt(j);
+                }
+              }
+              childs[i] = newChild;
+            }
+          }
+        } catch(VisitFailure f) {
+          getPosition().up();
+          throw new VisitFailure();
+        }
+      }
+      if (updated) {
+        result = ((MuVisitable) any).setChilds(childs);
       }
     } else {
-      try {
+      //System.out.println("All.visit(" + any.getClass() + ")");
+      if(!hasPosition()) {
         for (int i = 0; i < childCount; i++) {
-          //System.out.println(" -> " + getArgument(0).getClass() + ".visit(" + result.getChildAt(i) + ")");
-          //System.out.println("All.pos = " + getPosition());
-          getPosition().down(i+1);
           Visitable newChild = getArgument(ARG).visit(result.getChildAt(i));
-          getPosition().up();
           result = result.setChildAt(i, newChild);
         }
-      } catch(VisitFailure f) {
-        getPosition().up();
-        throw new VisitFailure();
+      } else {
+        try {
+          for (int i = 0; i < childCount; i++) {
+            //System.out.println(" -> " + getArgument(0).getClass() + ".visit(" + result.getChildAt(i) + ")");
+            //System.out.println("All.pos = " + getPosition());
+            getPosition().down(i+1);
+            Visitable newChild = getArgument(ARG).visit(result.getChildAt(i));
+            getPosition().up();
+            result = result.setChildAt(i, newChild);
+          }
+        } catch(VisitFailure f) {
+          getPosition().up();
+          throw new VisitFailure();
+        }
       }
     }
     return result;

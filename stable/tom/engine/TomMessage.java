@@ -99,6 +99,8 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage recognitionException  =
       new TomMessage("RecognitionException catched: See stacktrace\n\n{0}");
   // parser.TomParser
+  // TODO : simplify the message in using PlatformLogRecord with detail
+  // As these messages are propagated via an exception in TomLanguage.g.t, it is not trivial
   public static final TomMessage malformedXMLTerm      =
       new TomMessage("In file {0} at line {1,number,integer}: In structure {2}, malformed XML pattern: expecting {3} but got {4}");
   public static final TomMessage malformedStrategy=
@@ -145,8 +147,6 @@ public class TomMessage implements PlatformMessage {
   // checker.TomChecker
   public static final TomMessage findOTL               =
     new TomMessage("{0}: findOriginTrackingLine : not found (TomChecker)");
-  public static final TomMessage detailedMessage       =
-      new TomMessage("In structure {0} declared line {1,number,integer}, {2}");
   public static final TomMessage syntaxCheckerInactivated=
       new TomMessage("The syntax checker is not activated and thus WILL NOT RUN.");
   public static final TomMessage typeCheckerInactivated=
@@ -206,10 +206,6 @@ public class TomMessage implements PlatformMessage {
     new TomMessage("{0}:{1,number,integer}:Error:{2}");
   public static final TomMessage mainWarningMessage    =
     new TomMessage("{0}:{1,number,integer}:Warning:{2}");
-  public static final TomMessage detailErrorMessage    =
-      new TomMessage("In structure `{0}` declared line {1,number,integer}, {2}");
-  public static final TomMessage detailWarningMessage  =
-      new TomMessage("In structure `{0}` declared line {1,number,integer}, {2}");
 
   // Tom.java
   public static final TomMessage iOException           =
