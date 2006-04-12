@@ -1,4 +1,5 @@
 module Rhoterm
+imports String
 abstract syntax
 RTerm = var(na:String)
       | Const(na:String)
