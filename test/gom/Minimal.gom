@@ -1,10 +1,8 @@
 module Minimal
 
-public
-	sorts Nop
 abstract syntax
-	EmptyNop() -> Nop
-	UnaryNop(slot:Nop) -> Nop
-	BinaryNop(ls:Nop,rs:Nop) -> Nop
-	TertiaryNop(ls:Nop,cs:Nop,rs:Nop) -> Nop
-	Vary(Nop*) -> Nop
+Nop = EmptyNop()
+    | UnaryNop(slot:Nop)
+    | BinaryNop(ls:Nop,rs:Nop)
+    | TertiaryNop(ls:Nop,cs:Nop,rs:Nop)
+    | Vary(Nop*)
