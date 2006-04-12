@@ -445,8 +445,8 @@ public class GomTypeExpander {
           if (!prevSort.equals(`slotSort)) {
             getLogger().log(Level.SEVERE, GomMessage.slotIncompatibleTypes.getMessage(),
                 new Object[]{`(slotName),prevSort.getname(),`(slotSort).getname()});
+            valid = false;
           }
-          valid = false;
         }
       }
     }
