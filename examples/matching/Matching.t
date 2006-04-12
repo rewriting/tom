@@ -4,8 +4,8 @@ import matching.matching.term.types.*;
 
 class Matching {
   %gom {
-    // ...
     module Term
+    imports String
     abstract syntax
     Term = Variable(name:String)
          | Appl(name:String, args:TermList)
