@@ -9,19 +9,19 @@ Struc = o() | a() | a1() | a2()
       | cop(copl:StrucCop)
       | par(parl:StrucPar)
       | seq(seql:StrucSeq)
-cop:make_before(l) {
+cop:make(l) {
   %match(StrucCop l) {
     concCop() -> { return `o(); }
     concCop(x)-> { return `x; }
   }
 }
-par:make_before(l) {
+par:make(l) {
   %match(StrucPar l) {
     concPar() -> { return `o(); }
     concPar(x)-> { return `x; }
   }
 }
-seq:make_before (l) {
+seq:make(l) {
   %match(StrucSeq l) {
     concSeq()  -> { return `o(); }
     concSeq(x) -> { return `x; }
@@ -36,7 +36,6 @@ concSeq:make_insert(e,l) {
     o()                 -> { return l; }
     seq(concSeq(subL*)) -> { return `concSeq(subL*,l*); }
   }
-  return realMake(e,l);
 }
 
 concCop:make_insert(e,l) {
@@ -52,7 +51,6 @@ concCop:make_insert(e,l) {
       return realMake(l.getHeadconcCop(), newTail);
     }
   }
-  return realMake(e,l);
 }
 
 concPar:make_insert(e,l) {
@@ -66,9 +64,8 @@ concPar:make_insert(e,l) {
       return realMake(l.getHeadconcPar(), `concPar(e,newTail*));
     }
   }
-  return realMake(e,l);
 }
-neg:make_before(a) {
+neg:make(a) {
   %match(Struc a) {
     neg(s) -> { return `s; }
     par(concPar(h,t*)) -> { 

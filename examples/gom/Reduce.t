@@ -52,7 +52,6 @@ public class Reduce {
       %match(Term l) {
         A() -> { return `A(); }
       }
-      return realMake(l,r);
     }
   }
 

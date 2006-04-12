@@ -15,7 +15,7 @@ public class TestTomHook extends TestCase {
     True() -> Bool
     False() -> Bool
     Not(b:Bool) -> Bool
-    Not:make_before(b) {
+    Not:make(b) {
       %match(Bool b) {
         And(l,r) -> { return `Or(Not(l),Not(r)); }
         Or(l,r)  -> { return `And(Not(l),Not(r)); }

@@ -9,5 +9,4 @@ Plus:make(l,r) {
     x, Zero() -> { return `x; }
     Suc(x), y -> { return `Plus(x, Suc(y)); }
   }
-  return realMake(l,r);
 }

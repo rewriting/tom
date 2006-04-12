@@ -14,7 +14,6 @@ Not:make(b) {
     And(l,r) -> { return `Or(Not(l),Not(r)); }
     Or(l,r)  -> { return `And(Not(l),Not(r)); }
   }
-  return realMake(b);
 }
 Gt:make(n1,n2) {
   %match(Nat n1, Nat n2) {
@@ -23,12 +22,11 @@ Gt:make(n1,n2) {
     Zero(), Zero() -> { return `False(); }
     Suc(x), Suc(y) -> { return `Gt(x,y); }
   }
-  return realMake(n1,n2);
 }
 Lt:make(n1,n2) {
  gom.bool.types.Bool b = `Not(Gt(n1,n2));
  %match(Bool b) {
   Not(_) -> { return realMake(n1,n2); }
  }
- return b;
+ if (true) return b;
 }
