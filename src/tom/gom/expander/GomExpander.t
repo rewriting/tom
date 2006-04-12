@@ -132,7 +132,7 @@ public class GomExpander {
       return null;
     }
     GomLexer lexer = new GomLexer(inputStream);
-    GomParser parser = new GomParser(lexer);
+    GomParser parser = new GomParser(lexer,"GomIncludeParser");
     try {
       result = parser.module();
     } catch (RecognitionException re) {
