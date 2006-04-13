@@ -27,11 +27,9 @@ Prepare for the build
   specified by the build.xml file. You will need to install apache ant and java
   1.4 in order to compile Tom.
 
-  Next step is to copy the local.properties_template file, found at the root of
-  jtom to local.properties, and edit it to reflect your setup:
-    tomdocdir has to point to the directory containing the jtom documentation
-  (usually, the root of the cvs module jtom-doc). If you don't mind producing
-  complete distribution sets for Tom, you can simply set tomdocdir="stable".
+  The next optional step is to copy the local.properties_template file, found
+  at the root of jtom to local.properties, and edit it to reflect your local
+  setup: you can for instance specify the java compiler to use
 
 Build
 -----
