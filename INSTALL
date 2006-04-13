@@ -3,7 +3,12 @@ For developers only
 Getting Tom
 ===========
 
-TODO
+To get the current source tree of Tom via anonymous cvs, use the commands:
+cvs -d :pserver:anonymous@scm.gforge.inria.fr:/cvsroot/tom login
+cvs -d :pserver:anonymous@scm.gforge.inria.fr:/cvsroot/tom checkout jtom
+
+Developer access is possible via SSH. See
+http://gforge.inria.fr/scm/?group_id=78 for detailed instructions.
 
 Installing Tom
 ==============
