@@ -45,21 +45,24 @@ public class Tools {
 
   public static void main(String[] args) {
     Tools tools = new Tools();
-    System.out.println("\nRunning Matching1: \n");
-    Matching test1 = new Matching2();
-    tools.run(test1,args[0]);
-    System.out.println("\nRunning Matching2: \n");
-    Matching test2 = new Matching2();
-    tools.run(test2,args[1]);
-    System.out.println("\nRunning Matching3: \n");
-    Matching test3 = new Matching3();
-    tools.run(test3,args[2]);
-    System.out.println("\nRunning Matching4: \n");
-    Matching test4 = new Matching4();
-    tools.run(test4,args[3]);
-    System.out.println("\nRunning MatchingDifferences: \n");
-    Matching test5 = new MatchingDifferences();
-    tools.run(test5,args[3]);
+//    System.out.println("\nRunning Matching1: \n");
+//    Matching test1 = new Matching2();
+//    tools.run(test1,args[0]);
+//    System.out.println("\nRunning Matching2: \n");
+//    Matching test2 = new Matching2();
+//    tools.run(test2,args[1]);
+//    System.out.println("\nRunning Matching3: \n");
+//    Matching test3 = new Matching3();
+//    tools.run(test3,args[2]);
+//    System.out.println("\nRunning Matching4: \n");
+//    Matching test4 = new Matching4();
+//    tools.run(test4,args[3]);
+//    System.out.println("\nRunning MatchingDifferences: \n");
+//    Matching test5 = new MatchingDifferences();
+//    tools.run(test5,args[3]);
+	  System.out.println("\nRunning ApAndDisunification: \n");
+	  Matching test6 = new ApAndDisunification();
+	  tools.run(test6,args[0]);
   }
 
   public void run(Matching match, String fileName) {
@@ -81,10 +84,10 @@ public class Tools {
 	        Constraint c = atermToConstraint(at);
           Collection solution = new HashSet();
 	        System.out.println(s);
-	        if (match instanceof Matching4) {
-	        	Constraint reversedPattern = ((Matching4)match).checkReverse(c,solution);	        	
-	        	System.out.println(" !!!!--> " + reversedPattern);
-	        }
+//	        if (match instanceof Matching4) {
+//	        	Constraint reversedPattern = ((Matching4)match).checkReverse(c,solution);	        	
+//	        	System.out.println(" !!!!--> " + reversedPattern);
+//	        }
 	        Constraint simplifiedConstraint = match.simplifyAndSolve(c,solution);
 	        System.out.println(" --> " + simplifiedConstraint);
           if(simplifiedConstraint == `True()) {
@@ -131,9 +134,9 @@ public class Tools {
   private ConstraintList atermListToConstraintList(ATerm at) {
     if(at instanceof ATermList) {
       ATermList atl = (ATermList) at;
-      ConstraintList l = `emptyConstraintList();
+      ConstraintList l = `concConstraint();
       while(!atl.isEmpty()) {
-        l = `manyConstraintList(atermToConstraint(atl.getLast()),l);
+        l = `concConstraint(atermToConstraint(atl.getLast()),l*);
         atl = atl.getPrefix();
       }
       return l;
@@ -145,9 +148,9 @@ public class Tools {
   private TermList atermListToTermList(ATerm at) {
     if(at instanceof ATermList) {
       ATermList atl = (ATermList) at;
-      TermList l = `emptyTermList();
+      TermList l = `concTerm();
       while(!atl.isEmpty()) {
-        l = `manyTermList(atermToTerm(atl.getLast()),l);
+        l = `concTerm(atermToTerm(atl.getLast()),l*);
         atl = atl.getPrefix();
       }
       return l;

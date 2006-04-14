@@ -13,7 +13,7 @@ import java.util.Collection;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 
-public class NegativeCleaning extends antipattern.term.TermVisitableFwd {
+public class NegativeCleaning extends antipattern.term.TermBasicStrategy {
     
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }

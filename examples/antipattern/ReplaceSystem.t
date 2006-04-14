@@ -9,7 +9,7 @@ import antipattern.term.types.*;
 import jjtraveler.VisitFailure;
 import jjtraveler.reflective.VisitableVisitor;
 
-public class ReplaceSystem extends antipattern.term.TermVisitableFwd {
+public class ReplaceSystem extends antipattern.term.TermBasicStrategy {
 	
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }

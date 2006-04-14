@@ -11,22 +11,17 @@ import jjtraveler.reflective.VisitableVisitor;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 
-public class DecomposeAP extends antipattern.term.TermVisitableFwd {
-	protected TermFactory factory;
-	
+public class DecomposeAP extends antipattern.term.TermBasicStrategy {
+		
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
 	
-	protected final TermFactory getTermFactory() {
-		return factory;
-	}
 	protected boolean isIdentity;
 	
 	public static int varCounter = 0;
 	
 	public DecomposeAP(VisitableVisitor vis) {
-		super(vis);
-		this.factory = TermFactory.getInstance(SingletonFactory.getInstance());
+		super(vis);		
 		this.isIdentity = (vis.getClass().equals(`Identity().getClass()) ? 
 				true : false ); 
 	}

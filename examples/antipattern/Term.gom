@@ -1,16 +1,18 @@
 module Term    
-imports String 
+imports String int
 abstract syntax
 Term = Variable(name:String)
      | Appl(name:String, args:TermList)
      | ApplCons(name:String, args:TermList, cons:ConstraintList)
      | Anti(pattern:Term)
      | TermDiff(term1:Term, term2:Term)
-     | GenericGroundTerm()         
+     | GenericGroundTerm(termName:String)         
+     | Subterm(nr:int,groundTerm:Term)
 
 TermList = concTerm(Term*)
 
 Constraint = True()
+			| False()
 			| LessThan(objectToCompare:Term, objectToCompareTo:Term)
 			| GreaterThan(objectToCompare:Term, objectToCompareTo:Term)
 			| InList(objectToCompare:Term, list:TermList)	
@@ -19,6 +21,8 @@ Constraint = True()
 			| And(cl:ConstraintList)
 			| Or(cl:ConstraintList)
 			| SymbolOf(groundTerm:Term, symName:String)
-			| Equal(term1:Term, term2:Term)
+			| Equal(pattern:Term, genTerm:Term)
+			| Exists(var:Term,cons:Constraint)
+			| ForAll(var:Term,cons:Constraint)
 			
 ConstraintList = concConstraint(Constraint*)
