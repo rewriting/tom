@@ -11,7 +11,7 @@ import jjtraveler.reflective.VisitableVisitor;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 
-public class SimplifySystemModified extends antipattern.term.TermVisitableFwd {
+public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
 	
 	%include{ term/Term.tom }
 	%include{ mutraveler.tom }
