@@ -167,7 +167,7 @@
   </target>
 
   <target name="antipattern" depends="init"> 
-    <vascompile example="${antipattern}"/>
+    <gomcompile example="${antipattern}"/>
     <tomcompile example="${antipattern}"/>
     <javacompile example="${antipattern}"/>
   	<copy todir="${examples.build}/${antipattern}">
@@ -759,7 +759,7 @@
   
   <target name="examples" 
           description="Builds the examples (at least some)"
-	  depends="addressbook, adt, antipattern, apireach, appletxml,
+	  depends="addressbook, adt, apireach, appletxml,
           boulderdash, builtin, caml, cell, dom, expression, ferus, gom,
           gomoku, gterm, integerc, list, matching, master, meta, mgs, nspk,
           p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set,
