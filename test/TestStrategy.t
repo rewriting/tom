@@ -18,26 +18,18 @@ public class TestStrategy extends TestCase {
 
   %include { mutraveler.tom }
 
-  %vas{
+  %gom{
     module Term
-      imports
-      public
-      sorts Term Term1 L
 
       abstract syntax
-      a -> Term
-      b -> Term
-      c -> Term
-      d -> Term
-      e -> Term1
-      f(s1:Term) -> Term
-      ff(s1:Term) -> Term
-      g(s1:Term,s2:Term) -> Term
-      l(s3:L) -> Term
-      h(s1:Term,s2:Term) -> Term
-      k(s2:Term,s1:Term) -> Term
-      concTerm(Term*) -> L
-
+      Term = a() | b() | c() | d()
+      | f(s1:Term)
+      | ff(s1:Term)
+      | g(s1:Term,s2:Term)
+      | l(s3:L)
+      | h(s1:Term,s2:Term)
+      Term1 = e()
+      L = concTerm(Term*)
   } 
 
   %typeterm ArrayList {
@@ -136,7 +128,6 @@ public class TestStrategy extends TestCase {
     }
   }
   //with visits in reverse order
-  //try ro reproduce Emilie's bug
   %strategy S6() extends `Identity() {
     visit Term1 {
       e()            -> { return `e(); }
