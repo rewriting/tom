@@ -1897,9 +1897,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
         (
             t:MAKE
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-
-            ( 
-                LPAREN 
+                (LPAREN 
                 ( 
                     typeArg:ALL_ID
                     {
@@ -1956,9 +1954,9 @@ keywordMakeEmptyList[String name] returns [Declaration result] throws TomExcepti
     Option ot = null;
 }
     :
-        t:MAKE_EMPTY
+        t:MAKE_EMPTY (LPAREN RPAREN)?
         { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
-        (LPAREN RPAREN)?
+        
         LBRACE
         {   
             selector().push("targetlexer");

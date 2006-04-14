@@ -1056,7 +1056,7 @@ public class TomSyntaxChecker extends TomChecker {
       String res = nameList.getHead().getString();
       TomSymbol symbol =  getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]
-          // it is not correct to use Record an unknown symbols
+          // it is not correct to use Record with unknown symbols
         messageError(decLine,
                      TomMessage.unknownSymbol,
                      new Object[]{res});

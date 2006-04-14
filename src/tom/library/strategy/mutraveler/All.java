@@ -1,6 +1,7 @@
 package tom.library.strategy.mutraveler;
 import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
 import jjtraveler.Visitable;
+import jjtraveler.Visitor;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
@@ -21,6 +22,7 @@ public class All extends AbstractVisitableVisitor {
   public Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
     Visitable result = any;
+		Visitor S = getArgument(ARG);
     if (any instanceof MuVisitable) {
       boolean updated = false;
       Visitable[] childs = null;
@@ -29,14 +31,14 @@ public class All extends AbstractVisitableVisitor {
         for (int i = 0; i < childCount; i++) {
           //childs[i] = getArgument(ARG).visit(any.getChildAt(i));
           Visitable oldChild = any.getChildAt(i);
-          Visitable newChild = getArgument(ARG).visit(oldChild);
+          Visitable newChild = S.visit(oldChild);
           if (updated || (newChild != oldChild)) {
-            if (!updated) {
+            if (!updated) { // this is the first change
               updated = true;
               // allocate the array, and fill it
               childs = new Visitable[childCount];
-              for (int j = i-1; j >= 0; j--) {
-                  System.out.println("All nopos:"+i+", "+j+", "+any);
+              for (int j = 0 ; j<i ; j++) {
+                //  System.out.println("All nopos:"+i+", "+j+", "+any);
                 childs[j] = any.getChildAt(j);
               }
             }
@@ -56,8 +58,8 @@ public class All extends AbstractVisitableVisitor {
                 updated = true;
                 // allocate the array, and fill it
                 childs = new Visitable[childCount];
-                for (int j = i-1; j >= 0; j--) {
-                  System.out.println("All pos:"+i+", "+j+", "+any);
+								for (int j = 0 ; j<i ; j++) {
+                  // System.out.println("All pos:"+i+", "+j+", "+any);
                   childs[j] = any.getChildAt(j);
                 }
               }
