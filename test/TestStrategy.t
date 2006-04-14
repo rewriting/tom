@@ -1,10 +1,7 @@
-import aterm.*;
-import aterm.pure.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
 import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
