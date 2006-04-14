@@ -33,8 +33,6 @@ import strategy.term.*;
 import strategy.term.types.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
@@ -49,13 +47,11 @@ public class MuStrategy2 {
     test.run();
   }
 
-  private Term globalSubject = null;
   public void run() {
     //Term subject = `g(d(),d());
     Term subject = `g(g(a(),a()),g(a(),b()));
-    globalSubject = subject;
 
-    VisitableVisitor rule = new RewriteSystem();
+    VisitableVisitor rule = `RewriteSystem();
 
     try {
       System.out.println("subject          = " + subject);
@@ -68,20 +64,11 @@ public class MuStrategy2 {
 
   }
   
-  class RewriteSystem extends strategy.term.termVisitableFwd {
-    public RewriteSystem() {
-      super(`Fail());
-    }
-    
-    public Term visit_Term(Term arg) throws VisitFailure { 
+  %strategy RewriteSystem() extends `Fail() {
 
-
-      %match(Term arg) {
-        a() -> { return `b(); }
-        g(b(),a()) -> { return `c(); }
-      }
-      return (Term)`Fail().visit(arg);
-      //throw new VisitFailure();
+    visit Term {
+      a() -> { return `b(); }
+      g(b(),a()) -> { return `c(); }
     }
   }
 }
