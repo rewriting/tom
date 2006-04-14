@@ -95,25 +95,6 @@ public class Rewrite3 {
     }
   }
 
-  /*class RewriteSystem extends strategy.term.termVisitableFwd {
-    Collection collection;
-    public RewriteSystem(Collection c) {
-      super(`Fail());
-      this.collection = c;
-    }
-    
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      //System.out.println("arg = " + arg);
-      %match(Term arg) {
-        g(x,b()) -> { collection.add(`x); }
-      }
-
-      return arg;
-      //throw new VisitFailure();
-    }
-  }*/
-
-
   /*
    * Library
    */

@@ -112,21 +112,6 @@ public class Rewrite4 {
     }
   }
 
- /* class S1 extends strategy.term.termVisitableFwd {
-    public S1() {
-      super(`Identity());
-    }
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      int depth = MuTraveler.getPosition(this).depth();
-      String offset = "";
-      for (int i = 0; i<depth; i++){
-        offset += "  ";
-      }
-      System.out.println(offset + "s1: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
-      return arg;
-    }
-  }*/
-
   %strategy S2() extends `Identity() { 
 
     visit Term {
@@ -141,21 +126,6 @@ public class Rewrite4 {
     }
   }
 
-  /*class S2 extends strategy.term.termVisitableFwd {
-    public S2() {
-      super(`Identity());
-    }
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      int depth = MuTraveler.getPosition(this).depth();
-      String offset = "";
-      for (int i = 0; i<depth; i++){
-        offset += "--";
-      }
-      System.out.println(offset + "> s2: "+ arg.getName() + " position: "+ MuTraveler.getPosition(this));
-      return arg;
-    }
-  }*/
-
   %strategy FindLeaves(bag:Collection) extends `Identity() { 
 
     visit Term {
@@ -166,37 +136,6 @@ public class Rewrite4 {
       }
     }
   }
-
-  /*class FindLeaves extends strategy.term.termVisitableFwd {
-    Collection bag;
-    public FindLeaves(Collection bag) {
-      super(`Identity());
-      this.bag = bag;
-    }
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      if (arg.getArity() == 0) {
-        bag.add(MuTraveler.getPosition(this));
-      }
-      return arg;
-    }
-  }*/
-
-/*
-%strategy with use of when --not yet stable--
-*/
-/*
-  private boolean eqPosWhen(VisitableVisitor v,Position p) {
-    return MuTraveler.getPosition(v).equals(p);
-  }
-
-  %strategy EqPos(p:Position) extends `Fail() { 
-
-    visit Term {
-      _ when eqPosWhen(this,p) -> {return arg;}
-    }
-  }
-*/
-
 
   %strategy EqPos(p:Position) extends `Fail() { 
 
@@ -209,21 +148,6 @@ public class Rewrite4 {
     }
   }
 
-  /*class EqPos extends strategy.term.termVisitableFwd {
-    Position p;
-    public EqPos(Position p) {
-      super(`Fail());
-      this.p = p;
-    }
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      if (MuTraveler.getPosition(this).equals(p)) {
-        return arg;
-      } else {
-        return (Term)`Fail().visit(arg);
-      }
-    }
-  }*/
-
   %strategy SubPos(p:Position) extends `Fail() {
 
     visit Term {
@@ -234,19 +158,4 @@ public class Rewrite4 {
       }
     }
   }
-
-/*  class SubPos extends strategy.term.termVisitableFwd {
-    Position p;
-    public SubPos(Position p) {
-      super(`Fail());
-      this.p = p;
-    }
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      if (MuTraveler.getPosition(this).isPrefix(p)) {
-        return arg;
-      } 
-      return (Term)`Fail().visit(arg);
-    }
-  }*/
-
 }

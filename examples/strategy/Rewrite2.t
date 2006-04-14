@@ -74,22 +74,4 @@ public class Rewrite2 {
         g(c(),c()) -> { return `c(); }
       }
     }
-    
-
-  /*
-  class RewriteSystem extends strategy.term.termVisitableFwd {
-    public RewriteSystem() {
-      super(new tom.library.strategy.mutraveler.Fail());
-    }
-    
-    public Term visit_Term(Term arg) throws VisitFailure { 
-      %match(Term arg) {
-        a() -> { return `b(); }
-        b() -> { return `c(); }
-        g(c(),c()) -> { return `c(); }
-      }
-      throw new VisitFailure();
-    }
-  }
-   */
 }

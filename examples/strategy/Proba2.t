@@ -102,25 +102,6 @@ public class Proba2 {
       }
     }
   }
-
-  /*class Transition extends strategy.proba2.state.StateVisitableFwd {
-    State s1;
-    State s2;
-    public Transition(State s1, State s2) { 
-      super(`Fail()); 
-      this.s1 = s1;
-      this.s2 = s2;
-    }
-
-    public State visit_State(State state) throws VisitFailure { 
-      if(state == s1) {
-        System.out.println(s1 + " -> " + s2); 
-        return s2; 
-      }
-      throw new VisitFailure();
-    }
-  }*/
-
 }
 
  

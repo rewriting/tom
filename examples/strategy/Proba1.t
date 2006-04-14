@@ -96,32 +96,4 @@ public class Proba1 {
       nothing() -> { return `face(); }
     }
   }
-
-
-/*  class PileSystem extends strategy.proba1.piece.PieceVisitableFwd {
-    public PileSystem() {
-      super(`Fail());
-    }
-    
-    public Piece visit_Piece(Piece arg) throws VisitFailure { 
-      %match(Piece arg) {
-        nothing() -> { return `pile(); }
-      }
-      throw new VisitFailure();
-    }
-  }
-
-  class FaceSystem extends strategy.proba1.piece.PieceVisitableFwd {
-    public FaceSystem() {
-      super(`Fail());
-    }
-    
-    public Piece visit_Piece(Piece arg) throws VisitFailure { 
-      %match(Piece arg) {
-        nothing() -> { return `face(); }
-      }
-      throw new VisitFailure();
-    }
-  }
-*/
 }
