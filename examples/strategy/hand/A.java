@@ -16,4 +16,10 @@ public class A extends Term {
     return "A()";
   }
 
+  public boolean equals(Object o) {
+    if(o instanceof A) {
+      return true;
+    }
+    return false;
+  }
 }

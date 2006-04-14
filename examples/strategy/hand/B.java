@@ -14,4 +14,11 @@ public class B extends Term {
   public String toString() {
     return "B()";
   }
+
+  public boolean equals(Object o) {
+    if(o instanceof B) {
+      return true;
+    }
+    return false;
+  }
 }

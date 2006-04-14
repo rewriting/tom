@@ -24,4 +24,12 @@ public class G extends Term {
   public String toString() {
     return "G("+s.toString()+")";
   }
+
+  public boolean equals(Object o) {
+    if(o instanceof G) {
+      G g = (G) o;
+      return s.equals(g.s);
+    }
+    return false;
+  }
 }

@@ -30,4 +30,12 @@ public class F extends Term {
   public String toString() {
     return "F("+a.toString()+", "+b.toString()+")";
   }
+
+  public boolean equals(Object o) {
+    if(o instanceof F) {
+      F f = (F) o;
+      return a.equals(f.a) && b.equals(f.b);
+    }
+    return false;
+  }
 }

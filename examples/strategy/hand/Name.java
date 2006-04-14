@@ -19,4 +19,12 @@ public class Name extends Slot {
   public String toString() {
     return "Name("+name+")";
   }
+
+  public boolean equals(Object o) {
+    if(o instanceof Name) {
+      Name n = (Name) o;
+      return name.equals(n.name);
+    }
+    return false;
+  }
 }
