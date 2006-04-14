@@ -140,9 +140,9 @@ public class TomSyntaxChecker extends TomChecker {
     Collect1 collectAndVerify = new Collect1() {  
       public boolean apply(ATerm subject) {
         %match(Declaration subject) {
-          Strategy(sName, extendsTerm, visitList, orgTrack) -> {
+          Strategy[visitList = list] -> {
             /*  STRATEGY MATCH STRUCTURE*/
-            `verifyStrategy(sName, extendsTerm, visitList, orgTrack);
+            `verifyStrategy(list);
             return true;//case when %match in %strategy
           }
           RuleSet(list, optionList) -> {
@@ -548,8 +548,7 @@ public class TomSyntaxChecker extends TomChecker {
   ///////////////////////////////// 
   //STRATEGY VERIFICATION CONCERNS /
   /////////////////////////////////
-  private void verifyStrategy(TomName sName, TomTerm extendsTerm, TomVisitList visitList, Option orgTrack) {
-    currentTomStructureOrgTrack = orgTrack;
+  private void verifyStrategy(TomVisitList visitList){
     while(!visitList.isEmpty()) {
       TomVisit visit = visitList.getHead();
       verifyVisit(visit);

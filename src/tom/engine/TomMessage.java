@@ -274,6 +274,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("{0} is a constructor and cannot be a variable. Add () to denote the constructor.");
 
   //strategy
+  public static final TomMessage invalidStrategyName =
+      new TomMessage("{0} is not a valid strategy name. Maybe it is already used as a symbol.");
   public static final TomMessage differentVisitorForward =
       new TomMessage("All visited sorts in same %strategy must have same visitorForward: `{0}` is different from `{1}`");
   public static final TomMessage noVisitorForward =

@@ -358,6 +358,10 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
         {
 				Option ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
         options.add(ot);
+        if (symbolTable.getSymbolFromName(name.getText()) != null){
+        throw new TomException(TomMessage.invalidStrategyName,
+          new Object[]{name.getText()});
+        }
         }
         (
             LPAREN (slotName:ALL_ID COLON typeArg:ALL_ID 
@@ -400,8 +404,8 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 									"strat","a composite",extendsTerm.toString()});
 						}
 					}
-										}
-				}
+                    }
+        }
         LBRACE
         strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
         t:RBRACE
