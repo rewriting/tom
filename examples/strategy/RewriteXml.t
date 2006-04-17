@@ -46,10 +46,15 @@ public class RewriteXml {
 
   private XmlTools xtools;
   private TNode globalSubject;
+  private Collection globalLeaves = new HashSet();
 
   %include { adt/tnode/TNode.tom }
   %include { mutraveler.tom }
-  
+
+  %typeterm Position {
+    implement { tom.library.strategy.mutraveler.Position }
+  }
+
   public final static void main(String[] args) {
     RewriteXml test = new RewriteXml();
     test.run();
@@ -63,25 +68,22 @@ public class RewriteXml {
 
     globalSubject = subject;
 
-    // find all leaf nodes
-    Collection leaves = new HashSet();
     try {
-      VisitableVisitor getleaves = new FindLeaves();
-      MuTraveler.init(`BottomUp(getleaves)).visit(subject);
-      leaves = ((FindLeaves)getleaves).getLeaves();
+      VisitableVisitor findLeaves = `FindLeaves();
+      MuTraveler.init(`BottomUp(findLeaves)).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to get leaves" + subject);
     }
-    System.out.println("bag: "+leaves);
+    System.out.println("bag: "+globalLeaves);
 
-    Iterator it = leaves.iterator();
+    Iterator it = globalLeaves.iterator();
     while(it.hasNext()) {
       Position p = (Position)it.next();
 
-      VisitableVisitor s1 = new S1();
-      VisitableVisitor s2 = new S2();
-      VisitableVisitor eqPos = new EqPos(p);
-      VisitableVisitor subPos = new SubPos(p);
+      VisitableVisitor s1 = `S1();
+      VisitableVisitor s2 = `S2();
+      VisitableVisitor eqPos = `EqPos(p);
+      VisitableVisitor subPos = `SubPos(p);
 
       VisitableVisitor xmastree = `mu(MuVar("x"),
           All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1))));
@@ -96,91 +98,71 @@ public class RewriteXml {
       }
     }
   }
-  class S1 extends TNodeVisitableFwd {
-    public S1() {
-      super(`Identity());
-    }
-    public TNode visit_TNode(TNode arg) throws VisitFailure { 
-      %match(TNode arg) {
-        <section><title_fr>#TEXT(title)</title_fr></section> -> {
-          // prune the sub-lists: we keep only the title
-          return `xml(<section><title_fr>#TEXT(title)</title_fr></section>);
-        }
-        <subsection><title_fr>#TEXT(title)</title_fr></subsection> -> {
-          // prune the sub-lists: we keep only the title
-          return `xml(<subsection><title_fr>#TEXT(title)</title_fr></subsection>);
-        }
-      }
-      return arg;
-    }
-  }
-  class S2 extends TNodeVisitableFwd {
-    public S2() {
-      super(`Identity());
-    }
-    public TNode visit_TNode(TNode arg) throws VisitFailure { 
-      return `xml(<hilight>arg</hilight>);
-    }
-  }
 
-   class FindLeaves extends TNodeVisitableFwd {
-    Collection bag;
-    public FindLeaves() {
-      super(`Identity());
-      bag = new HashSet();
-    }
-    public Collection getLeaves() {
-      return bag;
-    }
-    public TNode visit_TNode(TNode arg) throws VisitFailure { 
-      %match(TNode arg) {
-        <subsection></subsection> -> { bag.add(MuTraveler.getPosition(this));}
+  %strategy S1() extends `Identity() {
+
+    visit TNode {
+      <section><title_fr>#TEXT(title)</title_fr></section> -> {
+        // prune the sub-lists: we keep only the title
+        return `xml(<section><title_fr>#TEXT(title)</title_fr></section>);
       }
-      return arg;
-    }
-  }
- 
-  class EqPos extends TNodeVisitableFwd {
-    Position p;
-    public EqPos(Position p) {
-      super(`Fail());
-      this.p = p;
-    }
-    public TNode visit_TNode(TNode arg) throws VisitFailure { 
-      if (MuTraveler.getPosition(this).equals(p)) {
-        return arg;
-      } else {
-        return (TNode)`Fail().visit(arg);
-      }
-    }
-    public TNodeList visit_TNodeList(TNodeList arg) throws VisitFailure { 
-      if (MuTraveler.getPosition(this).equals(p)) {
-        return arg;
-      } else {
-        return (TNodeList)`Fail().visit(arg);
-      }
-    }
-  }
-  class SubPos extends TNodeVisitableFwd {
-    Position p;
-    public SubPos(Position p) {
-      super(`Fail());
-      this.p = p;
-    }
-    public TNode visit_TNode(TNode arg) throws VisitFailure { 
-      if (MuTraveler.getPosition(this).isPrefix(p)) {
-        return arg;
-      } else {
-        return (TNode)`Fail().visit(arg);
-      }
-    }
-    public TNodeList visit_TNodeList(TNodeList arg) throws VisitFailure { 
-      if (MuTraveler.getPosition(this).isPrefix(p)) {
-        return arg;
-      } else {
-        return (TNodeList)`Fail().visit(arg);
+      <subsection><title_fr>#TEXT(title)</title_fr></subsection> -> {
+        // prune the sub-lists: we keep only the title
+        return `xml(<subsection><title_fr>#TEXT(title)</title_fr></subsection>);
       }
     }
   }
 
+  %strategy S2() extends `Identity() {
+
+    visit TNode {
+      arg -> { return `xml(<hilight>`arg</hilight>); }
+    }
+  }
+
+  %strategy FindLeaves() extends `Identity() {
+
+    visit TNode {
+      <subsection></subsection> -> { globalLeaves.add(MuTraveler.getPosition(this));}
+    }
+  }
+
+  %strategy EqPos(p:Position) extends `Fail(){
+
+    visit TNode {
+      arg -> {
+        if (MuTraveler.getPosition(this).equals(p)) {
+          return `arg;
+        }
+      }
+    }
+
+    visit TNodeList {
+      arg -> {
+        if (MuTraveler.getPosition(this).equals(p)) {
+          return `arg;
+        } 
+      }
+    }
+  }
+
+  %strategy SubPos(p:Position) extends `Fail() {
+
+    visit TNode {
+      arg -> {
+        if (MuTraveler.getPosition(this).isPrefix(p)) {
+          return `arg;
+        } 
+      }
+    }
+
+    visit TNodeList {
+      arg -> {
+        if (MuTraveler.getPosition(this).isPrefix(p)) {
+          return `arg;
+        } 
+      }
+    }
+  }
 }
+
