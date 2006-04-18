@@ -84,7 +84,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 	    tomTypes = tomTypes.getTail();
 	    index++;
     }
-    output.write(deep,"class " + tomName);
+    output.write(deep, modifier + "class " + tomName);
     //write extends
 		%match(TomForwardType extendsFwdType) {
 			TLForward(code) -> { 
