@@ -51,16 +51,16 @@ public class SimplifySystemExtended extends antipattern.SimplifySystem {
           TermList args1 = `a1;
           TermList args2 = `a2;
           ConstraintList argCons = `constraint;
-          ConstraintList l = `emptyConstraintList();
-          while(!`args2.isEmpty()) {
-            l = `manyConstraintList(Match(args1.getHead(),args2.getHead()),l);
-            args1 = args1.getTail();
-            args2 = args2.getTail();
+          ConstraintList l = `concConstraint();
+          while(!`args2.isEmptyconcTerm()) {
+            l = `concConstraint(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+            args1 = args1.getTailconcTerm();
+            args2 = args2.getTailconcTerm();
           }
           
-          while(!argCons.isEmpty()) {
-	    	l = `manyConstraintList(argCons.getHead(),l);
-	        argCons = argCons.getTail();
+          while(!argCons.isEmptyconcConstraint()) {
+	    	l = `concConstraint(argCons.getHeadconcConstraint(),l*);
+	        argCons = argCons.getTailconcConstraint();
           }
           
           return `And(l);

@@ -39,24 +39,27 @@ public class SimplifySystemRule{
 	private Constraint decomposeList(TermList l1, TermList l2){		
 		
 		// System.out.println("In decompose");
-		ConstraintList l = `emptyConstraintList();
+		ConstraintList l = `concConstraint();
 		
-		while(!l1.isEmpty()) {
-			l = `manyConstraintList(Match(l1.getHead(),l2.getHead()),l);
-			l1 = l1.getTail();
-			l2 = l2.getTail();					
+		while(!l1.isEmptyconcTerm()) {
+			l = `concConstraint(Match(l1.getHeadconcTerm(),l2.getHeadconcTerm()),l*);
+			l1 = l1.getTailconcTerm();
+			l2 = l2.getTailconcTerm();					
 		}
-		return `And(l.reverseConstraintList());
+		return `And(l/*.reverseConstraintList()*/);
 	}
 	
 	private Constraint areSymbolsEqual(Term t1, Term t2){
 		
 		// System.out.println("In areSymbolsEq");
 		
-		if (t1.getName().equals(t2.getName())){
-			return `True();
-		}
-		
+		%match(Term t1, Term t2){
+			Appl(name1,_),Appl(name2,_) -> {
+				if (`name1.equals(`name2)){
+					return `True();
+				}
+			}
+		}				
 		return `False();
 	}
 	
@@ -151,12 +154,12 @@ public class SimplifySystemRule{
 	}
 }
 
-class ContainsTerm extends antipattern.term.TermVisitableFwd {
+class ContainsTerm extends antipattern.term.TermBasicStrategy {
 	
 	private boolean found = false;
-	private ATerm objToSearchFor = null;
+	private Term objToSearchFor = null;
 	
-	public ContainsTerm(ATerm obj, VisitableVisitor visitor) {		
+	public ContainsTerm(Term obj, VisitableVisitor visitor) {		
 		super(visitor);
 		this.objToSearchFor = obj;
 		this.found = false;

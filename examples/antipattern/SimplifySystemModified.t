@@ -35,15 +35,15 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
 			
 			// Decompose
 			Match(Appl(name,a1),Appl(name,a2)) -> {
-				ConstraintList l = `emptyConstraintList();
+				ConstraintList l = `concConstraint();
 				TermList args1 = `a1;
 				TermList args2 = `a2;
-				while(!args1.isEmpty()) {
-					l = `manyConstraintList(Match(args1.getHead(),args2.getHead()),l);
-					args1 = args1.getTail();
-					args2 = args2.getTail();					
+				while(!args1.isEmptyconcTerm()) {
+					l = `concConstraint(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+					args1 = args1.getTailconcTerm();
+					args2 = args2.getTailconcTerm();					
 				}
-				return `And(l.reverseConstraintList());
+				return `And(l/*.reverseConstraintList()*/);
 			}
 			
 			// SymbolClash
