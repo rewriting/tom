@@ -27,7 +27,7 @@ header {
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   */
-	package lambdaParallel;
+	package lambdaparallel;
 }
 
 {
@@ -97,7 +97,7 @@ structure returns [Parallellamterm appl]
   Parallellamterm rhs=null;
 	Parallellamterm x=null;
 }
-: lhs=atom {rhs=`parallel(lhs);} (STRUCT x=atom {rhs=`parallel(rhs*,x);})*
+: lhs=atom {rhs=`parallel(lhs);} (STRUCT x=atom {%match(Parallellamterm rhs){ parallel(X*) -> {rhs=`parallel(X,x);}}})*
 {
   if(x!=null) {
 		appl=rhs;

@@ -29,7 +29,7 @@
   */
 
 
-package lambdaParallel;
+package lambdaparallel;
 
 import aterm.*;
 import aterm.pure.*;
@@ -64,6 +64,8 @@ public class Parallellamcal{
 
 	public void run(){
 		Parallellamterm subject = `var("undefined");
+		VisitableVisitor beta = `reductionRules();
+		VisitableVisitor print = `print();
 		String s;
 		System.out.println(" ******************************************************************\n lambda Parallel\n By Germain Faure\n  It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
      ParallelllamcalLexer lexer = new ParallelllamcalLexer(System.in); // Create parser attached to lexer
@@ -72,23 +74,31 @@ public class Parallellamcal{
 			System.out.print("laP>");
       try {
 				subject = parser.parallellamterm();
+				System.out.println(prettyPrinter(subject));
 			} catch (Exception e) {
 				System.out.println(e);
 				
 			}
 			try{
-			} catch(VisitFailure e) {
+				System.out.println("After beta-normalisation: "+MuTraveler.init(`Sequence(Innermost(beta),print)).visit(subject));
+			} 
+			catch(VisitFailure e) {
 				System.out.println("reduction failed on: " + subject);
 			}
 		}
 	}
 	
-	%strategy reductionRules() extends `Fail() {
+	%strategy print() extends `Identity() {
 		visit Parallellamterm {
-			app(abs(X@var[],M),N) -> {return `subst(X,N,M);}
+			X -> {System.out.println(prettyPrinter(`X));}
 		}
 	}
-	//[X\subject]t
+	%strategy reductionRules() extends `Fail() {
+		visit Parallellamterm {
+			app(abs(X@var[],M),N) -> {return `substitute(X,N,M);}
+		}
+	}
+	//[subject/X]t
 	public Parallellamterm substitute(Parallellamterm X, Parallellamterm subject, Parallellamterm t){
 		%match(Parallellamterm t){
 			var(name) -> {
@@ -110,6 +120,24 @@ public class Parallellamcal{
 		}
 		return `subject;
 	}
-
+	public String prettyPrinter(Parallellamterm t){
+		%match(Parallellamterm t){
+			app(term1,term2) -> {return "("+prettyPrinter(`term1)+"."+prettyPrinter(`term2)+")";}
+			abs(term1,term2) -> {return "("+prettyPrinter(`term1)+"->"+prettyPrinter(`term2)+")";}
+			parallel(x,xs*) -> {return "{"+prettyPrinter(`x)+prettyPrinterBis(`parallel(xs*))+"}";//si vide je renvoie ""
+			}
+			var(s) -> {return `s;}
+		}
+    return "";
+	}
+	public String prettyPrinterBis(Parallellamterm t){
+		%match(Parallellamterm t){
+			app(term1,term2) -> {return "("+prettyPrinter(`term1)+"."+prettyPrinter(`term2)+")";}
+			abs(term1,term2) -> {return "("+prettyPrinter(`term1)+"->"+prettyPrinter(`term2)+")";}
+			parallel(x,xs*) -> {return ","+prettyPrinter(`x)+prettyPrinterBis(`parallel(xs*));}
+			var(s) -> {return `s;}
+		}
+    return "";
+	}
 
 }
