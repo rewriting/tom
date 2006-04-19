@@ -26,103 +26,45 @@
 Ce quatrième TD a pour but d'approfondir les techniques de programmation en Tom.
 Nous abordons dans ce TD l'utilisation de symboles associatifs et de stratégies.
 
-L'objectif est d'implanter un interpréteur ainsi qu'un optimiseur pour un pico-langage.
+L'objectif est d'implanter un pico-outil d'analyse statique.
 
-\section{Expression booléennes}
-Dans un premier temps, on veut pouvoir construire et évaluer des expressions de la forme \verb|Not(True())|, \verb|And(Or(True(),False()),True())|, etc.
+\section{Expressions}
+Proposer une grammaire permettant de représenter des expressions composées de:
+\texttt{Var, Cst, Let, Seq, If, Print} et \texttt{Plus}.
 
-\begin{enumerate}
-\item proposer une grammaire ainsi qu'un système de simplification.
-\item simplifier \texttt{And(Or(Not(False),False),And(True,False))}
-\end{enumerate}
+\section{Programme}
+Écrire les programmes
+\begin{itemize}
+\item \texttt{a := 1}
+\item \texttt{b := a+2 ; print b}
+\item \texttt{i := 0 ; if i!=10 then Print(i) ; i := i+1}
+\end{itemize}
 
-\begin{versionProf}
-\begin{verbatim}
-    module Term
-    imports 
-    public
-    sorts Inst Expr Bool
-      
-    abstract syntax
-		True -> Bool
-		False -> Bool
-		Not(b:Bool) -> Bool
-		Or(b1:Bool, b2:Bool) -> Bool
-		And(b1:Bool, b2:Bool) -> Bool
-\end{verbatim}
+\section{Optim 1}
+Proposer un système de réécriture, décrit en Tom, permettant d'optimiser les \texttt{Seq} et les \texttt{If}.
 
-\begin{verbatim}
-	public Bool evalBool(Map env,Bool bool) {
-		%match(Bool bool) {	
-			Not(True()) -> { return `False(); }
-			Not(False()) -> { return `True(); }
-			Not(b) -> { return `evalBool(env,Not(evalBool(env,b))); }
 
-			Or(True(),b2) -> { return `True(); }
-			Or(b1,True()) -> { return `True(); }
-			Or(False(),b2) -> { return `b2; }
-			Or(b1,False()) -> { return `b1; }
-			And(True(),b2) -> { return `b2; }
-			And(b1,True()) -> { return `b1; }
-			And(False(),b2) -> { return `False(); }
-			And(b1,False()) -> { return `False(); }
-    + congruence pour Or et And
+\section{Collecter des variables}
+\begin{itemize}
+\item écrire une stratégie qui affiche \texttt{cst} lorsqu'un noeud \texttt{Cst} est rencontré
+\item écrire une stratégie qui affiche toutes les constantes contenues dans un terme
+\item écrire une stratégie qui fait l'identité \texttt{Cst} est rencontré
+\item écrire une stratégie qui affiche une noeud
+\item en utilisant les 2 stratégies précédentes, écrire une stratégie qui
+affiche toutes les constantes contenues dans un terme
+\end{itemize}
 
-			x -> { return x; }
-		}
-	}
+\section{Renommage de variables}
+\begin{itemize}
+\item écrire une stratégie qui renomme en \texttt{\_name} le nom d'une variable
+\item renommer toutes les variables d'une arbre
+\item renommer, en affichant les étapes intermédiaires, toutes les variables d'une arbre
+\end{itemize}
 
-\end{verbatim}
-\end{versionProf}
+\section{Optim 2}
+\begin{itemize}
+\item refaire l'optimiseur de \texttt{If} en utilisant une stratégie
+\end{itemize}
 
-\section{Mini pico langage}
-On considère un premier langage permettant de mémoriser des valeurs dans des variables. Sa grammaire est la suivante :
-\begin{verbatim}
-  <Inst> ::= Skip
-           | Assign(<String>,<int>)
-           | Print(<String>)
-           | <Inst> ; <Inst>
-\end{verbatim}
-
-\begin{enumerate}
-\item proposer une signature ainsi qu'une fonction permettant d'évaluer de tels programmes.
-\end{enumerate}
-
-\section{Pico langage}
-On considère maintenant une extension de ce langage dont la grammaire est la suivante :
-
-\begin{verbatim}
-  <Inst> ::= Skip
-           | Assign(<String>,<Exp>)
-           | Print(<Exp>)
-           | <Inst> ; <Inst>
-           | If(<Bool>,<Inst>,<Inst>)
-           | While(<Bool>,<Inst>)
-  <Bool> ::= True
-           | False
-           | Not(<Bool>)
-           | Or(<Bool>,<Bool>)
-           | And(<Bool>,<Bool>)
-           | Eq(<Expr>,<Expr>)
-  <Expr> ::= Cst(<int>)
-           | Var(<String>)
-           | Plus(<Expr>,<Expr>)
-           | Mult(<Expr>,<Expr>)
-\end{verbatim}
-
-\begin{enumerate}
-\item écrire le programme \texttt{a:=1 ; b:=a+2 ; Print(b)} dans la syntaxe de Pico
-\item écrire un programme qui affiche les entiers de 0 à 9.
-\item donner la signature et les fonctions d'évaluation d'un tel langage
-\end{enumerate}
-
-\section{Optimisation}
-On désire maintenant décrire une fonction qui élimine les instructions inutiles (\texttt{Skip}) et optimise les tests de la forme \texttt{If(Not(...),...)} 
-
-\section{Programmation}
-\begin{enumerate}
-\item écrire un programme qui calcule les nombres premiers jusqu'à 100
-\item que faut-il ajouter comme instruction à Pico pour que cela soit plus facile
-\end{enumerate}
 
 \end{document}

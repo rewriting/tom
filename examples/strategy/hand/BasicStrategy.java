@@ -1,6 +1,6 @@
 package strategy.hand;
 
-public class BasicStrategy implements jjtraveler.Visitor, jjtraveler.reflective.VisitableVisitor {
+public class BasicStrategy implements jjtraveler.reflective.VisitableVisitor {
   protected jjtraveler.Visitor any;
 
   public BasicStrategy(jjtraveler.Visitor v) {
