@@ -1,7 +1,6 @@
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import tom.library.traversal.*;
 import aterm.*;
 import java.util.*;
 import java.io.*;

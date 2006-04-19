@@ -19,7 +19,6 @@
   <property name="web-protheo.lib"   location="lib"/>
   <property name="web-protheo.build" location="build"/>
   <property name="web-protheo.dist"  location="dist"/>
-  <property name="bib"               location="biblio/"/>
 
   <target name="init" depends="tom.init">
     <!-- Create the time stamp -->
@@ -54,17 +53,40 @@
         description="generate the distribution" >
     <!-- Create the distribution directory -->
     <mkdir dir="${web-protheo.dist}/"/>
-    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <path id="tnode.path">
+      <fileset dir="${tom.home}/lib">
+        <include name="TNode*.jar"/>
+      </fileset>
+    </path>
+    <property name="tnode.jar" refid="tnode.path"/>
+    <path id="tom-library.path"> <!-- ugly hack to find the TNode jar -->
+      <fileset dir="${tom.home}/lib">
+        <include name="tom-library*.jar"/>
+      </fileset>
+    </path>
+    <property name="tom-library.jar" refid="tom-library.path"/>
+    <path id="mutraveler.path"> <!-- ugly hack to find the TNode jar -->
+      <fileset dir="${tom.home}/lib">
+        <include name="mutraveler*.jar"/>
+      </fileset>
+    </path>
+    <property name="mutraveler.jar" refid="mutraveler.path"/>
+    <!-- Put everything in ${build} into the web-protheo.jar file -->
     <jar jarfile="${web-protheo.dist}/web-protheo.jar">
     <fileset dir="${web-protheo.build}">
 	    <include name="**/*.class"/>
     </fileset>
-     <manifest>
-      <attribute name="Class-Path" value="jjtraveler.jar aterm.jar TNode.jar tom-library.jar shared-objects.jar MuTravelerADT.jar mutraveler.jar"/>
+    <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
+    <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
+    <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/**/Visit*"/>
+    <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
+    <zipfileset src="${mutraveler.jar}" includes="tom/library/**/*"/>
+    <zipfileset src="${tnode.jar}"/>
+    <manifest>
       <attribute name="Main-Class" value="Mk"/>
      </manifest>
-    </jar>
-  </target>
+   </jar>
+ </target>
   
   <target name="clean"
           description="clean up" >

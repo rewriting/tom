@@ -1,7 +1,6 @@
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import tom.library.traversal.*;
 import aterm.*;
 import java.util.*;
 import java.io.*;
@@ -24,7 +23,6 @@ public class Mk {
 
   private Tools tools;
   private XmlTools xtools;
-  private GenericTraversal traversal;
 
   private Menu menu;
   private Members members;
@@ -43,7 +41,6 @@ public class Mk {
   public Mk() {
     xtools = new XmlTools();
     tools = new Tools();
-    traversal = new GenericTraversal();
 
     TNode conf = (TNode)xtools.convertXMLToATerm("config.xml");
     if(!(conf == null)) {
@@ -120,6 +117,9 @@ public class Mk {
   public void writeHTML(String link, String lang) {
     TNode content;
     TNodeList menuHTML = menu.getContent(link+"_"+lang);
+    if(menuHTML == null) {
+      throw new RuntimeException("Pas de menu pour : "+link+"_"+lang);
+    }
     try{    
       // Get HTML page content
       if(link.equals("members")) {
