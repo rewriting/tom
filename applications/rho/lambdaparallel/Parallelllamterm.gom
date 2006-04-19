@@ -1,0 +1,35 @@
+module Parallellamterm
+	  imports String
+    abstract syntax
+     Parallellamterm =  var(na:String)
+											|   abs(lhs:Parallellamterm,rhs:Parallellamterm)
+											|   app(lhs:Parallellamterm,rhs:Parallellamterm)
+	                    |		parallel(Parallellamterm*)
+
+			abs:make(lhs,rhs){
+				%match(Parallellamterm rhs){
+					parallel(t1,t2*)	-> {return `parallel(abs(lhs,t1),abs(lhs,t2*));}
+				}	
+				return realMake(lhs,rhs);
+			}
+			app:make(lhs,rhs){
+				%match(Parallellamterm lhs){
+					parallel(t1,t2*)	-> {return `parallel(app(t1,rhs),app(t2*,rhs));}
+				}	
+				return realMake(lhs,rhs);
+			}
+      parallel:make_insert(x,l){
+				%match(Parallellamterm x,	Parallellamterm l){
+					y, parallel(X*,y,Z*)->{
+						//we know that l does not contain any doubloon by induction hypothesis
+						return `l;
+					}
+					//this is a flatten rule **that should not be used**
+					parallel(y*), parallel(z*) -> {
+						System.out.println("Make use of the flatten rule in the parallel hook");
+						return `parallel(y*,z*);
+					}
+				}
+				
+				return realMake(x,l);
+      }
