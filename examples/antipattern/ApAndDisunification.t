@@ -58,7 +58,7 @@ public class ApAndDisunification implements Matching{
 		
 		label:%match(Constraint c){
 			Match(p,s) -> { 
-				transformedMatch = `Equal(p,GenericGroundTerm(s.toString()));
+				transformedMatch = `Equal(p,s/*GenericGroundTerm("SUBJECT")*/);
 				break label;
 			}
 			_ -> {
@@ -67,6 +67,7 @@ public class ApAndDisunification implements Matching{
 		}
 		
 		VisitableVisitor simplifyRule = `SimplifyWithDisunification();
+		
 		Constraint noAnti = null;;
 		try{
 			noAnti = applyMainRule(transformedMatch);
@@ -75,15 +76,25 @@ public class ApAndDisunification implements Matching{
 			e.printStackTrace();
 		}
 		
-		System.out.println("Result: " + noAnti);
+//		System.out.println("Result after main rule: " + formatConstraint(noAnti));
+		
+		Constraint compiledConstraint = null, solvedConstraint = null;
+	
+		VisitableVisitor decomposeTerms = `DecomposeTerms();
+		VisitableVisitor solve = `SolveRes();
 		
 		try {		
-			return (Constraint) MuTraveler.init(`InnermostId(simplifyRule)).visit(noAnti);			
+			compiledConstraint = (Constraint) MuTraveler.init(`InnermostId(simplifyRule)).visit(noAnti);
+			solvedConstraint = (Constraint) MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
 		} catch (VisitFailure e) {
 			System.out.println("reduction failed on: " + c);
 			e.printStackTrace();
 		}
-		return `False();		
+		
+		System.out.println("Final result: " + formatConstraint(compiledConstraint));
+		System.out.println("Final result solved: " + formatConstraint(solvedConstraint));
+		
+		return compiledConstraint;		
 	}
 	
 	//	applies the main rule that transforms ap problems
@@ -94,8 +105,11 @@ public class ApAndDisunification implements Matching{
 		VisitableVisitor replaceAnti = `ReplaceAnti();
 		
 		 %match(Constraint c){
+			 Equal(Anti(p),subject) -> {
+				 return `Neg(applyMainRule(Equal(p,subject)));
+			 }
 			 Equal(pattern,subject) -> {
-				 // first get the pattern withour the anti
+				 // first get the pattern without the anti
 				 Term pNoAnti =  (Term) MuTraveler.init(`OnceBottomUpId(elimAnti)).visit(`pattern);
 				 //if nothing changed, time to exit
 				 if (pNoAnti == `pattern){
@@ -112,7 +126,7 @@ public class ApAndDisunification implements Matching{
 		 }	
 		 
 		 throw new RuntimeException("Abnormal term received in applyMainRule: " + c); 
-	}
+	}	
 	
 	//	returns a term without the first negation that it finds
 	%strategy ElimAnti() extends `Identity(){
@@ -130,7 +144,7 @@ public class ApAndDisunification implements Matching{
 		
 		visit Term {
 			//main rule 
-			Anti(_) -> {
+			a@Anti(_) -> {
 				return `Variable("v" + (++ApAndDisunification.varCounter) );
 			}
 		}
@@ -138,20 +152,56 @@ public class ApAndDisunification implements Matching{
 	
 	%strategy SimplifyWithDisunification() extends `Identity(){
 		
-		visit Constraint {
+		visit Constraint {			
 			
 			//simple rules with exists and forall
-			Exists(Variable(a),Equal(Variable(a),GenericGroundTerm(_))) ->{
+			Exists(Variable(a),Equal(Variable(a),_)) ->{				
+				return `True();
+			}						
+			Exists(Variable(a),Neg(Equal(Variable(a),_))) ->{				
 				return `True();
 			}
-			Exists(Variable(a),Neg(Equal(Variable(a),GenericGroundTerm(_)))) ->{
-				return `True();
+			Exists(Variable(name),constr)->{
+				// eliminates the cuantificator when the 
+				// constraint does not contains the variable				
+				
+				//TODO - replace with a strategy				
+				if (! (`constr.toString().indexOf(`name) > -1) ) {
+					return `constr;
+				}
+				
 			}
-			ForAll(Variable(a),Equal(Variable(a),GenericGroundTerm(_))) ->{
-				return `False();
-			}
-			ForAll(Variable(a),Neg(Equal(Variable(a),GenericGroundTerm(_)))) ->{
-				return `False();
+//			ForAll(Variable(a),Equal(Variable(a),_)) ->{
+//				return `False();
+//			}
+//			ForAll(Variable(a),Neg(Equal(Variable(a),_))) ->{
+//				return `False();
+//			}			
+			
+			// distribution of exists in and and or 			
+			Exists(v@Variable(var),And(list)) ->{
+				
+				ConstraintList l = `list;
+				ConstraintList result = `concConstraint();
+				
+				while(!l.isEmptyconcConstraint()){
+					result = `concConstraint(Exists(v,l.getHeadconcConstraint()),result*);
+					l = l.getTailconcConstraint();
+				}
+				
+				return `And(result);
+			}			
+			Exists(v@Variable(var),Or(list)) ->{
+				
+				ConstraintList l = `list;
+				ConstraintList result = `concConstraint();
+				
+				while(!l.isEmptyconcConstraint()){
+					result = `concConstraint(Exists(v,l.getHeadconcConstraint()),result*);
+					l = l.getTailconcConstraint();
+				}
+				
+				return `Or(result);
 			}
 			
 			//BooleanSimplification
@@ -160,7 +210,11 @@ public class ApAndDisunification implements Matching{
 			Neg(False()) -> { return `True(); }
 			
 			// Decompose
-			Equal(Appl(name,a1),g@GenericGroundTerm(_)) -> {
+			e@Equal(Appl(name,a1),g) -> {
+				
+				%match(Term g){
+					SymbolOf(_) -> {return `e;}
+				}				
 				
 				ConstraintList l = `concConstraint();
 				TermList args1 = `a1;
@@ -168,18 +222,16 @@ public class ApAndDisunification implements Matching{
 				int counter = 0;
 				
 				while(!args1.isEmptyconcTerm()) {
-					l = `concConstraint(Equal(args1.getHeadconcTerm(),Subterm(++counter,g)),l*);
+					l = `concConstraint(Equal(args1.getHeadconcTerm(),Subterm(++counter,g)),l*);					
 					args1 = args1.getTailconcTerm();										
 				}
 				
-				l = `concConstraint(SymbolOf(g,name),l*);
+				l = `concConstraint(Equal(Appl(name,concTerm()),SymbolOf(g)),l*);
+				
+//				System.out.println("Entered with :" + `e);
+//				System.out.println("Left with :" + `l);
 				
 				return `And(l);
-			}
-			
-			// ground terms' equality
-			Equal(p@Appl(_,concTerm()),g@GenericGroundTerm(_)) -> {
-				return `g == `p ? `True() : `False();
 			}
 			
 			// associativity for AND and OR
@@ -196,28 +248,55 @@ public class ApAndDisunification implements Matching{
 				return `Or(l);
 			}
 			
-//			// Replace
-//			input@And(concConstraint(X*,match@Match(var@Variable(name),s),Y*)) -> {	            
-//	            VisitableVisitor rule,ruleStrategy;            
-//	            if (isIdentity){
-//	            	rule = new ReplaceSystem(`var,`s, `Identity());
-//	            	ruleStrategy = `InnermostId(rule);
-//	            }else{
-//	            	rule = new ReplaceSystem(`var,`s, `Fail());
-//	            	ruleStrategy = `Innermost(rule);
-//	            }            
-//	            Constraint res = (Constraint) MuTraveler.init(ruleStrategy).visit(`And(concConstraint(X*,Y*)));
-//	            if (res != `And(concConstraint(X*,Y*))){
-//	            	return `And(concConstraint(match,res));
-//	            }
-//	        }
+			// producing or - de morgan 1
+			Neg(And(a)) ->{
+				
+				ConstraintList l = `a;
+				ConstraintList result = `concConstraint();			
+				
+				while(!l.isEmptyconcConstraint()){
+					result = `concConstraint(Neg(l.getHeadconcConstraint()),result*);
+					l = l.getTailconcConstraint();
+				}				
+				
+				return `Or(result);
+			}
+			
+			// make Neg go down - de morgan 2
+			n@Neg(Or(a)) -> {
+				
+				ConstraintList l = `a;
+				ConstraintList result = `concConstraint();
+				
+				//System.out.println("Came with:" + formatConstraint(`n));
+				
+				while(!l.isEmptyconcConstraint()){
+					result = `concConstraint(Neg(l.getHeadconcConstraint()),result*);
+					l = l.getTailconcConstraint();
+				}
+				
+				//System.out.println("Left with:" + formatConstraint(`And(result)));
+				
+				return `And(result);
+			}
+			
 			
 			// Delete
-			And(concConstraint(_*,Equal(a,b),_*,Neg(Equal(a,b)),_*)) ->{
+			and@And(concConstraint(_*,Equal(a,b),_*,Neg(Equal(a,b)),_*)) ->{
+				
+				%match(Term a){
+					v@Variable(_) -> { System.out.println("and " + `and);} 
+				}
+				
 				return `False();
 			}
 			
-			And(concConstraint(_*,Neg(Equal(a,b)),_*,Equal(a,b),_*)) ->{
+			and@And(concConstraint(_*,Neg(Equal(a,b)),_*,Equal(a,b),_*)) ->{				
+				
+				%match(Term a){
+					v@Variable(_) -> { System.out.println("and_1 " + `and);} 
+				}
+				
 				return `False();
 			}
 			
@@ -230,7 +309,29 @@ public class ApAndDisunification implements Matching{
 				return `Or(concConstraint(X*,Y*));
 			}
 			
-			// PropagateSuccess
+			// PropagateSuccess				
+			And(concConstraint(X*,True(),Y*)) -> {
+				return `And(concConstraint(X*,Y*));
+			}			
+			
+//			Or(c@concConstraint(_*,True(),_*)) -> {
+//				System.out.println("8888 " + `c);
+//				return `True();
+//			}		
+			
+			// cleaning the result			
+			And(concConstraint(And(concConstraint(X*)),Y*)) ->{
+				return `And(concConstraint(X*,Y*));
+			}
+			
+			And(concConstraint(X*,a,Y*,a,Z*)) -> {				
+				return `And(concConstraint(X*,a,Y*,Z*));
+			}
+			
+			Or(concConstraint(X*,a,Y*,a,Z*)) -> {				
+				return `And(concConstraint(X*,a,Y*,Z*));
+			}
+			
 			And(concConstraint()) -> {
 				return `True();
 			}
@@ -247,15 +348,204 @@ public class ApAndDisunification implements Matching{
 				return `x;
 			}
 			
+		} // end visit
+	} // end strategy
+	
+	
+	%strategy DecomposeTerms() extends `Identity(){
+		
+		visit Term {
+			
+			SymbolOf(Appl(name,_)) ->{
+				return `Appl(name,concTerm());
+			}
+			
+			Subterm(no,Appl(name,list)) -> {
+				
+				TermList tl = `list;
+				Term tmp = null;				
+				
+				try{								
+					for (int i = 1; i <= `no; i++,tl=tl.getTailconcTerm()){
+						tmp = tl.getHeadconcTerm();						
+					}
+				}catch(UnsupportedOperationException e){
+					return `FalseTerm(); // decomposition not possible
+				}
+
+				return tmp;
+			}
+		}
+	}
+	
+	%strategy SolveRes() extends `Identity(){
+		
+		visit Constraint {
+			
+			// ground terms' equality
+			Equal(p@Appl(_,_),g@Appl(_,_)) -> {
+//				System.out.println("p:" + `p + " g:" + `g + " result:" +  (`g == `p));
+				return (`g == `p ? `True() : `False() );
+			}
+			
+			Equal(_,FalseTerm()) ->{
+				return `False();
+			}
+			
+			// PropagateClash
+			And(concConstraint(_*,False(),_*)) -> {
+				return `False();
+			}
+			
+			Or(concConstraint(X*,False(),Y*)) -> {
+				return `Or(concConstraint(X*,Y*));
+			}
+			
+			// PropagateSuccess				
 			And(concConstraint(X*,True(),Y*)) -> {
 				return `And(concConstraint(X*,Y*));
-			}
+			}			
 			
 			Or(concConstraint(_*,True(),_*)) -> {
 				return `True();
 			}
 			
-		} // end visit
-	} // end strategy
+			//BooleanSimplification
+			Neg(Neg(x)) -> { return `x; }
+			Neg(True()) -> { return `False(); }
+			Neg(False()) -> { return `True(); }
+			
+			And(concConstraint()) -> {
+				return `True();
+			}
+			
+			Or(concConstraint()) -> {
+				return `False();
+			}
+			
+			// cleaning			
+			And(concConstraint(X*,a,Y*,a,Z*)) -> {
+				return `And(concConstraint(X*,a,Y*,Z*));
+			}
+			
+			Or(concConstraint(X*,a,Y*,a,Z*)) -> {
+				return `And(concConstraint(X*,a,Y*,Z*));
+			}
+			
+			And(concConstraint(x)) -> {
+				return `x;
+			}
+			
+			Or(concConstraint(x)) -> {
+				return `x;
+			}
+			
+			// merging rules - Comon and Lescanne
+			
+			// m1
+			And(concConstraint(X*,Equal(Variable(z),t),Y*,Equal(Variable(z),u),Z*)) ->{
+				return `And(concConstraint(X*,Equal(Variable(z),t),Y*,Equal(t,u),Z*));
+			}			
+			// m2
+			Or(concConstraint(X*,Neg(Equal(Variable(z),t)),Y*,Neg(Equal(Variable(z),u)),Z*)) ->{
+				return `Or(concConstraint(X*,Neg(Equal(Variable(z),t)),Y*,Neg(Equal(t,u)),Z*));
+			}
+			// m3
+			And(concConstraint(X*,Equal(Variable(z),t),Y*,Neg(Equal(Variable(z),u)),Z*)) ->{
+				return `And(concConstraint(X*,Equal(Variable(z),t),Y*,Neg(Equal(t,u)),Z*));
+			}
+			And(concConstraint(X*,Neg(Equal(Variable(z),u)),Y*,Equal(Variable(z),t),Z*)) ->{
+				return `And(concConstraint(X*,Equal(Variable(z),t),Y*,Neg(Equal(t,u)),Z*));
+			}
+			// m4
+			Or(concConstraint(X*,Equal(Variable(z),t),Y*,Neg(Equal(Variable(z),u)),Z*)) ->{
+				return `Or(concConstraint(X*,Equal(t,u),Y*,Neg(Equal(Variable(z),u)),Z*));
+			}
+			Or(concConstraint(X*,Neg(Equal(Variable(z),u)),Y*,Equal(Variable(z),t),Z*)) ->{
+				return `Or(concConstraint(X*,Equal(t,u),Y*,Neg(Equal(Variable(z),u)),Z*));
+			}
+		}
+	}
+	
+	private String formatConstraint(Constraint c){
+		
+		%match(Constraint c) {
+			True() -> {
+				return "T";	
+			}
+			False() ->{
+				return "F";
+			}
+			Neg(cons) ->{
+				return "Neg(" + formatConstraint(`cons) + ")";
+			}
+			And(concConstraint(x,Z*)) ->{
+				
+				ConstraintList l = `Z*;
+				String result = formatConstraint(`x);
+				
+				while(!l.isEmptyconcConstraint()){
+					result += " and " + formatConstraint(l.getHeadconcConstraint());
+					l = l.getTailconcConstraint();
+				}
+				
+				return result; 
+			}
+			Or(concConstraint(x,Z*)) ->{
+				
+				ConstraintList l = `Z*;
+				String result = formatConstraint(`x);
+				
+				while(!l.isEmptyconcConstraint()){
+					result += " or " + formatConstraint(l.getHeadconcConstraint());
+					l = l.getTailconcConstraint();
+				}
+				
+				return result; 
+			}
+			Equal(pattern, subject) ->{
+				return formatTerm(`pattern) + "=" + formatTerm(`subject); 
+			}
+			Exists(Variable(name),cons) -> {
+				return "exists " + `name + ", ( " + formatConstraint(`cons) + " ) "; 
+			}			
+			ForAll(Variable(name),cons) -> {				
+				return "for all " + `name + ", ( " + formatConstraint(`cons) + " ) ";				
+			}
+		}
+		
+		return c.toString();
+	}
+	
+	private String formatTerm(Term t){
+		
+		%match(Term t){
+			Variable(name) ->{
+				return `name;
+			}
+	        Appl(name, concTerm())->{
+	        	return `name;
+	        }	     
+	        GenericGroundTerm(name) ->{
+	    	   return `name;
+	        }		
+		}
+	
+		return t.toString();
+	}
+	
+//	private boolean notContainsVar(Term a, Constraint constr) {
+//		
+//		//TODO - replace with a strategy
+//		%match(Term a, Constraint constr){
+//			Variable(vname),c ->{
+//				return !c.toString().contains(`vname);
+//			}
+//		}		
+//		
+//		return true;
+//	}	
+	
+	
 
 } //end class
