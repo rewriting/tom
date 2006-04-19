@@ -1,5 +1,4 @@
-  /*
-  * Copyright (c) 2004-2006, INRIA
+  /*  * Copyright (c) 2004-2006, INRIA
   * All rights reserved.
   * 
   * Redistribution and use in source and binary forms, with or without
@@ -283,10 +282,8 @@ public class Rho {
 			var(s) -> {return `s;}
 			Const(s) -> {return `s;}
 			stk() -> {return "stk";}
-			_ -> {return "";}
 		}
-    //default return statement is mandatory for Java, but obviously useless
-    return "";
+     return "";
 	}
 	public String stringInfix(ListSubst substs){
 		%match(ListSubst substs){

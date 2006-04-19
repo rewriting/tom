@@ -52,7 +52,7 @@
     </macrodef>
   </target>
 
-  <target name="build" depends="build.xrho,build.matching"/>
+  <target name="build" depends="build.xrho,build.matching,build.parallel"/>
 
   <target name="build.xrho" depends="init">
     <!--<vascompile package="xrho"/>-->
@@ -88,6 +88,25 @@
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <javacompile package="matching"/>
+  </target>
+  <target name="build.parallel" depends="init">
+  <gom config="${gomconfigfile}"
+         srcdir="${rho.dir}"
+         package="lambdaParallel" 
+         destdir="${rho.gen}">
+      <include name="lambdaParallel/**/*.gom"/>
+    </gom>
+    <tomcompile package="lambdaParallel"/>
+    <tom.preset srcdir="${rho.dir}" 
+	    outputfile="${rho.gen}/lambdaParallel/LamcalparallelParser.g"
+	    options="-I ${rho.gen}/lambdaParallel/">
+	    <include name="lambdaParallel/*.g.t"/>
+    </tom.preset>
+    <tomantlr target="${rho.gen}/lambdaParallel/LamcalparallelParser.g"
+              outputdirectory="${rho.gen}/lambdaParallel/">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <javacompile package="lambdaParallel"/>
   </target>
 
   <target name="junit" description="Runs junit acceptance tests for xrho" depends="build.xrho, init">

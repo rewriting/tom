@@ -6,7 +6,7 @@ RTerm = var(na:String)
       | stk()
       | abs(lhs:RTerm,rhs:RTerm)
       | app(lhs:RTerm,rhs:RTerm)
-      | struct(lhs:RTerm,rhs:RTerm) //structure is couple
+      | struct(lhs:RTerm,rhs:RTerm) 
       | appC(co:ListConstraint,term:RTerm)
       | appS(su:ListSubst,term:RTerm)
       | withPrint()
