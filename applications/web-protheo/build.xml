@@ -80,7 +80,7 @@
     <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
     <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/**/Visit*"/>
     <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
-    <zipfileset src="${mutraveler.jar}" includes="tom/library/**/*"/>
+    <zipfileset src="${mutraveler.jar}" includes="tom/library/strategy/mutraveler/**/*"/>
     <zipfileset src="${tnode.jar}"/>
     <manifest>
       <attribute name="Main-Class" value="Mk"/>
