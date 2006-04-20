@@ -30,7 +30,7 @@
  **/
 
 %include { Object.tom }
-%include { type/ArrayList.tom }
+%include { types/ArrayList.tom }
 
 /*
  * We use shallow copy for the get_tail operation, so be cautious about side
