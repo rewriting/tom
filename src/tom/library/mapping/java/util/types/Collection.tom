@@ -29,9 +29,11 @@
  * 
  **/
 
-%typeterm ArrayList {
-  implement      { java.util.ArrayList }
+%typeterm Collection {
+  implement      { java.util.Collection }
   equals(l1,l2)  { l1.equals(l2) }
   check_stamp(l) {}
   set_stamp(l)   { l }
 }
+%include { ArrayList.tom }
+%include { LinkedList.tom }
