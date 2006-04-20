@@ -148,8 +148,16 @@ public class Mk {
           content = `xml(#TEXT("empty page"));
         }
       }
+
+      String title;
+      if(lang.equals(Translator.IN_FRENCH)) {
+        title = "Le projet PROTHEO";
+      }
+      else{
+        title = "The PROTHEO Project Home Page";
+      }
       // Build HTML page
-      IncludeContent ruleId = new IncludeContent(content,menuHTML,lang,link);
+      VisitableVisitor ruleId = `IncludeContent(content,menuHTML,link,title);
       TNode p = (TNode)MuTraveler.init(`BottomUp(ruleId)).visit(skeleton);
       // Write HTML page
       OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(w3Dir + link+ "_"+lang+".html"),"UTF-8");
@@ -162,45 +170,26 @@ public class Mk {
     }
   }
 
-  class IncludeContent extends TNodeVisitableFwd {
-    private TNode content;
-    private TNodeList menu;
-    private String lang, link, title;
-    public IncludeContent(TNode c, TNodeList m, String la, String li) {
-      super(`Identity());
-      content = c;
-      menu = m;
-      lang = la;
-      link = li;
-      if(lang.equals(Translator.IN_FRENCH)) {
-        title = "Le projet PROTHEO";
+  %strategy IncludeContent(content:TNode,menu:TNodeList,link:String,title:String) extends `Identity(){
+
+    visit TNode {
+      /* we can't do pattern matching on namespaces yet
+         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">(c*)</html> ->{
+         if lang.equals(Translator.FRENCH)
+         return `xml(<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">(c*)</html>);           
+         }*/
+      <div id="replace_me_title_header"/> ->{
+        return `xml(<title>#TEXT("Protheo::") #TEXT(link)</title>);
       }
-      else{
-        title = "The PROTHEO Project Home Page";
+      <div id="replace_me_title"/> ->{
+        return `xml(<h1>#TEXT(title)</h1>);
       }
-    }
-    public TNode visit_TNode(TNode arg) throws VisitFailure {
-      %match(TNode arg) {
-        /* we can't do pattern matching on namespaces yet
-           <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">(c*)</html> ->{
-           if lang.equals(Translator.FRENCH)
-           return arg = `xml(<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">(c*)</html>);           
-           }*/
-        <div id="replace_me_title_header"/> ->{
-          return arg = `xml(<title>#TEXT("Protheo::") #TEXT(link)</title>);
-        }
-        <div id="replace_me_title"/> ->{
-          return arg = `xml(<h1>#TEXT(title)</h1>);
-        }
-        <div id="replace_me_menu"/> ->{
-          return arg = `xml(<div id="menu">menu*</div>);
-        }
-        <div id="replace_me_content"/> ->{
-          return arg = content;
-        }
+      <div id="replace_me_menu"/> ->{
+        return `xml(<div id="menu">menu*</div>);
       }
-      return arg;
+      <div id="replace_me_content"/> ->{
+        return content;
+      }
     }
   }
-
 }
