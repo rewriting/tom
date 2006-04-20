@@ -60,8 +60,8 @@ public class Tools {
 //    System.out.println("\nRunning MatchingDifferences: \n");
 //    Matching test5 = new MatchingDifferences();
 //    tools.run(test5,args[3]);
-	  System.out.println("\nRunning ApAndDisunification: \n");
-	  Matching test6 = new ApAndDisunification();
+	  System.out.println("\nRunning ApAndDisunification1: \n");
+	  Matching test6 = new ApAndDisunification1();
 	  tools.run(test6,args[0]);
   }
 

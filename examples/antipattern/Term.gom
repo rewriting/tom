@@ -23,6 +23,7 @@ Constraint = True()
 			| And(cl:ConstraintList)
 			| Or(cl:ConstraintList)
 			| Equal(pattern:Term, genTerm:Term)
+			| NEqual(pattern:Term, genTerm:Term)
 			| Exists(var:Term,cons:Constraint)
 			| ForAll(var:Term,cons:Constraint)
 			
