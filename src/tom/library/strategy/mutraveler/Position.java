@@ -55,7 +55,7 @@ public class Position {
   public boolean equals(Object o) {
     if (o instanceof Position) {
 			Position p = (Position)o;
-			return size==p.size && data.equals(p.data);
+			return size==p.size && Arrays.equals(data,p.data);
     } else {
       return false;
     }
