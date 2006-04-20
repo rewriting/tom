@@ -3,6 +3,7 @@ import junit.framework.TestSuite;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
+import tom.library.strategy.mutraveler.Position;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
@@ -37,6 +38,9 @@ public class TestStrategy extends TestCase {
     implement { LinkedList }
   }
 
+  %typeterm Position {
+    implement {tom.library.strategy.mutraveler.Position}
+  }
     boolean bool0 = true;
 
   public static void main(String[] args) {
@@ -46,7 +50,7 @@ public class TestStrategy extends TestCase {
   public void setUp() {
   }
 
-  public void testS1(){
+  public void testS(){
     
     ArrayList arrayList = new ArrayList();
     LinkedList linkedList = new LinkedList();
@@ -79,6 +83,37 @@ public class TestStrategy extends TestCase {
       assertSame("g(a,a) return a", MuTraveler.init(`rule9).visit(`g(a(),a())), `a());
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
+    }
+  }
+
+  public void testPosition() {
+
+    Term t = `f(a());
+    Term tBis = `f(b());
+    Position p1 = new Position();
+    Position p2 = new Position();
+    Position p3 = new Position();
+    VisitableVisitor getPos1 = `GetPositionA(p1);
+    VisitableVisitor getPos2 = `GetPositionA(p2);
+    VisitableVisitor getPos3 = `GetPositionA(p3);
+
+    try{
+      MuTraveler.init(`BottomUp(getPos1)).visit(t);
+      MuTraveler.init(`BottomUp(getPos2)).visit(t);
+      MuTraveler.init(`BottomUp(getPos3)).visit(tBis);
+    } catch (VisitFailure e){
+      System.out.println("VisitFailure");
+    }
+System.out.println("p1: " + p1);
+System.out.println("p2: " + p2);
+System.out.println("p3: " + p3);
+    //assertTrue("equality on Position", p1.equals(p2));
+    //assertFalse("inequality on Position", p1.equals(p3));
+  }
+
+  %strategy GetPositionA(p:Position) extends `Identity(){
+    visit Term {
+      a() -> {System.out.println("updatePosition");p = MuTraveler.getPosition(this);}
     }
   }
 
