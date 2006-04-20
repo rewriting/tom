@@ -17,6 +17,9 @@ public class Menu {
   %include{mutraveler.tom}
   %include{adt/tnode/TNode.tom}
 
+  %typeterm HashSet {
+    implement {HashSet}
+  }
   %typeterm Position {
     implement {tom.library.strategy.mutraveler.Position}
   }
@@ -24,7 +27,6 @@ public class Menu {
   private XmlTools xtools;
   private Tools tools;
   private TNode menu;
-  private Collection globalLeaves = new HashSet();
   private String globalS2Link = "";
   private Hashtable menus;
 
@@ -40,14 +42,17 @@ public class Menu {
       menu = (TNode)MuTraveler.init(`BottomUp(RepeatId(duplicateLinks))).visit(menu);
       menu = (TNode)MuTraveler.init(`BottomUp(addSubsectionsTag)).visit(menu);
 
+      //find all leaf nodes
+      HashSet leaves = new HashSet();
+
       try {
-        VisitableVisitor findLeaves = `FindLeaves();
+        VisitableVisitor findLeaves = `FindLeaves(leaves);
         MuTraveler.init(`BottomUp(findLeaves)).visit(menu);
       } catch (VisitFailure e) {
         System.out.println("Failed to get leaves" + menu);
       }
 
-      Iterator it = globalLeaves.iterator();
+      Iterator it = leaves.iterator();
       while(it.hasNext()) {
         Position p = (Position)it.next();
 
@@ -241,10 +246,10 @@ public class Menu {
   /**
    * Collect leaves (menu entries)
    */
-  %strategy FindLeaves() extends `Identity() { 
+  %strategy FindLeaves(leaves:HashSet) extends `Identity() { 
 
     visit TNode {
-      <section></section> -> { globalLeaves.add(MuTraveler.getPosition(this));}
+      <section></section> -> { leaves.add(MuTraveler.getPosition(this));}
     }
   }
 
