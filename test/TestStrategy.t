@@ -15,8 +15,10 @@ import java.util.*;
 public class TestStrategy extends TestCase {
 
   %include { mutraveler.tom }
+  %include { java/util/ArrayList.tom }
+  %include { java/util/LinkedList.tom }
 
-  %gom{
+%gom{
     module Term
 
       abstract syntax
@@ -30,17 +32,10 @@ public class TestStrategy extends TestCase {
       L = concTerm(Term*)
   } 
 
-  %typeterm ArrayList {
-    implement { ArrayList }
+  %typeterm Position {
+    implement { tom.library.strategy.mutraveler.Position }
   }
 
-  %typeterm LinkedList {
-    implement { LinkedList }
-  }
-
-  %typeterm PositionRef {
-    implement {PositionRef}
-  }
     boolean bool0 = true;
 
   public static void main(String[] args) {
@@ -90,12 +85,12 @@ public class TestStrategy extends TestCase {
 
     Term t = `f(a());
     Term tBis = `f(b());
-    PositionRef pr1 = new PositionRef(new Position());
-    PositionRef pr2 = new PositionRef(new Position());
-    PositionRef pr3 = new PositionRef(new Position());
-    VisitableVisitor getPos1 = `GetPositionA(pr1);
-    VisitableVisitor getPos2 = `GetPositionA(pr2);
-    VisitableVisitor getPos3 = `GetPositionA(pr3);
+    Position p1 = new Position();
+    Position p2 = new Position();
+    Position p3 = new Position();
+    VisitableVisitor getPos1 = `GetPositionA(p1);
+    VisitableVisitor getPos2 = `GetPositionA(p2);
+    VisitableVisitor getPos3 = `GetPositionA(p3);
 
     try{
       MuTraveler.init(`BottomUp(getPos1)).visit(t);
@@ -104,13 +99,13 @@ public class TestStrategy extends TestCase {
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
-    assertTrue("equality on Position", pr1.getPosition().equals(pr2.getPosition()));
-    assertFalse("inequality on Position", pr1.getPosition().equals(pr3.getPosition()));
+    assertTrue("equality on Position", p1.equals(p2));
+    assertFalse("inequality on Position", p1.equals(p3));
   }
 
-  %strategy GetPositionA(posRef:PositionRef) extends `Identity(){
+  %strategy GetPositionA(pos:Position) extends `Identity(){
     visit Term {
-      a() -> {posRef.setPosition(MuTraveler.getPosition(this));}
+      a() -> {pos.setPosition(MuTraveler.getPosition(this));}
     }
   }
 
@@ -194,18 +189,4 @@ public class TestStrategy extends TestCase {
 
   //with underscore only
 
-  private class PositionRef {
-
-    private Position ref;
-
-    protected PositionRef(Position p){
-      ref = p;
-    }
-    protected Position getPosition(){
-      return ref;
-    }
-    protected void setPosition(Position p){
-      ref = p;
-    }
-  }
 }

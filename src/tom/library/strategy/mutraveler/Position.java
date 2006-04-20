@@ -19,6 +19,15 @@ public class Position {
     this(DEFAULT_LENGTH);
   }
 
+  /**
+   *setter for use in %strategy
+   *no getter needed
+   */
+  public void setPosition(Position p){
+    size = p.size;
+    data = p.data;
+  }
+
   private Position(int length) {
     data = new int[length];
 		size = 0;
