@@ -70,7 +70,7 @@ public class GomMessage implements PlatformMessage {
   public static final GomMessage instantiationError =
     new GomMessage("{0}: An error occured during the instantiation of class {1}");
 
-  // Plugings
+  // Plugins
   public static final GomMessage invalidPluginArgument =
     new GomMessage("{0}.setArg expecting {1} but {2} argument");
 
@@ -94,7 +94,9 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("ParseException occurs: See StackTrace\n+++++++++++++++++++++++++\n{0}+++++++++++++++++++++++++");
   public static final GomMessage unknownHookKind =
     new GomMessage("Unknown hook kind \"{0}\"");
-
+  public static final GomMessage deprecatedSyntax =
+    new GomMessage("The Vas compatibility syntax is deprecated, "+
+        "and should be converted to plain Gom syntax");
 
   // verbose messages
   public static final GomMessage gomParsingPhase =

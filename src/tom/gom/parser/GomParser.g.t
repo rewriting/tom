@@ -123,7 +123,7 @@ grammar returns [GrammarList grammars]
     { grammars = `concGrammar(grammars*,Sorts(sorts)); }
     |
     prods = syntax[sortList]
-    { 
+    {
     if(!sortList.isEmpty()) {
       sorts = typeListFromList(sortList);
       grammars = `concGrammar(grammars*,Sorts(sorts));
@@ -142,6 +142,10 @@ sortdef returns [GomTypeList definedSorts]
 (
  sortName = type
  {
+ /* Warns the user about deprecated syntax */
+ Logger.getLogger(getClass().getName()).log(Level.WARNING,
+   GomMessage.deprecatedSyntax.getMessage(),
+   new Object[]{});
  definedSorts = `concGomType(GomType(sortName), definedSorts*);
  }
  )*
@@ -199,7 +203,7 @@ typedecl [List sortList] returns [ProductionList list]
   list = null;
   GomType type = null;
 }
-: id:IDENTIFIER 
+: id:IDENTIFIER
   { type=`GomType(id.getText()); sortList.add(type); }
   EQUALS
   list = alternatives[type]
@@ -327,13 +331,13 @@ RBRACE
 : '}'
 ;
 
-WS          : ( ' '
-                | '\t'
-                | ( "\r\n" // DOS
-                    | '\n'   // Unix
-                    | '\r'   // Macintosh
-                    ){ newline(); }
-                ){$setType(Token.SKIP);}
+WS : ( ' '
+       | '\t'
+       | ( "\r\n" // DOS
+           | '\n'   // Unix
+           | '\r'   // Macintosh
+           ){ newline(); }
+       ){$setType(Token.SKIP);}
 ;
 SLCOMMENT
   :       "//"
