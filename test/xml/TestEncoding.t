@@ -7,7 +7,6 @@ import tom.library.adt.tnode.types.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import java.io.*;
 public class TestEncoding extends TestCase {
 
   %include{adt/tnode/TNode.tom}
@@ -24,7 +23,7 @@ public class TestEncoding extends TestCase {
   }
   public void testFr(){
     TNode fileNode;
-//file opening needs to be improved...
+    //file opening needs to be improved...
     //case ant call from tom.home
     fileNode = (TNode)xtools.convertXMLToATerm("test/xml/data.xml");
     if (fileNode == null)
