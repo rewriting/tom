@@ -28,40 +28,36 @@
  */
 package builtin;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-public class Collections {
+public class TestArrayList extends TestCase {
 
   public final static void main(String[] args) {
-    Collections test = new Collections();
-
-    ArrayList res = test.testArrayList();
-    System.out.println("ArrayList = " + res);
-
-    LinkedList resLinked = test.testLinkedList();
-    System.out.println("LinkedList = " + resLinked);
+    junit.textui.TestRunner.run(new TestSuite(TestArrayList.class));
   }
 
   %include { java/util/ArrayList.tom }
-  public ArrayList testArrayList() {
-    ArrayList list = `concArrayList();
-    ArrayList res = `concArrayList();
-    list = `concArrayList("one","two","three","four");
-    %match(ArrayList list) {
-      (_*,x,_*)   -> { res = `concArrayList((String)x+" thing",res*); }
-    }
-    return res;
+
+  public void testMake() {
+    java.util.ArrayList list = `concArrayList("one","two","three","four");
+
+    assertEquals(list.get(0),"one");
+    assertEquals(list.get(1),"two");
+    assertEquals(list.get(2),"three");
+    assertEquals(list.get(3),"four");
   }
 
-  %include { java/util/LinkedList.tom }
-  public LinkedList testLinkedList() {
-    LinkedList list = `concLinkedList();
-    LinkedList res = `concLinkedList();
-    list = `concLinkedList("one","two","three","four");
-    %match(LinkedList list) {
-      (_*,x,_*)   -> { res = `concLinkedList((String)x+" thing",res*); }
+  public void testIter() {
+    java.util.Set set = new java.util.HashSet();
+    java.util.ArrayList list = `concArrayList("one","two","three","four");
+    %match(ArrayList list) {
+      (_*,x,_*)   -> { set.add(`x+"_"+`x); }
     }
-    return res;
+    assertEquals(set.size(),4);
+    assertTrue(set.contains("one_one"));
+    assertTrue(set.contains("two_two"));
+    assertTrue(set.contains("three_three"));
+    assertTrue(set.contains("four_four"));
   }
 }
