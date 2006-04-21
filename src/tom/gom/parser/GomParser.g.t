@@ -33,6 +33,7 @@ header {
   import java.util.logging.Level;
 
   import aterm.*;
+  import tom.gom.GomMessage;
   import tom.gom.tools.GomEnvironment;
   import tom.gom.tools.error.GomRuntimeException;
   import tom.gom.adt.gom.*;
@@ -152,7 +153,8 @@ type returns [String id]
   if(i.getText().equals(DOUBLE)) {
     id=REAL;
     Logger.getLogger(getClass().getName()).log(Level.WARNING,
-        "Please prefer to use real in place of double\nAutomatic conversion done since double is a reserved word");
+        "Please prefer to use real in place of double\n"+
+        "Automatic conversion done since double is a reserved word");
   } else {
     id=i.getText();
   }
@@ -270,6 +272,9 @@ hooktype returns [Hookkind type]
   } else if (typeName.equals("make_insert")) {
     type = `KindMakeinsertHook();
   } else {
+    Logger.getLogger(getClass().getName()).log(Level.SEVERE,
+          GomMessage.unknownHookKind.getMessage(),
+          new Object[]{typeName});
     throw new GomRuntimeException("parsing problem");
   }
 };

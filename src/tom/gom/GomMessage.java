@@ -92,6 +92,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Exception {0} occurs in parsing file `{1}` included in file {2} at line {3,number,integer}: See stacktrace\n\n{4}");
   public static final GomMessage parseException =
     new GomMessage("ParseException occurs: See StackTrace\n+++++++++++++++++++++++++\n{0}+++++++++++++++++++++++++");
+  public static final GomMessage unknownHookKind =
+    new GomMessage("Unknown hook kind \"{0}\"");
 
 
   // verbose messages
