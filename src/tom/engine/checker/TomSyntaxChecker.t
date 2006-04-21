@@ -140,7 +140,14 @@ public class TomSyntaxChecker extends TomChecker {
     Collect1 collectAndVerify = new Collect1() {  
       public boolean apply(ATerm subject) {
         %match(Declaration subject) {
-          Strategy[visitList = list] -> {
+          strat@Strategy[visitList = list,orgTrack=origin] -> {
+            if(`list.isEmpty()) {
+              int line = -1;
+              %match(Option `origin) {
+                OriginTracking[line=orgline] -> { line = `orgline; }
+              }
+              messageError(line,TomMessage.emptyStrategy,new Object[]{});
+            }
             /*  STRATEGY MATCH STRUCTURE*/
             `verifyStrategy(list);
             return true;//case when %match in %strategy
@@ -297,29 +304,29 @@ public class TomSyntaxChecker extends TomChecker {
         }*/
   } //verifySymbol
 
-	private void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
-		%match(TomType codomain) {
-			Codomain(Name(opName)) -> {
-				if(symbolTable().getSymbolFromName(`opName) == null) {
-					messageError(currentTomStructureOrgTrack.getLine(), 
-							symbolType+" "+symbName, 
-							TomMessage.symbolCodomainError,
-							new Object[]{symbName, codomain});
-				}
+  private void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
+    %match(TomType codomain) {
+      Codomain(Name(opName)) -> {
+        if(symbolTable().getSymbolFromName(`opName) == null) {
+          messageError(currentTomStructureOrgTrack.getLine(), 
+              symbolType+" "+symbName, 
+              TomMessage.symbolCodomainError,
+              new Object[]{symbName, codomain});
+        }
         return;
-			}
+      }
 
-			_ -> {
-				if(!testTypeExistence(codomain.getString())) {
-					messageError(currentTomStructureOrgTrack.getLine(), 
-							symbolType+" "+symbName, 
-							TomMessage.symbolCodomainError,
-							new Object[]{symbName, codomain});
-				}
-			}
-		}
-  } //verifySymbolCodomain
-   
+      _ -> {
+        if(!testTypeExistence(codomain.getString())) {
+          messageError(currentTomStructureOrgTrack.getLine(), 
+              symbolType+" "+symbName, 
+              TomMessage.symbolCodomainError,
+              new Object[]{symbName, codomain});
+        }
+      }
+    }
+  }
+
   private int verifySymbolDomain(TomTypeList args, String symbName, String symbolType) {
     int position = 1;
     if(symbolType == TomSyntaxChecker.CONSTRUCTOR) {
@@ -706,7 +713,7 @@ public class TomSyntaxChecker extends TomChecker {
     String termName = "emptyName";
     TomType type = null;
     int termClass=-1;
-		int decLine=-1;
+    int decLine=-1;
     Option orgTrack;
     matchblock:{
       %match(TomTerm term) {
@@ -1178,6 +1185,6 @@ public class TomSyntaxChecker extends TomChecker {
 
   protected boolean testTypeExistence(String typeName) {
     return symbolTable().getType(typeName) != null;
-  } //testTypeExistence
+  }
   
-} // class TomSyntaxChecker
+}

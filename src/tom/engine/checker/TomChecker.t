@@ -169,11 +169,10 @@ abstract public class TomChecker extends TomGenericPlugin {
       //System.out.println("findOriginTrackingLine: not found ");
     }
   }
-  
-      /**
-     * Message Functions
-     */
 
+  /**
+   * Message Functions
+   */
   protected void messageError(int errorLine, TomMessage msg, Object[] msgArgs) {
     String structName = currentTomStructureOrgTrack.getAstName().getString();
     messageError(errorLine, structName, msg, msgArgs);

@@ -282,6 +282,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("no visitorForward defined for type `{0}`");
   public static final TomMessage unknownVisitedType =
       new TomMessage("Visited Type `{0}` is unknown.");
+  public static final TomMessage emptyStrategy =
+      new TomMessage("empty %strategy construct : at least one \"visit\" should be declared");
   
   // rule
   public static final TomMessage incorrectRuleLHSClass   =
