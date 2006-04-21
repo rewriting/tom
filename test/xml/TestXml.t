@@ -3,7 +3,6 @@ package xml;
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import aterm.*;
 import tom.library.traversal.*;
 import java.util.*;
 import junit.framework.TestCase;

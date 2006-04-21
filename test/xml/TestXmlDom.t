@@ -1,3 +1,5 @@
+package xml;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import javax.xml.parsers.*;
@@ -60,7 +62,9 @@ public class TestXmlDom extends TestCase {
     %match(TNode list) {
       <IntegerList>[<(Int|Integer)>(#TEXT(s1))</(Int|Integer)>,
                     <(Integer|Int)>(#TEXT(s2))</(Integer|Int)>]</IntegerList> -> {
-				 if(`s1.compareTo(`s2) > 0) { System.out.println("testSortedInteger"); }
+				 if(`s1.compareTo(`s2) > 0) {
+           //System.out.println("testSortedInteger");
+         }
 				 assertFalse("Expects the matched integers to be ordered",
 										 `s1.compareTo(`s2) > 0);
 			 }
@@ -70,7 +74,9 @@ public class TestXmlDom extends TestCase {
 	public void testSwapElements() {
 		Node list = getXmldoc();
     LinkedList res = extractElements(swapElements(list));
-    if(reverseElements!= res) { System.out.println("testSwapElements"); }
+    if(reverseElements!= res) {
+      //System.out.println("testSwapElements");
+    }
     assertEquals("ExtractElement extract elements in order",
 								 reverseElements, res);
   }
@@ -78,7 +84,9 @@ public class TestXmlDom extends TestCase {
 	public void testExtractElements() {
 		Node list = getXmldoc();
 		LinkedList res = extractElements(list);
-    if(elements!= res) { System.out.println("testExtractElements"); }
+    if(elements!= res) {
+      //System.out.println("testExtractElements");
+    }
 		assertEquals("ExtractElement extract elements in order",
 								 elements, res);
 	}
