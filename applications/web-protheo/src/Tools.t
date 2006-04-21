@@ -1,12 +1,9 @@
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import aterm.*;
 import java.util.*;
-import java.io.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
 import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
@@ -21,17 +18,17 @@ public class Tools{
   private String dirWww = "www/";
   private String dirTmp = "tmp/";
   private XmlTools xtools;
-  private TNodeFactory getTNodeFactory() {
-    xtools = new XmlTools();
-    return xtools.getTNodeFactory();
-  }
 
-  /**
+  public Tools(){
+    xtools = new XmlTools();
+}
+
+/**
    * Remove CommentNode from the term
    */
   public TNode removeComments(TNode input) {
     try {
-      VisitableVisitor ruleId = new RmComments();
+      VisitableVisitor ruleId = `RmComments();
       return (TNode)MuTraveler.init(`InnermostId(ruleId)).visit(input);
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + input);
@@ -39,18 +36,13 @@ public class Tools{
     return input;
   }
 
-  class RmComments extends TNodeVisitableFwd {
-    public RmComments() {
-      super(`Identity());
-    }
-    public TNodeList visit_TNodeList(TNodeList arg) throws VisitFailure {
-      %match(TNodeList arg) {
+  %strategy RmComments() extends `Identity() {
+
+   visit TNodeList {
         concTNode(before*,CommentNode(_),after*) -> {
-          return arg = `concTNode(before*, after*);
+          return `concTNode(before*, after*);
         }
       }
-      return arg;
-    }
   }
 
   /**
