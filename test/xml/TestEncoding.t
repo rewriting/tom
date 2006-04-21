@@ -7,6 +7,7 @@ import tom.library.adt.tnode.types.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.io.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -30,14 +31,15 @@ public class TestEncoding extends TestCase {
   }
 
   public void testFr(){
-    TNode fileNode;
-    fileNode = (TNode)xtools.convertXMLToATerm("xml/data.xml");
+    TNode fileNode = (TNode)xtools.convertXMLToATerm("xml/data.xml");
 
     fileNode = fileNode.getDocElem();
-    TNode textNode = `xml(<data type="encoding"><datum lang="fr">#TEXT("eée")</datum></data>);
+    //TNode textNode = `xml(<data type="encoding"><datum lang="fr">#TEXT("eée")</datum></data>);
+    TNode textNode = `xml(<data type="encoding"><datum lang="fr">#TEXT("e\u00E9e")</datum></data>);
 
     logger.log(level,"fileNode: " + fileNode);
     logger.log(level,"textNode: " + textNode);
+
     assertEquals("characters read from file and from textnode must be equals",
         textNode,fileNode);
   }
