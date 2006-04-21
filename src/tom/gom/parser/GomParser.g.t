@@ -356,10 +356,10 @@ ML_COMMENT
      }
      :
     { LA(2)!='/' }? '*'
-     |       '\r' '\n' {newline();}
-     |       '\r'      {newline();}
-     |       '\n'      {newline();}
-     |       ~('*'|'\n'|'\r')
+     | '\r' '\n' {newline();}
+     | '\r'      {newline();}
+     | '\n'      {newline();}
+     | ~('*'|'\n'|'\r')
      )*
     "*/"
 {$setType(Token.SKIP);}

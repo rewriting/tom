@@ -261,10 +261,8 @@ public class TestXmlDom extends TestCase {
 				res++;
 			}
 		}
-    if(15!= res) { System.out.println("testAttributeMatch"); }
 		assertEquals(
 			"XML attibute matching should not depend on the order of the attibutes", 
 			res, 15);
 	}
-
 }
