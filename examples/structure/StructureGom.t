@@ -35,8 +35,6 @@ import java.util.*;
 import structure.structures.*;
 import structure.structures.types.*;
 
-import tom.library.traversal.*;
-
 import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
@@ -45,7 +43,6 @@ import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
 
 
 public class StructureGom {
-  private GenericTraversal traversal;
 
   private final static boolean optim = true;
   private final static boolean optim2 = true;
@@ -61,14 +58,8 @@ public class StructureGom {
     implement { HashSet }
   }
 
-  StructureGom() {
-    this(new GenericTraversal());
-  }
+  StructureGom() { }
   
-  StructureGom(GenericTraversal traversal) {
-    this.traversal = traversal;
-  }
-
   public void run(Struc initStruc) {
 		//initStruc = `par(concPar(cop(concCop(seq(concSeq(d1(),d2())),a())), seq(concSeq(par(concPar(neg(d1()),neg(b()))),neg(d2()))),seq(concSeq(b(),neg(a())))));
     System.out.println("Starting with: " + prettyPrint(initStruc));
