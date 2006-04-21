@@ -4,6 +4,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import javax.xml.parsers.*;
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -11,14 +13,18 @@ public class TestXmlDom extends TestCase {
   private Document dom;
 	private LinkedList elements;
 	private LinkedList reverseElements;
+  private static Logger logger;
+  private static Level level = Level.FINE;
 
   %include{ dom.tom }
 
 	public static void main(String[] args) {
+    level = Level.INFO;
 		junit.textui.TestRunner.run(new TestSuite(TestXmlDom.class));
 	}
 
 	public void setUp() {
+    logger = Logger.getLogger(getClass().getName());
 		try {
 		dom = DocumentBuilderFactory
 			.newInstance()
@@ -63,7 +69,7 @@ public class TestXmlDom extends TestCase {
       <IntegerList>[<(Int|Integer)>(#TEXT(s1))</(Int|Integer)>,
                     <(Integer|Int)>(#TEXT(s2))</(Integer|Int)>]</IntegerList> -> {
 				 if(`s1.compareTo(`s2) > 0) {
-           //System.out.println("testSortedInteger");
+           logger.log(level,"testSortedInteger");
          }
 				 assertFalse("Expects the matched integers to be ordered",
 										 `s1.compareTo(`s2) > 0);
@@ -75,7 +81,7 @@ public class TestXmlDom extends TestCase {
 		Node list = getXmldoc();
     LinkedList res = extractElements(swapElements(list));
     if(reverseElements!= res) {
-      //System.out.println("testSwapElements");
+      logger.log(level,"testSwapElements");
     }
     assertEquals("ExtractElement extract elements in order",
 								 reverseElements, res);
@@ -85,7 +91,7 @@ public class TestXmlDom extends TestCase {
 		Node list = getXmldoc();
 		LinkedList res = extractElements(list);
     if(elements!= res) {
-      //System.out.println("testExtractElements");
+      logger.log(level,"testExtractElements");
     }
 		assertEquals("ExtractElement extract elements in order",
 								 elements, res);
