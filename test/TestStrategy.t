@@ -15,9 +15,12 @@ import java.util.*;
 public class TestStrategy extends TestCase {
 
   %include { mutraveler.tom }
-  %include { java/util/ArrayList.tom }
   %include { java/util/LinkedList.tom }
 
+  %typeterm Hashtable{
+  implement {Hashtable}  
+  }
+  
 %gom{
     module Term
 
@@ -32,9 +35,6 @@ public class TestStrategy extends TestCase {
       L = concTerm(Term*)
   } 
 
-  %typeterm Hashtable{
-    implement { Hashtable }
-  }
   %typeterm Position {
     implement { tom.library.strategy.mutraveler.Position }
   }
@@ -50,7 +50,7 @@ public class TestStrategy extends TestCase {
 
   public void testS(){
     
-    ArrayList arrayList = new ArrayList();
+    Hashtable hashtable = new Hashtable();
     LinkedList linkedList = new LinkedList();
     boolean bool = true;
     long along = 1;
@@ -61,7 +61,7 @@ public class TestStrategy extends TestCase {
     VisitableVisitor rule1 = `S1(bool);
     VisitableVisitor rule2 = `S2(along,string);
     VisitableVisitor rule3 = `S3(i);
-    VisitableVisitor rule4 = `S4(arrayList, linkedList);
+    VisitableVisitor rule4 = `S4(hashtable, linkedList);
     VisitableVisitor rule5 = `S5();
     VisitableVisitor rule6 = `S6();
     VisitableVisitor rule7 = `S7();
@@ -141,9 +141,9 @@ public class TestStrategy extends TestCase {
     }
   }
 
-  %strategy S4(arrayList:ArrayList,linkedList:LinkedList) extends `Identity() {
+  %strategy S4(hashtable:Hashtable,linkedList:LinkedList) extends `Identity() {
     visit Term {
-      g(x,y)            -> { arrayList.add(`x); linkedList.add("ok"); return `g(y,x);}
+      g(x,y)            -> { linkedList.add("ok"); return `g(y,x);}
     }
   }
 
