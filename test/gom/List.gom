@@ -1,6 +1,3 @@
 module List
-
-public
-	sorts List
 abstract syntax
-	conc(int*) -> List
+List = conc(int*)

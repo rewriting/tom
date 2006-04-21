@@ -1,8 +1,6 @@
 module Builtin
 imports int String
 
-public 
-	sorts Wrapper
 abstract syntax
-	Int(i:int) -> Wrapper
-	Name(n:String) -> Wrapper
+Wrapper = Int(i:int)
+        |	Name(n:String)

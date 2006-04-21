@@ -1,22 +1,19 @@
 module JavaHook
-
-public
-sorts Term
 abstract syntax
-Empty() -> Term
+Term = Empty()
+     | Unary(slot:Term)
+     | Binary(ls:Term,rs:Term)
+     | Ternary(ls:Term,cs:Term,rs:Term)
+     | Vary(Term*)
 Empty:make() {
   System.out.println("Empty()");
 }
-Unary(slot:Term) -> Term
-Binary(ls:Term,rs:Term) -> Term
 Binary:make(l,r) {
   System.out.println("Binary("+l+", "+r+")");
 }
-Ternary(ls:Term,cs:Term,rs:Term) -> Term
 Unary:make(a) {
   System.out.println("Unary("+a+")");
 }
-Vary(Term*) -> Term
 Vary:make_insert(e,l) {
   System.out.println("Vary("+e+", "+l+")");
 }
