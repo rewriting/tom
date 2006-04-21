@@ -32,6 +32,9 @@ public class TestStrategy extends TestCase {
       L = concTerm(Term*)
   } 
 
+  %typeterm Hashtable{
+    implement { Hashtable }
+  }
   %typeterm Position {
     implement { tom.library.strategy.mutraveler.Position }
   }
@@ -82,15 +85,13 @@ public class TestStrategy extends TestCase {
   }
 
   public void testPosition() {
-
+    //3 positions for now
+    Hashtable positions = new Hashtable(3);
     Term t = `f(a());
     Term tBis = `f(b());
-    Position p1 = new Position();
-    Position p2 = new Position();
-    Position p3 = new Position();
-    VisitableVisitor getPos1 = `GetPositionA(p1);
-    VisitableVisitor getPos2 = `GetPositionA(p2);
-    VisitableVisitor getPos3 = `GetPositionA(p3);
+    VisitableVisitor getPos1 = `GetPositionA(positions,"p1");
+    VisitableVisitor getPos2 = `GetPositionA(positions,"p2");
+    VisitableVisitor getPos3 = `GetPositionA(positions,"p3");
 
     try{
       MuTraveler.init(`BottomUp(getPos1)).visit(t);
@@ -99,13 +100,17 @@ public class TestStrategy extends TestCase {
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
+
+    Position p1 = (Position)positions.get("p1");
+    Position p2 = (Position)positions.get("p2");
+    Position p3 = (Position)positions.get("p3");
     assertTrue("equality on Position", p1.equals(p2));
     assertFalse("inequality on Position", p1.equals(p3));
   }
 
-  %strategy GetPositionA(pos:Position) extends `Identity(){
+  %strategy GetPositionA(positions:Hashtable,posName:String) extends `Identity(){
     visit Term {
-      a() -> {pos.setPosition(MuTraveler.getPosition(this));}
+      a() -> {positions.put(posName,MuTraveler.getPosition(this));}
     }
   }
 
