@@ -23,12 +23,7 @@ public class TestEncoding extends TestCase {
   }
   public void testFr(){
     TNode fileNode;
-    //file opening needs to be improved...
-    //case ant call from tom.home
-    fileNode = (TNode)xtools.convertXMLToATerm("test/xml/data.xml");
-    if (fileNode == null)
-      //case ant call from tom.home/test
-      fileNode = (TNode)xtools.convertXMLToATerm("xml/data.xml");
+    fileNode = (TNode)xtools.convertXMLToATerm("xml/data.xml");
 
     fileNode = fileNode.getDocElem();
     TNode textNode = `xml(<data type="encoding"><datum lang="fr">#TEXT("eée")</datum></data>);
