@@ -3,6 +3,8 @@ import aterm.pure.*;
 import java.util.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class TestArray extends TestCase {
 
@@ -14,6 +16,8 @@ public class TestArray extends TestCase {
 	private ArrayList sortedlist;
 	private ArrayList listwithdoubles;
 	private ArrayList listwithoutdoubles;
+  private static Logger logger;
+  private static Level level = Level.FINE;
 
   %typeterm L {
     implement { ArrayList }
@@ -65,10 +69,12 @@ public class TestArray extends TestCase {
   } 
 
 	public static void main(String[] args) {
+    level = Level.INFO;
 		junit.textui.TestRunner.run(new TestSuite(TestArray.class));
 	}
 	
 	protected void setUp() {
+    logger = Logger.getLogger(getClass().getName());
 		this.factory = new PureFactory(16);
 
 		ATerm ta = factory.makeAppl(factory.makeAFun("a", 0, false));
@@ -215,13 +221,9 @@ public class TestArray extends TestCase {
 		%match(L l) {
       conc(X1*,X2*,X3*) -> {
         nbSol++;
-				//System.out.println("X1 = " + `X1* + " X2 = " + `X2*+ " X3 = " + `X3*);
+        logger.log(level,"X1 = " + `X1* + " X2 = " + `X2*+ " X3 = " + `X3*);
       }
     }
-
     assertTrue("TestVariableStar1",nbSol==6);
 	}
-  
-
 }
-

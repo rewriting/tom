@@ -1,8 +1,12 @@
 import java.util.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class TestArray2 extends TestCase {
+  private static Logger logger;
+  private static Level level = Level.FINE;
 
   %typeterm jtList {
 	  implement { List }
@@ -48,6 +52,7 @@ public class TestArray2 extends TestCase {
 	}
 	
 	protected void setUp() {
+    logger = Logger.getLogger(getClass().getName());
 	}
 
   public void testVariableStar1() {
@@ -56,10 +61,10 @@ public class TestArray2 extends TestCase {
 		%match(jtList l) {
       conc(ListElement(conc(R*,T*)),X1*,u,X2*) -> {
         nbSol++;
-				System.out.println("R = " + `R* + " T = " + `T*+" X1 = " + `X1* + " u = " + `u + " X2 = " + `X2*);
+				logger.log(level,
+            "R = " + `R* + " T = " + `T*+" X1 = " + `X1* + " u = " + `u + " X2 = " + `X2*);
       }
     }
-
     assertTrue("TestVariableStar1",nbSol==6);
 	}
   
