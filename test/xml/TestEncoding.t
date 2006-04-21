@@ -7,20 +7,28 @@ import tom.library.adt.tnode.types.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 public class TestEncoding extends TestCase {
 
   %include{adt/tnode/TNode.tom}
 
   private XmlTools xtools;
+  private static Logger logger;
+  private static Level level = Level.FINE;
 
-  public TestEncoding(){
+	public void setUp() {
+    logger = Logger.getLogger(getClass().getName());
     xtools = new XmlTools();
     xtools.setDeletingWhiteSpaceNodes(true);
   }
 
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestXml.class));
+    level = Level.INFO;
+    junit.textui.TestRunner.run(new TestSuite(TestEncoding.class));
   }
+
   public void testFr(){
     TNode fileNode;
     fileNode = (TNode)xtools.convertXMLToATerm("xml/data.xml");
@@ -28,8 +36,9 @@ public class TestEncoding extends TestCase {
     fileNode = fileNode.getDocElem();
     TNode textNode = `xml(<data type="encoding"><datum lang="fr">#TEXT("eée")</datum></data>);
 
-    System.out.println("fileNode: " + fileNode);
-    System.out.println("textNode: " + textNode);
-    //assertEquals("characters read from file and from textnode must be equals",textNode,fileNode);
+    logger.log(level,"fileNode: " + fileNode);
+    logger.log(level,"textNode: " + textNode);
+    assertEquals("characters read from file and from textnode must be equals",
+        textNode,fileNode);
   }
 }

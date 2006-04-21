@@ -66,6 +66,7 @@
   	<copy todir="${test.build}">
       <fileset dir="${test.src}">
         <include name="*/*.xml"/>
+        <include name="*/*.dtd"/>
       </fileset>
     </copy>
   </target>
