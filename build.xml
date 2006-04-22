@@ -205,6 +205,9 @@
     <taskdef name="tomsrc"
              classname="tom.engine.tools.ant.TomTask"
              classpathref="tomsrc.classpath"/>
+    <taskdef name="vassrc" 
+             classname="vas.ant.VasTask" 
+             classpathref="tomsrc.classpath"/>
   </target>
 
   <!-- 
@@ -215,11 +218,23 @@
     <presetdef name="tomcompile">
       <tom config="${stable.configfile}"/>
     </presetdef>
+    <presetdef name="gomcompile">
+      <gom config="${stable.gomconfigfile}"/>
+    </presetdef>
+    <presetdef name="vascompile">
+      <vas config="${stable.vasconfigfile}"/>
+    </presetdef>
   </target> 
   
   <target name="-withsrc" if="withsource">
     <presetdef name="tomcompile">
       <tomsrc config="${src.configfile}"/>
+    </presetdef>
+    <presetdef name="gomcompile">
+      <gomsrc config="${src.gomconfigfile}"/>
+    </presetdef>
+    <presetdef name="vascompile">
+      <vassrc config="${src.vasconfigfile}"/>
     </presetdef>
   </target> 
   
@@ -348,21 +363,19 @@
   </target>
 
   <!-- compile adt's -->
-  <target name="buildadt" depends="init.task.stable, prepare.src">
+  <target name="buildadt" depends="-withstable,-withsrc">
 
-    <vas config="${stable.vasconfigfile}"
-         srcdir="${src.src}"
-         package="tom.library.adt" 
-         destdir="${src.gen}">
+    <vascompile srcdir="${src.src}"
+                package="tom.library.adt" 
+                destdir="${src.gen}">
       <include name="tom/library/adt/*.vas"/>
-    </vas>
+    </vascompile>
 
-    <vas config="${stable.vasconfigfile}"
-         srcdir="${src.src}"
-         package="tom.platform.adt" 
-         destdir="${src.gen}">
+    <vascompile srcdir="${src.src}"
+                package="tom.platform.adt" 
+                destdir="${src.gen}">
       <include name="tom/platform/adt/*.vas"/>
-    </vas>
+    </vascompile>
 
     <uptodate property="vascompile.required" 
 	    targetfile="${src.gen}/tom/engine/adt/tomsignature/TomSignature.tom" >
@@ -370,27 +383,24 @@
     </uptodate>
     <antcall target="touchvas"/>
 
-    <vas config="${stable.vasconfigfile}"
-         srcdir="${src.src}"
-         package="tom.engine.adt" 
-         name="tomsignature" 
-         destdir="${src.gen}">
+    <vascompile srcdir="${src.src}"
+                package="tom.engine.adt" 
+                name="tomsignature" 
+                destdir="${src.gen}">
 	 <include name="tom/engine/adt/TomSignature.vas"/>
-    </vas>
+    </vascompile>
 
-    <vas config="${stable.vasconfigfile}"
-         srcdir="${src.src}"
-         package="tom.engine.adt" 
-         destdir="${src.gen}">
+    <vascompile srcdir="${src.src}"
+                package="tom.engine.adt" 
+                destdir="${src.gen}">
 	 <include name="tom/engine/adt/Il.vas"/>
-    </vas>
+    </vascompile>
 
-    <vas config="${stable.vasconfigfile}"
-         srcdir="${src.src}"
-         package="tom.engine.adt" 
-         destdir="${src.gen}">
+    <vascompile srcdir="${src.src}"
+                package="tom.engine.adt" 
+                destdir="${src.gen}">
 	 <include name="tom/engine/adt/Zenon.vas"/>
-    </vas>
+    </vascompile>
 
 <!-- how to build adt from adt instead of vas
     <adt srcdir="${src.src}"
@@ -408,26 +418,23 @@
     </copy>
 
     <!-- adt for the verifier -->
-    <vas config="${stable.vasconfigfile}"
-         srcdir="${src.src}"
-	 package="tom.engine/verifier" 
-         destdir="${src.gen}">
+    <vascompile srcdir="${src.src}"
+	        package="tom.engine/verifier" 
+                destdir="${src.gen}">
 	 <include name="tom/engine/verifier/*.vas"/>
-    </vas>
+    </vascompile>
 
     <!-- adt for gom -->
-    <!--<vas config="${stable.vasconfigfile}"
-	       srcdir="${src.src}"
-	       package="tom.gom.adt"
-	       destdir="${src.gen}">
-	    <include name="tom/gom/adt/*.vas"/>
-    </vas>-->
-    <gom config="${stable.gomconfigfile}"
-         srcdir="${src.src}"
-         package="tom.gom.adt"
-         destdir="${src.gen}">
+    <!--<vascompile srcdir="${src.src}"
+	            package="tom.gom.adt"
+	            destdir="${src.gen}">
+	     <include name="tom/gom/adt/*.vas"/>
+    </vascompile>-->
+    <gomcompile srcdir="${src.src}"
+                package="tom.gom.adt"
+                destdir="${src.gen}">
      <include name="tom/gom/adt/*.gom"/>
-    </gom>
+    </gomcompile>
   </target>
 
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
@@ -785,7 +792,7 @@
 		<!-- <ant dir="${examples}" target="clean.dist"/> -->
     <delete dir="${examples.gen}"/>
     <delete dir="${examples.build}"/>
-	</target>
+  </target>
 
   <target name="clean.src.dist" description="Remove the src distribution">
     <delete dir="${src.dist}"/>
@@ -1016,6 +1023,7 @@
 
     <!-- rebuild and copy adt -->
     <antcall target="buildadt">
+      <param name="withsource" value="yes"/>
       <param name="tom.home" value="${src.dist}"/>
     </antcall>
     <copy todir="${destination}/gen">
