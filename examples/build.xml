@@ -913,7 +913,7 @@
 
         <include name="${propp}/README"/>
         <include name="${propp}/*.t"/>
-        <include name="${propp}/*.adt"/>
+        <include name="${propp}/*.gom"/>
         <include name="${propp}/*.g"/>
         <include name="${propp}/*.sty"/>
         <include name="${propp}/examples"/>
