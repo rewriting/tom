@@ -211,6 +211,11 @@
       <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
       <zipfileset src="${tnode.jar}"/>
     </jar>
+    <copy todir="${examples.build}/${appletxml}">
+      <fileset dir="${examples.dir}/${appletxml}">
+        <include name="*.html"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="boulderdash" depends="init">
@@ -805,6 +810,7 @@
         <include name="${appletxml}/README"/>
         <include name="${appletxml}/*.t"/>
         <include name="${appletxml}/*.java"/>
+        <include name="${appletxml}/*.html"/>
 
         <include name="${boulderdash}/README"/>
         <include name="${boulderdash}/*.t"/>

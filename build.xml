@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.3rc0"/>
+  <property name="stable.version" value="2.3rc1"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
 
@@ -75,13 +75,13 @@
   <!-- for bootstrap -->
   <property name="bootstrap.dir"        location="${src.src}/bootstrap" />
 
-  <property name="javacSource" value="1.4"/>
-  <property name="javacTarget" value="1.4"/>
+  <property name="javacSource"    value="1.4"/>
+  <property name="javacTarget"    value="1.4"/>
   <property name="javacDebugInfo" value="on"/>
-  <property name="javacVerbose" value="false"/>
-  <property name="nowarnings" value="false" />  
+  <property name="javacVerbose"   value="false"/>
+  <property name="nowarnings"     value="false" />  
   <property name="memoryInitSize" value="128m" />  
-  <property name="memoryMaxSize" value="512m" />  
+  <property name="memoryMaxSize"  value="512m" />  
   
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">
@@ -582,15 +582,15 @@
     </copy>
 
     <!-- prepare tar file -->
-    <tar tarfile="${dist}/jtom-${stable.version}.tar.gz" compression="gzip">
-      <tarfileset dir="${stable.dist}" prefix="jtom-${stable.version}" mode="755">
+    <tar tarfile="${dist}/tom-${stable.version}.tar.gz" compression="gzip">
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="755">
         <include name="bin/*"/>
         <exclude name="bin/*.bat"/>
       </tarfileset>
-      <tarfileset dir="${stable.dist}" prefix="jtom-${stable.version}">
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}">
         <include name="bin/*.bat"/>
       </tarfileset>
-      <tarfileset dir="${stable.dist}" prefix="jtom-${stable.version}">
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}">
         <include name="**"/>
         <exclude name="bin/*"/>
       </tarfileset>
@@ -730,15 +730,15 @@
 
     <!-- prepare tar file -->
     <tar tarfile="${dist}/tom-${src.version}.tar.gz" compression="gzip">
-      <tarfileset dir="${src.dist}" prefix="jtom-${src.version}" mode="755">
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}" mode="755">
         <include name="bin/*"/>
         <exclude name="bin/*.bat"/>
         <exclude name="bin/tom.src"/>
       </tarfileset>
-      <tarfileset dir="${src.dist}" prefix="jtom-${src.version}">
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
         <include name="bin/*.bat"/>
       </tarfileset>
-      <tarfileset dir="${src.dist}" prefix="jtom-${src.version}">
+      <tarfileset dir="${src.dist}" prefix="tom-${src.version}">
         <include name="**"/>
         <exclude name="bin/*"/>
       </tarfileset>
