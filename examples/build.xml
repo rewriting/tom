@@ -713,7 +713,7 @@
     <!-- copy resources -->
     <copy todir="${examples.build}/${xml}">
       <fileset dir="${examples.dir}/${xml}">
-        <include name="*.xml"/>
+        <include name="**/*.xml"/>
         <include name="*.html"/>
       </fileset>
     </copy>
@@ -964,9 +964,9 @@
         <include name="${vas}/*.t"/>
 
         <include name="${xml}/README"/>
-        <include name="${xml}/*.t"/>
+        <include name="${xml}/**/*.t"/>
         <include name="${xml}/*.adt"/>
-        <include name="${xml}/*.xml"/>
+        <include name="${xml}/**/*.xml"/>
         <include name="${xml}/*.html"/>
 
         <include name="${xquery}/README"/>
