@@ -853,7 +853,8 @@
         <include name="${ferus}/*.vas"/>
 
         <include name="${gom}/*.t"/>
-				<include name="${gom}/*.gom"/>
+        <include name="${gom}/*.java"/>
+        <include name="${gom}/*.gom"/>
 
         <include name="${gomoku}/*.t"/>
         <include name="${gomoku}/*.vas"/>
