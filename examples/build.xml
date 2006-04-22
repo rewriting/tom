@@ -685,6 +685,11 @@
     <gomcompile example="${tutorial}"/>
     <tomcompile example="${tutorial}"/>
     <javacompile example="${tutorial}"/>
+    <copy todir="${examples.build}/${tutorial}">
+      <fileset dir="${examples.dir}/${tutorial}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="vas" depends="init">
