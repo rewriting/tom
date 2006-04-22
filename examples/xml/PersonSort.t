@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2006, Pierre-Etienne Moreau
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -41,16 +41,16 @@ public class PersonSort {
   private TNodeFactory getTNodeFactory() {
       return xtools.getTNodeFactory();
   }
-  
+
   public static void main (String args[]) {
     PersonSort person = new PersonSort();
     person.run("xml/person.xml");
-  } 
+  }
 
  private void run(String filename){
     xtools = new XmlTools();
     TNode term = (TNode)xtools.convertXMLToATerm(filename);
-    
+
     TNode result = sort(term.getDocElem());
     xtools.printXMLFromATerm(result);
 
@@ -58,25 +58,25 @@ public class PersonSort {
     searchJu(term.getDocElem());
 
   }
-  
+
   private TNode sort(TNode subject) {
     %match(TNode subject) {
      <Persons>(X1*,p1,X2*,p2,X3*)</Persons> -> {
         if(`compare(p1,p2) > 0) {
           return sort(`xml(<Persons>X1* p2 X2* p1 X3*</Persons>));
-        }	
+        }
       }
-    } 
-		return subject;
+    }
+    return subject;
   }
-  	 
+
   private int compare(TNode t1, TNode t2) {
     %match(TNode t1, TNode t2) {
       <Person Age=a1><FirstName>#TEXT(n1)</FirstName></Person>,
       <Person Age=a2><FirstName>#TEXT(n2)</FirstName></Person>
-      -> { 
-          int res = `a1.compareTo(`a2); 
-					return res;
+      -> {
+          int res = `a1.compareTo(`a2);
+          return res;
       }
     }
     return 0;
@@ -85,8 +85,8 @@ public class PersonSort {
   private void searchJu(TNode subject) {
     %match(TNode subject) {
       <Persons><Person><FirstName>#TEXT(Z@(_*,'Ju',X*))</FirstName></Person></Persons> -> {
-        System.out.println("Z = " + `Z); 
-        System.out.println("Hello Mr Ju" + `X); 
+        System.out.println("Z = " + `Z);
+        System.out.println("Hello Mr Ju" + `X);
       }
     }
   }

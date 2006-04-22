@@ -16,10 +16,8 @@ class GomRunner {
   public static void main(String[] args) {
     String module = %[
       module Allo
-      public
-        sorts Huile
       abstract syntax
-        Clock() -> Huile
+      Huile = Clock()
       ]%;
 
     String[] params = {"-X","/Users/tonio/workspace/jtom/src/dist/Gom.xml","-d", "gom/coin", "-"};

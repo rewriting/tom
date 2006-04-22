@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2006, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -34,11 +34,11 @@ import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import aterm.*;
 import tom.library.traversal.*;
- 
+
 public class Action {
-  
+
   %include{ adt/tnode/TNode.tom }
-    
+
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();
   private TNodeFactory getTNodeFactory() {
@@ -47,7 +47,7 @@ public class Action {
 
   public static void main (String args[]) {
     Action action = new Action();
-    action.run("action.xml");
+    action.run("xml/action.xml");
   }
 
   private void run(String filename){
@@ -56,7 +56,7 @@ public class Action {
     test1(term);
     test2(term);
   }
-    
+
   private void test1(ATerm subject) {
     TNode t = (TNode) subject;
     t = t.getDocElem();
@@ -68,12 +68,12 @@ public class Action {
            System.out.println("Action 1 Localisee ! " + `type + "  " + `i);
            System.out.println("Comp: " + `comp);
          }
-      
+
       _ -> {
           //System.out.println("do not match: " + t);
       }
     } // match
-    
+
   }
 
   private void test2(ATerm subject) {
@@ -84,15 +84,11 @@ public class Action {
         %match(TNode a,TNode a) {
           <Action><Comp Index=i2 Label=l Type="Wait"/></Action>,
           <Action><Comp Index=i1 Label=l Type="Send"/></Action> -> {
-            System.out.println("Synchronisation sur le label "+`l +" entre "+`i1+"(!) et "+`i2+"(?)");				
-          }	
+            System.out.println("Synchronisation sur le label "+`l +" entre "+`i1+"(!) et "+`i2+"(?)");
+          }
         }
       }
     } // match
-    
+
   }
-
-  
-  
 }
-
