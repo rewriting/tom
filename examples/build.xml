@@ -901,6 +901,7 @@
         <include name="${poly}/*.t"/>
         <include name="${poly}/Poly.signature"/>
         <include name="${poly}/*.adt"/>
+        <include name="${poly}/*.gom"/>
         <include name="${poly}/*.java"/>
 
         <include name="${pqueens}/README"/>
