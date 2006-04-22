@@ -75,6 +75,7 @@
           depends="build">
     <tom.junit printsummary="yes"
                fork="true"
+               dir="${test.build}"
                haltonfailure="false"
                failureproperty="tests.failed"
                showoutput="true">
