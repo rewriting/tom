@@ -73,20 +73,20 @@ public class TomIlTools extends TomBase {
 
   public void getZTermSubjectListFromPattern(Pattern pattern, List list, Map map) {
     Set unamedVarSet = new HashSet();
-     if(pattern instanceof  tom.engine.adt.tomsignature.types.Pattern) { { tom.engine.adt.tomsignature.types.Pattern tom_match1_1=(( tom.engine.adt.tomsignature.types.Pattern)pattern); if(tom_is_fun_sym_Pattern(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match1_1_subjectList=tom_get_slot_Pattern_subjectList(tom_match1_1); { tom.engine.adt.tomsignature.types.TomList tom_match1_1_tomList=tom_get_slot_Pattern_tomList(tom_match1_1); { tom.engine.adt.tomsignature.types.TomList tom_match1_1_guards=tom_get_slot_Pattern_guards(tom_match1_1); { tom.engine.adt.tomsignature.types.TomList subjectList=tom_match1_1_subjectList; { tom.engine.adt.tomsignature.types.TomList tomList=tom_match1_1_tomList; { tom.engine.adt.tomsignature.types.TomList guards=tom_match1_1_guards; if( true ) {
+     if(pattern instanceof  tom.engine.adt.tomsignature.types.Pattern) { { tom.engine.adt.tomsignature.types.Pattern tom_match1_1=(( tom.engine.adt.tomsignature.types.Pattern)pattern); if (tom_is_fun_sym_Pattern(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match1_1_subjectList=tom_get_slot_Pattern_subjectList(tom_match1_1); { tom.engine.adt.tomsignature.types.TomList tom_match1_1_tomList=tom_get_slot_Pattern_tomList(tom_match1_1); { tom.engine.adt.tomsignature.types.TomList tom_match1_1_guards=tom_get_slot_Pattern_guards(tom_match1_1); { tom.engine.adt.tomsignature.types.TomList subjectList=tom_match1_1_subjectList; { tom.engine.adt.tomsignature.types.TomList tomList=tom_match1_1_tomList; { tom.engine.adt.tomsignature.types.TomList guards=tom_match1_1_guards; if ( true ) {
 
           while(!subjectList.isEmpty()) {
             TomTerm head = subjectList.getHead();
             subjectList = subjectList.getTail();
             list.add(tomTermToZTerm(head,map,unamedVarSet));
           }
-       }}}}}}} }} }
+       } } } } } } } } } }
 
   }
 
   public ZExpr patternToZExpr(Pattern pattern, Map map) {
     Set unamedVariableSet = new HashSet();
-     if(pattern instanceof  tom.engine.adt.tomsignature.types.Pattern) { { tom.engine.adt.tomsignature.types.Pattern tom_match2_1=(( tom.engine.adt.tomsignature.types.Pattern)pattern); if(tom_is_fun_sym_Pattern(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match2_1_subjectList=tom_get_slot_Pattern_subjectList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_tomList=tom_get_slot_Pattern_tomList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_guards=tom_get_slot_Pattern_guards(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList subjectList=tom_match2_1_subjectList; { tom.engine.adt.tomsignature.types.TomList tomList=tom_match2_1_tomList; { tom.engine.adt.tomsignature.types.TomList guards=tom_match2_1_guards; if( true ) {
+     if(pattern instanceof  tom.engine.adt.tomsignature.types.Pattern) { { tom.engine.adt.tomsignature.types.Pattern tom_match2_1=(( tom.engine.adt.tomsignature.types.Pattern)pattern); if (tom_is_fun_sym_Pattern(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomList tom_match2_1_subjectList=tom_get_slot_Pattern_subjectList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_tomList=tom_get_slot_Pattern_tomList(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList tom_match2_1_guards=tom_get_slot_Pattern_guards(tom_match2_1); { tom.engine.adt.tomsignature.types.TomList subjectList=tom_match2_1_subjectList; { tom.engine.adt.tomsignature.types.TomList tomList=tom_match2_1_tomList; { tom.engine.adt.tomsignature.types.TomList guards=tom_match2_1_guards; if ( true ) {
 
           ZExpr result = patternToZExpr(subjectList, tomList, map, unamedVariableSet);
           // insert existential quantifiers for the unamed variables
@@ -96,7 +96,7 @@ public class TomIlTools extends TomBase {
             result = tom_make_zexists(var,tom_make_ztype("T"),result);
           }
           return result;
-       }}}}}}} }} }
+       } } } } } } } } } }
 
     throw new TomRuntimeException("patternToZExpr : strange pattern " + pattern);
   }
@@ -116,7 +116,7 @@ public class TomIlTools extends TomBase {
   }
   
   public ZTerm tomTermToZTerm(TomTerm tomTerm, Map map, Set unamedVariableSet) {
-     if(tomTerm instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1=(( tom.engine.adt.tomsignature.types.TomTerm)tomTerm); if(tom_is_fun_sym_TermAppl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match3_1_nameList=tom_get_slot_TermAppl_nameList(tom_match3_1); { tom.engine.adt.tomsignature.types.TomList tom_match3_1_args=tom_get_slot_TermAppl_args(tom_match3_1); if(tom_is_fun_sym_concTomName(tom_match3_1_nameList) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match3_1_nameList_list1=tom_match3_1_nameList; if(!(tom_is_empty_concTomName_NameList(tom_match3_1_nameList_list1))) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_nameList_1=tom_get_head_concTomName_NameList(tom_match3_1_nameList_list1);tom_match3_1_nameList_list1=tom_get_tail_concTomName_NameList(tom_match3_1_nameList_list1); if(tom_is_fun_sym_Name(tom_match3_1_nameList_1) ||  false ) { { String  tom_match3_1_nameList_1_string=tom_get_slot_Name_string(tom_match3_1_nameList_1); { String  name=tom_match3_1_nameList_1_string; { tom.engine.adt.tomsignature.types.TomList childrens=tom_match3_1_args; if( true ) {
+     if(tomTerm instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match3_1=(( tom.engine.adt.tomsignature.types.TomTerm)tomTerm); if (tom_is_fun_sym_TermAppl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match3_1_nameList=tom_get_slot_TermAppl_nameList(tom_match3_1); { tom.engine.adt.tomsignature.types.TomList tom_match3_1_args=tom_get_slot_TermAppl_args(tom_match3_1); if (tom_is_fun_sym_concTomName(tom_match3_1_nameList) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match3_1_nameList_list1=tom_match3_1_nameList; if (!(tom_is_empty_concTomName_NameList(tom_match3_1_nameList_list1))) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_nameList_1=tom_get_head_concTomName_NameList(tom_match3_1_nameList_list1);tom_match3_1_nameList_list1=tom_get_tail_concTomName_NameList(tom_match3_1_nameList_list1); if (tom_is_fun_sym_Name(tom_match3_1_nameList_1) ||  false ) { { String  tom_match3_1_nameList_1_string=tom_get_slot_Name_string(tom_match3_1_nameList_1); { String  name=tom_match3_1_nameList_1_string; { tom.engine.adt.tomsignature.types.TomList childrens=tom_match3_1_args; if ( true ) {
 
         // builds children list
         ZTermList zchild = tom_empty_list_concZTerm();
@@ -128,7 +128,7 @@ public class TomIlTools extends TomBase {
         }
         // issue a warning here: this case is probably impossible
         return tom_make_zappl(tom_make_zsymbol(name),zchild);
-       }}}} }} }} }}} } if(tom_is_fun_sym_RecordAppl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match3_1_nameList=tom_get_slot_RecordAppl_nameList(tom_match3_1); { tom.engine.adt.tomsignature.types.SlotList tom_match3_1_slots=tom_get_slot_RecordAppl_slots(tom_match3_1); if(tom_is_fun_sym_concTomName(tom_match3_1_nameList) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match3_1_nameList_list1=tom_match3_1_nameList; if(!(tom_is_empty_concTomName_NameList(tom_match3_1_nameList_list1))) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_nameList_1=tom_get_head_concTomName_NameList(tom_match3_1_nameList_list1);tom_match3_1_nameList_list1=tom_get_tail_concTomName_NameList(tom_match3_1_nameList_list1); if(tom_is_fun_sym_Name(tom_match3_1_nameList_1) ||  false ) { { String  tom_match3_1_nameList_1_string=tom_get_slot_Name_string(tom_match3_1_nameList_1); { String  name=tom_match3_1_nameList_1_string; { tom.engine.adt.tomsignature.types.SlotList childrens=tom_match3_1_slots; if( true ) {
+       } } } } } } } } } } } } if (tom_is_fun_sym_RecordAppl(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match3_1_nameList=tom_get_slot_RecordAppl_nameList(tom_match3_1); { tom.engine.adt.tomsignature.types.SlotList tom_match3_1_slots=tom_get_slot_RecordAppl_slots(tom_match3_1); if (tom_is_fun_sym_concTomName(tom_match3_1_nameList) ||  false ) { { tom.engine.adt.tomsignature.types.NameList tom_match3_1_nameList_list1=tom_match3_1_nameList; if (!(tom_is_empty_concTomName_NameList(tom_match3_1_nameList_list1))) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_nameList_1=tom_get_head_concTomName_NameList(tom_match3_1_nameList_list1);tom_match3_1_nameList_list1=tom_get_tail_concTomName_NameList(tom_match3_1_nameList_list1); if (tom_is_fun_sym_Name(tom_match3_1_nameList_1) ||  false ) { { String  tom_match3_1_nameList_1_string=tom_get_slot_Name_string(tom_match3_1_nameList_1); { String  name=tom_match3_1_nameList_1_string; { tom.engine.adt.tomsignature.types.SlotList childrens=tom_match3_1_slots; if ( true ) {
 
         // builds a map: slotName / TomTerm
         Map definedSlotMap = new HashMap();
@@ -143,13 +143,13 @@ public class TomIlTools extends TomBase {
         // take care to add unamedVariables for wildcards
         TomSymbol symbol = getSymbolFromName(name,getSymbolTable());
         // process all slots from symbol
-         if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) { { tom.engine.adt.tomsignature.types.TomSymbol tom_match4_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol); if(tom_is_fun_sym_Symbol(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match4_1_pairNameDeclList=tom_get_slot_Symbol_pairNameDeclList(tom_match4_1); { tom.engine.adt.tomsignature.types.PairNameDeclList slots=tom_match4_1_pairNameDeclList; if( true ) {
+         if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) { { tom.engine.adt.tomsignature.types.TomSymbol tom_match4_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol); if (tom_is_fun_sym_Symbol(tom_match4_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match4_1_pairNameDeclList=tom_get_slot_Symbol_pairNameDeclList(tom_match4_1); { tom.engine.adt.tomsignature.types.PairNameDeclList slots=tom_match4_1_pairNameDeclList; if ( true ) {
 
             // process all slots. If the slot is in childrens, use it
             while(!slots.isEmpty()) {
               Declaration decl= slots.getHead().getSlotDecl();
               slots= slots.getTail();
-               if(decl instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match5_1=(( tom.engine.adt.tomsignature.types.Declaration)decl); if(tom_is_fun_sym_GetSlotDecl(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match5_1_slotName=tom_get_slot_GetSlotDecl_slotName(tom_match5_1); { tom.engine.adt.tomsignature.types.TomName slotName=tom_match5_1_slotName; if( true ) {
+               if(decl instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match5_1=(( tom.engine.adt.tomsignature.types.Declaration)decl); if (tom_is_fun_sym_GetSlotDecl(tom_match5_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match5_1_slotName=tom_get_slot_GetSlotDecl_slotName(tom_match5_1); { tom.engine.adt.tomsignature.types.TomName slotName=tom_match5_1_slotName; if ( true ) {
 
                   if (definedSlotMap.containsKey(slotName)) {
                     zchild = tom_append_list_concZTerm(zchild,tom_cons_list_concZTerm(tomTermToZTerm((TomTerm)definedSlotMap.get(slotName),map,unamedVariableSet),tom_empty_list_concZTerm()));
@@ -160,13 +160,13 @@ public class TomIlTools extends TomBase {
 
 ;
                   }
-                 }}} }} }
+                 } } } } } }
 
             }
-           }}} }} }
+           } } } } } }
 
         return tom_make_zappl(tom_make_zsymbol(name),zchild);
-       }}}} }} }} }}} } if(tom_is_fun_sym_Variable(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_astName=tom_get_slot_Variable_astName(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_astName) ||  false ) { { String  tom_match3_1_astName_string=tom_get_slot_Name_string(tom_match3_1_astName); { String  name=tom_match3_1_astName_string; if( true ) {
+       } } } } } } } } } } } } if (tom_is_fun_sym_Variable(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_astName=tom_get_slot_Variable_astName(tom_match3_1); if (tom_is_fun_sym_Name(tom_match3_1_astName) ||  false ) { { String  tom_match3_1_astName_string=tom_get_slot_Name_string(tom_match3_1_astName); { String  name=tom_match3_1_astName_string; if ( true ) {
 
         if (map.containsKey(name)) {
           return (ZTerm) map.get(name);
@@ -174,7 +174,7 @@ public class TomIlTools extends TomBase {
           System.out.println("tomTermToZTerm 1 Not in map: " + name+ " map: " + map);
           return tom_make_zvar(name);
         }
-       }}} }} } if(tom_is_fun_sym_Variable(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_astName=tom_get_slot_Variable_astName(tom_match3_1); if(tom_is_fun_sym_PositionName(tom_match3_1_astName) ||  false ) { { tom.engine.adt.tomsignature.types.TomNumberList tom_match3_1_astName_numberList=tom_get_slot_PositionName_numberList(tom_match3_1_astName); { tom.engine.adt.tomsignature.types.TomNumberList numberList=tom_match3_1_astName_numberList; if( true ) {
+       } } } } } } if (tom_is_fun_sym_Variable(tom_match3_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1_astName=tom_get_slot_Variable_astName(tom_match3_1); if (tom_is_fun_sym_PositionName(tom_match3_1_astName) ||  false ) { { tom.engine.adt.tomsignature.types.TomNumberList tom_match3_1_astName_numberList=tom_get_slot_PositionName_numberList(tom_match3_1_astName); { tom.engine.adt.tomsignature.types.TomNumberList numberList=tom_match3_1_astName_numberList; if ( true ) {
 
         String name = verifier.tomNumberListToString(numberList);
         if (map.containsKey(name)) {
@@ -183,17 +183,17 @@ public class TomIlTools extends TomBase {
           System.out.println("tomTermToZTerm 2 Not in map: " + name + " map: " + map);
           return tom_make_zvar(name);
         }
-       }}} }} } if(tom_is_fun_sym_UnamedVariable(tom_match3_1) ||  false ) { if( true ) {
+       } } } } } } if (tom_is_fun_sym_UnamedVariable(tom_match3_1) ||  false ) { if ( true ) {
 
         // for unamed variables in a pattern, we generate an existential
         // quantifier for a dummy name
         ZTerm unamedVariable = tom_make_zvar(replaceNumbersByString("unamedVariable"+unamedVariableSet.size()));
         unamedVariableSet.add(unamedVariable);
         return unamedVariable;
-       } } if(tom_is_fun_sym_TLVar(tom_match3_1) ||  false ) { { String  tom_match3_1_strName=tom_get_slot_TLVar_strName(tom_match3_1); { String  name=tom_match3_1_strName; if( true ) {
+       } } if (tom_is_fun_sym_TLVar(tom_match3_1) ||  false ) { { String  tom_match3_1_strName=tom_get_slot_TLVar_strName(tom_match3_1); { String  name=tom_match3_1_strName; if ( true ) {
 
         return tom_make_zvar(name);
-       }}} }} }
+       } } } } } }
 
     throw new TomRuntimeException("tomTermToZTerm Strange pattern: " + tomTerm);
   }
@@ -201,10 +201,10 @@ public class TomIlTools extends TomBase {
   private Collect2 collect_symbols = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
-				 if(subject instanceof  tom.engine.adt.zenon.types.ZSymbol) { { tom.engine.adt.zenon.types.ZSymbol tom_match6_1=(( tom.engine.adt.zenon.types.ZSymbol)subject); if(tom_is_fun_sym_zsymbol(tom_match6_1) ||  false ) { { String  tom_match6_1_name=tom_get_slot_zsymbol_name(tom_match6_1); { String  name=tom_match6_1_name; if( true ) {
+				 if(subject instanceof  tom.engine.adt.zenon.types.ZSymbol) { { tom.engine.adt.zenon.types.ZSymbol tom_match6_1=(( tom.engine.adt.zenon.types.ZSymbol)subject); if (tom_is_fun_sym_zsymbol(tom_match6_1) ||  false ) { { String  tom_match6_1_name=tom_get_slot_zsymbol_name(tom_match6_1); { String  name=tom_match6_1_name; if ( true ) {
 
 						store.add(name);
-					 }}} }} }
+					 } } } } } }
 
 				return true;
       }
@@ -230,19 +230,19 @@ public class TomIlTools extends TomBase {
       ZTermList list = tom_empty_list_concZTerm();
       ZTerm abstractVariable = tom_make_zvar("t");
       //ZExpr exists = null;
-       if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) { { tom.engine.adt.tomsignature.types.TomSymbol tom_match7_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol); if(tom_is_fun_sym_Symbol(tom_match7_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match7_1_pairNameDeclList=tom_get_slot_Symbol_pairNameDeclList(tom_match7_1); { tom.engine.adt.tomsignature.types.PairNameDeclList slots=tom_match7_1_pairNameDeclList; if( true ) {
+       if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) { { tom.engine.adt.tomsignature.types.TomSymbol tom_match7_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol); if (tom_is_fun_sym_Symbol(tom_match7_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match7_1_pairNameDeclList=tom_get_slot_Symbol_pairNameDeclList(tom_match7_1); { tom.engine.adt.tomsignature.types.PairNameDeclList slots=tom_match7_1_pairNameDeclList; if ( true ) {
 
           // process all slots
           while(!slots.isEmpty()) {
             Declaration hd= slots.getHead().getSlotDecl();
             slots= slots.getTail();
-             if(hd instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match8_1=(( tom.engine.adt.tomsignature.types.Declaration)hd); if(tom_is_fun_sym_GetSlotDecl(tom_match8_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match8_1_slotName=tom_get_slot_GetSlotDecl_slotName(tom_match8_1); if(tom_is_fun_sym_Name(tom_match8_1_slotName) ||  false ) { { String  tom_match8_1_slotName_string=tom_get_slot_Name_string(tom_match8_1_slotName); { String  slotName=tom_match8_1_slotName_string; if( true ) {
+             if(hd instanceof  tom.engine.adt.tomsignature.types.Declaration) { { tom.engine.adt.tomsignature.types.Declaration tom_match8_1=(( tom.engine.adt.tomsignature.types.Declaration)hd); if (tom_is_fun_sym_GetSlotDecl(tom_match8_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match8_1_slotName=tom_get_slot_GetSlotDecl_slotName(tom_match8_1); if (tom_is_fun_sym_Name(tom_match8_1_slotName) ||  false ) { { String  tom_match8_1_slotName_string=tom_get_slot_Name_string(tom_match8_1_slotName); { String  slotName=tom_match8_1_slotName_string; if ( true ) {
 
                 list = tom_append_list_concZTerm(list,tom_cons_list_concZTerm(tom_make_zsl(abstractVariable,slotName),tom_empty_list_concZTerm()));
-               }}} }} }} }
+               } } } } } } } }
 
           }
-         }}} }} }
+         } } } } } }
 
 
       ZExpr axiom = tom_make_zforall(abstractVariable,tom_make_ztype("T"),tom_make_zequiv(tom_make_zisfsym(abstractVariable,tom_make_zsymbol(name)),tom_make_zeq(abstractVariable,tom_make_zappl(tom_make_zsymbol(name),list))))
@@ -261,14 +261,14 @@ public class TomIlTools extends TomBase {
       String name = (String) it.next();
       TomSymbol symbol = getSymbolFromName(name,getSymbolTable());
       ZTermList list = tom_empty_list_concZTerm();
-       if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) { { tom.engine.adt.tomsignature.types.TomSymbol tom_match9_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol); if(tom_is_fun_sym_Symbol(tom_match9_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match9_1_pairNameDeclList=tom_get_slot_Symbol_pairNameDeclList(tom_match9_1); { tom.engine.adt.tomsignature.types.PairNameDeclList slots=tom_match9_1_pairNameDeclList; if( true ) {
+       if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) { { tom.engine.adt.tomsignature.types.TomSymbol tom_match9_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol); if (tom_is_fun_sym_Symbol(tom_match9_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match9_1_pairNameDeclList=tom_get_slot_Symbol_pairNameDeclList(tom_match9_1); { tom.engine.adt.tomsignature.types.PairNameDeclList slots=tom_match9_1_pairNameDeclList; if ( true ) {
 
           // process all slots
           int slotnumber = slots.getLength();
           for (int i = 0; i < slotnumber;i++) {
             list = tom_append_list_concZTerm(list,tom_cons_list_concZTerm(tom_make_zvar("x"+i),tom_empty_list_concZTerm()));
           }
-           if(slots instanceof  tom.engine.adt.tomsignature.types.PairNameDeclList) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match10_1=(( tom.engine.adt.tomsignature.types.PairNameDeclList)slots); if(tom_is_fun_sym_concPairNameDecl(tom_match10_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match10_1_list1=tom_match10_1; { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match10_1_begin1=tom_match10_1_list1; { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match10_1_end1=tom_match10_1_list1;{ while (!(tom_is_empty_concPairNameDecl_PairNameDeclList(tom_match10_1_end1))) {tom_match10_1_list1=tom_match10_1_end1;{ { tom.engine.adt.tomsignature.types.PairNameDeclList al=tom_get_slice_concPairNameDecl(tom_match10_1_begin1,tom_match10_1_end1); { tom.engine.adt.tomsignature.types.PairNameDecl tom_match10_1_2=tom_get_head_concPairNameDecl_PairNameDeclList(tom_match10_1_list1);tom_match10_1_list1=tom_get_tail_concPairNameDecl_PairNameDeclList(tom_match10_1_list1); if(tom_is_fun_sym_PairNameDecl(tom_match10_1_2) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match10_1_2_slotName=tom_get_slot_PairNameDecl_slotName(tom_match10_1_2); if(tom_is_fun_sym_Name(tom_match10_1_2_slotName) ||  false ) { { String  tom_match10_1_2_slotName_string=tom_get_slot_Name_string(tom_match10_1_2_slotName); { String  slname=tom_match10_1_2_slotName_string; if( true ) {
+           if(slots instanceof  tom.engine.adt.tomsignature.types.PairNameDeclList) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match10_1=(( tom.engine.adt.tomsignature.types.PairNameDeclList)slots); if (tom_is_fun_sym_concPairNameDecl(tom_match10_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match10_1_list1=tom_match10_1; { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match10_1_begin1=tom_match10_1_list1; { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match10_1_end1=tom_match10_1_list1; { while (!(tom_is_empty_concPairNameDecl_PairNameDeclList(tom_match10_1_end1))) {tom_match10_1_list1=tom_match10_1_end1; { { tom.engine.adt.tomsignature.types.PairNameDeclList al=tom_get_slice_concPairNameDecl(tom_match10_1_begin1,tom_match10_1_end1); { tom.engine.adt.tomsignature.types.PairNameDecl tom_match10_1_2=tom_get_head_concPairNameDecl_PairNameDeclList(tom_match10_1_list1);tom_match10_1_list1=tom_get_tail_concPairNameDecl_PairNameDeclList(tom_match10_1_list1); if (tom_is_fun_sym_PairNameDecl(tom_match10_1_2) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match10_1_2_slotName=tom_get_slot_PairNameDecl_slotName(tom_match10_1_2); if (tom_is_fun_sym_Name(tom_match10_1_2_slotName) ||  false ) { { String  tom_match10_1_2_slotName_string=tom_get_slot_Name_string(tom_match10_1_2_slotName); { String  slname=tom_match10_1_2_slotName_string; if ( true ) {
 
               int index = al.getLength();
               ZExpr axiom = tom_make_zeq(tom_make_zvar("x"+index),tom_make_zsl(tom_make_zappl(tom_make_zsymbol(name),list),slname))
@@ -277,9 +277,9 @@ public class TomIlTools extends TomBase {
                 axiom = tom_make_zforall(tom_make_zvar("x"+j),tom_make_ztype("T"),axiom);
               }
               res=tom_append_list_zby(res,tom_cons_list_zby(tom_make_zaxiom("st_"+slname+"_"+replaceNumbersByString(name),axiom),tom_empty_list_zby()));
-             }}} }} }}}tom_match10_1_end1=tom_get_tail_concPairNameDecl_PairNameDeclList(tom_match10_1_end1);} }tom_match10_1_list1=tom_match10_1_begin1;}}}} }} }
+             } } } } } } } }tom_match10_1_end1=tom_get_tail_concPairNameDecl_PairNameDeclList(tom_match10_1_end1); } }tom_match10_1_list1=tom_match10_1_begin1; } } } } } } }
 
-         }}} }} }
+         } } } } } }
 
     }
     return res;
@@ -290,14 +290,14 @@ public class TomIlTools extends TomBase {
 
     TomSymbol symbol = getSymbolFromName(symbolName,getSymbolTable());
     
-     if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) { { tom.engine.adt.tomsignature.types.TomSymbol tom_match11_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol); if(tom_is_fun_sym_Symbol(tom_match11_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match11_1_pairNameDeclList=tom_get_slot_Symbol_pairNameDeclList(tom_match11_1); { tom.engine.adt.tomsignature.types.PairNameDeclList slots=tom_match11_1_pairNameDeclList; if( true ) { if(slots instanceof  tom.engine.adt.tomsignature.types.PairNameDeclList) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match12_1=(( tom.engine.adt.tomsignature.types.PairNameDeclList)slots); if(tom_is_fun_sym_concPairNameDecl(tom_match12_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match12_1_list1=tom_match12_1; { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match12_1_begin1=tom_match12_1_list1; { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match12_1_end1=tom_match12_1_list1;{ while (!(tom_is_empty_concPairNameDecl_PairNameDeclList(tom_match12_1_end1))) {tom_match12_1_list1=tom_match12_1_end1;{ { tom.engine.adt.tomsignature.types.PairNameDeclList al=tom_get_slice_concPairNameDecl(tom_match12_1_begin1,tom_match12_1_end1); { tom.engine.adt.tomsignature.types.PairNameDecl tom_match12_1_2=tom_get_head_concPairNameDecl_PairNameDeclList(tom_match12_1_list1);tom_match12_1_list1=tom_get_tail_concPairNameDecl_PairNameDeclList(tom_match12_1_list1); if(tom_is_fun_sym_PairNameDecl(tom_match12_1_2) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match12_1_2_slotName=tom_get_slot_PairNameDecl_slotName(tom_match12_1_2); if(tom_is_fun_sym_Name(tom_match12_1_2_slotName) ||  false ) { { String  tom_match12_1_2_slotName_string=tom_get_slot_Name_string(tom_match12_1_2_slotName); { String  slname=tom_match12_1_2_slotName_string; if( true ) {
+     if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) { { tom.engine.adt.tomsignature.types.TomSymbol tom_match11_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol); if (tom_is_fun_sym_Symbol(tom_match11_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match11_1_pairNameDeclList=tom_get_slot_Symbol_pairNameDeclList(tom_match11_1); { tom.engine.adt.tomsignature.types.PairNameDeclList slots=tom_match11_1_pairNameDeclList; if ( true ) { if(slots instanceof  tom.engine.adt.tomsignature.types.PairNameDeclList) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match12_1=(( tom.engine.adt.tomsignature.types.PairNameDeclList)slots); if (tom_is_fun_sym_concPairNameDecl(tom_match12_1) ||  false ) { { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match12_1_list1=tom_match12_1; { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match12_1_begin1=tom_match12_1_list1; { tom.engine.adt.tomsignature.types.PairNameDeclList tom_match12_1_end1=tom_match12_1_list1; { while (!(tom_is_empty_concPairNameDecl_PairNameDeclList(tom_match12_1_end1))) {tom_match12_1_list1=tom_match12_1_end1; { { tom.engine.adt.tomsignature.types.PairNameDeclList al=tom_get_slice_concPairNameDecl(tom_match12_1_begin1,tom_match12_1_end1); { tom.engine.adt.tomsignature.types.PairNameDecl tom_match12_1_2=tom_get_head_concPairNameDecl_PairNameDeclList(tom_match12_1_list1);tom_match12_1_list1=tom_get_tail_concPairNameDecl_PairNameDeclList(tom_match12_1_list1); if (tom_is_fun_sym_PairNameDecl(tom_match12_1_2) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match12_1_2_slotName=tom_get_slot_PairNameDecl_slotName(tom_match12_1_2); if (tom_is_fun_sym_Name(tom_match12_1_2_slotName) ||  false ) { { String  tom_match12_1_2_slotName_string=tom_get_slot_Name_string(tom_match12_1_2_slotName); { String  slname=tom_match12_1_2_slotName_string; if ( true ) {
 
 
 
             nameList.add(slname);
-           }}} }} }}}tom_match12_1_end1=tom_get_tail_concPairNameDecl_PairNameDeclList(tom_match12_1_end1);} }tom_match12_1_list1=tom_match12_1_begin1;}}}} }} }
+           } } } } } } } }tom_match12_1_end1=tom_get_tail_concPairNameDecl_PairNameDeclList(tom_match12_1_end1); } }tom_match12_1_list1=tom_match12_1_begin1; } } } } } } }
 
-       }}} }} }
+       } } } } } }
 
     return nameList;
   } 

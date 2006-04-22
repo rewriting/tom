@@ -170,19 +170,19 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
-     if(option instanceof  tom.platform.adt.platformoption.types.PlatformOption) { { tom.platform.adt.platformoption.types.PlatformOption tom_match1_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_BooleanValue(tom_match1_1_value) ||  false ) { { tom.platform.adt.platformoption.types.PlatformBoolean tom_match1_1_value_booleanValue=tom_get_slot_BooleanValue_booleanValue(tom_match1_1_value); if(tom_is_fun_sym_True(tom_match1_1_value_booleanValue) ||  false ) { if( true ) {
+     if(option instanceof  tom.platform.adt.platformoption.types.PlatformOption) { { tom.platform.adt.platformoption.types.PlatformOption tom_match1_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if (tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if (tom_is_fun_sym_BooleanValue(tom_match1_1_value) ||  false ) { { tom.platform.adt.platformoption.types.PlatformBoolean tom_match1_1_value_booleanValue=tom_get_slot_BooleanValue_booleanValue(tom_match1_1_value); if (tom_is_fun_sym_True(tom_match1_1_value_booleanValue) ||  false ) { if ( true ) {
 
         return Boolean.valueOf(true);
-       } }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_BooleanValue(tom_match1_1_value) ||  false ) { { tom.platform.adt.platformoption.types.PlatformBoolean tom_match1_1_value_booleanValue=tom_get_slot_BooleanValue_booleanValue(tom_match1_1_value); if(tom_is_fun_sym_False(tom_match1_1_value_booleanValue) ||  false ) { if( true ) {
+       } } } } } } if (tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if (tom_is_fun_sym_BooleanValue(tom_match1_1_value) ||  false ) { { tom.platform.adt.platformoption.types.PlatformBoolean tom_match1_1_value_booleanValue=tom_get_slot_BooleanValue_booleanValue(tom_match1_1_value); if (tom_is_fun_sym_False(tom_match1_1_value_booleanValue) ||  false ) { if ( true ) {
 
         return Boolean.valueOf(false);
-       } }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_IntegerValue(tom_match1_1_value) ||  false ) { { int  tom_match1_1_value_integerValue=tom_get_slot_IntegerValue_integerValue(tom_match1_1_value); if( true ) {
+       } } } } } } if (tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if (tom_is_fun_sym_IntegerValue(tom_match1_1_value) ||  false ) { { int  tom_match1_1_value_integerValue=tom_get_slot_IntegerValue_integerValue(tom_match1_1_value); if ( true ) {
 
         return new Integer(tom_match1_1_value_integerValue);
-       }} }} } if(tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if(tom_is_fun_sym_StringValue(tom_match1_1_value) ||  false ) { { String  tom_match1_1_value_stringValue=tom_get_slot_StringValue_stringValue(tom_match1_1_value); if( true ) {
+       } } } } } if (tom_is_fun_sym_PluginOption(tom_match1_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match1_1_value=tom_get_slot_PluginOption_value(tom_match1_1); if (tom_is_fun_sym_StringValue(tom_match1_1_value) ||  false ) { { String  tom_match1_1_value_stringValue=tom_get_slot_StringValue_stringValue(tom_match1_1_value); if ( true ) {
 
         return tom_match1_1_value_stringValue;
-       }} }} }} }
+       } } } } } } }
 
     getLogger().log(Level.SEVERE,"TomOptionManager: getOptionFromName did not return a PluginOption");
     throw new RuntimeException();
@@ -235,14 +235,14 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       owner.setOptionManager((OptionManager)this);
       while(!list.isEmpty()) {
         PlatformOption option = list.getHead();
-         if(option instanceof  tom.platform.adt.platformoption.types.PlatformOption) { { tom.platform.adt.platformoption.types.PlatformOption tom_match2_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if(tom_is_fun_sym_PluginOption(tom_match2_1) ||  false ) { { String  tom_match2_1_name=tom_get_slot_PluginOption_name(tom_match2_1); { String  tom_match2_1_altName=tom_get_slot_PluginOption_altName(tom_match2_1); { String  tom_name=tom_match2_1_name; { String  tom_altName=tom_match2_1_altName; if( true ) {
+         if(option instanceof  tom.platform.adt.platformoption.types.PlatformOption) { { tom.platform.adt.platformoption.types.PlatformOption tom_match2_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if (tom_is_fun_sym_PluginOption(tom_match2_1) ||  false ) { { String  tom_match2_1_name=tom_get_slot_PluginOption_name(tom_match2_1); { String  tom_match2_1_altName=tom_get_slot_PluginOption_altName(tom_match2_1); { String  tom_name=tom_match2_1_name; { String  tom_altName=tom_match2_1_altName; if ( true ) {
 
             setOptionOwnerFromName(tom_name, owner);
             setOptionFromName(tom_name, option);
             if(tom_altName.length() > 0) {
               mapShortNameToName.put(tom_altName,tom_name);
             }
-           }}}}} }} }
+           } } } } } } } }
 
         list = list.getTail();
       }
@@ -325,7 +325,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     Iterator it = treeMap.values().iterator();
     while(it.hasNext()) {
       PlatformOption h = (PlatformOption)it.next();
-       if(h instanceof  tom.platform.adt.platformoption.types.PlatformOption) { { tom.platform.adt.platformoption.types.PlatformOption tom_match3_1=(( tom.platform.adt.platformoption.types.PlatformOption)h); if(tom_is_fun_sym_PluginOption(tom_match3_1) ||  false ) { { String  tom_match3_1_name=tom_get_slot_PluginOption_name(tom_match3_1); { String  tom_match3_1_altName=tom_get_slot_PluginOption_altName(tom_match3_1); { String  tom_match3_1_description=tom_get_slot_PluginOption_description(tom_match3_1); { String  tom_match3_1_attrName=tom_get_slot_PluginOption_attrName(tom_match3_1); { String  tom_altName=tom_match3_1_altName; { String  tom_attrName=tom_match3_1_attrName; if( true ) {
+       if(h instanceof  tom.platform.adt.platformoption.types.PlatformOption) { { tom.platform.adt.platformoption.types.PlatformOption tom_match3_1=(( tom.platform.adt.platformoption.types.PlatformOption)h); if (tom_is_fun_sym_PluginOption(tom_match3_1) ||  false ) { { String  tom_match3_1_name=tom_get_slot_PluginOption_name(tom_match3_1); { String  tom_match3_1_altName=tom_get_slot_PluginOption_altName(tom_match3_1); { String  tom_match3_1_description=tom_get_slot_PluginOption_description(tom_match3_1); { String  tom_match3_1_attrName=tom_get_slot_PluginOption_attrName(tom_match3_1); { String  tom_altName=tom_match3_1_altName; { String  tom_attrName=tom_match3_1_attrName; if ( true ) {
 
           buffer.append("\t--" + tom_match3_1_name);
           if(tom_attrName.length() > 0) {
@@ -336,7 +336,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           buffer.append(":\t" + tom_match3_1_description);
           buffer.append("\n");
-         }}}}}}} }} }
+         } } } } } } } } } }
 
     }
     System.out.println(buffer.toString());
@@ -358,10 +358,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @return true if every option was found with the right value
    */
   private boolean checkOptionDependency(PlatformOptionList requiredOptions) {
-     if(requiredOptions instanceof  tom.platform.adt.platformoption.types.PlatformOptionList) { { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1=(( tom.platform.adt.platformoption.types.PlatformOptionList)requiredOptions); if(tom_is_fun_sym_concPlatformOption(tom_match4_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1_list1=tom_match4_1; if(tom_is_empty_concPlatformOption_PlatformOptionList(tom_match4_1_list1)) { if( true ) {
+     if(requiredOptions instanceof  tom.platform.adt.platformoption.types.PlatformOptionList) { { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1=(( tom.platform.adt.platformoption.types.PlatformOptionList)requiredOptions); if (tom_is_fun_sym_concPlatformOption(tom_match4_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1_list1=tom_match4_1; if (tom_is_empty_concPlatformOption_PlatformOptionList(tom_match4_1_list1)) { if ( true ) {
 
         return true;
-       } }} } if(tom_is_fun_sym_concPlatformOption(tom_match4_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1_list1=tom_match4_1; if(!(tom_is_empty_concPlatformOption_PlatformOptionList(tom_match4_1_list1))) { { tom.platform.adt.platformoption.types.PlatformOption tom_match4_1_1=tom_get_head_concPlatformOption_PlatformOptionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concPlatformOption_PlatformOptionList(tom_match4_1_list1); if(tom_is_fun_sym_PluginOption(tom_match4_1_1) ||  false ) { { String  tom_match4_1_1_name=tom_get_slot_PluginOption_name(tom_match4_1_1); { tom.platform.adt.platformoption.types.PlatformValue tom_match4_1_1_value=tom_get_slot_PluginOption_value(tom_match4_1_1); { String  tom_name=tom_match4_1_1_name; { tom.platform.adt.platformoption.types.PlatformValue tom_value=tom_match4_1_1_value; if( true ) {
+       } } } } if (tom_is_fun_sym_concPlatformOption(tom_match4_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformOptionList tom_match4_1_list1=tom_match4_1; if (!(tom_is_empty_concPlatformOption_PlatformOptionList(tom_match4_1_list1))) { { tom.platform.adt.platformoption.types.PlatformOption tom_match4_1_1=tom_get_head_concPlatformOption_PlatformOptionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_concPlatformOption_PlatformOptionList(tom_match4_1_list1); if (tom_is_fun_sym_PluginOption(tom_match4_1_1) ||  false ) { { String  tom_match4_1_1_name=tom_get_slot_PluginOption_name(tom_match4_1_1); { tom.platform.adt.platformoption.types.PlatformValue tom_match4_1_1_value=tom_get_slot_PluginOption_value(tom_match4_1_1); { String  tom_name=tom_match4_1_1_name; { tom.platform.adt.platformoption.types.PlatformValue tom_value=tom_match4_1_1_value; if ( true ) {
 
 
         PlatformOption option = getOptionFromName(tom_name);
@@ -378,7 +378,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
                           new Object[]{tom_name,tom_value,getOptionValue(tom_name)});
           return false;
         }
-       }}}}} }} }} }} }
+       } } } } } } } } } } } }
 
     return false;
   }
@@ -451,7 +451,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
             displayHelp();
             return null;
           } else {
-             if(option instanceof  tom.platform.adt.platformoption.types.PlatformOption) { { tom.platform.adt.platformoption.types.PlatformOption tom_match5_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if(tom_is_fun_sym_PluginOption(tom_match5_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match5_1_value=tom_get_slot_PluginOption_value(tom_match5_1); if(tom_is_fun_sym_BooleanValue(tom_match5_1_value) ||  false ) { if( true ) {
+             if(option instanceof  tom.platform.adt.platformoption.types.PlatformOption) { { tom.platform.adt.platformoption.types.PlatformOption tom_match5_1=(( tom.platform.adt.platformoption.types.PlatformOption)option); if (tom_is_fun_sym_PluginOption(tom_match5_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match5_1_value=tom_get_slot_PluginOption_value(tom_match5_1); if (tom_is_fun_sym_BooleanValue(tom_match5_1_value) ||  false ) { if ( true ) {
 
                 // this is a boolean flag if set then we put the opposite of current value
                 if(((Boolean)getOptionValue(argument)).booleanValue()) {
@@ -459,12 +459,12 @@ public class TomOptionManager implements OptionManager, OptionOwner {
                 } else {
                   setOptionValue(argument, Boolean.TRUE);
                 }
-               } }} } if(tom_is_fun_sym_PluginOption(tom_match5_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match5_1_value=tom_get_slot_PluginOption_value(tom_match5_1); if(tom_is_fun_sym_IntegerValue(tom_match5_1_value) ||  false ) { if( true ) {
+               } } } } if (tom_is_fun_sym_PluginOption(tom_match5_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match5_1_value=tom_get_slot_PluginOption_value(tom_match5_1); if (tom_is_fun_sym_IntegerValue(tom_match5_1_value) ||  false ) { if ( true ) {
 
 
                 String t = argumentList[++i];
                 setOptionValue(argument, new Integer(t));
-               } }} } if(tom_is_fun_sym_PluginOption(tom_match5_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match5_1_value=tom_get_slot_PluginOption_value(tom_match5_1); if(tom_is_fun_sym_StringValue(tom_match5_1_value) ||  false ) { if( true ) {
+               } } } } if (tom_is_fun_sym_PluginOption(tom_match5_1) ||  false ) { { tom.platform.adt.platformoption.types.PlatformValue tom_match5_1_value=tom_get_slot_PluginOption_value(tom_match5_1); if (tom_is_fun_sym_StringValue(tom_match5_1_value) ||  false ) { if ( true ) {
 
 
                 if ( !( argument.equals("import") || argument.equals("I") ) ) {
@@ -472,7 +472,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
                   String t = argumentList[++i];
                   setOptionValue(argument, t);
                 }
-               } }} }} }
+               } } } } } }
 
           }
         }

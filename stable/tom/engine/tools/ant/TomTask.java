@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2004-2006 INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *     
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -73,17 +73,14 @@ public class TomTask extends MatchingTask {
   private File configFile = null;
   private String logPropertiesFile;
   private File outputFile;
-  private Path compileClasspath;
-  private Path compileSourcepath;
   private boolean verbose = false;
   private boolean stamp = false;
-  private Path extdirs;
   private boolean nowarn = false;
   private boolean optimize = false;
   private boolean optimize2 = false;
   private boolean pretty = false;
   private boolean protectedFlag = false;
-  
+
 
   private boolean failOnError = true;
   private boolean listFiles = false;
@@ -126,7 +123,7 @@ public class TomTask extends MatchingTask {
   public String getOptions() {
     return options;
   }
-  
+
   /**
    * Adds a path for source compilation.
    *
@@ -206,118 +203,6 @@ public class TomTask extends MatchingTask {
   }
 
   /**
-   * Set the sourcepath to be used for this compilation.
-   * @param sourcepath the source path
-   */
-  public void setSourcepath(Path sourcepath) {
-    if (compileSourcepath == null) {
-      compileSourcepath = sourcepath;
-    } else {
-      compileSourcepath.append(sourcepath);
-    }
-  }
-
-  /**
-   * Gets the sourcepath to be used for this compilation.
-   * @return the source path
-   */
-  public Path getSourcepath() {
-    return compileSourcepath;
-  }
-
-  /**
-   * Adds a path to sourcepath.
-   * @return a sourcepath to be configured
-   */
-  public Path createSourcepath() {
-    if (compileSourcepath == null) {
-      compileSourcepath = new Path(getProject());
-    }
-    return compileSourcepath.createPath();
-  }
-
-  /**
-   * Adds a reference to a source path defined elsewhere.
-   * @param r a reference to a source path
-   */
-  public void setSourcepathRef(Reference r) {
-    createSourcepath().setRefid(r);
-  }
-
-  /**
-   * Set the classpath to be used for this compilation.
-   *
-   * @param classpath an Ant Path object containing the compilation classpath.
-   */
-  public void setClasspath(Path classpath) {
-    if (compileClasspath == null) {
-      compileClasspath = classpath;
-    } else {
-      compileClasspath.append(classpath);
-    }
-  }
-
-  /**
-   * Gets the classpath to be used for this compilation.
-   * @return the class path
-   */
-  public Path getClasspath() {
-    return compileClasspath;
-  }
-
-  /**
-   * Adds a path to the classpath.
-   * @return a class path to be configured
-   */
-  public Path createClasspath() {
-    if (compileClasspath == null) {
-      compileClasspath = new Path(getProject());
-    }
-    return compileClasspath.createPath();
-  }
-
-  /**
-   * Adds a reference to a classpath defined elsewhere.
-   * @param r a reference to a classpath
-   */
-  public void setClasspathRef(Reference r) {
-    createClasspath().setRefid(r);
-  }
-  
-  /**
-   * Sets the extension directories that will be used during the
-   * compilation.
-   * @param extdirs a path
-   */
-  public void setExtdirs(Path extdirs) {
-    if (this.extdirs == null) {
-      this.extdirs = extdirs;
-    } else {
-      this.extdirs.append(extdirs);
-    }
-  }
-
-  /**
-   * Gets the extension directories that will be used during the
-   * compilation.
-   * @return the extension directories as a path
-   */
-  public Path getExtdirs() {
-    return extdirs;
-  }
-
-  /**
-   * Adds a path to extdirs.
-   * @return a path to be configured
-   */
-  public Path createExtdirs() {
-    if (extdirs == null) {
-      extdirs = new Path(getProject());
-    }
-    return extdirs.createPath();
-  }
-
-  /**
    * If true, list the source files being handed off to the compiler.
    * @param list if true list the source files
    */
@@ -369,22 +254,22 @@ public class TomTask extends MatchingTask {
   public void setOptimize(boolean optimize) {
     this.optimize = optimize;
   }
-  
+
   public boolean getOptimize() {
     return optimize;
   }
-  
-	/**
-	 * If true, compiles with optimization enabled.
-	 * @param optimize if true compile with optimization level-2 enabled
-	 */
-	public void setOptimize2(boolean optimize) {
-		this.optimize2 = optimize;
-	}
-	
-	public boolean getOptimize2() {
-		return optimize2;
-	}
+
+  /**
+   * If true, compiles with optimization enabled.
+   * @param optimize if true compile with optimization level-2 enabled
+   */
+  public void setOptimize2(boolean optimize) {
+    this.optimize2 = optimize;
+  }
+
+  public boolean getOptimize2() {
+    return optimize2;
+  }
 
   /**
    * If true, compiles with pretty-printing enabled.
@@ -393,7 +278,7 @@ public class TomTask extends MatchingTask {
   public void setPretty(boolean pretty) {
     this.pretty = pretty;
   }
-  
+
   public boolean getPretty() {
     return pretty;
   }
@@ -405,7 +290,7 @@ public class TomTask extends MatchingTask {
   public void setProtected(boolean flag) {
     this.protectedFlag = flag;
   }
-  
+
   public boolean getProtected() {
     return protectedFlag;
   }
@@ -438,9 +323,9 @@ public class TomTask extends MatchingTask {
     // compile lists
     String[] list = src.list();
     for (int i = 0; i < list.length; i++) {
-          
+
       File srcDir = getProject().resolveFile(list[i]);
-            
+
       if (!srcDir.exists()) {
         throw new BuildException("srcdir \""
                                  + srcDir.getPath()
@@ -449,7 +334,7 @@ public class TomTask extends MatchingTask {
 
       DirectoryScanner ds = this.getDirectoryScanner(srcDir);
       String[] files = ds.getIncludedFiles();
-            
+
       scanDir(srcDir, destDir != null ? destDir : srcDir, files);
     }
 
@@ -478,7 +363,7 @@ public class TomTask extends MatchingTask {
       m.setTo(outputFile.getPath());
       SourceFileScanner sfs = new SourceFileScanner(this);
       File[] newFiles = sfs.restrictAsFiles(files, srcDir, null, m);
-      
+
       if (newFiles.length > 0) {
         File[] newCompileList
           = new File[compileList.length + newFiles.length];
@@ -495,7 +380,7 @@ public class TomTask extends MatchingTask {
       m.setTo("*.java");
       SourceFileScanner sfs = new SourceFileScanner(this);
       File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
-      
+
       if (newFiles.length > 0) {
         File[] newCompileList
           = new File[compileList.length + newFiles.length];
@@ -555,10 +440,10 @@ public class TomTask extends MatchingTask {
         String filename = compileList[i].getAbsolutePath();
         if(verbose)
           System.out.println("Compiling " + compileList[i] + "...");
-        
+
         File file = new File(filename);
       */
-      
+
       if (logPropertiesFile != null) {
         System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
         System.setProperty("java.util.logging.config.file",logPropertiesFile);
@@ -571,7 +456,7 @@ public class TomTask extends MatchingTask {
       } else {
         log("\"tom.home\" is not defined, some features may not work");
       }
-      
+
       String cmd_line = "";
       if(options != null && getOptions().trim().length() > 0) {
         cmd_line = cmd_line.trim() + " " + options;
@@ -609,7 +494,7 @@ public class TomTask extends MatchingTask {
         // in importList: clean and reinit for each input file
         // File file = new File(filename);
         // cmd_line = cmd_line.trim() + " -I " + file.getParent();
-        
+
         cmd_line = cmd_line.trim() + " " + filename;
       }
 
@@ -626,7 +511,7 @@ public class TomTask extends MatchingTask {
       }
     }
   }
-  
+
   private String[] split(String str) {
     try {
       String res[] = new String[0];
@@ -634,7 +519,7 @@ public class TomTask extends MatchingTask {
       int end = 0;
       Vector list = new Vector();
       while(end < str.length()) {
-        while(end < str.length() && str.charAt(end) != ' ') 
+        while(end < str.length() && str.charAt(end) != ' ')
           end++;
         list.add(str.substring(begin, end));
         begin = ++end;
@@ -644,5 +529,5 @@ public class TomTask extends MatchingTask {
       return new String[0];
     }
   }
-  
+
 }

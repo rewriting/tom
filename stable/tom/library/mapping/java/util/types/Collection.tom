@@ -29,25 +29,11 @@
  * 
  **/
 
-%include { Object.tom }
-%include { types/LinkedList.tom }
-
-%oplist LinkedList concLinkedList(Object*) {
-  is_fsym(l)       { (l!= null) && (l instanceof java.util.LinkedList) }
-  make_empty()     { new java.util.LinkedList() }
-  make_insert(o,l) { concLinkedListAppend(o,l) }
-  get_head(l)      { l.getFirst() }
-  get_tail(l)      { concLinkedListgetTail(l) }
-  is_empty(l)      { (l.size()==0) }
+%typeterm Collection {
+  implement      { java.util.Collection }
+  equals(l1,l2)  { l1.equals(l2) }
+  check_stamp(l) {}
+  set_stamp(l)   { l }
 }
-
-private static java.util.LinkedList concLinkedListAppend(Object o, java.util.LinkedList l) {
-  java.util.LinkedList res = (java.util.LinkedList)l.clone();
-  res.addFirst(o);
-  return res;
-}
-private static java.util.LinkedList concLinkedListgetTail(java.util.LinkedList l) {
-  java.util.LinkedList res = (java.util.LinkedList)l.clone();
-  res.removeFirst();
-  return res;
-}
+%include { ArrayList.tom }
+%include { LinkedList.tom }

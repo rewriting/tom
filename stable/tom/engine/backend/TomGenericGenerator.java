@@ -135,9 +135,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpIsEmptyList(int deep, TomName opNameAST, TomType type, TomTerm expList, String moduleName) throws IOException {
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match1_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match1_1) ||  false ) { if( true ) {
- output.write("tom_is_empty_" + getTomType(type) + "(");  } } if(tom_is_fun_sym_Name(tom_match1_1) ||  false ) { { String  tom_match1_1_string=tom_get_slot_Name_string(tom_match1_1); if( true ) {
- output.write("tom_is_empty_" + tom_match1_1_string+ "_" + getTomType(type) + "(");  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match1_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_EmptyName(tom_match1_1) ||  false ) { if ( true ) {
+ output.write("tom_is_empty_" + getTomType(type) + "(");  } } if (tom_is_fun_sym_Name(tom_match1_1) ||  false ) { { String  tom_match1_1_string=tom_get_slot_Name_string(tom_match1_1); if ( true ) {
+ output.write("tom_is_empty_" + tom_match1_1_string+ "_" + getTomType(type) + "(");  } } } } }
 
     generate(deep,expList,moduleName);
     output.write(")");
@@ -146,9 +146,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected void buildExpIsEmptyArray(int deep, TomName opNameAST, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException {
     generate(deep,expIndex,moduleName);
     output.write(" >= ");
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match2_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match2_1) ||  false ) { if( true ) {
- output.write("tom_get_size_" + getTomType(type) + "(");  } } if(tom_is_fun_sym_Name(tom_match2_1) ||  false ) { { String  tom_match2_1_string=tom_get_slot_Name_string(tom_match2_1); if( true ) {
- output.write("tom_get_size_" + tom_match2_1_string+ "_" + getTomType(type) + "(");  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match2_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_EmptyName(tom_match2_1) ||  false ) { if ( true ) {
+ output.write("tom_get_size_" + getTomType(type) + "(");  } } if (tom_is_fun_sym_Name(tom_match2_1) ||  false ) { { String  tom_match2_1_string=tom_get_slot_Name_string(tom_match2_1); if ( true ) {
+ output.write("tom_get_size_" + tom_match2_1_string+ "_" + getTomType(type) + "(");  } } } } }
 
     generate(deep,expArray,moduleName);
     output.write(")");
@@ -187,18 +187,18 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpGetTail(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match3_1) ||  false ) { if( true ) {
- output.write("tom_get_tail_" + getTomType(type) + "(");  } } if(tom_is_fun_sym_Name(tom_match3_1) ||  false ) { { String  tom_match3_1_string=tom_get_slot_Name_string(tom_match3_1); if( true ) {
- output.write("tom_get_tail_" + tom_match3_1_string+ "_" + getTomType(type) + "(");  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match3_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_EmptyName(tom_match3_1) ||  false ) { if ( true ) {
+ output.write("tom_get_tail_" + getTomType(type) + "(");  } } if (tom_is_fun_sym_Name(tom_match3_1) ||  false ) { { String  tom_match3_1_string=tom_get_slot_Name_string(tom_match3_1); if ( true ) {
+ output.write("tom_get_tail_" + tom_match3_1_string+ "_" + getTomType(type) + "(");  } } } } }
 
     generate(deep,var,moduleName); 
     output.write(")");
   }
 
   protected void buildExpGetSize(int deep, TomName opNameAST, TomType type, TomTerm var, String moduleName) throws IOException {
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match4_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match4_1) ||  false ) { if( true ) {
- output.write("tom_get_size_" + getTomType(type) + "(");  } } if(tom_is_fun_sym_Name(tom_match4_1) ||  false ) { { String  tom_match4_1_string=tom_get_slot_Name_string(tom_match4_1); if( true ) {
- output.write("tom_get_size_" + tom_match4_1_string+ "_" + getTomType(type) + "(");  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match4_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_EmptyName(tom_match4_1) ||  false ) { if ( true ) {
+ output.write("tom_get_size_" + getTomType(type) + "(");  } } if (tom_is_fun_sym_Name(tom_match4_1) ||  false ) { { String  tom_match4_1_string=tom_get_slot_Name_string(tom_match4_1); if ( true ) {
+ output.write("tom_get_size_" + tom_match4_1_string+ "_" + getTomType(type) + "(");  } } } } }
 
     generate(deep,var,moduleName);
     output.write(")");
@@ -380,25 +380,25 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_get_head";
 
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match5_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match5_1) ||  false ) { { String  tom_match5_1_string=tom_get_slot_Name_string(tom_match5_1); if( true ) {
- functionName = functionName + "_" + tom_match5_1_string;  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match5_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_Name(tom_match5_1) ||  false ) { { String  tom_match5_1_string=tom_get_slot_Name_string(tom_match5_1); if ( true ) {
+ functionName = functionName + "_" + tom_match5_1_string;  } } } } }
 
 
     if(lazyMode) {
       returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
     } else {
-       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match6_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match6_1) ||  false ) { if( true ) {
+       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match6_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_EmptyName(tom_match6_1) ||  false ) { if ( true ) {
 
           returnType = getTLCode(codomain);
           argType = getTLCode(domain);
-         } } if(tom_is_fun_sym_Name(tom_match6_1) ||  false ) { { String  tom_match6_1_string=tom_get_slot_Name_string(tom_match6_1); if( true ) {
+         } } if (tom_is_fun_sym_Name(tom_match6_1) ||  false ) { { String  tom_match6_1_string=tom_get_slot_Name_string(tom_match6_1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_match6_1_string);
           argType = getTLType(getSymbolCodomain(tomSymbol));
           returnType = getTLType(getSymbolDomain(tomSymbol).getHead());
-         }} }} }
+         } } } } }
 
     }
     genDeclInstr(returnType, functionName, suffix,
@@ -412,25 +412,25 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_get_tail";
 
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match7_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match7_1) ||  false ) { { String  tom_match7_1_string=tom_get_slot_Name_string(tom_match7_1); if( true ) {
- functionName = functionName + "_" + tom_match7_1_string;  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match7_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_Name(tom_match7_1) ||  false ) { { String  tom_match7_1_string=tom_get_slot_Name_string(tom_match7_1); if ( true ) {
+ functionName = functionName + "_" + tom_match7_1_string;  } } } } }
 
 
     if(lazyMode) {
       returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
     } else {
-       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match8_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match8_1) ||  false ) { if( true ) {
+       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match8_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_EmptyName(tom_match8_1) ||  false ) { if ( true ) {
 
           returnType = getTLCode(tlType);
           argType = returnType;
-         } } if(tom_is_fun_sym_Name(tom_match8_1) ||  false ) { { String  tom_match8_1_string=tom_get_slot_Name_string(tom_match8_1); if( true ) {
+         } } if (tom_is_fun_sym_Name(tom_match8_1) ||  false ) { { String  tom_match8_1_string=tom_get_slot_Name_string(tom_match8_1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_match8_1_string);
           returnType = getTLType(getSymbolCodomain(tomSymbol));
           argType = returnType;
-         }} }} }
+         } } } } }
 
     }
 
@@ -444,21 +444,21 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_is_empty";
 
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match9_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match9_1) ||  false ) { { String  tom_match9_1_string=tom_get_slot_Name_string(tom_match9_1); if( true ) {
- functionName = functionName + "_" + tom_match9_1_string;  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match9_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_Name(tom_match9_1) ||  false ) { { String  tom_match9_1_string=tom_get_slot_Name_string(tom_match9_1); if ( true ) {
+ functionName = functionName + "_" + tom_match9_1_string;  } } } } }
 
     if(lazyMode) {
       argType = getTLType(getUniversalType());
     } else {
-       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match10_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match10_1) ||  false ) { if( true ) {
+       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match10_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_EmptyName(tom_match10_1) ||  false ) { if ( true ) {
 
           argType = getTLCode(tlType);
-         } } if(tom_is_fun_sym_Name(tom_match10_1) ||  false ) { { String  tom_match10_1_string=tom_get_slot_Name_string(tom_match10_1); if( true ) {
+         } } if (tom_is_fun_sym_Name(tom_match10_1) ||  false ) { { String  tom_match10_1_string=tom_get_slot_Name_string(tom_match10_1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_match10_1_string);
           argType = getTLType(getSymbolCodomain(tomSymbol));
-         }} }} }
+         } } } } }
 
     }
 
@@ -474,25 +474,25 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_get_element";
 
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match11_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match11_1) ||  false ) { { String  tom_match11_1_string=tom_get_slot_Name_string(tom_match11_1); if( true ) {
- functionName = functionName + "_" + tom_match11_1_string;  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match11_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_Name(tom_match11_1) ||  false ) { { String  tom_match11_1_string=tom_get_slot_Name_string(tom_match11_1); if ( true ) {
+ functionName = functionName + "_" + tom_match11_1_string;  } } } } }
 
 
     if(lazyMode) {
       returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
     } else {
-       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match12_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match12_1) ||  false ) { if( true ) {
+       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match12_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_EmptyName(tom_match12_1) ||  false ) { if ( true ) {
 
           returnType = getTLType(getUniversalType());
           argType = getTLCode(domain);
-         } } if(tom_is_fun_sym_Name(tom_match12_1) ||  false ) { { String  tom_match12_1_string=tom_get_slot_Name_string(tom_match12_1); if( true ) {
+         } } if (tom_is_fun_sym_Name(tom_match12_1) ||  false ) { { String  tom_match12_1_string=tom_get_slot_Name_string(tom_match12_1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_match12_1_string);
           argType = getTLType(getSymbolCodomain(tomSymbol));
           returnType = getTLType(getSymbolDomain(tomSymbol).getHead());
-         }} }} }
+         } } } } }
 
     }
     
@@ -510,22 +510,22 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     String argType = null;
     String functionName = "tom_get_size";
 
-     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match13_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_Name(tom_match13_1) ||  false ) { { String  tom_match13_1_string=tom_get_slot_Name_string(tom_match13_1); if( true ) {
- functionName = functionName + "_" + tom_match13_1_string;  }} }} }
+     if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match13_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_Name(tom_match13_1) ||  false ) { { String  tom_match13_1_string=tom_get_slot_Name_string(tom_match13_1); if ( true ) {
+ functionName = functionName + "_" + tom_match13_1_string;  } } } } }
 
 
     if(lazyMode) {
       argType = getTLType(getUniversalType());
     } else {
-       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match14_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if(tom_is_fun_sym_EmptyName(tom_match14_1) ||  false ) { if( true ) {
+       if(opNameAST instanceof  tom.engine.adt.tomsignature.types.TomName) { { tom.engine.adt.tomsignature.types.TomName tom_match14_1=(( tom.engine.adt.tomsignature.types.TomName)opNameAST); if (tom_is_fun_sym_EmptyName(tom_match14_1) ||  false ) { if ( true ) {
 
           argType = getTLCode(domain);
-         } } if(tom_is_fun_sym_Name(tom_match14_1) ||  false ) { { String  tom_match14_1_string=tom_get_slot_Name_string(tom_match14_1); if( true ) {
+         } } if (tom_is_fun_sym_Name(tom_match14_1) ||  false ) { { String  tom_match14_1_string=tom_get_slot_Name_string(tom_match14_1); if ( true ) {
 
 
           TomSymbol tomSymbol = getSymbolFromName(tom_match14_1_string);
           argType = getTLType(getSymbolCodomain(tomSymbol));
-         }} }} }
+         } } } } }
 
     }
     

@@ -274,12 +274,16 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("{0} is a constructor and cannot be a variable. Add () to denote the constructor.");
 
   //strategy
+  public static final TomMessage invalidStrategyName =
+      new TomMessage("{0} is not a valid strategy name. Maybe it is already used as a symbol.");
   public static final TomMessage differentVisitorForward =
       new TomMessage("All visited sorts in same %strategy must have same visitorForward: `{0}` is different from `{1}`");
   public static final TomMessage noVisitorForward =
       new TomMessage("no visitorForward defined for type `{0}`");
   public static final TomMessage unknownVisitedType =
       new TomMessage("Visited Type `{0}` is unknown.");
+  public static final TomMessage emptyStrategy =
+      new TomMessage("empty %strategy construct : at least one \"visit\" should be declared");
   
   // rule
   public static final TomMessage incorrectRuleLHSClass   =

@@ -84,12 +84,12 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 	    tomTypes = tomTypes.getTail();
 	    index++;
     }
-    output.write(deep, modifier +"class " + tomName);
+    output.write(deep, modifier + "class " + tomName);
     //write extends
-		 if(extendsFwdType instanceof  tom.engine.adt.tomsignature.types.TomForwardType) { { tom.engine.adt.tomsignature.types.TomForwardType tom_match1_1=(( tom.engine.adt.tomsignature.types.TomForwardType)extendsFwdType); if(tom_is_fun_sym_TLForward(tom_match1_1) ||  false ) { { String  tom_match1_1_string=tom_get_slot_TLForward_string(tom_match1_1); if( true ) {
+		 if(extendsFwdType instanceof  tom.engine.adt.tomsignature.types.TomForwardType) { { tom.engine.adt.tomsignature.types.TomForwardType tom_match1_1=(( tom.engine.adt.tomsignature.types.TomForwardType)extendsFwdType); if (tom_is_fun_sym_TLForward(tom_match1_1) ||  false ) { { String  tom_match1_1_string=tom_get_slot_TLForward_string(tom_match1_1); if ( true ) {
  
 				output.write(deep," extends " + tom_match1_1_string);
-			 }} }} }
+			 } } } } }
 
     output.write(deep," {");
     int args = names.size();
@@ -129,21 +129,21 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     while(!varList.isEmpty()) {
       TomTerm localVar = varList.getHead();
       matchBlock: {
-         if(localVar instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1=(( tom.engine.adt.tomsignature.types.TomTerm)localVar); if(tom_is_fun_sym_Variable(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match2_1_astType=tom_get_slot_Variable_astType(tom_match2_1); if( true ) {
+         if(localVar instanceof  tom.engine.adt.tomsignature.types.TomTerm) { { tom.engine.adt.tomsignature.types.TomTerm tom_match2_1=(( tom.engine.adt.tomsignature.types.TomTerm)localVar); if (tom_is_fun_sym_Variable(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match2_1_astType=tom_get_slot_Variable_astType(tom_match2_1); if ( true ) {
 
             output.write(deep,getTLType(tom_match2_1_astType) + " ");
             generate(deep,tom_match2_1,moduleName);
             break matchBlock;
-           }} } if(tom_is_fun_sym_TLVar(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match2_1_astType=tom_get_slot_TLVar_astType(tom_match2_1); if( true ) {
+           } } } if (tom_is_fun_sym_TLVar(tom_match2_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match2_1_astType=tom_get_slot_TLVar_astType(tom_match2_1); if ( true ) {
 
             output.write(deep,getTLType(tom_match2_1_astType) + " ");
             generate(deep,tom_match2_1,moduleName);
             break matchBlock;
-           }} } if( true ) {
+           } } } if ( true ) {
 
             System.out.println("MakeFunction: strange term: " + localVar);
             throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
-           }} }
+           } } }
 
       }
       varList = varList.getTail();
@@ -154,10 +154,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     }
     output.writeln(deep,")"); 
 
-     if(throwsType instanceof  tom.engine.adt.tomsignature.types.TomType) { { tom.engine.adt.tomsignature.types.TomType tom_match3_1=(( tom.engine.adt.tomsignature.types.TomType)throwsType); if(tom_is_fun_sym_TomTypeAlone(tom_match3_1) ||  false ) { { String  tom_match3_1_string=tom_get_slot_TomTypeAlone_string(tom_match3_1); if( true ) {
+     if(throwsType instanceof  tom.engine.adt.tomsignature.types.TomType) { { tom.engine.adt.tomsignature.types.TomType tom_match3_1=(( tom.engine.adt.tomsignature.types.TomType)throwsType); if (tom_is_fun_sym_TomTypeAlone(tom_match3_1) ||  false ) { { String  tom_match3_1_string=tom_get_slot_TomTypeAlone_string(tom_match3_1); if ( true ) {
 
         output.write(deep," throws " + tom_match3_1_string);
-       }} }} }
+       } } } } }
 
 
     output.writeln(" {");
