@@ -1,3 +1,4 @@
 module List
+imports int
 abstract syntax
 List = conc(int*)
