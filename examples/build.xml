@@ -857,7 +857,7 @@
         <include name="${gom}/*.gom"/>
 
         <include name="${gomoku}/*.t"/>
-        <include name="${gomoku}/*.vas"/>
+        <include name="${gomoku}/*.gom"/>
 
         <include name="${gterm}/*.t"/>
         <include name="${gterm}/*.java"/>
