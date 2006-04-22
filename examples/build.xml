@@ -938,7 +938,9 @@
         <include name="${structure}/README"/>
         <include name="${structure}/*.t"/>
         <include name="${structure}/*.vas"/>
+        <include name="${structure}/*.gom"/>
         <include name="${structure}/*.tom"/>
+        <include name="${structure}/*.java"/>
 
         <include name="${ted}/example.aterm"/>
         <include name="${ted}/aterms"/>
