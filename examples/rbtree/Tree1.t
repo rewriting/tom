@@ -189,7 +189,7 @@ public class Tree1 {
     stopChrono = System.currentTimeMillis();
     System.out.println("Building Set of size = " + set.size() + " in " + (stopChrono-startChrono) + " ms");
 
-    ATermList list = factory.getPureFactory().makeList();
+    ATermList list = SingletonFactory.getInstance().makeList();
     startChrono = System.currentTimeMillis();
     for(int i=0 ; i<3*n ; i++) {
       list = list.insert(array[i]);
@@ -210,7 +210,7 @@ public class Tree1 {
   }
   
   public final static void main(String[] args) {
-    Tree1 test = new Tree1(Factory.getInstance(new PureFactory()));
+    Tree1 test = new Tree1(Factory.getInstance(SingletonFactory.getInstance()));
     test.run(10000);
   }
 
