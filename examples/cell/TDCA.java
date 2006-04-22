@@ -53,16 +53,17 @@ public class TDCA {
     reglages = zb.r;
     auto = new TDCA();
 
-    long startChrono  = System.currentTimeMillis();
-    auto.Generation(1000);
-    long stopChrono  = System.currentTimeMillis();
-    System.out.println("gen(1000) in " + (stopChrono-startChrono) + " ms");    
-    /*
-    affiche = new Affichage();
-    Fenetre f = new Fenetre(affiche);
-    f.setSize(600, 400);
-    f.setVisible(true);
-  */
+    if (args.length >= 1 && args[0].equals("bench")) {
+      long startChrono  = System.currentTimeMillis();
+      auto.Generation(1000);
+      long stopChrono  = System.currentTimeMillis();
+      System.out.println("gen(1000) in " + (stopChrono-startChrono) + " ms");
+    } else {
+      affiche = new Affichage();
+      Fenetre f = new Fenetre(affiche);
+      f.setSize(600, 400);
+      f.setVisible(true);
+    }
   }
 
   void init() {
