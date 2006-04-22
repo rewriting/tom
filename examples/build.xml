@@ -929,6 +929,7 @@
         <include name="${strategy}/README"/>
         <include name="${strategy}/*.t"/>
         <include name="${strategy}/*.vas"/>
+        <include name="${strategy}/*.xml"/>
         <include name="${strategy}/**/*.java"/>
         <include name="${strategy}/**/*.tom"/>
 
