@@ -1,3 +1,8 @@
+2006-04-22 Antoine Reilles <reilles@loria.fr>
+  * Tagged tom-2_3rc1
+  * Bootinstall now uses gom and tom src version
+  * bootinstall
+
 2006-03-13 Antoine Reilles <reilles@loria.fr>
   * updated antlr to 2.7.6
   * The "meta-quote" construct works with @
