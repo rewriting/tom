@@ -34,7 +34,6 @@ import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
-import tom.library.traversal.*;
 import aterm.*;
  
 public abstract class TomAbstractGenerator extends TomBase {
@@ -44,15 +43,12 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected SymbolTable symbolTable;
   protected boolean prettyMode;
 
-  private GenericTraversal traversal;
-
   public TomAbstractGenerator(OutputCode output, OptionManager optionManager,
                               SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
     this.optionManager = optionManager;
     this.output = output;
     this.prettyMode = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
-    this.traversal = new GenericTraversal();
   }
   
   protected SymbolTable getSymbolTable(String moduleName) {
@@ -87,7 +83,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     return subject;
   }
 
-  //Testing purpose
+  //Testing purpose : it will be necessary to rewrite it with strategies...
   /*protected void collectMake(TomTerm subject) {
    Collect1 collect = new Collect1() { 
        public boolean apply(ATerm subject) {

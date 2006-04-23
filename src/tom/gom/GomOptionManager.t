@@ -362,7 +362,6 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    */
   private List processArguments(String[] argumentList) {
     List inputFiles = new ArrayList();
-    List res = new ArrayList();
     StringBuffer imports = new StringBuffer();
     boolean outputEncountered = false;
     boolean destdirEncountered = false;

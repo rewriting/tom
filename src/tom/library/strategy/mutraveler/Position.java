@@ -61,6 +61,10 @@ public class Position {
     }
   }
 
+  public int hashCode() {
+    return size * data.hashCode();
+  }
+
   /**
    * Tests is prefix
    */
