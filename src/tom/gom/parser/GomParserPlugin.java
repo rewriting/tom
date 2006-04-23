@@ -67,6 +67,7 @@ public class GomParserPlugin extends GomGenericPlugin {
     if (arg[0] instanceof GomStreamManager) {
       setStreamManager((GomStreamManager)arg[0]);
       inputReader = getStreamManager().getInputReader();
+      inputFileName = getStreamManager().getInputFileName();
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
@@ -111,7 +112,7 @@ public class GomParserPlugin extends GomGenericPlugin {
       PrintWriter printwriter = new PrintWriter(stringwriter);
       e.printStackTrace(printwriter);
       getLogger().log(Level.SEVERE, GomMessage.exceptionMessage.getMessage(),
-                      new Object[]{getClass().getName(), inputFileName, stringwriter.toString()});
+          new Object[]{getClass().getName(), inputFileName, stringwriter.toString()});
       return;
     }
 
