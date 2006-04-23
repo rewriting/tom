@@ -115,8 +115,7 @@ public class @className()@ extends @fullClassName(sortName)@ implements tom.libr
 
   public final boolean equivalent(shared.SharedObject obj) {
     if(obj instanceof @className()@) {
-      @className()@ peer = (@className()@) obj;
-      return @generateMembersEqualityTest("peer")@;
+@generateMembersEqualityTest("peer")@
     }
     return false;
   }
@@ -407,13 +406,19 @@ public class @className()@ extends @fullClassName(sortName)@ implements tom.libr
   }
   private String generateMembersEqualityTest(String peer) {
     String res = "";
+    if(!slotList.isEmptyconcSlotField()) {
+      res += %[
+      @className()@ peer = (@className()@) obj;]%;
+    }
+    res += %[
+      return ]%;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=fieldName],_*) -> {
         res += fieldName(`fieldName)+"=="+peer+"."+fieldName(`fieldName);
         res+= " && ";
       }
     }
-    res += "true"; // to handle the "no childs" case
+    res += "true;"; // to handle the "no childs" case
     return res;
   }
   private int nonBuiltinChildCount() {

@@ -9,12 +9,12 @@ public class TestTomHook extends TestCase {
 
   %gom {
     module Bool
-    public
-    sorts Bool
     abstract syntax
-    True() -> Bool
-    False() -> Bool
-    Not(b:Bool) -> Bool
+    Bool = True()
+         | False()
+         | Not(b:Bool)
+         | And(l:Bool,r:Bool)
+         | Or(l:Bool,r:Bool)
     Not:make(b) {
       %match(Bool b) {
         And(l,r) -> { return `Or(Not(l),Not(r)); }
@@ -23,8 +23,6 @@ public class TestTomHook extends TestCase {
         False()  -> { return `True(); }
       }
     }
-    And(l:Bool,r:Bool) -> Bool
-    Or(l:Bool,r:Bool) -> Bool
   }
 
   public static void main(String[] args) {
