@@ -94,18 +94,18 @@ public class GomParserPlugin extends GomGenericPlugin {
     } catch (RecognitionException re) {
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
-      re.printStackTrace(pw);
+      //re.printStackTrace(pw);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
-            GomMessage.parseException,sw.toString(),
-            inputFileName, gomlexer.getLine()));
+            GomMessage.detailedParseException,
+            re.toString(), inputFileName, gomlexer.getLine()));
       return;
     } catch(TokenStreamException streamException) {
       StringWriter stringwriter = new StringWriter();
       PrintWriter printwriter = new PrintWriter(stringwriter);
-      streamException.printStackTrace(printwriter);
+      //streamException.printStackTrace(printwriter);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
-            GomMessage.parseException,stringwriter.toString(),
-            inputFileName, gomlexer.getLine()));
+            GomMessage.detailedParseException,
+            streamException.toString(),inputFileName, gomlexer.getLine()));
       return;
     } catch (Exception e) {
       StringWriter stringwriter = new StringWriter();

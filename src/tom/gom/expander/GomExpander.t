@@ -41,6 +41,7 @@ import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 import tom.gom.parser.GomLexer;
 import tom.gom.parser.GomParser;
+import tom.platform.PlatformLogRecord;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
@@ -136,16 +137,14 @@ public class GomExpander {
     try {
       result = parser.module();
     } catch (RecognitionException re) {
-      getLogger().log(Level.SEVERE, GomMessage.parseException.getMessage(),
-          new Object[]{moduleName+".gom",
-          new Integer(lexer.getLine()),
-          re.getMessage()});
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
+            GomMessage.detailedParseException,
+            re.getMessage(),moduleName+".gom", lexer.getLine()));
       return null;
     } catch(TokenStreamException tse) {
-      getLogger().log(Level.SEVERE, GomMessage.parseException.getMessage(),
-          new Object[]{moduleName+".gom",
-          new Integer(lexer.getLine()),
-          tse.getMessage()});
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
+            GomMessage.detailedParseException,
+            tse.getMessage(),moduleName+".gom", lexer.getLine()));
       return null;
     }
     return result;
