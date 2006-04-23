@@ -42,7 +42,7 @@ import javax.swing.*;
 class Etat extends JPanel {
 	Matrice matr;
 	Color fore, back;
-	Color rose, rouge, bistre, bleu, lavande, jaune, jaunepale, bleu1, bleu2, bleu3, bleu4, jaune1, jaune2, jaune3, jaune4, vert1, vert2, vert3, vert4;;
+	Color rose, rouge, bistre, bleu, lavande, jaune, jaunepale, bleu1, bleu2, bleu3, bleu4, jaune1, jaune2, jaune3, jaune4, vert1, vert2, vert3, vert4;
 	Reglages reg;
 	int x0;
 	int y0;
@@ -146,8 +146,8 @@ class Etat extends JPanel {
 		largeur = getSize().width;
 		hauteur = getSize().height;
 
-		/* pour obtenir un résultat (à peu près) harmonieux,
-		 * on essaie de garder des pixels de même dimensions horizontales
+		/* pour obtenir un rÃ©sultat (Ã  peu prÃ¨s) harmonieux,
+		 * on essaie de garder des pixels de mÃªme dimensions horizontales
 		 * et verticales */
 
 		scaleX = (float) largeur / nbcols;
