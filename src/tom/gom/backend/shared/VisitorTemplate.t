@@ -56,7 +56,7 @@ public class VisitorTemplate extends TemplateClass {
     }
 
     out.append("\n");
-    out.append("}");
+    out.append("}\n");
 
     return out.toString();
   }

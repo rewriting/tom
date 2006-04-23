@@ -82,7 +82,8 @@ public class @className()@ implements @ className(visitor)+importedVisitorList(i
 
 @generateVisitMethods()@
 
-}]%);
+}
+]%);
 
     return out.toString();
   }
