@@ -40,9 +40,9 @@ public class GomEnvironment {
    * Unique instance of the GomEnvironment
    */
   private static GomEnvironment instance;
-  private static GomStreamManager streamManager;
 
-  private static String lastGeneratedMapping;
+  private GomStreamManager streamManager;
+  private String lastGeneratedMapping;
   /**
    * A private constructor method to defeat instantiation
    */
@@ -71,7 +71,7 @@ public class GomEnvironment {
     importedModules.put(module,imported);
   }
   public void setStreamManager(GomStreamManager stream) {
-    GomEnvironment.streamManager = stream;
+    this.streamManager = stream;
   }
   public GomStreamManager getStreamManager() {
     return streamManager;
