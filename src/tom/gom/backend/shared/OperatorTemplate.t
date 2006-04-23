@@ -65,13 +65,14 @@ package @getPackage()@;
 public class @className()@ extends @fullClassName(sortName)@ implements tom.library.strategy.mutraveler.MuVisitable {
   private static @className()@ proto = new @className()@();
   private int hashCode;
-  private @className()@() {};
+  private @className()@() {}
 
 @generateMembers()@
 
 @generateBody()@
 
-}]%;
+}
+]%;
 
     return classBody;
   }
