@@ -140,7 +140,7 @@ public class TomSyntaxChecker extends TomChecker {
     Collect1 collectAndVerify = new Collect1() {
       public boolean apply(ATerm subject) {
         %match(Declaration subject) {
-          strat@Strategy[visitList = list,orgTrack=origin] -> {
+          Strategy[visitList = list,orgTrack=origin] -> {
             if(`list.isEmpty()) {
               int line = -1;
               %match(Option `origin) {
@@ -163,7 +163,7 @@ public class TomSyntaxChecker extends TomChecker {
             return false;
           }
           // Symbols
-          SymbolDecl(Name(tomName))      -> {
+          SymbolDecl(Name(tomName)) -> {
             `verifySymbol(TomSyntaxChecker.CONSTRUCTOR, getSymbolFromName(tomName));
             return false;
           }
