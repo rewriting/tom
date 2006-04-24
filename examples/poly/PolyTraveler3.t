@@ -29,8 +29,8 @@
 
 package poly;
 
-import expression.*;
-import expression.types.*;
+import poly.expression.*;
+import poly.expression.types.*;
 
 import tom.library.strategy.mutraveler.Fail;
 import jjtraveler.reflective.VisitableVisitor;
