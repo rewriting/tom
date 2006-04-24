@@ -593,8 +593,7 @@
 
 
   <target name="rbtree" depends="init">
-    <adtcompile example="${rbtree}"
-                factory="tree"/>
+    <gomcompile example="${rbtree}"/>
     <tomcompile example="${rbtree}"/>
     <javacompile example="${rbtree}"/>
   </target>
