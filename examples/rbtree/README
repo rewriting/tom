@@ -1,6 +1,0 @@
-*  adt-to-tom -n tree --input tree.adt --nojar --javagen --package adt.rbtree
-
-* tom Tree1.t
-* javac Tree1.java
-* java Tree1
-

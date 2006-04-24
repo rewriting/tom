@@ -1,6 +1,0 @@
-* Anagram:
-----------
- This example takes two strings as arguments and determines whether
- the strings are anagrams of each other. Two strings are considered
- anagrams if they are composed of the same characters.
- For example, "parse" and "spare" are anagrams.
