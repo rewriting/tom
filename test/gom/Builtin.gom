@@ -1,6 +1,7 @@
 module Builtin
-imports int String
+imports int String aterm atermlist
 
 abstract syntax
 Wrapper = Int(i:int)
         |	Name(n:String)
+        | Node(aterm:aterm)

@@ -33,10 +33,17 @@ package gom;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import gom.b.u.i.l.t.i.n.builtin.types.*;
+import aterm.ATermFactory;
+import aterm.pure.SingletonFactory;
 
 public class TestBuiltin extends TestCase {
 
   %include { b/u/i/l/t/i/n/builtin/Builtin.tom }
+
+  private aterm.ATerm constructNode(String nodeName, int nodeLine) {
+    ATermFactory factory = SingletonFactory.getInstance();
+    return factory.makeAppl(factory.makeAFun(nodeName,1,false),factory.makeInt(nodeLine));
+  }
 
   public void testInt() {
     Wrapper t1 = `Int(10);
@@ -52,6 +59,16 @@ public class TestBuiltin extends TestCase {
     Wrapper nb = `Name(b);
     assertTrue(na == nb);
   }
+
+ public void testATerm() {
+    aterm.ATerm a = constructNode("n1",2);
+    aterm.ATerm b = constructNode("n1",2);
+    assertTrue(a == b);
+    Wrapper na = `Node(a);
+    Wrapper nb = `Node(b);
+    assertTrue(na == nb);
+  }
+
 
   public void testMatchInt() {
     String res = "";
