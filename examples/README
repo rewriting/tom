@@ -110,6 +110,9 @@ If you come from the
 
 * applexml
   XML Transformation
+  This examples contains an applet with is similar to the one in the Tom
+  web site: the author page. It aims to show how to combine applet, xml and tom to
+  complete web design technologies.
   Concepts: XML pattern matching  
   
 * boulderdash
