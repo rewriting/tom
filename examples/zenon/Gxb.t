@@ -9,27 +9,14 @@ import zenon.gxb.abg.types.*;
 import java.io.*;
 
 class Gxb {
-  %vas{
+  %gom {
     module Abg  
-  
-    public sorts Hop
-
     abstract syntax
-      a -> Hop
-      b -> Hop
-      f(argf:Hop) -> Hop
-      h(argg:Hop) -> Hop
-      g(left:Hop,right:Hop) -> Hop
-  }
-
-  private zenon.gxb.abg.AbgFactory factory;
-
-  Gxb() {
-    factory = AbgFactory.getInstance(SingletonFactory.getInstance());
-  }
-
-  protected final AbgFactory getAbgFactory() {
-    return factory;
+    Hop = a()
+        | b()
+        | f(argf:Hop)
+        | h(argg:Hop)
+        | g(left:Hop,right:Hop)
   }
 
   public static void main(String[] args) {
