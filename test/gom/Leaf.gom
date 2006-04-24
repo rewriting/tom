@@ -1,4 +1,5 @@
 module Leaf
+imports String
 abstract syntax
 Leaf = Leaf()
      | Label(s:String)

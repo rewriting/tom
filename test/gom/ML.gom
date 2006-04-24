@@ -1,5 +1,5 @@
 module ML
-sorts Bool Expr
+imports String int
 abstract syntax
 
 Bool = True()
