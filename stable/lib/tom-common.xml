@@ -18,8 +18,8 @@
   <property name="gomconfigfile"  location="${tom.home}/Gom.xml"/>
 
   <target name="tom.init">
-    <fail unless="env.TOM_HOME"
-          message="TOM_HOME has to be defined in your environment, 
+    <fail unless="tom.home"
+          message="tom.home has to be defined in your environment, 
           to find the Tom classes"/>
     <!-- Define the classpath to run tom and related tools -->
     <path id="tom.classpath">
