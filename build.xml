@@ -844,7 +844,10 @@
     </ant>
 
     <echo>Test tom-stable in examples with optimizer</echo>
-    <ant dir="${examples}" target="clean"/>
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${stable.dist}"/>
+      <property name="tom.common.path" location="${stable.lib}"/>
+    </ant>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${stable.dist}"/>
       <property name="tom.common.path" location="${stable.lib}"/>
@@ -883,7 +886,10 @@
   <target name="examples.stable" 
           description="Build and test examples with jtom-stable" 
           depends="stable.dist">
-    <ant dir="${examples}" target="clean"/>
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${stable.dist}"/>
+      <property name="tom.common.path" location="${stable.lib}"/>
+    </ant>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${stable.dist}"/>
       <property name="tom.common.path" location="${stable.lib}"/>
