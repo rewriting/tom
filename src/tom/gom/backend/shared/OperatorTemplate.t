@@ -286,15 +286,18 @@ public class @className()@ extends @fullClassName(sortName)@ implements tom.libr
     %match(SlotField slot) {
       SlotField[domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res+= getMethod(slot)+"().toATerm()";
+          res += getMethod(slot)+"().toATerm()";
         } else {
           if (`domain.equals(`ClassName("","int"))) {
-            res+= "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt("+getMethod(slot)+"())";
+            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt("+getMethod(slot)+"())";
           } else if (`domain.equals(`ClassName("","String"))) {
-            res+= "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(";
+            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(";
             res += "aterm.pure.SingletonFactory.getInstance().makeAFun(";
             res += getMethod(slot)+"() ,0 , true))";
-          } else {
+          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))){
+            res += getMethod(slot)+"()";
+          }
+            else {
             throw new GomRuntimeException("Builtin " + `domain + " not supported");
           }
         }
@@ -329,7 +332,10 @@ public class @className()@ extends @fullClassName(sortName)@ implements tom.libr
             res+= "((aterm.ATermInt)"+appl+".getArgument("+index+")).getInt()";
           } else if (`domain.equals(`ClassName("","String"))) {
             res+= "(String)"+appl+".getArgument("+index+").toString()";
-          } else {
+          } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
+            res +=  appl+".getArgument("+index+")";
+          }
+            else {
             throw new GomRuntimeException("Builtin " + `domain + " not supported");
           }
         }
@@ -518,7 +524,10 @@ public class @className()@ extends @fullClassName(sortName)@ implements tom.libr
           } else if (`domain.equals(`ClassName("","String"))) {
             // Use the string hashFunction for Strings, and pass index as arity
             res+= "shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")";
-          } else {
+          } else if (`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList"))) {
+            // Use the string hashFunction for Strings, and pass index as arity
+            res+= fieldName(`slotName)+".hashCode()";
+          }  else {
             throw new GomRuntimeException("generateHashArgs: Builtin " + `domain + " not supported");
           }
         }
