@@ -183,7 +183,7 @@ public class ATermToXML {
   private void write(String s) {
     try {
       if (out != null) {
-    out.write(s.getBytes());
+    out.write(s.getBytes("UTF-8"));
     }
       if (writer != null) {
     writer.write(s);
