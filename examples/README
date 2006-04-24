@@ -165,6 +165,10 @@ If you come from the
 
 * integerc
   Show how to use Tom with C
+  - cfib.t describes addition over Peano integers in C, by defining a simple term
+    data-structure and a Tom mapping
+  - loulou.t illustrates a tricky mapping between Peano and builtin integers
+  - PeanoTest.t shows how to define a mapping for the C version of the ATerm Library
   Concepts: mapping, complex mapping on builtin
 
 * list
