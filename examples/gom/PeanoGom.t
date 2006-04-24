@@ -36,15 +36,11 @@ class PeanoGom {
 
   %gom {
     module Peano
-
-    public
-      sorts Nat
-      
     abstract syntax
-      zero() -> Nat
-      suc(pred:Nat) -> Nat
-      fib(val:Nat)  -> Nat
-      plus(x1:Nat, x2:Nat) -> Nat
+    Nat = zero()
+        | suc(pred:Nat)
+        | fib(val:Nat)
+        | plus(x1:Nat, x2:Nat)
    }
 
     // rule fib
