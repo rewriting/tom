@@ -792,7 +792,7 @@
 
     <tar tarfile="${examples.dist}/tom-${version}-examples.tar.gz" 
          compression="gzip">
-      <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
+      <tarfileset dir="${examples.dir}" prefix="examples" mode="644">
         <include name="README"/>
         <include name="build.xml"/>
         <include name="build.sh"/>
