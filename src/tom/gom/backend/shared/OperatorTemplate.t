@@ -188,7 +188,8 @@ public class @className()@ extends @fullClassName(sortName)@ implements tom.libr
     int a, b, c;
 
     /* Set up the internal state */
-    a = b = 0x9e3779b9; /* the golden ratio; an arbitrary value */
+    a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
+    b = (@shared.HashFunctions.stringHashFunction(fullClassName(),getLength(slotList))@<<8);
     c = getArity();
     /*---------------------------------------- handle most of the key */
 
