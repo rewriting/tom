@@ -35,15 +35,13 @@ import mgs.term.*;
 import mgs.term.types.*;
 
 public class BeadSort {
-  private Factory factory;
-
   private HashMap space;
   private HashMap newSpace;
 
   %include { term/term.tom }
 
   %op Bead beadNS(n:Bead, s:Bead) {
-    is_fsym(t) { (t!=null) && t.isBead() }
+    is_fsym(t) { (t!=null) && t.isbead() }
     make(n,s) { makeBead(n,s) }
     get_slot(n,t) { getNorthBead(t) }
     get_slot(s,t) { getSouthBead(t) }
@@ -59,8 +57,8 @@ public class BeadSort {
      * (Resp. "south")
      */
   private Bead makeBead(Bead beadNorth, Bead beadSouth) {
-    Position north = (beadNorth!=null)?beadNorth.getPos():null;
-    Position south = (beadSouth!=null)?beadSouth.getPos():null;
+    Position north = (beadNorth!=null)?beadNorth.getpos():null;
+    Position south = (beadSouth!=null)?beadSouth.getpos():null;
     
     if(north==null && south!=null) {
       return `bead(getNorthPosition(south),1);
@@ -68,7 +66,7 @@ public class BeadSort {
       return `bead(getSouthPosition(north),1);
     } else if(north==null && south==null) {
       return `bead(makeOrigin(),1);
-    } else if(north.getX()!=south.getX() || (north.getY()-south.getY()) != 2) {
+    } else if(north.getx()!=south.getx() || (north.gety()-south.gety()) != 2) {
       System.out.println("north and south are not compatible: " + north + " <--> " + south);
     }
     return `bead(getSouthPosition(north),1);
@@ -79,36 +77,27 @@ public class BeadSort {
   }
   
   private Position getNorthPosition(Position p) {
-    return `pos(p.getX(),p.getY()+1);
+    return `pos(p.getx(),p.gety()+1);
   }
   
   private Position getSouthPosition(Position p) {
-    return `pos(p.getX(),p.getY()-1);
+    return `pos(p.getx(),p.gety()-1);
   }
 
   private Bead getNorthBead(Bead b) {
-    return (Bead) space.get(getNorthPosition(b.getPos()));
+    return (Bead) space.get(getNorthPosition(b.getpos()));
   }
   
   private Bead getSouthBead(Bead b) {
-    return (Bead) space.get(getSouthPosition(b.getPos()));
+    return (Bead) space.get(getSouthPosition(b.getpos()));
   }
 
   private boolean onGround(Bead b) {
-    return b.getPos().getY() <= 0;
+    return b.getpos().gety() <= 0;
   }
-  
-  public BeadSort(Factory factory) {
-    this.factory = factory;
-  }
-
-  public Factory getTermFactory() {
-    return factory;
-  }
-
 
   public final static void main(String[] args) {
-    BeadSort test = new BeadSort(Factory.getInstance(SingletonFactory.getInstance()));
+    BeadSort test = new BeadSort();
     test.run();
   }
 
@@ -154,7 +143,7 @@ public class BeadSort {
       beadNS[s=empty()] -> {
         if(!onGround(b)) {
           Bead newBead = `beadNS(b,empty());
-          newSpace.put(newBead.getPos(),newBead);
+          newSpace.put(newBead.getpos(),newBead);
           System.out.println(b + " --> " + newBead);
           return true;
         }

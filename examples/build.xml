@@ -485,8 +485,7 @@
   </target>
 
   <target name="mgs" depends="init">
-    <adtcompile example="${mgs}"
-                factory="term"/>
+    <gomcompile example="${mgs}"/>
     <tomcompile example="${mgs}"/>
     <javacompile example="${mgs}"/>
   </target>
