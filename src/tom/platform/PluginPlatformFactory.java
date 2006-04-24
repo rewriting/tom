@@ -58,6 +58,10 @@ public class PluginPlatformFactory {
       consoleHandler.setLevel(Level.ALL);
       // by default, print everything that the logger sends
       consoleHandler.setFormatter(new PlatformFormatter());
+      Handler[] handlers = PluginPlatformFactory.logger.getHandlers();
+      for(int i = 0; i < handlers.length; i++) {
+        PluginPlatformFactory.logger.removeHandler(handlers[i]);
+      }
       PluginPlatformFactory.logger.addHandler(consoleHandler);
     }
   }
