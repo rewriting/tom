@@ -1,6 +1,6 @@
 Tom is a language extension which adds pattern matching facilities to
 C, Java or Caml. Therefore, Tom is a multi-purpose programming
-language. 
+language.
 
 Depending on your background, Tom can be seen as:
  - a language to perform transformation of XML documents.
@@ -12,7 +12,7 @@ Depending on your background, Tom can be seen as:
 
 * How to start with Tom?
 ------------------------
-If you come from the 
+If you come from the
  - algebraic programming community
    => start with:
       - vas
@@ -42,7 +42,7 @@ If you come from the
 * Running the examples:
 ------------------------
   Compilation:
-    _To compile all examples, run the script 'build.sh' from directory 'examples', 
+    _To compile all examples, run the script 'build.sh' from directory 'examples',
     assuming Ant is installed. To compile a specific example, specify the example name.
     For instance, to compile example 'peano' only, run 'build.sh peano' (without
     the trailing backslash at the end of peano).
@@ -51,7 +51,7 @@ If you come from the
     _To run a specific example, go to directory examples/build/ and execute the java class
     of your choice using your Java Virtual Machine. For instance, to run 'PeanoSimple1',
     simply run 'java peano.PeanoSimple1'.
- 
+
 * Note about ApiGen/Vas/Gom:
 ------------------------
   Vas is build on top of apigen and both are deprecated. You may now use
@@ -81,28 +81,29 @@ If you come from the
   Solving anti-pattern matching problems
   Concepts: anti-patterns, strategies, rule construct
   Files' description:
-	Matching1
-		- an algorithm for solving anti-pattern matching problems
-	Matching2
-		- same algorithm, but with the strategy Id instead of fail
-	Matching3
-		- modification of the algorithm to allow guards on rules 
-	Matching4
-		- another algorithm, a more correct one
-	Matching5
-		- same algorithm as 4, but implemented using %rule
-		- is is not working properly because of the problems with %rule
-		Problems: 
-			- if the construct of terms is in a file, and the rules in another, 
-					tom won't apply the rules
-			- you cannot control whether a rule should apply or not. For example 
-			if you need some rules to apply, and only after they have been applied,
-			to run another rule.   	
-			- when a strategy applies, the modified term will not fire the rules. 		
-					
-	MatchingDifferences
-		- another algorithm for anti-pattern matching based on set differences, but it only responds `True or `False,
-		without giving the substitution when it exists
+  Matching1
+    - an algorithm for solving anti-pattern matching problems
+  Matching2
+    - same algorithm, but with the strategy Id instead of fail
+  Matching3
+    - modification of the algorithm to allow guards on rules
+  Matching4
+    - another algorithm, a more correct one
+  Matching5
+    - same algorithm as 4, but implemented using %rule
+    - is is not working properly because of the problems with %rule
+  Problems:
+    - if the construct of terms is in a file, and the rules in another,
+      tom won't apply the rules
+    - you cannot control whether a rule should apply or not. For example
+      if you need some rules to apply, and only after they have been applied,
+      to run another rule.
+    - when a strategy applies, the modified term will not fire the rules.
+
+  MatchingDifferences
+    - another algorithm for anti-pattern matching based on set differences, but
+      it only responds `True or `False, without giving the substitution when it
+      exists
 
 * apireach
   Compute reachable terms (wrt. a rewrite system)
@@ -113,18 +114,18 @@ If you come from the
   This examples contains an applet with is similar to the one in the Tom
   web site: the author page. It aims to show how to combine applet, xml and tom to
   complete web design technologies.
-  Concepts: XML pattern matching  
-  
+  Concepts: XML pattern matching
+
 * boulderdash
-  Simulate how rocks go down in the boulder-dash game	
-  Concepts: apigen, virtual mapping 
+  Simulate how rocks go down in the boulder-dash game
+  Concepts: apigen, virtual mapping
 
 * builtin
-  Show how to use builtin integer and string  
+  Show how to use builtin integer and string
   Concepts: list-matching, string-matching
 
 * caml
-  Show how to use Tom with Caml  
+  Show how to use Tom with Caml
   Concepts: mapping, list-matching
 
 * cell
@@ -165,10 +166,10 @@ If you come from the
 * integerc
   Show how to use Tom with C
   Concepts: mapping, complex mapping on builtin
-  
+
 * list
-  Introduction to list-matching  
-  Concepts: list-matching, mapping to the ATerm library 
+  Introduction to list-matching
+  Concepts: list-matching, mapping to the ATerm library
 
 * lsystems
   implementation of the Lindenmayer systems (plants simulation)
@@ -199,20 +200,20 @@ If you come from the
 
 * peano
   Computation with Peano integers
-  Concepts: simple mapping, apigen, Tom notation 
+  Concepts: simple mapping, apigen, Tom notation
 
 * pnspk
   Parallel verification of the Needham-Schroeder Public-Key protocol
-  Concepts: apigen, parallel exploration of a search space, strategy library 
+  Concepts: apigen, parallel exploration of a search space, strategy library
 
 * poly
   Compute the derivative of a polynom
-  Concepts: mapping, apigen, generic traversal, rewrite system  
+  Concepts: mapping, apigen, generic traversal, rewrite system
   Examples:
     _Simple:   Show how to differentiate a polynom.
-    _Advanced: Extended version with non-linearity and disjunction. 
+    _Advanced: Extended version with non-linearity and disjunction.
     _Apigen:   Same as before, but based on ApiGen.
-	             Also introduce the notion of rewrite rule system.
+               Also introduce the notion of rewrite rule system.
 
 * pqueens
   Parallel version of the N-Queens problem
