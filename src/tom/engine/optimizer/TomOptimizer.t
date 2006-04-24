@@ -365,7 +365,7 @@ public class TomOptimizer extends TomGenericPlugin {
   public class RewriteSystem1 extends TomSignatureVisitableFwd {
 
     public RewriteSystem1() {
-      super(`Identity());
+      super(new tom.library.strategy.mutraveler.Identity());
     }
 
     public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure{
