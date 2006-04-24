@@ -40,7 +40,8 @@ public class Members {
     %match(String lang){
       "fr" -> {
         result = `concTNode(<p>#TEXT("Vous pouvez trouver les contacts dans l'") <a href="http://www.loria.fr/services/annuaire/annuaire.php">#TEXT("annuaire")</a>#TEXT(".")</p>,result*);
-        result = `concTNode(<h2>#TEXT("Les membres du projet Prothéo")</h2>,result*);
+        //result = `concTNode(<h2>#TEXT("Les membres du projet Prothéo")</h2>,result*);
+        result = `concTNode(<h2>#TEXT("Les membres du projet Proth\u00E9o")</h2>,result*);
       }
       "en" ->  {
         result = `concTNode(<p>#TEXT("You can find contacts in the ") <a href="http://www.loria.fr/services/annuaire/annuaire.php">#TEXT("addressbook")</a>#TEXT(".")</p>,result*);

@@ -57,8 +57,10 @@ public class Publi {
     TNodeList result = `concTNode(<h2>#TEXT("Publications")</h2>);
     %match(String lang){
       "fr" -> {
-        result = `concTNode(result*,#TEXT("\n"),<div id="year"><h3>#TEXT("Publications triées par année:")</h3>years*</div>);
-        result = `concTNode(result*,#TEXT("\n"),<div id="author"><h3>#TEXT("Publications triées par auteur:")</h3>authorsList*</div>);
+        //result = `concTNode(result*,#TEXT("\n"),<div id="year"><h3>#TEXT("Publications triées par année:")</h3>years*</div>);
+        result = `concTNode(result*,#TEXT("\n"),<div id="year"><h3>#TEXT("Publications tri\u00E9es par année:")</h3>years*</div>);
+        //result = `concTNode(result*,#TEXT("\n"),<div id="author"><h3>#TEXT("Publications triées par auteur:")</h3>authorsList*</div>);
+        result = `concTNode(result*,#TEXT("\n"),<div id="author"><h3>#TEXT("Publications tri\u00E9es par auteur:")</h3>authorsList*</div>);
         result = `concTNode(result*,#TEXT("\n"),<div id="alumni"><h3>#TEXT("Anciens membres:")</h3>alumniList*</div>);
       }
       "en" -> {
