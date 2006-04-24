@@ -29,30 +29,20 @@
 
 package poly;
 
-import aterm.*;
-import aterm.pure.PureFactory;
-import poly.expression.*;
-import poly.expression.types.*;
+import expression.*;
+import expression.types.*;
 
 import tom.library.strategy.mutraveler.Fail;
 import jjtraveler.reflective.VisitableVisitor;
 
 public class PolyTraveler3 {
 
-  private Factory factory;
-
-  public PolyTraveler3(Factory factory) {
-    this.factory = factory;
-  }
-  public Factory getExpressionFactory() {
-    return factory;
-  }
 
   %include { expression/expression.tom }
   %include{ mutraveler.tom }
 
   public final static void main(String[] args) {
-    PolyTraveler3 test = new PolyTraveler3(Factory.getInstance(new PureFactory()));
+    PolyTraveler3 test = new PolyTraveler3();
     test.run(5);
   }
 

@@ -29,8 +29,8 @@
 
 package poly;
 
-import poly.expression.*;
-import poly.expression.types.*;
+import expression.*;
+import expression.types.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
