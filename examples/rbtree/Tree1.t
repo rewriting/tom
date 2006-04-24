@@ -39,7 +39,7 @@ import rbtree.tree.types.*;
 public class Tree1 {
 
   private Comparator comparator;
-  %include { tree/Tree.tom }
+  %include { tree/tree.tom }
   
   public Tree1() {
     this.comparator = new MyComparator();

@@ -1,4 +1,4 @@
-module Tree 
+module tree 
 abstract syntax
 Color= R()
      | B()
