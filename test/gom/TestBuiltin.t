@@ -45,6 +45,13 @@ public class TestBuiltin extends TestCase {
     return factory.makeAppl(factory.makeAFun(nodeName,1,false),factory.makeInt(nodeLine));
   }
 
+
+  private aterm.ATermList constructList(int e1, int e2, int e3) {
+    ATermFactory factory = SingletonFactory.getInstance();
+    return factory.makeList(factory.makeInt(e1),factory.makeList(factory.makeInt(e2),factory.makeList(factory.makeInt(e3),factory.makeList())));
+  }
+
+
   public void testInt() {
     Wrapper t1 = `Int(10);
     Wrapper t2 = `Int(10);
@@ -60,13 +67,19 @@ public class TestBuiltin extends TestCase {
     assertTrue(na == nb);
   }
 
- public void testATerm() {
+  public void testATerm() {
     aterm.ATerm a = constructNode("n1",2);
     aterm.ATerm b = constructNode("n1",2);
     assertTrue(a == b);
     Wrapper na = `Node(a);
     Wrapper nb = `Node(b);
     assertTrue(na == nb);
+  }
+
+  public void testATermList() {
+    aterm.ATermList a = constructList(1,2,3);
+    aterm.ATermList b = constructList(1,2,3);
+    assertTrue(a == b);
   }
 
 
