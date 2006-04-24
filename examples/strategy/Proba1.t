@@ -37,17 +37,14 @@ import jjtraveler.VisitFailure;
 
 public class Proba1 {
 
-  %vas {
+  %gom {
     // extension of adt syntax
     module Piece
-    imports 
-    public
-      sorts Piece
       
     abstract syntax
-      nothing -> Piece
-      pile -> Piece
-      face -> Piece
+      Piece = nothing()
+            | pile()
+            | face()
    }
 
   %include { mutraveler.tom }

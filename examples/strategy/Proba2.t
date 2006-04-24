@@ -37,18 +37,14 @@ import jjtraveler.VisitFailure;
 
 public class Proba2 {
 
-  %vas {
+  %gom {
     // extension of adt syntax
     module State
-    imports 
-    public
-      sorts State
-      
     abstract syntax
-      a -> State
-      b -> State
-      c -> State
-      puits -> State
+      State = a()
+            | b()
+            | c()
+            | puits()
    }
 
   %include { mutraveler.tom }
