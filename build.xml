@@ -832,7 +832,10 @@
     <antcall target="junit.stable"/>
 
     <echo>Test tom-stable in examples</echo>
-    <ant dir="${examples}" target="clean"/>
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${stable.dist}"/>
+      <property name="tom.common.path" location="${stable.lib}"/>
+    </ant>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${stable.dist}"/>
       <property name="tom.common.path" location="${stable.lib}"/>
@@ -856,7 +859,10 @@
     <antcall target="junit.src"/>
 
     <echo>Test tom-source in examples</echo>
-    <ant dir="${examples}" target="clean"/>
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${src.dist}"/>
+      <property name="tom.common.path" location="${src.lib}"/>
+    </ant>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
       <property name="tom.common.path" location="${src.lib}"/>
