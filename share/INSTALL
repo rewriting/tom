@@ -13,7 +13,7 @@ The binary distribution of Tom consists of the following directory layout:
    +--- share
          +--- contrib
          |
-         +--- jtom    // contains predefined mapping
+         +--- tom    // contains predefined mapping
          |     +--- adt
          |     |
          |     +--- c

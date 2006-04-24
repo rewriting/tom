@@ -558,7 +558,7 @@
     </copy>
 
     <!-- tom share -->
-    <copy todir="${stable.dist.share}/jtom">
+    <copy todir="${stable.dist.share}/tom">
       <fileset dir="${stable.mapping}" includes="**/*.tom"/>
       <fileset dir="${stable.adt}" includes="**/*.tom">
         <exclude name="TomSignature.tom"/>
@@ -700,7 +700,7 @@
     </jar>
 
     <!-- tom share -->
-    <copy todir="${src.dist.share}/jtom">
+    <copy todir="${src.dist.share}/tom">
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
       <fileset dir="${src.adt}" includes="**/*.tom">
         <exclude name="TomSignature.tom"/>
@@ -806,7 +806,7 @@
      </ant>
   </target>
 
-  <target name="junit.stable"
+  <target name="stable.junit"
           description="Runs junit acceptance tests compiled with stable" 
           depends="clean.test, test.stable">
      <ant dir="${test}" target="junit">
@@ -814,7 +814,7 @@
      </ant>
   </target>
 
-  <target name="junit.src" depends="junit"/>
+  <target name="src.junit" depends="junit"/>
   <target name="junit" description="Runs junit acceptance tests"
           depends="clean.test, test">
      <ant dir="${test}" target="junit">
@@ -829,7 +829,7 @@
   <target name="stable.all" description="cleans, build, test all" depends="clean.stable, clean.stable.dist">
     <antcall target="stable.dist"/>
     <antcall target="clean.test"/>
-    <antcall target="junit.stable"/>
+    <antcall target="stable.junit"/>
 
     <echo>Test tom-stable in examples</echo>
     <ant dir="${examples}" target="clean">
@@ -859,7 +859,7 @@
   <target name="src.all" description="cleans, build, test junit" depends="clean, clean.dist, stable.dist">
     <antcall target="src.dist"/>
     <antcall target="clean.test"/>
-    <antcall target="junit.src"/>
+    <antcall target="src.junit"/>
 
     <echo>Test tom-source in examples</echo>
     <ant dir="${examples}" target="clean">
@@ -1136,7 +1136,7 @@
            todir="${plugin.workspace.dir}/jtom-eclipse"/>
      <!-- copy mappings -->
      <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
-       <fileset dir="${src.dist.share}/jtom/">
+       <fileset dir="${src.dist.share}/tom/">
          <include name="**/*.tom"/>
        </fileset>
      </copy>
@@ -1153,7 +1153,7 @@
            todir="${plugin.workspace.dir}/jtom-eclipse"/>
      <!-- copy mappings -->
      <copy todir="${plugin.workspace.dir}/jtom-eclipse/include">
-       <fileset dir="${stable.dist.share}/jtom/">
+       <fileset dir="${stable.dist.share}/tom/">
          <include name="**/*.tom"/>
        </fileset>
      </copy>

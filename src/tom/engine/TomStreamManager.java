@@ -231,8 +231,8 @@ public class TomStreamManager {
    *  - user defined imports
    *  - destDir/packagePath
    *  - inputFile.getParent
-   *  - TOM_HOME/share/jtom
-   *  - TOM_HOME/share/jtom/importLanguageSubdir (i.e [java|c|caml])
+   *  - TOM_HOME/share/tom
+   *  - TOM_HOME/share/tom/importLanguageSubdir (i.e [java|c|caml])
    */
   public List getImportList() {
     List importList = new ArrayList(getUserImportList().size()+3);
@@ -245,7 +245,7 @@ public class TomStreamManager {
       importList.add(getInputParentFile().getCanonicalFile());
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
-        File file = new File(new File(tom_home,"share"),"jtom");
+        File file = new File(new File(tom_home,"share"),"tom");
         //System.out.println(" extend import list with: " + file.getPath());
         importList.add(file.getCanonicalFile());
         file = new File(file,importLanguageSubdir);
