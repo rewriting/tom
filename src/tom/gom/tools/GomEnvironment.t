@@ -82,8 +82,8 @@ public class GomEnvironment {
     builtinSorts.put("int",`ClassName("","int"));
     builtinSorts.put("String",`ClassName("","String"));
     builtinSorts.put("double",`ClassName("","double"));
-    builtinSorts.put("aterm",`ClassName("aterm","ATerm"));
-    builtinSorts.put("atermlist",`ClassName("aterm","ATermList"));
+    builtinSorts.put("ATerm",`ClassName("aterm","ATerm"));
+    builtinSorts.put("ATermList",`ClassName("aterm","ATermList"));
   }
   private Map usedBuiltinSorts = new HashMap();
 
