@@ -241,6 +241,8 @@ If you come from the
 
 * strings
   Tiny example based on string matching
+  Check whether two strings are anagrams of each other
+  using list matching on strings
   Concepts: string matching
 
 * structure
