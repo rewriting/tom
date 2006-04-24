@@ -70,9 +70,10 @@
   <property name="analysis"       value="analysis"/>
 
   <target name="init" depends="tom.init">
-    <fail unless="env.TOM_HOME"
+    <!-- to have something correct, check tom.home is defined to something meaningful
+    <fail unless="TOM_HOME"
           message="TOM_HOME has to be defined in your environment, 
-          to find the Tom classes"/>
+          to find the Tom classes"/>-->
     <mkdir dir="${examples.build}"/>
     <mkdir dir="${examples.gen}"/>
     <path id="tom.examples.classpath">
