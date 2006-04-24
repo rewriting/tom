@@ -30,6 +30,6 @@
  **/
 
 %typeterm ATerm {
-  implement { ATerm }
+  implement { aterm.ATerm }
   equals(t1, t2)      { t1 == t2}
 }
