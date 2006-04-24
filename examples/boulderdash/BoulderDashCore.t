@@ -44,7 +44,7 @@ public class BoulderDashCore {
   %include { boulder/boulder.tom }
  
   %op Bead beadRock(n:Bead, s:Bead, e:Bead, w:Bead) {
-    is_fsym(t) { (t!=null) && t.isBead() && t.getValue() == rock && !marked.contains(t) }
+    is_fsym(t) { (t!=null) && t.isbead() && t.getvalue() == rock && !marked.contains(t) }
     get_slot(n,t) { getNorthBead(t) }
     get_slot(s,t) { getSouthBead(t) }
     get_slot(e,t) { getEastBead(t) }
@@ -61,35 +61,35 @@ public class BoulderDashCore {
   private static int ground = 2; //Titanium Wall
 
   private Position getNorthPosition(Position p) {
-    return `pos(p.getX(),p.getY()-1);
+    return `pos(p.getx(),p.gety()-1);
   }
 
   private Position getSouthPosition(Position p) {
-    return `pos(p.getX(),p.getY()+1);
+    return `pos(p.getx(),p.gety()+1);
   }
 
   private Position getEastPosition(Position p) {
-    return `pos(p.getX()+1,p.getY());
+    return `pos(p.getx()+1,p.gety());
   }
 
   private Position getWestPosition(Position p) {
-    return `pos(p.getX()-1,p.getY());
+    return `pos(p.getx()-1,p.gety());
   }
 
   private Bead getNorthBead(Bead b) {
-    return (Bead) space.get(getNorthPosition(b.getPos()));
+    return (Bead) space.get(getNorthPosition(b.getpos()));
   }
 
   private Bead getSouthBead(Bead b) {
-    return (Bead) space.get(getSouthPosition(b.getPos()));
+    return (Bead) space.get(getSouthPosition(b.getpos()));
   }
 
   private Bead getEastBead(Bead b) {
-    return (Bead) space.get(getEastPosition(b.getPos()));
+    return (Bead) space.get(getEastPosition(b.getpos()));
   }
 
   private Bead getWestBead(Bead b) {
-    return (Bead) space.get(getWestPosition(b.getPos()));
+    return (Bead) space.get(getWestPosition(b.getpos()));
   }
 
   public final static void main(String[] args) {
@@ -189,14 +189,14 @@ public class BoulderDashCore {
   public boolean gravity(HashMap newSpace, Bead b) {
     %match(Bead b) {
       beadRock[s=empty()] -> {
-        Bead newBead = `bead(getSouthPosition(b.getPos()),b.getValue());
+        Bead newBead = `bead(getSouthPosition(b.getpos()),b.getvalue());
         marked.add(b);
         putBead(newSpace,newBead);
         return true;
       }
 
       beadRock[s=s@beadRock[e=empty()],e=empty()] -> {
-        Bead newBead = `bead(getEastPosition(getSouthPosition(b.getPos())),b.getValue());
+        Bead newBead = `bead(getEastPosition(getSouthPosition(b.getpos())),b.getvalue());
         putBead(newSpace,newBead);
         putBead(newSpace,`s);
         marked.add(b);
@@ -205,7 +205,7 @@ public class BoulderDashCore {
       }
 
       beadRock[s=s@beadRock[w=empty()],w=empty()] -> {
-        Bead newBead = `bead(getWestPosition(getSouthPosition(b.getPos())),b.getValue());
+        Bead newBead = `bead(getWestPosition(getSouthPosition(b.getpos())),b.getvalue());
         putBead(newSpace,newBead);
         putBead(newSpace,`s);
         marked.add(b);
@@ -229,11 +229,11 @@ public class BoulderDashCore {
   }
 
   private void putBead(HashMap space, Bead b) {
-    space.put(b.getPos(),b);
+    space.put(b.getpos(),b);
   }
 
   private void removeBead(HashMap space, Bead b) {
-    space.remove(b.getPos());
+    space.remove(b.getpos());
   }
 
 

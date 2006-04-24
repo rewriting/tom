@@ -1,0 +1,5 @@
+module boulder
+imports int
+abstract syntax
+Position = pos(x:int,y:int)
+Bead = bead(pos:Position,value:int)

@@ -49,9 +49,9 @@ public class JBoulderDashPanel extends JPanel {
       // Warning between North and south,, east and west
     while(it.hasNext()) {
       Bead b = (Bead) it.next();
-      int x = b.getPos().getX();
-      int y = b.getPos().getY();
-      g.drawImage(img[b.getValue()], x*BoulderDashImagesData.IMAGE_SIZE, y*BoulderDashImagesData.IMAGE_SIZE, null);
+      int x = b.getpos().getx();
+      int y = b.getpos().gety();
+      g.drawImage(img[b.getvalue()], x*BoulderDashImagesData.IMAGE_SIZE, y*BoulderDashImagesData.IMAGE_SIZE, null);
     }
     lastDrawnSpace = space;
   }

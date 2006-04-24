@@ -220,8 +220,7 @@
   </target>
 
   <target name="boulderdash" depends="init">
-    <adtcompile example="${boulderdash}"
-                factory="boulder"/>
+    <gomcompile example="${boulderdash}"/>
     <tomcompile example="${boulderdash}"/>
     <javacompile example="${boulderdash}"/>
     <!-- copy resources in build -->
@@ -232,14 +231,21 @@
       </fileset>
     </copy>
     <!-- Create a jar for the applet -->
+    <path id="mutraveler.path"> <!-- ugly hack to find the TNode jar -->
+      <fileset dir="${tom.home}/lib">
+        <include name="mutraveler*.jar"/>
+      </fileset>
+    </path>
+    <property name="mutraveler.jar" refid="mutraveler.path"/>
     <jar jarfile="${examples.build}/${boulderdash}/boulder.jar">
       <fileset dir="${examples.build}">
         <include name="${boulderdash}/**/*.class"/>
         <include name="${boulderdash}/**/*.gif"/>
       </fileset>
       <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
-      <zipfileset src="${tom.home}/lib/aterm.jar"/>
       <zipfileset src="${tom.home}/lib/jjtraveler.jar"/>
+      <zipfileset src="${mutraveler.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
+      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/*"/>
     </jar>
   </target>
 
