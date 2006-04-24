@@ -6,15 +6,11 @@ public class List1 {
   %gom {
     // extension of adt syntax
     module List
-    imports 
-    public
-      sorts E L
-      
     abstract syntax
-      a() -> E
-      b() -> E
-      c() -> E
-      f( E* ) -> L
+    E = a()
+      | b()
+      | c()
+    L = f( E* )
    }
 
   public L swapSort(L l) {
@@ -22,24 +18,24 @@ public class List1 {
       f(X*,e1,Z*,e2,Y*) -> {
         if(`gt(e1,e2)) {
           return `swapSort(f(X*,e2,Z*,e1,Y*));
-					//System.out.println("("+`e1+","+`e2+")");
+          //System.out.println("("+`e1+","+`e2+")");
         }
       }
     }
-		return l;
+    return l;
   }
 
   private boolean gt(E e1, E e2) {
     return e1.toString().compareTo(e2.toString()) > 0;
   }
-  
+
   public L removeDouble(L l) {
     %match(L l) {
       f(X1*,x,x,X2*) -> {
         return removeDouble(`f(X1*,x,X2*));
       }
     }
-		return l; 
+    return l;
   }
 
   public void run() {
@@ -58,4 +54,3 @@ public class List1 {
   }
 
 }
-

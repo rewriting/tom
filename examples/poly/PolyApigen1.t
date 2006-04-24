@@ -45,22 +45,18 @@ private final static int COMPLEXITY = 2;
   }
 
   /*
-  %vas {
-    module poly
-      imports int str
-      
-    public
-      sorts Expression
-
+  %gom {
+    module expression
+    imports String int
     abstract syntax
-      zero                                   -> Expression
-      one                                    -> Expression
-      mult(arg1:Expression, arg2:Expression) -> Expression
-      plus(arg1:Expression, arg2:Expression) -> Expression
-      exp(arg1:Expression)                   -> Expression
-      variable(string:str)                   -> Expression
-      constant(string:str)                   -> Expression
-      number(integer:int)                    -> Expression
+    Expression = zero()
+    	   | one()
+    	   | mult(arg1:Expression,arg2:Expression)
+    	   | plus(arg1:Expression,arg2:Expression)
+    	   | exp(arg1:Expression)
+    	   | variable(string:String)
+    	   | constant(string:String)
+    	   | number(integer:int)
   }
   */
 

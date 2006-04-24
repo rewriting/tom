@@ -6,20 +6,15 @@ public class Fibonacci1 {
 
   %gom {
     module Peano
-    imports 
-      int
-    public
-      sorts Nat
-      
+    imports int
     abstract syntax
-      zero() -> Nat
-      suc(pred:Nat) -> Nat
-      plus(x1:Nat, x2:Nat) -> Nat
-      mult(x1:Nat, x2:Nat) -> Nat
-      
-			fib(x:Nat) -> Nat
+    Nat = zero()
+        | suc(pred:Nat)
+        | plus(x1:Nat, x2:Nat)
+        | mult(x1:Nat, x2:Nat)
+        | fib(x:Nat)
 
-			//fibint(n:int) -> int
+        //fibint(n:int) -> int
    }
 
     // rule plus
@@ -31,47 +26,47 @@ public class Fibonacci1 {
     mult(x, zero())    -> zero()
     mult(x, suc(y))    -> plus(x,mult(x,y))
   } // rule
- 
-	/*
-	%rule {
-    fibint(0) -> 1
-    fib(1)    -> 1
-    fib(n)    -> fibint(n - 1) + fibint(n - 2) 
-  } 
-	*/
 
-	public int fibint(int n) {
-		%match(int n) {
-			0 -> { return 1; }
-			1 -> { return 1; }
-			x -> { 
-				if(`x>1) { 
-					return `fibint(x-1) + `fibint(x-2); 
-				} 
-			}
-		}
+  /*
+     %rule {
+     fibint(0) -> 1
+     fib(1)    -> 1
+     fib(n)    -> fibint(n - 1) + fibint(n - 2)
+     }
+   */
+
+  public int fibint(int n) {
+    %match(int n) {
+      0 -> { return 1; }
+      1 -> { return 1; }
+      x -> {
+        if(`x>1) {
+          return `fibint(x-1) + `fibint(x-2);
+        }
+      }
+    }
     return -1;
-	}
+  }
 
-	%rule {
+  %rule {
     fib(zero())        -> suc(zero())
     fib(suc(zero()))   -> suc(zero())
     fib(suc(suc(x)))   -> plus(fib(x),fib(suc(x)))
   }
-  
+
   //-------------------------------------------------------
 
   public void run() {
     System.out.println("running...");
-		Nat one = `suc(zero());
-		Nat two = `suc(one);
+    Nat one = `suc(zero());
+    Nat two = `suc(one);
 
     System.out.println("plus(one,two) = " + `plus(one,two));
     System.out.println("mult(two,two) = " + `mult(two,two));
     System.out.println("fibint(4) = " + `fibint(4));
     System.out.println("fib(four) = " + `fib(mult(two,two)));
   }
-  
+
   public final static void main(String[] args) {
     Fibonacci1 test = new Fibonacci1();
     test.run();
