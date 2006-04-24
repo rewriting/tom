@@ -5,38 +5,35 @@ public class Matching1 {
 
   %gom {
     module Peano
-    imports 
-    public
-      sorts Nat 
-      
+    imports String
     abstract syntax
 //       xx -> Nat
 //       yy -> Nat
-      var(n:String) -> Nat
-      zero() -> Nat
-      suc(pred:Nat) -> Nat
-      plus(x1:Nat, x2:Nat) -> Nat
-      True()   -> Nat
-      False()  -> Nat
-      Match(pattern:Nat, subject:Nat) 	-> Nat
-      And(n1:Nat,n2:Nat) -> Nat
+    Nat = var(n:String)
+        | zero()
+        | suc(pred:Nat)
+        | plus(x1:Nat, x2:Nat)
+        | True()
+        | False()
+        | Match(pattern:Nat, subject:Nat)
+        | And(n1:Nat,n2:Nat)
    }
 
   %rule {
     // Delete
     Match(zero(),zero()) -> True()
-      
+
     // Decompose
       Match(suc(x),suc(y)) -> Match(x,y)
       Match(plus(x1,x2),plus(y1,y2)) -> And(Match(x1,y1),Match(x2,y2))
-        
+
     // SymbolClash
-      Match(suc(_),zero()) -> False() 
-      Match(zero(),suc(_)) -> False() 
-      Match(plus(_,_),zero()) -> False() 
-      Match(zero(),plus(_,_)) -> False() 
-      Match(suc(_),plus(_,_)) -> False() 
-      Match(plus(_,_),suc(_)) -> False() 
+      Match(suc(_),zero()) -> False()
+      Match(zero(),suc(_)) -> False()
+      Match(plus(_,_),zero()) -> False()
+      Match(zero(),plus(_,_)) -> False()
+      Match(suc(_),plus(_,_)) -> False()
+      Match(plus(_,_),suc(_)) -> False()
   }
 
   %rule {
@@ -54,10 +51,10 @@ public class Matching1 {
     // MergingFail
       And(Match(var(x),zero()),Match(var(x),suc(_))) -> False()
       And(Match(var(x),suc(_)),Match(var(x),zero())) -> False()
-      And(Match(var(x),zero()),Match(var(x),plus(_,_))) -> False() 
-      And(Match(var(x),plus(_,_)),Match(var(x),zero())) -> False() 
-      And(Match(var(x),suc(_)),Match(var(x),plus(_,_))) -> False() 
-      And(Match(var(x),plus(_,_)),Match(var(x),suc(_))) -> False() 
+      And(Match(var(x),zero()),Match(var(x),plus(_,_))) -> False()
+      And(Match(var(x),plus(_,_)),Match(var(x),zero())) -> False()
+      And(Match(var(x),suc(_)),Match(var(x),plus(_,_))) -> False()
+      And(Match(var(x),plus(_,_)),Match(var(x),suc(_))) -> False()
   }
 
   //-------------------------------------------------------
@@ -67,8 +64,8 @@ public class Matching1 {
     Nat xx=`var("x");
     Nat yy=`var("y");
 
-		Nat one = `suc(zero());
-		Nat two = `suc(one);
+    Nat one = `suc(zero());
+    Nat two = `suc(one);
 
     Nat pxy = `plus(xx,yy);
     Nat px0 = `plus(xx,zero());
@@ -88,7 +85,7 @@ public class Matching1 {
     Nat start = `Match(t1,t2);
     System.out.println("Match("+`t1+","+`t2+") = " + `start);
   }
-  
+
   public final static void main(String[] args) {
     Matching1 test = new Matching1();
     test.run();

@@ -6,21 +6,17 @@ class Matching {
   %gom {
     // ...
     module Term
-    imports 
-      String
-    public
-    sorts Term TermList
-      
+    imports String
     abstract syntax
-    Variable(name:String)               -> Term
-    Appl(name:String, args:TermList)    -> Term
-    cons(head:Term,tail:TermList )      -> TermList
-    nil()                                 -> TermList
-    True() 																-> Term
-    False()																-> Term
-    Match(pattern:Term, subject:Term) 	-> Term
-    And(a1:Term, a2:Term) 							-> Term
-    decomposeList(l1:TermList, l2:TermList) -> Term
+    Term = Variable(name:String)
+         | Appl(name:String, args:TermList)
+         | True()
+         | False()
+         | Match(pattern:Term, subject:Term)
+         | And(a1:Term, a2:Term)
+         | decomposeList(l1:TermList, l2:TermList)
+    TermList = cons(head:Term,tail:TermList)
+             | nil()
   }
 
   %rule {

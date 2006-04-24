@@ -6,45 +6,40 @@ public class Matching3 {
 
   %gom {
     module Peano
-    imports 
-    public
-      sorts Nat 
-      
     abstract syntax
-      var(n:String) -> Nat
-      zero()  -> Nat
-      suc(pred:Nat) -> Nat
-      plus(x1:Nat, x2:Nat) -> Nat
-      True()   -> Nat
-      False()  -> Nat
-      Match(pattern:Nat, subject:Nat) 	-> Nat
-      And(n1:Nat,n2:Nat) -> Nat
+    Nat = var(n:String)
+        | zero()
+        | suc(pred:Nat)
+        | plus(x1:Nat, x2:Nat)
+        | True()
+        | False()
+        | Match(pattern:Nat, subject:Nat)
+        | And(n1:Nat,n2:Nat)
    }
 
-	
-	public Nat solve(Nat p) {
-		Nat res = oneStepSolve(p);
-		if(p != res) {
-			res = solve(res);
-		}
-		return res;
-	}
+  public Nat solve(Nat p) {
+    Nat res = oneStepSolve(p);
+    if(p != res) {
+      res = solve(res);
+    }
+    return res;
+  }
 
-	public Nat oneStepSolve(Nat p) {
-		%match(Nat p) {
+  public Nat oneStepSolve(Nat p) {
+    %match(Nat p) {
 
       // Delete
       Match(zero(),zero()) -> { return `True();}
-      
+
       // Decompose
       Match(suc(x),suc(y)) -> { return `Match(x,y);}
-      Match(plus(x1,x2),plus(y1,y2)) -> { 
+      Match(plus(x1,x2),plus(y1,y2)) -> {
         return `And(Match(x1,y1),Match(x2,y2));}
-        
+
     // SymbolClash
       Match(suc(_),zero()) -> { return `False() ;}
       Match(zero(),suc(_)) -> { return `False() ;}
-      Match(plus(_,_),zero()) -> { return `False() ;} 
+      Match(plus(_,_),zero()) -> { return `False() ;}
       Match(zero(),plus(_,_)) -> { return `False() ;}
       Match(suc(_),plus(_,_)) -> { return `False() ;}
       Match(plus(_,_),suc(_)) -> { return `False() ;}
@@ -62,24 +57,24 @@ public class Matching3 {
       And(X,And(X,Y)) -> { return  `And(X,Y);}
 
     // MergingFail
-      And(Match(var(x),X),Match(var(x),Y)) -> { 
+      And(Match(var(x),X),Match(var(x),Y)) -> {
         if(`X!=`Y){
           return `False() ;
         }
       }
-      And(Match(var(x),X),And(Match(var(x),Y),P)) -> { 
+      And(Match(var(x),X),And(Match(var(x),Y),P)) -> {
         if(`X!=`Y){
           return `False() ;
         }
       }
 
     // Sort
-      And(Match(var(x),X),Match(var(y),Y)) -> { 
+      And(Match(var(x),X),Match(var(y),Y)) -> {
         if(`x.compareTo(`y)<0){
           return `And(Match(var(y),Y),Match(var(x),X)) ;
         }
       }
-      And(Match(var(x),X),And(Match(var(y),Y),P)) -> { 
+      And(Match(var(x),X),And(Match(var(y),Y),P)) -> {
         if(`x.compareTo(`y)<0){
           return `And(Match(var(y),Y),And(Match(var(x),X),P)) ;
         }
@@ -89,10 +84,10 @@ public class Matching3 {
         And(And(p1,p2),p3) -> { return `And(p1, And(p2,p3)); }
 
     // congruence
-			And(p1,p2) -> { return `And(solve(p1),solve(p2)); }
-		}
-		return p;
-	}
+        And(p1,p2) -> { return `And(solve(p1),solve(p2)); }
+    }
+    return p;
+  }
 
 
   //-------------------------------------------------------
@@ -103,8 +98,8 @@ public class Matching3 {
     Nat yy=`var("y");
     Nat zz=`var("z");
 
-		Nat one = `suc(zero());
-		Nat two = `suc(one);
+    Nat one = `suc(zero());
+    Nat two = `suc(one);
 
     Nat pxy = `plus(xx,yy);
     Nat pzx = `plus(zz,xx);
@@ -140,7 +135,7 @@ public class Matching3 {
     start = `solve(Match(t1,t2));
     System.out.println("Match("+`t1+","+`t2+") = " + `start);
   }
-  
+
   public final static void main(String[] args) {
     Matching3 test = new Matching3();
     test.run();

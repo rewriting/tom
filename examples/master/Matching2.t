@@ -5,22 +5,18 @@ import master.matching2.term.types.*;
 class Matching2 {
   %gom {
     module Term
-    imports 
-    public
-    sorts Term TermList
-      
+    imports String
     abstract syntax
-    Variable(name:String)               -> Term
-    Appl(name:String, args:TermList)    -> Term
-    conc( Term* )                       -> TermList
-    True()  																-> Term
-    False() 																-> Term
-    Match(pattern:Term, subject:Term) 	-> Term
-    And(l:TermList)       							-> Term
+    Term = Variable(name:String)
+         | Appl(name:String, args:TermList)
+         | True()
+         | False()
+         | Match(pattern:Term, subject:Term)
+         | And(l:TermList)
+    TermList = conc( Term* )
     //decomposeList(l1:TermList, l2:TermList) -> TermList
   }
 
-  
   private TermList decomposeList(TermList l1, TermList l2) {
     %match(TermList l1, TermList l2) {
       conc(),conc() -> { return `conc(True()); }
@@ -30,7 +26,7 @@ class Matching2 {
       }
     }
     return `conc();
-  } 
+  }
 /*
   %rule {
     decomposeList(conc(),conc()) -> conc()
@@ -40,12 +36,12 @@ class Matching2 {
   %rule {
     // Delete
     Match(Appl(name,conc()),Appl(name,conc())) -> True()
-        
+
     // Decompose
     Match(Appl(name,a1),Appl(name,a2)) -> And(decomposeList(a1,a2))
-        
+
     // SymbolClash
-    Match(Appl(name1,args1),Appl(name2,args2)) -> False() 
+    Match(Appl(name1,args1),Appl(name2,args2)) -> False()
   }
 
   %rule {
@@ -63,7 +59,7 @@ class Matching2 {
   public void run() {
     Term p1 = `Appl("f",conc(Variable("x")));
     Term s1 = `Appl("f",conc(Appl("a",conc())));
-    
+
     Term p2 = `Appl("f",conc(Variable("x"),Appl("g",conc(Variable("y")))));
     Term s2 = `Appl("f",conc(Appl("a",conc()),Appl("g",conc(Appl("b",conc())))));
 
@@ -79,11 +75,10 @@ class Matching2 {
     System.out.println("match(p2,s2) = " + `Match(p2,s2));
     System.out.println("match(p3,s3) = " + `Match(p3,s3));
   }
-  
+
   public final static void main(String[] args) {
     Matching2 test = new Matching2();
     test.run();
   }
-
 
 }
