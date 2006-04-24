@@ -64,7 +64,7 @@ public class BasicStrategyTemplate extends TemplateClass {
     out.append("\tpublic "+className()+"(jjtraveler.reflective.VisitableVisitor any) {\n");
     out.append("\t\tsuper(any);\n");
     out.append("\t}\n");
-    out.append("}");
+    out.append("}\n");
 
     return out.toString();
   }

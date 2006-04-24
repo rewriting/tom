@@ -33,7 +33,6 @@ import java.util.logging.*;
 
 public class TestHandler extends Handler {
 
-
   Vector records;
   Vector mess_attempted;
   int index;
@@ -55,15 +54,15 @@ public class TestHandler extends Handler {
         mess_attempted.add( (Class.forName(className)).getField(fieldName).get(null));
         line  = reader.readLine();
       }
-    }catch(java.io.IOException e)
-      {publish(new LogRecord(Level.SEVERE, "No Non Regression Test file : <file-name>+\".nrt\""));}
-     catch(java.lang.NoSuchFieldException e)
-       {publish(new LogRecord(Level.SEVERE, e.getMessage()));}
-     catch(java.lang.ClassNotFoundException e)
-       {publish(new LogRecord(Level.SEVERE, e.getMessage()));}
-     catch(java.lang.IllegalAccessException e)
-       {publish(new LogRecord(Level.SEVERE, e.getMessage()));}
-
+    } catch(java.io.IOException e) {
+      publish(new LogRecord(Level.SEVERE, "No Non Regression Test file : <file-name>+\".nrt\""));
+    } catch(java.lang.NoSuchFieldException e) {
+      publish(new LogRecord(Level.SEVERE, e.getMessage()));
+    } catch(java.lang.ClassNotFoundException e) {
+      publish(new LogRecord(Level.SEVERE, e.getMessage()));
+    } catch(java.lang.IllegalAccessException e) {
+      publish(new LogRecord(Level.SEVERE, e.getMessage()));
+    }
   }
 
   public boolean hasLog(Level level) {
