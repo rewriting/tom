@@ -1,5 +1,4 @@
 module Tree 
-imports aterm atermlist
 abstract syntax
 Color= R()
      | B()
