@@ -38,28 +38,21 @@ import rbtree.tree.types.*;
 
 public class Tree1 {
 
-  private Factory factory;
   private Comparator comparator;
-  
   %include { tree/tree.tom }
   
-  public Tree1(Factory factory) {
-    this.factory = factory;
+  public Tree1() {
     this.comparator = new MyComparator();
   }
 
-  public Factory getTreeFactory() {
-    return factory;
-  }
-
   private Tree makeBlack(Tree t) {
-    if(!t.getColor().isB()) {
-      t = `(t.setColor(B())); 
+    if(!t.getcolor().isB()) {
+      t = `node(B(),t.getlhs(),t.getvalue(),t.getrhs()); 
     }
     return t;
   }
 
-  public boolean member(Tree t, ATerm x) {
+  public boolean member(Tree t, Element x) {
     %match(Tree t) {
       emptyTree() -> { return false; }
       node(_,a,y,b) -> {
@@ -84,11 +77,11 @@ public class Tree1 {
     return 0;
   }
   
-  public Tree insert(Tree t, ATerm x) {
+  public Tree insert(Tree t, Element x) {
     return makeBlack(ins(t,x));
   }
 
-  private Tree ins(Tree t, ATerm x) {
+  private Tree ins(Tree t, Element x) {
     %match(Tree t) {
       emptyTree() -> {
         return `node(R(),t,x,t);
@@ -108,8 +101,8 @@ public class Tree1 {
     return null;
   }
 
-  public Tree balance(Color color, Tree lhs, ATerm elt, Tree rhs) {
-    %match(Color color, Tree lhs, ATerm elt, Tree rhs) {
+  public Tree balance(Color color, Tree lhs, Element elt, Tree rhs) {
+    %match(Color color, Tree lhs, Element elt, Tree rhs) {
       B(), node(R(),node(R(),a,x,b),y,c), z, d -> { return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d)); }
       B(), node(R(),a,x,node(R(),b,y,c)), z, d -> { return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d)); }
       B(), a, x, node(R(),node(R(),b,y,c),z,d) -> { return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d)); }
@@ -119,8 +112,8 @@ public class Tree1 {
     return `node(color,lhs,elt,rhs);
   }
   
-  public Tree balance2(Color color, Tree lhs, ATerm elt, Tree rhs) {
-    %match(Color color, Tree lhs, ATerm elt, Tree rhs) {
+  public Tree balance2(Color color, Tree lhs, Element elt, Tree rhs) {
+    %match(Color color, Tree lhs, Element elt, Tree rhs) {
         // color flip
       B(), node(R(),a@node(R(),_,_,_),x,b), y, node(R(),c,z,d) -> {
         return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d));
@@ -189,6 +182,7 @@ public class Tree1 {
     stopChrono = System.currentTimeMillis();
     System.out.println("Building Set of size = " + set.size() + " in " + (stopChrono-startChrono) + " ms");
 
+    /*
     ATermList list = SingletonFactory.getInstance().makeList();
     startChrono = System.currentTimeMillis();
     for(int i=0 ; i<3*n ; i++) {
@@ -197,7 +191,7 @@ public class Tree1 {
     stopChrono = System.currentTimeMillis();
     System.out.println("Building ATlist of size = " + list.getLength() + " in " + (stopChrono-startChrono) + " ms");
 
-
+*/
     
   }
   
@@ -210,12 +204,13 @@ public class Tree1 {
   }
   
   public final static void main(String[] args) {
-    Tree1 test = new Tree1(Factory.getInstance(SingletonFactory.getInstance()));
+    Tree1 test = new Tree1();
     test.run(10000);
   }
 
   class MyComparator implements Comparator {
     public int compare(Object o1, Object o2) {
+      
       if(o1==o2) {
         return 0;
       }
@@ -228,6 +223,8 @@ public class Tree1 {
       } else if(ho1 > ho2) {
         return 1;
       } else {
+        System.out.println("o1 :"+o1);
+        System.out.println("o2 :"+o2);
         System.out.println("compare: hashCode collision");
         System.exit(1);
       }
