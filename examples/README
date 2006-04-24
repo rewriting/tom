@@ -268,4 +268,7 @@ If you come from the
 
 * zenon
   certification of tom's output using zenon and coq
+  Tom is ran with "--verify" option, and produces a proof obligation script ".zv"
+  Use "zvtov" (from the focal distribution) to check the proofs and produce a
+  coq proof script
 
