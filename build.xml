@@ -508,11 +508,6 @@
 	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
 	    <replaceFilter token="@INCLUDES_DIR@" value="share/jtom"/>
     </replace>
-    <copy todir="${stable.dist.bin}">
-      <fileset dir="${utils}">
-        <include name="adt-to-tom.*"/>
-      </fileset>
-    </copy>
     <chmod dir="${stable.dist.bin}" perm="ugo+rx">
       <include name="*"/>
       <exclude name="*.bat"/>
@@ -637,11 +632,6 @@
 	    <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
 	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
     </replace>
-    <copy todir="${src.dist.bin}">
-      <fileset dir="${utils}">
-        <include name="adt-to-tom.*"/>
-      </fileset>
-    </copy>
     <chmod dir="${src.dist.bin}" perm="ugo+rx">
       <include name="*"/>
       <exclude name="*.bat"/>
