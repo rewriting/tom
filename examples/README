@@ -118,6 +118,14 @@ If you come from the
 
 * boulderdash
   Simulate how rocks go down in the boulder-dash game
+  Coordinate system for Java 2D and used Topology:
+ 0
+0*-------->
+ |    N
+ |    |
+ | W--*--E
+ |    |
+ Y    S
   Concepts: apigen, virtual mapping
 
 * builtin
