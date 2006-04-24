@@ -1,8 +1,0 @@
-* term.adt describes the abstract data-type
-
-*  adt-to-tom -n data --nojar --input data.adt --javagen --package addressbook 
-
-* tom AddressBook.t
-* javac AddressBook.java
-* java AddressBook
-
