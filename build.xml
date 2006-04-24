@@ -582,10 +582,10 @@
         <include name="bin/*"/>
         <exclude name="bin/*.bat"/>
       </tarfileset>
-      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}">
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
         <include name="bin/*.bat"/>
       </tarfileset>
-      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}">
+      <tarfileset dir="${stable.dist}" prefix="tom-${stable.version}" mode="644">
         <include name="**"/>
         <exclude name="bin/*"/>
       </tarfileset>
