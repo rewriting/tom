@@ -55,14 +55,14 @@ public class Position {
   public boolean equals(Object o) {
     if (o instanceof Position) {
       Position p = (Position)o;
-      /* we need to chenck only the meaningful part of the data array */
+      /* we need to check only the meaningful part of the data array */
       if (size==p.size) {
-       for(int i=0; i<size; i++) {
-        if (data[i]!=p.data[i]) {
-          return false;
+        for(int i=0; i<size; i++) {
+          if (data[i]!=p.data[i]) {
+            return false;
+          }
         }
-       }
-       return true;
+        return true;
       } else {
         return false;
       }
