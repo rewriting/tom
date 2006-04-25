@@ -69,8 +69,8 @@ let rec plus (t1,t2)=
 let rec fib (t1)= 
   try(
   %match (peano t1 ) {
-    zero() -> { raise (Result(`suc(zero))) }
-    suc(zero()) -> { raise (Result(`suc(zero))) }
+    zero() -> { raise (Result(`suc(zero()))) }
+    suc(zero()) -> { raise (Result(`suc(zero()))) }
     suc(suc(x)) -> { raise (Result(`plus(fib(x),fib(suc(x))))) }
   };
   assert false
