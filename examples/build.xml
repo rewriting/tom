@@ -250,8 +250,7 @@
   </target>
 
   <target name="builtin" depends="init">
-    <adtcompile example="${builtin}"
-                factory="term"/>
+    <gomcompile example="${builtin}"/>
     <tomcompile example="${builtin}"/>
     <javacompile example="${builtin}"/>
   </target>
@@ -825,9 +824,9 @@
         <include name="${boulderdash}/*.html"/>
         <include name="${boulderdash}/*.java"/>
 
-        <include name="${builtin}/README"/>
         <include name="${builtin}/*.t"/>
-        <include name="${builtin}/*.adt"/>
+        <include name="${builtin}/*.java"/>
+        <include name="${builtin}/*.gom"/>
 
         <include name="${caml}/README"/>
         <include name="${caml}/Makefile"/>

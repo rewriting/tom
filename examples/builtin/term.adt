@@ -1,4 +1,0 @@
-[
-constructor(Term,Name,Name(<string(str)>)),
-constructor(Term,Age,Age(<age(int)>))
-]
