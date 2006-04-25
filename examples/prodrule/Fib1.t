@@ -33,18 +33,13 @@ import prodrule.fib1.fib.types.*;
 
 public class Fib1 {
   %gom {
-    // extension of adt syntax
     module fib
-    imports
-      int
-    public
-      sorts Element Space
-      
+    imports int
     abstract syntax
-      Undef() -> Element
-      Nat( value:int ) -> Element
-      Fib(arg:int, val:Element) -> Element
-      concElement( Element* ) -> Space
+      Element = Undef()
+              | Nat( value:int )
+              | Fib(arg:int, val:Element) 
+      Space = concElement( Element* )
    }
 
   public int run(int n) {

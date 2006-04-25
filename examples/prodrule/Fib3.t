@@ -33,18 +33,13 @@ import prodrule.fib3.fib.types.*;
 import java.util.*;
 
 public class Fib3 {
-  %vas {
-    // extension of adt syntax
+  %gom {
     module fib
-    imports
-      
-    public
-      sorts Element
-      
+    imports int
     abstract syntax
-      Undef() -> Element
-      Nat( value:int ) -> Element
-      Fib(arg:int, val:Element) -> Element
+      Element = Undef()
+              | Nat( value:int )
+              | Fib(arg:int, val:Element) 
    }
 
   %typeterm Space {

@@ -31,29 +31,21 @@ public final class Gasel2 {
     t.run();
   }
 
-  %vas {
+  %gom {
   module data
-	imports public
+	abstract syntax		
+		Atom = empty
+		     | C(n:int)
+		     | arC(n:int)
+		     | O(n:int)
+		     | arO(n:int)
+		     | H(n:int)
+		     | e(n:int)
+		
+    Bond = bond(bondType:BondType,source:Atom,target:Atom)
+		BondList = concBond( Bond* )
 
-	sorts Atom BondType Bond BondList
-      
-	abstract syntax	
-    empty      -> Atom
-		C(n:int)   -> Atom
-		arC(n:int) -> Atom
-		O(n:int)   -> Atom
-		arO(n:int) -> Atom
-		H(n:int)   -> Atom
-		e(n:int)   -> Atom
-	
-    bond(bondType:BondType,source:Atom,target:Atom) -> Bond
-		concBond( Bond* ) -> BondList  
-
-		none   -> BondType
-		simple -> BondType
-		double -> BondType
-		triple -> BondType
-		arom   -> BondType
+		Link = none | simple | double | triple | arom
   }
 
   %typeterm StateList {

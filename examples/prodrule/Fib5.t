@@ -33,19 +33,13 @@ import prodrule.fib5.fib.types.*;
 
 public class Fib5 {
   %gom {
-    // extension of adt syntax
     module fib
-    imports
-      
-	    public
-	    sorts Element
-      
-	    abstract syntax
-	    Undef() -> Element
-      Nat( value:int ) -> Element
-	    Fib(arg:int, val:Element) -> Element
-	    }
-
+    imports int
+    abstract syntax
+      Element = Undef()
+              | Nat( value:int )
+              | Fib(arg:int, val:Element) 
+   }
     
   %typeterm Space {
     implement { MyList }

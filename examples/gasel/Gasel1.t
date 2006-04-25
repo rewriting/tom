@@ -14,31 +14,22 @@ public final class Gasel1 {
   private dataFactory factory;
   private Graph globalGraph;
 
-  %vas {
+  %gom {
   module data
-	imports public
-
-	sorts Atom IntList Link 
-        // Radical RadicalList
-      
 	abstract syntax		
-		C(n:int)   -> Atom
-		arC(n:int) -> Atom
-		O(n:int)   -> Atom
-		arO(n:int) -> Atom
-		H(n:int)   -> Atom
-		e(n:int)   -> Atom
+		Atom = C(n:int)
+		     | arC(n:int)
+		     | O(n:int)
+		     | arO(n:int)
+		     | H(n:int)
+		     | e(n:int)
 		
-		concInt( int* ) -> IntList  
+		IntList = concInt( int* )
 
-		none   -> Link
-		simple -> Link
-		double -> Link
-		triple -> Link
-		arom   -> Link
+		Link = none | simple | double | triple | arom
 
-		//rad(link:Link,symbol:Symbol,radList:RadicalList) -> Radical
-		//concRad( Radical* ) -> RadicalList
+		//Radical = rad(link:Link,symbol:Symbol,radList:RadicalList)
+		//RadicalList = concRad( Radical* )
   }
 
   %typeterm Radical {
