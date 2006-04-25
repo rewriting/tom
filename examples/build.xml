@@ -285,7 +285,7 @@
           failonerror="yes"
           executable="make">
       <arg line=""/>
-      <env key="CAMLC" value="${camlc.bin}"/>
+      <env key="OCAMLC" value="${camlc.bin}"/>
     </exec>
   </target>
 

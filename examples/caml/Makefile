@@ -1,4 +1,4 @@
-OCAMLC=${CAMLC}
+OCAMLC?=ocamlc
 
 all: tompeano tomlist peanomapped erat
 
