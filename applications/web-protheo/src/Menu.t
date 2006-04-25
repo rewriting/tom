@@ -16,9 +16,6 @@ public class Menu {
   %include{mutraveler.tom}
   %include{adt/tnode/TNode.tom}
 
-  %typeterm HashSet {
-    implement {HashSet}
-  }
   %typeterm Position {
     implement {tom.library.strategy.mutraveler.Position}
   }
