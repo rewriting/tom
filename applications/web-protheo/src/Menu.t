@@ -39,52 +39,54 @@ public class Menu {
     this.xtools = xtools;
     menus = new Hashtable();
 
+    //find all leaf nodes
+    HashSet leaves = new HashSet();
+
     VisitableVisitor duplicateLinks = `DuplicateLinks();
     VisitableVisitor addSubsectionsTag = `AddSubsectionsTag();
+    VisitableVisitor findLeaves = `FindLeaves(leaves);
+
     try {
       menu = (TNode)MuTraveler.init(`BottomUp(RepeatId(duplicateLinks))).visit(menu);
       menu = (TNode)MuTraveler.init(`BottomUp(addSubsectionsTag)).visit(menu);
 
-      //find all leaf nodes
-      HashSet leaves = new HashSet();
-
-      try {
-        VisitableVisitor findLeaves = `FindLeaves(leaves);
-        MuTraveler.init(`BottomUp(findLeaves)).visit(menu);
-      } catch (VisitFailure e) {
-        System.out.println("Failed to get leaves" + menu);
-      }
-
-      Iterator it = leaves.iterator();
-      while(it.hasNext()) {
-        Position p = (Position)it.next();
-
-        StringBuffer link = new StringBuffer();
-
-        VisitableVisitor s1 = `S1();
-        VisitableVisitor s2 = `S2(link);
-        VisitableVisitor eqPos = `EqPos(p);
-        VisitableVisitor subPos = `SubPos(p);
-
-        VisitableVisitor xmastree = `mu(MuVar("x"),
-            All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1))));
-
-        try {
-          TNode output = (TNode)MuTraveler.init(xmastree).visit(menu);
-          TNode tmp = switchLang(link);
-          TNodeList outList = `concTNode(output,tmp);
-
-          writeMenu(Translator.IN_ENGLISH,link,outList);
-          writeMenu(Translator.IN_FRENCH,link,outList);
-
-        } catch (VisitFailure e) {
-          System.out.println("reduction failed on: " + menu);
-        }
-      }
+      MuTraveler.init(`BottomUp(findLeaves)).visit(menu);
 
     } catch (VisitFailure e) {
-      System.err.println("reduction failed");
+      System.err.println("reduction failed: " + menu);
     }    
+
+    //this is a StringBuffer for local use in %strategy
+    StringBuffer link = new StringBuffer();
+
+    VisitableVisitor s1 = `S1();
+    VisitableVisitor s2 = `S2(link);
+
+    Iterator it = leaves.iterator();
+    while(it.hasNext()) {
+      Position p = (Position)it.next();
+
+      VisitableVisitor eqPos = `EqPos(p);
+      VisitableVisitor subPos = `SubPos(p);
+
+      //means: if eqPos on Position p then apply s2 else if not subPos apply s1 
+      VisitableVisitor xmastree = `mu(MuVar("x"),
+          All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1))));
+
+      try {
+
+        TNode output = (TNode)MuTraveler.init(xmastree).visit(menu);
+        TNode tmp = switchLang(link);
+        TNodeList outList = `concTNode(output,tmp);
+
+        writeMenu(Translator.IN_ENGLISH,link,outList);
+        writeMenu(Translator.IN_FRENCH,link,outList);
+
+      } catch (VisitFailure e) {
+        System.err.println("reduction failed: " + menu);
+      }    
+
+    }
   }
 
   public TNodeList getContent(String key) {
