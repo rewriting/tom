@@ -2,9 +2,9 @@ import tom.library.xml.*;
 
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import aterm.*;
 import java.util.*;
 import java.io.*;
+
 import java.lang.reflect.Array;
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
@@ -58,7 +58,7 @@ public class Publi {
     %match(String lang){
       "fr" -> {
         //result = `concTNode(result*,#TEXT("\n"),<div id="year"><h3>#TEXT("Publications triées par année:")</h3>years*</div>);
-        result = `concTNode(result*,#TEXT("\n"),<div id="year"><h3>#TEXT("Publications tri\u00E9es par année:")</h3>years*</div>);
+        result = `concTNode(result*,#TEXT("\n"),<div id="year"><h3>#TEXT("Publications tri\u00E9es par ann\u00E9e:")</h3>years*</div>);
         //result = `concTNode(result*,#TEXT("\n"),<div id="author"><h3>#TEXT("Publications triées par auteur:")</h3>authorsList*</div>);
         result = `concTNode(result*,#TEXT("\n"),<div id="author"><h3>#TEXT("Publications tri\u00E9es par auteur:")</h3>authorsList*</div>);
         result = `concTNode(result*,#TEXT("\n"),<div id="alumni"><h3>#TEXT("Anciens membres:")</h3>alumniList*</div>);
