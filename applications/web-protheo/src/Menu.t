@@ -31,7 +31,6 @@ public class Menu {
   private XmlTools xtools;
   private Tools tools;
   private TNode menu;
-  private HashSet leaves;
   private Hashtable menus;
 
   public Menu(TNode menu,Tools tools,XmlTools xtools){
@@ -39,7 +38,6 @@ public class Menu {
     this.tools = tools;
     this.xtools = xtools;
     menus = new Hashtable();
-    leaves = new HashSet();
 
     VisitableVisitor duplicateLinks = `DuplicateLinks();
     VisitableVisitor addSubsectionsTag = `AddSubsectionsTag();
