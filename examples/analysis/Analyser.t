@@ -195,7 +195,7 @@ public class Analyser{
   }
 
   %op VisitableVisitor Modified(v:Variable) {
-    make(v) { new ControlFlowGraphBasicStrategy(new InnerModified(v))}
+    make(v) { new ControlFlowGraphBasicStrategy(`InnerModified(v))}
   }
 
   //Construction du CFG à partir de l'Ast
