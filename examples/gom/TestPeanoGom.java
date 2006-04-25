@@ -28,55 +28,22 @@
  */
 package gom;
 
-import gom.peanogom.peano.*;
-import gom.peanogom.peano.types.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-class PeanoGom {
+public class TestPeanoGom extends TestCase {
+	private PeanoGom test;
 
-  %gom {
-    module Peano
-    abstract syntax
-    Nat = zero()
-        | suc(pred:Nat)
-        | fib(val:Nat)
-        | plus(x1:Nat, x2:Nat)
-   }
-
-    // rule fib
-  %rule {
-    fib(zero())        -> suc(zero())
-    fib(suc(zero()))   -> suc(zero())
-    fib(suc(suc(x)))   -> plus(fib(x),fib(suc(x)))
+  public static void main(String[] args) {
+    junit.textui.TestRunner.run(new TestSuite(TestPeanoGom.class));
   }
 
-    // rule plus
-  %rule {
-    plus(x, zero())    -> x
-    plus(x, suc(y))    -> suc(plus(x,y))
-  } // rule
-  
-  public void run() {
-    System.out.println("running...");
-    System.out.println(fib(`suc(suc(suc(suc(suc(zero())))))));
+  public void setUp() {
+    test = new PeanoGom();
   }
-  
-  public final static void main(String[] args) {
-    PeanoGom test = new PeanoGom();
-    test.run();
-  }
-
-  public Nat getFive() {
-    return `suc(suc(suc(suc(suc(zero())))));
-  }
-
-  public Nat getEight() {
-    return `suc(suc(suc(suc(suc(suc(suc(suc(zero()))))))));
-  }
-
-/*
-  %rule {
-    mult(x, zero())    -> zero()
-    mult(x, suc(y))    -> plus(x,mult(x,y))
-  }
-*/
+	
+	public void testfib() {
+		assertEquals("fib 5 is 8",
+								 test.getEight(),test.fib(test.getFive()));
+	}
 }
