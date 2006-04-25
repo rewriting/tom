@@ -2,7 +2,6 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import java.util.*;
-import java.io.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Position;
@@ -24,10 +23,18 @@ public class Menu {
     implement {tom.library.strategy.mutraveler.Position}
   }
 
+  %typeterm StringBuffer {
+    implement { StringBuffer }
+  }
+
+  %typeterm HashSet {
+    implement { HashSet }
+  }
+
   private XmlTools xtools;
   private Tools tools;
   private TNode menu;
-  private String globalS2Link = "";
+  private HashSet leaves;
   private Hashtable menus;
 
   public Menu(TNode menu,Tools tools,XmlTools xtools){
@@ -35,6 +42,7 @@ public class Menu {
     this.tools = tools;
     this.xtools = xtools;
     menus = new Hashtable();
+    leaves = new HashSet();
 
     VisitableVisitor duplicateLinks = `DuplicateLinks();
     VisitableVisitor addSubsectionsTag = `AddSubsectionsTag();
@@ -56,8 +64,10 @@ public class Menu {
       while(it.hasNext()) {
         Position p = (Position)it.next();
 
+        StringBuffer link = new StringBuffer();
+
         VisitableVisitor s1 = `S1();
-        VisitableVisitor s2 = `S2();
+        VisitableVisitor s2 = `S2(link);
         VisitableVisitor eqPos = `EqPos(p);
         VisitableVisitor subPos = `SubPos(p);
 
@@ -66,11 +76,11 @@ public class Menu {
 
         try {
           TNode output = (TNode)MuTraveler.init(xmastree).visit(menu);
-          TNode tmp = switchLang(globalS2Link);
+          TNode tmp = switchLang(link);
           TNodeList outList = `concTNode(output,tmp);
 
-          writeMenu(Translator.IN_ENGLISH,globalS2Link,outList);
-          writeMenu(Translator.IN_FRENCH,globalS2Link,outList);
+          writeMenu(Translator.IN_ENGLISH,link,outList);
+          writeMenu(Translator.IN_FRENCH,link,outList);
 
         } catch (VisitFailure e) {
           System.out.println("reduction failed on: " + menu);
@@ -89,7 +99,7 @@ public class Menu {
   /**
    * Build a menu given its language and its keyName, put it in the hastable
    */
-  private void writeMenu(String lang, String link, TNodeList outList) throws VisitFailure {
+  private void writeMenu(String lang, StringBuffer link, TNodeList outList) throws VisitFailure {
     VisitableVisitor ruleId = `RewriteSystemId(lang);
     TNodeList outList2 = (TNodeList)MuTraveler.init(`BottomUp(ruleId)).visit(outList);
     menus.put(link+"_"+lang,outList2);
@@ -98,7 +108,7 @@ public class Menu {
   /**
    * Generate the fr :: en link
    */
-  private TNode switchLang(String menuKey) {
+  private TNode switchLang(StringBuffer menuKey) {
     String frLnk = menuKey+"_"+Translator.IN_FRENCH+".html";
     String fr = Translator.IN_FRENCH;
     String enLnk = menuKey+"_"+Translator.IN_ENGLISH+".html";
@@ -214,20 +224,22 @@ public class Menu {
   /**
    * Extract the link reference related to the leaf
    */
-  %strategy S2() extends `Identity() {
+  %strategy S2(link:StringBuffer) extends `Identity() {
 
     visit TNode {
       <section>(t*,l@<anchor>#TEXT(ln)</anchor>,sub*)</section> -> {
         VisitableVisitor s1 = `S1();
         TNodeList tList = (TNodeList)MuTraveler.init(`BottomUp(s1)).visit(`sub);
-        globalS2Link = `ln;
+        //put `ln into link
+        link.replace(0,link.length(),`ln);
         return `xml(<section>t* l tList*</section>);
       }
       <section>(t*,l@<link>#TEXT(ln)</link>,sub*)</section> -> {
         if(!hasAnchor(`t)) {
           VisitableVisitor s1 = `S1();
           TNodeList tList = (TNodeList)MuTraveler.init(`BottomUp(s1)).visit(`sub);
-          globalS2Link = `ln;
+          //put `ln into link
+          link.replace(0,link.length(),`ln);
           return `xml(<section>t* l tList*</section>);
         }
       }
