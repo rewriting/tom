@@ -24,7 +24,7 @@
 
   <!-- Examples to build and distribute -->
   <property name="addressbook"    value="addressbook"/>
-  <property name="adt"            value="adt"/>
+  <property name="analysis"       value="analysis"/>
   <property name="antipattern"    value="antipattern"/>
   <property name="apireach"       value="apireach"/>
   <property name="appletxml"      value="appletxml"/>
@@ -37,25 +37,26 @@
   <property name="dom"            value="dom"/>
   <property name="expression"     value="expression"/>
   <property name="ferus"          value="ferus"/>
+  <property name="gasel"          value="gasel"/>
   <property name="gom"            value="gom"/>
   <property name="gomoku"         value="gomoku"/>
   <property name="gterm"          value="gterm"/>
   <property name="integerc"       value="integerc"/>
   <property name="list"           value="list"/>
-  <property name="lsystem"        value="lsystems"/>
-  <property name="matching"       value="matching"/>
+  <property name="lsystems"        value="lsystems"/>
   <property name="master"         value="master"/>
+  <property name="matching"       value="matching"/>
   <property name="meta"           value="meta"/>
   <property name="mgs"            value="mgs"/>
   <property name="nspk"           value="nspk"/>
   <property name="p3p"            value="p3p"/>
+  <property name="parsingtests"   value="parsingtests"/>
   <property name="peano"          value="peano"/>
   <property name="pnspk"          value="pnspk"/>
   <property name="poly"           value="poly"/>
   <property name="pqueens"        value="pqueens"/>
   <property name="prodrule"       value="prodrule"/>
   <property name="propp"          value="propp"/>
-  <property name="parsingtests"   value="parsingtests"/>
   <property name="rbtree"         value="rbtree"/>
   <property name="set"            value="set"/>
   <property name="strategy"       value="strategy"/>
@@ -67,7 +68,6 @@
   <property name="xml"            value="xml"/>
   <property name="xquery"         value="xquery"/>
   <property name="zenon"          value="zenon"/>
-  <property name="analysis"       value="analysis"/>
 
   <target name="init" depends="tom.init">
     <!-- to have something correct, check tom.home is defined to something meaningful
@@ -161,11 +161,17 @@
     <javacompile example="${addressbook}"/>
   </target>
 
-  <target name="adt" depends="init">
-    <vascompile example="${adt}"/>
-    <tomcompile example="${adt}"/>
-    <javacompile example="${adt}"/>
+  <target name="analysis" depends="init">
+  <!-- copy resources in build -->
+    <copy todir="${examples.build}/${analysis}">
+      <fileset dir="${examples.dir}/${analysis}">
+      </fileset>
+    </copy>
+    <gomcompile example="${analysis}"/>
+    <tomcompile example="${analysis}"/>
+    <javacompile example="${analysis}"/>
   </target>
+
 
   <target name="antipattern" depends="init"> 
     <gomcompile example="${antipattern}"/>
@@ -284,7 +290,7 @@
           failonerror="yes"
           executable="make">
       <arg line=""/>
-      <env key="OCAMLC" value="${camlc.bin}"/>
+      <env key="CAMLC" value="${camlc.bin}"/>
     </exec>
   </target>
 
@@ -384,6 +390,13 @@
     </exec>
   </target>
 
+  <target name="gasel" depends="init">
+    <gomcompile example="${gasel}"/>
+    <tomcompile example="${gasel}"/>
+    <javacompile example="${gasel}"/>
+  </target>
+
+
   <target name="gom" depends="init">
     <gomcompile example="${gom}"/>
     <tomcompile example="${gom}"/>
@@ -451,34 +464,23 @@
     <javacompile example="${list}"/>
   </target>
 
-  <target name="lsystem" depends="init">
-    <tomcompile example="${lsystem}"/>
-    <javacompile example="${lsystem}"/>
+  <target name="lsystems" depends="init">
+    <tomcompile example="${lsystems}"/>
+    <javacompile example="${lsystems}"/>
   </target>
-
-  <target name="matching" depends="init"> 
-    <vascompile example="${matching}"/>
-    <tomcompile example="${matching}"/>
-    <javacompile example="${matching}"/>
-  	<copy todir="${examples.build}/${matching}">
-      <fileset dir="${matching}">
-        <include name="*.txt"/>
-      </fileset>
-    </copy>
-  </target>
-
+  
   <target name="master" depends="init"> 
-    <vascompile example="${master}"/>
     <tomcompile example="${master}"/>
     <javacompile example="${master}"/>
-  	<copy todir="${examples.build}/${master}">
-      <fileset dir="${master}">
-        <include name="*.txt"/>
-      </fileset>
-    </copy>
   </target>
 
-  <target name="meta" depends="init"> 
+
+  <target name="matching" depends="init"> 
+    <tomcompile example="${matching}"/>
+    <javacompile example="${matching}"/>
+  </target>
+
+    <target name="meta" depends="init"> 
     <tomcompile example="${meta}"/>
     <javacompile example="${meta}"/>
   </target>
@@ -681,7 +683,6 @@
   </target>
 
   <target name="tutorial" depends="init">
-    <gomcompile example="${tutorial}"/>
     <tomcompile example="${tutorial}"/>
     <javacompile example="${tutorial}"/>
     <copy todir="${examples.build}/${tutorial}">
@@ -753,26 +754,14 @@
     </apply>
   </target>
 
-
-  <target name="analysis" depends="init">
-  <!-- copy resources in build -->
-    <copy todir="${examples.build}/${analysis}">
-      <fileset dir="${examples.dir}/${analysis}">
-      </fileset>
-    </copy>
-    <gomcompile example="${analysis}"/>
-    <tomcompile example="${analysis}"/>
-    <javacompile example="${analysis}"/>
-  </target>
-
   
   <target name="examples" 
           description="Builds the examples (at least some)"
-	  depends="addressbook, adt, apireach, appletxml,
-          boulderdash, builtin, caml, cell, dom, expression, ferus, gom,
-          gomoku, gterm, integerc, list, matching, master, meta, mgs, nspk,
+	  depends="addressbook, analysis, antipattern,  apireach, appletxml,
+          boulderdash, builtin, caml, cell, dom, expression, ferus, gasel,  gom,
+          gomoku, gterm, integerc, list, master, matching, meta, mgs, nspk,
           p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set,
-          strategy, structure, strings, ted, tutorial, vas, xml, zenon">
+          strategy, strings, structure, ted, tutorial, xml, zenon">
   </target>
 
   <target name="dist.examples" 
@@ -790,46 +779,49 @@
 
     <tar tarfile="${examples.dist}/tom-${version}-examples.tar.gz" 
          compression="gzip">
+      <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
+        <include name="build.sh"/>
+      </tarfileset>
       <tarfileset dir="${examples.dir}" prefix="examples" mode="644">
         <include name="README"/>
         <include name="build.xml"/>
-        <include name="build.sh"/>
         <include name="${examples.lib}/*.jar"/>
-
-        <include name="${addressbook}/README"/>
+        
         <include name="${addressbook}/*.t"/>
         <include name="${addressbook}/*.gom"/>
 
-        <include name="${antipattern}/README"/>
+        <include name="${analysis}/*.t"/>
+        <include name="${analysis}/*.tom"/>
+        <include name="${analysis}/*.java"/>
+        <include name="${analysis}/*.gom"/>
+        
         <include name="${antipattern}/*.t"/>
+        <include name="${antipattern}/*.txt"/>
         <include name="${antipattern}/Matching.java"/>
-        <include name="${antipattern}/*.vas"/>
+        <include name="${antipattern}/*.gom"/>
         <include name="${antipattern}/atermmapping.tom"/>
 
-        <include name="${apireach}/README"/>
         <include name="${apireach}/*.t"/>
         <include name="${apireach}/*.adt"/>
         <include name="${apireach}/*.gom"/>
 
-        <include name="${appletxml}/README"/>
         <include name="${appletxml}/*.t"/>
         <include name="${appletxml}/*.java"/>
         <include name="${appletxml}/*.html"/>
 
-        <include name="${boulderdash}/README"/>
         <include name="${boulderdash}/*.t"/>
-        <include name="${boulderdash}/*.adt"/>
+        <include name="${boulderdash}/*.gom"/>
         <include name="${boulderdash}/*.gif"/>
         <include name="${boulderdash}/*.html"/>
         <include name="${boulderdash}/*.java"/>
 
         <include name="${builtin}/*.t"/>
-        <include name="${builtin}/*.java"/>
         <include name="${builtin}/*.gom"/>
+        <include name="${builtin}/*.java"/>
 
-        <include name="${caml}/README"/>
         <include name="${caml}/Makefile"/>
         <include name="${caml}/*.t"/>
+        <include name="${caml}/mapping.tom"/>
         <include name="${caml}/peanotype.ml"/>
         <include name="${caml}/tomExtension.ml"/>
         <include name="${caml}/tomList.ml"/>
@@ -838,16 +830,9 @@
         <include name="${cell}/*.java"/>
         <include name="${cell}/*.gif"/>
 
-        <!-- not yet distribution ready
-        <include name="${csmaca}/*.t"/>
-        -->
-
-        <include name="${dom}/README"/>
         <include name="${dom}/*.t"/>
-        <include name="${dom}/*.adt"/>
         <include name="${dom}/*.xml"/>
 
-        <include name="${expression}/README"/>
         <include name="${expression}/*.t"/>
         <include name="${expression}/*.java"/>
 
@@ -856,6 +841,8 @@
         <include name="${ferus}/*.adt"/>
         <include name="${ferus}/*.vas"/>
 
+        <include name="${gasel}/*.t"/>
+        
         <include name="${gom}/*.t"/>
         <include name="${gom}/*.java"/>
         <include name="${gom}/*.gom"/>
@@ -866,80 +853,67 @@
         <include name="${gterm}/*.t"/>
         <include name="${gterm}/*.java"/>
 
-        <include name="${integerc}/README"/>
         <include name="${integerc}/*.t"/>
         <include name="${integerc}/Makefile"/>
         <include name="${integerc}/*.adt"/>
 
-        <include name="${list}/README"/>
         <include name="${list}/*.t"/>
-        <include name="${list}/*.adt"/>
+        <include name="${list}/*.java"/>
 
         <include name="${master}/README"/>
         <include name="${master}/*.t"/>
-	<include name="${master}/*.vas"/>
 
-        <include name="${meta}/*.t"/>
-
-        <include name="${matching}/README"/>
         <include name="${matching}/*.t"/>
-	<include name="${matching}/*.vas"/>
+        
+        <include name="${meta}/*.t"/>
+        
+        <include name="${mgs}/*.t"/>
+        <include name="${mgs}/*.gom"/>
 				
         <include name="${nspk}/*.t"/>
+        
         <include name="${nspk}/*.java"/>
         <include name="${nspk}/*.gom"/>
 
-        <include name="${p3p}/README"/>
         <include name="${p3p}/*.t"/>
         <include name="${p3p}/*.xml"/>
 
-        <include name="${peano}/README"/>
+        <include name="${peano}/*.java"/>
         <include name="${peano}/*.gom"/>
         <include name="${peano}/*.t"/>
 
-        <include name="${pnspk}/README"/>
         <include name="${pnspk}/*.t"/>
         <include name="${pnspk}/*.adt"/>
 
-        <include name="${poly}/README"/>
         <include name="${poly}/*.t"/>
         <include name="${poly}/Poly.signature"/>
         <include name="${poly}/*.gom"/>
-        <include name="${poly}/*.java"/>
 
-        <include name="${pqueens}/README"/>
         <include name="${pqueens}/*.t"/>
+        <include name="${pqueens}/*.java"/>
         <include name="${pqueens}/*.tom"/>
 
-        <include name="${prodrule}/README"/>
+        <include name="${prodrule}/*.java"/>
         <include name="${prodrule}/*.t"/>
 
-        <include name="${propp}/README"/>
         <include name="${propp}/*.t"/>
         <include name="${propp}/*.gom"/>
-        <include name="${propp}/*.g"/>
         <include name="${propp}/*.sty"/>
         <include name="${propp}/examples"/>
 
-        <include name="${rbtree}/README"/>
         <include name="${rbtree}/*.t"/>
-        <include name="${rbtree}/*.adt"/>
+        <include name="${rbtree}/*.gom"/>
         
-        <include name="${set}/README"/>
         <include name="${set}/*.t"/>
         <include name="${set}/*.adt"/>
 
-        <include name="${strategy}/README"/>
         <include name="${strategy}/*.t"/>
-        <include name="${strategy}/*.vas"/>
+        <include name="${strategy}/hand/*"/>
         <include name="${strategy}/*.xml"/>
-        <include name="${strategy}/**/*.java"/>
-        <include name="${strategy}/**/*.tom"/>
+        <include name="${strategy}/**/*.gom"/>
 
-        <include name="${strings}/README"/>
         <include name="${strings}/*.t"/>
 
-        <include name="${structure}/README"/>
         <include name="${structure}/*.t"/>
         <include name="${structure}/*.vas"/>
         <include name="${structure}/*.gom"/>
@@ -953,28 +927,21 @@
         <include name="${ted}/**/*.tom"/>
         <include name="${ted}/**/*.java"/>
 
-        <include name="${tutorial}/README"/>
         <include name="${tutorial}/*.t"/>
         <include name="${tutorial}/*.java"/>
         <include name="${tutorial}/*.xml"/>
 
-        <include name="${vas}/README"/>
-        <include name="${vas}/*.t"/>
-
-        <include name="${xml}/README"/>
         <include name="${xml}/**/*.t"/>
-        <include name="${xml}/*.adt"/>
         <include name="${xml}/**/*.xml"/>
-        <include name="${xml}/*.html"/>
+        <include name="${xml}/*.t"/>
+        <include name="${xml}/*.xml"/>
 
-        <include name="${xquery}/README"/>
-        <include name="${xquery}/*.t"/>
-        <include name="${xquery}/*.xml"/>
-        <include name="${xquery}/*.xquery"/>
-        <include name="${xquery}/*.html"/>
-
-        <include name="${analysis}/*.t"/>
-        <include name="${analysis}/*.vas"/>
+        <include name="${zenon}/*.t"/>
+        <include name="${zenon}/*.coz"/>
+        <include name="${zenon}/*.v"/>
+        <include name="${zenon}/*.zv"/>
+        
+        <include name="${lib}/*.jar"/>
 
         <not>
           <present targetdir="${examples.dir}">
