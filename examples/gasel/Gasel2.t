@@ -33,8 +33,9 @@ public final class Gasel2 {
 
   %gom {
   module data
+    imports int
 	abstract syntax		
-		Atom = empty
+		Atom = empty()
 		     | C(n:int)
 		     | arC(n:int)
 		     | O(n:int)
@@ -43,9 +44,14 @@ public final class Gasel2 {
 		     | e(n:int)
 		
     Bond = bond(bondType:BondType,source:Atom,target:Atom)
-		BondList = concBond( Bond* )
 
-		Link = none | simple | double | triple | arom
+    BondList = concBond( Bond* )
+
+		BondType = none()
+             | simpleLink() 
+             | doubleLink() 
+             | tripleLink()
+             | aromLink()
   }
 
   %typeterm StateList {
@@ -82,7 +88,7 @@ public final class Gasel2 {
   private Map labelMap = new HashMap();
 
   /*
-   * add a simple bond to the graph
+   * add a simpleLink bond to the graph
    * the label is stored in a hashmap
    */
   private void addBond(Atom v1, Atom v2, BondType bondType) {
@@ -157,54 +163,54 @@ public final class Gasel2 {
     g.addVertex( v5 );
 
     // add edges to create a circuit
-    addBond( v1, v2, `simple() );
-    addBond( v2, v3, `simple() );
-    addBond( v3, v4, `simple() );
-    addBond( v4, v5, `simple() );
-    addBond( v5, v3, `simple() );
+    addBond( v1, v2, `simpleLink() );
+    addBond( v2, v3, `simpleLink() );
+    addBond( v3, v4, `simpleLink() );
+    addBond( v4, v5, `simpleLink() );
+    addBond( v5, v3, `simpleLink() );
 
     System.out.println("g = " + g);
     System.out.println("edges of C3 = " + g.edgesOf(v3));
-    System.out.println("successors of C3 = " + computeSuccessors(g,new State(`concBond(bond(simple(),v2,v3)),`simple(),v3)));
+    System.out.println("successors of C3 = " + computeSuccessors(g,new State(`concBond(bond(simpleLink(),v2,v3)),`simpleLink(),v3)));
    
     State state = new State(`emptyBondList(),`none(),v1);
     */
 
-    State state = `rad(none(), e(1), conc(rad(simple(), C(2),
-                                     conc(rad(simple(), C(3),
-                                     conc(rad(simple(), C(4),conc(rad(simple(), C(5),conc()))),
-                                          rad(simple(), C(5),conc())))))));
+    State state = `rad(none(), e(1), conc(rad(simpleLink(), C(2),
+                                     conc(rad(simpleLink(), C(3),
+                                     conc(rad(simpleLink(), C(4),conc(rad(simpleLink(), C(5),conc()))),
+                                          rad(simpleLink(), C(5),conc())))))));
 /*
-    State state = `rad(none(), e(1), conc(rad(simple(), C(2),
+    State state = `rad(none(), e(1), conc(rad(simpleLink(), C(2),
                                      conc(
-                                      rad(simple(),C(6),conc(rad(simple(),C(7),conc(rad(simple(),C(3),conc()))))), 
-                                       rad(simple(), C(3),
-                                     conc(rad(simple(), C(4),conc(rad(simple(), C(5),conc()))),
-                                          rad(simple(), C(5),conc())))))));
+                                      rad(simpleLink(),C(6),conc(rad(simpleLink(),C(7),conc(rad(simpleLink(),C(3),conc()))))), 
+                                       rad(simpleLink(), C(3),
+                                     conc(rad(simpleLink(), C(4),conc(rad(simpleLink(), C(5),conc()))),
+                                          rad(simpleLink(), C(5),conc())))))));
   */
     System.out.println("g = " + g);
 
     %match(State state) {
       // e C
       rad(_, e[], conc(_*,
-      rad(simple(), C[],subterm),
+      rad(simpleLink(), C[],subterm),
       _*)) -> {
         System.out.println("Bingo 1: " + subterm);
       }
       
       // e C C
       rad(_,e[], conc(_*, 
-      rad(simple(),C[], conc(_*, 
-      rad(simple(),C[],subterm),
+      rad(simpleLink(),C[], conc(_*, 
+      rad(simpleLink(),C[],subterm),
       _*)),_*)) -> {
         System.out.println("Bingo 2: " + subterm);
       }
       
       // e C C C
       rad(_,e[], conc(_*, 
-      rad(simple(),C[], conc(_*,
-      rad(simple(),C[], conc(_*, 
-      rad(simple(),C[],subterm),
+      rad(simpleLink(),C[], conc(_*,
+      rad(simpleLink(),C[], conc(_*, 
+      rad(simpleLink(),C[],subterm),
       _*)),_*)),_*)) -> {
         System.out.println("Bingo 3: " + subterm);
       }

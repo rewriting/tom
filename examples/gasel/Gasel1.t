@@ -16,6 +16,7 @@ public final class Gasel1 {
 
   %gom {
   module data
+  imports int
 	abstract syntax		
 		Atom = C(n:int)
 		     | arC(n:int)
@@ -26,10 +27,11 @@ public final class Gasel1 {
 		
 		IntList = concInt( int* )
 
-		Link = none | simple | double | triple | arom
-
-		//Radical = rad(link:Link,symbol:Symbol,radList:RadicalList)
-		//RadicalList = concRad( Radical* )
+		Link = none() 
+          | simpleLink() 
+          | doubleLink() 
+          | tripleLink() 
+          | aromLink()
   }
 
   %typeterm Radical {
@@ -116,7 +118,7 @@ public final class Gasel1 {
 
   private void addSimpleLink(Object v1, Object v2) {
     Edge e = new UndirectedEdge(v1,v2);
-    labelMap.put(e,`simple());
+    labelMap.put(e,`simpleLinkLink());
     System.out.println("add label( " + e + " ) = " + labelMap.get(e)); 
     getGraph().addEdge(e);
   }
@@ -151,20 +153,20 @@ public final class Gasel1 {
     
     %match(Radical v1) {
       // e C
-      rad(e[], conc(linkrad(simple(), rad(C[],subterm)) )) -> {
+      rad(e[], conc(linkrad(simpleLink(), rad(C[],subterm)) )) -> {
         System.out.println("Bingo 1: " + subterm);
       }
       
       // e C C
-      rad(e[], conc(_*, linkrad(simple(),rad(C[],
-                          conc(_*, linkrad(simple(),rad(C[],subterm)),_*))),_*)) -> {
+      rad(e[], conc(_*, linkrad(simpleLink(),rad(C[],
+                          conc(_*, linkrad(simpleLink(),rad(C[],subterm)),_*))),_*)) -> {
         System.out.println("Bingo 2: " + subterm);
       }
       
       // e C C C
-      rad(e[], conc(_*, linkrad(simple(),rad(C[],
-                          conc(_*, linkrad(simple(),rad(C[],
-                          conc(_*, linkrad(simple(),rad(C[],subterm)),_*))),_*))),_*)) -> {
+      rad(e[], conc(_*, linkrad(simpleLink(),rad(C[],
+                          conc(_*, linkrad(simpleLink(),rad(C[],
+                          conc(_*, linkrad(simpleLink(),rad(C[],subterm)),_*))),_*))),_*)) -> {
         System.out.println("Bingo 3: " + subterm);
       }
       
