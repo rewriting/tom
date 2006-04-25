@@ -490,8 +490,7 @@
   </target>
   
   <target name="nspk" depends="init">
-    <adtcompile example="${nspk}"
-                factory="term"/>
+    <gomcompile example="${nspk}"/>
     <tomcompile example="${nspk}"/>
     <javacompile example="${nspk}"/>
   </target>
@@ -886,9 +885,9 @@
         <include name="${matching}/*.t"/>
 	<include name="${matching}/*.vas"/>
 				
-        <include name="${nspk}/README"/>
         <include name="${nspk}/*.t"/>
-        <include name="${nspk}/*.adt"/>
+        <include name="${nspk}/*.java"/>
+        <include name="${nspk}/*.gom"/>
 
         <include name="${p3p}/README"/>
         <include name="${p3p}/*.t"/>

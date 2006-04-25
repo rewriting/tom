@@ -41,6 +41,7 @@ public class Nsh {
 
 // ------------------------------------------------------------  
   %include { term/term.tom }
+  %include { mutraveler.tom }
 // ------------------------------------------------------------  
  
   public void run(int nbAgent) {
@@ -60,11 +61,11 @@ public class Nsh {
   public State query(int nbSenders, int nbReceivers) {
     ListAgent s = `concAgent();
     for(int index=0 ; index<nbSenders ; index++) {
-        s = s.insert(`agent(sender(index),SLEEP(),N(sender(index),sender(index))));
+        s = `concAgent(agent(sender(index),SLEEP(),N(sender(index),sender(index))),s*);
     }
     ListAgent r = `concAgent();
     for(int index=0 ; index<nbReceivers ; index++) {
-        r = r.insert(`agent(receiver(index),SLEEP(),N(receiver(index),receiver(index))));
+        r = `concAgent(agent(receiver(index),SLEEP(),N(receiver(index),receiver(index))),r*);
     }
     State state =
       `state(s,r,intruder(devil(),concNonce(),concMessage()),concMessage());
@@ -213,12 +214,13 @@ public class Nsh {
   }
   ListMessage insertMessage(Message m,ListMessage l) {
     ListMessage res = null;
-    if(l.isEmpty()) {
-      res = l.insert(m);
-    } else if(compareMessage(m, l.getHead()) < 0) {
-      res = l.insert(m);
+    if(l.isEmptyconcMessage()) {
+      res = `concMessage(m,l*);
+    } else if(compareMessage(m, l.getHeadconcMessage()) < 0) {
+      res = `concMessage(m,l*);
     } else {
-      res = insertMessage(m,l.getTail()).insert(l.getHead());
+      ListMessage newTail = insertMessage(m,l.getTailconcMessage());
+      res = `concMessage(l.getHeadconcMessage(),newTail*);
     }
 
       //System.out.println("res = " + res);
@@ -231,14 +233,15 @@ public class Nsh {
       N(dai(),dai()) -> { return l; }
     }
  
-    if(l.isEmpty()) {
-      res = l.insert(m);
-    } else if(m == l.getHead()) {
+    if(l.isEmptyconcNonce()) {
+      res = `concNonce(m,l*);
+    } else if(m == l.getHeadconcNonce()) {
       res = l;
-    } else if(compareNonce(m, l.getHead()) < 0) {
-      res = l.insert(m);
+    } else if(compareNonce(m, l.getHeadconcNonce()) < 0) {
+      res = `concNonce(m,l*);
     } else {
-      res = insertNonce(m,l.getTail()).insert(l.getHead());
+      ListNonce newTail = insertNonce(m,l.getTailconcNonce());
+      res = `concNonce(l.getHeadconcNonce(),newTail*);
     }
 
       //System.out.println("res = " + res);
@@ -254,296 +257,299 @@ public class Nsh {
   }
 
   public boolean existAgent(Agent agent, ListAgent list) {
-      /*
     %match(Agent agent, ListAgent list) {
       x, concAgent()          -> { return false; }
       x, concAgent(X1*,x,X2*) -> { return true; }
     }
     return false;
-      */
+      /*
       return list.indexOf(agent,0) >= 0;
+      */
   }
 
   public boolean existMessage(Message message, ListMessage list) {
-      /*
         %match(Message message, ListMessage list) {
         x, concMessage()          -> { return false; }
         x, concMessage(X1*,x,X2*) -> { return true; }
         }
         return false;
-      */
+      /*
       return list.indexOf(message,0) >= 0;
+      */
   }
 
   public int sizeMessage(ListMessage list) {
-    return list.getLength();
+    %match(ListMessage list) {
+        concMessage()     -> { return 0; }
+        concMessage(h,t*) -> { return 1+sizeMessage(`t*); }
+    }
+    return 0;
   }
   
-  public void collectOneStep(State subject, final Collection collection) {
-    Collect2 collect = new Collect2() { 
-        public boolean apply(ATerm subject, Object arg1) {
-          Collection c = (Collection) arg1;
-          %match(State subject) {
-              // 3 (A --> B)
-              // sender creates message
-              // sender waits a message from y(or I) with the nonce N(x,y)(or N(x,I))
+  %typeterm Collection {
+    implement {java.util.Collection}
+  }
+  public void collectOneStep(State state, Collection col) {
+    try {
+      `OneStep(col).visit(state);
+    } catch (jjtraveler.VisitFailure f) {
+      throw new RuntimeException("VisitFailure for "+state);
+    }
+  }
+  %strategy OneStep(c:Collection) extends `Identity() {
+    visit State {
+      // 3 (A --> B)
+      // sender creates message
+      // sender waits a message from y(or I) with the nonce N(x,y)(or N(x,I))
 
-              // initiator 1
-            state(
-              concAgent(E1*,agent(x,SLEEP(),_),E2*),
-              dst@concAgent(_*,agent(y,_,_),_*),
-              I,
-              M) -> {
-              if(sizeMessage(`M) < maxMessagesInNetwork) {
-                State state = `state(
-                  concAgent(E1*,agent(x,WAIT(),N(x,y)),E2*),
-                  dst,I,
-                  insertMessage(msg(x,y,K(y),N(x,y),DN(),A(x)),M));
-                c.add(state);
-                fire[1]++;
-              }
-            } 
-              // initiator 1
-            state(
-              concAgent(E1*,agent(x,SLEEP(),_),E2*),
-              D, 
-              intru@intruder(w,_,_),
-              M) -> {
-              if(sizeMessage(`M) < maxMessagesInNetwork) {
-                State state = `state(
-                  concAgent(E1*,agent(x,WAIT(),N(x,w)),E2*),
-                  D,intru,
-                  concMessage(msg(x,w,K(w),N(x,w),DN(),A(x)),M*));
-                c.add(state);
-                fire[2]++;
-              }
-            }
+      // initiator 1
+      state(
+          concAgent(E1*,agent(x,SLEEP(),_),E2*),
+          dst@concAgent(_*,agent(y,_,_),_*),
+          I,
+          M) -> {
+        if(sizeMessage(`M) < maxMessagesInNetwork) {
+          State state = `state(
+              concAgent(E1*,agent(x,WAIT(),N(x,y)),E2*),
+              dst,I,
+              insertMessage(msg(x,y,K(y),N(x,y),DN(),A(x)),M));
+          c.add(state);
+          fire[1]++;
+        }
+      } 
+      // initiator 1
+      state(
+          concAgent(E1*,agent(x,SLEEP(),_),E2*),
+          D, 
+          intru@intruder(w,_,_),
+          M) -> {
+        if(sizeMessage(`M) < maxMessagesInNetwork) {
+          State state = `state(
+              concAgent(E1*,agent(x,WAIT(),N(x,w)),E2*),
+              D,intru,
+              concMessage(msg(x,w,K(w),N(x,w),DN(),A(x)),M*));
+          c.add(state);
+          fire[2]++;
+        }
+      }
 
-              // 3/6 (--> B --> A)
-              // receiver checks if 
-              //  - y is the dest
-              //  - message encrypted with K(y)
-              //  - message type is MNA
-              // receiver sends
-              //  - to n2 (identifier of sender; normally N(n1,n3)==N(n2,n4))
-              //  - received nonce (N(n1,n3)) and its nonce (N(y,n1))
-              // receiver waits a message from n1 with the nonce N(y,n1)
+      // 3/6 (--> B --> A)
+      // receiver checks if 
+      //  - y is the dest
+      //  - message encrypted with K(y)
+      //  - message type is MNA
+      // receiver sends
+      //  - to n2 (identifier of sender; normally N(n1,n3)==N(n2,n4))
+      //  - received nonce (N(n1,n3)) and its nonce (N(y,n1))
+      // receiver waits a message from n1 with the nonce N(y,n1)
 
-            state(
-              E,
-              concAgent(D1*,agent(y,SLEEP(),_),D2*),
-              intru@intruder(w,_,_),
-              concMessage(M1*,msg(w,y,K(y),N(n1,n3),N(_,_),A(z)),M2*)) -> {
-              State state = `state(
-                E,
-                concAgent(D1*,agent(y,WAIT(),N(y,z)),D2*),
-                intru,
-                insertMessage(msg(y,z,K(z),N(n1,n3),N(y,z),A(y)),concMessage(M1*,M2*)));
-              c.add(state);
-              fire[3]++;
-            }
-            
-            // 6/7 (--> A --> B)
-              // sender checks if 
-              //  - x is the dest
-              //  - message encrypted with K(x)
-              //  - message type is MNNA
-              //  - nonce is N(x,v) --> if not: ERROR
-              //  ?? (possibly checks address : A(v) ) ??
-            
-              // sender sends a message 
-              //   - to the the initial receiver (stored in N(x,v)->v)
-              //   - with the received nonce
+      state(
+          E,
+          concAgent(D1*,agent(y,SLEEP(),_),D2*),
+          intru@intruder(w,_,_),
+          concMessage(M1*,msg(w,y,K(y),N(n1,n3),N(_,_),A(z)),M2*)) -> {
+        State state = `state(
+            E,
+            concAgent(D1*,agent(y,WAIT(),N(y,z)),D2*),
+            intru,
+            insertMessage(msg(y,z,K(z),N(n1,n3),N(y,z),A(y)),concMessage(M1*,M2*)));
+        c.add(state);
+        fire[3]++;
+      }
 
-            state(
-              concAgent(E1*,agent(x,WAIT(),N(x,v)),E2*),
+      // 6/7 (--> A --> B)
+      // sender checks if 
+      //  - x is the dest
+      //  - message encrypted with K(x)
+      //  - message type is MNNA
+      //  - nonce is N(x,v) --> if not: ERROR
+      //  ?? (possibly checks address : A(v) ) ??
+
+      // sender sends a message 
+      //   - to the the initial receiver (stored in N(x,v)->v)
+      //   - with the received nonce
+
+      state(
+          concAgent(E1*,agent(x,WAIT(),N(x,v)),E2*),
+          D,
+          intru@intruder(w,_,_),
+          concMessage(M1*,msg(w,x,K(x),N(n1,n3),N(n2,n4),A(z)),M2*)) -> {
+
+        if(`x==`n1 && `v==`n3 && (!authVerif || `v==`z)) { // lowe
+          State state = `state(
+              concAgent(E1*,agent(x,COMMIT(),N(x,v)),E2*),
               D,
-              intru@intruder(w,_,_),
-              concMessage(M1*,msg(w,x,K(x),N(n1,n3),N(n2,n4),A(z)),M2*)) -> {
-              
-              if(`x==`n1 && `v==`n3 && (!authVerif || `v==`z)) { // lowe
-                State state = `state(
-                  concAgent(E1*,agent(x,COMMIT(),N(x,v)),E2*),
-                  D,
-                  intru,
-                  insertMessage(msg(x,v,K(v),N(n2,n4),DN(),DA()),concMessage(M1*,M2*)));
-                c.add(state);
-                fire[4]++;
-              }
+              intru,
+              insertMessage(msg(x,v,K(v),N(n2,n4),DN(),DA()),concMessage(M1*,M2*)));
+          c.add(state);
+          fire[4]++;
+        }
 
-              if(`x!=`n1 || `v!=`n3 && (!authVerif || `v!=`z)) { // lowe
-                c.add(`ERROR());
-                fire[5]++;
-              }
-            }
+        if(`x!=`n1 || `v!=`n3 && (!authVerif || `v!=`z)) { // lowe
+          c.add(`ERROR());
+          fire[5]++;
+        }
+      }
 
-            // 7 (B --> A)
+      // 7 (B --> A)
 
-              // receiver checks if 
-              //  - y is the dest
-              //  - message encrypted with K(y)
-              //  - message type is MN
-              //  - nonce is N(y,x) --> if not: ERROR
+      // receiver checks if 
+      //  - y is the dest
+      //  - message encrypted with K(y)
+      //  - message type is MN
+      //  - nonce is N(y,x) --> if not: ERROR
 
-              // receiver sends
-              //  - to n2 (identifier of sender; normally N(n1,n3)==N(n2,n4))
-              //  - received nonce (N(n1,n3)) and its nonce (N(y,n1))
-              // receiver waits a message from n1 with the nonce N(y,n1)
+      // receiver sends
+      //  - to n2 (identifier of sender; normally N(n1,n3)==N(n2,n4))
+      //  - received nonce (N(n1,n3)) and its nonce (N(y,n1))
+      // receiver waits a message from n1 with the nonce N(y,n1)
 
-            state(
+      state(
+          E,
+          concAgent(D1*,agent(y,WAIT(),N(y,x)),D2*),
+          intru@intruder(w,_,_),
+          concMessage(M1*,msg(w,y,K(y),N(n1,n3),N(_,_),A(_)),M2*)) -> {
+        if(`x==`n3 && `y==`n1) {
+          State state = `state(
               E,
-              concAgent(D1*,agent(y,WAIT(),N(y,x)),D2*),
-              intru@intruder(w,_,_),
-              concMessage(M1*,msg(w,y,K(y),N(n1,n3),N(_,_),A(_)),M2*)) -> {
-              if(`x==`n3 && `y==`n1) {
-                State state = `state(
-                  E,
-                  concAgent(D1*,agent(y,COMMIT(),N(y,x)),D2*),
-                  intru,
-                  concMessage(M1*,M2*));
-                c.add(state);
-                fire[6]++;    
-              } else {
-                c.add(`ERROR());
-                fire[7]++;
-              }
-            }
+              concAgent(D1*,agent(y,COMMIT(),N(y,x)),D2*),
+              intru,
+              concMessage(M1*,M2*));
+          c.add(state);
+          fire[6]++;    
+        } else {
+          c.add(`ERROR());
+          fire[7]++;
+        }
+      }
 
-              //----------------------------
-              // intruder intercepts message
-              //----------------------------
-              // intruder intercepts message encrypted with its key
-              // we may replace N(n1,n3) with a variable Nonce:n13
-              // 		  N(n2,n4) with a variable Nonce:n24
-              // 		  A(v) with a variable Address:add
+      //----------------------------
+      // intruder intercepts message
+      //----------------------------
+      // intruder intercepts message encrypted with its key
+      // we may replace N(n1,n3) with a variable Nonce:n13
+      // 		  N(n2,n4) with a variable Nonce:n24
+      // 		  A(v) with a variable Address:add
 
-            state(
+      state(
+          E, D,
+          intruder(w,l,ll),
+          concMessage(M1*,msg(z,_,K(w),N1,N2,_),M2*)) -> {
+        if(`w!=`z) {
+          State state = `state(
               E, D,
-              intruder(w,l,ll),
-              concMessage(M1*,msg(z,_,K(w),N1,N2,_),M2*)) -> {
-              if(`w!=`z) {
-                State state = `state(
-                  E, D,
-                  intruder(w,insertNonce(N1,insertNonce(N2,l)),ll),
-                  concMessage(M1*,M2*));
-                c.add(state);
-                fire[8]++;
-              } 
-            }
+              intruder(w,insertNonce(N1,insertNonce(N2,l)),ll),
+              concMessage(M1*,M2*));
+          c.add(state);
+          fire[8]++;
+        } 
+      }
 
-              //------------------------
-              // learn messages
-              // intruder should check if has not already intercepted it
-              // (with nonamed rules --> we might get infinite loops ???)
-              // (with insUnic)
-            state(
+      //------------------------
+      // learn messages
+      // intruder should check if has not already intercepted it
+      // (with nonamed rules --> we might get infinite loops ???)
+      // (with insUnic)
+      state(
+          E, D,
+          intruder(w,l,ll),
+          concMessage(M1*,message@msg(z,_,K(y),N(_,_),N(_,_),A(_)),M2*)) -> {
+        if(`w!=`z && `w!=`y) {
+          State state = `state(
               E, D,
-              intruder(w,l,ll),
-              concMessage(M1*,message@msg(z,_,K(y),N(_,_),N(_,_),A(_)),M2*)) -> {
-              if(`w!=`z && `w!=`y) {
-                State state = `state(
-                  E, D,
-                  intruder(w,l,insertMessage(message,ll)),
-                  concMessage(M1*,M2*));
+              intruder(w,l,insertMessage(message,ll)),
+              concMessage(M1*,M2*));
+          c.add(state);
+          fire[9]++;
+        } 
+      }
+
+      //-----------------------
+      // intruder sends (random) stored messages to
+      //		  (random) agents from E and D
+      // !! allow dupplicates in the network (in the list version)
+
+      state(
+          E, D,
+          intru@intruder(w,_,concMessage(_*,msg(_,_,K(z),N(n1,n3),N(n2,n4),A(v)),_*)),
+          M) -> {
+        if(sizeMessage(`M) < maxMessagesInNetwork) {
+          ListAgent subjectList = `concAgent(E*,D*);
+          %match(ListAgent subjectList) {
+            concAgent(_*,agent(t,_,_),_*) -> {
+              Message message = `msg(w,t,K(z),N(n1,n3),N(n2,n4),A(v));
+              if(!existMessage(message,`M)) {
+                State state = `state(E,D,intru,insertMessage(message,M));
                 c.add(state);
-                fire[9]++;
-              } 
-            }
-
-              //-----------------------
-              // intruder sends (random) stored messages to
-              //		  (random) agents from E and D
-              // !! allow dupplicates in the network (in the list version)
-
-            state(
-              E, D,
-              intru@intruder(w,_,concMessage(_*,msg(_,_,K(z),N(n1,n3),N(n2,n4),A(v)),_*)),
-              M) -> {
-              if(sizeMessage(`M) < maxMessagesInNetwork) {
-                ListAgent subjectList = `concAgent(E*,D*);
-                %match(ListAgent subjectList) {
-                  concAgent(_*,agent(t,_,_),_*) -> {
-                    Message message = `msg(w,t,K(z),N(n1,n3),N(n2,n4),A(v));
-                    if(!existMessage(message,`M)) {
-                      State state = `state(E,D,intru,insertMessage(message,M));
-                      c.add(state);
-                      fire[10]++;
-                    } 
-                  }
-                }
-              }
-            } 
-
-              //---------------------------
-              // intruder sends mnessages starting from the 
-              //		(random) nonces it knows with --> resp, init
-              //		  (random) destination   --> y
-              //		  (random) message type  --> 3 rules
-              //		  (random) nonce1 --> resp
-              //		  (random) nonce2 --> init
-              //		  (random) address --> A(xadd)
-              // !! allow dupplicates in the network (in the list version)
-
-            state(
-              E, D,
-              intru@intruder(w,listNonce,_),
-              M) -> {
-              if(sizeMessage(`M) < maxMessagesInNetwork) {
-                ListAgent subjectED = `concAgent(E*,D*);
-                %match(ListAgent subjectED, ListAgent subjectED,
-                       ListNonce `listNonce, ListNonce `listNonce) {
-                  concAgent(_*,agent(y,_,_),_*),
-                  concAgent(_*,agent(xadd,_,_),_*),
-                  concNonce(_*,init,_*),
-                  concNonce(_*,resp,_*) -> {
-                    Message message = `msg(w,y,K(y),resp,init,A(xadd));
-                    if(!existMessage(message,`M)) {
-                      State state = `state(E,D,intru,insertMessage(message,M));
-                      c.add(state);
-                      fire[11]++;
-                    } 
-                  }
-                }
-              }
-            }
- 
-              //------------------------------
-              // the ATTACK
-              //------------------------------
-              // attack on the receiver
-            state(
-              concAgent(_*,agent(x,COMMIT(),N(x,y)),_*),
-              D,intruder(w,_,_),_) -> {
-              if(`y!=`w &&
-                 !existAgent(`agent(y,WAIT(),N(y,x)),`D) &&
-                 !existAgent(`agent(y,COMMIT(),N(y,x)),`D) ) {
-                State state = `ATTACK();
-                c.add(state);
-                fire[12]++;
-              } 
-            }
-
-              //---------------------------
-              // attack on the sender
-            state(
-              E,
-              concAgent(_*,agent(y,COMMIT(),N(y,x)),_*),
-              intruder(w,_,_),_) -> {
-              if(`x!=`w && !existAgent(`agent(x,COMMIT(),N(x,y)),`E) ) {
-                State state = `ATTACK();
-                c.add(state);
-                fire[13]++;
+                fire[10]++;
               } 
             }
           }
-          
-          return true;
-        } // end apply
-      }; // end new
+        }
+      } 
 
-    collect.apply(subject,collection);
-    
-      //traversal.genericCollect(subject, collect, collection); 
+      //---------------------------
+      // intruder sends mnessages starting from the 
+      //		(random) nonces it knows with --> resp, init
+      //		  (random) destination   --> y
+      //		  (random) message type  --> 3 rules
+      //		  (random) nonce1 --> resp
+      //		  (random) nonce2 --> init
+      //		  (random) address --> A(xadd)
+      // !! allow dupplicates in the network (in the list version)
+
+      state(
+          E, D,
+          intru@intruder(w,listNonce,_),
+          M) -> {
+        if(sizeMessage(`M) < maxMessagesInNetwork) {
+          ListAgent subjectED = `concAgent(E*,D*);
+          %match(ListAgent subjectED, ListAgent subjectED,
+              ListNonce `listNonce, ListNonce `listNonce) {
+            concAgent(_*,agent(y,_,_),_*),
+            concAgent(_*,agent(xadd,_,_),_*),
+            concNonce(_*,init,_*),
+            concNonce(_*,resp,_*) -> {
+              Message message = `msg(w,y,K(y),resp,init,A(xadd));
+              if(!existMessage(message,`M)) {
+                State state = `state(E,D,intru,insertMessage(message,M));
+                c.add(state);
+                fire[11]++;
+              } 
+            }
+          }
+        }
+      }
+
+      //------------------------------
+      // the ATTACK
+      //------------------------------
+      // attack on the receiver
+      state(
+          concAgent(_*,agent(x,COMMIT(),N(x,y)),_*),
+          D,intruder(w,_,_),_) -> {
+        if(`y!=`w &&
+            !existAgent(`agent(y,WAIT(),N(y,x)),`D) &&
+            !existAgent(`agent(y,COMMIT(),N(y,x)),`D) ) {
+          State state = `ATTACK();
+          c.add(state);
+          fire[12]++;
+        } 
+      }
+
+      //---------------------------
+      // attack on the sender
+      state(
+          E,
+          concAgent(_*,agent(y,COMMIT(),N(y,x)),_*),
+          intruder(w,_,_),_) -> {
+        if(`x!=`w && !existAgent(`agent(x,COMMIT(),N(x,y)),`E) ) {
+          State state = `ATTACK();
+          c.add(state);
+          fire[13]++;
+        } 
+      }
+    }
   }
 
   public ListNonce simplify(ListNonce list) {
