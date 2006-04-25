@@ -107,7 +107,7 @@ public class Rewrite4 {
         for (int i = 0; i<depth; i++){
           offset += "  ";
         }
-        System.out.println(offset + "s1: "+ `subject.getName() + " position: "+ MuTraveler.getPosition(this));
+        System.out.println(offset + "s1: "+ `subject.symbolName() + " position: "+ MuTraveler.getPosition(this));
       }
     }
   }
@@ -121,7 +121,7 @@ public class Rewrite4 {
         for (int i = 0; i<depth; i++){
           offset += "--";
         }
-        System.out.println(offset + "> s2: "+ `subject.getName() + " position: "+ MuTraveler.getPosition(this));
+        System.out.println(offset + "> s2: "+ `subject.symbolName() + " position: "+ MuTraveler.getPosition(this));
       }
     }
   }
@@ -130,7 +130,7 @@ public class Rewrite4 {
 
     visit Term {
       subject -> {
-        if (`subject.getArity() == 0) {
+        if (`subject.getChildCount() == 0) {
           bag.add(MuTraveler.getPosition(this));
         }
       }

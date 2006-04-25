@@ -612,9 +612,7 @@
         <include name="*.xml"/>
       </fileset>
     </copy>
-    <adtcompile example="${strategy}"
-                factory="term"/>
-    <vascompile example="${strategy}"/>
+    <gomcompile example="${strategy}"/>
     <tomcompile example="${strategy}"/>
     <javacompile example="${strategy}"/>
   </target>

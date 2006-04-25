@@ -29,7 +29,6 @@
 
 package strategy;
 
-import aterm.*;
 import strategy.term.*;
 import strategy.term.types.*;
 
@@ -84,10 +83,6 @@ public class Rewrite3 {
 
   }
   
-  public void collect(Collection collection, VisitableVisitor rule, ATerm subject) {
-
-  }
-
   %strategy RewriteSystem(collection:Collection) extends `Fail() {
 
     visit Term {
@@ -99,7 +94,7 @@ public class Rewrite3 {
    * Library
    */
   
-  private boolean occursTerm(final ATerm groundTerm, ATerm subject) {
+  private boolean occursTerm(final jjtraveler.Visitable groundTerm, jjtraveler.Visitable subject) {
     VisitableVisitor rule = new tom.library.strategy.mutraveler.VoidVisitor() {
         public void voidVisit(jjtraveler.Visitable subject) throws VisitFailure {
           if(groundTerm == subject) {
