@@ -1,7 +1,24 @@
-This document should be read in reverse order (from bottom to top).
 
-since version 2.2:
-  - new organization
+version 2.3:
+ - a new generator of abstract data types has been introduced: Gom. 
+   Its syntax is compatible with the syntax of Vas. 
+	 Gom is more expressive than Vas by allowing the definition of Hooks.
+	 This ensure that an action is executed each time a constructor is built. In
+	 practice, this allows to compute canonical forms.
+	 In addtition, Gom generate more compact code and is more efficient than Vas.
+
+ - %strategy: a new construct that helps to defines strategies. When
+   using %strategy, it is no longer necessary to define inner-classes.
+   In addition, a Tom mapping is automatically generated.
+	 
+- %[...]%: a new construct that helps to write backends. The text
+   between %[ and ]% is no interpreted, therefore the string
+   s=%[print("hello\n")]% corresponds to s="print(\"hello\\n\")"
+
+ - the documentation has been improved. The four documents (reference, guide,
+	 tutorial, and cookbook) have been merged into one: manual
+ 
+ - new organization
     * tom
     *  |--- engine
     *  |      |--- adt               (datatype definitions)

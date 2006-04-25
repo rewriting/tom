@@ -1,22 +1,24 @@
-Tom 2.1 announcement
+Tom 2.3 announcement
 --------------------
 
 It is my great privilege and pleasure to announce the availability of
-Tom version 2.1.
+Tom version 2.3.
 
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into C and Java.
 
 Tom is a pattern matching compiler developed at INRIA. It is
-particularly  well-suited for programming various transformations on
-trees/terms and XML based documents. Its design follows  our research
+particularly well-suited for programming various transformations on
+trees/terms and XML based documents. Its design follows our research
 on the efficient compilation of rule based languages (e.g. ELAN,
 developed at INRIA-Loria).
 
-Tom is a tool implemented in Tom itself. Similarly to Yacc, it
-translates patterns into executable pattern matching automata. When a
-match is found, the corresponding semantic action (a sequence of
-instructions written in C or Java) is triggered and executed.    
+Many applications have been developed in Tom. Among them, let us mention:
+ - the Tom compiler itself
+ - languages semantics, interpreters and program transformation tools
+ - a prover for the Calculus of Structures
+ - an interpreter for the Rho Calculus
+ - a disunification algorithm
 
 Tom is a complex compiler which adds powerful constructs to C and
 Java: non linear syntactic matching, associative matching with neutral
@@ -28,15 +30,17 @@ applications. It comes with documentation, programming, and debugging
 support. 
 
 This new release contains many improvements and new features:
+  - a new generator of abstract data types implementations (Gom) which supports
+    hooks. In practice, this corresponds to private data types of Caml, which
+    ensures that terms are maintained in canonical form
 
-  - a re-designed plugin based architecture, which allows extension
-    and experimentation
-  - a new parser based on ANTLR
-  - a library for defining traversal strategies, very useful to
-    perform analysis and transformations
-  - a new organization, which make a clean separation between
-    libraries and kernel
-  - several bugs fixed
+  - a new %strategy construct which allows to easilly define strategies that
+    can be combined using strategy primitives a la Stratego (All, One, Repeat,
+    Choice, Innermost, Mu, etc.)
+
+  - a new %[...]% construct which helps to write cide generators (it is no
+    longer necessary to encode special characters of strings)
+
   
 Tom is available, in open source (GPL/BSD License), from the Tom web page:
 
