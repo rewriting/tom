@@ -430,7 +430,7 @@ public class StructureGom {
     }
 
   //private WeakHashMap lengthCache = new WeakHashMap();
-  public int length(StructuresAbstractType t) {
+  public static int length(StructuresAbstractType t) {
     
     //if(lengthCache.containsKey(t)) {
     //return ((Integer)lengthCache.get(t)).intValue();
@@ -462,9 +462,9 @@ public class StructureGom {
     return res;
   }
 
-  private WeakHashMap weightMap = new WeakHashMap();
+  private static WeakHashMap weightMap = new WeakHashMap();
 	private static int weightCall = 0;
-  public int weight(StructuresAbstractType subject) {
+  public static int weight(StructuresAbstractType subject) {
 		weightCall++;
     if(weightMap.containsKey(subject)) {
       return ((Integer)weightMap.get(subject)).intValue();
@@ -480,7 +480,7 @@ public class StructureGom {
     return (int)w;
   }
 
-  public int numberOfPair(StructuresAbstractType subject) {
+  public static int numberOfPair(StructuresAbstractType subject) {
     final Collection collection = new ArrayList();
     try {
       VisitableVisitor countPairs = new CountPairs(collection);
@@ -508,7 +508,7 @@ public class StructureGom {
    * but we can detect some un-provable formula
    * here, we check that any positive atom also appears as a negative atom
    */
-  private boolean provable(Struc subject) {
+  private static boolean provable(Struc subject) {
     final HashSet positive = new HashSet();
     final HashSet negative = new HashSet();
     collectAtom(subject, positive,negative);
@@ -535,7 +535,7 @@ public class StructureGom {
   /*
    * we say that 2 structures can react if t1 \cap -t2 \neq empty
    */
-  private boolean canReact(StructuresAbstractType t1, StructuresAbstractType t2) {
+  private static boolean canReact(StructuresAbstractType t1, StructuresAbstractType t2) {
     final HashSet atomT1 = new HashSet();
     final HashSet atomT2 = new HashSet();
     collectAtom(t1, atomT1, atomT1);
@@ -550,7 +550,7 @@ public class StructureGom {
   }
 
 
-  private void collectAtom(StructuresAbstractType subject, final HashSet positive, final HashSet negative) {
+  private static void collectAtom(StructuresAbstractType subject, final HashSet positive, final HashSet negative) {
     try {
       VisitableVisitor findAtoms = new FindAtoms(positive,negative);
       //`BottomUp(findAtoms).visit(subject);
@@ -570,7 +570,7 @@ public class StructureGom {
   }
 
   /* conversion functions */
-  StrucPar cop2par(StrucCop l) {
+  static StrucPar cop2par(StrucCop l) {
     %match(StrucCop l) {
       concCop() -> { return `concPar(); }
       concCop(head,tail*) -> { 
@@ -581,7 +581,7 @@ public class StructureGom {
     return null;
   }
 
-  StrucPar seq2par(StrucSeq l) {
+  static StrucPar seq2par(StrucSeq l) {
     %match(StrucSeq l) {
       concSeq() -> { return `concPar(); }
       concSeq(head,tail*) -> {
@@ -701,7 +701,7 @@ public class StructureGom {
     return t.toString();
   }
 
-  class CompiledBottomUp extends AbstractVisitableVisitor {
+  static class CompiledBottomUp extends AbstractVisitableVisitor {
     protected final static int ARG = 0;
     public CompiledBottomUp(VisitableVisitor v) {
       initSubterm(v);
@@ -720,7 +720,7 @@ public class StructureGom {
     }
   }
 
-  class CompiledBottomUpWithPositions extends AbstractVisitableVisitor {
+  static class CompiledBottomUpWithPositions extends AbstractVisitableVisitor {
     protected final static int ARG = 0;
     public CompiledBottomUpWithPositions(VisitableVisitor v) {
       initSubterm(v);
