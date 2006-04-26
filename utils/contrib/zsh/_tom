@@ -14,7 +14,7 @@ _arguments -C -s \
     {-l,--lazyType}'[Use universal type]' \
     {-I,--import}'[Path for %include]:include path:_files -/' \
     '--protected[Generate protected functions]' \
-    '--static[Generate static functions]' \
+    '--noStatic[Generate non static functions]' \
     {-O,--optimize}'[Optimized generated code]' \
     {-O2,--optimize2}'[Optimized generated code]' \
     '--debug[Generate debug primitives]' \
