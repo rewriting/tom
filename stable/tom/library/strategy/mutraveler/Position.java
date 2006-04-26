@@ -55,14 +55,27 @@ public class Position {
   public boolean equals(Object o) {
     if (o instanceof Position) {
       Position p = (Position)o;
-      return size==p.size && Arrays.equals(data,p.data);
+      /* we need to check only the meaningful part of the data array */
+      if (size==p.size) {
+        for(int i=0; i<size; i++) {
+          if (data[i]!=p.data[i]) {
+            return false;
+          }
+        }
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
   }
 
   public int hashCode() {
-    return size * data.hashCode();
+    /* Hash only the interesting part of the array */
+    int[] hashedData = new int[size];
+    System.arraycopy(data,0,hashedData,0,size);
+    return size * hashedData.hashCode();
   }
 
   /**

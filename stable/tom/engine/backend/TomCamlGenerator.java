@@ -57,14 +57,17 @@ public class TomCamlGenerator extends TomImperativeGenerator {
    */
   
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
+    Instruction head = instructionList.getHead();
     if(!instructionList.isEmpty()) {
-      generateInstruction(deep,instructionList.getHead(), moduleName);
+      generateInstruction(deep,head, moduleName);
       instructionList = instructionList.getTail();
     }
 
     while(!instructionList.isEmpty()) {
-      output.write("(* end InstructionSequence *) ");
-      output.writeln(";");
+      if(!head.isTargetLanguageToInstruction()) {
+        output.write("(* end InstructionSequence *) ");
+        output.writeln(";");
+      }
       generateInstruction(deep,instructionList.getHead(), moduleName);
       /*
        * buildInstructionSequence is used for CompiledPattern.
