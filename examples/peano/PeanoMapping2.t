@@ -34,12 +34,11 @@ import aterm.pure.*;
 
 public class PeanoMapping2 {
 
-  ATermFactory factory;
-  AFun fzero, fsuc;
-  ATermAppl tzero;
+  static TermFactory factory = new SingletonFactory.getInstance();
+  static AFun fzero, fsuc;
+  static ATermAppl tzero;
 
-  public PeanoMapping2(ATermFactory factory) {
-    this.factory = factory;
+  public PeanoMapping2() {
     fzero = factory.makeAFun("zero", 0, false);
     fsuc  = factory.makeAFun("suc" , 1, false);
     tzero = factory.makeAppl(fzero);
@@ -80,7 +79,7 @@ public class PeanoMapping2 {
   }
 
   public final static void main(String[] args) {
-    PeanoMapping2 test = new PeanoMapping2(new PureFactory());
+    PeanoMapping2 test = new PeanoMapping2();
     test.run(10);
   }
  

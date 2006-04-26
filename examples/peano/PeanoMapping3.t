@@ -34,15 +34,14 @@ import aterm.pure.*;
 
 
 public class PeanoMapping3 {
-  ATermFactory factory;
-  ATerm stamp = null;
-  ATerm tomstamp = null;
-  public PeanoMapping3(ATermFactory factory) {
-    this.factory = factory;
+  static ATermFactory factory = SingletonFactory.getInstance();
+  static ATerm stamp = null;
+  static ATerm tomstamp = null;
+  public PeanoMapping3() {
     //this.stamp = factory.makeAppl(factory.makeAFun("stamp",0,false));
     //this.tomstamp = factory.makeAppl(factory.makeAFun("tomstamp",0,false));
-    this.stamp = factory.makeList();
-    this.tomstamp = factory.makeList();
+    stamp = factory.makeList();
+    tomstamp = factory.makeList();
   }
 
   %typeterm term {
@@ -82,7 +81,7 @@ public class PeanoMapping3 {
   }
 
   public final static void main(String[] args) {
-    PeanoMapping3 test = new PeanoMapping3(new PureFactory());
+    PeanoMapping3 test = new PeanoMapping3();
     test.run(10);
   }
  
