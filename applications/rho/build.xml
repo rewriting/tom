@@ -86,24 +86,25 @@
     </tomantlr>
     <javacompile package="matching"/>
   </target>
+
   <target name="build.parallel" depends="init">
   <gom config="${gomconfigfile}"
          srcdir="${rho.dir}"
-         package="lambdaParallel" 
+         package="lambdaparallel" 
          destdir="${rho.gen}">
-      <include name="lambdaParallel/**/*.gom"/>
+      <include name="lambdaparallel/**/*.gom"/>
     </gom>
-    <tomcompile package="lambdaParallel"/>
+    <tomcompile package="lambdaparallel"/>
     <tom.preset srcdir="${rho.dir}" 
-	    outputfile="${rho.gen}/lambdaParallel/LamcalparallelParser.g"
-	    options="-I ${rho.gen}/lambdaParallel/">
-	    <include name="lambdaParallel/*.g.t"/>
+	    outputfile="${rho.gen}/lambdaparallel/LamcalparallelParser.g"
+	    options="-I ${rho.gen}/lambdaparallel/">
+	    <include name="lambdaparallel/*.g.t"/>
     </tom.preset>
-    <tomantlr target="${rho.gen}/lambdaParallel/LamcalparallelParser.g"
-              outputdirectory="${rho.gen}/lambdaParallel/">
+    <tomantlr target="${rho.gen}/lambdaparallel/LamcalparallelParser.g"
+              outputdirectory="${rho.gen}/lambdaparallel/">
       <classpath refid="tom.classpath"/>
     </tomantlr>
-    <javacompile package="lambdaParallel"/>
+    <javacompile package="lambdaparallel"/>
   </target>
 
   <target name="junit" description="Runs junit acceptance tests for xrho" depends="build.xrho, init">

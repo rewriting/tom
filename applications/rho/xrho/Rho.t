@@ -294,7 +294,7 @@ public class Rho {
     return "";
 	}
 
-	public class Not_abs extends RhotermBasicStrategy {
+	public static class Not_abs extends RhotermBasicStrategy {
 		public Not_abs() {
 			super(`Identity());
 		}

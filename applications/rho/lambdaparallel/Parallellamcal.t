@@ -51,18 +51,12 @@ import jjtraveler.VisitFailure;
 import java.io.*;
 
 public class Parallellamcal{
-	private int comptVariable = 0;	
+	private static int comptVariable = 0;	
 	%include { mutraveler.tom }
 	%include { parallellamterm/Parallellamterm.tom }
 	
 
 	public final static void main(String[] args) {
-		Parallellamcal engine = new Parallellamcal();
-		engine.run();
-	}
-	
-
-	public void run(){
 		Parallellamterm subject = `var("undefined");
 		VisitableVisitor beta = `reductionRules();
 		VisitableVisitor print = `print();
@@ -99,7 +93,7 @@ public class Parallellamcal{
 		}
 	}
 	//[subject/X]t
-	public Parallellamterm substitute(Parallellamterm X, Parallellamterm subject, Parallellamterm t){
+	public static Parallellamterm substitute(Parallellamterm X, Parallellamterm subject, Parallellamterm t){
 		%match(Parallellamterm t){
 			var(name) -> {
 				%match(Parallellamterm X){
@@ -120,7 +114,7 @@ public class Parallellamcal{
 		}
 		return `subject;
 	}
-	public String prettyPrinter(Parallellamterm t){
+	public static String prettyPrinter(Parallellamterm t){
 		%match(Parallellamterm t){
 			app(term1,term2) -> {return "("+prettyPrinter(`term1)+"."+prettyPrinter(`term2)+")";}
 			abs(term1,term2) -> {return "("+prettyPrinter(`term1)+"->"+prettyPrinter(`term2)+")";}
@@ -130,7 +124,7 @@ public class Parallellamcal{
 		}
     return "";
 	}
-	public String prettyPrinterBis(Parallellamterm t){
+	public static String prettyPrinterBis(Parallellamterm t){
 		%match(Parallellamterm t){
 			app(term1,term2) -> {return "("+prettyPrinter(`term1)+"."+prettyPrinter(`term2)+")";}
 			abs(term1,term2) -> {return "("+prettyPrinter(`term1)+"->"+prettyPrinter(`term2)+")";}

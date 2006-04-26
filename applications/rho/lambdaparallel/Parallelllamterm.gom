@@ -2,9 +2,9 @@ module Parallellamterm
 imports String
 abstract syntax
 Parallellamterm =  var(na:String)
-	|   abs(lhs:Parallellamterm,rhs:Parallellamterm)
-	|   app(lhs:Parallellamterm,rhs:Parallellamterm)
-	|		parallel(Parallellamterm*)
+	| abs(lhs:Parallellamterm,rhs:Parallellamterm)
+	| app(lhs:Parallellamterm,rhs:Parallellamterm)
+	| parallel(Parallellamterm*)
 	
 	abs:make(lhs,rhs){
 	%match(Parallellamterm rhs){
@@ -15,7 +15,6 @@ Parallellamterm =  var(na:String)
 			}
 		}
 	}
-	return realMake(lhs,rhs);
 }
 app:make(lhs,rhs){
 	%match(Parallellamterm lhs) {
@@ -26,8 +25,6 @@ app:make(lhs,rhs){
 			}
 		}
 	}
-	
-	return realMake(lhs,rhs);
 }
 parallel:make_insert(x,l){
 	%match(Parallellamterm x,	Parallellamterm l){
@@ -41,6 +38,4 @@ parallel:make_insert(x,l){
 			return `parallel(y*,z*);
 		}
 	}
-	
-	return realMake(x,l);
 }
