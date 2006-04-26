@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 public class TestBuiltin extends TestCase {
   private static ATerm pattern1,pattern2,pattern3,pattern4,pattern5;
  
-  private ATermFactory factory;
+  private static ATermFactory factory = SingletonFactory.getInstance();
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
@@ -56,56 +56,56 @@ public class TestBuiltin extends TestCase {
     make(t) { makeDouble(t) }
   }
 
-  public ATerm makeString(String t) {
+  public static ATerm makeString(String t) {
     return factory.makeAppl(factory.makeAFun("string", 1, false),
                             factory.makeAppl(factory.makeAFun(t, 0, true)));
   }
 
-  public ATerm makeChar(char t) {
+  public static ATerm makeChar(char t) {
     return factory.makeAppl(factory.makeAFun("char", 1, false),
                             factory.makeInt((int)t));
   }
 
-  public ATerm makeInt(int t) {
+  public static ATerm makeInt(int t) {
     return factory.makeAppl(factory.makeAFun("int", 1, false),
                             factory.makeInt(t));
   }
 
-  public ATerm makeLong(long t) {
+  public static ATerm makeLong(long t) {
     return factory.makeAppl(factory.makeAFun("long", 1, false),
                             factory.makeInt((int)t));
   }
 
-  public ATerm makeDouble(double t) {
+  public static ATerm makeDouble(double t) {
     return factory.makeAppl(factory.makeAFun("double", 1, false),
                             factory.makeReal(t));
   }
 
-  public String getString(ATerm t) {
+  public static String getString(ATerm t) {
     ATermAppl subterm = (ATermAppl) ((ATermAppl)t).getArgument(0);
     String name = subterm.getName();
     return name;
   }
   
-  public int getInt(ATerm t) {
+  public static int getInt(ATerm t) {
     ATermInt subterm = (ATermInt) ((ATermAppl)t).getArgument(0);
     int value = subterm.getInt();
     return value;
   }
 
-  public long getLong(ATerm t) {
+  public static long getLong(ATerm t) {
     ATermInt subterm = (ATermInt) ((ATermAppl)t).getArgument(0);
     long value = (long)subterm.getInt();
     return value;
   }
 
-  public char getChar(ATerm t) {
+  public static char getChar(ATerm t) {
     ATermInt subterm = (ATermInt) ((ATermAppl)t).getArgument(0);
     int value = subterm.getInt();
     return (char)value;
   }
 
-  public double getDouble(ATerm t) {
+  public static double getDouble(ATerm t) {
     ATermReal subterm = (ATermReal) ((ATermAppl)t).getArgument(0);
     double value = subterm.getReal();
     return value;

@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Array {
 
-  private ATermFactory factory;
+  private static ATermFactory factory = SingletonFactory.getInstance();
   
   private AFun fzero, fsuc, fplus,ffib;
   public ATermAppl tzero;
@@ -59,12 +59,8 @@ public class Array {
     double3(conc(X*)) -> conc(X*)
   } 
 
-  public Array(ATermFactory factory) {
-    this.factory = factory;
-  }
-
   public final static void main(String[] args) {
-    Array test = new Array(new PureFactory(16));
+    Array test = new Array();
     test.testArray1();
   }
 

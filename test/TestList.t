@@ -6,7 +6,7 @@ import junit.framework.TestSuite;
 
 public class TestList extends TestCase {
   private static ATerm ok,fail;
-  private ATermFactory factory;
+  private static ATermFactory factory = SingletonFactory.getInstance();
 	private int testNumber;
 
 	public static void main(String[] args) {
@@ -14,7 +14,6 @@ public class TestList extends TestCase {
 	}
 
   public void setUp() {
-    factory = new PureFactory(16);
     ok      = factory.parse("ok");
     fail    = factory.parse("fail");
   }
