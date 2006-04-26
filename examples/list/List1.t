@@ -33,15 +33,7 @@ import aterm.*;
 import aterm.pure.SingletonFactory;
 
 public class List1 {
-  private ATermFactory factory;
-
-  public List1(ATermFactory factory) {
-    this.factory = factory;
-  }
-
-	public ATermFactory getFactory() {
-		return factory;
-	}
+  private static ATermFactory factory = SingletonFactory.getInstance();
 
   %typeterm TomList {
     implement { ATermList }
@@ -113,7 +105,7 @@ public class List1 {
   }
 
   public final static void main(String[] args) {
-    List1 test = new List1(SingletonFactory.getInstance());
+    List1 test = new List1();
     test.run();
   }
 

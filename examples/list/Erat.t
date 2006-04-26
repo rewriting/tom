@@ -33,17 +33,9 @@ import aterm.*;
 import aterm.pure.SingletonFactory;
 
 public class Erat {
-  private ATermFactory factory;
+  private static ATermFactory factory = SingletonFactory.getInstance();
 
   %include { int.tom }
-
-  public Erat(ATermFactory factory) {
-    this.factory = factory;
-  }
-
-	public ATermFactory getFactory() {
-		return factory;
-	}
 
   %typeterm TomList {
     implement { ATermList }
@@ -90,7 +82,7 @@ public class Erat {
   }
 
   public final static void main(String[] args) {
-    Erat test = new Erat(SingletonFactory.getInstance());
+    Erat test = new Erat();
     test.run();
   }
 

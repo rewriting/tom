@@ -34,15 +34,7 @@ import aterm.pure.SingletonFactory;
 import java.util.*;
 
 public class List2 {
-  private ATermFactory factory;
-
-  public List2(ATermFactory factory) {
-    this.factory = factory;
-  }
-
-	public ATermFactory getFactory() {
-		return factory;
-	}
+  private static ATermFactory factory = SingletonFactory.getInstance();
 
   %typeterm TomList {
     implement { ArrayList }
@@ -57,12 +49,12 @@ public class List2 {
     get_size(l)        { l.size() }
   }
 
-  private ArrayList myAdd(Object e,ArrayList l) {
+  private static ArrayList myAdd(Object e,ArrayList l) {
     l.add(e);
     return l;
   }
   
-  private ArrayList myEmpty(int n) {
+  private static ArrayList myEmpty(int n) {
     ArrayList res = new ArrayList(n);
     return res;
   }
@@ -123,9 +115,8 @@ public class List2 {
   }
 
   public final static void main(String[] args) {
-    List2 test = new List2(SingletonFactory.getInstance());
+    List2 test = new List2();
     test.run();
   }
 
 }
-

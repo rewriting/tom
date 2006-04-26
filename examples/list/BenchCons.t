@@ -33,17 +33,9 @@ import aterm.*;
 import aterm.pure.SingletonFactory;
 
 public class BenchCons {
-  private ATermFactory factory;
+  private static ATermFactory factory = SingletonFactory.getInstance();
 
   %include { int.tom }
-
-  public BenchCons(ATermFactory factory) {
-    this.factory = factory;
-  }
-
-	public ATermFactory getFactory() {
-		return factory;
-	}
 
   %typeterm TomList {
     implement { ATermAppl }
@@ -103,7 +95,7 @@ public class BenchCons {
   }
 
   public final static void main(String[] args) {
-    BenchCons test = new BenchCons(SingletonFactory.getInstance());
+    BenchCons test = new BenchCons();
     int max = 100;
     try {
       max = Integer.parseInt(args[0]);
@@ -115,4 +107,3 @@ public class BenchCons {
   }
 
 }
-
