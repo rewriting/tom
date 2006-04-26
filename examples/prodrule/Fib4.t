@@ -56,12 +56,12 @@ public class Fib4 {
   }
     
 
-  private ArrayList myAdd(Object e,ArrayList l) {
+  private static ArrayList myAdd(Object e,ArrayList l) {
     l.add(e);
     return l;
   }
   
-  private ArrayList myEmpty(int n) {
+  private static ArrayList myEmpty(int n) {
     ArrayList res = new ArrayList(n);
     return res;
   }

@@ -55,12 +55,12 @@ public class Fib3 {
     get_size(l)        { l.size() }
   }
 
-  private ArrayList myAdd(Object e,ArrayList l) {
+  private static ArrayList myAdd(Object e,ArrayList l) {
     l.add(e);
     return l;
   }
   
-  private ArrayList myEmpty(int n) {
+  private static ArrayList myEmpty(int n) {
     ArrayList res = new ArrayList(n);
     return res;
   }
@@ -99,7 +99,7 @@ public class Fib3 {
 	    concElement(S1*, Fib[arg=n,val=Undef()], S2*) -> {
         if( `(n>2 && !occursFib(S1*,n-1) && !occursFib(S2*,n-1)) ) {
           //if( `n>2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1))  {
-          //  if( `n>2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1) ) {
+          //if( `n>2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1) ) {
           return `concElement(Fib(n-1,Undef()),s*);
         }
 	    }
