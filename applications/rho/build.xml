@@ -13,9 +13,6 @@
   <property name="rho.build"    location="build"/>
 
   <target name="init" depends="tom.init">
-    <fail unless="env.TOM_HOME"
-          message="TOM_HOME has to be defined in your environment, 
-          to find the Tom classes"/>
     <mkdir dir="${rho.build}"/>
     <mkdir dir="${rho.gen}"/>
     
