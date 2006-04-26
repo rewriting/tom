@@ -392,7 +392,7 @@ class SPropp {
 	//}}}
 
 	//{{{ public class MyBoolean
-	public class MyBoolean {
+	public static class MyBoolean {
 		private boolean value;
 		public MyBoolean(boolean initValue) {
 			value = initValue;
@@ -408,7 +408,7 @@ class SPropp {
 	
 	//{{{ public class MyInt
   %typeterm MyInt { implement { MyInt } }
-	public class MyInt {
+	public static class MyInt {
 		private int value;
 		public MyInt(int initValue) {
 			value = initValue;
