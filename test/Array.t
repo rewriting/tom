@@ -23,7 +23,7 @@ public class Array {
     get_size(l)      { ((ArrayList)l).size() }
   }
 
-  private ArrayList myAdd(Object e, ArrayList l) {
+  private static ArrayList myAdd(Object e, ArrayList l) {
     l.add(e);
     return l;
   }

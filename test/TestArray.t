@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 public class TestArray extends TestCase {
 
-  private ATermFactory factory;
+  private static ATermFactory factory = SingletonFactory.getInstance();
   
   private AFun fzero, fsuc, fplus,ffib;
   public ATermAppl tzero;
@@ -32,7 +32,7 @@ public class TestArray extends TestCase {
     make_append(e,l) { myAdd(e,(ArrayList)l) }
   }
 
-  private ArrayList myAdd(Object e, ArrayList l) {
+  private static ArrayList myAdd(Object e, ArrayList l) {
     l.add(e);
     return l;
   }
@@ -75,7 +75,6 @@ public class TestArray extends TestCase {
 	
 	protected void setUp() {
     logger = Logger.getLogger(getClass().getName());
-		this.factory = new PureFactory(16);
 
 		ATerm ta = factory.makeAppl(factory.makeAFun("a", 0, false));
 		ATerm tb = factory.makeAppl(factory.makeAFun("b", 0, false));
