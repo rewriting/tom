@@ -129,7 +129,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   }
 
   protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
-    output.write(deep,"public " + getTLType(`codomain) + " " + tomName + "(");
+    output.write(deep,modifier + getTLType(`codomain) + " " + tomName + "(");
     while(!varList.isEmpty()) {
       TomTerm localVar = varList.getHead();
       matchBlock: {
