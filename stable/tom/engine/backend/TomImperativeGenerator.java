@@ -54,7 +54,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     super(output, optionManager, symbolTable);
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
     
-    if(((Boolean)optionManager.getOptionValue("static")).booleanValue()) {
+    if(!((Boolean)optionManager.getOptionValue("noStatic")).booleanValue()) {
       this.modifier += "static " ;
     }
   }

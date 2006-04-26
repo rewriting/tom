@@ -613,7 +613,7 @@ public class @className()@ extends @fullClassName(sortName)@ implements tom.libr
       } catch (IOException e) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
       }
-      String[] params = {"-X",config_xml,"--static","--output",file_path,"-"};
+      String[] params = {"-X",config_xml,"--output",file_path,"-"};
 
       String gen = generate();
 

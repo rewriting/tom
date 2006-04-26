@@ -43,7 +43,8 @@
          <include name="gom/List.gom"/>
     </gom>
     <tom.preset srcdir="${test.src}"
-                destdir="${test.gen}"> 
+                destdir="${test.gen}"
+                options="--noStatic"> 
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
       <exclude name="Record.t"/>
