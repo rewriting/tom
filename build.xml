@@ -253,7 +253,7 @@
     <!--  compile in protected mode -->
     <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
-         options="--protected">
+         options="--static --protected">
       <include name="**/TomBase.t"/>
       <include name="**/verifier/*.t"/>
       <exclude name="**/TomVerifier.t"/>
@@ -262,7 +262,7 @@
     <!--  compile in standard mode -->
     <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
-         options="-I ${src.mapping} --optimize">
+         options="-I ${src.mapping} --static --optimize">
       <exclude name="**/TomBase.t"/>
       <exclude name="**/OptionParser.t"/>
       <exclude name="tom/engine/parser/*.g.t"/>
@@ -277,7 +277,7 @@
     <!--  compile without declaration -->
     <tomcompile srcdir="${src.src}" 
          destdir="${gen.destination}" 
-         options="-I ${src.mapping} --noDeclaration --optimize">
+         options="-I ${src.mapping} --noDeclaration --static --optimize">
 	 <exclude name="tom/engine/*.t"/>
 	 <exclude name="tom/engine/parser/*.g.t"/>
 
@@ -286,24 +286,24 @@
     <!-- Specific stuff for parser generation -->
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
-	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
+	    options="-I ${src.mapping} --static -I ${src.gen}/tom/engine/adt">
       <include name="**/TomLanguage.g.t"/>  
     </tomcompile>
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
-	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
+	    options="-I ${src.mapping} --static -I ${src.gen}/tom/engine/adt">
       <include name="**/HostLanguage.g.t"/>  
     </tomcompile>
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/BackQuoteLanguage.g"
-	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
+	    options="-I ${src.mapping} --static -I ${src.gen}/tom/engine/adt">
       <include name="**/BackQuoteLanguage.g.t"/>  
     </tomcompile>
 
     <!-- gom parser -->
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/gom/parser/GomParser.g"
-	    options="-I ${src.mapping} -I ${gen.destination}">
+	    options="-I ${src.mapping} --static -I ${gen.destination}">
       <include name="tom/gom/**/GomParser.g.t"/>
     </tomcompile>
   </target> 
