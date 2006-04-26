@@ -153,7 +153,7 @@ public class Nsh {
     return false;
   }
 
-  public int compareMessage(Message m1, Message m2) {
+  public static int compareMessage(Message m1, Message m2) {
       
     %match(Message m1, Message m2) {
       msg[src=sender[]],   msg[src=receiver[]] -> { return 1;  }
@@ -183,7 +183,7 @@ public class Nsh {
     return res;
   }
 
-  public int compareNonce(Nonce m1, Nonce m2) {
+  public static int compareNonce(Nonce m1, Nonce m2) {
       
     %match(Nonce m1, Nonce m2) {
       N[id1=sender[]],   N[id1=receiver[]] -> { return 1;  }
@@ -212,7 +212,7 @@ public class Nsh {
     
     return res;
   }
-  ListMessage insertMessage(Message m,ListMessage l) {
+  static ListMessage insertMessage(Message m,ListMessage l) {
     ListMessage res = null;
     if(l.isEmptyconcMessage()) {
       res = `concMessage(m,l*);
@@ -227,7 +227,7 @@ public class Nsh {
     return res;
   }
     
-  ListNonce insertNonce(Nonce m,ListNonce l) {
+  static ListNonce insertNonce(Nonce m,ListNonce l) {
     ListNonce res = null;
    %match(Nonce m) {
       N(dai(),dai()) -> { return l; }
@@ -248,15 +248,15 @@ public class Nsh {
     return res;
   }
      
-  public Nonce DN() {
+  public static Nonce DN() {
     return `N(dai(),dai());
   }
 
-  public Address DA() {
+  public static Address DA() {
     return `A(dai());
   }
 
-  public boolean existAgent(Agent agent, ListAgent list) {
+  public static boolean existAgent(Agent agent, ListAgent list) {
     %match(Agent agent, ListAgent list) {
       x, concAgent()          -> { return false; }
       x, concAgent(X1*,x,X2*) -> { return true; }
@@ -267,7 +267,7 @@ public class Nsh {
       */
   }
 
-  public boolean existMessage(Message message, ListMessage list) {
+  public static boolean existMessage(Message message, ListMessage list) {
         %match(Message message, ListMessage list) {
         x, concMessage()          -> { return false; }
         x, concMessage(X1*,x,X2*) -> { return true; }
@@ -278,7 +278,7 @@ public class Nsh {
       */
   }
 
-  public int sizeMessage(ListMessage list) {
+  public static int sizeMessage(ListMessage list) {
     %match(ListMessage list) {
         concMessage()     -> { return 0; }
         concMessage(h,t*) -> { return 1+sizeMessage(`t*); }
