@@ -65,6 +65,10 @@ class PeanoGom {
     test.run();
   }
 
+  public Nat getFib(Nat n) {
+    return `fib(n);
+  }
+  
   public Nat getFive() {
     return `suc(suc(suc(suc(suc(zero())))));
   }

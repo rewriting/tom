@@ -44,6 +44,6 @@ public class TestPeanoGom extends TestCase {
 	
 	public void testfib() {
 		assertEquals("fib 5 is 8",
-								 test.getEight(),test.fib(test.getFive()));
+								 test.getEight(),test.getFib(test.getFive()));
 	}
 }
