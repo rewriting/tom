@@ -34,11 +34,8 @@ import addressbook.addressbookvas.person.types.*;
 public class AddressBookVas {
 
   %gom {
-      //
-      // extension of adt syntax
-      //
     module person
-      imports int String
+    imports int String
       
     abstract syntax
       Date = date( year:int, month:int, day:int )
@@ -48,23 +45,13 @@ public class AddressBookVas {
       PersonList = concPerson( Person* )
   }
  
-  public AddressBookVas() { }
- 
   public final static void main(String[] args) {
-    AddressBookVas test = new AddressBookVas();
-    test.run();
-  }
-  
-  public void run() {
     PersonList book = generateBook();
     Date today = `date(2003,3,27);
     happyBirthday(book,today);
   }
 
-  // concPerson( Person* ) -> PersonList
-
-
-  public void happyBirthday(PersonList book, Date date) {
+  public static void happyBirthday(PersonList book, Date date) {
     %match(PersonList book, Date date) {
       concPerson(_*, person(firstname, _, date(_, month,day)), _*) , 
                                           date(_,month,day)   -> {
@@ -73,12 +60,12 @@ public class AddressBookVas {
     }
   }
   
-  public PersonList generateBook() {
+  public static PersonList generateBook() {
     return `concPerson(
       person("John","Smith",date(1965,3,27)),
       person("Marie","Muller",date(1986,3,27)),
       person("Paul","Muller",date(2000,1,27))
-      );
+			);
   }
   
 }

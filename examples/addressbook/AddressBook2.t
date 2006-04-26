@@ -35,20 +35,13 @@ public class AddressBook2 {
    
   %include { data/Data.tom }
  
-  public AddressBook2() { }
- 
   public final static void main(String[] args) {
-    AddressBook2 test = new AddressBook2();
-    test.run();
-  }
-  
-  public void run() {
     PersonList book = generateBook();
     Date today = `date(2003,3,27);
     happyBirthday(book,today);
   }
- 
-  public void happyBirthday(PersonList book, Date date) {
+  
+  public static void happyBirthday(PersonList book, Date date) {
     %match(PersonList book, Date date) {
       concPerson(_*, person(firstname, _, date(_,month,day)), _*),
         date(_,month,day)   -> {
@@ -57,7 +50,7 @@ public class AddressBook2 {
     }
   }
   
-  public PersonList generateBook() {
+  public static PersonList generateBook() {
     return `concPerson(
       person("John","Smith",date(1965,3,27)),
       person("Marie","Muller",date(1986,3,28)),

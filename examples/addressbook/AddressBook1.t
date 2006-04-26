@@ -35,20 +35,10 @@ import java.util.Iterator;
 import java.util.HashSet;
 
 public class AddressBook1 {
-  private HashSet book;
-   
   %include { data/Data.tom }
  
-  public AddressBook1() {
-  }
- 
   public final static void main(String[] args) {
-    AddressBook1 test = new AddressBook1();
-    test.run();
-  }
-  
-  public void run() {
-    book = new HashSet();
+    HashSet book = new HashSet();
     generatePerson(book);
     
     Iterator it = book.iterator();
@@ -57,8 +47,8 @@ public class AddressBook1 {
       happyBirthday(p, `date(2004,3,27));
     }
   }
- 
-  public void happyBirthday(Person p, Date today) {
+  
+  public static void happyBirthday(Person p, Date today) {
     %match(Person p, Date today) {
       person(firstname, _ ,date(_,month1,day1)),
       date(_,month2,day2) -> {
@@ -69,7 +59,7 @@ public class AddressBook1 {
     }
   }
   
-  public void generatePerson(HashSet set) {
+  public static void generatePerson(HashSet set) {
     set.add(`person("John","Smith",date(1965,3,27)));
     set.add(`person("Marie","Muller",date(1986,3,26)));
     set.add(`person("Paul","Muller",date(2000,1,27)));

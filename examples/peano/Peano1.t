@@ -35,7 +35,7 @@ import peano.peano.types.*;
 public class Peano1 {
   %include { peano/Peano.tom }
   
-  public Nat plus(Nat t1, Nat t2) {
+  public static Nat plus(Nat t1, Nat t2) {
     %match(Nat t1, Nat t2) {
       x, zero() -> { return `x; }
       x, suc(y) -> { return `suc(plus(x,y)); }
@@ -43,7 +43,7 @@ public class Peano1 {
     return null;
   }
 
-  public Nat fib(Nat t) {
+  public static Nat fib(Nat t) {
     %match(Nat t) {
       zero()      -> { return `suc(zero()); }
       suc(zero()) -> { return `suc(zero()); }
@@ -52,19 +52,15 @@ public class Peano1 {
     return null;
   }
 
-  public void run(int n) {
-    Nat N = `zero();
+  public final static void main(String[] args) {
+    int n = 10;
+		Nat N = `zero();
     for(int i=0 ; i<n ; i++) {
       N = `suc(N);
     }
 
     Nat res = fib(N);
     System.out.println("fib(" + n + ") =  " + res);
-  }
-
-  public final static void main(String[] args) {
-    Peano1 test = new Peano1();
-    test.run(10);
   }
 
 
