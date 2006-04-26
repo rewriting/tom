@@ -38,6 +38,7 @@
   <property name="stable.dist"    location="${stable.src}/dist"/>
   <property name="stable.doc"     location="${stable.src}/doc"/>
   <property name="stable.lib"     location="${stable.src}/lib"/>
+  <property name="stable.config"  location="${stable.src}/config"/>
 
   <!--some used directory location  for devel -->
   <property name="src.src"        location="src"/>
@@ -48,6 +49,7 @@
   <property name="src.dist"       location="${src.src}/dist"/>
   <property name="src.doc"        location="${src.src}/doc"/>
   <property name="src.lib"        location="${src.src}/lib"/>
+  <property name="src.config"     location="${src.src}/config"/>
   
   <!-- for distribution: top, stable and src -->
   <property name="dist"              location="dist"/>
@@ -60,12 +62,12 @@
   <property name="src.dist.share"    location="${src.dist}/share"/>
 
   <!-- the configuration files -->
-  <property name="stable.configfile"    location="${utils}/Tom.xml"/>
-  <property name="src.configfile"       location="${utils}/Tom.src.xml"/>
-  <property name="stable.gomconfigfile" location="${utils}/Gom.xml"/>
-  <property name="src.gomconfigfile"    location="${utils}/Gom.xml"/>
-  <property name="stable.vasconfigfile" location="${stable.lib}/Vas.xml"/>
-  <property name="src.vasconfigfile"    location="${src.lib}/Vas.xml"/>
+  <property name="stable.configfile"    location="${stable.config}/Tom.xml"/>
+  <property name="src.configfile"       location="${src.config}/Tom.xml"/>
+  <property name="stable.gomconfigfile" location="${stable.config}/Gom.xml"/>
+  <property name="src.gomconfigfile"    location="${src.config}/Gom.xml"/>
+  <property name="stable.vasconfigfile" location="${stable.config}/Vas.xml"/>
+  <property name="src.vasconfigfile"    location="${src.config}/Vas.xml"/>
 
   <!-- Aircube bundle -->
   <property name="bundle.temp.dir"      value="bundle"/>
@@ -1074,7 +1076,6 @@
         <include name="**/*.java"/>
         <include name="**/*.properties"/>
         <include name="lib/*.jar"/>
-        <include name="lib/*.xml"/>
         <exclude name="**/Tom.java"/>
         <exclude name="**/adt/**/*.java"/>
         <exclude name="**/bootstrap/**/*"/>
@@ -1088,6 +1089,9 @@
     </copy>
     <copy todir="${stable.mapping}" overwrite="true">
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
+    </copy>
+    <copy todir="${stable.config}" overwrite="true">
+      <fileset dir="${src.config}" includes="*.xml"/>
     </copy>
 
     <mkdir dir="${stable.src}/tom/engine/adt"/>
