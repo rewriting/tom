@@ -28,10 +28,10 @@ class PeanoVas {
      two() -> suc(suc(zero()))
   }
 
-  private Nat vOne;
-  private Nat vTwo;
+  private static Nat vOne;
+  private static Nat vTwo;
 
-  private Nat fvOne() { return vOne; }
+  private static Nat fvOne() { return vOne; }
 
     // rule fib
   %rule {
@@ -52,7 +52,7 @@ class PeanoVas {
     plusInt(suc(x), y)    -> increment(plusInt(x,y))
   } // rule
 
-  private int increment(int a) { return a+1; }
+  private static int increment(int a) { return a+1; }
 
   //-------------------------------------------------------
 

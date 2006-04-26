@@ -34,15 +34,7 @@ import aterm.pure.*;
 import java.util.*;
 
 public class List {
-  private ATermFactory factory;
-
-  public List(ATermFactory factory) {
-    this.factory = factory;
-  }
-
-  public ATermFactory getFactory() {
-    return factory;
-  }
+  private static ATermFactory factory = SingletonFactory.getInstance();
 
   %typeterm TomList {
     implement { ArrayList }
@@ -57,12 +49,12 @@ public class List {
     make_append(e,l) { myAdd(e,(ArrayList)l) }
   }
 
-  private ArrayList myAdd(Object e,ArrayList l) {
+  private static ArrayList myAdd(Object e,ArrayList l) {
     l.add(e);
     return l;
   }
 
-  private ArrayList myEmpty(int n) {
+  private static ArrayList myEmpty(int n) {
     ArrayList res = new ArrayList(n);
     return res;
   }
@@ -124,7 +116,7 @@ public class List {
   }
 
   public final static void main(String[] args) {
-    List test = new List(new PureFactory(16));
+    List test = new List();
     test.run();
   }
 

@@ -17,7 +17,7 @@ class Matching2 {
     //decomposeList(l1:TermList, l2:TermList) -> TermList
   }
 
-  private TermList decomposeList(TermList l1, TermList l2) {
+  private static TermList decomposeList(TermList l1, TermList l2) {
     %match(TermList l1, TermList l2) {
       conc(),conc() -> { return `conc(True()); }
       conc(h1,t1*),conc(h2,t2*) -> {

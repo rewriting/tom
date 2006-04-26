@@ -33,10 +33,7 @@ import aterm.*;
 import aterm.pure.*;
 
 public class Peano1 {
-  ATermFactory factory;
-  public Peano1(ATermFactory factory) {
-    this.factory = factory;
-  }
+  static ATermFactory factory = SingletonFactory.getInstance();
 
   %typeterm Nat {
     implement { ATermAppl }
@@ -71,7 +68,7 @@ public class Peano1 {
   }
 
   public final static void main(String[] args) {
-    Peano1 test = new Peano1(new PureFactory());
+    Peano1 test = new Peano1();
     test.run(10);
   }
  
