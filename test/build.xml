@@ -49,6 +49,7 @@
       <include name="TestStrategy.t"/>
       <include name="TestList2.t"/>
       <include name="TestArray2.t"/>
+      <include name="TestSet1.t"/>
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
       <exclude name="Record.t"/>
@@ -68,6 +69,7 @@
       <exclude name="TestStrategy.t"/>
       <exclude name="TestList2.t"/>
       <exclude name="TestArray2.t"/>
+      <exclude name="TestSet1.t"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"

@@ -7,22 +7,20 @@ public class TestMatch extends TestCase {
   private static ATerm ok,fail;
   private static ATerm pattern1,pattern2,pattern3,pattern4,pattern5;
  
-  private static ATermFactory factory() {
-    return SingletonFactory.getInstance();
-  }
+  private static ATermFactory factory = SingletonFactory.getInstance();
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestMatch.class));
 	}
 	
   public void setUp() {
-    ok   = factory().parse("ok");
-    fail = factory().parse("fail");
-    pattern1 = factory().parse("pattern1");
-    pattern2 = factory().parse("pattern2");
-    pattern3 = factory().parse("pattern3");
-    pattern4 = factory().parse("pattern4");
-    pattern5 = factory().parse("pattern5");
+    ok   = factory.parse("ok");
+    fail = factory.parse("fail");
+    pattern1 = factory.parse("pattern1");
+    pattern2 = factory.parse("pattern2");
+    pattern3 = factory.parse("pattern3");
+    pattern4 = factory.parse("pattern4");
+    pattern5 = factory.parse("pattern5");
   }
 
   %typeterm L {
@@ -32,7 +30,7 @@ public class TestMatch extends TestCase {
 
   %oplist L conc( E* ) {
     is_fsym(t)     { t instanceof ATermList }
-    make_empty()   { factory().makeList() }
+    make_empty()   { factory.makeList() }
     make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
     get_head(l)    { ((ATermList)l).getFirst() }
     get_tail(l)    { ((ATermList)l).getNext() }
@@ -128,8 +126,8 @@ public class TestMatch extends TestCase {
 		for (int i=0; i<TEST.length;i++) {
 			assertSame(
 				"TestMatch1 expected "+TEST[i].answer+" for match1("+TEST[i].question+")",
-				match1(factory().parse(TEST[i].question)),
-				factory().parse(TEST[i].answer)
+				match1(factory.parse(TEST[i].question)),
+				factory.parse(TEST[i].answer)
 				);
 		}
   }
@@ -156,8 +154,8 @@ public class TestMatch extends TestCase {
 		for (int i=0; i<TEST.length;i++) {
 			assertSame(
 				"TestMatch2 expected "+TEST[i].answer+" for match2("+TEST[i].question1+","+TEST[i].question2+")",
-				match2(factory().parse(TEST[i].question1),factory().parse(TEST[i].question2)),
-				factory().parse(TEST[i].answer)
+				match2(factory.parse(TEST[i].question1),factory.parse(TEST[i].question2)),
+				factory.parse(TEST[i].answer)
 				);
 		}
   }
@@ -185,8 +183,8 @@ public class TestMatch extends TestCase {
 		for (int i=0; i<TEST.length;i++) {
 			assertSame(
 				"TestMatch3 expected "+TEST[i].answer+" for match3("+TEST[i].question+")",
-				match3(factory().parse(TEST[i].question)),
-				factory().parse(TEST[i].answer)
+				match3(factory.parse(TEST[i].question)),
+				factory.parse(TEST[i].answer)
 				);
 		}
   }
@@ -217,8 +215,8 @@ public class TestMatch extends TestCase {
 		for (int i=0; i<TEST.length;i++) {
 			assertSame(
 				"TestMatch4 expected "+TEST[i].answer+" for match4("+TEST[i].question+")",
-				match4(factory().parse(TEST[i].question)),
-				factory().parse(TEST[i].answer)
+				match4(factory.parse(TEST[i].question)),
+				factory.parse(TEST[i].answer)
 				);
 		}
   }
@@ -235,11 +233,11 @@ public class TestMatch extends TestCase {
   }
     
   public void test5() {
-    assertTrue(pattern1 == match5(factory().parse("h(a, l([f(a),f(b),f(a),f(c)]))")));
-    assertTrue(fail == match5(factory().parse("h(a, l([f(a),f(b),f(c)]))")));
+    assertTrue(pattern1 == match5(factory.parse("h(a, l([f(a),f(b),f(a),f(c)]))")));
+    assertTrue(fail == match5(factory.parse("h(a, l([f(a),f(b),f(c)]))")));
 
-    assertTrue(pattern2 == match5(factory().parse("h(b, l([ff(f(a)),f(b),ff(f(a)),f(c)]))")));
-    assertTrue(fail == match5(factory().parse("h(b, l([ff(f(a)),f(b),ff(f(b)),f(c)]))")));
+    assertTrue(pattern2 == match5(factory.parse("h(b, l([ff(f(a)),f(b),ff(f(a)),f(c)]))")));
+    assertTrue(fail == match5(factory.parse("h(b, l([ff(f(a)),f(b),ff(f(b)),f(c)]))")));
   }
   
   public ATerm match5(ATerm t) { 
@@ -252,14 +250,14 @@ public class TestMatch extends TestCase {
   } 
 
   public void test6() {
-    ATerm res = match6(factory().parse("h(a(),b())"));
+    ATerm res = match6(factory.parse("h(a(),b())"));
     assertTrue("slot s1 of \"h\" is a(), it should match, but got "+res, 
         pattern2 == res);
-    res = match6(factory().parse("k(a(),b())"));
+    res = match6(factory.parse("k(a(),b())"));
     /* -- test for the disjunction bug (TOM-50) --*/
     assertTrue("slot s1 of \"k\" is b(), it should not match, but got "+res, 
         fail     == res);
-    res = match6(factory().parse("k(b(),a())"));
+    res = match6(factory.parse("k(b(),a())"));
     assertTrue("slot s1 of \"k\" is a(), it should match, but got "+res, 
         pattern3 == res);
   }
