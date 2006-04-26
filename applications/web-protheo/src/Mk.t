@@ -22,24 +22,19 @@ public class Mk {
   public static String tmpDir;
 
   private Tools tools;
-  private XmlTools xtools;
+  private static final XmlTools xtools = new XmlTools();
 
-  private Menu menu;
-  private Members members;
-  private Publi publi;
+  private static Menu menu;
+  private static Members members;
+  private static Publi publi;
 
-  private TNode skeleton;
-
-  private TNodeFactory getTNodeFactory() {
-    return xtools.getTNodeFactory();
-  }
+  private static TNode skeleton;
 
   public static void main (String args[]) {
     Mk mk = new Mk();
   }
 
   public Mk() {
-    xtools = new XmlTools();
     tools = new Tools();
 
     TNode conf = (TNode)xtools.convertXMLToATerm("config.xml");
@@ -114,7 +109,7 @@ public class Mk {
     }
   }
 
-  public void writeHTML(String link, String lang) {
+  public static void writeHTML(String link, String lang) {
     TNode content;
     TNodeList menuHTML = menu.getContent(link+"_"+lang);
     if(menuHTML == null) {
