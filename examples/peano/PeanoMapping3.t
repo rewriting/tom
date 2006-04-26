@@ -34,15 +34,8 @@ import aterm.pure.*;
 
 
 public class PeanoMapping3 {
-  static ATermFactory factory = SingletonFactory.getInstance();
-  static ATerm stamp = null;
-  static ATerm tomstamp = null;
-  public PeanoMapping3() {
-    //this.stamp = factory.makeAppl(factory.makeAFun("stamp",0,false));
-    //this.tomstamp = factory.makeAppl(factory.makeAFun("tomstamp",0,false));
-    stamp = factory.makeList();
-    tomstamp = factory.makeList();
-  }
+  static ATerm stamp = SingletonFactory.getInstance().makeList();
+  static ATerm tomstamp = SingletonFactory.getInstance().makeList();
 
   %typeterm term {
     implement           { ATermAppl }
@@ -53,16 +46,16 @@ public class PeanoMapping3 {
 
   %op term zero() {
     is_fsym(t) { t.getName() == "zero" }
-    make { factory.makeAppl(factory.makeAFun("zero",0,false)) }
+    make { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("zero",0,false)) }
   }
   
   %op term suc(p:term) {
     is_fsym(t) { t.getName() == "suc" }
     get_slot(p,t) { (ATermAppl)t.getArgument(0) }
-    make(t) { factory.makeAppl(factory.makeAFun("suc",1,false),t) }
+    make(t) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("suc",1,false),t) }
   }
 
-  public ATermAppl plus(ATermAppl t1, ATermAppl t2) {
+  public static ATermAppl plus(ATermAppl t1, ATermAppl t2) {
     %match(term t1, term t2) {
       x,zero() -> { return `x; }
       x,suc(y) -> { return `suc(plus(x,y)); }
@@ -70,8 +63,8 @@ public class PeanoMapping3 {
     return null;
   }
 
-  public void run(int n) {
-    //ATermAppl N = factory.makeAppl(factory.makeAFun("zero",0,false));
+  public final static void main(String[] args) {
+    int n = 10;
     ATermAppl N = `zero();
     for(int i=0 ; i<n ; i++) {
       N = `suc(N);
@@ -79,12 +72,5 @@ public class PeanoMapping3 {
     ATermAppl res = plus(N,N);
     System.out.println("plus(" + n + "," + n + ") = " + res);
   }
-
-  public final static void main(String[] args) {
-    PeanoMapping3 test = new PeanoMapping3();
-    test.run(10);
-  }
- 
-
 }
 

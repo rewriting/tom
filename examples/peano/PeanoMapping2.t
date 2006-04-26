@@ -34,15 +34,9 @@ import aterm.pure.*;
 
 public class PeanoMapping2 {
 
-  static TermFactory factory = new SingletonFactory.getInstance();
-  static AFun fzero, fsuc;
-  static ATermAppl tzero;
-
-  public PeanoMapping2() {
-    fzero = factory.makeAFun("zero", 0, false);
-    fsuc  = factory.makeAFun("suc" , 1, false);
-    tzero = factory.makeAppl(fzero);
-  }
+  static AFun fzero = SingletonFactory.getInstance().makeAFun("zero", 0, false);
+  static AFun fsuc = SingletonFactory.getInstance().makeAFun("suc" , 1, false);
+  static ATermAppl tzero = SingletonFactory.getInstance().makeAppl(fzero);
 
   %typeterm term {
     implement { ATerm }
@@ -57,11 +51,11 @@ public class PeanoMapping2 {
     get_slot(p,t) { (((ATermAppl)t).getArgument(0)) }
   }
 
-  public ATermAppl suc(ATermAppl t) {
-    return factory.makeAppl(fsuc,t);
+  public static ATermAppl suc(ATermAppl t) {
+    return SingletonFactory.getInstance().makeAppl(fsuc,t);
   }
   
-  public ATermAppl plus(ATermAppl t1, ATermAppl t2) {
+  public static ATermAppl plus(ATermAppl t1, ATermAppl t2) {
     %match(term t1, term t2) {
       x,zero() -> { return (ATermAppl) `x; }
       x,suc(y) -> { return suc(plus((ATermAppl) `x,(ATermAppl) `y)); }
@@ -69,7 +63,8 @@ public class PeanoMapping2 {
     return null;
   }
 
-  public void run(int n) {
+  public final static void main(String[] args) {
+    int n = 10;
     ATermAppl N = tzero;
     for(int i=0 ; i<n ; i++) {
       N = suc(N);
@@ -77,12 +72,4 @@ public class PeanoMapping2 {
     ATermAppl res = plus(N,N);
     System.out.println("plus(" + n + "," + n + ") = " + res);
   }
-
-  public final static void main(String[] args) {
-    PeanoMapping2 test = new PeanoMapping2();
-    test.run(10);
-  }
- 
-
 }
-
