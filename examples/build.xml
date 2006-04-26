@@ -243,7 +243,6 @@
 	        options="--noStatic"
                 destdir="${examples.gen}">          
        <include name="${boulderdash}/**/*.t"/>
-       <exclude name="${boulderdash}/**/*.g.t"/>
     </tom.preset>
     <javacompile example="${boulderdash}"/>
     <!-- copy resources in build -->

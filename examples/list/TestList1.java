@@ -43,13 +43,13 @@ public class TestList1 extends TestCase {
   }
 
   public void setUp() {
-    test = new List1(SingletonFactory.getInstance());
+    test = new List1();
   }
 
 	public void testMakeSubject() {
 		ATermList subject = test.makeSubject();
 		assertEquals("Bad initialisation of subject",subject,
-								 test.getFactory().parse(
+								 SingletonFactory.getInstance().parse(
 									 "[a,b,c,a,b,c,a]"));
 	}
 
@@ -58,7 +58,7 @@ public class TestList1 extends TestCase {
 		ATermList res = test.swapSort(subject);
 		assertEquals("Swapsort should to sort",
 								 res,
-								 test.getFactory().parse("[a,a,a,b,b,c,c]"));
+								 SingletonFactory.getInstance().parse("[a,a,a,b,b,c,c]"));
 	}
 
 	public void testRemoveDouble() {
@@ -75,7 +75,7 @@ public class TestList1 extends TestCase {
 		ATermList res2 = test.removeDouble(res1);
 		assertEquals("Removedouble on the sorded list ",
 								 res2,
-								 test.getFactory().parse("[a,b,c]"));
+								 SingletonFactory.getInstance().parse("[a,b,c]"));
 	}
     
 }
