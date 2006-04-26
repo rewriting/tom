@@ -474,6 +474,7 @@
   <target name="dist.examples">
     <ant dir="${examples}" target="dist.examples">
       <property name="version" value="${stable.version}"/>
+       <property name="tom.home" value="${stable.dist}"/>
     </ant>
   </target>
 
@@ -874,7 +875,9 @@
     </ant>
 
     <echo>Test tom-source in examples with optimizer</echo>
-    <ant dir="${examples}" target="clean"/>
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${src.dist}"/>
+    </ant>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
       <property name="tom.common.path" location="${src.lib}"/>
@@ -902,7 +905,9 @@
 
   <target name="examples.src" 
           depends="src.dist">
-    <ant dir="${examples}" target="clean"/>
+    <ant dir="${examples}" target="clean">
+      <property name="tom.home" location="${src.dist}"/>
+    </ant>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
       <property name="tom.common.path" location="${src.lib}"/>
@@ -912,7 +917,9 @@
 
   <target name="applications.src" 
           depends="src.dist">
-    <ant dir="${applications}" target="clean"/>
+    <ant dir="${applications}" target="clean">
+      <property name="tom.home" location="${src.dist}"/>
+    </ant>
     <ant dir="${applications}" target="all">
       <property name="tom.home" location="${src.dist}"/>
       <property name="optimize" value="on"/>
