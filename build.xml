@@ -1230,12 +1230,14 @@
       <tarfileset dir="${dist}/checkout/jtom" prefix="tom-${stable.version}" mode="755">
         <include name="**/*.sh"/>
         <include name="**/*-tom"/>
+        <exclude name="applications/**"/>
       </tarfileset>
       <tarfileset dir="${dist}/checkout/jtom" prefix="tom-${stable.version}" mode="644">
         <include name="**/*"/>
         <exclude name="**/*.sh"/>
         <exclude name="**/*-tom"/>
         <exclude name="**/CVS/**"/>
+        <exclude name="applications/**"/>
       </tarfileset>
     </tar>
     <delete dir="${dist}/checkout"/>
