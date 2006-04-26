@@ -92,7 +92,7 @@ public class TestAnalyser extends TestCase {
       Vertex n = (Vertex) (iter.next());
       Node nn = n.getNode();
       %match(Node nn){
-        affect(Name("y"),g(Var(var_x))) -> {attemptedResult.add(n);}
+        affect(Name("y"),g(Var(Name("x")))) -> {attemptedResult.add(n);}
         affect(Name("z"),f(a(),b())) -> {attemptedResult.add(n);}
       }
     }
