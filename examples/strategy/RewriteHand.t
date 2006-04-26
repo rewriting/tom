@@ -48,17 +48,15 @@ public class RewriteHand {
     test.run();
   }
 
-  private Term globalSubject = null;
   public void run() {
     Term subject = `F(F(F(A(),B()),F(G(Name("a")),A())),B());
-    globalSubject = subject;
 
     System.out.println(subject);
     try {
       MuTraveler.init(`TopDown(Print())).visit(subject);
       System.out.println();
 
-      VisitableVisitor rule = `RewriteSystem();
+      VisitableVisitor rule = `RewriteSystem(subject);
       MuTraveler.init(
           `Sequence(OnceBottomUp(rule),TopDown(Print()))
           ).visit(subject);
@@ -93,13 +91,13 @@ public class RewriteHand {
     }
   }
 
-  %strategy RewriteSystem() extends `Fail() {
+  %strategy RewriteSystem(subject:Term) extends `Fail() {
     visit Term {
       A() -> { 
         Position pos = MuTraveler.getPosition(this);
         System.out.println("A -> B at " + pos);
-        System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
-        System.out.println("rwr into: " + pos.getReplace(`B()).visit(globalSubject));
+        System.out.println(subject + " at " + pos + " = " + pos.getSubterm().visit(subject));
+        System.out.println("rwr into: " + pos.getReplace(`B()).visit(subject));
 
         return `B();
       }

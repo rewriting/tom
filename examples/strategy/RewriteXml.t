@@ -45,11 +45,13 @@ import java.util.*;
 public class RewriteXml {
 
   private XmlTools xtools;
-  private TNode globalSubject;
-  private Collection globalLeaves = new HashSet();
 
   %include { adt/tnode/TNode.tom }
   %include { mutraveler.tom }
+
+  %typeterm Collection {
+    implement { java.util.Collection }
+  }
 
   %typeterm Position {
     implement { tom.library.strategy.mutraveler.Position }
@@ -65,18 +67,17 @@ public class RewriteXml {
     xtools = new XmlTools();
     TNode subject = (TNode)xtools.convertXMLToATerm("strategy/minimenu.xml");
     subject = subject.getDocElem();
-
-    globalSubject = subject;
+    Collection leaves = new HashSet();
 
     try {
-      VisitableVisitor findLeaves = `FindLeaves();
+      VisitableVisitor findLeaves = `FindLeaves(leaves);
       MuTraveler.init(`BottomUp(findLeaves)).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to get leaves" + subject);
     }
-    System.out.println("bag: "+globalLeaves);
+    System.out.println("bag: "+leaves);
 
-    Iterator it = globalLeaves.iterator();
+    Iterator it = leaves.iterator();
     while(it.hasNext()) {
       Position p = (Position)it.next();
 
@@ -120,10 +121,10 @@ public class RewriteXml {
     }
   }
 
-  %strategy FindLeaves() extends `Identity() {
+  %strategy FindLeaves(c:Collection) extends `Identity() {
 
     visit TNode {
-      <subsection></subsection> -> { globalLeaves.add(MuTraveler.getPosition(this));}
+      <subsection></subsection> -> { c.add(MuTraveler.getPosition(this));}
     }
   }
 

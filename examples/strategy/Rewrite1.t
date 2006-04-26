@@ -49,13 +49,11 @@ public class Rewrite1 {
     test.run();
   }
 
-  private Term globalSubject = null;
   public void run() {
     //Term subject = `g(d(),d());
     Term subject = `f(g(g(a(),b()),g(a(),a())));
-    globalSubject = subject;
 
-   VisitableVisitor rule = `RewriteSystem();
+   VisitableVisitor rule = `RewriteSystem(subject);
    VisitableVisitor ruleId = `RewriteSystemId();
 
     try {
@@ -73,13 +71,13 @@ public class Rewrite1 {
 
   }
 
-  %strategy RewriteSystem() extends `Fail() {
+  %strategy RewriteSystem(subject:Term) extends `Fail() {
     visit Term {
       a() -> { 
         Position pos = MuTraveler.getPosition(this);
         System.out.println("a -> b at " + pos);
-        System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
-        System.out.println("rwr into: " + pos.getReplace(`b()).visit(globalSubject));
+        System.out.println(subject + " at " + pos + " = " + pos.getSubterm().visit(subject));
+        System.out.println("rwr into: " + pos.getReplace(`b()).visit(subject));
 
         return `b();
       }
