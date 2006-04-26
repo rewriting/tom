@@ -46,6 +46,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     } else {
       this.modifier += "private " ;
     }
+    
+    if(!((Boolean)optionManager.getOptionValue("noStatic")).booleanValue()) {
+      this.modifier += "static " ;
+    }
   }
 
 // ------------------------------------------------------------
