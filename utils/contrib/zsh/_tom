@@ -7,6 +7,10 @@ _arguments -C -s \
     {-V,--version}'[Print version]' \
     {-v,--verbose}'[Set verbose mode on]' \
     {-i,--intermediate}'[Generate intermediate files]' \
+    {-j,--jCode}'[Generate Java code]' \
+    {-c,--cCode}'[Generate C code]' \
+    '--camlCode[Generate Caml code]' \
+    {-e,--encoding}'[Specify the character encoding]:encoding' \
     {-d,--destdir}'[Set output directory]:include path:_dirs -/' \
     {-o,--output}'[Set output file name]:include path:_files -/' \
     {-D,--noDeclaration}'[Do not generate code for declarations]' \
