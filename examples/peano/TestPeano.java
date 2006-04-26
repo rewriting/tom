@@ -66,21 +66,13 @@ public class TestPeano extends TestCase {
   }
 
   public void testPeano1() {
-    Peano1 test;
-    test = new Peano1();
-  
     assertEquals("fib(10) should be 89",
-                 fibten,test.fib(ten));
+                 fibten,Peano1.fib(ten));
   }
 
   public void testPeano2() {
-    Peano2 test;
-    test = new Peano2();
-  
     assertEquals("fib(10) should be 89",
-                 fibten,test.fib(ten));
+                 fibten,Peano2.fib(ten));
   }
 
-
 }
-
