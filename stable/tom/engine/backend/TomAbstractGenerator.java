@@ -535,6 +535,11 @@ public abstract class TomAbstractGenerator extends TomBase {
 
 ;
         return;
+       } } } } } } } } } if (tom_is_fun_sym_MethodDef(tom_match6_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match6_1_astName=tom_get_slot_MethodDef_astName(tom_match6_1); { tom.engine.adt.tomsignature.types.TomList tom_match6_1_argumentList=tom_get_slot_MethodDef_argumentList(tom_match6_1); { tom.engine.adt.tomsignature.types.TomType tom_match6_1_codomain=tom_get_slot_MethodDef_codomain(tom_match6_1); { tom.engine.adt.tomsignature.types.TomType tom_match6_1_throwsType=tom_get_slot_MethodDef_throwsType(tom_match6_1); { tom.engine.adt.tomsignature.types.Instruction tom_match6_1_instruction=tom_get_slot_MethodDef_instruction(tom_match6_1); if (tom_is_fun_sym_Name(tom_match6_1_astName) ||  false ) { { String  tom_match6_1_astName_string=tom_get_slot_Name_string(tom_match6_1_astName); if ( true ) {buildMethodDef(deep,tom_match6_1_astName_string,tom_match6_1_argumentList,tom_match6_1_codomain,tom_match6_1_throwsType,tom_match6_1_instruction,moduleName)
+
+
+;
+        return;
        } } } } } } } } } if (tom_is_fun_sym_Class(tom_match6_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomName tom_match6_1_astName=tom_get_slot_Class_astName(tom_match6_1); { tom.engine.adt.tomsignature.types.TomForwardType tom_match6_1_extendsType=tom_get_slot_Class_extendsType(tom_match6_1); { tom.engine.adt.tomsignature.types.TomTerm tom_match6_1_superTerm=tom_get_slot_Class_superTerm(tom_match6_1); { tom.engine.adt.tomsignature.types.Declaration tom_match6_1_declaration=tom_get_slot_Class_declaration(tom_match6_1); if (tom_is_fun_sym_Name(tom_match6_1_astName) ||  false ) { { String  tom_match6_1_astName_string=tom_get_slot_Name_string(tom_match6_1_astName); if ( true ) {buildClass(deep,tom_match6_1_astName_string,tom_match6_1_extendsType,tom_match6_1_superTerm,tom_match6_1_declaration,moduleName)
 
 
@@ -799,13 +804,15 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException;
 
   protected abstract void buildFunctionCall(int deep, String name, TomList argList, String moduleName)  throws IOException;
-  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException; 
+  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException;
+  protected void buildMethodDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    throw new TomRuntimeException("Backend "+getClass()+" does not support Methods");
+  }
 
   /*buildClass is not abstract since only Java backend supports class
     only backends that supports Class should overload buildClass  
    */
   protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
-    System.out.println("Backend does not support Class");
     throw new TomRuntimeException("Backend does not support Class");
   }
 

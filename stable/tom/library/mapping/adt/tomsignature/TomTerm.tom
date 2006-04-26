@@ -1667,6 +1667,16 @@
   make(t0, t1, t2, t3) { tom.engine.adt.tomsignature.TomTermFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_Class(t0, t1, t2, t3)}
 }
 
+%op Declaration MethodDef(astName:TomName, argumentList:TomList, codomain:TomType, throwsType:TomType, instruction:Instruction) {
+  is_fsym(t) { (t!= null) && t.isMethodDef()}
+  get_slot(astName,t) { t.getAstName()}
+  get_slot(argumentList,t) { t.getArgumentList()}
+  get_slot(codomain,t) { t.getCodomain()}
+  get_slot(throwsType,t) { t.getThrowsType()}
+  get_slot(instruction,t) { t.getInstruction()}
+  make(t0, t1, t2, t3, t4) { tom.engine.adt.tomsignature.TomTermFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeDeclaration_MethodDef(t0, t1, t2, t3, t4)}
+}
+
 %op Declaration FunctionDef(astName:TomName, argumentList:TomList, codomain:TomType, throwsType:TomType, instruction:Instruction) {
   is_fsym(t) { (t!= null) && t.isFunctionDef()}
   get_slot(astName,t) { t.getAstName()}

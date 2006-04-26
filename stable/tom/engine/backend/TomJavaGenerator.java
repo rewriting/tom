@@ -46,6 +46,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     } else {
       this.modifier += "private " ;
     }
+    
+    if(!((Boolean)optionManager.getOptionValue("noStatic")).booleanValue()) {
+      this.modifier += "static " ;
+    }
   }
 
 // ------------------------------------------------------------
@@ -124,8 +128,16 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.write(deep,"}");
   }
 
-  protected void buildFunctionDef(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
-    output.write(deep,"public " + getTLType(codomain) + " " + tomName + "(");
+  protected void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
+  }
+
+  protected void buildMethodDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
+  }
+
+  private void buildMethod(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
+    output.write(deep, methodModifier + getTLType(codomain) + " " + tomName + "(");
     while(!varList.isEmpty()) {
       TomTerm localVar = varList.getHead();
       matchBlock: {

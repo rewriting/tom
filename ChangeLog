@@ -1,3 +1,9 @@
+2006-04-26 Antoine Reilles <reilles@loria.fr>
+  * remove --static option, and make static functions the default in Java
+  * add a --noStatic option, to revert this behavior
+  * %rules generate private functions (as %op)
+  * bumped to rc2
+
 2006-04-22 Antoine Reilles <reilles@loria.fr>
   * Tagged tom-2_3rc1
   * Bootinstall now uses gom and tom src version

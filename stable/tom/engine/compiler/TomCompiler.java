@@ -255,7 +255,7 @@ matchBlock: {
                 //return default strategy.visit(arg)
                 Instruction returnStatement = tom_make_Return(tom_make_FunctionCall(tom_make_Name("super." + funcName),subjectListAST));
                 InstructionList instructions = tom_cons_list_concInstruction(matchStatement,tom_cons_list_concInstruction(returnStatement,tom_empty_list_concInstruction()));
-                l = tom_append_list_concDeclaration(l,tom_cons_list_concDeclaration(tom_make_FunctionDef(tom_make_Name(funcName),tom_cons_list_concTomTerm(arg,tom_empty_list_concTomTerm()),tom_vType,tom_make_TomTypeAlone("jjtraveler.VisitFailure"),tom_make_AbstractBlock(instructions)),tom_empty_list_concDeclaration()));
+                l = tom_append_list_concDeclaration(l,tom_cons_list_concDeclaration(tom_make_MethodDef(tom_make_Name(funcName),tom_cons_list_concTomTerm(arg,tom_empty_list_concTomTerm()),tom_vType,tom_make_TomTypeAlone("jjtraveler.VisitFailure"),tom_make_AbstractBlock(instructions)),tom_empty_list_concDeclaration()));
                } } } } } } } } } } } } }
 
             jVisitList = jVisitList.getTail();
