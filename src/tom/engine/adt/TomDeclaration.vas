@@ -27,6 +27,7 @@ MakeDecl(astName:TomName,astType:TomType,args:TomList,instr:Instruction,orgTrack
 Strategy(sName:TomName,extendsTerm:TomTerm,visitList:TomVisitList,orgTrack:Option) -> Declaration
 RuleSet(ruleList:TomRuleList,option:OptionList) -> Declaration 
 FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction) -> Declaration 
+MethodDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction) -> Declaration 
 /*
 super is the parameter given to the function super. For instance: super(`Identity());
 */

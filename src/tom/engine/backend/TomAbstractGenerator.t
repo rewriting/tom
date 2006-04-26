@@ -537,6 +537,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      MethodDef(Name(tomName),argList,codomain,throwsType,instruction) -> {
+        `buildMethodDef(deep, tomName, argList, codomain, throwsType, instruction, moduleName);
+        return;
+      }
+
       Class(Name(tomName),extendsFwdType,superTerm,declaration) -> {
         `buildClass(deep, tomName, extendsFwdType, superTerm, declaration, moduleName);
         return;
@@ -799,13 +804,15 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildListOrArray(int deep, TomTerm list, String moduleName) throws IOException;
 
   protected abstract void buildFunctionCall(int deep, String name, TomList argList, String moduleName)  throws IOException;
-  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException; 
+  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException;
+  protected void buildMethodDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    throw new TomRuntimeException("Backend "+getClass()+" does not support Methods");
+  }
 
   /*buildClass is not abstract since only Java backend supports class
     only backends that supports Class should overload buildClass  
    */
   protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
-    System.out.println("Backend does not support Class");
     throw new TomRuntimeException("Backend does not support Class");
   }
 

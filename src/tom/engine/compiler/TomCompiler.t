@@ -255,7 +255,7 @@ matchBlock: {
                 //return default strategy.visit(arg)
                 Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),subjectListAST));
                 InstructionList instructions = `concInstruction(matchStatement, returnStatement);
-                l = `concDeclaration(l*,FunctionDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("jjtraveler.VisitFailure"),AbstractBlock(instructions)));
+                l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("jjtraveler.VisitFailure"),AbstractBlock(instructions)));
               }
             }
             jVisitList = jVisitList.getTail();
