@@ -977,6 +977,9 @@
               showoutput="true">
       <classpath>
         <path refid="tom.classpath"/>
+	<fileset dir="${examples.dir}/${examples.lib}">
+		<include name="*.jar"/>
+	</fileset>
         <pathelement location="${examples.build}"/>
       </classpath>
       <batchtest>
