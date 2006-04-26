@@ -175,7 +175,16 @@
 
   <target name="antipattern" depends="init"> 
     <gomcompile example="${antipattern}"/>
+    <!--
+    "Wait for the static %rule problem to be resolved"
     <tomcompile example="${antipattern}"/>
+    -->
+    <tom.preset srcdir="${examples.dir}"
+	        options="--noStatic"
+                destdir="${examples.gen}">          
+       <include name="${antipattern}/**/*.t"/>
+       <exclude name="${antipattern}/**/*.g.t"/>
+    </tom.preset>
     <javacompile example="${antipattern}"/>
   	<copy todir="${examples.build}/${antipattern}">
       <fileset dir="${antipattern}">
