@@ -39,7 +39,7 @@ public class TestStrategy extends TestCase {
     implement { tom.library.strategy.mutraveler.Position }
   }
 
-    boolean bool0 = true;
+  static boolean bool0 = true;
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestStrategy.class));

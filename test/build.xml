@@ -46,6 +46,7 @@
                 destdir="${test.gen}">
       <include name="Testbuiltin.t"/>
       <include name="TestMatch.t"/>
+      <include name="TestStrategy.t"/>
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
       <exclude name="Record.t"/>
@@ -62,6 +63,7 @@
       <exclude name="**/error/**"/>
       <exclude name="Testbuiltin.t"/>
       <exclude name="TestMatch.t"/>
+      <exclude name="TestStrategy.t"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
