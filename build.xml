@@ -1226,4 +1226,26 @@
     </target>
   -->
 
+  <target name="source.distribution" depends=""
+          description="Creates a  ready to distribute tom-sources.tgz ">
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist}/checkout"/>
+    <cvs cvsRoot=":pserver:anonymous@scm.gforge.inria.fr:/cvsroot/tom"
+         package="jtom"
+         dest="${dist}/checkout"/>
+    <tar tarfile="${dist}/tom-${stable.version}-source.tar.gz" compression="gzip">
+      <tarfileset dir="${dist}/checkout/jtom" prefix="tom-${stable.version}" mode="755">
+        <include name="**/*.sh"/>
+        <include name="**/*-tom"/>
+      </tarfileset>
+      <tarfileset dir="${dist}/checkout/jtom" prefix="tom-${stable.version}" mode="644">
+        <include name="**/*"/>
+        <exclude name="**/*.sh"/>
+        <exclude name="**/*-tom"/>
+        <exclude name="**/CVS/**"/>
+      </tarfileset>
+    </tar>
+    <delete dir="${dist}/checkout"/>
+  </target>
+
 </project>
