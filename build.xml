@@ -818,8 +818,18 @@
      </ant>
   </target>
 
-  <target name="all" description="cleans, build, test all"
-          depends="stable.all, src.all">
+  <target name="all" description="cleans, build, test all">
+    <!--depends="stable.all, src.all">-->
+    <exec dir="${basedir}"
+	  failonerror="yes"
+	  executable="ant">
+      <arg line="stable.all"/>
+    </exec>
+    <exec dir="${basedir}"
+	  failonerror="yes"
+	  executable="ant">
+      <arg line="src.all"/>
+    </exec>
   </target>
 
   <target name="stable.all" description="cleans, build, test all" depends="clean.stable, clean.stable.dist">
