@@ -118,7 +118,7 @@ public class Analyser{
 
  // Méthode d'ajout d'un élément dans une liste (utilisée dans la définition des constructeurs de liste)
 
-  private List myAdd(Object e,List l) {
+  private static List myAdd(Object e,List l) {
     l.add(e);
     return l;
   }
