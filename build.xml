@@ -1076,6 +1076,7 @@
         <include name="**/*.java"/>
         <include name="**/*.properties"/>
         <include name="lib/*.jar"/>
+        <include name="lib/*.xml"/>
         <exclude name="**/Tom.java"/>
         <exclude name="**/adt/**/*.java"/>
         <exclude name="**/bootstrap/**/*"/>
