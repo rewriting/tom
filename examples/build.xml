@@ -474,7 +474,6 @@
     <javacompile example="${master}"/>
   </target>
 
-
   <target name="matching" depends="init"> 
     <tomcompile example="${matching}"/>
     <javacompile example="${matching}"/>
@@ -590,7 +589,6 @@
       </fileset>
     </copy>
   </target>
-
 
   <target name="rbtree" depends="init">
     <gomcompile example="${rbtree}"/>
@@ -753,7 +751,6 @@
       <mapper type="glob" from="*.zv" to="*.v"/>
     </apply>
   </target>
-
   
   <target name="examples" 
           description="Builds the examples (at least some)"
@@ -908,9 +905,10 @@
         <include name="${set}/*.adt"/>
 
         <include name="${strategy}/*.t"/>
-        <include name="${strategy}/hand/*"/>
         <include name="${strategy}/*.xml"/>
-        <include name="${strategy}/**/*.gom"/>
+        <include name="${strategy}/*.gom"/>
+        <include name="${strategy}/**/*.java"/>
+        <include name="${strategy}/**/*.tom"/>
 
         <include name="${strings}/*.t"/>
 
@@ -919,6 +917,7 @@
         <include name="${structure}/*.gom"/>
         <include name="${structure}/*.tom"/>
         <include name="${structure}/*.java"/>
+        <include name="${structure}/examples*"/>
 
         <include name="${ted}/example.aterm"/>
         <include name="${ted}/aterms"/>
