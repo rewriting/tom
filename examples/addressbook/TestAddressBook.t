@@ -50,7 +50,7 @@ public class TestAddressBook extends TestCase {
   public void setUp() {
     test = new AddressBook1();
     book = new HashSet();
-    test.generatePerson(book);
+    AddressBook1.generatePerson(book);
   }
 
   %include { data/Data.tom }
