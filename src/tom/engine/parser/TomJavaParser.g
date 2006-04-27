@@ -123,10 +123,10 @@ protected
        greedy=false;  // make it exit upon "*/"
        generateAmbigWarnings=false; // shut off newline errors
      }
-     :	'\r' '\n'	{newline();}
-     |	'\r'		{newline();}
-     |	'\n'		{newline();}
-     |	~('\n'|'\r')
+     :	'\r' '\n'	{newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
+     |	'\r'		{newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
+     |	'\n'		{newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
+     |	~('\n'|'\r') {if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
      )*
     "*/" 
     ;
