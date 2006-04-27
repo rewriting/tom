@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.3rc2"/>
+  <property name="stable.version" value="2.3rc3"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
 
@@ -502,7 +502,7 @@
 	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
 	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
 	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/jtom"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
     <chmod dir="${stable.dist.bin}" perm="ugo+rx">
       <include name="*"/>
@@ -606,13 +606,13 @@
 	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
 	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
 	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/jtom"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
     <replace file="${src.dist.bin}/tom.src">
 	    <replaceFilter token="@TOM_HOME@" value="TOM_SRC_HOME"/>
 	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
 	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
-	    <replaceFilter token="@INCLUDES_DIR@" value="share/jtom"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
     <copy tofile="${src.dist.bin}/gom" file="${utils}/script.in"/>
     <copy tofile="${src.dist.bin}/gom.src" file="${utils}/script.in"/>
