@@ -747,7 +747,8 @@ public class TomSyntaxChecker extends TomChecker {
           decLine = findOriginTrackingLine(`options);
           termClass = TERM_APPL;
 
-          TomSymbol symbol = ensureValidApplDisjunction(`nameList, expectedType, decLine, args.isEmpty(), permissive, topLevel);
+          TomSymbol symbol = ensureValidApplDisjunction(`nameList, expectedType, decLine, permissive, topLevel);
+
           if(symbol == null) {
             validateTermThrough(term,permissive);
             break matchblock;
@@ -779,8 +780,9 @@ public class TomSyntaxChecker extends TomChecker {
           break matchblock;
         }
 
-        rec@RecordAppl[option=options,nameList=nameList,slots=slotList] ->{
+        rec@RecordAppl[option=options,nameList=nameList,slots=slotList] -> {
           if(permissive) {
+						// Record are not allowed in a rhs
             messageError(findOriginTrackingLine(`options), TomMessage.incorrectRuleRHSClass,
                          new Object[]{getName(`rec)+"[...]"});
           }
@@ -993,26 +995,24 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   private TomSymbol ensureValidApplDisjunction(NameList nameList, TomType expectedType, int decLine,
-                                               boolean emptyChilds, boolean permissive, boolean topLevel) {
+                                               boolean permissive, boolean topLevel) {
     TomTypeList domainReference = null, currentDomain = null;
     TomSymbol symbol = null;
 
-    if(nameList.isSingle()) { // Valid but has is a good type
+    if(nameList.isSingle()) { // Valid but has it a good type?
       String res = nameList.getHead().getString();
       symbol  =  getSymbolFromName(res);
       if (symbol == null ) {
-        if(!emptyChilds) {
-          // this correspond to a term like 'unknown()' or unknown(s1, s2, ...)
-          if(!permissive) {
-            messageError(decLine,
-                         TomMessage.unknownSymbol,
-                         new Object[]{res});
-          } else {
-            messageWarning(decLine,
-                         TomMessage.unknownPermissiveSymbol,
-                           new Object[]{res});
-          }
-        }
+				// this correspond to a term like 'unknown()' or unknown(s1, s2, ...)
+				if(!permissive) {
+					messageError(decLine,
+							TomMessage.unknownSymbol,
+							new Object[]{res});
+				} else {
+					messageWarning(decLine,
+							TomMessage.unknownPermissiveSymbol,
+							new Object[]{res});
+				}
       } else { //known symbol
         if ( strictType  || !topLevel ) {
           if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, decLine)) {
@@ -1076,7 +1076,7 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   private TomSymbol ensureValidRecordDisjunction(NameList nameList, TomType expectedType, int decLine, boolean topLevel) {
-    if(nameList.isSingle()) { // Valid but has is a good type
+    if(nameList.isSingle()) { // Valid but has it a good type?
       String res = nameList.getHead().getString();
       TomSymbol symbol =  getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]
@@ -1095,7 +1095,7 @@ public class TomSyntaxChecker extends TomChecker {
       }
       return symbol;
     } else {
-      return ensureValidApplDisjunction(nameList, expectedType, decLine, false, false, topLevel);
+      return ensureValidApplDisjunction(nameList, expectedType, decLine, false, topLevel);
     }
   }
 
