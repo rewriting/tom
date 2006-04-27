@@ -776,7 +776,7 @@
   <target name="examples" 
           description="Builds the examples (at least some)"
 	  depends="addressbook, analysis, antipattern,  apireach, appletxml,
-          boulderdash, builtin, caml, cell, dom, expression, ferus, gasel,  gom,
+          boulderdash, builtin, caml, cell, dom, expression, ferus, gom,
           gomoku, gterm, integerc, list, master, matching, meta, mgs, nspk,
           p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set,
           strategy, strings, structure, ted, tutorial, vas, xml, zenon">
@@ -859,8 +859,6 @@
         <include name="${ferus}/*.adt"/>
         <include name="${ferus}/*.vas"/>
 
-        <include name="${gasel}/*.t"/>
-        
         <include name="${gom}/*.t"/>
         <include name="${gom}/*.java"/>
         <include name="${gom}/*.gom"/>
