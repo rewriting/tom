@@ -1,25 +1,46 @@
+/*
+ * 
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (c) 2000-2006, INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
+ **/
+
+package gasel;
 import org._3pq.jgrapht.Graph;
-//import org._3pq.jgrapht.edge.*;
 import org._3pq.jgrapht.graph.DefaultDirectedGraph;
 import org._3pq.jgrapht.graph.SimpleGraph;
 
 import java.util.*;
 
 import aterm.pure.*;
-import gasel2.data.*;
-import gasel2.data.types.*;
+import aterm.*;
+
+import gasel.gasel2.data.*;
+import gasel.gasel2.data.types.*;
 
 public final class Gasel2 {
-  private dataFactory factory;
   private Graph globalGraph;
 
-  public Gasel2(dataFactory factory) {
-    this.factory = factory;
+  public Gasel2() {
     this.globalGraph = new SimpleGraph();
-  }
-
-  public dataFactory getDataFactory() {
-    return factory;
   }
   
   private Graph getGraph() {
@@ -27,7 +48,7 @@ public final class Gasel2 {
   }
  
   public static void main( String[] args ) {
-    Gasel2 t = new Gasel2(dataFactory.getInstance(new PureFactory()));
+    Gasel2 t = new Gasel2();
     t.run();
   }
 
@@ -92,7 +113,7 @@ public final class Gasel2 {
    * the label is stored in a hashmap
    */
   private void addBond(Atom v1, Atom v2, BondType bondType) {
-    if(!bondType.isNone()) {
+    if(!bondType.isnone()) {
       org._3pq.jgrapht.Edge e = new org._3pq.jgrapht.edge.UndirectedEdge(v1,v2);
       labelMap.put(e,`bond(bondType,v1,v2));
       //System.out.println("add label( " + e + " ) = " + labelMap.get(e)); 
@@ -110,21 +131,21 @@ public final class Gasel2 {
   }
 
   private BondType getBondType(org._3pq.jgrapht.Edge e) {
-    return getBond(e).getBondType();
+    return getBond(e).getbondType();
   }
 
   /*
    * This creates a graph by side-effect
    */
   private State createState(Graph g, BondType bondType, Atom atom, List subterm) {
-    if(!atom.isEmpty()) {
+    if(!atom.isempty()) {
       g.addVertex(atom);
     }
     for(Iterator it = subterm.iterator() ; it.hasNext() ; ) {
       State state = (State)it.next();
       addBond(atom, state.getAtom(), state.getBondType());
     }
-    return new State(`emptyBondList(),bondType, atom);
+    return new State(`concBond(),bondType, atom);
   }
   
   /*
@@ -137,12 +158,17 @@ public final class Gasel2 {
     for(Iterator it=g.edgesOf(atom).iterator() ; it.hasNext() ; ) {
       org._3pq.jgrapht.Edge e = (org._3pq.jgrapht.Edge)it.next();
       Bond b = getBond(e);
-      if(path.indexOf(b,0) < 0) { // bond does not occur in path
+      if(contains(b,path)) { // bond does not occur in path
         Atom successor = (Atom)e.oppositeVertex(atom);
-        res.add(new State(`manyBondList(b,path),getBondType(e),successor));
+        res.add(new State(`ConsconcBond(b,path),getBondType(e),successor));
       }
     }
     return res;
+  }
+
+  private boolean contains(Bond e,BondList list){
+    if (list.isEmptyconcBond()) return false;
+    return list.getHeadconcBond().equals(e) ||contains(e,list.getTailconcBond());
   }
 
   public void run() {
@@ -195,7 +221,7 @@ public final class Gasel2 {
       rad(_, e[], conc(_*,
       rad(simpleLink(), C[],subterm),
       _*)) -> {
-        System.out.println("Bingo 1: " + subterm);
+        System.out.println("Bingo 1: " + `subterm);
       }
       
       // e C C
@@ -203,7 +229,7 @@ public final class Gasel2 {
       rad(simpleLink(),C[], conc(_*, 
       rad(simpleLink(),C[],subterm),
       _*)),_*)) -> {
-        System.out.println("Bingo 2: " + subterm);
+        System.out.println("Bingo 2: " + `subterm);
       }
       
       // e C C C
@@ -212,7 +238,7 @@ public final class Gasel2 {
       rad(simpleLink(),C[], conc(_*, 
       rad(simpleLink(),C[],subterm),
       _*)),_*)),_*)) -> {
-        System.out.println("Bingo 3: " + subterm);
+        System.out.println("Bingo 3: " + `subterm);
       }
       
       // e C C C C C with a cycle
@@ -224,7 +250,7 @@ public final class Gasel2 {
       rad(b,y@C[],subterm),
       _*)),_*)),_*)),_*)),_*)) -> {
         System.out.println("x = " + `x + " y = " + `y);
-        if(x.equals(y)) {
+        if(`x.equals(`y)) {
           System.out.println("Bingo 4: " + `x);
         }
       }
@@ -251,8 +277,8 @@ class State {
     return bondType;
   }
 
-  public BondList getPath() {
-    return path;
+    public BondList getPath() {
+      return path;
   }
 
   public Atom getAtom() {

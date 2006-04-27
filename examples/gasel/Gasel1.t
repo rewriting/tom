@@ -1,4 +1,29 @@
+/*
+ * 
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (c) 2000-2006, INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
+ **/
 
+package gasel;
 import org._3pq.jgrapht.*;
 import org._3pq.jgrapht.edge.*;
 import org._3pq.jgrapht.graph.DefaultDirectedGraph;
@@ -7,11 +32,10 @@ import org._3pq.jgrapht.graph.SimpleGraph;
 import java.util.*;
 
 import aterm.pure.*;
-import gasel1.data.*;
-import gasel1.data.types.*;
+import gasel.gasel1.data.*;
+import gasel.gasel1.data.types.*;
 
 public final class Gasel1 {
-  private dataFactory factory;
   private Graph globalGraph;
 
   %gom {
@@ -96,17 +120,13 @@ public final class Gasel1 {
     return res;
   }
 
-  public Gasel1(dataFactory factory) {
-    this.factory = factory;
+  public Gasel1(){
     this.globalGraph = new SimpleGraph();
   }
 
-  public dataFactory getDataFactory() {
-    return factory;
-  }
   
   public static void main( String[] args ) {
-    Gasel1 t = new Gasel1(dataFactory.getInstance(new PureFactory()));
+    Gasel1 t = new Gasel1();
     t.run();
   }
 
@@ -118,7 +138,7 @@ public final class Gasel1 {
 
   private void addSimpleLink(Object v1, Object v2) {
     Edge e = new UndirectedEdge(v1,v2);
-    labelMap.put(e,`simpleLinkLink());
+    labelMap.put(e,`simpleLink());
     System.out.println("add label( " + e + " ) = " + labelMap.get(e)); 
     getGraph().addEdge(e);
   }
@@ -154,20 +174,20 @@ public final class Gasel1 {
     %match(Radical v1) {
       // e C
       rad(e[], conc(linkrad(simpleLink(), rad(C[],subterm)) )) -> {
-        System.out.println("Bingo 1: " + subterm);
+        System.out.println("Bingo 1: " + `subterm);
       }
       
       // e C C
       rad(e[], conc(_*, linkrad(simpleLink(),rad(C[],
                           conc(_*, linkrad(simpleLink(),rad(C[],subterm)),_*))),_*)) -> {
-        System.out.println("Bingo 2: " + subterm);
+        System.out.println("Bingo 2: " + `subterm);
       }
       
       // e C C C
       rad(e[], conc(_*, linkrad(simpleLink(),rad(C[],
                           conc(_*, linkrad(simpleLink(),rad(C[],
                           conc(_*, linkrad(simpleLink(),rad(C[],subterm)),_*))),_*))),_*)) -> {
-        System.out.println("Bingo 3: " + subterm);
+        System.out.println("Bingo 3: " + `subterm);
       }
       
     }
