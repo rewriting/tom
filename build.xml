@@ -496,6 +496,7 @@
     <!-- "tom binary" -->
     <copy todir="${stable.dist.bin}" file="${utils}/javac-tom"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tom.bat"/>
+    <copy todir="${stable.dist.bin}" file="${utils}/gom.bat"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tlappend.bat"/>
     <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
     <replace file="${stable.dist.bin}/tom">
