@@ -618,8 +618,7 @@
   </target>
 
   <target name="set" depends="init">
-    <adtcompile example="${set}"
-                factory="jgset"/>
+    <gomcompile example="${set}"/>
     <tomcompile example="${set}"/>
     <javacompile example="${set}"/>
   </target>
@@ -778,7 +777,7 @@
 	  depends="addressbook, analysis, antipattern,  apireach, appletxml,
           boulderdash, builtin, caml, cell, dom, expression, ferus, gom,
           gomoku, gterm, integerc, list, master, matching, meta, mgs, nspk,
-          p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, set,
+          p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
           strategy, strings, structure, ted, tutorial, vas, xml, zenon">
   </target>
 
@@ -920,9 +919,6 @@
         <include name="${rbtree}/*.t"/>
         <include name="${rbtree}/*.gom"/>
         
-        <include name="${set}/*.t"/>
-        <include name="${set}/*.adt"/>
-
         <include name="${strategy}/*.t"/>
         <include name="${strategy}/*.xml"/>
         <include name="${strategy}/*.gom"/>
