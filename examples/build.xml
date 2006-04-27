@@ -771,7 +771,6 @@
       <mapper type="glob" from="*.zv" to="*.v"/>
     </apply>
   </target>
-  
   <target name="examples" 
           description="Builds the examples (at least some)"
 	  depends="addressbook, analysis, antipattern,  apireach, appletxml,
@@ -779,7 +778,52 @@
           gomoku, gterm, integerc, list, master, matching, meta, mgs, nspk,
           p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
           strategy, strings, structure, ted, tutorial, vas, xml, zenon">
-  </target>
+				</target>
+	<!-- 
+  <target name="examples" 
+		description="Builds the examples (at least some)">
+		<sequential>
+			<antcall target="addressbook"/>
+			<antcall target="analysis"/>
+			<antcall target="antipattern"/>
+			<antcall target="apireach"/>
+			<antcall target="appletxml"/>
+			<antcall target="boulderdash"/>
+			<antcall target="builtin"/>
+			<antcall target="caml"/>
+			<antcall target="cell"/>
+			<antcall target="dom"/>
+			<antcall target="expression"/>
+			<antcall target="ferus"/>
+			<antcall target="gom"/>
+			<antcall target="gomoku"/>
+			<antcall target="gterm"/>
+			<antcall target="integerc"/>
+			<antcall target="list"/>
+			<antcall target="master"/>
+			<antcall target="matching"/>
+			<antcall target="meta"/>
+			<antcall target="mgs"/>
+			<antcall target="nspk"/>
+			<antcall target="p3p"/>
+			<antcall target="peano"/>
+			<antcall target="pnspk"/>
+			<antcall target="poly"/>
+			<antcall target="pqueens"/>
+			<antcall target="prodrule"/>
+			<antcall target="propp"/>
+			<antcall target="rbtree"/>
+			<antcall target="strategy"/>
+			<antcall target="strings"/>
+			<antcall target="structure"/>
+			<antcall target="ted"/>
+			<antcall target="tutorial"/>
+			<antcall target="vas"/>
+			<antcall target="xml"/>
+			<antcall target="zenon"/>
+	</sequential>
+	</target>
+				-->
 
   <target name="dist.examples" 
           description="Prepare a distribution of examples" 
