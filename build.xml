@@ -499,6 +499,7 @@
     <copy todir="${stable.dist.bin}" file="${utils}/gom.bat"/>
     <copy todir="${stable.dist.bin}" file="${utils}/tlappend.bat"/>
     <copy tofile="${stable.dist.bin}/tom" file="${utils}/script.in"/>
+    <copy tofile="${stable.dist.bin}/gom" file="${utils}/script.in"/>
     <replace file="${stable.dist.bin}/tom">
 	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
 	    <replaceFilter token="@MAIN_CLASS@" value="tom.engine.Tom"/>
