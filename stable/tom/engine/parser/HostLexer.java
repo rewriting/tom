@@ -790,20 +790,21 @@ tryAgain:
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && ((LA(4) >= '\u0000' && LA(4) <= '\uffff')) && (true) && (true)) {
 				match('\r');
 				match('\n');
-				newline();
+				newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
 			else if ((LA(1)=='\r') && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff')) && (true) && (true) && (true)) {
 				match('\r');
-				newline();
+				newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
 			else if ((_tokenSet_1.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff'))) {
 				{
 				match(_tokenSet_1);
 				}
+				if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
 			else if ((LA(1)=='\n')) {
 				match('\n');
-				newline();
+				newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 			}
 			else {
 				break _loop61;

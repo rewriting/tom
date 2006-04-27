@@ -119,7 +119,10 @@ public class GomStreamManager {
       importList.add(it.next());
     }
     try {
-      importList.add(getInputParent());
+      File inputParent = getInputParent();
+      if (inputParent != null) {
+        importList.add(inputParent);
+      }
       String gomHome = System.getProperty("tom.home");
       if(gomHome != null) {
         File file = new File(gomHome,"share/share");
@@ -189,7 +192,10 @@ public class GomStreamManager {
   public File getInputParent() {
     File parent = null;
     try {
-      parent = ((new File(inputFileName)).getParentFile()).getCanonicalFile();
+      File rawParent = (new File(inputFileName)).getParentFile();
+      if (rawParent != null) {
+        parent = rawParent.getCanonicalFile();
+      }
     } catch (IOException e) {
       getLogger().log(Level.SEVERE, "getInputParent:IOExceptionManipulation",
                       new Object[]{inputFileName, e.getMessage()});

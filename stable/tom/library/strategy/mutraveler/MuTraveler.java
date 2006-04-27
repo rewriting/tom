@@ -59,6 +59,10 @@ public class MuTraveler {
 	public static VisitableVisitor getReplace(VisitableVisitor v, final Visitable t) {
     return ((Position) positionMap.get(v)).getReplace(t);
 	}
+	
+	public static VisitableVisitor getSubterm(VisitableVisitor v) {
+    return ((Position) positionMap.get(v)).getSubterm();
+	}
 
 }
 

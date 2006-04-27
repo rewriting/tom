@@ -777,24 +777,27 @@ tryAgain:
 				match('\r');
 				match('\n');
 				if ( inputState.guessing==0 ) {
-					newline();
+					newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 				}
 			}
 			else if ((LA(1)=='\r') && ((LA(2) >= '\u0000' && LA(2) <= '\uffff')) && ((LA(3) >= '\u0000' && LA(3) <= '\uffff'))) {
 				match('\r');
 				if ( inputState.guessing==0 ) {
-					newline();
+					newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 				}
 			}
 			else if ((LA(1)=='\n')) {
 				match('\n');
 				if ( inputState.guessing==0 ) {
-					newline();
+					newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 				}
 			}
 			else if ((_tokenSet_2.member(LA(1)))) {
 				{
 				match(_tokenSet_2);
+				}
+				if ( inputState.guessing==0 ) {
+					if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");
 				}
 			}
 			else {
