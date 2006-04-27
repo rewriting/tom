@@ -31,20 +31,20 @@ package set;
 
 import java.util.*;
 
-import aterm.*;
-import aterm.pure.*;
 import set.jgset.*;
 import set.jgset.types.*;
 
-import tom.library.traversal.GenericTraversal;
-import tom.library.traversal.Replace1;
+import tom.library.strategy.mutraveler.*;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.Visitable;
+import jjtraveler.VisitFailure;
+
 import java.io.*;
 
 public class Set1 {
+  %include{mutraveler.tom}
     // Jean Goubault version 
-  private Factory factory;
   private Comparator comparator;
-  private GenericTraversal traversal;
   private int depth;
   private int collisions;
   private final static int[] mask =
@@ -84,31 +84,23 @@ public class Set1 {
 
   %include { jgset/jgset.tom }
 
-  public Set1(Factory factory) {
-    this(factory, 31);
-  }
   
-  public Set1(Factory factory, int depth) {
-    this.factory = factory;
+  public Set1(int depth) {
     this.comparator = new MyComparator();
-    this.traversal = new GenericTraversal();
     if (depth <= 32) {
       this.depth = depth;
     } else {this.depth = 32;}
   }
-  public Factory getJgsetFactory() {
-    return factory;
-  }
 
-  public JGSet add(ATerm elt, JGSet t) {
+  public JGSet add(Element elt, JGSet t) {
     return override(elt, t, 0);
   }
 
-  public JGSet remove(ATerm elt, JGSet t) {
+  public JGSet remove(Element elt, JGSet t) {
     return remove(elt, t, 0);
   }
 
-  public boolean member(ATerm elt, JGSet t) {
+  public boolean member(Element elt, JGSet t) {
     return member(elt, t, 0);
   }
 
@@ -138,14 +130,14 @@ public class Set1 {
   }
 
     // getHead return the first left inner element found
-  public ATerm getHead(JGSet t) {
+  public Element getHead(JGSet t) {
     %match(JGSet t) {
       emptyJGSet() -> {
         return null;
       }
       singleton(x) -> {return `x;}
       branch(l,r) -> {
-        ATerm left = getHead(`l);
+        Element left = getHead(`l);
         if(left != null) {
           return left;
         }
@@ -180,9 +172,30 @@ public class Set1 {
     }
   }*/
 
+  %strategy reworkJGSetOnce() extends `Identity(){
+    visit JGSet{
+            branch(emptyJGSet(), s@singleton(_)) -> {return `s;}
+            branch(s@singleton(_), emptyJGSet()) -> {return `s;}
+            branch(e@emptyJGSet(), emptyJGSet()) -> {return `e;}
+    }
+  }
+  
   private JGSet reworkJGSet(JGSet t) {
-    Replace1 replace = new Replace1() {
-        public ATerm apply(ATerm t) {
+    JGSet res = null;
+    try{
+      res = (JGSet) MuTraveler.init(`TopDown(reworkJGSetOnce())).visit(t);
+    }catch(VisitFailure e){System.out.println("failure in reworkJGSet strategy");}
+    if(res != t) {
+      res = reworkJGSet(res);
+    }
+    return res;
+  }
+  
+  
+  /*
+  private JGSet reworkJGSet(JGSet t) {
+  Replace1 replace = new Replace1() {
+        public Element apply(Element t) {
           %match(JGSet t) {
             emptyJGSet() -> {return t;}
             singleton(_) -> {return t;}
@@ -194,14 +207,15 @@ public class Set1 {
 					return traversal.genericTraversal(t,this); 
         }
       };
-    
+
     JGSet res = (JGSet)replace.apply(t);
     if(res != t) {
       res = reworkJGSet(res);
     }
     return res;
   }
-  
+   */
+
   private JGSet union(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
       emptyJGSet(), _ -> {
@@ -282,7 +296,7 @@ public class Set1 {
     return null;
   }
   
-  private JGSet remove(ATerm elt, JGSet t, int level) {
+  private JGSet remove(Element elt, JGSet t, int level) {
     %match(JGSet t) {
       emptyJGSet()     -> {return t;}
 
@@ -310,7 +324,7 @@ public class Set1 {
     return null;
   }
 
-  private boolean member(ATerm elt, JGSet t, int level) {
+  private boolean member(Element elt, JGSet t, int level) {
     %match(JGSet t) {
       emptyJGSet() -> {return false;}
       
@@ -332,7 +346,7 @@ public class Set1 {
     return false;
   }
   
-  private JGSet override(ATerm elt, JGSet t, int level) {
+  private JGSet override(Element elt, JGSet t, int level) {
     int lev = level+1;
     %match(JGSet t) {
       emptyJGSet()      -> {return `singleton(elt);}
@@ -369,7 +383,7 @@ public class Set1 {
     return null;
   }
   
-  private JGSet underride(ATerm elt, JGSet t, int level) {
+  private JGSet underride(Element elt, JGSet t, int level) {
     int lev = level+1;
     %match(JGSet t) {
       emptyJGSet()     -> {return `singleton(elt);}
@@ -390,16 +404,15 @@ public class Set1 {
     return null;
   }
 
-  private boolean isBitZero(ATerm elt, int position) {
-    return ( (elt.getUniqueIdentifier() & mask[position]) == 0);
+  private boolean isBitZero(Element elt, int position) {
+    return ( (elt.hashCode() & mask[position]) == 0);
   }
   
-  private boolean isBitOne(ATerm elt, int position) {
-    return ( (elt.getUniqueIdentifier() & mask[position]) > 0);
+  private boolean isBitOne(Element elt, int position) {
+    return ( (elt.hashCode() & mask[position]) > 0);
   }
   
   public final static void main(String[] args) {
-    Factory fact = Factory.getInstance(SingletonFactory.getInstance());
     Set1 test;
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     int input = 0;
@@ -415,7 +428,7 @@ public class Set1 {
           continue;
         }
         if( input == 0 ) System.exit(0);
-        test = new Set1(fact, input);
+        test = new Set1(input);
         while(true) {
           try {
             str = "";
@@ -481,7 +494,7 @@ public class Set1 {
     System.out.println("getTail de t0: "+getTail(t0));
 
     startChrono = System.currentTimeMillis();
-    ATerm trm = getHead(t1), trm2 = getHead(t1);
+    Element trm = getHead(t1), trm2 = getHead(t1);
     stopChrono = System.currentTimeMillis();
     if (trm == trm2) {System.out.println("getHead is OK");}
     System.out.println("2 times getHead from tree in: "+ (stopChrono-startChrono) + " ms");
@@ -597,15 +610,15 @@ public class Set1 {
         return 0;
       }
 
-      int ho1 = ((ATerm)o1).getUniqueIdentifier();
-      int ho2 = ((ATerm)o2).getUniqueIdentifier();
+      int ho1 = ((Element)o1).hashCode();
+      int ho2 = ((Element)o2).hashCode();
       
       if(ho1 < ho2) {
         return -1;
       } else if(ho1 > ho2) {
         return 1;
       } else {
-        System.out.println("hum");
+        System.out.println("hashcode collision");
       }
       return 1;
     }

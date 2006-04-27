@@ -1,0 +1,11 @@
+module jgset 
+abstract syntax
+JGSet = emptyJGSet()
+      | singleton(value:Element)
+      | branch(left:JGSet,right:JGSet)
+
+Element = f(elt:Element)
+        | e1() 
+        | e2()
+        | e3()
+
