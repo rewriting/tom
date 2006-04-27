@@ -16,9 +16,9 @@ rem   JAVA_HOME     Must point at your Java Development Kit installation.
 rem
 rem   JAVA_OPTS     (Optional) Java runtime options.
 rem
-rem $Id: tom.bat,v 1.2 2004/10/11 16:21:15 reilles Exp $
-rem $Id: tom.bat,v 1.2 2004/10/11 16:21:15 reilles Exp $
-rem $Id: tom.bat,v 1.2 2004/10/11 16:21:15 reilles Exp $
+rem $Id: tom.bat,v 1.3 2006/04/27 12:56:09 tonio Exp $
+rem $Id: tom.bat,v 1.3 2006/04/27 12:56:09 tonio Exp $
+rem $Id: tom.bat,v 1.3 2006/04/27 12:56:09 tonio Exp $
 rem ---------------------------------------------------------------------------
 
 rem Make sure prerequisite environment variables are set
@@ -59,7 +59,7 @@ for %%i in ("%TOM_HOME%\lib\*.jar") do call "%TOM_HOME%\bin\tlappend.bat" %%i
 rem Check for TOM_OPTS variable
 if not "%TOM_OPTS%" == "" goto okOpts
 rem Use standard options
-set TOM_OPTS=-X "%TOM_HOME%\tom.xml" --import "%TOM_HOME%\share\jtom"
+set TOM_OPTS=-X "%TOM_HOME%\Tom.xml"
 set STD_OPTS=true
 :okOpts
 
@@ -96,6 +96,6 @@ set TOM_OPTS=
 :doneSetArgs
 
 rem execute TOM
-%_RUNJAVA% %JAVA_OPTS% -classpath "%CLASSPATH%%TOM_LIB%" %MAINCLASS% %TOM_OPTS% %CMD_LINE_ARGS%
+%_RUNJAVA% %JAVA_OPTS% -Dtom.home=%TOM_HOME% -classpath "%CLASSPATH%%TOM_LIB%" %MAINCLASS% %TOM_OPTS% %CMD_LINE_ARGS%
 
 :end
