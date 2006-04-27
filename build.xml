@@ -1235,8 +1235,9 @@
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist}/checkout"/>
     <cvs cvsRoot=":pserver:anonymous@scm.gforge.inria.fr:/cvsroot/tom"
-         package="jtom"
-         dest="${dist}/checkout"/>
+	 command="checkout -P jtom"
+         dest="${dist}/checkout">
+    </cvs>
     <tar tarfile="${dist}/tom-${stable.version}-source.tar.gz" compression="gzip">
       <tarfileset dir="${dist}/checkout/jtom" prefix="tom-${stable.version}" mode="755">
         <include name="**/*.sh"/>
