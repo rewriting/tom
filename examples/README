@@ -15,12 +15,12 @@ Depending on your background, Tom can be seen as:
 If you come from the
  - algebraic programming community
    => start with:
-      - vas
       - addressbook
       - peano
+      - gom
       - poly
-      - apireach
       - strategy
+      - apireach
 
  - XML community
    => start with
@@ -31,12 +31,12 @@ If you come from the
    => start with:
       - builtin
       - peano
+      - strings
       - expression (quite complex)
 
  - C programming community
    => start with:
       - integerc
-      - peano
 
 
 * Running the examples:
@@ -49,12 +49,13 @@ If you come from the
 
   Execution:
     _To run a specific example, go to directory examples/build/ and execute the java class
-    of your choice using your Java Virtual Machine. For instance, to run 'PeanoSimple1',
+    of your choice using your Java Virtual Machine. For instance, to run 'Peano1',
     simply run 'java peano.PeanoSimple1'.
+
 
 * Note about ApiGen/Vas/Gom:
 ------------------------
-  Vas is build on top of apigen and both are deprecated. You may now use
+  Vas is build on top of ApiGen and both are deprecated. You may now use
   Gom for all your applications (see user manual).
 
   ApiGen is a system which takes a many-sorted signature as input, and
@@ -140,10 +141,6 @@ If you come from the
   Cellular automata
   Concepts: pattern matching
 
-* csmaca
-  TODO
-  Concepts: TODO
-
 * dom
   XML manipulation based on DOM
   Concepts: XML, list-matching, DOM
@@ -155,7 +152,7 @@ If you come from the
 * ferus
   Show how to use apigen in a C environment
 
-* gasel
+* gasel [no longer in the distribution]
   Look for a pattern in a graph
   Concepts: complex user-defined mapping
 
@@ -243,7 +240,7 @@ If you come from the
   Red-Black Tree algorithm
   Concepts: apigen, disjunction of patterns
 
-* set
+* set [no longer in the distribution]
   Implementation of Set with maximal sharing
   Concepts: apigen, ATerm with unique id
 
@@ -269,7 +266,7 @@ If you come from the
   Examples introduced in the tutorial
   Concepts: string matching, XML
 
-* vas
+* vas [no longer in the distribution]
   Introduction to the VAS abstract syntax
   Concepts: vas
 
@@ -277,7 +274,7 @@ If you come from the
   XML manipulation based on TNode
   Concepts: XML, list-matching, TNode
 
-* xquery
+* xquery [no longer in the distribution]
   XQuery use cases
 
 * zenon
