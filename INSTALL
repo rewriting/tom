@@ -1,4 +1,6 @@
-For developers only
+===========================
+*** For developers only ***
+===========================
 
 Getting Tom
 ===========
@@ -55,11 +57,11 @@ Setup
 Before you can run Tom there is some additional set up you will need
 to do:
   - Add the stable/dist/bin and src/dist/bin directories to your path.
-    They contains the Tom and Tom.src scripts, to use Tom.
+    They contains the 'tom' and 'tom.src' scripts, to use Tom.
   - Set the TOM_HOME environment variable to either the stable/dist directory
     or the src/dist directory. Using stable/dist is the safest option. If you
-    use src/dist, the Tom command will be equivalent to the Tom.src command,
-    and the souce version will always be used. (If you do not set TOM_HOME,
+    use src/dist, the 'tom' command will be equivalent to the 'tom.src' command,
+    and the source version will always be used. (If you do not set TOM_HOME,
     stable/dist will be the default).
   - Optionally, set the JAVA_HOME environment variable.
     This should be set to the directory where your JDK is installed.
