@@ -16,9 +16,9 @@ rem   JAVA_HOME     Must point at your Java Development Kit installation.
 rem
 rem   JAVA_OPTS     (Optional) Java runtime options.
 rem
-rem $Id: tom.bat,v 1.2 2004/10/09 14:40:12 mmoossen Exp $
-rem $Id: tom.bat,v 1.1 2004/09/15 20:17:43 mmoossen Exp $
-rem $Id: tom.bat,v 1.0 2004/09/15 19:53:43 mmoossen Exp $
+rem $Id: tom.bat,v 1.2 2004/10/11 16:21:15 reilles Exp $
+rem $Id: tom.bat,v 1.2 2004/10/11 16:21:15 reilles Exp $
+rem $Id: tom.bat,v 1.2 2004/10/11 16:21:15 reilles Exp $
 rem ---------------------------------------------------------------------------
 
 rem Make sure prerequisite environment variables are set
@@ -69,7 +69,7 @@ echo Using TOM_HOME:        %TOM_HOME%
 
 rem Set standard command for invoking Java.
 set _RUNJAVA="%JAVA_HOME%\bin\java"
-set MAINCLASS=jtom.Tom
+set MAINCLASS=tom.engine.Tom
 
 rem Get command line arguments and save them in 
 rem the CMD_LINE_ARGS environment variable
