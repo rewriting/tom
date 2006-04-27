@@ -1244,13 +1244,13 @@
 	 command="checkout -P jtom"
          dest="${dist}/checkout">
     </cvs>
-    <tar tarfile="${dist}/tom-${stable.version}-source.tar.gz" compression="gzip">
-      <tarfileset dir="${dist}/checkout/jtom" prefix="tom-${stable.version}" mode="755">
+    <tar tarfile="${dist}/tom-src-${stable.version}.tar.gz" compression="gzip">
+      <tarfileset dir="${dist}/checkout/jtom" prefix="tom-src-${stable.version}" mode="755">
         <include name="**/*.sh"/>
         <include name="**/*-tom"/>
         <exclude name="applications/**"/>
       </tarfileset>
-      <tarfileset dir="${dist}/checkout/jtom" prefix="tom-${stable.version}" mode="644">
+      <tarfileset dir="${dist}/checkout/jtom" prefix="tom-src-${stable.version}" mode="644">
         <include name="**/*"/>
         <exclude name="**/*.sh"/>
         <exclude name="**/*-tom"/>
