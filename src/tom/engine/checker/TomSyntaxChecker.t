@@ -782,7 +782,7 @@ public class TomSyntaxChecker extends TomChecker {
 
         rec@RecordAppl[option=options,nameList=nameList,slots=slotList] -> {
           if(permissive) {
-						// Record are not allowed in a rhs
+            // Record are not allowed in a rhs
             messageError(findOriginTrackingLine(`options), TomMessage.incorrectRuleRHSClass,
                          new Object[]{getName(`rec)+"[...]"});
           }
@@ -1003,16 +1003,16 @@ public class TomSyntaxChecker extends TomChecker {
       String res = nameList.getHead().getString();
       symbol  =  getSymbolFromName(res);
       if (symbol == null ) {
-				// this correspond to a term like 'unknown()' or unknown(s1, s2, ...)
-				if(!permissive) {
-					messageError(decLine,
-							TomMessage.unknownSymbol,
-							new Object[]{res});
-				} else {
-					messageWarning(decLine,
-							TomMessage.unknownPermissiveSymbol,
-							new Object[]{res});
-				}
+        // this correspond to a term like 'unknown()' or unknown(s1, s2, ...)
+        if(!permissive) {
+          messageError(decLine,
+              TomMessage.unknownSymbol,
+              new Object[]{res});
+        } else {
+          messageWarning(decLine,
+              TomMessage.unknownPermissiveSymbol,
+              new Object[]{res});
+        }
       } else { //known symbol
         if ( strictType  || !topLevel ) {
           if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomMessage.invalidCodomain, res, decLine)) {

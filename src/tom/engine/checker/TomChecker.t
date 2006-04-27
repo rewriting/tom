@@ -100,7 +100,7 @@ abstract public class TomChecker extends TomGenericPlugin {
       Variable[] -> { return VARIABLE;}
       UnamedVariableStar[] -> { return UNAMED_VARIABLE_STAR;}
     }
-		throw new TomRuntimeException("Invalid Term");
+    throw new TomRuntimeException("Invalid Term");
   }
   
   public String getName(TomTerm term) {
@@ -143,7 +143,7 @@ abstract public class TomChecker extends TomGenericPlugin {
       (Variable|VariableStar)[astName=Name(name)]              ->{ return `name+"*";}
       UnamedVariableStar[] ->{ return "_*";}
     }
-		throw new TomRuntimeException("Invalid Term");
+    throw new TomRuntimeException("Invalid Term");
   }
   
   /**

@@ -119,7 +119,10 @@ public class GomStreamManager {
       importList.add(it.next());
     }
     try {
-      importList.add(getInputParent());
+      File inputParent = getInputParent();
+      if (inputParent != null) {
+        importList.add(inputParent);
+      }
       String gomHome = System.getProperty("tom.home");
       if(gomHome != null) {
         File file = new File(gomHome,"share/share");
@@ -193,6 +196,9 @@ public class GomStreamManager {
     } catch (IOException e) {
       getLogger().log(Level.SEVERE, "getInputParent:IOExceptionManipulation",
                       new Object[]{inputFileName, e.getMessage()});
+    } catch (NullPointerException e) {
+      // The file was not found
+      return null;
     }
     return parent;
   }
