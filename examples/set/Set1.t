@@ -41,6 +41,11 @@ import jjtraveler.VisitFailure;
 
 import java.io.*;
 
+//TODO
+//In this version, the maximal sharing is not preserved
+//replace hashcode() by getUniqueIdentifier()
+//when it is implemented in gom
+
 public class Set1 {
   %include{mutraveler.tom}
     // Jean Goubault version 
@@ -183,11 +188,8 @@ public class Set1 {
   private JGSet reworkJGSet(JGSet t) {
     JGSet res = null;
     try{
-      res = (JGSet) MuTraveler.init(`TopDown(reworkJGSetOnce())).visit(t);
+      res = (JGSet) MuTraveler.init(`RepeatId(TopDown(reworkJGSetOnce()))).visit(t);
     }catch(VisitFailure e){System.out.println("failure in reworkJGSet strategy");}
-    if(res != t) {
-      res = reworkJGSet(res);
-    }
     return res;
   }
   
