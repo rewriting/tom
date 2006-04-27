@@ -192,13 +192,13 @@ public class GomStreamManager {
   public File getInputParent() {
     File parent = null;
     try {
-      parent = ((new File(inputFileName)).getParentFile()).getCanonicalFile();
+      File rawParent = (new File(inputFileName)).getParentFile();
+      if (rawParent != null) {
+        parent = rawParent.getCanonicalFile();
+      }
     } catch (IOException e) {
       getLogger().log(Level.SEVERE, "getInputParent:IOExceptionManipulation",
                       new Object[]{inputFileName, e.getMessage()});
-    } catch (NullPointerException e) {
-      // The file was not found
-      return null;
     }
     return parent;
   }
