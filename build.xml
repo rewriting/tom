@@ -505,6 +505,12 @@
 	    <replaceFilter token="@CONFIG_FILE@" value="Tom.xml"/>
 	    <replaceFilter token="@INCLUDES_DIR@" value="share/tom"/>
     </replace>
+    <replace file="${stable.dist.bin}/gom">
+	    <replaceFilter token="@TOM_HOME@" value="TOM_HOME"/>
+	    <replaceFilter token="@MAIN_CLASS@" value="tom.gom.Gom"/>
+	    <replaceFilter token="@CONFIG_FILE@" value="Gom.xml"/>
+	    <replaceFilter token="@INCLUDES_DIR@" value="share/gom"/>
+    </replace>
     <chmod dir="${stable.dist.bin}" perm="ugo+rx">
       <include name="*"/>
       <exclude name="*.bat"/>
