@@ -838,7 +838,7 @@
       ****************************************************
     </fail>
 
-    <tar tarfile="${examples.dist}/tom-${version}-examples.tar.gz" 
+    <tar tarfile="${examples.dist}/tom-examples-${version}.tar.gz" 
          compression="gzip">
       <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
         <include name="build.sh"/>
