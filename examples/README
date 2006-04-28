@@ -50,7 +50,7 @@ If you come from the
   Execution:
     _To run a specific example, go to directory examples/build/ and execute the java class
     of your choice using your Java Virtual Machine. For instance, to run 'Peano1',
-    simply run 'java peano.PeanoSimple1'.
+    simply run 'java peano.Peano1'.
 
 
 * Note about ApiGen/Vas/Gom:
