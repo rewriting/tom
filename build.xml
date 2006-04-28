@@ -16,7 +16,7 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="stable.version" value="2.3"/>
+  <property name="stable.version" value="2.4alpha"/>
   <tstamp/>
   <property name="src.version"    value="${DSTAMP}"/>
 
@@ -772,6 +772,10 @@
        <property name="tom.common.path" location="${stable.lib}"/>
      </ant>
   </target>
+
+  <target name="clean.all" description="Cleans everything (stable, src, test, doc, dist)"
+          depends="clean, clean.dist">
+  </target> 
 
   <target name="clean" description="Cleans everything in the project"
           depends="clean.stable, clean.src, clean.test, clean.doc">

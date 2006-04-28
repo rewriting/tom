@@ -88,13 +88,14 @@ public class Set1 {
   };
 
   %include { jgset/jgset.tom }
-
   
   public Set1(int depth) {
     this.comparator = new MyComparator();
     if (depth <= 32) {
       this.depth = depth;
-    } else {this.depth = 32;}
+    } else {
+      this.depth = 32;
+    }
   }
 
   public JGSet add(Element elt, JGSet t) {
@@ -122,15 +123,15 @@ public class Set1 {
     %match(JGSet t) {
       emptyJGSet()    -> { return 0; }
       singleton(_)    -> { return 1; }
-      branch(l, r)    -> {return card(`l) + card(`r);}
+      branch(l, r)    -> { return card(`l) + card(`r); }
     }
     return 0;
   }
 
   public void topRepartition(JGSet t) {
     %match(JGSet t) {
-      branch(l,r) -> { System.out.println("Left branch: "+card(`l)+"\tright branch: "+card(`r));return;}
-      _ ->  {System.out.println("topRepartition: No a branch");}
+      branch(l,r) -> { System.out.println("Left branch: "+card(`l)+"\tright branch: "+card(`r));return; }
+      _ ->  { System.out.println("topRepartition: No a branch") ;}
     }
   }
 
@@ -178,18 +179,20 @@ public class Set1 {
   }*/
 
   %strategy reworkJGSetOnce() extends `Identity(){
-    visit JGSet{
-            branch(emptyJGSet(), s@singleton(_)) -> {return `s;}
-            branch(s@singleton(_), emptyJGSet()) -> {return `s;}
-            branch(e@emptyJGSet(), emptyJGSet()) -> {return `e;}
+    visit JGSet {
+      branch(emptyJGSet(), s@singleton(_)) -> { return `s; }
+      branch(s@singleton(_), emptyJGSet()) -> { return `s; }
+      branch(e@emptyJGSet(), emptyJGSet()) -> { return `e; }
     }
   }
   
   private JGSet reworkJGSet(JGSet t) {
     JGSet res = null;
-    try{
+    try {
       res = (JGSet) MuTraveler.init(`RepeatId(TopDown(reworkJGSetOnce()))).visit(t);
-    }catch(VisitFailure e){System.out.println("failure in reworkJGSet strategy");}
+    } catch(VisitFailure e) { 
+      System.out.println("failure in reworkJGSet strategy"); 
+    }
     return res;
   }
   
@@ -349,23 +352,30 @@ public class Set1 {
   }
   
   private JGSet override(Element elt, JGSet t, int level) {
+    //System.out.println("elt = " + elt + " id = " + elt.getUniqueIdentifier());
+
     int lev = level+1;
     %match(JGSet t) {
-      emptyJGSet()      -> {return `singleton(elt);}
+      emptyJGSet()   -> { return `singleton(elt); }
 
       singleton(x)   -> {
-        if(`x == elt) {  return `singleton(elt);}
-        else if( level >= depth ) {
+        if(`x == elt) {  
+          return `singleton(elt);
+        } else if( level >= depth ) {
           System.out.println("Collision!!!!!!!!");
           collisions++;
-            // Create 1rst list of element as it was a branch
+            // Create 1st list of element as it was a branch
           return `branch(t, singleton(elt));
           
+        } else if ( isBitZero(elt, level) && isBitZero(`x, level) ) {
+          return `branch(override(elt, t, lev), emptyJGSet());
+        } else if ( isBitOne(elt, level)  && isBitOne(`x, level) ) {
+          return `branch(emptyJGSet(), override(elt, t, lev));
+        } else if ( isBitZero(elt, level) && isBitOne(`x, level) ) {
+          return `branch(singleton(elt), t);
+        } else if ( isBitOne(elt, level)  && isBitZero(`x, level) ) {
+          return `branch(t, singleton(elt));
         }
-        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(override(elt, t, lev), emptyJGSet());}
-        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptyJGSet(), override(elt, t, lev));}
-        else if ( isBitZero(elt, level) && isBitOne(`x, level) ) { return `branch(singleton(elt), t);}
-        else if ( isBitOne(elt, level)  && isBitZero(`x, level) ){ return `branch(t, singleton(elt));}
       }
       
       branch(l, r) -> {
@@ -382,6 +392,7 @@ public class Set1 {
         }
       }
     }
+    System.out.println("Should not be there: set = " + t);
     return null;
   }
   
@@ -407,11 +418,11 @@ public class Set1 {
   }
 
   private boolean isBitZero(Element elt, int position) {
-    return ( (elt.hashCode() & mask[position]) == 0);
+    return ( (elt.getUniqueIdentifier() & mask[position]) == 0);
   }
   
   private boolean isBitOne(Element elt, int position) {
-    return ( (elt.hashCode() & mask[position]) > 0);
+    return ( (elt.getUniqueIdentifier() & mask[position]) > 0);
   }
   
   public final static void main(String[] args) {
@@ -463,7 +474,6 @@ public class Set1 {
     Element e1 = `e1();
     Element e2 = `e2();
     Element e3 = `e3();
-
     
     Element array[] = new Element[3*n];
     array[0] = e1;
@@ -612,15 +622,15 @@ public class Set1 {
         return 0;
       }
 
-      int ho1 = ((Element)o1).hashCode();
-      int ho2 = ((Element)o2).hashCode();
+      int ho1 = ((Element)o1).getUniqueIdentifier();
+      int ho2 = ((Element)o2).getUniqueIdentifier();
       
       if(ho1 < ho2) {
         return -1;
       } else if(ho1 > ho2) {
         return 1;
       } else {
-        System.out.println("hashcode collision");
+        System.out.println("uniqueID collision");
       }
       return 1;
     }

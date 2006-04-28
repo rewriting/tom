@@ -46,7 +46,8 @@ public class AbstractTypeTemplate extends TemplateClass {
 %[
 package @getPackage()@;
 
-public abstract class @className()@ implements shared.SharedObject, jjtraveler.Visitable {
+public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable {
+  private int uniqueID;
 
   public abstract aterm.ATerm toATerm();
 
@@ -56,10 +57,19 @@ public abstract class @className()@ implements shared.SharedObject, jjtraveler.V
     return toATerm().toString();
   }
 
+  public int getUniqueIdentifier() {
+    return uniqueID;
+  }
+
+  public void setUniqueIdentifier(int uniqueID) {
+    this.uniqueID = uniqueID;
+  }
+
   abstract public @className()@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure;
 }
 ]%);
 
     return out.toString();
   }
+
 }
