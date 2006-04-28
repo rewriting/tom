@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="Ant for TOM" default="stable" basedir=".">
   <description>
     Build script using Ant offering checks, dists,
     installation, and so on.
-    
+
     To use this build file, install ant,
     and just run ./build.sh in the current directory.
-    
+
     You can modify distribution default settings via
     ./build.sh -Ddist="/yourdirectory"
   </description>
-  
+
   <!-- set local properties for this build -->
   <property file="local.properties"/>
   <property name="build.sysclasspath" value="ignore" />
@@ -31,7 +31,7 @@
 
   <!-- some used directory location for stable -->
   <property name="stable.src"     location="stable"/>
-  <property name="stable.gen"     location="${stable.src}/gen"/>   
+  <property name="stable.gen"     location="${stable.src}/gen"/>
   <property name="stable.adt"     location="${stable.src}/tom/engine/adt"/>
   <property name="stable.mapping" location="${stable.src}/tom/library/mapping"/>
   <property name="stable.build"   location="${stable.src}/build"/>
@@ -44,13 +44,13 @@
   <property name="src.src"        location="src"/>
   <property name="src.adt"        location="${src.src}/tom/engine/adt"/>
   <property name="src.mapping"    location="${src.src}/tom/library/mapping"/>
-  <property name="src.gen"        location="${src.src}/gen"/>   
-  <property name="src.build"      location="${src.src}/build"/>   
+  <property name="src.gen"        location="${src.src}/gen"/>
+  <property name="src.build"      location="${src.src}/build"/>
   <property name="src.dist"       location="${src.src}/dist"/>
   <property name="src.doc"        location="${src.src}/doc"/>
   <property name="src.lib"        location="${src.src}/lib"/>
   <property name="src.config"     location="${src.src}/config"/>
-  
+
   <!-- for distribution: top, stable and src -->
   <property name="dist"              location="dist"/>
   <property name="stable.dist.bin"   location="${stable.dist}/bin"/>
@@ -81,10 +81,10 @@
   <property name="javacTarget"    value="1.4"/>
   <property name="javacDebugInfo" value="on"/>
   <property name="javacVerbose"   value="false"/>
-  <property name="nowarnings"     value="false" />  
-  <property name="memoryInitSize" value="128m" />  
-  <property name="memoryMaxSize"  value="512m" />  
-  
+  <property name="nowarnings"     value="false" />
+  <property name="memoryInitSize" value="128m" />
+  <property name="memoryMaxSize"  value="512m" />
+
   <!-- Define classpath for building stable and source  -->
   <path id="external.classpath">
   </path>
@@ -100,7 +100,7 @@
       <include name="*.jar"/>
     </fileset>
   </path>
-  
+
   <path id="src.classpath">
     <path refid="external.classpath"/>
     <!-- Src lib jar files -->
@@ -123,8 +123,8 @@
     <attribute name="memoryMaximumSize"  default="${memoryMaxSize}"/>
     <element name="srcelements" implicit="yes"/>
     <sequential>
-      <javac destdir="@{destdir}" 
-             debug=  "@{debug}" 
+      <javac destdir="@{destdir}"
+             debug=  "@{debug}"
              verbose="@{verbose}"
              fork=   "@{fork}"
              target= "@{target}"
@@ -141,7 +141,7 @@
     <mkdir dir="${src.build}"/>
     <mkdir dir="${src.gen}"/>
   </target>
-  
+
   <target name="prepare.stable">
     <mkdir dir="${stable.build}"/>
     <mkdir dir="${stable.gen}"/>
@@ -166,7 +166,7 @@
   </target>
 
   <!-- target debug to help finding properties problems -->
-  <target name="debug"> 
+  <target name="debug">
     <echoproperties/>
   </target>
 
@@ -179,10 +179,10 @@
       </fileset>
     </path>
 
-    <taskdef name="adt" 
-             classname="tom.engine.tools.ant.ApigenTask" 
+    <taskdef name="adt"
+             classname="tom.engine.tools.ant.ApigenTask"
              classpathref="tom.classpath"/>
-    <taskdef name="vas" 
+    <taskdef name="vas"
              classname="vas.ant.VasTask" 
              classpathref="tom.classpath"/>
     <taskdef name="gom"
