@@ -75,9 +75,10 @@ public class TomIlTools extends TomBase {
     Set unamedVarSet = new HashSet();
     %match(Pattern pattern) {
       Pattern(subjectList,tomList,guards) -> {
-          while(!subjectList.isEmpty()) {
-            TomTerm head = subjectList.getHead();
-            subjectList = subjectList.getTail();
+        TomList sl = `subjectList;
+          while(!sl.isEmpty()) {
+            TomTerm head = sl.getHead();
+            sl = sl.getTail();
             list.add(tomTermToZTerm(head,map,unamedVarSet));
           }
       }
@@ -88,7 +89,7 @@ public class TomIlTools extends TomBase {
     Set unamedVariableSet = new HashSet();
     %match(Pattern pattern) {
       Pattern(subjectList,tomList,guards) -> {
-          ZExpr result = patternToZExpr(subjectList, tomList, map, unamedVariableSet);
+          ZExpr result = `patternToZExpr(subjectList, tomList, map, unamedVariableSet);
           // insert existential quantifiers for the unamed variables
           Iterator it = unamedVariableSet.iterator();
           while (it.hasNext()) {
@@ -141,7 +142,7 @@ public class TomIlTools extends TomBase {
         // builds children list
         ZTermList zchild = `concZTerm();
         // take care to add unamedVariables for wildcards
-        TomSymbol symbol = getSymbolFromName(name,getSymbolTable());
+        TomSymbol symbol = `getSymbolFromName(name,getSymbolTable());
         // process all slots from symbol
         %match(TomSymbol symbol) {
           Symbol[pairNameDeclList=slots] -> {
@@ -151,7 +152,7 @@ public class TomIlTools extends TomBase {
               `slots = `slots.getTail();
               %match(Declaration decl) {
                 GetSlotDecl[slotName=slotName] -> {
-                  if (definedSlotMap.containsKey(slotName)) {
+                  if (definedSlotMap.containsKey(`slotName)) {
                     zchild = `concZTerm(zchild*,tomTermToZTerm((TomTerm)definedSlotMap.get(slotName),map,unamedVariableSet));
                   } 
                   else {

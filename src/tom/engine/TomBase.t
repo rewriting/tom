@@ -199,7 +199,7 @@ public class TomBase {
       AbsVar(Number(i)) -> { return "_absvar" + `i; }
       RenamedVar(Name(name)) -> { return "_renamedvar_" + `name; }
       NameNumber(Name(name)) -> { return "_" + `name; }
-      NameNumber(PositionName(numberList)) -> { return numberListToIdentifier(numberList); }
+      NameNumber(PositionName(numberList)) -> { return `numberListToIdentifier(numberList); }
       RuleVar() -> { return "_rulevar"; }
       Number(i) -> { return "_" + `i; }
     }
@@ -492,7 +492,7 @@ public class TomBase {
     %match(TomSymbol symbol) {
       Symbol[typesToType=TypesToType(typeList,codomain)] -> {
         int index = getSlotIndex(symbol,slotName);
-        return (TomType)typeList.elementAt(index);
+        return (TomType)`typeList.elementAt(index);
       }
     }
     throw new TomRuntimeException("getSlotType: bad slotName error");
@@ -518,7 +518,7 @@ public class TomBase {
     }
     %match(TomSymbol symbol) {
       Symbol[pairNameDeclList=concPairNameDecl(_*,PairNameDecl[slotName=name,slotDecl=decl],_*)] -> {
-        if(name==slotName && decl!=`EmptyDeclaration()) {
+        if(`name==slotName && `decl!=`EmptyDeclaration()) {
           return true;
         }
       }

@@ -102,19 +102,19 @@ public class Verifier extends TomBase {
     %match(Expression expression) {
       GetSubterm(codomain,Variable[astName=name], Number(index)) -> {
         // we will need to find the head symbol
-        Term term = termFromTomName(name);
+        Term term = termFromTomName(`name);
         return `subterm(fsymbol("empty"),term,index);
       }
       GetSlot(codomain,Name(symbolName),slotName,Variable[astName=name]) -> {
-        Term term = termFromTomName(name);
+        Term term = termFromTomName(`name);
         return `slot(fsymbol(symbolName),term,slotName);
       }
       TomTermToExpression(Variable[astName=name]) -> {
-        Term term = termFromTomName(name);
+        Term term = termFromTomName(`name);
         return `term;
       }
       Cast(type,expr) -> {
-        return termFromExpresssion(expr);
+        return termFromExpresssion(`expr);
       }
     }
 		System.out.println("termFromExpresssion don't know how to handle this: " + expression);
@@ -135,7 +135,7 @@ public class Verifier extends TomBase {
       TrueTL()  -> { return `true(subs(undefsubs())); }
       FalseTL() -> { return `false(); }
       EqualFunctionSymbol(type,Variable[astName=name],RecordAppl[nameList=symbolName]) -> {
-        Term term = termFromTomName(name);
+        Term term = termFromTomName(`name);
         return `isfsym(term,fsymbol(extractName(symbolName)));
       }
       EqualFunctionSymbol(type,term1,RecordAppl[nameList=symbolName]) -> {
@@ -173,13 +173,13 @@ public class Verifier extends TomBase {
                     instrFromInstruction(iff));
       }
       Let(Variable[astName=avar],expr,body) -> {
-        Variable thevar = variableFromTomName(avar);
+        Variable thevar = variableFromTomName(`avar);
         return `ILLet(thevar,
                       termFromExpresssion(expr),
                       instrFromInstruction(body));
       }
       LetAssign(Variable[astName=avar],expr,body) -> {
-        Variable thevar = variableFromTomName(avar);
+        Variable thevar = variableFromTomName(`avar);
         return `ILLet(thevar,
                       termFromExpresssion(expr),
                       instrFromInstruction(body));
@@ -209,12 +209,13 @@ public class Verifier extends TomBase {
     SubstitutionList substitution = `subs();
     %match(Instr instr) {
       accept(positive,negative) -> {
-        Pattern positivePattern = (Pattern) positive;
+        Pattern positivePattern = (Pattern) `positive;
         %match(Pattern positivePattern) {
           Pattern[subjectList=subjectList] -> {
-            while(!subjectList.isEmpty()) {
-              TomTerm subject = subjectList.getHead();
-              subjectList=subjectList.getTail();
+            TomList sl = `subjectList;
+            while(!sl.isEmpty()) {
+              TomTerm subject = sl.getHead();
+              sl=sl.getTail();
               %match(TomTerm subject) {
                 Variable[astName=name] -> {
                   substitution = `subs(substitution*,
@@ -374,8 +375,7 @@ public class Verifier extends TomBase {
       }
       subs(is(v,term),t*) -> {
         SubstitutionList tail = reduceSubstitutionWithMappingRules(`t*);
-        term = replaceVariablesInTerm(`appSubsT(tail*,term));
-        return `subs(is(v,reduceTermWithMappingRules(term)),tail*);
+        return `subs(is(v,reduceTermWithMappingRules(replaceVariablesInTerm(appSubsT(tail*,term)))),tail*);
       }
       subs(undefsubs(),t*) -> {
         SubstitutionList tail = reduceSubstitutionWithMappingRules(`t*);
@@ -607,7 +607,7 @@ public class Verifier extends TomBase {
     Collection c = new HashSet();
     %match(Deriv post) {
       ebs(env(e,sequence(semicolon(h,t*))),env(subs(undefsubs()),ip)) -> {
-        if(instructionContains(`h,ip)) {
+        if(`instructionContains(h,ip)) {
           // ends the derivation
           Deriv up = `ebs(env(e,h),env(subs(undefsubs()),ip));
           Collection pre_list = applySemanticsRules(up);
@@ -772,8 +772,8 @@ public class Verifier extends TomBase {
 				%match(Term subject) {
 					tau(absvar(v@var(name))) -> {
 						Map map = (Map) arg1;
-						if (map.containsKey(v)) {
-							return (Term)map.get(v);
+						if (map.containsKey(`v)) {
+							return (Term)map.get(`v);
 						}
 						return (Term)subject;
 					}
@@ -786,8 +786,8 @@ public class Verifier extends TomBase {
   public Term replaceVariablesInTerm(Term subject) {
     %match(Term subject) {
       appSubsT(sublist,term) -> {
-        Map map = buildVariableMap(sublist, new HashMap());
-        return (Term) replaceVariableByTerm.apply(term,map);
+        Map map = buildVariableMap(`sublist, new HashMap());
+        return (Term) replaceVariableByTerm.apply(`term,map);
       }
     }
     return subject;
@@ -796,8 +796,8 @@ public class Verifier extends TomBase {
   public Expr replaceVariablesInExpr(Expr subject) {
     %match(Expr subject) {
       appSubsE(sublist,term) -> {
-        Map map = buildVariableMap(sublist, new HashMap());
-        return (Expr) replaceVariableByTerm.apply(term,map);
+        Map map = buildVariableMap(`sublist, new HashMap());
+        return (Expr) replaceVariableByTerm.apply(`term,map);
       }
     }
     return subject;
@@ -834,10 +834,10 @@ public class Verifier extends TomBase {
           String identifier = "Empty";
           %match(TomName tomName) {
             Name(name) -> { 
-              identifier = name; 
+              identifier = `name; 
             }
             PositionName(localNumberList) -> {
-              identifier = tomNumberListToString(localNumberList);
+              identifier = tomNumberListToString(`localNumberList);
             }
           }
           result = result + "RenamedVar" + identifier;
@@ -846,10 +846,10 @@ public class Verifier extends TomBase {
           String identifier = "Empty";
           %match(TomName tomName) {
             Name(name) -> { 
-              identifier = name; 
+              identifier = `name; 
             }
             PositionName(localNumberList) -> {
-              identifier = tomNumberListToString(localNumberList);
+              identifier = tomNumberListToString(`localNumberList);
             }
           }
           result = result + "NameNumber" + identifier;

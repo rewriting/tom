@@ -233,7 +233,7 @@ public class ZenonOutput {
 						if (store.containsKey(`name)){
 							newname = (String) store.get(`name);
 						} else {
-							if (name.startsWith("[") && `name.endsWith("]")) {
+							if (`name.startsWith("[") && `name.endsWith("]")) {
 								newname = "X_" + store.size();
 							}
 							store.put(`name,newname);

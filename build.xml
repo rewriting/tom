@@ -243,39 +243,19 @@
   <target name="buildtom.common"
           if="gen.destination"
           depends="-withstable,-withsrc">
-
-    <!--  compile in protected mode -->
-    <tomcompile srcdir="${src.src}"
-         destdir="${gen.destination}"
-         options="--protected">
-      <include name="**/TomBase.t"/>
-      <include name="**/verifier/*.t"/>
-      <exclude name="**/TomVerifier.t"/>
-    </tomcompile>
-
     <!--  compile in standard mode -->
     <tomcompile srcdir="${src.src}"
          destdir="${gen.destination}"
          options="-I ${src.mapping} --optimize">
-      <exclude name="**/TomBase.t"/>
-      <exclude name="tom/engine/parser/*.g.t"/>
-
-      <include name="tom/engine/*.t"/>
-      <include name="tom/library/**/*.t"/>
-      <include name="tom/platform/**/*.t"/>
-
+      <include name="tom/engine/**/*.t"/> 
+      <include name="tom/library/**/*.t"/> 
+      <include name="tom/platform/**/*.t"/> 
       <include name="tom/gom/**/*.t"/>
+
+      <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/gom/**/GomParser.g.t"/>
     </tomcompile>
-    <!--  compile without declaration -->
-    <tomcompile srcdir="${src.src}"
-         destdir="${gen.destination}"
-         options="-I ${src.mapping} --noDeclaration --optimize">
-	 <exclude name="tom/engine/*.t"/>
-	 <exclude name="tom/engine/parser/*.g.t"/>
 
-	 <include name="tom/engine/**/*.t"/>
-    </tomcompile>
     <!-- Specific stuff for parser generation -->
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
