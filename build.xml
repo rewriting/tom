@@ -1241,7 +1241,7 @@
     </target>
   -->
 
-  <target name="source.distribution" depends=""
+  <target name="source.distribution"
           description="Creates a  ready to distribute tom-sources.tgz ">
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist}/checkout"/>
