@@ -29,10 +29,11 @@
  * 
  **/
 
-%typeterm LinkedList {
-  implement      { java.util.LinkedList }
+%typeterm AbstractSet {
+  implement      { java.util.AbstractSet }
   equals(l1,l2)  { l1.equals(l2) }
   check_stamp(l) {}
   set_stamp(l)   { l }
 }
-%include { Object.tom }
+%include { HashSet.tom }
+%include { TreeSet.tom }

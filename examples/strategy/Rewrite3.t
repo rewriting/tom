@@ -41,14 +41,7 @@ public class Rewrite3 {
 
   %include { term/term.tom }
   %include { mutraveler.tom }
-
-  %typeterm Collection {
-    implement {Collection}
-  }
-
-  %typeterm HashSet {
-    implement {HashSet}
-  } 
+  %include { java/util/types/Collection.tom }
 
   public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
     return tom.library.strategy.mutraveler.MuTraveler.mu(var,v);

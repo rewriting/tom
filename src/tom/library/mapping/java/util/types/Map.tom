@@ -29,10 +29,12 @@
  * 
  **/
 
-%typeterm LinkedList {
-  implement      { java.util.LinkedList }
+%typeterm Map {
+  implement      { java.util.Map }
   equals(l1,l2)  { l1.equals(l2) }
   check_stamp(l) {}
   set_stamp(l)   { l }
 }
-%include { Object.tom }
+%include { HashMap.tom }
+%include { TreeMap.tom }
+%include { WeakHashMap.tom }

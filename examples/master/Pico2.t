@@ -8,9 +8,7 @@ import jjtraveler.reflective.VisitableVisitor;
 
 class Pico2 {
 	%include { mutraveler.tom }
-	%typeterm HashMap {
-		implement { java.util.HashMap }
-	}
+	%include { java/util/types/HashMap.tom }
 
   %gom {
     module Term

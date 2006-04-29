@@ -45,10 +45,7 @@ public class Rewrite4 {
 
   %include { term/term.tom }
   %include { mutraveler.tom }
-
-  %typeterm Collection {
-    implement {Collection}
-  }
+  %include { java/util/types/Collection.tom }
 
   %typeterm Position {
     implement {Position}

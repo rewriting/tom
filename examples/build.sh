@@ -16,4 +16,4 @@ fi
 
 LOCALCLASSPATH=`echo ./lib/junit.jar | tr ' ' ':'` 
 
-CLASSPATH=${LOCALCLASSPATH} ant -Dtoto=tutu $*
+CLASSPATH=${LOCALCLASSPATH} ant $*
