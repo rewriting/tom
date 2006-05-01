@@ -38,7 +38,7 @@ This new release contains many improvements and new features:
     can be combined using strategy primitives a la Stratego (All, One, Repeat,
     Choice, Innermost, Mu, etc.)
 
-  - a new %[...]% construct which helps to write cide generators (it is no
+  - a new %[...]% construct which helps to write code generators (it is no
     longer necessary to encode special characters of strings)
 
   
