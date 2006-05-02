@@ -26,12 +26,12 @@ public class SimplifySystemRule{
 		make(t1,t2) { decomposeList(t1, t2) }
 	}
 	
-	%op Constraint ContainsVariable(v:Term, l:ConstraintList){
+	%op Constraint ContainsVariable(v:Term, l:AConstraintList){
 		is_fsym(t) { false }
 		make(t1,t2) { containsVariable(t1, t2) }
 	}
 	
-	%op Constraint ApplyReplaceStrategy(var:Term,value:Term,l:ConstraintList){
+	%op Constraint ApplyReplaceStrategy(var:Term,value:Term,l:AConstraintList){
 		is_fsym(t) { false }
 		make(t1,t2,t3) { applyReplaceStrategy(t1,t2,t3) }
 	}
@@ -39,10 +39,10 @@ public class SimplifySystemRule{
 	private Constraint decomposeList(TermList l1, TermList l2){		
 		
 		// System.out.println("In decompose");
-		ConstraintList l = `concConstraint();
+		AConstraintList l = `concAnd();
 		
 		while(!l1.isEmptyconcTerm()) {
-			l = `concConstraint(Match(l1.getHeadconcTerm(),l2.getHeadconcTerm()),l*);
+			l = `concAnd(Match(l1.getHeadconcTerm(),l2.getHeadconcTerm()),l*);
 			l1 = l1.getTailconcTerm();
 			l2 = l2.getTailconcTerm();					
 		}
@@ -63,7 +63,7 @@ public class SimplifySystemRule{
 		return `False();
 	}
 	
-	private Constraint containsVariable(Term v, ConstraintList l){
+	private Constraint containsVariable(Term v, AConstraintList l){
 		
 		// not the most efficient method, because
 		// it doesn't stop when an occurence is found
@@ -81,7 +81,7 @@ public class SimplifySystemRule{
 		// return l.match(v) == null ? `False():`True();
 	}
 	
-	private Constraint applyReplaceStrategy(Term var, Term value, ConstraintList l){
+	private Constraint applyReplaceStrategy(Term var, Term value, AConstraintList l){
 		
 		VisitableVisitor rule,ruleStrategy;            
 		rule = new ReplaceSystem(var,value, `Identity());
@@ -131,18 +131,18 @@ public class SimplifySystemRule{
 	
 	%rule{
 		// Replace
-		And(concConstraint(X*,match@Match(var@Variable(name),s),Y*)) -> And(concConstraint(match,ApplyReplaceStrategy(var,s,concConstraint(X*,Y*))))
-																			if True() == ContainsVariable(var,concConstraint(X*,Y*))
+		And(concAnd(X*,match@Match(var@Variable(name),s),Y*)) -> And(concAnd(match,ApplyReplaceStrategy(var,s,concAnd(X*,Y*))))
+																			if True() == ContainsVariable(var,concAnd(X*,Y*))
 		// PropagateClash
-		And(concConstraint(_*,False(),_*)) -> False()
+		And(concAnd(_*,False(),_*)) -> False()
 		
 		
 		// PropagateSuccess
-		And(concConstraint()) -> True()
+		And(concAnd()) -> True()
 		
-		And(concConstraint(x)) -> x
+		And(concAnd(x)) -> x
 		
-		And(concConstraint(X*,True(),Y*)) -> And(concConstraint(X*,Y*))
+		And(concAnd(X*,True(),Y*)) -> And(concAnd(X*,Y*))
 		
 	}
 	

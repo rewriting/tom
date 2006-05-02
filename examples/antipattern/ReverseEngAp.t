@@ -32,12 +32,12 @@ public class ReverseEngAp extends antipattern.term.TermBasicStrategy {
         Neg(Match(a,b)) -> {             
             return `Match(Anti(a),b);
         }        
-        And(concConstraint(X*,Match(q1,t1),Z*,Match(q2,t2),Y*)) -> {
+        And(concAnd(X*,Match(q1,t1),Z*,Match(q2,t2),Y*)) -> {
         	//return `Match(conc);
         	System.out.println("ici");
-        	return `And(concConstraint(X*,Match(Appl("conc",concTerm(q1,q2)),Appl("conc",concTerm(t1,t2))),Z*,Y*));
+        	return `And(concAnd(X*,Match(Appl("conc",concTerm(q1,q2)),Appl("conc",concTerm(t1,t2))),Z*,Y*));
         }
-        And(concConstraint(Match(a,b))) ->{
+        And(concAnd(Match(a,b))) ->{
         	return `Match(a,b);
         }
       }

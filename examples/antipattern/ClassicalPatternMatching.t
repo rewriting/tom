@@ -33,11 +33,11 @@ public class ClassicalPatternMatching extends antipattern.term.TermBasicStrategy
 
         // Decompose
         Match(Appl(name,a1),Appl(name,a2)) -> {
-          ConstraintList l = `concConstraint();
+          AConstraintList l = `concAnd();
           TermList args1 = `a1;
           TermList args2 = `a2;
           while(!args1.isEmptyconcTerm()) {
-            l = `concConstraint(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+            l = `concAnd(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
             args1 = args1.getTailconcTerm();
             args2 = args2.getTailconcTerm();
           }
@@ -52,26 +52,26 @@ public class ClassicalPatternMatching extends antipattern.term.TermBasicStrategy
         }
         
         // MergingClash
-        And(concConstraint(_*,Match(Variable(x),t1@Appl(_,_)),_*,Match(Variable(x),t2@Appl(_,_)),_*)) -> {
+        And(concAnd(_*,Match(Variable(x),t1@Appl(_,_)),_*,Match(Variable(x),t2@Appl(_,_)),_*)) -> {
           if(`t1 != `t2) {
             return `False();
           }
         }
        
         // PropagateClash
-        And(concConstraint(_*,False(),_*)) -> {
+        And(concAnd(_*,False(),_*)) -> {
           return `False();
         }
         
         // PropagateSuccess
-        And(concConstraint()) -> {
+        And(concAnd()) -> {
           return `True();
         }
-        And(concConstraint(x)) -> {
+        And(concAnd(x)) -> {
           return `x;
         }
-        And(concConstraint(X*,True(),Y*)) -> {
-          return `And(concConstraint(X*,Y*));
+        And(concAnd(X*,True(),Y*)) -> {
+          return `And(concAnd(X*,Y*));
         } 
         
         //new introduced variables

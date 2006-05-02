@@ -35,11 +35,11 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
 			
 			// Decompose
 			Match(Appl(name,a1),Appl(name,a2)) -> {
-				ConstraintList l = `concConstraint();
+				AConstraintList l = `concAnd();
 				TermList args1 = `a1;
 				TermList args2 = `a2;
 				while(!args1.isEmptyconcTerm()) {
-					l = `concConstraint(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+					l = `concAnd(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
 					args1 = args1.getTailconcTerm();
 					args2 = args2.getTailconcTerm();					
 				}
@@ -54,7 +54,7 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
 			}
 			
 			// Replace
-			input@And(concConstraint(X*,match@Match(var@Variable(name),s),Y*)) -> {	            
+			input@And(concAnd(X*,match@Match(var@Variable(name),s),Y*)) -> {	            
 	            VisitableVisitor rule,ruleStrategy;            
 	            if (isIdentity){
 	            	rule = new ReplaceSystem(`var,`s, `Identity());
@@ -63,9 +63,9 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
 	            	rule = new ReplaceSystem(`var,`s, `Fail());
 	            	ruleStrategy = `Innermost(rule);
 	            }            
-	            Constraint res = (Constraint) MuTraveler.init(ruleStrategy).visit(`And(concConstraint(X*,Y*)));
-	            if (res != `And(concConstraint(X*,Y*))){
-	            	return `And(concConstraint(match,res));
+	            Constraint res = (Constraint) MuTraveler.init(ruleStrategy).visit(`And(concAnd(X*,Y*)));
+	            if (res != `And(concAnd(X*,Y*))){
+	            	return `And(concAnd(match,res));
 	            }
 	        }
 			
@@ -75,20 +75,20 @@ public class SimplifySystemModified extends antipattern.term.TermBasicStrategy {
 			}
 			
 			// PropagateClash
-			And(concConstraint(_*,False(),_*)) -> {
+			And(concAnd(_*,False(),_*)) -> {
 				return `False();
 			}
 			
 			// PropagateSuccess
-			And(concConstraint()) -> {
+			And(concAnd()) -> {
 				return `True();
 			}
-			And(concConstraint(x)) -> {
+			And(concAnd(x)) -> {
 				return `x;
 			}
 			
-			And(concConstraint(X*,True(),Y*)) -> {
-				return `And(concConstraint(X*,Y*));
+			And(concAnd(X*,True(),Y*)) -> {
+				return `And(concAnd(X*,Y*));
 			}
 			
 			// BooleanSimplification

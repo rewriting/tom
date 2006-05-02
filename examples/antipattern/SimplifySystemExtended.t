@@ -50,17 +50,17 @@ public class SimplifySystemExtended extends antipattern.SimplifySystem {
         Match(ApplCons(name,a1,constraint),Appl(name,a2)) -> {
           TermList args1 = `a1;
           TermList args2 = `a2;
-          ConstraintList argCons = `constraint;
-          ConstraintList l = `concConstraint();
+          AConstraintList argCons = `constraint;
+          AConstraintList l = `concAnd();
           while(!`args2.isEmptyconcTerm()) {
-            l = `concConstraint(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+            l = `concAnd(Match(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
             args1 = args1.getTailconcTerm();
             args2 = args2.getTailconcTerm();
           }
           
-          while(!argCons.isEmptyconcConstraint()) {
-	    	l = `concConstraint(argCons.getHeadconcConstraint(),l*);
-	        argCons = argCons.getTailconcConstraint();
+          while(!argCons.isEmptyconcAnd()) {
+	    	l = `concAnd(argCons.getHeadconcAnd(),l*);
+	        argCons = argCons.getTailconcAnd();
           }
           
           return `And(l);
@@ -74,13 +74,13 @@ public class SimplifySystemExtended extends antipattern.SimplifySystem {
         }
        
         // PropagateSuccess
-        And(concConstraint(X*,GreaterThan(Appl(var1,_),Appl(var2,_)),Y*)) ->{
+        And(concAnd(X*,GreaterThan(Appl(var1,_),Appl(var2,_)),Y*)) ->{
         	return (Integer.parseInt(`var1) > Integer.parseInt(`var2) ? 
-        			`And(concConstraint(X*,Y*)):`False());
+        			`And(concAnd(X*,Y*)):`False());
         }
-        And(concConstraint(X*,LessThan(Appl(var1,_),Appl(var2,_)),Y*)) ->{
+        And(concAnd(X*,LessThan(Appl(var1,_),Appl(var2,_)),Y*)) ->{
         	return (Integer.parseInt(`var1) < Integer.parseInt(`var2) ? 
-        			`And(concConstraint(X*,Y*)):`False());
+        			`And(concAnd(X*,Y*)):`False());
         }
       }
       

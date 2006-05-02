@@ -131,12 +131,12 @@ public class Tools {
     throw new RuntimeException("error on: " + at);
   }
   
-  private ConstraintList atermListToConstraintList(ATerm at) {
+  private AConstraintList atermListToConstraintList(ATerm at) {
     if(at instanceof ATermList) {
       ATermList atl = (ATermList) at;
-      ConstraintList l = `concConstraint();
+      AConstraintList l = `concAnd();
       while(!atl.isEmpty()) {
-        l = `concConstraint(atermToConstraint(atl.getLast()),l*);
+        l = `concAnd(atermToConstraint(atl.getLast()),l*);
         atl = atl.getPrefix();
       }
       return l;
