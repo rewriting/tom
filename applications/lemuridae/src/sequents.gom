@@ -42,5 +42,4 @@ abstract syntax
 	// sequents and constraints
 	RuleList = rlist(Rule*)
 
-	
 

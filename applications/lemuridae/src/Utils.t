@@ -4,10 +4,13 @@ import sequents.types.*;
 import java.util.HashSet;
 import java.util.Collection;
 
-
 import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.VisitFailure;
 import jjtraveler.reflective.VisitableVisitor;
+
+import java.io.*;
+import antlr.*;
+import antlr.collections.*;
 
 class Utils {
 
@@ -153,5 +156,26 @@ class Utils {
     return set;
   }
 
+  // handling user input
+  public static String getInput() {
+     String res = null;
+     BufferedReader clav = new BufferedReader(new InputStreamReader(System.in));
+     try { res = clav.readLine(); }
+     catch (IOException e) { System.out.println(e); }
+     return res.trim();
+  }
+
+  public static Prop getProp() throws RecognitionException, TokenStreamException {
+
+    SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+    SeqParser parser = new SeqParser(lexer);
+    SeqTreeParser walker = new SeqTreeParser();
+
+    parser.start1();
+    AST t = parser.getAST();
+    Prop p  = walker.pred(t);
+
+    return p;
+  }
 }
 

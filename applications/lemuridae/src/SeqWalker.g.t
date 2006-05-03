@@ -72,3 +72,4 @@ term returns [Term t]
     : v:VAR { t = `Var(v.getText());  }
     | #(LPAREN f:VAR l=term_list) { t = `funAppl(fun(f.getText()),l); }
     ;
+

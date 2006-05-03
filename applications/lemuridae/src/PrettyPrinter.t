@@ -252,7 +252,7 @@ class PrettyPrinter {
     return res + " not in FV";
   }
  
-  public String prettyRule(sequentsAbstractType term) {
+  public static String prettyRule(sequentsAbstractType term) {
 
     %match(RuleList term) {
       (x) -> { return prettyRule(`x); }

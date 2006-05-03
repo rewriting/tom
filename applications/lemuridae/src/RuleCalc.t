@@ -19,10 +19,8 @@ public class RuleCalc {
 
   private static Utils ut = new Utils();
 
-
   %include { sequents/sequents.tom }
   %include { mutraveler.tom }
-
 
   static int counter = 0;
 
@@ -73,7 +71,7 @@ public class RuleCalc {
     }
   }
 
-  public RuleList transform(Prop atom, Prop p) {
+  public static RuleList transform(Prop atom, Prop p) {
     RuleList init = `rlist(ruledesc(1,atom,concSeq(sequent(context(),p))),
         ruledesc(0,atom,concSeq(sequent(context(p),nullProp()))));
     NewRulesVisitor v = new NewRulesVisitor();

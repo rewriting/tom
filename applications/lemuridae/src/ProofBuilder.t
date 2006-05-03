@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Map;
+import java.util.LinkedList;
 
 import java.io.*;
 import antlr.*;
@@ -173,6 +174,15 @@ b: {
     throw new Exception("can't apply rule");
   }
 
+  // Axiom
+
+  public static SeqList applyAxiom(Sequent seq, Prop active) throws Exception {
+    %match(Sequent seq, Prop active) {
+      sequent((_*,act,_*),act), act -> { return `concSeq(); }
+    }
+    throw new Exception("can't apply rule");
+  }
+  
   // Bottom
 
   public static SeqList applyBottomL(Sequent seq) throws Exception {
@@ -232,18 +242,67 @@ b: {
     }
 
 
+  // User interaction 
+ 
+  SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+  SeqParser parser = new SeqParser(lexer);
+  SeqTreeParser walker = new SeqTreeParser();
+
+  LinkedList new_rules = new LinkedList();
+
+  private void proofLoop(Sequent seq) {
+    LinkedList openGoals = new LinkedList();
+    Tree tree;
+    String command = null;
+    Sequent goal;
+    
+    openGoals.add(seq);
+    
+    while(true) {
+      goal = (Sequent) openGoals.getFirst();
+      System.out.println("Current goal : " + PrettyPrinter.prettyPrint(goal));
+     break; 
+    }
+  }
+  
+  public void mainLoop() throws Exception {
+    String command = null;
+    
+    while(true) {
+      System.out.print("> ");
+      command = Utils.getInput();
+      
+      if (command.equals("rule")) {
+        System.out.print("lhs. (atom) > ");
+        Prop p1 = Utils.getProp();
+        System.out.print("rhs. > ");
+        Prop p2 = Utils.getProp();
+        RuleList rl = RuleCalc.transform(p1,p2);
+        System.out.println("The new deduction rules are : \n");
+        System.out.println(PrettyPrinter.prettyRule(rl));
+      }
+
+      if (command.equals("proof")) {
+        System.out.print("sequent. > ");
+        parser.seq();
+        AST t = parser.getAST();
+        Sequent seq = (Sequent) walker.seq(t);
+        proofLoop(seq);
+      }
+    }
+  }
+
   // ---- tests ----
 
   private void tryRule(Rule r, Sequent seq, Prop active) {
-    PrettyPrinter pprinter = new PrettyPrinter();
     SeqList res = null;
 
     System.out.println("\n ======== Test  ========\n\n- rule:\n");
-    System.out.println(pprinter.prettyRule(r));
-    System.out.println("\n- on " + pprinter.prettyPrint(seq) + "\n- focus : " + pprinter.prettyPrint(active)+"\n");
+    System.out.println(PrettyPrinter.prettyRule(r));
+    System.out.println("\n- on " + PrettyPrinter.prettyPrint(seq) + "\n- focus : " + PrettyPrinter.prettyPrint(active)+"\n");
     try {
       res = applyRule(r, seq, active);
-      System.out.println("SUCCES. new premisses : " + pprinter.prettyRule(res) +"\n\n");
+      System.out.println("SUCCES. new premisses : " + PrettyPrinter.prettyRule(res) +"\n\n");
     } catch (Exception e) {
       System.out.println("FAIL\n\n");
     }
@@ -271,8 +330,6 @@ b: {
   private void run() throws Exception {
 
     RuleCalc rulecalc = new RuleCalc();
-    PrettyPrinter pprinter = new PrettyPrinter();
-
 
     SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
     SeqParser parser = new SeqParser(lexer);
@@ -291,7 +348,7 @@ b: {
 
     RuleList rl = rulecalc.transform(p1,p2);
     System.out.println("\nThe new deduction rules are : \n");
-    System.out.println(pprinter.prettyRule(rl));
+    System.out.println(PrettyPrinter.prettyRule(rl));
 
     System.out.println("\nEnter new sequent:");
     parser.seq();
@@ -304,6 +361,7 @@ b: {
 
   public final static void main(String[] args) throws Exception {
     ProofBuilder test = new ProofBuilder();
-    test.run();
+    //test.run();
+    test.mainLoop();
   }
 }

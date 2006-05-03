@@ -12,7 +12,6 @@ tokens {
     VOIDLIST;
 }
 
-
 seq: SEQ pred DOT! 
    | list_pred SEQ pred DOT!
    ;
@@ -52,6 +51,7 @@ funappl : VAR LPAREN^ term_list RPAREN!;
 
 // points d'entree pour les programmes
 start1 : pred DOT! ;
+rewrite: term ARROW^ term DOT;
 
 
 class SeqLexer extends Lexer;
@@ -94,3 +94,5 @@ VAR: ('a'..'z')+ ;
 FORALL  : "\\A";
 
 EXISTS : "\\E";
+
+ARROW : "->";
