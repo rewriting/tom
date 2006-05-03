@@ -405,7 +405,7 @@ public class TomTask extends MatchingTask {
    * silly has been entered.
    *
    * @since Ant 1.5
-   * @exception BuildException if an error occurs
+   * @throws BuildException if all required attributes are not set
    */
   protected void checkParameters() throws BuildException {
     if (src == null) {
@@ -511,6 +511,11 @@ public class TomTask extends MatchingTask {
     }
   }
 
+  /**
+   * Splits a string using spaces, and returns the words in an array
+   * @param str the String to split
+   * @return the list of arguments
+   */
   private String[] split(String str) {
     try {
       String res[] = new String[0];
