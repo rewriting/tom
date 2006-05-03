@@ -1,24 +1,24 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -27,9 +27,6 @@ package tom.library.plugin;
 
 import java.util.*;
 import java.util.logging.*;
-
-import aterm.*;
-import aterm.pure.*;
 
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
@@ -53,7 +50,7 @@ import tom.platform.adt.platformoption.types.*;
  * Of course, the plugin must also implement the Plugin interface,
  * and the XML file must respect this DTD :
  * <!DOCTYPE factory [
- * 
+ *
  * <!ELEMENT factory (plugin*)>
  *
  * <!ELEMENT plugin EMPTY>
@@ -74,7 +71,7 @@ import tom.platform.adt.platformoption.types.*;
  */
 
 public class PluginFactory implements Plugin {
-  
+
   %include{ adt/tnode/TNode.tom }
 
   %include{ adt/platformoption/PlatformOption.tom }
@@ -84,7 +81,7 @@ public class PluginFactory implements Plugin {
   private Map flagOwners;
   private Object[] argToRelay;
   private OptionManager optionManager; // it is never written!
-  
+
   private String pluginName;
   private Logger logger;
 
@@ -106,13 +103,13 @@ public class PluginFactory implements Plugin {
     List plugins = new ArrayList();
 
     fillClassPathsList(classPaths, xmlFile);
-    
+
     // creates an instance of each plugin
     Iterator it = classPaths.iterator();
     while( it.hasNext() ) {
       Object instance;
       String path = (String)it.next();
-      try { 
+      try {
         instance = Class.forName(path).newInstance();
         if(instance instanceof Plugin) {
           plugins.add(instance);
@@ -120,10 +117,10 @@ public class PluginFactory implements Plugin {
           logger.log(Level.SEVERE, "ClassNotAPlugin",
                      new Object[]{pluginName, path});
         }
-      } catch(ClassNotFoundException cnfe) { 
+      } catch(ClassNotFoundException cnfe) {
         logger.log(Level.WARNING, "ClassNotFound",
-                   new Object[]{pluginName, path}); 
-      } catch(Exception e) { 
+                   new Object[]{pluginName, path});
+      } catch(Exception e) {
         logger.log(Level.SEVERE, "InstantiationError",
                    new Object[]{pluginName, path});
       }
@@ -178,7 +175,7 @@ public class PluginFactory implements Plugin {
       // TODO: when error management has changed, change this
     }
   }
-  
+
   /**
    * From OptionOwner interface inherited from Plugin interface
    */
@@ -201,7 +198,7 @@ public class PluginFactory implements Plugin {
       if(((Boolean)getOM().getOptionValue(flagName)).booleanValue()) {
         // if this plugin is activated
         it = flagOwners.keySet().iterator();
-        
+
         while( it.hasNext() ) {
           String name = (String)it.next();
           if( !name.equals(flagName) ) // require that the other aren't
@@ -209,16 +206,16 @@ public class PluginFactory implements Plugin {
         }
       }
     }
-    
-    return allRequiredOptions; 
+
+    return allRequiredOptions;
   }
-  
+
   /**
    * From OptionOwner interface inherited from Plugin interface
    */
   public void optionChanged(String optionName, Object optionValue) {
     getOM().setOptionValue(optionName, optionValue);
-    
+
     if(optionValue.equals(Boolean.TRUE)) {
       // no more than 1 plugin can be activated at a time
       if( flagOwners.keySet().contains(optionName) ) {
@@ -236,19 +233,19 @@ public class PluginFactory implements Plugin {
       }
     }
   }
-  
+
   private void fillClassPathsList(List classPaths, String xmlFile) {
     XmlTools xtools = new XmlTools();
     TNode docNode = ( (TNode)xtools.convertXMLToATerm(xmlFile) ).getDocElem();
-    
+
     %match(TNode docNode) {
       fact@<factory></factory> -> {
-        
+
         %match(TNode fact) {
-          ElementNode[childList = cl] -> { 
+          ElementNode[childList = cl] -> {
             while(!(`cl.isEmpty())) {
               TNode pluginNode = `cl.getHead();
-              
+
               %match(TNode pluginNode) {
                 <plugin [classpath = cp] /> -> { classPaths.add(`cp);/*System.out.println(cp);*/ }
               }
@@ -259,5 +256,5 @@ public class PluginFactory implements Plugin {
       }
     }
   }
-  
+
 }

@@ -373,8 +373,7 @@ public class TomTask extends MatchingTask {
                          compileList.length, newFiles.length);
         compileList = newCompileList;
       }
-    }
-    else {
+    } else {
       GlobPatternMapper m = new GlobPatternMapper();
       m.setFrom("*.t");
       m.setTo("*.java");
