@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="lemu" default="build" basedir=".">
+  <description>
+    The lemu proof assistant
+  </description>
+
+  <property environment="env"/>
+  <property name="tom.home" value="${env.TOM_HOME}"/>
+  <import file="${tom.home}/lib/tom-common.xml"/>
+
+  <property name="lemu.dir"      location="."/>
+  <property name="lemu.src"      location="src"/>
+  <property name="lemu.gen"      location="gen"/>
+  <property name="lemu.build"    location="build"/>
+
+
+  <target name="init" depends="tom.init">
+    <mkdir dir="${lemu.build}"/>
+    <mkdir dir="${lemu.gen}"/>
+  </target>
+
+  <target name="build" depends="init">
+    <gom config="${gomconfigfile}"
+         srcdir="${lemu.src}"
+         destdir="${lemu.gen}">
+      <include name="*.gom"/>
+    </gom>
+    <tom.preset srcdir="${lemu.src}"
+                destdir="${lemu.gen}">
+      <include name="**/*.t"/>
+      <exclude name="**/*.g.t"/>
+    </tom.preset>
+    <tom.preset outputfile="${lemu.gen}/SeqWalker.g"
+                options="-I ${lemu.gen}"
+                srcdir="${lemu.src}"> 
+      <include name="SeqWalker.g.t"/>
+    </tom.preset>
+    <tomantlr target="${lemu.src}/SeqParser.g"
+              outputdirectory="${lemu.gen}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <tomantlr target="${lemu.gen}/SeqWalker.g"
+              outputdirectory="${lemu.gen}">
+    	<classpath refid="tom.classpath"/> 	
+    </tomantlr>
+    <javac.preset destdir="${lemu.build}">
+      <src path="${lemu.gen}"/>
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac.preset>
+  </target>
+
+  <target name="clean" description="make clean">
+    <delete dir="${lemu.gen}"/>
+    <delete dir="${lemu.build}"/>
+  </target>
+</project>

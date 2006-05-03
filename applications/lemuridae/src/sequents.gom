@@ -1,0 +1,46 @@
+module sequents
+imports  String int
+
+abstract syntax
+
+  Term = Var(name:String)
+       | funAppl(fun:Fun, p:TermList)
+       | NewVar(id:int, name:String) // asks for a new var
+       | FreshVar(id:int, name:String) // asks for a fresh var
+
+  Fun  = fun(name:String)
+
+  TermList = concTerm(Term*)
+
+  Relation = relation(name:String)
+
+	Prop = relationAppl(r:Relation, t:TermList)
+       | and(p1:Prop, p2:Prop)
+	     | or(p1:Prop, p2:Prop)
+	     | implies(left:Prop, right:Prop)
+	     | forAll(var:String, p:Prop)
+	     | exists(var:String, p:Prop)
+       | bottom()
+       | top()
+	     | nullProp()  // nullable type
+
+	Context = context(Prop*)
+
+	Sequent = sequent(h:Context,c:Prop)
+
+	Premisses = premisses(Tree*)
+	    
+	Tree = rule(name:String, p:Premisses, c:Sequent, active:Prop)
+
+	//--- new rules ---
+	SeqList = concSeq(Sequent*)
+  VarList = varlist(String*)
+	// hs == hand-side : 0 left, 1 right
+  Rule = ruledesc(hs:int, concl:Prop, prem:SeqList)
+
+	// --- for the new rules computing---
+	// sequents and constraints
+	RuleList = rlist(Rule*)
+
+	
+
