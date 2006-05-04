@@ -94,7 +94,7 @@ public class RewriteHand {
   %strategy RewriteSystem(subject:Term) extends `Fail() {
     visit Term {
       A() -> { 
-        Position pos = MuTraveler.getPosition(this);
+        Position pos = getPosition();
         System.out.println("A -> B at " + pos);
         System.out.println(subject + " at " + pos + " = " + pos.getSubterm().visit(subject));
         System.out.println("rwr into: " + pos.getReplace(`B()).visit(subject));
@@ -102,11 +102,11 @@ public class RewriteHand {
         return `B();
       }
       B() -> {
-        System.out.println("B -> C at " + MuTraveler.getPosition(this));
+        System.out.println("B -> C at " + getPosition());
         return `C();
       }
       F(C(),C()) -> {
-        System.out.println("G(C,C) -> C at " + MuTraveler.getPosition(this));
+        System.out.println("G(C,C) -> C at " + getPosition());
         return `C(); }
     }
   }

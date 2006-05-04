@@ -1,10 +1,28 @@
 package strategy.hand;
+import tom.library.strategy.mutraveler.Position;
 
-public class BasicStrategy implements jjtraveler.reflective.VisitableVisitor {
+public class BasicStrategy implements tom.library.strategy.mutraveler.reflective.MuStrategy {
   protected jjtraveler.Visitor any;
+  private Position position;
 
   public BasicStrategy(jjtraveler.Visitor v) {
     this.any = v;
+  }
+
+  public void setPosition(Position pos) {
+    this.position = pos;
+  }
+
+  public Position getPosition() {
+    if(hasPosition()) {
+      return position;
+    } else {
+      throw new RuntimeException("position not initialized");
+    }
+  }
+
+  public boolean hasPosition() {
+    return position!=null;
   }
 
   public jjtraveler.Visitable visit(jjtraveler.Visitable v) throws jjtraveler.VisitFailure {
