@@ -110,7 +110,7 @@ public class TestStrategy extends TestCase {
 
   %strategy GetPositionA(positions:Hashtable,posName:String) extends `Identity(){
     visit Term {
-      a() -> {positions.put(posName,MuTraveler.getPosition(this));}
+      a() -> {positions.put(posName,getPosition());}
     }
   }
 

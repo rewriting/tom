@@ -39,32 +39,54 @@ public class BasicStrategyTemplate extends TemplateClass {
   public String generate() {
     StringBuffer out = new StringBuffer();
 
-    out.append("package "+getPackage()+";\n");
-    out.append("\n");
-    out.append("public class "+className()+" extends "+className(fwd) + " implements jjtraveler.reflective.VisitableVisitor {\n");
-    out.append("\n");
-    out.append("\tpublic int getChildCount() {\n");
-    out.append("\t\treturn 1;\n");
-    out.append("\t}\n");
-    out.append("\n");
-    out.append("\tpublic jjtraveler.Visitable getChildAt(int i) {\n");
-    out.append("\t\tswitch (i) {\n");
-    out.append("\t\tcase 0: return (jjtraveler.Visitable) any;\n");
-    out.append("\t\tdefault: throw new IndexOutOfBoundsException();\n");
-    out.append("\t\t}\n");
-    out.append("\t}\n");
-    out.append("\n");
-    out.append("\tpublic jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {\n");
-    out.append("\t\tswitch (i) {\n");
-    out.append("\t\tcase 0: any = (jjtraveler.reflective.VisitableVisitor) child; return this;\n");
-    out.append("\t\tdefault: throw new IndexOutOfBoundsException();\n");
-    out.append("\t\t}\n");
-    out.append("\t}\n");
-    out.append("\n");
-    out.append("\tpublic "+className()+"(jjtraveler.reflective.VisitableVisitor any) {\n");
-    out.append("\t\tsuper(any);\n");
-    out.append("\t}\n");
-    out.append("}\n");
+    out.append(%[
+package @getPackage()@;
+import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.reflective.MuStrategy;
+    
+  public class @className()@ extends @className(fwd)@ implements MuStrategy {
+  private Position position;
+
+  public void setPosition(Position pos) {
+    this.position = pos;
+  }
+
+  public Position getPosition() {
+    if(hasPosition()) {
+      return position;
+    } else {
+      throw new RuntimeException("position not initialized");
+    }
+  }
+
+  public boolean hasPosition() {
+    return position!=null;
+  }
+
+    
+  public int getChildCount() {
+    return 1;
+  }
+    
+  public jjtraveler.Visitable getChildAt(int i) {
+    switch (i) {
+      case 0: return (jjtraveler.Visitable) any;
+      default: throw new IndexOutOfBoundsException();
+    }
+  }
+    
+  public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {
+    switch (i) {
+      case 0: any = (jjtraveler.reflective.VisitableVisitor) child; return this;
+      default: throw new IndexOutOfBoundsException();
+    }
+  }
+    
+  public @className()@(jjtraveler.reflective.VisitableVisitor any) {
+    super(any);
+  }
+}
+]%);
 
     return out.toString();
   }
