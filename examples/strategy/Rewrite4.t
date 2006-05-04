@@ -85,11 +85,14 @@ public class Rewrite4 {
           Sequence(s1,
             All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1)))));
 
+      VisitableVisitor useOmegaPath = p.getOmegaPath(`Sequence(s2,All(s1)));
+
       try {
         System.out.println("----------------------");
         System.out.println("subject       = " + subject);
         System.out.println("position      = " + p);
         System.out.println("xmastree = " + MuTraveler.init(xmastree).visit(subject));
+        System.out.println("omegapath = " + MuTraveler.init(useOmegaPath).visit(subject));
       } catch (VisitFailure e) {
         System.out.println("reduction failed on: " + subject);
       }
