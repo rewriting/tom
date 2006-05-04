@@ -9,7 +9,7 @@ import jjtraveler.Visitable;
  * should play the role of children.
  */
 
-public abstract class AbstractVisitableVisitor implements VisitableVisitor {
+public abstract class AbstractVisitableVisitor implements MuStrategy {
   protected VisitableVisitor[] visitors;
   private Position position;
 

@@ -1,6 +1,6 @@
 package tom.library.strategy.mutraveler;
 
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.reflective.MuStrategy;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
@@ -75,8 +75,8 @@ class MuInitializer extends Identity {
   }
 
   public Visitable visit(Visitable v) {
-    if(v instanceof AbstractVisitableVisitor) {
-      AbstractVisitableVisitor avv = (AbstractVisitableVisitor) v;
+    if(v instanceof MuStrategy) {
+      MuStrategy avv = (MuStrategy) v;
       avv.setPosition(position);
     } else if(v instanceof VisitableVisitor) {
       MuTraveler.setPosition((VisitableVisitor)v,position);
