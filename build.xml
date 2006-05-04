@@ -185,6 +185,9 @@
     <taskdef name="vas"
              classname="vas.ant.VasTask"
              classpathref="tom.classpath"/>
+    <!-- taskdef name="pom"
+             classname="tom.pom.tools.ant.PomTask"
+             classpathref="tom.classpath"/ -->
     <taskdef name="gom"
              classname="tom.gom.tools.ant.GomTask"
              classpathref="tom.classpath"/>
@@ -201,6 +204,9 @@
       </fileset>
     </path>
 
+    <taskdef name="pomsrc"
+             classname="tom.pom.tools.ant.PomTask"
+             classpathref="tomsrc.classpath"/>
     <taskdef name="gomsrc"
              classname="tom.gom.tools.ant.GomTask"
              classpathref="tomsrc.classpath"/>
@@ -251,6 +257,7 @@
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
       <include name="tom/gom/**/*.t"/>
+      <include name="tom/pom/**/*.t"/>
 
       <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/gom/**/GomParser.g.t"/>
@@ -533,6 +540,11 @@
 	    <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
 	    <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
     </jar>
+    <jar jarfile="${stable.dist.lib}/pom.jar"
+         update="yes">
+	    <fileset dir="${stable.build}" includes="tom/pom/**/*.class"/>
+	    <fileset dir="${stable.src}" includes="tom/pom/**/*.properties"/>
+    </jar>
 
     <copy todir="${stable.dist.lib}">
       <fileset dir="${stable.src}/tom/engine/adt" includes="*.jar"/>
@@ -678,6 +690,11 @@
 	      includes="tom/gom/**/*.class"
 	      excludes="tom/gom/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="gom/**/*.properties"/>
+    </jar>
+    <jar jarfile="${src.dist.lib}/pom.jar">
+      <fileset dir="${src.build}"
+        includes="tom/pom/**/*.class"/>
+      <fileset dir="${src.src}" includes="pom/**/*.properties"/>
     </jar>
     <jar jarfile="${src.dist.lib}/GomADT-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>
