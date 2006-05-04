@@ -226,8 +226,8 @@ class PrettyPrinter {
     %match(Term term) {
       Var(x) -> { return `x;}
       funAppl(fun(f),x) -> { return `f + "(" + prettyPrint(`x) + ")";}
-      FreshVar(i,n) -> { return `(n+i); }
-      NewVar(i,n) -> { return `(n+i); }
+      FreshVar(n,_) -> { return `n; }
+      NewVar(n,_) -> { return `n; }
     }
 
     %match(TermList term) {

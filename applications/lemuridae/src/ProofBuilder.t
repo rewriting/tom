@@ -62,9 +62,8 @@ public class ProofBuilder {
     it = fresh.iterator();
     while( it.hasNext() ) {
       Term fvar = (Term) it.next();
-      String name = fvar.getname();
-      //String new_name = ((Term) tds.get(name)).getname();
-      Term new_var = Utils.freshVar(name, res);
+      String bname = fvar.getbase_name();
+      Term new_var = Utils.freshVar(bname, seq);
       res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
     }
    
@@ -136,7 +135,7 @@ b: {
         return `concSeq(sequent(ctxt,p1));
       }
     }
-    throw new Exception("can't apply rule");
+    throw new Exception("can't apply rule Or R 1");
   }
 
   public static SeqList applyOrR2(Sequent seq) throws Exception {
@@ -145,7 +144,7 @@ b: {
         return `concSeq(sequent(ctxt,p2));
       }
     }
-    throw new Exception("can't apply rule");
+    throw new Exception("can't apply rule Or R 2");
   }
 
   public static SeqList applyOrL(Sequent seq, Prop active) throws Exception {
@@ -154,7 +153,7 @@ b: {
         return `concSeq(sequent(context(X*,p1,Y*),c), sequent(context(X*,p2,Y*),c));
       }
     }
-    throw new Exception("can't apply rule");
+    throw new Exception("can't apply rule Or L");
   }
 
   // Implies
@@ -165,7 +164,7 @@ b: {
         return `concSeq(sequent(context(ctxt*,p1),p2));
       }
     }
-    throw new Exception("can't apply rule");
+    throw new Exception("can't apply rule => R");
   }
   
   public static SeqList applyImpliesL(Sequent seq, Prop active) throws Exception {
@@ -174,7 +173,7 @@ b: {
         return `concSeq(sequent(context(X*,Y*),p1), sequent(context(X*,p2,Y*),c));
       }
     }
-    throw new Exception("can't apply rule");
+    throw new Exception("can't apply rule => L");
   }
 
   // Axiom
@@ -183,7 +182,7 @@ b: {
     %match(Sequent seq) {
       sequent((_*,x,_*),x) -> { return `concSeq(); }
     }
-    throw new Exception("can't apply rule");
+    throw new Exception("can't apply rule axiom");
   }
   
   // Bottom
@@ -194,7 +193,7 @@ b: {
         return `concSeq();
       }
     }
-    throw new Exception("can't apply rule");
+    throw new Exception("can't apply rule bottom");
   }
 
   // forall
@@ -206,7 +205,7 @@ b: {
         return `concSeq(sequent(ctxt,res));
       }
     }
-    throw new Exception("can't apply rule");
+    throw new Exception("can't apply rule forall R");
   }
 
   public static SeqList applyForAllL
@@ -218,7 +217,7 @@ b: {
           return `concSeq(sequent(context(X*,res,Y*),c));
         }
       }
-      throw new Exception("can't apply rule");
+      throw new Exception("can't apply rule forall L");
     }
 
   // exists
@@ -230,7 +229,7 @@ b: {
         return `concSeq(sequent(ctxt,res));
       }
     }
-    throw new Exception("can't apply rule");
+    throw new Exception("can't apply rule exists R");
   }
 
   // TODO add FV test
@@ -241,7 +240,7 @@ b: {
           return `concSeq(sequent(context(X*,p,Y*),c));
         }
       }
-      throw new Exception("can't apply rule");
+      throw new Exception("can't apply rule exists L");
     }
 
 

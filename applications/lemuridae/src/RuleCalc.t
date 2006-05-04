@@ -44,9 +44,9 @@ public class RuleCalc {
       }
 
 	    // forall R
-      (X*,ruledesc(hs,c,(x*, sequent(ctxt,forAll(n,a)), y*)), Y*) -> {
-        //Term fresh_v = freshVar(n,l);
-        Term fresh_v = `FreshVar(counter++,n);
+      l@(X*,ruledesc(hs,c,(x*, sequent(ctxt,forAll(n,a)), y*)), Y*) -> {
+        String new_n = Utils.freshVar(`n,`l).getname();
+        Term fresh_v = `FreshVar(new_n,n);
         Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
         if (new_a != `a) { // si on a remplace qqc
           return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, new_a), y*)), Y*);

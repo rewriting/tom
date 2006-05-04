@@ -5,8 +5,8 @@ abstract syntax
 
   Term = Var(name:String)
        | funAppl(fun:Fun, p:TermList)
-       | NewVar(id:int, name:String) // asks for a new var
-       | FreshVar(id:int, name:String) // asks for a fresh var
+       | NewVar(name:String, base_name: String) // asks for a new var
+       | FreshVar(name:String, base_name: String) // asks for a fresh var
 
   Fun  = fun(name:String)
 
