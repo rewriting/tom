@@ -36,8 +36,10 @@ import tom.engine.exception.TomRuntimeException;
 
 import tom.platform.adt.platformoption.*;
 import tom.library.traversal.*;
+import tom.library.strategy.mutraveler.*;
 
 import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
 /**
  * Base class for most tom files in the compiler.
@@ -47,6 +49,9 @@ public class TomBase {
 
   %include { adt/tomsignature/TomSignature.tom }
   %include { mutraveler.tom }
+	%typeterm Collection {
+		implement { java.util.Collection }
+	}
 
  public final static String DEFAULT_MODULE_NAME = "default"; 
   
@@ -300,46 +305,47 @@ public class TomBase {
     return res;
   }
   // ------------------------------------------------------------
-  protected void collectVariable(final Collection collection, ATerm subject) {
-    Collect1 collect = new Collect1() { 
-        public boolean apply(ATerm t) {
-					TomTerm annotedVariable = null;
-					%match(TomTerm t) {
-						(Variable|VariableStar)[constraints=constraintList] -> {
-							collection.add(t);
-							annotedVariable = getAssignToVariable(`constraintList);
-							if(annotedVariable!=null) {
-								collection.add(annotedVariable);
-							}
-							return false;
-						}
+	%strategy collectVariable(collection:Collection) extends `Identity() {
+		visit TomTerm {
+			v@(Variable|VariableStar)[constraints=constraintList] -> {
+				collection.add(`v);
+				TomTerm annotedVariable = getAssignToVariable(`constraintList);
+				if(annotedVariable!=null) {
+					collection.add(annotedVariable);
+				}
+				`Fail().visit(`v);
+			}
 
-						(UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
-							annotedVariable = getAssignToVariable(`constraintList);
-							if(annotedVariable!=null) {
-								collection.add(annotedVariable);
-							}
-							return false;
-						}
+			v@(UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
+				TomTerm annotedVariable = getAssignToVariable(`constraintList);
+				if(annotedVariable!=null) {
+					collection.add(annotedVariable);
+				}
+				`Fail().visit(`v);
+			}
 
-						// to collect annoted nodes but avoid collect variables in optionSymbol
-						RecordAppl[slots=subterms, constraints=constraintList] -> {
-							collectVariable(collection,`subterms);
-							annotedVariable = getAssignToVariable(`constraintList);
-							if(annotedVariable!=null) {
-								collection.add(annotedVariable);
-							}
-							return false;
-						}
-					}
-					return true;
-        } // end apply
-      }; // end new
+			// to collect annoted nodes but avoid collect variables in optionSymbol
+			t@RecordAppl[slots=subterms, constraints=constraintList] -> {
+				collectVariable(collection,`subterms);
+				TomTerm annotedVariable = getAssignToVariable(`constraintList);
+				if(annotedVariable!=null) {
+					collection.add(annotedVariable);
+				}
+				`Fail().visit(`t);
+			}
 
-    traversal().genericCollect(subject, collect);
+		}
+	}
+
+  protected static void collectVariable(final Collection collection, ATerm subject) {
+		try {
+			MuTraveler.init(`mu(MuVar("x"),Try(Sequence(collectVariable(collection),All(MuVar("x")))))).visit(subject);
+		} catch(jjtraveler.VisitFailure e) {
+			System.out.println("strategy failed");
+		}
   }
 
-  protected Map collectMultiplicity(ATerm subject) {
+  public static Map collectMultiplicity(ATerm subject) {
     // collect variables
     ArrayList variableList = new ArrayList();
     collectVariable(variableList,subject);
@@ -368,7 +374,7 @@ public class TomBase {
     return false;
   }
 
-  protected TomTerm getAssignToVariable(ConstraintList constraintList) {
+  public static TomTerm getAssignToVariable(ConstraintList constraintList) {
     %match(ConstraintList constraintList) {
       concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
     }

@@ -20,7 +20,7 @@ public class TestCarre extends TestCase {
   }
 
   %include { mutraveler.tom }
-  %include { mjava/util/types/ArrayList.tom }
+  %include { java/util/types/ArrayList.tom }
   %include { rond/Rond.tom }
 
   %typeterm Carre {

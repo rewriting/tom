@@ -100,28 +100,21 @@ public class TomOptimizer extends TomGenericPlugin {
       VisitableVisitor interBlock = new InterBlock();
       VisitableVisitor normExpr = new NormExpr();
 
-      /*
-      VisitableVisitor optStrategy2 = `Sequence(InnermostId(nopElimAndFlatten),
-                               InnermostId(ChoiceId(SequenceId(RepeatId(ifSwapping),nopElimAndFlatten), 
-                                                    ChoiceId(RepeatId(SequenceId(ChoiceId(blockFusion,ifFusion),nopElimAndFlatten)),
-                                                             SequenceId(interBlock,nopElimAndFlatten)))));
-      */
 
       VisitableVisitor optStrategy2 = `Sequence(
-                                                InnermostId(ChoiceId(RepeatId((nopElimAndFlatten)),normExpr)),
-                                                InnermostId(
-                                                            ChoiceId(
-                                                                       Sequence(RepeatId(ifSwapping), RepeatId(SequenceId(ChoiceId(blockFusion,ifFusion),OnceTopDownId(nopElimAndFlatten)))),
-                                                                       SequenceId(interBlock,OnceTopDownId(RepeatId(nopElimAndFlatten))))
-
-)
-                                                );
+					InnermostId(ChoiceId(RepeatId((nopElimAndFlatten)),normExpr)),
+					InnermostId(
+						ChoiceId(
+							Sequence(RepeatId(ifSwapping), RepeatId(SequenceId(ChoiceId(blockFusion,ifFusion),OnceTopDownId(nopElimAndFlatten)))),
+							SequenceId(interBlock,OnceTopDownId(RepeatId(nopElimAndFlatten))))
+						)
+					);
       normStrategy = `InnermostId(normExpr);
 
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
-        TomTerm renamedTerm   = renameIntoTomVariable( (TomTerm)getWorkingTerm(), new HashSet() );
+        TomTerm renamedTerm = (TomTerm)getWorkingTerm();
       
         if(getOptionBooleanValue("optimize2")) {
           //System.out.println(renamedTerm);
@@ -290,46 +283,6 @@ public class TomOptimizer extends TomGenericPlugin {
     
     traversal().genericCollect(subject, collect);
   }
-
-  /*
-   * add a prefix (tom_) to back-quoted variables which comes from the lhs
-   */
-  Replace2 replace_renameIntoTomVariable = new Replace2() {
-      public ATerm apply(ATerm subject, Object arg1) {
-        Set context = (Set) arg1;
-        %match(TomTerm subject) {
-          var@(Variable|VariableStar)[astName=astName@Name(name)] -> {
-            if(context.contains(`astName)) {
-              return `var.setAstName(`Name(getAstFactory().makeTomVariableName(name)));
-            }
-          }
-        }
-        /*
-         * collect the set of variables that correspond
-         * to the lhs of this instruction
-         */
-
-        %match(Instruction subject) {
-          CompiledPattern(patternList,instruction) -> {
-            Map map = collectMultiplicity(`patternList);
-            Set newContext = new HashSet(map.keySet());
-            newContext.addAll(context);
-            return this.apply(`instruction,newContext);
-          }
-        }
-
-          /*
-           * Defaul case: traversal
-           */
-        return traversal().genericTraversal(subject,this,context);
-      } // end apply
-    };
-
-
-  private TomTerm renameIntoTomVariable(TomTerm subject, Set context) {
-    return (TomTerm) replace_renameIntoTomVariable.apply(subject,context); 
-  }
-
 
   /* 
    * rename variable1 into variable2

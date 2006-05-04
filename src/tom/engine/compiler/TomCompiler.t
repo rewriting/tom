@@ -40,6 +40,8 @@ import tom.library.traversal.Replace3;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
+import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.Identity;
 
 /**
  * The TomCompiler plugin.
@@ -47,6 +49,12 @@ import aterm.ATerm;
 public class TomCompiler extends TomGenericPlugin {
 
   %include { adt/tomsignature/TomSignature.tom }
+  %include { mutraveler.tom }
+  //%include { java/util/types/Set.tom }
+	%typeterm Set {
+		implement      { java.util.Set }
+		equals(l1,l2)  { l1.equals(l2) }
+	}
 
   /** some output suffixes */
   public static final String COMPILED_SUFFIX = ".tfix.compiled";
@@ -70,24 +78,26 @@ public class TomCompiler extends TomGenericPlugin {
     TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(getStreamManager().getSymbolTable());
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
-    TomTerm compiledTerm = null;
     try {
       // renit absVarNumber to generate reproductable output
       absVarNumber = 0;
       TomTerm preCompiledTerm = preProcessing((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
-      compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
+      TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
+			Set hashSet = new HashSet();
+      TomTerm renamedTerm = (TomTerm)MuTraveler.init(`TopDown(findRenameVariable(hashSet))).visit(compiledTerm);
+      //TomTerm renamedTerm = compiledTerm;
       // verbose
       getLogger().log( Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
                        new Integer((int)(System.currentTimeMillis()-startChrono)) );      
-      setWorkingTerm(compiledTerm);
+      setWorkingTerm(renamedTerm);
+			if(intermediate) {
+				Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, (TomTerm)getWorkingTerm());
+			}
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                        new Object[]{getStreamManager().getInputFileName(), "TomCompiler", e.getMessage()} );
       e.printStackTrace();
-    }
-    if(intermediate) {
-      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
     }
   }
   
@@ -622,6 +632,29 @@ matchBlock: {
         return traversal().genericTraversal(subject,this,variableSet,constraint);
       } // end apply
     }; // end new
+
+  /*
+   * add a prefix (tom_) to back-quoted variables which comes from the lhs
+   */
+	%strategy findRenameVariable(context:Set) extends `Identity() {
+		visit TomTerm {
+			var@(Variable|VariableStar)[astName=astName@Name(name)] -> {
+				if(context.contains(`astName)) {
+					return `var.setAstName(`Name(getAstFactory().makeTomVariableName(name)));
+				}
+			}
+    }
+
+    visit Instruction {
+			CompiledPattern(patternList,instruction) -> {
+				Map map = TomBase.collectMultiplicity(`patternList);
+				Set newContext = new HashSet(map.keySet());
+				newContext.addAll(context);
+				//System.out.println("newContext = " + newContext);
+				return (Instruction)MuTraveler.init(`TopDown(findRenameVariable(newContext))).visit(`instruction);
+			}
+		}
+	}
 
 
 } // class TomCompiler
