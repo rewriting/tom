@@ -122,7 +122,7 @@ public class Proba3 {
   
 	%strategy GetPosition(c:Collection) extends `Identity() { 
     visit Term {
-			_ -> { c.add(MuTraveler.getPosition(this)); }
+			_ -> { c.add(getPosition()); }
 		}
 	}
 

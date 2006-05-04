@@ -102,12 +102,12 @@ public class Rewrite4 {
   %strategy S1() extends `Identity() { 
     visit Term {
       subject -> {
-        int depth = MuTraveler.getPosition(this).depth();
+        int depth = getPosition().depth();
         String offset = "";
         for (int i = 0; i<depth; i++){
           offset += "  ";
         }
-        System.out.println(offset + "s1: "+ `subject.symbolName() + " position: "+ MuTraveler.getPosition(this));
+        System.out.println(offset + "s1: "+ `subject.symbolName() + " position: "+ getPosition());
       }
     }
   }
@@ -116,12 +116,12 @@ public class Rewrite4 {
 
     visit Term {
       subject -> {
-        int depth = MuTraveler.getPosition(this).depth();
+        int depth = getPosition().depth();
         String offset = "";
         for (int i = 0; i<depth; i++){
           offset += "--";
         }
-        System.out.println(offset + "> s2: "+ `subject.symbolName() + " position: "+ MuTraveler.getPosition(this));
+        System.out.println(offset + "> s2: "+ `subject.symbolName() + " position: "+ getPosition());
       }
     }
   }
@@ -131,7 +131,7 @@ public class Rewrite4 {
     visit Term {
       subject -> {
         if (`subject.getChildCount() == 0) {
-          bag.add(MuTraveler.getPosition(this));
+          bag.add(getPosition());
         }
       }
     }
@@ -141,7 +141,7 @@ public class Rewrite4 {
 
     visit Term {
       subject -> {
-        if (MuTraveler.getPosition(this).equals(p)) {
+        if (getPosition().equals(p)) {
           return `subject;
         }
       }
@@ -152,7 +152,7 @@ public class Rewrite4 {
 
     visit Term {
       subject-> {
-        if (MuTraveler.getPosition(this).isPrefix(p)) {
+        if (getPosition().isPrefix(p)) {
           return `subject;
         } 
       }

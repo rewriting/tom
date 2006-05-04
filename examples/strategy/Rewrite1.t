@@ -74,7 +74,7 @@ public class Rewrite1 {
   %strategy RewriteSystem(subject:Term) extends `Fail() {
     visit Term {
       a() -> { 
-        Position pos = MuTraveler.getPosition(this);
+        Position pos = getPosition();
         System.out.println("a -> b at " + pos);
         System.out.println(subject + " at " + pos + " = " + pos.getSubterm().visit(subject));
         System.out.println("rwr into: " + pos.getReplace(`b()).visit(subject));
@@ -82,11 +82,11 @@ public class Rewrite1 {
         return `b();
       }
       b() -> {
-        System.out.println("b -> c at " + MuTraveler.getPosition(this));
+        System.out.println("b -> c at " + getPosition());
         return `c();
       }
       g(c(),c()) -> {
-        System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this));
+        System.out.println("g(c,c) -> c at " + getPosition());
         return `c(); }
     }
   }
@@ -94,15 +94,15 @@ public class Rewrite1 {
   %strategy RewriteSystemId() extends `Identity() {
     visit Term {
       a() -> {
-        System.out.println("a -> b at " + MuTraveler.getPosition(this));
+        System.out.println("a -> b at " + getPosition());
         return `b();
       }
       b() -> {
-        System.out.println("b -> c at " + MuTraveler.getPosition(this));
+        System.out.println("b -> c at " + getPosition());
         return `c();
       }
       g(c(),c()) -> {
-        System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this));
+        System.out.println("g(c,c) -> c at " + getPosition());
         return `c();
       }
     }
