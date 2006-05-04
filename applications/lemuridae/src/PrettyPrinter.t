@@ -25,7 +25,7 @@ class PrettyPrinter {
   private static HashMap dict = new HashMap();
 
   // static bloc
-  {
+  static {
     dict.put("axiom", "\\mathrel{Ax}");  
     dict.put("implies I", "\\Rightarrow I");  
     dict.put("implies E", "\\Rightarrow E");
@@ -39,12 +39,17 @@ class PrettyPrinter {
     dict.put("or E", "\\vee E");
     dict.put("or R", "\\vee R");
     dict.put("or L", "\\vee L");
+    dict.put("forAll R", "\\forall R");
+    dict.put("forAll L", "\\forall L");
+    dict.put("exists R", "\\exists R");
+    dict.put("exists L", "\\exists L");
+    dict.put("bottom", "\\perp");
   }
 
   private static String translate(String name) {
     String res = (String) dict.get(name);
     if (res != null) return res;
-    else return name;
+    else  return name;
   }
 
   // converts a context into a java set

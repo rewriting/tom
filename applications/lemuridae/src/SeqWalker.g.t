@@ -45,6 +45,8 @@ pred returns [Prop p]
       p = null;
     }
       : i:ID { p = `relationAppl(relation(i.getText()), concTerm()); } 
+      | BOTTOM { p = `bottom(); }
+      | TOP { p = `top(); }
       | #(IMPL a=pred b=pred )  { p = `implies(a,b); }
       | #(OR a=pred b=pred ) { p = `or(a,b); }
       | #(AND a=pred b=pred ) {  p = `and(a,b); }

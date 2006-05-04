@@ -32,6 +32,8 @@ quantif: FORALL^ VAR DOT! atom
 atom: LPAREN! pred RPAREN!
     | appl
     | ID
+    | BOTTOM
+    | TOP
 //    | NOT^ atom
     ;
 
@@ -94,5 +96,9 @@ VAR: ('a'..'z')+ ;
 FORALL  : "\\A";
 
 EXISTS : "\\E";
+
+BOTTOM : "\\B";
+
+TOP: "\\T";
 
 ARROW : "->";
