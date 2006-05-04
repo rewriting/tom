@@ -82,17 +82,17 @@ public class Rewrite1 {
 
 
       %match(Term arg) {
-        //a() -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
+        //a() -> { System.out.println("a -> b at " + getPosition()); return `b(); }
         a() -> { 
-          Position pos = MuTraveler.getPosition(this);
+          Position pos = getPosition();
           System.out.println("a -> b at " + pos);
           System.out.println(globalSubject + " at " + pos + " = " + pos.getSubterm().visit(globalSubject));
           System.out.println("rwr into: " + pos.getReplace(`b()).visit(globalSubject));
 
           return `b();
         }
-        b() -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
-        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
+        b() -> { System.out.println("b -> c at " + getPosition()); return `c(); }
+        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getPosition()); return `c(); }
       }
       return (Term)`Fail().visit(arg);
       //throw new VisitFailure();
@@ -106,9 +106,9 @@ public class Rewrite1 {
     
     public Term visit_Term(Term arg) {
       %match(Term arg) {
-        a() -> { System.out.println("a -> b at " + MuTraveler.getPosition(this)); return `b(); }
-        b() -> { System.out.println("b -> c at " + MuTraveler.getPosition(this)); return `c(); }
-        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + MuTraveler.getPosition(this)); return `c(); }
+        a() -> { System.out.println("a -> b at " + getPosition()); return `b(); }
+        b() -> { System.out.println("b -> c at " + getPosition()); return `c(); }
+        g(c(),c()) -> { System.out.println("g(c,c) -> c at " + getPosition()); return `c(); }
       }
       return arg;
     }
