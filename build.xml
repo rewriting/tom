@@ -891,6 +891,7 @@
     <echo>Test tom-source in examples with optimizer</echo>
     <ant dir="${examples}" target="clean">
       <property name="tom.home" location="${src.dist}"/>
+      <property name="tom.common.path" location="${src.lib}"/>
     </ant>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>

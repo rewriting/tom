@@ -55,11 +55,6 @@ public class SymbolTable {
   private Map mapSymbolName = null;
   private Map mapTypeName = null;
   
-  private ASTFactory astFactory;
-  public SymbolTable(ASTFactory astFactory) {
-    this.astFactory = astFactory;
-  }
-
   public void init(OptionManager optionManager) {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
@@ -67,32 +62,32 @@ public class SymbolTable {
     TomForwardType emptyForward = tsf().makeTomForwardType_EmptyForward();
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
-      putTypeDefinition(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"),emptyForward);
-      putTypeDefinition(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"int"),emptyForward);
-      putTypeDefinition(TYPE_INT, ast().makeType(TYPE_INT,"int"),emptyForward);
-      putTypeDefinition(TYPE_LONG, ast().makeType(TYPE_LONG,"long"),emptyForward);
-      putTypeDefinition(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"),emptyForward);
-      putTypeDefinition(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"),emptyForward);
-      putTypeDefinition(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"),emptyForward);
-      putTypeDefinition(TYPE_VOID, ast().makeType(TYPE_VOID,"void"),emptyForward);
+      putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
+      putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"int"),emptyForward);
+      putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
+      putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
+      putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
+      putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"char*"),emptyForward);
+      putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"void*"),emptyForward);
+      putTypeDefinition(TYPE_VOID, ASTFactory.makeType(TYPE_VOID,"void"),emptyForward);
     } else if( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
-      putTypeDefinition(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"),emptyForward);
-      putTypeDefinition(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"boolean"),emptyForward);
-      putTypeDefinition(TYPE_INT, ast().makeType(TYPE_INT,"int"),emptyForward);
-      putTypeDefinition(TYPE_LONG, ast().makeType(TYPE_LONG,"long"),emptyForward);
-      putTypeDefinition(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"),emptyForward);
-      putTypeDefinition(TYPE_STRING, ast().makeType(TYPE_STRING,"String"),emptyForward);
-      putTypeDefinition(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"),emptyForward);
-      putTypeDefinition(TYPE_VOID, ast().makeType(TYPE_VOID,"void"),emptyForward);
+      putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
+      putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"boolean"),emptyForward);
+      putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
+      putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
+      putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
+      putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"String"),emptyForward);
+      putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"Object"),emptyForward);
+      putTypeDefinition(TYPE_VOID, ASTFactory.makeType(TYPE_VOID,"void"),emptyForward);
     } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) { // this is really bad, will need to be improved
-      putTypeDefinition(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"),emptyForward);
-      putTypeDefinition(TYPE_BOOLEAN, ast().makeType(TYPE_BOOLEAN,"bool"),emptyForward);
-      putTypeDefinition(TYPE_INT, ast().makeType(TYPE_INT,"int"),emptyForward);
-      putTypeDefinition(TYPE_LONG, ast().makeType(TYPE_LONG,"long"),emptyForward);
-      putTypeDefinition(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"),emptyForward);
-      putTypeDefinition(TYPE_STRING, ast().makeType(TYPE_STRING,"String"),emptyForward);
-      putTypeDefinition(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"None"),emptyForward);
-      putTypeDefinition(TYPE_VOID, ast().makeType(TYPE_VOID,"unit"),emptyForward);
+      putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
+      putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"bool"),emptyForward);
+      putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
+      putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
+      putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
+      putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"String"),emptyForward);
+      putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"None"),emptyForward);
+      putTypeDefinition(TYPE_VOID, ASTFactory.makeType(TYPE_VOID,"unit"),emptyForward);
     }
   }
 
@@ -104,12 +99,9 @@ public class SymbolTable {
       list = list.getTail();
     }
   }
-  protected ASTFactory ast() {
-    return astFactory;
-  }
 
   protected TomSignatureFactory tsf() {
-    return ast().tsf();
+		return tom.engine.adt.tomsignature.TomSignatureFactory.getInstance(aterm.pure.SingletonFactory.getInstance());
   }
 
   public void putSymbol(String name, TomSymbol astSymbol) {

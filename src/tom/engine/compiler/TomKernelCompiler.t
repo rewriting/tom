@@ -29,6 +29,7 @@ import tom.engine.TomBase;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.ASTFactory;
 import tom.library.traversal.Replace1;
 import aterm.ATerm;
 import java.util.logging.Level;
@@ -56,7 +57,7 @@ public class TomKernelCompiler extends TomBase {
   private int matchNumber = 0;
 
   private OptionList option() {
-    return getAstFactory().makeOption();
+    return ASTFactory.makeOption();
   }
 
   private TomName getLabel(OptionList list) {

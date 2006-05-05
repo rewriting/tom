@@ -41,6 +41,7 @@ import tom.engine.adt.tomsignature.types.TomName;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
 public abstract class TomImperativeGenerator extends TomGenericGenerator {
@@ -379,7 +380,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    TargetLanguage itl = getAstFactory().reworkTLCode(`ITL(s), prettyMode);
+    TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);
     output.write(itl.getCode()); 
   }
 
@@ -440,7 +441,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
 
     //If necessary we remove \n code depending on pretty option
-    TargetLanguage itl = getAstFactory().reworkTLCode(`ITL(s), prettyMode);
+    TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);
     output.write(itl.getCode()); 
   }
 

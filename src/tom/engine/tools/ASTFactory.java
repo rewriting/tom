@@ -35,26 +35,23 @@ import tom.engine.xml.Constants;
 import aterm.ATerm;
 
 public class ASTFactory {
-
-  private TomSignatureFactory tomSignatureFactory;
-  
-  public ASTFactory(TomSignatureFactory tomSignatureFactory) {
-    this.tomSignatureFactory = tomSignatureFactory;
+   // Suppresses default constructor, ensuring non-instantiability.
+  private ASTFactory() {
   }
 
-  protected TomSignatureFactory tsf() {
-    return tomSignatureFactory;
+  protected static TomSignatureFactory tsf() {
+		return tom.engine.adt.tomsignature.TomSignatureFactory.getInstance(aterm.pure.SingletonFactory.getInstance());
   }
 
-  protected TomList cons(TomTerm t, TomList l) {
+  protected static TomList cons(TomTerm t, TomList l) {
     return tsf().makeTomList(t,l);
   }
 
-  protected TomList append(TomTerm t, TomList l) {
+  protected static TomList append(TomTerm t, TomList l) {
     return (TomList) l.append(t);
   }
 
-  public TomList makeList(Collection c) {
+  public static TomList makeList(Collection c) {
     Object array[] = c.toArray();
     TomList list = tsf().makeTomList();
     for(int i=array.length-1; i>=0 ; i--) {
@@ -80,7 +77,7 @@ public class ASTFactory {
     return list;
   }
 
-  public InstructionList makeInstructionList(Collection c) {
+  public static InstructionList makeInstructionList(Collection c) {
     Object array[] = c.toArray();
     InstructionList list = tsf().makeInstructionList();
     for(int i=array.length-1; i>=0 ; i--) {
@@ -102,7 +99,7 @@ public class ASTFactory {
     return list;
   }
 
-  public OptionList makeOptionList(List argumentList) {
+  public static OptionList makeOptionList(List argumentList) {
     OptionList list = tsf().makeOptionList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
@@ -121,7 +118,7 @@ public class ASTFactory {
     return list;
   }
 
-  public ConstraintList makeConstraintList(List argumentList) {
+  public static ConstraintList makeConstraintList(List argumentList) {
     ConstraintList list = tsf().makeConstraintList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
@@ -132,7 +129,7 @@ public class ASTFactory {
     return list;
   }
 
-  public NameList makeNameList(List argumentList) {
+  public static NameList makeNameList(List argumentList) {
     NameList list = tsf().makeNameList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
@@ -142,7 +139,7 @@ public class ASTFactory {
     return list;
   }
 
-  public SlotList makeSlotList(List argumentList) {
+  public static SlotList makeSlotList(List argumentList) {
     SlotList list = tsf().makeSlotList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
@@ -152,7 +149,7 @@ public class ASTFactory {
     return list;
   }
 
-  public PairNameDeclList makePairNameDeclList(List argumentList) {
+  public static PairNameDeclList makePairNameDeclList(List argumentList) {
     PairNameDeclList list = tsf().makePairNameDeclList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
@@ -162,7 +159,7 @@ public class ASTFactory {
     return list;
   }
 
-  public PatternInstructionList makePatternInstructionList(List argumentList) {
+  public static PatternInstructionList makePatternInstructionList(List argumentList) {
     PatternInstructionList list = tsf().makePatternInstructionList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
@@ -173,7 +170,7 @@ public class ASTFactory {
     return list;
   }
 
-  public TomVisitList makeTomVisitList(List argumentList) {
+  public static TomVisitList makeTomVisitList(List argumentList) {
     TomVisitList list = tsf().makeTomVisitList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
@@ -184,39 +181,39 @@ public class ASTFactory {
     return list;
   }
   
-  public TomTerm makeVariable(String name, String type) {
+  public static TomTerm makeVariable(String name, String type) {
     return makeVariable(makeOption(), name, type);      
   }
 
-  public TomTerm makeVariable(OptionList option, String name, String type) {
+  public static TomTerm makeVariable(OptionList option, String name, String type) {
     return tsf().makeTomTerm_Variable(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeConstraintList());  
   }
 
-  public TomTerm makeVariable(OptionList option, TomName name, TomType type) {
+  public static TomTerm makeVariable(OptionList option, TomName name, TomType type) {
     return tsf().makeTomTerm_Variable(option, name, type, tsf().makeConstraintList());  
   }
 
-  public TomTerm makeVariableStar(OptionList option, String name, String type) {
+  public static TomTerm makeVariableStar(OptionList option, String name, String type) {
     return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeConstraintList());  
   }
 
-  public TomTerm makeVariableStar(OptionList option, TomName name, TomType type) {
+  public static TomTerm makeVariableStar(OptionList option, TomName name, TomType type) {
     return tsf().makeTomTerm_VariableStar(option, name, type, tsf().makeConstraintList());  
   }
 
-  public TomTerm makeVariableStar(OptionList option, String name, String type, ConstraintList constraintList) {
+  public static TomTerm makeVariableStar(OptionList option, String name, String type, ConstraintList constraintList) {
     return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), constraintList);  
   }
 
-  public TomTerm makeVariableStar(OptionList option, TomName name, TomType type, ConstraintList constraintList) {
+  public static TomTerm makeVariableStar(OptionList option, TomName name, TomType type, ConstraintList constraintList) {
     return tsf().makeTomTerm_VariableStar(option, name, type, constraintList);  
   }
 
-  public TomTerm makeUnamedVariableStar(OptionList option, String type, ConstraintList constraintList) {
+  public static TomTerm makeUnamedVariableStar(OptionList option, String type, ConstraintList constraintList) {
     return tsf().makeTomTerm_UnamedVariableStar(option, tsf().makeTomType_TomTypeAlone(type),constraintList);  
   }
 
-  public TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
+  public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
                               List optionList) {
     TomType type;
     TomName name = tsf().makeTomName_Name(symbolName);
@@ -226,11 +223,11 @@ public class ASTFactory {
     return tsf().makeTomSymbol_Symbol(name,typesToType,pairNameDeclList,options);
   }
 
-  public OptionList makeOption() {
+  public static OptionList makeOption() {
     return tsf().makeOptionList();
   }
 
-  public OptionList makeOption(Option arg) {
+  public static OptionList makeOption(Option arg) {
     OptionList list = tsf().makeOptionList();
     if(arg!= null) {
       list = tsf().makeOptionList(arg,list);
@@ -238,11 +235,11 @@ public class ASTFactory {
     return list;
   }
 
-  public ConstraintList makeConstraint() {
+  public static ConstraintList makeConstraint() {
     return tsf().makeConstraintList();
   }
 
-  public ConstraintList makeConstraint(Constraint arg) {
+  public static ConstraintList makeConstraint(Constraint arg) {
     ConstraintList list = tsf().makeConstraintList();
     if(arg!= null) {
       list = tsf().makeConstraintList(arg,list);
@@ -250,14 +247,14 @@ public class ASTFactory {
     return list;
   }
 
-  public Constraint makeAssignTo(TomName name,int line, String fileName) {
+  public static Constraint makeAssignTo(TomName name,int line, String fileName) {
     return tsf().makeConstraint_AssignTo(tsf().makeTomTerm_Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
           name,
           tsf().makeTomType_TomTypeAlone("unknown type"),
           tsf().makeConstraintList()));
   }
   
-  public OptionList makeOption(Option arg, Option info) {
+  public static OptionList makeOption(Option arg, Option info) {
     OptionList list = tsf().makeOptionList();
     if(arg!= null) {
       list = tsf().makeOptionList(arg,list);
@@ -267,12 +264,12 @@ public class ASTFactory {
   }
 
   
-  private Option makeOriginTracking(String name, int line , String fileName) {
+  private static Option makeOriginTracking(String name, int line , String fileName) {
     return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), line, tsf().makeTomName_Name( fileName));
   }
 
   
-  protected TomType makeType(String typeNameTom, String typeNametGL) {
+  protected static TomType makeType(String typeNameTom, String typeNametGL) {
     TomType typeTom = tsf().makeTomType_ASTTomType(typeNameTom);
     TomType sortTL  = tsf().makeTomType_TLType(tsf().makeTargetLanguage_ITL(typeNametGL));
     return tsf().makeTomType_Type(typeTom,sortTL);
@@ -282,7 +279,7 @@ public class ASTFactory {
      * create an <sort> symbol
      * where <sort> could be int. double or String  
      */
-  private void makeSortSymbol(SymbolTable symbolTable,
+  private static void makeSortSymbol(SymbolTable symbolTable,
                              String sort,
                              String value, List optionList) {
     TomTypeList typeList = tsf().makeTomTypeList();
@@ -294,7 +291,7 @@ public class ASTFactory {
     /*
      * create an integer symbol
      */
-  public void makeIntegerSymbol(SymbolTable symbolTable,
+  public static void makeIntegerSymbol(SymbolTable symbolTable,
                                 String value, List optionList) {
     String sort = "int";
     makeSortSymbol(symbolTable, sort, value, optionList);
@@ -303,7 +300,7 @@ public class ASTFactory {
     /*
      * create a long symbol
      */
-  public void makeLongSymbol(SymbolTable symbolTable,
+  public static void makeLongSymbol(SymbolTable symbolTable,
                              String value, List optionList) {
     String sort = "long";
     makeSortSymbol(symbolTable, sort, value, optionList);
@@ -312,7 +309,7 @@ public class ASTFactory {
     /*
      * create a char symbol
      */
-  public void makeCharSymbol(SymbolTable symbolTable,
+  public static void makeCharSymbol(SymbolTable symbolTable,
                              String value, List optionList) {
     String sort = "char";
     makeSortSymbol(symbolTable, sort, value, optionList);
@@ -320,7 +317,7 @@ public class ASTFactory {
     /*
      * create a double symbol
      */
-  public void makeDoubleSymbol(SymbolTable symbolTable,
+  public static void makeDoubleSymbol(SymbolTable symbolTable,
                                String value, List optionList) {
     String sort = "double";
     makeSortSymbol(symbolTable, sort, value, optionList);
@@ -329,7 +326,7 @@ public class ASTFactory {
     /*
      * create a string symbol
      */
-  public void makeStringSymbol(SymbolTable symbolTable,
+  public static void makeStringSymbol(SymbolTable symbolTable,
                                String value, List optionList) {
     String sort = "String";
     makeSortSymbol(symbolTable, sort, value, optionList);
@@ -338,7 +335,7 @@ public class ASTFactory {
     /*
      * update the root of lhs: it becomes a defined symbol
      */
-  public TomSymbol updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
+  public static TomSymbol updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
     if(term.isTermAppl() || term.isRecordAppl()) {
       String key = term.getNameList().getHead().getString();
       TomSymbol symbol = symbolTable.getSymbolFromName(key);
@@ -352,7 +349,7 @@ public class ASTFactory {
     return null;
   }
 
-  public TargetLanguage reworkTLCode(TargetLanguage code, boolean pretty) {
+  public static TargetLanguage reworkTLCode(TargetLanguage code, boolean pretty) {
     if(!pretty){
       String newTlCode = code.getCode();      
       newTlCode = newTlCode.replace('\n', ' ');
@@ -364,20 +361,20 @@ public class ASTFactory {
       return code;
   }
 
-  public TomName makeName(String slotName) {
+  public static TomName makeName(String slotName) {
     if(slotName.length()>0)
       return tsf().makeTomName_Name(slotName);
     else
       return tsf().makeTomName_EmptyName();
   }
 
-  public String encodeXMLString(SymbolTable symbolTable, String name) {
+  public static String encodeXMLString(SymbolTable symbolTable, String name) {
     name = "\"" + name + "\"";
     makeStringSymbol(symbolTable,name, new LinkedList());
     return name;
   }
 
-  public TomTerm encodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
+  public static TomTerm encodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
       /*
        * encode a String into a quoted-string
        * Appl(...,Name("string"),...) becomes
@@ -394,7 +391,7 @@ public class ASTFactory {
       return term;
   }
 
-  public TomTerm metaEncodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
+  public static TomTerm metaEncodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
       /*
        * meta-encode a String into a TextNode
        * Appl(...,Name("\"string\""),...) becomes
@@ -427,7 +424,7 @@ public class ASTFactory {
     return term;
   }
 
-  public String makeTomVariableName(String name) {
+  public static String makeTomVariableName(String name) {
     return "tom_" + name;
   }
   

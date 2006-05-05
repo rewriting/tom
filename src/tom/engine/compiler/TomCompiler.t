@@ -33,6 +33,7 @@ import tom.engine.exception.TomRuntimeException;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.tools.TomFactory;
+import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.library.traversal.Replace1;
@@ -40,8 +41,11 @@ import tom.library.traversal.Replace3;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
+
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
 /**
  * The TomCompiler plugin.
@@ -62,16 +66,12 @@ public class TomCompiler extends TomGenericPlugin {
   /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options><boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/></options>";
   
-  /** the tomfactory for creating intermediate terms */
-  private TomFactory tomFactory;
-  
   /** unicity var counter*/
   private int absVarNumber;
   
   /** Constructor*/
   public TomCompiler() {
     super("TomCompiler");
-    this.tomFactory = new TomFactory();
   }
   
   public void run() {
@@ -106,7 +106,7 @@ public class TomCompiler extends TomGenericPlugin {
   }
   
   private OptionList option() {
-    return getAstFactory().makeOption();
+    return ASTFactory.makeOption();
   }
   
   /* 
@@ -134,9 +134,9 @@ public class TomCompiler extends TomGenericPlugin {
 						return `BuildConstant(name);
 					} else if(tomSymbol != null) {
 						if(isListOperator(tomSymbol)) {
-							return tomFactory.buildList(`name,tomListArgs);
+							return TomFactory.buildList(`name,tomListArgs);
 						} else if(isArrayOperator(tomSymbol)) {
-							return tomFactory.buildArray(`name,tomListArgs);
+							return TomFactory.buildArray(`name,tomListArgs);
 						} else if(isDefinedSymbol(tomSymbol)) {
 							return `FunctionCall(name,tomListArgs);
 						} else {
@@ -204,9 +204,9 @@ matchBlock: {
 									if(abstractedPattern.size() > 0) {
 										/* generate a new match construct */
 
-										TomList generatedSubjectList = `getAstFactory().makeList(introducedVariable);
+										TomList generatedSubjectList = `ASTFactory.makeList(introducedVariable);
 										PatternInstruction generatedPatternInstruction =
-											`PatternInstruction(Pattern(generatedSubjectList, getAstFactory().makeList(abstractedPattern),emptyGuardList),newAction, concOption());        
+											`PatternInstruction(Pattern(generatedSubjectList, ASTFactory.makeList(abstractedPattern),emptyGuardList),newAction, concOption());        
 										/* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
 										OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
 										Instruction generatedMatch =
@@ -471,7 +471,7 @@ matchBlock: {
       list.add(newCstElt);
       constraintList = constraintList.getTail();
     }
-    return getAstFactory().makeConstraintList(list);
+    return ASTFactory.makeConstraintList(list);
   }
 
   private TomList linearizePattern(TomList subject, ArrayList equalityCheck) {
@@ -640,7 +640,7 @@ matchBlock: {
 		visit TomTerm {
 			var@(Variable|VariableStar)[astName=astName@Name(name)] -> {
 				if(context.contains(`astName)) {
-					return `var.setAstName(`Name(getAstFactory().makeTomVariableName(name)));
+					return `var.setAstName(`Name(ASTFactory.makeTomVariableName(name)));
 				}
 			}
     }

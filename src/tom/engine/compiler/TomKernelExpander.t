@@ -33,6 +33,7 @@ import tom.engine.TomBase;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.ASTFactory;
 import tom.library.traversal.Replace2;
 import aterm.ATerm;
 
@@ -113,7 +114,7 @@ public class TomKernelExpander extends TomBase {
 						// build the list of variables that occur in the lhs
 						HashSet set = new HashSet();
 						collectVariable(set,newLhs);
-						TomList varList = getAstFactory().makeList(set);
+						TomList varList = ASTFactory.makeList(set);
 						InstructionList newCondList = `emptyInstructionList();
 						while(!`condList.isEmpty()) {
 							Instruction cond = `condList.getHead();
@@ -123,7 +124,7 @@ public class TomKernelExpander extends TomBase {
 
 							newCondList = `manyInstructionList(newCond,newCondList);
 							collectVariable(set,newCond); 
-							varList = getAstFactory().makeList(set);
+							varList = ASTFactory.makeList(set);
 							`condList = `condList.getTail();
 						}
 
@@ -260,20 +261,20 @@ public class TomKernelExpander extends TomBase {
 							`termList = `termList.getTail();
 							`l1 = `l1.getTail();
 						}
-						TomList newTermList = getAstFactory().makeList(list);
+						TomList newTermList = ASTFactory.makeList(list);
 
 						// process a list of guards
 						list.clear();
 						// build the list of variables that occur in the lhs
 						HashSet set = new HashSet();
 						collectVariable(set,newTermList);
-						TomList varList = getAstFactory().makeList(set);
+						TomList varList = ASTFactory.makeList(set);
 						//System.out.println("varList = " + varList);
 						while(!`guardList.isEmpty()) {
 							list.add(replaceInstantiatedVariable(`varList, `guardList.getHead()));
 							`guardList = `guardList.getTail();
 						}
-						TomList newGuardList = getAstFactory().makeList(list);
+						TomList newGuardList = ASTFactory.makeList(list);
 						//System.out.println("newGuardList = " + newGuardList);
 						return `Pattern(subjectList,newTermList,newGuardList);
 					}
@@ -363,13 +364,13 @@ public class TomKernelExpander extends TomBase {
 					_, TLVar(strName,TomTypeAlone(tomType)) -> {
 						// create a variable: its type is ensured by checker
 						TomType localType = getType(`tomType);
-						OptionList option = getAstFactory().makeOption();
+						OptionList option = ASTFactory.makeOption();
 						return `Variable(option,Name(strName),localType,concConstraint());
 					}
 
 					_, TLVar(strName,localType@Type[]) -> {
 						// create a variable: its type is ensured by checker
-						OptionList option = getAstFactory().makeOption();
+						OptionList option = ASTFactory.makeOption();
 						return `Variable(option,Name(strName),localType,concConstraint());
 					}
 

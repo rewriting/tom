@@ -42,6 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.ASTFactory;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 
@@ -88,7 +89,7 @@ public class TomStreamManager {
   private Collection importsToDiscard;
   
   public TomStreamManager(){
-    symbolTable = new SymbolTable(TomBase.getAstFactory());
+    symbolTable = new SymbolTable();
     importsToDiscard = new HashSet();
     //importsToDiscard.add("boolean.tom");
     importsToDiscard.add("string.tom");

@@ -38,6 +38,7 @@ import tom.library.traversal.Collect1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
+import tom.engine.tools.ASTFactory;
 
 /**
  * The TomSyntaxChecker plugin.
@@ -622,7 +623,7 @@ public class TomSyntaxChecker extends TomChecker {
     currentHeadSymbolName = getName(lhs);
     if(ruleNumber == 0) {
       // update the root of lhs: it becomes a defined symbol
-      symbol = getAstFactory().updateDefinedSymbol(symbolTable(),lhs);
+      symbol = ASTFactory.updateDefinedSymbol(symbolTable(),lhs);
       if( symbol == null ) {
         messageError(findOriginTrackingLine(lhs.getOption()),
                      TomMessage.unknownSymbol,

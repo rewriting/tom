@@ -37,23 +37,23 @@ import tom.engine.adt.tomsignature.types.TomTerm;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.xml.Constants;
 
-public class TomFactory extends TomBase {
+public class TomFactory {
 
 // ------------------------------------------------------------
   %include { adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
 
-  public TomFactory() {
-    super();
+   // Suppresses default constructor, ensuring non-instantiability.
+  private TomFactory() {
   }
   
-  public String encodeXMLString(SymbolTable symbolTable, String name) {
+  public static String encodeXMLString(SymbolTable symbolTable, String name) {
     name = "\"" + name + "\"";
-    getAstFactory().makeStringSymbol(symbolTable,name, new LinkedList());
+    ASTFactory.makeStringSymbol(symbolTable,name, new LinkedList());
     return name;
   }
 
-  public TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
+  public static TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
     %match(TomList list) {
       emptyTomList() -> { return `emptyTomList();}
       manyTomList(head,tail) -> {
@@ -64,7 +64,7 @@ public class TomFactory extends TomBase {
     return list;
   }
 
-  public TomTerm encodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
+  public static TomTerm encodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
       /*
        * encode a String into a quoted-string
        * Appl(...,Name("string"),...) becomes
@@ -81,7 +81,7 @@ public class TomFactory extends TomBase {
     return term;
   }
 
-  public TomTerm metaEncodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
+  public static TomTerm metaEncodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
       /*
        * meta-encode a String into a TextNode
        * Appl(...,Name("\"string\""),...) becomes
@@ -93,11 +93,11 @@ public class TomFactory extends TomBase {
           //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
-          if(symbolTable.isStringType(getTomType(getSymbolCodomain(tomSymbol)))) {
+          if(symbolTable.isStringType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
             Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,Name("??"));
-            term = `RecordAppl(getAstFactory().makeOption(info),
+            term = `RecordAppl(ASTFactory.makeOption(info),
                                concTomName(Name(Constants.TEXT_NODE)),concSlot(PairSlotAppl(Name(Constants.SLOT_DATA),term)),
-                          tsf().makeConstraintList());
+                          ASTFactory.tsf().makeConstraintList());
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
@@ -106,7 +106,7 @@ public class TomFactory extends TomBase {
     return term;
   }
 
-  public boolean isExplicitTermList(LinkedList childs) {
+  public static boolean isExplicitTermList(LinkedList childs) {
     if(childs.size() == 1) {
       TomTerm term = (TomTerm) childs.getFirst();
       //System.out.println("isExplicitTermList: " + term);
@@ -122,7 +122,7 @@ public class TomFactory extends TomBase {
     return false;
   }
   
-  public LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
+  public static LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
     %match(TomTerm term) {
       RecordAppl[nameList=(Name("")),slots=args] -> {
@@ -146,7 +146,7 @@ public class TomFactory extends TomBase {
 		return list;
   }
 
-  public TomTerm buildList(TomName name,TomList args) {
+  public static TomTerm buildList(TomName name,TomList args) {
     %match(TomList args) {
       emptyTomList() -> {
         return `BuildEmptyList(name);
@@ -178,11 +178,11 @@ public class TomFactory extends TomBase {
      
   }
 
-  public TomTerm buildArray(TomName name,TomList args) {
+  public static TomTerm buildArray(TomName name,TomList args) {
     return buildArray(name,(TomList)args.reverse(),0);
   }
 
-  private TomTerm buildArray(TomName name,TomList args, int size) {
+  private static TomTerm buildArray(TomName name,TomList args, int size) {
     %match(TomList args) {
       emptyTomList() -> {
         return `BuildEmptyArray(name,size);

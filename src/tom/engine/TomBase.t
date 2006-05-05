@@ -35,11 +35,13 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.platform.adt.platformoption.*;
-import tom.library.traversal.*;
-import tom.library.strategy.mutraveler.*;
 
+import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
+
+import tom.library.traversal.*;
 
 /**
  * Base class for most tom files in the compiler.
@@ -58,14 +60,10 @@ public class TomBase {
   
   /** shortcut */
   protected static TomSignatureFactory tsf() {
-    return TomEnvironment.getInstance().getTomSignatureFactory();
+		return tom.engine.adt.tomsignature.TomSignatureFactory.getInstance(aterm.pure.SingletonFactory.getInstance());
   }
   
   %include { adt/platformoption/PlatformOption.tom }
-  
-  public static final ASTFactory getAstFactory() {
-    return TomEnvironment.getInstance().getAstFactory();
-  }
   
   private TomList empty;
   private GenericTraversal traversal;
@@ -75,14 +73,6 @@ public class TomBase {
     this.traversal = new GenericTraversal();
   }
 
-  /**
-   * Gets the TomEnvironment instance.
-   * @return the TomEnvironment instance
-   */    
-  protected TomEnvironment environment() {
-    return TomEnvironment.getInstance();
-  }
-  
   public GenericTraversal traversal() {
     return this.traversal;
   }
@@ -92,7 +82,7 @@ public class TomBase {
   }
   
   protected OptionList emptyOption() {
-    return getAstFactory().makeOption();
+    return ASTFactory.makeOption();
   }
 
   protected TomList empty() {
@@ -145,7 +135,7 @@ public class TomBase {
     }
   }
 
-  protected String getTomType(TomType type) {
+  public static String getTomType(TomType type) {
     %match(TomType type) {
       ASTTomType(s) -> {return `s;}
       TomTypeAlone(s) -> {return `s;}
@@ -173,7 +163,7 @@ public class TomBase {
 		throw new TomRuntimeException("getTLCode error on term: " + type);
   }
 
-  protected TomType getSymbolCodomain(TomSymbol symbol) {
+  public static TomType getSymbolCodomain(TomSymbol symbol) {
     if(symbol!=null) {
       return symbol.getTypesToType().getCodomain();
     } else {
@@ -273,37 +263,6 @@ public class TomBase {
 		throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
   }
 
-  protected TomList tomListMap(TomList subject, Replace1 replace) {
-    TomList res = subject;
-    try {
-      if(!subject.isEmpty()) {
-        TomTerm term = (TomTerm) replace.apply(subject.getHead());
-        TomList list = tomListMap(subject.getTail(),replace);
-        res = cons(term,list);
-      }
-    } catch(Exception e) {
-      System.out.println("tomListMap error: " + e);
-      e.printStackTrace();
-      throw new TomRuntimeException("tomListMap error: " + e);
-    }
-    return res;
-  }
-
-  protected InstructionList instructionListMap(InstructionList subject, Replace1 replace) {
-    InstructionList res = subject;
-    try {
-      if(!subject.isEmpty()) {
-        Instruction term = (Instruction) replace.apply(subject.getHead());
-        InstructionList list = instructionListMap(subject.getTail(),replace);
-        res = `manyInstructionList(term,list);
-      }
-    } catch(Exception e) {
-      System.out.println("instructionListMap error: " + e);
-      e.printStackTrace();
-      throw new TomRuntimeException("instructionListMap error: " + e);
-    }
-    return res;
-  }
   // ------------------------------------------------------------
 	%strategy collectVariable(collection:Collection) extends `Identity() {
 		visit TomTerm {

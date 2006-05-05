@@ -31,9 +31,9 @@ package tom.engine.parser;
 import java.util.LinkedList;
 
 import tom.engine.TomBase;
-import tom.engine.TomEnvironment;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.xml.Constants;
+import tom.engine.tools.ASTFactory;
 import antlr.TokenStreamSelector;
 import aterm.*;
 }
@@ -69,10 +69,6 @@ options{
       bqlexer = (BackQuoteLexer) selector().getStream("bqlexer");
     }
 
-    private tom.engine.tools.ASTFactory ast() {
-      return TomBase.getAstFactory();
-    }
-
     // add token t to the buffer containing the target code
     private void addTargetCode(Token t){
       tomparser.addTargetCode(t);
@@ -90,7 +86,7 @@ options{
        `concTomTerm(TargetLanguageToTomTerm(ITL(".")),term);
 
      if(composite) {
-			 TomList list = ast().makeList(blockList);
+			 TomList list = ASTFactory.makeList(blockList);
 			 return `Composite(concTomTerm(BackQuoteAppl(option,Name(id.getText()),list),target*));
      } else {
 			 return `Composite(concTomTerm(Variable(option,Name(id.getText()),TomTypeAlone("unknown type"),concConstraint()),target*));
@@ -157,7 +153,7 @@ options{
     
     // built a sorted TomList from a LinkedList
     private TomList buildAttributeList(LinkedList list){
-      return sortAttributeList(ast().makeList(list));
+      return sortAttributeList(ASTFactory.makeList(list));
     }
     
     // add double quotes around a string
@@ -291,13 +287,13 @@ basicTerm [TomList context] returns [TomTerm result]
              (bqTerm[null] BQ_COMMA) => term = bqTerm[context] BQ_COMMA ws
              { blockList.add(term); } 
              )* 
-            { localContext = ast().makeList(blockList); }
+            { localContext = ASTFactory.makeList(blockList); }
             result = bqTerm[localContext]
             BQ_RPAREN
             
         |   BQ_LPAREN ws ( termList[blockList,context] )? BQ_RPAREN
             {
-              TomList compositeList = ast().makeList(blockList);
+              TomList compositeList = ASTFactory.makeList(blockList);
                 result = `Composite(concTomTerm(
                         TargetLanguageToTomTerm(ITL("(")),
                         compositeList*,
@@ -473,7 +469,7 @@ xmlTerm[TomList context] returns [TomTerm result]
                 |   XML_CLOSE
                     ws xmlChildren[children,context]
                 {
-                  childrenTomList = ast().makeList(children);
+                  childrenTomList = ASTFactory.makeList(children);
                 }
                     XML_START_ENDING ws BQ_ID ws XML_CLOSE ws
                 )

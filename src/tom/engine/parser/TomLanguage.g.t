@@ -41,6 +41,7 @@ import tom.engine.TomMessage;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomException;
 import tom.engine.tools.SymbolTable;
+import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomFactory;
 import tom.engine.xml.Constants;
 import tom.platform.OptionManager;
@@ -74,8 +75,6 @@ options{
     
     private int lastLine; 
 
-    private TomFactory tomFactory;
-
     private SymbolTable symbolTable;
 
     public TomParser(ParserSharedInputState state, HostParser target,
@@ -83,15 +82,10 @@ options{
         this(state);
         this.targetparser = target;
         this.bqparser = new BackQuoteParser(state,this);
-        this.tomFactory = new TomFactory();
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
         this.symbolTable = target.getSymbolTable();
     }
     
-    private tom.engine.tools.ASTFactory ast() {
-        return TomBase.getAstFactory();
-    }
-
     private void putTypeDefinition(String name, TomType type, TomForwardType forward) {
         symbolTable.putTypeDefinition(name,type,forward);
     }
@@ -156,7 +150,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
 }
   : (
             LPAREN matchArguments[argumentList] RPAREN 
-            LBRACE { subjectList = ast().makeList(argumentList); }
+            LBRACE { subjectList = ASTFactory.makeList(argumentList); }
             ( 
              patternInstruction[subjectList,patternInstructionList] 
             )* 
@@ -164,7 +158,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
             { 
                 result = `Match(
                     SubjectList(subjectList),
-                    ast().makePatternInstructionList(patternInstructionList),
+                    ASTFactory.makePatternInstructionList(patternInstructionList),
                     optionList
                 );
                 
@@ -213,7 +207,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
             ( (ALL_ID COLON) => label:ALL_ID COLON )?
              option = matchPattern[matchPatternList] 
             {
-                listOfMatchPatternList.add(ast().makeList(matchPatternList));
+                listOfMatchPatternList.add(ASTFactory.makeList(matchPatternList));
                 matchPatternList.clear();
                 listTextPattern.add(text.toString());
                 clearText();
@@ -222,7 +216,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
             ( 
                 ALTERNATIVE option = matchPattern[matchPatternList] 
                 {
-                    listOfMatchPatternList.add(ast().makeList(matchPatternList));
+                    listOfMatchPatternList.add(ASTFactory.makeList(matchPatternList));
                     matchPatternList.clear();
                     listTextPattern.add(text.toString());
                     clearText();
@@ -277,11 +271,11 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                         OriginalText(Name(patternText))
                     );
 
-                    //System.out.println("pattern = " + `Pattern(subjectList,patterns,ast().makeList(matchGuardsList)));
+                    //System.out.println("pattern = " + `Pattern(subjectList,patterns,ASTFactory.makeList(matchGuardsList)));
 
                     list.add(`PatternInstruction(
-                            Pattern(subjectList,patterns,ast().makeList(matchGuardsList)),
-                            RawAction(AbstractBlock(ast().makeInstructionList(blockList))),
+                            Pattern(subjectList,patterns,ASTFactory.makeList(matchGuardsList)),
+                            RawAction(AbstractBlock(ASTFactory.makeInstructionList(blockList))),
                             optionList)
                     );
                 }
@@ -377,7 +371,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                 slotName2:ALL_ID COLON typeArg2:ALL_ID
                 {
                     stringSlotName = slotName2.getText(); 
-                    TomName astName = ast().makeName(stringSlotName);
+                    TomName astName = ASTFactory.makeName(stringSlotName);
                     if(slotNameList.indexOf(astName) != -1) {
                       getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
                         new Object[]{stringSlotName},
@@ -407,7 +401,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
                     }
         }
         LBRACE
-        strategyVisitList[visitList]{astVisitList = ast().makeTomVisitList(visitList);}
+        strategyVisitList[visitList]{astVisitList = ASTFactory.makeTomVisitList(visitList);}
         t:RBRACE
        {
          //initialize arrayList with argument names
@@ -434,7 +428,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
 				 Declaration makeDecl = `MakeDecl(Name(name.getText()), codomainType,makeArgs, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
           options.add(makeDecl); 
 
-          TomSymbol astSymbol = ast().makeSymbol(name.getText(), codomainType, types, ast().makePairNameDeclList(pairNameDeclList), options);
+          TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), codomainType, types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           // update for new target block...
           updatePosition(t.getLine(),t.getColumn());
@@ -480,8 +474,8 @@ strategyVisit [LinkedList list] throws TomException
   {
     LinkedList optionList = new LinkedList();
     optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),Name(currentFile())));
-    OptionList options = ast().makeOptionList(optionList);
-    list.add(`VisitTerm(vType,ast().makePatternInstructionList(patternInstructionList),options));
+    OptionList options = ASTFactory.makeOptionList(optionList);
+    list.add(`VisitTerm(vType,ASTFactory.makePatternInstructionList(patternInstructionList),options));
   }
 ;
 
@@ -590,7 +584,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
     boolean withArgs = false;
 
     Constraint annotedName = 
-    (astAnnotedName == null)?null:ast().makeAssignTo(astAnnotedName, line, currentFile());
+    (astAnnotedName == null)?null:ASTFactory.makeAssignTo(astAnnotedName, line, currentFile());
     if(annotedName != null)
         constraintList.add(annotedName);
 }
@@ -609,8 +603,8 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             {LA(2) != LPAREN && LA(2) != LBRACKET}? 
             name = headSymbol[optionList] 
             {
-						    result = `Variable(ast().makeOptionList(optionList),name,
-									TomTypeAlone("unknown type"),ast().makeConstraintList(constraintList));
+						    result = `Variable(ASTFactory.makeOptionList(optionList),name,
+									TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
             }
 
         |   // for a single constant. 
@@ -621,10 +615,10 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                 nameList = (NameList) nameList.append(name);
 								optionList.add(`Constant());
                 result = `TermAppl(
-                        ast().makeOptionList(optionList),
+                        ASTFactory.makeOptionList(optionList),
                         nameList,
-                        ast().makeList(list),
-                        ast().makeConstraintList(constraintList)
+                        ASTFactory.makeList(list),
+                        ASTFactory.makeConstraintList(constraintList)
                     );
             }
 
@@ -637,17 +631,17 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             {
               if(implicit) {
                     result = `RecordAppl(
-                        ast().makeOptionList(optionList),
+                        ASTFactory.makeOptionList(optionList),
                         nameList,
-                        ast().makeSlotList(list),
-                        ast().makeConstraintList(constraintList)
+                        ASTFactory.makeSlotList(list),
+                        ASTFactory.makeConstraintList(constraintList)
                     );
               } else {
                     result = `TermAppl(
-                        ast().makeOptionList(optionList),
+                        ASTFactory.makeOptionList(optionList),
                         nameList,
-                        ast().makeList(list),
-                        ast().makeConstraintList(constraintList)
+                        ASTFactory.makeList(list),
+                        ASTFactory.makeConstraintList(constraintList)
                     );
               }
             }
@@ -662,17 +656,17 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
 							withArgs = true;
               if(implicit) {
                     result = `RecordAppl(
-                        ast().makeOptionList(optionList),
+                        ASTFactory.makeOptionList(optionList),
                         nameList,
-                        ast().makeSlotList(list),
-                        ast().makeConstraintList(constraintList)
+                        ASTFactory.makeSlotList(list),
+                        ASTFactory.makeConstraintList(constraintList)
                     );
               } else {
                     result = `TermAppl(
-                        ast().makeOptionList(optionList),
+                        ASTFactory.makeOptionList(optionList),
                         nameList,
-                        ast().makeList(list),
-                        ast().makeConstraintList(constraintList)
+                        ASTFactory.makeList(list),
+                        ASTFactory.makeConstraintList(constraintList)
                     );
               }
             }
@@ -682,10 +676,10 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                 nameList = `concTomName(Name(""));
                 optionList.addAll(secondOptionList);
                 result = `TermAppl(
-                    ast().makeOptionList(optionList),
+                    ASTFactory.makeOptionList(optionList),
                     nameList,
-                    ast().makeList(list),
-                    ast().makeConstraintList(constraintList)
+                    ASTFactory.makeList(list),
+                    ASTFactory.makeConstraintList(constraintList)
                 );
             }
         )
@@ -719,7 +713,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 XML_CLOSE_SINGLETON
                 {
                     text.append("\\>");
-                    option =  ast().makeOptionList(optionList);
+                    option =  ASTFactory.makeOptionList(optionList);
                 }
             |   // case: > childs  </NODE>
                 XML_CLOSE  {text.append(">");}
@@ -749,22 +743,22 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                         // Special case when XMLChilds() is reduced to a singleton
                         // when XMLChilds() is reduced to a singleton
                         // Appl(...,Name(""),args)
-                        if(tomFactory.isExplicitTermList(childs)) {
-                            childs = tomFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
+                        if(TomFactory.isExplicitTermList(childs)) {
+                            childs = TomFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
                         } else {
                             optionList.add(`ImplicitXMLChild());
                         }
                     }
-                    option = ast().makeOptionList(optionList);    
+                    option = ASTFactory.makeOptionList(optionList);    
                 }
             ) // end choice
             {
                 result = `XMLAppl(
                     option,
                     nameList,
-                    ast().makeList(attributeList),
-                    ast().makeList(childs),
-                    ast().makeConstraintList(constraintList));
+                    ASTFactory.makeList(attributeList),
+                    ASTFactory.makeList(childs),
+                    ASTFactory.makeConstraintList(constraintList));
             }
 
         | // #TEXT(...)
@@ -774,12 +768,12 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
 
                 optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile())));
-                option = ast().makeOptionList(optionList);
-                constraint = ast().makeConstraintList(constraintList);
+                option = ASTFactory.makeOptionList(optionList);
+                constraint = ASTFactory.makeConstraintList(constraintList);
                 nameList = `concTomName(Name(keyword));
                 result = `RecordAppl(option,
                     nameList,
-                    ast().makeSlotList(pairSlotList),
+                    ASTFactory.makeSlotList(pairSlotList),
                     constraint);
             }
         | // #COMMENT(...)
@@ -789,12 +783,12 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
 
                 optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile())));
-                option = ast().makeOptionList(optionList);
-                constraint = ast().makeConstraintList(constraintList);
+                option = ASTFactory.makeOptionList(optionList);
+                constraint = ASTFactory.makeConstraintList(constraintList);
                 nameList = `concTomName(Name(keyword));
                 result = `RecordAppl(option,
                     nameList,
-                    ast().makeSlotList(pairSlotList),
+                    ASTFactory.makeSlotList(pairSlotList),
                     constraint);
             }
         | // #PROCESSING-INSTRUCTION(... , ...)
@@ -807,12 +801,12 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg2));
 
                 optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile())));
-                option = ast().makeOptionList(optionList);
-                constraint = ast().makeConstraintList(constraintList);
+                option = ASTFactory.makeOptionList(optionList);
+                constraint = ASTFactory.makeConstraintList(constraintList);
                 nameList = `concTomName(Name(keyword));
                 result = `RecordAppl(option,
                     nameList,
-                    ast().makeSlotList(pairSlotList),
+                    ASTFactory.makeSlotList(pairSlotList),
                     constraint);
             }
         )
@@ -892,9 +886,9 @@ xmlAttribute returns [TomTerm result] throws TomException
             )?
             term = unamedVariableOrTermStringIdentifier[optionListAnno2]
             {
-                name = tomFactory.encodeXMLString(symbolTable,id.getText());
+                name = TomFactory.encodeXMLString(symbolTable,id.getText());
                 nameList = `concTomName(Name(name));
-                termName = `TermAppl(ast().makeOption(),nameList,concTomTerm(),concConstraint());
+                termName = `TermAppl(ASTFactory.makeOption(),nameList,concTomTerm(),concConstraint());
             }
         | // [anno1@]_ = [anno2@](_|String|Identifier)
             (
@@ -919,17 +913,17 @@ xmlAttribute returns [TomTerm result] throws TomException
             if (!varStar) {
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
-                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
+                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ASTFactory.makeOption(),ASTFactory.makeConstraint())));
                 // no longer necessary ot metaEncode Strings in attributes
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
                 optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile())));
-                option = ast().makeOptionList(optionList);            
-                constraint = ast().makeConstraintList(constraintList);
+                option = ASTFactory.makeOptionList(optionList);            
+                constraint = ASTFactory.makeConstraintList(constraintList);
                 
                 nameList = `concTomName(Name(Constants.ATTRIBUTE_NODE));
                 result = `RecordAppl(option,
                     nameList,
-                    ast().makeSlotList(slotList),
+                    ASTFactory.makeSlotList(slotList),
                     constraint);
             }   
         }
@@ -1010,7 +1004,7 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
             {
                 text.append(nameID.getText());
                 optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),Name(currentFile())));
-                option = ast().makeOptionList(optionList);
+                option = ASTFactory.makeOptionList(optionList);
                 result = `Variable(option,Name(nameID.getText()),TomTypeAlone("unknown type"),concConstraint());
             }
         |
@@ -1018,8 +1012,8 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
             {
                 text.append(nameString.getText());
                 optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),Name(currentFile())));
-                option = ast().makeOptionList(optionList);
-                ast().makeStringSymbol(symbolTable,nameString.getText(),optionList);
+                option = ASTFactory.makeOptionList(optionList);
+                ASTFactory.makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
 								result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
             }
@@ -1040,7 +1034,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
             {
                 text.append(nameUnderscore.getText());
                 optionList.add(`OriginTracking(Name(nameUnderscore.getText()),nameUnderscore.getLine(),Name(currentFile())));
-                option = ast().makeOptionList(optionList);
+                option = ASTFactory.makeOptionList(optionList);
                 result = `UnamedVariable(option,TomTypeAlone("unknown type"),concConstraint());
             }
         |
@@ -1048,7 +1042,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
             {
                 text.append(nameID.getText());
                 optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),Name(currentFile())));
-                option = ast().makeOptionList(optionList);
+                option = ASTFactory.makeOptionList(optionList);
                 result = `Variable(option,Name(nameID.getText()),TomTypeAlone("unknown type"),concConstraint());
             }
         |
@@ -1056,8 +1050,8 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
             {
                 text.append(nameString.getText());
                 optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),Name(currentFile())));
-                option = ast().makeOptionList(optionList);
-                ast().makeStringSymbol(symbolTable,nameString.getText(),optionList);
+                option = ASTFactory.makeOptionList(optionList);
+                ASTFactory.makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
                 result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
             }
@@ -1105,7 +1099,7 @@ xmlChilds [LinkedList list] returns [boolean result] throws TomException
         {
             it = childs.iterator();
             while(it.hasNext()) {
-                list.add(tomFactory.metaEncodeXMLAppl(symbolTable,(TomTerm)it.next()));
+                list.add(TomFactory.metaEncodeXMLAppl(symbolTable,(TomTerm)it.next()));
             }
         }
     ;
@@ -1213,8 +1207,8 @@ variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm
                 setLastLine(t.getLine());
                 
                 optionList.add(`OriginTracking(Name(name),line,Name(currentFile())));
-                options = ast().makeOptionList(optionList);
-                constraints = ast().makeConstraintList(constraintList);
+                options = ASTFactory.makeOptionList(optionList);
+                constraints = ASTFactory.makeConstraintList(constraintList);
                 if(name1 == null) {
                     result = `UnamedVariableStar(
                         options,
@@ -1249,8 +1243,8 @@ placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm 
                 optionList.add(
                     `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()))
                 );
-                options = ast().makeOptionList(optionList);
-                constraints = ast().makeConstraintList(constraintList);
+                options = ASTFactory.makeOptionList(optionList);
+                constraints = ASTFactory.makeConstraintList(constraintList);
                 result = `Placeholder(options, constraints);
             } 
         )
@@ -1327,19 +1321,19 @@ headConstant [LinkedList optionList] returns [TomName result]
 
 	switch(t.getType()) {
 		case NUM_INT:
-			ast().makeIntegerSymbol(symbolTable,name,optionList);
+			ASTFactory.makeIntegerSymbol(symbolTable,name,optionList);
 			break;
 		case NUM_LONG:
-			ast().makeLongSymbol(symbolTable,name,optionList);
+			ASTFactory.makeLongSymbol(symbolTable,name,optionList);
 			break;
 		case CHARACTER:
-			ast().makeCharSymbol(symbolTable,name,optionList);
+			ASTFactory.makeCharSymbol(symbolTable,name,optionList);
 			break;
 		case NUM_DOUBLE:
-			ast().makeDoubleSymbol(symbolTable,name,optionList);
+			ASTFactory.makeDoubleSymbol(symbolTable,name,optionList);
 			break;
 		case STRING:
-			ast().makeStringSymbol(symbolTable,name,optionList);
+			ASTFactory.makeStringSymbol(symbolTable,name,optionList);
 			break;
 		default:
 	}
@@ -1379,7 +1373,7 @@ operator returns [Declaration result] throws TomException
                 slotName2:ALL_ID COLON typeArg2:ALL_ID
                 {
                     stringSlotName = slotName2.getText(); 
-                    astName = ast().makeName(stringSlotName);
+                    astName = ASTFactory.makeName(stringSlotName);
                     if(slotNameList.indexOf(astName) != -1) {
                       getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.repeatedSlotName,
                         new Object[]{stringSlotName},
@@ -1441,7 +1435,7 @@ operator returns [Declaration result] throws TomException
 
           //System.out.println("pairNameDeclList = " + pairNameDeclList);
 
-          TomSymbol astSymbol = ast().makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, ast().makePairNameDeclList(pairNameDeclList), options);
+          TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, ASTFactory.makePairNameDeclList(pairNameDeclList), options);
           putSymbol(name.getText(),astSymbol);
           result = `SymbolDecl(astName);
           updatePosition(t.getLine(),t.getColumn());
@@ -1488,7 +1482,7 @@ operatorList returns [Declaration result] throws TomException
         t:RBRACE
         { 
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ast().makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
+            TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
             putSymbol(name.getText(),astSymbol);
             result = `ListSymbolDecl(Name(name.getText()));
             updatePosition(t.getLine(),t.getColumn());
@@ -1532,7 +1526,7 @@ operatorArray returns [Declaration result] throws TomException
         t:RBRACE
         { 
             PairNameDeclList pairNameDeclList = `concPairNameDecl(PairNameDecl(EmptyName(), EmptyDeclaration()));
-            TomSymbol astSymbol = ast().makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
+            TomSymbol astSymbol = ASTFactory.makeSymbol(name.getText(), `TomTypeAlone(type.getText()), types, pairNameDeclList, options);
             putSymbol(name.getText(),astSymbol);
 
             result = `ArraySymbolDecl(Name(name.getText()));
@@ -1947,7 +1941,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
                 selector().pop();
                 blockList.add(tlCode);
-                result = `MakeDecl(Name(opname),returnType,args,AbstractBlock(ast().makeInstructionList(blockList)),ot);
+                result = `MakeDecl(Name(opname),returnType,args,AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
             }
         )
     ;
@@ -1968,7 +1962,7 @@ keywordMakeEmptyList[String name] returns [Declaration result] throws TomExcepti
             TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
             blockList.add(tlCode);
-            result = `MakeEmptyList(Name(name),AbstractBlock(ast().makeInstructionList(blockList)),ot);
+            result = `MakeEmptyList(Name(name),AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
         }
     ;
 
@@ -1997,7 +1991,7 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
             result = `MakeAddList(Name(name),
                 Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),emptyConstraintList()),
                 Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
-                AbstractBlock(ast().makeInstructionList(blockList)),ot);
+                AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
         }
     ;
 
@@ -2022,7 +2016,7 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
             blockList.add(tlCode);
             result = `MakeEmptyArray(Name(name),
                 Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
-                AbstractBlock(ast().makeInstructionList(blockList)),ot);
+                AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
         }
     ;   
 
@@ -2051,7 +2045,7 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
             result = `MakeAddArray(Name(name),
                 Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),emptyConstraintList()),
                 Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
-                AbstractBlock(ast().makeInstructionList(blockList)),ot);
+                AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
         }
     ;
 

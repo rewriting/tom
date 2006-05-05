@@ -34,6 +34,7 @@ import tom.engine.exception.TomRuntimeException;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.tools.TomFactory;
+import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.engine.tools.SymbolTable;
@@ -64,13 +65,11 @@ public class TomExpander extends TomGenericPlugin {
   /** the kernel expander acting at very low level */
   private TomKernelExpander tomKernelExpander;
   /** the tomfactory for creating intermediate terms */
-  private TomFactory tomFactory;
   
   /** Constructor*/
   public TomExpander() {
     super("TomExpander");
     tomKernelExpander = new TomKernelExpander();
-    tomFactory = new TomFactory();
   }
 
   /**
@@ -409,9 +408,9 @@ public class TomExpander extends TomGenericPlugin {
 								return `BuildConstant(name);
 							} else if(tomSymbol != null) {
 								if(isListOperator(tomSymbol)) {
-									return tomFactory.buildList(`name,args);
+									return TomFactory.buildList(`name,args);
 								} else if(isArrayOperator(tomSymbol)) {
-									return tomFactory.buildArray(`name,args);
+									return TomFactory.buildArray(`name,args);
 								} else if(isDefinedSymbol(tomSymbol)) {
 									return `FunctionCall(name,args);
 								} else {
@@ -510,7 +509,7 @@ public class TomExpander extends TomGenericPlugin {
     TomList newAttrList  = `emptyTomList();
     TomList newChildList = `emptyTomList();
 
-    TomTerm star = getAstFactory().makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",`concConstraint());
+    TomTerm star = ASTFactory.makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",`concConstraint());
     if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
     if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 
@@ -571,7 +570,7 @@ public class TomExpander extends TomGenericPlugin {
         }
 
         (_*,Name(name),_*) -> {
-          newNameList = (NameList)newNameList.append(`Name(tomFactory.encodeXMLString(symbolTable(),name)));
+          newNameList = (NameList)newNameList.append(`Name(TomFactory.encodeXMLString(symbolTable(),name)));
         }
       }
     }
