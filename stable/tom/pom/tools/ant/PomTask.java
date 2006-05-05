@@ -167,8 +167,17 @@ public class PomTask extends MatchingTask {
       }
 
       String cmd_line = "";
+      if(srcFile != null) {
+        cmd_line = cmd_line.trim() + " --srcfile " + srcFile;
+      }
       if(destDir != null) {
-        cmd_line = cmd_line.trim() + " -d " + destDir;
+        cmd_line = cmd_line.trim() + " --destdir " + destDir;
+      }
+      if(packageName != null) {
+        cmd_line = cmd_line.trim() + " --packagename " + packageName;
+      }
+      if(parserName != null) {
+        cmd_line = cmd_line.trim() + " --parsername " + parserName;
       }
 
       String[] cmd = split(cmd_line);
