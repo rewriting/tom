@@ -1,4 +1,8 @@
+2006-05-05 Yoann Toussaint <yoann.toussaint@loria.fr>
+	* created Pom, a new tool that generates Gom mappings from ANTLR token table
+
 2006-04-26 Antoine Reilles <reilles@loria.fr>
+  * remove --static option, and make static functions the default in Java
   * remove --static option, and make static functions the default in Java
   * add a --noStatic option, to revert this behavior
   * %rules generate private functions (as %op)
