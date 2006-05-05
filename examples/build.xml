@@ -585,6 +585,7 @@
   <target name="parsingtests" depends="init">
     <!--<adtcompile example="${propp}"
       factory="seq"/>-->
+      <!-- parsername="" -->
     <gomcompile example="${parsingtests}"/>
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${parsingtests}/SeqWalker.g"
@@ -597,6 +598,10 @@
               outputdirectory="${examples.gen}/${parsingtests}">
  		<classpath refid="tom.classpath"/>
     </tomantlr>
+    <pom srcfile="${examples.gen}/${parsingtests}/SeqParserTokenTypes.txt"
+      destdir="${parsingtests}"
+      packagename="${parsingtests}">
+    </pom>
     <tomantlr target="${examples.gen}/${parsingtests}/SeqWalker.g"
               outputdirectory="${examples.gen}/${parsingtests}">
     	<classpath refid="tom.classpath"/>	    	
