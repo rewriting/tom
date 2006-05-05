@@ -115,7 +115,7 @@ options{
       if(newComposite) {
         %match(TomTerm lastElement, TomTerm term) {
           Composite(l1), t2@Composite[] -> { 
-            list.add(t2); 
+            list.add(`t2); 
             return; 
           }
           Composite(l1), t2 -> { 

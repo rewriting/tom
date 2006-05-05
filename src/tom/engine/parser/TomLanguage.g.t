@@ -1418,7 +1418,7 @@ operator returns [Declaration result] throws TomException
                 PairNameDecl pair = (PairNameDecl) pairNameDeclList.get(index);
                 %match(PairNameDecl pair) {
                   PairNameDecl[slotDecl=decl] -> {
-                    if(decl!=`EmptyDeclaration()) {
+                    if(`decl != `EmptyDeclaration()) {
                       msg = TomMessage.errorTwoSameSlotDecl;
                     }
                   }
