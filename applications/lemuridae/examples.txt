@@ -1,0 +1,13 @@
+rule
+Subset(a,b).
+\A x.(In(x,a) => In(x,b)).
+rule
+In(x,void()).
+\B.
+proof
+|- Subset(void(),a()).
+rule 0
+focus 1
+rule 3
+bottom
+
