@@ -185,9 +185,9 @@
     <taskdef name="vas"
              classname="vas.ant.VasTask"
              classpathref="tom.classpath"/>
-    <!-- taskdef name="pom"
+    <taskdef name="pom"
              classname="tom.pom.tools.ant.PomTask"
-             classpathref="tom.classpath"/ -->
+             classpathref="tom.classpath"/>
     <taskdef name="gom"
              classname="tom.gom.tools.ant.GomTask"
              classpathref="tom.classpath"/>
