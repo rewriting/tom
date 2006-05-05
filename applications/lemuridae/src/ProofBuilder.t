@@ -214,7 +214,8 @@ b: {
       %match(Sequent seq, Prop active) {
         sequent((X*,act@forAll(n,p),Y*),c), act -> {
           Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), new_var); 
-          return `concSeq(sequent(context(X*,res,Y*),c));
+	  // FIXME : remove act and add contraction rule ??
+          return `concSeq(sequent(context(X*,act,res,Y*),c));
         }
       }
       throw new Exception("can't apply rule forall L");
@@ -350,15 +351,12 @@ b: {
                 }
 
                 // exists R
-                exists[] -> {
+                exists(x,_) -> {
                   ruleName = "exists R";
-                  String s = command.substring(4).trim();
-                  if (s.matches("[a-z]([a-z][1-9])*")) {
-                    Term new_var = `Var(s);
-                    prems = applyExistsR(goal, new_var);
-                    ok = true;
-                  }
-                }
+		  System.out.print("instance of " + `x + " > ");
+		  Term new_var = Utils.getTerm();
+		  prems = applyExistsR(goal, new_var);
+		}
 
                 // not a complex formula
                 _ -> { if(!ok) continue; }
@@ -391,14 +389,12 @@ b: {
                 }
 
                 // forAll L
-                forAll[] -> {
+                forAll(x,_) -> {
                   ruleName = "forAll L";
-                  String s = command.substring(4).trim();
-                  if (s.matches("[a-z]([a-z0-9])*")) {
-                    Term new_var = `Var(s);
-                    prems = applyForAllL(goal, active, new_var);
-                    ok = true;
-                  }
+		  System.out.print("instance of " + `x + " > ");
+		  Term new_var = Utils.getTerm();
+		  prems = applyForAllL(goal, active, new_var);
+		  ok = true;
                 }
 
                 // exists L

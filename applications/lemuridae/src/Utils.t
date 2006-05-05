@@ -177,5 +177,18 @@ class Utils {
 
     return p;
   }
+
+  public static Term getTerm() throws RecognitionException, TokenStreamException {
+
+    SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+    SeqParser parser = new SeqParser(lexer);
+    SeqTreeParser walker = new SeqTreeParser();
+
+    parser.start2();
+    AST t = parser.getAST();
+    Term res  = walker.term(t);
+
+    return res;
+  }
 }
 

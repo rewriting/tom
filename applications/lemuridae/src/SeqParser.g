@@ -53,7 +53,8 @@ funappl : VAR LPAREN^ term_list RPAREN!;
 
 // points d'entree pour les programmes
 start1 : pred DOT! ;
-rewrite: term ARROW^ term DOT;
+start2 : term DOT! ;
+rewrite: pred ARROW^ pred DOT;
 
 
 class SeqLexer extends Lexer;
