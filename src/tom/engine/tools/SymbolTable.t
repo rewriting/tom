@@ -43,6 +43,7 @@ import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 
 public class SymbolTable {
+  %include { adt/tomsignature/TomSignature.tom }
   private final static String TYPE_INT       = "int";
   private final static String TYPE_LONG      = "long";
   private final static String TYPE_CHAR      = "char";
@@ -59,7 +60,7 @@ public class SymbolTable {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
 	
-    TomForwardType emptyForward = tsf().makeTomForwardType_EmptyForward();
+    TomForwardType emptyForward = `EmptyForward();
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
@@ -100,10 +101,6 @@ public class SymbolTable {
     }
   }
 
-  protected TomSignatureFactory tsf() {
-		return tom.engine.adt.tomsignature.TomSignatureFactory.getInstance(aterm.pure.SingletonFactory.getInstance());
-  }
-
   public void putSymbol(String name, TomSymbol astSymbol) {
     TomSymbol result = (TomSymbol) mapSymbolName.put(name,astSymbol);
   }
@@ -114,19 +111,19 @@ public class SymbolTable {
   }
 
   public SymbolList getSymbolFromType(TomType type) {
-    SymbolList res = tsf().makeSymbolList();
+    SymbolList res = `concTomSymbol();
     Iterator it = mapSymbolName.values().iterator();
     while(it.hasNext()) {
       TomSymbol symbol = (TomSymbol)it.next();
       if(symbol.getTypesToType().getCodomain() == type) {
-        res = tsf().makeSymbolList(symbol,res);
+        res = `concTomSymbol(symbol,res*);
       }
     }
     return res;
   }
 
   public void putTypeDefinition(String name, TomType astType, TomForwardType fwdType) {
-    TomTypeDefinition typeDef = tsf().makeTomTypeDefinition_TypeDefinition(astType,fwdType);
+    TomTypeDefinition typeDef = `TypeDefinition(astType,fwdType);
     mapTypeName.put(name,typeDef);
   }
 
@@ -156,31 +153,31 @@ public class SymbolTable {
   }
 
 	public boolean isUsedSymbolConstructor(TomSymbol symbol) {
-		//return (mapSymbolName.get(tsf().makeKeyEntry_UsedSymbolConstructor(symbol)) != null);
+		//return (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null);
 		return true;
 	}
 	
 	public boolean isUsedSymbolDestructor(TomSymbol symbol) {
-		//return (mapSymbolName.get(tsf().makeKeyEntry_UsedSymbolDestructor(symbol)) != null);
+		//return (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null);
 		return true;
 	}
 	
 	public boolean isUsedTypeDefinition(TomTypeDefinition type) {
-		//return (mapTypeName.get(tsf().makeKeyEntry_UsedTypeDefinition(type)) != null);
+		//return (mapTypeName.get(`UsedTypeDefinition(type)) != null);
 		return true;
 	}
  
 	public void setUsedSymbolConstructor(TomSymbol symbol) {
-    TomSymbol result = (TomSymbol) mapSymbolName.put(tsf().makeKeyEntry_UsedSymbolConstructor(symbol),symbol);
+    TomSymbol result = (TomSymbol) mapSymbolName.put(`UsedSymbolConstructor(symbol),symbol);
 	}
 	
 	public void setUsedSymbolDestructor(TomSymbol symbol) {
 		//System.out.println("setUsedDestructor: " + symbol.getAstName());
-    TomSymbol result = (TomSymbol) mapSymbolName.put(tsf().makeKeyEntry_UsedSymbolDestructor(symbol),symbol);
+    TomSymbol result = (TomSymbol) mapSymbolName.put(`UsedSymbolDestructor(symbol),symbol);
 	}
 	
 	public void setUsedTypeDefinition(TomTypeDefinition type) {
-    TomTypeDefinition result = (TomTypeDefinition) mapTypeName.put(tsf().makeKeyEntry_UsedTypeDefinition(type),type);
+    TomTypeDefinition result = (TomTypeDefinition) mapTypeName.put(`UsedTypeDefinition(type),type);
 	}
 
 	public void setUsedSymbolConstructor(String name) {
@@ -327,18 +324,18 @@ public class SymbolTable {
   }
 
   public TomSymbolTable toTerm() {
-    TomEntryList list = tsf().makeTomEntryList();
+    TomEntryList list = `concTomEntry();
     Iterator it = keySymbolIterator();
     while(it.hasNext()) {
 			Object key = it.next();
 			if(key instanceof String) {
 				String name = (String)key;
 				TomSymbol symbol = getSymbolFromName(name);
-				TomEntry entry = tsf().makeTomEntry_Entry(name,symbol);
-				list = tsf().makeTomEntryList(entry,list);
+				TomEntry entry = `Entry(name,symbol);
+				list = `concTomEntry(entry,list*);
 			}
     }
-    return tsf().makeTomSymbolTable_Table(list);
+    return `Table(list);
   }
 
 } // class SymbolTable

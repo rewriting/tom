@@ -42,7 +42,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomException;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
-import tom.engine.tools.TomFactory;
 import tom.engine.xml.Constants;
 import tom.platform.OptionManager;
 import tom.platform.PlatformLogRecord;
@@ -292,7 +291,7 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
              term = annotedTerm 
             {
                 list.add(term);
-                result = `OriginTracking(Name("Pattern"),lastLine,Name(currentFile()));
+                result = `OriginTracking(Name("Pattern"),lastLine,currentFile());
             } 
             ( 
                 COMMA {text.append('\n');}  
@@ -350,7 +349,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     :(
         name:ALL_ID
         {
-				Option ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+				Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
         options.add(ot);
         if (symbolTable.getSymbolFromName(name.getText()) != null){
         throw new TomException(TomMessage.invalidStrategyName,
@@ -424,7 +423,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
          }
 				 makeTlCode += ")";
 
-				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),Name(currentFile()));
+				 Option makeOption = `OriginTracking(Name(name.getText()),t.getLine(),currentFile());
 				 Declaration makeDecl = `MakeDecl(Name(name.getText()), codomainType,makeArgs, TargetLanguageToInstruction(ITL(makeTlCode)), makeOption);
           options.add(makeDecl); 
 
@@ -473,7 +472,7 @@ strategyVisit [LinkedList list] throws TomException
   )
   {
     LinkedList optionList = new LinkedList();
-    optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),Name(currentFile())));
+    optionList.add(`OriginTracking(Name(type.getText()),type.getLine(),currentFile()));
     OptionList options = ASTFactory.makeOptionList(optionList);
     list.add(`VisitTerm(vType,ASTFactory.makePatternInstructionList(patternInstructionList),options));
   }
@@ -512,10 +511,7 @@ ruleConstruct [Option ot] returns [Declaration result] throws TomException
             {
                 // get the last token's line
                 int line = lastLine;
-                Option ot2 = `OriginTracking(
-                    Name("Pattern"),
-                    line,
-                    Name(currentFile())
+                Option ot2 = `OriginTracking( Name("Pattern"), line, currentFile()
                 );
                 OptionList optionList2 = `concOption(ot2,OriginalText(orgText),ModuleName(TomBase.DEFAULT_MODULE_NAME));
                 while(! listOfLhs.isEmpty()){
@@ -743,8 +739,8 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                         // Special case when XMLChilds() is reduced to a singleton
                         // when XMLChilds() is reduced to a singleton
                         // Appl(...,Name(""),args)
-                        if(TomFactory.isExplicitTermList(childs)) {
-                            childs = TomFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
+                        if(ASTFactory.isExplicitTermList(childs)) {
+                            childs = ASTFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
                         } else {
                             optionList.add(`ImplicitXMLChild());
                         }
@@ -767,7 +763,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 keyword = Constants.TEXT_NODE;
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
 
-                optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile())));
+                optionList.add(`OriginTracking(Name(keyword),getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
                 nameList = `concTomName(Name(keyword));
@@ -782,7 +778,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 keyword = Constants.COMMENT_NODE;
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
 
-                optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile())));
+                optionList.add(`OriginTracking(Name(keyword),getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
                 nameList = `concTomName(Name(keyword));
@@ -800,7 +796,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_TARGET),arg1));
                 pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg2));
 
-                optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile())));
+                optionList.add(`OriginTracking(Name(keyword),getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 constraint = ASTFactory.makeConstraintList(constraintList);
                 nameList = `concTomName(Name(keyword));
@@ -886,7 +882,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             )?
             term = unamedVariableOrTermStringIdentifier[optionListAnno2]
             {
-                name = TomFactory.encodeXMLString(symbolTable,id.getText());
+                name = ASTFactory.encodeXMLString(symbolTable,id.getText());
                 nameList = `concTomName(Name(name));
                 termName = `TermAppl(ASTFactory.makeOption(),nameList,concTomTerm(),concConstraint());
             }
@@ -916,7 +912,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ASTFactory.makeOption(),ASTFactory.makeConstraint())));
                 // no longer necessary ot metaEncode Strings in attributes
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
-                optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile())));
+                optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);            
                 constraint = ASTFactory.makeConstraintList(constraintList);
                 
@@ -983,9 +979,7 @@ xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [NameList resu
         )
         {
             if(needOrgTrack) {
-                optionList.add(`OriginTracking(Name(XMLName.toString()),
-                        decLine,
-                        Name(currentFile())));
+                optionList.add(`OriginTracking(Name(XMLName.toString()), decLine, currentFile()));
             }
         }
     ;
@@ -1003,7 +997,7 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
             nameID:ALL_ID
             {
                 text.append(nameID.getText());
-                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),Name(currentFile())));
+                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 result = `Variable(option,Name(nameID.getText()),TomTypeAlone("unknown type"),concConstraint());
             }
@@ -1011,7 +1005,7 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
             nameString:STRING
             {
                 text.append(nameString.getText());
-                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),Name(currentFile())));
+                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 ASTFactory.makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
@@ -1033,7 +1027,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
             nameUnderscore:UNDERSCORE
             {
                 text.append(nameUnderscore.getText());
-                optionList.add(`OriginTracking(Name(nameUnderscore.getText()),nameUnderscore.getLine(),Name(currentFile())));
+                optionList.add(`OriginTracking(Name(nameUnderscore.getText()),nameUnderscore.getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 result = `UnamedVariable(option,TomTypeAlone("unknown type"),concConstraint());
             }
@@ -1041,7 +1035,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
             nameID:ALL_ID
             {
                 text.append(nameID.getText());
-                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),Name(currentFile())));
+                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 result = `Variable(option,Name(nameID.getText()),TomTypeAlone("unknown type"),concConstraint());
             }
@@ -1049,7 +1043,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
             nameString:STRING 
             {
                 text.append(nameString.getText());
-                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),Name(currentFile())));
+                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),currentFile()));
                 option = ASTFactory.makeOptionList(optionList);
                 ASTFactory.makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
@@ -1099,7 +1093,7 @@ xmlChilds [LinkedList list] returns [boolean result] throws TomException
         {
             it = childs.iterator();
             while(it.hasNext()) {
-                list.add(TomFactory.metaEncodeXMLAppl(symbolTable,(TomTerm)it.next()));
+                list.add(ASTFactory.metaEncodeXMLAppl(symbolTable,(TomTerm)it.next()));
             }
         }
     ;
@@ -1122,7 +1116,7 @@ args [LinkedList list, LinkedList optionList] returns [boolean result] throws To
                 text.append(t2.getText());
             
                 result = false;
-                optionList.add(`OriginTracking(Name(""),t1.getLine(),Name(currentFile())));
+                optionList.add(`OriginTracking(Name(""),t1.getLine(),currentFile()));
             }
             
         |   // [term = term , term = term , ...]
@@ -1136,7 +1130,7 @@ args [LinkedList list, LinkedList optionList] returns [boolean result] throws To
                 text.append(t4.getText());
                 
                 result = true;
-                optionList.add(`OriginTracking(Name(""),t3.getLine(),Name(currentFile())));
+                optionList.add(`OriginTracking(Name(""),t3.getLine(),currentFile()));
             }
         )
     ;
@@ -1206,7 +1200,7 @@ variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm
                 // in %rule construct
                 setLastLine(t.getLine());
                 
-                optionList.add(`OriginTracking(Name(name),line,Name(currentFile())));
+                optionList.add(`OriginTracking(Name(name),line,currentFile()));
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
                 if(name1 == null) {
@@ -1241,7 +1235,7 @@ placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm 
                 setLastLine(t.getLine());
 
                 optionList.add(
-                    `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()))
+                    `OriginTracking(Name(t.getText()),t.getLine(),currentFile())
                 );
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
@@ -1300,7 +1294,7 @@ headSymbol [LinkedList optionList] returns [TomName result]
 		text.append(name);
 		setLastLine(line);
 		result = `Name(name);
-		optionList.add(`OriginTracking(result,line, Name(currentFile())));
+		optionList.add(`OriginTracking(result,line, currentFile()));
 	}
 	)
 ;
@@ -1317,7 +1311,7 @@ headConstant [LinkedList optionList] returns [TomName result]
 	text.append(name);
 	setLastLine(line);
 	result = `Name(name);
-	optionList.add(`OriginTracking(result,line, Name(currentFile())));
+	optionList.add(`OriginTracking(result,line, currentFile()));
 
 	switch(t.getType()) {
 		case NUM_INT:
@@ -1356,7 +1350,7 @@ operator returns [Declaration result] throws TomException
     :
       type:ALL_ID name:ALL_ID 
         {
-            ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             options.add(ot);
         }
         (
@@ -1453,7 +1447,7 @@ operatorList returns [Declaration result] throws TomException
     :
         type:ALL_ID name:ALL_ID
         {
-            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             options.add(ot);
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
@@ -1500,7 +1494,7 @@ operatorArray returns [Declaration result] throws TomException
     :
         type:ALL_ID name:ALL_ID
         {
-            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             options.add(ot);
         }
         LPAREN typeArg:ALL_ID STAR RPAREN
@@ -1550,7 +1544,7 @@ typeTerm returns [Declaration result] throws TomException
     :   (
             type:ALL_ID
             { 
-                ot = `OriginTracking(Name(type.getText()), type.getLine(),Name(currentFile()));
+                ot = `OriginTracking(Name(type.getText()), type.getLine(),currentFile());
             }
             LBRACE
 
@@ -1615,11 +1609,11 @@ keywordEquals[String type] returns [Declaration result] throws TomException
     :
         (
             t:EQUALS 
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
-                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(currentFile()));
-                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(currentFile()));
+                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),currentFile());
+                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),currentFile());
                 OptionList option1 = `concOption(info1);
                 OptionList option2 = `concOption(info2);
                 
@@ -1642,10 +1636,10 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
     :
         (
             t:GET_HEAD 
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -1669,10 +1663,10 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
     :
         (
             t:GET_TAIL 
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -1695,10 +1689,10 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
     :
         (
             t:IS_EMPTY 
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -1721,11 +1715,11 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
     :
         (
             t:GET_ELEMENT 
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name1:ALL_ID COMMA name2:ALL_ID RPAREN
             {
-                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(currentFile()));
-                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(currentFile()));
+                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),currentFile());
+                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),currentFile());
                 OptionList option1 = `concOption(info1);
                 OptionList option2 = `concOption(info2);
                 
@@ -1749,10 +1743,10 @@ keywordGetSize[TomName opname, String type] returns [Declaration result] throws 
     :
         (
             t:GET_SIZE
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN name:ALL_ID RPAREN
             {
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
@@ -1773,10 +1767,10 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
 }
     :
         t:IS_FSYM
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
         LPAREN name:ALL_ID RPAREN
         {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
@@ -1796,10 +1790,10 @@ keywordCheckStamp [String typeString] returns [Declaration result] throws TomExc
 }
     :
         t:CHECK_STAMP
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
         LPAREN name:ALL_ID RPAREN
         {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
@@ -1818,10 +1812,10 @@ keywordSetStamp [String typeString] returns [Declaration result] throws TomExcep
 }
     :
         t:SET_STAMP
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
         LPAREN name:ALL_ID RPAREN
         {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
@@ -1840,10 +1834,10 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
 }
     :
         t:GET_IMPLEMENTATION
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
         LPAREN name:ALL_ID RPAREN
         {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
@@ -1864,10 +1858,10 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
     :
         (
             t:GET_SLOT
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
             LPAREN slotName:ALL_ID COMMA name:ALL_ID RPAREN
             {                
-                Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
                 OptionList option = `concOption(info);
                 
                 selector().push("targetlexer");
@@ -1894,7 +1888,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
     :
         (
             t:MAKE
-            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
                 (LPAREN 
                 ( 
                     typeArg:ALL_ID
@@ -1904,7 +1898,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                         } else {
                             type = (TomType)types.elementAt(index++);
                         }
-                        Option info1 = `OriginTracking(Name(typeArg.getText()),typeArg.getLine(),Name(currentFile()));  
+                        Option info1 = `OriginTracking(Name(typeArg.getText()),typeArg.getLine(),currentFile());  
                         OptionList option1 = `concOption(info1);
                         
                         args = (TomList) args.append(`Variable(
@@ -1921,7 +1915,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                             } else {
                                 type = (TomType)types.elementAt(index++);
                             }
-                            Option info2 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),Name(currentFile()));
+                            Option info2 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),currentFile());
                             OptionList option2 = `concOption(info2);
                             
                             args = (TomList) args.append(`Variable(
@@ -1953,7 +1947,7 @@ keywordMakeEmptyList[String name] returns [Declaration result] throws TomExcepti
 }
     :
         t:MAKE_EMPTY (LPAREN RPAREN)?
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
+        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
         
         LBRACE
         {   
@@ -1973,13 +1967,13 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
 }
     :
         t:MAKE_INSERT
-        {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
+        {ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile());}
 
         LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
         LBRACE
         {
-            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(currentFile()));  
-            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),Name(currentFile()));
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());  
+            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),currentFile());
             OptionList listOption = `concOption(listInfo);
             OptionList elementOption = `concOption(elementInfo);
 
@@ -2002,11 +1996,11 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
 }
     :
         t:MAKE_EMPTY
-        {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
+        {ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile());}
         LPAREN listName:ALL_ID RPAREN
         LBRACE
         {
-            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(currentFile()));  
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());  
             OptionList listOption = `concOption(listInfo);
 
             selector().push("targetlexer");
@@ -2027,7 +2021,7 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
 }
     :
         t:MAKE_APPEND
-        {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
+        {ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile());}
         LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
         LBRACE
         {
@@ -2037,8 +2031,8 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
             selector().pop();
             blockList.add(tlCode);
 
-            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(currentFile()));  
-            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),Name(currentFile()));
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),currentFile());  
+            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),currentFile());
             OptionList listOption = `concOption(listInfo);
             OptionList elementOption = `concOption(elementInfo);
             

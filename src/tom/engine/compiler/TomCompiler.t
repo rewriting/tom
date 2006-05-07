@@ -32,7 +32,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
-import tom.engine.tools.TomFactory;
 import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
@@ -134,9 +133,9 @@ public class TomCompiler extends TomGenericPlugin {
 						return `BuildConstant(name);
 					} else if(tomSymbol != null) {
 						if(isListOperator(tomSymbol)) {
-							return TomFactory.buildList(`name,tomListArgs);
+							return ASTFactory.buildList(`name,tomListArgs);
 						} else if(isArrayOperator(tomSymbol)) {
-							return TomFactory.buildArray(`name,tomListArgs);
+							return ASTFactory.buildArray(`name,tomListArgs);
 						} else if(isDefinedSymbol(tomSymbol)) {
 							return `FunctionCall(name,tomListArgs);
 						} else {

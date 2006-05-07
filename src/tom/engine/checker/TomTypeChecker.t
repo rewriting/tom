@@ -131,7 +131,8 @@ public class TomTypeChecker extends TomChecker {
 					%match(TomTerm term) {
 						app@TermAppl[] -> {
 							if((symbolTable().getSymbolFromName(getName(`app)))==null) {
-								messageError(findOriginTrackingLine(`app.getOption()),
+								messageError(findOriginTrackingFileName(`app.getOption()),
+                    findOriginTrackingLine(`app.getOption()),
 										TomMessage.unknownVariableInWhen,
 										new Object[]{getName(`app)});
 							}
@@ -171,9 +172,11 @@ public class TomTypeChecker extends TomChecker {
       TomVisit visit = list.getHead();
       %match(TomVisit visit) {
         VisitTerm(visitType,patternInstructionList,options) -> {
+          String fileName =findOriginTrackingFileName(`options);
           %match(TomType visitType) {
             TomTypeAlone(strVisitType) -> {
-              messageError(findOriginTrackingLine(`options),
+              messageError(fileName,
+                  findOriginTrackingLine(`options),
                   TomMessage.unknownVisitedType,
                   new Object[]{`(strVisitType)});
             }
@@ -184,18 +187,16 @@ public class TomTypeChecker extends TomChecker {
 
               //noVisitorFwd defined for visitType
               if (currentVisitorFwd == null || currentVisitorFwd == `EmptyForward()){ 
-                messageError(`TLVisitType.getStart().getLine(),
+                messageError(fileName,`TLVisitType.getStart().getLine(),
                     TomMessage.noVisitorForward,
                     new Object[]{`(ASTVisitType)});
-              }
-              else if (visitorFwd == null) {
+              } else if (visitorFwd == null) {
                 //first visit 
                 visitorFwd = currentVisitorFwd;
-              }
-              else {
+              } else {
                 //check if current visitor equals to previous visitor
                 if (currentVisitorFwd != visitorFwd){ 
-                  messageError(`TLVisitType.getStart().getLine(),
+                  messageError(fileName,`TLVisitType.getStart().getLine(),
                       TomMessage.differentVisitorForward,
                       new Object[]{visitorFwd.getString(),currentVisitorFwd.getString()});
                 }
@@ -320,7 +321,8 @@ public class TomTypeChecker extends TomChecker {
 				//System.out.println("var1 = " + var);
 				//System.out.println("var2 = " + variable);
         if(!(type1==type2)) {
-          messageError(findOriginTrackingLine(variable.getOption()),
+          messageError(findOriginTrackingFileName(variable.getOption()),
+              findOriginTrackingLine(variable.getOption()),
                        TomMessage.incoherentVariable,
                        new Object[]{name.getString(), type1.getTomType().getString(), type2.getTomType().getString()});
         }
@@ -348,7 +350,8 @@ public class TomTypeChecker extends TomChecker {
         //TomType type = var.getAstType();
         TomType type = (TomType)variableTable.get(nameVar);
         if(!(type==typeVar)) {
-          messageError(findOriginTrackingLine(variable.getOption()),
+          messageError(findOriginTrackingFileName(variable.getOption()),
+              findOriginTrackingLine(variable.getOption()),
                        TomMessage.incoherentVariable,
                        new Object[]{nameVar.getString(), type.getTomType().getString(), typeVar.getTomType().getString()});
           return false;
@@ -369,7 +372,8 @@ public class TomTypeChecker extends TomChecker {
       TomTerm variable = (TomTerm)it.next();
       TomName name = variable.getAstName();
       if(variableTable.containsKey(name)) {
-        messageError(findOriginTrackingLine(variable.getOption()),
+        messageError(findOriginTrackingFileName(variable.getOption()),
+            findOriginTrackingLine(variable.getOption()),
                      TomMessage.freshVariableIssue,
                      new Object[]{name.getString()});
          
@@ -386,7 +390,8 @@ public class TomTypeChecker extends TomChecker {
       TomTerm variable = (TomTerm)it.next();
       TomName name = variable.getAstName();
       if(!variableTable.containsKey(name)) {
-        messageError(findOriginTrackingLine(variable.getOption()),
+        messageError(findOriginTrackingFileName(variable.getOption()),
+            findOriginTrackingLine(variable.getOption()),
                      message,
                      new Object[]{name.getString()});             
         return false;

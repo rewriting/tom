@@ -11,7 +11,7 @@ TomNameToOption(astName:TomName) -> Option
 TomTermToOption(astTerm:TomTerm) -> Option
 DefinedSymbol() -> Option
 GeneratedMatch() -> Option
-OriginTracking(astName:TomName,line:Int,fileName:TomName) -> Option
+OriginTracking(astName:TomName,line:Int,fileName:String) -> Option
 OriginalText(astName:TomName) -> Option
 Constant() -> Option
 Label(astName:TomName) -> Option

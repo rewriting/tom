@@ -29,12 +29,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import tom.engine.adt.tomsignature.TomSignatureFactory;
+import tom.engine.TomBase;
+import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.xml.Constants;
+import tom.engine.exception.TomRuntimeException;
 import aterm.ATerm;
 
 public class ASTFactory {
+  %include { adt/tomsignature/TomSignature.tom }
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {
   }
@@ -44,11 +47,11 @@ public class ASTFactory {
   }
 
   protected static TomList cons(TomTerm t, TomList l) {
-    return tsf().makeTomList(t,l);
+    return `concTomTerm(t,l*);
   }
 
   protected static TomList append(TomTerm t, TomList l) {
-    return (TomList) l.append(t);
+    return `concTomTerm(l*,t);
   }
 
   public static TomList makeList(Collection c) {
@@ -265,7 +268,7 @@ public class ASTFactory {
 
   
   private static Option makeOriginTracking(String name, int line , String fileName) {
-    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), line, tsf().makeTomName_Name( fileName));
+    return `OriginTracking(Name(name), line, fileName);
   }
 
   
@@ -374,21 +377,36 @@ public class ASTFactory {
     return name;
   }
 
+  public static String makeTomVariableName(String name) {
+    return "tom_" + name;
+  }
+
+  public static TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
+    %match(TomList list) {
+      emptyTomList() -> { return `emptyTomList();}
+      manyTomList(head,tail) -> {
+        return `manyTomList(metaEncodeXMLAppl(symbolTable,head),
+                            metaEncodeTermList(symbolTable,tail));
+      }
+    }
+    return list;
+  }
+
   public static TomTerm encodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
       /*
        * encode a String into a quoted-string
        * Appl(...,Name("string"),...) becomes
        * Appl(...,Name("\"string\""),...)
        */
-    if(term.isTermAppl()) {
-      TomName astName = term.getAstName();
-      if(astName.isName()) {
-        String tomName = encodeXMLString(symbolTable,astName.getString());
-        term = term.setAstName(tsf().makeTomName_Name(tomName));
-          //System.out.println("encodeXMLAppl = " + term);
+    NameList newNameList = `concTomName();
+    %match(TomTerm term) {
+      RecordAppl[nameList=(_*,Name(name),_*)] -> {
+        newNameList = (NameList)newNameList.append(`Name(encodeXMLString(symbolTable,name)));
       }
     }
-      return term;
+    term = term.setNameList(newNameList);
+      //System.out.println("encodeXMLAppl = " + term);
+    return term;
   }
 
   public static TomTerm metaEncodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
@@ -397,25 +415,17 @@ public class ASTFactory {
        * Appl(...,Name("\"string\""),...) becomes
        * Appl(...,Name("TextNode"),[Appl(...,Name("\"string\""),...)],...)
        */
-    if(term.isTermAppl()) {
-      TomName astName = term.getAstName();
-      if(astName.isName()) {
-        String tomName = astName.getString();
-        TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
+      //System.out.println("metaEncode: " + term);
+    %match(TomTerm term) {
+      RecordAppl[nameList=(Name(tomName))] -> {
+          //System.out.println("tomName = " + tomName);
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
-          TomType type = tomSymbol.getTypesToType().getCodomain();
-            //System.out.println("type = " + type);
-          if(type.isTomTypeAlone() && type.getString().equals("String")) {
-            Option info = makeOriginTracking(Constants.TEXT_NODE,-1,"??");
-            TomList list = tsf().makeTomList();
-            list = tsf().makeTomList(term,list);
-            NameList nameList = tsf().makeNameList();
-            nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.TEXT_NODE));
-            term = tsf().makeTomTerm_TermAppl(
-              makeOption(info),
-              nameList,
-              list,
-              tsf().makeConstraintList());
+          if(symbolTable.isStringType(TomBase.getTomType(TomBase.getSymbolCodomain(tomSymbol)))) {
+            Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,"unknown filename");
+            term = `RecordAppl(ASTFactory.makeOption(info),
+                               concTomName(Name(Constants.TEXT_NODE)),concSlot(PairSlotAppl(Name(Constants.SLOT_DATA),term)),
+                          ASTFactory.tsf().makeConstraintList());
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
@@ -424,8 +434,114 @@ public class ASTFactory {
     return term;
   }
 
-  public static String makeTomVariableName(String name) {
-    return "tom_" + name;
+  public static boolean isExplicitTermList(LinkedList childs) {
+    if(childs.size() == 1) {
+      TomTerm term = (TomTerm) childs.getFirst();
+      //System.out.println("isExplicitTermList: " + term);
+      %match(TomTerm term) {
+        RecordAppl[nameList=(Name(""))] -> { 
+          return true;
+        }
+        TermAppl[nameList=(Name(""))] -> { 
+          return true;
+        }
+      }
+    }
+    return false;
   }
   
+  public static LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
+    LinkedList list = new LinkedList();
+    %match(TomTerm term) {
+      RecordAppl[nameList=(Name("")),slots=args] -> {
+        while(!`args.isEmpty()) {
+          list.add(metaEncodeXMLAppl(symbolTable,`args.getHead().getAppl()));
+          `args = `args.getTail();
+        }
+        return list;
+      }
+
+      TermAppl[nameList=(Name("")),args=args] -> {
+        while(!`args.isEmpty()) {
+          list.add(metaEncodeXMLAppl(symbolTable,`args.getHead()));
+          `args = `args.getTail();
+        }
+        return list;
+      }
+    }
+		//System.out.println("metaEncodeExplicitTermList: strange case: " + term);
+		list.add(term);
+		return list;
+  }
+
+  public static TomTerm buildList(TomName name,TomList args) {
+    %match(TomList args) {
+      emptyTomList() -> {
+        return `BuildEmptyList(name);
+      }
+
+      manyTomList(head@VariableStar[],tail) -> {
+        TomTerm subList = buildList(name,`tail);
+        return `BuildAppendList(name,head,subList);
+      }
+      
+      manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
+        TomTerm subList = buildList(name,`tail);
+        return `BuildAppendList(name,head,subList);
+      }
+
+      manyTomList(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail) -> {
+        TomTerm subList = buildList(name,`tail);
+        return `BuildConsList(name,head,subList);
+      }
+
+      manyTomList(TargetLanguageToTomTerm[],tail) -> {
+        TomTerm subList = buildList(name,`tail);
+        return subList;
+      }
+
+    }
+
+    throw new TomRuntimeException("buildList strange term: " + args);
+     
+  }
+
+  public static TomTerm buildArray(TomName name,TomList args) {
+    return buildArray(name,(TomList)args.reverse(),0);
+  }
+
+  private static TomTerm buildArray(TomName name,TomList args, int size) {
+    %match(TomList args) {
+      emptyTomList() -> {
+        return `BuildEmptyArray(name,size);
+      }
+
+      manyTomList(head@VariableStar[],tail) -> {
+          /*System.out.println("head = " + head);*/
+        TomTerm subList = buildArray(name,`tail,size+1);
+        return `BuildAppendArray(name,head,subList);
+      }
+
+      manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
+          /*System.out.println("head = " + head);*/
+        TomTerm subList = buildArray(name,`tail,size+1);
+        return `BuildAppendArray(name,head,subList);
+      }
+
+      manyTomList(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail) -> {
+        TomTerm subList = buildArray(name,`tail,size+1);
+        return `BuildConsArray(name,head,subList);
+      }
+
+      manyTomList(TargetLanguageToTomTerm[],tail) -> {
+        TomTerm subList = buildArray(name,`tail,size);
+        return subList;
+      }
+
+    }
+
+    throw new TomRuntimeException("buildArray strange term: " + args);
+     
+  }
+
 }

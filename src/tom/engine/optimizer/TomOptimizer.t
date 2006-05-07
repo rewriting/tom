@@ -347,7 +347,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
             getLogger().log( Level.WARNING,
                 TomMessage.unusedVariable.getMessage(),
-                new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+                new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()),
                 `extractRealName(tomName)} );
             getLogger().log( Level.INFO,
                 TomMessage.remove.getMessage(),
@@ -391,7 +391,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
             getLogger().log( Level.WARNING,
                 TomMessage.unusedVariable.getMessage(),
-                new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+                new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()),
                 `extractRealName(tomName)} );
             getLogger().log( Level.INFO,
                 TomMessage.remove.getMessage(),

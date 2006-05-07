@@ -80,7 +80,7 @@ options{
     }
     
    private TomTerm buildBqAppl(Token id, LinkedList blockList, TomTerm term, boolean composite) {
-     OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),Name(currentFile())),ModuleName(DEFAULT_ MODULE_NAME));
+     OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),currentFile()),ModuleName(DEFAULT_ MODULE_NAME));
      TomList target = (term==null)?
        `emptyTomList():
        `concTomTerm(TargetLanguageToTomTerm(ITL(".")),term);
@@ -195,7 +195,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
            {LA(1) == BQ_STAR}? BQ_STAR
            {   
              String name = id.getText();
-             Option ot = `OriginTracking(Name(name), id.getLine(), Name(currentFile()));
+             Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
              result = `VariableStar(concOption(ot),Name(name),TomTypeAlone("unknown type"),concConstraint());  
            }
                 
@@ -212,7 +212,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
                    //System.out.println("targetCode = " + t);
                    addTargetCode(t);
                    String name = id.getText();
-                   OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), Name(currentFile())), ModuleName(DEFAULT_MODULE_NAME));
+                   OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
                    //result = `BackQuoteAppl(ol,Name(name),concTomTerm());
                    result = `Variable(ol,Name(name),TomTypeAlone("unknown type"),concConstraint());
                  }
@@ -240,7 +240,7 @@ bqTerm [TomList context] returns [TomTerm result]
             {LA(1) == BQ_STAR}? BQ_STAR
             {   
               String name = id.getText();
-              Option ot = `OriginTracking(Name(name), id.getLine(), Name(currentFile()));
+              Option ot = `OriginTracking(Name(name), id.getLine(), currentFile());
               result = `VariableStar(concOption(ot),Name(name),TomTypeAlone("unknown type"),concConstraint());      
             }
             
@@ -324,7 +324,7 @@ xmlAttributeStringOrVariable returns [TomTerm result]
      id:BQ_ID 
 		 {
        String name = id.getText();
-       OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), Name(currentFile())), ModuleName(DEFAULT_MODULE_NAME));
+       OptionList ol = `concOption(OriginTracking(Name(name), id.getLine(), currentFile()), ModuleName(DEFAULT_MODULE_NAME));
        result = `Variable(ol,Name(name),TomTypeAlone("unknown type"),concConstraint());
 		   //result = `TargetLanguageToTomTerm(ITL(id.getText())); 
 		 }

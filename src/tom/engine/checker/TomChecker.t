@@ -28,6 +28,7 @@ package tom.engine.checker;
 
 import java.text.MessageFormat;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tom.engine.TomMessage;
 import tom.engine.adt.tomsignature.types.Option;
@@ -46,24 +47,6 @@ abstract public class TomChecker extends TomGenericPlugin {
   %include { adt/tomsignature/TomSignature.tom }
     // ------------------------------------------------------------
   
-  static protected class TermDescription {
-    int termClass, decLine;
-    String name ="";
-    TomType tomType = null;
-    public TermDescription(int termClass, String name, int decLine, TomType tomType) {
-      this.termClass = termClass;
-      this.decLine = decLine;
-      this.name = name;
-      this.tomType = tomType;
-    }
-    public String type() {
-      if(tomType != null && !tomType.isEmptyType()) {
-        return tomType.getString();
-      } else {
-        return null;
-      }
-    }
-  }
     // Different kind of structures
   protected final static int TERM_APPL               = 0;
   protected final static int UNAMED_APPL             = 1;
@@ -154,7 +137,14 @@ abstract public class TomChecker extends TomGenericPlugin {
     return getTomType(type);
   }
   
-  protected int findOriginTrackingLine(OptionList optionList) {
+  protected static String findOriginTrackingFileName(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,OriginTracking[fileName=fileName],_*) -> { return `fileName; }
+    }
+    return "unknown filename";
+  }
+
+  protected static int findOriginTrackingLine(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,OriginTracking[line=line],_*) -> { return `line; }
     }
@@ -173,26 +163,20 @@ abstract public class TomChecker extends TomGenericPlugin {
   /**
    * Message Functions
    */
-  protected void messageError(int errorLine, TomMessage msg, Object[] msgArgs) {
-    String structName = currentTomStructureOrgTrack.getAstName().getString();
-    messageError(errorLine, structName, msg, msgArgs);
+  protected void messageError(String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
+    getLogger().log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
   }
   
-  protected void messageError(int errorLine, String structInfo, TomMessage msg, Object[] msgArgs) {
-    String fileName = currentTomStructureOrgTrack.getFileName().getString();
-    int structDeclLine = currentTomStructureOrgTrack.getLine();
-    getLogger().log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine, structDeclLine, structInfo));
+  protected void messageWarning(String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
+    getLogger().log(new PlatformLogRecord(Level.WARNING,msg,msgArgs,fileName, errorLine));
   }
   
-  protected void messageWarning(int errorLine, TomMessage msg, Object[] msgArgs) {
-    String structName = currentTomStructureOrgTrack.getAstName().getString();
-    messageWarning(errorLine, structName, msg, msgArgs);
+  public static void messageError(String className,String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
+    Logger.getLogger(className).log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
   }
   
-  protected void messageWarning(int errorLine, String structInfo, TomMessage msg, Object[] msgArgs) {
-    String fileName = currentTomStructureOrgTrack.getFileName().getString();
-    int structDeclLine = currentTomStructureOrgTrack.getLine();
-    getLogger().log(new PlatformLogRecord(Level.WARNING,msg,msgArgs,fileName, errorLine,structDeclLine,structInfo));
+  public static void messageWarning(String className,String fileName, int errorLine, TomMessage msg, Object[] msgArgs) {
+    Logger.getLogger(className).log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
   }
   
 }  //Class TomChecker

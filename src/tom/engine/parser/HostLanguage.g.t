@@ -390,11 +390,7 @@ strategyConstruct [LinkedList list] throws TomException
                 list.add(code);
             }
 
-            Option ot = `OriginTracking(
-                Name("Strategy"),
-                t.getLine(),
-                Name(currentFile)
-            );
+            Option ot = `OriginTracking( Name("Strategy"), t.getLine(), currentFile);
 
             // call the tomparser for the construct
             Declaration strategy = tomparser.strategyConstruct(ot);
@@ -422,11 +418,7 @@ ruleConstruct [LinkedList list] throws TomException
                 list.add(code);
             }
 
-            Option ot = `OriginTracking(
-                Name("Rule"),
-                t.getLine(),
-                Name(currentFile)
-            );
+            Option ot = `OriginTracking( Name("Rule"), t.getLine(), currentFile);
 
             // call the tomparser for the construct
             Declaration ruleSet = tomparser.ruleConstruct(ot);
@@ -451,7 +443,7 @@ matchConstruct [LinkedList list] throws TomException
                 list.add(code);
             }
 
-            Option ot = `OriginTracking(Name("Match"),t.getLine(), Name(currentFile));
+            Option ot = `OriginTracking(Name("Match"),t.getLine(), currentFile);
 
             Instruction match = tomparser.matchConstruct(ot);
             list.add(match);
@@ -626,7 +618,7 @@ backquoteTerm [LinkedList list]
             list.add(code);
           }
 
-          Option ot = `OriginTracking(Name("Backquote"),t.getLine(), Name(currentFile));
+          Option ot = `OriginTracking(Name("Backquote"),t.getLine(), currentFile);
           TomTerm bqTerm = bqparser.beginBackquote();
 
           // update position for new target block

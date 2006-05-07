@@ -37,7 +37,6 @@ import tom.engine.exception.TomRuntimeException;
 import tom.platform.adt.platformoption.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
@@ -510,7 +509,7 @@ public class TomBase {
     throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
   }
 
-  protected TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
+  protected static TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
     return symbolTable.getSymbolFromName(tomName);
   }
 

@@ -33,7 +33,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
-import tom.engine.tools.TomFactory;
 import tom.engine.tools.ASTFactory;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
@@ -408,9 +407,9 @@ public class TomExpander extends TomGenericPlugin {
 								return `BuildConstant(name);
 							} else if(tomSymbol != null) {
 								if(isListOperator(tomSymbol)) {
-									return TomFactory.buildList(`name,args);
+									return ASTFactory.buildList(`name,args);
 								} else if(isArrayOperator(tomSymbol)) {
-									return TomFactory.buildArray(`name,args);
+									return ASTFactory.buildArray(`name,args);
 								} else if(isDefinedSymbol(tomSymbol)) {
 									return `FunctionCall(name,args);
 								} else {
@@ -570,7 +569,7 @@ public class TomExpander extends TomGenericPlugin {
         }
 
         (_*,Name(name),_*) -> {
-          newNameList = (NameList)newNameList.append(`Name(TomFactory.encodeXMLString(symbolTable(),name)));
+          newNameList = (NameList)newNameList.append(`Name(ASTFactory.encodeXMLString(symbolTable(),name)));
         }
       }
     }

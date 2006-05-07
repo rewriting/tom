@@ -83,29 +83,9 @@ public abstract class TomAbstractGenerator extends TomBase {
     return subject;
   }
 
-  //Testing purpose : it will be necessary to rewrite it with strategies...
-  /*protected void collectMake(TomTerm subject) {
-   Collect1 collect = new Collect1() { 
-       public boolean apply(ATerm subject) {
-         if(subject instanceof TomTerm) {
-           %match(TomTerm subject) {
-             BuildTerm[] -> { 
-              System.out.println("Found Make : "+subject);
-              return false;
-             }
-           }
-         }
-         return true;
-       } // end apply
-     }; // end collect
-   // use a traversal to get all interesting subtrees
-   traversal.genericCollect(subject,collect);
- }
-*/
-
-    /*
-     * Generate the goal language     */
- 
+  /*
+   * Generate the goal language     
+   */
   protected void generate(int deep, TomTerm subject, String moduleName)throws IOException {
     %match(TomTerm subject) {
       
