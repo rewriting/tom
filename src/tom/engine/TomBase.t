@@ -56,7 +56,6 @@ public class TomBase {
 
  public final static String DEFAULT_MODULE_NAME = "default"; 
   
-  
   /** shortcut */
   protected static TomSignatureFactory tsf() {
 		return tom.engine.adt.tomsignature.TomSignatureFactory.getInstance(aterm.pure.SingletonFactory.getInstance());

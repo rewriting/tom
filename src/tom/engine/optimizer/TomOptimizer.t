@@ -146,7 +146,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
     if(getOptionBooleanValue("prettyPIL")) {
       PILFactory fact = new PILFactory();
-      System.out.println(fact.prettyPrintCompiledMatch(fact.reduce((TomTerm)getWorkingTerm())));
+      System.out.println(fact.prettyPrintCompiledMatch(fact.remove((TomTerm)getWorkingTerm())));
     }
 
   }

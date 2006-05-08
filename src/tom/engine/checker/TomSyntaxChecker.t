@@ -697,10 +697,16 @@ public class TomSyntaxChecker extends TomChecker {
     TermDescription termDesc = validateTerm(rhs, lhsType, isListOperator(symbol)||isArrayOperator(symbol), true, true);
     TomType rhsType = termDesc.getType();
     if(termClass == TERM_APPL && rhsType != lhsType) {
+        String rhsTypeName;
+        if(rhsType.isEmptyType()) {
+          rhsTypeName = "No Type Found";
+        } else {
+          rhsTypeName = rhsType.getString();
 			messageError(findOriginTrackingFileName(rhs.getOption()),
 					findOriginTrackingLine(rhs.getOption()),
 					TomMessage.incorrectRuleRHSType,
-					new Object[]{rhsType.getString(), lhsType.getString()});
+					new Object[]{rhsTypeName, lhsType.getString()});
+        }
 		}
 	}
 

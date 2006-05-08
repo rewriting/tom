@@ -32,14 +32,18 @@ import tom.engine.TomBase;
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.tools.TomGenericPlugin;
-import tom.library.traversal.Collect2;
-import tom.library.traversal.Replace1;
 import aterm.ATerm;
 import aterm.ATermList;
+
+import tom.library.strategy.mutraveler.MuTraveler;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
 public class PILFactory extends TomBase {
   
   %include{ adt/tomsignature/TomSignature.tom }
+  %include{ java/util/types/Collection.tom }
+  %include{ mutraveler.tom }
 
   /**
    * level specifies the level of details of the output
@@ -57,52 +61,49 @@ public class PILFactory extends TomBase {
     this.level = level;
   }
 
-  public TomTerm reduce(TomTerm subject) {
-    TomTerm res = subject;
-    res = remove(res);
-
-    return res;
+  public ATerm remove(ATerm subject) {
+   try {
+     return (ATerm) MuTraveler.init(`TopDown(replaceRemove())).visit(subject);
+   } catch(jjtraveler.VisitFailure e) {
+     System.out.println("strategy failed");
+   }
+   return subject;
   }
 
-  TomTerm remove(TomTerm subject) {
-    return (TomTerm) replace_remove.apply(subject);
+  public TomTerm remove(TomTerm subject) {
+   try {
+     return (TomTerm) MuTraveler.init(`TopDown(replaceRemove())).visit(subject);
+   } catch(jjtraveler.VisitFailure e) {
+     System.out.println("strategy failed");
+   }
+   return subject;
   }
 
- public ATerm remove(ATerm subject) {
-    return replace_remove.apply(subject);
-  }
-
-  Replace1 replace_remove = new Replace1() {
-      public ATerm apply(ATerm subject) {
+  %strategy replaceRemove() extends `Identity() {
+    visit OptionList {
         // removes options
-        if (subject instanceof OptionList) {
-          return `concOption();
-        } else if (subject instanceof Option) {
-          return `noOption();
-        } else if (subject instanceof TargetLanguage) {
-          // removes TargetLanguage
-          return `noTL();
-        } else if (subject instanceof TomType) {
-          // removes Type
-          %match(TomType subject) {
-            Type[] -> { return `EmptyType();}
-          }
-        } else if (subject instanceof Expression) {
-        // clean Expressions
-          %match(Expression subject) {
-            Cast[source=e]          -> { return this.apply(`e); }
-            Or[arg1=e,arg2=FalseTL()] -> { return this.apply(`e); }
-            EqualFunctionSymbol(type,t1,appl@RecordAppl[slots=concSlot(_,_*)]) -> {
-              return this.apply(`EqualFunctionSymbol(type,t1,appl.setSlots(concSlot())));
-            } 
-          }
-        }
-
-
-        /* Default case : Traversal */
-        return traversal().genericTraversal(subject,this);
-      }
-    };
+        _ -> { return `concOption(); }
+    }
+    visit Option {
+      _ -> { return `noOption(); }
+    }
+    visit TargetLanguage {
+      // removes TargetLanguage
+      _ -> { return `noTL(); }
+    }
+    visit TomType {
+      // removes Type
+      Type[] -> { return `EmptyType(); }
+    }
+    visit Expression {
+      // clean Expressions
+      Cast[source=e] -> { return (Expression) this.visit(`e); }
+      Or[arg1=e,arg2=FalseTL()] -> { return (Expression) this.visit(`e); }
+      EqualFunctionSymbol(type,t1,appl@RecordAppl[slots=concSlot(_,_*)]) -> {
+        return (Expression) this.visit(`EqualFunctionSymbol(type,t1,appl.setSlots(concSlot())));
+      } 
+    }
+  }
 
   public String prettyPrintCompiledMatch(ATerm subject) {
     StringBuffer res = new StringBuffer();
@@ -307,23 +308,21 @@ public class PILFactory extends TomBase {
 		return subject.toString();
 	}
 
-  private Collect2 collect_match = new Collect2() {
-      public boolean apply(ATerm subject, Object astore) {
-        Collection store = (Collection)astore;
-        if (subject instanceof Instruction) {
-          %match(Instruction subject) {
-            CompiledMatch[automataInst=_]  -> {
-              store.add(subject);
-            }
-          }
-        } 
-				return true; 
+  %strategy collectMatch(c:Collection) extends `Identity() {
+    visit Instruction {
+      m@CompiledMatch[automataInst=_]  -> {
+        c.add(`m);
       }
-    };
+    }
+  } 
   
   public Collection collectMatch(ATerm subject) {
     Collection result = new HashSet();
-    traversal().genericCollect(subject,collect_match,result);
+    try {
+      MuTraveler.init(`TopDown(collectMatch(result))).visit(subject);
+    } catch(jjtraveler.VisitFailure e) {
+      System.out.println("strategy failed");
+    }
     return result;
   }
 
