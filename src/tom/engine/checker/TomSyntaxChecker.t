@@ -34,7 +34,6 @@ import tom.engine.TomMessage;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.xml.Constants;
-import tom.library.traversal.Collect1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
@@ -697,21 +696,13 @@ public class TomSyntaxChecker extends TomChecker {
     TomType lhsType = getSymbolCodomain(symbol);
     TermDescription termDesc = validateTerm(rhs, lhsType, isListOperator(symbol)||isArrayOperator(symbol), true, true);
     TomType rhsType = termDesc.getType();
-    if(rhsType != null) {
-      if(rhsType != lhsType) {
-        String rhsTypeName;
-        if(rhsType.isEmptyType()) {
-          rhsTypeName = "No Type Found";
-        } else {
-          rhsTypeName = rhsType.getString();
-        }
-        messageError(findOriginTrackingFileName(rhs.getOption()),
-          findOriginTrackingLine(rhs.getOption()),
-            TomMessage.incorrectRuleRHSType,
-            new Object[]{rhsTypeName, lhsType.getString()});
-      }
-    }
-  }
+    if(termClass == TERM_APPL && rhsType != lhsType) {
+			messageError(findOriginTrackingFileName(rhs.getOption()),
+					findOriginTrackingLine(rhs.getOption()),
+					TomMessage.incorrectRuleRHSType,
+					new Object[]{rhsType.getString(), lhsType.getString()});
+		}
+	}
 
   /**
    * Analyse a term given an expected type and re-enter recursively on children

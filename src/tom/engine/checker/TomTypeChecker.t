@@ -36,10 +36,13 @@ import java.util.logging.Level;
 
 import tom.engine.TomMessage;
 import tom.engine.adt.tomsignature.types.*;
-import tom.library.traversal.Collect1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
+
+import tom.library.strategy.mutraveler.MuTraveler;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
 /**
  * The TomTypeChecker plugin.
@@ -47,6 +50,7 @@ import aterm.ATerm;
 public class TomTypeChecker extends TomChecker {
 
   %include { adt/tomsignature/TomSignature.tom }
+  %include { mutraveler.tom }
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noTypeCheck' altName='' description='Do not perform type checking' value='false'/></options>";
@@ -71,7 +75,11 @@ public class TomTypeChecker extends TomChecker {
         // clean up internals
         reinit();
         // perform analyse
-        checkTypeInference( (TomTerm)getWorkingTerm() );
+        try {
+          MuTraveler.init(`mu(MuVar("x"),Try(Sequence(checkTypeInference(this),All(MuVar("x")))))).visit((TomTerm)getWorkingTerm());
+        } catch(jjtraveler.VisitFailure e) {
+          System.out.println("strategy failed");
+        }
         // verbose
         getLogger().log( Level.INFO, TomMessage.tomTypeCheckingPhase.getMessage(),
                          new Integer((int)(System.currentTimeMillis()-startChrono)) );
@@ -94,57 +102,45 @@ public class TomTypeChecker extends TomChecker {
    * Main type checking entry point:
    * We check all Match and RuleSet instructions
    */
-  private void checkTypeInference(TomTerm expandedTerm) {
-    Collect1 collectAndVerify = new Collect1() {  
-      public boolean apply(ATerm term) {
-        %match(Instruction term) {
-          Match(_, patternInstructionList, oplist) -> {  
-            currentTomStructureOrgTrack = findOriginTracking(`oplist);
-            verifyMatchVariable(`patternInstructionList);
-            return false;
-          }
-        }
-        %match(Declaration term) {
-          Strategy(_,_,visitList,orgTrack) -> {
-            currentTomStructureOrgTrack = `orgTrack;
-            verifyStrategyVariable(`visitList);
-            return false;
-          }
-          RuleSet(list, optionList) -> {
-            currentTomStructureOrgTrack = findOriginTracking(`optionList);
-            verifyRuleVariable(`list);
-            return false;
-          }
-        }
-        return true;
-      }// end apply
-    }; // end new
-    traversal().genericCollect(expandedTerm, collectAndVerify);
-  } //checkTypeInference
+  %typeterm TomTypeChecker { implement { TomTypeChecker } }
+	%strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
+		visit Instruction {
+			Match(_, patternInstructionList, oplist) -> {  
+				ttc.currentTomStructureOrgTrack = ttc.findOriginTracking(`oplist);
+				ttc.verifyMatchVariable(`patternInstructionList);
+				`Fail().visit(null);
+			}
+		}
+		visit Declaration {
+			Strategy(_,_,visitList,orgTrack) -> {
+				ttc.currentTomStructureOrgTrack = `orgTrack;
+				ttc.verifyStrategyVariable(`visitList);
+				`Fail().visit(null);
+			}
+			RuleSet(list, optionList) -> {
+				ttc.currentTomStructureOrgTrack = ttc.findOriginTracking(`optionList);
+				ttc.verifyRuleVariable(`list);
+				`Fail().visit(null);
+			}
+		}
+	} //checkTypeInference
 
   /* 
    * Collect unknown (not in symbol table) appls without ()
    */
-  private void collectUnknownsAppls(ArrayList unknownsApplsInWhen, TomList guards) {
-    Collect1 collectAndVerify = new Collect1() {  
-        public boolean apply(ATerm term) {
-					%match(TomTerm term) {
-						app@TermAppl[] -> {
-							if((symbolTable().getSymbolFromName(getName(`app)))==null) {
-								messageError(findOriginTrackingFileName(`app.getOption()),
-                    findOriginTrackingLine(`app.getOption()),
-										TomMessage.unknownVariableInWhen,
-										new Object[]{getName(`app)});
-							}
-							// else, it's actually app()
-							// else, it's a unknown (ie : java) function
-							return true;
-						}
-          } 
-          return true;
-        }// end apply
-      }; // end new
-    traversal().genericCollect(guards, collectAndVerify);
+  %strategy collectUnknownsAppls(ttc:TomTypeChecker) extends `Identity() {
+    visit TomTerm {
+			app@TermAppl[] -> {
+				if(ttc.symbolTable().getSymbolFromName(ttc.getName(`app))==null) {
+					ttc.messageError(findOriginTrackingFileName(`app.getOption()),
+							findOriginTrackingLine(`app.getOption()),
+							TomMessage.unknownVariableInWhen,
+							new Object[]{ttc.getName(`app)});
+				}
+				// else, it's actually app()
+				// else, it's a unknown (ie : java) function
+			}
+		} 
   }
   
   private void verifyMatchVariable(PatternInstructionList patternInstructionList) {
@@ -156,10 +152,12 @@ public class TomTypeChecker extends TomChecker {
       collectVariable(variableList, pattern);
       verifyVariableTypeListCoherence(variableList);
       // verify variables in WHEN instruction
-      ArrayList unknownsApplsInWhen = new ArrayList();
       // collect unknown variables
-      collectUnknownsAppls(unknownsApplsInWhen, pattern.getGuards());
-      //System.out.println("vars in guard "+unknownsApplsInWhen);
+			try {
+				MuTraveler.init(`TopDown(collectUnknownsAppls(this))).visit(pattern.getGuards());
+			} catch(jjtraveler.VisitFailure e) {
+				System.out.println("strategy failed");
+			}
 
       patternInstructionList = patternInstructionList.getTail();
     }
