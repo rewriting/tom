@@ -279,11 +279,7 @@ public class Nsh {
   }
 
   public static int sizeMessage(ListMessage list) {
-    %match(ListMessage list) {
-        concMessage()     -> { return 0; }
-        concMessage(h,t*) -> { return 1+sizeMessage(`t*); }
-    }
-    return 0;
+    return ((nspk.term.types.listmessage.concMessage)list).length();
   }
   
   %typeterm Collection {
