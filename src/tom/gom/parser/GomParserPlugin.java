@@ -42,7 +42,7 @@ import antlr.TokenStreamSelector;
 
 /**
  * The responsability of the GomParser plugin is to parse the input Gom file
- * Get the input file from GomStreamManger and parse
+ * Get the input file from GomStreamManager and parse
  */
 public class GomParserPlugin extends GomGenericPlugin {
 
