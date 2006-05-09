@@ -64,15 +64,15 @@ public class TomBase {
   %include { adt/platformoption/PlatformOption.tom }
   
   private TomList empty;
-  private GenericTraversal traversal;
+  private static GenericTraversal traversal;
   
   public TomBase() {
     this.empty = tsf().makeTomList();
-    this.traversal = new GenericTraversal();
+    traversal = new GenericTraversal();
   }
 
-  public GenericTraversal traversal() {
-    return this.traversal;
+  public static GenericTraversal traversal() {
+    return traversal;
   }
   
   protected TomNumber makeNumber(int n) {
@@ -491,7 +491,7 @@ public class TomBase {
 
 
   // findOriginTracking(_) return the option containing OriginTracking information
-  protected Option findOriginTracking(OptionList optionList) {
+  protected static Option findOriginTracking(OptionList optionList) {
     if(optionList.isEmpty()) {
       return `noOption();
     }

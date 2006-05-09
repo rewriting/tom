@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomsignature.*;
@@ -41,10 +42,6 @@ import tom.engine.TomMessage;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.PILFactory;
 import tom.engine.tools.Tools;
-import tom.library.traversal.Collect1;
-import tom.library.traversal.Replace1;
-import tom.library.traversal.Replace2;
-import tom.library.traversal.Replace3;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
@@ -52,6 +49,7 @@ import aterm.*;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
+import tom.library.strategy.mutraveler.*;
 
 /**
  * The TomOptimizer plugin.
@@ -59,7 +57,9 @@ import jjtraveler.VisitFailure;
 public class TomOptimizer extends TomGenericPlugin {
 
   %include{ adt/tomsignature/TomSignature.tom }
-  %include{ mutraveler.tom }
+  %include{ mutraveler.tom}
+  %include{java/util/ArrayList.tom}
+  %include{java/util/HashSet.tom}
 
   /** some output suffixes */
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
@@ -77,47 +77,36 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  private VisitableVisitor normStrategy;
+  // this static field is necessary for %strategy instructions that generate static code
+  private static PILFactory factory = new PILFactory();
+  private static Logger logger = Logger.getLogger("tom.engine.optimizer.TomOptimizer");
 
   /** Constructor */
   public TomOptimizer() {
     super("TomOptimizer");
   }
-  
+
   public void run() {
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
       // Initialize strategies
-      
-      VisitableVisitor optRule1 = new RewriteSystem1();
-      VisitableVisitor optStrategy1 = `InnermostId(optRule1);
 
-      VisitableVisitor nopElimAndFlatten = new NopElimAndFlatten();
-      //nopElimAndFlatten = `RepeatId(nopElimAndFlatten);
-
-      VisitableVisitor ifSwapping = new IfSwapping();
-      VisitableVisitor blockFusion = new BlockFusion();
-      VisitableVisitor ifFusion = new IfFusion();
-      VisitableVisitor interBlock = new InterBlock();
-      VisitableVisitor normExpr = new NormExpr();
-
+      VisitableVisitor optStrategy1 = `InnermostId(RewriteSystem1());
 
       VisitableVisitor optStrategy2 = `Sequence(
-					InnermostId(ChoiceId(RepeatId((nopElimAndFlatten)),normExpr)),
-					InnermostId(
-						ChoiceId(
-							Sequence(RepeatId(ifSwapping), RepeatId(SequenceId(ChoiceId(blockFusion,ifFusion),OnceTopDownId(nopElimAndFlatten)))),
-							SequenceId(interBlock,OnceTopDownId(RepeatId(nopElimAndFlatten))))
-						)
-					);
-      normStrategy = `InnermostId(normExpr);
+          InnermostId(ChoiceId(RepeatId((NopElimAndFlatten())),NormExpr())),
+          InnermostId(
+            ChoiceId(
+              Sequence(RepeatId(IfSwapping()), RepeatId(SequenceId(ChoiceId(BlockFusion(),IfFusion()),OnceTopDownId(NopElimAndFlatten())))),
+              SequenceId(InterBlock(),OnceTopDownId(RepeatId(NopElimAndFlatten()))))
+            )
+          );
 
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
         TomTerm renamedTerm = (TomTerm)getWorkingTerm();
-      
+
         if(getOptionBooleanValue("optimize2")) {
-          //System.out.println(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
         }
 
@@ -127,26 +116,25 @@ public class TomOptimizer extends TomGenericPlugin {
         setWorkingTerm(renamedTerm);
 
         // verbose
-        getLogger().log(Level.INFO, TomMessage.tomOptimizationPhase.getMessage(),
+        logger.log(Level.INFO, TomMessage.tomOptimizationPhase.getMessage(),
             new Integer((int)(System.currentTimeMillis()-startChrono)) );
       } catch (Exception e) {
-        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-                         new Object[]{"TomOptimizer", getStreamManager().getInputFileName(), e.getMessage()} );
-        
+        logger.log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
+            new Object[]{"TomOptimizer", getStreamManager().getInputFileName(), e.getMessage()} );
+
         e.printStackTrace();
         return;
       }
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
-                             (ATerm)getWorkingTerm() );
+            (ATerm)getWorkingTerm() );
       }
     } else {
       // not active plugin
-      getLogger().log(Level.INFO, "The optimizer is not activated and thus WILL NOT RUN.");
+      logger.log(Level.INFO, "The optimizer is not activated and thus WILL NOT RUN.");
     }
     if(getOptionBooleanValue("prettyPIL")) {
-      PILFactory fact = new PILFactory();
-      System.out.println(fact.prettyPrintCompiledMatch(fact.remove((TomTerm)getWorkingTerm())));
+      System.out.println(factory.prettyPrintCompiledMatch(factory.remove((TomTerm)getWorkingTerm())));
     }
 
   }
@@ -155,7 +143,7 @@ public class TomOptimizer extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(TomOptimizer.DECLARED_OPTIONS);
   }
 
-  private String extractRealName(String name) {
+  private static String extractRealName(String name) {
     if(name.startsWith("tom_")) {
       return name.substring(4);
     }
@@ -163,193 +151,139 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
 
-  /* 
-   * inline:
-   * replace a variable instantiation by its content in the body
-   */
-
-  Replace3 replace_inline = new Replace3() {
-      public ATerm apply(ATerm subject, Object arg1, Object arg2) {
-        TomTerm variable = (TomTerm) arg1;
-        TomName variableName = variable.getAstName();
-        Expression expression = (Expression) arg2;
-        %match(TomTerm subject) {
-          (Variable|VariableStar)[astName=name] -> {
-            if(variableName == `name) {
-              return `ExpressionToTomTerm(expression);
-            }
-          }
-        } // end match
-
-          /*
-           * Defaul case: traversal
-           */
-        return traversal().genericTraversal(subject,this,arg1,arg2);
-      } // end apply
-    };
-
-  public Instruction inlineInstruction(TomTerm variable, Expression expression, Instruction subject) {
-    return (Instruction) replace_inline.apply(subject,variable,expression); 
+  %op VisitableVisitor inlineInstruction(variableName:TomName, expression:Expression){
+    make(variableName, expression) {`TopDown(inlineInstrOnce(variableName,expression))}
   }
 
-  private List computeOccurences(final TomName variableName, ATerm subject) {
-    final List list = new ArrayList();
-    Collect1 collect = new Collect1() { 
-        public boolean apply(ATerm t) {
-          %match(Instruction t) { 
-            TypedAction[astInstruction=ast] -> {
-              traversal().genericCollect(`ast, this);
-              return false;
-            }
-          }
-          %match(TomTerm t) { 
-            (Variable|VariableStar)[astName=name] -> {
-              if(variableName == `name) {
-                list.add(t);
-                return false;
-              }
-            }
-          }
-          return true;
-        } // end apply
-      }; // end new
-    
-    traversal().genericCollect(subject, collect);
-    return list;
+  %strategy inlineInstrOnce(variableName:TomName, expression:Expression) extends `Identity(){
+    visit TomTerm { 
+      (Variable|VariableStar)[astName=name] -> {
+        if(variableName == `name) {
+          return `ExpressionToTomTerm(expression);
+        }
+      }
+    }
   }
 
-  private boolean isAssigned(final TomName variableName, ATerm subject) {
-    final List list = new ArrayList();
-    Collect1 collect = new Collect1() { 
-        public boolean apply(ATerm t) {
-
-          //System.out.println("isAssigned(" + variableName + "): " + t);
-          %match(Instruction t) {
-            Assign[variable=(Variable|VariableStar)[astName=name]] -> {
-              if(variableName == `name) {
-                list.add(t);
-                return false;
-              }
-            }
-
-            LetAssign[variable=(Variable|VariableStar)[astName=name]] -> {
-              if(variableName == `name) {
-                list.add(t);
-                return false;
-              }
-            }
-          }
-          return true;
-        } // end apply
-      }; // end new
-    
-    traversal().genericCollect(subject, collect);
-    return list.size() > 0;
+  %op VisitableVisitor computeOccurences(variableName:TomName, list:ArrayList){
+    make(variableName, list) {`TopDown(findOccurence(variableName,list))}
   }
 
-  private boolean expConstantInBody(Expression exp, Instruction body) {
-    boolean res = true;
+  %strategy findOccurence(variableName:TomName, list:ArrayList) extends `Identity(){
+    visit TomTerm{ 
+      t@(Variable|VariableStar)[astName=name] -> {
+        if(variableName == `name) {
+          list.add(`t);
+        }
+      }
+    }
+  }
+
+  %op VisitableVisitor isAssigned(variableName:TomName){
+    make(variableName) {`TopDown(findAssignment(variableName))}
+  }
+
+
+  %strategy findAssignment(variableName:TomName) extends `Identity(){
+    visit Instruction {
+      Assign[variable=(Variable|VariableStar)[astName=name]] -> {
+        if(variableName == `name) {
+          throw new VisitFailure();
+        }
+      }
+
+      LetAssign[variable=(Variable|VariableStar)[astName=name]] -> {
+        if(variableName == `name) {
+          throw new VisitFailure();
+        }
+      }
+    }
+  }
+
+  private static boolean expConstantInBody(Expression exp, Instruction body) {
     HashSet c = new HashSet();
-    collectRefVariable(c,exp);
+    try{
+      MuTraveler.init(`collectRefVariable(c)).visit(exp);
+    }catch(VisitFailure e){
+      logger.log( Level.SEVERE, "Error during collecting variables in "+exp);
+    }
     Iterator it = c.iterator();
-
-    //System.out.println("exp  = " + exp);
-    //System.out.println("body = " + body);
-    while(res && it.hasNext()) {
+    while(it.hasNext()) {
       TomName name = (TomName) it.next();
-      //List list = computeOccurences(name,body);
-      //res = res && (list.size()==0);
-      //System.out.println("Ref variable: " + name);
-      res = res && !isAssigned(name,body);
-      //System.out.println(" assign = " + !res);
-
+      try{
+        MuTraveler.init(`isAssigned(name)).visit(body);
+      }catch(VisitFailure e){return false;}
     }
-    return res; 
+    return true; 
   }
 
-  protected void collectRefVariable(final Collection collection, ATerm subject) {
-    Collect1 collect = new Collect1() { 
-        public boolean apply(ATerm t) {
-          // System.out.println("t = " + t);
-          %match(TomTerm t) {
-            Ref((Variable|VariableStar)[astName=name])  -> {
-              collection.add(`name);
-              return false;
-            }
-          }
-          return true;
-        } // end apply
-      }; // end new
-    
-    traversal().genericCollect(subject, collect);
-  }
-
-  /* 
-   * rename variable1 into variable2
-   */
-  public Instruction renameVariable(TomTerm variable1, TomTerm variable2, Instruction subject) {
-    return (Instruction) rename_variable.apply(subject,variable1,variable2); 
-  }
-
-  Replace3 rename_variable = new Replace3() {
-      public ATerm apply(ATerm subject, Object arg1, Object arg2) {
-        TomName variableName = ((TomTerm) arg1).getAstName();
-        TomName newVariableName = ((TomTerm) arg2).getAstName();
-        %match(TomTerm subject) {
-          var@(Variable|VariableStar)[astName=astName] -> {
-            if(variableName == `astName) {
-              return `var.setAstName(newVariableName);
-            }
-          }
-        } // end match
-
-          /*
-           * Defaul case: traversal
-           */
-        return traversal().genericTraversal(subject,this,arg1,arg2);
-      } // end apply
-    };
-
-  public boolean compare (ATerm term1, ATerm term2){
-    PILFactory factory = new PILFactory();
-    return factory.remove(term1)==factory.remove(term2);
-  }
-  
-  public class RewriteSystem1 extends TomSignatureVisitableFwd {
-
-    public RewriteSystem1() {
-      super(new tom.library.strategy.mutraveler.Identity());
+  // use VisitFailure to stop visiting subterms 
+  %op VisitableVisitor collectRefVariable(set:HashSet){
+    make(set) {`mu(MuVar("x"),Try(Sequence(findRefVariable(set),All(MuVar("x")))))}
     }
 
-    public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure{
+    %strategy findRefVariable(set: HashSet) extends `Identity(){
+      visit TomTerm {
+        Ref((Variable|VariableStar)[astName=name])  -> {
+          set.add(`name);
+          //stop to visit this branch (like "return false" with traversal) 
+          throw new VisitFailure();
+        }
+      }
+    }
 
-      %match(TomTerm subject) {
+    /* 
+     * rename variable1 into variable2
+     */
+
+    %op VisitableVisitor renameVariable(variable1: TomName, variable2: TomName){
+      make(variable1,variable2) {`TopDown(renameVariableOnce(variable1,variable2))}
+    }
+
+    %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends `Identity() {
+      visit TomTerm{
+        var@(Variable|VariableStar)[astName=astName] -> {
+          if(variable1 == `astName) {
+            return `var.setAstName(variable2);
+          }
+        }
+      } // end match
+    }
+
+
+    private static boolean compare (ATerm term1, ATerm term2){
+      return factory.remove(term1)==factory.remove(term2);
+    }
+
+    %strategy RewriteSystem1() extends `Identity() {
+      visit TomTerm {
         ExpressionToTomTerm(TomTermToExpression(t)) -> {
           return `t;
         }
       }
-      %match(Expression subject) {
+      visit Expression {
         TomTermToExpression(ExpressionToTomTerm(t)) -> {
           return `t;
         }
       }
-      %match(Instruction subject) {
+      visit Instruction {
 
         /*
          * 
          * LetRef x where x is used 0 or 1 ==> eliminate
          */
         (LetRef|LetAssign)(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
-          List list  = computeOccurences(`name,`body);
+          ArrayList list  = new ArrayList();
+          MuTraveler.init(`computeOccurences(name,list)).visit(`body);
           int mult = list.size();
           if(mult == 0) {
             Option orgTrack = findOriginTracking(`var.getOption());
 
-            getLogger().log( Level.WARNING,
+            logger.log( Level.WARNING,
                 TomMessage.unusedVariable.getMessage(),
                 new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()),
                 `extractRealName(tomName)} );
-            getLogger().log( Level.INFO,
+            logger.log( Level.INFO,
                 TomMessage.remove.getMessage(),
                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
@@ -358,20 +292,20 @@ public class TomOptimizer extends TomGenericPlugin {
           } else if(mult == 1) {
             if(expConstantInBody(`exp,`body)) {
 
-              getLogger().log( Level.INFO,
+              logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
-              return inlineInstruction(`var,`exp,`body);
+              return (Instruction) (MuTraveler.init(`inlineInstruction(name,exp)).visit(`body));
             } else {
-              getLogger().log( Level.INFO,
+              logger.log( Level.INFO,
                   TomMessage.noInline.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(tomName) });
             }
 
           } else {
-            /* do nothing: traversal */
-            getLogger().log( Level.INFO,
+            /* do nothing: traversal() */
+            logger.log( Level.INFO,
                 TomMessage.doNothing.getMessage(),
                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
           }
@@ -383,246 +317,157 @@ public class TomOptimizer extends TomGenericPlugin {
         } 
 
         Let(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
-          List list  = computeOccurences(`name,`body);
+          ArrayList list  = new ArrayList();
+          MuTraveler.init(`computeOccurences(name,list)).visit(`body);
           int mult = list.size();
 
           if(mult == 0) {
             Option orgTrack = findOriginTracking(`var.getOption());
 
-            getLogger().log( Level.WARNING,
+            logger.log( Level.WARNING,
                 TomMessage.unusedVariable.getMessage(),
                 new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()),
                 `extractRealName(tomName)} );
-            getLogger().log( Level.INFO,
+            logger.log( Level.INFO,
                 TomMessage.remove.getMessage(),
                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
             return `body; 
           } else if(mult == 1) {
             if(expConstantInBody(`exp,`body)) {
-              getLogger().log( Level.INFO,
+              logger.log( Level.INFO,
                   TomMessage.inline.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(tomName) });
-              return inlineInstruction(`var,`exp,`body);
+              return (Instruction) (MuTraveler.init(`inlineInstruction(name,exp)).visit(`body));
             } else {
-              getLogger().log( Level.INFO,
+              logger.log( Level.INFO,
                   TomMessage.noInline.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(tomName) });
             }
           } else {
-            /* do nothing: traversal */
-            getLogger().log( Level.INFO,
+            /* do nothing: traversal() */
+            logger.log( Level.INFO,
                 TomMessage.doNothing.getMessage(),
                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
           }
         }
 
       } // end match
-      /*
-       * Defaul case: traversal
-       */
-      return subject;
     }      
-      
-  }
 
-  public class BaseId extends TomSignatureVisitableFwd {
-    public BaseId() {
-      super(new tom.library.strategy.mutraveler.Identity());
-    }
-  }
+    %strategy NopElimAndFlatten() extends `Identity() {
+      visit Instruction {
 
-  public class NopElimAndFlatten extends BaseId {
-    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
-      throws jjtraveler.VisitFailure{
-      %match(Instruction subject) {
-        
         AbstractBlock(concInstruction(C1*,AbstractBlock(L1),C2*)) -> {
-          getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                        "flatten");     
+          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+              "flatten");     
           return `AbstractBlock(concInstruction(C1*,L1*,C2*));
         }
 
         AbstractBlock(concInstruction(C1*,Nop(),C2*)) -> {
-          getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                        "nop-elim");     
+          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+              "nop-elim");     
           return `AbstractBlock(concInstruction(C1*,C2*));
         }  
 
         AbstractBlock(concInstruction()) -> {
-           getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                        "abstractblock-elim1");     
+          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+              "abstractblock-elim1");     
           return `Nop();
         } 
 
         AbstractBlock(concInstruction(i)) -> {
-           getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                        "abstractblock-elim2");     
+          logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+              "abstractblock-elim2");     
           return `i;
         }
+      }      
 
-        
-        /*
-        AbstractBlock(l@concInstruction(_*)) -> {
-          System.out.println("flatten/nop");
-          InstructionList res = flatten(`l);
-          if(res.isEmpty()) {
-            return `Nop();
-          } else {
-            return `AbstractBlock(res);
-          }
-        } 
-        */
-      }
-      // Defaul case: traversal
-      return subject;
-    }      
-
-    private InstructionList flatten(InstructionList list) {
-      %match(InstructionList list) {
-        emptyInstructionList() -> { 
-          return list;
-        }
-        
-        manyInstructionList(head, tail) -> {
-          %match(Instruction head) {
-            Nop() -> { 
-              return flatten(`tail);
-            }
-            AbstractBlock(l) -> {
-              return (InstructionList) flatten(`l).concat(`tail);
-            }
-            _ -> {return `manyInstructionList(head,flatten(tail));}
-          }
-
-        }
-      }
-      return list;
     }
 
-  }
+    %strategy IfSwapping() extends `Identity() {
 
-  public class IfSwapping extends BaseId {
-    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
-      throws jjtraveler.VisitFailure{
-
-      PILFactory factory = new PILFactory(); 
-      //System.out.println(factory.prettyPrint(factory.remove(subject)));
-
-      /*
-      %match(Instruction subject) {
-        AbstractBlock(concInstruction(L*)) -> {
-          System.out.println(factory.prettyPrint(factory.remove(subject)));
-          System.out.println(`L);
-        }
-      }
-      */
-
-      %match(Instruction subject) {
+      visit Instruction {
         AbstractBlock(concInstruction(X1*,I1@If(cond1,_,Nop()),I2@If(cond2,_,Nop()),X2*)) -> {
           String s1 = factory.prettyPrint(factory.remove(`cond1));
           String s2 = factory.prettyPrint(factory.remove(`cond2));
-          //System.out.println("s1 = " + s1);
-          //System.out.println("s2 = " + s2);
-          //System.out.println("cmp = " + s1.compareTo(s2));
-          
+
           if(s1.compareTo(s2) < 0) {
-            Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
+            Expression compatible = (Expression) `InnermostId(NormExpr()).visit(`And(cond1,cond2));
             if(compatible==`FalseTL()) {
-                        getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                        new Object[]{"if-swapping"});     
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                  new Object[]{"if-swapping"});     
               return `AbstractBlock(concInstruction(X1*,I2,I1,X2*));
             }
           }
         }
       }
-      // Defaul case: traversal
-      return subject;
     }      
-  }
 
-  public class BlockFusion extends BaseId {
-    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
-      throws jjtraveler.VisitFailure{
-      %match(Instruction subject) {
-        AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar)[astName=name],term1,body1),Let(var2,term2,body2),X2*)) -> {
+    %strategy BlockFusion() extends `Identity() {
+      visit Instruction {
+        AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar)[astName=name1],term1,body1),Let(var2@(Variable|VariableStar)[astName=name2],term2,body2),X2*)) -> {
           /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
           if(`compare(term1,term2)) {
             if(`compare(var1,var2)) {
-                        getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                        new Object[]{"block-fusion1"});     
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                  new Object[]{"block-fusion1"});     
               return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,body2))),X2*));
             } else {
-              List list  = computeOccurences(`name,`body2);
+              ArrayList list  = new ArrayList();
+              `computeOccurences(name1,list).visit(`body2);
               int mult = list.size();
               if(mult==0){
-                         getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                         new Object[]{"block-fusion2"});     
-                /*
-                 * TODO: check that var1 does not appear in body2
-                 */
-                return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,renameVariable(var2,var1,body2)))),X2*));
+                logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                    new Object[]{"block-fusion2"});    
+                Instruction newBody2 =  (Instruction)(MuTraveler.init(`renameVariable(name2,name1)).visit(`body2));
+                return `AbstractBlock(concInstruction(X1*,Let(var1,term1,AbstractBlock(concInstruction(body1,newBody2))),X2*));
               }
             }
           }
         }
       }
-      // Defaul case: traversal
-      return subject;
     }      
-  }
 
-  public class IfFusion extends BaseId {
-    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
-      throws jjtraveler.VisitFailure{
-      %match(Instruction subject) {
+    %strategy IfFusion() extends `Identity() {
+      visit Instruction {
         AbstractBlock(concInstruction(X1*,If(cond1,success1,failure1),If(cond2,success2,failure2),X2*)) -> {
           /* Fusion de 2 blocs If gardes par la meme condition */
           if(`compare(cond1,cond2)) {
             if(`failure1.isNop() && `failure2.isNop()) {
-        getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                        new Object[]{"if-fusion1"});
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                  new Object[]{"if-fusion1"});
               Instruction res = `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),Nop()),X2*));
               //System.out.println(res);
 
               return res;
             } else {
-         getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                       new Object[]{ "if-fusion2"});
+              logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                  new Object[]{ "if-fusion2"});
               return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));
             }
           }
         }
       }
-      // Defaul case: traversal
-      return subject;
-    }      
-  }
+    }
 
-  public class InterBlock extends BaseId {
-    public tom.engine.adt.tomsignature.types.Instruction visit_Instruction(tom.engine.adt.tomsignature.types.Instruction subject)
-      throws jjtraveler.VisitFailure{
-
-      %match(Instruction subject) {
+    %strategy InterBlock() extends `Identity(){
+      visit Instruction {
         /* on entrelace deux blocs incompatibles */
         AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),If(cond2,suc2,Nop()),X2*)) -> {
-          Expression compatible = (Expression) normStrategy.visit(`And(cond1,cond2));
+          Expression compatible = (Expression) `InnermostId(NormExpr()).visit(`And(cond1,cond2));
           if(compatible==`FalseTL()) {
-          getLogger().log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
-                        new Object[]{"inter-block"});
+            logger.log( Level.INFO, TomMessage.tomOptimizationType.getMessage(),
+                new Object[]{"inter-block"});
             return `AbstractBlock(concInstruction(X1*,If(cond1,suc1,AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
-          }
-        }  
-      }
-       // Defaul case: traversal
-      return subject;
-    }      
-  }
 
-  public class NormExpr extends BaseId {
-    public tom.engine.adt.tomsignature.types.Expression visit_Expression(tom.engine.adt.tomsignature.types.Expression subject) 
-      throws jjtraveler.VisitFailure {
-      %match(Expression subject) {
+          }  
+        }
+      }      
+    }
+
+    %strategy NormExpr() extends `Identity() {
+      visit Expression {
         Or(_,TrueTL()) -> {
           return `TrueTL();
         }
@@ -660,17 +505,12 @@ public class TomOptimizer extends TomGenericPlugin {
           if (`exp1.getNameList()==`exp2.getNameList()){
             return `EqualFunctionSymbol(astType,exp,exp1);
           } else if(l1.getLength()==1 && l2.getLength()==1) {
-              return `FalseTL();
+            return `FalseTL();
           } else {
             return `ref;
           }
         }
       } 
-      
-      // Defaul case: traversal
-      return subject;
-    }      
-      
-  }
+    }
 
-} // class TomOptimizer
+  } // class TomOptimizer

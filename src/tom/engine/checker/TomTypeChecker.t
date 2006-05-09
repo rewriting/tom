@@ -106,7 +106,7 @@ public class TomTypeChecker extends TomChecker {
 	%strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
 		visit Instruction {
 			Match(_, patternInstructionList, oplist) -> {  
-				ttc.currentTomStructureOrgTrack = ttc.findOriginTracking(`oplist);
+				ttc.currentTomStructureOrgTrack = findOriginTracking(`oplist);
 				ttc.verifyMatchVariable(`patternInstructionList);
 				`Fail().visit(null);
 			}
@@ -118,7 +118,7 @@ public class TomTypeChecker extends TomChecker {
 				`Fail().visit(null);
 			}
 			RuleSet(list, optionList) -> {
-				ttc.currentTomStructureOrgTrack = ttc.findOriginTracking(`optionList);
+				ttc.currentTomStructureOrgTrack = findOriginTracking(`optionList);
 				ttc.verifyRuleVariable(`list);
 				`Fail().visit(null);
 			}
