@@ -54,13 +54,13 @@ public class Tools {
 //    System.out.println("\nRunning Matching3: \n");
 //    Matching test3 = new Matching3();
 //    tools.run(test3,args[2]);
-    System.out.println("\nRunning Matching4: \n");
-    Matching test4 = new Matching4();
-    tools.run(test4,args[0]);
+//    System.out.println("\nRunning Matching4: \n");
+//    Matching test4 = new Matching4();
+//    tools.run(test4,args[0]);
 //    System.out.println("\nRunning MatchingDifferences: \n");
 //    Matching test5 = new MatchingDifferences();
 //    tools.run(test5,args[3]);
-	  System.out.println("\nRunning ApAndDisunification1: \n");
+	  System.out.println("\nRunning anti-patterns with disunification: \n");
 	  Matching test6 = new ApAndDisunification1();
 	  tools.run(test6,args[0]);
   }
@@ -83,14 +83,14 @@ public class Tools {
 	        ATerm at = SingletonFactory.getInstance().parse(s);	        
 	        Constraint c = atermToConstraint(at);
           Collection solution = new HashSet();
-	        System.out.println(s);
+	        System.out.println(formatConstraint(c));
 //	        if (match instanceof Matching4) {
 //	        	Constraint reversedPattern = ((Matching4)match).checkReverse(c,solution);	        	
 //	        	System.out.println(" !!!!--> " + reversedPattern);
 //	        }
 	        Constraint simplifiedConstraint = match.simplifyAndSolve(c,solution);
 	        System.out.println(" --> " + simplifiedConstraint);
-          if(simplifiedConstraint == `True()) {
+          if(simplifiedConstraint == `True() && !solution.isEmpty()) {
             System.out.println(" sol = " + solution);
           }
 	      }
@@ -100,8 +100,8 @@ public class Tools {
 		System.exit(0);
     }
 
-  }  
-
+  }    
+  
   private Term atermToTerm(ATerm at) {
     if(at instanceof ATermAppl) {
       ATermAppl appl = (ATermAppl) at;
@@ -192,6 +192,99 @@ public class Tools {
 
     throw new RuntimeException("error on: " + at);
   }  
+  
+  public String formatConstraint(Constraint c){
+		
+		%match(Constraint c) {
+			True() -> {
+				return "T";	
+			}
+			False() ->{
+				return "F";
+			}
+			Neg(cons) ->{
+				return "Neg(" + formatConstraint(`cons) + ")";
+			}
+			And(concAnd(x,Z*)) ->{
+				
+				AConstraintList l = `Z*;
+				String result = formatConstraint(`x);
+				
+				while(!l.isEmptyconcAnd()){
+					result ="(" + result + " and " + formatConstraint(l.getHeadconcAnd()) +")";
+					l = l.getTailconcAnd();
+				}
+				
+				return result; 
+			}
+			Or(concOr(x,Z*)) ->{
+				
+				OConstraintList l = `Z*;
+				String result = formatConstraint(`x);
+				
+				while(!l.isEmptyconcOr()){
+					result ="(" + result + " or " + formatConstraint(l.getHeadconcOr()) + ")";
+					l = l.getTailconcOr();
+				}
+				
+				return result; 
+			}
+			Equal(pattern, subject) ->{
+				return formatTerm(`pattern) + "=" + formatTerm(`subject); 
+			}
+			NEqual(pattern, subject) ->{
+				return formatTerm(`pattern) + "!=" + formatTerm(`subject); 
+			}
+			Exists(Variable(name),cons) -> {
+				return "exists " + `name + ", ( " + formatConstraint(`cons) + " ) "; 
+			}			
+			ForAll(Variable(name),cons) -> {				
+				return "for all " + `name + ", ( " + formatConstraint(`cons) + " ) ";				
+			}
+			Match(pattern, subject) ->{
+				return formatTerm(`pattern) + " << " + formatTerm(`subject); 
+			}
+		}
+		
+		return c.toString();
+	}
+	
+	public String formatTerm(Term t){
+		
+		%match(Term t){
+			Variable(name) ->{
+				return `name;
+			}
+			Appl(name, concTerm())->{
+				return `name;
+			}
+			Anti(apl@Appl(_,_))->{
+				return "!" + formatTerm(`apl);
+			}
+			Anti(name)->{
+				return "!" + `name;
+			}
+			GenericGroundTerm(name) ->{
+				return `name;
+			}
+			Appl(name, concTerm(x,Z*)) ->{
+				
+				TermList l = `Z*;
+				String result = formatTerm(`x);
+				
+				while(!l.isEmptyconcTerm()){
+					result = result + "," + formatTerm(l.getHeadconcTerm());
+					l = l.getTailconcTerm();
+				}
+				
+				return `name + "(" + result + ")"; 
+			}
+			
+		}
+		
+		return t.toString();
+	}
+
  
 }
 

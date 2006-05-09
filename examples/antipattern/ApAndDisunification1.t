@@ -50,6 +50,7 @@ public class ApAndDisunification1 implements Matching{
 	%include{ term/Term.tom }
 	
 	public static int varCounter = 0;
+	public Tools tools = new Tools();
 	
 	public Constraint simplifyAndSolve(Constraint c,Collection solution) {
 		
@@ -107,9 +108,9 @@ public class ApAndDisunification1 implements Matching{
 		}
 		
 //		System.out.println("Final result: " + formatConstraint(compiledConstraint));
-		System.out.println("Final result solved: " + formatConstraint(solvedConstraint));
+//		System.out.println("Final result solved: " + formatConstraint(solvedConstraint));
 		
-		return compiledConstraint;		
+		return solvedConstraint;		
 	}
 	
 	// applies the main rule that transforms ap problems
@@ -126,9 +127,9 @@ public class ApAndDisunification1 implements Matching{
 		Constraint cAntiReplaced =  (Constraint) MuTraveler.init(`OnceTopDownId(ApplyStrategy(ReplaceAnti()))).visit(c);
 		
 		// recursive call to itself
-		return `And(concAnd(applyMainRule(Exists(Variable("v" + ApAndDisunification1.varCounter),
-				cAntiReplaced)),
-				Neg(applyMainRule(cNoAnti))));
+		return `And(concAnd(applyMainRule(
+					Exists(Variable("v" + ApAndDisunification1.varCounter),cAntiReplaced)),
+						Neg(applyMainRule(cNoAnti))));
 		
 	}
 	
@@ -408,22 +409,7 @@ public class ApAndDisunification1 implements Matching{
 				l = `concOr(NEqual(Appl(name,concTerm()),SymbolOf(g)),l*);
 				
 				return `Or(l);
-			}		
-			
-			
-//			// associativity for AND and OR
-//			And(concAnd(X*,Or(orList),Y*)) ->{
-//			
-//			ConstraintList orTerms = `orList;
-//			ConstraintList l = `concConstraint();
-//			
-//			while(!orTerms.isEmptyconcConstraint()) {
-//			l = `concConstraint(And(concAnd(X*,Y*,orTerms.getHeadconcConstraint())),l*);
-//			orTerms = orTerms.getTailconcConstraint();
-//			}
-//			
-//			return `Or(l);
-//			}
+			}
 			
 		} // end visit
 	} // end strategy
@@ -542,90 +528,6 @@ public class ApAndDisunification1 implements Matching{
 				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
 			}
 		}
-	}
-	
-	private String formatConstraint(Constraint c){
-		
-		%match(Constraint c) {
-			True() -> {
-				return "T";	
-			}
-			False() ->{
-				return "F";
-			}
-			Neg(cons) ->{
-				return "Neg(" + formatConstraint(`cons) + ")";
-			}
-			And(concAnd(x,Z*)) ->{
-				
-				AConstraintList l = `Z*;
-				String result = formatConstraint(`x);
-				
-				while(!l.isEmptyconcAnd()){
-					result ="(" + result + " and " + formatConstraint(l.getHeadconcAnd()) +")";
-					l = l.getTailconcAnd();
-				}
-				
-				return result; 
-			}
-			Or(concOr(x,Z*)) ->{
-				
-				OConstraintList l = `Z*;
-				String result = formatConstraint(`x);
-				
-				while(!l.isEmptyconcOr()){
-					result ="(" + result + " or " + formatConstraint(l.getHeadconcOr()) + ")";
-					l = l.getTailconcOr();
-				}
-				
-				return result; 
-			}
-			Equal(pattern, subject) ->{
-				return formatTerm(`pattern) + "=" + formatTerm(`subject); 
-			}
-			NEqual(pattern, subject) ->{
-				return formatTerm(`pattern) + "!=" + formatTerm(`subject); 
-			}
-			Exists(Variable(name),cons) -> {
-				return "exists " + `name + ", ( " + formatConstraint(`cons) + " ) "; 
-			}			
-			ForAll(Variable(name),cons) -> {				
-				return "for all " + `name + ", ( " + formatConstraint(`cons) + " ) ";				
-			}
-		}
-		
-		return c.toString();
-	}
-	
-	private String formatTerm(Term t){
-		
-		%match(Term t){
-			Variable(name) ->{
-				return `name;
-			}
-			Appl(name, concTerm())->{
-				return `name;
-			}	     
-			GenericGroundTerm(name) ->{
-				return `name;
-			}		
-		}
-		
-		return t.toString();
-	}
-	
-//	private boolean notContainsVar(Term a, Constraint constr) {
-//	
-//	//TODO - replace with a strategy
-//	%match(Term a, Constraint constr){
-//	Variable(vname),c ->{
-//	return !c.toString().contains(`vname);
-//	}
-//	}
-//	
-//	return true;
-//	}
-	
-	
+	}	
 	
 } // end class
