@@ -7,8 +7,10 @@ GomClass = VisitableFwdClass(className:ClassName,fwd:GomClass)
          | AbstractTypeClass(className:ClassName,visitor:ClassName,sortList:ClassNameList)
          | SortClass(className:ClassName,abstractType:ClassName,visitor:ClassName,forward:ClassName,operators:ClassNameList,slots:SlotFieldList)
          | OperatorClass(className:ClassName,abstractType:ClassName,mapping:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList,hooks:HookList)
-         | VariadicOperatorClass(className:ClassName,abstractType:ClassName,mapping:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList,empty:ClassName,operator:String,hooks:HookList)
-
+         | VariadicOperatorClass(className:ClassName,
+                                 abstractType:ClassName,
+                                 sortName:ClassName,
+                                 empty:ClassName,cons:GomClass)
          | VisitorClass(className:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList)
          | FwdClass(className:ClassName,visitor:ClassName,importedVisitors:ClassNameList,abstractType:ClassName,importedAbstractTypes:ClassNameList,sortClasses:GomClassList,operatorClasses:GomClassList)
          | TomMapping(className:ClassName,basicStrategy:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList)

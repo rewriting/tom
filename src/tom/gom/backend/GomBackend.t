@@ -123,15 +123,24 @@ public class GomBackend {
         sort.generateFile();
         return 1;
       }
-      (OperatorClass|VariadicOperatorClass)[className=className,
-                                            abstractType=abstracttype,
-                                            mapping=mapping,
-                                            sortName=sort,
-                                            visitor=visitorName,
-                                            slots=slots,
-                                            hooks=hooks] -> {
+      OperatorClass[className=className,
+                    abstractType=abstracttype,
+                    mapping=mapping,
+                    sortName=sort,
+                    visitor=visitorName,
+                    slots=slots,
+                    hooks=hooks] -> {
         GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
         TemplateClass operator = templatefactory.makeOperatorTemplate(`className,`abstracttype,`sort,`visitorName,`slots,`hooks,getMappingTemplate(mappingClass));
+        operator.generateFile();
+        return 1;
+      }
+      VariadicOperatorClass[className=className,
+                            abstractType=abstracttype,
+                            sortName=sort,
+                            empty=empty,
+                            cons=cons] -> {
+        TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(`className,`abstracttype,`sort,`empty,`cons);
         operator.generateFile();
         return 1;
       }

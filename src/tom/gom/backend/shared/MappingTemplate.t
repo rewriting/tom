@@ -78,10 +78,9 @@ public class MappingTemplate extends TemplateClass {
     // generate a %op for each operator
     %match(GomClassList operatorClasses) {
       concGomClass(_*,
-          (OperatorClass|VariadicOperatorClass)[
-          className=opName,
-          sortName=sortName,
-          slots=slotList],
+          OperatorClass[className=opName,
+                        sortName=sortName,
+                        slots=slotList],
           _*) -> {
         out.append("%op "+className(`sortName)+" "+className(`opName)+"("+slotDecl(`slotList)+") {\n");
         out.append("  is_fsym(t) { (t!=null) && t."+isOperatorMethod(`opName)+"() }\n");
@@ -100,18 +99,21 @@ public class MappingTemplate extends TemplateClass {
     // generate a %oplist for each variadic operator
     %match(GomClassList operatorClasses) {
       concGomClass(_*,
-          VariadicOperatorClass[
-          className=opName,
-          sortName=sortName,
-          slots=concSlotField(head@SlotField[domain=headDomain],tail),
-          empty=emptyClass,
-          operator=operatorName],
+          VariadicOperatorClass[className=opName,
+                                sortName=sortName,
+                                empty=emptyClass,
+                                cons=OperatorClass[className=concClass,
+                                                   slots=concSlotField(
+                                                           head@SlotField[domain=headDomain],
+                                                           tail)
+                                                   ]
+                                ],
           _*) -> {
         out.append(%[
-%oplist @className(`sortName)@ @`operatorName@(@className(`headDomain)@*) {
-  is_fsym(t) { t instanceof @fullClassName(`opName)@ || t instanceof @fullClassName(`emptyClass)@ }
+%oplist @className(`sortName)@ @className(`opName)@(@className(`headDomain)@*) {
+  is_fsym(t) { t instanceof @fullClassName(`concClass)@ || t instanceof @fullClassName(`emptyClass)@ }
   make_empty() { @fullClassName(`emptyClass)@.make() }
-  make_insert(e,l) { @fullClassName(`opName)@.make(e,l) }
+  make_insert(e,l) { @fullClassName(`concClass)@.make(e,l) }
   get_head(l) { l.@getMethod(`head)@() }
   get_tail(l) { l.@getMethod(`tail)@() }
   is_empty(l) { l.@isOperatorMethod(`emptyClass)@() }

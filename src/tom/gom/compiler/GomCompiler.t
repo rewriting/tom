@@ -133,6 +133,7 @@ public class GomCompiler {
               String sortNamePackage = `sortName.toLowerCase();
               ClassName operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
               SlotFieldList slots = `concSlotField();
+              ClassName variadicOpClassName = null;
               ClassName empty = null;
               %match(TypedProduction typedproduction) {
                 Variadic[sort=domain] -> {
@@ -143,13 +144,11 @@ public class GomCompiler {
                   allSortSlots.add(`slotTail);
                   slots = `concSlotField(slotHead,slotTail);
                   // as the operator is variadic, add a Cons and an Empty
+                  variadicOpClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
                   empty = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Empty"+opname);
                   operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Cons"+opname);
 
                   allOperators = `concClassName(empty,allOperators*);
-                  GomClass emptyClass = `OperatorClass(empty,abstracttypeName,mappingName,sortClassName,visitorName,concSlotField(),concHook());
-                  classForOperatorDecl.put(`opdecl,emptyClass);
-                  classList = `concGomClass(emptyClass,classList*);
                 }
                 Slots(concSlot(_*,Slot[name=slotname,sort=domain],_*)) -> {
                   ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
@@ -161,17 +160,34 @@ public class GomCompiler {
               GomClass operatorClass;
               allOperators = `concClassName(operatorClassName,allOperators*);
               HookList operatorHooks = makeHooksFromHookDecls(`hookList);
-              if (empty!= null) { // We just processed a variadic operator
-                operatorClass = `VariadicOperatorClass(operatorClassName,
+              if (variadicOpClassName != null) { // We just processed a variadic operator
+                GomClass cons = `OperatorClass(operatorClassName,
+                                               variadicOpClassName,
+                                               mappingName,
+                                               sortClassName,
+                                               visitorName, slots,
+                                               operatorHooks);
+                classForOperatorDecl.put(`opdecl,cons);
+                classList = `concGomClass(cons,classList*);
+
+                GomClass emptyClass = `OperatorClass(empty,
+                                                     variadicOpClassName,
+                                                     mappingName,
+                                                     sortClassName,
+                                                     visitorName,
+                                                     concSlotField(),
+                                                     concHook());
+                classForOperatorDecl.put(`opdecl,emptyClass);
+                classList = `concGomClass(emptyClass,classList*);
+
+                operatorClass = `VariadicOperatorClass(variadicOpClassName ,
                                                        abstracttypeName,
-                                                       mappingName,
                                                        sortClassName,
-                                                       visitorName,
-                                                       slots,empty,opname,
-                                                       operatorHooks);
+                                                       empty,
+                                                       cons);
               } else {
                 operatorClass = `OperatorClass(operatorClassName,
-                                               abstracttypeName,
+                                               sortClassName,
                                                mappingName,
                                                sortClassName,
                                                visitorName,slots,
