@@ -32,7 +32,7 @@ import tom.gom.adt.gom.types.*;
 public class Main {
   public static void main(String[] args) throws FileNotFoundException {
     if (args[0].equals("block")) {
-      // we will test the block parsr on System.in
+      // we will test the block parser on System.in
       runBlockParser();
       return;
     }
