@@ -54,7 +54,7 @@ public class ApAndDisunification1 implements Matching{
 	
 	private int antiCounter = 0;
 	
-	private ArrayList cunatifiedVarList = new ArrayList();
+	private ArrayList quantifiedVarList = new ArrayList();
 	
 	public Constraint simplifyAndSolve(Constraint c,Collection solution) {
 		
@@ -75,7 +75,7 @@ public class ApAndDisunification1 implements Matching{
 		// eliminate anti
 		Constraint noAnti = null;;
 		try{
-			noAnti = applyMainRule2(transformedMatch);
+			noAnti = applyMainRule(transformedMatch);
 		}catch(VisitFailure e){
 			System.out.println("1. reduction failed on: " + transformedMatch);
 			e.printStackTrace();
@@ -117,45 +117,11 @@ public class ApAndDisunification1 implements Matching{
 //		System.out.println("egalitate:" + (`Variable("a") == `Variable("a")));
 		
 		return solvedConstraint;		
-	}
+	}	
 	
 	// applies the main rule that transforms ap problems
 	// into dis-unification ones
 	public Constraint applyMainRule(Constraint c) throws VisitFailure{
-		
-		// first get the constraint without the anti
-		Constraint cNoAnti =  (Constraint) MuTraveler.init(`OnceTopDownId(ApplyStrategy(OnceTopDownId(ElimAnti())))).visit(c);
-		// if nothing changed, time to exit
-		if (cNoAnti == c){
-			return c;
-		}
-		// get the constraint with a variable instead of anti
-		Constraint cAntiReplaced =  (Constraint) MuTraveler.init(`OnceTopDownId(ApplyStrategy(OnceTopDownId(ReplaceAnti())))).visit(c);
-		
-		cunatifiedVarList.clear();
-		
-		MuTraveler.init(`OnceTopDownId(ApplyStrategySpecial())).visit(cNoAnti);
-		
-		Iterator it = cunatifiedVarList.iterator();
-		while(it.hasNext()){
-			Term t = (Term)it.next();
-			cNoAnti = `Exists(t,cNoAnti);
-		}
-		
-	//	System.out.println("antiCounter=" + antiCounter + " cNoAnti=" + tools.formatConstraint(cNoAnti));
-		
-		// recursive call to itself
-		return `And(concAnd(applyMainRule(
-					Exists(Variable("v" + ApAndDisunification1.varCounter),cAntiReplaced)),
-						Neg(applyMainRule(cNoAnti))));
-		
-	}
-	
-	
-	// the difference with the method on top is that 
-	// 1. it is does not consider qunatificators as part of the context
-	// 2. it replaces only the variables from "q", not from the entire constraint	
-	public Constraint applyMainRule2(Constraint c) throws VisitFailure{
 		
 		Term pattern = null;
 		Term subject = null;
@@ -177,19 +143,19 @@ public class ApAndDisunification1 implements Matching{
 		Constraint cAntiReplaced =  `Equal((Term) MuTraveler.init(OnceTopDownId(ReplaceAnti())).visit(pattern),subject);
 		
 		cAntiReplaced = `Exists(Variable("v" + ApAndDisunification1.varCounter),
-				applyMainRule2(cAntiReplaced));
+				applyMainRule(cAntiReplaced));
 		
-		cNoAnti = applyMainRule2(cNoAnti);
+		cNoAnti = applyMainRule(cNoAnti);
 		
 //		System.out.println("Asta e 'c':" + tools.formatConstraint(c));
 		
 		cNoAnti = `Neg(cNoAnti);
 		
-		cunatifiedVarList.clear();
+		quantifiedVarList.clear();
 		
-		MuTraveler.init(`OnceTopDownId(ApplyStrategySpecial2())).visit(c);
+		MuTraveler.init(`OnceTopDownId(ApplyStrategy())).visit(c);
 		
-		Iterator it = cunatifiedVarList.iterator();
+		Iterator it = quantifiedVarList.iterator();
 		while(it.hasNext()){
 			Term t = (Term)it.next();
 			cNoAnti = `ForAll(t,cNoAnti);
@@ -221,12 +187,13 @@ public class ApAndDisunification1 implements Matching{
 //				System.out.println("After analyzing counter=" + antiCounter);
 				// if no anti-symbol found, than the variable can be quantified
 				if (antiCounter == 0) {
-					cunatifiedVarList.add(`v);
+					quantifiedVarList.add(`v);
 				}
 			}
 		}		
 	}
 	
+	// counts the anti symbols 
 	%strategy CountAnti() extends `Identity(){
 		visit Term {
 			Anti(_) -> {
@@ -236,8 +203,7 @@ public class ApAndDisunification1 implements Matching{
 	}
 	
 	// returns a term without the first negation that it finds
-	%strategy ElimAnti() extends `Identity(){
-		
+	%strategy ElimAnti() extends `Identity(){		
 		visit Term {		 
 			Anti(p) -> {
 				return `p;
@@ -257,29 +223,9 @@ public class ApAndDisunification1 implements Matching{
 		}
 	}
 	
-	%strategy ApplyStrategy(vv:VisitableVisitor) extends `Identity(){
-		
-		visit Constraint {
-			// main rule
-			Equal(p,s) -> {
-				Term t = (Term)MuTraveler.init(vv).visit(`p);
-				return `Equal(t,s);
-			}
-		}
-	}
-	
-	%strategy ApplyStrategySpecial() extends `Identity(){
-		
-		visit Constraint {
-			// main rule
-			Equal(p,s) -> {
-				Term t = (Term)MuTraveler.init(`InnermostId(AnalyzeTerm(p))).visit(`p);
-				return `Equal(t,s);
-			}
-		}
-	}
-	
-	%strategy ApplyStrategySpecial2() extends `Identity(){
+	// the strategy that handles the variables inside an anti
+	// symbol for beeing qunatified 
+	%strategy ApplyStrategy() extends `Identity(){
 		
 		visit Term {
 			// main rule
@@ -291,6 +237,8 @@ public class ApAndDisunification1 implements Matching{
 		}
 	}
 	
+	// applies symple logic rules for eliiminating 
+	// the not and thus creating a real disunification problem
 	%strategy TransformIntoDisunification() extends `Identity(){
 		
 		visit Constraint {
@@ -360,12 +308,11 @@ public class ApAndDisunification1 implements Matching{
 			Exists(Variable(a),NEqual(Variable(a),_)) ->{				
 				return `True();
 			}
-			Exists(Variable(name),constr)->{
+			Exists(v@Variable(name),constr)->{
 				// eliminates the quantificator when the
 				// constraint does not contains the variable
 				
-				// TODO - replace with a strategy
-				if ( `constr.toString().indexOf(`name) == -1 ) {
+				if (!tools.containsVariable(`constr,`v)){				
 					return `constr;
 				}
 				
@@ -376,12 +323,11 @@ public class ApAndDisunification1 implements Matching{
 			ForAll(Variable(a),NEqual(Variable(a),_)) ->{
 				return `False();
 			}
-			ForAll(Variable(name),constr)->{
+			ForAll(v@Variable(_),constr)->{
 				// eliminates the quantificator when the
 				// constraint does not contains the variable
 				
-				// TODO - replace with a strategy
-				if ( `constr.toString().indexOf(`name) == -1 ) {
+				if (!tools.containsVariable(`constr,`v)){
 					return `constr;
 				}				
 			}
@@ -390,19 +336,7 @@ public class ApAndDisunification1 implements Matching{
 			
 			// distribution of exists/forall in and and or - allows
 			// simplification with the rules above
-//			Exists(v@Variable(var),And(list)) ->{
-//				
-//				AConstraintList l = `list;
-//				AConstraintList result = `concAnd();
-//				
-//				while(!l.isEmptyconcAnd()){
-//					result = `concAnd(Exists(v,l.getHeadconcAnd()),result*);
-//					l = l.getTailconcAnd();
-//				}
-//				
-//				return `And(result);
-//			}
-			e@Exists(v@Variable(var),And(list)) ->{
+			e@Exists(v@Variable(_),And(list)) ->{
 				
 				AConstraintList l = `list;
 				AConstraintList result = `concAnd();
@@ -414,7 +348,7 @@ public class ApAndDisunification1 implements Matching{
 					
 					// if the c doesn't contain the variable, we 
 					// can put it outside the expresion that is quantified					
-					if ( c.toString().indexOf(`var) == -1 ) {
+					if ( !tools.containsVariable(`c,`v) ) {
 						result = `concAnd(Exists(v,c),result*);
 					}else{
 						result1 = `concAnd(c,result1*);
@@ -460,20 +394,8 @@ public class ApAndDisunification1 implements Matching{
 				
 				return `And(result);
 			}			
-//			ForAll(v@Variable(var),Or(list)) ->{
-//				
-//				OConstraintList l = `list;
-//				OConstraintList result = `concOr();
-//				
-//				while(!l.isEmptyconcOr()){
-//					result = `concOr(ForAll(v,l.getHeadconcOr()),result*);
-//					l = l.getTailconcOr();
-//				}
-//				
-//				return `Or(result);
-//			}
 
-			f@ForAll(v@Variable(var),Or(list)) ->{
+			f@ForAll(v@Variable(_),Or(list)) ->{
 			
 				OConstraintList l = `list;
 				OConstraintList result = `concOr();
@@ -485,7 +407,7 @@ public class ApAndDisunification1 implements Matching{
 					
 					// if the c doesn't contain the variable, we 
 					// can put it outside the expresion that is quantified					
-					if ( c.toString().indexOf(`var) == -1 ) {					
+					if ( !tools.containsVariable(`c,`v) ) {					
 						result = `concOr(ForAll(v,c),result*);
 					}else{
 						result1 = `concOr(c,result1*);
@@ -760,5 +682,5 @@ public class ApAndDisunification1 implements Matching{
 			}
 		}
 	}	
-	
+		
 } // end class

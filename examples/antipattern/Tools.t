@@ -38,9 +38,16 @@ import java.util.*;
 import antipattern.term.*;
 import antipattern.term.types.*;
 
+import tom.library.strategy.mutraveler.MuTraveler;
+
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
+
+
 public class Tools {
 
   %include{ term/Term.tom }
+  %include{ mutraveler.tom }	
   %include{ atermmapping.tom }
 
   public static void main(String[] args) {
@@ -89,7 +96,7 @@ public class Tools {
 //	        	System.out.println(" !!!!--> " + reversedPattern);
 //	        }
 	        Constraint simplifiedConstraint = match.simplifyAndSolve(c,solution);
-	        System.out.println(" --> " + simplifiedConstraint);
+	        System.out.println(" --> " + formatConstraint(simplifiedConstraint));
           if(simplifiedConstraint == `True() && !solution.isEmpty()) {
             System.out.println(" sol = " + solution);
           }
@@ -284,6 +291,46 @@ public class Tools {
 		
 		return t.toString();
 	}
+	
+    private boolean foundVariable = false;
+	
+	public boolean containsVariable(Constraint c, Term v){
+		
+		foundVariable = false;
+		
+		try{		
+			MuTraveler.init(`InnermostId(ConstraintContainsVariable(v))).visit(c);
+		}catch(VisitFailure e){
+			throw new RuntimeException("VisitFailure occured:" + e);
+		}
+		
+		return foundVariable;
+	}
+	
+	%strategy ConstraintContainsVariable(v:Term) extends `Identity(){
+		
+		visit Constraint {
+			Equal(p,_) ->{
+				MuTraveler.init(`InnermostId(TermContainsVariable(v))).visit(`p);
+			}
+			NEqual(p,_) ->{
+				MuTraveler.init(`InnermostId(TermContainsVariable(v))).visit(`p);
+			}
+		}
+	}
+	
+	%strategy TermContainsVariable(v:Term) extends `Identity(){
+		
+		visit Term {
+			var@Variable(_) ->{
+				
+				if (`var == v){					
+					foundVariable = true;
+				}
+			}
+		}
+	}
+
 
  
 }
