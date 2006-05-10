@@ -52,10 +52,10 @@ public class Pom {
       if (args[i].equals("--destdir")) {
         destdir = args[i+1];
       }
-      if (args[i].equals("--packagename")) {
+      if (args[i].equals("--package")) {
         packagename = args[i+1];
       }
-      if (args[i].equals("--parsername")) {
+      if (args[i].equals("--parser")) {
         parsername = args[i+1];
       }
     }

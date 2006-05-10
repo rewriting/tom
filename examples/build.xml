@@ -600,7 +600,7 @@
     </tomantlr>
     <pom srcfile="${examples.gen}/${parsingtests}/SeqParserTokenTypes.txt"
       destdir="${parsingtests}"
-      packagename="${parsingtests}">
+      package="${parsingtests}">
     </pom>
     <tomantlr target="${examples.gen}/${parsingtests}/SeqWalker.g"
               outputdirectory="${examples.gen}/${parsingtests}">
