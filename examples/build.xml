@@ -556,7 +556,7 @@
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <pom srcfile="${examples.gen}/${pom}/SeqParserTokenTypes.txt"
-         destdir="${examples.gen}/${pom}"
+         destdir="${examples.gen}"
          package="${pom}">
     </pom>
     <javacompile example="${pom}"/>
