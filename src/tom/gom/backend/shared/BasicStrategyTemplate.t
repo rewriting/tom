@@ -53,7 +53,7 @@ import tom.library.strategy.mutraveler.reflective.MuStrategy;
 
   public Position getPosition() {
     if(hasPosition()) {
-      return position;
+      return (Position) position.clone();
     } else {
       throw new RuntimeException("position not initialized");
     }
