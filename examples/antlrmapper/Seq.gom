@@ -1,0 +1,48 @@
+module Seq
+imports String int
+abstract syntax
+
+Node = node(type:String, text:String, line:int, column:int, children:ListNode)
+
+ListNode = concNode(Node*)
+
+RuleR = negd()
+      | disjd()
+      | impd()
+      | negg()
+      | conjg()
+      | disjg()
+      | conjd()
+      | impg()
+      | axiom()
+      | rulename(name:String)
+
+Pred  = EmptyP()
+      | A()
+      | B()
+      | C()
+      | D()
+      | P()
+      | Q()
+      | E()
+      | pred(name:String)
+      | equiv(left:Pred,right:Pred)
+      | impl(left:Pred,right:Pred)
+      | vee(left:Pred,right:Pred)
+      | wedge(left:Pred,right:Pred)
+      | neg(p:Pred)
+      | mark(p:Pred)
+
+Trace = rappl(rule:RuleR,subject:Sequent,prod:ListSequent)
+Proof = hyp(seq:Sequent)
+      | rule(rule:RuleR,goal:Sequent,lemm:ListProof)
+ListProof = concProof(Proof*)
+
+Sequent = PROOF()
+        | end()
+        | seq(left:ListPred,right:ListPred)
+ListPred = concPred(Pred*)
+ListSequent = concSequent(Sequent*)
+
+Pair = pair(left:int,right:String)
+ListPair = concPair(Pair*)
