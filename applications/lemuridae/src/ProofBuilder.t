@@ -2,10 +2,10 @@ import sequents.*;
 import sequents.types.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.Position;
 import jjtraveler.VisitFailure;
 import jjtraveler.reflective.VisitableVisitor;
 
-import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Map;
@@ -22,6 +22,7 @@ public class ProofBuilder {
   %include { sequents/sequents.tom }
   %include { mutraveler.tom }
   %include { string.tom }
+  %include { util/LinkedList.tom }
 
   %strategy AddInContexts(ctx:Context) extends `Identity() {
     visit Sequent {
@@ -42,26 +43,22 @@ public class ProofBuilder {
 
 
     // recuperage de la table des symboles
-    HashMap tds = Unification.match(conclusion, active);
+    HashMap<String,Term> tds = Unification.match(conclusion, active);
     if (tds == null) throw new Exception("active formula and rule conclusion don't match");
 
 
     // renommage des variables
-    Set entries = tds.entrySet();
-    Iterator it = entries.iterator();
-    while( it.hasNext() ) {
-      Map.Entry ent = (Map.Entry) it.next();
-      Term old_term = `Var((String) ent.getKey());
-      Term new_term = (Term) ent.getValue();
+    Set<Map.Entry<String,Term>> entries= tds.entrySet();
+    for (Map.Entry<String,Term> ent: entries) {
+      Term old_term = `Var(ent.getKey());
+      Term new_term = ent.getValue();
       res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term); 
     }
 
 
     // creation des variables fraiches
-    Set fresh = Utils.getSideConstraints(rule.getprem());
-    it = fresh.iterator();
-    while( it.hasNext() ) {
-      Term fvar = (Term) it.next();
+    Set<Term> fresh = Utils.getSideConstraints(rule.getprem());
+    for (Term fvar : fresh) {
       String bname = fvar.getbase_name();
       Term new_var = Utils.freshVar(bname, seq);
       res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
@@ -182,12 +179,12 @@ b: {
     %match(Sequent seq) {
       sequent((_*,x,_*),x) -> { return `concSeq(); }
     }
-    throw new Exception("can't apply rule axiom");
+    throw new Exception("this is not an axiom");
   }
   
   // Bottom
 
-  public static SeqList applyBottomL(Sequent seq) throws Exception {
+  public static SeqList applyBottom(Sequent seq) throws Exception {
     %match(Sequent seq) {
       sequent((_*,bottom(),_*),_) -> {
         return `concSeq();
@@ -245,12 +242,11 @@ b: {
     }
 
 
-  // User interaction 
+  /* --- User interaction  --- */
  
   SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
   SeqParser parser = new SeqParser(lexer);
   SeqTreeParser walker = new SeqTreeParser();
-  LinkedList new_rules = new LinkedList();
  
   private String prettyGoal(ArrayList hyp, Prop concl, int focus) {
     String res = "";
@@ -265,8 +261,8 @@ b: {
     return res;
   }
 
-  private ArrayList getHypothesis(Sequent seq) {
-    ArrayList res = new ArrayList();
+  private ArrayList<Prop> getHypothesis(Sequent seq) {
+    ArrayList<Prop> res = new ArrayList<Prop>();
     Context ctxt = seq.geth();
     %match (Context ctxt) {
       (_*, p, _*) -> {
@@ -274,6 +270,306 @@ b: {
       }
     }
     return res;
+  }
+
+
+  %strategy getOpenPositions(list:LinkedList) extends `Identity() {
+    visit Tree {
+      rule[name="open"] -> {
+        list.add(MuTraveler.getPosition(this));
+      }
+    }
+  }
+
+  private Sequent getSequentByPosition(Tree tree, Position pos) {
+    Tree res = null;
+    try {res = (Tree) MuTraveler.init(pos.getSubterm()).visit(tree); }
+    catch (VisitFailure e) { e.printStackTrace(); }
+    return res.getc();
+  }
+
+  // builds the proof by manipulating a tree
+  private Tree buildProofTree(Sequent goal) {
+
+    // initialisations
+    Tree tree = `rule("open", premisses(), goal, goal.getc()); 
+    LinkedList<Position> openGoals = new LinkedList<Position>(); 
+    try { MuTraveler.init(`TopDown(getOpenPositions(openGoals))).visit(tree); }
+    catch (VisitFailure e) { e.printStackTrace(); }
+
+    int focus = 0;
+    int currentGoal = 0;
+
+    // main loop
+    while(openGoals.size() > 0) {
+      // printing open goals
+      System.out.println("Open goals : ");
+      %match(LinkedList openGoals) {
+        (_*,p,_*) -> {
+          Position pos = (Position) `p;
+          System.out.println("\t"+PrettyPrinter.prettyPrint(getSequentByPosition(tree, pos)));
+        }
+      }
+
+      // " + openGoals.size() + ", currentGoal = " + currentGoalgets current goal
+      Position currentPos = openGoals.get(currentGoal);
+      goal = getSequentByPosition(tree, currentPos);
+
+      // pritty prints the current goal 
+      ArrayList<Prop> hyp = getHypothesis(goal);
+      Prop concl = goal.getc();
+      System.out.println("\n" + prettyGoal(hyp, concl, focus) + "\n");
+
+      System.out.print("proof> ");
+      String command = Utils.getInput();
+
+      /* begin of the big switch */
+      if (command.equals("next")) {
+        currentGoal = (currentGoal+1 ) % openGoals.size();
+      }
+
+      if (command.equals("display")) {
+        try { PrettyPrinter.display(tree); }
+        catch (Exception e) { System.out.println("display failed : " + e); }
+      }
+
+
+      else if (command.startsWith("focus")) {
+        int n;
+        try { n = Integer.parseInt(command.substring(5).trim()); }
+        catch (NumberFormatException e) { continue; }
+        if (n <= hyp.size()) 
+          focus = n;
+      }
+
+      /* ask for possible rules */
+      else if (command.equals("rules?")) {
+        Prop active = (focus == 0) ? concl : (Prop) hyp.get(focus-1);
+        for(int i=0; i<newRules.size(); i++) {
+          Rule rule = newRules.get(i);
+          Prop conclusion = rule.getconcl();
+          HashMap<String,Term> tds = Unification.match(conclusion, active);
+          int rule_hs = rule.geths();
+
+          // same side condition
+          if (tds != null && ((rule_hs==0 && focus >0) || (rule_hs==1 && focus==0))) 
+          {
+            System.out.println("\n- rule " + i + " :\n");
+            System.out.println(PrettyPrinter.prettyRule(rule));
+          }
+        } // for
+        System.out.println();
+      }
+
+
+      /* applying one of the custom rules */
+      else if (command.startsWith("rule")) {
+        int n;
+        try { n = Integer.parseInt(command.substring(4).trim()); }
+        catch (NumberFormatException e) { continue; }
+        if (n < newRules.size()) {
+          // TODO verify hand side
+          try {
+            Rule rule = newRules.get(n);
+            Prop active = (focus == 0) ? concl : (Prop) hyp.get(focus-1);
+            SeqList slist = applyRule(rule, goal, active);
+
+
+            // create open leafs
+            Premisses prems = `premisses();
+            %match(SeqList slist) {
+              (_*,s,_*) -> { prems = `premisses(prems*, rule("open", premisses(), s, s.getc())) ;}
+            }
+
+            // get new tree
+            Tree newrule = `rule("rule\\ " + n, prems, goal, active);
+            tree = (Tree) MuTraveler.init(currentPos.getReplace(newrule)).visit(tree); 
+
+            // get open positions
+            openGoals.remove(currentPos);
+            MuTraveler.init(currentPos.getOmega(`TopDown(getOpenPositions(openGoals)))).visit(tree);
+            currentGoal = openGoals.size()-1;
+
+          } catch (Exception e) {
+            System.out.println("Can't apply custom rule "+n+": " + e.getMessage());
+          }
+        }
+      }
+
+
+
+
+      /* All classical rules */
+      else if (command.startsWith("elim")) {
+
+        // list of the new premisses after applying a rule
+        SeqList slist = null;  
+
+        Prop active = null;
+        String ruleName = null;
+        boolean applied = false;
+
+        try {
+          // breaking right rule
+          if(focus == 0) {
+            active = concl;
+            %match(Prop active) {
+
+              // And R
+              and[] -> {
+                ruleName = "and R";
+                slist = applyAndR(goal);
+                applied = true;
+              }
+              // Or R
+              or[] -> {
+                ruleName = "or R";
+                String hs = command.substring(4).trim();
+                %match(String hs) {
+                  "right" -> {
+                    slist = applyOrR2(goal);
+                    applied = true;
+                  }
+
+                  "left" -> {
+                    slist = applyOrR1(goal);
+                    applied = true;
+                  }
+                }
+              }
+
+              // Implies R
+              implies[] -> {
+                ruleName = "implies R";
+                slist = applyImpliesR(goal);
+                applied = true;
+              }
+
+              // forAll R
+              forAll[var=n] -> {
+                ruleName = "forAll R";
+                // TODO interactif ?
+                Term nvar = Utils.freshVar(`n, goal);
+                slist = applyForAllR(goal, nvar);
+                applied = true;
+              }
+
+              // exists R
+              exists(x,_) -> {
+                ruleName = "exists R";
+                System.out.print("instance of " + `x + " > ");
+                Term new_var = Utils.getTerm();
+                slist = applyExistsR(goal, new_var);
+                applied = true;
+              }
+
+            } // match(active)
+
+          } else /* focus != 0, left case*/ {
+            active = (Prop) hyp.get(focus-1);
+            %match(Prop active) {
+
+              // Or L
+              or[] -> {
+                ruleName = "or L";
+                slist = applyOrL(goal, active);
+                applied = true;
+              }
+
+              // And L
+              and[] -> {
+                ruleName = "and L";
+                slist = applyAndL(goal, active);
+                applied = true;
+              }
+
+              // Implies L
+              implies[] -> {
+                ruleName = "implies L";
+                slist = applyImpliesL(goal, active);
+                applied = true;
+              }
+
+              // forAll L
+              forAll(x,_) -> {
+                ruleName = "forAll L";
+                System.out.print("instance of " + `x + " > ");
+                Term new_var = Utils.getTerm();
+                slist = applyForAllL(goal, active, new_var);
+                applied = true;
+              }
+
+              // exists L
+              exists[] -> {
+                ruleName = "exists L";
+                slist = applyExistsL(goal, active);
+                applied = true;
+              }
+            } // match(active)
+          } // focus != 0
+
+          // if one of the right rules has been applied
+          if (applied) {
+            Premisses prems = `premisses();
+            %match(SeqList slist) {
+              (_*,s,_*) -> { prems = `premisses(prems*, rule("open", premisses(), s, s.getc())) ;}
+            }
+
+            // get new tree
+            Tree newrule = `rule(ruleName, prems, goal, active);
+            tree = (Tree) MuTraveler.init(currentPos.getReplace(newrule)).visit(tree); 
+
+            // get open positions
+            openGoals.remove(currentPos);
+            MuTraveler.init(currentPos.getOmega(`TopDown(getOpenPositions(openGoals)))).visit(tree);
+            currentGoal = openGoals.size()-1;
+          }
+
+        } catch (Exception e) {
+          System.out.println("Can't apply elim " + ruleName + ": " + e);
+        }
+      }
+
+      /* Axiom case */
+      else if (command.equals("axiom")) {
+        try {
+          SeqList slist = null;
+          Prop active = (focus == 0) ? concl : (Prop) hyp.get(focus-1);
+
+          applyAxiom(goal); 
+
+          Tree newrule = `rule("axiom", premisses(), goal, active);
+          tree = (Tree) MuTraveler.init(currentPos.getReplace(newrule)).visit(tree);
+          openGoals.remove(currentPos);
+          currentGoal = 0;
+
+        } catch (Exception e) {
+          System.out.println("can't apply rule axiom : " + e.getMessage());
+        }
+      }
+
+      /* Bottom case */
+      else if (command.equals("bottom")) {
+        try {
+          SeqList slist = null;
+          Prop active = (focus == 0) ? concl : (Prop) hyp.get(focus-1);
+
+          slist = applyBottom(goal); 
+
+          Tree newrule = `rule("axiom", premisses(), goal, active);
+          tree = (Tree) MuTraveler.init(currentPos.getReplace(newrule)).visit(tree);
+          openGoals.remove(currentPos);
+          currentGoal = 0;
+
+        } catch (Exception e) {
+          System.out.println("can't apply rule axiom : " + e.getMessage());
+        }
+      }
+
+      /* end of the big switch */
+    } // while still open goals
+
+    return tree;
   }
 
   // builds recursively the proof
@@ -288,7 +584,7 @@ b: {
 
     while(true) {
       command = Utils.getInput();
-      
+
       if (command.startsWith("focus")) {
         int n;
         try { n = Integer.parseInt(command.substring(5).trim()); }
@@ -299,158 +595,159 @@ b: {
 
       // TODO separer
       else if (command.startsWith("elim")) {
-          String ruleName = null;
-          SeqList prems = null;
-          Prop active = null;
-          boolean ok = false;
+        String ruleName = null;
+        SeqList prems = null;
+        Prop active = null;
+        boolean ok = false;
 
-          try {
-            // cassage a droite
-            if(focus == 0) {
-              active = concl;
-              %match(Prop active) {
+        try {
+          // cassage a droite
+          if(focus == 0) {
+            active = concl;
+            %match(Prop active) {
 
-                // And R
-                and[] -> {
-                  ruleName = "and R";
-                  prems = applyAndR(goal);
-                  ok = true;
-                }
+              // And R
+              and[] -> {
+                ruleName = "and R";
+                prems = applyAndR(goal);
+                ok = true;
+              }
 
-                // Or R
-                or[] -> {
-                  ruleName = "or R";
-                  String hs = command.substring(4).trim();
-                  %match(String hs) {
-                    "right" -> {
-                      prems = applyOrR2(goal);
-                      ok = true;
-                    }
-                    
-                    "left" -> {
-                      prems = applyOrR1(goal);
-                      ok = true;
-                    }
+              // Or R
+              or[] -> {
+                ruleName = "or R";
+                String hs = command.substring(4).trim();
+                %match(String hs) {
+                  "right" -> {
+                    prems = applyOrR2(goal);
+                    ok = true;
+                  }
+
+                  "left" -> {
+                    prems = applyOrR1(goal);
+                    ok = true;
                   }
                 }
-
-                // Implies R
-                implies[] -> {
-                  ruleName = "implies R";
-                  prems = applyImpliesR(goal);
-                  ok = true;
-                }
-
-                // forAll R
-                forAll[var=n] -> {
-                  ruleName = "forAll R";
-                  // TODO interactif ?
-                  Term nvar = Utils.freshVar(`n, goal);
-                  prems = applyForAllR(goal, nvar);
-                  ok = true;
-                }
-
-                // exists R
-                exists(x,_) -> {
-                  ruleName = "exists R";
-		  System.out.print("instance of " + `x + " > ");
-		  Term new_var = Utils.getTerm();
-		  prems = applyExistsR(goal, new_var);
-		}
-
-                // not a complex formula
-                _ -> { if(!ok) continue; }
-
-              } // match
-
-            } else /* focus != 0 */ {
-              active = (Prop) hyp.get(focus-1);
-              %match(Prop active) {
-
-                // Or L
-                or[] -> {
-                  ruleName = "or L";
-                  prems = applyOrL(goal, active);
-                  ok = true;
-                }
-
-                // And L
-                and[] -> {
-                  ruleName = "and L";
-                  prems = applyAndL(goal, active);
-                  ok = true;
-                }
-
-                // Implies L
-                implies[] -> {
-                  ruleName = "implies L";
-                  prems = applyImpliesL(goal, active);
-                  ok = true;
-                }
-
-                // forAll L
-                forAll(x,_) -> {
-                  ruleName = "forAll L";
-		  System.out.print("instance of " + `x + " > ");
-		  Term new_var = Utils.getTerm();
-		  prems = applyForAllL(goal, active, new_var);
-		  ok = true;
-                }
-
-                // exists L
-                exists[] -> {
-                  ruleName = "exists L";
-                  prems = applyExistsL(goal, active);
-                  ok = true;
-                }
-
-                // not a complex formula
-                _ -> { if(!ok) continue; }
-
               }
-            }
-          } catch (Exception e) {
-            System.out.println("can't apply elim: " + e);
-            continue;
-          }
 
-          // new node creation
-          System.out.println("New goals : ");
-          %match(SeqList prems) {
-            (_*,p,_*) -> {  System.out.println("\t"+PrettyPrinter.prettyPrint(`p)); }
+              // Implies R
+              implies[] -> {
+                ruleName = "implies R";
+                prems = applyImpliesR(goal);
+                ok = true;
+              }
+
+              // forAll R
+              forAll[var=n] -> {
+                ruleName = "forAll R";
+                // TODO interactif ?
+                Term nvar = Utils.freshVar(`n, goal);
+                prems = applyForAllR(goal, nvar);
+                ok = true;
+              }
+
+              // exists R
+              exists(x,_) -> {
+                ruleName = "exists R";
+                System.out.print("instance of " + `x + " > ");
+                Term new_var = Utils.getTerm();
+                prems = applyExistsR(goal, new_var);
+                ok = true;
+              }
+
+              // not a complex formula
+              _ -> { if(!ok) continue; }
+
+            } // match
+
+          } else /* focus != 0 */ {
+            active = (Prop) hyp.get(focus-1);
+            %match(Prop active) {
+
+              // Or L
+              or[] -> {
+                ruleName = "or L";
+                prems = applyOrL(goal, active);
+                ok = true;
+              }
+
+              // And L
+              and[] -> {
+                ruleName = "and L";
+                prems = applyAndL(goal, active);
+                ok = true;
+              }
+
+              // Implies L
+              implies[] -> {
+                ruleName = "implies L";
+                prems = applyImpliesL(goal, active);
+                ok = true;
+              }
+
+              // forAll L
+              forAll(x,_) -> {
+                ruleName = "forAll L";
+                System.out.print("instance of " + `x + " > ");
+                Term new_var = Utils.getTerm();
+                prems = applyForAllL(goal, active, new_var);
+                ok = true;
+              }
+
+              // exists L
+              exists[] -> {
+                ruleName = "exists L";
+                prems = applyExistsL(goal, active);
+                ok = true;
+              }
+
+              // not a complex formula
+              _ -> { if(!ok) continue; }
+
+            }
           }
-          Premisses trees = `premisses();
-          %match(SeqList prems) {
-            (_*, p, _*) -> { trees = `premisses(trees*, buildProof(p)); }
-          }
-          return `rule(ruleName, trees, goal, active);
+        } catch (Exception e) {
+          System.out.println("can't apply elim: " + e);
+          continue;
+        }
+
+        // new node creation
+        System.out.println("New goals : ");
+        %match(SeqList prems) {
+          (_*,p,_*) -> {  System.out.println("\t"+PrettyPrinter.prettyPrint(`p)); }
+        }
+        Premisses trees = `premisses();
+        %match(SeqList prems) {
+          (_*, p, _*) -> { trees = `premisses(trees*, buildProof(p)); }
+        }
+        return `rule(ruleName, trees, goal, active);
       }
 
       else if (command.equals("axiom")) {
-          try { applyAxiom(goal); }
-          catch (Exception e) {
-            System.out.println("can't apply rule : " + e);
-            continue;
-          }
-          return Utils.axiom(goal);
+        try { applyAxiom(goal); }
+        catch (Exception e) {
+          System.out.println("can't apply rule : " + e);
+          continue;
+        }
+        return Utils.axiom(goal);
       }
 
       else if (command.equals("bottom")) {
-          try { applyBottomL(goal); }
-          catch (Exception e) {
-            System.out.println("can't apply rule : " + e);
-            continue;
-          }
-          return `rule("bottom", premisses(), goal, nullProp());
+        try { applyBottom(goal); }
+        catch (Exception e) {
+          System.out.println("can't apply rule : " + e);
+          continue;
+        }
+        return `rule("bottom", premisses(), goal, nullProp());
       }
 
 
       else if (command.equals("rules?")) {
         Prop active = (focus == 0) ? concl : (Prop) hyp.get(focus-1);
         for(int i=0; i<newRules.size(); i++) {
-          Rule rule = (Rule) newRules.get(i);
+          Rule rule = newRules.get(i);
           Prop conclusion = rule.getconcl();
-          HashMap tds = Unification.match(conclusion, active);
+          HashMap<String,Term> tds = Unification.match(conclusion, active);
           int rule_hs = rule.geths();
           // same side condition
           if (tds != null && 
@@ -471,7 +768,7 @@ b: {
         if (n < newRules.size()) {
           // TODO verify hand side
           try {
-            Rule rule = (Rule) newRules.get(n);
+            Rule rule = newRules.get(n);
             Prop active = (focus == 0) ? concl : (Prop) hyp.get(focus-1);
             SeqList prems = applyRule(rule, goal, active);
 
@@ -507,7 +804,7 @@ b: {
   }
 
 
-  private ArrayList newRules = new ArrayList();
+  private ArrayList<Rule> newRules = new ArrayList<Rule>();
 
   public void mainLoop() throws Exception {
     String command = null;
@@ -535,7 +832,7 @@ b: {
         parser.seq();
         AST t = parser.getAST();
         Sequent seq = (Sequent) walker.seq(t);
-        Tree tree = buildProof(seq);
+        Tree tree = buildProofTree(seq);
         System.out.println("Proof complete.");
         PrettyPrinter.display(tree);
       }
@@ -548,72 +845,6 @@ b: {
     }
   }
 
-  // ---- tests ----
-
-  private void tryRule(Rule r, Sequent seq, Prop active) {
-    SeqList res = null;
-
-    System.out.println("\n ======== Test  ========\n\n- rule:\n");
-    System.out.println(PrettyPrinter.prettyRule(r));
-    System.out.println("\n- on " + PrettyPrinter.prettyPrint(seq) + "\n- focus : " + PrettyPrinter.prettyPrint(active)+"\n");
-    try {
-      res = applyRule(r, seq, active);
-      System.out.println("SUCCES. new premisses : " + PrettyPrinter.prettyRule(res) +"\n\n");
-    } catch (Exception e) {
-      System.out.println("FAIL\n\n");
-    }
-  }
-
-
-  private void tryAll(RuleList rl, Sequent seq) {
-
-    Context ctxt = seq.geth();
-    Prop concl = seq.getc();
-
-    for(RuleList l=rl; !l.isEmptyrlist(); l = l.getTailrlist()) {
-      Rule current_rule = l.getHeadrlist();
-      for(Context c=ctxt; !c.isEmptycontext(); c = c.getTailcontext()) {
-        Prop active = c.getHeadcontext();
-        if (current_rule.geths() == 0)
-          tryRule(current_rule, seq, active);
-      }
-      if (current_rule.geths() == 1)
-        tryRule(current_rule, seq, concl);
-    }
-  }
-
-
-  private void run() throws Exception {
-
-    RuleCalc rulecalc = new RuleCalc();
-
-    SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
-    SeqParser parser = new SeqParser(lexer);
-    SeqTreeParser walker = new SeqTreeParser();
-
-
-    System.out.println("Enter new rewriting rule");
-    System.out.print("atom. rhs.  ?  ");
-    parser.start1();
-    AST t = parser.getAST();
-    Prop p1  = walker.pred(t);
-
-    parser.start1();
-    t = parser.getAST();
-    Prop p2  = walker.pred(t);
-
-    RuleList rl = rulecalc.transform(p1,p2);
-    System.out.println("\nThe new deduction rules are : \n");
-    System.out.println(PrettyPrinter.prettyRule(rl));
-
-    System.out.println("\nEnter new sequent:");
-    parser.seq();
-    t = parser.getAST();
-    Sequent seq = (Sequent) walker.seq(t);
-
-    System.out.println("\nTests:");
-    tryAll(rl, seq );
-  }
 
   public final static void main(String[] args) throws Exception {
     ProofBuilder test = new ProofBuilder();

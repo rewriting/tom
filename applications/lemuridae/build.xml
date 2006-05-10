@@ -3,7 +3,9 @@
   <description>
     The lemu proof assistant
   </description>
-
+  <property name="javacSource" value="1.5"/>
+  <property name="javacTarget" value="1.5"/>
+ 
   <property environment="env"/>
   <property name="tom.home" value="${env.TOM_HOME}"/>
   <import file="${tom.home}/lib/tom-common.xml"/>

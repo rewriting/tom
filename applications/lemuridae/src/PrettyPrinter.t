@@ -72,24 +72,23 @@ class PrettyPrinter {
 
  
   private static Context getGreaterCommonContext(Tree tree) {
-    Set tmp = new HashSet();
+    HashSet<Set<Prop>> tmp = new HashSet<Set<Prop>>();
     try {
       MuTraveler.init(`TopDown(GetContextsSet(tmp))).visit(tree);
     } catch (VisitFailure e) {
       e.printStackTrace();
     }
 
-    Iterator it = tmp.iterator();
-    Set res = (Set) it.next();
+    Iterator<Set<Prop>> it = tmp.iterator();
+    Set<Prop> res = it.next();
     while( it.hasNext() ) {
       res.retainAll((Set)it.next());
     }
 
     Context result = `context();
-    for( it=res.iterator(); it.hasNext(); ) {
-      Prop p = (Prop) it.next();
+    for(Prop p : res) 
       result = `context(p,result*);
-    }
+    
 
     return result;
   }
@@ -180,7 +179,7 @@ class PrettyPrinter {
 
     %match(Sequent term) {
       sequent(h,c) -> { 
-        return prettyPrint(`h) + "|-" + prettyPrint(`c); 
+        return prettyPrint(`h) + " |- " + prettyPrint(`c); 
       }
     }
 
@@ -242,16 +241,16 @@ class PrettyPrinter {
 
   private static String getPrettySideConstraints(SeqList list) {
 
-    HashSet set = Utils.getSideConstraints(list);
+    HashSet<Term> set = Utils.getSideConstraints(list);
     
     if (set.isEmpty())
       return null;
     
-    Iterator it = set.iterator();
-    Term var = (Term) it.next();
+    Iterator<Term> it = set.iterator();
+    Term var = it.next();
     String res = prettyPrint(var);
     while (it.hasNext()) {
-      var = (Term) it.next();
+      var =  it.next();
       res += ", " + prettyPrint(var);
     }
     return res + " not in FV";

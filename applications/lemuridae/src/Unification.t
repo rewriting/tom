@@ -19,11 +19,11 @@ class Unification {
   /**
   /* returns a Symbol Table if it matches, else returns false 
    **/
-  public static HashMap match(Prop atom, Prop p) {
-    return match(atom, p, new HashMap());
+  public static HashMap<String, Term> match(Prop atom, Prop p) {
+    return match(atom, p, new HashMap<String, Term>());
   }
 
-  private static HashMap match(sequentsAbstractType p1, sequentsAbstractType p2, HashMap tds) {
+  private static HashMap<String, Term> match(sequentsAbstractType p1, sequentsAbstractType p2, HashMap<String, Term> tds) {
 
     %match (Prop p1, Prop p2) {
       relationAppl(x,args1), relationAppl(x,args2) -> {
@@ -78,15 +78,13 @@ class Unification {
     Prop p2  = walker.pred(t);
 
     Unification uni = new Unification();
-    HashMap res = uni.match(p1,p2);
+    HashMap<String, Term> res = uni.match(p1,p2);
 
     if (res == null) {
       System.out.println("clash !");
     } else {
-      Set entries = res.entrySet();
-      Iterator it = entries.iterator();
-      while( it.hasNext() ) {
-        Map.Entry ent = (Map.Entry) it.next();
+      Set<Map.Entry<String,Term>> entries = res.entrySet();
+      for(Map.Entry<String,Term> ent: entries) {
         System.out.println(ent.getKey() 
             + " -> " 
             + PrettyPrinter.prettyPrint((sequentsAbstractType)ent.getValue()));
