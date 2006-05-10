@@ -45,7 +45,6 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <li>srcfile</li>
  * <li>destdir</li>
  * <li>package</li>
- * <li>parser</li>
  * </ul>
  * Of these arguments, the <b>srcfile</b>, <b>destdir</b> and <b>package</b> are
  * required.
@@ -56,7 +55,6 @@ public class PomTask extends MatchingTask {
   private File srcFile;
   private File destDir;
   private String packagePrefix;
-  private String parser = "parser";
 
   /**
    * Set the source file
@@ -106,21 +104,6 @@ public class PomTask extends MatchingTask {
     return packagePrefix;
   }
 
-  /**
-   * Set the parser name
-   * @param parser the parser name
-   */
-  public void setParser(String name) {
-    this.parser = name;
-  }
-
-  /**
-   * Gets the parser name
-   * @return the parser name
-   */
-  public String getParser() {
-    return parser;
-  }
   /**
    * Executes the task.
    * @exception BuildException if an error occurs
@@ -179,9 +162,6 @@ public class PomTask extends MatchingTask {
       }
       if(packagePrefix != null) {
         cmd_line = cmd_line.trim() + " --package " + packagePrefix;
-      }
-      if(parser != null) {
-        cmd_line = cmd_line.trim() + " --parser " + parser;
       }
 
       String[] cmd = split(cmd_line);

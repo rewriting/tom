@@ -29,11 +29,9 @@ import java.util.*;
 
 public class Pom {
 
-
   private String fileName;
   private String destDir;
   private String packageName;
-  private String parserName;
 
   %include { string.tom }
 
@@ -44,7 +42,7 @@ public class Pom {
     String srcfile= null;
     String  destdir= null;
     String packagename= null;
-    String parsername = null;
+
     for (int i=0;i<java.lang.reflect.Array.getLength(args);i++) {
       if (args[i].equals("--srcfile")) {
         srcfile = args[i+1];
@@ -55,20 +53,16 @@ public class Pom {
       if (args[i].equals("--package")) {
         packagename = args[i+1];
       }
-      if (args[i].equals("--parser")) {
-        parsername = args[i+1];
-      }
     }
-    Pom pom = new Pom(srcfile,destdir,packagename,parsername);
+    Pom pom = new Pom(srcfile,destdir,packagename);
     pom.gen();
     return 0;//no errors
   }
 
-  public Pom(String fileN, String destD,String packageN, String parserN){
+  public Pom(String fileN, String destD,String packageN){
     this.fileName = fileN;
     this.destDir = destD;
     this.packageName = packageN;
-    this.parserName = parserN;
   }
 
   public void gen() {
