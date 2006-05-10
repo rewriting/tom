@@ -224,6 +224,10 @@ If you come from the
     _Apigen:   Same as before, but based on ApiGen.
                Also introduce the notion of rewrite rule system.
 
+* pom
+  Shows how to use Pom, in order to easily generate Tom Mappings
+  from ANTLR.
+  
 * pqueens
   Parallel version of the N-Queens problem
   Concepts: strategy library, complex mapping
