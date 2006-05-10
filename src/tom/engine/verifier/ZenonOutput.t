@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  * Antoine Reilles        e-mail: Antoine.Reilles@loria.fr
  *
@@ -44,9 +44,9 @@ public class ZenonOutput {
   %include { adt/il/Il.tom }
   %include { adt/zenon/Zenon.tom }
   %include { mutraveler.tom }
-	%typeterm Map {
-		implement { java.util.Map }
-	}
+  %typeterm Map {
+    implement { java.util.Map }
+  }
   // ------------------------------------------------------------
 
   private Verifier verifier;
@@ -82,7 +82,7 @@ public class ZenonOutput {
   public ZSpec zspecFromMapEntry(Map.Entry entry) {
     Instr accept = (Instr) entry.getKey();
     Expr constraint = (Expr) entry.getValue();
-    
+
     List subjectList = new LinkedList();
     ZExpr pattern = null;
     ZExpr negpattern = null;
@@ -94,7 +94,7 @@ public class ZenonOutput {
         PatternList negativePatternList = (PatternList)`negative;
         // we need the substitution to generate the pattern part of the theorem
         SubstitutionList subsList = verifier.collectSubstitutionInConstraint(constraint);
-        Map variableMap = ztermVariableMapFromSubstitutionList(subsList, 
+        Map variableMap = ztermVariableMapFromSubstitutionList(subsList,
                                                                new HashMap());
         tomiltools.getZTermSubjectListFromPattern(positivePattern,
                                                   subjectList,
@@ -105,7 +105,7 @@ public class ZenonOutput {
         }
       }
     }
-    
+
     ZExpr zenonConstraint = zexprFromExpr(constraint);
 
     ZExpr theorem = null;
@@ -120,7 +120,7 @@ public class ZenonOutput {
     // now we have to to build the axiom list, starting from the
     // signature. Again, the TomIlTools will be useful, it has access
     // to TomSignature and Zenon signature
-    
+
     // collects symbols in pattern
     Collection symbols = tomiltools.collectSymbols(pattern);
     // generates the axioms for this set of symbols
@@ -131,7 +131,7 @@ public class ZenonOutput {
     Iterator iter = subjectList.iterator();
     while(iter.hasNext()) {
       ZTerm input = (ZTerm)iter.next();
-      theorem = `zforall(input,ztype("T"),theorem);  
+      theorem = `zforall(input,ztype("T"),theorem);
     }
     ZSpec spec = `zthm(theorem,zby(symbolsAxioms*,subtermAxioms*));
 
@@ -139,13 +139,13 @@ public class ZenonOutput {
   }
 
   public ZSpec zspecFromDerivationTree(DerivTree tree) {
-    
+
     Map variableset = new HashMap();
     tree = collectProgramVariables(tree,variableset);
 
     // Use a TreeMap to have the conditions sorted
     Map conditions = new TreeMap();
-    collectConstraints(tree,conditions);            
+    collectConstraints(tree,conditions);
     Map conds = new TreeMap();
 
     List subjectList = new LinkedList();
@@ -157,7 +157,7 @@ public class ZenonOutput {
         [post=ebs[rhs=env(subsList,accept(positive,negative))]] -> {
         Pattern positivePattern = (Pattern)`positive;
         PatternList negativePatternList = (PatternList)`negative;
-        Map variableMap = ztermVariableMapFromSubstitutionList(`subsList, 
+        Map variableMap = ztermVariableMapFromSubstitutionList(`subsList,
                                                                new HashMap());
         tomiltools.getZTermSubjectListFromPattern(positivePattern,
                                                   subjectList,
@@ -168,7 +168,7 @@ public class ZenonOutput {
         }
       }
     }
-    
+
     ZExpr constraints = `ztrue();
     // we consider only the interesting conditions : dedexpr
     Iterator it = conditions.entrySet().iterator();
@@ -196,9 +196,8 @@ public class ZenonOutput {
     }
 
     // now we have to to build the axiom list, starting from the
-    // signature. Again, the TomIlTools will be useful, it has access
-    // to TomSignature and Zenon signature
-    
+    // signature.
+
     // collects symbols in pattern
     Collection symbols = tomiltools.collectSymbols(pattern);
     // generates the axioms for this set of symbols
@@ -209,7 +208,7 @@ public class ZenonOutput {
     Iterator iter = subjectList.iterator();
     while(iter.hasNext()) {
       ZTerm input = (ZTerm)iter.next();
-      theorem = `zforall(input,ztype("T"),theorem);  
+      theorem = `zforall(input,ztype("T"),theorem);
     }
     ZSpec spec = `zthm(theorem,zby(symbolsAxioms*,subtermAxioms*));
 
@@ -241,8 +240,8 @@ public class ZenonOutput {
     try {
       tree = (DerivTree) `TopDown(programVariablesCollector(variables)).visit(tree);
     } catch (jjtraveler.VisitFailure e) {
-			throw new TomRuntimeException("Strategy collectProgramVariables failed");
-		}
+      throw new TomRuntimeException("Strategy collectProgramVariables failed");
+    }
     return tree;
   }
 
@@ -314,7 +313,7 @@ public class ZenonOutput {
 
   ZExpr zexprFromSeq(Seq seq) {
     %match(Seq seq) {
-      seq() -> { 
+      seq() -> {
         return `ztrue();
       }
       dedterm(termlist) -> {
@@ -347,10 +346,10 @@ public class ZenonOutput {
       absvar(var(name)) -> {
         return `zvar(name);
       }
-      st(s,t,index) -> {
+      st(_,t,index) -> {
         return `zst(ztermFromAbsTerm(t),index);
       }
-      sl(s,t,name) -> {
+      sl(_,t,name) -> {
         return `zsl(ztermFromAbsTerm(t),name);
       }
     }
@@ -374,12 +373,12 @@ public class ZenonOutput {
     %match(SubstitutionList sublist) {
       ()                -> { return map; }
       (undefsubs(),t*)  -> { return ztermVariableMapFromSubstitutionList(`t,map);}
-      (is(var(name),term),t*)   -> { 
+      (is(var(name),term),t*)   -> {
         map.put(`name,ztermFromTerm(`term));
         return ztermVariableMapFromSubstitutionList(`t,map);
       }
     }
-		throw new TomRuntimeException("verifier: strange substitution list: "+sublist);
+    throw new TomRuntimeException("verifier: strange substitution list: "+sublist);
   }
 
   public void collectConstraints(DerivTree tree, Map conditions) {

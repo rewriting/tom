@@ -1,24 +1,24 @@
 /*
- * 
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  * Antoine Reilles        e-mail: Antoine.Reilles@loria.fr
  **/
@@ -50,14 +50,14 @@ import tom.engine.adt.zenon.types.*;
  * The TomVerifier plugin.
  */
 public class TomVerifier extends TomGenericPlugin {
-  
+
   %include{ adt/tomsignature/TomSignature.tom }
   %include { mutraveler.tom }
 	%typeterm Collection {
 		implement { java.util.Collection }
 	}
-  
-  public static final String DECLARED_OPTIONS = 
+
+  public static final String DECLARED_OPTIONS =
     "<options>" +
     "<boolean name='verify' altName='' description='Verify correctness of match compilation' value='false'/>" +
     "<boolean name='noReduce' altName='' description='Do not simplify extracted constraints (depends on --verify)' value='false'/>" +
@@ -66,7 +66,7 @@ public class TomVerifier extends TomGenericPlugin {
 
   public static final String ZENON_SUFFIX = ".zv";
   public static final String INTERMEDIATE_SUFFIX = ".tfix.zenon";
-  
+
   protected Verifier verif;
   protected ZenonOutput zenon;
 
@@ -108,7 +108,7 @@ public class TomVerifier extends TomGenericPlugin {
         ZenonBackend back = new ZenonBackend(verif);
         //System.out.println(back.genZSpecCollection(zen));
         String output = back.genZSpecCollection(zspecSet);
-        
+
         // do not generate a file if there is no proof to do
         if (!zspecSet.isEmpty()) {
           try {
@@ -127,7 +127,7 @@ public class TomVerifier extends TomGenericPlugin {
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomVerificationPhase.getMessage(),
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
-        
+
       } catch (Exception e) {
         getLogger().log(Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
                          new Object[]{getClass().getName(),
@@ -135,7 +135,7 @@ public class TomVerifier extends TomGenericPlugin {
                                       e.getMessage()} );
         e.printStackTrace();
       }
-    } else {      
+    } else {
       getLogger().log(Level.INFO, TomMessage.verifierInactivated.getMessage());
     }
   }
@@ -145,14 +145,14 @@ public class TomVerifier extends TomGenericPlugin {
         Collection matchSet = collectMatch((TomTerm)getWorkingTerm());
 
         Collection purified = purify(matchSet);
-        // System.out.println("Purified : " + purified);        
+        // System.out.println("Purified : " + purified);
 
         // removes all associative patterns
         filterAssociative(purified);
 
         return purified;
   }
-  
+
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TomVerifier.DECLARED_OPTIONS);
   }
@@ -160,7 +160,7 @@ public class TomVerifier extends TomGenericPlugin {
   private boolean isActivated() {
     return getOptionBooleanValue("verify");
   }
-  
+
   %strategy collectMatch(collection:Collection) extends `Identity() {
     visit Instruction {
       CompiledMatch[automataInst=automata]  -> {
@@ -168,7 +168,7 @@ public class TomVerifier extends TomGenericPlugin {
       }
     }
   }
-  
+
   public static Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
     try {
@@ -189,7 +189,7 @@ public class TomVerifier extends TomGenericPlugin {
     }
     return purified;
   }
-  
+
   %strategy ilSimplifier() extends `Identity() {
     visit Expression {
       Or(cond,FalseTL()) -> {
@@ -224,7 +224,7 @@ public class TomVerifier extends TomGenericPlugin {
 		}
     return subject;
   }
-  
+
   void filterAssociative(Collection c) {
     for (Iterator i = c.iterator(); i.hasNext(); )
       if (containsAssociativeOperator((Instruction) i.next()))
@@ -238,7 +238,7 @@ public class TomVerifier extends TomGenericPlugin {
     } catch (jjtraveler.VisitFailure e) {
 			throw new TomRuntimeException("Strategy containsAssociativeOperator failed");
 		}
-    return !result.isEmpty();   
+    return !result.isEmpty();
   }
 
   %strategy associativeOperatorCollector(store:Collection) extends `Identity() {
@@ -264,7 +264,7 @@ public class TomVerifier extends TomGenericPlugin {
   public Collection getDerivations(Collection subject) {
     Collection derivations = new HashSet();
     Iterator it = subject.iterator();
-    
+
     while (it.hasNext()) {
       Instruction automata = (Instruction) it.next();
       Collection trees = verif.build_tree(automata);
@@ -276,7 +276,7 @@ public class TomVerifier extends TomGenericPlugin {
   public Map getRawConstraints(Collection subject) {
     Map rawConstraints = new HashMap();
     Iterator it = subject.iterator();
-    
+
     while (it.hasNext()) {
       Instruction automata = (Instruction) it.next();
       Map trees = verif.getConstraints(automata);
@@ -284,7 +284,7 @@ public class TomVerifier extends TomGenericPlugin {
     }
     return rawConstraints;
   }
-  
+
   public String patternToString(ATerm patternList) {
     return patternToString((PatternList) patternList);
   }

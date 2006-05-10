@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  * Antoine Reilles        e-mail: Antoine.Reilles@loria.fr
  *
@@ -34,6 +34,7 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.il.*;
 import tom.engine.adt.il.types.*;
+import tom.engine.exception.TomRuntimeException;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -43,7 +44,10 @@ public class Verifier extends TomBase {
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/il/Il.tom }
-  %include{ mutraveler.tom }
+  %include { mutraveler.tom }
+  %typeterm Collection {
+    implement { java.util.Collection }
+  }
   // ------------------------------------------------------------
 
   private SymbolTable symbolTable;
@@ -75,8 +79,8 @@ public class Verifier extends TomBase {
         return `termFromTomName(name);
       }
     }
-		System.out.println("termFromTomTerm don't know how to handle this: " + tomterm);
-		return `repr("foirade");
+    System.out.println("termFromTomTerm don't know how to handle this: " + tomterm);
+    return `repr("foirade");
   }
 
   Variable variableFromTomName(TomName name) {
@@ -93,7 +97,7 @@ public class Verifier extends TomBase {
     }
     return `var("error while building variable name");
   }
-  
+
   Term termFromTomName(TomName name) {
     return `tau(absvar(variableFromTomName(name)));
   }
@@ -117,10 +121,10 @@ public class Verifier extends TomBase {
         return termFromExpresssion(`expr);
       }
     }
-		System.out.println("termFromExpresssion don't know how to handle this: " + expression);
-		return `repr("autre foirade avec " + expression);
+    System.out.println("termFromExpresssion don't know how to handle this: " + expression);
+    return `repr("autre foirade avec " + expression);
   }
-  
+
   public String extractName(NameList nl) {
     %match(NameList nl) {
       (Name(name)) -> {
@@ -145,8 +149,8 @@ public class Verifier extends TomBase {
         return `eq(termFromTomTerm(t1),termFromTomTerm(t2));
       }
     }
-		System.out.println("exprFromExpression don't know how to handle this: " + expression);
-		return `false();
+    System.out.println("exprFromExpression don't know how to handle this: " + expression);
+    return `false();
   }
 
   public Instr instrFromInstructionList(InstructionList instrlist) {
@@ -201,8 +205,8 @@ public class Verifier extends TomBase {
         return `refuse();
       }
     }
-		System.out.println("instrFromInstruction don't know how to handle this : " + automata);
-		return `refuse();
+    System.out.println("instrFromInstruction don't know how to handle this : " + automata);
+    return `refuse();
   }
 
   private SubstitutionList abstractSubstitutionFromAccept(Instr instr) {
@@ -288,58 +292,58 @@ public class Verifier extends TomBase {
     Collect2 substitutionCollector = new Collect2() {
       public boolean apply(ATerm subject, Object astore) {
         SubstRef outsubst = (SubstRef) astore;
-				%match(Expr subject) {
-					true(subs(undefsubs())) -> {
-						return false;
-					}
-					true(x) -> {
-						outsubst.set(`x);
-					}
-				}//end match
-				return true;
+        %match(Expr subject) {
+          true(subs(undefsubs())) -> {
+            return false;
+          }
+          true(x) -> {
+            outsubst.set(`x);
+          }
+        }//end match
+        return true;
       }//end apply
     }; //end new
     SubstRef output = new SubstRef(`subs());
     traversal().genericCollect(expr,substitutionCollector,output);
     return output.get();
   }
-  
-  private Collect2 outputSubstitutionCollector = new Collect2() {
-      public boolean apply(ATerm subject, Object astore) {
-        SubstRef outsubst = (SubstRef) astore;
-				%match(Deriv subject) {
-					ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
-						outsubst.set(`e);
-					}
-				}//end match
-				return true;
-      }//end apply
-    }; //end new
-  
+
+  %strategy outputSubstitutionCollector(outsubst:SubstRef) extends `Identity() {
+    visit Deriv {
+      ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
+        outsubst.set(`e);
+      }
+    }
+  }
+
   public SubstitutionList getOutputSubstitution(DerivTree subject) {
     SubstRef output = new SubstRef(`subs());
-    traversal().genericCollect(subject,outputSubstitutionCollector,output);
+    try {
+      `TopDown(outputSubstitutionCollector(output)).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
+      throw new TomRuntimeException("Strategy outputSubstitutionCollector failed");
+    }
     return output.get();
   }
 
-  private Collect2 acceptCollector = new Collect2() {
-      public boolean apply(ATerm subject, Object astore) {
-        Collection store = (Collection)astore;
-				%match(Instruction subject) {
-					TypedAction(action,positive,negative)  -> {
-						store.add(`accept(positive,negative));
-					}
-        }
-				return true;
-      }//end apply
-    }; //end new
-  
+  %strategy acceptCollector(store:Collection) extends `Identity() {
+    visit Instruction {
+      TypedAction(action,positive,negative)  -> {
+        store.add(`accept(positive,negative));
+      }
+    }
+  }
+
   public Collection collectAccept(Instruction subject) {
     Collection result = new HashSet();
-    traversal().genericCollect(subject,acceptCollector,result);
+    try {
+      `TopDown(acceptCollector(result)).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
+      throw new TomRuntimeException("Strategy collectAccept failed");
+    }
     return result;
   }
-  
+
 
   /**
    * The axioms the mapping has to verify
@@ -347,9 +351,9 @@ public class Verifier extends TomBase {
   protected Seq seqFromTerm(Term sp) {
     TermList ded = `concTerm(sp);
     %match(Term sp) {
-      appSubsT[] -> { 
+      appSubsT[] -> {
         TermList follow = applyMappingRules(replaceVariablesInTerm(sp));
-        ded = `concTerm(ded*,follow*); 
+        ded = `concTerm(ded*,follow*);
       }
     }
     return `dedterm(concTerm(ded*));
@@ -358,9 +362,9 @@ public class Verifier extends TomBase {
   protected ExprList exprListFromExpr(Expr sp) {
     ExprList ded = `concExpr(sp);
     %match(Expr sp) {
-      appSubsE[] -> { 
+      appSubsE[] -> {
         ExprList follow = applyExprRules(replaceVariablesInExpr(sp));
-        ded = `concExpr(ded*,follow*); 
+        ded = `concExpr(ded*,follow*);
       }
     }
 
@@ -415,8 +419,8 @@ public class Verifier extends TomBase {
         return `ilor(reduceWithMappingRules(lt),reduceWithMappingRules(rt));
       }
     }
-		System.out.println("reduceWithMappingRules : nothing applies to:" + ex);
-		return `ex; 
+    System.out.println("reduceWithMappingRules : nothing applies to:" + ex);
+    return `ex;
   }
 
   protected Term reduceTermWithMappingRules(Term trm) {
@@ -431,18 +435,18 @@ public class Verifier extends TomBase {
         return `reduceTermWithMappingRules(slot(s,reduceTermWithMappingRules(t),slotName));
       }
       subterm(s,tau(t),index) -> {
-        // we shall test if term t has symbol s 
+        // we shall test if term t has symbol s
         AbsTerm term = `st(s,t,index);
         return `tau(term);
       }
       slot(s,tau(t),slotName) -> {
-        // we shall test if term t has symbol s 
+        // we shall test if term t has symbol s
         AbsTerm term = `sl(s,t,slotName);
         return `tau(term);
       }
     }
-		System.out.println("reduceTermWithMappingRules : nothing applies to:" + trm);
-		return `trm; 
+    System.out.println("reduceTermWithMappingRules : nothing applies to:" + trm);
+    return `trm;
   }
 
   protected TermList applyMappingRules(Term trm) {
@@ -460,7 +464,7 @@ public class Verifier extends TomBase {
             TermList hl = applyMappingRules(head);
             while(!hl.isEmpty()) {
               Term h = hl.getHead();
-              res = `concTerm(res*,subterm(s,h,index));           
+              res = `concTerm(res*,subterm(s,h,index));
               hl = hl.getTail();
             }
           } else {
@@ -480,7 +484,7 @@ public class Verifier extends TomBase {
             TermList hl = applyMappingRules(head);
             while(!hl.isEmpty()) {
               Term h = hl.getHead();
-              res = `concTerm(res*,slot(s,h,slotName));           
+              res = `concTerm(res*,slot(s,h,slotName));
               hl = hl.getTail();
             }
           } else {
@@ -491,18 +495,18 @@ public class Verifier extends TomBase {
         return `concTerm(res*);
       }
       subterm(s,tau(t),index) -> {
-        // we shall test if term t has symbol s 
+        // we shall test if term t has symbol s
         AbsTerm term = `st(s,t,index);
         return `concTerm(trm,tau(term));
       }
       slot(s,tau(t),slotName) -> {
-        // we shall test if term t has symbol s 
+        // we shall test if term t has symbol s
         AbsTerm term = `sl(s,t,slotName);
         return `concTerm(trm,tau(term));
       }
     }
-		System.out.println("apply TermRules : nothing applies to:" + trm);
-		return `concTerm(trm); 
+    System.out.println("apply TermRules : nothing applies to:" + trm);
+    return `concTerm(trm);
   }
 
   protected ExprList applyExprRules(Expr ex) {
@@ -551,8 +555,8 @@ public class Verifier extends TomBase {
         return `concExpr(ex);
       }
     }
-		System.out.println("apply ExprRules : nothing applies to:" + ex);
-		return `concExpr(ex); 
+    System.out.println("apply ExprRules : nothing applies to:" + ex);
+    return `concExpr(ex);
   }
 
   protected Expr buildConstraint(SubstitutionList substitution, Instr pil,Instr goal) {
@@ -651,7 +655,7 @@ public class Verifier extends TomBase {
         Term t = null;
         %match(Seq cond) {
           dedterm(concTerm(_*,r)) -> { t = `r; }
-            _ -> { if (t == null) { 
+            _ -> { if (t == null) {
               System.out.println("seqFromTerm has a problem with " + cond);
             }
           }
@@ -674,7 +678,7 @@ public class Verifier extends TomBase {
 
         Deriv up = `ebs(env(e,ift),env(subs(undefsubs()),ip));
         String rulename = "iftrue";
-        
+
         Collection pre_list = applySemanticsRules(up);
         Iterator it = pre_list.iterator();
         while(it.hasNext()) {
@@ -684,7 +688,7 @@ public class Verifier extends TomBase {
 
         up = `ebs(env(e,iff),env(subs(undefsubs()),ip));
         rulename = "iffalse";
-        
+
         pre_list = applySemanticsRules(up);
         it = pre_list.iterator();
         while(it.hasNext()) {
@@ -699,7 +703,7 @@ public class Verifier extends TomBase {
       ebs(env(e,refuse[]),env(subs(undefsubs()),refuse[])) -> {
         c.add(`derivrule("axiom_refuse",post,endderiv(),seq()));
       }
-      _ -> { 
+      _ -> {
         if (c.isEmpty()) {
             //System.out.println("Error " + post);
         }
@@ -719,7 +723,7 @@ public class Verifier extends TomBase {
             return false;
           }
           return true;
-        } else { 
+        } else {
           return true;
         }
       }//end apply
@@ -735,21 +739,24 @@ public class Verifier extends TomBase {
  */
   Replace2 replaceUndefsubs = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
-				%match(SubstitutionList subject) {
-					(undefsubs()) -> {
-						return (SubstitutionList)arg1;
-					}
+        %match(SubstitutionList subject) {
+          (undefsubs()) -> {
+            return (SubstitutionList)arg1;
+          }
         }
         /* Default case : Traversal */
         return traversal().genericTraversal(subject,this,arg1);
       } // end apply
     };
 
-  private DerivTree replaceUndefinedSubstitution(DerivTree subject, 
+  private DerivTree replaceUndefinedSubstitution(DerivTree subject,
                                       SubstitutionList subs) {
     return (DerivTree) replaceUndefsubs.apply(subject,subs);
   }
 
+  %typeterm SubstRef {
+    implement { SubstRef }
+  }
   static private class SubstRef {
     private SubstitutionList sublist;
     public SubstRef(SubstitutionList slist) {
@@ -769,15 +776,15 @@ public class Verifier extends TomBase {
 
   Replace2 replaceVariableByTerm = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
-				%match(Term subject) {
-					tau(absvar(v@var(name))) -> {
-						Map map = (Map) arg1;
-						if (map.containsKey(`v)) {
-							return (Term)map.get(`v);
-						}
-						return (Term)subject;
-					}
-        } 
+        %match(Term subject) {
+          tau(absvar(v@var(name))) -> {
+            Map map = (Map) arg1;
+            if (map.containsKey(`v)) {
+              return (Term)map.get(`v);
+            }
+            return (Term)subject;
+          }
+        }
         /* Default case : Traversal */
         return traversal().genericTraversal(subject,this,arg1);
       } // end apply
@@ -809,7 +816,7 @@ public class Verifier extends TomBase {
       TomNumber number = numberList.getHead();
       numberList = numberList.getTail();
       %match(TomNumber number) {
-        Number(n) -> { 
+        Number(n) -> {
           result = result + "Number" + Integer.toString(`n);
         }
         MatchNumber(Number(n)) -> {
@@ -833,8 +840,8 @@ public class Verifier extends TomBase {
         RenamedVar(tomName) -> {
           String identifier = "Empty";
           %match(TomName tomName) {
-            Name(name) -> { 
-              identifier = `name; 
+            Name(name) -> {
+              identifier = `name;
             }
             PositionName(localNumberList) -> {
               identifier = tomNumberListToString(`localNumberList);
@@ -845,8 +852,8 @@ public class Verifier extends TomBase {
         NameNumber(tomName) -> {
           String identifier = "Empty";
           %match(TomName tomName) {
-            Name(name) -> { 
-              identifier = `name; 
+            Name(name) -> {
+              identifier = `name;
             }
             PositionName(localNumberList) -> {
               identifier = tomNumberListToString(`localNumberList);
@@ -866,12 +873,12 @@ public class Verifier extends TomBase {
     %match(SubstitutionList sublist) {
       ()                -> { return map; }
       (undefsubs(),t*)  -> { return buildVariableMap(`t,map);}
-      (is(v,term),t*)   -> { 
+      (is(v,term),t*)   -> {
         map.put(`v,`term);
         return buildVariableMap(`t,map);
       }
     }
-		return null; 
+    return null;
   }
 
   public void mappingReduce(Map input) {
@@ -879,7 +886,7 @@ public class Verifier extends TomBase {
     while(it.hasNext()) {
       Object key = it.next();
       Expr value = (Expr) input.get(key);
-      input.put(key,reduceWithMappingRules(value));          
+      input.put(key,reduceWithMappingRules(value));
     }
   }
 
@@ -888,7 +895,7 @@ public class Verifier extends TomBase {
     while(it.hasNext()) {
       Object key = it.next();
       Expr value = (Expr) input.get(key);
-      input.put(key,booleanSimplify(value));          
+      input.put(key,booleanSimplify(value));
     }
   }
 
@@ -902,7 +909,7 @@ public class Verifier extends TomBase {
     }
     return res;
   }
-  
+
   public class BooleanSimplifier extends IlVisitableFwd {
     public BooleanSimplifier() {
       super(`Identity());
@@ -911,22 +918,22 @@ public class Verifier extends TomBase {
     public Expr visit_Expr(Expr arg) throws jjtraveler.VisitFailure {
       %match(Expr arg) {
         iland(false(),right) -> {
-          return `false(); 
+          return `false();
         }
         iland(left,false()) -> {
-          return `false();  
+          return `false();
         }
         ilor(lt@true[],right) -> {
-          return `lt; 
+          return `lt;
         }
         ilor(left,lt@true[]) -> {
-          return `lt;  
+          return `lt;
         }
         ilor(false(),right) -> {
-          return `right; 
+          return `right;
         }
         ilor(left,false()) -> {
-          return `left;  
+          return `left;
         }
         ilnot(true[]) -> {
           return `false();

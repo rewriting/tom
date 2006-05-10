@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  * Antoine Reilles        e-mail: Antoine.Reilles@loria.fr
  *
@@ -42,13 +42,13 @@ public class TomIlTools extends TomBase {
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/zenon/Zenon.tom }
   %include { mutraveler.tom }
-	%typeterm Collection {
-		implement { java.util.Collection }
-	}
+  %typeterm Collection {
+    implement { java.util.Collection }
+  }
   // ------------------------------------------------------------
 
   private SymbolTable symbolTable;
-  private Verifier verifier; 
+  private Verifier verifier;
 
 
   public TomIlTools(Verifier verifier) {
@@ -105,7 +105,7 @@ public class TomIlTools extends TomBase {
     }
     throw new TomRuntimeException("patternToZExpr : strange pattern " + pattern);
   }
-  
+
   public ZExpr patternToZExpr(TomList subjectList, TomList tomList, Map map, Set unamedVariableSet) {
     /* for each TomTerm: builds a zeq : pattern = subject */
     ZExpr res = `ztrue();
@@ -119,7 +119,7 @@ public class TomIlTools extends TomBase {
     }
     return res;
   }
-  
+
   public ZTerm tomTermToZTerm(TomTerm tomTerm, Map map, Set unamedVariableSet) {
     %match(TomTerm tomTerm) {
       TermAppl[nameList=concTomName(Name(name),_*),args=childrens] -> {
@@ -158,7 +158,7 @@ public class TomIlTools extends TomBase {
                 GetSlotDecl[slotName=slotName] -> {
                   if (definedSlotMap.containsKey(`slotName)) {
                     zchild = `concZTerm(zchild*,tomTermToZTerm((TomTerm)definedSlotMap.get(slotName),map,unamedVariableSet));
-                  } 
+                  }
                   else {
                     // fake an UnamedVariable
                     zchild = `concZTerm(zchild*,tomTermToZTerm(
@@ -188,7 +188,7 @@ public class TomIlTools extends TomBase {
           System.out.println("tomTermToZTerm 2 Not in map: " + name + " map: " + map);
           return `zvar(name);
         }
-      }      
+      }
       UnamedVariable[] -> {
         // for unamed variables in a pattern, we generate an existential
         // quantifier for a dummy name
@@ -214,19 +214,19 @@ public class TomIlTools extends TomBase {
   public Collection collectSymbols(ZExpr subject) {
     Collection result = new HashSet();
     try {
-			`TopDown(collect_symbols(result)).visit(subject);
+      `TopDown(collect_symbols(result)).visit(subject);
     } catch (jjtraveler.VisitFailure e) {
-			throw new TomRuntimeException("Strategy collect_symbols failed");
-		}
+      throw new TomRuntimeException("Strategy collect_symbols failed");
+    }
     return result;
   }
   public Collection collectSymbolsFromZSpec(ZSpec subject) {
     Collection result = new HashSet();
     try {
-			`TopDown(collect_symbols(result)).visit(subject);
+      `TopDown(collect_symbols(result)).visit(subject);
     } catch (jjtraveler.VisitFailure e) {
-			throw new TomRuntimeException("Strategy collect_symbols failed");
-		}
+      throw new TomRuntimeException("Strategy collect_symbols failed");
+    }
     return result;
   }
 
@@ -261,7 +261,7 @@ public class TomIlTools extends TomBase {
       res=`zby(res*,zaxiom("symb_"+replaceNumbersByString(name),axiom));
     }
     return res;
-  } 
+  }
 
   public ZAxiomList subtermsDefinition(Collection symbolnames) {
     ZAxiomList res = `zby();
@@ -292,13 +292,13 @@ public class TomIlTools extends TomBase {
       }
     }
     return res;
-  } 
+  }
 
   public List subtermList(String symbolName) {
     List nameList = new LinkedList();
 
     TomSymbol symbol = getSymbolFromName(symbolName,getSymbolTable());
-    
+
     %match(TomSymbol symbol) {
       Symbol[pairNameDeclList=slots] -> {
         %match(PairNameDeclList slots) {
@@ -309,7 +309,7 @@ public class TomIlTools extends TomBase {
       }
     }
     return nameList;
-  } 
+  }
 
   public String replaceNumbersByString(String input) {
     String output = input;
