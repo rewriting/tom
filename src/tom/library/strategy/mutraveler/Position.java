@@ -33,7 +33,7 @@ public class Position {
     }
   }
 
-  protected Object clone() {
+  public Object clone() {
     Position clone = new Position(data.length);
     clone.size = size;
     System.arraycopy(data, 0, clone.data, 0, size);
