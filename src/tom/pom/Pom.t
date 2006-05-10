@@ -1,25 +1,25 @@
 /*
  * Pom
- * 
+ *
  * Copyright (c) 2005-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Yoann Toussaint    e-mail: Yoann.Toussaint@loria.fr
- * 
+ *
  **/
 
 package tom.pom;
@@ -39,27 +39,27 @@ public class Pom {
     exec(args);
   }
   public static int exec(String[] args) {
-    String srcfile= null;
-    String  destdir= null;
-    String packageP= null;
+    String srcfile = null;
+    String destdir = null;
+    String packageP = null;
 
-    for (int i=0;i<java.lang.reflect.Array.getLength(args);i++) {
+    for (int i=0; i<java.lang.reflect.Array.getLength(args); i++) {
       if (args[i].equals("--srcfile")) {
-        srcfile = args[i+1];
+        srcfile = args[++i];
       }
       if (args[i].equals("--destdir")) {
-        destdir = args[i+1];
+        destdir = args[++i];
       }
       if (args[i].equals("--package")) {
-        packageP = args[i+1];
+        packageP = args[++i];
       }
     }
     Pom pom = new Pom(srcfile,destdir,packageP);
     pom.gen();
-    return 0;//no errors
+    return 0; //no errors
   }
 
-  public Pom(String fileN, String destD,String packageP){
+  public Pom(String fileN, String destD, String packageP) {
     this.fileName = fileN;
     this.destDir = destD;
     this.packagePrefix = packageP;
@@ -115,7 +115,8 @@ public class TokenTable {
 ]%);
     try {
       Writer writer = new BufferedWriter(
-          new FileWriter(packagePrefix + "/TokenTable.java"));
+          new FileWriter(destDir + File.separator +
+            packagePrefix + File.separator + "TokenTable.java"));
       writer.write(out.toString());
       writer.close();
     } catch (Exception e) {
@@ -179,7 +180,8 @@ public class TokenTable {
 
     try {
       Writer writer = new BufferedWriter(
-          new FileWriter(packagePrefix + "/Mapping.tom"));
+          new FileWriter(destDir + File.separator +
+            packagePrefix + File.separator + "Mapping.tom"));
       writer.write(out.toString());
       writer.close();
     } catch (Exception e) {

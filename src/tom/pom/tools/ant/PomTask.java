@@ -114,7 +114,6 @@ public class PomTask extends MatchingTask {
     compile();
   }
 
-  
   /**
    * Check that all required attributes have been set and nothing
    * silly has been entered.
