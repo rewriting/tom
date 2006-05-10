@@ -737,21 +737,22 @@ public class Verifier extends TomBase {
  * To replace undefsubst in tree by the computed value
  * which leads to axiom
  */
-  Replace2 replaceUndefsubs = new Replace2() {
-      public ATerm apply(ATerm subject, Object arg1) {
-        %match(SubstitutionList subject) {
-          (undefsubs()) -> {
-            return (SubstitutionList)arg1;
-          }
-        }
-        /* Default case : Traversal */
-        return traversal().genericTraversal(subject,this,arg1);
-      } // end apply
-    };
+  %strategy replaceUndefsubs(arg:SubstitutionList) extends `Identity() {
+    visit SubstitutionList {
+      (undefsubs()) -> {
+        return arg;
+      }
+    }
+  }
 
   private DerivTree replaceUndefinedSubstitution(DerivTree subject,
                                       SubstitutionList subs) {
-    return (DerivTree) replaceUndefsubs.apply(subject,subs);
+    try {
+      subject = (DerivTree) `TopDown(replaceUndefsubs(subs)).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
+      throw new TomRuntimeException("Strategy collectProgramVariables failed");
+    }
+    return subject;
   }
 
   %typeterm SubstRef {
