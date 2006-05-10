@@ -48,6 +48,9 @@ public class Verifier extends TomBase {
   %typeterm Collection {
     implement { java.util.Collection }
   }
+  %typeterm Map {
+    implement { java.util.Map }
+  }
   // ------------------------------------------------------------
 
   private SymbolTable symbolTable;
@@ -774,28 +777,28 @@ public class Verifier extends TomBase {
   /**
    * These functions deals with substitution application
    */
-
-  Replace2 replaceVariableByTerm = new Replace2() {
-      public ATerm apply(ATerm subject, Object arg1) {
-        %match(Term subject) {
-          tau(absvar(v@var(name))) -> {
-            Map map = (Map) arg1;
-            if (map.containsKey(`v)) {
-              return (Term)map.get(`v);
-            }
-            return (Term)subject;
-          }
+  %strategy replaceVariableByTerm(map:Map) extends `Identity() {
+    visit Term {
+      t@tau(absvar(v@var(name))) -> {
+        if (map.containsKey(`v)) {
+          return (Term)map.get(`v);
         }
-        /* Default case : Traversal */
-        return traversal().genericTraversal(subject,this,arg1);
-      } // end apply
-    };
+        return `t;
+      }
+    }
+  }
 
   public Term replaceVariablesInTerm(Term subject) {
     %match(Term subject) {
       appSubsT(sublist,term) -> {
         Map map = buildVariableMap(`sublist, new HashMap());
-        return (Term) replaceVariableByTerm.apply(`term,map);
+        Term t = `term;
+        try {
+          t = (Term) `TopDown(replaceVariableByTerm(map)).visit(`term);
+        } catch (jjtraveler.VisitFailure e) {
+          throw new TomRuntimeException("Strategy collectProgramVariables failed");
+        }
+        return t;
       }
     }
     return subject;
@@ -805,7 +808,13 @@ public class Verifier extends TomBase {
     %match(Expr subject) {
       appSubsE(sublist,term) -> {
         Map map = buildVariableMap(`sublist, new HashMap());
-        return (Expr) replaceVariableByTerm.apply(`term,map);
+        Expr t = `term;
+        try {
+          t = (Expr) `TopDown(replaceVariableByTerm(map)).visit(`term);
+        } catch (jjtraveler.VisitFailure e) {
+          throw new TomRuntimeException("Strategy collectProgramVariables failed");
+        }
+        return t;
       }
     }
     return subject;
