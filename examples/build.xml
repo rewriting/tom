@@ -553,11 +553,11 @@
     <mkdir dir="${examples.gen}/${pom}"/>
     <tomantlr target="${pom}/SeqParser.g"
               outputdirectory="${examples.gen}/${pom}">
- 		<classpath refid="tom.classpath"/>
+      <classpath refid="tom.classpath"/>
     </tomantlr>
     <pom srcfile="${examples.gen}/${pom}/SeqParserTokenTypes.txt"
-      destdir="${pom}"
-      package="${pom}">
+         destdir="${examples.gen}/${pom}"
+         package="${pom}">
     </pom>
     <javacompile example="${pom}"/>
     <!-- copy resources -->
