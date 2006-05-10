@@ -30,7 +30,6 @@ import tom.engine.*;
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import tom.library.traversal.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.il.*;
 import tom.engine.adt.il.types.*;
@@ -44,22 +43,20 @@ public class ZenonOutput {
   // ------------------------------------------------------------
   %include { adt/il/Il.tom }
   %include { adt/zenon/Zenon.tom }
+  %include { mutraveler.tom }
+	%typeterm Map {
+		implement { java.util.Map }
+	}
   // ------------------------------------------------------------
 
-  private GenericTraversal traversal;
   private Verifier verifier;
   private TomIlTools tomiltools;
 
   public ZenonOutput(Verifier verifier) {
-    this.traversal = new GenericTraversal();
     this.verifier = verifier;
     this.tomiltools = new TomIlTools(verifier);
   }
 
-  public GenericTraversal traversal() {
-    return this.traversal;
-  }
-  
   public Collection zspecSetFromDerivationTreeSet(Collection derivationSet) {
     Collection resset = new HashSet();
     Iterator it = derivationSet.iterator();
@@ -223,28 +220,30 @@ public class ZenonOutput {
   /**
    * collects all variable names in the DerivTree, and give a name to _'s
    */
-  DerivTree collectProgramVariables(DerivTree tree, Map variables) {
-    Replace2 programVariablesCollector = new Replace2() {
-      public ATerm apply(ATerm subject, Object astore) {
-        Map store = (Map) astore;
-				%match(Variable subject) {
-					var(name) -> {
-						String newname = `name;
-						if (store.containsKey(`name)){
-							newname = (String) store.get(`name);
-						} else {
-							if (`name.startsWith("[") && `name.endsWith("]")) {
-								newname = "X_" + store.size();
-							}
-							store.put(`name,newname);
-						}
-						return `var(newname);
-					}
+  %strategy programVariablesCollector(store:Map) extends `Identity() {
+    visit Variable {
+      var(name) -> {
+        String newname = `name;
+        if (store.containsKey(`name)){
+          newname = (String) store.get(`name);
+        } else {
+          if (`name.startsWith("[") && `name.endsWith("]")) {
+            newname = "X_" + store.size();
+          }
+          store.put(`name,newname);
         }
-        return traversal().genericTraversal(subject,this,astore);
+        return `var(newname);
       }
-    };
-    return (DerivTree) programVariablesCollector.apply(tree,variables);
+    }
+  }
+
+  DerivTree collectProgramVariables(DerivTree tree, Map variables) {
+    try {
+      tree = (DerivTree) `TopDown(programVariablesCollector(variables)).visit(tree);
+    } catch (jjtraveler.VisitFailure e) {
+			throw new TomRuntimeException("Strategy collectProgramVariables failed");
+		}
+    return tree;
   }
 
   ZTerm ztermFromTerm(Term term) {

@@ -40,10 +40,9 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomMessage;
 import tom.engine.tools.Tools;
 import tom.engine.tools.TomGenericPlugin;
-import tom.library.traversal.Collect2;
-import tom.library.traversal.Replace1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
+import tom.engine.exception.TomRuntimeException;
 import aterm.ATerm;
 import tom.engine.adt.il.types.*;
 import tom.engine.adt.zenon.types.*;
@@ -53,6 +52,10 @@ import tom.engine.adt.zenon.types.*;
 public class TomVerifier extends TomGenericPlugin {
   
   %include{ adt/tomsignature/TomSignature.tom }
+  %include { mutraveler.tom }
+	%typeterm Collection {
+		implement { java.util.Collection }
+	}
   
   public static final String DECLARED_OPTIONS = 
     "<options>" +
@@ -158,21 +161,21 @@ public class TomVerifier extends TomGenericPlugin {
     return getOptionBooleanValue("verify");
   }
   
-  private Collect2 matchCollector = new Collect2() {
-      public boolean apply(ATerm subject, Object astore) {
-        Collection store = (Collection)astore;
-				%match(Instruction subject) {
-					CompiledMatch[automataInst=automata]  -> {
-						store.add(`automata);
-					}
-				}//end match
-				return true;
-      }//end apply
-    };//end new
+  %strategy collectMatch(collection:Collection) extends `Identity() {
+    visit Instruction {
+      CompiledMatch[automataInst=automata]  -> {
+        collection.add(`automata);
+      }
+    }
+  }
   
-  public Collection collectMatch(TomTerm subject) {
+  public static Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
-    traversal().genericCollect(subject,matchCollector,result);
+    try {
+			`TopDown(collectMatch(result)).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
+			throw new TomRuntimeException("Strategy collectMatch failed");
+		}
     return result;
   }
 
@@ -187,41 +190,39 @@ public class TomVerifier extends TomGenericPlugin {
     return purified;
   }
   
-  Replace1 ilSimplifier = new Replace1() {
-      public ATerm apply(ATerm subject) {
-				%match(Expression subject) {
-					Or(cond,FalseTL()) -> {
-						return traversal().genericTraversal(`cond,this);
-					}
-				}
-				// the checkstamp should be managed another way 
-				%match(Instruction subject) {
-					If(TrueTL(),success,Nop()) -> {
-						return traversal().genericTraversal(`success,this);
-					}
-					(UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {
-						return traversal().genericTraversal(`inst,this);
-					}
-					(Let|LetRef|LetAssign)[variable=(UnamedVariable|UnamedVariableStar)[],astInstruction=body] -> {
-						return traversal().genericTraversal(`body,this);
-					}
+  %strategy ilSimplifier() extends `Identity() {
+    visit Expression {
+      Or(cond,FalseTL()) -> {
+        return `cond;
+      }
+    }
+    visit Instruction {
+      If(TrueTL(),success,Nop()) -> {
+        return `success;
+      }
+      (UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {
+        return `inst;
+      }
+      (Let|LetRef|LetAssign)[variable=(UnamedVariable|UnamedVariableStar)[],astInstruction=body] -> {
+        return `body;
+      }
 
-					CompiledPattern[automataInst=inst] -> {
-						return traversal().genericTraversal(`inst,this);
-					}
-          CheckInstance[instruction=inst] -> {
-						return traversal().genericTraversal(`inst,this);
-          }
-				}
-        /*
-         * Default case : Traversal
-         */
-        return traversal().genericTraversal(subject,this);
-      }//end apply
-    };//end new Replace1 ilSimplifier
-  
+      CompiledPattern[automataInst=inst] -> {
+        return `inst;
+      }
+      CheckInstance[instruction=inst] -> {
+        return `inst;
+      }
+    }
+  }
+
   private Instruction simplifyIl(Instruction subject) {
-    return (Instruction) ilSimplifier.apply(subject);
+    try {
+			subject = (Instruction) `TopDown(ilSimplifier()).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
+			throw new TomRuntimeException("Strategy simplifyIl failed");
+		}
+    return subject;
   }
   
   void filterAssociative(Collection c) {
@@ -232,33 +233,33 @@ public class TomVerifier extends TomGenericPlugin {
 
   boolean containsAssociativeOperator(Instruction subject) {
     Collection result = new HashSet();
-    traversal().genericCollect(subject,associativeOperatorCollector,result);
+    try {
+			`TopDown(associativeOperatorCollector(result)).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
+			throw new TomRuntimeException("Strategy containsAssociativeOperator failed");
+		}
     return !result.isEmpty();   
   }
 
-  private Collect2 associativeOperatorCollector = new Collect2() {
-      public boolean apply(ATerm subject, Object astore) {
-        Collection store = (Collection)astore;
-				%match(Instruction subject) {
-					LetRef[]  -> {
-						store.add(subject);
-					}
-					WhileDo[] -> {
-						store.add(subject);
-					}
-					DoWhile[] -> {
-						store.add(subject);
-					}
-				}//end match
-				%match(Expression subject) {
-					// we filter also patterns containing or() constructs
-					Or(_,_) -> {
-						store.add(subject);
-					}
-        }
-        return true;
-      }//end apply
-    }; //end new  
+  %strategy associativeOperatorCollector(store:Collection) extends `Identity() {
+    visit Instruction {
+      subject@LetRef[]  -> {
+        store.add(`subject);
+      }
+      subject@WhileDo[] -> {
+        store.add(`subject);
+      }
+      subject@DoWhile[] -> {
+        store.add(`subject);
+      }
+    }
+    visit Expression {
+      /* we filter also patterns containing or() constructs */
+      subject@Or(_,_) -> {
+        store.add(`subject);
+      }
+    }
+  }
 
   public Collection getDerivations(Collection subject) {
     Collection derivations = new HashSet();

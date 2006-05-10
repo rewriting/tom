@@ -29,18 +29,22 @@ package tom.engine.verifier;
 import tom.engine.*;
 import aterm.*;
 import java.util.*;
-import tom.library.traversal.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.zenon.*;
 import tom.engine.adt.zenon.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
+import tom.engine.exception.TomRuntimeException;
 
 public class TomIlTools extends TomBase {
 
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/zenon/Zenon.tom }
+  %include { mutraveler.tom }
+	%typeterm Collection {
+		implement { java.util.Collection }
+	}
   // ------------------------------------------------------------
 
   private SymbolTable symbolTable;
@@ -199,26 +203,30 @@ public class TomIlTools extends TomBase {
     throw new TomRuntimeException("tomTermToZTerm Strange pattern: " + tomTerm);
   }
 
-  private Collect2 collect_symbols = new Collect2() {
-      public boolean apply(ATerm subject, Object astore) {
-        Collection store = (Collection)astore;
-				%match(ZSymbol subject) {
-					zsymbol(name)  -> {
-						store.add(`name);
-					}
-				}
-				return true;
+  %strategy collect_symbols(store:Collection) extends `Identity() {
+    visit ZSymbol {
+      zsymbol(name)  -> {
+        store.add(`name);
       }
-    }; 
+    }
+  }
 
   public Collection collectSymbols(ZExpr subject) {
     Collection result = new HashSet();
-    traversal().genericCollect(subject,collect_symbols,result);
+    try {
+			`TopDown(collect_symbols(result)).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
+			throw new TomRuntimeException("Strategy collect_symbols failed");
+		}
     return result;
   }
   public Collection collectSymbolsFromZSpec(ZSpec subject) {
     Collection result = new HashSet();
-    traversal().genericCollect(subject,collect_symbols,result);
+    try {
+			`TopDown(collect_symbols(result)).visit(subject);
+    } catch (jjtraveler.VisitFailure e) {
+			throw new TomRuntimeException("Strategy collect_symbols failed");
+		}
     return result;
   }
 
