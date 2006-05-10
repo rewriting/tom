@@ -52,6 +52,10 @@ public class ApAndDisunification1 implements Matching{
 	public static int varCounter = 0;
 	public Tools tools = new Tools();
 	
+	private int antiCounter = 0;
+	
+	private ArrayList cunatifiedVarList = new ArrayList();
+	
 	public Constraint simplifyAndSolve(Constraint c,Collection solution) {
 		
 		Constraint transformedMatch = null;
@@ -71,13 +75,13 @@ public class ApAndDisunification1 implements Matching{
 		// eliminate anti
 		Constraint noAnti = null;;
 		try{
-			noAnti = applyMainRule(transformedMatch);
+			noAnti = applyMainRule2(transformedMatch);
 		}catch(VisitFailure e){
-			System.out.println("reduction failed on: " + transformedMatch);
+			System.out.println("1. reduction failed on: " + transformedMatch);
 			e.printStackTrace();
 		}
 		
-//		System.out.println("Result after main rule: " + formatConstraint(noAnti));
+//		System.out.println("Result after main rule: " + tools.formatConstraint(noAnti));
 		
 		// transform the problem into a disunification one
 		VisitableVisitor transInDisunif = `TransformIntoDisunification();
@@ -85,7 +89,7 @@ public class ApAndDisunification1 implements Matching{
 		try {		
 			disunifProblem = (Constraint) MuTraveler.init(`InnermostId(transInDisunif)).visit(noAnti);			
 		} catch (VisitFailure e) {
-			System.out.println("reduction failed on: " + noAnti);
+			System.out.println("2. reduction failed on: " + noAnti);
 			e.printStackTrace();
 		}
 		
@@ -103,12 +107,14 @@ public class ApAndDisunification1 implements Matching{
 			compiledConstraint = (Constraint) MuTraveler.init(`InnermostId(simplifyRule)).visit(disunifProblem);
 			solvedConstraint = (Constraint) MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
 		} catch (VisitFailure e) {
-			System.out.println("reduction failed on: " + c);
+			System.out.println("3. reduction failed on: " + c);
 			e.printStackTrace();
 		}
 		
-//		System.out.println("Final result: " + formatConstraint(compiledConstraint));
+//		System.out.println("Final result: " + tools.formatConstraint(compiledConstraint));
 //		System.out.println("Final result solved: " + formatConstraint(solvedConstraint));
+		
+//		System.out.println("egalitate:" + (`Variable("a") == `Variable("a")));
 		
 		return solvedConstraint;		
 	}
@@ -118,19 +124,115 @@ public class ApAndDisunification1 implements Matching{
 	public Constraint applyMainRule(Constraint c) throws VisitFailure{
 		
 		// first get the constraint without the anti
-		Constraint cNoAnti =  (Constraint) MuTraveler.init(`OnceTopDownId(ApplyStrategy(ElimAnti()))).visit(c);
+		Constraint cNoAnti =  (Constraint) MuTraveler.init(`OnceTopDownId(ApplyStrategy(OnceTopDownId(ElimAnti())))).visit(c);
 		// if nothing changed, time to exit
 		if (cNoAnti == c){
 			return c;
 		}
 		// get the constraint with a variable instead of anti
-		Constraint cAntiReplaced =  (Constraint) MuTraveler.init(`OnceTopDownId(ApplyStrategy(ReplaceAnti()))).visit(c);
+		Constraint cAntiReplaced =  (Constraint) MuTraveler.init(`OnceTopDownId(ApplyStrategy(OnceTopDownId(ReplaceAnti())))).visit(c);
+		
+		cunatifiedVarList.clear();
+		
+		MuTraveler.init(`OnceTopDownId(ApplyStrategySpecial())).visit(cNoAnti);
+		
+		Iterator it = cunatifiedVarList.iterator();
+		while(it.hasNext()){
+			Term t = (Term)it.next();
+			cNoAnti = `Exists(t,cNoAnti);
+		}
+		
+	//	System.out.println("antiCounter=" + antiCounter + " cNoAnti=" + tools.formatConstraint(cNoAnti));
 		
 		// recursive call to itself
 		return `And(concAnd(applyMainRule(
 					Exists(Variable("v" + ApAndDisunification1.varCounter),cAntiReplaced)),
 						Neg(applyMainRule(cNoAnti))));
 		
+	}
+	
+	
+	// the difference with the method on top is that 
+	// 1. it is does not consider qunatificators as part of the context
+	// 2. it replaces only the variables from "q", not from the entire constraint	
+	public Constraint applyMainRule2(Constraint c) throws VisitFailure{
+		
+		Term pattern = null;
+		Term subject = null;
+		
+		%match(Constraint c){
+			Equal(p,s) ->{
+				pattern = `p;
+				subject = `s;
+			}
+		}				
+		
+		// first get the constraint without the anti
+		Constraint cNoAnti =  `Equal((Term) MuTraveler.init(OnceTopDownId(ElimAnti())).visit(pattern),subject);
+		// if nothing changed, time to exit
+		if (cNoAnti == c){
+			return c;
+		}
+		// get the constraint with a variable instead of anti
+		Constraint cAntiReplaced =  `Equal((Term) MuTraveler.init(OnceTopDownId(ReplaceAnti())).visit(pattern),subject);
+		
+		cAntiReplaced = `Exists(Variable("v" + ApAndDisunification1.varCounter),
+				applyMainRule2(cAntiReplaced));
+		
+		cNoAnti = applyMainRule2(cNoAnti);
+		
+//		System.out.println("Asta e 'c':" + tools.formatConstraint(c));
+		
+		cNoAnti = `Neg(cNoAnti);
+		
+		cunatifiedVarList.clear();
+		
+		MuTraveler.init(`OnceTopDownId(ApplyStrategySpecial2())).visit(c);
+		
+		Iterator it = cunatifiedVarList.iterator();
+		while(it.hasNext()){
+			Term t = (Term)it.next();
+			cNoAnti = `ForAll(t,cNoAnti);
+		}
+		
+	//	System.out.println("antiCounter=" + antiCounter + " cNoAnti=" + tools.formatConstraint(cNoAnti));
+		
+		// recursive call to itself
+		return `And(concAnd(cAntiReplaced,cNoAnti));
+
+		
+	}
+	
+	
+	// quantifies the variables in positive positions
+	%strategy AnalyzeTerm(subject:Term) extends `Identity(){		
+		
+		visit Term {
+			v@Variable(x) ->{
+				
+				antiCounter = 0;
+				
+//				System.out.println("Analyzing " + `v + " position=" + getPosition() );
+				
+				VisitableVisitor useOmegaPath = getPosition().getOmegaPath(`CountAnti());				
+				
+				MuTraveler.init(useOmegaPath).visit(subject);
+				
+//				System.out.println("After analyzing counter=" + antiCounter);
+				// if no anti-symbol found, than the variable can be quantified
+				if (antiCounter == 0) {
+					cunatifiedVarList.add(`v);
+				}
+			}
+		}		
+	}
+	
+	%strategy CountAnti() extends `Identity(){
+		visit Term {
+			Anti(_) -> {
+				antiCounter++;				
+			}
+		}
 	}
 	
 	// returns a term without the first negation that it finds
@@ -160,8 +262,31 @@ public class ApAndDisunification1 implements Matching{
 		visit Constraint {
 			// main rule
 			Equal(p,s) -> {
-				Term t = (Term)MuTraveler.init(`OnceTopDownId(vv)).visit(`p);
+				Term t = (Term)MuTraveler.init(vv).visit(`p);
 				return `Equal(t,s);
+			}
+		}
+	}
+	
+	%strategy ApplyStrategySpecial() extends `Identity(){
+		
+		visit Constraint {
+			// main rule
+			Equal(p,s) -> {
+				Term t = (Term)MuTraveler.init(`InnermostId(AnalyzeTerm(p))).visit(`p);
+				return `Equal(t,s);
+			}
+		}
+	}
+	
+	%strategy ApplyStrategySpecial2() extends `Identity(){
+		
+		visit Term {
+			// main rule
+			anti@Anti(p) -> {
+				Term t = (Term)MuTraveler.init(`InnermostId(AnalyzeTerm(p))).visit(`p);				
+				// now it has to stop
+				return `p;
 			}
 		}
 	}
@@ -169,6 +294,11 @@ public class ApAndDisunification1 implements Matching{
 	%strategy TransformIntoDisunification() extends `Identity(){
 		
 		visit Constraint {
+			
+			// some simplification stuff
+			Exists(a,Exists(a,b)) ->{
+				return `Exists(a,b);
+			}
 			
 			// producing or - de morgan 1
 			Neg(And(a)) ->{
@@ -231,11 +361,11 @@ public class ApAndDisunification1 implements Matching{
 				return `True();
 			}
 			Exists(Variable(name),constr)->{
-				// eliminates the cuantificator when the
+				// eliminates the quantificator when the
 				// constraint does not contains the variable
 				
 				// TODO - replace with a strategy
-				if (! (`constr.toString().indexOf(`name) > -1) ) {
+				if ( `constr.toString().indexOf(`name) == -1 ) {
 					return `constr;
 				}
 				
@@ -247,11 +377,11 @@ public class ApAndDisunification1 implements Matching{
 				return `False();
 			}
 			ForAll(Variable(name),constr)->{
-				// eliminates the cuantificator when the
+				// eliminates the quantificator when the
 				// constraint does not contains the variable
 				
 				// TODO - replace with a strategy
-				if (! (`constr.toString().indexOf(`name) > -1) ) {
+				if ( `constr.toString().indexOf(`name) == -1 ) {
 					return `constr;
 				}				
 			}
@@ -260,14 +390,48 @@ public class ApAndDisunification1 implements Matching{
 			
 			// distribution of exists/forall in and and or - allows
 			// simplification with the rules above
-			Exists(v@Variable(var),And(list)) ->{
+//			Exists(v@Variable(var),And(list)) ->{
+//				
+//				AConstraintList l = `list;
+//				AConstraintList result = `concAnd();
+//				
+//				while(!l.isEmptyconcAnd()){
+//					result = `concAnd(Exists(v,l.getHeadconcAnd()),result*);
+//					l = l.getTailconcAnd();
+//				}
+//				
+//				return `And(result);
+//			}
+			e@Exists(v@Variable(var),And(list)) ->{
 				
 				AConstraintList l = `list;
 				AConstraintList result = `concAnd();
+				AConstraintList result1 = `concAnd();
 				
 				while(!l.isEmptyconcAnd()){
-					result = `concAnd(Exists(v,l.getHeadconcAnd()),result*);
+					
+					Constraint c = l.getHeadconcAnd();
+					
+					// if the c doesn't contain the variable, we 
+					// can put it outside the expresion that is quantified					
+					if ( c.toString().indexOf(`var) == -1 ) {
+						result = `concAnd(Exists(v,c),result*);
+					}else{
+						result1 = `concAnd(c,result1*);
+					}				
+									
+					//result = `concAnd(Exists(v,l.getHeadconcAnd()),result*);
 					l = l.getTailconcAnd();
+				}
+				
+				// if couldn't do anything, return the same thing
+				if (result.isEmptyconcAnd()){
+					return `e;
+				}
+				
+				// if not all were separated
+				if (!result1.isEmptyconcAnd()){
+					result = `concAnd(Exists(v,And(result1)),result*);
 				}
 				
 				return `And(result);
@@ -296,18 +460,52 @@ public class ApAndDisunification1 implements Matching{
 				
 				return `And(result);
 			}			
-			ForAll(v@Variable(var),Or(list)) ->{
-				
+//			ForAll(v@Variable(var),Or(list)) ->{
+//				
+//				OConstraintList l = `list;
+//				OConstraintList result = `concOr();
+//				
+//				while(!l.isEmptyconcOr()){
+//					result = `concOr(ForAll(v,l.getHeadconcOr()),result*);
+//					l = l.getTailconcOr();
+//				}
+//				
+//				return `Or(result);
+//			}
+
+			f@ForAll(v@Variable(var),Or(list)) ->{
+			
 				OConstraintList l = `list;
 				OConstraintList result = `concOr();
+				OConstraintList result1 = `concOr();
 				
 				while(!l.isEmptyconcOr()){
-					result = `concOr(ForAll(v,l.getHeadconcOr()),result*);
+					
+					Constraint c = l.getHeadconcOr();
+					
+					// if the c doesn't contain the variable, we 
+					// can put it outside the expresion that is quantified					
+					if ( c.toString().indexOf(`var) == -1 ) {					
+						result = `concOr(ForAll(v,c),result*);
+					}else{
+						result1 = `concOr(c,result1*);
+					}			
+					
 					l = l.getTailconcOr();
 				}
 				
+				// if couldn't do anything, return the same thing
+				if (result.isEmptyconcOr()){
+					return `f;
+				}
+				
+				// if not all were separated
+				if (!result1.isEmptyconcOr()){
+					result = `concOr(ForAll(v,Or(result1)),result*);
+				}
+				
 				return `Or(result);
-			}
+			}			
 			
 			// ///////////////////////////////////////////////////////////////////
 			
@@ -444,6 +642,39 @@ public class ApAndDisunification1 implements Matching{
 	%strategy SolveRes() extends `Identity(){
 		
 		visit Constraint {
+			
+//			 simple rules with exists and forall
+			Exists(Variable(a),Equal(Variable(a),_)) ->{				
+				return `True();
+			}						
+			Exists(Variable(a),NEqual(Variable(a),_)) ->{				
+				return `True();
+			}
+			Exists(Variable(name),constr)->{
+				// eliminates the quantificator when the
+				// constraint does not contains the variable
+				
+				// TODO - replace with a strategy
+				if (! (`constr.toString().indexOf(`name) > -1) ) {
+					return `constr;
+				}
+				
+			}			
+			ForAll(Variable(a),Equal(Variable(a),_)) ->{
+				return `False();
+			}
+			ForAll(Variable(a),NEqual(Variable(a),_)) ->{
+				return `False();
+			}
+			ForAll(Variable(name),constr)->{
+				// eliminates the quantificator when the
+				// constraint does not contains the variable
+				
+				// TODO - replace with a strategy
+				if (! (`constr.toString().indexOf(`name) > -1) ) {
+					return `constr;
+				}				
+			}
 			
 			// ground terms' equality
 			Equal(p@Appl(_,_),g@Appl(_,_)) -> {

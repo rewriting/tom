@@ -49,3 +49,5 @@ match(anti(f(X,Y)), f(a,b))
 match(anti(f(X,anti(g(Y)))), f(a,g(b)))
 -
 match(anti(f(Z,anti(g(X,Y)))),f(c,g(a,b)))
+-
+match(anti(anti(X)),a)
