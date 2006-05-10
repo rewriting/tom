@@ -144,11 +144,11 @@
   }
 
   %op VisitableVisitor OnceBottomUpId(s1:VisitableVisitor) {
-    make(v) { `mu(MuVar("x"),ChoiceId(OneId(MuVar("x")),v)) }
+    make(v) { `mu(MuVar("x"),SequenceId(OneId(MuVar("x")),v)) }
   }
 
   %op VisitableVisitor OnceTopDownId(s1:VisitableVisitor) {
-    make(v) { `mu(MuVar("x"),ChoiceId(v,OneId(MuVar("x")))) }
+    make(v) { `mu(MuVar("x"),SequenceId(v,OneId(MuVar("x")))) }
   }
 
   %op VisitableVisitor InnermostId(s1:VisitableVisitor) {
