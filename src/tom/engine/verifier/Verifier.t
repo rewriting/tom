@@ -29,7 +29,6 @@ package tom.engine.verifier;
 import tom.engine.*;
 import aterm.*;
 import java.util.*;
-import tom.library.traversal.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.il.*;
@@ -291,23 +290,23 @@ public class Verifier extends TomBase {
     return constraintList;
   }
 
+  %strategy substitutionCollector(outsubst:SubstRef) extends `Identity() {
+    visit Expr {
+      t@true(subs(undefsubs())) -> {
+				`Fail().visit(`t);
+      }
+      true(x) -> {
+        outsubst.set(`x);
+      }
+    }
+  }
   public SubstitutionList collectSubstitutionInConstraint(Expr expr) {
-    Collect2 substitutionCollector = new Collect2() {
-      public boolean apply(ATerm subject, Object astore) {
-        SubstRef outsubst = (SubstRef) astore;
-        %match(Expr subject) {
-          true(subs(undefsubs())) -> {
-            return false;
-          }
-          true(x) -> {
-            outsubst.set(`x);
-          }
-        }//end match
-        return true;
-      }//end apply
-    }; //end new
     SubstRef output = new SubstRef(`subs());
-    traversal().genericCollect(expr,substitutionCollector,output);
+    try {
+			`mu(MuVar("x"),Try(Sequence(substitutionCollector(output),All(MuVar("x"))))).visit(expr);
+    } catch (jjtraveler.VisitFailure e) {
+      throw new TomRuntimeException("Strategy substitutionCollector failed");
+    }
     return output.get();
   }
 
@@ -715,24 +714,23 @@ public class Verifier extends TomBase {
     return c;
   }
 
-  protected boolean instructionContains(Instr i, Instr goal) {
-    Collect3 collect_find = new Collect3() {
-      public boolean apply(ATerm subject, Object astore, Object arg) {
-        Collection c = (Collection) astore;
-        Instr lgoal = (Instr) arg;
-        if (subject instanceof Instr) {
-          if (subject == lgoal) {
-            c.add(lgoal);
-            return false;
-          }
-          return true;
-        } else {
-          return true;
+  %strategy stratInstructionContains(goal:Instr,c:Collection) extends `Identity() {
+    visit Instr {
+      x -> {
+        if (`x == goal) {
+          c.add(goal);
+          `Fail().visit(`x);
         }
-      }//end apply
-    };
+      }
+    }
+  }
+  protected boolean instructionContains(Instr i, Instr goal) {
     Collection collect = new HashSet();
-    traversal().genericCollect(i,collect_find,collect,goal);
+    try {
+      `mu(MuVar("x"),Try(Sequence(stratInstructionContains(goal,collect),All(MuVar("x"))))).visit(i);
+    } catch(jjtraveler.VisitFailure e) {
+			System.out.println("strategy instructionContains failed");
+		}
     return !collect.isEmpty();
   }
 
