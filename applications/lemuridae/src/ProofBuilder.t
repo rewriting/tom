@@ -276,7 +276,7 @@ b: {
   %strategy getOpenPositions(list:LinkedList) extends `Identity() {
     visit Tree {
       rule[name="open"] -> {
-        list.add(MuTraveler.getPosition(this));
+        list.add(getPosition());
       }
     }
   }
