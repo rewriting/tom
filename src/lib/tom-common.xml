@@ -19,7 +19,7 @@
 
   <target name="tom.init">
     <fail unless="tom.home"
-          message="tom.home has to be defined in your environment, 
+          message="tom.home has to be defined in your environment,
           to find the Tom classes"/>
     <!-- Define the classpath to run tom and related tools -->
     <path id="tom.classpath">
@@ -27,7 +27,7 @@
         <include name="*.jar"/>
       </fileset>
     </path>
-    
+
     <taskdef name="adt"
              classname="tom.engine.tools.ant.ApigenTask"
              classpathref="tom.classpath"/>
@@ -35,9 +35,9 @@
              classname="tom.engine.tools.ant.TomTask"
              classpathref="tom.classpath"/>
     <taskdef name="vas"
-             classname="vas.ant.VasTask" 
+             classname="vas.ant.VasTask"
              classpathref="tom.classpath"/>
-    <taskdef name="tomantlr" 
+    <taskdef name="tomantlr"
              classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
       <classpath refid="tom.classpath"/>
     </taskdef>

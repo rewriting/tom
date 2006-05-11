@@ -5,7 +5,7 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 /**
- * <code>Omega(i,v)</code> 
+ * <code>Omega(i,v)</code>
  * <p>
  * Basic visitor combinator which applies v the i-th subterm
  * 0-th subterm is the term itself
@@ -18,7 +18,7 @@ import jjtraveler.VisitFailure;
 public class Omega extends AbstractMuStrategy {
   protected final static int ARG = 0;
   protected int position;
-  
+
   public Omega(int position, VisitableVisitor v) {
     initSubterm(v);
     this.position = position;
@@ -33,7 +33,7 @@ public class Omega extends AbstractMuStrategy {
         Visitable newChild = getArgument(ARG).visit(any.getChildAt(childNumber));
         return any.setChildAt(childNumber,newChild);
       } else {
-        try { 
+        try {
           getPosition().down(position);
           Visitable newChild = getArgument(ARG).visit(any.getChildAt(childNumber));
           getPosition().up();
