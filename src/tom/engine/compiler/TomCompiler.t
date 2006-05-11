@@ -37,7 +37,6 @@ import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
-import aterm.ATerm;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
@@ -81,7 +80,7 @@ public class TomCompiler extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     try {
-      // renit absVarNumber to generate reproductable output
+      // reinit absVarNumber to generate reproducible output
       absVarNumber = 0;
       TomTerm preCompiledTerm = (TomTerm)(MuTraveler.init(`preProcessing(this)).visit(((TomTerm)getWorkingTerm())));
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
@@ -121,7 +120,11 @@ public class TomCompiler extends TomGenericPlugin {
    */
 
   %op VisitableVisitor preProcessing(compiler:TomCompiler){
-     make(compiler){`(mu(MuVar("x"),Choice(preProcessing_once(compiler),All(MuVar("x")))))}
+     make(compiler){
+       `(mu(MuVar("x"),Choice(
+               preProcessing_once(compiler),
+               All(MuVar("x")))))
+     }
    }
 
 
