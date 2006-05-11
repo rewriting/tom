@@ -35,7 +35,7 @@ import tom.library.adt.tnode.*;
  * The PluginPlatform manages plugins defined in an xml configuration file.
  * (which plugins are used and how they are ordered) with the intermediate
  * of a ConfigurationManager objet
- * Its main role is to run the plugins in the specified order and make some 
+ * Its main role is to run the plugins in the specified order and make some
  * error management.
  *
  */
@@ -46,7 +46,7 @@ public class PluginPlatform {
 
   /** The List of reference to plugins. */
   private List pluginsList;
-    
+
   /** The status handler */
   private StatusHandler statusHandler;
 
@@ -59,7 +59,7 @@ public class PluginPlatform {
   /** List of generated object cleared before each run */
   private List lastGeneratedObjects;
 
-  /** Radical of the logger */  
+  /** Radical of the logger */
   private String loggerRadical;
 
   /** Class Pluginplatform constructor */
@@ -70,10 +70,10 @@ public class PluginPlatform {
     pluginsList = confManager.getPluginsList();
     inputToCompileList = confManager.getOptionManager().getInputToCompileList();
   }
-  
+
   /**
    * The main method which runs the PluginPlatform.
-   * 
+   *
    * @return an error code :
    * <ul>
    * <li>0 if no error was encountered</li>
@@ -93,8 +93,8 @@ public class PluginPlatform {
       Object initArgument = input;
       boolean success = true;
       statusHandler.clear();
-      
-      if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);     
+
+      if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);
       if(input instanceof String && ((String)input).endsWith(".t")) {
         String inputWithoutSuffix = ((String)input).substring(0, ((String)input).length() - ".t".length());
         testHandler = new TestHandler(inputWithoutSuffix);
@@ -102,7 +102,7 @@ public class PluginPlatform {
           Logger.getLogger(loggerRadical).addHandler(this.testHandler);
           }
       }
-      
+
       getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
       // runs the plugins
       Iterator it = pluginsList.iterator();
@@ -139,7 +139,7 @@ public class PluginPlatform {
     }
 
     if(!globalSuccess) {
-      // this is the highest possible level > will be printed no matter what 
+      // this is the highest possible level > will be printed no matter what
       getLogger().log(Level.SEVERE, PluginPlatformMessage.runErrorMessage.getMessage(),
                       new Integer(globalNbOfErrors));
       return 1;
@@ -171,7 +171,7 @@ public class PluginPlatform {
   public List getLastGeneratedObjects() {
     return lastGeneratedObjects;
   }
-  
+
   public RuntimeAlert getAlertForInput(String filePath) {
     return statusHandler.getAlertForInput(filePath);
   }
