@@ -1,5 +1,5 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
  * 
  * Copyright (c) 2000-2006, INRIA
@@ -35,9 +35,9 @@ import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 import aterm.*;
- 
+
 public abstract class TomAbstractGenerator extends TomBase {
-  
+
   protected OutputCode output;
   protected OptionManager optionManager;
   protected SymbolTable symbolTable;
@@ -50,14 +50,14 @@ public abstract class TomAbstractGenerator extends TomBase {
     this.output = output;
     this.prettyMode = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
   }
-  
+
   protected SymbolTable getSymbolTable(String moduleName) {
     //TODO//
     //Using of the moduleName
     ////////
     return symbolTable;
   }
-  
+
   protected TomSymbol getSymbolFromName(String tomName) {
     return getSymbolFromName(tomName, symbolTable);
   }
@@ -84,11 +84,11 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 
   /*
-   * Generate the goal language     
+   * Generate the goal language
    */
   protected void generate(int deep, TomTerm subject, String moduleName)throws IOException {
     %match(TomTerm subject) {
-      
+
       Tom(l) -> {
         generateList(deep,`l, moduleName);
         return;
@@ -98,7 +98,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         generateListInclude(deep,`l, moduleName);
         return;
       }
-     
+
       Ref(term@(Variable|VariableStar)[]) -> {
         buildRef(deep, `term, moduleName);
         return;
@@ -140,7 +140,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         generateList(deep,`argList, moduleName);
         return;
       }
-      
+
       Variable[astName=PositionName(l)] -> {
           /*
            * sans type: re-definition lorsque %variable est utilise
@@ -157,7 +157,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       VariableStar[astName=PositionName(l)] -> {
         output.write("tom" + numberListToIdentifier(`l));
-        return;  
+        return;
       }
 
       VariableStar[astName=Name(name)] -> {
@@ -223,12 +223,12 @@ public abstract class TomAbstractGenerator extends TomBase {
         buildExpBottom(deep);
         return;
       }
-      
+
       TrueTL() -> {
         buildExpTrue(deep);
         return;
       }
-      
+
       FalseTL() -> {
         buildExpFalse(deep);
         return;
@@ -244,7 +244,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      EqualFunctionSymbol(type, exp, RecordAppl[nameList=(nameAST@Name(opName))]) -> { 
+      EqualFunctionSymbol(type, exp, RecordAppl[nameList=(nameAST@Name(opName))]) -> {
         if(getSymbolTable(moduleName).isBuiltinType(getTomType(`type))) {
           TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`opName);
           if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
@@ -360,7 +360,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         `buildLetAssign(deep, var, option, exp, body, moduleName);
         return;
       }
-      
+
       (Let|LetRef|LetAssign)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
         `generateInstruction(deep, body, moduleName);
         return;
@@ -391,7 +391,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         `buildNamedBlock(deep, blockName, instList, moduleName);
         return;
       }
-      
+
       If(exp,succesList,Nop()) -> {
         `buildIf(deep, exp,succesList, moduleName);
         return;
@@ -437,7 +437,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         `generateInstruction(deep, instruction, moduleName);
         return;
       }
-      
+
       CompiledPattern(_,instruction) -> {
         `generateInstruction(deep, instruction, moduleName);
         return;
@@ -447,9 +447,9 @@ public abstract class TomAbstractGenerator extends TomBase {
         `buildCheckStamp(deep, getTermType(variable), variable, moduleName);
         return;
       }
-      
+
 			CheckInstance(Type[tomType=ASTTomType(typeName),tlType=tlType@TLType[]], exp, instruction) -> {
-        `buildCheckInstance(deep,typeName,tlType,exp,instruction, moduleName); 
+        `buildCheckInstance(deep,typeName,tlType,exp,instruction, moduleName);
         return;
       }
 
@@ -459,7 +459,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
     }
   }
-  
+
   public void generateTargetLanguage(int deep, TargetLanguage subject, String moduleName) throws IOException {
     %match(TargetLanguage subject) {
       TL(t,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
@@ -499,7 +499,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
     }
   }
-  
+
   public void generateDeclaration(int deep, Declaration subject, String moduleName) throws IOException {
     %match(Declaration subject) {
       EmptyDeclaration() -> {
@@ -544,23 +544,23 @@ public abstract class TomAbstractGenerator extends TomBase {
         return ;
       }
 
-      CheckStampDecl(Variable[astName=Name(name), 
-                              astType=Type(ASTTomType(type),tlType@TLType[])], 
-                     //astType=Type((type),tlType@TLType[])], 
+      CheckStampDecl(Variable[astName=Name(name),
+                              astType=Type(ASTTomType(type),tlType@TLType[])],
+                     //astType=Type((type),tlType@TLType[])],
                      instr, _) -> {
         `buildCheckStampDecl(deep, type, name, tlType, instr, moduleName);
         return;
       }
-      
-      SetStampDecl(Variable[astName=Name(name), 
-                              astType=Type(ASTTomType(type),tlType@TLType[])], 
+
+      SetStampDecl(Variable[astName=Name(name),
+                              astType=Type(ASTTomType(type),tlType@TLType[])],
                      instr, _) -> {
         `buildSetStampDecl(deep, type, name, tlType, instr, moduleName);
         return;
       }
 
-      GetImplementationDecl(Variable[astName=Name(name), 
-                              astType=Type(ASTTomType(type),tlType@TLType[])], 
+      GetImplementationDecl(Variable[astName=Name(name),
+                              astType=Type(ASTTomType(type),tlType@TLType[])],
                      instr, _) -> {
         `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
         return;
@@ -590,9 +590,9 @@ public abstract class TomAbstractGenerator extends TomBase {
         `buildTermsEqualDecl(deep, name1, name2, type1, type2, instr, moduleName);
         return;
       }
-      
+
       GetHeadDecl[opname=opNameAST@Name(opname),
-                  codomain=Type[tlType=codomain], 
+                  codomain=Type[tlType=codomain],
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(suffix),domain@TLType[])],
                   instr=instr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -647,9 +647,9 @@ public abstract class TomAbstractGenerator extends TomBase {
         }
         return;
       }
-      
+
       GetSizeDecl[opname=opNameAST@Name(opname),
-				          variable=Variable[astName=Name(name), 
+				          variable=Variable[astName=Name(name),
 									astType=Type(ASTTomType(type),tlType@TLType[])],
 				instr=instr] -> {
 					if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -686,7 +686,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         }
         return;
       }
-      
+
       TypeTermDecl[declarations=declList] -> {
         generateDeclarationList(deep, `declList, moduleName);
         return;
@@ -698,7 +698,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
     }
   }
-  
+
   public void generateListInclude(int deep, TomList subject, String moduleName) throws IOException {
     output.setSingleLine();
     generateList(deep, subject, moduleName);
@@ -712,7 +712,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       subject = subject.getTail();
     }
   }
-  
+
   public void generateOptionList(int deep, OptionList subject, String moduleName)
     throws IOException {
     while(!subject.isEmpty()) {
@@ -747,10 +747,9 @@ public abstract class TomAbstractGenerator extends TomBase {
       pairNameDeclList = pairNameDeclList.getTail();
     }
   }
-   
-  
+
     // ------------------------------------------------------------
-  
+
   protected abstract void genDecl(String returnType,
                                   String declName,
                                   String suffix,
@@ -765,16 +764,16 @@ public abstract class TomAbstractGenerator extends TomBase {
                                        Instruction instr,
                                        int deep,
                                        String moduleName) throws IOException;
-  
-  protected abstract void genDeclMake(String funName, TomType returnType, 
+
+  protected abstract void genDeclMake(String funName, TomType returnType,
                                       TomList argList, Instruction instr, String moduleName) throws IOException;
-  
+
   protected abstract void genDeclList(String name, String moduleName) throws IOException;
 
   protected abstract void genDeclArray(String name, String moduleName) throws IOException;
- 
+
   // ------------------------------------------------------------
-  
+
   protected abstract void buildDeclarationSequence(int deep, DeclarationList declarationList, String moduleName) throws IOException;
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
   protected abstract void buildSemiColon() throws IOException;
@@ -790,7 +789,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 
   /*buildClass is not abstract since only Java backend supports class
-    only backends that supports Class should overload buildClass  
+    only backends that supports Class should overload buildClass
    */
   protected void buildClass(int deep, String tomName, TomForwardType extendsFwdType, TomTerm superTerm, Declaration declaration, String moduleName) throws IOException {
     throw new TomRuntimeException("Backend does not support Class");
@@ -852,5 +851,5 @@ public abstract class TomAbstractGenerator extends TomBase {
                                               String type1, TomType tlType1, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, TomName opNameAST, String name1, String type,
                                            TomType tlType, Instruction instr, String moduleName) throws IOException;
- 
+
 } // class TomAbstractGenerator
