@@ -572,15 +572,13 @@ public class ApAndDisunification1 implements Matching{
 			Exists(Variable(a),NEqual(Variable(a),_)) ->{				
 				return `True();
 			}
-			Exists(Variable(name),constr)->{
+			Exists(v@Variable(_),constr)->{
 				// eliminates the quantificator when the
 				// constraint does not contains the variable
 				
-				// TODO - replace with a strategy
-				if (! (`constr.toString().indexOf(`name) > -1) ) {
+				if (!tools.containsVariable(`constr,`v)){
 					return `constr;
-				}
-				
+				}					
 			}			
 			ForAll(Variable(a),Equal(Variable(a),_)) ->{
 				return `False();
@@ -588,14 +586,12 @@ public class ApAndDisunification1 implements Matching{
 			ForAll(Variable(a),NEqual(Variable(a),_)) ->{
 				return `False();
 			}
-			ForAll(Variable(name),constr)->{
+			ForAll(v@Variable(_),constr)->{
 				// eliminates the quantificator when the
 				// constraint does not contains the variable
-				
-				// TODO - replace with a strategy
-				if (! (`constr.toString().indexOf(`name) > -1) ) {
+				if (!tools.containsVariable(`constr,`v)){
 					return `constr;
-				}				
+				}					
 			}
 			
 			// ground terms' equality
