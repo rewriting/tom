@@ -22,7 +22,7 @@ public class All extends AbstractMuStrategy {
   public Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
     Visitable result = any;
-		Visitor S = getArgument(ARG);
+    Visitor S = getArgument(ARG);
     if (any instanceof MuVisitable) {
       boolean updated = false;
       Visitable[] childs = null;
@@ -58,7 +58,7 @@ public class All extends AbstractMuStrategy {
                 updated = true;
                 // allocate the array, and fill it
                 childs = new Visitable[childCount];
-								for (int j = 0 ; j<i ; j++) {
+                for (int j = 0 ; j<i ; j++) {
                   // System.out.println("All pos:"+i+", "+j+", "+any);
                   childs[j] = any.getChildAt(j);
                 }
