@@ -42,6 +42,7 @@ public class ATViewer extends JPanel implements ActionListener {
   private JEditorPane commandPane;
   private JPanel intermediate;
   private ATerm[] inputaterms;
+  private ATerm[] origaterms;
   private JButton btnCommand;
   private static ATermFactory atermFactory = SingletonFactory.getInstance();
 
@@ -53,6 +54,8 @@ public class ATViewer extends JPanel implements ActionListener {
   public void run(String[] filenames) {
 
     // aterms to modify
+
+    origaterms = new ATerm[filenames.length]; 
     inputaterms = new ATerm[filenames.length]; 
     
     intermediate = new JPanel();
@@ -61,7 +64,7 @@ public class ATViewer extends JPanel implements ActionListener {
     for (int i=0; i<filenames.length; i++){
     	
     	try {
-    	      inputaterms[i] = atermFactory.readFromFile(filenames[i]);
+    	      origaterms[i] = inputaterms[i] = atermFactory.readFromFile(filenames[i]);
     	      
     	      DefaultMutableTreeNode top = createTree(inputaterms[i]);
     	      JTree tree = new JTree(top);
@@ -174,37 +177,44 @@ public class ATViewer extends JPanel implements ActionListener {
     frame.pack();
     frame.setVisible(true);    
   }
-  
+
   public void actionPerformed(ActionEvent e){ 
-	  
-	  try{
-		  String strategy = null ,action = null;
-		  int termNo;
-		  
-		  StringTokenizer st = new StringTokenizer(commandPane.getText());
-		  
-		  termNo = Integer.parseInt(st.nextToken());
-		  strategy = st.nextToken();
-		  action = st.nextToken();
-		  	  	  
-		  Ted ted = new Ted();
-		  String newTerm = ted.run(inputaterms[termNo].toString(),strategy,action);
-		  
-		  inputaterms[termNo] = atermFactory.parse(newTerm);
-		  
-		  addTreesToPanel();
-		  
-	  }catch(Exception ex){
-		  JOptionPane.showMessageDialog(this, "Usage: AtermNumber Strategy Action \n (" + 
-				  ex.getMessage() + ")");
-	  }
+
+    for(int i=0; i<origaterms.length; i++) {
+      inputaterms[i] = origaterms[i];
+    }
+
+    String strategy = null ,action = null;
+    int termNo;
+
+    StringTokenizer st = new StringTokenizer(commandPane.getText());
+
+    while(st.hasMoreTokens()) {
+      try{
+        termNo = Integer.parseInt(st.nextToken());
+        strategy = st.nextToken();
+        action = st.nextToken();
+
+        String newTerm = Ted.run(inputaterms[termNo].toString(),strategy,action);
+
+        inputaterms[termNo] = atermFactory.parse(newTerm);
+
+
+      } catch(Exception ex) {
+        JOptionPane.showMessageDialog(this, "Usage: AtermNumber Strategy Action (num begins at 0, with no spaces in action) \n (" + 
+            ex.getMessage() + ")");
+      }
+
+    } // while
+
+    addTreesToPanel();
   }
 
   public static void main(String[] argv) {
     final String[] filenames = argv;
     if (filenames.length < 1){
-    	System.out.println("At least one filename should be specified !");
-    	System.exit(0);
+      System.out.println("At least one filename should be specified !");
+      System.exit(0);
     }
     //Schedule a job for the event-dispatching thread:
     //creating and showing this application's GUI.

@@ -17,9 +17,7 @@ public class MatchAndRemoveVisitor extends aterm.ATermFwd {
 
   public aterm.Visitable visitAppl(ATermAppl arg) {
     ATermFactory factory = aterm.pure.SingletonFactory.getInstance();
-
     ATermList newSons = (ATermList) visitList(arg.getArguments());
-
     AFun oldFun = arg.getAFun();
     AFun newFun = factory.makeAFun(oldFun.getName(), newSons.getLength(), oldFun.isQuoted());
     return factory.makeApplList(newFun, newSons);
@@ -31,7 +29,7 @@ public class MatchAndRemoveVisitor extends aterm.ATermFwd {
 
     while(!arg.isEmpty()) {
       term = arg.getFirst();
-      if(!ted.match(tomatch,term)) {
+      if(Ted.match(tomatch,term) == null) {
         res = (ATermList) res.insert(term);
       }
       arg = arg.getNext();

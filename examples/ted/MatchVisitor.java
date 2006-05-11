@@ -7,7 +7,6 @@ import tom.library.strategy.mutraveler.*;
 
 public class MatchVisitor extends aterm.ATermFwdVoid {
 
-  Ted ted = new Ted();
   ATerm tomatch;
 
   public MatchVisitor(ATerm tomatch) {
@@ -16,7 +15,7 @@ public class MatchVisitor extends aterm.ATermFwdVoid {
   }
 
   public void voidVisitATerm(ATerm arg) {
-    if(ted.match(tomatch, arg)) {
+    if(Ted.match(tomatch, arg) != null) {
       System.out.println("matched !");
     }
   }
