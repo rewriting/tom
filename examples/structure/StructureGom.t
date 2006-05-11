@@ -39,7 +39,7 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 
 
 public class StructureGom {
@@ -687,7 +687,7 @@ public class StructureGom {
     return t.toString();
   }
 
-  static class CompiledBottomUp extends AbstractVisitableVisitor {
+  static class CompiledBottomUp extends AbstractMuStrategy {
     protected final static int ARG = 0;
     public CompiledBottomUp(VisitableVisitor v) {
       initSubterm(v);
@@ -706,7 +706,7 @@ public class StructureGom {
     }
   }
 
-  static class CompiledBottomUpWithPositions extends AbstractVisitableVisitor {
+  static class CompiledBottomUpWithPositions extends AbstractMuStrategy {
     protected final static int ARG = 0;
     public CompiledBottomUpWithPositions(VisitableVisitor v) {
       initSubterm(v);
