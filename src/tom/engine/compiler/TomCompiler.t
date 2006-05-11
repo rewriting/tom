@@ -643,4 +643,4 @@ itBlock: {
     }
   }
 
-} // class TomCompiler
+}
