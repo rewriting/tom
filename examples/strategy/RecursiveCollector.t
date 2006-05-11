@@ -70,7 +70,7 @@ public class RecursiveCollector {
     visit Term {
       g(_,t2) -> {
         //MuTraveler.getRoot(this).visit(`t2);
-      MuTraveler.init(`TopDownCollect(Collector())).visit(subject);
+      MuTraveler.init(`TopDownCollect(Collector())).visit(`t2);
 
         `Fail().visit(null); 
       }
