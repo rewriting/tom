@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -35,7 +35,7 @@ import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
 
 public class TomJavaGenerator extends TomImperativeGenerator {
-   
+
   public TomJavaGenerator(OutputCode output, OptionManager optionManager,
                        SymbolTable symbolTable) {
     super(output, optionManager, symbolTable);
@@ -46,7 +46,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     } else {
       this.modifier += "private " ;
     }
-    
+
     if(!((Boolean)optionManager.getOptionValue("noStatic")).booleanValue()) {
       this.modifier += "static " ;
     }
@@ -63,11 +63,11 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   protected void buildExpTrue(int deep) throws IOException {
     output.write(" true ");
   }
-  
+
   protected void buildExpFalse(int deep) throws IOException {
     output.write(" false ");
   }
-   
+
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
     output.writeln(blockName + ": {");
     generateInstructionList(deep+1,instList,moduleName);
@@ -91,7 +91,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.write(deep, modifier + "class " + tomName);
     //write extends
 		%match(TomForwardType extendsFwdType) {
-			TLForward(code) -> { 
+			TLForward(code) -> {
 				output.write(deep," extends " + `code);
 			}
     }
@@ -116,10 +116,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.write(deep,") { super(");
     generate(deep,superTerm,moduleName);
     output.write(deep,");");
-    
+
     //here index represents the parameter number
     for (int i = 0 ; i < args ; i++) {
-	    String param = (String)names.get(i); 
+	    String param = (String)names.get(i);
 	    output.write(deep, "this." + param + "=" + param + ";");
     }
     output.write(deep,"}");
@@ -161,10 +161,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
       varList = varList.getTail();
       if(!varList.isEmpty()) {
         output.write(deep,", ");
-        
+
       }
     }
-    output.writeln(deep,")"); 
+    output.writeln(deep,")");
 
     %match(TomType throwsType){
       TomTypeAlone(throws) -> {
@@ -181,8 +181,8 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     if(getSymbolTable(moduleName).isBuiltinType(typeName)) {
 			generateInstruction(deep,instruction,moduleName);
 		} else {
-			output.write(deep,"if("); 
-			generateExpression(deep,exp,moduleName); 
+			output.write(deep,"if(");
+			generateExpression(deep,exp,moduleName);
 			output.writeln(" instanceof " + getTLCode(tlType) + ") {");
 			generateInstruction(deep+1,instruction,moduleName);
 			output.writeln(deep,"}");

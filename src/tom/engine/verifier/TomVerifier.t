@@ -53,9 +53,9 @@ public class TomVerifier extends TomGenericPlugin {
 
   %include{ adt/tomsignature/TomSignature.tom }
   %include { mutraveler.tom }
-	%typeterm Collection {
-		implement { java.util.Collection }
-	}
+  %typeterm Collection {
+    implement { java.util.Collection }
+  }
 
   public static final String DECLARED_OPTIONS =
     "<options>" +
@@ -172,10 +172,10 @@ public class TomVerifier extends TomGenericPlugin {
   public static Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
     try {
-			`TopDown(collectMatch(result)).visit(subject);
+      `TopDown(collectMatch(result)).visit(subject);
     } catch (jjtraveler.VisitFailure e) {
-			throw new TomRuntimeException("Strategy collectMatch failed");
-		}
+      throw new TomRuntimeException("Strategy collectMatch failed");
+    }
     return result;
   }
 
@@ -218,10 +218,10 @@ public class TomVerifier extends TomGenericPlugin {
 
   private Instruction simplifyIl(Instruction subject) {
     try {
-			subject = (Instruction) `TopDown(ilSimplifier()).visit(subject);
+      subject = (Instruction) `TopDown(ilSimplifier()).visit(subject);
     } catch (jjtraveler.VisitFailure e) {
-			throw new TomRuntimeException("Strategy simplifyIl failed");
-		}
+      throw new TomRuntimeException("Strategy simplifyIl failed");
+    }
     return subject;
   }
 
@@ -234,10 +234,10 @@ public class TomVerifier extends TomGenericPlugin {
   boolean containsAssociativeOperator(Instruction subject) {
     Collection result = new HashSet();
     try {
-			`TopDown(associativeOperatorCollector(result)).visit(subject);
+      `TopDown(associativeOperatorCollector(result)).visit(subject);
     } catch (jjtraveler.VisitFailure e) {
-			throw new TomRuntimeException("Strategy containsAssociativeOperator failed");
-		}
+      throw new TomRuntimeException("Strategy containsAssociativeOperator failed");
+    }
     return !result.isEmpty();
   }
 

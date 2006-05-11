@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -34,7 +34,7 @@ import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 public abstract class TomGenericGenerator extends TomAbstractGenerator {
-  
+
   protected HashMap isFsymMap = new HashMap();
   protected boolean lazyMode;
 
@@ -54,21 +54,21 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
                                   String args[],
                                   TargetLanguage tlCode,
                                   String moduleName) throws IOException;
-  
-  protected abstract void genDeclMake(String funName, TomType returnType, 
+
+  protected abstract void genDeclMake(String funName, TomType returnType,
                                       TomList argList, Instruction instr, String moduleName) throws IOException;
-  
+
   protected abstract void genDeclList(String name, String moduleName) throws IOException;
 
   protected abstract void genDeclArray(String name, String moduleName) throws IOException;
 
   //------------------------------------------------------------
- 
+
   protected abstract void buildRef(int deep, TomTerm term, String moduleName) throws IOException;
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildFunctionCall(int deep, String name, TomList argList, String moduleName)  throws IOException;
-  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException; 
+  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException;
   protected abstract void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException;
   protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomName opNameAST,TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException;
@@ -94,7 +94,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
    * Implementation of functions whose definition is
    * independant of the target language
    */
- 
+
   protected void buildTerm(int deep, String name, TomList argList, String moduleName) throws IOException {
     buildFunctionCall(deep, "tom_make_"+name, argList, moduleName);
   }
@@ -167,7 +167,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     if(s == null) {
       s = "tom_is_fun_sym_" + opname + "(";
       isFsymMap.put(opname,s);
-    } 
+    }
     output.write(s);
     generate(deep,exp,moduleName);
     output.write(")");
@@ -191,7 +191,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       EmptyName() -> { output.write("tom_get_tail_" + getTomType(type) + "("); }
       Name(opName) -> { output.write("tom_get_tail_" + `opName + "_" + getTomType(type) + "("); }
     }
-    generate(deep,var,moduleName); 
+    generate(deep,var,moduleName);
     output.write(")");
   }
 
@@ -239,7 +239,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     } else {
       args = new String[] { getTLCode(tlType), name };
     }
-    
+
     TomType returnType = getUniversalType();
     if(getSymbolTable(moduleName).isBuiltinType(type)) {
       returnType = getSymbolTable(moduleName).getBuiltinType(type);
@@ -256,7 +256,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     } else {
       argType = getTLType(getUniversalType());
     }
-    
+
     genDeclInstr(getTLType(returnType),"tom_check_stamp", type, new String[] { argType, name }, instr, deep, moduleName);
   }
 
@@ -269,7 +269,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       argType = getTLType(getUniversalType());
     }
     String returnType = argType; /* TODO: use stamp type */
-    
+
     genDeclInstr(returnType,
             "tom_set_stamp", type,
             new String[] { argType, name },
@@ -285,7 +285,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
       argType = getTLType(getUniversalType());
     }
     String returnType = argType; /* TODO: use stamp type */
-    
+
     genDeclInstr(returnType,
             "tom_get_implementation", type,
             new String[] { argType, name },
@@ -296,7 +296,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
                                  TomType tlType, Instruction instr, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
-    
+
     TomType returnType = getSymbolTable(moduleName).getBooleanType();
     String argType;
     if(!lazyMode) {
@@ -304,7 +304,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     } else {
       argType = getTLType(getUniversalType());
     }
-    
+
     genDeclInstr(getTLType(returnType),
             "tom_is_fun_sym", opname,
             new String[] { argType, name1 },
@@ -316,14 +316,14 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
-    
+
     int slotIndex = getSlotIndex(tomSymbol,slotName);
     TomTypeList l = typesList;
     for(int index = 0; !l.isEmpty() && index<slotIndex ; index++) {
       l = l.getTail();
     }
     TomType returnType = l.getHead();
-    
+
     String argType;
     if(!lazyMode) {
       argType = getTLCode(tlType);
@@ -345,8 +345,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     TomType argType2 = getUniversalType();
     if(getSymbolTable(moduleName).isBuiltinType(type2)) {
       argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
-    } 
-    
+    }
+
     genDecl(getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_cmp_fun_sym", type1,
             new String[] {
               getTLType(argType1), name1,
@@ -360,12 +360,12 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     TomType argType1 = getUniversalType();
     if(getSymbolTable(moduleName).isBuiltinType(type1)) {
       argType1 = getSymbolTable(moduleName).getBuiltinType(type1);
-    } 
+    }
     TomType argType2 = getUniversalType();
     if(getSymbolTable(moduleName).isBuiltinType(type2)) {
       argType2 = getSymbolTable(moduleName).getBuiltinType(type2);
-    } 
-    
+    }
+
     genDeclInstr(getTLType(getSymbolTable(moduleName).getBooleanType()), "tom_terms_equal", type1,
             new String[] {
               getTLType(argType1), name1,
@@ -374,7 +374,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             instr,deep,moduleName);
   }
 
-  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Instruction instr, String moduleName) 
+  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Instruction instr, String moduleName)
     throws IOException {
     String returnType = null;
     String argType = null;
@@ -393,7 +393,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           returnType = getTLCode(codomain);
           argType = getTLCode(domain);
         }
-        
+
         Name(opName) -> {
           TomSymbol tomSymbol = getSymbolFromName(`opName);
           argType = getTLType(getSymbolCodomain(tomSymbol));
@@ -406,7 +406,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
             instr,deep,moduleName);
   }
 
-  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Instruction instr, String moduleName) 
+  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Instruction instr, String moduleName)
     throws IOException {
     String returnType = null;
     String argType = null;
@@ -425,7 +425,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           returnType = getTLCode(tlType);
           argType = returnType;
         }
-        
+
         Name(opName) -> {
           TomSymbol tomSymbol = getSymbolFromName(`opName);
           returnType = getTLType(getSymbolCodomain(tomSymbol));
@@ -454,7 +454,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         EmptyName() -> {
           argType = getTLCode(tlType);
         }
-        
+
         Name(opName) -> {
           TomSymbol tomSymbol = getSymbolFromName(`opName);
           argType = getTLType(getSymbolCodomain(tomSymbol));
@@ -487,7 +487,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
           returnType = getTLType(getUniversalType());
           argType = getTLCode(domain);
         }
-        
+
         Name(opName) -> {
           TomSymbol tomSymbol = getSymbolFromName(`opName);
           argType = getTLType(getSymbolCodomain(tomSymbol));
@@ -495,7 +495,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         }
       }
     }
-    
+
     genDeclInstr(returnType,
             functionName, type1,
             new String[] {
@@ -521,19 +521,18 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         EmptyName() -> {
           argType = getTLCode(domain);
         }
-        
+
         Name(opName) -> {
           TomSymbol tomSymbol = getSymbolFromName(`opName);
           argType = getTLType(getSymbolCodomain(tomSymbol));
         }
       }
     }
-    
+
     genDeclInstr(getTLType(getSymbolTable(moduleName).getIntType()),
             functionName, type,
             new String[] { argType, name1 },
             instr,deep,moduleName);
   }
 
- 
 } // class TomGenericGenerator

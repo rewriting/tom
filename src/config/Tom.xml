@@ -64,7 +64,6 @@
     <plugin  name="Backend"
              class="tom.engine.backend.TomBackend"/>
   </plugins>
-
   <optionmanager class="tom.engine.TomOptionManager">
     <options>
       <boolean name="help" altName="h"

@@ -293,7 +293,7 @@ public class Verifier extends TomBase {
   %strategy substitutionCollector(outsubst:SubstRef) extends `Identity() {
     visit Expr {
       t@true(subs(undefsubs())) -> {
-				`Fail().visit(`t);
+        `Fail().visit(`t);
       }
       true(x) -> {
         outsubst.set(`x);
@@ -303,7 +303,7 @@ public class Verifier extends TomBase {
   public SubstitutionList collectSubstitutionInConstraint(Expr expr) {
     SubstRef output = new SubstRef(`subs());
     try {
-			`mu(MuVar("x"),Try(Sequence(substitutionCollector(output),All(MuVar("x"))))).visit(expr);
+      `mu(MuVar("x"),Try(Sequence(substitutionCollector(output),All(MuVar("x"))))).visit(expr);
     } catch (jjtraveler.VisitFailure e) {
       throw new TomRuntimeException("Strategy substitutionCollector failed");
     }
@@ -729,8 +729,8 @@ public class Verifier extends TomBase {
     try {
       `mu(MuVar("x"),Try(Sequence(stratInstructionContains(goal,collect),All(MuVar("x"))))).visit(i);
     } catch(jjtraveler.VisitFailure e) {
-			System.out.println("strategy instructionContains failed");
-		}
+      System.out.println("strategy instructionContains failed");
+    }
     return !collect.isEmpty();
   }
 
