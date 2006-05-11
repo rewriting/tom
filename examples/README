@@ -42,15 +42,16 @@ If you come from the
 * Running the examples:
 ------------------------
   Compilation:
-    _To compile all examples, run the script 'build.sh' from directory 'examples',
-    assuming Ant is installed. To compile a specific example, specify the example name.
-    For instance, to compile example 'peano' only, run 'build.sh peano' (without
-    the trailing backslash at the end of peano).
+    - To compile all examples, run the script 'build.sh' from directory
+    'examples', assuming Ant is installed. To compile a specific example,
+    specify the example name.
+    For instance, to compile example 'peano' only, run 'build.sh peano'
+    (without the trailing backslash at the end of peano).
 
   Execution:
-    _To run a specific example, go to directory examples/build/ and execute the java class
-    of your choice using your Java Virtual Machine. For instance, to run 'Peano1',
-    simply run 'java peano.Peano1'.
+    - To run a specific example, go to directory examples/build/ and execute
+      the java class of your choice using your Java Virtual Machine. For
+      instance, to run 'Peano1', simply run 'java peano.Peano1'.
 
 
 * Note about ApiGen/Vas/Gom:
