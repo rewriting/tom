@@ -97,10 +97,10 @@ public class PILFactory extends TomBase {
     }
     visit Expression {
       // clean Expressions
-      Cast[source=e] -> { return (Expression) this.visit(`e); }
-      Or[arg1=e,arg2=FalseTL()] -> { return (Expression) this.visit(`e); }
+      Cast[source=e] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
+      Or[arg1=e,arg2=FalseTL()] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
       EqualFunctionSymbol(type,t1,appl@RecordAppl[slots=concSlot(_,_*)]) -> {
-        return (Expression) this.visit(`EqualFunctionSymbol(type,t1,appl.setSlots(concSlot())));
+        return (Expression) `TopDown(replaceRemove()).visit(`EqualFunctionSymbol(type,t1,appl.setSlots(concSlot())));
       } 
     }
   }
