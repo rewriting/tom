@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2006, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
- * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
- * 	- Redistributions in binary form must reproduce the above copyright
- * 	notice, this list of conditions and the following disclaimer in the
- * 	documentation and/or other materials provided with the distribution.
- * 	- Neither the name of the INRIA nor the names of its
- * 	contributors may be used to endorse or promote products derived from
- * 	this software without specific prior written permission.
- * 
+ * met:
+ *  - Redistributions of source code must retain the above copyright
+ *  notice, this list of conditions and the following disclaimer.
+ *  - Redistributions in binary form must reproduce the above copyright
+ *  notice, this list of conditions and the following disclaimer in the
+ *  documentation and/or other materials provided with the distribution.
+ *  - Neither the name of the INRIA nor the names of its
+ *  contributors may be used to endorse or promote products derived from
+ *  this software without specific prior written permission.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,15 +32,15 @@ package addressbook;
 import addressbook.data.types.*;
 
 public class AddressBook2 {
-   
+
   %include { data/Data.tom }
- 
+
   public final static void main(String[] args) {
     PersonList book = generateBook();
     Date today = `date(2003,3,27);
     happyBirthday(book,today);
   }
-  
+
   public static void happyBirthday(PersonList book, Date date) {
     %match(PersonList book, Date date) {
       concPerson(_*, person(firstname, _, date(_,month,day)), _*),
@@ -49,7 +49,7 @@ public class AddressBook2 {
       }
     }
   }
-  
+
   public static PersonList generateBook() {
     return `concPerson(
       person("John","Smith",date(1965,3,27)),
@@ -57,5 +57,5 @@ public class AddressBook2 {
       person("Paul","Muller",date(2000,1,27))
       );
   }
-  
+
 }
