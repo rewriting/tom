@@ -37,7 +37,7 @@ import jjtraveler.VisitFailure;
 import jjtraveler.Visitable;
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 
 import java.util.*;
 
@@ -244,7 +244,7 @@ public class Scompiler {
   }
 
   //BottomUp(v) = `mu(MuVar("x"),Sequence(All(MuVar("x")),v))
-  class CompiledBottomUp extends AbstractVisitableVisitor {
+  class CompiledBottomUp extends AbstractMuStrategy {
     protected final static int ARG = 0;
     public CompiledBottomUp(VisitableVisitor v) {
       initSubterm(v);
@@ -264,7 +264,7 @@ public class Scompiler {
   }
 
   //TopDown(v) = `mu(MuVar("x"),Sequence(v,All(MuVar("x"))))
-  class CompiledTopDown extends AbstractVisitableVisitor {
+  class CompiledTopDown extends AbstractMuStrategy {
     protected final static int ARG = 0;
     public CompiledTopDown(VisitableVisitor v) {
       initSubterm(v);
@@ -286,7 +286,7 @@ public class Scompiler {
   }
 
   //Innermost(v) = `mu(MuVar("x"),Sequence(All(MuVar("x")),Try(Sequence(v,MuVar("x")))))
-  class CompiledInnermost extends AbstractVisitableVisitor {
+  class CompiledInnermost extends AbstractMuStrategy {
     protected final static int ARG = 0;
     public CompiledInnermost(VisitableVisitor v) {
       initSubterm(v);

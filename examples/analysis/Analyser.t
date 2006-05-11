@@ -130,7 +130,7 @@ public class Analyser{
 
   // Prédicat NotUsed(v:Variable) qui teste si une variable n'est pas utilisée au noeud racine d'un cfg 
 
-  %op VisitableVisitor NotUsed(v:Variable) {
+  %op Strategy NotUsed(v:Variable) {
     make(v) {new ControlFlowGraphBasicStrategy(`TopDown(InnerNotUsed(v)))}
   }
 
@@ -178,7 +178,7 @@ public class Analyser{
     }
   }
 
-  %op VisitableVisitor Free(v:Variable) {
+  %op Strategy Free(v:Variable) {
     make(v) { new ControlFlowGraphBasicStrategy(`InnerFree(v))}
   }
 
@@ -194,7 +194,7 @@ public class Analyser{
     }
   }
 
-  %op VisitableVisitor Modified(v:Variable) {
+  %op Strategy Modified(v:Variable) {
     make(v) { new ControlFlowGraphBasicStrategy(`InnerModified(v))}
   }
 

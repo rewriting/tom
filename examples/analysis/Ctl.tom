@@ -1,42 +1,42 @@
 
-  %op VisitableVisitor AU(s1:VisitableVisitor, s2:VisitableVisitor) {
+  %op Strategy AU(s1:Strategy, s2:Strategy) {
     make(s1,s2) { `mu(MuVar("x"),Choice((VisitableVisitor)s2,Sequence(Sequence((VisitableVisitor)s1,All(MuVar("x"))),One(Identity()))))}
   }
 
-  %op VisitableVisitor EU(s1:VisitableVisitor, s2:VisitableVisitor) {
+  %op Strategy EU(s1:Strategy, s2:Strategy) {
     make(s1,s2) { `mu(MuVar("x"),Choice((VisitableVisitor)s2,Sequence(Sequence((VisitableVisitor)s1,One(MuVar("x"))),One(Identity()))))}
   }
 
-  %op VisitableVisitor TrueCtl(){
+  %op Strategy TrueCtl(){
     make() {`Identity() }
   }
 
 
-  %op VisitableVisitor FalseCtl(){
+  %op Strategy FalseCtl(){
     make() {`Fail() }
   }
 
-  %op VisitableVisitor AndCtl(s1:VisitableVisitor, s2:VisitableVisitor) {
+  %op Strategy AndCtl(s1:Strategy, s2:Strategy) {
     make(s1,s2) {`Sequence((VisitableVisitor)s1,(VisitableVisitor)s2) }
   }
   
-  %op VisitableVisitor OrCtl(s1:VisitableVisitor, s2:VisitableVisitor) {
+  %op Strategy OrCtl(s1:Strategy, s2:Strategy) {
     make(s1,s2) {`Choice((VisitableVisitor)s1,(VisitableVisitor)s2)}
   }
   
-  %op VisitableVisitor AF(s:VisitableVisitor) {
+  %op Strategy AF(s:Strategy) {
     make(s) {`AU(Identity(),(VisitableVisitor)s) }
   }
 
-  %op VisitableVisitor EF(s:VisitableVisitor) {
+  %op Strategy EF(s:Strategy) {
     make(s) {`EU(Identity(),(VisitableVisitor)s) }
   }
 
-  %op VisitableVisitor AX(s:VisitableVisitor) {
+  %op Strategy AX(s:Strategy) {
     make(s) { `All((VisitableVisitor)s) }
   }
 
-  %op VisitableVisitor EX(s:VisitableVisitor) {
+  %op Strategy EX(s:Strategy) {
     make(s) {`One((VisitableVisitor)s) }
   }
 

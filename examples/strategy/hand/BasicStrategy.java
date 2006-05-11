@@ -1,7 +1,7 @@
 package strategy.hand;
 import tom.library.strategy.mutraveler.Position;
 
-public class BasicStrategy implements tom.library.strategy.mutraveler.reflective.MuStrategy {
+public class BasicStrategy implements tom.library.strategy.mutraveler.MuStrategy {
   protected jjtraveler.Visitor any;
   private Position position;
 
