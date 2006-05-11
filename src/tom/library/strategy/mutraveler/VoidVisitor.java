@@ -1,6 +1,6 @@
 package tom.library.strategy.mutraveler;
 
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 
@@ -8,7 +8,7 @@ import jjtraveler.VisitFailure;
  * Abstract visitor implementation that has no return value.
  */
 
-public abstract class VoidVisitor extends AbstractVisitableVisitor {
+public abstract class VoidVisitor extends AbstractMuStrategy {
 
   public VoidVisitor() {
     initSubterm();

@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.logging.Level;
-import java.util.Stack;
+import java.util.*;
 
 import tom.engine.TomMessage;
 import tom.engine.adt.tomsignature.types.*;
@@ -107,7 +107,7 @@ public class TomBackend extends TomGenericPlugin {
         ////////
 				TomTerm pilCode = (TomTerm) getWorkingTerm();
 
-				markUsedConstructorDestructor(pilCode);
+				//markUsedConstructorDestructor(pilCode);
 
         generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),defaultModule);
         // verbose
@@ -172,33 +172,72 @@ public class TomBackend extends TomGenericPlugin {
     return new Object[]{generatedFileName};
   }
 
-	private void markUsedConstructorDestructor(TomTerm pilCode) {}
-	/*
+	%typeterm Stack {
+		implement { Stack }
+	}
+
+  %op VisitableVisitor TopDownCollector(s:Stack) {
+    make(s) { `mu(MuVar("x"),Try(Sequence(Collector(s),All(MuVar("x"))))) }
+  }
+
 	private void markUsedConstructorDestructor(TomTerm pilCode) {
 		Stack stack = new Stack();
 		try {
-			VisitableVisitor v = MuTraveler.init(`TopDown(Collector(stack)));
+			VisitableVisitor v = `TopDownCollector(stack);
+			v = MuTraveler.init(v);
 			v.visit(pilCode);
 		} catch (VisitFailure e) {
       System.out.println("reduction failed on: " + pilCode);
 		}
 	}
 
-	%typeterm Stack {
-		implement { Stack }
-	}
-
 	%strategy Collector(stack:Stack) extends `Identity() {
     visit Instruction {
-			m@CompiledMatch[automataInst=inst, option=optionList] -> {
+			CompiledMatch[automataInst=inst, option=optionList] -> {
 				String moduleName = getModuleName(`optionList);
-				System.out.println("moduleName = " + moduleName);
+				//if(moduleName==null && hasGeneratedMatch(`optionList)) 
+				//System.out.println("m = " + `m);
+				//System.out.println("match -> moduleName = " + moduleName);
 				stack.push(moduleName);
-				this.visit(`inst);
-				stack.pop();
+				System.out.println("push: " + moduleName);
+				try {
+					`TopDownCollector(stack).visit(`inst);
+				} catch (jjtraveler.VisitFailure e) {
+					System.out.println("visit failure");
+					`Fail().visit(null);
+				}
+				String pop = (String) stack.pop();
+				System.out.println("pop: " + pop);
+				`Fail().visit(null);
 			}
 		}
+
+		visit TomTerm {
+			(TermAppl|RecordAppl)[nameList=nameList] -> {
+				NameList l = `nameList;
+				while(!l.isEmpty()) {
+					try {
+						System.out.println("op: " + l.getHead());
+						String moduleName = (String) stack.peek();
+						System.out.println("moduleName: " + moduleName);
+					} catch (EmptyStackException e) {
+						System.out.println("No moduleName in stack");
+					}
+					l = l.getTail();
+				}
+			}
+			BuildTerm[astName=astName] -> {
+				try {
+					System.out.println("build: " + `astName);
+					String moduleName = (String) stack.peek();
+					System.out.println("moduleName: " + moduleName);
+				} catch (EmptyStackException e) {
+					System.out.println("No moduleName in stack");
+				}
+			}
+		}
+		
+
 	}
-*/
 
 } // class TomBackend

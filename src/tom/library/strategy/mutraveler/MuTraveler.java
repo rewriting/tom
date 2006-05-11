@@ -1,6 +1,6 @@
 package tom.library.strategy.mutraveler;
 
-import tom.library.strategy.mutraveler.reflective.MuStrategy;
+import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;

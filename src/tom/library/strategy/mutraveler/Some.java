@@ -1,5 +1,5 @@
 package tom.library.strategy.mutraveler;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -17,7 +17,7 @@ import jjtraveler.VisitFailure;
  *
  */
 
-public class Some extends AbstractVisitableVisitor {
+public class Some extends AbstractMuStrategy {
   protected final static int ARG = 0;
   public Some(VisitableVisitor v) {
     initSubterm(v);

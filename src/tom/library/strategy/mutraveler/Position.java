@@ -1,6 +1,6 @@
 package tom.library.strategy.mutraveler;
 
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -180,7 +180,7 @@ public class Position {
    * @return the omega strategy that retrieves the corresponding subterm
    */
   public VisitableVisitor getSubterm() {
-   return new AbstractVisitableVisitor() {
+   return new AbstractMuStrategy() {
      { initSubterm(); }
      public Visitable visit(Visitable subject) throws VisitFailure {
        final Visitable[] ref = new Visitable[1];

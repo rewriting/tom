@@ -1,5 +1,5 @@
 package tom.library.strategy.mutraveler;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -12,7 +12,7 @@ import jjtraveler.VisitFailure;
 
 */
 
-public class MuVar extends AbstractVisitableVisitor {
+public class MuVar extends AbstractMuStrategy {
   private VisitableVisitor instance = null;
   protected String name;
   
@@ -26,14 +26,22 @@ public class MuVar extends AbstractVisitableVisitor {
     if(o instanceof MuVar) {
       MuVar muVar = (MuVar)o;
       if(muVar != null) {
-        return muVar.name.equals(this.name);
+        if(name != null) {
+          return name.equals(muVar.name);
+        } else {
+          return name==muVar.name && instance==muVar.instance;
+        }
       }
     }
     return false;
   }
 
   public int hashCode() {
-    return name.hashCode();
+    if(name!=null) {
+      return name.hashCode();
+    } else {
+      return instance.hashCode();
+    }
   }
   
   public Visitable visit(Visitable any) throws VisitFailure {
@@ -51,4 +59,7 @@ public class MuVar extends AbstractVisitableVisitor {
     this.name = name;
   }
 
+  public String toString() {
+    return "[" + name + "," + instance + "]";
+  }
 }

@@ -345,7 +345,7 @@ public class TomBase {
     return null;
   }
   
-	protected String getModuleName(OptionList optionList) {
+	protected static String getModuleName(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,ModuleName(moduleName),_*) -> { return `moduleName; }
     }
@@ -359,7 +359,7 @@ public class TomBase {
     return null;
   }
 
-  protected boolean hasGeneratedMatch(OptionList optionList) {
+  protected static boolean hasGeneratedMatch(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,GeneratedMatch(),_*) -> { return true; }
     }

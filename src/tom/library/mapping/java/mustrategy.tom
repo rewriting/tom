@@ -1,0 +1,6 @@
+%typeterm Strategy {
+  implement { tom.library.strategy.mutraveler.MuStrategy }
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%include { strategy.tom }

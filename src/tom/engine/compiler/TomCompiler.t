@@ -156,6 +156,7 @@ public class TomCompiler extends TomGenericPlugin {
 			%match(Instruction subject) {
 				Match(SubjectList(l1),patternInstructionList, matchOptionList)  -> {
 					Option orgTrack = findOriginTracking(`matchOptionList);
+					String moduleName = getModuleName(`matchOptionList);
 					PatternInstructionList newPatternInstructionList = `concPatternInstruction();
 					PatternList negativePattern = `concPattern();
 					while(!`patternInstructionList.isEmpty()) {
@@ -202,12 +203,11 @@ matchBlock: {
 									/* newPatternInstruction is overwritten when abstraction is performed */
 									if(abstractedPattern.size() > 0) {
 										/* generate a new match construct */
-
 										TomList generatedSubjectList = `ASTFactory.makeList(introducedVariable);
 										PatternInstruction generatedPatternInstruction =
 											`PatternInstruction(Pattern(generatedSubjectList, ASTFactory.makeList(abstractedPattern),emptyGuardList),newAction, concOption());        
 										/* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
-										OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
+										OptionList generatedMatchOptionList = `concOption(ModuleName(moduleName),orgTrack,GeneratedMatch());
 										Instruction generatedMatch =
 											`Match(SubjectList(generatedSubjectList),
 													concPatternInstruction(generatedPatternInstruction),
@@ -260,7 +260,8 @@ matchBlock: {
                 TomTerm arg = `Variable(option(),Name("tom__arg"),vType,concConstraint());//arg subjectList
                 subjectListAST = append(arg,subjectListAST);
                 String funcName = "visit_" + `type;//function name
-                Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
+								OptionList optionList = `concOption(orgTrack,ModuleName(TomBase.DEFAULT_MODULE_NAME));
+                Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, optionList);
                 //return default strategy.visit(arg)
                 Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),subjectListAST));
                 InstructionList instructions = `concInstruction(matchStatement, returnStatement);

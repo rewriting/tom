@@ -1,9 +1,8 @@
-package tom.library.strategy.mutraveler.reflective;
+package tom.library.strategy.mutraveler;
 
-import jjtraveler.reflective.VisitableVisitor;
 import tom.library.strategy.mutraveler.Position;
 
-public interface MuStrategy extends VisitableVisitor {
+public interface MuStrategy extends jjtraveler.reflective.VisitableVisitor {
 
   public void setPosition(Position pos);
 

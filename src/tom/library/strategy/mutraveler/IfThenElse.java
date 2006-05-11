@@ -1,10 +1,10 @@
 package tom.library.strategy.mutraveler;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-public class IfThenElse extends AbstractVisitableVisitor {
+public class IfThenElse extends AbstractMuStrategy {
   
   private final static int CONDITION = 0;
   private final static int TRUE_CASE = 1;

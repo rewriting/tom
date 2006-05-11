@@ -1,5 +1,5 @@
 package tom.library.strategy.mutraveler;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -16,7 +16,7 @@ import jjtraveler.VisitFailure;
  * Note that any side-effects of v1 are not undone when it fails.
  */
 
-public class Choice extends AbstractVisitableVisitor {
+public class Choice extends AbstractMuStrategy {
   protected final static int FIRST = 0;
   protected final static int THEN = 1;
   public Choice(VisitableVisitor first, VisitableVisitor then) {

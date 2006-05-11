@@ -42,7 +42,7 @@ public class BasicStrategyTemplate extends TemplateClass {
     out.append(%[
 package @getPackage()@;
 import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.reflective.MuStrategy;
+import tom.library.strategy.mutraveler.MuStrategy;
     
   public class @className()@ extends @className(fwd)@ implements MuStrategy {
   private Position position;

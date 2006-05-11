@@ -1,5 +1,5 @@
 package tom.library.strategy.mutraveler;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -11,7 +11,7 @@ import jjtraveler.VisitFailure;
  * these visitors one after the other (sequential composition).
  */
 
-public class Sequence extends AbstractVisitableVisitor {
+public class Sequence extends AbstractMuStrategy {
   protected final static int FIRST = 0;
   protected final static int THEN = 1;
   public Sequence(VisitableVisitor first, VisitableVisitor then) {

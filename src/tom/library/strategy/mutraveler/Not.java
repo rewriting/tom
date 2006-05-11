@@ -1,5 +1,5 @@
 package tom.library.strategy.mutraveler;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -8,7 +8,7 @@ import jjtraveler.VisitFailure;
  * <code>Not(v)</code> succeeds if and only if <code>v</code> fails.
  */
 
-public class Not extends AbstractVisitableVisitor {
+public class Not extends AbstractMuStrategy {
   protected final static int ARG = 0;
   
   public Not(VisitableVisitor v) {
