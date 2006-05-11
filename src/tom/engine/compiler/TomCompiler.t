@@ -121,7 +121,7 @@ public class TomCompiler extends TomGenericPlugin {
    */
 
   %op VisitableVisitor preProcessing(compiler:TomCompiler){
-     make(compiler){`RepeatId(mu(MuVar("x"),Choice(preProcessing_once(compiler),All(MuVar("x")))))}
+     make(compiler){`(mu(MuVar("x"),Choice(preProcessing_once(compiler),All(MuVar("x")))))}
    }
 
 
