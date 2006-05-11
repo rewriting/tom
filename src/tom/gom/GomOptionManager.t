@@ -1,23 +1,23 @@
 /*
  * Gom
- * 
+ *
  * Copyright (c) 2005-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles       e-mail: Antoine.Reilles@loria.fr
  *
  **/
@@ -46,7 +46,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
   /** The global options */
   private PlatformOptionList globalOptions;
-  
+
   /**  map the name of an option to the plugin which defines this option */
   private Map mapNameToOptionOwner;
 
@@ -106,7 +106,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
   /**
    * An option has changed
-   * 
+   *
    * @param optionName the option's name
    * @param optionValue the option's desired value
    */
@@ -125,7 +125,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
         Gom.changeLogLevel(Level.FINE);
       }
     } else if(canonicalOptionName.equals("verbosedebug")) {
-      if( ((Boolean)optionValue).booleanValue() ) { 
+      if( ((Boolean)optionValue).booleanValue() ) {
         Gom.changeLogLevel(Level.FINER);
       }
     }
@@ -156,7 +156,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   /**
    * Returns the value of an option. Returns an Object which is a Boolean,
    * a String or an Integer depending on what the option type is.
-   * 
+   *
    * @param optionName the name of the option whose value is seeked
    * @return an Object containing the option's value
    */
@@ -195,7 +195,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
   }
 
   public void setOptionManager(OptionManager om) {}
-  
+
   /**
    * collects the options/services provided by each plugin
    */
@@ -319,7 +319,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
   /**
    * Checks if all the options a plugin needs are here.
-   * 
+   *
    * @param list a list of options that must be found with the right value
    * @return true if every option was found with the right value
    */
@@ -356,7 +356,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     /**
    * This method takes the arguments given by the user and deduces the options
    * to set, then sets them.
-   * 
+   *
    * @param argumentList
    * @return an array containing the name of the input files
    */
@@ -411,7 +411,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
 
           OptionOwner plugin = getOptionOwnerFromName(argument);
           PlatformOption option = getOptionFromName(argument);
-          
+
           if(option == null || plugin == null) {// option not found
             getLogger().log(Level.SEVERE, GomMessage.invalidOption.getMessage(), argument);
             displayHelp();
