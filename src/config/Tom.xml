@@ -13,10 +13,10 @@
     class CDATA #REQUIRED>
 
   <!ELEMENT optionmanager (options)>
-	<!ATTLIST optionmanager
+  <!ATTLIST optionmanager
     class CDATA #REQUIRED>
 
-	<!ELEMENT options (boolean*,integer*,string*)>
+  <!ELEMENT options (boolean*,integer*,string*)>
 
   <!ELEMENT boolean EMPTY>
   <!ATTLIST boolean
@@ -103,11 +103,11 @@
       <boolean name="eclipse" altName=""
                description="Sets Eclipse mode"
                value="false"/>
-      <string name="import"	altName="I"
+      <string name="import" altName="I"
               description="Path for %include"
               value=""
               attrName="path"/>
-      <string name="output"	altName="o"
+      <string name="output" altName="o"
               description="Set output file name"
               value=""
               attrName="file"/>
@@ -121,5 +121,5 @@
               attrName="charset"/>
     </options>
   </optionmanager>
-  
+
 </platform>
