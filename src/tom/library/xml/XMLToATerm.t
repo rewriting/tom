@@ -4,19 +4,19 @@
  *
  * Copyright (c) 2000-2006, Pierre-Etienne Moreau
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  *  - Redistributions of source code must retain the above copyright
- *  notice, this list of conditions and the following disclaimer.  
+ *  notice, this list of conditions and the following disclaimer.
  *  - Redistributions in binary form must reproduce the above copyright
  *  notice, this list of conditions and the following disclaimer in the
  *  documentation and/or other materials provided with the distribution.
  *  - Neither the name of the INRIA nor the names of its
  *  contributors may be used to endorse or promote products derived from
  *  this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,7 +29,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * INRIA, Nancy, France 
+ * INRIA, Nancy, France
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -48,14 +48,14 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 public class XMLToATerm {
-  
+
   %include{ adt/tnode/TNode.tom }
-  
+
   private TNodeFactory factory = null;
   private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
   private Hashtable ht_Nodes = new Hashtable();
-  
+
   protected Collection getNodes(TNode key) {
     return (Collection)ht_Nodes.get(key);
   }
@@ -101,12 +101,12 @@ public class XMLToATerm {
 
   public void convert(InputStream is) {
     nodeTerm = xmlToATerm(convertToNode(is));
-  } 
- 
+  }
+
   public void convert(Node node) {
     nodeTerm = xmlToATerm(node);
   }
-  
+
   public Node convertToNode(String filename) {
     try {
       DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -159,7 +159,7 @@ public class XMLToATerm {
     }
     return res;
   }
-  
+
   public TNodeList namedNodeMapToAterm(NamedNodeMap list) {
     TNodeList res = `emptyTNodeList();
     for(int i=list.getLength()-1 ; i>=0 ; i--) {
@@ -170,7 +170,7 @@ public class XMLToATerm {
     }
     return res;
   }
-  
+
   public TNode xmlToATerm(Node node) {
     if ( node == null ) { // Nothing to do
       return null;
@@ -226,7 +226,7 @@ public class XMLToATerm {
     case Node.TEXT_NODE:
       return makeTextNode((Text) node);
       //break;
-    default : 
+    default :
       System.err.println("The type of Node is unknown");
       throw new RuntimeException("The type of Node is unknown");
     } // switch
@@ -240,7 +240,7 @@ public class XMLToATerm {
     TNode elem = xmlToATerm(doc.getDocumentElement());
     return `DocumentNode(doctype,elem);
   }
-    
+
   private TNode makeDocumentTypeNode (DocumentType doctype) {
     String name=doctype.getName();
     name = (name == null ? "UNDEF" : name);
@@ -255,7 +255,7 @@ public class XMLToATerm {
     return `DocumentTypeNode(name,publicId,systemId,
            internalSubset,entitiesList,notationsList);
   }
-    
+
   private TNode makeElementNode(Element elem) {
     TNodeList attrList  = namedNodeMapToAterm(elem.getAttributes());
       //System.out.println("attrList = " + attrList);
@@ -286,7 +286,7 @@ public class XMLToATerm {
       AttributeNode[name=_], emptyTNodeList() -> {
         return `manyTNodeList(elt,list);
       }
-      
+
       AttributeNode[name=name1], manyTNodeList(head@AttributeNode[name=name2],tail) -> {
         if(`name1.compareTo(`name2) >= 0) {
           return `manyTNodeList(head,insertSortedAttribute(elt,tail));
@@ -298,7 +298,7 @@ public class XMLToATerm {
     System.err.println("insertSortedAttribute: Strange case");
     return list;
   }
-    
+
   private TNode makeAttributeNode(Attr attr) {
     String specif = (attr.getSpecified() ? "true" : "false");
     return `AttributeNode(attr.getNodeName(),specif,attr.getNodeValue());
@@ -313,7 +313,7 @@ public class XMLToATerm {
     }
     return null;
   }
-  
+
   private TNode makeEntityNode(Entity e) {
     String nn= e.getNotationName();
     nn = (nn == null ? "UNDEF" : nn);
@@ -340,7 +340,7 @@ public class XMLToATerm {
   private TNode makeCommentNode(Comment comment) {
     return `CommentNode(comment.getData());
   }
-  
+
   private TNode makeCDATASectionNode(CDATASection cdata) {
     return `CDATASectionNode(cdata.getData());
   }
