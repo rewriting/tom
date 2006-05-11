@@ -76,15 +76,15 @@
     - verifier has to be upgraded
 
 2005-03-25  pem  <pem@polly.loria.fr>
-    * src/jtom/compiler/TomExpander.t: 
+    * src/jtom/compiler/TomExpander.t:
     - allows to use backquote notation all make() constructs
 
 2005-03-24  pem  <pem@polly.loria.fr>
-    * src/jtom/compiler/TomExpander.t: 
+    * src/jtom/compiler/TomExpander.t:
     - allows to use backquote constructs in make() { ... }
 
 2005-03-23  emilie  <emilie@galadriel.loria.fr>
-  * src/jtom/optimizer/TomOptimizer.t: 
+  * src/jtom/optimizer/TomOptimizer.t:
   - new optimizer (-O2) for test-fusion and test-merging
 
 2005-03-22  pem  <pem@polly.loria.fr>
@@ -93,10 +93,10 @@
     (subjectIndex has to be reseted to begin)
 
 2005-03-11  Anne-Claire Lonchamp  <lonchamp@sawyer.loria.fr>
-  * src/jtom/compiler/TomCompiler.t: 
+  * src/jtom/compiler/TomCompiler.t:
   - introduce the Ensure constraint
   - attach this constraint to the last instantiated variable (of the
-      pattern) occuring in this constraint 
+      pattern) occuring in this constraint
   * src/jtom/compiler/TomKernelCompiler.t: 
   - generate IfThenElse for the ensure constraint
 
