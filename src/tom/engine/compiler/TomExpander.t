@@ -66,8 +66,8 @@ public class TomExpander extends TomGenericPlugin {
   public static final String EXPANDED_TABLE_SUFFIX = ".tfix.expanded.table";
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = 
-    "<options>" + 
+  public static final String DECLARED_OPTIONS =
+    "<options>" +
     "<boolean name='expand' altName='' description='Expander (activated by default)' value='true'/>" +
     "</options>";
 
@@ -137,7 +137,7 @@ public class TomExpander extends TomGenericPlugin {
       tomSymbol = updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
       /*
        * add default isFsym and make HERE
-       */ 
+       */
       tomSymbol = addDefaultIsFSym(tomSymbol);
       try{
         tomSymbol =  ((TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
@@ -190,14 +190,14 @@ public class TomExpander extends TomGenericPlugin {
   }
 
   /**
-   * inherited from OptionOwner interface (plugin) 
+   * inherited from OptionOwner interface (plugin)
    */
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TomExpander.DECLARED_OPTIONS);
   }
 
   private TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
-    return tomKernelExpander.expandVariable(contextSubject,subject); 
+    return tomKernelExpander.expandVariable(contextSubject,subject);
   }
 
   /*
@@ -224,8 +224,8 @@ public class TomExpander extends TomGenericPlugin {
         //System.out.println("expandXML in:\n" + subject);
         return expander.expandXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
       }
-    } 
-  } 
+    }
+  }
 
   /*
    * this post-processing phase replaces untyped (universalType) codomain
@@ -281,7 +281,7 @@ public class TomExpander extends TomGenericPlugin {
             }
           }
         } // end match
-      } 
+      }
 
   /*
    * detect ill-formed char: 'abc'
@@ -413,7 +413,7 @@ public class TomExpander extends TomGenericPlugin {
               return `FunctionCall(name,args);
             }
           }
-        } // end match 
+        } // end match
     }
 
   private static TomList sortAttributeList(TomList attrList) {
@@ -513,8 +513,8 @@ public class TomExpander extends TomGenericPlugin {
       try{
         TomTerm newPattern = (TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(attrList.getHead());
         newAttrList = `manyTomList(newPattern,newAttrList);
-        if(implicitAttribute) { 
-          newAttrList = `manyTomList(star,newAttrList); 
+        if(implicitAttribute) {
+          newAttrList = `manyTomList(star,newAttrList);
         }
         attrList = attrList.getTail();
       }catch(VisitFailure e){}
@@ -571,7 +571,7 @@ matchBlock: {
 
             if(newNameList.isEmpty()){
               xmlHead = `Placeholder(emptyOption(),concConstraint());
-            } else { 
+            } else {
               xmlHead = `TermAppl(convertOriginTracking(newNameList.getHead().getString(),optionList),newNameList,empty(),concConstraint());
             }
             try{
