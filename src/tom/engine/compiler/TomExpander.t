@@ -90,13 +90,13 @@ public class TomExpander extends TomGenericPlugin {
     TomTerm expandedTerm = null;
     try {
       tomKernelExpander.setSymbolTable(getStreamManager().getSymbolTable());
-      TomTerm syntaxExpandedTerm   =  (TomTerm) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit((TomTerm)getWorkingTerm());
+      TomTerm syntaxExpandedTerm   =  (TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit((TomTerm)getWorkingTerm());
       updateSymbolTable();
       TomTerm context = `emptyTerm();
 
       TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
-      TomTerm stringExpandedTerm   = (TomTerm) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(expandString(this),All(MuVar("x")))))).visit(variableExpandedTerm);
-      expandedTerm =  (TomTerm) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(updateCodomain(this),All(MuVar("x")))))).visit(stringExpandedTerm);
+      TomTerm stringExpandedTerm   = (TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandString(this),All(MuVar("x")))))).visit(variableExpandedTerm);
+      expandedTerm =  (TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(updateCodomain(this),All(MuVar("x")))))).visit(stringExpandedTerm);
       setWorkingTerm(expandedTerm);
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
@@ -140,7 +140,7 @@ public class TomExpander extends TomGenericPlugin {
        */ 
       tomSymbol = addDefaultIsFSym(tomSymbol);
       try{
-        tomSymbol =  ((TomTerm) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
+        tomSymbol =  ((TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(`TomSymbolToTomTerm(tomSymbol))).getAstSymbol();
       }catch(VisitFailure e){
         // never
       }
@@ -211,7 +211,7 @@ public class TomExpander extends TomGenericPlugin {
   %strategy expandTermApplTomSyntax(expander:TomExpander) extends `Fail(){
     visit TomTerm {
       backQuoteTerm@BackQuoteAppl[] -> {
-        TomTerm t = (TomTerm) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(expandBackQuoteAppl(expander),All(MuVar("x")))))).visit(`backQuoteTerm);
+        TomTerm t = (TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandBackQuoteAppl(expander),All(MuVar("x")))))).visit(`backQuoteTerm);
         //System.out.println("t = " + t);
         return t;
       }
@@ -355,7 +355,7 @@ public class TomExpander extends TomGenericPlugin {
     if(opName.equals("") || tomSymbol==null || isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
       while(!args.isEmpty()) {
         try{
-          TomTerm subterm = (TomTerm) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(args.getHead());
+          TomTerm subterm = (TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(args.getHead());
           TomName slotName = `EmptyName();
           if(subterm.isUnamedVariable()) {
             // do nothing
@@ -369,7 +369,7 @@ public class TomExpander extends TomGenericPlugin {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
       while(!args.isEmpty()) {
         try{
-          TomTerm subterm = (TomTerm) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(args.getHead());
+          TomTerm subterm = (TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(args.getHead());
           TomName slotName = pairNameDeclList.getHead().getSlotName();
           if(subterm.isUnamedVariable()) {
             // do nothing
@@ -389,7 +389,7 @@ public class TomExpander extends TomGenericPlugin {
         visit TomTerm {
           BackQuoteAppl[option=optionList,astName=name@Name(tomName),args=l] -> {
             TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);
-            TomList args  = (TomList) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(expandBackQuoteAppl(expander),All(MuVar("x")))))).visit(`l);
+            TomList args  = (TomList) MuTraveler.init(`(mu(MuVar("x"),Choice(expandBackQuoteAppl(expander),All(MuVar("x")))))).visit(`l);
 
             //System.out.println("BackQuoteTerm: " + `tomName);
             //System.out.println("tomSymbol: " + tomSymbol);
@@ -511,7 +511,7 @@ public class TomExpander extends TomGenericPlugin {
      */
     while(!attrList.isEmpty()) {
       try{
-        TomTerm newPattern = (TomTerm) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(attrList.getHead());
+        TomTerm newPattern = (TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(attrList.getHead());
         newAttrList = `manyTomList(newPattern,newAttrList);
         if(implicitAttribute) { 
           newAttrList = `manyTomList(star,newAttrList); 
@@ -526,7 +526,7 @@ public class TomExpander extends TomGenericPlugin {
      */
     while(!childList.isEmpty()) {
       try{
-        TomTerm newPattern = (TomTerm) MuTraveler.init(`RepeatId(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(childList.getHead());
+        TomTerm newPattern = (TomTerm) MuTraveler.init(`(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(childList.getHead());
         newChildList = `manyTomList(newPattern,newChildList);
         if(implicitChild) {
           if(newPattern.isVariableStar()) {
@@ -577,11 +577,11 @@ matchBlock: {
             try{
               SlotList newArgs = `concSlot(
                   PairSlotAppl(Name(Constants.SLOT_NAME),
-                    (TomTerm) MuTraveler.init(RepeatId(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(xmlHead)),
+                    (TomTerm) MuTraveler.init((mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(xmlHead)),
                   PairSlotAppl(Name(Constants.SLOT_ATTRLIST),
-                    (TomTerm) MuTraveler.init(RepeatId(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList,concConstraint()))),
+                    (TomTerm) MuTraveler.init((mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList,concConstraint()))),
                   PairSlotAppl(Name(Constants.SLOT_CHILDLIST),
-                    (TomTerm) MuTraveler.init(RepeatId(mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList,concConstraint()))));
+                    (TomTerm) MuTraveler.init((mu(MuVar("x"),Choice(expandTermApplTomSyntax(this),All(MuVar("x")))))).visit(TermAppl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList,concConstraint()))));
 
               TomTerm result = `RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs,constraints);
 
