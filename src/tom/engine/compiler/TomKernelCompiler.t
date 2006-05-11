@@ -136,7 +136,7 @@ public class TomKernelCompiler extends TomBase {
 
     /*
      * collect match variables (from match(t1,...,tn))
-     * create a list of declaration/assignement: v1=t1 ... vn=tn in body
+     * create a list of declaration/assignment: v1=t1 ... vn=tn in body
      * generate a check_stamp
      */
   private Instruction collectVariableFromSubjectList(SlotList subjectList, TomNumberList path, Instruction body, String moduleName) {
@@ -206,7 +206,7 @@ public class TomKernelCompiler extends TomBase {
      */
   
     /*
-     * given a pattern, this function generates the discrimitation test on the root symbol
+     * given a pattern, this function generates the discrimination test on the root symbol
      * and recursively calls the algorithm on subterms
      */
   Instruction genSyntacticMatchingAutomata(Instruction action,
