@@ -23,7 +23,7 @@ Many applications have been developed in Tom. Among them, let us mention:
 Tom is a complex compiler which adds powerful constructs to C and
 Java: non linear syntactic matching, associative matching with neutral
 element (a.k.a. list-matching), XML based pattern matching, string
-matching, and equational rewriting.   
+matching, and equational rewriting.
 This offers the possibility to analyze and transform any kind of
 data-structure. Tom can be used for large scale developments and
 applications. It comes with documentation, programming, and debugging
@@ -34,7 +34,7 @@ This new release contains many improvements and new features:
     hooks. In practice, this corresponds to private data types of Caml, which
     ensures that terms are maintained in canonical form
 
-  - a new %strategy construct which allows to easilly define strategies that
+  - a new %strategy construct which allows to easily define strategies that
     can be combined using strategy primitives a la Stratego (All, One, Repeat,
     Choice, Innermost, Mu, etc.)
 
@@ -47,5 +47,5 @@ Tom is available, in open source (GPL/BSD License), from the Tom web page:
   http://tom.loria.fr
 
 
-  best regards,
+  Best regards,
   Tom development team
