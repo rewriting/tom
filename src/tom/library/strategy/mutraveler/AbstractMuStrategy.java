@@ -74,4 +74,14 @@ public abstract class AbstractMuStrategy implements MuStrategy {
     return this;
   }
 
+  /*
+   * Apply the strategy, and returns the subject in case of VisitFailure
+   */
+  public jjtraveler.Visitable apply(jjtraveler.Visitable any) {
+    try {
+      return tom.library.strategy.mutraveler.MuTraveler.init(this).visit(any);
+    } catch (jjtraveler.VisitFailure f) {
+      return any;
+    }
+  }
 }

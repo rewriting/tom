@@ -9,4 +9,6 @@ public interface MuStrategy extends jjtraveler.reflective.VisitableVisitor {
   public Position getPosition();
 
   public boolean hasPosition();
+
+  public jjtraveler.Visitable apply(jjtraveler.Visitable any);
 }
