@@ -57,7 +57,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * Of these arguments, only <b>sourcedir</b> is required.
  * Either <b>destdir</b> or <b>outputfile</b> have to be set,
  * and <b>config</b> has to be set if the Tom.xml file can't be found in
- * <p>tom.home</p>.<p>
+ * <b>tom.home</b>.<p>
  * When this task executes, it will recursively scan the sourcedir and
  * destdir looking for Java source files to compile. This task makes its
  * compile decision based on timestamp.
