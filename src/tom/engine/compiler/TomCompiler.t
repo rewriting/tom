@@ -121,14 +121,14 @@ public class TomCompiler extends TomGenericPlugin {
 
   %op VisitableVisitor preProcessing(compiler:TomCompiler){
      make(compiler){
-       `(mu(MuVar("x"),Choice(
+       `(mu(MuVar("x"),ChoiceId(
                preProcessing_once(compiler),
                All(MuVar("x")))))
      }
    }
 
 
-  %strategy preProcessing_once(compiler:TomCompiler) extends `Fail(){
+  %strategy preProcessing_once(compiler:TomCompiler) extends `Identity(){
     visit TomTerm {
       BuildReducedTerm(var@(Variable|VariableStar)[]) -> {
         return `var;
@@ -334,11 +334,11 @@ matchBlock: {
   }
 
   %op VisitableVisitor preProcessing_makeTerm(compiler:TomCompiler){
-     make(compiler){`mu(MuVar("x"),Choice(preProcessing_makeTerm_once(compiler),All(MuVar("x"))))}
+     make(compiler){`mu(MuVar("x"),ChoiceId(preProcessing_makeTerm_once(compiler),All(MuVar("x"))))}
   }
 
 
-  %strategy preProcessing_makeTerm_once(compiler:TomCompiler) extends `Fail()  {
+  %strategy preProcessing_makeTerm_once(compiler:TomCompiler) extends `Identity()  {
     visit TomTerm {
       t -> {return (TomTerm) MuTraveler.init(`preProcessing(compiler)).visit(`BuildReducedTerm((TomTerm)t));}
     }
@@ -598,10 +598,10 @@ itBlock: {
    */
 
   %op VisitableVisitor attachConstraint(variableSet:Set,constraint:TomTerm,compiler:TomCompiler){
-    make(variableSet,constraint,compiler){`mu(MuVar("x"),Choice(attachConstraint_once(variableSet,constraint,compiler),All(MuVar("x"))))}
+    make(variableSet,constraint,compiler){`mu(MuVar("x"),ChoiceId(attachConstraint_once(variableSet,constraint,compiler),All(MuVar("x"))))}
   }
 
-  %strategy attachConstraint_once(variableSet:Set,constraint:TomTerm,compiler:TomCompiler) extends `Fail(){
+  %strategy attachConstraint_once(variableSet:Set,constraint:TomTerm,compiler:TomCompiler) extends `Identity(){
 
     visit TomTerm {
       var@(Variable|VariableStar)[constraints=constraintList] -> {
