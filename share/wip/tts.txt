@@ -1,0 +1,53 @@
+================================================================================
+Travail en cours :
+------------------
+
+Le contexte (nom de la table des symbole) va être codé dans le module gom et
+dans les instructions match.
+
+Mon but actuel est de mettre en place la "tuyauterie" qui permattra de récupérer
+une table de symboles dans une table de table de symboles.
+Pour ce faire, la fonction getSymbolTable() va prendre en paramètre un argument
+correspondant à l'idantifiant de la table des symboles demandées, c'est à dire
+le nom de module.
+
+================================================================================
+Pense-bête de l'état actuel de mon travail :
+--------------------------------------------
+
+* Parser
+
+* Checker
+SyntaxChecker
+TypeChecker
+
+* Compiler
+KernelCompiler // OK
+TODO l.47 utiliser le modulename
+TODO l.122 affecter valeur
+KernelExpander -> pb à cause des traversals
+
+* Backend // OK
+TomBackend // OK
+TODO l.105 instancier valeur par défaut
+TomAbstractGenerator  // OK
+TODO l.56 utiliser le modulename
+TODO l.436 affecter valeur
+
+================================================================================
+Résumé de la situation :
+------------------------
+
+Le backend a déjà toute la logistique nécessaire à l'utilisation de table de
+tables de symboles.
+
+Le compiler a une partie de la logistique en place, mais dans les fonctions
+utilisant des traversals il est ardu de capturer le contexte.
+
+Dans le parser, les changements sont faciles à faire, le contexte est facilement
+accesible.
+
+J'ai besoin de travailler dans l'ordre pour que les modifications me génère les
+erreurs en casdade afin de ne pas risquer d'oublier de faire une modification.
+
+===============================================================================
