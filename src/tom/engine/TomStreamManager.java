@@ -170,8 +170,6 @@ public class TomStreamManager {
   }
   
   public void prepareForInputFile(String localInputFileName) { // updateInputOutputFiles + init
-    //XXX: make sure each run do not eat all mamory
-    tom.library.strategy.mutraveler.MuTraveler.reset();
     // compute inputFile:
     //  - add a suffix if necessary
     if((!localInputFileName.endsWith(getInputSuffix())) && (!localInputFileName.equals("-"))) {

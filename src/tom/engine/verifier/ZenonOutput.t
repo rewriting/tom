@@ -250,16 +250,16 @@ public class ZenonOutput {
       tau(absTerm) -> {
         return ztermFromAbsTerm(`absTerm);
       }
-      repr(name) -> {
+      repr[] -> {
         return `zvar("Error in ztermFromTerm repr");
       }
-      subterm(s,t,index) -> {
+      subterm[] -> {
         return `zvar("Error in ztermFromTerm subterm");
       }
-      slot(s,t,name) -> {
+      slot[] -> {
         return `zvar("Error in ztermFromTerm "+ term +" slot");
       }
-      appSubsT(subst,t) -> {
+      appSubsT[] -> {
         // probleme: la substitution devrait etre appliquee
         return `zvar("Error in ztermFromTerm appsubsT ");
       }
@@ -277,15 +277,15 @@ public class ZenonOutput {
       teq(absterml,abstermr) -> {
         return `zeq(ztermFromAbsTerm(absterml),ztermFromAbsTerm(abstermr));
       }
-      isfsym(t,s) -> {
+      isfsym[] -> {
         // this should not occur
         return `zisfsym(zvar("Error in zexprFromExpr"),zsymbol("isfsym"));
       }
-      eq(lt,rt) -> {
+      eq[] -> {
         // this should not occur
         return `zeq(zvar("Error in zexprFromExpr"),zvar("eq"));
       }
-      appSubsE(subslist,e) -> {
+      appSubsE[] -> {
         // this should not occur
         return `zeq(zvar("Error in zexprFromExpr"),zvar("appSubsE"));
       }
@@ -324,14 +324,14 @@ public class ZenonOutput {
         }
       }
       dedexpr(exprlist) -> {
-        %match(ExprList exprlist) {
+        %match(ExprList `exprlist) {
           concExpr(_*,t,true[]) -> {
             return zexprFromExpr(`t);
           }
         }
       }
       dedexpr(exprlist) -> {
-        %match(ExprList exprlist) {
+        %match(ExprList `exprlist) {
           concExpr(_*,t,false()) -> {
             return `znot(zexprFromExpr(t));
           }

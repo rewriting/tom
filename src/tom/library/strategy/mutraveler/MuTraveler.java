@@ -8,11 +8,7 @@ import java.util.*;
 
 public class MuTraveler {
 
-  private static Map positionMap = new HashMap();
-
-  public static void reset() {
-    positionMap = new HashMap();
-  }
+  private static Map positionMap = new WeakHashMap();
 
   public static VisitableVisitor init(VisitableVisitor v) {
     try {
