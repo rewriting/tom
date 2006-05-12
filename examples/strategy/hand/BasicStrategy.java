@@ -59,4 +59,12 @@ public class BasicStrategy implements tom.library.strategy.mutraveler.MuStrategy
     }
     throw new IndexOutOfBoundsException();
   }
+
+  public jjtraveler.Visitable apply(jjtraveler.Visitable any) {
+    try {
+      return tom.library.strategy.mutraveler.MuTraveler.init(this).visit(any);
+    } catch (jjtraveler.VisitFailure f) {
+      return any;
+    }
+  }
 }

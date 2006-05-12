@@ -35,7 +35,7 @@ import strategy.term.types.*;
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Position;
 import tom.library.strategy.mutraveler.Identity;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 
@@ -44,7 +44,7 @@ import java.util.*;
 public class Rewrite4 {
 
   %include { term/term.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
   %include { java/util/types/Collection.tom }
 
   %typeterm Position {
@@ -66,7 +66,7 @@ public class Rewrite4 {
     // find all leaf nodes positions
     Collection leaves = new HashSet();
     try {
-      VisitableVisitor getleaves = `FindLeaves(leaves);
+      MuStrategy getleaves = `FindLeaves(leaves);
       MuTraveler.init(`BottomUp(getleaves)).visit(subject);
     } catch (VisitFailure e) {
       System.out.println("Failed to get leaves" + subject);
@@ -76,26 +76,22 @@ public class Rewrite4 {
     while(it.hasNext()) {
       Position p = (Position)it.next();
 
-      VisitableVisitor s1 = `S1();
-      VisitableVisitor s2 = `S2();
-      VisitableVisitor eqPos = `EqPos(p);
-      VisitableVisitor subPos = `SubPos(p);
+      MuStrategy s1 = `S1();
+      MuStrategy s2 = `S2();
+      MuStrategy eqPos = `EqPos(p);
+      MuStrategy subPos = `SubPos(p);
 
-      VisitableVisitor xmastree = `mu(MuVar("x"),
+      MuStrategy xmastree = `mu(MuVar("x"),
           Sequence(s1,
             All(IfThenElse(eqPos,s2,IfThenElse(subPos,MuVar("x"),s1)))));
 
-      VisitableVisitor useOmegaPath = p.getOmegaPath(`Sequence(s2,All(s1)));
+      MuStrategy useOmegaPath = (MuStrategy)p.getOmegaPath(`Sequence(s2,All(s1)));
 
-      try {
-        System.out.println("----------------------");
-        System.out.println("subject       = " + subject);
-        System.out.println("position      = " + p);
-        System.out.println("xmastree = " + MuTraveler.init(xmastree).visit(subject));
-        System.out.println("omegapath = " + MuTraveler.init(useOmegaPath).visit(subject));
-      } catch (VisitFailure e) {
-        System.out.println("reduction failed on: " + subject);
-      }
+      System.out.println("----------------------");
+      System.out.println("subject       = " + subject);
+      System.out.println("position      = " + p);
+      System.out.println("xmastree = " + xmastree.apply(subject));
+      System.out.println("omegapath = " + useOmegaPath.apply(subject));
     }
   }
 
