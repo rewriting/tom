@@ -330,8 +330,7 @@ matchBlock: {
         return `FunctionDef(name,subjectListAST,codomain,EmptyType(),functionBody);
       }
     }//end match
-    // end apply
-  }
+  } // end strategy
 
   %op VisitableVisitor preProcessing_makeTerm(compiler:TomCompiler){
      make(compiler){`mu(MuVar("x"),ChoiceId(preProcessing_makeTerm_once(compiler),All(MuVar("x"))))}
