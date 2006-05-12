@@ -10,6 +10,10 @@ public class MuTraveler {
 
   private static Map positionMap = new HashMap();
 
+  public static void reset() {
+    positionMap = new HashMap();
+  }
+
   public static VisitableVisitor init(VisitableVisitor v) {
     try {
       VisitableVisitor muInitializer = new BottomUp(new MuInitializer(new Position()));
