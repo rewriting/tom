@@ -599,7 +599,7 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
         return 1;
       }
     } else { /* We need to call gom to generate the file */
-      String config_xml = System.getProperty("tom.home") + "/Tom.xml";
+      String config_xml = System.getProperty("tom.home") + File.separator + "Tom.xml";
       try {
         File file = new File(config_xml);
         config_xml = file.getCanonicalPath();

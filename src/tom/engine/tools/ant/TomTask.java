@@ -96,7 +96,18 @@ public class TomTask extends MatchingTask {
   }
 
   public File getConfig() {
-    return configFile;
+    if (configFile != null) {
+      return configFile;
+    } else {
+      String tom_home = getProject().getProperty("tom.home");
+      try {
+        return new File(tom_home,File.separator+"Tom.xml").getCanonicalFile();
+      } catch (IOException e) {
+        throw new BuildException(
+            "Unable to find Tom.xml in "+tom_home,
+            getLocation());
+      }
+    }
   }
 
   /**
@@ -408,6 +419,11 @@ public class TomTask extends MatchingTask {
    * @throws BuildException if all required attributes are not set
    */
   protected void checkParameters() throws BuildException {
+    if (configFile == null && getProject().getProperty("tom.home") == null) {
+      throw new BuildException(
+          "config attribute has to be defined, or the tom.home property",
+          getLocation());
+    }
     if (src == null) {
       throw new BuildException("srcdir attribute must be set!",
                                getLocation());
@@ -460,8 +476,8 @@ public class TomTask extends MatchingTask {
       if(options != null && getOptions().trim().length() > 0) {
         cmd_line = cmd_line.trim() + " " + options;
       }
-      if(configFile != null) {
-        cmd_line = cmd_line.trim() + " -X " + configFile;
+      if(getConfig() != null) {
+        cmd_line = cmd_line.trim() + " -X " + getConfig();
       }
       if(destDir != null) {
         cmd_line = cmd_line.trim() + " -d " + destDir;

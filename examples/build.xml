@@ -281,11 +281,11 @@
   <target name="caml" depends="init">
     <mkdir dir="${examples.gen}/${caml}"/>
     <!-- build tom -->
-    <tom.preset destdir="${examples.gen}/${caml}"
+    <tom destdir="${examples.gen}/${caml}"
 	        srcdir="${examples.dir}"
                 options="--camlCode -I ${tom.home}/share/jtom">
       <include name="${caml}/**/*.t"/>
-    </tom.preset>
+    </tom>
     <copy todir="${examples.build}/${caml}">
       <fileset dir="${examples.gen}/${caml}">
         <include name="*.ml"/>
