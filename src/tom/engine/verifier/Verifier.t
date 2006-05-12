@@ -77,7 +77,7 @@ public class Verifier extends TomBase {
       ExpressionToTomTerm(expr) -> {
         return `termFromExpresssion(expr);
       }
-      Variable(options,name,type,constraints) -> {
+      Variable[astName=name] -> {
         return `termFromTomName(name);
       }
     }
@@ -106,7 +106,7 @@ public class Verifier extends TomBase {
 
   public Term termFromExpresssion(Expression expression) {
     %match(Expression expression) {
-      GetSubterm(codomain,Variable[astName=name], Number(index)) -> {
+      GetSubterm[variable=Variable[astName=name], number=Number(index)] -> {
         // we will need to find the head symbol
         Term term = termFromTomName(`name);
         return `subterm(fsymbol("empty"),term,index);
@@ -119,7 +119,7 @@ public class Verifier extends TomBase {
         Term term = termFromTomName(`name);
         return `term;
       }
-      Cast(type,expr) -> {
+      Cast[source=expr] -> {
         return termFromExpresssion(`expr);
       }
     }
@@ -144,10 +144,10 @@ public class Verifier extends TomBase {
         Term term = termFromTomName(`name);
         return `isfsym(term,fsymbol(extractName(symbolName)));
       }
-      EqualFunctionSymbol(type,term1,RecordAppl[nameList=symbolName]) -> {
+      EqualFunctionSymbol[exp1=term1,exp2=RecordAppl[nameList=symbolName]] -> {
         return `isfsym(termFromTomTerm(term1),fsymbol(extractName(symbolName)));
       }
-      EqualTerm(type,t1,t2) -> {
+      EqualTerm[kid1=t1,kid2=t2] -> {
         return `eq(termFromTomTerm(t1),termFromTomTerm(t2));
       }
     }
@@ -777,7 +777,7 @@ public class Verifier extends TomBase {
    */
   %strategy replaceVariableByTerm(map:Map) extends `Identity() {
     visit Term {
-      t@tau(absvar(v@var(name))) -> {
+      t@tau(absvar(v@var[])) -> {
         if (map.containsKey(`v)) {
           return (Term)map.get(`v);
         }
