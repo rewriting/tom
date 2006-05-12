@@ -72,7 +72,7 @@ public class GomMessage implements PlatformMessage {
 
   // Plugins
   public static final GomMessage invalidPluginArgument =
-    new GomMessage("{0}.setArg expecting {1} but {2} argument");
+    new GomMessage("{0}.setArg expecting {1} but got {2} as argument");
 
   // parser.GomParserPlugin
   public static final GomMessage fileNotFound =
