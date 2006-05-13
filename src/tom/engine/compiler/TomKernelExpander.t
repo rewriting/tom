@@ -149,7 +149,7 @@ public class TomKernelExpander extends TomBase {
 						}
 
 					MatchingCondition[lhs=lhs@RecordAppl[nameList=(Name(lhsName))],
-						                rhs=rhs@Variable[astName=Name(_), astType=rhsType]] -> {
+						                rhs=rhs@Variable[astName=Name(_)]] -> {
 							TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
 							TomType type;
 							if(lhsSymbol != null) {
@@ -163,7 +163,7 @@ public class TomKernelExpander extends TomBase {
 							return `MatchingCondition(newLhs,newRhs);
 						}
 					
-					MatchingCondition[lhs=lhs@Variable[astName=Name(_), astType=lhsType],
+					MatchingCondition[lhs=lhs@Variable[astName=Name(_)],
 						                rhs=rhs@RecordAppl[nameList=(Name(rhsName))]] -> {
 							TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
 							TomType type;
