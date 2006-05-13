@@ -318,7 +318,7 @@ public class ZenonOutput {
       }
       dedterm(termlist) -> {
         %match(TermList `termlist) {
-          concTerm(X*,tl,tr) -> {
+          concTerm(_*,tl,tr) -> {
             return `zeq(ztermFromTerm(tl),ztermFromTerm(tr));
           }
         }

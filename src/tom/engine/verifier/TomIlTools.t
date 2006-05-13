@@ -78,7 +78,7 @@ public class TomIlTools extends TomBase {
   public void getZTermSubjectListFromPattern(Pattern pattern, List list, Map map) {
     Set unamedVarSet = new HashSet();
     %match(Pattern pattern) {
-      Pattern(subjectList,tomList,guards) -> {
+      Pattern[subjectList=subjectList] -> {
         TomList sl = `subjectList;
           while(!sl.isEmpty()) {
             TomTerm head = sl.getHead();
@@ -92,7 +92,7 @@ public class TomIlTools extends TomBase {
   public ZExpr patternToZExpr(Pattern pattern, Map map) {
     Set unamedVariableSet = new HashSet();
     %match(Pattern pattern) {
-      Pattern(subjectList,tomList,guards) -> {
+      Pattern[subjectList=subjectList,tomList=tomList] -> {
           ZExpr result = `patternToZExpr(subjectList, tomList, map, unamedVariableSet);
           // insert existential quantifiers for the unamed variables
           Iterator it = unamedVariableSet.iterator();
@@ -302,7 +302,7 @@ public class TomIlTools extends TomBase {
     %match(TomSymbol symbol) {
       Symbol[pairNameDeclList=slots] -> {
         %match(PairNameDeclList slots) {
-          concPairNameDecl(al*,PairNameDecl[slotName=Name(slname)],_*) -> {
+          concPairNameDecl(_*,PairNameDecl[slotName=Name(slname)],_*) -> {
             nameList.add(`slname);
           }
         }
