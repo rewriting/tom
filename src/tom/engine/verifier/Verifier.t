@@ -111,7 +111,7 @@ public class Verifier extends TomBase {
         Term term = termFromTomName(`name);
         return `subterm(fsymbol("empty"),term,index);
       }
-      GetSlot(codomain,Name(symbolName),slotName,Variable[astName=name]) -> {
+      GetSlot[astName=Name(symbolName),slotNameString=slotName,variable=Variable[astName=name]] -> {
         Term term = termFromTomName(`name);
         return `slot(fsymbol(symbolName),term,slotName);
       }
@@ -140,7 +140,7 @@ public class Verifier extends TomBase {
     %match(Expression expression) {
       TrueTL()  -> { return `true(subs(undefsubs())); }
       FalseTL() -> { return `false(); }
-      EqualFunctionSymbol(type,Variable[astName=name],RecordAppl[nameList=symbolName]) -> {
+      EqualFunctionSymbol[exp1=Variable[astName=name],exp2=RecordAppl[nameList=symbolName]] -> {
         Term term = termFromTomName(`name);
         return `isfsym(term,fsymbol(extractName(symbolName)));
       }
@@ -169,7 +169,7 @@ public class Verifier extends TomBase {
 
   public Instr instrFromInstruction(Instruction automata) {
     %match(Instruction automata) {
-      TypedAction(action,positivePattern,negativePatternList) -> {
+      TypedAction[positivePattern=positivePattern,negativePatternList=negativePatternList] -> {
         return `accept(positivePattern,negativePatternList);
       }
 
@@ -190,10 +190,10 @@ public class Verifier extends TomBase {
                       termFromExpresssion(expr),
                       instrFromInstruction(body));
       }
-      (Let|LetAssign)(UnamedVariable[],expr,body) -> {
+      (Let|LetAssign)(UnamedVariable[],_,body) -> {
         return instrFromInstruction(`body);
       }
-      CompiledPattern(patterns,instr) -> {
+      CompiledPattern[automataInst=instr] -> {
         return instrFromInstruction(`instr);
       }
       AbstractBlock(concInstruction(CheckStamp[],instr)) -> {
@@ -214,7 +214,7 @@ public class Verifier extends TomBase {
   private SubstitutionList abstractSubstitutionFromAccept(Instr instr) {
     SubstitutionList substitution = `subs();
     %match(Instr instr) {
-      accept(positive,negative) -> {
+      accept(positive,_) -> {
         Pattern positivePattern = (Pattern) `positive;
         %match(Pattern positivePattern) {
           Pattern[subjectList=subjectList] -> {
@@ -330,7 +330,7 @@ public class Verifier extends TomBase {
 
   %strategy acceptCollector(store:Collection) extends `Identity() {
     visit Instruction {
-      TypedAction(action,positive,negative)  -> {
+      TypedAction[positivePattern=positive,negativePatternList=negative]  -> {
         store.add(`accept(positive,negative));
       }
     }
@@ -699,10 +699,10 @@ public class Verifier extends TomBase {
         }
       }
       // axioms
-      ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
+      ebs(env(_,accept[]),env(subs(undefsubs()),accept[])) -> {
         c.add(`derivrule("axiom_accept",post,endderiv(),seq()));
       }
-      ebs(env(e,refuse[]),env(subs(undefsubs()),refuse[])) -> {
+      ebs(env(_,refuse[]),env(subs(undefsubs()),refuse[])) -> {
         c.add(`derivrule("axiom_refuse",post,endderiv(),seq()));
       }
       _ -> {
@@ -925,16 +925,16 @@ public class Verifier extends TomBase {
 
     public Expr visit_Expr(Expr arg) throws jjtraveler.VisitFailure {
       %match(Expr arg) {
-        iland(false(),right) -> {
+        iland(false(),_) -> {
           return `false();
         }
-        iland(left,false()) -> {
+        iland(_,false()) -> {
           return `false();
         }
-        ilor(lt@true[],right) -> {
+        ilor(lt@true[],_) -> {
           return `lt;
         }
-        ilor(left,lt@true[]) -> {
+        ilor(_,lt@true[]) -> {
           return `lt;
         }
         ilor(false(),right) -> {
