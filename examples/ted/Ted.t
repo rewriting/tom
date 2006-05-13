@@ -107,7 +107,7 @@ public class Ted {
   public static ATerm run(ATerm res, String strategy, ATerm action) throws java.io.IOException {
     Constructor ctor = null;
     try {
-      Class strategy_class = Class.forName(strategy);
+      Class strategy_class = Class.forName("jjtraveler." + strategy);
       ctor = strategy_class.getConstructor(new Class[] {jjtraveler.Visitor.class});
     }
     catch( Exception e ) { System.err.println("This strategy doesn't exist or has a bad signature : " + e.getMessage()); System.exit(1); }
@@ -116,19 +116,32 @@ public class Ted {
 
     %match(ATerm action) {
       ATermAppl(AFun[name="replace"], concATerm(tomatch, replacement)) -> {
-        try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new ReplaceVisitor(`tomatch, `replacement)} ); }
+        try {
+          vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new ReplaceVisitor(`tomatch, `replacement)} );
+          return (ATerm) vtor.visit(res);
+        }
         catch ( Exception e ) { e.printStackTrace(); }
       }
 
       ATermAppl(AFun[name="remove"], concATerm(tomatch)) -> {
-        try { vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new MatchAndRemoveVisitor(`tomatch)}); }
+        try {
+          vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {new MatchAndRemoveVisitor(`tomatch)});
+          return  (ATerm) vtor.visit(res);
+        }
+        catch ( Exception e ) { e.printStackTrace(); }
+      }
+
+      ATermAppl(AFun[name="grep"], concATerm(tomatch)) -> {
+        try {
+          ATermList l = `concATerm();
+          GrepVisitor v =  new GrepVisitor(`tomatch);
+          vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {v});
+          vtor.visit(res);
+          return v.getList();
+        }
         catch ( Exception e ) { e.printStackTrace(); }
       }
     }
-
-    // application
-    try { res = (ATerm) vtor.visit(res);}
-    catch (Exception e) {e.printStackTrace();}        
 
     return res;
   }

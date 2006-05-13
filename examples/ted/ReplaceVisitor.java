@@ -21,12 +21,8 @@ public class ReplaceVisitor extends aterm.ATermFwd {
 
       ATerm key = (ATerm)it.next();
       String keyStr = key.toString();
-
-      if (termStr.equals(keyStr)){
-        termStr = ((ATerm)tds.get(key)).toString();
-      }else{
-        termStr.replaceAll(keyStr,((ATerm)tds.get(key)).toString());
-      }
+      
+      termStr = termStr.replaceAll(keyStr,((ATerm)tds.get(key)).toString());
     }
     return atermFactory.parse(termStr);
   }
