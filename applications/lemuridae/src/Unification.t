@@ -35,7 +35,8 @@ class Unification {
       (), () -> { return tds; }
 
       // 2 listes de longueur differentes, clash
-      (_*), () -> { return null; }
+      (_,_*), () -> { return null; }
+      (), (_,_*) -> { return null; }
 
       (x1,t1*), (x2,t2*) -> { 
         tds = match(`x1,`x2,tds);
