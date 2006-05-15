@@ -212,7 +212,7 @@
       </fileset>
     </path>
     <property name="tnode.jar" refid="tnode.path"/>
-    <path id="tom-library.path"> <!-- ugly hack to find the TNode jar -->
+    <path id="tom-library.path">
       <fileset dir="${tom.home}/lib">
         <include name="tom-library*.jar"/>
       </fileset>
@@ -254,7 +254,7 @@
       </fileset>
     </copy>
     <!-- Create a jar for the applet -->
-    <path id="mutraveler.path"> <!-- ugly hack to find the TNode jar -->
+    <path id="mutraveler.path"> <!-- ugly hack to find the jar -->
       <fileset dir="${tom.home}/lib">
         <include name="mutraveler*.jar"/>
       </fileset>
@@ -708,6 +708,31 @@
         <include name="examples"/>
       </fileset>
     </copy>
+    <!-- Create a jar for the applet -->
+    <path id="mutraveler.path"> <!-- ugly hack to find the jar -->
+      <fileset dir="${tom.home}/lib">
+        <include name="mutraveler*.jar"/>
+      </fileset>
+    </path>
+    <path id="tom-library.path"> <!-- ugly hack to find the jar -->
+      <fileset dir="${tom.home}/lib">
+        <include name="tom-library*.jar"/>
+      </fileset>
+    </path>
+    <property name="tom-library.jar" refid="tom-library.path"/>
+    <property name="mutraveler.jar" refid="mutraveler.path"/>
+    <jar jarfile="${examples.build}/${structure}/structure.jar">
+      <fileset dir="${examples.build}">
+        <include name="${structure}/**/*.class"/>
+        <include name="${structure}/**/*.gif"/>
+      </fileset>
+      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/jjtraveler.jar"/>
+      <zipfileset src="${tom.home}/lib/antlr.jar"/>
+      <zipfileset src="${mutraveler.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
+      <zipfileset src="${tom-library.jar}" includes="tom/library/traversal/**/*.class"/>
+      <zipfileset src="${tom.home}/lib/aterm.jar"/>
+    </jar>
   </target>
 
   <target name="ted" depends="init"> 
