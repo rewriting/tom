@@ -44,10 +44,9 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <ul>
  * <li>srcfile</li>
  * <li>destdir</li>
- * <li>packagename</li>
- * <li>parsername</li>
+ * <li>package</li>
  * </ul>
- * Of these arguments, the <b>srcfile</b>, <b>destdir</b> and <b>packagename</b> are
+ * Of these arguments, the <b>srcfile</b>, <b>destdir</b> and <b>package</b> are
  * required.
  */
 
@@ -55,8 +54,7 @@ public class PomTask extends MatchingTask {
 
   private File srcFile;
   private File destDir;
-  private String packageName;
-  private String parserName = "parser";
+  private String packagePrefix;
 
   /**
    * Set the source file
@@ -92,35 +90,20 @@ public class PomTask extends MatchingTask {
 
   /**
    * Set the package name
-   * @param packageName the package name
+   * @param packagePrefix the package name
    */
-  public void setPackageName(String name) {
-    this.packageName = name;
+  public void setPackage(String name) {
+    this.packagePrefix = name;
   }
 
   /**
    * Gets the package name
    * @return the package name
    */
-  public String getPackageName() {
-    return packageName;
+  public String getPackage() {
+    return packagePrefix;
   }
 
-  /**
-   * Set the parser name
-   * @param parserName the parser name
-   */
-  public void setParserName(String name) {
-    this.parserName = name;
-  }
-
-  /**
-   * Gets the parser name
-   * @return the parser name
-   */
-  public String getParserName() {
-    return parserName;
-  }
   /**
    * Executes the task.
    * @exception BuildException if an error occurs
@@ -131,7 +114,6 @@ public class PomTask extends MatchingTask {
     compile();
   }
 
-  
   /**
    * Check that all required attributes have been set and nothing
    * silly has been entered.
@@ -150,6 +132,10 @@ public class PomTask extends MatchingTask {
                                + destDir
                                + "\" does not exist "
                                + "or is not a directory", getLocation());
+    }
+    if (packagePrefix == null) {
+      throw new BuildException("package attribute must be set!",
+                               getLocation());
     }
   }
 
@@ -173,11 +159,8 @@ public class PomTask extends MatchingTask {
       if(destDir != null) {
         cmd_line = cmd_line.trim() + " --destdir " + destDir;
       }
-      if(packageName != null) {
-        cmd_line = cmd_line.trim() + " --packagename " + packageName;
-      }
-      if(parserName != null) {
-        cmd_line = cmd_line.trim() + " --parsername " + parserName;
+      if(packagePrefix != null) {
+        cmd_line = cmd_line.trim() + " --package " + packagePrefix;
       }
 
       String[] cmd = split(cmd_line);
