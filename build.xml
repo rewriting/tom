@@ -691,7 +691,7 @@
 	      excludes="tom/gom/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="gom/**/*.properties"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/pom.jar">
+    <jar jarfile="${src.dist.lib}/pom-${src.version}.jar">
       <fileset dir="${src.build}"
         includes="tom/pom/**/*.class"/>
       <fileset dir="${src.src}" includes="pom/**/*.properties"/>
