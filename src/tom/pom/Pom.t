@@ -32,6 +32,7 @@ public class Pom {
   private String fileName;
   private String destDir;
   private String packagePrefix;
+  private String packagePath;
 
   %include { string.tom }
 
@@ -41,7 +42,7 @@ public class Pom {
   public static int exec(String[] args) {
     String srcfile = null;
     String destdir = null;
-    String packageP = null;
+    String pack = null;
 
     for (int i=0; i<java.lang.reflect.Array.getLength(args); i++) {
       if (args[i].equals("--srcfile")) {
@@ -51,18 +52,19 @@ public class Pom {
         destdir = args[++i];
       }
       if (args[i].equals("--package")) {
-        packageP = args[++i];
+        pack = args[++i];
       }
     }
-    Pom pom = new Pom(srcfile,destdir,packageP);
+    Pom pom = new Pom(srcfile,destdir,pack);
     pom.gen();
     return 0; //no errors
   }
 
-  public Pom(String fileN, String destD, String packageP) {
+  public Pom(String fileN, String destD, String pack) {
     this.fileName = fileN;
     this.destDir = destD;
-    this.packagePrefix = packageP;
+    this.packagePrefix = pack;
+    this.packagePath = pack.replace('.',File.separatorChar);
   }
 
   public void gen() {
@@ -116,7 +118,7 @@ public class TokenTable {
     try {
       Writer writer = new BufferedWriter(
           new FileWriter(destDir + File.separator +
-            packagePrefix + File.separator + "TokenTable.java"));
+            packagePath + File.separator + "TokenTable.java"));
       writer.write(out.toString());
       writer.close();
     } catch (Exception e) {
@@ -181,7 +183,7 @@ public class TokenTable {
     try {
       Writer writer = new BufferedWriter(
           new FileWriter(destDir + File.separator +
-            packagePrefix + File.separator + "Mapping.tom"));
+            packagePath + File.separator + "Mapping.tom"));
       writer.write(out.toString());
       writer.close();
     } catch (Exception e) {
