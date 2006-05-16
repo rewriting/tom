@@ -33,6 +33,16 @@ public class RuleCalc {
 // 		System.out.println("etape = " + pprinter.prettyRule(l));
 // 	    }
 
+      // axiom
+      (X*,ruledesc(hs,c,(x*,sequent((_*,p,_*),p),y*)),Y*) -> {
+        return `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
+      }
+      
+      // bottom
+       (X*,ruledesc(hs,c,(x*,sequent((_*,bottom(),_*),_),y*)),Y*) -> {
+        return `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
+      }
+      
       // and R
       (X*,ruledesc(hs,c,(x*,sequent(ctxt,and(a,b)),y*)),Y*) -> {
         return `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,a), sequent(ctxt,b), y*)),Y*);
@@ -64,10 +74,12 @@ public class RuleCalc {
         return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(t*,q*),a), sequent(context(t*,q*,b),p), y*)), Y*);
       }
 
+      /*
 	    // ou L
       (X*,ruledesc(hs,c,(x*,sequent((t*,or(a,b),q*),p),y*)),Y*) -> {
         return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(t*,a,q*),p), sequent(context(t*,b,q*),p), y*)), Y*);
       }
+      */
     }
   }
 
