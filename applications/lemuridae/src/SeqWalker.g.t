@@ -21,11 +21,11 @@ options {
 seq returns [Sequent s]
 {
   Context ctxt;
-  Prop p;
+  Context concl;
   s = null;  
 }
-  : SEQ p=pred { s = `sequent(context(),p); }
-  | ctxt=list_pred SEQ p=pred { s = `sequent(ctxt,p); }
+  : SEQ concl=list_pred { s = `sequent(context(),concl); }
+  | ctxt=list_pred SEQ concl=list_pred { s = `sequent(ctxt,concl); }
   ;
 
 list_pred returns [Context c]

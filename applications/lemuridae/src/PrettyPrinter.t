@@ -274,9 +274,9 @@ class PrettyPrinter {
         String r1 = prettyRule(`p);
         String r2;
         if(`hs==0)
-          r2 = prettyPrint(`sequent(context(c),nullProp()));
+          r2 = prettyPrint(`sequent(context(c),context(nullProp())));
         else
-          r2 = prettyPrint(`sequent(context(),c));
+          r2 = prettyPrint(`sequent(context(),context(c)));
 
         StringBuffer sb = new StringBuffer();
         for (int i=0; i< Math.max(r1.length(), r2.length()); ++i) 

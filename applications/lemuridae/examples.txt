@@ -1,13 +1,22 @@
 rule
-Subset(a,b).
-\A x.(In(x,a) => In(x,b)).
+In(x,symdiff(a,b)).
+(In(x,a) \/ In(x,b)) /\ ((In(x,a) /\ In(x,b)) => \B).
 rule
-In(x,void()).
-\B.
+In(x,inter(a,b)).
+In(x,a) /\ In(x,b).
 proof
-|- Subset(void(),a()).
-rule 0
-focus 1
+In(x, symdiff(a(), b())) |- (In(x, inter(a(), b())) => False).
+focus h1
+rules?
+rule 1
+focus c2
+elim
+focus h2
+rules?
 rule 3
-bottom
-
+axiom
+focus c2
+elim
+focus h2
+rule 3
+axiom

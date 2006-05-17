@@ -31,6 +31,7 @@
                 destdir="${lemu.gen}">
       <include name="**/*.t"/>
       <exclude name="**/*.g.t"/>
+      <exclude name="**/LJ2NJ.t"/>
     </tom.preset>
     <tom.preset outputfile="${lemu.gen}/SeqWalker.g"
                 options="-I ${lemu.gen}"
@@ -50,6 +51,7 @@
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac.preset>
+    <copy file="proof.sty" todir="${lemu.build}" />
   </target>
 
   <target name="clean" description="make clean">

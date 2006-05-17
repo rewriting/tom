@@ -34,58 +34,65 @@ public class RuleCalc {
 // 	    }
 
       // axiom
-      (X*,ruledesc(hs,c,(x*,sequent((_*,p,_*),p),y*)),Y*) -> {
+      (X*,ruledesc(hs,c,(x*,sequent((_*,p,_*),(_*,p,_*)),y*)),Y*) -> {
         return `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
       }
       
       // bottom
-       (X*,ruledesc(hs,c,(x*,sequent((_*,bottom(),_*),_),y*)),Y*) -> {
+      (X*,ruledesc(hs,c,(x*,sequent((_*,bottom(),_*),_),y*)),Y*) -> {
         return `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
       }
-      
+
       // and R
-      (X*,ruledesc(hs,c,(x*,sequent(ctxt,and(a,b)),y*)),Y*) -> {
-        return `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,a), sequent(ctxt,b), y*)),Y*);
+      (X*,ruledesc(hs,c,(x*,sequent(ctxt,(u*,and(a,b),v*)),y*)),Y*) -> {
+        return `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,context(u*,a,v*)),sequent(ctxt,context(u*,b,v*)), y*)),Y*);
+      }
+
+      // or R
+      (X*,ruledesc(hs,c,(x*,sequent(ctxt,(u*,or(a,b),v*)),y*)),Y*) -> {
+        return `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,context(u*,a,b,v*)), y*)),Y*);
       }
 
       // => R
-      (X*,ruledesc(hs,c,(x*, sequent(ctxt,implies(a,b)), y*)), Y*) -> {
-        return `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(context(ctxt*,a),b), y*)), Y*);
+      (X*,ruledesc(hs,c,(x*, sequent(ctxt,(u*,implies(a,b),v*)), y*)), Y*) -> {
+        return `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(context(ctxt*,a),context(u*,b,v*)), y*)), Y*);
       }
 
 	    // forall R
-      l@(X*,ruledesc(hs,c,(x*, sequent(ctxt,forAll(n,a)), y*)), Y*) -> {
+      l@(X*,ruledesc(hs,c,(x*, sequent(ctxt,(u*,forAll(n,a),v*)), y*)), Y*) -> {
         String new_n = Utils.freshVar(`n,`l).getname();
         Term fresh_v = `FreshVar(new_n,n);
         Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
-        if (new_a != `a) { // si on a remplace qqc
-          return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, new_a), y*)), Y*);
-        } else
-          return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, a), y*)), Y*);
+        return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, context(u*,new_a,v*)), y*)), Y*);
       }
 
 	    // and L
-	    (X*,ruledesc(hs,c,(x*,sequent((t*,and(a,b),q*),p),y*)),Y*) -> {
-        return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(t*,a,b,q*),p), y*)), Y*);
+	    (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
+        return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
       }
 
 	    // => L
-      (X*,ruledesc(hs,c,(x*,sequent((t*,implies(a,b),q*),p),y*)),Y*) -> {
-        return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(t*,q*),a), sequent(context(t*,q*,b),p), y*)), Y*);
+      (X*,ruledesc(hs,c,(x*,sequent((u*,implies(a,b),v*),p),y*)),Y*) -> {
+        return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,v*),context(a,p*)), sequent(context(u*,v*,b),p), y*)), Y*);
+      }
+      
+      // or L
+      (X*,ruledesc(hs,c,(x*,sequent((u*,or(a,b),v*),p),y*)),Y*) -> {
+        return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,v*),p), sequent(context(u*,b,v*),p), y*)), Y*);
       }
 
-      /*
-	    // ou L
-      (X*,ruledesc(hs,c,(x*,sequent((t*,or(a,b),q*),p),y*)),Y*) -> {
-        return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(t*,a,q*),p), sequent(context(t*,b,q*),p), y*)), Y*);
+      // and L
+      (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
+        return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
       }
-      */
+     
     }
   }
 
   public static RuleList transform(Prop atom, Prop p) {
-    RuleList init = `rlist(ruledesc(1,atom,concSeq(sequent(context(),p))),
-        ruledesc(0,atom,concSeq(sequent(context(p),nullProp()))));
+    RuleList init = `rlist(ruledesc(1,atom,concSeq(sequent( context(),context(p)           ))),
+                           ruledesc(0,atom,concSeq(sequent( context(p),context(nullProp()) )))
+                          );
     NewRulesVisitor v = new NewRulesVisitor();
     try {
       RuleList l = (RuleList) MuTraveler.init(`RepeatId(v)).visit(init);
@@ -108,8 +115,7 @@ public class RuleCalc {
     Prop p2  = walker.pred(t);
     RuleList rl = transform(p1,p2);
 
-    PrettyPrinter pprinter = new PrettyPrinter();
-    System.out.println(pprinter.prettyRule(rl));
+    System.out.println(PrettyPrinter.prettyRule(rl));
   }
 
   public final static void main(String[] args) throws Exception {
