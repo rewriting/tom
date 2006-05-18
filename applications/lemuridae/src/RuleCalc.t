@@ -90,8 +90,8 @@ public class RuleCalc {
   }
 
   public static RuleList transform(Prop atom, Prop p) {
-    RuleList init = `rlist(ruledesc(1,atom,concSeq(sequent( context(),context(p)           ))),
-                           ruledesc(0,atom,concSeq(sequent( context(p),context(nullProp()) )))
+    RuleList init = `rlist(ruledesc(1,atom,concSeq(sequent( context() , context(p) ))),
+                           ruledesc(0,atom,concSeq(sequent( context(p), context()  )))
                           );
     NewRulesVisitor v = new NewRulesVisitor();
     try {

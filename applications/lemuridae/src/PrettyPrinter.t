@@ -153,10 +153,6 @@ class PrettyPrinter {
       exists(n, p) -> { return "\\exists " + `n + " . (" + toLatex(`p) + ")";}
       bottom() -> { return "\\perp";  }
       top() -> { return "\\mathrel(T)";  }
-      nullProp() -> {
-        return ""; 
-      }
-
     }	
 
     %match(TermList term) {
@@ -217,9 +213,6 @@ class PrettyPrinter {
       top() -> {
         return "True";
       }
-      nullProp() -> {
-        return ""; 
-      }
     }
 
     %match(Term term) {
@@ -274,7 +267,7 @@ class PrettyPrinter {
         String r1 = prettyRule(`p);
         String r2;
         if(`hs==0)
-          r2 = prettyPrint(`sequent(context(c),context(nullProp())));
+          r2 = prettyPrint(`sequent(context(c),context()));
         else
           r2 = prettyPrint(`sequent(context(),context(c)));
 

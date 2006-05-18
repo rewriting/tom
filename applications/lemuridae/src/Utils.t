@@ -18,28 +18,28 @@ class Utils {
 
   // pour convenance
 
-  public static Tree axiom(Sequent s) {
-    return `rule("axiom", premisses(), s, nullProp());
+  public static Tree axiom(Sequent s, Prop active) {
+    return `rule("axiom", premisses(), s, active);
   }
 
   public static Tree impliesL(Tree s1, Tree s2, Sequent c, Prop active) {
     return `rule("implies L", premisses(s1,s2), c, active);
   }
 
-  public static Tree impliesR(Tree s, Sequent c) {
-    return `rule("implies R", premisses(s), c, nullProp());
+  public static Tree impliesR(Tree s, Sequent c, Prop active) {
+    return `rule("implies R", premisses(s), c, active);
   }
 
   public static Tree andL(Tree s, Sequent c, Prop active) {
     return `rule("and L", premisses(s), c, active);
   }
 
-  public static Tree andR(Tree s1, Tree s2, Sequent c) {
-    return `rule("and R", premisses(s1,s2), c, nullProp());
+  public static Tree andR(Tree s1, Tree s2, Sequent c, Prop active) {
+    return `rule("and R", premisses(s1,s2), c, active);
   }
 
-  public static Tree orR(Tree s, Sequent c) {
-    return `rule("or R", premisses(s), c, nullProp());
+  public static Tree orR(Tree s, Sequent c, Prop active) {
+    return `rule("or R", premisses(s), c, active);
   }
 
   public static Tree orL(Tree s1, Tree s2, Sequent c, Prop active) {

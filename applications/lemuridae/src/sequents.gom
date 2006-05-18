@@ -22,7 +22,6 @@ Prop = relationAppl(r:Relation, t:TermList)
      | exists(var:String, p:Prop)
      | bottom()
      | top()
-     | nullProp()  // nullable type
 
 Context = context(Prop*)
 
@@ -41,16 +40,5 @@ Rule = ruledesc(hs:int, concl:Prop, prem:SeqList)
 // --- for the new rules computing---
 // sequents and constraints
 RuleList = rlist(Rule*)
-
-// hooks
-
-// we don't want sequents with nullProp and other conclusions at the same time
-sequent:make(h,c) {
-  %match(Context c) {
-    (X*,nullProp(),Y*) -> {
-      return `sequent(h,context(X*,Y*));
-    }
-  }
-}
 
 

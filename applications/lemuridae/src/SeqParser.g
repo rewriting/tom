@@ -13,7 +13,7 @@ tokens {
 }
 
 seq: SEQ pred DOT! 
-   | list_pred SEQ pred DOT!
+   | list_pred SEQ list_pred DOT!
    ;
 
 list_pred: pred (LIST^ pred)* ;
