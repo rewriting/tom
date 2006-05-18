@@ -113,7 +113,7 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
   public static @fullClassName()@ fromTerm(aterm.ATerm trm) {
     @fullClassName()@ tmp;
 @generateFromTerm("trm","tmp")@
-    throw new IllegalArgumentException("This is not a @className()@" + trm);
+    throw new IllegalArgumentException("This is not a @className()@ " + trm);
   }
 
 ]%);
