@@ -261,6 +261,8 @@
 
       <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/gom/**/GomParser.g.t"/>
+      <!-- needs to generate mappings first -->
+      <exclude name="tom/gom/parser/AST2Gom.t"/>
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
@@ -333,10 +335,35 @@
            outputdirectory="${gen.destination}/tom/gom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
+    <antlr target="${src.src}/tom/gom/parser/PomGomParser.g"
+           outputdirectory="${gen.destination}/tom/gom/parser">
+      <classpath refid="stable.classpath"/>
+    </antlr>
     <antlr target="${src.src}/tom/gom/parser/BlockParser.g"
            outputdirectory="${gen.destination}/tom/gom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
+  </target>
+
+  <target name="buildmappings">
+    <antcall target="buildmappings.common">
+      <param name="gen.destination" value="${src.gen}"/>
+      <param name="tom.home" value="${stable.dist}"/>
+    </antcall>
+  </target>
+  <!-- builds mappings -->
+  <target name="buildmappings.common"
+    if="gen.destination"
+    depends="init.task.stable,-withstable">
+    <pom srcfile="${gen.destination}/tom/gom/parser/PomGomParserTokenTypes.txt"
+      destdir="${gen.destination}"
+      package="tom.gom.parser"/>
+    <!-- once mappings generated, compile AST2Gom.t -->
+    <tomcompile srcdir="${src.src}"
+         destdir="${gen.destination}"
+         options="-I ${src.mapping} --optimize">
+      <include name="tom/gom/parser/AST2Gom.t"/>
+    </tomcompile>
   </target>
 
   <target name="touchvas"
@@ -422,6 +449,7 @@
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
     <antcall target="buildtom"/>
     <antcall target="buildparser"/>
+    <antcall target="buildmappings"/>
     <!--<property name="unixpath" refid="src.classpath" />
     <echo>classpath = ${unixpath}</echo>-->
     <copy file="${src.src}/tom/engine/Tom.java.in"
