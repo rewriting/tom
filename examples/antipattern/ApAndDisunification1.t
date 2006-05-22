@@ -40,13 +40,14 @@ import antipattern.term.types.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 
-import jjtraveler.reflective.VisitableVisitor;
+//import jjtraveler.reflective.VisitableVisitor;
+import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.VisitFailure;
 
 
 public class ApAndDisunification1 implements Matching{
 	
-	%include{ mutraveler.tom }	
+	%include{ mustrategy.tom }	
 	%include{ term/Term.tom }
 	
 	public static int varCounter = 0;
@@ -54,17 +55,20 @@ public class ApAndDisunification1 implements Matching{
 	
 	private int antiCounter = 0;
 	
+	// temporary list that holds variables that need to
+	// be quantified 
 	private ArrayList quantifiedVarList = new ArrayList();
 	
 	public Constraint simplifyAndSolve(Constraint c,Collection solution) {
 		
 		Constraint transformedMatch = null;
-		varCounter = 0;
+		varCounter = 0;		
 		
 		// replace the match with =
 		label:%match(Constraint c){
 			Match(p,s) -> { 
 				transformedMatch = `Equal(p,s/* GenericGroundTerm("SUBJECT") */);
+
 				break label;
 			}
 			_ -> {
@@ -84,7 +88,7 @@ public class ApAndDisunification1 implements Matching{
 //		System.out.println("Result after main rule: " + tools.formatConstraint(noAnti));
 		
 		// transform the problem into a disunification one
-		VisitableVisitor transInDisunif = `TransformIntoDisunification();
+		MuStrategy transInDisunif = `TransformIntoDisunification();
 		Constraint disunifProblem = null;
 		try {		
 			disunifProblem = (Constraint) MuTraveler.init(`InnermostId(transInDisunif)).visit(noAnti);			
@@ -93,19 +97,20 @@ public class ApAndDisunification1 implements Matching{
 			e.printStackTrace();
 		}
 		
-		// System.out.println("Disunification problem: " +
-		// formatConstraint(disunifProblem));
+//		 System.out.println("Disunification problem: " +
+//		 formatConstraint(disunifProblem));
 		
 		// apply the disunification rules
 		Constraint compiledConstraint = null, solvedConstraint = null;
 		
-		VisitableVisitor simplifyRule = `SimplifyWithDisunification();
-		VisitableVisitor decomposeTerms = `DecomposeTerms();
-		VisitableVisitor solve = `SolveRes();
+//		MuStrategy simplifyRule = `SimplifyWithDisunification();
+		MuStrategy simplifyRule = `SimplifyWithDisunificationAll();
+		MuStrategy decomposeTerms = `DecomposeTerms();
+		MuStrategy solve = `SolveRes();
 		
 		try {		
 			compiledConstraint = (Constraint) MuTraveler.init(`InnermostId(simplifyRule)).visit(disunifProblem);
-			solvedConstraint = (Constraint) MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
+//			solvedConstraint = (Constraint) MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
 		} catch (VisitFailure e) {
 			System.out.println("3. reduction failed on: " + c);
 			e.printStackTrace();
@@ -114,9 +119,8 @@ public class ApAndDisunification1 implements Matching{
 //		System.out.println("Final result: " + tools.formatConstraint(compiledConstraint));
 //		System.out.println("Final result solved: " + formatConstraint(solvedConstraint));
 		
-//		System.out.println("egalitate:" + (`Variable("a") == `Variable("a")));
-		
-		return solvedConstraint;		
+//		return solvedConstraint;
+		return compiledConstraint;
 	}	
 	
 	// applies the main rule that transforms ap problems
@@ -165,8 +169,8 @@ public class ApAndDisunification1 implements Matching{
 		
 		// recursive call to itself
 		return `And(concAnd(cAntiReplaced,cNoAnti));
-
-		
+		//return `And(concAnd(cAntiReplaced));
+		//return `And(concAnd(cNoAnti));
 	}
 	
 	
@@ -180,7 +184,7 @@ public class ApAndDisunification1 implements Matching{
 				
 //				System.out.println("Analyzing " + `v + " position=" + getPosition() );
 				
-				VisitableVisitor useOmegaPath = getPosition().getOmegaPath(`CountAnti());				
+				MuStrategy useOmegaPath = (MuStrategy)getPosition().getOmegaPath(`CountAnti());				
 				
 				MuTraveler.init(useOmegaPath).visit(subject);
 				
@@ -677,6 +681,272 @@ public class ApAndDisunification1 implements Matching{
 				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
 			}
 		}
-	}	
+	}
+	
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+	/// All in one strategy
+	
+	%strategy SimplifyWithDisunificationAll() extends `Identity(){
+		
+		visit Constraint {			
+			
+			// simple rules with exists and forall
+			Exists(Variable(a),Equal(Variable(a),_)) ->{				
+				return `True();
+			}						
+			Exists(Variable(a),NEqual(Variable(a),_)) ->{				
+				return `True();
+			}
+			Exists(v@Variable(name),constr)->{
+				// eliminates the quantificator when the
+				// constraint does not contains the variable
+				
+				if (!tools.containsVariable(`constr,`v)){				
+					return `constr;
+				}
+				
+			}			
+			ForAll(Variable(a),Equal(Variable(a),_)) ->{
+				return `False();
+			}
+			ForAll(Variable(a),NEqual(Variable(a),_)) ->{
+				return `False();
+			}
+			ForAll(v@Variable(_),constr)->{
+				// eliminates the quantificator when the
+				// constraint does not contains the variable
+				
+				if (!tools.containsVariable(`constr,`v)){
+					return `constr;
+				}				
+			}
+			
+			// ///////////////////////////////////////////////////
+			
+			// distribution of exists/forall in and and or - allows
+			// simplification with the rules above
+			e@Exists(v@Variable(_),And(list)) ->{
+				
+				AConstraintList l = `list;
+				AConstraintList result = `concAnd();
+				AConstraintList result1 = `concAnd();
+				
+				while(!l.isEmptyconcAnd()){
+					
+					Constraint c = l.getHeadconcAnd();
+					
+					// if the c doesn't contain the variable, we 
+					// can put it outside the expresion that is quantified					
+					if ( !tools.containsVariable(`c,`v) ) {
+						result = `concAnd(Exists(v,c),result*);
+					}else{
+						result1 = `concAnd(c,result1*);
+					}				
+									
+					//result = `concAnd(Exists(v,l.getHeadconcAnd()),result*);
+					l = l.getTailconcAnd();
+				}
+				
+				// if couldn't do anything, return the same thing
+				if (result.isEmptyconcAnd()){
+					return `e;
+				}
+				
+				// if not all were separated
+				if (!result1.isEmptyconcAnd()){
+					result = `concAnd(Exists(v,And(result1)),result*);
+				}
+				
+				return `And(result);
+			}			
+			Exists(v@Variable(var),Or(list)) ->{
+				
+				OConstraintList l = `list;
+				OConstraintList result = `concOr();
+				
+				while(!l.isEmptyconcOr()){
+					result = `concOr(Exists(v,l.getHeadconcOr()),result*);
+					l = l.getTailconcOr();
+				}
+				
+				return `Or(result);
+			}
+			ForAll(v@Variable(var),And(list)) ->{
+				
+				AConstraintList l = `list;
+				AConstraintList result = `concAnd();
+				
+				while(!l.isEmptyconcAnd()){
+					result = `concAnd(ForAll(v,l.getHeadconcAnd()),result*);
+					l = l.getTailconcAnd();
+				}
+				
+				return `And(result);
+			}			
+
+			f@ForAll(v@Variable(_),Or(list)) ->{
+			
+				OConstraintList l = `list;
+				OConstraintList result = `concOr();
+				OConstraintList result1 = `concOr();
+				
+				while(!l.isEmptyconcOr()){
+					
+					Constraint c = l.getHeadconcOr();
+					
+					// if the c doesn't contain the variable, we 
+					// can put it outside the expresion that is quantified					
+					if ( !tools.containsVariable(`c,`v) ) {					
+						result = `concOr(ForAll(v,c),result*);
+					}else{
+						result1 = `concOr(c,result1*);
+					}			
+					
+					l = l.getTailconcOr();
+				}
+				
+				// if couldn't do anything, return the same thing
+				if (result.isEmptyconcOr()){
+					return `f;
+				}
+				
+				// if not all were separated
+				if (!result1.isEmptyconcOr()){
+					result = `concOr(ForAll(v,Or(result1)),result*);
+				}
+				
+				return `Or(result);
+			}			
+			
+			// ///////////////////////////////////////////////////////////////////
+			
+			// Delete
+			And(concAnd(_*,Equal(a,b),_*,NEqual(a,b),_*)) ->{				
+				return `False();
+			}			
+			And(concAnd(_*,NEqual(a,b),_*,Equal(a,b),_*)) ->{				
+				return `False();
+			}			
+			
+			// PropagateClash
+			And(concAnd(_*,False(),_*)) -> {
+				return `False();
+			}
+			
+			Or(concOr(X*,False(),Y*)) -> {
+				return `Or(concOr(X*,Y*));
+			}
+			
+			// PropagateSuccess
+			And(concAnd(X*,True(),Y*)) -> {
+				return `And(concAnd(X*,Y*));
+			}
+			
+			Or(concOr(_*,True(),_*)) -> {			
+				return `True();
+			}
+			
+			// cleaning the result
+			And(concAnd(And(concAnd(X*)),Y*)) ->{
+				return `And(concAnd(X*,Y*));
+			}
+			
+			And(concAnd(X*,a,Y*,a,Z*)) -> {				
+				return `And(concAnd(X*,a,Y*,Z*));
+			}
+			
+			Or(concOr(X*,a,Y*,a,Z*)) -> {				
+				return `Or(concOr(X*,a,Y*,Z*));
+			}
+			
+			And(concAnd()) -> {
+				return `True();
+			}
+			
+			Or(concOr()) -> {
+				return `False();
+			}
+			
+			And(concAnd(x)) -> {
+				return `x;
+			}
+			
+			Or(concOr(x)) -> {
+				return `x;
+			}
+			
+			// ////////////////////////////////////////////////////
+			
+			// SymbolClash
+			Equal(Appl(name1,_),Appl(name2,_)) -> {
+				if(`name1 != `name2) {
+					return `False();
+				}
+			}
+			
+			NEqual(Appl(name1,_),Appl(name2,_)) -> {
+				if(`name1 != `name2) {
+					return `True();
+				}
+			}
+						
+			//Decompose
+			Equal(Appl(name,a1),Appl(name,a2)) -> {
+				
+				AConstraintList l = `concAnd();
+				TermList args1 = `a1;
+				TermList args2 = `a2;
+				while(!args1.isEmptyconcTerm()) {
+					l = `concAnd(Equal(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+					args1 = args1.getTailconcTerm();
+					args2 = args2.getTailconcTerm();					
+				}
+				return `And(l/*.reverseConstraintList()*/);
+			}
+			
+			NEqual(Appl(name,a1),Appl(name,a2)) -> {
+				
+				OConstraintList l = `concOr();
+				TermList args1 = `a1;
+				TermList args2 = `a2;
+				while(!args1.isEmptyconcTerm()) {
+					l = `concOr(NEqual(args1.getHeadconcTerm(),args2.getHeadconcTerm()),l*);
+					args1 = args1.getTailconcTerm();
+					args2 = args2.getTailconcTerm();					
+				}
+				return `Or(l/*.reverseConstraintList()*/);
+			}			
+			
+			////////////////////////
+			
+			// merging rules - Comon and Lescanne
+			
+			// m1
+			And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(Variable(z),u),Z*)) ->{
+				return `And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(t,u),Z*));
+			}			
+			// m2
+			Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				return `Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(t,u),Z*));
+			}
+			// m3
+			And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
+			}
+			And(concAnd(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
+				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
+			}
+			// m4
+			Or(concOr(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
+			}
+			Or(concOr(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
+				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
+			}
+			
+		} // end visit
+	} // end strategy
+
 		
 } // end class
