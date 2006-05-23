@@ -836,6 +836,22 @@
       <fileset dir="." includes="*/build.xml"/>
     </subant>
   </target>
+  <target name="dist.all">
+    <fail unless="version">
+      ****************************************************
+      ****************************************************
+      You have to define the "version" property in order 
+			to build the examples distribution
+			> ./build.sh -Dversion="xxx"
+      ****************************************************
+      ****************************************************
+    </fail>
+    <subant target="dist">
+      <fileset dir="." includes="*/build.xml"/>
+      <property name="distrib.zip"
+        value="${examples.dist}/tom-examples-${version}.zip"/>
+    </subant>
+  </target>
 	<!-- 
   <target name="examples" 
 		description="Builds the examples (at least some)">

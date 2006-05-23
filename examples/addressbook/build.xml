@@ -11,4 +11,14 @@
     <tomcompile example="${addressbook}"/>
     <javacompile example="${addressbook}"/>
   </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${addressbook}/*.t"/>
+        <include name="${addressbook}/*.gom"/>
+      </zipfileset>
+    </zip>
+  </target>
+
 </project>
