@@ -6,10 +6,17 @@ import java.io.*;
 
 /**
   * This example show how to call Tom from a class, and compile many files
+  * to use it, populate a directory "bench/src" with tom files, and run
+  * java -Dtom.home=${TOM_HOME} gom.TomRunner
+  * It will compile all tom files in that directory, and loop
   */
 class TomRunner {
 
   public static void main(String[] args) {
+    int maxiter = 1000;
+    if (args.length >= 1) {
+      maxiter = Integer.parseInt(args[0]);
+    }
     int offset = 4;
     File path = new File("bench/src");
     File[] files = path.listFiles();
@@ -27,10 +34,10 @@ class TomRunner {
     }
     
     int cnt = 0;
-    while(cnt++ < 1000) {
+    while(cnt++ < maxiter) {
       int res = Tom.exec(params);    
       System.out.println("Generation: " + res);
+      System.out.println("Iteration: "+cnt);
     }
-    System.out.println("Iterations "+cnt);
   }
 }
