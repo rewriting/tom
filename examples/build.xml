@@ -25,7 +25,6 @@
   <!-- Examples to build and distribute -->
   <property name="cril"           value="cril"/>
 
-  <property name="ferus"          value="ferus"/>
   <property name="gasel"          value="gasel"/>
   <property name="gterm"          value="gterm"/>
   <property name="integerc"       value="integerc"/>
@@ -174,39 +173,6 @@
         <include name="*.xml"/>
       </fileset>
     </copy>
-  </target>
-
-  <target name="ferus" depends="init">
-    <mkdir dir="${examples.gen}/${ferus}"/>
-    <adt srcdir="${examples.dir}"
-      name="apisig" 
-      cCode="yes" 
-      destdir="${examples.gen}/${ferus}">
-      <include name="${ferus}/**/*.adt"/>
-    </adt>
-    <tom.preset destdir="${examples.gen}/${ferus}"         
-	        srcdir="${examples.dir}"
-                stamp="off"
-                options="--cCode -I ${tom.home}/share/jtom">
-      <include name="${ferus}/**/*.t"/>
-    </tom.preset>
-    <copy todir="${examples.gen}/${ferus}">
-      <fileset dir="${examples.dir}/${ferus}">
-        <include name="Makefile"/>
-      </fileset>
-    </copy>
-    <antcall target="ferus.make"/>
-  </target>
-
-  <target name="ferus.make" if="aterm.home">
-    <exec dir="${examples.gen}/${ferus}" 
-          failonerror="yes"
-          executable="make">
-      <arg line="ferus atermfib"/>
-      <env key="ATERM_HOME" value="${aterm.home}"/>
-      <env key="LDFLAGS" value="-L${aterm.home}/lib -lATerm"/>
-      <env key="CFLAGS"  value="-I${aterm.home}/include -I."/>
-    </exec>
   </target>
 
   <target name="gasel" depends="init">
@@ -556,7 +522,7 @@
   </target>
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="ferus, gterm, integerc, list, master, matching, meta, mgs,
+          depends="gterm, integerc, list, master, matching, meta, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
           strategy, strings, structure, ted, tutorial, vas, xml, zenon">
   </target>
@@ -582,51 +548,6 @@
         value="${examples.dist}/tom-examples-${version}.zip"/>
     </subant>
   </target>
-	<!-- 
-  <target name="examples" 
-		description="Builds the examples (at least some)">
-		<sequential>
-			<antcall target="addressbook"/>
-			<antcall target="analysis"/>
-			<antcall target="antipattern"/>
-			<antcall target="apireach"/>
-			<antcall target="appletxml"/>
-			<antcall target="boulderdash"/>
-			<antcall target="builtin"/>
-			<antcall target="caml"/>
-			<antcall target="cell"/>
-			<antcall target="dom"/>
-			<antcall target="expression"/>
-			<antcall target="ferus"/>
-			<antcall target="gom"/>
-			<antcall target="gomoku"/>
-			<antcall target="gterm"/>
-			<antcall target="integerc"/>
-			<antcall target="list"/>
-			<antcall target="master"/>
-			<antcall target="matching"/>
-			<antcall target="meta"/>
-			<antcall target="mgs"/>
-			<antcall target="nspk"/>
-			<antcall target="p3p"/>
-			<antcall target="peano"/>
-			<antcall target="pnspk"/>
-			<antcall target="poly"/>
-			<antcall target="pqueens"/>
-			<antcall target="prodrule"/>
-			<antcall target="propp"/>
-			<antcall target="rbtree"/>
-			<antcall target="strategy"/>
-			<antcall target="strings"/>
-			<antcall target="structure"/>
-			<antcall target="ted"/>
-			<antcall target="tutorial"/>
-			<antcall target="vas"/>
-			<antcall target="xml"/>
-			<antcall target="zenon"/>
-	</sequential>
-	</target>
-				-->
 
   <target name="dist.examples" 
           description="Prepare a distribution of examples" 
@@ -651,11 +572,6 @@
         <include name="build.xml"/>
         <include name="${examples.lib}/*.jar"/>
         
-        <include name="${ferus}/*.t"/>
-        <include name="${ferus}/Makefile"/>
-        <include name="${ferus}/*.adt"/>
-        <include name="${ferus}/*.vas"/>
-
         <include name="${gterm}/*.t"/>
         <include name="${gterm}/*.java"/>
 
