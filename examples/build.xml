@@ -1111,5 +1111,18 @@
       ****************************************************
     </fail>
   </target>
+
+  <target name="memorytest">
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+    <antcall target="clean"/>
+    <antcall target="junit"/>
+  </target>
   
 </project>
