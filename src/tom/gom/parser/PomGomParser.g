@@ -57,7 +57,7 @@ type: i:ID ;
 
 syntax: ABSTRACT! SYNTAX^ (production | hook | typedecl)* ;
 
-production: id:ID fieldlist ARROW type ;
+production: id:ID fieldlist ARROW^ type ;
 
 typedecl : id:ID EQUALS^ alternatives ;
 
@@ -69,7 +69,7 @@ hook: id:ID COLON hooktype LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRAC
 
 hooktype: tp:ID ;
 
-field: type STAR | id:ID COLON type ;
+field: type STAR | id:ID COLON^ type ;
 
 class PomGomLexer extends Lexer;
 options {

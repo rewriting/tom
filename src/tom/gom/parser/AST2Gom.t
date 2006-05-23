@@ -18,7 +18,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
+ * Yoann Toussaint    e-mail: Yoann.Toussaint@loria.fr
  * 
  **/
 
@@ -40,7 +40,7 @@ public class AST2Gom{
     return getGomModule(t.genATermFromAST(TokenTable.getTokenMap()));
   }
 
-  public static GomModule getGomModule(ATerm t) {
+  private static GomModule getGomModule(ATerm t) {
     %match(ATerm t){
       MODULE(_,(name,imports,section*)) ->{
         return `GomModule(getGomModuleName(name),concSection(getImports(imports),getSection(section*)));
@@ -52,7 +52,7 @@ public class AST2Gom{
     throw new RuntimeException("Unable to translate: " + t);
   }
 
-  public static GomModuleName getGomModuleName(ATerm t) {
+  private static GomModuleName getGomModuleName(ATerm t) {
     %match(ATerm t){
       ID(NodeInfo[text=text],_) ->{
         return `GomModuleName(text);
@@ -61,7 +61,7 @@ public class AST2Gom{
     throw new RuntimeException("Unable to translate: " + t);
   }
 
-  public static Section getImports(ATerm t) {
+  private static Section getImports(ATerm t) {
     %match(ATerm t){
       IMPORTS(_,importList) -> {
         return `Imports(getImportList(importList));
@@ -70,7 +70,7 @@ public class AST2Gom{
     throw new RuntimeException("Unable to translate: " + t);
   }
 
-  public static ImportList getImportList(ATermList l) {
+  private static ImportList getImportList(ATermList l) {
     %match(ATermList l){
       (importM,tail*) -> {
         ImportList tmpL = getImportList(`tail);
@@ -83,7 +83,7 @@ public class AST2Gom{
     throw new RuntimeException("Unable to translate: " + l);
   }
 
-  public static ImportedModule getImportedModule(ATerm t) {
+  private static ImportedModule getImportedModule(ATerm t) {
     %match(ATerm t){
       module -> {
         return `Import(getGomModuleName(module));
@@ -91,7 +91,7 @@ public class AST2Gom{
     }
     throw new RuntimeException("Unable to translate: " + t);
   }
-  public static Section getSection(ATermList l) {
+  private static Section getSection(ATermList l) {
     %match(ATermList l){
       (PUBLIC(_,_),grammar*) -> {
         return `Public(getGrammarList(grammar*));
@@ -102,7 +102,7 @@ public class AST2Gom{
     }
     throw new RuntimeException("Unable to translate: " + l);
   }
-  public static GrammarList getGrammarList(ATermList l) {
+  private static GrammarList getGrammarList(ATermList l) {
     %match(ATermList l){
       (g,tail*) -> {
         GrammarList tmpL = getGrammarList(`tail);
@@ -114,10 +114,10 @@ public class AST2Gom{
     }
     throw new RuntimeException("Unable to translate: " + l);
   }
-  public static Grammar getGrammar(ATerm t) {
+  private static Grammar getGrammar(ATerm t) {
     %match(ATerm t){
       SORTS(_,types) -> {
-        return `Sorts(getTypeList(types));
+        return `Sorts(getGomTypeList(types));
       }
       SYNTAX(_,productions) -> {
         return `Grammar(getProductionList(productions));
@@ -125,15 +125,16 @@ public class AST2Gom{
     }
     throw new RuntimeException("Unable to translate: " + t);
   }
-  public static Production getProduction(ATerm t) {
+  private static Production getProduction(ATerm t) {
     %match(ATerm t){
-      EQUALS(_,_) -> {
-        //return `Production(getTypeList(types));
+      ARROW(_,(name,fieldlist*, type)) -> {
+        return `Production(getId(name),getFieldList(fieldlist*),getGomType(type));
       }
     }
     throw new RuntimeException("Unable to translate: " + t);
   }
-  public static ProductionList getProductionList(ATermList l) {
+
+  private static ProductionList getProductionList(ATermList l) {
     %match(ATermList l){
       (g,tail*) -> {
         ProductionList tmpL = getProductionList(`tail);
@@ -145,11 +146,11 @@ public class AST2Gom{
     }
     throw new RuntimeException("Unable to translate: " + l);
   }
-  public static GomTypeList getTypeList(ATermList l) {
+  private static GomTypeList getGomTypeList(ATermList l) {
     %match(ATermList l){
       (g,tail*) -> {
-        GomTypeList tmpL = getTypeList(`tail);
-        return `concGomType(getType(g),tmpL*);
+        GomTypeList tmpL = getGomTypeList(`tail);
+        return `concGomType(getGomType(g),tmpL*);
       }
       _ -> {
         return `concGomType();
@@ -157,7 +158,7 @@ public class AST2Gom{
     }
     throw new RuntimeException("Unable to translate: " + l);
   }
-  public static GomType getType(ATerm t) {
+  private static GomType getGomType(ATerm t) {
     %match(ATerm t){
       ID(NodeInfo[text=text],_) ->{
         return `GomType(text);
@@ -165,56 +166,34 @@ public class AST2Gom{
     }
     throw new RuntimeException("Unable to translate: " + t);
   }
-  /*public static GomModule getGomModule(ATerm t) {
-    %match(ATerm t){
-    MODULE(_,(name,imports,section)) ->{
-    return `GomModule(getGomModuleName(name),getgetSectionList(bodyList*));
-    }
-    }
-    throw new RuntimeException("Unable to translate: " + t);
-    }
-    public static SectionList getSectionList(ATermList l) {
-    %match(ATermList l){
-    (section,tail*) -> {
-    SectionList tmpL = getSectionList(`tail);
-    return `concSection(getSection(section),tmpL*);
-    }
-    _ ->{
-    return `concSection();
-    }
-    }
-    throw new RuntimeException("Unable to translate: " + l);
-    }
-    public static GomModuleName getGomModuleName(ATerm t) {
-    %match(ATerm t){
-    ID(NodeInfo[text=text],_) ->{
-    return `GomModuleName(text);
-    }
-    }
-    throw new RuntimeException("Unable to translate: " + t);
-    }
 
-    public static Grammar getGrammar(ATerm t) {
+  private static String getId(ATerm t) {
     %match(ATerm t){
-    SORTS(_,types) -> {
-    return `Sorts(getTypeList(types));
-    }
-    SYNTAX(_,productions) -> {
-    return `Grammar(getProductionList(productions));
-    }
+      ID(NodeInfo[text=text],_) ->{
+        return `text;
+      }
     }
     throw new RuntimeException("Unable to translate: " + t);
-    }
-    public static GrammarList getGrammarList(ATermList l) {
+  }
+
+  private static FieldList getFieldList(ATermList l){
     %match(ATermList l){
-    (g,tail*) -> {
-    GrammarList tmpL = getGrammarList(`tail);
-    return `concGrammar(getGrammar(g),tmpL*);
-    }
-    _ -> {
-    return `concGrammar();
-    }
+      (f,tail*) -> {
+        FieldList tmpL = getFieldList(`tail);
+        return `concField(getField(f),tmpL*);
+      }
+      _ -> {
+        return `concField();
+      }
     }
     throw new RuntimeException("Unable to translate: " + l);
-    }*/
+  }
+  private static Field getField(ATerm t) {
+    %match(ATerm t){
+      COLON(_,(id, type)) -> {
+        return `NamedField(getId(id),getGomType(type));
+      }
+    }
+    throw new RuntimeException("Unable to translate: " + t);
+  }
 }
