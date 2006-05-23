@@ -138,7 +138,15 @@ public class AST2Gom{
     %match(ATermList l){
       (g,tail*) -> {
         ProductionList tmpL = getProductionList(`tail);
-        return `concProduction(getProduction(g),tmpL*);
+        %match(ATerm g){
+          ARROW(_,_) -> {
+            return `concProduction(getProduction(g),tmpL*);
+          }
+          EQUALS(_,_) -> {
+            ProductionList alter = getAlternatives(`g);
+            return `concProduction(alter*,tmpL*);
+          }
+        }
       }
       _ -> {
         return `concProduction();
@@ -146,6 +154,33 @@ public class AST2Gom{
     }
     throw new RuntimeException("Unable to translate: " + l);
   }
+
+  private static ProductionList getAlternatives(ATerm type, ATermList altL) {
+    %match(ATermList altL){
+      (ALT(_,_),id,fieldlist*, ALT(_,_), tail*) -> {
+        ProductionList tmpL = getAlternatives(type,`tail);
+        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type)),tmpL*);
+      }
+      (id,fieldlist*, ALT(_,_), tail*) -> {
+        ProductionList tmpL = getAlternatives(type,`tail);
+        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type)),tmpL*);
+      }
+      _ -> {
+        return `concProduction();
+      }
+    }
+    throw new RuntimeException("Unable to translate: " + altL);
+  }
+
+  private static ProductionList getAlternatives(ATerm t) {
+    %match(ATerm t){
+          EQUALS(_,(type,alternatives*)) -> {
+            return getAlternatives(`type,`alternatives);
+          }
+        }
+    throw new RuntimeException("Unable to translate: " + t);
+  }
+
   private static GomTypeList getGomTypeList(ATermList l) {
     %match(ATermList l){
       (g,tail*) -> {
@@ -178,9 +213,12 @@ public class AST2Gom{
 
   private static FieldList getFieldList(ATermList l){
     %match(ATermList l){
-      (f,tail*) -> {
+      (f,COMMA(_,_),tail*) -> {
         FieldList tmpL = getFieldList(`tail);
         return `concField(getField(f),tmpL*);
+      }
+      (f) -> {
+        return `concField(getField(f));
       }
       _ -> {
         return `concField();
@@ -192,6 +230,9 @@ public class AST2Gom{
     %match(ATerm t){
       COLON(_,(id, type)) -> {
         return `NamedField(getId(id),getGomType(type));
+      }
+      STAR(_,(type)) -> {
+        return `StarredField(getGomType(type));
       }
     }
     throw new RuntimeException("Unable to translate: " + t);

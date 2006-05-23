@@ -69,7 +69,7 @@ hook: id:ID COLON hooktype LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRAC
 
 hooktype: tp:ID ;
 
-field: type STAR | id:ID COLON^ type ;
+field: type STAR^ | id:ID COLON^ type ;
 
 class PomGomLexer extends Lexer;
 options {
