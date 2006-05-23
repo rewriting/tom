@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the builtin example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="builtin" value="builtin"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${builtin}"/>
+    <delete dir="${examples.build}/${builtin}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${builtin}"/>
+    <tomcompile example="${builtin}"/>
+    <javacompile example="${builtin}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${builtin}/*.t"/>
+        <include name="${builtin}/*.gom"/>
+        <include name="${builtin}/*.java"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

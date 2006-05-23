@@ -156,6 +156,17 @@
     <delete dir="${examples.build}"/>
   </target>
 
+  <target name="build" depends="init">
+    <fail unless="example">
+      Please define the "example" to build
+    </fail>
+    <subant target="build">
+      <filelist dir=".">
+        <file name="${example}/build.xml"/>
+      </filelist>
+    </subant>
+  </target>
+
   <target name="addressbook" depends="init">
     <subant target="build">
       <filelist dir=".">

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the appletxml example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="appletxml" value="appletxml"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${appletxml}"/>
+    <delete dir="${examples.build}/${appletxml}"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="${appletxml}"/>
+    <javacompile example="${appletxml}"/>
+    <!-- Create a jar for the applet -->
+    <!-- ugly hacks to find the TNode and tom-library jars -->
+    <path id="tnode.path">
+      <fileset dir="${tom.home}/lib">
+        <include name="TNode*.jar"/>
+      </fileset>
+    </path>
+    <property name="tnode.jar" refid="tnode.path"/>
+    <path id="tom-library.path">
+      <fileset dir="${tom.home}/lib">
+        <include name="tom-library*.jar"/>
+      </fileset>
+    </path>
+    <property name="tom-library.jar" refid="tom-library.path"/>
+    <jar jarfile="${examples.build}/${appletxml}/xmlconverter.jar">
+      <fileset dir="${examples.build}">
+        <include name="${appletxml}/**/*.class"/>
+      </fileset>
+      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
+      <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/Visit*"/>
+      <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
+      <zipfileset src="${tnode.jar}"/>
+    </jar>
+    <copy todir="${examples.build}/${appletxml}">
+      <fileset dir="${examples.dir}/${appletxml}">
+        <include name="*.html"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${appletxml}/*.t"/>
+        <include name="${appletxml}/*.java"/>
+        <include name="${appletxml}/*.html"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

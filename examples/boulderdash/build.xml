@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the boulderdash example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="boulderdash" value="boulderdash"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${boulderdash}"/>
+    <delete dir="${examples.build}/${boulderdash}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${boulderdash}"/>
+    <!--
+    <tomcompile example="${boulderdash}"/>
+    -->
+    <tom.preset srcdir="${examples.dir}"
+	        options="--noStatic"
+                destdir="${examples.gen}">          
+       <include name="${boulderdash}/**/*.t"/>
+    </tom.preset>
+    <javacompile example="${boulderdash}"/>
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${boulderdash}">
+      <fileset dir="${examples.dir}/${boulderdash}">
+        <include name="*.gif"/>
+        <include name="*.html"/>
+      </fileset>
+    </copy>
+    <!-- Create a jar for the applet -->
+    <path id="mutraveler.path"> <!-- ugly hack to find the jar -->
+      <fileset dir="${tom.home}/lib">
+        <include name="mutraveler*.jar"/>
+      </fileset>
+    </path>
+    <property name="mutraveler.jar" refid="mutraveler.path"/>
+    <jar jarfile="${examples.build}/${boulderdash}/boulder.jar">
+      <fileset dir="${examples.build}">
+        <include name="${boulderdash}/**/*.class"/>
+        <include name="${boulderdash}/**/*.gif"/>
+      </fileset>
+      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
+      <zipfileset src="${tom.home}/lib/jjtraveler.jar"/>
+      <zipfileset src="${mutraveler.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
+      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/*"/>
+    </jar>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${boulderdash}/*.t"/>
+        <include name="${boulderdash}/*.gom"/>
+        <include name="${boulderdash}/*.gif"/>
+        <include name="${boulderdash}/*.html"/>
+        <include name="${boulderdash}/*.java"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
