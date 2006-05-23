@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the addressbook example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="addressbook" value="addressbook"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${addressbook}"/>
+    <delete dir="${examples.build}/${addressbook}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${addressbook}"/>
+    <tomcompile example="${addressbook}"/>
+    <javacompile example="${addressbook}"/>
+  </target>
+</project>

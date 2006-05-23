@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <property environment="env"/>
+  <property name="tom.home"        value="${env.TOM_HOME}"/>
+  <property name="tom.common.path" value="${tom.home}/lib"/>
+  <import file="${tom.common.path}/tom-common.xml"/>
+
+  <!-- some used directory location -->
+  <property name="examples.dir"   location="."/>
+  <property name="examples.dist"  location="dist"/>
+
+  <property name="examples.lib"   value="lib"/>
+
+  <!-- where the examples a build: javac destDir -->
+  <property name="examples.gen"   location="gen"/>
+  <property name="examples.build" location="build"/>
+
+  <target name="init" depends="tom.init">
+    <!-- to have something correct, check tom.home is defined to something meaningful
+    <fail unless="TOM_HOME"
+          message="TOM_HOME has to be defined in your environment, 
+          to find the Tom classes"/>-->
+    <mkdir dir="${examples.build}"/>
+    <mkdir dir="${examples.gen}"/>
+    <path id="tom.examples.classpath">
+      <fileset dir="${examples.dir}/${examples.lib}">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement path="${tom.classpath}"/>
+    </path>
+
+    <macrodef name="tomcompile">
+      <attribute name="example"/>
+      <sequential>
+        <tom.preset srcdir="${examples.dir}"
+                    destdir="${examples.gen}">          
+          <include name="@{example}/**/*.t"/>
+          <exclude name="@{example}/**/*.g.t"/>
+        </tom.preset>
+      </sequential>
+    </macrodef>
+    <macrodef name="adtcompile">
+      <attribute name="example"/>
+      <attribute name="factory"/>
+      <sequential>
+        <adt srcdir="${examples.dir}"
+             name="@{factory}" 
+             package="@{example}" 
+             visitable="${visitable}"
+             destdir="${examples.gen}">
+          <include name="@{example}/**/*.adt"/>
+        </adt>
+      </sequential>
+    </macrodef>
+    <macrodef name="vascompile">
+      <attribute name="example"/>
+      <sequential>
+        <vas config="${vasconfigfile}"
+             srcdir="${examples.dir}"
+             package="@{example}" 
+             destdir="${examples.gen}">
+          <include name="@{example}/**/*.vas"/>
+        </vas>
+      </sequential>
+    </macrodef>
+    <macrodef name="gomcompile">
+      <attribute name="example"/>
+      <sequential>
+        <gom config="${gomconfigfile}"
+             srcdir="${examples.dir}"
+             package="@{example}" 
+             destdir="${examples.gen}">
+          <include name="@{example}/**/*.gom"/>
+        </gom>
+      </sequential>
+    </macrodef>
+    <macrodef name="javacompile">
+      <attribute name="example"/>
+      <sequential>
+        <javac.preset destdir="${examples.build}">
+          <src path="${examples.dir}"/>
+          <src path="${examples.gen}"/>
+          <classpath refid="tom.examples.classpath"/>
+          <include name="@{example}/**/*.java"/>
+        </javac.preset>
+      </sequential>
+    </macrodef>
+  </target>
+
+  <target name="prepare.examples">
+    <mkdir dir="${examples.dist}"/>
+  </target>
+  
+  <!-- target debug to help finding properties problems -->
+  <target name="debug"> 
+    <echoproperties/>
+  </target>
+  
+  <target name="clean.examples" description="Cleans examples directory">
+    <delete dir="${examples.gen}"/>
+    <delete dir="${examples.build}"/>
+  </target>
+
+  <target name="clean.dist" description="Mr proper" depends="clean">
+    <delete dir="${examples.dist}"/>
+  </target>
+
+  <target name="initjunit">
+    <taskdef name="tomjunit"
+             classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+  </target>
+</project>

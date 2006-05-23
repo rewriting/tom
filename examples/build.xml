@@ -157,9 +157,11 @@
   </target>
 
   <target name="addressbook" depends="init">
-    <gomcompile example="${addressbook}"/>
-    <tomcompile example="${addressbook}"/>
-    <javacompile example="${addressbook}"/>
+    <subant target="build">
+      <filelist dir=".">
+        <file name="addressbook/build.xml"/>
+      </filelist>
+    </subant>
   </target>
 
   <target name="analysis" depends="init">
