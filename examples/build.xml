@@ -27,7 +27,6 @@
   <property name="gasel"          value="gasel"/>
 
   <property name="lsystems"        value="lsystems"/>
-  <property name="master"         value="master"/>
   <property name="matching"       value="matching"/>
   <property name="meta"           value="meta"/>
   <property name="mgs"            value="mgs"/>
@@ -183,11 +182,6 @@
     <javacompile example="${lsystems}"/>
   </target>
   
-  <target name="master" depends="init"> 
-    <tomcompile example="${master}"/>
-    <javacompile example="${master}"/>
-  </target>
-
   <target name="matching" depends="init"> 
     <tomcompile example="${matching}"/>
     <javacompile example="${matching}"/>
@@ -464,7 +458,7 @@
   </target>
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="master, matching, meta, mgs,
+          depends="matching, meta, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
           strategy, strings, structure, ted, tutorial, vas, xml, zenon">
   </target>
@@ -514,9 +508,6 @@
         <include name="build.xml"/>
         <include name="${examples.lib}/*.jar"/>
         
-        <include name="${master}/README"/>
-        <include name="${master}/*.t"/>
-
         <include name="${matching}/*.t"/>
         
         <include name="${meta}/*.t"/>
