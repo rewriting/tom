@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the csmaca example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="csmaca" value="csmaca"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${csmaca}"/>
+    <delete dir="${examples.build}/${csmaca}"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="${csmaca}"/>
+    <javacompile example="${csmaca}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="not distributed"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

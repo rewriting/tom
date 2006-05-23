@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the expression example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="expression" value="expression"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${expression}"/>
+    <delete dir="${examples.build}/${expression}"/>
+  </target>
+  <target name="build" depends="init">
+    <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}"
+	        options="-I ${tom.home}/share/jtom --lazyType">
+      <include name="${expression}/**/Record.t"/>
+    </tom.preset>
+    <tom.preset srcdir="${examples.dir}"
+                destdir="${examples.gen}">
+      <include name="${expression}/**/RecordStrict.t"/>
+    </tom.preset>
+    <javacompile example="${expression}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${expression}/*.t"/>
+        <include name="${expression}/*.java"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

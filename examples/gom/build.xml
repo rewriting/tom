@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the gom example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="gom" value="gom"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${gom}"/>
+    <delete dir="${examples.build}/${gom}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${gom}"/>
+    <tomcompile example="${gom}"/>
+    <javacompile example="${gom}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${gom}/*.t"/>
+        <include name="${gom}/*.java"/>
+        <include name="${gom}/*.gom"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

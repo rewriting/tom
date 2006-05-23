@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the caml example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="caml" value="caml"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${caml}"/>
+    <delete dir="${examples.build}/${caml}"/>
+  </target>
+  <target name="build" depends="init">
+    <mkdir dir="${examples.gen}/${caml}"/>
+    <!-- build tom -->
+    <tom destdir="${examples.gen}/${caml}"
+	        srcdir="${examples.dir}"
+                options="--camlCode -I ${tom.home}/share/jtom">
+      <include name="${caml}/**/*.t"/>
+    </tom>
+    <copy todir="${examples.build}/${caml}">
+      <fileset dir="${examples.gen}/${caml}">
+        <include name="*.ml"/>
+      </fileset>
+    </copy>
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${caml}">
+      <fileset dir="${examples.dir}/${caml}">
+        <include name="*.ml"/>
+        <include name="Makefile"/>
+        <include name="README"/>
+      </fileset>
+    </copy>
+    <antcall target="caml.make"/>
+  </target>
+  <target name="caml.make" if="camlc.bin">
+    <exec dir="${examples.build}/${caml}" 
+          failonerror="yes"
+          executable="make">
+      <arg line=""/>
+      <env key="CAMLC" value="${camlc.bin}"/>
+    </exec>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${caml}/Makefile"/>
+        <include name="${caml}/*.t"/>
+        <include name="${caml}/mapping.tom"/>
+        <include name="${caml}/peanotype.ml"/>
+        <include name="${caml}/tomExtension.ml"/>
+        <include name="${caml}/tomList.ml"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

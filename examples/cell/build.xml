@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the cell example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="cell" value="cell"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${cell}"/>
+    <delete dir="${examples.build}/${cell}"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="${cell}"/>
+    <javacompile example="${cell}"/>
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${cell}">
+      <fileset dir="${examples.dir}/${cell}">
+        <include name="*.gif"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}"
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${cell}/*.t"/>
+        <include name="${cell}/*.java"/>
+        <include name="${cell}/*.gif"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
