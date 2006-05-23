@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the analysis example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="analysis" value="analysis"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${analysis}"/>
+    <delete dir="${examples.build}/${analysis}"/>
+  </target>
+  <target name="build" depends="init">
+  <!-- copy resources in build -->
+    <copy todir="${examples.build}/${analysis}">
+      <fileset dir="${examples.dir}/${analysis}">
+      </fileset>
+    </copy>
+    <gomcompile example="${analysis}"/>
+    <tomcompile example="${analysis}"/>
+    <javacompile example="${analysis}"/>
+  </target>
+</project>

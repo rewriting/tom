@@ -165,16 +165,12 @@
   </target>
 
   <target name="analysis" depends="init">
-  <!-- copy resources in build -->
-    <copy todir="${examples.build}/${analysis}">
-      <fileset dir="${examples.dir}/${analysis}">
-      </fileset>
-    </copy>
-    <gomcompile example="${analysis}"/>
-    <tomcompile example="${analysis}"/>
-    <javacompile example="${analysis}"/>
+    <subant target="build">
+      <filelist dir=".">
+        <file name="analysis/build.xml"/>
+      </filelist>
+    </subant>
   </target>
-
 
   <target name="antipattern" depends="init"> 
     <gomcompile example="${antipattern}"/>
@@ -833,7 +829,13 @@
           gomoku, gterm, integerc, list, master, matching, meta, mgs, nspk,
           p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
           strategy, strings, structure, ted, tutorial, vas, xml, zenon">
-				</target>
+  </target>
+
+  <target name="build.all">
+    <subant target="build">
+      <fileset dir="." includes="*/build.xml"/>
+    </subant>
+  </target>
 	<!-- 
   <target name="examples" 
 		description="Builds the examples (at least some)">
