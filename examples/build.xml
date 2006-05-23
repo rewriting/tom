@@ -23,23 +23,10 @@
   <property name="examples.build" location="build"/>
 
   <!-- Examples to build and distribute -->
-  <property name="addressbook"    value="addressbook"/>
-  <property name="analysis"       value="analysis"/>
-  <property name="antipattern"    value="antipattern"/>
-  <property name="apireach"       value="apireach"/>
-  <property name="appletxml"      value="appletxml"/>
-  <property name="boulderdash"    value="boulderdash"/>
-  <property name="builtin"        value="builtin"/>
-  <property name="caml"           value="caml"/>
-  <property name="cell"           value="cell"/>
   <property name="cril"           value="cril"/>
-  <property name="csmaca"         value="csmaca"/>
-  <property name="dom"            value="dom"/>
-  <property name="expression"     value="expression"/>
+
   <property name="ferus"          value="ferus"/>
   <property name="gasel"          value="gasel"/>
-  <property name="gom"            value="gom"/>
-  <property name="gomoku"         value="gomoku"/>
   <property name="gterm"          value="gterm"/>
   <property name="integerc"       value="integerc"/>
   <property name="list"           value="list"/>
@@ -167,158 +154,6 @@
     </subant>
   </target>
 
-  <target name="addressbook" depends="init">
-    <subant target="build">
-      <filelist dir=".">
-        <file name="addressbook/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-
-  <target name="analysis" depends="init">
-    <subant target="build">
-      <filelist dir=".">
-        <file name="analysis/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-
-  <target name="antipattern" depends="init"> 
-    <subant target="build">
-      <filelist dir=".">
-        <file name="antipattern/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-
-  <target name="apireach" depends="init"> 
-    <adtcompile example="${apireach}" factory="reach"/>
-    <gomcompile example="${apireach}"/>
-    <tomcompile example="${apireach}"/>
-    <javacompile example="${apireach}"/>
-  </target>
-
-  <target name="appletxml" depends="init"> 
-    <tomcompile example="${appletxml}"/>
-    <javacompile example="${appletxml}"/>
-    <!-- Create a jar for the applet -->
-    <!-- ugly hacks to find the TNode and tom-library jars -->
-    <path id="tnode.path">
-      <fileset dir="${tom.home}/lib">
-        <include name="TNode*.jar"/>
-      </fileset>
-    </path>
-    <property name="tnode.jar" refid="tnode.path"/>
-    <path id="tom-library.path">
-      <fileset dir="${tom.home}/lib">
-        <include name="tom-library*.jar"/>
-      </fileset>
-    </path>
-    <property name="tom-library.jar" refid="tom-library.path"/>
-    <jar jarfile="${examples.build}/${appletxml}/xmlconverter.jar">
-      <fileset dir="${examples.build}">
-        <include name="${appletxml}/**/*.class"/>
-      </fileset>
-      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
-      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
-      <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/Visit*"/>
-      <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
-      <zipfileset src="${tnode.jar}"/>
-    </jar>
-    <copy todir="${examples.build}/${appletxml}">
-      <fileset dir="${examples.dir}/${appletxml}">
-        <include name="*.html"/>
-      </fileset>
-    </copy>
-  </target>
-
-  <target name="boulderdash" depends="init">
-    <gomcompile example="${boulderdash}"/>
-    <!--
-    <tomcompile example="${boulderdash}"/>
-    -->
-    <tom.preset srcdir="${examples.dir}"
-	        options="--noStatic"
-                destdir="${examples.gen}">          
-       <include name="${boulderdash}/**/*.t"/>
-    </tom.preset>
-    <javacompile example="${boulderdash}"/>
-    <!-- copy resources in build -->
-    <copy todir="${examples.build}/${boulderdash}">
-      <fileset dir="${examples.dir}/${boulderdash}">
-        <include name="*.gif"/>
-        <include name="*.html"/>
-      </fileset>
-    </copy>
-    <!-- Create a jar for the applet -->
-    <path id="mutraveler.path"> <!-- ugly hack to find the jar -->
-      <fileset dir="${tom.home}/lib">
-        <include name="mutraveler*.jar"/>
-      </fileset>
-    </path>
-    <property name="mutraveler.jar" refid="mutraveler.path"/>
-    <jar jarfile="${examples.build}/${boulderdash}/boulder.jar">
-      <fileset dir="${examples.build}">
-        <include name="${boulderdash}/**/*.class"/>
-        <include name="${boulderdash}/**/*.gif"/>
-      </fileset>
-      <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
-      <zipfileset src="${tom.home}/lib/jjtraveler.jar"/>
-      <zipfileset src="${mutraveler.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
-      <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/*"/>
-    </jar>
-  </target>
-
-  <target name="builtin" depends="init">
-    <gomcompile example="${builtin}"/>
-    <tomcompile example="${builtin}"/>
-    <javacompile example="${builtin}"/>
-  </target>
-
-  <target name="caml" depends="init">
-    <mkdir dir="${examples.gen}/${caml}"/>
-    <!-- build tom -->
-    <tom destdir="${examples.gen}/${caml}"
-	        srcdir="${examples.dir}"
-                options="--camlCode -I ${tom.home}/share/jtom">
-      <include name="${caml}/**/*.t"/>
-    </tom>
-    <copy todir="${examples.build}/${caml}">
-      <fileset dir="${examples.gen}/${caml}">
-        <include name="*.ml"/>
-      </fileset>
-    </copy>
-    <!-- copy resources in build -->
-    <copy todir="${examples.build}/${caml}">
-      <fileset dir="${examples.dir}/${caml}">
-        <include name="*.ml"/>
-        <include name="Makefile"/>
-        <include name="README"/>
-      </fileset>
-    </copy>
-    <antcall target="caml.make"/>
-  </target>
-
-  <target name="caml.make" if="camlc.bin">
-    <exec dir="${examples.build}/${caml}" 
-          failonerror="yes"
-          executable="make">
-      <arg line=""/>
-      <env key="CAMLC" value="${camlc.bin}"/>
-    </exec>
-  </target>
-
-  <target name="cell" depends="init">
-    <tomcompile example="${cell}"/>
-    <javacompile example="${cell}"/>
-    <!-- copy resources in build -->
-    <copy todir="${examples.build}/${cell}">
-      <fileset dir="${examples.dir}/${cell}">
-        <include name="*.gif"/>
-      </fileset>
-    </copy>
-  </target>
-
   <target name="cril" depends="init">
     <!-- build tom -->
     <tomcompile example="${cril}"/>
@@ -339,36 +174,6 @@
         <include name="*.xml"/>
       </fileset>
     </copy>
-  </target>
-
-  <target name="csmaca" depends="init">
-    <tomcompile example="${csmaca}"/>
-    <javacompile example="${csmaca}"/>
-  </target>
-
-  <target name="dom" depends="init">
-    <tomcompile example="${dom}"/>
-    <javacompile example="${dom}"/>
-    <!-- copy resources -->
-    <copy todir="${examples.build}/${dom}">
-      <fileset dir="${examples.dir}/${dom}">
-        <include name="*.xml"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="expression" depends="init">
-    <!-- build tom -->
-    <tom.preset srcdir="${examples.dir}"
-                destdir="${examples.gen}"
-	        options="-I ${tom.home}/share/jtom --lazyType">
-      <include name="${expression}/**/Record.t"/>
-    </tom.preset>
-    <tom.preset srcdir="${examples.dir}"
-                destdir="${examples.gen}">
-      <include name="${expression}/**/RecordStrict.t"/>
-    </tom.preset>
-    <javacompile example="${expression}"/>
   </target>
 
   <target name="ferus" depends="init">
@@ -408,19 +213,6 @@
     <gomcompile example="${gasel}"/>
     <tomcompile example="${gasel}"/>
     <javacompile example="${gasel}"/>
-  </target>
-
-
-  <target name="gom" depends="init">
-    <gomcompile example="${gom}"/>
-    <tomcompile example="${gom}"/>
-    <javacompile example="${gom}"/>
-  </target>
-
-  <target name="gomoku" depends="init">
-    <gomcompile example="${gomoku}"/>
-    <tomcompile example="${gomoku}"/>
-    <javacompile example="${gomoku}"/>
   </target>
 
   <target name="gterm" depends="init">
@@ -764,10 +556,8 @@
   </target>
   <target name="examples" 
           description="Builds the examples (at least some)"
-	  depends="addressbook, analysis, antipattern,  apireach, appletxml,
-          boulderdash, builtin, caml, cell, dom, expression, ferus, gom,
-          gomoku, gterm, integerc, list, master, matching, meta, mgs, nspk,
-          p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
+          depends="ferus, gterm, integerc, list, master, matching, meta, mgs,
+          nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
           strategy, strings, structure, ted, tutorial, vas, xml, zenon">
   </target>
 
@@ -861,66 +651,10 @@
         <include name="build.xml"/>
         <include name="${examples.lib}/*.jar"/>
         
-        <include name="${addressbook}/*.t"/>
-        <include name="${addressbook}/*.gom"/>
-
-        <include name="${analysis}/*.t"/>
-        <include name="${analysis}/*.tom"/>
-        <include name="${analysis}/*.java"/>
-        <include name="${analysis}/*.gom"/>
-        
-        <include name="${antipattern}/*.t"/>
-        <include name="${antipattern}/*.txt"/>
-        <include name="${antipattern}/Matching.java"/>
-        <include name="${antipattern}/*.gom"/>
-        <include name="${antipattern}/atermmapping.tom"/>
-
-        <include name="${apireach}/*.t"/>
-        <include name="${apireach}/*.adt"/>
-        <include name="${apireach}/*.gom"/>
-
-        <include name="${appletxml}/*.t"/>
-        <include name="${appletxml}/*.java"/>
-        <include name="${appletxml}/*.html"/>
-
-        <include name="${boulderdash}/*.t"/>
-        <include name="${boulderdash}/*.gom"/>
-        <include name="${boulderdash}/*.gif"/>
-        <include name="${boulderdash}/*.html"/>
-        <include name="${boulderdash}/*.java"/>
-
-        <include name="${builtin}/*.t"/>
-        <include name="${builtin}/*.gom"/>
-        <include name="${builtin}/*.java"/>
-
-        <include name="${caml}/Makefile"/>
-        <include name="${caml}/*.t"/>
-        <include name="${caml}/mapping.tom"/>
-        <include name="${caml}/peanotype.ml"/>
-        <include name="${caml}/tomExtension.ml"/>
-        <include name="${caml}/tomList.ml"/>
-
-        <include name="${cell}/*.t"/>
-        <include name="${cell}/*.java"/>
-        <include name="${cell}/*.gif"/>
-
-        <include name="${dom}/*.t"/>
-        <include name="${dom}/*.xml"/>
-
-        <include name="${expression}/*.t"/>
-        <include name="${expression}/*.java"/>
-
         <include name="${ferus}/*.t"/>
         <include name="${ferus}/Makefile"/>
         <include name="${ferus}/*.adt"/>
         <include name="${ferus}/*.vas"/>
-
-        <include name="${gom}/*.t"/>
-        <include name="${gom}/*.java"/>
-        <include name="${gom}/*.gom"/>
-
-        <include name="${gomoku}/*.t"/>
-        <include name="${gomoku}/*.gom"/>
 
         <include name="${gterm}/*.t"/>
         <include name="${gterm}/*.java"/>

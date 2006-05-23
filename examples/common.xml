@@ -5,6 +5,9 @@
   <property name="tom.common.path" value="${tom.home}/lib"/>
   <import file="${tom.common.path}/tom-common.xml"/>
 
+  <!-- set local properties for this build -->
+  <property file="../local.properties"/>
+
   <!-- some used directory location -->
   <property name="examples.dir"   location="."/>
   <property name="examples.dist"  location="dist"/>
