@@ -65,8 +65,8 @@ import org.apache.tools.ant.util.SourceFileScanner;
 
 public class TomTask extends MatchingTask {
 
-  private static final String FAIL_MSG
-    = "Compile failed; see the compiler error output for details.";
+  private static final String FAIL_MSG =
+    "Compile failed; see the compiler error output for details.";
 
   private String options = null;
   private Path src;
