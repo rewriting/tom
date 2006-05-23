@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the antipattern example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="antipattern" value="antipattern"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${antipattern}"/>
+    <delete dir="${examples.build}/${antipattern}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${antipattern}"/>
+    <!--
+    "Wait for the static %rule problem to be resolved"
+    <tomcompile example="${antipattern}"/>
+    -->
+    <tom.preset srcdir="${examples.dir}"
+	        options="--noStatic"
+                destdir="${examples.gen}">          
+       <include name="${antipattern}/**/*.t"/>
+       <exclude name="${antipattern}/**/*.g.t"/>
+    </tom.preset>
+    <javacompile example="${antipattern}"/>
+  	<copy todir="${examples.build}/${antipattern}">
+      <fileset dir="${antipattern}">
+        <include name="*.txt"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${antipattern}/*.t"/>
+        <include name="${antipattern}/*.txt"/>
+        <include name="${antipattern}/Matching.java"/>
+        <include name="${antipattern}/*.gom"/>
+        <include name="${antipattern}/atermmapping.tom"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
