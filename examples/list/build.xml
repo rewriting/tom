@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the list example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="list" value="list"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${list}"/>
+    <delete dir="${examples.build}/${list}"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="${list}"/>
+    <javacompile example="${list}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${list}/*.t"/>
+        <include name="${list}/*.java"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

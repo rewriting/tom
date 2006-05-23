@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the integerc example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="integerc" value="integerc"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${integerc}"/>
+    <delete dir="${examples.build}/${integerc}"/>
+  </target>
+  <target name="build" depends="init">
+    <mkdir dir="${examples.gen}/${integerc}"/>
+    <adt srcdir="${examples.dir}"
+      name="Peano" 
+      cCode="yes" 
+      destdir="${examples.gen}/${integerc}">
+      <include name="${integerc}/**/*.adt"/>
+    </adt>
+    <tom.preset srcdir="${examples.dir}"
+	        destdir="${examples.gen}/${integerc}"         
+                stamp="off" 
+                options="--cCode -I ${tom.home}/share/jtom">
+      <include name="${integerc}/**/*.t"/>
+    </tom.preset>
+    <copy todir="${examples.gen}/${integerc}">
+      <fileset dir="${examples.dir}/${integerc}">
+        <include name="Makefile"/>
+      </fileset>
+    </copy>
+    <antcall target="integerc.make"/>
+  </target>
+  <target name="integerc.make" if="aterm.home">
+    <exec dir="${examples.gen}/${integerc}" 
+          failonerror="yes"
+          executable="make">
+      <arg line=""/>
+      <env key="ATERM_HOME" value="${aterm.home}"/>
+      <env key="LDFLAGS" value="-L${aterm.home}/lib -lATerm"/>
+      <env key="CFLAGS"  value="-I${aterm.home}/include -I."/>
+    </exec>
+    <antcall target="integerc.make.cpl"/>
+  </target>
+  <target name="integerc.make.cpl" if="cpl.home">
+    <exec dir="${examples.gen}/${integerc}" 
+          failonerror="yes"
+          executable="make">
+      <env key="ATERM_HOME" value="${aterm.home}"/>
+      <arg line="nqueens nqueens2"/>
+      <env key="LDFLAGS" value="-L${aterm.home}/lib -L${cpl.home}/lib -lATerm -lchoice"/>
+      <env key="CFLAGS"  value="-I${aterm.home}/include -I${cpl.home}/include -I."/>
+    </exec>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${integerc}/*.t"/>
+        <include name="${integerc}/Makefile"/>
+        <include name="${integerc}/*.adt"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

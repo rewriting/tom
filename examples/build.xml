@@ -24,11 +24,8 @@
 
   <!-- Examples to build and distribute -->
   <property name="cril"           value="cril"/>
-
   <property name="gasel"          value="gasel"/>
-  <property name="gterm"          value="gterm"/>
-  <property name="integerc"       value="integerc"/>
-  <property name="list"           value="list"/>
+
   <property name="lsystems"        value="lsystems"/>
   <property name="master"         value="master"/>
   <property name="matching"       value="matching"/>
@@ -179,61 +176,6 @@
     <gomcompile example="${gasel}"/>
     <tomcompile example="${gasel}"/>
     <javacompile example="${gasel}"/>
-  </target>
-
-  <target name="gterm" depends="init">
-    <tomcompile example="${gterm}"/>
-    <javacompile example="${gterm}"/>
-  </target>
-
-  <target name="integerc" depends="init">
-    <mkdir dir="${examples.gen}/${integerc}"/>
-    <adt srcdir="${examples.dir}"
-      name="Peano" 
-      cCode="yes" 
-      destdir="${examples.gen}/${integerc}">
-      <include name="${integerc}/**/*.adt"/>
-    </adt>
-    <tom.preset srcdir="${examples.dir}"
-	        destdir="${examples.gen}/${integerc}"         
-                stamp="off" 
-                options="--cCode -I ${tom.home}/share/jtom">
-      <include name="${integerc}/**/*.t"/>
-    </tom.preset>
-    <copy todir="${examples.gen}/${integerc}">
-      <fileset dir="${examples.dir}/${integerc}">
-        <include name="Makefile"/>
-      </fileset>
-    </copy>
-    <antcall target="integerc.make"/>
-  </target>
-
-  <target name="integerc.make" if="aterm.home">
-    <exec dir="${examples.gen}/${integerc}" 
-          failonerror="yes"
-          executable="make">
-      <arg line=""/>
-      <env key="ATERM_HOME" value="${aterm.home}"/>
-      <env key="LDFLAGS" value="-L${aterm.home}/lib -lATerm"/>
-      <env key="CFLAGS"  value="-I${aterm.home}/include -I."/>
-    </exec>
-    <antcall target="integerc.make.cpl"/>
-  </target>
-  
-  <target name="integerc.make.cpl" if="cpl.home">
-    <exec dir="${examples.gen}/${integerc}" 
-          failonerror="yes"
-          executable="make">
-      <env key="ATERM_HOME" value="${aterm.home}"/>
-      <arg line="nqueens nqueens2"/>
-      <env key="LDFLAGS" value="-L${aterm.home}/lib -L${cpl.home}/lib -lATerm -lchoice"/>
-      <env key="CFLAGS"  value="-I${aterm.home}/include -I${cpl.home}/include -I."/>
-    </exec>
-  </target>
-
-  <target name="list" depends="init">
-    <tomcompile example="${list}"/>
-    <javacompile example="${list}"/>
   </target>
 
   <target name="lsystems" depends="init">
@@ -522,7 +464,7 @@
   </target>
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="gterm, integerc, list, master, matching, meta, mgs,
+          depends="master, matching, meta, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
           strategy, strings, structure, ted, tutorial, vas, xml, zenon">
   </target>
@@ -572,16 +514,6 @@
         <include name="build.xml"/>
         <include name="${examples.lib}/*.jar"/>
         
-        <include name="${gterm}/*.t"/>
-        <include name="${gterm}/*.java"/>
-
-        <include name="${integerc}/*.t"/>
-        <include name="${integerc}/Makefile"/>
-        <include name="${integerc}/*.adt"/>
-
-        <include name="${list}/*.t"/>
-        <include name="${list}/*.java"/>
-
         <include name="${master}/README"/>
         <include name="${master}/*.t"/>
 
