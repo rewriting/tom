@@ -39,7 +39,6 @@
   <property name="prodrule"       value="prodrule"/>
   <property name="propp"          value="propp"/>
   <property name="rbtree"         value="rbtree"/>
-  <property name="ted"            value="ted"/>
   <property name="xquery"         value="xquery"/>
 
   <target name="init" depends="tom.init">
@@ -306,14 +305,6 @@
     </subant>
   </target>
 
-  <target name="ted" depends="init">
-    <subant target="build">
-      <filelist dir=".">
-        <file name="ted/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-
   <target name="xquery" depends="init">
     <tomcompile example="${xquery}"/>
     <javacompile example="${xquery}"/>
@@ -329,8 +320,7 @@
   <target name="examples" 
           description="Builds the examples (at least some)"
           depends="matching, meta, mgs,
-          nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
-          ted">
+          nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree">
   </target>
 
   <target name="build.all">
@@ -419,13 +409,6 @@
         <include name="${rbtree}/*.t"/>
         <include name="${rbtree}/*.gom"/>
         
-        <include name="${ted}/example.aterm"/>
-        <include name="${ted}/aterms"/>
-        <include name="${ted}/*.ted"/>
-        <include name="${ted}/**/*.t"/>
-        <include name="${ted}/**/*.tom"/>
-        <include name="${ted}/**/*.java"/>
-
         <include name="${lib}/*.jar"/>
 
         <not>
