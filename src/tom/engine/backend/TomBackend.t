@@ -34,9 +34,9 @@ import java.util.logging.Level;
 import java.util.*;
 
 import tom.engine.TomMessage;
+import tom.engine.TomBase;
 import tom.engine.adt.tomsignature.types.*;
-import tom.engine.tools.OutputCode;
-import tom.engine.tools.TomGenericPlugin;
+import tom.engine.tools.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
@@ -100,16 +100,12 @@ public class TomBackend extends TomGenericPlugin {
         } else {
           throw new TomRuntimeException("no selected language for the Backend");
         }
-        //TODO//
-        ////////
-        String defaultModule = "default";
-        ////////
-        ////////
-				TomTerm pilCode = (TomTerm) getWorkingTerm();
+				
+        TomTerm pilCode = (TomTerm) getWorkingTerm();
 
 				//markUsedConstructorDestructor(pilCode);
 
-        generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),defaultModule);
+        generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
         // verbose
         getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
@@ -164,6 +160,15 @@ public class TomBackend extends TomGenericPlugin {
     return !getOptionBooleanValue("noOutput");
   }
   
+  protected SymbolTable getSymbolTable(String moduleName) {
+    //TODO//
+    //Using of the moduleName
+    ////////
+
+//System.out.println(symbolTable().toTerm());
+
+    return symbolTable();
+  }
   /**
    * inherited from plugin interface
    * returns the generated file name
@@ -175,15 +180,20 @@ public class TomBackend extends TomGenericPlugin {
 	%typeterm Stack {
 		implement { Stack }
 	}
+	
+  %typeterm TomBackend {
+		implement { TomBackend }
+	}
 
-  %op VisitableVisitor TopDownCollector(s:Stack) {
-    make(s) { `mu(MuVar("x"),Try(Sequence(Collector(s),All(MuVar("x"))))) }
+  %op VisitableVisitor TopDownCollector(tb:TomBackend,s:Stack) {
+    make(tb,s) { `mu(MuVar("x"),Try(Sequence(Collector(tb,s),All(MuVar("x"))))) }
   }
 
 	private void markUsedConstructorDestructor(TomTerm pilCode) {
 		Stack stack = new Stack();
+    stack.push(TomBase.DEFAULT_MODULE_NAME);
 		try {
-			VisitableVisitor v = `TopDownCollector(stack);
+			VisitableVisitor v = `TopDownCollector(this,stack);
 			v = MuTraveler.init(v);
 			v.visit(pilCode);
 		} catch (VisitFailure e) {
@@ -191,12 +201,12 @@ public class TomBackend extends TomGenericPlugin {
 		}
 	}
 
-	%strategy Collector(stack:Stack) extends `Identity() {
+	%strategy Collector(tb:TomBackend,stack:Stack) extends `Identity() {
     visit Instruction {
 			CompiledMatch[automataInst=inst, option=optionList] -> {
 				String moduleName = getModuleName(`optionList);
 
-				if(moduleName==null && hasGeneratedMatch(`optionList)) {
+				if(moduleName==null) { // && hasGeneratedMatch(`optionList)) {
 					try {
 						moduleName = (String) stack.peek();
             stack.push(moduleName);
@@ -210,7 +220,7 @@ public class TomBackend extends TomGenericPlugin {
         }
 				//System.out.println("match -> moduleName = " + moduleName);
 				try {
-					MuTraveler.init(`TopDownCollector(stack)).visit(`inst);
+					MuTraveler.init(`TopDownCollector(tb,stack)).visit(`inst);
 				} catch (jjtraveler.VisitFailure e) {
 					System.out.println("visit failure");
 					`Fail().visit(null);
@@ -219,28 +229,47 @@ public class TomBackend extends TomGenericPlugin {
 				System.out.println("pop: " + pop);
 				`Fail().visit(null);
 			}
-		}
 
+      TypedAction[astInstruction=inst] -> {
+        try {
+          MuTraveler.init(`TopDownCollector(tb,stack)).visit(`inst);
+        } catch (jjtraveler.VisitFailure e) {
+          System.out.println("visit failure");
+          `Fail().visit(null);
+        }
+        `Fail().visit(null);
+      }
+		}
+		
 		visit TomTerm {
 			(TermAppl|RecordAppl)[nameList=nameList] -> {
 				NameList l = `nameList;
         System.out.println(`l);
 				while(!l.isEmpty()) {
 					try {
-						System.out.println("op: " + l.getHead());
+						//System.out.println("op: " + l.getHead());
 						String moduleName = (String) stack.peek();
-						System.out.println("moduleName: " + moduleName);
+						//System.out.println("moduleName: " + moduleName);
+            TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHead().getString(),tb.getSymbolTable(moduleName)); 
+            if(tomSymbol!=null) {
+              tb.getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
+            } else {
+              System.out.println("null symbol: " + l.getHead().getString());
+            }
 					} catch (EmptyStackException e) {
 						System.out.println("No moduleName in stack");
 					}
 					l = l.getTail();
 				}
+				`Fail().visit(null);
 			}
-			BuildTerm[astName=astName] -> {
+			BuildTerm[astName=Name(name)] -> {
 				try {
-					System.out.println("build: " + `astName);
+					//System.out.println("build: " + `astName);
 					String moduleName = (String) stack.peek();
-					System.out.println("moduleName: " + moduleName);
+					//System.out.println("moduleName: " + moduleName);
+          TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
+          tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}

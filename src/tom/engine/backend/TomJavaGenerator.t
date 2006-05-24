@@ -98,7 +98,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.write(deep," {");
     int args = names.size();
     //write Declarations
-    for (int i = 0 ; i < args ; i++){
+    for (int i = 0 ; i < args ; i++) {
 	    output.write(deep, types.get(i) + " " + names.get(i) + "; ");
     }
 

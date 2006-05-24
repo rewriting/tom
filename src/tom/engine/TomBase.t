@@ -505,7 +505,6 @@ public class TomBase {
   protected static TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
     return symbolTable.getSymbolFromName(tomName);
   }
-
   
   protected static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
     SymbolList list = symbolTable.getSymbolFromType(tomType);

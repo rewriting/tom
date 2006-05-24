@@ -533,14 +533,20 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       ArraySymbolDecl(Name(tomName)) -> {
-        `buildSymbolDecl(deep, tomName, moduleName);
-        `genDeclArray(tomName, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
+         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+          `buildSymbolDecl(deep, tomName, moduleName);
+          `genDeclArray(tomName, moduleName);
+        }
         return ;
       }
 
       ListSymbolDecl(Name(tomName)) -> {
-        `buildSymbolDecl(deep, tomName, moduleName);
-        `genDeclList(tomName, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolConstructor(`tomName) 
+         ||getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
+          `buildSymbolDecl(deep, tomName, moduleName);
+          `genDeclList(tomName, moduleName);
+        }
         return ;
       }
 
@@ -548,21 +554,27 @@ public abstract class TomAbstractGenerator extends TomBase {
                               astType=Type(ASTTomType(type),tlType@TLType[])],
                      //astType=Type((type),tlType@TLType[])],
                      instr, _) -> {
-        `buildCheckStampDecl(deep, type, name, tlType, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+          `buildCheckStampDecl(deep, type, name, tlType, instr, moduleName);
+        }
         return;
       }
 
       SetStampDecl(Variable[astName=Name(name),
                               astType=Type(ASTTomType(type),tlType@TLType[])],
                      instr, _) -> {
-        `buildSetStampDecl(deep, type, name, tlType, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+          `buildSetStampDecl(deep, type, name, tlType, instr, moduleName);
+        }
         return;
       }
 
       GetImplementationDecl(Variable[astName=Name(name),
                               astType=Type(ASTTomType(type),tlType@TLType[])],
                      instr, _) -> {
-        `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
+          `buildGetImplementationDecl(deep, type, name, tlType, instr, moduleName);
+        }
         return;
       }
 
