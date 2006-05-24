@@ -210,13 +210,13 @@ public class TomBackend extends TomGenericPlugin {
 					try {
 						moduleName = (String) stack.peek();
             stack.push(moduleName);
-            System.out.println("push2: " + moduleName);
+            //System.out.println("push2: " + moduleName);
 					} catch (EmptyStackException e) {
 						System.out.println("No moduleName in stack");
 					}
         } else {
           stack.push(moduleName);
-          System.out.println("push1: " + moduleName);
+          //System.out.println("push1: " + moduleName);
         }
 				//System.out.println("match -> moduleName = " + moduleName);
 				try {
@@ -225,8 +225,8 @@ public class TomBackend extends TomGenericPlugin {
 					System.out.println("visit failure");
 					`Fail().visit(null);
 				}
-				String pop = (String) stack.pop();
-				System.out.println("pop: " + pop);
+				//String pop = (String) stack.pop();
+				//System.out.println("pop: " + pop);
 				`Fail().visit(null);
 			}
 
@@ -242,9 +242,9 @@ public class TomBackend extends TomGenericPlugin {
 		}
 		
 		visit TomTerm {
-			(TermAppl|RecordAppl)[nameList=nameList] -> {
+			(TermAppl|RecordAppl|ListAppl)[nameList=nameList] -> {
 				NameList l = `nameList;
-        System.out.println(`l);
+        //System.out.println(`l);
 				while(!l.isEmpty()) {
 					try {
 						//System.out.println("op: " + l.getHead());
@@ -263,9 +263,9 @@ public class TomBackend extends TomGenericPlugin {
 				}
 				`Fail().visit(null);
 			}
-			BuildTerm[astName=Name(name)] -> {
+			(BuildTerm|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[astName=Name(name)] -> {
 				try {
-					//System.out.println("build: " + `astName);
+					System.out.println("build: " + `name);
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
@@ -275,7 +275,6 @@ public class TomBackend extends TomGenericPlugin {
 				}
 			}
 		}
-		
 
 	}
 

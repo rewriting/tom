@@ -613,7 +613,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-    GetTailDecl[opname=opNameAST@Name(opname),
+      GetTailDecl[opname=opNameAST@Name(opname),
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(type),tlType@TLType[])],
                   instr=instr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
