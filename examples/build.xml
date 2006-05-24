@@ -28,7 +28,6 @@
 
   <property name="lsystems"        value="lsystems"/>
   <property name="parsingtests"   value="parsingtests"/>
-  <property name="prodrule"       value="prodrule"/>
   <property name="xquery"         value="xquery"/>
 
   <target name="init" depends="tom.init">
@@ -161,11 +160,6 @@
     <javacompile example="${lsystems}"/>
   </target>
   
-  <target name="prodrule" depends="init">
-    <tomcompile example="${prodrule}"/>
-    <javacompile example="${prodrule}"/>
-  </target>
-
   <target name="parsingtests" depends="init">
     <!--<adtcompile example="${propp}"
       factory="seq"/>-->
@@ -214,7 +208,7 @@
 
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="prodrule">
+          depends="clean, build.all">
   </target>
 
   <target name="build.all">
@@ -222,6 +216,7 @@
       <fileset dir="." includes="*/build.xml"/>
     </subant>
   </target>
+
   <target name="dist.all">
     <fail unless="version">
       ****************************************************
@@ -235,6 +230,9 @@
     <property name="distrib.zip"
       value="${examples.dist}/tom-examples-${version}.zip"/>
     <zip destfile="${distrib.zip}" update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" mode="755">
+        <include name="build.sh"/>
+      </zipfileset>
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="README"/>
         <include name="build.xml"/>
@@ -251,41 +249,7 @@
 
   <target name="dist.examples" 
           description="Prepare a distribution of examples" 
-          depends="prepare.examples">
-    <fail unless="version">
-      ****************************************************
-      ****************************************************
-      You have to define the "version" property in order 
-			to build the examples distribution
-			> ./build.sh -Dversion="xxx"
-      ****************************************************
-      ****************************************************
-    </fail>
-
-    <tar tarfile="${examples.dist}/tom-examples-${version}.tar.gz" 
-         compression="gzip">
-      <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
-        <include name="build.sh"/>
-      </tarfileset>
-      <tarfileset dir="${examples.dir}" prefix="examples" mode="644">
-        <include name="README"/>
-        <include name="build.xml"/>
-        <include name="${examples.lib}/*.jar"/>
-
-        <include name="${prodrule}/*.java"/>
-        <include name="${prodrule}/*.t"/>
-
-        <include name="${lib}/*.jar"/>
-
-        <not>
-          <present targetdir="${examples.dir}">
-            <mapper type="glob" 
-                    from="**/*.java" 
-                    to="**/*.t"/>
-          </present>
-        </not>
-      </tarfileset>
-    </tar>
+          depends="prepare.examples, dist.all">
   </target>
 
   <target name="clean.dist" description="Mr proper" depends="clean">

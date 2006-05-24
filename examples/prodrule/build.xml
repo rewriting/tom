@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the prodrule example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="prodrule" value="prodrule"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${prodrule}"/>
+    <delete dir="${examples.build}/${prodrule}"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="${prodrule}"/>
+    <javacompile example="${prodrule}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${prodrule}/*.java"/>
+        <include name="${prodrule}/*.t"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
