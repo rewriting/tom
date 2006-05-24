@@ -27,8 +27,6 @@
   <property name="gasel"          value="gasel"/>
 
   <property name="lsystems"        value="lsystems"/>
-  <property name="nspk"           value="nspk"/>
-  <property name="p3p"            value="p3p"/>
   <property name="parsingtests"   value="parsingtests"/>
   <property name="peano"          value="peano"/>
   <property name="pnspk"          value="pnspk"/>
@@ -169,22 +167,6 @@
     <javacompile example="${lsystems}"/>
   </target>
   
-  <target name="nspk" depends="init">
-    <subant target="build">
-      <filelist dir=".">
-        <file name="nspk/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-  
-  <target name="p3p" depends="init">
-    <subant target="build">
-      <filelist dir=".">
-        <file name="p3p/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-
   <target name="peano" depends="init">
     <gomcompile example="${peano}"/>
     <tomcompile example="${peano}"/>
@@ -298,7 +280,7 @@
 
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree">
+          depends="peano, pnspk, poly, pqueens, prodrule, propp, rbtree">
   </target>
 
   <target name="build.all">
@@ -356,14 +338,6 @@
         <include name="build.xml"/>
         <include name="${examples.lib}/*.jar"/>
         
-        <include name="${nspk}/*.t"/>
-        
-        <include name="${nspk}/*.java"/>
-        <include name="${nspk}/*.gom"/>
-
-        <include name="${p3p}/*.t"/>
-        <include name="${p3p}/*.xml"/>
-
         <include name="${peano}/*.java"/>
         <include name="${peano}/*.gom"/>
         <include name="${peano}/*.t"/>
