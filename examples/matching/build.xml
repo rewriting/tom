@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the matching example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="matching" value="matching"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${matching}"/>
+    <delete dir="${examples.build}/${matching}"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="${matching}"/>
+    <javacompile example="${matching}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${matching}/*.t"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+</project>

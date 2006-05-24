@@ -27,7 +27,6 @@
   <property name="gasel"          value="gasel"/>
 
   <property name="lsystems"        value="lsystems"/>
-  <property name="matching"       value="matching"/>
   <property name="meta"           value="meta"/>
   <property name="mgs"            value="mgs"/>
   <property name="nspk"           value="nspk"/>
@@ -181,9 +180,12 @@
     <javacompile example="${lsystems}"/>
   </target>
   
-  <target name="matching" depends="init"> 
-    <tomcompile example="${matching}"/>
-    <javacompile example="${matching}"/>
+  <target name="matching" depends="init">
+    <subant target="build">
+      <filelist dir=".">
+        <file name="matching/build.xml"/>
+      </filelist>
+    </subant>
   </target>
 
     <target name="meta" depends="init"> 
