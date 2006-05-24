@@ -338,10 +338,20 @@
       ****************************************************
       ****************************************************
     </fail>
+    <property name="distrib.zip"
+      value="${examples.dist}/tom-examples-${version}.zip"/>
+    <zip destfile="${distrib.zip}" update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="README"/>
+        <include name="build.xml"/>
+        <include name="*/build.xml"/>
+        <include name="${examples.lib}/*.jar"/>
+      </zipfileset>
+    </zip>
     <subant target="dist">
       <fileset dir="." includes="*/build.xml"/>
       <property name="distrib.zip"
-        value="${examples.dist}/tom-examples-${version}.zip"/>
+        value="${distrib.zip}"/>
     </subant>
   </target>
 
