@@ -30,10 +30,14 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
-import tom.library.traversal.Replace1;
 import aterm.ATerm;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.Identity;
+import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
+
 
 public class TomKernelCompiler extends TomBase {
 
@@ -52,9 +56,15 @@ public class TomKernelCompiler extends TomBase {
 
 // ------------------------------------------------------------
   %include { adt/tomsignature/TomSignature.tom }
+  %include { mutraveler.tom}
 // ------------------------------------------------------------
  
-  private int matchNumber = 0;
+  %typeterm TomKernelCompiler {
+    implement { TomKernelCompiler }
+  }
+
+
+  public int matchNumber = 0;
 
   private OptionList option() {
     return ASTFactory.makeOption();
@@ -72,15 +82,14 @@ public class TomKernelCompiler extends TomBase {
      * compiles the Match construct into a matching automaton: CompiledMatch
      */
 
-  private Replace1 replace_compileMatching = new Replace1() {
-      public ATerm apply(ATerm subject) {
-        %match(Instruction subject) {
+  %strategy replace_compileMatching(compiler:TomKernelCompiler) extends `Identity(){
+        visit Instruction {
           Match(SubjectList(l1),patternInstructionList, optionList)  -> {
             //TODO
             String moduleName = "default";
             TomNumberList rootpath = tsf().makeTomNumberList();
-            matchNumber++;
-            rootpath = (TomNumberList) rootpath.append(`MatchNumber(makeNumber(matchNumber)));
+            compiler.matchNumber++;
+            rootpath = (TomNumberList) rootpath.append(`MatchNumber(makeNumber(compiler.matchNumber)));
 
             /*
              * for each pattern action (<term>,...,<term> -> <action>)
@@ -102,10 +111,10 @@ public class TomKernelCompiler extends TomBase {
                * compile nested match constructs
                * given a list of pattern: we build a matching automaton
                */
-              actionInst = (Instruction) this.apply(actionInst);
-              Instruction matchingAutomata = genSyntacticMatchingAutomata(actionInst,patternList,rootpath,moduleName);
+              actionInst = (Instruction) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_compileMatching(compiler),All(MuVar("x"))))).visit(actionInst);
+              Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,patternList,rootpath,moduleName);
               OptionList automataOptionList = `concOption();
-              TomName label = getLabel(pa.getOption());
+              TomName label = compiler.getLabel(pa.getOption());
               if(label != null) {
                 automataOptionList = `manyOptionList(Label(label),automataOptionList);
               }
@@ -120,18 +129,18 @@ public class TomKernelCompiler extends TomBase {
             /*
              * return the compiled Match construction
              */
-            InstructionList astAutomataList = automataListCompileMatchingList(automataList);
+            InstructionList astAutomataList = compiler.automataListCompileMatchingList(automataList);
             SlotList slots = tomListToSlotList(`l1);
-            Instruction astAutomata = `collectVariableFromSubjectList(slots,rootpath,AbstractBlock(astAutomataList),moduleName);
+            Instruction astAutomata = compiler.collectVariableFromSubjectList(slots,rootpath,`AbstractBlock(astAutomataList),moduleName);
             return `CompiledMatch(astAutomata, optionList);
           }
         } // end match
-        return traversal().genericTraversal(subject,this);
-      } // end apply
-  }; // end new
+  } 
 
   public TomTerm compileMatching(TomTerm subject) {
-    return (TomTerm) replace_compileMatching.apply(subject);
+    try{
+    return (TomTerm) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_compileMatching(this),All(MuVar("x"))))).visit(subject);
+    }catch(VisitFailure e){return subject;}
   }
 
     /*

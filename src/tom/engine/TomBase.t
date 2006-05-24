@@ -40,7 +40,6 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-import tom.library.traversal.*;
 
 /**
  * Base class for most tom files in the compiler.
@@ -64,16 +63,11 @@ public class TomBase {
   %include { adt/platformoption/PlatformOption.tom }
   
   private static TomList empty;
-  private static GenericTraversal traversal;
   
   public TomBase() {
     empty = tsf().makeTomList();
-    traversal = new GenericTraversal();
   }
 
-  public static GenericTraversal traversal() {
-    return traversal;
-  }
   
   protected static TomNumber makeNumber(int n) {
     return tsf().makeTomNumber_Number(n);
