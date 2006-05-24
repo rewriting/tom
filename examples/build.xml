@@ -189,8 +189,11 @@
   </target>
 
     <target name="meta" depends="init"> 
-    <tomcompile example="${meta}"/>
-    <javacompile example="${meta}"/>
+    <subant target="build">
+      <filelist dir=".">
+        <file name="matching/build.xml"/>
+      </filelist>
+    </subant>
   </target>
 
   <target name="mgs" depends="init">
