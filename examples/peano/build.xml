@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the peano example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="peano" value="peano"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${peano}"/>
+    <delete dir="${examples.build}/${peano}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${peano}"/>
+    <tomcompile example="${peano}"/>
+    <javacompile example="${peano}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${peano}/*.java"/>
+        <include name="${peano}/*.gom"/>
+        <include name="${peano}/*.t"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

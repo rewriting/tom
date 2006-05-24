@@ -16,11 +16,11 @@
   <property name="examples.dir"   location="."/>
   <property name="examples.dist"  location="dist"/>
 
-  <property name="examples.lib"   value="lib"/>
-
   <!-- where the examples a build: javac destDir -->
   <property name="examples.gen"   location="gen"/>
   <property name="examples.build" location="build"/>
+
+  <property name="examples.lib"   value="lib"/>
 
   <!-- Examples to build and distribute -->
   <property name="cril"           value="cril"/>
@@ -28,7 +28,6 @@
 
   <property name="lsystems"        value="lsystems"/>
   <property name="parsingtests"   value="parsingtests"/>
-  <property name="peano"          value="peano"/>
   <property name="pqueens"        value="pqueens"/>
   <property name="prodrule"       value="prodrule"/>
   <property name="propp"          value="propp"/>
@@ -164,12 +163,6 @@
     <javacompile example="${lsystems}"/>
   </target>
   
-  <target name="peano" depends="init">
-    <gomcompile example="${peano}"/>
-    <tomcompile example="${peano}"/>
-    <javacompile example="${peano}"/>
-  </target>
-
   <target name="pqueens" depends="init">
     <tomcompile example="${pqueens}"/>
     <javacompile example="${pqueens}"/>
@@ -254,7 +247,7 @@
 
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="peano, pqueens, prodrule, propp">
+          depends="pqueens, prodrule, propp">
   </target>
 
   <target name="build.all">
@@ -311,10 +304,6 @@
         <include name="README"/>
         <include name="build.xml"/>
         <include name="${examples.lib}/*.jar"/>
-        
-        <include name="${peano}/*.java"/>
-        <include name="${peano}/*.gom"/>
-        <include name="${peano}/*.t"/>
 
         <include name="${pqueens}/*.t"/>
         <include name="${pqueens}/*.java"/>
