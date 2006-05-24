@@ -27,8 +27,6 @@
   <property name="gasel"          value="gasel"/>
 
   <property name="lsystems"        value="lsystems"/>
-  <property name="meta"           value="meta"/>
-  <property name="mgs"            value="mgs"/>
   <property name="nspk"           value="nspk"/>
   <property name="p3p"            value="p3p"/>
   <property name="parsingtests"   value="parsingtests"/>
@@ -171,25 +169,6 @@
     <javacompile example="${lsystems}"/>
   </target>
   
-  <target name="matching" depends="init">
-    <subant target="build">
-      <filelist dir=".">
-        <file name="matching/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-
-  <target name="meta" depends="init"> 
-    <subant target="build">
-      <filelist dir=".">
-        <file name="meta/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-  
-  <target name="mgs" depends="init">
-  </target>
-  
   <target name="nspk" depends="init">
     <subant target="build">
       <filelist dir=".">
@@ -319,8 +298,7 @@
 
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="matching, meta, mgs,
-          nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree">
+          depends="nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree">
   </target>
 
   <target name="build.all">
@@ -378,13 +356,6 @@
         <include name="build.xml"/>
         <include name="${examples.lib}/*.jar"/>
         
-        <include name="${matching}/*.t"/>
-        
-        <include name="${meta}/*.t"/>
-        
-        <include name="${mgs}/*.t"/>
-        <include name="${mgs}/*.gom"/>
-				
         <include name="${nspk}/*.t"/>
         
         <include name="${nspk}/*.java"/>
