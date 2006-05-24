@@ -240,11 +240,26 @@ public class TomBackend extends TomGenericPlugin {
         `Fail().visit(null);
       }
 		}
-		
+	  
+    visit Expression {
+      (IsEmptyList|IsEmptyArray|GetHead|GetTail)[opname=Name(name)] -> {
+				try {
+					System.out.println("list check: " + `name);
+					String moduleName = (String) stack.peek();
+					//System.out.println("moduleName: " + moduleName);
+          TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
+          tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
+				} catch (EmptyStackException e) {
+					System.out.println("No moduleName in stack");
+				}
+
+      }
+    }
+
 		visit TomTerm {
 			(TermAppl|RecordAppl|ListAppl)[nameList=nameList] -> {
 				NameList l = `nameList;
-        //System.out.println(`l);
+        System.out.println("dest " + `l);
 				while(!l.isEmpty()) {
 					try {
 						//System.out.println("op: " + l.getHead());
@@ -263,13 +278,27 @@ public class TomBackend extends TomGenericPlugin {
 				}
 				`Fail().visit(null);
 			}
-			(BuildTerm|BuildEmptyList|BuildConsList|BuildAppendList|BuildEmptyArray|BuildConsArray|BuildAppendArray)[astName=Name(name)] -> {
+			(BuildTerm|BuildEmptyList|BuildEmptyArray)[astName=Name(name)] -> {
 				try {
 					System.out.println("build: " + `name);
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
           tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
+				} catch (EmptyStackException e) {
+					System.out.println("No moduleName in stack");
+				}
+			}
+			(BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[astName=Name(name)] -> {
+				try {
+					System.out.println("build: " + `name);
+					String moduleName = (String) stack.peek();
+					//System.out.println("moduleName: " + moduleName);
+          TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
+          tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
+          /* XXX: Also mark the destructors as used, since some generated
+           * functions will use them */
+          tb.getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
