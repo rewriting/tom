@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the mgs example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="mgs" value="mgs"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${mgs}"/>
+    <delete dir="${examples.build}/${mgs}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${mgs}"/>
+    <!-- <tomcompile example="${mgs}"/> -->
+    <tom.preset srcdir="${examples.dir}"
+	        options="--noStatic"
+                destdir="${examples.gen}">          
+       <include name="${mgs}/**/*.t"/>
+    </tom.preset>
+    <javacompile example="${mgs}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${msg}/*.t"/>
+        <include name="${msg}/*.g"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+</project>
