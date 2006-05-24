@@ -26,7 +26,6 @@
   <property name="cril"           value="cril"/>
   <property name="gasel"          value="gasel"/>
 
-  <property name="lsystems"        value="lsystems"/>
   <property name="parsingtests"   value="parsingtests"/>
   <property name="xquery"         value="xquery"/>
 
@@ -155,11 +154,6 @@
     <javacompile example="${gasel}"/>
   </target>
 
-  <target name="lsystems" depends="init">
-    <tomcompile example="${lsystems}"/>
-    <javacompile example="${lsystems}"/>
-  </target>
-  
   <target name="parsingtests" depends="init">
     <!--<adtcompile example="${propp}"
       factory="seq"/>-->
