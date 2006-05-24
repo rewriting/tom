@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the rbtree example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="rbtree" value="rbtree"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${rbtree}"/>
+    <delete dir="${examples.build}/${rbtree}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${rbtree}"/>
+    <tomcompile example="${rbtree}"/>
+    <javacompile example="${rbtree}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${rbtree}/*.t"/>
+        <include name="${rbtree}/*.gom"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+</project>

@@ -311,9 +311,11 @@
   </target>
 
   <target name="rbtree" depends="init">
-    <gomcompile example="${rbtree}"/>
-    <tomcompile example="${rbtree}"/>
-    <javacompile example="${rbtree}"/>
+    <subant target="build">
+      <filelist dir=".">
+        <file name="rbtree/build.xml"/>
+      </filelist>
+    </subant>
   </target>
 
   <target name="structure" depends="init">
