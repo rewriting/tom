@@ -36,7 +36,6 @@
   <property name="peano"          value="peano"/>
   <property name="pnspk"          value="pnspk"/>
   <property name="poly"           value="poly"/>
-  <property name="pom"            value="pom"/>
   <property name="pqueens"        value="pqueens"/>
   <property name="prodrule"       value="prodrule"/>
   <property name="propp"          value="propp"/>
@@ -236,28 +235,6 @@
     <gomcompile example="${poly}"/>
     <tomcompile example="${poly}"/>
     <javacompile example="${poly}"/>
-  </target>
-
-  <target name="pom" depends="init">
-    <gomcompile example="${pom}"/>
-    <!-- build parser -->
-    <mkdir dir="${examples.gen}/${pom}"/>
-    <tomantlr target="${pom}/SeqParser.g"
-              outputdirectory="${examples.gen}/${pom}">
-      <classpath refid="tom.classpath"/>
-    </tomantlr>
-    <pom srcfile="${examples.gen}/${pom}/SeqParserTokenTypes.txt"
-         destdir="${examples.gen}"
-         package="${pom}">
-    </pom>
-    <tomcompile example="${pom}"/>
-    <javacompile example="${pom}"/>
-    <!-- copy resources -->
-    <copy todir="${examples.build}/${pom}">
-      <fileset dir="${examples.dir}/${pom}">
-        <include name="ex_current"/>
-      </fileset>
-    </copy>
   </target>
 
   <target name="pqueens" depends="init">
