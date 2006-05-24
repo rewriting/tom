@@ -153,14 +153,14 @@ public class SymbolTable {
   }
 
 	public boolean isUsedSymbolConstructor(TomSymbol symbol) {
-    //System.out.println("con " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null));
+    // System.out.println("con " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null));
 		//return (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null);
 		return true;
 	}
 	
 	public boolean isUsedSymbolDestructor(TomSymbol symbol) {
-    //System.out.println("des " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null));
-		//return (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null);
+    // System.out.println("des " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null));
+    //return (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null);
 		return true;
 	}
 	
