@@ -51,7 +51,7 @@ public class Analyser{
   %include {node/Node.tom}
   %include {Ctl.tom}
 
-  //Définition des types
+  //Definition des types
 
   %typeterm ControlFlowGraphList {
     implement { List }
@@ -77,7 +77,7 @@ public class Analyser{
     equals(t1,t2) { t1.equals(t2) } 
     visitor_fwd { analysis.ast.AstBasicStrategy }
   }
-  //Définition des constructeurs
+  //Definition des constructeurs
 
   %op ControlFlowGraph conc(root:ControlFlowGraph,subterm:ControlFlowGraphList) {
     is_fsym(t)  { t instanceof ControlFlowGraph }
@@ -116,7 +116,7 @@ public class Analyser{
   }
 
 
- // Méthode d'ajout d'un élément dans une liste (utilisée dans la définition des constructeurs de liste)
+ // Methode d'ajout d'un element dans une liste (utilisee dans la definition des constructeurs de liste)
 
   private static List myAdd(Object e,List l) {
     l.add(e);
@@ -124,11 +124,11 @@ public class Analyser{
   }
 
   /**
-    Définition des prédicats 	 	 
+    Definition des predicats 	 	 
    */
 
 
-  // Prédicat NotUsed(v:Variable) qui teste si une variable n'est pas utilisée au noeud racine d'un cfg 
+  // Predicat NotUsed(v:Variable) qui teste si une variable n'est pas utilisee au noeud racine d'un cfg 
 
   %op Strategy NotUsed(v:Variable) {
     make(v) {new ControlFlowGraphBasicStrategy(`TopDown(InnerNotUsed(v)))}
@@ -142,7 +142,7 @@ public class Analyser{
       }
     }
   }
-  // en attendant que le bug dans NodeForward soit fixé (ensuite on utilisera la strategie InnerNotUsed)
+  // en attendant que le bug dans NodeForward soit fixe (ensuite on utilisera la strategie InnerNotUsed)
   /* class InnerNotUsed extends NodeBasicStrategy{
 
 
@@ -167,7 +167,7 @@ public class Analyser{
      }*/ 
 
 
-  // Prédicat Free(v:Variable) qui teste si une variable est libéré au noeud racine d'un cfg
+  // Predicat Free(v:Variable) qui teste si une variable est libere au noeud racine d'un cfg
   %strategy InnerFree(v:Variable) extends `Fail() {
     visit Node{
       n@free(var) -> {
@@ -183,7 +183,7 @@ public class Analyser{
   }
 
 
-  // Prédicat Modified(v:Variable) qui teste si une variable est modifié (affected) au noeud racine d'un cfg
+  // Predicat Modified(v:Variable) qui teste si une variable est modifie (affected) au noeud racine d'un cfg
   %strategy InnerModified(v:Variable) extends `Fail() {
     visit Node{
       n@affect(var,_) -> {
@@ -300,7 +300,7 @@ public class Analyser{
         Node nn = n.getNode();
         %match(Node nn){
           affect(var,term) -> {
-            //teste si une variable n'est utilisé qu'une seule fois
+            //teste si une variable n'est utilise qu'une seule fois
             //AX(A(not(modified(var)U(used(var) and AX(notUsedCond(var)))
 
 

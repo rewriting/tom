@@ -34,7 +34,7 @@ import analysis.node.types.*;
 
 /**
   Classe provisoire d'encapsulation des Node
-  pour éviter le partage maximale des ATerms
+  pour eviter le partage maximale des ATerms
 */
 
 public class Vertex{ 
