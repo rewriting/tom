@@ -45,7 +45,6 @@
   <property name="structure"      value="structure"/>
   <property name="ted"            value="ted"/>
   <property name="tutorial"       value="tutorial"/>
-  <property name="vas"            value="vas"/>
   <property name="xquery"         value="xquery"/>
 
   <target name="init" depends="tom.init">
@@ -361,21 +360,6 @@
     </copy>
   </target>
 
-  <target name="vas" depends="init">
-    <!-- build tom -->
-    <tom.preset config="${tomconfigfile}"
-         srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         optimize2="${optimize2}"
-         stamp="off"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${vas}/**/*.t"/>
-    </tom.preset>
-    <javacompile example="${vas}"/>
-  </target>
-
   <target name="xquery" depends="init">
     <tomcompile example="${xquery}"/>
     <javacompile example="${xquery}"/>
@@ -392,7 +376,7 @@
           description="Builds the examples (at least some)"
           depends="matching, meta, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
-          strategy, strings, structure, ted, tutorial, vas">
+          strategy, strings, structure, ted, tutorial">
   </target>
 
   <target name="build.all">
