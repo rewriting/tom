@@ -184,14 +184,14 @@
     </subant>
   </target>
 
-    <target name="meta" depends="init"> 
+  <target name="meta" depends="init"> 
     <subant target="build">
       <filelist dir=".">
-        <file name="matching/build.xml"/>
+        <file name="meta/build.xml"/>
       </filelist>
     </subant>
   </target>
-
+  
   <target name="mgs" depends="init">
     <gomcompile example="${mgs}"/>
     <!-- <tomcompile example="${mgs}"/> -->
@@ -232,10 +232,12 @@
     <javacompile example="${pnspk}"/>
   </target>
   
-  <target name="poly" depends="init">
-    <gomcompile example="${poly}"/>
-    <tomcompile example="${poly}"/>
-    <javacompile example="${poly}"/>
+  <target name="poly" depends="init"> 
+    <subant target="build">
+      <filelist dir=".">
+        <file name="poly/build.xml"/>
+      </filelist>
+    </subant>
   </target>
 
   <target name="pqueens" depends="init">
