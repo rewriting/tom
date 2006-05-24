@@ -30,11 +30,9 @@
   <property name="parsingtests"   value="parsingtests"/>
   <property name="peano"          value="peano"/>
   <property name="pnspk"          value="pnspk"/>
-  <property name="poly"           value="poly"/>
   <property name="pqueens"        value="pqueens"/>
   <property name="prodrule"       value="prodrule"/>
   <property name="propp"          value="propp"/>
-  <property name="rbtree"         value="rbtree"/>
   <property name="xquery"         value="xquery"/>
 
   <target name="init" depends="tom.init">
@@ -180,14 +178,6 @@
     <javacompile example="${pnspk}"/>
   </target>
   
-  <target name="poly" depends="init"> 
-    <subant target="build">
-      <filelist dir=".">
-        <file name="poly/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-
   <target name="pqueens" depends="init">
     <tomcompile example="${pqueens}"/>
     <javacompile example="${pqueens}"/>
@@ -258,14 +248,6 @@
     </copy>
   </target>
 
-  <target name="rbtree" depends="init">
-    <subant target="build">
-      <filelist dir=".">
-        <file name="rbtree/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
-
   <target name="xquery" depends="init">
     <tomcompile example="${xquery}"/>
     <javacompile example="${xquery}"/>
@@ -280,7 +262,7 @@
 
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="peano, pnspk, poly, pqueens, prodrule, propp, rbtree">
+          depends="peano, pnspk, pqueens, prodrule, propp">
   </target>
 
   <target name="build.all">
@@ -345,10 +327,6 @@
         <include name="${pnspk}/*.t"/>
         <include name="${pnspk}/*.adt"/>
 
-        <include name="${poly}/*.t"/>
-        <include name="${poly}/Poly.signature"/>
-        <include name="${poly}/*.gom"/>
-
         <include name="${pqueens}/*.t"/>
         <include name="${pqueens}/*.java"/>
         <include name="${pqueens}/*.tom"/>
@@ -361,9 +339,6 @@
         <include name="${propp}/*.sty"/>
         <include name="${propp}/examples"/>
 
-        <include name="${rbtree}/*.t"/>
-        <include name="${rbtree}/*.gom"/>
-        
         <include name="${lib}/*.jar"/>
 
         <not>
