@@ -44,7 +44,6 @@
   <property name="strings"        value="strings"/>
   <property name="structure"      value="structure"/>
   <property name="ted"            value="ted"/>
-  <property name="tutorial"       value="tutorial"/>
   <property name="xquery"         value="xquery"/>
 
   <target name="init" depends="tom.init">
@@ -350,16 +349,6 @@
     </subant>
   </target>
 
-  <target name="tutorial" depends="init">
-    <tomcompile example="${tutorial}"/>
-    <javacompile example="${tutorial}"/>
-    <copy todir="${examples.build}/${tutorial}">
-      <fileset dir="${examples.dir}/${tutorial}">
-        <include name="*.xml"/>
-      </fileset>
-    </copy>
-  </target>
-
   <target name="xquery" depends="init">
     <tomcompile example="${xquery}"/>
     <javacompile example="${xquery}"/>
@@ -376,7 +365,7 @@
           description="Builds the examples (at least some)"
           depends="matching, meta, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
-          strategy, strings, structure, ted, tutorial">
+          strategy, strings, structure, ted">
   </target>
 
   <target name="build.all">
@@ -486,10 +475,6 @@
         <include name="${ted}/**/*.t"/>
         <include name="${ted}/**/*.tom"/>
         <include name="${ted}/**/*.java"/>
-
-        <include name="${tutorial}/*.t"/>
-        <include name="${tutorial}/*.java"/>
-        <include name="${tutorial}/*.xml"/>
 
         <include name="${lib}/*.jar"/>
 
