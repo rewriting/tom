@@ -48,7 +48,6 @@
   <property name="vas"            value="vas"/>
   <property name="xml"            value="xml"/>
   <property name="xquery"         value="xquery"/>
-  <property name="zenon"          value="zenon"/>
 
   <target name="init" depends="tom.init">
     <!-- to have something correct, check tom.home is defined to something meaningful
@@ -407,33 +406,11 @@
     </copy>
   </target>
 
-  <target name="zenon" depends="init">
-	  <tom.preset srcdir="${examples.dir}"
-                      destdir="${examples.gen}"
-		      options="-I ${tom.home}/share/jtom --verify">
-      <include name="${zenon}/**/*.t"/>
-      <exclude name="${zenon}/**/*.g.t"/>
-    </tom.preset>
-    <javacompile example="${zenon}"/>
-    <antcall target="zenon.make"/>
-  </target>
-  <target name="zenon.make" if="zvtov.bin">
-    <apply dir="${examples.gen}/${zenon}" 
-           dest="${examples.gen}/${zenon}"
-           failonerror="yes"
-	   executable="${zvtov.bin}">
-      <srcfile/>
-      <fileset dir="${examples.gen}">
-        <include name="${zenon}/**/*.zv"/>
-      </fileset>
-      <mapper type="glob" from="*.zv" to="*.v"/>
-    </apply>
-  </target>
   <target name="examples" 
           description="Builds the examples (at least some)"
           depends="matching, meta, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
-          strategy, strings, structure, ted, tutorial, vas, xml, zenon">
+          strategy, strings, structure, ted, tutorial, vas, xml">
   </target>
 
   <target name="build.all">
@@ -553,11 +530,6 @@
         <include name="${xml}/*.t"/>
         <include name="${xml}/*.xml"/>
 
-        <include name="${zenon}/*.t"/>
-        <include name="${zenon}/*.coz"/>
-        <include name="${zenon}/*.v"/>
-        <include name="${zenon}/*.zv"/>
-        
         <include name="${lib}/*.jar"/>
 
         <not>
