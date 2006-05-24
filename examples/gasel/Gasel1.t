@@ -36,8 +36,10 @@ import gasel.gasel1.data.*;
 import gasel.gasel1.data.types.*;
 
 public final class Gasel1 {
-  private Graph globalGraph;
-
+  private static Graph globalGraph;
+  private  static Map labelMap = new HashMap();
+  
+  
   %gom {
   module data
   imports int
@@ -93,12 +95,12 @@ public final class Gasel1 {
     get_size(l)      { l.size()                }
   }
 
-  private List myAdd(Object e,List l) {
+  private static List myAdd(Object e,List l) {
     l.add(e);
     return l;
   }
 
-  private Link getLink(Edge e) {
+  private static Link getLink(Edge e) {
     Link label = (Link)labelMap.get(e);
     Link res;
     if(label==null) {
@@ -110,7 +112,7 @@ public final class Gasel1 {
     return res;
   }
 
-  private List computeSuccessors(Graph g, Object v) {
+  private static List computeSuccessors(Graph g, Object v) {
     List edges = g.edgesOf(v);
     List res = new LinkedList();
     for(Iterator it=edges.iterator() ; it.hasNext() ; ) {
@@ -119,31 +121,26 @@ public final class Gasel1 {
     }
     return res;
   }
-
-  public Gasel1(){
-    this.globalGraph = new SimpleGraph();
-  }
-
+  
   
   public static void main( String[] args ) {
-    Gasel1 t = new Gasel1();
-    t.run();
+    globalGraph = new SimpleGraph();
+    run();
   }
 
-  private Graph getGraph() {
+  private  static Graph getGraph() {
     return globalGraph;
   }
  
-  private Map labelMap = new HashMap();
 
-  private void addSimpleLink(Object v1, Object v2) {
+  private static  void addSimpleLink(Object v1, Object v2) {
     Edge e = new UndirectedEdge(v1,v2);
     labelMap.put(e,`simpleLink());
     System.out.println("add label( " + e + " ) = " + labelMap.get(e)); 
     getGraph().addEdge(e);
   }
 
-  public void run() {
+  public static void run() {
     Graph g = getGraph();
 
 

@@ -37,19 +37,15 @@ import gasel.gasel2.data.*;
 import gasel.gasel2.data.types.*;
 
 public final class Gasel2 {
-  private Graph globalGraph;
+  private static Graph globalGraph;
 
-  public Gasel2() {
-    this.globalGraph = new SimpleGraph();
-  }
-  
-  private Graph getGraph() {
+  private  static Graph getGraph() {
     return globalGraph;
   }
  
   public static void main( String[] args ) {
-    Gasel2 t = new Gasel2();
-    t.run();
+    globalGraph = new SimpleGraph();
+    run();
   }
 
   %gom {
@@ -101,18 +97,18 @@ public final class Gasel2 {
     get_size(l)      { l.size()               }
   }
 
-  private List myAdd(Object e,List l) {
+  private static List myAdd(Object e,List l) {
     l.add(e);
     return l;
   }
   
-  private Map labelMap = new HashMap();
+  private static Map labelMap = new HashMap();
 
   /*
    * add a simpleLink bond to the graph
    * the label is stored in a hashmap
    */
-  private void addBond(Atom v1, Atom v2, BondType bondType) {
+  private static void addBond(Atom v1, Atom v2, BondType bondType) {
     if(!bondType.isnone()) {
       org._3pq.jgrapht.Edge e = new org._3pq.jgrapht.edge.UndirectedEdge(v1,v2);
       labelMap.put(e,`bond(bondType,v1,v2));
@@ -121,7 +117,7 @@ public final class Gasel2 {
     }
   }
 
-  private Bond getBond(org._3pq.jgrapht.Edge e) {
+  private static Bond getBond(org._3pq.jgrapht.Edge e) {
     Bond bond = (Bond)labelMap.get(e);
     if(bond==null) {
       throw new RuntimeException("no associated bond to: " + e); 
@@ -130,14 +126,14 @@ public final class Gasel2 {
     return bond;
   }
 
-  private BondType getBondType(org._3pq.jgrapht.Edge e) {
+  private static BondType getBondType(org._3pq.jgrapht.Edge e) {
     return getBond(e).getbondType();
   }
 
   /*
    * This creates a graph by side-effect
    */
-  private State createState(Graph g, BondType bondType, Atom atom, List subterm) {
+  private static State createState(Graph g, BondType bondType, Atom atom, List subterm) {
     if(!atom.isempty()) {
       g.addVertex(atom);
     }
@@ -151,7 +147,7 @@ public final class Gasel2 {
   /*
    * given a node, compute all its immediate successors with the bond information
    */
-  private List computeSuccessors(Graph g, State state) {
+  private static List computeSuccessors(Graph g, State state) {
     Atom atom = state.getAtom();
     BondList path = state.getPath();
     List res = new LinkedList();
@@ -160,18 +156,18 @@ public final class Gasel2 {
       Bond b = getBond(e);
       if(contains(b,path)) { // bond does not occur in path
         Atom successor = (Atom)e.oppositeVertex(atom);
-        res.add(new State(`ConsconcBond(b,path),getBondType(e),successor));
+        res.add(new State(`concBond(b,path*),getBondType(e),successor));
       }
     }
     return res;
   }
 
-  private boolean contains(Bond e,BondList list){
+  private static boolean contains(Bond e,BondList list){
     if (list.isEmptyconcBond()) return false;
     return list.getHeadconcBond().equals(e) ||contains(e,list.getTailconcBond());
   }
 
-  public void run() {
+  public static void run() {
     Graph g = getGraph();
 
     /*
