@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the xml example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="xml" value="xml"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${xml}"/>
+    <delete dir="${examples.build}/${xml}"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="${xml}"/>
+    <javacompile example="${xml}"/>
+    <!-- copy resources -->
+    <copy todir="${examples.build}/${xml}">
+      <fileset dir="${examples.dir}/${xml}">
+        <include name="**/*.xml"/>
+        <include name="*.html"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${xml}/**/*.t"/>
+        <include name="${xml}/**/*.xml"/>
+        <include name="${xml}/*.t"/>
+        <include name="${xml}/*.xml"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

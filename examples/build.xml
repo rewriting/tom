@@ -46,7 +46,6 @@
   <property name="ted"            value="ted"/>
   <property name="tutorial"       value="tutorial"/>
   <property name="vas"            value="vas"/>
-  <property name="xml"            value="xml"/>
   <property name="xquery"         value="xquery"/>
 
   <target name="init" depends="tom.init">
@@ -196,11 +195,6 @@
   </target>
   
   <target name="mgs" depends="init">
-    <subant target="build">
-      <filelist dir=".">
-        <file name="mgs/build.xml"/>
-      </filelist>
-    </subant>
   </target>
   
   <target name="nspk" depends="init">
@@ -382,18 +376,6 @@
     <javacompile example="${vas}"/>
   </target>
 
-  <target name="xml" depends="init">
-    <tomcompile example="${xml}"/>
-    <javacompile example="${xml}"/>
-    <!-- copy resources -->
-    <copy todir="${examples.build}/${xml}">
-      <fileset dir="${examples.dir}/${xml}">
-        <include name="**/*.xml"/>
-        <include name="*.html"/>
-      </fileset>
-    </copy>
-  </target>
-
   <target name="xquery" depends="init">
     <tomcompile example="${xquery}"/>
     <javacompile example="${xquery}"/>
@@ -410,7 +392,7 @@
           description="Builds the examples (at least some)"
           depends="matching, meta, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
-          strategy, strings, structure, ted, tutorial, vas, xml">
+          strategy, strings, structure, ted, tutorial, vas">
   </target>
 
   <target name="build.all">
@@ -524,11 +506,6 @@
         <include name="${tutorial}/*.t"/>
         <include name="${tutorial}/*.java"/>
         <include name="${tutorial}/*.xml"/>
-
-        <include name="${xml}/**/*.t"/>
-        <include name="${xml}/**/*.xml"/>
-        <include name="${xml}/*.t"/>
-        <include name="${xml}/*.xml"/>
 
         <include name="${lib}/*.jar"/>
 
