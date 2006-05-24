@@ -106,13 +106,29 @@ public class AST2Gom{
     %match(ATermList l){
       (g,tail*) -> {
         GrammarList tmpL = getGrammarList(`tail);
-        return `concGrammar(getGrammar(g),tmpL*);
+        %match (ATerm g){
+          SORTS(_,_) -> {
+            return `concGrammar(getGrammar(g),tmpL*);
+          }
+          SYNTAX(_,_) -> {
+            return `concGrammar(getSorts(g),getGrammar(g),tmpL*);
+          }
+        }
       }
       _ -> {
         return `concGrammar();
       }
     }
     throw new RuntimeException("Unable to translate: " + l);
+  }
+  //when sorts are declared with using 'sorts ...'
+  private static Grammar getSorts(ATerm t) {
+    %match(ATerm t){
+      SYNTAX(_,productions) -> {
+        return `Sorts(getSortsList(productions));
+      }
+    }
+    throw new RuntimeException("Unable to translate: " + t);
   }
   private static Grammar getGrammar(ATerm t) {
     %match(ATerm t){
@@ -124,6 +140,23 @@ public class AST2Gom{
       }
     }
     throw new RuntimeException("Unable to translate: " + t);
+  }
+
+  private static GomTypeList getSortsList(ATermList l) {
+    %match(ATermList l){
+      (g,tail*) -> {
+        GomTypeList tmpL = getSortsList(`tail);
+        %match(ATerm g){
+          EQUALS(_,(type,_*)) -> {
+            return `concGomType(getGomType(type),tmpL*);
+          }
+        }
+      }
+      _ -> {
+        return `concGomType();
+      }
+    }
+    throw new RuntimeException("Unable to translate: " + l);
   }
   private static Production getProduction(ATerm t) {
     %match(ATerm t){
