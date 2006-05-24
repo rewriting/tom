@@ -26,8 +26,6 @@
   <property name="cril"           value="cril"/>
   <property name="gasel"          value="gasel"/>
 
-  <property name="xquery"         value="xquery"/>
-
   <target name="init" depends="tom.init">
     <!-- to have something correct, check tom.home is defined to something meaningful
     <fail unless="TOM_HOME"
@@ -151,18 +149,6 @@
     <gomcompile example="${gasel}"/>
     <tomcompile example="${gasel}"/>
     <javacompile example="${gasel}"/>
-  </target>
-
-  <target name="xquery" depends="init">
-    <tomcompile example="${xquery}"/>
-    <javacompile example="${xquery}"/>
-    <!-- copy resources -->
-    <copy todir="${examples.build}/${xquery}">
-      <fileset dir="${examples.dir}/${xquery}">
-        <include name="*.xquery"/>
-        <include name="*.html"/>
-      </fileset>
-    </copy>
   </target>
 
   <target name="examples" 
