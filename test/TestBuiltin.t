@@ -13,7 +13,7 @@ public class TestBuiltin extends TestCase {
 	}
   
   public void setUp() {
-    factory = new PureFactory(16);
+    factory = SingletonFactory.getInstance();
   }
 
   %include { int.tom }  
