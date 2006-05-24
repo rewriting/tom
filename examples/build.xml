@@ -29,7 +29,6 @@
   <property name="lsystems"        value="lsystems"/>
   <property name="parsingtests"   value="parsingtests"/>
   <property name="prodrule"       value="prodrule"/>
-  <property name="propp"          value="propp"/>
   <property name="xquery"         value="xquery"/>
 
   <target name="init" depends="tom.init">
@@ -167,32 +166,6 @@
     <javacompile example="${prodrule}"/>
   </target>
 
-  <target name="propp" depends="init">
-    <!--<adtcompile example="${propp}"
-      factory="seq"/>-->
-    <gomcompile example="${propp}"/>
-    <!-- build parser -->
-    <tom.preset outputfile="${examples.gen}/${propp}/SeqParser.g"
-                options="-I ${examples.gen}/${propp}"
-                srcdir="${examples.dir}"> 
-      <include name="${propp}/**/SeqParser.g.t"/>
-    </tom.preset>
-    <mkdir dir="${examples.gen}/${propp}"/>
-    <tomantlr target="${examples.gen}/${propp}/SeqParser.g"
-              outputdirectory="${examples.gen}/${propp}">
-      <classpath refid="tom.classpath"/>
-    </tomantlr>
-    <tomcompile example="${propp}"/>
-    <javacompile example="${propp}"/>
-    <!-- copy resources -->
-    <copy todir="${examples.build}/${propp}">
-      <fileset dir="${examples.dir}/${propp}">
-        <include name="examples"/>
-        <include name="*.sty"/>
-      </fileset>
-    </copy>
-  </target>
-	
   <target name="parsingtests" depends="init">
     <!--<adtcompile example="${propp}"
       factory="seq"/>-->
@@ -241,7 +214,7 @@
 
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="prodrule, propp">
+          depends="prodrule">
   </target>
 
   <target name="build.all">
@@ -301,11 +274,6 @@
 
         <include name="${prodrule}/*.java"/>
         <include name="${prodrule}/*.t"/>
-
-        <include name="${propp}/*.t"/>
-        <include name="${propp}/*.gom"/>
-        <include name="${propp}/*.sty"/>
-        <include name="${propp}/examples"/>
 
         <include name="${lib}/*.jar"/>
 

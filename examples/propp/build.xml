@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the propp example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="propp" value="propp"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${propp}"/>
+    <delete dir="${examples.build}/${propp}"/>
+  </target>
+  <target name="build" depends="init">
+    <!--<adtcompile example="${propp}"
+      factory="seq"/>-->
+    <gomcompile example="${propp}"/>
+    <!-- build parser -->
+    <tom.preset outputfile="${examples.gen}/${propp}/SeqParser.g"
+                options="-I ${examples.gen}/${propp}"
+                srcdir="${examples.dir}"> 
+      <include name="${propp}/**/SeqParser.g.t"/>
+    </tom.preset>
+    <mkdir dir="${examples.gen}/${propp}"/>
+    <tomantlr target="${examples.gen}/${propp}/SeqParser.g"
+              outputdirectory="${examples.gen}/${propp}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <tomcompile example="${propp}"/>
+    <javacompile example="${propp}"/>
+    <!-- copy resources -->
+    <copy todir="${examples.build}/${propp}">
+      <fileset dir="${examples.dir}/${propp}">
+        <include name="examples"/>
+        <include name="*.sty"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${propp}/*.t"/>
+        <include name="${propp}/*.gom"/>
+        <include name="${propp}/*.sty"/>
+        <include name="${propp}/examples"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
