@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the strategy example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="strategy" value="strategy"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${strategy}"/>
+    <delete dir="${examples.build}/${strategy}"/>
+  </target>
+  <target name="build" depends="init">
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${strategy}">
+      <fileset dir="${examples.dir}/${strategy}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+    <gomcompile example="${strategy}"/>
+    <tomcompile example="${strategy}"/>
+    <javacompile example="${strategy}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${strategy}/*.t"/>
+        <include name="${strategy}/*.gom"/>
+        <include name="${strategy}/*.xml"/>
+        <include name="${strategy}/**/*.java"/>
+        <include name="${strategy}/**/*.tom"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+</project>

@@ -39,11 +39,7 @@
   <property name="prodrule"       value="prodrule"/>
   <property name="propp"          value="propp"/>
   <property name="rbtree"         value="rbtree"/>
-  <property name="set"            value="set"/>
-  <property name="strategy"       value="strategy"/>
-  <property name="strings"        value="strings"/>
   <property name="structure"      value="structure"/>
-  <property name="ted"            value="ted"/>
   <property name="tutorial"       value="tutorial"/>
   <property name="vas"            value="vas"/>
   <property name="xml"            value="xml"/>
@@ -318,29 +314,6 @@
     <javacompile example="${rbtree}"/>
   </target>
 
-  <target name="set" depends="init">
-    <gomcompile example="${set}"/>
-    <tomcompile example="${set}"/>
-    <javacompile example="${set}"/>
-  </target>
-
-  <target name="strategy" depends="init">
-  <!-- copy resources in build -->
-    <copy todir="${examples.build}/${strategy}">
-      <fileset dir="${examples.dir}/${strategy}">
-        <include name="*.xml"/>
-      </fileset>
-    </copy>
-    <gomcompile example="${strategy}"/>
-    <tomcompile example="${strategy}"/>
-    <javacompile example="${strategy}"/>
-  </target>
-
-  <target name="strings" depends="init">
-    <tomcompile example="${strings}"/>
-    <javacompile example="${strings}"/>
-  </target>
-
   <target name="structure" depends="init">
     <subant target="build">
       <filelist dir=".">
@@ -442,7 +415,7 @@
           description="Builds the examples (at least some)"
           depends="matching, meta, mgs,
           nspk, p3p, peano, pnspk, poly, pqueens, prodrule, propp, rbtree, 
-          strategy, strings, structure, ted, tutorial, vas, xml, zenon">
+          structure, ted, tutorial, vas, xml, zenon">
   </target>
 
   <target name="build.all">
@@ -531,14 +504,6 @@
         <include name="${rbtree}/*.t"/>
         <include name="${rbtree}/*.gom"/>
         
-        <include name="${strategy}/*.t"/>
-        <include name="${strategy}/*.xml"/>
-        <include name="${strategy}/*.gom"/>
-        <include name="${strategy}/**/*.java"/>
-        <include name="${strategy}/**/*.tom"/>
-
-        <include name="${strings}/*.t"/>
-
         <include name="${structure}/*.t"/>
         <include name="${structure}/*.vas"/>
         <include name="${structure}/*.gom"/>
