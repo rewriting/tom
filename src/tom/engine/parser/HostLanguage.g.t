@@ -308,6 +308,7 @@ options{
   }
 
   private static String metaEncodeCode(String code) {
+    System.out.println("before: '" + code + "'");
     code = code.replaceAll("\\\"","\\\\\"");
     code = code.replaceAll("\\\\n","\\\\\\\\n");
     code = code.replaceAll("\\\\t","\\\\\\\\t");
@@ -317,6 +318,8 @@ options{
     code = code.replaceAll("\r","\\\\r");
     code = code.replaceAll("\t","\\\\t");
     code = code.replaceAll("\"","\\\"");
+    
+    System.out.println("after: '" + code + "'");
 
     return "\"" + code + "\"";
   }

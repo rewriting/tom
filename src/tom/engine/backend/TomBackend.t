@@ -195,13 +195,22 @@ public class TomBackend extends TomGenericPlugin {
     visit Instruction {
 			CompiledMatch[automataInst=inst, option=optionList] -> {
 				String moduleName = getModuleName(`optionList);
-				//if(moduleName==null && hasGeneratedMatch(`optionList)) 
-				//System.out.println("m = " + `m);
+
+				if(moduleName==null && hasGeneratedMatch(`optionList)) {
+					try {
+						moduleName = (String) stack.peek();
+            stack.push(moduleName);
+            System.out.println("push2: " + moduleName);
+					} catch (EmptyStackException e) {
+						System.out.println("No moduleName in stack");
+					}
+        } else {
+          stack.push(moduleName);
+          System.out.println("push1: " + moduleName);
+        }
 				//System.out.println("match -> moduleName = " + moduleName);
-				stack.push(moduleName);
-				System.out.println("push: " + moduleName);
 				try {
-					`TopDownCollector(stack).visit(`inst);
+					MuTraveler.init(`TopDownCollector(stack)).visit(`inst);
 				} catch (jjtraveler.VisitFailure e) {
 					System.out.println("visit failure");
 					`Fail().visit(null);
@@ -215,6 +224,7 @@ public class TomBackend extends TomGenericPlugin {
 		visit TomTerm {
 			(TermAppl|RecordAppl)[nameList=nameList] -> {
 				NameList l = `nameList;
+        System.out.println(`l);
 				while(!l.isEmpty()) {
 					try {
 						System.out.println("op: " + l.getHead());

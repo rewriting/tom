@@ -33,7 +33,6 @@ import tom.library.adt.tnode.types.*;
 import java.io.*;
 
 import aterm.*;
-import tom.library.traversal.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.MuStrategy;
@@ -46,12 +45,6 @@ public class HTMLToLaTeX {
   %include{ adt/tnode/TNode.tom }
   %include{ mutraveler.tom }
     
-  private XmlTools xtools;
-  private GenericTraversal traversal = new GenericTraversal();
-  private TNodeFactory getTNodeFactory() {
-    return xtools.getTNodeFactory();
-  }
-
   public static void main (String args[]) {
     HTMLToLaTeX html2latex = new HTMLToLaTeX();
     if (args.length == 2) {
@@ -67,7 +60,6 @@ public class HTMLToLaTeX {
   private static void write(String s) {
     try {
       out.write(s);
-      //System.out.print(s);
     } catch (IOException e) {
       System.out.println("Error in write");
     }
@@ -76,7 +68,7 @@ public class HTMLToLaTeX {
   private void run(String filename, String output){
     try {
       out = new FileWriter(output);
-      xtools = new XmlTools();
+      XmlTools xtools = new XmlTools();
       ATerm term = xtools.convertXMLToATerm(filename);
       toLaTeX(term);
       out.flush();
@@ -87,6 +79,7 @@ public class HTMLToLaTeX {
   }
     
   private static boolean firstLine, firstCol;
+
   private static void toLaTeX(ATerm subject) {
     VisitableVisitor rule = `ToLaTeX();
     try {
@@ -100,8 +93,6 @@ public class HTMLToLaTeX {
   %strategy ToLaTeX() extends `Identity() {
     visit TNode {
       <html><head>h*</head> <body>b*</body> </html> -> {
-        //System.out.println("t = " + t);
-        //System.out.println("h = " + h);
         write("\\documentclass{article}\n");
         toLaTeX(`h);
         write("\\begin{document}\n\\maketitle\n");
@@ -185,11 +176,7 @@ public class HTMLToLaTeX {
         write("img : "+`text);
         `Fail().visit(null);
       }
-      /*
-         <li>data*</li> -> { write("\\item "); toLaTeX(`data); write("\n"); `Fail().visit(null); }
-         <dd>data*</dd> -> { write("\\item "); toLaTeX(`data); write("\n"); `Fail().visit(null); }
-         <dt>data*</dt> -> { write("\\item "); toLaTeX(`data); write("\n"); `Fail().visit(null); }
-       */
+      
       <(li|dd|dt)>data*</(li|dd|dt)> -> { write("\\item "); toLaTeX(`data); write("\n"); `Fail().visit(null); }
 
       <code>data*</code> -> {
@@ -319,7 +306,6 @@ public class HTMLToLaTeX {
       return "l"+columnSpec(nbCol-1);
     }
   }
-
 
   %strategy ComputeWidth() extends `Identity() {
     visit TNode {
