@@ -350,22 +350,12 @@
     </subant>
   </target>
 
-  <target name="ted" depends="init"> 
-    <!-- <tomcompile example="${ted}"/> -->
-    <tom.preset srcdir="${examples.dir}"
-                destdir="${examples.gen}"
-	        optimize2="no">
-      <include name="${ted}/**/*.t"/>
-      <exclude name="${ted}/**/*.g.t"/>
-    </tom.preset>
-    <javacompile example="${ted}"/>
-    <!-- copy resources -->
-    <copy todir="${examples.build}/${ted}">
-      <fileset dir="${examples.dir}/${ted}">
-        <include name="*.ted"/>
-        <include name="aterms"/>
-      </fileset>
-    </copy>
+  <target name="ted" depends="init">
+    <subant target="build">
+      <filelist dir=".">
+        <file name="ted/build.xml"/>
+      </filelist>
+    </subant>
   </target>
 
   <target name="tutorial" depends="init">
