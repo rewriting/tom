@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the p3p example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="p3p" value="p3p"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${p3p}"/>
+    <delete dir="${examples.build}/${p3p}"/>
+  </target>
+  <target name="build" depends="init">
+    <tomcompile example="${p3p}"/>
+    <javacompile example="${p3p}"/>
+    <copy todir="${examples.build}/${p3p}">
+      <fileset dir="${examples.dir}/${p3p}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${p3p}/*.t"/>
+        <include name="${p3p}/*.xml"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
