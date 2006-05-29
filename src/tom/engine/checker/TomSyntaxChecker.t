@@ -76,11 +76,11 @@ public class TomSyntaxChecker extends TomChecker {
   private final static String MAKE        = "make";
 
   /** the list of already studied and declared Types */
-  private /*static*/ ArrayList alreadyStudiedTypes =  new ArrayList();
+  private  ArrayList alreadyStudiedTypes =  new ArrayList();
   /** the list of already studied and declared Symbol */
-  private /*static*/ ArrayList alreadyStudiedSymbols =  new ArrayList();
+  private  ArrayList alreadyStudiedSymbols =  new ArrayList();
   /** the list of already studied and declared Rule Symbol */
-  private /*static*/ ArrayList alreadyStudiedRule =  new ArrayList();
+  private  ArrayList alreadyStudiedRule =  new ArrayList();
 
   /** List of expected functional declaration in each type declaration */
   private final static ArrayList TypeTermSignature =
@@ -264,7 +264,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   } //verifyMultipleDefinition
 
-  private /*static*/ void checkField(String function, ArrayList foundFunctions, Option orgTrack, String symbolType) {
+  private  void checkField(String function, ArrayList foundFunctions, Option orgTrack, String symbolType) {
     if(foundFunctions.contains(function)) {
       foundFunctions.remove(foundFunctions.indexOf(function));
     } else {
@@ -274,7 +274,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   } //checkField
 
-  private /*static*/ void checkFieldAndLinearArgs(String function, ArrayList foundFunctions, Option orgTrack, String name1, String name2, String symbolType) {
+  private  void checkFieldAndLinearArgs(String function, ArrayList foundFunctions, Option orgTrack, String name1, String name2, String symbolType) {
     checkField(function,foundFunctions, orgTrack, symbolType);
     if(name1.equals(name2)) {
       messageError(orgTrack.getFileName(),orgTrack.getLine(),
@@ -286,7 +286,7 @@ public class TomSyntaxChecker extends TomChecker {
   /////////////////////////////////
   // SYMBOL DECLARATION CONCERNS //
   /////////////////////////////////
-  private /*static*/ void verifySymbol(String symbolType, TomSymbol tomSymbol){
+  private  void verifySymbol(String symbolType, TomSymbol tomSymbol){
     int domainLength;
     String symbStrName = tomSymbol.getAstName().getString();
     OptionList optionList = tomSymbol.getOption();
@@ -300,7 +300,7 @@ public class TomSyntaxChecker extends TomChecker {
     verifySymbolMacroFunctions(optionList, domainLength, symbolType);
   } //verifySymbol
 
-  private /*static*/ void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
+  private  void verifySymbolCodomain(TomType codomain, String symbName, String symbolType) {
     %match(TomType codomain) {
       Codomain(Name(opName)) -> {
         if(symbolTable().getSymbolFromName(`opName) == null) {
@@ -321,7 +321,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  private /*static*/ int verifySymbolDomain(TomTypeList args, String symbName, String symbolType) {
+  private  int verifySymbolDomain(TomTypeList args, String symbName, String symbolType) {
     int position = 1;
     if(symbolType == TomSyntaxChecker.CONSTRUCTOR) {
       %match(TomTypeList args) {
@@ -351,7 +351,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   } //verifySymbolDomain
 
-  private /*static*/ void verifySymbolMacroFunctions(OptionList list, int domainLength, String symbolType) {
+  private  void verifySymbolMacroFunctions(OptionList list, int domainLength, String symbolType) {
     ArrayList verifyList = new ArrayList();
     boolean foundOpMake = false;
     if(symbolType == TomSyntaxChecker.CONSTRUCTOR){ //Nothing absolutely necessary
@@ -407,7 +407,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }  //verifySymbolMacroFunctions
 
-  private /*static*/ void verifyMakeDeclArgs(TomList argsList, int domainLength, Option orgTrack, String symbolType){
+  private  void verifyMakeDeclArgs(TomList argsList, int domainLength, Option orgTrack, String symbolType){
       // we test the necessity to use different names for each variable-parameter.
     int nbArgs = 0;
     ArrayList listVar = new ArrayList();
@@ -430,7 +430,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   } //verifyMakeDeclArgs
 
-  private /*static*/ void verifySymbolPairNameDeclList(PairNameDeclList pairNameDeclList, String symbolType) {
+  private  void verifySymbolPairNameDeclList(PairNameDeclList pairNameDeclList, String symbolType) {
       // we test the existence of 2 same slot names
     ArrayList listSlot = new ArrayList();
     %match(PairNameDeclList pairNameDeclList) {
@@ -445,7 +445,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   } //verifySymbolPairNameDeclList
 
-  private /*static*/ void messageMissingMacroFunctions(String symbolType, ArrayList list) {
+  private  void messageMissingMacroFunctions(String symbolType, ArrayList list) {
     StringBuffer listOfMissingMacros = new StringBuffer();
     for(int i=0;i<list.size();i++) {
       listOfMissingMacros.append(list.get(i) + ",  ");
@@ -464,7 +464,7 @@ public class TomSyntaxChecker extends TomChecker {
   /*
    * Given a MatchConstruct's subject list and pattern-action list
    */
-  private /*static*/ void verifyMatch(TomList subjectList, PatternInstructionList patternInstructionList, OptionList list) {
+  private  void verifyMatch(TomList subjectList, PatternInstructionList patternInstructionList, OptionList list) {
     currentTomStructureOrgTrack = findOriginTracking(list);
     ArrayList typeMatchArgs = new ArrayList(),
       nameMatchArgs = new ArrayList();
@@ -503,7 +503,7 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   // each patternList shall have the expected length and each term shall be valid
-  private /*static*/ void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs, int nbExpectedArgs) {
+  private  void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs, int nbExpectedArgs) {
     int nbFoundArgs = termList.getLength();
     if(nbFoundArgs != nbExpectedArgs) {
       OptionList og = termList.getHead().getOption();
@@ -537,7 +537,7 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   // each term shall be valid
-  private /*static*/ void verifyWhenPattern(TomList termList) {
+  private  void verifyWhenPattern(TomList termList) {
     %match(TomList termList) {
       concTomTerm(_*, term, _*) -> {
         // the type is boolean, no variablestar, toplevel and permissive
@@ -549,7 +549,7 @@ public class TomSyntaxChecker extends TomChecker {
   /////////////////////////////////
   //STRATEGY VERIFICATION CONCERNS /
   /////////////////////////////////
-  private /*static*/ void verifyStrategy(TomVisitList visitList){
+  private  void verifyStrategy(TomVisitList visitList){
     while(!visitList.isEmpty()) {
       TomVisit visit = visitList.getHead();
       verifyVisit(visit);
@@ -558,7 +558,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  private /*static*/ void verifyVisit(TomVisit visit){
+  private  void verifyVisit(TomVisit visit){
     ArrayList typeMatchArgs = new ArrayList();
     %match(TomVisit visit) {
       VisitTerm(type,patternInstructionList,_) -> {
@@ -579,7 +579,7 @@ public class TomSyntaxChecker extends TomChecker {
   /////////////////////////////////
   // RULE VERIFICATION CONCERNS ///
   /////////////////////////////////
-  private /*static*/ void verifyRule(TomRuleList ruleList, OptionList optionList) {
+  private  void verifyRule(TomRuleList ruleList, OptionList optionList) {
     int ruleNumber = 0;
     currentTomStructureOrgTrack = findOriginTracking(optionList);
     String headSymbolName = "Unknown return type";
@@ -593,7 +593,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  private /*static*/ String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  headSymbolName, int ruleNumber) {
+  private  String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  headSymbolName, int ruleNumber) {
     String currentHeadSymbolName;
     TomType lhsType  = null;
     TomSymbol symbol = null;
@@ -673,7 +673,7 @@ public class TomSyntaxChecker extends TomChecker {
   /**
    * Rhs shall have no underscore, be a var* nor _*, nor a RecordAppl
    */
-  private /*static*/ void verifyRhsRuleStructure(TomTerm rhs, String lhsHeadSymbolName) {
+  private  void verifyRhsRuleStructure(TomTerm rhs, String lhsHeadSymbolName) {
     int termClass = getClass(rhs); 
     if(termClass != TERM_APPL && termClass != VARIABLE) {
       String termName;
@@ -713,7 +713,7 @@ public class TomSyntaxChecker extends TomChecker {
   /**
    * Analyse a term given an expected type and re-enter recursively on children
    */
-  public /*static*/ TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
+  public  TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
     String termName = "emptyName";
     TomType type = null;
     int termClass=-1;
@@ -897,7 +897,7 @@ public class TomSyntaxChecker extends TomChecker {
     return new TermDescription(termClass, termName, fileName,decLine, type);
   }
 
-  private /*static*/ void validateTermThrough(TomTerm term, boolean permissive) {
+  private  void validateTermThrough(TomTerm term, boolean permissive) {
     %match(TomTerm term) {
       TermAppl[args=arguments] -> {
         TomList args = `arguments;
@@ -915,7 +915,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  public /*static*/ TermDescription analyseTerm(TomTerm term) {
+  public  TermDescription analyseTerm(TomTerm term) {
     matchblock:{
       %match(TomTerm term) {
         TermAppl[option=options, nameList=(Name(str))] -> {
@@ -982,7 +982,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  private /*static*/ TomSymbol ensureValidUnamedList(TomType expectedType, String fileName,int decLine) {
+  private  TomSymbol ensureValidUnamedList(TomType expectedType, String fileName,int decLine) {
     SymbolList symbolList = symbolTable().getSymbolFromType(expectedType);
     SymbolList filteredList = `emptySymbolList();
     %match(SymbolList symbolList) {
@@ -1013,7 +1013,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  private /*static*/ TomSymbol ensureValidApplDisjunction(NameList nameList, TomType expectedType, String fileName, int decLine,
+  private  TomSymbol ensureValidApplDisjunction(NameList nameList, TomType expectedType, String fileName, int decLine,
                                                boolean permissive, boolean topLevel) {
     TomTypeList domainReference = null, currentDomain = null;
     TomSymbol symbol = null;
@@ -1083,7 +1083,7 @@ public class TomSyntaxChecker extends TomChecker {
     return symbol;
   }
 
-  private /*static*/ boolean ensureSymbolCodomain(TomType currentCodomain, TomType expectedType, TomMessage msg, String symbolName, String fileName,int decLine) {
+  private  boolean ensureSymbolCodomain(TomType currentCodomain, TomType expectedType, TomMessage msg, String symbolName, String fileName,int decLine) {
     if(currentCodomain != expectedType) {
       //System.out.println(currentCodomain+"!="+expectedType);
       messageError(fileName,decLine,
@@ -1094,7 +1094,7 @@ public class TomSyntaxChecker extends TomChecker {
     return true;
   }
 
-  private /*static*/ TomSymbol ensureValidRecordDisjunction(NameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
+  private  TomSymbol ensureValidRecordDisjunction(NameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
     if(nameList.isSingle()) { // Valid but has it a good type?
       String res = nameList.getHead().getString();
       TomSymbol symbol =  getSymbolFromName(res);
@@ -1121,7 +1121,7 @@ public class TomSyntaxChecker extends TomChecker {
   ///////////////////////
   // RECORDS CONCERNS ///
   ///////////////////////
-  private /*static*/ void verifyRecordStructure(OptionList option, String tomName, SlotList slotList, String fileName, int decLine)  {
+  private  void verifyRecordStructure(OptionList option, String tomName, SlotList slotList, String fileName, int decLine)  {
     TomSymbol symbol = getSymbolFromName(tomName);
     if(symbol != null) {
         // constants have an emptyPairNameDeclList
@@ -1143,7 +1143,7 @@ public class TomSyntaxChecker extends TomChecker {
 
     // We test the existence/repetition of slotName contained in pairSlotAppl
     // and then the associated term
-  private /*static*/ void verifyRecordSlots(SlotList slotList, TomSymbol tomSymbol, TomTypeList typeList, String methodName, String fileName, int decLine) {
+  private  void verifyRecordSlots(SlotList slotList, TomSymbol tomSymbol, TomTypeList typeList, String methodName, String fileName, int decLine) {
   TomName pairSlotName = null;
   ArrayList listOfPossibleSlot = null;
   ArrayList studiedSlotIndexList = new ArrayList();
@@ -1212,18 +1212,18 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  public /*static*/ void validateListOperatorArgs(TomList args, TomType expectedType, boolean permissive) {
+  public  void validateListOperatorArgs(TomList args, TomType expectedType, boolean permissive) {
     while(!args.isEmpty()) {
       validateTerm(args.getHead(), expectedType, true, false, permissive);
       args = args.getTail();
     }
   }
 
-  private /*static*/ boolean testTypeExistence(String typeName) {
+  private  boolean testTypeExistence(String typeName) {
     return symbolTable().getType(typeName) != null;
   }
 
-  static protected class TermDescription {
+  protected static class TermDescription {
     private int termClass;
     private String fileName;
     private int decLine;

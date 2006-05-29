@@ -32,7 +32,7 @@ import tom.gom.adt.objects.types.*;
 public class NullTemplate extends TemplateClass {
 
   /**
-   * The NullTemplate class generate only an empty file.
+   * The NullTemplate class generates nothing.
    */
   public NullTemplate(ClassName className) {
     super(className);

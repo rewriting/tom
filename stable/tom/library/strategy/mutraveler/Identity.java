@@ -1,6 +1,6 @@
 package tom.library.strategy.mutraveler;
 
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 
 /**
@@ -11,7 +11,7 @@ import jjtraveler.Visitable;
  * See also <a href="IdentityTest.java">IdentityTest</a>.
  */
 
-public class Identity extends AbstractVisitableVisitor {
+public class Identity extends AbstractMuStrategy {
   public Identity() {
     initSubterm();
   }

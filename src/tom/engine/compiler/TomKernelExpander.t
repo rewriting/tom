@@ -539,11 +539,11 @@ public class TomKernelExpander extends TomBase {
     throw new TomRuntimeException("expandVariableList: strange case: '" + symbol + "'");
   }
 
-  %strategy replace_replaceInstantiatedVariable(instantiatedvariable:TomList) extends `Identity() {
+  %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends `Identity() {
     visit TomTerm {
-      subject->{
-        %match(TomTerm subject, TomList instantiatedvariable){
-          RecordAppl[nameList=(opNameAST),slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*)-> {
+      subject -> {
+        %match(TomTerm subject, TomList instantiatedVariable) {
+          RecordAppl[nameList=(opNameAST),slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*) -> {
             return `var;
           }
           Variable[astName=opNameAST], concTomTerm(_*,var@Variable[astName=opNameAST] ,_*) -> {

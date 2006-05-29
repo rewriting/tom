@@ -1049,7 +1049,7 @@
   make(t0) { tom.engine.adt.tomsignature.TomTermFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeOption_OriginalText(t0)}
 }
 
-%op Option OriginTracking(astName:TomName, line:int, fileName:TomName) {
+%op Option OriginTracking(astName:TomName, line:int, fileName:String) {
   is_fsym(t) { (t!= null) && t.isOriginTracking()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(line,t) { t.getLine()}

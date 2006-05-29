@@ -32,11 +32,7 @@ public class BasicFormatter extends Formatter {
   public String format(LogRecord record) {
     if(record instanceof PlatformLogRecord) {
       PlatformLogRecord plr  = (PlatformLogRecord)record;
-      if (plr.isDetailed()){
-        return plr.getFilePath()+":"+plr.getLine()+": In structure "+plr.getStructInfo()+" declared line "+plr.getStructDeclLine()+","+ formatMessage(plr)+"\n";
-      }else{
-        return  plr.getFilePath()+":"+plr.getLine()+": "+formatMessage(plr)+"\n";
-      }
+      return  plr.getFilePath()+":"+plr.getLine()+": "+formatMessage(plr)+"\n";
     } else {
       return formatMessage(record)+"\n";
     }

@@ -933,7 +933,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
 
-  static private class MatchingParameter {
+  private static class MatchingParameter {
       /*
        * This object is used by matching-algorithms to store common parameters
        * which are not modified during the matching process

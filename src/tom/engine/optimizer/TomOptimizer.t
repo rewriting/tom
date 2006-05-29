@@ -151,7 +151,11 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
 
-  %op VisitableVisitor inlineInstruction(variableName:TomName, expression:Expression){
+  %typeterm MyVisitableVisitor {
+		implement { VisitableVisitor }
+	}
+
+  %op MyVisitableVisitor inlineInstruction(variableName:TomName, expression:Expression){
     make(variableName, expression) {`TopDown(inlineInstrOnce(variableName,expression))}
   }
 
@@ -165,7 +169,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %op VisitableVisitor computeOccurences(variableName:TomName, list:ArrayList){
+  %op MyVisitableVisitor computeOccurences(variableName:TomName, list:ArrayList){
     make(variableName, list) {`TopDown(findOccurence(variableName,list))}
   }
 
@@ -179,7 +183,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %op VisitableVisitor isAssigned(variableName:TomName){
+  %op MyVisitableVisitor isAssigned(variableName:TomName){
     make(variableName) {`TopDown(findAssignment(variableName))}
   }
 
@@ -218,7 +222,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   // use VisitFailure to stop visiting subterms 
-  %op VisitableVisitor collectRefVariable(set:HashSet){
+  %op MyVisitableVisitor collectRefVariable(set:HashSet){
     make(set) {`mu(MuVar("x"),Try(Sequence(findRefVariable(set),All(MuVar("x")))))}
     }
 
@@ -236,7 +240,7 @@ public class TomOptimizer extends TomGenericPlugin {
      * rename variable1 into variable2
      */
 
-    %op VisitableVisitor renameVariable(variable1: TomName, variable2: TomName){
+    %op MyVisitableVisitor renameVariable(variable1: TomName, variable2: TomName){
       make(variable1,variable2) {`TopDown(renameVariableOnce(variable1,variable2))}
     }
 

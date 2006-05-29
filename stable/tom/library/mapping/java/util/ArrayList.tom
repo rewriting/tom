@@ -29,7 +29,6 @@
  * 
  **/
 
-%include { Object.tom }
 %include { types/ArrayList.tom }
 
 /*

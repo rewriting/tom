@@ -39,17 +39,17 @@ public interface Plugin extends OptionOwner {
    * @param arg the input argument
    */
   public void setArgs(Object[] arg);
-  
+
   /**
    * Runs the plugin.
    */
   public void run();
-  
+
   /**
    * Retrieves the output of the plugin.
    *
    * @return the output argument
    */
   public Object[] getArgs();
-    
+
 }

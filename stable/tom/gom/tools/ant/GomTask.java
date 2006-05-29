@@ -40,6 +40,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * Compiles GOM source files. this task can take the following
  * arguments:
  * <ul>
+ * <li>config</li>
  * <li>srcdir</li>
  * <li>destdir</li>
  * <li>package</li>
@@ -49,6 +50,8 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
  * required.
+ * <b>config</b> has to be set if the Gom.xml file can't be found in
+ * <b>tom.home</b>.<p>
  *
 */
 
@@ -58,7 +61,7 @@ public class GomTask extends MatchingTask {
   private String options;
   private File   destdir;
   private String packagePrefix = null;
-  private File   configFile = null;
+  private File configFile = null;
   private File[] compileList = null;
   private boolean verbose = false;
   private boolean failOnError = true;
@@ -139,6 +142,11 @@ public class GomTask extends MatchingTask {
    * @throws BuildException if all required attributes are not set
    */
   protected void checkParameters() throws BuildException {
+    if (configFile == null && getProject().getProperty("tom.home") == null) {
+      throw new BuildException(
+          "config attribute has to be defined, or the tom.home property",
+          getLocation());
+    }
     if(getSrcdir() == null) {
       throw new BuildException("You must set at least one source directory");
     }
@@ -201,8 +209,8 @@ public class GomTask extends MatchingTask {
       }
       printCompileList(compileList);
       String str_command = "";
-      if(configFile != null) {
-        str_command = str_command.trim() + " -X " + configFile;
+      if(getConfig() != null) {
+        str_command = str_command.trim() + " -X " + getConfig();
       }
 
       if(getPackage() != null && getPackage().length() > 0) {
@@ -266,7 +274,18 @@ public class GomTask extends MatchingTask {
   }
 
   public File getConfig() {
-    return configFile;
+    if (configFile != null) {
+      return configFile;
+    } else {
+      String tom_home = getProject().getProperty("tom.home");
+      try {
+        return new File(tom_home,File.separator+"Gom.xml").getCanonicalFile();
+      } catch (IOException e) {
+        throw new BuildException(
+            "Unable to find Gom.xml in "+tom_home,
+            getLocation());
+      }
+    }
   }
 
   /**

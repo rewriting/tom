@@ -1,6 +1,6 @@
 package tom.library.strategy.mutraveler;
 
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 
@@ -13,7 +13,7 @@ import jjtraveler.VisitFailure;
  * <a href="FailTest.java">FailTest</a>
  */
 
-public class Fail extends AbstractVisitableVisitor {
+public class Fail extends AbstractMuStrategy {
   private String message;
     
   /** 

@@ -103,7 +103,7 @@ public class TomBackend extends TomGenericPlugin {
 				
         TomTerm pilCode = (TomTerm) getWorkingTerm();
 
-				//markUsedConstructorDestructor(pilCode);
+				markUsedConstructorDestructor(pilCode);
 
         generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
         // verbose
@@ -184,8 +184,12 @@ public class TomBackend extends TomGenericPlugin {
   %typeterm TomBackend {
 		implement { TomBackend }
 	}
+  
+  %typeterm MyVisitableVisitor {
+		implement { VisitableVisitor }
+	}
 
-  %op VisitableVisitor TopDownCollector(tb:TomBackend,s:Stack) {
+  %op MyVisitableVisitor TopDownCollector(tb:TomBackend,s:Stack) {
     make(tb,s) { `mu(MuVar("x"),Try(Sequence(Collector(tb,s),All(MuVar("x"))))) }
   }
 

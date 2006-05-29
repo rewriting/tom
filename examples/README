@@ -45,8 +45,11 @@ If you come from the
     - To compile all examples, run the script 'build.sh' from directory
     'examples', assuming Ant is installed. To compile a specific example,
     specify the example name.
-    For instance, to compile example 'peano' only, run 'build.sh peano'
-    (without the trailing backslash at the end of peano).
+		For instance, to compile example 'peano' only, run 
+    'build.sh -Dexample=peano build'.
+    Another possibility is to go into the directory and call 'ant': 
+    'cd peano'
+    'ant'
 
   Execution:
     - To run a specific example, go to directory examples/build/ and execute

@@ -1,5 +1,5 @@
 package tom.library.strategy.mutraveler;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -13,7 +13,7 @@ import jjtraveler.VisitFailure;
  * <p>
 */
 
-public class OmegaU extends AbstractVisitableVisitor {
+public class OmegaU extends AbstractMuStrategy {
   protected final static int ARG = 0;
   protected VisitableVisitor defaultStrategy;
   private static java.util.Random random = null;

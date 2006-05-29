@@ -1,6 +1,6 @@
 package tom.library.strategy.mutraveler;
 
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -33,7 +33,7 @@ public class Position {
     }
   }
 
-  protected Object clone() {
+  public Object clone() {
     Position clone = new Position(data.length);
     clone.size = size;
     System.arraycopy(data, 0, clone.data, 0, size);
@@ -148,6 +148,21 @@ public class Position {
   }
 
   /**
+   * create s=omegaPath(v)
+   * such that s[subject] applies s to all nodes in the path of omega
+   *
+   * @param v strategy subterm of the omega strategy
+   * @return the omegaPath strategy corresponding to the position
+   */
+  public VisitableVisitor getOmegaPath(VisitableVisitor v) {
+    VisitableVisitor res = v;
+    for(int i = size-1 ; i>=0 ; i--) {
+     res = new Sequence(v,new Omega(data[i],res));
+    }
+    return res;
+  }
+
+  /**
    * create s=omega(x->t)
    * such that s[subject] returns subject[t]|omega
    *
@@ -165,7 +180,7 @@ public class Position {
    * @return the omega strategy that retrieves the corresponding subterm
    */
   public VisitableVisitor getSubterm() {
-   return new AbstractVisitableVisitor() {
+   return new AbstractMuStrategy() {
      { initSubterm(); }
      public Visitable visit(Visitable subject) throws VisitFailure {
        final Visitable[] ref = new Visitable[1];

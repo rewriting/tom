@@ -43,6 +43,7 @@ public abstract class TemplateFactory {
   public abstract TemplateClass makeAbstractTypeTemplate(ClassName className, ClassName visitor, ClassNameList sortList);
   public abstract TemplateClass makeSortTemplate(ClassName className, ClassName abstractType, ClassName visitor, ClassNameList operators, SlotFieldList slots);
   public abstract TemplateClass makeOperatorTemplate(ClassName className, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks,TemplateClass mapping);
+  public abstract TemplateClass makeVariadicOperatorTemplate(ClassName className, ClassName abstractType, ClassName sort, ClassName empty, GomClass conc);
 }
 
 class SharedTemplateFactory extends TemplateFactory {
@@ -50,7 +51,7 @@ class SharedTemplateFactory extends TemplateFactory {
   public TemplateClass makeTomMappingTemplate(ClassName className, ClassName basicStrategy, GomClassList sortClasses, GomClassList opClasses) {
     return new tom.gom.backend.shared.MappingTemplate(className,basicStrategy,sortClasses,opClasses);
   }
-  public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor,ClassNameList importedVisitors, ClassName abstractType, ClassNameList importedAbstract,  GomClassList sortClasses, GomClassList opClasses) {
+  public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor,ClassNameList importedVisitors, ClassName abstractType, ClassNameList importedAbstract, GomClassList sortClasses, GomClassList opClasses) {
     return new tom.gom.backend.shared.ForwardTemplate(className, visitor, importedVisitors, abstractType, importedAbstract, sortClasses, opClasses);
   }
   public TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward) {
@@ -67,5 +68,8 @@ class SharedTemplateFactory extends TemplateFactory {
   }
   public TemplateClass makeOperatorTemplate(ClassName className, ClassName abstractType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks,TemplateClass mapping) {
     return new tom.gom.backend.shared.OperatorTemplate(className,abstractType,sort,visitor,slots,hooks,mapping);
+  }
+  public TemplateClass makeVariadicOperatorTemplate(ClassName className, ClassName abstractType, ClassName sort, ClassName empty, GomClass conc) {
+    return new tom.gom.backend.shared.VariadicOperatorTemplate(className,abstractType,sort,empty,conc);
   }
 }

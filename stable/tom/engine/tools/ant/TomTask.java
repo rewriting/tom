@@ -54,9 +54,10 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <li>stamp</li>
  * <li>nowarn</li>
  * </ul>
- * Of these arguments, the <b>config</b> and <b>sourcedir</b> are
- * required. Either <b>destdir</b> or <b>outputfile</b> have to be set.
- * <p>
+ * Of these arguments, only <b>sourcedir</b> is required.
+ * Either <b>destdir</b> or <b>outputfile</b> have to be set,
+ * and <b>config</b> has to be set if the Tom.xml file can't be found in
+ * <b>tom.home</b>.<p>
  * When this task executes, it will recursively scan the sourcedir and
  * destdir looking for Java source files to compile. This task makes its
  * compile decision based on timestamp.
@@ -64,8 +65,8 @@ import org.apache.tools.ant.util.SourceFileScanner;
 
 public class TomTask extends MatchingTask {
 
-  private static final String FAIL_MSG
-    = "Compile failed; see the compiler error output for details.";
+  private static final String FAIL_MSG =
+    "Compile failed; see the compiler error output for details.";
 
   private String options = null;
   private Path src;
@@ -96,7 +97,18 @@ public class TomTask extends MatchingTask {
   }
 
   public File getConfig() {
-    return configFile;
+    if (configFile != null) {
+      return configFile;
+    } else {
+      String tom_home = getProject().getProperty("tom.home");
+      try {
+        return new File(tom_home,File.separator+"Tom.xml").getCanonicalFile();
+      } catch (IOException e) {
+        throw new BuildException(
+            "Unable to find Tom.xml in "+tom_home,
+            getLocation());
+      }
+    }
   }
 
   /**
@@ -373,8 +385,7 @@ public class TomTask extends MatchingTask {
                          compileList.length, newFiles.length);
         compileList = newCompileList;
       }
-    }
-    else {
+    } else {
       GlobPatternMapper m = new GlobPatternMapper();
       m.setFrom("*.t");
       m.setTo("*.java");
@@ -406,9 +417,14 @@ public class TomTask extends MatchingTask {
    * silly has been entered.
    *
    * @since Ant 1.5
-   * @exception BuildException if an error occurs
+   * @throws BuildException if all required attributes are not set
    */
   protected void checkParameters() throws BuildException {
+    if (configFile == null && getProject().getProperty("tom.home") == null) {
+      throw new BuildException(
+          "config attribute has to be defined, or the tom.home property",
+          getLocation());
+    }
     if (src == null) {
       throw new BuildException("srcdir attribute must be set!",
                                getLocation());
@@ -461,8 +477,8 @@ public class TomTask extends MatchingTask {
       if(options != null && getOptions().trim().length() > 0) {
         cmd_line = cmd_line.trim() + " " + options;
       }
-      if(configFile != null) {
-        cmd_line = cmd_line.trim() + " -X " + configFile;
+      if(getConfig() != null) {
+        cmd_line = cmd_line.trim() + " -X " + getConfig();
       }
       if(destDir != null) {
         cmd_line = cmd_line.trim() + " -d " + destDir;
@@ -512,6 +528,11 @@ public class TomTask extends MatchingTask {
     }
   }
 
+  /**
+   * Splits a string using spaces, and returns the words in an array
+   * @param str the String to split
+   * @return the list of arguments
+   */
   private String[] split(String str) {
     try {
       String res[] = new String[0];

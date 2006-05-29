@@ -16,10 +16,10 @@
   <!ATTLIST optionmanager
     class CDATA #REQUIRED>
 
-	<!ELEMENT options (boolean*,integer*,string*)>
+  <!ELEMENT options (boolean*,integer*,string*)>
 
-	<!ELEMENT boolean EMPTY>
-	<!ATTLIST boolean
+  <!ELEMENT boolean EMPTY>
+  <!ATTLIST boolean
     name CDATA #REQUIRED
     altName CDATA ''
     description CDATA ''
@@ -43,14 +43,15 @@
 ]>
 
 <platform>
-  
   <plugins>
     <plugin name='Starter'
             version=''
             description='Only here to initialize the environment'
-            class='tom.gom.starter.GomStarter'/>		 
+            class='tom.gom.starter.GomStarter'/>
     <plugin name='Parser'
-            class='tom.gom.parser.GomParserPlugin'/>
+    class='tom.gom.parser.GomParserPlugin'/>
+    <!-- plugin name='PomGomParser'
+            class='tom.gom.parser.PomGomParserPlugin'/ -->
     <plugin name='Expander'
             class='tom.gom.expander.GomExpanderPlugin'/>
     <plugin name='TypeExpander'

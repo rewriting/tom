@@ -1,5 +1,5 @@
 package tom.library.strategy.mutraveler;
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
+import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import jjtraveler.Visitable;
 import jjtraveler.Visitor;
 import jjtraveler.reflective.VisitableVisitor;
@@ -12,7 +12,7 @@ import jjtraveler.VisitFailure;
  * this visitor to all children.
  */
 
-public class All extends AbstractVisitableVisitor {
+public class All extends AbstractMuStrategy {
   protected final static int ARG = 0;
 
   public All(VisitableVisitor v) {
@@ -22,7 +22,7 @@ public class All extends AbstractVisitableVisitor {
   public Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
     Visitable result = any;
-		Visitor S = getArgument(ARG);
+    Visitor S = getArgument(ARG);
     if (any instanceof MuVisitable) {
       boolean updated = false;
       Visitable[] childs = null;
@@ -58,7 +58,7 @@ public class All extends AbstractVisitableVisitor {
                 updated = true;
                 // allocate the array, and fill it
                 childs = new Visitable[childCount];
-								for (int j = 0 ; j<i ; j++) {
+                for (int j = 0 ; j<i ; j++) {
                   // System.out.println("All pos:"+i+", "+j+", "+any);
                   childs[j] = any.getChildAt(j);
                 }

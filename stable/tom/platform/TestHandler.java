@@ -36,7 +36,7 @@ public class TestHandler extends Handler {
   Vector records;
   Vector mess_attempted;
   int index;
- 
+
   /** Constructor */
   public TestHandler(String fileName) {
     records = new Vector();
@@ -46,7 +46,7 @@ public class TestHandler extends Handler {
       BufferedReader reader = new BufferedReader(new FileReader(new File(fileName+".nrt")));
       String line = reader.readLine();
       while(line != null){
-        // On specifie sur chaque ligne les erreurs attendues 
+        // On specifie sur chaque ligne les erreurs attendues
         // par le nom de la classe de messages (TomMessage,PluginPlatformMessage,...) suivi de " : ",
         // puis par le nom du champs correspondant au message attendu.
         String className = line.substring(0,line.indexOf(" : "));
@@ -73,15 +73,15 @@ public class TestHandler extends Handler {
     }
     return false;
   }
-  
+
   public boolean hasError() {
     return hasLog(Level.SEVERE);
   }
-  
+
   public boolean hasWarning() {
     return hasLog(Level.WARNING);
   }
-  
+
   public int nbOfLogs(Level level) {
     int nb_rec =0;
     Enumeration enumeration = records.elements();
@@ -91,15 +91,15 @@ public class TestHandler extends Handler {
     }
     return nb_rec;
   }
-  
+
   public int nbOfErrors() {
     return nbOfLogs(Level.SEVERE);
   }
-  
+
   public int nbOfWarnings() {
     return nbOfLogs(Level.WARNING);
   }
-  
+
   public void publish(LogRecord record) {
     records.add(record);
     if (record instanceof PlatformLogRecord){
@@ -107,7 +107,7 @@ public class TestHandler extends Handler {
     }
   }
 
-          
+
   // Part of Handler abstract interface
   public void close() {/*No resources to free */}
   public void flush() {/*No needs to flush any buffered output */}
@@ -121,7 +121,7 @@ public class TestHandler extends Handler {
   public String toString() {
     return records.toString();
   }
-  
+
   /**
    * This Handler keeps track of all LogRecords,  therefore this method always
    * returns true. Please note that since we receive the LogRecords from a
@@ -140,16 +140,16 @@ public class TestHandler extends Handler {
    * by comparing the content of the message, the line, the filepath and paramaters.
    * Currently, only the type of message is tested. It is insufficient because
    * most of the messages are encapsulated in a message of type DetailedMessage
-   * 
+   *
    * @param record a given LogRecord
    * @return true if the message was attempted by the non regression test file
    */
-  
+
   public void nonRegressionTest(PlatformLogRecord record){
-    //The nonRegressionTest method verify that all structured log messages (of type PlatformLogRecord) were attempted in the same order and with the same parameters. The attempted messages are contained in a file with suffix .nrt. Currently, only the type of messages are compared. 
+    //The nonRegressionTest method verify that all structured log messages (of type PlatformLogRecord) were attempted in the same order and with the same parameters. The attempted messages are contained in a file with suffix .nrt. Currently, only the type of messages are compared.
     PlatformMessage message = record.getPlatformMessage();
     //TODO : comparing this elements
-    int line = record.getLine();  
+    int line = record.getLine();
     String filePath = record.getFilePath();
     Object[] parameters = record.getParameters();
     System.out.println("Message attempted : "+mess_attempted.get(index));
@@ -165,5 +165,5 @@ public class TestHandler extends Handler {
 
     //TODO : at the end of the file analysis, verify that all attempted messages have been checked. In cases of conflicts, log the differences between the two traces.
   }
-  
-} // class TestHandler
+
+}

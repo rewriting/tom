@@ -37,14 +37,14 @@ public class PluginPlatformFactory {
 
   /** Log radical string*/
   public final static String LOG_RADICAL = "tom.platform";
-  
+
   /** "java.util.logging.config.file" */
   private final static String LOGGING_PROPERTY_FILE =
     "java.util.logging.config.file";
-  
+
   /** The root logger */
   private static Logger logger = Logger.getLogger(LOG_RADICAL);
-  
+
   /** the singleton instance*/
   private static PluginPlatformFactory instance = new PluginPlatformFactory();
 
@@ -65,7 +65,7 @@ public class PluginPlatformFactory {
       PluginPlatformFactory.logger.addHandler(consoleHandler);
     }
   }
-  
+
   /** the singleton accessor*/
   public static PluginPlatformFactory getInstance() {
     return instance;
@@ -88,18 +88,18 @@ public class PluginPlatformFactory {
     }
     return new PluginPlatform(confManager,logRadical);
   }
-  
+
   /**
    * This method analyzes the command line and determines which configuration
    * file should be used. As the tom scripts already specify a default
    * configuration file which can be overridden by the user, only the last one
    * is taken into account
-   * 
+   *
    * @param commandLine the command line
    * @return a String containing the path to the configuration file to be used
    */
   private static String extractConfigFileName(String[] commandLine) {
-    String xmlConfigurationFile = null; 
+    String xmlConfigurationFile = null;
     int i=0;
     List commandList = new ArrayList();
     try {
@@ -111,20 +111,20 @@ public class PluginPlatformFactory {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      logger.log(Level.SEVERE, 
-                 PluginPlatformMessage.incompleteXOption.getMessage(), 
+      logger.log(Level.SEVERE,
+                 PluginPlatformMessage.incompleteXOption.getMessage(),
                  commandLine[--i]);
       return null;
     }
-    
+
     if(xmlConfigurationFile==null) { // lack of a configuration file
       logger.log(Level.SEVERE, PluginPlatformMessage.configFileNotSpecified.getMessage());
       return null;
     }
-    
+
     File file = new File(xmlConfigurationFile);
     if(!file.exists()) { // the last specified configuration file doesn't exist
-      logger.log(Level.SEVERE, PluginPlatformMessage.configFileNotFound.getMessage(), 
+      logger.log(Level.SEVERE, PluginPlatformMessage.configFileNotFound.getMessage(),
                  xmlConfigurationFile);
       return null;
     }
