@@ -150,12 +150,7 @@ public class TomOptimizer extends TomGenericPlugin {
     return name;
   }
 
-
-  %typeterm MyVisitableVisitor {
-		implement { VisitableVisitor }
-	}
-
-  %op MyVisitableVisitor inlineInstruction(variableName:TomName, expression:Expression){
+  %op Strategy inlineInstruction(variableName:TomName, expression:Expression){
     make(variableName, expression) {`TopDown(inlineInstrOnce(variableName,expression))}
   }
 
@@ -169,7 +164,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %op MyVisitableVisitor computeOccurences(variableName:TomName, list:ArrayList){
+  %op Strategy computeOccurences(variableName:TomName, list:ArrayList){
     make(variableName, list) {`TopDown(findOccurence(variableName,list))}
   }
 
@@ -183,7 +178,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  %op MyVisitableVisitor isAssigned(variableName:TomName){
+  %op Strategy isAssigned(variableName:TomName){
     make(variableName) {`TopDown(findAssignment(variableName))}
   }
 
@@ -207,7 +202,7 @@ public class TomOptimizer extends TomGenericPlugin {
   private static boolean expConstantInBody(Expression exp, Instruction body) {
     HashSet c = new HashSet();
     try{
-      MuTraveler.init(`collectRefVariable(c)).visit(exp);
+      MuTraveler.init(`TopDownCollect(findRefVariable(c))).visit(exp);
     }catch(VisitFailure e){
       logger.log( Level.SEVERE, "Error during collecting variables in "+exp);
     }
@@ -220,11 +215,6 @@ public class TomOptimizer extends TomGenericPlugin {
     }
     return true; 
   }
-
-  // use VisitFailure to stop visiting subterms 
-  %op MyVisitableVisitor collectRefVariable(set:HashSet){
-    make(set) {`mu(MuVar("x"),Try(Sequence(findRefVariable(set),All(MuVar("x")))))}
-    }
 
     %strategy findRefVariable(set: HashSet) extends `Identity(){
       visit TomTerm {
@@ -240,7 +230,7 @@ public class TomOptimizer extends TomGenericPlugin {
      * rename variable1 into variable2
      */
 
-    %op MyVisitableVisitor renameVariable(variable1: TomName, variable2: TomName){
+    %op Strategy renameVariable(variable1: TomName, variable2: TomName){
       make(variable1,variable2) {`TopDown(renameVariableOnce(variable1,variable2))}
     }
 

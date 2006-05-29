@@ -189,15 +189,11 @@ public class TomBackend extends TomGenericPlugin {
 		implement { VisitableVisitor }
 	}
 
-  %op MyVisitableVisitor TopDownCollector(tb:TomBackend,s:Stack) {
-    make(tb,s) { `mu(MuVar("x"),Try(Sequence(Collector(tb,s),All(MuVar("x"))))) }
-  }
-
 	private void markUsedConstructorDestructor(TomTerm pilCode) {
 		Stack stack = new Stack();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
 		try {
-			VisitableVisitor v = `TopDownCollector(this,stack);
+			VisitableVisitor v = `TopDownCollect(Collector(this,stack));
 			v = MuTraveler.init(v);
 			v.visit(pilCode);
 		} catch (VisitFailure e) {
@@ -224,7 +220,7 @@ public class TomBackend extends TomGenericPlugin {
         }
 				//System.out.println("match -> moduleName = " + moduleName);
 				try {
-					MuTraveler.init(`TopDownCollector(tb,stack)).visit(`inst);
+					MuTraveler.init(`TopDownCollect(Collector(tb,stack))).visit(`inst);
 				} catch (jjtraveler.VisitFailure e) {
 					System.out.println("visit failure");
 					`Fail().visit(null);
@@ -236,7 +232,7 @@ public class TomBackend extends TomGenericPlugin {
 
       TypedAction[astInstruction=inst] -> {
         try {
-          MuTraveler.init(`TopDownCollector(tb,stack)).visit(`inst);
+          MuTraveler.init(`TopDownCollect(Collector(tb,stack))).visit(`inst);
         } catch (jjtraveler.VisitFailure e) {
           System.out.println("visit failure");
           `Fail().visit(null);
@@ -291,7 +287,7 @@ public class TomBackend extends TomGenericPlugin {
           tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
           // resolve uses in the symbol declaration
           try {
-            MuTraveler.init(`TopDownCollector(tb,stack)).visit(`tomSymbol);
+            MuTraveler.init(`TopDownCollect(Collector(tb,stack))).visit(`tomSymbol);
           } catch (jjtraveler.VisitFailure e) {
             System.out.println("visit failure");
             `Fail().visit(null);
@@ -312,7 +308,7 @@ public class TomBackend extends TomGenericPlugin {
           tb.getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
           // resolve uses in the symbol declaration
           try {
-            MuTraveler.init(`TopDownCollector(tb,stack)).visit(`tomSymbol.getPairNameDeclList());
+            MuTraveler.init(`TopDownCollect(Collector(tb,stack))).visit(`tomSymbol.getPairNameDeclList());
           } catch (jjtraveler.VisitFailure e) {
             System.out.println("visit failure");
             `Fail().visit(null);

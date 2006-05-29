@@ -119,11 +119,7 @@ public class TomCompiler extends TomGenericPlugin {
    * rename non-linear patterns
    */
 
-  %typeterm MyVisitableVisitor {
-		implement { VisitableVisitor }
-	}
-
-  %op MyVisitableVisitor preProcessing(compiler:TomCompiler){
+  %op Strategy preProcessing(compiler:TomCompiler){
      make(compiler){
        `(mu(MuVar("x"),ChoiceId(
                preProcessing_once(compiler),
@@ -336,7 +332,7 @@ matchBlock: {
     }//end match
   } // end strategy
 
-  %op MyVisitableVisitor preProcessing_makeTerm(compiler:TomCompiler){
+  %op Strategy preProcessing_makeTerm(compiler:TomCompiler){
      make(compiler){`mu(MuVar("x"),ChoiceId(preProcessing_makeTerm_once(compiler),All(MuVar("x"))))}
   }
 
@@ -600,7 +596,7 @@ itBlock: {
    * used by the when
    */
 
-  %op MyVisitableVisitor attachConstraint(variableSet:Set,constraint:TomTerm,compiler:TomCompiler){
+  %op Strategy attachConstraint(variableSet:Set,constraint:TomTerm,compiler:TomCompiler){
     make(variableSet,constraint,compiler){`mu(MuVar("x"),ChoiceId(attachConstraint_once(variableSet,constraint,compiler),All(MuVar("x"))))}
   }
 
