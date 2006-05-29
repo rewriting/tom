@@ -1,0 +1,155 @@
+/*
+ * basic operators
+ */
+
+  %op Strategy Identity() {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Identity) }
+    make() { new tom.library.strategy.mutraveler.Identity() }
+  }
+
+  %op Strategy Fail() {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Fail) }
+    make() { new tom.library.strategy.mutraveler.Fail() }
+  }
+
+  %op Strategy Not(s1:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Not) }
+    make(v) { new tom.library.strategy.mutraveler.Not(v) }
+  }
+
+  %op Strategy Sequence(s1:Strategy, s2:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Sequence) }
+    make(first,then) { new tom.library.strategy.mutraveler.Sequence(first,then) }
+  }
+
+  %op Strategy Choice(s1:Strategy, s2:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Choice) }
+    make(first,then) { new tom.library.strategy.mutraveler.Choice(first,then) }
+  }
+
+  %op Strategy All(s1:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.All) }
+    make(v) { new tom.library.strategy.mutraveler.All(v) }
+  }
+
+  %op Strategy One(s1:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.One) }
+    make(v) { new tom.library.strategy.mutraveler.One(v) }
+  }
+
+  %op Strategy Some(s1:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Some) }
+    make(v) { new tom.library.strategy.mutraveler.Some(v) }
+  }
+
+  %op Strategy IfThenElse(s1:Strategy, s2:Strategy, s3:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.IfThenElse) }
+    make(condition,trueCase,falseCase) { new tom.library.strategy.mutraveler.IfThenElse(condition,trueCase,falseCase) }
+  }
+
+  %op Strategy MuVar(var:String) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.MuVar) }
+    make(name) { new tom.library.strategy.mutraveler.MuVar(name) }
+  }
+
+  %op Strategy Omega(position:int, s1:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Omega) }
+    make(pos,v) { new tom.library.strategy.mutraveler.Omega(pos,v) }
+  }
+/*
+ * basic operators with Id considered as a failure
+ */
+
+  %op Strategy OneId(s1:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.OneId) }
+    make(v) { new tom.library.strategy.mutraveler.OneId(v) }
+  }
+
+  %op Strategy SequenceId(s1:Strategy, s2:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.SequenceId) }
+    make(first,then) { new tom.library.strategy.mutraveler.SequenceId(first,then) }
+  }
+
+  %op Strategy ChoiceId(s1:Strategy, s2:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.ChoiceId) }
+    make(first,then) { new tom.library.strategy.mutraveler.ChoiceId(first,then) }
+  }
+
+/*
+ * basic probabilistic operators
+ */
+
+  %op Strategy Pselect(p1:int, p2:int, s1:Strategy, s2:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Pselect) }
+    make(p,q,first,then) { new tom.library.strategy.mutraveler.Pselect(p,q,first,then) }
+  }
+
+  %op Strategy OmegaU(s1:Strategy, defaultStrategy:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.OmegaU) }
+    make(v,d) { new tom.library.strategy.mutraveler.OmegaU(v,d) }
+  }
+
+/*
+ * strategies
+ */
+
+  %op Strategy Try(s1:Strategy) {
+    make(v) { `Choice(v,Identity()) }
+  }
+
+  %op Strategy TopDown(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Sequence(v,All(MuVar("x")))) }
+  }
+  
+  %op Strategy TopDownCollect(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Try(Sequence(v,All(MuVar("x"))))) }
+  }
+
+  %op Strategy BottomUp(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),v)) }
+  }
+
+  %op Strategy OnceBottomUp(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Choice(One(MuVar("x")),v)) }
+  }
+
+  %op Strategy OnceTopDown(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Choice(v,One(MuVar("x")))) }
+  }
+
+  %op Strategy Innermost(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),Try(Sequence(v,MuVar("x"))))) }
+  }
+
+  %op Strategy Repeat(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Choice(Sequence(v,MuVar("x")),Identity())) }
+  }
+
+/*
+ * strategies with Id considered as failure
+ */
+
+  %op Strategy TryId(s1:Strategy) {
+    make(v) { v }
+  }
+
+  %op Strategy RepeatId(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),SequenceId(v,MuVar("x"))) }
+  }
+
+  %op Strategy OnceBottomUpId(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),ChoiceId(OneId(MuVar("x")),v)) }
+  }
+
+  %op Strategy OnceTopDownId(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),ChoiceId(v,OneId(MuVar("x")))) }
+  }
+
+  %op Strategy InnermostId(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),SequenceId(v,MuVar("x")))) }
+  }
+
+  %op Strategy OutermostId(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),Sequence(SequenceId(v,MuVar("x")),All(MuVar("x")))) }
+  }
+
