@@ -1,4 +1,4 @@
-// $ANTLR 2.7.6 (2005-12-22): "HostLanguage.g" -> "HostLexer.java"$
+// $ANTLR 2.7.6 (20060516): "HostLanguage.g" -> "HostLexer.java"$
 /*
  *
  * TOM - To One Matching Compiler

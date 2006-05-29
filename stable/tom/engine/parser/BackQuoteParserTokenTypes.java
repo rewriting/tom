@@ -1,4 +1,4 @@
-// $ANTLR 2.7.6 (2005-12-22): "BackQuoteLanguage.g" -> "BackQuoteParser.java"$
+// $ANTLR 2.7.6 (20060516): "BackQuoteLanguage.g" -> "BackQuoteParser.java"$
 /*
  * 
  * TOM - To One Matching Compiler

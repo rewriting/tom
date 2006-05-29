@@ -1,4 +1,4 @@
-// $ANTLR 2.7.6 (2005-12-22): "PomGomParser.g" -> "PomGomParser.java"$
+// $ANTLR 2.7.6 (20060516): "PomGomParser.g" -> "PomGomParser.java"$
 
   /*
    * Gom

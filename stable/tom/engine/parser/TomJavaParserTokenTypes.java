@@ -1,4 +1,4 @@
-// $ANTLR 2.7.6 (2005-12-22): "TomJavaParser.g" -> "TomJavaParser.java"$
+// $ANTLR 2.7.6 (20060516): "TomJavaParser.g" -> "TomJavaParser.java"$
 /*
  *
  * TOM - To One Matching Compiler
