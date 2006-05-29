@@ -184,29 +184,49 @@ public class TomBackend extends TomGenericPlugin {
   %typeterm TomBackend {
 		implement { TomBackend }
 	}
-  
-  %typeterm MyVisitableVisitor {
-		implement { VisitableVisitor }
-	}
+ 
+  private VisitableVisitor markStrategy = null;
+  private void applyMarkStrategy(jjtraveler.Visitable subject) {
+    try {
+      markStrategy.visit(subject);
+    } catch (VisitFailure e) {
+      System.out.println("reduction failed on: " +subject);
+		}
+  }
 
 	private void markUsedConstructorDestructor(TomTerm pilCode) {
 		Stack stack = new Stack();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
-		try {
-			VisitableVisitor v = `TopDownCollect(Collector(this,stack));
-			v = MuTraveler.init(v);
-			v.visit(pilCode);
-		} catch (VisitFailure e) {
-      System.out.println("reduction failed on: " + pilCode);
-		}
+    markStrategy = MuTraveler.init(`TopDownCollect(Collector(this,stack)));
+    applyMarkStrategy(pilCode);
 	}
+
+  private void setUsedSymbolConstructor(String moduleName, TomSymbol tomSymbol) {
+    SymbolTable st = getSymbolTable(moduleName);
+    if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
+      applyMarkStrategy(tomSymbol);
+    }
+    getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
+  }
+
+  private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol) {
+    SymbolTable st = getSymbolTable(moduleName);
+    if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
+      applyMarkStrategy(tomSymbol);
+    }
+    getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
+  }
 
 	%strategy Collector(tb:TomBackend,stack:Stack) extends `Identity() {
     visit Instruction {
 			CompiledMatch[automataInst=inst, option=optionList] -> {
 				String moduleName = getModuleName(`optionList);
-
-				if(moduleName==null) { // && hasGeneratedMatch(`optionList)) {
+        /*
+         * push the modulename
+         * or the wrapping modulename if the current one
+         * (nested match for example) does not have one
+         */
+				if(moduleName==null) {
 					try {
 						moduleName = (String) stack.peek();
             stack.push(moduleName);
@@ -219,24 +239,14 @@ public class TomBackend extends TomGenericPlugin {
           //System.out.println("push1: " + moduleName);
         }
 				//System.out.println("match -> moduleName = " + moduleName);
-				try {
-					MuTraveler.init(`TopDownCollect(Collector(tb,stack))).visit(`inst);
-				} catch (jjtraveler.VisitFailure e) {
-					System.out.println("visit failure");
-					`Fail().visit(null);
-				}
+        tb.applyMarkStrategy(`inst);
 				//String pop = (String) stack.pop();
 				//System.out.println("pop: " + pop);
 				`Fail().visit(null);
 			}
 
       TypedAction[astInstruction=inst] -> {
-        try {
-          MuTraveler.init(`TopDownCollect(Collector(tb,stack))).visit(`inst);
-        } catch (jjtraveler.VisitFailure e) {
-          System.out.println("visit failure");
-          `Fail().visit(null);
-        }
+        tb.applyMarkStrategy(`inst);
         `Fail().visit(null);
       }
 		}
@@ -248,7 +258,7 @@ public class TomBackend extends TomGenericPlugin {
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
-          tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol);
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
@@ -266,11 +276,7 @@ public class TomBackend extends TomGenericPlugin {
 						String moduleName = (String) stack.peek();
 						//System.out.println("moduleName: " + moduleName);
             TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHead().getString(),tb.getSymbolTable(moduleName)); 
-            if(tomSymbol!=null) {
-              tb.getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
-            } else {
-              System.out.println("null symbol: " + l.getHead().getString());
-            }
+            tb.setUsedSymbolDestructor(moduleName,tomSymbol);
 					} catch (EmptyStackException e) {
 						System.out.println("No moduleName in stack");
 					}
@@ -284,14 +290,7 @@ public class TomBackend extends TomGenericPlugin {
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
-          tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
-          // resolve uses in the symbol declaration
-          try {
-            MuTraveler.init(`TopDownCollect(Collector(tb,stack))).visit(`tomSymbol);
-          } catch (jjtraveler.VisitFailure e) {
-            System.out.println("visit failure");
-            `Fail().visit(null);
-          }
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol);
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
@@ -302,17 +301,11 @@ public class TomBackend extends TomGenericPlugin {
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
-          tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol);
           /* XXX: Also mark the destructors as used, since some generated
            * functions will use them */
-          tb.getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
+          tb.setUsedSymbolDestructor(moduleName,tomSymbol);
           // resolve uses in the symbol declaration
-          try {
-            MuTraveler.init(`TopDownCollect(Collector(tb,stack))).visit(`tomSymbol.getPairNameDeclList());
-          } catch (jjtraveler.VisitFailure e) {
-            System.out.println("visit failure");
-            `Fail().visit(null);
-          }
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
