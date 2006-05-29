@@ -541,56 +541,23 @@ public class TomKernelExpander extends TomBase {
 
   %strategy replace_replaceInstantiatedVariable(instantiatedvariable:TomList) extends `Identity() {
     visit TomTerm {
-  subject->{
-        %match(TomList instantiatedvariable,TomTerm subject){
-          concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*), RecordAppl[nameList=(opNameAST),slots=concSlot()] -> {
+      subject->{
+        %match(TomTerm subject, TomList instantiatedvariable){
+          RecordAppl[nameList=(opNameAST),slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*)-> {
             return `var;
           }
-          concTomTerm(_*,var@Variable[astName=opNameAST] ,_*), Variable[astName=opNameAST] -> {
-            System.out.println("Variable :"+`opNameAST);
-          System.out.println("Position :"+MuTraveler.getPosition(this));
+          Variable[astName=opNameAST], concTomTerm(_*,var@Variable[astName=opNameAST] ,_*) -> {
             return `var;
           }
-
-          concTomTerm(_*,var@VariableStar[astName=opNameAST] ,_*),  VariableStar[astName=opNameAST] -> {
-            System.out.println("Variable star:"+`opNameAST);
-          System.out.println("Position :"+MuTraveler.getPosition(this));
+          VariableStar[astName=opNameAST],concTomTerm(_*,var@VariableStar[astName=opNameAST] ,_*) -> {
             return `var;
           }
-        }
-      }
-        }
-    }
-/**
-  RecordAppl[nameList=(opNameAST),slots=concSlot()] -> {
-        %match(TomList instantiatedvariable){
-          concTomTerm(_*,var@(Variable|VariableStar)[astName=opNameAST] ,_*) ->{
-            return `var;
-          }
-        }
-      }
-    Variable[astName=opNameAST] -> {
-      %match(TomList instantiatedvariable){
-        concTomTerm(_*,var@Variable[astName=opNameAST] ,_*)->{
-          System.out.println("Variable :"+`opNameAST);
-          System.out.println("Position :"+MuTraveler.getPosition(this));
-          return `var;
         }
       }
     }
-    VariableStar[astName=opNameAST] -> {
-      %match(TomList instantiatedvariable){
-        concTomTerm(_*,var@VariableStar[astName=opNameAST] ,_*) ->{
-          System.out.println("Variable star :"+`opNameAST);
-          System.out.println("Position :"+MuTraveler.getPosition(this));
-          return `var;
-        }
-    }    
   }
-*/
 
   protected TomTerm replaceInstantiatedVariable(TomList instantiatedVariable, TomTerm subject) {
- System.out.println("remplacement des var instanciees dans le sujet "+subject);
     if(instantiatedVariable == null) {
       throw new TomRuntimeException("replaceInstantiatedVariable: null instantiatedVariable");
     }
