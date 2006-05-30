@@ -156,6 +156,22 @@ class Utils {
     return set;
   }
 
+  %strategy CollectNewVars(set: Collection) extends `Identity() {
+    visit Term {
+      x@NewVar[] -> { set.add(`x); }
+    }
+  }
+
+  public static HashSet getNewVars(SeqList list) {
+    HashSet set = new HashSet();
+    try {
+      MuTraveler.init(`TopDown(CollectNewVars(set))).visit(list);
+    } catch ( VisitFailure e) {
+      e.printStackTrace();
+    }
+    return set;
+  }
+
   // handling user input
   public static String getInput() {
      String res = null;

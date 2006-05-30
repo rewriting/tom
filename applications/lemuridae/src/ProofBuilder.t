@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.LinkedList;
 import java.util.ArrayList;
-
+import java.util.StringTokenizer; 
 
 import java.io.*;
 import antlr.*;
@@ -37,9 +37,11 @@ public class ProofBuilder {
     }
   }
 
-  public static SeqList applyRule(Rule rule, Sequent seq, Prop active) throws Exception {
+  public static SeqList applyRule(Rule rule, Sequent seq, Prop active,
+                                  Map<Term,Term> args) throws Exception {
 
     SeqList res = rule.getprem();
+    // si la regle instancie des variables, il faut dupliquer la proposition
     Prop conclusion = rule.getconcl();
 
 
@@ -57,22 +59,34 @@ public class ProofBuilder {
     }
 
 
-    // creation des variables fraiches
+    // creation des variables fraiches (forall right et exists left)
     Set<Term> fresh = Utils.getSideConstraints(rule.getprem());
     for (Term fvar : fresh) {
       String bname = fvar.getbase_name();
       Term new_var = Utils.freshVar(bname, seq);
       res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
     }
-   
+
+    // remplacement des nouvelles variables (forall left et exists right)
+    Set<Term> new_vars = Utils.getNewVars(rule.getprem());
+    if (new_vars.size() != args.size())
+      throw new Exception("Wrong variables number");
+    Set<Map.Entry<Term,Term>> entries2 = args.entrySet();
+    for (Map.Entry<Term,Term> ent: entries2) {
+      Term old_term = ent.getKey();
+      if (! new_vars.contains(old_term))
+        throw new Exception("Variable " + old_term.getname() +" not present in the rule");
+      Term new_term = ent.getValue();
+      res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
+    }
 
     // ajout des contextes dans les premisses
     b: {
      %match (Rule rule, Sequent seq, Prop active) {
 
        // si c'est une regle gauche
-       ruledesc(0,_,_), sequent(context(u*,act,v*),c), act -> {
-         Context gamma = `context(u*,v*);
+       ruledesc(0,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
+         Context gamma = args.size() < 0 ? `context(u*,v*) : `ctxt;
          try { 
            VisitableVisitor v1 = `AddInContexts(gamma);
            res = (SeqList) MuTraveler.init(`TopDown(v1)).visit(res); 
@@ -83,11 +97,11 @@ public class ProofBuilder {
        }
 
        // si c'est une regle droite
-       ruledesc(1,_,_), sequent(ctxt,(u*,act,v*)), act -> {
+       ruledesc(1,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
          try { 
            VisitableVisitor v1 = `AddInContexts(ctxt);
            res = (SeqList) MuTraveler.init(`TopDown(v1)).visit(res);
-           Context delta = `context(u*,v*);
+           Context delta = args.size() < 0 ? `context(u*,v*) : `c;
            VisitableVisitor v2 = `PutInConclusion(delta);
            res = (SeqList) MuTraveler.init(`TopDown(v2)).visit(res); 
          } catch (VisitFailure e) {  e.printStackTrace();  }
@@ -186,6 +200,17 @@ public class ProofBuilder {
       }
     }
     throw new Exception("can't apply rule bottom");
+  }
+
+  // Top
+ 
+  public static SeqList applyTop(Sequent seq) throws Exception {
+    %match(Sequent seq) {
+      sequent(_,(_*,top(),_*)) -> {
+        return `concSeq();
+      }
+    }
+    throw new Exception("can't apply rule top");
   }
 
   // forall
@@ -383,13 +408,26 @@ public class ProofBuilder {
       /* applying one of the custom rules */
       else if (command.startsWith("rule")) {
         int n;
+        HashMap<Term,Term> args = new HashMap<Term,Term>();
         try { n = Integer.parseInt(command.substring(4).trim()); }
-        catch (NumberFormatException e) { continue; }
-        if (n < newRules.size()) {
+        catch (Exception e) { continue; } // TODO specialize exceptions
+ 
+
+       if (n < newRules.size()) {
           // TODO verify hand side
           try {
             Rule rule = newRules.get(n);
-            SeqList slist = applyRule(rule, goal, active);
+
+            // asking for new vars
+            Set<Term> new_vars = Utils.getNewVars(rule.getprem());
+            for (Term t : new_vars) {
+              String varname = t.getname();
+              System.out.print("new term for variable " + varname + " in rule " + n + " > ");
+              Term new_var = Utils.getTerm();
+              args.put(t, new_var);
+            }
+
+            SeqList slist = applyRule(rule, goal, active, args);
 
             // create open leafs
             Premisses prems = `premisses();
@@ -409,7 +447,7 @@ public class ProofBuilder {
           } catch (Exception e) {
             System.out.println("Can't apply custom rule "+n+": " + e.getMessage());
           }
-        }
+       }
       }
 
       /* All classical rules */
@@ -431,7 +469,7 @@ public class ProofBuilder {
                 slist = applyAndR(goal,active);
                 applied = true;
               }
-              
+
               // Or R
               or[] -> {
                 ruleName = "or R";
@@ -548,7 +586,7 @@ public class ProofBuilder {
 
           focus_left = false;
           focus = 1;
- 
+
 
         } catch (Exception e) {
           System.out.println("can't apply rule axiom : " + e.getMessage());
@@ -569,12 +607,34 @@ public class ProofBuilder {
 
           focus_left = false;
           focus = 1;
- 
+
 
         } catch (Exception e) {
-          System.out.println("can't apply rule axiom : " + e.getMessage());
+          System.out.println("can't apply rule bottom : " + e.getMessage());
         }
       }
+
+      /* top case */
+      else if (command.equals("top")) {
+        try {
+          SeqList slist = null;
+
+          slist = applyTop(goal); 
+
+          Tree newrule = `rule("axiom", premisses(), goal, active);
+          tree = (Tree) MuTraveler.init(currentPos.getReplace(newrule)).visit(tree);
+          openGoals.remove(currentPos);
+          currentGoal = 0;
+
+          focus_left = false;
+          focus = 1;
+
+
+        } catch (Exception e) {
+          System.out.println("can't apply rule bottom : " + e.getMessage());
+        }
+      }
+
 
       /* end of the big switch */
     } // while still open goals

@@ -43,6 +43,11 @@ public class RuleCalc {
         return `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
       }
 
+      // top
+      (X*,ruledesc(hs,c,(x*,sequent(_,(_*,top(),_*)),y*)),Y*) -> {
+        return `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
+      }
+
       // and R
       (X*,ruledesc(hs,c,(x*,sequent(ctxt,(u*,and(a,b),v*)),y*)),Y*) -> {
         return `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,context(u*,a,v*)),sequent(ctxt,context(u*,b,v*)), y*)),Y*);
@@ -85,7 +90,15 @@ public class RuleCalc {
       (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
         return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
       }
-     
+
+      // forall L
+      l@(X*,ruledesc(hs,c,(x*, sequent((u*,forAll(n,a),v*),p), y*)), Y*) -> {
+        // TODO add negative position test
+        String new_n = Utils.freshVar(`n,`l).getname();
+        Term fresh_v = `NewVar(new_n,n);
+        Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
+        return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,new_a,v*),p), y*)), Y*);
+      }
     }
   }
 

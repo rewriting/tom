@@ -129,11 +129,13 @@ class PrettyPrinter {
     }
 
     %match(Premisses term) {
+      () -> { return ""; }
       (x) -> { return toLatex(`x); }
       (h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
     }
 
     %match(Context term) {
+      () -> { return ""; }
       (x) -> { return toLatex(`x); }
       (h,t*) -> {return toLatex(`h) + ", " + toLatex(`t);}
     }
@@ -257,6 +259,7 @@ class PrettyPrinter {
     }
 
     %match(SeqList term) {
+      () -> { return ""; }
       (x) -> { return prettyPrint(`x); }
       (t,q*) -> {	return prettyPrint(`t) + "    " + prettyRule(`q); }
     }
