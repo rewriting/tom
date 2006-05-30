@@ -22,8 +22,27 @@ public class RuleCalc {
   %include { sequents/sequents.tom }
   %include { mutraveler.tom }
 
-  static int counter = 0;
 
+  public static boolean forallInNegativePosition(Prop p) {
+    return forallNeg(p, true);
+  }
+
+  public static boolean forallInPositivePosition(Prop p) {
+    return forallNeg(p, false);
+  }
+
+
+  private static boolean forallNeg(Prop p, boolean current) {
+    %match(Prop p) {
+      (relationAppl | top | bottom) [] -> { return false; }
+      (and | or) (p1,p2) -> { return forallNeg(`p1,current) || forallNeg(`p2,current); }
+      implies(p1,p2) -> { return forallNeg(`p1, !current) || forallNeg(`p2,current); }
+      forAll(_,p1) -> { return current ? forallNeg(`p1,current) : true; }
+      exists(_,p1) -> { return current ? true : forallNeg(`p1,current); }
+    }
+    return false;
+  }
+  
   %strategy NewRulesVisitor() extends `Identity() {
     
     visit RuleList {
@@ -71,6 +90,16 @@ public class RuleCalc {
         return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, context(u*,new_a,v*)), y*)), Y*);
       }
 
+      // exists R
+      l@(X*,ruledesc(hs,c,(x*, sequent(ctxt,(u*,exists(n,a),v*)), y*)), Y*) -> {
+        if (! forallInPositivePosition(`a)) {
+          String new_n = Utils.freshVar(`n,`l).getname();
+          Term new_v = `NewVar(new_n,n);
+          Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), new_v);
+          return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, context(u*,new_a,v*)), y*)), Y*);
+        }
+      }
+ 
 	    // and L
 	    (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
         return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
@@ -91,13 +120,22 @@ public class RuleCalc {
         return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
       }
 
-      // forall L
-      l@(X*,ruledesc(hs,c,(x*, sequent((u*,forAll(n,a),v*),p), y*)), Y*) -> {
-        // TODO add negative position test
+	    // exists L
+      l@(X*,ruledesc(hs,c,(x*, sequent((u*,exists(n,a),v*),p), y*)), Y*) -> {
         String new_n = Utils.freshVar(`n,`l).getname();
-        Term fresh_v = `NewVar(new_n,n);
+        Term fresh_v = `FreshVar(new_n,n);
         Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
         return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,new_a,v*),p), y*)), Y*);
+      }
+      
+      // forall L
+      l@(X*,ruledesc(hs,c,(x*, sequent((u*,forAll(n,a),v*),p), y*)), Y*) -> {
+        if (! forallInNegativePosition(`a)) {
+          String new_n = Utils.freshVar(`n,`l).getname();
+          Term new_v = `NewVar(new_n,n);
+          Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), new_v);
+          return `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,new_a,v*),p), y*)), Y*);
+        }
       }
     }
   }

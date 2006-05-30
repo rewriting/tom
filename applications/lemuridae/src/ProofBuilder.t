@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.Map;
 import java.util.LinkedList;
 import java.util.ArrayList;
-import java.util.StringTokenizer; 
 
 import java.io.*;
 import antlr.*;
@@ -32,7 +31,6 @@ public class ProofBuilder {
 
   %strategy PutInConclusion(ctxt:Context) extends `Identity() {
     visit Sequent {
-//      sequent(hyp,(nullProp())) -> { return `sequent(hyp,ctxt);} // FIXME un peu crade 
       sequent(hyp,concl) -> { return `sequent(hyp,context(concl*,ctxt*));} 
     }
   }
