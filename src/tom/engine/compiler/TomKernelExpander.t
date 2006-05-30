@@ -50,6 +50,9 @@ public class TomKernelExpander extends TomBase {
     implement { TomKernelExpander }
   }
 
+  %op Strategy ChoiceTopDown(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),ChoiceId(v,All(MuVar("x")))) }
+  }
 
   private SymbolTable symbolTable;
 
@@ -411,26 +414,32 @@ public class TomKernelExpander extends TomBase {
       throw new TomRuntimeException("expandVariable: null contextSubject");
     }
     try{
-      return  (TomTerm) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_expandVariable(contextSubject,this),All(MuVar("x"))))).visit(subject);
-    }catch(VisitFailure e){return subject;}
+      return  (TomTerm) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
+    } catch(VisitFailure e) {
+      return subject;
+    }
   }
 
   protected TomType expandType(TomTerm contextSubject, TomType subject) {
     if(contextSubject == null) {
       throw new TomRuntimeException("expandVariable: null contextSubject");
     }
-    try{
-      return  (TomType) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_expandVariable(contextSubject,this),All(MuVar("x"))))).visit(subject);
-    }catch(VisitFailure e){return subject;}
+    try {
+      return  (TomType) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
+    } catch(VisitFailure e) {
+      return subject;
+    }
   }
 
   private Instruction expandVariableInstruction(TomTerm contextSubject, Instruction subject) {
     if(contextSubject == null) {
       throw new TomRuntimeException("expandVariable: null contextSubject");
     }
-    try{
-      return  (Instruction) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_expandVariable(contextSubject,this),All(MuVar("x"))))).visit(subject);
-    }catch(VisitFailure e){return subject;}
+    try {
+      return (Instruction) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
+    } catch(VisitFailure e) {
+      return subject;
+    }
   }
 
   protected ConstraintList expandVariableConstraintList(TomTerm contextSubject, ConstraintList subject) {
@@ -438,8 +447,10 @@ public class TomKernelExpander extends TomBase {
       throw new TomRuntimeException("expandVariable: null contextSubject");
     }
     try{
-      return  (ConstraintList) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_expandVariable(contextSubject,this),All(MuVar("x"))))).visit(subject);
-    }catch(VisitFailure e){return subject;}
+      return  (ConstraintList) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
+    } catch(VisitFailure e) {
+      return subject;
+    }
   }
 
   protected PatternInstructionList expandVariablePatternInstructionList(TomTerm contextSubject, PatternInstructionList subject) {
@@ -447,7 +458,7 @@ public class TomKernelExpander extends TomBase {
       throw new TomRuntimeException("expandVariable: null contextSubject");
     }
     try{
-      return  (PatternInstructionList) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_expandVariable(contextSubject,this),All(MuVar("x"))))).visit(subject);
+      return  (PatternInstructionList) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
     }catch(VisitFailure e){return subject;}
   }
 
@@ -562,7 +573,7 @@ public class TomKernelExpander extends TomBase {
       throw new TomRuntimeException("replaceInstantiatedVariable: null instantiatedVariable");
     }
     try{
-      return (TomTerm) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_replaceInstantiatedVariable(instantiatedVariable),All(MuVar("x"))))).visit(subject);
+      return (TomTerm)(`ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable))).visit(subject);
     }catch(VisitFailure e){
       return subject;}
   }
@@ -572,7 +583,7 @@ public class TomKernelExpander extends TomBase {
       throw new TomRuntimeException("replaceInstantiatedVariable: null instantiatedVariable");
     }
     try{
-      return (Instruction) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_replaceInstantiatedVariable(instantiatedVariable),All(MuVar("x"))))).visit(subject);
+      return (Instruction) (`ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable))).visit(subject);
     }catch(VisitFailure e){
       return subject;
     }

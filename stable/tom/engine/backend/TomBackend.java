@@ -184,29 +184,49 @@ public class TomBackend extends TomGenericPlugin {
 
 
 
-
-
-
-
+ 
+  private VisitableVisitor markStrategy = null;
+  private void applyMarkStrategy(jjtraveler.Visitable subject) {
+    try {
+      markStrategy.visit(subject);
+    } catch (VisitFailure e) {
+      System.out.println("reduction failed on: " +subject);
+		}
+  }
 
 	private void markUsedConstructorDestructor(TomTerm pilCode) {
 		Stack stack = new Stack();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
-		try {
-			VisitableVisitor v = tom_make_TopDownCollect(tom_make_Collector(this,stack));
-			v = MuTraveler.init(v);
-			v.visit(pilCode);
-		} catch (VisitFailure e) {
-      System.out.println("reduction failed on: " + pilCode);
-		}
+    markStrategy = MuTraveler.init(tom_make_TopDownCollect(tom_make_Collector(this,stack)));
+    applyMarkStrategy(pilCode);
 	}
+
+  private void setUsedSymbolConstructor(String moduleName, TomSymbol tomSymbol) {
+    SymbolTable st = getSymbolTable(moduleName);
+    if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
+      applyMarkStrategy(tomSymbol);
+    }
+    getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
+  }
+
+  private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol) {
+    SymbolTable st = getSymbolTable(moduleName);
+    if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
+      applyMarkStrategy(tomSymbol);
+    }
+    getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
+  }
 
 	 private static class Collector  extends  tom.engine.adt.tomsignature.TomSignatureVisitableFwd  {  TomBackend  tb;   Stack  stack;  public Collector(  TomBackend  tb ,   Stack  stack ) { super(tom_make_Identity() ); this.tb=tb; this.stack=stack; } public  tom.engine.adt.tomsignature.types.Instruction visit_Instruction(  tom.engine.adt.tomsignature.types.Instruction tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.engine.adt.tomsignature.types.Instruction) { { tom.engine.adt.tomsignature.types.Instruction tom_match1_1=(( tom.engine.adt.tomsignature.types.Instruction)tom__arg); if (tom_is_fun_sym_CompiledMatch(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.Instruction tom_match1_1_automataInst=tom_get_slot_CompiledMatch_automataInst(tom_match1_1); { tom.engine.adt.tomsignature.types.OptionList tom_match1_1_option=tom_get_slot_CompiledMatch_option(tom_match1_1); { tom.engine.adt.tomsignature.types.Instruction tom_inst=tom_match1_1_automataInst; { tom.engine.adt.tomsignature.types.OptionList tom_optionList=tom_match1_1_option; if ( true ) {
 
 
 				String moduleName = getModuleName(tom_optionList);
-
-				if(moduleName==null) { // && hasGeneratedMatch(`optionList)) {
+        /*
+         * push the modulename
+         * or the wrapping modulename if the current one
+         * (nested match for example) does not have one
+         */
+				if(moduleName==null) {
 					try {
 						moduleName = (String) stack.peek();
             stack.push(moduleName);
@@ -219,24 +239,14 @@ public class TomBackend extends TomGenericPlugin {
           //System.out.println("push1: " + moduleName);
         }
 				//System.out.println("match -> moduleName = " + moduleName);
-				try {
-					MuTraveler.init(tom_make_TopDownCollect(tom_make_Collector(tb,stack))).visit(tom_inst);
-				} catch (jjtraveler.VisitFailure e) {
-					System.out.println("visit failure");
-					tom_make_Fail().visit(null);
-				}
+        tb.applyMarkStrategy(tom_inst);
 				//String pop = (String) stack.pop();
 				//System.out.println("pop: " + pop);
 				tom_make_Fail().visit(null);
 			 } } } } } } if (tom_is_fun_sym_TypedAction(tom_match1_1) ||  false ) { { tom.engine.adt.tomsignature.types.Instruction tom_match1_1_astInstruction=tom_get_slot_TypedAction_astInstruction(tom_match1_1); { tom.engine.adt.tomsignature.types.Instruction tom_inst=tom_match1_1_astInstruction; if ( true ) {
 
 
-        try {
-          MuTraveler.init(tom_make_TopDownCollect(tom_make_Collector(tb,stack))).visit(tom_inst);
-        } catch (jjtraveler.VisitFailure e) {
-          System.out.println("visit failure");
-          tom_make_Fail().visit(null);
-        }
+        tb.applyMarkStrategy(tom_inst);
         tom_make_Fail().visit(null);
        } } } } } } return super.visit_Instruction(tom__arg) ;  } public  tom.engine.adt.tomsignature.types.Expression visit_Expression(  tom.engine.adt.tomsignature.types.Expression tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.engine.adt.tomsignature.types.Expression) { { tom.engine.adt.tomsignature.types.Expression tom_match2_1=(( tom.engine.adt.tomsignature.types.Expression)tom__arg); {boolean tom_bool_match2_1= false ; { tom.engine.adt.tomsignature.types.TomName tom_match2_1_opname= null ; if (tom_is_fun_sym_IsEmptyList(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_opname=tom_get_slot_IsEmptyList_opname(tom_match2_1); } else { if (tom_is_fun_sym_IsEmptyArray(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_opname=tom_get_slot_IsEmptyArray_opname(tom_match2_1); } else { if (tom_is_fun_sym_GetHead(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_opname=tom_get_slot_GetHead_opname(tom_match2_1); } else { if (tom_is_fun_sym_GetTail(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_opname=tom_get_slot_GetTail_opname(tom_match2_1); } } } } if (tom_bool_match2_1) { if (tom_is_fun_sym_Name(tom_match2_1_opname) ||  false ) { { String  tom_match2_1_opname_string=tom_get_slot_Name_string(tom_match2_1_opname); { String  tom_name=tom_match2_1_opname_string; if ( true ) {
 
@@ -248,7 +258,7 @@ public class TomBackend extends TomGenericPlugin {
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(tom_name,tb.getSymbolTable(moduleName)); 
-          tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol);
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
@@ -266,11 +276,7 @@ public class TomBackend extends TomGenericPlugin {
 						String moduleName = (String) stack.peek();
 						//System.out.println("moduleName: " + moduleName);
             TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHead().getString(),tb.getSymbolTable(moduleName)); 
-            if(tomSymbol!=null) {
-              tb.getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
-            } else {
-              System.out.println("null symbol: " + l.getHead().getString());
-            }
+            tb.setUsedSymbolDestructor(moduleName,tomSymbol);
 					} catch (EmptyStackException e) {
 						System.out.println("No moduleName in stack");
 					}
@@ -284,14 +290,7 @@ public class TomBackend extends TomGenericPlugin {
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(tom_name,tb.getSymbolTable(moduleName)); 
-          tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
-          // resolve uses in the symbol declaration
-          try {
-            MuTraveler.init(tom_make_TopDownCollect(tom_make_Collector(tb,stack))).visit(tomSymbol);
-          } catch (jjtraveler.VisitFailure e) {
-            System.out.println("visit failure");
-            tom_make_Fail().visit(null);
-          }
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol);
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
@@ -302,17 +301,11 @@ public class TomBackend extends TomGenericPlugin {
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(tom_name,tb.getSymbolTable(moduleName)); 
-          tb.getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol);
           /* XXX: Also mark the destructors as used, since some generated
            * functions will use them */
-          tb.getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
+          tb.setUsedSymbolDestructor(moduleName,tomSymbol);
           // resolve uses in the symbol declaration
-          try {
-            MuTraveler.init(tom_make_TopDownCollect(tom_make_Collector(tb,stack))).visit(tomSymbol.getPairNameDeclList());
-          } catch (jjtraveler.VisitFailure e) {
-            System.out.println("visit failure");
-            tom_make_Fail().visit(null);
-          }
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
