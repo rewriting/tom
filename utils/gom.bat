@@ -16,9 +16,9 @@ rem   JAVA_HOME     Must point at your Java Development Kit installation.
 rem
 rem   JAVA_OPTS     (Optional) Java runtime options.
 rem
-rem $Id: tom.bat,v 1.3 2006/04/27 12:56:09 tonio Exp $
-rem $Id: tom.bat,v 1.3 2006/04/27 12:56:09 tonio Exp $
-rem $Id: tom.bat,v 1.3 2006/04/27 12:56:09 tonio Exp $
+rem $Id: gom.bat,v 1.1 2006/04/27 14:58:33 tonio Exp $
+rem $Id: gom.bat,v 1.1 2006/04/27 14:58:33 tonio Exp $
+rem $Id: gom.bat,v 1.1 2006/04/27 14:58:33 tonio Exp $
 rem ---------------------------------------------------------------------------
 
 rem Make sure prerequisite environment variables are set
@@ -97,5 +97,5 @@ set TOM_OPTS=
 
 rem execute GOM
 %_RUNJAVA% %JAVA_OPTS% -Dtom.home=%TOM_HOME% -classpath "%CLASSPATH%%TOM_LIB%" %MAINCLASS% %TOM_OPTS% %CMD_LINE_ARGS%
-
+ 
 :end

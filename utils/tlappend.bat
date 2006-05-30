@@ -1,7 +1,7 @@
 rem ---------------------------------------------------------------------------
 rem Append to TOM_LIB
 rem
-rem $Id: tlappend.bat,v 1.0 2004/09/15 20:17:09 mmoossen Exp $
+rem $Id: tlappend.bat,v 1.1 2004/10/11 16:21:15 reilles Exp $
 rem ---------------------------------------------------------------------------
 
 rem Process the first argument
@@ -18,3 +18,4 @@ shift
 goto setArgs
 :doneSetArgs
 :end
+ 

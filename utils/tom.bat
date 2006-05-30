@@ -16,11 +16,11 @@ rem   JAVA_HOME     Must point at your Java Development Kit installation.
 rem
 rem   JAVA_OPTS     (Optional) Java runtime options.
 rem
-rem $Id: tom.bat,v 1.3 2006/04/27 12:56:09 tonio Exp $
-rem $Id: tom.bat,v 1.3 2006/04/27 12:56:09 tonio Exp $
-rem $Id: tom.bat,v 1.3 2006/04/27 12:56:09 tonio Exp $
+rem $Id: tom.bat,v 1.4 2006/04/27 14:57:06 tonio Exp $
+rem $Id: tom.bat,v 1.4 2006/04/27 14:57:06 tonio Exp $
+rem $Id: tom.bat,v 1.4 2006/04/27 14:57:06 tonio Exp $
 rem ---------------------------------------------------------------------------
-
+ 
 rem Make sure prerequisite environment variables are set
 if not "%JAVA_HOME%" == "" goto gotJavaHome
 echo The JAVA_HOME environment variable is not defined
