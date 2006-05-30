@@ -43,7 +43,11 @@ public class AST2Gom{
   private static GomModule getGomModule(ATerm t) {
     %match(ATerm t){
       MODULE(_,(name,imports,section*)) ->{
-        return `GomModule(getGomModuleName(name),concSection(getImports(imports),getSection(section*)));
+        %match(ATerm imports){//checks that imports is a real import, not a section
+          IMPORTS(_,_) -> {
+            return `GomModule(getGomModuleName(name),concSection(getImports(imports),getSection(section*)));
+          }
+        }
       }
       MODULE(_,(name,section*)) ->{
         return `GomModule(getGomModuleName(name),concSection(getSection(section*)));
@@ -136,7 +140,7 @@ public class AST2Gom{
         return `Sorts(getGomTypeList(types));
       }
       SYNTAX(_,productions) -> {
-        return `Grammar(getProductionList(productions));
+        return `Grammar(getProductionList(productions*));
       }
     }
     throw new RuntimeException("Unable to translate: " + t);
@@ -163,6 +167,9 @@ public class AST2Gom{
       ARROW(_,(name,fieldlist*, type)) -> {
         return `Production(getId(name),getFieldList(fieldlist*),getGomType(type));
       }
+      COLON(NodeInfo(code,_,_),(id, type, arglist*)) -> {
+        return `Hook(getId(id), getHookkind(type),getArgList(arglist*),code);
+      }
     }
     throw new RuntimeException("Unable to translate: " + t);
   }
@@ -176,8 +183,13 @@ public class AST2Gom{
             return `concProduction(getProduction(g),tmpL*);
           }
           EQUALS(_,_) -> {
+            System.out.println("productionList" + l);
             ProductionList alter = getAlternatives(`g);
             return `concProduction(alter*,tmpL*);
+          }
+          //hook
+          COLON(_,_) -> {
+            return `concProduction(getProduction(g),tmpL*);
           }
         }
       }
@@ -198,6 +210,9 @@ public class AST2Gom{
         ProductionList tmpL = getAlternatives(type,`tail);
         return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type)),tmpL*);
       }
+      (id,fieldlist*) -> {
+        return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type)));
+      }
       _ -> {
         return `concProduction();
       }
@@ -208,7 +223,8 @@ public class AST2Gom{
   private static ProductionList getAlternatives(ATerm t) {
     %match(ATerm t){
           EQUALS(_,(type,alternatives*)) -> {
-            return getAlternatives(`type,`alternatives);
+            System.out.println("alt"+t);
+            return getAlternatives(`type,`alternatives*);
           }
         }
     throw new RuntimeException("Unable to translate: " + t);
@@ -244,6 +260,33 @@ public class AST2Gom{
     throw new RuntimeException("Unable to translate: " + t);
   }
 
+  private static Hookkind getHookkind(ATerm t) {
+    %match(ATerm t){
+      ID(NodeInfo[text="make"],_) ->{
+        return `KindMakeHook();
+      }
+      ID(NodeInfo[text="make_insert"],_) ->{
+        return `KindMakeinsertHook();
+      }
+    }
+    throw new RuntimeException("Unable to translate: " + t);
+  }
+
+  private static ArgList getArgList(ATermList l){
+    %match(ATermList l){
+      (a,COMMA(_,_),tail*) -> {
+        ArgList tmpL = getArgList(`tail);
+        return `concArg(getArg(a),tmpL*);
+      }
+      (a) -> {
+        return `concArg(getArg(a));
+      }
+      _ -> {
+        return `concArg();
+      }
+    }
+    throw new RuntimeException("Unable to translate: " + l);
+  }
   private static FieldList getFieldList(ATermList l){
     %match(ATermList l){
       (f,COMMA(_,_),tail*) -> {
@@ -259,6 +302,11 @@ public class AST2Gom{
     }
     throw new RuntimeException("Unable to translate: " + l);
   }
+
+  private static Arg getArg(ATerm s) {
+    return `Arg(getId(s));
+  }
+
   private static Field getField(ATerm t) {
     %match(ATerm t){
       COLON(_,(id, type)) -> {

@@ -65,8 +65,22 @@ alternatives : (ALT)? id:ID fieldlist (ALT altid:ID fieldlist)* (SEMI)? ;
 
 fieldlist: LEFT_BRACE! (field (COMMA field)* )? RIGHT_BRACE! ;
 
-hook: id:ID COLON hooktype LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRACE! ;
+arglist: LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRACE! ;
 
+hook
+{
+  String code = "";
+}
+:! id:ID COLON^ type:hooktype args:arglist 
+// '!' turns off auto transform
+{
+  BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
+  code = blockparser.block();
+
+#hook = #(COLON,id,type,args);
+#hook.setText(code);
+}
+;
 hooktype: tp:ID ;
 
 field: type STAR^ | id:ID COLON^ type ;

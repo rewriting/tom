@@ -100,6 +100,7 @@ public class PomGomParserPlugin extends GomGenericPlugin {
       //antlr.debug.misc.ASTFrame frame = new antlr.debug.misc.ASTFrame("AST JTree Example", t);
       //frame.setVisible(true);
       module = AST2Gom.getGomModule(t);
+      System.out.println("module: "+ module);
     } catch (RecognitionException re) {
       //StringWriter sw = new StringWriter();
       //PrintWriter pw = new PrintWriter(sw);
