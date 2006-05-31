@@ -89,14 +89,16 @@ class PomGomLexer extends Lexer;
 options {
   k = 2; // \r and \r\n
 }
-
-  MODULE   : "module";
-  IMPORTS  : "imports";
-  PUBLIC   : "public";
-  PRIVATE  : "private";
-  SORTS    : "sorts";
-  ABSTRACT : "abstract";
-  SYNTAX   : "syntax";
+tokens
+{
+  MODULE   = "module";
+  IMPORTS  = "imports";
+  PUBLIC   = "public";
+  PRIVATE  = "private";
+  SORTS    = "sorts";
+  ABSTRACT = "abstract";
+  SYNTAX   = "syntax";
+}
 
 ARROW       : "->";
 COLON       : ':';
