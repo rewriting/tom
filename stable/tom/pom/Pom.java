@@ -75,16 +75,26 @@ public class Pom {
       String line = "";
       while(line != null) {
         line = reader.readLine();
-         { String  tom_match1_1=(( String )line); if (tom_is_fun_sym_concString(tom_match1_1) ||  false ) { { String  tom_match1_1_list1=tom_match1_1; if (!(tom_is_empty_concString_String(tom_match1_1_list1))) { { char  tom_match1_1_1=tom_get_head_concString_String(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concString_String(tom_match1_1_list1); if (tom_terms_equal_char('/', tom_match1_1_1) ||  false ) { if (!(tom_is_empty_concString_String(tom_match1_1_list1))) { { char  tom_match1_1_2=tom_get_head_concString_String(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concString_String(tom_match1_1_list1); if (tom_terms_equal_char('/', tom_match1_1_2) ||  false ) { if ( true ) {
- /* comment */ } } } } } } } } } if (tom_is_fun_sym_concString(tom_match1_1) ||  false ) { { String  tom_match1_1_list1=tom_match1_1; { String  tom_match1_1_begin1=tom_match1_1_list1; { String  tom_match1_1_end1=tom_match1_1_list1; { while (!(tom_is_empty_concString_String(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1; { { String  tom_name=tom_get_slice_concString(tom_match1_1_begin1,tom_match1_1_end1); { char  tom_match1_1_2=tom_get_head_concString_String(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concString_String(tom_match1_1_list1); if (tom_terms_equal_char('=', tom_match1_1_2) ||  false ) { { String  tom_value=tom_match1_1_list1; if ( true ) {
+matchBlock: {
+               { String  tom_match1_1=(( String )line); if (tom_is_fun_sym_concString(tom_match1_1) ||  false ) { { String  tom_match1_1_list1=tom_match1_1; if (!(tom_is_empty_concString_String(tom_match1_1_list1))) { { char  tom_match1_1_1=tom_get_head_concString_String(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concString_String(tom_match1_1_list1); if (tom_terms_equal_char('/', tom_match1_1_1) ||  false ) { if (!(tom_is_empty_concString_String(tom_match1_1_list1))) { { char  tom_match1_1_2=tom_get_head_concString_String(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concString_String(tom_match1_1_list1); if (tom_terms_equal_char('/', tom_match1_1_2) ||  false ) { if ( true ) {
+ /* comment */
+                  break matchBlock;
+               } } } } } } } } } if (tom_is_fun_sym_concString(tom_match1_1) ||  false ) { { String  tom_match1_1_list1=tom_match1_1; { String  tom_match1_1_begin1=tom_match1_1_list1; { String  tom_match1_1_end1=tom_match1_1_list1; { while (!(tom_is_empty_concString_String(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1; { { String  tom_name=tom_get_slice_concString(tom_match1_1_begin1,tom_match1_1_end1); { char  tom_match1_1_2=tom_get_head_concString_String(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concString_String(tom_match1_1_list1); if (tom_terms_equal_char('=', tom_match1_1_2) ||  false ) { { String  tom_match1_1_begin3=tom_match1_1_list1; { String  tom_match1_1_end3=tom_match1_1_list1; { while (!(tom_is_empty_concString_String(tom_match1_1_end3))) {tom_match1_1_list1=tom_match1_1_end3; { { char  tom_match1_1_4=tom_get_head_concString_String(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concString_String(tom_match1_1_list1); if (tom_terms_equal_char('=', tom_match1_1_4) ||  false ) { { String  tom_value=tom_match1_1_list1; if ( true ) {
+//token
+                Integer val = Integer.valueOf(tom_value);
+                tokenMap.put(val,tom_name);
+                break matchBlock;
+               } } } }tom_match1_1_end3=tom_get_tail_concString_String(tom_match1_1_end3); } }tom_match1_1_list1=tom_match1_1_begin3; } } } } } }tom_match1_1_end1=tom_get_tail_concString_String(tom_match1_1_end1); } }tom_match1_1_list1=tom_match1_1_begin1; } } } } } if (tom_is_fun_sym_concString(tom_match1_1) ||  false ) { { String  tom_match1_1_list1=tom_match1_1; { String  tom_match1_1_begin1=tom_match1_1_list1; { String  tom_match1_1_end1=tom_match1_1_list1; { while (!(tom_is_empty_concString_String(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1; { { String  tom_name=tom_get_slice_concString(tom_match1_1_begin1,tom_match1_1_end1); { char  tom_match1_1_2=tom_get_head_concString_String(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concString_String(tom_match1_1_list1); if (tom_terms_equal_char('=', tom_match1_1_2) ||  false ) { { String  tom_value=tom_match1_1_list1; if ( true ) {
 
-            Integer val = Integer.valueOf(tom_value);
-            tokenMap.put(val,tom_name);
-           } } } } }tom_match1_1_end1=tom_get_tail_concString_String(tom_match1_1_end1); } }tom_match1_1_list1=tom_match1_1_begin1; } } } } } }
+                Integer val = Integer.valueOf(tom_value);
+                tokenMap.put(val,tom_name);
+                break matchBlock;
+               } } } } }tom_match1_1_end1=tom_get_tail_concString_String(tom_match1_1_end1); } }tom_match1_1_list1=tom_match1_1_begin1; } } } } } }
 
+            }
       }
     } catch (Exception e) {
-      System.out.println("Exception "+e);
+      System.out.println("Exception while parsing: "+e);
     }
     System.out.println(tokenMap);
     generateTable(tokenMap);

@@ -75,16 +75,26 @@ public class Pom {
       String line = "";
       while(line != null) {
         line = reader.readLine();
-        %match(String line) {
-          ('//',_*) -> { /* comment */}
-          (name*,'=',value*) -> {
-            Integer val = Integer.valueOf(`value);
-            tokenMap.put(val,`name);
-          }
-        }
+matchBlock: {
+              %match(String line) {
+                ('//',_*) -> { /* comment */
+                  break matchBlock;
+              }
+              (name*,'=',_*,'=',value*) -> {//token
+                Integer val = Integer.valueOf(`value);
+                tokenMap.put(val,`name);
+                break matchBlock;
+              }
+              (name*,'=',value*) -> {
+                Integer val = Integer.valueOf(`value);
+                tokenMap.put(val,`name);
+                break matchBlock;
+              }
+              }
+            }
       }
     } catch (Exception e) {
-      System.out.println("Exception "+e);
+      System.out.println("Exception while parsing: "+e);
     }
     System.out.println(tokenMap);
     generateTable(tokenMap);
