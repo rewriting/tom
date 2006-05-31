@@ -63,6 +63,9 @@ public class TomKernelCompiler extends TomBase {
     implement { TomKernelCompiler }
   }
 
+  %op Strategy ChoiceTopDown(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),ChoiceId(v,All(MuVar("x")))) }
+  }
 
   public int matchNumber = 0;
 
@@ -97,6 +100,7 @@ public class TomKernelCompiler extends TomBase {
              */
             TomList automataList = empty();
             int actionNumber = 0;
+            VisitableVisitor compileStrategy = `ChoiceTopDown(replace_compileMatching(compiler));
             while(!`patternInstructionList.isEmpty()) {
               actionNumber++;
               PatternInstruction pa = `patternInstructionList.getHead();
@@ -111,7 +115,7 @@ public class TomKernelCompiler extends TomBase {
                * compile nested match constructs
                * given a list of pattern: we build a matching automaton
                */
-              actionInst = (Instruction) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_compileMatching(compiler),All(MuVar("x"))))).visit(actionInst);
+              actionInst = (Instruction) compileStrategy.visit(actionInst);
               Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,patternList,rootpath,moduleName);
               OptionList automataOptionList = `concOption();
               TomName label = compiler.getLabel(pa.getOption());
@@ -139,8 +143,10 @@ public class TomKernelCompiler extends TomBase {
 
   public TomTerm compileMatching(TomTerm subject) {
     try{
-    return (TomTerm) MuTraveler.init(`mu(MuVar("x"),ChoiceId(replace_compileMatching(this),All(MuVar("x"))))).visit(subject);
-    }catch(VisitFailure e){return subject;}
+      return (TomTerm) `ChoiceTopDown(replace_compileMatching(this)).visit(subject);
+    } catch(VisitFailure e) {
+      return subject;
+    }
   }
 
     /*

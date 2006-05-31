@@ -94,13 +94,13 @@ public class TomExpander extends TomGenericPlugin {
     TomTerm expandedTerm = null;
     try {
       tomKernelExpander.setSymbolTable(getStreamManager().getSymbolTable());
-      TomTerm syntaxExpandedTerm   =  (TomTerm) (`ChoiceTopDown(expandTermApplTomSyntax(this))).visit((TomTerm)getWorkingTerm());
+      TomTerm syntaxExpandedTerm = (TomTerm) `ChoiceTopDown(expandTermApplTomSyntax(this)).visit((TomTerm)getWorkingTerm());
       updateSymbolTable();
       TomTerm context = `emptyTerm();
 
       TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
-      TomTerm stringExpandedTerm   = (TomTerm) (`ChoiceTopDown(expandString(this))).visit(variableExpandedTerm);
-      expandedTerm =  (TomTerm) (`ChoiceTopDown(updateCodomain(this))).visit(stringExpandedTerm);
+      TomTerm stringExpandedTerm = (TomTerm) `ChoiceTopDown(expandString(this)).visit(variableExpandedTerm);
+      expandedTerm = (TomTerm) `ChoiceTopDown(updateCodomain(this)).visit(stringExpandedTerm);
       setWorkingTerm(expandedTerm);
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomExpandingPhase.getMessage(),
@@ -146,8 +146,9 @@ public class TomExpander extends TomGenericPlugin {
        */
       tomSymbol = addDefaultIsFSym(tomSymbol);
       try {
-        TomTerm term = (TomTerm) expandStrategy.visit(`TomSymbolToTomTerm(tomSymbol));
-        tomSymbol = term.getAstSymbol();
+        //TomTerm term = (TomTerm) expandStrategy.visit(`TomSymbolToTomTerm(tomSymbol));
+        //tomSymbol = term.getAstSymbol();
+        tomSymbol = (TomSymbol) expandStrategy.visit(`tomSymbol);
       } catch(VisitFailure e) {
         System.out.println("should not be there");
       }
@@ -204,7 +205,7 @@ public class TomExpander extends TomGenericPlugin {
   }
 
   private TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
-    return tomKernelExpander.expandVariable(contextSubject,subject);
+    return (TomTerm)tomKernelExpander.expandVariable(contextSubject,subject);
   }
 
   /*

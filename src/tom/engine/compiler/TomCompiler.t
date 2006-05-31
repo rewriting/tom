@@ -56,10 +56,13 @@ public class TomCompiler extends TomGenericPlugin {
     equals(l1,l2)  { l1.equals(l2) }
   }
 
- %typeterm TomCompiler {
+  %typeterm TomCompiler {
     implement { TomCompiler }
   }
 
+  %op Strategy ChoiceTopDown(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),ChoiceId(v,All(MuVar("x")))) }
+  }
 
   /** some output suffixes */
   public static final String COMPILED_SUFFIX = ".tfix.compiled";
@@ -120,13 +123,8 @@ public class TomCompiler extends TomGenericPlugin {
    */
 
   %op Strategy preProcessing(compiler:TomCompiler){
-     make(compiler){
-       `(mu(MuVar("x"),ChoiceId(
-               preProcessing_once(compiler),
-               All(MuVar("x")))))
-     }
-   }
-
+    make(compiler) { `ChoiceTopDown(preProcessing_once(compiler)) }
+  }
 
   %strategy preProcessing_once(compiler:TomCompiler) extends `Identity(){
     visit TomTerm {
@@ -333,9 +331,8 @@ matchBlock: {
   } // end strategy
 
   %op Strategy preProcessing_makeTerm(compiler:TomCompiler){
-     make(compiler){`mu(MuVar("x"),ChoiceId(preProcessing_makeTerm_once(compiler),All(MuVar("x"))))}
+     make(compiler){ `ChoiceTopDown(preProcessing_makeTerm_once(compiler)) }
   }
-
 
   %strategy preProcessing_makeTerm_once(compiler:TomCompiler) extends `Identity()  {
     visit TomTerm {
@@ -597,7 +594,7 @@ itBlock: {
    */
 
   %op Strategy attachConstraint(variableSet:Set,constraint:TomTerm,compiler:TomCompiler){
-    make(variableSet,constraint,compiler){`mu(MuVar("x"),ChoiceId(attachConstraint_once(variableSet,constraint,compiler),All(MuVar("x"))))}
+    make(variableSet,constraint,compiler) { `ChoiceTopDown(attachConstraint_once(variableSet,constraint,compiler)) }
   }
 
   %strategy attachConstraint_once(variableSet:Set,constraint:TomTerm,compiler:TomCompiler) extends `Identity(){

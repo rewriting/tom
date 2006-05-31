@@ -120,7 +120,7 @@ public class TomKernelExpander extends TomBase {
           option)  -> {
         TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);
         TomType symbolType = getSymbolCodomain(tomSymbol);
-        TomTerm newLhs = `Term(expander.expandVariable(contextSubject,lhs));
+        TomTerm newLhs = `Term((TomTerm)expander.expandVariable(contextSubject,lhs));
         // build the list of variables that occur in the lhs
         HashSet set = new HashSet();
         collectVariable(set,newLhs);
@@ -129,8 +129,8 @@ public class TomKernelExpander extends TomBase {
         while(!`condList.isEmpty()) {
           Instruction cond = `condList.getHead();
 
-          Instruction newCond = expander.replaceInstantiatedVariableInstruction(`varList,cond);
-          newCond = (Instruction) expander.expandVariableInstruction(contextSubject,newCond);
+          Instruction newCond = (Instruction)expander.replaceInstantiatedVariable(`varList,cond);
+          newCond = (Instruction) expander.expandVariable(contextSubject,newCond);
 
           newCondList = `manyInstructionList(newCond,newCondList);
           collectVariable(set,newCond);
@@ -138,8 +138,8 @@ public class TomKernelExpander extends TomBase {
           `condList = `condList.getTail();
         }
 
-        TomTerm newRhs = expander.replaceInstantiatedVariable(`varList,`rhs);
-        newRhs = `Term(expander.expandVariable(TomTypeToTomTerm(symbolType),newRhs));
+        TomTerm newRhs = (TomTerm)expander.replaceInstantiatedVariable(`varList,`rhs);
+        newRhs = `Term((TomTerm)expander.expandVariable(TomTypeToTomTerm(symbolType),newRhs));
 
         return `RewriteRule(newLhs,newRhs,newCondList,option);
       }
@@ -147,15 +147,15 @@ public class TomKernelExpander extends TomBase {
 
     visit TomVisit {
       VisitTerm(type,patternInstructionList,options) -> {
-        TomType newType = `expander.expandType(contextSubject,`type);
-        PatternInstructionList newPatternInstructionList = expander.expandVariablePatternInstructionList(`TomTypeToTomTerm(newType),`patternInstructionList);
+        TomType newType = (TomType)`expander.expandVariable(contextSubject,`type);
+        PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(`TomTypeToTomTerm(newType),`patternInstructionList);
         return `VisitTerm(newType, newPatternInstructionList,options);
       }
     }
     visit Instruction {
       MatchingCondition[lhs=lhs@Variable[astName=Name(_), astType=lhsType],
         rhs=rhs@Variable[astName=Name(_), astType=rhsType]] -> {
-          TomTerm newLhs = expander.expandVariable(`TomTypeToTomTerm(rhsType),`lhs);
+          TomTerm newLhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(rhsType),`lhs);
           return `MatchingCondition(newLhs,rhs);
         }
 
@@ -169,8 +169,8 @@ public class TomKernelExpander extends TomBase {
             throw new TomRuntimeException("lhs has an unknown sort: " + `lhsName);
           }
 
-          TomTerm newLhs = expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
-          TomTerm newRhs = expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
+          TomTerm newLhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
+          TomTerm newRhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
           return `MatchingCondition(newLhs,newRhs);
         }
 
@@ -184,8 +184,8 @@ public class TomKernelExpander extends TomBase {
             throw new TomRuntimeException("rhs has an unknown sort: " + `rhsName);
           }
 
-          TomTerm newLhs = expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
-          TomTerm newRhs = expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
+          TomTerm newLhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
+          TomTerm newRhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
           return `MatchingCondition(newLhs,newRhs);
         }
 
@@ -205,8 +205,8 @@ public class TomKernelExpander extends TomBase {
             throw new TomRuntimeException("rhs has an unknown sort: " + `rhsName);
           }
 
-          TomTerm newLhs = expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
-          TomTerm newRhs = expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
+          TomTerm newLhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
+          TomTerm newRhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
           return `MatchingCondition(newLhs,newRhs);
         }
 
@@ -217,13 +217,13 @@ public class TomKernelExpander extends TomBase {
 
       EqualityCondition[lhs=lhs@Variable[astName=Name(_), astType=type],
         rhs=rhs@RecordAppl[nameList=(Name(_))]] -> {
-          TomTerm newRhs = expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
+          TomTerm newRhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
           return `TypedEqualityCondition(type,lhs,newRhs);
         }
 
       EqualityCondition[lhs=lhs@RecordAppl[nameList=(Name(_))],
         rhs=rhs@Variable[astName=Name(_), astType=type]] -> {
-          TomTerm newLhs = expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
+          TomTerm newLhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
           return `TypedEqualityCondition(type,newLhs,rhs);
         }
 
@@ -244,8 +244,8 @@ public class TomKernelExpander extends TomBase {
 
           //System.out.println("EqualityCondition type = " + type);
 
-          TomTerm newLhs = expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
-          TomTerm newRhs = expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
+          TomTerm newLhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`lhs);
+          TomTerm newRhs = (TomTerm)expander.expandVariable(`TomTypeToTomTerm(type),`rhs);
 
           //System.out.println("lhs    = " + lhs);
           //System.out.println("newLhs = " + newLhs);
@@ -255,9 +255,9 @@ public class TomKernelExpander extends TomBase {
 
       Match(tomSubjectList,patternInstructionList, option) -> {
         //System.out.println("tomSubjectList = " + tomSubjectList);
-        TomTerm newSubjectList = expander.expandVariable(contextSubject,`tomSubjectList);
+        TomTerm newSubjectList = (TomTerm)expander.expandVariable(contextSubject,`tomSubjectList);
         //System.out.println("newSubjectList = " + newSubjectList);
-        PatternInstructionList newPatternInstructionList = expander.expandVariablePatternInstructionList(newSubjectList,`patternInstructionList);
+        PatternInstructionList newPatternInstructionList = (PatternInstructionList)expander.expandVariable(newSubjectList,`patternInstructionList);
         return `Match(newSubjectList,newPatternInstructionList, option);
       }
     }
@@ -271,7 +271,7 @@ public class TomKernelExpander extends TomBase {
             // process a list of subterms
             ArrayList list = new ArrayList();
             while(!`termList.isEmpty()) {
-              list.add(expander.expandVariable(`l1.getHead(), `termList.getHead()));
+              list.add((TomTerm)expander.expandVariable(`l1.getHead(), `termList.getHead()));
               `termList = `termList.getTail();
               `l1 = `l1.getTail();
             }
@@ -285,7 +285,7 @@ public class TomKernelExpander extends TomBase {
             TomList varList = ASTFactory.makeList(set);
             //System.out.println("varList = " + varList);
             while(!`guardList.isEmpty()) {
-              list.add(expander.replaceInstantiatedVariable(`varList, `guardList.getHead()));
+              list.add((TomTerm)expander.replaceInstantiatedVariable(`varList, `guardList.getHead()));
               `guardList = `guardList.getTail();
             }
             TomList newGuardList = ASTFactory.makeList(list);
@@ -312,22 +312,22 @@ public class TomKernelExpander extends TomBase {
 
         if(tomSymbol != null) {
           SlotList subterm = expander.expandVariableList(tomSymbol, `slotList);
-          ConstraintList newConstraints = expander.expandVariableConstraintList(`TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),`constraints);
+          ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),`constraints);
           return `RecordAppl(option,nameList,subterm,newConstraints);
         } else {
           %match(TomTerm contextSubject) {
             TomTypeToTomTerm(type@Type[]) -> {
               SlotList subterm = expander.expandVariableList(`emptySymbol(), `slotList);
-              ConstraintList newConstraints = expander.expandVariableConstraintList(`emptyTerm(),`constraints);
+              ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`emptyTerm(),`constraints);
               return `RecordAppl(option,nameList,subterm,newConstraints);
             }
             Variable[astType=type] -> {
-              ConstraintList newConstraints = expander.expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
+              ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`TomTypeToTomTerm(type),`constraints);
               SlotList subterm = expander.expandVariableList(`emptySymbol(), `slotList);
               return `RecordAppl(option,nameList,subterm,newConstraints);
             }
             Tom(concTomTerm(_*,var@Variable[astName=Name(varName)],_*)) -> {
-              ConstraintList newConstraints = expander.expandVariableConstraintList(`contextSubject,`constraints);
+              ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`contextSubject,`constraints);
               SlotList subterm = expander.expandVariableList(`emptySymbol(), `slotList);
               return `RecordAppl(option,nameList,subterm,newConstraints);
             }
@@ -348,7 +348,7 @@ public class TomKernelExpander extends TomBase {
         %match(TomTerm contextSubject){
           context@TomTypeToTomTerm(type@Type[]) ->{
             // create a variable
-            return `Variable(option,astName,type,expander.expandVariableConstraintList(context,constraints));
+            return `Variable(option,astName,type,(ConstraintList)expander.expandVariable(context,constraints));
           }
         }
       }
@@ -356,7 +356,7 @@ public class TomKernelExpander extends TomBase {
       Variable[option=option,astName=astName,astType=TomTypeAlone[],constraints=constraints] -> {
         %match(TomTerm contextSubject){
           Variable[astType=type1] -> {
-            ConstraintList newConstraints = expander.expandVariableConstraintList(`TomTypeToTomTerm(type1),`constraints);
+            ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`TomTypeToTomTerm(type1),`constraints);
             // create a variable
             return `Variable(option,astName,type1,newConstraints);
           }
@@ -376,7 +376,7 @@ public class TomKernelExpander extends TomBase {
       Placeholder[option=option,constraints=constraints] -> {
         %match(TomTerm contextSubject){
           TomTypeToTomTerm(type@Type[])->{ 
-            ConstraintList newConstraints = expander.expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
+            ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`TomTypeToTomTerm(type),`constraints);
             // create an unamed variable
             return `UnamedVariable(option,type,newConstraints);
           }
@@ -386,7 +386,7 @@ public class TomKernelExpander extends TomBase {
       Placeholder[option=option,constraints=constraints] -> {
         %match(TomTerm contextSubject){
           Variable[astType=type1] -> {
-            ConstraintList newConstraints = expander.expandVariableConstraintList(`TomTypeToTomTerm(type1),`constraints);
+            ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`TomTypeToTomTerm(type1),`constraints);
             // create an unamed variable
             return `UnamedVariable(option,type1,newConstraints);
           }
@@ -409,59 +409,16 @@ public class TomKernelExpander extends TomBase {
     }
   }
 
-  protected TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
+  protected jjtraveler.Visitable expandVariable(TomTerm contextSubject, jjtraveler.Visitable subject) {
     if(contextSubject == null) {
       throw new TomRuntimeException("expandVariable: null contextSubject");
     }
     try{
-      return  (TomTerm) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
+      return `ChoiceTopDown(replace_expandVariable(contextSubject,this)).visit(subject);
     } catch(VisitFailure e) {
       return subject;
     }
   }
-
-  protected TomType expandType(TomTerm contextSubject, TomType subject) {
-    if(contextSubject == null) {
-      throw new TomRuntimeException("expandVariable: null contextSubject");
-    }
-    try {
-      return  (TomType) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
-    } catch(VisitFailure e) {
-      return subject;
-    }
-  }
-
-  private Instruction expandVariableInstruction(TomTerm contextSubject, Instruction subject) {
-    if(contextSubject == null) {
-      throw new TomRuntimeException("expandVariable: null contextSubject");
-    }
-    try {
-      return (Instruction) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
-    } catch(VisitFailure e) {
-      return subject;
-    }
-  }
-
-  protected ConstraintList expandVariableConstraintList(TomTerm contextSubject, ConstraintList subject) {
-    if(contextSubject == null) {
-      throw new TomRuntimeException("expandVariable: null contextSubject");
-    }
-    try{
-      return  (ConstraintList) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
-    } catch(VisitFailure e) {
-      return subject;
-    }
-  }
-
-  protected PatternInstructionList expandVariablePatternInstructionList(TomTerm contextSubject, PatternInstructionList subject) {
-    if(contextSubject == null) {
-      throw new TomRuntimeException("expandVariable: null contextSubject");
-    }
-    try{
-      return  (PatternInstructionList) (`ChoiceTopDown(replace_expandVariable(contextSubject,this))).visit(subject);
-    }catch(VisitFailure e){return subject;}
-  }
-
 
   private TomType getTypeFromVariableList(TomName name, TomList list) {
 
@@ -502,7 +459,7 @@ public class TomKernelExpander extends TomBase {
          * if the top symbol is unknown, the subterms
          * are expanded in an empty context
          */
-        return `manySlotList(PairSlotAppl(slotName,expandVariable(emptyTerm(),slotAppl)), expandVariableList(symbol,tail));
+        return `manySlotList(PairSlotAppl(slotName,(TomTerm)expandVariable(emptyTerm(),slotAppl)), expandVariableList(symbol,tail));
       }
 
       symb@Symbol[typesToType=TypesToType(typelist,codomain)],
@@ -525,24 +482,24 @@ public class TomKernelExpander extends TomBase {
 
             %match(TomTerm slotAppl) {
               VariableStar[option=option,astName=name,constraints=constraints] -> {
-                ConstraintList newconstraints = expandVariableConstraintList(`TomTypeToTomTerm(codomain),`constraints);
+                ConstraintList newconstraints = (ConstraintList)expandVariable(`TomTypeToTomTerm(codomain),`constraints);
                 return `manySlotList(PairSlotAppl(slotName,VariableStar(option,name,codomain,newconstraints)), expandVariableList(symbol,tail));
               }
 
               UnamedVariableStar[option=option,constraints=constraints] -> {
-                ConstraintList newconstraints = expandVariableConstraintList(`TomTypeToTomTerm(codomain),`constraints);
+                ConstraintList newconstraints = (ConstraintList)expandVariable(`TomTypeToTomTerm(codomain),`constraints);
                 return `manySlotList(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)), expandVariableList(symbol,tail));
               }
 
               _ -> {
                 TomType domaintype = `typelist.getHead();
-                return `manySlotList(PairSlotAppl(slotName,expandVariable(TomTypeToTomTerm(domaintype), slotAppl)), expandVariableList(symbol,tail));
+                return `manySlotList(PairSlotAppl(slotName,(TomTerm)expandVariable(TomTypeToTomTerm(domaintype), slotAppl)), expandVariableList(symbol,tail));
 
               }
             }
           } else {
             //TomType type = `typelist.getHead();
-            return `manySlotList(PairSlotAppl(slotName,expandVariable(TomTypeToTomTerm(getSlotType(symb,slotName)), slotAppl)), expandVariableList(symbol,tail));
+            return `manySlotList(PairSlotAppl(slotName,(TomTerm)expandVariable(TomTypeToTomTerm(getSlotType(symb,slotName)), slotAppl)), expandVariableList(symbol,tail));
           }
         }
     }
@@ -568,23 +525,13 @@ public class TomKernelExpander extends TomBase {
     }
   }
 
-  protected TomTerm replaceInstantiatedVariable(TomList instantiatedVariable, TomTerm subject) {
+  protected jjtraveler.Visitable replaceInstantiatedVariable(TomList instantiatedVariable, jjtraveler.Visitable subject) {
     if(instantiatedVariable == null) {
       throw new TomRuntimeException("replaceInstantiatedVariable: null instantiatedVariable");
     }
-    try{
-      return (TomTerm)(`ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable))).visit(subject);
-    }catch(VisitFailure e){
-      return subject;}
-  }
-  protected Instruction replaceInstantiatedVariableInstruction(TomList instantiatedVariable, Instruction subject) {
-
-    if(instantiatedVariable == null) {
-      throw new TomRuntimeException("replaceInstantiatedVariable: null instantiatedVariable");
-    }
-    try{
-      return (Instruction) (`ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable))).visit(subject);
-    }catch(VisitFailure e){
+    try {
+      return `ChoiceTopDown(replace_replaceInstantiatedVariable(instantiatedVariable)).visit(subject);
+    } catch(VisitFailure e) {
       return subject;
     }
   }
