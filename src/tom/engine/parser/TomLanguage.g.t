@@ -137,7 +137,6 @@ constant returns [Token result]
         )
     ;
 
-
 // the %match construct :
 matchConstruct [Option ot] returns [Instruction result] throws TomException
 { 
@@ -602,6 +601,15 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
 						    result = `Variable(ASTFactory.makeOptionList(optionList),name,
 									TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
             }
+            
+        |   // for a single anti constant. 
+        	// ambiguous with the next rule so :
+	        {LA(3) != LPAREN && LA(3) != LBRACKET}? 
+	        name = antiHeadSymbol[optionList] 
+	        {
+						    result = `AntiTerm(Variable(ASTFactory.makeOptionList(optionList),name,
+									TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList)));
+	        }            
 
         |   // for a single constant. 
             // ambiguous with the next rule so :
@@ -618,6 +626,20 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                     );
             }
 
+        |   // for a single anti constant. 
+        	// ambiguous with the next rule so :
+            {LA(3) != LPAREN && LA(3) != LBRACKET}? 
+            name = antiHeadConstant[optionList] 
+            {
+                nameList = (NameList) nameList.append(name);
+								optionList.add(`Constant());
+                result = `AntiTerm(TermAppl(
+                        ASTFactory.makeOptionList(optionList),
+                        nameList,
+                        ASTFactory.makeList(list),
+                        ASTFactory.makeConstraintList(constraintList)
+                    ));
+            }
 
 
         |   // f(...) or f[...]
@@ -641,6 +663,29 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                     );
               }
             }
+            
+       |   // !f(...) or !f[...]
+            name = antiHeadSymbol[optionList] 
+            {nameList = (NameList) nameList.append(name);}
+            implicit = args[list,secondOptionList]
+            {
+              if(implicit) {
+                    result = `AntiTerm(RecordAppl(
+                        ASTFactory.makeOptionList(optionList),
+                        nameList,
+                        ASTFactory.makeSlotList(list),
+                        ASTFactory.makeConstraintList(constraintList))
+                    );
+              } else {
+                    result = `AntiTerm(TermAppl(
+                        ASTFactory.makeOptionList(optionList),
+                        nameList,
+                        ASTFactory.makeList(list),
+                        ASTFactory.makeConstraintList(constraintList)
+                    ));
+              }
+            }
+                    
             
         |   // (f|g...) 
             // ambiguity with the last rule so use a lookahead
@@ -1299,6 +1344,15 @@ headSymbol [LinkedList optionList] returns [TomName result]
 	)
 ;
 
+antiHeadSymbol [LinkedList optionList] returns [TomName result]
+{ 
+    result = null; 
+}
+: 
+  ANTI_SYM result=headSymbol[optionList]  
+;
+
+
 headConstant [LinkedList optionList] returns [TomName result]
 { 
     result = null; 
@@ -1333,6 +1387,14 @@ headConstant [LinkedList optionList] returns [TomName result]
 	}
         }
 ;
+
+antiHeadConstant [LinkedList optionList] returns [TomName result]
+  { 
+      result = null;  		
+  } : 
+     ANTI_SYM result=headConstant[optionList] // add to symbol table     
+  ;
+
 
 // Operator Declaration
 operator returns [Declaration result] throws TomException
@@ -2159,6 +2221,8 @@ STRING
   : '"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
   ;
 
+ANTI_SYM  : '!';
+
 protected
 ESC
   : '\\'
@@ -2210,7 +2274,6 @@ options{testLiterals = true;}
         |   ID
         )
     ;
-        
 
 protected ID
 options{testLiterals = true;}
