@@ -33,6 +33,7 @@ DoubleBackQuote(args:TomList) -> TomTerm
 Composite(args:TomList) -> TomTerm
 SubjectList(tomList:TomList) -> TomTerm
 Term(tomTerm:TomTerm) -> TomTerm
+AntiTerm(tomTerm:TomTerm) -> TomTerm
 TLVar(strName:String,astType:TomType) -> TomTerm
 Ref(tomTerm:TomTerm) -> TomTerm
 BuildReducedTerm(kid1:TomTerm) -> TomTerm
