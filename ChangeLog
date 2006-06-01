@@ -1,7 +1,6 @@
 2006-05-31 toussain
   * fixed pom:
     -case line in ParserTokenTypes.txt is in the form: TOKEN="token"=int
-  * removed nondeterministic lexical warnings from antlr
 
 2006-04-09 Antoine Reilles <reilles@loria.fr>
   * Introduce an abstract class for Variadic operators in gom
