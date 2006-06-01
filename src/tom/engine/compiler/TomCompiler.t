@@ -277,7 +277,7 @@ matchBlock: {
         return (Declaration) MuTraveler.init(`preProcessing(compiler)).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
 
-      RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(RecordAppl[nameList=(Name(tomName))])],_),optionList) -> {
+      RuleSet(rl@concTomRule(RewriteRule[lhs=Term(RecordAppl[nameList=(Name(tomName))])],_*),optionList) -> {
         TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
         TomName name = tomSymbol.getAstName();
         String moduleName = getModuleName(`optionList);
@@ -342,9 +342,9 @@ matchBlock: {
 
   private Instruction buildCondition(InstructionList condList, Instruction action) {
     %match(InstructionList condList) {
-      emptyInstructionList() -> { return action; }
+      concInstruction() -> { return action; }
 
-      manyInstructionList(MatchingCondition[lhs=pattern,rhs=subject], tail) -> {
+      concInstruction(MatchingCondition[lhs=pattern,rhs=subject], tail*) -> {
         try{
         Instruction newAction = `buildCondition(tail,action);
 
@@ -371,7 +371,7 @@ matchBlock: {
         }catch(VisitFailure e){}
       }
 
-      manyInstructionList(TypedEqualityCondition[tomType=type,lhs=lhs,rhs=rhs], tail) -> {
+      concInstruction(TypedEqualityCondition[tomType=type,lhs=lhs,rhs=rhs], tail*) -> {
         try{
         Instruction newAction = `buildCondition(tail,action);
 
@@ -526,10 +526,11 @@ matchBlock: {
       ArrayList abstractedPattern,
       ArrayList introducedVariable)  {
     %match(TomList subjectList) {
-      emptyTomList() -> { return subjectList; }
-      manyTomList(head,tail) -> {
+      concTomTerm() -> { return subjectList; }
+      concTomTerm(head,tail*) -> {
         TomTerm newElt = abstractPattern(`head,abstractedPattern,introducedVariable);
-        return `manyTomList(newElt,abstractPatternList(tail,abstractedPattern,introducedVariable));
+        TomList tl = abstractPatternList(tail,abstractedPattern,introducedVariable);
+        return `concTomTerm(newElt,tl*);
       }
     }
     throw new TomRuntimeException("abstractPatternList: " + subjectList);

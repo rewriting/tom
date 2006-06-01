@@ -156,8 +156,8 @@ public class TomKernelCompiler extends TomBase {
      */
   private Instruction collectVariableFromSubjectList(SlotList subjectList, TomNumberList path, Instruction body, String moduleName) {
     %match(SlotList subjectList) { 
-      emptySlotList() -> { return body; }
-      manySlotList(PairSlotAppl(slotName,subjectVar@Variable[option=option,astType=variableType]),tail) -> {
+      concSlot() -> { return body; }
+      concSlot(PairSlotAppl(slotName,subjectVar@Variable[option=option,astType=variableType]),tail*) -> {
         body = collectVariableFromSubjectList(`tail,path,body,moduleName);
         TomTerm variable = `Variable(option,PositionName(path.append(NameNumber(slotName))),variableType,concConstraint());
         Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
@@ -167,7 +167,7 @@ public class TomKernelCompiler extends TomBase {
         return `CheckInstance(variableType,TomTermToExpression(subjectVar),let);
       }
 
-      manySlotList(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_)),tail) -> {
+      concSlot(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_)),tail*) -> {
         body = collectVariableFromSubjectList(`tail,path,body,moduleName);
 
         // ModuleName
@@ -196,8 +196,8 @@ public class TomKernelCompiler extends TomBase {
      */
   private InstructionList automataListCompileMatchingList(TomList automataList) {
     %match(TomList automataList) {
-      emptyTomList() -> { return `emptyInstructionList(); }
-      manyTomList(Automata(optionList,patternList,_,instruction),l)  -> {
+      concTomTerm() -> { return `concInstruction(); }
+      concTomTerm(Automata(optionList,patternList,_,instruction),l*)  -> {
         InstructionList newList = automataListCompileMatchingList(`l);
         if(getLabel(`optionList) != null) {
             /*
