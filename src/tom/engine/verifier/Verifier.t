@@ -138,8 +138,8 @@ public class Verifier extends TomBase {
 
   public Expr exprFromExpression(Expression expression) {
     %match(Expression expression) {
-      TrueTL()  -> { return `true(subs(undefsubs())); }
-      FalseTL() -> { return `false(); }
+      TrueTL()  -> { return `iltrue(subs(undefsubs())); }
+      FalseTL() -> { return `ilfalse(); }
       EqualFunctionSymbol[exp1=Variable[astName=name],exp2=RecordAppl[nameList=symbolName]] -> {
         Term term = termFromTomName(`name);
         return `isfsym(term,fsymbol(extractName(symbolName)));
@@ -152,7 +152,7 @@ public class Verifier extends TomBase {
       }
     }
     System.out.println("exprFromExpression don't know how to handle this: " + expression);
-    return `false();
+    return `ilfalse();
   }
 
   public Instr instrFromInstructionList(InstructionList instrlist) {
@@ -292,10 +292,10 @@ public class Verifier extends TomBase {
 
   %strategy substitutionCollector(outsubst:SubstRef) extends `Identity() {
     visit Expr {
-      t@true(subs(undefsubs())) -> {
+      t@iltrue(subs(undefsubs())) -> {
         `Fail().visit(`t);
       }
-      true(x) -> {
+      iltrue(x) -> {
         outsubst.set(`x);
       }
     }
@@ -408,10 +408,10 @@ public class Verifier extends TomBase {
       ilnot(e) -> {
         return `ilnot(reduceWithMappingRules(e));
       }
-      true[subst=substitutionList] -> {
-        return `true(reduceSubstitutionWithMappingRules(substitutionList));
+      iltrue[subst=substitutionList] -> {
+        return `iltrue(reduceSubstitutionWithMappingRules(substitutionList));
       }
-      false[] -> {
+      ilfalse[] -> {
         return `ex;
       }
       iland(lt,rt) -> {
@@ -460,19 +460,19 @@ public class Verifier extends TomBase {
         // first reduce the argument
         TermList reduced = applyMappingRules(`t);
         TermList res = `concTerm(trm);
-        while(!reduced.isEmpty()) {
-          Term head = reduced.getHead();
-          if (head.isTau()) {
+        while(!reduced.isEmptyconcTerm()) {
+          Term head = reduced.getHeadconcTerm();
+          if (head.istau()) {
             TermList hl = applyMappingRules(head);
-            while(!hl.isEmpty()) {
-              Term h = hl.getHead();
+            while(!hl.isEmptyconcTerm()) {
+              Term h = hl.getHeadconcTerm();
               res = `concTerm(res*,subterm(s,h,index));
-              hl = hl.getTail();
+              hl = hl.getTailconcTerm();
             }
           } else {
             res = `concTerm(res*,subterm(s,head,index));
           }
-          reduced = reduced.getTail();
+          reduced = reduced.getTailconcTerm();
         }
         return `concTerm(res*);
       }
@@ -480,19 +480,19 @@ public class Verifier extends TomBase {
         // first reduce the argument
         TermList reduced = applyMappingRules(`t);
         TermList res = `concTerm(trm);
-        while(!reduced.isEmpty()) {
-          Term head = reduced.getHead();
-          if (head.isTau()) {
+        while(!reduced.isEmptyconcTerm()) {
+          Term head = reduced.getHeadconcTerm();
+          if (head.istau()) {
             TermList hl = applyMappingRules(head);
-            while(!hl.isEmpty()) {
-              Term h = hl.getHead();
+            while(!hl.isEmptyconcTerm()) {
+              Term h = hl.getHeadconcTerm();
               res = `concTerm(res*,slot(s,h,slotName));
-              hl = hl.getTail();
+              hl = hl.getTailconcTerm();
             }
           } else {
             res = `concTerm(res*,slot(s,head,slotName));
           }
-          reduced = reduced.getTail();
+          reduced = reduced.getTailconcTerm();
         }
         return `concTerm(res*);
       }
@@ -521,8 +521,8 @@ public class Verifier extends TomBase {
       }
       eq(lt,rt) -> {
         // first reduce the argument
-        Term reducedl = ((TermList)applyMappingRules(`lt).reverse()).getHead();
-        Term reducedr = ((TermList)applyMappingRules(`rt).reverse()).getHead();
+        Term reducedl = reverseTermList((TermList)applyMappingRules(`lt)).getHeadconcTerm();
+        Term reducedr = reverseTermList((TermList)applyMappingRules(`rt)).getHeadconcTerm();
 
         ExprList taill = `applyExprRules(eq(reducedl,reducedr));
         ExprList res = `concExpr(ex,taill*);
@@ -531,10 +531,10 @@ public class Verifier extends TomBase {
         // first reduce the argument
         TermList reduced = applyMappingRules(`t);
         ExprList res = `concExpr(ex);
-        while(!reduced.isEmpty()) {
-          Term head = reduced.getHead();
+        while(!reduced.isEmptyconcTerm()) {
+          Term head = reduced.getHeadconcTerm();
           res = `concExpr(res*,isfsym(head,symbol));
-          reduced = reduced.getTail();
+          reduced = reduced.getTailconcTerm();
         }
         %match(ExprList res) {
           concExpr(hl*,tail) -> {
@@ -546,14 +546,14 @@ public class Verifier extends TomBase {
       ilnot(e) -> {
         ExprList exprList = `applyExprRules(e);
         ExprList newExprList = `concExpr(ex);
-        while(!exprList.isEmpty()) {
-          Expr localExpr = exprList.getHead();
-          exprList = exprList.getTail();
+        while(!exprList.isEmptyconcExpr()) {
+          Expr localExpr = exprList.getHeadconcExpr();
+          exprList = exprList.getTailconcExpr();
           newExprList = `concExpr(newExprList*,ilnot(localExpr));
         }
         return newExprList;
       }
-      (true|false)[] -> {
+      (iltrue|ilfalse)[] -> {
         return `concExpr(ex);
       }
     }
@@ -565,7 +565,7 @@ public class Verifier extends TomBase {
     %match(Instr pil) {
       sequence(semicolon(h,t*)) -> {
         Expr goalFromHead = buildConstraint(substitution,`h,goal);
-        if (!`t.isEmpty()) {
+        if (!`t.isEmptysemicolon()) {
           Expr refuseFromHead = buildConstraint(substitution,`h,`refuse());
           Expr goalFromTail = buildConstraint(substitution,`sequence(t),goal);
           if(this.isCamlSemantics()) {
@@ -592,21 +592,21 @@ public class Verifier extends TomBase {
       }
       refuse[] -> {
         if (pil == goal) {
-          return `true(subs(undefsubs()));
+          return `iltrue(subs(undefsubs()));
         } else {
-          return `false();
+          return `ilfalse();
         }
       }
       accept[] -> {
         if (pil == goal) {
-          return `true(substitution);
+          return `iltrue(substitution);
         } else {
-          return `false();
+          return `ilfalse();
         }
       }
     }
     // default case, should not happen
-    return `false();
+    return `ilfalse();
   }
 
   protected Collection applySemanticsRules(Deriv post) {
@@ -685,7 +685,7 @@ public class Verifier extends TomBase {
         Iterator it = pre_list.iterator();
         while(it.hasNext()) {
           DerivTree pre = (DerivTree) it.next();
-          c.add(`derivrule(rulename,post,pre,dedexpr(concExpr(cond*,true(subs(undefsubs()))))));
+          c.add(`derivrule(rulename,post,pre,dedexpr(concExpr(cond*,iltrue(subs(undefsubs()))))));
         }
 
         up = `ebs(env(e,iff),env(subs(undefsubs()),ip));
@@ -695,7 +695,7 @@ public class Verifier extends TomBase {
         it = pre_list.iterator();
         while(it.hasNext()) {
           DerivTree pre = (DerivTree) it.next();
-          c.add(`derivrule(rulename,post,pre,dedexpr(concExpr(cond*,false()))));
+          c.add(`derivrule(rulename,post,pre,dedexpr(concExpr(cond*,ilfalse()))));
         }
       }
       // axioms
@@ -909,7 +909,7 @@ public class Verifier extends TomBase {
 
   public Expr booleanSimplify(Expr expr) {
     VisitableVisitor booleanSimplifier = new BooleanSimplifier();
-    Expr res = `false();
+    Expr res = `ilfalse();
     try {
       res = (Expr) `InnermostId(booleanSimplifier).visit(expr);
     } catch (jjtraveler.VisitFailure e) {
@@ -918,40 +918,50 @@ public class Verifier extends TomBase {
     return res;
   }
 
-  public class BooleanSimplifier extends IlVisitableFwd {
+  public class BooleanSimplifier extends IlBasicStrategy {
     public BooleanSimplifier() {
       super(`Identity());
     }
 
     public Expr visit_Expr(Expr arg) throws jjtraveler.VisitFailure {
       %match(Expr arg) {
-        iland(false(),_) -> {
-          return `false();
+        iland(ilfalse(),_) -> {
+          return `ilfalse();
         }
-        iland(_,false()) -> {
-          return `false();
+        iland(_,ilfalse()) -> {
+          return `ilfalse();
         }
-        ilor(lt@true[],_) -> {
+        ilor(lt@iltrue[],_) -> {
           return `lt;
         }
-        ilor(_,lt@true[]) -> {
+        ilor(_,lt@iltrue[]) -> {
           return `lt;
         }
-        ilor(false(),right) -> {
+        ilor(ilfalse(),right) -> {
           return `right;
         }
-        ilor(left,false()) -> {
+        ilor(left,ilfalse()) -> {
           return `left;
         }
-        ilnot(true[]) -> {
-          return `false();
+        ilnot(iltrue[]) -> {
+          return `ilfalse();
         }
-        ilnot(false[]) -> {
-          return `true(subs());
+        ilnot(ilfalse[]) -> {
+          return `iltrue(subs());
         }
       }
       return (Expr) any.visit(arg);
     }
+  }
+
+  TermList reverseTermList(TermList l) {
+    %match(TermList l) {
+      concTerm(h,t*) -> {
+        TermList nt = reverseTermList(`t*);
+        return `concTerm(nt*,h);
+      }
+    }
+    return l;
   }
 
 }

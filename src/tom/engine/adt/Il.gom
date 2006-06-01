@@ -1,5 +1,5 @@
 module Il
-imports
+imports String int ATerm
 
 public sorts 
   Symbol Variable Term Expr Instr 
@@ -14,14 +14,14 @@ abstract syntax
 
   tau(abst:AbsTerm)                          -> Term
   absvar(varname:Variable)                   -> AbsTerm
-  st(symbol:Symbol,abst:AbsTerm,index:Int)   -> AbsTerm
+  st(symbol:Symbol,abst:AbsTerm,index:int)   -> AbsTerm
   sl(symbol:Symbol,abst:AbsTerm,name:String) -> AbsTerm
   repr(term:String)                          -> Term
-  subterm(symbol:Symbol,t:Term,index:Int)    -> Term
+  subterm(symbol:Symbol,t:Term,index:int)    -> Term
   slot(symbol:Symbol,t:Term,name:String)     -> Term
 
-  true(subst:SubstitutionList)               -> Expr
-  false                                      -> Expr
+  iltrue(subst:SubstitutionList)             -> Expr
+  ilfalse()                                  -> Expr
   isfsym(t:Term,symbol:Symbol)               -> Expr
   eq(lt:Term,rt:Term)                        -> Expr
   tisfsym(abst:AbsTerm,symbol:Symbol)        -> Expr
@@ -31,20 +31,20 @@ abstract syntax
   ilor(left:Expr,right:Expr)                 -> Expr
   ilnot(exp:Expr)                            -> Expr
 
-  accept(positive:term,negative:term)        -> Instr
-  refuse                                     -> Instr
+  accept(positive:ATerm,negative:ATerm)      -> Instr
+  refuse()                                   -> Instr
   ITE(e:Expr,ift:Instr,iff:Instr)            -> Instr
   ILLet(var:Variable,t:Term,body:Instr)      -> Instr
   sequence(instrlist:InstrList)              -> Instr
 
   semicolon(Instr*)                          -> InstrList
 
-  undefsubs                                  -> Substitution
+  undefsubs()                                -> Substitution
   is(var:Variable,term:Term)                 -> Substitution
   subs(Substitution *)                       -> SubstitutionList
   env(subs:SubstitutionList,i:Instr)         -> Environment
 
-  seq                                        -> Seq
+  seq()                                      -> Seq
   appSubsT(subs:SubstitutionList,t:Term)     -> Term
   appSubsE(subs:SubstitutionList,e:Expr)     -> Expr
   dedterm(terms:TermList)                    -> Seq
@@ -53,6 +53,6 @@ abstract syntax
   concExpr(Expr *)                           -> ExprList
 
   ebs(lhs:Environment,rhs:Environment)       -> Deriv
-  endderiv                                   -> DerivTree
+  endderiv()                                 -> DerivTree
   derivrule(name:String,post:Deriv,pre:DerivTree,cond:Seq) -> DerivTree
   derivrule2(name:String,post:Deriv,pre:DerivTree,pre2:DerivTree,cond:Seq) -> DerivTree

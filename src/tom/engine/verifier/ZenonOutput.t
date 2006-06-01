@@ -175,7 +175,7 @@ public class ZenonOutput {
     while (it.hasNext()) {
       Map.Entry entry = (Map.Entry) it.next();
       Seq value = (Seq) entry.getValue();
-      if (value.isDedexpr()) {
+      if (value.isdedexpr()) {
         conds.put(((String) entry.getKey()),
                   zexprFromSeq(cleanSeq(value)));
       }
@@ -269,8 +269,8 @@ public class ZenonOutput {
 
   ZExpr zexprFromExpr(Expr expr) {
     %match(Expr expr) {
-      true[] -> { return `ztrue();}
-      false() -> { return `zfalse();}
+      iltrue[] -> { return `ztrue();}
+      ilfalse() -> { return `zfalse();}
       tisfsym(absterm,s) -> {
         return `zisfsym(ztermFromAbsTerm(absterm),zsymbolFromSymbol(s));
       }
@@ -325,14 +325,14 @@ public class ZenonOutput {
       }
       dedexpr(exprlist) -> {
         %match(ExprList `exprlist) {
-          concExpr(_*,t,true[]) -> {
+          concExpr(_*,t,iltrue[]) -> {
             return zexprFromExpr(`t);
           }
         }
       }
       dedexpr(exprlist) -> {
         %match(ExprList `exprlist) {
-          concExpr(_*,t,false()) -> {
+          concExpr(_*,t,ilfalse()) -> {
             return `znot(zexprFromExpr(t));
           }
         }

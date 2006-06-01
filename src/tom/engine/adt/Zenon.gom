@@ -1,5 +1,5 @@
 module Zenon
-imports
+imports String int
 
 public sorts 
   ZSymbol ZTerm ZTermList ZExpr ZType ZAxiom ZAxiomList ZSpec
@@ -9,14 +9,14 @@ abstract syntax
   
   zvar(varname:String)                        -> ZTerm
   zappl(zsymb:ZSymbol,termlist:ZTermList)     -> ZTerm
-  zst(abst:ZTerm,index:Int)                   -> ZTerm
+  zst(abst:ZTerm,index:int)                   -> ZTerm
   zsl(abst:ZTerm,name:String)                 -> ZTerm
   concZTerm(ZTerm *)                          -> ZTermList
 
   ztype(tname:String)                         -> ZType
 
-  ztrue                                       -> ZExpr
-  zfalse                                      -> ZExpr
+  ztrue()                                     -> ZExpr
+  zfalse()                                    -> ZExpr
   zisfsym(t:ZTerm,symbol:ZSymbol)             -> ZExpr
   zeq(lt:ZTerm,rt:ZTerm)                      -> ZExpr
   zforall(var:ZTerm,aztype:ZType,expr:ZExpr)  -> ZExpr

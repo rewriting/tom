@@ -404,17 +404,17 @@
 	 <include name="tom/engine/adt/TomSignature.vas"/>
     </vascompile>
 
-    <vascompile srcdir="${src.src}"
+    <gomcompile srcdir="${src.src}"
                 package="tom.engine.adt"
                 destdir="${src.gen}">
-	 <include name="tom/engine/adt/Il.vas"/>
-    </vascompile>
+	 <include name="tom/engine/adt/Il.gom"/>
+    </gomcompile>
 
-    <vascompile srcdir="${src.src}"
+    <gomcompile srcdir="${src.src}"
                 package="tom.engine.adt"
                 destdir="${src.gen}">
-	 <include name="tom/engine/adt/Zenon.vas"/>
-    </vascompile>
+	 <include name="tom/engine/adt/Zenon.gom"/>
+    </gomcompile>
 
 <!-- how to build adt from adt instead of vas
     <adt srcdir="${src.src}"

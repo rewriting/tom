@@ -87,9 +87,9 @@ public class ZenonBackend {
 
   public String genZTermList(ZTermList tl) {
     StringBuffer res = new StringBuffer();
-    while (!tl.isEmpty()) {
-      res.append(" "+genZTerm(tl.getHead()));
-      tl = tl.getTail();
+    while (!tl.isEmptyconcZTerm()) {
+      res.append(" "+genZTerm(tl.getHeadconcZTerm()));
+      tl = tl.getTailconcZTerm();
     }
     return res.toString();
   }
@@ -149,9 +149,9 @@ public class ZenonBackend {
 
   public String genZAxiomList(ZAxiomList axlist) {
     StringBuffer res = new StringBuffer();
-    while (!axlist.isEmpty()) {
-      res.append(genZAxiom(axlist.getHead()));
-      axlist = axlist.getTail();
+    while (!axlist.isEmptyzby()) {
+      res.append(genZAxiom(axlist.getHeadzby()));
+      axlist = axlist.getTailzby();
     }
     return res.toString();
   }
@@ -231,9 +231,9 @@ public class ZenonBackend {
     ZAxiomList axiomsDef = tomiltools.symbolsDefinition(symbols);
     ZAxiomList axiomsSub = tomiltools.subtermsDefinition(symbols);
     ZAxiomList axioms = `zby(axiomsDef*,axiomsSub*);
-    while (!axioms.isEmpty()) {
-      out.append(genZAxiom(axioms.getHead()));
-      axioms = axioms.getTail();
+    while (!axioms.isEmptyzby()) {
+      out.append(genZAxiom(axioms.getHeadzby()));
+      axioms = axioms.getTailzby();
     }
 
     // Generates the different proof obligations

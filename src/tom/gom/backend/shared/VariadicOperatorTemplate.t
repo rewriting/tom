@@ -83,6 +83,7 @@ public abstract class @className()@ extends @fullClassName(sortName)@ {
       return 0;
     }
   }
+  // TODO reverse !!
 ]%);
 
     return out.toString();
