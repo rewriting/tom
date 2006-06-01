@@ -426,14 +426,14 @@ public class TomKernelExpander extends TomBase {
     //System.out.println("list = " + list);
 
     %match(TomName name,TomList list) {
-      _,emptyTomList() -> {
+      _,concTomTerm() -> {
         System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
         throw new TomRuntimeException("getTypeFromVariableList. Stange case '" + name + "' not found");
       }
 
-      varName, manyTomList(Variable[astName=varName,astType=type@Type[]],_) -> { return `type; }
-      varName, manyTomList(VariableStar[astName=varName,astType=type@Type[]],_) -> { return `type; }
-      _, manyTomList(_,tail) -> { return getTypeFromVariableList(name,`tail); }
+      varName, concTomTerm(Variable[astName=varName,astType=type@Type[]],_*) -> { return `type; }
+      varName, concTomTerm(VariableStar[astName=varName,astType=type@Type[]],_*) -> { return `type; }
+      _, concTomTerm(_,tail*) -> { return getTypeFromVariableList(name,`tail); }
 
     }
     return null;
@@ -454,16 +454,17 @@ public class TomKernelExpander extends TomBase {
 
     //System.out.println("symbol = " + subject.getastname());
     %match(TomSymbol symbol, SlotList subtermList) {
-      emptySymbol(), manySlotList(PairSlotAppl(slotName,slotAppl),tail) -> {
+      emptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
         /*
          * if the top symbol is unknown, the subterms
          * are expanded in an empty context
          */
-        return `manySlotList(PairSlotAppl(slotName,(TomTerm)expandVariable(emptyTerm(),slotAppl)), expandVariableList(symbol,tail));
+        SlotList sl = expandVariableList(symbol,tail);
+        return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(emptyTerm(),slotAppl)),sl*);
       }
 
       symb@Symbol[typesToType=TypesToType(typelist,codomain)],
-        manySlotList(PairSlotAppl(slotName,slotAppl),tail) -> {
+        concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
           // process a list of subterms and a list of types
           if(isListOperator(`symb) || isArrayOperator(`symb)) {
             /*
@@ -483,23 +484,27 @@ public class TomKernelExpander extends TomBase {
             %match(TomTerm slotAppl) {
               VariableStar[option=option,astName=name,constraints=constraints] -> {
                 ConstraintList newconstraints = (ConstraintList)expandVariable(`TomTypeToTomTerm(codomain),`constraints);
-                return `manySlotList(PairSlotAppl(slotName,VariableStar(option,name,codomain,newconstraints)), expandVariableList(symbol,tail));
+                SlotList sl = expandVariableList(symbol,tail);
+                return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,codomain,newconstraints)),sl*);
               }
 
               UnamedVariableStar[option=option,constraints=constraints] -> {
                 ConstraintList newconstraints = (ConstraintList)expandVariable(`TomTypeToTomTerm(codomain),`constraints);
-                return `manySlotList(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)), expandVariableList(symbol,tail));
+                SlotList sl = expandVariableList(symbol,tail);
+                return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)),sl*);
               }
 
               _ -> {
                 TomType domaintype = `typelist.getHead();
-                return `manySlotList(PairSlotAppl(slotName,(TomTerm)expandVariable(TomTypeToTomTerm(domaintype), slotAppl)), expandVariableList(symbol,tail));
+                SlotList sl = expandVariableList(symbol,tail);
+                return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(TomTypeToTomTerm(domaintype), slotAppl)),sl*);
 
               }
             }
           } else {
             //TomType type = `typelist.getHead();
-            return `manySlotList(PairSlotAppl(slotName,(TomTerm)expandVariable(TomTypeToTomTerm(getSlotType(symb,slotName)), slotAppl)), expandVariableList(symbol,tail));
+            SlotList sl = expandVariableList(symbol,tail);
+            return `consSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(TomTypeToTomTerm(getSlotType(symb,slotName)), slotAppl)),sl*);
           }
         }
     }
