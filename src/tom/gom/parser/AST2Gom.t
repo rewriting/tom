@@ -183,7 +183,6 @@ public class AST2Gom{
             return `concProduction(getProduction(g),tmpL*);
           }
           EQUALS(_,_) -> {
-            System.out.println("productionList" + l);
             ProductionList alter = getAlternatives(`g);
             return `concProduction(alter*,tmpL*);
           }
@@ -223,7 +222,6 @@ public class AST2Gom{
   private static ProductionList getAlternatives(ATerm t) {
     %match(ATerm t){
           EQUALS(_,(type,alternatives*)) -> {
-            System.out.println("alt"+t);
             return getAlternatives(`type,`alternatives*);
           }
         }
