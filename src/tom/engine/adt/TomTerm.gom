@@ -1,55 +1,54 @@
 module TomTerm
 imports TomSignature int
-
-public
-sorts TomTerm TomList 
-			Pattern PatternList 
-			PatternInstruction PatternInstructionList 
-
 abstract syntax
 
-TermAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList) -> TomTerm
-ListAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList) -> TomTerm
-RecordAppl(option:OptionList,nameList:NameList,slots:SlotList,constraints:ConstraintList) -> TomTerm
-XMLAppl(option:OptionList,nameList:NameList,attrList:TomList,childList:TomList,constraints:ConstraintList) -> TomTerm
-Variable(option:OptionList,astName:TomName,astType:TomType,constraints:ConstraintList) -> TomTerm
-VariableStar(option:OptionList,astName:TomName,astType:TomType,constraints:ConstraintList) -> TomTerm
-Placeholder(option:OptionList,constraints:ConstraintList) -> TomTerm
-UnamedVariable(option:OptionList,astType:TomType,constraints:ConstraintList) -> TomTerm
-UnamedVariableStar(option:OptionList,astType:TomType,constraints:ConstraintList) -> TomTerm
-emptyTerm() -> TomTerm
-TargetLanguageToTomTerm(tl:TargetLanguage) -> TomTerm
-TomTypeToTomTerm(astType:TomType) -> TomTerm
-TomNameToTomTerm(astName:TomName) -> TomTerm
-TomSymbolToTomTerm(astSymbol:TomSymbol) -> TomTerm
-DeclarationToTomTerm(astDeclaration:Declaration) -> TomTerm
-OptionToTomTerm(option:OptionList) -> TomTerm
-ExpressionToTomTerm(astExpression:Expression) -> TomTerm
-InstructionToTomTerm(astInstruction:Instruction) -> TomTerm
-Tom(tomList:TomList) -> TomTerm
-BackQuoteAppl(option:OptionList,astName:TomName,args:TomList) -> TomTerm
-DoubleBackQuote(args:TomList) -> TomTerm
-Composite(args:TomList) -> TomTerm
-SubjectList(tomList:TomList) -> TomTerm
-Term(tomTerm:TomTerm) -> TomTerm
-AntiTerm(tomTerm:TomTerm) -> TomTerm
-TLVar(strName:String,astType:TomType) -> TomTerm
-Ref(tomTerm:TomTerm) -> TomTerm
-BuildReducedTerm(kid1:TomTerm) -> TomTerm
-FunctionCall(astName:TomName,args:TomList) -> TomTerm
-BuildConstant(astName:TomName) -> TomTerm
-BuildTerm(astName:TomName,args:TomList,moduleName:String) -> TomTerm
-BuildEmptyList(astName:TomName) -> TomTerm
-BuildConsList(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm) -> TomTerm
-BuildAppendList(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm) -> TomTerm
-BuildEmptyArray(astName:TomName,size:int) -> TomTerm
-BuildConsArray(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm) -> TomTerm
-BuildAppendArray(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm) -> TomTerm
-TomInclude(tomList:TomList) -> TomTerm
-Automata(option:OptionList,patternList:TomList,numberList:TomNumberList,inst:Instruction) -> TomTerm
-PatternInstruction(pattern:Pattern,action:Instruction,option:OptionList) -> PatternInstruction
-Pattern(subjectList:TomList,tomList:TomList,guards:TomList) -> Pattern
-concPatternInstruction(PatternInstruction*) -> PatternInstructionList
-concPattern(Pattern*) -> PatternList
-concTomTerm(TomTerm*) -> TomList
+TomTerm = TermAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList)
+        | ListAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList)
+        | RecordAppl(option:OptionList,nameList:NameList,slots:SlotList,constraints:ConstraintList)
+        | XMLAppl(option:OptionList,nameList:NameList,attrList:TomList,childList:TomList,constraints:ConstraintList)
+        | Variable(option:OptionList,astName:TomName,astType:TomType,constraints:ConstraintList)
+        | VariableStar(option:OptionList,astName:TomName,astType:TomType,constraints:ConstraintList)
+        | Placeholder(option:OptionList,constraints:ConstraintList)
+        | UnamedVariable(option:OptionList,astType:TomType,constraints:ConstraintList)
+        | UnamedVariableStar(option:OptionList,astType:TomType,constraints:ConstraintList)
+        | emptyTerm()
+        | TargetLanguageToTomTerm(tl:TargetLanguage)
+        | TomTypeToTomTerm(astType:TomType)
+        | TomNameToTomTerm(astName:TomName)
+        | TomSymbolToTomTerm(astSymbol:TomSymbol)
+        | DeclarationToTomTerm(astDeclaration:Declaration)
+        | OptionToTomTerm(option:OptionList)
+        | ExpressionToTomTerm(astExpression:Expression)
+        | InstructionToTomTerm(astInstruction:Instruction)
+        | Tom(tomList:TomList)
+        | BackQuoteAppl(option:OptionList,astName:TomName,args:TomList)
+        | DoubleBackQuote(args:TomList)
+        | Composite(args:TomList)
+        | SubjectList(tomList:TomList)
+        | Term(tomTerm:TomTerm)
+        | AntiTerm(tomTerm:TomTerm)
+        | TLVar(strName:String,astType:TomType)
+        | Ref(tomTerm:TomTerm)
+        | BuildReducedTerm(kid1:TomTerm)
+        | FunctionCall(astName:TomName,args:TomList)
+        | BuildConstant(astName:TomName)
+        | BuildTerm(astName:TomName,args:TomList,moduleName:String)
+        | BuildEmptyList(astName:TomName)
+        | BuildConsList(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm)
+        | BuildAppendList(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm)
+        | BuildEmptyArray(astName:TomName,size:int)
+        | BuildConsArray(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm)
+        | BuildAppendArray(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm)
+        | TomInclude(tomList:TomList)
+        | Automata(option:OptionList,patternList:TomList,numberList:TomNumberList,inst:Instruction)
+
+PatternInstruction = PatternInstruction(pattern:Pattern,action:Instruction,option:OptionList)
+
+Pattern = Pattern(subjectList:TomList,tomList:TomList,guards:TomList)
+
+PatternInstructionList = concPatternInstruction(PatternInstruction*)
+
+PatternList = concPattern(Pattern*)
+
+TomList = concTomTerm(TomTerm*)
 

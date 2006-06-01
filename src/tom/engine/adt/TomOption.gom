@@ -1,23 +1,19 @@
 module TomOption
 imports TomSignature int
-
-public
-sorts OptionList Option 
-
 abstract syntax
+Option = DeclarationToOption(astDeclaration:Declaration)
+       | TomNameToOption(astName:TomName)
+       | TomTermToOption(astTerm:TomTerm)
+       | DefinedSymbol()
+       | GeneratedMatch()
+       | OriginTracking(astName:TomName,line:int,fileName:String)
+       | OriginalText(astName:TomName)
+       | Constant()
+       | Label(astName:TomName)
+       | Debug(astName:TomName)
+       | ModuleName(string:String)
+       | ImplicitXMLAttribut()
+       | ImplicitXMLChild()
+       | noOption()
 
-DeclarationToOption(astDeclaration:Declaration) -> Option
-TomNameToOption(astName:TomName) -> Option
-TomTermToOption(astTerm:TomTerm) -> Option
-DefinedSymbol() -> Option
-GeneratedMatch() -> Option
-OriginTracking(astName:TomName,line:int,fileName:String) -> Option
-OriginalText(astName:TomName) -> Option
-Constant() -> Option
-Label(astName:TomName) -> Option
-Debug(astName:TomName) -> Option
-ModuleName(string:String) -> Option
-ImplicitXMLAttribut() -> Option
-ImplicitXMLChild() -> Option
-noOption() -> Option
-concOption(Option*) -> OptionList
+OptionList = concOption(Option*)

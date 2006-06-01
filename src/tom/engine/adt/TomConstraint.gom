@@ -1,12 +1,8 @@
 module TomConstraint
 imports TomSignature 
-
-public
-sorts Constraint ConstraintList 
-
 abstract syntax
+Constraint = Ensure(variable:TomTerm)
+           | Equal(variable:TomTerm)
+           | AssignTo(variable:TomTerm)
 
-Ensure(variable:TomTerm) -> Constraint
-Equal(variable:TomTerm) -> Constraint
-AssignTo(variable:TomTerm) -> Constraint
-concConstraint(Constraint*) -> ConstraintList
+ConstraintList = concConstraint(Constraint*)

@@ -798,7 +798,7 @@ public class TomSyntaxChecker extends TomChecker {
           }
 
           boolean first = true;
-          %match(NameList nameList) {
+          %match(TomNameList nameList) {
             /* 
              * We perform tests as we have different RecordAppls: 
              * they all must be valid and have the expected return type
@@ -983,12 +983,12 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   private  TomSymbol ensureValidUnamedList(TomType expectedType, String fileName,int decLine) {
-    SymbolList symbolList = symbolTable().getSymbolFromType(expectedType);
-    SymbolList filteredList = `emptySymbolList();
-    %match(SymbolList symbolList) {
+    TomSymbolList symbolList = symbolTable().getSymbolFromType(expectedType);
+    TomSymbolList filteredList = `concTomSymbol();
+    %match(TomSymbolList symbolList) {
       (_*, symbol , _*) -> {
         if(isArrayOperator(`symbol) || isListOperator(`symbol)) {
-          filteredList = `manySymbolList(symbol,filteredList);
+          filteredList = `concTomSymbol(symbol,filteredList*);
         }
       }
     }
@@ -1013,7 +1013,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  private  TomSymbol ensureValidApplDisjunction(NameList nameList, TomType expectedType, String fileName, int decLine,
+  private  TomSymbol ensureValidApplDisjunction(TomNameList nameList, TomType expectedType, String fileName, int decLine,
                                                boolean permissive, boolean topLevel) {
     TomTypeList domainReference = null, currentDomain = null;
     TomSymbol symbol = null;
@@ -1050,7 +1050,7 @@ public class TomSyntaxChecker extends TomChecker {
 
     // this part is common between Appl and records with multiple head symbols
     boolean first = true; // the first symbol give the expected type
-    %match(NameList nameList) {
+    %match(TomNameList nameList) {
       (_*, Name(dijName), _*) -> { // for each SymbolName
         symbol =  getSymbolFromName(`dijName);
         if (symbol == null) {
@@ -1094,7 +1094,7 @@ public class TomSyntaxChecker extends TomChecker {
     return true;
   }
 
-  private  TomSymbol ensureValidRecordDisjunction(NameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
+  private  TomSymbol ensureValidRecordDisjunction(TomNameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
     if(nameList.isSingle()) { // Valid but has it a good type?
       String res = nameList.getHead().getString();
       TomSymbol symbol =  getSymbolFromName(res);

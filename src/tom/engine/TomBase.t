@@ -507,17 +507,17 @@ public class TomBase {
   }
   
   protected static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
-    SymbolList list = symbolTable.getSymbolFromType(tomType);
-    SymbolList filteredList = `emptySymbolList();
+    TomSymbolList list = symbolTable.getSymbolFromType(tomType);
+    TomSymbolList filteredList = `concTomSymbol();
     // Not necessary since checker ensure the uniqueness of the symbol
-    while(!list.isEmptyconcSymbol()) {
-      TomSymbol head = list.getHeadconcSymbol();
+    while(!list.isEmptyconcTomSymbol()) {
+      TomSymbol head = list.getHeadconcTomSymbol();
       if(isArrayOperator(head) || isListOperator(head)) {
-        filteredList = `concSymbol(head,filteredList*);
+        filteredList = `concTomSymbol(head,filteredList*);
       }
-      list = list.getTailconcSymbol();
+      list = list.getTailconcTomSymbol();
     }
-    return filteredList.getHeadconcSymbol();
+    return filteredList.getHeadconcTomSymbol();
   }
 
   protected static TomType getTermType(TomTerm t, SymbolTable symbolTable){

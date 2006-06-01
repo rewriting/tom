@@ -724,44 +724,44 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   public void generateList(int deep, TomList subject, String moduleName)
     throws IOException {
-    while(!subject.isEmpty()) {
-      generate(deep, subject.getHead(), moduleName);
-      subject = subject.getTail();
+    while(!subject.isEmptyconcTomTerm()) {
+      generate(deep, subject.getHeadconcTomTerm(), moduleName);
+      subject = subject.getTailconcTomTerm();
     }
   }
 
   public void generateOptionList(int deep, OptionList subject, String moduleName)
     throws IOException {
-    while(!subject.isEmpty()) {
-      generateOption(deep,subject.getHead(), moduleName);
-      subject = subject.getTail();
+    while(!subject.isEmptyconcOption()) {
+      generateOption(deep,subject.getHeadconcOption(), moduleName);
+      subject = subject.getTailconcOption();
     }
   }
 
   public void generateInstructionList(int deep, InstructionList subject, String moduleName)
     throws IOException {
-    while(!subject.isEmpty()) {
-      generateInstruction(deep,subject.getHead(), moduleName);
-      subject = subject.getTail();
+    while(!subject.isEmptyconcInstruction()) {
+      generateInstruction(deep,subject.getHeadconcInstruction(), moduleName);
+      subject = subject.getTailconcInstruction();
     }
     if(prettyMode) {
-	output.writeln();
+      output.writeln();
     }
   }
 
   public void generateDeclarationList(int deep, DeclarationList subject, String moduleName)
     throws IOException {
-    while(!subject.isEmpty()) {
-      generateDeclaration(deep,subject.getHead(), moduleName);
-      subject = subject.getTail();
+    while(!subject.isEmptyconcDeclaration()) {
+      generateDeclaration(deep,subject.getHeadconcDeclaration(), moduleName);
+      subject = subject.getTailconcDeclaration();
     }
   }
 
   public void generatePairNameDeclList(int deep, PairNameDeclList pairNameDeclList, String moduleName)
     throws IOException {
-    while ( !pairNameDeclList.isEmpty() ) {
-      generateDeclaration(deep, pairNameDeclList.getHead().getSlotDecl(), moduleName);
-      pairNameDeclList = pairNameDeclList.getTail();
+    while ( !pairNameDeclList.isEmptyconcPairNameDecl() ) {
+      generateDeclaration(deep, pairNameDeclList.getHeadconcPairNameDecl().getSlotDecl(), moduleName);
+      pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
     }
   }
 

@@ -1,42 +1,36 @@
 module TomDeclaration
 imports TomSignature 
-
-public
-sorts Declaration DeclarationList 
-
 abstract syntax
+Declaration = TypeTermDecl(astName:TomName,declarations:DeclarationList,orgTrack:Option)
+            | CheckStampDecl(variable:TomTerm,instr:Instruction,orgTrack:Option)
+            | SetStampDecl(variable:TomTerm,instr:Instruction,orgTrack:Option)
+            | GetImplementationDecl(variable:TomTerm,instr:Instruction,orgTrack:Option)
+            | IsFsymDecl(astName:TomName,variable:TomTerm,instr:Instruction,orgTrack:Option)
+            | GetSlotDecl(astName:TomName,slotName:TomName,variable:TomTerm,instr:Instruction,orgTrack:Option)
+            | TermsEqualDecl(termArg1:TomTerm,termArg2:TomTerm,instr:Instruction,orgTrack:Option)
+            | GetHeadDecl(opname:TomName, codomain:TomType,variable:TomTerm,instr:Instruction,orgTrack:Option)
+            | GetTailDecl(opname:TomName, variable:TomTerm,instr:Instruction,orgTrack:Option)
+            | IsEmptyDecl(opname:TomName, variable:TomTerm,instr:Instruction,orgTrack:Option)
+            | MakeEmptyList(astName:TomName,instr:Instruction,orgTrack:Option)
+            | MakeAddList(astName:TomName,varElt:TomTerm,varList:TomTerm,instr:Instruction,orgTrack:Option)
+            | GetElementDecl(opname:TomName, variable:TomTerm,index:TomTerm,instr:Instruction,orgTrack:Option)
+            | GetSizeDecl(opname:TomName, variable:TomTerm,instr:Instruction,orgTrack:Option)
+            | MakeEmptyArray(astName:TomName,varSize:TomTerm,instr:Instruction,orgTrack:Option)
+            | MakeAddArray(astName:TomName,varElt:TomTerm,varList:TomTerm,instr:Instruction,orgTrack:Option)
+            | MakeDecl(astName:TomName,astType:TomType,args:TomList,instr:Instruction,orgTrack:Option)
 
-TypeTermDecl(astName:TomName,declarations:DeclarationList,orgTrack:Option) -> Declaration
-CheckStampDecl(variable:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-SetStampDecl(variable:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-GetImplementationDecl(variable:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-IsFsymDecl(astName:TomName,variable:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-GetSlotDecl(astName:TomName,slotName:TomName,variable:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-TermsEqualDecl(termArg1:TomTerm,termArg2:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-GetHeadDecl(opname:TomName, codomain:TomType,variable:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-GetTailDecl(opname:TomName, variable:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-IsEmptyDecl(opname:TomName, variable:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-MakeEmptyList(astName:TomName,instr:Instruction,orgTrack:Option) -> Declaration
-MakeAddList(astName:TomName,varElt:TomTerm,varList:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-GetElementDecl(opname:TomName, variable:TomTerm,index:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-GetSizeDecl(opname:TomName, variable:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-MakeEmptyArray(astName:TomName,varSize:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-MakeAddArray(astName:TomName,varElt:TomTerm,varList:TomTerm,instr:Instruction,orgTrack:Option) -> Declaration
-MakeDecl(astName:TomName,astType:TomType,args:TomList,instr:Instruction,orgTrack:Option) -> Declaration
-
-Strategy(sName:TomName,extendsTerm:TomTerm,visitList:TomVisitList,orgTrack:Option) -> Declaration
-RuleSet(ruleList:TomRuleList,option:OptionList) -> Declaration 
-FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction) -> Declaration 
-MethodDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction) -> Declaration 
+            | Strategy(sName:TomName,extendsTerm:TomTerm,visitList:TomVisitList,orgTrack:Option)
+            | RuleSet(ruleList:TomRuleList,option:OptionList)
+            | FunctionDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction)
+            | MethodDef(astName:TomName,argumentList:TomList,codomain:TomType,throwsType:TomType,instruction:Instruction)
 /*
 super is the parameter given to the function super. For instance: super(`Identity());
 */
-Class(astName:TomName,extendsType:TomForwardType,superTerm:TomTerm,declaration:Declaration) -> Declaration 
+            | Class(astName:TomName,extendsType:TomForwardType,superTerm:TomTerm,declaration:Declaration)
+            | SymbolDecl(astName:TomName)
+            | ListSymbolDecl(astName:TomName)
+            | ArraySymbolDecl(astName:TomName)
+            | EmptyDeclaration()
+            | AbstractDecl(declList:DeclarationList)
 
-SymbolDecl(astName:TomName) -> Declaration
-ListSymbolDecl(astName:TomName) -> Declaration
-ArraySymbolDecl(astName:TomName) -> Declaration
-EmptyDeclaration() -> Declaration
-
-AbstractDecl(declList:DeclarationList) -> Declaration
-concDeclaration(Declaration*) -> DeclarationList
+DeclarationList = concDeclaration(Declaration*)

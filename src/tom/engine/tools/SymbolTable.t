@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import tom.engine.adt.tomsignature.TomSignatureFactory;
-import tom.engine.adt.tomsignature.types.SymbolList;
+import tom.engine.adt.tomsignature.types.TomSymbolList;
 import tom.engine.adt.tomsignature.types.TomEntry;
 import tom.engine.adt.tomsignature.types.TomEntryList;
 import tom.engine.adt.tomsignature.types.TomSymbol;
@@ -110,8 +110,8 @@ public class SymbolTable {
     return res;
   }
 
-  public SymbolList getSymbolFromType(TomType type) {
-    SymbolList res = `concTomSymbol();
+  public TomSymbolList getSymbolFromType(TomType type) {
+    TomSymbolList res = `concTomSymbol();
     Iterator it = mapSymbolName.values().iterator();
     while(it.hasNext()) {
       TomSymbol symbol = (TomSymbol)it.next();

@@ -1,31 +1,26 @@
 module TomExpression
 imports TomSignature 
-
-public
-sorts Expression 
-
 abstract syntax
-
-TomTermToExpression(astTerm:TomTerm) -> Expression
-Bottom() -> Expression
-Negation(arg:Expression) -> Expression
-And(arg1:Expression,arg2:Expression) -> Expression
-Or(arg1:Expression,arg2:Expression) -> Expression
-GreaterThan(arg1:Expression,arg2:Expression) -> Expression
-TrueTL() -> Expression
-FalseTL() -> Expression
-EqualFunctionSymbol(astType:TomType,exp1:TomTerm,exp2:TomTerm) -> Expression
-EqualTerm(tomType:TomType,kid1:TomTerm,kid2:TomTerm) -> Expression
-Cast(astType:TomType,source:Expression) -> Expression
-GetSubterm(codomain:TomType,variable:TomTerm,number:TomNumber) -> Expression
-GetSlot(codomain:TomType,astName:TomName,slotNameString:String,variable:TomTerm) -> Expression
-IsFsym(astName:TomName,variable:TomTerm) -> Expression
-GetHead(opname:TomName,codomain:TomType,variable:TomTerm) -> Expression
-GetTail(opname:TomName,variable:TomTerm) -> Expression
-IsEmptyList(opname:TomName,variable:TomTerm) -> Expression
-IsEmptyArray(opname:TomName,variable:TomTerm,index:TomTerm) -> Expression
-AddOne(variable:TomTerm) -> Expression
-GetSize(opname:TomName,variable:TomTerm) -> Expression
-GetElement(opname:TomName,codomain:TomType,kid1:TomTerm,kid2:TomTerm) -> Expression
-GetSliceList(astName:TomName,variableBeginAST:TomTerm,variableEndAST:TomTerm) -> Expression
-GetSliceArray(astName:TomName,subjectListName:TomTerm,variableBeginAST:TomTerm,variableEndAST:TomTerm) -> Expression
+Expression = TomTermToExpression(astTerm:TomTerm)
+           | Bottom()
+           | Negation(arg:Expression)
+           | And(arg1:Expression,arg2:Expression)
+           | Or(arg1:Expression,arg2:Expression)
+           | GreaterThan(arg1:Expression,arg2:Expression)
+           | TrueTL()
+           | FalseTL()
+           | EqualFunctionSymbol(astType:TomType,exp1:TomTerm,exp2:TomTerm)
+           | EqualTerm(tomType:TomType,kid1:TomTerm,kid2:TomTerm)
+           | Cast(astType:TomType,source:Expression)
+           | GetSubterm(codomain:TomType,variable:TomTerm,number:TomNumber)
+           | GetSlot(codomain:TomType,astName:TomName,slotNameString:String,variable:TomTerm)
+           | IsFsym(astName:TomName,variable:TomTerm)
+           | GetHead(opname:TomName,codomain:TomType,variable:TomTerm)
+           | GetTail(opname:TomName,variable:TomTerm)
+           | IsEmptyList(opname:TomName,variable:TomTerm)
+           | IsEmptyArray(opname:TomName,variable:TomTerm,index:TomTerm)
+           | AddOne(variable:TomTerm)
+           | GetSize(opname:TomName,variable:TomTerm)
+           | GetElement(opname:TomName,codomain:TomType,kid1:TomTerm,kid2:TomTerm)
+           | GetSliceList(astName:TomName,variableBeginAST:TomTerm,variableEndAST:TomTerm)
+           | GetSliceArray(astName:TomName,subjectListName:TomTerm,variableBeginAST:TomTerm,variableEndAST:TomTerm)

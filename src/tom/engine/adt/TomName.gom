@@ -1,24 +1,20 @@
 module TomName
 imports int
-
-public
-sorts TomNumberList TomNumber TomName 
-
 abstract syntax
+TomName = Name(string:String)
+        | PositionName(numberList:TomNumberList)
+        | EmptyName()
 
-Name(string:String) -> TomName
-PositionName(numberList:TomNumberList) -> TomName
-EmptyName() -> TomName
+TomNumber = MatchNumber(number:TomNumber)
+          | PatternNumber(number:TomNumber)
+          | ListNumber(number:TomNumber)
+          | IndexNumber(number:TomNumber)
+          | Begin(number:TomNumber)
+          | End(number:TomNumber)
+          | Number(integer:int)
+          | AbsVar(number:TomNumber)
+          | RenamedVar(astName:TomName)
+          | NameNumber(astName:TomName)
+          | RuleVar()
 
-MatchNumber(number:TomNumber) -> TomNumber
-PatternNumber(number:TomNumber) -> TomNumber
-ListNumber(number:TomNumber) -> TomNumber
-IndexNumber(number:TomNumber) -> TomNumber
-Begin(number:TomNumber) -> TomNumber
-End(number:TomNumber) -> TomNumber
-Number(integer:int) -> TomNumber
-AbsVar(number:TomNumber) -> TomNumber
-RenamedVar(astName:TomName) -> TomNumber
-NameNumber(astName:TomName) -> TomNumber
-RuleVar() -> TomNumber
-concTomNumber(TomNumber*) -> TomNumberList
+TomNumberList = concTomNumber(TomNumber*)

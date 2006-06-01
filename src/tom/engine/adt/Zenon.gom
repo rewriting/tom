@@ -1,33 +1,30 @@
 module Zenon
 imports String int
-
-public sorts 
-  ZSymbol ZTerm ZTermList ZExpr ZType ZAxiom ZAxiomList ZSpec
-
 abstract syntax
-  zsymbol(name:String)                        -> ZSymbol
+ZSymbol = zsymbol(name:String)
   
-  zvar(varname:String)                        -> ZTerm
-  zappl(zsymb:ZSymbol,termlist:ZTermList)     -> ZTerm
-  zst(abst:ZTerm,index:int)                   -> ZTerm
-  zsl(abst:ZTerm,name:String)                 -> ZTerm
-  concZTerm(ZTerm *)                          -> ZTermList
+ZTerm = zvar(varname:String)
+      | zappl(zsymb:ZSymbol,termlist:ZTermList)
+      | zst(abst:ZTerm,index:int)
+      | zsl(abst:ZTerm,name:String)
 
-  ztype(tname:String)                         -> ZType
+ZTermList = concZTerm(ZTerm *)
 
-  ztrue()                                     -> ZExpr
-  zfalse()                                    -> ZExpr
-  zisfsym(t:ZTerm,symbol:ZSymbol)             -> ZExpr
-  zeq(lt:ZTerm,rt:ZTerm)                      -> ZExpr
-  zforall(var:ZTerm,aztype:ZType,expr:ZExpr)  -> ZExpr
-  zexists(var:ZTerm,aztype:ZType,expr:ZExpr)  -> ZExpr
-  zand(lte:ZExpr,rte:ZExpr)                   -> ZExpr
-  zor(lte:ZExpr,rte:ZExpr)                   -> ZExpr
-  znot(nex:ZExpr)                             -> ZExpr
-  zequiv(lte:ZExpr,rte:ZExpr)                 -> ZExpr
+ZType = ztype(tname:String)
+
+ZExpr = ztrue()
+      | zfalse()
+      | zisfsym(t:ZTerm,symbol:ZSymbol)
+      | zeq(lt:ZTerm,rt:ZTerm)
+      | zforall(var:ZTerm,aztype:ZType,expr:ZExpr)
+      | zexists(var:ZTerm,aztype:ZType,expr:ZExpr)
+      | zand(lte:ZExpr,rte:ZExpr)
+      | zor(lte:ZExpr,rte:ZExpr)
+      | znot(nex:ZExpr)
+      | zequiv(lte:ZExpr,rte:ZExpr)
   
-  zaxiom(name:String,ax:ZExpr)                -> ZAxiom
+ZAxiom = zaxiom(name:String,ax:ZExpr)
 
-  zby(ZAxiom *)                               -> ZAxiomList
+ZAxiomList = zby(ZAxiom *)          
 
-  zthm(thm:ZExpr,by:ZAxiomList)               -> ZSpec
+ZSpec = zthm(thm:ZExpr,by:ZAxiomList)   

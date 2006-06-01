@@ -1,29 +1,24 @@
 module TomSignature
 imports TomName TomType TomConstraint TomInstruction TomExpression TomDeclaration TomOption TomTerm TomSlot int String
-
-public
-sorts TomSymbolTable SymbolList Position TomEntryList TargetLanguage NameList TomRuleList TomRule TomVisitList TomVisit TomStructureTable TomSymbol TomEntry KeyEntry
-
 abstract syntax
+TargetLanguage = TL(code:String,start:Position,end:Position)
+               | ITL(code:String)
+               | Comment(code:String)
+               | noTL()
+Position = TextPosition(line:int,column:int)
+TomRule = RewriteRule(lhs:TomTerm,rhs:TomTerm,condList:InstructionList,option:OptionList)
+TomVisit = VisitTerm(vNode:TomType,astPatternInstructionList:PatternInstructionList,option:OptionList)
+TomSymbol = emptySymbol()
+          | Symbol(astName:TomName, typesToType:TomType, pairNameDeclList:PairNameDeclList, option:OptionList)
+TomSymbolTable = Table(entryList:TomEntryList)
+TomEntry = Entry(strName:String,astSymbol:TomSymbol)
+TomStructureTable = StructTable(structList:TomList)
+TomRuleList = concTomRule(TomRule*)
+TomVisitList = concTomVisit(TomVisit*)
+TomEntryList = concTomEntry(TomEntry*)
+TomSymbolList = concTomSymbol(TomSymbol*)
+TomNameList = concTomName(TomName*)
 
-TL(code:String,start:Position,end:Position) -> TargetLanguage
-ITL(code:String) -> TargetLanguage
-Comment(code:String) -> TargetLanguage
-noTL() -> TargetLanguage
-TextPosition(line:int,column:int) -> Position
-RewriteRule(lhs:TomTerm,rhs:TomTerm,condList:InstructionList,option:OptionList) -> TomRule
-VisitTerm(vNode:TomType,astPatternInstructionList:PatternInstructionList,option:OptionList) -> TomVisit
-emptySymbol() -> TomSymbol
-Symbol(astName:TomName, typesToType:TomType, pairNameDeclList:PairNameDeclList, option:OptionList) -> TomSymbol
-Table(entryList:TomEntryList) -> TomSymbolTable
-Entry(strName:String,astSymbol:TomSymbol) -> TomEntry
-StructTable(structList:TomList) -> TomStructureTable
-concTomRule(TomRule*) -> TomRuleList
-concTomVisit(TomVisit*) -> TomVisitList
-concTomEntry(TomEntry*) -> TomEntryList
-concTomSymbol(TomSymbol*) -> SymbolList
-concTomName(TomName*) -> NameList
-
-UsedSymbolConstructor(symbol:TomSymbol) -> KeyEntry
-UsedSymbolDestructor(symbol:TomSymbol) -> KeyEntry
-UsedTypeDefinition(typedef:TomTypeDefinition) -> KeyEntry
+KeyEntry = UsedSymbolConstructor(symbol:TomSymbol)
+         | UsedSymbolDestructor(symbol:TomSymbol)
+         | UsedTypeDefinition(typedef:TomTypeDefinition)

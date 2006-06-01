@@ -268,9 +268,9 @@ public class TomBackend extends TomGenericPlugin {
 
 		visit TomTerm {
 			(TermAppl|RecordAppl|ListAppl)[nameList=nameList] -> {
-				NameList l = `nameList;
+				TomNameList l = `nameList;
         // System.out.println("dest " + `l);
-				while(!l.isEmpty()) {
+				while(!l.isEmptyconcTomName()) {
 					try {
 						//System.out.println("op: " + l.getHead());
 						String moduleName = (String) stack.peek();
@@ -280,7 +280,7 @@ public class TomBackend extends TomGenericPlugin {
 					} catch (EmptyStackException e) {
 						System.out.println("No moduleName in stack");
 					}
-					l = l.getTail();
+					l = l.getTailconcTomName();
 				}
 				`Fail().visit(null);
 			}

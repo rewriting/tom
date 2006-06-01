@@ -494,8 +494,8 @@ public class TomOptimizer extends TomGenericPlugin {
           }
         }
         ref@And(EqualFunctionSymbol(astType,exp,exp1),EqualFunctionSymbol(astType,exp,exp2)) -> {
-          NameList l1 = `exp1.getNameList();
-          NameList l2 = `exp2.getNameList();
+          TomNameList l1 = `exp1.getNameList();
+          TomNameList l2 = `exp2.getNameList();
           if (`exp1.getNameList()==`exp2.getNameList()){
             return `EqualFunctionSymbol(astType,exp,exp1);
           } else if(l1.getLength()==1 && l2.getLength()==1) {

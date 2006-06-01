@@ -572,7 +572,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
     LinkedList optionList = new LinkedList();
     LinkedList secondOptionList = new LinkedList();
     TomTerm term = null;
-    NameList nameList = `emptyNameList();
+    TomNameList nameList = `concTomName();
     TomName name = null;
     LinkedList list = new LinkedList();
     boolean implicit = false;
@@ -616,7 +616,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             {LA(2) != LPAREN && LA(2) != LBRACKET}? 
             name = headConstant[optionList] 
             {
-                nameList = (NameList) nameList.append(name);
+                nameList = (TomNameList) nameList.append(name);
 								optionList.add(`Constant());
                 result = `TermAppl(
                         ASTFactory.makeOptionList(optionList),
@@ -631,7 +631,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             {LA(3) != LPAREN && LA(3) != LBRACKET}? 
             name = antiHeadConstant[optionList] 
             {
-                nameList = (NameList) nameList.append(name);
+                nameList = (TomNameList) nameList.append(name);
 								optionList.add(`Constant());
                 result = `AntiTerm(TermAppl(
                         ASTFactory.makeOptionList(optionList),
@@ -644,7 +644,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
 
         |   // f(...) or f[...]
             name = headSymbol[optionList] 
-            {nameList = (NameList) nameList.append(name);}
+            {nameList = (TomNameList) nameList.append(name);}
             implicit = args[list,secondOptionList]
             {
               if(implicit) {
@@ -666,7 +666,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             
        |   // !f(...) or !f[...]
             name = antiHeadSymbol[optionList] 
-            {nameList = (NameList) nameList.append(name);}
+            {nameList = (TomNameList) nameList.append(name);}
             implicit = args[list,secondOptionList]
             {
               if(implicit) {
@@ -737,7 +737,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
   LinkedList childs = new LinkedList();
   String keyword = "";
   boolean implicit;
-  NameList nameList, closingNameList;
+  TomNameList nameList, closingNameList;
   OptionList option = null;
   ConstraintList constraint;
 }
@@ -908,7 +908,7 @@ xmlAttribute returns [TomTerm result] throws TomException
     LinkedList optionList = new LinkedList();
     LinkedList constraintList = new LinkedList();
     LinkedList optionListAnno2 = new LinkedList();
-    NameList nameList;
+    TomNameList nameList;
     boolean varStar = false;
 }
     :
@@ -983,9 +983,9 @@ xmlTermList [LinkedList list] returns [boolean result] throws TomException
         {result = true;}
     ;
 
-xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [NameList result] throws TomException
+xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [TomNameList result] throws TomException
 {
-    result = `emptyNameList();
+    result = `concTomName();
     StringBuffer XMLName = new StringBuffer("");
     int decLine = 0;
 }
@@ -1017,7 +1017,7 @@ xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [NameList resu
                 {
                     text.append("|"+name4.getText());
                     XMLName.append("|"+name4.getText());
-                    result = (NameList)result.append(`Name(name4.getText()));
+                    result = (TomNameList)result.append(`Name(name4.getText()));
                 }
             )*
             RPAREN
@@ -1034,7 +1034,7 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
   result = null;
   LinkedList optionList = (options==null)?new LinkedList():options;
   OptionList option = null;
-  NameList nameList = null;
+  TomNameList nameList = null;
 }
     :
         
@@ -1065,7 +1065,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
   result = null;
   LinkedList optionList = (options==null)?new LinkedList():options;
   OptionList option = null;
-  NameList nameList = null;
+  TomNameList nameList = null;
 }
     :
         (
@@ -1290,25 +1290,25 @@ placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm 
     ;
 
 // ( id | id | ...)
-headSymbolList [LinkedList optionList] returns [NameList result]
+headSymbolList [LinkedList optionList] returns [TomNameList result]
 { 
-    result = `emptyNameList();
+    result = `concTomName();
     TomName name = null;
 }
     :  
         (
             LPAREN {text.append('(');}
             name = headSymbolOrConstant[optionList] 
-            {result = (NameList) result.append(name);}
+            {result = (TomNameList) result.append(name);}
 
             ALTERNATIVE {text.append('|');}
             name = headSymbolOrConstant[optionList] 
-            {result = (NameList) result.append(name);}
+            {result = (TomNameList) result.append(name);}
 
             ( 
                 ALTERNATIVE {text.append('|');} 
                 name = headSymbolOrConstant[optionList] 
-                {result = (NameList) result.append(name);}
+                {result = (TomNameList) result.append(name);}
             )* 
             t:RPAREN 
             {

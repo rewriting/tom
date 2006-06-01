@@ -42,54 +42,48 @@ public class ASTFactory {
   private ASTFactory() {
   }
 
+/*
   protected static TomSignatureFactory tsf() {
 		return tom.engine.adt.tomsignature.TomSignatureFactory.getInstance(aterm.pure.SingletonFactory.getInstance());
   }
-
-  protected static TomList cons(TomTerm t, TomList l) {
-    return `concTomTerm(t,l*);
-  }
-
-  protected static TomList append(TomTerm t, TomList l) {
-    return `concTomTerm(l*,t);
-  }
+*/
 
   public static TomList makeList(Collection c) {
     Object array[] = c.toArray();
-    TomList list = tsf().makeTomList();
+    TomList list = `concTomTerm();
     for(int i=array.length-1; i>=0 ; i--) {
       ATerm elt = (ATerm)array[i];
       TomTerm term;
       if(elt instanceof TargetLanguage) {
-        term = tsf().makeTomTerm_TargetLanguageToTomTerm((TargetLanguage)elt);
+        term = `TargetLanguageToTomTerm((TargetLanguage)elt);
       } else if(elt instanceof TomType) {
-        term = tsf().makeTomTerm_TomTypeToTomTerm((TomType)elt);
+        term = `TomTypeToTomTerm((TomType)elt);
       } else if(elt instanceof Declaration) {
-        term = tsf().makeTomTerm_DeclarationToTomTerm((Declaration)elt);
+        term = `DeclarationToTomTerm((Declaration)elt);
       } else if(elt instanceof Expression) {
-        term = tsf().makeTomTerm_ExpressionToTomTerm((Expression)elt);
+        term = `ExpressionToTomTerm((Expression)elt);
       } else if(elt instanceof TomName) {
-        term = tsf().makeTomTerm_TomNameToTomTerm((TomName)elt);
+        term = `TomNameToTomTerm((TomName)elt);
       } else if(elt instanceof Instruction) {
-        term = tsf().makeTomTerm_InstructionToTomTerm((Instruction)elt);
+        term = `InstructionToTomTerm((Instruction)elt);
       } else {
         term = (TomTerm)elt;
       }
-      list = cons(term,list);
+      list = concTomTerm(term,list);
     }
     return list;
   }
 
   public static InstructionList makeInstructionList(Collection c) {
     Object array[] = c.toArray();
-    InstructionList list = tsf().makeInstructionList();
+    InstructionList list = `concInstruction();
     for(int i=array.length-1; i>=0 ; i--) {
       ATerm elt = (ATerm)array[i];
       Instruction term;
       if(elt instanceof TargetLanguage) {
-        term = tsf().makeInstruction_TargetLanguageToInstruction((TargetLanguage)elt);
+        term = `TargetLanguageToInstruction((TargetLanguage)elt);
       } else if(elt instanceof TomTerm) {
-        term = tsf().makeInstruction_TomTermToInstruction((TomTerm)elt);
+        term = `TomTermToInstruction((TomTerm)elt);
           //System.out.println("term   = " + term);
       } else if(elt instanceof Instruction) {
         term = (Instruction)elt;
@@ -97,172 +91,168 @@ public class ASTFactory {
         System.out.println("elt   = " + elt);
         term = (Instruction)elt;
       }
-      list = tsf().makeInstructionList(term,list);
+      list = `concInstruction(term,list);
     }
     return list;
   }
 
   public static OptionList makeOptionList(List argumentList) {
-    OptionList list = tsf().makeOptionList();
+    OptionList list = `concOption();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       Option term;
       if(elt instanceof TomName) {
-        term = tsf().makeOption_TomNameToOption((TomName)elt);
+        term = `TomNameToOption((TomName)elt);
       } else if(elt instanceof Declaration) {
-        term = tsf().makeOption_DeclarationToOption((Declaration)elt);
+        term = `DeclarationToOption((Declaration)elt);
       } else if(elt instanceof TomTerm) {
-        term = tsf().makeOption_TomTermToOption((TomTerm)elt);
+        term = `TomTermToOption((TomTerm)elt);
       } else {
         term = (Option)elt;
       }
-      list = tsf().makeOptionList(term,list);
+      list = `concOption(term,list);
     }
     return list;
   }
 
   public static ConstraintList makeConstraintList(List argumentList) {
-    ConstraintList list = tsf().makeConstraintList();
+    ConstraintList list = `concConstraint();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       Constraint term;
       term = (Constraint)elt;
-      list = tsf().makeConstraintList(term,list);
+      list = `concConstraint(term,list);
     }
     return list;
   }
 
-  public static NameList makeNameList(List argumentList) {
-    NameList list = tsf().makeNameList();
+  public static TomNameList makeNameList(List argumentList) {
+    TomNameList list = `concTomName();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       TomName term = (TomName) elt;
-      list = tsf().makeNameList(term,list);
+      list = `concTomName(term,list);
     }
     return list;
   }
 
   public static SlotList makeSlotList(List argumentList) {
-    SlotList list = tsf().makeSlotList();
+    SlotList list = `concSlot();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       Slot term = (Slot) elt;
-      list = tsf().makeSlotList(term,list);
+      list = `concSlot(term,list);
     }
     return list;
   }
 
   public static PairNameDeclList makePairNameDeclList(List argumentList) {
-    PairNameDeclList list = tsf().makePairNameDeclList();
+    PairNameDeclList list = `concPairNameDecl();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       PairNameDecl term = (PairNameDecl) elt;
-      list = tsf().makePairNameDeclList(term,list);
+      list = `concPairNameDecl(term,list);
     }
     return list;
   }
 
   public static PatternInstructionList makePatternInstructionList(List argumentList) {
-    PatternInstructionList list = tsf().makePatternInstructionList();
+    PatternInstructionList list = `concPatternInstruction();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       PatternInstruction term;
       term = (PatternInstruction)elt;
-      list = tsf().makePatternInstructionList(term,list);
+      list = `concPatternInstruction(term,list);
     }
     return list;
   }
 
   public static TomVisitList makeTomVisitList(List argumentList) {
-    TomVisitList list = tsf().makeTomVisitList();
+    TomVisitList list = `concTomVisit();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       TomVisit term;
       term = (TomVisit)elt;
-      list = tsf().makeTomVisitList(term,list);
+      list = `concTomVisit(term,list);
     }
     return list;
   }
   
   public static TomTerm makeVariable(String name, String type) {
-    return makeVariable(makeOption(), name, type);      
+    return makeVariable(`concOption(), name, type);      
   }
 
   public static TomTerm makeVariable(OptionList option, String name, String type) {
-    return tsf().makeTomTerm_Variable(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeConstraintList());  
+    return `Variable(option, Name(name), TomTypeAlone(type), concConstraint());  
   }
 
   public static TomTerm makeVariable(OptionList option, TomName name, TomType type) {
-    return tsf().makeTomTerm_Variable(option, name, type, tsf().makeConstraintList());  
+    return `Variable(option, name, type, concConstraint());  
   }
 
   public static TomTerm makeVariableStar(OptionList option, String name, String type) {
-    return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeConstraintList());  
+    return `VariableStar(option, Name(name), TomTypeAlone(type), concConstraint());  
   }
 
   public static TomTerm makeVariableStar(OptionList option, TomName name, TomType type) {
-    return tsf().makeTomTerm_VariableStar(option, name, type, tsf().makeConstraintList());  
+    return `VariableStar(option, name, type, concConstraint());  
   }
 
   public static TomTerm makeVariableStar(OptionList option, String name, String type, ConstraintList constraintList) {
-    return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), constraintList);  
+    return `VariableStar(option, Name(name), TomTypeAlone(type), constraintList);  
   }
 
   public static TomTerm makeVariableStar(OptionList option, TomName name, TomType type, ConstraintList constraintList) {
-    return tsf().makeTomTerm_VariableStar(option, name, type, constraintList);  
+    return `VariableStar(option, name, type, constraintList);  
   }
 
   public static TomTerm makeUnamedVariableStar(OptionList option, String type, ConstraintList constraintList) {
-    return tsf().makeTomTerm_UnamedVariableStar(option, tsf().makeTomType_TomTypeAlone(type),constraintList);  
+    return `UnamedVariableStar(option, TomTypeAlone(type),constraintList);  
   }
 
   public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
                               List optionList) {
     TomType type;
-    TomName name = tsf().makeTomName_Name(symbolName);
+    TomName name = `Name(symbolName);
     type = resultType;
-    TomType typesToType =  tsf().makeTomType_TypesToType(typeList,type); 
+    TomType typesToType =  `TypesToType(typeList,type); 
     OptionList options = makeOptionList(optionList);
-    return tsf().makeTomSymbol_Symbol(name,typesToType,pairNameDeclList,options);
-  }
-
-  public static OptionList makeOption() {
-    return tsf().makeOptionList();
+    return `Symbol(name,typesToType,pairNameDeclList,options);
   }
 
   public static OptionList makeOption(Option arg) {
-    OptionList list = tsf().makeOptionList();
+    OptionList list = `concOption();
     if(arg!= null) {
-      list = tsf().makeOptionList(arg,list);
+      list = `concOption(arg,list);
     }
     return list;
   }
 
   public static ConstraintList makeConstraint() {
-    return tsf().makeConstraintList();
+    return `concConstraint();
   }
 
   public static ConstraintList makeConstraint(Constraint arg) {
-    ConstraintList list = tsf().makeConstraintList();
+    ConstraintList list = `concConstraint();
     if(arg!= null) {
-      list = tsf().makeConstraintList(arg,list);
+      list = `concConstraint(arg,list);
     }
     return list;
   }
 
   public static Constraint makeAssignTo(TomName name,int line, String fileName) {
-    return tsf().makeConstraint_AssignTo(tsf().makeTomTerm_Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
+    return `AssignTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
           name,
-          tsf().makeTomType_TomTypeAlone("unknown type"),
-          tsf().makeConstraintList()));
+          TomTypeAlone("unknown type"),
+          concConstraint()));
   }
   
   public static OptionList makeOption(Option arg, Option info) {
-    OptionList list = tsf().makeOptionList();
+    OptionList list = `concOption();
     if(arg!= null) {
-      list = tsf().makeOptionList(arg,list);
+      list = `concOption(arg,list);
     }
-    list = tsf().makeOptionList(info,list);
+    list = `concOption(info,list);
     return list;
   }
 
@@ -273,9 +263,9 @@ public class ASTFactory {
 
   
   protected static TomType makeType(String typeNameTom, String typeNametGL) {
-    TomType typeTom = tsf().makeTomType_ASTTomType(typeNameTom);
-    TomType sortTL  = tsf().makeTomType_TLType(tsf().makeTargetLanguage_ITL(typeNametGL));
-    return tsf().makeTomType_Type(typeTom,sortTL);
+    TomType typeTom = `ASTTomType(typeNameTom);
+    TomType sortTL  = `TLType(ITL(typeNametGL));
+    return `Type(typeTom,sortTL);
   }
   
     /*
@@ -285,9 +275,9 @@ public class ASTFactory {
   private static void makeSortSymbol(SymbolTable symbolTable,
                              String sort,
                              String value, List optionList) {
-    TomTypeList typeList = tsf().makeTomTypeList();
-    PairNameDeclList pairSlotDeclList = tsf().makePairNameDeclList();
-    TomSymbol astSymbol = makeSymbol(value,tsf().makeTomType_TomTypeAlone(sort),typeList,pairSlotDeclList,optionList);
+    TomTypeList typeList = `concTomType();
+    PairNameDeclList pairSlotDeclList = `concPairNameDecl();
+    TomSymbol astSymbol = makeSymbol(value,`TomTypeAlone(sort),typeList,pairSlotDeclList,optionList);
     symbolTable.putSymbol(value,astSymbol);
   }
   
@@ -344,7 +334,7 @@ public class ASTFactory {
       TomSymbol symbol = symbolTable.getSymbolFromName(key);
       if (symbol != null) {
         OptionList optionList = symbol.getOption();
-        optionList = (OptionList) optionList.append(tsf().makeOption_DefinedSymbol());
+        optionList = (OptionList) optionList.append(`DefinedSymbol());
         symbolTable.putSymbol(key,symbol.setOption(optionList));
         return symbol;
       }
@@ -366,9 +356,9 @@ public class ASTFactory {
 
   public static TomName makeName(String slotName) {
     if(slotName.length()>0)
-      return tsf().makeTomName_Name(slotName);
+      return `Name(slotName);
     else
-      return tsf().makeTomName_EmptyName();
+      return `EmptyName();
   }
 
   public static String encodeXMLString(SymbolTable symbolTable, String name) {
@@ -398,10 +388,10 @@ public class ASTFactory {
        * Appl(...,Name("string"),...) becomes
        * Appl(...,Name("\"string\""),...)
        */
-    NameList newNameList = `concTomName();
+    TomNameList newNameList = `concTomName();
     %match(TomTerm term) {
       RecordAppl[nameList=(_*,Name(name),_*)] -> {
-        newNameList = (NameList)newNameList.append(`Name(encodeXMLString(symbolTable,name)));
+        newNameList = (TomNameList)newNameList.append(`Name(encodeXMLString(symbolTable,name)));
       }
     }
     term = term.setNameList(newNameList);
@@ -425,7 +415,7 @@ public class ASTFactory {
             Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,"unknown filename");
             term = `RecordAppl(ASTFactory.makeOption(info),
                                concTomName(Name(Constants.TEXT_NODE)),concSlot(PairSlotAppl(Name(Constants.SLOT_DATA),term)),
-                          ASTFactory.tsf().makeConstraintList());
+                          concConstraint());
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
