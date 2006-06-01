@@ -144,8 +144,8 @@ public class TomTypeChecker extends TomChecker {
   }
   
   private void verifyMatchVariable(PatternInstructionList patternInstructionList) {
-    while(!patternInstructionList.isEmpty()) {
-      PatternInstruction pa = patternInstructionList.getHead();
+    while(!patternInstructionList.isEmptyconcInstruction()) {
+      PatternInstruction pa = patternInstructionList.getHeadconcInstruction();
       Pattern pattern = pa.getPattern();
         // collect variables
       ArrayList variableList = new ArrayList();
@@ -159,15 +159,15 @@ public class TomTypeChecker extends TomChecker {
 				System.out.println("strategy failed");
 			}
 
-      patternInstructionList = patternInstructionList.getTail();
+      patternInstructionList = patternInstructionList.getTailconcInstruction();
     }
   } //verifyMatchVariable
   
   private void verifyStrategyVariable(TomVisitList list) {
     TomForwardType visitorFwd = null;
     TomForwardType currentVisitorFwd = null;
-    while(!list.isEmpty()) {
-      TomVisit visit = list.getHead();
+    while(!list.isEmptyconcTomVisit()) {
+      TomVisit visit = list.getHeadconcTomVisit();
       %match(TomVisit visit) {
         VisitTerm(visitType,patternInstructionList,options) -> {
           String fileName =findOriginTrackingFileName(`options);
@@ -205,7 +205,7 @@ public class TomTypeChecker extends TomChecker {
         }
       }
       // next visit
-      list = list.getTail();
+      list = list.getTailconcTomVisit();
     }
   }
 
@@ -221,8 +221,8 @@ public class TomTypeChecker extends TomChecker {
    * (iv) the condition Qj==Dj shall never lead to the declaration of a new variable
    */
   private void verifyRuleVariable(TomRuleList list) {
-    while(!list.isEmpty()) {
-      TomRule rewriteRule = list.getHead();
+    while(!list.isEmptyconcTomRule()) {
+      TomRule rewriteRule = list.getHeadconcTomRule();
       TomTerm ruleLhs = rewriteRule.getLhs();
       TomTerm ruleRhs = rewriteRule.getRhs();
       InstructionList condList = rewriteRule.getCondList();
@@ -298,7 +298,7 @@ public class TomTypeChecker extends TomChecker {
       areAllExistingVariableTest(variableRhs, variableTable, TomMessage.unknownRuleRhsVariable);
       
       // next rewrite rule
-      list = list.getTail();
+      list = list.getTailconcTomRule();
     }
   } //verifyRuleVariable
   

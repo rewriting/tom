@@ -92,39 +92,39 @@ abstract public class TomChecker extends TomGenericPlugin {
       TermAppl[nameList=(Name(name))] -> { return `name;}
       TermAppl[nameList=nameList] -> {
         String head;
-        dijunctionName = `nameList.getHead().getString();
-        while(!`nameList.isEmpty()) {
-          head = `nameList.getHead().getString();
+        dijunctionName = `nameList.getHeadconcTomName().getString();
+        while(!`nameList.isEmptyconcTomName()) {
+          head = `nameList.getHeadconcTomName().getString();
           dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          `nameList = `nameList.getTail();
+          `nameList = `nameList.getTailconcTomName();
         }
         return dijunctionName;
       }
       RecordAppl[nameList=(Name(name))] -> { return `name;}
       RecordAppl[nameList=nameList] -> {
         String head;
-        dijunctionName = `nameList.getHead().getString();
-        while(!`nameList.isEmpty()) {
-          head = `nameList.getHead().getString();
+        dijunctionName = `nameList.getHeadconcTomName().getString();
+        while(!`nameList.isEmptyconcTomName()) {
+          head = `nameList.getHeadconcTomName().getString();
           dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          `nameList = `nameList.getTail();
+          `nameList = `nameList.getTailconcTomName();
         }
         return dijunctionName;
       }
       XMLAppl[nameList=(Name(name), _*)] ->{ return `name;}
       XMLAppl[nameList=nameList] -> {
         String head;
-        dijunctionName = `nameList.getHead().getString();
-        while(!`nameList.isEmpty()) {
-          head = `nameList.getHead().getString();
+        dijunctionName = `nameList.getHeadconcTomName().getString();
+        while(!`nameList.isEmptyconcTomName()) {
+          head = `nameList.getHeadconcTomName().getString();
           dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          `nameList = `nameList.getTail();
+          `nameList = `nameList.getTailconcTomName();
         }
         return dijunctionName;
       }
-      Placeholder[]               ->{ return "_";}
-      (Variable|VariableStar)[astName=Name(name)]              ->{ return `name+"*";}
-      UnamedVariableStar[] ->{ return "_*";}
+      Placeholder[] -> { return "_";}
+      (Variable|VariableStar)[astName=Name(name)] -> { return `name+"*";}
+      UnamedVariableStar[] -> { return "_*";}
     }
     throw new TomRuntimeException("Invalid Term");
   }

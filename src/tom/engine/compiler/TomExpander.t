@@ -338,7 +338,7 @@ public class TomExpander extends TomGenericPlugin {
    * replaces 'TermAppl' by its 'RecordAppl' form
    * when no slotName exits, the position becomes the slotName
    */
-  protected TomTerm expandTermAppl(OptionList option, NameList nameList, TomList args, ConstraintList constraints) {
+  protected TomTerm expandTermAppl(OptionList option, TomNameList nameList, TomList args, ConstraintList constraints) {
     String opName = nameList.getHead().getString();
     TomSymbol tomSymbol = getSymbolFromName(opName);
 
@@ -495,7 +495,7 @@ public class TomExpander extends TomGenericPlugin {
     return emptyOption();
   }
 
-  protected TomTerm expandXMLAppl(OptionList optionList, NameList nameList,
+  protected TomTerm expandXMLAppl(OptionList optionList, TomNameList nameList,
       TomList attrList, TomList childList, ConstraintList constraints) {
     boolean implicitAttribute = hasImplicitXMLAttribut(optionList);
     boolean implicitChild     = hasImplicitXMLChild(optionList);
@@ -560,9 +560,9 @@ public class TomExpander extends TomGenericPlugin {
     /*
      * encode the name and put it into the table of symbols
      */
-    NameList newNameList = `concTomName();
+    TomNameList newNameList = `concTomName();
 matchBlock: {
-              %match(NameList nameList) {
+              %match(TomNameList nameList) {
                 (Name("_")) -> {
                   break matchBlock;
                 }

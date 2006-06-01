@@ -2,10 +2,10 @@ module TomTerm
 imports TomSignature TomName int
 abstract syntax
 
-TomTerm = TermAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList)
-        | ListAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList)
-        | RecordAppl(option:OptionList,nameList:NameList,slots:SlotList,constraints:ConstraintList)
-        | XMLAppl(option:OptionList,nameList:NameList,attrList:TomList,childList:TomList,constraints:ConstraintList)
+TomTerm = TermAppl(option:OptionList,nameList:TomNameList,args:TomList,constraints:ConstraintList)
+        | ListAppl(option:OptionList,nameList:TomNameList,args:TomList,constraints:ConstraintList)
+        | RecordAppl(option:OptionList,nameList:TomNameList,slots:SlotList,constraints:ConstraintList)
+        | XMLAppl(option:OptionList,nameList:TomNameList,attrList:TomList,childList:TomList,constraints:ConstraintList)
         | Variable(option:OptionList,astName:TomName,astType:TomType,constraints:ConstraintList)
         | VariableStar(option:OptionList,astName:TomName,astType:TomType,constraints:ConstraintList)
         | Placeholder(option:OptionList,constraints:ConstraintList)
