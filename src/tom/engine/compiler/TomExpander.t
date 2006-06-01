@@ -319,7 +319,7 @@ public class TomExpander extends TomGenericPlugin {
                 TomSymbol newSymbol = tomSymbol.setAstName(`Name(newName));
                 symbolTable().putSymbol(newName,newSymbol);
                 Slot newHead = `PairSlotAppl(slotName,appl.setNameList(concTomName(Name(newName))));
-                newArgs = `manySlotList(newHead,newArgs);
+                newArgs = `concSlot(newHead,newArgs*);
                 //System.out.println("newHead = " + newHead);
                 //System.out.println("newSymb = " + getSymbolFromName(newName));
               }
@@ -330,7 +330,7 @@ public class TomExpander extends TomGenericPlugin {
           }
         }
       }
-      return `manySlotList(head,tail);
+      return `concSlot(head,tail*);
     }
   }
 
@@ -430,50 +430,50 @@ public class TomExpander extends TomGenericPlugin {
       concTomTerm() -> { return attrList; }
       concTomTerm(X1*,e1,X2*,e2,X3*) -> {
         %match(TomTerm e1, TomTerm e2) {
-          TermAppl[args=manyTomList(RecordAppl[nameList=(Name(name1))],_)],
-            TermAppl[args=manyTomList(RecordAppl[nameList=(Name(name2))],_)] -> {
+          TermAppl[args=concTomTerm(RecordAppl[nameList=(Name(name1))],_*)],
+            TermAppl[args=concTomTerm(RecordAppl[nameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          TermAppl[args=manyTomList(TermAppl[nameList=(Name(name1))],_)],
-            TermAppl[args=manyTomList(TermAppl[nameList=(Name(name2))],_)] -> {
+          TermAppl[args=concTomTerm(TermAppl[nameList=(Name(name1))],_*)],
+            TermAppl[args=concTomTerm(TermAppl[nameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          RecordAppl[slots=manySlotList(PairSlotAppl(slotName,RecordAppl[nameList=(Name(name1))]),_)],
-            RecordAppl[slots=manySlotList(PairSlotAppl(slotName,RecordAppl[nameList=(Name(name2))]),_)] -> {
+          RecordAppl[slots=concSlot(PairSlotAppl(slotName,RecordAppl[nameList=(Name(name1))]),_*)],
+            RecordAppl[slots=concSlot(PairSlotAppl(slotName,RecordAppl[nameList=(Name(name2))]),_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          RecordAppl[slots=manySlotList(PairSlotAppl(slotName,TermAppl[nameList=(Name(name1))]),_)],
-            RecordAppl[slots=manySlotList(PairSlotAppl(slotName,TermAppl[nameList=(Name(name2))]),_)] -> {
+          RecordAppl[slots=concSlot(PairSlotAppl(slotName,TermAppl[nameList=(Name(name1))]),_*)],
+            RecordAppl[slots=concSlot(PairSlotAppl(slotName,TermAppl[nameList=(Name(name2))]),_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          BackQuoteAppl[args=manyTomList(RecordAppl[nameList=(Name(name1))],_)],
-            BackQuoteAppl[args=manyTomList(RecordAppl[nameList=(Name(name2))],_)] -> {
+          BackQuoteAppl[args=concTomTerm(RecordAppl[nameList=(Name(name1))],_*)],
+            BackQuoteAppl[args=concTomTerm(RecordAppl[nameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          BackQuoteAppl[args=manyTomList(TermAppl[nameList=(Name(name1))],_)],
-            BackQuoteAppl[args=manyTomList(TermAppl[nameList=(Name(name2))],_)] -> {
+          BackQuoteAppl[args=concTomTerm(TermAppl[nameList=(Name(name1))],_*)],
+            BackQuoteAppl[args=concTomTerm(TermAppl[nameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name1)],_)],
-            BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name2)],_)] -> {
+          BackQuoteAppl[args=concTomTerm(BackQuoteAppl[astName=Name(name1)],_*)],
+            BackQuoteAppl[args=concTomTerm(BackQuoteAppl[astName=Name(name2)],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
@@ -503,8 +503,8 @@ public class TomExpander extends TomGenericPlugin {
     TomList newAttrList  = `emptyTomList();
     TomList newChildList = `emptyTomList();
     TomTerm star = ASTFactory.makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",`concConstraint());
-    if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
-    if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
+    if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
+    if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
 
     /*
      * the list of attributes should not be expanded before the sort
@@ -522,9 +522,9 @@ public class TomExpander extends TomGenericPlugin {
     while(!attrList.isEmpty()) {
       try{
         TomTerm newPattern = (TomTerm) expandStrategy.visit(attrList.getHead());
-        newAttrList = `manyTomList(newPattern,newAttrList);
+        newAttrList = `concTomTerm(newPattern,newAttrList*);
         if(implicitAttribute) {
-          newAttrList = `manyTomList(star,newAttrList);
+          newAttrList = `concTomTerm(star,newAttrList*);
         }
         attrList = attrList.getTail();
       }catch(VisitFailure e){}
@@ -537,7 +537,7 @@ public class TomExpander extends TomGenericPlugin {
     while(!childList.isEmpty()) {
       try{
         TomTerm newPattern = (TomTerm) expandStrategy.visit(childList.getHead());
-        newChildList = `manyTomList(newPattern,newChildList);
+        newChildList = `concTomTern(newPattern,newChildList*);
         if(implicitChild) {
           if(newPattern.isVariableStar()) {
             // remove the previously inserted pattern
@@ -547,9 +547,9 @@ public class TomExpander extends TomGenericPlugin {
               newChildList = newChildList.getTail();
             }
             // re-insert the pattern
-            newChildList = `manyTomList(newPattern,newChildList);
+            newChildList = `concTomTerm(newPattern,newChildList*);
           } else {
-            newChildList = `manyTomList(star,newChildList);
+            newChildList = `concTomTerm(star,newChildList*);
           }
         }
         childList = childList.getTail();
