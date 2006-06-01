@@ -1,3 +1,6 @@
+2006-06-01    <tonio@arcelot>
+  * switched TNode to gom data structure 
+
 2006-05-31 toussain
   * fixed pom:
     -case line in ParserTokenTypes.txt is in the form: TOKEN="token"=int
