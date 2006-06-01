@@ -1018,7 +1018,7 @@ public class TomSyntaxChecker extends TomChecker {
     TomTypeList domainReference = null, currentDomain = null;
     TomSymbol symbol = null;
 
-    if(nameList.isSingle()) { // Valid but has it a good type?
+    if(nameList.length()==1) { // Valid but has it a good type?
       String res = nameList.getHead().getString();
       symbol  =  getSymbolFromName(res);
       if (symbol == null ) {
@@ -1095,7 +1095,7 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   private  TomSymbol ensureValidRecordDisjunction(TomNameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
-    if(nameList.isSingle()) { // Valid but has it a good type?
+    if(nameList.length()==1) { // Valid but has it a good type?
       String res = nameList.getHead().getString();
       TomSymbol symbol =  getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]

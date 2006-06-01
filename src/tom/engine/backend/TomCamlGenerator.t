@@ -85,7 +85,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
-    if(instList.isSingle()) {
+    if(instList.length()==1) {
       output.writeln(deep,"( (* begin unamed block*)");
       generateInstruction(deep+1,instList.getHeadconcInstruction(), moduleName);
       output.writeln(deep,") (* end unamed block*)");

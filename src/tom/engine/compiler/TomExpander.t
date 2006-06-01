@@ -244,7 +244,7 @@ public class TomExpander extends TomGenericPlugin {
       decl@GetHeadDecl[opname=Name(opName)] -> {
         TomSymbol tomSymbol = expander.getSymbolFromName(`opName);
         TomTypeList codomain = getSymbolDomain(tomSymbol);
-        if(codomain.isSingle()) {
+        if(codomain.length()==1) {
           Declaration t = (Declaration)`decl;
           t = t.setCodomain(codomain.getHead());
           return t;
@@ -258,7 +258,7 @@ public class TomExpander extends TomGenericPlugin {
         if(tomSymbol != null) {
           TomTypeList codomain = getSymbolDomain(tomSymbol);
 
-          if(codomain.isSingle()) {
+          if(codomain.length()==1) {
             Declaration t = (Declaration)`decl;
             t = t.setCodomain(codomain.getHead());
             return t;
