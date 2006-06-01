@@ -98,9 +98,9 @@ public class TomKernelCompiler extends TomBase {
           Match(SubjectList(l1),patternInstructionList, optionList)  -> {
             //TODO
             String moduleName = "default";
-            TomNumberList rootpath = tsf().makeTomNumberList();
+            TomNumberList rootpath = `concTomNumber();
             compiler.matchNumber++;
-            rootpath = (TomNumberList) rootpath.append(`MatchNumber(makeNumber(compiler.matchNumber)));
+            rootpath = (TomNumberList) rootpath.append(`MatchNumber(Number(compiler.matchNumber)));
 
             /*
              * for each pattern action (<term>,...,<term> -> <action>)
@@ -130,7 +130,7 @@ public class TomKernelCompiler extends TomBase {
               if(label != null) {
                 automataOptionList = `manyOptionList(Label(label),automataOptionList);
               }
-              TomNumberList numberList = (TomNumberList) rootpath.append(`PatternNumber(makeNumber(actionNumber)));
+              TomNumberList numberList = (TomNumberList) rootpath.append(`PatternNumber(Number(actionNumber)));
               TomTerm automata = `Automata(automataOptionList,slotListToTomList(patternList),numberList,matchingAutomata);
               //System.out.println("automata = " + automata);
 
@@ -277,7 +277,7 @@ public class TomKernelCompiler extends TomBase {
              * call genListMatchingAutomata with the new internal variable
              */
           int indexSubterm = 1;
-          TomNumberList newPath = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
+          TomNumberList newPath = (TomNumberList) path.append(`ListNumber(Number(indexSubterm)));
           TomTerm newSubjectVariableAST = `VariableStar(option(),PositionName(newPath),codomain,concConstraint());
           boolean ensureNotEmptyList = true;
           Instruction automata = genListMatchingAutomata(new MatchingParameter(
@@ -294,8 +294,8 @@ public class TomKernelCompiler extends TomBase {
         } else if(isArrayOperator(tomSymbol)) {
           // case: array operator
           int indexSubterm = 1;
-          TomNumberList newPathList = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
-          TomNumberList newPathIndex = (TomNumberList) path.append(`IndexNumber(makeNumber(indexSubterm)));
+          TomNumberList newPathList = (TomNumberList) path.append(`ListNumber(Number(indexSubterm)));
+          TomNumberList newPathIndex = (TomNumberList) path.append(`IndexNumber(Number(indexSubterm)));
           TomTerm newVariableListAST = `VariableStar(option(),PositionName(newPathList),codomain,concConstraint());
           TomTerm newVariableIndexAST = `Variable(option(),PositionName(newPathIndex),getSymbolTable(moduleName).getIntType(),concConstraint());
           boolean ensureNotEmptyList = true;
@@ -404,8 +404,8 @@ public class TomKernelCompiler extends TomBase {
              * ...
              */
           Instruction subAction = genListMatchingAutomata(p,`termTail,indexTerm+1,false,moduleName);
-          TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(makeNumber(indexTerm)));
-          TomNumberList pathEnd = (TomNumberList) p.path.append(`End(makeNumber(indexTerm)));
+          TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(Number(indexTerm)));
+          TomNumberList pathEnd = (TomNumberList) p.path.append(`End(Number(indexTerm)));
           TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType,concConstraint());
           TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),termType,concConstraint());
 
@@ -609,8 +609,8 @@ public class TomKernelCompiler extends TomBase {
            * ...
            */
           Instruction subAction = genArrayMatchingAutomata(p,`termTail,indexTerm+1,false,moduleName);
-          TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(makeNumber(indexTerm)));
-          TomNumberList pathEnd = (TomNumberList) p.path.append(`End(makeNumber(indexTerm)));
+          TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(Number(indexTerm)));
+          TomNumberList pathEnd = (TomNumberList) p.path.append(`End(Number(indexTerm)));
           TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),getSymbolTable(moduleName).getIntType(),concConstraint());
           TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),getSymbolTable(moduleName).getIntType(),concConstraint());
 

@@ -291,7 +291,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
         %match(TomTerm arg) {
-          Variable[astName=Name(name), astType=Type[tomType=tomType,tlType=tlType@TLType[]]] -> {
+          Variable[astName=Name(name), astType=Type[TomType=tomType,TlType=tlType@TLType[]]] -> {
             s.append(getTLCode(`tlType) + " " + `name);
             if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
               check.append("tom_check_stamp_" + getTomType(`tomType) + "(" + `name + ");\n");

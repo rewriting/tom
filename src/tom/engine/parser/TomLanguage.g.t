@@ -247,7 +247,7 @@ patternInstruction [TomList subjectList, LinkedList list] throws TomException
                 selector().pop();
 
                 blockList.add(tlCode);
-                OptionList optionList = `emptyOptionList();
+                OptionList optionList = `concOption();
                 
                 if(label != null){
                     optionList = `concOption(Label(Name(label.getText())));

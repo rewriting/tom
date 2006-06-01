@@ -192,7 +192,7 @@ public class TomExpander extends TomGenericPlugin {
 
   private TomSymbol addDefaultIsFSym(TomSymbol tomSymbol) {
     %match(TomSymbol tomSymbol) {
-      Symbol[option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
+      Symbol[Option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return tomSymbol;
       }
       Symbol(name,t@TypesToType(_,codom),l,(b*,origin@OriginTracking(_,line,file),a*)) -> {
@@ -497,7 +497,7 @@ public class TomExpander extends TomGenericPlugin {
       }
     }
     System.out.println("Warning: no OriginTracking information");
-    return emptyOption();
+    return `concOption();
   }
 
   protected TomTerm expandXMLAppl(OptionList optionList, TomNameList nameList,
@@ -585,7 +585,7 @@ matchBlock: {
             TomTerm xmlHead;
 
             if(newNameList.isEmpty()){
-              xmlHead = `Placeholder(emptyOption(),concConstraint());
+              xmlHead = `Placeholder(concOption(),concConstraint());
             } else {
               xmlHead = `TermAppl(convertOriginTracking(newNameList.getHead().getString(),optionList),newNameList,empty(),concConstraint());
             }

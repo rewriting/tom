@@ -374,12 +374,12 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Let(var@(Variable|VariableStar)[option=list,astType=Type[tlType=tlType@TLType[]]],exp,body) -> {
+      Let(var@(Variable|VariableStar)[option=list,astType=Type[TlType=tlType@TLType[]]],exp,body) -> {
         `buildLet(deep, var, list, tlType, exp, body, moduleName);
         return;
       }
 
-      LetRef(var@(Variable|VariableStar)[option=list,astType=Type[tlType=tlType@TLType[]]],exp,body) -> {
+      LetRef(var@(Variable|VariableStar)[option=list,astType=Type[TlType=tlType@TLType[]]],exp,body) -> {
         `buildLetRef(deep, var, list, tlType, exp, body, moduleName);
         return;
       }
@@ -456,7 +456,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-			CheckInstance(Type[tomType=ASTTomType(typeName),tlType=tlType@TLType[]], exp, instruction) -> {
+			CheckInstance(Type[TomType=ASTTomType(typeName),TlType=tlType@TLType[]], exp, instruction) -> {
         `buildCheckInstance(deep,typeName,tlType,exp,instruction, moduleName);
         return;
       }
@@ -587,7 +587,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       IsFsymDecl(Name(tomName),
-       Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]], instr, _) -> {
+       Variable[astName=Name(name), astType=Type[TlType=tlType@TLType[]]], instr, _) -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildIsFsymDecl(deep, tomName, name, tlType, instr, moduleName);
         }
@@ -596,7 +596,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       GetSlotDecl[astName=Name(tomName),
                   slotName=slotName,
-                  variable=Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]],
+                  variable=Variable[astName=Name(name), astType=Type[TlType=tlType@TLType[]]],
                   instr=instr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`tomName)) {
           `buildGetSlotDecl(deep, tomName, name, tlType, instr, slotName, moduleName);
@@ -612,7 +612,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       GetHeadDecl[opname=opNameAST@Name(opname),
-                  codomain=Type[tlType=codomain],
+                  codomain=Type[TlType=codomain],
                   variable=Variable[astName=Name(varName), astType=Type(ASTTomType(suffix),domain@TLType[])],
                   instr=instr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
@@ -652,8 +652,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeAddList(Name(opname),
-                  elt@Variable[astType=Type[tlType=TLType[]]],
-                  list@Variable[astType=fullListType@Type[tlType=TLType[]]],
+                  elt@Variable[astType=Type[TlType=TLType[]]],
+                  list@Variable[astType=fullListType@Type[TlType=TLType[]]],
                   instr, _) -> {
         TomType returnType = `fullListType;
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname) 
@@ -664,7 +664,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       GetElementDecl[opname=opNameAST@Name(opname),
-                     variable=Variable[astName=Name(name1), astType=Type[tomType=ASTTomType(type1),tlType=tlType1@TLType[]]],
+                     variable=Variable[astName=Name(name1), astType=Type[TomType=ASTTomType(type1),TlType=tlType1@TLType[]]],
                      index=Variable[astName=Name(name2)],
                      instr=instr] -> {
         if(getSymbolTable(moduleName).isUsedSymbolDestructor(`opname)) {
@@ -695,8 +695,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeAddArray(Name(opname),
-                   elt@Variable[astType=Type[tlType=TLType[]]],
-                   list@Variable[astType=fullArrayType@Type[tlType=TLType[]]],
+                   elt@Variable[astType=Type[TlType=TLType[]]],
+                   list@Variable[astType=fullArrayType@Type[TlType=TLType[]]],
                    instr, _) -> {
         TomType returnType = `fullArrayType;
         if(getSymbolTable(moduleName).isUsedSymbolConstructor(`opname)) {

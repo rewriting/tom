@@ -262,7 +262,7 @@ matchBlock: {
           TomList subjectListAST = empty();
           TomVisit visit = jVisitList.getHead();
           %match(TomVisit visit) {
-            VisitTerm(vType@Type[tomType = ASTTomType(type)],patternInstructionList,_) -> {
+            VisitTerm(vType@Type[TomType=ASTTomType(type)],patternInstructionList,_) -> {
               if (visitorFwd == null) {//first time in loop
                 visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
               }
@@ -353,7 +353,7 @@ matchBlock: {
         Instruction newAction = `buildCondition(tail,action);
 
         TomType subjectType = getTermType(`pattern);
-        TomNumberList path = tsf().makeTomNumberList();
+        TomNumberList path = `concTomNumber();
         path = (TomNumberList) path.append(`RuleVar());
         TomTerm newSubject = (TomTerm)(MuTraveler.init(`preProcessing(this)).visit(`BuildReducedTerm(subject)));
         TomTerm introducedVariable = newSubject;
@@ -414,9 +414,9 @@ matchBlock: {
           int mult = multiplicity.intValue();
           multiplicityMap.put(`name,new Integer(mult+1));
 
-          TomNumberList path = tsf().makeTomNumberList();
+          TomNumberList path = `concTomNumber();
           path = (TomNumberList) path.append(`RenamedVar(name));
-          path = (TomNumberList) path.append(makeNumber(mult));
+          path = (TomNumberList) path.append(Number(mult));
 
           renamedTerm = `var.setAstName(`PositionName(path));
           renamedTerm = renamedTerm.setConstraints(`concConstraint(Equal(var.setConstraints(concConstraint())),newConstraintList*));
@@ -500,10 +500,10 @@ matchBlock: {
                   TomType type2 = tomSymbol2.getTypesToType().getCodomain();
                   abstractedPattern.add(`appl);
 
-                  TomNumberList path = tsf().makeTomNumberList();
-                  //path = append(`AbsVar(makeNumber(introducedVariable.size())),path);
+                  TomNumberList path = `concTomNumber();
+                  //path = append(`AbsVar(Number(introducedVariable.size())),path);
                   absVarNumber++;
-                  path = (TomNumberList) path.append(`AbsVar(makeNumber(absVarNumber)));
+                  path = (TomNumberList) path.append(`AbsVar(Number(absVarNumber)));
 
                   TomTerm newVariable = `Variable(option(),PositionName(path),type2,concConstraint());
 

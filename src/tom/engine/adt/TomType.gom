@@ -2,19 +2,19 @@ module TomType
 imports TomSignature
 abstract syntax
 
-TomType = Type(tomType:TomType,tlType:TomType)
-        | TomTypeAlone(string:String)
-        | Codomain(astName:TomName)
+TomType = Type(TomType:TomType,TlType:TomType)
+        | TomTypeAlone(String:String)
+        | Codomain(AstName:TomName)
 
-        | ASTTomType(string:String)
-        | TypesToType(domain:TomTypeList,codomain:TomType)
-        | TLType(tl:TargetLanguage)
+        | ASTTomType(String:String)
+        | TypesToType(Domain:TomTypeList,Codomain:TomType)
+        | TLType(Tl:TargetLanguage)
         | EmptyType()
 
-TomForwardType = TLForward(string:String)
+TomForwardType = TLForward(String:String)
                | EmptyForward()
 
 //slot 1 must be different from "type" otherwise it will overload method "int getType()" in aterm.pure.ATerm
-TomTypeDefinition = TypeDefinition(tomType:TomType, forward:TomForwardType)
+TomTypeDefinition = TypeDefinition(TomType:TomType, Forward:TomForwardType)
 
 TomTypeList = concTomType(TomType*)

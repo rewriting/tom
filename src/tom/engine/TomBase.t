@@ -32,6 +32,15 @@ import aterm.*;
 import tom.engine.tools.*;
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomname.*;
+import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomtype.*;
+import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomoption.*;
+import tom.engine.adt.tomoption.types.*;
+
 import tom.engine.exception.TomRuntimeException;
 
 import tom.platform.adt.platformoption.*;
@@ -56,25 +65,13 @@ public class TomBase {
  public final static String DEFAULT_MODULE_NAME = "default"; 
   
   /** shortcut */
-  protected static TomSignatureFactory tsf() {
-		return tom.engine.adt.tomsignature.TomSignatureFactory.getInstance(aterm.pure.SingletonFactory.getInstance());
-  }
   
   %include { adt/platformoption/PlatformOption.tom }
   
   private static TomList empty;
   
   public TomBase() {
-    empty = tsf().makeTomList();
-  }
-
-  
-  protected static TomNumber makeNumber(int n) {
-    return tsf().makeTomNumber_Number(n);
-  }
-  
-  protected static OptionList emptyOption() {
-    return ASTFactory.makeOption();
+    empty = `concTomTerm();
   }
 
   protected static TomList empty() {
@@ -83,7 +80,7 @@ public class TomBase {
 
   protected static TomList cons(TomTerm t, TomList l) {
     if(t!=null) {
-      return tsf().makeTomList(t,l);
+      return `concTomTerm(t,l*);
     } else {
       System.out.println("cons: Warning t == null");
       return l;
@@ -91,7 +88,7 @@ public class TomBase {
   }
 
   protected static TomNumberList appendNumber(int n, TomNumberList path) {
-    return (TomNumberList) path.append(makeNumber(n));
+    return `concTomNumber(path*,Number(n));
   }
     
   protected static TomList append(TomTerm t, TomList l) {
@@ -141,7 +138,7 @@ public class TomBase {
   protected static String getTLType(TomType type) {
     %match(TomType type) {
       TLType[]  -> { return getTLCode(type); }
-      Type[tlType=tlType] -> { return getTLCode(`tlType); }
+      Type[TlType=tlType] -> { return getTLCode(`tlType); }
     }
 		throw new TomRuntimeException("getTLType error on term: " + type);
   }
@@ -169,7 +166,7 @@ public class TomBase {
       return symbol.getTypesToType().getDomain();
     } else {
       //System.out.println("getSymbolDomain: symbol = " + symbol);
-      return tsf().makeTomTypeList();
+      return `concTomType();
     }
   }
 
@@ -215,7 +212,7 @@ public class TomBase {
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol[option=l] -> {
+      Symbol[Option=l] -> {
         OptionList optionList = `l;
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
@@ -238,7 +235,7 @@ public class TomBase {
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol[option=l] -> {
+      Symbol[Option=l] -> {
         OptionList optionList = `l;
         while(!optionList.isEmptyconcOption()) {
           Option opt = optionList.getHeadconcOption();
@@ -447,7 +444,7 @@ public class TomBase {
 
   protected static TomType getSlotType(TomSymbol symbol, TomName slotName) {
     %match(TomSymbol symbol) {
-      Symbol[typesToType=TypesToType(typeList,codomain)] -> {
+      Symbol[TypesToType=TypesToType(typeList,codomain)] -> {
         int index = getSlotIndex(symbol,slotName);
         return (TomType)`typeList.elementAt(index);
       }
@@ -461,7 +458,7 @@ public class TomBase {
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol[option=optionList] -> {
+      Symbol[Option=optionList] -> {
         return hasDefinedSymbol(`optionList);
       }
     }
@@ -474,7 +471,7 @@ public class TomBase {
       return false;
     }
     %match(TomSymbol symbol) {
-      Symbol[pairNameDeclList=concPairNameDecl(_*,PairNameDecl[slotName=name,slotDecl=decl],_*)] -> {
+      Symbol[PairNameDeclList=concPairNameDecl(_*,PairNameDecl[slotName=name,slotDecl=decl],_*)] -> {
         if(`name==slotName && `decl!=`EmptyDeclaration()) {
           return true;
         }

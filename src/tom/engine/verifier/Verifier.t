@@ -128,7 +128,7 @@ public class Verifier extends TomBase {
   }
 
   public String extractName(NameList nl) {
-    %match(NameList nl) {
+    %match(TomNameList nl) {
       (Name(name)) -> {
         return `name;
       }

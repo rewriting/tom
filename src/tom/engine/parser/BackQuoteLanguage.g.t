@@ -414,10 +414,10 @@ xmlAttribute [TomList context] returns [TomTerm result]
             | BQ_STAR
               {
 								result = `VariableStar(
-										emptyOptionList(),
+										concOption(),
 										Name(id.getText()),
 										TomTypeAlone("unknown type"),
-										emptyConstraintList());
+										concConstraint());
               }
             )
         )

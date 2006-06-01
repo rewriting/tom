@@ -467,7 +467,7 @@ public class TomKernelExpander extends TomBase {
         return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(emptyTerm(),slotAppl)),sl*);
       }
 
-      symb@Symbol[typesToType=TypesToType(typelist,codomain)],
+      symb@Symbol[TypesToType=TypesToType(typelist,codomain)],
         concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
           // process a list of subterms and a list of types
           if(isListOperator(`symb) || isArrayOperator(`symb)) {

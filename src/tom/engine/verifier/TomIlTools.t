@@ -149,7 +149,7 @@ public class TomIlTools extends TomBase {
         TomSymbol symbol = `getSymbolFromName(name,getSymbolTable());
         // process all slots from symbol
         %match(TomSymbol symbol) {
-          Symbol[pairNameDeclList=slots] -> {
+          Symbol[PairNameDeclList=slots] -> {
             // process all slots. If the slot is in childrens, use it
             while(!`slots.isEmpty()) {
               Declaration decl= `slots.getHead().getSlotDecl();
@@ -240,7 +240,7 @@ public class TomIlTools extends TomBase {
       ZTerm abstractVariable = `zvar("t");
       //ZExpr exists = null;
       %match(TomSymbol symbol) {
-        Symbol[pairNameDeclList=slots] -> {
+        Symbol[PairNameDeclList=slots] -> {
           // process all slots
           while(!`slots.isEmpty()) {
             Declaration hd= `slots.getHead().getSlotDecl();
@@ -271,7 +271,7 @@ public class TomIlTools extends TomBase {
       TomSymbol symbol = getSymbolFromName(name,getSymbolTable());
       ZTermList list = `concZTerm();
       %match(TomSymbol symbol) {
-        Symbol[pairNameDeclList=slots] -> {
+        Symbol[PairNameDeclList=slots] -> {
           // process all slots
           int slotnumber = `slots.getLength();
           for (int i = 0; i < slotnumber;i++) {
@@ -300,7 +300,7 @@ public class TomIlTools extends TomBase {
     TomSymbol symbol = getSymbolFromName(symbolName,getSymbolTable());
 
     %match(TomSymbol symbol) {
-      Symbol[pairNameDeclList=slots] -> {
+      Symbol[PairNameDeclList=slots] -> {
         %match(PairNameDeclList slots) {
           concPairNameDecl(_*,PairNameDecl[slotName=Name(slname)],_*) -> {
             nameList.add(`slname);

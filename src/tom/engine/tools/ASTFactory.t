@@ -30,6 +30,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import tom.engine.TomBase;
+import tom.engine.adt.tomterm.*;
+import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -48,12 +50,6 @@ public class ASTFactory {
    // Suppresses default constructor, ensuring non-instantiability.
   private ASTFactory() {
   }
-
-/*
-  protected static TomSignatureFactory tsf() {
-		return tom.engine.adt.tomsignature.TomSignatureFactory.getInstance(aterm.pure.SingletonFactory.getInstance());
-  }
-*/
 
   public static TomList makeList(Collection c) {
     Object array[] = c.toArray();
