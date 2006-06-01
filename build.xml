@@ -368,7 +368,7 @@
 
   <target name="touchvas"
           unless="vascompile.required">
-	  <touch file="${src.src}/tom/engine/adt/TomSignature.vas"/>
+	  <touch file="${src.src}/tom/engine/adt/TomSignature.gom"/>
   </target>
 
   <!-- compile adt's -->
@@ -393,7 +393,7 @@
 
     <uptodate property="vascompile.required"
 	    targetfile="${src.gen}/tom/engine/adt/tomsignature/TomSignature.tom" >
-	    <srcfiles dir= "${src.src}/tom/engine/adt" includes="*.vas"/>
+	    <srcfiles dir= "${src.src}/tom/engine/adt" includes="*.gom"/>
     </uptodate>
     <antcall target="touchvas"/>
 
