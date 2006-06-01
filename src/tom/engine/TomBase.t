@@ -198,11 +198,11 @@ public class TomBase {
     if(res == null) {
       TomNumberList key = l;
       StringBuffer buf = new StringBuffer(30);
-      while(!l.isEmpty()) {
-        TomNumber elt = l.getHead();
+      while(!l.isEmptyconcTomNumber()) {
+        TomNumber elt = l.getHeadconcTomNumber();
         //buf.append("_");
         buf.append(elementToIdentifier(elt));
-        l = l.getTail();
+        l = l.getTailconcTomNumber();
       }
       res = buf.toString();
       numberListToIdentifierMap.put(key,res);
@@ -217,13 +217,13 @@ public class TomBase {
     %match(TomSymbol subject) {
       Symbol[option=l] -> {
         OptionList optionList = `l;
-        while(!optionList.isEmpty()) {
-          Option opt = optionList.getHead();
+        while(!optionList.isEmptyconcOption()) {
+          Option opt = optionList.getHeadconcOption();
           %match(Option opt) {
             DeclarationToOption(MakeEmptyList[]) -> { return true; }
             DeclarationToOption(MakeAddList[])   -> { return true; }
           }
-          optionList = optionList.getTail();
+          optionList = optionList.getTailconcOption();
         }
         return false;
       }
@@ -240,13 +240,13 @@ public class TomBase {
     %match(TomSymbol subject) {
       Symbol[option=l] -> {
         OptionList optionList = `l;
-        while(!optionList.isEmpty()) {
-          Option opt = optionList.getHead();
+        while(!optionList.isEmptyconcOption()) {
+          Option opt = optionList.getHeadconcOption();
           %match(Option opt) {
             DeclarationToOption(MakeEmptyArray[]) -> { return true; }
             DeclarationToOption(MakeAddArray[])   -> { return true; }
           }
-          optionList = optionList.getTail();
+          optionList = optionList.getTailconcOption();
         }
         return false;
       }
@@ -413,14 +413,14 @@ public class TomBase {
 
   protected static TomName getSlotName(TomSymbol symbol, int number) {
     PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
-    for(int index = 0; !pairNameDeclList.isEmpty() && index<number ; index++) {
-      pairNameDeclList = pairNameDeclList.getTail();
+    for(int index = 0; !pairNameDeclList.isEmptyconcPairNameDecl() && index<number ; index++) {
+      pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
     }
-    if(pairNameDeclList.isEmpty()) {
+    if(pairNameDeclList.isEmptyconcPairNameDecl()) {
       System.out.println("getSlotName: bad index error");
       throw new TomRuntimeException("getSlotName: bad index error");
     }
-    PairNameDecl pairNameDecl = pairNameDeclList.getHead();
+    PairNameDecl pairNameDecl = pairNameDeclList.getHeadconcPairNameDecl();
 
     Declaration decl = pairNameDecl.getSlotDecl();
     %match(Declaration decl) {
@@ -433,13 +433,13 @@ public class TomBase {
   protected static int getSlotIndex(TomSymbol tomSymbol, TomName slotName) {
     int index = 0;
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-    while(!pairNameDeclList.isEmpty()) {
-      TomName name = pairNameDeclList.getHead().getSlotName();
+    while(!pairNameDeclList.isEmptyconcPairNameDecl()) {
+      TomName name = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
       // System.out.println("index = " + index + " name = " + name);
       if(slotName.equals(name)) {
         return index; 
       }
-      pairNameDeclList = pairNameDeclList.getTail();
+      pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
       index++;
     }
     return -1;
@@ -486,17 +486,17 @@ public class TomBase {
 
   // findOriginTracking(_) return the option containing OriginTracking information
   protected static Option findOriginTracking(OptionList optionList) {
-    if(optionList.isEmpty()) {
+    if(optionList.isEmptyconcOption()) {
       return `noOption();
     }
-    while(!optionList.isEmpty()) {
-      Option subject = optionList.getHead();
+    while(!optionList.isEmptyconcOption()) {
+      Option subject = optionList.getHeadconcOption();
       %match(Option subject) {
         orgTrack@OriginTracking[] -> {
           return `orgTrack;
         }
       }
-      optionList = optionList.getTail();
+      optionList = optionList.getTailconcOption();
     }
     System.out.println("findOriginTracking:  not found" + optionList);
     throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
@@ -510,14 +510,14 @@ public class TomBase {
     SymbolList list = symbolTable.getSymbolFromType(tomType);
     SymbolList filteredList = `emptySymbolList();
     // Not necessary since checker ensure the uniqueness of the symbol
-    while(!list.isEmpty()) {
-      TomSymbol head = list.getHead();
+    while(!list.isEmptyconcSymbol()) {
+      TomSymbol head = list.getHeadconcSymbol();
       if(isArrayOperator(head) || isListOperator(head)) {
-        filteredList = `manySymbolList(head,filteredList);
+        filteredList = `concSymbol(head,filteredList*);
       }
-      list = list.getTail();
+      list = list.getTailconcSymbol();
     }
-    return filteredList.getHead();
+    return filteredList.getHeadconcSymbol();
   }
 
   protected static TomType getTermType(TomTerm t, SymbolTable symbolTable){
