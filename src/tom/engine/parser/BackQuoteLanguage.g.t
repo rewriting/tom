@@ -32,6 +32,7 @@ import java.util.LinkedList;
 
 import tom.engine.TomBase;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.types.*;
 import tom.engine.xml.Constants;
 import tom.engine.tools.ASTFactory;
 import antlr.TokenStreamSelector;
@@ -139,8 +140,8 @@ options{
         concTomTerm() -> { return list; }
         concTomTerm(X1*,e1,X2*,e2,X3*) -> {
           %match(TomTerm e1, TomTerm e2) {
-            BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name1)],_)],
-            BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name2)],_)] -> {
+            BackQuoteAppl[args=concTomTerm(BackQuoteAppl[astName=Name(name1)],_*)],
+            BackQuoteAppl[args=concTomTerm(BackQuoteAppl[astName=Name(name2)],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
