@@ -35,7 +35,7 @@ public class VariadicOperatorTemplate extends TemplateClass {
   ClassName abstractType;
   ClassName sortName;
   ClassName empty;
-  GomClass conc;
+  GomClass cons;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -43,12 +43,12 @@ public class VariadicOperatorTemplate extends TemplateClass {
                                   ClassName abstractType,
                                   ClassName sortName,
                                   ClassName empty,
-                                  GomClass conc) {
+                                  GomClass cons) {
     super(className);
     this.abstractType = abstractType;
     this.sortName = sortName;
     this.empty = empty;
-    this.conc = conc;
+    this.cons = cons;
   }
 
   public String generate() {
@@ -72,8 +72,8 @@ public abstract class @className()@ extends @fullClassName(sortName)@ {
     out.append(%[
   public int length() {
     int count = 0;
-    if(this instanceof @fullClassName(conc.getclassName())@) {
-      @fullClassName(sortName)@ tl = ((@fullClassName(conc.getclassName())@)this).getTail@className()@();
+    if(this instanceof @fullClassName(cons.getclassName())@) {
+      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getclassName())@)this).getTail@className()@();
       if (tl instanceof @className()@) {
         return 1+((@className()@)tl).length();
       } else {
@@ -83,7 +83,20 @@ public abstract class @className()@ extends @fullClassName(sortName)@ {
       return 0;
     }
   }
-  // TODO reverse !!
+
+  public @fullClassName(sortName)@ reverse() {
+    if(this instanceof @fullClassName(cons.getclassName())@) {
+      @fullClassName(sortName)@ cur = this;
+      @fullClassName(sortName)@ rev = @fullClassName(empty)@.make();
+      while(cur instanceof @fullClassName(cons.getclassName())@) {
+        rev = @fullClassName(cons.getclassName())@.make(((@fullClassName(cons.getclassName())@)cur).getHead@className()@(),rev);
+        cur = ((@fullClassName(cons.getclassName())@)cur).getTail@className()@();
+      }
+      return rev;
+    } else {
+      return this;
+    }
+  }
 ]%);
 
     return out.toString();

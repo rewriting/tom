@@ -41,6 +41,40 @@ public class TestList extends TestCase {
     assertEquals(getListLength(l),((conc)l).length());
   }
 
+  public void testZeroReverse() {
+    List l = `conc();
+    assertEquals(getListReverse(l),((conc)l).reverse());
+  }
+
+  public void testOneReverse() {
+    List l = `conc(a());
+    assertEquals(getListReverse(l),((conc)l).reverse());
+  }
+
+  public void testTwoReverse() {
+    List l = `conc(a(),b());
+    assertEquals(getListReverse(l),((conc)l).reverse());
+  }
+
+  public void testnReverse() {
+    int n = 15;
+    List l = `conc();
+    for(int i = 0; i<n; i++) {
+      l = `conc(a(),b(),l*);
+    }
+    assertEquals(getListReverse(l),((conc)l).reverse());
+  }
+
+  public static List getListReverse(List l) {
+    %match(List l) {
+      conc(h,t*) -> {
+        List nt = getListReverse(`t*);
+        return `conc(nt*,h);
+      }
+    }
+    return l;
+  }
+
   public static int getListLength(List l) {
     %match(List l) {
       conc() -> { return 0; }
