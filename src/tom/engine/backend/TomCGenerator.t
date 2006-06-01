@@ -77,41 +77,20 @@ public class TomCGenerator extends TomImperativeGenerator {
     if(isDefinedSymbol(tomSymbol)) {
         // TODO: build an abstract declaration
       int argno=1;
-        /*
-          String s = "";
-              if(!l.isEmpty()) {
-              s = getTLType(type1) + " " + name1;
-              
-              if(!l.isEmpty()) {
-              s += "(";
-              while (!l.isEmpty()) {
-              s += getTLType(l.getHead()) + " _" + argno;
-              argno++;
-              l = l.getTail() ;
-              if(!l.isEmpty()) {
-              s += ",";
-              }
-              }
-              s += ");";
-              }
-              }
-              generate(out,deep,makeTL(s));
-        */
-      
       output.indent(deep);
-      if(!l.isEmpty()) {
+      if(!l.isEmptyconcTomType()) {
         output.write(getTLType(type1));
         output.writeSpace();
         output.write(name1);
-        if(!l.isEmpty()) {
+        if(!l.isEmptyconcTomType()) {
           output.writeOpenBrace();
-          while (!l.isEmpty()) {
-            output.write(getTLType(l.getHead()));
+          while (!l.isEmptyconcTomType()) {
+            output.write(getTLType(l.getHeadconcTomType()));
               //out.writeUnderscore();
               //out.write(argno);
             argno++;
-            l = l.getTail() ;
-            if(!l.isEmpty()) {
+            l = l.getTailconcTomType() ;
+            if(!l.isEmptyconcTomType()) {
               output.writeComa();
             }
           }
@@ -140,19 +119,19 @@ public class TomCGenerator extends TomImperativeGenerator {
     // TODO: build an abstract declaration
     int argno=1;
     output.indent(deep);
-    if(!l.isEmpty()) {
+    if(!l.isEmptyconcTomType()) {
       output.write(getTLType(type1));
       output.writeSpace();
       output.write(name1);
-      if(!l.isEmpty()) {
+      if(!l.isEmptyconcTomType()) {
         output.writeOpenBrace();
-        while (!l.isEmpty()) {
-          output.write(getTLType(l.getHead()));
+        while (!l.isEmptyconcTomType()) {
+          output.write(getTLType(l.getHeadconcTomType()));
           output.writeUnderscore();
           output.write(argno);
           argno++;
-          l = l.getTail() ;
-          if(!l.isEmpty()) {
+          l = l.getTailconcTomType() ;
+          if(!l.isEmptyconcTomType()) {
             output.writeComa();
           }
         }
@@ -179,19 +158,19 @@ public class TomCGenerator extends TomImperativeGenerator {
     // TODO: build an abstract declaration
     int argno=1;
     output.indent(deep);
-    if(!l.isEmpty()) {
+    if(!l.isEmptyconcTomType()) {
       output.write(getTLType(type1));
       output.writeSpace();
       output.write(name1);
-      if(!l.isEmpty()) {
+      if(!l.isEmptyconcTomType()) {
         output.writeOpenBrace();
-        while (!l.isEmpty()) {
-          output.write(getTLType(l.getHead()));
+        while (!l.isEmptyconcTomType()) {
+          output.write(getTLType(l.getHeadconcTomType()));
           output.writeUnderscore();
           output.write(argno);
           argno++;
-          l = l.getTail() ;
-          if(!l.isEmpty()) {
+          l = l.getTailconcTomType() ;
+          if(!l.isEmptyconcTomType()) {
             output.writeComa();
           }
         }

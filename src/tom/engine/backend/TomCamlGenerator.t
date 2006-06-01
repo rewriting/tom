@@ -58,24 +58,24 @@ public class TomCamlGenerator extends TomImperativeGenerator {
    */
   
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
-    Instruction head = instructionList.getHead();
-    if(!instructionList.isEmpty()) {
+    Instruction head = instructionList.getHeadconcInstruction();
+    if(!instructionList.isEmptyconcInstruction()) {
       generateInstruction(deep,head, moduleName);
-      instructionList = instructionList.getTail();
+      instructionList = instructionList.getTailconcInstruction();
     }
 
-    while(!instructionList.isEmpty()) {
+    while(!instructionList.isEmptyconcInstruction()) {
       if(!head.isTargetLanguageToInstruction()) {
         output.write("(* end InstructionSequence *) ");
         output.writeln(";");
       }
-      generateInstruction(deep,instructionList.getHead(), moduleName);
+      generateInstruction(deep,instructionList.getHeadconcInstruction(), moduleName);
       /*
        * buildInstructionSequence is used for CompiledPattern.
        * Since a pattern should have type unit, we have to put a ";"
        */
 
-      instructionList = instructionList.getTail();
+      instructionList = instructionList.getTailconcInstruction();
     }
     return;
   }
@@ -87,14 +87,14 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
     if(instList.isSingle()) {
       output.writeln(deep,"( (* begin unamed block*)");
-      generateInstruction(deep+1,instList.getHead(), moduleName);
+      generateInstruction(deep+1,instList.getHeadconcInstruction(), moduleName);
       output.writeln(deep,") (* end unamed block*)");
     } else {
       output.writeln(deep,"( (* begin unamed block*)");
-      while(!instList.isEmpty()) {
-        generateInstruction(deep+1,instList.getHead(), moduleName);
+      while(!instList.isEmptyconcInstruction()) {
+        generateInstruction(deep+1,instList.getHeadconcInstruction(), moduleName);
         output.writeln("; (* from unamed block*)");
-        instList = instList.getTail();
+        instList = instList.getTailconcInstruction();
       }
       output.writeln(deep,") (* end unamed block*)");
     }
@@ -270,8 +270,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       return;
     }
     s.append("let " + funName + "(");
-    while(!argList.isEmpty()) {
-      TomTerm arg = argList.getHead();
+    while(!argList.isEmptyconcTomTerm()) {
+      TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
         %match(TomTerm arg) {
             // in caml, we are not interested in the type of arguments
@@ -286,8 +286,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
           }
         }
       }
-      argList = argList.getTail();
-      if(!argList.isEmpty()) {
+      argList = argList.getTailconcTomTerm();
+      if(!argList.isEmptyconcTomTerm()) {
         s.append(", ");
       }
     }
@@ -300,7 +300,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   protected void genDeclList(String name, String moduleName)  throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
     TomType listType = getSymbolCodomain(tomSymbol);
-    TomType eltType = getSymbolDomain(tomSymbol).getHead();
+    TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {

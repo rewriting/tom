@@ -81,11 +81,11 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     ArrayList types = new ArrayList();
     //initialize arrayList with argument names
     int index = 0;
-    while(!tomTypes.isEmpty()) {
-	    TomType type = tomTypes.getHead();
+    while(!tomTypes.isEmptyconcTomType()) {
+	    TomType type = tomTypes.getHeadconcTomType();
 	    types.add(getTLType(type));
       names.add(getSlotName(tomSymbol, index).getString());
-	    tomTypes = tomTypes.getTail();
+	    tomTypes = tomTypes.getTailconcTomType();
 	    index++;
     }
     output.write(deep, modifier + "class " + tomName);
@@ -138,8 +138,8 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 
   private void buildMethod(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
     output.write(deep, methodModifier + getTLType(`codomain) + " " + tomName + "(");
-    while(!varList.isEmpty()) {
-      TomTerm localVar = varList.getHead();
+    while(!varList.isEmptyconcTomTerm()) {
+      TomTerm localVar = varList.getHeadconcTomTerm();
       matchBlock: {
         %match(TomTerm localVar) {
           v@Variable[astType=type2] -> {
@@ -158,8 +158,8 @@ public class TomJavaGenerator extends TomImperativeGenerator {
           }
         }
       }
-      varList = varList.getTail();
-      if(!varList.isEmpty()) {
+      varList = varList.getTailconcTomTerm();
+      if(!varList.isEmptyconcTomTerm()) {
         output.write(deep,", ");
 
       }

@@ -319,10 +319,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
     int slotIndex = getSlotIndex(tomSymbol,slotName);
     TomTypeList l = typesList;
-    for(int index = 0; !l.isEmpty() && index<slotIndex ; index++) {
-      l = l.getTail();
+    for(int index = 0; !l.isEmptyconcTomType() && index<slotIndex ; index++) {
+      l = l.getTailconcTomType();
     }
-    TomType returnType = l.getHead();
+    TomType returnType = l.getHeadconcTomType();
 
     String argType;
     if(!lazyMode) {
@@ -397,7 +397,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         Name(opName) -> {
           TomSymbol tomSymbol = getSymbolFromName(`opName);
           argType = getTLType(getSymbolCodomain(tomSymbol));
-          returnType = getTLType(getSymbolDomain(tomSymbol).getHead());
+          returnType = getTLType(getSymbolDomain(tomSymbol).getHeadconcTomType());
         }
       }
     }
@@ -491,7 +491,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
         Name(opName) -> {
           TomSymbol tomSymbol = getSymbolFromName(`opName);
           argType = getTLType(getSymbolCodomain(tomSymbol));
-          returnType = getTLType(getSymbolDomain(tomSymbol).getHead());
+          returnType = getTLType(getSymbolDomain(tomSymbol).getHeadconcTomType());
         }
       }
     }

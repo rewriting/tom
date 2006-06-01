@@ -142,10 +142,10 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   protected void buildFunctionCall(int deep, String name, TomList argList, String moduleName) throws IOException {
     output.write(name);
     output.writeOpenBrace();
-    while(!argList.isEmpty()) {
-      generate(deep,argList.getHead(),moduleName);
-      argList = argList.getTail();
-      if(!argList.isEmpty()) {
+    while(!argList.isEmptyconcTomTerm()) {
+      generate(deep,argList.getHeadconcTomTerm(),moduleName);
+      argList = argList.getTailconcTomTerm();
+      if(!argList.isEmptyconcTomTerm()) {
         output.writeComa();
       }
     }
@@ -290,8 +290,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     }
 
     s.append(modifier + getTLType(returnType) + " " + funName + "(");
-    while(!argList.isEmpty()) {
-      TomTerm arg = argList.getHead();
+    while(!argList.isEmptyconcTomTerm()) {
+      TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
         %match(TomTerm arg) {
           Variable[astName=Name(name), astType=Type[tomType=tomType,tlType=tlType@TLType[]]] -> {
@@ -308,8 +308,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
           }
         }
       }
-      argList = argList.getTail();
-      if(!argList.isEmpty()) {
+      argList = argList.getTailconcTomTerm();
+      if(!argList.isEmptyconcTomTerm()) {
         s.append(", ");
       }
     }
@@ -331,7 +331,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   protected void genDeclList(String name, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
     TomType listType = getSymbolCodomain(tomSymbol);
-    TomType eltType = getSymbolDomain(tomSymbol).getHead();
+    TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {
@@ -387,7 +387,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   protected void genDeclArray(String name, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
     TomType listType = getSymbolCodomain(tomSymbol);
-    TomType eltType = getSymbolDomain(tomSymbol).getHead();
+    TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {
