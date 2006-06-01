@@ -383,10 +383,10 @@ public class ASTFactory {
 
   public static TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
     %match(TomList list) {
-      emptyTomList() -> { return `emptyTomList();}
-      manyTomList(head,tail) -> {
-        return `manyTomList(metaEncodeXMLAppl(symbolTable,head),
-                            metaEncodeTermList(symbolTable,tail));
+      concTomTerm() -> { return `concTomTerm();}
+      concTomTerm(head,tail*) -> {
+        TomList tl = metaEncodeTermList(symbolTable,tail);
+        return `concTomTerm(metaEncodeXMLAppl(symbolTable,head),tl*);
       }
     }
     return list;
@@ -476,26 +476,26 @@ public class ASTFactory {
 
   public static TomTerm buildList(TomName name,TomList args) {
     %match(TomList args) {
-      emptyTomList() -> {
+      concTomTerm() -> {
         return `BuildEmptyList(name);
       }
 
-      manyTomList(head@VariableStar[],tail) -> {
+      concTomTerm(head@VariableStar[],tail*) -> {
         TomTerm subList = buildList(name,`tail);
         return `BuildAppendList(name,head,subList);
       }
       
-      manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
+      concTomTerm(Composite(concTomTerm(_*,head@VariableStar[])),tail*) -> {
         TomTerm subList = buildList(name,`tail);
         return `BuildAppendList(name,head,subList);
       }
 
-      manyTomList(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail) -> {
+      concTomTerm(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail*) -> {
         TomTerm subList = buildList(name,`tail);
         return `BuildConsList(name,head,subList);
       }
 
-      manyTomList(TargetLanguageToTomTerm[],tail) -> {
+      concTomTerm(TargetLanguageToTomTerm[],tail*) -> {
         TomTerm subList = buildList(name,`tail);
         return subList;
       }
@@ -512,28 +512,28 @@ public class ASTFactory {
 
   private static TomTerm buildArray(TomName name,TomList args, int size) {
     %match(TomList args) {
-      emptyTomList() -> {
+      concTomTerm() -> {
         return `BuildEmptyArray(name,size);
       }
 
-      manyTomList(head@VariableStar[],tail) -> {
+      concTomTerm(head@VariableStar[],tail*) -> {
           /*System.out.println("head = " + head);*/
         TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildAppendArray(name,head,subList);
       }
 
-      manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
+      concTomTerm(Composite(concTomTerm(_*,head@VariableStar[])),tail*) -> {
           /*System.out.println("head = " + head);*/
         TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildAppendArray(name,head,subList);
       }
 
-      manyTomList(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail) -> {
+      concTomTerm(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail*) -> {
         TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildConsArray(name,head,subList);
       }
 
-      manyTomList(TargetLanguageToTomTerm[],tail) -> {
+      concTomTerm(TargetLanguageToTomTerm[],tail*) -> {
         TomTerm subList = buildArray(name,`tail,size);
         return subList;
       }

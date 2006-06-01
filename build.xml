@@ -397,12 +397,11 @@
     </uptodate>
     <antcall target="touchvas"/>
 
-    <vascompile srcdir="${src.src}"
+    <gomcompile srcdir="${src.src}"
                 package="tom.engine.adt"
-                name="tomsignature"
                 destdir="${src.gen}">
-	 <include name="tom/engine/adt/TomSignature.vas"/>
-    </vascompile>
+	 <include name="tom/engine/adt/TomSignature.gom"/>
+    </gomcompile>
 
     <gomcompile srcdir="${src.src}"
                 package="tom.engine.adt"

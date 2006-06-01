@@ -1,5 +1,5 @@
 module TomOption
-imports TomSignature 
+imports TomSignature int
 
 public
 sorts OptionList Option 
@@ -11,7 +11,7 @@ TomNameToOption(astName:TomName) -> Option
 TomTermToOption(astTerm:TomTerm) -> Option
 DefinedSymbol() -> Option
 GeneratedMatch() -> Option
-OriginTracking(astName:TomName,line:Int,fileName:String) -> Option
+OriginTracking(astName:TomName,line:int,fileName:String) -> Option
 OriginalText(astName:TomName) -> Option
 Constant() -> Option
 Label(astName:TomName) -> Option

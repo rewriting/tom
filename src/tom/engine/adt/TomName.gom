@@ -1,5 +1,5 @@
 module TomName
-imports 
+imports int
 
 public
 sorts TomNumberList TomNumber TomName 
@@ -16,7 +16,7 @@ ListNumber(number:TomNumber) -> TomNumber
 IndexNumber(number:TomNumber) -> TomNumber
 Begin(number:TomNumber) -> TomNumber
 End(number:TomNumber) -> TomNumber
-Number(integer:Int) -> TomNumber
+Number(integer:int) -> TomNumber
 AbsVar(number:TomNumber) -> TomNumber
 RenamedVar(astName:TomName) -> TomNumber
 NameNumber(astName:TomName) -> TomNumber

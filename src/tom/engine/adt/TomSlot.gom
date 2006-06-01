@@ -1,0 +1,9 @@
+module TomSlot
+imports TomSignature
+
+abstract syntax
+
+Slot = PairSlotAppl(slotName:TomName,appl:TomTerm)
+SlotList = concSlot(Slot*)
+PairNameDecl = PairNameDecl(slotName:TomName,slotDecl:Declaration)
+PairNameDeclList = concPairNameDecl(PairNameDecl*)

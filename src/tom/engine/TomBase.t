@@ -95,35 +95,35 @@ public class TomBase {
   }
     
   protected static TomList append(TomTerm t, TomList l) {
-    if(l.isEmpty()) {
+    if(l.isEmptyconcTomTerm()) {
       return cons(t,l);
     } else {
-      return cons(l.getHead(), append(t,l.getTail()));
+      return cons(l.getHeadconcTomTerm(), append(t,l.getTailconcTomTerm()));
     }
   }
 
   protected static TomList concat(TomList l1, TomList l2) {
-    if(l1.isEmpty()) {
+    if(l1.isEmptyconcTomTerm()) {
       return l2;
     } else {
-      return cons(l1.getHead(), concat(l1.getTail(),l2));
+      return cons(l1.getHeadconcTomTerm(), concat(l1.getTailconcTomTerm(),l2));
     }
   }
 
   protected static TomList reverse(TomList l) {
     TomList reverse = empty();
-    while(!l.isEmpty()){
-      reverse = cons(l.getHead(),reverse);
-      l = l.getTail();
+    while(!l.isEmptyconcTomTerm()){
+      reverse = cons(l.getHeadconcTomTerm(),reverse);
+      l = l.getTailconcTomTerm();
     }
     return reverse;
   }
 
   protected static int length(TomList l) {
-    if(l.isEmpty()) {
+    if(l.isEmptyconcTomTerm()) {
       return 0;
     } else {
-      return 1 + length(l.getTail());
+      return 1 + length(l.getTailconcTomTerm());
     }
   }
 
@@ -560,10 +560,11 @@ public class TomBase {
 
   protected static SlotList tomListToSlotList(TomList tomList, int index) {
     %match(TomList tomList) {
-      emptyTomList() -> { return `emptySlotList(); }
-      manyTomList(head,tail) -> { 
+      concTomTerm() -> { return `concSlot(); }
+      concTomTerm(head,tail*) -> { 
         TomName slotName = `PositionName(concTomNumber(Number(index)));
-        return `manySlotList(PairSlotAppl(slotName,head),tomListToSlotList(tail,index+1)); 
+        SlotList sl = tomListToSlotList(tail,index+1);
+        return `concSlot(PairSlotAppl(slotName,head),sl*); 
       }
     }
     throw new TomRuntimeException("tomListToSlotList: " + tomList);
@@ -571,11 +572,12 @@ public class TomBase {
 
   protected static SlotList mergeTomListWithSlotList(TomList tomList, SlotList slotList) {
     %match(TomList tomList, SlotList slotList) {
-      emptyTomList(), emptySlotList() -> { 
-        return `emptySlotList(); 
+      concTomTerm(), concSlot() -> { 
+        return `concSlot(); 
       }
-      manyTomList(head,tail), manySlotList(PairSlotAppl[slotName=slotName],tailSlotList) -> { 
-        return `manySlotList(PairSlotAppl(slotName,head),mergeTomListWithSlotList(tail,tailSlotList)); 
+      concTomTerm(head,tail*), concSlot(PairSlotAppl[slotName=slotName],tailSlotList*) -> { 
+        SlotList sl = mergeTomListWithSlotList(tail,tailSlotList);
+        return `concSlot(PairSlotAppl(slotName,head),sl*); 
       }
     }
     throw new TomRuntimeException("mergeTomListWithSlotList: " + tomList + " and " + slotList);
@@ -583,8 +585,11 @@ public class TomBase {
 
   protected static TomList slotListToTomList(SlotList tomList) {
     %match(SlotList tomList) {
-      emptySlotList() -> { return `emptyTomList(); }
-      manySlotList(PairSlotAppl[appl=head],tail) -> { return `manyTomList(head,slotListToTomList(tail)); }
+      concSlot() -> { return `concTomTerm(); }
+      concSlot(PairSlotAppl[appl=head],tail*) -> {
+        TomList tl = slotListToTomList(tail);
+        return `concTomTerm(head,tl*);
+      }
     }
     throw new TomRuntimeException("slotListToTomList: " + tomList);
   }
