@@ -229,12 +229,12 @@ public class TomKernelCompiler extends TomBase {
                                            TomNumberList rootpath,
                                            String moduleName) {
     %match(SlotList termList) {
-      emptySlotList() -> { 
+      concSlot() -> { 
         return action;
       } 
       // X or _,...  
-      manySlotList(PairSlotAppl(slotName,
-                                var@(Variable|UnamedVariable)[astType=termType]),termTail) -> {
+      concSlot(PairSlotAppl(slotName,
+                                var@(Variable|UnamedVariable)[astType=termType]),termTail*) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);
         TomNumberList path  = (TomNumberList) rootpath.append(`NameNumber(slotName));
 
@@ -243,9 +243,9 @@ public class TomKernelCompiler extends TomBase {
       }
      
       // (f|g)[...]
-      manySlotList(PairSlotAppl(slotName,
+      concSlot(PairSlotAppl(slotName,
                    currentTerm@RecordAppl[nameList=nameList@(Name(tomName),_*),
-                                          slots=termArgs]),termTail) -> {
+                                          slots=termArgs]),termTail*) -> {
         // recursively call the algorithm on termTail
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);
         // find the codomain of (f|g) [* should be the same *]
@@ -339,7 +339,7 @@ public class TomKernelCompiler extends TomBase {
                                       String moduleName) {
     //getSymbolTable(moduleName).setUsedSymbolDestructor(p.symbol);
     %match(SlotList termList) {
-      emptySlotList() -> {
+      concSlot() -> {
           /*
            * nothing to compile
            * just check that the subject is empty
@@ -347,7 +347,7 @@ public class TomKernelCompiler extends TomBase {
         return `genCheckEmptyList(p.symbol, p.subjectListName, p.action, Nop());
       }
         
-      manySlotList(PairSlotAppl[appl=var@(Variable|UnamedVariable)[astType=termType]],termTail) -> {
+      concSlot(PairSlotAppl[appl=var@(Variable|UnamedVariable)[astType=termType]],termTail*) -> {
           /*
            * get an element and store it
            */
@@ -355,7 +355,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementList(p.symbol, p.subjectListName, `var, `termType, subAction, ensureNotEmptyList, moduleName);
       }
 
-      manySlotList(PairSlotAppl[appl=term@RecordAppl[nameList=(Name(tomName),_*)]],termTail)  -> {
+      concSlot(PairSlotAppl[appl=term@RecordAppl[nameList=(Name(tomName),_*)]],termTail*)  -> {
           /*
            * get an element
            * perform syntactic matching
@@ -371,7 +371,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementList(p.symbol, p.subjectListName, var, termType, subAction, ensureNotEmptyList, moduleName);
       }
       
-      manySlotList(PairSlotAppl[appl=var@(VariableStar|UnamedVariableStar)[astType=termType]],termTail) -> {
+      concSlot(PairSlotAppl[appl=var@(VariableStar|UnamedVariableStar)[astType=termType]],termTail*) -> {
           /*
            * 3 cases:
            * - tail = emptyList
@@ -463,11 +463,11 @@ public class TomKernelCompiler extends TomBase {
 
   private boolean containOnlyVariableStar(SlotList termList) {
     %match(SlotList termList) {
-      emptySlotList() -> {
+      concSlot() -> {
         return true;
       }
 
-      manySlotList(PairSlotAppl[appl=(VariableStar|UnamedVariableStar)[]],termTail) -> {
+      concSlot(PairSlotAppl[appl=(VariableStar|UnamedVariableStar)[]],termTail*) -> {
         return containOnlyVariableStar(`termTail);
       }
     }
@@ -538,7 +538,7 @@ public class TomKernelCompiler extends TomBase {
                                        String moduleName) {
     //getSymbolTable(moduleName).setUsedSymbolDestructor(p.symbol);
     %match(SlotList termList) {
-      emptySlotList() -> {
+      concSlot() -> {
           /*
            * nothing to compile
            * just check that the subject is empty
@@ -546,7 +546,7 @@ public class TomKernelCompiler extends TomBase {
         return `genIsEmptyArray(p.symbol,p.subjectListName, p.subjectListIndex, p.action, Nop());
       }
 
-      manySlotList(PairSlotAppl[appl=var@(Variable|UnamedVariable)[astType=termType]],termTail) -> {
+      concSlot(PairSlotAppl[appl=var@(Variable|UnamedVariable)[astType=termType]],termTail*) -> {
           /*
            * get an element and store it
            */
@@ -554,7 +554,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementArray(p.symbol,p.subjectListName, p.subjectListIndex, `var, `termType, subAction, ensureNotEmptyList, moduleName);
       }
 
-      manySlotList(PairSlotAppl[appl=term@RecordAppl[nameList=(Name(tomName),_*)]],termTail)  -> {
+      concSlot(PairSlotAppl[appl=term@RecordAppl[nameList=(Name(tomName),_*)]],termTail*)  -> {
           /*
            * get an element
            * perform syntactic matching
@@ -571,7 +571,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementArray(p.symbol,p.subjectListName, p.subjectListIndex, var, termType, subAction, ensureNotEmptyList, moduleName);
       }
         
-      manySlotList(PairSlotAppl[appl=var@(VariableStar|UnamedVariableStar)[]],termTail) -> {
+      concSlot(PairSlotAppl[appl=var@(VariableStar|UnamedVariableStar)[]],termTail*) -> {
           /*
            * 3 cases:
            * - tail = emptyList
@@ -744,11 +744,11 @@ public class TomKernelCompiler extends TomBase {
                                        TomNumberList path,
                                        String moduleName) {
     %match(NameList nameList) {  
-      emptyNameList() -> {
+      concTomName() -> {
         return `Nop();
       }
 
-      manyNameList(name@Name(tomName),tail) -> {
+      concTomName(name@Name(tomName),tail*) -> {
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         Instruction elseBody = `collectSubtermIf(tail,booleanVariable,currentTerm,termArgList,subjectVariableAST,path,moduleName);
@@ -771,9 +771,9 @@ public class TomKernelCompiler extends TomBase {
                                               String moduleName) {
     TomName opNameAST = tomSymbol.getAstName();
     %match(SlotList termArgList) { 
-      emptySlotList() -> { return body; }
+      concSlot() -> { return body; }
      
-      manySlotList(PairSlotAppl(slotName,_),tail) -> {
+      concSlot(PairSlotAppl(slotName,_),tail*) -> {
         body = collectSubtermLetAssign(`tail,tomSymbol,subjectVariableAST,path,body,moduleName);
         TomType subtermType = getSlotType(tomSymbol,`slotName);
 
@@ -803,11 +803,11 @@ public class TomKernelCompiler extends TomBase {
                                                  TomSymbol tomSymbol,
                                                  TomNumberList path, Instruction body) {
     %match(SlotList termArgList) { 
-      emptySlotList() -> {
+      concSlot() -> {
         return body;
       }
      
-      manySlotList(PairSlotAppl(slotName,_),tail) -> {
+      concSlot(PairSlotAppl(slotName,_),tail*) -> {
         body = collectSubtermLetRefBottom(`tail,tomSymbol,path,body);
         TomType subtermType = getSlotType(tomSymbol,`slotName);
         TomNumberList newPath  = (TomNumberList) path.append(`NameNumber(slotName));
@@ -826,9 +826,9 @@ public class TomKernelCompiler extends TomBase {
       TomTerm subjectVariableAST, TomNumberList path, Instruction body, String moduleName) {
     TomName opNameAST = tomSymbol.getAstName();
     %match(SlotList termArgList) { 
-      emptySlotList() -> { return body; }
+      concSlot() -> { return body; }
       
-      manySlotList(PairSlotAppl(slotName,_),tail) -> {
+      concSlot(PairSlotAppl(slotName,_),tail*) -> {
         body = collectSubtermFromTomSymbol(`tail,tomSymbol,subjectVariableAST,path,body,moduleName);
         TomType subtermType = getSlotType(tomSymbol,`slotName);
         if(!isDefinedGetSlot(tomSymbol,`slotName)) {
