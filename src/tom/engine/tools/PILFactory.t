@@ -31,6 +31,7 @@ import java.util.Iterator;
 import tom.engine.TomBase;
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.types.*;
 import tom.engine.tools.TomGenericPlugin;
 import aterm.ATerm;
 import aterm.ATermList;

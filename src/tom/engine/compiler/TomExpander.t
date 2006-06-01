@@ -30,6 +30,11 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.tomoption.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;

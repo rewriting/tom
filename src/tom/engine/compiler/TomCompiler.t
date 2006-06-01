@@ -29,6 +29,10 @@ import java.util.*;
 import java.util.logging.Level;
 
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tominstruction.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomoption.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;

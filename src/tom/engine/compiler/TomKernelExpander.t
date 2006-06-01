@@ -31,6 +31,10 @@ import java.util.Iterator;
 
 import tom.engine.TomBase;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomname.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
