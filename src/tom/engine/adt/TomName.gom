@@ -18,3 +18,5 @@ TomNumber = MatchNumber(number:TomNumber)
           | RuleVar()
 
 TomNumberList = concTomNumber(TomNumber*)
+
+NameList = concTomName(TomName*)

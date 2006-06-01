@@ -17,7 +17,6 @@ TomRuleList = concTomRule(TomRule*)
 TomVisitList = concTomVisit(TomVisit*)
 TomEntryList = concTomEntry(TomEntry*)
 TomSymbolList = concTomSymbol(TomSymbol*)
-TomNameList = concTomName(TomName*)
 
 KeyEntry = UsedSymbolConstructor(symbol:TomSymbol)
          | UsedSymbolDestructor(symbol:TomSymbol)

@@ -1,5 +1,5 @@
 module TomTerm
-imports TomSignature int
+imports TomSignature TomName int
 abstract syntax
 
 TomTerm = TermAppl(option:OptionList,nameList:NameList,args:TomList,constraints:ConstraintList)
