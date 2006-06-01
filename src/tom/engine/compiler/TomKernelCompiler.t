@@ -736,14 +736,14 @@ public class TomKernelCompiler extends TomBase {
      * given a list of symbol names
      * generated nested if, for each symbol name
      */
-  private Instruction collectSubtermIf(TomNameList nameList,
+  private Instruction collectSubtermIf(NameList nameList,
                                        TomTerm booleanVariable,
                                        TomTerm currentTerm,
                                        SlotList termArgList,
                                        TomTerm subjectVariableAST, 
                                        TomNumberList path,
                                        String moduleName) {
-    %match(TomNameList nameList) {  
+    %match(NameList nameList) {  
       concTomName() -> {
         return `Nop();
       }

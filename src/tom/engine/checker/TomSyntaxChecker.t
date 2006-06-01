@@ -798,7 +798,7 @@ public class TomSyntaxChecker extends TomChecker {
           }
 
           boolean first = true;
-          %match(TomNameList nameList) {
+          %match(NameList nameList) {
             /* 
              * We perform tests as we have different RecordAppls: 
              * they all must be valid and have the expected return type
@@ -1013,7 +1013,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  private  TomSymbol ensureValidApplDisjunction(TomNameList nameList, TomType expectedType, String fileName, int decLine,
+  private  TomSymbol ensureValidApplDisjunction(NameList nameList, TomType expectedType, String fileName, int decLine,
                                                boolean permissive, boolean topLevel) {
     TomTypeList domainReference = null, currentDomain = null;
     TomSymbol symbol = null;
@@ -1050,7 +1050,7 @@ public class TomSyntaxChecker extends TomChecker {
 
     // this part is common between Appl and records with multiple head symbols
     boolean first = true; // the first symbol give the expected type
-    %match(TomNameList nameList) {
+    %match(NameList nameList) {
       (_*, Name(dijName), _*) -> { // for each SymbolName
         symbol =  getSymbolFromName(`dijName);
         if (symbol == null) {
@@ -1094,7 +1094,7 @@ public class TomSyntaxChecker extends TomChecker {
     return true;
   }
 
-  private  TomSymbol ensureValidRecordDisjunction(TomNameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
+  private  TomSymbol ensureValidRecordDisjunction(NameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
     if(nameList.length()==1) { // Valid but has it a good type?
       String res = nameList.getHead().getString();
       TomSymbol symbol =  getSymbolFromName(res);
