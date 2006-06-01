@@ -1,58 +1,52 @@
 module Il
 imports String int ATerm
-
-public sorts 
-  Symbol Variable Term Expr Instr 
-  Substitution SubstitutionList Environment
-  Seq TermList ExprList AbsTerm
-  Deriv DerivTree InstrList
-
 abstract syntax
-  fsymbol(name:String)                       -> Symbol
+Symbol = fsymbol(name:String)
+Variable=  var(name:String)
 
-  var(name:String)                           -> Variable
+AbsTerm = absvar(varname:Variable)
+				| st(symbol:Symbol,abst:AbsTerm,index:int)
+				| sl(symbol:Symbol,abst:AbsTerm,name:String)
 
-  tau(abst:AbsTerm)                          -> Term
-  absvar(varname:Variable)                   -> AbsTerm
-  st(symbol:Symbol,abst:AbsTerm,index:int)   -> AbsTerm
-  sl(symbol:Symbol,abst:AbsTerm,name:String) -> AbsTerm
-  repr(term:String)                          -> Term
-  subterm(symbol:Symbol,t:Term,index:int)    -> Term
-  slot(symbol:Symbol,t:Term,name:String)     -> Term
+Term = tau(abst:AbsTerm)
+		 | repr(term:String)
+		 | subterm(symbol:Symbol,t:Term,index:int)
+		 | slot(symbol:Symbol,t:Term,name:String)
+		 |appSubsT(subs:SubstitutionList,t:Term)
 
-  iltrue(subst:SubstitutionList)             -> Expr
-  ilfalse()                                  -> Expr
-  isfsym(t:Term,symbol:Symbol)               -> Expr
-  eq(lt:Term,rt:Term)                        -> Expr
-  tisfsym(abst:AbsTerm,symbol:Symbol)        -> Expr
-  teq(labst:AbsTerm,rabst:AbsTerm)           -> Expr
+Expr = iltrue(subst:SubstitutionList)
+		 | ilfalse()
+		 | isfsym(t:Term,symbol:Symbol)
+		 | eq(lt:Term,rt:Term)
+		 | tisfsym(abst:AbsTerm,symbol:Symbol)
+		 | teq(labst:AbsTerm,rabst:AbsTerm)
+		 | iland(left:Expr,right:Expr)
+		 | ilor(left:Expr,right:Expr)
+		 | ilnot(exp:Expr)
+		 | appSubsE(subs:SubstitutionList,e:Expr)
 
-  iland(left:Expr,right:Expr)                -> Expr
-  ilor(left:Expr,right:Expr)                 -> Expr
-  ilnot(exp:Expr)                            -> Expr
+Instr = accept(positive:ATerm,negative:ATerm)
+			| refuse()
+			| ITE(e:Expr,ift:Instr,iff:Instr)
+			| ILLet(var:Variable,t:Term,body:Instr)
+			| sequence(instrlist:InstrList)
 
-  accept(positive:ATerm,negative:ATerm)      -> Instr
-  refuse()                                   -> Instr
-  ITE(e:Expr,ift:Instr,iff:Instr)            -> Instr
-  ILLet(var:Variable,t:Term,body:Instr)      -> Instr
-  sequence(instrlist:InstrList)              -> Instr
+InstrList = semicolon(Instr*)
 
-  semicolon(Instr*)                          -> InstrList
+Substitution = undefsubs()
+						 | is(var:Variable,term:Term)
 
-  undefsubs()                                -> Substitution
-  is(var:Variable,term:Term)                 -> Substitution
-  subs(Substitution *)                       -> SubstitutionList
-  env(subs:SubstitutionList,i:Instr)         -> Environment
+SubstitutionList = subs(Substitution *)
+Environment = env(subs:SubstitutionList,i:Instr)
 
-  seq()                                      -> Seq
-  appSubsT(subs:SubstitutionList,t:Term)     -> Term
-  appSubsE(subs:SubstitutionList,e:Expr)     -> Expr
-  dedterm(terms:TermList)                    -> Seq
-  concTerm(Term *)                           -> TermList
-  dedexpr(exprs:ExprList)                    -> Seq
-  concExpr(Expr *)                           -> ExprList
+Seq =  seq()
+		| dedexpr(exprs:ExprList)
+		| dedterm(terms:TermList)
 
-  ebs(lhs:Environment,rhs:Environment)       -> Deriv
-  endderiv()                                 -> DerivTree
-  derivrule(name:String,post:Deriv,pre:DerivTree,cond:Seq) -> DerivTree
-  derivrule2(name:String,post:Deriv,pre:DerivTree,pre2:DerivTree,cond:Seq) -> DerivTree
+TermList = concTerm(Term *)
+ExprList = concExpr(Expr *)
+
+Deriv = ebs(lhs:Environment,rhs:Environment)
+DerivTree = endderiv()
+					| derivrule(name:String,post:Deriv,pre:DerivTree,cond:Seq)
+					| derivrule2(name:String,post:Deriv,pre:DerivTree,pre2:DerivTree,cond:Seq)
