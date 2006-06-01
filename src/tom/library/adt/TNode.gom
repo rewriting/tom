@@ -1,0 +1,24 @@
+module TNode
+imports String
+
+public
+
+sorts TNode TNodeList
+
+abstract syntax
+
+  EmptyNode() -> TNode
+  CommentNode(data:String) -> TNode
+  ProcessingInstructionNode(target:String,data:String) -> TNode
+  TextNode(data:String) -> TNode
+  CDATASectionNode(data:String) -> TNode
+  DocumentNode(docType:TNode, docElem:TNode) -> TNode
+  ElementNode(name:String, attrList:TNodeList, childList:TNodeList) -> TNode
+  AttributeNode(name:String, specified:String, value:String) -> TNode
+  DocumentTypeNode(name:String, publicId:String, systemId:String, internalSubset:String,
+	                 entities:TNodeList, notations:TNodeList) -> TNode
+  EntityReferenceNode(name:String, childList:TNodeList) -> TNode
+  EntityNode(notationName:String, publicId:String, systemId:String) -> TNode
+  NotationNode(publicId:String, systemId:String) -> TNode
+
+  concTNode(TNode*) -> TNodeList

@@ -13,9 +13,6 @@ public class Xml {
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();
-  private TNodeFactory getTNodeFactory() {
-    return xtools.getTNodeFactory();
-  }
 
   public static void main (String args[]) {
     Xml test = new Xml();

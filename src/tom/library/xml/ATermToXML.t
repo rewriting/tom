@@ -46,21 +46,8 @@ public class ATermToXML {
 
   %include{ adt/tnode/TNode.tom }
 
-  private TNodeFactory factory = null;
   private OutputStream out = System.out;
   private Writer writer = null;
-
-  private TNodeFactory getTNodeFactory() {
-    return factory;
-  }
-
-  public ATermToXML () {
-    factory = TNodeFactory.getInstance(SingletonFactory.getInstance());
-  }
-
-  public ATermToXML (TNodeFactory factory) {
-    this.factory = factory;
-  }
 
   public void setOutputStream(OutputStream out){
     this.out = out;
@@ -72,7 +59,7 @@ public class ATermToXML {
 
   public void convert(String filename) {
     try {
-      convert(factory.getPureFactory().readFromFile(filename));
+      convert(SingletonFactory.getInstance().readFromFile(filename));
     } catch (IOException e) {
       System.out.println(e.getMessage());
     }
@@ -171,11 +158,11 @@ public class ATermToXML {
   }
 
   private void atermToXMLList(TNodeList list) {
-    if(list.isEmpty()) {
+    if(list.isEmptyconcTNode()) {
       return;
     }
-    TNode t = (TNode) list.getFirst();
-    TNodeList l = list.getTail();
+    TNode t = list.getHeadconcTNode();
+    TNodeList l = list.getTailconcTNode();
     atermToXML(t);
     atermToXMLList(l);
   }

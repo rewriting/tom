@@ -51,7 +51,6 @@ public class XMLToATerm {
 
   %include{ adt/tnode/TNode.tom }
 
-  private TNodeFactory factory = null;
   private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
   private Hashtable ht_Nodes = new Hashtable();
@@ -64,35 +63,22 @@ public class XMLToATerm {
     deleteWhiteSpaceNodes=b_d;
   }
 
-  private TNodeFactory getTNodeFactory() {
-    return factory;
-  }
-
-  public XMLToATerm () {
-    factory = TNodeFactory.getInstance(SingletonFactory.getInstance());
-  }
-
-  public XMLToATerm(TNodeFactory factory) {
-    this.factory = factory;
-  }
-
-  public XMLToATerm(String filename) {
-    this();
-    convert(filename);
-  }
+  public XMLToATerm() { /* Beware ! nodeTerm is null */ }
 
   public XMLToATerm(InputStream is) {
-    this();
     convert(is);
   }
 
-  public XMLToATerm(TNodeFactory factory,String filename) {
-    this(factory);
+  public XMLToATerm(String filename) {
     convert(filename);
   }
 
-  public ATerm getATerm() {
+  public TNode getTNode() {
     return nodeTerm;
+  }
+
+  public ATerm getATerm() {
+    return nodeTerm.toATerm();
   }
 
   public void convert(String filename) {
@@ -150,22 +136,22 @@ public class XMLToATerm {
   }
 
   public TNodeList nodeListToAterm(NodeList list) {
-    TNodeList res = `emptyTNodeList();
+    TNodeList res = `concTNode();
     for(int i=list.getLength()-1 ; i>=0 ; i--) {
       TNode elt = xmlToATerm(list.item(i));
       if(elt != null) {
-        res = `manyTNodeList(elt,res);
+        res = `concTNode(elt,res*);
       }
     }
     return res;
   }
 
   public TNodeList namedNodeMapToAterm(NamedNodeMap list) {
-    TNodeList res = `emptyTNodeList();
+    TNodeList res = `concTNode();
     for(int i=list.getLength()-1 ; i>=0 ; i--) {
       TNode elt = xmlToATerm(list.item(i));
       if(elt != null) {
-        res = `manyTNodeList(elt,res);
+        res = `concTNode(elt,res*);
       }
     }
     return res;
@@ -273,25 +259,26 @@ public class XMLToATerm {
   }
 
   public TNodeList sortAttributeList(TNodeList attrList) {
-    TNodeList res = `emptyTNodeList();
-    while(!attrList.isEmpty()) {
-      res = insertSortedAttribute(attrList.getHead(),res);
-      attrList = attrList.getTail();
+    TNodeList res = `concTNode();
+    while(!attrList.isEmptyconcTNode()) {
+      res = insertSortedAttribute(attrList.getHeadconcTNode(),res);
+      attrList = attrList.getTailconcTNode();
     }
     return res;
   }
 
   private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
     %match(TNode elt, TNodeList list) {
-      AttributeNode[name=_], emptyTNodeList() -> {
-        return `manyTNodeList(elt,list);
+      AttributeNode[name=_], concTNode() -> {
+        return `concTNode(elt,list*);
       }
 
-      AttributeNode[name=name1], manyTNodeList(head@AttributeNode[name=name2],tail) -> {
+      AttributeNode[name=name1], concTNode(head@AttributeNode[name=name2],tail*) -> {
         if(`name1.compareTo(`name2) >= 0) {
-          return `manyTNodeList(head,insertSortedAttribute(elt,tail));
+          TNodeList tl = insertSortedAttribute(elt,`tail*);
+          return `concTNode(head,tl*);
         } else {
-          return `manyTNodeList(elt,list);
+          return `concTNode(elt,list*);
         }
       }
     }

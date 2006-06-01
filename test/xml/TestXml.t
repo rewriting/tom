@@ -17,10 +17,6 @@ public class TestXml extends TestCase {
 	private LinkedList elements;
 	private LinkedList reverseElements;
 
-	private TNodeFactory getTNodeFactory() {
-    return xtools.getTNodeFactory();
-  }
-
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestXml.class));
 	}

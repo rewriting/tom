@@ -379,6 +379,11 @@
                 destdir="${src.gen}">
       <include name="tom/library/adt/*.vas"/>
     </vascompile>
+    <gomcompile srcdir="${src.src}"
+                package="tom.library.adt"
+                destdir="${src.gen}">
+      <include name="tom/library/adt/*.gom"/>
+    </gomcompile>
 
     <vascompile srcdir="${src.src}"
                 package="tom.platform.adt"
@@ -434,11 +439,6 @@
     </vascompile>
 
     <!-- adt for gom -->
-    <!--<vascompile srcdir="${src.src}"
-	            package="tom.gom.adt"
-	            destdir="${src.gen}">
-	     <include name="tom/gom/adt/*.vas"/>
-    </vascompile>-->
     <gomcompile srcdir="${src.src}"
                 package="tom.gom.adt"
                 destdir="${src.gen}">

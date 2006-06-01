@@ -84,8 +84,8 @@ public class OptionParser {
    */
   public static PlatformOptionList xmlToOptionList(String xmlString) {
     InputStream stream = new ByteArrayInputStream(xmlString.getBytes());
-    TNode node = (TNode)xtools.convertXMLToATerm(stream);
-    return xmlNodeToOptionList(node.getDocElem());
+    TNode node = xtools.convertXMLToTNode(stream);
+    return xmlNodeToOptionList(node.getdocElem());
   }
   
   /**

@@ -236,20 +236,20 @@ public class PluginFactory implements Plugin {
 
   private void fillClassPathsList(List classPaths, String xmlFile) {
     XmlTools xtools = new XmlTools();
-    TNode docNode = ( (TNode)xtools.convertXMLToATerm(xmlFile) ).getDocElem();
+    TNode docNode = ( (TNode)xtools.convertXMLToATerm(xmlFile) ).getdocElem();
 
     %match(TNode docNode) {
       fact@<factory></factory> -> {
 
         %match(TNode fact) {
           ElementNode[childList = cl] -> {
-            while(!(`cl.isEmpty())) {
-              TNode pluginNode = `cl.getHead();
+            while(!(`cl.isEmptyconcTNode())) {
+              TNode pluginNode = `cl.getHeadconcTNode();
 
               %match(TNode pluginNode) {
                 <plugin [classpath = cp] /> -> { classPaths.add(`cp);/*System.out.println(cp);*/ }
               }
-              `cl = `cl.getTail();
+              `cl = `cl.getTailconcTNode();
             }
           }
         }

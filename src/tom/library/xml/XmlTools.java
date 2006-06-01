@@ -51,20 +51,14 @@ public class XmlTools {
 
   private ATermToXML a2x;
   private XMLToATerm x2a;
-  private TNodeFactory ntf = null;
 
   public XmlTools () {
-    ntf = TNodeFactory.getInstance(SingletonFactory.getInstance());
-    a2x = new ATermToXML(ntf);
-    x2a = new XMLToATerm(ntf);
+    a2x = new ATermToXML();
+    x2a = new XMLToATerm();
   }
 
   public void setDeletingWhiteSpaceNodes(boolean b_d) {
     x2a.setDeletingWhiteSpaceNodes(b_d);
-  }
-
-  public TNodeFactory getTNodeFactory() {
-    return ntf;
   }
 
   public TNode nodeToATerm(Node node) {
@@ -92,21 +86,43 @@ public class XmlTools {
   }
 
   /**
+   * converts XML to TNode
+   * @param filename input representing XML
+   */
+  public TNode convertXMLToTNode(String filename) {
+    x2a.convert(filename);
+    return x2a.getTNode();
+  }
+
+  /**
    * converts XML to ATerm
    * @param filename input representing ATerm
    */
+  /*
   public ATerm convertXMLToATerm(String filename) {
     x2a.convert(filename);
     return x2a.getATerm();
   }
+  */
 
   /**
    * converts XML to ATerm
    * @param is input representing ATerm
    */
+  /*
   public ATerm convertXMLToATerm(InputStream is) {
     x2a.convert(is);
     return x2a.getATerm();
+  }
+  */
+
+  /**
+   * converts XML to TNode
+   * @param is input representing XML
+   */
+  public TNode convertXMLToTNode(InputStream is) {
+    x2a.convert(is);
+    return x2a.getTNode();
   }
 
   /**

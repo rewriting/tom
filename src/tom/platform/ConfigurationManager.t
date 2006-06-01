@@ -82,15 +82,15 @@ public class ConfigurationManager {
    */
   public int initialize(String[] commandLine) {
     XmlTools xtools = new XmlTools();
-    TNode configurationNode = (TNode)xtools.convertXMLToATerm(xmlConfigurationFileName);
+    TNode configurationNode = xtools.convertXMLToTNode(xmlConfigurationFileName);
     if(configurationNode == null) {
       getLogger().log(Level.SEVERE, PluginPlatformMessage.configFileNotXML.getMessage(), xmlConfigurationFileName);
       return 1;
     }
-    if(createPlugins(configurationNode.getDocElem())==1) {
+    if(createPlugins(configurationNode.getdocElem())==1) {
       return 1;
     }
-    if(createOptionManager(configurationNode.getDocElem()) == 1) {
+    if(createOptionManager(configurationNode.getdocElem()) == 1) {
       return 1;
     }
     return optionManager.initialize(this, commandLine);
