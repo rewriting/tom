@@ -29,6 +29,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tominstruction.types.*;
+import tom.engine.adt.tomdeclaration.types.*;
+import tom.engine.adt.tomexpression.types.*;
+import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomterm.types.*;
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;

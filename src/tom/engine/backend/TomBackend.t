@@ -36,6 +36,7 @@ import java.util.*;
 import tom.engine.TomMessage;
 import tom.engine.TomBase;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.types.*;
 import tom.engine.tools.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionParser;

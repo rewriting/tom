@@ -27,16 +27,13 @@ package tom.engine.backend;
 
 import java.io.IOException;
 
-import tom.engine.adt.tomsignature.types.Expression;
-import tom.engine.adt.tomsignature.types.Instruction;
-import tom.engine.adt.tomsignature.types.InstructionList;
-import tom.engine.adt.tomsignature.types.OptionList;
-import tom.engine.adt.tomsignature.types.TargetLanguage;
-import tom.engine.adt.tomsignature.types.TomList;
-import tom.engine.adt.tomsignature.types.TomNumberList;
-import tom.engine.adt.tomsignature.types.TomSymbol;
-import tom.engine.adt.tomsignature.types.TomTerm;
-import tom.engine.adt.tomsignature.types.TomType;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomexpression.types.*;
+import tom.engine.adt.tominstruction.types.*;
+import tom.engine.adt.tomoption.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomtype.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
