@@ -236,7 +236,7 @@ public class PluginFactory implements Plugin {
 
   private void fillClassPathsList(List classPaths, String xmlFile) {
     XmlTools xtools = new XmlTools();
-    TNode docNode = ( (TNode)xtools.convertXMLToATerm(xmlFile) ).getdocElem();
+    TNode docNode = ( xtools.convertXMLToTNode(xmlFile) ).getdocElem();
 
     %match(TNode docNode) {
       fact@<factory></factory> -> {
