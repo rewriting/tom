@@ -37,8 +37,6 @@
 package tom.library.xml;
 
 import java.util.*;
-import aterm.*;
-import aterm.pure.*;
 
 import java.io.*;
 import tom.library.adt.tnode.*;
@@ -47,7 +45,7 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-public class XMLToATerm {
+public class XMLToTNode {
 
   %include{ adt/tnode/TNode.tom }
 
@@ -63,13 +61,13 @@ public class XMLToATerm {
     deleteWhiteSpaceNodes=b_d;
   }
 
-  public XMLToATerm() { /* Beware ! nodeTerm is null */ }
+  public XMLToTNode() { /* Beware ! nodeTerm is null */ }
 
-  public XMLToATerm(InputStream is) {
+  public XMLToTNode(InputStream is) {
     convert(is);
   }
 
-  public XMLToATerm(String filename) {
+  public XMLToTNode(String filename) {
     convert(filename);
   }
 
@@ -77,20 +75,16 @@ public class XMLToATerm {
     return nodeTerm;
   }
 
-  public ATerm getATerm() {
-    return nodeTerm.toATerm();
-  }
-
   public void convert(String filename) {
-    nodeTerm = xmlToATerm(convertToNode(filename));
+    nodeTerm = xmlToTNode(convertToNode(filename));
   }
 
   public void convert(InputStream is) {
-    nodeTerm = xmlToATerm(convertToNode(is));
+    nodeTerm = xmlToTNode(convertToNode(is));
   }
 
   public void convert(Node node) {
-    nodeTerm = xmlToATerm(node);
+    nodeTerm = xmlToTNode(node);
   }
 
   public Node convertToNode(String filename) {
@@ -100,16 +94,16 @@ public class XMLToATerm {
       DocumentBuilder db = documentFactory.newDocumentBuilder();
       return db.parse(filename);
     } catch (SAXException e) {
-      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (IOException e) {
-      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (ParserConfigurationException e) {
-      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (FactoryConfigurationError e) {
-      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     }
     return null;
@@ -120,16 +114,16 @@ public class XMLToATerm {
       DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       return db.parse(is);
     } catch (SAXException e) {
-      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (IOException e) {
-      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (ParserConfigurationException e) {
-      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     } catch (FactoryConfigurationError e) {
-      System.err.println("XMLToATerm: "+ e.getClass() + ": " + e.getMessage());
+      System.err.println("XMLToTNode: "+ e.getClass() + ": " + e.getMessage());
       //e.printStackTrace();
     }
     return null;
@@ -138,7 +132,7 @@ public class XMLToATerm {
   public TNodeList nodeListToAterm(NodeList list) {
     TNodeList res = `concTNode();
     for(int i=list.getLength()-1 ; i>=0 ; i--) {
-      TNode elt = xmlToATerm(list.item(i));
+      TNode elt = xmlToTNode(list.item(i));
       if(elt != null) {
         res = `concTNode(elt,res*);
       }
@@ -149,7 +143,7 @@ public class XMLToATerm {
   public TNodeList namedNodeMapToAterm(NamedNodeMap list) {
     TNodeList res = `concTNode();
     for(int i=list.getLength()-1 ; i>=0 ; i--) {
-      TNode elt = xmlToATerm(list.item(i));
+      TNode elt = xmlToTNode(list.item(i));
       if(elt != null) {
         res = `concTNode(elt,res*);
       }
@@ -157,7 +151,7 @@ public class XMLToATerm {
     return res;
   }
 
-  public TNode xmlToATerm(Node node) {
+  public TNode xmlToTNode(Node node) {
     if ( node == null ) { // Nothing to do
       return null;
     }
@@ -219,11 +213,11 @@ public class XMLToATerm {
   }
 
   private TNode makeDocumentNode (Document doc){
-    TNode doctype = xmlToATerm(doc.getDoctype());
+    TNode doctype = xmlToTNode(doc.getDoctype());
     if (doctype == null) {
       doctype = `TextNode("");
     }
-    TNode elem = xmlToATerm(doc.getDocumentElement());
+    TNode elem = xmlToTNode(doc.getDocumentElement());
     return `DocumentNode(doctype,elem);
   }
 

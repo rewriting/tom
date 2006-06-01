@@ -451,15 +451,7 @@ public class TomTask extends MatchingTask {
       log("Compiling " + compileList.length + " source file"
           + (compileList.length == 1 ? "" : "s")
           + (destDir != null ? " to " + destDir : ""));
-
-      /*for (int i = 0; i < compileList.length; i++) {
-        String filename = compileList[i].getAbsolutePath();
-        if(verbose)
-          System.out.println("Compiling " + compileList[i] + "...");
-
-        File file = new File(filename);
-      */
-
+      
       if (logPropertiesFile != null) {
         System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
         System.setProperty("java.util.logging.config.file",logPropertiesFile);
@@ -501,16 +493,14 @@ public class TomTask extends MatchingTask {
       if(nowarn == false) {
         cmd_line = cmd_line.trim() + " --wall";
       }
+      if(verbose == true) {
+        cmd_line = cmd_line.trim() + " --verbose";
+      }
       for (int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();
-        if(verbose) {
-          System.out.println("Compiling " + filename + "...");
-        }
-        // Not usefull since the TomStreamManager already add the parent
-        // in importList: clean and reinit for each input file
-        // File file = new File(filename);
-        // cmd_line = cmd_line.trim() + " -I " + file.getParent();
-
+        //if(verbose) {
+        //  System.out.println("Compiling " + filename + "...");
+        //}
         cmd_line = cmd_line.trim() + " " + filename;
       }
 

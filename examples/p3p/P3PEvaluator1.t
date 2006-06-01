@@ -38,9 +38,6 @@ public class P3PEvaluator1 {
   %include{ adt/tnode/TNode.tom }
     
   private XmlTools xtools;
-  private TNodeFactory getTNodeFactory() {
-      return xtools.getTNodeFactory();
-  }
  
   public static void main (String args[]) {
     P3PEvaluator1 evaluator = new P3PEvaluator1();
@@ -49,9 +46,9 @@ public class P3PEvaluator1 {
 
   private void run(String polfile,String clientfile){
     xtools = new XmlTools();
-    TNode pol = (TNode)xtools.convertXMLToATerm(polfile);
-    TNode client = (TNode)xtools.convertXMLToATerm(clientfile);
-    boolean res = compareDataGroup(getDataGroup(pol.getDocElem()),getDataGroup(client.getDocElem()));
+    TNode pol = (TNode)xtools.convertXMLToTNode(polfile);
+    TNode client = (TNode)xtools.convertXMLToTNode(clientfile);
+    boolean res = compareDataGroup(getDataGroup(pol.getdocElem()),getDataGroup(client.getdocElem()));
     System.out.println("res = " + res);
     //xtools.printXMLFromATerm(term);
   }
@@ -83,10 +80,10 @@ public class P3PEvaluator1 {
 
   private boolean compareDataGroup(TNode pol, TNode client) {
 	System.out.println("pol = ");
-    xtools.printXMLFromATerm(pol);
+    xtools.printXMLFromTNode(pol);
     System.out.println();
     System.out.println("client = ");
-    xtools.printXMLFromATerm(client);
+    xtools.printXMLFromTNode(client);
     System.out.println();
 
 	boolean res = true;

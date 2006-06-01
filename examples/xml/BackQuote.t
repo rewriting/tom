@@ -39,10 +39,6 @@ public class BackQuote {
     
   private XmlTools xtools;
  
-  private TNodeFactory getTNodeFactory() {
-      return xtools.getTNodeFactory();
-  }
-
   public static void main (String args[]) {
     BackQuote birds = new BackQuote();
     birds.run();

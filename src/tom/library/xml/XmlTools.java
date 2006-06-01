@@ -42,39 +42,37 @@ import java.util.Collection;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import aterm.*;
-import aterm.pure.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 
 public class XmlTools {
 
-  private ATermToXML a2x;
-  private XMLToATerm x2a;
+  private TNodeToXML t2x;
+  private XMLToTNode x2t;
 
   public XmlTools () {
-    a2x = new ATermToXML();
-    x2a = new XMLToATerm();
+    t2x = new TNodeToXML();
+    x2t = new XMLToTNode();
   }
 
   public void setDeletingWhiteSpaceNodes(boolean b_d) {
-    x2a.setDeletingWhiteSpaceNodes(b_d);
+    x2t.setDeletingWhiteSpaceNodes(b_d);
   }
 
-  public TNode nodeToATerm(Node node) {
-    return x2a.xmlToATerm(node);
+  public TNode nodeToTNode(Node node) {
+    return x2t.xmlToTNode(node);
   }
 
   public TNodeList nodeListToAterm(NodeList n) {
-    return x2a.nodeListToAterm(n);
+    return x2t.nodeListToAterm(n);
   }
 
   public Node convertToNode(String filename) {
-    return x2a.convertToNode(filename);
+    return x2t.convertToNode(filename);
   }
 
   public Node convertToNode(InputStream is) {
-    return x2a.convertToNode(is);
+    return x2t.convertToNode(is);
   }
 
   /**
@@ -82,7 +80,7 @@ public class XmlTools {
    * @param n root to collect all TNodes in the tree
    */
   public Collection getNodes(TNode n) {
-    return x2a.getNodes(n);
+    return x2t.getNodes(n);
   }
 
   /**
@@ -90,69 +88,37 @@ public class XmlTools {
    * @param filename input representing XML
    */
   public TNode convertXMLToTNode(String filename) {
-    x2a.convert(filename);
-    return x2a.getTNode();
+    x2t.convert(filename);
+    return x2t.getTNode();
   }
-
-  /**
-   * converts XML to ATerm
-   * @param filename input representing ATerm
-   */
-  /*
-  public ATerm convertXMLToATerm(String filename) {
-    x2a.convert(filename);
-    return x2a.getATerm();
-  }
-  */
-
-  /**
-   * converts XML to ATerm
-   * @param is input representing ATerm
-   */
-  /*
-  public ATerm convertXMLToATerm(InputStream is) {
-    x2a.convert(is);
-    return x2a.getATerm();
-  }
-  */
 
   /**
    * converts XML to TNode
    * @param is input representing XML
    */
   public TNode convertXMLToTNode(InputStream is) {
-    x2a.convert(is);
-    return x2a.getTNode();
+    x2t.convert(is);
+    return x2t.getTNode();
   }
 
   /**
-   * print ATerm t in XML format, without any extra character (ie:\n)
-   * @param an ATerm to print
+   * print TNode t in XML format, without any extra character (ie:\n)
+   * @param an TNode to print
    */
-  public void printXMLFromATerm(ATerm t) {
-    a2x.setWriter(null);
-    a2x.setOutputStream(System.out);
-    a2x.convert(t);
+  public void printXMLFromTNode(TNode t) {
+    t2x.setWriter(null);
+    t2x.setOutputStream(System.out);
+    t2x.tnodeToXML(t);
   }
 
   /**
-   * given a filename, print ATerm in XML format, without any extra character (ie:\n)
-   * @param filename the filename, containing Aterm
+   * write TNode in XML format, without any extra character (ie:\n)
+   * @see TNode
    */
-  public void printXMLFromATermFile(String filename) {
-    a2x.setWriter(null);
-    a2x.setOutputStream(System.out);
-    a2x.convert(filename);
-  }
-
-  /**
-   * write ATerm in XML format, without any extra character (ie:\n)
-   * @see ATerm
-   */
-  public void writeXMLFileFromATerm(Writer writer, ATerm t) {
-    a2x.setWriter(writer);
-    a2x.setOutputStream(null);
-    a2x.convert(t);
+  public void writeXMLFileFromTNode(Writer writer, TNode t) {
+    t2x.setWriter(writer);
+    t2x.setOutputStream(null);
+    t2x.tnodeToXML(t);
   }
 
   /**
@@ -160,7 +126,7 @@ public class XmlTools {
    * @param t this parameter can be either a TNode, a TNode list, or #TEXT("...").
    */
   public String xml(TNode t) {
-    return a2x.xml(t);
+    return t2x.xml(t);
   }
 
 }

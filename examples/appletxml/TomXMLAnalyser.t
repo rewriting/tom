@@ -29,8 +29,6 @@
 
 package appletxml;
 
-import aterm.*;
-
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
@@ -57,8 +55,8 @@ public class TomXMLAnalyser {
     if (analysedString != null && !analysedString.equals("")) {
       try {
         xtools = new XmlTools();
-        TNode term = (TNode)xtools.convertXMLToATerm(new ByteArrayInputStream(analysedString.getBytes()));
-        String res = extractEMail(term.getDocElem());
+        TNode term = (TNode)xtools.convertXMLToTNode(new ByteArrayInputStream(analysedString.getBytes()));
+        String res = extractEMail(term.getdocElem());
         return res;
       } catch (Exception e) {
         return "Exception catched: Enter a Valid XML string";

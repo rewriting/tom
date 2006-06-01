@@ -38,24 +38,21 @@ public class PersonSort {
   %include{ adt/tnode/TNode.tom }
 
   private XmlTools xtools;
-  private TNodeFactory getTNodeFactory() {
-      return xtools.getTNodeFactory();
-  }
-
-  public static void main (String args[]) {
-    PersonSort person = new PersonSort();
+  
+	public static void main (String args[]) {
+		PersonSort person = new PersonSort();
     person.run("xml/person.xml");
   }
 
  private void run(String filename){
     xtools = new XmlTools();
-    TNode term = (TNode)xtools.convertXMLToATerm(filename);
+    TNode term = (TNode)xtools.convertXMLToTNode(filename);
 
-    TNode result = sort(term.getDocElem());
-    xtools.printXMLFromATerm(result);
+    TNode result = sort(term.getdocElem());
+    xtools.printXMLFromTNode(result);
 
     //System.out.println();
-    searchJu(term.getDocElem());
+    searchJu(term.getdocElem());
 
   }
 

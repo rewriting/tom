@@ -32,18 +32,12 @@ package xml;
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import aterm.*;
-import tom.library.traversal.*;
 
 public class Action {
 
   %include{ adt/tnode/TNode.tom }
 
   private XmlTools xtools;
-  private GenericTraversal traversal = new GenericTraversal();
-  private TNodeFactory getTNodeFactory() {
-      return xtools.getTNodeFactory();
-  }
 
   public static void main (String args[]) {
     Action action = new Action();
@@ -52,14 +46,14 @@ public class Action {
 
   private void run(String filename){
     xtools = new XmlTools();
-    ATerm term = xtools.convertXMLToATerm(filename);
+    TNode term = xtools.convertXMLToTNode(filename);
     test1(term);
     test2(term);
   }
 
-  private void test1(ATerm subject) {
+  private void test1(TNode subject) {
     TNode t = (TNode) subject;
-    t = t.getDocElem();
+    t = t.getdocElem();
     %match(TNode t) {
       <Actions><Action>
          comp@<Comp Label="busy" Type=type Index=i />
@@ -76,9 +70,9 @@ public class Action {
 
   }
 
-  private void test2(ATerm subject) {
+  private void test2(TNode subject) {
     TNode t = (TNode) subject;
-    t = t.getDocElem();
+    t = t.getdocElem();
     %match(TNode t) {
       <Actions>a</Actions> -> {
         %match(TNode a,TNode a) {

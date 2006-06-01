@@ -32,23 +32,17 @@ package p3p;
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import aterm.*;
-import tom.library.traversal.*;
 import java.util.*;
+
+import tom.library.strategy.mutraveler.MuStrategy;
 
 public class P3PEvaluator2 {
    
   %include{ adt/tnode/TNode.tom }
+  %include{ mustrategy.tom }
+  %include{ java/util/types/Collection.tom }
  
-  private GenericTraversal traversal;
-  public P3PEvaluator2() {
-    this.traversal = new GenericTraversal();
-  }
-  
   private XmlTools xtools;
-  private TNodeFactory getTNodeFactory() {
-    return xtools.getTNodeFactory();
-  }
  
   public static void main (String args[]) {
     P3PEvaluator2 P3PEvaluator2 = new P3PEvaluator2();
@@ -57,15 +51,15 @@ public class P3PEvaluator2 {
 
   private void run(String polfile,String clientfile){
     xtools = new XmlTools();
-    TNode pol = (TNode)xtools.convertXMLToATerm(polfile);
-    TNode client = (TNode)xtools.convertXMLToATerm(clientfile);
+    TNode pol = (TNode)xtools.convertXMLToTNode(polfile);
+    TNode client = (TNode)xtools.convertXMLToTNode(clientfile);
     boolean res = compareDataGroup(getDataGroup(pol),getDataGroup(client));
     System.out.println("res = " + res);
   }
      
   private TNode getDataGroup(TNode doc) {
     HashSet c = new HashSet();
-    collectDatagroup(c,doc);
+    `TopDownCollect(collectDatagroup(c)).apply(doc);
     Iterator it = c.iterator();
     while(it.hasNext()) {
       TNode datagroup = (TNode)it.next();
@@ -95,23 +89,13 @@ public class P3PEvaluator2 {
     return false;
   }
 
-  protected void collectDatagroup(final Collection collection, TNode subject) {
-    Collect1 collect = new Collect1() { 
-        public boolean apply(ATerm t) {
-          if(t instanceof TNode) {
-            %match(TNode t) { 
-              <DATA-GROUP> </DATA-GROUP> -> {
-                 collection.add(t);
-                 return false;
-               }
-            }
-          } 
-          return true;
-        } // end apply
-      }; // end new
-    
-    traversal.genericCollect(subject, collect);
-  }
-
+  %strategy collectDatagroup(collection:Collection) extends `Identity() {
+    visit TNode {
+      t@<DATA-GROUP> </DATA-GROUP> -> {
+        collection.add(`t);
+        `Fail().visit(null);
+      }
+    }
+  } 
   
 }

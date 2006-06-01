@@ -65,8 +65,8 @@ public class RewriteXml {
   public void run() {
 
     xtools = new XmlTools();
-    TNode subject = (TNode)xtools.convertXMLToATerm("strategy/minimenu.xml");
-    subject = subject.getDocElem();
+    TNode subject = (TNode)xtools.convertXMLToTNode("strategy/minimenu.xml");
+    subject = subject.getdocElem();
     Collection leaves = new HashSet();
 
     try {
@@ -92,7 +92,7 @@ public class RewriteXml {
       try {
         System.out.println("----------------------");
         System.out.println("position      = " + p);
-        xtools.printXMLFromATerm((TNode)MuTraveler.init(xmastree).visit(subject));
+        xtools.printXMLFromTNode((TNode)MuTraveler.init(xmastree).visit(subject));
         System.out.println("-----------------------");
       } catch (VisitFailure e) {
         System.out.println("reduction failed on: " + subject);

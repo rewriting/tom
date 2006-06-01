@@ -39,10 +39,8 @@ package tom.library.xml;
 import java.io.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import aterm.*;
-import aterm.pure.*;
 
-public class ATermToXML {
+public class TNodeToXML {
 
   %include{ adt/tnode/TNode.tom }
 
@@ -57,37 +55,29 @@ public class ATermToXML {
     this.writer = writer;
   }
 
-  public void convert(String filename) {
+  /*
+public void convert(String filename) {
     try {
       convert(SingletonFactory.getInstance().readFromFile(filename));
     } catch (IOException e) {
       System.out.println(e.getMessage());
     }
   }
-
-  public void convert(ATerm term) {
-    if (term instanceof TNode) {
-      atermToXML((TNode) term);
-    } else if (term instanceof TNodeList) {
-      atermToXMLList((TNodeList) term);
-    } else {
-      System.out.println("ATermToXML can only convert TNode to XML");
-    }
-  }
+*/
 
   public String xml(TNode n) {
-  StringWriter str_res = new StringWriter();
-  setWriter(str_res);
-  atermToXML(n);
-  return str_res.toString();
+		StringWriter str_res = new StringWriter();
+		setWriter(str_res);
+		tnodeToXML(n);
+		return str_res.toString();
   }
 
-  public void atermToXML(TNode n) {
+  public void tnodeToXML(TNode n) {
     %match(TNode n) {
       DocumentNode(docType,docElem) -> {
         write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        atermToXML(`docType);
-        atermToXML(`docElem);
+        tnodeToXML(`docType);
+        tnodeToXML(`docElem);
         write("\n");
         return;
       }
@@ -109,15 +99,15 @@ public class ATermToXML {
       }
       ElementNode(name,attrList,concTNode()) -> {
         write("<"+`name);
-        atermToXMLList(`attrList);
+        tnodeListToXML(`attrList);
         write("/>");
         return;
       }
       ElementNode(name,attrList,childList) -> {
         write("<"+`name);
-        atermToXMLList(`attrList);
+        tnodeListToXML(`attrList);
         write(">");
-        atermToXMLList(`childList);
+        tnodeListToXML(`childList);
         write("</"+`name+">");
         return;
       }
@@ -157,14 +147,14 @@ public class ATermToXML {
     write("\n");
   }
 
-  private void atermToXMLList(TNodeList list) {
+  private void tnodeListToXML(TNodeList list) {
     if(list.isEmptyconcTNode()) {
       return;
     }
     TNode t = list.getHeadconcTNode();
     TNodeList l = list.getTailconcTNode();
-    atermToXML(t);
-    atermToXMLList(l);
+    tnodeToXML(t);
+    tnodeListToXML(l);
   }
 
   private void write(String s) {
