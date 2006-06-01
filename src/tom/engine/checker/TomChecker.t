@@ -31,11 +31,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tom.engine.TomMessage;
-import tom.engine.adt.tomsignature.types.Option;
-import tom.engine.adt.tomsignature.types.OptionList;
-import tom.engine.adt.tomsignature.types.TomSymbol;
-import tom.engine.adt.tomsignature.types.TomTerm;
-import tom.engine.adt.tomsignature.types.TomType;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomoption.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomtype.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.TomGenericPlugin;
 import tom.platform.PlatformLogRecord;

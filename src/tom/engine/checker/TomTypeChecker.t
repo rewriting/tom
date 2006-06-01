@@ -36,6 +36,7 @@ import java.util.logging.Level;
 
 import tom.engine.TomMessage;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.types.*;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
