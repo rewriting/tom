@@ -28,7 +28,15 @@ package tom.engine.backend;
 import java.io.IOException;
 
 import tom.engine.TomBase;
+import tom.engine.adt.tomdeclaration.types.*;
+import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tominstruction.types.*;
+import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.tomoption.types.*;
+import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomterm.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
