@@ -396,7 +396,7 @@ public class ASTFactory {
        */
     TomNameList newNameList = `concTomName();
     %match(TomTerm term) {
-      RecordAppl[nameList=(_*,Name(name),_*)] -> {
+      RecordAppl[NameList=(_*,Name(name),_*)] -> {
         newNameList = (TomNameList)newNameList.append(`Name(encodeXMLString(symbolTable,name)));
       }
     }
@@ -413,7 +413,7 @@ public class ASTFactory {
        */
       //System.out.println("metaEncode: " + term);
     %match(TomTerm term) {
-      RecordAppl[nameList=(Name(tomName))] -> {
+      RecordAppl[NameList=(Name(tomName))] -> {
           //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
@@ -435,10 +435,10 @@ public class ASTFactory {
       TomTerm term = (TomTerm) childs.getFirst();
       //System.out.println("isExplicitTermList: " + term);
       %match(TomTerm term) {
-        RecordAppl[nameList=(Name(""))] -> { 
+        RecordAppl[NameList=(Name(""))] -> { 
           return true;
         }
-        TermAppl[nameList=(Name(""))] -> { 
+        TermAppl[NameList=(Name(""))] -> { 
           return true;
         }
       }
@@ -449,7 +449,7 @@ public class ASTFactory {
   public static LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
     %match(TomTerm term) {
-      RecordAppl[nameList=(Name("")),slots=args] -> {
+      RecordAppl[NameList=(Name("")),Slots=args] -> {
         while(!`args.isEmpty()) {
           list.add(metaEncodeXMLAppl(symbolTable,`args.getHead().getAppl()));
           `args = `args.getTail();
@@ -457,7 +457,7 @@ public class ASTFactory {
         return list;
       }
 
-      TermAppl[nameList=(Name("")),args=args] -> {
+      TermAppl[NameList=(Name("")),Args=args] -> {
         while(!`args.isEmpty()) {
           list.add(metaEncodeXMLAppl(symbolTable,`args.getHead()));
           `args = `args.getTail();

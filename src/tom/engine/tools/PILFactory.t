@@ -109,9 +109,9 @@ public class PILFactory extends TomBase {
     }
     visit Expression {
       // clean Expressions
-      Cast[source=e] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
-      Or[arg1=e,arg2=FalseTL()] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
-      EqualFunctionSymbol(type,t1,appl@RecordAppl[slots=concSlot(_,_*)]) -> {
+      Cast[Source=e] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
+      Or[Arg1=e,Arg2=FalseTL()] -> { return (Expression) `TopDown(replaceRemove()).visit(`e); }
+      EqualFunctionSymbol(type,t1,appl@RecordAppl[Slots=concSlot(_,_*)]) -> {
         return (Expression) `TopDown(replaceRemove()).visit(`EqualFunctionSymbol(type,t1,appl.setSlots(concSlot())));
       } 
     }
@@ -169,7 +169,7 @@ public class PILFactory extends TomBase {
 				return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replaceAll("\n","\n\t")+"\n";
 			}
 
-			CheckInstance[instruction=instruction] -> {
+			CheckInstance[Instruction=nstruction] -> {
 				return "checkInstance\n\t" + prettyPrint(`instruction).replaceAll("\n","\n\t");
 			}
 
@@ -217,7 +217,7 @@ public class PILFactory extends TomBase {
 				return "not " + prettyPrint(`exp);
 			}
 
-			IsEmptyList[variable=kid1] -> {
+			IsEmptyList[Variable=kid1] -> {
 				return "is_empty(" + prettyPrint(`kid1) + ")";
 			}
 
@@ -230,11 +230,11 @@ public class PILFactory extends TomBase {
 			}
 
 
-			GetHead[variable=variable] -> {
+			GetHead[Variable=variable] -> {
 				return "getHead("+prettyPrint(`variable)+")";
 			}
 
-			GetTail[variable=variable] -> {
+			GetTail[Variable=variable] -> {
 				return "getTail("+prettyPrint(`variable)+")";
 			}
 
@@ -322,7 +322,7 @@ public class PILFactory extends TomBase {
 
   %strategy collectMatch(c:Collection) extends `Identity() {
     visit Instruction {
-      m@CompiledMatch[automataInst=_]  -> {
+      m@CompiledMatch[AutomataInst=_]  -> {
         c.add(`m);
       }
     }
