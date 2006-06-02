@@ -169,7 +169,7 @@ public class TomKernelCompiler extends TomBase {
   private Instruction collectVariableFromSubjectList(SlotList subjectList, TomNumberList path, Instruction body, String moduleName) {
     %match(SlotList subjectList) { 
       concSlot() -> { return body; }
-      concSlot(PairSlotAppl(slotName,subjectVar@Variable[option=option,astType=variableType]),tail*) -> {
+      concSlot(PairSlotAppl(slotName,subjectVar@Variable[Option=option,AstType=variableType]),tail*) -> {
         body = collectVariableFromSubjectList(`tail,path,body,moduleName);
         TomTerm variable = `Variable(option,PositionName(path.append(NameNumber(slotName))),variableType,concConstraint());
         Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
@@ -246,7 +246,7 @@ public class TomKernelCompiler extends TomBase {
       } 
       // X or _,...  
       concSlot(PairSlotAppl(slotName,
-                                var@(Variable|UnamedVariable)[astType=termType]),termTail*) -> {
+                                var@(Variable|UnamedVariable)[AstType=termType]),termTail*) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);
         TomNumberList path  = (TomNumberList) rootpath.append(`NameNumber(slotName));
 
@@ -256,8 +256,8 @@ public class TomKernelCompiler extends TomBase {
      
       // (f|g)[...]
       concSlot(PairSlotAppl(slotName,
-                   currentTerm@RecordAppl[nameList=nameList@(Name(tomName),_*),
-                                          slots=termArgs]),termTail*) -> {
+                   currentTerm@RecordAppl[NameList=nameList@(Name(tomName),_*),
+                                          Slots=termArgs]),termTail*) -> {
         // recursively call the algorithm on termTail
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);
         // find the codomain of (f|g) [* should be the same *]
@@ -359,7 +359,7 @@ public class TomKernelCompiler extends TomBase {
         return `genCheckEmptyList(p.symbol, p.subjectListName, p.action, Nop());
       }
         
-      concSlot(PairSlotAppl[appl=var@(Variable|UnamedVariable)[astType=termType]],termTail*) -> {
+      concSlot(PairSlotAppl[Appl=var@(Variable|UnamedVariable)[astType=termType]],termTail*) -> {
           /*
            * get an element and store it
            */
@@ -367,7 +367,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementList(p.symbol, p.subjectListName, `var, `termType, subAction, ensureNotEmptyList, moduleName);
       }
 
-      concSlot(PairSlotAppl[appl=term@RecordAppl[nameList=(Name(tomName),_*)]],termTail*)  -> {
+      concSlot(PairSlotAppl[Appl=term@RecordAppl[NameList=(Name(tomName),_*)]],termTail*)  -> {
           /*
            * get an element
            * perform syntactic matching
@@ -383,7 +383,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementList(p.symbol, p.subjectListName, var, termType, subAction, ensureNotEmptyList, moduleName);
       }
       
-      concSlot(PairSlotAppl[appl=var@(VariableStar|UnamedVariableStar)[astType=termType]],termTail*) -> {
+      concSlot(PairSlotAppl[Appl=var@(VariableStar|UnamedVariableStar)[AstType=ermType]],termTail*) -> {
           /*
            * 3 cases:
            * - tail = emptyList
@@ -479,7 +479,7 @@ public class TomKernelCompiler extends TomBase {
         return true;
       }
 
-      concSlot(PairSlotAppl[appl=(VariableStar|UnamedVariableStar)[]],termTail*) -> {
+      concSlot(PairSlotAppl[Appl=(VariableStar|UnamedVariableStar)[]],termTail*) -> {
         return containOnlyVariableStar(`termTail);
       }
     }
@@ -558,7 +558,7 @@ public class TomKernelCompiler extends TomBase {
         return `genIsEmptyArray(p.symbol,p.subjectListName, p.subjectListIndex, p.action, Nop());
       }
 
-      concSlot(PairSlotAppl[appl=var@(Variable|UnamedVariable)[astType=termType]],termTail*) -> {
+      concSlot(PairSlotAppl[Appl=var@(Variable|UnamedVariable)[AstType=termType]],termTail*) -> {
           /*
            * get an element and store it
            */
@@ -566,7 +566,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementArray(p.symbol,p.subjectListName, p.subjectListIndex, `var, `termType, subAction, ensureNotEmptyList, moduleName);
       }
 
-      concSlot(PairSlotAppl[appl=term@RecordAppl[nameList=(Name(tomName),_*)]],termTail*)  -> {
+      concSlot(PairSlotAppl[Appl=term@RecordAppl[NameList=(Name(tomName),_*)]],termTail*)  -> {
           /*
            * get an element
            * perform syntactic matching
@@ -583,7 +583,7 @@ public class TomKernelCompiler extends TomBase {
         return genGetElementArray(p.symbol,p.subjectListName, p.subjectListIndex, var, termType, subAction, ensureNotEmptyList, moduleName);
       }
         
-      concSlot(PairSlotAppl[appl=var@(VariableStar|UnamedVariableStar)[]],termTail*) -> {
+      concSlot(PairSlotAppl[Appl=var@(VariableStar|UnamedVariableStar)[]],termTail*) -> {
           /*
            * 3 cases:
            * - tail = emptyList
@@ -727,7 +727,7 @@ public class TomKernelCompiler extends TomBase {
                                                     TomTerm subjectVariableAST, 
                                                     TomNumberList path, Instruction body, String moduleName) {
     %match(TomTerm currentTerm) {
-      RecordAppl[nameList=nameList@(Name(tomName),_*), slots=termArgList] -> {
+      RecordAppl[NameList=nameList@(Name(tomName),_*), Slots=termArgList] -> {
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
 
         // check that variables are no longer Bottom 
@@ -863,7 +863,7 @@ public class TomKernelCompiler extends TomBase {
   private Expression expandDisjunction(Expression exp, String moduleName) {
     Expression cond = `FalseTL();
     %match(Expression exp) {
-      EqualFunctionSymbol(termType,exp1,RecordAppl[option=option,nameList=nameList,slots=l]) -> {
+      EqualFunctionSymbol(termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
         while(!`nameList.isEmpty()) {
           TomName name = `nameList.getHead();
           Expression check = `EqualFunctionSymbol(termType,exp1,RecordAppl(option,concTomName(name),l,concConstraint()));
@@ -901,15 +901,15 @@ public class TomKernelCompiler extends TomBase {
 
   private Instruction compileConstraint(TomTerm subject, Expression source, Instruction body, String moduleName) {
     %match(TomTerm subject) {
-      (Variable|VariableStar)[constraints=constraints] -> {
+      (Variable|VariableStar)[Constraints=constraints] -> {
         return buildConstraint(`constraints,`TomTermToExpression(subject),body,moduleName);
       }
 
-      (UnamedVariable|UnamedVariableStar)[constraints=constraints] -> {
+      (UnamedVariable|UnamedVariableStar)[Constraints=constraints] -> {
         return buildConstraint(`constraints,source,body,moduleName);
       }
 
-      RecordAppl[constraints=constraints] -> {
+      RecordAppl[Constraints=constraints] -> {
         return buildConstraint(`constraints,source,body,moduleName);
       }
     }

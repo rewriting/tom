@@ -144,7 +144,7 @@ public class TomCompiler extends TomGenericPlugin {
         return `var;
       }
 
-      BuildReducedTerm(RecordAppl[option=optionList,nameList=(name@Name(tomName)),slots=termArgs]) -> {
+      BuildReducedTerm(RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs]) -> {
         TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
         SlotList newTermArgs = (SlotList) (MuTraveler.init(`preProcessing_makeTerm(compiler)).visit(`termArgs));
         TomList tomListArgs = slotListToTomList(newTermArgs);
@@ -187,7 +187,7 @@ public class TomCompiler extends TomGenericPlugin {
 
 matchBlock: {
               %match(PatternInstruction newPatternInstruction) {
-                PatternInstruction(pattern@Pattern[subjectList=subjectList,tomList=termList,guards=guardList],actionInst, option) -> {
+                PatternInstruction(pattern@Pattern[SubjectList=subjectList,TomList=termList,Guards=guardList],actionInst, option) -> {
                   Instruction newAction = `actionInst;
                   /* expansion of RawAction into TypedAction */
                   %match(Instruction actionInst) {
@@ -289,7 +289,7 @@ matchBlock: {
         return (Declaration) MuTraveler.init(`preProcessing(compiler)).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
 
-      RuleSet(rl@concTomRule(RewriteRule[lhs=Term(RecordAppl[nameList=(Name(tomName))])],_*),optionList) -> {
+      RuleSet(rl@concTomRule(RewriteRule[Lhs=Term(RecordAppl[NameList=(Name(tomName))])],_*),optionList) -> {
         TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
         TomName name = tomSymbol.getAstName();
         String moduleName = getModuleName(`optionList);
@@ -313,7 +313,7 @@ matchBlock: {
         while(!ruleList.isEmpty()) {
           TomRule rule = ruleList.getHead();
           %match(TomRule rule) {
-            RewriteRule(Term(RecordAppl[slots=matchPatternsList]),//lhsTerm
+            RewriteRule(Term(RecordAppl[Slots=matchPatternsList]),//lhsTerm
                 Term(rhsTerm),
                 condList,
                 option) -> {
@@ -356,7 +356,7 @@ matchBlock: {
     %match(InstructionList condList) {
       concInstruction() -> { return action; }
 
-      concInstruction(MatchingCondition[lhs=pattern,rhs=subject], tail*) -> {
+      concInstruction(MatchingCondition[Lhs=pattern,Rhs=subject], tail*) -> {
         try{
         Instruction newAction = `buildCondition(tail,action);
 
@@ -383,7 +383,7 @@ matchBlock: {
         }catch(VisitFailure e){}
       }
 
-      concInstruction(TypedEqualityCondition[tomType=type,lhs=lhs,rhs=rhs], tail*) -> {
+      concInstruction(TypedEqualityCondition[TomType=type,Lhs=lhs,Rhs=rhs], tail*) -> {
         try{
         Instruction newAction = `buildCondition(tail,action);
 
@@ -405,12 +405,12 @@ matchBlock: {
     TomTerm renamedTerm = subject;
 
     %match(TomTerm subject) {
-      var@(UnamedVariable|UnamedVariableStar)[constraints=constraints] -> {
+      var@(UnamedVariable|UnamedVariableStar)[Constraints=constraints] -> {
         ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap,equalityCheck);
         return `var.setConstraints(newConstraintList);
       }
 
-      var@(Variable|VariableStar)[astName=name,constraints=clist] -> {
+      var@(Variable|VariableStar)[AstName=name,Constraints=clist] -> {
         ConstraintList newConstraintList = renameVariableInConstraintList(`clist,multiplicityMap,equalityCheck);
         if(!multiplicityMap.containsKey(`name)) {
           // We see this variable for the first time
@@ -433,7 +433,7 @@ matchBlock: {
         return renamedTerm;
       }
 
-      RecordAppl[option=optionList, nameList=nameList, slots=arguments, constraints=constraints] -> {
+      RecordAppl[Option=optionList, NameList=nameList, Slots=arguments, Constraints=constraints] -> {
         SlotList args = `arguments;
         SlotList newArgs = `emptySlotList();
         while(!args.isEmpty()) {
@@ -486,7 +486,7 @@ matchBlock: {
       ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(TomTerm subject) {
-      RecordAppl[nameList=(Name(tomName),_*), slots=arguments] -> {
+      RecordAppl[NameList=(Name(tomName),_*), Slots=arguments] -> {
         TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
 
         SlotList newArgs = `emptySlotList();
@@ -496,7 +496,7 @@ matchBlock: {
             Slot elt = args.getHead();
             TomTerm newElt = elt.getAppl();
             %match(TomTerm newElt) {
-              appl@RecordAppl[nameList=(Name(tomName2),_*)] -> {
+              appl@RecordAppl[NameList=(Name(tomName2),_*)] -> {
                 /*
                  * we no longer abstract syntactic subterm
                  * they are compiled by the TomKernelCompiler
@@ -586,11 +586,11 @@ itBlock: {
            for(Iterator it2 = constraintVariable.iterator(); it2.hasNext() ; ) {
              TomTerm constraintTerm = (TomTerm) it2.next();
              %match(TomTerm patternTerm, TomTerm constraintTerm) {
-               var@Variable[astName=name], Variable[astName=name] -> {
+               var@Variable[AstName=name], Variable[AstName=name] -> {
                  res.add(`var);
                  //break itBlock;
                }
-               var@VariableStar[astName=name], VariableStar[astName=name] -> {
+               var@VariableStar[AstName=ame], VariableStar[AstName=name] -> {
                  res.add(`var);
                  //break itBlock;
                }
@@ -613,14 +613,14 @@ itBlock: {
   %strategy attachConstraint_once(variableSet:Set,constraint:TomTerm,compiler:TomCompiler) extends `Identity(){
 
     visit TomTerm {
-      var@(Variable|VariableStar)[constraints=constraintList] -> {
+      var@(Variable|VariableStar)[Constraints=constraintList] -> {
         if(variableSet.remove(`var) && variableSet.isEmpty()) {
           ConstraintList newConstraintList = (ConstraintList)`constraintList.append(`Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint))));
           return `var.setConstraints(newConstraintList);
         }
       }
 
-      appl@RecordAppl[constraints=constraintList] -> {
+      appl@RecordAppl[Constraints=constraintList] -> {
         if(variableSet.isEmpty()) {
           ConstraintList newConstraintList = (ConstraintList)`constraintList.append(`Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint))));
           return `appl.setConstraints(newConstraintList);
@@ -634,7 +634,7 @@ itBlock: {
    */
   %strategy findRenameVariable(context:Set) extends `Identity() {
     visit TomTerm {
-      var@(Variable|VariableStar)[astName=astName@Name(name)] -> {
+      var@(Variable|VariableStar)[AstName=astName@Name(name)] -> {
         if(context.contains(`astName)) {
           return `var.setAstName(`Name(ASTFactory.makeTomVariableName(name)));
         }
