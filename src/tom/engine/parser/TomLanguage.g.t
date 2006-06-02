@@ -415,7 +415,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
          int index = 0;
          TomTypeList makeTypes = types;//keep a copy of types
 				 String makeTlCode = "new " + name.getText() + "(";
-         while(!makeTypes.isEmpty()) {
+         while(!makeTypes.isEmptyconcTomType()) {
 					 String argName = "t"+index;
            if (index>0) {//if many parameters
              makeTlCode = makeTlCode.concat(",");
@@ -775,11 +775,11 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                     if(!nameList.equals(closingNameList)) {
                         StringBuffer found = new StringBuffer();
                         StringBuffer expected = new StringBuffer();
-                        while(!nameList.isEmpty()) {
+                        while(!nameList.isEmptyconcTomName()) {
                             expected.append("|"+nameList.getHeadconcTomName().getstring());
                             nameList = nameList.getTailconcTomName();
                         }
-                        while(!closingNameList.isEmpty()) {
+                        while(!closingNameList.isEmptyconcTomName()) {
                             found.append("|"+closingNameList.getHeadconcTomName().getstring());
                             closingNameList = closingNameList.getTailconcTomName();
                         }
@@ -1484,8 +1484,8 @@ operator returns [Declaration result] throws TomException
               }
               if(msg != null) {
                 getLogger().log(new PlatformLogRecord(Level.SEVERE, msg,
-                      new Object[]{currentFile(), new Integer(attribute.getorgTrack().getLine()),
-                      "%op "+type.getText(), new Integer(ot.getLine()), sName.getstring()} ,
+                      new Object[]{currentFile(), new Integer(attribute.getorgTrack().getline()),
+                      "%op "+type.getText(), new Integer(ot.getline()), sName.getstring()} ,
                     currentFile(), getLine()));
               } else {
                 pairNameDeclList.set(index,`PairNameDecl(sName,attribute));
