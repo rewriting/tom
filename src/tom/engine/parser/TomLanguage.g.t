@@ -1970,7 +1970,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                         if( !(nbTypes > 0) ) {
                             type = `EmptyType();
                         } else {
-                            type = (TomType)types.elementAt(index++);
+                            type = TomBase.elementAt(types,index++);
                         }
                         Option info1 = `OriginTracking(Name(typeArg.getText()),typeArg.getLine(),currentFile());  
                         OptionList option1 = `concOption(info1);
@@ -1987,7 +1987,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                             if( index >= nbTypes ) {
                                 type = `EmptyType();
                             } else {
-                                type = (TomType)types.elementAt(index++);
+                              type = TomBase.elementAt(types,index++);
                             }
                             Option info2 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),currentFile());
                             OptionList option2 = `concOption(info2);

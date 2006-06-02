@@ -42,6 +42,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomtype.types.tomtypelist.*;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -59,7 +60,7 @@ import jjtraveler.VisitFailure;
 public class TomBase {
 
   %include { adt/tomsignature/TomSignature.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
 	%typeterm Collection {
 		implement { java.util.Collection }
 	}
@@ -276,7 +277,7 @@ public class TomBase {
 
 			// to collect annoted nodes but avoid collect variables in optionSymbol
 			t@RecordAppl[Slots=subterms, Constraints=constraintList] -> {
-        `TopDownCollector(collectVariable(collection)).apply(`subterm);
+        `TopDownCollect(collectVariable(collection)).apply(`subterms);
 				TomTerm annotedVariable = getAssignToVariable(`constraintList);
 				if(annotedVariable!=null) {
 					collection.add(annotedVariable);
@@ -290,7 +291,7 @@ public class TomBase {
   public static Map collectMultiplicity(ATerm subject) {
     // collect variables
     ArrayList variableList = new ArrayList();
-    `TopDownCollector(collectVariable(variableList)).apply(`subject);
+    `TopDownCollect(collectVariable(variableList)).apply(`subject);
     // compute multiplicities
     HashMap multiplicityMap = new HashMap();
     Iterator it = variableList.iterator();
@@ -436,11 +437,21 @@ public class TomBase {
     return -1;
   }
 
+  public static TomType elementAt(TomTypeList l, int index) {
+    if (0 > index || index > ((concTomType)l).length()) {
+      throw new IllegalArgumentException("illegal list index: " + index);
+    }
+    for (int i = 0; i < index; i++) {
+      l = l.getTailconcTomType();
+    }
+    return l.getHeadconcTomType();
+  }
+
   protected static TomType getSlotType(TomSymbol symbol, TomName slotName) {
     %match(TomSymbol symbol) {
       Symbol[TypesToType=TypesToType(typeList,codomain)] -> {
         int index = getSlotIndex(symbol,slotName);
-        return (TomType)`typeList.elementAt(index);
+        return elementAt(`typeList,index);
       }
     }
     throw new TomRuntimeException("getSlotType: bad slotName error");
@@ -554,7 +565,7 @@ public class TomBase {
       concTomTerm() -> { return `concSlot(); }
       concTomTerm(head,tail*) -> { 
         TomName slotName = `PositionName(concTomNumber(Number(index)));
-        SlotList sl = tomListToSlotList(tail,index+1);
+        SlotList sl = tomListToSlotList(`tail,index+1);
         return `concSlot(PairSlotAppl(slotName,head),sl*); 
       }
     }
@@ -567,7 +578,7 @@ public class TomBase {
         return `concSlot(); 
       }
       concTomTerm(head,tail*), concSlot(PairSlotAppl[SlotName=slotName],tailSlotList*) -> { 
-        SlotList sl = mergeTomListWithSlotList(tail,tailSlotList);
+        SlotList sl = mergeTomListWithSlotList(`tail,`tailSlotList);
         return `concSlot(PairSlotAppl(slotName,head),sl*); 
       }
     }
@@ -578,7 +589,7 @@ public class TomBase {
     %match(SlotList tomList) {
       concSlot() -> { return `concTomTerm(); }
       concSlot(PairSlotAppl[Appl=head],tail*) -> {
-        TomList tl = slotListToTomList(tail);
+        TomList tl = slotListToTomList(`tail);
         return `concTomTerm(head,tl*);
       }
     }
