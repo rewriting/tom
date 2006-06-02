@@ -80,11 +80,11 @@ abstract public class TomChecker extends TomGenericPlugin {
  
   public int getClass(TomTerm term) {
     %match(TomTerm term) {
-      TermAppl[nameList=(Name(""))] -> { return UNAMED_APPL;}
-      TermAppl[nameList=(Name(_))] -> { return TERM_APPL;}
-      TermAppl[nameList=(Name(_), _*)] -> { return APPL_DISJUNCTION;}
-      RecordAppl[nameList=(Name(_))] -> { return RECORD_APPL;}
-      RecordAppl[nameList=(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
+      TermAppl[NameList=(Name(""))] -> { return UNAMED_APPL;}
+      TermAppl[NameList=(Name(_))] -> { return TERM_APPL;}
+      TermAppl[NameList=(Name(_), _*)] -> { return APPL_DISJUNCTION;}
+      RecordAppl[NameList=(Name(_))] -> { return RECORD_APPL;}
+      RecordAppl[NameList=(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
       XMLAppl[] -> { return XML_APPL;}
       Placeholder[] -> { return PLACE_HOLDER;}
       VariableStar[] -> { return VARIABLE_STAR;}
@@ -97,8 +97,8 @@ abstract public class TomChecker extends TomGenericPlugin {
   public String getName(TomTerm term) {
     String dijunctionName = "";
     %match(TomTerm term) {
-      TermAppl[nameList=(Name(name))] -> { return `name;}
-      TermAppl[nameList=nameList] -> {
+      TermAppl[NameList=(Name(name))] -> { return `name;}
+      TermAppl[NameList=nameList] -> {
         String head;
         dijunctionName = `nameList.getHeadconcTomName().getString();
         while(!`nameList.isEmptyconcTomName()) {
@@ -108,8 +108,8 @@ abstract public class TomChecker extends TomGenericPlugin {
         }
         return dijunctionName;
       }
-      RecordAppl[nameList=(Name(name))] -> { return `name;}
-      RecordAppl[nameList=nameList] -> {
+      RecordAppl[NameList=(Name(name))] -> { return `name;}
+      RecordAppl[NameList=nameList] -> {
         String head;
         dijunctionName = `nameList.getHeadconcTomName().getString();
         while(!`nameList.isEmptyconcTomName()) {
@@ -119,8 +119,8 @@ abstract public class TomChecker extends TomGenericPlugin {
         }
         return dijunctionName;
       }
-      XMLAppl[nameList=(Name(name), _*)] ->{ return `name;}
-      XMLAppl[nameList=nameList] -> {
+      XMLAppl[NameList=(Name(name), _*)] ->{ return `name;}
+      XMLAppl[NameList=nameList] -> {
         String head;
         dijunctionName = `nameList.getHeadconcTomName().getString();
         while(!`nameList.isEmptyconcTomName()) {
@@ -131,7 +131,7 @@ abstract public class TomChecker extends TomGenericPlugin {
         return dijunctionName;
       }
       Placeholder[] -> { return "_";}
-      (Variable|VariableStar)[astName=Name(name)] -> { return `name+"*";}
+      (Variable|VariableStar)[AstName=Name(name)] -> { return `name+"*";}
       UnamedVariableStar[] -> { return "_*";}
     }
     throw new TomRuntimeException("Invalid Term");
@@ -147,14 +147,14 @@ abstract public class TomChecker extends TomGenericPlugin {
   
   protected static String findOriginTrackingFileName(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(_*,OriginTracking[fileName=fileName],_*) -> { return `fileName; }
+      concOption(_*,OriginTracking[FileName=fileName],_*) -> { return `fileName; }
     }
     return "unknown filename";
   }
 
   protected static int findOriginTrackingLine(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(_*,OriginTracking[line=line],_*) -> { return `line; }
+      concOption(_*,OriginTracking[Line=line],_*) -> { return `line; }
     }
     return -1;
   }

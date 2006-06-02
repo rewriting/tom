@@ -159,10 +159,10 @@ public class TomSyntaxChecker extends TomChecker {
   %typeterm TomSyntaxChecker { implement { TomSyntaxChecker } }
   %strategy checkSyntax(tsc:TomSyntaxChecker) extends `Identity() {
     visit Declaration {
-      Strategy[visitList = list,orgTrack=origin] -> {
+      Strategy[VisitList = list,OrgTrack=origin] -> {
         if(`list.isEmptyconcTomVisit()) {
           %match(Option `origin) {
-            OriginTracking[fileName=fileName,line=line] -> { 
+            OriginTracking[FileName=fileName,Line=line] -> { 
               tsc.messageError(`fileName,`line,TomMessage.emptyStrategy,new Object[]{});
             }
           }
@@ -220,29 +220,29 @@ public class TomSyntaxChecker extends TomChecker {
         matchblock:{
           %match(Declaration decl) {
             // Common Macro functions
-            TermsEqualDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack) -> {
+            TermsEqualDecl(Variable[AstName=Name(name1)],Variable[AstName=Name(name2)],_, orgTrack) -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.EQUALS,verifyList,orgTrack,name1,name2, declType);
               break matchblock;
             }
             // List specific Macro functions
-            GetHeadDecl[orgTrack=orgTrack] -> {
+            GetHeadDecl[OrgTrack=orgTrack] -> {
               `checkField(TomSyntaxChecker.GET_HEAD,verifyList,orgTrack, declType);
               break matchblock;
             }
-            GetTailDecl[orgTrack=orgTrack] -> {
+            GetTailDecl[OrgTrack=orgTrack] -> {
               `checkField(TomSyntaxChecker.GET_TAIL,verifyList,orgTrack, declType);
               break matchblock;
             }
-            IsEmptyDecl[orgTrack=orgTrack] -> {
+            IsEmptyDecl[OrgTrack=orgTrack] -> {
               `checkField(TomSyntaxChecker.IS_EMPTY,verifyList,orgTrack, declType);
               break matchblock;
             }
             // Array specific Macro functions
-            GetElementDecl[variable=Variable[astName=Name(name1)],index=Variable[astName=Name(name2)],orgTrack=orgTrack] -> {
+            GetElementDecl[Variable=Variable[AstName=Name(name1)],index=Variable[AstName=Name(name2)],OrgTrack=orgTrack] -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.GET_ELEMENT,verifyList,orgTrack,name1,name2, declType);
               break matchblock;
             }
-            GetSizeDecl[orgTrack=orgTrack] -> {
+            GetSizeDecl[OrgTrack=orgTrack] -> {
               `checkField(TomSyntaxChecker.GET_SIZE,verifyList,orgTrack, declType);
               break matchblock;
             }
@@ -381,25 +381,25 @@ public class TomSyntaxChecker extends TomChecker {
         matchblock:{
           %match(Declaration decl ) {
             // for a array symbol
-            MakeEmptyArray[orgTrack=orgTrack] -> {
+            MakeEmptyArray[OrgTrack=orgTrack] -> {
               `checkField(TomSyntaxChecker.MAKE_EMPTY,verifyList,orgTrack, symbolType);
               break matchblock;
             }
-            MakeAddArray[varList=Variable[astName=Name(name1)], varElt=Variable[astName=Name(name2)], orgTrack=orgTrack] -> {
+            MakeAddArray[VarList=Variable[AstName=Name(name1)], varElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.MAKE_APPEND, verifyList, orgTrack, name1, name2, symbolType);
               break matchblock;
             }
             // for a List symbol
-            MakeEmptyList[orgTrack=orgTrack] -> {
+            MakeEmptyList[OrgTrack=orgTrack] -> {
               `checkField(TomSyntaxChecker.MAKE_EMPTY,verifyList,orgTrack, symbolType);
               break matchblock;
             }
-            MakeAddList[varList=Variable[astName=Name(name1)], varElt=Variable[astName=Name(name2)], orgTrack=orgTrack] -> {
+            MakeAddList[VarList=Variable[AstName=Name(name1)], varElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.MAKE_INSERT, verifyList, orgTrack, name1, name2, symbolType);
               break matchblock;
             }
             // for a symbol
-            MakeDecl[args=makeArgsList, orgTrack=og@OriginTracking[fileName=fileName,line=line]] -> {
+            MakeDecl[Args=makeArgsList, orgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
               if (!foundOpMake) {
                 foundOpMake = true;
                 `verifyMakeDeclArgs(makeArgsList, domainLength, og, symbolType);
@@ -424,7 +424,7 @@ public class TomSyntaxChecker extends TomChecker {
     int nbArgs = 0;
     ArrayList listVar = new ArrayList();
     %match(TomList argsList) {
-      (_*, Variable[astName=Name(name)] ,_*) -> { // for each Macro variable
+      (_*, Variable[AstName=Name(name)] ,_*) -> { // for each Macro variable
         if(listVar.contains(`name)) {
           messageError(orgTrack.getFileName(),orgTrack.getLine(),
                        TomMessage.nonLinearMacroFunction,
@@ -446,7 +446,7 @@ public class TomSyntaxChecker extends TomChecker {
       // we test the existence of 2 same slot names
     ArrayList listSlot = new ArrayList();
     %match(PairNameDeclList pairNameDeclList) {
-      (_*, PairNameDecl[slotName=Name(name)], _*) -> { // for each Slot
+      (_*, PairNameDecl[SlotName=Name(name)], _*) -> { // for each Slot
         if(listSlot.contains(`name)) {
             //TODO
             //messageWarningTwoSameSlotDeclError(name, orgTrack, symbolType);
@@ -506,7 +506,7 @@ public class TomSyntaxChecker extends TomChecker {
     int nbExpectedArgs = typeMatchArgs.size();
     // we now compare pattern to its definition
     %match(PatternInstructionList patternInstructionList) {
-      concPatternInstruction(_*, PatternInstruction[pattern=Pattern[tomList=terms,guards=guards]], _*) -> {
+      concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms,Guards=guards]], _*) -> {
         // control each pattern vs the match definition
         `verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
         `verifyWhenPattern(guards);
@@ -577,7 +577,7 @@ public class TomSyntaxChecker extends TomChecker {
         typeMatchArgs.add(`type);
         // we now compare pattern to its definition
         %match(PatternInstructionList patternInstructionList) {
-          concPatternInstruction(_*, PatternInstruction[pattern=Pattern[tomList=terms,guards=guards]], _*) -> {
+          concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms,Guards=guards]], _*) -> {
             // control each pattern vs the match definition
             //always 1 expected argument in visit
             `verifyMatchPattern(terms, typeMatchArgs, 1);
@@ -734,7 +734,7 @@ public class TomSyntaxChecker extends TomChecker {
     Option orgTrack;
     matchblock:{
       %match(TomTerm term) {
-        TermAppl[option=options, nameList=(Name("")), args=args] -> {
+        TermAppl[Option=options, NameList=(Name("")), Args=args] -> {
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
           termClass = UNAMED_APPL;
@@ -755,7 +755,7 @@ public class TomSyntaxChecker extends TomChecker {
           }
         }
 
-        TermAppl[option=options, nameList=nameList, args=arguments] -> {
+        TermAppl[Option=options, NameList=nameList, Args=arguments] -> {
           TomList args = `arguments;
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
@@ -794,7 +794,7 @@ public class TomSyntaxChecker extends TomChecker {
           break matchblock;
         }
 
-        rec@RecordAppl[option=options,nameList=nameList,slots=slotList] -> {
+        rec@RecordAppl[Option=options,NameList=nameList,Slots=slotList] -> {
           if(permissive) {
             // Record are not allowed in a rhs
             messageError(findOriginTrackingFileName(`options),findOriginTrackingLine(`options), TomMessage.incorrectRuleRHSClass,
@@ -825,7 +825,7 @@ public class TomSyntaxChecker extends TomChecker {
           break matchblock;
         }
 
-        XMLAppl[option=options, nameList=(_*, Name(_), _*), childList=childList] -> {
+        XMLAppl[Option=options, NameList=(_*, Name(_), _*), ChildList=childList] -> {
             // TODO: can we do it
             // ensureValidDisjunction(nameList); ??????????
           termClass = XML_APPL;
@@ -851,7 +851,7 @@ public class TomSyntaxChecker extends TomChecker {
           break matchblock;
         }
 
-        Placeholder[option=options] -> {
+        Placeholder[Option=options] -> {
           termClass = PLACE_HOLDER;
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
@@ -864,7 +864,7 @@ public class TomSyntaxChecker extends TomChecker {
           break matchblock;
         }
 
-        Variable[option=options, astName=Name(name)] -> {
+        Variable[Option=options, AstName=Name(name)] -> {
           termClass = VARIABLE;
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
@@ -873,7 +873,7 @@ public class TomSyntaxChecker extends TomChecker {
           break matchblock;
         }
 
-        VariableStar[option=options, astName=Name(name)] -> {
+        VariableStar[Option=options, AstName=Name(name)] -> {
           termClass = VARIABLE_STAR;
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
@@ -886,7 +886,7 @@ public class TomSyntaxChecker extends TomChecker {
           break matchblock;
         }
 
-        UnamedVariableStar[option=options] -> {
+        UnamedVariableStar[Option=options] -> {
           termClass = UNAMED_VARIABLE_STAR;
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
@@ -911,7 +911,7 @@ public class TomSyntaxChecker extends TomChecker {
 
   private  void validateTermThrough(TomTerm term, boolean permissive) {
     %match(TomTerm term) {
-      TermAppl[args=arguments] -> {
+      TermAppl[Args=arguments] -> {
         TomList args = `arguments;
         while(!args.isEmptyconcTomTerm()) {
           TomTerm child = args.getHeadconcTomTerm();
@@ -930,7 +930,7 @@ public class TomSyntaxChecker extends TomChecker {
   public  TermDescription analyseTerm(TomTerm term) {
     matchblock:{
       %match(TomTerm term) {
-        TermAppl[option=options, nameList=(Name(str))] -> {
+        TermAppl[Option=options, NameList=(Name(str))] -> {
           if (`str.equals("")) {
             return new TermDescription(UNAMED_APPL, `str,
                 findOriginTrackingFileName(`options),
@@ -944,46 +944,46 @@ public class TomSyntaxChecker extends TomChecker {
                 getSymbolCodomain(getSymbolFromName(`str)));
           }
         }
-        TermAppl[option=options, nameList=(Name(name), _*)] -> {
+        TermAppl[Option=options, NameList=(Name(name), _*)] -> {
           return new TermDescription(APPL_DISJUNCTION, `name,
                 findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),
               getSymbolCodomain(getSymbolFromName(`name)));
         }
-        RecordAppl[option=options,nameList=(Name(name))] ->{
+        RecordAppl[Option=options,NameList=(Name(name))] ->{
           return new TermDescription(RECORD_APPL, `name,
                 findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),
               getSymbolCodomain(getSymbolFromName(`name)));
         }
-        RecordAppl[option=options,nameList=(Name(name), _*)] ->{
+        RecordAppl[Option=options,NameList=(Name(name), _*)] ->{
           return new TermDescription(RECORD_APPL_DISJUNCTION,`name,
                 findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),
               getSymbolCodomain(getSymbolFromName(`name)));
         }
-        XMLAppl[option=options] -> {
+        XMLAppl[Option=options] -> {
           return new TermDescription(XML_APPL, Constants.ELEMENT_NODE,
                 findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),
               getSymbolCodomain(getSymbolFromName(Constants.ELEMENT_NODE)));
         }
-        Placeholder[option=options] -> {
+        Placeholder[Option=options] -> {
           return new TermDescription(PLACE_HOLDER, "_",
                 findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),  null);
         }
-        Variable[option=options, astName=Name(name)] -> {
+        Variable[Option=options, AstName=Name(name)] -> {
           return new TermDescription(VARIABLE, `name,
                 findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),  null);
         }
-        VariableStar[option=options, astName=Name(name)] -> {
+        VariableStar[Option=options, AstName=Name(name)] -> {
           return new TermDescription(VARIABLE_STAR, `name+"*",
                 findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),  null);
         }
-        UnamedVariableStar[option=options] -> {
+        UnamedVariableStar[Option=options] -> {
           return new TermDescription(UNAMED_VARIABLE_STAR, "_*",
                 findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),  null);
@@ -1206,7 +1206,7 @@ public class TomSyntaxChecker extends TomChecker {
             while(!listOfPair.isEmptyconcPairNameDecl()) {
               Slot pairSlotTerm = listOfPair.getHeadconcPairNameDecl();
               %match(TomName slotName, Slot pairSlotTerm) {
-                Name[string=name1], PairSlotAppl(Name[string=name1],slotSubterm) -> {
+                Name[String=name1], PairSlotAppl(Name[String=name1],slotSubterm) -> {
                    validateTerm(`slotSubterm ,expectedType, false, true, false);
                    break whileBlock;
                  }

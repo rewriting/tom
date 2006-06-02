@@ -147,8 +147,8 @@ public class TomBase {
 
   protected static String getTLCode(TomType type) {
     %match(TomType type) {
-      TLType(TL[code=tlType])  -> { return `tlType; }
-      TLType(ITL[code=tlType]) -> { return `tlType; }
+      TLType(TL[Code=tlType])  -> { return `tlType; }
+      TLType(ITL[Code=tlType]) -> { return `tlType; }
     }
 		System.out.println("getTLCode error on term: " + type);
 		throw new TomRuntimeException("getTLCode error on term: " + type);
@@ -275,7 +275,7 @@ public class TomBase {
 			}
 
 			// to collect annoted nodes but avoid collect variables in optionSymbol
-			t@RecordAppl[slots=subterms, constraints=constraintList] -> {
+			t@RecordAppl[Slots=subterms, Constraints=constraintList] -> {
         `TopDownCollector(collectVariable(collection)).apply(`subterm);
 				TomTerm annotedVariable = getAssignToVariable(`constraintList);
 				if(annotedVariable!=null) {
@@ -415,7 +415,7 @@ public class TomBase {
 
     Declaration decl = pairNameDecl.getSlotDecl();
     %match(Declaration decl) {
-      GetSlotDecl[slotName=name] -> { return `name; }
+      GetSlotDecl[SlotName=name] -> { return `name; }
     }
 
     return pairNameDecl.getSlotName();
@@ -465,7 +465,7 @@ public class TomBase {
       return false;
     }
     %match(TomSymbol symbol) {
-      Symbol[PairNameDeclList=concPairNameDecl(_*,PairNameDecl[slotName=name,slotDecl=decl],_*)] -> {
+      Symbol[PairNameDeclList=concPairNameDecl(_*,PairNameDecl[SlotName=name,SlotDecl=decl],_*)] -> {
         if(`name==slotName && `decl!=`EmptyDeclaration()) {
           return true;
         }
@@ -513,7 +513,7 @@ public class TomBase {
 
   protected static TomType getTermType(TomTerm t, SymbolTable symbolTable){
     %match(TomTerm t) {
-      RecordAppl[nameList=(Name(tomName),_*)] -> {
+      RecordAppl[NameList=(Name(tomName),_*)] -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         return tomSymbol.getTypesToType().getCodomain();
       }
@@ -524,7 +524,7 @@ public class TomBase {
 
       Ref(term) -> { return getTermType(`term, symbolTable); }
 
-      TargetLanguageToTomTerm[tl=(TL|ITL)[]] -> { return `EmptyType(); }
+      TargetLanguageToTomTerm[Tl=(TL|ITL)[]] -> { return `EmptyType(); }
 
       FunctionCall[] -> { return `EmptyType(); }
     }
@@ -534,12 +534,12 @@ public class TomBase {
   
   protected static TomType getTermType(Expression t, SymbolTable symbolTable){
     %match(Expression t) {
-      (GetSubterm|GetHead|GetSlot|GetElement)[codomain=type] -> { return `type; }
+      (GetSubterm|GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
 
       TomTermToExpression(term) -> { return getTermType(`term, symbolTable); }
-      GetTail[variable=term] -> { return getTermType(`term, symbolTable); }
-      GetSliceList[variableBeginAST=term] -> { return getTermType(`term, symbolTable); }
-      GetSliceArray[subjectListName=term] -> { return getTermType(`term, symbolTable); }
+      GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }
+      GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
+      GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
     }
 		System.out.println("getTermType error on term: " + t);
 		throw new TomRuntimeException("getTermType error on term: " + t);
@@ -577,7 +577,7 @@ public class TomBase {
   protected static TomList slotListToTomList(SlotList tomList) {
     %match(SlotList tomList) {
       concSlot() -> { return `concTomTerm(); }
-      concSlot(PairSlotAppl[appl=head],tail*) -> {
+      concSlot(PairSlotAppl[Appl=head],tail*) -> {
         TomList tl = slotListToTomList(tail);
         return `concTomTerm(head,tl*);
       }
