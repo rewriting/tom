@@ -71,16 +71,6 @@ public class TomBase {
   
   %include { adt/platformoption/PlatformOption.tom }
   
-  private static TomList empty;
-  
-  public TomBase() {
-    empty = `concTomTerm();
-  }
-
-  protected static TomList empty() {
-    return empty;
-  }
-
   protected static TomList cons(TomTerm t, TomList l) {
     if(t!=null) {
       return `concTomTerm(t,l*);
@@ -111,7 +101,7 @@ public class TomBase {
   }
 
   protected static TomList reverse(TomList l) {
-    TomList reverse = empty();
+    TomList reverse = `concTomTerm();
     while(!l.isEmptyconcTomTerm()){
       reverse = cons(l.getHeadconcTomTerm(),reverse);
       l = l.getTailconcTomTerm();
@@ -256,6 +246,10 @@ public class TomBase {
   }
 
   // ------------------------------------------------------------
+  public static void collectVariable(Collection collection, jjtraveler.Visitable subject) {
+    `TopDownCollect(collectVariable(collection)).apply(`subject);
+  }
+
 	%strategy collectVariable(collection:Collection) extends `Identity() {
 		visit TomTerm {
 			v@(Variable|VariableStar)[Constraints=constraintList] -> {
@@ -277,7 +271,7 @@ public class TomBase {
 
 			// to collect annoted nodes but avoid collect variables in optionSymbol
 			t@RecordAppl[Slots=subterms, Constraints=constraintList] -> {
-        `TopDownCollect(collectVariable(collection)).apply(`subterms);
+        collectVariable(collection,`subterms);
 				TomTerm annotedVariable = getAssignToVariable(`constraintList);
 				if(annotedVariable!=null) {
 					collection.add(annotedVariable);
@@ -288,10 +282,10 @@ public class TomBase {
 		}
 	}
 
-  public static Map collectMultiplicity(ATerm subject) {
+  public static Map collectMultiplicity(jjtraveler.Visitable subject) {
     // collect variables
     ArrayList variableList = new ArrayList();
-    `TopDownCollect(collectVariable(variableList)).apply(`subject);
+    collectVariable(variableList,`subject);
     // compute multiplicities
     HashMap multiplicityMap = new HashMap();
     Iterator it = variableList.iterator();

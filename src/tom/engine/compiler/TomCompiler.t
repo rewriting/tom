@@ -121,10 +121,6 @@ public class TomCompiler extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(TomCompiler.DECLARED_OPTIONS);
   }
 
-  private static OptionList option() {
-    return ASTFactory.makeOption();
-  }
-
   /*
    * preProcessing:
    * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
@@ -178,12 +174,12 @@ public class TomCompiler extends TomGenericPlugin {
         Option orgTrack = findOriginTracking(`matchOptionList);
         PatternInstructionList newPatternInstructionList = `concPatternInstruction();
         PatternList negativePattern = `concPattern();
-        while(!`patternInstructionList.isEmpty()) {
+        while(!`patternInstructionList.isEmptyconcPatternInstruction()) {
           /*
            * the call to preProcessing performs the recursive expansion
            * of nested match constructs
            */
-          PatternInstruction newPatternInstruction = (PatternInstruction) MuTraveler.init(`preProcessing(compiler)).visit(`patternInstructionList.getHead());
+          PatternInstruction newPatternInstruction = (PatternInstruction) MuTraveler.init(`preProcessing(compiler)).visit(`patternInstructionList.getHeadconcPatternInstruction());
 
 matchBlock: {
               %match(PatternInstruction newPatternInstruction) {
@@ -195,7 +191,7 @@ matchBlock: {
                       newAction=`TypedAction(If(TrueTL(),x,Nop()),pattern,negativePattern);
                     }
                   }
-                  negativePattern = (PatternList) negativePattern.append(`pattern);
+                  negativePattern = `concPattern(negativePattern*,pattern);
 
                   /* generate equality checks */
                   ArrayList equalityCheck = new ArrayList();
@@ -204,13 +200,13 @@ matchBlock: {
                   /* attach guards to variables or applications*/
                   TomList constrainedTermList = renamedTermList;
                   TomList l = `guardList;
-                  while(!l.isEmpty()) {
-                    TomTerm guard = l.getHead();
+                  while(!l.isEmptyconcTomTerm()) {
+                    TomTerm guard = l.getHeadconcTomTerm();
                     //System.out.println("try to attach "+guard+"\nto "+constrainedTermList);
                     constrainedTermList = compiler.attachConstraint(constrainedTermList,guard);
-                    l = l.getTail();
+                    l = l.getTailconcTomTerm();
                   }
-                  TomList emptyGuardList = `empty();
+                  TomList emptyGuardList = `concTomTerm();
                   newPatternInstruction = `PatternInstruction(Pattern(subjectList,constrainedTermList,emptyGuardList),newAction, option);
 
                   /* abstract patterns */
@@ -249,8 +245,8 @@ matchBlock: {
               }
             } // end matchBlock
 
-            newPatternInstructionList = (PatternInstructionList) newPatternInstructionList.append(newPatternInstruction);
-            `patternInstructionList = `patternInstructionList.getTail();
+            newPatternInstructionList = `concPatternInstruction(newPatternInstructionList*,newPatternInstruction);
+            `patternInstructionList = `patternInstructionList.getTailconcPatternInstruction();
         }
 
         Instruction newMatch = `Match(SubjectList(l1),
@@ -266,15 +262,15 @@ matchBlock: {
         DeclarationList l = `concDeclaration();//represents compiled Strategy
         TomVisitList jVisitList = `visitList;
         TomForwardType visitorFwd = null;
-        while (!jVisitList.isEmpty()){
-          TomList subjectListAST = empty();
-          TomVisit visit = jVisitList.getHead();
+        while (!jVisitList.isEmptyconcTomVisit()){
+          TomList subjectListAST = `concTomTerm();
+          TomVisit visit = jVisitList.getHeadconcTomVisit();
           %match(TomVisit visit) {
             VisitTerm(vType@Type[TomType=ASTTomType(type)],patternInstructionList,_) -> {
               if (visitorFwd == null) {//first time in loop
                 visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
               }
-              TomTerm arg = `Variable(option(),Name("tom__arg"),vType,concConstraint());//arg subjectList
+              TomTerm arg = `Variable(concOption(),Name("tom__arg"),vType,concConstraint());//arg subjectList
               subjectListAST = append(arg,subjectListAST);
               String funcName = "visit_" + `type;//function name
               Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
@@ -284,7 +280,7 @@ matchBlock: {
               l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("jjtraveler.VisitFailure"),AbstractBlock(instructions)));
             }
           }
-          jVisitList = jVisitList.getTail();
+          jVisitList = jVisitList.getTailconcTomVisit();
         }
         return (Declaration) MuTraveler.init(`preProcessing(compiler)).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
@@ -297,21 +293,21 @@ matchBlock: {
 
         //build variables list for lhs symbol
         TomTypeList typesList = getSymbolDomain(tomSymbol);
-        TomList subjectListAST = empty();
+        TomList subjectListAST = `concTomTerm();
         TomNumberList path = `concTomNumber(RuleVar());
         int index = 0;
-        while(!typesList.isEmpty()) {
-          TomType subtermType = typesList.getHead();
-          TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
+        while(!typesList.isEmptyconcTomType()) {
+          TomType subtermType = typesList.getHeadconcTomType();
+          TomTerm variable = `Variable(concOption(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
           subjectListAST = append(variable,subjectListAST);
-          typesList = typesList.getTail();
+          typesList = typesList.getTailconcTomType();
           index++;
         }
 
         TomRuleList ruleList = `rl;
-        TomList guardList = empty();//no guardlist in pattern
-        while(!ruleList.isEmpty()) {
-          TomRule rule = ruleList.getHead();
+        TomList guardList = `concTomTerm();//no guardlist in pattern
+        while(!ruleList.isEmptyconcTomRule()) {
+          TomRule rule = ruleList.getHeadconcTomRule();
           %match(TomRule rule) {
             RewriteRule(Term(RecordAppl[Slots=matchPatternsList]),//lhsTerm
                 Term(rhsTerm),
@@ -322,10 +318,10 @@ matchBlock: {
               Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
               Instruction newRhsInst = compiler.buildCondition(`condList,`rhsInst);
               Pattern pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
-              patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(pattern,RawAction(newRhsInst),option));
+              patternInstructionList = `concPatternInstruction(patternInstructionList*,PatternInstruction(pattern,RawAction(newRhsInst),option));
             }
           }
-          ruleList = ruleList.getTail();
+          ruleList = ruleList.getTailconcTomRule();
         }
 
         Instruction matchAST = `Match(SubjectList(subjectListAST),
@@ -362,23 +358,23 @@ matchBlock: {
 
         TomType subjectType = getTermType(`pattern);
         TomNumberList path = `concTomNumber();
-        path = (TomNumberList) path.append(`RuleVar());
+        path = `concTomNumber(path*,RuleVar());
         TomTerm newSubject = (TomTerm)(MuTraveler.init(`preProcessing(this)).visit(`BuildReducedTerm(subject)));
         TomTerm introducedVariable = newSubject;
-        TomList guardList = empty();
-        TomList generatedSubjectList = `cons(introducedVariable,empty());
+        TomList guardList = `concTomTerm();
+        TomList generatedSubjectList = `cons(introducedVariable,concTomTerm());
         /*
          * we do not use RawAction nor TypedAction here because the generated match should not
          * produce any proof obligation for the verifier
          */
         PatternInstruction generatedPatternInstruction =
-          `PatternInstruction(Pattern(generatedSubjectList, cons(pattern,empty()),guardList),newAction, option());
+          `PatternInstruction(Pattern(generatedSubjectList, cons(pattern,concTomTerm()),guardList),newAction, concOption());
 
         // Warning: The options are not good
         Instruction generatedMatch =
           `Match(SubjectList(generatedSubjectList),
               concPatternInstruction(generatedPatternInstruction),
-              option());
+              concOption());
         return generatedMatch;
         }catch(VisitFailure e){}
       }
@@ -423,8 +419,8 @@ matchBlock: {
           multiplicityMap.put(`name,new Integer(mult+1));
 
           TomNumberList path = `concTomNumber();
-          path = (TomNumberList) path.append(`RenamedVar(name));
-          path = (TomNumberList) path.append(Number(mult));
+          path = `concTomNumber(path*,RenamedVar(name));
+          path = `concTomNumber(path*,Number(mult));
 
           renamedTerm = `var.setAstName(`PositionName(path));
           renamedTerm = renamedTerm.setConstraints(`concConstraint(Equal(var.setConstraints(concConstraint())),newConstraintList*));
@@ -435,12 +431,12 @@ matchBlock: {
 
       RecordAppl[Option=optionList, NameList=nameList, Slots=arguments, Constraints=constraints] -> {
         SlotList args = `arguments;
-        SlotList newArgs = `emptySlotList();
-        while(!args.isEmpty()) {
-          Slot elt = args.getHead();
+        SlotList newArgs = `concSlot();
+        while(!args.isEmptyconcSlot()) {
+          Slot elt = args.getHeadconcSlot();
           TomTerm newElt = renameVariable(elt.getAppl(),multiplicityMap,equalityCheck);
-          newArgs = (SlotList) newArgs.append(`PairSlotAppl(elt.getSlotName(),newElt));
-          args = args.getTail();
+          newArgs = `concSlot(newArgs*,PairSlotAppl(elt.getSlotName(),newElt));
+          args = args.getTailconcSlot();
         }
         ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap,equalityCheck);
         renamedTerm = `RecordAppl(optionList,nameList,newArgs,newConstraintList);
@@ -454,8 +450,8 @@ matchBlock: {
       Map multiplicityMap,
       ArrayList equalityCheck) {
     ArrayList list = new ArrayList();
-    while(!constraintList.isEmpty()) {
-      Constraint cstElt = constraintList.getHead();
+    while(!constraintList.isEmptyconcConstraint()) {
+      Constraint cstElt = constraintList.getHeadconcConstraint();
       Constraint newCstElt = cstElt;
       %match(Constraint cstElt) {
         AssignTo(var@Variable[]) -> {
@@ -463,7 +459,7 @@ matchBlock: {
         }
       }
       list.add(newCstElt);
-      constraintList = constraintList.getTail();
+      constraintList = constraintList.getTailconcConstraint();
     }
     return ASTFactory.makeConstraintList(list);
   }
@@ -471,12 +467,12 @@ matchBlock: {
   private static TomList linearizePattern(TomList subject, ArrayList equalityCheck) {
     Map multiplicityMap = new HashMap();
     // perform the renaming and generate equality checks
-    TomList newList = empty();
-    while(!subject.isEmpty()) {
-      TomTerm elt = subject.getHead();
+    TomList newList = `concTomTerm();
+    while(!subject.isEmptyconcTomTerm()) {
+      TomTerm elt = subject.getHeadconcTomTerm();
       TomTerm newElt = renameVariable(elt,multiplicityMap,equalityCheck);
       newList = append(newElt,newList);
-      subject = subject.getTail();
+      subject = subject.getTailconcTomTerm();
     }
     return newList;
   }
@@ -489,11 +485,11 @@ matchBlock: {
       RecordAppl[NameList=(Name(tomName),_*), Slots=arguments] -> {
         TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
 
-        SlotList newArgs = `emptySlotList();
+        SlotList newArgs = `concSlot();
         if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
           SlotList args = `arguments;
-          while(!args.isEmpty()) {
-            Slot elt = args.getHead();
+          while(!args.isEmptyconcSlot()) {
+            Slot elt = args.getHeadconcSlot();
             TomTerm newElt = elt.getAppl();
             %match(TomTerm newElt) {
               appl@RecordAppl[NameList=(Name(tomName2),_*)] -> {
@@ -511,9 +507,9 @@ matchBlock: {
                   TomNumberList path = `concTomNumber();
                   //path = append(`AbsVar(Number(introducedVariable.size())),path);
                   absVarNumber++;
-                  path = (TomNumberList) path.append(`AbsVar(Number(absVarNumber)));
+                  path = `concTomNumber(path*,AbsVar(Number(absVarNumber)));
 
-                  TomTerm newVariable = `Variable(option(),PositionName(path),type2,concConstraint());
+                  TomTerm newVariable = `Variable(concOption(),PositionName(path),type2,concConstraint());
 
                   //System.out.println("newVariable = " + newVariable);
 
@@ -522,8 +518,8 @@ matchBlock: {
                 }
               }
             }
-            newArgs = (SlotList) newArgs.append(`PairSlotAppl(elt.getSlotName(),newElt));
-            args = args.getTail();
+            newArgs = `concSlot(newArgs*,PairSlotAppl(elt.getSlotName(),newElt));
+            args = args.getTailconcSlot();
           }
         } else {
           newArgs = mergeTomListWithSlotList(abstractPatternList(slotListToTomList(`arguments),abstractedPattern,introducedVariable),`arguments);
@@ -534,14 +530,12 @@ matchBlock: {
     return abstractedTerm;
   }
 
-  private TomList abstractPatternList(TomList subjectList,
-      ArrayList abstractedPattern,
-      ArrayList introducedVariable)  {
+  private TomList abstractPatternList(TomList subjectList, ArrayList abstractedPattern, ArrayList introducedVariable)  {
     %match(TomList subjectList) {
       concTomTerm() -> { return subjectList; }
       concTomTerm(head,tail*) -> {
         TomTerm newElt = abstractPattern(`head,abstractedPattern,introducedVariable);
-        TomList tl = abstractPatternList(tail,abstractedPattern,introducedVariable);
+        TomList tl = abstractPatternList(`tail,abstractedPattern,introducedVariable);
         return `concTomTerm(newElt,tl*);
       }
     }
@@ -615,14 +609,16 @@ itBlock: {
     visit TomTerm {
       var@(Variable|VariableStar)[Constraints=constraintList] -> {
         if(variableSet.remove(`var) && variableSet.isEmpty()) {
-          ConstraintList newConstraintList = (ConstraintList)`constraintList.append(`Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint))));
+					Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint)));
+          ConstraintList newConstraintList = `concConstraint(constraintList*,c);
           return `var.setConstraints(newConstraintList);
         }
       }
 
       appl@RecordAppl[Constraints=constraintList] -> {
         if(variableSet.isEmpty()) {
-          ConstraintList newConstraintList = (ConstraintList)`constraintList.append(`Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint))));
+					Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint)));
+          ConstraintList newConstraintList = `concConstraint(constraintList*,c);
           return `appl.setConstraints(newConstraintList);
         }
       }
