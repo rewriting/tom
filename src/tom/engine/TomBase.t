@@ -566,7 +566,7 @@ public class TomBase {
       concTomTerm(), concSlot() -> { 
         return `concSlot(); 
       }
-      concTomTerm(head,tail*), concSlot(PairSlotAppl[slotName=slotName],tailSlotList*) -> { 
+      concTomTerm(head,tail*), concSlot(PairSlotAppl[SlotName=slotName],tailSlotList*) -> { 
         SlotList sl = mergeTomListWithSlotList(tail,tailSlotList);
         return `concSlot(PairSlotAppl(slotName,head),sl*); 
       }
