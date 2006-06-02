@@ -157,6 +157,9 @@ public class AST2Gom{
           COLON(_,_) -> {
             return `concGomType(tmpL*);
           }
+          ARROW(_,_) -> {
+            return `concGomType(tmpL*);
+          }
         }
       }
       _ -> {
