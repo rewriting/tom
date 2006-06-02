@@ -100,7 +100,7 @@ public class SymbolTable {
     TomEntryList list =  symbTable.getEntryList();
     while(!list.isEmptyconcTomEntry()) {
       TomEntry symb = list.getHeadconcTomEntry();
-      putSymbol(symb.getstrName(), symb.getastSymbol());
+      putSymbol(symb.getStrName(), symb.getAstSymbol());
       list = list.getTailconcTomEntry();
     }
   }
@@ -321,10 +321,10 @@ public class SymbolTable {
   }
 
   public void fromTerm(TomSymbolTable table) {
-    TomEntryList list = table.getentryList();
+    TomEntryList list = table.getEntryList();
     while(!list.isEmptyconcTomEntry()) {
       TomEntry entry = list.getHeadconcTomEntry();
-      putSymbol(entry.getstrName(),entry.getastSymbol());
+      putSymbol(entry.getStrName(),entry.getAstSymbol());
       list = list.getTailconcTomEntry();
     }
   }
