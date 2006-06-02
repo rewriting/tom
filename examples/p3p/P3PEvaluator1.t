@@ -48,7 +48,7 @@ public class P3PEvaluator1 {
     xtools = new XmlTools();
     TNode pol = (TNode)xtools.convertXMLToTNode(polfile);
     TNode client = (TNode)xtools.convertXMLToTNode(clientfile);
-    boolean res = compareDataGroup(getDataGroup(pol.getdocElem()),getDataGroup(client.getdocElem()));
+    boolean res = compareDataGroup(getDataGroup(pol.getDocElem()),getDataGroup(client.getDocElem()));
     System.out.println("res = " + res);
     //xtools.printXMLFromATerm(term);
   }

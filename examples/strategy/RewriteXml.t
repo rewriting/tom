@@ -66,7 +66,7 @@ public class RewriteXml {
 
     xtools = new XmlTools();
     TNode subject = (TNode)xtools.convertXMLToTNode("strategy/minimenu.xml");
-    subject = subject.getdocElem();
+    subject = subject.getDocElem();
     Collection leaves = new HashSet();
 
     try {

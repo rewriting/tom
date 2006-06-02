@@ -87,10 +87,10 @@ public class ConfigurationManager {
       getLogger().log(Level.SEVERE, PluginPlatformMessage.configFileNotXML.getMessage(), xmlConfigurationFileName);
       return 1;
     }
-    if(createPlugins(configurationNode.getdocElem())==1) {
+    if(createPlugins(configurationNode.getDocElem())==1) {
       return 1;
     }
-    if(createOptionManager(configurationNode.getdocElem()) == 1) {
+    if(createOptionManager(configurationNode.getDocElem()) == 1) {
       return 1;
     }
     return optionManager.initialize(this, commandLine);

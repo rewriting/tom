@@ -56,7 +56,7 @@ public class TomXMLAnalyser {
       try {
         xtools = new XmlTools();
         TNode term = (TNode)xtools.convertXMLToTNode(new ByteArrayInputStream(analysedString.getBytes()));
-        String res = extractEMail(term.getdocElem());
+        String res = extractEMail(term.getDocElem());
         return res;
       } catch (Exception e) {
         return "Exception catched: Enter a Valid XML string";

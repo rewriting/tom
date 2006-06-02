@@ -36,12 +36,12 @@ public class Constants {
   public final static String ELEMENT_NODE   = "ElementNode";
   public final static String PROCESSING_INSTRUCTION_NODE = "ProcessingInstructionNode";
 
-  public final static String SLOT_NAME      = "name";
-  public final static String SLOT_ATTRLIST  = "attrList";
-  public final static String SLOT_CHILDLIST = "childList";
-  public final static String SLOT_SPECIFIED = "specified";
-  public final static String SLOT_VALUE     = "value";
-  public final static String SLOT_DATA      = "data";
-  public final static String SLOT_TARGET    = "target";
+  public final static String SLOT_NAME      = "Name";
+  public final static String SLOT_ATTRLIST  = "AttrList";
+  public final static String SLOT_CHILDLIST = "ChildList";
+  public final static String SLOT_SPECIFIED = "Specified";
+  public final static String SLOT_VALUE     = "Value";
+  public final static String SLOT_DATA      = "Data";
+  public final static String SLOT_TARGET    = "Target";
 
 }

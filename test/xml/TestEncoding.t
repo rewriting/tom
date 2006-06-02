@@ -33,7 +33,7 @@ public class TestEncoding extends TestCase {
   public void testFr(){
     TNode fileNode = xtools.convertXMLToTNode("xml/data.xml");
 
-    fileNode = fileNode.getdocElem();
+    fileNode = fileNode.getDocElem();
     //TNode textNode = `xml(<data type="encoding"><datum lang="fr">#TEXT("eée")</datum></data>);
     TNode textNode = `xml(<data type="encoding"><datum lang="fr">#TEXT("e\u00E9e")</datum></data>);
 

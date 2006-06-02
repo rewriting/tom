@@ -53,7 +53,7 @@ public class Action {
 
   private void test1(TNode subject) {
     TNode t = (TNode) subject;
-    t = t.getdocElem();
+    t = t.getDocElem();
     %match(TNode t) {
       <Actions><Action>
          comp@<Comp Label="busy" Type=type Index=i />
@@ -72,7 +72,7 @@ public class Action {
 
   private void test2(TNode subject) {
     TNode t = (TNode) subject;
-    t = t.getdocElem();
+    t = t.getDocElem();
     %match(TNode t) {
       <Actions>a</Actions> -> {
         %match(TNode a,TNode a) {
