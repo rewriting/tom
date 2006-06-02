@@ -1,8 +1,8 @@
 module TomConstraint
 imports TomSignature 
 abstract syntax
-Constraint = Ensure(variable:TomTerm)
-           | Equal(variable:TomTerm)
-           | AssignTo(variable:TomTerm)
+Constraint = Ensure(Variable:TomTerm)
+           | Equal(Variable:TomTerm)
+           | AssignTo(Variable:TomTerm)
 
 ConstraintList = concConstraint(Constraint*)

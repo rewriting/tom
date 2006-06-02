@@ -231,7 +231,7 @@ public class TomBackend extends TomGenericPlugin {
 
 	%strategy Collector(tb:TomBackend,stack:Stack) extends `Identity() {
     visit Instruction {
-			CompiledMatch[automataInst=inst, option=optionList] -> {
+			CompiledMatch[AutomataInst=inst, Option=optionList] -> {
 				String moduleName = getModuleName(`optionList);
         /*
          * push the modulename
@@ -257,14 +257,14 @@ public class TomBackend extends TomGenericPlugin {
 				`Fail().visit(null);
 			}
 
-      TypedAction[astInstruction=inst] -> {
+      TypedAction[AstInstruction=inst] -> {
         tb.applyMarkStrategy(`inst);
         `Fail().visit(null);
       }
 		}
 	  
     visit Expression {
-      (IsEmptyList|IsEmptyArray|GetHead|GetTail)[opname=Name(name)] -> {
+      (IsEmptyList|IsEmptyArray|GetHead|GetTail)[Opname=Name(name)] -> {
 				try {
 					// System.out.println("list check: " + `name);
 					String moduleName = (String) stack.peek();
@@ -279,7 +279,7 @@ public class TomBackend extends TomGenericPlugin {
     }
 
 		visit TomTerm {
-			(TermAppl|RecordAppl|ListAppl)[nameList=nameList] -> {
+			(TermAppl|RecordAppl|ListAppl)[NameList=nameList] -> {
 				TomNameList l = `nameList;
         // System.out.println("dest " + `l);
 				while(!l.isEmptyconcTomName()) {
@@ -296,7 +296,7 @@ public class TomBackend extends TomGenericPlugin {
 				}
 				`Fail().visit(null);
 			}
-			(BuildTerm|BuildEmptyList|BuildEmptyArray)[astName=Name(name)] -> {
+			(BuildTerm|BuildEmptyList|BuildEmptyArray)[AstName=Name(name)] -> {
 				try {
 					// System.out.println("build: " + `name);
 					String moduleName = (String) stack.peek();
@@ -307,7 +307,7 @@ public class TomBackend extends TomGenericPlugin {
 					System.out.println("No moduleName in stack");
 				}
 			}
-			(BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[astName=Name(name)] -> {
+			(BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[AstName=Name(name)] -> {
 				try {
 					// System.out.println("build: " + `name);
 					String moduleName = (String) stack.peek();

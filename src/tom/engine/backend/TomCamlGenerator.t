@@ -254,7 +254,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     s.append(") = " + tlCode.getCode() + " ");
 
     %match(TargetLanguage tlCode) {
-      TL(_,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
+      TL(_,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
         output.write(0,s, `startLine, `endLine - `startLine);
         return;
       }
@@ -278,7 +278,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       matchBlock: {
         %match(TomTerm arg) {
             // in caml, we are not interested in the type of arguments
-          Variable[astName=Name(name)] -> {
+          Variable[AstName=Name(name)] -> {
             s.append(`name);
             break matchBlock;
           }

@@ -1,20 +1,20 @@
 module TomName
 imports int
 abstract syntax
-TomName = Name(string:String)
-        | PositionName(numberList:TomNumberList)
+TomName = Name(String:String)
+        | PositionName(NumberList:TomNumberList)
         | EmptyName()
 
-TomNumber = MatchNumber(number:TomNumber)
-          | PatternNumber(number:TomNumber)
-          | ListNumber(number:TomNumber)
-          | IndexNumber(number:TomNumber)
-          | Begin(number:TomNumber)
-          | End(number:TomNumber)
-          | Number(integer:int)
-          | AbsVar(number:TomNumber)
-          | RenamedVar(astName:TomName)
-          | NameNumber(astName:TomName)
+TomNumber = MatchNumber(Number:TomNumber)
+          | PatternNumber(Number:TomNumber)
+          | ListNumber(Number:TomNumber)
+          | IndexNumber(Number:TomNumber)
+          | Begin(Number:TomNumber)
+          | End(Number:TomNumber)
+          | Number(Integer:int)
+          | AbsVar(Number:TomNumber)
+          | RenamedVar(AstName:TomName)
+          | NameNumber(AstName:TomName)
           | RuleVar()
 
 TomNumberList = concTomNumber(TomNumber*)

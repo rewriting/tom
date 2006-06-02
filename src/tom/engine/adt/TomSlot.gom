@@ -3,7 +3,7 @@ imports TomSignature
 
 abstract syntax
 
-Slot = PairSlotAppl(slotName:TomName,appl:TomTerm)
+Slot = PairSlotAppl(SlotName:TomName,Appl:TomTerm)
 SlotList = concSlot(Slot*)
-PairNameDecl = PairNameDecl(slotName:TomName,slotDecl:Declaration)
+PairNameDecl = PairNameDecl(SlotName:TomName,SlotDecl:Declaration)
 PairNameDeclList = concPairNameDecl(PairNameDecl*)

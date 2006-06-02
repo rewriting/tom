@@ -1,45 +1,45 @@
 module TomInstruction
 imports TomSignature 
 abstract syntax
-Instruction = TomTermToInstruction(tom:TomTerm)
-            | TargetLanguageToInstruction(tl:TargetLanguage)
-            | If(condition:Expression,succesInst:Instruction,failureInst:Instruction)
-            | DoWhile(doInst:Instruction,condition:Expression)
-            | WhileDo(condition:Expression,doInst:Instruction)
-            | Assign(variable:TomTerm,source:Expression)
-            | Let(variable:TomTerm,source:Expression,astInstruction:Instruction)
-            | LetRef(variable:TomTerm,source:Expression,astInstruction:Instruction)
-            | LetAssign(variable:TomTerm,source:Expression,astInstruction:Instruction)
-            | AssignMatchSubject(kid1:TomTerm,source:Expression)
-            | Return(kid1:TomTerm)
+Instruction = TomTermToInstruction(Tom:TomTerm)
+            | TargetLanguageToInstruction(Tl:TargetLanguage)
+            | If(Condition:Expression,SuccesInst:Instruction,FailureInst:Instruction)
+            | DoWhile(DoInst:Instruction,Condition:Expression)
+            | WhileDo(Condition:Expression,DoInst:Instruction)
+            | Assign(Variable:TomTerm,Source:Expression)
+            | Let(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
+            | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
+            | LetAssign(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
+            | AssignMatchSubject(Kid1:TomTerm,Source:Expression)
+            | Return(Kid1:TomTerm)
             | Nop()
-            | AbstractBlock(instList:InstructionList)
-            | UnamedBlock(instList:InstructionList)
-            | NamedBlock(blockName:String,instList:InstructionList)
-            | Match(subjectList:TomTerm,astPatternInstructionList:PatternInstructionList,option:OptionList)
-            | CompiledMatch(automataInst:Instruction,option:OptionList)
-            | CompiledPattern(patternList:TomList,automataInst:Instruction)
-            | MatchingCondition(lhs:TomTerm,rhs:TomTerm)
-            | TypedEqualityCondition(tomType:TomType,lhs:TomTerm,rhs:TomTerm)
-            | EqualityCondition(lhs:TomTerm,rhs:TomTerm)
-            | CheckStamp(variable:TomTerm)
+            | AbstractBlock(InstList:InstructionList)
+            | UnamedBlock(InstList:InstructionList)
+            | NamedBlock(BlockName:String,InstList:InstructionList)
+            | Match(SubjectList:TomTerm,AstPatternInstructionList:PatternInstructionList,Option:OptionList)
+            | CompiledMatch(AutomataInst:Instruction,Option:OptionList)
+            | CompiledPattern(PatternList:TomList,AutomataInst:Instruction)
+            | MatchingCondition(Lhs:TomTerm,Rhs:TomTerm)
+            | TypedEqualityCondition(TomType:TomType,Lhs:TomTerm,Rhs:TomTerm)
+            | EqualityCondition(Lhs:TomTerm,Rhs:TomTerm)
+            | CheckStamp(Variable:TomTerm)
 
 /*
- * In Java only: check that source is an instance of astType, and then execute inst
+ * In Java Only: check that source is an instance of astType, and then execute inst
  * Otherwise: perform inst 
  */
-  | CheckInstance(astType:TomType,source:Expression,instruction:Instruction)
+  | CheckInstance(AstType:TomType,Source:Expression,Instruction:Instruction)
 
 /*
  * a RawAction is an action that comes from the original program 
  */
-  | RawAction(astInstruction:Instruction)
+  | RawAction(AstInstruction:Instruction)
 
 /*
  * a TypeAction knows the pattern to which it is attached (positivePattern),
  * and also the list a previously tried patterns, which are called negativePattern
  * This information is used to perform extra verification/certification
  */
-  | TypedAction(astInstruction:Instruction,positivePattern:Pattern,negativePatternList:PatternList)
+  | TypedAction(AstInstruction:Instruction,PositivePattern:Pattern,NegativePatternList:PatternList)
 
 InstructionList = concInstruction(Instruction*)

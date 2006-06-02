@@ -154,12 +154,12 @@ public class TomJavaGenerator extends TomImperativeGenerator {
       TomTerm localVar = varList.getHeadconcTomTerm();
       matchBlock: {
         %match(TomTerm localVar) {
-          v@Variable[astType=type2] -> {
+          v@Variable[AstType=type2] -> {
             output.write(deep,getTLType(`type2) + " ");
             generate(deep,`v,moduleName);
             break matchBlock;
           }
-          v@TLVar[astType=type2] -> {
+          v@TLVar[AstType=type2] -> {
             output.write(deep,getTLType(`type2) + " ");
             generate(deep,`v,moduleName);
             break matchBlock;
