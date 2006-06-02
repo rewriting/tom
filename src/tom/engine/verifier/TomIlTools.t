@@ -43,6 +43,8 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
+import tom.engine.adt.zenon.types.*;
+
 import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 
