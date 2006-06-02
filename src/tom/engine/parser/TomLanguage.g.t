@@ -39,9 +39,14 @@ import java.util.logging.Logger;
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomoption.types.*;
+import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.exception.TomException;
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -338,9 +343,9 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     TomTerm extendsTerm = null;
     TomType codomainType = null;
     LinkedList visitList = new LinkedList();
-    TomVisitList astVisitList = `emptyTomVisitList();
+    TomVisitList astVisitList = `concTomVisit();
     TomName orgText = null;
-    TomTypeList types = `emptyTomTypeList();
+    TomTypeList types = `concTomType();
     LinkedList options = new LinkedList();
     LinkedList slotNameList = new LinkedList();
     LinkedList pairNameDeclList = new LinkedList();
@@ -417,10 +422,10 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
            }
 					 makeTlCode += argName;
 
-           TomTerm arg = `Variable(concOption(),Name(argName),makeTypes.getHead(),concConstraint());
+           TomTerm arg = `Variable(concOption(),Name(argName),makeTypes.getHeadconcTomType(),concConstraint());
            makeArgs = `concTomTerm(makeArgs*,arg);
            
-					 makeTypes = makeTypes.getTail();
+					 makeTypes = makeTypes.getTailconcTomType();
            index++;
          }
 				 makeTlCode += ")";
@@ -449,7 +454,7 @@ strategyVisit [LinkedList list] throws TomException
 {
   LinkedList patternInstructionList = new LinkedList();
   TomType vType = null;
-  TomList subjectList = `emptyTomList();
+  TomList subjectList = `concTomTerm();
 
   clearText();
 }
@@ -485,10 +490,10 @@ strategyVisit [LinkedList list] throws TomException
 ruleConstruct [Option ot] returns [Declaration result] throws TomException
 {
     result = null;
-    TomRuleList ruleList = `emptyTomRuleList();
+    TomRuleList ruleList = `concTomRule();
     TomTerm lhs = null, rhs = null, pattern = null, subject = null;
-    TomList listOfLhs = `emptyTomList();
-    InstructionList conditionList = `emptyInstructionList();
+    TomList listOfLhs = `concTomTerm();
+    InstructionList conditionList = `concInstruction();
     TomName orgText = null;
     OptionList optionList = `concOption(ot,ModuleName(TomBase.DEFAULT_MODULE_NAME));
     clearText();
@@ -516,19 +521,19 @@ ruleConstruct [Option ot] returns [Declaration result] throws TomException
                 Option ot2 = `OriginTracking( Name("Pattern"), line, currentFile()
                 );
                 OptionList optionList2 = `concOption(ot2,OriginalText(orgText),ModuleName(TomBase.DEFAULT_MODULE_NAME));
-                while(! listOfLhs.isEmpty()){
+                while(! listOfLhs.isEmptyconcTomTerm()){
                     ruleList = (TomRuleList) ruleList.append(
                         `RewriteRule(
-                            Term(listOfLhs.getHead()),
+                            Term(listOfLhs.getHeadconcTomTerm()),
                             Term(rhs),
                             conditionList,
                             optionList2
                         )
                     );
-                    listOfLhs = listOfLhs.getTail();
+                    listOfLhs = listOfLhs.getTailconcTomTerm();
                 }
                 
-                conditionList = `emptyInstructionList();
+                conditionList = `concInstruction();
                 clearText();
             }
         )*
@@ -771,12 +776,12 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                         StringBuffer found = new StringBuffer();
                         StringBuffer expected = new StringBuffer();
                         while(!nameList.isEmpty()) {
-                            expected.append("|"+nameList.getHead().getString());
-                            nameList = nameList.getTail();
+                            expected.append("|"+nameList.getHeadconcTomName().getstring());
+                            nameList = nameList.getTailconcTomName();
                         }
                         while(!closingNameList.isEmpty()) {
-                            found.append("|"+closingNameList.getHead().getString());
-                            closingNameList = closingNameList.getTail();
+                            found.append("|"+closingNameList.getHeadconcTomName().getstring());
+                            closingNameList = closingNameList.getTailconcTomName();
                         }
                         // TODO find the orgTrack of the match
                         throw new TomException(TomMessage.malformedXMLTerm,
@@ -1404,7 +1409,7 @@ operator returns [Declaration result] throws TomException
 {
     result=null;
     Option ot = null;
-    TomTypeList types = `emptyTomTypeList();
+    TomTypeList types = `concTomType();
     LinkedList options = new LinkedList();
     LinkedList slotNameList = new LinkedList();
     LinkedList pairNameDeclList = new LinkedList();
@@ -1455,7 +1460,7 @@ operator returns [Declaration result] throws TomException
 
         |   attribute = keywordGetSlot[astName,type.getText()]
             {
-              TomName sName = attribute.getSlotName();
+              TomName sName = attribute.getslotName();
               /*
                * ensure that sName appears in slotNameList, only once
                * ensure that sName has not already been generated
@@ -1479,8 +1484,8 @@ operator returns [Declaration result] throws TomException
               }
               if(msg != null) {
                 getLogger().log(new PlatformLogRecord(Level.SEVERE, msg,
-                      new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
-                      "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ,
+                      new Object[]{currentFile(), new Integer(attribute.getorgTrack().getLine()),
+                      "%op "+type.getText(), new Integer(ot.getLine()), sName.getstring()} ,
                     currentFile(), getLine()));
               } else {
                 pairNameDeclList.set(index,`PairNameDecl(sName,attribute));
@@ -1505,7 +1510,7 @@ operator returns [Declaration result] throws TomException
 operatorList returns [Declaration result] throws TomException
 {
     result = null;
-    TomTypeList types = `emptyTomTypeList();
+    TomTypeList types = `concTomType();
     LinkedList options = new LinkedList();
     Declaration attribute = null;
 }
@@ -1552,7 +1557,7 @@ operatorList returns [Declaration result] throws TomException
 operatorArray returns [Declaration result] throws TomException
 {
     result = null;
-    TomTypeList types = `emptyTomTypeList();
+    TomTypeList types = `concTomType();
     LinkedList options = new LinkedList();
     Declaration attribute = null;
 }
@@ -1603,7 +1608,7 @@ typeTerm returns [Declaration result] throws TomException
     Declaration attribute = null;
     TargetLanguage implement = null;
     TomForwardType tomFwdType = `EmptyForward();
-    DeclarationList declarationList = `emptyDeclarationList();
+    DeclarationList declarationList = `concDeclaration();
 		String s;
 }
     :   (
@@ -1687,8 +1692,8 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 selector().pop();  
                 
                 result = `TermsEqualDecl(
-                    Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    Variable(option2,Name(name2.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option1,Name(name1.getText()),TomTypeAlone(type),concConstraint()),
+                    Variable(option2,Name(name2.getText()),TomTypeAlone(type),concConstraint()),
                     Return(TargetLanguageToTomTerm(tlCode)), ot);
             }
         )
@@ -1713,7 +1718,7 @@ keywordGetHead[TomName opname, String type] returns [Declaration result] throws 
 
                 result = `GetHeadDecl(opname,
                     symbolTable.getUniversalType(),
-                    Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
                     Return(TargetLanguageToTomTerm(tlCode)),
                     ot);
             }
@@ -1739,7 +1744,7 @@ keywordGetTail[TomName opname, String type] returns [Declaration result] throws 
                 selector().pop();  
 
                 result = `GetTailDecl(opname,
-                    Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
                     Return(TargetLanguageToTomTerm(tlCode)),
                     ot);
             }
@@ -1765,7 +1770,7 @@ keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws 
                 selector().pop(); 
 
                 result = `IsEmptyDecl(opname,
-                    Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
                     Return(TargetLanguageToTomTerm(tlCode)),
                     ot); 
             }
@@ -1793,8 +1798,8 @@ keywordGetElement[TomName opname, String type] returns [Declaration result] thro
                 selector().pop();  
                 
                 result = `GetElementDecl(opname,
-                    Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    Variable(option2,Name(name2.getText()),TomTypeAlone("int"),emptyConstraintList()),
+                    Variable(option1,Name(name1.getText()),TomTypeAlone(type),concConstraint()),
+                    Variable(option2,Name(name2.getText()),TomTypeAlone("int"),concConstraint()),
                     Return(TargetLanguageToTomTerm(tlCode)), ot);
             }
         )
@@ -1819,7 +1824,7 @@ keywordGetSize[TomName opname, String type] returns [Declaration result] throws 
                 selector().pop();  
 
                 result = `GetSizeDecl(opname,
-                    Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
                     Return(TargetLanguageToTomTerm(tlCode)),ot);
             }
         )
@@ -1843,7 +1848,7 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
             selector().pop();
 
             result = `IsFsymDecl(astName,
-                Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
+                Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
                 Return(TargetLanguageToTomTerm(tlCode)),ot);
         }
     ;
@@ -1865,7 +1870,7 @@ keywordCheckStamp [String typeString] returns [Declaration result] throws TomExc
             TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             selector().pop();
 
-            result = `CheckStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
+            result = `CheckStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
                 TargetLanguageToInstruction(tlCode),ot);
         }
     ;
@@ -1887,7 +1892,7 @@ keywordSetStamp [String typeString] returns [Declaration result] throws TomExcep
             TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             selector().pop();
 
-            result = `SetStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
+            result = `SetStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
                 Return(TargetLanguageToTomTerm(tlCode)),ot);
         }
     ;
@@ -1909,7 +1914,7 @@ keywordGetImplementation [String typeString] returns [Declaration result] throws
             TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             selector().pop();
 
-            result = `GetImplementationDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),emptyConstraintList()),
+            result = `GetImplementationDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
                 Return(TargetLanguageToTomTerm(tlCode)),ot);
         }
     ;
@@ -1935,7 +1940,7 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
 
                 result = `GetSlotDecl(astName,
                     Name(slotName.getText()),
-                    Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
                     Return(TargetLanguageToTomTerm(tlCode)), ot);
             }
         )
@@ -1945,7 +1950,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
 {
     result = null;
     Option ot = null;
-    TomList args = `emptyTomList();
+    TomList args = `concTomTerm();
     int index = 0;
     TomType type;
     int nbTypes = types.getLength();
@@ -1969,7 +1974,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                         args = (TomList) args.append(`Variable(
                                 option1,
                                 Name(typeArg.getText()),
-                                type,emptyConstraintList()
+                                type,concConstraint()
                             ));
                     }
                     ( 
@@ -1986,7 +1991,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                             args = (TomList) args.append(`Variable(
                                     option2,
                                     Name(nameArg.getText()),
-                                    type,emptyConstraintList()
+                                    type,concConstraint()
                                 ));
                         }
                     )*
@@ -2048,8 +2053,8 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
             selector().pop();
             blockList.add(tlCode);
             result = `MakeAddList(Name(name),
-                Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),emptyConstraintList()),
-                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
+                Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),
+                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
                 AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
         }
     ;
@@ -2074,7 +2079,7 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
             selector().pop();
             blockList.add(tlCode);
             result = `MakeEmptyArray(Name(name),
-                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
+                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
                 AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
         }
     ;   
@@ -2102,8 +2107,8 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
             OptionList elementOption = `concOption(elementInfo);
             
             result = `MakeAddArray(Name(name),
-                Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),emptyConstraintList()),
-                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
+                Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),concConstraint()),
+                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),concConstraint()),
                 AbstractBlock(ASTFactory.makeInstructionList(blockList)),ot);
         }
     ;

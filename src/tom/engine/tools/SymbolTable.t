@@ -30,15 +30,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import tom.engine.adt.tomsignature.TomSignatureFactory;
-import tom.engine.adt.tomsignature.types.TomSymbolList;
-import tom.engine.adt.tomsignature.types.TomEntry;
-import tom.engine.adt.tomsignature.types.TomEntryList;
-import tom.engine.adt.tomsignature.types.TomSymbol;
-import tom.engine.adt.tomsignature.types.TomSymbolTable;
-import tom.engine.adt.tomsignature.types.TomType;
-import tom.engine.adt.tomsignature.types.TomForwardType;
-import tom.engine.adt.tomsignature.types.TomTypeDefinition;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomtype.types.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 
@@ -94,10 +87,10 @@ public class SymbolTable {
 
   public void regenerateFromTerm(TomSymbolTable symbTable) {
     TomEntryList list =  symbTable.getEntryList();
-    while(!list.isEmpty()) {
-      TomEntry symb = list.getHead();
-      putSymbol(symb.getStrName(), symb.getAstSymbol());
-      list = list.getTail();
+    while(!list.isEmptyconcTomEntry()) {
+      TomEntry symb = list.getHeadconcTomEntry();
+      putSymbol(symb.getstrName(), symb.getastSymbol());
+      list = list.getTailconcTomEntry();
     }
   }
 
@@ -317,11 +310,11 @@ public class SymbolTable {
   }
 
   public void fromTerm(TomSymbolTable table) {
-    TomEntryList list = table.getEntryList();
-    while(!list.isEmpty()) {
-      TomEntry entry = list.getHead();
-      putSymbol(entry.getStrName(),entry.getAstSymbol());
-      list = list.getTail();
+    TomEntryList list = table.getentryList();
+    while(!list.isEmptyconcTomEntry()) {
+      TomEntry entry = list.getHeadconcTomEntry();
+      putSymbol(entry.getstrName(),entry.getastSymbol());
+      list = list.getTailconcTomEntry();
     }
   }
 
