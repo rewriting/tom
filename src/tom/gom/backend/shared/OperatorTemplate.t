@@ -264,6 +264,10 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
       res+= %[
   public @slotDomain(head)@ @getMethod(head)@() {
     return @fieldName(head.getname())@;
+  }
+      
+  public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ _arg) {
+    return make(@generateMakeArgsFor(head,"_arg")@);
   }]%;
     }
     return res;
@@ -503,6 +507,20 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
             res += "("+fullClassName(`domain)+") " + argName+", ";
           }
           index++;
+        }
+      }
+    }
+    return res.substring(0,res.length()-2);
+  }
+  private String generateMakeArgsFor(SlotField slot, String argName) {
+    String res = "";
+    int index = 0;
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,itslot@SlotField[name=fieldName,domain=domain],_*) -> {
+        if (`itslot == slot) {
+          res += argName+", ";
+        } else {
+          res += fieldName(`fieldName)+", ";
         }
       }
     }

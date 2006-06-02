@@ -97,14 +97,11 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
     throw new UnsupportedOperationException("This @className()@ has no @slot.getname()@");
   }
 
-]%);
+  public @className()@ @setMethod(slot)@(@slotDomain(slot)@ _arg) {
+    throw new UnsupportedOperationException("This @className()@ has no @slot.getname()@");
+  }
 
-      /* Do not generate "setSlot" methods for now
-      out.append("\tpublic "+className()+" "+setMethod(slot)+"("+slotDomain(slot)+" _arg) {\n");
-      out.append("\t\tthrow new IllegalArgumentException(\"Illegal argument: \" + _arg);\n");
-      out.append("\t}\n");
-      out.append("\n");
-      */
+]%);
 
     }
 
