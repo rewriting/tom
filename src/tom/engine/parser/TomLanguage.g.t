@@ -398,7 +398,7 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
         {
         matchBlock: {
 					%match(TomTerm extendsTerm) {
-						Composite(concTomTerm(BackQuoteAppl[astName=astName],_*)) -> {
+						Composite(concTomTerm(BackQuoteAppl[AstName=astName],_*)) -> {
 							codomainType = `Codomain(astName);
 							break matchBlock;
 						}
@@ -1479,7 +1479,7 @@ operator returns [Declaration result] throws TomException
               } else {
                 PairNameDecl pair = (PairNameDecl) pairNameDeclList.get(index);
                 %match(PairNameDecl pair) {
-                  PairNameDecl[slotDecl=decl] -> {
+                  PairNameDecl[SlotDecl=decl] -> {
                     if(`decl != `EmptyDeclaration()) {
                       msg = TomMessage.errorTwoSameSlotDecl;
                     }

@@ -238,7 +238,7 @@ public class TomSyntaxChecker extends TomChecker {
               break matchblock;
             }
             // Array specific Macro functions
-            GetElementDecl[Variable=Variable[AstName=Name(name1)],index=Variable[AstName=Name(name2)],OrgTrack=orgTrack] -> {
+            GetElementDecl[Variable=Variable[AstName=Name(name1)],Index=Variable[AstName=Name(name2)],OrgTrack=orgTrack] -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.GET_ELEMENT,verifyList,orgTrack,name1,name2, declType);
               break matchblock;
             }
@@ -385,7 +385,7 @@ public class TomSyntaxChecker extends TomChecker {
               `checkField(TomSyntaxChecker.MAKE_EMPTY,verifyList,orgTrack, symbolType);
               break matchblock;
             }
-            MakeAddArray[VarList=Variable[AstName=Name(name1)], varElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
+            MakeAddArray[VarList=Variable[AstName=Name(name1)], VarElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.MAKE_APPEND, verifyList, orgTrack, name1, name2, symbolType);
               break matchblock;
             }
@@ -394,12 +394,12 @@ public class TomSyntaxChecker extends TomChecker {
               `checkField(TomSyntaxChecker.MAKE_EMPTY,verifyList,orgTrack, symbolType);
               break matchblock;
             }
-            MakeAddList[VarList=Variable[AstName=Name(name1)], varElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
+            MakeAddList[VarList=Variable[AstName=Name(name1)], VarElt=Variable[AstName=Name(name2)], OrgTrack=orgTrack] -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.MAKE_INSERT, verifyList, orgTrack, name1, name2, symbolType);
               break matchblock;
             }
             // for a symbol
-            MakeDecl[Args=makeArgsList, orgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
+            MakeDecl[Args=makeArgsList, OrgTrack=og@OriginTracking[FileName=fileName,Line=line]] -> {
               if (!foundOpMake) {
                 foundOpMake = true;
                 `verifyMakeDeclArgs(makeArgsList, domainLength, og, symbolType);

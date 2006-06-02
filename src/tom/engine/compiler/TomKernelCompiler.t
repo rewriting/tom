@@ -359,7 +359,7 @@ public class TomKernelCompiler extends TomBase {
         return `genCheckEmptyList(p.symbol, p.subjectListName, p.action, Nop());
       }
         
-      concSlot(PairSlotAppl[Appl=var@(Variable|UnamedVariable)[astType=termType]],termTail*) -> {
+      concSlot(PairSlotAppl[Appl=var@(Variable|UnamedVariable)[AstType=termType]],termTail*) -> {
           /*
            * get an element and store it
            */

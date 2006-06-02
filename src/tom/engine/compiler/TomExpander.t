@@ -182,7 +182,7 @@ public class TomExpander extends TomGenericPlugin {
         //System.out.println("2nd depend codomain: " + getSymbolCodomain(dependSymbol));
         OptionList newOptions = `options;
         %match(OptionList options) {
-          concOption(O1*,DeclarationToOption(m@MakeDecl[astType=Codomain[]]),O2*) -> {
+          concOption(O1*,DeclarationToOption(m@MakeDecl[AstType=Codomain[]]),O2*) -> {
             Declaration newMake = `m.setAstType(codomain);
             //System.out.println("newMake: " + newMake);
             newOptions = `concOption(O1*,O2*,DeclarationToOption(newMake));
@@ -236,11 +236,11 @@ public class TomExpander extends TomGenericPlugin {
         return t;
       }
 
-      TermAppl[option=option,nameList=nameList,args=args,constraints=constraints] -> {
+      TermAppl[Option=option,NameList=nameList,Args=args,Constraints=constraints] -> {
         return expander.expandTermAppl(`option,`nameList,`args,`constraints);
       }
 
-      XMLAppl[option=optionList,nameList=nameList,attrList=list1,childList=list2,constraints=constraints] -> {
+      XMLAppl[Option=optionList,NameList=nameList,AttrList=list1,ChildList=list2,Constraints=constraints] -> {
         //System.out.println("expandXML in:\n" + subject);
         return expander.expandXMLAppl(`optionList, `nameList, `list1, `list2,`constraints);
       }
@@ -253,7 +253,7 @@ public class TomExpander extends TomGenericPlugin {
    */
   %strategy updateCodomain(expander:TomExpander) extends `Identity() {
     visit Declaration {
-      decl@GetHeadDecl[opname=Name(opName)] -> {
+      decl@GetHeadDecl[Opname=Name(opName)] -> {
         TomSymbol tomSymbol = expander.getSymbolFromName(`opName);
         TomTypeList codomain = getSymbolDomain(tomSymbol);
         if(codomain.length()==1) {
@@ -265,7 +265,7 @@ public class TomExpander extends TomGenericPlugin {
         }
       }
 
-      decl@GetHeadDecl[variable=Variable[astType=domain]] -> {
+      decl@GetHeadDecl[Variable=Variable[AstType=domain]] -> {
         TomSymbol tomSymbol = expander.getSymbolFromType(`domain);
         if(tomSymbol != null) {
           TomTypeList codomain = getSymbolDomain(tomSymbol);
@@ -287,7 +287,7 @@ public class TomExpander extends TomGenericPlugin {
    */
   %strategy expandString(expander:TomExpander) extends `Identity() {
         visit TomTerm {
-          appl@RecordAppl[nameList=(Name(tomName),_*),slots=args] -> {
+          appl@RecordAppl[NameList=(Name(tomName),_*),Slots=args] -> {
             TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);
             //System.out.println("appl = " + subject);
             if(tomSymbol != null) {
@@ -314,7 +314,7 @@ public class TomExpander extends TomGenericPlugin {
       Slot head = args.getHead();
       SlotList tail = expandChar(args.getTail());
       %match(Slot head) {
-        PairSlotAppl(slotName,appl@RecordAppl[nameList=(Name(tomName)),slots=()]) -> {
+        PairSlotAppl(slotName,appl@RecordAppl[NameList=(Name(tomName)),Slots=()]) -> {
           /*
            * ensure that the argument contains at least 1 character and 2 single quotes
            */
@@ -408,7 +408,7 @@ public class TomExpander extends TomGenericPlugin {
 
   %strategy expandBackQuoteAppl(expander:TomExpander) extends `Identity() {
         visit TomTerm {
-          BackQuoteAppl[option=optionList,astName=name@Name(tomName),args=l] -> {
+          BackQuoteAppl[Option=optionList,AstName=name@Name(tomName),Args=l] -> {
             TomSymbol tomSymbol = expander.getSymbolFromName(`tomName);
             TomList args  = (TomList) (`ChoiceTopDown(expandBackQuoteAppl(expander))).visit(`l);
 
@@ -442,50 +442,50 @@ public class TomExpander extends TomGenericPlugin {
       concTomTerm() -> { return attrList; }
       concTomTerm(X1*,e1,X2*,e2,X3*) -> {
         %match(TomTerm e1, TomTerm e2) {
-          TermAppl[args=concTomTerm(RecordAppl[nameList=(Name(name1))],_*)],
-            TermAppl[args=concTomTerm(RecordAppl[nameList=(Name(name2))],_*)] -> {
+          TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name1))],_*)],
+            TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          TermAppl[args=concTomTerm(TermAppl[nameList=(Name(name1))],_*)],
-            TermAppl[args=concTomTerm(TermAppl[nameList=(Name(name2))],_*)] -> {
+          TermAppl[Args=concTomTerm(TermAppl[NameList=(Name(name1))],_*)],
+            TermAppl[Args=concTomTerm(TermAppl[NameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          RecordAppl[slots=concSlot(PairSlotAppl(slotName,RecordAppl[nameList=(Name(name1))]),_*)],
-            RecordAppl[slots=concSlot(PairSlotAppl(slotName,RecordAppl[nameList=(Name(name2))]),_*)] -> {
+          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=(Name(name1))]),_*)],
+            RecordAppl[Slots=concSlot(PairSlotAppl(slotName,RecordAppl[NameList=(Name(name2))]),_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          RecordAppl[slots=concSlot(PairSlotAppl(slotName,TermAppl[nameList=(Name(name1))]),_*)],
-            RecordAppl[slots=concSlot(PairSlotAppl(slotName,TermAppl[nameList=(Name(name2))]),_*)] -> {
+          RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=(Name(name1))]),_*)],
+            RecordAppl[Slots=concSlot(PairSlotAppl(slotName,TermAppl[NameList=(Name(name2))]),_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          BackQuoteAppl[args=concTomTerm(RecordAppl[nameList=(Name(name1))],_*)],
-            BackQuoteAppl[args=concTomTerm(RecordAppl[nameList=(Name(name2))],_*)] -> {
+          BackQuoteAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name1))],_*)],
+            BackQuoteAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          BackQuoteAppl[args=concTomTerm(TermAppl[nameList=(Name(name1))],_*)],
-            BackQuoteAppl[args=concTomTerm(TermAppl[nameList=(Name(name2))],_*)] -> {
+          BackQuoteAppl[Args=concTomTerm(TermAppl[NameList=(Name(name1))],_*)],
+            BackQuoteAppl[Args=concTomTerm(TermAppl[NameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
             }
 
-          BackQuoteAppl[args=concTomTerm(BackQuoteAppl[astName=Name(name1)],_*)],
-            BackQuoteAppl[args=concTomTerm(BackQuoteAppl[astName=Name(name2)],_*)] -> {
+          BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name1)],_*)],
+            BackQuoteAppl[Args=concTomTerm(BackQuoteAppl[AstName=Name(name2)],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
                 return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
               }
@@ -499,7 +499,7 @@ public class TomExpander extends TomGenericPlugin {
   private static OptionList convertOriginTracking(String name,OptionList optionList) {
     Option originTracking = findOriginTracking(optionList);
     %match(Option originTracking) {
-      OriginTracking[line=line, fileName=fileName] -> {
+      OriginTracking[Line=line, FileName=fileName] -> {
         return `concOption(OriginTracking(Name(name),line,fileName));
       }
     }
