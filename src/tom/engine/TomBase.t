@@ -30,16 +30,18 @@ import java.util.*;
 import aterm.*;
 
 import tom.engine.tools.*;
+
 import tom.engine.adt.tomsignature.*;
-import tom.engine.adt.tomsignature.types.*;
-import tom.engine.adt.tomterm.*;
-import tom.engine.adt.tomterm.types.*;
-import tom.engine.adt.tomname.*;
+import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomdeclaration.types.*;
+import tom.engine.adt.tomexpression.types.*;
+import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
-import tom.engine.adt.tomtype.*;
-import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomoption.*;
 import tom.engine.adt.tomoption.types.*;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.tomtype.types.*;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -255,7 +257,7 @@ public class TomBase {
   // ------------------------------------------------------------
 	%strategy collectVariable(collection:Collection) extends `Identity() {
 		visit TomTerm {
-			v@(Variable|VariableStar)[constraints=constraintList] -> {
+			v@(Variable|VariableStar)[Constraints=constraintList] -> {
 				collection.add(`v);
 				TomTerm annotedVariable = getAssignToVariable(`constraintList);
 				if(annotedVariable!=null) {
@@ -264,7 +266,7 @@ public class TomBase {
 				`Fail().visit(`v);
 			}
 
-			v@(UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
+			v@(UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
 				TomTerm annotedVariable = getAssignToVariable(`constraintList);
 				if(annotedVariable!=null) {
 					collection.add(annotedVariable);
@@ -274,7 +276,7 @@ public class TomBase {
 
 			// to collect annoted nodes but avoid collect variables in optionSymbol
 			t@RecordAppl[slots=subterms, constraints=constraintList] -> {
-				collectVariable(collection,`subterms);
+        `TopDownCollector(collectVariable(collection)).apply(`subterm);
 				TomTerm annotedVariable = getAssignToVariable(`constraintList);
 				if(annotedVariable!=null) {
 					collection.add(annotedVariable);
@@ -285,18 +287,10 @@ public class TomBase {
 		}
 	}
 
-  protected static void collectVariable(final Collection collection, ATerm subject) {
-		try {
-			MuTraveler.init(`mu(MuVar("x"),Try(Sequence(collectVariable(collection),All(MuVar("x")))))).visit(subject);
-		} catch(jjtraveler.VisitFailure e) {
-			System.out.println("strategy failed");
-		}
-  }
-
   public static Map collectMultiplicity(ATerm subject) {
     // collect variables
     ArrayList variableList = new ArrayList();
-    collectVariable(variableList,subject);
+    `TopDownCollector(collectVariable(variableList)).apply(`subject);
     // compute multiplicities
     HashMap multiplicityMap = new HashMap();
     Iterator it = variableList.iterator();
@@ -315,7 +309,7 @@ public class TomBase {
 
   protected boolean isAnnotedVariable(TomTerm t) {
     %match(TomTerm t) {
-      (RecordAppl|Variable|VariableStar|UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
+      (RecordAppl|Variable|VariableStar|UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
         return getAssignToVariable(`constraintList)!=null;
       }
     }
@@ -524,7 +518,7 @@ public class TomBase {
         return tomSymbol.getTypesToType().getCodomain();
       }
 
-      (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[astType=type] -> { 
+      (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[AstType=type] -> { 
         return `type; 
       }
 

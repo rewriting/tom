@@ -30,9 +30,21 @@ import tom.engine.*;
 import aterm.*;
 import java.util.*;
 import tom.engine.tools.SymbolTable;
+
+import tom.engine.adt.tomsignature.*;
+import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomdeclaration.types.*;
+import tom.engine.adt.tomexpression.types.*;
+import tom.engine.adt.tominstruction.types.*;
+import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.tomtype.types.*;
 import tom.engine.adt.il.*;
 import tom.engine.adt.il.types.*;
+
 import tom.engine.exception.TomRuntimeException;
 
 import jjtraveler.reflective.VisitableVisitor;

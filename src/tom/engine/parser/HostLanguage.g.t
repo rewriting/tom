@@ -37,8 +37,20 @@ import tom.engine.Tom;
 import tom.engine.TomStreamManager;
 import tom.engine.TomMessage;
 import tom.engine.exception.*;
-import tom.engine.adt.tomsignature.types.*;
 import tom.engine.tools.SymbolTable;
+
+import tom.engine.adt.tomsignature.*;
+import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomdeclaration.types.*;
+import tom.engine.adt.tomexpression.types.*;
+import tom.engine.adt.tominstruction.types.*;
+import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomoption.types.*;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomslot.types.*;
+import tom.engine.adt.tomtype.types.*;
+
 import tom.engine.tools.ASTFactory;
 import aterm.*;
 import antlr.TokenStreamSelector;
