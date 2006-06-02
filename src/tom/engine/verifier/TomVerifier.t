@@ -49,6 +49,8 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
+import tom.platform.adt.platformoption.types.*;
+
 import aterm.ATerm;
 import tom.engine.adt.il.types.*;
 import tom.engine.adt.zenon.types.*;

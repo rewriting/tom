@@ -202,13 +202,13 @@ public class TomParserPlugin extends TomGenericPlugin {
       String outputFileName = getStreamManager().getInputParentFile()+
         File.separator + "."+
         getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
-      Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm());
+      Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm().toATerm());
       }
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
                            + PARSED_SUFFIX, (ATerm)getWorkingTerm());
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
-                           + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm());
+                           + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm().toATerm());
     }
   }
   

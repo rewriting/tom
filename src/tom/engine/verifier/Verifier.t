@@ -139,7 +139,7 @@ public class Verifier extends TomBase {
     return `repr("autre foirade avec " + expression);
   }
 
-  public String extractName(NameList nl) {
+  public String extractName(TomNameList nl) {
     %match(TomNameList nl) {
       (Name(name)) -> {
         return `name;
