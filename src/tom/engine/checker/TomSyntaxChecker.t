@@ -44,6 +44,9 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomterm.types.tomlist.*;
+import tom.engine.adt.tomtype.types.tomtypelist.*;
+import tom.engine.adt.tomname.types.tomnamelist.*;
 
 import tom.engine.xml.Constants;
 import tom.platform.OptionParser;
@@ -254,7 +257,7 @@ public class TomSyntaxChecker extends TomChecker {
     if(verifyList.contains(TomSyntaxChecker.EQUALS)) {
       verifyList.remove(verifyList.indexOf(TomSyntaxChecker.EQUALS));
     }
-    if(!verifyList.isEmptyconcTomVisit()) {
+    if(!verifyList.isEmpty()) {
       messageMissingMacroFunctions(declType, verifyList);
     }
   } //verifyTypeDecl
@@ -516,7 +519,7 @@ public class TomSyntaxChecker extends TomChecker {
 
   // each patternList shall have the expected length and each term shall be valid
   private  void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs, int nbExpectedArgs) {
-    int nbFoundArgs = termList.getLength();
+    int nbFoundArgs = ((concTomTerm)termList).length();
     if(nbFoundArgs != nbExpectedArgs) {
       OptionList og = termList.getHeadconcTomTerm().getOption();
       messageError(findOriginTrackingFileName(og),findOriginTrackingLine(og),
@@ -776,9 +779,9 @@ public class TomSyntaxChecker extends TomChecker {
             validateListOperatorArgs(args, symbol.getTypesToType().getDomain().getHeadconcTomType(),permissive);
           } else {
             // the arity is important also there are different types in Domain
-            TomTypeList  types = symbol.getTypesToType().getDomain();
-            int nbArgs = args.getLength();
-            int nbExpectedArgs = types.getLength();
+            TomTypeList types = symbol.getTypesToType().getDomain();
+            int nbArgs = ((concTomTerm)args).length();
+            int nbExpectedArgs = ((concTomType)types).length();
             if(nbArgs != nbExpectedArgs) {
               messageError(fileName,decLine, TomMessage.symbolNumberArgument,
                   new Object[]{termName, new Integer(nbExpectedArgs), new Integer(nbArgs)});
@@ -1030,7 +1033,7 @@ public class TomSyntaxChecker extends TomChecker {
     TomTypeList domainReference = null, currentDomain = null;
     TomSymbol symbol = null;
 
-    if(nameList.length()==1) { // Valid but has it a good type?
+    if(((concTomName)nameList).length()==1) { // Valid but has it a good type?
       String res = nameList.getHeadconcTomName().getString();
       symbol  =  getSymbolFromName(res);
       if (symbol == null ) {
@@ -1107,7 +1110,7 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   private  TomSymbol ensureValidRecordDisjunction(TomNameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
-    if(nameList.length()==1) { // Valid but has it a good type?
+    if(((concTomName)nameList).length()==1) { // Valid but has it a good type?
       String res = nameList.getHeadconcTomName().getString();
       TomSymbol symbol =  getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]
@@ -1199,12 +1202,12 @@ public class TomSyntaxChecker extends TomChecker {
       while(!listOfSlots.isEmptyconcPairNameDecl()) {
         SlotList listOfPair = slotList;
         TomName slotName = listOfSlots.getHeadconcPairNameDecl().getSlotName();
-        TomType expectedType = listOfTypes.getHeadconcPairNameDecl();
+        TomType expectedType = listOfTypes.getHeadconcTomType();
         if(!slotName.isEmptyName()) {
           // look for a same name (from record)
           whileBlock: {
-            while(!listOfPair.isEmptyconcPairNameDecl()) {
-              Slot pairSlotTerm = listOfPair.getHeadconcPairNameDecl();
+            while(!listOfPair.isEmptyconcSlot()) {
+              Slot pairSlotTerm = listOfPair.getHeadconcSlot();
               %match(TomName slotName, Slot pairSlotTerm) {
                 Name[String=name1], PairSlotAppl(Name[String=name1],slotSubterm) -> {
                    validateTerm(`slotSubterm ,expectedType, false, true, false);
@@ -1217,7 +1220,7 @@ public class TomSyntaxChecker extends TomChecker {
         }
         // prepare next step
         listOfSlots = listOfSlots.getTailconcPairNameDecl();
-        listOfTypes = listOfTypes.getTailconcPairNameDecl();
+        listOfTypes = listOfTypes.getTailconcTomType();
       }
 
       slotList = slotList.getTailconcSlot();

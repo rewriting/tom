@@ -287,7 +287,7 @@ public class TomBackend extends TomGenericPlugin {
 						//System.out.println("op: " + l.getHead());
 						String moduleName = (String) stack.peek();
 						//System.out.println("moduleName: " + moduleName);
-            TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHead().getString(),tb.getSymbolTable(moduleName)); 
+            TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),tb.getSymbolTable(moduleName)); 
             tb.setUsedSymbolDestructor(moduleName,tomSymbol);
 					} catch (EmptyStackException e) {
 						System.out.println("No moduleName in stack");

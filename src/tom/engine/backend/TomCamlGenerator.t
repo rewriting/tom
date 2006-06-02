@@ -40,6 +40,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tominstruction.types.instructionlist.*;
 
 import tom.engine.tools.OutputCode;
 import tom.engine.tools.SymbolTable;
@@ -88,7 +89,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException {
-    if(instList.length()==1) {
+    if(((concInstruction)instList).length()==1) {
       output.writeln(deep,"( (* begin unamed block*)");
       generateInstruction(deep+1,instList.getHeadconcInstruction(), moduleName);
       output.writeln(deep,") (* end unamed block*)");

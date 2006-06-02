@@ -156,7 +156,7 @@ public class TomTypeChecker extends TomChecker {
   }
   
   private void verifyMatchVariable(PatternInstructionList patternInstructionList) {
-    while(!patternInstructionList.isEmptyconcInstruction()) {
+    while(!patternInstructionList.isEmptyconcPatternInstruction()) {
       PatternInstruction pa = patternInstructionList.getHeadconcInstruction();
       Pattern pattern = pa.getPattern();
         // collect variables

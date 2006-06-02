@@ -94,7 +94,7 @@ options{
    private TomTerm buildBqAppl(Token id, LinkedList blockList, TomTerm term, boolean composite) {
      OptionList option = `concOption(OriginTracking(Name(id.getText()),id.getLine(),currentFile()),ModuleName(DEFAULT_ MODULE_NAME));
      TomList target = (term==null)?
-       `emptyTomList():
+       `concTomTerm():
        `concTomTerm(TargetLanguageToTomTerm(ITL(".")),term);
 
      if(composite) {
@@ -113,7 +113,7 @@ options{
     private void addTerm(LinkedList list, TomTerm term, boolean newComposite) {
       // if the list is empty put an empty composite in it to simplify the code
       if(list.isEmpty()) {
-        list.add(`Composite(emptyTomList()));
+        list.add(`Composite(concTomTerm()));
       }
       TomTerm lastElement = (TomTerm) list.getLast();
       /*
@@ -181,7 +181,7 @@ options{
 beginBackquote returns [TomTerm result]
 { 
   result = null; 
-  TomList context = `emptyTomList();
+  TomList context = `concTomTerm();
 }
 :
 ( result = mainBqTerm[context] ) { selector().pop(); }
@@ -192,7 +192,7 @@ mainBqTerm [TomList context] returns [TomTerm result]
 {
     result = null;
     TomTerm term = null;
-    TomList list = `emptyTomList();
+    TomList list = `concTomTerm();
 
     Token t = null;
     LinkedList blockList = new LinkedList();
@@ -237,7 +237,7 @@ bqTerm [TomList context] returns [TomTerm result]
 {
     result = null;
     TomTerm term = null;
-    TomList xmlTermList = `emptyTomList();
+    TomList xmlTermList = `concTomTerm();
 
     Token t = null;
     LinkedList blockList = new LinkedList();
@@ -288,7 +288,7 @@ basicTerm [TomList context] returns [TomTerm result]
 {
     result = null;
     TomTerm term = null;
-    TomList localContext = `emptyTomList();
+    TomList localContext = `concTomTerm();
 
     LinkedList blockList = new LinkedList();
 }
@@ -405,12 +405,12 @@ xmlAttribute [TomList context] returns [TomTerm result]
                         BackQuoteAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
-                            emptyTomList()
+                            concTomTerm()
                         ),
                         BackQuoteAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name("\"true\""),
-                            emptyTomList()
+                            concTomTerm()
                         ),
                         value
                     );
@@ -462,8 +462,8 @@ xmlChildren[LinkedList children, TomList context]
 xmlTerm[TomList context] returns [TomTerm result]
 {
     result = null;
-    TomList attributeTomList = `emptyTomList();
-    TomList childrenTomList = `emptyTomList();
+    TomList attributeTomList = `concTomTerm();
+    TomList childrenTomList = `concTomTerm();
     TomTerm term = null;
 
     LinkedList attributes = new LinkedList();
@@ -490,7 +490,7 @@ xmlTerm[TomList context] returns [TomTerm result]
                         BackQuoteAppl(
                             concOption(Constant(),ModuleName(TNODE_MODULE_NAME)),
                             Name(encodeName(id.getText())),
-                            emptyTomList()
+                            concTomTerm()
                         ),
                         BackQuoteAppl(
                             concOption(ModuleName(TNODE_MODULE_NAME)),
