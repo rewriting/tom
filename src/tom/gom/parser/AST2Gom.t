@@ -154,6 +154,9 @@ public class AST2Gom{
           EQUALS(_,(type,_*)) -> {
             return `concGomType(getGomType(type),tmpL*);
           }
+          COLON(_,_) -> {
+            return `concGomType(tmpL*);
+          }
         }
       }
       _ -> {
