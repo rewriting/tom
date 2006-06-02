@@ -89,7 +89,7 @@ public class Verifier extends TomBase {
       ExpressionToTomTerm(expr) -> {
         return `termFromExpresssion(expr);
       }
-      Variable[astName=name] -> {
+      Variable[AstName=name] -> {
         return `termFromTomName(name);
       }
     }
@@ -118,20 +118,20 @@ public class Verifier extends TomBase {
 
   public Term termFromExpresssion(Expression expression) {
     %match(Expression expression) {
-      GetSubterm[variable=Variable[astName=name], number=Number(index)] -> {
+      GetSubterm[Variable=Variable[AstName=name], Number=Number(index)] -> {
         // we will need to find the head symbol
         Term term = termFromTomName(`name);
         return `subterm(fsymbol("empty"),term,index);
       }
-      GetSlot[astName=Name(symbolName),slotNameString=slotName,variable=Variable[astName=name]] -> {
+      GetSlot[AstName=Name(symbolName),SlotNameString=slotName,Variable=Variable[AstName=name]] -> {
         Term term = termFromTomName(`name);
         return `slot(fsymbol(symbolName),term,slotName);
       }
-      TomTermToExpression(Variable[astName=name]) -> {
+      TomTermToExpression(Variable[AstName=name]) -> {
         Term term = termFromTomName(`name);
         return `term;
       }
-      Cast[source=expr] -> {
+      Cast[Source=expr] -> {
         return termFromExpresssion(`expr);
       }
     }
@@ -152,14 +152,14 @@ public class Verifier extends TomBase {
     %match(Expression expression) {
       TrueTL()  -> { return `iltrue(subs(undefsubs())); }
       FalseTL() -> { return `ilfalse(); }
-      EqualFunctionSymbol[exp1=Variable[astName=name],exp2=RecordAppl[nameList=symbolName]] -> {
+      EqualFunctionSymbol[Exp1=Variable[AstName=name],Exp2=RecordAppl[NameList=symbolName]] -> {
         Term term = termFromTomName(`name);
         return `isfsym(term,fsymbol(extractName(symbolName)));
       }
-      EqualFunctionSymbol[exp1=term1,exp2=RecordAppl[nameList=symbolName]] -> {
+      EqualFunctionSymbol[Exp1=term1,Exp2=RecordAppl[NameList=symbolName]] -> {
         return `isfsym(termFromTomTerm(term1),fsymbol(extractName(symbolName)));
       }
-      EqualTerm[kid1=t1,kid2=t2] -> {
+      EqualTerm[Kid1=t1,Kid2=t2] -> {
         return `eq(termFromTomTerm(t1),termFromTomTerm(t2));
       }
     }
@@ -181,7 +181,7 @@ public class Verifier extends TomBase {
 
   public Instr instrFromInstruction(Instruction automata) {
     %match(Instruction automata) {
-      TypedAction[positivePattern=positivePattern,negativePatternList=negativePatternList] -> {
+      TypedAction[PositivePattern=positivePattern,NegativePatternList=negativePatternList] -> {
         return `accept(positivePattern,negativePatternList);
       }
 
@@ -190,13 +190,13 @@ public class Verifier extends TomBase {
                     instrFromInstruction(ift),
                     instrFromInstruction(iff));
       }
-      Let(Variable[astName=avar],expr,body) -> {
+      Let(Variable[AstName=avar],expr,body) -> {
         Variable thevar = variableFromTomName(`avar);
         return `ILLet(thevar,
                       termFromExpresssion(expr),
                       instrFromInstruction(body));
       }
-      LetAssign(Variable[astName=avar],expr,body) -> {
+      LetAssign(Variable[AstName=avar],expr,body) -> {
         Variable thevar = variableFromTomName(`avar);
         return `ILLet(thevar,
                       termFromExpresssion(expr),
@@ -205,7 +205,7 @@ public class Verifier extends TomBase {
       (Let|LetAssign)(UnamedVariable[],_,body) -> {
         return instrFromInstruction(`body);
       }
-      CompiledPattern[automataInst=instr] -> {
+      CompiledPattern[AutomataInst=instr] -> {
         return instrFromInstruction(`instr);
       }
       AbstractBlock(concInstruction(CheckStamp[],instr)) -> {
@@ -229,13 +229,13 @@ public class Verifier extends TomBase {
       accept(positive,_) -> {
         Pattern positivePattern = (Pattern) `positive;
         %match(Pattern positivePattern) {
-          Pattern[subjectList=subjectList] -> {
+          Pattern[SubjectList=subjectList] -> {
             TomList sl = `subjectList;
             while(!sl.isEmpty()) {
               TomTerm subject = sl.getHead();
               sl=sl.getTail();
               %match(TomTerm subject) {
-                Variable[astName=name] -> {
+                Variable[AstName=name] -> {
                   substitution = `subs(substitution*,
                                        is(
                                           variableFromTomName(name),
@@ -342,7 +342,7 @@ public class Verifier extends TomBase {
 
   %strategy acceptCollector(store:Collection) extends `Identity() {
     visit Instruction {
-      TypedAction[positivePattern=positive,negativePatternList=negative]  -> {
+      TypedAction[PositivePattern=positive,NegativePatternList=negative]  -> {
         store.add(`accept(positive,negative));
       }
     }
@@ -420,7 +420,7 @@ public class Verifier extends TomBase {
       ilnot(e) -> {
         return `ilnot(reduceWithMappingRules(e));
       }
-      iltrue[subst=substitutionList] -> {
+      iltrue[Subst=substitutionList] -> {
         return `iltrue(reduceSubstitutionWithMappingRules(substitutionList));
       }
       ilfalse[] -> {

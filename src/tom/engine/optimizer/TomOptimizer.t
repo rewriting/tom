@@ -165,7 +165,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy inlineInstrOnce(variableName:TomName, expression:Expression) extends `Identity(){
     visit TomTerm { 
-      (Variable|VariableStar)[astName=name] -> {
+      (Variable|VariableStar)[AstName=name] -> {
         if(variableName == `name) {
           return `ExpressionToTomTerm(expression);
         }
@@ -179,7 +179,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy findOccurence(variableName:TomName, list:ArrayList) extends `Identity(){
     visit TomTerm{ 
-      t@(Variable|VariableStar)[astName=name] -> {
+      t@(Variable|VariableStar)[AstName=name] -> {
         if(variableName == `name) {
           list.add(`t);
         }
@@ -194,13 +194,13 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %strategy findAssignment(variableName:TomName) extends `Identity(){
     visit Instruction {
-      Assign[variable=(Variable|VariableStar)[astName=name]] -> {
+      Assign[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(variableName == `name) {
           throw new VisitFailure();
         }
       }
 
-      LetAssign[variable=(Variable|VariableStar)[astName=name]] -> {
+      LetAssign[Variable=(Variable|VariableStar)[AstName=name]] -> {
         if(variableName == `name) {
           throw new VisitFailure();
         }
@@ -227,7 +227,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
     %strategy findRefVariable(set: HashSet) extends `Identity(){
       visit TomTerm {
-        Ref((Variable|VariableStar)[astName=name])  -> {
+        Ref((Variable|VariableStar)[AstName=name])  -> {
           set.add(`name);
           //stop to visit this branch (like "return false" with traversal) 
           throw new VisitFailure();
@@ -245,7 +245,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
     %strategy renameVariableOnce(variable1:TomName, variable2:TomName) extends `Identity() {
       visit TomTerm{
-        var@(Variable|VariableStar)[astName=astName] -> {
+        var@(Variable|VariableStar)[AstName=astName] -> {
           if(variable1 == `astName) {
             return `var.setAstName(variable2);
           }
@@ -275,7 +275,7 @@ public class TomOptimizer extends TomGenericPlugin {
          * 
          * LetRef x where x is used 0 or 1 ==> eliminate
          */
-        (LetRef|LetAssign)(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
+        (LetRef|LetAssign)(var@(Variable|VariableStar)[AstName=name@Name(tomName)],exp,body) -> {
           ArrayList list  = new ArrayList();
           MuTraveler.init(`computeOccurences(name,list)).visit(`body);
           int mult = list.size();
@@ -319,7 +319,7 @@ public class TomOptimizer extends TomGenericPlugin {
           return `body; 
         } 
 
-        Let(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
+        Let(var@(Variable|VariableStar)[AstName=name@Name(tomName)],exp,body) -> {
           ArrayList list  = new ArrayList();
           MuTraveler.init(`computeOccurences(name,list)).visit(`body);
           int mult = list.size();
@@ -409,7 +409,7 @@ public class TomOptimizer extends TomGenericPlugin {
 
     %strategy BlockFusion() extends `Identity() {
       visit Instruction {
-        AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar)[astName=name1],term1,body1),Let(var2@(Variable|VariableStar)[astName=name2],term2,body2),X2*)) -> {
+        AbstractBlock(concInstruction(X1*,Let(var1@(Variable|VariableStar)[AstName=name1],term1,body1),Let(var2@(Variable|VariableStar)[AstName=name2],term2,body2),X2*)) -> {
           /* Fusion de 2 blocs Let contigus instanciant deux variables egales */
           if(`compare(term1,term2)) {
             if(`compare(var1,var2)) {

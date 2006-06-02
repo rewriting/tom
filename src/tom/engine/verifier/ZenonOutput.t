@@ -154,7 +154,7 @@ public class ZenonOutput {
     // theorem to prove
     %match(DerivTree tree) {
       (derivrule|derivrule2)
-        [post=ebs[rhs=env(subsList,accept(positive,negative))]] -> {
+        [Post=ebs[Rhs=env(subsList,accept(positive,negative))]] -> {
         Pattern positivePattern = (Pattern)`positive;
         PatternList negativePatternList = (PatternList)`negative;
         Map variableMap = ztermVariableMapFromSubstitutionList(`subsList,
@@ -383,12 +383,12 @@ public class ZenonOutput {
 
   public void collectConstraints(DerivTree tree, Map conditions) {
     %match(DerivTree tree) {
-      derivrule[pre=pre,cond=condition] -> {
+      derivrule[Pre=pre,Cond=condition] -> {
         String condname = Integer.toString(conditions.size()+1);
         conditions.put(condname,`condition);
         collectConstraints(`pre,conditions);
       }
-      derivrule2[pre=pre,pre2=pre2,cond=condition] -> {
+      derivrule2[Pre=pre,Pre2=pre2,Cond=condition] -> {
         String condname = Integer.toString(conditions.size()+1);
         conditions.put(condname,`condition);
         collectConstraints(`pre,conditions);

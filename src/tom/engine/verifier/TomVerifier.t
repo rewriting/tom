@@ -169,7 +169,7 @@ public class TomVerifier extends TomGenericPlugin {
 
   %strategy collectMatch(collection:Collection) extends `Identity() {
     visit Instruction {
-      CompiledMatch[automataInst=automata]  -> {
+      CompiledMatch[AutomataInst=automata]  -> {
         collection.add(`automata);
       }
     }
@@ -209,14 +209,14 @@ public class TomVerifier extends TomGenericPlugin {
       (UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {
         return `inst;
       }
-      (Let|LetRef|LetAssign)[variable=(UnamedVariable|UnamedVariableStar)[],astInstruction=body] -> {
+      (Let|LetRef|LetAssign)[Variable=(UnamedVariable|UnamedVariableStar)[],AstInstruction=body] -> {
         return `body;
       }
 
-      CompiledPattern[automataInst=inst] -> {
+      CompiledPattern[AutomataInst=inst] -> {
         return `inst;
       }
-      CheckInstance[instruction=inst] -> {
+      CheckInstance[Instruction=inst] -> {
         return `inst;
       }
     }
@@ -316,7 +316,7 @@ public class TomVerifier extends TomGenericPlugin {
   public String patternToString(Pattern pattern) {
     String result = "";
     %match(Pattern pattern) {
-      Pattern[tomList=tomList] -> {
+      Pattern[TomList=tomList] -> {
         return patternToString(`tomList);
       }
     }
@@ -342,7 +342,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
   public String patternToString(TomTerm tomTerm) {
     %match(TomTerm tomTerm) {
-      TermAppl[nameList=concTomName(Name(name),_*),args=childrens] -> {
+      TermAppl[NameList=concTomName(Name(name),_*),Args=childrens] -> {
         if (`childrens.isEmpty()) {
           return `name;
         } else {
@@ -359,7 +359,7 @@ public class TomVerifier extends TomGenericPlugin {
           return `name;
         }
       }
-      Variable[astName=Name(name)] -> {
+      Variable[AstName=Name(name)] -> {
         return `name;
       }
       UnamedVariable[] -> {
