@@ -431,11 +431,13 @@ return null; } } } }
   }
 
   protected static int getSlotIndex(TomSymbol tomSymbol, TomName slotName) {
+    //System.out.println("symbol = " + tomSymbol);
+    //System.out.println("slotName = " + slotName);
     int index = 0;
     PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
     while(!pairNameDeclList.isEmpty()) {
       TomName name = pairNameDeclList.getHead().getSlotName();
-      // System.out.println("index = " + index + " name = " + name);
+      //System.out.println("index = " + index + " name = " + name);
       if(slotName.equals(name)) {
         return index; 
       }
@@ -446,12 +448,19 @@ return null; } } } }
   }
 
   protected static TomType getSlotType(TomSymbol symbol, TomName slotName) {
-     if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) { { tom.engine.adt.tomsignature.types.TomSymbol tom_match21_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol); if (tom_is_fun_sym_Symbol(tom_match21_1) ||  false ) { { tom.engine.adt.tomsignature.types.TomType tom_match21_1_typesToType=tom_get_slot_Symbol_typesToType(tom_match21_1); if (tom_is_fun_sym_TypesToType(tom_match21_1_typesToType) ||  false ) { { tom.engine.adt.tomsignature.types.TomTypeList tom_match21_1_typesToType_domain=tom_get_slot_TypesToType_domain(tom_match21_1_typesToType); { tom.engine.adt.tomsignature.types.TomType tom_match21_1_typesToType_codomain=tom_get_slot_TypesToType_codomain(tom_match21_1_typesToType); { tom.engine.adt.tomsignature.types.TomTypeList tom_typeList=tom_match21_1_typesToType_domain; if ( true ) {
-
-        int index = getSlotIndex(symbol,slotName);
-        return (TomType)tom_typeList.elementAt(index);
-       } } } } } } } } }
-
+    if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol) {
+      tom.engine.adt.tomsignature.types.TomSymbol tom_match21_1=(( tom.engine.adt.tomsignature.types.TomSymbol)symbol);
+      if (tom_is_fun_sym_Symbol(tom_match21_1)) { 
+        tom.engine.adt.tomsignature.types.TomType tom_match21_1_typesToType=tom_get_slot_Symbol_typesToType(tom_match21_1);
+        if (tom_is_fun_sym_TypesToType(tom_match21_1_typesToType)) { 
+          tom.engine.adt.tomsignature.types.TomTypeList tom_match21_1_typesToType_domain=tom_get_slot_TypesToType_domain(tom_match21_1_typesToType); 
+              tom.engine.adt.tomsignature.types.TomType tom_match21_1_typesToType_codomain=tom_get_slot_TypesToType_codomain(tom_match21_1_typesToType); 
+                tom.engine.adt.tomsignature.types.TomTypeList tom_typeList=tom_match21_1_typesToType_domain;
+                int index = getSlotIndex(symbol,slotName);
+                return (TomType)tom_typeList.elementAt(index);
+        } 
+      }
+    }
     throw new TomRuntimeException("getSlotType: bad slotName error");
   }
 

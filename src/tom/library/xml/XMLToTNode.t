@@ -263,11 +263,11 @@ public class XMLToTNode {
 
   private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
     %match(TNode elt, TNodeList list) {
-      AttributeNode[name=_], concTNode() -> {
+      AttributeNode[Name=_], concTNode() -> {
         return `concTNode(elt,list*);
       }
 
-      AttributeNode[name=name1], concTNode(head@AttributeNode[name=name2],tail*) -> {
+      AttributeNode[Name=name1], concTNode(head@AttributeNode[Name=name2],tail*) -> {
         if(`name1.compareTo(`name2) >= 0) {
           TNodeList tl = insertSortedAttribute(elt,`tail*);
           return `concTNode(head,tl*);

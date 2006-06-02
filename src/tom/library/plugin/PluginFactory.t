@@ -73,7 +73,6 @@ import tom.platform.adt.platformoption.types.*;
 public class PluginFactory implements Plugin {
 
   %include{ adt/tnode/TNode.tom }
-
   %include{ adt/platformoption/PlatformOption.tom }
 
   private PlatformOptionList allDeclaredOptions;
@@ -242,7 +241,7 @@ public class PluginFactory implements Plugin {
       fact@<factory></factory> -> {
 
         %match(TNode fact) {
-          ElementNode[childList = cl] -> {
+          ElementNode[ChildList=cl] -> {
             while(!(`cl.isEmptyconcTNode())) {
               TNode pluginNode = `cl.getHeadconcTNode();
 
