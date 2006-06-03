@@ -75,7 +75,7 @@ public class ASTFactory {
     Object array[] = c.toArray();
     TomList list = `concTomTerm();
     for(int i=array.length-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)array[i];
+      Object elt = array[i];
       TomTerm term;
       if(elt instanceof TargetLanguage) {
         term = `TargetLanguageToTomTerm((TargetLanguage)elt);
@@ -101,7 +101,7 @@ public class ASTFactory {
     Object array[] = c.toArray();
     InstructionList list = `concInstruction();
     for(int i=array.length-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)array[i];
+      Object elt = array[i];
       Instruction term;
       if(elt instanceof TargetLanguage) {
         term = `TargetLanguageToInstruction((TargetLanguage)elt);
@@ -111,8 +111,9 @@ public class ASTFactory {
       } else if(elt instanceof Instruction) {
         term = (Instruction)elt;
       } else {
+        /* XXX: is this an error ? if yes, it should not be that silent */
         System.out.println("elt   = " + elt);
-        term = (Instruction)elt;
+        term = (Instruction) elt;
       }
       list = `concInstruction(term,list*);
     }
@@ -122,7 +123,7 @@ public class ASTFactory {
   public static OptionList makeOptionList(List argumentList) {
     OptionList list = `concOption();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)argumentList.get(i);
+      Object elt = argumentList.get(i);
       Option term;
       if(elt instanceof TomName) {
         term = `TomNameToOption((TomName)elt);
@@ -131,7 +132,7 @@ public class ASTFactory {
       } else if(elt instanceof TomTerm) {
         term = `TomTermToOption((TomTerm)elt);
       } else {
-        term = (Option)elt;
+        term = (Option) elt;
       }
       list = `concOption(term,list*);
     }
@@ -141,7 +142,7 @@ public class ASTFactory {
   public static ConstraintList makeConstraintList(List argumentList) {
     ConstraintList list = `concConstraint();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)argumentList.get(i);
+      Object elt = argumentList.get(i);
       Constraint term;
       term = (Constraint)elt;
       list = `concConstraint(term,list*);
@@ -152,7 +153,7 @@ public class ASTFactory {
   public static TomNameList makeNameList(List argumentList) {
     TomNameList list = `concTomName();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)argumentList.get(i);
+      Object elt = argumentList.get(i);
       TomName term = (TomName) elt;
       list = `concTomName(term,list*);
     }
@@ -162,7 +163,7 @@ public class ASTFactory {
   public static SlotList makeSlotList(List argumentList) {
     SlotList list = `concSlot();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)argumentList.get(i);
+      Object elt = argumentList.get(i);
       Slot term = (Slot) elt;
       list = `concSlot(term,list*);
     }
@@ -172,7 +173,7 @@ public class ASTFactory {
   public static PairNameDeclList makePairNameDeclList(List argumentList) {
     PairNameDeclList list = `concPairNameDecl();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)argumentList.get(i);
+      Object elt = argumentList.get(i);
       PairNameDecl term = (PairNameDecl) elt;
       list = `concPairNameDecl(term,list*);
     }
@@ -182,7 +183,7 @@ public class ASTFactory {
   public static PatternInstructionList makePatternInstructionList(List argumentList) {
     PatternInstructionList list = `concPatternInstruction();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)argumentList.get(i);
+      Object elt = argumentList.get(i);
       PatternInstruction term;
       term = (PatternInstruction)elt;
       list = `concPatternInstruction(term,list*);
@@ -193,7 +194,7 @@ public class ASTFactory {
   public static TomVisitList makeTomVisitList(List argumentList) {
     TomVisitList list = `concTomVisit();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)argumentList.get(i);
+      Object elt = argumentList.get(i);
       TomVisit term;
       term = (TomVisit)elt;
       list = `concTomVisit(term,list*);
