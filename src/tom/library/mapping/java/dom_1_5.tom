@@ -113,13 +113,13 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
 }
 
 
-%op TDocument DocumentNode(docType:TNode, docElem:TNode) {
+%op TDocument DocumentNode(DocType:TNode, DocElem:TNode) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.DOCUMENT_NODE)}
   get_slot(DocType,t) { ((org.w3c.dom.Document)t).getDoctype()}
   get_slot(DocElem,t) { ((org.w3c.dom.Document)t).getDocumentElement()}
 }
 
-%op TNode DocumentTypeNode(name:String, publicId:String, systemId:String, internalSubset:String, entities:TNodeList, notations:TNodeList) {
+%op TNode DocumentTypeNode(Name:String, PublicId:String, SystemId:String, InternalSubset:String, Entities:TNodeList, Notations:TNodeList) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.DOCUMENT_TYPE_NODE)}
   get_slot(Name,t) { ((org.w3c.dom.DocumentType)t).getName()}
   get_slot(PublicId,t) { ((org.w3c.dom.DocumentType)t).getPublicId()}
@@ -129,7 +129,7 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
   get_slot(Notations,t) { tom_mapping_buildNamedNodeMap(((org.w3c.dom.DocumentType)t).getNotations())}
 }
 
-%op TNode EntityReferenceNode(doc:TDocument, name:String, childList:TNodeList) {
+%op TNode EntityReferenceNode(Doc:TDocument, Name:String, ChildList:TNodeList) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.ENTITY_REFERENCE_NODE)}
   get_slot(Name,t) { ((org.w3c.dom.EntityReference)t).getNodeName()}
   get_slot(ChildList,t) { tom_mapping_buildTNodeList(((org.w3c.dom.EntityReference)t).getChildNodes())}
@@ -137,20 +137,20 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
   make(doc, t0, t1) { tom_mapping_buildEntityReference(doc,t0,t1) }	  
 }
 
-%op TNode EntityNode(notationName:String, publicId:String, systemId:String) {
+%op TNode EntityNode(NotationName:String, PublicId:String, SystemId:String) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.ENTITY_NODE)}
   get_slot(NotationName,t) { ((org.w3c.dom.Entity)t).getNotationName()}
   get_slot(PublicId,t) { ((org.w3c.dom.Entity)t).getPublicId()}
   get_slot(SystemId,t) { ((org.w3c.dom.Entity)t).getSystemId()}
 }
 
-%op TNode NotationNode(publicId:String, systemId:String) {
+%op TNode NotationNode(PublicId:String, systemId:String) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.NOTATION_NODE)}
   get_slot(PublicId,t) { ((org.w3c.dom.Notation)t).getPublicId()}
   get_slot(SystemId,t) { ((org.w3c.dom.Notation)t).getSystemId()}
 }
 
-%op TNode CommentNode(doc:TDocument, data:String) {
+%op TNode CommentNode(Doc:TDocument, Data:String) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.COMMENT_NODE)}
   get_slot(Data,t) { ((org.w3c.dom.Comment)t).getData()}
   get_slot(Doc,t) { ((org.w3c.dom.Comment)t).getOwnerDocument()}
@@ -158,7 +158,7 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
 }
 
 
-%op TNode ProcessingInstructionNode(doc:TDocument, target:String, data:String) {
+%op TNode ProcessingInstructionNode(Doc:TDocument, Target:String, Data:String) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.PROCESSING_INSTRUCTION_NODE)}
   get_slot(Target,t) { ((org.w3c.dom.ProcessingInstruction)t).getTarget()}
   get_slot(Data,t) { ((org.w3c.dom.ProcessingInstruction)t).getData()}
@@ -166,7 +166,7 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
   make(doc, t0, t1) { doc.createProcessingInstruction(t0,t1) }
 }
 
-%op TNode CDATASectionNode(doc:TDocument, data:String) {
+%op TNode CDATASectionNode(Doc:TDocument, Data:String) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.CDATA_SECTION_NODE)}
   get_slot(Data,t) { ((org.w3c.dom.CDATASection)t).getData()}
   get_slot(Doc,t) { ((org.w3c.dom.CDATASection)t).getOwnerDocument()}
@@ -193,7 +193,7 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
 }
 
 
-%op TNode ElementNode(doc:TDocument, name:String, attrList:TNodeList, childList:TNodeList) {
+%op TNode ElementNode(doc:TDocument, name:String, AttrList:TNodeList, ChildList:TNodeList) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.ELEMENT_NODE)}
 
   get_slot(Name,t) { ((org.w3c.dom.Element)t).getNodeName()}
@@ -203,7 +203,7 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
   make(t0, t2, t3, t4) { tom_mapping_buildElement(t0,t2,t3,t4)}
 }
 
-%op TNode AttributeNode(doc:TDocument, name:String, specified:String,  value:String) {
+%op TNode AttributeNode(Doc:TDocument, Name:String, Specified:String,  Value:String) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.ATTRIBUTE_NODE)}
   get_slot(Name,t) { ((org.w3c.dom.Attr)t).getName()}
   get_slot(Specified,t) { (((org.w3c.dom.Attr)t).getSpecified()?"true":"false") }
@@ -212,7 +212,7 @@ public static java.util.ArrayList<Node> tom_mapping_newTNodeList() {
   make(t0, t1, t2, t3) { tom_mapping_buildAttribute(t0,t1,t3) }
 }
 
-%op TNode TextNode(dom:TDocument,data:String) {
+%op TNode TextNode(Dom:TDocument,Data:String) {
   is_fsym(t) { (t!= null) && (t.getNodeType()==org.w3c.dom.Node.TEXT_NODE )}
   get_slot(Data,t) { t.getNodeValue() }
   get_slot(Dom,t) { t.getOwnerDocument()}
