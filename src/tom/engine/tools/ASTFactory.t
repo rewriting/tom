@@ -65,7 +65,7 @@ public class ASTFactory {
   public static TomList reverse(TomList l) {
     TomList reverse = `concTomTerm();
     while(!l.isEmptyconcTomTerm()){
-      reverse = cons(l.getHeadconcTomTerm(),reverse);
+      reverse = `concTomTerm(l.getHeadconcTomTerm(),reverse*);
       l = l.getTailconcTomTerm();
     }
     return reverse;
@@ -398,7 +398,7 @@ public class ASTFactory {
     %match(TomList list) {
       concTomTerm() -> { return `concTomTerm();}
       concTomTerm(head,tail*) -> {
-        TomList tl = metaEncodeTermList(symbolTable,tail*);
+        TomList tl = metaEncodeTermList(symbolTable,`tail);
         return `concTomTerm(metaEncodeXMLAppl(symbolTable,head),tl*);
       }
     }
