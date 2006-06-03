@@ -1,97 +1,81 @@
+
 %include { string.tom }
 %include { int.tom }
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
-%typeterm PlatformOptionList{
-  implement { tom.platform.adt.platformoption.types.PlatformOptionList}
-  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionVisitableFwd}
-  equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformOptionList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
-  get_implementation(t) {t}
+
+%typeterm PlatformOption {
+  implement { tom.platform.adt.platformoption.types.PlatformOption }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
 
-%oplist PlatformOptionList concPlatformOption(PlatformOption*) {
-  is_fsym(t) {(t!= null) && t.isSortPlatformOptionList()}
-  make_empty() {tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformOptionList()}
-  make_insert(e,l) {tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformOptionList(e,l)}
-  get_head(l) {l.getHead()}
-  get_tail(l) {l.getTail()}
-  is_empty(l) {l.isEmpty()}
+
+%typeterm PlatformOptionList {
+  implement { tom.platform.adt.platformoption.types.PlatformOptionList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
-%op PlatformOptionList emptyPlatformOptionList() {
-  is_fsym(t) { (t!= null) && t.isEmpty()}
-  make() {tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformOptionList()}
+
+
+%typeterm PlatformBoolean {
+  implement { tom.platform.adt.platformoption.types.PlatformBoolean }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
-%op PlatformOptionList manyPlatformOptionList(head:PlatformOption, tail:PlatformOptionList) {
-  is_fsym(t) { (t!= null) && t.isMany()}
-  get_slot(head,t) { t.getHead()}
-  get_slot(tail,t) { t.getTail()}
-  make(e,l) {tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformOptionList(e,l)}
+
+
+%typeterm PlatformValue {
+  implement { tom.platform.adt.platformoption.types.PlatformValue }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
-%typeterm PlatformBoolean{
-  implement { tom.platform.adt.platformoption.types.PlatformBoolean}
-  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionVisitableFwd}
-  equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformBoolean)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
-  get_implementation(t) {t}
+
+%op PlatformOption PluginOption(Name:String, AltName:String, Description:String, Value:PlatformValue, AttrName:String) {
+  is_fsym(t) { (t!=null) && t.isPluginOption() }
+  get_slot(Name, t) { t.getName() }
+  get_slot(AltName, t) { t.getAltName() }
+  get_slot(Description, t) { t.getDescription() }
+  get_slot(Value, t) { t.getValue() }
+  get_slot(AttrName, t) { t.getAttrName() }
+  make(t0, t1, t2, t3, t4) { tom.platform.adt.platformoption.types.platformoption.PluginOption.make(t0, t1, t2, t3, t4)}
 }
 
 %op PlatformBoolean False() {
-  is_fsym(t) { (t!= null) && t.isFalse()}
-  make() { tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformBoolean_False()}
+  is_fsym(t) { (t!=null) && t.isFalse() }
+  make() { tom.platform.adt.platformoption.types.platformboolean.False.make()}
 }
 
 %op PlatformBoolean True() {
-  is_fsym(t) { (t!= null) && t.isTrue()}
-  make() { tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformBoolean_True()}
+  is_fsym(t) { (t!=null) && t.isTrue() }
+  make() { tom.platform.adt.platformoption.types.platformboolean.True.make()}
 }
 
-%typeterm PlatformValue{
-  implement { tom.platform.adt.platformoption.types.PlatformValue}
-  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionVisitableFwd}
-  equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformValue)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
-  get_implementation(t) {t}
+%op PlatformValue IntegerValue(IntegerValue:int) {
+  is_fsym(t) { (t!=null) && t.isIntegerValue() }
+  get_slot(IntegerValue, t) { t.getIntegerValue() }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.IntegerValue.make(t0)}
 }
 
-%op PlatformValue IntegerValue(integerValue:int) {
-  is_fsym(t) { (t!= null) && t.isIntegerValue()}
-  get_slot(integerValue,t) { t.getIntegerValue()}
-  make(t0) { tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformValue_IntegerValue(t0)}
+%op PlatformValue StringValue(StringValue:String) {
+  is_fsym(t) { (t!=null) && t.isStringValue() }
+  get_slot(StringValue, t) { t.getStringValue() }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.StringValue.make(t0)}
 }
 
-%op PlatformValue StringValue(stringValue:String) {
-  is_fsym(t) { (t!= null) && t.isStringValue()}
-  get_slot(stringValue,t) { t.getStringValue()}
-  make(t0) { tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformValue_StringValue(t0)}
+%op PlatformValue BooleanValue(BooleanValue:PlatformBoolean) {
+  is_fsym(t) { (t!=null) && t.isBooleanValue() }
+  get_slot(BooleanValue, t) { t.getBooleanValue() }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make(t0)}
 }
 
-%op PlatformValue BooleanValue(booleanValue:PlatformBoolean) {
-  is_fsym(t) { (t!= null) && t.isBooleanValue()}
-  get_slot(booleanValue,t) { t.getBooleanValue()}
-  make(t0) { tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformValue_BooleanValue(t0)}
-}
 
-%typeterm PlatformOption{
-  implement { tom.platform.adt.platformoption.types.PlatformOption}
-  visitor_fwd { tom.platform.adt.platformoption.PlatformOptionVisitableFwd}
-  equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformOption)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
-  get_implementation(t) {t}
+%oplist PlatformOptionList concPlatformOption(PlatformOption*) {
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption || t instanceof tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption }
+  make_empty() { tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make() }
+  make_insert(e,l) { tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make(e,l) }
+  get_head(l) { l.getHeadconcPlatformOption() }
+  get_tail(l) { l.getTailconcPlatformOption() }
+  is_empty(l) { l.isEmptyconcPlatformOption() }
 }
-
-%op PlatformOption PluginOption(name:String, altName:String, description:String, value:PlatformValue, attrName:String) {
-  is_fsym(t) { (t!= null) && t.isPluginOption()}
-  get_slot(name,t) { t.getName()}
-  get_slot(altName,t) { t.getAltName()}
-  get_slot(description,t) { t.getDescription()}
-  get_slot(value,t) { t.getValue()}
-  get_slot(attrName,t) { t.getAttrName()}
-  make(t0, t1, t2, t3, t4) { tom.platform.adt.platformoption.PlatformOptionFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makePlatformOption_PluginOption(t0, t1, t2, t3, t4)}
-}
-

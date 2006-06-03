@@ -65,6 +65,13 @@ public PomGomLexer(LexerSharedInputState state) {
 	caseSensitiveLiterals = true;
 	setCaseSensitive(true);
 	literals = new Hashtable();
+	literals.put(new ANTLRHashString("imports", this), new Integer(6));
+	literals.put(new ANTLRHashString("abstract", this), new Integer(9));
+	literals.put(new ANTLRHashString("private", this), new Integer(20));
+	literals.put(new ANTLRHashString("module", this), new Integer(4));
+	literals.put(new ANTLRHashString("public", this), new Integer(7));
+	literals.put(new ANTLRHashString("syntax", this), new Integer(10));
+	literals.put(new ANTLRHashString("sorts", this), new Integer(8));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -149,45 +156,31 @@ tryAgain:
 					theRetToken=_returnToken;
 					break;
 				}
+				case 'A':  case 'B':  case 'C':  case 'D':
+				case 'E':  case 'F':  case 'G':  case 'H':
+				case 'I':  case 'J':  case 'K':  case 'L':
+				case 'M':  case 'N':  case 'O':  case 'P':
+				case 'Q':  case 'R':  case 'S':  case 'T':
+				case 'U':  case 'V':  case 'W':  case 'X':
+				case 'Y':  case 'Z':  case 'a':  case 'b':
+				case 'c':  case 'd':  case 'e':  case 'f':
+				case 'g':  case 'h':  case 'i':  case 'j':
+				case 'k':  case 'l':  case 'm':  case 'n':
+				case 'o':  case 'p':  case 'q':  case 'r':
+				case 's':  case 't':  case 'u':  case 'v':
+				case 'w':  case 'x':  case 'y':  case 'z':
+				{
+					mID(true);
+					theRetToken=_returnToken;
+					break;
+				}
 				default:
-					if ((LA(1)=='m') && (LA(2)=='o')) {
-						mMODULE(true);
-						theRetToken=_returnToken;
-					}
-					else if ((LA(1)=='i') && (LA(2)=='m')) {
-						mIMPORTS(true);
-						theRetToken=_returnToken;
-					}
-					else if ((LA(1)=='p') && (LA(2)=='u')) {
-						mPUBLIC(true);
-						theRetToken=_returnToken;
-					}
-					else if ((LA(1)=='p') && (LA(2)=='r')) {
-						mPRIVATE(true);
-						theRetToken=_returnToken;
-					}
-					else if ((LA(1)=='s') && (LA(2)=='o')) {
-						mSORTS(true);
-						theRetToken=_returnToken;
-					}
-					else if ((LA(1)=='a') && (LA(2)=='b')) {
-						mABSTRACT(true);
-						theRetToken=_returnToken;
-					}
-					else if ((LA(1)=='s') && (LA(2)=='y')) {
-						mSYNTAX(true);
-						theRetToken=_returnToken;
-					}
-					else if ((LA(1)=='/') && (LA(2)=='/')) {
+					if ((LA(1)=='/') && (LA(2)=='/')) {
 						mSLCOMMENT(true);
 						theRetToken=_returnToken;
 					}
 					else if ((LA(1)=='/') && (LA(2)=='*')) {
 						mML_COMMENT(true);
-						theRetToken=_returnToken;
-					}
-					else if ((_tokenSet_0.member(LA(1))) && (true)) {
-						mID(true);
 						theRetToken=_returnToken;
 					}
 				else {
@@ -216,97 +209,6 @@ tryAgain:
 	}
 }
 
-	public final void mMODULE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = MODULE;
-		int _saveIndex;
-		
-		match("module");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mIMPORTS(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = IMPORTS;
-		int _saveIndex;
-		
-		match("imports");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mPUBLIC(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = PUBLIC;
-		int _saveIndex;
-		
-		match("public");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mPRIVATE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = PRIVATE;
-		int _saveIndex;
-		
-		match("private");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mSORTS(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = SORTS;
-		int _saveIndex;
-		
-		match("sorts");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mABSTRACT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = ABSTRACT;
-		int _saveIndex;
-		
-		match("abstract");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mSYNTAX(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = SYNTAX;
-		int _saveIndex;
-		
-		match("syntax");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
 	public final void mARROW(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = ARROW;
@@ -508,15 +410,15 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop59:
+		_loop53:
 		do {
-			if ((_tokenSet_1.member(LA(1)))) {
+			if ((_tokenSet_0.member(LA(1)))) {
 				{
-				match(_tokenSet_1);
+				match(_tokenSet_0);
 				}
 			}
 			else {
-				break _loop59;
+				break _loop53;
 			}
 			
 		} while (true);
@@ -564,7 +466,7 @@ tryAgain:
 		
 		match("/*");
 		{
-		_loop65:
+		_loop59:
 		do {
 			switch ( LA(1)) {
 			case '\n':
@@ -607,7 +509,7 @@ tryAgain:
 			case '\u007f':
 			{
 				{
-				match(_tokenSet_2);
+				match(_tokenSet_1);
 				}
 				break;
 			}
@@ -625,7 +527,7 @@ tryAgain:
 					newline();
 				}
 			else {
-				break _loop65;
+				break _loop59;
 			}
 			}
 		} while (true);
@@ -675,7 +577,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop69:
+		_loop63:
 		do {
 			switch ( LA(1)) {
 			case 'a':  case 'b':  case 'c':  case 'd':
@@ -719,7 +621,7 @@ tryAgain:
 			}
 			default:
 			{
-				break _loop69;
+				break _loop63;
 			}
 			}
 		} while (true);
@@ -733,19 +635,14 @@ tryAgain:
 	
 	
 	private static final long[] mk_tokenSet_0() {
-		long[] data = { 0L, 576460743847706622L, 0L, 0L};
+		long[] data = { -9217L, -1L, 0L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	private static final long[] mk_tokenSet_1() {
-		long[] data = { -9217L, -1L, 0L, 0L};
-		return data;
-	}
-	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
-	private static final long[] mk_tokenSet_2() {
 		long[] data = { -4398046520321L, -1L, 0L, 0L};
 		return data;
 	}
-	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
+	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
 	
 	}

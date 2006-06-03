@@ -1,57 +1,45 @@
+
 %include { string.tom }
 %include { int.tom }
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
-%typeterm AlertList{
-  implement { tom.platform.adt.platformalert.types.AlertList}
-  visitor_fwd { tom.platform.adt.platformalert.PlatformAlertVisitableFwd}
-  equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.platform.adt.platformalert.types.AlertList)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
-  get_implementation(t) {t}
+
+%typeterm AlertList {
+  implement { tom.platform.adt.platformalert.types.AlertList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.platform.adt.platformalert.PlatformAlertBasicStrategy }
 }
+
+
+%typeterm Alert {
+  implement { tom.platform.adt.platformalert.types.Alert }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.platform.adt.platformalert.PlatformAlertBasicStrategy }
+}
+
+%op Alert Warning(Message:String, File:String, Line:int) {
+  is_fsym(t) { (t!=null) && t.isWarning() }
+  get_slot(Message, t) { t.getMessage() }
+  get_slot(File, t) { t.getFile() }
+  get_slot(Line, t) { t.getLine() }
+  make(t0, t1, t2) { tom.platform.adt.platformalert.types.alert.Warning.make(t0, t1, t2)}
+}
+
+%op Alert Error(Message:String, File:String, Line:int) {
+  is_fsym(t) { (t!=null) && t.isError() }
+  get_slot(Message, t) { t.getMessage() }
+  get_slot(File, t) { t.getFile() }
+  get_slot(Line, t) { t.getLine() }
+  make(t0, t1, t2) { tom.platform.adt.platformalert.types.alert.Error.make(t0, t1, t2)}
+}
+
 
 %oplist AlertList concAlert(Alert*) {
-  is_fsym(t) {(t!= null) && t.isSortAlertList()}
-  make_empty() {tom.platform.adt.platformalert.PlatformAlertFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAlertList()}
-  make_insert(e,l) {tom.platform.adt.platformalert.PlatformAlertFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAlertList(e,l)}
-  get_head(l) {l.getHead()}
-  get_tail(l) {l.getTail()}
-  is_empty(l) {l.isEmpty()}
+  is_fsym(t) { t instanceof tom.platform.adt.platformalert.types.alertlist.ConsconcAlert || t instanceof tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert }
+  make_empty() { tom.platform.adt.platformalert.types.alertlist.EmptyconcAlert.make() }
+  make_insert(e,l) { tom.platform.adt.platformalert.types.alertlist.ConsconcAlert.make(e,l) }
+  get_head(l) { l.getHeadconcAlert() }
+  get_tail(l) { l.getTailconcAlert() }
+  is_empty(l) { l.isEmptyconcAlert() }
 }
-%op AlertList emptyAlertList() {
-  is_fsym(t) { (t!= null) && t.isEmpty()}
-  make() {tom.platform.adt.platformalert.PlatformAlertFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAlertList()}
-}
-%op AlertList manyAlertList(head:Alert, tail:AlertList) {
-  is_fsym(t) { (t!= null) && t.isMany()}
-  get_slot(head,t) { t.getHead()}
-  get_slot(tail,t) { t.getTail()}
-  make(e,l) {tom.platform.adt.platformalert.PlatformAlertFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAlertList(e,l)}
-}
-%typeterm Alert{
-  implement { tom.platform.adt.platformalert.types.Alert}
-  visitor_fwd { tom.platform.adt.platformalert.PlatformAlertVisitableFwd}
-  equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(aterm.pure.SingletonFactory.getInstance().makeList()) == aterm.pure.SingletonFactory.getInstance().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(tom.platform.adt.platformalert.types.Alert)t.setAnnotation(aterm.pure.SingletonFactory.getInstance().makeList(),aterm.pure.SingletonFactory.getInstance().makeList())}
-  get_implementation(t) {t}
-}
-
-%op Alert Warning(message:String, file:String, line:int) {
-  is_fsym(t) { (t!= null) && t.isWarning()}
-  get_slot(message,t) { t.getMessage()}
-  get_slot(file,t) { t.getFile()}
-  get_slot(line,t) { t.getLine()}
-  make(t0, t1, t2) { tom.platform.adt.platformalert.PlatformAlertFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAlert_Warning(t0, t1, t2)}
-}
-
-%op Alert Error(message:String, file:String, line:int) {
-  is_fsym(t) { (t!= null) && t.isError()}
-  get_slot(message,t) { t.getMessage()}
-  get_slot(file,t) { t.getFile()}
-  get_slot(line,t) { t.getLine()}
-  make(t0, t1, t2) { tom.platform.adt.platformalert.PlatformAlertFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeAlert_Error(t0, t1, t2)}
-}
-

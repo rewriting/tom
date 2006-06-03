@@ -1,0 +1,134 @@
+
+%include { string.tom }
+%include { int.tom }
+%include { double.tom }
+%include { aterm.tom }
+%include { atermlist.tom }
+
+%typeterm TomNumber {
+  implement { tom.engine.adt.tomname.types.TomNumber }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
+}
+
+
+%typeterm TomNumberList {
+  implement { tom.engine.adt.tomname.types.TomNumberList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
+}
+
+
+%typeterm TomName {
+  implement { tom.engine.adt.tomname.types.TomName }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
+}
+
+
+%typeterm TomNameList {
+  implement { tom.engine.adt.tomname.types.TomNameList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomname.TomNameBasicStrategy }
+}
+
+%op TomNumber RuleVar() {
+  is_fsym(t) { (t!=null) && t.isRuleVar() }
+  make() { tom.engine.adt.tomname.types.tomnumber.RuleVar.make()}
+}
+
+%op TomNumber NameNumber(AstName:TomName) {
+  is_fsym(t) { (t!=null) && t.isNameNumber() }
+  get_slot(AstName, t) { t.getAstName() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.NameNumber.make(t0)}
+}
+
+%op TomNumber RenamedVar(AstName:TomName) {
+  is_fsym(t) { (t!=null) && t.isRenamedVar() }
+  get_slot(AstName, t) { t.getAstName() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.RenamedVar.make(t0)}
+}
+
+%op TomNumber AbsVar(Number:TomNumber) {
+  is_fsym(t) { (t!=null) && t.isAbsVar() }
+  get_slot(Number, t) { t.getNumber() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.AbsVar.make(t0)}
+}
+
+%op TomNumber Number(Integer:int) {
+  is_fsym(t) { (t!=null) && t.isNumber() }
+  get_slot(Integer, t) { t.getInteger() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.Number.make(t0)}
+}
+
+%op TomNumber End(Number:TomNumber) {
+  is_fsym(t) { (t!=null) && t.isEnd() }
+  get_slot(Number, t) { t.getNumber() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.End.make(t0)}
+}
+
+%op TomNumber Begin(Number:TomNumber) {
+  is_fsym(t) { (t!=null) && t.isBegin() }
+  get_slot(Number, t) { t.getNumber() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.Begin.make(t0)}
+}
+
+%op TomNumber IndexNumber(Number:TomNumber) {
+  is_fsym(t) { (t!=null) && t.isIndexNumber() }
+  get_slot(Number, t) { t.getNumber() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.IndexNumber.make(t0)}
+}
+
+%op TomNumber ListNumber(Number:TomNumber) {
+  is_fsym(t) { (t!=null) && t.isListNumber() }
+  get_slot(Number, t) { t.getNumber() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.ListNumber.make(t0)}
+}
+
+%op TomNumber PatternNumber(Number:TomNumber) {
+  is_fsym(t) { (t!=null) && t.isPatternNumber() }
+  get_slot(Number, t) { t.getNumber() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.PatternNumber.make(t0)}
+}
+
+%op TomNumber MatchNumber(Number:TomNumber) {
+  is_fsym(t) { (t!=null) && t.isMatchNumber() }
+  get_slot(Number, t) { t.getNumber() }
+  make(t0) { tom.engine.adt.tomname.types.tomnumber.MatchNumber.make(t0)}
+}
+
+%op TomName EmptyName() {
+  is_fsym(t) { (t!=null) && t.isEmptyName() }
+  make() { tom.engine.adt.tomname.types.tomname.EmptyName.make()}
+}
+
+%op TomName PositionName(NumberList:TomNumberList) {
+  is_fsym(t) { (t!=null) && t.isPositionName() }
+  get_slot(NumberList, t) { t.getNumberList() }
+  make(t0) { tom.engine.adt.tomname.types.tomname.PositionName.make(t0)}
+}
+
+%op TomName Name(String:String) {
+  is_fsym(t) { (t!=null) && t.isName() }
+  get_slot(String, t) { t.getString() }
+  make(t0) { tom.engine.adt.tomname.types.tomname.Name.make(t0)}
+}
+
+
+%oplist TomNumberList concTomNumber(TomNumber*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber || t instanceof tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber }
+  make_empty() { tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make() }
+  make_insert(e,l) { tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber.make(e,l) }
+  get_head(l) { l.getHeadconcTomNumber() }
+  get_tail(l) { l.getTailconcTomNumber() }
+  is_empty(l) { l.isEmptyconcTomNumber() }
+}
+
+%oplist TomNameList concTomName(TomName*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName || t instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName }
+  make_empty() { tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make() }
+  make_insert(e,l) { tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make(e,l) }
+  get_head(l) { l.getHeadconcTomName() }
+  get_tail(l) { l.getTailconcTomName() }
+  is_empty(l) { l.isEmptyconcTomName() }
+}

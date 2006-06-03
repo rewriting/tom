@@ -94,7 +94,7 @@ matchBlock: {
             }
       }
     } catch (Exception e) {
-      System.out.println("Exception while parsing: "+e);
+      System.out.println("Exception: "+e);
     }
     System.out.println(tokenMap);
     generateTable(tokenMap);

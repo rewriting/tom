@@ -1,3 +1,6 @@
+2006-06-03  pem
+  * bootstrap using gom
+
 2006-06-02 Yoann Toussaint <yoann.toussaint@loria.fr>
   * Gom uses the new Gom parser with the help of pom
 

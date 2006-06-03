@@ -25,6 +25,7 @@
 
 package tom.engine.exception;
 
+import java.text.MessageFormat;
 import tom.platform.PlatformMessage;
 
 public class TomException extends Exception {
@@ -51,7 +52,7 @@ public class TomException extends Exception {
   }
   
   public String toString() {
-    return msg.getMessage();
+    return MessageFormat.format(msg.getMessage(),getParameters());
   }
  }
 

@@ -38,4 +38,4 @@ public class BasicFormatter extends Formatter {
     }
   }
 
-} // class BasicFormatter
+}
