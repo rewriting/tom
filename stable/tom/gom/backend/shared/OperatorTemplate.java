@@ -336,7 +336,7 @@ public class OperatorTemplate extends TemplateClass {
           if (tom_domain.equals(tom_make_ClassName("","int"))) {
             res+= "((aterm.ATermInt)"+appl+".getArgument("+index+")).getInt()";
           } else if (tom_domain.equals(tom_make_ClassName("","String"))) {
-            res+= "(String)"+appl+".getArgument("+index+").toString()";
+            res+= "(String)((aterm.ATermAppl)"+appl+".getArgument("+index+")).getAFun().getName()";
           } else if (tom_domain.equals(tom_make_ClassName("aterm","ATerm")) || tom_domain.equals(tom_make_ClassName("aterm","ATermList")) ){
             res +=  appl+".getArgument("+index+")";
           }

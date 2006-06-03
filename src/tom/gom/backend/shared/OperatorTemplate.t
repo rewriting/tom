@@ -336,7 +336,7 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
           if (`domain.equals(`ClassName("","int"))) {
             res+= "((aterm.ATermInt)"+appl+".getArgument("+index+")).getInt()";
           } else if (`domain.equals(`ClassName("","String"))) {
-            res+= "(String)"+appl+".getArgument("+index+").toString()";
+            res+= "(String)((aterm.ATermAppl)"+appl+".getArgument("+index+")).getAFun().getName()";
           } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
             res +=  appl+".getArgument("+index+")";
           }
