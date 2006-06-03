@@ -48,11 +48,11 @@ public class PersonSort {
     xtools = new XmlTools();
     TNode term = (TNode)xtools.convertXMLToTNode(filename);
 
-    TNode result = sort(term.getdocElem());
+    TNode result = sort(term.getDocElem());
     xtools.printXMLFromTNode(result);
 
     //System.out.println();
-    searchJu(term.getdocElem());
+    searchJu(term.getDocElem());
 
   }
 
