@@ -266,8 +266,8 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
     return @fieldName(head.getname())@;
   }
       
-  public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ _arg) {
-    return make(@generateMakeArgsFor(head,"_arg")@);
+  public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
+    return make(@generateMakeArgsFor(head,"set_arg")@);
   }]%;
     }
     return res;
