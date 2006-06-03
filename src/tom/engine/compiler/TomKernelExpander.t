@@ -137,17 +137,17 @@ public class TomKernelExpander extends TomBase {
         HashSet set = new HashSet();
         collectVariable(set,newLhs);
         TomList varList = ASTFactory.makeList(set);
-        InstructionList newCondList = `emptyInstructionList();
-        while(!`condList.isEmpty()) {
-          Instruction cond = `condList.getHead();
+        InstructionList newCondList = `concInstruction();
+        while(!`condList.isEmptyconcInstruction()) {
+          Instruction cond = `condList.getHeadconcInstruction();
 
           Instruction newCond = (Instruction)expander.replaceInstantiatedVariable(`varList,cond);
           newCond = (Instruction) expander.expandVariable(contextSubject,newCond);
 
-          newCondList = `manyInstructionList(newCond,newCondList);
+          newCondList = `concInstruction(newCond,newCondList*);
           collectVariable(set,newCond);
           varList = ASTFactory.makeList(set);
-          `condList = `condList.getTail();
+          `condList = `condList.getTailconcInstruction();
         }
 
         TomTerm newRhs = (TomTerm)expander.replaceInstantiatedVariable(`varList,`rhs);
@@ -282,10 +282,10 @@ public class TomKernelExpander extends TomBase {
 
             // process a list of subterms
             ArrayList list = new ArrayList();
-            while(!`termList.isEmpty()) {
-              list.add((TomTerm)expander.expandVariable(`l1.getHead(), `termList.getHead()));
-              `termList = `termList.getTail();
-              `l1 = `l1.getTail();
+            while(!`termList.isEmptyconcTomTerm()) {
+              list.add((TomTerm)expander.expandVariable(`l1.getHeadconcTomTerm(), `termList.getHeadconcTomTerm()));
+              `termList = `termList.getTailconcTomTerm();
+              `l1 = `l1.getTailconcTomTerm();
             }
             TomList newTermList = ASTFactory.makeList(list);
 
@@ -296,9 +296,9 @@ public class TomKernelExpander extends TomBase {
             collectVariable(set,newTermList);
             TomList varList = ASTFactory.makeList(set);
             //System.out.println("varList = " + varList);
-            while(!`guardList.isEmpty()) {
-              list.add((TomTerm)expander.replaceInstantiatedVariable(`varList, `guardList.getHead()));
-              `guardList = `guardList.getTail();
+            while(!`guardList.isEmptyconcTomTerm()) {
+              list.add((TomTerm)expander.replaceInstantiatedVariable(`varList, `guardList.getHeadconcTomTerm()));
+              `guardList = `guardList.getTailconcTomTerm();
             }
             TomList newGuardList = ASTFactory.makeList(list);
             //System.out.println("newGuardList = " + newGuardList);
@@ -311,12 +311,15 @@ public class TomKernelExpander extends TomBase {
       RecordAppl[Option=option,NameList=nameList@(Name(tomName),_*),Slots=slotList,Constraints=constraints] -> {
         TomSymbol tomSymbol = null;
         if(`tomName.equals("")) {
-          if(contextSubject.hasAstType()) {
+          try {
             tomSymbol = expander.getSymbolFromType(contextSubject.getAstType());
             if(tomSymbol==null) {
               throw new TomRuntimeException("No symbol found for type '" + contextSubject.getAstType() + "'");
             }
             `nameList = `concTomName(tomSymbol.getAstName());
+          } catch(UnsupportedOperationException e) {
+            // contextSubject has no AstType slot
+            tomSymbol = null;
           }
         } else {
           tomSymbol = expander.getSymbolFromName(`tomName);
@@ -408,13 +411,13 @@ public class TomKernelExpander extends TomBase {
       TLVar(strName,TomTypeAlone(tomType)) -> {
         // create a variable: its type is ensured by checker
         TomType localType = expander.getType(`tomType);
-        OptionList option = ASTFactory.makeOption();
+        OptionList option = `concOption();
         return `Variable(option,Name(strName),localType,concConstraint());
       }
 
       TLVar(strName,localType@Type[]) -> {
         // create a variable: its type is ensured by checker
-        OptionList option = ASTFactory.makeOption();
+        OptionList option = `concOption();
         return `Variable(option,Name(strName),localType,concConstraint());
       }
 
@@ -460,8 +463,8 @@ public class TomKernelExpander extends TomBase {
       throw new TomRuntimeException("expandVariableList: null symbol");
     }
 
-    if(subtermList.isEmpty()) {
-      return `emptySlotList();
+    if(subtermList.isEmptyconcSlot()) {
+      return `concSlot();
     }
 
     //System.out.println("symbol = " + subject.getastname());
@@ -471,7 +474,7 @@ public class TomKernelExpander extends TomBase {
          * if the top symbol is unknown, the subterms
          * are expanded in an empty context
          */
-        SlotList sl = expandVariableList(symbol,tail);
+        SlotList sl = expandVariableList(symbol,`tail);
         return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(emptyTerm(),slotAppl)),sl*);
       }
 
@@ -496,27 +499,26 @@ public class TomKernelExpander extends TomBase {
             %match(TomTerm slotAppl) {
               VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
                 ConstraintList newconstraints = (ConstraintList)expandVariable(`TomTypeToTomTerm(codomain),`constraints);
-                SlotList sl = expandVariableList(symbol,tail);
+                SlotList sl = expandVariableList(symbol,`tail);
                 return `concSlot(PairSlotAppl(slotName,VariableStar(option,name,codomain,newconstraints)),sl*);
               }
 
               UnamedVariableStar[Option=option,Constraints=constraints] -> {
                 ConstraintList newconstraints = (ConstraintList)expandVariable(`TomTypeToTomTerm(codomain),`constraints);
-                SlotList sl = expandVariableList(symbol,tail);
+                SlotList sl = expandVariableList(symbol,`tail);
                 return `concSlot(PairSlotAppl(slotName,UnamedVariableStar(option,codomain,newconstraints)),sl*);
               }
 
               _ -> {
-                TomType domaintype = `typelist.getHead();
-                SlotList sl = expandVariableList(symbol,tail);
+                TomType domaintype = `typelist.getHeadconcTomType();
+                SlotList sl = expandVariableList(symbol,`tail);
                 return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(TomTypeToTomTerm(domaintype), slotAppl)),sl*);
 
               }
             }
           } else {
-            //TomType type = `typelist.getHead();
-            SlotList sl = expandVariableList(symbol,tail);
-            return `consSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(TomTypeToTomTerm(getSlotType(symb,slotName)), slotAppl)),sl*);
+            SlotList sl = expandVariableList(symbol,`tail);
+            return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(TomTypeToTomTerm(getSlotType(symb,slotName)), slotAppl)),sl*);
           }
         }
     }

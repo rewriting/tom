@@ -42,6 +42,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomtype.types.tomtypelist.*;
 
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
@@ -256,9 +257,9 @@ public class TomExpander extends TomGenericPlugin {
       decl@GetHeadDecl[Opname=Name(opName)] -> {
         TomSymbol tomSymbol = expander.getSymbolFromName(`opName);
         TomTypeList codomain = getSymbolDomain(tomSymbol);
-        if(codomain.length()==1) {
+        if(((concTomType)codomain).length()==1) {
           Declaration t = (Declaration)`decl;
-          t = t.setCodomain(codomain.getHead());
+          t = t.setCodomain(codomain.getHeadconcTomType());
           return t;
         } else {
           throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
@@ -270,9 +271,9 @@ public class TomExpander extends TomGenericPlugin {
         if(tomSymbol != null) {
           TomTypeList codomain = getSymbolDomain(tomSymbol);
 
-          if(codomain.length()==1) {
+          if(((concTomType)codomain).length()==1) {
             Declaration t = (Declaration)`decl;
-            t = t.setCodomain(codomain.getHead());
+            t = t.setCodomain(codomain.getHeadconcTomType());
             return t;
           } else {
             throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
@@ -308,11 +309,11 @@ public class TomExpander extends TomGenericPlugin {
    * and expand it into a list of char: 'a','b','c'
    */
   private SlotList expandChar(SlotList args) {
-    if(args.isEmpty()) {
+    if(args.isEmptyconcSlot()) {
       return args;
     } else {
-      Slot head = args.getHead();
-      SlotList tail = expandChar(args.getTail());
+      Slot head = args.getHeadconcSlot();
+      SlotList tail = expandChar(args.getTailconcSlot());
       %match(Slot head) {
         PairSlotAppl(slotName,appl@RecordAppl[NameList=(Name(tomName)),Slots=()]) -> {
           /*
@@ -351,15 +352,15 @@ public class TomExpander extends TomGenericPlugin {
    * when no slotName exits, the position becomes the slotName
    */
   protected TomTerm expandTermAppl(OptionList option, TomNameList nameList, TomList args, ConstraintList constraints) {
-    String opName = nameList.getHead().getString();
+    String opName = nameList.getHeadconcTomName().getString();
     TomSymbol tomSymbol = getSymbolFromName(opName);
 
 
     //System.out.println("expandTermAppl: " + tomSymbol);
     //System.out.println("  nameList = " + nameList);
 
-    if(tomSymbol==null && args.isEmpty()) {
-      return `RecordAppl(option,nameList,emptySlotList(),constraints);
+    if(tomSymbol==null && args.isEmptyconcTomTerm()) {
+      return `RecordAppl(option,nameList,concSlot(),constraints);
     }
 
     /*
@@ -371,34 +372,34 @@ public class TomExpander extends TomGenericPlugin {
        }
      */
 
-    SlotList slotList = `emptySlotList();
+    SlotList slotList = `concSlot();
     VisitableVisitor expandStrategy = (`ChoiceTopDown(expandTermApplTomSyntax(this)));
     if(opName.equals("") || tomSymbol==null || isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
-      while(!args.isEmpty()) {
+      while(!args.isEmptyconcTomTerm()) {
         try{
-          TomTerm subterm = (TomTerm) expandStrategy.visit(args.getHead());
+          TomTerm subterm = (TomTerm) expandStrategy.visit(args.getHeadconcTomTerm());
           TomName slotName = `EmptyName();
           if(subterm.isUnamedVariable()) {
             // do nothing
           } else {
-            slotList = (SlotList)slotList.append(`PairSlotAppl(slotName,subterm));
+            slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
           }
-          args = args.getTail();
+          args = args.getTailconcTomTerm();
         }catch(VisitFailure e){}
       }
     } else {
       PairNameDeclList pairNameDeclList = tomSymbol.getPairNameDeclList();
-      while(!args.isEmpty()) {
+      while(!args.isEmptyconcTomTerm()) {
         try{
-          TomTerm subterm = (TomTerm) expandStrategy.visit(args.getHead());
-          TomName slotName = pairNameDeclList.getHead().getSlotName();
+          TomTerm subterm = (TomTerm) expandStrategy.visit(args.getHeadconcTomTerm());
+          TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
           if(subterm.isUnamedVariable()) {
             // do nothing
           } else {
-            slotList = (SlotList)slotList.append(`PairSlotAppl(slotName,subterm));
+            slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
           }
-          args = args.getTail();
-          pairNameDeclList = pairNameDeclList.getTail();
+          args = args.getTailconcTomTerm();
+          pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
         }catch(VisitFailure e){}
       }
     }
@@ -512,8 +513,8 @@ public class TomExpander extends TomGenericPlugin {
     boolean implicitAttribute = hasImplicitXMLAttribut(optionList);
     boolean implicitChild     = hasImplicitXMLChild(optionList);
 
-    TomList newAttrList  = `emptyTomList();
-    TomList newChildList = `emptyTomList();
+    TomList newAttrList  = `concTomTerm();
+    TomList newChildList = `concTomTerm();
     TomTerm star = ASTFactory.makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",`concConstraint());
     if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
     if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
@@ -531,32 +532,32 @@ public class TomExpander extends TomGenericPlugin {
      * Attributes: go from implicit notation to explicit notation
      */
     VisitableVisitor expandStrategy = (`ChoiceTopDown(expandTermApplTomSyntax(this)));
-    while(!attrList.isEmpty()) {
+    while(!attrList.isEmptyconcTomTerm()) {
       try{
-        TomTerm newPattern = (TomTerm) expandStrategy.visit(attrList.getHead());
+        TomTerm newPattern = (TomTerm) expandStrategy.visit(attrList.getHeadconcTomTerm());
         newAttrList = `concTomTerm(newPattern,newAttrList*);
         if(implicitAttribute) {
           newAttrList = `concTomTerm(star,newAttrList*);
         }
-        attrList = attrList.getTail();
+        attrList = attrList.getTailconcTomTerm();
       }catch(VisitFailure e){}
     }
-    newAttrList = (TomList) newAttrList.reverse();
+    newAttrList = reverse(newAttrList);
 
     /*
      * Childs: go from implicit notation to explicit notation
      */
-    while(!childList.isEmpty()) {
+    while(!childList.isEmptyconcTomTerm()) {
       try{
-        TomTerm newPattern = (TomTerm) expandStrategy.visit(childList.getHead());
-        newChildList = `concTomTern(newPattern,newChildList*);
+        TomTerm newPattern = (TomTerm) expandStrategy.visit(childList.getHeadconcTomTerm());
+        newChildList = `concTomTerm(newPattern,newChildList*);
         if(implicitChild) {
           if(newPattern.isVariableStar()) {
             // remove the previously inserted pattern
-            newChildList = newChildList.getTail();
-            if(newChildList.getHead().isUnamedVariableStar()) {
+            newChildList = newChildList.getTailconcTomTerm();
+            if(newChildList.getHeadconcTomTerm().isUnamedVariableStar()) {
               // remove the previously inserted star
-              newChildList = newChildList.getTail();
+              newChildList = newChildList.getTailconcTomTerm();
             }
             // re-insert the pattern
             newChildList = `concTomTerm(newPattern,newChildList*);
@@ -564,10 +565,10 @@ public class TomExpander extends TomGenericPlugin {
             newChildList = `concTomTerm(star,newChildList*);
           }
         }
-        childList = childList.getTail();
+        childList = childList.getTailconcTomTerm();
       }catch(VisitFailure e){}
     }
-    newChildList = (TomList) newChildList.reverse();
+    newChildList = reverse(newChildList);
 
     /*
      * encode the name and put it into the table of symbols
@@ -580,7 +581,7 @@ matchBlock: {
                 }
 
                 (_*,Name(name),_*) -> {
-                  newNameList = (NameList)newNameList.append(`Name(ASTFactory.encodeXMLString(symbolTable(),name)));
+                  newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(symbolTable(),name)));
                 }
               }
             }
@@ -591,10 +592,10 @@ matchBlock: {
              */
             TomTerm xmlHead;
 
-            if(newNameList.isEmpty()){
+            if(newNameList.isEmptyconcTomName()){
               xmlHead = `Placeholder(concOption(),concConstraint());
             } else {
-              xmlHead = `TermAppl(convertOriginTracking(newNameList.getHead().getString(),optionList),newNameList,empty(),concConstraint());
+              xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
             }
             try {
               //VisitableVisitor expandStrategy = (ChoiceTopDown(expandTermApplTomSyntax(this)));

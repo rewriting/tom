@@ -157,7 +157,7 @@ public class TomTypeChecker extends TomChecker {
   
   private void verifyMatchVariable(PatternInstructionList patternInstructionList) {
     while(!patternInstructionList.isEmptyconcPatternInstruction()) {
-      PatternInstruction pa = patternInstructionList.getHeadconcInstruction();
+      PatternInstruction pa = patternInstructionList.getHeadconcPatternInstruction();
       Pattern pattern = pa.getPattern();
         // collect variables
       ArrayList variableList = new ArrayList();
@@ -171,7 +171,7 @@ public class TomTypeChecker extends TomChecker {
 				System.out.println("strategy failed");
 			}
 
-      patternInstructionList = patternInstructionList.getTailconcInstruction();
+      patternInstructionList = patternInstructionList.getTailconcPatternInstruction();
     }
   } //verifyMatchVariable
   

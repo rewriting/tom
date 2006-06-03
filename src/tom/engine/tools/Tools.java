@@ -33,10 +33,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Collection;
 
-import aterm.ATerm;
 
 public class Tools {
-  public static void generateOutput(String outputFileName, ATerm ast) {
+  public static void generateOutput(String outputFileName, jjtraveler.Visitable ast) {
     try {
       OutputStream output = new FileOutputStream(outputFileName);
       Writer writer = new BufferedWriter(new OutputStreamWriter(output));
