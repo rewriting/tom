@@ -23,7 +23,7 @@
  		<classpath refid="tom.classpath"/>
     </tomantlr>
     <pom srcfile="${examples.gen}/${parsingtests}/SeqParserTokenTypes.txt"
-      destdir="${parsingtests}"
+      destdir="${examples.gen}"
       package="${parsingtests}">
     </pom>
     <tomantlr target="${examples.gen}/${parsingtests}/SeqWalker.g"
