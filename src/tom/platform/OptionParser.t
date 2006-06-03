@@ -92,7 +92,7 @@ public class OptionParser {
    * @return a PlatformOptionList extracted from a TNode
    */
   public static PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
-    PlatformOptionList list = `emptyPlatformOptionList();
+    PlatformOptionList list = `concPlatformOption();
     %match(TNode optionsNode) {
       <options>(_*,option,_*)</options> -> {
         %match(TNode option) {

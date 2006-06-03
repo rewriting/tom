@@ -91,8 +91,8 @@ public class PluginFactory implements Plugin {
   }
 
   public PluginFactory(String name, String xmlFile) {
-    allDeclaredOptions = `emptyPlatformOptionList();
-    allRequiredOptions = `emptyPlatformOptionList();
+    allDeclaredOptions = `concPlatformOption();
+    allRequiredOptions = `concPlatformOption();
     flagOwners = new HashMap();
 
     pluginName = name;
@@ -131,7 +131,7 @@ public class PluginFactory implements Plugin {
 
       PlatformOptionList declaredList = plugin.getDeclaredOptionList();
       allDeclaredOptions = `concPlatformOption(allDeclaredOptions*, declaredList*);
-      String flagName = declaredList.getHead().getName();
+      String flagName = declaredList.getHeadconcPlatformOption().getName();
       flagOwners.put(flagName, plugin);
 
       PlatformOptionList requiredList = plugin.getRequiredOptionList();

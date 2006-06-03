@@ -68,7 +68,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     mapNameToOption = new HashMap();
     mapShortNameToName = new HashMap();
     inputFileList = new ArrayList();
-    globalOptions = `emptyPlatformOptionList();
+    globalOptions = `concPlatformOption();
   }
 
   /**
@@ -164,10 +164,10 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     PlatformOption option = getOptionFromName(name);
     if(option != null) {
       %match(PlatformOption option) {
-        PluginOption[value=BooleanValue(True())]  -> { return Boolean.valueOf(true); }
-        PluginOption[value=BooleanValue(False())] -> { return Boolean.valueOf(false); }
-        PluginOption[value=IntegerValue(value)]   -> { return new Integer(`value); }
-        PluginOption[value=StringValue(value)]    -> { return `value; }
+        PluginOption[Value=BooleanValue(True())]  -> { return Boolean.valueOf(true); }
+        PluginOption[Value=BooleanValue(False())] -> { return Boolean.valueOf(false); }
+        PluginOption[Value=IntegerValue(value)]   -> { return new Integer(`value); }
+        PluginOption[Value=StringValue(value)]    -> { return `value; }
       }
     } else {
       getLogger().log(Level.SEVERE,GomMessage.optionNotFound.getMessage(),name);
@@ -189,7 +189,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    * @return the prerequisites
    */
   public PlatformOptionList getRequiredOptionList() {
-    PlatformOptionList prerequisites = `emptyPlatformOptionList();
+    PlatformOptionList prerequisites = `concPlatformOption();
     // for now, there is no incompatibilities or requirements on options
     return prerequisites;
   }
@@ -205,10 +205,10 @@ public class GomOptionManager implements OptionManager, OptionOwner {
       OptionOwner owner = (OptionOwner)owners.next();
       PlatformOptionList list = owner.getDeclaredOptionList();
       owner.setOptionManager((OptionManager)this);
-      while(!list.isEmpty()) {
-        PlatformOption option = list.getHead();
+      while(!list.isEmptyconcPlatformOption()) {
+        PlatformOption option = list.getHeadconcPlatformOption();
         %match(PlatformOption option) {
-          PluginOption[name=name, altName=altName] -> {
+          PluginOption[Name=name, AltName=altName] -> {
             setOptionOwnerFromName(`name, owner);
             setOptionFromName(`name, option);
             if(`altName.length() > 0) {
@@ -216,7 +216,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
             }
           }
         }
-        list = list.getTail();
+        list = list.getTailconcPlatformOption();
       }
     }
   }
@@ -292,7 +292,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
     for(Iterator it = mapNameToOption.values().iterator(); it.hasNext() ; ) {
       PlatformOption h = (PlatformOption)it.next();
       %match(PlatformOption h) {
-        PluginOption[name=name, altName=altName, description=description, attrName=attrName] -> {
+        PluginOption[Name=name, AltName=altName, Description=description, AttrName=attrName] -> {
           buffer.append("\t--" + `name);
           if(`attrName.length() > 0) {
             buffer.append(" <" + `attrName + ">");
@@ -329,7 +329,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
         return true;
       }
 
-      concPlatformOption(PluginOption[name=name,value=value],tail*) -> {
+      concPlatformOption(PluginOption[Name=name,Value=value],tail*) -> {
         PlatformOption option = getOptionFromName(`name);
         if(option !=null) {
           PlatformValue localValue = option.getValue();
@@ -418,16 +418,16 @@ public class GomOptionManager implements OptionManager, OptionOwner {
             return null;
           } else {
             %match(PlatformOption option) {
-              PluginOption[value=BooleanValue[]] -> {
+              PluginOption[Value=BooleanValue[]] -> {
                 setOptionValue(argument, Boolean.TRUE);
               }
 
-              PluginOption[value=IntegerValue[]] -> {
+              PluginOption[Value=IntegerValue[]] -> {
                 String t = argumentList[++i];
                 setOptionValue(argument, new Integer(t));
               }
 
-              PluginOption[value=StringValue[]] -> {
+              PluginOption[Value=StringValue[]] -> {
                 if ( !( argument.equals("import") || argument.equals("I") ) ) {
                   // "import" is handled in the end
                   String t = argumentList[++i];

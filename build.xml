@@ -385,11 +385,11 @@
       <include name="tom/library/adt/*.gom"/>
     </gomcompile>
 
-    <vascompile srcdir="${src.src}"
+    <gomcompile srcdir="${src.src}"
                 package="tom.platform.adt"
                 destdir="${src.gen}">
-      <include name="tom/platform/adt/*.vas"/>
-    </vascompile>
+      <include name="tom/platform/adt/*.gom"/>
+    </gomcompile>
 
     <uptodate property="vascompile.required"
 	    targetfile="${src.gen}/tom/engine/adt/tomsignature/TomSignature.tom" >

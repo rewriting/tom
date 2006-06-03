@@ -124,7 +124,7 @@ public abstract class GomGenericPlugin implements Plugin {
    * @return an empty PlatformOptionList
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return `emptyPlatformOptionList();
+    return `concPlatformOption();
   }
 
   /**
@@ -135,7 +135,7 @@ public abstract class GomGenericPlugin implements Plugin {
    * @return an empty PlatformOptionList
    */
   public PlatformOptionList getRequiredOptionList() {
-    return `emptyPlatformOptionList();
+    return `concPlatformOption();
   }
 
   /**
