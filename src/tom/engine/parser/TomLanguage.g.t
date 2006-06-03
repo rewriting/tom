@@ -51,7 +51,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomtype.types.tomtypelist.*;
+import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -509,15 +509,15 @@ ruleConstruct [Option ot] returns [Declaration result] throws TomException
             lhs = annotedTerm 
             {listOfLhs = `concTomTerm(lhs);}
             ( ALTERNATIVE {text.append('|');} lhs = annotedTerm
-                {listOfLhs = `concTomTerm(listOfLhs*,lhs);} 
+                { listOfLhs = `concTomTerm(listOfLhs*,lhs); }
             )*
  
             ARROW {orgText = `Name(text.toString());} rhs = plainTerm[null,0]
             (
                 WHERE pattern = annotedTerm AFFECT subject = annotedTerm 
-                {conditionList = `concInstruction(conditionList*,MatchingCondition(pattern,subject));}
+                { conditionList = `concInstruction(conditionList*,MatchingCondition(pattern,subject)); }
             |   IF pattern = annotedTerm DOUBLEEQ subject = annotedTerm
-                {conditionList = `concInstruction(conditionList*,EqualityCondition(pattern,subject));}
+                { conditionList = `concInstruction(conditionList*,EqualityCondition(pattern,subject)); }
             )*
             
             {
@@ -527,7 +527,14 @@ ruleConstruct [Option ot] returns [Declaration result] throws TomException
                 );
                 OptionList optionList2 = `concOption(ot2,OriginalText(orgText),ModuleName(TomBase.DEFAULT_MODULE_NAME));
                 while(! listOfLhs.isEmptyconcTomTerm()){
-                    ruleList = `concTomRule(ruleList*, RewriteRule( Term(listOfLhs.getHeadconcTomTerm()), Term(rhs), conditionList, optionList2));
+                    ruleList = `concTomRule(ruleList*,
+                        RewriteRule(
+                            Term(listOfLhs.getHeadconcTomTerm()),
+                            Term(rhs),
+                            conditionList,
+                            optionList2
+                        )
+                    );
                     listOfLhs = listOfLhs.getTailconcTomTerm();
                 }
                 
@@ -623,7 +630,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             name = headConstant[optionList] 
             {
                 nameList = `concTomName(nameList*,name);
-								optionList.add(`Constant());
+                optionList.add(`Constant());
                 result = `TermAppl(
                         ASTFactory.makeOptionList(optionList),
                         nameList,
@@ -1969,7 +1976,11 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                         Option info1 = `OriginTracking(Name(typeArg.getText()),typeArg.getLine(),currentFile());  
                         OptionList option1 = `concOption(info1);
                         
-                        args = `concTomTerm(args*,Variable( option1, Name(typeArg.getText()), type,concConstraint()));
+                        args = `concTomTerm(args*,Variable(
+                                option1,
+                                Name(typeArg.getText()),
+                                type,concConstraint()
+                            ));
                     }
                     ( 
                         COMMA nameArg:ALL_ID
@@ -1982,7 +1993,11 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                             Option info2 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),currentFile());
                             OptionList option2 = `concOption(info2);
                             
-                            args = `concTomTerm(args*,Variable( option2, Name(nameArg.getText()), type,concConstraint()));
+                            args = `concTomTerm(args*,Variable(
+                                    option2,
+                                    Name(nameArg.getText()),
+                                    type,concConstraint()
+                                ));
                         }
                     )*
                 )? 
@@ -2055,8 +2070,7 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
     Option ot = null;
 }
     :
-        t:MAKE_EMPTY
-        {ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile());}
+        t:MAKE_EMPTY { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
         LPAREN listName:ALL_ID RPAREN
         LBRACE
         {
@@ -2080,10 +2094,9 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
     Option ot = null;
 }
     :
-        t:MAKE_APPEND
-        {ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile());}
-        LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
-        LBRACE
+        t:MAKE_APPEND { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+          LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
+          LBRACE
         {
             selector().push("targetlexer");
             LinkedList blockList = new LinkedList();

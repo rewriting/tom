@@ -42,6 +42,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomslot.types.pairnamedecllist.concPairNameDecl;
 
 import tom.engine.adt.zenon.types.*;
 
@@ -79,10 +80,10 @@ public class TomIlTools extends TomBase {
   public ZExpr patternToZExpr(PatternList patternList, Map map) {
     // do everything match the empty pattern ?
     ZExpr result = `zfalse();
-    while(!patternList.isEmpty()) {
-      Pattern h = patternList.getHead();
+    while(!patternList.isEmptyconcPattern()) {
+      Pattern h = patternList.getHeadconcPattern();
       result = `zor(result,patternToZExpr(h,map));
-      patternList = patternList.getTail();
+      patternList = patternList.getTailconcPattern();
     }
     return result;
   }
@@ -92,9 +93,9 @@ public class TomIlTools extends TomBase {
     %match(Pattern pattern) {
       Pattern[SubjectList=subjectList] -> {
         TomList sl = `subjectList;
-          while(!sl.isEmpty()) {
-            TomTerm head = sl.getHead();
-            sl = sl.getTail();
+          while(!sl.isEmptyconcTomTerm()) {
+            TomTerm head = sl.getHeadconcTomTerm();
+            sl = sl.getTailconcTomTerm();
             list.add(tomTermToZTerm(head,map,unamedVarSet));
           }
       }
@@ -121,11 +122,11 @@ public class TomIlTools extends TomBase {
   public ZExpr patternToZExpr(TomList subjectList, TomList tomList, Map map, Set unamedVariableSet) {
     /* for each TomTerm: builds a zeq : pattern = subject */
     ZExpr res = `ztrue();
-    while(!tomList.isEmpty()) {
-      TomTerm h = tomList.getHead();
-      TomTerm subject = subjectList.getHead();
-      tomList = tomList.getTail();
-      subjectList = subjectList.getTail();
+    while(!tomList.isEmptyconcTomTerm()) {
+      TomTerm h = tomList.getHeadconcTomTerm();
+      TomTerm subject = subjectList.getHeadconcTomTerm();
+      tomList = tomList.getTailconcTomTerm();
+      subjectList = subjectList.getTailconcTomTerm();
       res = `zand(res,zeq(tomTermToZTerm(h,map,unamedVariableSet),
                           tomTermToZTerm(subject,map,unamedVariableSet)));
     }
@@ -138,9 +139,9 @@ public class TomIlTools extends TomBase {
         // builds children list
         ZTermList zchild = `concZTerm();
         TomTerm hd = null;
-        while (!`childrens.isEmpty()) {
-          hd = `childrens.getHead();
-          `childrens = `childrens.getTail();
+        while (!`childrens.isEmptyconcTomTerm()) {
+          hd = `childrens.getHeadconcTomTerm();
+          `childrens = `childrens.getTailconcTomTerm();
           zchild = `concZTerm(zchild*,tomTermToZTerm(hd,map,unamedVariableSet));
         }
         // issue a warning here: this case is probably impossible
@@ -150,9 +151,9 @@ public class TomIlTools extends TomBase {
         // builds a map: slotName / TomTerm
         Map definedSlotMap = new HashMap();
         Slot hd = null;
-        while (!`childrens.isEmpty()) {
-          hd = `childrens.getHead();
-          `childrens = `childrens.getTail();
+        while (!`childrens.isEmptyconcSlot()) {
+          hd = `childrens.getHeadconcSlot();
+          `childrens = `childrens.getTailconcSlot();
           definedSlotMap.put(hd.getSlotName(),hd.getAppl());
         }
         // builds children list
@@ -163,9 +164,9 @@ public class TomIlTools extends TomBase {
         %match(TomSymbol symbol) {
           Symbol[PairNameDeclList=slots] -> {
             // process all slots. If the slot is in childrens, use it
-            while(!`slots.isEmpty()) {
-              Declaration decl= `slots.getHead().getSlotDecl();
-              `slots = `slots.getTail();
+            while(!`slots.isEmptyconcPairNameDecl()) {
+              Declaration decl= `slots.getHeadconcPairNameDecl().getSlotDecl();
+              `slots = `slots.getTailconcPairNameDecl();
               %match(Declaration decl) {
                 GetSlotDecl[SlotName=slotName] -> {
                   if (definedSlotMap.containsKey(`slotName)) {
@@ -254,9 +255,9 @@ public class TomIlTools extends TomBase {
       %match(TomSymbol symbol) {
         Symbol[PairNameDeclList=slots] -> {
           // process all slots
-          while(!`slots.isEmpty()) {
-            Declaration hd= `slots.getHead().getSlotDecl();
-            `slots = `slots.getTail();
+          while(!`slots.isEmptyconcPairNameDecl()) {
+            Declaration hd= `slots.getHeadconcPairNameDecl().getSlotDecl();
+            `slots = `slots.getTailconcPairNameDecl();
             %match(Declaration hd) {
               GetSlotDecl[SlotName=Name(slotName)] -> {
                 list = `concZTerm(list*,zsl(abstractVariable,slotName));
@@ -285,13 +286,13 @@ public class TomIlTools extends TomBase {
       %match(TomSymbol symbol) {
         Symbol[PairNameDeclList=slots] -> {
           // process all slots
-          int slotnumber = `slots.getLength();
+          int slotnumber =((concPairNameDecl)`slots).length();
           for (int i = 0; i < slotnumber;i++) {
             list = `concZTerm(list*,zvar("x"+i));
           }
           %match(PairNameDeclList slots) {
             concPairNameDecl(al*,PairNameDecl[SlotName=Name(slname)],_*) -> {
-              int index = `al.getLength();
+              int index = ((concPairNameDecl)`al).length();
               ZExpr axiom = `zeq(zvar("x"+index),
                                  zsl(zappl(zsymbol(name),list),slname));
               for (int j = 0; j < slotnumber;j++) {

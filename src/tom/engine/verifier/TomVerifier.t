@@ -49,6 +49,10 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
+import tom.engine.TomMessage;
+import tom.engine.tools.Tools;
+import tom.engine.tools.TomGenericPlugin;
+import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.*;
 
 import aterm.ATerm;
@@ -301,16 +305,16 @@ public class TomVerifier extends TomGenericPlugin {
     StringBuffer result = new StringBuffer();
     Pattern h = null;
     PatternList tail = patternList;
-    if(!tail.isEmpty()) {
-      h = tail.getHead();
-      tail = tail.getTail();
+    if(!tail.isEmptyconcPattern()) {
+      h = tail.getHeadconcPattern();
+      tail = tail.getTailconcPattern();
       result.append(patternToString(h));
     }
 
-    while(!tail.isEmpty()) {
-      h = tail.getHead();
+    while(!tail.isEmptyconcPattern()) {
+      h = tail.getHeadconcPattern();
       result.append("," + patternToString(h));
-      tail = tail.getTail();
+      tail = tail.getTailconcPattern();
     }
     return result.toString();
   }
@@ -329,33 +333,33 @@ public class TomVerifier extends TomGenericPlugin {
     StringBuffer result = new StringBuffer();
     TomTerm h = null;
     TomList tail = tomList;
-    if(!tail.isEmpty()) {
-      h = tail.getHead();
-      tail = tail.getTail();
+    if(!tail.isEmptyconcTomTerm()) {
+      h = tail.getHeadconcTomTerm();
+      tail = tail.getTailconcTomTerm();
       result.append(patternToString(h));
     }
 
-    while(!tail.isEmpty()) {
-      h = tail.getHead();
+    while(!tail.isEmptyconcTomTerm()) {
+      h = tail.getHeadconcTomTerm();
       result.append("," + patternToString(h));
-      tail = tail.getTail();
+      tail = tail.getTailconcTomTerm();
     }
     return result.toString();
   }
   public String patternToString(TomTerm tomTerm) {
     %match(TomTerm tomTerm) {
       TermAppl[NameList=concTomName(Name(name),_*),Args=childrens] -> {
-        if (`childrens.isEmpty()) {
+        if (`childrens.isEmptyconcTomTerm()) {
           return `name;
         } else {
           `name = `name + "(";
-          TomTerm head = `childrens.getHead();
+          TomTerm head = `childrens.getHeadconcTomTerm();
           `name += patternToString(head);
-          TomList tail = `childrens.getTail();
-          while(!tail.isEmpty()) {
-            head = tail.getHead();
+          TomList tail = `childrens.getTailconcTomTerm();
+          while(!tail.isEmptyconcTomTerm()) {
+            head = tail.getHeadconcTomTerm();
             `name += "," + patternToString(head);
-            tail = tail.getTail();
+            tail = tail.getTailconcTomTerm();
           }
           `name += ")";
           return `name;

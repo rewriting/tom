@@ -169,9 +169,9 @@ public class Verifier extends TomBase {
 
   public Instr instrFromInstructionList(InstructionList instrlist) {
     InstrList list = `semicolon();
-    while (!instrlist.isEmpty()) {
-      Instruction i = (Instruction) instrlist.getHead();
-      instrlist = instrlist.getTail();
+    while (!instrlist.isEmptyconcInstruction()) {
+      Instruction i = (Instruction) instrlist.getHeadconcInstruction();
+      instrlist = instrlist.getTailconcInstruction();
       if (!i.isCheckStamp()) {
         list = `semicolon(list*,instrFromInstruction(i));
       }
@@ -182,7 +182,7 @@ public class Verifier extends TomBase {
   public Instr instrFromInstruction(Instruction automata) {
     %match(Instruction automata) {
       TypedAction[PositivePattern=positivePattern,NegativePatternList=negativePatternList] -> {
-        return `accept(positivePattern,negativePatternList);
+        return `accept(positivePattern.toATerm(),negativePatternList.toATerm());
       }
 
       If(cond,ift,iff) -> {
@@ -227,13 +227,13 @@ public class Verifier extends TomBase {
     SubstitutionList substitution = `subs();
     %match(Instr instr) {
       accept(positive,_) -> {
-        Pattern positivePattern = (Pattern) `positive;
+        Pattern positivePattern = Pattern.fromTerm(`positive);
         %match(Pattern positivePattern) {
           Pattern[SubjectList=subjectList] -> {
             TomList sl = `subjectList;
-            while(!sl.isEmpty()) {
-              TomTerm subject = sl.getHead();
-              sl=sl.getTail();
+            while(!sl.isEmptyconcTomTerm()) {
+              TomTerm subject = sl.getHeadconcTomTerm();
+              sl=sl.getTailconcTomTerm();
               %match(TomTerm subject) {
                 Variable[AstName=name] -> {
                   substitution = `subs(substitution*,
@@ -343,7 +343,7 @@ public class Verifier extends TomBase {
   %strategy acceptCollector(store:Collection) extends `Identity() {
     visit Instruction {
       TypedAction[PositivePattern=positive,NegativePatternList=negative]  -> {
-        store.add(`accept(positive,negative));
+        store.add(`accept(positive.toATerm(),negative.toATerm()));
       }
     }
   }
@@ -832,9 +832,9 @@ public class Verifier extends TomBase {
 
   String tomNumberListToString(TomNumberList numberList) {
     String result = "";
-    while(!numberList.isEmpty()) {
-      TomNumber number = numberList.getHead();
-      numberList = numberList.getTail();
+    while(!numberList.isEmptyconcTomNumber()) {
+      TomNumber number = numberList.getHeadconcTomNumber();
+      numberList = numberList.getTailconcTomNumber();
       %match(TomNumber number) {
         Number(n) -> {
           result = result + "Number" + Integer.toString(`n);
