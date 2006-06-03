@@ -54,6 +54,23 @@ public class ASTFactory {
   private ASTFactory() {
   }
 
+  public static int length(TomList l) {
+    if(l.isEmptyconcTomTerm()) {
+      return 0;
+    } else {
+      return 1 + length(l.getTailconcTomTerm());
+    }
+  }
+
+  public static TomList reverse(TomList l) {
+    TomList reverse = `concTomTerm();
+    while(!l.isEmptyconcTomTerm()){
+      reverse = cons(l.getHeadconcTomTerm(),reverse);
+      l = l.getTailconcTomTerm();
+    }
+    return reverse;
+  }
+
   public static TomList makeList(Collection c) {
     Object array[] = c.toArray();
     TomList list = `concTomTerm();
@@ -75,7 +92,7 @@ public class ASTFactory {
       } else {
         term = (TomTerm)elt;
       }
-      list = concTomTerm(term,list);
+      list = `concTomTerm(term,list*);
     }
     return list;
   }
@@ -97,7 +114,7 @@ public class ASTFactory {
         System.out.println("elt   = " + elt);
         term = (Instruction)elt;
       }
-      list = `concInstruction(term,list);
+      list = `concInstruction(term,list*);
     }
     return list;
   }
@@ -116,7 +133,7 @@ public class ASTFactory {
       } else {
         term = (Option)elt;
       }
-      list = `concOption(term,list);
+      list = `concOption(term,list*);
     }
     return list;
   }
@@ -127,7 +144,7 @@ public class ASTFactory {
       ATerm elt = (ATerm)argumentList.get(i);
       Constraint term;
       term = (Constraint)elt;
-      list = `concConstraint(term,list);
+      list = `concConstraint(term,list*);
     }
     return list;
   }
@@ -137,7 +154,7 @@ public class ASTFactory {
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       TomName term = (TomName) elt;
-      list = `concTomName(term,list);
+      list = `concTomName(term,list*);
     }
     return list;
   }
@@ -147,7 +164,7 @@ public class ASTFactory {
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       Slot term = (Slot) elt;
-      list = `concSlot(term,list);
+      list = `concSlot(term,list*);
     }
     return list;
   }
@@ -157,7 +174,7 @@ public class ASTFactory {
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       PairNameDecl term = (PairNameDecl) elt;
-      list = `concPairNameDecl(term,list);
+      list = `concPairNameDecl(term,list*);
     }
     return list;
   }
@@ -168,7 +185,7 @@ public class ASTFactory {
       ATerm elt = (ATerm)argumentList.get(i);
       PatternInstruction term;
       term = (PatternInstruction)elt;
-      list = `concPatternInstruction(term,list);
+      list = `concPatternInstruction(term,list*);
     }
     return list;
   }
@@ -179,7 +196,7 @@ public class ASTFactory {
       ATerm elt = (ATerm)argumentList.get(i);
       TomVisit term;
       term = (TomVisit)elt;
-      list = `concTomVisit(term,list);
+      list = `concTomVisit(term,list*);
     }
     return list;
   }
@@ -229,7 +246,7 @@ public class ASTFactory {
   public static OptionList makeOption(Option arg) {
     OptionList list = `concOption();
     if(arg!= null) {
-      list = `concOption(arg,list);
+      list = `concOption(arg,list*);
     }
     return list;
   }
@@ -241,7 +258,7 @@ public class ASTFactory {
   public static ConstraintList makeConstraint(Constraint arg) {
     ConstraintList list = `concConstraint();
     if(arg!= null) {
-      list = `concConstraint(arg,list);
+      list = `concConstraint(arg,list*);
     }
     return list;
   }
@@ -256,9 +273,9 @@ public class ASTFactory {
   public static OptionList makeOption(Option arg, Option info) {
     OptionList list = `concOption();
     if(arg!= null) {
-      list = `concOption(arg,list);
+      list = `concOption(arg,list*);
     }
-    list = `concOption(info,list);
+    list = `concOption(info,list*);
     return list;
   }
 
@@ -336,11 +353,11 @@ public class ASTFactory {
      */
   public static TomSymbol updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
     if(term.isTermAppl() || term.isRecordAppl()) {
-      String key = term.getNameList().getHead().getString();
+      String key = term.getNameList().getHeadconcTomName().getString();
       TomSymbol symbol = symbolTable.getSymbolFromName(key);
       if (symbol != null) {
         OptionList optionList = symbol.getOption();
-        optionList = (OptionList) optionList.append(`DefinedSymbol());
+        optionList = `concOption(optionList*,DefinedSymbol());
         symbolTable.putSymbol(key,symbol.setOption(optionList));
         return symbol;
       }
@@ -381,7 +398,7 @@ public class ASTFactory {
     %match(TomList list) {
       concTomTerm() -> { return `concTomTerm();}
       concTomTerm(head,tail*) -> {
-        TomList tl = metaEncodeTermList(symbolTable,tail);
+        TomList tl = metaEncodeTermList(symbolTable,tail*);
         return `concTomTerm(metaEncodeXMLAppl(symbolTable,head),tl*);
       }
     }
@@ -397,7 +414,7 @@ public class ASTFactory {
     TomNameList newNameList = `concTomName();
     %match(TomTerm term) {
       RecordAppl[NameList=(_*,Name(name),_*)] -> {
-        newNameList = (TomNameList)newNameList.append(`Name(encodeXMLString(symbolTable,name)));
+        newNameList = `concTomName(newNameList*,Name(encodeXMLString(symbolTable,name)));
       }
     }
     term = term.setNameList(newNameList);
@@ -450,17 +467,17 @@ public class ASTFactory {
     LinkedList list = new LinkedList();
     %match(TomTerm term) {
       RecordAppl[NameList=(Name("")),Slots=args] -> {
-        while(!`args.isEmpty()) {
-          list.add(metaEncodeXMLAppl(symbolTable,`args.getHead().getAppl()));
-          `args = `args.getTail();
+        while(!`args.isEmptyconcSlot()) {
+          list.add(metaEncodeXMLAppl(symbolTable,`args.getHeadconcSlot().getAppl()));
+          `args = `args.getTailconcSlot();
         }
         return list;
       }
 
       TermAppl[NameList=(Name("")),Args=args] -> {
-        while(!`args.isEmpty()) {
-          list.add(metaEncodeXMLAppl(symbolTable,`args.getHead()));
-          `args = `args.getTail();
+        while(!`args.isEmptyconcTomTerm()) {
+          list.add(metaEncodeXMLAppl(symbolTable,`args.getHeadconcTomTerm()));
+          `args = `args.getTailconcTomTerm();
         }
         return list;
       }
@@ -503,7 +520,7 @@ public class ASTFactory {
   }
 
   public static TomTerm buildArray(TomName name,TomList args) {
-    return buildArray(name,(TomList)args.reverse(),0);
+    return buildArray(name,reverse(args),0);
   }
 
   private static TomTerm buildArray(TomName name,TomList args, int size) {

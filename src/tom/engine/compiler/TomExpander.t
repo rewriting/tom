@@ -542,7 +542,7 @@ public class TomExpander extends TomGenericPlugin {
         attrList = attrList.getTailconcTomTerm();
       }catch(VisitFailure e){}
     }
-    newAttrList = reverse(newAttrList);
+    newAttrList = ASTFactory.reverse(newAttrList);
 
     /*
      * Childs: go from implicit notation to explicit notation
@@ -568,7 +568,7 @@ public class TomExpander extends TomGenericPlugin {
         childList = childList.getTailconcTomTerm();
       }catch(VisitFailure e){}
     }
-    newChildList = reverse(newChildList);
+    newChildList = ASTFactory.reverse(newChildList);
 
     /*
      * encode the name and put it into the table of symbols

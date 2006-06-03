@@ -44,9 +44,6 @@ import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
-import aterm.ATerm;
-import aterm.ATermList;
-
 import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -73,9 +70,9 @@ public class PILFactory extends TomBase {
     this.level = level;
   }
 
-  public ATerm remove(ATerm subject) {
+  public jjtraveler.Visitable remove(jjtraveler.Visitable subject) {
    try {
-     return (ATerm) MuTraveler.init(`TopDown(replaceRemove())).visit(subject);
+     return MuTraveler.init(`TopDown(replaceRemove())).visit(subject);
    } catch(jjtraveler.VisitFailure e) {
      System.out.println("strategy failed");
    }
@@ -117,7 +114,7 @@ public class PILFactory extends TomBase {
     }
   }
 
-  public String prettyPrintCompiledMatch(ATerm subject) {
+  public String prettyPrintCompiledMatch(jjtraveler.Visitable subject) {
     StringBuffer res = new StringBuffer();
     Collection matches = collectMatch(subject);
     Iterator it = matches.iterator();
@@ -129,7 +126,7 @@ public class PILFactory extends TomBase {
     return res.toString();
   }
 	
-	public String prettyPrint(ATerm subject) {
+	public String prettyPrint(jjtraveler.Visitable subject) {
 		%match(Instruction subject) {
 			CompiledMatch(automata,_) -> { 
 				return prettyPrint(`automata); 
@@ -169,7 +166,7 @@ public class PILFactory extends TomBase {
 				return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replaceAll("\n","\n\t")+"\n";
 			}
 
-			CheckInstance[Instruction=nstruction] -> {
+			CheckInstance[Instruction=instruction] -> {
 				return "checkInstance\n\t" + prettyPrint(`instruction).replaceAll("\n","\n\t");
 			}
 
@@ -295,28 +292,20 @@ public class PILFactory extends TomBase {
 		}
 
 		if(subject instanceof InstructionList) {
-			ATermList list = (ATermList)subject;
-			if(list.isEmpty()) {
+			InstructionList list = (InstructionList)subject;
+			if(list.isEmptyconcInstruction()) {
 				return "";
 			} else {
-				return prettyPrint(list.getFirst()) + "\n" + prettyPrint(list.getNext());
+				return prettyPrint(list.getHeadconcInstruction()) + "\n" + prettyPrint(list.getTailconcInstruction());
 			}
 		}  else if(subject instanceof TomNumberList) {
-			ATermList list = (ATermList)subject;
-			if(list.isEmpty()) {
+			TomNumberList list = (TomNumberList)subject;
+			if(list.isEmptyconcTomNumber()) {
 				return "";
 			} else {
-				return prettyPrint(list.getFirst()) + prettyPrint(list.getNext());
-			}
-		} else if(subject instanceof ATermList) {
-			ATermList list = (ATermList)subject;
-			if(list.isEmpty()) {
-				return "";
-			} else {
-				return prettyPrint(list.getFirst()) + " " + prettyPrint(list.getNext());
+				return prettyPrint(list.getTailconcTomNumber()) + prettyPrint(list.getTailconcTomNumber());
 			}
 		}
-
 		return subject.toString();
 	}
 
@@ -328,7 +317,7 @@ public class PILFactory extends TomBase {
     }
   } 
   
-  public Collection collectMatch(ATerm subject) {
+  public Collection collectMatch(jjtraveler.Visitable subject) {
     Collection result = new HashSet();
     try {
       MuTraveler.init(`TopDown(collectMatch(result))).visit(subject);

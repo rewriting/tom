@@ -100,23 +100,6 @@ public class TomBase {
     }
   }
 
-  protected static TomList reverse(TomList l) {
-    TomList reverse = `concTomTerm();
-    while(!l.isEmptyconcTomTerm()){
-      reverse = cons(l.getHeadconcTomTerm(),reverse);
-      l = l.getTailconcTomTerm();
-    }
-    return reverse;
-  }
-
-  protected static int length(TomList l) {
-    if(l.isEmptyconcTomTerm()) {
-      return 0;
-    } else {
-      return 1 + length(l.getTailconcTomTerm());
-    }
-  }
-
   public static String getTomType(TomType type) {
     %match(TomType type) {
       ASTTomType(s) -> {return `s;}
