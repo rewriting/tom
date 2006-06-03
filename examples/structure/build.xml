@@ -72,7 +72,6 @@
       <zipfileset src="${tom.home}/lib/aterm.jar"/>
     </jar>
   </target>
-
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
          update="yes">
@@ -86,5 +85,4 @@
       </zipfileset>
     </zip>
   </target>
-
 </project>

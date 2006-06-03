@@ -22,6 +22,12 @@
         <include name="tom-library*.jar"/>
       </fileset>
     </path>
+    <path id="mutraveler.path">
+      <fileset dir="${tom.home}/lib">
+        <include name="mutraveler*.jar"/>
+      </fileset>
+    </path>
+    <property name="mutraveler.jar" refid="mutraveler.path"/>
     <property name="tom-library.jar" refid="tom-library.path"/>
     <jar jarfile="${examples.build}/${appletxml}/xmlconverter.jar">
       <fileset dir="${examples.build}">
@@ -30,6 +36,7 @@
       <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
       <zipfileset src="${tom.home}/lib/aterm.jar" includes="aterm/**/*"/>
       <zipfileset src="${tom.home}/lib/jjtraveler.jar" includes="jjtraveler/Visit*"/>
+      <zipfileset src="${mutraveler.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
       <zipfileset src="${tom-library.jar}" includes="tom/library/xml/*"/>
       <zipfileset src="${tnode.jar}"/>
     </jar>
