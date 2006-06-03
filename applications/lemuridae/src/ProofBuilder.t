@@ -84,7 +84,7 @@ public class ProofBuilder {
 
        // si c'est une regle gauche
        ruledesc(0,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
-         Context gamma = args.size() < 0 ? `context(u*,v*) : `ctxt;
+         Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
          try { 
            VisitableVisitor v1 = `AddInContexts(gamma);
            res = (SeqList) MuTraveler.init(`TopDown(v1)).visit(res); 
@@ -99,7 +99,7 @@ public class ProofBuilder {
          try { 
            VisitableVisitor v1 = `AddInContexts(ctxt);
            res = (SeqList) MuTraveler.init(`TopDown(v1)).visit(res);
-           Context delta = args.size() < 0 ? `context(u*,v*) : `c;
+           Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
            VisitableVisitor v2 = `PutInConclusion(delta);
            res = (SeqList) MuTraveler.init(`TopDown(v2)).visit(res); 
          } catch (VisitFailure e) {  e.printStackTrace();  }
