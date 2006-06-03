@@ -67,7 +67,7 @@
       <exclude name="**/error/**"/>
       <exclude name="gen/**"/>
     </javac.preset>
-  	<copy todir="${test.build}">
+    <copy todir="${test.build}">
       <fileset dir="${test.src}">
         <include name="*/*.xml"/>
         <include name="*/*.dtd"/>
