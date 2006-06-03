@@ -96,14 +96,14 @@ public class OptionParser {
     %match(TNode optionsNode) {
       <options>(_*,option,_*)</options> -> {
         %match(TNode option) {
-          <boolean [Name = n, AltName = an, Description = d, Value = v] /> -> { 
+          <boolean [name = n, altName = an, description = d, value = v] /> -> { 
             PlatformBoolean bool = Boolean.valueOf(`v).booleanValue()?`True():`False();
             list = `concPlatformOption(list*, PluginOption(n, an, d, BooleanValue(bool), "")); 
           }
-          <integer [Name = n, AltName = an, Description = d, Value = v, AttrName = at] /> -> {
+          <integer [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
             list = `concPlatformOption(list*, PluginOption(n, an, d, IntegerValue(Integer.parseInt(v)), at));
           }
-          <string [Name = n, AltName = an, Description = d, Value = v, AttrName = at] /> -> {
+          <string [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
             list = `concPlatformOption(list*, PluginOption(n, an, d, StringValue(v), at));
           }
         }
