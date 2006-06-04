@@ -859,12 +859,12 @@
     <exec dir="${basedir}"
 	  failonerror="yes"
 	  executable="ant">
-      <arg line="stable.all"/>
+      <arg line="src.all"/>
     </exec>
     <exec dir="${basedir}"
 	  failonerror="yes"
 	  executable="ant">
-      <arg line="src.all"/>
+      <arg line="stable.all"/>
     </exec>
   </target>
 
