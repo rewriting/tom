@@ -158,6 +158,7 @@
     <apply executable="ant"
            parallel="false"
            failonerror="yes">
+      <arg value="-Dtom.home=${tom.home}"/>
       <arg value="-f"/>
       <fileset dir="." includes="a*/build.xml"/>
     </apply>
