@@ -24,7 +24,6 @@
 
   <!-- Examples to build and distribute -->
   <property name="cril"           value="cril"/>
-  <property name="gasel"          value="gasel"/>
 
   <target name="init" depends="tom.init">
     <!-- to have something correct, check tom.home is defined to something meaningful
@@ -145,21 +144,22 @@
     </copy>
   </target>
 
-  <target name="gasel" depends="init">
-    <gomcompile example="${gasel}"/>
-    <tomcompile example="${gasel}"/>
-    <javacompile example="${gasel}"/>
-  </target>
-
   <target name="examples" 
           description="Builds the examples (at least some)"
           depends="build.all">
   </target>
 
   <target name="build.all">
+    <!-- Replace this subant by apply, to make sure memory is released
     <subant target="build">
       <fileset dir="." includes="*/build.xml"/>
-    </subant>
+    </subant>-->
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="*/build.xml"/>
+    </apply>
   </target>
 
   <target name="dist.all">
