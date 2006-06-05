@@ -18,19 +18,31 @@ public class TestList extends TestCase {
     junit.textui.TestRunner.run(new TestSuite(TestList.class));
   }
 
+  public void testException() {
+    Element a = `a();
+    try {
+      a.length();
+      fail("length should raise an IllegalArgumentException");
+    } catch (IllegalArgumentException e) {
+      return;
+    } catch (Exception e) {
+      fail("wrong exception");
+    }
+  }
+
   public void testZeroLength() {
     List l = `conc();
-    assertEquals(getListLength(l),((conc)l).length());
+    assertEquals(getListLength(l),l.length());
   }
 
   public void testOneLength() {
     List l = `conc(a());
-    assertEquals(getListLength(l),((conc)l).length());
+    assertEquals(getListLength(l),l.length());
   }
 
   public void testTwoLength() {
     List l = `conc(a(),b());
-    assertEquals(getListLength(l),((conc)l).length());
+    assertEquals(getListLength(l),l.length());
   }
   public void testnLength() {
     int n = 15;
@@ -38,22 +50,22 @@ public class TestList extends TestCase {
     for(int i = 0; i<n; i++) {
       l = `conc(a(),b(),l*);
     }
-    assertEquals(getListLength(l),((conc)l).length());
+    assertEquals(getListLength(l),l.length());
   }
 
   public void testZeroReverse() {
     List l = `conc();
-    assertEquals(getListReverse(l),((conc)l).reverse());
+    assertEquals(getListReverse(l),l.reverse());
   }
 
   public void testOneReverse() {
     List l = `conc(a());
-    assertEquals(getListReverse(l),((conc)l).reverse());
+    assertEquals(getListReverse(l),l.reverse());
   }
 
   public void testTwoReverse() {
     List l = `conc(a(),b());
-    assertEquals(getListReverse(l),((conc)l).reverse());
+    assertEquals(getListReverse(l),l.reverse());
   }
 
   public void testnReverse() {
@@ -62,7 +74,7 @@ public class TestList extends TestCase {
     for(int i = 0; i<n; i++) {
       l = `conc(a(),b(),l*);
     }
-    assertEquals(getListReverse(l),((conc)l).reverse());
+    assertEquals(getListReverse(l),l.reverse());
   }
 
   public static List getListReverse(List l) {

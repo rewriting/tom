@@ -115,6 +115,19 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
 
 ]%);
 
+    /* length and reverse prototypes, only usable on lists */
+    out.append(%[
+  public int length() {
+    throw new IllegalArgumentException(
+      "This "+this.getClass().getName()+" is not a list");
+  }
+
+  public @fullClassName()@ reverse() {
+    throw new IllegalArgumentException(
+      "This "+this.getClass().getName()+" is not a list");
+  }
+]%);
+
     return out.toString();
   }
   
