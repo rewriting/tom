@@ -147,7 +147,7 @@
 
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="build.all">
+          depends="sub.all">
   </target>
 
   <target name="sub.all">

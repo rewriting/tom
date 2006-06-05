@@ -8,6 +8,7 @@
   <property name="verbose"     value="off"/>
   <property name="pretty"      value="off"/>
   <property name="visitable"   value="on"/>
+  <property name="tomfork"     value="off"/>
   <property name="stamp"       value="off"/>
 
   <property environment="env"/>
@@ -57,7 +58,9 @@
            optimize="${optimize}"
            optimize2="${optimize2}"
            verbose="${verbose}"
+	   fork="${tomfork}"
            pretty="${pretty}">
+        <classpath refid="tom.classpath"/>
       </tom>
     </presetdef>
 
@@ -69,5 +72,4 @@
       </javac>
     </presetdef>
   </target>
-
 </project>

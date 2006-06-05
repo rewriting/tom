@@ -1424,6 +1424,12 @@
   make(t0, t1) { tom.engine.adt.tomsignature.TomConstraintFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomTerm_TLVar(t0, t1)}
 }
 
+%op TomTerm AntiTerm(tomTerm:TomTerm) {
+  is_fsym(t) { (t!= null) && t.isAntiTerm()}
+  get_slot(tomTerm,t) { t.getTomTerm()}
+  make(t0) { tom.engine.adt.tomsignature.TomConstraintFactory.getInstance(aterm.pure.SingletonFactory.getInstance()).makeTomTerm_AntiTerm(t0)}
+}
+
 %op TomTerm Term(tomTerm:TomTerm) {
   is_fsym(t) { (t!= null) && t.isTerm()}
   get_slot(tomTerm,t) { t.getTomTerm()}

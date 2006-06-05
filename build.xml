@@ -197,7 +197,7 @@
   </target>
 
   <!-- define task for running tom.src -->
-  <target name="init.task.src" depends="src">
+  <target name="init.task.src" depends="src.dist">
     <path id="tomsrc.classpath">
       <fileset dir="${src.dist.lib}">
         <include name="*.jar"/>
@@ -224,7 +224,9 @@
   -->
   <target name="-withstable" unless="withsource">
     <presetdef name="tomcompile">
-      <tom config="${stable.configfile}"/>
+      <tom config="${stable.configfile}">
+        <classpath refid="tom.classpath"/>
+      </tom>
     </presetdef>
     <presetdef name="gomcompile">
       <gom config="${stable.gomconfigfile}"/>
@@ -236,7 +238,9 @@
 
   <target name="-withsrc" if="withsource">
     <presetdef name="tomcompile">
-      <tomsrc config="${src.configfile}"/>
+      <tomsrc config="${src.configfile}">
+        <classpath refid="tom.classpath"/>
+      </tomsrc>
     </presetdef>
     <presetdef name="gomcompile">
       <gomsrc config="${src.gomconfigfile}"/>
@@ -1066,7 +1070,7 @@
 
 
   <!-- compile tom files in src.src with tom.src -->
-  <target name="bootstep" depends="init.task.src,src.dist" if="destination">
+  <target name="bootstep" depends="init.task.src" if="destination">
 
     <mkdir dir="${destination}/gen"/>
     <mkdir dir="${destination}/build"/>
