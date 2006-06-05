@@ -13,6 +13,7 @@
 	        srcdir="${examples.dir}"
                 options="--camlCode -I ${tom.home}/share/jtom">
       <include name="${caml}/**/*.t"/>
+      <classpath refid="tom.classpath"/>
     </tom>
     <copy todir="${examples.build}/${caml}">
       <fileset dir="${examples.gen}/${caml}">

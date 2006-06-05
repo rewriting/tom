@@ -27,15 +27,18 @@ package tom.engine.tools.ant;
 
 import java.io.*;
 import java.util.*;
-import tom.engine.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.*;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
+
 import org.apache.tools.ant.util.GlobPatternMapper;
 import org.apache.tools.ant.util.SourceFileScanner;
+
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.MatchingTask;
+import org.apache.tools.ant.taskdefs.Java;
 
 /**
  * Compiles Tom source files. This task can take the following
@@ -53,6 +56,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <li>failonerror</li>
  * <li>stamp</li>
  * <li>nowarn</li>
+ * <li>fork</li>
  * </ul>
  * Of these arguments, only <b>sourcedir</b> is required.
  * Either <b>destdir</b> or <b>outputfile</b> have to be set,
@@ -82,10 +86,24 @@ public class TomTask extends MatchingTask {
   private boolean pretty = false;
   private boolean protectedFlag = false;
 
-
   private boolean failOnError = true;
+  private boolean fork = false;
   private boolean listFiles = false;
   private File[] compileList = new File[0];
+
+  private Java javaRunner;
+
+  public void init() throws BuildException {
+    javaRunner = new Java();
+    configureTask(javaRunner);
+  }
+
+  private void configureTask(Task runner) {
+    runner.setProject(getProject());
+    runner.setTaskName(getTaskName());
+    runner.setOwningTarget(getOwningTarget());
+    runner.init();
+  }
 
   /**
    * Set the configuration file
@@ -324,6 +342,22 @@ public class TomTask extends MatchingTask {
   }
 
   /**
+   * If true, run Tom in a new JVM
+   * @param flag if true, executes in a new JVM
+   */
+  public void setFork(boolean flag) {
+    this.fork = flag;
+  }
+
+  /**
+   * Should Tom run in a new JVM
+   * @return true if Tom should run in a new JVM
+   */
+  public boolean getFork() {
+    return fork;
+  }
+
+  /**
    * Executes the task.
    * @exception BuildException if an error occurs
    */
@@ -467,47 +501,52 @@ public class TomTask extends MatchingTask {
 
       String cmd_line = "";
       if(options != null && getOptions().trim().length() > 0) {
-        cmd_line = cmd_line.trim() + " " + options;
+        javaRunner.createArg().setLine(options);
       }
       if(getConfig() != null) {
-        cmd_line = cmd_line.trim() + " -X " + getConfig();
+        javaRunner.createArg().setValue("-X");
+        javaRunner.createArg().setFile(getConfig());
       }
       if(destDir != null) {
-        cmd_line = cmd_line.trim() + " -d " + destDir;
+        javaRunner.createArg().setValue("-d");
+        javaRunner.createArg().setFile(destDir);
       }
       if(outputFile != null) {
-        cmd_line = cmd_line.trim() + " -o " + outputFile;
+        javaRunner.createArg().setValue("-o");
+        javaRunner.createArg().setFile(outputFile);
       }
       if(optimize == true) {
-        cmd_line = cmd_line.trim() + " --optimize";
+        javaRunner.createArg().setValue("--optimize");
       }
       if(optimize2 == true) {
-        cmd_line = cmd_line.trim() + " --optimize2";
+        javaRunner.createArg().setValue("--optimize2");
       }
       if(pretty == true) {
-        cmd_line = cmd_line.trim() + " --pretty";
+        javaRunner.createArg().setValue("--pretty");
       }
       if(stamp == true) {
-        cmd_line = cmd_line.trim() + " --stamp";
+        javaRunner.createArg().setValue("--stamp");
       }
       if(nowarn == false) {
-        cmd_line = cmd_line.trim() + " --wall";
+        javaRunner.createArg().setValue("--wall");
       }
       if(verbose == true) {
-        cmd_line = cmd_line.trim() + " --verbose";
+        javaRunner.createArg().setValue("--verbose");
       }
       for (int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();
         //if(verbose) {
         //  System.out.println("Compiling " + filename + "...");
         //}
-        cmd_line = cmd_line.trim() + " " + filename;
+        javaRunner.createArg().setValue(filename);
       }
 
       String[] cmd = split(cmd_line);
       //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
       int err = -1;
-      err = Tom.exec(cmd);
+      javaRunner.setFork(getFork());
+      javaRunner.setClassname("tom.engine.Tom");
+      err = javaRunner.executeJava();
       if(err != 0) {
         if(failOnError) {
           throw new BuildException("Tom returned: " + err, getLocation());
@@ -540,5 +579,17 @@ public class TomTask extends MatchingTask {
       return new String[0];
     }
   }
-
+  /* for the nested java process */
+  public void setClasspath(Path s) {
+    javaRunner.setClasspath(s);
+  }
+  public Path createClasspath() {
+    return javaRunner.createClasspath();
+  }
+  public void setClasspathRef(Reference r) {
+    javaRunner.setClasspathRef(r);
+  }
+  public Path createBootclasspath() {
+    return javaRunner.createBootclasspath();
+  }
 }

@@ -7,6 +7,7 @@
   <!-- set local properties for this build -->
   <property file="../local.properties"/>
 
+  <property name="tomfork" value="no"/>
   <property environment="env"/>
   <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>
@@ -147,6 +148,12 @@
   <target name="examples" 
           description="Builds the examples (at least some)"
           depends="build.all">
+  </target>
+
+  <target name="sub.all">
+    <subant target="build">
+      <fileset dir="." includes="*/build.xml"/>
+    </subant>
   </target>
 
   <target name="build.all">
@@ -374,7 +381,7 @@
       <classpath>
         <path refid="tom.classpath"/>
 	<fileset dir="${examples.dir}/${examples.lib}">
-		<include name="*.jar"/>
+          <include name="*.jar"/>
 	</fileset>
         <pathelement location="${examples.build}"/>
       </classpath>

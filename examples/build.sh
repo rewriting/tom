@@ -17,7 +17,7 @@ fi
 LOCALCLASSPATH=`echo ./lib/junit.jar | tr ' ' ':'` 
 
 ARGS=$*
-if [ -d $ARGS ]; then
+if [ "${ARGS}" -a -d "${ARGS}" ]; then
 	ARGS="-Dexample=$ARGS build"
 fi
 #CLASSPATH=${LOCALCLASSPATH} ANT_OPTS="-XX:PermSize=128m -XX:MaxPermSize=128m" ant $*
