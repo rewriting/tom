@@ -64,6 +64,12 @@
       </tom>
     </presetdef>
 
+    <presetdef name="gom.preset">
+      <gom config="${gomconfigfile}">
+        <classpath refid="tom.classpath"/>
+      </gom>
+    </presetdef>
+
     <presetdef name="javac.preset">
       <javac target="${javacTarget}"
              source="${javacSource}"

@@ -499,7 +499,6 @@ public class TomTask extends MatchingTask {
         log("\"tom.home\" is not defined, some features may not work");
       }
 
-      String cmd_line = "";
       if(options != null && getOptions().trim().length() > 0) {
         javaRunner.createArg().setLine(options);
       }
@@ -541,8 +540,6 @@ public class TomTask extends MatchingTask {
         javaRunner.createArg().setValue(filename);
       }
 
-      String[] cmd = split(cmd_line);
-      //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
       int err = -1;
       javaRunner.setFork(getFork());
       javaRunner.setClassname("tom.engine.Tom");

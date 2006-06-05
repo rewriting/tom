@@ -31,10 +31,14 @@ import java.util.Vector;
 import tom.engine.tools.ant.TomRegexpPatternMapper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.taskdefs.MatchingTask;
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
+
 import org.apache.tools.ant.util.SourceFileScanner;
+
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.MatchingTask;
+import org.apache.tools.ant.taskdefs.Java;
 
 /**
  * Compiles GOM source files. this task can take the following
@@ -46,6 +50,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <li>package</li>
  * <li>options</li>
  * <li>failonerror</li>
+ * <li>fork</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
@@ -65,7 +70,22 @@ public class GomTask extends MatchingTask {
   private File[] compileList = null;
   private boolean verbose = false;
   private boolean failOnError = true;
+  private boolean fork = false;
   private String protectedFileSeparator = "\\"+File.separatorChar;
+
+  private Java javaRunner;
+
+  public void init() throws BuildException {
+    javaRunner = new Java();
+    configureTask(javaRunner);
+  }
+
+  private void configureTask(Task runner) {
+    runner.setProject(getProject());
+    runner.setTaskName(getTaskName());
+    runner.setOwningTarget(getOwningTarget());
+    runner.init();
+  }
 
   public Path createSrc() {
     if (src == null) {
@@ -89,6 +109,22 @@ public class GomTask extends MatchingTask {
 
   public Path getSrcdir() {
     return src;
+  }
+
+  /**
+   * If true, run Gom in a new JVM
+   * @param flag if true, executes in a new JVM
+   */
+  public void setFork(boolean flag) {
+    this.fork = flag;
+  }
+
+  /**
+   * Should Gom run in a new JVM
+   * @return true if Gom should run in a new JVM
+   */
+  public boolean getFork() {
+    return fork;
   }
 
   /**
@@ -208,34 +244,37 @@ public class GomTask extends MatchingTask {
         scanDir(srcDir,getDestdirWithPackage(),files);
       }
       printCompileList(compileList);
-      String str_command = "";
       if(getConfig() != null) {
-        str_command = str_command.trim() + " -X " + getConfig();
+        javaRunner.createArg().setValue("-X");
+        javaRunner.createArg().setFile(getConfig());
       }
 
       if(getPackage() != null && getPackage().length() > 0) {
-          str_command = str_command.trim() + " --package " + getPackage();
+        javaRunner.createArg().setValue("--package");
+        javaRunner.createArg().setValue(getPackage());
       }
 
       if(getOptions() != null && getOptions().trim().length() > 0) {
-        str_command = str_command.trim() + " " + getOptions().trim();
+        javaRunner.createArg().setLine(getOptions());
       }
 
       if(getDestdir() != null) {
-        str_command = str_command.trim() + " --destdir " + getDestdir().getAbsolutePath();
+        javaRunner.createArg().setValue("--destdir");
+        javaRunner.createArg().setFile(getDestdir());
       }
       if(getVerbose() == true) {
-        str_command = str_command.trim() + " --verbose ";
+        javaRunner.createArg().setValue("--verbose");
       }
 
       for (int i = 0; i < compileList.length; i++) {
-        str_command = str_command.trim() + " " + compileList[i];
+        javaRunner.createArg().setValue(compileList[i].getAbsolutePath());
       }
 
-      String cmd[] = split(str_command);
       if(compileList.length > 0) {
         int err = -1;
-        err = tom.gom.Gom.exec(cmd);
+        javaRunner.setFork(getFork());
+        javaRunner.setClassname("tom.gom.Gom");
+        err = javaRunner.executeJava();
         if(err != 0) {
           if(failOnError) {
             throw new BuildException("gom returned: " + err, getLocation());
@@ -354,5 +393,16 @@ public class GomTask extends MatchingTask {
       System.out.println("Problem with Package Path " + result);
     }
     return result;
+  }
+
+  /* for the nested java process */
+  public void setClasspath(Path s) {
+    javaRunner.setClasspath(s);
+  }
+  public Path createClasspath() {
+    return javaRunner.createClasspath();
+  }
+  public void setClasspathRef(Reference r) {
+    javaRunner.setClasspathRef(r);
   }
 }

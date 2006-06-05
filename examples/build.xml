@@ -77,12 +77,11 @@
     <macrodef name="gomcompile">
       <attribute name="example"/>
       <sequential>
-        <gom config="${gomconfigfile}"
-             srcdir="${examples.dir}"
-             package="@{example}" 
-             destdir="${examples.gen}">
+        <gom.preset srcdir="${examples.dir}"
+                    package="@{example}" 
+                    destdir="${examples.gen}">
           <include name="@{example}/**/*.gom"/>
-        </gom>
+        </gom.preset>
       </sequential>
     </macrodef>
     <macrodef name="javacompile">

@@ -229,7 +229,9 @@
       </tom>
     </presetdef>
     <presetdef name="gomcompile">
-      <gom config="${stable.gomconfigfile}"/>
+      <gom config="${stable.gomconfigfile}">
+        <classpath refid="tom.classpath"/>
+      </gom>
     </presetdef>
     <presetdef name="vascompile">
       <vas config="${stable.vasconfigfile}"/>
