@@ -42,7 +42,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomslot.types.pairnamedecllist.concPairNameDecl;
 
 import tom.engine.adt.zenon.types.*;
 
@@ -286,13 +285,13 @@ public class TomIlTools extends TomBase {
       %match(TomSymbol symbol) {
         Symbol[PairNameDeclList=slots] -> {
           // process all slots
-          int slotnumber =((concPairNameDecl)`slots).length();
+          int slotnumber =`slots.length();
           for (int i = 0; i < slotnumber;i++) {
             list = `concZTerm(list*,zvar("x"+i));
           }
           %match(PairNameDeclList slots) {
             concPairNameDecl(al*,PairNameDecl[SlotName=Name(slname)],_*) -> {
-              int index = ((concPairNameDecl)`al).length();
+              int index = `al.length();
               ZExpr axiom = `zeq(zvar("x"+index),
                                  zsl(zappl(zsymbol(name),list),slname));
               for (int j = 0; j < slotnumber;j++) {

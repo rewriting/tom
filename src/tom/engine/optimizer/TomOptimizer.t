@@ -46,7 +46,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomname.types.tomnamelist.*;
 
 import tom.engine.TomMessage;
 import tom.engine.tools.TomGenericPlugin;
@@ -58,6 +57,7 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 import tom.library.strategy.mutraveler.*;
+
 
 /**
  * The TomOptimizer plugin.
@@ -506,7 +506,7 @@ public class TomOptimizer extends TomGenericPlugin {
           TomNameList l2 = `exp2.getNameList();
           if (`exp1.getNameList()==`exp2.getNameList()){
             return `EqualFunctionSymbol(astType,exp,exp1);
-          } else if(((concTomName)l1).length()==1 && ((concTomName)l2).length()==1) {
+          } else if(l1.length()==1 && l2.length()==1) {
             return `FalseTL();
           } else {
             return `ref;
