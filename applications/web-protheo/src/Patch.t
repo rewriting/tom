@@ -19,13 +19,13 @@ public class Patch {
   %include{adt/tnode/TNode.tom}
 
   private XmlTools xtools;
-  private List members;
+  private static List members;
 
   public Patch(TNode mbrs,TNode bib){
     xtools = new XmlTools();
     members= new ArrayList();
-    VisitableVisitor ruleId1 = new GetMembers();
-    VisitableVisitor ruleId2 = new ParseBib();
+    VisitableVisitor ruleId1 = `GetMembers();
+    VisitableVisitor ruleId2 = `ParseBib();
     try{
       MuTraveler.init(`BottomUp(ruleId1)).visit(mbrs);
       MuTraveler.init(`BottomUp(ruleId2)).visit(bib);
@@ -39,42 +39,32 @@ public class Patch {
     }
   }
   
-  class ParseBib extends TNodeVisitableFwd {
-    public ParseBib() {
-      super(`Identity());
-    }  
-    public TNode visit_TNode(TNode arg) throws VisitFailure {
-      %match(TNode arg) {
-        <author>#TEXT(a)</author> -> {
-          String first="", last = "";
-          String authArray[] = `a.split(" and ");//must be surrouded by blanks (don't split name 'Brand' for instance)
-          for (int i=0;i<(Array.getLength(authArray));i++) {//for each author
-            String current_a[] = authArray[i].split(",");
-            last = current_a[0].trim();
-            if (Array.getLength(current_a) > 1){//case field firstname empty
-              first = current_a[1].trim();
-            }
-            if(!members.contains(last + " " + first)) {
-              members.add(last + " " + first);
-            }
+  %strategy ParseBib() extends `Identity() {
+
+    visit TNode{
+      <author>#TEXT(a)</author> -> {
+        String first="", last = "";
+        String authArray[] = `a.split(" and ");//must be surrouded by blanks (don't split name 'Brand' for instance)
+        for (int i=0;i<(Array.getLength(authArray));i++) {//for each author
+          String current_a[] = authArray[i].split(",");
+          last = current_a[0].trim();
+          if (Array.getLength(current_a) > 1){//case field firstname empty
+            first = current_a[1].trim();
+          }
+          if(!members.contains(last + " " + first)) {
+            members.add(last + " " + first);
           }
         }
       }
-      return arg;
     }
   }
 
-  class GetMembers extends TNodeVisitableFwd {
-    public GetMembers() {
-      super(`Identity());
-    }
-    public TNode visit_TNode(TNode arg) throws VisitFailure {
-      %match(TNode arg) {
-        <person><firstname>#TEXT(first)</firstname><lastname>#TEXT(last)</lastname><status>#TEXT(s)</status></person> -> {
-          members.add(`last + " " + `first + " <<<<<<<<");
-        }
-      }  
-      return arg;
+  %strategy GetMembers() extends `Identity(){
+
+    visit TNode {
+      <person><firstname>#TEXT(first)</firstname><lastname>#TEXT(last)</lastname><status>#TEXT(s)</status></person> -> {
+        members.add(`last + " " + `first + " <<<<<<<<");
+      }
     }
   }
 }

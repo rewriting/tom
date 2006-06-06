@@ -19,13 +19,10 @@ public class Publi {
 
   private final static int firstYearPubli = 1992;
 
-  protected SortedMap authors, alumni, members;
+  protected static SortedMap authors, alumni, members;
   private TNode bibN, membersN;
   private XmlTools xtools;
   private Tools tools;
-  private TNodeFactory getTNodeFactory() {
-    return xtools.getTNodeFactory();
-  }
 
   public Publi(TNode membersN,TNode bibN,Tools tools,XmlTools xtools){
     this.tools = tools;
@@ -36,8 +33,8 @@ public class Publi {
     alumni = new TreeMap();
     members = new TreeMap();
     // Put members in a java structure
-    VisitableVisitor getMembers = new GetMembers();
-    VisitableVisitor parseBib = new ParseBib();
+    VisitableVisitor getMembers = `GetMembers();
+    VisitableVisitor parseBib = `ParseBib();
     try{
       MuTraveler.init(`InnermostId(getMembers)).visit(membersN);//put all members in members.xml to variable 'members'
       MuTraveler.init(`InnermostId(parseBib)).visit(bibN);//parse bib
@@ -123,7 +120,7 @@ public class Publi {
 
   private void bib2html(String id, String condition){
     Runtime run = Runtime.getRuntime();
-      StringBuffer body = new StringBuffer();//patch for -encoding
+    StringBuffer body = new StringBuffer();//patch for -encoding
     try {
       String[] bib2bib = {"/bin/sh", "-c","bib2bib -oc " + Mk.tmpDir + "cite" + id +" -ob " + Mk.tmpDir + id +".bib " + condition + " " + Mk.bibDir + "complete.bib"};
       //System.out.println(bib2bib[2]);
@@ -159,66 +156,54 @@ public class Publi {
     }
   }
 
-  class ParseBib extends TNodeVisitableFwd {
-    public ParseBib() {
-      super(`Identity());
-    }  
-    
-    public TNode visit_TNode(TNode arg) throws VisitFailure {
-      %match(TNode arg) {
-        <author>#TEXT(a)</author> -> {
-          // Must be surrouded by blanks (don't split name 'Brand' for instance)
-          String authArray[] = `a.split(" and ");
-          // For each author
-          String last,first;
-          for (int i=0 ; i<(Array.getLength(authArray)) ; i++) {
-            String current_a[] = authArray[i].split(",");
-            last = current_a[0].trim();
-            first = "";
-            // If firstname not empty
-            if (Array.getLength(current_a) > 1){
-              first = current_a[1].trim();
-            }
-            // If author belongs to members.xml
-            if(members.containsKey(last + first)) {
-              boolean isAlumni = ((Author)members.get(last + first)).getStatus().equalsIgnoreCase("Ancien Membre");
-              //check is author already added
-              if (isAlumni){
-                // Alumni
-                if(!alumni.containsKey(last + first)) {
-                  Author auth = new Author(first,last);
-                  alumni.put(last + first,auth);
-                }
+  %strategy ParseBib() extends `Identity(){
+
+    visit TNode {
+      <author>#TEXT(a)</author> -> {
+        // Must be surrouded by blanks (don't split name 'Brand' for instance)
+        String authArray[] = `a.split(" and ");
+        // For each author
+        String last,first;
+        for (int i=0 ; i<(Array.getLength(authArray)) ; i++) {
+          String current_a[] = authArray[i].split(",");
+          last = current_a[0].trim();
+          first = "";
+          // If firstname not empty
+          if (Array.getLength(current_a) > 1){
+            first = current_a[1].trim();
+          }
+          // If author belongs to members.xml
+          if(members.containsKey(last + first)) {
+            boolean isAlumni = ((Author)members.get(last + first)).getStatus().equalsIgnoreCase("Ancien Membre");
+            //check is author already added
+            if (isAlumni){
+              // Alumni
+              if(!alumni.containsKey(last + first)) {
+                Author auth = new Author(first,last);
+                alumni.put(last + first,auth);
               }
-              else{
-                // Author
-                if(!authors.containsKey(last + first)) {
-                  Author auth = new Author(first,last);
-                  authors.put(last + first,auth);
-                }
-              }
-            } else {
-              //System.err.println("Bad author : " + last + " " + first);
             }
+            else{
+              // Author
+              if(!authors.containsKey(last + first)) {
+                Author auth = new Author(first,last);
+                authors.put(last + first,auth);
+              }
+            }
+          } else {
+            //System.err.println("Bad author : " + last + " " + first);
           }
         }
       }
-      return arg;
-    }
-  }
-  
-  class GetMembers extends TNodeVisitableFwd {
-    public GetMembers() {
-      super(`Identity());
-    }
-    public TNode visit_TNode(TNode arg) throws VisitFailure {
-      %match(TNode arg) {
-        <person><firstname>#TEXT(fn)</firstname><lastname>#TEXT(ln)</lastname><status>#TEXT(s)</status></person> -> {
-          members.put(`ln + `fn, new Author(`fn,`ln,`s));
-        }
-      }  
-      return arg;
     }
   }
 
+  %strategy GetMembers() extends `Identity(){
+
+    visit TNode {
+      <person><firstname>#TEXT(fn)</firstname><lastname>#TEXT(ln)</lastname><status>#TEXT(s)</status></person> -> {
+        members.put(`ln + `fn, new Author(`fn,`ln,`s));
+      }
+    }
+  }
 }

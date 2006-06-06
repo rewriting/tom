@@ -37,7 +37,7 @@ public class Mk {
   public Mk() {
     tools = new Tools();
 
-    TNode conf = (TNode)xtools.convertXMLToATerm("config.xml");
+    TNode conf = xtools.convertXMLToTNode("config.xml");
     if(!(conf == null)) {
       conf = tools.removeComments(conf.getDocElem());
       %match(TNode conf) {
@@ -52,21 +52,21 @@ public class Mk {
     }
 
     // Removes first tag <!DOCTYPE...> as well.
-    TNode mn = (TNode)xtools.convertXMLToATerm(contentDir +"menu.xml");
+    TNode mn = xtools.convertXMLToTNode(contentDir +"menu.xml");
     if(!(mn == null)) {
       mn = tools.removeComments(mn.getDocElem());
     } else {
       System.err.println(contentDir +"menu.xml doesn't exists.");
       System.exit(1);
     }
-    TNode mb = (TNode)xtools.convertXMLToATerm(contentDir + "members.xml");
+    TNode mb = xtools.convertXMLToTNode(contentDir + "members.xml");
     if(!(mb == null)) {
       mb = tools.removeComments(mb.getDocElem());
     } else {
       System.err.println(contentDir +"members.xml doesn't exists.");
       System.exit(1);
     }
-    TNode bib = (TNode)xtools.convertXMLToATerm(bibDir + "complete.xml");
+    TNode bib = xtools.convertXMLToTNode(bibDir + "complete.xml");
     if(!(bib == null)) {
       bib = tools.removeComments(bib.getDocElem());
     } else {
@@ -74,7 +74,7 @@ public class Mk {
       System.exit(1);
     }
 
-    skeleton = (TNode)xtools.convertXMLToATerm(contentDir + "skeleton.html");
+    skeleton = xtools.convertXMLToTNode(contentDir + "skeleton.html");
     if(skeleton == null) {
       System.err.println(contentDir +"skeleton.xml doesn't exists.");
       System.exit(1);
@@ -125,7 +125,7 @@ public class Mk {
       }
       // If french file do not exist
       else if((lang == Translator.IN_FRENCH) && (!new File(contentDir + link + "_fr.body").exists())) {
-        content = (TNode)xtools.convertXMLToATerm(contentDir + link + "_" + Translator.IN_ENGLISH + ".body");
+        content = xtools.convertXMLToTNode(contentDir + link + "_" + Translator.IN_ENGLISH + ".body");
         if(!(content == null)) {
           content = content.getDocElem();
         } else {
@@ -135,7 +135,7 @@ public class Mk {
       }
       // General case
       else {
-        content = (TNode)xtools.convertXMLToATerm(contentDir + link + "_" + lang + ".body");
+        content = xtools.convertXMLToTNode(contentDir + link + "_" + lang + ".body");
         if(!(content == null)) {
           content = content.getDocElem();
         } else {
@@ -156,7 +156,7 @@ public class Mk {
       TNode p = (TNode)MuTraveler.init(`BottomUp(ruleId)).visit(skeleton);
       // Write HTML page
       OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(w3Dir + link+ "_"+lang+".html"),"UTF-8");
-      xtools.writeXMLFileFromATerm(writer,p);
+      xtools.writeXMLFileFromTNode(writer,p);
       writer.close();
     }
     catch(Exception e) {

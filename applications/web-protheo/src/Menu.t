@@ -148,7 +148,7 @@ public class Menu {
     }
   }
 
-  private boolean hasLink(TNodeList sub) {
+  private static boolean hasLink(TNodeList sub) {
     %match(TNodeList sub) {
       (_*,<link></link>,_*) -> { 
         return true;
@@ -157,7 +157,7 @@ public class Menu {
     return false;
   }
 
-  private boolean hasSectionTag(TNodeList sub) {
+  private static boolean hasSectionTag(TNodeList sub) {
     %match(TNodeList sub) {
       (_*,<section></section>,_*) -> { 
         return true;
@@ -243,7 +243,7 @@ public class Menu {
     }
   }
 
-  private boolean hasAnchor(TNodeList sub) {
+  private static boolean hasAnchor(TNodeList sub) {
     %match(TNodeList sub) {
       (_*,<anchor></anchor>,_*) -> { 
         return true;

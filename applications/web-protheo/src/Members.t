@@ -19,20 +19,16 @@ public class Members {
   private XmlTools xtools;
   private TNode members;
 
-  private TNodeFactory getTNodeFactory() {
-     return xtools.getTNodeFactory();
-   }
-
   public Members(TNode members,XmlTools xtools){
     this.members = members;
     this.xtools = xtools;
   }
 
-   /**
-    * Generate members page body
-    */
+  /**
+   * Generate members page body
+   */
   public TNode getContent(String lang) throws Exception{
-    VisitableVisitor ruleId = new RewriteSystemId(lang);
+    VisitableVisitor ruleId = `RewriteSystemId(lang);
     TNode output = (TNode)MuTraveler.init(`BottomUp(ruleId)).visit(members);
 
     TNodeList result = `concTNode(output);
@@ -56,58 +52,49 @@ public class Members {
   /**
    * Translate XML into xHTML
    */
-  class RewriteSystemId extends TNodeVisitableFwd {
-    private String lang;
-    public RewriteSystemId(String l) {
-      super(`Identity());
-      lang = l;
-    }
+  %strategy RewriteSystemId(lang: String) extends `Identity(){
 
-    public TNode visit_TNode(TNode arg) throws VisitFailure {
-      %match(TNode arg) {
-        <members>(g*)</members> -> {
-          return arg = `xml(<div id="members">g*</div>);
+    visit TNode {
+      <members>(g*)</members> -> {
+        return `xml(<div id="members">g*</div>);
+      }
+      <group class=x>(_*,tag@<(title_fr|title_en)>title</(title_fr|title_en)>,p*)</group> -> {
+        if((`tag.getName()).endsWith(lang)) {
+          return `xml(<div id=x><h3><a name=x>#TEXT("")</a>title</h3>p*</div>);
         }
-        <group class=x>(_*,tag@<(title_fr|title_en)>title</(title_fr|title_en)>,p*)</group> -> {
-          if((`tag.getName()).endsWith(lang)) {
-            return arg = `xml(<div id=x><h3><a name=x>#TEXT("")</a>title</h3>p*</div>);
-          }
+      }
+      tag@<(title_fr|title_en)>title</(title_fr|title_en)> -> {
+        // Remove bad title
+        if(!(`tag.getName()).endsWith(lang)) {
+          return `xml(#TEXT(""));
         }
-        tag@<(title_fr|title_en)>title</(title_fr|title_en)> -> {
-          // Remove bad title
-          if(!(`tag.getName()).endsWith(lang)) {
-            return arg = `xml(#TEXT(""));
-          }
-        }
-        <person>(p*)</person> -> {
-          TNodeList tags = `concTNode();
-          %match(TNodeList p) {
-            (_*,<firstname>#TEXT(first)</firstname>, _*,<lastname>#TEXT(last)</lastname>,_*) -> {
-              String name = `first+" "+`last;
-              %match(TNodeList p) {
-                //photo attribute is optional
-                (_*,<photo>#TEXT(t_photo)</photo>,_*) -> {
-                  String photo =  "images/trombi/"+`t_photo;
-                  tags = `concTNode(tags*,<img src=photo alt=name />);
-                  tags = `concTNode(tags*,<br />);
-                }
+      }
+      <person>(p*)</person> -> {
+        TNodeList tags = `concTNode();
+        %match(TNodeList p) {
+          (_*,<firstname>#TEXT(first)</firstname>, _*,<lastname>#TEXT(last)</lastname>,_*) -> {
+            String name = `first+" "+`last;
+            %match(TNodeList p) {
+              //photo attribute is optional
+              (_*,<photo>#TEXT(t_photo)</photo>,_*) -> {
+                String photo =  "images/trombi/"+`t_photo;
+                tags = `concTNode(tags*,<img src=photo alt=name />);
+                tags = `concTNode(tags*,<br />);
               }
-              //name attribute is mandatory
-              tags = `concTNode(tags*,#TEXT(name));
-              //homepage attribute is optional
-              %match(TNodeList p) {
-                (_*,<homepage>#TEXT(t_home)</homepage>,_*) -> {
-                  String home = `t_home;
-                  tags = `concTNode(<a href=home>tags*</a>);
-                }
+            }
+            //name attribute is mandatory
+            tags = `concTNode(tags*,#TEXT(name));
+            //homepage attribute is optional
+            %match(TNodeList p) {
+              (_*,<homepage>#TEXT(t_home)</homepage>,_*) -> {
+                String home = `t_home;
+                tags = `concTNode(<a href=home>tags*</a>);
               }
             }
           }
-          return `xml(<div class="person">tags*</div>);
         }
+        return `xml(<div class="person">tags*</div>);
       }
-      return arg;
     }
   }
-
 }
