@@ -32,12 +32,14 @@ import tom.pom.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.*;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.util.GlobPatternMapper;
 import org.apache.tools.ant.util.SourceFileScanner;
 
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.MatchingTask;
+import org.apache.tools.ant.taskdefs.Java;
 /**
  * Generates Tom mappings and Token table. This task can take the following
  * arguments:
@@ -45,6 +47,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <li>srcfile</li>
  * <li>destdir</li>
  * <li>package</li>
+ * <li>fork</li>
  * </ul>
  * Of these arguments, the <b>srcfile</b>, <b>destdir</b> and <b>package</b> are
  * required.
@@ -55,12 +58,27 @@ public class PomTask extends MatchingTask {
   private File srcFile;
   private File destDir;
   private String packagePrefix;
+  private boolean fork = false;
+
+  private Java javaRunner;
+
+  public void init() throws BuildException {
+    javaRunner = new Java();
+    configureTask(javaRunner);
+  }
+
+  private void configureTask(Task runner) {
+    runner.setProject(getProject());
+    runner.setTaskName(getTaskName());
+    runner.setOwningTarget(getOwningTarget());
+    runner.init();
+  }
 
   /**
    * Set the source file
    * @param srcFile the source file
    */
-  public void setSrcFile(File srcFile) {
+  public void setSrcfile(File srcFile) {
     this.srcFile = srcFile;
   }
 
@@ -68,7 +86,7 @@ public class PomTask extends MatchingTask {
    * Gets the source file
    * @return the source file
    */
-  public File getSrcFile() {
+  public File getSrcfile() {
     return srcFile;
   }
 
@@ -102,6 +120,22 @@ public class PomTask extends MatchingTask {
    */
   public String getPackage() {
     return packagePrefix;
+  }
+
+  /**
+   * If true, run Pom in a new JVM
+   * @param flag if true, executes in a new JVM
+   */
+  public void setFork(boolean flag) {
+    this.fork = flag;
+  }
+
+  /**
+   * Should Pom run in a new JVM
+   * @return true if Pom should run in a new JVM
+   */
+  public boolean getFork() {
+    return fork;
   }
 
   /**
@@ -152,20 +186,23 @@ public class PomTask extends MatchingTask {
         log("\"tom.home\" is not defined, some features may not work");
       }
 
-      String cmd_line = "";
       if(srcFile != null) {
-        cmd_line = cmd_line.trim() + " --srcfile " + srcFile;
+        javaRunner.createArg().setValue("--srcfile");
+        javaRunner.createArg().setFile(getSrcfile());
       }
       if(destDir != null) {
-        cmd_line = cmd_line.trim() + " --destdir " + destDir;
+        javaRunner.createArg().setValue("--destdir");
+        javaRunner.createArg().setFile(getDestdir());
       }
       if(packagePrefix != null) {
-        cmd_line = cmd_line.trim() + " --package " + packagePrefix;
+        javaRunner.createArg().setValue("--package");
+        javaRunner.createArg().setValue(getPackage());
       }
 
-      String[] cmd = split(cmd_line);
       int err = -1;
-      err = tom.pom.Pom.exec(cmd);
+      javaRunner.setFork(getFork());
+      javaRunner.setClassname("tom.pom.Pom");
+      err = javaRunner.executeJava();
       if(err != 0) {
           throw new BuildException("Pom returned: " + err, getLocation());
       }
@@ -194,4 +231,14 @@ public class PomTask extends MatchingTask {
     }
   }
 
+  /* for the nested java process */
+  public void setClasspath(Path s) {
+    javaRunner.setClasspath(s);
+  }
+  public Path createClasspath() {
+    return javaRunner.createClasspath();
+  }
+  public void setClasspathRef(Reference r) {
+    javaRunner.setClasspathRef(r);
+  }
 }
