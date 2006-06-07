@@ -35,10 +35,11 @@ import org.apache.tools.ant.types.Reference;
 
 import org.apache.tools.ant.util.GlobPatternMapper;
 import org.apache.tools.ant.util.SourceFileScanner;
+import org.apache.tools.ant.taskdefs.Java;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.MatchingTask;
-import org.apache.tools.ant.taskdefs.Java;
+//import org.apache.tools.ant.taskdefs.Java;
 
 /**
  * Compiles Tom source files. This task can take the following

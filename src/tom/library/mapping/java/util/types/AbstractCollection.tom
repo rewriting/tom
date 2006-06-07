@@ -35,5 +35,3 @@
   check_stamp(l) {}
   set_stamp(l)   { l }
 }
-%include { AbstractList.tom }
-%include { AbstractSet.tom }

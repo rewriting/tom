@@ -42,7 +42,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomtype.types.tomtypelist.*;
 
 import tom.engine.TomBase;
 import tom.engine.TomMessage;
@@ -257,7 +256,7 @@ public class TomExpander extends TomGenericPlugin {
 
         TomSymbol tomSymbol = expander.getSymbolFromName(tom_opName);
         TomTypeList codomain = getSymbolDomain(tomSymbol);
-        if(((concTomType)codomain).length()==1) {
+        if(codomain.length()==1) {
           Declaration t = (Declaration)tom_decl;
           t = t.setCodomain(codomain.getHeadconcTomType());
           return t;
@@ -271,7 +270,7 @@ public class TomExpander extends TomGenericPlugin {
         if(tomSymbol != null) {
           TomTypeList codomain = getSymbolDomain(tomSymbol);
 
-          if(((concTomType)codomain).length()==1) {
+          if(codomain.length()==1) {
             Declaration t = (Declaration)tom_decl;
             t = t.setCodomain(codomain.getHeadconcTomType());
             return t;

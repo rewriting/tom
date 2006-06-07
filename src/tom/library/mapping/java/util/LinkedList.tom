@@ -30,6 +30,7 @@
  **/
 
 %include { types/LinkedList.tom }
+%include { types/Object.tom }
 
 %oplist LinkedList concLinkedList(Object*) {
   is_fsym(l)       { (l!= null) && (l instanceof java.util.LinkedList) }

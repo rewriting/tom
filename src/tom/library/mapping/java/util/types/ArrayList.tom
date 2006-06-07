@@ -35,4 +35,3 @@
   check_stamp(l) {}
   set_stamp(l)   { l }  
 }
-%include { Object.tom }

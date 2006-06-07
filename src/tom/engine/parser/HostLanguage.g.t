@@ -96,6 +96,8 @@ options{
   private int currentLine = 1;
   private int currentColumn = 1;
 
+	private boolean skipComment = false;
+
   public HostParser(TokenStreamSelector selector, String currentFile,
                     HashSet includedFiles, HashSet alreadyParsedFiles,
                     OptionManager optionManager, TomStreamManager streamManager){
@@ -114,6 +116,13 @@ options{
     tomparser = new TomParser(getInputState(),this, optionManager);
     bqparser = tomparser.bqparser;
   }
+
+  private void setSkipComment() {
+    skipComment = true;
+	}
+  public boolean isSkipComment() {
+    return skipComment;
+	}
 
   private OptionManager getOptionManager() {
     return optionManager;
@@ -234,7 +243,7 @@ options{
         throw new TomIncludeException(TomMessage.includedFileCycle,new Object[]{fileName, new Integer(getLine()), currentFile});
       }
 
-      // if trying to include a file twice, but not in a cycle : discard
+      // if trying to include a file twice, but not in a cycle: discard
       if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet)) {
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
           getLogger().log(new PlatformLogRecord(Level.WARNING,
@@ -247,6 +256,7 @@ options{
       parser = TomParserPlugin.newParser(fileReader,fileCanonicalName,
                                          includedFileSet,alreadyParsedFileSet,
                                          getOptionManager(), getStreamManager());
+      parser.setSkipComment();
       astTom = parser.input();
       astTom = `TomInclude(astTom.getTomList());
       list.add(astTom);
@@ -1015,7 +1025,9 @@ SL_COMMENT
     | '\n'
         )
         {
+ 					if(!parser.isSkipComment()) {
             target.append($getText);
+          }
             newline();
         }
   ;
@@ -1038,8 +1050,12 @@ ML_COMMENT
         | ~('\n'|'\r'){if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
         )*
         "*/"
-        {target.append($getText);}
-  ;
+        {
+					if(!parser.isSkipComment()) {
+						target.append($getText);
+					}
+				}
+;
 
 CODE
     :

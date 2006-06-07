@@ -228,6 +228,15 @@ public class TomBackend extends TomGenericPlugin {
     }
     getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
   }
+  
+  private void setUsedTypeDefinition(String moduleName, String tomTypeName) {
+    SymbolTable st = getSymbolTable(moduleName);
+    //if(!st.isUsedTypeDefinition(tomType)) {
+    //  applyMarkStrategy(tomType);
+    //}
+    getSymbolTable(moduleName).setUsedTypeDefinition(tomTypeName);
+		//System.out.println("use type: " + tomTypeName);
+  }
 
 	%strategy Collector(tb:TomBackend,stack:Stack) extends `Identity() {
     visit Instruction {
@@ -277,6 +286,34 @@ public class TomBackend extends TomGenericPlugin {
 
       }
     }
+
+    visit TomType {
+      Type(ASTTomType(type),_) -> {
+        try {
+					String moduleName = (String) stack.peek();
+          tb.setUsedTypeDefinition(moduleName,`type);
+				} catch (EmptyStackException e) {
+					System.out.println("No moduleName in stack");
+				}
+      }
+    }
+
+		visit Declaration {
+			TypeTermDecl[] -> {
+				// should not search under a declaration
+				//System.out.println("skip: " + `x);
+				`Fail().visit(null);
+			}
+		}
+
+/*
+		visit TomTypeDefinition {
+			TypeDefinition[] -> {
+				// should not search under a definition
+				`Fail().visit(null);
+			}
+		}
+*/
 
 		visit TomTerm {
 			(TermAppl|RecordAppl|ListAppl)[NameList=nameList] -> {

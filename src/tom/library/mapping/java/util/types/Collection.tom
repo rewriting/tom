@@ -35,12 +35,3 @@
   check_stamp(l) {}
   set_stamp(l)   { l }
 }
-%include { AbstractCollection.tom }
-%include { AbstractList.tom }
-%include { AbstractSet.tom }
-%include { HashSet.tom }
-%include { LinkedHashSet.tom }
-%include { ArrayList.tom }
-%include { LinkedList.tom }
-%include { TreeSet.tom }
-%include { Vector.tom }

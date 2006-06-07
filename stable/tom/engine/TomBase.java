@@ -42,7 +42,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomtype.types.tomtypelist.*;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -415,7 +414,7 @@ return null; } } } }
   }
 
   public static TomType elementAt(TomTypeList l, int index) {
-    if (0 > index || index > ((concTomType)l).length()) {
+    if (0 > index || index > l.length()) {
       throw new IllegalArgumentException("illegal list index: " + index);
     }
     for (int i = 0; i < index; i++) {

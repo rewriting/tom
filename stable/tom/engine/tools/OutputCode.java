@@ -135,45 +135,48 @@ public class OutputCode {
     write(deep, s.toString(), line, length);
   }
 
+  private String makeSingleLine(String s) {
+    s = s.replace('\n', ' ');
+    s = s.replace('\r', ' ');
+    s = s.replace('\t', ' ');
+    return s;
+  }
+
   public void write(int deep, String s, int line, int length) throws IOException {
-    if(singleLine>0 && !((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
-      s = s.replace('\n', ' ');
-      s = s.replace('\r', ' ');
-      s = s.replace('\t', ' ');
-      write(s);
-      return;
-    }
-    if (!pretty){
-      if(lineCounter > line) {
-        if(((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
+    if (!pretty) {
+      if(((Boolean)optionManager.getOptionValue("cCode")).booleanValue()) {
           String s1 = "\n#line "+line+"\n";
-          // writeln(deep,s);
           s = s1+s;
-        } else { // Java Stuff
-          length = 0;
-          s = s.replace('\n', ' ');
-          s = s.replace('\r', ' ');
-          s = s.replace('\t', ' ');
-          //System.out.println("remove:"+s);
-        }
-      } else if(lineCounter < line) {
+          write(s);
+          lineCounter+= length;
+      } else if(singleLine>0 || lineCounter>line) {
+        // put everything on a single line
+        length = 0;
+        write(makeSingleLine(s));
+      } else if(lineCounter <= line) {
         while(lineCounter < line) {
           write("\n");
           lineCounter++;
         }
-      }
-      lineCounter+= length;
-      write(s);
+        write(s);
+        lineCounter+= length;
+      } 
     } else {
       String[] lines = s.split("\n");
-      for (int i=0; i<lines.length-1; i++) {
-        String ln = lines[i];
-        ln = ln.replaceFirst("^\\s+",""); // removes spaces at the beginning of the line
+      //System.out.println("s = '" + s + "'");
+      //System.out.println("length = " + lines.length);
+      if(lines.length==0) {
+        write(deep, s.replaceFirst("^\\s+",""));
+      } else {
+        for (int i=0; i<lines.length-1; i++) {
+          String ln = lines[i];
+          ln = ln.replaceFirst("^\\s+",""); // removes spaces at the beginning of the line
+          writeln(deep, ln);
+        }
+        String ln = lines[lines.length-1];
+        ln = ln.replaceFirst("^\\s+","");
         writeln(deep, ln);
       }
-      String ln = lines[lines.length-1];
-      ln = ln.replaceFirst("^\\s+","");
-      write(deep, ln);
     }
   }
 

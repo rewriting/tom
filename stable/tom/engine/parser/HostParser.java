@@ -104,6 +104,8 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
   private int currentLine = 1;
   private int currentColumn = 1;
 
+	private boolean skipComment = false;
+
   public HostParser(TokenStreamSelector selector, String currentFile,
                     HashSet includedFiles, HashSet alreadyParsedFiles,
                     OptionManager optionManager, TomStreamManager streamManager){
@@ -122,6 +124,13 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
     tomparser = new TomParser(getInputState(),this, optionManager);
     bqparser = tomparser.bqparser;
   }
+
+  private void setSkipComment() {
+    skipComment = true;
+	}
+  public boolean isSkipComment() {
+    return skipComment;
+	}
 
   private OptionManager getOptionManager() {
     return optionManager;
@@ -242,7 +251,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
         throw new TomIncludeException(TomMessage.includedFileCycle,new Object[]{fileName, new Integer(getLine()), currentFile});
       }
 
-      // if trying to include a file twice, but not in a cycle : discard
+      // if trying to include a file twice, but not in a cycle: discard
       if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet)) {
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
           getLogger().log(new PlatformLogRecord(Level.WARNING,
@@ -255,6 +264,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
       parser = TomParserPlugin.newParser(fileReader,fileCanonicalName,
                                          includedFileSet,alreadyParsedFileSet,
                                          getOptionManager(), getStreamManager());
+      parser.setSkipComment();
       astTom = parser.input();
       astTom = tom_make_TomInclude(astTom.getTomList());
       list.add(astTom);

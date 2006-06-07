@@ -42,7 +42,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomslot.types.pairnamedecllist.concPairNameDecl;
 
 import tom.engine.adt.zenon.types.*;
 
@@ -286,13 +285,13 @@ public class TomIlTools extends TomBase {
        if(symbol instanceof  tom.engine.adt.tomsignature.types.TomSymbol ) { { tom.engine.adt.tomsignature.types.TomSymbol  tom_match9_1=(( tom.engine.adt.tomsignature.types.TomSymbol )symbol); if (tom_is_fun_sym_Symbol(tom_match9_1) ||  false ) { { tom.engine.adt.tomslot.types.PairNameDeclList  tom_match9_1_PairNameDeclList=tom_get_slot_Symbol_PairNameDeclList(tom_match9_1); { tom.engine.adt.tomslot.types.PairNameDeclList  tom_slots=tom_match9_1_PairNameDeclList; if ( true ) {
 
           // process all slots
-          int slotnumber =((concPairNameDecl)tom_slots).length();
+          int slotnumber =tom_slots.length();
           for (int i = 0; i < slotnumber;i++) {
             list = tom_append_list_concZTerm(list,tom_cons_list_concZTerm(tom_make_zvar("x"+i),tom_empty_list_concZTerm()));
           }
            if(tom_slots instanceof  tom.engine.adt.tomslot.types.PairNameDeclList ) { { tom.engine.adt.tomslot.types.PairNameDeclList  tom_match10_1=(( tom.engine.adt.tomslot.types.PairNameDeclList )tom_slots); if (tom_is_fun_sym_concPairNameDecl(tom_match10_1) ||  false ) { { tom.engine.adt.tomslot.types.PairNameDeclList  tom_match10_1_list1=tom_match10_1; { tom.engine.adt.tomslot.types.PairNameDeclList  tom_match10_1_begin1=tom_match10_1_list1; { tom.engine.adt.tomslot.types.PairNameDeclList  tom_match10_1_end1=tom_match10_1_list1; { while (!(tom_is_empty_concPairNameDecl_PairNameDeclList(tom_match10_1_end1))) {tom_match10_1_list1=tom_match10_1_end1; { { tom.engine.adt.tomslot.types.PairNameDeclList  tom_al=tom_get_slice_concPairNameDecl(tom_match10_1_begin1,tom_match10_1_end1); { tom.engine.adt.tomslot.types.PairNameDecl  tom_match10_1_2=tom_get_head_concPairNameDecl_PairNameDeclList(tom_match10_1_list1);tom_match10_1_list1=tom_get_tail_concPairNameDecl_PairNameDeclList(tom_match10_1_list1); if (tom_is_fun_sym_PairNameDecl(tom_match10_1_2) ||  false ) { { tom.engine.adt.tomname.types.TomName  tom_match10_1_2_SlotName=tom_get_slot_PairNameDecl_SlotName(tom_match10_1_2); if (tom_is_fun_sym_Name(tom_match10_1_2_SlotName) ||  false ) { { String  tom_match10_1_2_SlotName_String=tom_get_slot_Name_String(tom_match10_1_2_SlotName); { String  tom_slname=tom_match10_1_2_SlotName_String; if ( true ) {
 
-              int index = ((concPairNameDecl)tom_al).length();
+              int index = tom_al.length();
               ZExpr axiom = tom_make_zeq(tom_make_zvar("x"+index),tom_make_zsl(tom_make_zappl(tom_make_zsymbol(name),list),tom_slname))
 ;
               for (int j = 0; j < slotnumber;j++) {

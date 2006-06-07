@@ -512,7 +512,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       buildSemiColon();  
     }
     output.write("}");
-
+    output.writeln();
   }
 
   

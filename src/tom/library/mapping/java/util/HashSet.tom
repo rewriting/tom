@@ -30,6 +30,7 @@
  **/
 
 %include { types/HashSet.tom }
+%include { types/Object.tom }
 
 %oplist HashSet concHashSet(Object*) {
   is_fsym(s)       { (s!= null) && (s instanceof java.util.HashSet) }

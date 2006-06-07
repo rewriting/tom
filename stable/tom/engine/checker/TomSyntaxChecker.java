@@ -44,9 +44,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomterm.types.tomlist.*;
-import tom.engine.adt.tomtype.types.tomtypelist.*;
-import tom.engine.adt.tomname.types.tomnamelist.*;
 
 import tom.engine.xml.Constants;
 import tom.platform.OptionParser;
@@ -519,7 +516,7 @@ public class TomSyntaxChecker extends TomChecker {
 
   // each patternList shall have the expected length and each term shall be valid
   private  void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs, int nbExpectedArgs) {
-    int nbFoundArgs = ((concTomTerm)termList).length();
+    int nbFoundArgs = termList.length();
     if(nbFoundArgs != nbExpectedArgs) {
       OptionList og = termList.getHeadconcTomTerm().getOption();
       messageError(findOriginTrackingFileName(og),findOriginTrackingLine(og),
@@ -780,8 +777,8 @@ public class TomSyntaxChecker extends TomChecker {
           } else {
             // the arity is important also there are different types in Domain
             TomTypeList types = symbol.getTypesToType().getDomain();
-            int nbArgs = ((concTomTerm)args).length();
-            int nbExpectedArgs = ((concTomType)types).length();
+            int nbArgs = args.length();
+            int nbExpectedArgs = types.length();
             if(nbArgs != nbExpectedArgs) {
               messageError(fileName,decLine, TomMessage.symbolNumberArgument,
                   new Object[]{termName, new Integer(nbExpectedArgs), new Integer(nbArgs)});
@@ -1033,7 +1030,7 @@ public class TomSyntaxChecker extends TomChecker {
     TomTypeList domainReference = null, currentDomain = null;
     TomSymbol symbol = null;
 
-    if(((concTomName)nameList).length()==1) { // Valid but has it a good type?
+    if(nameList.length()==1) { // Valid but has it a good type?
       String res = nameList.getHeadconcTomName().getString();
       symbol  =  getSymbolFromName(res);
       if (symbol == null ) {
@@ -1110,7 +1107,7 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   private  TomSymbol ensureValidRecordDisjunction(TomNameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
-    if(((concTomName)nameList).length()==1) { // Valid but has it a good type?
+    if(nameList.length()==1) { // Valid but has it a good type?
       String res = nameList.getHeadconcTomName().getString();
       TomSymbol symbol =  getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]

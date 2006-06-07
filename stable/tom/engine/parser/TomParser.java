@@ -64,7 +64,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomtype.types.tomtypelist.concTomType;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -2845,7 +2844,7 @@ inputState.guessing--;
 		TomList args = tom_empty_list_concTomTerm();
 		int index = 0;
 		TomType type;
-		int nbTypes = ((concTomType)types).length();
+		int nbTypes = types.length();
 		
 		
 		{

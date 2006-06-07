@@ -611,7 +611,9 @@ public abstract class TomAbstractGenerator extends TomBase {
       TermsEqualDecl(Variable[AstName=Name(name1), AstType=Type(ASTTomType(type1),_)],
                      Variable[AstName=Name(name2), AstType=Type(ASTTomType(type2),_)],
                      instr, _) -> {
-        `buildTermsEqualDecl(deep, name1, name2, type1, type2, instr, moduleName);
+        if(getSymbolTable(moduleName).isUsedTypeDefinition(`type1)) {
+          `buildTermsEqualDecl(deep, name1, name2, type1, type2, instr, moduleName);
+        }
         return;
       }
 

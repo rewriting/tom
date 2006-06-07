@@ -39,7 +39,6 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
-import tom.engine.adt.tomname.types.tomnamelist.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -317,7 +316,7 @@ public class TomKernelCompiler extends TomBase {
           // case: syntactic operator
           Instruction automata = genSyntacticMatchingAutomata(subAction,tom_termArgs,path,moduleName);
           TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
-          if(((concTomName)tom_nameList).length()==1 || tom_termArgs.isEmptyconcSlot()) {
+          if(tom_nameList.length()==1 || tom_termArgs.isEmptyconcSlot()) {
               automataInstruction = collectSubtermFromTomSymbol(tom_termArgs,tomSymbol,subjectVariableAST,path,automata,moduleName); 
           } else { 
             // generate is_fsym(t,f) || is_fsym(t,g)
