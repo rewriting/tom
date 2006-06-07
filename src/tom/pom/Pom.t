@@ -94,14 +94,14 @@ matchBlock: {
             }
       }
     } catch (Exception e) {
-      System.out.println("Exception: "+e);
+      System.err.println("Exception: "+e);
     }
     System.out.println(tokenMap);
     generateTable(tokenMap);
     generateTomMapping(tokenMap);
   }
 
-  void generateTable(Map tokenMap) {
+  private void generateTable(Map tokenMap) {
     StringBuffer out = new StringBuffer();
 
     out.append(%[
@@ -131,8 +131,10 @@ public class TokenTable {
             packagePath + File.separator + "TokenTable.java"));
       writer.write(out.toString());
       writer.close();
+    } catch (IOException e) {
+      System.err.println(e.getClass() + ": " + e.getMessage());
     } catch (Exception e) {
-      System.out.println("Write failed "+e);
+      System.err.println("Write failed "+e);
       e.printStackTrace();
     }
   }
@@ -196,8 +198,10 @@ public class TokenTable {
             packagePath + File.separator + "Mapping.tom"));
       writer.write(out.toString());
       writer.close();
+    } catch (IOException e) {
+      System.err.println(e.getClass() + ": " + e.getMessage());
     } catch (Exception e) {
-      System.out.println("Write failed "+e);
+      System.err.println("Write failed "+e);
       e.printStackTrace();
     }
   }
