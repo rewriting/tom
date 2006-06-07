@@ -17,6 +17,7 @@
     <pom srcfile="${examples.gen}/${pom}/SeqParserTokenTypes.txt"
          destdir="${examples.gen}"
          package="${pom}">
+      <classpath refid="tom.classpath"/>
     </pom>
     <tomcompile example="${pom}"/>
     <javacompile example="${pom}"/>
