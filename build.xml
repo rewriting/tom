@@ -236,6 +236,11 @@
     <presetdef name="vascompile">
       <vas config="${stable.vasconfigfile}"/>
     </presetdef>
+    <presetdef name="pomcompile">
+      <pom>
+        <classpath refid="tom.classpath"/>
+      </pom>
+    </presetdef>
   </target>
 
   <target name="-withsrc" if="withsource">
@@ -249,6 +254,11 @@
     </presetdef>
     <presetdef name="vascompile">
       <vassrc config="${src.vasconfigfile}"/>
+    </presetdef>
+    <presetdef name="pomcompile">
+      <pom>
+        <classpath refid="tom.classpath"/>
+      </pom>
     </presetdef>
   </target>
 
@@ -361,9 +371,11 @@
   <target name="buildmappings.common"
     if="gen.destination"
     depends="init.task.stable,-withstable">
-    <pom srcfile="${gen.destination}/tom/gom/parser/PomGomParserTokenTypes.txt"
+    <pomcompile
+      srcfile="${gen.destination}/tom/gom/parser/PomGomParserTokenTypes.txt"
       destdir="${gen.destination}"
-      package="tom.gom.parser"/>
+      package="tom.gom.parser">
+    </pomcompile>
     <!-- once mappings generated, compile AST2Gom.t -->
     <tomcompile srcdir="${src.src}"
          destdir="${gen.destination}"
