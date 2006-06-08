@@ -80,7 +80,7 @@ public class AST2Gom{
         ImportList tmpL = getImportList(`tail);
         return `concImportedModule(getImportedModule(importM),tmpL*);
       }
-      _ -> {
+      concATerm() -> {
         return `concImportedModule();
       }
     }
@@ -119,7 +119,7 @@ public class AST2Gom{
           }
         }
       }
-      _ -> {
+      concATerm() -> {
         return `concGrammar();
       }
     }
@@ -162,7 +162,7 @@ public class AST2Gom{
           }
         }
       }
-      _ -> {
+      concATerm() -> {
         return `concGomType();
       }
     }
@@ -198,7 +198,7 @@ public class AST2Gom{
           }
         }
       }
-      _ -> {
+      concATerm() -> {
         return `concProduction();
       }
     }
@@ -218,7 +218,7 @@ public class AST2Gom{
       (id,fieldlist*) -> {
         return `concProduction(Production(getId(id),getFieldList(fieldlist*),getGomType(type)));
       }
-      _ -> {
+      concATerm() -> {
         return `concProduction();
       }
     }
@@ -240,7 +240,7 @@ public class AST2Gom{
         GomTypeList tmpL = getGomTypeList(`tail);
         return `concGomType(getGomType(g),tmpL*);
       }
-      _ -> {
+      concATerm() -> {
         return `concGomType();
       }
     }
@@ -285,7 +285,7 @@ public class AST2Gom{
       (a) -> {
         return `concArg(getArg(a));
       }
-      _ -> {
+      concATerm() -> {
         return `concArg();
       }
     }
@@ -300,7 +300,7 @@ public class AST2Gom{
       (f) -> {
         return `concField(getField(f));
       }
-      _ -> {
+      concATerm() -> {
         return `concField();
       }
     }
