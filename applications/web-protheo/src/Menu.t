@@ -28,15 +28,11 @@ public class Menu {
     implement { HashSet }
   }
 
-  private XmlTools xtools;
-  private Tools tools;
   private TNode menu;
   private Hashtable menus;
 
-  public Menu(TNode menu,Tools tools,XmlTools xtools){
+  public Menu(TNode menu){
     this.menu = menu;
-    this.tools = tools;
-    this.xtools = xtools;
     menus = new Hashtable();
 
     //find all leaf nodes
@@ -258,7 +254,7 @@ public class Menu {
   %strategy FindLeaves(leaves:HashSet) extends `Identity() { 
 
     visit TNode {
-      <section></section> -> { leaves.add(MuTraveler.getPosition(this));}
+      <section></section> -> { leaves.add(getPosition());}
     }
   }
 
@@ -268,14 +264,14 @@ public class Menu {
 
     visit TNode {
       arg -> {
-        if (MuTraveler.getPosition(this).equals(p)) {
+        if (getPosition().equals(p)) {
           return `arg;
         }
       }
     }
     visit TNodeList {
       arg -> {
-        if (MuTraveler.getPosition(this).equals(p)) {
+        if (getPosition().equals(p)) {
           return `arg;
         } 
       }
@@ -286,14 +282,14 @@ public class Menu {
 
     visit TNode {
       arg -> {
-        if (MuTraveler.getPosition(this).isPrefix(p)) {
+        if (getPosition().isPrefix(p)) {
           return `arg;
         } 
       }
     }
     visit TNodeList {
       arg -> {
-        if (MuTraveler.getPosition(this).isPrefix(p)) {
+        if (getPosition().isPrefix(p)) {
           return `arg;
         } 
       }
