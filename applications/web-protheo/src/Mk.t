@@ -68,7 +68,8 @@ public class Mk {
     }
     TNode bib = xtools.convertXMLToTNode(bibDir + "complete.xml");
     if(!(bib == null)) {
-      bib = tools.removeComments(bib.getDocElem());
+      bib = bib.getDocElem();
+      //bib = tools.removeComments(bib.getDocElem());//infinite loop
     } else {
       System.err.println(contentDir +"complete.xml doesn't exists.");
       System.exit(1);
@@ -83,7 +84,7 @@ public class Mk {
     // Tests if all authors are well patched
     // Patch patch = new Patch(mb,bib);
 
-    menu = new Menu(mn,tools,xtools);
+    menu = new Menu(mn);
     publi = new Publi(mb,bib,tools,xtools);
     members = new Members(mb,xtools);
 
