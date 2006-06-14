@@ -14,13 +14,7 @@ public class Tools{
   %include{adt/tnode/TNode.tom}
   %include{mutraveler.tom}
 
-  private String dirC = "content/";
-  private String dirWww = "www/";
-  private String dirTmp = "tmp/";
-  private XmlTools xtools;
-
   public Tools(){
-    xtools = new XmlTools();
 }
 
 /**
@@ -38,11 +32,11 @@ public class Tools{
 
   %strategy RmComments() extends `Identity() {
 
-   visit TNodeList {
-        concTNode(before*,CommentNode(_),after*) -> {
-          return `concTNode(before*, after*);
-        }
+    visit TNodeList {
+      concTNode(before*,CommentNode(_),after*) -> {
+        return `concTNode(before*, after*);
       }
+    }
   }
 
   /**
@@ -57,9 +51,5 @@ public class Tools{
       result = `concTNode(result*,tmp*);
     }
     return result;
-  }
-  public String removeAccents(String s){
-    ToolsEncode t = new ToolsEncode();
-    return t.removeAccents(s);
   }
 }

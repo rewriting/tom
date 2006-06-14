@@ -107,7 +107,7 @@ public class Publi {
       first = author.getFirstname();
       last = author.getLastname();
       id = first + "." + last;
-      id = tools.removeAccents(id);
+      id = ToolsEncode.removeAccents(id);
       ref = Mk.bibDir + id + ".html";
       result = `concTNode(result*,#TEXT("\n"),<a href=ref>#TEXT(first) #TEXT(" ") #TEXT(last)</a>,<br />);
       // Generates bibfile only once

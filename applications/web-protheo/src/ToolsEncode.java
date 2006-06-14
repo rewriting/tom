@@ -1,5 +1,5 @@
 public class ToolsEncode{
-  public String removeAccents(String s){
+  public static String removeAccents(String s){
     s = s.replaceAll("[éèêë]","e");
     s = s.replaceAll("[ûù]","u");
     s = s.replaceAll("[ïî]","i");
