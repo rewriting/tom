@@ -1,6 +1,7 @@
 package tom.library.strategy.mutraveler;
 
 import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd;
 /**
  * A visitor that it iself visitable with a VisitorVisitor needs
  * to implement the MuStrategy interface. The visitor's arguments
@@ -84,4 +85,9 @@ public abstract class AbstractMuStrategy implements MuStrategy {
       return any;
     }
   }
+
+  public MuStrategy accept(StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
+    return v.visit_Strategy(this);
+  }
 }
+

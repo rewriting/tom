@@ -35,6 +35,3 @@
   check_stamp(l) {}
   set_stamp(l)   { l }
 }
-%include { AbstractSequentialList.tom }
-%include { ArrayList.tom }
-%include { Vector.tom }

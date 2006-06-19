@@ -18,20 +18,20 @@
   visitor_fwd { tom.platform.adt.platformalert.PlatformAlertBasicStrategy }
 }
 
-%op Alert Warning(Message:String, File:String, Line:int) {
-  is_fsym(t) { (t!=null) && t.isWarning() }
-  get_slot(Message, t) { t.getMessage() }
-  get_slot(File, t) { t.getFile() }
-  get_slot(Line, t) { t.getLine() }
-  make(t0, t1, t2) { tom.platform.adt.platformalert.types.alert.Warning.make(t0, t1, t2)}
-}
-
 %op Alert Error(Message:String, File:String, Line:int) {
   is_fsym(t) { (t!=null) && t.isError() }
   get_slot(Message, t) { t.getMessage() }
   get_slot(File, t) { t.getFile() }
   get_slot(Line, t) { t.getLine() }
   make(t0, t1, t2) { tom.platform.adt.platformalert.types.alert.Error.make(t0, t1, t2)}
+}
+
+%op Alert Warning(Message:String, File:String, Line:int) {
+  is_fsym(t) { (t!=null) && t.isWarning() }
+  get_slot(Message, t) { t.getMessage() }
+  get_slot(File, t) { t.getFile() }
+  get_slot(Line, t) { t.getLine() }
+  make(t0, t1, t2) { tom.platform.adt.platformalert.types.alert.Warning.make(t0, t1, t2)}
 }
 
 

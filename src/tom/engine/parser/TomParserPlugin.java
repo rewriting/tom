@@ -37,16 +37,19 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.logging.Level;
+import java.util.Iterator;
 
 import tom.engine.TomMessage;
 import tom.engine.TomStreamManager;
 import tom.engine.exception.TomException;
 import tom.engine.tools.TomGenericPlugin;
 import tom.engine.tools.Tools;
+import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.platform.OptionParser;
 import tom.platform.PlatformLogRecord;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
+import tom.engine.adt.tomsignature.types.TomSymbol;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 import antlr.TokenStreamSelector;
@@ -160,9 +163,22 @@ public class TomParserPlugin extends TomGenericPlugin {
       parser = newParser(currentReader, currentFileName, getOptionManager(), getStreamManager());
       // parsing
       setWorkingTerm(parser.input());
+
+      /*
+       * we update codomains which are constrained by a symbolName
+       * (come from the %strategy operator)
+       */
+      SymbolTable symbolTable = getStreamManager().getSymbolTable();
+      Iterator it = symbolTable.keySymbolIterator();
+      while(it.hasNext()) {
+        String tomName = (String)it.next();
+        TomSymbol tomSymbol = getSymbolFromName(tomName);
+        tomSymbol = symbolTable.updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
+      }
+
       // verbose
       getLogger().log(Level.INFO, TomMessage.tomParsingPhase.getMessage(),
-                      new Integer((int)(System.currentTimeMillis()-startChrono)) );      
+                      new Integer((int)(System.currentTimeMillis()-startChrono)) );
     } catch (TokenStreamException e) {
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);

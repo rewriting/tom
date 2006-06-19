@@ -17,7 +17,7 @@ import jjtraveler.VisitFailure;
  */
 
 public class One extends AbstractMuStrategy {
-  protected final static int ARG = 0;
+  public final static int ARG = 0;
   
   public One(VisitableVisitor v) {
     initSubterm(v);

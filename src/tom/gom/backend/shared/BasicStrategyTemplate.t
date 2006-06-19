@@ -92,6 +92,10 @@ import tom.library.strategy.mutraveler.MuStrategy;
       return any;
     }
   }
+
+  public tom.library.strategy.mutraveler.MuStrategy accept(tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
+    return v.visit_Strategy(this);
+  }
     
   public @className()@(jjtraveler.reflective.VisitableVisitor any) {
     super(any);

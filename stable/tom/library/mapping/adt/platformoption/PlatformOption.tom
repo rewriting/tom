@@ -42,20 +42,20 @@
   make(t0, t1, t2, t3, t4) { tom.platform.adt.platformoption.types.platformoption.PluginOption.make(t0, t1, t2, t3, t4)}
 }
 
-%op PlatformBoolean False() {
-  is_fsym(t) { (t!=null) && t.isFalse() }
-  make() { tom.platform.adt.platformoption.types.platformboolean.False.make()}
-}
-
 %op PlatformBoolean True() {
   is_fsym(t) { (t!=null) && t.isTrue() }
   make() { tom.platform.adt.platformoption.types.platformboolean.True.make()}
 }
 
-%op PlatformValue IntegerValue(IntegerValue:int) {
-  is_fsym(t) { (t!=null) && t.isIntegerValue() }
-  get_slot(IntegerValue, t) { t.getIntegerValue() }
-  make(t0) { tom.platform.adt.platformoption.types.platformvalue.IntegerValue.make(t0)}
+%op PlatformBoolean False() {
+  is_fsym(t) { (t!=null) && t.isFalse() }
+  make() { tom.platform.adt.platformoption.types.platformboolean.False.make()}
+}
+
+%op PlatformValue BooleanValue(BooleanValue:PlatformBoolean) {
+  is_fsym(t) { (t!=null) && t.isBooleanValue() }
+  get_slot(BooleanValue, t) { t.getBooleanValue() }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make(t0)}
 }
 
 %op PlatformValue StringValue(StringValue:String) {
@@ -64,10 +64,10 @@
   make(t0) { tom.platform.adt.platformoption.types.platformvalue.StringValue.make(t0)}
 }
 
-%op PlatformValue BooleanValue(BooleanValue:PlatformBoolean) {
-  is_fsym(t) { (t!=null) && t.isBooleanValue() }
-  get_slot(BooleanValue, t) { t.getBooleanValue() }
-  make(t0) { tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make(t0)}
+%op PlatformValue IntegerValue(IntegerValue:int) {
+  is_fsym(t) { (t!=null) && t.isIntegerValue() }
+  get_slot(IntegerValue, t) { t.getIntegerValue() }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.IntegerValue.make(t0)}
 }
 
 

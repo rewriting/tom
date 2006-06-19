@@ -14,7 +14,7 @@ import jjtraveler.VisitFailure;
 */
 
 public class OmegaU extends AbstractMuStrategy {
-  protected final static int ARG = 0;
+  public final static int ARG = 0;
   protected VisitableVisitor defaultStrategy;
   private static java.util.Random random = null;
   
@@ -24,6 +24,10 @@ public class OmegaU extends AbstractMuStrategy {
     if(random == null) {
       random = new java.util.Random();
     }
+  }
+
+  public VisitableVisitor getDefaultStrategy() {
+    return defaultStrategy;
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {

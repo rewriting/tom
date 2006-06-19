@@ -149,11 +149,6 @@ public class TomExpander extends TomGenericPlugin {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
 
       /*
-       * we update codomains which a constrained by a symbolName
-       * (come from the %strategy operator)
-       */
-      tomSymbol = updateConstrainedSymbolCodomain(tomSymbol, symbolTable);
-      /*
        * add default isFsym and make HERE
        */
       tomSymbol = addDefaultIsFSym(tomSymbol);
@@ -168,33 +163,6 @@ public class TomExpander extends TomGenericPlugin {
       tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
       getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
     }
-  }
-
-  private TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
-    %match(TomSymbol symbol) {
-      Symbol(name,TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
-        //System.out.println("update codomain: " + `name);
-        //System.out.println("depend from : " + `opName);
-        TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
-        //System.out.println("1st depend codomain: " + getSymbolCodomain(dependSymbol));
-        dependSymbol = updateConstrainedSymbolCodomain(dependSymbol,symbolTable);
-        TomType codomain = getSymbolCodomain(dependSymbol);
-        //System.out.println("2nd depend codomain: " + getSymbolCodomain(dependSymbol));
-        OptionList newOptions = `options;
-        %match(OptionList options) {
-          concOption(O1*,DeclarationToOption(m@MakeDecl[AstType=Codomain[]]),O2*) -> {
-            Declaration newMake = `m.setAstType(codomain);
-            //System.out.println("newMake: " + newMake);
-            newOptions = `concOption(O1*,O2*,DeclarationToOption(newMake));
-          }
-        }
-        TomSymbol newSymbol = `Symbol(name,TypesToType(domain,codomain),slots,newOptions);
-        //System.out.println("newSymbol: " + newSymbol);
-        symbolTable.putSymbol(`name.getString(),newSymbol);
-        return newSymbol;
-      }
-    }
-    return symbol;
   }
 
   private TomSymbol addDefaultIsFSym(TomSymbol tomSymbol) {

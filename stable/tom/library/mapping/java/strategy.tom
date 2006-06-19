@@ -15,46 +15,60 @@
   %op Strategy Not(s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Not) }
     make(v) { new tom.library.strategy.mutraveler.Not(v) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Not.ARG) }
   }
 
   %op Strategy Sequence(s1:Strategy, s2:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Sequence) }
     make(first,then) { new tom.library.strategy.mutraveler.Sequence(first,then) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Sequence.FIRST) }
+    get_slot(s2, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Sequence.THEN) }
   }
 
   %op Strategy Choice(s1:Strategy, s2:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Choice) }
     make(first,then) { new tom.library.strategy.mutraveler.Choice(first,then) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Choice.FIRST) }
+    get_slot(s2, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Choice.THEN) }
   }
 
   %op Strategy All(s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.All) }
     make(v) { new tom.library.strategy.mutraveler.All(v) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.All.ARG) }
   }
 
   %op Strategy One(s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.One) }
     make(v) { new tom.library.strategy.mutraveler.One(v) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.One.ARG) }
   }
 
   %op Strategy Some(s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Some) }
     make(v) { new tom.library.strategy.mutraveler.Some(v) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.One.ARG) }
   }
 
   %op Strategy IfThenElse(s1:Strategy, s2:Strategy, s3:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.IfThenElse) }
     make(condition,trueCase,falseCase) { new tom.library.strategy.mutraveler.IfThenElse(condition,trueCase,falseCase) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.IfThenElse.CONDITION) }
+    get_slot(s2, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.IfThenElse.TRUE_CASE) }
+    get_slot(s3, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.IfThenElse.FALSE_CASE) }
   }
 
   %op Strategy MuVar(var:String) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.MuVar) }
     make(name) { new tom.library.strategy.mutraveler.MuVar(name) }
+    get_slot(var, t) { ((tom.library.strategy.mutraveler.MuVar)t).getName() }
   }
 
   %op Strategy Omega(position:int, s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Omega) }
     make(pos,v) { new tom.library.strategy.mutraveler.Omega(pos,v) }
+    get_slot(position, t) { ((tom.library.strategy.mutraveler.Omega)t).getPos() }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Omega.ARG) }
   }
 /*
  * basic operators with Id considered as a failure
@@ -63,16 +77,21 @@
   %op Strategy OneId(s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.OneId) }
     make(v) { new tom.library.strategy.mutraveler.OneId(v) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.OneId.ARG) }
   }
 
   %op Strategy SequenceId(s1:Strategy, s2:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.SequenceId) }
     make(first,then) { new tom.library.strategy.mutraveler.SequenceId(first,then) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.SequenceId.FIRST) }
+    get_slot(s2, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.SequenceId.THEN) }
   }
 
   %op Strategy ChoiceId(s1:Strategy, s2:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.ChoiceId) }
     make(first,then) { new tom.library.strategy.mutraveler.ChoiceId(first,then) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.ChoiceId.FIRST) }
+    get_slot(s2, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.ChoiceId.THEN) }
   }
 
 /*
@@ -82,11 +101,17 @@
   %op Strategy Pselect(p1:int, p2:int, s1:Strategy, s2:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Pselect) }
     make(p,q,first,then) { new tom.library.strategy.mutraveler.Pselect(p,q,first,then) }
+    get_slot(p1, t) { t.getP() }
+    get_slot(p2, t) { t.getQ() }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Pselect.FIRST) }
+    get_slot(s2, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Pselect.THEN) }
   }
 
   %op Strategy OmegaU(s1:Strategy, defaultStrategy:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.OmegaU) }
     make(v,d) { new tom.library.strategy.mutraveler.OmegaU(v,d) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.OmegaU.ARG) }
+    get_slot(defaultStrategy, t) { (jjtraveler.reflective.VisitableVisitor)t.getDefaultStrategy() }
   }
 
 /*

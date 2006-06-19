@@ -30,6 +30,7 @@
  **/
 
 %include { types/TreeSet.tom }
+%include { types/Object.tom }
 
 %oplist TreeSet concTreeSet(Object*) {
   is_fsym(s)       { (s!= null) && (s instanceof java.util.TreeSet) }

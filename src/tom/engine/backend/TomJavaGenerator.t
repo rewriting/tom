@@ -111,7 +111,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     int args = names.size();
     //write Declarations
     for (int i = 0 ; i < args ; i++) {
-	    output.write(deep, types.get(i) + " " + names.get(i) + "; ");
+	    output.write(deep, "private " + types.get(i) + " " + names.get(i) + "; ");
     }
 
     //write constructor
@@ -135,6 +135,11 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 	    output.write(deep, "this." + param + "=" + param + ";");
     }
     output.write(deep,"}");
+
+    // write getters
+    for (int i = 0 ; i < args ; i++) {
+      output.write(deep, "public " + types.get(i) + " get" + names.get(i) + "() { return " + names.get(i) + ";}");
+    }
 
     generateDeclaration(deep,`declaration,moduleName);
     output.write(deep,"}");

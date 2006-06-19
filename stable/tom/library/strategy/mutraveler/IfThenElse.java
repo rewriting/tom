@@ -6,9 +6,9 @@ import jjtraveler.VisitFailure;
 
 public class IfThenElse extends AbstractMuStrategy {
   
-  private final static int CONDITION = 0;
-  private final static int TRUE_CASE = 1;
-  private final static int FALSE_CASE = 2;
+  public final static int CONDITION = 0;
+  public final static int TRUE_CASE = 1;
+  public final static int FALSE_CASE = 2;
 
   public IfThenElse(VisitableVisitor c, VisitableVisitor t, VisitableVisitor f) {
     initSubterm(c,t,f);

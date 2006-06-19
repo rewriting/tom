@@ -32,6 +32,8 @@ import java.util.Set;
 
 import tom.engine.exception.TomRuntimeException;
 
+import tom.engine.TomBase;
+
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
@@ -343,5 +345,34 @@ public class SymbolTable {
     }
     return `Table(list);
   }
+
+  public TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
+    %match(TomSymbol symbol) {
+      Symbol(name,TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
+        //System.out.println("update codomain: " + `name);
+        //System.out.println("depend from : " + `opName);
+        TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
+        //System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
+        dependSymbol = updateConstrainedSymbolCodomain(dependSymbol,symbolTable);
+        TomType codomain = TomBase.getSymbolCodomain(dependSymbol);
+        //System.out.println("2nd depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
+        OptionList newOptions = `options;
+        %match(OptionList options) {
+          concOption(O1*,DeclarationToOption(m@MakeDecl[AstType=Codomain[]]),O2*) -> {
+            Declaration newMake = `m.setAstType(codomain);
+            //System.out.println("newMake: " + newMake);
+            newOptions = `concOption(O1*,O2*,DeclarationToOption(newMake));
+          }
+        }
+        TomSymbol newSymbol = `Symbol(name,TypesToType(domain,codomain),slots,newOptions);
+        //System.out.println("newSymbol: " + newSymbol);
+        symbolTable.putSymbol(`name.getString(),newSymbol);
+        return newSymbol;
+      }
+    }
+    return symbol;
+  }
+
+
 
 } // class SymbolTable

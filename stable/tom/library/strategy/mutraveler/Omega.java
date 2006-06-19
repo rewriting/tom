@@ -16,12 +16,16 @@ import jjtraveler.VisitFailure;
 */
 
 public class Omega extends AbstractMuStrategy {
-  protected final static int ARG = 0;
+  public final static int ARG = 0;
   protected int position;
 
   public Omega(int position, VisitableVisitor v) {
     initSubterm(v);
     this.position = position;
+  }
+
+  public int getPos() {
+    return position;
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {

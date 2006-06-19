@@ -66,18 +66,10 @@
   make(t0) { tom.engine.adt.zenon.types.ztype.ztype.make(t0)}
 }
 
-%op ZTerm zsl(Abst:ZTerm, Name:String) {
-  is_fsym(t) { (t!=null) && t.iszsl() }
-  get_slot(Abst, t) { t.getAbst() }
-  get_slot(Name, t) { t.getName() }
-  make(t0, t1) { tom.engine.adt.zenon.types.zterm.zsl.make(t0, t1)}
-}
-
-%op ZTerm zst(Abst:ZTerm, Index:int) {
-  is_fsym(t) { (t!=null) && t.iszst() }
-  get_slot(Abst, t) { t.getAbst() }
-  get_slot(Index, t) { t.getIndex() }
-  make(t0, t1) { tom.engine.adt.zenon.types.zterm.zst.make(t0, t1)}
+%op ZTerm zvar(Varname:String) {
+  is_fsym(t) { (t!=null) && t.iszvar() }
+  get_slot(Varname, t) { t.getVarname() }
+  make(t0) { tom.engine.adt.zenon.types.zterm.zvar.make(t0)}
 }
 
 %op ZTerm zappl(Zsymb:ZSymbol, Termlist:ZTermList) {
@@ -87,10 +79,18 @@
   make(t0, t1) { tom.engine.adt.zenon.types.zterm.zappl.make(t0, t1)}
 }
 
-%op ZTerm zvar(Varname:String) {
-  is_fsym(t) { (t!=null) && t.iszvar() }
-  get_slot(Varname, t) { t.getVarname() }
-  make(t0) { tom.engine.adt.zenon.types.zterm.zvar.make(t0)}
+%op ZTerm zst(Abst:ZTerm, Index:int) {
+  is_fsym(t) { (t!=null) && t.iszst() }
+  get_slot(Abst, t) { t.getAbst() }
+  get_slot(Index, t) { t.getIndex() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zterm.zst.make(t0, t1)}
+}
+
+%op ZTerm zsl(Abst:ZTerm, Name:String) {
+  is_fsym(t) { (t!=null) && t.iszsl() }
+  get_slot(Abst, t) { t.getAbst() }
+  get_slot(Name, t) { t.getName() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zterm.zsl.make(t0, t1)}
 }
 
 %op ZAxiom zaxiom(Name:String, Ax:ZExpr) {
@@ -113,39 +113,28 @@
   make(t0) { tom.engine.adt.zenon.types.zsymbol.zsymbol.make(t0)}
 }
 
-%op ZExpr zequiv(Lte:ZExpr, Rte:ZExpr) {
-  is_fsym(t) { (t!=null) && t.iszequiv() }
-  get_slot(Lte, t) { t.getLte() }
-  get_slot(Rte, t) { t.getRte() }
-  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zequiv.make(t0, t1)}
+%op ZExpr ztrue() {
+  is_fsym(t) { (t!=null) && t.isztrue() }
+  make() { tom.engine.adt.zenon.types.zexpr.ztrue.make()}
 }
 
-%op ZExpr znot(Nex:ZExpr) {
-  is_fsym(t) { (t!=null) && t.isznot() }
-  get_slot(Nex, t) { t.getNex() }
-  make(t0) { tom.engine.adt.zenon.types.zexpr.znot.make(t0)}
+%op ZExpr zfalse() {
+  is_fsym(t) { (t!=null) && t.iszfalse() }
+  make() { tom.engine.adt.zenon.types.zexpr.zfalse.make()}
 }
 
-%op ZExpr zor(Lte:ZExpr, Rte:ZExpr) {
-  is_fsym(t) { (t!=null) && t.iszor() }
-  get_slot(Lte, t) { t.getLte() }
-  get_slot(Rte, t) { t.getRte() }
-  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zor.make(t0, t1)}
+%op ZExpr zisfsym(T:ZTerm, Symbol:ZSymbol) {
+  is_fsym(t) { (t!=null) && t.iszisfsym() }
+  get_slot(T, t) { t.getT() }
+  get_slot(Symbol, t) { t.getSymbol() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zisfsym.make(t0, t1)}
 }
 
-%op ZExpr zand(Lte:ZExpr, Rte:ZExpr) {
-  is_fsym(t) { (t!=null) && t.iszand() }
-  get_slot(Lte, t) { t.getLte() }
-  get_slot(Rte, t) { t.getRte() }
-  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zand.make(t0, t1)}
-}
-
-%op ZExpr zexists(Var:ZTerm, Aztype:ZType, Expr:ZExpr) {
-  is_fsym(t) { (t!=null) && t.iszexists() }
-  get_slot(Var, t) { t.getVar() }
-  get_slot(Aztype, t) { t.getAztype() }
-  get_slot(Expr, t) { t.getExpr() }
-  make(t0, t1, t2) { tom.engine.adt.zenon.types.zexpr.zexists.make(t0, t1, t2)}
+%op ZExpr zeq(Lt:ZTerm, Rt:ZTerm) {
+  is_fsym(t) { (t!=null) && t.iszeq() }
+  get_slot(Lt, t) { t.getLt() }
+  get_slot(Rt, t) { t.getRt() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zeq.make(t0, t1)}
 }
 
 %op ZExpr zforall(Var:ZTerm, Aztype:ZType, Expr:ZExpr) {
@@ -156,28 +145,39 @@
   make(t0, t1, t2) { tom.engine.adt.zenon.types.zexpr.zforall.make(t0, t1, t2)}
 }
 
-%op ZExpr zeq(Lt:ZTerm, Rt:ZTerm) {
-  is_fsym(t) { (t!=null) && t.iszeq() }
-  get_slot(Lt, t) { t.getLt() }
-  get_slot(Rt, t) { t.getRt() }
-  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zeq.make(t0, t1)}
+%op ZExpr zexists(Var:ZTerm, Aztype:ZType, Expr:ZExpr) {
+  is_fsym(t) { (t!=null) && t.iszexists() }
+  get_slot(Var, t) { t.getVar() }
+  get_slot(Aztype, t) { t.getAztype() }
+  get_slot(Expr, t) { t.getExpr() }
+  make(t0, t1, t2) { tom.engine.adt.zenon.types.zexpr.zexists.make(t0, t1, t2)}
 }
 
-%op ZExpr zisfsym(T:ZTerm, Symbol:ZSymbol) {
-  is_fsym(t) { (t!=null) && t.iszisfsym() }
-  get_slot(T, t) { t.getT() }
-  get_slot(Symbol, t) { t.getSymbol() }
-  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zisfsym.make(t0, t1)}
+%op ZExpr zand(Lte:ZExpr, Rte:ZExpr) {
+  is_fsym(t) { (t!=null) && t.iszand() }
+  get_slot(Lte, t) { t.getLte() }
+  get_slot(Rte, t) { t.getRte() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zand.make(t0, t1)}
 }
 
-%op ZExpr zfalse() {
-  is_fsym(t) { (t!=null) && t.iszfalse() }
-  make() { tom.engine.adt.zenon.types.zexpr.zfalse.make()}
+%op ZExpr zor(Lte:ZExpr, Rte:ZExpr) {
+  is_fsym(t) { (t!=null) && t.iszor() }
+  get_slot(Lte, t) { t.getLte() }
+  get_slot(Rte, t) { t.getRte() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zor.make(t0, t1)}
 }
 
-%op ZExpr ztrue() {
-  is_fsym(t) { (t!=null) && t.isztrue() }
-  make() { tom.engine.adt.zenon.types.zexpr.ztrue.make()}
+%op ZExpr znot(Nex:ZExpr) {
+  is_fsym(t) { (t!=null) && t.isznot() }
+  get_slot(Nex, t) { t.getNex() }
+  make(t0) { tom.engine.adt.zenon.types.zexpr.znot.make(t0)}
+}
+
+%op ZExpr zequiv(Lte:ZExpr, Rte:ZExpr) {
+  is_fsym(t) { (t!=null) && t.iszequiv() }
+  get_slot(Lte, t) { t.getLte() }
+  get_slot(Rte, t) { t.getRte() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zequiv.make(t0, t1)}
 }
 
 

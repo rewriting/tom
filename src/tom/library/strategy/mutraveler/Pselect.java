@@ -18,8 +18,8 @@ import jjtraveler.VisitFailure;
  */
 
 public class Pselect extends AbstractMuStrategy {
-  protected final static int FIRST = 0;
-  protected final static int THEN = 1;
+  public final static int FIRST = 0;
+  public final static int THEN = 1;
   private int p;
   private int q;
   private static java.util.Random random = null;
@@ -31,6 +31,13 @@ public class Pselect extends AbstractMuStrategy {
     if(random == null) {
       random = new java.util.Random();
     }
+  }
+
+  public int getP() {
+    return p;
+  }
+  public int getQ() {
+    return q;
   }
     
   public Visitable visit(Visitable visitable) throws VisitFailure {
