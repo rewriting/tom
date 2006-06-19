@@ -256,9 +256,9 @@
       <vassrc config="${src.vasconfigfile}"/>
     </presetdef>
     <presetdef name="pomcompile">
-      <pom>
+      <pomsrc>
         <classpath refid="tom.classpath"/>
-      </pom>
+      </pomsrc>
     </presetdef>
   </target>
 
