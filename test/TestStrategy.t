@@ -66,11 +66,6 @@ public class TestStrategy extends TestCase {
     MuStrategy rule7 = `S7();
     MuStrategy rule8 = `S8(bool);
     MuStrategy rule9 = `S9(i);
-    MuStrategy rule10 = `S10();
-    MuStrategy rule11 = `S11();
-    MuStrategy rule12 = `S12();
-    MuStrategy rule13 = `S13("test");
-    MuStrategy rule14 = `S14("test", S10());
    
     try{
       assertSame("g(a,a) return a", MuTraveler.init(`rule0).visit(`g(a(),a())), `a());
@@ -83,16 +78,6 @@ public class TestStrategy extends TestCase {
       assertSame("g(a,a) return a", MuTraveler.init(`rule7).visit(`g(a(),a())), `a());
       assertSame("g(a,a) return a", MuTraveler.init(`rule8).visit(`g(a(),a())), `a());
       assertSame("g(a,a) return a", MuTraveler.init(`rule9).visit(`g(a(),a())), `a());
-      /*assertSame(MuTraveler.init(`rule10).visit(`S6()), `S8(true));
-      assertSame(MuTraveler.init(`rule10).visit(`All(All(Fail()))), `All(Fail()));
-      assertSame(MuTraveler.init(`rule10).visit(`All(Identity())), `All(Identity()));
-      assertSame(MuTraveler.init(`rule11).visit(`S8(true)), `S9(42));
-      assertSame(MuTraveler.init(`rule11).visit(`S8(false)), `S9(56));
-      assertSame(MuTraveler.init(`rule11).visit(`S9(3)), `S8(true));
-      assertSame(MuTraveler.init(`rule12).visit(`S2(4, "test")), `S2(5, "testtest"));
-      assertSame(MuTraveler.init(`rule13).visit(`S6()), `("testtest"));
-      assertSame(MuTraveler.init(`rule14).visit(`S6()), `S14("testtest", S8(true)));
-      assertSame(MuTraveler.init(`rule14).visit(`S8(true)), `S14("true", S10()));*/
     } catch (VisitFailure e){
       System.out.println("VisitFailure");
     }
@@ -195,37 +180,6 @@ public class TestStrategy extends TestCase {
   %strategy S9(i:int) extends `Identity() {
     visit Term {
       g(x,x)            -> { return `x; }
-    }
-  }
-
-  // with strategy visit
-  %strategy S10() extends `Identity() {
-    visit Strategy {
-      S6() -> { return `S8(true); }
-      All(All(x)) -> { return `All(x); }
-    }
-  }
-  %strategy S11() extends `Identity() {
-    visit Strategy {
-      S8(true) -> { return `S9(42); }
-      S8(false) -> { return `S9(56); }
-      S9(i) -> { return `S8(true); }
-    }
-  }
-  %strategy S12() extends `Identity() {
-    visit Strategy {
-      S2(l,s) -> { return `S2(l+1,s+s); }
-    }
-  }
-  %strategy S13(str:String) extends `Identity() {
-    visit Strategy {
-      S6() -> { return `S13(str+str); }
-    }
-  }
-  %strategy S14(str:String,s:Strategy) extends `Identity() {
-    visit Strategy {
-      S6() -> { return `S14(str+str,S8(true)); }
-      S8(true) -> { return `S14("true",s); }
     }
   }
 
