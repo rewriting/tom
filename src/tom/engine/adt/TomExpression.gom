@@ -1,5 +1,5 @@
 module TomExpression
-imports TomSignature 
+imports TomSignature String
 abstract syntax
 Expression = TomTermToExpression(AstTerm:TomTerm)
            | Bottom()
@@ -24,3 +24,7 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | GetElement(Opname:TomName,Codomain:TomType,Kid1:TomTerm,Kid2:TomTerm)
            | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
            | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
+           // TargetLanguageFunctionCall - the target language function that has to be called
+           // 								in order to perform the match
+           // CompiledAntiPatternMatch - the string that contains the compiled anti-pattern match
+		   | EqualTrueAntiPatternMatch(TargetLanguageFunctionCall:String,CompiledAntiPatternMatch:String) 	
