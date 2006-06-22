@@ -269,6 +269,7 @@
     <tomcompile srcdir="${src.src}"
          destdir="${gen.destination}"
          options="-I ${src.mapping} --optimize">
+      <include name="tom/engine/**/**/*.t"/>     	
       <include name="tom/engine/**/*.t"/> 
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
@@ -577,7 +578,7 @@
     </jar>
     <jar jarfile="${stable.dist.lib}/jtom.jar"
          update="yes">
-	    <fileset dir="${stable.build}" includes="tom/engine/**/*.class"/>
+	    <fileset dir="${stable.build}" includes="tom/engine/**/*.class,tom/engine/**/**/*.class"/>
 	    <fileset dir="${stable.src}" includes="tom/engine/**/*.properties"/>
     </jar>
     <jar jarfile="${stable.dist.lib}/gom.jar"
@@ -725,7 +726,7 @@
     </jar>
     <jar jarfile="${src.dist.lib}/tom-${src.version}.jar">
       <fileset dir="${src.build}"
-	      includes="tom/engine/**/*.class"
+	      includes="tom/engine/**/*.class,tom/engine/**/**/*.class"
 	      excludes="tom/engine/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="tom/engine/**/*.properties"/>
     </jar>
