@@ -50,6 +50,7 @@ import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
+import tom.engine.compiler.antipattern.*;
 
 public class TomKernelCompiler extends TomBase {
 
@@ -238,33 +239,48 @@ public class TomKernelCompiler extends TomBase {
                                            SlotList termList,
                                            TomNumberList rootpath,
                                            String moduleName) {
+
     %match(SlotList termList) {
-      concSlot() -> { 
-        return action;
+      concSlot() -> {    	  
+        return action;        
       } 
       // X or _,...  
       concSlot(PairSlotAppl(slotName,
-                                var@(Variable|UnamedVariable)[AstType=termType]),termTail*) -> {
-        Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);
+                                var@(Variable|UnamedVariable)[AstType=termType]),termTail*) -> {        
+    	Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);
         TomNumberList path  = `concTomNumber(rootpath*,NameNumber(slotName));
 
         Expression source = `TomTermToExpression(Variable(concOption(),PositionName(path),termType, concConstraint()));
         return buildLet(`var, source, subAction, moduleName);
       }
-     
+      // !X                                 
+      concSlot(PairSlotAppl(slotName,
+            AntiTerm(Variable(_,_,_,_))),_*) -> {         
+        // this will generate directly false
+    	return `Nop();		  
+      }            
       // (f|g)[...]
       concSlot(PairSlotAppl(slotName,
                    currentTerm@RecordAppl[NameList=nameList@(Name(tomName),_*),
-                                          Slots=termArgs]),termTail*) -> {
+                                          Slots=termArgs]),termTail*) -> {        
+                                        	  
         // recursively call the algorithm on termTail
-        Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);
-        // find the codomain of (f|g) [* should be the same *]
+        Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);        
 
+    	// if the termList contains antipatterns then the compiler for the 
+    	// antipatterns has to be called
+        if (TomAntiPatternUtils.hasAntiTerms(`currentTerm)){
+        	// get the compiled anti-pattern
+        	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchInstruction(action,
+        			`currentTerm, rootpath, moduleName);
+			// bound the result with the result for the next term		
+        	return `If(compiledAntiPattern,subAction,Nop());        		
+        }
+
+        // find the codomain of (f|g) [* should be the same *]
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
-        //System.out.println("name: " + `tomName);
-        //System.out.println("symb: " + tomSymbol);
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
-        
+
           // perform the compilation, according to 3 cases:
           // - (f|g) is a list operator
           // - (f|g) is an array operator
@@ -272,7 +288,7 @@ public class TomKernelCompiler extends TomBase {
         TomNumberList path  = `concTomNumber(rootpath*,NameNumber(slotName));
         TomTerm subjectVariableAST =  `Variable(concOption(),PositionName(path),codomain,concConstraint());
         Instruction automataInstruction;
-        if(isListOperator(tomSymbol)) {
+        if(isListOperator(tomSymbol)) {        	
           // case: list operator
             /*
              * store the subject into an internal variable
@@ -293,7 +309,7 @@ public class TomKernelCompiler extends TomBase {
           automataInstruction = `LetRef(newSubjectVariableAST,
                                         TomTermToExpression(subjectVariableAST),
                                         automata);
-        } else if(isArrayOperator(tomSymbol)) {
+        } else if(isArrayOperator(tomSymbol)) {        	
           // case: array operator
           int indexSubterm = 1;
           TomNumberList newPathList = `concTomNumber(path*,ListNumber(Number(indexSubterm)));
@@ -314,11 +330,12 @@ public class TomKernelCompiler extends TomBase {
                                          automata));
         } else {
           // case: syntactic operator
-          Instruction automata = genSyntacticMatchingAutomata(subAction,`termArgs,path,moduleName);
-          TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
-          if(`nameList.length()==1 || `termArgs.isEmptyconcSlot()) {
+          Instruction automata = genSyntacticMatchingAutomata(subAction,`termArgs,path,moduleName);          
+          TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain(); 
+          // if there is no disjonction or no arguments
+          if(`nameList.length()==1 || `termArgs.isEmptyconcSlot()) {        	  
               automataInstruction = `collectSubtermFromTomSymbol(termArgs,tomSymbol,subjectVariableAST,path,automata,moduleName); 
-          } else { 
+          } else {        	  
             // generate is_fsym(t,f) || is_fsym(t,g)
             automataInstruction = `collectSubtermFromSubjectList(currentTerm,subjectVariableAST,path,automata,moduleName); 
             automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction,moduleName);
@@ -326,11 +343,25 @@ public class TomKernelCompiler extends TomBase {
           }
         }
         // generate is_fsym(t,f) || is_fsym(t,g)
-        Expression cond = `expandDisjunction(EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm),moduleName);
-        automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction,moduleName);
+        Expression cond = `expandDisjunction(EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm),moduleName);                
+        automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction,moduleName);        
         return `If(cond,automataInstruction,Nop());
       }
-    }
+      // !f
+      // TODO - factorize with the one on top ?
+      concSlot(PairSlotAppl(slotName,
+              currentTerm@AntiTerm(RecordAppl[NameList=nameList@(Name(tomName),_*),
+                                     Slots=termArgs])),termTail*) -> {
+		// recursively call the algorithm on termTail
+	    Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);        
+	
+     	// get the compiled anti-pattern
+     	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchInstruction(action,
+     			`currentTerm, rootpath, moduleName);
+		// bound the result with the result for the next term		
+     	return `If(compiledAntiPattern,subAction,Nop());
+      }                                                                                    
+    } // end match
     System.out.println("GenSyntacticMatchingAutomata strange term: " + termList);
     throw new TomRuntimeException("GenSyntacticMatchingAutomata strange term: " + termList);
   }
@@ -835,7 +866,7 @@ public class TomKernelCompiler extends TomBase {
      * declare/assign internal matching variables: match_path_i = ti
      */
   private Instruction collectSubtermFromTomSymbol(SlotList termArgList, TomSymbol tomSymbol,
-      TomTerm subjectVariableAST, TomNumberList path, Instruction body, String moduleName) {
+      TomTerm subjectVariableAST, TomNumberList path, Instruction body, String moduleName) {	  
     TomName opNameAST = tomSymbol.getAstName();
     %match(SlotList termArgList) { 
       concSlot() -> { return body; }
