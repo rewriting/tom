@@ -1,0 +1,6 @@
+TODO
+
+1. bug when multiple subjectss and only one pattern
+2. allow disjonctions 
+3. verify !x, !_ 
+4. guards are not handled
