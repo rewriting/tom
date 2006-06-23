@@ -123,6 +123,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     return v.visit_Strategy(this);
   }
 
+  private static boolean[] nonbuiltin = new boolean[]{@genNonBuiltin()@};
   public @className()@(@genConstrArgs(slotList.length(),"VisitableVisitor arg")@) {
     args = new VisitableVisitor[]{@genConstrArgs(slotList.length(),"arg")@};
   }
@@ -137,29 +138,11 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
 
         if(!hasPosition()) {
           for (int i = 0; i < childCount; i++) {
-            Visitable oldChild = any.getChildAt(i);
-            Visitable newChild = args[i].visit(oldChild);
-            if (updated || (newChild != oldChild)) {
-              if (!updated) { // this is the first change
-                updated = true;
-                // allocate the array, and fill it
-                childs = new Visitable[childCount];
-                for (int j = 0 ; j<i ; j++) {
-                  childs[j] = any.getChildAt(j);
-                }
-              }
-              childs[i] = newChild;
-            }
-          }
-        } else {
-          try {
-            for (int i = 0; i < childCount; i++) {
+            if (nonbuiltin[i]) {
               Visitable oldChild = any.getChildAt(i);
-              getPosition().down(i+1);
               Visitable newChild = args[i].visit(oldChild);
-              getPosition().up();
               if (updated || (newChild != oldChild)) {
-                if (!updated) {
+                if (!updated) { // this is the first change
                   updated = true;
                   // allocate the array, and fill it
                   childs = new Visitable[childCount];
@@ -168,6 +151,28 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
                   }
                 }
                 childs[i] = newChild;
+              }
+            }
+          }
+        } else {
+          try {
+            for (int i = 0; i < childCount; i++) {
+              if (nonbuiltin[i]) {
+                Visitable oldChild = any.getChildAt(i);
+                getPosition().down(i+1);
+                Visitable newChild = args[i].visit(oldChild);
+                getPosition().up();
+                if (updated || (newChild != oldChild)) {
+                  if (!updated) {
+                    updated = true;
+                    // allocate the array, and fill it
+                    childs = new Visitable[childCount];
+                    for (int j = 0 ; j<i ; j++) {
+                      childs[j] = any.getChildAt(j);
+                    }
+                  }
+                  childs[i] = newChild;
+                }
               }
             }
           } catch(VisitFailure f) {
@@ -181,16 +186,20 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       } else {
         if(!hasPosition()) {
           for (int i = 0; i < childCount; i++) {
-            Visitable newChild = args[i].visit(result.getChildAt(i));
-            result = result.setChildAt(i, newChild);
+            if (nonbuiltin[i]) {
+              Visitable newChild = args[i].visit(result.getChildAt(i));
+              result = result.setChildAt(i, newChild);
+            }
           }
         } else {
           try {
             for (int i = 0; i < childCount; i++) {
-              getPosition().down(i+1);
-              Visitable newChild = args[i].visit(result.getChildAt(i));
-              getPosition().up();
-              result = result.setChildAt(i, newChild);
+              if (nonbuiltin[i]) {
+                getPosition().down(i+1);
+                Visitable newChild = args[i].visit(result.getChildAt(i));
+                getPosition().up();
+                result = result.setChildAt(i, newChild);
+              }
             }
           } catch(VisitFailure f) {
             getPosition().up();
@@ -241,6 +250,24 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       args += (i==0?"":", ")+arg+i+":Strategy";
     }
     return args;
+  }
+
+  private String genNonBuiltin() {
+    String out = "";
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          out += "true, ";
+        } else {
+          out += "false, ";
+        }
+      }
+    }
+    if (out.length()!=0) {
+      return out.substring(0,out.length()-2);
+    } else {
+      return out;
+    }
   }
 
   /** the class logger instance*/
