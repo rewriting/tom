@@ -1,0 +1,5 @@
+module Elist
+abstract syntax
+Elist = Empty()
+      | Cons(head:E,tail:Elist)
+E = a() | b() | c()
