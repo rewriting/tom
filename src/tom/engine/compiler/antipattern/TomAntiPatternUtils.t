@@ -108,11 +108,26 @@ public class TomAntiPatternUtils{
 			TomNumberList rootpath,
 			String moduleName) {
 		
-//		TomTerm pattern = null;
-//		// get the term to match
-//		%match(SlotList termList) ->{
-//			
-//		}
+		// subject to be matched
+		TomTerm subject = null;
+		
+		// extract the subject
+		// TODO - the guards
+		%match(Instruction action){
+			TypedAction(_,Pattern(concTomTerm(subject,_*),_,_),_)->{
+				subject = `subject;
+			}
+		}
+		
+		// transform the anti-pattern match problem into 
+		// a disunification one
+		Constraint disunificationProblem = TomAntiPatternTransform.transform(
+				`EqualConstraint(tomTerm,subject));
+		// launch the constraint compiler
+//		Contraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);
+		
+//		return EqualTrueAntiPatternMatch("functionToBeCalled", compiledApProblem);
+		
 		System.out.println("Action:" + action);
 		System.out.println("TomTerm:" + tomTerm);
 		System.out.println("RootPath:" + rootpath);
