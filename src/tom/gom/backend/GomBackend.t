@@ -81,9 +81,13 @@ public class GomBackend {
    */
   public int generateClass(GomClass gomclass) {
     %match(GomClass gomclass) {
-      TomMapping[className=className,basicStrategy=basicStrategy,sortClasses=sortClasses,operatorClasses=ops] -> {
+      TomMapping[className=className@ClassName(pkg,name),basicStrategy=basicStrategy,sortClasses=sortClasses,operatorClasses=ops] -> {
         TemplateClass mapping = templatefactory.makeTomMappingTemplate(`className,`basicStrategy,`sortClasses,`ops);
         mapping.generateFile();
+
+        TemplateClass stratMapping = 
+          new tom.gom.backend.strategy.StratMappingTemplate(`ClassName(pkg,"_"+name),`ops);
+        stratMapping.generateFile();
         return 1;
       }
       FwdClass[className=className,
@@ -133,6 +137,12 @@ public class GomBackend {
         GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
         TemplateClass operator = templatefactory.makeOperatorTemplate(`className,`abstracttype,`sort,`visitorName,`slots,`hooks,getMappingTemplate(mappingClass));
         operator.generateFile();
+
+        TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(`className);
+        isOpStrat.generateFile();
+
+        TemplateClass sOpStrat = new tom.gom.backend.strategy.SOpTemplate(`className,`slots);
+        sOpStrat.generateFile();
         return 1;
       }
       VariadicOperatorClass[className=className,

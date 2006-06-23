@@ -2185,7 +2185,7 @@ COLON       :   ':' ;
 EQUAL       :   '=' ;
 AT          :   '@' ;
 STAR        :   '*' ;
-UNDERSCORE  :   '_' ; 
+UNDERSCORE  :   {!Character.isJavaIdentifierPart(LA(2))}? '_' ; 
 BACKQUOTE   :   "`" ;
 
 //XML Tokens
@@ -2308,10 +2308,10 @@ options{testLiterals = true;}
 protected ID
 options{testLiterals = true;}
     :
-        LETTER
+        ('_')? LETTER
         ( 
             options{greedy = true;}:
-            ( LETTER | DIGIT | UNDERSCORE )
+            ( LETTER | DIGIT | '_' )
         )* 
     ;   
 

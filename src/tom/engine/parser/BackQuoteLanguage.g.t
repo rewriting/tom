@@ -607,10 +607,10 @@ options{ testLiterals = true; }
 protected
 BQ_SIMPLE_ID
 options{ testLiterals = true; }   
-    :   ('a'..'z' | 'A'..'Z') 
+    :   ('_')? ('a'..'z' | 'A'..'Z') 
         ( 
             ('a'..'z' | 'A'..'Z') 
-        |   BQ_UNDERSCORE 
+        |   '_' 
 //        |   BQ_DOT
         |   BQ_DIGIT
         )*
@@ -647,7 +647,7 @@ protected
 BQ_DIGIT   :   ('0'..'9')  ;
 
 protected 
-BQ_UNDERSCORE  :   '_' ;
+BQ_UNDERSCORE : {!Character.isJavaIdentifierPart(LA(2))}? '_' ;
 
 protected
 BQ_ESC
