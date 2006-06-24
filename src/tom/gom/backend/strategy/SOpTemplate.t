@@ -130,35 +130,35 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
 
   public Visitable visit(Visitable any) throws VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
-      int childCount = any.getChildCount();
       Visitable result = any;
       if (any instanceof MuVisitable) {
         boolean updated = false;
         Visitable[] childs = null;
 
         if(!hasPosition()) {
-          for (int i = 0; i < childCount; i++) {
+          for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
             if (nonbuiltin[i]) {
-              Visitable oldChild = any.getChildAt(i);
+              Visitable oldChild = any.getChildAt(nbi);
               Visitable newChild = args[i].visit(oldChild);
               if (updated || (newChild != oldChild)) {
                 if (!updated) { // this is the first change
                   updated = true;
                   // allocate the array, and fill it
-                  childs = new Visitable[childCount];
-                  for (int j = 0 ; j<i ; j++) {
+                  childs = new Visitable[@nonBuiltinChildCount()@];
+                  for (int j = 0 ; j<nbi ; j++) {
                     childs[j] = any.getChildAt(j);
                   }
                 }
-                childs[i] = newChild;
+                childs[nbi] = newChild;
               }
+              nbi++;
             }
           }
         } else {
           try {
-            for (int i = 0; i < childCount; i++) {
+            for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
               if (nonbuiltin[i]) {
-                Visitable oldChild = any.getChildAt(i);
+                Visitable oldChild = any.getChildAt(nbi);
                 getPosition().down(i+1);
                 Visitable newChild = args[i].visit(oldChild);
                 getPosition().up();
@@ -166,13 +166,14 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
                   if (!updated) {
                     updated = true;
                     // allocate the array, and fill it
-                    childs = new Visitable[childCount];
-                    for (int j = 0 ; j<i ; j++) {
+                    childs = new Visitable[@nonBuiltinChildCount()@];
+                    for (int j = 0 ; j<nbi ; j++) {
                       childs[j] = any.getChildAt(j);
                     }
                   }
-                  childs[i] = newChild;
+                  childs[nbi] = newChild;
                 }
+                nbi++;
               }
             }
           } catch(VisitFailure f) {
@@ -185,20 +186,22 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
         }
       } else {
         if(!hasPosition()) {
-          for (int i = 0; i < childCount; i++) {
+          for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
             if (nonbuiltin[i]) {
-              Visitable newChild = args[i].visit(result.getChildAt(i));
-              result = result.setChildAt(i, newChild);
+              Visitable newChild = args[i].visit(result.getChildAt(nbi));
+              result = result.setChildAt(nbi, newChild);
+              nbi++;
             }
           }
         } else {
           try {
-            for (int i = 0; i < childCount; i++) {
+            for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
               if (nonbuiltin[i]) {
                 getPosition().down(i+1);
-                Visitable newChild = args[i].visit(result.getChildAt(i));
+                Visitable newChild = args[i].visit(result.getChildAt(nbi));
                 getPosition().up();
-                result = result.setChildAt(i, newChild);
+                result = result.setChildAt(nbi, newChild);
+                nbi++;
               }
             }
           } catch(VisitFailure f) {
@@ -268,6 +271,18 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     } else {
       return out;
     }
+  }
+
+  private int nonBuiltinChildCount() {
+    int count = 0;
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,SlotField[domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          count++;
+        }
+      }
+    }
+    return count;
   }
 
   /** the class logger instance*/
