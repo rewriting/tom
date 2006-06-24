@@ -160,6 +160,30 @@ public class TestMap extends TestCase {
         subject);
   }
 
+  public void testInnermost() {
+    E subject =
+      `f(
+        f(f(a(),0,a()),0,f(a(),1,a())),
+        0,
+        f(
+          f(
+            f(a(),1,a()),
+            0,
+            f(a(),1,f(f(a(),1,a()),0,f(a(),1,a())))
+           ),
+          0,
+          f(f(a(),0,a()),0,f(a(),1,a()))
+          )
+        );
+    MuStrategy rule =
+      `Sequence(
+          _f(_a(),Identity(),_a()),
+            replace_with_a()
+            );
+    subject = (E) `Innermost(rule).apply(subject);
+    assertEquals(`a(),subject);
+  }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestMap.class));
   }
