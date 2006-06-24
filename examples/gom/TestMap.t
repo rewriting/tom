@@ -90,6 +90,19 @@ public class TestMap extends TestCase {
     assertTrue("The strategie pattern should match",state);
   }
 
+  public void testMatchFailure() {
+    E subject = `f(f(a(),1,b()),2,f(c(),3,d()));
+    MuStrategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_c()));
+    boolean state = true;
+    try {
+      match.visit(subject);
+      fail("the match should fail");
+    } catch (jjtraveler.VisitFailure e) {
+      state = false;
+    }
+    assertFalse("The strategie pattern not have matched",state);
+  }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestMap.class));
   }
