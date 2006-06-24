@@ -55,10 +55,10 @@ import jjtraveler.VisitFailure;
 /**
  * Contains methods for transforming an anti-pattern problem into a disunification one
  */
-public class TomAntiPatternTransform{	
+public class TomAntiPatternTransform {	
 
 //	------------------------------------------------------------
-	%include { adt/tomconstraint/tomconstraint.tom }
+	%include { adt/tomconstraint/TomConstraint.tom }
 //	%include { adt/tomterm/tomterm.tom }
 	%include { mutraveler.tom}	
 //	------------------------------------------------------------
