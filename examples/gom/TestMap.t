@@ -77,6 +77,19 @@ public class TestMap extends TestCase {
     assertEquals("count c",0,cbag.size());
   }
 
+  public void testMatch() {
+    E subject = `f(f(a(),1,b()),2,f(c(),3,d()));
+    MuStrategy match = `_f(_f(_a(),Fail(),_b()),Fail(),_f(_c(),Fail(),_d()));
+    boolean state = false;
+    try {
+      match.visit(subject);
+      state = true;
+    } catch (jjtraveler.VisitFailure e) {
+      fail("the match should not fail");
+    }
+    assertTrue("The strategie pattern should match",state);
+  }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestMap.class));
   }
