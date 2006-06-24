@@ -1,5 +1,9 @@
 module Elist
+imports int
 abstract syntax
 Elist = Empty()
       | Cons(head:E,tail:Elist)
-E = a() | b() | c()
+E = a()
+  | b()
+  | c()
+  | f(el1:E,bi:int,el2:E)
