@@ -137,6 +137,29 @@ public class TestMap extends TestCase {
     assertEquals(1,cbag.size());
   }
 
+  public void testRewrite() {
+    Elist subject = 
+      `Cons(a(),
+        Cons(f(f(c(),1,f(b(),5,a())),4,f(a(),2,b())),
+          Cons(b(),
+            Cons(c(),
+              Empty()))));
+    /* encode the rule f(_,_b()) -> a() */
+    MuStrategy rule = `BottomUp(
+        Try(
+          Sequence(
+            _f(Identity(),Identity(),_b()),
+            replace_with_a())));
+    subject = (Elist) rule.apply(subject);
+    assertEquals(
+        `Cons(a(),
+          Cons(f(f(c(),1,f(b(),5,a())),4,a()),
+            Cons(b(),
+              Cons(c(),
+                Empty())))),
+        subject);
+  }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestMap.class));
   }
