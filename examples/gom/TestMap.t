@@ -103,6 +103,40 @@ public class TestMap extends TestCase {
     assertFalse("The strategie pattern not have matched",state);
   }
 
+  %strategy replace_with_a() extends `Identity() {
+    visit E {
+      _ -> { return `a(); }
+    }
+  }
+
+  public void testReplace() {
+    Elist subject = 
+      `Cons(a(),
+        Cons(f(f(c(),1,f(b(),5,a())),4,f(a(),2,b())),
+          Cons(b(),
+            Cons(c(),
+              Empty()))));
+    MuStrategy maps = `mu(MuVar("x"),
+        Choice(
+          _Cons(
+            Try(
+              _f(
+                _f(replace_with_a(),Identity(),Identity()),
+                Identity(),
+                _f(Identity(),Identity(),replace_with_a())
+              )),MuVar("x")),
+          _Empty()
+        ));
+    subject = (Elist) maps.apply(subject);
+    Collection abag = new HashSet();
+    Collection bbag = new HashSet();
+    Collection cbag = new HashSet();
+    `BottomUp(Log(abag,bbag,cbag)).apply(subject);
+    assertEquals(5,abag.size());
+    assertEquals(2,bbag.size());
+    assertEquals(1,cbag.size());
+  }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestMap.class));
   }
