@@ -61,7 +61,7 @@ public class TestMap extends TestCase {
   }
 
   public void testCut() {
-    E subject = `f(f(a(),2,b()),4,f(f(c(),2,a()),1,f(b(),5,f(a(),3,f(b(),6,a())))));
+    E subject = `f(f(a(),2,b()),4,f(f(c(),2,a()),1,g(b(),5,f(a(),3,f(b(),6,a())))));
     Collection abag = new HashSet();
     Collection bbag = new HashSet();
     Collection cbag = new HashSet();
