@@ -107,47 +107,47 @@ public class TestStrategy extends TestCase {
     assertFalse("inequality on Position", p1.equals(p3));
   }
 
-  %strategy GetPositionA(positions:Hashtable,posName:String) extends `Identity(){
+  %strategy GetPositionA(positions:Hashtable,posName:String) extends Identity(){
     visit Term {
       a() -> {positions.put(posName,getPosition());}
     }
   }
 
-  %strategy S0() extends `Identity() {
+  %strategy S0() extends Identity() {
     visit Term {
       g(x,x)            -> { return `x; }
     }
   }
 
   //with parameter
-  %strategy S1(b:boolean) extends `Identity() {
+  %strategy S1(b:boolean) extends Identity() {
     visit Term {
       a()          -> { return `b(); }
     }
   }
 
   //with 2 parameters
-  %strategy S2(l:long,s:String) extends `Identity() {
+  %strategy S2(l:long,s:String) extends Identity() {
     visit Term {
       g(x,x)            -> { return `x; }
     }
   }
 
   //with builtin parameter
-  %strategy S3(i:int) extends `Identity() {
+  %strategy S3(i:int) extends Identity() {
     visit Term {
       g(x,x)            -> { return `x; }
     }
   }
 
-  %strategy S4(hashtable:Hashtable,linkedList:LinkedList) extends `Identity() {
+  %strategy S4(hashtable:Hashtable,linkedList:LinkedList) extends Identity() {
     visit Term {
       g(x,y)            -> { linkedList.add("ok"); return `g(y,x);}
     }
   }
 
    //with many visits
-  %strategy S5() extends `Identity() {
+  %strategy S5() extends Identity() {
     visit Term {
       g(x,x)            -> { return `x; }
     }
@@ -156,7 +156,7 @@ public class TestStrategy extends TestCase {
     }
   }
   //with visits in reverse order
-  %strategy S6() extends `Identity() {
+  %strategy S6() extends Identity() {
     visit Term1 {
       e()            -> { return `e(); }
     }
@@ -166,18 +166,18 @@ public class TestStrategy extends TestCase {
     }
   }
 
-  %strategy S7() extends `S8(bool0) {
+  %strategy S7() extends S8(bool0) {
     visit Term {
       g(x,x)            -> { return `x; }
     }
   }
-  %strategy S8(b:boolean) extends `S9(3) {
+  %strategy S8(b:boolean) extends  `S9(3) {
     visit Term {
       g(x,x)            -> { return `x; }
     }
   }
 
-  %strategy S9(i:int) extends `Identity() {
+  %strategy S9(i:int) extends  Identity() {
     visit Term {
       g(x,x)            -> { return `x; }
     }
@@ -185,7 +185,7 @@ public class TestStrategy extends TestCase {
 
 
   //with no visit
-  //%strategy S4() extends `Identity() {
+  //%strategy S4() extends Identity() {
   //}
 
 

@@ -17,7 +17,7 @@ public class GenHello {
     String prg2=%[
 public class Hello {
   public static void main(String[] args) {
-    System.out.println("Hello\n\tWorld      @version@");
+    System.out.println("Hello\n\tWorld\t@version@");
   }
 }
       ]%;

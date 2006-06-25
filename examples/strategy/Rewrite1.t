@@ -71,7 +71,7 @@ public class Rewrite1 {
 
   }
 
-  %strategy RewriteSystem(subject:Term) extends `Fail() {
+  %strategy RewriteSystem(subject:Term) extends Fail() {
     visit Term {
       a() -> { 
         Position pos = getPosition();

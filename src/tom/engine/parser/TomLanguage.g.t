@@ -332,7 +332,7 @@ extendsBqTerm returns [TomTerm bqTerm] throws TomException
   bqTerm = null;
 }
   :
-    EXTENDS BACKQUOTE
+    EXTENDS //(BACKQUOTE)?
     {
     selector().push("bqlexer");
     bqTerm = bqparser.beginBackquote();

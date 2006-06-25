@@ -1,3 +1,7 @@
+2006-06-25  Pem  <pem@becky.local>
+  * make backquote optional in %strategy
+	* allow \ in %[...]%
+
 2006-06-07  Pem  <pem@becky.local>
   * generate only used typeterm definitions
 	* do no longer generate comments in includes

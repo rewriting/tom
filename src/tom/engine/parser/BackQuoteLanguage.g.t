@@ -184,7 +184,7 @@ beginBackquote returns [TomTerm result]
   TomList context = `concTomTerm();
 }
 :
-( result = mainBqTerm[context] ) { selector().pop(); }
+ws (BQ_BACKQUOTE)? ( result = mainBqTerm[context] ) { selector().pop(); }
 ;
 
 
@@ -560,6 +560,7 @@ BQ_LPAREN      :    '('   ;
 BQ_RPAREN      :    ')'   ;
 BQ_COMMA       :    ','   ;
 BQ_STAR        :    '*'   ;
+BQ_BACKQUOTE   :   "`" ;
 
 //XML Tokens
 XML_EQUAL   :   '=' ;
