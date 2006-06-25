@@ -34,7 +34,7 @@ import tom.gom.adt.objects.types.*;
 public class VariadicOperatorTemplate extends TemplateClass {
   ClassName abstractType;
   ClassName sortName;
-  ClassName empty;
+  GomClass empty;
   GomClass cons;
 
   %include { ../../adt/objects/Objects.tom}
@@ -42,7 +42,7 @@ public class VariadicOperatorTemplate extends TemplateClass {
   public VariadicOperatorTemplate(ClassName className,
                                   ClassName abstractType,
                                   ClassName sortName,
-                                  ClassName empty,
+                                  GomClass empty,
                                   GomClass cons) {
     super(className);
     this.abstractType = abstractType;
@@ -87,7 +87,7 @@ public abstract class @className()@ extends @fullClassName(sortName)@ {
   public @fullClassName(sortName)@ reverse() {
     if(this instanceof @fullClassName(cons.getclassName())@) {
       @fullClassName(sortName)@ cur = this;
-      @fullClassName(sortName)@ rev = @fullClassName(empty)@.make();
+      @fullClassName(sortName)@ rev = @fullClassName(empty.getclassName())@.make();
       while(cur instanceof @fullClassName(cons.getclassName())@) {
         rev = @fullClassName(cons.getclassName())@.make(((@fullClassName(cons.getclassName())@)cur).getHead@className()@(),rev);
         cur = ((@fullClassName(cons.getclassName())@)cur).getTail@className()@();

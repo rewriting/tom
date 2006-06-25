@@ -167,7 +167,6 @@ public class GomCompiler {
                                                sortClassName,
                                                visitorName, slots,
                                                operatorHooks);
-                classForOperatorDecl.put(`opdecl,cons);
                 classList = `concGomClass(cons,classList*);
 
                 GomClass emptyClass = `OperatorClass(empty,
@@ -177,13 +176,12 @@ public class GomCompiler {
                                                      visitorName,
                                                      concSlotField(),
                                                      concHook());
-                classForOperatorDecl.put(`opdecl,emptyClass);
                 classList = `concGomClass(emptyClass,classList*);
 
                 operatorClass = `VariadicOperatorClass(variadicOpClassName ,
                                                        abstracttypeName,
                                                        sortClassName,
-                                                       empty,
+                                                       emptyClass,
                                                        cons);
               } else {
                 operatorClass = `OperatorClass(operatorClassName,
@@ -237,6 +235,12 @@ public class GomCompiler {
           concSort(_*,Sort[operators=concOperator(_*,opDecl,_*)],_*) -> {
             GomClass opClass = (GomClass) classForOperatorDecl.get(`opDecl);
             allOperatorClasses = `concGomClass(opClass,allOperatorClasses*);
+            %match(GomClass opClass) {
+              VariadicOperatorClass[empty=emptyClass,cons=consClass] -> {
+                allOperatorClasses = `concGomClass(emptyClass,consClass,allOperatorClasses*);
+      
+              }
+            }
           }
         }
       }

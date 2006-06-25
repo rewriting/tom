@@ -101,7 +101,7 @@ public class MappingTemplate extends TemplateClass {
       concGomClass(_*,
           VariadicOperatorClass[className=opName,
                                 sortName=sortName,
-                                empty=emptyClass,
+                                empty=OperatorClass[className=emptyClass],
                                 cons=OperatorClass[className=concClass,
                                                    slots=concSlotField(
                                                            head@SlotField[domain=headDomain],

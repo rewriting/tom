@@ -184,6 +184,18 @@ public class TestMap extends TestCase {
     assertEquals(`a(),subject);
   }
 
+  public void testVariadicMap() {
+    VElist subject = `conc(a(),b(),b(),f(a(),0,b()),c());
+    Collection abag = new HashSet();
+    Collection bbag = new HashSet();
+    Collection cbag = new HashSet();
+    MuStrategy maps = `_conc(Log(abag,bbag,cbag));
+    maps.apply(subject);
+    assertEquals(1,abag.size());
+    assertEquals(2,bbag.size());
+    assertEquals(1,cbag.size());
+  }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestMap.class));
   }

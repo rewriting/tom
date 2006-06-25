@@ -57,6 +57,18 @@ public class StratMappingTemplate extends TemplateClass {
       out +=
         (new tom.gom.backend.strategy.SOpTemplate(`opName,`slotList)).generateMapping();
       }
+      concGomClass(_*,
+          VariadicOperatorClass[className=vopName,
+                                empty=OperatorClass[className=empty],
+                                cons=OperatorClass[className=cons]],
+                            _*)-> {
+        out += %[
+%op Strategy _@className(`vopName)@(sub:Strategy) {
+  is_fsym(t) { false }
+  make(sub)  { `mu(MuVar("x"),Choice(_@className(`cons)@(sub,MuVar("x")),_@className(`empty)@())) }
+}
+]%;
+      }
     }
     return out;
   }
