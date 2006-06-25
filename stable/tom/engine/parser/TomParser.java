@@ -666,7 +666,6 @@ inputState.guessing--;
 		
 		
 		match(EXTENDS);
-		match(BACKQUOTE);
 		if ( inputState.guessing==0 ) {
 			
 			selector().push("bqlexer");

@@ -187,6 +187,20 @@
 }
 
 
+%typeterm OConstraintList {
+  implement { tom.engine.adt.tomconstraint.types.OConstraintList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomterm.TomTermBasicStrategy }
+}
+
+
+%typeterm AConstraintList {
+  implement { tom.engine.adt.tomconstraint.types.AConstraintList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomterm.TomTermBasicStrategy }
+}
+
+
 %typeterm Constraint {
   implement { tom.engine.adt.tomconstraint.types.Constraint }
   equals(t1,t2) { t1.equals(t2) }
@@ -929,6 +943,13 @@
   make(t0) { tom.engine.adt.tomname.types.tomname.Name.make(t0)}
 }
 
+%op Expression EqualTrueAntiPatternMatch(TargetLanguageFunctionCall:String, CompiledAntiPatternMatch:String) {
+  is_fsym(t) { (t!=null) && t.isEqualTrueAntiPatternMatch() }
+  get_slot(TargetLanguageFunctionCall, t) { t.getTargetLanguageFunctionCall() }
+  get_slot(CompiledAntiPatternMatch, t) { t.getCompiledAntiPatternMatch() }
+  make(t0, t1) { tom.engine.adt.tomexpression.types.expression.EqualTrueAntiPatternMatch.make(t0, t1)}
+}
+
 %op Expression GetSliceArray(AstName:TomName, SubjectListName:TomTerm, VariableBeginAST:TomTerm, VariableEndAST:TomTerm) {
   is_fsym(t) { (t!=null) && t.isGetSliceArray() }
   get_slot(AstName, t) { t.getAstName() }
@@ -1091,6 +1112,62 @@
   is_fsym(t) { (t!=null) && t.isTomTermToExpression() }
   get_slot(AstTerm, t) { t.getAstTerm() }
   make(t0) { tom.engine.adt.tomexpression.types.expression.TomTermToExpression.make(t0)}
+}
+
+%op Constraint ForAll(var:TomTerm, cons:Constraint) {
+  is_fsym(t) { (t!=null) && t.isForAll() }
+  get_slot(var, t) { t.getvar() }
+  get_slot(cons, t) { t.getcons() }
+  make(t0, t1) { tom.engine.adt.tomconstraint.types.constraint.ForAll.make(t0, t1)}
+}
+
+%op Constraint Exists(var:TomTerm, cons:Constraint) {
+  is_fsym(t) { (t!=null) && t.isExists() }
+  get_slot(var, t) { t.getvar() }
+  get_slot(cons, t) { t.getcons() }
+  make(t0, t1) { tom.engine.adt.tomconstraint.types.constraint.Exists.make(t0, t1)}
+}
+
+%op Constraint NEqualConstraint(pattern:TomTerm, genTerm:TomTerm) {
+  is_fsym(t) { (t!=null) && t.isNEqualConstraint() }
+  get_slot(pattern, t) { t.getpattern() }
+  get_slot(genTerm, t) { t.getgenTerm() }
+  make(t0, t1) { tom.engine.adt.tomconstraint.types.constraint.NEqualConstraint.make(t0, t1)}
+}
+
+%op Constraint EqualConstraint(pattern:TomTerm, genTerm:TomTerm) {
+  is_fsym(t) { (t!=null) && t.isEqualConstraint() }
+  get_slot(pattern, t) { t.getpattern() }
+  get_slot(genTerm, t) { t.getgenTerm() }
+  make(t0, t1) { tom.engine.adt.tomconstraint.types.constraint.EqualConstraint.make(t0, t1)}
+}
+
+%op Constraint OrConstraint(clo:OConstraintList) {
+  is_fsym(t) { (t!=null) && t.isOrConstraint() }
+  get_slot(clo, t) { t.getclo() }
+  make(t0) { tom.engine.adt.tomconstraint.types.constraint.OrConstraint.make(t0)}
+}
+
+%op Constraint AndConstraint(cla:AConstraintList) {
+  is_fsym(t) { (t!=null) && t.isAndConstraint() }
+  get_slot(cla, t) { t.getcla() }
+  make(t0) { tom.engine.adt.tomconstraint.types.constraint.AndConstraint.make(t0)}
+}
+
+%op Constraint Neg(c:Constraint) {
+  is_fsym(t) { (t!=null) && t.isNeg() }
+  get_slot(c, t) { t.getc() }
+  make(t0) { tom.engine.adt.tomconstraint.types.constraint.Neg.make(t0)}
+}
+
+%op Constraint FalseConstraint() {
+  is_fsym(t) { (t!=null) && t.isFalseConstraint() }
+  make() { tom.engine.adt.tomconstraint.types.constraint.FalseConstraint.make()}
+}
+
+%op Constraint TrueConstraint() {
+  is_fsym(t) { (t!=null) && t.isTrueConstraint() }
+  make() { tom.engine.adt.tomconstraint.types.constraint.TrueConstraint.make()}
 }
 
 %op Constraint AssignTo(Variable:TomTerm) {
@@ -1576,6 +1653,24 @@
   get_head(l) { l.getHeadconcTomName() }
   get_tail(l) { l.getTailconcTomName() }
   is_empty(l) { l.isEmptyconcTomName() }
+}
+
+%oplist OConstraintList concOr(Constraint*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.oconstraintlist.ConsconcOr || t instanceof tom.engine.adt.tomconstraint.types.oconstraintlist.EmptyconcOr }
+  make_empty() { tom.engine.adt.tomconstraint.types.oconstraintlist.EmptyconcOr.make() }
+  make_insert(e,l) { tom.engine.adt.tomconstraint.types.oconstraintlist.ConsconcOr.make(e,l) }
+  get_head(l) { l.getHeadconcOr() }
+  get_tail(l) { l.getTailconcOr() }
+  is_empty(l) { l.isEmptyconcOr() }
+}
+
+%oplist AConstraintList concAnd(Constraint*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.aconstraintlist.ConsconcAnd || t instanceof tom.engine.adt.tomconstraint.types.aconstraintlist.EmptyconcAnd }
+  make_empty() { tom.engine.adt.tomconstraint.types.aconstraintlist.EmptyconcAnd.make() }
+  make_insert(e,l) { tom.engine.adt.tomconstraint.types.aconstraintlist.ConsconcAnd.make(e,l) }
+  get_head(l) { l.getHeadconcAnd() }
+  get_tail(l) { l.getTailconcAnd() }
+  is_empty(l) { l.isEmptyconcAnd() }
 }
 
 %oplist ConstraintList concConstraint(Constraint*) {

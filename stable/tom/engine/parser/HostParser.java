@@ -338,7 +338,46 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
   }
 
   private static String metaEncodeCode(String code) {
-    //System.out.println("before: '" + code + "'");
+		/*
+			 System.out.println("before: '" + code + "'");
+			 for(int i=0 ; i<code.length() ; i++) {
+			 System.out.print((int)code.charAt(i));
+			 System.out.print(" ");
+			 }
+			 System.out.println();
+		 */
+		char bs = '\\';
+		StringBuffer sb = new StringBuffer((int)1.5*code.length());
+		for(int i=0 ; i<code.length() ; i++) {
+			char c = code.charAt(i);
+			switch(c) {
+				case '\n': 
+					sb.append(bs);
+					sb.append('n');
+					break;
+				case '\r': 
+					sb.append(bs);
+					sb.append('r');
+					break;
+				case '\t': 
+					sb.append(bs);
+					sb.append('t');
+					break;
+				case '\"': 
+				case '\\': 
+					sb.append(bs);
+					sb.append(c);
+					break;
+				default:
+					sb.append(c);
+			}
+		}
+    //System.out.println("sb = '" + sb + "'");
+		sb.insert(0,'\"');
+		sb.append('\"');
+		return sb.toString();
+
+/*
     code = code.replaceAll("\\\"","\\\\\"");
     code = code.replaceAll("\\\\n","\\\\\\\\n");
     code = code.replaceAll("\\\\t","\\\\\\\\t");
@@ -349,9 +388,12 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
     code = code.replaceAll("\t","\\\\t");
     code = code.replaceAll("\"","\\\"");
     
-    //System.out.println("after: '" + code + "'");
+    System.out.println("after: '" + code + "'");
 
     return "\"" + code + "\"";
+*/
+
+
   }
 
   private Logger getLogger() {

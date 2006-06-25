@@ -99,8 +99,15 @@ public class PomGomParserPlugin extends GomGenericPlugin {
       //System.out.println(t.genATermFromAST(TokenTable.getTokenMap()));
       //antlr.debug.misc.ASTFrame frame = new antlr.debug.misc.ASTFrame("AST JTree Example", t);
       //frame.setVisible(true);
-      module = AST2Gom.getGomModule(t);
-      //System.out.println("module: "+ module);
+      if (t != null){
+        module = AST2Gom.getGomModule(t);
+      }
+      else{
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
+            GomMessage.detailedParseException,
+           "", inputFileName, pomgomlexer.getLine()));
+      return;
+      }
     } catch (RecognitionException re) {
       //StringWriter sw = new StringWriter();
       //PrintWriter pw = new PrintWriter(sw);

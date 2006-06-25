@@ -211,6 +211,26 @@ public BackQuoteParser(ParserSharedInputState state) {
 		TomList context = tom_empty_list_concTomTerm();
 		
 		
+		ws();
+		{
+		switch ( LA(1)) {
+		case BQ_BACKQUOTE:
+		{
+			match(BQ_BACKQUOTE);
+			break;
+		}
+		case BQ_ID:
+		case BQ_LPAREN:
+		case XML:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
 		{
 		result=mainBqTerm(context);
 		}
@@ -218,6 +238,23 @@ public BackQuoteParser(ParserSharedInputState state) {
 			selector().pop();
 		}
 		return result;
+	}
+	
+	public final void ws() throws RecognitionException, TokenStreamException {
+		
+		
+		{
+		_loop33:
+		do {
+			if ((LA(1)==BQ_WS)) {
+				match(BQ_WS);
+			}
+			else {
+				break _loop33;
+			}
+			
+		} while (true);
+		}
 	}
 	
 	public final TomTerm  mainBqTerm(
@@ -359,12 +396,12 @@ public BackQuoteParser(ParserSharedInputState state) {
 			match(BQ_LPAREN);
 			ws();
 			{
-			_loop22:
+			_loop23:
 			do {
-				boolean synPredMatched21 = false;
+				boolean synPredMatched22 = false;
 				if (((_tokenSet_2.member(LA(1))))) {
-					int _m21 = mark();
-					synPredMatched21 = true;
+					int _m22 = mark();
+					synPredMatched22 = true;
 					inputState.guessing++;
 					try {
 						{
@@ -373,12 +410,12 @@ public BackQuoteParser(ParserSharedInputState state) {
 						}
 					}
 					catch (RecognitionException pe) {
-						synPredMatched21 = false;
+						synPredMatched22 = false;
 					}
-					rewind(_m21);
+					rewind(_m22);
 inputState.guessing--;
 				}
-				if ( synPredMatched21 ) {
+				if ( synPredMatched22 ) {
 					term=bqTerm(context);
 					match(BQ_COMMA);
 					ws();
@@ -387,7 +424,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop22;
+					break _loop23;
 				}
 				
 			} while (true);
@@ -459,23 +496,6 @@ inputState.guessing--;
 		return result;
 	}
 	
-	public final void ws() throws RecognitionException, TokenStreamException {
-		
-		
-		{
-		_loop32:
-		do {
-			if ((LA(1)==BQ_WS)) {
-				match(BQ_WS);
-			}
-			else {
-				break _loop32;
-			}
-			
-		} while (true);
-		}
-	}
-	
 	public final void termList(
 		LinkedList list,TomList context
 	) throws RecognitionException, TokenStreamException {
@@ -490,7 +510,7 @@ inputState.guessing--;
 			addTerm(list,term,false);
 		}
 		{
-		_loop27:
+		_loop28:
 		do {
 			if ((_tokenSet_3.member(LA(1)))) {
 				{
@@ -532,7 +552,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop27;
+				break _loop28;
 			}
 			
 		} while (true);
@@ -738,10 +758,10 @@ inputState.guessing--;
 				
 				}
 				{
-				boolean synPredMatched14 = false;
+				boolean synPredMatched15 = false;
 				if (((LA(1)==BQ_DOT))) {
-					int _m14 = mark();
-					synPredMatched14 = true;
+					int _m15 = mark();
+					synPredMatched15 = true;
 					inputState.guessing++;
 					try {
 						{
@@ -750,12 +770,12 @@ inputState.guessing--;
 						}
 					}
 					catch (RecognitionException pe) {
-						synPredMatched14 = false;
+						synPredMatched15 = false;
 					}
-					rewind(_m14);
+					rewind(_m15);
 inputState.guessing--;
 				}
-				if ( synPredMatched14 ) {
+				if ( synPredMatched15 ) {
 					match(BQ_DOT);
 					term=bqTerm(context);
 				}
@@ -780,10 +800,10 @@ inputState.guessing--;
 			break;
 		}
 		default:
-			boolean synPredMatched16 = false;
+			boolean synPredMatched17 = false;
 			if (((LA(1)==XML_START||LA(1)==XML_TEXT))) {
-				int _m16 = mark();
-				synPredMatched16 = true;
+				int _m17 = mark();
+				synPredMatched17 = true;
 				inputState.guessing++;
 				try {
 					{
@@ -791,12 +811,12 @@ inputState.guessing--;
 					}
 				}
 				catch (RecognitionException pe) {
-					synPredMatched16 = false;
+					synPredMatched17 = false;
 				}
-				rewind(_m16);
+				rewind(_m17);
 inputState.guessing--;
 			}
-			if ( synPredMatched16 ) {
+			if ( synPredMatched17 ) {
 				result=xmlTerm(context);
 			}
 			else if ((_tokenSet_5.member(LA(1)))) {
@@ -1204,7 +1224,7 @@ inputState.guessing--;
 		
 		
 		{
-		_loop40:
+		_loop41:
 		do {
 			if ((LA(1)==BQ_ID)) {
 				term=xmlAttribute(context);
@@ -1216,7 +1236,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop40;
+				break _loop41;
 			}
 			
 		} while (true);
@@ -1232,7 +1252,7 @@ inputState.guessing--;
 		
 		
 		{
-		_loop43:
+		_loop44:
 		do {
 			if (((_tokenSet_2.member(LA(1))))&&(LA(1) != XML_START_ENDING && LA(1) != XML_CLOSE)) {
 				term=bqTerm(context);
@@ -1241,7 +1261,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop43;
+				break _loop44;
 			}
 			
 		} while (true);
@@ -1254,6 +1274,7 @@ inputState.guessing--;
 		"EOF",
 		"<2>",
 		"NULL_TREE_LOOKAHEAD",
+		"BQ_BACKQUOTE",
 		"BQ_ID",
 		"BQ_STAR",
 		"BQ_LPAREN",
@@ -1286,32 +1307,32 @@ inputState.guessing--;
 	};
 	
 	private static final long[] mk_tokenSet_0() {
-		long[] data = { 33553904L, 0L};
+		long[] data = { 67107808L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	private static final long[] mk_tokenSet_1() {
-		long[] data = { 33553840L, 0L};
+		long[] data = { 67107680L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
 	private static final long[] mk_tokenSet_2() {
-		long[] data = { 5241712L, 0L};
+		long[] data = { 10483424L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
 	private static final long[] mk_tokenSet_3() {
-		long[] data = { 5242736L, 0L};
+		long[] data = { 10485472L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());
 	private static final long[] mk_tokenSet_4() {
-		long[] data = { 6291440L, 0L};
+		long[] data = { 12582880L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_4 = new BitSet(mk_tokenSet_4());
 	private static final long[] mk_tokenSet_5() {
-		long[] data = { 1046816L, 0L};
+		long[] data = { 2093632L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());

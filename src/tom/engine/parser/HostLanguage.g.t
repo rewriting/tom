@@ -339,7 +339,7 @@ options{
 			 System.out.println();
 		 */
 		char bs = '\\';
-		StringBuffer sb = new StringBuffer(1.5*code.length());
+		StringBuffer sb = new StringBuffer((int)1.5*code.length());
 		for(int i=0 ; i<code.length() ; i++) {
 			char c = code.charAt(i);
 			switch(c) {
