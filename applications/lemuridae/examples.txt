@@ -1,22 +1,13 @@
-rule
-In(x,symdiff(a,b)).
-(In(x,a) \/ In(x,b)) /\ ((In(x,a) /\ In(x,b)) => \B).
-rule
-In(x,inter(a,b)).
-In(x,a) /\ In(x,b).
-proof
-In(x, symdiff(a(), b())) |- (In(x, inter(a(), b())) => False).
-focus h1
-rules?
-rule 1
-focus c2
+rule In(x,symdiff(a,b)) -> (In(x,a) \/ In(x,b)) /\ ((In(x,a) /\ In(x,b)) => \B).
+rule In(x,inter(a,b)) -> In(x,a) /\ In(x,b).
+proof In(x, symdiff(a(), b())) |- (In(x, inter(a(), b())) => False).
 elim
 focus h2
 rules?
 rule 3
+focus h3
+rules?
+rule1
 axiom
-focus c2
-elim
-focus h2
-rule 3
 axiom
+
