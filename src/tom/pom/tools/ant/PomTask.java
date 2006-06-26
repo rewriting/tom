@@ -47,6 +47,7 @@ import org.apache.tools.ant.taskdefs.Java;
  * <li>srcfile</li>
  * <li>destdir</li>
  * <li>package</li>
+ * <li>failonerror</li>
  * <li>fork</li>
  * </ul>
  * Of these arguments, the <b>srcfile</b>, <b>destdir</b> and <b>package</b> are
@@ -59,6 +60,7 @@ public class PomTask extends MatchingTask {
   private File destDir;
   private String packagePrefix;
   private boolean fork = false;
+  private boolean failOnError = true;
 
   private Java javaRunner;
 
@@ -202,10 +204,8 @@ public class PomTask extends MatchingTask {
       int err = -1;
       javaRunner.setFork(getFork());
       javaRunner.setClassname("tom.pom.Pom");
-      err = javaRunner.executeJava();
-      if(err != 0) {
-          throw new BuildException("Pom returned: " + err, getLocation());
-      }
+      javaRunner.setFailonerror(failOnError);
+      javaRunner.execute();
     }
 
   /**

@@ -37,7 +37,8 @@ public class Pom {
   %include { string.tom }
 
   public static void main(String[] args) {
-    exec(args);
+    int errno = exec(args);
+    System.exit(errno);
   }
   public static int exec(String[] args) {
     String srcfile = null;
@@ -56,8 +57,7 @@ public class Pom {
       }
     }
     Pom pom = new Pom(srcfile,destdir,pack);
-    pom.gen();
-    return 0; //no errors
+    return pom.gen();
   }
 
   public Pom(String fileN, String destD, String pack) {
@@ -67,7 +67,7 @@ public class Pom {
     this.packagePath = pack.replace('.',File.separatorChar);
   }
 
-  public void gen() {
+  public int gen() {
     // use the first argument as input file
     Map tokenMap = new HashMap();
     try {
@@ -95,10 +95,12 @@ matchBlock: {
       }
     } catch (Exception e) {
       System.err.println("Exception: "+e);
+      return 1;
     }
     System.out.println(tokenMap);
     generateTable(tokenMap);
     generateTomMapping(tokenMap);
+    return 0;//no errors
   }
 
   private void generateTable(Map tokenMap) {
