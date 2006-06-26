@@ -18,6 +18,18 @@
   visitor_fwd { tom.library.adt.tnode.TNodeBasicStrategy }
 }
 
+%op TNodeList EmptyconcTNode() {
+  is_fsym(t) { (t!=null) && t.isEmptyconcTNode() }
+  make() { tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make()}
+}
+
+%op TNodeList ConsconcTNode(HeadconcTNode:TNode, TailconcTNode:TNodeList) {
+  is_fsym(t) { (t!=null) && t.isConsconcTNode() }
+  get_slot(HeadconcTNode, t) { t.getHeadconcTNode() }
+  get_slot(TailconcTNode, t) { t.getTailconcTNode() }
+  make(t0, t1) { tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make(t0, t1)}
+}
+
 %op TNode EmptyNode() {
   is_fsym(t) { (t!=null) && t.isEmptyNode() }
   make() { tom.library.adt.tnode.types.tnode.EmptyNode.make()}

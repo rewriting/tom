@@ -195,6 +195,30 @@
   make(t0, t1) { tom.engine.adt.il.types.environment.env.make(t0, t1)}
 }
 
+%op InstrList Emptysemicolon() {
+  is_fsym(t) { (t!=null) && t.isEmptysemicolon() }
+  make() { tom.engine.adt.il.types.instrlist.Emptysemicolon.make()}
+}
+
+%op InstrList Conssemicolon(Headsemicolon:Instr, Tailsemicolon:InstrList) {
+  is_fsym(t) { (t!=null) && t.isConssemicolon() }
+  get_slot(Headsemicolon, t) { t.getHeadsemicolon() }
+  get_slot(Tailsemicolon, t) { t.getTailsemicolon() }
+  make(t0, t1) { tom.engine.adt.il.types.instrlist.Conssemicolon.make(t0, t1)}
+}
+
+%op ExprList EmptyconcExpr() {
+  is_fsym(t) { (t!=null) && t.isEmptyconcExpr() }
+  make() { tom.engine.adt.il.types.exprlist.EmptyconcExpr.make()}
+}
+
+%op ExprList ConsconcExpr(HeadconcExpr:Expr, TailconcExpr:ExprList) {
+  is_fsym(t) { (t!=null) && t.isConsconcExpr() }
+  get_slot(HeadconcExpr, t) { t.getHeadconcExpr() }
+  get_slot(TailconcExpr, t) { t.getTailconcExpr() }
+  make(t0, t1) { tom.engine.adt.il.types.exprlist.ConsconcExpr.make(t0, t1)}
+}
+
 %op Substitution undefsubs() {
   is_fsym(t) { (t!=null) && t.isundefsubs() }
   make() { tom.engine.adt.il.types.substitution.undefsubs.make()}
@@ -230,6 +254,18 @@
   make(t0) { tom.engine.adt.il.types.seq.dedterm.make(t0)}
 }
 
+%op SubstitutionList Emptysubs() {
+  is_fsym(t) { (t!=null) && t.isEmptysubs() }
+  make() { tom.engine.adt.il.types.substitutionlist.Emptysubs.make()}
+}
+
+%op SubstitutionList Conssubs(Headsubs:Substitution, Tailsubs:SubstitutionList) {
+  is_fsym(t) { (t!=null) && t.isConssubs() }
+  get_slot(Headsubs, t) { t.getHeadsubs() }
+  get_slot(Tailsubs, t) { t.getTailsubs() }
+  make(t0, t1) { tom.engine.adt.il.types.substitutionlist.Conssubs.make(t0, t1)}
+}
+
 %op Term tau(Abst:AbsTerm) {
   is_fsym(t) { (t!=null) && t.istau() }
   get_slot(Abst, t) { t.getAbst() }
@@ -263,6 +299,18 @@
   get_slot(Subs, t) { t.getSubs() }
   get_slot(T, t) { t.getT() }
   make(t0, t1) { tom.engine.adt.il.types.term.appSubsT.make(t0, t1)}
+}
+
+%op TermList EmptyconcTerm() {
+  is_fsym(t) { (t!=null) && t.isEmptyconcTerm() }
+  make() { tom.engine.adt.il.types.termlist.EmptyconcTerm.make()}
+}
+
+%op TermList ConsconcTerm(HeadconcTerm:Term, TailconcTerm:TermList) {
+  is_fsym(t) { (t!=null) && t.isConsconcTerm() }
+  get_slot(HeadconcTerm, t) { t.getHeadconcTerm() }
+  get_slot(TailconcTerm, t) { t.getTailconcTerm() }
+  make(t0, t1) { tom.engine.adt.il.types.termlist.ConsconcTerm.make(t0, t1)}
 }
 
 %op Instr accept(Positive:ATerm, Negative:ATerm) {

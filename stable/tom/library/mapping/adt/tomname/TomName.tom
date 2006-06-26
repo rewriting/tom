@@ -97,6 +97,18 @@
   make(t0) { tom.engine.adt.tomname.types.tomnumber.MatchNumber.make(t0)}
 }
 
+%op TomNumberList EmptyconcTomNumber() {
+  is_fsym(t) { (t!=null) && t.isEmptyconcTomNumber() }
+  make() { tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make()}
+}
+
+%op TomNumberList ConsconcTomNumber(HeadconcTomNumber:TomNumber, TailconcTomNumber:TomNumberList) {
+  is_fsym(t) { (t!=null) && t.isConsconcTomNumber() }
+  get_slot(HeadconcTomNumber, t) { t.getHeadconcTomNumber() }
+  get_slot(TailconcTomNumber, t) { t.getTailconcTomNumber() }
+  make(t0, t1) { tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber.make(t0, t1)}
+}
+
 %op TomName EmptyName() {
   is_fsym(t) { (t!=null) && t.isEmptyName() }
   make() { tom.engine.adt.tomname.types.tomname.EmptyName.make()}
@@ -112,6 +124,18 @@
   is_fsym(t) { (t!=null) && t.isName() }
   get_slot(String, t) { t.getString() }
   make(t0) { tom.engine.adt.tomname.types.tomname.Name.make(t0)}
+}
+
+%op TomNameList EmptyconcTomName() {
+  is_fsym(t) { (t!=null) && t.isEmptyconcTomName() }
+  make() { tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make()}
+}
+
+%op TomNameList ConsconcTomName(HeadconcTomName:TomName, TailconcTomName:TomNameList) {
+  is_fsym(t) { (t!=null) && t.isConsconcTomName() }
+  get_slot(HeadconcTomName, t) { t.getHeadconcTomName() }
+  get_slot(TailconcTomName, t) { t.getTailconcTomName() }
+  make(t0, t1) { tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make(t0, t1)}
 }
 
 

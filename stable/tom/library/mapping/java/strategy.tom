@@ -58,6 +58,13 @@
     get_slot(s3, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.IfThenElse.FALSE_CASE) }
   }
 
+  %op Strategy Mu(s1:Strategy, s2:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Mu) }
+    make(var, v) { new tom.library.strategy.mutraveler.Mu(var, v) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Mu.VAR) }
+    get_slot(s2, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Mu.V) }
+  }
+
   %op Strategy MuVar(var:String) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.MuVar) }
     make(name) { new tom.library.strategy.mutraveler.MuVar(name) }

@@ -5,8 +5,7 @@
 }
 
 %op Strategy mu(s1:Strategy, s2:Strategy) {
-  make(var,v) { (tom.library.strategy.mutraveler.MuStrategy) tom.library.strategy.mutraveler.MuTraveler.mu(var,v) }
+  make(var,v) { new tom.library.strategy.mutraveler.Mu(var,v) }
 }
-  
 
 %include { strategy.tom }

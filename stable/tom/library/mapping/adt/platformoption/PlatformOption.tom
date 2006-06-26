@@ -42,6 +42,18 @@
   make(t0, t1, t2, t3, t4) { tom.platform.adt.platformoption.types.platformoption.PluginOption.make(t0, t1, t2, t3, t4)}
 }
 
+%op PlatformOptionList EmptyconcPlatformOption() {
+  is_fsym(t) { (t!=null) && t.isEmptyconcPlatformOption() }
+  make() { tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make()}
+}
+
+%op PlatformOptionList ConsconcPlatformOption(HeadconcPlatformOption:PlatformOption, TailconcPlatformOption:PlatformOptionList) {
+  is_fsym(t) { (t!=null) && t.isConsconcPlatformOption() }
+  get_slot(HeadconcPlatformOption, t) { t.getHeadconcPlatformOption() }
+  get_slot(TailconcPlatformOption, t) { t.getTailconcPlatformOption() }
+  make(t0, t1) { tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make(t0, t1)}
+}
+
 %op PlatformBoolean True() {
   is_fsym(t) { (t!=null) && t.isTrue() }
   make() { tom.platform.adt.platformoption.types.platformboolean.True.make()}

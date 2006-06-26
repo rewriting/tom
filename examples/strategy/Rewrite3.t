@@ -44,7 +44,7 @@ public class Rewrite3 {
   %include { java/util/types/Collection.tom }
 
   public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-    return tom.library.strategy.mutraveler.MuTraveler.mu(var,v);
+    return new tom.library.strategy.mutraveler.Mu(var,v);
   }
 
   public final static void main(String[] args) {

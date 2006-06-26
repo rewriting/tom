@@ -60,6 +60,18 @@
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
 
+%op ZTermList EmptyconcZTerm() {
+  is_fsym(t) { (t!=null) && t.isEmptyconcZTerm() }
+  make() { tom.engine.adt.zenon.types.ztermlist.EmptyconcZTerm.make()}
+}
+
+%op ZTermList ConsconcZTerm(HeadconcZTerm:ZTerm, TailconcZTerm:ZTermList) {
+  is_fsym(t) { (t!=null) && t.isConsconcZTerm() }
+  get_slot(HeadconcZTerm, t) { t.getHeadconcZTerm() }
+  get_slot(TailconcZTerm, t) { t.getTailconcZTerm() }
+  make(t0, t1) { tom.engine.adt.zenon.types.ztermlist.ConsconcZTerm.make(t0, t1)}
+}
+
 %op ZType ztype(Tname:String) {
   is_fsym(t) { (t!=null) && t.isztype() }
   get_slot(Tname, t) { t.getTname() }
@@ -178,6 +190,18 @@
   get_slot(Lte, t) { t.getLte() }
   get_slot(Rte, t) { t.getRte() }
   make(t0, t1) { tom.engine.adt.zenon.types.zexpr.zequiv.make(t0, t1)}
+}
+
+%op ZAxiomList Emptyzby() {
+  is_fsym(t) { (t!=null) && t.isEmptyzby() }
+  make() { tom.engine.adt.zenon.types.zaxiomlist.Emptyzby.make()}
+}
+
+%op ZAxiomList Conszby(Headzby:ZAxiom, Tailzby:ZAxiomList) {
+  is_fsym(t) { (t!=null) && t.isConszby() }
+  get_slot(Headzby, t) { t.getHeadzby() }
+  get_slot(Tailzby, t) { t.getTailzby() }
+  make(t0, t1) { tom.engine.adt.zenon.types.zaxiomlist.Conszby.make(t0, t1)}
 }
 
 
