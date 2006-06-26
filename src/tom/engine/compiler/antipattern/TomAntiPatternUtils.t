@@ -53,11 +53,13 @@ import jjtraveler.VisitFailure;
  */
 public class TomAntiPatternUtils{
 	
-//	------------------------------------------------------------
+// ------------------------------------------------------------
 	%include { adt/tomsignature/TomSignature.tom }
 	%include { mutraveler.tom}
-//	------------------------------------------------------------
+// ------------------------------------------------------------
 	
+	// helping variables used inside strategies
+	private static boolean foundVariable = false;
 	private static int antiCounter = 0;
 	
 	/**
@@ -108,6 +110,11 @@ public class TomAntiPatternUtils{
 			TomNumberList rootpath,
 			String moduleName) {
 		
+		System.out.println("Action:" + action);
+		System.out.println("TomTerm:" + tomTerm);
+		System.out.println("RootPath:" + rootpath);
+		System.out.println("ModuleName:" + moduleName);
+		
 		// subject to be matched
 		TomTerm subject = null;
 		
@@ -119,20 +126,161 @@ public class TomAntiPatternUtils{
 			}
 		}
 		
-		// transform the anti-pattern match problem into 
+		// transform the anti-pattern match problem into
 		// a disunification one
 		Constraint disunificationProblem = TomAntiPatternTransform.transform(
 				`EqualConstraint(tomTerm,subject));
 		// launch the constraint compiler
-//		Contraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);
+		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);
 		
-//		return EqualTrueAntiPatternMatch("functionToBeCalled", compiledApProblem);
+		return `EqualTrueAntiPatternMatch("TomConstraintSolver.solve", compiledApProblem);		
+	}	
+	
+	public static boolean containsVariable(Constraint c, TomTerm v){
 		
-		System.out.println("Action:" + action);
-		System.out.println("TomTerm:" + tomTerm);
-		System.out.println("RootPath:" + rootpath);
-		System.out.println("ModuleName:" + moduleName);
+		foundVariable = false;
 		
-		return null;
+		try{		
+			MuTraveler.init(`InnermostId(ConstraintContainsVariable(v))).visit(c);
+		}catch(VisitFailure e){
+			throw new RuntimeException("VisitFailure occured:" + e);
+		}
+		
+		return foundVariable;
 	}
+	
+	%strategy ConstraintContainsVariable(v:TomTerm) extends `Identity(){
+		
+		visit Constraint {
+			EqualConstraint(p,_) ->{
+				MuTraveler.init(`InnermostId(TermContainsVariable(v))).visit(`p);
+			}
+			NEqualConstraint(p,_) ->{
+				MuTraveler.init(`InnermostId(TermContainsVariable(v))).visit(`p);
+			}
+		}
+	}
+	
+	%strategy TermContainsVariable(v:TomTerm) extends `Identity(){
+		
+		visit TomTerm {
+			var@Variable(_,_,_,_) ->{
+				
+				if (`var == v){					
+					foundVariable = true;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Given a constraint, it performs some formatting on it for better 
+	 * readability (for debug purpose)
+	 * 
+	 * @param c 
+	 * 			The constraint to format
+	 * @return 
+	 * 			Formatted constraint
+	 */
+	public static String formatConstraint(Constraint c){
+		
+		%match(Constraint c) {
+			TrueConstraint() -> {
+				return "T";	
+			}
+			FalseConstraint() ->{
+				return "F";
+			}
+			Neg(cons) ->{
+				return "Neg(" + formatConstraint(`cons) + ")";
+			}
+			AndConstraint(concAnd(x,Z*)) ->{
+				
+				AConstraintList l = `Z*;
+				String result = formatConstraint(`x);
+				
+				while(!l.isEmptyconcAnd()){
+					result ="(" + result + " and " + formatConstraint(l.getHeadconcAnd()) +")";
+					l = l.getTailconcAnd();
+				}
+				
+				return result; 
+			}
+			OrConstraint(concOr(x,Z*)) ->{
+				
+				OConstraintList l = `Z*;
+				String result = formatConstraint(`x);
+				
+				while(!l.isEmptyconcOr()){
+					result ="(" + result + " or " + formatConstraint(l.getHeadconcOr()) + ")";
+					l = l.getTailconcOr();
+				}
+				
+				return result; 
+			}
+			EqualConstraint(pattern, subject) ->{
+				return formatTerm(`pattern) + "=" + formatTerm(`subject); 
+			}
+			NEqualConstraint(pattern, subject) ->{
+				return formatTerm(`pattern) + "!=" + formatTerm(`subject); 
+			}
+			Exists(Variable(_,name,_,_),cons) -> {
+				return "exists " + `name + ", ( " + formatConstraint(`cons) + " ) "; 
+			}			
+			ForAll(Variable(_,name,_,_),cons) -> {				
+				return "for all " + `name + ", ( " + formatConstraint(`cons) + " ) ";				
+			}
+//			Match(pattern, subject) ->{
+//				return formatTerm(`pattern) + " << " + formatTerm(`subject); 
+//			}
+		}
+		
+		return c.toString();
+	}
+	
+	/**
+	 * Given a TomTerm, it performs some formatting on it for better 
+	 * readability (for debug purpose)
+	 * 
+	 * @param t 
+	 * 			The term to format
+	 * @return 
+	 * 			Formatted term
+	 */
+	public static String formatTerm(TomTerm t){
+		
+		%match(TomTerm t){
+			Variable(_,Name(name),_,_) ->{
+				return `name;
+			}
+			RecordAppl(_,concTomName(Name(name),_*), concSlot(),_)->{
+				return `name;
+			}
+			AntiTerm(apl@RecordAppl(_,_,_,_))->{
+				return "!" + formatTerm(`apl);
+			}
+			AntiTerm(name)->{
+				return "!" + `name;
+			}
+//			GenericGroundTerm(name) ->{
+//				return `name;
+//			}
+			RecordAppl(_,name, concSlot(PairSlotAppl(_,x),Z*),_) ->{
+				
+				SlotList l = `Z*;
+				String result = formatTerm(`x);
+				
+				while(!l.isEmptyconcSlot()){
+					result = result + "," + formatTerm(l.getHeadconcSlot().getAppl());
+					l = l.getTailconcSlot();
+				}
+				
+				return `name + "(" + result + ")"; 
+			}
+			
+		}
+		
+		return t.toString();
+	}
+	
 }
