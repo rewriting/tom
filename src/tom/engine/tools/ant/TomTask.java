@@ -543,15 +543,11 @@ public class TomTask extends MatchingTask {
 
       int err = -1;
       javaRunner.setFork(getFork());
+      javaRunner.setFailonerror(failOnError);
       javaRunner.setClassname("tom.engine.Tom");
-      err = javaRunner.executeJava();
-      if(err != 0) {
-        if(failOnError) {
-          throw new BuildException("Tom returned: " + err, getLocation());
-        } else {
-          log("Tom Result: " + err, Project.MSG_ERR);
-        }
-      }
+      /* this call will raise a BuildException if tom
+         returns != 0 */
+      javaRunner.execute(); 
     }
   }
 
