@@ -6,14 +6,15 @@ class SeqParser extends Parser;
 options {
   buildAST = true;  // uses CommonAST by default
     k = 2;
+    defaultErrorHandler=false;
 }
 
 tokens {
     VOIDLIST;
 }
 
-seq: SEQ pred DOT! 
-   | list_pred SEQ list_pred DOT!
+seq: SEQ pred  
+   | list_pred SEQ list_pred 
    ;
 
 list_pred: pred (LIST^ pred)* ;
@@ -41,9 +42,9 @@ appl : ID LPAREN^ term_list  RPAREN!
      ;
 
 term_list: term (LIST^ term)* 
-         |! { #term_list = #(#[VOIDLIST,"VOIDLIST"]); }
+         | { #term_list = #[VOIDLIST,"VOIDLIST"]; }
          ;
-
+         
 term : funappl
      | VAR
      ;
@@ -52,14 +53,25 @@ funappl : VAR LPAREN^ term_list RPAREN!;
 
 
 // points d'entree pour les programmes
-start1 : pred DOT! ;
-start2 : term DOT! ;
-rewrite: pred ARROW^ pred DOT;
 
+command: PROOF^ seq DOT!
+       | RRULE^ atom ARROW! pred DOT!
+       ;
 
+proofcommand: FOCUS^ VAR 
+            | RRULE^ NUMBER
+            | ASKRULES
+            | VAR 
+            ;
+
+start1: pred DOT! ;
+start2: term DOT! ;
+
+      
 class SeqLexer extends Lexer;
 options {
-  k=2;
+  k=7;
+  defaultErrorHandler=false;
 }
 
 WS
@@ -90,10 +102,6 @@ NOT : '!'
 
 DOT : '.' ;
 
-ID : ('A'..'Z')('a'..'z')* ;
-
-VAR: ('a'..'z')('a'..'z'|'0'..'9')* ;
-
 FORALL  : "\\A";
 
 EXISTS : "\\E";
@@ -103,3 +111,13 @@ BOTTOM : "\\B";
 TOP: "\\T";
 
 ARROW : "->";
+
+PROOF: "proof";
+RRULE: "rule";
+FOCUS: "focus";
+ASKRULES: "rules?";
+
+ID : ('A'..'Z')('a'..'z')* ;
+VAR: ('a'..'z')('a'..'z'|'0'..'9')* ;
+NUMBER: ('0'..'9')+;
+

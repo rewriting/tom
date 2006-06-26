@@ -41,4 +41,12 @@ Rule = ruledesc(hs:int, concl:Prop, prem:SeqList)
 // sequents and constraints
 RuleList = rlist(Rule*)
 
+// parsed in interactive mode
+Command = rewritep(l:Prop, r:Prop)
+        | rewritet(lt:Term, rt:Term)
+        | proof(s:Sequent)
 
+ProofCommand = proofCommand(text:String)
+             | focusCommand(hyp:String)
+             | ruleCommand(n:int)
+             | askrulesCommand()

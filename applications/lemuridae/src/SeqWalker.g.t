@@ -64,6 +64,7 @@ term_list returns [TermList l]
     }
     : t = term { l = `concTerm(t,l*); }
     | #(LIST left=term_list t=term) {  l = `concTerm(left*,t); }
+    | VOIDLIST {}
     ;
 
 term returns [Term t] 
@@ -75,3 +76,41 @@ term returns [Term t]
     | #(LPAREN f:VAR l=term_list) { t = `funAppl(fun(f.getText()),l); }
     ;
 
+
+command returns [Command c] 
+  {
+    c = null;
+    Prop r,l;
+    Sequent s;
+  }
+  : #(PROOF s=seq) { c = `proof(s); }
+  | #(RRULE l=pred r=pred) { c = `rewritep(l,r); }
+  ;
+
+proofcommand returns [ProofCommand c]
+  {
+    c = null;
+  }
+  : i:VAR { c = `proofCommand(i.getText()); }
+  | #(FOCUS v:VAR) {c = `focusCommand(v.getText()); }
+  | #(RRULE n:NUMBER) {c = `ruleCommand(Integer.parseInt(n.getText())); }
+  | ASKRULES { c = `askrulesCommand(); }
+  ;
+
+  /*
+rewritep returns [RewriteP rw]
+  {
+    rw = null;
+    Prop l, r;
+  }
+  : #(ARROW l=pred r=pred) {rw = `rewritep(l,r);}
+  ;
+
+  rewritet returns [RewriteT rw]
+  {
+    rw = null;
+    Term l,r;
+  }
+  : #(ARROW l=term r=term) {rw = `rewritet(l,r);}
+  ;
+*/

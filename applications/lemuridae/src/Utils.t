@@ -14,6 +14,8 @@ import antlr.collections.*;
 
 class Utils {
 
+
+ 
   %include { sequents/sequents.tom }
 
   // pour convenance
@@ -182,29 +184,50 @@ class Utils {
   }
 
   public static Prop getProp() throws RecognitionException, TokenStreamException {
-
     SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
     SeqParser parser = new SeqParser(lexer);
     SeqTreeParser walker = new SeqTreeParser();
-
+ 
     parser.start1();
     AST t = parser.getAST();
     Prop p  = walker.pred(t);
-
     return p;
   }
 
   public static Term getTerm() throws RecognitionException, TokenStreamException {
-
     SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
     SeqParser parser = new SeqParser(lexer);
     SeqTreeParser walker = new SeqTreeParser();
-
+    
     parser.start2();
     AST t = parser.getAST();
     Term res  = walker.term(t);
-
     return res;
   }
+
+  public static Command getCommand()
+    throws RecognitionException, TokenStreamException {
+      SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+      SeqParser parser = new SeqParser(lexer);
+      SeqTreeParser walker = new SeqTreeParser();
+      
+      parser.command();
+      AST t = parser.getAST();
+
+      Command res = walker.command(t);
+      return res;
+    }
+
+  public static ProofCommand getProofCommand()
+    throws RecognitionException, TokenStreamException {
+      SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+      SeqParser parser = new SeqParser(lexer);
+      SeqTreeParser walker = new SeqTreeParser();
+      
+      parser.proofcommand();
+      AST t = parser.getAST();
+      ProofCommand res = walker.proofcommand(t);
+      return res;
+    }
 }
 

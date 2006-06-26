@@ -302,7 +302,7 @@ class PrettyPrinter {
     writer.flush();
 
     Runtime rt = Runtime.getRuntime();
-    Process pr = rt.exec("latex -output-directory=/tmp "+ path );
+    Process pr = rt.exec("latex -output-directory=/tmp " + path );
     pr.waitFor(); 
     System.out.println(path);
     pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");

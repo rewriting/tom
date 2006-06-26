@@ -262,10 +262,6 @@ public class ProofBuilder {
 
   /* --- User interaction  --- */
  
-  SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
-  SeqParser parser = new SeqParser(lexer);
-  SeqTreeParser walker = new SeqTreeParser();
- 
   private String prettyGoal(ArrayList<Prop> hyp, ArrayList<Prop> concl, boolean left, int focus) {
     String res = "";
     for (int i=0; i < hyp.size(); i++) {
@@ -354,24 +350,27 @@ public class ProofBuilder {
       System.out.println("\n" + prettyGoal(hyp, concl, focus_left, focus) + "\n");
 
       System.out.print("proof> ");
-      String command = Utils.getInput();
+      ProofCommand pcommand;
+      try {pcommand = Utils.getProofCommand(); }
+      catch (Exception e) { System.out.println("Unknown command : " + e); continue; }
+      
       
       /* begin of the big switch */
-      if (command.equals("next")) {
+      %match(ProofCommand pcommand) {
+      proofCommand("next") -> {
         currentGoal = (currentGoal+1 ) % openGoals.size();
       }
 
-      if (command.equals("display")) {
+      proofCommand("display") -> {
         try { PrettyPrinter.display(tree); }
         catch (Exception e) { System.out.println("display failed : " + e); }
       }
 
 
-      else if (command.startsWith("focus")) {
+      focusCommand(arg) -> {
         int n;
-        String arg = command.substring(5).trim();
-        char hs = arg.charAt(0);
-        try { n = Integer.parseInt(arg.substring(1)); }
+        char hs = `arg.charAt(0);
+        try { n = Integer.parseInt(`arg.substring(1)); }
         catch (NumberFormatException e) { continue; }
      
         if (hs == 'h' && n <= hyp.size()) {
@@ -385,7 +384,7 @@ public class ProofBuilder {
       }
 
       /* ask for possible rules */
-      else if (command.equals("rules?")) {
+       askrulesCommand()-> {
         for(int i=0; i<newRules.size(); i++) {
           Rule rule = newRules.get(i);
           Prop conclusion = rule.getconcl();
@@ -404,23 +403,19 @@ public class ProofBuilder {
 
 
       /* applying one of the custom rules */
-      else if (command.startsWith("rule")) {
-        int n;
+      ruleCommand(n) -> {
         HashMap<Term,Term> args = new HashMap<Term,Term>();
-        try { n = Integer.parseInt(command.substring(4).trim()); }
-        catch (Exception e) { continue; } // TODO specialize exceptions
- 
 
-       if (n < newRules.size()) {
+       if (`n < newRules.size()) {
           // TODO verify hand side
           try {
-            Rule rule = newRules.get(n);
+            Rule rule = newRules.get(`n);
 
             // asking for new vars
             Set<Term> new_vars = Utils.getNewVars(rule.getprem());
             for (Term t : new_vars) {
               String varname = t.getname();
-              System.out.print("new term for variable " + varname + " in rule " + n + " > ");
+              System.out.print("new term for variable " + varname + " in rule " + `n + " > ");
               Term new_var = Utils.getTerm();
               args.put(t, new_var);
             }
@@ -443,13 +438,13 @@ public class ProofBuilder {
             currentGoal = openGoals.size()-1;
 
           } catch (Exception e) {
-            System.out.println("Can't apply custom rule "+n+": " + e.getMessage());
+            System.out.println("Can't apply custom rule "+ `n +": " + e.getMessage());
           }
        }
       }
 
       /* All classical rules */
-      else if (command.startsWith("elim")) {
+      proofCommand("elim") -> {
 
         // list of the new premisses after applying a rule
         SeqList slist = null;  
@@ -571,7 +566,7 @@ public class ProofBuilder {
       }
 
       /* Axiom case */
-      else if (command.equals("axiom")) {
+      proofCommand("axiom") -> {
         try {
           SeqList slist = null;
 
@@ -592,7 +587,7 @@ public class ProofBuilder {
       }
 
       /* Bottom case */
-      else if (command.equals("bottom")) {
+      proofCommand("bottom") -> {
         try {
           SeqList slist = null;
 
@@ -613,7 +608,7 @@ public class ProofBuilder {
       }
 
       /* top case */
-      else if (command.equals("top")) {
+      proofCommand("top") -> {
         try {
           SeqList slist = null;
 
@@ -634,7 +629,7 @@ public class ProofBuilder {
       }
 
 
-      /* end of the big switch */
+      }     /* end of the big switch */
     } // while still open goals
 
     return tree;
@@ -644,44 +639,35 @@ public class ProofBuilder {
   private ArrayList<Rule> newRules = new ArrayList<Rule>();
 
   public void mainLoop() throws Exception {
-    String command = null;
+    Command command = null;
 
-
-    System.out.print("> ");
     while(true) {
-      command = Utils.getInput();
 
-      if (command.equals("rule")) {
-        System.out.print("lhs. (atom) > ");
-        Prop p1 = Utils.getProp();
-        System.out.print("rhs. > ");
-        Prop p2 = Utils.getProp();
-        RuleList rl = RuleCalc.transform(p1,p2);
-        %match(RuleList rl) {
-          (_*,r,_*) -> { newRules.add(`r);}
-        }
-        System.out.println("The new deduction rules are : \n");
-        System.out.println(PrettyPrinter.prettyRule(rl));
-      }
-
-      else if (command.equals("proof")) {
-        System.out.print("sequent. > ");
-        parser.seq();
-        AST t = parser.getAST();
-        Sequent seq = (Sequent) walker.seq(t);
-        Tree tree = buildProofTree(seq);
-        System.out.println("Proof complete.");
-        PrettyPrinter.display(tree);
-      }
-
-      else {
+      System.out.print("> ");
+      try { command = Utils.getCommand(); }
+      catch (Exception e) {
+        System.out.println("Unknow command : " + e);
         continue;
       }
 
-      System.out.print("> ");
+      %match(Command command) {
+        rewritep(p1,p2) -> {
+          RuleList rl = RuleCalc.transform(`p1,`p2);
+          %match(RuleList rl) {
+            (_*,r,_*) -> { newRules.add(`r);}
+          }
+          System.out.println("The new deduction rules are : \n");
+          System.out.println(PrettyPrinter.prettyRule(rl));
+        }
+       
+        proof(s) -> {
+          Tree tree = buildProofTree(`s);
+          System.out.println("Proof complete.");
+          PrettyPrinter.display(tree);
+        }
+      }
     }
   }
-
 
   public final static void main(String[] args) throws Exception {
     ProofBuilder test = new ProofBuilder();
