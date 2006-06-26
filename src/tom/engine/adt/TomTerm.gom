@@ -27,6 +27,8 @@ TomTerm = TermAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constrain
         | SubjectList(TomList:TomList)
         | Term(TomTerm:TomTerm)
         | AntiTerm(TomTerm:TomTerm)
+        | Subterm(nr:int,groundTerm:TomTerm)
+ 	    | SymbolOf(groundTerm:TomTerm)
         | TLVar(StrName:String,AstType:TomType)
         | Ref(TomTerm:TomTerm)
         | BuildReducedTerm(Kid1:TomTerm)

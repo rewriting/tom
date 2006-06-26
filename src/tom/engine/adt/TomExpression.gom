@@ -27,4 +27,4 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            // TargetLanguageFunctionCall - the target language function that has to be called
            // 								in order to perform the match
            // CompiledAntiPatternMatch - the string that contains the compiled anti-pattern match
-		   | EqualTrueAntiPatternMatch(TargetLanguageFunctionCall:String,CompiledAntiPatternMatch:String) 	
+		   | EqualTrueAntiPatternMatch(TargetLanguageFunctionCall:String,CompiledAntiPatternMatch:Constraint) 	
