@@ -76,34 +76,31 @@ public class TomAntiPatternTransform {
 	 * @param c the anti-pattern problem to transform 
 	 * @return corresponding disunification problem 
 	 */
-	public static Constraint transform(Constraint c) {
+	public static Constraint transform(Constraint c) {	
 		
-		Constraint transformedMatch = null;
 		varCounter = 0;		
 				
 		// eliminate anti
 		Constraint noAnti = null;;
 		try{
-			noAnti = applyMainRule(transformedMatch);
+			noAnti = applyMainRule(c);
 		}catch(VisitFailure e){
-			throw new TomRuntimeException("Reduction failed on: " + transformedMatch + 
+			throw new TomRuntimeException("Reduction failed on: " + c + 
 					"\nException:" + e.getMessage());			
 		}
 		
-//		System.out.println("Result after main rule: " + tools.formatConstraint(noAnti));
+		System.out.println("Result after main rule: " + TomAntiPatternUtils.formatConstraint(noAnti));
 		
-		// transform the problem into a disunification one
-		VisitableVisitor transInDisunif = `TransformIntoDisunification();
+		// transform the problem into a disunification one		
 		Constraint disunifProblem = null;
 		try {		
-			disunifProblem = (Constraint) MuTraveler.init(`InnermostId(transInDisunif)).visit(noAnti);			
+			disunifProblem = (Constraint) MuTraveler.init(`InnermostId(TransformIntoDisunification())).visit(noAnti);			
 		} catch (VisitFailure e) {
-			throw new TomRuntimeException("Reduction failed on: " + transformedMatch + 
+			throw new TomRuntimeException("Reduction failed on: " + noAnti + 
 					"\nException:" + e.getMessage());
 		}
 		
-//		 System.out.println("Disunification problem: " +
-//		 formatConstraint(disunifProblem));
+	    System.out.println("Disunification problem: " + TomAntiPatternUtils.formatConstraint(disunifProblem));
 		return disunifProblem;
 	}	
 	
@@ -130,7 +127,7 @@ public class TomAntiPatternTransform {
 		// get the constraint with a variable instead of anti
 		Constraint cAntiReplaced =  `EqualConstraint((TomTerm) MuTraveler.init(OnceTopDownId(ReplaceAnti())).visit(pattern),subject);
 		
-		cAntiReplaced = `Exists(Variable(null,Name("v" + varCounter),null,null),
+		cAntiReplaced = `Exists(Variable(concOption(),Name("v" + varCounter),EmptyType(),concConstraint()),
 				applyMainRule(cAntiReplaced));
 		
 		cNoAnti = applyMainRule(cNoAnti);
@@ -203,7 +200,7 @@ public class TomAntiPatternTransform {
 		visit TomTerm {
 			// main rule
 			a@AntiTerm(_) -> {
-				return `Variable(null,Name("v" + (++varCounter)),null,null);
+				return `Variable(concOption(),Name("v" + (++varCounter)),EmptyType(),concConstraint());
 			}
 		}
 	}
