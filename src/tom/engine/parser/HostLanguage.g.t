@@ -816,11 +816,6 @@ typeTerm [LinkedList list] throws TomException
                 line = tt.getLine();
                 column = tt.getColumn();
             }
-        |   t:TYPE
-            {
-                line = t.getLine();
-                column = t.getColumn();
-            }
         )
         {
             // addPreviousCode...
@@ -941,9 +936,6 @@ MATCH
     ;
 OPERATOR
     : "%op"   {selector().push("tomlexer");}
-    ;
-TYPE
-    : "%type" {selector().push("tomlexer");}
     ;
 TYPETERM
     : "%typeterm" {selector().push("tomlexer");}
