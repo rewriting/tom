@@ -232,6 +232,22 @@ public class TomConstraintCompiler{
 				return `FalseConstraint();
 			}			
 			
+			// Elimination of trivial equations and disequations			
+			EqualConstraint(a,a) ->{
+				return `TrueConstraint();
+			}			
+			NEqualConstraint(a,a) ->{
+				return `FalseConstraint();
+			}
+			
+			// Special cleaning
+			OrConstraint(concOr(X*,NEqualConstraint(x,a),Y*,AndConstraint(concAnd(T*,EqualConstraint(x,a),U*)),Z*)) ->{
+				return `OrConstraint(concOr(X*,NEqualConstraint(x,a),Y*,AndConstraint(concAnd(T*,U*)),Z*));
+			}
+			AndConstraint(concAnd(X*,EqualConstraint(x,a),Y*,OrConstraint(concOr(T*,NEqualConstraint(x,a),U*)),Z*)) ->{
+				return `AndConstraint(concAnd(X*,EqualConstraint(x,a),Y*,OrConstraint(concOr(T*,U*)),Z*));
+			}
+			
 			// PropagateClash
 			AndConstraint(concAnd(_*,FalseConstraint(),_*)) -> {
 				return `FalseConstraint();
@@ -250,10 +266,15 @@ public class TomConstraintCompiler{
 				return `TrueConstraint();
 			}
 			
-			// cleaning the result
-			AndConstraint(concAnd(AndConstraint(concAnd(X*)),Y*)) ->{
-				return `AndConstraint(concAnd(X*,Y*));
-			}
+			// cleaning the result			
+			AndConstraint(concAnd(X*,AndConstraint(concAnd(Y*)),Z*)) ->{
+				return `AndConstraint(concAnd(X*,Y*,Z*));
+			}			
+
+			OrConstraint(concOr(X*,OrConstraint(concOr(Y*)),Z*)) ->{
+				return `OrConstraint(concOr(X*,Y*,Z*));
+			}					
+
 			
 			AndConstraint(concAnd(X*,a,Y*,a,Z*)) -> {				
 				return `AndConstraint(concAnd(X*,a,Y*,Z*));
@@ -279,7 +300,20 @@ public class TomConstraintCompiler{
 				return `x;
 			}
 			
-			// ////////////////////////////////////////////////////
+			/////////////////////////////////////////////////////
+			
+			// Replace
+			AndConstraint(concAnd(X*,eq@EqualConstraint(var@Variable[AstName=name],s),Y*)) -> {
+			//And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
+				            
+	            Constraint res = (Constraint) MuTraveler.init(
+	            		`InnermostId(ReplaceTerm(var,s))).visit(`AndConstraint(concAnd(X*,Y*)));
+	            if (res != `AndConstraint(concAnd(X*,Y*))){
+	            	return `AndConstraint(concAnd(eq,res));
+	            }
+	        }
+			
+			//////////////////////////////////////////////////////
 			
 			// Decompose
 			e@EqualConstraint(RecordAppl(options,name,a1,constraints),g) -> {
@@ -329,29 +363,43 @@ public class TomConstraintCompiler{
 			// merging rules - Comon and Lescanne
 			
 			// m1
-			And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(Variable(z),u),Z*)) ->{
-				return `And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(t,u),Z*));
+			AndConstraint(concAnd(X*,EqualConstraint(var@Variable[AstName=z],t),Y*,EqualConstraint(Variable[AstName=z],u),Z*)) ->{
+				return `AndConstraint(concAnd(X*,EqualConstraint(var,t),Y*,EqualConstraint(t,u),Z*));
 			}			
 			// m2
-			Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
-				return `Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(t,u),Z*));
+			OrConstraint(concOr(X*,NEqualConstraint(var@Variable[AstName=z],t),Y*,NEqualConstraint(Variable[AstName=z],u),Z*)) ->{
+				return `OrConstraint(concOr(X*,NEqualConstraint(var,t),Y*,NEqualConstraint(t,u),Z*));
 			}
 			// m3
-			And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
-				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
+			AndConstraint(concAnd(X*,EqualConstraint(var@Variable[AstName=z],t),Y*,NEqualConstraint(Variable[AstName=z],u),Z*)) ->{
+				return `AndConstraint(concAnd(X*,EqualConstraint(var,t),Y*,NEqualConstraint(t,u),Z*));
 			}
-			And(concAnd(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
-				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
+			AndConstraint(concAnd(X*,NEqualConstraint(var@Variable[AstName=z],u),Y*,EqualConstraint(Variable[AstName=z],t),Z*)) ->{
+				return `AndConstraint(concAnd(X*,EqualConstraint(var,t),Y*,NEqualConstraint(t,u),Z*));
 			}
 			// m4
-			Or(concOr(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
-				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
+			OrConstraint(concOr(X*,EqualConstraint(var@Variable[AstName=z],t),Y*,NEqualConstraint(Variable[AstName=z],u),Z*)) ->{
+				return `OrConstraint(concOr(X*,EqualConstraint(t,u),Y*,NEqualConstraint(var,u),Z*));
 			}
-			Or(concOr(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
-				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
+			OrConstraint(concOr(X*,NEqualConstraint(var@Variable[AstName=z],u),Y*,EqualConstraint(Variable[AstName=z],t),Z*)) ->{
+				return `OrConstraint(concOr(X*,EqualConstraint(t,u),Y*,NEqualConstraint(var,u),Z*));
 			}			
 			
 		} // end visit
 	} // end strategy
+	
+	/**
+	 * Replaces the occurence of all the terms equal with 'variable'
+	 * with 'value'
+	 */
+	%strategy ReplaceTerm(variable:TomTerm,value:TomTerm) extends `Identity(){
+		visit TomTerm {
+			t ->{
+				if (`t == variable){
+					return value;
+				}
+			}
+		}// end visit
+	}
 	
 } // end class
