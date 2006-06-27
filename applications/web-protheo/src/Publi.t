@@ -145,9 +145,12 @@ public class Publi {
         }
         reader.close();
       }
+      
+      //patch: links to .bib contains ./www/biblio but we want .
+      String bodyS = body.toString().replaceAll("./www/biblio/","./");
 
       OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(Mk.w3Dir +  "biblio/" + id + ".html"),"UTF-8");
-      writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xml:lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"> <head>  <meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\"/>   <link href=\"protheo.css\" rel=\"stylesheet\" title=\"Classic\" type=\"text/css\"/>  <title>Protheo::publi</title> </head> <body>  <h2>" + id.replace('.',' ') + "</h2>" + body.toString() + "</body></html>");
+      writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xml:lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"> <head>  <meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\"/>   <link href=\"protheo.css\" rel=\"stylesheet\" title=\"Classic\" type=\"text/css\"/>  <title>Protheo::publi</title> </head> <body>  <h2>" + id.replace('.',' ') + "</h2>" + bodyS + "</body></html>");
       writer.close();
       /*********************************************************/
     } catch(Exception e) {
