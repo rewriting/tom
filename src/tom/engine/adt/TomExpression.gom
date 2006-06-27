@@ -9,6 +9,8 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | GreaterThan(Arg1:Expression,Arg2:Expression)
            | TrueTL()
            | FalseTL()
+           // Exp1 - the subject
+           // Exp2 - the pattern
            | EqualFunctionSymbol(AstType:TomType,Exp1:TomTerm,Exp2:TomTerm)
            | EqualTerm(TomType:TomType,Kid1:TomTerm,Kid2:TomTerm)
            | Cast(AstType:TomType,Source:Expression)
