@@ -5,3 +5,10 @@ TODO
 3. verify !x, !_ 
 4. guards are not handled
 5. in solver, see what rules can be eliminated
+6. Use existing tom signature: 
+	Equal = EqualTerm
+	SymbolOf = EqualFunctionSymbol
+	SubTerm = ?
+7. if the compiler generates True or False then return directly 
+	this result without passing it to the solver
+ 	

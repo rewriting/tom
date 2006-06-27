@@ -324,6 +324,33 @@ public class TomConstraintCompiler{
 				return `OrConstraint(l);
 			}
 			
+			////////////////////////
+			
+			// merging rules - Comon and Lescanne
+			
+			// m1
+			And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(Variable(z),u),Z*)) ->{
+				return `And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(t,u),Z*));
+			}			
+			// m2
+			Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				return `Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(t,u),Z*));
+			}
+			// m3
+			And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
+			}
+			And(concAnd(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
+				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
+			}
+			// m4
+			Or(concOr(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
+			}
+			Or(concOr(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
+				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
+			}			
+			
 		} // end visit
 	} // end strategy
 	

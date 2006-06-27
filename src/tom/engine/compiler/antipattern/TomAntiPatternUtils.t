@@ -116,22 +116,22 @@ public class TomAntiPatternUtils{
 		System.out.println("ModuleName:" + moduleName);
 		
 		// subject to be matched
-		TomTerm subject = null;
+		TomTerm subject = null;		
 		
 		// extract the subject
 		// TODO - the guards
 		%match(Instruction action){
 			TypedAction(_,Pattern(concTomTerm(subject,_*),_,_),_)->{
-				subject = `subject;
+				subject = `subject;				
 			}
-		}
+		}		
 		
 		// transform the anti-pattern match problem into
 		// a disunification one
 		Constraint disunificationProblem = TomAntiPatternTransform.transform(
 				`EqualConstraint(tomTerm,subject));
 		// launch the constraint compiler
-		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);
+		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);		
 		
 		return `EqualTrueAntiPatternMatch("TomConstraintSolver.solve", compiledApProblem);		
 	}	
