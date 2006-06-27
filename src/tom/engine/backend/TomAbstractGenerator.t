@@ -95,8 +95,11 @@ public abstract class TomAbstractGenerator extends TomBase {
     return subject;
   }
 
-  /*
+  /**
    * Generate the goal language
+   * 
+   * @param deep 
+   * 		The distance from the right side (allows the computation of the column number)
    */
   protected void generate(int deep, TomTerm subject, String moduleName)throws IOException {
     %match(TomTerm subject) {
@@ -328,6 +331,14 @@ public abstract class TomAbstractGenerator extends TomBase {
       TomTermToExpression(t) -> {
         generate(deep,`t, moduleName);
         return;
+      }
+      
+      EqualTrueAntiPatternMatch(tlFunctionCall,compiledApMatch) ->{
+    	// builds a function call with a single argument
+    	// which is the string representation of the constraint
+    	buildFunctionCall(deep,`tlFunctionCall,
+    			`concTomTerm(TargetLanguageToTomTerm(ITL("\"" + compiledApMatch.toString() + "\""))),moduleName);    	
+    	return;
       }
 
       t -> {
