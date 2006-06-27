@@ -67,7 +67,7 @@ public class ApAndDisunification1 implements Matching{
 		// replace the match with =
 		label:%match(Constraint c){
 			Match(p,s) -> { 
-				transformedMatch = `Equal(p,s/* GenericGroundTerm("SUBJECT") */);
+				transformedMatch = `Equal(p,GenericGroundTerm("SUBJECT"));
 
 				break label;
 			}
@@ -103,24 +103,25 @@ public class ApAndDisunification1 implements Matching{
 		// apply the disunification rules
 		Constraint compiledConstraint = null, solvedConstraint = null;
 		
-//		MuStrategy simplifyRule = `SimplifyWithDisunification();
-		MuStrategy simplifyRule = `SimplifyWithDisunificationAll();
+		MuStrategy simplifyRule = `SimplifyWithDisunification();
+//		MuStrategy simplifyRule = `SimplifyWithDisunificationAll();
 		MuStrategy decomposeTerms = `DecomposeTerms();
 		MuStrategy solve = `SolveRes();
 		
 		try {		
 			compiledConstraint = (Constraint) MuTraveler.init(`InnermostId(simplifyRule)).visit(disunifProblem);
-//			solvedConstraint = (Constraint) MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
+			solvedConstraint = (Constraint) MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
 		} catch (VisitFailure e) {
 			System.out.println("3. reduction failed on: " + c);
 			e.printStackTrace();
 		}
 		
-//		System.out.println("Final result: " + tools.formatConstraint(compiledConstraint));
-//		System.out.println("Final result solved: " + formatConstraint(solvedConstraint));
+//		System.out.println("Final result: " + compiledConstraint);
+		System.out.println("Final result formated: " + tools.formatConstraint(compiledConstraint));
+//		System.out.println("Final result solved: " + tools.formatConstraint(solvedConstraint));
 		
-//		return solvedConstraint;
-		return compiledConstraint;
+		return solvedConstraint;
+//		return compiledConstraint;
 	}	
 	
 	// applies the main rule that transforms ap problems
@@ -441,7 +442,23 @@ public class ApAndDisunification1 implements Matching{
 			}			
 			And(concAnd(_*,NEqual(a,b),_*,Equal(a,b),_*)) ->{				
 				return `False();
+			}		
+			
+			// Elimination of trivial equations and disequations			
+			Equal(a,a) ->{
+				return `True();
 			}			
+			NEqual(a,a) ->{
+				return `False();
+			}
+			
+			// Special cleaning
+			Or(concOr(X*,NEqual(x,a),Y*,And(concAnd(T*,Equal(x,a),U*)),Z*)) ->{
+				return `Or(concOr(X*,NEqual(x,a),Y*,And(concAnd(T*,U*)),Z*));
+			}
+			And(concAnd(X*,Equal(x,a),Y*,Or(concOr(T*,NEqual(x,a),U*)),Z*)) ->{
+				return `And(concAnd(X*,Equal(x,a),Y*,Or(concOr(T*,U*)),Z*));
+			}
 			
 			// PropagateClash
 			And(concAnd(_*,False(),_*)) -> {
@@ -462,9 +479,13 @@ public class ApAndDisunification1 implements Matching{
 			}
 			
 			// cleaning the result
-			And(concAnd(And(concAnd(X*)),Y*)) ->{
-				return `And(concAnd(X*,Y*));
-			}
+			And(concAnd(X*,And(concAnd(Y*)),Z*)) ->{
+				return `And(concAnd(X*,Y*,Z*));
+			}			
+
+			Or(concOr(X*,Or(concOr(Y*)),Z*)) ->{
+				return `Or(concOr(X*,Y*,Z*));
+			}					
 			
 			And(concAnd(X*,a,Y*,a,Z*)) -> {				
 				return `And(concAnd(X*,a,Y*,Z*));
@@ -489,6 +510,19 @@ public class ApAndDisunification1 implements Matching{
 			Or(concOr(x)) -> {
 				return `x;
 			}
+			
+			// ///////////////////////////////////////////////////
+			
+			// Replace
+			And(concAnd(X*,eq@Equal(var@Variable(name),s),Y*)) -> {
+			//And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
+				            
+	            Constraint res = (Constraint) MuTraveler.init(
+	            		`InnermostId(ReplaceTerm(var,s))).visit(`And(concAnd(X*,Y*)));
+	            if (res != `And(concAnd(X*,Y*))){
+	            	return `And(concAnd(eq,res));
+	            }
+	        }
 			
 			// ////////////////////////////////////////////////////
 			
@@ -535,9 +569,45 @@ public class ApAndDisunification1 implements Matching{
 				return `Or(l);
 			}
 			
+			////////////////////////
+			
+			// merging rules - Comon and Lescanne
+			
+			// m1
+			And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(Variable(z),u),Z*)) ->{
+				return `And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(t,u),Z*));
+			}			
+			// m2
+			Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				return `Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(t,u),Z*));
+			}
+			// m3
+			And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
+			}
+			And(concAnd(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
+				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
+			}
+			// m4
+			Or(concOr(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
+			}
+			Or(concOr(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
+				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
+			}			
+			
 		} // end visit
 	} // end strategy
 	
+	%strategy ReplaceTerm(variable:Term,value:Term) extends `Identity(){
+		visit Term {
+			t ->{
+				if (`t == variable){
+					return value;
+				}
+			}
+		}// end visit
+	}
 	
 	%strategy DecomposeTerms() extends `Identity(){
 		
