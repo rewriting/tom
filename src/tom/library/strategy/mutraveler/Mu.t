@@ -18,35 +18,39 @@ public class Mu extends AbstractMuStrategy {
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
-    if(!isExpanded())
-      expand();
+		if(!isExpanded()) {
+			expand();
+		}
     return getArgument(V).visit(any);
   }
 
-  public void expand() {
-    if(!isExpanded()) {
-      try {
-        new MuTopDown().visit(this);
-      } catch (VisitFailure e) {
-        System.out.println("mu reduction failed");
-      }
-    }
-  }
-
-  public boolean isExpanded() {
+  private boolean isExpanded() {
     return ((MuVar)getArgument(VAR)).isExpanded();
   }
+
+	private void expand() {
+		try {
+			new MuTopDown().visit(this);
+		} catch (VisitFailure e) {
+			System.out.println("mu reduction failed");
+		}
+	}
+
 }
 
 /**
  * Custom TopDown strategy which realizes the mu expansion.
  * The visit method seeks all Mu and MuVar nodes.
  *
- * When a Mu node is matched, it is pushed on a stack. Then child nodes are visited and finally, the Mu node is poped.
+ * When a Mu node is matched, it is pushed on a stack. Then child nodes are
+ * visited and finally, the Mu node is poped.
  *
- * When a MuVar node is matched, then the stacked is browsed to find the corresponding Mu (the last pushed with the same variable name). The MuVar is expanded.
+ * When a MuVar node is matched, then the stacked is browsed to find the
+ * corresponding Mu (the last pushed with the same variable name). The MuVar is
+ * expanded.
  *
- * When the current node is not a Mu or a MuVar, we visit all children of the current node.
+ * When the current node is not a Mu or a MuVar, we visit all children of the
+ * current node.
  */
 class MuTopDown {
   %include { mustrategy.tom }
@@ -58,38 +62,36 @@ class MuTopDown {
   }
 
   public void visit(Visitable any) throws VisitFailure {
-    if(any instanceof MuStrategy) {
-      MuStrategy s = (MuStrategy)any;
-      %match(Strategy s) {
-        m@Mu(var@MuVar(_), v) -> {
-          stack.addFirst(`m);
-          visit(`v);
-          visit(`var);
-          stack.removeFirst();
-          return;
-        }
+		%match(Strategy any) {
+			m@Mu(var@MuVar(_), v) -> {
+				stack.addFirst(`m);
+				visit(`v);
+				visit(`var);
+				stack.removeFirst();
+				return;
+			}
 
-        var@MuVar(n) -> {
-          MuVar var = (MuVar)`var;
-          if(!var.isExpanded()) {
-            ListIterator it = stack.listIterator(0);
-            while(it.hasNext()) {
-              Mu m = (Mu)it.next();
-              if(((MuVar)m.getArgument(Mu.VAR)).getName().equals(`n)) {
-                var.setInstance(m);
-                return;
-              }
-            }
+			var@MuVar(n) -> {
+				MuVar muvar = (MuVar)`var;
+				if(!muvar.isExpanded()) {
+					ListIterator it = stack.listIterator(0);
+					while(it.hasNext()) {
+						Mu m = (Mu)it.next();
+						if(((MuVar)m.getArgument(Mu.VAR)).getName().equals(`n)) {
+							muvar.setInstance(m);
+							return;
+						}
+					}
 
-            throw new VisitFailure();
-          }
-        }
-      }
-    }
+					throw new VisitFailure();
+				}
+			}
+		}
 
     int childCount = any.getChildCount();
-    for(int i = 0; i < childCount; i++)
+    for(int i = 0; i < childCount; i++) {
       visit(any.getChildAt(i));
+		}
   }
 }
 

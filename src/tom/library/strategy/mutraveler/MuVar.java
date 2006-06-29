@@ -59,9 +59,10 @@ public class MuVar extends AbstractMuStrategy {
     this.name = name;
   }
 
-  public boolean isExpanded() {
+  protected boolean isExpanded() {
     return instance != null;
   }
+
   public String getName() {
     return name;
   }
