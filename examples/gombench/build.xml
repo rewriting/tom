@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the gombench example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/gombench"/>
+    <delete dir="${examples.build}/gombench"/>
+  </target>
+  <target name="build" depends="init">
+    <adtcompile example="gombench" factory="apiterm"/>
+    <gomcompile example="gombench"/>
+    <tomcompile example="gombench"/>
+    <javacompile example="gombench"/>
+    <copy todir="${examples.build}/gombench">
+      <fileset dir="${examples.dir}/gombench">
+        <include name="bench.sh"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="gombench/*.t"/>
+        <include name="gombench/**/*.java"/>
+        <include name="gombench/*.gom"/>
+        <include name="gombench/*.adt"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+</project>
