@@ -29,10 +29,7 @@
 
 package gombench;
 
-import aterm.*;
-import aterm.pure.*;
 import java.util.*;
-import tom.library.traversal.*;
 import gombench.gomterm.*;
 import gombench.gomterm.types.*;
 
