@@ -59,6 +59,9 @@ public class ApAndDisunification1 implements Matching{
 	// be quantified 
 	private ArrayList quantifiedVarList = new ArrayList();
 	
+	// used to count the number of rules that are applied
+	private int rulesCounter = 0;
+	
 	public Constraint simplifyAndSolve(Constraint c,Collection solution) {
 		
 		Constraint transformedMatch = null;
@@ -67,7 +70,7 @@ public class ApAndDisunification1 implements Matching{
 		// replace the match with =
 		label:%match(Constraint c){
 			Match(p,s) -> { 
-				transformedMatch = `Equal(p,GenericGroundTerm("SUBJECT"));
+				transformedMatch = `Equal(p,s /*GenericGroundTerm("SUBJECT")*/);
 
 				break label;
 			}
@@ -103,25 +106,31 @@ public class ApAndDisunification1 implements Matching{
 		// apply the disunification rules
 		Constraint compiledConstraint = null, solvedConstraint = null;
 		
-		MuStrategy simplifyRule = `SimplifyWithDisunification();
-//		MuStrategy simplifyRule = `SimplifyWithDisunificationAll();
+		rulesCounter = 0;
+		long timeStart = System.currentTimeMillis();
+		
+//		MuStrategy simplifyRule = `SimplifyWithDisunification();
+		MuStrategy simplifyRule = `SimplifyWithDisunificationAll();
 		MuStrategy decomposeTerms = `DecomposeTerms();
 		MuStrategy solve = `SolveRes();
 		
 		try {		
 			compiledConstraint = (Constraint) MuTraveler.init(`InnermostId(simplifyRule)).visit(disunifProblem);
-			solvedConstraint = (Constraint) MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
+//			solvedConstraint = (Constraint) MuTraveler.init(`SequenceId(InnermostId(decomposeTerms),InnermostId(solve))).visit(compiledConstraint);
 		} catch (VisitFailure e) {
 			System.out.println("3. reduction failed on: " + c);
 			e.printStackTrace();
 		}
 		
 //		System.out.println("Final result: " + compiledConstraint);
-		System.out.println("Final result formated: " + tools.formatConstraint(compiledConstraint));
+//		System.out.println("Final result formated: " + tools.formatConstraint(compiledConstraint));
 //		System.out.println("Final result solved: " + tools.formatConstraint(solvedConstraint));
+	
+		System.out.println("Number of rules applied: " + rulesCounter);
+		System.out.println("Time passed: " + (System.currentTimeMillis() - timeStart) + " ms");
 		
-		return solvedConstraint;
-//		return compiledConstraint;
+//		return solvedConstraint;
+		return compiledConstraint;
 	}	
 	
 	// applies the main rule that transforms ap problems
@@ -759,28 +768,33 @@ public class ApAndDisunification1 implements Matching{
 	
 	%strategy SimplifyWithDisunificationAll() extends `Identity(){
 		
-		visit Constraint {			
+		visit Constraint {		
 			
 			// simple rules with exists and forall
 			Exists(Variable(a),Equal(Variable(a),_)) ->{				
+				rulesCounter++;
 				return `True();
 			}						
-			Exists(Variable(a),NEqual(Variable(a),_)) ->{				
+			Exists(Variable(a),NEqual(Variable(a),_)) ->{
+				rulesCounter++;
 				return `True();
 			}
 			Exists(v@Variable(name),constr)->{
 				// eliminates the quantificator when the
 				// constraint does not contains the variable
 				
-				if (!tools.containsVariable(`constr,`v)){				
+				if (!tools.containsVariable(`constr,`v)){
+					rulesCounter++;
 					return `constr;
 				}
 				
 			}			
 			ForAll(Variable(a),Equal(Variable(a),_)) ->{
+				rulesCounter++;
 				return `False();
 			}
 			ForAll(Variable(a),NEqual(Variable(a),_)) ->{
+				rulesCounter++;
 				return `False();
 			}
 			ForAll(v@Variable(_),constr)->{
@@ -788,6 +802,7 @@ public class ApAndDisunification1 implements Matching{
 				// constraint does not contains the variable
 				
 				if (!tools.containsVariable(`constr,`v)){
+					rulesCounter++;
 					return `constr;
 				}				
 			}
@@ -827,7 +842,7 @@ public class ApAndDisunification1 implements Matching{
 				if (!result1.isEmptyconcAnd()){
 					result = `concAnd(Exists(v,And(result1)),result*);
 				}
-				
+				rulesCounter++;
 				return `And(result);
 			}			
 			Exists(v@Variable(var),Or(list)) ->{
@@ -839,7 +854,7 @@ public class ApAndDisunification1 implements Matching{
 					result = `concOr(Exists(v,l.getHeadconcOr()),result*);
 					l = l.getTailconcOr();
 				}
-				
+				rulesCounter++;
 				return `Or(result);
 			}
 			ForAll(v@Variable(var),And(list)) ->{
@@ -851,7 +866,7 @@ public class ApAndDisunification1 implements Matching{
 					result = `concAnd(ForAll(v,l.getHeadconcAnd()),result*);
 					l = l.getTailconcAnd();
 				}
-				
+				rulesCounter++;
 				return `And(result);
 			}			
 
@@ -885,64 +900,92 @@ public class ApAndDisunification1 implements Matching{
 				if (!result1.isEmptyconcOr()){
 					result = `concOr(ForAll(v,Or(result1)),result*);
 				}
-				
+				rulesCounter++;
 				return `Or(result);
 			}			
 			
 			// ///////////////////////////////////////////////////////////////////
 			
 			// Delete
-			And(concAnd(_*,Equal(a,b),_*,NEqual(a,b),_*)) ->{				
+			And(concAnd(_*,Equal(a,b),_*,NEqual(a,b),_*)) ->{
+				rulesCounter++;
 				return `False();
 			}			
-			And(concAnd(_*,NEqual(a,b),_*,Equal(a,b),_*)) ->{				
+			And(concAnd(_*,NEqual(a,b),_*,Equal(a,b),_*)) ->{
+				rulesCounter++;
 				return `False();
+			}		
+			
+			// Elimination of trivial equations and disequations			
+			Equal(a,a) ->{
+				rulesCounter++;
+				return `True();
 			}			
+			NEqual(a,a) ->{
+				rulesCounter++;
+				return `False();
+			}
 			
 			// PropagateClash
 			And(concAnd(_*,False(),_*)) -> {
+				rulesCounter++;
 				return `False();
 			}
 			
 			Or(concOr(X*,False(),Y*)) -> {
+				rulesCounter++;
 				return `Or(concOr(X*,Y*));
 			}
 			
 			// PropagateSuccess
 			And(concAnd(X*,True(),Y*)) -> {
+				rulesCounter++;
 				return `And(concAnd(X*,Y*));
 			}
 			
-			Or(concOr(_*,True(),_*)) -> {			
+			Or(concOr(_*,True(),_*)) -> {
+				rulesCounter++;
 				return `True();
 			}
 			
 			// cleaning the result
-			And(concAnd(And(concAnd(X*)),Y*)) ->{
-				return `And(concAnd(X*,Y*));
+			And(concAnd(X*,And(concAnd(Y*)),Z*)) ->{
+				rulesCounter++;
+				return `And(concAnd(X*,Y*,Z*));
+			}			
+
+			Or(concOr(X*,Or(concOr(Y*)),Z*)) ->{
+				rulesCounter++;
+				return `Or(concOr(X*,Y*,Z*));
 			}
 			
-			And(concAnd(X*,a,Y*,a,Z*)) -> {				
+			And(concAnd(X*,a,Y*,a,Z*)) -> {
+				rulesCounter++;
 				return `And(concAnd(X*,a,Y*,Z*));
 			}
 			
-			Or(concOr(X*,a,Y*,a,Z*)) -> {				
+			Or(concOr(X*,a,Y*,a,Z*)) -> {
+				rulesCounter++;
 				return `Or(concOr(X*,a,Y*,Z*));
 			}
 			
 			And(concAnd()) -> {
+				rulesCounter++;
 				return `True();
 			}
 			
 			Or(concOr()) -> {
+				rulesCounter++;
 				return `False();
 			}
 			
 			And(concAnd(x)) -> {
+				rulesCounter++;
 				return `x;
 			}
 			
 			Or(concOr(x)) -> {
+				rulesCounter++;
 				return `x;
 			}
 			
@@ -951,12 +994,14 @@ public class ApAndDisunification1 implements Matching{
 			// SymbolClash
 			Equal(Appl(name1,_),Appl(name2,_)) -> {
 				if(`name1 != `name2) {
+					rulesCounter++;
 					return `False();
 				}
 			}
 			
 			NEqual(Appl(name1,_),Appl(name2,_)) -> {
 				if(`name1 != `name2) {
+					rulesCounter++;
 					return `True();
 				}
 			}
@@ -972,6 +1017,7 @@ public class ApAndDisunification1 implements Matching{
 					args1 = args1.getTailconcTerm();
 					args2 = args2.getTailconcTerm();					
 				}
+				rulesCounter++;
 				return `And(l/*.reverseConstraintList()*/);
 			}
 			
@@ -985,6 +1031,7 @@ public class ApAndDisunification1 implements Matching{
 					args1 = args1.getTailconcTerm();
 					args2 = args2.getTailconcTerm();					
 				}
+				rulesCounter++;
 				return `Or(l/*.reverseConstraintList()*/);
 			}			
 			
@@ -994,24 +1041,30 @@ public class ApAndDisunification1 implements Matching{
 			
 			// m1
 			And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(Variable(z),u),Z*)) ->{
+				rulesCounter++;
 				return `And(concAnd(X*,Equal(Variable(z),t),Y*,Equal(t,u),Z*));
 			}			
 			// m2
 			Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				rulesCounter++;
 				return `Or(concOr(X*,NEqual(Variable(z),t),Y*,NEqual(t,u),Z*));
 			}
 			// m3
 			And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				rulesCounter++;
 				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
 			}
 			And(concAnd(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
+				rulesCounter++;
 				return `And(concAnd(X*,Equal(Variable(z),t),Y*,NEqual(t,u),Z*));
 			}
 			// m4
 			Or(concOr(X*,Equal(Variable(z),t),Y*,NEqual(Variable(z),u),Z*)) ->{
+				rulesCounter++;
 				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
 			}
 			Or(concOr(X*,NEqual(Variable(z),u),Y*,Equal(Variable(z),t),Z*)) ->{
+				rulesCounter++;
 				return `Or(concOr(X*,Equal(t,u),Y*,NEqual(Variable(z),u),Z*));
 			}
 			
