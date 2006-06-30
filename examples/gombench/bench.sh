@@ -3,11 +3,13 @@ liststart=50
 listmax=500
 
 for i in `jot 10 1 10`; do
+	${JAVA} gombench.ApiNshNoLength 1 $i
 	${JAVA} gombench.ApiNsh 1 $i
 	${JAVA} gombench.GomNsh 1 $i
 done
 
 for i in `jot 2 1 2`; do
+	${JAVA} -Xmx256m gombench.ApiNshNoLength 2 $i
 	${JAVA} -Xmx256m gombench.ApiNsh 2 $i
 	${JAVA} -Xmx256m gombench.GomNsh 2 $i
 done
