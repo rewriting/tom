@@ -51,7 +51,7 @@ public class GomNsh {
       //boolean res      = depthSearch2(new HashSet(),initState,search);
     long stopChrono = System.currentTimeMillis();
 
-    System.out.println("GomNsh: "+nbAgent+" "+maxMessagesInNetwork+" " + (stopChrono-startChrono));
+    System.out.println("GomNsh & "+nbAgent+" & "+maxMessagesInNetwork+" & " + (stopChrono-startChrono));
     
   }
 

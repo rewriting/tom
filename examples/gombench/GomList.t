@@ -80,7 +80,7 @@ public class GomList {
     //System.out.println(" l = " + elim(reverse(genere(100))));
     elim(reverse(genere(max)));
     
-    System.out.println("Gom: "+max + " " + (System.currentTimeMillis()-startChrono));
+    System.out.println("GomList & "+max + " & " + (System.currentTimeMillis()-startChrono));
   }
 
   public final static void main(String[] args) {
