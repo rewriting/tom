@@ -103,6 +103,10 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
     return @getLength(slotList)@;
   }
 
+  public String toString() {
+    return "@className()@(@toStringChilds()@)";
+  }
+
   /* shared.SharedObject */
   public final int hashCode() {
     return hashCode;
@@ -525,6 +529,32 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
       }
     }
     return res.substring(0,res.length()-2);
+  }
+
+  private String toStringChilds() {
+    String res = "";
+    if (0 == slotList.length()) {
+      return res;
+    }
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
+        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+         if (`domain.equals(`ClassName("","int"))) { 
+           res+= %["+@fieldName(`slotName)@+"]%;
+         } else if (`domain.equals(`ClassName("","String"))) {
+           res+= %[\""+@fieldName(`slotName)@+"\"]%;
+         } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
+           res+= %["+@fieldName(`slotName)@.toString()+"]%;
+         } else {
+            throw new GomRuntimeException("Builtin "+`domain+" not supported");
+         }
+        } else {
+          res+= %["+@fieldName(`slotName)@.toString()+"]%; 
+        }
+        res += ",";
+      }
+    }
+    return res.substring(0,res.length()-1);
   }
 
   private String generateHashArgs() {

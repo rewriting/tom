@@ -51,7 +51,7 @@ public class TestNsh extends TestCase {
 
   public void testQuery() {
     assertEquals("Tests the query function (and toString()).",
-                 "state(ConsconcAgent(agent(sender(1),SLEEP,N(sender(1),sender(1))),ConsconcAgent(agent(sender(0),SLEEP,N(sender(0),sender(0))),EmptyconcAgent)),ConsconcAgent(agent(receiver(1),SLEEP,N(receiver(1),receiver(1))),ConsconcAgent(agent(receiver(0),SLEEP,N(receiver(0),receiver(0))),EmptyconcAgent)),intruder(devil,EmptyconcNonce,EmptyconcMessage),EmptyconcMessage)",
+                 "state(ConsconcAgent(agent(sender(1),SLEEP(),N(sender(1),sender(1))),ConsconcAgent(agent(sender(0),SLEEP(),N(sender(0),sender(0))),EmptyconcAgent())),ConsconcAgent(agent(receiver(1),SLEEP(),N(receiver(1),receiver(1))),ConsconcAgent(agent(receiver(0),SLEEP(),N(receiver(0),receiver(0))),EmptyconcAgent())),intruder(devil(),EmptyconcNonce(),EmptyconcMessage()),EmptyconcMessage())",
                  test.query(2,2).toString());
   }
 

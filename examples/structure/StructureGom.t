@@ -658,7 +658,11 @@ public class StructureGom {
       par(l) -> { return "[" + prettyPrint(`l) + "]";}
       cop(l) -> { return "(" + prettyPrint(`l) + ")";}
       seq(l) -> { return "<" + prettyPrint(`l) + ">";}
-      x      -> { return `x.toString();}
+      x      -> {
+        String res = `x.toString();
+        /* constant, so remove the trailing () */
+        return res.substring(0,res.length()-2);
+      }
     }
     %match(StrucCop t) {
       concCop(head) -> {

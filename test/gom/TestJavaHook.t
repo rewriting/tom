@@ -28,7 +28,7 @@ public class TestJavaHook extends TestCase {
     System.setOut(new PrintStream(res));
     Term empty = `Unary(Empty());
     System.setOut(tmpOut);
-    assertEquals(res.toString(),"Empty()\nUnary(Empty)\n");
+    assertEquals(res.toString(),"Empty()\nUnary(Empty())\n");
   }
 
   public void testBinaryMakeBeforeHook() {
@@ -37,7 +37,7 @@ public class TestJavaHook extends TestCase {
     System.setOut(new PrintStream(res));
     Term empty = `Binary(Empty(),Empty());
     System.setOut(tmpOut);
-    assertEquals(res.toString(),"Empty()\nEmpty()\nBinary(Empty, Empty)\n");
+    assertEquals(res.toString(),"Empty()\nEmpty()\nBinary(Empty(),Empty())\n");
   }
 
   public void testTernaryMakeBeforeHook() {
@@ -47,7 +47,7 @@ public class TestJavaHook extends TestCase {
     Term empty = `Ternary(Empty(),Empty(),Binary(Empty(),Unary(Empty())));
     System.setOut(tmpOut);
     assertEquals(res.toString(),
-        "Empty()\nEmpty()\nEmpty()\nEmpty()\nUnary(Empty)\nBinary(Empty, Unary(Empty))\nTernary(Empty, Empty, Binary(Empty,Unary(Empty)))\n");
+        "Empty()\nEmpty()\nEmpty()\nEmpty()\nUnary(Empty())\nBinary(Empty(),Unary(Empty()))\nTernary(Empty(),Empty(),Binary(Empty(),Unary(Empty())))\n");
   }
 
   public void testVaryMakeInsertHook() {
@@ -60,9 +60,9 @@ public class TestJavaHook extends TestCase {
         "Empty()\n"+
         "Empty()\n"+
         "Empty()\n"+
-        "Vary(Empty, EmptyVary)\n"+
-        "Vary(Empty, ConsVary(Empty,EmptyVary))\n"+
-        "Vary(Empty, ConsVary(Empty,ConsVary(Empty,EmptyVary)))\n"+
-        "Vary(Empty, ConsVary(Empty,ConsVary(Empty,ConsVary(Empty,EmptyVary))))\n");
+        "Vary(Empty(),EmptyVary())\n"+
+        "Vary(Empty(),ConsVary(Empty(),EmptyVary()))\n"+
+        "Vary(Empty(),ConsVary(Empty(),ConsVary(Empty(),EmptyVary())))\n"+
+        "Vary(Empty(),ConsVary(Empty(),ConsVary(Empty(),ConsVary(Empty(),EmptyVary()))))\n");
   }
 }

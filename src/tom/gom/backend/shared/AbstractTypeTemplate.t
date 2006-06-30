@@ -53,9 +53,7 @@ public abstract class @className()@ implements shared.SharedObjectWithID, jjtrav
 
   public abstract String symbolName();
 
-  public String toString() {
-    return toATerm().toString();
-  }
+  public abstract String toString();
 
   public int getUniqueIdentifier() {
     return uniqueID;

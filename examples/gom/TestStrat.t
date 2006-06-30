@@ -29,7 +29,7 @@ public class TestStrat extends TestCase {
 
   public void testToString() {
     VList subject = genere(max);
-    assertEquals(subject.toString(),"Consconc(4,Consconc(3,Consconc(2,Emptyconc)))");
+    assertEquals("Consconc(4,Consconc(3,Consconc(2,Emptyconc())))",subject.toString());
   }
 
   public void testOncebottomUp() {
@@ -53,7 +53,7 @@ public class TestStrat extends TestCase {
     } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
-    assertEquals(result.toString(),"Consconc(5,Consconc(4,Consconc(3,Emptyconc)))");
+    assertEquals("Consconc(5,Consconc(4,Consconc(3,Emptyconc())))",result.toString());
   }
 
   public static void main(String[] args) {

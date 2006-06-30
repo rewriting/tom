@@ -21,7 +21,7 @@ public class TestImport extends TestCase {
   public void testMake() {
     Out test = `Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())));
     assertEquals(test.toString(),
-        "Loop(Loop(Pack(Atom),Element(Atom)),Element(Element(Atom)))");
+        "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))");
   }
 
   public void testStrat() {
