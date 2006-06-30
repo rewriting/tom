@@ -12,7 +12,7 @@
     <javacompile example="gombench"/>
     <copy todir="${examples.build}/gombench">
       <fileset dir="${examples.dir}/gombench">
-        <include name="bench.sh"/>
+        <include name="*.sh"/>
       </fileset>
     </copy>
   </target>
