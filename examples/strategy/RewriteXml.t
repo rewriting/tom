@@ -117,7 +117,7 @@ public class RewriteXml {
   %strategy S2() extends `Identity() {
 
     visit TNode {
-      arg -> { return `xml(<hilight>`arg</hilight>); }
+      arg -> { return `xml(<hilight>arg</hilight>); }
     }
   }
 
