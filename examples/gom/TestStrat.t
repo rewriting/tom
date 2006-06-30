@@ -41,7 +41,7 @@ public class TestStrat extends TestCase {
     } catch (VisitFailure e) {
       fail("catched VisitFailure");
     }
-    assertEquals(result.toString(),"Consconc(4,Consconc(3,Consconc(3,Emptyconc)))");
+    assertEquals(result.toString(),"Consconc(4,Consconc(3,Consconc(3,Emptyconc())))");
   }
 
   public void testBottomUp() {
