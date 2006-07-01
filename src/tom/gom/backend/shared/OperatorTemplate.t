@@ -107,6 +107,30 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
     return "@className()@(@toStringChilds()@)";
   }
 
+  public int compareTo(Object o) {
+    /*
+     * We do not want to compare with any object, only members of the module
+     * In case of invalid argument, throw a ClassCastException, as the java api
+     * asks for it
+     */
+    @fullClassName(abstractType)@ ao = (@fullClassName(abstractType)@) o;
+    /* return 0 for equality */
+    if (ao == this)
+      return 0;
+    /* do the hash values allow us to discriminate ? */
+    int hashCmp = this.hashCode - ao.hashCode();
+    if (hashCmp != 0)
+      return hashCmp;
+    /* If not, compare the symbols */
+    int symbCmp = this.symbolName().compareTo(ao.symbolName());
+    if (symbCmp != 0)
+      return symbCmp;
+    /* last resort: compare the childs */
+    @className()@ tco = (@className()@) ao;
+    @genCompareChilds("tco")@
+    throw new RuntimeException("Unable to compare");
+  }
+
   /* shared.SharedObject */
   public final int hashCode() {
     return hashCode;
@@ -555,6 +579,46 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
       }
     }
     return res.substring(0,res.length()-1);
+  }
+
+  private String genCompareChilds(String other) {
+    String res = "";
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
+        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+         if (`domain.equals(`ClassName("","int"))) { 
+           res+= %[
+    int @fieldName(`slotName)@Cmp = this.@fieldName(`slotName)@ - @other@.@fieldName(`slotName)@;
+    if(@fieldName(`slotName)@Cmp != 0)
+      return @fieldName(`slotName)@Cmp;
+]%;
+         } else if (`domain.equals(`ClassName("","String"))) {
+           res+= %[
+    int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).compareTo(@other@.@fieldName(`slotName)@);
+    if(@fieldName(`slotName)@Cmp != 0)
+      return @fieldName(`slotName)@Cmp;
+             
+]%;
+         } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
+           res+= %[
+    /* Inefficient total order on ATerm */
+    int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).compareTo((@other@.@fieldName(`slotName)@).toString());
+    if(@fieldName(`slotName)@Cmp != 0)
+      return @fieldName(`slotName)@Cmp;
+]%;
+         } else {
+            throw new GomRuntimeException("Builtin "+`domain+" not supported");
+         }
+        } else {
+          res+= %[
+    int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).compareTo(@other@.@fieldName(`slotName)@);
+    if(@fieldName(`slotName)@Cmp != 0)
+      return @fieldName(`slotName)@Cmp;
+]%; 
+        }
+      }
+    }
+    return res;
   }
 
   private String generateHashArgs() {

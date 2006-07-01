@@ -46,7 +46,7 @@ public class AbstractTypeTemplate extends TemplateClass {
 %[
 package @getPackage()@;
 
-public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable {
+public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable, Comparable {
   private int uniqueID;
 
   public abstract aterm.ATerm toATerm();
@@ -54,6 +54,8 @@ public abstract class @className()@ implements shared.SharedObjectWithID, jjtrav
   public abstract String symbolName();
 
   public abstract String toString();
+
+  public abstract int compareTo(Object o);
 
   public int getUniqueIdentifier() {
     return uniqueID;

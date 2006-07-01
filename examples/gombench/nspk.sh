@@ -3,9 +3,12 @@ JAVA="java -classpath ..:${CLASSPATH}"
 TEXFILE=nspk.tex
 DATFILE=nspk.dat
 
-echo "#nbAgent maxMsg apigen gom" > ${DATFILE}
-echo "\hline" > ${TEXFILE}
-echo "Agents & Messages & {\\apigen} & {\\gom} \\\\" >> ${TEXFILE}
+echo "#nbAgent maxMsg apigen gom gomv2" > ${DATFILE}
+echo "\\multicolumn{1}{c}{\\makebox[0cm][l]{\\rotatebox{45}{Agents}}}" >> ${TEXFILE}
+echo "  & \\multicolumn{1}{c}{\\makebox[0cm][l]{\\rotatebox{45}{Messages}}}" >> ${TEXFILE}
+echo "      & \\multicolumn{1}{c}{\\makebox[0cm][l]{\\rotatebox{45}{\\apigen}}}" >> ${TEXFILE}
+echo "            & \\multicolumn{1}{c}{\\makebox[0cm][l]{\\rotatebox{45}{\\gom}}}" >> ${TEXFILE}
+echo "	            & \\multicolumn{1}{c}{\\makebox[0cm][l]{\\rotatebox{45}{{\\gom} v.2}}} \\\\" >> ${TEXFILE}
 echo "\hline" >> ${TEXFILE}
 
 for i in `jot 10 1 10`; do
@@ -15,8 +18,11 @@ for i in `jot 10 1 10`; do
 	echo -n "${APITIME} & " >> ${TEXFILE}
 	echo -n "${APITIME} " >> ${DATFILE}
 	GOMTIME=`${JAVA} gombench.GomNsh 1 $i | awk -F'&' '{printf $4}'`
-	echo "${GOMTIME} \\\\" >> ${TEXFILE}
-	echo "${GOMTIME} " >> ${DATFILE}
+	echo -n "${GOMTIME} & " >> ${TEXFILE}
+	echo -n "${GOMTIME} " >> ${DATFILE}
+	GOMCMPTIME=`${JAVA} gombench.GomNshWithCompare 1 $i | awk -F'&' '{printf $4}'`
+	echo "${GOMCMPTIME} \\\\" >> ${TEXFILE}
+	echo "${GOMCMPTIME} " >> ${DATFILE}
 done
 
 for i in `jot 2 1 2`; do
@@ -26,6 +32,9 @@ for i in `jot 2 1 2`; do
 	echo -n "${APITIME} & " >> ${TEXFILE}
 	echo -n "${APITIME} " >> ${DATFILE}
 	GOMTIME=`${JAVA} -Xmx256m gombench.GomNsh 2 $i | awk -F'&' '{printf $4}'`
-	echo "${GOMTIME} \\\\" >> ${TEXFILE}
-	echo "${GOMTIME} " >> ${DATFILE}
+	echo -n "${GOMTIME} & " >> ${TEXFILE}
+	echo -n "${GOMTIME} " >> ${DATFILE}
+	GOMCMPTIME=`${JAVA} -Xmx256m gombench.GomNshWithCompare 2 $i | awk -F'&' '{printf $4}'`
+	echo "${GOMCMPTIME} \\\\" >> ${TEXFILE}
+	echo "${GOMCMPTIME} " >> ${DATFILE}
 done
