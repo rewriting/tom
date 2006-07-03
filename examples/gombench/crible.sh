@@ -5,8 +5,8 @@ listmax=500
 TEXFILE=crible.tex
 DATFILE=crible.dat
 
-echo "" > ${DATFILE}
-echo "" > ${DATFILE}.1.tmp
+echo -n "" > ${DATFILE}
+echo -n "" > ${DATFILE}.1.tmp
 echo "" > ${DATFILE}.2.tmp
 echo "" > ${DATFILE}.3.tmp
 echo "\\begin{tabular}{|l|rrr|}" > ${TEXFILE}
