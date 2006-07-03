@@ -9,7 +9,8 @@ echo "" > ${DATFILE}
 echo "" > ${DATFILE}.1.tmp
 echo "" > ${DATFILE}.2.tmp
 echo "" > ${DATFILE}.3.tmp
-echo "\hline" > ${TEXFILE}
+echo "\\begin{tabular}{|l|rrr|}" > ${TEXFILE}
+echo "\hline" >> ${TEXFILE}
 echo "Taille & Manuel & {\\apigen} & {\\tom} \\\\" >> ${TEXFILE}
 echo "\hline" >> ${TEXFILE}
 for i in `jot 10 $liststart $listmax`; do
@@ -25,4 +26,6 @@ for i in `jot 10 $liststart $listmax`; do
 	echo "$i  ${GOMTIME} " >> ${DATFILE}.3.tmp
 done
 
+echo "\hline" >> ${TEXFILE}
+echo "\end{tabular}" >> ${TEXFILE}
 cat ${DATFILE}.1.tmp ${DATFILE}.2.tmp ${DATFILE}.3.tmp >> ${DATFILE}
