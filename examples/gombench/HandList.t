@@ -74,7 +74,7 @@ public class HandList {
 
     elim(reverse(genere(max)));
     
-    System.out.println("HandList & "+max + " & " + (System.currentTimeMillis()-startChrono));
+    System.out.println("HandList & "+max + " & " + (System.currentTimeMillis()-startChrono)/1000.);
   }
 
   public final static void main(String[] args) {
