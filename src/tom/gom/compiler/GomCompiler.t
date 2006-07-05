@@ -162,6 +162,7 @@ public class GomCompiler {
               HookList operatorHooks = makeHooksFromHookDecls(`hookList);
               if (variadicOpClassName != null) { // We just processed a variadic operator
                 GomClass cons = `OperatorClass(operatorClassName,
+                                               abstracttypeName,
                                                variadicOpClassName,
                                                mappingName,
                                                sortClassName,
@@ -170,6 +171,7 @@ public class GomCompiler {
                 classList = `concGomClass(cons,classList*);
 
                 GomClass emptyClass = `OperatorClass(empty,
+                                                     abstracttypeName,
                                                      variadicOpClassName,
                                                      mappingName,
                                                      sortClassName,
@@ -185,6 +187,7 @@ public class GomCompiler {
                                                        cons);
               } else {
                 operatorClass = `OperatorClass(operatorClassName,
+                                               abstracttypeName,
                                                sortClassName,
                                                mappingName,
                                                sortClassName,

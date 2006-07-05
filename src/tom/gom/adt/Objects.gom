@@ -6,7 +6,14 @@ abstract syntax
 GomClass = VisitableFwdClass(className:ClassName,fwd:GomClass)
          | AbstractTypeClass(className:ClassName,visitor:ClassName,sortList:ClassNameList)
          | SortClass(className:ClassName,abstractType:ClassName,visitor:ClassName,forward:ClassName,operators:ClassNameList,slots:SlotFieldList)
-         | OperatorClass(className:ClassName,abstractType:ClassName,mapping:ClassName,sortName:ClassName,visitor:ClassName,slots:SlotFieldList,hooks:HookList)
+         | OperatorClass(className:ClassName,
+                         abstractType:ClassName,
+                         extendsType:ClassName,
+                         mapping:ClassName,
+                         sortName:ClassName,
+                         visitor:ClassName,
+                         slots:SlotFieldList,
+                         hooks:HookList)
          | VariadicOperatorClass(className:ClassName,
                                  abstractType:ClassName,
                                  sortName:ClassName,

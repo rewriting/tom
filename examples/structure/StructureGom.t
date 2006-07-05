@@ -123,7 +123,7 @@ public class StructureGom {
           } else if(v1>v2) {
             return 1;
           } else {
-            int res = compareStruc(s1,s2);
+            int res = s1.compareTo(s2);
             if(res == 0) {
               System.out.println("wrong order");
               System.out.println("s1 = " + s1);
@@ -576,80 +576,6 @@ public class StructureGom {
       }
     }
     return null;
-  }
-
-  public final static int compareStruc(StructuresAbstractType t1, StructuresAbstractType t2) {
-		while(true) {
-			if(t1 == t2) {
-				return 0;
-			}
-
-			if(t1 instanceof Struc && t2 instanceof Struc) {
-				Struc s1 = (Struc) t1;
-				Struc s2 = (Struc) t2;
-				String sym1 = s1.symbolName();
-				String sym2 = s2.symbolName();
-				int res = sym1.compareTo(sym2);
-				if(res != 0) {
-					return res;
-				} else { /* here we are sure there is at least one child */
-					t1 = (StructuresAbstractType)s1.getChildAt(0);
-					t2 = (StructuresAbstractType)s2.getChildAt(0);
-					continue;
-				}
-			} else if(t1 instanceof StrucCop && t2 instanceof StrucCop) {
-				StrucCop l1 = (StrucCop) t1;
-				StrucCop l2 = (StrucCop) t2;
-				if(l1.isEmptyconcCop()) {
-					return -1;
-				} else if(l2.isEmptyconcCop()) {
-					return 1;
-				} else {
-					int res = compareStruc(l1.getHeadconcCop(),l2.getHeadconcCop());
-					if(res != 0) {
-						return res;
-					} else {
-						t1 = l1.getTailconcCop();
-						t2 = l2.getTailconcCop();
-						continue;
-					}
-				}
-			} else if(t1 instanceof StrucPar && t2 instanceof StrucPar) {
-				StrucPar l1 = (StrucPar) t1;
-				StrucPar l2 = (StrucPar) t2;
-				if(l1.isEmptyconcPar()) {
-					return -1;
-				} else if(l2.isEmptyconcPar()) {
-					return 1;
-				} else {
-					int res = compareStruc(l1.getHeadconcPar(),l2.getHeadconcPar());
-					if(res != 0) {
-						return res;
-					} else {
-						t1 = l1.getTailconcPar();
-						t2 = l2.getTailconcPar();
-						continue;
-					}
-				}
-			} else if(t1 instanceof StrucSeq && t2 instanceof StrucSeq) {
-				StrucSeq l1 = (StrucSeq) t1;
-				StrucSeq l2 = (StrucSeq) t2;
-				if(l1.isEmptyconcSeq()) {
-					return -1;
-				} else if(l2.isEmptyconcSeq()) {
-					return 1;
-				} else {
-					int res = compareStruc(l1.getHeadconcSeq(),l2.getHeadconcSeq());
-					if(res != 0) {
-						return res;
-					} else {
-						t1 = l1.getTailconcSeq();
-						t2 = l2.getTailconcSeq();
-						continue;
-					}
-				}
-			} 
-		}
   }
 
   public String prettyPrint(StructuresAbstractType t) {

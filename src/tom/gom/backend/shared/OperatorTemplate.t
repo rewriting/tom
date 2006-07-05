@@ -33,6 +33,7 @@ import tom.gom.adt.objects.types.*;
 
 public class OperatorTemplate extends TemplateClass {
   ClassName abstractType;
+  ClassName extendsType;
   ClassName sortName;
   ClassName visitor;
   SlotFieldList slotList;
@@ -43,6 +44,7 @@ public class OperatorTemplate extends TemplateClass {
 
   public OperatorTemplate(ClassName className,
                           ClassName abstractType,
+                          ClassName extendsType,
                           ClassName sortName,
                           ClassName visitor,
                           SlotFieldList slots,
@@ -50,6 +52,7 @@ public class OperatorTemplate extends TemplateClass {
                           TemplateClass mapping) {
     super(className);
     this.abstractType = abstractType;
+    this.extendsType = extendsType;;
     this.sortName = sortName;
     this.visitor = visitor;
     this.slotList = slots;
@@ -62,7 +65,7 @@ public class OperatorTemplate extends TemplateClass {
     String classBody = %[
 package @getPackage()@;
 
-public class @className()@ extends @fullClassName(abstractType)@ implements tom.library.strategy.mutraveler.MuVisitable {
+public class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable {
   private static @className()@ proto = new @className()@();
   private int hashCode;
   private @className()@() {}
@@ -107,6 +110,9 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
     return "@className()@(@toStringChilds()@)";
   }
 
+  /**
+    * This method implements a lexicographic order
+    */
   public int compareTo(Object o) {
     /*
      * We do not want to compare with any object, only members of the module
@@ -117,11 +123,31 @@ public class @className()@ extends @fullClassName(abstractType)@ implements tom.
     /* return 0 for equality */
     if (ao == this)
       return 0;
-    /* do the hash values allow us to discriminate ? */
+    /* If not, compare the symbols */
+    int symbCmp = this.symbolName().compareTo(ao.symbolName());
+    if (symbCmp != 0)
+      return symbCmp;
+    /* last resort: compare the childs */
+    @className()@ tco = (@className()@) ao;
+    @genCompareChilds("tco")@
+    throw new RuntimeException("Unable to compare");
+  }
+
+  public int fastCompareTo(Object o) {
+    /*
+     * We do not want to compare with any object, only members of the module
+     * In case of invalid argument, throw a ClassCastException, as the java api
+     * asks for it
+     */
+    @fullClassName(abstractType)@ ao = (@fullClassName(abstractType)@) o;
+    /* return 0 for equality */
+    if (ao == this)
+      return 0;
+    /* use the hash values to discriminate */
     int hashCmp = this.hashCode - ao.hashCode();
     if (hashCmp != 0)
       return hashCmp;
-    /* If not, compare the symbols */
+    /* If not, compare the symbols : back to the normal order */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0)
       return symbCmp;

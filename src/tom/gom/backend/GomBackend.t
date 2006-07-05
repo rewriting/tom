@@ -129,13 +129,22 @@ public class GomBackend {
       }
       OperatorClass[className=className,
                     abstractType=abstracttype,
+                    extendsType=extendstype,
                     mapping=mapping,
                     sortName=sort,
                     visitor=visitorName,
                     slots=slots,
                     hooks=hooks] -> {
         GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
-        TemplateClass operator = templatefactory.makeOperatorTemplate(`className,`abstracttype,`sort,`visitorName,`slots,`hooks,getMappingTemplate(mappingClass));
+        TemplateClass operator = templatefactory.makeOperatorTemplate(
+            `className,
+            `abstracttype,
+            `extendstype,
+            `sort,
+            `visitorName,
+            `slots,
+            `hooks,
+            getMappingTemplate(mappingClass));
         operator.generateFile();
 
         TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(`className);
