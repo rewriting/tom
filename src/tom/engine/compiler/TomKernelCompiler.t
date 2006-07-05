@@ -126,6 +126,7 @@ public class TomKernelCompiler extends TomBase {
                */
               actionInst = (Instruction) compileStrategy.visit(actionInst);
               Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,patternList,rootpath,moduleName);
+              System.out.println("Matching automata: " + matchingAutomata);
               OptionList automataOptionList = `concOption();
               TomName label = compiler.getLabel(pa.getOption());
               if(label != null) {
@@ -239,7 +240,7 @@ public class TomKernelCompiler extends TomBase {
                                            SlotList termList,
                                            TomNumberList rootpath,
                                            String moduleName) {
-
+	  
     %match(SlotList termList) {
       concSlot() -> {    	  
         return action;        
@@ -272,7 +273,7 @@ public class TomKernelCompiler extends TomBase {
         if (TomAntiPatternUtils.hasAntiTerms(`currentTerm)){
         	// get the compiled anti-pattern
         	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchInstruction(action,
-        			`currentTerm, rootpath, moduleName);
+        			`currentTerm, rootpath, moduleName, this);
 			// bound the result with the result for the next term		
         	return `If(compiledAntiPattern,subAction,Nop());        		
         }
@@ -357,7 +358,7 @@ public class TomKernelCompiler extends TomBase {
 	
      	// get the compiled anti-pattern
      	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchInstruction(action,
-     			`currentTerm, rootpath, moduleName);
+     			`currentTerm, rootpath, moduleName, this);
 		// bound the result with the result for the next term		
      	return `If(compiledAntiPattern,subAction,Nop());
       }                                                                                    
@@ -980,6 +981,18 @@ public class TomKernelCompiler extends TomBase {
     }
     throw new TomRuntimeException("buildConstraint: unknown constraints: " + constraints);
   }
+  
+  public TomType getSlotType(String constructorName,TomName slotName, String moduleName){
+	  
+	  TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(constructorName);        	   
+	  return getSlotType(tomSymbol,slotName);
+  }
+  
+  public TomType getTermType(TomTerm t,String moduleName){ 
+      
+      return getTermType(t, getSymbolTable(moduleName));      
+  }
+  
 
 
   private static class MatchingParameter {
