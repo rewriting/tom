@@ -31,22 +31,28 @@ package tom.engine.compiler.antipattern;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
+import tom.engine.adt.tomexpression.types.expression.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 
 import tom.engine.exception.*;
+import tom.engine.compiler.*;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
+
+import java.util.*;
 
 /**
  * Class that contains utility functions used for antipattern compilation
@@ -56,6 +62,7 @@ public class TomAntiPatternUtils{
 // ------------------------------------------------------------
 	%include { adt/tomsignature/TomSignature.tom }
 	%include { mutraveler.tom}
+	%include { java/util/ArrayList.tom}
 // ------------------------------------------------------------
 	
 	// helping variables used inside strategies
@@ -108,7 +115,8 @@ public class TomAntiPatternUtils{
 	public static Expression getAntiPatternMatchInstruction(Instruction action,
 			TomTerm tomTerm,
 			TomNumberList rootpath,
-			String moduleName) {
+			String moduleName,
+			TomKernelCompiler compiler) {
 		
 		System.out.println("Action:" + action);
 		System.out.println("TomTerm:" + tomTerm);
@@ -133,8 +141,123 @@ public class TomAntiPatternUtils{
 		// launch the constraint compiler
 		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);		
 		
-		return `EqualTrueAntiPatternMatch("TomConstraintSolver.solve", compiledApProblem);		
+		ArrayList variablesList = new ArrayList();
+		try{		
+			compiledApProblem = (Constraint)MuTraveler.init(`InnermostId(ExtractVariables(variablesList))).visit(compiledApProblem);
+		}catch(VisitFailure e){
+			throw new RuntimeException("VisitFailure occured:" + e);
+		}
+		
+		// TODO - manage the variables
+		
+		return getTomMappingForConstraint(compiledApProblem,compiler,moduleName);
+		//return `EqualTrueAntiPatternMatch("TomConstraintSolver.solve", compiledApProblem);		
 	}	
+	
+	%strategy ExtractVariables(list:ArrayList) extends `Identity(){
+		
+		visit Constraint{
+			
+			AndConstraint(concAnd(X*,EqualConstraint(v@Variable[],_),Y*))->{
+				list.add(`v);
+				return `AndConstraint(concAnd(X*,Y*));
+			}
+			OrConstraint(concOr(X*,EqualConstraint(v@Variable[],_),Y*))->{
+				list.add(`v);
+				return `OrConstraint(concOr(X*,Y*));
+			}
+		}
+	}
+	
+	private static Expression getTomMappingForConstraint(Constraint c,
+			TomKernelCompiler compiler,
+			String moduleName) {
+		
+		%match(Constraint c) {
+			AndConstraint(concAnd(a,b*))->{
+				return `And(getTomMappingForConstraint(a,compiler,moduleName),
+						getTomMappingForConstraint(AndConstraint(concAnd(b*)),compiler,moduleName));
+			}
+			OrConstraint(concOr(a,b*))->{
+				return `Or(getTomMappingForConstraint(a,compiler,moduleName),
+						getTomMappingForConstraint(OrConstraint(concOr(b*)),compiler,moduleName));
+			}
+			pattern@(EqualConstraint|NEqualConstraint)(t,SymbolOf(term)) ->{
+				
+				TomType type = null;
+				TomTerm transformedTerm = null;
+				
+				// if it is a Subterm
+				if (`term 
+						instanceof Subterm){
+					Expression exprTrans = transformTerm(`term,compiler,moduleName);
+					transformedTerm = `ExpressionToTomTerm(exprTrans);
+					type = exprTrans.getCodomain();
+				}else{ 
+					type = compiler.getTermType(`term,moduleName);
+					transformedTerm = `term;
+				}
+				
+				return (`pattern 
+						instanceof EqualConstraint) ? `EqualFunctionSymbol(type,transformedTerm,t)
+						: `Negation(EqualFunctionSymbol(type,transformedTerm,t));				
+			}
+			pattern@(EqualConstraint|NEqualConstraint)(t1,t2) ->{
+				
+				Expression transformedT1 = transformTerm(`t1,compiler,moduleName);
+				Expression transformedT2 = transformTerm(`t2,compiler,moduleName);
+				// type	should be the same
+				if (`pattern 
+						instanceof EqualConstraint){
+					return `EqualTerm(compiler.getTermType(t1,moduleName),
+								ExpressionToTomTerm(transformedT1),
+								ExpressionToTomTerm(transformedT2));
+				}
+				
+				return `Negation(EqualTerm(compiler.getTermType(t1,moduleName),
+						ExpressionToTomTerm(transformedT1),
+						ExpressionToTomTerm(transformedT2)));
+			}
+			
+		}
+		
+		throw new TomRuntimeException();
+	}
+	
+	/**
+	 * Transforms from "Subterm" to "GetSlot"
+	 * @param t term to transform
+	 * @return corresponding "GetSlot"
+	 */
+	private static Expression transformTerm(TomTerm t, 
+			TomKernelCompiler compiler,
+			String moduleName) {
+		
+		%match(TomTerm t) {
+			
+           Subterm(constructorName,slotName, currentTerm@Subterm[])->{                 		        
+          
+        	   // get the transformed term 
+        	   Expression transformedTerm = transformTerm(`currentTerm,compiler,moduleName);
+        	   
+        	   // get the type for the subterm        	           	   
+        	   TomType subtermType = compiler.getSlotType(`constructorName.getString(),`slotName,moduleName);
+        	   
+        	   TomTerm var = null;
+        	   
+        	   // if we find just a wrapper, throw it away
+        	   var = (transformedTerm instanceof TomTermToExpression) ? transformedTerm.getAstTerm():
+        		   `ExpressionToTomTerm(transformedTerm);
+        	   
+        	   return `GetSlot(subtermType,constructorName,
+						slotName.getString(),var);
+		   }
+           term@RecordAppl[] ->{
+        	   return `TomTermToExpression(term);
+           }
+		}
+		throw new TomRuntimeException("Unable to transform term: " + t);
+	}
 	
 	public static boolean containsVariable(Constraint c, TomTerm v){
 		

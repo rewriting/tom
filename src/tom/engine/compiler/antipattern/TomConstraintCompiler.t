@@ -87,6 +87,44 @@ public class TomConstraintCompiler{
 		return compiledConstraint;
 	}	
 	
+//	public static Instruction getConstraintAutomata(Constraint compiledConstraint
+//													Instruction action,										            
+//										            TomNumberList rootpath,
+//										            String moduleName){
+//		
+//		%match(compiledConstraint)->{
+//			
+//			AndConstraint(concAnd(cons1,X*))->{
+//				
+//				Instruction action = getConstraintAutomata(action,`cons1,rootpath,moduleName);
+//				Instruction subAction = getConstraintAutomata(action,`AndConstraint(concAnd(X*)),rootpath,moduleName);
+//				
+//				return `If(action,subaction,Nop());
+//			}
+//			
+//			OrConstraint(concOr(cons1,X*))->{
+//				
+//				Instruction action = getConstraintAutomata(action,`cons1,rootpath,moduleName);
+//				Instruction subAction = getConstraintAutomata(action,`AndConstraint(concAnd(X*)),rootpath,moduleName);
+//				
+//				
+//			}
+//			
+//			Or(concOr(t1,t2,X*))->{
+//				
+//			}
+//			
+//			EqualConstraint(var@Variable[])->{
+//				
+//			}
+//			
+//			NEqualConstraint()->{
+//				
+//			}
+//		}
+//		
+//	}
+	
 	/**
 	 *  Strategy that contains the disunification rules
 	 */
@@ -328,7 +366,9 @@ public class TomConstraintCompiler{
 				int counter = 0;
 				
 				while(!args1.isEmptyconcSlot()) {
-					l = `concAnd(EqualConstraint(args1.getHeadconcSlot().getAppl(),Subterm(++counter,g)),l*);					
+					Slot headSlot = args1.getHeadconcSlot();
+					l = `concAnd(EqualConstraint(headSlot.getAppl(),Subterm(name.getHeadconcTomName()
+							,headSlot.getSlotName(),g)),l*);					
 					args1 = args1.getTailconcSlot();										
 				}
 				
@@ -349,7 +389,9 @@ public class TomConstraintCompiler{
 				int counter = 0;
 				
 				while(!args1.isEmptyconcSlot()) {
-					l = `concOr(NEqualConstraint(args1.getHeadconcSlot().getAppl(),Subterm(++counter,g)),l*);					
+					Slot headSlot = args1.getHeadconcSlot();
+					l = `concOr(NEqualConstraint(headSlot.getAppl(),Subterm(name.getHeadconcTomName()
+							,headSlot.getSlotName(),g)),l*);					
 					args1 = args1.getTailconcSlot();										
 				}
 				
