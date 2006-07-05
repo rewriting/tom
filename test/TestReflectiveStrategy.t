@@ -125,6 +125,25 @@ public class TestReflectiveStrategy extends TestCase {
     assertEquals("matchAll should return 1 with `BottomUp(S3()).apply(`All(All(All(All(Identity())))))", 1, matchAll((MuStrategy)`BottomUp(S3()).apply(`All(All(All(All(Identity())))))));
   }
 
+  public void test26() {
+    assertEquals("countAll should return 3 with `All(S2(0, \"\", All(All(Identity()))))", 3, countAll(`All(S2(0, "", All(All(Identity()))))));
+  }
+
+  public void test27() {
+    assertEquals("countAll should return 2 with `BottomUp(S3()).apply(`All(S2(0, \"\", All(All(Identity())))))", 2, countAll((MuStrategy)`BottomUp(S3()).apply(`All(S2(0, "", All(All(Identity())))))));
+  }
+
+  public void test28() {
+    assertEquals("countAll should return 6 with `All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 6, countAll(`All(S4(All(All(Identity())), 0, All(All(All(Identity())))))));
+  }
+
+  public void test29() {
+    assertEquals("countAll should return 3 with `BottomUp(S3()).apply(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))", 3, countAll((MuStrategy)`BottomUp(S3()).apply(`All(S4(All(All(Identity())), 0, All(All(All(Identity()))))))));
+  }
+
+  public void test30() {
+    assertEquals("countAll should return 2 with `BottomUp(S5()).apply(`S4(Identity(), 0, Fail()))", 2, countAll((MuStrategy)`BottomUp(S5()).apply(`S4(Identity(), 0, Fail()))));
+  }
 
   // matching basic strategy
   public boolean matchIdentity(MuStrategy s) {
@@ -218,6 +237,35 @@ public class TestReflectiveStrategy extends TestCase {
   %strategy S3() extends `Identity() {
     visit Strategy {
       All(All(x)) -> { return `All(x); }
+    }
+  }
+
+  %strategy S4(s1:Strategy, i:int, s2:Strategy) extends `Fail() {
+    visit Strategy {
+      Identity() -> { return `s1; }
+      Fail() -> { return `All(s2); }
+    }
+  }
+
+  %strategy S5() extends `Identity() {
+    visit Strategy {
+      Fail() -> { return `All(Identity()); }
+    }
+  }
+
+  // count the number of All nodes
+  public class Counter { public int count = 0; }
+  %typeterm Counter {
+    implement { Counter }
+  }
+  public int countAll(MuStrategy s) {
+    Counter c = new Counter();
+    `TopDown(incAll(c)).apply(s);
+    return c.count;
+  }
+  %strategy incAll(c:Counter) extends `Identity() {
+    visit Strategy {
+      All(_) -> { c.count++; }
     }
   }
 }

@@ -91,12 +91,23 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     TomTypeList tomTypes = getSymbolDomain(tomSymbol);
     ArrayList names = new ArrayList();
     ArrayList types = new ArrayList();
+    ArrayList stratChild = new ArrayList(); // child of type Strategy.
+
     //initialize arrayList with argument names
     int index = 0;
     while(!tomTypes.isEmptyconcTomType()) {
 	    TomType type = tomTypes.getHeadconcTomType();
 	    types.add(getTLType(type));
-      names.add(getSlotName(tomSymbol, index).getString());
+      String name = getSlotName(tomSymbol, index).getString();
+      names.add(name);
+
+      // test if the argument is a Strategy
+      %match(TomType type) {
+        Type(ASTTomType("Strategy"), _) -> {
+          stratChild.add(new Integer(index));
+        }
+      }
+
 	    tomTypes = tomTypes.getTailconcTomType();
 	    index++;
     }
@@ -140,6 +151,31 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     for (int i = 0 ; i < args ; i++) {
       output.write(deep, "public " + types.get(i) + " get" + names.get(i) + "() { return " + names.get(i) + ";}");
     }
+
+    // write getChildCount (= 1 + stratChildCount because of the %strategy `extends' which is the first child)
+    int stratChildCount = stratChild.size();
+    output.write(deep, "public int getChildCount() { return " + (stratChildCount + 1) + "; }");
+
+    // write getChildAt
+    output.write(deep, "public jjtraveler.Visitable getChildAt(int i) {");
+    output.write(deep, "switch (i) {");
+    output.write(deep, "case 0: return super.getChildAt(0);");
+    for (int i = 0; i < stratChildCount; i++) {
+      output.write(deep, "case " + (i+1) + ": return get" + names.get(((Integer)stratChild.get(i)).intValue()) + "();");
+    }
+    output.write(deep, "default: throw new IndexOutOfBoundsException();");
+    output.write(deep, "}}");
+
+    // write setChildAt
+    output.write(deep, "public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {");
+    output.write(deep, "switch (i) {");
+    output.write(deep, "case 0: return super.setChildAt(0, child);");
+    for (int i = 0; i < stratChildCount; i++) {
+      int j = ((Integer)stratChild.get(i)).intValue();
+      output.write(deep, "case " + (i+1) + ": " + names.get(j) + " = (" + types.get(j) + ")child; return this;");
+    }
+    output.write(deep, "default: throw new IndexOutOfBoundsException();");
+    output.write(deep, "}}");
 
     generateDeclaration(deep,`declaration,moduleName);
     output.write(deep,"}");
