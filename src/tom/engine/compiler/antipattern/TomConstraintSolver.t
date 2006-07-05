@@ -306,7 +306,8 @@ public class TomConstraintSolver{
 				int counter = 0;
 				
 				while(!args1.isEmptyconcSlot()) {
-					l = `concAnd(EqualConstraint(args1.getHeadconcSlot().getAppl(),Subterm(++counter,g)),l*);					
+          // TODO: this is incorrect and should be fixed
+					// l = `concAnd(EqualConstraint(args1.getHeadconcSlot().getAppl(),Subterm(++counter,g)),l*);					
 					args1 = args1.getTailconcSlot();										
 				}
 				
@@ -327,7 +328,8 @@ public class TomConstraintSolver{
 				int counter = 0;
 				
 				while(!args1.isEmptyconcSlot()) {
-					l = `concOr(NEqualConstraint(args1.getHeadconcSlot().getAppl(),Subterm(++counter,g)),l*);					
+          // TODO: this is incorrect and should be fixed
+					// l = `concOr(NEqualConstraint(args1.getHeadconcSlot().getAppl(),Subterm(++counter,g)),l*);					
 					args1 = args1.getTailconcSlot();										
 				}
 				

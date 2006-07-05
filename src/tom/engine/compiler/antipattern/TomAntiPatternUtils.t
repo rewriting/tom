@@ -57,7 +57,7 @@ import java.util.*;
 /**
  * Class that contains utility functions used for antipattern compilation
  */
-public class TomAntiPatternUtils{
+public class TomAntiPatternUtils {
 	
 // ------------------------------------------------------------
 	%include { adt/tomsignature/TomSignature.tom }

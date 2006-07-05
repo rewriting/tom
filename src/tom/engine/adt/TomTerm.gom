@@ -27,12 +27,12 @@ TomTerm = TermAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constrain
         | SubjectList(TomList:TomList)
         | Term(TomTerm:TomTerm)
         | AntiTerm(TomTerm:TomTerm)
-//        | Subterm(nr:int,groundTerm:TomTerm)
-		// AstName - from whom (function symbol name) to extract
-		// SlotName - what to extract
-		// GroundTerm - from where to extract
-		| Subterm(AstName:TomName,SlotName:TomName,GroundTerm:TomTerm)
- 	    | SymbolOf(groundTerm:TomTerm)
+        // | Subterm(nr:int,groundTerm:TomTerm)
+        // AstName - from whom (function symbol name) to extract
+        // SlotName - what to extract
+        // GroundTerm - from where to extract
+        | Subterm(AstName:TomName,SlotName:TomName,GroundTerm:TomTerm)
+        | SymbolOf(groundTerm:TomTerm)
         | TLVar(StrName:String,AstType:TomType)
         | Ref(TomTerm:TomTerm)
         | BuildReducedTerm(Kid1:TomTerm)
