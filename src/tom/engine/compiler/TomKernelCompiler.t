@@ -51,6 +51,7 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 import tom.engine.compiler.antipattern.*;
+import tom.engine.adt.tomterm.types.tomterm.*;
 
 public class TomKernelCompiler extends TomBase {
 
@@ -146,6 +147,7 @@ public class TomKernelCompiler extends TomBase {
             InstructionList astAutomataList = compiler.automataListCompileMatchingList(automataList);
             SlotList slots = tomListToSlotList(`l1);
             Instruction astAutomata = compiler.collectVariableFromSubjectList(slots,rootpath,`AbstractBlock(astAutomataList),moduleName);
+ //           System.out.println("Matching compiled: " + `CompiledMatch(astAutomata, optionList));
             return `CompiledMatch(astAutomata, optionList);
           }
         } // end match
@@ -989,7 +991,7 @@ public class TomKernelCompiler extends TomBase {
   }
   
   public TomType getTermType(TomTerm t,String moduleName){ 
-      
+      if (t instanceof TLVar) return ((TLVar)t).getAstType();
       return getTermType(t, getSymbolTable(moduleName));      
   }
   
