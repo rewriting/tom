@@ -148,9 +148,13 @@ public class TomAntiPatternUtils {
 			throw new RuntimeException("VisitFailure occured:" + e);
 		}
 		
-		// TODO - manage the variables
+		System.out.println("No variables' constraint:" + TomAntiPatternUtils.formatConstraint(compiledApProblem));
 		
-		return getTomMappingForConstraint(compiledApProblem,compiler,moduleName);
+		// TODO - manage the variables
+		Expression debug = getTomMappingForConstraint(compiledApProblem,compiler,moduleName);
+		System.out.println("Transformed constraint:" + debug);
+		return debug;
+		//return getTomMappingForConstraint(compiledApProblem,compiler,moduleName);
 		//return `EqualTrueAntiPatternMatch("TomConstraintSolver.solve", compiledApProblem);		
 	}	
 	
@@ -164,7 +168,8 @@ public class TomAntiPatternUtils {
 			}
 			OrConstraint(concOr(X*,EqualConstraint(v@Variable[],_),Y*))->{
 				list.add(`v);
-				return `OrConstraint(concOr(X*,Y*));
+				return `TrueConstraint();
+				//return `OrConstraint(concOr(X*,Y*));
 			}
 		}
 	}
@@ -178,9 +183,15 @@ public class TomAntiPatternUtils {
 				return `And(getTomMappingForConstraint(a,compiler,moduleName),
 						getTomMappingForConstraint(AndConstraint(concAnd(b*)),compiler,moduleName));
 			}
+			AndConstraint(concAnd())->{
+				return `TrueTL();
+			}
 			OrConstraint(concOr(a,b*))->{
 				return `Or(getTomMappingForConstraint(a,compiler,moduleName),
 						getTomMappingForConstraint(OrConstraint(concOr(b*)),compiler,moduleName));
+			}
+			OrConstraint(concOr())->{
+				return `FalseTL();
 			}
 			pattern@(EqualConstraint|NEqualConstraint)(t,SymbolOf(term)) ->{
 				
@@ -221,7 +232,7 @@ public class TomAntiPatternUtils {
 			
 		}
 		
-		throw new TomRuntimeException();
+		throw new TomRuntimeException("Strange constraint:" + c);
 	}
 	
 	/**
@@ -235,7 +246,7 @@ public class TomAntiPatternUtils {
 		
 		%match(TomTerm t) {
 			
-           Subterm(constructorName,slotName, currentTerm@Subterm[])->{                 		        
+           Subterm(constructorName,slotName, currentTerm)->{                 		        
           
         	   // get the transformed term 
         	   Expression transformedTerm = transformTerm(`currentTerm,compiler,moduleName);
@@ -252,7 +263,7 @@ public class TomAntiPatternUtils {
         	   return `GetSlot(subtermType,constructorName,
 						slotName.getString(),var);
 		   }
-           term@RecordAppl[] ->{
+           term@(RecordAppl|TLVar)[] ->{
         	   return `TomTermToExpression(term);
            }
 		}

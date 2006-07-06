@@ -11,4 +11,6 @@ TODO
 	SubTerm = ?
 7. if the compiler generates True or False then return directly 
 	this result without passing it to the solver
+8. recomment TLVar from abstract generator - line 184 / 291
+9. solve the problem with demanding the slots when the do not exist
  	
