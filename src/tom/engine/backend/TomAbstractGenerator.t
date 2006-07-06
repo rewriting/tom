@@ -180,10 +180,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      /*TLVar[strName=name] -> {
+      //TODO - recomment
+      TLVar[StrName=name] -> {
 	      output.write(`name);
 	      return;
-      }*/
+      }
 
       TargetLanguageToTomTerm(t) -> {
         generateTargetLanguage(deep,`t, moduleName);
@@ -287,8 +288,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         buildExpCast(deep, `tlType, `exp, moduleName);
         return;
       }
-
-      GetSlot(_,Name(opname),slotName, var@Variable[]) -> {
+      //TODO - remove TLVar ?
+      GetSlot(_,Name(opname),slotName, var@(Variable|TLVar)[]) -> {
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;
       }
