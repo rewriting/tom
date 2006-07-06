@@ -628,7 +628,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
            res+= %[
     /* Inefficient total order on ATerm */
-    int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).@compareFun@((@other@.@fieldName(`slotName)@).toString());
+    int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).compareTo((@other@.@fieldName(`slotName)@).toString());
     if(@fieldName(`slotName)@Cmp != 0)
       return @fieldName(`slotName)@Cmp;
 ]%;
