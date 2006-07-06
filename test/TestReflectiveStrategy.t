@@ -254,7 +254,7 @@ public class TestReflectiveStrategy extends TestCase {
   }
 
   // count the number of All nodes
-  public class Counter { public int count = 0; }
+  private static  class Counter { public int count = 0; }
   %typeterm Counter {
     implement { Counter }
   }
