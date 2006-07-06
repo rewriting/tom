@@ -126,7 +126,7 @@ public class TomKernelCompiler extends TomBase {
                */
               actionInst = (Instruction) compileStrategy.visit(actionInst);
               Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,patternList,rootpath,moduleName);
-              System.out.println("Matching automata: " + matchingAutomata);
+//              System.out.println("Matching automata: " + matchingAutomata);
               OptionList automataOptionList = `concOption();
               TomName label = compiler.getLabel(pa.getOption());
               if(label != null) {
