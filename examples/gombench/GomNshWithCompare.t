@@ -172,7 +172,7 @@ public class GomNshWithCompare {
     
       //System.out.println("m1 = " + s1);
       //System.out.println("m2 = " + s2);
-    int res = m1.fastCompareTo(m2);
+    int res = m1.compareTo(m2);
     
     return res;
   }
@@ -199,7 +199,7 @@ public class GomNshWithCompare {
     
       //System.out.println("m1 = " + s1);
       //System.out.println("m2 = " + s2);
-    int res = m1.fastCompareTo(m2);
+    int res = m1.compareTo(m2);
     
     return res;
   }

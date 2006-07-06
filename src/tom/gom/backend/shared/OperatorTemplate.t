@@ -113,7 +113,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
   /**
     * This method implements a lexicographic order
     */
-  public int compareTo(Object o) {
+  public int compareToLPO(Object o) {
     /*
      * We do not want to compare with any object, only members of the module
      * In case of invalid argument, throw a ClassCastException, as the java api
@@ -123,17 +123,17 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     /* return 0 for equality */
     if (ao == this)
       return 0;
-    /* If not, compare the symbols */
+    /* compare the symbols */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0)
       return symbCmp;
-    /* last resort: compare the childs */
+    /* compare the childs */
     @className()@ tco = (@className()@) ao;
-    @genCompareChilds("tco")@
+    @genCompareChilds("tco","compareToLPO")@
     throw new RuntimeException("Unable to compare");
   }
 
-  public int fastCompareTo(Object o) {
+  public int compareTo(Object o) {
     /*
      * We do not want to compare with any object, only members of the module
      * In case of invalid argument, throw a ClassCastException, as the java api
@@ -153,7 +153,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
       return symbCmp;
     /* last resort: compare the childs */
     @className()@ tco = (@className()@) ao;
-    @genCompareChilds("tco")@
+    @genCompareChilds("tco","compareTo")@
     throw new RuntimeException("Unable to compare");
   }
 
@@ -607,7 +607,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return res.substring(0,res.length()-1);
   }
 
-  private String genCompareChilds(String other) {
+  private String genCompareChilds(String other, String compareFun) {
     String res = "";
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
@@ -628,7 +628,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
            res+= %[
     /* Inefficient total order on ATerm */
-    int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).compareTo((@other@.@fieldName(`slotName)@).toString());
+    int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).@compareFun@((@other@.@fieldName(`slotName)@).toString());
     if(@fieldName(`slotName)@Cmp != 0)
       return @fieldName(`slotName)@Cmp;
 ]%;
@@ -637,7 +637,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
          }
         } else {
           res+= %[
-    int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).compareTo(@other@.@fieldName(`slotName)@);
+    int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).@compareFun@(@other@.@fieldName(`slotName)@);
     if(@fieldName(`slotName)@Cmp != 0)
       return @fieldName(`slotName)@Cmp;
 ]%; 

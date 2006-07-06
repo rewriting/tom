@@ -123,7 +123,7 @@ public class StructureGom {
           } else if(v1>v2) {
             return 1;
           } else {
-            int res = s1.compareTo(s2);
+            int res = s1.compareToLPO(s2);
             if(res == 0) {
               System.out.println("wrong order");
               System.out.println("s1 = " + s1);
