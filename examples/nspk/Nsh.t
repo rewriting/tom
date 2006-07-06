@@ -173,12 +173,9 @@ public class Nsh {
 
     }
     
-    String s1 = m1.toString();
-    String s2 = m2.toString();
-    
       //System.out.println("m1 = " + s1);
       //System.out.println("m2 = " + s2);
-    int res = s1.compareTo(s2);
+    int res = m1.compareTo(m2);
     
     return res;
   }
@@ -203,12 +200,9 @@ public class Nsh {
      
     }
     
-    String s1 = m1.toString();
-    String s2 = m2.toString();
-    
       //System.out.println("m1 = " + s1);
       //System.out.println("m2 = " + s2);
-    int res = s1.compareTo(s2);
+    int res = m1.compareTo(m2);
     
     return res;
   }
