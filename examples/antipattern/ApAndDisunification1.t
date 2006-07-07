@@ -70,7 +70,7 @@ public class ApAndDisunification1 implements Matching{
 		// replace the match with =
 		label:%match(Constraint c){
 			Match(p,s) -> { 
-				transformedMatch = `Equal(p,s /*GenericGroundTerm("SUBJECT")*/);
+				transformedMatch = `Equal(p,s/*GenericGroundTerm("SUBJECT")*/);
 
 				break label;
 			}
@@ -100,8 +100,7 @@ public class ApAndDisunification1 implements Matching{
 			e.printStackTrace();
 		}
 		
-//		 System.out.println("Disunification problem: " +
-//		 formatConstraint(disunifProblem));
+//		 System.out.println("Disunification problem: " + tools.formatConstraint(disunifProblem));
 		
 		// apply the disunification rules
 		Constraint compiledConstraint = null, solvedConstraint = null;
@@ -126,8 +125,8 @@ public class ApAndDisunification1 implements Matching{
 //		System.out.println("Final result formated: " + tools.formatConstraint(compiledConstraint));
 //		System.out.println("Final result solved: " + tools.formatConstraint(solvedConstraint));
 	
-		System.out.println("Number of rules applied: " + rulesCounter);
-		System.out.println("Time passed: " + (System.currentTimeMillis() - timeStart) + " ms");
+//		System.out.println("Number of rules applied: " + rulesCounter);
+//		System.out.println("Time passed: " + (System.currentTimeMillis() - timeStart) + " ms");
 		
 //		return solvedConstraint;
 		return compiledConstraint;
@@ -273,7 +272,7 @@ public class ApAndDisunification1 implements Matching{
 					l = l.getTailconcAnd();
 				}				
 				
-				return `Or(result);
+				return `Or(result.reverse());
 			}
 			
 			// make Neg go down - de morgan 2
@@ -287,7 +286,7 @@ public class ApAndDisunification1 implements Matching{
 					l = l.getTailconcOr();
 				}
 				
-				return `And(result);
+				return `And(result.reverse());
 			}
 			
 			// BooleanSimplification
@@ -377,6 +376,9 @@ public class ApAndDisunification1 implements Matching{
 					return `e;
 				}
 				
+				result = result.reverse();
+				result1 = result1.reverse();
+				
 				// if not all were separated
 				if (!result1.isEmptyconcAnd()){
 					result = `concAnd(Exists(v,And(result1)),result*);
@@ -434,6 +436,9 @@ public class ApAndDisunification1 implements Matching{
 				if (result.isEmptyconcOr()){
 					return `f;
 				}
+				
+				result = result.reverse();
+				result1 = result1.reverse();
 				
 				// if not all were separated
 				if (!result1.isEmptyconcOr()){
@@ -552,6 +557,8 @@ public class ApAndDisunification1 implements Matching{
 					args1 = args1.getTailconcTerm();										
 				}
 				
+				l = l.reverse();
+				
 				l = `concAnd(Equal(Appl(name,concTerm()),SymbolOf(g)),l*);
 				
 				return `And(l);
@@ -572,6 +579,8 @@ public class ApAndDisunification1 implements Matching{
 					l = `concOr(NEqual(args1.getHeadconcTerm(),Subterm(++counter,g)),l*);					
 					args1 = args1.getTailconcTerm();										
 				}
+				
+				l = l.reverse();
 				
 				l = `concOr(NEqual(Appl(name,concTerm()),SymbolOf(g)),l*);
 				
@@ -838,6 +847,9 @@ public class ApAndDisunification1 implements Matching{
 					return `e;
 				}
 				
+				result = result.reverse();
+				result1 = result1.reverse();
+				
 				// if not all were separated
 				if (!result1.isEmptyconcAnd()){
 					result = `concAnd(Exists(v,And(result1)),result*);
@@ -895,6 +907,9 @@ public class ApAndDisunification1 implements Matching{
 				if (result.isEmptyconcOr()){
 					return `f;
 				}
+				
+				result = result.reverse();
+				result1 = result1.reverse();
 				
 				// if not all were separated
 				if (!result1.isEmptyconcOr()){
@@ -1018,6 +1033,7 @@ public class ApAndDisunification1 implements Matching{
 					args2 = args2.getTailconcTerm();					
 				}
 				rulesCounter++;
+				l = l.reverse();
 				return `And(l/*.reverseConstraintList()*/);
 			}
 			
@@ -1032,6 +1048,7 @@ public class ApAndDisunification1 implements Matching{
 					args2 = args2.getTailconcTerm();					
 				}
 				rulesCounter++;
+				l = l.reverse();
 				return `Or(l/*.reverseConstraintList()*/);
 			}			
 			
