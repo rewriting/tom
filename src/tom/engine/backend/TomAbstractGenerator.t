@@ -180,7 +180,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      //TODO - recomment
+      //TODO:radu - recomment
       TLVar[StrName=name] -> {
 	      output.write(`name);
 	      return;
@@ -288,8 +288,12 @@ public abstract class TomAbstractGenerator extends TomBase {
         buildExpCast(deep, `tlType, `exp, moduleName);
         return;
       }
-      //TODO - remove TLVar ?
-      GetSlot(_,Name(opname),slotName, var@(Variable|TLVar)[]) -> {
+      //TODO:radu - remove TLVar 
+      GetSlot(_,Name(opname),slotName, var@(Variable|TLVar|ExpressionToTomTerm)[]) -> {    	  
+        `buildExpGetSlot(deep, opname, slotName, var, moduleName);
+        return;
+      }
+      GetSlot(_,Name(opname),slotName, var@ExpressionToTomTerm(GetSlot[])) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;
       }
@@ -332,16 +336,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       TomTermToExpression(t) -> {
         generate(deep,`t, moduleName);
         return;
-      }
-      
-      EqualTrueAntiPatternMatch(tlFunctionCall,compiledApMatch) ->{
-    	// builds a function call with a single argument
-    	// which is the string representation of the constraint
-    	buildFunctionCall(deep,`tlFunctionCall,
-    			`concTomTerm(TargetLanguageToTomTerm(ITL("\"" + compiledApMatch.toString() + "\""))),moduleName);    	
-    	return;
-      }
-
+      }      
       t -> {
         System.out.println("Cannot generate code for expression: " + `t);
         throw new TomRuntimeException("Cannot generate code for expression: " + `t);
