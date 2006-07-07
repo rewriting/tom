@@ -273,11 +273,8 @@ public class TomKernelCompiler extends TomBase {
     	// if the termList contains antipatterns then the compiler for the 
     	// antipatterns has to be called
         if (TomAntiPatternUtils.hasAntiTerms(`currentTerm)){
-        	// get the compiled anti-pattern
-        	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchInstruction(action,
-        			`currentTerm, rootpath, moduleName, this);
-			// bound the result with the result for the next term		
-        	return `If(compiledAntiPattern,subAction,Nop());        		
+        	return getAntiPatternMatchInstruction(action,`currentTerm, rootpath, 
+           			moduleName, subAction);      		
         }
 
         // find the codomain of (f|g) [* should be the same *]
@@ -351,22 +348,48 @@ public class TomKernelCompiler extends TomBase {
         return `If(cond,automataInstruction,Nop());
       }
       // !f
-      // TODO - factorize with the one on top ?
       concSlot(PairSlotAppl(slotName,
               currentTerm@AntiTerm(RecordAppl[NameList=nameList@(Name(tomName),_*),
                                      Slots=termArgs])),termTail*) -> {
 		// recursively call the algorithm on termTail
 	    Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);        
 	
-     	// get the compiled anti-pattern
-     	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchInstruction(action,
-     			`currentTerm, rootpath, moduleName, this);
-		// bound the result with the result for the next term		
-     	return `If(compiledAntiPattern,subAction,Nop());
+     	return getAntiPatternMatchInstruction(action,`currentTerm, rootpath, 
+       			moduleName, subAction);
       }                                                                                    
     } // end match
     System.out.println("GenSyntacticMatchingAutomata strange term: " + termList);
     throw new TomRuntimeException("GenSyntacticMatchingAutomata strange term: " + termList);
+  }
+  
+  /**
+   * compiles anti-pattern matching
+   */
+  Instruction getAntiPatternMatchInstruction(Instruction action,
+			TomTerm currentTerm,
+			TomNumberList rootpath,
+			String moduleName,
+			Instruction subAction){
+    
+	// get the compiled anti-pattern
+   	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchExpression(action,
+   			currentTerm, rootpath, moduleName, this);
+   	
+   	// if the result is false, no need to generate anything
+   	%match(Expression compiledAntiPattern){
+   		FalseTL() ->{
+   			return `Nop();
+   		}
+   	}
+   	
+   	if (TomAntiPatternUtils.varAssignments == null){
+	     	// bound the result with the result for the next term		
+	     	return `If(compiledAntiPattern,subAction,Nop());
+   	}else{
+   		// bound the variables' assignment with the result for the next term     		
+   		return `If(compiledAntiPattern,
+   				TomAntiPatternUtils.varAssignments.setAstInstruction(subAction),Nop());
+   	}
   }
 
     /*
