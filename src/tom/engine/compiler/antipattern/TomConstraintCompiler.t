@@ -82,7 +82,7 @@ public class TomConstraintCompiler{
 					"\nException:" + e.getMessage());
 		}
 		
-		System.out.println("Compiled constraint: " + TomAntiPatternUtils.formatConstraint(compiledConstraint));
+//		System.out.println("Compiled constraint: " + TomAntiPatternUtils.formatConstraint(compiledConstraint));
 		
 		return compiledConstraint;
 	}

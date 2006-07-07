@@ -161,7 +161,7 @@ public class TomAntiPatternUtils {
 			throw new RuntimeException("VisitFailure occured:" + e);
 		}
 		
-		System.out.println("No variables' constraint:" + TomAntiPatternUtils.formatConstraint(compiledApProblem));
+//		System.out.println("No variables constraint:" + TomAntiPatternUtils.formatConstraint(compiledApProblem));
 		
 		// builds the assignment
 		if (!variablesList.isEmpty()){

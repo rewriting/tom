@@ -89,7 +89,7 @@ public class TomAntiPatternTransform {
 					"\nException:" + e.getMessage());			
 		}
 		
-		System.out.println("Result after main rule: " + TomAntiPatternUtils.formatConstraint(noAnti));
+	//	System.out.println("Result after main rule: " + TomAntiPatternUtils.formatConstraint(noAnti));
 		
 		// transform the problem into a disunification one		
 		Constraint disunifProblem = null;
@@ -100,7 +100,7 @@ public class TomAntiPatternTransform {
 					"\nException:" + e.getMessage());
 		}
 		
-	    System.out.println("Disunification problem: " + TomAntiPatternUtils.formatConstraint(disunifProblem));
+//	    System.out.println("Disunification problem: " + TomAntiPatternUtils.formatConstraint(disunifProblem));
 		return disunifProblem;
 	}	
 	
