@@ -85,45 +85,7 @@ public class TomConstraintCompiler{
 		System.out.println("Compiled constraint: " + TomAntiPatternUtils.formatConstraint(compiledConstraint));
 		
 		return compiledConstraint;
-	}	
-	
-//	public static Instruction getConstraintAutomata(Constraint compiledConstraint
-//													Instruction action,										            
-//										            TomNumberList rootpath,
-//										            String moduleName){
-//		
-//		%match(compiledConstraint)->{
-//			
-//			AndConstraint(concAnd(cons1,X*))->{
-//				
-//				Instruction action = getConstraintAutomata(action,`cons1,rootpath,moduleName);
-//				Instruction subAction = getConstraintAutomata(action,`AndConstraint(concAnd(X*)),rootpath,moduleName);
-//				
-//				return `If(action,subaction,Nop());
-//			}
-//			
-//			OrConstraint(concOr(cons1,X*))->{
-//				
-//				Instruction action = getConstraintAutomata(action,`cons1,rootpath,moduleName);
-//				Instruction subAction = getConstraintAutomata(action,`AndConstraint(concAnd(X*)),rootpath,moduleName);
-//				
-//				
-//			}
-//			
-//			Or(concOr(t1,t2,X*))->{
-//				
-//			}
-//			
-//			EqualConstraint(var@Variable[])->{
-//				
-//			}
-//			
-//			NEqualConstraint()->{
-//				
-//			}
-//		}
-//		
-//	}
+	}
 	
 	/**
 	 *  Strategy that contains the disunification rules
@@ -194,6 +156,9 @@ public class TomConstraintCompiler{
 					return `e;
 				}
 				
+				result = result.reverse();
+				result1 = result1.reverse();
+				
 				// if not all were separated
 				if (!result1.isEmptyconcAnd()){
 					result = `concAnd(Exists(v,AndConstraint(result1)),result*);
@@ -251,6 +216,9 @@ public class TomConstraintCompiler{
 				if (result.isEmptyconcOr()){
 					return `f;
 				}
+				
+				result = result.reverse();
+				result1 = result1.reverse();
 				
 				// if not all were separated
 				if (!result1.isEmptyconcOr()){
@@ -372,6 +340,8 @@ public class TomConstraintCompiler{
 					args1 = args1.getTailconcSlot();										
 				}
 				
+				l = l.reverse();
+				
 				l = `concAnd(EqualConstraint(RecordAppl(options,name,concSlot(),constraints),SymbolOf(g)),l*);
 				
 				return `AndConstraint(l);
@@ -394,6 +364,8 @@ public class TomConstraintCompiler{
 							,headSlot.getSlotName(),g)),l*);					
 					args1 = args1.getTailconcSlot();										
 				}
+				
+				l = l.reverse();
 				
 				l = `concOr(NEqualConstraint(RecordAppl(options,name,concSlot(),constraints),SymbolOf(g)),l*);
 				

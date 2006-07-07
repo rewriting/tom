@@ -240,7 +240,7 @@ public class TomAntiPatternTransform {
 					result = `concOr(Neg(l.getHeadconcAnd()),result*);
 					l = l.getTailconcAnd();
 				}				
-				
+				result = result.reverse();
 				return `OrConstraint(result);
 			}
 			
@@ -254,7 +254,7 @@ public class TomAntiPatternTransform {
 					result = `concAnd(Neg(l.getHeadconcOr()),result*);
 					l = l.getTailconcOr();
 				}
-				
+				result = result.reverse();
 				return `AndConstraint(result);
 			}
 			
