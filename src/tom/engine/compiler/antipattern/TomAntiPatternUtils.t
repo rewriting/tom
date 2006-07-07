@@ -65,9 +65,17 @@ public class TomAntiPatternUtils {
 	%include { java/util/ArrayList.tom}
 // ------------------------------------------------------------
 	
+	%typeterm TomKernelCompiler {
+		  implement           { TomKernelCompiler }
+		  equals(t1,t2)       { (t1.equals(t2)) }
+	}
+	
 	// helping variables used inside strategies
 	private static boolean foundVariable = false;
 	private static int antiCounter = 0;
+	
+	// contains the assignments for each free variable of pattern (if any)	
+	public static Instruction varAssignments = null;
 	
 	/**
 	 * Checks to see if the parameter received contains antipatterns
@@ -112,16 +120,19 @@ public class TomAntiPatternUtils {
 	 * @param moduleName
 	 * @return compiled expresion
 	 */	
-	public static Expression getAntiPatternMatchInstruction(Instruction action,
+	public static Expression getAntiPatternMatchExpression(Instruction action,
 			TomTerm tomTerm,
 			TomNumberList rootpath,
 			String moduleName,
 			TomKernelCompiler compiler) {
 		
-		System.out.println("Action:" + action);
-		System.out.println("TomTerm:" + tomTerm);
-		System.out.println("RootPath:" + rootpath);
-		System.out.println("ModuleName:" + moduleName);
+//		System.out.println("Action:" + action);
+//		System.out.println("TomTerm:" + tomTerm);
+//		System.out.println("RootPath:" + rootpath);
+//		System.out.println("ModuleName:" + moduleName);
+		
+		// resent container 
+		varAssignments = null;
 		
 		// subject to be matched
 		TomTerm subject = null;		
@@ -142,36 +153,62 @@ public class TomAntiPatternUtils {
 		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);		
 		
 		ArrayList variablesList = new ArrayList();
+		ArrayList assignedValues = new ArrayList();
 		try{		
-			compiledApProblem = (Constraint)MuTraveler.init(`InnermostId(ExtractVariables(variablesList))).visit(compiledApProblem);
+			compiledApProblem = (Constraint)MuTraveler.init(`InnermostId(
+					ExtractVariables(variablesList,assignedValues,compiler,moduleName))).visit(compiledApProblem);
 		}catch(VisitFailure e){
 			throw new RuntimeException("VisitFailure occured:" + e);
 		}
 		
 		System.out.println("No variables' constraint:" + TomAntiPatternUtils.formatConstraint(compiledApProblem));
 		
-		// TODO - manage the variables
-		Expression debug = getTomMappingForConstraint(compiledApProblem,compiler,moduleName);
-		System.out.println("Transformed constraint:" + debug);
-		return debug;
-		//return getTomMappingForConstraint(compiledApProblem,compiler,moduleName);
-		//return `EqualTrueAntiPatternMatch("TomConstraintSolver.solve", compiledApProblem);		
+		// builds the assignment
+		if (!variablesList.isEmpty()){
+			varAssignments = buildVariableAssignment(variablesList,assignedValues);
+		}
+		
+		%match(Constraint compiledApProblem){
+			TrueConstraint() ->{
+				return `TrueTL();				 
+			}
+			FalseConstraint()->{
+				return `FalseTL();				
+			}
+		}
+		return getTomMappingForConstraint(compiledApProblem,compiler,moduleName);
+		
 	}	
 	
-	%strategy ExtractVariables(list:ArrayList) extends `Identity(){
+	%strategy ExtractVariables(varList:ArrayList,assignedValues:ArrayList,
+			compiler:TomKernelCompiler,moduleName:String) extends `Identity(){
 		
 		visit Constraint{
 			
-			AndConstraint(concAnd(X*,EqualConstraint(v@Variable[],_),Y*))->{
-				list.add(`v);
+			AndConstraint(concAnd(X*,EqualConstraint(v@Variable[],t),Y*))->{
+				varList.add(`v);
+				assignedValues.add(transformTerm(`t,compiler,moduleName));
 				return `AndConstraint(concAnd(X*,Y*));
 			}
-			OrConstraint(concOr(X*,EqualConstraint(v@Variable[],_),Y*))->{
-				list.add(`v);
+			OrConstraint(concOr(X*,EqualConstraint(v@Variable[],t),Y*))->{
+				varList.add(`v);
+				assignedValues.add(transformTerm(`t,compiler,moduleName));
 				return `TrueConstraint();
 				//return `OrConstraint(concOr(X*,Y*));
 			}
 		}
+	}
+	
+	private static Instruction buildVariableAssignment(ArrayList varList, ArrayList varValues){
+		
+		if (varList.isEmpty()) return `Nop();
+		
+		TomTerm var = (TomTerm)varList.get(0);
+		Expression expr = (Expression)varValues.get(0);
+		varList.remove(0);
+		varValues.remove(0);
+		
+		return `Let(var,expr,buildVariableAssignment(varList,varValues));
 	}
 	
 	private static Expression getTomMappingForConstraint(Constraint c,
