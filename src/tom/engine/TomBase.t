@@ -423,7 +423,7 @@ public class TomBase {
     return l.getHeadconcTomType();
   }
 
-  protected static TomType getSlotType(TomSymbol symbol, TomName slotName) {
+  public static TomType getSlotType(TomSymbol symbol, TomName slotName) {
     %match(TomSymbol symbol) {
       Symbol[TypesToType=TypesToType(typeList,codomain)] -> {
         int index = getSlotIndex(symbol,slotName);
@@ -498,7 +498,7 @@ public class TomBase {
     return filteredList.getHeadconcTomSymbol();
   }
 
-  protected static TomType getTermType(TomTerm t, SymbolTable symbolTable){
+  public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
     %match(TomTerm t) {
       RecordAppl[NameList=(Name(tomName),_*)] -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);

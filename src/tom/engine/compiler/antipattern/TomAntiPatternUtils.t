@@ -45,9 +45,12 @@ import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.MuStrategy;
 
 import tom.engine.exception.*;
 import tom.engine.compiler.*;
+import tom.engine.tools.*;
+import tom.engine.TomBase;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
@@ -61,18 +64,14 @@ public class TomAntiPatternUtils {
 	
 // ------------------------------------------------------------
 	%include { adt/tomsignature/TomSignature.tom }
-	%include { mutraveler.tom}
+	%include { mustrategy.tom}
 	%include { java/util/ArrayList.tom}
 // ------------------------------------------------------------
 	
-	%typeterm TomKernelCompiler {
-		  implement           { TomKernelCompiler }
+	%typeterm SymbolTable {
+		  implement           { SymbolTable }
 		  equals(t1,t2)       { (t1.equals(t2)) }
 	}
-	
-	// helping variables used inside strategies
-	private static boolean foundVariable = false;
-	private static int antiCounter = 0;
 	
 	// contains the assignments for each free variable of pattern (if any)	
 	public static Instruction varAssignments = null;
@@ -85,29 +84,21 @@ public class TomAntiPatternUtils {
 	 * @return true if tomTerm contains anti-symbols false otherwise
 	 */	
 	public static boolean hasAntiTerms(TomTerm tomTerm){
-		
-		antiCounter = 0;
-		
-		try{		
-			VisitableVisitor countAnti = `OnceTopDownId(CountAnti());
-			MuTraveler.init(countAnti).visit(tomTerm);
-		}catch(Exception e){
-			throw new TomRuntimeException("Cannot count the number of anti symbols in : " + tomTerm 
-					+ "\n Exception:" + e.getMessage());
-		}
-		
-		return (antiCounter > 0 ? true:false);
+    MuStrategy findAnti = `OnceTopDown(FindAnti());
+    try {
+      TomTerm res = (TomTerm) findAnti.visit(tomTerm);
+      return true;
+    } catch(jjtraveler.VisitFailure e) {
+      return false;
+    }
 	}
 	
 	/**
-	 * counts the anti symbols
+	 * search an anti symbol
 	 */  
-	%strategy CountAnti() extends `Identity(){
+	%strategy FindAnti() extends `Fail(){
 		visit TomTerm {
-			AntiTerm(t) -> {
-				antiCounter++;
-				return `t;
-			}
+			at@AntiTerm[] -> { return `at; }
 		}
 	}
 	
@@ -125,7 +116,7 @@ public class TomAntiPatternUtils {
 			TomNumberList rootpath,
 			TomName slotName,
 			String moduleName,
-			TomKernelCompiler compiler) {
+			SymbolTable symbolTable) {
 		
 //		System.out.println("Action:" + action);
 //		System.out.println("TomTerm:" + tomTerm);
@@ -138,7 +129,7 @@ public class TomAntiPatternUtils {
 		// subject to be matched
 		TomTerm subject = null;
 		
-		subject = getSubjectVariableAST(tomTerm,rootpath,compiler,slotName,moduleName);
+		subject = getSubjectVariableAST(tomTerm,rootpath,symbolTable,slotName,moduleName);
 		
 		// transform the anti-pattern match problem into
 		// a disunification one
@@ -151,7 +142,7 @@ public class TomAntiPatternUtils {
 		ArrayList assignedValues = new ArrayList();
 		try{		
 			compiledApProblem = (Constraint)MuTraveler.init(`InnermostId(
-					ExtractVariables(variablesList,assignedValues,compiler,moduleName))).visit(compiledApProblem);
+					ExtractVariables(variablesList,assignedValues,symbolTable,moduleName))).visit(compiledApProblem);
 		}catch(VisitFailure e){
 			throw new RuntimeException("VisitFailure occured:" + e);
 		}
@@ -171,7 +162,7 @@ public class TomAntiPatternUtils {
 				return `FalseTL();				
 			}
 		}
-		return getTomMappingForConstraint(compiledApProblem,compiler,moduleName);
+		return getTomMappingForConstraint(compiledApProblem,symbolTable,moduleName);
 		
 	}	
 	
@@ -180,31 +171,29 @@ public class TomAntiPatternUtils {
 	 */
 	private static TomTerm getSubjectVariableAST(TomTerm tomTerm, 
 			TomNumberList rootpath,
-			TomKernelCompiler compiler,
+			SymbolTable symbolTable,
 			TomName slotName,
-			String moduleName){		
-		
-		TomType codomain = compiler.getTermType(tomTerm,moduleName);
-        TomNumberList path  = `concTomNumber(rootpath*,NameNumber(slotName));
-        TomTerm subjectVariableAST =  `Variable(concOption(),PositionName(path),codomain,concConstraint());
+			String moduleName) {		
+    TomType codomain = TomBase.getTermType(tomTerm,symbolTable);
+    TomNumberList path  = `concTomNumber(rootpath*,NameNumber(slotName));
+    TomTerm subjectVariableAST =  `Variable(concOption(),PositionName(path),codomain,concConstraint());
         
-        return subjectVariableAST;
-
+    return subjectVariableAST;
 	}
 	
 	%strategy ExtractVariables(varList:ArrayList,assignedValues:ArrayList,
-			compiler:TomKernelCompiler,moduleName:String) extends `Identity(){
+			symbolTable:SymbolTable,moduleName:String) extends `Identity(){
 		
 		visit Constraint{
 			
 			AndConstraint(concAnd(X*,EqualConstraint(v@Variable[],t),Y*))->{
 				varList.add(`v);
-				assignedValues.add(transformTerm(`t,compiler,moduleName));
+				assignedValues.add(transformTerm(`t,symbolTable,moduleName));
 				return `AndConstraint(concAnd(X*,Y*));
 			}
 			OrConstraint(concOr(X*,EqualConstraint(v@Variable[],t),Y*))->{
 				varList.add(`v);
-				assignedValues.add(transformTerm(`t,compiler,moduleName));
+				assignedValues.add(transformTerm(`t,symbolTable,moduleName));
 				return `TrueConstraint();
 				//return `OrConstraint(concOr(X*,Y*));
 			}
@@ -213,7 +202,9 @@ public class TomAntiPatternUtils {
 	
 	private static Instruction buildVariableAssignment(ArrayList varList, ArrayList varValues){
 		
-		if (varList.isEmpty()) return `Nop();
+		if (varList.isEmpty()) {
+      return `Nop();
+    }
 		
 		TomTerm var = (TomTerm)varList.get(0);
 		Expression expr = (Expression)varValues.get(0);
@@ -224,20 +215,20 @@ public class TomAntiPatternUtils {
 	}
 	
 	private static Expression getTomMappingForConstraint(Constraint c,
-			TomKernelCompiler compiler,
+			SymbolTable symbolTable,
 			String moduleName) {
 		
 		%match(Constraint c) {
 			AndConstraint(concAnd(a,b*))->{
-				return `And(getTomMappingForConstraint(a,compiler,moduleName),
-						getTomMappingForConstraint(AndConstraint(concAnd(b*)),compiler,moduleName));
+				return `And(getTomMappingForConstraint(a,symbolTable,moduleName),
+						getTomMappingForConstraint(AndConstraint(concAnd(b*)),symbolTable,moduleName));
 			}
 			AndConstraint(concAnd())->{
 				return `TrueTL();
 			}
 			OrConstraint(concOr(a,b*))->{
-				return `Or(getTomMappingForConstraint(a,compiler,moduleName),
-						getTomMappingForConstraint(OrConstraint(concOr(b*)),compiler,moduleName));
+				return `Or(getTomMappingForConstraint(a,symbolTable,moduleName),
+						getTomMappingForConstraint(OrConstraint(concOr(b*)),symbolTable,moduleName));
 			}
 			OrConstraint(concOr())->{
 				return `FalseTL();
@@ -250,11 +241,11 @@ public class TomAntiPatternUtils {
 				// if it is a Subterm
 				if (`term 
 						instanceof Subterm){
-					Expression exprTrans = transformTerm(`term,compiler,moduleName);
+					Expression exprTrans = transformTerm(`term,symbolTable,moduleName);
 					transformedTerm = `ExpressionToTomTerm(exprTrans);
 					type = exprTrans.getCodomain();
 				}else{ 
-					type = compiler.getTermType(`term,moduleName);
+					type = TomBase.getTermType(`term,symbolTable);
 					transformedTerm = `term;
 				}
 				
@@ -264,8 +255,8 @@ public class TomAntiPatternUtils {
 			}
 			pattern@(EqualConstraint|NEqualConstraint)(t1,t2) ->{
 				
-				Expression transformedT1 = transformTerm(`t1,compiler,moduleName);
-				Expression transformedT2 = transformTerm(`t2,compiler,moduleName);
+				Expression transformedT1 = transformTerm(`t1,symbolTable,moduleName);
+				Expression transformedT2 = transformTerm(`t2,symbolTable,moduleName);
 				
 				TomType type = null;
 				
@@ -274,7 +265,7 @@ public class TomAntiPatternUtils {
 				if (transformedT1 instanceof GetSlot){
 					type = ((GetSlot)transformedT1).getCodomain();
 				}else{
-					type = compiler.getTermType(`t1,moduleName);
+					type = TomBase.getTermType(`t1,symbolTable);
 				}
 				
 				// type	should be the same
@@ -301,7 +292,7 @@ public class TomAntiPatternUtils {
 	 * @return corresponding "GetSlot"
 	 */
 	private static Expression transformTerm(TomTerm t, 
-			TomKernelCompiler compiler,
+			SymbolTable symbolTable,
 			String moduleName) {		
 		
 		%match(TomTerm t) {			
@@ -309,10 +300,11 @@ public class TomAntiPatternUtils {
            Subterm(constructorName,slotName, currentTerm)->{                 		        
         	   
         	   // get the transformed term 
-        	   Expression transformedTerm = transformTerm(`currentTerm,compiler,moduleName);
+        	   Expression transformedTerm = transformTerm(`currentTerm,symbolTable,moduleName);
         	   
         	   // get the type for the subterm        	           	   
-        	   TomType subtermType = compiler.getSlotType(`constructorName.getString(),`slotName,moduleName);
+             TomSymbol tomSymbol = symbolTable.getSymbolFromName(`constructorName.getString());
+        	   TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);
         	   
         	   TomTerm var = null;
         	   
@@ -331,37 +323,28 @@ public class TomAntiPatternUtils {
 	}
 	
 	public static boolean containsVariable(Constraint c, TomTerm v){
-		
-		foundVariable = false;
-		
-		try{		
-			MuTraveler.init(`InnermostId(ConstraintContainsVariable(v))).visit(c);
-		}catch(VisitFailure e){
-			throw new RuntimeException("VisitFailure occured:" + e);
+		try {		
+			MuTraveler.init(`OnceTopDown(ConstraintContainsVariable(v))).visit(c);
+      return true;
+		} catch(jjtraveler.VisitFailure e) {
+      return false;
 		}
-		
-		return foundVariable;
 	}
 	
-	%strategy ConstraintContainsVariable(v:TomTerm) extends `Identity(){
-		
+	%strategy ConstraintContainsVariable(v:TomTerm) extends `Fail(){
 		visit Constraint {
-			EqualConstraint(p,_) ->{
-				MuTraveler.init(`InnermostId(TermContainsVariable(v))).visit(`p);
-			}
-			NEqualConstraint(p,_) ->{
-				MuTraveler.init(`InnermostId(TermContainsVariable(v))).visit(`p);
+			c@(EqualConstraint|NEqualConstraint)(p,_) -> {
+				MuTraveler.init(`OnceTopDown(TermContainsVariable(v))).visit(`p);
+        return `c;
 			}
 		}
 	}
 	
-	%strategy TermContainsVariable(v:TomTerm) extends `Identity(){
-		
+	%strategy TermContainsVariable(v:TomTerm) extends `Fail(){
 		visit TomTerm {
-			var@Variable(_,_,_,_) ->{
-				
-				if (`var == v){					
-					foundVariable = true;
+			var@Variable[] ->{
+				if (`var == v) {					
+					return v;
 				}
 			}
 		}

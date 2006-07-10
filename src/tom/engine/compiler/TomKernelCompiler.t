@@ -262,6 +262,16 @@ public class TomKernelCompiler extends TomBase {
         // this will generate directly false
     	return `Nop();		  
       }            
+      // !f
+      concSlot(PairSlotAppl(slotName,
+              currentTerm@AntiTerm(RecordAppl[NameList=nameList@(Name(tomName),_*),
+                                     Slots=termArgs])),termTail*) -> {
+		// recursively call the algorithm on termTail
+	    Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);        
+	
+     	return getAntiPatternMatchInstruction(action,`currentTerm, rootpath, 
+     			`slotName, moduleName,subAction);
+      }                                                                                    
       // (f|g)[...]
       concSlot(PairSlotAppl(slotName,
                    currentTerm@RecordAppl[NameList=nameList@(Name(tomName),_*),
@@ -347,16 +357,6 @@ public class TomKernelCompiler extends TomBase {
         automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction,moduleName);        
         return `If(cond,automataInstruction,Nop());
       }
-      // !f
-      concSlot(PairSlotAppl(slotName,
-              currentTerm@AntiTerm(RecordAppl[NameList=nameList@(Name(tomName),_*),
-                                     Slots=termArgs])),termTail*) -> {
-		// recursively call the algorithm on termTail
-	    Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);        
-	
-     	return getAntiPatternMatchInstruction(action,`currentTerm, rootpath, 
-     			`slotName, moduleName,subAction);
-      }                                                                                    
     } // end match
     System.out.println("GenSyntacticMatchingAutomata strange term: " + termList);
     throw new TomRuntimeException("GenSyntacticMatchingAutomata strange term: " + termList);
@@ -374,7 +374,7 @@ public class TomKernelCompiler extends TomBase {
     
 	// get the compiled anti-pattern
    	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchExpression(action,
-   			currentTerm, rootpath, slotName, moduleName, this);
+   			currentTerm, rootpath, slotName, moduleName, getSymbolTable(moduleName));
    	
    	// if the result is false, no need to generate anything
    	%match(Expression compiledAntiPattern){
@@ -1007,7 +1007,7 @@ public class TomKernelCompiler extends TomBase {
     }
     throw new TomRuntimeException("buildConstraint: unknown constraints: " + constraints);
   }
-  
+ /* 
   public TomType getSlotType(String constructorName,TomName slotName, String moduleName){
 	  
 	  TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(constructorName);        	   
@@ -1018,7 +1018,7 @@ public class TomKernelCompiler extends TomBase {
       if (t instanceof TLVar) return ((TLVar)t).getAstType();
       return getTermType(t, getSymbolTable(moduleName));      
   }
-  
+  */
 
 
   private static class MatchingParameter {

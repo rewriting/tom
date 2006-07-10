@@ -95,12 +95,9 @@ public class TomConstraintCompiler{
 		visit Constraint {			
 			
 			// simple rules with exists and forall
-			Exists(Variable(_,a,_,_),EqualConstraint(Variable(_,a,_,_),_)) ->{				
+			Exists(Variable[AstName=a],(EqualConstraint|NEqualConstraint)(Variable[AstName=a],_)) ->{				
 				return `TrueConstraint();
 			}						
-			Exists(Variable(_,a,_,_),NEqualConstraint(Variable(_,a,_,_),_)) ->{				
-				return `TrueConstraint();
-			}
 			Exists(v@Variable(_,name,_,_),constr)->{
 				// eliminates the quantificator when the
 				// constraint does not contains the variable
@@ -132,40 +129,40 @@ public class TomConstraintCompiler{
 			e@Exists(v@Variable(_,_,_,_),AndConstraint(list)) ->{
 				
 				AConstraintList l = `list;
-				AConstraintList result = `concAnd();
-				AConstraintList result1 = `concAnd();
+				AConstraintList nonquantifiedConstraints = `concAnd();
+				AConstraintList quantifiedConstraints = `concAnd();
 				
 				while(!l.isEmptyconcAnd()){
-					
 					Constraint c = l.getHeadconcAnd();
 					
 					// if the c doesn't contain the variable, we
 					// can put it outside the expresion that is quantified
 					if ( !TomAntiPatternUtils.containsVariable(`c,`v) ) {
-						result = `concAnd(Exists(v,c),result*);
+						nonquantifiedConstraints = `concAnd(Exists(v,c),nonquantifiedConstraints*);
 					}else{
-						result1 = `concAnd(c,result1*);
+						quantifiedConstraints = `concAnd(c,quantifiedConstraints*);
 					}				
 					
-					// result = `concAnd(Exists(v,l.getHeadconcAnd()),result*);
+					// nonquantifiedConstraints = `concAnd(Exists(v,l.getHeadconcAnd()),nonquantifiedConstraints*);
 					l = l.getTailconcAnd();
 				}
 				
 				// if couldn't do anything, return the same thing
-				if (result.isEmptyconcAnd()){
+				if (nonquantifiedConstraints.isEmptyconcAnd()){
 					return `e;
 				}
 				
-				result = result.reverse();
-				result1 = result1.reverse();
+				nonquantifiedConstraints = nonquantifiedConstraints.reverse();
+				quantifiedConstraints = quantifiedConstraints.reverse();
 				
 				// if not all were separated
-				if (!result1.isEmptyconcAnd()){
-					result = `concAnd(Exists(v,AndConstraint(result1)),result*);
-				}
-				
-				return `AndConstraint(result);
+        if (quantifiedConstraints.isEmptyconcAnd()){
+          return `AndConstraint(nonquantifiedConstraints);
+        }
+        // we quanfity and mix both lists
+        return `AndConstraint(concAnd(Exists(v,AndConstraint(quantifiedConstraints)),nonquantifiedConstraints*));
 			}			
+
 			Exists(v@Variable(_,var,_,_),OrConstraint(list)) ->{
 				
 				OConstraintList l = `list;
@@ -177,7 +174,10 @@ public class TomConstraintCompiler{
 				}
 				
 				return `OrConstraint(result);
+        // return `OrConstraint(map(addExist).visit(list));
+        // return `OrConstraint(map(?"x";!Exists(v,!"x")).visit(list));
 			}
+
 			ForAll(v@Variable(_,var,_,_),AndConstraint(list)) ->{
 				
 				AConstraintList l = `list;
@@ -313,18 +313,17 @@ public class TomConstraintCompiler{
 			//And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
 				            
 	            Constraint res = (Constraint) MuTraveler.init(
-	            		`InnermostId(ReplaceTerm(var,s))).visit(`AndConstraint(concAnd(X*,Y*)));
+	            		`BottomUp(ReplaceTerm(var,s))).visit(`AndConstraint(concAnd(X*,Y*)));
 	            if (res != `AndConstraint(concAnd(X*,Y*))){
 	            	return `AndConstraint(concAnd(eq,res));
 	            }
 	        }
 			
 			//////////////////////////////////////////////////////
-			
 			// Decompose
 			e@EqualConstraint(RecordAppl(options,name,a1,constraints),g) -> {
 				
-				%match(TomTerm g){
+				%match(TomTerm g) {
 					SymbolOf(_) -> {return `e;}
 				}				
 				

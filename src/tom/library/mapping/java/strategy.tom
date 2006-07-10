@@ -185,3 +185,10 @@
     make(v) { `mu(MuVar("x"),Sequence(SequenceId(v,MuVar("x")),All(MuVar("x")))) }
   }
 
+  %op Strategy TopDownId(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),SequenceId(v,All(MuVar("x")))) }
+  }
+  
+  %op Strategy BottomUpId(s1:Strategy) {
+    make(v) { `mu(MuVar("x"),SequenceId(All(MuVar("x")),v)) }
+  }
