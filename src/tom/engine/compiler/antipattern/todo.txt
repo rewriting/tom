@@ -2,9 +2,7 @@ TODO
 
 1. bug when multiple subjects and only one pattern
 2. allow disjonctions 
-3. verify !x, !_ 
 4. guards are not handled
-10. check f(!x..
-11. in the action we should only allow the free variables
+11. in the action we should only allow the free variables - should we provide a warning message ?
 
  	
