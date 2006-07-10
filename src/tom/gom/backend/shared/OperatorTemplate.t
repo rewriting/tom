@@ -144,9 +144,10 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     if (ao == this)
       return 0;
     /* use the hash values to discriminate */
-    int hashCmp = this.hashCode - ao.hashCode();
-    if (hashCmp != 0)
-      return hashCmp;
+    
+    if(this.hashCode != ao.hashCode())
+      return  (this.hashCode < ao.hashCode())?-1:1;
+
     /* If not, compare the symbols : back to the normal order */
     int symbCmp = this.symbolName().compareTo(ao.symbolName());
     if (symbCmp != 0)
@@ -614,9 +615,8 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
          if (`domain.equals(`ClassName("","int"))) { 
            res+= %[
-    int @fieldName(`slotName)@Cmp = this.@fieldName(`slotName)@ - @other@.@fieldName(`slotName)@;
-    if(@fieldName(`slotName)@Cmp != 0)
-      return @fieldName(`slotName)@Cmp;
+    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
+      return (this.@fieldName(`slotName)@ < @other@.@fieldName(`slotName)@)?-1:1;
 ]%;
          } else if (`domain.equals(`ClassName("","String"))) {
            res+= %[
