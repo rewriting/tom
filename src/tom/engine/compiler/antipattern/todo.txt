@@ -1,14 +1,9 @@
 TODO
 
-1. bug when multiple subjectss and only one pattern
+1. bug when multiple subjects and only one pattern
 2. allow disjonctions 
 3. verify !x, !_ 
 4. guards are not handled
-5. in solver, see what rules can be eliminated
-7. if the compiler generates True or False then return directly 
-	this result without passing it to the solver
-8. recomment TLVar from abstract generator - line 184 / 291
-9. solve the problem with demanding the slots when the do not exist
 10. check f(!x..
 11. in the action we should only allow the free variables
 

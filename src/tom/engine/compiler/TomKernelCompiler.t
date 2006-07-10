@@ -274,7 +274,7 @@ public class TomKernelCompiler extends TomBase {
     	// antipatterns has to be called
         if (TomAntiPatternUtils.hasAntiTerms(`currentTerm)){
         	return getAntiPatternMatchInstruction(action,`currentTerm, rootpath, 
-           			moduleName, subAction);      		
+           			`slotName, moduleName, subAction);      		
         }
 
         // find the codomain of (f|g) [* should be the same *]
@@ -355,7 +355,7 @@ public class TomKernelCompiler extends TomBase {
 	    Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);        
 	
      	return getAntiPatternMatchInstruction(action,`currentTerm, rootpath, 
-       			moduleName, subAction);
+     			`slotName, moduleName,subAction);
       }                                                                                    
     } // end match
     System.out.println("GenSyntacticMatchingAutomata strange term: " + termList);
@@ -368,12 +368,13 @@ public class TomKernelCompiler extends TomBase {
   Instruction getAntiPatternMatchInstruction(Instruction action,
 			TomTerm currentTerm,
 			TomNumberList rootpath,
-			String moduleName,
+			TomName slotName,
+			String moduleName,			
 			Instruction subAction){
     
 	// get the compiled anti-pattern
    	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchExpression(action,
-   			currentTerm, rootpath, moduleName, this);
+   			currentTerm, rootpath, slotName, moduleName, this);
    	
    	// if the result is false, no need to generate anything
    	%match(Expression compiledAntiPattern){

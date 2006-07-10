@@ -123,6 +123,7 @@ public class TomAntiPatternUtils {
 	public static Expression getAntiPatternMatchExpression(Instruction action,
 			TomTerm tomTerm,
 			TomNumberList rootpath,
+			TomName slotName,
 			String moduleName,
 			TomKernelCompiler compiler) {
 		
@@ -135,15 +136,9 @@ public class TomAntiPatternUtils {
 		varAssignments = null;
 		
 		// subject to be matched
-		TomTerm subject = null;		
+		TomTerm subject = null;
 		
-		// extract the subject
-		// TODO - the guards
-		%match(Instruction action){
-			TypedAction(_,Pattern(concTomTerm(subject,_*),_,_),_)->{
-				subject = `subject;				
-			}
-		}		
+		subject = getSubjectVariableAST(tomTerm,rootpath,compiler,slotName,moduleName);
 		
 		// transform the anti-pattern match problem into
 		// a disunification one
@@ -179,6 +174,23 @@ public class TomAntiPatternUtils {
 		return getTomMappingForConstraint(compiledApProblem,compiler,moduleName);
 		
 	}	
+	
+	/**
+	 * returns the AST variable to be matched
+	 */
+	private static TomTerm getSubjectVariableAST(TomTerm tomTerm, 
+			TomNumberList rootpath,
+			TomKernelCompiler compiler,
+			TomName slotName,
+			String moduleName){		
+		
+		TomType codomain = compiler.getTermType(tomTerm,moduleName);
+        TomNumberList path  = `concTomNumber(rootpath*,NameNumber(slotName));
+        TomTerm subjectVariableAST =  `Variable(concOption(),PositionName(path),codomain,concConstraint());
+        
+        return subjectVariableAST;
+
+	}
 	
 	%strategy ExtractVariables(varList:ArrayList,assignedValues:ArrayList,
 			compiler:TomKernelCompiler,moduleName:String) extends `Identity(){
@@ -254,15 +266,26 @@ public class TomAntiPatternUtils {
 				
 				Expression transformedT1 = transformTerm(`t1,compiler,moduleName);
 				Expression transformedT2 = transformTerm(`t2,compiler,moduleName);
+				
+				TomType type = null;
+				
+				// if the term was transformed in a GetSlot,
+				// retreive the type directly 
+				if (transformedT1 instanceof GetSlot){
+					type = ((GetSlot)transformedT1).getCodomain();
+				}else{
+					type = compiler.getTermType(`t1,moduleName);
+				}
+				
 				// type	should be the same
 				if (`pattern 
 						instanceof EqualConstraint){
-					return `EqualTerm(compiler.getTermType(t1,moduleName),
+					return `EqualTerm(type,
 								ExpressionToTomTerm(transformedT1),
 								ExpressionToTomTerm(transformedT2));
 				}
 				
-				return `Negation(EqualTerm(compiler.getTermType(t1,moduleName),
+				return `Negation(EqualTerm(type,
 						ExpressionToTomTerm(transformedT1),
 						ExpressionToTomTerm(transformedT2)));
 			}
@@ -279,12 +302,12 @@ public class TomAntiPatternUtils {
 	 */
 	private static Expression transformTerm(TomTerm t, 
 			TomKernelCompiler compiler,
-			String moduleName) {
+			String moduleName) {		
 		
-		%match(TomTerm t) {
+		%match(TomTerm t) {			
 			
            Subterm(constructorName,slotName, currentTerm)->{                 		        
-          
+        	   
         	   // get the transformed term 
         	   Expression transformedTerm = transformTerm(`currentTerm,compiler,moduleName);
         	   
@@ -300,7 +323,7 @@ public class TomAntiPatternUtils {
         	   return `GetSlot(subtermType,constructorName,
 						slotName.getString(),var);
 		   }
-           term@(RecordAppl|TLVar)[] ->{
+           term@(RecordAppl|Variable)[] ->{        	   
         	   return `TomTermToExpression(term);
            }
 		}
