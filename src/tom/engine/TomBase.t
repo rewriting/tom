@@ -514,6 +514,8 @@ public class TomBase {
       TargetLanguageToTomTerm[Tl=(TL|ITL)[]] -> { return `EmptyType(); }
 
       FunctionCall[] -> { return `EmptyType(); }
+      
+      AntiTerm(term) -> { return getTermType(`term,symbolTable);}
     }
 		System.out.println("getTermType error on term: " + t);
 		throw new TomRuntimeException("getTermType error on term: " + t);
