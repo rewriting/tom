@@ -110,7 +110,7 @@ public class Ted {
       Class strategy_class = Class.forName("jjtraveler." + strategy);
       ctor = strategy_class.getConstructor(new Class[] {jjtraveler.Visitor.class});
     }
-    catch( Exception e ) { System.err.println("This strategy doesn't exist or has a bad signature : " + e.getMessage()); System.exit(1); }
+    catch( Exception e ) { System.err.println("This strategy doesn't exist or has a bad signature : " + e.getMessage()); }
 
     jjtraveler.Visitor vtor = null;
 
@@ -135,8 +135,9 @@ public class Ted {
         try {
           ATermList l = `concATerm();
           GrepVisitor v =  new GrepVisitor(`tomatch);
-          vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {v});
-          vtor.visit(res);
+          VisitableVisitor s = `mu(MuVar("x"),Try(Sequence(v,All(MuVar("x")))));
+          vtor = (jjtraveler.Visitor) ctor.newInstance (new Object[] {s});
+          s.visit(res);
           return v.getList();
         }
         catch ( Exception e ) { e.printStackTrace(); }
