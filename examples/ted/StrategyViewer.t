@@ -19,7 +19,7 @@ public class StrategyViewer {
     s = s.replace('@','_');
     return s;
   }
-  
+
   %strategy toDot(out : Writer) extends `Identity() {
     visit Strategy {
       y@MuVar[] -> { return `y; }
@@ -29,8 +29,10 @@ public class StrategyViewer {
       x -> {
         String[] tab = `x.getClass().getName().split("\\.");
         String name = tab[tab.length-1];
+        tab = name.split("\\$");
+        name = tab[tab.length-1];
         String idNode = `clean(x.toString());
-       
+
         try {
           out.write(%[@idNode@ [label="@name@"];]%);
           out.write("\n");  
@@ -41,14 +43,14 @@ public class StrategyViewer {
             %match(Strategy s) {
               y@MuVar[var=varName] -> {
                 MuStrategy pointer = (MuStrategy) `((MuVar)y).getInstance();
-		String idMu = clean(pointer.toString());
+                String idMu = clean(pointer.toString());
                 if (pointer.getChildCount() > 0 && pointer.getChildAt(0) != `y) {
-		  String idMuVar = idMu + "_" + (counter++);
-		  out.write(%[
-		      @idMuVar@ [label="@`varName@"]; 
-		      @idNode@ -> @idMuVar@;
-		      @idMuVar@ -> @idMu@;
-		      ]%);
+                  String idMuVar = idMu + "_" + (counter++);
+                  out.write(%[
+                      @idMuVar@ [label="@`varName@"]; 
+                      @idNode@ -> @idMuVar@;
+                      @idMuVar@ -> @idMu@;
+                      ]%);
                 }
                 continue;
               }
@@ -72,14 +74,14 @@ public class StrategyViewer {
     Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
     System.out.println("digraph G {");
     `TopDown(toDot(w)).apply(s);
-     System.out.println("}\n");
+    System.out.println("}\n");
   }
-  
+
   public static void main(String[] args) {
     //MuStrategy strat = `mu(MuVar("x"),Sequence(All(MuVar("x")),Identity()));
     MuStrategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(R()),R())), InnermostId( ChoiceId( Sequence(RepeatId(R()), RepeatId(SequenceId(ChoiceId(R(),R()),OnceTopDownId(R())))), SequenceId(R(),OnceTopDownId(RepeatId(R()))))));
 
-   //MuStrategy strat = `SequenceId(R(),R());
+    //MuStrategy strat = `SequenceId(R(),R());
 
     stratToDot(strat);
   }
