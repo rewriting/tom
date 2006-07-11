@@ -52,9 +52,14 @@ public class MuVar extends AbstractMuStrategy {
     }
   }
 
+  public VisitableVisitor getInstance() {
+    return instance;
+  }
+  
   protected void setInstance(VisitableVisitor v) {
     this.instance = v;
   }
+  
   protected void setName(String name) {
     this.name = name;
   }
