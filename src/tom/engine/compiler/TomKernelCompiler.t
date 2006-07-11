@@ -374,7 +374,7 @@ public class TomKernelCompiler extends TomBase {
     
 	// get the compiled anti-pattern
    	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchExpression(action,
-   			currentTerm, rootpath, slotName, moduleName, getSymbolTable(moduleName));
+   			currentTerm, rootpath, slotName, moduleName, getSymbolTable(moduleName), subAction);
    	
    	// if the result is false, no need to generate anything
    	%match(Expression compiledAntiPattern){
@@ -383,13 +383,14 @@ public class TomKernelCompiler extends TomBase {
    		}
    	}
    	
-   	if (TomAntiPatternUtils.varAssignments == null){
-	     	// bound the result with the result for the next term		
-	     	return `If(compiledAntiPattern,subAction,Nop());
+   	Instruction varAssign = TomAntiPatternUtils.getVarAssignments(); 
+   	
+   	if ( varAssign == null){
+     	// bound the result with the result for the next term		
+     	return `If(compiledAntiPattern,subAction,Nop());
    	}else{
    		// bound the variables' assignment with the result for the next term     		
-   		return `If(compiledAntiPattern,
-   				TomAntiPatternUtils.varAssignments.setAstInstruction(subAction),Nop());
+   		return `If(compiledAntiPattern, varAssign,Nop());
    	}
   }
 

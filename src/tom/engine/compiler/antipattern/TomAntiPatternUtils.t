@@ -74,7 +74,7 @@ public class TomAntiPatternUtils {
 	}
 	
 	// contains the assignments for each free variable of pattern (if any)	
-	public static Instruction varAssignments = null;
+	private static Instruction varAssignments = null;
 	
 	/**
 	 * Checks to see if the parameter received contains antipatterns
@@ -116,7 +116,8 @@ public class TomAntiPatternUtils {
 			TomNumberList rootpath,
 			TomName slotName,
 			String moduleName,
-			SymbolTable symbolTable) {
+			SymbolTable symbolTable,
+			Instruction subAction) {
 		
 //		System.out.println("Action:" + action);
 //		System.out.println("TomTerm:" + tomTerm);
@@ -136,7 +137,7 @@ public class TomAntiPatternUtils {
 		Constraint disunificationProblem = TomAntiPatternTransform.transform(
 				`EqualConstraint(tomTerm,subject));
 		// launch the constraint compiler
-		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);		
+		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);			
 		
 		ArrayList variablesList = new ArrayList();
 		ArrayList assignedValues = new ArrayList();
@@ -151,7 +152,7 @@ public class TomAntiPatternUtils {
 		
 		// builds the assignment
 		if (!variablesList.isEmpty()){
-			varAssignments = buildVariableAssignment(variablesList,assignedValues);
+			varAssignments = buildVariableAssignment(variablesList,assignedValues, subAction);
 		}
 		
 		%match(Constraint compiledApProblem){
@@ -200,18 +201,20 @@ public class TomAntiPatternUtils {
 		}
 	}
 	
-	private static Instruction buildVariableAssignment(ArrayList varList, ArrayList varValues){
+	private static Instruction buildVariableAssignment(ArrayList varList, 
+			ArrayList varValues,
+			Instruction subAction){
 		
 		if (varList.isEmpty()) {
-      return `Nop();
-    }
+			return subAction;
+		}
 		
 		TomTerm var = (TomTerm)varList.get(0);
 		Expression expr = (Expression)varValues.get(0);
 		varList.remove(0);
 		varValues.remove(0);
 		
-		return `Let(var,expr,buildVariableAssignment(varList,varValues));
+		return `Let(var,expr,buildVariableAssignment(varList,varValues,subAction));
 	}
 	
 	private static Expression getTomMappingForConstraint(Constraint c,
@@ -348,6 +351,10 @@ public class TomAntiPatternUtils {
 				}
 			}
 		}
+	}
+	
+	public static Instruction getVarAssignments(){
+		return varAssignments;
 	}
 	
 	/**

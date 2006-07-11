@@ -4,5 +4,7 @@ TODO
 2. allow disjonctions 
 4. guards are not handled
 11. in the action we should only allow the free variables - should we provide a warning message ?
+12. warning for the no gerenation of code
+
 
  	
