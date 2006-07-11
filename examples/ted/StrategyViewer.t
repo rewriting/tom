@@ -12,9 +12,6 @@ public class StrategyViewer {
   %include{mustrategy.tom}
   %typeterm Writer { implement {java.io.Writer} }
   
-  public StrategyViewer() {
-  }
-
   static private String clean(String s) {
     s = s.replaceAll("\\.","");
     return s.replaceAll("@","");
@@ -25,6 +22,7 @@ public class StrategyViewer {
       y@MuVar[] -> { return `y; }
 
       x@Mu(s1,s2) -> {
+	`x.apply(`Identity()); // to mu-expand
         String[] tab = `x.getClass().getName().split("\\.");
         String name = tab[tab.length-1];
         String id = `clean(x.toString());
@@ -101,7 +99,7 @@ public class StrategyViewer {
   }
 
   public static void stratToDot(MuStrategy s) {
-    s.apply(`Identity()); // to expand
+    //s.apply(`Identity()); // to expand
     Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
     System.out.println("digraph G {");
     `TopDown(toDot(w)).apply(s);
@@ -109,7 +107,11 @@ public class StrategyViewer {
   }
   
   public static void main(String[] args) {
-    MuStrategy strat = `mu(MuVar("x"),Sequence(All(MuVar("x")),Identity()));
+    //MuStrategy strat = `mu(MuVar("x"),Sequence(All(MuVar("x")),Identity()));
+    MuStrategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(Fail()),Fail())), InnermostId( ChoiceId( Sequence(RepeatId(Fail()), RepeatId(SequenceId(ChoiceId(Fail(),Fail()),OnceTopDownId(Fail())))), SequenceId(Fail(),OnceTopDownId(RepeatId(Fail()))))));
+
+    //MuStrategy strat = `SequenceId(Fail(),OnceTopDownId(RepeatId(Fail())));
+
     stratToDot(strat);
   }
 }
