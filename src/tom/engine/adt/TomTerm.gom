@@ -2,15 +2,41 @@ module TomTerm
 imports TomSignature TomName int
 abstract syntax
 
-TomTerm = TermAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
-        | ListAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
-        | RecordAppl(Option:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
-        | XMLAppl(Option:OptionList,NameList:TomNameList,AttrList:TomList,ChildList:TomList,Constraints:ConstraintList)
-        | Variable(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
+TomTerm =
+	/**
+	 * <code>TermAppl</code> application of a symbol to a list of subterms
+	 * <code>ListAppl</code> application of a list-symbol to a list of subterms
+	 * <code>RecordAppl</code> application of a symbol to a list of pairs (slot,subterm)
+	 * <code>XMLAppl</code> application of a xml-symbol to a list of attributes and a list of subterms
+	 *
+	 * @param Option a list of options
+	 * @param NameList a list of head symbol names
+	 * @param Args a list of subterms
+	 * @param Slots a list of pairs (slot,subterm)
+	 * @param Constraints a list of constraints
+	 */
+	        TermAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
+				| ListAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
+				| RecordAppl(Option:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
+				| XMLAppl(Option:OptionList,NameList:TomNameList,AttrList:TomList,ChildList:TomList,Constraints:ConstraintList)
+	/**
+	 * <code>Variable</code> a variable
+	 * <code>UnamedVariable</code> a variable without name
+	 * <code>VariableStar</code> a list-variable
+	 * <code>UnamedVariableStar</code> a list-variable without name
+	 * <code>Placeholder</code> ???
+	 *
+	 * @param Option a list of options
+	 * @param AstName the name of the variable
+	 * @param AstType the type of the variable
+	 * @param Constraints a list of constraints
+	 */
+				| Variable(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
         | VariableStar(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
-        | Placeholder(Option:OptionList,Constraints:ConstraintList)
         | UnamedVariable(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
         | UnamedVariableStar(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
+        | Placeholder(Option:OptionList,Constraints:ConstraintList)
+
         | emptyTerm()
         | TargetLanguageToTomTerm(Tl:TargetLanguage)
         | TomTypeToTomTerm(AstType:TomType)

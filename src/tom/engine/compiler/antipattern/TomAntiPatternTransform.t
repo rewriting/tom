@@ -206,7 +206,7 @@ public class TomAntiPatternTransform {
 	}
 	
 	// the strategy that handles the variables inside an anti
-	// symbol for beeing qunatified 
+	// symbol for beeing quantified 
 	%strategy ApplyStrategy() extends `Identity(){
 		
 		visit TomTerm {
