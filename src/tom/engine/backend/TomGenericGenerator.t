@@ -130,14 +130,18 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
   protected void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
-    generateExpression(deep,exp1,moduleName);
+	output.write(" ( ");
+	generateExpression(deep,exp1,moduleName);
     output.write(" && ");
     generateExpression(deep,exp2,moduleName);
+    output.write(" ) ");
   }
   protected void buildExpOr(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+	output.write(" ( ");  
     generateExpression(deep,exp1,moduleName);
     output.write(" || ");
     generateExpression(deep,exp2,moduleName);
+    output.write(" ) ");
   }
 
   protected void buildExpGreaterThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
