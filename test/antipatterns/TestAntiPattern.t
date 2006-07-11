@@ -172,7 +172,7 @@ public class TestAntiPattern extends TestCase {
 
     public void testAp8() {
 		
-	//	assertTrue(match8(`f(a(),b())) == `Equal("x",a()));
+		assertTrue(match8(`f(a(),b())) == `Equal("x",a()));
 		assertTrue(match8(`f(a(),g(b()))) == `Equal("x",a()));
 		assertTrue(match8(`f(b(),g(b()))) == `False());
 		assertTrue(match8(`g(b())) == `False());
@@ -288,9 +288,26 @@ public class TestAntiPattern extends TestCase {
 	
 	public void testAp15() {		
 		
-    	assertTrue(match13(`f(a(),a())) == `False());
-		assertTrue(match13(`f(a(),b())) == `False());
-		assertTrue(match13(`b()) == `False());
+    	assertTrue(match15(`f(a(),a())) == `False());
+		assertTrue(match15(`f(a(),b())) == `False());
+		assertTrue(match15(`b()) == `False());
+	}
+	
+	private Result match16(Term subject){
+		%match(Term subject){
+			f(x,f(a(),f(y,!g(x)))) ->{
+				return `And(Equal("x",x),Equal("y",y));
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp16() {		
+		
+    	assertTrue(match16(`f(b(),f(a(),f(a(),g(b()))))) == `False());
+    	assertTrue(match16(`f(b(),f(a(),f(a(),g(a()))))) == `And(Equal("x",b()),Equal("y",a())));
+    	assertTrue(match16(`f(a(),f(a(),f(b(),b())))) == `And(Equal("x",a()),Equal("y",b())));
+    	assertTrue(match16(`f(b(),f(a(),b()))) == `False());
 	}
 
 	
