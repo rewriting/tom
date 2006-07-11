@@ -21,7 +21,7 @@ public class StrategyViewer {
     visit Strategy {
       y@MuVar[] -> { return `y; }
 
-      x@Mu[] -> { `x.apply(`Identity()); }
+      x@Mu[] -> { `x.apply(`Identity()); } // to mu-expand
 
       x -> {
         String[] tab = `x.getClass().getName().split("\\.");
@@ -29,10 +29,8 @@ public class StrategyViewer {
         String id = `clean(x.toString());
        
         try {
-          out.write(id);
-          out.write(" [label=\"");
-          out.write(name);
-          out.write("\"];\n");  
+          out.write(%[@`id@ [label="@`name@"];]%);
+          out.write("\n");  
 
           int n = `x.getChildCount();
           for(int i=0; i<n; i++) {
@@ -41,18 +39,14 @@ public class StrategyViewer {
               y@MuVar[] -> {
                 MuStrategy pointer = (MuStrategy) `((MuVar)y).getInstance();
                 if (pointer.getChildCount() > 0 && pointer.getChildAt(0) != `y) {
-                  out.write(id);
-                  out.write(" -> ");
-                  out.write(`clean(pointer.toString()));
-                  out.write(";\n");
+                  out.write(%[@`id@ -> @`clean(pointer.toString())@;]%);
+                  out.write("\n");
                 }
                 continue;
               }
               y -> {
-                out.write(id);
-                out.write(" -> ");
-                out.write(`clean(y.toString()));
-                out.write(";\n");
+                out.write(%[@`id@ -> @`clean(y.toString())@;]%);
+                out.write("\n");
               }
             }
           }
