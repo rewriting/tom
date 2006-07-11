@@ -108,9 +108,8 @@ public class TomExpander extends TomGenericPlugin {
       tomKernelExpander.setSymbolTable(getStreamManager().getSymbolTable());
       TomTerm syntaxExpandedTerm = (TomTerm) `ChoiceTopDown(expandTermApplTomSyntax(this)).visit((TomTerm)getWorkingTerm());
       updateSymbolTable();
-      TomTerm context = `emptyTerm();
 
-      TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
+      TomTerm variableExpandedTerm = expandVariable(`EmptyContext(), syntaxExpandedTerm);
       TomTerm stringExpandedTerm = (TomTerm) `ChoiceTopDown(expandString(this)).visit(variableExpandedTerm);
       expandedTerm = (TomTerm) `ChoiceTopDown(updateCodomain(this)).visit(stringExpandedTerm);
       setWorkingTerm(expandedTerm);
@@ -145,7 +144,6 @@ public class TomExpander extends TomGenericPlugin {
 
     while(it.hasNext()) {
       String tomName = (String)it.next();
-      TomTerm emptyContext = `emptyTerm();
       TomSymbol tomSymbol = getSymbolFromName(tomName);
 
       /*
@@ -160,7 +158,7 @@ public class TomExpander extends TomGenericPlugin {
         System.out.println("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
-      tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+      tomSymbol = expandVariable(`EmptyContext(),`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
       getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
@@ -346,11 +344,11 @@ public class TomExpander extends TomGenericPlugin {
         try{
           TomTerm subterm = (TomTerm) expandStrategy.visit(args.getHeadconcTomTerm());
           TomName slotName = `EmptyName();
-          if(subterm.isUnamedVariable()) {
-            // do nothing
-          } else {
-            slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
-          }
+	  /*
+	   * we cannot optimize when subterm.isUnamedVariable
+	   * since it can be constrained
+	   */	  
+	  slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
           args = args.getTailconcTomTerm();
         }catch(VisitFailure e){}
       }
@@ -360,11 +358,11 @@ public class TomExpander extends TomGenericPlugin {
         try{
           TomTerm subterm = (TomTerm) expandStrategy.visit(args.getHeadconcTomTerm());
           TomName slotName = pairNameDeclList.getHeadconcPairNameDecl().getSlotName();
-          if(subterm.isUnamedVariable()) {
-            // do nothing
-          } else {
-            slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
-          }
+	  /*
+	   * we cannot optimize when subterm.isUnamedVariable
+	   * since it can be constrained
+	   */	  
+	  slotList = `concSlot(slotList*,PairSlotAppl(slotName,subterm));
           args = args.getTailconcTomTerm();
           pairNameDeclList = pairNameDeclList.getTailconcPairNameDecl();
         }catch(VisitFailure e){}
@@ -482,7 +480,7 @@ public class TomExpander extends TomGenericPlugin {
 
     TomList newAttrList  = `concTomTerm();
     TomList newChildList = `concTomTerm();
-    TomTerm star = ASTFactory.makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",`concConstraint());
+    TomTerm star = `UnamedVariableStar(convertOriginTracking("_*",optionList),TomTypeAlone("unknown type"),concConstraint());
     if(implicitAttribute) { newAttrList  = `concTomTerm(star,newAttrList*); }
     if(implicitChild)     { newChildList = `concTomTerm(star,newChildList*); }
 
@@ -554,13 +552,13 @@ matchBlock: {
             }
 
             /*
-             * a single "_" is converted into a Placeholder to match
+             * a single "_" is converted into an UnamedVariable to match
              * any XML node
              */
             TomTerm xmlHead;
 
             if(newNameList.isEmptyconcTomName()){
-              xmlHead = `Placeholder(concOption(),concConstraint());
+              xmlHead = `UnamedVariable(concOption(),TomTypeAlone("unknown type"),concConstraint());
             } else {
               xmlHead = `TermAppl(convertOriginTracking(newNameList.getHeadconcTomName().getString(),optionList),newNameList,concTomTerm(),concConstraint());
             }

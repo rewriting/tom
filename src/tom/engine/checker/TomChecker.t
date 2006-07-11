@@ -64,7 +64,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected final static int XML_APPL                = 5;
   protected final static int VARIABLE_STAR           = 6;
   protected final static int UNAMED_VARIABLE_STAR    = 7;
-  protected final static int PLACE_HOLDER            = 8;
+  protected final static int UNAMED_VARIABLE         = 8;
   protected final static int VARIABLE                = 9;
   
   protected boolean strictType = false;
@@ -86,7 +86,7 @@ abstract public class TomChecker extends TomGenericPlugin {
       RecordAppl[NameList=(Name(_))] -> { return RECORD_APPL;}
       RecordAppl[NameList=(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
       XMLAppl[] -> { return XML_APPL;}
-      Placeholder[] -> { return PLACE_HOLDER;}
+      UnamedVariable[] -> { return UNAMED_VARIABLE;}
       VariableStar[] -> { return VARIABLE_STAR;}
       Variable[] -> { return VARIABLE;}
       UnamedVariableStar[] -> { return UNAMED_VARIABLE_STAR;}
@@ -130,8 +130,9 @@ abstract public class TomChecker extends TomGenericPlugin {
         }
         return dijunctionName;
       }
-      Placeholder[] -> { return "_";}
-      (Variable|VariableStar)[AstName=Name(name)] -> { return `name+"*";}
+      Variable[AstName=Name(name)] -> { return `name;}
+      VariableStar[AstName=Name(name)] -> { return `name+"*";}
+      UnamedVariable[] -> { return "_";}
       UnamedVariableStar[] -> { return "_*";}
     }
     throw new TomRuntimeException("Invalid Term");

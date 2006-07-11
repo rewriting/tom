@@ -15,16 +15,15 @@ TomTerm =
    * @param Slots a list of pairs (slot,subterm)
    * @param Constraints a list of constraints
    */
-   TermAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
+    | TermAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
     | ListAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
     | RecordAppl(Option:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
     | XMLAppl(Option:OptionList,NameList:TomNameList,AttrList:TomList,ChildList:TomList,Constraints:ConstraintList)
-/**
+  /**
    * <code>Variable</code> a variable
-   * <code>UnamedVariable</code> a variable without name
    * <code>VariableStar</code> a list-variable
+   * <code>UnamedVariable</code> a variable without name
    * <code>UnamedVariableStar</code> a list-variable without name
-   * <code>Placeholder</code> ???
    *
    * @param Option a list of options
    * @param AstName the name of the variable
@@ -35,9 +34,15 @@ TomTerm =
     | VariableStar(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
     | UnamedVariable(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
     | UnamedVariableStar(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
-    | Placeholder(Option:OptionList,Constraints:ConstraintList)
 
-    | emptyTerm()
+  /**
+   * <code>EmptyContext</code> used by the expander to denote an empty context
+   */
+    | EmptyContext()
+
+  /**
+   * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm
+   */
     | TargetLanguageToTomTerm(Tl:TargetLanguage)
     | TomTypeToTomTerm(AstType:TomType)
     | TomNameToTomTerm(AstName:TomName)
@@ -46,6 +51,7 @@ TomTerm =
     | OptionToTomTerm(Option:OptionList)
     | ExpressionToTomTerm(AstExpression:Expression)
     | InstructionToTomTerm(AstInstruction:Instruction)
+
     | Tom(TomList:TomList)
     | BackQuoteAppl(Option:OptionList,AstName:TomName,Args:TomList)
     | DoubleBackQuote(Args:TomList)
@@ -53,26 +59,22 @@ TomTerm =
     | SubjectList(TomList:TomList)
     | Term(TomTerm:TomTerm)
     | AntiTerm(TomTerm:TomTerm)
-// | Subterm(nr:int,groundTerm:TomTerm)
-// AstName - from whom (function symbol name) to extract
-// SlotName - what to extract
-// GroundTerm - from where to extract
-     | Subterm(AstName:TomName,SlotName:TomName,GroundTerm:TomTerm)
-     | SymbolOf(groundTerm:TomTerm)
-     | TLVar(StrName:String,AstType:TomType)
-     | Ref(TomTerm:TomTerm)
-     | BuildReducedTerm(Kid1:TomTerm)
-     | FunctionCall(AstName:TomName,Args:TomList)
-     | BuildConstant(AstName:TomName)
-     | BuildTerm(AstName:TomName,Args:TomList,ModuleName:String)
-     | BuildEmptyList(AstName:TomName)
-     | BuildConsList(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
-     | BuildAppendList(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
-     | BuildEmptyArray(AstName:TomName,Size:int)
-     | BuildConsArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
-     | BuildAppendArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
-     | TomInclude(TomList:TomList)
-     | Automata(Option:OptionList,PatternList:TomList,NumberList:TomNumberList,Inst:Instruction)
+    | Subterm(AstName:TomName,SlotName:TomName,GroundTerm:TomTerm)
+    | SymbolOf(groundTerm:TomTerm)
+    | TLVar(StrName:String,AstType:TomType)
+    | Ref(TomTerm:TomTerm)
+    | BuildReducedTerm(Kid1:TomTerm)
+    | FunctionCall(AstName:TomName,Args:TomList)
+    | BuildConstant(AstName:TomName)
+    | BuildTerm(AstName:TomName,Args:TomList,ModuleName:String)
+    | BuildEmptyList(AstName:TomName)
+    | BuildConsList(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
+    | BuildAppendList(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
+    | BuildEmptyArray(AstName:TomName,Size:int)
+    | BuildConsArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
+    | BuildAppendArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
+    | TomInclude(TomList:TomList)
+    | Automata(Option:OptionList,PatternList:TomList,NumberList:TomNumberList,Inst:Instruction)
 
 PatternInstruction = PatternInstruction(Pattern:Pattern,Action:Instruction,Option:OptionList)
 

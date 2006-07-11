@@ -851,19 +851,6 @@ public class TomSyntaxChecker extends TomChecker {
           break matchblock;
         }
 
-        Placeholder[Option=options] -> {
-          termClass = PLACE_HOLDER;
-          fileName = findOriginTrackingFileName(`options);
-          decLine = findOriginTrackingLine(`options);
-          type = null;
-          termName = "_";
-          if(permissive) {
-            messageError(fileName,decLine, TomMessage.incorrectRuleRHSClass,
-                         new Object[]{termName});
-          }
-          break matchblock;
-        }
-
         Variable[Option=options, AstName=Name(name)] -> {
           termClass = VARIABLE;
           fileName = findOriginTrackingFileName(`options);
@@ -881,6 +868,19 @@ public class TomSyntaxChecker extends TomChecker {
           termName = `name+"*";
           if(!listSymbol) {
             messageError(fileName,decLine, TomMessage.invalidVariableStarArgument,
+                         new Object[]{termName});
+          }
+          break matchblock;
+        }
+
+        UnamedVariable[Option=options] -> {
+          termClass = UNAMED_VARIABLE;
+          fileName = findOriginTrackingFileName(`options);
+          decLine = findOriginTrackingLine(`options);
+          type = null;
+          termName = "_";
+          if(permissive) {
+            messageError(fileName,decLine, TomMessage.incorrectRuleRHSClass,
                          new Object[]{termName});
           }
           break matchblock;
@@ -968,11 +968,6 @@ public class TomSyntaxChecker extends TomChecker {
               findOriginTrackingLine(`options),
               getSymbolCodomain(getSymbolFromName(Constants.ELEMENT_NODE)));
         }
-        Placeholder[Option=options] -> {
-          return new TermDescription(PLACE_HOLDER, "_",
-                findOriginTrackingFileName(`options),
-              findOriginTrackingLine(`options),  null);
-        }
         Variable[Option=options, AstName=Name(name)] -> {
           return new TermDescription(VARIABLE, `name,
                 findOriginTrackingFileName(`options),
@@ -980,6 +975,11 @@ public class TomSyntaxChecker extends TomChecker {
         }
         VariableStar[Option=options, AstName=Name(name)] -> {
           return new TermDescription(VARIABLE_STAR, `name+"*",
+                findOriginTrackingFileName(`options),
+              findOriginTrackingLine(`options),  null);
+        }
+        UnamedVariable[Option=options] -> {
+          return new TermDescription(UNAMED_VARIABLE, "_",
                 findOriginTrackingFileName(`options),
               findOriginTrackingLine(`options),  null);
         }

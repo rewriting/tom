@@ -201,7 +201,7 @@ public class ASTFactory {
     }
     return list;
   }
-  
+ /* 
   public static TomTerm makeVariable(String name, String type) {
     return makeVariable(`concOption(), name, type);      
   }
@@ -225,15 +225,7 @@ public class ASTFactory {
   public static TomTerm makeVariableStar(OptionList option, String name, String type, ConstraintList constraintList) {
     return `VariableStar(option, Name(name), TomTypeAlone(type), constraintList);  
   }
-
-  public static TomTerm makeVariableStar(OptionList option, TomName name, TomType type, ConstraintList constraintList) {
-    return `VariableStar(option, name, type, constraintList);  
-  }
-
-  public static TomTerm makeUnamedVariableStar(OptionList option, String type, ConstraintList constraintList) {
-    return `UnamedVariableStar(option, TomTypeAlone(type),constraintList);  
-  }
-
+*/
   public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
                               List optionList) {
     TomType type;
@@ -250,10 +242,6 @@ public class ASTFactory {
       list = `concOption(arg,list*);
     }
     return list;
-  }
-
-  public static ConstraintList makeConstraint() {
-    return `concConstraint();
   }
 
   public static ConstraintList makeConstraint(Constraint arg) {

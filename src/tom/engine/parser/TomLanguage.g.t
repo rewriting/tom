@@ -623,7 +623,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             (variableStar[null,null]) => result = variableStar[optionList,constraintList] 
 
         |   // _
-            result = placeHolder[optionList,constraintList] 
+            result = unamedVariable[optionList,constraintList] 
 
         |   // for a single constant. 
             // ambiguous with the next rule so :
@@ -971,7 +971,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                     optionList.add(`Name(anno1.getText()));
                 }
             )?
-            termName = placeHolder[optionList,constraintList]
+            termName = unamedVariable[optionList,constraintList]
             e:EQUAL {text.append("=");}
             (
                 {LA(2) == AT}? anno3:ALL_ID AT
@@ -986,7 +986,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             if (!varStar) {
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
-                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(concOption(),ASTFactory.makeConstraint())));
+                slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),UnamedVariable(concOption(),TomTypeAlone("unknown type"),concConstraint())));
                 // no longer necessary ot metaEncode Strings in attributes
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
                 optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),currentFile()));
@@ -1101,13 +1101,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
 }
     :
         (
-            nameUnderscore:UNDERSCORE
-            {
-                text.append(nameUnderscore.getText());
-                optionList.add(`OriginTracking(Name(nameUnderscore.getText()),nameUnderscore.getLine(),currentFile()));
-                option = ASTFactory.makeOptionList(optionList);
-                result = `UnamedVariable(option,TomTypeAlone("unknown type"),concConstraint());
-            }
+            result = unamedVariable[optionList, new LinkedList()]
         |
             nameID:ALL_ID
             {
@@ -1299,7 +1293,7 @@ variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm
     ;
 
 // _
-placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm result]
+unamedVariable [LinkedList optionList, LinkedList constraintList] returns [TomTerm result]
 { 
     result = null;
     OptionList options = null;
@@ -1311,12 +1305,10 @@ placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm 
                 text.append(t.getText());
                 setLastLine(t.getLine());
 
-                optionList.add(
-                    `OriginTracking(Name(t.getText()),t.getLine(),currentFile())
-                );
+                optionList.add(`OriginTracking(Name(t.getText()),t.getLine(),currentFile()));
                 options = ASTFactory.makeOptionList(optionList);
                 constraints = ASTFactory.makeConstraintList(constraintList);
-                result = `Placeholder(options, constraints);
+                result = `UnamedVariable(options,TomTypeAlone("unknown type"),constraints);
             } 
         )
     ;

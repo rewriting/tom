@@ -333,7 +333,7 @@ public class TomKernelExpander extends TomBase {
           %match(TomTerm contextSubject) {
             TomTypeToTomTerm(type@Type[]) -> {
               SlotList subterm = expander.expandVariableList(`emptySymbol(), `slotList);
-              ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`emptyTerm(),`constraints);
+              ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`EmptyContext(),`constraints);
               return `RecordAppl(option,nameList,subterm,newConstraints);
             }
             Variable[AstType=type] -> {
@@ -388,22 +388,11 @@ public class TomKernelExpander extends TomBase {
         }
       }
 
-      Placeholder[Option=option,Constraints=constraints] -> {
+      UnamedVariable[Option=option,Constraints=constraints] -> {
         %match(TomTerm contextSubject){
-          TomTypeToTomTerm(type@Type[])->{ 
+          (TomTypeToTomTerm|Variable)[AstType=type@Type[]] -> { 
             ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`TomTypeToTomTerm(type),`constraints);
-            // create an unamed variable
             return `UnamedVariable(option,type,newConstraints);
-          }
-        }
-      }
-
-      Placeholder[Option=option,Constraints=constraints] -> {
-        %match(TomTerm contextSubject){
-          Variable[AstType=type1] -> {
-            ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`TomTypeToTomTerm(type1),`constraints);
-            // create an unamed variable
-            return `UnamedVariable(option,type1,newConstraints);
           }
         }
       }
@@ -475,7 +464,7 @@ public class TomKernelExpander extends TomBase {
          * are expanded in an empty context
          */
         SlotList sl = expandVariableList(symbol,`tail);
-        return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(emptyTerm(),slotAppl)),sl*);
+        return `concSlot(PairSlotAppl(slotName,(TomTerm)expandVariable(EmptyContext(),slotAppl)),sl*);
       }
 
       symb@Symbol[TypesToType=TypesToType(typelist,codomain)],
