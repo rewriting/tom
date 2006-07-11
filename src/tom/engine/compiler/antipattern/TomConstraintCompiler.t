@@ -307,19 +307,6 @@ public class TomConstraintCompiler{
 				return `x;
 			}
 			
-			/////////////////////////////////////////////////////
-			
-			// Replace
-			AndConstraint(concAnd(X*,eq@EqualConstraint(var@Variable[],s),Y*)) -> {
-			//And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
-				            
-	            Constraint res = (Constraint) MuTraveler.init(
-	            		`BottomUp(ReplaceTerm(var,s))).visit(`AndConstraint(concAnd(X*,Y*)));
-	            if (res != `AndConstraint(concAnd(X*,Y*))){
-	            	return `AndConstraint(concAnd(eq,res));
-	            }
-	        }
-			
 			//////////////////////////////////////////////////////
 			// Decompose
 			e@EqualConstraint(RecordAppl(options,name,a1,constraints),g) -> {
@@ -397,7 +384,33 @@ public class TomConstraintCompiler{
 			}
 			OrConstraint(concOr(X*,NEqualConstraint(var@Variable[AstName=z],u),Y*,EqualConstraint(Variable[AstName=z],t),Z*)) ->{
 				return `OrConstraint(concOr(X*,EqualConstraint(t,u),Y*,NEqualConstraint(var,u),Z*));
-			}			
+			}
+			
+			/////////////////////////////////////////////////////
+			
+			// Replace
+			AndConstraint(concAnd(X*,eq@EqualConstraint(var@Variable[],s),Y*)) -> {
+			//And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
+				            
+	            Constraint res = (Constraint) MuTraveler.init(
+	            		`BottomUp(ReplaceTerm(var,s))).visit(`AndConstraint(concAnd(X*,Y*)));
+	            if (res != `AndConstraint(concAnd(X*,Y*))){
+	            	return `AndConstraint(concAnd(eq,res));
+	            }
+	        }
+			
+			// Replace 2
+			OrConstraint(concOr(X*,eq@NEqualConstraint(var@Variable[],s),Y*)) -> {
+				            
+	            Constraint res = (Constraint) MuTraveler.init(
+	            		`BottomUp(ReplaceTerm(var,s))).visit(`OrConstraint(concOr(X*,Y*)));
+	            if (res != `OrConstraint(concOr(X*,Y*))){
+	            	return `OrConstraint(concOr(eq,res));
+	            }
+	        }
+
+			
+
 			
 		} // end visit
 	} // end strategy

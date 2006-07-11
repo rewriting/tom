@@ -70,7 +70,7 @@ public class ApAndDisunification1 implements Matching{
 		// replace the match with =
 		label:%match(Constraint c){
 			Match(p,s) -> { 
-				transformedMatch = `Equal(p,s/*GenericGroundTerm("SUBJECT")*/);
+				transformedMatch = `Equal(p,GenericGroundTerm("SUBJECT"));
 
 				break label;
 			}
@@ -108,8 +108,8 @@ public class ApAndDisunification1 implements Matching{
 		rulesCounter = 0;
 		long timeStart = System.currentTimeMillis();
 		
-//		MuStrategy simplifyRule = `SimplifyWithDisunification();
-		MuStrategy simplifyRule = `SimplifyWithDisunificationAll();
+		MuStrategy simplifyRule = `SimplifyWithDisunification();
+//		MuStrategy simplifyRule = `SimplifyWithDisunificationAll();
 		MuStrategy decomposeTerms = `DecomposeTerms();
 		MuStrategy solve = `SolveRes();
 		
@@ -122,7 +122,7 @@ public class ApAndDisunification1 implements Matching{
 		}
 		
 //		System.out.println("Final result: " + compiledConstraint);
-//		System.out.println("Final result formated: " + tools.formatConstraint(compiledConstraint));
+		System.out.println("Final result formated: " + tools.formatConstraint(compiledConstraint));
 //		System.out.println("Final result solved: " + tools.formatConstraint(solvedConstraint));
 	
 //		System.out.println("Number of rules applied: " + rulesCounter);
@@ -362,7 +362,7 @@ public class ApAndDisunification1 implements Matching{
 					// if the c doesn't contain the variable, we 
 					// can put it outside the expresion that is quantified					
 					if ( !tools.containsVariable(`c,`v) ) {
-						result = `concAnd(Exists(v,c),result*);
+						result = `concAnd(c,result*);
 					}else{
 						result1 = `concAnd(c,result1*);
 					}				
@@ -424,7 +424,7 @@ public class ApAndDisunification1 implements Matching{
 					// if the c doesn't contain the variable, we 
 					// can put it outside the expresion that is quantified					
 					if ( !tools.containsVariable(`c,`v) ) {					
-						result = `concOr(ForAll(v,c),result*);
+						result = `concOr(c,result*);
 					}else{
 						result1 = `concOr(c,result1*);
 					}			
@@ -527,14 +527,25 @@ public class ApAndDisunification1 implements Matching{
 			
 			// ///////////////////////////////////////////////////
 			
-			// Replace
+			// Replace 1
 			And(concAnd(X*,eq@Equal(var@Variable(name),s),Y*)) -> {
 			//And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
 				            
 	            Constraint res = (Constraint) MuTraveler.init(
-	            		`InnermostId(ReplaceTerm(var,s))).visit(`And(concAnd(X*,Y*)));
+	            		`BottomUp(ReplaceTerm(var,s))).visit(`And(concAnd(X*,Y*)));
 	            if (res != `And(concAnd(X*,Y*))){
 	            	return `And(concAnd(eq,res));
+	            }
+	        }
+			
+			// Replace 2
+			Or(concOr(X*,eq@NEqual(var@Variable(name),s),Y*)) -> {
+			//And(concAnd(X*,eq@Equal(var,s),Y*)) -> {
+				            
+	            Constraint res = (Constraint) MuTraveler.init(
+	            		`BottomUp(ReplaceTerm(var,s))).visit(`Or(concOr(X*,Y*)));
+	            if (res != `Or(concOr(X*,Y*))){
+	            	return `Or(concOr(eq,res));
 	            }
 	        }
 			
