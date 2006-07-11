@@ -11,10 +11,13 @@ public class StrategyViewer {
 
   %include{mustrategy.tom}
   %typeterm Writer { implement {java.io.Writer} }
-  
+
+  private static int counter = 0;  
   static private String clean(String s) {
-    s = s.replaceAll("\\.","");
-    return s.replaceAll("@","");
+    s = s.replace('.','_');
+    s = s.replace('$','_');
+    s = s.replace('@','_');
+    return s;
   }
   
   %strategy toDot(out : Writer) extends `Identity() {
@@ -26,26 +29,32 @@ public class StrategyViewer {
       x -> {
         String[] tab = `x.getClass().getName().split("\\.");
         String name = tab[tab.length-1];
-        String id = `clean(x.toString());
+        String idNode = `clean(x.toString());
        
         try {
-          out.write(%[@`id@ [label="@`name@"];]%);
+          out.write(%[@idNode@ [label="@name@"];]%);
           out.write("\n");  
 
           int n = `x.getChildCount();
           for(int i=0; i<n; i++) {
             Visitable s = `x.getChildAt(i);
             %match(Strategy s) {
-              y@MuVar[] -> {
+              y@MuVar[var=varName] -> {
                 MuStrategy pointer = (MuStrategy) `((MuVar)y).getInstance();
+		String idMu = clean(pointer.toString());
                 if (pointer.getChildCount() > 0 && pointer.getChildAt(0) != `y) {
-                  out.write(%[@`id@ -> @`clean(pointer.toString())@;]%);
-                  out.write("\n");
+		  String idMuVar = idMu + "_" + (counter++);
+		  out.write(%[
+		      @idMuVar@ [label="@`varName@"]; 
+		      @idNode@ -> @idMuVar@;
+		      @idMuVar@ -> @idMu@;
+		      ]%);
                 }
                 continue;
               }
+
               y -> {
-                out.write(%[@`id@ -> @`clean(y.toString())@;]%);
+                out.write(%[@idNode@ -> @clean(`y.toString())@;]%);
                 out.write("\n");
               }
             }
@@ -68,10 +77,16 @@ public class StrategyViewer {
   
   public static void main(String[] args) {
     //MuStrategy strat = `mu(MuVar("x"),Sequence(All(MuVar("x")),Identity()));
-    MuStrategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(Fail()),Fail())), InnermostId( ChoiceId( Sequence(RepeatId(Fail()), RepeatId(SequenceId(ChoiceId(Fail(),Fail()),OnceTopDownId(Fail())))), SequenceId(Fail(),OnceTopDownId(RepeatId(Fail()))))));
+    MuStrategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(R()),R())), InnermostId( ChoiceId( Sequence(RepeatId(R()), RepeatId(SequenceId(ChoiceId(R(),R()),OnceTopDownId(R())))), SequenceId(R(),OnceTopDownId(RepeatId(R()))))));
 
-   //MuStrategy strat = `SequenceId(Fail(),OnceTopDownId(RepeatId(Fail())));
+   //MuStrategy strat = `SequenceId(R(),R());
 
     stratToDot(strat);
+  }
+
+  %strategy R() extends Identity() {
+    visit Strategy {
+      x -> { return `x; }
+    }
   }
 }
