@@ -18,6 +18,7 @@ public class TestMap extends TestCase {
   %include { elist/Elist.tom }
   %include { elist/_Elist.tom }
   %include { java/util/types/Collection.tom }
+  %include { java/util/types/Map.tom }
 
   public void testMap() {
     Elist subject = `Cons(a(),Cons(b(),Cons(b(),Cons(c(),Empty()))));
@@ -183,6 +184,45 @@ public class TestMap extends TestCase {
     assertEquals(`f(a(),2,a()),builder.apply(null));
     assertEquals(`f(a(),2,a()),builder.apply(`a()));
     assertEquals(`f(a(),2,a()),builder.apply(`f(a(),3,a())));
+  }
+
+  %strategy Assign(env:Map, name:String) extends Identity() {
+    visit E {
+      x -> { env.put(name,`x); }
+    }
+  }
+  %strategy Get(env:Map, name:String) extends Identity() {
+    visit E {
+      _ -> {
+        return (E) env.get(name);
+      }
+    }
+  }
+
+  public void testRule() {
+    E subject =
+      `f(
+        f(f(a(),0,a()),0,f(a(),1,a())),
+        0,
+        f(
+          f(
+            f(a(),1,a()),
+            0,
+            f(a(),1,f(f(a(),1,a()),0,f(a(),1,a())))
+           ),
+          0,
+          f(f(a(),0,a()),0,f(a(),1,a()))
+          )
+        );
+    Map env = new HashMap();
+    MuStrategy rule =
+      `Sequence(
+         _f(Assign(env,"x"),Identity(),_a()),
+         Get(env,"x")
+       );
+    subject = (E) `Innermost(rule).apply(subject);
+
+    assertEquals(`a(),subject);
   }
 
   public void testVariadicMap() {
