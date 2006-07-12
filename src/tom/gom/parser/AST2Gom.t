@@ -24,10 +24,15 @@
 
 package tom.gom.parser;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 import tom.pom.ATermAST;
 import aterm.*;
 import aterm.pure.*;
 
+import tom.gom.GomMessage;
+import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 
@@ -53,7 +58,7 @@ public class AST2Gom{
         return `GomModule(getGomModuleName(name),concSection(getSection(section*)));
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static GomModuleName getGomModuleName(ATerm t) {
@@ -62,7 +67,7 @@ public class AST2Gom{
         return `GomModuleName(text);
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static Section getImports(ATerm t) {
@@ -71,7 +76,7 @@ public class AST2Gom{
         return `Imports(getImportList(importList));
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static ImportList getImportList(ATermList l) {
@@ -84,7 +89,7 @@ public class AST2Gom{
         return `concImportedModule();
       }
     }
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
 
   private static ImportedModule getImportedModule(ATerm t) {
@@ -93,7 +98,7 @@ public class AST2Gom{
         return `Import(getGomModuleName(module));
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
   private static Section getSection(ATermList l) {
     %match(ATermList l){
@@ -104,7 +109,7 @@ public class AST2Gom{
         return `Public(getGrammarList(grammar*));
       }
     }
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   private static GrammarList getGrammarList(ATermList l) {
     %match(ATermList l){
@@ -123,7 +128,7 @@ public class AST2Gom{
         return `concGrammar();
       }
     }
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   //when sorts are declared with using 'sorts ...'
   private static Grammar getSorts(ATerm t) {
@@ -132,7 +137,7 @@ public class AST2Gom{
         return `Sorts(getSortsList(productions));
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
   private static Grammar getGrammar(ATerm t) {
     %match(ATerm t){
@@ -143,7 +148,7 @@ public class AST2Gom{
         return `Grammar(getProductionList(productions*));
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static GomTypeList getSortsList(ATermList l) {
@@ -166,7 +171,7 @@ public class AST2Gom{
         return `concGomType();
       }
     }
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   private static Production getProduction(ATerm t) {
     %match(ATerm t){
@@ -177,7 +182,7 @@ public class AST2Gom{
         return `Hook(getId(id), getHookkind(type),getArgList(arglist*),code);
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static ProductionList getProductionList(ATermList l) {
@@ -202,7 +207,7 @@ public class AST2Gom{
         return `concProduction();
       }
     }
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
 
   private static ProductionList getAlternatives(ATerm type, ATermList altL) {
@@ -222,7 +227,7 @@ public class AST2Gom{
         return `concProduction();
       }
     }
-    throw new RuntimeException("Unable to translate: " + altL);
+    throw new GomRuntimeException("Unable to translate: " + altL);
   }
 
   private static ProductionList getAlternatives(ATerm t) {
@@ -231,7 +236,7 @@ public class AST2Gom{
             return getAlternatives(`type,`alternatives*);
           }
         }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static GomTypeList getGomTypeList(ATermList l) {
@@ -244,7 +249,7 @@ public class AST2Gom{
         return `concGomType();
       }
     }
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   private static GomType getGomType(ATerm t) {
     %match(ATerm t){
@@ -252,7 +257,7 @@ public class AST2Gom{
         return `GomType(text);
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static String getId(ATerm t) {
@@ -261,7 +266,7 @@ public class AST2Gom{
         return `text;
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static Hookkind getHookkind(ATerm t) {
@@ -273,7 +278,7 @@ public class AST2Gom{
         return `KindMakeinsertHook();
       }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static ArgList getArgList(ATermList l){
@@ -289,7 +294,7 @@ public class AST2Gom{
         return `concArg();
       }
     }
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   private static FieldList getFieldList(ATermList l){
     %match(ATermList l){
@@ -304,7 +309,7 @@ public class AST2Gom{
         return `concField();
       }
     }
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
 
   private static Arg getArg(ATerm s) {
@@ -319,7 +324,13 @@ public class AST2Gom{
       STAR(_,(type)) -> {
         return `StarredField(getGomType(type));
       }
+      _ -> {
+    Logger.getLogger("AST2Gom.class").log(Level.SEVERE,
+          GomMessage.noSlotDeclaration.getMessage(),
+          new Object[]{});
+        throw new GomRuntimeException("parsing problem");
+      }
     }
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 }
