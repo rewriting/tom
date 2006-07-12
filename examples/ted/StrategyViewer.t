@@ -72,7 +72,7 @@ public class StrategyViewer {
   public static void stratToDot(MuStrategy s) {
     //s.apply(`Identity()); // to expand
     Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
-    System.out.println("digraph G {");
+    System.out.println("digraph G { graph [ordering=out];");
     `TopDown(toDot(w)).apply(s);
     System.out.println("}\n");
   }
