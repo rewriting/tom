@@ -103,12 +103,6 @@ public class TestMap extends TestCase {
     assertFalse("The strategie pattern not have matched",state);
   }
 
-  %strategy replace_with_a() extends `Identity() {
-    visit E {
-      _ -> { return `a(); }
-    }
-  }
-
   public void testReplace() {
     Elist subject = 
       `Cons(a(),
@@ -121,9 +115,9 @@ public class TestMap extends TestCase {
           _Cons(
             Try(
               _f(
-                _f(replace_with_a(),Identity(),Identity()),
+                _f(Make_a(),Identity(),Identity()),
                 Identity(),
-                _f(Identity(),Identity(),replace_with_a())
+                _f(Identity(),Identity(),Make_a())
               )),MuVar("x")),
           _Empty()
         ));
@@ -149,7 +143,7 @@ public class TestMap extends TestCase {
         Try(
           Sequence(
             _f(Identity(),Identity(),_b()),
-            replace_with_a())));
+            Make_a())));
     subject = (Elist) rule.apply(subject);
     assertEquals(
         `Cons(a(),
@@ -178,10 +172,17 @@ public class TestMap extends TestCase {
     MuStrategy rule =
       `Sequence(
           _f(_a(),Identity(),_a()),
-            replace_with_a()
+            Make_a()
             );
     subject = (E) `Innermost(rule).apply(subject);
     assertEquals(`a(),subject);
+  }
+
+  public void testMake_Strat() {
+    MuStrategy builder = `Make_f(Make_a(),2,Make_a());
+    assertEquals(`f(a(),2,a()),builder.apply(null));
+    assertEquals(`f(a(),2,a()),builder.apply(`a()));
+    assertEquals(`f(a(),2,a()),builder.apply(`f(a(),3,a())));
   }
 
   public void testVariadicMap() {

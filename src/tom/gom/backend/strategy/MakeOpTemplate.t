@@ -165,9 +165,9 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       %match(SlotField head) {
         SlotField[name=name,domain=domain] -> {
           if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-            args += (i==0?"":", ")+arg+i+":Strategy";
+            args += (i==0?"":", ")+fieldName(`name)+":Strategy";
           } else {
-            args += (i==0?"":", ")+arg+i+":"+fullClassName(`domain);
+            args += (i==0?"":", ")+fieldName(`name)+":"+fullClassName(`domain);
           }
         }
       }
