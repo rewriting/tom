@@ -79,14 +79,19 @@ public class StrategyViewer {
 
   public static void main(String[] args) {
     //MuStrategy strat = `mu(MuVar("x"),Sequence(All(MuVar("x")),Identity()));
-    MuStrategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(R()),R())), InnermostId( ChoiceId( Sequence(RepeatId(R()), RepeatId(SequenceId(ChoiceId(R(),R()),OnceTopDownId(R())))), SequenceId(R(),OnceTopDownId(RepeatId(R()))))));
+    //MuStrategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(R()),R())), InnermostId( ChoiceId( Sequence(RepeatId(R()), RepeatId(SequenceId(ChoiceId(R(),R()),OnceTopDownId(R())))), SequenceId(R(),OnceTopDownId(RepeatId(R()))))));
 
-    //MuStrategy strat = `SequenceId(R(),R());
+    MuStrategy strat = `mu(MuVar("x"),TopDownCollect(S(MuVar("x"))));
 
     stratToDot(strat);
   }
 
   %strategy R() extends Identity() {
+    visit Strategy {
+      x -> { return `x; }
+    }
+  }
+  %strategy S(s:Strategy) extends Identity() {
     visit Strategy {
       x -> { return `x; }
     }
