@@ -139,7 +139,7 @@ public class TestMap extends TestCase {
           Cons(b(),
             Cons(c(),
               Empty()))));
-    /* encode the rule f(_,_b()) -> a() */
+    /* encode the rule f(_,b) -> a */
     MuStrategy rule = `BottomUp(
         Try(
           Sequence(
@@ -170,6 +170,7 @@ public class TestMap extends TestCase {
           f(f(a(),0,a()),0,f(a(),1,a()))
           )
         );
+    /* encode the rule f(a,a) -> a */
     MuStrategy rule =
       `Sequence(
           _f(_a(),Identity(),_a()),
@@ -193,9 +194,7 @@ public class TestMap extends TestCase {
   }
   %strategy Get(env:Map, name:String) extends Identity() {
     visit E {
-      _ -> {
-        return (E) env.get(name);
-      }
+      _ -> { return (E) env.get(name); }
     }
   }
 
@@ -215,6 +214,7 @@ public class TestMap extends TestCase {
           )
         );
     Map env = new HashMap();
+    /* encode the rule f(x,a) -> x */
     MuStrategy rule =
       `Sequence(
          _f(Assign(env,"x"),Identity(),_a()),
