@@ -47,11 +47,10 @@ public class RecursiveCollector {
     //Term subject = `g(g(a(),b()),g(c(),d()));
     Term subject = `h(g(a(),b()),a(),g(c(),d()));
 
-    MuStrategy rule = `Collector();
-
     try {
       System.out.println("subject          = " + subject);
-      MuTraveler.init(`TopDownCollect(Collector())).visit(subject);
+      System.out.println("collect all nodes, except those under the first subterm of g(...)");
+      MuTraveler.init(`mu(MuVar("x"),TopDownCollect(Collector(MuVar("x"))))).visit(subject);
 
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
@@ -60,19 +59,19 @@ public class RecursiveCollector {
   }
  
   /*
-   * under a g, collect only in second subterm
+   * under a g(), collect only in second subterm
    * 2 solutions
    * - use getRoot
    * - perform mu-expansion in user defined strategies [TODO]
    */
 
-  %strategy Collector() extends `Identity() {
+  %strategy Collector(current:Strategy) extends `Identity() {
     visit Term {
       g(_,t2) -> {
-        //MuTraveler.getRoot(this).visit(`t2);
-      MuTraveler.init(`TopDownCollect(Collector())).visit(`t2);
-
-        `Fail().visit(null); 
+      //MuTraveler.getRoot(this).visit(`t2);
+      //MuTraveler.init(`TopDownCollect(Collector())).visit(`t2);
+      current.visit(`t2);
+      `Fail().visit(null); 
       }
 
       x -> { System.out.println("found " + `x); }
