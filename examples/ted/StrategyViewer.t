@@ -81,7 +81,9 @@ public class StrategyViewer {
     //MuStrategy strat = `mu(MuVar("x"),Sequence(All(MuVar("x")),Identity()));
     //MuStrategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(R()),R())), InnermostId( ChoiceId( Sequence(RepeatId(R()), RepeatId(SequenceId(ChoiceId(R(),R()),OnceTopDownId(R())))), SequenceId(R(),OnceTopDownId(RepeatId(R()))))));
 
-    MuStrategy strat = `mu(MuVar("x"),TopDownCollect(S(MuVar("x"))));
+    MuStrategy strat = `Choice(
+	mu(MuVar("x"),TopDownCollect(S(MuVar("x")))),
+	mu(MuVar("y"),TopDownCollect(S(MuVar("y")))));
 
     stratToDot(strat);
   }
