@@ -68,7 +68,7 @@ public class Tools {
 //    Matching test5 = new MatchingDifferences();
 //    tools.run(test5,args[3]);
 	  System.out.println("\nRunning anti-patterns with disunification: \n");
-	  Matching test6 = new ApAndDisunification1();
+	  Matching test6 = new ApAndDisunification2();
 	  tools.run(test6,args[0]);
   }
 
