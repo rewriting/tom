@@ -144,6 +144,13 @@ public class TestReflectiveStrategy extends TestCase {
   public void test30() {
     assertEquals("countAll should return 2 with `BottomUp(S5()).apply(`S4(Identity(), 0, Fail()))", 2, countAll((MuStrategy)`BottomUp(S5()).apply(`S4(Identity(), 0, Fail()))));
   }
+  
+  public void test31() {
+    Counter c = new Counter();
+    MuStrategy s = `mu(MuVar("x"),TopDownCollect(CollectExceptFirst(MuVar("x"),c)));
+    s.apply(`Sequence(S1(),Sequence(Choice(S1(),S1()),Choice(S1(),S1()))));
+    assertEquals("collectExceptFirst should return 5 when applied on `Sequence(S1(),Sequence(Choice(S1(),S1()),Choice(S1(),S1())))", 5, c.count);
+  }
 
   // matching basic strategy
   public boolean matchIdentity(MuStrategy s) {
@@ -266,6 +273,18 @@ public class TestReflectiveStrategy extends TestCase {
   %strategy incAll(c:Counter) extends `Identity() {
     visit Strategy {
       All(_) -> { c.count++; }
+    }
+  }
+ 
+  /* collect all strategies, except those in first argument of a sequence */
+  %strategy CollectExceptFirst(current:Strategy, c:Counter) extends `Identity() {
+    visit Strategy {
+      Sequence(_,s2) -> {
+      current.visit(`s2);
+      `Fail().visit(null); 
+      }
+
+      x -> { c.count++; }
     }
   }
 }
