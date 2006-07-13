@@ -114,8 +114,8 @@ public class MappingTemplate extends TemplateClass {
   is_fsym(t) { t instanceof @fullClassName(`concClass)@ || t instanceof @fullClassName(`emptyClass)@ }
   make_empty() { @fullClassName(`emptyClass)@.make() }
   make_insert(e,l) { @fullClassName(`concClass)@.make(e,l) }
-  get_head(l) { l.@getMethod(`head)@() }
-  get_tail(l) { l.@getMethod(`tail)@() }
+  get_head(l) { (l.@isOperatorMethod(`concClass)@())?(l.@getMethod(`head)@()):(l) }
+  get_tail(l) { (l.@isOperatorMethod(`concClass)@())?(l.@getMethod(`tail)@()):(@fullClassName(`emptyClass)@.make()) }
   is_empty(l) { l.@isOperatorMethod(`emptyClass)@() }
 }
 ]%);
