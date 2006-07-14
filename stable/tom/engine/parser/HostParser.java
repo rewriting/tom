@@ -510,7 +510,6 @@ public HostParser(ParserSharedInputState state) {
 				break;
 			}
 			case TYPETERM:
-			case TYPE:
 			{
 				typeTerm(list);
 				break;
@@ -941,39 +940,18 @@ public HostParser(ParserSharedInputState state) {
 	) throws RecognitionException, TokenStreamException, TomException {
 		
 		Token  tt = null;
-		Token  t = null;
 		
 		TargetLanguage code = null;
 		int line, column;
 		
 		
 		{
-		switch ( LA(1)) {
-		case TYPETERM:
-		{
-			tt = LT(1);
-			match(TYPETERM);
-			
-			line = tt.getLine();
-			column = tt.getColumn();
-			
-			break;
-		}
-		case TYPE:
-		{
-			t = LT(1);
-			match(TYPE);
-			
-			line = t.getLine();
-			column = t.getColumn();
-			
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
+		tt = LT(1);
+		match(TYPETERM);
+		
+		line = tt.getLine();
+		column = tt.getColumn();
+		
 		}
 		
 		// addPreviousCode...
@@ -1102,7 +1080,6 @@ public HostParser(ParserSharedInputState state) {
 		"INCLUDE",
 		"CODE",
 		"TYPETERM",
-		"TYPE",
 		"ESC",
 		"HEX_DIGIT",
 		"WS",

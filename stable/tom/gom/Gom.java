@@ -63,7 +63,8 @@ public class Gom {
   private static Handler consoleHandler;
 
   public static void main(String[] args) {
-    exec(args);
+    int errno = exec(args);
+    System.exit(errno);
   }
 
   public static int exec(String[] commandLine) {

@@ -50,7 +50,7 @@
     <plugin name="Parser"
             class="tom.engine.parser.TomParserPlugin"/>
     <plugin name="Syntax checker"
-            class="tom.engine.checker.TomSyntaxChecker"/>
+            class="tom.engine.checker.TomSyntaxCheckerAp"/>
     <plugin name="Expander"
             class="tom.engine.compiler.TomExpander"/>
     <plugin name="Type checker"

@@ -94,6 +94,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Parse problem \"{0}\"");
   public static final GomMessage unknownHookKind =
     new GomMessage("Unknown hook kind \"{0}\"");
+  public static final GomMessage noSlotDeclaration =
+    new GomMessage("no slot declaration");
   public static final GomMessage deprecatedSyntax =
     new GomMessage("The Vas compatibility syntax is deprecated, "+
         "and should be converted to plain Gom syntax");

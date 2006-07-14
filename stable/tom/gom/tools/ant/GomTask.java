@@ -274,12 +274,8 @@ public class GomTask extends MatchingTask {
         int err = -1;
         javaRunner.setFork(getFork());
         javaRunner.setClassname("tom.gom.Gom");
-        err = javaRunner.executeJava();
-        if(err != 0) {
-          if(failOnError) {
-            throw new BuildException("gom returned: " + err, getLocation());
-          }
-        }
+        javaRunner.setFailonerror(failOnError);
+        javaRunner.execute();
       }
     }
     catch(Exception e){

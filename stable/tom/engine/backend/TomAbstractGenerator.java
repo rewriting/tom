@@ -95,8 +95,11 @@ public abstract class TomAbstractGenerator extends TomBase {
     return subject;
   }
 
-  /*
+  /**
    * Generate the goal language
+   * 
+   * @param deep 
+   * 		The distance from the right side (allows the computation of the column number)
    */
   protected void generate(int deep, TomTerm subject, String moduleName)throws IOException {
      if(subject instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tom_match1_1=(( tom.engine.adt.tomterm.types.TomTerm )subject); if (tom_is_fun_sym_Tom(tom_match1_1) ||  false ) { { tom.engine.adt.tomterm.types.TomList  tom_match1_1_TomList=tom_get_slot_Tom_TomList(tom_match1_1); { tom.engine.adt.tomterm.types.TomList  tom_l=tom_match1_1_TomList; if ( true ) {
@@ -283,12 +286,16 @@ public abstract class TomAbstractGenerator extends TomBase {
 
         buildExpCast(deep, tom_tlType, tom_exp, moduleName);
         return;
-       } } } } } } } } } } if (tom_is_fun_sym_GetSlot(tom_match2_1) ||  false ) { { tom.engine.adt.tomtype.types.TomType  tom_match2_1_Codomain=tom_get_slot_GetSlot_Codomain(tom_match2_1); { tom.engine.adt.tomname.types.TomName  tom_match2_1_AstName=tom_get_slot_GetSlot_AstName(tom_match2_1); { String  tom_match2_1_SlotNameString=tom_get_slot_GetSlot_SlotNameString(tom_match2_1); { tom.engine.adt.tomterm.types.TomTerm  tom_match2_1_Variable=tom_get_slot_GetSlot_Variable(tom_match2_1); if (tom_is_fun_sym_Name(tom_match2_1_AstName) ||  false ) { { String  tom_match2_1_AstName_String=tom_get_slot_Name_String(tom_match2_1_AstName); { String  tom_opname=tom_match2_1_AstName_String; { String  tom_slotName=tom_match2_1_SlotNameString; if (tom_is_fun_sym_Variable(tom_match2_1_Variable) ||  false ) { { tom.engine.adt.tomterm.types.TomTerm  tom_var=tom_match2_1_Variable; if ( true ) {buildExpGetSlot(deep,tom_opname,tom_slotName,tom_var,moduleName)
+       } } } } } } } } } } if (tom_is_fun_sym_GetSlot(tom_match2_1) ||  false ) { { tom.engine.adt.tomtype.types.TomType  tom_match2_1_Codomain=tom_get_slot_GetSlot_Codomain(tom_match2_1); { tom.engine.adt.tomname.types.TomName  tom_match2_1_AstName=tom_get_slot_GetSlot_AstName(tom_match2_1); { String  tom_match2_1_SlotNameString=tom_get_slot_GetSlot_SlotNameString(tom_match2_1); { tom.engine.adt.tomterm.types.TomTerm  tom_match2_1_Variable=tom_get_slot_GetSlot_Variable(tom_match2_1); if (tom_is_fun_sym_Name(tom_match2_1_AstName) ||  false ) { { String  tom_match2_1_AstName_String=tom_get_slot_Name_String(tom_match2_1_AstName); { String  tom_opname=tom_match2_1_AstName_String; { String  tom_slotName=tom_match2_1_SlotNameString; if (tom_is_fun_sym_ExpressionToTomTerm(tom_match2_1_Variable) || tom_is_fun_sym_Variable(tom_match2_1_Variable) ||  false ) { { tom.engine.adt.tomterm.types.TomTerm  tom_var=tom_match2_1_Variable; if ( true ) {buildExpGetSlot(deep,tom_opname,tom_slotName,tom_var,moduleName)
 
 
 ;
         return;
-       } } } } } } } } } } } } if (tom_is_fun_sym_GetHead(tom_match2_1) ||  false ) { { tom.engine.adt.tomname.types.TomName  tom_match2_1_Opname=tom_get_slot_GetHead_Opname(tom_match2_1); { tom.engine.adt.tomtype.types.TomType  tom_match2_1_Codomain=tom_get_slot_GetHead_Codomain(tom_match2_1); { tom.engine.adt.tomterm.types.TomTerm  tom_match2_1_Variable=tom_get_slot_GetHead_Variable(tom_match2_1); { tom.engine.adt.tomname.types.TomName  tom_opNameAST=tom_match2_1_Opname; { tom.engine.adt.tomtype.types.TomType  tom_codomain=tom_match2_1_Codomain; { tom.engine.adt.tomterm.types.TomTerm  tom_exp=tom_match2_1_Variable; if ( true ) {buildExpGetHead(deep,tom_opNameAST,getTermType(tom_exp),tom_codomain,tom_exp,moduleName)
+       } } } } } } } } } } } } if (tom_is_fun_sym_GetSlot(tom_match2_1) ||  false ) { { tom.engine.adt.tomtype.types.TomType  tom_match2_1_Codomain=tom_get_slot_GetSlot_Codomain(tom_match2_1); { tom.engine.adt.tomname.types.TomName  tom_match2_1_AstName=tom_get_slot_GetSlot_AstName(tom_match2_1); { String  tom_match2_1_SlotNameString=tom_get_slot_GetSlot_SlotNameString(tom_match2_1); { tom.engine.adt.tomterm.types.TomTerm  tom_match2_1_Variable=tom_get_slot_GetSlot_Variable(tom_match2_1); if (tom_is_fun_sym_Name(tom_match2_1_AstName) ||  false ) { { String  tom_match2_1_AstName_String=tom_get_slot_Name_String(tom_match2_1_AstName); { String  tom_opname=tom_match2_1_AstName_String; { String  tom_slotName=tom_match2_1_SlotNameString; if (tom_is_fun_sym_ExpressionToTomTerm(tom_match2_1_Variable) ||  false ) { { tom.engine.adt.tomterm.types.TomTerm  tom_var=tom_match2_1_Variable; { tom.engine.adt.tomexpression.types.Expression  tom_match2_1_Variable_AstExpression=tom_get_slot_ExpressionToTomTerm_AstExpression(tom_match2_1_Variable); if (tom_is_fun_sym_GetSlot(tom_match2_1_Variable_AstExpression) ||  false ) { if ( true ) {buildExpGetSlot(deep,tom_opname,tom_slotName,tom_var,moduleName)
+
+;
+        return;
+       } } } } } } } } } } } } } } if (tom_is_fun_sym_GetHead(tom_match2_1) ||  false ) { { tom.engine.adt.tomname.types.TomName  tom_match2_1_Opname=tom_get_slot_GetHead_Opname(tom_match2_1); { tom.engine.adt.tomtype.types.TomType  tom_match2_1_Codomain=tom_get_slot_GetHead_Codomain(tom_match2_1); { tom.engine.adt.tomterm.types.TomTerm  tom_match2_1_Variable=tom_get_slot_GetHead_Variable(tom_match2_1); { tom.engine.adt.tomname.types.TomName  tom_opNameAST=tom_match2_1_Opname; { tom.engine.adt.tomtype.types.TomType  tom_codomain=tom_match2_1_Codomain; { tom.engine.adt.tomterm.types.TomTerm  tom_exp=tom_match2_1_Variable; if ( true ) {buildExpGetHead(deep,tom_opNameAST,getTermType(tom_exp),tom_codomain,tom_exp,moduleName)
 
 
 ;
@@ -329,7 +336,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         generate(deep,tom_t, moduleName);
         return;
        } } } } { tom.engine.adt.tomexpression.types.Expression  tom_t=tom_match2_1; if ( true ) {
-
 
         System.out.println("Cannot generate code for expression: " + tom_t);
         throw new TomRuntimeException("Cannot generate code for expression: " + tom_t);

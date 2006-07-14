@@ -44,12 +44,11 @@ public interface HostParserTokenTypes {
 	int INCLUDE = 16;
 	int CODE = 17;
 	int TYPETERM = 18;
-	int TYPE = 19;
-	int ESC = 20;
-	int HEX_DIGIT = 21;
-	int WS = 22;
-	int COMMENT = 23;
-	int SL_COMMENT = 24;
-	int ML_COMMENT = 25;
-	int TARGET = 26;
+	int ESC = 19;
+	int HEX_DIGIT = 20;
+	int WS = 21;
+	int COMMENT = 22;
+	int SL_COMMENT = 23;
+	int ML_COMMENT = 24;
+	int TARGET = 25;
 }

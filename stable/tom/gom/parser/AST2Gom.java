@@ -24,10 +24,15 @@
 
 package tom.gom.parser;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 import tom.pom.ATermAST;
 import aterm.*;
 import aterm.pure.*;
 
+import tom.gom.GomMessage;
+import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 
@@ -53,7 +58,7 @@ public class AST2Gom{
         return tom_make_GomModule(getGomModuleName(tom_name),tom_cons_list_concSection(getSection(tom_section),tom_empty_list_concSection()));
        } } } } } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static GomModuleName getGomModuleName(ATerm t) {
@@ -62,7 +67,7 @@ public class AST2Gom{
         return tom_make_GomModuleName(tom_text);
        } } } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static Section getImports(ATerm t) {
@@ -71,7 +76,7 @@ public class AST2Gom{
         return tom_make_Imports(getImportList(tom_importList));
        } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static ImportList getImportList(ATermList l) {
@@ -84,7 +89,7 @@ public class AST2Gom{
         return tom_empty_list_concImportedModule();
        } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
 
   private static ImportedModule getImportedModule(ATerm t) {
@@ -93,7 +98,7 @@ public class AST2Gom{
         return tom_make_Import(getGomModuleName(tom_module));
        } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
   private static Section getSection(ATermList l) {
      if(l instanceof  aterm.ATermList ) { { aterm.ATermList  tom_match7_1=(( aterm.ATermList )l); if (tom_is_fun_sym_concATerm(tom_match7_1) ||  false ) { { aterm.ATermList  tom_match7_1_list1=tom_match7_1; if (!(tom_is_empty_concATerm_ATermList(tom_match7_1_list1))) { { aterm.ATerm  tom_match7_1_1=tom_get_head_concATerm_ATermList(tom_match7_1_list1);tom_match7_1_list1=tom_get_tail_concATerm_ATermList(tom_match7_1_list1); if (tom_is_fun_sym_PUBLIC(tom_match7_1_1) ||  false ) { { aterm.ATerm  tom_match7_1_1_info=tom_get_slot_PUBLIC_info(tom_match7_1_1); { aterm.ATermList  tom_match7_1_1_childs=tom_get_slot_PUBLIC_childs(tom_match7_1_1); { aterm.ATermList  tom_grammar=tom_match7_1_list1; if ( true ) {
@@ -104,7 +109,7 @@ public class AST2Gom{
         return tom_make_Public(getGrammarList(tom_grammar));
        } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   private static GrammarList getGrammarList(ATermList l) {
      if(l instanceof  aterm.ATermList ) { { aterm.ATermList  tom_match8_1=(( aterm.ATermList )l); if (tom_is_fun_sym_concATerm(tom_match8_1) ||  false ) { { aterm.ATermList  tom_match8_1_list1=tom_match8_1; if (!(tom_is_empty_concATerm_ATermList(tom_match8_1_list1))) { { aterm.ATerm  tom_g=tom_get_head_concATerm_ATermList(tom_match8_1_list1);tom_match8_1_list1=tom_get_tail_concATerm_ATermList(tom_match8_1_list1); { aterm.ATermList  tom_tail=tom_match8_1_list1; if ( true ) {
@@ -123,7 +128,7 @@ public class AST2Gom{
         return tom_empty_list_concGrammar();
        } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   //when sorts are declared with using 'sorts ...'
   private static Grammar getSorts(ATerm t) {
@@ -132,7 +137,7 @@ public class AST2Gom{
         return tom_make_Sorts(getSortsList(tom_productions));
        } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
   private static Grammar getGrammar(ATerm t) {
      if(t instanceof  aterm.ATerm ) { { aterm.ATerm  tom_match11_1=(( aterm.ATerm )t); if (tom_is_fun_sym_SORTS(tom_match11_1) ||  false ) { { aterm.ATerm  tom_match11_1_info=tom_get_slot_SORTS_info(tom_match11_1); { aterm.ATermList  tom_match11_1_childs=tom_get_slot_SORTS_childs(tom_match11_1); { aterm.ATermList  tom_types=tom_match11_1_childs; if ( true ) {
@@ -143,7 +148,7 @@ public class AST2Gom{
         return tom_make_Grammar(getProductionList(tom_productions));
        } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static GomTypeList getSortsList(ATermList l) {
@@ -166,7 +171,7 @@ public class AST2Gom{
         return tom_empty_list_concGomType();
        } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   private static Production getProduction(ATerm t) {
      if(t instanceof  aterm.ATerm ) { { aterm.ATerm  tom_match14_1=(( aterm.ATerm )t); if (tom_is_fun_sym_ARROW(tom_match14_1) ||  false ) { { aterm.ATerm  tom_match14_1_info=tom_get_slot_ARROW_info(tom_match14_1); { aterm.ATermList  tom_match14_1_childs=tom_get_slot_ARROW_childs(tom_match14_1); if (tom_is_fun_sym_concATerm(tom_match14_1_childs) ||  false ) { { aterm.ATermList  tom_match14_1_childs_list1=tom_match14_1_childs; if (!(tom_is_empty_concATerm_ATermList(tom_match14_1_childs_list1))) { { aterm.ATerm  tom_name=tom_get_head_concATerm_ATermList(tom_match14_1_childs_list1);tom_match14_1_childs_list1=tom_get_tail_concATerm_ATermList(tom_match14_1_childs_list1); { aterm.ATermList  tom_match14_1_childs_begin2=tom_match14_1_childs_list1; { aterm.ATermList  tom_match14_1_childs_end2=tom_match14_1_childs_list1; { while (!(tom_is_empty_concATerm_ATermList(tom_match14_1_childs_end2))) {tom_match14_1_childs_list1=tom_match14_1_childs_end2; { { aterm.ATermList  tom_fieldlist=tom_get_slice_concATerm(tom_match14_1_childs_begin2,tom_match14_1_childs_end2); { aterm.ATerm  tom_type=tom_get_head_concATerm_ATermList(tom_match14_1_childs_list1);tom_match14_1_childs_list1=tom_get_tail_concATerm_ATermList(tom_match14_1_childs_list1); if (tom_is_empty_concATerm_ATermList(tom_match14_1_childs_list1)) { if ( true ) {
@@ -177,7 +182,7 @@ public class AST2Gom{
         return tom_make_Hook(getId(tom_id),getHookkind(tom_type),getArgList(tom_arglist),tom_code);
        } } } } } } } } } } } } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static ProductionList getProductionList(ATermList l) {
@@ -202,7 +207,7 @@ public class AST2Gom{
         return tom_empty_list_concProduction();
        } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
 
   private static ProductionList getAlternatives(ATerm type, ATermList altL) {
@@ -222,7 +227,7 @@ public class AST2Gom{
         return tom_empty_list_concProduction();
        } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + altL);
+    throw new GomRuntimeException("Unable to translate: " + altL);
   }
 
   private static ProductionList getAlternatives(ATerm t) {
@@ -231,7 +236,7 @@ public class AST2Gom{
             return getAlternatives(tom_type,tom_alternatives);
            } } } } } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static GomTypeList getGomTypeList(ATermList l) {
@@ -244,7 +249,7 @@ public class AST2Gom{
         return tom_empty_list_concGomType();
        } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   private static GomType getGomType(ATerm t) {
      if(t instanceof  aterm.ATerm ) { { aterm.ATerm  tom_match20_1=(( aterm.ATerm )t); if (tom_is_fun_sym_ID(tom_match20_1) ||  false ) { { aterm.ATerm  tom_match20_1_info=tom_get_slot_ID_info(tom_match20_1); { aterm.ATermList  tom_match20_1_childs=tom_get_slot_ID_childs(tom_match20_1); if (tom_is_fun_sym_NodeInfo(tom_match20_1_info) ||  false ) { { String  tom_match20_1_info_text=tom_get_slot_NodeInfo_text(tom_match20_1_info); { String  tom_text=tom_match20_1_info_text; if ( true ) {
@@ -252,7 +257,7 @@ public class AST2Gom{
         return tom_make_GomType(tom_text);
        } } } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static String getId(ATerm t) {
@@ -261,7 +266,7 @@ public class AST2Gom{
         return tom_text;
        } } } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static Hookkind getHookkind(ATerm t) {
@@ -273,7 +278,7 @@ public class AST2Gom{
         return tom_make_KindMakeinsertHook();
        } } } } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + t);
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static ArgList getArgList(ATermList l){
@@ -289,7 +294,7 @@ public class AST2Gom{
         return tom_empty_list_concArg();
        } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
   private static FieldList getFieldList(ATermList l){
      if(l instanceof  aterm.ATermList ) { { aterm.ATermList  tom_match24_1=(( aterm.ATermList )l); if (tom_is_fun_sym_concATerm(tom_match24_1) ||  false ) { { aterm.ATermList  tom_match24_1_list1=tom_match24_1; if (!(tom_is_empty_concATerm_ATermList(tom_match24_1_list1))) { { aterm.ATerm  tom_f=tom_get_head_concATerm_ATermList(tom_match24_1_list1);tom_match24_1_list1=tom_get_tail_concATerm_ATermList(tom_match24_1_list1); if (!(tom_is_empty_concATerm_ATermList(tom_match24_1_list1))) { { aterm.ATerm  tom_match24_1_2=tom_get_head_concATerm_ATermList(tom_match24_1_list1);tom_match24_1_list1=tom_get_tail_concATerm_ATermList(tom_match24_1_list1); if (tom_is_fun_sym_COMMA(tom_match24_1_2) ||  false ) { { aterm.ATerm  tom_match24_1_2_info=tom_get_slot_COMMA_info(tom_match24_1_2); { aterm.ATermList  tom_match24_1_2_childs=tom_get_slot_COMMA_childs(tom_match24_1_2); { aterm.ATermList  tom_tail=tom_match24_1_list1; if ( true ) {
@@ -304,7 +309,7 @@ public class AST2Gom{
         return tom_empty_list_concField();
        } } } } } }
 
-    throw new RuntimeException("Unable to translate: " + l);
+    throw new GomRuntimeException("Unable to translate: " + l);
   }
 
   private static Arg getArg(ATerm s) {
@@ -318,8 +323,14 @@ public class AST2Gom{
        } } } } } } } } } } } if (tom_is_fun_sym_STAR(tom_match25_1) ||  false ) { { aterm.ATerm  tom_match25_1_info=tom_get_slot_STAR_info(tom_match25_1); { aterm.ATermList  tom_match25_1_childs=tom_get_slot_STAR_childs(tom_match25_1); if (tom_is_fun_sym_concATerm(tom_match25_1_childs) ||  false ) { { aterm.ATermList  tom_match25_1_childs_list1=tom_match25_1_childs; if (!(tom_is_empty_concATerm_ATermList(tom_match25_1_childs_list1))) { { aterm.ATerm  tom_type=tom_get_head_concATerm_ATermList(tom_match25_1_childs_list1);tom_match25_1_childs_list1=tom_get_tail_concATerm_ATermList(tom_match25_1_childs_list1); if (tom_is_empty_concATerm_ATermList(tom_match25_1_childs_list1)) { if ( true ) {
 
         return tom_make_StarredField(getGomType(tom_type));
-       } } } } } } } } } } }
+       } } } } } } } } } if ( true ) {
 
-    throw new RuntimeException("Unable to translate: " + t);
+    Logger.getLogger("AST2Gom.class").log(Level.SEVERE,
+          GomMessage.noSlotDeclaration.getMessage(),
+          new Object[]{});
+        throw new GomRuntimeException("parsing problem");
+       } } }
+
+    throw new GomRuntimeException("Unable to translate: " + t);
   }
 }

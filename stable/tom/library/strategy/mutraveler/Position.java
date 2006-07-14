@@ -150,16 +150,21 @@ public class Position {
   /**
    * create s=omegaPath(v)
    * such that s[subject] applies s to all nodes in the path of omega
+   * in a bottom-up way
    *
    * @param v strategy subterm of the omega strategy
    * @return the omegaPath strategy corresponding to the position
    */
   public VisitableVisitor getOmegaPath(VisitableVisitor v) {
-    VisitableVisitor res = v;
-    for(int i = size-1 ; i>=0 ; i--) {
-     res = new Sequence(v,new Omega(data[i],res));
+    return getOmegaPathAux(v,0);
+  }
+
+  private VisitableVisitor getOmegaPathAux(VisitableVisitor v, int i) {
+    if(i >= size-1) {
+      return v;
+    } else {
+     return new Sequence(new Omega(data[i],getOmegaPathAux(v,i+1)),v);
     }
-    return res;
   }
 
   /**
