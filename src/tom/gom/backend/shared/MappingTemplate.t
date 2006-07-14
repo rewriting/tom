@@ -109,7 +109,8 @@ public class MappingTemplate extends TemplateClass {
                                                    ]
                                 ],
           _*) -> {
-        out.append(%[
+        if(`sortName == `headDomain) { /* handle List = conc(List*) case */
+          out.append(%[
 %oplist @className(`sortName)@ @className(`opName)@(@className(`headDomain)@*) {
   is_fsym(t) { t instanceof @fullClassName(`concClass)@ || t instanceof @fullClassName(`emptyClass)@ }
   make_empty() { @fullClassName(`emptyClass)@.make() }
@@ -119,6 +120,19 @@ public class MappingTemplate extends TemplateClass {
   is_empty(l) { l.@isOperatorMethod(`emptyClass)@() }
 }
 ]%);
+        } else {
+          out.append(%[
+%oplist @className(`sortName)@ @className(`opName)@(@className(`headDomain)@*) {
+  is_fsym(t) { t instanceof @fullClassName(`concClass)@ || t instanceof @fullClassName(`emptyClass)@ }
+  make_empty() { @fullClassName(`emptyClass)@.make() }
+  make_insert(e,l) { @fullClassName(`concClass)@.make(e,l) }
+  get_head(l) { l.@getMethod(`head)@() }
+  get_tail(l) { l.@getMethod(`tail)@() }
+  is_empty(l) { l.@isOperatorMethod(`emptyClass)@() }
+}
+]%);
+
+        }
       }
     }
 
