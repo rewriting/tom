@@ -58,13 +58,13 @@ import jjtraveler.VisitFailure;
 public class TomAntiPatternTransform {	
 
 //	------------------------------------------------------------
-	%include { adt/tomconstraint/TomConstraint.tom }
-//	%include { adt/tomterm/tomterm.tom }
-	%include { mutraveler.tom}	
+//	%include { adt/tomconstraint/TomConstraint.tom }
+  %include { adt/tomsignature/TomSignature.tom }
+	%include { mustrategy.tom}	
 	%include { java/util/types/ArrayList.tom}	
 //	------------------------------------------------------------
 	
-	public static int varCounter = 0;	
+	private static int varCounter = 0;	
 	
 	/**
 	 * transforms the anti-pattern problem received into a disunification one
@@ -72,81 +72,57 @@ public class TomAntiPatternTransform {
 	 * @return corresponding disunification problem 
 	 */
 	public static Constraint transform(Constraint c) {	
-		
-		varCounter = 0;		
-				
-		// eliminate anti
-		Constraint noAnti = null;;
+		//varCounter = 0;		
 		try {
-			noAnti = applyMainRule(c);
-		} catch(VisitFailure e) {
-			throw new TomRuntimeException("Reduction failed on: " + c + 
-					"\nException:" + e.getMessage());			
-		}
-		
-	//	System.out.println("Result after main rule: " + TomAntiPatternUtils.formatConstraint(noAnti));
-		
+		// eliminate anti
+			Constraint noAnti = applyMainRule(c);
 		// transform the problem into a disunification one		
-		Constraint disunifProblem = null;
-		try {		
-			disunifProblem = (Constraint) MuTraveler.init(`InnermostId(TransformIntoDisunification())).visit(noAnti);			
-		} catch (VisitFailure e) {
-			throw new TomRuntimeException("Reduction failed on: " + noAnti + 
-					"\nException:" + e.getMessage());
+			return (Constraint) MuTraveler.init(`InnermostId(TransformIntoDisunification())).visit(noAnti);			
+		} catch(VisitFailure e) {
+			throw new TomRuntimeException("Reduction failed on: " + c + "\nException:" + e.getMessage());			
 		}
-		
-//	    System.out.println("Disunification problem: " + TomAntiPatternUtils.formatConstraint(disunifProblem));
-		return disunifProblem;
+    // System.out.println("Result after main rule: " + TomAntiPatternUtils.formatConstraint(noAnti));
+    // System.out.println("Disunification problem: " + TomAntiPatternUtils.formatConstraint(disunifProblem));
 	}	
 	
-	// applies the main rule that transforms ap problems
-	// into dis-unification ones
-	private static Constraint applyMainRule(Constraint c) throws VisitFailure{
-		TomTerm pattern = null;
-		TomTerm subject = null;
-		
-    %match(Constraint c){
-			EqualConstraint(p,s) ->{
-				pattern = `p;
-				subject = `s;
-			}
-		}
+	/**
+   * applies the main rule that transforms ap problems
+   * into dis-unification ones
+   */
+  private static Constraint applyMainRule(Constraint c) throws VisitFailure {
+    // first get the constraint without the anti
+    Constraint cNoAnti = (Constraint) `OnceTopDownId(ElimAnti()).apply(c);
+    // if nothing changed, time to exit
+    if(cNoAnti == c) {
+      return c;
+    } 
+    cNoAnti = `Neg(applyMainRule(cNoAnti));
 
-    if(pattern==null || subject==null) {
-			throw new TomRuntimeException("pattern = " + pattern + "\nsubject = " + subject);
-    }
-
-		// first get the constraint without the anti
-    Constraint cNoAnti =  `EqualConstraint((TomTerm) MuTraveler.init(OnceTopDownId(ElimAnti())).visit(pattern),subject);
-		// if nothing changed, time to exit
-		if(cNoAnti == c) {
-			return c;
-		}
-		// get the constraint with a variable instead of anti
-    // TODO: introduce AbstractTerm and use Sequence(ElimAnti,AbstractTerm) instead
-    Constraint cAntiReplaced = `EqualConstraint((TomTerm) MuTraveler.init(OnceTopDownId(ReplaceAnti())).visit(pattern),subject);
-	// TODO: DANGEROUS, you assume that varCounter corresponds to the last introduced variable	
-		cAntiReplaced = `Exists(Variable(concOption(),Name("v" + varCounter),EmptyType(),concConstraint()),
-        applyMainRule(cAntiReplaced));
-		
-		cNoAnti = applyMainRule(cNoAnti);
-		
-//		System.out.println("Asta e 'c':" + tools.formatConstraint(c));
-		
-		cNoAnti = `Neg(cNoAnti);
-		
     ArrayList quantifiedVarList = new ArrayList();
     // TODO: use a congruence here and remove ApplyStrategy
-		MuTraveler.init(`OnceTopDownId(ApplyStrategy(quantifiedVarList))).visit(c);
+    MuTraveler.init(`OnceTopDownId(ApplyStrategy(quantifiedVarList))).visit(c);
     //System.out.println("quantifiedVarList = " + quantifiedVarList);
-		Iterator it = quantifiedVarList.iterator();
-		while(it.hasNext()){
-			TomTerm t = (TomTerm)it.next();
-			cNoAnti = `ForAll(t,cNoAnti);
-		}
-		
-		return `AndConstraint(concAnd(cAntiReplaced,cNoAnti));
-	}
+    Iterator it = quantifiedVarList.iterator();
+    while(it.hasNext()) {
+      TomTerm t = (TomTerm)it.next();
+      cNoAnti = `ForAll(t,cNoAnti);
+    }
+
+    // get the constraint with a variable instead of anti
+    String varName = "v" + (varCounter++);
+    TomTerm abstractVariable = `Variable(concOption(),Name(varName),EmptyType(),concConstraint());
+    Constraint cAntiReplaced = (Constraint) `OnceTopDownId(SequenceId(ElimAnti(),AbstractTerm(abstractVariable))).apply(c);
+    cAntiReplaced = applyMainRule(cAntiReplaced);
+
+    /*
+     * to improve the efficiency, we should
+     * first, abstract anti symbols, and get cAntiReplaced
+     * store the tuple (abstractedTerm, variable) during the abstraction
+     * then, re-instantiated the abstractedVariables to deduce cNoAnti
+     * this would avoid the double recrusive traversal
+     */
+    return `AndConstraint(concAnd(Exists(abstractVariable,cAntiReplaced),cNoAnti));
+  }
 	
 	// the strategy that handles the variables inside an anti
 	// symbol for beeing quantified 
@@ -166,17 +142,8 @@ public class TomAntiPatternTransform {
 		visit TomTerm {
 			v@Variable[] -> {
 				//System.out.println("Analyzing " + `v + " position=" + getPosition() );
-				//System.out.println("position=" + getPosition() );
-        //try {
-        //  System.out.println("subterm = " + getPosition().getSubterm().visit(subject));
-        //  getPosition().getOmegaPath(`Identity()).visit(subject);
-        //} catch(jjtraveler.VisitFailure e) {
-        //  System.out.println("wrong position, subject = " + subject);
-        // }
-
         MuStrategy useOmegaPath = (MuStrategy)getPosition().getOmegaPath(`ElimAnti());				
-          //TomTerm res = (TomTerm) MuTraveler.init(useOmegaPath).visit(subject);
-          TomTerm res = (TomTerm) useOmegaPath.visit(subject);
+        TomTerm res = (TomTerm) useOmegaPath.visit(subject);
 				// if no anti-symbol found, then the variable can be quantified
 				if(res == subject) { // there was no anti symbol
           quantifiedVarList.add(`v);
@@ -194,31 +161,23 @@ public class TomAntiPatternTransform {
 	
 	// returns a term with the first negation that it finds
 	// replaced by a fresh variable
-	%strategy ReplaceAnti() extends `Identity() {
+	%strategy AbstractTerm(variable:TomTerm) extends `Identity() {
 		visit TomTerm {
-			// main rule
-			a@AntiTerm(_) -> {
-        System.out.println("ReplaceAnti: why an EmptyType here ?");
-				return `Variable(concOption(),Name("v" + (++varCounter)),EmptyType(),concConstraint());
-			}
-		}
-	}
+      x -> { return variable; }
+    }
+  }
 	
 	// applies symple logic rules for eliminating 
 	// the not and thus creating a real disunification problem
 	%strategy TransformIntoDisunification() extends `Identity(){
 		visit Constraint {
 			// some simplification stuff
-			Exists(a,Exists(a,b)) ->{
-				return `Exists(a,b);
-			}
+			Exists(a,e@Exists(a,b)) ->{ return `e; }
 			
 			// producing or - de morgan 1
 			Neg(AndConstraint(a)) ->{
-				
 				AConstraintList l = `a;
 				OConstraintList result = `concOr();			
-				
 				while(!l.isEmptyconcAnd()){
 					result = `concOr(Neg(l.getHeadconcAnd()),result*);
 					l = l.getTailconcAnd();
@@ -229,10 +188,8 @@ public class TomAntiPatternTransform {
 			
 			// make Neg go down - de morgan 2
 			n@Neg(OrConstraint(a)) -> {
-				
 				OConstraintList l = `a;
 				AConstraintList result = `concAnd();
-				
 				while(!l.isEmptyconcOr()){
 					result = `concAnd(Neg(l.getHeadconcOr()),result*);
 					l = l.getTailconcOr();
@@ -251,14 +208,10 @@ public class TomAntiPatternTransform {
 			Neg(NEqualConstraint(a,b)) -> { return `EqualConstraint(a,b);}
 			
 			// replace Neg(Exists) with ForAll
-			Neg(Exists(v,c)) ->{			
-				return `ForAll(v,Neg(c));			
-			}
+			Neg(Exists(v,c)) -> { return `ForAll(v,Neg(c)); }
 			
 			// replace Neg(ForAll) with Exists
-			Neg(ForAll(v,c)) ->{			
-				return `Exists(v,Neg(c));			
-			}
+			Neg(ForAll(v,c)) -> { return `Exists(v,Neg(c)); }
 		}
 	}		
 } // end class
