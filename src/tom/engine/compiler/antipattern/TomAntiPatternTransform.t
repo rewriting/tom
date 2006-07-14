@@ -61,7 +61,7 @@ public class TomAntiPatternTransform {
 //	%include { adt/tomconstraint/TomConstraint.tom }
   %include { adt/tomsignature/TomSignature.tom }
 	%include { mustrategy.tom}	
-	%include { java/util/types/ArrayList.tom}	
+	%include { java/util/types/Collection.tom}	
 //	------------------------------------------------------------
 	
 	private static int varCounter = 0;	
@@ -72,24 +72,25 @@ public class TomAntiPatternTransform {
 	 * @return corresponding disunification problem 
 	 */
 	public static Constraint transform(Constraint c) {	
-		//varCounter = 0;		
-		try {
-		// eliminate anti
-			Constraint noAnti = applyMainRule(c);
-		// transform the problem into a disunification one		
-			return (Constraint) MuTraveler.init(`InnermostId(TransformIntoDisunification())).visit(noAnti);			
-		} catch(VisitFailure e) {
-			throw new TomRuntimeException("Reduction failed on: " + c + "\nException:" + e.getMessage());			
-		}
-    // System.out.println("Result after main rule: " + TomAntiPatternUtils.formatConstraint(noAnti));
-    // System.out.println("Disunification problem: " + TomAntiPatternUtils.formatConstraint(disunifProblem));
+    // eliminate anti
+    Constraint noAnti = applyMainRule(c);
+    // transform the problem into a disunification one		
+    return (Constraint) `InnermostId(TransformIntoDisunification()).apply(noAnti);			
 	}	
 	
 	/**
    * applies the main rule that transforms ap problems
    * into dis-unification ones
    */
-  private static Constraint applyMainRule(Constraint c) throws VisitFailure {
+  private static Constraint applyMainRule(Constraint c) {
+    /*
+     * to improve the efficiency, we should
+     * first, abstract anti symbols, and get cAntiReplaced
+     * store the tuple (abstractedTerm, variable) during the abstraction
+     * then, re-instantiate the abstractedVariables to deduce cNoAnti
+     * this would avoid the double recursive traversal
+     */
+
     // first get the constraint without the anti
     Constraint cNoAnti = (Constraint) `OnceTopDownId(ElimAnti()).apply(c);
     // if nothing changed, time to exit
@@ -98,9 +99,16 @@ public class TomAntiPatternTransform {
     } 
     cNoAnti = `Neg(applyMainRule(cNoAnti));
 
-    ArrayList quantifiedVarList = new ArrayList();
-    // TODO: use a congruence here and remove ApplyStrategy
-    MuTraveler.init(`OnceTopDownId(ApplyStrategy(quantifiedVarList))).visit(c);
+    /*
+     * find an Anti(...)
+     * an then collect (under this Anti) variables which are not under another Anti
+     * TODO: this is strange since we do not collect variables which are in other branches
+     */
+    Collection quantifiedVarList = new ArrayList();
+    `OnceTopDownId(SequenceId(ElimAnti(),TopDownCollect(CollectPositiveVariable(quantifiedVarList)))).apply(c);
+
+    //`OnceTopDownId(_Anti(TopDownCollect(CollectPositiveVariable(quantifiedVarList)))).apply(c);
+
     //System.out.println("quantifiedVarList = " + quantifiedVarList);
     Iterator it = quantifiedVarList.iterator();
     while(it.hasNext()) {
@@ -114,53 +122,31 @@ public class TomAntiPatternTransform {
     Constraint cAntiReplaced = (Constraint) `OnceTopDownId(SequenceId(ElimAnti(),AbstractTerm(abstractVariable))).apply(c);
     cAntiReplaced = applyMainRule(cAntiReplaced);
 
-    /*
-     * to improve the efficiency, we should
-     * first, abstract anti symbols, and get cAntiReplaced
-     * store the tuple (abstractedTerm, variable) during the abstraction
-     * then, re-instantiated the abstractedVariables to deduce cNoAnti
-     * this would avoid the double recrusive traversal
-     */
     return `AndConstraint(concAnd(Exists(abstractVariable,cAntiReplaced),cNoAnti));
   }
-	
-	// the strategy that handles the variables inside an anti
-	// symbol for beeing quantified 
-	%strategy ApplyStrategy(quantifiedVarList:ArrayList) extends `Identity(){
-		visit TomTerm {
-			// main rule
-			anti@AntiTerm(p) -> {
-				MuTraveler.init(`TopDown(AnalyzeTerm(quantifiedVarList,p))).visit(`p);				
-				// now it has to stop
-				return `p;
-			}
-		}
-	}
-	
-	// quantifies the variables in positive positions
-	%strategy AnalyzeTerm(quantifiedVarList:ArrayList,subject:TomTerm) extends `Identity() {		
-		visit TomTerm {
-			v@Variable[] -> {
-				//System.out.println("Analyzing " + `v + " position=" + getPosition() );
-        MuStrategy useOmegaPath = (MuStrategy)getPosition().getOmegaPath(`ElimAnti());				
-        TomTerm res = (TomTerm) useOmegaPath.visit(subject);
-				// if no anti-symbol found, then the variable can be quantified
-				if(res == subject) { // there was no anti symbol
-          quantifiedVarList.add(`v);
-				}
-			}
-		}		
-	}
-	
-	// returns a term without the first negation that it finds
+
+  // collect variables, a do not inspect under an AntiTerm
+	%strategy CollectPositiveVariable(bag:Collection) extends `Identity() {		
+    visit TomTerm {
+      AntiTerm[] -> {
+        throw new VisitFailure();
+      }
+
+      v@Variable[] -> {
+        bag.add(`v);
+        throw new VisitFailure();
+      }
+    }
+  }
+
+	// remove an anti-symbol
 	%strategy ElimAnti() extends `Identity(){		
 		visit TomTerm {		 
 			AntiTerm(p) -> { return `p; }
 		}
 	}
 	
-	// returns a term with the first negation that it finds
-	// replaced by a fresh variable
+	// replace a term by another (a variable)
 	%strategy AbstractTerm(variable:TomTerm) extends `Identity() {
 		visit TomTerm {
       x -> { return variable; }
