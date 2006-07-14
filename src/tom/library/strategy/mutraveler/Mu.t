@@ -18,9 +18,9 @@ public class Mu extends AbstractMuStrategy {
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
-		if(!isExpanded()) {
-			expand();
-		}
+    if(!isExpanded()) {
+      expand();
+    }
     return getArgument(V).visit(any);
   }
 
@@ -28,13 +28,13 @@ public class Mu extends AbstractMuStrategy {
     return ((MuVar)getArgument(VAR)).isExpanded();
   }
 
-	private void expand() {
-		try {
-			new MuTopDown().visit(this);
-		} catch (VisitFailure e) {
-			System.out.println("mu reduction failed");
-		}
-	}
+  private void expand() {
+    try {
+      new MuTopDown().visit(this);
+    } catch (VisitFailure e) {
+      System.out.println("mu reduction failed");
+    }
+  }
 
 }
 
@@ -62,36 +62,36 @@ class MuTopDown {
   }
 
   public void visit(Visitable any) throws VisitFailure {
-		%match(Strategy any) {
-			m@Mu(var@MuVar(_), v) -> {
-				stack.addFirst(`m);
-				visit(`v);
-				visit(`var);
-				stack.removeFirst();
-				return;
-			}
+    %match(Strategy any) {
+      m@Mu(var@MuVar(_), v) -> {
+        stack.addFirst(`m);
+        visit(`v);
+        visit(`var);
+        stack.removeFirst();
+        return;
+      }
 
-			var@MuVar(n) -> {
-				MuVar muvar = (MuVar)`var;
-				if(!muvar.isExpanded()) {
-					ListIterator it = stack.listIterator(0);
-					while(it.hasNext()) {
-						Mu m = (Mu)it.next();
-						if(((MuVar)m.getArgument(Mu.VAR)).getName().equals(`n)) {
-							muvar.setInstance(m);
-							return;
-						}
-					}
+      var@MuVar(n) -> {
+        MuVar muvar = (MuVar)`var;
+        if(!muvar.isExpanded()) {
+          ListIterator it = stack.listIterator(0);
+          while(it.hasNext()) {
+            Mu m = (Mu)it.next();
+            if(((MuVar)m.getArgument(Mu.VAR)).getName().equals(`n)) {
+              muvar.setInstance(m);
+              return;
+            }
+          }
 
-					throw new VisitFailure();
-				}
-			}
-		}
+          throw new VisitFailure();
+        }
+      }
+    }
 
     int childCount = any.getChildCount();
     for(int i = 0; i < childCount; i++) {
       visit(any.getChildAt(i));
-		}
+    }
   }
 }
 

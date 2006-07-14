@@ -3,6 +3,7 @@ imports TomSignature TomName int
 abstract syntax
 
 TomTerm =
+
   /**
    * <code>TermAppl</code> application of a symbol to a list of subterms
    * <code>ListAppl</code> application of a list-symbol to a list of subterms
@@ -19,6 +20,7 @@ TomTerm =
     | ListAppl(Option:OptionList,NameList:TomNameList,Args:TomList,Constraints:ConstraintList)
     | RecordAppl(Option:OptionList,NameList:TomNameList,Slots:SlotList,Constraints:ConstraintList)
     | XMLAppl(Option:OptionList,NameList:TomNameList,AttrList:TomList,ChildList:TomList,Constraints:ConstraintList)
+
   /**
    * <code>Variable</code> a variable
    * <code>VariableStar</code> a list-variable
@@ -52,10 +54,18 @@ TomTerm =
     | ExpressionToTomTerm(AstExpression:Expression)
     | InstructionToTomTerm(AstInstruction:Instruction)
 
+  /**
+   * <code>Tom</code> main construct to embed a Tom island
+   * <code>TomInclude</code> like <code>Tom</code>, but corresponds to an include.
+   * It will be generated on a single line
+   * @param Tomlist a list of TomTerm that correspond to islands or lakes
+   */
     | Tom(TomList:TomList)
+    | TomInclude(TomList:TomList)
+
     | BackQuoteAppl(Option:OptionList,AstName:TomName,Args:TomList)
-    | DoubleBackQuote(Args:TomList)
     | Composite(Args:TomList)
+
     | SubjectList(TomList:TomList)
     | Term(TomTerm:TomTerm)
     | AntiTerm(TomTerm:TomTerm)
@@ -63,6 +73,9 @@ TomTerm =
     | SymbolOf(groundTerm:TomTerm)
     | TLVar(StrName:String,AstType:TomType)
     | Ref(TomTerm:TomTerm)
+
+    | Automata(Option:OptionList,PatternList:TomList,NumberList:TomNumberList,Inst:Instruction)
+
     | BuildReducedTerm(Kid1:TomTerm)
     | FunctionCall(AstName:TomName,Args:TomList)
     | BuildConstant(AstName:TomName)
@@ -73,8 +86,6 @@ TomTerm =
     | BuildEmptyArray(AstName:TomName,Size:int)
     | BuildConsArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
     | BuildAppendArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
-    | TomInclude(TomList:TomList)
-    | Automata(Option:OptionList,PatternList:TomList,NumberList:TomNumberList,Inst:Instruction)
 
 PatternInstruction = PatternInstruction(Pattern:Pattern,Action:Instruction,Option:OptionList)
 

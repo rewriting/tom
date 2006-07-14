@@ -61,15 +61,10 @@ public class TomAntiPatternTransform {
 	%include { adt/tomconstraint/TomConstraint.tom }
 //	%include { adt/tomterm/tomterm.tom }
 	%include { mutraveler.tom}	
+	%include { java/util/types/ArrayList.tom}	
 //	------------------------------------------------------------
 	
 	public static int varCounter = 0;	
-	
-	private static int antiCounter = 0;
-	
-	// temporary list that holds variables that need to
-	// be quantified 
-	private static ArrayList quantifiedVarList = new ArrayList();
 	
 	/**
 	 * transforms the anti-pattern problem received into a disunification one
@@ -82,9 +77,9 @@ public class TomAntiPatternTransform {
 				
 		// eliminate anti
 		Constraint noAnti = null;;
-		try{
+		try {
 			noAnti = applyMainRule(c);
-		}catch(VisitFailure e){
+		} catch(VisitFailure e) {
 			throw new TomRuntimeException("Reduction failed on: " + c + 
 					"\nException:" + e.getMessage());			
 		}
@@ -107,28 +102,32 @@ public class TomAntiPatternTransform {
 	// applies the main rule that transforms ap problems
 	// into dis-unification ones
 	private static Constraint applyMainRule(Constraint c) throws VisitFailure{
-		
 		TomTerm pattern = null;
 		TomTerm subject = null;
 		
-		%match(Constraint c){
+    %match(Constraint c){
 			EqualConstraint(p,s) ->{
 				pattern = `p;
 				subject = `s;
 			}
-		}				
-		
+		}
+
+    if(pattern==null || subject==null) {
+			throw new TomRuntimeException("pattern = " + pattern + "\nsubject = " + subject);
+    }
+
 		// first get the constraint without the anti
-		Constraint cNoAnti =  `EqualConstraint((TomTerm) MuTraveler.init(OnceTopDownId(ElimAnti())).visit(pattern),subject);
+    Constraint cNoAnti =  `EqualConstraint((TomTerm) MuTraveler.init(OnceTopDownId(ElimAnti())).visit(pattern),subject);
 		// if nothing changed, time to exit
-		if (cNoAnti == c){
+		if(cNoAnti == c) {
 			return c;
 		}
 		// get the constraint with a variable instead of anti
-		Constraint cAntiReplaced =  `EqualConstraint((TomTerm) MuTraveler.init(OnceTopDownId(ReplaceAnti())).visit(pattern),subject);
-		
+    // TODO: introduce AbstractTerm and use Sequence(ElimAnti,AbstractTerm) instead
+    Constraint cAntiReplaced = `EqualConstraint((TomTerm) MuTraveler.init(OnceTopDownId(ReplaceAnti())).visit(pattern),subject);
+	// TODO: DANGEROUS, you assume that varCounter corresponds to the last introduced variable	
 		cAntiReplaced = `Exists(Variable(concOption(),Name("v" + varCounter),EmptyType(),concConstraint()),
-				applyMainRule(cAntiReplaced));
+        applyMainRule(cAntiReplaced));
 		
 		cNoAnti = applyMainRule(cNoAnti);
 		
@@ -136,85 +135,71 @@ public class TomAntiPatternTransform {
 		
 		cNoAnti = `Neg(cNoAnti);
 		
-		quantifiedVarList.clear();
-		
-		MuTraveler.init(`OnceTopDownId(ApplyStrategy())).visit(c);
-		
+    ArrayList quantifiedVarList = new ArrayList();
+    // TODO: use a congruence here and remove ApplyStrategy
+		MuTraveler.init(`OnceTopDownId(ApplyStrategy(quantifiedVarList))).visit(c);
+    //System.out.println("quantifiedVarList = " + quantifiedVarList);
 		Iterator it = quantifiedVarList.iterator();
 		while(it.hasNext()){
 			TomTerm t = (TomTerm)it.next();
 			cNoAnti = `ForAll(t,cNoAnti);
 		}
 		
-	//	System.out.println("antiCounter=" + antiCounter + " cNoAnti=" + tools.formatConstraint(cNoAnti));	
-
 		return `AndConstraint(concAnd(cAntiReplaced,cNoAnti));
 	}
 	
+	// the strategy that handles the variables inside an anti
+	// symbol for beeing quantified 
+	%strategy ApplyStrategy(quantifiedVarList:ArrayList) extends `Identity(){
+		visit TomTerm {
+			// main rule
+			anti@AntiTerm(p) -> {
+				MuTraveler.init(`TopDown(AnalyzeTerm(quantifiedVarList,p))).visit(`p);				
+				// now it has to stop
+				return `p;
+			}
+		}
+	}
 	
 	// quantifies the variables in positive positions
-	%strategy AnalyzeTerm(subject:TomTerm) extends `Identity(){		
-		
+	%strategy AnalyzeTerm(quantifiedVarList:ArrayList,subject:TomTerm) extends `Identity() {		
 		visit TomTerm {
-			v@Variable(_,_,_,_) ->{
-				
-				antiCounter = 0;
-				
-//				System.out.println("Analyzing " + `v + " position=" + getPosition() );
-				
-				MuStrategy useOmegaPath = (MuStrategy)getPosition().getOmegaPath(`CountAnti());				
-				
-				MuTraveler.init(useOmegaPath).visit(subject);
-				
-//				System.out.println("After analyzing counter=" + antiCounter);
-				// if no anti-symbol found, than the variable can be quantified
-				if (antiCounter == 0) {
-					quantifiedVarList.add(`v);
+			v@Variable[] -> {
+				//System.out.println("Analyzing " + `v + " position=" + getPosition() );
+				//System.out.println("position=" + getPosition() );
+        //try {
+        //  System.out.println("subterm = " + getPosition().getSubterm().visit(subject));
+        //  getPosition().getOmegaPath(`Identity()).visit(subject);
+        //} catch(jjtraveler.VisitFailure e) {
+        //  System.out.println("wrong position, subject = " + subject);
+        // }
+
+        MuStrategy useOmegaPath = (MuStrategy)getPosition().getOmegaPath(`ElimAnti());				
+          //TomTerm res = (TomTerm) MuTraveler.init(useOmegaPath).visit(subject);
+          TomTerm res = (TomTerm) useOmegaPath.visit(subject);
+				// if no anti-symbol found, then the variable can be quantified
+				if(res == subject) { // there was no anti symbol
+          quantifiedVarList.add(`v);
 				}
 			}
 		}		
 	}
 	
-	// counts the anti symbols 
-	%strategy CountAnti() extends `Identity(){
-		visit TomTerm {
-			AntiTerm(_) -> {
-				antiCounter++;				
-			}
-		}
-	}
-	
 	// returns a term without the first negation that it finds
 	%strategy ElimAnti() extends `Identity(){		
 		visit TomTerm {		 
-			AntiTerm(p) -> {
-				return `p;
-			}
+			AntiTerm(p) -> { return `p; }
 		}
 	}
 	
 	// returns a term with the first negation that it finds
 	// replaced by a fresh variable
-	%strategy ReplaceAnti() extends `Identity(){
-		
+	%strategy ReplaceAnti() extends `Identity() {
 		visit TomTerm {
 			// main rule
 			a@AntiTerm(_) -> {
+        System.out.println("ReplaceAnti: why an EmptyType here ?");
 				return `Variable(concOption(),Name("v" + (++varCounter)),EmptyType(),concConstraint());
-			}
-		}
-	}
-	
-	// the strategy that handles the variables inside an anti
-	// symbol for beeing quantified 
-	%strategy ApplyStrategy() extends `Identity(){
-		
-		visit TomTerm {
-			// main rule
-			anti@AntiTerm(p) -> {
-				TomTerm t = (TomTerm)MuTraveler.init(`InnermostId(AnalyzeTerm(p))).visit(`p);				
-				// now it has to stop
-				return `p;
 			}
 		}
 	}
@@ -222,9 +207,7 @@ public class TomAntiPatternTransform {
 	// applies symple logic rules for eliminating 
 	// the not and thus creating a real disunification problem
 	%strategy TransformIntoDisunification() extends `Identity(){
-		
 		visit Constraint {
-			
 			// some simplification stuff
 			Exists(a,Exists(a,b)) ->{
 				return `Exists(a,b);
