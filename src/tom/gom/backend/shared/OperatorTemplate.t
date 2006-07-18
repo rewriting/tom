@@ -350,6 +350,12 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
         } else {
           if (`domain.equals(`ClassName("","int"))) {
             res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt("+getMethod(slot)+"())";
+           }else if (`domain.equals(`ClassName("","long"))) {
+            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal("+getMethod(slot)+"())";
+            }else if (`domain.equals(`ClassName("","double"))) {
+            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal("+getMethod(slot)+"())";
+            }else if (`domain.equals(`ClassName("","float"))) {
+            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal("+getMethod(slot)+"())";
           } else if (`domain.equals(`ClassName("","String"))) {
             res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(";
             res += "aterm.pure.SingletonFactory.getInstance().makeAFun(";
@@ -390,7 +396,13 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
         } else {
           if (`domain.equals(`ClassName("","int"))) {
             res+= "((aterm.ATermInt)"+appl+".getArgument("+index+")).getInt()";
-          } else if (`domain.equals(`ClassName("","String"))) {
+          } else  if (`domain.equals(`ClassName("","float"))) {
+            res+= "(float) ((aterm.ATermReal)"+appl+".getArgument("+index+")).getReal()";
+          }else  if (`domain.equals(`ClassName("","long"))) {
+            res+= "(long) ((aterm.ATermReal)"+appl+".getArgument("+index+")).getReal()";
+          }else  if (`domain.equals(`ClassName("","double"))) {
+            res+= "((aterm.ATermReal)"+appl+".getArgument("+index+")).getReal()";
+          }else if (`domain.equals(`ClassName("","String"))) {
             res+= "(String)((aterm.ATermAppl)"+appl+".getArgument("+index+")).getAFun().getName()";
           } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
             res +=  appl+".getArgument("+index+")";
@@ -590,7 +602,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-         if (`domain.equals(`ClassName("","int"))) { 
+         if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float"))) { 
            res+= %["+@fieldName(`slotName)@+"]%;
          } else if (`domain.equals(`ClassName("","String"))) {
            res+= %[\""+@fieldName(`slotName)@+"\"]%;
@@ -613,7 +625,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-         if (`domain.equals(`ClassName("","int"))) { 
+         if (`domain.equals(`ClassName("","int"))|| `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float"))) { 
            res+= %[
     if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
       return (this.@fieldName(`slotName)@ < @other@.@fieldName(`slotName)@)?-1:1;
@@ -658,7 +670,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += fieldName(`slotName)+".hashCode()";
         } else {
-          if (`domain.equals(`ClassName("","int"))) {
+          if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float"))) {
             res+= fieldName(`slotName);
           } else if (`domain.equals(`ClassName("","String"))) {
             // Use the string hashFunction for Strings, and pass index as arity
