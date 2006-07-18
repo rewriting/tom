@@ -523,7 +523,7 @@ public class TomBase {
   
   protected static TomType getTermType(Expression t, SymbolTable symbolTable){
     %match(Expression t) {
-      (GetSubterm|GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
+      (GetHead|GetSlot|GetElement)[Codomain=type] -> { return `type; }
 
       TomTermToExpression(term) -> { return getTermType(`term, symbolTable); }
       GetTail[Variable=term] -> { return getTermType(`term, symbolTable); }

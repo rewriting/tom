@@ -118,11 +118,6 @@ public class Verifier extends TomBase {
 
   public Term termFromExpresssion(Expression expression) {
     %match(Expression expression) {
-      GetSubterm[Variable=Variable[AstName=name], Number=Number(index)] -> {
-        // we will need to find the head symbol
-        Term term = termFromTomName(`name);
-        return `subterm(fsymbol("empty"),term,index);
-      }
       GetSlot[AstName=Name(symbolName),SlotNameString=slotName,Variable=Variable[AstName=name]] -> {
         Term term = termFromTomName(`name);
         return `slot(fsymbol(symbolName),term,slotName);
