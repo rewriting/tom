@@ -52,6 +52,7 @@ public class SymbolTable {
   %include { adt/tomsignature/TomSignature.tom }
   private final static String TYPE_INT       = "int";
   private final static String TYPE_LONG      = "long";
+  private final static String TYPE_FLOAT     = "float";
   private final static String TYPE_CHAR      = "char";
   private final static String TYPE_DOUBLE    = "double";
   private final static String TYPE_STRING    = "String";
@@ -73,6 +74,7 @@ public class SymbolTable {
       putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"int"),emptyForward);
       putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
       putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
+      putTypeDefinition(TYPE_FLOAT, ASTFactory.makeType(TYPE_FLOAT,"float"),emptyForward);
       putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
       putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"char*"),emptyForward);
       putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"void*"),emptyForward);
@@ -82,6 +84,7 @@ public class SymbolTable {
       putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"boolean"),emptyForward);
       putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
       putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
+      putTypeDefinition(TYPE_FLOAT, ASTFactory.makeType(TYPE_FLOAT,"float"),emptyForward);
       putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
       putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"String"),emptyForward);
       putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"Object"),emptyForward);
@@ -241,6 +244,10 @@ public class SymbolTable {
     return getType(TYPE_LONG);
   }
 
+  public TomType getFloatType() {
+    return getType(TYPE_FLOAT);
+  }
+
   public TomType getCharType() {
     return getType(TYPE_CHAR);
   }
@@ -271,6 +278,10 @@ public class SymbolTable {
 
   public boolean isLongType(String type) {
     return type.equals(TYPE_LONG);
+  }
+
+  public boolean isFloatType(String type) {
+    return type.equals(TYPE_FLOAT);
   }
 
   public boolean isCharType(String type) {
