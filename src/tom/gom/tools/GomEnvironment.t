@@ -82,6 +82,8 @@ public class GomEnvironment {
     builtinSorts.put("int",`ClassName("","int"));
     builtinSorts.put("String",`ClassName("","String"));
     builtinSorts.put("double",`ClassName("","double"));
+    builtinSorts.put("long",`ClassName("","long"));
+    builtinSorts.put("float",`ClassName("","float"));
     builtinSorts.put("ATerm",`ClassName("aterm","ATerm"));
     builtinSorts.put("ATermList",`ClassName("aterm","ATermList"));
   }
