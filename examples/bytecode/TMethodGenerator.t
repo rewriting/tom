@@ -116,7 +116,26 @@ public class TMethodGenerator implements MethodVisitor {
       String owner,
       String name,
       String desc) {
-    // TODO
+    TInstruction ins = null;
+    switch(opcode) {
+      case Opcodes.GETSTATIC:
+        ins = `Getstatic(owner, name, desc);
+        break;
+      case Opcodes.PUTSTATIC:
+        ins = `Putstatic(owner, name, desc);
+        break;
+      case Opcodes.GETFIELD:
+        ins = `Getfield(owner, name, desc);
+        break;
+      case Opcodes.PUTFIELD:
+        ins = `Putfield(owner, name, desc);
+        break;
+      default:
+        System.err.println("Unsupported OpCode :" + opcode);
+        System.exit(-1);
+    }
+
+    appendInstruction(ins);
   }
 
   public void visitIincInsn(int var, int increment) {
