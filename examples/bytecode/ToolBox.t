@@ -106,26 +106,37 @@ public class ToolBox {
     switch(t) {
       case Type.ARRAY:
         ret = `ARRAY();
+        break;
       case Type.BOOLEAN:
         ret = `BOOLEAN();
+        break;
       case Type.BYTE:
         ret = `BYTE();
+        break;
       case Type.CHAR:
         ret = `CHAR();
+        break;
       case Type.DOUBLE:
         ret = `DOUBLE();
+        break;
       case Type.FLOAT:
         ret = `FLOAT();
+        break;
       case Type.INT:
         ret = `INT();
+        break;
       case Type.LONG:
         ret = `LONG();
+        break;
       case Type.OBJECT:
         ret = `OBJECT();
+        break;
       case Type.SHORT:
         ret = `SHORT();
+        break;
       case Type.VOID:
         ret = `VOID();
+        break;
     }
 
     return ret;
