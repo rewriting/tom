@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the bytecode example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="bytecode" value="bytecode"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${bytecode}"/>
+    <delete dir="${examples.build}/${bytecode}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${bytecode}"/>
+    <tomcompile example="${bytecode}"/>
+    <javacompile example="${bytecode}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${bytecode}/*.t"/>
+        <include name="${bytecode}/*.tom"/>
+        <include name="${bytecode}/*.java"/>
+        <include name="${bytecode}/*.gom"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
