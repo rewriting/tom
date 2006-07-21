@@ -23,7 +23,14 @@ TOuterClassInfo = OuterClassInfo(owner:String, name:String, desc:String)
 TLocalVariable = LocalVariable(name:String, desc:String, signature:TSignature, start:TLabel, end:TLabel, index:int)
 TLocalVariableList = LocalVariableList(TLocalVariable*)
 
-TTryCatchBlock = TryCatchBlock(start:TLabel, end:TLabel, handler:TLabel, type:String) 
+THandler = CatchHandler(handler:TLabel, type:String)
+         | FinallyHandler(handler:TLabel)
+CatchHandler:make(handler, type) {
+  if(type == null)
+    return `FinallyHandler(handler);
+}
+
+TTryCatchBlock = TryCatchBlock(start:TLabel, end:TLabel, handler:THandler)
 TTryCatchBlockList = TryCatchBlockList(TTryCatchBlock*)
 
 TField = Field(access:TAccessList, name:String, desc:String, signature:TSignature, value:TValue)

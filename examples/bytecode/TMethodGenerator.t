@@ -21,6 +21,7 @@ public class TMethodGenerator implements MethodVisitor {
   private TTryCatchBlockList tryCatchBlocks;
   private TLocalVariableList localVariables;
 
+  private static int labelCounter = 0;
   private HashMap labelsMap = new HashMap();
   private TLabel currentLabel = null;
 
@@ -28,7 +29,7 @@ public class TMethodGenerator implements MethodVisitor {
     Object o = labelsMap.get(label);
     TLabel l = null;
     if(o == null) {
-      l = `Label(labelsMap.size());
+      l = `Label(labelCounter++);
       labelsMap.put(label, l);
     } else
       l = (TLabel)o;
@@ -652,7 +653,7 @@ public class TMethodGenerator implements MethodVisitor {
       Label end,
       Label handler,
       String type) {
-    appendTryCatchBlock(`TryCatchBlock(buildTLabel(start), buildTLabel(end), buildTLabel(handler), type));
+    appendTryCatchBlock(`TryCatchBlock(buildTLabel(start), buildTLabel(end), CatchHandler(buildTLabel(handler), type)));
   }
 
   public void visitTypeInsn(int opcode, String desc) {
