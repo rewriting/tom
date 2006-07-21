@@ -125,34 +125,47 @@ public class Publi {
       String[] bib2bib = {"/bin/sh", "-c","bib2bib -oc " + Mk.tmpDir + "cite" + id +" -ob " + Mk.tmpDir + id +".bib " + condition + " " + Mk.bibDir + "complete.bib"};
       //System.out.println(bib2bib[2]);
       Process proc = run.exec(bib2bib);
-      proc.waitFor();
+      int bib2bibExit = proc.waitFor();
 
-      //test if citefile is empty
-      File cite = new File(Mk.tmpDir + "cite" + id);
-      if (!(cite.length()==0)){
-        //String[] bibtex2html = {"/bin/sh", "-c","bibtex2html -t \"Publications::" + id.replace('.',' ') + "\" -css biblio.css -o " + Mk.w3Dir +  Mk.bibDir + id + " -citefile " + Mk.tmpDir + "cite" + id + " " + Mk.tmpDir + id +".bib"};
-        String[] bibtex2html = {"/bin/sh", "-c","bibtex2html -nodoc -o " + Mk.w3Dir +  "biblio/" + id + " -citefile " + Mk.tmpDir + "cite" + id + " " + Mk.tmpDir + id +".bib"};
-        //System.out.println(bibtex2html[2]);
-        proc = run.exec(bibtex2html);
-        proc.waitFor();
-
-        /*patch en attendant d'avoir -encoding dans bibtex2html */
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(Mk.w3Dir +  "biblio/" + id +".html"),"UTF-8");
-        int i = 0;
-        while(i != -1) {
-          i = reader.read();
-          body.append((char)i);
-        }
-        reader.close();
+      if (bib2bibExit != 0){
+        System.err.println("Please check if bib2bib is installed on your machine");
       }
-      
-      //patch: links to .bib contains ./www/biblio but we want .
-      String bodyS = body.toString().replaceAll("./www/biblio/","./");
+      else{
+        //test if citefile is empty
+        File cite = new File(Mk.tmpDir + "cite" + id);
+        if (cite.length()==0){
+          System.err.println("citeFile for " +id+ " is empty");
+        }
+        else{
+          //String[] bibtex2html = {"/bin/sh", "-c","bibtex2html -t \"Publications::" + id.replace('.',' ') + "\" -css biblio.css -o " + Mk.w3Dir +  Mk.bibDir + id + " -citefile " + Mk.tmpDir + "cite" + id + " " + Mk.tmpDir + id +".bib"};
+          String[] bibtex2html = {"/bin/sh", "-c","bibtex2html -nodoc -o " + Mk.w3Dir +  "biblio/" + id + " -citefile " + Mk.tmpDir + "cite" + id + " " + Mk.tmpDir + id +".bib"};
+          //System.out.println(bibtex2html[2]);
+          proc = run.exec(bibtex2html);
+          int bibtex2htmlExit = proc.waitFor();
+          if (bibtex2htmlExit != 0){
+            System.err.println("Please check if bibtex2html is installed on your machine");
+          }
+          else{
+            /*patch en attendant d'avoir -encoding dans bibtex2html */
+            InputStreamReader reader = new InputStreamReader(new FileInputStream(Mk.w3Dir +  "biblio/" + id +".html"),"UTF-8");
+            int i = 0;
+            while(i != -1) {
+              i = reader.read();
+              body.append((char)i);
+            }
+            reader.close();
 
-      OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(Mk.w3Dir +  "biblio/" + id + ".html"),"UTF-8");
-      writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xml:lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"> <head>  <meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\"/>   <link href=\"protheo.css\" rel=\"stylesheet\" title=\"Classic\" type=\"text/css\"/>  <title>Protheo::publi</title> </head> <body>  <h2>" + id.replace('.',' ') + "</h2>" + bodyS + "</body></html>");
-      writer.close();
-      /*********************************************************/
+            //patch: links to .bib contains ./www/biblio but we want .
+            String bodyS = body.toString().replaceAll("./www/biblio/","./");
+
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(Mk.w3Dir +  "biblio/" + id + ".html"),"UTF-8");
+            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xml:lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"> <head>  <meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\"/>   <link href=\"protheo.css\" rel=\"stylesheet\" title=\"Classic\" type=\"text/css\"/>  <title>Protheo::publi</title> </head> <body>  <h2>" + id.replace('.',' ') + "</h2>" + bodyS + "</body></html>");
+            writer.close();
+            /*********************************************************/
+          }
+        }
+      }
+
     } catch(Exception e) {
       System.err.println("An error occurs when executing bib2html.");
       e.printStackTrace();
