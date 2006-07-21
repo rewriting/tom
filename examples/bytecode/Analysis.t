@@ -178,7 +178,6 @@ public class Analysis {
         TInstruction inst = `ins;
         %match(TInstruction inst) {
           Istore(index) -> {
-            System.out.println("pouet");
             return `c;
           }
           Lstore(index) -> {
@@ -215,12 +214,12 @@ public class Analysis {
   }
 
   %op Strategy AU(s1:Strategy, s2:Strategy, m:Map) {
-    make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,AllCfg(MuVar("x"), m)),Fail())))}
+    make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,AllCfg(MuVar("x"), m)),One(Identity()))))}
   }
 
   %strategy PrintInst() extends Identity() {
     visit TInstructionList {
-      ConsInstructionList(ins, _) -> { System.out.println(`ins); }
+      c@ConsInstructionList(ins, _) -> { System.out.println(`c); }
     }
   }
 
@@ -244,7 +243,11 @@ public class Analysis {
 
         MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
 
-        `BottomUp(ChoiceId(storeNotUsed, PrintInst())).apply(ins);
+        `BottomUp(Try(ChoiceId(storeNotUsed, PrintInst()))).apply(ins);
+
+      //imprimer le cfg d'une liste d'instructions :
+      //`mu(MuVar("x"),Sequence(PrintInst(),AllCfg(MuVar("x"),labelMap))).apply(ins);
+         
 
         //`TopDown(Try(Choice(Sequence(IsStore(indexMap, "index"), PrintInst()), Sequence(HasIndex(indexMap, "index"), PrintInst())))).apply(ins);
       }
@@ -265,7 +268,7 @@ public class Analysis {
 
       TClass c = cg.getTClass();
 
-      System.out.println("gom term :\n\n" + c + "\n");
+      //System.out.println("gom term :\n\n" + c + "\n");
       analyze(c);
     } catch(IOException ioe) {
       System.err.println("Class not found : " + args[0]);
