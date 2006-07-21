@@ -54,7 +54,7 @@ import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.library.strategy.mutraveler.MuTraveler;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.VisitFailure;
 
 
@@ -67,7 +67,7 @@ public class TomBackend extends TomGenericPlugin {
   
   %include { adt/tomsignature/TomSignature.tom }
   %include { adt/platformoption/PlatformOption.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
 
   /** the tabulation starting value */
   private final static int defaultDeep = 2;
@@ -197,48 +197,38 @@ public class TomBackend extends TomGenericPlugin {
 		implement { TomBackend }
 	}
  
-  private VisitableVisitor markStrategy = null;
-  private void applyMarkStrategy(jjtraveler.Visitable subject) {
-    try {
-      markStrategy.visit(subject);
-    } catch (VisitFailure e) {
-      System.out.println("reduction failed on: " +subject);
-		}
-  }
-
 	private void markUsedConstructorDestructor(TomTerm pilCode) {
 		Stack stack = new Stack();
     stack.push(TomBase.DEFAULT_MODULE_NAME);
-    markStrategy = MuTraveler.init(`TopDownCollect(Collector(this,stack)));
-    applyMarkStrategy(pilCode);
+    `mu(MuVar("markStrategy"),TopDownCollect(Collector(MuVar("markStrategy"),this,stack))).apply(pilCode);
 	}
 
-  private void setUsedSymbolConstructor(String moduleName, TomSymbol tomSymbol) {
+  private void setUsedSymbolConstructor(String moduleName, TomSymbol tomSymbol, MuStrategy markStrategy) {
     SymbolTable st = getSymbolTable(moduleName);
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
-      applyMarkStrategy(tomSymbol);
+      markStrategy.apply(tomSymbol);
     }
     getSymbolTable(moduleName).setUsedSymbolConstructor(tomSymbol);
   }
 
-  private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol) {
+  private void setUsedSymbolDestructor(String moduleName, TomSymbol tomSymbol, MuStrategy markStrategy) {
     SymbolTable st = getSymbolTable(moduleName);
     if(!st.isUsedSymbolConstructor(tomSymbol) && !st.isUsedSymbolDestructor(tomSymbol)) {
-      applyMarkStrategy(tomSymbol);
+      markStrategy.apply(tomSymbol);
     }
     getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
   }
   
-  private void setUsedTypeDefinition(String moduleName, String tomTypeName) {
+  private void setUsedTypeDefinition(String moduleName, String tomTypeName, MuStrategy markStrategy) {
     SymbolTable st = getSymbolTable(moduleName);
     //if(!st.isUsedTypeDefinition(tomType)) {
-    //  applyMarkStrategy(tomType);
+    //  markStrategy.apply(tomType);
     //}
     getSymbolTable(moduleName).setUsedTypeDefinition(tomTypeName);
 		//System.out.println("use type: " + tomTypeName);
   }
 
-	%strategy Collector(tb:TomBackend,stack:Stack) extends `Identity() {
+	%strategy Collector(markStrategy:Strategy,tb:TomBackend,stack:Stack) extends `Identity() {
     visit Instruction {
 			CompiledMatch[AutomataInst=inst, Option=optionList] -> {
 				String moduleName = getModuleName(`optionList);
@@ -260,14 +250,14 @@ public class TomBackend extends TomGenericPlugin {
           //System.out.println("push1: " + moduleName);
         }
 				//System.out.println("match -> moduleName = " + moduleName);
-        tb.applyMarkStrategy(`inst);
+        markStrategy.visit(`inst);
 				//String pop = (String) stack.pop();
 				//System.out.println("pop: " + pop);
 				`Fail().visit(null);
 			}
 
       TypedAction[AstInstruction=inst] -> {
-        tb.applyMarkStrategy(`inst);
+        markStrategy.visit(`inst);
         `Fail().visit(null);
       }
 		}
@@ -279,7 +269,7 @@ public class TomBackend extends TomGenericPlugin {
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
-          tb.setUsedSymbolConstructor(moduleName,tomSymbol);
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
@@ -291,7 +281,7 @@ public class TomBackend extends TomGenericPlugin {
       Type(ASTTomType(type),_) -> {
         try {
 					String moduleName = (String) stack.peek();
-          tb.setUsedTypeDefinition(moduleName,`type);
+          tb.setUsedTypeDefinition(moduleName,`type,markStrategy);
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
@@ -325,7 +315,7 @@ public class TomBackend extends TomGenericPlugin {
 						String moduleName = (String) stack.peek();
 						//System.out.println("moduleName: " + moduleName);
             TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),tb.getSymbolTable(moduleName)); 
-            tb.setUsedSymbolDestructor(moduleName,tomSymbol);
+            tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
 					} catch (EmptyStackException e) {
 						System.out.println("No moduleName in stack");
 					}
@@ -339,7 +329,7 @@ public class TomBackend extends TomGenericPlugin {
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
-          tb.setUsedSymbolConstructor(moduleName,tomSymbol);
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
 				}
@@ -350,10 +340,10 @@ public class TomBackend extends TomGenericPlugin {
 					String moduleName = (String) stack.peek();
 					//System.out.println("moduleName: " + moduleName);
           TomSymbol tomSymbol = TomBase.getSymbolFromName(`name,tb.getSymbolTable(moduleName)); 
-          tb.setUsedSymbolConstructor(moduleName,tomSymbol);
+          tb.setUsedSymbolConstructor(moduleName,tomSymbol,markStrategy);
           /* XXX: Also mark the destructors as used, since some generated
            * functions will use them */
-          tb.setUsedSymbolDestructor(moduleName,tomSymbol);
+          tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
           // resolve uses in the symbol declaration
 				} catch (EmptyStackException e) {
 					System.out.println("No moduleName in stack");
