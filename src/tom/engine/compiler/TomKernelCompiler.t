@@ -342,7 +342,7 @@ public class TomKernelCompiler extends TomBase {
           // case: syntactic operator
           Instruction automata = genSyntacticMatchingAutomata(subAction,`termArgs,path,moduleName);          
           TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain(); 
-          // if there is no disjonction or no arguments
+          // if there is no disjunction or no arguments
           if(`nameList.length()==1 || `termArgs.isEmptyconcSlot()) {        	  
               automataInstruction = `collectSubtermFromTomSymbol(termArgs,tomSymbol,subjectVariableAST,path,automata,moduleName); 
           } else {        	  
@@ -883,6 +883,7 @@ public class TomKernelCompiler extends TomBase {
         TomType subtermType = getSlotType(tomSymbol,`slotName);
         TomNumberList newPath  = `concTomNumber(path*,NameNumber(slotName));
         TomTerm newVariableAST = `Variable(concOption(),PositionName(newPath),subtermType,concConstraint());
+        /* TODO PR 1071: let the symboltable provide the correct bottom type */
         return `LetRef(newVariableAST,Bottom(),body);
       }
     }
