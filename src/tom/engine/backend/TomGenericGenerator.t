@@ -86,7 +86,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildExpGetElement(int deep, TomName opNameAST,TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException;
 
   protected abstract void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException ;
-  protected abstract void buildExpBottom(int deep) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;

@@ -384,6 +384,4 @@ public class SymbolTable {
     return symbol;
   }
 
-
-
-} // class SymbolTable
+}

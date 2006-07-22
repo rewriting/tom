@@ -103,6 +103,24 @@ public class TestBuiltin extends TestCase {
     assertTrue(res.equals("G"));
   }
 
+  public void testDisjunctionInt() {
+    boolean res = false;
+    Wrapper wi = `Int(42);
+    %match(Wrapper wi) {
+      (Int|IntBis)(42) -> { res = true; }
+    }
+    assertTrue(res);
+  }
+
+  public void testDisjunctionString() {
+    boolean res = false;
+    Wrapper wi = `Name("42");
+    %match(Wrapper wi) {
+      (Name|NameBis)("42") -> { res = true; }
+    }
+    assertTrue(res);
+  }
+
   public final static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
   }

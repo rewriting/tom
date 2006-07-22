@@ -345,7 +345,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.writeln(" = ref None in");
   }
 
-  protected void buildExpBottom(int deep) throws IOException {
+  protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
     output.write(" None ");
   }
 

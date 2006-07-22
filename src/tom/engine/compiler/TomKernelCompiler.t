@@ -872,7 +872,8 @@ public class TomKernelCompiler extends TomBase {
    */
   private Instruction collectSubtermLetRefBottom(SlotList termArgList,
                                                  TomSymbol tomSymbol,
-                                                 TomNumberList path, Instruction body) {
+                                                 TomNumberList path,
+                                                 Instruction body) {
     %match(SlotList termArgList) { 
       concSlot() -> {
         return body;
@@ -883,8 +884,7 @@ public class TomKernelCompiler extends TomBase {
         TomType subtermType = getSlotType(tomSymbol,`slotName);
         TomNumberList newPath  = `concTomNumber(path*,NameNumber(slotName));
         TomTerm newVariableAST = `Variable(concOption(),PositionName(newPath),subtermType,concConstraint());
-        /* TODO PR 1071: let the symboltable provide the correct bottom type */
-        return `LetRef(newVariableAST,Bottom(),body);
+        return `LetRef(newVariableAST,Bottom(subtermType),body);
       }
     }
     return `Nop();

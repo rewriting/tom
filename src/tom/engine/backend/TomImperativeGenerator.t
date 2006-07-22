@@ -63,7 +63,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   // ------------------------------------------------------------
 
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException;
-  protected abstract void buildExpBottom(int deep) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
   

@@ -2,7 +2,11 @@ module TomExpression
 imports TomSignature String
 abstract syntax
 Expression = TomTermToExpression(AstTerm:TomTerm)
-           | Bottom()
+           /**
+            * We have different Bottom for different types
+            * For instance, builtin types can't be null in Java
+            */
+           | Bottom(TomType:TomType)
            | Negation(Arg:Expression)
            | And(Arg1:Expression,Arg2:Expression)
            | Or(Arg1:Expression,Arg2:Expression)

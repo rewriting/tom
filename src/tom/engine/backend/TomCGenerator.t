@@ -56,7 +56,7 @@ public class TomCGenerator extends TomImperativeGenerator {
   %include { adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
-  protected void buildExpBottom(int deep) throws IOException {
+  protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
     output.write(" NULL ");
   }
 

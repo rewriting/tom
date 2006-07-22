@@ -68,8 +68,20 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   %include { adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
 
-  protected void buildExpBottom(int deep) throws IOException {
-    output.write(" null ");
+  protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
+    if ((getSymbolTable(moduleName).getIntType() == type)
+        || (getSymbolTable(moduleName).getCharType() == type)
+        || (getSymbolTable(moduleName).getLongType() == type)
+        || (getSymbolTable(moduleName).getFloatType() == type)
+        || (getSymbolTable(moduleName).getDoubleType() == type)) {
+      output.write(" 0 ");
+    } else if (getSymbolTable(moduleName).getBooleanType() == type) {
+      output.write(" false ");
+    } else if (getSymbolTable(moduleName).getStringType() == type) {
+      output.write(" \"\" ");
+    } else {
+      output.write(" null ");
+    }
   }
 
   protected void buildExpTrue(int deep) throws IOException {
