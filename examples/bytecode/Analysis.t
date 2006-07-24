@@ -177,34 +177,34 @@ public class Analysis {
         int index = ((Integer)map.get(var)).intValue();
         TInstruction inst = `ins;
         %match(TInstruction inst) {
-          Istore(index) -> {
+          Istore|Iload(index) -> {
             return `c;
           }
-          Lstore(index) -> {
+          Lstore|Lload(index) -> {
             return `c;
           }
-          Fstore(index) -> {
+          Fstore|Fload(index) -> {
             return `c;
           }
-          Dstore(index) -> {
+          Dstore|Dload(index) -> {
             return `c;
           }
-          Astore(index) -> {
+          Astore|Aload(index) -> {
             return `c;
           }
-          (Istore_0|Lstore_0|Fstore_0|Dstore_0|Astore_0)() -> {
+          (Istore_0|Lstore_0|Fstore_0|Dstore_0|Astore_0|Iload_0|Lload_0|Fload_0|Dload_0|Aload_0)() -> {
             if(index == 0)
               return `c;
           }
-          (Istore_1|Lstore_1|Fstore_1|Dstore_1|Astore_1)() -> {
+          (Istore_1|Lstore_1|Fstore_1|Dstore_1|Astore_1|Iload_1|Lload_1|Fload_1|Dload_1|Aload_1)() -> {
             if(index == 1)
               return `c;
           }
-          (Istore_2|Lstore_2|Fstore_2|Dstore_2|Astore_2)() -> {
+          (Istore_2|Lstore_2|Fstore_2|Dstore_2|Astore_2|Iload_2|Lload_2|Fload_2|Dload_2|Aload_2)() -> {
             if(index == 2)
               return `c;
           }
-          (Istore_3|Lstore_3|Fstore_3|Dstore_3|Astore_3)() -> {
+          (Istore_3|Lstore_3|Fstore_3|Dstore_3|Astore_3|Iload_3|Lload_3|Fload_3|Dload_3|Aload_3)() -> {
             if(index == 3)
               return `c;
           }
@@ -243,7 +243,11 @@ public class Analysis {
 
         MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
 
-        `BottomUp(Try(ChoiceId(storeNotUsed, PrintInst()))).apply(ins);
+        //afficher les store qui ne servent pas :
+        `BottomUp(Try(ChoiceId(storeNotUsed, Sequence(IsStore(indexMap,"useless"),PrintInst())))).apply(ins);
+        
+        //afficher les store qui ne servent pas :
+        //`BottomUp(Try(Choice(storeNotUsed, PrintInst()))).apply(ins);
 
       //imprimer le cfg d'une liste d'instructions :
       //`mu(MuVar("x"),Sequence(PrintInst(),AllCfg(MuVar("x"),labelMap))).apply(ins);
