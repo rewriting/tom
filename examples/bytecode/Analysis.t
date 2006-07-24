@@ -244,10 +244,10 @@ public class Analysis {
         MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
 
         //afficher les store qui ne servent pas :
-        `BottomUp(Try(ChoiceId(storeNotUsed, Sequence(IsStore(indexMap,"useless"),PrintInst())))).apply(ins);
+        `BottomUp(Try(ChoiceId(storeNotUsed, PrintInst()))).apply(ins);
         
         //afficher les store qui ne servent pas :
-        //`BottomUp(Try(Choice(storeNotUsed, PrintInst()))).apply(ins);
+        //`BottomUp(Try(Choice(storeNotUsed,Sequence(IsStore(indexMap,"useless"), PrintInst())))).apply(ins);
 
       //imprimer le cfg d'une liste d'instructions :
       //`mu(MuVar("x"),Sequence(PrintInst(),AllCfg(MuVar("x"),labelMap))).apply(ins);
