@@ -17,6 +17,9 @@ public class Analysis {
   %include { classtree/ClassTree.tom }
   %typeterm Map { implement { java.util.Map } }
 
+  // This strategy fills in the `Map' m with the `ConsInstructionList'
+  // corresponding to each `LabeledInstruction'.
+  // Thus, we can retrieve the `ConsInstructionList' from a `Label'.
   %strategy BuildLabelMap(m:Map) extends Identity() {
     visit TInstructionList {
       c@ConsInstructionList(LabeledInstruction[label=l], _) -> {
@@ -25,87 +28,42 @@ public class Analysis {
     }
   }
 
+  // `AllCfg' stands for AllControlFlowGraph.
+  // This works as the classical `All' strategy but is
+  // adapted for a ControlFlowGraph run.
+  // (i.e. a `Goto' instruction has one child : the one to jump to;
+  // a `IfXX' instruction has two children : the one which
+  // satisfies the expression, and the other...)
   %strategy AllCfg(s:Strategy, m:Map) extends Identity() {
     visit TInstructionList {
-      c@ConsInstructionList(Goto(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-        return `c;
-      }
-      ConsInstructionList(Ifeq(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(Ifne(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(Iflt(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(Ifge(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(Ifgt(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(Ifle(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(If_icmpeq(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(If_icmpne(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(If_icmplt(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(If_icmpge(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(If_icmpgt(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(If_icmple(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(If_acmpeq(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(If_acmpne(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(Jsr(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(Ifnull(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
-      ConsInstructionList(Ifnonnull(l), t) -> {
-        s.visit((TInstructionList)m.get(`l));
-      }
+      c@ConsInstructionList(ins, t) -> {
+        TInstruction ins = `ins;
+        %match(TInstruction ins) {
+          Goto(l) -> {
+            s.visit((TInstructionList)m.get(`l));
+            return `c;
+          }
 
-      // Visit the next instruction.
-      ConsInstructionList(_, t) -> { s.visit(`t); }
+          (Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
+           If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
+           If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l) -> {
+            s.visit((TInstructionList)m.get(`l));
+          }
+
+          // Visit the next instruction.
+          _ -> { s.visit(`t); }
+        }
+      }
     }
   }
 
+  // Checks if the current instruction is a load type instruction.
   %strategy IsLoad() extends Fail() {
     visit TInstructionList {
       c@ConsInstructionList(ins, _) -> {
         TInstruction inst = `ins;
         %match(TInstruction inst) {
-          Iload(_) -> {
-            return `c;
-          }
-          Lload(_) -> {
-            return `c;
-          }
-          Fload(_) -> {
-            return `c;
-          }
-          Dload(_) -> {
-            return `c;
-          }
-          Aload(_) -> {
+          (Iload|Lload|Fload|Dload|Aload)(_) -> {
             return `c;
           }
           (Iload_0|Lload_0|Fload_0|Dload_0|Aload_0)() -> {
@@ -125,28 +83,15 @@ public class Analysis {
     }
   }
 
+  // Checks if the current instruction is a store type instruction.
+  // If it is true, then the index of the variable to be store is
+  // putted into the `Map' map with the key `var'.
   %strategy IsStore(map:Map, var:String) extends Fail() {
     visit TInstructionList {
       c@ConsInstructionList(ins, _) -> {
         TInstruction inst = `ins;
         %match(TInstruction inst) {
-          Istore(i) -> {
-            map.put(var, new Integer(`i));
-            return `c;
-          }
-          Lstore(i) -> {
-            map.put(var, new Integer(`i));
-            return `c;
-          }
-          Fstore(i) -> {
-            map.put(var, new Integer(`i));
-            return `c;
-          }
-          Dstore(i) -> {
-            map.put(var, new Integer(`i));
-            return `c;
-          }
-          Astore(i) -> {
+          (Istore|Lstore|Fstore|Dstore|Astore)(i) -> {
             map.put(var, new Integer(`i));
             return `c;
           }
@@ -171,25 +116,15 @@ public class Analysis {
     }
   }
 
+  // Checks if the current load/store instruction has the wanted index.
+  // The index is retrieved from the map at key `var'.
   %strategy HasIndex(map:Map, var:String) extends Fail() {
     visit TInstructionList {
       c@ConsInstructionList(ins, _) -> {
         int index = ((Integer)map.get(var)).intValue();
         TInstruction inst = `ins;
         %match(TInstruction inst) {
-          Istore|Iload(index) -> {
-            return `c;
-          }
-          Lstore|Lload(index) -> {
-            return `c;
-          }
-          Fstore|Fload(index) -> {
-            return `c;
-          }
-          Dstore|Dload(index) -> {
-            return `c;
-          }
-          Astore|Aload(index) -> {
+          (Istore|Lstore|Fstore|Dstore|Astore|Iload|Lload|Fload|Dload|Aload)(index) -> {
             return `c;
           }
           (Istore_0|Lstore_0|Fstore_0|Dstore_0|Astore_0|Iload_0|Lload_0|Fload_0|Dload_0|Aload_0)() -> {
@@ -214,16 +149,20 @@ public class Analysis {
   }
 
   %op Strategy AU(s1:Strategy, s2:Strategy, m:Map) {
-    make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,AllCfg(MuVar("x"), m)),One(Identity()))))}
+    make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"), m)))) }
   }
 
+  // Prints the gom-subterm of the current `TInstructionList'.
   %strategy PrintInst() extends Identity() {
     visit TInstructionList {
       c@ConsInstructionList(ins, _) -> { System.out.println(`c); }
     }
   }
 
-  public static void analyze(TClass clazz) {
+  // Analyzes the instruction list of each method of the given class.
+  // Useless `store i' instruction will be printed.
+  // (i.e. a `store i' which is not followed by a `load i' instruction)
+  private static void analyze(TClass clazz) {
     TMethodList methods = clazz.getmethods();
     %match(TMethodList methods) {
       MethodList(_*, x, _*) -> {
@@ -231,6 +170,8 @@ public class Analysis {
 
         TInstructionList ins = `x.getcode().getinstructions();
 
+        // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
+        // (This is needed for the flow simulation when a jump instruction is encoutered.)
         HashMap labelMap = new HashMap();
         `TopDown(BuildLabelMap(labelMap)).apply(ins);
 
@@ -243,17 +184,11 @@ public class Analysis {
 
         MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
 
-        //afficher les store qui ne servent pas :
+        // Display the useless store.
         `BottomUp(Try(ChoiceId(storeNotUsed, PrintInst()))).apply(ins);
-        
-        //afficher les store qui ne servent pas :
-        //`BottomUp(Try(Choice(storeNotUsed,Sequence(IsStore(indexMap,"useless"), PrintInst())))).apply(ins);
 
-      //imprimer le cfg d'une liste d'instructions :
-      //`mu(MuVar("x"),Sequence(PrintInst(),AllCfg(MuVar("x"),labelMap))).apply(ins);
-         
-
-        //`TopDown(Try(Choice(Sequence(IsStore(indexMap, "index"), PrintInst()), Sequence(HasIndex(indexMap, "index"), PrintInst())))).apply(ins);
+        // Display the imprimer le cfg d'une liste d'instructions :
+        //`mu(MuVar("x"),Sequence(PrintInst(),AllCfg(MuVar("x"),labelMap))).apply(ins);
       }
     }
   }

@@ -57,5 +57,9 @@ public class Subject {
       j = i;
     }
   }
+
+  public void endingStore() {
+    int i = 0;
+  }
 }
 
