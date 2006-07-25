@@ -1,6 +1,8 @@
 
 package bytecode;
 
+import java.util.HashMap;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
@@ -56,12 +58,37 @@ public class ToolBox {
 
   public static TAccessList buildTAccess(int access) {
     TAccessList list = `AccessList();
+    
     for(int i = 0; i < accessFlags.length; i++) {
       if((access & accessFlags[i]) != 0)
         list = `ConsAccessList(accessObj[i], list);
     }
 
     return list;
+  }
+
+
+  public static int buildAccessValue(TAccessList list){
+    int value =0;
+    HashMap map = new HashMap();
+    for(int i =0;i<accessObj.length;i++){
+      map.put(accessObj[i],new Integer(accessFlags[i]));
+    }
+
+    %match(TAccessList list){
+      AccessList(_*,acc,_*)->{
+        value = value | ((Integer)map.get(`acc)).intValue();
+      }
+    }
+    return value;   
+  }
+
+  public static String buildSignature(TSignature signature){
+    String sig = null;
+    %match(TSignature signature){
+      Signature(s) -> {sig=`s;}
+    }
+    return sig;
   }
 
   public static TValue buildTValue(Object v) {
@@ -77,6 +104,17 @@ public class ToolBox {
       return `DoubleValue(((Double)v).doubleValue());
 
     return null;
+  }
+
+  public static Object buildConstant(TValue value) {
+      %match(TValue value){
+        StringValue(v) -> { return `v;}
+        IntValue(v) -> {return new Integer(`v);}
+        LongValue(v) -> {return new Long(`v);}
+        FloatValue(v) -> {return new Float(`v);}
+        DoubleValue(v) -> {return new Double(`v);}
+      }
+      return null;
   }
 
   public static TStringList buildTStringList(String[] array) {
