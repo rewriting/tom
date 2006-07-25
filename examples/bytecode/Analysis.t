@@ -12,6 +12,8 @@ import tom.library.strategy.mutraveler.MuStrategy;
 import bytecode.classtree.*;
 import bytecode.classtree.types.*;
 
+import java.io.FileOutputStream;
+
 public class Analysis {
   %include { mustrategy.tom }
   %include { classtree/ClassTree.tom }
@@ -206,6 +208,12 @@ public class Analysis {
       cr.accept(ca, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 
       TClass c = cg.getTClass();
+      BytecodeGenerator bg = new BytecodeGenerator();
+      byte[] code = bg.toBytecode(c);
+      FileOutputStream fos = new FileOutputStream("Generated.class");
+      fos.write(code);
+      fos.close();
+
 
       //System.out.println("gom term :\n\n" + c + "\n");
       analyze(c);

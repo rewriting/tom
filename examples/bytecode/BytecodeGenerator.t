@@ -38,7 +38,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
-
 import bytecode.classtree.*;
 import bytecode.classtree.types.*;
 import bytecode.classtree.types.tstringlist.*;
@@ -53,7 +52,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
 
   public byte[] toBytecode(TClass clazz){
 
-    ClassWriter cw = new ClassWriter(0);
+    ClassWriter cw = new ClassWriter(3);
 
     %match(TClass clazz){
 
@@ -84,13 +83,18 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
           }
         }
 
-        //TODO bytecode for the fields 
+        //bytecode for the fields 
 
         %match(TFieldList fields){
 
           FieldList(_*,field,_*) ->{
 
             %match(TField field){
+             Field(fieldAccess,fieldName, fieldDesc, fieldSignature, fieldValue)->{
+               FieldVisitor fw = cw.visitField(buildAccessValue(`fieldAccess),`fieldName,`fieldDesc,buildSignature(`fieldSignature),buildConstant(`fieldValue));
+               // we do not visit the annotations and attributes
+               fw.visitEnd(); 
+             }
             }
           }
         }
@@ -98,15 +102,17 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
 
         MethodVisitor mw;
         %match(TMethodList methods){
-
           MethodList(_*,method,_*) ->{
             %match(TMethod method){
-              Method(MethodInfo(owner,methAccess,methName,desc,methSignature,exceptions),MethodCode[instructions=code]) ->{
+              Method(MethodInfo(owner,methAccess,methName,desc,methSignature,exceptions),MethodCode(code,localVariables,tryCatchBlockLists)) ->{
                 mw = cw.visitMethod(buildAccessValue(`methAccess),
                     `methName,
                     `desc,
                     buildSignature(`methSignature),
                     ((StringList)`exceptions).toArray());
+
+                //no bytecode generated for local variables and trycatch blocks
+
                 HashMap labelMap = new HashMap();
                 //bytecode for the method code 
                 %match(TInstructionList code){

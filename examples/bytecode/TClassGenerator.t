@@ -57,7 +57,7 @@ public class TClassGenerator implements ClassVisitor {
   }
 
   public void visitEnd() {
-    // TODO
+    // do nothing
   }
 
   public FieldVisitor visitField(
@@ -97,7 +97,7 @@ public class TClassGenerator implements ClassVisitor {
   }
 
   public void visitSource(String source, String debug) {
-    // TODO
+    // do nothing
   }
 }
 
