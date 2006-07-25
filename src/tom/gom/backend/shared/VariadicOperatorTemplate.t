@@ -84,6 +84,28 @@ public abstract class @className()@ extends @fullClassName(sortName)@ {
     }
   }
 
+ public @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[] toArray() {
+    @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[] array;
+    if(this instanceof @fullClassName(cons.getclassName())@) {
+      @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@ h = ((@fullClassName(cons.getclassName())@)this).getHead@className()@();
+      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getclassName())@)this).getTail@className()@();
+      if (tl instanceof @className()@) {
+        @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[] tailArray =((@className()@)tl).toArray();
+        array = new @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[1+tailArray.length];
+        array[0]=h;     
+        for(int i =0;i<tailArray.length;i++){
+          array[i+1]=tailArray[i];
+        }
+      } else {
+        array = new @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[1];
+        array[0]=h;  
+      }
+    } else {
+        array = new @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[0];
+    }
+    return array;
+  }
+
   public @fullClassName(sortName)@ reverse() {
     if(this instanceof @fullClassName(cons.getclassName())@) {
       @fullClassName(sortName)@ cur = this;
