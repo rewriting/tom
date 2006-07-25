@@ -1,0 +1,113 @@
+
+%include { mustrategy.tom }
+%include { util/types/Map.tom }
+%include { classtree/ClassTree.tom }
+
+/**
+ * This strategy fills in the `Map' m with the `ConsInstructionList'
+ * corresponding to each `LabeledInstruction'.
+ * Thus, we can retrieve the `ConsInstructionList' from a `Label'.
+ * @param m the map to be filled.
+ */
+%strategy BuildLabelMap(m:Map) extends Identity() {
+  visit TInstructionList {
+    c@ConsInstructionList(LabeledInstruction[label=l], _) -> {
+      m.put(`l, `c);
+    }
+  }
+}
+
+/**
+ * `AllCfg' stands for AllControlFlowGraph.
+ * This works as the classical `All' strategy but is
+ * adapted for a ControlFlowGraph run.
+ * (i.e. a `Goto' instruction has one child : the one to jump to;
+ * a `IfXX' instruction has two children : the one which
+ * satisfies the expression, and the other...)
+ * @param s the strategy to be applied on each child.
+ * @param m the label map (see the BuildLabelMap strategy).
+ */
+%strategy AllCfg(s:Strategy, m:Map) extends Identity() {
+  visit TInstructionList {
+    c@ConsInstructionList(ins, t) -> {
+      TInstruction ins = `ins;
+      %match(TInstruction ins) {
+        Goto(l) -> {
+          s.visit((TInstructionList)m.get(`l));
+          return `c;
+        }
+
+        (Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
+         If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
+         If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l) -> {
+          s.visit((TInstructionList)m.get(`l));
+        }
+
+        (Tableswitch|Lookupswitch)[dflt=dflt, labels=labels] -> {
+          TLabelList labelList = `labels;
+          %match(TLabelList labelList) {
+            LabelList(_*, x, _*) -> {
+              s.visit((TInstructionList)m.get(`x));
+            }
+          }
+          s.visit((TInstructionList)m.get(`dflt));
+          return `c;
+        }
+
+        // Visit the next instruction.
+        _ -> { s.visit(`t); }
+      }
+    }
+  }
+}
+
+/**
+ * Adds one to the current node mark.
+ * @param map the map containing all instructions marks.
+ */
+%strategy Mark(map:Map) extends Identity() {
+  visit TInstructionList {
+    c@_ -> {
+      Object o = map.get(`c);
+      int value = 1;
+      if(o != null)
+        value = ((Integer)o).intValue() + 1;
+      map.put(`c, new Integer(value));
+    }
+  }
+}
+
+/**
+ * Substract one to the current node mark.
+ * @param map the map containing all instructions marks.
+ */
+%strategy UnMark(map:Map) extends Identity() {
+  visit TInstructionList {
+    c@_ -> {
+      Object o = map.get(`c);
+      if(o == null)
+        throw new jjtraveler.VisitFailure();
+      int value = ((Integer)o).intValue() - 1;
+      map.put(`c, new Integer(value));
+    }
+  }
+}
+
+/**
+ * Indicates if the current node is marked (>0) or not.
+ * @param map the map containing all instructions marks.
+ */
+%strategy IsMarked(map:Map) extends Identity() {
+  visit TInstructionList {
+    c@_ -> {
+      Object o = map.get(`c);
+      if(o == null || ((Integer)o).intValue() <= 0)
+        throw new jjtraveler.VisitFailure();
+    }
+  }
+}
+
+%op Strategy AU(s1:Strategy, s2:Strategy, m:Map) {
+  make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"), m)))) }
+}
+

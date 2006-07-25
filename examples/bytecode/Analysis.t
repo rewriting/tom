@@ -15,49 +15,7 @@ import bytecode.classtree.types.*;
 import java.io.FileOutputStream;
 
 public class Analysis {
-  %include { mustrategy.tom }
-  %include { classtree/ClassTree.tom }
-  %typeterm Map { implement { java.util.Map } }
-
-  // This strategy fills in the `Map' m with the `ConsInstructionList'
-  // corresponding to each `LabeledInstruction'.
-  // Thus, we can retrieve the `ConsInstructionList' from a `Label'.
-  %strategy BuildLabelMap(m:Map) extends Identity() {
-    visit TInstructionList {
-      c@ConsInstructionList(LabeledInstruction[label=l], _) -> {
-        m.put(`l, `c);
-      }
-    }
-  }
-
-  // `AllCfg' stands for AllControlFlowGraph.
-  // This works as the classical `All' strategy but is
-  // adapted for a ControlFlowGraph run.
-  // (i.e. a `Goto' instruction has one child : the one to jump to;
-  // a `IfXX' instruction has two children : the one which
-  // satisfies the expression, and the other...)
-  %strategy AllCfg(s:Strategy, m:Map) extends Identity() {
-    visit TInstructionList {
-      c@ConsInstructionList(ins, t) -> {
-        TInstruction ins = `ins;
-        %match(TInstruction ins) {
-          Goto(l) -> {
-            s.visit((TInstructionList)m.get(`l));
-            return `c;
-          }
-
-          (Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
-           If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
-           If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l) -> {
-            s.visit((TInstructionList)m.get(`l));
-          }
-
-          // Visit the next instruction.
-          _ -> { s.visit(`t); }
-        }
-      }
-    }
-  }
+  %include { Cfg.tom }
 
   // Checks if the current instruction is a load type instruction.
   %strategy IsLoad() extends Fail() {
@@ -148,10 +106,6 @@ public class Analysis {
         }
       }
     }
-  }
-
-  %op Strategy AU(s1:Strategy, s2:Strategy, m:Map) {
-    make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"), m)))) }
   }
 
   // Prints the gom-subterm of the current `TInstructionList'.
