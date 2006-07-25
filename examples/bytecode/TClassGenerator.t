@@ -32,7 +32,7 @@ public class TClassGenerator implements ClassVisitor {
 
   public void appendInnerClass(TInnerClassInfo info) {
     TClassInfo i = clazz.getinfo();
-    TInnerClassInfoList l = i.getinnerClass();
+    TInnerClassInfoList l = i.getinnerClasses();
     clazz = `Class(ClassInfo(i.getname(), i.getsignature(), i.getaccess(), i.getsuperName(), i.getinterfaces(), InnerClassInfoList(l*, info), i.getouterClass()), clazz.getfields(), clazz.getmethods());
   }
 
@@ -93,7 +93,7 @@ public class TClassGenerator implements ClassVisitor {
   public void visitOuterClass(String owner, String name, String desc) {
     TOuterClassInfo info = `OuterClassInfo(owner, name, desc);
     TClassInfo i = clazz.getinfo();
-    clazz = `Class(ClassInfo(i.getname(), i.getsignature(), i.getaccess(), i.getsuperName(), i.getinterfaces(), i.getinnerClass(), info), clazz.getfields(), clazz.getmethods());
+    clazz = `Class(ClassInfo(i.getname(), i.getsignature(), i.getaccess(), i.getsuperName(), i.getinterfaces(), i.getinnerClasses(), info), clazz.getfields(), clazz.getmethods());
   }
 
   public void visitSource(String source, String debug) {

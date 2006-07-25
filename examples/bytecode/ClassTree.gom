@@ -13,7 +13,7 @@ Signature:make(sig) {
 }
 
 TClass = Class(info:TClassInfo, fields:TFieldList, methods:TMethodList)
-TClassInfo = ClassInfo(name:String, signature:TSignature, access:TAccessList, superName:String, interfaces:TStringList, innerClass:TInnerClassInfoList, outerClass:TOuterClassInfo)
+TClassInfo = ClassInfo(name:String, signature:TSignature, access:TAccessList, superName:String, interfaces:TStringList, innerClasses:TInnerClassInfoList, outerClass:TOuterClassInfo)
 
 TInnerClassInfo = InnerClassInfo(name:String, outerName:String, innerName:String, access:TAccessList)
 TInnerClassInfoList = InnerClassInfoList(TInnerClassInfo*)
