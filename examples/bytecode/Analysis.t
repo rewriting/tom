@@ -115,14 +115,23 @@ public class Analysis {
     }
   }
 
+  // Removes the head instruction of an instruction list 
+  %strategy RemoveHeadInst() extends Fail() {
+    visit TInstructionList {
+      ConsInstructionList(head,tail) -> {
+        System.out.println("remove "+`head);
+        return `tail;}
+    }
+  }
+
+
   // Analyzes the instruction list of each method of the given class.
   // Useless `store i' instruction will be printed.
   // (i.e. a `store i' which is not followed by a `load i' instruction)
-  private static void analyze(TClass clazz) {
+  private static TClass analyze(TClass clazz) {
     TMethodList methods = clazz.getmethods();
     %match(TMethodList methods) {
       MethodList(_*, x, _*) -> {
-        System.out.println("method : " + `x.getinfo().getname());
 
         TInstructionList ins = `x.getcode().getinstructions();
 
@@ -140,13 +149,16 @@ public class Analysis {
 
         MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
 
-        // Display the useless store.
-        `BottomUp(Try(ChoiceId(storeNotUsed, PrintInst()))).apply(ins);
+        (`BottomUp(Try(ChoiceId(storeNotUsed,PrintInst())))).apply(ins);
+        // Remove the useless store.
+        `x.getcode().setinstructions((TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).apply(ins));
+        (`BottomUp(Try(ChoiceId(storeNotUsed,PrintInst())))).apply(ins);
 
         // Display the imprimer le cfg d'une liste d'instructions :
         //`mu(MuVar("x"),Sequence(PrintInst(),AllCfg(MuVar("x"),labelMap))).apply(ins);
       }
     }
+    return clazz;
   }
 
   public static void main(String[] args) {
@@ -162,15 +174,14 @@ public class Analysis {
       cr.accept(ca, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 
       TClass c = cg.getTClass();
+      TClass cImproved = analyze(c);
       BytecodeGenerator bg = new BytecodeGenerator();
-      byte[] code = bg.toBytecode(c);
+      byte[] code = bg.toBytecode(cImproved);
       FileOutputStream fos = new FileOutputStream("Generated.class");
       fos.write(code);
       fos.close();
 
-
       //System.out.println("gom term :\n\n" + c + "\n");
-      analyze(c);
     } catch(IOException ioe) {
       System.err.println("Class not found : " + args[0]);
     }
