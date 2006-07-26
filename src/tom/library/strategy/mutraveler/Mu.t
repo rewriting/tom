@@ -1,4 +1,3 @@
-
 package tom.library.strategy.mutraveler;
 
 import tom.library.strategy.mutraveler.AbstractMuStrategy;
@@ -43,11 +42,11 @@ public class Mu extends AbstractMuStrategy {
  * The visit method seeks all Mu and MuVar nodes.
  *
  * When a Mu node is matched, it is pushed on a stack. Then child nodes are
- * visited and finally, the Mu node is poped.
+ * visited and finally, the Mu node is popped.
  *
- * When a MuVar node is matched, then the stacked is browsed to find the
+ * When a MuVar node is matched, then the stack is browsed to find the
  * corresponding Mu (the last pushed with the same variable name). The MuVar is
- * expanded.
+ * then expanded.
  *
  * When the current node is not a Mu or a MuVar, we visit all children of the
  * current node.
@@ -82,7 +81,6 @@ class MuTopDown {
               return;
             }
           }
-
           throw new VisitFailure();
         }
       }
@@ -94,4 +92,3 @@ class MuTopDown {
     }
   }
 }
-
