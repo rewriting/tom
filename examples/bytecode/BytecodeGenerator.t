@@ -52,11 +52,11 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
 
   public byte[] toBytecode(TClass clazz){
 
-    ClassWriter cw = new ClassWriter(3);
+    ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 
     %match(TClass clazz){
 
-      Class(ClassInfo(name,signature,access,superName,interfaces,innerClasses,outerClass), fields, methods) ->{
+      Class(ClassInfo(name,signature,access,superName,interfaces,innerClasses,outerClass), fields, methods) -> {
 
         // bytecode for the header
 
@@ -104,14 +104,14 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
         %match(TMethodList methods){
           MethodList(_*,method,_*) ->{
             %match(TMethod method){
-              Method(MethodInfo(owner,methAccess,methName,desc,methSignature,exceptions),MethodCode(code,localVariables,tryCatchBlockLists)) ->{
+              Method(MethodInfo(owner,methAccess,methName,desc,methSignature,exceptions),MethodCode(code,localVariables,tryCatchBlockLists)) -> {
                 mw = cw.visitMethod(buildAccessValue(`methAccess),
                     `methName,
                     `desc,
                     buildSignature(`methSignature),
                     ((StringList)`exceptions).toArray());
 
-                //no bytecode generated for local variables and trycatch blocks
+                mw.visitCode();
 
                 HashMap labelMap = new HashMap();
                 //bytecode for the method code 
@@ -120,7 +120,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
                     labelMap.put(`label,new Label());
                   }
                   InstructionList(_*,inst,_*)->{
-                    %match(TInstruction inst){
+                    %match(TInstruction inst) {
                       LabeledInstruction(label,i) -> {
                         mw.visitLabel((Label)labelMap.get(`label));
                         addInstruction(mw,`i,labelMap);
@@ -129,6 +129,26 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
                     }
                   }
                 }
+
+                %match(TTryCatchBlockList tryCatchBlockLists) {
+                  TryCatchBlockList(_*, TryCatchBlock(start,end,handler), _*) -> {
+                    %match(THandler handler) {
+                      CatchHandler(h, type) -> {
+                        mw.visitTryCatchBlock((Label)labelMap.get(`start),(Label)labelMap.get(`end),(Label)labelMap.get(`h),`type);
+                      }
+                      FinallyHandler(h) -> {
+                        mw.visitTryCatchBlock((Label)labelMap.get(`start),(Label)labelMap.get(`end),(Label)labelMap.get(`h),null);
+                      }
+                    }
+                  }
+                }
+
+                %match(TLocalVariableList localVariables) {
+                  LocalVariableList(_*, LocalVariable(varname, vardesc, varsignature, start, end, index), _*) -> {
+                    mw.visitLocalVariable(`varname, `vardesc, buildSignature(`varsignature), (Label)labelMap.get(`start), (Label)labelMap.get(`end), `index);
+                  }
+                }
+
                 mw.visitMaxs(0, 0);
                 mw.visitEnd();
               }
@@ -610,7 +630,19 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
         mw.visitMultiANewArrayInsn(`desc,`dims);
       }
 
-      Lookupswitch(dflt, keys, labels) ->{
+      Tableswitch(min, max, dflt, labels) -> {
+        TLabel[] tlabelTab = ((LabelList)`labels).toArray();
+        Label[] labelTab = null;
+        if(tlabelTab != null){
+          labelTab = new Label[tlabelTab.length];
+          for(int i=0;i<labelTab.length;i++){
+            labelTab[i]=(Label)labelMap.get(tlabelTab[i]);
+          }
+        }
+        mw.visitTableSwitchInsn(`min, `max, (Label)labelMap.get(`dflt), labelTab);
+      }
+
+      Lookupswitch(dflt, keys, labels) -> {
         TLabel[] tlabelTab = ((LabelList)`labels).toArray();
         Label[] labelTab = null;
         if(tlabelTab != null){
@@ -621,13 +653,6 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
         }
         mw.visitLookupSwitchInsn((Label)labelMap.get(`dflt),((intList)`keys).toArray(),labelTab);
       }
-
-      //TODO
-      /*
-         TryCatchBlock(start,end,handler,type)->{
-         mw.visitTryCatchBlock((Label)labelMap.get(`start),(Label)labelMap.get(`end),(Label)labelMap.get(`handler),`type); 
-         }
-       */
     }
   }
 }

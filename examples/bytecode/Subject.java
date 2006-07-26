@@ -4,9 +4,23 @@ package bytecode;
 public class Subject {
   static protected int i = 42;
   static private String s = "hello";
-  private String myAttr;
-/*
-  private static String gets() {
+  private String myAttr = "attr";
+
+  public static void main(String[] args) {
+    Subject s = new Subject();
+
+    gets();
+    s.switchfct(3);
+
+    try {
+      s.t();
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
+    s.stratKiller();
+  }
+
+  public static String gets() {
     String sUp = s.toUpperCase();
     ++i;
     return sUp;
@@ -28,7 +42,7 @@ public class Subject {
   }
 
   public class SubSubject {
-  }*/
+  }
 
   public void fct() throws Exception {
     while(true) {
@@ -41,8 +55,9 @@ public class Subject {
 
   public void t() throws Exception {
     try {
-      fct();
       myAttr = "try";
+      System.out.println(myAttr);
+      fct();
 
       String s = "test";
       int k = 0;
@@ -53,8 +68,10 @@ public class Subject {
       System.out.println(s);
     } catch(Exception ex) {
       myAttr = "catch";
+      System.out.println(myAttr);
     } finally {
       myAttr = "finally";
+      System.out.println(myAttr);
     }
   }
 
@@ -101,6 +118,15 @@ public class Subject {
     }
 
     System.out.println(value);
+  }
+
+  public int d() {
+    return 4;
+  }
+
+  public void e() {
+    int p = 1;
+    p = d();
   }
 }
 

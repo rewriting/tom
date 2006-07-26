@@ -119,8 +119,23 @@ public class Analysis {
   %strategy RemoveHeadInst() extends Fail() {
     visit TInstructionList {
       ConsInstructionList(head,tail) -> {
-        System.out.println("remove "+`head);
-        return `tail;}
+        TInstruction head = `head;
+
+        System.out.println("removes : " + head);
+
+        %match(TInstruction head) {
+          LabeledInstruction(l, ins) -> {
+            // Try to remove the last instruction, replace it with a nop.
+            if(`tail.isEmptyInstructionList())
+              return `InstructionList(LabeledInstruction(l, Nop()));
+
+            // Move the label to the next instruction.
+            return `ConsInstructionList(LabeledInstruction(l, tail.getHeadInstructionList()), tail.getTailInstructionList());
+          }
+        }
+
+        return `tail;
+      }
     }
   }
 
@@ -129,6 +144,8 @@ public class Analysis {
   // Useless `store i' instruction will be printed.
   // (i.e. a `store i' which is not followed by a `load i' instruction)
   private static TClass analyze(TClass clazz) {
+    TClass impClass = clazz.setmethods(`MethodList());
+
     TMethodList methods = clazz.getmethods();
     %match(TMethodList methods) {
       MethodList(_*, x, _*) -> {
@@ -149,16 +166,66 @@ public class Analysis {
 
         MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
 
-        (`BottomUp(Try(ChoiceId(storeNotUsed,PrintInst())))).apply(ins);
-        // Remove the useless store.
-        `x.getcode().setinstructions((TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).apply(ins));
-        (`BottomUp(Try(ChoiceId(storeNotUsed,PrintInst())))).apply(ins);
+        //(`BottomUp(Try(ChoiceId(storeNotUsed,PrintInst())))).apply(ins);
 
-        // Display the imprimer le cfg d'une liste d'instructions :
+        TInstructionList impInstList = ins;
+        // Removes the useless store.
+        if(`x.getinfo().getname().equals("stratKiller")) {
+          impInstList = (TInstructionList)`Sequence(RemoveHeadInst(), RemoveHeadInst()).apply(ins);
+          //impInstList = (TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).apply(ins);
+        }
+
+        TMethodCode impCode = `x.getcode().setinstructions(impInstList);
+        TMethod impMethod = `x.setcode(impCode);
+        impClass = appendMethod(impClass, impMethod);
+        
+        //(`BottomUp(Try(ChoiceId(storeNotUsed,PrintInst())))).apply(impInstList);
+        //System.out.println(impClass);
+
+        // Display the control flow graph.
         //`mu(MuVar("x"),Sequence(PrintInst(),AllCfg(MuVar("x"),labelMap))).apply(ins);
       }
     }
-    return clazz;
+    return impClass;
+  }
+
+  private static TClass appendMethod(TClass clazz, TMethod method){
+    TMethodList l = clazz.getmethods();
+    return `Class(clazz.getinfo(), clazz.getfields(), MethodList(l*, method));
+  }
+
+  %strategy RenameOwner(currentName:String, newName:String) extends Identity() {
+    visit TOuterClassInfo {
+      x@OuterClassInfo[owner=owner] -> {
+        if(`owner.equals(currentName))
+          return `x.setowner(newName);
+      }
+    }
+
+    visit TMethodInfo {
+      x@MethodInfo[owner=owner] -> {
+        if(`owner.equals(currentName))
+          return `x.setowner(newName);
+      }
+    }
+
+    visit TInstruction {
+      x@(Getstatic|Putstatic|Getfield|Putfield|
+          Invokevirtual|Invokespecial|Invokestatic|Invokeinterface)
+        [owner=owner] -> {
+          if(`owner.equals(currentName))
+            return `x.setowner(newName);
+        }
+    }
+  }
+
+  private static TClass renameClass(TClass clazz, String newName) {
+    // FIXME : descriptor must be renamed too..
+    TClassInfo classInfo = clazz.getinfo();
+    String currentName = classInfo.getname();
+
+    TClass newClass = clazz.setinfo(classInfo.setname(newName));
+    return (TClass)`TopDown(RenameOwner(currentName, newName)).apply(newClass);
   }
 
   public static void main(String[] args) {
@@ -168,16 +235,23 @@ public class Analysis {
     }
 
     try {
+      System.out.println("Parsing class file " + args[0] + " ...");
       ClassReader cr = new ClassReader(args[0]);
       TClassGenerator cg = new TClassGenerator();
       ClassAdapter ca = new ClassAdapter(cg);
       cr.accept(ca, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 
+      System.out.println("Analyzing ...");
       TClass c = cg.getTClass();
       TClass cImproved = analyze(c);
+
+      String impClassName = args[0];// + "Imp";
+      System.out.println("Generating improved class " + impClassName + " ...");
+      cImproved = renameClass(c, impClassName);
+
       BytecodeGenerator bg = new BytecodeGenerator();
       byte[] code = bg.toBytecode(cImproved);
-      FileOutputStream fos = new FileOutputStream("Generated.class");
+      FileOutputStream fos = new FileOutputStream(impClassName + ".class");
       fos.write(code);
       fos.close();
 
@@ -187,4 +261,5 @@ public class Analysis {
     }
   }
 }
+
 
