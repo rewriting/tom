@@ -69,43 +69,73 @@ public class CFGViewer {
   %strategy PrintDotNode(out:Writer) extends Identity() {
     visit TInstructionList {
       c@ConsInstructionList(ins, _) -> {
-        try {
-          String id = getDotId(`c);
-          TInstruction ins = `ins;
-          %match(TInstruction ins) {
-            LabeledInstruction(_, realIns) -> {
-              out.write(%[
-                  @id@ [label="@clean(`realIns.toString())@"];
-                  ]%);
-              return `c;
-            }
+        String id = getDotId(`c);
+        printDotInstruction(`ins, id, out);
+      }
+    }
+  }
 
-            s@Goto(_) -> {
-              out.write(%[
-                  @id@ [label="@`s.symbolName()@"];
-                  ]%);
-              return `c;
-            }
+  /**
+   * Prints the given instruction with a suitable label and id.
+   * @param ins the instruction to be printed.
+   * @param id the id of the dot node.
+   * @param out the writer to be used for the dot output.
+   */
+  private static void printDotInstruction(TInstruction ins, String id, Writer out) {
+    try {
+      %match(TInstruction ins) {
+        LabeledInstruction(_, realIns) -> {
+          printDotInstruction(`realIns, id, out);
+          return;
+        }
 
-            s@(Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
-             If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
-             If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(_) -> {
-              out.write(%[
-                  @id@ [label="@`s.symbolName()@"];
-                  ]%);
-              return `c;
-            }
+        (Bipush|Sipush|Newarray)(operand) -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\noperand : @Integer.toString(`operand)@"];
+              ]%);
+          return;
+        }
 
-            s@Tableswitch[min=min, max=max] -> {
-              out.write(%[
-                  @id@ [label="@`s.symbolName()@(@`min@, @`max@)"];
-                  ]%);
-              return `c;
-            }
+        Multianewarray(typeDesc, dims) -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\ntypeDesc : @`typeDesc@\ndims : @Integer.toString(`dims)@"];
+              ]%);
+          return;
+        }
 
-            s@Lookupswitch[keys=keys] -> {
-              out.write(%[
-                  @id@ [label="@`s.symbolName()@(]%);
+        Ldc(cst) -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\ncst : @clean(`cst.toString())@"];
+              ]%);
+          return;
+        }
+
+        (Iload|Lload|Fload|Dload|Aload|
+         Istore|Lstore|Fstore|Dstore|Astore|
+         Ret)(var) -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\nvar : @Integer.toString(`var)@"];
+              ]%);
+          return;
+        }
+
+        Iinc(incr, var) -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\nincr : @Integer.toString(`incr)@\nvar : @Integer.toString(`var)@"];
+              ]%);
+          return;
+        }
+
+        Tableswitch[min=min, max=max] -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\nmin : @`min@\nmax : @`max@"];
+              ]%);
+          return;
+        }
+
+        Lookupswitch[keys=keys] -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\nkeys : ]%);
               TintList keys = `keys;
               %match(TintList keys) {
                 intList(_*, x, _*, _) -> {
@@ -115,20 +145,39 @@ public class CFGViewer {
                   out.write(Integer.toString(`x));
                 }
               }
-              out.write(%[)"];]%);
-              return `c;
-            }
+              out.write(%["];]%);
+              return;
+        }
 
-            _ -> {
-              out.write(%[
-                  @id@ [label="@clean(ins.toString())@"];
-                  ]%);
-            }
-          }
-        } catch(IOException e) {
-          e.printStackTrace();
+        (Getstatic|Putstatic|Getfield|Putfield)(owner, name, fieldDesc) -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\nowner : @`owner@\nname : @`name@\ndescriptor : @ToolBox.buildDescriptor(`fieldDesc)@"];
+              ]%);
+          return;
+        }
+
+        (Invokevirtual|Invokespecial|Invokestatic|Invokeinterface)(owner, name, methodDesc) -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\nowner : @`owner@\nname : @`name@\ndescriptor : @ToolBox.buildDescriptor(`methodDesc)@"];
+              ]%);
+          return;
+        }
+
+        (New|Anewarray|Checkcast|Instanceof)(typeDesc) -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@\ndescriptor : @`typeDesc@"];
+              ]%);
+          return;
+        }
+
+        _ -> {
+          out.write(%[
+              @id@ [label="@ins.symbolName()@"];
+              ]%);
         }
       }
+    } catch(IOException e) {
+      e.printStackTrace();
     }
   }
 
@@ -166,7 +215,7 @@ public class CFGViewer {
           %match(THandler handler) {
             CatchHandler(h, t) -> {
               out.write(%[
-                  @id@ [label="Catch(@clean(`t)@)" shape=box];
+                  @id@ [label="Catch\ntype : @`t@" shape=box];
                   @id@ -> @getDotId((TInstructionList)labelMap.get(`h))@ [label="handler" style=dotted];
                   ]%);
             }
@@ -204,7 +253,7 @@ public class CFGViewer {
           String id = getDotId(var);
 
           out.write(%[
-              @id@ [label="var : @var.getname()@\ndescriptor : @clean(var.getdesc())@\nindex : @Integer.toString(var.getindex())@" shape=box];
+              @id@ [label="var : @var.getname()@\ndescriptor : @var.gettypeDesc()@\nindex : @Integer.toString(var.getindex())@" shape=box];
               @id@ -> @getDotId((TInstructionList)labelMap.get(var.getstart()))@ [label="start" style=dotted];
               @id@ -> @getDotId((TInstructionList)labelMap.get(var.getend()))@ [label="end" style=dotted];
               ]%);
@@ -246,13 +295,13 @@ public class CFGViewer {
               ]%);
 
           // Print a root node with the method name and descriptor. Add a link to the first instruction if any.
-          w.write(%[method [label="method : @info.getname()@\ndescriptor : @clean(info.getdesc())@" shape=box];
+          w.write(%[method [label="method : @info.getname()@\ndescriptor : @ToolBox.buildDescriptor(info.getdesc())@" shape=box];
               ]%);
           if(!`x.getcode().isEmptyCode()) {
             TInstructionList ins = `x.getcode().getinstructions();
             if(!ins.isEmptyInstructionList()) {
-            w.write(%[method -> @getDotId(ins)@
-              ]%);
+              w.write(%[method -> @getDotId(ins)@
+                  ]%);
             }
 
             // Compute the label map to allow us to retrieve an instruction from a label.

@@ -11,6 +11,7 @@ import bytecode.classtree.*;
 import bytecode.classtree.types.*;
 
 public class ToolBox {
+  %include { mustrategy.tom }
 	%include { classtree/ClassTree.tom }
 
   private final static int[] accessFlags = {
@@ -178,6 +179,127 @@ public class ToolBox {
     }
 
     return ret;
+  }
+
+  private static class Counter { public int count = 0; }
+  public static TFieldDescriptor buildTFieldDescriptor(String desc) {
+    Counter count = new Counter();
+    TFieldDescriptor fDesc = buildTFieldDescriptorFrom(desc, count);
+    if(count.count != desc.length())
+      System.err.println("Malformed descriptor : " + desc);
+    return fDesc;
+  }
+
+  private static TFieldDescriptor buildTFieldDescriptorFrom(String desc, Counter count) {
+    TFieldDescriptor fDesc = null;
+    switch(desc.charAt(count.count)) {
+      case 'L':
+        count.count++;
+        int j = desc.indexOf(';', count.count);
+        if(j == -1)
+          System.err.println("Malformed descriptor : " + desc);
+        String className = desc.substring(count.count, j);
+        count.count += className.length() + 1;
+        fDesc = `ObjectType(className);
+        break;
+      case '[':
+        count.count++;
+        fDesc = `ArrayType(buildTFieldDescriptorFrom(desc, count));
+        break;
+      case 'B':
+        count.count++;
+        fDesc = `B();
+        break;
+      case 'C':
+        count.count++;
+        fDesc = `C();
+        break;
+      case 'D':
+        count.count++;
+        fDesc = `D();
+        break;
+      case 'F':
+        count.count++;
+        fDesc = `F();
+        break;
+      case 'I':
+        count.count++;
+        fDesc = `I();
+        break;
+      case 'J':
+        count.count++;
+        fDesc = `J();
+        break;
+      case 'S':
+        count.count++;
+        fDesc = `S();
+        break;
+      case 'Z':
+        count.count++;
+        fDesc = `Z();
+        break;
+    }
+    if(fDesc == null)
+      System.err.println("Malformed descriptor : " + desc);
+    return fDesc;
+  }
+
+  public static TReturnDescriptor buildTReturnDescriptor(String desc) {
+    if(desc.charAt(0) == 'V' && desc.length() == 1)
+      return `Void();
+    return `ReturnDescriptor(buildTFieldDescriptor(desc));
+  }
+
+  public static TMethodDescriptor buildTMethodDescriptor(String desc) {
+    int endParam = desc.indexOf(')', 1);
+    if(desc.charAt(0) != '(' || endParam == -1)
+      System.err.println("Malformed descriptor : " + desc);
+
+    TFieldDescriptorList fList = `FieldDescriptorList();
+    Counter count = new Counter();
+    count.count++;
+    while(count.count < endParam)
+      fList = `FieldDescriptorList(fList*, buildTFieldDescriptorFrom(desc, count));
+    if(count.count != endParam)
+      System.err.println("Malformed descriptor : " + desc);
+    TReturnDescriptor ret = buildTReturnDescriptor(desc.substring(count.count + 1));
+    return `MethodDescriptor(fList, ret);
+  }
+
+  %typeterm StringBuffer { implement { StringBuffer } }
+  %strategy BuildDescriptor(sb:StringBuffer) extends Identity() {
+    visit TFieldDescriptor {
+      ObjectType(className) -> { sb.append("L" + `className + ";"); }
+      ArrayType[] -> { sb.append('['); }
+      B() -> { sb.append('B'); }
+      C() -> { sb.append('C'); }
+      D() -> { sb.append('D'); }
+      F() -> { sb.append('F'); }
+      I() -> { sb.append('I'); }
+      J() -> { sb.append('J'); }
+      S() -> { sb.append('S'); }
+      Z() -> { sb.append('Z'); }
+    }
+
+    visit TMethodDescriptor {
+      _ -> { sb.append('('); }
+    }
+
+    visit TReturnDescriptor {
+      _ -> { sb.append(')'); }
+      Void() -> { sb.append('V'); }
+    }
+  }
+
+  public static String buildDescriptor(TFieldDescriptor desc) {
+    StringBuffer sb = new StringBuffer();
+    `TopDown(BuildDescriptor(sb)).apply(desc);
+    return sb.toString();
+  }
+  public static String buildDescriptor(TMethodDescriptor desc) {
+    StringBuffer sb = new StringBuffer();
+    `TopDown(BuildDescriptor(sb)).apply(desc);
+    return sb.toString();
   }
 }
 

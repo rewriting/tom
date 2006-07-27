@@ -52,7 +52,7 @@ public class TMethodGenerator implements MethodVisitor {
       TClassGenerator cg,
       TAccessList access,
       String name,
-      String desc,
+      TMethodDescriptor desc,
       TSignature signature,
       TStringList exceptions) {
     classGenerator = cg;
@@ -120,16 +120,16 @@ public class TMethodGenerator implements MethodVisitor {
     TInstruction ins = null;
     switch(opcode) {
       case Opcodes.GETSTATIC:
-        ins = `Getstatic(owner, name, desc);
+        ins = `Getstatic(owner, name, ToolBox.buildTFieldDescriptor(desc));
         break;
       case Opcodes.PUTSTATIC:
-        ins = `Putstatic(owner, name, desc);
+        ins = `Putstatic(owner, name, ToolBox.buildTFieldDescriptor(desc));
         break;
       case Opcodes.GETFIELD:
-        ins = `Getfield(owner, name, desc);
+        ins = `Getfield(owner, name, ToolBox.buildTFieldDescriptor(desc));
         break;
       case Opcodes.PUTFIELD:
-        ins = `Putfield(owner, name, desc);
+        ins = `Putfield(owner, name, ToolBox.buildTFieldDescriptor(desc));
         break;
       default:
         System.err.println("Unsupported OpCode :" + opcode);
@@ -609,16 +609,16 @@ public class TMethodGenerator implements MethodVisitor {
 
     switch(opcode) {
       case Opcodes.INVOKEVIRTUAL:
-        ins = `Invokevirtual(owner, name, desc);
+        ins = `Invokevirtual(owner, name, ToolBox.buildTMethodDescriptor(desc));
         break;
       case Opcodes.INVOKESPECIAL:
-        ins = `Invokespecial(owner, name, desc);
+        ins = `Invokespecial(owner, name, ToolBox.buildTMethodDescriptor(desc));
         break;
       case Opcodes.INVOKESTATIC:
-        ins = `Invokestatic(owner, name, desc);
+        ins = `Invokestatic(owner, name, ToolBox.buildTMethodDescriptor(desc));
         break;
       case Opcodes.INVOKEINTERFACE:
-        ins = `Invokeinterface(owner, name, desc);
+        ins = `Invokeinterface(owner, name, ToolBox.buildTMethodDescriptor(desc));
         break;
       default:
         System.err.println("Unsupported OpCode :" + opcode);

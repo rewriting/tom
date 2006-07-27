@@ -22,18 +22,18 @@ public class TClassGenerator implements ClassVisitor {
 
   public void appendMethod(TMethod method){
     TMethodList l = clazz.getmethods();
-    clazz = `Class(clazz.getinfo(), clazz.getfields(), MethodList(l*, method));
+    clazz = clazz.setmethods(`MethodList(l*, method));
   }
 
   public void appendField(TField field) {
     TFieldList l = clazz.getfields();
-    clazz = `Class(clazz.getinfo(), FieldList(l*, field), clazz.getmethods());
+    clazz = clazz.setfields(`FieldList(l*, field));
   }
 
   public void appendInnerClass(TInnerClassInfo info) {
     TClassInfo i = clazz.getinfo();
     TInnerClassInfoList l = i.getinnerClasses();
-    clazz = `Class(ClassInfo(i.getname(), i.getsignature(), i.getaccess(), i.getsuperName(), i.getinterfaces(), InnerClassInfoList(l*, info), i.getouterClass()), clazz.getfields(), clazz.getmethods());
+    clazz = clazz.setinfo(i.setinnerClasses(`InnerClassInfoList(l*, info)));
   }
 
   public void visit(
@@ -66,7 +66,7 @@ public class TClassGenerator implements ClassVisitor {
       String desc,
       String signature,
       Object value) {
-    TField field = `Field(ToolBox.buildTAccess(access), name, desc, Signature(signature), ToolBox.buildTValue(value));
+    TField field = `Field(ToolBox.buildTAccess(access), name, ToolBox.buildTFieldDescriptor(desc), Signature(signature), ToolBox.buildTValue(value));
     appendField(field);
 
     return null;
@@ -87,13 +87,13 @@ public class TClassGenerator implements ClassVisitor {
       String desc,
       String signature,
       String[] exceptions) {
-    return new TMethodGenerator(this, ToolBox.buildTAccess(access), name, desc, `Signature(signature), ToolBox.buildTStringList(exceptions));
+    return new TMethodGenerator(this, ToolBox.buildTAccess(access), name, ToolBox.buildTMethodDescriptor(desc), `Signature(signature), ToolBox.buildTStringList(exceptions));
   }
 
   public void visitOuterClass(String owner, String name, String desc) {
-    TOuterClassInfo info = `OuterClassInfo(owner, name, desc);
+    TOuterClassInfo info = `OuterClassInfo(owner, name, ToolBox.buildTMethodDescriptor(desc));
     TClassInfo i = clazz.getinfo();
-    clazz = `Class(ClassInfo(i.getname(), i.getsignature(), i.getaccess(), i.getsuperName(), i.getinterfaces(), i.getinnerClasses(), info), clazz.getfields(), clazz.getmethods());
+    clazz = clazz.setinfo(i.setouterClass(info));
   }
 
   public void visitSource(String source, String debug) {

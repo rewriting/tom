@@ -194,11 +194,25 @@ public class Analysis {
     return `Class(clazz.getinfo(), clazz.getfields(), MethodList(l*, method));
   }
 
-  %strategy RenameOwner(currentName:String, newName:String) extends Identity() {
+  %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {
     visit TOuterClassInfo {
       x@OuterClassInfo[owner=owner] -> {
         if(`owner.equals(currentName))
           return `x.setowner(newName);
+      }
+    }
+
+    visit TLocalVariable {
+      x@LocalVariable[typeDesc=t] -> {
+        if(`t.equals(currentName))
+          return `x.settypeDesc(newName);
+      }
+    }
+
+    visit TFieldDescriptor {
+      x@ObjectType[className=n] -> {
+        if(`n.equals(currentName))
+          return `x.setclassName(newName);
       }
     }
 
@@ -216,16 +230,20 @@ public class Analysis {
           if(`owner.equals(currentName))
             return `x.setowner(newName);
         }
+      x@(New|Anewarray|Checkcast|Instanceof|Multianewarray)[typeDesc=t] -> {
+        if(`t.equals(currentName))
+          return `x.settypeDesc(newName);
+      }
     }
+
   }
 
   private static TClass renameClass(TClass clazz, String newName) {
-    // FIXME : descriptor must be renamed too..
     TClassInfo classInfo = clazz.getinfo();
     String currentName = classInfo.getname();
 
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
-    return (TClass)`TopDown(RenameOwner(currentName, newName)).apply(newClass);
+    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).apply(newClass);
   }
 
   public static void main(String[] args) {
@@ -245,7 +263,7 @@ public class Analysis {
       TClass c = cg.getTClass();
       TClass cImproved = analyze(c);
 
-      String impClassName = args[0];// + "Imp";
+      String impClassName = args[0] + "Imp";
       System.out.println("Generating improved class " + impClassName + " ...");
       cImproved = renameClass(c, impClassName);
 

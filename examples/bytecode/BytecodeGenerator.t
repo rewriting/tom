@@ -79,7 +79,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
 
         %match(TOuterClassInfo outerClass){
           OuterClassInfo(outerOwner,outerName,outerDesc)->{
-            cw.visitOuterClass(`outerOwner,`outerName,`outerDesc);
+            cw.visitOuterClass(`outerOwner,`outerName,buildDescriptor(`outerDesc));
           }
         }
 
@@ -91,7 +91,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
 
             %match(TField field){
              Field(fieldAccess,fieldName, fieldDesc, fieldSignature, fieldValue)->{
-               FieldVisitor fw = cw.visitField(buildAccessValue(`fieldAccess),`fieldName,`fieldDesc,buildSignature(`fieldSignature),buildConstant(`fieldValue));
+               FieldVisitor fw = cw.visitField(buildAccessValue(`fieldAccess),`fieldName,buildDescriptor(`fieldDesc),buildSignature(`fieldSignature),buildConstant(`fieldValue));
                // we do not visit the annotations and attributes
                fw.visitEnd(); 
              }
@@ -107,7 +107,7 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
               Method(MethodInfo(owner,methAccess,methName,desc,methSignature,exceptions),MethodCode(code,localVariables,tryCatchBlockLists)) -> {
                 mw = cw.visitMethod(buildAccessValue(`methAccess),
                     `methName,
-                    `desc,
+                    buildDescriptor(`desc),
                     buildSignature(`methSignature),
                     ((StringList)`exceptions).toArray());
 
@@ -487,16 +487,16 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
         mw.visitInsn(MONITOREXIT);
       }
       Getstatic(owner, name, desc)->{
-        mw.visitFieldInsn(GETSTATIC,`owner,`name,`desc);
+        mw.visitFieldInsn(GETSTATIC,`owner,`name,buildDescriptor(`desc));
       }
       Putstatic(owner, name, desc)->{
-        mw.visitFieldInsn(PUTSTATIC,`owner,`name,`desc);
+        mw.visitFieldInsn(PUTSTATIC,`owner,`name,buildDescriptor(`desc));
       }
       Getfield(owner, name, desc)->{
-        mw.visitFieldInsn(GETFIELD,`owner,`name,`desc);
+        mw.visitFieldInsn(GETFIELD,`owner,`name,buildDescriptor(`desc));
       }
       Putfield(owner, name, desc)->{
-        mw.visitFieldInsn(PUTFIELD,`owner,`name,`desc);
+        mw.visitFieldInsn(PUTFIELD,`owner,`name,buildDescriptor(`desc));
       }
       Bipush(operand)->{
         mw.visitIntInsn(BIPUSH,`operand);
@@ -562,16 +562,16 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
         mw.visitJumpInsn(IFNONNULL,(Label)labelMap.get(`l));
       }
       Invokevirtual(owner, name, desc)->{
-        mw.visitMethodInsn(INVOKEVIRTUAL,`owner,`name,`desc);
+        mw.visitMethodInsn(INVOKEVIRTUAL,`owner,`name,buildDescriptor(`desc));
       }
       Invokespecial(owner, name, desc)->{
-        mw.visitMethodInsn(INVOKESPECIAL,`owner,`name,`desc);
+        mw.visitMethodInsn(INVOKESPECIAL,`owner,`name,buildDescriptor(`desc));
       }
       Invokestatic(owner, name, desc)->{
-        mw.visitMethodInsn(INVOKESTATIC,`owner,`name,`desc);
+        mw.visitMethodInsn(INVOKESTATIC,`owner,`name,buildDescriptor(`desc));
       }
       Invokeinterface(owner, name, desc)->{
-        mw.visitMethodInsn(INVOKEINTERFACE,`owner,`name,`desc);
+        mw.visitMethodInsn(INVOKEINTERFACE,`owner,`name,buildDescriptor(`desc));
       }
 
       New(desc)->{

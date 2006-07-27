@@ -121,12 +121,24 @@ public class Subject {
   }
 
   public int d() {
-    return 4;
+    String [] array = new String[3];
+    int [] array2 = new int[4];
+    return array.length + array2.length;
   }
 
   public void e() {
     int p = 1;
     p = d();
+  }
+
+  public void l() {
+    Object o = new String();
+    String s = (String)o;
+    System.out.println(o instanceof String);
+  }
+
+  public String substring(String s, int from, int to) {
+    return s.substring(from, to);
   }
 }
 
