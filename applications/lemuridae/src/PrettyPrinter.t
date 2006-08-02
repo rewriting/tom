@@ -2,6 +2,7 @@ import sequents.*;
 import sequents.types.*;
 
 import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.VisitFailure;
 import jjtraveler.reflective.VisitableVisitor;
 
@@ -26,24 +27,26 @@ class PrettyPrinter {
 
   // static bloc
   static {
-    dict.put("axiom", "\\mathrel{Ax}");  
-    dict.put("implies I", "\\Rightarrow I");  
-    dict.put("implies E", "\\Rightarrow E");
-    dict.put("implies R", "\\Rightarrow R");
-    dict.put("implies L", "\\Rightarrow L");
-    dict.put("and I", "\\wedge I");  
-    dict.put("and E", "\\wedge E");
-    dict.put("and R", "\\wedge R");
-    dict.put("and L", "\\wedge L");
-    dict.put("or I", "\\vee I");
-    dict.put("or E", "\\vee E");
-    dict.put("or R", "\\vee R");
-    dict.put("or L", "\\vee L");
-    dict.put("forAll R", "\\forall R");
-    dict.put("forAll L", "\\forall L");
-    dict.put("exists R", "\\exists R");
-    dict.put("exists L", "\\exists L");
-    dict.put("bottom", "\\perp");
+    dict.put("axiom", "\\mathop{ax}");  
+    dict.put("implies I", "\\Rightarrow_\\mathcal{I}");  
+    dict.put("implies E", "\\Rightarrow_\\mathcal{E}");
+    dict.put("implies R", "\\Rightarrow_\\mathcal{R}");
+    dict.put("implies L", "\\Rightarrow_\\mathcal{L}");
+    dict.put("and I", "\\land_\\mathcal{I}");  
+    dict.put("and E", "\\land_\\mathcal{E}");
+    dict.put("and R", "\\land_\\mathcal{R}");
+    dict.put("and L", "\\land_\\mathcal{L}");
+    dict.put("or I", "\\lor_\\mathcal{I}");
+    dict.put("or E", "\\lor_\\mathcal{E}");
+    dict.put("or R", "\\lor_\\mathcal{R}");
+    dict.put("or L", "\\lor_\\mathcal{L}");
+    dict.put("forAll R", "\\forall_\\mathcal{R}");
+    dict.put("forAll L", "\\forall_\\mathcal{L}");
+    dict.put("exists R", "\\exists_\\mathcal{R}");
+    dict.put("exists L", "\\exists_\\mathcal{L}");
+    dict.put("bottom", "\\bot");
+    dict.put("top", "\\top");
+    dict.put("cut", "\\mathop{cut}");
   }
 
   private static String translate(String name) {
@@ -52,80 +55,99 @@ class PrettyPrinter {
     else  return name;
   }
 
-  // converts a context into a java set
-  private static Set getContextSet(Context ctxt) {
-    HashSet res = new HashSet();
-    %match(Context ctxt) {
-      (_*,x,_*) -> { res.add(`x); }
+  public static int peanoToInt(Term term) throws Exception {
+    return peanoToInt(term,0);
+  }
+
+  private static int peanoToInt(Term term, int i) throws Exception {
+    %match(Term term) {
+      funAppl(fun("z"),()) -> { return i; }
+      funAppl(fun("s"),(t)) -> { return peanoToInt(`t,i+1); }
+    }
+    throw new Exception("term is not an integer");
+  }
+
+  public static Term intToPeano(int n) {
+    Term res = `funAppl(fun("z"),concTerm());
+    for (int i=0; i<n; i++) {
+      res = `funAppl(fun("s"),concTerm(res));
     }
     return res;
   }
- 
-  // Get set of sets
-  %strategy GetContextsSet(result: Set) extends `Identity() {
+
+  // --- auxiliary strats for cleanTree ----
+  
+  %strategy RemoveInHyp(prop: Prop) extends `Identity() {
     visit Sequent {
-      sequent(ctxt,_) -> {
-        result.add(getContextSet(`ctxt));
+      sequent((X*,p,Y*), c) -> { if (prop == `p) return `sequent(context(X*,Y*),c); }
+    }
+  }
+
+  %strategy RemoveInConcl(prop: Prop) extends `Identity() {
+    visit Sequent {
+      sequent(h, (X*,p,Y*)) -> { if (prop == `p) return `sequent(h,context(X*,Y*)); }
+    }
+  }
+
+  %strategy IsActive(prop: Prop, tl: TermRuleList) extends `Fail() {
+    visit Tree {
+      // all propositions are virtually used in an open branch
+      r@rule[name="open"] -> { return `r; }
+      
+      // in case of a reduce rule, we have to check if the reduced form of a prop is active
+      r@rule("reduce",_,concl,_) -> {
+        %match(Sequent `concl, Prop prop) {
+          sequent((_*,p,_*),_), p -> {
+            Prop after = (Prop) Unification.reduce(`p,tl);
+            if (`p != after) 
+                return `r;
+            }
+          sequent(_,(_*,p,_*)), p -> {
+            Prop after = (Prop) Unification.reduce(`p,tl);
+            if (`p != after) 
+                return `r;
+          }
+        }
+      }
+      
+      r@rule(name,_,_,p) -> { if (prop == `p) { return `r; } }
+    }
+  }
+
+  %strategy Clean(tl: TermRuleList) extends `Identity() {
+    visit Tree {
+      r@rule(_,_,sequent(h,c),_) -> {
+        Tree res = `r;
+        %match(Context h) {
+          (_*,x,_*) -> {
+            res = (Tree) 
+              ((MuStrategy) `Choice(OnceTopDown(IsActive(x,tl)),InnermostId(RemoveInHyp(x)))).apply(`res);
+          }
+        }
+        %match(Context c) {
+          (_*,x,_*) -> {
+            res = (Tree) 
+              ((MuStrategy) `Choice(OnceTopDown(IsActive(x,tl)),InnermostId(RemoveInConcl(x)))).apply(`res);
+          }
+        }
+        return res;
       }
     }
   }
-
- 
-  private static Context getGreaterCommonContext(Tree tree) {
-    HashSet<Set<Prop>> tmp = new HashSet<Set<Prop>>();
-    try {
-      MuTraveler.init(`TopDown(GetContextsSet(tmp))).visit(tree);
-    } catch (VisitFailure e) {
-      e.printStackTrace();
-    }
-
-    Iterator<Set<Prop>> it = tmp.iterator();
-    Set<Prop> res = it.next();
-    while( it.hasNext() ) {
-      res.retainAll((Set)it.next());
-    }
-
-    Context result = `context();
-    for(Prop p : res) 
-      result = `context(p,result*);
-    
-
-    return result;
+  
+  // ---------------------------------------
+  
+  /**
+   * remove unused hypothesis and conclusions in subtrees
+   **/
+  public static Tree cleanTree(Tree tree, TermRuleList tl) {
+    return (Tree) ((MuStrategy) `TopDown(Clean(tl))).apply(tree);
   }
-
-  %strategy ReplaceContext(ctxt: Context) extends `Identity() {
-    visit Context {
-      (X*, Y*, Z*) -> {
-        if (`Y == ctxt) return `context(X*, Utils.prop("\\Gamma"), Z*);
-      } 
-    }
-  }
-
-  private static String prettyContext(Context ctxt) {
-    %match(Context ctxt) {
-      (h) -> { return toLatex(`h); }
-      (h,t*) -> { return toLatex(`h) + ", " + prettyContext(`t); }
-    }
-    return null;
-  }
-
-  // finds greater comon context and replaces it by gamma
-  public static String latexPreProcessing(Tree tree) {
-    Context ctxt = getGreaterCommonContext(tree);
-
-    try {
-      tree = (Tree) MuTraveler.init(`TopDown(ReplaceContext(ctxt))).visit(tree);
-    } catch (VisitFailure e) {
-      e.printStackTrace();
-    }
-
-    return "$\\Gamma = " + prettyContext(ctxt) +"$\n\\[\n" + toLatex(tree) + "\n\\]";
-  }
-
+  
   public static String toLatex(sequentsAbstractType term) {
     %match(Tree term) {
-      rule(n,(),c,_) -> {return "\\infer[("+ translate(`n) +")]{" + toLatex(`c) + "}{}";}
-      rule(n,p,c,_) -> {return "\\infer[("+ translate(`n) +")]{" + toLatex(`c) + "}{"+ toLatex(`p) +"}";}
+      rule(n,(),c,_) -> {return "\\infer["+ translate(`n) +"]{" + toLatex(`c) + "}{}";}
+      rule(n,p,c,_) -> {return "\\infer["+ translate(`n) +"]{" + toLatex(`c) + "}{"+ toLatex(`p) +"}";}
     }
 
     %match(Premisses term) {
@@ -146,15 +168,30 @@ class PrettyPrinter {
     }
 
     %match(Prop term) {
+       // second order simulation pretty print
+      relationAppl(relation("appl"),((NewVar|FreshVar)(n,_),x*)) -> {
+        return `n + "["+ toLatex(`x*) + "]";
+      }
+      relationAppl(relation("appl"),(Var(n),x*)) -> {
+        return `n + "["+ toLatex(`x*) + "]";
+      }
+      relationAppl(relation("appl"),(funAppl(fun(n),()),x*)) -> {
+        return `n + "["+ toLatex(`x*) + "]";
+      }
+      // equality pretty print
+      relationAppl(relation("eq"),(x,y)) -> {
+        return toLatex(`x) + " = " + toLatex(`y);
+      }
+ 
       relationAppl(relation[name=n], ()) -> { return `n;}
       relationAppl(relation[name=n], tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
-      and(p1, p2) -> { return "(" + toLatex(`p1) + " \\wedge " + toLatex(`p2) + ")";}
-      or(p1, p2) -> { return "(" + toLatex(`p1) + " \\vee " + toLatex(`p2) + ")";}
+      and(p1, p2) -> { return "(" + toLatex(`p1) + " \\land " + toLatex(`p2) + ")";}
+      or(p1, p2) -> { return "(" + toLatex(`p1) + " \\lor " + toLatex(`p2) + ")";}
       implies(p1, p2) -> { return "(" + toLatex(`p1) + " \\Rightarrow " + toLatex(`p2) + ")";}
       forAll(n, p) -> { return "\\forall " + `n + " . (" + toLatex(`p) + ")";}
       exists(n, p) -> { return "\\exists " + `n + " . (" + toLatex(`p) + ")";}
       bottom() -> { return "\\perp";  }
-      top() -> { return "\\mathrel(T)";  }
+      top() -> { return "\\top";  }
     }	
 
     %match(TermList term) {
@@ -164,6 +201,20 @@ class PrettyPrinter {
 
     %match(Term term) {
       Var(n) -> { return `n; }
+    
+      // arithmetic
+      funAppl(fun("z"),()) -> { return "0"; }
+      i@funAppl(fun("s"),x) -> {
+        try { return Integer.toString(peanoToInt(`i));}
+        catch (Exception e) {}
+      }
+      funAppl(fun("plus"),(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + "+" + toLatex(`t2) + ")";
+      }
+      funAppl(fun("mult"),(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + " \\times " + toLatex(`t2) + ")";
+      }
+
       funAppl(fun[name=n], ()) -> { return `n + "()";}
       funAppl(fun[name=n], tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
     }
@@ -206,6 +257,22 @@ class PrettyPrinter {
       relationAppl(relation(r),()) -> {
         return `r;
       }
+     
+      // second order simulation pretty print
+      relationAppl(relation("appl"),((NewVar|FreshVar)(n,_),x*)) -> {
+        return `n + "["+ prettyPrint(`x*) + "]";
+      }
+      relationAppl(relation("appl"),(Var(n),x*)) -> {
+        return `n + "["+ prettyPrint(`x*) + "]";
+      }
+      relationAppl(relation("appl"),(funAppl(fun(n),()),x*)) -> {
+        return `n + "["+ prettyPrint(`x*) + "]";
+      }
+      // equality pretty print
+      relationAppl(relation("eq"),(x,y)) -> {
+        return prettyPrint(`x) + " = " + prettyPrint(`y);
+      }
+      
       relationAppl(relation(r),x) -> {
         return `r + "(" + prettyPrint(`x) + ")";
       }
@@ -219,7 +286,22 @@ class PrettyPrinter {
 
     %match(Term term) {
       Var(x) -> { return `x;}
-      funAppl(fun(f),x) -> { return `f + "(" + prettyPrint(`x) + ")";}
+
+      funAppl(fun("z"),()) -> { return "0"; }
+      i@funAppl(fun("s"),x) -> {
+        try { return Integer.toString(peanoToInt(`i));}
+        catch (Exception e) {}
+      }
+      funAppl(fun("plus"),(t1,t2)) -> { 
+        return "(" + prettyPrint(`t1) + "+" + prettyPrint(`t2) + ")";
+      }
+      funAppl(fun("mult"),(t1,t2)) -> { 
+        return "(" + prettyPrint(`t1) + "*" + prettyPrint(`t2) + ")";
+      }
+      funAppl(fun(name),x) -> {
+        return `name + "(" + prettyPrint(`x) + ")";
+      }
+
       FreshVar(n,_) -> { return `n; }
       NewVar(n,_) -> { return `n; }
     }
@@ -237,10 +319,10 @@ class PrettyPrinter {
   private static String getPrettySideConstraints(SeqList list) {
 
     HashSet<Term> set = Utils.getSideConstraints(list);
-    
+
     if (set.isEmpty())
       return null;
-    
+
     Iterator<Term> it = set.iterator();
     Term var = it.next();
     String res = prettyPrint(var);
@@ -250,7 +332,7 @@ class PrettyPrinter {
     }
     return res + " not in FV";
   }
- 
+
   public static String prettyRule(sequentsAbstractType term) {
 
     %match(RuleList term) {
@@ -278,7 +360,7 @@ class PrettyPrinter {
         for (int i=0; i< Math.max(r1.length(), r2.length()); ++i) 
           sb.append('-');
 
-       
+
         String r3 = getPrettySideConstraints(`p);
         if (r3 != null) 
           return r1 + "\n" + sb.toString() + " (" + r3 + ")\n" + r2;
@@ -289,6 +371,11 @@ class PrettyPrinter {
     return term.toString();
   }
 
+  public static void display(Tree tree, TermRuleList tl) throws java.io.IOException, java.lang.InterruptedException {
+    tree = cleanTree(tree, tl);
+    display(tree);
+  }
+  
   // displays a latex output in xdvi
   public static void display(sequentsAbstractType term) throws java.io.IOException, java.lang.InterruptedException {
     File tmp = File.createTempFile("output",".tex");
@@ -301,10 +388,10 @@ class PrettyPrinter {
     writer.write("\\end{document}\n");
     writer.flush();
 
+    System.out.println(path);
     Runtime rt = Runtime.getRuntime();
     Process pr = rt.exec("latex -output-directory=/tmp " + path );
     pr.waitFor(); 
-    System.out.println(path);
     pr = rt.exec("xdvi " + path.substring(0,path.length()-4) +".dvi");
     pr.waitFor();
   }

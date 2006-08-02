@@ -2,9 +2,12 @@ import sequents.*;
 import sequents.types.*;
 
 import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
 import java.util.Collection;
 
 import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.VisitFailure;
 import jjtraveler.reflective.VisitableVisitor;
 
@@ -13,8 +16,6 @@ import antlr.*;
 import antlr.collections.*;
 
 class Utils {
-
-
  
   %include { sequents/sequents.tom }
 
@@ -59,7 +60,14 @@ class Utils {
     visit Term {
       x -> { 
         if (`x == old_term) return new_term;
-        else return `x;
+      }
+    }
+  }
+
+  %strategy ReplaceProp(old_prop: Prop, new_prop: Prop) extends `Identity() {
+    visit Prop {
+      x -> {
+        if (`x == old_prop) return new_prop;
       }
     }
   }
@@ -109,26 +117,57 @@ class Utils {
         `p = (sequentsAbstractType) MuTraveler.init(v).visit(`p); 
       } catch ( VisitFailure e) { e.printStackTrace(); }
       return `p;
-    } 
+    }
+
+  public static HashSet<Term> collectFreeVars(Prop p) {
+    HashSet<Term> res = new HashSet<Term>();
+    collectFreeVars(p, res, new Stack<Term>());
+    return res;
+  }
+
+  private static void collectFreeVars(Prop p, HashSet<Term> set, Stack<Term> bounded) {
+    %match(Prop p) {
+      (forAll|exists)(n,p1) -> {
+        bounded.push(`Var(n));
+        collectFreeVars(`p1,set,bounded);
+        bounded.pop();
+      }
+      relationAppl(r,t) -> {
+        HashSet<Term> vars = collectVars(`t);
+        for(Term var: vars) {
+          if (!bounded.contains(var))
+            set.add(var);
+        }
+      }
+      (and|or)(p1,p2) -> {
+        collectFreeVars(`p1,set,bounded);
+        collectFreeVars(`p2,set,bounded);
+      }
+      implies(p1,p2) -> {
+        collectFreeVars(`p1,set,bounded);
+        collectFreeVars(`p2,set,bounded);
+      }
+    }
+  }
 
   %typeterm Collection { implement {Collection}}
 
-  %strategy GetVarsId(vars:Collection) extends `Identity() {
+  %strategy VarCollector(vars:Collection) extends `Identity() {
     visit Term {
       v@Var(_) -> { vars.add(`v); }
     }
   }
 
+  public static HashSet<Term> collectVars(sequentsAbstractType t) {
+    HashSet set = new HashSet();
+    MuStrategy v = (MuStrategy) `TopDown(VarCollector(set));
+    v.apply(t);
+    return set;
+  }
+
   public static Term freshVar(String x, sequentsAbstractType term) {
 
-    HashSet set = new HashSet();
-    VisitableVisitor v = `GetVarsId(set);
-
-    try{
-      MuTraveler.init(`TopDown(v)).visit(term);
-    } catch (VisitFailure e){
-      e.printStackTrace();
-    }
+    HashSet set = collectVars(term);
 
     int i = 0;
     while(true) {
@@ -176,18 +215,18 @@ class Utils {
 
   // handling user input
   public static String getInput() {
-     String res = null;
-     BufferedReader clav = new BufferedReader(new InputStreamReader(System.in));
-     try { res = clav.readLine(); }
-     catch (IOException e) { System.out.println(e); }
-     return res.trim();
+    String res = null;
+    BufferedReader clav = new BufferedReader(new InputStreamReader(System.in));
+    try { res = clav.readLine(); }
+    catch (IOException e) { System.out.println(e); }
+    return res.trim();
   }
 
   public static Prop getProp() throws RecognitionException, TokenStreamException {
     SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
     SeqParser parser = new SeqParser(lexer);
     SeqTreeParser walker = new SeqTreeParser();
- 
+
     parser.start1();
     AST t = parser.getAST();
     Prop p  = walker.pred(t);
@@ -198,7 +237,7 @@ class Utils {
     SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
     SeqParser parser = new SeqParser(lexer);
     SeqTreeParser walker = new SeqTreeParser();
-    
+
     parser.start2();
     AST t = parser.getAST();
     Term res  = walker.term(t);
@@ -210,7 +249,7 @@ class Utils {
       SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
       SeqParser parser = new SeqParser(lexer);
       SeqTreeParser walker = new SeqTreeParser();
-      
+
       parser.command();
       AST t = parser.getAST();
 
@@ -223,10 +262,23 @@ class Utils {
       SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
       SeqParser parser = new SeqParser(lexer);
       SeqTreeParser walker = new SeqTreeParser();
-      
+
       parser.proofcommand();
       AST t = parser.getAST();
       ProofCommand res = walker.proofcommand(t);
+      return res;
+    }
+
+  // FIXME : get rid of "ident" in parser and use lexer directly
+  public static String getIdent()
+    throws RecognitionException, TokenStreamException {
+      SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+      SeqParser parser = new SeqParser(lexer);
+      SeqTreeParser walker = new SeqTreeParser();
+
+      parser.ident();
+      AST t = parser.getAST();
+      String res = walker.ident(t);
       return res;
     }
 }

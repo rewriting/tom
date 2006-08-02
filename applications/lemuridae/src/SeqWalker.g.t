@@ -43,6 +43,7 @@ pred returns [Prop p]
       Prop a,b;
       TermList l;
       p = null;
+      Term t1,t2;
     }
       : i:ID { p = `relationAppl(relation(i.getText()), concTerm()); } 
       | BOTTOM { p = `bottom(); }
@@ -50,10 +51,10 @@ pred returns [Prop p]
       | #(IMPL a=pred b=pred )  { p = `implies(a,b); }
       | #(OR a=pred b=pred ) { p = `or(a,b); }
       | #(AND a=pred b=pred ) {  p = `and(a,b); }
-//      | #(NOT a=pred ) {p = `neg(a);}
+      | #(NOT a=pred ) {p = `implies(a,bottom());}
       | #(LPAREN ap:ID l=term_list) { p = `relationAppl(relation(ap.getText()), l); }
-      | #(FORALL x:VAR a=pred) { p = `forAll(x.getText(),a); }
-      | #(EXISTS y:VAR a=pred) { p = `exists(y.getText(),a); }
+      | #(FORALL x:ID a=pred) { p = `forAll(x.getText(),a); }
+      | #(EXISTS y:ID a=pred) { p = `exists(y.getText(),a); }
       ;
 
 term_list returns [TermList l] 
@@ -71,9 +72,16 @@ term returns [Term t]
     {
         t = null;
         TermList l;
+        Term t1,t2;
     }
-    : v:VAR { t = `Var(v.getText());  }
-    | #(LPAREN f:VAR l=term_list) { t = `funAppl(fun(f.getText()),l); }
+    : v:ID { t = `Var(v.getText());  }
+    | i:NUMBER {
+        try { t = PrettyPrinter.intToPeano(Integer.parseInt(i.getText())); }
+        catch (NumberFormatException e) { e.printStackTrace(); } 
+      }
+    | #(TIMES t1=term t2=term) { t = `funAppl(fun("mult"),concTerm(t1,t2)); }
+    | #(PLUS t1=term t2=term) { t = `funAppl(fun("plus"),concTerm(t1,t2)); }
+    | #(LPAREN f:ID l=term_list) { t = `funAppl(fun(f.getText()),l); }
     ;
 
 
@@ -82,35 +90,33 @@ command returns [Command c]
     c = null;
     Prop r,l;
     Sequent s;
+    Term lhs,rhs;
   }
-  : #(PROOF s=seq) { c = `proof(s); }
+  : #(PROOF i1:ID s=seq) { c = `proof(i1.getText(),s); }
   | #(RRULE l=pred r=pred) { c = `rewritep(l,r); }
+  | #(TRULE lhs=term rhs=term) { c = `rewritet(lhs,rhs); }
+  | #(DISPLAY i2:ID) { c = `display(i2.getText()); }
+  | #(PRINT i3:ID) { c = `print(i3.getText()); }
   ;
 
 proofcommand returns [ProofCommand c]
   {
     c = null;
+    Prop p;
   }
-  : i:VAR { c = `proofCommand(i.getText()); }
-  | #(FOCUS v:VAR) {c = `focusCommand(v.getText()); }
+  : i:ID { c = `proofCommand(i.getText()); }
+  | #(FOCUS v:ID) {c = `focusCommand(v.getText()); }
   | #(RRULE n:NUMBER) {c = `ruleCommand(Integer.parseInt(n.getText())); }
+  | #(CUT p=pred) { c = `cutCommand(p); }
+  | #(THEOREM name:ID) { c = `theoremCommand(name.getText()); }
+  | DISPLAY { c = `proofCommand("display"); }
   | ASKRULES { c = `askrulesCommand(); }
   ;
 
-  /*
-rewritep returns [RewriteP rw]
+ident returns [String s]
   {
-    rw = null;
-    Prop l, r;
+    s = null;
   }
-  : #(ARROW l=pred r=pred) {rw = `rewritep(l,r);}
+  : i:ID { s = i.getText(); }
   ;
 
-  rewritet returns [RewriteT rw]
-  {
-    rw = null;
-    Term l,r;
-  }
-  : #(ARROW l=term r=term) {rw = `rewritet(l,r);}
-  ;
-*/

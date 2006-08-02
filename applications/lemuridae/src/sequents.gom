@@ -1,5 +1,5 @@
 module sequents
-imports  String int
+imports String int 
 
 abstract syntax
 
@@ -29,13 +29,20 @@ Sequent = sequent(h:Context,c:Context)
 
 Premisses = premisses(Tree*)
 
+// st == symbol table
 Tree = rule(name:String, p:Premisses, c:Sequent, active:Prop)
 
 //--- new rules ---
 SeqList = concSeq(Sequent*)
+
 VarList = varlist(String*)
+
 // hs == hand-side : 0 left, 1 right
 Rule = ruledesc(hs:int, concl:Prop, prem:SeqList)
+
+TermRule = termrule(lhs:Term,rh:Term)
+
+TermRuleList = termrulelist(TermRule*)
 
 // --- for the new rules computing---
 // sequents and constraints
@@ -44,9 +51,15 @@ RuleList = rlist(Rule*)
 // parsed in interactive mode
 Command = rewritep(l:Prop, r:Prop)
         | rewritet(lt:Term, rt:Term)
-        | proof(s:Sequent)
-
+        | proof(name:String, s:Sequent)
+        | display(name:String)
+	| print(name:String)
+	
 ProofCommand = proofCommand(text:String)
              | focusCommand(hyp:String)
+             | cutCommand(p:Prop)
              | ruleCommand(n:int)
              | askrulesCommand()
+	     | theoremCommand(name:String)
+
+

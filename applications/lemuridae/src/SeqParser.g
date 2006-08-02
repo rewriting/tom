@@ -5,15 +5,15 @@
 class SeqParser extends Parser;
 options {
   buildAST = true;  // uses CommonAST by default
-    k = 2;
-    defaultErrorHandler=false;
+  k = 3;
+  defaultErrorHandler=false;
 }
 
 tokens {
     VOIDLIST;
 }
 
-seq: SEQ pred  
+seq: SEQ list_pred  
    | list_pred SEQ list_pred 
    ;
 
@@ -25,17 +25,22 @@ andpred: orpred (AND^ orpred)* ;
 
 orpred: quantif (OR^ quantif)* ;
 
-quantif: FORALL^ VAR DOT! atom
-       | EXISTS^ VAR DOT! atom
-       | atom
+quantif: FORALL^ ID DOT! negpred
+       | EXISTS^ ID DOT! negpred
+       | negpred
        ;
 
-atom: LPAREN! pred RPAREN!
-    | appl
+negpred: NOT^ simplepred
+       | simplepred
+       ;
+       
+simplepred: LPAREN! pred RPAREN!
+          | atom
+          ;
+atom: appl
     | ID
     | BOTTOM
     | TOP
-//    | NOT^ atom
     ;
 
 appl : ID LPAREN^ term_list  RPAREN! 
@@ -44,29 +49,44 @@ appl : ID LPAREN^ term_list  RPAREN!
 term_list: term (LIST^ term)* 
          | { #term_list = #[VOIDLIST,"VOIDLIST"]; }
          ;
-         
-term : funappl
-     | VAR
-     ;
 
-funappl : VAR LPAREN^ term_list RPAREN!;
+term : LPAREN! term RPAREN!
+      | mterm (PLUS^ mterm)*
+      ;
+
+
+mterm : fterm (TIMES^ fterm)*
+      ;
+      
+fterm : funappl
+      | ID
+      | NUMBER
+      ;
+
+funappl : ID LPAREN^ term_list RPAREN!;
 
 
 // points d'entree pour les programmes
 
-command: PROOF^ seq DOT!
+command: PROOF^ ID COLUMN! seq DOT!
        | RRULE^ atom ARROW! pred DOT!
-       ;
+       | TRULE^ term ARROW! term DOT!
+       | DISPLAY^ ID DOT!
+       | PRINT^ ID DOT!
+      ;
 
-proofcommand: FOCUS^ VAR 
+proofcommand: FOCUS^ ID 
             | RRULE^ NUMBER
+            | CUT^ pred
+            | THEOREM^ ID
             | ASKRULES
-            | VAR 
+            | DISPLAY
+            | ID
             ;
 
 start1: pred DOT! ;
 start2: term DOT! ;
-
+ident: ID DOT! ;
       
 class SeqLexer extends Lexer;
 options {
@@ -81,7 +101,7 @@ WS
     | '\r')
     { _ttype = Token.SKIP; }
   ;
-
+  
 LPAREN : '(' ;
 
 RPAREN : ')' ;
@@ -112,12 +132,24 @@ TOP: "\\T";
 
 ARROW : "->";
 
+COLUMN: ':';
+
+TIMES: '*';
+
+PLUS: '+';
+
+
 PROOF: "proof";
 RRULE: "rule";
+TRULE: "termrule";
 FOCUS: "focus";
 ASKRULES: "rules?";
+CUT: "cut";
+DISPLAY: "display";
+THEOREM: "theorem";
+PRINT: "print";
 
-ID : ('A'..'Z')('a'..'z')* ;
-VAR: ('a'..'z')('a'..'z'|'0'..'9')* ;
+//VAR: ('a'..'z')('a'..'z'|'0'..'9')*;
+ID : ('A'..'Z'|'a'..'z')('A'..'Z'|'a'..'z'|'0'..'9')*;
 NUMBER: ('0'..'9')+;
 
