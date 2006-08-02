@@ -1,0 +1,56 @@
+termrule s(n) + m -> s(n+m).
+termrule 0 + n -> n.
+termrule s(n) * m -> n*m +m.
+termrule 0 * n -> 0.
+
+rule N(n) -> \AP.( appl(P,0) => ( \Am.(appl(P,m) => appl(P,s(m))) => appl(P,n) ) ).
+hered.
+
+rule appl(pair(),0) -> \T.
+rule appl(pair(),s(n)) -> appl(impair(),n).
+rule appl(impair(),s(n)) -> appl(pair(),n).
+
+rule appl(pair2(),n) -> appl(pair(),2*n).
+
+rule appl(P,x+y) -> appl(P,y+x).
+
+rule N(s(n)) -> \T.
+rule N(0) -> \T.
+
+proof doublepair: N(n) |- appl(pair2(),n).
+elim
+elim
+focus h1
+rule 1
+pair2().
+axiom
+rule 10
+reduce
+rule 4
+rule 2
+rule 10
+focus h1
+rule 11
+reduce
+rule 6
+rule 12
+reduce
+rule 8
+axiom
+
+
+
+
+proof pair36: |- appl(pair(),36).
+cut N(18).
+theorem doublepair
+focus h2
+rule 11
+reduce
+axiom
+focus c2
+rule 14
+
+display pair36.
+
+
