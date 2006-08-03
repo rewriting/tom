@@ -187,7 +187,7 @@ class Utils {
     }
   }
 
-  public static HashSet getSideConstraints(SeqList list) {
+  public static HashSet getSideConstraints(sequentsAbstractType list) {
     HashSet set = new HashSet();
     try {
       MuTraveler.init(`TopDown(CollectConstraints(set))).visit(list);
@@ -203,7 +203,7 @@ class Utils {
     }
   }
 
-  public static HashSet getNewVars(SeqList list) {
+  public static HashSet getNewVars(sequentsAbstractType list) {
     HashSet set = new HashSet();
     try {
       MuTraveler.init(`TopDown(CollectNewVars(set))).visit(list);

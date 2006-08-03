@@ -53,13 +53,13 @@ Command = rewritep(l:Prop, r:Prop)
         | rewritet(lt:Term, rt:Term)
         | proof(name:String, s:Sequent)
         | display(name:String)
-	| print(name:String)
+        | print(name:String)
 	
 ProofCommand = proofCommand(text:String)
              | focusCommand(hyp:String)
              | cutCommand(p:Prop)
              | ruleCommand(n:int)
              | askrulesCommand()
-	     | theoremCommand(name:String)
+             | theoremCommand(name:String)
 
 
