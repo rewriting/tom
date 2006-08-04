@@ -18,38 +18,29 @@ rule N(s(n)) -> \T.
 rule N(0) -> \T.
 
 proof doublepair: N(n) |- appl(pair2(),n).
-elim
-elim
-focus h1
-rule 1
-pair2().
-axiom
-rule 10
-reduce
-rule 4
-rule 2
-rule 10
-focus h1
-rule 11
-reduce
-rule 6
-rule 12
-reduce
-rule 8
-axiom
-
-
+focus h1. rule. pair2().
+axiom.
+auto.
+reduce.
+focus c2. rule.
+rule.
+reduce. 
+rule.
+axiom.
+rule.
+reduce.
+rule.
 
 
 proof pair36: |- appl(pair(),36).
+
+
 cut N(18).
-theorem doublepair
-focus h2
-rule 11
-reduce
-axiom
-focus c2
-rule 14
+theorem doublepair.
+focus h2. rule.
+reduce. axiom.
+focus c2.
+rule 14.
 
 display pair36.
 

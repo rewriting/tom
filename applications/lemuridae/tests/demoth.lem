@@ -1,16 +1,11 @@
 proof l : P(n) => Q(n), P(n) |- Q(n).
-focus h1
-elim
-axiom
-axiom
+auto.
 
 print l.
 
 proof l2: P(a()) => Q(a()), P(a()), Q(a()) => F |- F .
-theorem l
-focus h3
-elim
-axiom
-axiom
+theorem l.
+focus h3. elim.
+axiom. axiom.
 
 display l2.

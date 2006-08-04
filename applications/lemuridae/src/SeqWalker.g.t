@@ -81,6 +81,8 @@ term returns [Term t]
       }
     | #(TIMES t1=term t2=term) { t = `funAppl(fun("mult"),concTerm(t1,t2)); }
     | #(PLUS t1=term t2=term) { t = `funAppl(fun("plus"),concTerm(t1,t2)); }
+    | #(DIV t1=term t2=term) { t = `funAppl(fun("div"),concTerm(t1,t2)); }
+    | #(MINUS t1=term t2=term) { t = `funAppl(fun("minus"),concTerm(t1,t2)); }
     | #(LPAREN f:ID l=term_list) { t = `funAppl(fun(f.getText()),l); }
     ;
 
@@ -107,6 +109,7 @@ proofcommand returns [ProofCommand c]
   : i:ID { c = `proofCommand(i.getText()); }
   | #(FOCUS v:ID) {c = `focusCommand(v.getText()); }
   | #(RRULE n:NUMBER) {c = `ruleCommand(Integer.parseInt(n.getText())); }
+  | RULEALONE { c = `ruleCommand(-1);}
   | #(CUT p=pred) { c = `cutCommand(p); }
   | #(THEOREM name:ID) { c = `theoremCommand(name.getText()); }
   | DISPLAY { c = `proofCommand("display"); }

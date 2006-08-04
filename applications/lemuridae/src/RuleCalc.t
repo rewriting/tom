@@ -39,22 +39,22 @@ public class RuleCalc {
     private Position lastPos = null;
     private Prop lastProp = null;
     private Rule lastRule = null;
-    
+
     public RulesComputer(Prop atom, Prop p) {
       ruleList = `rlist(ruledesc(1,atom,concSeq(sequent( context() , context(p) ))),
-	                ruledesc(0,atom,concSeq(sequent( context(p), context()  )))
-	          );
+          ruledesc(0,atom,concSeq(sequent( context(p), context()  )))
+          );
       run();
     }
 
     %strategy ReplaceProp(old_prop: Prop, new_prop: Prop) extends `Identity() {
       visit Prop {
-	x -> {
-	  if (`x == old_prop) return new_prop;
-	}
+        x -> {
+          if (`x == old_prop) return new_prop;
+        }
       }
     }
-    
+
     public void run(String name) {
       HashSet<Term> freevars = Utils.collectFreeVars(lastProp);
       TermList tl = `concTerm();
@@ -63,10 +63,10 @@ public class RuleCalc {
       MuStrategy rep = (MuStrategy) `TopDown(ReplaceProp(lastProp,newProp));
       lastRule = (Rule) rep.apply(lastRule);
       ruleList = `rlist(ruleList*,lastRule,
-	                ruledesc(1,newProp,concSeq(sequent( context() , context(lastProp) ))),
-	                ruledesc(0,newProp,concSeq(sequent( context(lastProp), context()  )))
-	          );
-     run();
+          ruledesc(1,newProp,concSeq(sequent( context() , context(lastProp) ))),
+          ruledesc(0,newProp,concSeq(sequent( context(lastProp), context()  )))
+          );
+      run();
     }
 
     public Prop getProblem() {
@@ -80,128 +80,134 @@ public class RuleCalc {
     private void run() {
       boolean pause = false;
       while(!pause) {
-	RuleList tmp = null; // to check fixpoint
-	
-	//System.out.println("etape");
-	%match(RuleList ruleList) {
-	  /*
-	  (X*,ruledesc(hs,_,l),Y*) -> {
-	    if (`hs == 1)
-	      System.out.println("droite " + PrettyPrinter.prettyRule(`l));
-	    else
-	      System.out.println("gauche " + PrettyPrinter.prettyRule(`l));
-	  }
-	  */
+        RuleList tmp = null; // to check fixpoint
 
-	  // axiom
-	  (X*,ruledesc(hs,c,(x*,sequent((_*,p,_*),(_*,p,_*)),y*)),Y*) -> {
-	    tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
-	  }
+b: {
+        //System.out.println("etape");
+        %match(RuleList ruleList) {
+          /*
+             (X*,ruledesc(hs,_,l),Y*) -> {
+             if (`hs == 1)
+             System.out.println("droite " + PrettyPrinter.prettyRule(`l));
+             else
+             System.out.println("gauche " + PrettyPrinter.prettyRule(`l));
+             }
+           */
 
-	  // bottom
-	  (X*,ruledesc(hs,c,(x*,sequent((_*,bottom(),_*),_),y*)),Y*) -> {
-	    tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
-	  }
+          // axiom
+          (X*,ruledesc(hs,c,(x*,sequent((_*,p,_*),(_*,p,_*)),y*)),Y*) -> {
+            tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
+          }
 
-	  // top
-	  (X*,ruledesc(hs,c,(x*,sequent(_,(_*,top(),_*)),y*)),Y*) -> {
-	    tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
-	  }
+          // bottom
+          (X*,ruledesc(hs,c,(x*,sequent((_*,bottom(),_*),_),y*)),Y*) -> {
+            tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
+          }
 
-	  // and R
-	  (X*,ruledesc(hs,c,(x*,sequent(ctxt,(u*,and(a,b),v*)),y*)),Y*) -> {
-	    tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,context(u*,a,v*)),sequent(ctxt,context(u*,b,v*)), y*)),Y*);
-	  }
+          // top
+          (X*,ruledesc(hs,c,(x*,sequent(_,(_*,top(),_*)),y*)),Y*) -> {
+            tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
+          }
 
-	  // or R
-	  (X*,ruledesc(hs,c,(x*,sequent(ctxt,(u*,or(a,b),v*)),y*)),Y*) -> {
-	    tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,context(u*,a,b,v*)), y*)),Y*);
-	  }
+          // and R
+          (X*,ruledesc(hs,c,(x*,sequent(ctxt,(u*,and(a,b),v*)),y*)),Y*) -> {
+            tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,context(u*,a,v*)),sequent(ctxt,context(u*,b,v*)), y*)),Y*);
+          }
 
-	  // => R
-	  (X*,ruledesc(hs,c,(x*, sequent(ctxt,(u*,implies(a,b),v*)), y*)), Y*) -> {
-	    tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(context(ctxt*,a),context(u*,b,v*)), y*)), Y*);
-	  }
+          // or R
+          (X*,ruledesc(hs,c,(x*,sequent(ctxt,(u*,or(a,b),v*)),y*)),Y*) -> {
+            tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,context(u*,a,b,v*)), y*)),Y*);
+          }
 
-	  // forall R
-	  l@(X*,ruledesc(hs,c,(x*, sequent(ctxt,(u*,forAll(n,a),v*)), y*)), Y*) -> {
-	    String new_n = Utils.freshVar(`n,`l).getname();
-	    Term fresh_v = `FreshVar(new_n,n);
-	    Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
-	    tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, context(u*,new_a,v*)), y*)), Y*);
-	  }
+          // => R
+          (X*,ruledesc(hs,c,(x*, sequent(ctxt,(u*,implies(a,b),v*)), y*)), Y*) -> {
+            tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(context(ctxt*,a),context(u*,b,v*)), y*)), Y*);
+          }
 
-	  // exists R
-	  l@(X*,rul@ruledesc(hs,c,(x*, sequent(ctxt,(u*,exists(n,a),v*)), y*)), Y*) -> {
-	    lastPos = forallInPositivePosition(`a);  
-	    if (lastPos == null) {
-	      String new_n = Utils.freshVar(`n,`l).getname();
-	      Term new_v = `NewVar(new_n,n);
-	      Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), new_v);
-	      tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, context(u*,new_a,v*)), y*)), Y*);
-	    } else {
-	      lastRule = `rul;
-	      try {lastProp = (Prop) MuTraveler.init(lastPos.getSubterm()).visit(`a); }
-	      catch (VisitFailure e) { e.printStackTrace(); }
-	      tmp = `rlist(X*,Y*);
-	      pause = true; // get out of fixpoint computation
-	    }
-	  }
+          // forall R
+          l@(X*,ruledesc(hs,c,(x*, sequent(ctxt,(u*,forAll(n,a),v*)), y*)), Y*) -> {
+            String new_n = Utils.freshVar(`n,`l).getname();
+            Term fresh_v = `FreshVar(new_n,n);
+            Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
+            tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, context(u*,new_a,v*)), y*)), Y*);
+          }
 
-	  // and L
-	  (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
-	    tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
-	  }
+          // and L
+          (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
+            tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
+          }
 
-	  // => L
-	  (X*,ruledesc(hs,c,(x*,sequent((u*,implies(a,b),v*),p),y*)),Y*) -> {
-	    tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,v*),context(a,p*)), sequent(context(u*,v*,b),p), y*)), Y*);
-	  }
+          // => L
+          (X*,ruledesc(hs,c,(x*,sequent((u*,implies(a,b),v*),p),y*)),Y*) -> {
+            tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,v*),context(a,p*)), sequent(context(u*,v*,b),p), y*)), Y*);
+          }
 
-	  // or L
-	  (X*,ruledesc(hs,c,(x*,sequent((u*,or(a,b),v*),p),y*)),Y*) -> {
-	    tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,v*),p), sequent(context(u*,b,v*),p), y*)), Y*);
-	  }
+          // or L
+          (X*,ruledesc(hs,c,(x*,sequent((u*,or(a,b),v*),p),y*)),Y*) -> {
+            tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,v*),p), sequent(context(u*,b,v*),p), y*)), Y*);
+          }
 
-	  // and L
-	  (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
-	    tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
-	  }
+          // and L
+          (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
+            tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
+          }
 
-	  // exists L
-	  l@(X*,ruledesc(hs,c,(x*, sequent((u*,exists(n,a),v*),p), y*)), Y*) -> {
-	    String new_n = Utils.freshVar(`n,`l).getname();
-	    Term fresh_v = `FreshVar(new_n,n);
-	    Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
-	    tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,new_a,v*),p), y*)), Y*);
-	  }
+          // exists L
+          l@(X*,ruledesc(hs,c,(x*, sequent((u*,exists(n,a),v*),p), y*)), Y*) -> {
+            String new_n = Utils.freshVar(`n,`l).getname();
+            Term fresh_v = `FreshVar(new_n,n);
+            Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
+            tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,new_a,v*),p), y*)), Y*);
+          }
 
-	  // forall L
-	  l@(X*,rul@ruledesc(hs,c,(x*, sequent((u*,forAll(n,a),v*),p), y*)), Y*) -> {
-	    Position lastPos = forallInNegativePosition(`a); 
-	    if (lastPos == null) {
-	      String new_n = Utils.freshVar(`n,`l).getname();
-	      Term new_v = `NewVar(new_n,n);
-	      Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), new_v);
-	      tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,new_a,v*),p), y*)), Y*);
-	    } else {
-	      lastRule = `rul;
-	      try {lastProp = (Prop) MuTraveler.init(lastPos.getSubterm()).visit(`a); }
-	      catch (VisitFailure e) { e.printStackTrace(); }
-	      tmp = `rlist(X*,Y*);
-	      pause = true; // get out of fixpoint computation
-	    }
-	  }
-	} // big match
+          // permutation problem cases
 
-	// fixpoint - no rules applied
-	if (tmp == null) {
-	  // notice it is done
-	  lastPos = null;
-	  lastProp = null;
-	  break;
-	}
-	else ruleList = tmp;
+          // exists R
+          l@(X*,rul@ruledesc(hs,c,(x*, sequent(ctxt,(u*,exists(n,a),v*)), y*)), Y*) -> {
+            lastPos = forallInPositivePosition(`a);  
+            if (lastPos == null) {
+              String new_n = Utils.freshVar(`n,`l).getname();
+              Term new_v = `NewVar(new_n,n);
+              Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), new_v);
+              tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, context(u*,new_a,v*)), y*)), Y*);
+            } else {
+              lastRule = `rul;
+              try { lastProp = (Prop) MuTraveler.init(lastPos.getSubterm()).visit(`a); }
+              catch (VisitFailure e) { e.printStackTrace(); }
+              tmp = `rlist(X*,Y*);
+              pause = true; // get out of fixpoint computation
+              break b;
+            }
+          }
+
+         // forall L
+          l@(X*,rul@ruledesc(hs,c,(x*, sequent((u*,forAll(n,a),v*),p), y*)), Y*) -> {
+            Position lastPos = forallInNegativePosition(`a); 
+            if (lastPos == null) {
+              String new_n = Utils.freshVar(`n,`l).getname();
+              Term new_v = `NewVar(new_n,n);
+              Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), new_v);
+              tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,new_a,v*),p), y*)), Y*);
+            } else {
+              lastRule = `rul;
+              try {lastProp = (Prop) MuTraveler.init(lastPos.getSubterm()).visit(`a); }
+              catch (VisitFailure e) { e.printStackTrace(); }
+              tmp = `rlist(X*,Y*);
+              pause = true; // get out of fixpoint computation
+              break b;
+            }
+          }
+        } // big match
+   }
+
+        // fixpoint - no rules applied
+        if (tmp == null) {
+          // notice it is done
+          lastPos = null;
+          lastProp = null;
+          break;
+        }
+        else ruleList = tmp;
 
       } // while loop
     }
@@ -221,42 +227,42 @@ public class RuleCalc {
       (relationAppl | top | bottom) [] -> { return null; }
 
       (and | or) (p1,p2) -> {
-	pos.down(1);
-	Position pos1 = forallNeg(`p1, current, pos);
-	if (pos1 != null) return pos1;
-	pos.up();
-	pos.down(2);
-	pos1 = forallNeg(`p2, current, pos);
-	if (pos1 != null) return pos1;
-	pos.up();
+        pos.down(1);
+        Position pos1 = forallNeg(`p1, current, pos);
+        if (pos1 != null) return pos1;
+        pos.up();
+        pos.down(2);
+        pos1 = forallNeg(`p2, current, pos);
+        if (pos1 != null) return pos1;
+        pos.up();
       }
 
       implies(p1,p2) -> {
-	pos.down(1);
-	Position pos1 = forallNeg(`p1, !current, pos);
-	if (pos1 != null) return pos1;
-	pos.up();
-	pos.down(2);
-	pos1 = forallNeg(`p2, current, pos);
-	if (pos1 != null) return pos1;
-	pos.up();
+        pos.down(1);
+        Position pos1 = forallNeg(`p1, !current, pos);
+        if (pos1 != null) return pos1;
+        pos.up();
+        pos.down(2);
+        pos1 = forallNeg(`p2, current, pos);
+        if (pos1 != null) return pos1;
+        pos.up();
       }
 
       forAll(_,p1) -> {
-	if(current) {
-	  pos.down(2);
-	  return forallNeg(`p1,current,pos);
-	}
-	else return pos; 
+        if(current) {
+          pos.down(2);
+          return forallNeg(`p1,current,pos);
+        }
+        else return pos; 
       }
 
       exists(_,p1) -> { 
-	if(current)
-	  return pos;
-	else {
-	  pos.down(2);
-	  return forallNeg(`p1,current,pos); 
-	}
+        if(current)
+          return pos;
+        else {
+          pos.down(2);
+          return forallNeg(`p1,current,pos); 
+        }
       }
     }
     return null;
@@ -268,11 +274,11 @@ public class RuleCalc {
     int i = 1;
     while((permut_problem = rc.getProblem()) != null) {
       try {
-        System.out.print("id for " + 
-            PrettyPrinter.prettyPrint(permut_problem) + " > ");
+        System.out.print("name the proposition \"" + 
+            PrettyPrinter.prettyPrint(permut_problem) + "\" > ");
         String name = Utils.getIdent();
-      // ask user for a name
-      rc.run(name);
+        // ask user for a name
+        rc.run(name);
       } catch (Exception e) {
         System.out.println("not a valid id : " + e.toString());
       }

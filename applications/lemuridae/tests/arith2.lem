@@ -12,131 +12,71 @@ rule eq(x,y) -> \AP. ((appl(P,x) => appl(P,y)) /\ (appl(P,y) => appl(P,x))).
 
 
 proof eqrefl: |- \Ax.(eq(x,x)).
-elim
-rule 8
-axiom
-axiom
+auto.
 
 proof eqsym: |- \Ax.(\Ay.(eq(x,y) => eq(y,x)) /\ (eq(y,x) => eq(x,y))).
-elim
-elim
-elim
-elim
-rule 8
-focus h2
-rule 9
-P0.
-axiom
-next
-focus h2
-rule 9
-P0.
-axiom
-elim
-elim
-rule 8
-focus h2
-rule 9
-P0.
-axiom
-axiom
-axiom
-next 
-axiom
-focus h2
-rule 9
-P0.
-axiom
-axiom
+auto.
+focus h2. rule. P0.
+axiom.
+axiom.
+focus h2. rule. P0.
+axiom.
+axiom.
+focus h2. rule. P0.
+axiom.
+axiom.
+focus h2. rule. P0.
+axiom.
+axiom.
 
 proof eqtrans: |- \Ax.(\Ay.(\Az.( eq(x,y) => (eq(y,z) => eq(x,z)) ))).
-elim
-elim
-elim
-elim
-elim
-rule 8
-focus h2
-rule 9
-P0.
-axiom
-focus h2
-rule 9
-P0.
-focus h5
-rule 9
-P0.
-axiom
-focus h3
-rule 9
-P0.
-axiom
-axiom
-axiom
-axiom
+auto.
+focus h2. rule. P0.
+axiom.
+focus h3. rule. P0.
+axiom.
+axiom.
+focus h2. rule. P0.
+focus h5. rule. P0.
+axiom.
+axiom.
+axiom.
+
 
 rule appl(res(),n) -> eq(n+0,n).
 rule eq(s(x),s(y)) -> eq(x,y).
 
 proof nplus0: |- \An.( N(n) => appl(res(),n) ).
-elim
-elim
-focus h1
-rule 1
-res().
-axiom
-rule 10
-reduce
-theorem eqrefl
-focus h2
-elim
-0.
-axiom
-rule 2
-focus h1
-rule 11
-rule 10
-reduce
-rule 12
-axiom
-
-
+elim. elim.
+focus h1. rule. res().
+axiom.
+rule.
+next.
+rule.
+reduce. theorem eqrefl.
+focus h2. elim. 0. axiom.
+rule.
+focus h1. rule.
+reduce.
+focus c1. rule 12. axiom.
 
 
 rule N(n,m) -> \AP.( appl(P,0,m) => ( \Aq.(appl(P,q,m) => appl(P,s(q),m)) => appl(P,n,m) ) ).
 hered2.
 
 rule appl(snplusm(),n,m) -> eq(s(n)+m,n+s(m)).
-proof lem2: |- \An.(\Am.(N(n,m) => appl(snplusm(),n,m))).
-elim
-elim
-elim
-focus h1
-rule 15
-snplusm().
-axiom
-rule 18
-reduce
-theorem eqrefl
-focus h2
-elim
-s(m0).
-axiom
-rule 16
-focus h1
-rule 19
-rule 18
-reduce
-rule 12
-axiom
-
-
-
-
-
-
-
-
+proof lemme1: |- \An.(\Am.(N(n,m) => appl(snplusm(),n,m))).
+elim. elim. elim.
+focus h1 . rule . snplusm().
+axiom.
+rule.
+focus h1. rule. rule.
+reduce.
+rule 12. axiom.
+rule.
+reduce.
+theorem eqrefl.
+focus h2. elim. s(m0). axiom.
 
 
 

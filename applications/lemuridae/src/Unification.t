@@ -110,7 +110,6 @@ class Unification {
     return null; // clash par defaut
   }
 
-
   public static sequentsAbstractType reduce(sequentsAbstractType t, TermRuleList tl) {
     sequentsAbstractType res = null;
     while(res != t) {
@@ -133,13 +132,43 @@ class Unification {
     }
   }
 
+
+ /* ---------- for reduce ----------*/
+
+  %strategy RenameIntoTemp() extends `Identity() {
+    visit Term {
+       Var(name) -> { return `Var("temp_" + name); }
+    }
+  }
+
+  %strategy RenameFromTemp() extends `Identity() {
+     visit Term {
+       Var(name) -> { if (`name.startsWith("temp_")) return `Var(name.substring(5)); }
+    }
+  }
+
+  public static sequentsAbstractType 
+    substPreTreatment(sequentsAbstractType term) {
+      return (sequentsAbstractType)
+        ((MuStrategy) `TopDown(RenameIntoTemp())).apply(term);
+    }
+
+  public static sequentsAbstractType 
+    substPostTreatment(sequentsAbstractType term) {
+      return (sequentsAbstractType)
+        ((MuStrategy) `TopDown(RenameFromTemp())).apply(term);
+  }
+
+ /* ----------------------------------*/
+
   public static Term reduce(Term t, TermRule rule) {
     %match(TermRule rule) {
       termrule(lhs,rhs) -> {
+        t = (Term) substPreTreatment(t);
 
         // recuperage de la table des symboles
         HashMap<String,Term> tds = match(`lhs, t);
-        if (tds == null) return t; 
+        if (tds == null) return (Term) substPostTreatment(t); 
 
         Term res = `rhs;
 
@@ -151,7 +180,7 @@ class Unification {
           res = (Term) Utils.replaceTerm(res, old_term, new_term);
         }
 
-        return res;
+        return (Term) substPostTreatment(res);
       }
     }
     return t;

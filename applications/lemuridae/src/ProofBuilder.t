@@ -44,8 +44,12 @@ public class ProofBuilder {
     Prop conclusion = rule.getconcl();
 
 
+    // renommage temporaire pour eviter les collisions
+    // FIXME : renommer dans les regles de reecriture plutot
+    Prop active_prepared = (Prop) Unification.substPreTreatment(active);
+
     // recuperage de la table des symboles
-    HashMap<String,Term> tds = Unification.match(conclusion, active);
+    HashMap<String,Term> tds = Unification.match(conclusion, active_prepared);
     if (tds == null) throw new Exception("active formula and rule conclusion don't match");
 
 
@@ -56,6 +60,10 @@ public class ProofBuilder {
       Term new_term = ent.getValue();
       res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term); 
     }
+
+    // post traitement 
+    res = (SeqList) Unification.substPostTreatment(res);
+
 
 
     // creation des variables fraiches (forall right et exists left)
@@ -331,6 +339,19 @@ b: {
   private Tree ruleCommand(Tree tree, Position pos,
       Prop active, boolean focus_left, int n) throws Exception {
     HashMap<Term,Term> args = new HashMap<Term,Term>();
+
+    if (n == -1) { // trying to apply one unique rule
+
+      for(int i=0; i<newRules.size(); i++) {
+        Rule rule = newRules.get(i); 
+        Prop conclusion = rule.getconcl();
+        HashMap<String,Term> tds = Unification.match(conclusion, active);
+        if (tds != null && ((focus_left && rule.geths() == 0) || (!focus_left && rule.geths() == 1))) {
+          if (n != -1)  throw new Exception("more than one matching rule, give a number"); // more than one rule
+          else n = i; 
+        }
+      }
+    }
 
     if (n < newRules.size()) {
       // TODO verify hand side

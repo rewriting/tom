@@ -11,6 +11,7 @@ options {
 
 tokens {
     VOIDLIST;
+    RULEALONE;
 }
 
 seq: SEQ list_pred  
@@ -43,7 +44,7 @@ atom: appl
     | TOP
     ;
 
-appl : ID LPAREN^ term_list  RPAREN! 
+appl : ID LPAREN^ term_list  RPAREN!
      ;
 
 term_list: term (LIST^ term)* 
@@ -51,12 +52,17 @@ term_list: term (LIST^ term)*
          ;
 
 term : LPAREN! term RPAREN!
-      | mterm (PLUS^ mterm)*
+      | minterm (PLUS^ minterm)*
       ;
 
+minterm: mterm (MINUS^ mterm)*
+       ;
 
-mterm : fterm (TIMES^ fterm)*
+mterm : divterm (TIMES^ divterm)*
       ;
+
+divterm: fterm (DIV^ fterm)*
+       ;
       
 fterm : funappl
       | ID
@@ -75,13 +81,14 @@ command: PROOF^ ID COLUMN! seq DOT!
        | PRINT^ ID DOT!
       ;
 
-proofcommand: FOCUS^ ID 
-            | RRULE^ NUMBER
-            | CUT^ pred
-            | THEOREM^ ID
-            | ASKRULES
-            | DISPLAY
-            | ID
+proofcommand: FOCUS^ ID DOT!
+            | RRULE^ NUMBER DOT!
+            | RRULE DOT { #proofcommand = #[RULEALONE,"RULEALONE"]; }
+            | CUT^ pred DOT!
+            | THEOREM^ ID DOT!
+            | ASKRULES DOT!
+            | DISPLAY DOT!
+            | ID DOT!
             ;
 
 start1: pred DOT! ;
@@ -130,6 +137,7 @@ BOTTOM : "\\B";
 
 TOP: "\\T";
 
+
 ARROW : "->";
 
 COLUMN: ':';
@@ -138,12 +146,19 @@ TIMES: '*';
 
 PLUS: '+';
 
+DIV: '/';
+
+MINUS: '-';
+
+GT: '>';
+
+LT: '<';
 
 PROOF: "proof";
 RRULE: "rule";
 TRULE: "termrule";
 FOCUS: "focus";
-ASKRULES: "rules?";
+ASKRULES: "showrules";
 CUT: "cut";
 DISPLAY: "display";
 THEOREM: "theorem";

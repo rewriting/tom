@@ -178,9 +178,15 @@ class PrettyPrinter {
       relationAppl(relation("appl"),(funAppl(fun(n),()),x*)) -> {
         return `n + "["+ toLatex(`x*) + "]";
       }
-      // equality pretty print
+      // arithmetic pretty print
       relationAppl(relation("eq"),(x,y)) -> {
         return toLatex(`x) + " = " + toLatex(`y);
+      }
+      relationAppl(relation("gt"),(x,y)) -> {
+        return toLatex(`x) + " > " + toLatex(`y);
+      }
+      relationAppl(relation("lt"),(x,y)) -> {
+        return toLatex(`x) + " < " + toLatex(`y);
       }
  
       relationAppl(relation[name=n], ()) -> { return `n;}
@@ -214,6 +220,13 @@ class PrettyPrinter {
       funAppl(fun("mult"),(t1,t2)) -> { 
         return "(" + toLatex(`t1) + " \\times " + toLatex(`t2) + ")";
       }
+      funAppl(fun("minus"),(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + " - " + toLatex(`t2) + ")";
+      }
+      funAppl(fun("div"),(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + " / " + toLatex(`t2) + ")";
+      }
+
 
       funAppl(fun[name=n], ()) -> { return `n + "()";}
       funAppl(fun[name=n], tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
@@ -268,9 +281,15 @@ class PrettyPrinter {
       relationAppl(relation("appl"),(funAppl(fun(n),()),x*)) -> {
         return `n + "["+ prettyPrint(`x*) + "]";
       }
-      // equality pretty print
+      // arithmetic pretty print
       relationAppl(relation("eq"),(x,y)) -> {
         return prettyPrint(`x) + " = " + prettyPrint(`y);
+      }
+      relationAppl(relation("gt"),(x,y)) -> {
+        return prettyPrint(`x) + " > " + prettyPrint(`y);
+      }
+      relationAppl(relation("lt"),(x,y)) -> {
+        return prettyPrint(`x) + " < " + prettyPrint(`y);
       }
       
       relationAppl(relation(r),x) -> {
@@ -297,6 +316,12 @@ class PrettyPrinter {
       }
       funAppl(fun("mult"),(t1,t2)) -> { 
         return "(" + prettyPrint(`t1) + "*" + prettyPrint(`t2) + ")";
+      }
+      funAppl(fun("minus"),(t1,t2)) -> { 
+        return "(" + prettyPrint(`t1) + "-" + prettyPrint(`t2) + ")";
+      }
+      funAppl(fun("div"),(t1,t2)) -> { 
+        return "(" + prettyPrint(`t1) + "/" + prettyPrint(`t2) + ")";
       }
       funAppl(fun(name),x) -> {
         return `name + "(" + prettyPrint(`x) + ")";

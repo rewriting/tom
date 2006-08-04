@@ -1,0 +1,25 @@
+proof l1: A => B, B => (C /\ D), C => E |- A => ( E \/ F).
+auto.
+
+rule B -> C /\ D.
+proof l2: A => B, C => E |- A => ( E \/ F).
+auto.
+
+rule B(n) -> C(n) /\ D(n).
+proof l3: |- \Ax.( ((A(x) => B(x)) /\ (C(x) => E(x)))  => (A(x) => (E(x) \/ F(x))) ).
+auto.
+
+proof l3: \Ax.( ((A(x) => B(x)) /\ (C(x) => E(x)))) |- \Ax. (A(x) => (E(x) \/ F(x))).
+auto
+focus h1
+elim x0.
+auto.
+
+
+rule limU(l) -> \A eps.( gt(eps,0) => (\E n0. ( \An.( gt(n,n0) => (gt(U(n), l-eps ) /\ gt( l+eps ,U(n))  ))))).
+existsn0.
+confiance1.
+confiance2.
+
+
+
