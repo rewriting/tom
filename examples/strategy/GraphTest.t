@@ -73,6 +73,13 @@ public class GraphTest{
     make(s,v) { `mu(MuVar("_x"),Sequence(v,AllPos(s,MuVar("_x")))) }
   }
 
+  static GraphTerm root = null;
+  %op GraphTerm Ref(ptr:GraphTerm) {
+    is_fsym(t) { (t!=null) 
+      && (t instanceof strategy.graphterm.types.graphterm.refGraphTerm) }
+    get_slot(ptr, t) { (GraphTerm)(new Position(((MuReference)t).toArray())).getSubterm().apply(root) }
+  }
+
   public static void main(String[] args){
     GraphTerm g = `graph("titi",
         conc(node("titi"),
@@ -86,7 +93,24 @@ public class GraphTest{
       System.out.println("Failure");
     }
     System.out.println(g);
+    root = `graph("titi",
+        conc(node("titi"),
+          graph("toto",conc(refGraphTerm(1,1))),
+          graph("titi",conc(refGraphTerm(1,1))),
+          node("toto"))
+        );
+    System.out.println("truc?" + (new Position(new int[]{1,1})).getSubterm().apply(root));
+    %match(GraphTerm root) {
+       graph(_,conc(_*,graph(c,conc(Ref(x))),_*)) -> {
+        System.out.println("chose: "+`x);
+       }
+    }
+    GraphTerm s = `node("titi");
+    %match(GraphTerm s, GraphTerm root) {
+       x, graph(_,conc(_*,graph(c,conc(Ref(x))),_*)) -> {
+        System.out.println("truc: "+`c);
+       }
+    }
   }
-
 }
 
