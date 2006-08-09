@@ -1,0 +1,128 @@
+
+%include { mustrategy.tom }
+
+%op Strategy Is_node() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm.Is_node)}
+  make() { new strategy.graphterm.strategy.graphterm.Is_node() }
+}
+
+%op Strategy _node(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm._node)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new strategy.graphterm.strategy.graphterm._node(arg0) }
+}
+
+%op Strategy Make_node(_name:String) {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm.Make_node)}
+
+  get_slot(_name, t) { _name }
+  make( _name) { new strategy.graphterm.strategy.graphterm.Make_node( _name) }
+}
+
+%op Strategy Is_graph() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm.Is_graph)}
+  make() { new strategy.graphterm.strategy.graphterm.Is_graph() }
+}
+
+%op Strategy _graph(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm._graph)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new strategy.graphterm.strategy.graphterm._graph(arg0, arg1) }
+}
+
+%op Strategy Make_graph(_name:String, _subterms:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm.Make_graph)}
+
+  get_slot(_name, t) { _name }
+  get_slot(_subterms, t) { _subterms }
+  make( _name,  new_subterms) { new strategy.graphterm.strategy.graphterm.Make_graph( _name,  new_subterms) }
+}
+
+%op Strategy Is_EmptyrefGraphTerm() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm.Is_EmptyrefGraphTerm)}
+  make() { new strategy.graphterm.strategy.graphterm.Is_EmptyrefGraphTerm() }
+}
+
+%op Strategy _EmptyrefGraphTerm() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm._EmptyrefGraphTerm)}
+
+  make() { new strategy.graphterm.strategy.graphterm._EmptyrefGraphTerm() }
+}
+
+%op Strategy Make_EmptyrefGraphTerm() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm.Make_EmptyrefGraphTerm)}
+
+  make() { new strategy.graphterm.strategy.graphterm.Make_EmptyrefGraphTerm() }
+}
+
+%op Strategy Is_ConsrefGraphTerm() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm.Is_ConsrefGraphTerm)}
+  make() { new strategy.graphterm.strategy.graphterm.Is_ConsrefGraphTerm() }
+}
+
+%op Strategy _ConsrefGraphTerm(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm._ConsrefGraphTerm)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new strategy.graphterm.strategy.graphterm._ConsrefGraphTerm(arg0, arg1) }
+}
+
+%op Strategy Make_ConsrefGraphTerm(_HeadrefGraphTerm:int, _TailrefGraphTerm:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphterm.Make_ConsrefGraphTerm)}
+
+  get_slot(_HeadrefGraphTerm, t) { _HeadrefGraphTerm }
+  get_slot(_TailrefGraphTerm, t) { _TailrefGraphTerm }
+  make( _HeadrefGraphTerm,  new_TailrefGraphTerm) { new strategy.graphterm.strategy.graphterm.Make_ConsrefGraphTerm( _HeadrefGraphTerm,  new_TailrefGraphTerm) }
+}
+
+%op Strategy Is_Emptyconc() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphtermlist.Is_Emptyconc)}
+  make() { new strategy.graphterm.strategy.graphtermlist.Is_Emptyconc() }
+}
+
+%op Strategy _Emptyconc() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphtermlist._Emptyconc)}
+
+  make() { new strategy.graphterm.strategy.graphtermlist._Emptyconc() }
+}
+
+%op Strategy Make_Emptyconc() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphtermlist.Make_Emptyconc)}
+
+  make() { new strategy.graphterm.strategy.graphtermlist.Make_Emptyconc() }
+}
+
+%op Strategy Is_Consconc() {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphtermlist.Is_Consconc)}
+  make() { new strategy.graphterm.strategy.graphtermlist.Is_Consconc() }
+}
+
+%op Strategy _Consconc(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphtermlist._Consconc)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new strategy.graphterm.strategy.graphtermlist._Consconc(arg0, arg1) }
+}
+
+%op Strategy Make_Consconc(_Headconc:Strategy, _Tailconc:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (strategy.graphterm.strategy.graphtermlist.Make_Consconc)}
+
+  get_slot(_Headconc, t) { _Headconc }
+  get_slot(_Tailconc, t) { _Tailconc }
+  make( new_Headconc,  new_Tailconc) { new strategy.graphterm.strategy.graphtermlist.Make_Consconc( new_Headconc,  new_Tailconc) }
+}
+
+%op Strategy _refGraphTerm(sub:Strategy) {
+  is_fsym(t) { false }
+  make(sub)  { `mu(MuVar("x"),Choice(_ConsrefGraphTerm(sub,MuVar("x")),_EmptyrefGraphTerm())) }
+}
+
+%op Strategy _conc(sub:Strategy) {
+  is_fsym(t) { false }
+  make(sub)  { `mu(MuVar("x"),Choice(_Consconc(sub,MuVar("x")),_Emptyconc())) }
+}

@@ -1,0 +1,75 @@
+
+%include { string.tom }
+%include { int.tom }
+%include { double.tom }
+%include { aterm.tom }
+%include { atermlist.tom }
+
+%typeterm GraphTerm {
+  implement { strategy.graphterm.types.GraphTerm }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { strategy.graphterm.GraphTermBasicStrategy }
+}
+
+
+%typeterm GraphTermList {
+  implement { strategy.graphterm.types.GraphTermList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { strategy.graphterm.GraphTermBasicStrategy }
+}
+
+%op GraphTerm node(name:String) {
+  is_fsym(t) { (t!=null) && t.isnode() }
+  get_slot(name, t) { t.getname() }
+  make(t0) { strategy.graphterm.types.graphterm.node.make(t0)}
+}
+
+%op GraphTerm graph(name:String, subterms:GraphTermList) {
+  is_fsym(t) { (t!=null) && t.isgraph() }
+  get_slot(name, t) { t.getname() }
+  get_slot(subterms, t) { t.getsubterms() }
+  make(t0, t1) { strategy.graphterm.types.graphterm.graph.make(t0, t1)}
+}
+
+%op GraphTerm EmptyrefGraphTerm() {
+  is_fsym(t) { (t!=null) && t.isEmptyrefGraphTerm() }
+  make() { strategy.graphterm.types.graphterm.EmptyrefGraphTerm.make()}
+}
+
+%op GraphTerm ConsrefGraphTerm(HeadrefGraphTerm:int, TailrefGraphTerm:GraphTerm) {
+  is_fsym(t) { (t!=null) && t.isConsrefGraphTerm() }
+  get_slot(HeadrefGraphTerm, t) { t.getHeadrefGraphTerm() }
+  get_slot(TailrefGraphTerm, t) { t.getTailrefGraphTerm() }
+  make(t0, t1) { strategy.graphterm.types.graphterm.ConsrefGraphTerm.make(t0, t1)}
+}
+
+%op GraphTermList Emptyconc() {
+  is_fsym(t) { (t!=null) && t.isEmptyconc() }
+  make() { strategy.graphterm.types.graphtermlist.Emptyconc.make()}
+}
+
+%op GraphTermList Consconc(Headconc:GraphTerm, Tailconc:GraphTermList) {
+  is_fsym(t) { (t!=null) && t.isConsconc() }
+  get_slot(Headconc, t) { t.getHeadconc() }
+  get_slot(Tailconc, t) { t.getTailconc() }
+  make(t0, t1) { strategy.graphterm.types.graphtermlist.Consconc.make(t0, t1)}
+}
+
+
+%oplist GraphTerm refGraphTerm(int*) {
+  is_fsym(t) { t instanceof strategy.graphterm.types.graphterm.ConsrefGraphTerm || t instanceof strategy.graphterm.types.graphterm.EmptyrefGraphTerm }
+  make_empty() { strategy.graphterm.types.graphterm.EmptyrefGraphTerm.make() }
+  make_insert(e,l) { strategy.graphterm.types.graphterm.ConsrefGraphTerm.make(e,l) }
+  get_head(l) { l.getHeadrefGraphTerm() }
+  get_tail(l) { l.getTailrefGraphTerm() }
+  is_empty(l) { l.isEmptyrefGraphTerm() }
+}
+
+%oplist GraphTermList conc(GraphTerm*) {
+  is_fsym(t) { t instanceof strategy.graphterm.types.graphtermlist.Consconc || t instanceof strategy.graphterm.types.graphtermlist.Emptyconc }
+  make_empty() { strategy.graphterm.types.graphtermlist.Emptyconc.make() }
+  make_insert(e,l) { strategy.graphterm.types.graphtermlist.Consconc.make(e,l) }
+  get_head(l) { l.getHeadconc() }
+  get_tail(l) { l.getTailconc() }
+  is_empty(l) { l.isEmptyconc() }
+}
