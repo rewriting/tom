@@ -12,8 +12,8 @@ import java.util.*;
 
 public class Position {
   private static final int DEFAULT_LENGTH = 8;
-  private int size;
-  private int[] data;
+  protected int size;
+  protected int[] data;
 
   public Position() {
     this(DEFAULT_LENGTH);
@@ -22,6 +22,12 @@ public class Position {
   private Position(int length) {
     data = new int[length];
     size = 0;
+  }
+
+  public Position(int[] data) {
+    this.data = new int[data.length];
+    size = data.length;
+    System.arraycopy(data, 0, this.data, 0, size);
   }
 
   private void ensureLength(int minLength) {
