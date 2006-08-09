@@ -190,7 +190,7 @@ public class Position {
    *
    * @return the omega strategy that retrieves the corresponding subterm
    */
-  public VisitableVisitor getSubterm() {
+  public MuStrategy getSubterm() {
    return new AbstractMuStrategy() {
      { initSubterm(); }
      public Visitable visit(Visitable subject) throws VisitFailure {
