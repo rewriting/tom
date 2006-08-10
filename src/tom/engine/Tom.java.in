@@ -106,10 +106,9 @@ public class Tom {
      */
     if(logger != null && newLevel.intValue() <= Level.WARNING.intValue()) {
       logger.setLevel(newLevel);
-      consoleHandler.setLevel(newLevel);
     } 
 
-    if(consoleHandler != null && newLevel.intValue() >= Level.WARNING.intValue()) {
+    if(consoleHandler != null) {
       // if we've found a global console handler
       consoleHandler.setLevel(newLevel);
       // warnings are no more printed, but still seen by the StatusHandler
