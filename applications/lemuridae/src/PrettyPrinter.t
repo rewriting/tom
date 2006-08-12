@@ -178,6 +178,7 @@ class PrettyPrinter {
       relationAppl(relation("appl"),(funAppl(fun(n),()),x*)) -> {
         return `n + "["+ toLatex(`x*) + "]";
       }
+      
       // arithmetic pretty print
       relationAppl(relation("eq"),(x,y)) -> {
         return toLatex(`x) + " = " + toLatex(`y);
@@ -188,11 +189,24 @@ class PrettyPrinter {
       relationAppl(relation("lt"),(x,y)) -> {
         return toLatex(`x) + " < " + toLatex(`y);
       }
+
+      // set theory pretty print
+      relationAppl(relation("in"),(x,y)) -> {
+        return toLatex(`x) + " \\in " + toLatex(`y);
+      }
+      relationAppl(relation("subset"),(x,y)) -> {
+        return toLatex(`x) + " \\subset " + toLatex(`y);
+      }
+      relationAppl(relation("supset"),(x,y)) -> {
+        return toLatex(`x) + " \\supset " + toLatex(`y);
+      }
  
       relationAppl(relation[name=n], ()) -> { return `n;}
       relationAppl(relation[name=n], tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
       and(p1, p2) -> { return "(" + toLatex(`p1) + " \\land " + toLatex(`p2) + ")";}
       or(p1, p2) -> { return "(" + toLatex(`p1) + " \\lor " + toLatex(`p2) + ")";}
+      //negation
+      implies(p, bottom()) -> { return "\\lnot (" + toLatex(`p) + ")"; }
       implies(p1, p2) -> { return "(" + toLatex(`p1) + " \\Rightarrow " + toLatex(`p2) + ")";}
       forAll(n, p) -> { return "\\forall " + `n + " . (" + toLatex(`p) + ")";}
       exists(n, p) -> { return "\\exists " + `n + " . (" + toLatex(`p) + ")";}
@@ -227,6 +241,17 @@ class PrettyPrinter {
         return "(" + toLatex(`t1) + " / " + toLatex(`t2) + ")";
       }
 
+      // set theory
+      funAppl(fun("union"),(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + ") \\cup (" + toLatex(`t2) + ")";
+      }
+      funAppl(fun("inter"),(t1,t2)) -> { 
+        return "(" + toLatex(`t1) + ") \\cap (" + toLatex(`t2) + ")";
+      }
+      funAppl(fun("emptyset"),()) -> { 
+        return "\\emptyset";
+      }
+     
 
       funAppl(fun[name=n], ()) -> { return `n + "()";}
       funAppl(fun[name=n], tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
