@@ -9,7 +9,12 @@
   <target name="build" depends="init">
     <gomcompile example="${bytecode}"/>
     <tomcompile example="${bytecode}"/>
-    <javacompile example="${bytecode}"/>
+    <javac.preset fork="true" destdir="${examples.build}">
+      <src path="${examples.dir}"/>
+      <src path="${examples.gen}"/>
+      <classpath refid="tom.examples.classpath"/>
+      <include name="${bytecode}/**/*.java"/>
+    </javac.preset>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
