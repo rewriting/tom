@@ -13,6 +13,11 @@ public class StringSplit {
     }
     for(int i = 1; i<=maxcount; i++) {
       System.out.print(i+"\t");
+      System.out.println(benchfast(i));
+    }
+    System.out.println();
+    for(int i = 1; i<=maxcount; i++) {
+      System.out.print(i+"\t");
       System.out.println(benchnew(i));
     }
     System.out.println();
@@ -20,6 +25,19 @@ public class StringSplit {
       System.out.print(i+"\t");
       System.out.println(benchold(i));
     }
+  }
+
+  public static double benchfast(int i) {
+    String test = new String(makeInput(i));
+    String mark = "";
+		long startChrono = System.currentTimeMillis();
+    %match(String test) {
+      (login*,':',pass*,':',more*,':',rest*) -> {
+        //mark = `login* + `pass* + `rest*;
+      }
+    }
+		long stopChrono = System.currentTimeMillis();
+    return ((stopChrono-startChrono)/1000.);
   }
 
   public static double benchnew(int i) {
@@ -41,7 +59,7 @@ public class StringSplit {
 		long startChrono = System.currentTimeMillis();
     %match(String test) {
       (login*,a,pass*,b,more*,c,rest*) -> {
-        if(`a == `b && `b == `c) {
+        if(`a == `b && `b == `c && `a == ':') {
           //mark = `login* + `pass* + `rest*;
         }
       }
