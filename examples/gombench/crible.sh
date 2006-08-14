@@ -11,18 +11,18 @@ echo "" > ${DATFILE}.2.tmp
 echo "" > ${DATFILE}.3.tmp
 echo "\\begin{tabular}{|l|rrr|}" > ${TEXFILE}
 echo "\hline" >> ${TEXFILE}
-echo "Taille & Manuel & {\\apigen} & {\\tom} \\\\" >> ${TEXFILE}
+echo "Taille & {\\apigen} & {\\apigen} & {\\gom} \\\\" >> ${TEXFILE}
 echo "\hline" >> ${TEXFILE}
 for i in `jot 10 $liststart $listmax`; do
 	echo -n "$i   & " >> ${TEXFILE}
-	HANDTIME=`${JAVA} gombench.HandList $i | awk -F'&' '{printf $3}'`
-	echo -n "${HANDTIME} & " >> ${TEXFILE}
-	echo "$i  ${HANDTIME} " >> ${DATFILE}.1.tmp
+	ATTIME=`${JAVA} gombench.AtList $i | awk -F'&' '{printf $3}'`
+	echo -n "\\nombre{${ATTIME/./,}} & " >> ${TEXFILE}
+	echo "$i  ${ATTIME} " >> ${DATFILE}.1.tmp
 	APITIME=`${JAVA} gombench.ApiList $i | awk -F'&' '{printf $3}'`
-	echo -n "${APITIME} & " >> ${TEXFILE}
+	echo -n "\\nombre{${APITIME/./,}} & " >> ${TEXFILE}
 	echo "$i  ${APITIME} " >> ${DATFILE}.2.tmp
 	GOMTIME=`${JAVA} gombench.GomList $i | awk -F'&' '{printf $3}'`
-	echo "${GOMTIME} \\\\" >> ${TEXFILE}
+	echo "\\nombre{${GOMTIME/./,}} \\\\" >> ${TEXFILE}
 	echo "$i  ${GOMTIME} " >> ${DATFILE}.3.tmp
 done
 
