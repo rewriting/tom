@@ -89,14 +89,13 @@ ATermList reverse(ATermList l)
 
 int main(int argc, char *argv[])
 {
-  ATerm bottomOfStack;
   int i;
 	int max = 100;
   for(i=1; i<argc; i++)
     if(strcmp(argv[i], "-max") == 0)
       max = atoi(argv[++i]);
 
-  ATinit(argc, argv, &bottomOfStack);
+  ATinitialize(argc, argv);
   ATermList l;
 
   l = genere(max);
