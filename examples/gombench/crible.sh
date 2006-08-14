@@ -16,13 +16,13 @@ echo "\hline" >> ${TEXFILE}
 for i in `jot 10 $liststart $listmax`; do
 	echo -n "$i   & " >> ${TEXFILE}
 	ATTIME=`${JAVA} gombench.AtList $i | awk -F'&' '{printf $3}'`
-	echo -n "\\nombre{${ATTIME/./,}} & " >> ${TEXFILE}
+	echo -n "\\nombre[,]{${ATTIME/./,}} & " >> ${TEXFILE}
 	echo "$i  ${ATTIME} " >> ${DATFILE}.1.tmp
 	APITIME=`${JAVA} gombench.ApiList $i | awk -F'&' '{printf $3}'`
-	echo -n "\\nombre{${APITIME/./,}} & " >> ${TEXFILE}
+	echo -n "\\nombre[,]{${APITIME/./,}} & " >> ${TEXFILE}
 	echo "$i  ${APITIME} " >> ${DATFILE}.2.tmp
 	GOMTIME=`${JAVA} gombench.GomList $i | awk -F'&' '{printf $3}'`
-	echo "\\nombre{${GOMTIME/./,}} \\\\" >> ${TEXFILE}
+	echo "\\nombre[,]{${GOMTIME/./,}} \\\\" >> ${TEXFILE}
 	echo "$i  ${GOMTIME} " >> ${DATFILE}.3.tmp
 done
 

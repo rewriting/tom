@@ -21,9 +21,11 @@ class GomGC {
 
   %strategy Rewrite() extends Identity() {
     visit Nat {
-      M() -> { return `Suc(gombench.GomGC.base); }
-      N() -> { return gombench.GomGC.base; }
-      P() -> { return `Suc(Suc(gombench.GomGC.base)); }
+      M() -> { return `Suc(Zero()); }
+      N() -> { return `Suc(Suc(Suc(Zero()))); }
+      P() -> { return gombench.GomGC.base; }
+      //N() -> { return `Suc(Suc(Suc(Zero()))); }
+      //P() -> { return `Suc(Suc(Suc(Suc(Zero())))); }
       C(Zero(),y) -> { return `y; }
       C(Suc(x),y) -> { return `Suc(C(x,y)); }
       F(x,y,Suc(z),t,u) -> { return `F(x,y,z,C(t,t),u); } 
