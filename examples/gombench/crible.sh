@@ -11,7 +11,7 @@ echo "" > ${DATFILE}.2.tmp
 echo "" > ${DATFILE}.3.tmp
 echo "\\begin{tabular}{|l|rrr|}" > ${TEXFILE}
 echo "\hline" >> ${TEXFILE}
-echo "Taille & {\\aterm} & {\\apigen} & {\\gom} \\\\" >> ${TEXFILE}
+echo "Taille & \\multicolumn{1}{c}{\\aterm} & \\multicolumn{1}{c}{\\apigen} & \\multicolumn{1}{c}{\\gom} \\\\" >> ${TEXFILE}
 echo "\hline" >> ${TEXFILE}
 for i in `jot 10 $liststart $listmax`; do
 	echo -n "$i   & " >> ${TEXFILE}
