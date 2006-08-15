@@ -64,6 +64,8 @@ public class TomAntiPatternTransformNew {
 	%include { java/util/types/Collection.tom}	
 //	------------------------------------------------------------
 	
+	private static int varCounter = 0;
+	
 	/**
 	 * transforms the anti-pattern problem received 
 	 * in order to eliminate the anti symbols
@@ -94,7 +96,6 @@ public class TomAntiPatternTransformNew {
 		 * to deduce cNoAnti this would avoid the double recursive traversal
 		 */
 		
-		int varCounter = 0;
 		// first get the constraint without the anti
 		Constraint cNoAnti = (Constraint) `OnceTopDownId(ElimAnti()).apply(c);
 		// if nothing changed, time to exit
@@ -122,7 +123,7 @@ public class TomAntiPatternTransformNew {
 		Constraint cAntiReplaced = (Constraint) `OnceTopDownId(AbstractTerm(abstractVariable)).apply(c);
 		cAntiReplaced = applyMainRule(cAntiReplaced,quantifiedVarList);
 		
-		return `AndConstraint(concAnd(Exists(abstractVariable,cAntiReplaced),cNoAnti));
+		return `AndConstraint(concAnd(cAntiReplaced,cNoAnti));
 	}
 	
 	// collect variables, a do not inspect under an AntiTerm

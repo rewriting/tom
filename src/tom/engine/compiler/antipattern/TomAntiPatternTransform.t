@@ -63,7 +63,9 @@ public class TomAntiPatternTransform {
 	%include { mustrategy.tom}	
 	%include { java/util/types/Collection.tom}	
 //	------------------------------------------------------------
-		
+
+	private static int varCounter = 0;
+	
 	/**
 	 * transforms the anti-pattern problem received into a disunification one
 	 * @param c the anti-pattern problem to transform 
@@ -89,7 +91,6 @@ public class TomAntiPatternTransform {
      * this would avoid the double recursive traversal
      */
 	
-	int varCounter = 0;
     // first get the constraint without the anti
     Constraint cNoAnti = (Constraint) `OnceTopDownId(ElimAnti()).apply(c);
     // if nothing changed, time to exit
