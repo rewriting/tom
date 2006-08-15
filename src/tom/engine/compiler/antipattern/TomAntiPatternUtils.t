@@ -134,10 +134,18 @@ public class TomAntiPatternUtils {
 		
 		// transform the anti-pattern match problem into
 		// a disunification one
-		Constraint disunificationProblem = TomAntiPatternTransform.transform(
-				`EqualConstraint(tomTerm,subject));
-		// launch the constraint compiler
-		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);			
+//		Constraint disunificationProblem = TomAntiPatternTransform.transform(
+//				`EqualConstraint(tomTerm,subject));
+//		// launch the constraint compiler
+//		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);
+		
+		Collection quantifiedVarList = new ArrayList();
+		Collection freeVarList = new ArrayList();
+		Constraint transformedProblem = TomAntiPatternTransformNew.transform(
+				`EqualConstraint(tomTerm,subject),quantifiedVarList,freeVarList);
+		
+		// launch the antipattern compiler
+		Constraint compiledApProblem = TomAntiPatternCompiler.compile(transformedProblem,quantifiedVarList,freeVarList);					
 		
 		ArrayList variablesList = new ArrayList();
 		ArrayList assignedValues = new ArrayList();
@@ -148,7 +156,7 @@ public class TomAntiPatternUtils {
 			throw new RuntimeException("VisitFailure occured:" + e);
 		}
 		
-//		System.out.println("No variables constraint:" + TomAntiPatternUtils.formatConstraint(compiledApProblem));
+//		System.out.println("No variables constraint:" + /*TomAntiPatternUtils.formatConstraint(*/compiledApProblem);
 		
 		// builds the assignment
 		if (!variablesList.isEmpty()){
@@ -255,6 +263,11 @@ public class TomAntiPatternUtils {
 				return (`pattern 
 						instanceof EqualConstraint) ? `EqualFunctionSymbol(type,transformedTerm,t)
 						: `Negation(EqualFunctionSymbol(type,transformedTerm,t));				
+			}
+			Neg(constraint) ->{
+				return `Negation(getTomMappingForConstraint(constraint,	symbolTable,
+						moduleName));
+							
 			}
 			pattern@(EqualConstraint|NEqualConstraint)(t1,t2) ->{
 				
