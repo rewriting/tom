@@ -63,9 +63,7 @@ public class TomAntiPatternTransform {
 	%include { mustrategy.tom}	
 	%include { java/util/types/Collection.tom}	
 //	------------------------------------------------------------
-	
-	private static int varCounter = 0;	
-	
+		
 	/**
 	 * transforms the anti-pattern problem received into a disunification one
 	 * @param c the anti-pattern problem to transform 
@@ -73,7 +71,7 @@ public class TomAntiPatternTransform {
 	 */
 	public static Constraint transform(Constraint c) {	
     // eliminate anti
-    Constraint noAnti = applyMainRule(c);
+    Constraint noAnti = applyMainRule(c);    
     // transform the problem into a disunification one		
     return (Constraint) `InnermostId(TransformIntoDisunification()).apply(noAnti);			
 	}	
@@ -90,7 +88,8 @@ public class TomAntiPatternTransform {
      * then, re-instantiate the abstractedVariables to deduce cNoAnti
      * this would avoid the double recursive traversal
      */
-
+	
+	int varCounter = 0;
     // first get the constraint without the anti
     Constraint cNoAnti = (Constraint) `OnceTopDownId(ElimAnti()).apply(c);
     // if nothing changed, time to exit
@@ -119,7 +118,8 @@ public class TomAntiPatternTransform {
     // get the constraint with a variable instead of anti
     String varName = "v" + (varCounter++);
     TomTerm abstractVariable = `Variable(concOption(),Name(varName),EmptyType(),concConstraint());
-    Constraint cAntiReplaced = (Constraint) `OnceTopDownId(SequenceId(ElimAnti(),AbstractTerm(abstractVariable))).apply(c);
+    //Constraint cAntiReplaced = (Constraint) `OnceTopDownId(SequenceId(ElimAnti(),AbstractTerm(abstractVariable))).apply(c);
+    Constraint cAntiReplaced = (Constraint) `OnceTopDownId(AbstractTerm(abstractVariable)).apply(c);
     cAntiReplaced = applyMainRule(cAntiReplaced);
 
     return `AndConstraint(concAnd(Exists(abstractVariable,cAntiReplaced),cNoAnti));
@@ -149,9 +149,9 @@ public class TomAntiPatternTransform {
 	// replace a term by another (a variable)
 	%strategy AbstractTerm(variable:TomTerm) extends `Identity() {
 		visit TomTerm {
-      x -> { return variable; }
-    }
-  }
+			AntiTerm[] -> { return variable; }
+		}
+	}
 	
 	// applies symple logic rules for eliminating 
 	// the not and thus creating a real disunification problem
