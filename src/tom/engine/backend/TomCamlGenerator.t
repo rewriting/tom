@@ -59,6 +59,28 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   /*
    * the implementation of methods are here for caml 
    */
+ 
+	protected void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction, String moduleName) throws IOException {
+		generateInstruction(deep,instruction,moduleName);
+	}
+
+  protected void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+	output.write(" ( ");
+	generateExpression(deep,exp1,moduleName);
+    output.write(" && ");
+    generateExpression(deep,exp2,moduleName);
+    output.write(" ) ");
+  }
+  protected void buildExpOr(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+	output.write(" ( ");  
+    generateExpression(deep,exp1,moduleName);
+    output.write(" || ");
+    generateExpression(deep,exp2,moduleName);
+    output.write(" ) ");
+  }
+
+  
+/* ----- old ---- */
   
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
     Instruction head = instructionList.getHeadconcInstruction();
@@ -216,13 +238,15 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       output.write("(* checkstamp *) ()");
     }
   }
-
+/*
+  
   protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
     output.write("tom_get_head_" + getTomType(domain) + "(");
     generate(deep,var,moduleName);
     output.write(")");
   }
 
+  
   protected void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
     output.write("tom_get_element_" + getTomType(domain) + "(");
     generate(deep,varName,moduleName);
@@ -230,7 +254,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generate(deep,varIndex,moduleName);
     output.write(")");
   }
-
+*/
 
   protected void genDecl(String returnType,
                          String declName,

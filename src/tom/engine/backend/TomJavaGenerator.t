@@ -46,7 +46,7 @@ import tom.engine.tools.SymbolTable;
 import tom.platform.OptionManager;
 import tom.engine.exception.TomRuntimeException;
 
-public class TomJavaGenerator extends TomImperativeGenerator {
+public class TomJavaGenerator extends TomCFamilyGenerator {
 
   public TomJavaGenerator(OutputCode output, OptionManager optionManager,
                        SymbolTable symbolTable) {

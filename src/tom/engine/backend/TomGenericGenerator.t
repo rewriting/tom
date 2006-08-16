@@ -60,47 +60,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   %include { adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
-  protected abstract void genDecl(String returnType,
-                                  String declName,
-                                  String suffix,
-                                  String args[],
-                                  TargetLanguage tlCode,
-                                  String moduleName) throws IOException;
-
-  protected abstract void genDeclMake(String funName, TomType returnType,
-                                      TomList argList, Instruction instr, String moduleName) throws IOException;
-
-  protected abstract void genDeclList(String name, String moduleName) throws IOException;
-
-  protected abstract void genDeclArray(String name, String moduleName) throws IOException;
-
-  //------------------------------------------------------------
-
-  protected abstract void buildRef(int deep, TomTerm term, String moduleName) throws IOException;
-  protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
-  protected abstract void buildComment(int deep, String text) throws IOException;
-  protected abstract void buildFunctionCall(int deep, String name, TomList argList, String moduleName)  throws IOException;
-  protected abstract void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException;
-  protected abstract void buildExpNegation(int deep, Expression exp, String moduleName) throws IOException;
-  protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException;
-  protected abstract void buildExpGetElement(int deep, TomName opNameAST,TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException;
-
-  protected abstract void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException ;
-  protected abstract void buildExpTrue(int deep) throws IOException;
-  protected abstract void buildExpFalse(int deep) throws IOException;
-  protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
-  protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException ;
-  protected abstract void buildExpCast(int deep, TomType type, Expression exp, String moduleName) throws IOException;
-  protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
-  protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
-  protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException ;
-  protected abstract void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException ;
-  protected abstract void buildIf(int deep, Expression exp, Instruction succes, String moduleName) throws IOException ;
-  protected abstract void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure, String moduleName) throws IOException ;
-  protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException;
-  protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException;
-  protected abstract void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction, String moduleName) throws IOException ;
-
   /*
    * Implementation of functions whose definition is
    * independant of the target language
@@ -110,13 +69,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     buildFunctionCall(deep, "tom_make_"+name, argList, moduleName);
   }
 
-  protected void buildCheckStamp(int deep, TomType type, TomTerm variable, String moduleName) throws IOException {
-    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-      output.write("tom_check_stamp_" + getTomType(type) + "(");
-      generate(deep,variable,moduleName);
-      output.write(");");
-    }
-  }
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
@@ -126,21 +78,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     generateOptionList(deep, optionList, moduleName);
     // inspect the slotlist
     generatePairNameDeclList(deep, pairNameDeclList, moduleName);
-  }
-
-  protected void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
-	output.write(" ( ");
-	generateExpression(deep,exp1,moduleName);
-    output.write(" && ");
-    generateExpression(deep,exp2,moduleName);
-    output.write(" ) ");
-  }
-  protected void buildExpOr(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
-	output.write(" ( ");  
-    generateExpression(deep,exp1,moduleName);
-    output.write(" || ");
-    generateExpression(deep,exp2,moduleName);
-    output.write(" ) ");
   }
 
   protected void buildExpGreaterThan(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {

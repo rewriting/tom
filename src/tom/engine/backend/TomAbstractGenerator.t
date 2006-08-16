@@ -526,7 +526,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       AbstractDecl(declList) -> {
         //`generateInstructionList(deep, instList);
-        `buildDeclarationSequence(deep, declList, moduleName);
+        `generateDeclarationList(deep, declList, moduleName);
         return;
       }
 
@@ -811,7 +811,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   // ------------------------------------------------------------
 
-  protected abstract void buildDeclarationSequence(int deep, DeclarationList declarationList, String moduleName) throws IOException;
   protected abstract void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException;
   protected abstract void buildSemiColon() throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
