@@ -132,21 +132,38 @@ public class TomAntiPatternUtils {
 		
 		subject = getSubjectVariableAST(tomTerm,rootpath,symbolTable,slotName,moduleName);
 		
-		// transform the anti-pattern match problem into
-		// a disunification one
-//		Constraint disunificationProblem = TomAntiPatternTransform.transform(
-//				`EqualConstraint(tomTerm,subject));
-//		// launch the constraint compiler
-//		Constraint compiledApProblem = TomConstraintCompiler.compile(disunificationProblem);
+		long timeBegin = 0;
+		
+		Constraint transformedProblem = null, compiledApProblem = null;
+		
+		timeBegin = System.currentTimeMillis();
+		
+		for (int i=0; i<100; i++){
+			// transform the anti-pattern match problem into
+			// a disunification one
+			transformedProblem = TomAntiPatternTransform.transform(
+					`EqualConstraint(tomTerm,subject));
+			// launch the constraint compiler
+			compiledApProblem = TomConstraintCompiler.compile(transformedProblem);
+		}
+		
+		System.out.println("Disunification took:" + (System.currentTimeMillis()-timeBegin) + " ms");
 		
 		Collection quantifiedVarList = new ArrayList();
 		Collection freeVarList = new ArrayList();
-		Constraint transformedProblem = TomAntiPatternTransformNew.transform(
-				`EqualConstraint(tomTerm,subject),quantifiedVarList,freeVarList);
 		
-		// launch the antipattern compiler
-		Constraint compiledApProblem = TomAntiPatternCompiler.compile(transformedProblem,quantifiedVarList,freeVarList);					
+		timeBegin = System.currentTimeMillis();
 		
+		for (int i=0; i<100; i++){
+			transformedProblem = TomAntiPatternTransformNew.transform(
+					`EqualConstraint(tomTerm,subject),quantifiedVarList,freeVarList);
+			
+			// launch the antipattern compiler
+			compiledApProblem = TomAntiPatternCompiler.compile(transformedProblem,quantifiedVarList,freeVarList);					
+		}
+		
+		System.out.println("New algorithm took:" + (System.currentTimeMillis()-timeBegin) + " ms");
+			
 		ArrayList variablesList = new ArrayList();
 		ArrayList assignedValues = new ArrayList();
 		try{		
