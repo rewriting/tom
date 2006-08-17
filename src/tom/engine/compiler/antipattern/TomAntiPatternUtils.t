@@ -149,18 +149,22 @@ public class TomAntiPatternUtils {
 		
 		ArrayList variablesList = new ArrayList();
 		ArrayList assignedValues = new ArrayList();
-		try{		
-			compiledApProblem = (Constraint)MuTraveler.init(`InnermostId(
-					ExtractVariables(variablesList,assignedValues,symbolTable,moduleName))).visit(compiledApProblem);
-		}catch(VisitFailure e){
-			throw new RuntimeException("VisitFailure occured:" + e);
-		}
-		
+		ArrayList constraintsList = new ArrayList();
+		ArrayList constraintsListAssign = new ArrayList();
+			
+		compiledApProblem = (Constraint)`InnermostId(ExtractVariablesAndAssignments(variablesList,assignedValues,constraintsList,					
+							constraintsListAssign,symbolTable,moduleName)).apply(compiledApProblem);
+				
 //		System.out.println("No variables constraint:" + /*TomAntiPatternUtils.formatConstraint(*/compiledApProblem);
 		
-		// builds the assignment
+		// builds the variables' assignment
 		if (!variablesList.isEmpty()){
-			varAssignments = buildVariableAssignment(variablesList,assignedValues, subAction);
+			varAssignments = buildVariableAssignment(variablesList,assignedValues,subAction);
+		}
+		// builds the assignment for the annotations
+		if (!constraintsList.isEmpty()){
+			varAssignments = buildVariableAssignment(constraintsList,constraintsListAssign,
+					varAssignments == null ? subAction : varAssignments);
 		}
 		
 		%match(Constraint compiledApProblem){
@@ -190,19 +194,59 @@ public class TomAntiPatternUtils {
     return subjectVariableAST;
 	}
 	
-	%strategy ExtractVariables(varList:ArrayList,assignedValues:ArrayList,
-			symbolTable:SymbolTable,moduleName:String) extends `Identity(){
+	/**
+	 * Extracts the variables and the annotated terms (for the assigments) 
+	 */
+	%strategy ExtractVariablesAndAssignments(varList:ArrayList,assignedValues:ArrayList,
+			constraintsList:ArrayList,constraintsListAssign:ArrayList,symbolTable:SymbolTable,moduleName:String) extends `Identity(){
 		
 		visit Constraint{
 			
-			AndConstraint(concAnd(X*,EqualConstraint(v@Variable[],t),Y*))->{
+			AndConstraint(concAnd(X*,EqualConstraint(v@Variable[Constraints=cons],t),Y*))->{
 				varList.add(`v);
-				assignedValues.add(transformTerm(`t,symbolTable,moduleName));
+				Expression transTerm = transformTerm(`t,symbolTable,moduleName);
+				assignedValues.add(transTerm);
+				
+				if (`cons != null && !`cons.isEmptyconcConstraint()){
+					
+					TomTerm assignedVar = `((AssignTo)cons.getHeadconcConstraint()).getVariable();
+					
+					if (!constraintsList.contains(assignedVar)){					
+						constraintsList.add(assignedVar);
+						constraintsListAssign.add(transTerm);					
+					}
+				}
+				
 				return `AndConstraint(concAnd(X*,Y*));
 			}
-			OrConstraint(concOr(X*,EqualConstraint(v@Variable[],t),Y*))->{
+			EqualConstraint(r@RecordAppl[Constraints=cons],t)->{
+				
+				if (`cons != null && !`cons.isEmptyconcConstraint()){
+					
+					TomTerm assignedVar = `((AssignTo)cons.getHeadconcConstraint()).getVariable();
+					
+					if (!constraintsList.contains(assignedVar)){
+					
+						constraintsList.add(assignedVar);
+						if (`t 
+								instanceof SymbolOf){
+							constraintsListAssign.add(transformTerm(((SymbolOf)`t).getGroundTerm(),symbolTable,moduleName));
+						}else{
+							constraintsListAssign.add(transformTerm(`t,symbolTable,moduleName));
+						}
+					}					
+				} 
+			}
+			OrConstraint(concOr(X*,EqualConstraint(v@Variable[Constraints=cons],t),Y*))->{
 				varList.add(`v);
-				assignedValues.add(transformTerm(`t,symbolTable,moduleName));
+				Expression transTerm = transformTerm(`t,symbolTable,moduleName);
+				assignedValues.add(transTerm);
+				
+				if (`cons != null && !`cons.isEmptyconcConstraint()){
+					constraintsList.add(`((AssignTo)cons.getHeadconcConstraint()).getVariable());
+					constraintsListAssign.add(transTerm);
+				}
+				
 				return `TrueConstraint();
 				//return `OrConstraint(concOr(X*,Y*));
 			}
@@ -210,7 +254,7 @@ public class TomAntiPatternUtils {
 	}
 	
 	private static Instruction buildVariableAssignment(ArrayList varList, 
-			ArrayList varValues,
+			ArrayList varValues,			
 			Instruction subAction){
 		
 		if (varList.isEmpty()) {
@@ -332,7 +376,7 @@ public class TomAntiPatternUtils {
 						slotName.getString(),var);
 		   }
            term@(RecordAppl|Variable)[] ->{        	   
-        	   return `TomTermToExpression(term);
+        	   return `TomTermToExpression(term);        	   
            }
 		}
 		throw new TomRuntimeException("Unable to transform term: " + t);
