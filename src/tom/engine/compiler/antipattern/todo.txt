@@ -5,6 +5,7 @@ TODO
 4. guards are not handled
 11. in the action we should only allow the free variables - should we provide a warning message ?
 12. warning for the no gerenation of code
-
-
+13. optimize generated code: no tests should be repeated
+14. remove from getTomMappingForConstraint -TomAntiPatternUtils - things that are no more needed
+15. clean TomAntiPatternUtils from OrConstraint 
  	
