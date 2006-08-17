@@ -70,7 +70,7 @@ TomTerm =
     | Term(TomTerm:TomTerm)
     | AntiTerm(TomTerm:TomTerm)
     | Subterm(AstName:TomName,SlotName:TomName,GroundTerm:TomTerm)
-    | SymbolOf(groundTerm:TomTerm)
+    | SymbolOf(GroundTerm:TomTerm)
     | TLVar(StrName:String,AstType:TomType)
     | Ref(TomTerm:TomTerm)
 
