@@ -44,6 +44,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomconstraint.types.constraint.*;
 
 import tom.engine.xml.Constants;
 import tom.platform.OptionParser;
@@ -51,7 +52,7 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
 import tom.engine.tools.ASTFactory;
 
-import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
@@ -61,7 +62,7 @@ import jjtraveler.VisitFailure;
 public class TomSyntaxCheckerAp extends TomSyntaxChecker {
 
   %include { adt/tomsignature/TomSignature.tom }
-
+  %include { mustrategy.tom }
   /**
    * Basicaly ingnores the anti-symbol
    */
@@ -70,7 +71,8 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
 	  %match(TomTerm term) {
     	
     	// validate that after the anti symbol we have a valid term  
-    	AntiTerm(t) ->{
+    	AntiTerm(t@(TermAppl|Variable)[Option=options]) ->{
+    		checkForAnnotations(`t,`options);
     		return super.validateTerm(`t, expectedType, listSymbol, topLevel, permissive);
     	}
 	  }
@@ -83,14 +85,43 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
       %match(TomTerm term) {
     	  
         // for the moment, the anti only on termappl and on named variables
-    	AntiTerm(t@TermAppl(_,_,_,_))  -> {
+    	AntiTerm(t@(TermAppl|Variable)[])  -> {
     		return super.analyseTerm(`t);
     	}
-    	AntiTerm(v@Variable(_,_,_,_))  -> {
-    		return super.analyseTerm(`v);
-    	}    	  
       }
       
       return super.analyseTerm(term);
   }
+  
+  /**
+   * Checks if the given term contains annotations
+   * 
+   * @param t the term to search
+   */
+  private void checkForAnnotations(TomTerm t, OptionList options){	  
+	   
+	  String fileName = findOriginTrackingFileName(options);
+      int decLine = findOriginTrackingLine(options);
+      
+	 `TopDown(CheckForAnnotations(fileName,decLine)).apply(t);
+  }
+  
+   
+  /**
+   * Given a term, it checks if it contains annotations
+   * TODO : use disjonction when compiler bug will be fixed
+   */  
+	%strategy CheckForAnnotations(fileName:String,decLine:int) extends `Identity(){
+	  visit TomTerm {
+		  t@TermAppl(_,_,_,concConstraint(_*,AssignTo[],_*)) ->{
+			  TomChecker.messageError("TomSyntaxChecker",fileName,decLine,TomMessage.illegalAnnotationInAntiPattern, new Object[]{});
+			  throw new TomRuntimeException("Illegal use of annotations in " + `t);
+		  }
+		  v@Variable(_,_,_,concConstraint(_*,AssignTo[],_*)) ->{
+			  TomChecker.messageError("TomSyntaxChecker",fileName,decLine,TomMessage.illegalAnnotationInAntiPattern, new Object[]{});
+			  throw new TomRuntimeException("Illegal use of annotations in " + `v);
+		  }
+	  }// end visit
+	}
+
 }
