@@ -497,16 +497,16 @@ public class TomAntiPatternUtils {
 			RecordAppl(_,concTomName(Name(name),_*), concSlot(),_)->{
 				return `name;
 			}
-			AntiTerm(apl@RecordAppl(_,_,_,_))->{
+			AntiTerm(apl)->{
 				return "!" + formatTerm(`apl);
 			}
-			AntiTerm(name)->{
-				return "!" + `name;
-			}
+//			AntiTerm(name)->{
+//				return "!" + `name;
+//			}
 //			GenericGroundTerm(name) ->{
 //				return `name;
 //			}
-			RecordAppl(_,name, concSlot(PairSlotAppl(_,x),Z*),_) ->{
+			RecordAppl(_,concTomName(Name(name),_*), concSlot(PairSlotAppl(_,x),Z*),_) ->{
 				
 				SlotList l = `Z*;
 				String result = formatTerm(`x);

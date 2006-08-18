@@ -386,7 +386,7 @@ public class TomKernelCompiler extends TomBase {
    		FalseTL() ->{
    			Logger.getLogger(getClass().getName()).log( Level.WARNING,
    	                TomMessage.noCodeGeneration.getMessage(),
-   	                new Object[]{slotName.getString()});
+   	                new Object[]{TomAntiPatternUtils.formatTerm(currentTerm)});
    			return `Nop();
    		}
    	}
