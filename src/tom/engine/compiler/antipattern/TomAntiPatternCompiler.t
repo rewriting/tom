@@ -65,6 +65,7 @@ public class TomAntiPatternCompiler{
 		Constraint classicalMatch = null; 
 		Constraint replacedVariables = null;
 		Constraint quantifierFree = null;
+		Constraint optimizedCode = null;
 		Constraint result = null;		
 		
 		classicalMatch = (Constraint)`InnermostId(ClassicalPatternMatching()).apply(c);
@@ -73,7 +74,9 @@ public class TomAntiPatternCompiler{
 //		System.out.println("After variable replacement: " +  tools.formatConstraint(replacedVariables));
 		quantifierFree = (Constraint)`TopDown(EliminateQuantifiedVars(quantifiedVarList,freeVarList)).apply(replacedVariables);
 //		System.out.println("After quantified vars' elimination: " +  tools.formatConstraint(quantifierFree));
-		result = (Constraint)`InnermostId(Cleaning()).apply(quantifierFree);			
+		optimizedCode = (Constraint)`TopDown(ReplaceEquation()).apply(quantifierFree);			
+//		System.out.println("After optimization: " +  tools.formatConstraint(quantifierFree));
+		result = (Constraint)`InnermostId(Cleaning()).apply(optimizedCode);			
 		
 //		System.out.println("Final result formated: " + tools.formatConstraint(result));
 		
@@ -159,7 +162,7 @@ public class TomAntiPatternCompiler{
 				
 				Constraint consToSearchIn = `AndConstraint(concAnd(X*,Y*));
 				
-				Constraint res = (Constraint)`BottomUp(ReplaceTerm(var,s)).apply(consToSearchIn);
+				Constraint res = (Constraint)`BottomUp(Replace(var,s,null)).apply(consToSearchIn);
 				// if we replaced something
 				if (res != consToSearchIn){
 					return `AndConstraint(concAnd(eq,res));
@@ -227,7 +230,8 @@ public class TomAntiPatternCompiler{
 		
 	}
 	
-	%strategy ReplaceTerm(variable:TomTerm,value:TomTerm) extends `Identity(){
+	
+	%strategy Replace(variable:TomTerm,value:TomTerm,constraint:Constraint) extends `Identity(){
 		visit TomTerm {
 			t ->{
 				if (`t == variable){
@@ -235,6 +239,30 @@ public class TomAntiPatternCompiler{
 				}
 			}
 		}// end visit
+		
+		visit Constraint {
+			t ->{
+				if (`t == constraint){
+					return `TrueConstraint();
+				}
+			}
+		}// end visit
+	}
+		
+	%strategy ReplaceEquation() extends `Identity(){
+		
+		visit Constraint {		
+			AndConstraint(concAnd(eq@EqualConstraint[],Y*)) -> {
+				
+				Constraint consToSearchIn = `AndConstraint(concAnd(Y*));
+				
+				Constraint res = (Constraint)`TopDown(Replace(null,null,eq)).apply(consToSearchIn);
+				// if we replaced something
+				if (res != consToSearchIn){
+					return `AndConstraint(concAnd(eq,res));
+				}
+			}
+		} // end visit
 	}
 	
 } // end class
