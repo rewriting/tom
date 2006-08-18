@@ -97,31 +97,37 @@ b: {
           // axiom
           (X*,ruledesc(hs,c,(x*,sequent((_*,p,_*),(_*,p,_*)),y*)),Y*) -> {
             tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
+            break b;
           }
 
           // bottom
           (X*,ruledesc(hs,c,(x*,sequent((_*,bottom(),_*),_),y*)),Y*) -> {
             tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
+            break b;
           }
 
           // top
           (X*,ruledesc(hs,c,(x*,sequent(_,(_*,top(),_*)),y*)),Y*) -> {
             tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*,y*)),Y*);
+            break b;
           }
 
           // and R
           (X*,ruledesc(hs,c,(x*,sequent(ctxt,(u*,and(a,b),v*)),y*)),Y*) -> {
             tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,context(u*,a,v*)),sequent(ctxt,context(u*,b,v*)), y*)),Y*);
+            break b;
           }
 
           // or R
           (X*,ruledesc(hs,c,(x*,sequent(ctxt,(u*,or(a,b),v*)),y*)),Y*) -> {
             tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(ctxt,context(u*,a,b,v*)), y*)),Y*);
+            break b;
           }
 
           // => R
           (X*,ruledesc(hs,c,(x*, sequent(ctxt,(u*,implies(a,b),v*)), y*)), Y*) -> {
             tmp = `rlist(X*,ruledesc(hs,c,concSeq(x*, sequent(context(ctxt*,a),context(u*,b,v*)), y*)), Y*);
+            break b;
           }
 
           // forall R
@@ -130,26 +136,31 @@ b: {
             Term fresh_v = `FreshVar(new_n,n);
             Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
             tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(ctxt, context(u*,new_a,v*)), y*)), Y*);
+            break b;
           }
 
           // and L
           (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
             tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
+            break b;
           }
 
           // => L
           (X*,ruledesc(hs,c,(x*,sequent((u*,implies(a,b),v*),p),y*)),Y*) -> {
             tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,v*),context(a,p*)), sequent(context(u*,v*,b),p), y*)), Y*);
+            break b;
           }
 
           // or L
           (X*,ruledesc(hs,c,(x*,sequent((u*,or(a,b),v*),p),y*)),Y*) -> {
             tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,v*),p), sequent(context(u*,b,v*),p), y*)), Y*);
+            break b;
           }
 
           // and L
           (X*,ruledesc(hs,c,(x*,sequent((u*,and(a,b),v*),p),y*)),Y*) -> {
             tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,a,b,v*),p), y*)), Y*);
+            break b;
           }
 
           // exists L
@@ -158,6 +169,7 @@ b: {
             Term fresh_v = `FreshVar(new_n,n);
             Prop new_a = (Prop) Utils.replaceFreeVars(`a,`Var(n), fresh_v);
             tmp = `rlist(X*, ruledesc(hs,c,concSeq(x*, sequent(context(u*,new_a,v*),p), y*)), Y*);
+            break b;
           }
 
           // permutation problem cases
