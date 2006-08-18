@@ -26,6 +26,7 @@
 package tom.engine.compiler;
 
 import tom.engine.TomBase;
+import tom.engine.TomMessage;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
@@ -258,8 +259,12 @@ public class TomKernelCompiler extends TomBase {
       }
       // !X                                 
       concSlot(PairSlotAppl(slotName,
-            AntiTerm(Variable(_,_,_,_))),_*) -> {         
-        // this will generate directly false
+            AntiTerm(Variable(_,Name(name),_,_))),_*) -> {         
+    	// this will generate directly false
+    	Logger.getLogger(getClass().getName()).log( Level.WARNING,
+                TomMessage.noCodeGeneration.getMessage(),
+                new Object[]{("!" + `name)});
+            	
     	return `Nop();		  
       }            
       // !f
@@ -379,6 +384,9 @@ public class TomKernelCompiler extends TomBase {
    	// if the result is false, no need to generate anything
    	%match(Expression compiledAntiPattern){
    		FalseTL() ->{
+   			Logger.getLogger(getClass().getName()).log( Level.WARNING,
+   	                TomMessage.noCodeGeneration.getMessage(),
+   	                new Object[]{slotName.getString()});
    			return `Nop();
    		}
    	}

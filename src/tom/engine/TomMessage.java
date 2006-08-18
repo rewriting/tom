@@ -168,6 +168,10 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage errorMissingSlotDecl=
       new TomMessage("In symbol ''{0}'', get_slot for {1} is missing.");
 
+  public static final TomMessage noCodeGeneration=
+      new TomMessage("The match with ''{0}'' is always unsuccessful. No code for the correspondent action will be generated");
+
+  
   // optimizer.TomOptimizer
   public static final TomMessage tomOptimizationType =
     new TomMessage("optimization of type ''{0}''");
