@@ -79,6 +79,7 @@ public class TomBackend extends TomGenericPlugin {
     "<boolean name='jCode'    altName='j' description='Generate Java code' value='true'/>" + 
     "<boolean name='cCode'    altName='c' description='Generate C code' value='false'/>" +
     "<boolean name='camlCode' altName=''  description='Generate Caml code' value='false'/>" + 
+    "<boolean name='pCode'    altName=''  description='Generate Python code' value='false'/>" + 
     "</options>";
   
   /** the generated file name */
@@ -107,6 +108,8 @@ public class TomBackend extends TomGenericPlugin {
           generator = new TomCGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("camlCode")) {
           generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
+        } else if(getOptionBooleanValue("pCode")) {
+          generator = new TomPythonGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("jCode")) {
           generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
         } else {
@@ -151,12 +154,19 @@ public class TomBackend extends TomGenericPlugin {
     if(optionName.equals("camlCode") && ((Boolean)optionValue).booleanValue() ) { 
       setOptionValue("jCode", Boolean.FALSE);        
       setOptionValue("cCode", Boolean.FALSE);        
+      setOptionValue("pCode", Boolean.FALSE);        
     } else if(optionName.equals("cCode") && ((Boolean)optionValue).booleanValue() ) { 
       setOptionValue("jCode", Boolean.FALSE);        
       setOptionValue("camlCode", Boolean.FALSE);        
+      setOptionValue("pCode", Boolean.FALSE);        
     } else if(optionName.equals("jCode") && ((Boolean)optionValue).booleanValue() ) { 
       setOptionValue("cCode", Boolean.FALSE);        
       setOptionValue("camlCode", Boolean.FALSE);        
+      setOptionValue("pCode", Boolean.FALSE);        
+     } else if(optionName.equals("pCode") && ((Boolean)optionValue).booleanValue() ) { 
+      setOptionValue("cCode", Boolean.FALSE);        
+      setOptionValue("camlCode", Boolean.FALSE);        
+      setOptionValue("jCode", Boolean.FALSE);        
     }
   }
 

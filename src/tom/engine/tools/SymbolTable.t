@@ -98,7 +98,17 @@ public class SymbolTable {
       putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"String"),emptyForward);
       putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"None"),emptyForward);
       putTypeDefinition(TYPE_VOID, ASTFactory.makeType(TYPE_VOID,"unit"),emptyForward);
+    } else if( ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() ) { // this is really bad, will need to be improved
+      putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"str"),emptyForward);
+      putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"bool"),emptyForward);
+      putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
+      putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
+      putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"float"),emptyForward);
+      putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"str"),emptyForward);
+      putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"None"),emptyForward);
+      putTypeDefinition(TYPE_VOID, ASTFactory.makeType(TYPE_VOID,"function"),emptyForward);
     }
+
   }
 
   public void regenerateFromTerm(TomSymbolTable symbTable) {

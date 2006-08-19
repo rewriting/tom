@@ -46,7 +46,7 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
 import tom.platform.OptionManager;
 
-public abstract class TomPythonGenerator extends TomImperativeGenerator {
+public class TomPythonGenerator extends TomImperativeGenerator {
 
   // ------------------------------------------------------------
   %include { adt/tomsignature/TomSignature.tom }
@@ -294,5 +294,129 @@ matchBlock: {
       generateInstruction(0,instr,moduleName);
     }
   }
+
+  protected void buildCheckInstance(int deep, String typeName, TomType tlType, Expression exp, Instruction instruction, String moduleName) throws IOException {
+    if(getSymbolTable(moduleName).isBuiltinType(typeName)) {
+      generateInstruction(deep,instruction,moduleName);
+    } else {
+      output.write(deep,"if isinstance(");
+      generateExpression(deep,exp,moduleName);
+      output.writeln(getTLCode(tlType) + "):\n");
+      generateInstruction(deep+1,instruction,moduleName);
+    }
+  }
+
+  // FIXME
+  protected void buildNamedBlock(int deep, String blockName, InstructionList instList, String moduleName) throws IOException {
+    //output.writeln(blockName + ": {");
+    generateInstructionList(deep+1,instList,moduleName);
+    //output.writeln("}");
+  }
+
+  protected void buildExpTrue(int deep) throws IOException {
+    output.write(" True ");
+  }
+
+  protected void buildExpFalse(int deep) throws IOException {
+    output.write(" False ");
+  }
+
+  protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
+    if ((getSymbolTable(moduleName).getIntType() == type)
+        || (getSymbolTable(moduleName).getCharType() == type)
+        || (getSymbolTable(moduleName).getLongType() == type)
+        || (getSymbolTable(moduleName).getFloatType() == type)
+        || (getSymbolTable(moduleName).getDoubleType() == type)) {
+      output.write(" 0 ");
+    } else if (getSymbolTable(moduleName).getBooleanType() == type) {
+      output.write(" False ");
+    } else if (getSymbolTable(moduleName).getStringType() == type) {
+      output.write(" \"\" ");
+    } else {
+      output.write(" None ");
+    }
+  }
+
+  protected void buildFunctionDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,this.modifier);
+  }
+
+  protected void buildMethodDef(int deep, String tomName, TomList argList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName) throws IOException {
+    buildMethod(deep,tomName,argList,codomain,throwsType,instruction,moduleName,"public ");
+  }
+
+  private void buildMethod(int deep, String tomName, TomList varList, TomType codomain, TomType throwsType, Instruction instruction, String moduleName, String methodModifier) throws IOException {
+    output.write(deep, "def " + tomName + "(");
+    while(!varList.isEmptyconcTomTerm()) {
+      TomTerm localVar = varList.getHeadconcTomTerm();
+matchBlock: {
+              %match(TomTerm localVar) {
+                v@Variable[AstType=type2] -> {
+                  //output.write(deep,getTLType(`type2) + " ");
+                  generate(deep,`v,moduleName);
+                  break matchBlock;
+                }
+                v@TLVar[AstType=type2] -> {
+                  //output.write(deep,getTLType(`type2) + " ");
+                  generate(deep,`v,moduleName);
+                  break matchBlock;
+                }
+                _ -> {
+                  System.out.println("MakeFunction: strange term: " + localVar);
+                  throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
+                }
+              }
+            }
+            varList = varList.getTailconcTomTerm();
+            if(!varList.isEmptyconcTomTerm()) {
+              output.write(deep,", ");
+
+            }
+    }
+    output.writeln(deep,")");
+
+    output.writeln(": ");
+    generateInstruction(deep+1,instruction,moduleName);
+  }
+
+  protected void buildRef(int deep, TomTerm term, String moduleName) throws IOException {
+    generate(deep,term,moduleName);
+  }
+
+  protected void genDecl(String returnType,
+      String declName,
+      String suffix,
+      String args[],
+      TargetLanguage tlCode,
+      String moduleName) throws IOException {
+    StringBuffer s = new StringBuffer();
+    if(nodeclMode) {
+      return;
+    }
+    s.append("def " + declName + "_" + suffix + "(");
+    for(int i=0 ; i<args.length ; ) {
+      s.append(args[i+1]);
+      i+=2;
+      if(i<args.length) {
+        s.append(", ");
+      }
+    } 
+    String returnValue = getSymbolTable(moduleName).isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
+    s.append("):\n " + returnValue + "\n");
+
+    %match(TargetLanguage tlCode) {
+      TL(_,TextPosition[Line=startLine], TextPosition[Line=endLine]) -> {
+        output.write(0,s, `startLine, `endLine - `startLine);
+        return;
+      }
+
+      ITL(_) -> {  // pas de \n donc pas besoin de reworkTL
+        output.write(s);
+        return;
+      }
+
+    }
+  }
+
 
 }
