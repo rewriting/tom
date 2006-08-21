@@ -62,5 +62,9 @@ axiom.
 auto. reduce.
 auto.
 
-display pair2n.
+
+proof eqrefl: |- \Ax.eq(x,x).
+auto.
+
+proof eqsym: |- \Ax.(\Ay.( eq(x,y) => eq(y,x) )).
 
