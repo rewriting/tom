@@ -392,7 +392,6 @@
 
   <!-- compile adt's -->
   <target name="buildadt" depends="-withstable,-withsrc">
-
     <vascompile srcdir="${src.src}"
                 package="tom.library.adt"
                 destdir="${src.gen}">
@@ -409,7 +408,6 @@
                 destdir="${src.gen}">
       <include name="tom/platform/adt/*.gom"/>
     </gomcompile>
-
     <uptodate property="vascompile.required"
 	    targetfile="${src.gen}/tom/engine/adt/tomsignature/TomSignature.tom" >
 	    <srcfiles dir= "${src.src}/tom/engine/adt" includes="*.gom"/>

@@ -603,17 +603,16 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
     LinkedList constraintList = new LinkedList();
     LinkedList optionList = new LinkedList();
     LinkedList secondOptionList = new LinkedList();
-    TomTerm term = null;
     TomNameList nameList = `concTomName();
     TomName name = null;
     LinkedList list = new LinkedList();
     boolean implicit = false;
-    boolean withArgs = false;
+    boolean anti = false;
 
-    Constraint annotedName = 
-    (astAnnotedName == null)?null:ASTFactory.makeAssignTo(astAnnotedName, line, currentFile());
-    if(annotedName != null)
-        constraintList.add(annotedName);
+    if(astAnnotedName != null) {
+      constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
+    }
+
 }
     :  
         (   // xml term
@@ -674,9 +673,11 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             }
 
 
-        |   // f(...) or f[...]
+        |   // f(...) or f[...] or !f(...) or !f[...]
+
+        ( ANTI_SYM {anti = true; } )?
             name = headSymbol[optionList] 
-            {nameList = `concTomName(nameList*,name);}
+            { nameList = `concTomName(nameList*,name); }
             implicit = args[list,secondOptionList]
             {
               if(implicit) {
@@ -694,8 +695,11 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                         ASTFactory.makeConstraintList(constraintList)
                     );
               }
+              if(anti) {
+                result = `AntiTerm(result);
+              }
             }
-            
+           /* 
        |   // !f(...) or !f[...]
             name = antiHeadSymbol[optionList] 
             {nameList = `concTomName(nameList*,name);}
@@ -717,16 +721,14 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                     ));
               }
             }
-                    
+             */       
             
         |   // (f|g...) 
             // ambiguity with the last rule so use a lookahead
             // if ALTERNATIVE then parse headSymbolList
         {LA(3) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
-            //( (args[null,null]) => implicit = args[list, secondOptionList] {withArgs = true;})?
             implicit = args[list, secondOptionList] 
             {
-							withArgs = true;
               if(implicit) {
                     result = `RecordAppl(
                         ASTFactory.makeOptionList(optionList),
