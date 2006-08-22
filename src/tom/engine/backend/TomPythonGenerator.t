@@ -74,7 +74,7 @@ public class TomPythonGenerator extends TomImperativeGenerator {
   }
 
   protected void buildComment(int deep, String text) throws IOException {
-    output.writeln("#" + text.replace("\n","\n#"));
+    //output.writeln("#" + text.replace("\n","\n#"));
   }
  
   protected void buildDoWhile(int deep, Instruction succes, Expression exp, String moduleName) throws IOException {
