@@ -1,6 +1,6 @@
 termrule appl(t,nil()) -> t.
 termrule appl(one(),cons(t,l)) -> t.
-termrule appl(S(n),cons(t,l)) -> appl(n,t,l).
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
 termrule appl(succ(t),l) -> succ(appl(t,l)).
 termrule appl(pred(t),l) -> pred(appl(t,l)).
 termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
@@ -66,5 +66,13 @@ auto.
 proof eqrefl: |- \Ax.eq(x,x).
 auto.
 
+rule in(l,hack()) -> eq(appl(one(),l),x0).
 proof eqsym: |- \Ax.(\Ay.( eq(x,y) => eq(y,x) )).
+elim.elim.elim.
+focus h1. rule. hack().
+focus h1. rule. reduce.
+axiom.
+rule. reduce.
+theorem eqrefl.
+focus h2. elim. x0. axiom.
 
