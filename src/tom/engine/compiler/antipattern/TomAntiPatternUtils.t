@@ -274,13 +274,16 @@ public class TomAntiPatternUtils {
 			String moduleName) {
 		
 		%match(Constraint c) {
+			AndConstraint(concAnd(x))->{
+				return getTomMappingForConstraint(`x,symbolTable,moduleName);
+		    }
 			AndConstraint(concAnd(a,b*))->{
 				return `And(getTomMappingForConstraint(a,symbolTable,moduleName),
 						getTomMappingForConstraint(AndConstraint(concAnd(b*)),symbolTable,moduleName));
 			}
-			AndConstraint(concAnd())->{
-				return `TrueTL();
-			}
+//			AndConstraint(concAnd())->{
+//				return `TrueTL();
+//			}
 			OrConstraint(concOr(a,b*))->{
 				return `Or(getTomMappingForConstraint(a,symbolTable,moduleName),
 						getTomMappingForConstraint(OrConstraint(concOr(b*)),symbolTable,moduleName));

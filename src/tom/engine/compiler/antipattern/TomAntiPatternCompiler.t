@@ -75,10 +75,10 @@ public class TomAntiPatternCompiler{
 		quantifierFree = (Constraint)`TopDown(EliminateQuantifiedVars(quantifiedVarList,freeVarList)).apply(replacedVariables);
 //		System.out.println("After quantified vars' elimination: " +  tools.formatConstraint(quantifierFree));
 		optimizedCode = (Constraint)`TopDown(ReplaceEquation()).apply(quantifierFree);			
-//		System.out.println("After optimization: " +  tools.formatConstraint(quantifierFree));
+//		System.out.println("After optimization: " +  tools.formatConstraint(optimizedCode));
 		result = (Constraint)`InnermostId(Cleaning()).apply(optimizedCode);			
 		
-//		System.out.println("Final result formated: " + tools.formatConstraint(result));
+//		System.out.println("Final result: " + result);
 		
 		return result;
 	}	
