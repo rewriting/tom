@@ -47,7 +47,7 @@ public class TestAnalyser extends TestCase {
   %include {mutraveler.tom}
   
   private Analyser analyser;
-  private InstructionList subject;
+  private Ast subject;
   private ControlFlowGraph correspondingCfg;
   private	Variable var_x = `Name("x");
 	private	Variable var_y = `Name("y");
@@ -59,19 +59,19 @@ public class TestAnalyser extends TestCase {
 
   public void setUp() {
     analyser = new Analyser();
- 			subject = `concInstruction(
+ 			subject = `concAst(
         If(True(),
-           concInstruction(),
-           concInstruction(
-             LetRef(var_x,g(a()),concInstruction(
+           concAst(),
+           concAst(
+             LetRef(var_x,g(a()),concAst(
                  LetAssign(var_x,g(b())),
                  LetAssign(var_x,f(a(),b())),
-                 Let(var_y,g(Var(var_x)),concInstruction())
+                 Let(var_y,g(Var(var_x)),concAst())
                  )
              )
            )
         ),
-        Let(var_z,f(a(),b()),concInstruction())
+        Let(var_z,f(a(),b()),concAst())
     );
 
 		System.out.println("subject          = " + subject);

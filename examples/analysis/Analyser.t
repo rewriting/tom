@@ -200,7 +200,7 @@ public class Analyser{
 
   //Construction du CFG à partir de l'Ast
   public  ControlFlowGraph constructCFG(AstAbstractType arg) throws Exception{ 
-    %match(Instruction arg) {
+    %match(Ast arg) {
       If(cond,succesInst,failureInst) -> { 
         ControlFlowGraph suc = constructCFG(`succesInst);
         ControlFlowGraph fail= constructCFG(`failureInst);
@@ -244,15 +244,12 @@ public class Analyser{
       Nop() -> {Vertex n = new Vertex(`nil()); return `graph(n);
       }
 
-    }
-
-    %match(InstructionList arg){
-      concInstruction(instr,tail*) -> {
+      concAst(instr,tail*) -> {
         ControlFlowGraph instrGraph = constructCFG(`instr);
         ControlFlowGraph tailGraph = constructCFG(`tail);
         return `conc(instrGraph,list(tailGraph));}
 
-        concInstruction() -> {Vertex n = new Vertex(`nil()); return `graph(n);}
+        concAst() -> {Vertex n = new Vertex(`nil()); return `graph(n);}
     }
 
     throw new Exception("Error during Cfg construction");
