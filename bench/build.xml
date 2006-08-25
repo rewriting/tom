@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Ant for Tom-bench" default="bench" basedir=".">
+  <description>
+    This script prepare a bundle of Tom bench
+  </description>
+
+  <!-- set local properties for this build -->
+  <property file="../local.properties"/>
+
+  <property name="tomfork" value="no"/>
+  <import file="./common.xml"/>
+  
+  <target name="clean.bench" description="Cleans bench directory">
+    <delete dir="${bench.gen}"/>
+    <delete dir="${bench.build}"/>
+  </target>
+
+  <target name="build" depends="init">
+    <fail unless="bench">
+      Please define the "bench" to build
+    </fail>
+    <subant target="build">
+      <filelist dir=".">
+        <file name="${bench}/build.xml"/>
+      </filelist>
+    </subant>
+  </target>
+
+  <target name="bench" 
+          description="Builds the bench (at least some)"
+          depends="sub.all">
+  </target>
+
+  <target name="sub.all">
+    <subant target="build">
+      <fileset dir="." includes="*/build.xml"/>
+    </subant>
+  </target>
+
+  <target name="build.all">
+    <!-- Replace this subant by apply, to make sure memory is released
+    <subant target="build">
+      <fileset dir="." includes="*/build.xml"/>
+    </subant>-->
+    <parallel threadCount='4'>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-Dtom.home=${tom.home}"/>
+      <arg value="-f"/>
+      <fileset dir="." includes="a*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="b*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="c*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="d*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="e*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="f*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="g*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="h*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="i*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="j*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="k*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="l*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="m*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="n*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="o*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="p*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="q*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="r*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="s*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="t*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="u*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="v*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="w*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="x*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="y*/build.xml"/>
+    </apply>
+    <apply executable="ant"
+           parallel="false"
+           failonerror="yes">
+      <arg value="-f"/>
+      <fileset dir="." includes="z*/build.xml"/>
+    </apply>
+  </parallel>
+  </target>
+
+  <target name="clean" 
+          description="Cleans everything in the project" 
+          depends="clean.bench">
+  </target> 
+
+  <target name="junit" description="Runs junit acceptance tests" depends="bench">
+    <tom.junit printsummary="yes"
+               fork="true"
+               haltonfailure="false"
+               failureproperty="tests.failed"
+               showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+	<fileset dir="${bench.dir}/${bench.lib}">
+          <include name="*.jar"/>
+	</fileset>
+        <pathelement location="${bench.build}"/>
+      </classpath>
+      <batchtest>
+        <fileset dir="${bench.gen}">
+          <include name="**/Test*.java"/>
+        </fileset>
+        <fileset dir="${bench.dir}">
+          <include name="**/Test*.java"/>
+          <exclude name="gen/**/*"/>
+        </fileset>
+      </batchtest>
+    </tom.junit>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
+
+</project>
