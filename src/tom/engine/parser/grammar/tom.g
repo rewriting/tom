@@ -25,6 +25,7 @@
 
 grammar Tom;
 
+
 @header { package tom.engine.parser; }
 @lexer::members {
   //this is for Token NUM_INT only
@@ -178,6 +179,9 @@ annotatedTerm
     ;
 
 plainTerm
+options {
+backtrack=true;
+}
     :  
             xmlTerm
 
@@ -401,7 +405,7 @@ variableStar
 
 // _
 placeHolder
-    :   t=UNDERSCORE 
+    :   UNDERSCORE 
     ;
 
 // ( id | id | ...)
@@ -626,25 +630,12 @@ WS  : ( ' '
 
 // tokens to skip : Single Line Comments
 LINE_COMMENT
-//I got it from java grammar
-    : '//' ~('\n'|'\r')* '\r'? '\n' {channel=99;newline();}
+    : '//' ~('\n'|'\r')* '\r'? '\n' {channel=99;}
   ;
 
-// tokens to skip : Multi Lines Comments
-ML_COMMENT
-  : '/*'
-    ( 
-    :
-      { LA(2)!='/' }? '*'
-    | '\r' '\n'   {newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
-    | '\r'      {newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
-    | '\n'      {newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
-    | ~('*'|'\n'|'\r'){if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
-    )*
-    '*/'
-    {channel=99;newline();}
-  ;
-
+COMMENT
+    :   '/*' ( options {greedy=false;} : . )* '*/' {channel=99;}
+    ;
 
 CHARACTER
   : '\'' ( ESC | ~('\''|'\n'|'\r'|'\\') )+ '\''

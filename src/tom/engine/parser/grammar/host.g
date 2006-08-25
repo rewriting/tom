@@ -52,7 +52,7 @@ blockList
         |   strategyConstruct
         |   ruleConstruct
         |   gomSignature
-        |   backquoteTerm
+        //|   backquoteTerm
         |   operator
         |   operatorList
         |   operatorArray
@@ -114,6 +114,7 @@ gomSignature
 }
 ;
 
+/* argh...to enable this, the backquote parser must be rewritten for Pom
 backquoteTerm
     :
         BACKQUOTE_KEYWORD
@@ -123,7 +124,7 @@ backquoteTerm
 #backquoteTerm = #(#[BACKQUOTE,"BACKQUOTE"],t);
         }
     ;
-
+*/
 operator
     : '%op'
 {
@@ -214,50 +215,17 @@ WS  : ( ' '
         {channel=99;}
     ;
 
-// comments
 COMMENT
-    :
-        ( SL_COMMENT | ML_COMMENT )
-        { channel=99;}
-  ;
+    :   '/*' ( options {greedy=false;} : . )* '*/' {channel=99;}
+    ;
 
-protected
-SL_COMMENT
-    :
-        '//'
-        ( ~('\n'|'\r') )*
-        (
-    : '\r' '\n'
-    | '\r'
-    | '\n'
-        )
-        {
-            newline();
-        }
-  ;
-
-protected
-ML_COMMENT
-    :
-        '/*'
-        ( { LA(2)!='/' }? '*'
-        |
-        )
-        (
-            options {
-                greedy=false;  // make it exit upon "*/"
-            }
-        : '\r' '\n' {newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
-        | '\r'    {newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
-        | '\n'    {newline();if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
-        | ~('\n'|'\r'){if(LA(1)==EOF_CHAR) throw new TokenStreamException("premature EOF");}
-        )*
-        '*/'
-;
+LINE_COMMENT
+    : '//' ~('\n'|'\r')* '\r'? '\n' {channel=99;}
+    ;
 
 CODE
     :
-        '%' '['
+        '%['
         ( { LA(2)!='%' }? ']'
         |
         )
@@ -270,7 +238,7 @@ CODE
         | '\n'    {newline();}
         | ~('\n'|'\r')
         )*
-        ']' '%'
+        ']%'
 ;
 // the rule for the filter: just append the text to the buffer
 protected
