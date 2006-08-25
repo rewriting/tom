@@ -7,246 +7,86 @@ public class GomTree17 {
   %gom {
     module Term
     abstract syntax
-		Bool = True() 
-		     | False() 
-    Nat  = Zero()
+		Bool = TRUE() 
+		     | FALSE() 
+    Nat  = ZERO()
          | S(n1:Nat)
-    SNat = ExZero()
-         | ExS(s1:SNat)
-         | ExPlus(s1:SNat,s2:SNat)
-         | ExMult(s1:SNat,s2:SNat)
-         | ExExp(s1:SNat,s2:SNat)
-         | Dec(s1:SNat)
-    Tree = Leaf(n1:Nat)
-         | Node(n1:Nat,n2:Nat,t3:Tree,t4:Tree)
-  }
-
-  public Nat plus(Nat t1, Nat t2) {
-    %match(Nat t1, Nat t2) {
-      x, Zero() -> { return `x; }
-      x, S(y) -> { return `S(plus(x,y)); }
-    }
-    return null;
-  }
-
-  public Nat mult(Nat t1, Nat t2) {
-    %match(Nat t1, Nat t2) {
-      x, Zero() -> { return `Zero(); }
-      x, S(y) -> { return `plus(mult(x,y),x); }
-    }
-    return null;
-  }
-
-  public Nat exp(Nat t1, Nat t2) {
-    %match(Nat t1, Nat t2) {
-      x, Zero() -> { return `S(Zero()); }
-      x, S(y) -> { return `mult(x,exp(x,y)); }
-    }
-    return null;
+         | PLUS(n1:Nat,n2:Nat)
+         | MULT(n1:Nat,n2:Nat)
+         | EXP(n1:Nat,n2:Nat)
+         | PRED17(n1:Nat)
+         | PLUS17(n1:Nat,n2:Nat)
+         | MULT17(n1:Nat,n2:Nat)
+         | EXP17(n1:Nat,n2:Nat)
+         | GETMAX(t1:Tree)
+         | GETVAL(t1:Tree)
+         | EVAL(s1:SNat)
+         | EVAL17(s1:SNat)
+         | EVALSYM17(s1:SNat)
+    SNat = EXZERO()
+         | EXS(s1:SNat)
+         | EXPLUS(s1:SNat,s2:SNat)
+         | EXMULT(s1:SNat,s2:SNat)
+         | EXEXP(s1:SNat,s2:SNat)
+         | DEC(s1:SNat)
+         | EXPAND(s1:SNat)
+         | EXONE()
+    Tree = LEAF(n1:Nat)
+         | NODE(n1:Nat,n2:Nat,t3:Tree,t4:Tree)
+         | BUILDTREE(n1:Nat,n2:Nat)
   }
 
   public Bool equal(Nat t1, Nat t2) {
     if(t1==t2) {
-      return `True();
+      return `TRUE();
     } else {
-      return `False();
+      return `FALSE();
     }
-  }
-
-  public Nat succ17(Nat t1) {
-    %match(Nat t1) {
-      S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(Zero())))))))))))))))) -> { return `Zero(); }
-      x -> { return `S(x); }
-    }
-    return null;
-  }
-
-  public Nat pred17(Nat t1) {
-    %match(Nat t1) {
-      S(x) -> { return `x; }
-      Zero() -> { return `S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(Zero())))))))))))))))); }
-    }
-    return null;
-  }
-
-  public Nat plus17(Nat arg1, Nat arg2) {
-    %match(Nat arg1, Nat arg2) {
-      x, Zero()  -> { return `x; }
-      x, S(y) -> { return `succ17(plus17(x,y)); }
-    }
-    return null;
-  }
-
-  public Nat mult17(Nat arg1, Nat arg2) {
-    %match(Nat arg1, Nat arg2) {
-      x, Zero()  -> { return `Zero(); }
-      x, S(y) -> { return `plus17(x,mult17(x,y)); }
-    }
-    return null;
-  }
-
-  public Nat exp17(Nat arg1, Nat arg2) {
-    %match(Nat arg1, Nat arg2) {
-      x, Zero()  -> { return `succ17(Zero()); }
-      x, S(y) -> { return `mult17(x,exp17(x,y)); }
-    }
-    return null;
-  }
-
-  public Nat eval(SNat arg1) {
-    %match(SNat arg1) {
-      ExZero()  -> { return `Zero(); }
-      ExS(x)  -> { return `S(eval(x)); }
-      ExPlus(x,y)  -> { return `plus(eval(x),eval(y)); }
-      ExMult(x,y)  -> { return `mult(eval(x),eval(y)); }
-      ExExp(x,y)  -> { return `exp(eval(x),eval(y)); }
-    }
-    return null;
-  }
-
-  public Nat eval17(SNat arg1) {
-    %match(SNat arg1) {
-      ExZero()  -> { return `Zero(); }
-      ExS(x)  -> { return `succ17(eval17(x)); }
-      ExPlus(x,y)  -> { return `plus17(eval17(x),eval17(y)); }
-      ExMult(x,y)  -> { return `mult17(eval17(x),eval17(y)); }
-      ExExp(x,y)  -> { return `exp17(eval17(x),eval17(y)); }
-    }
-    return null;
-  }
-
-  public Nat evalsym17(SNat arg1) {
-    %match(SNat arg1) {
-      ExZero() -> { return `Zero(); }
-      ExS(x) -> { return `succ17(evalsym17(x)); }
-      ExPlus(x,y) -> { return `plus17(evalsym17(x),evalsym17(y)); }
-      ExMult(x,ExZero()) -> { return `Zero(); }
-      ExMult(x,ExS(y)) -> { return `evalsym17(ExPlus(ExMult(x,y),x)); }
-      ExMult(x,ExPlus(y,z)) -> { return `evalsym17(ExPlus(ExMult(x,y),ExMult(x,z))); }
-      ExMult(x,ExMult(y,z)) -> { return `evalsym17(ExMult(ExMult(x,y),z)); }
-      ExMult(x,ExExp(y,z)) -> { return `evalsym17(ExMult(x,dec(ExExp(y,z)))); }
-      ExExp(x,ExZero()) -> { return `succ17(Zero()); }
-      ExExp(x,ExS(y)) -> { return `evalsym17(ExMult(ExExp(x,y),x)); }
-      ExExp(x,ExPlus(y,z)) -> { return `evalsym17(ExMult(ExExp(x,y),ExExp(x,z))); }
-      ExExp(x,ExMult(y,z)) -> { return `evalsym17(ExExp(ExExp(x,y),z)); }
-      ExExp(x,ExExp(y,z)) -> { return `evalsym17(ExExp(x,dec(ExExp(y,z)))); }
-    }
-    return null;
-  }
-  
-  public SNat dec(SNat t) {
-    System.out.println("dec: " + t);
-    %match(SNat t) {
-      ExExp(x,ExZ) -> { return `ExS(ExZ); }
-      ExExp(x,ExS(y)) -> { return `ExMult(ExExp(x,y),x); }
-      ExExp(x,ExPlus(y,z)) -> { return `ExMult(ExExp(x,y),ExExp(x,z)); }
-      ExExp(x,ExMult(y,z)) -> { return `dec(ExExp(ExExp(x,y),z)); }
-      ExExp(x,ExExp(y,z)) -> { return `dec(ExExp(x, dec(ExExp(y,z)))); }
-    }
-    return null;
-  }
-
-  public Nat evalexp17(SNat x) {
-    return eval17(expand(x));
-  }
-
-  public SNat expand(SNat arg1) {
-    %match(SNat arg1) {
-      ExZero() -> { return `ExZero(); } 
-      ExS(x) -> { return `ExPlus(ExS(ExZero()),expand(x)); }
-      ExPlus(x,y) -> { return `ExPlus(expand(x),expand(y)); }
-      ExMult(x,ExZero()) -> { return `ExZero(); }
-      ExMult(x,ExS(ExZero())) -> { return `expand(x); }
-      ExMult(x,ExPlus(y,z)) -> { return `expand(ExPlus(ExMult(x,y),ExMult(x,z))); }
-      ExMult(x,y) -> { return `expand(ExMult(x,expand(y))); }
-      ExExp(x,ExZero()) -> { return `ExS(ExZero()); }
-      ExExp(x,ExS(ExZero())) -> { return `expand(x); }
-      ExExp(x,ExPlus(y,z)) -> { return `expand(ExMult(ExExp(x,y),ExExp(x,z))); }
-      ExExp(x,y) -> { return `expand(ExExp(x, expand(y))); }
-    }
-    return null;
-  }
-  
-  public Nat getval(Tree t) {
-    %match(Tree t) {
-      Leaf(val) -> { return `val; }
-      Node(val,_,_,_) -> { return `val; }
-    }
-    return null;
-  }
-  
-  public Nat getmax(Tree t) {
-    %match(Tree t) {
-      Leaf(val) -> { return `val; }
-      Node(_,max,_,_) -> { return `max; }
-    }
-    return null;
-  }
-
-  public Tree buildtree(Nat t1, Nat t2) {
-    %match(Nat t1, Nat t2) {
-      Zero(),val   -> { return `Leaf(val); }
-      S(x), y -> {
-        Tree left = `buildtree(x, y);	
-        Nat max2 = getmax(left);
-        Tree right = `buildtree(x, succ17(max2));
-        Nat val2 = getval(left);
-        Nat val3 = getval(right);
-        Nat val  = plus17(val2, val3);
-        Nat max  = getmax(right);
-        return `Node(val, max, left, right);
-      }
-    }
-    return null;
-  }
-
-  public Nat calctree17(Nat x) {
-    return `mult17(exp17(S(S(Zero())), pred17(x)), pred17(exp17(S(S(Zero())),x)));
   }
 
   public SNat int2SNat(int n) {
-    SNat N = `ExZero();
+    SNat N = `EXZERO();
     for(int i=0 ; i<n ; i++) {
-      N = `ExS(N);
+      N = `EXS(N);
     }
     return N;
   }
 
-  public void run_evalsym17(int max) {
+  public void run_EVALSYM17(int max) {
     System.out.print(max);
     long startChrono = System.currentTimeMillis();
-    SNat n = `ExExp(int2SNat(2),int2SNat(max));
-    Nat t1 = eval17(n);
-    Nat t2 = evalsym17(n);
+    SNat n = `EXEXP(int2SNat(2),int2SNat(max));
+    Nat t1 = EVAL17(n);
+    Nat t2 = EVALSYM17(n);
     Bool res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t evalsym17 " + res);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t EVALSYM17 " + res);
     System.out.println("t1 = " + t1);
     System.out.println("t2 = " + t2);
   }
 
-  public void run_evalexp17(int max) {
+  public void run_EVALEXP17(int max) {
     System.out.print(max);
     long startChrono = System.currentTimeMillis();
-    SNat n = `ExExp(int2SNat(2),int2SNat(max));
-    Nat t1 = eval17(n);
-    Nat t2 = evalexp17(n);
+    SNat n = `EXEXP(int2SNat(2),int2SNat(max));
+    Nat t1 = EVAL17(n);
+    Nat t2 = EVALEXP17(n);
     Bool res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t evalexp17 " + res);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t EVALEXP17 " + res);
     System.out.println("t1 = " + t1);
     System.out.println("t2 = " + t2);
   }
 
-  public void run_evaltree17(int max) {
+  public void run_EVALtree17(int max) {
     System.out.print(max);
     long startChrono = System.currentTimeMillis();
-    Nat n = eval(int2SNat(max));
+    Nat n = EVAL(int2SNat(max));
     Nat t1 = calctree17(n);
-    Nat t2 = getval(buildtree(n,`Zero()));
+    Nat t2 = GETVAL(BUILDTREE(n,`ZERO()));
     Bool res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t evaltree17 " + res);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t EVALtree17 " + res);
     System.out.println("t1 = " + t1);
     System.out.println("t2 = " + t2);
   }
@@ -260,8 +100,143 @@ public class GomTree17 {
       return;
     }
     GomTree17 gomtest = new GomTree17();
-    gomtest.run_evalsym17(max);
-    gomtest.run_evalexp17(max);
-    gomtest.run_evaltree17(max);
+    gomtest.run_EVALSYM17(max);
+    gomtest.run_EVALEXP17(max);
+    gomtest.run_EVALtree17(max);
+  }
+  
+  public Tree BUILDTREE(Nat t1, Nat t2) {
+    %match(Nat t1, Nat t2) {
+      ZERO(),Val   -> { return `LEAF(Val); }
+      S(X), Y -> {
+        Tree Left = BUILDTREE(`X, `Y);	
+        Nat Max2 = GETMAX(Left);
+        Tree Right= BUILDTREE(`X, succ17(Max2));
+        Nat Val2 = GETVAL(Left);
+        Nat Val3 = GETVAL(Right);
+        Nat Val  = PLUS17(Val2, Val3);
+        Nat Max  = GETMAX(Right);
+        return `NODE(Val, Max, Left, Right);
+      }
+    }
+    return null;
+  }
+
+  %rule {
+    PLUS(x,ZERO()) -> x 
+    PLUS(x,S(y)) -> S(PLUS(x,y)) 
+  }
+  
+  %rule {
+    MULT(x,ZERO()) -> ZERO()
+    MULT(x,S(y)) -> PLUS(MULT(x,y),x) 
+  }
+  
+  %rule {
+    EXP(x,ZERO()) -> S(ZERO()) 
+    EXP(x,S(y)) -> MULT(x,EXP(x,y)) 
+  }
+  
+  public static Nat succ17(Nat arg) {
+    %match(Nat arg) {
+      S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(ZERO())))))))))))))))) -> { return `ZERO(); }
+      x -> { return `S(x); }
+    }
+    return null;
+  }
+
+  
+  %rule {
+    PRED17(S(x)) -> x 
+    PRED17(ZERO()) -> S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(ZERO())))))))))))))))) 
+  }
+  
+  %rule {
+    PLUS17(x,ZERO()) -> x 
+    PLUS17(x,S(y)) -> succ17(PLUS17(x,y)) 
+  }
+
+    
+  %rule {
+    MULT17(x,ZERO()) -> ZERO()
+    MULT17(x,S(y)) -> PLUS17(x,MULT17(x,y)) 
+  }
+  
+  %rule {
+    EXP17(x,ZERO()) -> succ17(ZERO()) 
+    EXP17(x,S(y)) -> MULT17(x,EXP17(x,y)) 
+  }
+  
+  %rule {
+    EVAL(EXZERO()) -> ZERO()
+    EVAL(EXS(xs)) -> S(EVAL(xs)) 
+    EVAL(EXPLUS(xs,ys)) -> PLUS(EVAL(xs), EVAL(ys)) 
+    EVAL(EXMULT(xs,ys)) -> MULT(EVAL(xs), EVAL(ys)) 
+    EVAL(EXEXP(xs,ys)) -> EXP(EVAL(xs), EVAL(ys)) 
+  }
+  
+  %rule {
+    EVALSYM17(EXZERO()) -> ZERO()
+    EVALSYM17(EXS(Xs)) -> succ17(EVALSYM17(Xs)) 
+    EVALSYM17(EXPLUS(Xs,Ys)) -> PLUS17(EVALSYM17(Xs),EVALSYM17(Ys)) 
+    EVALSYM17(EXMULT(Xs,EXZERO())) -> ZERO()
+    EVALSYM17(EXMULT(Xs,EXS(Ys))) -> EVALSYM17(EXPLUS(EXMULT(Xs,Ys),Xs)) 
+    EVALSYM17(EXMULT(Xs,EXPLUS(Ys,Zs))) -> EVALSYM17(EXPLUS(EXMULT(Xs,Ys),EXMULT(Xs,Zs))) 
+    EVALSYM17(EXMULT(Xs,EXMULT(Ys,Zs))) -> EVALSYM17(EXMULT(EXMULT(Xs,Ys),Zs)) 
+    EVALSYM17(EXMULT(Xs,EXEXP(Ys,Zs))) -> EVALSYM17(EXMULT(Xs,DEC(EXEXP(Ys,Zs)))) 
+    EVALSYM17(EXEXP(Xs,EXZERO())) -> succ17(ZERO()) 
+    EVALSYM17(EXEXP(Xs,EXS(Ys))) -> EVALSYM17(EXMULT(EXEXP(Xs,Ys),Xs)) 
+    EVALSYM17(EXEXP(Xs,EXPLUS(Ys,Zs))) -> EVALSYM17(EXMULT(EXEXP(Xs,Ys),EXEXP(Xs,Zs))) 
+    EVALSYM17(EXEXP(Xs,EXMULT(Ys,Zs))) -> EVALSYM17(EXEXP(EXEXP(Xs,Ys),Zs)) 
+    EVALSYM17(EXEXP(Xs,EXEXP(Ys,Zs))) -> EVALSYM17(EXEXP(Xs,DEC(EXEXP(Ys,Zs))))  
+  }
+
+  public Nat EVALEXP17(Nat Xs) {
+    return EVAL17(EXPAND(Xs));
+  }
+    
+  %rule {
+      DEC(EXEXP(Xs,EXZERO)) -> EXS(EXZERO)
+      DEC(EXEXP(Xs,EXS(Ys))) -> EXMULT(EXEXP(Xs,Ys),Xs)
+      DEC(EXEXP(Xs,EXPLUS(Ys,Zs))) -> EXMULT(EXEXP(Xs,Ys),EXEXP(Xs,Zs))
+      DEC(EXEXP(Xs,EXMULT(Ys,Zs))) -> DEC(EXEXP(EXEXP(Xs,Ys),Zs))
+      DEC(EXEXP(Xs,EXEXP(Ys,Zs))) -> DEC(EXEXP(Xs, DEC(EXEXP(Ys,Zs)))) 
+  }
+  %rule {
+    EVAL17(EXONE()) -> S(ZERO()) 
+    EVAL17(EXZERO()) -> ZERO()
+    EVAL17(EXS(xs)) -> succ17(EVAL17(xs))
+    EVAL17(EXPLUS(xs,ys)) -> PLUS17(EVAL17(xs), EVAL17(ys))
+    EVAL17(EXMULT(xs,ys)) -> MULT17(EVAL17(xs), EVAL17(ys))
+    EVAL17(EXEXP(xs,ys)) -> EXP17(EVAL17(xs), EVAL(ys))
+  }
+
+  %rule {
+    EXPAND(EXZERO()) -> EXZERO() 
+    EXPAND(EXONE()) -> EXONE() 
+    EXPAND(EXS(Xs)) -> EXPLUS(EXONE(),EXPAND(Xs)) 
+    EXPAND(EXPLUS(Xs,Ys)) -> EXPLUS(EXPAND(Xs),EXPAND(Ys)) 
+    EXPAND(EXMULT(Xs,EXZERO())) -> EXZERO() 
+    EXPAND(EXMULT(Xs,EXONE())) -> EXPAND(Xs) 
+    EXPAND(EXMULT(Xs,EXPLUS(Ys,Zs))) -> EXPAND(EXPLUS(EXMULT(Xs,Ys),EXMULT(Xs,Zs))) 
+    EXPAND(EXMULT(Xs,Ys)) -> EXPAND(EXMULT(Xs,EXPAND(Ys))) 
+    EXPAND(EXEXP(Xs,EXZERO())) -> EXONE() 
+    EXPAND(EXEXP(Xs,EXONE())) -> EXPAND(Xs) 
+    EXPAND(EXEXP(Xs,EXPLUS(Ys,Zs))) -> EXPAND(EXMULT(EXEXP(Xs,Ys),EXEXP(Xs,Zs))) 
+    EXPAND(EXEXP(Xs,Ys)) -> EXPAND(EXEXP(Xs, EXPAND(Ys))) 
+  }
+
+  %rule {
+    GETVAL(LEAF(Val)) -> Val
+    GETVAL(NODE(Val,Max,Left,Right)) -> Val
+  }
+
+  %rule {
+    GETMAX(LEAF(Val)) -> Val
+    GETMAX(NODE(Val,Max,Left,Right)) -> Max
+  }
+
+  public Nat calctree17(Nat X) {
+    return MULT17(EXP17(`S(S(ZERO())), pred17(X)),pred17(EXP17(`S(S(ZERO())),X)));
   }
 }
