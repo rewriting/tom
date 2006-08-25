@@ -11,8 +11,16 @@ public class Main {
     }
     // Generate something for metapost
     GomTree17 gomtest = new GomTree17();
-    for (int i = 0; i < max; i++) {
-      gomtest.run(i);
+    for (int i=1; i <= max; i++) {
+      gomtest.run_evalsym17(i);
+    }
+    System.out.println();
+    for (int i=1; i <= max; i++) {
+      gomtest.run_evalexp17(i);
+    }
+    System.out.println();
+    for (int i=1; i <= max; i++) {
+      gomtest.run_evaltree17(i);
     }
   }
 }
