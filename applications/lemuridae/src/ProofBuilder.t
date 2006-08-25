@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import java.io.*;
 import antlr.*;
@@ -783,55 +784,84 @@ b: {
 
   /* ------------------------------------------------------------------ */
 
+  private class ProofEnv implements Cloneable {
+    public Tree tree = null;
+    LinkedList<Position> openGoals = null;
+    public boolean focus_left = false;  // true if focus on one hypothesis, false if on a conclusion
+    public int focus = 1;
+    public int currentGoal = 0;
+    
+    public Object clone() {
+      ProofEnv res = new ProofEnv();
+      res.tree = tree;
+      res.openGoals = (LinkedList<Position>) openGoals.clone();
+      res.focus_left = focus_left;
+      res.focus = focus;
+      res.currentGoal = currentGoal;
+      return res;
+    }
+  }
+  
   // builds the proof by manipulating a tree
   private Tree buildProofTree(Sequent goal) {
-
+    
+    // environnement stack to allow the "undo" command and incomplete proof save
+    Stack<ProofEnv> envStack = new Stack<ProofEnv>();
+    ProofEnv env = new ProofEnv();
+    
     // initialisations
-    Tree tree = `rule("open", premisses(), goal, goal.getc().getHeadcontext()); 
-    LinkedList<Position> openGoals = new LinkedList<Position>(); 
-    try { MuTraveler.init(`TopDown(getOpenPositions(openGoals))).visit(tree); }
+    env.focus_left = false;
+    env.focus = 1;
+    env.currentGoal = 0;
+    env.openGoals = new LinkedList<Position>();
+    env.tree = `rule("open", premisses(), goal, goal.getc().getHeadcontext());
+    try { MuTraveler.init(`TopDown(getOpenPositions(env.openGoals))).visit(env.tree); }
     catch (VisitFailure e) { e.printStackTrace(); }
-
-    boolean focus_left = false; // true if focus on one hypothesis, false if on a conclusion
-    int focus = 1;
-    int currentGoal = 0;
-
+   
     // main loop
-    while(openGoals.size() > 0) {
+    while(env.openGoals.size() > 0) {
+      Tree tree = null;
+
       // printing open goals
       System.out.println("Open goals : ");
-      %match(LinkedList openGoals) {
+      LinkedList<Position> og = env.openGoals;
+      %match(LinkedList og) {
         (_*,p,_*) -> {
           Position pos = (Position) `p;
-          System.out.println("\t"+PrettyPrinter.prettyPrint(getSequentByPosition(tree, pos)));
+          System.out.println("\t"+PrettyPrinter.prettyPrint(getSequentByPosition(env.tree, pos)));
         }
       }
 
       // " + openGoals.size() + ", currentGoal = " + currentGoalgets current goal
-      Position currentPos = openGoals.get(currentGoal);
-      goal = getSequentByPosition(tree, currentPos);
+      Position currentPos = env.openGoals.get(env.currentGoal);
+      goal = getSequentByPosition(env.tree, currentPos);
 
       // pritty prints the current goal 
       ArrayList<Prop> hyp = getHypothesis(goal);
       ArrayList<Prop> concl = getConclusions(goal);
-      Prop active = focus_left ?  hyp.get(focus-1) : concl.get(focus-1);  // for conveniance
-      System.out.println("\n" + prettyGoal(hyp, concl, focus_left, focus) + "\n");
+      Prop active = env.focus_left ?  hyp.get(env.focus-1) : concl.get(env.focus-1);  // for conveniance
+      System.out.println("\n" + prettyGoal(hyp, concl, env.focus_left, env.focus) + "\n");
 
       System.out.print("proof> ");
       ProofCommand pcommand;
       try {pcommand = Utils.getProofCommand(); }
       catch (Exception e) { System.out.println("Unknown command : " + e); continue; }
 
-      Tree old_tree = tree;
-
       /* begin of the big switch */
       %match(ProofCommand pcommand) {
+
+        proofCommand("undo") -> {
+          if (envStack.size() > 0) {
+            env = envStack.pop();
+          }
+        }
+        
         proofCommand("next") -> {
-          currentGoal = (currentGoal+1 ) % openGoals.size();
+          env.currentGoal = (env.currentGoal+1 ) % env.openGoals.size();
         }
 
         proofCommand("display") -> {
-          try { PrettyPrinter.display(tree,newTermRules); }
+          try { PrettyPrinter.display(env.tree, newTermRules); }
           catch (Exception e) { System.out.println("display failed : " + e); }
         }
 
@@ -843,12 +873,12 @@ b: {
           catch (NumberFormatException e) { continue; }
 
           if (hs == 'h' && n <= hyp.size()) {
-            focus_left = true;
-            focus = n;
+            env.focus_left = true;
+            env.focus = n;
           } 
           else if (hs == 'c' && n <= concl.size()) {
-            focus_left = false;
-            focus = n;
+            env.focus_left = false;
+            env.focus = n;
           }
         }
 
@@ -861,7 +891,7 @@ b: {
             int rule_hs = rule.geths();
 
             // same side condition
-            if (tds != null && ((rule_hs==0 && focus_left) || (rule_hs==1 && !focus_left))) 
+            if (tds != null && ((rule_hs==0 && env.focus_left) || (rule_hs==1 && !env.focus_left))) 
             {
               System.out.println("\n- rule " + i + " :\n");
               System.out.println(PrettyPrinter.prettyRule(rule));
@@ -874,7 +904,7 @@ b: {
         /* applying one of the custom rules */
         ruleCommand(n) -> {
           try {
-            tree = ruleCommand(tree, currentPos, active, focus_left, `n);
+            tree = ruleCommand(env.tree, currentPos, active, env.focus_left, `n);
           } catch (Exception e) {
             System.out.println("Can't apply custom rule "+ `n +": " + e.getMessage());
           }
@@ -883,7 +913,7 @@ b: {
         /* elim case */
         proofCommand("elim") -> {
           try {
-            tree = elimCommand(tree,currentPos, active, focus_left); 
+            tree = elimCommand(env.tree, currentPos, active, env.focus_left); 
           } catch (Exception e) {
             System.out.println("Can't apply elim: " + e.getMessage());
           }
@@ -892,7 +922,7 @@ b: {
         /* auto case */
         proofCommand("auto") -> {
           try {
-            tree = autoCommand(tree,currentPos, active, focus_left); 
+            tree = autoCommand(env.tree, currentPos, active, env.focus_left); 
           } catch (Exception e) {
             System.out.println("Can't apply auto: " + e.getMessage());
             e.printStackTrace();
@@ -902,7 +932,7 @@ b: {
         /* Axiom case */
         proofCommand("axiom") -> {
           try {
-            tree = axiomCommand(tree,currentPos, active, focus_left);
+            tree = axiomCommand(env.tree, currentPos, active, env.focus_left);
           } catch (Exception e) {
             System.out.println("can't apply rule axiom : " + e.getMessage());
           }
@@ -911,7 +941,7 @@ b: {
         /* Bottom case */
         proofCommand("bottom") -> {
           try {
-            tree = bottomCommand(tree,currentPos, active, focus_left);
+            tree = bottomCommand(env.tree, currentPos, active, env.focus_left);
           } catch (Exception e) {
             System.out.println("can't apply bottom rule : " + e.getMessage());
           }
@@ -920,7 +950,7 @@ b: {
         /* top case */
         proofCommand("top") -> {
           try {
-            tree = topCommand(tree,currentPos, active, focus_left);
+            tree = topCommand(env.tree, currentPos, active, env.focus_left);
           } catch (Exception e) {
             System.out.println("can't apply top rule : " + e.getMessage());
           }
@@ -929,7 +959,7 @@ b: {
         /* cut case */
         cutCommand(prop) -> {
           try {
-            tree = cutCommand(tree,currentPos, active, focus_left, `prop);
+            tree = cutCommand(env.tree, currentPos, active, env.focus_left, `prop);
           } catch (Exception e) {
             System.out.println("can't apply cut rule : " + e.getMessage());
           }
@@ -938,7 +968,7 @@ b: {
         /* experimental theorem case */
         theoremCommand(name) -> {
           try {
-            tree = theoremCommand(tree,currentPos, active, focus_left, `name);
+            tree = theoremCommand(env.tree, currentPos, active, env.focus_left, `name);
           } catch(Exception e) {
             System.out.println("can't apply theorem " + `name + " : " + e.getMessage());
           }
@@ -947,7 +977,7 @@ b: {
         /* experimental reduce case */
         proofCommand("reduce") -> {
           try {
-            tree = reduceCommand(tree,currentPos, active, focus_left);
+            tree = reduceCommand(env.tree, currentPos, active, env.focus_left);
           } catch (Exception e) {
             System.out.println("can't apply cut rule : " + e.getMessage());
           }
@@ -956,21 +986,25 @@ b: {
 
       } /* end of the big command switch */
 
-      if(tree != old_tree) {
+      if(tree != null && tree != env.tree) {
         // get open positions
-        openGoals.remove(currentPos);
-        ((MuStrategy)currentPos.getOmega(`TopDown(getOpenPositions(openGoals)))).apply(tree);
-        currentGoal = openGoals.size()-1;
+        envStack.push(env);
+        env = (ProofEnv) env.clone();
+ 
+        env.tree = tree;       
+        env.openGoals.remove(currentPos);
+        ((MuStrategy)currentPos.getOmega(`TopDown(getOpenPositions(env.openGoals)))).apply(env.tree);
+        env.currentGoal = env.openGoals.size()-1;
 
         // reset focus
-        focus_left = false;
-        focus = 1;
+        env.focus_left = false;
+        env.focus = 1;
       }
 
 
     } // while still open goals
 
-    return tree;
+    return env.tree;
   }
 
 

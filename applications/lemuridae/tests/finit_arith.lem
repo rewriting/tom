@@ -21,7 +21,7 @@ hered.
 rule Null(0) -> \T.
 rule Null(succ(x)) -> \B.
 rule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
-rule union(A,B)) -> in(l,A) \/ in(l,B).
+rule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
 rule in(l,supset(A,B)) -> in(l,A) => in(l,B).
 rule in(l,emptyset()) -> \B.
 rule in(l,P(a)) -> \En.(in(cons(n,l),A)).
