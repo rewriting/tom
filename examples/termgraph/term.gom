@@ -1,0 +1,18 @@
+module term
+imports String int
+abstract syntax
+Term = a() | b() | c() | d()
+     | f(arg1:Term)
+     | g(arg1:Term, arg2:Term)
+     | labTerm(label:String,term:Term)
+     | refTerm(label:String)
+     | posTerm(int*)
+     | expTerm(term:Term)
+
+expTerm:make(term) {
+  termgraph.term.types.Term termWithPos = termgraph.Tool.expand(term);
+  //to avoid unaccessible real_make statement
+  if(! termWithPos.equals(term)) return termWithPos;
+ }
+
+
