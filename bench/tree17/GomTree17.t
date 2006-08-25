@@ -7,8 +7,8 @@ public class GomTree17 {
   %gom {
     module Term
     abstract syntax
-		Bool = TRUE() 
-		     | FALSE() 
+    Bool = TRUE() 
+         | FALSE() 
     Nat  = ZERO()
          | S(n1:Nat)
          | PLUS(n1:Nat,n2:Nat)
@@ -52,7 +52,7 @@ public class GomTree17 {
     return N;
   }
 
-  public void run_EVALSYM17(int max) {
+  public void run_evalsym17(int max) {
     System.out.print(max);
     long startChrono = System.currentTimeMillis();
     SNat n = `EXEXP(int2SNat(2),int2SNat(max));
@@ -60,12 +60,12 @@ public class GomTree17 {
     Nat t2 = EVALSYM17(n);
     Bool res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t EVALSYM17 " + res);
-    System.out.println("t1 = " + t1);
-    System.out.println("t2 = " + t2);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t gom evalsym17 " + res);
+    //System.out.println("t1 = " + t1);
+    //System.out.println("t2 = " + t2);
   }
 
-  public void run_EVALEXP17(int max) {
+  public void run_evalexp17(int max) {
     System.out.print(max);
     long startChrono = System.currentTimeMillis();
     SNat n = `EXEXP(int2SNat(2),int2SNat(max));
@@ -73,12 +73,12 @@ public class GomTree17 {
     Nat t2 = EVALEXP17(n);
     Bool res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t EVALEXP17 " + res);
-    System.out.println("t1 = " + t1);
-    System.out.println("t2 = " + t2);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t gom evalexp17 " + res);
+    //System.out.println("t1 = " + t1);
+    //System.out.println("t2 = " + t2);
   }
 
-  public void run_EVALtree17(int max) {
+  public void run_evaltree17(int max) {
     System.out.print(max);
     long startChrono = System.currentTimeMillis();
     Nat n = EVAL(int2SNat(max));
@@ -86,9 +86,9 @@ public class GomTree17 {
     Nat t2 = GETVAL(BUILDTREE(n,`ZERO()));
     Bool res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t EVALtree17 " + res);
-    System.out.println("t1 = " + t1);
-    System.out.println("t2 = " + t2);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t gom evaltree17 " + res);
+    //System.out.println("t1 = " + t1);
+    //System.out.println("t2 = " + t2);
   }
 
   public final static void main(String[] args) {
@@ -100,9 +100,9 @@ public class GomTree17 {
       return;
     }
     GomTree17 gomtest = new GomTree17();
-    gomtest.run_EVALSYM17(max);
-    gomtest.run_EVALEXP17(max);
-    gomtest.run_EVALtree17(max);
+    gomtest.run_evalsym17(max);
+    gomtest.run_evalexp17(max);
+    gomtest.run_evaltree17(max);
   }
   
   public Tree BUILDTREE(Nat t1, Nat t2) {
@@ -191,7 +191,7 @@ public class GomTree17 {
     EVALSYM17(EXEXP(Xs,EXEXP(Ys,Zs))) -> EVALSYM17(EXEXP(Xs,DEC(EXEXP(Ys,Zs))))  
   }
 
-  public Nat EVALEXP17(Nat Xs) {
+  public Nat EVALEXP17(SNat Xs) {
     return EVAL17(EXPAND(Xs));
   }
     
@@ -237,6 +237,6 @@ public class GomTree17 {
   }
 
   public Nat calctree17(Nat X) {
-    return MULT17(EXP17(`S(S(ZERO())), pred17(X)),pred17(EXP17(`S(S(ZERO())),X)));
+    return MULT17(EXP17(`S(S(ZERO())), PRED17(X)),PRED17(EXP17(`S(S(ZERO())),X)));
   }
 }

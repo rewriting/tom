@@ -265,9 +265,9 @@ public class ATermTree17 {
     ATerm t2 = evalsym17(n);
     ATerm res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t evalsym17 " + res);
-    System.out.println("t1 = " + t1);
-    System.out.println("t2 = " + t2);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t aterm evalsym17 " + res);
+    //System.out.println("t1 = " + t1);
+    //System.out.println("t2 = " + t2);
   }
 
   public void run_evalexp17(int max) {
@@ -278,9 +278,9 @@ public class ATermTree17 {
     ATerm t2 = evalexp17(n);
     ATerm res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t evalexp17 " + res);
-    System.out.println("t1 = " + t1);
-    System.out.println("t2 = " + t2);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t aterm evalexp17 " + res);
+    //System.out.println("t1 = " + t1);
+    //System.out.println("t2 = " + t2);
   }
 
   public void run_evaltree17(int max) {
@@ -291,9 +291,9 @@ public class ATermTree17 {
     ATerm t2 = getval(buildtree(n,`z()));
     ATerm res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t evaltree17 " + res);
-    System.out.println("t1 = " + t1);
-    System.out.println("t2 = " + t2);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t aterm evaltree17 " + res);
+    //System.out.println("t1 = " + t1);
+    //System.out.println("t2 = " + t2);
   }
   public ATerm buildtree(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {
