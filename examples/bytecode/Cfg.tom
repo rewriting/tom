@@ -5,13 +5,13 @@
 
 /**
  * This strategy fills in the `Map' m with the `ConsInstructionList'
- * corresponding to each `LabeledInstruction'.
+ * corresponding to each `Anchor'.
  * Thus, we can retrieve the `ConsInstructionList' from a `Label'.
  * @param m the map to be filled.
  */
 %strategy BuildLabelMap(m:Map) extends Identity() {
   visit TInstructionList {
-    c@ConsInstructionList(LabeledInstruction[label=l], _) -> {
+    c@ConsInstructionList(Anchor(l), _) -> {
       m.put(`l, `c);
     }
   }

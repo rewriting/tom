@@ -26,7 +26,7 @@ public class Analysis {
           (Iload|Lload|Fload|Dload|Aload)(_) -> {
             return `c;
           }
-          (Iload_0|Lload_0|Fload_0|Dload_0|Aload_0)() -> {
+/*          (Iload_0|Lload_0|Fload_0|Dload_0|Aload_0)() -> {
             return `c;
           }
           (Iload_1|Lload_1|Fload_1|Dload_1|Aload_1)() -> {
@@ -37,7 +37,7 @@ public class Analysis {
           }
           (Iload_3|Lload_3|Fload_3|Dload_3|Aload_3)() -> {
             return `c;
-          }
+          }*/
         }
       }
     }
@@ -55,7 +55,7 @@ public class Analysis {
             map.put(var, new Integer(`i));
             return `c;
           }
-          (Istore_0|Lstore_0|Fstore_0|Dstore_0|Astore_0)() -> {
+/*          (Istore_0|Lstore_0|Fstore_0|Dstore_0|Astore_0)() -> {
             map.put(var, new Integer(0));
             return `c;
           }
@@ -70,7 +70,7 @@ public class Analysis {
           (Istore_3|Lstore_3|Fstore_3|Dstore_3|Astore_3)() -> {
             map.put(var, new Integer(3));
             return `c;
-          }
+          }*/
         }
       }
     }
@@ -83,11 +83,11 @@ public class Analysis {
       c@ConsInstructionList(ins, _) -> {
         int index = ((Integer)map.get(var)).intValue();
         TInstruction inst = `ins;
-        %match(TInstruction inst) {
-          (Istore|Lstore|Fstore|Dstore|Astore|Iload|Lload|Fload|Dload|Aload)(index) -> {
+        %match(TInstruction inst, int index) {
+          (Istore|Lstore|Fstore|Dstore|Astore|Iload|Lload|Fload|Dload|Aload)(i), i -> {
             return `c;
           }
-          (Istore_0|Lstore_0|Fstore_0|Dstore_0|Astore_0|Iload_0|Lload_0|Fload_0|Dload_0|Aload_0)() -> {
+/*          (Istore_0|Lstore_0|Fstore_0|Dstore_0|Astore_0|Iload_0|Lload_0|Fload_0|Dload_0|Aload_0)() -> {
             if(index == 0)
               return `c;
           }
@@ -102,7 +102,7 @@ public class Analysis {
           (Istore_3|Lstore_3|Fstore_3|Dstore_3|Astore_3|Iload_3|Lload_3|Fload_3|Dload_3|Aload_3)() -> {
             if(index == 3)
               return `c;
-          }
+          }*/
         }
       }
     }
@@ -123,7 +123,7 @@ public class Analysis {
 
         System.out.println("removes : " + head);
 
-        %match(TInstruction head) {
+/*        %match(TInstruction head) {
           LabeledInstruction(l, ins) -> {
             // Try to remove the last instruction, replace it with a nop.
             if(`tail.isEmptyInstructionList())
@@ -133,7 +133,7 @@ public class Analysis {
             return `ConsInstructionList(LabeledInstruction(l, tail.getHeadInstructionList()), tail.getTailInstructionList());
           }
         }
-
+*/
         return `tail;
       }
     }
@@ -265,7 +265,7 @@ public class Analysis {
 
       String impClassName = args[0] + "Imp";
       System.out.println("Generating improved class " + impClassName + " ...");
-      cImproved = renameClass(c, impClassName);
+      cImproved = renameClass(cImproved, impClassName);
 
       BytecodeGenerator bg = new BytecodeGenerator();
       byte[] code = bg.toBytecode(cImproved);

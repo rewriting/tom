@@ -84,10 +84,10 @@ public class CFGViewer {
   private static void printDotInstruction(TInstruction ins, String id, Writer out) {
     try {
       %match(TInstruction ins) {
-        LabeledInstruction(_, realIns) -> {
-          printDotInstruction(`realIns, id, out);
-          return;
-        }
+//        LabeledInstruction(_, realIns) -> {
+//          printDotInstruction(`realIns, id, out);
+//          return;
+//        }
 
         (Bipush|Sipush|Newarray)(operand) -> {
           out.write(%[
@@ -284,7 +284,7 @@ public class CFGViewer {
    * Generates a control flow graph for each method of the given class.
    * @param clazz the gom-term subject representing the class.
    */
-  private static void classToDot(TClass clazz) {
+  public static void classToDot(TClass clazz) {
     Writer w = new BufferedWriter(new OutputStreamWriter(System.out)); 
     TMethodList methods = clazz.getmethods();
     %match(TMethodList methods) {
