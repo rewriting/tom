@@ -23,7 +23,6 @@ public class TMethodGenerator implements MethodVisitor {
 
   private static int labelCounter = 0;
   private HashMap labelsMap = new HashMap();
-  private TLabel currentLabel = null;
 
   private TLabel buildTLabel(Label label) {
     Object o = labelsMap.get(label);
@@ -60,12 +59,7 @@ public class TMethodGenerator implements MethodVisitor {
   }
 
   private void appendInstruction(TInstruction ins) {
-    if(currentLabel == null)
-      instructions = `InstructionList(instructions*, ins);
-    else {
-      instructions = `InstructionList(instructions*, LabeledInstruction(currentLabel, ins));
-      currentLabel = null;
-    }
+    instructions = `InstructionList(instructions*, ins);
   }
 
   private void appendTryCatchBlock(TTryCatchBlock tcb) {
@@ -566,11 +560,7 @@ public class TMethodGenerator implements MethodVisitor {
   }
 
   public void visitLabel(Label label) {
-    // To be removed - should never happen.
-    if(currentLabel != null)
-      System.err.println("Current label already exists !");
-
-    currentLabel = buildTLabel(label);
+    appendInstruction(`Anchor(buildTLabel(label)));
   }
 
   public void visitLdcInsn(Object cst) {

@@ -116,14 +116,13 @@ public class BytecodeGenerator extends ToolBox implements Opcodes {
                 HashMap labelMap = new HashMap();
                 //bytecode for the method code 
                 %match(TInstructionList code){
-                  InstructionList(_*,LabeledInstruction(label,_),_*)->{
+                  InstructionList(_*,Anchor(label),_*)->{
                     labelMap.put(`label,new Label());
                   }
                   InstructionList(_*,inst,_*)->{
                     %match(TInstruction inst) {
-                      LabeledInstruction(label,i) -> {
+                      Anchor(label) -> {
                         mw.visitLabel((Label)labelMap.get(`label));
-                        addInstruction(mw,`i,labelMap);
                       }
                       i@_ -> {addInstruction(mw,`i,labelMap);}
                     }
