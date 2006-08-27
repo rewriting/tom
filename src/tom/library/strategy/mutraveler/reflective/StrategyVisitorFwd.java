@@ -6,7 +6,7 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class StrategyVisitorFwd extends AbstractMuStrategy {
-  public static int ARG = 0;
+  public final static int ARG = 0;
 
   public StrategyVisitorFwd(VisitableVisitor v) {
     initSubterm(v);
