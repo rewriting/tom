@@ -1,40 +1,42 @@
 package tree17;
-import tree17.gomtree17.term.types.*;
+import tree17.apitree17.term.types.*;
 
 import java.util.*;
 
-public class GomTree17 {
-  %gom {
+public class ApiTree17 {
+  %vas {
     module Term
-    abstract syntax
-    Bool = TRUE() 
-         | FALSE() 
-    Nat  = ZERO()
-         | S(n1:Nat)
-         | PLUS(n1:Nat,n2:Nat)
-         | MULT(n1:Nat,n2:Nat)
-         | EXP(n1:Nat,n2:Nat)
-         | SUCC17(n1:Nat)
-         | PRED17(n1:Nat)
-         | PLUS17(n1:Nat,n2:Nat)
-         | MULT17(n1:Nat,n2:Nat)
-         | EXP17(n1:Nat,n2:Nat)
-         | GETMAX(t1:Tree)
-         | GETVAL(t1:Tree)
-         | EVAL(s1:SNat)
-         | EVAL17(s1:SNat)
-         | EVALSYM17(s1:SNat)
-    SNat = EXZERO()
-         | EXS(s1:SNat)
-         | EXPLUS(s1:SNat,s2:SNat)
-         | EXMULT(s1:SNat,s2:SNat)
-         | EXEXP(s1:SNat,s2:SNat)
-         | DEC(s1:SNat)
-         | EXPAND(s1:SNat)
-         | EXONE()
-    Tree = LEAF(n1:Nat)
-         | NODE(n1:Nat,n2:Nat,t3:Tree,t4:Tree)
-         | BUILDTREE(n1:Nat,n2:Nat)
+      public
+      sorts Bool Nat SNat Tree
+      abstract syntax
+      TRUE() -> Bool
+      FALSE() -> Bool
+      ZERO() -> Nat
+      S(n1:Nat) -> Nat
+      PLUS(n1:Nat,n2:Nat) -> Nat
+      MULT(n1:Nat,n2:Nat) -> Nat
+      EXP(n1:Nat,n2:Nat) -> Nat
+      SUCC17(n1:Nat) -> Nat
+      PRED17(n1:Nat) -> Nat
+      PLUS17(n1:Nat,n2:Nat) -> Nat
+      MULT17(n1:Nat,n2:Nat) -> Nat
+      EXP17(n1:Nat,n2:Nat) -> Nat
+      GETMAX(t1:Tree) -> Nat
+      GETVAL(t1:Tree) -> Nat
+      EVAL(s1:SNat) -> Nat
+      EVAL17(s1:SNat) -> Nat
+      EVALSYM17(s1:SNat) -> Nat
+      EXZERO() -> SNat
+      EXS(s1:SNat) -> SNat
+      EXPLUS(s1:SNat,s2:SNat) -> SNat
+      EXMULT(s1:SNat,s2:SNat) -> SNat
+      EXEXP(s1:SNat,s2:SNat) -> SNat
+      DEC(s1:SNat) -> SNat
+      EXPAND(s1:SNat) -> SNat
+      EXONE() -> SNat
+      LEAF(n1:Nat) -> Tree
+      NODE(n1:Nat,n2:Nat,t3:Tree,t4:Tree) -> Tree
+      BUILDTREE(n1:Nat,n2:Nat) -> Tree
   }
 
   public Bool equal(Nat t1, Nat t2) {
@@ -61,7 +63,7 @@ public class GomTree17 {
     Nat t2 = EVALSYM17(n);
     Bool res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t gom evalsym17 " + res);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t api evalsym17 " + res);
     //System.out.println("t1 = " + t1);
     //System.out.println("t2 = " + t2);
   }
@@ -74,7 +76,7 @@ public class GomTree17 {
     Nat t2 = EVALEXP17(n);
     Bool res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t gom evalexp17 " + res);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t api evalexp17 " + res);
     //System.out.println("t1 = " + t1);
     //System.out.println("t2 = " + t2);
   }
@@ -87,7 +89,7 @@ public class GomTree17 {
     Nat t2 = GETVAL(BUILDTREE(n,`ZERO()));
     Bool res = equal(t1,t2);
 		long stopChrono = System.currentTimeMillis();
-		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t gom evaltree17 " + res);
+		System.out.println("\t" + (stopChrono-startChrono)/1000. + "\t api evaltree17 " + res);
     //System.out.println("t1 = " + t1);
     //System.out.println("t2 = " + t2);
   }
@@ -97,13 +99,13 @@ public class GomTree17 {
     try {
       max = Integer.parseInt(args[0]);
     } catch (Exception e) {
-      System.out.println("Usage: java tree17.GomTree17 <max>");
+      System.out.println("Usage: java tree17.ApiTree17 <max>");
       return;
     }
-    GomTree17 gomtest = new GomTree17();
-    gomtest.run_evalsym17(max);
-    gomtest.run_evalexp17(max);
-    gomtest.run_evaltree17(max);
+    ApiTree17 apitest = new ApiTree17();
+    apitest.run_evalsym17(max);
+    apitest.run_evalexp17(max);
+    apitest.run_evaltree17(max);
   }
   
   public Tree BUILDTREE(Nat t1, Nat t2) {
@@ -137,7 +139,11 @@ public class GomTree17 {
     EXP(x,ZERO()) -> S(ZERO()) 
     EXP(x,S(y)) -> MULT(x,EXP(x,y)) 
   }
- 
+  
+  %rule {
+    SUCC17(S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(ZERO()))))))))))))))))) -> ZERO()
+    SUCC17(x) -> S(x)
+  }
   /*
   public static Nat SUCC17(Nat arg) {
     %match(Nat arg) {
@@ -147,11 +153,6 @@ public class GomTree17 {
     return null;
   }
 */
-
-  %rule {
-    SUCC17(S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(S(ZERO()))))))))))))))))) -> ZERO()
-    SUCC17(x) -> S(x)
-  }
   
   %rule {
     PRED17(S(x)) -> x 

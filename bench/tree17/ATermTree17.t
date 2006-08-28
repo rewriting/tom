@@ -99,6 +99,11 @@ public class ATermTree17 {
     make(t1,t2) { SingletonFactory.getInstance().makeAppl(fexp,t1,t2) }
   }
 
+  %op term succ17(a1:term) {
+    is_fsym(t) { (((ATermAppl)t).getAFun())== fsucc17 }
+    get_slot(a1,t) { (((ATermAppl)t).getArgument(0)) }
+    make(t) { SingletonFactory.getInstance().makeAppl(fsucc17,t) }
+  }
   %op term pred17(a1:term) {
     is_fsym(t) { (((ATermAppl)t).getAFun())== fpred17 }
     get_slot(a1,t) { (((ATermAppl)t).getArgument(0)) }
@@ -226,7 +231,6 @@ public class ATermTree17 {
     make { texone }
   }
   
-
   public ATerm int2aterm(int n) {
     ATerm N = texz;
     for(int i=0 ; i<n ; i++) {
@@ -326,7 +330,8 @@ public class ATermTree17 {
     exp(x,z()) -> s(z()) 
     exp(x,s(y)) -> mult(x,exp(x,y)) 
   }
-  
+ 
+  /*
   public static ATerm succ17(ATerm arg) {
     %match(term arg) {
       s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(z())))))))))))))))) -> {
@@ -336,7 +341,11 @@ public class ATermTree17 {
     }
     return null;
   }
-
+*/
+  %rule {
+    succ17(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(z()))))))))))))))))) -> z()
+    succ17(x) -> s(x)
+  }
   
   %rule {
     pred17(s(x)) -> x 
