@@ -66,13 +66,48 @@ auto.
 proof eqrefl: |- \Ax.eq(x,x).
 auto.
 
-rule in(l,hack()) -> eq(appl(one(),l),x0).
 proof eqsym: |- \Ax.(\Ay.( eq(x,y) => eq(y,x) )).
 elim.elim.elim.
-focus h1. rule. hack().
-focus h1. rule. reduce.
+focus h1. rule. fEq(one(),S(x0)).
+focus h1. rule. 
+reduce.
 axiom.
 rule. reduce.
 theorem eqrefl.
 focus h2. elim. x0. axiom.
+
+proof eqtrans: |- \Ax.(\Ay.(\Az.( eq(x,y) => (eq(y,z) => eq(x,z)) ))).
+auto.
+focus h2. rule. A0.
+focus h4. rule. A0.
+axiom.
+axiom.
+axiom.
+
+
+proof succisafun:  eq(x,y) |- eq(succ(x),succ(y)).
+focus h1. rule. fEq(S(succ(x)),succ(one())).
+focus h1. rule. reduce.
+axiom.
+rule. reduce.
+theorem eqrefl.
+focus h2. elim. succ(x). axiom.
+
+
+proof nplus0: N(n) |- eq(n+0,n).
+focus h1. rule. fEq(one()+S(0),one()).
+focus h1. rule. reduce.
+axiom.
+rule.
+focus h1. rule. rule. reduce.
+theorem succisafun. axiom.
+rule. reduce.
+theorem eqrefl.
+focus h2. elim. 0. axiom.
+
+
+
+
+
+display nplus0.
 

@@ -62,7 +62,7 @@ class PrettyPrinter {
   private static int peanoToInt(Term term, int i) throws Exception {
     %match(Term term) {
       funAppl(fun("z"),()) -> { return i; }
-      funAppl(fun("s"),(t)) -> { return peanoToInt(`t,i+1); }
+      funAppl(fun("succ"),(t)) -> { return peanoToInt(`t,i+1); }
     }
     throw new Exception("term is not an integer");
   }
@@ -70,7 +70,7 @@ class PrettyPrinter {
   public static Term intToPeano(int n) {
     Term res = `funAppl(fun("z"),concTerm());
     for (int i=0; i<n; i++) {
-      res = `funAppl(fun("s"),concTerm(res));
+      res = `funAppl(fun("succ"),concTerm(res));
     }
     return res;
   }
@@ -168,17 +168,7 @@ class PrettyPrinter {
     }
 
     %match(Prop term) {
-       // second order simulation pretty print
-      relationAppl(relation("appl"),((NewVar|FreshVar)(n,_),x*)) -> {
-        return `n + "["+ toLatex(`x*) + "]";
-      }
-      relationAppl(relation("appl"),(Var(n),x*)) -> {
-        return `n + "["+ toLatex(`x*) + "]";
-      }
-      relationAppl(relation("appl"),(funAppl(fun(n),()),x*)) -> {
-        return `n + "["+ toLatex(`x*) + "]";
-      }
-      
+     
       // arithmetic pretty print
       relationAppl(relation("eq"),(x,y)) -> {
         return toLatex(`x) + " = " + toLatex(`y);
@@ -200,7 +190,7 @@ class PrettyPrinter {
       relationAppl(relation("supset"),(x,y)) -> {
         return toLatex(`x) + " \\supset " + toLatex(`y);
       }
- 
+
       relationAppl(relation[name=n], ()) -> { return `n;}
       relationAppl(relation[name=n], tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
       and(p1, p2) -> { return "(" + toLatex(`p1) + " \\land " + toLatex(`p2) + ")";}
@@ -224,7 +214,7 @@ class PrettyPrinter {
     
       // arithmetic
       funAppl(fun("z"),()) -> { return "0"; }
-      i@funAppl(fun("s"),x) -> {
+      i@funAppl(fun("succ"),x) -> {
         try { return Integer.toString(peanoToInt(`i));}
         catch (Exception e) {}
       }
@@ -252,6 +242,20 @@ class PrettyPrinter {
         return "\\emptyset";
       }
      
+      // finite 1st order theory of classes pretty print
+      funAppl(fun("appl"),(p,x*)) -> {
+        return `toLatex(p) + "["+ toLatex(`x*) + "]";
+      }
+      funAppl(fun("nil"),()) -> {
+        return ("nil");
+      }
+      funAppl(fun("fEq"),(x,y)) -> {
+        return toLatex(`x) + "\\dot{=}" + `toLatex(y);
+      }
+      l@funAppl(fun("cons"),(x,y)) -> {
+        if (endedByNil(`l)) return "\\langle " + listToLatex(`l) + "\\rangle "; 
+        else return toLatex(`x) + "::" + toLatex(`y);
+      }
 
       funAppl(fun[name=n], ()) -> { return `n + "()";}
       funAppl(fun[name=n], tlist) -> { return `n + "(" + toLatex(`tlist) + ")";}
@@ -260,7 +264,24 @@ class PrettyPrinter {
     return null;
   }
 
-
+  // finite 1st order theory of classes list pretty print
+  private static boolean endedByNil(Term l) {
+    %match(Term l) {
+      funAppl(fun("cons"),(x,funAppl(fun("nil"),()))) -> { return true; }
+      funAppl(fun("cons"),(_,y)) -> { return endedByNil(`y); }
+    }
+    return false;
+  }
+  
+  public static String listToLatex(Term t) {
+    %match(Term t) {
+      funAppl(fun("cons"),(x,funAppl(fun("nil"),()))) -> { return toLatex(`x); }
+      funAppl(fun("cons"),(x,y)) -> {
+        return toLatex(`x) + "," + listToLatex(`y); 
+      }
+    }
+    return null;
+  }
 
   public static String prettyPrint(sequentsAbstractType term) {
 
@@ -296,16 +317,6 @@ class PrettyPrinter {
         return `r;
       }
      
-      // second order simulation pretty print
-      relationAppl(relation("appl"),((NewVar|FreshVar)(n,_),x*)) -> {
-        return `n + "["+ prettyPrint(`x*) + "]";
-      }
-      relationAppl(relation("appl"),(Var(n),x*)) -> {
-        return `n + "["+ prettyPrint(`x*) + "]";
-      }
-      relationAppl(relation("appl"),(funAppl(fun(n),()),x*)) -> {
-        return `n + "["+ prettyPrint(`x*) + "]";
-      }
       // arithmetic pretty print
       relationAppl(relation("eq"),(x,y)) -> {
         return prettyPrint(`x) + " = " + prettyPrint(`y);
@@ -316,10 +327,16 @@ class PrettyPrinter {
       relationAppl(relation("lt"),(x,y)) -> {
         return prettyPrint(`x) + " < " + prettyPrint(`y);
       }
-      
+ 
+      // set theory prettyprint
+      relationAppl(relation("in"),(x,y)) -> {
+        return prettyPrint(`x) + " in " + prettyPrint(`y);
+      }
+     
       relationAppl(relation(r),x) -> {
         return `r + "(" + prettyPrint(`x) + ")";
       }
+      
       bottom() -> {
         return "False";
       }
@@ -331,8 +348,10 @@ class PrettyPrinter {
     %match(Term term) {
       Var(x) -> { return `x;}
 
+
+      // arithmetic pretty print
       funAppl(fun("z"),()) -> { return "0"; }
-      i@funAppl(fun("s"),x) -> {
+      i@funAppl(fun("succ"),x) -> {
         try { return Integer.toString(peanoToInt(`i));}
         catch (Exception e) {}
       }
@@ -348,10 +367,24 @@ class PrettyPrinter {
       funAppl(fun("div"),(t1,t2)) -> { 
         return "(" + prettyPrint(`t1) + "/" + prettyPrint(`t2) + ")";
       }
+      
+      // finite 1st order theory of classes pretty print
+      funAppl(fun("appl"),(p,x*)) -> {
+        return `prettyPrint(p) + "["+ prettyPrint(`x*) + "]";
+      }
+      funAppl(fun("nil"),()) -> {
+        return ("nil");
+      }
+      l@funAppl(fun("cons"),(x,y)) -> {
+        if(endedByNil(`l)) return "<" + prettyList(`l) + ">"; 
+        else return prettyPrint(`x) + "::" + prettyPrint(`y);
+      }
+      
+      
       funAppl(fun(name),x) -> {
         return `name + "(" + prettyPrint(`x) + ")";
       }
-
+     
       FreshVar(n,_) -> { return `n; }
       NewVar(n,_) -> { return `n; }
     }
@@ -365,6 +398,16 @@ class PrettyPrinter {
     return term.toString();
   }
 
+  // finite 1st order theory of classes list pretty print
+  public static String prettyList(Term t) {
+    %match(Term t) {
+      funAppl(fun("cons"),(x,funAppl(fun("nil"),()))) -> { return prettyPrint(`x); }
+      funAppl(fun("cons"),(x,y)) -> {
+        return prettyPrint(`x) + "," + prettyList(`y); 
+      }
+    }
+    return null;
+  }
 
   private static String getPrettySideConstraints(SeqList list) {
 

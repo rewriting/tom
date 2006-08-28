@@ -111,12 +111,16 @@ class Utils {
   public static sequentsAbstractType 
     replaceFreeVars(sequentsAbstractType p, Term old_term, Term new_term) 
     {
+      p = Unification.substPreTreatment(p);
+      old_term = (Term) Unification.substPreTreatment(old_term);
+
       VisitableVisitor r = `ReplaceFreeVars(old_term, new_term);
       VisitableVisitor v = `mu(MuVar("x"),Try(Sequence(r,All(MuVar("x")))));
       try {
-        `p = (sequentsAbstractType) MuTraveler.init(v).visit(`p); 
+        p = (sequentsAbstractType) MuTraveler.init(v).visit(`p); 
       } catch ( VisitFailure e) { e.printStackTrace(); }
-      return `p;
+      
+      return Unification.substPostTreatment(p);
     }
 
   public static HashSet<Term> collectFreeVars(Prop p) {
