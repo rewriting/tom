@@ -153,7 +153,7 @@ public class GraphTest{
     root=subject;
     %match(Term subject){
       g(x@a(),g(Ref(x),a())) -> {
-        System.out.println("matched with g(x@a(),g(Ref(x),a()))");
+        System.out.println("\tmatched with g(x@a(),g(Ref(x),a()))");
       }
     }
 

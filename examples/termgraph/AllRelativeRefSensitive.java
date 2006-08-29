@@ -26,11 +26,10 @@ public class AllRelativeRefSensitive extends AllRefSensitive {
 
   public posTerm visitReference(posTerm ref, MuStrategy strat) throws VisitFailure{
     RelativePosition relativePos = new RelativePosition(ref.toArray());
-    Position p = strat.getPosition();
+    Position p = getPosition();
     Position pos = relativePos.getAbsolutePosition(p); 
-    setPosition(pos);
-    originalSubj = pos.getOmega(strat).visit(originalSubj);
-    setPosition(p);
+    visitPosition(pos,strat);
     return ref;
   }
+
 }

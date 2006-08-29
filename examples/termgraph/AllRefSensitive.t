@@ -32,6 +32,11 @@ public class AllRefSensitive extends AbstractMuStrategy {
 
   public posTerm visitReference(posTerm ref, MuStrategy strat) throws VisitFailure{
     Position pos = new Position(ref.toArray());
+    visitPosition(pos,strat);
+    return ref;
+  }
+
+  public void visitPosition(Position pos, MuStrategy strat) throws VisitFailure{
     Position p = getPosition();
     setPosition(pos);
     try{
@@ -41,8 +46,6 @@ public class AllRefSensitive extends AbstractMuStrategy {
       throw new VisitFailure();
     }
     setPosition(p);
-
-    return ref;
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
