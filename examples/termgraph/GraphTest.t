@@ -81,6 +81,11 @@ public class GraphTest{
     make(s,v) { new AllRefSensitive(s,v) }
   }
 
+  %op Strategy AllRelativePos(s:Visitable,v:Strategy) {
+    is_fsym(t) { (t instanceof AllRelativeRefSensitive) }
+    make(s,v) { new AllRelativeRefSensitive(s,v) }
+  }
+
   %op Strategy BottomUpRefSensitive(s:Visitable,v:Strategy) {
     make(s,v) { `mu(MuVar("_x"),Sequence(AllPos(s,MuVar("_x")),v)) }
   }
@@ -88,6 +93,11 @@ public class GraphTest{
   %op Strategy TopDownRefSensitive(s:Visitable,v:Strategy) {
     make(s,v) { `mu(MuVar("_x"),Sequence(v,AllPos(s,MuVar("_x")))) }
   }
+
+  %op Strategy TopDownRelativeRefSensitive(s:Visitable,v:Strategy) {
+    make(s,v) { `mu(MuVar("_x"),Sequence(v,AllRelativePos(s,MuVar("_x")))) }
+  }
+
 
   static Term root = null;
   %op Term Ref(ptr:Term) {
@@ -146,6 +156,14 @@ public class GraphTest{
         System.out.println("matched with g(x@a(),g(Ref(x),a()))");
       }
     }
+
+    System.out.println("\nApply dummyStrat with relative positions");
+    subject= `g(a(),g(posTerm(1,2),a()));
+    System.out.println("Initial Subject: "+subject);
+    root=subject;
+    subject= (Term) `TopDownRelativeRefSensitive(subject,DummyStrat()).apply(subject);
+    System.out.println("After DummyStrat: "+subject);
+
   }
 
 }

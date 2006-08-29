@@ -22,7 +22,7 @@ public class AllRefSensitive extends AbstractMuStrategy {
   %include{term/term.tom}
 
   public final static int ARG = 0;
-  private Visitable originalSubj;
+  protected Visitable originalSubj;
 
   public AllRefSensitive(Visitable s, MuStrategy v) {
     initSubterm(v);
@@ -34,8 +34,14 @@ public class AllRefSensitive extends AbstractMuStrategy {
     Position pos = new Position(ref.toArray());
     Position p = strat.getPosition();
     setPosition(pos);
-    originalSubj = pos.getOmega(strat).visit(originalSubj);
+    try{
+      originalSubj = pos.getOmega(strat).visit(originalSubj);
+    }catch(VisitFailure e){
+      setPosition(p);
+      throw new VisitFailure();
+    }
     setPosition(p);
+
     return ref;
   }
 
@@ -46,9 +52,8 @@ public class AllRefSensitive extends AbstractMuStrategy {
     if (any instanceof MuVisitable) {
       boolean updated = false;
       Visitable[] childs = null;
-
       if(!hasPosition()) {
-          throw new RuntimeException("Need to initialize positions");
+        throw new RuntimeException("Need to initialize positions");
       } else {
         try {
           for (int i = 0; i < childCount; i++) {
@@ -61,49 +66,39 @@ public class AllRefSensitive extends AbstractMuStrategy {
             }
             else{ 
               newChild = S.visit(oldChild);
-              originalSubj = getPosition().getReplace(newChild).visit(originalSubj);
             }
+            originalSubj = getPosition().getReplace(newChild).visit(originalSubj);
             getPosition().up();
-            if (updated || (newChild != oldChild)) {
-              if (!updated) {
-                updated = true;
-                // allocate the array, and fill it
-                childs = new Visitable[childCount];
-                for (int j = 0 ; j<i ; j++) {
-                  // System.out.println("AllRefSensitive pos:"+i+", "+j+", "+any);
-                  childs[j] = any.getChildAt(j);
-                }
-              }
-              childs[i] = newChild;
-            }
+
           }
         } catch(VisitFailure f) {
           getPosition().up();
           throw new VisitFailure();
         }
-      }
-      if (updated) {
+        childs = new Visitable[childCount];
+        Visitable newSubterm = getPosition().getSubterm().visit(originalSubj);
+        for (int i = 0 ; i<childCount ; i++) {
+          childs[i] = newSubterm.getChildAt(i);
+        }
         result = ((MuVisitable) any).setChilds(childs);
       }
     } else {
-      //System.out.println("AllRefSensitive.visit(" + any.getClass() + ")");
       if(!hasPosition()) {
-          throw new RuntimeException("Need to initialize positions");
-       } else {
+        throw new RuntimeException("Need to initialize positions");
+      } else {
         try {
           for (int i = 0; i < childCount; i++) {
             getPosition().down(i+1);
-            Visitable oldChild = result.getChildAt(i);
+            Visitable oldChild = any.getChildAt(i);
             Visitable newChild;
             if (oldChild instanceof posTerm){
               newChild = visitReference((posTerm) oldChild,S);
             }
             else{ 
               newChild = S.visit(oldChild);
-              originalSubj = getPosition().getReplace(newChild).visit(originalSubj);
             } 
+            originalSubj = getPosition().getReplace(newChild).visit(originalSubj);
             getPosition().up();
-            result = result.setChildAt(i, newChild);
           }
         } catch(VisitFailure f) {
           getPosition().up();
@@ -111,10 +106,9 @@ public class AllRefSensitive extends AbstractMuStrategy {
         }
       }
     }
-    //return result;
-    result =  getPosition().getSubterm().apply(originalSubj);
     return result;
   }
+
 
   public Visitable getSubject(){
     return originalSubj;
