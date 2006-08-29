@@ -32,7 +32,7 @@ public class AllRefSensitive extends AbstractMuStrategy {
 
   public posTerm visitReference(posTerm ref, MuStrategy strat) throws VisitFailure{
     Position pos = new Position(ref.toArray());
-    Position p = strat.getPosition();
+    Position p = getPosition();
     setPosition(pos);
     try{
       originalSubj = pos.getOmega(strat).visit(originalSubj);
