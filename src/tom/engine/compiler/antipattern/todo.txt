@@ -7,5 +7,3 @@ TODO
 4. in the action we should only allow the free variables - should we provide a warning message ?
 5. remove from getTomMappingForConstraint -TomAntiPatternUtils - things that are no more needed
 6. clean TomAntiPatternUtils from OrConstraint 
-7. rename fresh introduced variables in something like "tom_fresh_var_<no>" to avoid any interference 
-that may occur 	

@@ -65,6 +65,7 @@ public class TomAntiPatternTransformNew {
 //	------------------------------------------------------------
 	
 	private static int varCounter = 0;
+	private static final String FRESH_VAR_NAME = "_tom_fresh_var_";
 	
 	/**
 	 * transforms the anti-pattern problem received 
@@ -115,7 +116,7 @@ public class TomAntiPatternTransformNew {
 		// System.out.println("quantifiedVarList = " + quantifiedVarList);				
 		
 		// get the constraint with a variable instead of anti
-		String varName = "v" + (varCounter++);
+		String varName = FRESH_VAR_NAME + (varCounter++);
 		TomTerm abstractVariable = `Variable(concOption(),Name(varName),EmptyType(),concConstraint());
 		// we need to have all quantified variables stored in the list 
 		quantifiedVarList.add(abstractVariable);
