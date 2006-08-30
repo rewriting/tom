@@ -562,6 +562,7 @@ b: {
             boolean matches = false;
             %match(Sequent goal) {
               sequent((_*,hyp2,_*),_) -> {
+                `hyp2 = (Prop) Unification.substPreTreatment(`hyp2);
                 // Unification.match has side effects on temp, we need a copy
                 temp = (HashMap<String,Term>) st.clone();
                 temp = Unification.match(`hyp1,`hyp2, temp);
@@ -574,6 +575,7 @@ b: {
                     Term old_term = `Var(ent.getKey());
                     Term new_term = ent.getValue();
                     thtree = (Tree) Utils.replaceFreeVars(thtree, old_term, new_term);
+                    thtree = (Tree) Unification.substPostTreatment(thtree);
                   }
                 }
               }
