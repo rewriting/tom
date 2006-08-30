@@ -4,6 +4,7 @@ import java.io.*;
 import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.MuVar;
+import tom.library.strategy.mutraveler.Mu;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.*;
 
@@ -24,7 +25,7 @@ public class StrategyViewer {
     visit Strategy {
       y@MuVar[] -> { return `y; }
 
-      x@Mu[] -> { `x.apply(`Identity()); } // to mu-expand
+      x@Mu[] -> { ((Mu)`x).expand(); } // to mu-expand
 
       x -> {
         String[] tab = `x.getClass().getName().split("\\.");

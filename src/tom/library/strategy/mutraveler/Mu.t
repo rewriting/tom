@@ -27,7 +27,7 @@ public class Mu extends AbstractMuStrategy {
     return ((MuVar)getArgument(VAR)).isExpanded();
   }
 
-  private void expand() {
+  public void expand() {
     try {
       new MuTopDown().visit(this);
     } catch (VisitFailure e) {
