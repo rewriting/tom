@@ -184,21 +184,34 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
 
 matchArguments [LinkedList list]
     :   
-        (
-            matchArgument[list] ( COMMA matchArgument[list] )*
-        )
+        ( matchArgument[list] ( COMMA matchArgument[list] )*)
     ;
 
 matchArgument [LinkedList list]
     :   
-        (
-            type:ALL_ID ( BACKQUOTE )? name:ALL_ID 
-        )
-        {
-            list.add(`TLVar(name.getText(),TomTypeAlone(type.getText())));
-        }        
+        ( type:ALL_ID ( BACKQUOTE )? name:ALL_ID )
+        { list.add(`TLVar(name.getText(),TomTypeAlone(type.getText()))); }        
+        ;
+  /*
+matchArguments [LinkedList list]
+    :   
+        ( matchArgument[list] ( COMMA matchArgument[list] )*)
     ;
-
+matchArgument [LinkedList list] 
+  {
+    TomTerm bqTerm = null;
+  }
+  :   
+  type:ALL_ID 
+  {
+    selector().push("bqlexer");
+    bqTerm = bqparser.beginBackquote();
+    System.out.println(bqTerm);
+    list.add(bqTerm);
+    selector().pop();
+  }
+  ;
+*/
 patternInstruction [TomList subjectList, LinkedList list] throws TomException
 {
     LinkedList matchPatternList = new LinkedList();

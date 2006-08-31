@@ -419,7 +419,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
             TomOptionManager.displayVersion();
           }
           if(argument.equals("X")) {
-            // just skip it,along with its argument
+            // just skip it, along with its argument
             i++;
             continue;
           }

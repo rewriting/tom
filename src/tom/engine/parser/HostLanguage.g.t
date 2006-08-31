@@ -543,12 +543,19 @@ gomsignature [LinkedList list] throws TomException
     gomCode = cleanCode(blockparser.block().trim());
     String destDir = getStreamManager().getDestDir().getPath();
 
-    String config_xml = System.getProperty("tom.home") + "/Gom.xml";
+    File config_xml = null;
     try {
-      File file = new File(config_xml);
-      config_xml = file.getCanonicalPath();
+      String tom_home = System.getProperty("tom.home");
+      if(tom_home != null) {
+        config_xml = new File(tom_home,"Gom.xml");
+      } else {
+        // for the eclipse plugin for example
+        String tom_xml_filename = ((String)getOptionManager().getOptionValue("X"));
+        config_xml = new File(new File(tom_xml_filename).getParentFile(),"Gom.xml");
+      }
+      config_xml = config_xml.getCanonicalFile();
     } catch (IOException e) {
-      getLogger().log(Level.FINER,"Failed to get canonical path for "+config_xml);
+      getLogger().log(Level.FINER,"Failed to get canonical path for "+config_xml.getPath());
     }
 
     String packageName = getStreamManager().getPackagePath().replace(File.separatorChar, '.');
@@ -559,8 +566,8 @@ gomsignature [LinkedList list] throws TomException
     } else {
       subPackageName = packageName + "." + inputFileNameWithoutExtension;
     }
-    getLogger().log(Level.FINE,"Calling gom with: -X "+config_xml+" --destdir "+destDir+" --package "+subPackageName+" -");
-    String[] params = {"-X",config_xml,"--destdir",destDir,"--package",subPackageName,"-"};
+    getLogger().log(Level.FINE,"Calling gom with: -X "+config_xml.getPath() +" --destdir "+destDir+" --package "+subPackageName+" -");
+    String[] params = {"-X",config_xml.getPath(),"--destdir",destDir,"--package",subPackageName,"-"};
 
     InputStream backupIn = System.in;
     System.setIn(new DataInputStream(new StringBufferInputStream(gomCode)));

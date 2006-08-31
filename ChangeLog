@@ -1,3 +1,7 @@
+2006-08-31  Pem  <pem@becky.local>
+  * added the -X option into the global option, such that Gom.xml path can be
+	  deduced from the -X initialization, when tom.home is not defined
+
 2006-06-25  Pem  <pem@becky.local>
   * make backquote optional in %strategy
   * allow \ in %[...]%

@@ -181,7 +181,7 @@ public class ConfigurationManager {
    */
   private int createOptionManager(TNode node) {
     %match(TNode node) {
-      <platform><optionmanager class=omclass>opt@<options></options></optionmanager></platform> -> {
+      <platform><optionmanager class=omclass><options>(globalOptions*)</options></optionmanager></platform> -> {
         try {
           Object omInstance = Class.forName(`omclass).newInstance();
           if(omInstance instanceof OptionManager) {
@@ -201,6 +201,12 @@ public class ConfigurationManager {
           optionManager = null;
           return 1;
         }
+
+        TNode optionX = `xml(<string name="X" altName=""
+                       description="Tom XML file"
+                       value=xmlConfigurationFileName
+                       attrName="file"/>);
+        TNode opt = `xml(<options>optionX globalOptions*</options>);
         PlatformOptionList globalOptions = OptionParser.xmlNodeToOptionList(`opt);
         optionManager.setGlobalOptionList(globalOptions);
         return 0;
