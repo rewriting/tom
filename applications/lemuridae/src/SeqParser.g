@@ -51,9 +51,8 @@ term_list: term (LIST^ term)*
          | { #term_list = #[VOIDLIST,"VOIDLIST"]; }
          ;
 
-term : LPAREN! term RPAREN!
-      | minterm (PLUS^ minterm)*
-      ;
+term : minterm (PLUS^ minterm)*
+     ;
 
 minterm: mterm (MINUS^ mterm)*
        ;
@@ -64,7 +63,8 @@ mterm : divterm (TIMES^ divterm)*
 divterm: fterm (DIV^ fterm)*
        ;
       
-fterm : funappl
+fterm : LPAREN! term RPAREN!
+      | funappl
       | ID
       | NUMBER
       ;

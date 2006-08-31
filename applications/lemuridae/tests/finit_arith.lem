@@ -106,9 +106,9 @@ rule. reduce.
 theorem eqrefl.
 focus h2. elim. 0. axiom.
 
-proof plusassoc:  |- \Ax.(\Ay.(\Az.(N(x) => eq(plus(x,plus(y,z)),plus(plus(x,y),z))))).
+proof plusassoc:  |- \Ax.(\Ay.(\Az.(N(x) => eq( x+(y+z) , (x+y)+z )))).
 elim. elim. elim. elim.
-focus h1. rule. fEq(plus(one(),plus(S(y0),S(z0))),  plus(plus(one(),S(y0)),S(z0))).
+focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
 focus h1. rule. reduce. axiom.
 next. rule. reduce. 
 theorem eqrefl.
