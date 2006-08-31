@@ -26,19 +26,7 @@ public class Analysis {
           (Iload|Lload|Fload|Dload|Aload)(_) -> {
             return `c;
           }
-/*          (Iload_0|Lload_0|Fload_0|Dload_0|Aload_0)() -> {
-            return `c;
-          }
-          (Iload_1|Lload_1|Fload_1|Dload_1|Aload_1)() -> {
-            return `c;
-          }
-          (Iload_2|Lload_2|Fload_2|Dload_2|Aload_2)() -> {
-            return `c;
-          }
-          (Iload_3|Lload_3|Fload_3|Dload_3|Aload_3)() -> {
-            return `c;
-          }*/
-        }
+       }
       }
     }
   }
@@ -55,23 +43,7 @@ public class Analysis {
             map.put(var, new Integer(`i));
             return `c;
           }
-/*          (Istore_0|Lstore_0|Fstore_0|Dstore_0|Astore_0)() -> {
-            map.put(var, new Integer(0));
-            return `c;
-          }
-          (Istore_1|Lstore_1|Fstore_1|Dstore_1|Astore_1)() -> {
-            map.put(var, new Integer(1));
-            return `c;
-          }
-          (Istore_2|Lstore_2|Fstore_2|Dstore_2|Astore_2)() -> {
-            map.put(var, new Integer(2));
-            return `c;
-          }
-          (Istore_3|Lstore_3|Fstore_3|Dstore_3|Astore_3)() -> {
-            map.put(var, new Integer(3));
-            return `c;
-          }*/
-        }
+       }
       }
     }
   }
@@ -87,22 +59,6 @@ public class Analysis {
           (Istore|Lstore|Fstore|Dstore|Astore|Iload|Lload|Fload|Dload|Aload)(i), i -> {
             return `c;
           }
-/*          (Istore_0|Lstore_0|Fstore_0|Dstore_0|Astore_0|Iload_0|Lload_0|Fload_0|Dload_0|Aload_0)() -> {
-            if(index == 0)
-              return `c;
-          }
-          (Istore_1|Lstore_1|Fstore_1|Dstore_1|Astore_1|Iload_1|Lload_1|Fload_1|Dload_1|Aload_1)() -> {
-            if(index == 1)
-              return `c;
-          }
-          (Istore_2|Lstore_2|Fstore_2|Dstore_2|Astore_2|Iload_2|Lload_2|Fload_2|Dload_2|Aload_2)() -> {
-            if(index == 2)
-              return `c;
-          }
-          (Istore_3|Lstore_3|Fstore_3|Dstore_3|Astore_3|Iload_3|Lload_3|Fload_3|Dload_3|Aload_3)() -> {
-            if(index == 3)
-              return `c;
-          }*/
         }
       }
     }
@@ -122,18 +78,6 @@ public class Analysis {
         TInstruction head = `head;
 
         System.out.println("removes : " + head);
-
-/*        %match(TInstruction head) {
-          LabeledInstruction(l, ins) -> {
-            // Try to remove the last instruction, replace it with a nop.
-            if(`tail.isEmptyInstructionList())
-              return `InstructionList(LabeledInstruction(l, Nop()));
-
-            // Move the label to the next instruction.
-            return `ConsInstructionList(LabeledInstruction(l, tail.getHeadInstructionList()), tail.getTailInstructionList());
-          }
-        }
-*/
         return `tail;
       }
     }
@@ -273,7 +217,6 @@ public class Analysis {
       fos.write(code);
       fos.close();
 
-      //System.out.println("gom term :\n\n" + c + "\n");
     } catch(IOException ioe) {
       System.err.println("Class not found : " + args[0]);
     }

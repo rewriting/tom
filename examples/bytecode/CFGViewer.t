@@ -84,10 +84,6 @@ public class CFGViewer {
   private static void printDotInstruction(TInstruction ins, String id, Writer out) {
     try {
       %match(TInstruction ins) {
-//        LabeledInstruction(_, realIns) -> {
-//          printDotInstruction(`realIns, id, out);
-//          return;
-//        }
 
         (Bipush|Sipush|Newarray)(operand) -> {
           out.write(%[

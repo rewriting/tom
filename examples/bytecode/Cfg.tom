@@ -107,6 +107,15 @@
   }
 }
 
+/**
+* This strategy opertor corresponds to temporal operator AU in CTL.
+* Identity() can be interpreted as True and Failure as False
+* It succeeds if s1 is "True" until s2 is "True".
+* @param s1 the first strategy.
+* @param s2 the second strategy.
+* @param map the map containing all instructions marks.
+
+*/
 %op Strategy AU(s1:Strategy, s2:Strategy, m:Map) {
   make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"), m)))) }
 }
