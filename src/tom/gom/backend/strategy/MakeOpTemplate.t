@@ -60,12 +60,8 @@ public class MakeOpTemplate extends TemplateClass {
     String classBody = %[
 package @getPackage()@;
 
-import jjtraveler.Visitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
 import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.MuVisitable;
+//import tom.library.strategy.mutraveler.MuVisitable;
 import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd;
 
@@ -121,7 +117,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     * Builds a new @className(operator)@
     * If one of the sub-strategies application fails, throw a VisitFailure
     */
-  public Visitable visit(Visitable any) throws VisitFailure {
+  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
 @computeNewChilds(slotList,"any")@
     return @fullClassName(operator)@.make(@genMakeArguments(slotList)@);
   }
@@ -214,7 +210,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += "  private VisitableVisitor "+fieldName(`fieldName)+";\n";
+          res += "  private jjtraveler.reflective.VisitableVisitor "+fieldName(`fieldName)+";\n";
         } else {
           res += "  private "+fullClassName(`domain)+" "+fieldName(`fieldName)+";\n";
         }
@@ -247,7 +243,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += %[      case @index@: @fieldName(`fieldName)@ = (VisitableVisitor) @argName@; return this;
+          res += %[      case @index@: @fieldName(`fieldName)@ = (jjtraveler.reflective.VisitableVisitor) @argName@; return this;
 ]%;
           index++;
         }
@@ -271,7 +267,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
             res+= ", ";
           }
           if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-            res+= "VisitableVisitor "+fieldName(`name);
+            res+= "jjtraveler.reflective.VisitableVisitor "+fieldName(`name);
           } else {
             res+= fullClassName(`domain) + " "+fieldName(`name);
           }

@@ -858,7 +858,7 @@ public class TomKernelCompiler extends TomBase {
 
         if(!isDefinedGetSlot(tomSymbol,`slotName)) {
           Logger.getLogger(getClass().getName()).log( Level.SEVERE,
-              "ErrorMissingSlotDecl",
+              TomMessage.errorMissingSlotDecl.getMessage(),
               new Object[]{tomSymbol.getAstName().getString(),`slotName.getString()});
         }
 
@@ -913,7 +913,7 @@ public class TomKernelCompiler extends TomBase {
         TomType subtermType = getSlotType(tomSymbol,`slotName);
         if(!isDefinedGetSlot(tomSymbol,`slotName)) {
           Logger.getLogger(getClass().getName()).log( Level.SEVERE,
-              "ErrorMissingSlotDecl",
+              TomMessage.errorMissingSlotDecl.getMessage(),
               new Object[]{tomSymbol.getAstName().getString(),`slotName.getString()});
         }
 

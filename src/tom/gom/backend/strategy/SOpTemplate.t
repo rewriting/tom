@@ -60,10 +60,6 @@ public class SOpTemplate extends TemplateClass {
     String classBody = %[
 package @getPackage()@;
 
-import jjtraveler.Visitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
 import tom.library.strategy.mutraveler.Position;
 import tom.library.strategy.mutraveler.MuVisitable;
 import tom.library.strategy.mutraveler.MuStrategy;
@@ -90,7 +86,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     return position!=null;
   }
 
-  private VisitableVisitor[] args;
+  private jjtraveler.reflective.VisitableVisitor[] args;
 
   public jjtraveler.reflective.VisitableVisitor getArgument(int i) {
     return args[i];
@@ -124,27 +120,27 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   }
 
   private static boolean[] nonbuiltin = new boolean[]{@genNonBuiltin()@};
-  public @className()@(@genConstrArgs(slotList.length(),"VisitableVisitor arg")@) {
-    args = new VisitableVisitor[]{@genConstrArgs(slotList.length(),"arg")@};
+  public @className()@(@genConstrArgs(slotList.length(),"jjtraveler.reflective.VisitableVisitor arg")@) {
+    args = new jjtraveler.reflective.VisitableVisitor[]{@genConstrArgs(slotList.length(),"arg")@};
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure {
+  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
-      Visitable result = any;
+      jjtraveler.Visitable result = any;
       if (any instanceof MuVisitable) {
         boolean updated = false;
-        Visitable[] childs = null;
+        jjtraveler.Visitable[] childs = null;
 
         if(!hasPosition()) {
           for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
             if (nonbuiltin[i]) {
-              Visitable oldChild = any.getChildAt(nbi);
-              Visitable newChild = args[i].visit(oldChild);
+              jjtraveler.Visitable oldChild = any.getChildAt(nbi);
+              jjtraveler.Visitable newChild = args[i].visit(oldChild);
               if (updated || (newChild != oldChild)) {
                 if (!updated) { // this is the first change
                   updated = true;
                   // allocate the array, and fill it
-                  childs = new Visitable[@nonBuiltinChildCount()@];
+                  childs = new jjtraveler.Visitable[@nonBuiltinChildCount()@];
                   for (int j = 0 ; j<nbi ; j++) {
                     childs[j] = any.getChildAt(j);
                   }
@@ -158,15 +154,15 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
           try {
             for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
               if (nonbuiltin[i]) {
-                Visitable oldChild = any.getChildAt(nbi);
+                jjtraveler.Visitable oldChild = any.getChildAt(nbi);
                 getPosition().down(i+1);
-                Visitable newChild = args[i].visit(oldChild);
+                jjtraveler.Visitable newChild = args[i].visit(oldChild);
                 getPosition().up();
                 if (updated || (newChild != oldChild)) {
                   if (!updated) {
                     updated = true;
                     // allocate the array, and fill it
-                    childs = new Visitable[@nonBuiltinChildCount()@];
+                    childs = new jjtraveler.Visitable[@nonBuiltinChildCount()@];
                     for (int j = 0 ; j<nbi ; j++) {
                       childs[j] = any.getChildAt(j);
                     }
@@ -176,9 +172,9 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
                 nbi++;
               }
             }
-          } catch(VisitFailure f) {
+          } catch(jjtraveler.VisitFailure f) {
             getPosition().up();
-            throw new VisitFailure();
+            throw new jjtraveler.VisitFailure();
           }
         }
         if (updated) {
@@ -188,7 +184,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
         if(!hasPosition()) {
           for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
             if (nonbuiltin[i]) {
-              Visitable newChild = args[i].visit(result.getChildAt(nbi));
+              jjtraveler.Visitable newChild = args[i].visit(result.getChildAt(nbi));
               result = result.setChildAt(nbi, newChild);
               nbi++;
             }
@@ -198,21 +194,21 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
             for (int i = 0, nbi = 0; i < @slotList.length()@; i++) {
               if (nonbuiltin[i]) {
                 getPosition().down(i+1);
-                Visitable newChild = args[i].visit(result.getChildAt(nbi));
+                jjtraveler.Visitable newChild = args[i].visit(result.getChildAt(nbi));
                 getPosition().up();
                 result = result.setChildAt(nbi, newChild);
                 nbi++;
               }
             }
-          } catch(VisitFailure f) {
+          } catch(jjtraveler.VisitFailure f) {
             getPosition().up();
-            throw new VisitFailure();
+            throw new jjtraveler.VisitFailure();
           }
         }
       }
       return result;
     } else {
-      throw new VisitFailure(msg);
+      throw new jjtraveler.VisitFailure(msg);
     }
   }
 }

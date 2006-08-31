@@ -128,8 +128,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     if (symbCmp != 0)
       return symbCmp;
     /* compare the childs */
-    @className()@ tco = (@className()@) ao;
-    @genCompareChilds("tco","compareToLPO")@
+    @genCompareChilds("ao","compareToLPO")@
     throw new RuntimeException("Unable to compare");
   }
 
@@ -153,8 +152,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     if (symbCmp != 0)
       return symbCmp;
     /* last resort: compare the childs */
-    @className()@ tco = (@className()@) ao;
-    @genCompareChilds("tco","compareTo")@
+    @genCompareChilds("ao","compareTo")@
     throw new RuntimeException("Unable to compare");
   }
 
@@ -620,8 +618,12 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return res.substring(0,res.length()-1);
   }
 
-  private String genCompareChilds(String other, String compareFun) {
+  private String genCompareChilds(String oldOther, String compareFun) {
     String res = "";
+    String other = "tco";
+    if(!slotList.isEmptyconcSlotField()) {
+    res += %[@className()@ @other@ = (@className()@) @oldOther@;]%;
+    }
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
@@ -763,7 +765,8 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
       } catch (IOException e) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
       }
-      String[] params = {"-X",config_xml,"--output",file_path,"-"};
+      String[] params = {"-X",config_xml,"--optimize","--optimize2","--output",file_path,"-"};
+      //String[] params = {"-X",config_xml,"--output",file_path,"-"};
 
       String gen = generate();
 

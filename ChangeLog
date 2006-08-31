@@ -1,12 +1,12 @@
 2006-06-25  Pem  <pem@becky.local>
   * make backquote optional in %strategy
-	* allow \ in %[...]%
+  * allow \ in %[...]%
 
 2006-06-07  Pem  <pem@becky.local>
   * generate only used typeterm definitions
-	* do no longer generate comments in includes
-	* improved the --pretty option
-	* remove importation in java mappings
+  * do no longer generate comments in includes
+  * improved the --pretty option
+  * remove importation in java mappings
 
 2006-06-03  pem
   * bootstrap using gom
@@ -111,7 +111,7 @@
   - new optimizer (-O2) for test-fusion and test-merging
 
 2005-03-22  pem  <pem@polly.loria.fr>
-  * src/jtom/compiler/TomKernelCompiler.t: 	
+  * src/jtom/compiler/TomKernelCompiler.t:  
   - fixed the completeness list-matching bug in array version
     (subjectIndex has to be reseted to begin)
 
@@ -151,21 +151,21 @@
 
 2004-10-13  pem  <pem@becky.local>
 
-	* src/jtom/parser/TomLanguage.g.t: added 'long' as a builtin type
-	  (written 123l or 123L)
-	* fixed TOM-44
+  * src/jtom/parser/TomLanguage.g.t: added 'long' as a builtin type
+    (written 123l or 123L)
+  * fixed TOM-44
 
 2004-10-10  pem  <pem@becky.local>
 
-	* src/jtom/parser/BackQuoteLanguage.g.t: simplify the parser
+  * src/jtom/parser/BackQuoteLanguage.g.t: simplify the parser
 
 2004-09-24  pem  <pem@becky.local>
 
   * src/jtom/compiler/TomKernelCompiler.t: fixed a major bug in
-	list-matching: the containOnlyVariableStar was correct but not
-	complete
-	Still have to fix the array version.
-	
+  list-matching: the containOnlyVariableStar was correct but not
+  complete
+  Still have to fix the array version.
+  
 
 2004-09-16  pem  <pem@becky.local>
 
@@ -179,7 +179,7 @@
 2004-08-18  pem  <pem@polly.loria.fr>
 
   * bootinstall
-  * moved Tom.xml and Tom.src.xml into utils	
+  * moved Tom.xml and Tom.src.xml into utils  
   * src/tom/platform/adt/PlatformOption.adt: redesigned the ADT
   * src/jtom/TomOptionManager.t: simplified option manager
   * src/jtom/Tom.xml: renamed valueB, valueI, and valueS into value
@@ -210,258 +210,258 @@
 
 2004-06-28  pem  <pem@polly.loria.fr>
 
-	* src/jtom/parser/TomParser.t (TOKEN): 
-	  - allows x=_ in XML syntax (TOM-48)
+  * src/jtom/parser/TomParser.t (TOKEN): 
+    - allows x=_ in XML syntax (TOM-48)
 
-	* src/jtom/adt/TomSignature.adt: 
-	  - extended BuildVariable signature (with an 'args' slot) to write disjunction in bracket notation 
-	  - fixed TOM-47
+  * src/jtom/adt/TomSignature.adt: 
+    - extended BuildVariable signature (with an 'args' slot) to write disjunction in bracket notation 
+    - fixed TOM-47
 
 2004-06-25  pem  <pem@polly.loria.fr>
 
-	* src/jtom/tools/SymbolTable.java: 
-	  - added builtin long type
-	  - not yet correctly implement for builtin constants
+  * src/jtom/tools/SymbolTable.java: 
+    - added builtin long type
+    - not yet correctly implement for builtin constants
 
 2004-06-09  pem  <pem@becky.local>
   * version 2.0 released
-	
+  
 2004-06-07  pem  <pem@polly.loria.fr>
 
-	* src/jtom/optimizer/TomOptimizer.t: fixed TOM-43
+  * src/jtom/optimizer/TomOptimizer.t: fixed TOM-43
 
 2004-06-02  pem  <pem@polly.loria.fr>
 
-	* src/jtom/compiler/TomKernelExpander.t: fixed TOM-41 by adding a
-	  type to EqualTerm an EqualityCondition (TypedEqualityCondition)
+  * src/jtom/compiler/TomKernelExpander.t: fixed TOM-41 by adding a
+    type to EqualTerm an EqualityCondition (TypedEqualityCondition)
 
 2004-06-01  pem  <pem@polly.loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: fixed TOM-40 by adding a
-	  if(true) before construction the rhs of a rewrite rule  
+  * src/jtom/compiler/TomCompiler.t: fixed TOM-40 by adding a
+    if(true) before construction the rhs of a rewrite rule  
 
 2004-05-09    <pem@BACH>
 
-	* src/jtom/parser/TomParser.t: 
-	  - make TomParser a Tom file
-	  - introduced TomTaskParser
-	  - make TomJavaParser a separate parser
+  * src/jtom/parser/TomParser.t: 
+    - make TomParser a Tom file
+    - introduced TomTaskParser
+    - make TomJavaParser a separate parser
 
 2004-05-07  pem  <pem@polly.loria.fr>
 
-	* bootinstall
+  * bootinstall
 
-2004-05-02  antoine	<reilles@loria.fr>
+2004-05-02  antoine <reilles@loria.fr>
 
-	* bootinstall
-	  - vas in stable
+  * bootinstall
+    - vas in stable
 
 2004-04-29  pem  <pem@polly.loria.fr>
 
-	* src/jtom/Tom.java: is now a singleton
-	* src/jtom/tools/TomTaskInput.java: is now a singleton
-	* src/jtom/TomEnvironment.java: is now a singleton
+  * src/jtom/Tom.java: is now a singleton
+  * src/jtom/tools/TomTaskInput.java: is now a singleton
+  * src/jtom/TomEnvironment.java: is now a singleton
 
 2004-04-20  pem  <pem@polly.loria.fr>
 
-	* bootinstall
+  * bootinstall
 
 2004-04-19  pem  <pem@polly.loria.fr>
 
-	* src/jtom/compiler/TomExpander.t: 
-	  - improved the sortAttributeList method
-	  - fix a test failure
+  * src/jtom/compiler/TomExpander.t: 
+    - improved the sortAttributeList method
+    - fix a test failure
 
 2004-04-16 Julien Guyon <julien.guyon@loria.fr>
 
-	* src/make_rules **/Makefile.am: -O added
-	* Adapted all tom source code to -O flag: bootstrap OK
-	* test are less powerfull while migrating to Ant
+  * src/make_rules **/Makefile.am: -O added
+  * Adapted all tom source code to -O flag: bootstrap OK
+  * test are less powerfull while migrating to Ant
 
 2004-04-16  Antoine Reilles  <tonio@bonzai>
 
-	* build.sh
-	  - build.sh sets correct minimal classpath
-	  - tests uses junit
+  * build.sh
+    - build.sh sets correct minimal classpath
+    - tests uses junit
 
 2004-04-12    <pem@bach>
 
-	* src/jtom/optimizer/TomOptimizer.t: 
-	  - improved criteria for inlining
-	  - allow inlining for LetRef and LetAssign
+  * src/jtom/optimizer/TomOptimizer.t: 
+    - improved criteria for inlining
+    - allow inlining for LetRef and LetAssign
 
-	* src/jtom/backend/TomImperativeGenerator.t: 
-	  - removed buildList (to allow more inlining)
-	  - this is now done in TomExpander and TomFactory
+  * src/jtom/backend/TomImperativeGenerator.t: 
+    - removed buildList (to allow more inlining)
+    - this is now done in TomExpander and TomFactory
 
-	* src/jtom/compiler/TomKernelCompiler.t: re-designed list-matching
+  * src/jtom/compiler/TomKernelCompiler.t: re-designed list-matching
 
-	* src/jtom/backend/TomCamlGenerator.t: improve block management
+  * src/jtom/backend/TomCamlGenerator.t: improve block management
 
 2004-04-09  pem  <pem@polly.loria.fr>
 
-	* bootinstall
-	* added aterm.tom and atermlist.tom mappings
+  * bootinstall
+  * added aterm.tom and atermlist.tom mappings
 
 2004-04-08  pem  <pem@polly.loria.fr>
 
-	* src/jtom/compiler/TomKernelExpander.t: 
-	  - fix a major bug in the Type Expander
-	  - merge TomExpander.variableExpand with TomKernelExpander.variableExpand
+  * src/jtom/compiler/TomKernelExpander.t: 
+    - fix a major bug in the Type Expander
+    - merge TomExpander.variableExpand with TomKernelExpander.variableExpand
 
-	* src/jtom/runtime/mapping/dom.tom: fix a bug in the sorting algorithm for attributes
+  * src/jtom/runtime/mapping/dom.tom: fix a bug in the sorting algorithm for attributes
 
 2004-04-07  pem  <pem@polly.loria.fr>
 
-	* annoted variables and non-linear variable are compiled into constraints
+  * annoted variables and non-linear variable are compiled into constraints
 
 2004-04-06  pem  <pem@polly.loria.fr>
 
-	* bootinstall
-	* src/jtom/compiler/TomExpander.t: 
-	  added a post-processing phase to TomExpander
-	  this phases update the codomain of GetHeadDecl in order to
-	  generate correctly typed getHead functions
-	* detect concatenated-char : 'abc'
-	  and expand it into a list of char: 'a','b','c'
-	  
+  * bootinstall
+  * src/jtom/compiler/TomExpander.t: 
+    added a post-processing phase to TomExpander
+    this phases update the codomain of GetHeadDecl in order to
+    generate correctly typed getHead functions
+  * detect concatenated-char : 'abc'
+    and expand it into a list of char: 'a','b','c'
+    
 
 2004-03-17 julien <julien.guyon@loria.fr>
-	
-	* Start incorporating Vas and prepare field for other tools integration
+  
+  * Start incorporating Vas and prepare field for other tools integration
 
 2004-03-16  pem  <pem@polly.loria.fr>
 
-	* src/jtom/compiler/TomKernelCompiler.t: 
-	  - syntactic patterns are no longer abstracted
-	  - compilation of syntactic patterns in list-matching
+  * src/jtom/compiler/TomKernelCompiler.t: 
+    - syntactic patterns are no longer abstracted
+    - compilation of syntactic patterns in list-matching
 
 2004-03-15    <pem@bach>
 
-	* src/jtom/Tom.java: allows Tom to compile several files 
+  * src/jtom/Tom.java: allows Tom to compile several files 
 
-	* improved Makefiles
-	
+  * improved Makefiles
+  
 2004-03-10  pem  <pem@polly.loria.fr>
 
-	* bootinstall
-	
-	* src/jtom/backend/TomCamlGenerator.t: 
-	  - compilation of list-matching for Caml
-	  - added caml mapping
+  * bootinstall
+  
+  * src/jtom/backend/TomCamlGenerator.t: 
+    - compilation of list-matching for Caml
+    - added caml mapping
 
 2004-03-03    <pem@bach>
 
-	* src/jtom/compiler/TomKernelExpander.t: 
-	  - major redesign of the expansion phase
-	    (to deal with the Instruction type)
+  * src/jtom/compiler/TomKernelExpander.t: 
+    - major redesign of the expansion phase
+      (to deal with the Instruction type)
 
-	* src/jtom/compiler/TomKernelCompiler.t: 
-	  - major redesign of matching algorithms 
-	    (by using the Instruction type)
+  * src/jtom/compiler/TomKernelCompiler.t: 
+    - major redesign of matching algorithms 
+      (by using the Instruction type)
 
-	* src/jtom/parser/TomParser.jj: 
-	  - introduced <TOM_QUOTE> and <TOM_CHAR> (for char)
-	  - removed %typeint, %typedouble and %typestring
-	    (use predefined mapping instead)
+  * src/jtom/parser/TomParser.jj: 
+    - introduced <TOM_QUOTE> and <TOM_CHAR> (for char)
+    - removed %typeint, %typedouble and %typestring
+      (use predefined mapping instead)
 
-	* src/jtom/backend/TomGenericGenerator.t: 
-	  - introduced a new intermediate generator
-	  - between TomAbstractGenerator and TomImperativeGenerator
+  * src/jtom/backend/TomGenericGenerator.t: 
+    - introduced a new intermediate generator
+    - between TomAbstractGenerator and TomImperativeGenerator
 
-	* src/adt/TomSignature.adt: re-design of the signature
-	 - new Instruction constructors (which were in TomTerm)
-	   AbstractBlock, UnamedBlock, NamedBlock, RuleSet, Match,
-	   CompiledMatch, CompiledPattern, MatchingCondition,
-	   EqualityCondition, LocalVariable,EndLocalVariable,
-	   MakeFunctionBegin, MakeFunctionEnd
+  * src/adt/TomSignature.adt: re-design of the signature
+   - new Instruction constructors (which were in TomTerm)
+     AbstractBlock, UnamedBlock, NamedBlock, RuleSet, Match,
+     CompiledMatch, CompiledPattern, MatchingCondition,
+     EqualityCondition, LocalVariable,EndLocalVariable,
+     MakeFunctionBegin, MakeFunctionEnd
    - this makes the code simpler and more typed
-	
-	* src/jtom/tools/SymbolTable.java: 
-	  - introduced builtin-types (INT,BOOL,STRING,CHAR,DOUBLE)
-	  - builtin char are now supported
+  
+  * src/jtom/tools/SymbolTable.java: 
+    - introduced builtin-types (INT,BOOL,STRING,CHAR,DOUBLE)
+    - builtin char are now supported
 
 2004-02-26    <pem@bach>
 
-	* bootinstall
+  * bootinstall
 
 2004-02-25    <pem@bach>
 
-	* src/jtom/compiler/TomKernelCompiler.t: 
-	  - compile ArrayMatching with new schema
-	  - introduced MatchingParameter to store parameters
+  * src/jtom/compiler/TomKernelCompiler.t: 
+    - compile ArrayMatching with new schema
+    - introduced MatchingParameter to store parameters
 
-	* src/jtom/tools/TomTaskInput.java: removed supportedGoto and supportedBlock
+  * src/jtom/tools/TomTaskInput.java: removed supportedGoto and supportedBlock
 
 2004-02-23  pem  <pem@polly.loria.fr>
 
-	* src/jtom/compiler/TomKernelCompiler.t: 
-	  - introduced the Let(...) construction
-	  - updated syntactic and list matching algorithm
-	  - simplified the kernel a lot
+  * src/jtom/compiler/TomKernelCompiler.t: 
+    - introduced the Let(...) construction
+    - updated syntactic and list matching algorithm
+    - simplified the kernel a lot
 
 2004-02-10  pem  <pem@polly.loria.fr>
 
-	* src/adt/TomSignature.adt: updated to DoubleBackQuote(args:TomList)
+  * src/adt/TomSignature.adt: updated to DoubleBackQuote(args:TomList)
 
-	* src/jtom/parser/TomParser.jj: extended `xml(arg1,...) to support extra arguments
+  * src/jtom/parser/TomParser.jj: extended `xml(arg1,...) to support extra arguments
 
-	* src/jtom/compiler/TomExpander.t: extended the TomExpander to support various XML mappings
-	  - XML patterns are built using RecordAppl instead of Appl
-	  - adapted sortAttribute to RecordAppl
-	  - concatenate a "context" variable to each XML nodes
+  * src/jtom/compiler/TomExpander.t: extended the TomExpander to support various XML mappings
+    - XML patterns are built using RecordAppl instead of Appl
+    - adapted sortAttribute to RecordAppl
+    - concatenate a "context" variable to each XML nodes
 
-	
+  
 2004-01-29    <pem@bach>
 
-	* src/jtom/compiler/TomExpander.t: anonymous XML nodes are allowed
-	  <_ []> ... </_>
-	* modified signature of Xml AttributeNode: the value is now a
-	  String (instead of a Term). 
-	  attr=#TEXT(x) has to be replaced by attr=x where x is a String  
+  * src/jtom/compiler/TomExpander.t: anonymous XML nodes are allowed
+    <_ []> ... </_>
+  * modified signature of Xml AttributeNode: the value is now a
+    String (instead of a Term). 
+    attr=#TEXT(x) has to be replaced by attr=x where x is a String  
 
 2003-12-10  pem  <pem@polly.loria.fr>
 
-	* bootinstall
-	* version 1.5 released
+  * bootinstall
+  * version 1.5 released
 
 2003-12-04    <pem@bach>
-	
+  
   * bootinstall
 
 2003-12-02    <pem@bach>
 
-	* ported jtom to new version of apigen
+  * ported jtom to new version of apigen
 
 2003-11-25  pem  <pem@polly.loria.fr>
 
-	* src/jtom/parser/TomParser.jj: 
-	  - fix bug related to annotations in XML
-	  - replaced double-backquote by `XML(...)
+  * src/jtom/parser/TomParser.jj: 
+    - fix bug related to annotations in XML
+    - replaced double-backquote by `XML(...)
 
 2003-11-21    <julien@aircube>
-	* All Tom tools now inherits from TomTask
-	* TomTask is an abstract class that inherit from TomBase
-	* TomTask is a template class but also a chain of responsability
+  * All Tom tools now inherits from TomTask
+  * TomTask is an abstract class that inherit from TomBase
+  * TomTask is a template class but also a chain of responsability
         * new TomChecker and simpler regression test infrastructure
 
 2003-11-18    <pem@bach>
 
-	* compilation of symbol disjunctions
-	  - plain term
-	  - xml term
-	* disjunctions are restricted to symbols with identical signatures
+  * compilation of symbol disjunctions
+    - plain term
+    - xml term
+  * disjunctions are restricted to symbols with identical signatures
 
 2003-11-16    <pem@bach>
 
-	* src/jtom/parser/TomParser.jj: 
-	  added disjunction of HeadSymbol
+  * src/jtom/parser/TomParser.jj: 
+    added disjunction of HeadSymbol
 
 2003-11-07    <pem@bach>
 
-	* bootinstall
-	* bumped to 1.5gamma
-	* Option constructor removed from ADT
+  * bootinstall
+  * bumped to 1.5gamma
+  * Option constructor removed from ADT
 
 2003-11-05    <pem@bach>
 
@@ -469,61 +469,61 @@
 
 2003-11-02    <pem@bach>
 
-	* restricted double-backquote parser and expander
-	* implicit and explicit XML lists are allowed
-	* unamed lists are allowed
+  * restricted double-backquote parser and expander
+  * implicit and explicit XML lists are allowed
+  * unamed lists are allowed
 
 2003-10-20    <pem@bach>
 
-	* src/jtom/compiler/TomExpander.t: 
-	  - sort attribute names by alphabetic order
+  * src/jtom/compiler/TomExpander.t: 
+    - sort attribute names by alphabetic order
 
 2003-10-20  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* bootinstall
-	* integration of xtom into jtom
-	* src/jtom/parser/TomParser.jj: new XML parser
+  * bootinstall
+  * integration of xtom into jtom
+  * src/jtom/parser/TomParser.jj: new XML parser
 
 2003-10-03  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* bootinstall
-	* src/jtom/TomBase.t: introduced _* variables
-	* src/jtom/runtime/set/SharedMultiSet.t: 
-	  - fix undetected error: pair -> ... instead of pair[] -> ...
-	* src/jtom/compiler/TomKernelCompiler.t: 
-	  - optimization in matching: do not assigned UnamedVariable when
-	    they are not annotated
+  * bootinstall
+  * src/jtom/TomBase.t: introduced _* variables
+  * src/jtom/runtime/set/SharedMultiSet.t: 
+    - fix undetected error: pair -> ... instead of pair[] -> ...
+  * src/jtom/compiler/TomKernelCompiler.t: 
+    - optimization in matching: do not assigned UnamedVariable when
+      they are not annotated
 
 2003-10-02    <pem@bach>
 
-	* src/jtom/compiler/TomKernelExpander.t: 
-	  - introduced UnamedVariableStar
-	  - fix a bug in linearization of annoted variables
-	* src/jtom/compiler/TomKernelCompiler.t: 
-	  - introduced UnamedVariableStar
-	  - allow UnamedVariable and UnamedVariableStar in list-matching
-	  - allow annoted variables in list-matching
-	* src/jtom/compiler/TomCompiler.t: 
-	  - allow non-linear annoted UnamedVariable
-	* src/jtom/backend/TomGenerator.t: 
-	  - do not generate code for Assign(UnameVariable...,...)
-	* test/Array.t: added new tests
-	* test/List.t: added new tests
+  * src/jtom/compiler/TomKernelExpander.t: 
+    - introduced UnamedVariableStar
+    - fix a bug in linearization of annoted variables
+  * src/jtom/compiler/TomKernelCompiler.t: 
+    - introduced UnamedVariableStar
+    - allow UnamedVariable and UnamedVariableStar in list-matching
+    - allow annoted variables in list-matching
+  * src/jtom/compiler/TomCompiler.t: 
+    - allow non-linear annoted UnamedVariable
+  * src/jtom/backend/TomGenerator.t: 
+    - do not generate code for Assign(UnameVariable...,...)
+  * test/Array.t: added new tests
+  * test/List.t: added new tests
 
 2003-10-01  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* added the generation of a comment "Generated by TOM..."
-	* replaced ArrayList by LinkedList in TomParser
-	* replaced ArrayList by List in ASTFactory 
+  * added the generation of a comment "Generated by TOM..."
+  * replaced ArrayList by LinkedList in TomParser
+  * replaced ArrayList by List in ASTFactory 
 
 2003-09-23  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* bootinstall
-	* released 1.4 
-	
+  * bootinstall
+  * released 1.4 
+  
 2003-09-19  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
- 	* src/jtom/tools/ASTFactory.java: fix the ^M problem under windows
+  * src/jtom/tools/ASTFactory.java: fix the ^M problem under windows
 
 
 2003-09-16  Pierre-Etienne Moreau  <pem@escher.loria.fr>
@@ -532,17 +532,17 @@
         * bumped to 1.4beta
 
 2003-09-15  Pierre-Etienne Moreau  <pem@escher.loria.fr>
-	* user defined labels a are allowed in patterns
+  * user defined labels a are allowed in patterns
 
 2003-09-11  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
         * complex paths allowed in %include contructs
-	* updated to *.tom files generated by apigen
-	* bootinstall
+  * updated to *.tom files generated by apigen
+  * bootinstall
  
 2003-08-23  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* bumped to 1.4alpha
+  * bumped to 1.4alpha
 
 2003-08-22  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
@@ -550,67 +550,67 @@
 
 2003-08-22  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/compiler/TomExpander.t: fix a problem when expanding RewriteRule
-	* bumped to 1.3delta
+  * src/jtom/compiler/TomExpander.t: fix a problem when expanding RewriteRule
+  * bumped to 1.3delta
         * bootinstall
-	* src/jtom/parser/TomParser.jj: removed old backquote and dotTerm parser
-	* src/jtom/tools/ASTFactory.java: removed previous dollar/backquote parser
-	* src/jtom/checker/TomChecker.t: adapted to DollarTerm
-	* src/jtom/TomSignature.adt: removed DotTerm, BuildBuiltin, BackquoteTerm
+  * src/jtom/parser/TomParser.jj: removed old backquote and dotTerm parser
+  * src/jtom/tools/ASTFactory.java: removed previous dollar/backquote parser
+  * src/jtom/checker/TomChecker.t: adapted to DollarTerm
+  * src/jtom/TomSignature.adt: removed DotTerm, BuildBuiltin, BackquoteTerm
 
 2003-08-21  Pierre-Etienne Moreau  <pem@escher.loria.fr>
-	* major redesign of the backquote parser
-	* should be compatible with the old one, but not yet finished
+  * major redesign of the backquote parser
+  * should be compatible with the old one, but not yet finished
 
 2003-08-21    <julien.guyon@loria.fr>
-	* Remove Flags.java, add TomSyntaxChecker.java and TomTypeChecker.java
+  * Remove Flags.java, add TomSyntaxChecker.java and TomTypeChecker.java
         * Simplify Tom interface
-	
+  
 2003-08-20    <pem@bach>
         * bootinstall
-	* added support for double
-	
+  * added support for double
+  
 2003-08-18    <pem@bach>
-	* %typedouble added
-	* %typeint is now an int instead of an Integer
+  * %typedouble added
+  * %typeint is now an int instead of an Integer
 
 2003-08-14    <pem@bach>
-	* bootstrap with the new apigen and aterm-java design
-	* bootinstall
-	* runtime/strategies added to stable
-	* bumped to 1.3gamma
-	* "string" tom type renamed into "String"
-	* builtin strings supported in back-quoted terms
-	
+  * bootstrap with the new apigen and aterm-java design
+  * bootinstall
+  * runtime/strategies added to stable
+  * bumped to 1.3gamma
+  * "string" tom type renamed into "String"
+  * builtin strings supported in back-quoted terms
+  
 2003-08-12    <pem@bach>
-	* src/jtom/TomSignature.adt: 
-	  - TomTypeList introduced
-	  - TomRule and TomRuleList introduced
-	  - TomNumber and TomNumberList introduced
-	  - TomList implemented as a list
+  * src/jtom/TomSignature.adt: 
+    - TomTypeList introduced
+    - TomRule and TomRuleList introduced
+    - TomNumber and TomNumberList introduced
+    - TomList implemented as a list
 
-	* src/jtom/TomBase.t: introduced apigen list-operators
+  * src/jtom/TomBase.t: introduced apigen list-operators
         * XML stuff added
 
 2003-08-05  Pierre-Etienne Moreau  <pem@escher.loria.fr>
         * convert ADT files to new style
 
 2003-06-06  Pierre-Etienne Moreau  <pem@escher.loria.fr>
-	* bootinstall
+  * bootinstall
 
 2003-5-23    <julien.guyon@loria.fr>
-	* start debugger development (jtom.debug.TomDebugger)
-	* Introduce SharedSet API (jtom.runtime.set.SharedSet)
+  * start debugger development (jtom.debug.TomDebugger)
+  * Introduce SharedSet API (jtom.runtime.set.SharedSet)
 
 2003-05-08    <pem@bach>
 
-	* src/jtom/parser/TomParser.jj: 
-	  allow is_fsym for list and array operators
+  * src/jtom/parser/TomParser.jj: 
+    allow is_fsym for list and array operators
 
 2003-05-07    <pem@bach>
 
-	* src/jtom/backend/TomGenerator.t: 
-	  improved tom_insert_list: no longer use reverse
+  * src/jtom/backend/TomGenerator.t: 
+    improved tom_insert_list: no longer use reverse
 
 2003-05-06    <pem@bach>
 
@@ -621,134 +621,134 @@
 
         * release 1.2 under GPL license
         * bootinstall
-	* src/jtom/compiler/TomKernelCompiler.t: re-introduced CompiledPattern
+  * src/jtom/compiler/TomKernelCompiler.t: re-introduced CompiledPattern
 
 2003-04-15    <pem@bach>
 
-	* src/jtom/tools/Flags.java: 
-	  - replaced --noWarning by --Wall
-	  - removed -W
-	  - replaced Flags.noWarning by Flags.warning
+  * src/jtom/tools/Flags.java: 
+    - replaced --noWarning by --Wall
+    - removed -W
+    - replaced Flags.noWarning by Flags.warning
 
-	* TomExpander split into TomExpander + TomKernelExpander
-	* TomExpander transforms: 
-	  - BackQuoteTerm   
-	  - RecordAppl
-	  - RewriteRule
-	  - MatchingCondition
-	  - Equality Condition
-	* TomKernelExpander transforms:
-	  - TomType
-	  - Appl
-	  - PlaceHolder
-	  - Variable
-	  - Match
-	
-	* TomCompiler split into TomCompiler + TomKernelCompiler
+  * TomExpander split into TomExpander + TomKernelExpander
+  * TomExpander transforms: 
+    - BackQuoteTerm   
+    - RecordAppl
+    - RewriteRule
+    - MatchingCondition
+    - Equality Condition
+  * TomKernelExpander transforms:
+    - TomType
+    - Appl
+    - PlaceHolder
+    - Variable
+    - Match
+  
+  * TomCompiler split into TomCompiler + TomKernelCompiler
         * pass2_1 renamed into preProcessing
         * pass3 renamed into postProcessing
         * TomCompiler transforms:
-	  - RewriteRule
-	  - MatchingCondition
-	  - Equality Condition
-	  - Abstraction of list matching
-	  - Linearization
-	* TomKernelCompiler deals with:
-	  - MakeTerm
-	  - Match
-	
+    - RewriteRule
+    - MatchingCondition
+    - Equality Condition
+    - Abstraction of list matching
+    - Linearization
+  * TomKernelCompiler deals with:
+    - MakeTerm
+    - Match
+  
 2003-03-30  Jurgen Vinju   <jurgenv@cwi.nl>
-	* Used backquotes to delay calling aterm-java-config script to after
-   	  configure phase. Otherwise autobundle can't configure all packages
-   	  before building them.
+  * Used backquotes to delay calling aterm-java-config script to after
+      configure phase. Otherwise autobundle can't configure all packages
+      before building them.
 
 2003-03-26  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* bootinstall
+  * bootinstall
 
-	* src/jtom/runtime/GenericTraversal.java: traversal are now used
-	by composition instead of inheritance
+  * src/jtom/runtime/GenericTraversal.java: traversal are now used
+  by composition instead of inheritance
 
 2003-03-25  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/runtime/GenericTraversal.java: extended genericCollect
-	to support multiple arguments
+  * src/jtom/runtime/GenericTraversal.java: extended genericCollect
+  to support multiple arguments
 
-	* src/jtom/compiler/TomCompiler.t: 
-	* src/jtom/compiler/TomExpander.t: 
-	  - fixed several bugs (matching conditions)
-	  - BuildVariableStar no longer used
+  * src/jtom/compiler/TomCompiler.t: 
+  * src/jtom/compiler/TomExpander.t: 
+    - fixed several bugs (matching conditions)
+    - BuildVariableStar no longer used
 
-	* src/jtom/TomSignature.adt: 
-	  - removed BuildVariableStar
-	  - added fileName to OriginTracking
+  * src/jtom/TomSignature.adt: 
+    - removed BuildVariableStar
+    - added fileName to OriginTracking
 
 2003-03-20    <jurgenv@cwi.nl>
-	* Removed dependency on shared-objects. The aterm-java-config
+  * Removed dependency on shared-objects. The aterm-java-config
           script takes care of this recursive dependency now. This is
           a try-out of this mechanism.
 
 2003-03-18    <jurgenv@cwi.nl>
-	* The names of the jarfiles for shared-objects and aterm-java are
+  * The names of the jarfiles for shared-objects and aterm-java are
           now found automatically using shared-objects-config and 
           aterm-java-config. 
 
 2003-03-17    <pem@bach>
 
-	* bootinstall
+  * bootinstall
 
 2003-03-16    <pem@bach>
 
-	* src/jtom/compiler/TomExpander.t: 
+  * src/jtom/compiler/TomExpander.t: 
           - support for integer in backQuotedTerm
-	
-	* src/jtom/parser/TomParser.jj: 
-	  - disjunction of patterns are now allowed
-	    the corresponding semantic action is dupplicated
-	    (p_1 | p_2 -> rhs) is transformed into
-	    (p_1 -> rhs and p_2 -> rhs)
-	    when p_1 and p_2 match, the rhs is evaluated twice
+  
+  * src/jtom/parser/TomParser.jj: 
+    - disjunction of patterns are now allowed
+      the corresponding semantic action is dupplicated
+      (p_1 | p_2 -> rhs) is transformed into
+      (p_1 -> rhs and p_2 -> rhs)
+      when p_1 and p_2 match, the rhs is evaluated twice
  
-	  - tutorial and tests updated to use disjunctive patterns
-	
+    - tutorial and tests updated to use disjunctive patterns
+  
 2003-03-15    <pem@bach>
 
-	* examples/Reach.t: based on runtime.GenericTraversal
+  * examples/Reach.t: based on runtime.GenericTraversal
 
-	* tutorial/poly/2_advanced: 
+  * tutorial/poly/2_advanced: 
           - poly tutorial is now based on runtime.GenericTraversal
-	  - bug: single-line comments are not supported in imported signature
-	
+    - bug: single-line comments are not supported in imported signature
+  
 2003-03-14  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/runtime/GenericTraversal.java: 
-	  - do not longer use exceptions in TomChecker
-	  - put all traversal functions in runtime.GenericTraversal
-	  - extends the generic traversal mechanism apply functions with n
-	    arguments
-	  - removed traversal functions from TomBase and TomExpander
+  * src/jtom/runtime/GenericTraversal.java: 
+    - do not longer use exceptions in TomChecker
+    - put all traversal functions in runtime.GenericTraversal
+    - extends the generic traversal mechanism apply functions with n
+      arguments
+    - removed traversal functions from TomBase and TomExpander
 
 2003-02-27    <pem@bach>
 
-	* src/jtom/backend/TomGenerator.t: 
+  * src/jtom/backend/TomGenerator.t: 
           generation of declarations guarded by isDefinedSymbol
-	  fix a bug in genDeclMake
-	
-	* src/jtom/compiler/TomCompiler.t: 
-	  isDefinedSymbol moved to TomBase
+    fix a bug in genDeclMake
+  
+  * src/jtom/compiler/TomCompiler.t: 
+    isDefinedSymbol moved to TomBase
 
 2003-02-21    <pem@bach>
 
-	* bootinstall
-	* new architecture: expander + backend
+  * bootinstall
+  * new architecture: expander + backend
 
 2003-02-14    <pem@bach>
 
-	* bootinstall
-	
+  * bootinstall
+  
 2003-02-05    julien
 
-	* Introduce SlotList type in symbols
+  * Introduce SlotList type in symbols
 
 2003-01-23    <pem@bach>
 
@@ -757,27 +757,27 @@
 2003-01-18    <pem@bach>
 
         * Tom source and generated code are now synchronized
-	* bootinstall
-	* --pretty flag added for de-synchronization
-	* src/jtom/tools/SingleLineOutputCode.java: 
-	* src/jtom/tools/ASTFactory.java: 
-	  - faster implementation of text formatting
-	* src/jtom/TomSignature.adt: iTL renamed into ITL
+  * bootinstall
+  * --pretty flag added for de-synchronization
+  * src/jtom/tools/SingleLineOutputCode.java: 
+  * src/jtom/tools/ASTFactory.java: 
+    - faster implementation of text formatting
+  * src/jtom/TomSignature.adt: iTL renamed into ITL
 
 2003-01-14  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/TomSignature.adt: 
-	  - TomName Position renamed into PositionName 
-	  - Position type added for origin tracking
+  * src/jtom/TomSignature.adt: 
+    - TomName Position renamed into PositionName 
+    - Position type added for origin tracking
 
 2003-01-10  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/parser/TomParser.jj: 
-	  - make_add renamed into make_insert (for oplist)
-	  - make_add renamed into make_append (for oparray)
+  * src/jtom/parser/TomParser.jj: 
+    - make_add renamed into make_insert (for oplist)
+    - make_add renamed into make_append (for oparray)
 
-	* src/jtom/compiler/TomGenerator.t: 
-	  - backquote support for typearray
+  * src/jtom/compiler/TomGenerator.t: 
+    - backquote support for typearray
 
 2002-12-21    <pem@escher>
 
@@ -785,301 +785,301 @@
 
 2002-12-21    <pem@bach>
 
-	* src/jtom/compiler/TomGenerator.t: 
-	  - make_add: arguments swapped!
-	  - backquote support for typelist
-	  - backquote support for typearray (not yet finished)
+  * src/jtom/compiler/TomGenerator.t: 
+    - make_add: arguments swapped!
+    - backquote support for typelist
+    - backquote support for typearray (not yet finished)
 
 2002-12-16    <pem@bach>
 
-	* tests compiled in strictType mode (except Record)
+  * tests compiled in strictType mode (except Record)
 
 2002-12-16  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
         * bootinstall
-	* configure.in: added tutorial to the distribution
-	                removed examples from the distribution
+  * configure.in: added tutorial to the distribution
+                  removed examples from the distribution
 
 2002-12-15    <pem@bach>
 
-	* add support for builtin-integer:
-	  - %typeint should be used to define the "int" type
-	  - digits can be used in patterns
-	   
-	* src/jtom/compiler/TomGenerator.t: 
-	  - typing improved in list-matching (with strictType)
+  * add support for builtin-integer:
+    - %typeint should be used to define the "int" type
+    - digits can be used in patterns
+     
+  * src/jtom/compiler/TomGenerator.t: 
+    - typing improved in list-matching (with strictType)
 
 2002-12-08    <pem@bach>
-	
-	* annoted variables: ':' replaced by '@'
-	* non-linear pattern used in TomChecker
-	* test suite revisited
-	* %make removed
-	* MakeTerm improved: function calls are allowed
-	* bootinstall
-	
+  
+  * annoted variables: ':' replaced by '@'
+  * non-linear pattern used in TomChecker
+  * test suite revisited
+  * %make removed
+  * MakeTerm improved: function calls are allowed
+  * bootinstall
+  
 2002-12-05    <pem@bach>
 
-	* src/jtom/compiler/TomCompiler.t: 
-	  - extension to non-linear annoted variables
+  * src/jtom/compiler/TomCompiler.t: 
+    - extension to non-linear annoted variables
 
 2002-12-01    <pem@bach>
 
-	* src/jtom/compiler/TomCompiler.t:
-	  - non-linear patterns are now supported
+  * src/jtom/compiler/TomCompiler.t:
+    - non-linear patterns are now supported
 
 2002-11-30    <pem@bach>
 
-	* new types (Declaration, Option and Expression)
-	* --strictType by default
+  * new types (Declaration, Option and Expression)
+  * --strictType by default
 
 2002-11-23    <pem@bach>
 
-	* dead code removed 
+  * dead code removed 
 
 2002-11-21    <pem@bach>
 
-	* version 1.0beta
-	* new stable version based on ApiGen
+  * version 1.0beta
+  * new stable version based on ApiGen
 
-	* src/jtom/Tom.java: 
-	  - symbol table can now be represented by a term
-	  - noDeclaration flags added: do not generate declarations
-	  - import option added: path extension for includes
+  * src/jtom/Tom.java: 
+    - symbol table can now be represented by a term
+    - noDeclaration flags added: do not generate declarations
+    - import option added: path extension for includes
 
-	* src/jtom/checker/TomChecker.t: efficiency bottleneck found
-	  - this was the debugPrintln statement
-	* bootstrap with --strictType activated
-	
+  * src/jtom/checker/TomChecker.t: efficiency bottleneck found
+    - this was the debugPrintln statement
+  * bootstrap with --strictType activated
+  
 2002-11-20  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/checker/TomChecker.t: shortcuts added in pass1
+  * src/jtom/checker/TomChecker.t: shortcuts added in pass1
 
 2002-11-20  Jurgen Vinju  <vinju@loria.fr>
 
-	* replaced Cons(<head>,<tail>) by [<head>,<tail>] for TomList
-	  in TomSignature.adt
+  * replaced Cons(<head>,<tail>) by [<head>,<tail>] for TomList
+    in TomSignature.adt
 
 2002-11-20  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* replace Symbol by Name everywhere
+  * replace Symbol by Name everywhere
 
 2002-11-19  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* version 0.7: bootstrap with ApiGen (6 types)
-	
+  * version 0.7: bootstrap with ApiGen (6 types)
+  
 2002-10-29    <pem@bach>
 
-	* version 0.6
+  * version 0.6
 
-	* src/jtom/TomBase.t: use a cache to compute numberListToIdentifier
+  * src/jtom/TomBase.t: use a cache to compute numberListToIdentifier
 
-	* src/jtom/checker/TomChecker.t: use backQuoteTerm
-	
-	* src/jtom/parser/TomParser.jj:  use cstFactory
+  * src/jtom/checker/TomChecker.t: use backQuoteTerm
+  
+  * src/jtom/parser/TomParser.jj:  use cstFactory
 
-	* src/jtom/tools/ASTFactory.java: use cstFactory
-	
+  * src/jtom/tools/ASTFactory.java: use cstFactory
+  
 
 2002-10-29  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/checker/TomChecker.t: DotTerm allowed in BackQuoteTerm
-	                                 (very nice!)
-	* src/jtom/parser/TomParser.jj (TOKEN): DotTerm added
+  * src/jtom/checker/TomChecker.t: DotTerm allowed in BackQuoteTerm
+                                   (very nice!)
+  * src/jtom/parser/TomParser.jj (TOKEN): DotTerm added
 
 2002-10-27    <pem@bach>
 
-	* src/jtom/compiler/TomCompiler.t: fix a bug in list matching
+  * src/jtom/compiler/TomCompiler.t: fix a bug in list matching
 
-	* src/jtom/Tom.java: 
-	  - based on aterm.* (and no longer on jaterm.*)
+  * src/jtom/Tom.java: 
+    - based on aterm.* (and no longer on jaterm.*)
 
-	* src/jtom/checker/TomChecker.t: 
-	  - new implementation of "expand", based on generic traversal
-	  - introduction of "backQuotedTerm"
+  * src/jtom/checker/TomChecker.t: 
+    - new implementation of "expand", based on generic traversal
+    - introduction of "backQuotedTerm"
 
-	* src/jtom/TomBase.t: new generic methods:
-	  - map, maptree and traversal
+  * src/jtom/TomBase.t: new generic methods:
+    - map, maptree and traversal
 
 2002-09-23 <vinju@lagarde>
 
-	* added jtom wrapper script in new utils directory
+  * added jtom wrapper script in new utils directory
 
 2002-09-15    <pem@bach>
 
-	* src/jtom/verifier/TomVerifier.t: errors are managed by exceptions
+  * src/jtom/verifier/TomVerifier.t: errors are managed by exceptions
 
-	* src/jtom/Tom.signature: fsym are built only once
+  * src/jtom/Tom.signature: fsym are built only once
 
 2002-08-21  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/verifier/TomVerifier.t: integration of the TOM Verifier
+  * src/jtom/verifier/TomVerifier.t: integration of the TOM Verifier
 
 2002-06-17  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: fix a bug in pass2_1: MakeTerm
- 	  are expanded in PatternAction
+  * src/jtom/compiler/TomCompiler.t: fix a bug in pass2_1: MakeTerm
+    are expanded in PatternAction
 
 2002-01-24  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: 
-	  - complete re-implementation of the syntactic matching
+  * src/jtom/compiler/TomCompiler.t: 
+    - complete re-implementation of the syntactic matching
 
 2002-01-22  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: 
-	  - extension to full list matching
-	  - allow list matching with empty pattern
+  * src/jtom/compiler/TomCompiler.t: 
+    - extension to full list matching
+    - allow list matching with empty pattern
 
 2002-01-21  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: pass2 splited into:
-	  - pass2_1: simplification of checkedTerm
-	  - pass2_2: compilation into Automata
+  * src/jtom/compiler/TomCompiler.t: pass2 splited into:
+    - pass2_1: simplification of checkedTerm
+    - pass2_2: compilation into Automata
 
 2001-10-31  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/compiler/TomGenerator.t: parenthesis added in genDecl (#define)
+  * src/jtom/compiler/TomGenerator.t: parenthesis added in genDecl (#define)
 
 2001-08-24  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/compiler/TomGenerator.t: first Eiffel program
-  	  automatically compiled
+  * src/jtom/compiler/TomGenerator.t: first Eiffel program
+      automatically compiled
 
 2001-07-19  Pierre-Etienne Moreau  <moreau@loria.fr>
 
         * New package: jtom.tools
-	
-	* src/jtom/tools/Flags.java: 
-	- new 'supportedGoto' flag
+  
+  * src/jtom/tools/Flags.java: 
+  - new 'supportedGoto' flag
 
-	* src/jtom/Tom.java: 
-	- new '-eCode' option for the Eiffel back-end
+  * src/jtom/Tom.java: 
+  - new '-eCode' option for the Eiffel back-end
 
-	* src/jtom/compiler/TomCompiler.t: 
-	- we can now generate a program without any goto/break (useful for
-	  Eiffel for example)
-	- jtom can be boostrapped without goto
+  * src/jtom/compiler/TomCompiler.t: 
+  - we can now generate a program without any goto/break (useful for
+    Eiffel for example)
+  - jtom can be boostrapped without goto
 
 2001-06-15  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/Tom.java: new options
-	- intermediate: generate intermediate files
-	- doCompile: read a checked AST and generate the target language
+  * src/jtom/Tom.java: new options
+  - intermediate: generate intermediate files
+  - doCompile: read a checked AST and generate the target language
 
 2001-06-01  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* test/Makefile.am: more tests
+  * test/Makefile.am: more tests
 
 2001-05-31  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/parser/TomParser.jj:
-	- new syntax: %rule { l_1 -> r_1 ... l_n -> r_n }
+  * src/jtom/parser/TomParser.jj:
+  - new syntax: %rule { l_1 -> r_1 ... l_n -> r_n }
 
-	* src/jtom/compiler/TomCompiler.t: 
-	- compilation of ruleset
+  * src/jtom/compiler/TomCompiler.t: 
+  - compilation of ruleset
 
 2001-05-11  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: 
-	- type depends on TypeList instead of ArgList (more flexible)
-	- get_slot added
+  * src/jtom/compiler/TomCompiler.t: 
+  - type depends on TypeList instead of ArgList (more flexible)
+  - get_slot added
 
-	* src/jtom/parser/TomParser.jj: 
-	- get_slot(name,t) added
+  * src/jtom/parser/TomParser.jj: 
+  - get_slot(name,t) added
 
 2001-05-07  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/parser/TomParser.jj: old syntax removed
-	- new parser for terms
-	- record syntax added: 
-	    - typeterm term pair(first:term, second:term)
-	    - pair[first=term]
-	- new syntax for aliases: x@term instead of x:term
-	- cmp_fun_sym(t1,t2) added
+  * src/jtom/parser/TomParser.jj: old syntax removed
+  - new parser for terms
+  - record syntax added: 
+      - typeterm term pair(first:term, second:term)
+      - pair[first=term]
+  - new syntax for aliases: x@term instead of x:term
+  - cmp_fun_sym(t1,t2) added
 
-	* src/jtom/checker/TomChecker.t: 
-	- records are available (done by expansion)
-	- expansion phase added before the type inference phase
+  * src/jtom/checker/TomChecker.t: 
+  - records are available (done by expansion)
+  - expansion phase added before the type inference phase
 
-	* src/jtom/compiler/TomCompiler.t: 
-	- simplified using somes records
+  * src/jtom/compiler/TomCompiler.t: 
+  - simplified using somes records
 
 2001-04-12  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: 
-	- prettyPrint has been removed
-	- generic traversal (collectVariable)
-	- improved compilation scheme: pass2() is no longer called in generate()
-	
-	* src/jtom/parser/TomParser.jj: %include { name.t } is now available
+  * src/jtom/compiler/TomCompiler.t: 
+  - prettyPrint has been removed
+  - generic traversal (collectVariable)
+  - improved compilation scheme: pass2() is no longer called in generate()
+  
+  * src/jtom/parser/TomParser.jj: %include { name.t } is now available
 
 2001-03-26  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: compilation of list-matching
-	(typearray representation)
+  * src/jtom/compiler/TomCompiler.t: compilation of list-matching
+  (typearray representation)
 
 2001-03-21  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: 
-	- AnnotedAppl have been removed for more flexibility
-	- Appl are now annoted with an Option([...])
+  * src/jtom/compiler/TomCompiler.t: 
+  - AnnotedAppl have been removed for more flexibility
+  - Appl are now annoted with an Option([...])
 
 2001-03-20  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/checker/TomChecker.t: parse and check list-pattern
+  * src/jtom/checker/TomChecker.t: parse and check list-pattern
 
 2001-03-07  Pierre-Etienne Moreau  <moreau@loria.fr>
 
 
-	* src/jtom/compiler/TomCompiler.t: generation of access and building functions
-	- GET_HEAD, GET_TAIL, IS_EMPTY, MAKE_EMPTY, MAKE_ADD
-	- the parsing of list-pattern is not yet implemented
+  * src/jtom/compiler/TomCompiler.t: generation of access and building functions
+  - GET_HEAD, GET_TAIL, IS_EMPTY, MAKE_EMPTY, MAKE_ADD
+  - the parsing of list-pattern is not yet implemented
 
 2001-03-02  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/parser/TomParser.jj: new syntax for type and symbol declaration
-	- %typeterm  (implement, get_fun_sym(t), get_subterm(t,n), equals(t1,t2))
-	- %typelist  (implement, ..., get_element(l,n), get_size(l))
-	- %typearray (implement, ..., get_head(l), get_tail(l), is_empty(l))
-	- %op        (fsym, make(t1,...,tn))
-	- %oplist    (fsym, make_empty(), make_add(l,e))
-	- %oparray   (fsym, make_empty(size), make_add(l,e,index))
-	
+  * src/jtom/parser/TomParser.jj: new syntax for type and symbol declaration
+  - %typeterm  (implement, get_fun_sym(t), get_subterm(t,n), equals(t1,t2))
+  - %typelist  (implement, ..., get_element(l,n), get_size(l))
+  - %typearray (implement, ..., get_head(l), get_tail(l), is_empty(l))
+  - %op        (fsym, make(t1,...,tn))
+  - %oplist    (fsym, make_empty(), make_add(l,e))
+  - %oparray   (fsym, make_empty(size), make_add(l,e,index))
+  
 2001-02-21  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: nested %match are allowed
+  * src/jtom/compiler/TomCompiler.t: nested %match are allowed
 
-	* src/jtom/parser/TomParser.jj: possibility to give a name to a node
-	- foo(x,subterm:g(y)) -> { ... subterm ... }
-	  this avoids to re-create the term g(y)
-	- intern variables _1, _1_1, _1_2, etc. are no longer necessary
-	  (and can non longer be used)
+  * src/jtom/parser/TomParser.jj: possibility to give a name to a node
+  - foo(x,subterm:g(y)) -> { ... subterm ... }
+    this avoids to re-create the term g(y)
+  - intern variables _1, _1_1, _1_2, etc. are no longer necessary
+    (and can non longer be used)
 
 2001-02-20  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* test/Jfib1Test.java: JUnit is now used
+  * test/Jfib1Test.java: JUnit is now used
 
 2001-02-15  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/compiler/TomCompiler.t: 
-	- Bug fixed (--cCode):
-	- Declaration are made before Assignement 
-	- Placeholder variables are now compiled
-	- Variables are now local to each pattern
-	- Semantic actions are included in the automaton (i.e. intern
-	  variables _1, _1_1, _1_2, etc. can used in semantic actions)
+  * src/jtom/compiler/TomCompiler.t: 
+  - Bug fixed (--cCode):
+  - Declaration are made before Assignement 
+  - Placeholder variables are now compiled
+  - Variables are now local to each pattern
+  - Semantic actions are included in the automaton (i.e. intern
+    variables _1, _1_1, _1_2, etc. can used in semantic actions)
 
 2001-02-14  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/Tom.java: first bootstrap
+  * src/jtom/Tom.java: first bootstrap
 
 2001-02-06  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* src/jtom/parser/TomParser.jj: first integration of the new (javacc) parser
+  * src/jtom/parser/TomParser.jj: first integration of the new (javacc) parser
 
-	* configure.in: use acinclude.m4 and check for java, javac and javacc
+  * configure.in: use acinclude.m4 and check for java, javac and javacc
 
 2001-01-25  Pierre-Etienne Moreau  <moreau@loria.fr>
 
-	* Setup of TOM under automake
+  * Setup of TOM under automake

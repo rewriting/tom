@@ -1181,7 +1181,9 @@
     <antcall target="clean.bootstrap"/>
   </target>
 
-  <target name="bundle.src" depends="src.dist">
+  <target name="bundle.src"
+          description="Prepare bundle (src) for eclipse"
+          depends="src.dist">
     <mkdir dir="${bundle.temp.dir}"/>
     <unjar dest="${bundle.temp.dir}">
       <fileset dir="${src.dist.lib}">
@@ -1228,7 +1230,9 @@
      </copy>
   </target>
 
-  <target name="bundle.stable" depends="stable.dist">
+  <target name="bundle.stable"
+    description="Prepare bundle (stable) for eclipse"
+    depends="stable.dist">
     <mkdir dir="${bundle.temp.dir}"/>
     <unjar dest="${bundle.temp.dir}">
       <fileset dir="${stable.dist.lib}">

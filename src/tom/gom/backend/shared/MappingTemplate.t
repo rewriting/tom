@@ -83,7 +83,8 @@ public class MappingTemplate extends TemplateClass {
                         slots=slotList],
           _*) -> {
         out.append("%op "+className(`sortName)+" "+className(`opName)+"("+slotDecl(`slotList)+") {\n");
-        out.append("  is_fsym(t) { (t!=null) && t."+isOperatorMethod(`opName)+"() }\n");
+        //out.append("  is_fsym(t) { (t!=null) && t."+isOperatorMethod(`opName)+"() }\n");
+        out.append("  is_fsym(t) { t instanceof "+fullClassName(`opName)+" }\n");
         %match(SlotFieldList `slotList) {
           concSlotField(_*,slot@SlotField[name=slotName],_*) -> {
             out.append("  get_slot("+`slotName+", t) ");
