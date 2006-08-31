@@ -39,7 +39,7 @@ import tom.library.adt.tnode.*;
  * error management.
  *
  */
-public class PluginPlatform {
+public class PluginPlatform extends PluginPlatformBase{
 
   /** Used to analyse xml configuration file */
   %include{ adt/tnode/TNode.tom }
@@ -64,6 +64,7 @@ public class PluginPlatform {
 
   /** Class Pluginplatform constructor */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
+	super(loggerRadical);  
     statusHandler = new StatusHandler();
     this.loggerRadical = loggerRadical;
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
