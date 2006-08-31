@@ -60,21 +60,16 @@ public class SOpTemplate extends TemplateClass {
     String classBody = %[
 package @getPackage()@;
 
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.MuVisitable;
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd;
-
 public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy {
   private static final String msg = "Not an @className(operator)@";
   /* Manage an internal position */
-  private Position position;
+  private tom.library.strategy.mutraveler.Position position;
 
-  public void setPosition(Position pos) {
+  public void setPosition(tom.library.strategy.mutraveler.Position pos) {
     this.position = pos;
   }
 
-  public Position getPosition() {
+  public tom.library.strategy.mutraveler.Position getPosition() {
     if(hasPosition()) {
       return position;
     } else {
@@ -115,7 +110,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     }
   }
 
-  public MuStrategy accept(StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
+  public tom.library.strategy.mutraveler.MuStrategy accept(tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
     return v.visit_Strategy(this);
   }
 
@@ -127,7 +122,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
       jjtraveler.Visitable result = any;
-      if (any instanceof MuVisitable) {
+      if (any instanceof tom.library.strategy.mutraveler.MuVisitable) {
         boolean updated = false;
         jjtraveler.Visitable[] childs = null;
 
@@ -178,7 +173,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
           }
         }
         if (updated) {
-          result = ((MuVisitable) any).setChilds(childs);
+          result = ((tom.library.strategy.mutraveler.MuVisitable) any).setChilds(childs);
         }
       } else {
         if(!hasPosition()) {

@@ -60,18 +60,13 @@ public class MakeOpTemplate extends TemplateClass {
     String classBody = %[
 package @getPackage()@;
 
-import tom.library.strategy.mutraveler.Position;
-//import tom.library.strategy.mutraveler.MuVisitable;
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd;
-
 public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy {
   /* Do not manage an internal position, since the arguments is not really
    * used
    */
-  public void setPosition(Position pos) { ; /* who cares */ }
+  public void setPosition(tom.library.strategy.mutraveler.Position pos) { ; /* who cares */ }
 
-  public Position getPosition() {
+  public tom.library.strategy.mutraveler.Position getPosition() {
     throw new RuntimeException("Construction strategies have no position");
   }
 
@@ -105,7 +100,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     }
   }
 
-  public MuStrategy accept(StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
+  public tom.library.strategy.mutraveler.MuStrategy accept(tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
     return v.visit_Strategy(this);
   }
 
