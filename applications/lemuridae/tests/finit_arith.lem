@@ -4,6 +4,7 @@ termrule appl(S(n),cons(t,l)) -> appl(n,l).
 termrule appl(succ(t),l) -> succ(appl(t,l)).
 termrule appl(pred(t),l) -> pred(appl(t,l)).
 termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
+termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
 
 termrule pred(0) -> 0.
 termrule pred(succ(x)) -> x.
@@ -34,6 +35,8 @@ rule Impair(succ(n)) -> Pair(n).
 
 rule in(l,fPair(t)) -> Pair(appl(t,l)).
 rule in(l,fImpair(t)) -> Impair(appl(t,l)).
+
+
 
 
 proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) |- \An.(N(n) => Pair(succ(succ(0))*n)).
@@ -163,5 +166,23 @@ axiom.
 axiom.
 axiom.
 axiom.
+
+proof multn0: |- \An.(N(n) => eq(0,n*0)).
+elim.elim.
+focus h1. rule. fEq(S(0),one()*S(0)).
+focus h1. rule. reduce. axiom.
+next.
+rule. reduce.
+theorem eqrefl.
+focus h2. elim. 0. axiom.
+rule.
+focus h1. rule. rule. reduce.
+focus h1. rule. fEq(S(0),one()+S(0)).
+focus h1. rule. reduce.
+axiom.
+rule. reduce.
+theorem eqrefl.
+focus h3. elim. 0. axiom.
+
 
 
