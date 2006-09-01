@@ -54,6 +54,7 @@ public class MappingTemplate extends TemplateClass {
     out.append(%[
 %include { string.tom }
 %include { int.tom }
+%include { long.tom }
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }

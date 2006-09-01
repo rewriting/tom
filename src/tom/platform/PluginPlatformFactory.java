@@ -119,6 +119,7 @@ public class PluginPlatformFactory {
 
     try {
       File file = new File(xmlConfigurationFile).getCanonicalFile();
+      //System.out.println("xmlConfigFile = " + file.getPath());
       if(file.exists()) { 
         // side effect on the commandLine since config information is no more needed
         commandLine = (String[])commandList.toArray(new String[]{});

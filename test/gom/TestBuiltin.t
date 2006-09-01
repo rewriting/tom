@@ -82,7 +82,6 @@ public class TestBuiltin extends TestCase {
     assertTrue(a == b);
   }
 
-
   public void testMatchInt() {
     String res = "";
     Wrapper t = `Int(32);
@@ -91,6 +90,26 @@ public class TestBuiltin extends TestCase {
       Int(32) -> { res += "32"; }
     }
     assertTrue(res.equals("32"));
+  }
+
+  public void testMatchLong() {
+    String res = "";
+    Wrapper t = `Long(1234567890);
+    %match(Wrapper t) {
+      Long(32l) -> { res += "32l"; }
+      Long(1234567890l) -> { res += "1234567890l"; }
+    }
+    assertTrue(res.equals("1234567890l"));
+  }
+  
+  public void testMatchChar() {
+    String res = "";
+    Wrapper t = `Char('b');
+    %match(Wrapper t) {
+      Char('a') -> { res += "a"; }
+      Char('b') -> { res += "b"; }
+    }
+    assertTrue(res.equals("b"));
   }
 
   public void testMatchString() {

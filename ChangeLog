@@ -1,3 +1,7 @@
+2006-09-01  Pem  <pem@becky.local>
+  * added 'char' as a Gom builtin
+	* also split char.tom into char.tom and Character.tom
+
 2006-08-31  Pem  <pem@becky.local>
   * added the -X option into the global option, such that Gom.xml path can be
 	  deduced from the -X initialization, when tom.home is not defined
