@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the strategycompiler example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="strategycompiler" value="strategycompiler"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${strategycompiler}"/>
+    <delete dir="${examples.build}/${strategycompiler}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${strategycompiler}"/>
+    <tomcompile example="${strategycompiler}"/>
+    <javac.preset fork="true" destdir="${examples.build}">
+      <src path="${examples.dir}"/>
+      <src path="${examples.gen}"/>
+      <classpath refid="tom.examples.classpath"/>
+      <include name="${strategycompiler}/**/*.java"/>
+    </javac.preset>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${strategycompiler}/*.t"/>
+        <include name="${strategycompiler}/*.tom"/>
+        <include name="${strategycompiler}/*.java"/>
+        <include name="${strategycompiler}/*.gom"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
