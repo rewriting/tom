@@ -45,12 +45,14 @@ import jjtraveler.VisitFailure;
 
 public class GomBackend {
   TemplateFactory templatefactory;
+  private File tomHomePath;
 
   %include { ../adt/objects/Objects.tom }
   %include { mutraveler.tom }
 
-  GomBackend(TemplateFactory templatefactory) {
+  GomBackend(TemplateFactory templatefactory, File tomHomePath) {
     this.templatefactory = templatefactory;
+    this.tomHomePath = tomHomePath;
   }
 
   private GomEnvironment environment() {
@@ -137,6 +139,7 @@ public class GomBackend {
                     hooks=hooks] -> {
         GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
         TemplateClass operator = templatefactory.makeOperatorTemplate(
+            tomHomePath,
             `className,
             `abstracttype,
             `extendstype,

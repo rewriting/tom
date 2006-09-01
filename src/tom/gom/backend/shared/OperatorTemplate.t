@@ -32,6 +32,7 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
 public class OperatorTemplate extends TemplateClass {
+  File tomHomePath;
   ClassName abstractType;
   ClassName extendsType;
   ClassName sortName;
@@ -42,7 +43,8 @@ public class OperatorTemplate extends TemplateClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public OperatorTemplate(ClassName className,
+  public OperatorTemplate(File tomHomePath,
+                          ClassName className,
                           ClassName abstractType,
                           ClassName extendsType,
                           ClassName sortName,
@@ -51,6 +53,7 @@ public class OperatorTemplate extends TemplateClass {
                           HookList hooks,
                           TemplateClass mapping) {
     super(className);
+    this.tomHomePath = tomHomePath;
     this.abstractType = abstractType;
     this.extendsType = extendsType;;
     this.sortName = sortName;
@@ -755,12 +758,9 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
         return 1;
       }
     } else { /* We need to call gom to generate the file */
-      String config_xml = System.getProperty("tom.home") + File.separator + "Tom.xml";
-      try {
-        File file = new File(config_xml);
-        config_xml = file.getCanonicalPath();
-      } catch (IOException e) {
-        getLogger().log(Level.FINER,"Failed to get canonical path for "+config_xml);
+      File xmlFile = new File(tomHomePath,"Tom.xml");
+      if(!xmlFile.exists()) {
+        getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());
       }
       String file_path = null;
       try {
@@ -769,7 +769,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
       } catch (IOException e) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
       }
-      String[] params = {"-X",config_xml,"--optimize","--optimize2","--output",file_path,"-"};
+      String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
       //String[] params = {"-X",config_xml,"--output",file_path,"-"};
 
       String gen = generate();

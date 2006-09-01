@@ -32,7 +32,6 @@ import tom.gom.tools.error.GomRuntimeException;
 import java.io.*;
 
 public abstract class TemplateClass {
-
   protected ClassName className;
 
   public TemplateClass(ClassName className) {
