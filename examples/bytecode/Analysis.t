@@ -93,7 +93,7 @@ public class Analysis {
     TMethodList methods = clazz.getmethods();
     %match(TMethodList methods) {
       MethodList(_*, x, _*) -> {
-
+        System.out.println("Analysis of method "+`x.getinfo().getname());
         TInstructionList ins = `x.getcode().getinstructions();
 
         // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
@@ -110,24 +110,21 @@ public class Analysis {
 
         MuStrategy storeNotUsed = `Sequence(IsStore(indexMap, "index"), AllCfg(noLoad, labelMap));
 
-        //(`BottomUp(Try(ChoiceId(storeNotUsed,PrintInst())))).apply(ins);
+        `BottomUp(Try(ChoiceId(storeNotUsed,PrintInst()))).apply(ins);
 
+        // Removes the useless stores of the method stratKiller
+        // We have not managed to do it in the general case because of
+        // stack size problems
         TInstructionList impInstList = ins;
-        // Removes the useless store.
+        /*
         if(`x.getinfo().getname().equals("stratKiller")) {
-          impInstList = (TInstructionList)`Sequence(RemoveHeadInst(), RemoveHeadInst()).apply(ins);
-          //impInstList = (TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).apply(ins);
+          impInstList = (TInstructionList)`RepeatId(BottomUp(Try(ChoiceId(storeNotUsed, RemoveHeadInst())))).apply(ins);
         }
-
+        */
         TMethodCode impCode = `x.getcode().setinstructions(impInstList);
         TMethod impMethod = `x.setcode(impCode);
         impClass = appendMethod(impClass, impMethod);
         
-        //(`BottomUp(Try(ChoiceId(storeNotUsed,PrintInst())))).apply(impInstList);
-        //System.out.println(impClass);
-
-        // Display the control flow graph.
-        //`mu(MuVar("x"),Sequence(PrintInst(),AllCfg(MuVar("x"),labelMap))).apply(ins);
       }
     }
     return impClass;
