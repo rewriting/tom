@@ -249,6 +249,8 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Variable ''{0}'' has an unknown type: ''{1}''");
   public static final TomMessage repeatedMatchArgumentName=
       new TomMessage("Repeated variable ''{0}'' in ''match'' declaration");
+  public static final TomMessage invalidMatchSubject=
+      new TomMessage("Type ''{0}'' and Subject ''{1}'' are not correct");
   public static final TomMessage badMatchNumberArgument  =
       new TomMessage("Bad number of arguments: {0,number,integer} argument(s) required by match signature but {1,number,integer} found");
   public static final TomMessage incorrectVariableStarInMatch=

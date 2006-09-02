@@ -170,10 +170,11 @@ public class TomCompiler extends TomGenericPlugin {
     } // end match
 
     visit Instruction {
-      Match(SubjectList(l1),patternInstructionList, matchOptionList)  -> {
+      Match(matchSubjectList,patternInstructionList, matchOptionList)  -> {
         Option orgTrack = findOriginTracking(`matchOptionList);
         PatternInstructionList newPatternInstructionList = `concPatternInstruction();
         PatternList negativePattern = `concPattern();
+        TomTerm newMatchSubjectList = (TomTerm) MuTraveler.init(`preProcessing(compiler)).visit(`matchSubjectList);
         while(!`patternInstructionList.isEmptyconcPatternInstruction()) {
           /*
            * the call to preProcessing performs the recursive expansion
@@ -249,9 +250,7 @@ matchBlock: {
             `patternInstructionList = `patternInstructionList.getTailconcPatternInstruction();
         }
 
-        Instruction newMatch = `Match(SubjectList(l1),
-            newPatternInstructionList,
-            matchOptionList);
+        Instruction newMatch = `Match(newMatchSubjectList, newPatternInstructionList, matchOptionList);
         return newMatch;
       }
 

@@ -1,3 +1,7 @@
+2006-09-02  Pem  <pem@becky.local>
+  * removed TLVar
+  * 
+
 2006-09-01  Pem  <pem@becky.local>
   * added 'char' as a Gom builtin
 	* also split char.tom into char.tom and Character.tom

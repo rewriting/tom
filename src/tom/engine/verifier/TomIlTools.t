@@ -208,9 +208,6 @@ public class TomIlTools extends TomBase {
         unamedVariableSet.add(unamedVariable);
         return unamedVariable;
       }
-      TLVar[StrName=name] -> {
-        return `zvar(name);
-      }
     }
     throw new TomRuntimeException("tomTermToZTerm Strange pattern: " + tomTerm);
   }

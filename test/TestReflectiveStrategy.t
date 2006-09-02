@@ -203,14 +203,14 @@ public class TestReflectiveStrategy extends TestCase {
   // matching user defined strategy and use slots
   public int matchS2(MuStrategy s) {
     %match(Strategy s) {
-      S2(i, str, s) -> {
+      S2(i, str, s1) -> {
         if (`i == 0) {
           return 1;
         } else if (`str.equals("msg")) {
           return 2;
-        } else if (matchIdentity(`s)) {
+        } else if (matchIdentity(`s1)) {
           return 3;
-        } else if (matchS1(`s)) {
+        } else if (matchS1(`s1)) {
           return 4;
         }
       }

@@ -38,11 +38,6 @@ TomTerm =
     | UnamedVariableStar(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
 
   /**
-   * <code>EmptyContext</code> used by the expander to denote an empty context
-   */
-    | EmptyContext()
-
-  /**
    * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm
    */
     | TargetLanguageToTomTerm(Tl:TargetLanguage)
@@ -71,12 +66,11 @@ TomTerm =
     | AntiTerm(TomTerm:TomTerm)
     | Subterm(AstName:TomName,SlotName:TomName,GroundTerm:TomTerm)
     | SymbolOf(GroundTerm:TomTerm)
-    | TLVar(StrName:String,AstType:TomType)
     | Ref(TomTerm:TomTerm)
 
     | Automata(Option:OptionList,PatternList:TomList,NumberList:TomNumberList,Inst:Instruction)
 
-    | BuildReducedTerm(Kid1:TomTerm)
+    | BuildReducedTerm(TomTerm:TomTerm)
     | FunctionCall(AstName:TomName,Args:TomList)
     | BuildConstant(AstName:TomName)
     | BuildTerm(AstName:TomName,Args:TomList,ModuleName:String)
@@ -87,12 +81,24 @@ TomTerm =
     | BuildConsArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
     | BuildAppendArray(AstName:TomName,HeadTerm:TomTerm,TailTerm:TomTerm)
 
+  /**
+   * <code>Pattern</code> a lhs of rule, composed by a list of terms with variables
+   *
+   * @param SubjectList the list of subjects against which the pattern is matched
+   * @param TomList the list of terms 
+   * @param Guards a list of constraints
+   */
+Pattern = Pattern(SubjectList:TomList,TomList:TomList,Guards:TomList)
+  /**
+   * <code>PatternInstruction</code> a tuple (Pattern,Action)
+   *
+   * @param Pattern the lhs
+   * @param Action the instruction to be executed
+   * @param Option 
+   */
 PatternInstruction = PatternInstruction(Pattern:Pattern,Action:Instruction,Option:OptionList)
 
-Pattern = Pattern(SubjectList:TomList,TomList:TomList,Guards:TomList)
-
-PatternInstructionList = concPatternInstruction(PatternInstruction*)
-
 PatternList = concPattern(Pattern*)
+PatternInstructionList = concPatternInstruction(PatternInstruction*)
 
 TomList = concTomTerm(TomTerm*)

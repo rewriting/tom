@@ -10,6 +10,7 @@ TomType = Type(TomType:TomType,TlType:TomType)
         | TypesToType(Domain:TomTypeList,Codomain:TomType)
         | TLType(Tl:TargetLanguage)
         | EmptyType()
+        | TypeList(TypeList:TomTypeList)
 
 TomForwardType = TLForward(String:String)
                | EmptyForward()

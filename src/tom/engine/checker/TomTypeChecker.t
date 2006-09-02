@@ -107,7 +107,7 @@ public class TomTypeChecker extends TomChecker {
   }
   
   private boolean isActivated() {
-    return !getOptionBooleanValue("noTypeCheck");
+	  return !getOptionBooleanValue("noTypeCheck");
   }
   
   /**
@@ -115,32 +115,33 @@ public class TomTypeChecker extends TomChecker {
    * We check all Match and RuleSet instructions
    */
   %typeterm TomTypeChecker { implement { TomTypeChecker } }
-	%strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
-		visit Instruction {
-			Match(_, patternInstructionList, oplist) -> {  
-				ttc.currentTomStructureOrgTrack = findOriginTracking(`oplist);
-				ttc.verifyMatchVariable(`patternInstructionList);
-				`Fail().visit(null);
-			}
-		}
-		visit Declaration {
-			Strategy(_,_,visitList,orgTrack) -> {
-				ttc.currentTomStructureOrgTrack = `orgTrack;
-				ttc.verifyStrategyVariable(`visitList);
-				`Fail().visit(null);
-			}
-			RuleSet(list, optionList) -> {
-				ttc.currentTomStructureOrgTrack = findOriginTracking(`optionList);
-				ttc.verifyRuleVariable(`list);
-				`Fail().visit(null);
-			}
-		}
-	} //checkTypeInference
+
+  %strategy checkTypeInference(ttc:TomTypeChecker) extends `Identity() {
+	  visit Instruction {
+		  Match(_, patternInstructionList, oplist) -> {  
+			  ttc.currentTomStructureOrgTrack = findOriginTracking(`oplist);
+			  ttc.verifyMatchVariable(`patternInstructionList);
+			  `Fail().visit(null);
+		  }
+	  }
+	  visit Declaration {
+		  Strategy(_,_,visitList,orgTrack) -> {
+			  ttc.currentTomStructureOrgTrack = `orgTrack;
+			  ttc.verifyStrategyVariable(`visitList);
+			  `Fail().visit(null);
+      }
+      RuleSet(list, optionList) -> {
+			  ttc.currentTomStructureOrgTrack = findOriginTracking(`optionList);
+			  ttc.verifyRuleVariable(`list);
+			  `Fail().visit(null);
+		  }
+	  }
+  } //checkTypeInference
 
   /* 
    * Collect unknown (not in symbol table) appls without ()
    */
-  %strategy collectUnknownsAppls(ttc:TomTypeChecker) extends `Identity() {
+  %strategy collectUnknownAppls(ttc:TomTypeChecker) extends `Identity() {
     visit TomTerm {
 			app@TermAppl[] -> {
 				if(ttc.symbolTable().getSymbolFromName(ttc.getName(`app))==null) {
@@ -165,11 +166,11 @@ public class TomTypeChecker extends TomChecker {
       verifyVariableTypeListCoherence(variableList);
       // verify variables in WHEN instruction
       // collect unknown variables
-			try {
-				MuTraveler.init(`TopDown(collectUnknownsAppls(this))).visit(pattern.getGuards());
-			} catch(jjtraveler.VisitFailure e) {
-				System.out.println("strategy failed");
-			}
+      try {
+	      MuTraveler.init(`TopDown(collectUnknownAppls(this))).visit(pattern.getGuards());
+      } catch(jjtraveler.VisitFailure e) {
+	      System.out.println("strategy failed");
+      }
 
       patternInstructionList = patternInstructionList.getTailconcPatternInstruction();
     }
@@ -316,7 +317,7 @@ public class TomTypeChecker extends TomChecker {
   
   private void verifyVariableTypeListCoherence(ArrayList list) {
     // compute multiplicities
-		//System.out.println("list = " + list);
+    //System.out.println("list = " + list);
     HashMap map = new HashMap();
     Iterator it = list.iterator();
     while(it.hasNext()) {
@@ -327,9 +328,6 @@ public class TomTypeChecker extends TomChecker {
         TomTerm var = (TomTerm)map.get(name);
         TomType type1 = var.getAstType();
         TomType type2 = variable.getAstType();
-
-				//System.out.println("var1 = " + var);
-				//System.out.println("var2 = " + variable);
         if(!(type1==type2)) {
           messageError(findOriginTrackingFileName(variable.getOption()),
               findOriginTrackingLine(variable.getOption()),

@@ -212,11 +212,6 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
             generate(deep,`v,moduleName);
             break matchBlock;
           }
-          v@TLVar[AstType=type2] -> {
-            output.write(deep,getTLType(`type2) + " ");
-            generate(deep,`v,moduleName);
-            break matchBlock;
-          }
           _ -> {
             System.out.println("MakeFunction: strange term: " + localVar);
             throw new TomRuntimeException("MakeFunction: strange term: " + localVar);

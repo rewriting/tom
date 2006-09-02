@@ -500,7 +500,7 @@ public class TomBase {
 
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
     %match(TomTerm t) {
-      RecordAppl[NameList=(Name(tomName),_*)] -> {
+      (TermAppl|RecordAppl)[NameList=(Name(tomName),_*)] -> {
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         return tomSymbol.getTypesToType().getCodomain();
       }

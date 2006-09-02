@@ -177,13 +177,12 @@ public class TomKernelCompiler extends TomBase {
         Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
           // the UnamedBlock encapsulation is needed for Caml
         Instruction let = `Let(variable,source,AbstractBlock(concatInstruction(CheckStamp(variable),body)));
-        // If is the variable has the correct type
+        // Check that the matched variable has the correct type
         return `CheckInstance(variableType,TomTermToExpression(subjectVar),let);
       }
 
       concSlot(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_)),tail*) -> {
         body = collectVariableFromSubjectList(`tail,path,body,moduleName);
-
         // ModuleName
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
         TomType tomType = getSymbolCodomain(tomSymbol);
@@ -1017,20 +1016,7 @@ public class TomKernelCompiler extends TomBase {
     }
     throw new TomRuntimeException("buildConstraint: unknown constraints: " + constraints);
   }
- /* 
-  public TomType getSlotType(String constructorName,TomName slotName, String moduleName){
-	  
-	  TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(constructorName);        	   
-	  return getSlotType(tomSymbol,slotName);
-  }
   
-  public TomType getTermType(TomTerm t,String moduleName){ 
-      if (t instanceof TLVar) return ((TLVar)t).getAstType();
-      return getTermType(t, getSymbolTable(moduleName));      
-  }
-  */
-
-
   private static class MatchingParameter {
       /*
        * This object is used by matching-algorithms to store common parameters

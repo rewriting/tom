@@ -363,7 +363,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   } //verifySymbolDomain
 
-  private  void verifySymbolMacroFunctions(OptionList list, int domainLength, String symbolType) {
+  private  void verifySymbolMacroFunctions(OptionList option, int domainLength, String symbolType) {
     ArrayList verifyList = new ArrayList();
     boolean foundOpMake = false;
     if(symbolType == TomSyntaxChecker.CONSTRUCTOR){ //Nothing absolutely necessary
@@ -375,7 +375,7 @@ public class TomSyntaxChecker extends TomChecker {
       verifyList.add(TomSyntaxChecker.MAKE_INSERT);
     }
 
-    %match(OptionList list) {
+    %match(OptionList option) {
       (_*, DeclarationToOption(d), _*) -> { // for each Declaration
         Declaration decl=`d;
         matchblock:{
@@ -476,34 +476,73 @@ public class TomSyntaxChecker extends TomChecker {
   /*
    * Given a MatchConstruct's subject list and pattern-action list
    */
-  private  void verifyMatch(TomList subjectList, PatternInstructionList patternInstructionList, OptionList list) {
-    currentTomStructureOrgTrack = findOriginTracking(list);
-    ArrayList typeMatchArgs = new ArrayList(),
-      nameMatchArgs = new ArrayList();
+  private void verifyMatch(TomList subjectList, PatternInstructionList patternInstructionList, OptionList option) {
+    currentTomStructureOrgTrack = findOriginTracking(option);
+    ArrayList typeMatchArgs = new ArrayList();
+    int nbExpectedArgs = 0;
     // From the subjects list(match definition), we test each used type and keep them in memory
-    %match(TomList subjectList) {
-      concTomTerm(_*, TLVar(name, tomType@TomTypeAlone(type)), _*) -> { // for each Match args
-        if (!testTypeExistence(`type)) {
-          messageError(currentTomStructureOrgTrack.getFileName(),
-              currentTomStructureOrgTrack.getLine(),
-                       TomMessage.unknownMatchArgumentTypeInSignature,
-                       new Object[]{`name, `(type)});
-          typeMatchArgs.add(null);
-        } else {
-          typeMatchArgs.add(`tomType);
+    while(!subjectList.isEmptyconcTomTerm()) {
+      TomTerm subject = subjectList.getHeadconcTomTerm();
+      // for each Match args
+      %match(TomTerm `subject) {
+        Variable[AstName=Name(name),AstType=tomType@TomTypeAlone(type)] -> {
+	  nbExpectedArgs++;
+          if(`type.equals("unknown type")) {
+            typeMatchArgs.add(null);
+          } else if(testTypeExistence(`type)) {
+            typeMatchArgs.add(`tomType);
+          } else {
+            messageError(currentTomStructureOrgTrack.getFileName(),
+                currentTomStructureOrgTrack.getLine(),
+                TomMessage.unknownMatchArgumentTypeInSignature,
+                new Object[]{`name, `(type)});
+            typeMatchArgs.add(null);
+          }
         }
-        if(nameMatchArgs.indexOf(`name) == -1) {
-          nameMatchArgs.add(`name);
-        } else {
-          // Maybe its an error to have the 2 same name variable in the match definition: warn the user
-          messageWarning(currentTomStructureOrgTrack.getFileName(),
-              currentTomStructureOrgTrack.getLine(),
-              TomMessage.repeatedMatchArgumentName,
-              new Object[]{`(name)});
+
+        term@TermAppl[NameList=concTomName(Name(name))] -> {
+	  nbExpectedArgs++;
+	  TomSymbol symbol = getSymbolFromName(`name);
+	  if(symbol!=null) {
+	    TomType type = getSymbolCodomain(symbol);
+	    typeMatchArgs.add(type);
+            validateTerm(`term, type, false, true, true);
+	  } else {
+	    typeMatchArgs.add(null);
+	  }
         }
       }
+      subjectList = subjectList.getTailconcTomTerm();
     }
-    int nbExpectedArgs = typeMatchArgs.size();
+
+    /*
+     * if a type is not specified in the subjectList
+     * we look for a type in a column and we update typeMatchArgs
+     */
+    for(int i=0 ; i<typeMatchArgs.size() ; i++) {
+      //System.out.println("i = " + i);
+block: {
+         if(typeMatchArgs.get(i) == null) {
+           %match(PatternInstructionList patternInstructionList) {
+             concPatternInstruction(_*, PatternInstruction[
+                 Pattern=Pattern[TomList=concTomTerm(X*,(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(Name(name),_*)],_*)]], _*) -> {
+               //System.out.println("X.length = " + `X*.length());
+               if(`X*.length() == i) {
+                 TomSymbol symbol = getSymbolFromName(`name);
+                 //System.out.println("name = " + `name);
+                 if(symbol!=null) {
+                   TomType type = getSymbolCodomain(symbol);
+                   //System.out.println("type = " + type);
+                   typeMatchArgs.set(i,type);
+                   break block;
+                 }
+               }
+             }
+           }
+         }
+       }
+    }
+
     // we now compare pattern to its definition
     %match(PatternInstructionList patternInstructionList) {
       concPatternInstruction(_*, PatternInstruction[Pattern=Pattern[TomList=terms,Guards=guards]], _*) -> {
@@ -522,7 +561,7 @@ public class TomSyntaxChecker extends TomChecker {
       messageError(findOriginTrackingFileName(og),findOriginTrackingLine(og),
                    TomMessage.badMatchNumberArgument,
                    new Object[]{new Integer(nbExpectedArgs), new Integer(nbFoundArgs)});
-      // we can not continue because we will use the fact that each element of the pattern
+      // we cannot continue because we will use the fact that each element of the pattern
       // has the expected type declared in the Match definition
       return ;
     }
@@ -571,9 +610,9 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
   private  void verifyVisit(TomVisit visit){
-    ArrayList typeMatchArgs = new ArrayList();
     %match(TomVisit visit) {
       VisitTerm(type,patternInstructionList,_) -> {
+        ArrayList typeMatchArgs = new ArrayList();
         typeMatchArgs.add(`type);
         // we now compare pattern to its definition
         %match(PatternInstructionList patternInstructionList) {
@@ -673,8 +712,8 @@ public class TomSyntaxChecker extends TomChecker {
     return currentHeadSymbolName;
   }
 
-  private static boolean findMakeDecl(OptionList list) {
-    %match(OptionList list) {
+  private static boolean findMakeDecl(OptionList option) {
+    %match(OptionList option) {
       (_*, DeclarationToOption(MakeDecl[]), _*) -> {
         return true;
       }
@@ -927,7 +966,7 @@ public class TomSyntaxChecker extends TomChecker {
     }
   }
 
-  public  TermDescription analyseTerm(TomTerm term) {
+  public TermDescription analyseTerm(TomTerm term) {
     matchblock:{
       %match(TomTerm term) {
         TermAppl[Option=options, NameList=(Name(str))] -> {

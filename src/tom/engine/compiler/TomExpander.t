@@ -109,7 +109,7 @@ public class TomExpander extends TomGenericPlugin {
       TomTerm syntaxExpandedTerm = (TomTerm) `ChoiceTopDown(expandTermApplTomSyntax(this)).visit((TomTerm)getWorkingTerm());
       updateSymbolTable();
 
-      TomTerm variableExpandedTerm = expandVariable(`EmptyContext(), syntaxExpandedTerm);
+      TomTerm variableExpandedTerm = expandVariable(`EmptyType(), syntaxExpandedTerm);
       TomTerm stringExpandedTerm = (TomTerm) `ChoiceTopDown(expandString(this)).visit(variableExpandedTerm);
       expandedTerm = (TomTerm) `ChoiceTopDown(updateCodomain(this)).visit(stringExpandedTerm);
       setWorkingTerm(expandedTerm);
@@ -158,7 +158,7 @@ public class TomExpander extends TomGenericPlugin {
         System.out.println("should not be there");
       }
       //System.out.println("symbol = " + tomSymbol);
-      tomSymbol = expandVariable(`EmptyContext(),`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+      tomSymbol = expandVariable(`EmptyType(),`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
       getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
@@ -182,8 +182,8 @@ public class TomExpander extends TomGenericPlugin {
     return OptionParser.xmlToOptionList(TomExpander.DECLARED_OPTIONS);
   }
 
-  private TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
-    return (TomTerm)tomKernelExpander.expandVariable(contextSubject,subject);
+  private TomTerm expandVariable(TomType contextType, TomTerm subject) {
+    return (TomTerm)tomKernelExpander.expandVariable(contextType,subject);
   }
 
   /*

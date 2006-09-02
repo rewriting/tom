@@ -182,36 +182,50 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
         )
   ;
 
-matchArguments [LinkedList list]
+matchArguments [LinkedList list] throws TomException
     :   
         ( matchArgument[list] ( COMMA matchArgument[list] )*)
     ;
 
-matchArgument [LinkedList list]
+matchArgument [LinkedList list] throws TomException
+{
+  TomTerm subject1 = null;
+  TomTerm subject2 = null;
+  TomType tomType = null;
+}
     :   
-        ( type:ALL_ID ( BACKQUOTE )? name:ALL_ID )
-        { list.add(`TLVar(name.getText(),TomTypeAlone(type.getText()))); }        
-        ;
-  /*
-matchArguments [LinkedList list]
-    :   
-        ( matchArgument[list] ( COMMA matchArgument[list] )*)
-    ;
-matchArgument [LinkedList list] 
-  {
-    TomTerm bqTerm = null;
-  }
-  :   
-  type:ALL_ID 
-  {
-    selector().push("bqlexer");
-    bqTerm = bqparser.beginBackquote();
-    System.out.println(bqTerm);
-    list.add(bqTerm);
-    selector().pop();
-  }
-  ;
+
+    //(type:ALL_ID { tomType = `TomTypeAlone(type.getText()); })?
+    //(BACKQUOTE)?
+    subject1 = plainTerm[null,0] 
+    (BACKQUOTE)?
+    (subject2 = plainTerm[null,0])?
+    {
+      if(subject2==null) {
+	//System.out.println("matchArgument = " + subject1);
+	list.add(subject1); 
+      } else {
+	if(subject1.isVariable() && subject2.isVariable()) {
+	  String type = subject1.getAstName().getString();
+	  TomName name = subject2.getAstName();
+	  //LinkedList optionList = new LinkedList();
+	  //optionList.add(`OriginTracking(name,type.getLine(),currentFile()));
+	  //list.add(`Variable(ASTFactory.makeOptionList(optionList),name,tomType,concConstraint()));
+	  Option ot = `OriginTracking(name, lastLine, currentFile());
+	  list.add(`Variable(concOption(ot),name,TomTypeAlone(type),concConstraint()));
+	} else { 
+	  throw new TomException(TomMessage.invalidMatchSubject, new Object[]{subject1, subject2});
+	}
+      }
+
+/*
+    subject = plainTerm[null,0] {
+      System.out.println("subject = " + subject);
+      list.add(subject); 
 */
+    }
+        ;
+
 patternInstruction [TomList subjectList, LinkedList list] throws TomException
 {
     LinkedList matchPatternList = new LinkedList();
@@ -373,11 +387,10 @@ strategyConstruct [Option orgTrack] returns [Declaration result] throws TomExcep
     :(
         name:ALL_ID
         {
-				Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+	Option ot = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
         options.add(ot);
-        if (symbolTable.getSymbolFromName(name.getText()) != null){
-        throw new TomException(TomMessage.invalidStrategyName,
-          new Object[]{name.getText()});
+        if (symbolTable.getSymbolFromName(name.getText()) != null) {
+	throw new TomException(TomMessage.invalidStrategyName, new Object[]{name.getText()});
         }
         }
         (
@@ -1084,7 +1097,6 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
   TomNameList nameList = null;
 }
     :
-        
         (
             nameID:ALL_ID
             {
@@ -1395,7 +1407,7 @@ antiHeadSymbol [LinkedList optionList] returns [TomName result]
 headConstant [LinkedList optionList] returns [TomName result]
 { 
     result = null; 
-		Token t;
+    Token t;
 } : 
         t=constant // add to symbol table
 {
