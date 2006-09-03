@@ -36,15 +36,16 @@ public class Peano2 {
   %include { peano/Peano.tom }
 
   public static Nat plus(Nat t1, Nat t2) {
-    %match(Nat t1, Nat t2) {
-      x, zero() -> { return `x; }
-      x, suc(y) -> { return `suc(plus(x,y)); }
+    Nat x = t1;
+    %match(t2) {
+      zero() -> { return `x; }
+      suc(y) -> { return `suc(plus(x,y)); }
     }
     return null;
   }
 
   public static Nat fib(Nat t) {
-    %match(Nat t) {
+    %match(t) {
       y@zero()      -> { return `suc(y); }
       y@suc(zero()) -> { return `y; }
       suc(y@suc(x)) -> { return `plus(fib(x),fib(y)); }

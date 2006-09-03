@@ -1,6 +1,14 @@
+2006-09-03  Pem  <pem@becky.local>
+  * improve domain checking of disjunction of records
+  * fix PR-1145
 2006-09-02  Pem  <pem@becky.local>
-  * removed TLVar
-  * 
+  * surprise:
+    - type is now optionnal in the %match construct
+    - terms (not only variables) can be given as subjects
+    - still experimental
+  * type inference algorithm as been simplified: the context is a type
+  * removed TLVar, EmptyContext
+  * added TypeList construct
 
 2006-09-01  Pem  <pem@becky.local>
   * added 'char' as a Gom builtin

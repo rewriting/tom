@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+import tom.engine.TomBase;
 import tom.engine.TomMessage;
 import tom.engine.exception.TomRuntimeException;
 
@@ -479,6 +480,7 @@ public class TomSyntaxChecker extends TomChecker {
   private void verifyMatch(TomList subjectList, PatternInstructionList patternInstructionList, OptionList option) {
     currentTomStructureOrgTrack = findOriginTracking(option);
     ArrayList typeMatchArgs = new ArrayList();
+    ArrayList subjectMatchArgs = new ArrayList();
     int nbExpectedArgs = 0;
     // From the subjects list(match definition), we test each used type and keep them in memory
     while(!subjectList.isEmptyconcTomTerm()) {
@@ -487,6 +489,7 @@ public class TomSyntaxChecker extends TomChecker {
       %match(TomTerm `subject) {
         Variable[AstName=Name(name),AstType=tomType@TomTypeAlone(type)] -> {
 	  nbExpectedArgs++;
+	  subjectMatchArgs.add(`name);
           if(`type.equals("unknown type")) {
             typeMatchArgs.add(null);
           } else if(testTypeExistence(`type)) {
@@ -502,6 +505,7 @@ public class TomSyntaxChecker extends TomChecker {
 
         term@TermAppl[NameList=concTomName(Name(name))] -> {
 	  nbExpectedArgs++;
+	  subjectMatchArgs.add(`name);
 	  TomSymbol symbol = getSymbolFromName(`name);
 	  if(symbol!=null) {
 	    TomType type = getSymbolCodomain(symbol);
@@ -540,6 +544,12 @@ block: {
              }
            }
          }
+       }
+       if(typeMatchArgs.get(i) == null) {
+            messageError(currentTomStructureOrgTrack.getFileName(),
+                currentTomStructureOrgTrack.getLine(),
+                TomMessage.cannotGuessMatchType,
+                new Object[]{subjectMatchArgs.get(i)});
        }
     }
 
@@ -794,13 +804,13 @@ block: {
           }
         }
 
-        TermAppl[Option=options, NameList=nameList, Args=arguments] -> {
+        TermAppl[Option=options, NameList=symbolNameList, Args=arguments] -> {
           TomList args = `arguments;
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
           termClass = TERM_APPL;
 
-          TomSymbol symbol = ensureValidApplDisjunction(`nameList, expectedType, fileName, decLine, permissive, topLevel);
+          TomSymbol symbol = ensureValidApplDisjunction(`symbolNameList, expectedType, fileName, decLine, permissive, topLevel);
 
           if(symbol == null) {
             validateTermThrough(term,permissive);
@@ -808,7 +818,7 @@ block: {
           }
             // Type is OK
           type = expectedType;
-          termName = `nameList.getHeadconcTomName().getString();
+          termName = `symbolNameList.getHeadconcTomName().getString();
           boolean listOp = (isListOperator(symbol) || isArrayOperator(symbol));
           if(listOp) {
               // whatever the arity is, we continue recursively and there is only one element in the Domain
@@ -833,23 +843,21 @@ block: {
           break matchblock;
         }
 
-        rec@RecordAppl[Option=options,NameList=nameList,Slots=slotList] -> {
+        rec@RecordAppl[Option=options,NameList=symbolNameList,Slots=slotList] -> {
           if(permissive) {
             // Record are not allowed in a rhs
-            messageError(findOriginTrackingFileName(`options),findOriginTrackingLine(`options), TomMessage.incorrectRuleRHSClass,
-                         new Object[]{getName(`rec)+"[...]"});
+            messageError(findOriginTrackingFileName(`options),findOriginTrackingLine(`options), TomMessage.incorrectRuleRHSClass, new Object[]{getName(`rec)+"[...]"});
           }
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
           termClass = RECORD_APPL;
 
-          TomSymbol symbol = ensureValidRecordDisjunction(`nameList, expectedType, fileName, decLine, true);
+          TomSymbol symbol = ensureValidRecordDisjunction(`symbolNameList, `slotList, expectedType, fileName, decLine, true);
           if(symbol == null) {
             break matchblock;
           }
 
-          boolean first = true;
-          %match(TomNameList nameList) {
+          %match(TomNameList symbolNameList) {
             /* 
              * We perform tests as we have different RecordAppls: 
              * they all must be valid and have the expected return type
@@ -860,13 +868,13 @@ block: {
           }
 
           type = expectedType;
-          termName = `nameList.getHeadconcTomName().getString();
+          termName = `symbolNameList.getHeadconcTomName().getString();
           break matchblock;
         }
 
         XMLAppl[Option=options, NameList=(_*, Name(_), _*), ChildList=childList] -> {
             // TODO: can we do it
-            // ensureValidDisjunction(nameList); ??????????
+            // ensureValidDisjunction(symbolNameList); ??????????
           termClass = XML_APPL;
           fileName = findOriginTrackingFileName(`options);
           decLine = findOriginTrackingLine(`options);
@@ -906,8 +914,7 @@ block: {
           type = null;
           termName = `name+"*";
           if(!listSymbol) {
-            messageError(fileName,decLine, TomMessage.invalidVariableStarArgument,
-                         new Object[]{termName});
+            messageError(fileName,decLine, TomMessage.invalidVariableStarArgument, new Object[]{termName});
           }
           break matchblock;
         }
@@ -919,8 +926,7 @@ block: {
           type = null;
           termName = "_";
           if(permissive) {
-            messageError(fileName,decLine, TomMessage.incorrectRuleRHSClass,
-                         new Object[]{termName});
+            messageError(fileName,decLine, TomMessage.incorrectRuleRHSClass, new Object[]{termName});
           }
           break matchblock;
         }
@@ -932,12 +938,10 @@ block: {
           type = null;
           termName = "_*";
           if(!listSymbol) {
-            messageError(fileName,decLine, TomMessage.invalidVariableStarArgument,
-                         new Object[]{termName});
+            messageError(fileName,decLine, TomMessage.invalidVariableStarArgument, new Object[]{termName});
           }
           if(permissive) {
-            messageError(fileName,decLine, TomMessage.incorrectRuleRHSClass,
-                         new Object[]{termName});
+            messageError(fileName,decLine, TomMessage.incorrectRuleRHSClass, new Object[]{termName});
           }
           break matchblock;
         }
@@ -1064,24 +1068,18 @@ block: {
     }
   }
 
-  private  TomSymbol ensureValidApplDisjunction(TomNameList nameList, TomType expectedType, String fileName, int decLine,
-                                               boolean permissive, boolean topLevel) {
-    TomTypeList domainReference = null, currentDomain = null;
-    TomSymbol symbol = null;
+  private TomSymbol ensureValidApplDisjunction(TomNameList symbolNameList, TomType expectedType, 
+      String fileName, int decLine, boolean permissive, boolean topLevel) {
 
-    if(nameList.length()==1) { // Valid but has it a good type?
-      String res = nameList.getHeadconcTomName().getString();
-      symbol  =  getSymbolFromName(res);
+    if(symbolNameList.length()==1) { // Valid but has it a good type?
+      String res = symbolNameList.getHeadconcTomName().getString();
+      TomSymbol symbol = getSymbolFromName(res);
       if (symbol == null ) {
         // this correspond to a term like 'unknown()' or unknown(s1, s2, ...)
         if(!permissive) {
-          messageError(fileName,decLine,
-              TomMessage.unknownSymbol,
-              new Object[]{res});
+          messageError(fileName,decLine, TomMessage.unknownSymbol, new Object[]{res});
         } else {
-          messageWarning(fileName,decLine,
-              TomMessage.unknownPermissiveSymbol,
-              new Object[]{res});
+          messageWarning(fileName,decLine, TomMessage.unknownPermissiveSymbol, new Object[]{res});
         }
       } else { //known symbol
         if ( strictType  || !topLevel ) {
@@ -1091,47 +1089,43 @@ block: {
         }
       }
       return symbol;
-    }
+    } else {
       //  this is a disjunction
-    if(permissive) {
-      messageError(fileName,decLine,
-                   TomMessage.impossiblePermissiveAndDisjunction,
-                   new Object[]{});
-    }
-
-    // this part is common between Appl and records with multiple head symbols
-    boolean first = true; // the first symbol give the expected type
-    %match(TomNameList nameList) {
-      (_*, Name(dijName), _*) -> { // for each SymbolName
-        symbol =  getSymbolFromName(`dijName);
-        if (symbol == null) {
-            // In disjunction we can only have known symbols
-          messageError(fileName,decLine,
-                       TomMessage.unknownSymbolInDisjunction,
-                       new Object[]{`(dijName)});
-          return null;
-        }
-        if ( strictType  || !topLevel ) {
-            // ensure codomain is correct
-          if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
-            return null;
-          }
-        }
-        currentDomain = getSymbolDomain(symbol);
-        if (first) { // save Domain reference
-          domainReference = currentDomain;
-        } else {
-          first = false;
-          if(currentDomain != domainReference) {
-            messageError(fileName,decLine,
-                         TomMessage.invalidDisjunctionDomain,
-                         new Object[]{`(dijName)});
-            return null;
-          }
-        }
+      if(permissive) {
+	messageError(fileName,decLine, TomMessage.impossiblePermissiveAndDisjunction, new Object[]{});
       }
+
+      TomSymbol symbol = null;
+      TomTypeList domainReference = null;
+      String nameReference = null;
+      %match(TomNameList symbolNameList) {
+	(_*, Name(dijName), _*) -> { // for each SymbolName
+	  symbol =  getSymbolFromName(`dijName);
+	  if (symbol == null) {
+	    // In disjunction we can only have known symbols
+	    messageError(fileName,decLine, TomMessage.unknownSymbolInDisjunction, new Object[]{`(dijName)});
+	    return null;
+	  }
+	  if ( strictType  || !topLevel ) {
+	    // ensure codomain is correct
+	    if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
+	      return null;
+	    }
+	  }
+
+	  if (domainReference == null) { // save Domain reference
+	    domainReference = getSymbolDomain(symbol);
+	    nameReference = `dijName;
+	  } else {
+	    if(getSymbolDomain(symbol) != domainReference) {
+	      messageError(fileName,decLine, TomMessage.invalidDisjunctionDomain, new Object[]{nameReference, `(dijName) });
+	      return null;
+	    }
+	  }
+	}
+      }
+      return symbol;
     }
-    return symbol;
   }
 
   private  boolean ensureSymbolCodomain(TomType currentCodomain, TomType expectedType, TomMessage msg, String symbolName, String fileName,int decLine) {
@@ -1145,15 +1139,14 @@ block: {
     return true;
   }
 
-  private  TomSymbol ensureValidRecordDisjunction(TomNameList nameList, TomType expectedType, String fileName, int decLine, boolean topLevel) {
-    if(nameList.length()==1) { // Valid but has it a good type?
-      String res = nameList.getHeadconcTomName().getString();
+  private  TomSymbol ensureValidRecordDisjunction(TomNameList symbolNameList, SlotList slotList, 
+      TomType expectedType, String fileName, int decLine, boolean topLevel) {
+    if(symbolNameList.length()==1) { // Valid but has it a good type?
+      String res = symbolNameList.getHeadconcTomName().getString();
       TomSymbol symbol =  getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]
           // it is not correct to use Record with unknown symbols
-        messageError(fileName,decLine,
-                     TomMessage.unknownSymbol,
-                     new Object[]{res});
+        messageError(fileName,decLine, TomMessage.unknownSymbol, new Object[]{res});
         return null;
       } else { // known symbol
           // ensure type correctness if necessary
@@ -1165,7 +1158,52 @@ block: {
       }
       return symbol;
     } else {
-      return ensureValidApplDisjunction(nameList, expectedType, fileName, decLine, false, topLevel);
+      TomSymbol symbol = null;
+      TomTypeList referenceDomain = null;
+      String referenceName = null;
+      %match(TomNameList symbolNameList) {
+	(_*, Name(dijName), _*) -> { // for each SymbolName
+	  symbol =  getSymbolFromName(`dijName);
+	  if (symbol == null) {
+	    // In disjunction we can only have known symbols
+	    messageError(fileName,decLine, TomMessage.unknownSymbolInDisjunction, new Object[]{`(dijName)});
+	    return null;
+	  }
+	  if ( strictType  || !topLevel ) {
+	    // ensure codomain is correct
+	    if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
+	      return null;
+	    }
+	  }
+	  //System.out.println("domain = " + getSymbolDomain(symbol));
+
+	  if (referenceDomain == null) { // save Domain reference
+	    referenceName = `dijName;
+	    referenceDomain = getSymbolDomain(symbol);
+
+	  } else {
+	    // check that domains are compatible
+	    TomTypeList currentDomain = getSymbolDomain(symbol);
+	    // restrict the domain to the record
+	    while(!slotList.isEmptyconcSlot()) {
+	      Slot slot = slotList.getHeadconcSlot();
+	      TomName slotName = slot.getSlotName();
+	      int slotIndex = TomBase.getSlotIndex(symbol,slotName);
+
+	      //System.out.println("type1 = " + TomBase.elementAt(currentDomain,slotIndex));
+	      //System.out.println("type2 = " + TomBase.elementAt(referenceDomain,slotIndex));
+	      if(TomBase.elementAt(currentDomain,slotIndex) != TomBase.elementAt(referenceDomain,slotIndex)) {
+		messageError(fileName,decLine, TomMessage.invalidDisjunctionDomain, new Object[]{referenceName, `(dijName) });
+		return null;
+	      }
+
+	      slotList = slotList.getTailconcSlot();
+	    }
+
+	  }
+	}
+      }
+      return symbol;
     }
   }
 

@@ -49,7 +49,7 @@ public class AddressBook1 {
   }
 
   public static void happyBirthday(Person p, Date today) {
-    %match(Person p, Date today) {
+    %match(p, today) {
       person(firstname, _ ,date(_,month1,day1)),
       date(_,month2,day2) -> {
         if(`month1==`month2 && `day1==`day2) {

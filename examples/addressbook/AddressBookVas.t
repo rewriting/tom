@@ -52,7 +52,7 @@ public class AddressBookVas {
   }
 
   public static void happyBirthday(PersonList book, Date date) {
-    %match(PersonList book, Date date) {
+    %match(book, date) {
       concPerson(_*, person(firstname, _, date(_, month,day)), _*) , 
                                           date(_,month,day)   -> {
         System.out.println("Happy birthday " + `firstname);

@@ -56,9 +56,10 @@ public class PeanoMapping2 {
   }
   
   public static ATermAppl plus(ATermAppl t1, ATermAppl t2) {
-    %match(term t1, term t2) {
-      x,zero() -> { return (ATermAppl) `x; }
-      x,suc(y) -> { return suc(plus((ATermAppl) `x,(ATermAppl) `y)); }
+    ATermAppl x =t1;
+    %match(t2) {
+      zero() -> { return (ATermAppl) `x; }
+      suc(y) -> { return suc(plus((ATermAppl) `x,(ATermAppl) `y)); }
     }
     return null;
   }

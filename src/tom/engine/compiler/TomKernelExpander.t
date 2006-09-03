@@ -28,8 +28,11 @@ package tom.engine.compiler;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tom.engine.TomBase;
+import tom.engine.TomMessage;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.adt.tomsignature.*;
