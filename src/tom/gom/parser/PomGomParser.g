@@ -32,6 +32,7 @@ class PomGomParser extends Parser;
 options {
   buildAST = true;  // uses CommonAST by default
   k=2; // because of field definition
+  defaultErrorHandler = false;
 }
 {
   private LexerSharedInputState lexerstate = null;
