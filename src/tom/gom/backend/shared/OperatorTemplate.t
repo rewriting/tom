@@ -312,35 +312,35 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
   }
 
   private String generateGetters() {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     SlotFieldList slots = slotList;
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
-      res+= %[
+      res.append(%[
   public @slotDomain(head)@ @getMethod(head)@() {
     return @fieldName(head.getname())@;
   }
       
   public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
     return make(@generateMakeArgsFor(head,"set_arg")@);
-  }]%;
+  }]%);
     }
-    return res;
+    return res.toString();
   }
 
   private String generateToATermChilds() {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     SlotFieldList slots = slotList;
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
-      if (!res.equals("")) {
-        res+= ", ";
+      if (res.length()!=0) {
+        res.append(", ");
       }
-      res+= toATermSlotField(head);
+      res.append(toATermSlotField(head));
     }
-    return res;
+    return res.toString();
   }
   private String toATermSlotField(SlotField slot) {
     String res = "";
@@ -376,19 +376,19 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
   }
 
   private String generatefromATermChilds(String appl) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     int index = 0;
     SlotFieldList slots = slotList;
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
-      if (!res.equals("")) {
-        res+= ", ";
+      if (res.length()!=0) {
+        res.append(", ");
       }
-      res+= fromATermSlotField(head, appl, index);
+      res.append(fromATermSlotField(head, appl, index));
       index++;
     }
-    return res;
+    return res.toString();
   }
   private String fromATermSlotField(SlotField slot, String appl, int index) {
     String res = "          ";
@@ -425,68 +425,74 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return "_"+fieldName;
   }
   private String childListWithType(SlotFieldList slots) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name, domain=domain] -> {
-          if (!res.equals("")) {
-            res+= ", ";
+          if (res.length()!=0) {
+            res.append(", ");
           }
-          res+= fullClassName(`domain) + " "+fieldName(`name);
+          res.append(fullClassName(`domain));
+          res.append(" ");
+          res.append(fieldName(`name));
         }
       }
     }
-    return res;
+    return res.toString();
   }
   private String unprotectedChildListWithType(SlotFieldList slots) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name, domain=domain] -> {
-          if (!res.equals("")) {
-            res+= ", ";
+          if (res.length()!=0) {
+            res.append(", ");
           }
-          res+= fullClassName(`domain) + " "+`name;
+          res.append(fullClassName(`domain));
+          res.append(" ");
+          res.append(`name);
         }
       }
     }
-    return res;
+    return res.toString();
   }
   private String childList(SlotFieldList slots) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name] -> {
-          if (!res.equals("")) {
-            res+= ", ";
+          if (res.length()!=0) {
+            res.append(", ");
           }
-          res+= " "+fieldName(`name);
+          res.append(" ");
+          res.append(fieldName(`name));
         }
       }
     }
-    return res;
+    return res.toString();
   }
   private String unprotectedChildList(SlotFieldList slots) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name] -> {
-          if (!res.equals("")) {
-            res+= ", ";
+          if (res.length()!=0) {
+            res.append(", ");
           }
-          res+= " "+`name;
+          res.append(" ");
+          res.append(`name);
         }
       }
     }
-    return res;
+    return res.toString();
   }
   private String generateMembersEqualityTest(String peer) {
     String res = "";
@@ -626,46 +632,46 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
   }
 
   private String genCompareChilds(String oldOther, String compareFun) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     String other = "tco";
     if(!slotList.isEmptyconcSlotField()) {
-    res += %[@className()@ @other@ = (@className()@) @oldOther@;]%;
+    res.append(%[@className()@ @other@ = (@className()@) @oldOther@;]%);
     }
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
          if (`domain.equals(`ClassName("","int"))|| `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
-           res+= %[
+           res.append(%[
     if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
       return (this.@fieldName(`slotName)@ < @other@.@fieldName(`slotName)@)?-1:1;
-]%;
+]%);
          } else if (`domain.equals(`ClassName("","String"))) {
-           res+= %[
+           res.append(%[
     int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).compareTo(@other@.@fieldName(`slotName)@);
     if(@fieldName(`slotName)@Cmp != 0)
       return @fieldName(`slotName)@Cmp;
              
-]%;
+]%);
          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
-           res+= %[
+           res.append(%[
     /* Inefficient total order on ATerm */
     int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).compareTo((@other@.@fieldName(`slotName)@).toString());
     if(@fieldName(`slotName)@Cmp != 0)
       return @fieldName(`slotName)@Cmp;
-]%;
+]%);
          } else {
             throw new GomRuntimeException("Builtin "+`domain+" not supported");
          }
         } else {
-          res+= %[
+          res.append(%[
     int @fieldName(`slotName)@Cmp = (this.@fieldName(`slotName)@).@compareFun@(@other@.@fieldName(`slotName)@);
     if(@fieldName(`slotName)@Cmp != 0)
       return @fieldName(`slotName)@Cmp;
-]%; 
+]%); 
         }
       }
     }
-    return res;
+    return res.toString();
   }
 
   private String generateHashArgs() {

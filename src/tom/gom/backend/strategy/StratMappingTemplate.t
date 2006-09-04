@@ -41,38 +41,38 @@ public class StratMappingTemplate extends TemplateClass {
   }
 
   public String generate() {
-    String out = "";
-    out += %[
+    StringBuffer out = new StringBuffer();
+    out.append(%[
 %include { mustrategy.tom }
-]%;
+]%);
     /* XXX: i could introduce an interface providing generateMapping() */
     %match(GomClassList operatorClasses) {
       concGomClass(_*,
           OperatorClass[className=opName,
                         slots=slotList],
           _*) -> {
-      out +=
-        (new tom.gom.backend.strategy.IsOpTemplate(`opName)).generateMapping();
+      out.append(
+        (new tom.gom.backend.strategy.IsOpTemplate(`opName)).generateMapping());
 
-      out +=
-        (new tom.gom.backend.strategy.SOpTemplate(`opName,`slotList)).generateMapping();
-      out +=
-        (new tom.gom.backend.strategy.MakeOpTemplate(`opName,`slotList)).generateMapping();
+      out.append(
+        (new tom.gom.backend.strategy.SOpTemplate(`opName,`slotList)).generateMapping());
+      out.append(
+        (new tom.gom.backend.strategy.MakeOpTemplate(`opName,`slotList)).generateMapping());
       }
       concGomClass(_*,
           VariadicOperatorClass[className=vopName,
                                 empty=OperatorClass[className=empty],
                                 cons=OperatorClass[className=cons]],
                             _*)-> {
-        out += %[
+        out.append(%[
 %op Strategy _@className(`vopName)@(sub:Strategy) {
   is_fsym(t) { false }
   make(sub)  { `mu(MuVar("x"),Choice(_@className(`cons)@(sub,MuVar("x")),_@className(`empty)@())) }
 }
-]%;
+]%);
       }
     }
-    return out;
+    return out.toString();
   }
 
   protected String fileName() {

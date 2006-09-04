@@ -142,31 +142,34 @@ public class MappingTemplate extends TemplateClass {
   }
 
   private String slotDecl(SlotFieldList slotList) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     while(!slotList.isEmptyconcSlotField()) {
       SlotField slot = slotList.getHeadconcSlotField();
       slotList = slotList.getTailconcSlotField();
-      if (!res.equals("")) { res += ", "; }
+      if (res.length()!=0) { res.append(", "); }
       %match(SlotField slot) {
         SlotField[name=slotName,domain=ClassName[name=domainName]] -> {
-          res += `slotName+":"+`domainName;
+          res.append(`slotName);
+          res.append(":");
+          res.append(`domainName);
         }
       }
     }
-    return res;
+    return res.toString();
   }
 
   private String slotArgs(SlotFieldList slotList) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     int index = 0;
     while(!slotList.isEmptyconcSlotField()) {
       SlotField slot = slotList.getHeadconcSlotField();
       slotList = slotList.getTailconcSlotField();
-      if (!res.equals("")) { res += ", "; }
-      res += "t"+index;
+      if (res.length()!=0) { res.append(", "); }
+      res.append("t");
+      res.append(index);
       index++;
     }
-    return res;
+    return res.toString();
   }
 
   protected String fileName() {

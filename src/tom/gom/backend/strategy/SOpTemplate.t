@@ -213,11 +213,13 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   }
 
   private String genConstrArgs(int count, String arg) {
-    String args = "";
+    StringBuffer args = new StringBuffer();
     for(int i = 0; i < count; ++i) {
-      args += (i==0?"":", ")+arg+i;
+      args.append((i==0?"":", "));
+      args.append(arg);
+      args.append(i);
     }
-    return args;
+    return args.toString();
   }
 
   public String generateMapping() {
@@ -231,19 +233,23 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   }
 
   private String genGetSlot(int count, String arg) {
-    String out = "";
+    StringBuffer out = new StringBuffer();
     for (int i = 0; i < count; ++i) {
-      out += %[
-  get_slot(@arg+i@, t) { t.getArgument(@i@) }]%;
+      out.append(%[
+  get_slot(@arg+i@, t) { t.getArgument(@i@) }]%);
     }
-    return out;
+    return out.toString();
   }
+
   private String genStratArgs(int count, String arg) {
-    String args = "";
+    StringBuffer args = new StringBuffer();
     for(int i = 0; i < count; ++i) {
-      args += (i==0?"":", ")+arg+i+":Strategy";
+      args.append((i==0?"":", "));
+      args.append(arg);
+      args.append(i);
+      args.append(":Strategy");
     }
-    return args;
+    return args.toString();
   }
 
   private String genNonBuiltin() {

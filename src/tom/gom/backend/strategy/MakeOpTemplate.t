@@ -133,21 +133,21 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   }
 
   private String genGetSlot(SlotFieldList slots, String arg) {
-    String out = "";
+    StringBuffer out = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name,domain=domain] -> {
-          out += %[
-  get_slot(@fieldName(`name)@, t) { @fieldName(`name)@ }]%;
+          out.append(%[
+  get_slot(@fieldName(`name)@, t) { @fieldName(`name)@ }]%);
         }
       }
     }
-    return out;
+    return out.toString();
   }
   private String genStratArgs(SlotFieldList slots,String arg) {
-    String args = "";
+    StringBuffer args = new StringBuffer();
     int i = 0;
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
@@ -155,33 +155,36 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
 
       %match(SlotField head) {
         SlotField[name=name,domain=domain] -> {
+          args.append((i==0?"":", "));
+          args.append(fieldName(`name));
           if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-            args += (i==0?"":", ")+fieldName(`name)+":Strategy";
+            args.append(":Strategy");
           } else {
-            args += (i==0?"":", ")+fieldName(`name)+":"+fullClassName(`domain);
+            args.append(":");
+            args.append(fullClassName(`domain));
           }
         }
       }
       i++;
     }
-    return args;
+    return args.toString();
   }
 
   private String genNonBuiltin() {
-    String out = "";
+    StringBuffer out = new StringBuffer();
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          out += "true, ";
+          out.append("true, ");
         } else {
-          out += "false, ";
+          out.append("false, ");
         }
       }
     }
     if (out.length()!=0) {
       return out.substring(0,out.length()-2);
     } else {
-      return out;
+      return out.toString();
     }
   }
 
@@ -252,24 +255,27 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     * Each non builtin child has type VisitableVisitor
     */
   private String childListWithType(SlotFieldList slots) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name, domain=domain] -> {
-          if (!res.equals("")) {
-            res+= ", ";
+          if (res.length()!=0) {
+            res.append(", ");
           }
           if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-            res+= "jjtraveler.reflective.VisitableVisitor "+fieldName(`name);
+            res.append("jjtraveler.reflective.VisitableVisitor ");
+            res.append(fieldName(`name));
           } else {
-            res+= fullClassName(`domain) + " "+fieldName(`name);
+            res.append(fullClassName(`domain));
+            res.append(" ");
+            res.append(fieldName(`name));
           }
         }
       }
     }
-    return res;
+    return res.toString();
   }
 
   /**
@@ -307,24 +313,26 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     * values computed by computeNewChilds
     */
   private String genMakeArguments(SlotFieldList slots) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
         SlotField[name=name,domain=domain] -> {
-          if (!res.equals("")) {
-            res+= ", ";
+          if (res.length()!=0) {
+            res.append(", ");
           }
           if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-            res+= " new"+fieldName(`name);
+            res.append(" new");
+            res.append(fieldName(`name));
           } else {
-            res+= " "+fieldName(`name);
+            res.append(" ");
+            res.append(fieldName(`name));
           }
         }
       }
     }
-    return res;
+    return res.toString();
   }
   private String fieldName(String fieldName) {
     return "_"+fieldName;

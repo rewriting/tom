@@ -181,7 +181,7 @@ public class TomKernelCompiler extends TomBase {
         return `CheckInstance(variableType,TomTermToExpression(subjectVar),let);
       }
 
-      concSlot(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_)),tail*) -> {
+      concSlot(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall)[AstName=Name(tomName)]),tail*) -> {
         body = collectVariableFromSubjectList(`tail,path,body,moduleName);
         // ModuleName
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);

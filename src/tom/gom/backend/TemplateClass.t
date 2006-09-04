@@ -59,7 +59,7 @@ public abstract class TemplateClass {
   public String fullClassName(ClassName clsName) {
     %match(ClassName clsName) {
       ClassName[pkg=pkgPrefix,name=name] -> {
-        if(`pkgPrefix.equals("")) {
+        if(`pkgPrefix.length()==0) {
           return `name;
         } else {
           return `pkgPrefix+"."+`name;
