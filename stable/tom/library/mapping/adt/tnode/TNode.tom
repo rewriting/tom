@@ -1,6 +1,7 @@
 
 %include { string.tom }
 %include { int.tom }
+%include { long.tom }
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
@@ -19,56 +20,56 @@
 }
 
 %op TNodeList EmptyconcTNode() {
-  is_fsym(t) { (t!=null) && t.isEmptyconcTNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode }
   make() { tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make()}
 }
 
 %op TNodeList ConsconcTNode(HeadconcTNode:TNode, TailconcTNode:TNodeList) {
-  is_fsym(t) { (t!=null) && t.isConsconcTNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode }
   get_slot(HeadconcTNode, t) { t.getHeadconcTNode() }
   get_slot(TailconcTNode, t) { t.getTailconcTNode() }
   make(t0, t1) { tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make(t0, t1)}
 }
 
 %op TNode EmptyNode() {
-  is_fsym(t) { (t!=null) && t.isEmptyNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.EmptyNode }
   make() { tom.library.adt.tnode.types.tnode.EmptyNode.make()}
 }
 
 %op TNode CommentNode(Data:String) {
-  is_fsym(t) { (t!=null) && t.isCommentNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.CommentNode }
   get_slot(Data, t) { t.getData() }
   make(t0) { tom.library.adt.tnode.types.tnode.CommentNode.make(t0)}
 }
 
 %op TNode ProcessingInstructionNode(Target:String, Data:String) {
-  is_fsym(t) { (t!=null) && t.isProcessingInstructionNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.ProcessingInstructionNode }
   get_slot(Target, t) { t.getTarget() }
   get_slot(Data, t) { t.getData() }
   make(t0, t1) { tom.library.adt.tnode.types.tnode.ProcessingInstructionNode.make(t0, t1)}
 }
 
 %op TNode TextNode(Data:String) {
-  is_fsym(t) { (t!=null) && t.isTextNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.TextNode }
   get_slot(Data, t) { t.getData() }
   make(t0) { tom.library.adt.tnode.types.tnode.TextNode.make(t0)}
 }
 
 %op TNode CDATASectionNode(Data:String) {
-  is_fsym(t) { (t!=null) && t.isCDATASectionNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.CDATASectionNode }
   get_slot(Data, t) { t.getData() }
   make(t0) { tom.library.adt.tnode.types.tnode.CDATASectionNode.make(t0)}
 }
 
 %op TNode DocumentNode(DocType:TNode, DocElem:TNode) {
-  is_fsym(t) { (t!=null) && t.isDocumentNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.DocumentNode }
   get_slot(DocType, t) { t.getDocType() }
   get_slot(DocElem, t) { t.getDocElem() }
   make(t0, t1) { tom.library.adt.tnode.types.tnode.DocumentNode.make(t0, t1)}
 }
 
 %op TNode ElementNode(Name:String, AttrList:TNodeList, ChildList:TNodeList) {
-  is_fsym(t) { (t!=null) && t.isElementNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.ElementNode }
   get_slot(Name, t) { t.getName() }
   get_slot(AttrList, t) { t.getAttrList() }
   get_slot(ChildList, t) { t.getChildList() }
@@ -76,7 +77,7 @@
 }
 
 %op TNode AttributeNode(Name:String, Specified:String, Value:String) {
-  is_fsym(t) { (t!=null) && t.isAttributeNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.AttributeNode }
   get_slot(Name, t) { t.getName() }
   get_slot(Specified, t) { t.getSpecified() }
   get_slot(Value, t) { t.getValue() }
@@ -84,7 +85,7 @@
 }
 
 %op TNode DocumentTypeNode(Name:String, PublicId:String, SystemId:String, InternalSubset:String, Entities:TNodeList, Notations:TNodeList) {
-  is_fsym(t) { (t!=null) && t.isDocumentTypeNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.DocumentTypeNode }
   get_slot(Name, t) { t.getName() }
   get_slot(PublicId, t) { t.getPublicId() }
   get_slot(SystemId, t) { t.getSystemId() }
@@ -95,14 +96,14 @@
 }
 
 %op TNode EntityReferenceNode(Name:String, ChildList:TNodeList) {
-  is_fsym(t) { (t!=null) && t.isEntityReferenceNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.EntityReferenceNode }
   get_slot(Name, t) { t.getName() }
   get_slot(ChildList, t) { t.getChildList() }
   make(t0, t1) { tom.library.adt.tnode.types.tnode.EntityReferenceNode.make(t0, t1)}
 }
 
 %op TNode EntityNode(NotationName:String, PublicId:String, SystemId:String) {
-  is_fsym(t) { (t!=null) && t.isEntityNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.EntityNode }
   get_slot(NotationName, t) { t.getNotationName() }
   get_slot(PublicId, t) { t.getPublicId() }
   get_slot(SystemId, t) { t.getSystemId() }
@@ -110,7 +111,7 @@
 }
 
 %op TNode NotationNode(PublicId:String, SystemId:String) {
-  is_fsym(t) { (t!=null) && t.isNotationNode() }
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnode.NotationNode }
   get_slot(PublicId, t) { t.getPublicId() }
   get_slot(SystemId, t) { t.getSystemId() }
   make(t0, t1) { tom.library.adt.tnode.types.tnode.NotationNode.make(t0, t1)}

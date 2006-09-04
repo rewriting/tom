@@ -1,6 +1,7 @@
 
 %include { string.tom }
 %include { int.tom }
+%include { long.tom }
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
@@ -33,7 +34,7 @@
 }
 
 %op PlatformOption PluginOption(Name:String, AltName:String, Description:String, Value:PlatformValue, AttrName:String) {
-  is_fsym(t) { (t!=null) && t.isPluginOption() }
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption }
   get_slot(Name, t) { t.getName() }
   get_slot(AltName, t) { t.getAltName() }
   get_slot(Description, t) { t.getDescription() }
@@ -43,41 +44,41 @@
 }
 
 %op PlatformOptionList EmptyconcPlatformOption() {
-  is_fsym(t) { (t!=null) && t.isEmptyconcPlatformOption() }
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption }
   make() { tom.platform.adt.platformoption.types.platformoptionlist.EmptyconcPlatformOption.make()}
 }
 
 %op PlatformOptionList ConsconcPlatformOption(HeadconcPlatformOption:PlatformOption, TailconcPlatformOption:PlatformOptionList) {
-  is_fsym(t) { (t!=null) && t.isConsconcPlatformOption() }
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption }
   get_slot(HeadconcPlatformOption, t) { t.getHeadconcPlatformOption() }
   get_slot(TailconcPlatformOption, t) { t.getTailconcPlatformOption() }
   make(t0, t1) { tom.platform.adt.platformoption.types.platformoptionlist.ConsconcPlatformOption.make(t0, t1)}
 }
 
 %op PlatformBoolean True() {
-  is_fsym(t) { (t!=null) && t.isTrue() }
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformboolean.True }
   make() { tom.platform.adt.platformoption.types.platformboolean.True.make()}
 }
 
 %op PlatformBoolean False() {
-  is_fsym(t) { (t!=null) && t.isFalse() }
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformboolean.False }
   make() { tom.platform.adt.platformoption.types.platformboolean.False.make()}
 }
 
 %op PlatformValue BooleanValue(BooleanValue:PlatformBoolean) {
-  is_fsym(t) { (t!=null) && t.isBooleanValue() }
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue }
   get_slot(BooleanValue, t) { t.getBooleanValue() }
   make(t0) { tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make(t0)}
 }
 
 %op PlatformValue StringValue(StringValue:String) {
-  is_fsym(t) { (t!=null) && t.isStringValue() }
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformvalue.StringValue }
   get_slot(StringValue, t) { t.getStringValue() }
   make(t0) { tom.platform.adt.platformoption.types.platformvalue.StringValue.make(t0)}
 }
 
 %op PlatformValue IntegerValue(IntegerValue:int) {
-  is_fsym(t) { (t!=null) && t.isIntegerValue() }
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformvalue.IntegerValue }
   get_slot(IntegerValue, t) { t.getIntegerValue() }
   make(t0) { tom.platform.adt.platformoption.types.platformvalue.IntegerValue.make(t0)}
 }
