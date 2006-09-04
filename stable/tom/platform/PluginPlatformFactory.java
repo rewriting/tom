@@ -117,20 +117,17 @@ public class PluginPlatformFactory {
       return null;
     }
 
-    if(xmlConfigurationFile==null) { // lack of a configuration file
-      logger.log(Level.SEVERE, PluginPlatformMessage.configFileNotSpecified.getMessage());
-      return null;
-    }
-
-    File file = new File(xmlConfigurationFile);
-    if(!file.exists()) { // the last specified configuration file doesn't exist
-      logger.log(Level.SEVERE, PluginPlatformMessage.configFileNotFound.getMessage(),
-                 xmlConfigurationFile);
-      return null;
-    }
-    // side effect on the commandLine since config information is no more needed
-    commandLine = (String[])commandList.toArray(new String[]{});
-    return xmlConfigurationFile;
+    try {
+      File file = new File(xmlConfigurationFile).getCanonicalFile();
+      //System.out.println("xmlConfigFile = " + file.getPath());
+      if(file.exists()) { 
+        // side effect on the commandLine since config information is no more needed
+        commandLine = (String[])commandList.toArray(new String[]{});
+        return xmlConfigurationFile;
+      }
+    } catch(Exception e) {}
+    logger.log(Level.SEVERE, PluginPlatformMessage.configFileNotSpecified.getMessage());
+    return null;
   }
 
 } // class PluginPlatformFactory

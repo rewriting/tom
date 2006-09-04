@@ -54,6 +54,9 @@ public abstract class AbstractMuStrategy implements MuStrategy {
   protected void initSubterm(jjtraveler.reflective.VisitableVisitor v1, jjtraveler.reflective.VisitableVisitor v2, jjtraveler.reflective.VisitableVisitor v3) {
     visitors = new jjtraveler.reflective.VisitableVisitor[] {v1,v2,v3};
   }
+  protected void initSubterm(jjtraveler.reflective.VisitableVisitor[] v) {
+    visitors = v;
+  }
 
   public jjtraveler.reflective.VisitableVisitor getArgument(int i) {
     return visitors[i];

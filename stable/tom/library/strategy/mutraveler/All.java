@@ -22,16 +22,18 @@ public class All extends AbstractMuStrategy {
   public Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
     Visitable result = any;
-    Visitor S = getArgument(ARG);
     if (any instanceof MuVisitable) {
       boolean updated = false;
       Visitable[] childs = null;
 
       if(!hasPosition()) {
+        //Visitor S = getArgument(ARG); // remove for Scompiler
         for (int i = 0; i < childCount; i++) {
           //childs[i] = getArgument(ARG).visit(any.getChildAt(i));
           Visitable oldChild = any.getChildAt(i);
-          Visitable newChild = S.visit(oldChild);
+          //Visitable newChild = S.visit(oldChild); // remove for Scompiler
+          Visitable newChild = getArgument(ARG).visit(oldChild); // activate for Scompiler
+
           if (updated || (newChild != oldChild)) {
             if (!updated) { // this is the first change
               updated = true;

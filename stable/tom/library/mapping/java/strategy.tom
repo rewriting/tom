@@ -130,31 +130,31 @@
   }
 
   %op Strategy TopDown(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Sequence(v,All(MuVar("x")))) }
+    make(v) { `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) }
   }
   
   %op Strategy TopDownCollect(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Try(Sequence(v,All(MuVar("x"))))) }
+    make(v) { `mu(MuVar("_x"),Try(Sequence(v,All(MuVar("_x"))))) }
   }
 
   %op Strategy BottomUp(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),v)) }
+    make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),v)) }
   }
 
   %op Strategy OnceBottomUp(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Choice(One(MuVar("x")),v)) }
+    make(v) { `mu(MuVar("_x"),Choice(One(MuVar("_x")),v)) }
   }
 
   %op Strategy OnceTopDown(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Choice(v,One(MuVar("x")))) }
+    make(v) { `mu(MuVar("_x"),Choice(v,One(MuVar("_x")))) }
   }
 
   %op Strategy Innermost(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),Try(Sequence(v,MuVar("x"))))) }
+    make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),Try(Sequence(v,MuVar("_x"))))) }
   }
 
   %op Strategy Repeat(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Choice(Sequence(v,MuVar("x")),Identity())) }
+    make(v) { `mu(MuVar("_x"),Choice(Sequence(v,MuVar("_x")),Identity())) }
   }
 
 /*
@@ -166,29 +166,29 @@
   }
 
   %op Strategy RepeatId(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),SequenceId(v,MuVar("x"))) }
+    make(v) { `mu(MuVar("_x"),SequenceId(v,MuVar("_x"))) }
   }
 
   %op Strategy OnceBottomUpId(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),ChoiceId(OneId(MuVar("x")),v)) }
+    make(v) { `mu(MuVar("_x"),ChoiceId(OneId(MuVar("_x")),v)) }
   }
 
   %op Strategy OnceTopDownId(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),ChoiceId(v,OneId(MuVar("x")))) }
+    make(v) { `mu(MuVar("_x"),ChoiceId(v,OneId(MuVar("_x")))) }
   }
 
   %op Strategy InnermostId(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),SequenceId(v,MuVar("x")))) }
+    make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),SequenceId(v,MuVar("_x")))) }
   }
 
   %op Strategy OutermostId(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),Sequence(SequenceId(v,MuVar("x")),All(MuVar("x")))) }
+    make(v) { `mu(MuVar("_x"),Sequence(SequenceId(v,MuVar("_x")),All(MuVar("_x")))) }
   }
 
   %op Strategy TopDownId(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),SequenceId(v,All(MuVar("x")))) }
+    make(v) { `mu(MuVar("_x"),SequenceId(v,All(MuVar("_x")))) }
   }
   
   %op Strategy BottomUpId(s1:Strategy) {
-    make(v) { `mu(MuVar("x"),SequenceId(All(MuVar("x")),v)) }
+    make(v) { `mu(MuVar("_x"),SequenceId(All(MuVar("_x")),v)) }
   }

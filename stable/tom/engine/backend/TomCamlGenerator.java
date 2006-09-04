@@ -59,6 +59,28 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   /*
    * the implementation of methods are here for caml 
    */
+ 
+	protected void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction, String moduleName) throws IOException {
+		generateInstruction(deep,instruction,moduleName);
+	}
+
+  protected void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+	output.write(" ( ");
+	generateExpression(deep,exp1,moduleName);
+    output.write(" && ");
+    generateExpression(deep,exp2,moduleName);
+    output.write(" ) ");
+  }
+  protected void buildExpOr(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
+	output.write(" ( ");  
+    generateExpression(deep,exp1,moduleName);
+    output.write(" || ");
+    generateExpression(deep,exp2,moduleName);
+    output.write(" ) ");
+  }
+
+  
+/* ----- old ---- */
   
   protected void buildInstructionSequence(int deep, InstructionList instructionList, String moduleName) throws IOException {
     Instruction head = instructionList.getHeadconcInstruction();
@@ -216,13 +238,15 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       output.write("(* checkstamp *) ()");
     }
   }
-
+/*
+  
   protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
     output.write("tom_get_head_" + getTomType(domain) + "(");
     generate(deep,var,moduleName);
     output.write(")");
   }
 
+  
   protected void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
     output.write("tom_get_element_" + getTomType(domain) + "(");
     generate(deep,varName,moduleName);
@@ -230,7 +254,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generate(deep,varIndex,moduleName);
     output.write(")");
   }
-
+*/
 
   protected void genDecl(String returnType,
                          String declName,
@@ -253,11 +277,11 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-     if(tlCode instanceof  tom.engine.adt.tomsignature.types.TargetLanguage ) { { tom.engine.adt.tomsignature.types.TargetLanguage  tom_match1_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode); if (tom_is_fun_sym_TL(tom_match1_1) ||  false ) { { String  tom_match1_1_Code=tom_get_slot_TL_Code(tom_match1_1); { tom.engine.adt.tomsignature.types.Position  tom_match1_1_Start=tom_get_slot_TL_Start(tom_match1_1); { tom.engine.adt.tomsignature.types.Position  tom_match1_1_End=tom_get_slot_TL_End(tom_match1_1); if (tom_is_fun_sym_TextPosition(tom_match1_1_Start) ||  false ) { { int  tom_match1_1_Start_Line=tom_get_slot_TextPosition_Line(tom_match1_1_Start); { int  tom_startLine=tom_match1_1_Start_Line; if (tom_is_fun_sym_TextPosition(tom_match1_1_End) ||  false ) { { int  tom_match1_1_End_Line=tom_get_slot_TextPosition_Line(tom_match1_1_End); { int  tom_endLine=tom_match1_1_End_Line; if ( true ) {
+     if(tlCode instanceof  tom.engine.adt.tomsignature.types.TargetLanguage ) { { tom.engine.adt.tomsignature.types.TargetLanguage  tom_match1_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode); if ( ( tom_is_fun_sym_TL(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_Code=tom_get_slot_TL_Code(tom_match1_1); { tom.engine.adt.tomsignature.types.Position  tom_match1_1_Start=tom_get_slot_TL_Start(tom_match1_1); { tom.engine.adt.tomsignature.types.Position  tom_match1_1_End=tom_get_slot_TL_End(tom_match1_1); if ( ( tom_is_fun_sym_TextPosition(tom_match1_1_Start) ||  false  ) ) { { int  tom_match1_1_Start_Line=tom_get_slot_TextPosition_Line(tom_match1_1_Start); { int  tom_startLine=tom_match1_1_Start_Line; if ( ( tom_is_fun_sym_TextPosition(tom_match1_1_End) ||  false  ) ) { { int  tom_match1_1_End_Line=tom_get_slot_TextPosition_Line(tom_match1_1_End); { int  tom_endLine=tom_match1_1_End_Line; if ( true ) {
 
         output.write(0,s, tom_startLine, tom_endLine- tom_startLine);
         return;
-       } } } } } } } } } } } if (tom_is_fun_sym_ITL(tom_match1_1) ||  false ) { { String  tom_match1_1_Code=tom_get_slot_ITL_Code(tom_match1_1); if ( true ) {
+       } } } } } } } } } } } if ( ( tom_is_fun_sym_ITL(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_Code=tom_get_slot_ITL_Code(tom_match1_1); if ( true ) {
 
   // pas de \n donc pas besoin de reworkTL
         output.write(s);
@@ -276,7 +300,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
-         if(arg instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tom_match2_1=(( tom.engine.adt.tomterm.types.TomTerm )arg); if (tom_is_fun_sym_Variable(tom_match2_1) ||  false ) { { tom.engine.adt.tomname.types.TomName  tom_match2_1_AstName=tom_get_slot_Variable_AstName(tom_match2_1); if (tom_is_fun_sym_Name(tom_match2_1_AstName) ||  false ) { { String  tom_match2_1_AstName_String=tom_get_slot_Name_String(tom_match2_1_AstName); { String  tom_name=tom_match2_1_AstName_String; if ( true ) {
+         if(arg instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tom_match2_1=(( tom.engine.adt.tomterm.types.TomTerm )arg); if ( ( tom_is_fun_sym_Variable(tom_match2_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match2_1_AstName=tom_get_slot_Variable_AstName(tom_match2_1); if ( ( tom_is_fun_sym_Name(tom_match2_1_AstName) ||  false  ) ) { { String  tom_match2_1_AstName_String=tom_get_slot_Name_String(tom_match2_1_AstName); { String  tom_name=tom_match2_1_AstName_String; if ( true ) {
 
 
             s.append(tom_name);
@@ -345,7 +369,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.writeln(" = ref None in");
   }
 
-  protected void buildExpBottom(int deep) throws IOException {
+  protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
     output.write(" None ");
   }
 

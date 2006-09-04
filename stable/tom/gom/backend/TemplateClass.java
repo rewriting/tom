@@ -32,7 +32,6 @@ import tom.gom.tools.error.GomRuntimeException;
 import java.io.*;
 
 public abstract class TemplateClass {
-
   protected ClassName className;
 
   public TemplateClass(ClassName className) {
@@ -47,7 +46,7 @@ public abstract class TemplateClass {
     return className(this.className);
   }
   public String className(ClassName clsName) {
-     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match1_1=(( tom.gom.adt.objects.types.ClassName )clsName); if (tom_is_fun_sym_ClassName(tom_match1_1) ||  false ) { { String  tom_match1_1_name=tom_get_slot_ClassName_name(tom_match1_1); { String  tom_name=tom_match1_1_name; if ( true ) {
+     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match1_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_name=tom_get_slot_ClassName_name(tom_match1_1); { String  tom_name=tom_match1_1_name; if ( true ) {
 
         return tom_name;
        } } } } } }
@@ -58,7 +57,7 @@ public abstract class TemplateClass {
     return fullClassName(this.className);
   }
   public String fullClassName(ClassName clsName) {
-     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match2_1=(( tom.gom.adt.objects.types.ClassName )clsName); if (tom_is_fun_sym_ClassName(tom_match2_1) ||  false ) { { String  tom_match2_1_pkg=tom_get_slot_ClassName_pkg(tom_match2_1); { String  tom_match2_1_name=tom_get_slot_ClassName_name(tom_match2_1); { String  tom_pkgPrefix=tom_match2_1_pkg; { String  tom_name=tom_match2_1_name; if ( true ) {
+     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match2_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match2_1) ||  false  ) ) { { String  tom_match2_1_pkg=tom_get_slot_ClassName_pkg(tom_match2_1); { String  tom_match2_1_name=tom_get_slot_ClassName_name(tom_match2_1); { String  tom_pkgPrefix=tom_match2_1_pkg; { String  tom_name=tom_match2_1_name; if ( true ) {
 
         if(tom_pkgPrefix.equals("")) {
           return tom_name;
@@ -74,7 +73,7 @@ public abstract class TemplateClass {
     return getPackage(this.className);
   }
   public String getPackage(ClassName clsName) {
-     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match3_1=(( tom.gom.adt.objects.types.ClassName )clsName); if (tom_is_fun_sym_ClassName(tom_match3_1) ||  false ) { { String  tom_match3_1_pkg=tom_get_slot_ClassName_pkg(tom_match3_1); { String  tom_pkg=tom_match3_1_pkg; if ( true ) {
+     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match3_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match3_1) ||  false  ) ) { { String  tom_match3_1_pkg=tom_get_slot_ClassName_pkg(tom_match3_1); { String  tom_pkg=tom_match3_1_pkg; if ( true ) {
 
         return tom_pkg;
        } } } } } }
@@ -83,7 +82,7 @@ public abstract class TemplateClass {
   }
 
   public String hasMethod(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match4_1=(( tom.gom.adt.objects.types.SlotField )slot); if (tom_is_fun_sym_SlotField(tom_match4_1) ||  false ) { { String  tom_match4_1_name=tom_get_slot_SlotField_name(tom_match4_1); { String  tom_name=tom_match4_1_name; if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match4_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match4_1) ||  false  ) ) { { String  tom_match4_1_name=tom_get_slot_SlotField_name(tom_match4_1); { String  tom_name=tom_match4_1_name; if ( true ) {
 
         return "has"+tom_name;
        } } } } } }
@@ -91,7 +90,7 @@ public abstract class TemplateClass {
     throw new GomRuntimeException("TemplateClass:hasMethod got a strange SlotField");
   }
   public String getMethod(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match5_1=(( tom.gom.adt.objects.types.SlotField )slot); if (tom_is_fun_sym_SlotField(tom_match5_1) ||  false ) { { String  tom_match5_1_name=tom_get_slot_SlotField_name(tom_match5_1); { String  tom_name=tom_match5_1_name; if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match5_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match5_1) ||  false  ) ) { { String  tom_match5_1_name=tom_get_slot_SlotField_name(tom_match5_1); { String  tom_name=tom_match5_1_name; if ( true ) {
 
         return "get"+tom_name;
        } } } } } }
@@ -99,7 +98,7 @@ public abstract class TemplateClass {
     throw new GomRuntimeException("TemplateClass:getMethod got a strange SlotField");
   }
   public String setMethod(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match6_1=(( tom.gom.adt.objects.types.SlotField )slot); if (tom_is_fun_sym_SlotField(tom_match6_1) ||  false ) { { String  tom_match6_1_name=tom_get_slot_SlotField_name(tom_match6_1); { String  tom_name=tom_match6_1_name; if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match6_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match6_1) ||  false  ) ) { { String  tom_match6_1_name=tom_get_slot_SlotField_name(tom_match6_1); { String  tom_name=tom_match6_1_name; if ( true ) {
 
         return "set"+tom_name;
        } } } } } }
@@ -107,7 +106,7 @@ public abstract class TemplateClass {
     throw new GomRuntimeException("TemplateClass:getMethod got a strange SlotField");
   }
   public String index(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match7_1=(( tom.gom.adt.objects.types.SlotField )slot); if (tom_is_fun_sym_SlotField(tom_match7_1) ||  false ) { { String  tom_match7_1_name=tom_get_slot_SlotField_name(tom_match7_1); { String  tom_name=tom_match7_1_name; if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match7_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match7_1) ||  false  ) ) { { String  tom_match7_1_name=tom_get_slot_SlotField_name(tom_match7_1); { String  tom_name=tom_match7_1_name; if ( true ) {
 
         return "index_"+tom_name;
        } } } } } }
@@ -115,7 +114,7 @@ public abstract class TemplateClass {
     throw new GomRuntimeException("TemplateClass:index got a strange SlotField");
   }
   public String slotDomain(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match8_1=(( tom.gom.adt.objects.types.SlotField )slot); if (tom_is_fun_sym_SlotField(tom_match8_1) ||  false ) { { tom.gom.adt.objects.types.ClassName  tom_match8_1_domain=tom_get_slot_SlotField_domain(tom_match8_1); { tom.gom.adt.objects.types.ClassName  tom_domain=tom_match8_1_domain; if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match8_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match8_1) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_match8_1_domain=tom_get_slot_SlotField_domain(tom_match8_1); { tom.gom.adt.objects.types.ClassName  tom_domain=tom_match8_1_domain; if ( true ) {
 
         return fullClassName(tom_domain);
        } } } } } }
@@ -123,7 +122,7 @@ public abstract class TemplateClass {
     throw new GomRuntimeException("TemplateClass:slotDomain got a strange SlotField");
   }
   public String fieldName(ClassName clsName) {
-     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match9_1=(( tom.gom.adt.objects.types.ClassName )clsName); if (tom_is_fun_sym_ClassName(tom_match9_1) ||  false ) { { String  tom_match9_1_name=tom_get_slot_ClassName_name(tom_match9_1); { String  tom_name=tom_match9_1_name; if ( true ) {
+     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match9_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match9_1) ||  false  ) ) { { String  tom_match9_1_name=tom_get_slot_ClassName_name(tom_match9_1); { String  tom_name=tom_match9_1_name; if ( true ) {
 
         return tom_name.toLowerCase();
        } } } } } }

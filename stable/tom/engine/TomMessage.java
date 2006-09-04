@@ -160,11 +160,18 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Expecting an already declared variable in WHERE condition instead of ''{0}''");
   public static final TomMessage unknownRuleRhsVariable=
       new TomMessage("Rule right hand side uses an undeclared variable ''{0}''");
-
+  
+  public static final TomMessage illegalAnnotationInAntiPattern=
+      new TomMessage("It is forbidden to annotate a symbol preceded by an anti or to make annotations after an anti symbol");  
+  
   // compiler
   public static final TomMessage errorMissingSlotDecl=
       new TomMessage("In symbol ''{0}'', get_slot for {1} is missing.");
 
+  public static final TomMessage noCodeGeneration=
+      new TomMessage("The match with ''{0}'' is always unsuccessful. No code for the correspondent action will be generated");
+
+  
   // optimizer.TomOptimizer
   public static final TomMessage tomOptimizationType =
     new TomMessage("optimization of type ''{0}''");
@@ -242,6 +249,10 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Variable ''{0}'' has an unknown type: ''{1}''");
   public static final TomMessage repeatedMatchArgumentName=
       new TomMessage("Repeated variable ''{0}'' in ''match'' declaration");
+  public static final TomMessage invalidMatchSubject=
+      new TomMessage("Type ''{0}'' and Subject ''{1}'' are not correct");
+  public static final TomMessage cannotGuessMatchType=
+      new TomMessage("Cannot guess the type of ''{0}'', use at least one constructor");
   public static final TomMessage badMatchNumberArgument  =
       new TomMessage("Bad number of arguments: {0,number,integer} argument(s) required by match signature but {1,number,integer} found");
   public static final TomMessage incorrectVariableStarInMatch=
@@ -261,7 +272,7 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage invalidDisjunctionCodomain=
       new TomMessage("The symbol ''{0}'' has type ''{1}'' but type ''{2}'' was required in disjunction");
   public static final TomMessage invalidDisjunctionDomain=
-      new TomMessage("The symbol ''{0}'' has a different domain as first symbol in disjunction");
+      new TomMessage("The symbols ''{0}'' and ''{1}'' do not have the same domain");
   public static final TomMessage bracketOnListSymbol     =
       new TomMessage("[] are not allowed on lists or arrays, see ''{0}''");
   public static final TomMessage slotRepeated=

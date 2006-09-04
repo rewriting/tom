@@ -1,0 +1,91 @@
+
+%include { mustrategy.tom }
+
+%op Strategy Is_EmptyconcAlert() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist.Is_EmptyconcAlert)}
+  make() { new tom.platform.adt.platformalert.strategy.alertlist.Is_EmptyconcAlert() }
+}
+
+%op Strategy _EmptyconcAlert() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist._EmptyconcAlert)}
+
+  make() { new tom.platform.adt.platformalert.strategy.alertlist._EmptyconcAlert() }
+}
+
+%op Strategy Make_EmptyconcAlert() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist.Make_EmptyconcAlert)}
+
+  make() { new tom.platform.adt.platformalert.strategy.alertlist.Make_EmptyconcAlert() }
+}
+
+%op Strategy Is_ConsconcAlert() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist.Is_ConsconcAlert)}
+  make() { new tom.platform.adt.platformalert.strategy.alertlist.Is_ConsconcAlert() }
+}
+
+%op Strategy _ConsconcAlert(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist._ConsconcAlert)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.platform.adt.platformalert.strategy.alertlist._ConsconcAlert(arg0, arg1) }
+}
+
+%op Strategy Make_ConsconcAlert(_HeadconcAlert:Strategy, _TailconcAlert:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist.Make_ConsconcAlert)}
+
+  get_slot(_HeadconcAlert, t) { _HeadconcAlert }
+  get_slot(_TailconcAlert, t) { _TailconcAlert }
+  make( new_HeadconcAlert,  new_TailconcAlert) { new tom.platform.adt.platformalert.strategy.alertlist.Make_ConsconcAlert( new_HeadconcAlert,  new_TailconcAlert) }
+}
+
+%op Strategy Is_Error() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert.Is_Error)}
+  make() { new tom.platform.adt.platformalert.strategy.alert.Is_Error() }
+}
+
+%op Strategy _Error(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert._Error)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.platform.adt.platformalert.strategy.alert._Error(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_Error(_Message:String, _File:String, _Line:int) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert.Make_Error)}
+
+  get_slot(_Message, t) { _Message }
+  get_slot(_File, t) { _File }
+  get_slot(_Line, t) { _Line }
+  make( _Message,  _File,  _Line) { new tom.platform.adt.platformalert.strategy.alert.Make_Error( _Message,  _File,  _Line) }
+}
+
+%op Strategy Is_Warning() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert.Is_Warning)}
+  make() { new tom.platform.adt.platformalert.strategy.alert.Is_Warning() }
+}
+
+%op Strategy _Warning(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert._Warning)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.platform.adt.platformalert.strategy.alert._Warning(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_Warning(_Message:String, _File:String, _Line:int) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert.Make_Warning)}
+
+  get_slot(_Message, t) { _Message }
+  get_slot(_File, t) { _File }
+  get_slot(_Line, t) { _Line }
+  make( _Message,  _File,  _Line) { new tom.platform.adt.platformalert.strategy.alert.Make_Warning( _Message,  _File,  _Line) }
+}
+
+%op Strategy _concAlert(sub:Strategy) {
+  is_fsym(t) { false }
+  make(sub)  { `mu(MuVar("x"),Choice(_ConsconcAlert(sub,MuVar("x")),_EmptyconcAlert())) }
+}

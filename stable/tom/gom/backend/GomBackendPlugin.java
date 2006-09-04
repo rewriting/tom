@@ -25,6 +25,8 @@
 package tom.gom.backend;
 
 import java.util.logging.Level;
+import java.io.File;
+import java.io.IOException;
 
 import tom.platform.PlatformLogRecord;
 import tom.platform.OptionParser;
@@ -87,7 +89,20 @@ public class GomBackendPlugin extends GomGenericPlugin {
     // make sure the environment has the correct streamManager
     environment().setStreamManager(getStreamManager());
     String backendType = getOptionStringValue("generator");
-    GomBackend backend = new GomBackend(TemplateFactory.getFactory(backendType));
+    /* Try to guess tom.home */
+    File tomHomePath = null;
+    String tomHome = System.getProperty("tom.home");
+    try {
+      if(tomHome == null) {
+        String xmlConfigFilename = getOptionStringValue("X");
+        tomHome = new File(xmlConfigFilename).getParent();
+      }
+      tomHomePath = new File(tomHome).getCanonicalFile();
+    } catch (IOException e) {
+      getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
+    }
+
+    GomBackend backend = new GomBackend(TemplateFactory.getFactory(backendType), tomHomePath);
     backend.generate(classList);
     if(classList == null) {
       getLogger().log(Level.SEVERE,

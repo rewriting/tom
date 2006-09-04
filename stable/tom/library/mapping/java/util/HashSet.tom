@@ -58,5 +58,3 @@ private static java.util.HashSet hashSetGetTail(java.util.HashSet s) {
   res.remove(it.next());
   return res;
 }
-
-

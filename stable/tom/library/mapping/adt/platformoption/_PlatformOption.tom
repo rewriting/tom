@@ -1,0 +1,163 @@
+
+%include { mustrategy.tom }
+
+%op Strategy Is_PluginOption() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoption.Is_PluginOption)}
+  make() { new tom.platform.adt.platformoption.strategy.platformoption.Is_PluginOption() }
+}
+
+%op Strategy _PluginOption(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoption._PluginOption)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  get_slot(arg3, t) { t.getArgument(3) }
+  get_slot(arg4, t) { t.getArgument(4) }
+  make(arg0, arg1, arg2, arg3, arg4) { new tom.platform.adt.platformoption.strategy.platformoption._PluginOption(arg0, arg1, arg2, arg3, arg4) }
+}
+
+%op Strategy Make_PluginOption(_Name:String, _AltName:String, _Description:String, _Value:Strategy, _AttrName:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoption.Make_PluginOption)}
+
+  get_slot(_Name, t) { _Name }
+  get_slot(_AltName, t) { _AltName }
+  get_slot(_Description, t) { _Description }
+  get_slot(_Value, t) { _Value }
+  get_slot(_AttrName, t) { _AttrName }
+  make( _Name,  _AltName,  _Description,  new_Value,  _AttrName) { new tom.platform.adt.platformoption.strategy.platformoption.Make_PluginOption( _Name,  _AltName,  _Description,  new_Value,  _AttrName) }
+}
+
+%op Strategy Is_EmptyconcPlatformOption() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist.Is_EmptyconcPlatformOption)}
+  make() { new tom.platform.adt.platformoption.strategy.platformoptionlist.Is_EmptyconcPlatformOption() }
+}
+
+%op Strategy _EmptyconcPlatformOption() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist._EmptyconcPlatformOption)}
+
+  make() { new tom.platform.adt.platformoption.strategy.platformoptionlist._EmptyconcPlatformOption() }
+}
+
+%op Strategy Make_EmptyconcPlatformOption() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist.Make_EmptyconcPlatformOption)}
+
+  make() { new tom.platform.adt.platformoption.strategy.platformoptionlist.Make_EmptyconcPlatformOption() }
+}
+
+%op Strategy Is_ConsconcPlatformOption() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist.Is_ConsconcPlatformOption)}
+  make() { new tom.platform.adt.platformoption.strategy.platformoptionlist.Is_ConsconcPlatformOption() }
+}
+
+%op Strategy _ConsconcPlatformOption(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist._ConsconcPlatformOption)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.platform.adt.platformoption.strategy.platformoptionlist._ConsconcPlatformOption(arg0, arg1) }
+}
+
+%op Strategy Make_ConsconcPlatformOption(_HeadconcPlatformOption:Strategy, _TailconcPlatformOption:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist.Make_ConsconcPlatformOption)}
+
+  get_slot(_HeadconcPlatformOption, t) { _HeadconcPlatformOption }
+  get_slot(_TailconcPlatformOption, t) { _TailconcPlatformOption }
+  make( new_HeadconcPlatformOption,  new_TailconcPlatformOption) { new tom.platform.adt.platformoption.strategy.platformoptionlist.Make_ConsconcPlatformOption( new_HeadconcPlatformOption,  new_TailconcPlatformOption) }
+}
+
+%op Strategy Is_True() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean.Is_True)}
+  make() { new tom.platform.adt.platformoption.strategy.platformboolean.Is_True() }
+}
+
+%op Strategy _True() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean._True)}
+
+  make() { new tom.platform.adt.platformoption.strategy.platformboolean._True() }
+}
+
+%op Strategy Make_True() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean.Make_True)}
+
+  make() { new tom.platform.adt.platformoption.strategy.platformboolean.Make_True() }
+}
+
+%op Strategy Is_False() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean.Is_False)}
+  make() { new tom.platform.adt.platformoption.strategy.platformboolean.Is_False() }
+}
+
+%op Strategy _False() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean._False)}
+
+  make() { new tom.platform.adt.platformoption.strategy.platformboolean._False() }
+}
+
+%op Strategy Make_False() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean.Make_False)}
+
+  make() { new tom.platform.adt.platformoption.strategy.platformboolean.Make_False() }
+}
+
+%op Strategy Is_BooleanValue() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.Is_BooleanValue)}
+  make() { new tom.platform.adt.platformoption.strategy.platformvalue.Is_BooleanValue() }
+}
+
+%op Strategy _BooleanValue(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue._BooleanValue)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.platform.adt.platformoption.strategy.platformvalue._BooleanValue(arg0) }
+}
+
+%op Strategy Make_BooleanValue(_BooleanValue:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.Make_BooleanValue)}
+
+  get_slot(_BooleanValue, t) { _BooleanValue }
+  make( new_BooleanValue) { new tom.platform.adt.platformoption.strategy.platformvalue.Make_BooleanValue( new_BooleanValue) }
+}
+
+%op Strategy Is_StringValue() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.Is_StringValue)}
+  make() { new tom.platform.adt.platformoption.strategy.platformvalue.Is_StringValue() }
+}
+
+%op Strategy _StringValue(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue._StringValue)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.platform.adt.platformoption.strategy.platformvalue._StringValue(arg0) }
+}
+
+%op Strategy Make_StringValue(_StringValue:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.Make_StringValue)}
+
+  get_slot(_StringValue, t) { _StringValue }
+  make( _StringValue) { new tom.platform.adt.platformoption.strategy.platformvalue.Make_StringValue( _StringValue) }
+}
+
+%op Strategy Is_IntegerValue() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.Is_IntegerValue)}
+  make() { new tom.platform.adt.platformoption.strategy.platformvalue.Is_IntegerValue() }
+}
+
+%op Strategy _IntegerValue(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue._IntegerValue)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.platform.adt.platformoption.strategy.platformvalue._IntegerValue(arg0) }
+}
+
+%op Strategy Make_IntegerValue(_IntegerValue:int) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.Make_IntegerValue)}
+
+  get_slot(_IntegerValue, t) { _IntegerValue }
+  make( _IntegerValue) { new tom.platform.adt.platformoption.strategy.platformvalue.Make_IntegerValue( _IntegerValue) }
+}
+
+%op Strategy _concPlatformOption(sub:Strategy) {
+  is_fsym(t) { false }
+  make(sub)  { `mu(MuVar("x"),Choice(_ConsconcPlatformOption(sub,MuVar("x")),_EmptyconcPlatformOption())) }
+}

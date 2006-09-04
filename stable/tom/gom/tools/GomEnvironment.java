@@ -81,7 +81,10 @@ public class GomEnvironment {
   private void initBuiltins() {
     builtinSorts.put("int",tom_make_ClassName("","int"));
     builtinSorts.put("String",tom_make_ClassName("","String"));
+    builtinSorts.put("char",tom_make_ClassName("","char"));
     builtinSorts.put("double",tom_make_ClassName("","double"));
+    builtinSorts.put("long",tom_make_ClassName("","long"));
+    builtinSorts.put("float",tom_make_ClassName("","float"));
     builtinSorts.put("ATerm",tom_make_ClassName("aterm","ATerm"));
     builtinSorts.put("ATermList",tom_make_ClassName("aterm","ATermList"));
   }

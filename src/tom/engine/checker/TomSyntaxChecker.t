@@ -1159,49 +1159,53 @@ block: {
       return symbol;
     } else {
       TomSymbol symbol = null;
+      TomSymbol referenceSymbol = null;
       TomTypeList referenceDomain = null;
       String referenceName = null;
       %match(TomNameList symbolNameList) {
-	(_*, Name(dijName), _*) -> { // for each SymbolName
-	  symbol =  getSymbolFromName(`dijName);
-	  if (symbol == null) {
-	    // In disjunction we can only have known symbols
-	    messageError(fileName,decLine, TomMessage.unknownSymbolInDisjunction, new Object[]{`(dijName)});
-	    return null;
-	  }
-	  if ( strictType  || !topLevel ) {
-	    // ensure codomain is correct
-	    if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
-	      return null;
-	    }
-	  }
-	  //System.out.println("domain = " + getSymbolDomain(symbol));
+        (_*, Name(dijName), _*) -> { // for each SymbolName
+          symbol =  getSymbolFromName(`dijName);
+          if (symbol == null) {
+            // In disjunction we can only have known symbols
+            messageError(fileName,decLine, TomMessage.unknownSymbolInDisjunction, new Object[]{`(dijName)});
+            return null;
+          }
+          if ( strictType  || !topLevel ) {
+            // ensure codomain is correct
+            if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomMessage.invalidDisjunctionCodomain, `dijName, fileName,decLine)) {
+              return null;
+            }
+          }
+          //System.out.println("domain = " + getSymbolDomain(symbol));
 
-	  if (referenceDomain == null) { // save Domain reference
-	    referenceName = `dijName;
-	    referenceDomain = getSymbolDomain(symbol);
+          if (referenceDomain == null) { // save Domain reference
+            referenceSymbol = symbol;
+            referenceName = `dijName;
+            referenceDomain = getSymbolDomain(symbol);
+          } else {
+            // check that domains are compatible
+            TomTypeList currentDomain = getSymbolDomain(symbol);
+            // restrict the domain to the record
+            while(!slotList.isEmptyconcSlot()) {
+              Slot slot = slotList.getHeadconcSlot();
+              TomName slotName = slot.getSlotName();
+              int currentSlotIndex = TomBase.getSlotIndex(symbol,slotName);
+              int referenceSlotIndex = TomBase.getSlotIndex(referenceSymbol,slotName);
 
-	  } else {
-	    // check that domains are compatible
-	    TomTypeList currentDomain = getSymbolDomain(symbol);
-	    // restrict the domain to the record
-	    while(!slotList.isEmptyconcSlot()) {
-	      Slot slot = slotList.getHeadconcSlot();
-	      TomName slotName = slot.getSlotName();
-	      int slotIndex = TomBase.getSlotIndex(symbol,slotName);
+              //System.out.println("index1 = " + currentSlotIndex);
+              //System.out.println("type1 = " + TomBase.elementAt(currentDomain,currentSlotIndex));
+              //System.out.println("index2 = " + referenceSlotIndex);
+              //System.out.println("type2 = " + TomBase.elementAt(referenceDomain,referenceSlotIndex));
+              if(TomBase.elementAt(currentDomain,currentSlotIndex) != TomBase.elementAt(referenceDomain,referenceSlotIndex)) {
+                messageError(fileName,decLine, TomMessage.invalidDisjunctionDomain, new Object[]{referenceName, `(dijName) });
+                return null;
+              }
 
-	      //System.out.println("type1 = " + TomBase.elementAt(currentDomain,slotIndex));
-	      //System.out.println("type2 = " + TomBase.elementAt(referenceDomain,slotIndex));
-	      if(TomBase.elementAt(currentDomain,slotIndex) != TomBase.elementAt(referenceDomain,slotIndex)) {
-		messageError(fileName,decLine, TomMessage.invalidDisjunctionDomain, new Object[]{referenceName, `(dijName) });
-		return null;
-	      }
+              slotList = slotList.getTailconcSlot();
+            }
 
-	      slotList = slotList.getTailconcSlot();
-	    }
-
-	  }
-	}
+          }
+        }
       }
       return symbol;
     }

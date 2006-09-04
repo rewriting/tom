@@ -514,6 +514,12 @@
   make(t0, t1) { tom.engine.adt.tomtype.types.tomtypelist.ConsconcTomType.make(t0, t1)}
 }
 
+%op TomType TypeList(TypeList:TomTypeList) {
+  is_fsym(t) { (t!=null) && t.isTypeList() }
+  get_slot(TypeList, t) { t.getTypeList() }
+  make(t0) { tom.engine.adt.tomtype.types.tomtype.TypeList.make(t0)}
+}
+
 %op TomType EmptyType() {
   is_fsym(t) { (t!=null) && t.isEmptyType() }
   make() { tom.engine.adt.tomtype.types.tomtype.EmptyType.make()}
@@ -1136,14 +1142,6 @@
   make(t0, t1, t2, t3) { tom.engine.adt.tomexpression.types.expression.GetSlot.make(t0, t1, t2, t3)}
 }
 
-%op Expression GetSubterm(Codomain:TomType, Variable:TomTerm, Number:TomNumber) {
-  is_fsym(t) { (t!=null) && t.isGetSubterm() }
-  get_slot(Codomain, t) { t.getCodomain() }
-  get_slot(Variable, t) { t.getVariable() }
-  get_slot(Number, t) { t.getNumber() }
-  make(t0, t1, t2) { tom.engine.adt.tomexpression.types.expression.GetSubterm.make(t0, t1, t2)}
-}
-
 %op Expression Cast(AstType:TomType, Source:Expression) {
   is_fsym(t) { (t!=null) && t.isCast() }
   get_slot(AstType, t) { t.getAstType() }
@@ -1204,9 +1202,10 @@
   make(t0) { tom.engine.adt.tomexpression.types.expression.Negation.make(t0)}
 }
 
-%op Expression Bottom() {
+%op Expression Bottom(TomType:TomType) {
   is_fsym(t) { (t!=null) && t.isBottom() }
-  make() { tom.engine.adt.tomexpression.types.expression.Bottom.make()}
+  get_slot(TomType, t) { t.getTomType() }
+  make(t0) { tom.engine.adt.tomexpression.types.expression.Bottom.make(t0)}
 }
 
 %op Expression TomTermToExpression(AstTerm:TomTerm) {
@@ -1293,9 +1292,9 @@
   make(t0, t1) { tom.engine.adt.tomterm.types.tomterm.FunctionCall.make(t0, t1)}
 }
 
-%op TomTerm BuildReducedTerm(Kid1:TomTerm) {
+%op TomTerm BuildReducedTerm(TomTerm:TomTerm) {
   is_fsym(t) { (t!=null) && t.isBuildReducedTerm() }
-  get_slot(Kid1, t) { t.getKid1() }
+  get_slot(TomTerm, t) { t.getTomTerm() }
   make(t0) { tom.engine.adt.tomterm.types.tomterm.BuildReducedTerm.make(t0)}
 }
 
@@ -1314,16 +1313,9 @@
   make(t0) { tom.engine.adt.tomterm.types.tomterm.Ref.make(t0)}
 }
 
-%op TomTerm TLVar(StrName:String, AstType:TomType) {
-  is_fsym(t) { (t!=null) && t.isTLVar() }
-  get_slot(StrName, t) { t.getStrName() }
-  get_slot(AstType, t) { t.getAstType() }
-  make(t0, t1) { tom.engine.adt.tomterm.types.tomterm.TLVar.make(t0, t1)}
-}
-
-%op TomTerm SymbolOf(groundTerm:TomTerm) {
+%op TomTerm SymbolOf(GroundTerm:TomTerm) {
   is_fsym(t) { (t!=null) && t.isSymbolOf() }
-  get_slot(groundTerm, t) { t.getgroundTerm() }
+  get_slot(GroundTerm, t) { t.getGroundTerm() }
   make(t0) { tom.engine.adt.tomterm.types.tomterm.SymbolOf.make(t0)}
 }
 
@@ -1425,11 +1417,6 @@
   is_fsym(t) { (t!=null) && t.isTargetLanguageToTomTerm() }
   get_slot(Tl, t) { t.getTl() }
   make(t0) { tom.engine.adt.tomterm.types.tomterm.TargetLanguageToTomTerm.make(t0)}
-}
-
-%op TomTerm EmptyContext() {
-  is_fsym(t) { (t!=null) && t.isEmptyContext() }
-  make() { tom.engine.adt.tomterm.types.tomterm.EmptyContext.make()}
 }
 
 %op TomTerm UnamedVariableStar(Option:OptionList, AstType:TomType, Constraints:ConstraintList) {

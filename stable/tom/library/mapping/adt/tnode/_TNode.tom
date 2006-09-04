@@ -1,0 +1,301 @@
+
+%include { mustrategy.tom }
+
+%op Strategy Is_EmptyconcTNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Is_EmptyconcTNode)}
+  make() { new tom.library.adt.tnode.strategy.tnodelist.Is_EmptyconcTNode() }
+}
+
+%op Strategy _EmptyconcTNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist._EmptyconcTNode)}
+
+  make() { new tom.library.adt.tnode.strategy.tnodelist._EmptyconcTNode() }
+}
+
+%op Strategy Make_EmptyconcTNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Make_EmptyconcTNode)}
+
+  make() { new tom.library.adt.tnode.strategy.tnodelist.Make_EmptyconcTNode() }
+}
+
+%op Strategy Is_ConsconcTNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Is_ConsconcTNode)}
+  make() { new tom.library.adt.tnode.strategy.tnodelist.Is_ConsconcTNode() }
+}
+
+%op Strategy _ConsconcTNode(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist._ConsconcTNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnodelist._ConsconcTNode(arg0, arg1) }
+}
+
+%op Strategy Make_ConsconcTNode(_HeadconcTNode:Strategy, _TailconcTNode:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnodelist.Make_ConsconcTNode)}
+
+  get_slot(_HeadconcTNode, t) { _HeadconcTNode }
+  get_slot(_TailconcTNode, t) { _TailconcTNode }
+  make( new_HeadconcTNode,  new_TailconcTNode) { new tom.library.adt.tnode.strategy.tnodelist.Make_ConsconcTNode( new_HeadconcTNode,  new_TailconcTNode) }
+}
+
+%op Strategy Is_EmptyNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_EmptyNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_EmptyNode() }
+}
+
+%op Strategy _EmptyNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._EmptyNode)}
+
+  make() { new tom.library.adt.tnode.strategy.tnode._EmptyNode() }
+}
+
+%op Strategy Make_EmptyNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_EmptyNode)}
+
+  make() { new tom.library.adt.tnode.strategy.tnode.Make_EmptyNode() }
+}
+
+%op Strategy Is_CommentNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_CommentNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_CommentNode() }
+}
+
+%op Strategy _CommentNode(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._CommentNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.library.adt.tnode.strategy.tnode._CommentNode(arg0) }
+}
+
+%op Strategy Make_CommentNode(_Data:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_CommentNode)}
+
+  get_slot(_Data, t) { _Data }
+  make( _Data) { new tom.library.adt.tnode.strategy.tnode.Make_CommentNode( _Data) }
+}
+
+%op Strategy Is_ProcessingInstructionNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_ProcessingInstructionNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_ProcessingInstructionNode() }
+}
+
+%op Strategy _ProcessingInstructionNode(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._ProcessingInstructionNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnode._ProcessingInstructionNode(arg0, arg1) }
+}
+
+%op Strategy Make_ProcessingInstructionNode(_Target:String, _Data:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_ProcessingInstructionNode)}
+
+  get_slot(_Target, t) { _Target }
+  get_slot(_Data, t) { _Data }
+  make( _Target,  _Data) { new tom.library.adt.tnode.strategy.tnode.Make_ProcessingInstructionNode( _Target,  _Data) }
+}
+
+%op Strategy Is_TextNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_TextNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_TextNode() }
+}
+
+%op Strategy _TextNode(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._TextNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.library.adt.tnode.strategy.tnode._TextNode(arg0) }
+}
+
+%op Strategy Make_TextNode(_Data:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_TextNode)}
+
+  get_slot(_Data, t) { _Data }
+  make( _Data) { new tom.library.adt.tnode.strategy.tnode.Make_TextNode( _Data) }
+}
+
+%op Strategy Is_CDATASectionNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_CDATASectionNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_CDATASectionNode() }
+}
+
+%op Strategy _CDATASectionNode(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._CDATASectionNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.library.adt.tnode.strategy.tnode._CDATASectionNode(arg0) }
+}
+
+%op Strategy Make_CDATASectionNode(_Data:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_CDATASectionNode)}
+
+  get_slot(_Data, t) { _Data }
+  make( _Data) { new tom.library.adt.tnode.strategy.tnode.Make_CDATASectionNode( _Data) }
+}
+
+%op Strategy Is_DocumentNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_DocumentNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_DocumentNode() }
+}
+
+%op Strategy _DocumentNode(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._DocumentNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnode._DocumentNode(arg0, arg1) }
+}
+
+%op Strategy Make_DocumentNode(_DocType:Strategy, _DocElem:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_DocumentNode)}
+
+  get_slot(_DocType, t) { _DocType }
+  get_slot(_DocElem, t) { _DocElem }
+  make( new_DocType,  new_DocElem) { new tom.library.adt.tnode.strategy.tnode.Make_DocumentNode( new_DocType,  new_DocElem) }
+}
+
+%op Strategy Is_ElementNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_ElementNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_ElementNode() }
+}
+
+%op Strategy _ElementNode(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._ElementNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.library.adt.tnode.strategy.tnode._ElementNode(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_ElementNode(_Name:String, _AttrList:Strategy, _ChildList:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_ElementNode)}
+
+  get_slot(_Name, t) { _Name }
+  get_slot(_AttrList, t) { _AttrList }
+  get_slot(_ChildList, t) { _ChildList }
+  make( _Name,  new_AttrList,  new_ChildList) { new tom.library.adt.tnode.strategy.tnode.Make_ElementNode( _Name,  new_AttrList,  new_ChildList) }
+}
+
+%op Strategy Is_AttributeNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_AttributeNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_AttributeNode() }
+}
+
+%op Strategy _AttributeNode(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._AttributeNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.library.adt.tnode.strategy.tnode._AttributeNode(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_AttributeNode(_Name:String, _Specified:String, _Value:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_AttributeNode)}
+
+  get_slot(_Name, t) { _Name }
+  get_slot(_Specified, t) { _Specified }
+  get_slot(_Value, t) { _Value }
+  make( _Name,  _Specified,  _Value) { new tom.library.adt.tnode.strategy.tnode.Make_AttributeNode( _Name,  _Specified,  _Value) }
+}
+
+%op Strategy Is_DocumentTypeNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_DocumentTypeNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_DocumentTypeNode() }
+}
+
+%op Strategy _DocumentTypeNode(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._DocumentTypeNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  get_slot(arg3, t) { t.getArgument(3) }
+  get_slot(arg4, t) { t.getArgument(4) }
+  get_slot(arg5, t) { t.getArgument(5) }
+  make(arg0, arg1, arg2, arg3, arg4, arg5) { new tom.library.adt.tnode.strategy.tnode._DocumentTypeNode(arg0, arg1, arg2, arg3, arg4, arg5) }
+}
+
+%op Strategy Make_DocumentTypeNode(_Name:String, _PublicId:String, _SystemId:String, _InternalSubset:String, _Entities:Strategy, _Notations:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_DocumentTypeNode)}
+
+  get_slot(_Name, t) { _Name }
+  get_slot(_PublicId, t) { _PublicId }
+  get_slot(_SystemId, t) { _SystemId }
+  get_slot(_InternalSubset, t) { _InternalSubset }
+  get_slot(_Entities, t) { _Entities }
+  get_slot(_Notations, t) { _Notations }
+  make( _Name,  _PublicId,  _SystemId,  _InternalSubset,  new_Entities,  new_Notations) { new tom.library.adt.tnode.strategy.tnode.Make_DocumentTypeNode( _Name,  _PublicId,  _SystemId,  _InternalSubset,  new_Entities,  new_Notations) }
+}
+
+%op Strategy Is_EntityReferenceNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_EntityReferenceNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_EntityReferenceNode() }
+}
+
+%op Strategy _EntityReferenceNode(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._EntityReferenceNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnode._EntityReferenceNode(arg0, arg1) }
+}
+
+%op Strategy Make_EntityReferenceNode(_Name:String, _ChildList:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_EntityReferenceNode)}
+
+  get_slot(_Name, t) { _Name }
+  get_slot(_ChildList, t) { _ChildList }
+  make( _Name,  new_ChildList) { new tom.library.adt.tnode.strategy.tnode.Make_EntityReferenceNode( _Name,  new_ChildList) }
+}
+
+%op Strategy Is_EntityNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_EntityNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_EntityNode() }
+}
+
+%op Strategy _EntityNode(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._EntityNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.library.adt.tnode.strategy.tnode._EntityNode(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_EntityNode(_NotationName:String, _PublicId:String, _SystemId:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_EntityNode)}
+
+  get_slot(_NotationName, t) { _NotationName }
+  get_slot(_PublicId, t) { _PublicId }
+  get_slot(_SystemId, t) { _SystemId }
+  make( _NotationName,  _PublicId,  _SystemId) { new tom.library.adt.tnode.strategy.tnode.Make_EntityNode( _NotationName,  _PublicId,  _SystemId) }
+}
+
+%op Strategy Is_NotationNode() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Is_NotationNode)}
+  make() { new tom.library.adt.tnode.strategy.tnode.Is_NotationNode() }
+}
+
+%op Strategy _NotationNode(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode._NotationNode)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.library.adt.tnode.strategy.tnode._NotationNode(arg0, arg1) }
+}
+
+%op Strategy Make_NotationNode(_PublicId:String, _SystemId:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.tnode.strategy.tnode.Make_NotationNode)}
+
+  get_slot(_PublicId, t) { _PublicId }
+  get_slot(_SystemId, t) { _SystemId }
+  make( _PublicId,  _SystemId) { new tom.library.adt.tnode.strategy.tnode.Make_NotationNode( _PublicId,  _SystemId) }
+}
+
+%op Strategy _concTNode(sub:Strategy) {
+  is_fsym(t) { false }
+  make(sub)  { `mu(MuVar("x"),Choice(_ConsconcTNode(sub,MuVar("x")),_EmptyconcTNode())) }
+}

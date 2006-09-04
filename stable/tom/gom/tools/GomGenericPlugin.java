@@ -205,6 +205,7 @@ public abstract class GomGenericPlugin implements Plugin {
   public String getArgumentArrayString(Object[] arg) {
     String argString = "[";
     for(int i=0;i<arg.length;i++) {
+      if (arg[i] == null) continue;
       argString += arg[i].getClass().getName();
       if(i < arg.length-1) {
         argString += ",";
