@@ -4,9 +4,8 @@ abstract syntax
 
 TomType = Type(TomType:TomType,TlType:TomType)
         | TomTypeAlone(String:String)
-        | Codomain(AstName:TomName)
-
         | ASTTomType(String:String)
+        | Codomain(AstName:TomName)
         | TypesToType(Domain:TomTypeList,Codomain:TomType)
         | TLType(Tl:TargetLanguage)
         | EmptyType()

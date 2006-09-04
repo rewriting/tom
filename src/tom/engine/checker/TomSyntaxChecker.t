@@ -306,7 +306,7 @@ public class TomSyntaxChecker extends TomChecker {
     // We save first the origin tracking of the symbol declaration
     currentTomStructureOrgTrack = findOriginTracking(optionList);
 
-      // ensure first definition then Codomain, Domain, Macros and Slots (Simple operator)
+    // ensure first definition then Codomain, Domain, Macros and Slots (Simple operator)
     verifyMultipleDefinition(symbStrName, symbolType, TomSyntaxChecker.OPERATOR);
     verifySymbolCodomain(getSymbolCodomain(tomSymbol), symbStrName, symbolType);
     domainLength = verifySymbolDomain(getSymbolDomain(tomSymbol), symbStrName, symbolType);
@@ -324,14 +324,23 @@ public class TomSyntaxChecker extends TomChecker {
         return;
       }
 
-      _ -> {
-        if(!testTypeExistence(codomain.getString())) {
+      TomTypeAlone(typeName) -> {
+        if(!testTypeExistence(`typeName)) {
           messageError(currentTomStructureOrgTrack.getFileName(),currentTomStructureOrgTrack.getLine(),
               TomMessage.symbolCodomainError,
-              new Object[]{symbName, codomain});
+              new Object[]{symbName, `(typeName)});
         }
+        return;
+      }
+
+      EmptyType() -> {
+        messageError(currentTomStructureOrgTrack.getFileName(),currentTomStructureOrgTrack.getLine(),
+            TomMessage.symbolCodomainError,
+            new Object[]{symbName, ""});
+        return;
       }
     }
+    throw new TomRuntimeException("Strange codomain "+codomain);
   }
 
   private  int verifySymbolDomain(TomTypeList args, String symbName, String symbolType) {
@@ -946,7 +955,6 @@ block: {
           break matchblock;
         }
       }
-      System.out.println("Strange term in pattern "+term);
       throw new TomRuntimeException("Strange Term "+term);
     }
     return new TermDescription(termClass, termName, fileName,decLine, type);
@@ -1032,7 +1040,6 @@ block: {
               findOriginTrackingLine(`options),  null);
         }
       }
-      System.out.println("Strange term "+term);
       throw new TomRuntimeException("Strange Term "+term);
     }
   }
