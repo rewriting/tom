@@ -64,7 +64,7 @@ public class MuVar extends AbstractMuStrategy {
     this.name = name;
   }
 
-  protected boolean isExpanded() {
+  protected final boolean isExpanded() {
     return instance != null;
   }
 
