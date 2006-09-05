@@ -44,7 +44,7 @@ public abstract class AbstractMuStrategy implements MuStrategy {
     visitors = v;
   }
 
-  protected final jjtraveler.reflective.VisitableVisitor getArgument(int i) {
+  public final jjtraveler.reflective.VisitableVisitor getArgument(int i) {
     return visitors[i];
   }
 
