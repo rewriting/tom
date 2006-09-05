@@ -46,13 +46,15 @@ import jjtraveler.VisitFailure;
 public class GomBackend {
   TemplateFactory templatefactory;
   private File tomHomePath;
+  private List importList = null;
 
   %include { ../adt/objects/Objects.tom }
   %include { mutraveler.tom }
 
-  GomBackend(TemplateFactory templatefactory, File tomHomePath) {
+  GomBackend(TemplateFactory templatefactory, File tomHomePath, List importList) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
+    this.importList = importList;
   }
 
   private GomEnvironment environment() {
@@ -140,6 +142,7 @@ public class GomBackend {
         GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
         TemplateClass operator = templatefactory.makeOperatorTemplate(
             tomHomePath,
+            importList,
             `className,
             `abstracttype,
             `extendstype,

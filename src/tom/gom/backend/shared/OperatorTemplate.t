@@ -25,6 +25,7 @@
 package tom.gom.backend.shared;
 
 import java.io.*;
+import java.util.*;
 import java.util.logging.*;
 import tom.gom.backend.TemplateClass;
 import tom.gom.tools.GomEnvironment;
@@ -33,6 +34,7 @@ import tom.gom.adt.objects.types.*;
 
 public class OperatorTemplate extends TemplateClass {
   File tomHomePath;
+  List importList;
   ClassName abstractType;
   ClassName extendsType;
   ClassName sortName;
@@ -44,6 +46,7 @@ public class OperatorTemplate extends TemplateClass {
   %include { ../../adt/objects/Objects.tom}
 
   public OperatorTemplate(File tomHomePath,
+		  				  List importList, 	
                           ClassName className,
                           ClassName abstractType,
                           ClassName extendsType,
@@ -54,6 +57,7 @@ public class OperatorTemplate extends TemplateClass {
                           TemplateClass mapping) {
     super(className);
     this.tomHomePath = tomHomePath;
+    this.importList = importList;
     this.abstractType = abstractType;
     this.extendsType = extendsType;;
     this.sortName = sortName;
@@ -763,7 +767,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
         e.printStackTrace();
         return 1;
       }
-    } else { /* We need to call gom to generate the file */
+    } else { /* We need to call tom to generate the file */
       File xmlFile = new File(tomHomePath,"Tom.xml");
       if(!xmlFile.exists()) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());
@@ -775,14 +779,39 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
       } catch (IOException e) {
         getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
       }
-      String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
+            
+      ArrayList tomParams = new ArrayList();      
+      
+      try{
+	      Iterator it = importList.iterator();
+	      while(it.hasNext()){
+	    	  String importPath = ((File)it.next()).getCanonicalPath();
+	    	  tomParams.add("--import");
+	    	  tomParams.add(importPath);
+	      }
+      }catch(IOException e){
+    	  getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
+      }
+      
+      tomParams.add("-X");
+      tomParams.add(xmlFile.getPath());
+      tomParams.add("--optimize");
+      tomParams.add("--optimize2");
+      tomParams.add("--output");
+      tomParams.add(file_path);
+      tomParams.add("-");     
+  
+      //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
       //String[] params = {"-X",config_xml,"--output",file_path,"-"};
+
+      //System.out.println("params: " + tomParams);
 
       String gen = generate();
 
       InputStream backupIn = System.in;
       System.setIn(new DataInputStream(new StringBufferInputStream(gen)));
-      int res = tom.engine.Tom.exec(params);
+      int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
+//      int res = tom.engine.Tom.exec(params);
       System.setIn(backupIn);
       if (res != 0 ) {
         getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
