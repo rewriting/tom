@@ -539,16 +539,16 @@
   make(t0, t1) { tom.engine.adt.tomtype.types.tomtype.TypesToType.make(t0, t1)}
 }
 
-%op TomType ASTTomType(String:String) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType }
-  get_slot(String, t) { t.getString() }
-  make(t0) { tom.engine.adt.tomtype.types.tomtype.ASTTomType.make(t0)}
-}
-
 %op TomType Codomain(AstName:TomName) {
   is_fsym(t) { t instanceof tom.engine.adt.tomtype.types.tomtype.Codomain }
   get_slot(AstName, t) { t.getAstName() }
   make(t0) { tom.engine.adt.tomtype.types.tomtype.Codomain.make(t0)}
+}
+
+%op TomType ASTTomType(String:String) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomtype.types.tomtype.ASTTomType }
+  get_slot(String, t) { t.getString() }
+  make(t0) { tom.engine.adt.tomtype.types.tomtype.ASTTomType.make(t0)}
 }
 
 %op TomType TomTypeAlone(String:String) {

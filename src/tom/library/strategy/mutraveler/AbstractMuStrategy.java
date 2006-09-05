@@ -10,7 +10,7 @@ import tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd;
 
 public abstract class AbstractMuStrategy implements MuStrategy {
   protected jjtraveler.reflective.VisitableVisitor[] visitors;
-  private Position position;
+  protected Position position;
 
   public void setPosition(Position pos) {
     this.position = pos;

@@ -25,7 +25,7 @@ public class OneId extends AbstractMuStrategy {
 
   public Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
-    if(!hasPosition()) {
+    if(position==null) {
       for (int i = 0; i < childCount; i++) {
         Visitable newSubterm = getArgument(ARG).visit(any.getChildAt(i));
         if (newSubterm != any.getChildAt(i)) {
@@ -34,9 +34,9 @@ public class OneId extends AbstractMuStrategy {
       } 
     } else {
       for (int i = 0; i < childCount; i++) {
-        getPosition().down(i+1);
+        position.down(i+1);
         Visitable newSubterm = getArgument(ARG).visit(any.getChildAt(i));
-        getPosition().up();
+        position.up();
         if (newSubterm != any.getChildAt(i)) {
           return any.setChildAt(i,newSubterm);
         } 

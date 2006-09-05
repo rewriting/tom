@@ -733,25 +733,6 @@
   make( new_Domain,  new_Codomain) { new tom.engine.adt.tomtype.strategy.tomtype.Make_TypesToType( new_Domain,  new_Codomain) }
 }
 
-%op Strategy Is_ASTTomType() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomtype.strategy.tomtype.Is_ASTTomType)}
-  make() { new tom.engine.adt.tomtype.strategy.tomtype.Is_ASTTomType() }
-}
-
-%op Strategy _ASTTomType(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomtype.strategy.tomtype._ASTTomType)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomtype.strategy.tomtype._ASTTomType(arg0) }
-}
-
-%op Strategy Make_ASTTomType(_String:String) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomtype.strategy.tomtype.Make_ASTTomType)}
-
-  get_slot(_String, t) { _String }
-  make( _String) { new tom.engine.adt.tomtype.strategy.tomtype.Make_ASTTomType( _String) }
-}
-
 %op Strategy Is_Codomain() {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomtype.strategy.tomtype.Is_Codomain)}
   make() { new tom.engine.adt.tomtype.strategy.tomtype.Is_Codomain() }
@@ -769,6 +750,25 @@
 
   get_slot(_AstName, t) { _AstName }
   make( new_AstName) { new tom.engine.adt.tomtype.strategy.tomtype.Make_Codomain( new_AstName) }
+}
+
+%op Strategy Is_ASTTomType() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomtype.strategy.tomtype.Is_ASTTomType)}
+  make() { new tom.engine.adt.tomtype.strategy.tomtype.Is_ASTTomType() }
+}
+
+%op Strategy _ASTTomType(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomtype.strategy.tomtype._ASTTomType)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomtype.strategy.tomtype._ASTTomType(arg0) }
+}
+
+%op Strategy Make_ASTTomType(_String:String) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomtype.strategy.tomtype.Make_ASTTomType)}
+
+  get_slot(_String, t) { _String }
+  make( _String) { new tom.engine.adt.tomtype.strategy.tomtype.Make_ASTTomType( _String) }
 }
 
 %op Strategy Is_TomTypeAlone() {

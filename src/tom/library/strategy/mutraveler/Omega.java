@@ -17,33 +17,33 @@ import jjtraveler.VisitFailure;
 
 public class Omega extends AbstractMuStrategy {
   public final static int ARG = 0;
-  protected int position;
+  protected int indexPosition;
 
-  public Omega(int position, VisitableVisitor v) {
+  public Omega(int indexPosition, VisitableVisitor v) {
     initSubterm(v);
-    this.position = position;
+    this.indexPosition = indexPosition;
   }
 
   public int getPos() {
-    return position;
+    return indexPosition;
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
-    if(position==0) {
+    if(indexPosition==0) {
       return any;
-    } else if(position>0 && position<=any.getChildCount()) {
-      int childNumber = position-1;
-      if(!hasPosition()) {
+    } else if(indexPosition>0 && indexPosition<=any.getChildCount()) {
+      int childNumber = indexPosition-1;
+      if(position==null) {
         Visitable newChild = getArgument(ARG).visit(any.getChildAt(childNumber));
         return any.setChildAt(childNumber,newChild);
       } else {
         try {
-          getPosition().down(position);
+          position.down(indexPosition);
           Visitable newChild = getArgument(ARG).visit(any.getChildAt(childNumber));
-          getPosition().up();
+          position.up();
           return any.setChildAt(childNumber,newChild);
         } catch(VisitFailure f) {
-          getPosition().up();
+          position.up();
           throw new VisitFailure();
         }
       }

@@ -12,27 +12,27 @@ public class Mu extends AbstractMuStrategy {
   public final static int VAR = 0;
   public final static int V = 1;
 
-  private MuVar S_VAR;
-  private VisitableVisitor S_V;
+  //private MuVar S_VAR;
+  //private VisitableVisitor S_V;
   private MuTopDown myMuTopDown;
 	private boolean expanded =false;
   public Mu(VisitableVisitor var, VisitableVisitor v) {
     initSubterm(var, v);
-    S_VAR = (MuVar)var;
-    S_V = v;
+    //S_VAR = (MuVar)var;
+    //S_V = v;
     myMuTopDown = new MuTopDown();
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure {
+  public final Visitable visit(Visitable any) throws VisitFailure {
     //if(!isExpanded()) { expand(); }
     if(!expanded) { expand(); }
     //return getArgument(V).visit(any);
-    return S_V.visit(any);
+    return visitors[V].visit(any);
   }
 
   private boolean isExpanded() {
     //return ((MuVar)getArgument(VAR)).isExpanded();
-    return S_VAR.isExpanded();
+    return ((MuVar)visitors[VAR]).isExpanded();
   }
 
   public void expand() {

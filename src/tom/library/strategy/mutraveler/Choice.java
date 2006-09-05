@@ -25,9 +25,9 @@ public class Choice extends AbstractMuStrategy {
     
   public Visitable visit(Visitable visitable) throws VisitFailure {
     try {
-      return getArgument(FIRST).visit(visitable);
+      return visitors[FIRST].visit(visitable);
     } catch (VisitFailure f) {
-      return getArgument(THEN).visit(visitable);
+      return visitors[THEN].visit(visitable);
     }
   }
 }

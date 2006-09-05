@@ -14,22 +14,22 @@ import jjtraveler.VisitFailure;
 
 public class All extends AbstractMuStrategy {
   public final static int ARG = 0;
-  private Visitor S_ARG;
+  //private Visitor S_ARG;
   public All(VisitableVisitor v) {
     initSubterm(v);
-    S_ARG = v;
+    //S_ARG = v;
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure {
+  public final Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
     Visitable result = any;
     //Visitor S = getArgument(ARG); // remove for Scompiler
     if (any instanceof MuVisitable) {
       Visitable[] childs = null;
-      if(!hasPosition()) {
+      if(position==null) {
         for (int i = 0; i < childCount; i++) {
           Visitable oldChild = any.getChildAt(i);
-          Visitable newChild = S_ARG.visit(oldChild); // remove for Scompiler
+          Visitable newChild = visitors[ARG].visit(oldChild); // remove for Scompiler
           //Visitable newChild = getArgument(ARG).visit(oldChild); // activate for Scompiler
           if(childs != null) {
             childs[i] = newChild;
@@ -46,10 +46,10 @@ public class All extends AbstractMuStrategy {
         try {
           for (int i = 0; i < childCount; i++) {
             Visitable oldChild = any.getChildAt(i);
-            getPosition().down(i+1);
-            Visitable newChild = S_ARG.visit(oldChild); // remove for Scompiler
+            position.down(i+1);
+            Visitable newChild = visitors[ARG].visit(oldChild); // remove for Scompiler
             //Visitable newChild = getArgument(ARG).visit(oldChild); // activate for Scompiler
-            getPosition().up();
+            position.up();
             if(childs != null) {
               childs[i] = newChild;
             } else if(newChild != oldChild) {
@@ -62,7 +62,7 @@ public class All extends AbstractMuStrategy {
             }
           }
         } catch(VisitFailure f) {
-          getPosition().up();
+          position.up();
           throw new VisitFailure();
         }
       }
@@ -71,9 +71,9 @@ public class All extends AbstractMuStrategy {
       }
     } else {
       //System.out.println("All.visit(" + any.getClass() + ")");
-      if(!hasPosition()) {
+      if(position==null) {
         for (int i = 0; i < childCount; i++) {
-          Visitable newChild = S_ARG.visit(result.getChildAt(i)); // remove for Scompiler
+          Visitable newChild = visitors[ARG].visit(result.getChildAt(i)); // remove for Scompiler
           //Visitable newChild = getArgument(ARG).visit(result.getChildAt(i)); // activate for Scompiler
           result = result.setChildAt(i, newChild);
         }
@@ -82,14 +82,14 @@ public class All extends AbstractMuStrategy {
           for (int i = 0; i < childCount; i++) {
             //System.out.println(" -> " + getArgument(0).getClass() + ".visit(" + result.getChildAt(i) + ")");
             //System.out.println("All.pos = " + getPosition());
-            getPosition().down(i+1);
-            Visitable newChild = S_ARG.visit(result.getChildAt(i)); // remove for Scompiler
+            position.down(i+1);
+            Visitable newChild = visitors[ARG].visit(result.getChildAt(i)); // remove for Scompiler
             // Visitable newChild = getArgument(ARG).visit(result.getChildAt(i)); // activate for Scompiler
-            getPosition().up();
+            position.up();
             result = result.setChildAt(i, newChild);
           }
         } catch(VisitFailure f) {
-          getPosition().up();
+          position.up();
           throw new VisitFailure();
         }
       }

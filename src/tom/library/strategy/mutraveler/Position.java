@@ -10,7 +10,7 @@ import java.util.*;
  * Object that represents a position in a term
  */
 
-public class Position {
+public final class Position {
   private static final int DEFAULT_LENGTH = 8;
   protected int size;
   protected int[] data;

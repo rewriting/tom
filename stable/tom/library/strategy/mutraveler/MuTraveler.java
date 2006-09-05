@@ -59,19 +59,19 @@ public class MuTraveler {
 }
 
 class MuInitializer extends Identity {
-  private Position position; 
+  private Position initialPosition; 
 
-  public MuInitializer(Position position) {
+  public MuInitializer(Position initialPosition) {
     super();
-    this.position = position;
+    this.initialPosition = initialPosition;
   }
 
   public Visitable visit(Visitable v) {
     if(v instanceof MuStrategy) {
       MuStrategy avv = (MuStrategy) v;
-      avv.setPosition(position);
+      avv.setPosition(initialPosition);
     } else if(v instanceof VisitableVisitor) {
-      MuTraveler.setPosition((VisitableVisitor)v,position);
+      MuTraveler.setPosition((VisitableVisitor)v,initialPosition);
     } else {
       throw new RuntimeException("cannot initialize: " + v);
     }

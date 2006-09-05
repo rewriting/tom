@@ -10,37 +10,23 @@ import tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd;
 
 public abstract class AbstractMuStrategy implements MuStrategy {
   protected jjtraveler.reflective.VisitableVisitor[] visitors;
-  private Position position;
+  protected Position position;
 
   public void setPosition(Position pos) {
     this.position = pos;
   }
 
   public Position getPosition() {
-    if(hasPosition()) {
+    if(position!=null) {
       return position;
     } else {
       throw new RuntimeException("position not initialized");
     }
   }
 
-  public boolean hasPosition() {
+  public final boolean hasPosition() {
     return position!=null;
   }
-  /*
-  protected void initPosition(Position pos) {
-    setPosition(pos);
-    for(int i=0 ; i<getChildCount() ; i++) {
-      ((AbstractMuStrategy)getChildAt(i)).initPosition(pos); 
-    }
-  }
-
-  public MuStrategy init() {
-    Position pos = new Position();
-    initPosition(pos);
-    return this;
-  }
-  */
 
   protected void initSubterm() {
     visitors = new jjtraveler.reflective.VisitableVisitor[] {};
@@ -58,9 +44,10 @@ public abstract class AbstractMuStrategy implements MuStrategy {
     visitors = v;
   }
 
-  public jjtraveler.reflective.VisitableVisitor getArgument(int i) {
+  public final jjtraveler.reflective.VisitableVisitor getArgument(int i) {
     return visitors[i];
   }
+
   public void setArgument(int i, jjtraveler.reflective.VisitableVisitor child) {
     visitors[i]= child;
   }

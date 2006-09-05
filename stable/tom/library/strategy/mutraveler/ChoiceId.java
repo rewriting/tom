@@ -16,8 +16,13 @@ import jjtraveler.VisitFailure;
 public class ChoiceId extends AbstractMuStrategy {
 	public final static int FIRST = 0;
 	public final static int THEN = 1;
+
+  //private VisitableVisitor S_FIRST;
+  //private VisitableVisitor S_THEN;
   public ChoiceId(VisitableVisitor first, VisitableVisitor then) {
     initSubterm(first,then);
+    //S_FIRST = first;
+    //S_THEN = then;
   }
 
   public ChoiceId(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
@@ -25,9 +30,9 @@ public class ChoiceId extends AbstractMuStrategy {
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
-    Visitable v = getArgument(FIRST).visit(any);
+    Visitable v = visitors[FIRST].visit(any);
     if (v == any) {
-      return getArgument(THEN).visit(v);
+      return visitors[THEN].visit(v);
     } else {
       return v;
     }

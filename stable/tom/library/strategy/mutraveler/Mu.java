@@ -6,30 +6,41 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 import java.util.LinkedList;
-import java.util.ListIterator;
+import java.util.Iterator;
 
 public class Mu extends AbstractMuStrategy {
   public final static int VAR = 0;
   public final static int V = 1;
 
+  //private MuVar S_VAR;
+  //private VisitableVisitor S_V;
+  private MuTopDown myMuTopDown;
+	private boolean expanded =false;
   public Mu(VisitableVisitor var, VisitableVisitor v) {
     initSubterm(var, v);
+    //S_VAR = (MuVar)var;
+    //S_V = v;
+    myMuTopDown = new MuTopDown();
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure {
-    if(!isExpanded()) {
-      expand();
-    }
-    return getArgument(V).visit(any);
+  public final Visitable visit(Visitable any) throws VisitFailure {
+    //if(!isExpanded()) { expand(); }
+    if(!expanded) { expand(); }
+    //return getArgument(V).visit(any);
+    return visitors[V].visit(any);
   }
 
   private boolean isExpanded() {
-    return ((MuVar)getArgument(VAR)).isExpanded();
+    //return ((MuVar)getArgument(VAR)).isExpanded();
+    return ((MuVar)visitors[VAR]).isExpanded();
   }
 
   public void expand() {
     try {
-      new MuTopDown().visit(this);
+      //new MuTopDown().visit(this);
+      myMuTopDown.init();
+      myMuTopDown.visit(this);
+			expanded = true;
     } catch (VisitFailure e) {
       System.out.println("mu reduction failed");
     }
@@ -59,6 +70,9 @@ class MuTopDown {
   public MuTopDown() {
     stack = new LinkedList();
   }
+  public void init() {
+    stack.clear();
+  }
 
   public void visit(Visitable any) throws VisitFailure {
      if(any instanceof  tom.library.strategy.mutraveler.MuStrategy ) { { tom.library.strategy.mutraveler.MuStrategy  tom_match1_1=(( tom.library.strategy.mutraveler.MuStrategy )any); if ( ( tom_is_fun_sym_Mu(tom_match1_1) ||  false  ) ) { { tom.library.strategy.mutraveler.MuStrategy  tom_m=tom_match1_1; { tom.library.strategy.mutraveler.MuStrategy  tom_match1_1_s1=tom_get_slot_Mu_s1(tom_match1_1); { tom.library.strategy.mutraveler.MuStrategy  tom_match1_1_s2=tom_get_slot_Mu_s2(tom_match1_1); if ( ( tom_is_fun_sym_MuVar(tom_match1_1_s1) ||  false  ) ) { { tom.library.strategy.mutraveler.MuStrategy  tom_var=tom_match1_1_s1; {String tom_match1_1_s1_var=tom_get_slot_MuVar_var(tom_match1_1_s1); { tom.library.strategy.mutraveler.MuStrategy  tom_v=tom_match1_1_s2; if ( true ) {
@@ -73,7 +87,7 @@ class MuTopDown {
 
         MuVar muvar = (MuVar)tom_var;
         if(!muvar.isExpanded()) {
-          ListIterator it = stack.listIterator(0);
+          Iterator it = stack.iterator();
           while(it.hasNext()) {
             Mu m = (Mu)it.next();
             if(((MuVar)m.getArgument(Mu.VAR)).getName().equals(tom_n)) {

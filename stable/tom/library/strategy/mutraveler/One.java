@@ -25,23 +25,23 @@ public class One extends AbstractMuStrategy {
 
   public Visitable visit(Visitable any) throws VisitFailure {
     int childCount = any.getChildCount();
-    if(!hasPosition()) {
+    if(position==null) {
       for(int i = 0; i < childCount; i++) {
         try {
-          Visitable newChild = getArgument(ARG).visit(any.getChildAt(i));
+          Visitable newChild = visitors[ARG].visit(any.getChildAt(i));
           return any.setChildAt(i,newChild);
         } catch(VisitFailure f) { }
       }
     } else {
       for(int i = 0; i < childCount; i++) {
         try { 
-          //System.out.println("One.pos = " + getPosition());
-          getPosition().down(i+1);
-          Visitable newChild = getArgument(ARG).visit(any.getChildAt(i));
-          getPosition().up();
+          //System.out.println("One.pos = " + position);
+          position.down(i+1);
+          Visitable newChild = visitors[ARG].visit(any.getChildAt(i));
+          position.up();
           return any.setChildAt(i,newChild);
         } catch(VisitFailure f) {
-          getPosition().up();
+          position.up();
         }
       }
     }

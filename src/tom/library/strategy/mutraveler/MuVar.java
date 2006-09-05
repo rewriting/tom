@@ -44,7 +44,7 @@ public class MuVar extends AbstractMuStrategy {
     }
   }
   
-  public Visitable visit(Visitable any) throws VisitFailure {
+  public final Visitable visit(Visitable any) throws VisitFailure {
     if(instance != null) {
       return instance.visit(any);
     } else {

@@ -14,12 +14,12 @@ import jjtraveler.VisitFailure;
 public class Sequence extends AbstractMuStrategy {
   public final static int FIRST = 0;
   public final static int THEN = 1;
-  private VisitableVisitor S_FIRST;
-  private VisitableVisitor S_THEN;
+  //private VisitableVisitor S_FIRST;
+  //private VisitableVisitor S_THEN;
   public Sequence(VisitableVisitor first, VisitableVisitor then) {
     initSubterm(first,then);
-    S_FIRST = first;
-    S_THEN = then;
+    //S_FIRST = first;
+    //S_THEN = then;
   }
 
   public Sequence(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
@@ -29,7 +29,7 @@ public class Sequence extends AbstractMuStrategy {
   public Visitable visit(Visitable any) throws VisitFailure {
     //System.out.println("Sequence.visit(" + any.getClass() + ")");
     //System.out.println(" -> " + getArgument(FIRST).getClass() + ".visit(" + any.getClass() + ")");
-    return S_THEN.visit(S_FIRST.visit(any));
+    return visitors[THEN].visit(visitors[FIRST].visit(any));
     //return getArgument(THEN).visit(getArgument(FIRST).visit(any));
   }
 

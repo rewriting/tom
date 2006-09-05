@@ -27,7 +27,7 @@ public class Some extends AbstractMuStrategy {
     int childCount = any.getChildCount();
     Visitable result = any;
     int successCount = 0;
-    if(!hasPosition()) {
+    if(position==null) {
       for (int i = 0; i < childCount; i++) {
         try { 
           result = result.setChildAt(i,getArgument(ARG).visit(any.getChildAt(i))); 
@@ -37,13 +37,13 @@ public class Some extends AbstractMuStrategy {
     } else {
       for (int i = 0; i < childCount; i++) {
         try { 
-          getPosition().down(i+1);
+          position.down(i+1);
           Visitable newChild = getArgument(ARG).visit(any.getChildAt(i));
-          getPosition().up();
+          position.up();
           result = result.setChildAt(i,newChild); 
           successCount++;
         } catch(VisitFailure f) { 
-          getPosition().up();
+          position.up();
         }
       }
     }
