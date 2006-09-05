@@ -117,7 +117,7 @@ public class StatusHandler extends Handler {
   }
 
   public RuntimeAlert getAlertForInput(String filePath) {
-    return (RuntimeAlert)inputAlert.get(new File(filePath).getPath());
+    return (RuntimeAlert)inputAlert.get(filePath);
   }
 
   /**
