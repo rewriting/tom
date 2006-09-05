@@ -35,6 +35,8 @@ import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomoption.*;
+import tom.engine.adt.tomoption.types.option.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
@@ -50,6 +52,8 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
+
+import tom.platform.*;
 
 import tom.engine.compiler.antipattern.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
@@ -258,11 +262,15 @@ public class TomKernelCompiler extends TomBase {
       }
       // !X                                 
       concSlot(PairSlotAppl(slotName,
-            AntiTerm(Variable(_,Name(name),_,_))),_*) -> {         
+            AntiTerm(Variable(option,Name(name),_,_))),_*) -> {
+        OriginTracking or = (OriginTracking)`option.getHeadconcOption();     	
     	// this will generate directly false
-    	Logger.getLogger(getClass().getName()).log( Level.WARNING,
-                TomMessage.noCodeGeneration.getMessage(),
-                new Object[]{("!" + `name)});
+    	Logger.getLogger(getClass().getName()).log( 
+    			new PlatformLogRecord(Level.WARNING, 
+					TomMessage.noCodeGeneration, 
+					new Object[]{("!" + `name)},
+					or.getFileName(), 
+					or.getLine()));
             	
     	return `Nop();		  
       }            
@@ -383,9 +391,13 @@ public class TomKernelCompiler extends TomBase {
    	// if the result is false, no need to generate anything
    	%match(Expression compiledAntiPattern){
    		FalseTL() ->{
-   			Logger.getLogger(getClass().getName()).log( Level.WARNING,
-   	                TomMessage.noCodeGeneration.getMessage(),
-   	                new Object[]{TomAntiPatternUtils.formatTerm(currentTerm)});
+   			OriginTracking or = (OriginTracking)currentTerm.getOption().getHeadconcOption();
+   			Logger.getLogger(getClass().getName()).log( 
+   					new PlatformLogRecord(Level.WARNING, 
+	   					TomMessage.noCodeGeneration, 
+	   					new Object[]{TomAntiPatternUtils.formatTerm(currentTerm)},
+	   					or.getFileName(), 
+	   					or.getLine()));
    			return `Nop();
    		}
    	}
