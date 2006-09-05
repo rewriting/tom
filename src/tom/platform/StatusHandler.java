@@ -69,7 +69,7 @@ public class StatusHandler extends Handler {
         ra = (RuntimeAlert)inputAlert.get(input);
       }
       ra.add(plr);
-      inputAlert.put(new File(input).getPath(), ra);
+      inputAlert.put(input, ra);
     }
   }
 
