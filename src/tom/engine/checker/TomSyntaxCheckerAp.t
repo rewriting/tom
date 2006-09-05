@@ -106,7 +106,7 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
   %strategy CheckForAnnotations(fileName:String,decLine:int) extends `Identity(){
     visit TomTerm {
       t@(TermAppl|Variable)[Constraints=concConstraint(_*,AssignTo[],_*)] ->{
-        TomChecker.messageError("TomSyntaxChecker",fileName,decLine,TomMessage.illegalAnnotationInAntiPattern, new Object[]{});
+        TomChecker.messageError(getClass().getName(),fileName,decLine,TomMessage.illegalAnnotationInAntiPattern, new Object[]{});
         throw new TomRuntimeException("Illegal use of annotations in " + `t);
       }
     }// end visit
