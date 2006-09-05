@@ -1,3 +1,6 @@
+2006-09-04  Pem  <pem@becky.local>
+  * added getChilds() in MuVisitable interface
+	* also improved All.java, using getChilds()
 2006-09-03  Pem  <pem@becky.local>
   * improve domain checking of disjunction of records
   * fix PR-1145

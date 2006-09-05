@@ -35,10 +35,11 @@ public class All extends AbstractMuStrategy {
             childs[i] = newChild;
           } else if(newChild != oldChild) {
             // allocate the array, and fill it
-            childs = new Visitable[childCount];
-            for (int j = 0 ; j<i ; j++) {
-              childs[j] = any.getChildAt(j);
-            }
+            childs = ((MuVisitable) any).getChilds();
+            //childs = new Visitable[childCount];
+            //for (int j = 0 ; j<i ; j++) {
+            //  childs[j] = any.getChildAt(j);
+            //}
             childs[i] = newChild;
           }
         }
@@ -54,10 +55,11 @@ public class All extends AbstractMuStrategy {
               childs[i] = newChild;
             } else if(newChild != oldChild) {
               // allocate the array, and fill it
-              childs = new Visitable[childCount];
-              for (int j = 0 ; j<i ; j++) {
-                childs[j] = any.getChildAt(j);
-              }
+              childs = ((MuVisitable) any).getChilds();
+              //childs = new Visitable[childCount];
+              //for (int j = 0 ; j<i ; j++) {
+              //  childs[j] = any.getChildAt(j);
+              //}
               childs[i] = newChild;
             }
           }

@@ -240,6 +240,9 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     }
   }
 
+  public jjtraveler.Visitable[] getChilds() {
+    return new jjtraveler.Visitable[] { @nonBuiltinChildList(slotList)@ };
+  }
 ]%);
 
     out.append(%[
@@ -528,17 +531,41 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
   }
 
   private String nonBuiltinsGetCases() {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     int index = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += "      case "+index+": return "+fieldName(`fieldName)+";\n";
+          res.append("      case ");
+          res.append(index);
+          res.append(": return ");
+          res.append(fieldName(`fieldName));
+          res.append(";\n");
           index++;
         }
       }
     }
-    return res;
+    return res.toString();
+  }
+
+  private String nonBuiltinChildList(SlotFieldList slots) {
+    StringBuffer res = new StringBuffer();
+    while(!slots.isEmptyconcSlotField()) {
+      SlotField head = slots.getHeadconcSlotField();
+      slots = slots.getTailconcSlotField();
+      %match(SlotField head) {
+        SlotField[domain=domain,name=name] -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          if (res.length()!=0) {
+            res.append(", ");
+          }
+          res.append(" ");
+          res.append(fieldName(`name));
+        }
+        }
+      }
+    }
+    return res.toString();
   }
 
   private String nonBuiltinArrayMake(String arrayName) {
