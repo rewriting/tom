@@ -583,8 +583,12 @@ gomsignature [LinkedList list] throws TomException
     /*
      * We shall not need to test the validity of the generatedMapping file name
      * as gom returned <> 0 if it is not valid
+     * 
+     * Anyway, for an empty gom signature, no files are generated 
      */
-    includeFile(generatedMapping, list);
+    if (generatedMapping != null){
+    	includeFile(generatedMapping, list);
+    }
 
     updatePosition();
   }
