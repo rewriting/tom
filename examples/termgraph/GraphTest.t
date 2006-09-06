@@ -140,11 +140,11 @@ public class GraphTest{
       g(x@a(),g(y@Ref(x),Ref(y))) -> {
         System.out.println("\tmatched with g(x@a(),g(y@Ref(x),Ref(y)))");
       }
-
-      !g(x@a(),g(Ref(x),Ref(x))) -> {
-        System.out.println("\tnot matched with g(x@a(),g(Ref(x),Ref(x)))");
-      }
-
+      /*
+         !g(x@a(),g(Ref(x),Ref(x))) -> {
+         System.out.println("\tnot matched with g(x@a(),g(Ref(x),Ref(x)))");
+         }
+       */
     }
 
     System.out.println("\n3. in case of identical subterms at different positions");
