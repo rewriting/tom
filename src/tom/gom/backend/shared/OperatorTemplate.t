@@ -113,8 +113,10 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return @getLength(slotList)@;
   }
 
-  public String toString() {
-    return "@className()@(@toStringChilds()@)";
+  public void toStringBuffer(java.lang.StringBuffer buffer) {
+    buffer.append("@className()@(");
+    @toStringChilds("buffer")@
+    buffer.append(")");
   }
 
   /**
@@ -636,30 +638,45 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return res.substring(0,res.length()-2);
   }
 
-  private String toStringChilds() {
-    String res = "";
+  private String toStringChilds(String buffer) {
     if (0 == slotList.length()) {
-      return res;
+      return "";
     }
-    %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
-        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-         if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
-           res+= %["+@fieldName(`slotName)@+"]%;
-         } else if (`domain.equals(`ClassName("","String"))) {
-           res+= %[\""+@fieldName(`slotName)@+"\"]%;
-         } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
-           res+= %["+@fieldName(`slotName)@.toString()+"]%;
-         } else {
-            throw new GomRuntimeException("Builtin "+`domain+" not supported");
-         }
-        } else {
-          res+= %["+@fieldName(`slotName)@.toString()+"]%; 
-        }
-        res += ",";
-      }
-    }
-    return res.substring(0,res.length()-1);
+    StringBuffer res = new StringBuffer();
+    SlotFieldList slots = slotList;
+		while(!slots.isEmptyconcSlotField()) {
+			if(res.length()!=0) {
+				res.append(%[@buffer@.append(",");
+    ]%);
+			}
+			SlotField head = slots.getHeadconcSlotField();
+			slots = slots.getTailconcSlotField();
+			%match(SlotField head) {
+				SlotField[name=slotName,domain=domain] -> {
+					if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+						if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
+							res.append(%[@buffer@.append(@fieldName(`slotName)@);
+    ]%);
+						} else if (`domain.equals(`ClassName("","String"))) {
+							res.append(%[@buffer@.append("\"");
+    @buffer@.append(@fieldName(`slotName)@);
+    @buffer@.append("\"");
+    ]%);
+						} else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
+							res.append(%[@buffer@.append(@fieldName(`slotName)@.toString());
+     ]%);
+						} else {
+							throw new GomRuntimeException("Builtin "+`domain+" not supported");
+						}
+					} else {
+						res.append(%[@fieldName(`slotName)@.toStringBuffer(@buffer@);
+     ]%);
+					}
+				}
+			}
+		}
+    //return res.substring(0,res.length()-1);
+			return res.toString();
   }
 
   private String genCompareChilds(String oldOther, String compareFun) {

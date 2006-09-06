@@ -53,7 +53,13 @@ public abstract class @className()@ implements shared.SharedObjectWithID, jjtrav
 
   public abstract String symbolName();
 
-  public abstract String toString();
+  public String toString() {
+    java.lang.StringBuffer buffer = new java.lang.StringBuffer();
+    toStringBuffer(buffer);
+    return buffer.toString();
+  }
+
+  public abstract void toStringBuffer(java.lang.StringBuffer buffer);
 
   public abstract int compareTo(Object o);
 

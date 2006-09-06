@@ -265,8 +265,9 @@
   <target name="buildtom.common"
           if="gen.destination"
           depends="-withstable,-withsrc">
-    <!--  compile in standard mode -->
-    <tomcompile srcdir="${src.src}"
+          <!--  compile in standard mode -->
+    <tomcompile fork="no"
+         srcdir="${src.src}"
          destdir="${gen.destination}"
          options="-I ${src.mapping} --optimize">
       <include name="tom/engine/**/**/*.t"/>     	
@@ -283,11 +284,14 @@
     </tomcompile>
 
     <!-- Specific stuff for parser generation -->
-    <tomcompile srcdir="${src.src}"
+    <tomcompile fork="no"
+      srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/TomLanguage.g"
 	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
       <include name="**/TomLanguage.g.t"/>
     </tomcompile>
+
+
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
 	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
@@ -397,13 +401,15 @@
                 destdir="${src.gen}">
       <include name="tom/library/adt/*.vas"/>
     </vascompile>
-    <gomcompile srcdir="${src.src}"
+    <gomcompile fork="no"
+                srcdir="${src.src}"
                 package="tom.library.adt"
                 destdir="${src.gen}">
       <include name="tom/library/adt/*.gom"/>
     </gomcompile>
 
-    <gomcompile srcdir="${src.src}"
+    <gomcompile fork="no"
+                srcdir="${src.src}"
                 package="tom.platform.adt"
                 destdir="${src.gen}">
       <include name="tom/platform/adt/*.gom"/>
@@ -473,7 +479,7 @@
     <replace dir="${src.gen}" token="@TOM_VERSION@" value="${src.version} (src)">
 	    <include name="tom/engine/Tom.java"/>
     </replace>
-    <tomjavac destdir="${src.build}" fork="yes">
+    <tomjavac destdir="${src.build}" fork="no">
       <src path="${src.src}"/>
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>

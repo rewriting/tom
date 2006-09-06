@@ -102,7 +102,8 @@ public class GomBackendPlugin extends GomGenericPlugin {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
 
-    GomBackend backend = new GomBackend(TemplateFactory.getFactory(backendType), tomHomePath);
+    GomBackend backend = new GomBackend(TemplateFactory.getFactory(backendType), 
+    		tomHomePath, streamManager.getImportList());
     backend.generate(classList);
     if(classList == null) {
       getLogger().log(Level.SEVERE,
@@ -111,7 +112,7 @@ public class GomBackendPlugin extends GomGenericPlugin {
     } else {
       getLogger().log(Level.INFO, "Code generation succeeds");
     }
-  }
+  }  
 
   /**
    * inherited from plugin interface
