@@ -39,6 +39,10 @@ public final class Position {
     }
   }
 
+  public int[] toArray(){
+    return data;
+  }
+
   public Object clone() {
     Position clone = new Position(data.length);
     clone.size = size;
