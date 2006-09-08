@@ -95,9 +95,9 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage fileNotFound          =
       new TomMessage("File ''{0}'' not found");
   public static final TomMessage tokenStreamException  =
-      new TomMessage("TokenStreamException catched: See stacktrace\n\n{0}");
+      new TomMessage("TokenStreamException catched: {0}");
   public static final TomMessage recognitionException  =
-      new TomMessage("RecognitionException catched: See stacktrace\n\n{0}");
+      new TomMessage("RecognitionException catched: {0}");
   // parser.TomParser
   // TODO : simplify the message in using PlatformLogRecord with detail
   // As these messages are propagated via an exception in TomLanguage.g.t, it is not trivial

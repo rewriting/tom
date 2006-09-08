@@ -180,21 +180,15 @@ public class TomParserPlugin extends TomGenericPlugin {
       getLogger().log(Level.INFO, TomMessage.tomParsingPhase.getMessage(),
                       new Integer((int)(System.currentTimeMillis()-startChrono)) );
     } catch (TokenStreamException e) {
-      StringWriter sw = new StringWriter();
-      PrintWriter pw = new PrintWriter(sw);
-      e.printStackTrace(pw);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
                       TomMessage.tokenStreamException,
-                      sw.toString(),
+                      new Object[]{e.getMessage()},
                       currentFileName, getLineFromTomParser()));
       return;
     } catch (RecognitionException e){
-      StringWriter sw = new StringWriter();
-      PrintWriter pw = new PrintWriter(sw);
-      e.printStackTrace(pw);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
                       TomMessage.recognitionException,
-                      sw.toString(),
+                      new Object[]{e.getMessage()},
                       currentFileName, getLineFromTomParser()));
       return;
     } catch (TomException e) {
