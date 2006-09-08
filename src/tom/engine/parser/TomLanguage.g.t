@@ -640,37 +640,33 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
     }
 
 }
-    :  
+    :  	(a:ANTI_SYM {anti = !anti;} )*    	
         (   // xml term
             result = xmlTerm[optionList, constraintList]
 
         |   // var* or _*
+        	{!anti}? // do not allow anti symbols on var* or _* 
             (variableStar[null,null]) => result = variableStar[optionList,constraintList] 
 
         |   // _
-            result = unamedVariable[optionList,constraintList] 
+            {!anti}? // do not allow anti symbols on _
+        	result = unamedVariable[optionList,constraintList] 
 
         |   // for a single constant. 
             // ambiguous with the next rule so :
-            {LA(2) != LPAREN && LA(2) != LBRACKET}? 
+        	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
             name = headSymbol[optionList] 
             {
-						    result = `Variable(ASTFactory.makeOptionList(optionList),name,
-									TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
-            }
-            
-        |   // for a single anti constant. 
-        	// ambiguous with the next rule so :
-	        {LA(3) != LPAREN && LA(3) != LBRACKET}? 
-	        name = antiHeadSymbol[optionList] 
-	        {
-						    result = `AntiTerm(Variable(ASTFactory.makeOptionList(optionList),name,
-									TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList)));
-	        }            
+			    result = `Variable(ASTFactory.makeOptionList(optionList),name,
+						TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
+			    if (anti){
+			    	result = `AntiTerm(result);
+			    }
+            }            
 
         |   // for a single constant. 
             // ambiguous with the next rule so :
-            {LA(2) != LPAREN && LA(2) != LBRACKET}? 
+        	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
             name = headConstant[optionList] 
             {
                 nameList = `concTomName(nameList*,name);
@@ -681,27 +677,12 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                         ASTFactory.makeList(list),
                         ASTFactory.makeConstraintList(constraintList)
                     );
+                if (anti){
+			    	result = `AntiTerm(result);
+			    }
             }
-
-        |   // for a single anti constant. 
-        	// ambiguous with the next rule so :
-            {LA(3) != LPAREN && LA(3) != LBRACKET}? 
-            name = antiHeadConstant[optionList] 
-            {
-                nameList = `concTomName(nameList*,name);
-								optionList.add(`Constant());
-                result = `AntiTerm(TermAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    ));
-            }
-
 
         |   // f(...) or f[...] or !f(...) or !f[...]
-
-        ( ANTI_SYM {anti = true; } )?
             name = headSymbol[optionList] 
             { nameList = `concTomName(nameList*,name); }
             implicit = args[list,secondOptionList]
@@ -725,29 +706,6 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                 result = `AntiTerm(result);
               }
             }
-           /* 
-       |   // !f(...) or !f[...]
-            name = antiHeadSymbol[optionList] 
-            {nameList = `concTomName(nameList*,name);}
-            implicit = args[list,secondOptionList]
-            {
-              if(implicit) {
-                    result = `AntiTerm(RecordAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeSlotList(list),
-                        ASTFactory.makeConstraintList(constraintList))
-                    );
-              } else {
-                    result = `AntiTerm(TermAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    ));
-              }
-            }
-             */       
             
         |   // (f|g...) 
             // ambiguity with the last rule so use a lookahead
@@ -1395,15 +1353,6 @@ headSymbol [LinkedList optionList] returns [TomName result]
 	)
 ;
 
-antiHeadSymbol [LinkedList optionList] returns [TomName result]
-{ 
-    result = null; 
-}
-: 
-  ANTI_SYM result=headSymbol[optionList]  
-;
-
-
 headConstant [LinkedList optionList] returns [TomName result]
 { 
     result = null; 
@@ -1438,14 +1387,6 @@ headConstant [LinkedList optionList] returns [TomName result]
 	}
         }
 ;
-
-antiHeadConstant [LinkedList optionList] returns [TomName result]
-  { 
-      result = null;  		
-  } : 
-     ANTI_SYM result=headConstant[optionList] // add to symbol table     
-  ;
-
 
 // Operator Declaration
 operator returns [Declaration result] throws TomException
