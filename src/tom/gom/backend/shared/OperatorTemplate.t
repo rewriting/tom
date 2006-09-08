@@ -27,12 +27,13 @@ package tom.gom.backend.shared;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
+import tom.gom.backend.TemplateHookedClass;
 import tom.gom.backend.TemplateClass;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
-public class OperatorTemplate extends TemplateClass {
+public class OperatorTemplate extends TemplateHookedClass {
   File tomHomePath;
   List importList;
   ClassName abstractType;
@@ -40,7 +41,6 @@ public class OperatorTemplate extends TemplateClass {
   ClassName sortName;
   ClassName visitor;
   SlotFieldList slotList;
-  HookList hooks;
   TemplateClass mapping;
 
   %include { ../../adt/objects/Objects.tom}
@@ -55,7 +55,7 @@ public class OperatorTemplate extends TemplateClass {
                           SlotFieldList slots,
                           HookList hooks,
                           TemplateClass mapping) {
-    super(className);
+    super(className,hooks);
     this.tomHomePath = tomHomePath;
     this.importList = importList;
     this.abstractType = abstractType;
@@ -63,7 +63,6 @@ public class OperatorTemplate extends TemplateClass {
     this.sortName = sortName;
     this.visitor = visitor;
     this.slotList = slots;
-    this.hooks = hooks;
     this.mapping = mapping;
   }
 
@@ -71,8 +70,12 @@ public class OperatorTemplate extends TemplateClass {
 
     String classBody = %[
 package @getPackage()@;
+@generateImport()@
 
-public class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable {
+public class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable @generateInterface()@ {
+
+@generateBlock()@
+
   private static @className()@ proto = new @className()@();
   private int hashCode;
   private @className()@() {}
@@ -753,135 +756,136 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return res;
   }
 
-  public String generateConstructor() {
-    StringBuffer out = new StringBuffer();
-    if (hooks.isEmptyconcHook()) {
-      out.append(%[
-  public static @className()@ make(@childListWithType(slotList)@) {
-    proto.initHashCode(@childList(slotList)@);
-    return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
-  }
 
-]%);
-    } else { // we have to generate an hidden "real" make
-      out.append(%[
-  private static @className()@ realMake(@childListWithType(slotList)@) {
-    proto.initHashCode(@childList(slotList)@);
-    return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
-  }
-
-]%);
-      if(getLength(hooks) > 1) {
-        throw new GomRuntimeException("Support for multiple hooks for an operator not implemented yet");
-      }
-      // then a make function calling it
-      %match(HookList hooks) {
-        concHook(MakeHook(args,code)) -> {
-          // replace the inner make call
-          out.append(%[
-  public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
-    @`code@
-    return realMake(@unprotectedChildList(`args)@);
-  }
-
-]%);
+public String generateConstructor() {
+  StringBuffer out = new StringBuffer();
+  if (hooks.isEmptyconcHook()) {
+    out.append(%[
+        public static @className()@ make(@childListWithType(slotList)@) {
+        proto.initHashCode(@childList(slotList)@);
+        return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
         }
-      }
-      // also generate the tom mapping
-     out.append(mapping.generate()); 
+
+        ]%);
+  } else { // we have to generate an hidden "real" make
+    out.append(%[
+        private static @className()@ realMake(@childListWithType(slotList)@) {
+        proto.initHashCode(@childList(slotList)@);
+        return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+        }
+
+        ]%);
+    if(getLength(hooks) > 1) {
+      throw new GomRuntimeException("Support for multiple hooks for an operator not implemented yet");
     }
-    return out.toString();
-  }
+    // then a make function calling it
+    %match(HookList hooks) {
+      concHook(MakeHook(args,code)) -> {
+        // replace the inner make call
+        out.append(%[
+            public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
+            @`code@
+            return realMake(@unprotectedChildList(`args)@);
+            }
 
-  /*
-   * The function for generating the file is extended, to be able to call Tom if necessary
-   * (i.e. if there are user defined hooks)
-   */
-  public int generateFile() {
-    if (hooks.isEmptyconcHook()) {
-      try {
-         File output = fileToGenerate();
-         // make sure the directory exists
-         output.getParentFile().mkdirs();
-         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-         writer.write(generate());
-         writer.flush();
-         writer.close();
-      } catch(Exception e) {
-        e.printStackTrace();
-        return 1;
-      }
-    } else { /* We need to call tom to generate the file */
-      File xmlFile = new File(tomHomePath,"Tom.xml");
-      if(!xmlFile.exists()) {
-        getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());
-      }
-      String file_path = null;
-      try {
-        File output = fileToGenerate();
-        file_path = output.getCanonicalPath();
-      } catch (IOException e) {
-        getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
-      }
-            
-      ArrayList tomParams = new ArrayList();      
-      
-      try{
-	      Iterator it = importList.iterator();
-	      while(it.hasNext()){
-	    	  String importPath = ((File)it.next()).getCanonicalPath();
-	    	  tomParams.add("--import");
-	    	  tomParams.add(importPath);
-	      }
-      }catch(IOException e){
-    	  getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
-      }
-      
-      tomParams.add("-X");
-      tomParams.add(xmlFile.getPath());
-      tomParams.add("--optimize");
-      tomParams.add("--optimize2");
-      tomParams.add("--output");
-      tomParams.add(file_path);
-      tomParams.add("-");     
-  
-      //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
-      //String[] params = {"-X",config_xml,"--output",file_path,"-"};
-
-      //System.out.println("params: " + tomParams);
-
-      String gen = generate();
-
-      InputStream backupIn = System.in;
-      System.setIn(new DataInputStream(new StringBufferInputStream(gen)));
-      int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
-//      int res = tom.engine.Tom.exec(params);
-      System.setIn(backupIn);
-      if (res != 0 ) {
-        getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
-        return res;
+            ]%);
       }
     }
-    return 0;
+    // also generate the tom mapping
+    out.append(mapping.generate()); 
   }
+  return out.toString();
+}
 
-  private int getLength(SlotFieldList list) {
-    %match(SlotFieldList list) {
-      concSlotField()     -> { return 0; }
-      concSlotField(_,t*) -> { return getLength(`t*)+1; }
+/*
+ * The function for generating the file is extended, to be able to call Tom if necessary
+ * (i.e. if there are user defined hooks)
+ */
+public int generateFile() {
+  if (hooks.isEmptyconcHook()) {
+    try {
+      File output = fileToGenerate();
+      // make sure the directory exists
+      output.getParentFile().mkdirs();
+      Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
+      writer.write(generate());
+      writer.flush();
+      writer.close();
+    } catch(Exception e) {
+      e.printStackTrace();
+      return 1;
     }
-    return -1;
-  }
-  private int getLength(HookList list) {
-    %match(HookList list) {
-      concHook()     -> { return 0; }
-      concHook(_,t*) -> { return getLength(`t*)+1; }
+  } else { /* We need to call tom to generate the file */
+    File xmlFile = new File(tomHomePath,"Tom.xml");
+    if(!xmlFile.exists()) {
+      getLogger().log(Level.FINER,"Failed to get canonical path for "+xmlFile.getPath());
     }
-    return -1;
-  }
+    String file_path = null;
+    try {
+      File output = fileToGenerate();
+      file_path = output.getCanonicalPath();
+    } catch (IOException e) {
+      getLogger().log(Level.FINER,"Failed to get canonical path for "+fileName());
+    }
 
-  /** the class logger instance*/
-  private Logger getLogger() {
-    return Logger.getLogger(getClass().getName());
+    ArrayList tomParams = new ArrayList();      
+
+    try{
+      Iterator it = importList.iterator();
+      while(it.hasNext()){
+        String importPath = ((File)it.next()).getCanonicalPath();
+        tomParams.add("--import");
+        tomParams.add(importPath);
+      }
+    }catch(IOException e){
+      getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
+    }
+
+    tomParams.add("-X");
+    tomParams.add(xmlFile.getPath());
+    tomParams.add("--optimize");
+    tomParams.add("--optimize2");
+    tomParams.add("--output");
+    tomParams.add(file_path);
+    tomParams.add("-");     
+
+    //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
+    //String[] params = {"-X",config_xml,"--output",file_path,"-"};
+
+    //System.out.println("params: " + tomParams);
+
+    String gen = generate();
+
+    InputStream backupIn = System.in;
+    System.setIn(new DataInputStream(new StringBufferInputStream(gen)));
+    int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
+    //      int res = tom.engine.Tom.exec(params);
+    System.setIn(backupIn);
+    if (res != 0 ) {
+      getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
+      return res;
+    }
   }
+  return 0;
+}
+
+private int getLength(SlotFieldList list) {
+  %match(SlotFieldList list) {
+    concSlotField()     -> { return 0; }
+    concSlotField(_,t*) -> { return getLength(`t*)+1; }
+  }
+  return -1;
+}
+private int getLength(HookList list) {
+  %match(HookList list) {
+    concHook()     -> { return 0; }
+    concHook(_,t*) -> { return getLength(`t*)+1; }
+  }
+  return -1;
+}
+
+/** the class logger instance*/
+private Logger getLogger() {
+  return Logger.getLogger(getClass().getName());
+}
 }

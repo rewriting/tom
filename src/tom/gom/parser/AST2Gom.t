@@ -173,14 +173,19 @@ public class AST2Gom{
     }
     throw new GomRuntimeException("Unable to translate: " + l);
   }
+
   private static Production getProduction(ATerm t) {
     %match(ATerm t){
       ARROW(_,(name,fieldlist*, type)) -> {
         return `Production(getId(name),getFieldList(fieldlist*),getGomType(type));
       }
-      COLON(NodeInfo(code,_,_),(id, type, arglist*)) -> {
-        return `Hook(getId(id), getHookkind(type),getArgList(arglist*),code);
+      COLON(NodeInfo(code,_,_),(id,hook)) -> {
+        return `Hook(KindOperator(),getId(id),getHookkind(hook),getHookarg(hook),code);
       }
+      COLON(NodeInfo(code,_,_),(idType,id,hook)) -> {
+        return `Hook(getIdkind(idType),getId(id),getHookkind(hook),concArg(),code);
+      }
+
     }
     throw new GomRuntimeException("Unable to translate: " + t);
   }
@@ -232,10 +237,10 @@ public class AST2Gom{
 
   private static ProductionList getAlternatives(ATerm t) {
     %match(ATerm t){
-          EQUALS(_,(type,alternatives*)) -> {
-            return getAlternatives(`type,`alternatives*);
-          }
-        }
+      EQUALS(_,(type,alternatives*)) -> {
+        return getAlternatives(`type,`alternatives*);
+      }
+    }
     throw new GomRuntimeException("Unable to translate: " + t);
   }
 
@@ -269,13 +274,52 @@ public class AST2Gom{
     throw new GomRuntimeException("Unable to translate: " + t);
   }
 
+  private static IdKind getIdkind(ATerm t) {
+    %match(ATerm t){
+      SORT[] ->{
+        return `KindSort();
+      }
+      MODULE[] ->{
+        return `KindModule();
+      }
+      OPERATOR[] ->{
+        return `KindOperator();
+      }
+    }
+    throw new GomRuntimeException("Unable to translate: " + t);
+  }
+
   private static Hookkind getHookkind(ATerm t) {
     %match(ATerm t){
-      ID(NodeInfo[text="make"],_) ->{
+      MAKE[] ->{
         return `KindMakeHook();
       }
-      ID(NodeInfo[text="make_insert"],_) ->{
+      MAKEINSERT[] ->{
         return `KindMakeinsertHook();
+      }
+      BLOCK[] ->{
+        return `KindBlockHook();
+      }
+      IMPORT[] ->{
+        return `KindImportHook();
+      }
+      INTERFACE[] ->{
+        return `KindInterfaceHook();
+      }
+    }
+    throw new GomRuntimeException("Unable to translate: " + t);
+  }
+
+  private static ArgList getHookarg(ATerm t) {
+    %match(ATerm t){
+      MAKE(_,args) -> {
+        return getArgList(`args);
+      }
+      MAKEINSERT(_,args) -> {
+        return getArgList(`args);
+      }
+      _ -> {
+        return `concArg();
       }
     }
     throw new GomRuntimeException("Unable to translate: " + t);
@@ -325,9 +369,9 @@ public class AST2Gom{
         return `StarredField(getGomType(type));
       }
       _ -> {
-    Logger.getLogger("AST2Gom.class").log(Level.SEVERE,
-          GomMessage.noSlotDeclaration.getMessage(),
-          new Object[]{});
+        Logger.getLogger("AST2Gom.class").log(Level.SEVERE,
+            GomMessage.noSlotDeclaration.getMessage(),
+            new Object[]{});
         throw new GomRuntimeException("parsing problem");
       }
     }

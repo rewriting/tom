@@ -24,10 +24,10 @@
 
 package tom.gom.backend.shared;
 
-import tom.gom.backend.TemplateClass;
+import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 
-public class SortTemplate extends TemplateClass {
+public class SortTemplate extends TemplateHookedClass {
   ClassName abstractType;
   ClassName visitor;
   ClassNameList operatorList;
@@ -37,8 +37,9 @@ public class SortTemplate extends TemplateClass {
                       ClassName abstractType,
                       ClassName visitor,
                       ClassNameList operatorList,
-                      SlotFieldList slots) {
-    super(className);
+                      SlotFieldList slots,
+                      HookList hooks) {
+    super(className,hooks);
     this.abstractType = abstractType;
     this.visitor = visitor;
     this.operatorList = operatorList;
@@ -50,8 +51,11 @@ public class SortTemplate extends TemplateClass {
 
     out.append(%[
 package @getPackage()@;        
+@generateImport()@
 
-public abstract class @className()@ extends @fullClassName(abstractType)@ {
+public abstract class @className()@ extends @fullClassName(abstractType)@ @generateInterface()@{
+
+@generateBlock()@
 
   public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure {
     return v.@visitMethod(className)@(this);
@@ -131,6 +135,12 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ {
     return out.toString();
   }
   
+  protected String generateInterface() {
+    String interfaces = super.generateInterface();
+    if (! interfaces.equals("")) return "implements "+interfaces.substring(1);
+    else return interfaces;
+  }
+
   private String generateFromTerm(String trm, String tmp) {
     StringBuffer out = new StringBuffer();
     ClassNameList consum = operatorList;

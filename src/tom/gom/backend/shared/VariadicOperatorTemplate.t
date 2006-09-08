@@ -26,12 +26,12 @@ package tom.gom.backend.shared;
 
 import java.io.*;
 import java.util.logging.*;
-import tom.gom.backend.TemplateClass;
+import tom.gom.backend.TemplateHookedClass;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
-public class VariadicOperatorTemplate extends TemplateClass {
+public class VariadicOperatorTemplate extends TemplateHookedClass {
   ClassName abstractType;
   ClassName sortName;
   GomClass empty;
@@ -43,8 +43,9 @@ public class VariadicOperatorTemplate extends TemplateClass {
                                   ClassName abstractType,
                                   ClassName sortName,
                                   GomClass empty,
-                                  GomClass cons) {
-    super(className);
+                                  GomClass cons,
+                                  HookList hooks){
+    super(className,hooks);
     this.abstractType = abstractType;
     this.sortName = sortName;
     this.empty = empty;
@@ -55,8 +56,11 @@ public class VariadicOperatorTemplate extends TemplateClass {
 
     String classBody = %[
 package @getPackage()@;
+@generateImport()@
 
-public abstract class @className()@ extends @fullClassName(sortName)@ {
+public abstract class @className()@ extends @fullClassName(sortName)@ @generateInterface()@{
+
+@generateBlock()@
 
 @generateBody()@
 
@@ -65,6 +69,13 @@ public abstract class @className()@ extends @fullClassName(sortName)@ {
 
     return classBody;
   }
+
+  protected String generateInterface() {
+    String interfaces = super.generateInterface();
+    if (! interfaces.equals("")) return "implements "+interfaces.substring(1);
+    else return interfaces;
+  }
+
 
   private String generateBody() {
     StringBuffer out = new StringBuffer();

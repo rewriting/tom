@@ -117,8 +117,9 @@ public class GomBackend {
       }
       AbstractTypeClass[className=className,
                         visitor=visitorName,
-                        sortList=sortList] -> {
-        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(`className,`visitorName,`sortList);
+                        sortList=sortList,
+                        hooks=hooks] -> {
+        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(`className,`visitorName,`sortList,`hooks);
         abstracttype.generateFile();
         return 1;
       }
@@ -126,8 +127,9 @@ public class GomBackend {
                 abstractType=abstracttype,
                 visitor=visitorName,
                 operators=ops,
-                slots=slots] -> {
-        TemplateClass sort = templatefactory.makeSortTemplate(`className,`abstracttype,`visitorName,`ops,`slots);
+                slots=slots,
+                hooks=hooks] -> {
+        TemplateClass sort = templatefactory.makeSortTemplate(`className,`abstracttype,`visitorName,`ops,`slots,`hooks);
         sort.generateFile();
         return 1;
       }
@@ -167,8 +169,9 @@ public class GomBackend {
                             abstractType=abstracttype,
                             sortName=sort,
                             empty=empty,
-                            cons=cons] -> {
-        TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(`className,`abstracttype,`sort,`empty,`cons);
+                            cons=cons,
+                            hooks=hooks] -> {
+        TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(`className,`abstracttype,`sort,`empty,`cons,`hooks);
         operator.generateFile();
         return 1;
       }

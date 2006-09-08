@@ -117,10 +117,14 @@ public class GomTypeExpander {
        */
       %match(GomModule module) {
         GomModule(_,concSection(_*,
-              Public(concGrammar(_*,Grammar(concProduction(_*,hook@Hook[],_*)),_*)),
+              Public(concGrammar(_*,Grammar(concProduction(_*,prod,_*)),_*)),
               _*)) -> {
-          // we may want to pass modulename to help resolve ambiguities with modules
-         attachHook(`hook,operatorsForSort);
+          %match(Production prod){
+            hook@Hook[nameType=KindOperator()] -> {
+              // we may want to pass modulename to help resolve ambiguities with modules
+              attachHookOperator(`hook,operatorsForSort);
+            }
+          }
         }
       }
     }
@@ -140,11 +144,10 @@ public class GomTypeExpander {
     return sortList;
   }
 
-  private void attachHook(Production prod,
-                          Map operatorsForSort) {
+  private void attachHookOperator(Production prod,Map operatorsForSort) {
     /* Find the operator corresponding to the hook, and attach its hook */
     %match(Production prod) {
-      Hook[name=hookName] -> {
+      Hook[nameType=KindOperator(),name=hookName] -> {
         Iterator it = operatorsForSort.keySet().iterator();
         while(it.hasNext()) {
           SortDecl decl = (SortDecl) it.next();
@@ -160,43 +163,60 @@ public class GomTypeExpander {
             }
           }
         }
-        getLogger().log(Level.SEVERE, GomMessage.orphanedHook.getMessage(),
-            new Object[]{prod.getname()});
-        return;
       }
     }
+    getLogger().log(Level.SEVERE, GomMessage.orphanedHook.getMessage(),
+        new Object[]{prod.getname()});
+    return;
   }
 
+
   private OperatorDecl typeOperatorHook(OperatorDecl operator, Production prod) {
+    HookDecl newHook = null;
     OperatorDecl newOperator = operator;
     %match(Production prod) {
-      Hook(hname,hkind,hargs,hcode) -> {
+      Hook(hnametype,hname,hkind,hargs,hcode) -> {
         %match(OperatorDecl operator) {
           OperatorDecl(oname,osort,oprod,ohooks) -> {
-            SlotList typedArgs = typedArguments(`hargs,`hkind,`oprod, `osort);
-            if (typedArgs == null) {
-              String hookName = `hname;
-              getLogger().log(Level.SEVERE, GomMessage.discardedHook.getMessage(),
-                  new Object[]{hookName});
-              return operator;
-            }
-            HookDecl newHook = null;
-            %match(Hookkind `hkind) {
+            %match(Hookkind hkind) {
+              KindBlockHook[] -> {
+                newHook = `BlockHookDecl(hcode);
+                newOperator = `OperatorDecl(oname,osort,oprod,concHookDecl(newHook,ohooks*));
+              }
+
+              KindInterfaceHook[] -> {
+                newHook = `InterfaceHookDecl(hcode);
+                newOperator = `OperatorDecl(oname,osort,oprod,concHookDecl(newHook,ohooks*));
+              }
+
+              KindImportHook[] -> {
+                newHook = `ImportHookDecl(hcode);
+                newOperator = `OperatorDecl(oname,osort,oprod,concHookDecl(newHook,ohooks*));
+              }
+
               (KindMakeHook| KindMakeinsertHook)[] -> {
+                SlotList typedArgs = typedArguments(`hargs,`hkind,`oprod, `osort);
+                if (typedArgs == null) {
+                  String hookName = `hname;
+                  getLogger().log(Level.SEVERE, GomMessage.discardedHook.getMessage(),
+                      new Object[]{hookName});
+                  return operator;
+                }
                 newHook = `MakeHookDecl(typedArgs,hcode);
+                newOperator = `OperatorDecl(oname,osort,oprod,concHookDecl(newHook,ohooks*));
               }
             }
-            if (newHook == null) {
-              throw new GomRuntimeException(
-                  "GomTypeExpander:typeOperatorHook unknown Hookkind: "+`hkind);
-            }
-            newOperator = `OperatorDecl(oname,osort,oprod,concHookDecl(newHook,ohooks*));
           }
+        }
+        if (newHook == null) {
+          throw new GomRuntimeException(
+              "GomTypeExpander:typeOperatorHook unknown Hookkind: "+`hkind);
         }
       }
     }
     return newOperator;
   }
+
   private SlotList recArgSlots(ArgList args, SlotList slots) {
     %match(ArgList args, SlotList slots) {
       concArg(),concSlot() -> {
@@ -210,7 +230,7 @@ public class GomTypeExpander {
     throw new GomRuntimeException("GomTypeExpander:recArgSlots failed "+args+" "+slots);
   }
   private SlotList typedArguments(ArgList args, Hookkind kind,
-                                  TypedProduction tprod, SortDecl sort) {
+      TypedProduction tprod, SortDecl sort) {
     %match(Hookkind kind) {
       KindMakeHook[] -> {
         // the TypedProduction has to be Slots
@@ -336,11 +356,13 @@ public class GomTypeExpander {
    */
   private Collection getSortDeclarations(GomModule module) {
     Collection result = new HashSet();
+    HookDeclList moduleHooks = getModuleHooks(module);
     %match(GomModule module) {
       GomModule(modulename,concSection(_*,
             Public(concGrammar(_*,Sorts(concGomType(_*,GomType(typeName),_*)),_*)),
             _*)) -> {
-        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath)));
+        HookDeclList sortHooks = getSortHooks(module,`typeName);
+        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath,moduleHooks),sortHooks));
       }
     }
     return result;
@@ -351,14 +373,87 @@ public class GomTypeExpander {
    */
   private Collection getSortDeclarationInCodomain(GomModule module) {
     Collection result = new HashSet();
+    HookDeclList moduleHooks = getModuleHooks(module);
     %match(GomModule module) {
-      GomModule(modulename,concSection(_*,
-            Public(concGrammar(_*,Grammar(concProduction(_*,Production(_,_,GomType(typeName)),_*)),_*)),
-            _*)) -> {
-        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath)));
+      GomModule(modulename,concSection(_*,Public(concGrammar(_*,Grammar(concProduction(_*,Production(_,_,GomType(typeName)),_*)),_*)),_*)) -> {
+        HookDeclList sortHooks = getSortHooks(module,`typeName);
+        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath,moduleHooks),sortHooks));
       }
     }
     return result;
+  }
+
+  /*
+     get all hooks for a module
+   */
+  private HookDeclList getModuleHooks(GomModule module) {
+    HookDeclList hooks = `concHookDecl();
+    %match(GomModule module) {
+      GomModule(modulename,concSection(_*,Public(concGrammar(_*,Grammar(productions),_*)),_*)) -> {
+        %match(ProductionList productions){
+          concProduction(_*,hook@Hook[nameType=KindModule(),hookType=hkind,code=hcode],_*) -> {
+            if(`hook.getname().equals(`modulename.getname())){
+              HookDecl newHook = null;
+              %match(Hookkind `hkind) {
+                KindBlockHook[] -> {
+                  newHook = `BlockHookDecl(hcode);
+                }
+                KindInterfaceHook[] -> {
+                  newHook = `InterfaceHookDecl(hcode);
+                }
+                KindImportHook[] -> {
+                  newHook = `ImportHookDecl(hcode);
+                }
+              }
+              if (newHook == null) {
+                throw new GomRuntimeException(
+                    "GomTypeExpander:typeModuleHook unknown Hookkind: "+`hkind);
+              }
+              hooks = `concHookDecl(hooks*,newHook);
+            }
+            else{
+              getLogger().log(Level.SEVERE,"Hooks on module are authorised only on the current module");
+            }
+          }
+        }
+      }
+    }
+    return hooks;
+  }
+  /*
+     get all hooks for a sort
+   */
+  private HookDeclList getSortHooks(GomModule module,String sortName) {
+    HookDeclList hooks = `concHookDecl();
+    %match(GomModule module) {
+      GomModule(modulename,concSection(_*,Public(concGrammar(_*,Grammar(productions),_*)),_*)) -> {
+        %match(ProductionList productions){
+          concProduction(_*,hook@Hook[nameType=KindSort(),hookType=hkind,code=hcode],_*) -> {
+            if(`hook.getname().equals(`sortName)){
+              HookDecl newHook = null;
+              %match(Hookkind `hkind) {
+                KindBlockHook[] -> {
+                  newHook = `BlockHookDecl(hcode);
+                }
+                KindInterfaceHook[] -> {
+                  newHook = `InterfaceHookDecl(hcode);
+                }
+                KindImportHook[] -> {
+                  newHook = `ImportHookDecl(hcode);
+                }
+              }
+              if (newHook == null) {
+                throw new GomRuntimeException(
+                    "GomTypeExpander:typeModuleHook unknown Hookkind: "+`hkind);
+              }
+
+              hooks = `concHookDecl(hooks*,newHook);
+            }
+          }
+        }
+      }
+    }
+    return hooks;
   }
 
   // get directly imported modules. Skip builtins
@@ -395,7 +490,7 @@ public class GomTypeExpander {
   }
 
   private Collection getTransitiveClosureImports(GomModule module,
-                                                 GomModuleList moduleList) {
+      GomModuleList moduleList) {
     Set imported = new HashSet();
     imported.addAll(getImportedModules(module));
 
@@ -420,11 +515,11 @@ public class GomTypeExpander {
         while(it.hasNext()) {
           GomModuleName importedModuleName = (GomModuleName) it.next();
           importsModuleDeclList = 
-            `concModuleDecl(ModuleDecl(importedModuleName,packagePath),
-                            importsModuleDeclList*);
+            `concModuleDecl(ModuleDecl(importedModuleName,packagePath,concHookDecl()),
+                importsModuleDeclList*);
         }
         environment().addModuleDependency(
-            `ModuleDecl(name,packagePath),importsModuleDeclList);
+            `ModuleDecl(name,packagePath,concHookDecl()),importsModuleDeclList);
       }
     }
   }

@@ -260,7 +260,7 @@ hook returns [Production prod]
   code = blockparser.block();
 }
 {
-  prod = `Hook(opName,hooktype,argList,code);
+  prod = `Hook(KindOperator(),opName,hooktype,argList,code);
 }
 ;
 

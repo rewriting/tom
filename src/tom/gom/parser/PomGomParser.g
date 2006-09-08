@@ -56,7 +56,7 @@ sortdef: SORTS^ (type)* ;
 
 type: i:ID ;
 
-syntax: ABSTRACT! SYNTAX^ (production | hook | typedecl)* ;
+syntax: ABSTRACT! SYNTAX^ (production | hookOperator | hookSortModule |  typedecl)* ;
 
 production: id:ID fieldlist ARROW^ type ;
 
@@ -68,21 +68,42 @@ fieldlist: LEFT_BRACE! (field (COMMA field)* )? RIGHT_BRACE! ;
 
 arglist: LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRACE! ;
 
-hook
+hookOperator
 {
   String code = "";
 }
-:! id:ID COLON^ type:hooktype args:arglist 
+:! (typeId:OPERATOR)? id:ID COLON^ hook:hook
 // '!' turns off auto transform
 {
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
 
-#hook = #(COLON,id,type,args);
-#hook.setText(code);
+#hookOperator = #(COLON,id,hook);
+#hookOperator.setText(code);
 }
 ;
-hooktype: tp:ID ;
+
+hook: makeHook | otherHook;
+
+makeHook : (MAKE^  | MAKEINSERT^) arglist;
+
+otherHook : BLOCK | INTERFACE | IMPORT;
+
+typeId : SORT | MODULE;
+
+hookSortModule
+{
+  String code = "";
+}
+:! typeId:typeId id:ID COLON^ hook:otherHook
+{
+  BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
+  code = blockparser.block();
+
+#hookSortModule = #(COLON,typeId,id,hook);
+#hookSortModule.setText(code);
+}
+;
 
 field: type STAR^ | id:ID COLON^ type ;
 
@@ -99,6 +120,13 @@ tokens
   SORTS    = "sorts";
   ABSTRACT = "abstract";
   SYNTAX   = "syntax";
+  SORT     = "sort";
+  OPERATOR = "operator";
+  MAKE     = "make";
+  MAKEINSERT   = "make_insert";
+  BLOCK    = "block";
+  INTERFACE = "interface";
+  IMPORT  = "import";
 }
 
 ARROW       : "->";

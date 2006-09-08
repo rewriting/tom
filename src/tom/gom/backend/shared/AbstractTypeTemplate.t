@@ -24,17 +24,18 @@
 
 package tom.gom.backend.shared;
 
-import tom.gom.backend.TemplateClass;
+import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 
-public class AbstractTypeTemplate extends TemplateClass {
+public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassName visitor;
   ClassNameList sortList;
 
   public AbstractTypeTemplate(ClassName className,
                               ClassName visitor,
-                              ClassNameList sortList) {
-    super(className);
+                              ClassNameList sortList,
+                              HookList hooks) {
+    super(className,hooks);
     this.visitor = visitor;
     this.sortList = sortList;
   }
@@ -45,8 +46,12 @@ public class AbstractTypeTemplate extends TemplateClass {
     out.append(
 %[
 package @getPackage()@;
+@generateImport()@
 
-public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable, Comparable {
+public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable, Comparable @generateInterface()@ {
+
+@generateBlock()@
+
   private int uniqueID;
 
   public abstract aterm.ATerm toATerm();

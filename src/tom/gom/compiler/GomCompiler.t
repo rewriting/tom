@@ -112,7 +112,7 @@ public class GomCompiler {
       consum=consum.getTailconcSort();
       // get the class name for the sort
       %match(Sort sort) {
-        Sort[decl=sortDecl@SortDecl[moduleDecl=moduleDecl],operators=oplist] -> {
+        Sort[decl=sortDecl@SortDecl[moduleDecl=moduleDecl,hooks=sorthooks],operators=oplist] -> {
           ClassName sortClassName = (ClassName)sortClassNameForSortDecl.get(`sortDecl);
           ClassName abstracttypeName = (ClassName)abstractTypeNameForModule.get(`moduleDecl);
           ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDecl);
@@ -184,7 +184,8 @@ public class GomCompiler {
                                                        abstracttypeName,
                                                        sortClassName,
                                                        emptyClass,
-                                                       cons);
+                                                       cons,
+                                                       concHook());
               } else {
                 operatorClass = `OperatorClass(operatorClassName,
                                                abstracttypeName,
@@ -204,7 +205,8 @@ public class GomCompiler {
                                           visitorName,
                                           visitableforwardName,
                                           allOperators,
-                                          slotFieldListFromSet(allSortSlots));
+                                          slotFieldListFromSet(allSortSlots),
+                                          makeHooksFromHookDecls(sorthooks));
           sortGomClassForSortDecl.put(`sortDecl,sortClass);
           classList = `concGomClass(sortClass,classList*);
         }
@@ -218,7 +220,9 @@ public class GomCompiler {
 
       GomClassList allOperatorClasses = `concGomClass();
       GomClassList allSortClasses = `concGomClass();
-      ModuleDeclList modlist = environment().getModuleDependency(moduleDecl);
+      /* TODO improve this part : just for test */
+      ModuleDecl moduleDeclWithoutHooks = `ModuleDecl(moduleDecl.getmoduleName(),moduleDecl.getpkg(),concHookDecl());
+      ModuleDeclList modlist = environment().getModuleDependency(moduleDeclWithoutHooks);
       while(!modlist.isEmptyconcModuleDecl()) {
         ModuleDecl imported = modlist.getHeadconcModuleDecl();
         modlist = modlist.getTailconcModuleDecl();
@@ -270,7 +274,8 @@ public class GomCompiler {
       /* create the abstractType */
       ClassNameList classSortList = sortClassNames(sortList);
       ClassName abstractTypeName = (ClassName) abstractTypeNameForModule.get(moduleDecl);
-      GomClass abstracttype = `AbstractTypeClass(abstractTypeName,visitorName,classSortList);
+      GomClass abstracttype =
+        `AbstractTypeClass(abstractTypeName,visitorName,classSortList,makeHooksFromHookDecls(moduleDecl.gethooks()));
       classList = `concGomClass(abstracttype,classList*);
 
       /* create a TomMapping */
@@ -362,7 +367,7 @@ public class GomCompiler {
     }
     return list;
   }
-
+  
   private HookList makeHooksFromHookDecls(HookDeclList declList) {
     HookList list = `concHook();
     %match(HookDeclList declList) {
@@ -375,9 +380,22 @@ public class GomCompiler {
           MakeHookDecl[slotargs=slotArgs,code=hookCode] -> {
             newArgs = makeSlotFieldListFromSlotList(`slotArgs);
             newHook = `MakeHook(newArgs,hookCode);
+            if (newArgs == null) {
+              throw new GomRuntimeException("Hook declaration "+`hook+" not processed");
+            }
           }
+          BlockHookDecl[code=hookCode] -> {
+            newHook = `BlockHook(hookCode);
+          }
+          InterfaceHookDecl[code=hookCode] -> {
+            newHook = `InterfaceHook(hookCode);
+          }
+          ImportHookDecl[code=hookCode] -> {
+            newHook = `ImportHook(hookCode);
+          }
+
         }
-        if (newHook == null || newArgs == null) {
+        if (newHook == null) {
           throw new GomRuntimeException("Hook declaration "+`hook+" not processed");
         }
         list = `concHook(list*,newHook);
@@ -385,6 +403,7 @@ public class GomCompiler {
     }
     return list;
   }
+
   private SlotFieldList makeSlotFieldListFromSlotList(SlotList args) {
     SlotFieldList newArgs = `concSlotField();
     while(!args.isEmptyconcSlot()) {
@@ -402,11 +421,13 @@ public class GomCompiler {
 
   private ClassNameList allClassForImports(Map classMap, ModuleDecl moduleDecl) {
     ClassNameList importedList = `concClassName();
-    ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDecl);
+    /* TODO improve this part : just for test */
+    ModuleDecl moduleDeclWithoutHooks = `ModuleDecl(moduleDecl.getmoduleName(),moduleDecl.getpkg(),concHookDecl());
+    ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDeclWithoutHooks);
     while(!importedModulelist.isEmptyconcModuleDecl()) {
       ModuleDecl imported = importedModulelist.getHeadconcModuleDecl();
       importedModulelist = importedModulelist.getTailconcModuleDecl();
-      if (!imported.equals(moduleDecl)) {
+      if (!imported.equals(moduleDeclWithoutHooks)) {
         ClassName importedclass = (ClassName)classMap.get(imported);
         importedList = `concClassName(importedclass,importedList*);
       }
