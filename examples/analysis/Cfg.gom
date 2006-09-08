@@ -14,3 +14,7 @@ Cfg = BeginIf(ast:Ast,refSuccess:Reference,refFailure:Reference)
 
 Reference = Ref(int*)
           | RefLabel(label:String)
+
+Ref:interface{
+tom.library.strategy.mutraveler.MuReference
+  }

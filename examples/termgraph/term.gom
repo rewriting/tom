@@ -15,4 +15,6 @@ expTerm:make(term) {
   if(! termWithPos.equals(term)) return termWithPos;
  }
 
-
+ posTerm:interface{
+tom.library.strategy.mutraveler.MuReference
+   }

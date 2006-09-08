@@ -82,7 +82,7 @@ public class BPELAnalyser {
         `leaves(leaveList).apply(`elt1);
         Iterator leaveIter = leaveList.iterator();
         ArrayList rootList = new ArrayList();
-        `roots(rootList).apply(`elt2);
+        `roots(rootList).apply(`elt1);
         while(leaveIter.hasNext()){
           String leave = (String) leaveIter.next();
           Iterator rootIter = rootList.iterator();

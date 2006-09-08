@@ -3,11 +3,11 @@ package termgraph;
 import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.MuVisitable;
+import tom.library.strategy.mutraveler.MuReference;
 import tom.library.strategy.mutraveler.Position;
 import jjtraveler.Visitable;
 import jjtraveler.Visitor;
 import jjtraveler.VisitFailure;
-import termgraph.term.types.term.posTerm;
 import java.util.*;
 /**
  * <code>AllRefSensitive(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
@@ -30,7 +30,7 @@ public class AllRefSensitive extends AbstractMuStrategy {
   }
 
 
-  public posTerm visitReference(posTerm ref, MuStrategy strat) throws VisitFailure{
+  public MuReference visitReference(MuReference ref, MuStrategy strat) throws VisitFailure{
     Position pos = new Position(ref.toArray());
     visitPosition(pos,strat);
     return ref;
@@ -64,8 +64,8 @@ public class AllRefSensitive extends AbstractMuStrategy {
             Visitable oldChild = any.getChildAt(i);
             getPosition().down(i+1);
             Visitable newChild;
-            if (oldChild instanceof posTerm){
-              newChild = visitReference((posTerm)oldChild,S);
+            if (oldChild instanceof MuReference){
+              newChild = visitReference((MuReference)oldChild,S);
             }
             else{ 
               newChild = S.visit(oldChild);
@@ -94,8 +94,8 @@ public class AllRefSensitive extends AbstractMuStrategy {
             getPosition().down(i+1);
             Visitable oldChild = any.getChildAt(i);
             Visitable newChild;
-            if (oldChild instanceof posTerm){
-              newChild = visitReference((posTerm) oldChild,S);
+            if (oldChild instanceof MuReference){
+              newChild = visitReference((MuReference) oldChild,S);
             }
             else{ 
               newChild = S.visit(oldChild);

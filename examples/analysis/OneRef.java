@@ -2,19 +2,19 @@ package analysis;
 
 import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.MuReference;
 import jjtraveler.Visitable;
 import jjtraveler.Visitor;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
-import analysis.cfg.types.reference.Ref;
 import java.util.ArrayList;
 
 /**
- * <code>T(t1,...,ti,...,tN).accept(OneRef(v)) = T(t1,...,ti.accept(v),...,tN)</code>
+ * <code>T(t1,...,ti,...,tN).accept(OneMuReference(v)) = T(t1,...,ti.accept(v),...,tN)</code>
  * if <code>ti</code> is the first child that succeeds.
  * <p>
  * Basic visitor combinator with one visitor argument, that applies
- * this visitor to exactly one child of type Ref. If no children are visited 
+ * this visitor to exactly one child of type MuReference. If no children are visited 
  * successfully, then OneRef(v) fails.
  * <p>
  * Note that side-effects of failing visits to children are not
@@ -31,11 +31,11 @@ public class OneRef extends AbstractMuStrategy {
     originalSubj = s;
   }
 
-  public Ref visitRef(Ref ref, Visitor strat) throws VisitFailure{
+  public MuReference visitMuReference(MuReference ref, Visitor strat) throws VisitFailure{
     //find the subterm at the position and modify it
     Position pos = new Position(ref.toArray());
-    Visitable subtermRef = pos.getSubterm().visit(originalSubj);
-    final Visitable subtermModified = strat.visit(subtermRef);
+    Visitable subtermMuReference = pos.getSubterm().visit(originalSubj);
+    final Visitable subtermModified = strat.visit(subtermMuReference);
      pos.getReplace(subtermModified).visit(originalSubj);
     return ref;
   }
@@ -47,8 +47,8 @@ public class OneRef extends AbstractMuStrategy {
       for(int i = 0; i < childCount; i++) {
         try {
           Visitable oldChild = any.getChildAt(i);
-          if (oldChild instanceof Ref){
-            Visitable newChild = visitRef((Ref) oldChild,getArgument(ARG));
+          if (oldChild instanceof MuReference){
+            Visitable newChild = visitMuReference((MuReference) oldChild,getArgument(ARG));
             return any.setChildAt(i,newChild);
           }
         } catch(VisitFailure f) { }
@@ -58,8 +58,8 @@ public class OneRef extends AbstractMuStrategy {
         try { 
           getPosition().down(i+1);
           Visitable oldChild = any.getChildAt(i);
-          if (oldChild instanceof Ref){
-            Visitable newChild = visitRef((Ref) oldChild,getArgument(ARG));
+          if (oldChild instanceof MuReference){
+            Visitable newChild = visitMuReference((MuReference) oldChild,getArgument(ARG));
             getPosition().up();
             return any.setChildAt(i,newChild);
           }

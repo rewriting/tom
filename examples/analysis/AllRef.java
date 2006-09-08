@@ -3,17 +3,17 @@ package analysis;
 import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import tom.library.strategy.mutraveler.MuVisitable;
 import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.MuReference;
 import jjtraveler.Visitable;
 import jjtraveler.Visitor;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
-import analysis.cfg.types.reference.Ref;
 import java.util.ArrayList;
 /**
  * <code>AllRef(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
  * <p>
  * Basic visitor combinator with one visitor argument, that applies
- * this visitor to all children of type Ref.
+ * this visitor to all children of type MuReference.
  */
 
 public class AllRef extends AbstractMuStrategy {
@@ -26,11 +26,11 @@ public class AllRef extends AbstractMuStrategy {
   }
 
 
-  public Ref visitRef(Ref ref, Visitor strat) throws VisitFailure{
+  public MuReference visitMuReference(MuReference ref, Visitor strat) throws VisitFailure{
     //find the subterm at the position and modify it
     Position pos = new Position(ref.toArray());
-    Visitable subtermRef = pos.getSubterm().visit(originalSubj);
-    final Visitable subtermModified = strat.visit(subtermRef);
+    Visitable subtermMuReference = pos.getSubterm().visit(originalSubj);
+    final Visitable subtermModified = strat.visit(subtermMuReference);
      pos.getReplace(subtermModified).visit(originalSubj);
     return ref;
   }
@@ -47,8 +47,8 @@ public class AllRef extends AbstractMuStrategy {
         for (int i = 0; i < childCount; i++) {
           Visitable oldChild = any.getChildAt(i);
           Visitable newChild = oldChild;
-          if (oldChild instanceof Ref){
-            newChild = visitRef((Ref) oldChild,S);
+          if (oldChild instanceof MuReference){
+            newChild = visitMuReference((MuReference) oldChild,S);
           }
           else{
             //only visiting references
@@ -73,8 +73,8 @@ public class AllRef extends AbstractMuStrategy {
             Visitable oldChild = any.getChildAt(i);
             getPosition().down(i+1);
             Visitable newChild = oldChild;
-            if (oldChild instanceof Ref){
-              newChild = visitRef((Ref) oldChild,S);
+            if (oldChild instanceof MuReference){
+              newChild = visitMuReference((MuReference) oldChild,S);
             }
             else{
               //only visit references
@@ -106,8 +106,8 @@ public class AllRef extends AbstractMuStrategy {
         for (int i = 0; i < childCount; i++) {
           Visitable oldChild = result.getChildAt(i);
           Visitable newChild = oldChild;
-          if (oldChild instanceof Ref){
-            newChild = visitRef((Ref) oldChild,S);
+          if (oldChild instanceof MuReference){
+            newChild = visitMuReference((MuReference) oldChild,S);
           }
           else{
             //only visit references
@@ -121,8 +121,8 @@ public class AllRef extends AbstractMuStrategy {
             getPosition().down(i+1);
             Visitable oldChild = result.getChildAt(i);
             Visitable newChild = oldChild;
-            if (oldChild instanceof Ref){
-              newChild = visitRef((Ref) oldChild,S);
+            if (oldChild instanceof MuReference){
+              newChild = visitMuReference((MuReference) oldChild,S);
             }
             else{ 
             //only visit references

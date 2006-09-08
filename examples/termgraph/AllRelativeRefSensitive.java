@@ -4,10 +4,10 @@ import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.MuVisitable;
 import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.MuReference;
 import jjtraveler.Visitable;
 import jjtraveler.Visitor;
 import jjtraveler.VisitFailure;
-import termgraph.term.types.term.posTerm;
 import java.util.*;
 /**
  * <code>AllRefSensitive(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
@@ -24,7 +24,7 @@ public class AllRelativeRefSensitive extends AllRefSensitive {
   }
 
 
-  public posTerm visitReference(posTerm ref, MuStrategy strat) throws VisitFailure{
+  public MuReference visitReference(MuReference ref, MuStrategy strat) throws VisitFailure{
     RelativePosition relativePos = new RelativePosition(ref.toArray());
     Position p = getPosition();
     Position pos = relativePos.getAbsolutePosition(p); 
