@@ -47,8 +47,8 @@ public class StratMappingTemplate extends TemplateClass {
     /* XXX: i could introduce an interface providing generateMapping() */
     %match(GomClassList operatorClasses) {
       concGomClass(_*,
-          OperatorClass[className=opName,
-                        slots=slotList],
+          OperatorClass[ClassName=opName,
+                        Slots=slotList],
           _*) -> {
       writer.write(
         (new tom.gom.backend.strategy.IsOpTemplate(`opName)).generateMapping());
@@ -59,9 +59,9 @@ public class StratMappingTemplate extends TemplateClass {
         (new tom.gom.backend.strategy.MakeOpTemplate(`opName,`slotList)).generateMapping());
       }
       concGomClass(_*,
-          VariadicOperatorClass[className=vopName,
-                                empty=OperatorClass[className=empty],
-                                cons=OperatorClass[className=cons]],
+          VariadicOperatorClass[ClassName=vopName,
+                                Empty=OperatorClass[ClassName=empty],
+                                Cons=OperatorClass[ClassName=cons]],
                             _*)-> {
         writer.write(%[
 %op Strategy _@className(`vopName)@(sub:Strategy) {

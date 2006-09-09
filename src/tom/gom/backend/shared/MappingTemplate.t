@@ -61,7 +61,7 @@ public class MappingTemplate extends TemplateClass {
     // generate a %typeterm for each class
     %match(GomClassList sortClasses) {
       concGomClass(_*,
-          SortClass[className=sortName],
+          SortClass[ClassName=sortName],
           _*) -> {
         writer.write(%[
 %typeterm @className(`sortName)@ {
@@ -77,9 +77,9 @@ public class MappingTemplate extends TemplateClass {
     // generate a %op for each operator
     %match(GomClassList operatorClasses) {
       concGomClass(_*,
-          OperatorClass[className=opName,
-                        sortName=sortName,
-                        slots=slotList],
+          OperatorClass[ClassName=opName,
+                        SortName=sortName,
+                        Slots=slotList],
           _*) -> {
         writer.write("%op "+className(`sortName)+" "+className(`opName)+"(");
         slotDecl(writer,`slotList);
@@ -87,7 +87,7 @@ public class MappingTemplate extends TemplateClass {
         //writer.write("  is_fsym(t) { (t!=null) && t."+isOperatorMethod(`opName)+"() }\n");
         writer.write("  is_fsym(t) { t instanceof "+fullClassName(`opName)+" }\n");
         %match(SlotFieldList `slotList) {
-          concSlotField(_*,slot@SlotField[name=slotName],_*) -> {
+          concSlotField(_*,slot@SlotField[Name=slotName],_*) -> {
             writer.write("  get_slot("+`slotName+", t) ");
             writer.write("{ t."+getMethod(`slot)+"() }\n");
           }
@@ -107,12 +107,12 @@ public class MappingTemplate extends TemplateClass {
     // generate a %oplist for each variadic operator
     %match(GomClassList operatorClasses) {
       concGomClass(_*,
-          VariadicOperatorClass[className=opName,
-                                sortName=sortName,
-                                empty=OperatorClass[className=emptyClass],
-                                cons=OperatorClass[className=concClass,
-                                                   slots=concSlotField(
-                                                           head@SlotField[domain=headDomain],
+          VariadicOperatorClass[ClassName=opName,
+                                SortName=sortName,
+                                Empty=OperatorClass[ClassName=emptyClass],
+                                Cons=OperatorClass[ClassName=concClass,
+                                                   Slots=concSlotField(
+                                                           head@SlotField[Domain=headDomain],
                                                            tail)
                                                    ]
                                 ],
@@ -152,7 +152,7 @@ public class MappingTemplate extends TemplateClass {
       slotList = slotList.getTailconcSlotField();
       if (index>0) { writer.write(", "); }
       %match(SlotField slot) {
-        SlotField[name=slotName,domain=ClassName[name=domainName]] -> {
+        SlotField[Name=slotName,Domain=ClassName[Name=domainName]] -> {
           writer.write(`slotName);
           writer.write(":");
           writer.write(`domainName);

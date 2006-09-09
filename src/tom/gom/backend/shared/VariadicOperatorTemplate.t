@@ -77,8 +77,8 @@ writer.write(%[
     writer.write(%[
   public int length() {
     int count = 0;
-    if(this instanceof @fullClassName(cons.getclassName())@) {
-      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getclassName())@)this).getTail@className()@();
+    if(this instanceof @fullClassName(cons.getClassName())@) {
+      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
       if (tl instanceof @className()@) {
         return 1+((@className()@)tl).length();
       } else {
@@ -89,35 +89,35 @@ writer.write(%[
     }
   }
 
- public @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[] toArray() {
-    @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[] array;
-    if(this instanceof @fullClassName(cons.getclassName())@) {
-      @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@ h = ((@fullClassName(cons.getclassName())@)this).getHead@className()@();
-      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getclassName())@)this).getTail@className()@();
+ public @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[] toArray() {
+    @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[] array;
+    if(this instanceof @fullClassName(cons.getClassName())@) {
+      @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@ h = ((@fullClassName(cons.getClassName())@)this).getHead@className()@();
+      @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
       if (tl instanceof @className()@) {
-        @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[] tailArray =((@className()@)tl).toArray();
-        array = new @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[1+tailArray.length];
+        @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[] tailArray =((@className()@)tl).toArray();
+        array = new @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[1+tailArray.length];
         array[0]=h;     
         for(int i =0;i<tailArray.length;i++){
           array[i+1]=tailArray[i];
         }
       } else {
-        array = new @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[1];
+        array = new @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[1];
         array[0]=h;  
       }
     } else {
-        array = new @fullClassName(cons.getslots().getHeadconcSlotField().getdomain())@[0];
+        array = new @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[0];
     }
     return array;
   }
 
   public @fullClassName(sortName)@ reverse() {
-    if(this instanceof @fullClassName(cons.getclassName())@) {
+    if(this instanceof @fullClassName(cons.getClassName())@) {
       @fullClassName(sortName)@ cur = this;
-      @fullClassName(sortName)@ rev = @fullClassName(empty.getclassName())@.make();
-      while(cur instanceof @fullClassName(cons.getclassName())@) {
-        rev = @fullClassName(cons.getclassName())@.make(((@fullClassName(cons.getclassName())@)cur).getHead@className()@(),rev);
-        cur = ((@fullClassName(cons.getclassName())@)cur).getTail@className()@();
+      @fullClassName(sortName)@ rev = @fullClassName(empty.getClassName())@.make();
+      while(cur instanceof @fullClassName(cons.getClassName())@) {
+        rev = @fullClassName(cons.getClassName())@.make(((@fullClassName(cons.getClassName())@)cur).getHead@className()@(),rev);
+        cur = ((@fullClassName(cons.getClassName())@)cur).getTail@className()@();
       }
       return rev;
     } else {

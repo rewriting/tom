@@ -42,12 +42,19 @@ public interface PomGomParserTokenTypes {
 	int LEFT_BRACE = 15;
 	int COMMA = 16;
 	int RIGHT_BRACE = 17;
-	int COLON = 18;
-	int STAR = 19;
-	int PRIVATE = 20;
-	int LBRACE = 21;
-	int RBRACE = 22;
-	int WS = 23;
-	int SLCOMMENT = 24;
-	int ML_COMMENT = 25;
+	int OPERATOR = 18;
+	int COLON = 19;
+	int MAKE = 20;
+	int MAKEINSERT = 21;
+	int BLOCK = 22;
+	int INTERFACE = 23;
+	int IMPORT = 24;
+	int SORT = 25;
+	int STAR = 26;
+	int PRIVATE = 27;
+	int LBRACE = 28;
+	int RBRACE = 29;
+	int WS = 30;
+	int SLCOMMENT = 31;
+	int ML_COMMENT = 32;
 }

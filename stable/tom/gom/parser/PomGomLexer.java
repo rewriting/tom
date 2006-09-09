@@ -65,13 +65,20 @@ public PomGomLexer(LexerSharedInputState state) {
 	caseSensitiveLiterals = true;
 	setCaseSensitive(true);
 	literals = new Hashtable();
-	literals.put(new ANTLRHashString("imports", this), new Integer(6));
-	literals.put(new ANTLRHashString("abstract", this), new Integer(9));
-	literals.put(new ANTLRHashString("private", this), new Integer(20));
-	literals.put(new ANTLRHashString("module", this), new Integer(4));
 	literals.put(new ANTLRHashString("public", this), new Integer(7));
+	literals.put(new ANTLRHashString("module", this), new Integer(4));
+	literals.put(new ANTLRHashString("abstract", this), new Integer(9));
 	literals.put(new ANTLRHashString("syntax", this), new Integer(10));
+	literals.put(new ANTLRHashString("make_insert", this), new Integer(21));
+	literals.put(new ANTLRHashString("sort", this), new Integer(25));
+	literals.put(new ANTLRHashString("private", this), new Integer(27));
 	literals.put(new ANTLRHashString("sorts", this), new Integer(8));
+	literals.put(new ANTLRHashString("import", this), new Integer(24));
+	literals.put(new ANTLRHashString("interface", this), new Integer(23));
+	literals.put(new ANTLRHashString("make", this), new Integer(20));
+	literals.put(new ANTLRHashString("operator", this), new Integer(18));
+	literals.put(new ANTLRHashString("imports", this), new Integer(6));
+	literals.put(new ANTLRHashString("block", this), new Integer(22));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -410,7 +417,7 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop53:
+		_loop59:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				{
@@ -418,7 +425,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop53;
+				break _loop59;
 			}
 			
 		} while (true);
@@ -466,7 +473,7 @@ tryAgain:
 		
 		match("/*");
 		{
-		_loop59:
+		_loop65:
 		do {
 			switch ( LA(1)) {
 			case '\n':
@@ -527,7 +534,7 @@ tryAgain:
 					newline();
 				}
 			else {
-				break _loop59;
+				break _loop65;
 			}
 			}
 		} while (true);
@@ -577,7 +584,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop63:
+		_loop69:
 		do {
 			switch ( LA(1)) {
 			case 'a':  case 'b':  case 'c':  case 'd':
@@ -621,7 +628,7 @@ tryAgain:
 			}
 			default:
 			{
-				break _loop63;
+				break _loop69;
 			}
 			}
 		} while (true);

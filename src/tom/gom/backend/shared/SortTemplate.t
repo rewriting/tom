@@ -93,11 +93,11 @@ writer.write(%[
 
       writer.write(%[
   public @slotDomain(slot)@ @getMethod(slot)@() {
-    throw new UnsupportedOperationException("This @className()@ has no @slot.getname()@");
+    throw new UnsupportedOperationException("This @className()@ has no @slot.getName()@");
   }
 
   public @className()@ @setMethod(slot)@(@slotDomain(slot)@ _arg) {
-    throw new UnsupportedOperationException("This @className()@ has no @slot.getname()@");
+    throw new UnsupportedOperationException("This @className()@ has no @slot.getName()@");
   }
 
 ]%);

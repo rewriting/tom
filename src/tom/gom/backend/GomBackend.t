@@ -67,7 +67,7 @@ public class GomBackend {
     int errno = 0;
     // populate the mappingForMappingName Map
     %match(GomClassList classList) {
-      concGomClass(_*,mapping@TomMapping[className=mappingName],_*) -> {
+      concGomClass(_*,mapping@TomMapping[ClassName=mappingName],_*) -> {
         mappingForMappingName.put(`mappingName,`mapping);
       }
     }
@@ -85,7 +85,7 @@ public class GomBackend {
    */
   public int generateClass(GomClass gomclass) {
     %match(GomClass gomclass) {
-      TomMapping[className=className@ClassName(pkg,name),basicStrategy=basicStrategy,sortClasses=sortClasses,operatorClasses=ops] -> {
+      TomMapping[ClassName=className@ClassName(pkg,name),BasicStrategy=basicStrategy,SortClasses=sortClasses,OperatorClasses=ops] -> {
         TemplateClass mapping = templatefactory.makeTomMappingTemplate(`className,`basicStrategy,`sortClasses,`ops);
         mapping.generateFile();
 
@@ -94,53 +94,53 @@ public class GomBackend {
         stratMapping.generateFile();
         return 1;
       }
-      FwdClass[className=className,
-               visitor=visitorClass,
-               importedVisitors=importedVisitors,
-               abstractType=abstractType,
-               importedAbstractTypes=imported,
-               sortClasses=sortClasses,
-               operatorClasses=ops] -> {
+      FwdClass[ClassName=className,
+               Visitor=visitorClass,
+               ImportedVisitors=importedVisitors,
+               AbstractType=abstractType,
+               ImportedAbstractTypes=imported,
+               SortClasses=sortClasses,
+               OperatorClasses=ops] -> {
         TemplateClass fwd = templatefactory.makeForwardTemplate(`className,`visitorClass,`importedVisitors,`abstractType,`imported,`sortClasses,`ops);
         fwd.generateFile();
         return 1;
       }
-      VisitableFwdClass[className=className,fwd=FwdClass[className=fwdClass]] -> {
+      VisitableFwdClass[ClassName=className,Fwd=FwdClass[ClassName=fwdClass]] -> {
         TemplateClass visitablefwd = templatefactory.makeVisitableForwardTemplate(`className,`fwdClass);
         visitablefwd.generateFile();
         return 1;
       }
-      VisitorClass[className=className,sortClasses=sortClasses,operatorClasses=ops] -> {
+      VisitorClass[ClassName=className,SortClasses=sortClasses,OperatorClasses=ops] -> {
         TemplateClass visitor = templatefactory.makeVisitorTemplate(`className,`sortClasses,`ops);
         visitor.generateFile();
         return 1;
       }
-      AbstractTypeClass[className=className,
-                        visitor=visitorName,
-                        sortList=sortList,
-                        hooks=hooks] -> {
+      AbstractTypeClass[ClassName=className,
+                        Visitor=visitorName,
+                        SortList=sortList,
+                        Hooks=hooks] -> {
         TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(`className,`visitorName,`sortList,`hooks);
         abstracttype.generateFile();
         return 1;
       }
-      SortClass[className=className,
-                abstractType=abstracttype,
-                visitor=visitorName,
-                operators=ops,
-                slots=slots,
-                hooks=hooks] -> {
+      SortClass[ClassName=className,
+                AbstractType=abstracttype,
+                Visitor=visitorName,
+                Operators=ops,
+                Slots=slots,
+                Hooks=hooks] -> {
         TemplateClass sort = templatefactory.makeSortTemplate(`className,`abstracttype,`visitorName,`ops,`slots,`hooks);
         sort.generateFile();
         return 1;
       }
-      OperatorClass[className=className,
-                    abstractType=abstracttype,
-                    extendsType=extendstype,
-                    mapping=mapping,
-                    sortName=sort,
-                    visitor=visitorName,
-                    slots=slots,
-                    hooks=hooks] -> {
+      OperatorClass[ClassName=className,
+                    AbstractType=abstracttype,
+                    ExtendsType=extendstype,
+                    Mapping=mapping,
+                    SortName=sort,
+                    Visitor=visitorName,
+                    Slots=slots,
+                    Hooks=hooks] -> {
         GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
         TemplateClass operator = templatefactory.makeOperatorTemplate(
             tomHomePath,
@@ -165,12 +165,12 @@ public class GomBackend {
         makeOpStrat.generateFile();
         return 1;
       }
-      VariadicOperatorClass[className=className,
-                            abstractType=abstracttype,
-                            sortName=sort,
-                            empty=empty,
-                            cons=cons,
-                            hooks=hooks] -> {
+      VariadicOperatorClass[ClassName=className,
+                            AbstractType=abstracttype,
+                            SortName=sort,
+                            Empty=empty,
+                            Cons=cons,
+                            Hooks=hooks] -> {
         TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(`className,`abstracttype,`sort,`empty,`cons,`hooks);
         operator.generateFile();
         return 1;
@@ -182,10 +182,10 @@ public class GomBackend {
   public TemplateClass getMappingTemplate(GomClass mapping) {
     TemplateClass mappingTemplate = null;
     %match(GomClass mapping) {
-      TomMapping[className=mappingName,
-                 basicStrategy=basicStrategy,
-                 sortClasses=sortClasses,
-                 operatorClasses=ops] -> {
+      TomMapping[ClassName=mappingName,
+                 BasicStrategy=basicStrategy,
+                 SortClasses=sortClasses,
+                 OperatorClasses=ops] -> {
         mappingTemplate = templatefactory.makeTomMappingTemplate(`mappingName,`basicStrategy,`sortClasses,`ops);
       }
     }

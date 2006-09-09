@@ -1,4 +1,5 @@
 2006-09-09  Pem  <pem@becky.local>
+  * capitalized slot-names
   * transform the Gom backend such that it generates directly in a writer
 	  instead of allocating strings
 

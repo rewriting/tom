@@ -89,7 +89,7 @@ writer.write(%[
   private void generateVisitMethods(java.io.Writer writer) throws java.io.IOException {
     // generate a visit for each sort
     %match(GomClassList sortClasses) {
-      concGomClass(_*,SortClass[className=sortName],_*) -> {
+      concGomClass(_*,SortClass[ClassName=sortName],_*) -> {
 
         writer.write(%[
   public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg) throws jjtraveler.VisitFailure {

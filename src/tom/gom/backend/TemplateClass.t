@@ -47,7 +47,7 @@ public abstract class TemplateClass {
   }
   public String className(ClassName clsName) {
     %match(ClassName clsName) {
-      ClassName[name=name] -> {
+      ClassName[Name=name] -> {
         return `name;
       }
     }
@@ -58,7 +58,7 @@ public abstract class TemplateClass {
   }
   public String fullClassName(ClassName clsName) {
     %match(ClassName clsName) {
-      ClassName[pkg=pkgPrefix,name=name] -> {
+      ClassName[Pkg=pkgPrefix,Name=name] -> {
         if(`pkgPrefix.length()==0) {
           return `name;
         } else {
@@ -74,7 +74,7 @@ public abstract class TemplateClass {
   }
   public String getPackage(ClassName clsName) {
     %match(ClassName clsName) {
-      ClassName[pkg=pkg] -> {
+      ClassName[Pkg=pkg] -> {
         return `pkg;
       }
     }
@@ -83,7 +83,7 @@ public abstract class TemplateClass {
 
   public String hasMethod(SlotField slot) {
     %match(SlotField slot) {
-      SlotField[name=name] -> {
+      SlotField[Name=name] -> {
         return "has"+`name;
       }
     }
@@ -91,7 +91,7 @@ public abstract class TemplateClass {
   }
   public String getMethod(SlotField slot) {
     %match(SlotField slot) {
-      SlotField[name=name] -> {
+      SlotField[Name=name] -> {
         return "get"+`name;
       }
     }
@@ -99,7 +99,7 @@ public abstract class TemplateClass {
   }
   public String setMethod(SlotField slot) {
     %match(SlotField slot) {
-      SlotField[name=name] -> {
+      SlotField[Name=name] -> {
         return "set"+`name;
       }
     }
@@ -107,7 +107,7 @@ public abstract class TemplateClass {
   }
   public String index(SlotField slot) {
     %match(SlotField slot) {
-      SlotField[name=name] -> {
+      SlotField[Name=name] -> {
         return "index_"+`name;
       }
     }
@@ -115,7 +115,7 @@ public abstract class TemplateClass {
   }
   public String slotDomain(SlotField slot) {
     %match(SlotField slot) {
-      SlotField[domain=domain] -> {
+      SlotField[Domain=domain] -> {
         return fullClassName(`domain);
       }
     }
@@ -123,7 +123,7 @@ public abstract class TemplateClass {
   }
   public String fieldName(ClassName clsName) {
     %match(ClassName clsName) {
-      ClassName[name=name] -> {
+      ClassName[Name=name] -> {
         return `name.toLowerCase();
       }
     }

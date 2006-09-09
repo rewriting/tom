@@ -135,7 +135,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
-        SlotField[name=name,domain=domain] -> {
+        SlotField[Name=name,Domain=domain] -> {
           out.append(%[
   get_slot(@fieldName(`name)@, t) { @fieldName(`name)@ }]%);
         }
@@ -151,7 +151,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       slots = slots.getTailconcSlotField();
 
       %match(SlotField head) {
-        SlotField[name=name,domain=domain] -> {
+        SlotField[Name=name,Domain=domain] -> {
           args.append((i==0?"":", "));
           args.append(fieldName(`name));
           if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
@@ -170,7 +170,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   private String genNonBuiltin() {
     StringBuffer out = new StringBuffer();
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           out.append("true, ");
         } else {
@@ -188,7 +188,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   private int nonBuiltinChildCount() {
     int count = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           count++;
         }
@@ -203,7 +203,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   private String generateMembers() {
     String res="";
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += "  private jjtraveler.reflective.VisitableVisitor "+fieldName(`fieldName)+";\n";
         } else {
@@ -222,7 +222,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     String res = "";
     int index = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += "      case "+index+": return "+fieldName(`fieldName)+";\n";
           index++;
@@ -236,7 +236,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     String res = "";
     int index = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += %[      case @index@: @fieldName(`fieldName)@ = (jjtraveler.reflective.VisitableVisitor) @argName@; return this;
 ]%;
@@ -257,7 +257,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
-        SlotField[name=name, domain=domain] -> {
+        SlotField[Name=name, Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");
           }
@@ -281,7 +281,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   private String computeNewChilds(SlotFieldList slots, String argName) {
     String res = "";
     %match(SlotFieldList slots) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += %[
     @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) @fieldName(`fieldName)@.visit(@argName@);
@@ -298,7 +298,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   private String generateMembersInit() {
     String res = "";
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=name],_*) -> {
+      concSlotField(_*,SlotField[Name=name],_*) -> {
         res += "    this."+fieldName(`name)+" = "+fieldName(`name)+";\n";
       }
     }
@@ -315,7 +315,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
-        SlotField[name=name,domain=domain] -> {
+        SlotField[Name=name,Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");
           }

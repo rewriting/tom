@@ -242,7 +242,7 @@ hook returns [Production prod]
 {
   prod = null;
   String opName = null;
-  Hookkind hooktype = null;
+  HookKind hooktype = null;
   ArgList argList = `concArg();
   String code = "";
 }
@@ -264,7 +264,7 @@ hook returns [Production prod]
 }
 ;
 
-hooktype returns [Hookkind type]
+hooktype returns [HookKind type]
 {
   type = null;
   String typeName = null;

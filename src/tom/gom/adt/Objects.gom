@@ -3,38 +3,38 @@ imports String
 
 abstract syntax
 
-GomClass = VisitableFwdClass(className:ClassName,fwd:GomClass)
-         | AbstractTypeClass(className:ClassName,visitor:ClassName,sortList:ClassNameList,hooks:HookList)
-         | SortClass(className:ClassName,abstractType:ClassName,visitor:ClassName,forward:ClassName,operators:ClassNameList,slots:SlotFieldList,hooks:HookList)
-         | OperatorClass(className:ClassName,
-                         abstractType:ClassName,
-                         extendsType:ClassName,
-                         mapping:ClassName,
-                         sortName:ClassName,
-                         visitor:ClassName,
-                         slots:SlotFieldList,
-                         hooks:HookList)
-         | VariadicOperatorClass(className:ClassName,
-                                 abstractType:ClassName,
-                                 sortName:ClassName,
-                                 empty:GomClass,
-                                 cons:GomClass,
-                                 hooks:HookList)
-         | VisitorClass(className:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList)
-         | FwdClass(className:ClassName,visitor:ClassName,importedVisitors:ClassNameList,abstractType:ClassName,importedAbstractTypes:ClassNameList,sortClasses:GomClassList,operatorClasses:GomClassList)
-         | TomMapping(className:ClassName,basicStrategy:ClassName,sortClasses:GomClassList,operatorClasses:GomClassList)
+GomClass = VisitableFwdClass(ClassName:ClassName,Fwd:GomClass)
+         | AbstractTypeClass(ClassName:ClassName,Visitor:ClassName,SortList:ClassNameList,Hooks:HookList)
+         | SortClass(ClassName:ClassName,AbstractType:ClassName,Visitor:ClassName,Forward:ClassName,Operators:ClassNameList,Slots:SlotFieldList,Hooks:HookList)
+         | OperatorClass(ClassName:ClassName,
+                         AbstractType:ClassName,
+                         ExtendsType:ClassName,
+                         Mapping:ClassName,
+                         SortName:ClassName,
+                         Visitor:ClassName,
+                         Slots:SlotFieldList,
+                         Hooks:HookList)
+         | VariadicOperatorClass(ClassName:ClassName,
+                                 AbstractType:ClassName,
+                                 SortName:ClassName,
+                                 Empty:GomClass,
+                                 Cons:GomClass,
+                                 Hooks:HookList)
+         | VisitorClass(ClassName:ClassName,SortClasses:GomClassList,OperatorClasses:GomClassList)
+         | FwdClass(ClassName:ClassName,Visitor:ClassName,ImportedVisitors:ClassNameList,AbstractType:ClassName,ImportedAbstractTypes:ClassNameList,SortClasses:GomClassList,OperatorClasses:GomClassList)
+         | TomMapping(ClassName:ClassName,BasicStrategy:ClassName,SortClasses:GomClassList,OperatorClasses:GomClassList)
 
 GomClassList = concGomClass(GomClass*)
 
-ClassName = ClassName(pkg:String,name:String)
+ClassName = ClassName(Pkg:String,Name:String)
 ClassNameList = concClassName(ClassName*)
 
-SlotField = SlotField(name:String,domain:ClassName)
+SlotField = SlotField(Name:String,Domain:ClassName)
 SlotFieldList = concSlotField(SlotField*)
 
-Hook = MakeHook(hookArguments:SlotFieldList,code:String)
-     | MakeBeforeHook(hookArguments:SlotFieldList,code:String)
-     | BlockHook(code:String)
-     | InterfaceHook(code:String)
-     | ImportHook(code:String)
+Hook = MakeHook(HookArguments:SlotFieldList,Code:String)
+     | MakeBeforeHook(HookArguments:SlotFieldList,Code:String)
+     | BlockHook(Code:String)
+     | InterfaceHook(Code:String)
+     | ImportHook(Code:String)
 HookList = concHook(Hook*)

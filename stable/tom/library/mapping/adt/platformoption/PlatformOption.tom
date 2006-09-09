@@ -6,8 +6,8 @@
 %include { aterm.tom }
 %include { atermlist.tom }
 
-%typeterm PlatformOption {
-  implement { tom.platform.adt.platformoption.types.PlatformOption }
+%typeterm PlatformValue {
+  implement { tom.platform.adt.platformoption.types.PlatformValue }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
@@ -27,20 +27,28 @@
 }
 
 
-%typeterm PlatformValue {
-  implement { tom.platform.adt.platformoption.types.PlatformValue }
+%typeterm PlatformOption {
+  implement { tom.platform.adt.platformoption.types.PlatformOption }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.platform.adt.platformoption.PlatformOptionBasicStrategy }
 }
 
-%op PlatformOption PluginOption(Name:String, AltName:String, Description:String, Value:PlatformValue, AttrName:String) {
-  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption }
-  get_slot(Name, t) { t.getName() }
-  get_slot(AltName, t) { t.getAltName() }
-  get_slot(Description, t) { t.getDescription() }
-  get_slot(Value, t) { t.getValue() }
-  get_slot(AttrName, t) { t.getAttrName() }
-  make(t0, t1, t2, t3, t4) { tom.platform.adt.platformoption.types.platformoption.PluginOption.make(t0, t1, t2, t3, t4)}
+%op PlatformValue BooleanValue(BooleanValue:PlatformBoolean) {
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue }
+  get_slot(BooleanValue, t) { t.getBooleanValue() }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make(t0)}
+}
+
+%op PlatformValue StringValue(StringValue:String) {
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformvalue.StringValue }
+  get_slot(StringValue, t) { t.getStringValue() }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.StringValue.make(t0)}
+}
+
+%op PlatformValue IntegerValue(IntegerValue:int) {
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformvalue.IntegerValue }
+  get_slot(IntegerValue, t) { t.getIntegerValue() }
+  make(t0) { tom.platform.adt.platformoption.types.platformvalue.IntegerValue.make(t0)}
 }
 
 %op PlatformOptionList EmptyconcPlatformOption() {
@@ -65,22 +73,14 @@
   make() { tom.platform.adt.platformoption.types.platformboolean.False.make()}
 }
 
-%op PlatformValue BooleanValue(BooleanValue:PlatformBoolean) {
-  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformvalue.BooleanValue }
-  get_slot(BooleanValue, t) { t.getBooleanValue() }
-  make(t0) { tom.platform.adt.platformoption.types.platformvalue.BooleanValue.make(t0)}
-}
-
-%op PlatformValue StringValue(StringValue:String) {
-  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformvalue.StringValue }
-  get_slot(StringValue, t) { t.getStringValue() }
-  make(t0) { tom.platform.adt.platformoption.types.platformvalue.StringValue.make(t0)}
-}
-
-%op PlatformValue IntegerValue(IntegerValue:int) {
-  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformvalue.IntegerValue }
-  get_slot(IntegerValue, t) { t.getIntegerValue() }
-  make(t0) { tom.platform.adt.platformoption.types.platformvalue.IntegerValue.make(t0)}
+%op PlatformOption PluginOption(Name:String, AltName:String, Description:String, Value:PlatformValue, AttrName:String) {
+  is_fsym(t) { t instanceof tom.platform.adt.platformoption.types.platformoption.PluginOption }
+  get_slot(Name, t) { t.getName() }
+  get_slot(AltName, t) { t.getAltName() }
+  get_slot(Description, t) { t.getDescription() }
+  get_slot(Value, t) { t.getValue() }
+  get_slot(AttrName, t) { t.getAttrName() }
+  make(t0, t1, t2, t3, t4) { tom.platform.adt.platformoption.types.platformoption.PluginOption.make(t0, t1, t2, t3, t4)}
 }
 
 

@@ -252,7 +252,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   private String genNonBuiltin() {
     String out = "";
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           out += "true, ";
         } else {
@@ -270,7 +270,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   private int nonBuiltinChildCount() {
     int count = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           count++;
         }

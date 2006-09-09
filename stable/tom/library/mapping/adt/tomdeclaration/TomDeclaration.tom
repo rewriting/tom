@@ -20,15 +20,15 @@
 }
 
 
-%typeterm TomTypeDefinition {
-  implement { tom.engine.adt.tomtype.types.TomTypeDefinition }
+%typeterm TomForwardType {
+  implement { tom.engine.adt.tomtype.types.TomForwardType }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
 
 
-%typeterm TomForwardType {
-  implement { tom.engine.adt.tomtype.types.TomForwardType }
+%typeterm TomTypeDefinition {
+  implement { tom.engine.adt.tomtype.types.TomTypeDefinition }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -48,34 +48,6 @@
 }
 
 
-%typeterm TomVisit {
-  implement { tom.engine.adt.tomsignature.types.TomVisit }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
-}
-
-
-%typeterm TomRuleList {
-  implement { tom.engine.adt.tomsignature.types.TomRuleList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
-}
-
-
-%typeterm TomRule {
-  implement { tom.engine.adt.tomsignature.types.TomRule }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
-}
-
-
-%typeterm TomVisitList {
-  implement { tom.engine.adt.tomsignature.types.TomVisitList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
-}
-
-
 %typeterm TomSymbolList {
   implement { tom.engine.adt.tomsignature.types.TomSymbolList }
   equals(t1,t2) { t1.equals(t2) }
@@ -90,13 +62,6 @@
 }
 
 
-%typeterm Position {
-  implement { tom.engine.adt.tomsignature.types.Position }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
-}
-
-
 %typeterm TomEntry {
   implement { tom.engine.adt.tomsignature.types.TomEntry }
   equals(t1,t2) { t1.equals(t2) }
@@ -104,22 +69,8 @@
 }
 
 
-%typeterm TomSymbol {
-  implement { tom.engine.adt.tomsignature.types.TomSymbol }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
-}
-
-
-%typeterm KeyEntry {
-  implement { tom.engine.adt.tomsignature.types.KeyEntry }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
-}
-
-
-%typeterm TomEntryList {
-  implement { tom.engine.adt.tomsignature.types.TomEntryList }
+%typeterm TomRuleList {
+  implement { tom.engine.adt.tomsignature.types.TomRuleList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -132,6 +83,27 @@
 }
 
 
+%typeterm Position {
+  implement { tom.engine.adt.tomsignature.types.Position }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
+}
+
+
+%typeterm TomEntryList {
+  implement { tom.engine.adt.tomsignature.types.TomEntryList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
+}
+
+
+%typeterm TomVisitList {
+  implement { tom.engine.adt.tomsignature.types.TomVisitList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
+}
+
+
 %typeterm TomSymbolTable {
   implement { tom.engine.adt.tomsignature.types.TomSymbolTable }
   equals(t1,t2) { t1.equals(t2) }
@@ -139,8 +111,43 @@
 }
 
 
+%typeterm TomSymbol {
+  implement { tom.engine.adt.tomsignature.types.TomSymbol }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
+}
+
+
+%typeterm TomRule {
+  implement { tom.engine.adt.tomsignature.types.TomRule }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
+}
+
+
+%typeterm KeyEntry {
+  implement { tom.engine.adt.tomsignature.types.KeyEntry }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
+}
+
+
+%typeterm TomVisit {
+  implement { tom.engine.adt.tomsignature.types.TomVisit }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
+}
+
+
 %typeterm TomNumber {
   implement { tom.engine.adt.tomname.types.TomNumber }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
+}
+
+
+%typeterm TomNameList {
+  implement { tom.engine.adt.tomname.types.TomNameList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -155,13 +162,6 @@
 
 %typeterm TomName {
   implement { tom.engine.adt.tomname.types.TomName }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
-}
-
-
-%typeterm TomNameList {
-  implement { tom.engine.adt.tomname.types.TomNameList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -202,15 +202,15 @@
 }
 
 
-%typeterm Constraint {
-  implement { tom.engine.adt.tomconstraint.types.Constraint }
+%typeterm ConstraintList {
+  implement { tom.engine.adt.tomconstraint.types.ConstraintList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
 
 
-%typeterm ConstraintList {
-  implement { tom.engine.adt.tomconstraint.types.ConstraintList }
+%typeterm Constraint {
+  implement { tom.engine.adt.tomconstraint.types.Constraint }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -230,8 +230,8 @@
 }
 
 
-%typeterm PatternInstructionList {
-  implement { tom.engine.adt.tomterm.types.PatternInstructionList }
+%typeterm TomList {
+  implement { tom.engine.adt.tomterm.types.TomList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -239,6 +239,13 @@
 
 %typeterm TomTerm {
   implement { tom.engine.adt.tomterm.types.TomTerm }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
+}
+
+
+%typeterm PatternInstructionList {
+  implement { tom.engine.adt.tomterm.types.PatternInstructionList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -258,13 +265,6 @@
 }
 
 
-%typeterm TomList {
-  implement { tom.engine.adt.tomterm.types.TomList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
-}
-
-
 %typeterm PatternList {
   implement { tom.engine.adt.tomterm.types.PatternList }
   equals(t1,t2) { t1.equals(t2) }
@@ -272,8 +272,8 @@
 }
 
 
-%typeterm Slot {
-  implement { tom.engine.adt.tomslot.types.Slot }
+%typeterm SlotList {
+  implement { tom.engine.adt.tomslot.types.SlotList }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -293,8 +293,8 @@
 }
 
 
-%typeterm SlotList {
-  implement { tom.engine.adt.tomslot.types.SlotList }
+%typeterm Slot {
+  implement { tom.engine.adt.tomslot.types.Slot }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -485,13 +485,6 @@
   make(t0, t1) { tom.engine.adt.tominstruction.types.instructionlist.ConsconcInstruction.make(t0, t1)}
 }
 
-%op TomTypeDefinition TypeDefinition(TomType:TomType, Forward:TomForwardType) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomtype.types.tomtypedefinition.TypeDefinition }
-  get_slot(TomType, t) { t.getTomType() }
-  get_slot(Forward, t) { t.getForward() }
-  make(t0, t1) { tom.engine.adt.tomtype.types.tomtypedefinition.TypeDefinition.make(t0, t1)}
-}
-
 %op TomForwardType EmptyForward() {
   is_fsym(t) { t instanceof tom.engine.adt.tomtype.types.tomforwardtype.EmptyForward }
   make() { tom.engine.adt.tomtype.types.tomforwardtype.EmptyForward.make()}
@@ -501,6 +494,13 @@
   is_fsym(t) { t instanceof tom.engine.adt.tomtype.types.tomforwardtype.TLForward }
   get_slot(String, t) { t.getString() }
   make(t0) { tom.engine.adt.tomtype.types.tomforwardtype.TLForward.make(t0)}
+}
+
+%op TomTypeDefinition TypeDefinition(TomType:TomType, Forward:TomForwardType) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomtype.types.tomtypedefinition.TypeDefinition }
+  get_slot(TomType, t) { t.getTomType() }
+  get_slot(Forward, t) { t.getForward() }
+  make(t0, t1) { tom.engine.adt.tomtype.types.tomtypedefinition.TypeDefinition.make(t0, t1)}
 }
 
 %op TomTypeList EmptyconcTomType() {
@@ -564,47 +564,6 @@
   make(t0, t1) { tom.engine.adt.tomtype.types.tomtype.Type.make(t0, t1)}
 }
 
-%op TomVisit VisitTerm(VNode:TomType, AstPatternInstructionList:PatternInstructionList, Option:OptionList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomvisit.VisitTerm }
-  get_slot(VNode, t) { t.getVNode() }
-  get_slot(AstPatternInstructionList, t) { t.getAstPatternInstructionList() }
-  get_slot(Option, t) { t.getOption() }
-  make(t0, t1, t2) { tom.engine.adt.tomsignature.types.tomvisit.VisitTerm.make(t0, t1, t2)}
-}
-
-%op TomRuleList EmptyconcTomRule() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomrulelist.EmptyconcTomRule }
-  make() { tom.engine.adt.tomsignature.types.tomrulelist.EmptyconcTomRule.make()}
-}
-
-%op TomRuleList ConsconcTomRule(HeadconcTomRule:TomRule, TailconcTomRule:TomRuleList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomrulelist.ConsconcTomRule }
-  get_slot(HeadconcTomRule, t) { t.getHeadconcTomRule() }
-  get_slot(TailconcTomRule, t) { t.getTailconcTomRule() }
-  make(t0, t1) { tom.engine.adt.tomsignature.types.tomrulelist.ConsconcTomRule.make(t0, t1)}
-}
-
-%op TomRule RewriteRule(Lhs:TomTerm, Rhs:TomTerm, CondList:InstructionList, Option:OptionList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomrule.RewriteRule }
-  get_slot(Lhs, t) { t.getLhs() }
-  get_slot(Rhs, t) { t.getRhs() }
-  get_slot(CondList, t) { t.getCondList() }
-  get_slot(Option, t) { t.getOption() }
-  make(t0, t1, t2, t3) { tom.engine.adt.tomsignature.types.tomrule.RewriteRule.make(t0, t1, t2, t3)}
-}
-
-%op TomVisitList EmptyconcTomVisit() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit }
-  make() { tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit.make()}
-}
-
-%op TomVisitList ConsconcTomVisit(HeadconcTomVisit:TomVisit, TailconcTomVisit:TomVisitList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit }
-  get_slot(HeadconcTomVisit, t) { t.getHeadconcTomVisit() }
-  get_slot(TailconcTomVisit, t) { t.getTailconcTomVisit() }
-  make(t0, t1) { tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit.make(t0, t1)}
-}
-
 %op TomSymbolList EmptyconcTomSymbol() {
   is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomsymbollist.EmptyconcTomSymbol }
   make() { tom.engine.adt.tomsignature.types.tomsymbollist.EmptyconcTomSymbol.make()}
@@ -623,13 +582,6 @@
   make(t0) { tom.engine.adt.tomsignature.types.tomstructuretable.StructTable.make(t0)}
 }
 
-%op Position TextPosition(Line:int, Column:int) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.position.TextPosition }
-  get_slot(Line, t) { t.getLine() }
-  get_slot(Column, t) { t.getColumn() }
-  make(t0, t1) { tom.engine.adt.tomsignature.types.position.TextPosition.make(t0, t1)}
-}
-
 %op TomEntry Entry(StrName:String, AstSymbol:TomSymbol) {
   is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomentry.Entry }
   get_slot(StrName, t) { t.getStrName() }
@@ -637,48 +589,16 @@
   make(t0, t1) { tom.engine.adt.tomsignature.types.tomentry.Entry.make(t0, t1)}
 }
 
-%op TomSymbol emptySymbol() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomsymbol.emptySymbol }
-  make() { tom.engine.adt.tomsignature.types.tomsymbol.emptySymbol.make()}
+%op TomRuleList EmptyconcTomRule() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomrulelist.EmptyconcTomRule }
+  make() { tom.engine.adt.tomsignature.types.tomrulelist.EmptyconcTomRule.make()}
 }
 
-%op TomSymbol Symbol(AstName:TomName, TypesToType:TomType, PairNameDeclList:PairNameDeclList, Option:OptionList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol }
-  get_slot(AstName, t) { t.getAstName() }
-  get_slot(TypesToType, t) { t.getTypesToType() }
-  get_slot(PairNameDeclList, t) { t.getPairNameDeclList() }
-  get_slot(Option, t) { t.getOption() }
-  make(t0, t1, t2, t3) { tom.engine.adt.tomsignature.types.tomsymbol.Symbol.make(t0, t1, t2, t3)}
-}
-
-%op KeyEntry UsedSymbolConstructor(Symbol:TomSymbol) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedSymbolConstructor }
-  get_slot(Symbol, t) { t.getSymbol() }
-  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedSymbolConstructor.make(t0)}
-}
-
-%op KeyEntry UsedSymbolDestructor(Symbol:TomSymbol) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedSymbolDestructor }
-  get_slot(Symbol, t) { t.getSymbol() }
-  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedSymbolDestructor.make(t0)}
-}
-
-%op KeyEntry UsedTypeDefinition(Typedef:TomTypeDefinition) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedTypeDefinition }
-  get_slot(Typedef, t) { t.getTypedef() }
-  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedTypeDefinition.make(t0)}
-}
-
-%op TomEntryList EmptyconcTomEntry() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomentrylist.EmptyconcTomEntry }
-  make() { tom.engine.adt.tomsignature.types.tomentrylist.EmptyconcTomEntry.make()}
-}
-
-%op TomEntryList ConsconcTomEntry(HeadconcTomEntry:TomEntry, TailconcTomEntry:TomEntryList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomentrylist.ConsconcTomEntry }
-  get_slot(HeadconcTomEntry, t) { t.getHeadconcTomEntry() }
-  get_slot(TailconcTomEntry, t) { t.getTailconcTomEntry() }
-  make(t0, t1) { tom.engine.adt.tomsignature.types.tomentrylist.ConsconcTomEntry.make(t0, t1)}
+%op TomRuleList ConsconcTomRule(HeadconcTomRule:TomRule, TailconcTomRule:TomRuleList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomrulelist.ConsconcTomRule }
+  get_slot(HeadconcTomRule, t) { t.getHeadconcTomRule() }
+  get_slot(TailconcTomRule, t) { t.getTailconcTomRule() }
+  make(t0, t1) { tom.engine.adt.tomsignature.types.tomrulelist.ConsconcTomRule.make(t0, t1)}
 }
 
 %op TargetLanguage TL(Code:String, Start:Position, End:Position) {
@@ -706,10 +626,90 @@
   make() { tom.engine.adt.tomsignature.types.targetlanguage.noTL.make()}
 }
 
+%op Position TextPosition(Line:int, Column:int) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.position.TextPosition }
+  get_slot(Line, t) { t.getLine() }
+  get_slot(Column, t) { t.getColumn() }
+  make(t0, t1) { tom.engine.adt.tomsignature.types.position.TextPosition.make(t0, t1)}
+}
+
+%op TomEntryList EmptyconcTomEntry() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomentrylist.EmptyconcTomEntry }
+  make() { tom.engine.adt.tomsignature.types.tomentrylist.EmptyconcTomEntry.make()}
+}
+
+%op TomEntryList ConsconcTomEntry(HeadconcTomEntry:TomEntry, TailconcTomEntry:TomEntryList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomentrylist.ConsconcTomEntry }
+  get_slot(HeadconcTomEntry, t) { t.getHeadconcTomEntry() }
+  get_slot(TailconcTomEntry, t) { t.getTailconcTomEntry() }
+  make(t0, t1) { tom.engine.adt.tomsignature.types.tomentrylist.ConsconcTomEntry.make(t0, t1)}
+}
+
+%op TomVisitList EmptyconcTomVisit() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit }
+  make() { tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit.make()}
+}
+
+%op TomVisitList ConsconcTomVisit(HeadconcTomVisit:TomVisit, TailconcTomVisit:TomVisitList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit }
+  get_slot(HeadconcTomVisit, t) { t.getHeadconcTomVisit() }
+  get_slot(TailconcTomVisit, t) { t.getTailconcTomVisit() }
+  make(t0, t1) { tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit.make(t0, t1)}
+}
+
 %op TomSymbolTable Table(EntryList:TomEntryList) {
   is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomsymboltable.Table }
   get_slot(EntryList, t) { t.getEntryList() }
   make(t0) { tom.engine.adt.tomsignature.types.tomsymboltable.Table.make(t0)}
+}
+
+%op TomSymbol emptySymbol() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomsymbol.emptySymbol }
+  make() { tom.engine.adt.tomsignature.types.tomsymbol.emptySymbol.make()}
+}
+
+%op TomSymbol Symbol(AstName:TomName, TypesToType:TomType, PairNameDeclList:PairNameDeclList, Option:OptionList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomsymbol.Symbol }
+  get_slot(AstName, t) { t.getAstName() }
+  get_slot(TypesToType, t) { t.getTypesToType() }
+  get_slot(PairNameDeclList, t) { t.getPairNameDeclList() }
+  get_slot(Option, t) { t.getOption() }
+  make(t0, t1, t2, t3) { tom.engine.adt.tomsignature.types.tomsymbol.Symbol.make(t0, t1, t2, t3)}
+}
+
+%op TomRule RewriteRule(Lhs:TomTerm, Rhs:TomTerm, CondList:InstructionList, Option:OptionList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomrule.RewriteRule }
+  get_slot(Lhs, t) { t.getLhs() }
+  get_slot(Rhs, t) { t.getRhs() }
+  get_slot(CondList, t) { t.getCondList() }
+  get_slot(Option, t) { t.getOption() }
+  make(t0, t1, t2, t3) { tom.engine.adt.tomsignature.types.tomrule.RewriteRule.make(t0, t1, t2, t3)}
+}
+
+%op KeyEntry UsedSymbolConstructor(Symbol:TomSymbol) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedSymbolConstructor }
+  get_slot(Symbol, t) { t.getSymbol() }
+  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedSymbolConstructor.make(t0)}
+}
+
+%op KeyEntry UsedSymbolDestructor(Symbol:TomSymbol) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedSymbolDestructor }
+  get_slot(Symbol, t) { t.getSymbol() }
+  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedSymbolDestructor.make(t0)}
+}
+
+%op KeyEntry UsedTypeDefinition(Typedef:TomTypeDefinition) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.keyentry.UsedTypeDefinition }
+  get_slot(Typedef, t) { t.getTypedef() }
+  make(t0) { tom.engine.adt.tomsignature.types.keyentry.UsedTypeDefinition.make(t0)}
+}
+
+%op TomVisit VisitTerm(VNode:TomType, AstPatternInstructionList:PatternInstructionList, Option:OptionList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomvisit.VisitTerm }
+  get_slot(VNode, t) { t.getVNode() }
+  get_slot(AstPatternInstructionList, t) { t.getAstPatternInstructionList() }
+  get_slot(Option, t) { t.getOption() }
+  make(t0, t1, t2) { tom.engine.adt.tomsignature.types.tomvisit.VisitTerm.make(t0, t1, t2)}
 }
 
 %op TomNumber RuleVar() {
@@ -777,6 +777,18 @@
   make(t0) { tom.engine.adt.tomname.types.tomnumber.MatchNumber.make(t0)}
 }
 
+%op TomNameList EmptyconcTomName() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName }
+  make() { tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make()}
+}
+
+%op TomNameList ConsconcTomName(HeadconcTomName:TomName, TailconcTomName:TomNameList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName }
+  get_slot(HeadconcTomName, t) { t.getHeadconcTomName() }
+  get_slot(TailconcTomName, t) { t.getTailconcTomName() }
+  make(t0, t1) { tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make(t0, t1)}
+}
+
 %op TomNumberList EmptyconcTomNumber() {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber }
   make() { tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make()}
@@ -804,18 +816,6 @@
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomname.Name }
   get_slot(String, t) { t.getString() }
   make(t0) { tom.engine.adt.tomname.types.tomname.Name.make(t0)}
-}
-
-%op TomNameList EmptyconcTomName() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName }
-  make() { tom.engine.adt.tomname.types.tomnamelist.EmptyconcTomName.make()}
-}
-
-%op TomNameList ConsconcTomName(HeadconcTomName:TomName, TailconcTomName:TomNameList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName }
-  get_slot(HeadconcTomName, t) { t.getHeadconcTomName() }
-  get_slot(TailconcTomName, t) { t.getTailconcTomName() }
-  make(t0, t1) { tom.engine.adt.tomname.types.tomnamelist.ConsconcTomName.make(t0, t1)}
 }
 
 %op Declaration AbstractDecl(DeclList:DeclarationList) {
@@ -1239,6 +1239,18 @@
   make(t0, t1) { tom.engine.adt.tomconstraint.types.aconstraintlist.ConsconcAnd.make(t0, t1)}
 }
 
+%op ConstraintList EmptyconcConstraint() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint }
+  make() { tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make()}
+}
+
+%op ConstraintList ConsconcConstraint(HeadconcConstraint:Constraint, TailconcConstraint:ConstraintList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint }
+  get_slot(HeadconcConstraint, t) { t.getHeadconcConstraint() }
+  get_slot(TailconcConstraint, t) { t.getTailconcConstraint() }
+  make(t0, t1) { tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make(t0, t1)}
+}
+
 %op Constraint ForAll(var:TomTerm, cons:Constraint) {
   is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraint.ForAll }
   get_slot(var, t) { t.getvar() }
@@ -1311,18 +1323,6 @@
   is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraint.Ensure }
   get_slot(Variable, t) { t.getVariable() }
   make(t0) { tom.engine.adt.tomconstraint.types.constraint.Ensure.make(t0)}
-}
-
-%op ConstraintList EmptyconcConstraint() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint }
-  make() { tom.engine.adt.tomconstraint.types.constraintlist.EmptyconcConstraint.make()}
-}
-
-%op ConstraintList ConsconcConstraint(HeadconcConstraint:Constraint, TailconcConstraint:ConstraintList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint }
-  get_slot(HeadconcConstraint, t) { t.getHeadconcConstraint() }
-  get_slot(TailconcConstraint, t) { t.getTailconcConstraint() }
-  make(t0, t1) { tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make(t0, t1)}
 }
 
 %op Option noOption() {
@@ -1417,16 +1417,16 @@
   make(t0, t1) { tom.engine.adt.tomoption.types.optionlist.ConsconcOption.make(t0, t1)}
 }
 
-%op PatternInstructionList EmptyconcPatternInstruction() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.patterninstructionlist.EmptyconcPatternInstruction }
-  make() { tom.engine.adt.tomterm.types.patterninstructionlist.EmptyconcPatternInstruction.make()}
+%op TomList EmptyconcTomTerm() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm }
+  make() { tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make()}
 }
 
-%op PatternInstructionList ConsconcPatternInstruction(HeadconcPatternInstruction:PatternInstruction, TailconcPatternInstruction:PatternInstructionList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.patterninstructionlist.ConsconcPatternInstruction }
-  get_slot(HeadconcPatternInstruction, t) { t.getHeadconcPatternInstruction() }
-  get_slot(TailconcPatternInstruction, t) { t.getTailconcPatternInstruction() }
-  make(t0, t1) { tom.engine.adt.tomterm.types.patterninstructionlist.ConsconcPatternInstruction.make(t0, t1)}
+%op TomList ConsconcTomTerm(HeadconcTomTerm:TomTerm, TailconcTomTerm:TomList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm }
+  get_slot(HeadconcTomTerm, t) { t.getHeadconcTomTerm() }
+  get_slot(TailconcTomTerm, t) { t.getTailconcTomTerm() }
+  make(t0, t1) { tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(t0, t1)}
 }
 
 %op TomTerm BuildAppendArray(AstName:TomName, HeadTerm:TomTerm, TailTerm:TomTerm) {
@@ -1693,6 +1693,18 @@
   make(t0, t1, t2, t3) { tom.engine.adt.tomterm.types.tomterm.TermAppl.make(t0, t1, t2, t3)}
 }
 
+%op PatternInstructionList EmptyconcPatternInstruction() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.patterninstructionlist.EmptyconcPatternInstruction }
+  make() { tom.engine.adt.tomterm.types.patterninstructionlist.EmptyconcPatternInstruction.make()}
+}
+
+%op PatternInstructionList ConsconcPatternInstruction(HeadconcPatternInstruction:PatternInstruction, TailconcPatternInstruction:PatternInstructionList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.patterninstructionlist.ConsconcPatternInstruction }
+  get_slot(HeadconcPatternInstruction, t) { t.getHeadconcPatternInstruction() }
+  get_slot(TailconcPatternInstruction, t) { t.getTailconcPatternInstruction() }
+  make(t0, t1) { tom.engine.adt.tomterm.types.patterninstructionlist.ConsconcPatternInstruction.make(t0, t1)}
+}
+
 %op PatternInstruction PatternInstruction(Pattern:Pattern, Action:Instruction, Option:OptionList) {
   is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.patterninstruction.PatternInstruction }
   get_slot(Pattern, t) { t.getPattern() }
@@ -1709,18 +1721,6 @@
   make(t0, t1, t2) { tom.engine.adt.tomterm.types.pattern.Pattern.make(t0, t1, t2)}
 }
 
-%op TomList EmptyconcTomTerm() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm }
-  make() { tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make()}
-}
-
-%op TomList ConsconcTomTerm(HeadconcTomTerm:TomTerm, TailconcTomTerm:TomList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm }
-  get_slot(HeadconcTomTerm, t) { t.getHeadconcTomTerm() }
-  get_slot(TailconcTomTerm, t) { t.getTailconcTomTerm() }
-  make(t0, t1) { tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm.make(t0, t1)}
-}
-
 %op PatternList EmptyconcPattern() {
   is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.patternlist.EmptyconcPattern }
   make() { tom.engine.adt.tomterm.types.patternlist.EmptyconcPattern.make()}
@@ -1733,11 +1733,16 @@
   make(t0, t1) { tom.engine.adt.tomterm.types.patternlist.ConsconcPattern.make(t0, t1)}
 }
 
-%op Slot PairSlotAppl(SlotName:TomName, Appl:TomTerm) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl }
-  get_slot(SlotName, t) { t.getSlotName() }
-  get_slot(Appl, t) { t.getAppl() }
-  make(t0, t1) { tom.engine.adt.tomslot.types.slot.PairSlotAppl.make(t0, t1)}
+%op SlotList EmptyconcSlot() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot }
+  make() { tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make()}
+}
+
+%op SlotList ConsconcSlot(HeadconcSlot:Slot, TailconcSlot:SlotList) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot }
+  get_slot(HeadconcSlot, t) { t.getHeadconcSlot() }
+  get_slot(TailconcSlot, t) { t.getTailconcSlot() }
+  make(t0, t1) { tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make(t0, t1)}
 }
 
 %op PairNameDeclList EmptyconcPairNameDecl() {
@@ -1759,16 +1764,11 @@
   make(t0, t1) { tom.engine.adt.tomslot.types.pairnamedecl.PairNameDecl.make(t0, t1)}
 }
 
-%op SlotList EmptyconcSlot() {
-  is_fsym(t) { t instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot }
-  make() { tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make()}
-}
-
-%op SlotList ConsconcSlot(HeadconcSlot:Slot, TailconcSlot:SlotList) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot }
-  get_slot(HeadconcSlot, t) { t.getHeadconcSlot() }
-  get_slot(TailconcSlot, t) { t.getTailconcSlot() }
-  make(t0, t1) { tom.engine.adt.tomslot.types.slotlist.ConsconcSlot.make(t0, t1)}
+%op Slot PairSlotAppl(SlotName:TomName, Appl:TomTerm) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomslot.types.slot.PairSlotAppl }
+  get_slot(SlotName, t) { t.getSlotName() }
+  get_slot(Appl, t) { t.getAppl() }
+  make(t0, t1) { tom.engine.adt.tomslot.types.slot.PairSlotAppl.make(t0, t1)}
 }
 
 
@@ -1790,24 +1790,6 @@
   is_empty(l) { l.isEmptyconcTomType() }
 }
 
-%oplist TomRuleList concTomRule(TomRule*) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomrulelist.ConsconcTomRule || t instanceof tom.engine.adt.tomsignature.types.tomrulelist.EmptyconcTomRule }
-  make_empty() { tom.engine.adt.tomsignature.types.tomrulelist.EmptyconcTomRule.make() }
-  make_insert(e,l) { tom.engine.adt.tomsignature.types.tomrulelist.ConsconcTomRule.make(e,l) }
-  get_head(l) { l.getHeadconcTomRule() }
-  get_tail(l) { l.getTailconcTomRule() }
-  is_empty(l) { l.isEmptyconcTomRule() }
-}
-
-%oplist TomVisitList concTomVisit(TomVisit*) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit || t instanceof tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit }
-  make_empty() { tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit.make() }
-  make_insert(e,l) { tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit.make(e,l) }
-  get_head(l) { l.getHeadconcTomVisit() }
-  get_tail(l) { l.getTailconcTomVisit() }
-  is_empty(l) { l.isEmptyconcTomVisit() }
-}
-
 %oplist TomSymbolList concTomSymbol(TomSymbol*) {
   is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomsymbollist.ConsconcTomSymbol || t instanceof tom.engine.adt.tomsignature.types.tomsymbollist.EmptyconcTomSymbol }
   make_empty() { tom.engine.adt.tomsignature.types.tomsymbollist.EmptyconcTomSymbol.make() }
@@ -1815,6 +1797,15 @@
   get_head(l) { l.getHeadconcTomSymbol() }
   get_tail(l) { l.getTailconcTomSymbol() }
   is_empty(l) { l.isEmptyconcTomSymbol() }
+}
+
+%oplist TomRuleList concTomRule(TomRule*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomrulelist.ConsconcTomRule || t instanceof tom.engine.adt.tomsignature.types.tomrulelist.EmptyconcTomRule }
+  make_empty() { tom.engine.adt.tomsignature.types.tomrulelist.EmptyconcTomRule.make() }
+  make_insert(e,l) { tom.engine.adt.tomsignature.types.tomrulelist.ConsconcTomRule.make(e,l) }
+  get_head(l) { l.getHeadconcTomRule() }
+  get_tail(l) { l.getTailconcTomRule() }
+  is_empty(l) { l.isEmptyconcTomRule() }
 }
 
 %oplist TomEntryList concTomEntry(TomEntry*) {
@@ -1826,13 +1817,13 @@
   is_empty(l) { l.isEmptyconcTomEntry() }
 }
 
-%oplist TomNumberList concTomNumber(TomNumber*) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber || t instanceof tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber }
-  make_empty() { tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make() }
-  make_insert(e,l) { tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber.make(e,l) }
-  get_head(l) { l.getHeadconcTomNumber() }
-  get_tail(l) { l.getTailconcTomNumber() }
-  is_empty(l) { l.isEmptyconcTomNumber() }
+%oplist TomVisitList concTomVisit(TomVisit*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit || t instanceof tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit }
+  make_empty() { tom.engine.adt.tomsignature.types.tomvisitlist.EmptyconcTomVisit.make() }
+  make_insert(e,l) { tom.engine.adt.tomsignature.types.tomvisitlist.ConsconcTomVisit.make(e,l) }
+  get_head(l) { l.getHeadconcTomVisit() }
+  get_tail(l) { l.getTailconcTomVisit() }
+  is_empty(l) { l.isEmptyconcTomVisit() }
 }
 
 %oplist TomNameList concTomName(TomName*) {
@@ -1842,6 +1833,15 @@
   get_head(l) { l.getHeadconcTomName() }
   get_tail(l) { l.getTailconcTomName() }
   is_empty(l) { l.isEmptyconcTomName() }
+}
+
+%oplist TomNumberList concTomNumber(TomNumber*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber || t instanceof tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber }
+  make_empty() { tom.engine.adt.tomname.types.tomnumberlist.EmptyconcTomNumber.make() }
+  make_insert(e,l) { tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber.make(e,l) }
+  get_head(l) { l.getHeadconcTomNumber() }
+  get_tail(l) { l.getTailconcTomNumber() }
+  is_empty(l) { l.isEmptyconcTomNumber() }
 }
 
 %oplist DeclarationList concDeclaration(Declaration*) {
@@ -1889,15 +1889,6 @@
   is_empty(l) { l.isEmptyconcOption() }
 }
 
-%oplist PatternInstructionList concPatternInstruction(PatternInstruction*) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.patterninstructionlist.ConsconcPatternInstruction || t instanceof tom.engine.adt.tomterm.types.patterninstructionlist.EmptyconcPatternInstruction }
-  make_empty() { tom.engine.adt.tomterm.types.patterninstructionlist.EmptyconcPatternInstruction.make() }
-  make_insert(e,l) { tom.engine.adt.tomterm.types.patterninstructionlist.ConsconcPatternInstruction.make(e,l) }
-  get_head(l) { l.getHeadconcPatternInstruction() }
-  get_tail(l) { l.getTailconcPatternInstruction() }
-  is_empty(l) { l.isEmptyconcPatternInstruction() }
-}
-
 %oplist TomList concTomTerm(TomTerm*) {
   is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.tomlist.ConsconcTomTerm || t instanceof tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm }
   make_empty() { tom.engine.adt.tomterm.types.tomlist.EmptyconcTomTerm.make() }
@@ -1905,6 +1896,15 @@
   get_head(l) { l.getHeadconcTomTerm() }
   get_tail(l) { l.getTailconcTomTerm() }
   is_empty(l) { l.isEmptyconcTomTerm() }
+}
+
+%oplist PatternInstructionList concPatternInstruction(PatternInstruction*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.patterninstructionlist.ConsconcPatternInstruction || t instanceof tom.engine.adt.tomterm.types.patterninstructionlist.EmptyconcPatternInstruction }
+  make_empty() { tom.engine.adt.tomterm.types.patterninstructionlist.EmptyconcPatternInstruction.make() }
+  make_insert(e,l) { tom.engine.adt.tomterm.types.patterninstructionlist.ConsconcPatternInstruction.make(e,l) }
+  get_head(l) { l.getHeadconcPatternInstruction() }
+  get_tail(l) { l.getTailconcPatternInstruction() }
+  is_empty(l) { l.isEmptyconcPatternInstruction() }
 }
 
 %oplist PatternList concPattern(Pattern*) {
@@ -1916,15 +1916,6 @@
   is_empty(l) { l.isEmptyconcPattern() }
 }
 
-%oplist PairNameDeclList concPairNameDecl(PairNameDecl*) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl || t instanceof tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl }
-  make_empty() { tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl.make() }
-  make_insert(e,l) { tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl.make(e,l) }
-  get_head(l) { l.getHeadconcPairNameDecl() }
-  get_tail(l) { l.getTailconcPairNameDecl() }
-  is_empty(l) { l.isEmptyconcPairNameDecl() }
-}
-
 %oplist SlotList concSlot(Slot*) {
   is_fsym(t) { t instanceof tom.engine.adt.tomslot.types.slotlist.ConsconcSlot || t instanceof tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot }
   make_empty() { tom.engine.adt.tomslot.types.slotlist.EmptyconcSlot.make() }
@@ -1932,4 +1923,13 @@
   get_head(l) { l.getHeadconcSlot() }
   get_tail(l) { l.getTailconcSlot() }
   is_empty(l) { l.isEmptyconcSlot() }
+}
+
+%oplist PairNameDeclList concPairNameDecl(PairNameDecl*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl || t instanceof tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl }
+  make_empty() { tom.engine.adt.tomslot.types.pairnamedecllist.EmptyconcPairNameDecl.make() }
+  make_insert(e,l) { tom.engine.adt.tomslot.types.pairnamedecllist.ConsconcPairNameDecl.make(e,l) }
+  get_head(l) { l.getHeadconcPairNameDecl() }
+  get_tail(l) { l.getTailconcPairNameDecl() }
+  is_empty(l) { l.isEmptyconcPairNameDecl() }
 }

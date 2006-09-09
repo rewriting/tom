@@ -95,9 +95,9 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage fileNotFound          =
       new TomMessage("File ''{0}'' not found");
   public static final TomMessage tokenStreamException  =
-      new TomMessage("TokenStreamException catched: See stacktrace\n\n{0}");
+      new TomMessage("TokenStreamException catched: {0}");
   public static final TomMessage recognitionException  =
-      new TomMessage("RecognitionException catched: See stacktrace\n\n{0}");
+      new TomMessage("RecognitionException catched: {0}");
   // parser.TomParser
   // TODO : simplify the message in using PlatformLogRecord with detail
   // As these messages are propagated via an exception in TomLanguage.g.t, it is not trivial
@@ -162,7 +162,7 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Rule right hand side uses an undeclared variable ''{0}''");
   
   public static final TomMessage illegalAnnotationInAntiPattern=
-      new TomMessage("It is forbidden to annotate a symbol preceded by an anti or to make annotations after an anti symbol");  
+      new TomMessage("It is forbidden to annotate a symbol preceded by an anti or to make annotations under an anti symbol");  
   
   // compiler
   public static final TomMessage errorMissingSlotDecl=

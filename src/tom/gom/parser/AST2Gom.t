@@ -180,10 +180,10 @@ public class AST2Gom{
         return `Production(getId(name),getFieldList(fieldlist*),getGomType(type));
       }
       COLON(NodeInfo(code,_,_),(id,hook)) -> {
-        return `Hook(KindOperator(),getId(id),getHookkind(hook),getHookarg(hook),code);
+        return `Hook(KindOperator(),getId(id),getHookKind(hook),getHookarg(hook),code);
       }
       COLON(NodeInfo(code,_,_),(idType,id,hook)) -> {
-        return `Hook(getIdkind(idType),getId(id),getHookkind(hook),concArg(),code);
+        return `Hook(getIdkind(idType),getId(id),getHookKind(hook),concArg(),code);
       }
 
     }
@@ -289,7 +289,7 @@ public class AST2Gom{
     throw new GomRuntimeException("Unable to translate: " + t);
   }
 
-  private static Hookkind getHookkind(ATerm t) {
+  private static HookKind getHookKind(ATerm t) {
     %match(ATerm t){
       MAKE[] ->{
         return `KindMakeHook();

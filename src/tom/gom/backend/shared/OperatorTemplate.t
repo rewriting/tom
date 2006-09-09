@@ -297,7 +297,7 @@ writer.write(%[
 
   private void generateMembers(java.io.Writer writer) throws java.io.IOException {
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domainClass],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domainClass],_*) -> {
         writer.write("  private ");
         writer.write(fullClassName(`domainClass));
         writer.write(" ");
@@ -309,7 +309,7 @@ writer.write(%[
 
   private void generateMembersInit(java.io.Writer writer) throws java.io.IOException {
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         writer.write("    this.");
         writer.write(fieldName(`fieldName));
         writer.write(" = ");
@@ -329,7 +329,7 @@ writer.write(%[
       slots = slots.getTailconcSlotField();
       writer.write(%[
   public @slotDomain(head)@ @getMethod(head)@() {
-    return @fieldName(head.getname())@;
+    return @fieldName(head.getName())@;
   }
       
   public @fullClassName(sortName)@ @setMethod(head)@(@slotDomain(head)@ set_arg) {
@@ -354,7 +354,7 @@ writer.write(%[
 
   private void toATermSlotField(StringBuffer res, SlotField slot) {
     %match(SlotField slot) {
-      SlotField[domain=domain] -> {
+      SlotField[Domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res.append(getMethod(slot));
           res.append("().toATerm()");
@@ -412,7 +412,7 @@ writer.write(%[
   }
   private void fromATermSlotField(StringBuffer buffer, SlotField slot, String appl, int index) {
     %match(SlotField slot) {
-      SlotField[domain=domain] -> {
+      SlotField[Domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           buffer.append(fullClassName(`domain));
           buffer.append(".fromTerm(");
@@ -452,7 +452,7 @@ writer.write(%[
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
-        SlotField[name=name, domain=domain] -> {
+        SlotField[Name=name, Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");
           }
@@ -470,7 +470,7 @@ writer.write(%[
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
-        SlotField[name=name, domain=domain] -> {
+        SlotField[Name=name, Domain=domain] -> {
           if (res.length()!=0) {
             res.append(", ");
           }
@@ -488,7 +488,7 @@ writer.write(%[
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
-        SlotField[name=name] -> {
+        SlotField[Name=name] -> {
           if (res.length()!=0) {
             res.append(", ");
           }
@@ -505,7 +505,7 @@ writer.write(%[
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
-        SlotField[name=name] -> {
+        SlotField[Name=name] -> {
           if (res.length()!=0) {
             res.append(", ");
           }
@@ -525,7 +525,7 @@ writer.write(%[
     res.append(%[
       return ]%);
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName],_*) -> {
         res.append(fieldName(`fieldName));
         res.append("==");
         res.append(peer);
@@ -540,7 +540,7 @@ writer.write(%[
   private int nonBuiltinChildCount() {
     int count = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           count++;
         }
@@ -553,7 +553,7 @@ writer.write(%[
     StringBuffer res = new StringBuffer();
     int index = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res.append("      case ");
           res.append(index);
@@ -573,7 +573,7 @@ writer.write(%[
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
       %match(SlotField head) {
-        SlotField[domain=domain,name=name] -> {
+        SlotField[Domain=domain,Name=name] -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           if (res.length()!=0) {
             res.append(", ");
@@ -592,7 +592,7 @@ writer.write(%[
     int index = 0;
     int fullindex = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,slot@SlotField[domain=domain],_*) -> {
+      concSlotField(_*,slot@SlotField[Domain=domain],_*) -> {
         if(fullindex>0) { res.append(", "); }
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res.append("(");
@@ -617,7 +617,7 @@ writer.write(%[
     StringBuffer res = new StringBuffer();
     int index = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res.append("      case "+index+": return make("+generateMakeArgsFor(index, argName)+");\n");
           index++;
@@ -631,7 +631,7 @@ writer.write(%[
     int index = 0;
     int fullindex = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,slot@SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,slot@SlotField[Name=fieldName,Domain=domain],_*) -> {
         if(fullindex>0) { res.append(", "); }
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res.append(getMethod(`slot));
@@ -656,7 +656,7 @@ writer.write(%[
     StringBuffer res = new StringBuffer();
     int fullindex = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,itslot@SlotField[name=fieldName,domain=domain],_*) -> {
+      concSlotField(_*,itslot@SlotField[Name=fieldName,Domain=domain],_*) -> {
         if(fullindex>0) { res.append(", "); }
         if (`itslot == slot) {
           res.append(argName);
@@ -683,7 +683,7 @@ writer.write(%[
 			SlotField head = slots.getHeadconcSlotField();
 			slots = slots.getTailconcSlotField();
 			%match(SlotField head) {
-				SlotField[name=slotName,domain=domain] -> {
+				SlotField[Name=slotName,Domain=domain] -> {
 					if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
 						if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
 							res.append(%[@buffer@.append(@fieldName(`slotName)@);
@@ -716,7 +716,7 @@ writer.write(%[
     res.append(%[@className()@ @other@ = (@className()@) @oldOther@;]%);
     }
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
          if (`domain.equals(`ClassName("","int"))|| `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
            res.append(%[
@@ -755,7 +755,7 @@ writer.write(%[
   private void generateHashArgs(java.io.Writer writer) throws java.io.IOException {
     int index = slotList.length() - 1;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
+      concSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
         int shift = (index % 4) * 8;
         String accum = ""+"aaaabbbbcccc".toCharArray()[index % 12];
         writer.write("    "+accum+" += (");

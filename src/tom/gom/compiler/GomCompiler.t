@@ -71,7 +71,7 @@ public class GomCompiler {
     Iterator it = getModuleDeclSet(sortList).iterator();
     while(it.hasNext()) {
       ModuleDecl moduleDecl = (ModuleDecl) it.next();
-      String moduleName = moduleDecl.getmoduleName().getname();
+      String moduleName = moduleDecl.getModuleName().getName();
 
       /* create an AbstractType class */
       ClassName abstractTypeName = `ClassName(
@@ -100,7 +100,7 @@ public class GomCompiler {
       consum=consum.getTailconcSort();
       // get the class name for the sort
       %match(Sort sort) {
-        Sort[decl=decl@SortDecl[name=sortname,moduleDecl=moduleDecl]] -> {
+        Sort[Decl=decl@SortDecl[Name=sortname,ModuleDecl=moduleDecl]] -> {
           ClassName sortClassName = `ClassName(packagePrefix(moduleDecl)+".types",sortname);
           sortClassNameForSortDecl.put(`decl,sortClassName);
         }
@@ -112,7 +112,7 @@ public class GomCompiler {
       consum=consum.getTailconcSort();
       // get the class name for the sort
       %match(Sort sort) {
-        Sort[decl=sortDecl@SortDecl[moduleDecl=moduleDecl,hooks=sorthooks],operators=oplist] -> {
+        Sort[Decl=sortDecl@SortDecl[ModuleDecl=moduleDecl,Hooks=sorthooks],Operators=oplist] -> {
           ClassName sortClassName = (ClassName)sortClassNameForSortDecl.get(`sortDecl);
           ClassName abstracttypeName = (ClassName)abstractTypeNameForModule.get(`moduleDecl);
           ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDecl);
@@ -125,10 +125,10 @@ public class GomCompiler {
           ClassNameList allOperators = `concClassName();
           %match(OperatorDeclList `oplist) {
             concOperator(_*,
-                         opdecl@OperatorDecl[name=opname,
-                                             sort=SortDecl[name=sortName],
-                                             prod=typedproduction,
-                                             hooks=hookList],
+                         opdecl@OperatorDecl[Name=opname,
+                                             Sort=SortDecl[Name=sortName],
+                                             Prod=typedproduction,
+                                             Hooks=hookList],
                          _*) -> {
               String sortNamePackage = `sortName.toLowerCase();
               ClassName operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
@@ -136,7 +136,7 @@ public class GomCompiler {
               ClassName variadicOpClassName = null;
               ClassName empty = null;
               %match(TypedProduction typedproduction) {
-                Variadic[sort=domain] -> {
+                Variadic[Sort=domain] -> {
                   ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
                   SlotField slotHead = `SlotField("Head"+opname,clsName);
                   SlotField slotTail = `SlotField("Tail"+opname,sortClassName);
@@ -150,7 +150,7 @@ public class GomCompiler {
 
                   allOperators = `concClassName(empty,allOperators*);
                 }
-                Slots(concSlot(_*,Slot[name=slotname,sort=domain],_*)) -> {
+                Slots(concSlot(_*,Slot[Name=slotname,Sort=domain],_*)) -> {
                   ClassName clsName = (ClassName)sortClassNameForSortDecl.get(`domain);
                   SlotField slotfield = `SlotField(slotname,clsName);
                   allSortSlots.add(slotfield);
@@ -216,12 +216,12 @@ public class GomCompiler {
     it = getModuleDeclSet(sortList).iterator();
     while(it.hasNext()) {
       ModuleDecl moduleDecl = (ModuleDecl) it.next();
-      String moduleName = moduleDecl.getmoduleName().getname();
+      String moduleName = moduleDecl.getModuleName().getName();
 
       GomClassList allOperatorClasses = `concGomClass();
       GomClassList allSortClasses = `concGomClass();
       /* TODO improve this part : just for test */
-      ModuleDecl moduleDeclWithoutHooks = `ModuleDecl(moduleDecl.getmoduleName(),moduleDecl.getpkg(),concHookDecl());
+      ModuleDecl moduleDeclWithoutHooks = `ModuleDecl(moduleDecl.getModuleName(),moduleDecl.getPkg(),concHookDecl());
       ModuleDeclList modlist = environment().getModuleDependency(moduleDeclWithoutHooks);
       while(!modlist.isEmptyconcModuleDecl()) {
         ModuleDecl imported = modlist.getHeadconcModuleDecl();
@@ -232,18 +232,18 @@ public class GomCompiler {
           Sort sort = sortconsum.getHeadconcSort();
           sortconsum = sortconsum.getTailconcSort();
           %match(Sort sort) {
-            Sort[decl=sortDecl] -> {
+            Sort[Decl=sortDecl] -> {
               GomClass sortClass = (GomClass) sortGomClassForSortDecl.get(`sortDecl);
               allSortClasses = `concGomClass(sortClass,allSortClasses*);
             }
           }
         }
         %match(SortList moduleSorts) {
-          concSort(_*,Sort[operators=concOperator(_*,opDecl,_*)],_*) -> {
+          concSort(_*,Sort[Operators=concOperator(_*,opDecl,_*)],_*) -> {
             GomClass opClass = (GomClass) classForOperatorDecl.get(`opDecl);
             allOperatorClasses = `concGomClass(opClass,allOperatorClasses*);
             %match(GomClass opClass) {
-              VariadicOperatorClass[empty=emptyClass,cons=consClass] -> {
+              VariadicOperatorClass[Empty=emptyClass,Cons=consClass] -> {
                 allOperatorClasses = `concGomClass(emptyClass,consClass,allOperatorClasses*);
       
               }
@@ -275,7 +275,7 @@ public class GomCompiler {
       ClassNameList classSortList = sortClassNames(sortList);
       ClassName abstractTypeName = (ClassName) abstractTypeNameForModule.get(moduleDecl);
       GomClass abstracttype =
-        `AbstractTypeClass(abstractTypeName,visitorName,classSortList,makeHooksFromHookDecls(moduleDecl.gethooks()));
+        `AbstractTypeClass(abstractTypeName,visitorName,classSortList,makeHooksFromHookDecls(moduleDecl.getHooks()));
       classList = `concGomClass(abstracttype,classList*);
 
       /* create a TomMapping */
@@ -292,7 +292,7 @@ public class GomCompiler {
     ClassNameList classNames = `concClassName();
     %match(SortList sortList) {
       concSort(_*,
-          Sort[decl=SortDecl[name=sortname,moduleDecl=moduledecl]]
+          Sort[Decl=SortDecl[Name=sortname,ModuleDecl=moduledecl]]
           ,_*) -> {
         classNames = `concClassName(ClassName(packagePrefix(moduledecl)+".types",sortname),classNames*);
       }
@@ -333,7 +333,7 @@ public class GomCompiler {
       // Build the sort list for this module
       SortList sorts = `concSort();
       %match(SortList sortList) {
-        concSort(_*,s@Sort[decl=SortDecl[moduleDecl=mod]],_*) -> {
+        concSort(_*,s@Sort[Decl=SortDecl[ModuleDecl=mod]],_*) -> {
           if (`mod.equals(module)) {
             sorts = `concSort(s,sorts*);
           }
@@ -347,7 +347,7 @@ public class GomCompiler {
   private String packagePrefix(ModuleDecl moduleDecl) {
     String pkgPrefix = "";
     %match(ModuleDecl moduleDecl) {
-      ModuleDecl[moduleName=GomModuleName[name=name],pkg=pkgopt] -> {
+      ModuleDecl[ModuleName=GomModuleName[Name=name],Pkg=pkgopt] -> {
         if(!`pkgopt.equals("")) {
           pkgPrefix = `pkgopt + "." + `name;
         } else {
@@ -377,20 +377,20 @@ public class GomCompiler {
         SlotFieldList newArgs = null;
         Hook newHook = null;
         %match(HookDecl `hook) {
-          MakeHookDecl[slotargs=slotArgs,code=hookCode] -> {
+          MakeHookDecl[SlotArgs=slotArgs,Code=hookCode] -> {
             newArgs = makeSlotFieldListFromSlotList(`slotArgs);
             newHook = `MakeHook(newArgs,hookCode);
             if (newArgs == null) {
               throw new GomRuntimeException("Hook declaration "+`hook+" not processed");
             }
           }
-          BlockHookDecl[code=hookCode] -> {
+          BlockHookDecl[Code=hookCode] -> {
             newHook = `BlockHook(hookCode);
           }
-          InterfaceHookDecl[code=hookCode] -> {
+          InterfaceHookDecl[Code=hookCode] -> {
             newHook = `InterfaceHook(hookCode);
           }
-          ImportHookDecl[code=hookCode] -> {
+          ImportHookDecl[Code=hookCode] -> {
             newHook = `ImportHook(hookCode);
           }
 
@@ -410,7 +410,7 @@ public class GomCompiler {
       Slot arg = args.getHeadconcSlot();
       args = args.getTailconcSlot();
       %match(Slot arg) {
-        Slot[name=slotName,sort=sortDecl] -> {
+        Slot[Name=slotName,Sort=sortDecl] -> {
           ClassName slotClassName = (ClassName) sortClassNameForSortDecl.get(`sortDecl);
           newArgs = `concSlotField(newArgs*,SlotField(slotName,slotClassName));
         }
@@ -422,7 +422,7 @@ public class GomCompiler {
   private ClassNameList allClassForImports(Map classMap, ModuleDecl moduleDecl) {
     ClassNameList importedList = `concClassName();
     /* TODO improve this part : just for test */
-    ModuleDecl moduleDeclWithoutHooks = `ModuleDecl(moduleDecl.getmoduleName(),moduleDecl.getpkg(),concHookDecl());
+    ModuleDecl moduleDeclWithoutHooks = `ModuleDecl(moduleDecl.getModuleName(),moduleDecl.getPkg(),concHookDecl());
     ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDeclWithoutHooks);
     while(!importedModulelist.isEmptyconcModuleDecl()) {
       ModuleDecl imported = importedModulelist.getHeadconcModuleDecl();

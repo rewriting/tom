@@ -64,7 +64,7 @@ public class GomExpander {
   public GomModuleList expand(GomModule module) {
     GomModuleList result = `concGomModule(module);
     Set alreadyParsedModule = new HashSet();
-    alreadyParsedModule.add(module.getmoduleName());
+    alreadyParsedModule.add(module.getModuleName());
     Set moduleToAnalyse = generateModuleToAnalyseSet(module, alreadyParsedModule);
     getLogger().log(Level.FINER, "GomExpander:moduleToAnalyse {0}",
         new Object[]{moduleToAnalyse});
@@ -75,7 +75,7 @@ public class GomExpander {
 
       while(it.hasNext()) {
         GomModuleName moduleNameName = (GomModuleName)it.next();
-        String moduleName = moduleNameName.getname();
+        String moduleName = moduleNameName.getName();
 
         if(!environment().isBuiltin(moduleName)
             && !alreadyParsedModule.contains(moduleNameName)) {
@@ -102,7 +102,7 @@ public class GomExpander {
     HashSet moduleToAnalyse = new HashSet();
     ImportList importedModules = getImportList(module);
     while(!importedModules.isEmptyconcImportedModule()) {
-      GomModuleName name = importedModules.getHeadconcImportedModule().getmoduleName();
+      GomModuleName name = importedModules.getHeadconcImportedModule().getModuleName();
       if(!alreadyParsedModule.contains(name)) {
         moduleToAnalyse.add(name);
       }

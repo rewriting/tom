@@ -272,8 +272,12 @@ public PomGomParser(ParserSharedInputState state) {
 				production();
 				astFactory.addASTChild(currentAST, returnAST);
 			}
-			else if ((LA(1)==ID) && (LA(2)==COLON)) {
-				hook();
+			else if ((LA(1)==ID||LA(1)==OPERATOR) && (LA(2)==ID||LA(2)==COLON)) {
+				hookOperator();
+				astFactory.addASTChild(currentAST, returnAST);
+			}
+			else if ((LA(1)==MODULE||LA(1)==SORT)) {
+				hookSortModule();
 				astFactory.addASTChild(currentAST, returnAST);
 			}
 			else if ((LA(1)==ID) && (LA(2)==EQUALS)) {
@@ -330,42 +334,98 @@ public PomGomParser(ParserSharedInputState state) {
 		returnAST = production_AST;
 	}
 	
-	public final void hook() throws RecognitionException, TokenStreamException {
+	public final void hookOperator() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
-		AST hook_AST = null;
+		AST hookOperator_AST = null;
+		Token  typeId = null;
+		AST typeId_AST = null;
 		Token  id = null;
 		AST id_AST = null;
-		AST type_AST = null;
-		AST args_AST = null;
+		AST hook_AST = null;
 		
 		String code = "";
 		
 		
+		{
+		switch ( LA(1)) {
+		case OPERATOR:
+		{
+			typeId = LT(1);
+			typeId_AST = astFactory.create(typeId);
+			match(OPERATOR);
+			break;
+		}
+		case ID:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
 		id = LT(1);
 		id_AST = astFactory.create(id);
 		match(ID);
 		AST tmp8_AST = null;
 		tmp8_AST = astFactory.create(LT(1));
 		match(COLON);
-		hooktype();
-		type_AST = (AST)returnAST;
-		arglist();
-		args_AST = (AST)returnAST;
-		hook_AST = (AST)currentAST.root;
+		hook();
+		hook_AST = (AST)returnAST;
+		hookOperator_AST = (AST)currentAST.root;
 		
 		BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
 		code = blockparser.block();
 		
-		hook_AST = (AST)astFactory.make( (new ASTArray(4)).add(tmp8_AST).add(id_AST).add(type_AST).add(args_AST));
-		hook_AST.setText(code);
+		hookOperator_AST = (AST)astFactory.make( (new ASTArray(3)).add(tmp8_AST).add(id_AST).add(hook_AST));
+		hookOperator_AST.setText(code);
 		
-		currentAST.root = hook_AST;
-		currentAST.child = hook_AST!=null &&hook_AST.getFirstChild()!=null ?
-			hook_AST.getFirstChild() : hook_AST;
+		currentAST.root = hookOperator_AST;
+		currentAST.child = hookOperator_AST!=null &&hookOperator_AST.getFirstChild()!=null ?
+			hookOperator_AST.getFirstChild() : hookOperator_AST;
 		currentAST.advanceChildToEnd();
-		returnAST = hook_AST;
+		returnAST = hookOperator_AST;
+	}
+	
+	public final void hookSortModule() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST hookSortModule_AST = null;
+		AST typeId_AST = null;
+		Token  id = null;
+		AST id_AST = null;
+		AST hook_AST = null;
+		
+		String code = "";
+		
+		
+		typeId();
+		typeId_AST = (AST)returnAST;
+		id = LT(1);
+		id_AST = astFactory.create(id);
+		match(ID);
+		AST tmp9_AST = null;
+		tmp9_AST = astFactory.create(LT(1));
+		match(COLON);
+		otherHook();
+		hook_AST = (AST)returnAST;
+		hookSortModule_AST = (AST)currentAST.root;
+		
+		BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
+		code = blockparser.block();
+		
+		hookSortModule_AST = (AST)astFactory.make( (new ASTArray(4)).add(tmp9_AST).add(typeId_AST).add(id_AST).add(hook_AST));
+		hookSortModule_AST.setText(code);
+		
+		currentAST.root = hookSortModule_AST;
+		currentAST.child = hookSortModule_AST!=null &&hookSortModule_AST.getFirstChild()!=null ?
+			hookSortModule_AST.getFirstChild() : hookSortModule_AST;
+		currentAST.advanceChildToEnd();
+		returnAST = hookSortModule_AST;
 	}
 	
 	public final void typedecl() throws RecognitionException, TokenStreamException {
@@ -380,9 +440,9 @@ public PomGomParser(ParserSharedInputState state) {
 		id_AST = astFactory.create(id);
 		astFactory.addASTChild(currentAST, id_AST);
 		match(ID);
-		AST tmp9_AST = null;
-		tmp9_AST = astFactory.create(LT(1));
-		astFactory.makeASTRoot(currentAST, tmp9_AST);
+		AST tmp10_AST = null;
+		tmp10_AST = astFactory.create(LT(1));
+		astFactory.makeASTRoot(currentAST, tmp10_AST);
 		match(EQUALS);
 		alternatives();
 		astFactory.addASTChild(currentAST, returnAST);
@@ -407,9 +467,9 @@ public PomGomParser(ParserSharedInputState state) {
 			_loop28:
 			do {
 				if ((LA(1)==COMMA)) {
-					AST tmp11_AST = null;
-					tmp11_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp11_AST);
+					AST tmp12_AST = null;
+					tmp12_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp12_AST);
 					match(COMMA);
 					field();
 					astFactory.addASTChild(currentAST, returnAST);
@@ -451,9 +511,9 @@ public PomGomParser(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case ALT:
 		{
-			AST tmp13_AST = null;
-			tmp13_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp13_AST);
+			AST tmp14_AST = null;
+			tmp14_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp14_AST);
 			match(ALT);
 			break;
 		}
@@ -477,9 +537,9 @@ public PomGomParser(ParserSharedInputState state) {
 		_loop23:
 		do {
 			if ((LA(1)==ALT)) {
-				AST tmp14_AST = null;
-				tmp14_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp14_AST);
+				AST tmp15_AST = null;
+				tmp15_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp15_AST);
 				match(ALT);
 				altid = LT(1);
 				altid_AST = astFactory.create(altid);
@@ -498,16 +558,19 @@ public PomGomParser(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case SEMI:
 		{
-			AST tmp15_AST = null;
-			tmp15_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp15_AST);
+			AST tmp16_AST = null;
+			tmp16_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp16_AST);
 			match(SEMI);
 			break;
 		}
 		case EOF:
+		case MODULE:
 		case ID:
 		case SORTS:
 		case ABSTRACT:
+		case OPERATOR:
+		case SORT:
 		{
 			break;
 		}
@@ -532,9 +595,9 @@ public PomGomParser(ParserSharedInputState state) {
 		if ((LA(1)==ID) && (LA(2)==STAR)) {
 			type();
 			astFactory.addASTChild(currentAST, returnAST);
-			AST tmp16_AST = null;
-			tmp16_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp16_AST);
+			AST tmp17_AST = null;
+			tmp17_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp17_AST);
 			match(STAR);
 			field_AST = (AST)currentAST.root;
 		}
@@ -543,9 +606,9 @@ public PomGomParser(ParserSharedInputState state) {
 			id_AST = astFactory.create(id);
 			astFactory.addASTChild(currentAST, id_AST);
 			match(ID);
-			AST tmp17_AST = null;
-			tmp17_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp17_AST);
+			AST tmp18_AST = null;
+			tmp18_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp18_AST);
 			match(COLON);
 			type();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -581,9 +644,9 @@ public PomGomParser(ParserSharedInputState state) {
 			_loop32:
 			do {
 				if ((LA(1)==COMMA)) {
-					AST tmp19_AST = null;
-					tmp19_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp19_AST);
+					AST tmp20_AST = null;
+					tmp20_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp20_AST);
 					match(COMMA);
 					supplarg = LT(1);
 					supplarg_AST = astFactory.create(supplarg);
@@ -613,20 +676,147 @@ public PomGomParser(ParserSharedInputState state) {
 		returnAST = arglist_AST;
 	}
 	
-	public final void hooktype() throws RecognitionException, TokenStreamException {
+	public final void hook() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
-		AST hooktype_AST = null;
-		Token  tp = null;
-		AST tp_AST = null;
+		AST hook_AST = null;
 		
-		tp = LT(1);
-		tp_AST = astFactory.create(tp);
-		astFactory.addASTChild(currentAST, tp_AST);
-		match(ID);
-		hooktype_AST = (AST)currentAST.root;
-		returnAST = hooktype_AST;
+		switch ( LA(1)) {
+		case MAKE:
+		case MAKEINSERT:
+		{
+			makeHook();
+			astFactory.addASTChild(currentAST, returnAST);
+			hook_AST = (AST)currentAST.root;
+			break;
+		}
+		case BLOCK:
+		case INTERFACE:
+		case IMPORT:
+		{
+			otherHook();
+			astFactory.addASTChild(currentAST, returnAST);
+			hook_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = hook_AST;
+	}
+	
+	public final void makeHook() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST makeHook_AST = null;
+		
+		{
+		switch ( LA(1)) {
+		case MAKE:
+		{
+			AST tmp22_AST = null;
+			tmp22_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp22_AST);
+			match(MAKE);
+			break;
+		}
+		case MAKEINSERT:
+		{
+			AST tmp23_AST = null;
+			tmp23_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp23_AST);
+			match(MAKEINSERT);
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		arglist();
+		astFactory.addASTChild(currentAST, returnAST);
+		makeHook_AST = (AST)currentAST.root;
+		returnAST = makeHook_AST;
+	}
+	
+	public final void otherHook() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST otherHook_AST = null;
+		
+		switch ( LA(1)) {
+		case BLOCK:
+		{
+			AST tmp24_AST = null;
+			tmp24_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp24_AST);
+			match(BLOCK);
+			otherHook_AST = (AST)currentAST.root;
+			break;
+		}
+		case INTERFACE:
+		{
+			AST tmp25_AST = null;
+			tmp25_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp25_AST);
+			match(INTERFACE);
+			otherHook_AST = (AST)currentAST.root;
+			break;
+		}
+		case IMPORT:
+		{
+			AST tmp26_AST = null;
+			tmp26_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp26_AST);
+			match(IMPORT);
+			otherHook_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = otherHook_AST;
+	}
+	
+	public final void typeId() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST typeId_AST = null;
+		
+		switch ( LA(1)) {
+		case SORT:
+		{
+			AST tmp27_AST = null;
+			tmp27_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp27_AST);
+			match(SORT);
+			typeId_AST = (AST)currentAST.root;
+			break;
+		}
+		case MODULE:
+		{
+			AST tmp28_AST = null;
+			tmp28_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp28_AST);
+			match(MODULE);
+			typeId_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = typeId_AST;
 	}
 	
 	
@@ -649,7 +839,14 @@ public PomGomParser(ParserSharedInputState state) {
 		"LEFT_BRACE",
 		"COMMA",
 		"RIGHT_BRACE",
+		"\"operator\"",
 		"COLON",
+		"\"make\"",
+		"\"make_insert\"",
+		"\"block\"",
+		"\"interface\"",
+		"\"import\"",
+		"\"sort\"",
 		"STAR",
 		"\"private\"",
 		"LBRACE",
