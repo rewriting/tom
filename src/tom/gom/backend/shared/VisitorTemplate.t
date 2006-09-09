@@ -40,25 +40,21 @@ public class VisitorTemplate extends TemplateClass {
   }
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
-  public String generate() {
-    StringBuffer out = new StringBuffer();
-
-    out.append("package "+getPackage()+";\n");
-    out.append("\n");
-    out.append("public interface "+className()+" {\n");
-    out.append("\n");
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+    writer.write("package "+getPackage()+";\n");
+    writer.write("\n");
+    writer.write("public interface "+className()+" {\n");
+    writer.write("\n");
 
     // generate a visit for each sort
     %match(GomClassList sortClasses) {
       concGomClass(_*,SortClass[className=sortName],_*) -> {
-        out.append("\tpublic "+fullClassName(`sortName)+" "+visitMethod(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure;\n");
+        writer.write("\tpublic "+fullClassName(`sortName)+" "+visitMethod(`sortName)+"("+fullClassName(`sortName)+" arg) throws jjtraveler.VisitFailure;\n");
       }
     }
 
-    out.append("\n");
-    out.append("}\n");
-
-    return out.toString();
+    writer.write("\n");
+    writer.write("}\n");
   }
 
 }

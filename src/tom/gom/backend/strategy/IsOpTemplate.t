@@ -37,7 +37,7 @@ public class IsOpTemplate extends TemplateClass {
   %include { ../../adt/objects/Objects.tom}
 
   /*
-   * The argument is an operator class, and this template generatees the
+   * The argument is an operator class, and this template generates the
    * assotiated isOp strategy
    */
   public IsOpTemplate(ClassName className) {
@@ -52,9 +52,8 @@ public class IsOpTemplate extends TemplateClass {
     this.operator = className;
   }
 
-  public String generate() {
-
-    String classBody = %[
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[
 package @getPackage()@;
 
 import jjtraveler.Visitable;
@@ -71,9 +70,7 @@ public class @className()@ extends tom.library.strategy.mutraveler.Fail {
     }
   }
 }
-]%;
-
-    return classBody;
+]%);
   }
 
   public String generateMapping() {

@@ -48,10 +48,8 @@ public class MappingTemplate extends TemplateClass {
   }
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
-  public String generate() {
-    StringBuffer out = new StringBuffer();
-
-    out.append(%[
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+    writer.write(%[
 %include { string.tom }
 %include { int.tom }
 %include { long.tom }
@@ -65,7 +63,7 @@ public class MappingTemplate extends TemplateClass {
       concGomClass(_*,
           SortClass[className=sortName],
           _*) -> {
-        out.append(%[
+        writer.write(%[
 %typeterm @className(`sortName)@ {
   implement { @fullClassName(`sortName)@ }
   equals(t1,t2) { t1.equals(t2) }
@@ -83,18 +81,26 @@ public class MappingTemplate extends TemplateClass {
                         sortName=sortName,
                         slots=slotList],
           _*) -> {
-        out.append("%op "+className(`sortName)+" "+className(`opName)+"("+slotDecl(`slotList)+") {\n");
-        //out.append("  is_fsym(t) { (t!=null) && t."+isOperatorMethod(`opName)+"() }\n");
-        out.append("  is_fsym(t) { t instanceof "+fullClassName(`opName)+" }\n");
+        writer.write("%op "+className(`sortName)+" "+className(`opName)+"(");
+        slotDecl(writer,`slotList);
+        writer.write(") {\n");
+        //writer.write("  is_fsym(t) { (t!=null) && t."+isOperatorMethod(`opName)+"() }\n");
+        writer.write("  is_fsym(t) { t instanceof "+fullClassName(`opName)+" }\n");
         %match(SlotFieldList `slotList) {
           concSlotField(_*,slot@SlotField[name=slotName],_*) -> {
-            out.append("  get_slot("+`slotName+", t) ");
-            out.append("{ t."+getMethod(`slot)+"() }\n");
+            writer.write("  get_slot("+`slotName+", t) ");
+            writer.write("{ t."+getMethod(`slot)+"() }\n");
           }
         }
-        out.append("  make("+slotArgs(`slotList)+") { "+fullClassName(`opName)+".make("+slotArgs(`slotList)+")}\n");
-        out.append("}\n");
-        out.append("\n");
+        writer.write("  make(");
+        slotArgs(writer,`slotList);
+        writer.write(") { ");
+        writer.write(fullClassName(`opName));
+        writer.write(".make(");
+        slotArgs(writer,`slotList);
+        writer.write(")}\n");
+        writer.write("}\n");
+        writer.write("\n");
       }
     }
 
@@ -112,7 +118,7 @@ public class MappingTemplate extends TemplateClass {
                                 ],
           _*) -> {
         if(`sortName == `headDomain) { /* handle List = conc(List*) case */
-          out.append(%[
+          writer.write(%[
 %oplist @className(`sortName)@ @className(`opName)@(@className(`headDomain)@*) {
   is_fsym(t) { t instanceof @fullClassName(`concClass)@ || t instanceof @fullClassName(`emptyClass)@ }
   make_empty() { @fullClassName(`emptyClass)@.make() }
@@ -123,7 +129,7 @@ public class MappingTemplate extends TemplateClass {
 }
 ]%);
         } else {
-          out.append(%[
+          writer.write(%[
 %oplist @className(`sortName)@ @className(`opName)@(@className(`headDomain)@*) {
   is_fsym(t) { t instanceof @fullClassName(`concClass)@ || t instanceof @fullClassName(`emptyClass)@ }
   make_empty() { @fullClassName(`emptyClass)@.make() }
@@ -137,39 +143,35 @@ public class MappingTemplate extends TemplateClass {
         }
       }
     }
-
-    return out.toString();
   }
 
-  private String slotDecl(SlotFieldList slotList) {
-    StringBuffer res = new StringBuffer();
-    while(!slotList.isEmptyconcSlotField()) {
-      SlotField slot = slotList.getHeadconcSlotField();
-      slotList = slotList.getTailconcSlotField();
-      if (res.length()!=0) { res.append(", "); }
-      %match(SlotField slot) {
-        SlotField[name=slotName,domain=ClassName[name=domainName]] -> {
-          res.append(`slotName);
-          res.append(":");
-          res.append(`domainName);
-        }
-      }
-    }
-    return res.toString();
-  }
-
-  private String slotArgs(SlotFieldList slotList) {
-    StringBuffer res = new StringBuffer();
+  private void slotDecl(java.io.Writer writer, SlotFieldList slotList) throws java.io.IOException {
     int index = 0;
     while(!slotList.isEmptyconcSlotField()) {
       SlotField slot = slotList.getHeadconcSlotField();
       slotList = slotList.getTailconcSlotField();
-      if (res.length()!=0) { res.append(", "); }
-      res.append("t");
-      res.append(index);
+      if (index>0) { writer.write(", "); }
+      %match(SlotField slot) {
+        SlotField[name=slotName,domain=ClassName[name=domainName]] -> {
+          writer.write(`slotName);
+          writer.write(":");
+          writer.write(`domainName);
+          index++;
+        }
+      }
+    }
+  }
+
+  private void slotArgs(java.io.Writer writer, SlotFieldList slotList) throws java.io.IOException {
+    int index = 0;
+    while(!slotList.isEmptyconcSlotField()) {
+      SlotField slot = slotList.getHeadconcSlotField();
+      slotList = slotList.getTailconcSlotField();
+      if (index>0) { writer.write(", "); }
+      // Warning: do not write the 'index' alone, this would be a strange character
+      writer.write("t"+index);
       index++;
     }
-    return res.toString();
   }
 
   protected String fileName() {

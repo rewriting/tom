@@ -55,9 +55,8 @@ public class MakeOpTemplate extends TemplateClass {
     this.slotList = slots;
   }
 
-  public String generate() {
-
-    String classBody = %[
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[
 package @getPackage()@;
 
 public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy {
@@ -117,9 +116,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     return @fullClassName(operator)@.make(@genMakeArguments(slotList)@);
   }
 }
-]%;
-
-    return classBody;
+]%);
   }
 
   public String generateMapping() {

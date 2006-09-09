@@ -66,44 +66,42 @@ public class OperatorTemplate extends TemplateHookedClass {
     this.mapping = mapping;
   }
 
-  public String generate() {
+  public void generate(java.io.Writer writer) throws java.io.IOException {
 
-    String classBody = %[
+writer.write(
+%[
 package @getPackage()@;
 @generateImport()@
-
 public class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable @generateInterface()@ {
-
 @generateBlock()@
-
   private static @className()@ proto = new @className()@();
   private int hashCode;
   private @className()@() {}
-
-@generateMembers()@
-
-@generateBody()@
-
+]%);
+generateMembers(writer);
+generateBody(writer);
+writer.write(%[
 }
-]%;
-
-    return classBody;
+]%);
   }
 
-  private String generateBody() {
-    StringBuffer out = new StringBuffer();
-
-    out.append(%[
+  private void generateBody(java.io.Writer writer) throws java.io.IOException {
+    writer.write(%[
     /* static constructor */
-@generateConstructor()@
-
+]%);
+generateConstructor(writer);
+writer.write(%[
   private void init(@childListWithType(slotList) + (slotList.isEmptyconcSlotField()?"":", ") @int hashCode) {
-@generateMembersInit()@
+]%);
+generateMembersInit(writer);
+writer.write(%[
     this.hashCode = hashCode;
   }
 
   private void initHashCode(@childListWithType(slotList)@) {
-@generateMembersInit()@
+]%);
+generateMembersInit(writer);
+writer.write(%[
   this.hashCode = hashFunction();
   }
 
@@ -113,7 +111,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
   }
 
   private int getArity() {
-    return @getLength(slotList)@;
+    return @slotList.length()@;
   }
 
   public void toStringBuffer(java.lang.StringBuffer buffer) {
@@ -190,12 +188,10 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
   public boolean @isOperatorMethod(className)@() {
     return true;
   }
-
-@generateGetters()@
-
 ]%);
+generateGetters(writer);
 
-    out.append(%[
+    writer.write(%[
   /* AbstractType */
   public aterm.ATerm toATerm() {
     return aterm.pure.SingletonFactory.getInstance().makeAppl(
@@ -217,7 +213,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
 
 ]%);
 
-    out.append(%[
+    writer.write(%[
   /* jjtraveler.Visitable */
   public int getChildCount() {
     return @nonBuiltinChildCount()@;
@@ -250,21 +246,21 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
   }
 ]%);
 
-    out.append(%[
+    writer.write(%[
       /* internal use */
   protected int hashFunction() {
     int a, b, c;
 
     /* Set up the internal state */
     a = 0x9e3779b9; /* the golden ratio; an arbitrary value */
-    b = (@shared.HashFunctions.stringHashFunction(fullClassName(),getLength(slotList))@<<8);
+    b = (@shared.HashFunctions.stringHashFunction(fullClassName(),slotList.length())@<<8);
     c = getArity();
     /*---------------------------------------- handle most of the key */
 
     /*------------------------------------- handle the last 11 bytes */
-
-@generateHashArgs()@
-
+]%);
+generateHashArgs(writer);
+writer.write(%[
     a -= b;
     a -= c;
     a ^= (c >> 13);
@@ -297,39 +293,41 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return c;
   }
 ]%);
-    return out.toString();
   }
 
-  private String generateMembers() {
-    String res="";
+  private void generateMembers(java.io.Writer writer) throws java.io.IOException {
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=fieldName,domain=domainClass],_*) -> {
-        res += "  private "+fullClassName(`domainClass)+" "+fieldName(`fieldName)+";\n";
+        writer.write("  private ");
+        writer.write(fullClassName(`domainClass));
+        writer.write(" ");
+        writer.write(fieldName(`fieldName));
+        writer.write(";\n");
       }
     }
-    return res;
-  }
-  private String generateMembersInit() {
-    String res = "";
-    %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
-        if (GomEnvironment.getInstance().isBuiltinClass(`domain) && `domain.equals(`ClassName("","String"))) {
-          res += "    this."+fieldName(`fieldName)+" = "+fieldName(`fieldName)+".intern();\n";
-        } else {
-          res += "    this."+fieldName(`fieldName)+" = "+fieldName(`fieldName)+";\n";
-        }
-      }
-    }
-    return res;
   }
 
-  private String generateGetters() {
-    StringBuffer res = new StringBuffer();
+  private void generateMembersInit(java.io.Writer writer) throws java.io.IOException {
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,SlotField[name=fieldName,domain=domain],_*) -> {
+        writer.write("    this.");
+        writer.write(fieldName(`fieldName));
+        writer.write(" = ");
+        writer.write(fieldName(`fieldName));
+        if (GomEnvironment.getInstance().isBuiltinClass(`domain) && `domain.equals(`ClassName("","String"))) {
+          writer.write(".intern()");
+        }
+        writer.write(";\n");
+      }
+    }
+  }
+
+  private void generateGetters(java.io.Writer writer) throws java.io.IOException {
     SlotFieldList slots = slotList;
     while(!slots.isEmptyconcSlotField()) {
       SlotField head = slots.getHeadconcSlotField();
       slots = slots.getTailconcSlotField();
-      res.append(%[
+      writer.write(%[
   public @slotDomain(head)@ @getMethod(head)@() {
     return @fieldName(head.getname())@;
   }
@@ -338,7 +336,6 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return make(@generateMakeArgsFor(head,"set_arg")@);
   }]%);
     }
-    return res.toString();
   }
 
   private String generateToATermChilds() {
@@ -350,41 +347,52 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
       if (res.length()!=0) {
         res.append(", ");
       }
-      res.append(toATermSlotField(head));
+      toATermSlotField(res,head);
     }
     return res.toString();
   }
-  private String toATermSlotField(SlotField slot) {
-    String res = "";
+
+  private void toATermSlotField(StringBuffer res, SlotField slot) {
     %match(SlotField slot) {
       SlotField[domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += getMethod(slot)+"().toATerm()";
+          res.append(getMethod(slot));
+          res.append("().toATerm()");
         } else {
           if (`domain.equals(`ClassName("","int"))) {
-            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt("+getMethod(slot)+"())";
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
+            res.append(getMethod(slot));
+            res.append("())");
           } else if (`domain.equals(`ClassName("","long"))) {
-            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal("+getMethod(slot)+"())";
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
+            res.append(getMethod(slot));
+            res.append("())");
           } else if (`domain.equals(`ClassName("","double"))) {
-            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal("+getMethod(slot)+"())";
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
+            res.append(getMethod(slot));
+            res.append("())");
           } else if (`domain.equals(`ClassName("","float"))) {
-            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal("+getMethod(slot)+"())";
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
+            res.append(getMethod(slot));
+            res.append("())");
           } else if (`domain.equals(`ClassName("","char"))) {
-            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt("+getMethod(slot)+"())";
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
+            res.append(getMethod(slot));
+            res.append("())");
           } else if (`domain.equals(`ClassName("","String"))) {
-            res += "(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(";
-            res += "aterm.pure.SingletonFactory.getInstance().makeAFun(";
-            res += getMethod(slot)+"() ,0 , true))";
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(");
+            res.append("aterm.pure.SingletonFactory.getInstance().makeAFun(");
+            res.append(getMethod(slot));
+            res.append("() ,0 , true))");
           } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))){
-            res += getMethod(slot)+"()";
-          }
-            else {
+            res.append(getMethod(slot));
+            res.append("()");
+          } else {
             throw new GomRuntimeException("Builtin " + `domain + " not supported");
           }
         }
       }
     }
-    return res;
   }
 
   private String generatefromATermChilds(String appl) {
@@ -397,40 +405,42 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
       if (res.length()!=0) {
         res.append(", ");
       }
-      res.append(fromATermSlotField(head, appl, index));
+      fromATermSlotField(res,head, appl, index);
       index++;
     }
     return res.toString();
   }
-  private String fromATermSlotField(SlotField slot, String appl, int index) {
-    String res = "          ";
+  private void fromATermSlotField(StringBuffer buffer, SlotField slot, String appl, int index) {
     %match(SlotField slot) {
       SlotField[domain=domain] -> {
         if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res+= fullClassName(`domain)+".fromTerm("+appl+".getArgument("+index+"))";
+          buffer.append(fullClassName(`domain));
+          buffer.append(".fromTerm(");
+          buffer.append(appl);
+          buffer.append(".getArgument(");
+          buffer.append(index);
+          buffer.append("))");
         } else {
           if (`domain.equals(`ClassName("","int"))) {
-            res+= "((aterm.ATermInt)"+appl+".getArgument("+index+")).getInt()";
+            buffer.append("((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()");
           } else  if (`domain.equals(`ClassName("","float"))) {
-            res+= "(float) ((aterm.ATermReal)"+appl+".getArgument("+index+")).getReal()";
+            buffer.append("(float) ((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
           } else  if (`domain.equals(`ClassName("","long"))) {
-            res+= "(long) ((aterm.ATermReal)"+appl+".getArgument("+index+")).getReal()";
+            buffer.append("(long) ((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
           } else  if (`domain.equals(`ClassName("","double"))) {
-            res+= "((aterm.ATermReal)"+appl+".getArgument("+index+")).getReal()";
+            buffer.append("((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
           } else  if (`domain.equals(`ClassName("","char"))) {
-            res+= "(char) ((aterm.ATermInt)"+appl+".getArgument("+index+")).getInt()";
+            buffer.append("(char) ((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()");
           } else if (`domain.equals(`ClassName("","String"))) {
-            res+= "(String)((aterm.ATermAppl)"+appl+".getArgument("+index+")).getAFun().getName()";
+            buffer.append("(String) ((aterm.ATermAppl)").append(appl).append(".getArgument(").append(index).append(")).getAFun().getName()");
           } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
-            res +=  appl+".getArgument("+index+")";
-          }
-            else {
+            buffer.append(appl).append(".getArgument(").append(index).append(")");
+          } else {
             throw new GomRuntimeException("Builtin " + `domain + " not supported");
           }
         }
       }
     }
-    return res;
   }
 
   private String fieldName(String fieldName) {
@@ -507,21 +517,25 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return res.toString();
   }
   private String generateMembersEqualityTest(String peer) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     if(!slotList.isEmptyconcSlotField()) {
-      res += %[
-      @className()@ peer = (@className()@) obj;]%;
+      res.append(%[
+      @className()@ peer = (@className()@) obj;]%);;
     }
-    res += %[
-      return ]%;
+    res.append(%[
+      return ]%);
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=fieldName],_*) -> {
-        res += fieldName(`fieldName)+"=="+peer+"."+fieldName(`fieldName);
-        res+= " && ";
+        res.append(fieldName(`fieldName));
+        res.append("==");
+        res.append(peer);
+        res.append(".");
+        res.append(fieldName(`fieldName));
+        res.append(" && ");
       }
     }
-    res += "true;"; // to handle the "no childs" case
-    return res;
+    res.append("true;"); // to handle the "no childs" case
+    return res.toString();
   }
   private int nonBuiltinChildCount() {
     int count = 0;
@@ -574,71 +588,85 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
   }
 
   private String nonBuiltinArrayMake(String arrayName) {
-    String res = "make(";
+    StringBuffer res = new StringBuffer("make(");
     int index = 0;
     int fullindex = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,slot@SlotField[domain=domain],_*) -> {
+        if(fullindex>0) { res.append(", "); }
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += "("+fullClassName(`domain)+") "+arrayName+"["+index+"], ";
+          res.append("(");
+          res.append(fullClassName(`domain));
+          res.append(") ");
+          res.append(arrayName);
+          res.append("[");
+          res.append(index);
+          res.append("]");
           index++;
         } else {
-          res += getMethod(`slot)+"(), ";
+          res.append(getMethod(`slot));
+          res.append("()");
         }
         fullindex++;
       }
     }
-    if (fullindex>0) {
-      res = res.substring(0,res.length()-2);
-    }
-    res += ")";
-    return res;
+    res.append(")");
+    return res.toString();
   }
   private String nonBuiltinMakeCases(String argName) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     int index = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += "      case "+index+": return make("+generateMakeArgsFor(index, argName)+");\n";
+          res.append("      case "+index+": return make("+generateMakeArgsFor(index, argName)+");\n");
           index++;
         }
       }
     }
-    return res;
+    return res.toString();
   }
   private String generateMakeArgsFor(int argIndex, String argName) {
-    String res = "";
+    StringBuffer res = new StringBuffer();
     int index = 0;
+    int fullindex = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,slot@SlotField[name=fieldName,domain=domain],_*) -> {
+        if(fullindex>0) { res.append(", "); }
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += getMethod(`slot)+"(), ";
+          res.append(getMethod(`slot));
+          res.append("()");
         } else {
           if (index != argIndex) {
-            res += fieldName(`fieldName)+", ";
+            res.append(fieldName(`fieldName));
           } else {
-            res += "("+fullClassName(`domain)+") " + argName+", ";
+            res.append("(");
+            res.append(fullClassName(`domain));
+            res.append(") ");
+            res.append(argName);
           }
           index++;
         }
+        fullindex++;
       }
     }
-    return res.substring(0,res.length()-2);
+    return res.toString();
   }
   private String generateMakeArgsFor(SlotField slot, String argName) {
-    String res = "";
-    int index = 0;
+    StringBuffer res = new StringBuffer();
+    int fullindex = 0;
     %match(SlotFieldList slotList) {
       concSlotField(_*,itslot@SlotField[name=fieldName,domain=domain],_*) -> {
+        if(fullindex>0) { res.append(", "); }
         if (`itslot == slot) {
-          res += argName+", ";
+          res.append(argName);
         } else {
-          res += fieldName(`fieldName)+", ";
+          res.append(fieldName(`fieldName));
         }
+        fullindex++;
       }
     }
-    return res.substring(0,res.length()-2);
+    return res.toString();
   }
 
   private String toStringChilds(String buffer) {
@@ -678,8 +706,7 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
 				}
 			}
 		}
-    //return res.substring(0,res.length()-1);
-			return res.toString();
+    return res.toString();
   }
 
   private String genCompareChilds(String oldOther, String compareFun) {
@@ -725,42 +752,38 @@ public class @className()@ extends @fullClassName(extendsType)@ implements tom.l
     return res.toString();
   }
 
-  private String generateHashArgs() {
-    String res = "";
-    int index = getLength(slotList) - 1;
+  private void generateHashArgs(java.io.Writer writer) throws java.io.IOException {
+    int index = slotList.length() - 1;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[name=slotName,domain=domain],_*) -> {
         int shift = (index % 4) * 8;
         String accum = ""+"aaaabbbbcccc".toCharArray()[index % 12];
-        res += "    "+accum+" += (";
+        writer.write("    "+accum+" += (");
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res += fieldName(`slotName)+".hashCode()";
+          writer.write(fieldName(`slotName)+".hashCode()");
         } else {
           if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) {
-            res+= fieldName(`slotName);
+            writer.write(fieldName(`slotName));
           } else if (`domain.equals(`ClassName("","String"))) {
             // Use the string hashFunction for Strings, and pass index as arity
-            res+= "shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")";
+            writer.write("shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")");
           } else if (`domain.equals(`ClassName("aterm","ATerm"))||`domain.equals(`ClassName("aterm","ATermList"))) {
             // Use the string hashFunction for Strings, and pass index as arity
-            res+= fieldName(`slotName)+".hashCode()";
+            writer.write(fieldName(`slotName)+".hashCode()");
           }  else {
             throw new GomRuntimeException("generateHashArgs: Builtin " + `domain + " not supported");
           }
         }
-        if (shift!=0) { res += " << "+(shift); }
-        res += ");\n";
+        if (shift!=0) { writer.write(" << "+(shift)); }
+        writer.write(");\n");
         index--;
       }
     }
-    return res;
   }
 
-
-public String generateConstructor() {
-  StringBuffer out = new StringBuffer();
+public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
   if (hooks.isEmptyconcHook()) {
-    out.append(%[
+    writer.write(%[
         public static @className()@ make(@childListWithType(slotList)@) {
         proto.initHashCode(@childList(slotList)@);
         return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
@@ -768,21 +791,21 @@ public String generateConstructor() {
 
         ]%);
   } else { // we have to generate an hidden "real" make
-    out.append(%[
+    writer.write(%[
         private static @className()@ realMake(@childListWithType(slotList)@) {
         proto.initHashCode(@childList(slotList)@);
         return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
         }
 
         ]%);
-    if(getLength(hooks) > 1) {
+    if(hooks.length() > 1) {
       throw new GomRuntimeException("Support for multiple hooks for an operator not implemented yet");
     }
     // then a make function calling it
     %match(HookList hooks) {
       concHook(MakeHook(args,code)) -> {
         // replace the inner make call
-        out.append(%[
+        writer.write(%[
             public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
             @`code@
             return realMake(@unprotectedChildList(`args)@);
@@ -792,9 +815,8 @@ public String generateConstructor() {
       }
     }
     // also generate the tom mapping
-    out.append(mapping.generate()); 
+    mapping.generate(writer); 
   }
-  return out.toString();
 }
 
 /*
@@ -808,7 +830,7 @@ public int generateFile() {
       // make sure the directory exists
       output.getParentFile().mkdirs();
       Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-      writer.write(generate());
+      generate(writer);
       writer.flush();
       writer.close();
     } catch(Exception e) {
@@ -854,34 +876,23 @@ public int generateFile() {
 
     //System.out.println("params: " + tomParams);
 
-    String gen = generate();
-
-    InputStream backupIn = System.in;
-    System.setIn(new DataInputStream(new StringBufferInputStream(gen)));
-    int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
-    //      int res = tom.engine.Tom.exec(params);
-    System.setIn(backupIn);
-    if (res != 0 ) {
-      getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
-      return res;
+    try {
+      StringWriter gen = new StringWriter();
+      generate(gen);
+      InputStream backupIn = System.in;
+      System.setIn(new DataInputStream(new StringBufferInputStream(gen.toString())));
+      int res = tom.engine.Tom.exec((String[])tomParams.toArray(new String[tomParams.size()]));
+      //      int res = tom.engine.Tom.exec(params);
+      System.setIn(backupIn);
+      if (res != 0 ) {
+        getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
+        return res;
+      }
+    } catch(IOException e) {
+      getLogger().log(Level.SEVERE,"Failed generate Tom code: " + e.getMessage());
     }
   }
   return 0;
-}
-
-private int getLength(SlotFieldList list) {
-  %match(SlotFieldList list) {
-    concSlotField()     -> { return 0; }
-    concSlotField(_,t*) -> { return getLength(`t*)+1; }
-  }
-  return -1;
-}
-private int getLength(HookList list) {
-  %match(HookList list) {
-    concHook()     -> { return 0; }
-    concHook(_,t*) -> { return getLength(`t*)+1; }
-  }
-  return -1;
 }
 
 /** the class logger instance*/

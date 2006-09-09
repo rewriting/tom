@@ -40,10 +40,8 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
     this.sortList = sortList;
   }
 
-  public String generate() {
-    StringBuffer out = new StringBuffer();
-
-    out.append(
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+    writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
@@ -81,8 +79,6 @@ public abstract class @className()@ implements shared.SharedObjectWithID, jjtrav
   abstract public @className()@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure;
 }
 ]%);
-
-    return out.toString();
   }
 
 }

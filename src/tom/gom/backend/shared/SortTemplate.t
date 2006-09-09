@@ -46,10 +46,8 @@ public class SortTemplate extends TemplateHookedClass {
     this.slotList = slots;
   }
 
-  public String generate() {
-    StringBuffer out = new StringBuffer();
-
-    out.append(%[
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+    writer.write(%[
 package @getPackage()@;        
 @generateImport()@
 
@@ -60,24 +58,21 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ @gener
   public @fullClassName(abstractType)@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure {
     return v.@visitMethod(className)@(this);
   }
-
-@generateBody()@
-
+]%);
+generateBody(writer);
+writer.write(%[
 }
 ]%);
-    return out.toString();
   }
 
-  public String generateBody() {
-    StringBuffer out = new StringBuffer();
-
+  public void generateBody(java.io.Writer writer) throws java.io.IOException {
     // methods for each operator
     ClassNameList consum = operatorList;
     while (!consum.isEmptyconcClassName()) {
       ClassName operatorName = consum.getHeadconcClassName();
       consum = consum.getTailconcClassName();
 
-      out.append(%[
+      writer.write(%[
   public boolean @isOperatorMethod(operatorName)@() {
     return false;
   }
@@ -90,13 +85,13 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ @gener
       slotList = slotList.getTailconcSlotField();
 
       /* Do not generate "hasOp" methods for now
-      out.append("\tpublic boolean "+hasMethod(slot)+"() {\n");
-      out.append("\t\treturn false;\n");
-      out.append("\t}\n");
-      out.append("\n");
+      writer.write("\tpublic boolean "+hasMethod(slot)+"() {\n");
+      writer.write("\t\treturn false;\n");
+      writer.write("\t}\n");
+      writer.write("\n");
       */
 
-      out.append(%[
+      writer.write(%[
   public @slotDomain(slot)@ @getMethod(slot)@() {
     throw new UnsupportedOperationException("This @className()@ has no @slot.getname()@");
   }
@@ -110,17 +105,19 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ @gener
     }
 
     /* fromTerm method, dispatching to operator classes */
-    out.append(%[
+    writer.write(%[
   public static @fullClassName()@ fromTerm(aterm.ATerm trm) {
     @fullClassName()@ tmp;
-@generateFromTerm("trm","tmp")@
+]%);
+    generateFromTerm(writer,"trm","tmp");
+    writer.write(%[
     throw new IllegalArgumentException("This is not a @className()@ " + trm);
   }
 
 ]%);
 
     /* length and reverse prototypes, only usable on lists */
-    out.append(%[
+    writer.write(%[
   public int length() {
     throw new IllegalArgumentException(
       "This "+this.getClass().getName()+" is not a list");
@@ -131,8 +128,6 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ @gener
       "This "+this.getClass().getName()+" is not a list");
   }
 ]%);
-
-    return out.toString();
   }
   
   protected String generateInterface() {
@@ -141,20 +136,18 @@ public abstract class @className()@ extends @fullClassName(abstractType)@ @gener
     else return interfaces;
   }
 
-  private String generateFromTerm(String trm, String tmp) {
-    StringBuffer out = new StringBuffer();
+  private void generateFromTerm(java.io.Writer writer, String trm, String tmp) throws java.io.IOException {
     ClassNameList consum = operatorList;
     while (!consum.isEmptyconcClassName()) {
       ClassName operatorName = consum.getHeadconcClassName();
       consum = consum.getTailconcClassName();
-      out.append(%[
+      writer.write(%[
     @tmp@ = @fullClassName(operatorName)@.fromTerm(@trm@);
     if (@tmp@ != null) {
       return tmp;
     }
 ]%);
     }
-    return out.toString();
   }
 
 }

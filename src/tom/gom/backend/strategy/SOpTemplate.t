@@ -55,9 +55,8 @@ public class SOpTemplate extends TemplateClass {
     this.slotList = slots;
   }
 
-  public String generate() {
-
-    String classBody = %[
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+writer.write(%[
 package @getPackage()@;
 
 public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy {
@@ -207,9 +206,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     }
   }
 }
-]%;
-
-    return classBody;
+]%);
   }
 
   private String genConstrArgs(int count, String arg) {

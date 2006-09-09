@@ -40,9 +40,8 @@ public class StratMappingTemplate extends TemplateClass {
     this.operatorClasses = operatorClasses;
   }
 
-  public String generate() {
-    StringBuffer out = new StringBuffer();
-    out.append(%[
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+    writer.write(%[
 %include { mustrategy.tom }
 ]%);
     /* XXX: i could introduce an interface providing generateMapping() */
@@ -51,12 +50,12 @@ public class StratMappingTemplate extends TemplateClass {
           OperatorClass[className=opName,
                         slots=slotList],
           _*) -> {
-      out.append(
+      writer.write(
         (new tom.gom.backend.strategy.IsOpTemplate(`opName)).generateMapping());
 
-      out.append(
+      writer.write(
         (new tom.gom.backend.strategy.SOpTemplate(`opName,`slotList)).generateMapping());
-      out.append(
+      writer.write(
         (new tom.gom.backend.strategy.MakeOpTemplate(`opName,`slotList)).generateMapping());
       }
       concGomClass(_*,
@@ -64,7 +63,7 @@ public class StratMappingTemplate extends TemplateClass {
                                 empty=OperatorClass[className=empty],
                                 cons=OperatorClass[className=cons]],
                             _*)-> {
-        out.append(%[
+        writer.write(%[
 %op Strategy _@className(`vopName)@(sub:Strategy) {
   is_fsym(t) { false }
   make(sub)  { `mu(MuVar("x"),Choice(_@className(`cons)@(sub,MuVar("x")),_@className(`empty)@())) }
@@ -72,7 +71,6 @@ public class StratMappingTemplate extends TemplateClass {
 ]%);
       }
     }
-    return out.toString();
   }
 
   protected String fileName() {

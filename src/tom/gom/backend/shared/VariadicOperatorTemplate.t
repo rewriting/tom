@@ -52,22 +52,18 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
     this.cons = cons;
   }
 
-  public String generate() {
+  public void generate(java.io.Writer writer) throws java.io.IOException {
 
-    String classBody = %[
+    writer.write(%[
 package @getPackage()@;
 @generateImport()@
-
 public abstract class @className()@ extends @fullClassName(sortName)@ @generateInterface()@{
-
 @generateBlock()@
-
-@generateBody()@
-
+]%);
+generateBody(writer);
+writer.write(%[
 }
-]%;
-
-    return classBody;
+]%);
   }
 
   protected String generateInterface() {
@@ -77,10 +73,8 @@ public abstract class @className()@ extends @fullClassName(sortName)@ @generateI
   }
 
 
-  private String generateBody() {
-    StringBuffer out = new StringBuffer();
-
-    out.append(%[
+  private void generateBody(java.io.Writer writer) throws java.io.IOException {
+    writer.write(%[
   public int length() {
     int count = 0;
     if(this instanceof @fullClassName(cons.getclassName())@) {
@@ -131,8 +125,6 @@ public abstract class @className()@ extends @fullClassName(sortName)@ @generateI
     }
   }
 ]%);
-
-    return out.toString();
   }
 
   /** the class logger instance*/

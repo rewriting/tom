@@ -36,10 +36,8 @@ public class BasicStrategyTemplate extends TemplateClass {
     this.fwd = fwd;
   }
 
-  public String generate() {
-    StringBuffer out = new StringBuffer();
-
-    out.append(%[
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+    writer.write(%[
 package @getPackage()@;
 import tom.library.strategy.mutraveler.Position;
 import tom.library.strategy.mutraveler.MuStrategy;
@@ -102,7 +100,5 @@ import tom.library.strategy.mutraveler.MuStrategy;
   }
 }
 ]%);
-
-    return out.toString();
   }
 }

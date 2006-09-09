@@ -38,40 +38,38 @@ public abstract class TemplateHookedClass extends TemplateClass {
   %include { ../adt/objects/Objects.tom}
 
   protected String generateBlock() {
-    StringBuffer out = new StringBuffer();
+    StringBuffer res = new StringBuffer();
     %match(HookList hooks) {
       concHook(L1*,BlockHook(code),L2*) -> {
         //remove brackets
-        out.append(`code.substring(1,`code.length()-1)+"\n");
+        res.append(`code.substring(1,`code.length()-1)+"\n");
         hooks = `concHook(L1*,L2*);
       }
     }
-    return out.toString();
+    return res.toString();
   }
 
   protected String generateImport() {
-    StringBuffer out = new StringBuffer();
+    StringBuffer res = new StringBuffer();
     %match(HookList hooks) {
       concHook(L1*,ImportHook(code),L2*) -> {
         //remove brackets
-        out.append(`code.substring(1,`code.length()-1)+"\n");
+        res.append(`code.substring(1,`code.length()-1)+"\n");
         hooks = `concHook(L1*,L2*);
       }
     }
-    return out.toString();
+    return res.toString();
   }
 
   protected String generateInterface() {
-    StringBuffer out = new StringBuffer();
+    StringBuffer res = new StringBuffer();
     %match(HookList hooks) {
       concHook(L1*,InterfaceHook(code),L2*) -> {
         //remove brackets
-        out.append(","+`code.substring(1,`code.length()-1).replaceAll("\n",""));
+        res.append(","+`code.substring(1,`code.length()-1).replaceAll("\n",""));
         hooks = `concHook(L1*,L2*);
       }
     }
-    return out.toString();
+    return res.toString();
   }
-
-
 }

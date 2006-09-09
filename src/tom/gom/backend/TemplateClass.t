@@ -40,7 +40,7 @@ public abstract class TemplateClass {
 
   %include { ../adt/objects/Objects.tom}
 
-  public abstract String generate();
+  public abstract void generate(Writer writer) throws java.io.IOException;
 
   public String className() {
     return className(this.className);
@@ -146,7 +146,7 @@ public abstract class TemplateClass {
        // make sure the directory exists
        output.getParentFile().mkdirs();
        Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
-       writer.write(generate());
+       generate(writer);
        writer.flush();
        writer.close();
     } catch(Exception e) {

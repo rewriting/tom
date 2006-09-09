@@ -57,10 +57,8 @@ public class ForwardTemplate extends TemplateClass {
    * We may want to return the stringbuffer itself in the future, or directly
    * write to a Stream
    */
-  public String generate() {
-    StringBuffer out = new StringBuffer();
-
-    out.append(%[
+  public void generate(java.io.Writer writer) throws java.io.IOException {
+    writer.write(%[
 package @getPackage()@;
 
 public class @className()@ implements @ className(visitor)+importedVisitorList(importedVisitors) @, jjtraveler.Visitor {
@@ -74,46 +72,44 @@ public class @className()@ implements @ className(visitor)+importedVisitorList(i
     if (v instanceof @fullClassName(abstractType)@) {
       return ((@fullClassName(abstractType)@) v).accept(this);
     }
-@generateDispatch(importedAbstractTypes)@
+]%);
+generateDispatch(writer,importedAbstractTypes);
+writer.write(%[
     else {
       return any.visit(v);
     }
   }
-
-@generateVisitMethods()@
-
+]%);
+generateVisitMethods(writer);
+writer.write(%[
 }
 ]%);
-
-    return out.toString();
   }
-  private String generateVisitMethods() {
-    StringBuffer out = new StringBuffer();
+
+  private void generateVisitMethods(java.io.Writer writer) throws java.io.IOException {
     // generate a visit for each sort
     %match(GomClassList sortClasses) {
       concGomClass(_*,SortClass[className=sortName],_*) -> {
 
-        out.append(%[
+        writer.write(%[
   public @ fullClassName(`sortName) @ @visitMethod(`sortName)@(@fullClassName(`sortName)@ arg) throws jjtraveler.VisitFailure {
     return (@fullClassName(`sortName)@) any.visit(arg);
   }
 ]%);
       }
     }
-    return out.toString();
   }
 
-  private String generateDispatch(ClassNameList types) {
-    StringBuffer out = new StringBuffer();
+  private void generateDispatch(java.io.Writer writer, ClassNameList types) throws java.io.IOException {
     while(!types.isEmptyconcClassName()) {
-      out.append(%[    else if (v instanceof @fullClassName(types.getHeadconcClassName())@) {
+      writer.write(%[    else if (v instanceof @fullClassName(types.getHeadconcClassName())@) {
       return ((@fullClassName(types.getHeadconcClassName())@) v).accept(this);
     }]%);
       types = types.getTailconcClassName();
     }
-    return out.toString();
   }
-  String importedVisitorList(ClassNameList list) {
+  
+  private String importedVisitorList(ClassNameList list) {
     StringBuffer out = new StringBuffer();
     while(!list.isEmptyconcClassName()) {
       out.append(", "+fullClassName(list.getHeadconcClassName()));
