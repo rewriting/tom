@@ -2,9 +2,28 @@ module Wfg
 imports String int
 abstract syntax
 
-Wfg = Node(Wfg*)
-    | Activity(name:String)
+Wfg = Wfg(Wfg*)
+    | Activity(name:String,inputcond:Condition,outputcond:Condition)
     | ConcWfg(Wfg*)
-    | LabWfg(label:String,wfg:Wfg)
-    | Ref(int*)
-    | RefLabel(label:String)
+    | labWfg(label:String,wfg:Wfg)
+    | refWfg(label:String)
+    | posWfg(int*)
+    | expWfg(wfg:Wfg)
+    | Empty()
+
+Condition = and(c1:Condition,c2:Condition) 
+          | or(c1:Condition,c2:Condition)
+          | xor(c1:Condition,c2:Condition)
+          | cond(wfg:Wfg)
+          | true()
+
+
+expWfg:make(wfg) {
+  bpel.wfg.types.Wfg wfgWithPos = bpel.Tool.expand(wfg);
+  //to avoid unaccessible real_make statement
+  if(! wfgWithPos.equals(wfg)) return wfgWithPos;
+}
+
+posWfg:interface{
+  tom.library.strategy.mutraveler.MuReference
+}

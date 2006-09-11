@@ -5,9 +5,9 @@
   set_stamp(l)   { l }  
 }
 
-%op Strategy AllRef(v:Visitable,s:Strategy) {
-  is_fsym(t) { (t instanceof AllRef) }
-  make(v,s) { new AllRef(v,s) }
+%op Strategy AllRelativeRefSensitive(v:Visitable,s:Strategy) {
+  is_fsym(t) { (t instanceof AllRelativeRefSensitive) }
+  make(v,s) { new AllRelativeRefSensitive(v,s) }
 }
 
 %op Strategy OneRef(v:Visitable,s:Strategy) {
@@ -16,12 +16,12 @@
 }
 
 %op Strategy TopDownRef(v:Visitable,s1:Strategy) {
-  make(v,s1) { `mu(MuVar("_x"),Sequence(s1,AllRef(v,MuVar("_x")))) }
+  make(v,s1) { `mu(MuVar("_x"),Sequence(s1,AllRelativeRefSensitive(v,MuVar("_x")))) }
 }
 
 
 %op Strategy AU(v:Visitable,s1:Strategy, s2:Strategy) {
-  make(v,s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,AllRef(v,MuVar("x"))),OneRef(v,Identity()))))}
+  make(v,s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,AllRelativeRefSensitive(v,MuVar("x"))),OneRef(v,Identity()))))}
 }
 
 %op Strategy EU(v:Visitable,s1:Strategy, s2:Strategy) {
@@ -54,7 +54,7 @@
 }
 
 %op Strategy AX(v:Visitable,s:Strategy) {
-  make(v,s) { `AllRef(v,s) }
+  make(v,s) { `AllRelativeRefSensitive(v,s) }
 }
 
 %op Strategy EX(v:Visitable,s:Strategy) {

@@ -53,7 +53,7 @@ public class PatternAnalyser{
   %include {util/ArrayList.tom}
   %include {wfg/Wfg.tom}
   %include {Ctl.tom}
-
+  %include {adt/tnode/TNode.tom }
 
   %strategy Collect(list:ArrayList) extends `Identity() {
     visit Wfg{
@@ -71,39 +71,10 @@ public class PatternAnalyser{
     }
   }
 
-  %strategy CollectPositions(table:HashMap) extends `Identity() {
-    visit Wfg{
-      LabWfg(label,wfg) -> {
-        table.put(`label,getPosition());
-        return `wfg; //remove the label
-      }
-    }
-  }
 
-
-  %strategy ReplaceLabels(table:HashMap) extends `Identity() {
-    visit Wfg{
-      RefLabel(label) -> {
-        Position pos = (Position) table.get(`label);
-        Wfg ref = `Ref();
-        int[] array = pos.toArray();
-        for(int i=0;i<pos.depth();i++){
-          ref = `Ref(ref*,array[i]);
-        }
-        return ref; 
-      }
-    }
-  }
-
-  public Wfg removeLabels(Wfg wfg){
-    HashMap table = new HashMap();
-    return (Wfg) `Sequence(TopDown(CollectPositions(table)),TopDown(ReplaceLabels(table))).apply(wfg);
-  }
-
-
-  public Wfg bpelToWfg(TNode term,int index){
+  public static Wfg bpelToWfg(TNode term,int index){
     Wfg wfg = `ConcWfg();
-    %match(term){
+    %match(TNode term){
       <process> process </process> -> {
         %match(TNode process){
           <flow>p</flow> ->{
@@ -112,8 +83,8 @@ public class PatternAnalyser{
           <sequence>p</sequence> ->{
             wfg = `ConcWfg(wfg*,bpelToWfg(p,index++)*);
           }
-          <activity<source name=label></activity> -> {
-            wfg = `();
+          <activity><source name=label /></activity> -> {
+            //wfg = `();
           }
         }
       }
@@ -123,26 +94,24 @@ public class PatternAnalyser{
   }
 
   public static void main(String[] args){
-    XmlTools xtools = new XmlTools();
-    TNode term = xtools.convertXMLToTNode(args[0]);
-    Wfg wfg = bpelToWfg(term,0);
-
-    Wfg wfg = `ConcWfg(
-        Node(Activity("empty"),RefLabel("A"),RefLabel("C"),RefLabel("G")), 
-        LabWfg("A",Node(Activity("A"),RefLabel("B"),RefLabel("F"))), 
-        LabWfg("C",Node(Activity("C"),RefLabel("D"),RefLabel("E"))), 
-        LabWfg("G",Node(Activity("G"),RefLabel("E"),RefLabel("empty"))), 
-        LabWfg("B",Node(Activity("B"),RefLabel("empty"))), 
-        LabWfg("D",Node(Activity("D"),RefLabel("F"))), 
-        LabWfg("E",Node(Activity("E"),RefLabel("F"))), 
-        LabWfg("F",Node(Activity("F"),RefLabel("empty"))), 
-        LabWfg("empty",Node(Activity("empty"))) 
-        );
+    /*
+       XmlTools xtools = new XmlTools();
+       TNode term = xtools.convertXMLToTNode(args[0]);
+     */
+    Wfg wfg = `expWfg(ConcWfg(
+        Wfg(Activity("empty"),refWfg("A"),refWfg("C"),refWfg("G")), 
+        labWfg("A",Wfg(Activity("A"),refWfg("B"),refWfg("F"))), 
+        labWfg("C",Wfg(Activity("C"),refWfg("D"),refWfg("E"))), 
+        labWfg("G",Wfg(Activity("G"),refWfg("E"),refWfg("empty"))), 
+        labWfg("B",Wfg(Activity("B"),refWfg("empty"))), 
+        labWfg("D",Wfg(Activity("D"),refWfg("F"))), 
+        labWfg("E",Wfg(Activity("E"),refWfg("F"))), 
+        labWfg("F",Wfg(Activity("F"),refWfg("empty"))), 
+        labWfg("empty",Wfg(Activity("empty"))) 
+        ));
 
     PatternAnalyser analyser = new PatternAnalyser();
     try{
-      System.out.println("Wfg with labels:\n" + wfg);
-      wfg = analyser.removeLabels(wfg);
       System.out.println("\nWfg with positions:\n" + wfg);
     }catch(Exception e){
       e.printStackTrace();
