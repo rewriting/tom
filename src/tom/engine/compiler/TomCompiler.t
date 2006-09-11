@@ -97,11 +97,11 @@ public class TomCompiler extends TomGenericPlugin {
     try {
       // reinit absVarNumber to generate reproducible output
       absVarNumber = 0;
-      TomTerm preCompiledTerm = (TomTerm)(MuTraveler.init(`preProcessing(this)).visit(((TomTerm)getWorkingTerm())));
+      TomTerm preCompiledTerm = (TomTerm) `preProcessing(this).visit((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       Set hashSet = new HashSet();
-      TomTerm renamedTerm = (TomTerm)MuTraveler.init(`TopDown(findRenameVariable(hashSet))).visit(compiledTerm);
+      TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visit(compiledTerm);
       //TomTerm renamedTerm = compiledTerm;
       // verbose
       getLogger().log( Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
@@ -142,7 +142,7 @@ public class TomCompiler extends TomGenericPlugin {
 
       BuildReducedTerm(RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs]) -> {
         TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
-        SlotList newTermArgs = (SlotList) (MuTraveler.init(`preProcessing_makeTerm(compiler)).visit(`termArgs));
+        SlotList newTermArgs = (SlotList) `preProcessing_makeTerm(compiler).visit(`termArgs);
         TomList tomListArgs = slotListToTomList(newTermArgs);
 
         if(hasConstant(`optionList)) {
@@ -174,13 +174,13 @@ public class TomCompiler extends TomGenericPlugin {
         Option orgTrack = findOriginTracking(`matchOptionList);
         PatternInstructionList newPatternInstructionList = `concPatternInstruction();
         PatternList negativePattern = `concPattern();
-        TomTerm newMatchSubjectList = (TomTerm) MuTraveler.init(`preProcessing(compiler)).visit(`matchSubjectList);
+        TomTerm newMatchSubjectList = (TomTerm) `preProcessing(compiler).visit(`matchSubjectList);
         while(!`patternInstructionList.isEmptyconcPatternInstruction()) {
           /*
            * the call to preProcessing performs the recursive expansion
            * of nested match constructs
            */
-          PatternInstruction newPatternInstruction = (PatternInstruction) MuTraveler.init(`preProcessing(compiler)).visit(`patternInstructionList.getHeadconcPatternInstruction());
+          PatternInstruction newPatternInstruction = (PatternInstruction) `preProcessing(compiler).visit(`patternInstructionList.getHeadconcPatternInstruction());
 
 matchBlock: {
               %match(PatternInstruction newPatternInstruction) {
@@ -642,7 +642,7 @@ itBlock: {
         Set newContext = new HashSet(map.keySet());
         newContext.addAll(context);
         //System.out.println("newContext = " + newContext);
-        return (Instruction)MuTraveler.init(`TopDown(findRenameVariable(newContext))).visit(`instruction);
+        return (Instruction)`TopDown(findRenameVariable(newContext)).visit(`instruction);
       }
     }
   }
