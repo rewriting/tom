@@ -1,0 +1,10 @@
+module Wfg
+imports String int
+abstract syntax
+
+Wfg = Node(Wfg*)
+    | Activity(name:String)
+    | ConcWfg(Wfg*)
+    | LabWfg(label:String,wfg:Wfg)
+    | Ref(int*)
+    | RefLabel(label:String)
