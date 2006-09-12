@@ -710,7 +710,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
         |   // (f|g...) 
             // ambiguity with the last rule so use a lookahead
             // if ALTERNATIVE then parse headSymbolList
-        {LA(3) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
+        	{LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
             implicit = args[list, secondOptionList] 
             {
               if(implicit) {
@@ -727,6 +727,9 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                         ASTFactory.makeList(list),
                         ASTFactory.makeConstraintList(constraintList)
                     );
+              }
+              if(anti) {
+                  result = `AntiTerm(result);
               }
             }
         |   // (...)
@@ -1302,27 +1305,43 @@ unamedVariable [LinkedList optionList, LinkedList constraintList] returns [TomTe
 headSymbolList [LinkedList optionList] returns [TomNameList result]
 { 
     result = `concTomName();
-    TomName name = null;
+    TomName name = null;    
+    boolean localanti = false;
 }
-    :  
+    :
         (
             LPAREN {text.append('(');}
+            //(ANTI_SYM {localanti = !localanti;} )*
             name = headSymbolOrConstant[optionList] 
-            {result = `concTomName(result*,name);}
+            {
+            	result = localanti ? `concTomName(result*,AntiName(name)) 
+            		: `concTomName(result*,name);
+            	localanti = false;
+            }
 
             ALTERNATIVE {text.append('|');}
+            //(ANTI_SYM {localanti = !localanti;} )*
             name = headSymbolOrConstant[optionList] 
-            {result = `concTomName(result*,name);}
+            {
+            	result = localanti ? `concTomName(result*,AntiName(name)) 
+                		: `concTomName(result*,name);
+                localanti = false;
+            }
 
             ( 
                 ALTERNATIVE {text.append('|');} 
+                //(ANTI_SYM {localanti = !localanti;} )*
                 name = headSymbolOrConstant[optionList] 
-                {result = `concTomName(result*,name);}
+                {
+                	result = localanti ? `concTomName(result*,AntiName(name)) 
+                    		: `concTomName(result*,name);
+                    localanti = false;
+                }
             )* 
             t:RPAREN 
             {
                 text.append(t.getText());
-                setLastLine(t.getLine());                
+                setLastLine(t.getLine());
             }
         )
     ;

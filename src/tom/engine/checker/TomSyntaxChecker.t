@@ -40,6 +40,7 @@ import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
@@ -827,7 +828,12 @@ block: {
           }
             // Type is OK
           type = expectedType;
-          termName = `symbolNameList.getHeadconcTomName().getString();
+          TomName headName = `symbolNameList.getHeadconcTomName();
+          if (headName 
+        		  	instanceof AntiName){
+        	  headName = ((AntiName)headName).getName();
+          }
+          termName = headName.getString();
           boolean listOp = (isListOperator(symbol) || isArrayOperator(symbol));
           if(listOp) {
               // whatever the arity is, we continue recursively and there is only one element in the Domain
@@ -877,7 +883,12 @@ block: {
           }
 
           type = expectedType;
-          termName = `symbolNameList.getHeadconcTomName().getString();
+          TomName headName = `symbolNameList.getHeadconcTomName();
+          if (headName 
+        		  	instanceof AntiName){
+        	  headName = ((AntiName)headName).getName();
+          }
+          termName = headName.getString();
           break matchblock;
         }
 

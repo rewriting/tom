@@ -37,6 +37,7 @@ import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
@@ -317,7 +318,12 @@ public class TomExpander extends TomGenericPlugin {
    * when no slotName exits, the position becomes the slotName
    */
   protected TomTerm expandTermAppl(OptionList option, TomNameList nameList, TomList args, ConstraintList constraints) {
-    String opName = nameList.getHeadconcTomName().getString();
+    TomName headName = nameList.getHeadconcTomName();
+    if (headName 
+    		instanceof AntiName){
+    	headName = ((AntiName)headName).getName();
+    }
+	String opName = headName.getString();
     TomSymbol tomSymbol = getSymbolFromName(opName);
 
 

@@ -37,6 +37,7 @@ import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
@@ -500,8 +501,15 @@ public class TomBase {
 
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
     %match(TomTerm t) {
-      (TermAppl|RecordAppl)[NameList=(Name(tomName),_*)] -> {
-        TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
+      (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
+    	String tomName = null;
+    	if (`headName 
+    			instanceof AntiName){
+    		tomName = ((AntiName)`headName).getName().getString(); 
+    	}else{
+    		tomName = ((TomName)`headName).getString();
+    	}    	
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
         return tomSymbol.getTypesToType().getCodomain();
       }
 

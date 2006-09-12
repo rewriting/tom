@@ -82,7 +82,13 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
     %match(TomTerm term) {
       // for the moment, the anti only on termappl and on named variables
       AntiTerm(t@(TermAppl|Variable|RecordAppl)[])  -> {
-        return super.analyseTerm(`t);
+    	  return super.analyseTerm(`t);
+      }
+      (RecordAppl|TermAppl)[Option=options,NameList=(AntiName(Name(name)), _*)] ->{
+    	  return new TermDescription(RECORD_APPL_DISJUNCTION,`name,
+            findOriginTrackingFileName(`options),
+            findOriginTrackingLine(`options),
+            getSymbolCodomain(getSymbolFromName(`name)));
       }
     }
     return super.analyseTerm(term);

@@ -35,6 +35,7 @@ import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.*;
 import tom.engine.adt.tomoption.types.option.*;
 import tom.engine.adt.tomoption.types.*;
@@ -286,9 +287,16 @@ public class TomKernelCompiler extends TomBase {
       }                                                                                    
       // (f|g)[...]
       concSlot(PairSlotAppl(slotName,
-                   currentTerm@RecordAppl[NameList=nameList@(Name(tomName),_*),
+                   currentTerm@RecordAppl[NameList=nameList@(headName,_*),
                                           Slots=termArgs]),termTail*) -> {        
-                                        	  
+        // handle the case when the head symbol has a negation                                        	  
+        String tomName = null;
+        if (`headName 
+        		instanceof AntiName){
+        	tomName = ((AntiName)`headName).getName().getString();
+        }else{
+        	tomName = ((Name)`headName).getString();
+        }
         // recursively call the algorithm on termTail
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,moduleName);        
 
@@ -386,7 +394,7 @@ public class TomKernelCompiler extends TomBase {
     
 	// get the compiled anti-pattern
    	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchExpression(action,
-   			currentTerm, rootpath, slotName, moduleName, getSymbolTable(moduleName), subAction);
+   			currentTerm, rootpath, slotName, moduleName, getSymbolTable(moduleName), subAction, this);
    	
    	// if the result is false, no need to generate anything
    	%match(Expression compiledAntiPattern){
@@ -939,13 +947,21 @@ public class TomKernelCompiler extends TomBase {
     return `Nop();
   }
 
-  private Expression expandDisjunction(Expression exp, String moduleName) {
+  public Expression expandDisjunction(Expression exp, String moduleName) {
     Expression cond = `FalseTL();
     %match(Expression exp) {
       EqualFunctionSymbol(termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
         while(!`nameList.isEmptyconcTomName()) {
           TomName name = `nameList.getHeadconcTomName();
+          boolean isAnti = (name instanceof AntiName);
+          if (isAnti) {
+        	  name = name.getName();
+          }
           Expression check = `EqualFunctionSymbol(termType,exp1,RecordAppl(option,concTomName(name),l,concConstraint()));
+          
+          if ( isAnti ){
+        	  check = `Negation(check);
+          }
           // to mark the symbol as alive
           //getSymbolTable(moduleName).setUsedSymbolDestructor(name.getString());
           cond = `Or(check,cond);

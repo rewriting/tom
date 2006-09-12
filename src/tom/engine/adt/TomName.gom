@@ -4,6 +4,7 @@ abstract syntax
 TomName = Name(String:String)
         | PositionName(NumberList:TomNumberList)
         | EmptyName()
+        | AntiName(Name:TomName)
 
 TomNumber = MatchNumber(Number:TomNumber)
           | PatternNumber(Number:TomNumber)

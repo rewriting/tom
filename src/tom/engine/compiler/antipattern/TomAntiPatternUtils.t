@@ -37,6 +37,7 @@ import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tomexpression.types.expression.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
@@ -117,7 +118,8 @@ public class TomAntiPatternUtils {
 			TomName slotName,
 			String moduleName,
 			SymbolTable symbolTable,
-			Instruction subAction) {
+			Instruction subAction,
+			TomKernelCompiler kernelCompiler) {
 		
 //		System.out.println("Action:" + action);
 //		System.out.println("TomTerm:" + tomTerm);
@@ -175,7 +177,7 @@ public class TomAntiPatternUtils {
 				return `FalseTL();				
 			}
 		}
-		return getTomMappingForConstraint(compiledApProblem,symbolTable,moduleName);
+		return getTomMappingForConstraint(compiledApProblem,symbolTable,moduleName,kernelCompiler);
 		
 	}	
 	
@@ -271,22 +273,23 @@ public class TomAntiPatternUtils {
 	
 	private static Expression getTomMappingForConstraint(Constraint c,
 			SymbolTable symbolTable,
-			String moduleName) {
+			String moduleName,
+			TomKernelCompiler kernelCompiler) {
 		
 		%match(Constraint c) {
 			AndConstraint(concAnd(x))->{
-				return getTomMappingForConstraint(`x,symbolTable,moduleName);
+				return getTomMappingForConstraint(`x,symbolTable,moduleName,kernelCompiler);
 		    }
 			AndConstraint(concAnd(a,b*))->{
-				return `And(getTomMappingForConstraint(a,symbolTable,moduleName),
-						getTomMappingForConstraint(AndConstraint(concAnd(b*)),symbolTable,moduleName));
+				return `And(getTomMappingForConstraint(a,symbolTable,moduleName,kernelCompiler),
+						getTomMappingForConstraint(AndConstraint(concAnd(b*)),symbolTable,moduleName,kernelCompiler));
 			}
 //			AndConstraint(concAnd())->{
 //				return `TrueTL();
 //			}
 			OrConstraint(concOr(a,b*))->{
-				return `Or(getTomMappingForConstraint(a,symbolTable,moduleName),
-						getTomMappingForConstraint(OrConstraint(concOr(b*)),symbolTable,moduleName));
+				return `Or(getTomMappingForConstraint(a,symbolTable,moduleName,kernelCompiler),
+						getTomMappingForConstraint(OrConstraint(concOr(b*)),symbolTable,moduleName,kernelCompiler));
 			}
 			OrConstraint(concOr())->{
 				return `FalseTL();
@@ -307,13 +310,14 @@ public class TomAntiPatternUtils {
 					transformedTerm = `term;
 				}
 				
+				Expression result = kernelCompiler.expandDisjunction(`EqualFunctionSymbol(type,transformedTerm,t),moduleName);
+				
 				return (`pattern 
-						instanceof EqualConstraint) ? `EqualFunctionSymbol(type,transformedTerm,t)
-						: `Negation(EqualFunctionSymbol(type,transformedTerm,t));				
+						instanceof EqualConstraint) ? result : `Negation(result);				
 			}
 			Neg(constraint) ->{
 				return `Negation(getTomMappingForConstraint(constraint,	symbolTable,
-						moduleName));
+						moduleName,kernelCompiler));
 							
 			}
 			pattern@(EqualConstraint|NEqualConstraint)(t1,t2) ->{
@@ -365,8 +369,15 @@ public class TomAntiPatternUtils {
         	   // get the transformed term 
         	   Expression transformedTerm = transformTerm(`currentTerm,symbolTable,moduleName);
         	   
-        	   // get the type for the subterm        	           	   
-             TomSymbol tomSymbol = symbolTable.getSymbolFromName(`constructorName.getString());
+        	   // get the type for the subterm
+        	   String tomName = null;
+        	   if (`constructorName 
+        			   instanceof AntiName){
+        		   tomName = ((AntiName)`constructorName).getName().getString(); 
+        	   }else{
+        		   tomName = ((TomName)`constructorName).getString();
+        	   } 
+        	   TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
         	   TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);
         	   
         	   TomTerm var = null;
@@ -416,6 +427,27 @@ public class TomAntiPatternUtils {
 	public static Instruction getVarAssignments(){
 		return varAssignments;
 	}
+	
+	/**
+	 * Duplication of the method from TomKernelCompiler
+	 *  - when it becomes static
+	 */
+	private Expression expandDisjunction(Expression exp, String moduleName) {
+	    Expression cond = `FalseTL();
+	    %match(Expression exp) {
+	      EqualFunctionSymbol(termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
+	        while(!`nameList.isEmptyconcTomName()) {
+	          TomName name = `nameList.getHeadconcTomName();
+	          Expression check = `EqualFunctionSymbol(termType,exp1,RecordAppl(option,concTomName(name),l,concConstraint()));
+	          // to mark the symbol as alive
+	          //getSymbolTable(moduleName).setUsedSymbolDestructor(name.getString());
+	          cond = `Or(check,cond);
+	          `nameList = `nameList.getTailconcTomName();
+	        }
+	      }
+	    }
+	    return cond;
+	  }
 	
 	/**
 	 * Given a constraint, it performs some formatting on it for better 
