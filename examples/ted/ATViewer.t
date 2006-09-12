@@ -8,7 +8,6 @@ import java.lang.reflect.*;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.*;
-import tom.library.traversal.*;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;

@@ -2234,6 +2234,25 @@
   make( new_HeadconcTomNumber,  new_TailconcTomNumber) { new tom.engine.adt.tomname.strategy.tomnumberlist.Make_ConsconcTomNumber( new_HeadconcTomNumber,  new_TailconcTomNumber) }
 }
 
+%op Strategy Is_AntiName() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Is_AntiName)}
+  make() { new tom.engine.adt.tomname.strategy.tomname.Is_AntiName() }
+}
+
+%op Strategy _AntiName(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname._AntiName)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomname._AntiName(arg0) }
+}
+
+%op Strategy Make_AntiName(_Name:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Make_AntiName)}
+
+  get_slot(_Name, t) { _Name }
+  make( new_Name) { new tom.engine.adt.tomname.strategy.tomname.Make_AntiName( new_Name) }
+}
+
 %op Strategy Is_EmptyName() {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Is_EmptyName)}
   make() { new tom.engine.adt.tomname.strategy.tomname.Is_EmptyName() }

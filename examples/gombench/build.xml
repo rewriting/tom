@@ -6,7 +6,6 @@
     <delete dir="${examples.build}/gombench"/>
   </target>
   <target name="build" depends="init">
-    <adtcompile example="gombench" factory="apiterm"/>
     <gomcompile example="gombench"/>
     <tomcompile example="gombench"/>
     <javacompile example="gombench"/>
@@ -23,7 +22,6 @@
         <include name="gombench/*.t"/>
         <include name="gombench/**/*.java"/>
         <include name="gombench/*.gom"/>
-        <include name="gombench/*.adt"/>
       </zipfileset>
     </zip>
   </target>

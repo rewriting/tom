@@ -40,6 +40,7 @@ import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
@@ -827,7 +828,12 @@ block: {
           }
             // Type is OK
           type = expectedType;
-          termName = tom_symbolNameList.getHeadconcTomName().getString();
+          TomName headName = tom_symbolNameList.getHeadconcTomName();
+          if (headName 
+        		  	instanceof AntiName){
+        	  headName = ((AntiName)headName).getName();
+          }
+          termName = headName.getString();
           boolean listOp = (isListOperator(symbol) || isArrayOperator(symbol));
           if(listOp) {
               // whatever the arity is, we continue recursively and there is only one element in the Domain
@@ -877,7 +883,12 @@ block: {
 
 
           type = expectedType;
-          termName = tom_symbolNameList.getHeadconcTomName().getString();
+          TomName headName = tom_symbolNameList.getHeadconcTomName();
+          if (headName 
+        		  	instanceof AntiName){
+        	  headName = ((AntiName)headName).getName();
+          }
+          termName = headName.getString();
           break matchblock;
          } } } } } } } } } if ( ( tom_is_fun_sym_XMLAppl(tom_match22_1) ||  false  ) ) { { tom.engine.adt.tomoption.types.OptionList  tom_match22_1_Option=tom_get_slot_XMLAppl_Option(tom_match22_1); { tom.engine.adt.tomname.types.TomNameList  tom_match22_1_NameList=tom_get_slot_XMLAppl_NameList(tom_match22_1); { tom.engine.adt.tomterm.types.TomList  tom_match22_1_ChildList=tom_get_slot_XMLAppl_ChildList(tom_match22_1); { tom.engine.adt.tomoption.types.OptionList  tom_options=tom_match22_1_Option; if ( ( tom_is_fun_sym_concTomName(tom_match22_1_NameList) ||  false  ) ) { { tom.engine.adt.tomname.types.TomNameList  tom_match22_1_NameList_list1=tom_match22_1_NameList; { tom.engine.adt.tomname.types.TomNameList  tom_match22_1_NameList_begin1=tom_match22_1_NameList_list1; { tom.engine.adt.tomname.types.TomNameList  tom_match22_1_NameList_end1=tom_match22_1_NameList_list1; { while (!(tom_is_empty_concTomName_TomNameList(tom_match22_1_NameList_end1))) {tom_match22_1_NameList_list1=tom_match22_1_NameList_end1; { { tom.engine.adt.tomname.types.TomName  tom_match22_1_NameList_2=tom_get_head_concTomName_TomNameList(tom_match22_1_NameList_list1);tom_match22_1_NameList_list1=tom_get_tail_concTomName_TomNameList(tom_match22_1_NameList_list1); if ( ( tom_is_fun_sym_Name(tom_match22_1_NameList_2) ||  false  ) ) { { String  tom_match22_1_NameList_2_String=tom_get_slot_Name_String(tom_match22_1_NameList_2); { tom.engine.adt.tomterm.types.TomList  tom_childList=tom_match22_1_ChildList; if ( true ) {
 

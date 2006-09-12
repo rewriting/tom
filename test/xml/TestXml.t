@@ -3,7 +3,6 @@ package xml;
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
-import tom.library.traversal.*;
 import java.util.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -13,7 +12,6 @@ public class TestXml extends TestCase {
   %include{ adt/tnode/TNode.tom }
     
   private XmlTools xtools;
-  private GenericTraversal traversal = new GenericTraversal();
 	private LinkedList elements;
 	private LinkedList reverseElements;
 

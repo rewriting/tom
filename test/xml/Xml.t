@@ -4,7 +4,6 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import aterm.*;
-import tom.library.traversal.*;
 import java.util.*;
 
 public class Xml {
@@ -12,7 +11,6 @@ public class Xml {
   %include{ adt/tnode/TNode.tom }
     
   private XmlTools xtools;
-  private GenericTraversal traversal = new GenericTraversal();
 
   public static void main (String args[]) {
     Xml test = new Xml();

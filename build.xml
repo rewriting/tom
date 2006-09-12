@@ -66,8 +66,6 @@
   <property name="src.configfile"       location="${src.config}/Tom.xml"/>
   <property name="stable.gomconfigfile" location="${stable.config}/Gom.xml"/>
   <property name="src.gomconfigfile"    location="${src.config}/Gom.xml"/>
-  <property name="stable.vasconfigfile" location="${stable.config}/Vas.xml"/>
-  <property name="src.vasconfigfile"    location="${src.config}/Vas.xml"/>
 
   <!-- Aircube bundle -->
   <property name="bundle.temp.dir"      value="bundle"/>
@@ -179,12 +177,6 @@
       </fileset>
     </path>
 
-    <taskdef name="adt"
-             classname="tom.engine.tools.ant.ApigenTask"
-             classpathref="tom.classpath"/>
-    <taskdef name="vas"
-             classname="vas.ant.VasTask"
-             classpathref="tom.classpath"/>
     <taskdef name="pom"
              classname="tom.pom.tools.ant.PomTask"
              classpathref="tom.classpath"/>
@@ -213,9 +205,6 @@
     <taskdef name="tomsrc"
              classname="tom.engine.tools.ant.TomTask"
              classpathref="tomsrc.classpath"/>
-    <taskdef name="vassrc"
-             classname="vas.ant.VasTask"
-             classpathref="tomsrc.classpath"/>
   </target>
 
   <!--
@@ -233,9 +222,6 @@
         <classpath refid="tom.classpath"/>
       </gom>
     </presetdef>
-    <presetdef name="vascompile">
-      <vas config="${stable.vasconfigfile}"/>
-    </presetdef>
     <presetdef name="pomcompile">
       <pom>
         <classpath refid="tom.classpath"/>
@@ -251,9 +237,6 @@
     </presetdef>
     <presetdef name="gomcompile">
       <gomsrc config="${src.gomconfigfile}"/>
-    </presetdef>
-    <presetdef name="vascompile">
-      <vassrc config="${src.vasconfigfile}"/>
     </presetdef>
     <presetdef name="pomcompile">
       <pomsrc>
@@ -389,18 +372,13 @@
     </tomcompile>
   </target>
 
-  <target name="touchvas"
-          unless="vascompile.required">
+  <target name="touchgom"
+          unless="gomcompile.required">
 	  <touch file="${src.src}/tom/engine/adt/TomSignature.gom"/>
   </target>
 
   <!-- compile adt's -->
   <target name="buildadt" depends="-withstable,-withsrc">
-    <vascompile srcdir="${src.src}"
-                package="tom.library.adt"
-                destdir="${src.gen}">
-      <include name="tom/library/adt/*.vas"/>
-    </vascompile>
     <gomcompile fork="no"
                 srcdir="${src.src}"
                 package="tom.library.adt"
@@ -414,11 +392,11 @@
                 destdir="${src.gen}">
       <include name="tom/platform/adt/*.gom"/>
     </gomcompile>
-    <uptodate property="vascompile.required"
+    <uptodate property="gomcompile.required"
 	    targetfile="${src.gen}/tom/engine/adt/tomsignature/TomSignature.tom" >
 	    <srcfiles dir= "${src.src}/tom/engine/adt" includes="*.gom"/>
     </uptodate>
-    <antcall target="touchvas"/>
+    <antcall target="touchgom"/>
 
     <gomcompile srcdir="${src.src}"
                 package="tom.engine.adt"
@@ -438,15 +416,6 @@
 	 <include name="tom/engine/adt/Zenon.gom"/>
     </gomcompile>
 
-<!-- how to build adt from adt instead of vas
-    <adt srcdir="${src.src}"
-         package="tom.engine.adt"
-         name="tomsignature"
-         destdir="${src.gen}">
-	 <include name="tom/engine/adt/*.adt"/>
-    </adt>
--->
-
     <copy todir="${src.mapping}/adt">
       <fileset dir="${src.gen}/tom/library/adt" includes="**/*.tom"/>
       <fileset dir="${src.gen}/tom/platform/adt" includes="**/*.tom"/>
@@ -454,11 +423,6 @@
     </copy>
 
     <!-- adt for the verifier -->
-    <vascompile srcdir="${src.src}"
-	        package="tom.engine/verifier"
-                destdir="${src.gen}">
-	 <include name="tom/engine/verifier/*.vas"/>
-    </vascompile>
 
     <!-- adt for gom -->
     <gomcompile srcdir="${src.src}"
@@ -528,7 +492,6 @@
     </antcall>
     <!-- Tom config file -->
     <copy tofile="${stable.dist}/Tom.xml" file="${stable.configfile}"/>
-    <copy tofile="${stable.dist}/Vas.xml" file="${stable.vasconfigfile}"/>
     <copy tofile="${stable.dist}/Gom.xml" file="${stable.gomconfigfile}"/>
     <!-- "tom binary" -->
     <copy todir="${stable.dist.bin}" file="${utils}/javac-tom"/>
@@ -646,7 +609,6 @@
     </antcall>
     <!-- "tom config file" -->
     <copy tofile="${src.dist}/Tom.xml" file="${src.configfile}"/>
-    <copy tofile="${src.dist}/Vas.xml" file="${src.vasconfigfile}"/>
     <copy tofile="${src.dist}/Gom.xml" file="${src.gomconfigfile}"/>
     <!-- "tom binary" -->
     <copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
@@ -698,17 +660,11 @@
     <jar jarfile="${src.dist.lib}/TomSignature-${src.version}.jar">
 	    <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/Set-${src.version}.jar">
-      <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>
-    </jar>
     <jar jarfile="${src.dist.lib}/TNode-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
     </jar>
     <jar jarfile="${src.dist.lib}/PlatformOption-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
-    </jar>
-    <jar jarfile="${src.dist.lib}/MuTravelerADT-${src.version}.jar">
-      <fileset dir="${src.build}" includes="tom/library/adt/mutraveleradt/**/*.class"/>
     </jar>
     <jar jarfile="${src.dist.lib}/PlatformAlert-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
@@ -1166,14 +1122,8 @@
     <jar jarfile="${stable.src}/tom/engine/adt/TomSignature.jar">
       <fileset dir="${src.build}" includes="tom/engine/adt/**/*.class"/>
     </jar>
-    <jar jarfile="${stable.src}/tom/library/adt/Set.jar">
-      <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>
-    </jar>
     <jar jarfile="${stable.src}/tom/library/adt/TNode.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
-    </jar>
-    <jar jarfile="${stable.src}/tom/library/adt/MuTravelerADT.jar">
-      <fileset dir="${src.build}" includes="tom/library/adt/mutraveleradt/**/*.class"/>
     </jar>
     <jar jarfile="${stable.src}/tom/platform/adt/PlatformOption.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>

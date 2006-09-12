@@ -32,7 +32,6 @@ package nspk;
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import tom.library.traversal.*;
 import nspk.term.*;
 import nspk.term.types.*;
 

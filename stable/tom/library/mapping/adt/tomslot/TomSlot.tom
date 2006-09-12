@@ -801,6 +801,12 @@
   make(t0, t1) { tom.engine.adt.tomname.types.tomnumberlist.ConsconcTomNumber.make(t0, t1)}
 }
 
+%op TomName AntiName(Name:TomName) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomname.AntiName }
+  get_slot(Name, t) { t.getName() }
+  make(t0) { tom.engine.adt.tomname.types.tomname.AntiName.make(t0)}
+}
+
 %op TomName EmptyName() {
   is_fsym(t) { t instanceof tom.engine.adt.tomname.types.tomname.EmptyName }
   make() { tom.engine.adt.tomname.types.tomname.EmptyName.make()}

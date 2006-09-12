@@ -35,6 +35,7 @@ import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.*;
 import tom.engine.adt.tomoption.types.option.*;
 import tom.engine.adt.tomoption.types.*;
@@ -283,12 +284,19 @@ public class TomKernelCompiler extends TomBase {
 	
      	return getAntiPatternMatchInstruction(action,tom_currentTerm, rootpath, 
      			tom_slotName, moduleName,subAction);
-       } } } } } } } } } } } } } } } } } } } } } } if ( ( tom_is_fun_sym_concSlot(tom_match6_1) ||  false  ) ) { { tom.engine.adt.tomslot.types.SlotList  tom_match6_1_list1=tom_match6_1; if (!(tom_is_empty_concSlot_SlotList(tom_match6_1_list1))) { { tom.engine.adt.tomslot.types.Slot  tom_match6_1_1=tom_get_head_concSlot_SlotList(tom_match6_1_list1);tom_match6_1_list1=tom_get_tail_concSlot_SlotList(tom_match6_1_list1); if ( ( tom_is_fun_sym_PairSlotAppl(tom_match6_1_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match6_1_1_SlotName=tom_get_slot_PairSlotAppl_SlotName(tom_match6_1_1); { tom.engine.adt.tomterm.types.TomTerm  tom_match6_1_1_Appl=tom_get_slot_PairSlotAppl_Appl(tom_match6_1_1); { tom.engine.adt.tomname.types.TomName  tom_slotName=tom_match6_1_1_SlotName; if ( ( tom_is_fun_sym_RecordAppl(tom_match6_1_1_Appl) ||  false  ) ) { { tom.engine.adt.tomterm.types.TomTerm  tom_currentTerm=tom_match6_1_1_Appl; { tom.engine.adt.tomname.types.TomNameList  tom_match6_1_1_Appl_NameList=tom_get_slot_RecordAppl_NameList(tom_match6_1_1_Appl); { tom.engine.adt.tomslot.types.SlotList  tom_match6_1_1_Appl_Slots=tom_get_slot_RecordAppl_Slots(tom_match6_1_1_Appl); if ( ( tom_is_fun_sym_concTomName(tom_match6_1_1_Appl_NameList) ||  false  ) ) { { tom.engine.adt.tomname.types.TomNameList  tom_nameList=tom_match6_1_1_Appl_NameList; { tom.engine.adt.tomname.types.TomNameList  tom_match6_1_1_Appl_NameList_list1=tom_match6_1_1_Appl_NameList; if (!(tom_is_empty_concTomName_TomNameList(tom_match6_1_1_Appl_NameList_list1))) { { tom.engine.adt.tomname.types.TomName  tom_match6_1_1_Appl_NameList_1=tom_get_head_concTomName_TomNameList(tom_match6_1_1_Appl_NameList_list1);tom_match6_1_1_Appl_NameList_list1=tom_get_tail_concTomName_TomNameList(tom_match6_1_1_Appl_NameList_list1); if ( ( tom_is_fun_sym_Name(tom_match6_1_1_Appl_NameList_1) ||  false  ) ) { { String  tom_match6_1_1_Appl_NameList_1_String=tom_get_slot_Name_String(tom_match6_1_1_Appl_NameList_1); { String  tom_tomName=tom_match6_1_1_Appl_NameList_1_String; { tom.engine.adt.tomslot.types.SlotList  tom_termArgs=tom_match6_1_1_Appl_Slots; { tom.engine.adt.tomslot.types.SlotList  tom_termTail=tom_match6_1_list1; if ( true ) {
+       } } } } } } } } } } } } } } } } } } } } } } if ( ( tom_is_fun_sym_concSlot(tom_match6_1) ||  false  ) ) { { tom.engine.adt.tomslot.types.SlotList  tom_match6_1_list1=tom_match6_1; if (!(tom_is_empty_concSlot_SlotList(tom_match6_1_list1))) { { tom.engine.adt.tomslot.types.Slot  tom_match6_1_1=tom_get_head_concSlot_SlotList(tom_match6_1_list1);tom_match6_1_list1=tom_get_tail_concSlot_SlotList(tom_match6_1_list1); if ( ( tom_is_fun_sym_PairSlotAppl(tom_match6_1_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match6_1_1_SlotName=tom_get_slot_PairSlotAppl_SlotName(tom_match6_1_1); { tom.engine.adt.tomterm.types.TomTerm  tom_match6_1_1_Appl=tom_get_slot_PairSlotAppl_Appl(tom_match6_1_1); { tom.engine.adt.tomname.types.TomName  tom_slotName=tom_match6_1_1_SlotName; if ( ( tom_is_fun_sym_RecordAppl(tom_match6_1_1_Appl) ||  false  ) ) { { tom.engine.adt.tomterm.types.TomTerm  tom_currentTerm=tom_match6_1_1_Appl; { tom.engine.adt.tomname.types.TomNameList  tom_match6_1_1_Appl_NameList=tom_get_slot_RecordAppl_NameList(tom_match6_1_1_Appl); { tom.engine.adt.tomslot.types.SlotList  tom_match6_1_1_Appl_Slots=tom_get_slot_RecordAppl_Slots(tom_match6_1_1_Appl); if ( ( tom_is_fun_sym_concTomName(tom_match6_1_1_Appl_NameList) ||  false  ) ) { { tom.engine.adt.tomname.types.TomNameList  tom_nameList=tom_match6_1_1_Appl_NameList; { tom.engine.adt.tomname.types.TomNameList  tom_match6_1_1_Appl_NameList_list1=tom_match6_1_1_Appl_NameList; if (!(tom_is_empty_concTomName_TomNameList(tom_match6_1_1_Appl_NameList_list1))) { { tom.engine.adt.tomname.types.TomName  tom_headName=tom_get_head_concTomName_TomNameList(tom_match6_1_1_Appl_NameList_list1);tom_match6_1_1_Appl_NameList_list1=tom_get_tail_concTomName_TomNameList(tom_match6_1_1_Appl_NameList_list1); { tom.engine.adt.tomslot.types.SlotList  tom_termArgs=tom_match6_1_1_Appl_Slots; { tom.engine.adt.tomslot.types.SlotList  tom_termTail=tom_match6_1_list1; if ( true ) {
 
 
 
         
-                                        	  
+        // handle the case when the head symbol has a negation                                        	  
+        String tomName = null;
+        if (tom_headName
+instanceof AntiName){
+        	tomName = ((AntiName)tom_headName).getName().getString();
+        }else{
+        	tomName = ((Name)tom_headName).getString();
+        }
         // recursively call the algorithm on termTail
         Instruction subAction = genSyntacticMatchingAutomata(action,tom_termTail,rootpath,moduleName);        
 
@@ -300,7 +308,7 @@ public class TomKernelCompiler extends TomBase {
         }
 
         // find the codomain of (f|g) [* should be the same *]
-        TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tom_tomName);
+        TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(tomName);
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
 
           // perform the compilation, according to 3 cases:
@@ -368,7 +376,7 @@ public class TomKernelCompiler extends TomBase {
         Expression cond = expandDisjunction(tom_make_EqualFunctionSymbol(codomain,subjectVariableAST,tom_currentTerm),moduleName);                
         automataInstruction = compileConstraint(tom_currentTerm,tom_make_TomTermToExpression(subjectVariableAST),automataInstruction,moduleName);        
         return tom_make_If(cond,automataInstruction,tom_make_Nop());
-       } } } } } } } } } } } } } } } } } } } } } } } } }
+       } } } } } } } } } } } } } } } } } } } } } }
  // end match
     System.out.println("GenSyntacticMatchingAutomata strange term: " + termList);
     throw new TomRuntimeException("GenSyntacticMatchingAutomata strange term: " + termList);
@@ -386,7 +394,7 @@ public class TomKernelCompiler extends TomBase {
     
 	// get the compiled anti-pattern
    	Expression compiledAntiPattern = TomAntiPatternUtils.getAntiPatternMatchExpression(action,
-   			currentTerm, rootpath, slotName, moduleName, getSymbolTable(moduleName), subAction);
+   			currentTerm, rootpath, slotName, moduleName, getSymbolTable(moduleName), subAction, this);
    	
    	// if the result is false, no need to generate anything
    	 if(compiledAntiPattern instanceof  tom.engine.adt.tomexpression.types.Expression ) { { tom.engine.adt.tomexpression.types.Expression  tom_match7_1=(( tom.engine.adt.tomexpression.types.Expression )compiledAntiPattern); if ( ( tom_is_fun_sym_FalseTL(tom_match7_1) ||  false  ) ) { if ( true ) {
@@ -940,13 +948,21 @@ public class TomKernelCompiler extends TomBase {
     return tom_make_Nop();
   }
 
-  private Expression expandDisjunction(Expression exp, String moduleName) {
+  public Expression expandDisjunction(Expression exp, String moduleName) {
     Expression cond = tom_make_FalseTL();
      if(exp instanceof  tom.engine.adt.tomexpression.types.Expression ) { { tom.engine.adt.tomexpression.types.Expression  tom_match16_1=(( tom.engine.adt.tomexpression.types.Expression )exp); if ( ( tom_is_fun_sym_EqualFunctionSymbol(tom_match16_1) ||  false  ) ) { { tom.engine.adt.tomtype.types.TomType  tom_match16_1_AstType=tom_get_slot_EqualFunctionSymbol_AstType(tom_match16_1); { tom.engine.adt.tomterm.types.TomTerm  tom_match16_1_Exp1=tom_get_slot_EqualFunctionSymbol_Exp1(tom_match16_1); { tom.engine.adt.tomterm.types.TomTerm  tom_match16_1_Exp2=tom_get_slot_EqualFunctionSymbol_Exp2(tom_match16_1); { tom.engine.adt.tomtype.types.TomType  tom_termType=tom_match16_1_AstType; { tom.engine.adt.tomterm.types.TomTerm  tom_exp1=tom_match16_1_Exp1; if ( ( tom_is_fun_sym_RecordAppl(tom_match16_1_Exp2) ||  false  ) ) { { tom.engine.adt.tomoption.types.OptionList  tom_match16_1_Exp2_Option=tom_get_slot_RecordAppl_Option(tom_match16_1_Exp2); { tom.engine.adt.tomname.types.TomNameList  tom_match16_1_Exp2_NameList=tom_get_slot_RecordAppl_NameList(tom_match16_1_Exp2); { tom.engine.adt.tomslot.types.SlotList  tom_match16_1_Exp2_Slots=tom_get_slot_RecordAppl_Slots(tom_match16_1_Exp2); { tom.engine.adt.tomoption.types.OptionList  tom_option=tom_match16_1_Exp2_Option; { tom.engine.adt.tomname.types.TomNameList  tom_nameList=tom_match16_1_Exp2_NameList; { tom.engine.adt.tomslot.types.SlotList  tom_l=tom_match16_1_Exp2_Slots; if ( true ) {
 
         while(!tom_nameList.isEmptyconcTomName()) {
           TomName name = tom_nameList.getHeadconcTomName();
+          boolean isAnti = (name instanceof AntiName);
+          if (isAnti) {
+        	  name = name.getName();
+          }
           Expression check = tom_make_EqualFunctionSymbol(tom_termType,tom_exp1,tom_make_RecordAppl(tom_option,tom_cons_list_concTomName(name,tom_empty_list_concTomName()),tom_l,tom_empty_list_concConstraint()));
+          
+          if ( isAnti ){
+        	  check = tom_make_Negation(check);
+          }
           // to mark the symbol as alive
           //getSymbolTable(moduleName).setUsedSymbolDestructor(name.getString());
           cond = tom_make_Or(check,cond);

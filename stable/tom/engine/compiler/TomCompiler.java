@@ -97,11 +97,11 @@ public class TomCompiler extends TomGenericPlugin {
     try {
       // reinit absVarNumber to generate reproducible output
       absVarNumber = 0;
-      TomTerm preCompiledTerm = (TomTerm)(MuTraveler.init(tom_make_preProcessing(this)).visit(((TomTerm)getWorkingTerm())));
+      TomTerm preCompiledTerm = (TomTerm) tom_make_preProcessing(this).visit((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       Set hashSet = new HashSet();
-      TomTerm renamedTerm = (TomTerm)MuTraveler.init(tom_make_TopDown(tom_make_findRenameVariable(hashSet))).visit(compiledTerm);
+      TomTerm renamedTerm = (TomTerm) tom_make_TopDown(tom_make_findRenameVariable(hashSet)).visit(compiledTerm);
       //TomTerm renamedTerm = compiledTerm;
       // verbose
       getLogger().log( Level.INFO, TomMessage.tomCompilationPhase.getMessage(),
@@ -142,7 +142,7 @@ public class TomCompiler extends TomGenericPlugin {
 
 
         TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(tom_tomName);
-        SlotList newTermArgs = (SlotList) (MuTraveler.init(tom_make_preProcessing_makeTerm(compiler)).visit(tom_termArgs));
+        SlotList newTermArgs = (SlotList) tom_make_preProcessing_makeTerm(compiler).visit(tom_termArgs);
         TomList tomListArgs = slotListToTomList(newTermArgs);
 
         if(hasConstant(tom_optionList)) {
@@ -174,13 +174,13 @@ public class TomCompiler extends TomGenericPlugin {
         Option orgTrack = findOriginTracking(tom_matchOptionList);
         PatternInstructionList newPatternInstructionList = tom_empty_list_concPatternInstruction();
         PatternList negativePattern = tom_empty_list_concPattern();
-        TomTerm newMatchSubjectList = (TomTerm) MuTraveler.init(tom_make_preProcessing(compiler)).visit(tom_matchSubjectList);
+        TomTerm newMatchSubjectList = (TomTerm) tom_make_preProcessing(compiler).visit(tom_matchSubjectList);
         while(!tom_patternInstructionList.isEmptyconcPatternInstruction()) {
           /*
            * the call to preProcessing performs the recursive expansion
            * of nested match constructs
            */
-          PatternInstruction newPatternInstruction = (PatternInstruction) MuTraveler.init(tom_make_preProcessing(compiler)).visit(tom_patternInstructionList.getHeadconcPatternInstruction());
+          PatternInstruction newPatternInstruction = (PatternInstruction) tom_make_preProcessing(compiler).visit(tom_patternInstructionList.getHeadconcPatternInstruction());
 
 matchBlock: {
                if(newPatternInstruction instanceof  tom.engine.adt.tomterm.types.PatternInstruction ) { { tom.engine.adt.tomterm.types.PatternInstruction  tom_match3_1=(( tom.engine.adt.tomterm.types.PatternInstruction )newPatternInstruction); if ( ( tom_is_fun_sym_PatternInstruction(tom_match3_1) ||  false  ) ) { { tom.engine.adt.tomterm.types.Pattern  tom_match3_1_Pattern=tom_get_slot_PatternInstruction_Pattern(tom_match3_1); { tom.engine.adt.tominstruction.types.Instruction  tom_match3_1_Action=tom_get_slot_PatternInstruction_Action(tom_match3_1); { tom.engine.adt.tomoption.types.OptionList  tom_match3_1_Option=tom_get_slot_PatternInstruction_Option(tom_match3_1); if ( ( tom_is_fun_sym_Pattern(tom_match3_1_Pattern) ||  false  ) ) { { tom.engine.adt.tomterm.types.Pattern  tom_pattern=tom_match3_1_Pattern; { tom.engine.adt.tomterm.types.TomList  tom_match3_1_Pattern_SubjectList=tom_get_slot_Pattern_SubjectList(tom_match3_1_Pattern); { tom.engine.adt.tomterm.types.TomList  tom_match3_1_Pattern_TomList=tom_get_slot_Pattern_TomList(tom_match3_1_Pattern); { tom.engine.adt.tomterm.types.TomList  tom_match3_1_Pattern_Guards=tom_get_slot_Pattern_Guards(tom_match3_1_Pattern); { tom.engine.adt.tomterm.types.TomList  tom_subjectList=tom_match3_1_Pattern_SubjectList; { tom.engine.adt.tomterm.types.TomList  tom_termList=tom_match3_1_Pattern_TomList; { tom.engine.adt.tomterm.types.TomList  tom_guardList=tom_match3_1_Pattern_Guards; { tom.engine.adt.tominstruction.types.Instruction  tom_actionInst=tom_match3_1_Action; { tom.engine.adt.tomoption.types.OptionList  tom_option=tom_match3_1_Option; if ( true ) {
@@ -642,7 +642,7 @@ itBlock: {
         Set newContext = new HashSet(map.keySet());
         newContext.addAll(context);
         //System.out.println("newContext = " + newContext);
-        return (Instruction)MuTraveler.init(tom_make_TopDown(tom_make_findRenameVariable(newContext))).visit(tom_instruction);
+        return (Instruction)tom_make_TopDown(tom_make_findRenameVariable(newContext)).visit(tom_instruction);
        } } } } } } } } return super.visit_Instruction(tom__arg) ;  } }private static  jjtraveler.reflective.VisitableVisitor  tom_make_findRenameVariable( java.util.Set  t0) { return new findRenameVariable(t0); }
 
 

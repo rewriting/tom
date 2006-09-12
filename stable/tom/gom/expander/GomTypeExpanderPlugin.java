@@ -82,7 +82,7 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
           GomMessage.expansionIssue.getMessage(),
           streamManager.getInputFileName());
     } else {
-      getLogger().log(Level.FINE, "Typed Modules: "+typedModuleList);
+      getLogger().log(Level.FINE, "Typed Modules: {0}",typedModuleList);
       getLogger().log(Level.INFO, "Expansion succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()

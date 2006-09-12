@@ -32,7 +32,6 @@ package propp;
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import tom.library.traversal.*;
 import propp.seq.*;
 import propp.seq.types.*;
 import java.io.*;

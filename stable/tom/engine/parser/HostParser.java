@@ -70,7 +70,6 @@ import antlr.TokenStreamSelector;
 import tom.platform.OptionManager;
 import tom.platform.PluginPlatform;
 import tom.platform.PlatformLogRecord;
-import vas.Vas;
 
 public class HostParser extends antlr.LLkParser       implements HostParserTokenTypes
  {
@@ -474,11 +473,6 @@ public HostParser(ParserSharedInputState state) {
 				ruleConstruct(list);
 				break;
 			}
-			case VAS:
-			{
-				signature(list);
-				break;
-			}
 			case GOM:
 			{
 				gomsignature(list);
@@ -633,94 +627,6 @@ public HostParser(ParserSharedInputState state) {
 		// call the tomparser for the construct
 		Declaration ruleSet = tomparser.ruleConstruct(ot);
 		list.add(ruleSet);
-		
-	}
-	
-	public final void signature(
-		LinkedList list
-	) throws RecognitionException, TokenStreamException, TomException {
-		
-		Token  t = null;
-		
-		int initialVasLine;
-		TargetLanguage vasTL = null, code = null;
-		LinkedList blockList = new LinkedList();
-		String vasCode = null, fileName = "", apiName = null, packageName = "";
-		File file = null;
-		
-		
-		t = LT(1);
-		match(VAS);
-		
-		initialVasLine = t.getLine();
-		
-		String textCode = getCode();
-		if(isCorrect(textCode)) {
-		code = tom_make_TL(textCode,tom_make_TextPosition(currentLine,currentColumn),tom_make_TextPosition(t.getLine(),t.getColumn()))
-		
-		;
-		list.add(code);
-		}
-		
-		vasTL=goalLanguage(blockList);
-		
-		vasCode = vasTL.getCode().trim();
-		String destDir = getStreamManager().getDestDir().getPath();
-		// Generated Tom, ADT and API from VAS Code
-		String generatedADTName = null;
-		ArrayList vasParams = new ArrayList();
-		vasParams.add("--destdir");
-		vasParams.add(destDir);
-		packageName = getStreamManager().getPackagePath().replace(File.separatorChar, '.');
-		String inputFileNameWithoutExtension = getStreamManager().getRawFileName().toLowerCase();
-		String subPackageName = "";
-		if(packageName.equals("")) {
-		subPackageName = inputFileNameWithoutExtension;
-		} else {
-		subPackageName = packageName + "." + inputFileNameWithoutExtension;
-		}
-		vasParams.add("--package");
-		vasParams.add(subPackageName);
-		PluginPlatform vasPlatform = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode));
-		if(vasPlatform == null) {
-		throw new TomException(TomMessage.vasPlatformFailure,new Object[]{currentFile,new Integer(initialVasLine)});
-		}
-		int vasResult = vasPlatform.run();
-		if(vasResult != 0) {
-		//System.out.println(platform.getAlertForInput().toString());
-		throw new TomException(TomMessage.vasFailure,new Object[]{currentFile,new Integer(initialVasLine)});
-		}
-		
-		generatedADTName = (String)vasPlatform.getLastGeneratedObjects().get(0);
-		if(generatedADTName == null) {
-		throw new TomException(TomMessage.vasFailure,new Object[]{currentFile,new Integer(initialVasLine)});
-		}
-		// Simulate the inclusion of generated Tom file
-		
-		File adtFile = new File(generatedADTName);
-		String adtFileName = adtFile.toString();
-		try {
-		String moduleName = adtFile.getName().substring(0,adtFile.getName().length()-".adt".length());
-		String tomFileName = adtFile.getParentFile().getCanonicalPath() + File.separatorChar + moduleName.toLowerCase() + File.separatorChar + moduleName + ".tom";
-		
-		//System.out.println("tomFileName = " + tomFileName);
-		file = new File(tomFileName);
-		fileName = file.getCanonicalPath();
-		} catch (IOException e) {
-		throw new TomException(TomMessage.iOExceptionWithGeneratedTomFile,
-		new Object[]{fileName, currentFile, e.getMessage()});
-		} catch (Exception e) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		e.printStackTrace(pw);
-		throw new TomException(TomMessage.exceptionWithGeneratedTomFile,
-		new Object[]{adtFileName, currentFile, sw.toString()});
-		}
-		
-		includeFile(fileName, list);
-		
-		// the vas construct is over : a new target block begins
-		updatePosition();
 		
 	}
 	
@@ -1083,7 +989,6 @@ public HostParser(ParserSharedInputState state) {
 		"RULE",
 		"MATCH",
 		"GOM",
-		"VAS",
 		"BACKQUOTE",
 		"OPERATOR",
 		"OPERATORLIST",

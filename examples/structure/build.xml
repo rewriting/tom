@@ -8,20 +8,14 @@
   </target>
   <target name="build" depends="init">
     <!-- build adt -->    
-    <vascompile example="${structure}"/>
     <gomcompile example="${structure}"/>
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}">
       <!-- stamp not yet ready for apigen list -->
       <include name="${structure}/**/*.t"/>
-      <exclude name="${structure}/**/StructParser.g.t"/>
       <exclude name="${structure}/**/StructuresParser.g.t"/>
       <!--      <exclude name="${structure}/**/StructureCDT.t"/> -->
-    </tom.preset>
-    <tom.preset outputfile="${examples.gen}/${structure}/StructParser.g"
-                srcdir="${examples.dir}">
-      <include name="${structure}/**/StructParser.g.t"/>
     </tom.preset>
     <tom.preset outputfile="${examples.gen}/${structure}/StructuresParser.g"
                 options="-I ${examples.gen}/${structure}"
@@ -30,10 +24,6 @@
     </tom.preset>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${structure}"/>
-    <tomantlr target="${examples.gen}/${structure}/StructParser.g"
-              outputdirectory="${examples.gen}/${structure}">
-      <classpath refid="tom.classpath"/>
-    </tomantlr>
     <tomantlr target="${examples.gen}/${structure}/StructuresParser.g"
               outputdirectory="${examples.gen}/${structure}">
       <classpath refid="tom.classpath"/>
@@ -52,12 +42,6 @@
         <include name="mutraveler*.jar"/>
       </fileset>
     </path>
-    <path id="tom-library.path"> <!-- ugly hack to find the jar -->
-      <fileset dir="${tom.home}/lib">
-        <include name="tom-library*.jar"/>
-      </fileset>
-    </path>
-    <property name="tom-library.jar" refid="tom-library.path"/>
     <property name="mutraveler.jar" refid="mutraveler.path"/>
     <jar jarfile="${examples.build}/${structure}/structure.jar">
       <fileset dir="${examples.build}">
@@ -68,7 +52,6 @@
       <zipfileset src="${tom.home}/lib/jjtraveler.jar"/>
       <zipfileset src="${tom.home}/lib/antlr.jar"/>
       <zipfileset src="${mutraveler.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
-      <zipfileset src="${tom-library.jar}" includes="tom/library/traversal/**/*.class"/>
       <zipfileset src="${tom.home}/lib/aterm.jar"/>
     </jar>
   </target>
@@ -77,7 +60,6 @@
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="${structure}/*.t"/>
-        <include name="${structure}/*.vas"/>
         <include name="${structure}/*.gom"/>
         <include name="${structure}/*.tom"/>
         <include name="${structure}/*.java"/>

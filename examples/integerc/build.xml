@@ -8,12 +8,14 @@
   </target>
   <target name="build" depends="init">
     <mkdir dir="${examples.gen}/${integerc}"/>
+    <!--
     <adt srcdir="${examples.dir}"
       name="Peano" 
       cCode="yes" 
       destdir="${examples.gen}/${integerc}">
       <include name="${integerc}/**/*.adt"/>
     </adt>
+    -->
     <tom.preset srcdir="${examples.dir}"
 	        destdir="${examples.gen}/${integerc}"         
                 stamp="off" 
@@ -54,7 +56,6 @@
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="${integerc}/*.t"/>
         <include name="${integerc}/Makefile"/>
-        <include name="${integerc}/*.adt"/>
       </zipfileset>
     </zip>
   </target>

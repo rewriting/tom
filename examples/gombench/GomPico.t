@@ -156,10 +156,10 @@ public class GomPico {
     for (int i = 100; i <= (100*criblemax); i+=100) {
       gomtest.run(i);
     }
-    System.out.println();
-    ApiPico apitest = new ApiPico();
-    for (int i = 100; i <= (100*criblemax); i+=100) {
-      apitest.run(i);
-    }
+    //System.out.println();
+    //ApiPico apitest = new ApiPico();
+    //for (int i = 100; i <= (100*criblemax); i+=100) {
+    //  apitest.run(i);
+    //}
   }
 }
