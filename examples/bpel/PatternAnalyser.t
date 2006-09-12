@@ -32,6 +32,7 @@ package bpel;
 
 import bpel.wfg.*;
 import bpel.wfg.types.*;
+import bpel.wfg.strategy.wfg.*;
 
 import tom.library.xml.*;
 import tom.library.adt.tnode.*;
@@ -63,58 +64,160 @@ public class PatternAnalyser{
     }
   }
 
- %strategy Print() extends `Identity() {
+
+
+ %strategy Combine(wfg:Wfg) extends `Identity(){
+   visit Wfg{
+       WfgNode(leaf@Activity[]) -> {
+       return `WfgNode(leaf,wfg);
+     }
+   }
+ }
+
+ public static Wfg bpelToWfg(TNode term,Wfg wfg){
+   Wfg wfglist = `ConcWfg();
+   %match(TNode term){
+     <flow>p</flow> ->{
+       wfglist = (Wfg) `ConcWfg(wfglist*,bpelToWfg(p,wfg));
+     }
+     <flow></flow> ->{
+       System.out.println("flow list "+wfglist);
+       wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(wfglist),All(MuVar("x")))).apply(wfg);
+       System.out.println("flow "+wfg);
+     }
+     <sequence>p</sequence> ->{
+       wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(p,wfg)),All(MuVar("x")))).apply(wfg);
+       System.out.println("sequence "+wfg);
+     }
+     <activity name=name /> -> {
+       return `Activity(name,noCond(),noCond()); 
+     }
+   }
+   return wfg;
+ }
+
+ %strategy removeTextNode() extends Identity(){
+   visit TNodeList {
+     concTNode(head,tail*)-> {
+       %match(TNode head){
+         TextNode(_) -> {return (TNodeList) this.visit(`tail);} 
+         _ -> {
+           TNodeList newTail = (TNodeList) this.visit(`tail); 
+           return `concTNode(head,newTail*);
+         } 
+       }
+     }
+   }
+ }
+
+ /*
+    %strategy getNode(root:Wfg,currentPos:Position) extends `Identity(){
     visit Wfg{
-      inst@_ -> {
-        System.out.println("---print---"+`inst);      
-      }
+    pos@posWfg(_*) ->{
+    RelativePosition posRelative = new RelativePosition(((bpel.wfg.types.wfg.posWfg)`pos).toArray());
+    System.out.println("Position relative:"+posRelative);
+    Position position = posRelative.getAbsolutePosition(currentPos);
+    System.out.println("Position :"+position);
+    return (Wfg) position.getSubterm().apply(root);
     }
-  }
-
-
-  public static Wfg bpelToWfg(TNode term,int index){
-    Wfg wfg = `ConcWfg();
-    %match(TNode term){
-      <process> process </process> -> {
-        %match(TNode process){
-          <flow>p</flow> ->{
-            wfg = `ConcWfg(wfg*,bpelToWfg(p,index++)*);
-          }
-          <sequence>p</sequence> ->{
-            wfg = `ConcWfg(wfg*,bpelToWfg(p,index++)*);
-          }
-          <activity><source name=label /></activity> -> {
-            //wfg = `();
-          }
-        }
-      }
-
     }
-    return wfg;
-  }
-
-  public static void main(String[] args){
-    /*
-       XmlTools xtools = new XmlTools();
-       TNode term = xtools.convertXMLToTNode(args[0]);
-     */
-    Wfg wfg = `expWfg(ConcWfg(
-        Wfg(Activity("empty"),refWfg("A"),refWfg("C"),refWfg("G")), 
-        labWfg("A",Wfg(Activity("A"),refWfg("B"),refWfg("F"))), 
-        labWfg("C",Wfg(Activity("C"),refWfg("D"),refWfg("E"))), 
-        labWfg("G",Wfg(Activity("G"),refWfg("E"),refWfg("empty"))), 
-        labWfg("B",Wfg(Activity("B"),refWfg("empty"))), 
-        labWfg("D",Wfg(Activity("D"),refWfg("F"))), 
-        labWfg("E",Wfg(Activity("E"),refWfg("F"))), 
-        labWfg("F",Wfg(Activity("F"),refWfg("empty"))), 
-        labWfg("empty",Wfg(Activity("empty"))) 
-        ));
-
-    PatternAnalyser analyser = new PatternAnalyser();
-    try{
-      System.out.println("\nWfg with positions:\n" + wfg);
-    }catch(Exception e){
-      e.printStackTrace();
     }
-  }
+  */
+
+ %op Strategy _ConsWfgNode(s1:Strategy,s2:Strategy){
+   is_fsym(t) { (t instanceof _ConsWfgNode) }
+   make(s1,s2) { new _ConsWfgNode(s1,s2) }
+ }
+
+ %op Strategy _ConsConcWfg(s1:Strategy,s2:Strategy){
+   is_fsym(t) { (t instanceof _ConsConcWfg) }
+   make(s1,s2) { new _ConsConcWfg(s1,s2) }
+ }
+
+
+ %op Strategy VisitWfgNode(v:Visitable,s:Strategy) {
+   make(v,s) {`mu(MuVar("x"),Sequence(OneRefSensitive(v,s),Try(_ConsWfgNode(Identity(),MuVar("x")))))}
+ }
+
+ public static void printWfg(Wfg wfg){
+   Node root = new Node("");
+   System.out.println("digraph g{");
+   %match(Wfg wfg) {
+     ConcWfg(e,_*) -> {
+       `mu(MuVar("y"),_ConsWfgNode(GetRoot(root),Sequence(VisitWfgNode(wfg,Print(root)),VisitWfgNode(wfg,Try(MuVar("y")))))).apply(`e);
+     }
+   }
+   System.out.println("}");
+ }
+
+ %strategy Debug() extends `Identity(){
+   visit Wfg{
+     _ -> {
+       System.out.println("debug");
+     }
+   }
+ }
+
+ %strategy Print(root:Node) extends `Identity(){
+   visit Wfg{
+     WfgNode(Activity[name=name],_*) ->{
+       System.out.println(root.name+" -> "+`name+";");
+     }
+     Activity[name=name] ->{
+       System.out.println(root.name+" -> "+`name+";");
+     }
+   }
+ }
+
+ %strategy GetRoot(root:Node) extends `Identity(){
+   visit Wfg{
+     Activity[name=name] ->{
+       root.name = `name; 
+     }
+   }
+ }
+
+ %typeterm Node{
+   implement {Node}
+ }
+ static class Node{
+   public String name;
+
+   public Node(String name){
+     this.name=name;
+   }
+
+ }
+ public static void main(String[] args){
+   XmlTools xtools = new XmlTools();
+   TNode term = xtools.convertXMLToTNode(args[0]);
+   term = (TNode) `TopDown(removeTextNode()).apply(term);
+   Wfg wfg = `ConcWfg(WfgNode(Activity("_start",noCond(),noCond())));
+   %match(TNode term){
+     DocumentNode(_,ElementNode("process",_,concTNode(_*,process,_*))) -> {
+       wfg = bpelToWfg(`process,wfg); 
+     }
+   }
+   /* 
+      Wfg wfg = `expWfg(ConcWfg(
+      WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C")),
+      labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("end"))), 
+      labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("end"))), 
+      labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
+      ));
+      Wfg wfg = `expWfg(ConcWfg(
+      WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C"),refWfg("G")), 
+      labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("B"),refWfg("F"))), 
+      labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("D"),refWfg("E"))), 
+      labWfg("G",WfgNode(Activity("G",noCond(),noCond()),refWfg("E"),refWfg("end"))), 
+      labWfg("B",WfgNode(Activity("B",noCond(),noCond()),refWfg("end"))), 
+      labWfg("D",WfgNode(Activity("D",noCond(),noCond()),refWfg("F"))), 
+      labWfg("E",WfgNode(Activity("E",noCond(),noCond()),refWfg("F"))), 
+      labWfg("F",WfgNode(Activity("F",noCond(),noCond()),refWfg("end"))), 
+      labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
+      ));
+    */
+   System.out.println("\nWfg with positions:\n" + wfg);
+   PatternAnalyser.printWfg(wfg);
+ }
 }//class PatternAnalyser

@@ -10,9 +10,14 @@
   make(v,s) { new AllRelativeRefSensitive(v,s) }
 }
 
-%op Strategy OneRef(v:Visitable,s:Strategy) {
-  is_fsym(t) { (t instanceof OneRef) }
-  make(v,s) { new OneRef(v,s) }
+%op Strategy OneRelativeRefSensitive(v:Visitable,s:Strategy) {
+  is_fsym(t) { (t instanceof OneRelativeRefSensitive) }
+  make(v,s) { new OneRelativeRefSensitive(v,s) }
+}
+
+%op Strategy OneRefSensitive(v:Visitable,s:Strategy) {
+  is_fsym(t) { (t instanceof OneRefSensitive) }
+  make(v,s) { new OneRefSensitive(v,s) }
 }
 
 %op Strategy TopDownRef(v:Visitable,s1:Strategy) {

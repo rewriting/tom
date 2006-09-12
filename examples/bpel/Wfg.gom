@@ -2,7 +2,7 @@ module Wfg
 imports String int
 abstract syntax
 
-Wfg = Wfg(Wfg*)
+Wfg = WfgNode(Wfg*)
     | Activity(name:String,inputcond:Condition,outputcond:Condition)
     | ConcWfg(Wfg*)
     | labWfg(label:String,wfg:Wfg)
@@ -15,13 +15,24 @@ Condition = and(c1:Condition,c2:Condition)
           | or(c1:Condition,c2:Condition)
           | xor(c1:Condition,c2:Condition)
           | cond(wfg:Wfg)
-          | true()
+          | noCond()
 
 
 expWfg:make(wfg) {
   bpel.wfg.types.Wfg wfgWithPos = bpel.Tool.expand(wfg);
   //to avoid unaccessible real_make statement
   if(! wfgWithPos.equals(wfg)) return wfgWithPos;
+}
+
+WfgNode:make_insert(node,wfg) {
+  %match(Wfg node){
+    ConcWfg(_*,e,_*) -> {
+      wfg = `WfgNode(wfg*,e);
+    }
+    ConcWfg(_*) -> {
+      return wfg;
+    }
+  }
 }
 
 posWfg:interface{
