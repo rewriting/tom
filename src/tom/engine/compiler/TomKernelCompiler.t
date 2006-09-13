@@ -90,7 +90,7 @@ public class TomKernelCompiler extends TomBase {
   public int matchNumber = 0;
 
   private TomName getLabel(OptionList list) {
-    %match(OptionList list) {
+    %match(list) {
       concOption(_*,Label(name@Name[]),_*) -> { return `name; }
     }
     return null;
@@ -173,7 +173,7 @@ public class TomKernelCompiler extends TomBase {
      * generate a check_stamp
      */
   private Instruction collectVariableFromSubjectList(SlotList subjectList, TomNumberList path, Instruction body, String moduleName) {
-    %match(SlotList subjectList) { 
+    %match(subjectList) { 
       concSlot() -> { return body; }
       concSlot(PairSlotAppl(slotName,subjectVar@Variable[Option=option,AstType=variableType]),tail*) -> {
         body = collectVariableFromSubjectList(`tail,path,body,moduleName);
@@ -202,7 +202,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
   private InstructionList concatInstruction(Instruction i1, Instruction i2) {
-    %match(Instruction i1, Instruction i2) {
+    %match(i1, i2) {
       AbstractBlock(l1), AbstractBlock(l2) -> { return `concInstruction(l1*,l2*); }
       AbstractBlock(l1), y -> { return `concInstruction(l1*,y); }
       x, AbstractBlock(l2) -> { return `concInstruction(x,l2*); }
@@ -214,7 +214,7 @@ public class TomKernelCompiler extends TomBase {
      * build a list of instructions from a list of automata
      */
   private InstructionList automataListCompileMatchingList(TomList automataList) {
-    %match(TomList automataList) {
+    %match(automataList) {
       concTomTerm() -> { return `concInstruction(); }
       concTomTerm(Automata(optionList,patternList,_,instruction),l*)  -> {
         InstructionList newList = automataListCompileMatchingList(`l);
@@ -248,7 +248,7 @@ public class TomKernelCompiler extends TomBase {
                                            TomNumberList rootpath,
                                            String moduleName) {
 	  
-    %match(SlotList termList) {
+    %match(termList) {
       concSlot() -> {    	  
         return action;        
       } 
@@ -397,7 +397,7 @@ public class TomKernelCompiler extends TomBase {
    			currentTerm, rootpath, slotName, moduleName, getSymbolTable(moduleName), subAction, this);
    	
    	// if the result is false, no need to generate anything
-   	%match(Expression compiledAntiPattern){
+   	%match(compiledAntiPattern) {
    		FalseTL() ->{
    			OriginTracking or = (OriginTracking)currentTerm.getOption().getHeadconcOption();
    			Logger.getLogger(getClass().getName()).log( 
@@ -434,7 +434,7 @@ public class TomKernelCompiler extends TomBase {
                                       boolean ensureNotEmptyList,
                                       String moduleName) {
     //getSymbolTable(moduleName).setUsedSymbolDestructor(p.symbol);
-    %match(SlotList termList) {
+    %match(termList) {
       concSlot() -> {
           /*
            * nothing to compile
@@ -559,7 +559,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
   private boolean containOnlyVariableStar(SlotList termList) {
-    %match(SlotList termList) {
+    %match(termList) {
       concSlot() -> {
         return true;
       }
@@ -634,7 +634,7 @@ public class TomKernelCompiler extends TomBase {
                                        boolean ensureNotEmptyList,
                                        String moduleName) {
     //getSymbolTable(moduleName).setUsedSymbolDestructor(p.symbol);
-    %match(SlotList termList) {
+    %match(termList) {
       concSlot() -> {
           /*
            * nothing to compile
@@ -812,7 +812,7 @@ public class TomKernelCompiler extends TomBase {
   private Instruction collectSubtermFromSubjectList(TomTerm currentTerm,
                                                     TomTerm subjectVariableAST, 
                                                     TomNumberList path, Instruction body, String moduleName) {
-    %match(TomTerm currentTerm) {
+    %match(currentTerm) {
       RecordAppl[NameList=nameList@(Name(tomName),_*), Slots=termArgList] -> {
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
 
@@ -841,7 +841,7 @@ public class TomKernelCompiler extends TomBase {
                                        TomTerm subjectVariableAST, 
                                        TomNumberList path,
                                        String moduleName) {
-    %match(TomNameList nameList) {  
+    %match(nameList) {  
       concTomName() -> {
         return `Nop();
       }
@@ -868,7 +868,7 @@ public class TomKernelCompiler extends TomBase {
                                               TomNumberList path, Instruction body,
                                               String moduleName) {
     TomName opNameAST = tomSymbol.getAstName();
-    %match(SlotList termArgList) { 
+    %match(termArgList) { 
       concSlot() -> { return body; }
      
       concSlot(PairSlotAppl(slotName,_),tail*) -> {
@@ -901,7 +901,7 @@ public class TomKernelCompiler extends TomBase {
                                                  TomSymbol tomSymbol,
                                                  TomNumberList path,
                                                  Instruction body) {
-    %match(SlotList termArgList) { 
+    %match(termArgList) { 
       concSlot() -> {
         return body;
       }
@@ -924,7 +924,7 @@ public class TomKernelCompiler extends TomBase {
   private Instruction collectSubtermFromTomSymbol(SlotList termArgList, TomSymbol tomSymbol,
       TomTerm subjectVariableAST, TomNumberList path, Instruction body, String moduleName) {	  
     TomName opNameAST = tomSymbol.getAstName();
-    %match(SlotList termArgList) { 
+    %match(termArgList) { 
       concSlot() -> { return body; }
       
       concSlot(PairSlotAppl(slotName,_),tail*) -> {
@@ -949,7 +949,7 @@ public class TomKernelCompiler extends TomBase {
 
   public Expression expandDisjunction(Expression exp, String moduleName) {
     Expression cond = `FalseTL();
-    %match(Expression exp) {
+    %match(exp) {
       EqualFunctionSymbol(termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
         while(!`nameList.isEmptyconcTomName()) {
           TomName name = `nameList.getHeadconcTomName();
@@ -995,7 +995,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
   private Instruction compileConstraint(TomTerm subject, Expression source, Instruction body, String moduleName) {
-    %match(TomTerm subject) {
+    %match(subject) {
       (Variable|VariableStar)[Constraints=constraints] -> {
         return buildConstraint(`constraints,`TomTermToExpression(subject),body,moduleName);
       }
@@ -1012,7 +1012,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
   private Instruction buildConstraint(ConstraintList constraints, Expression source, Instruction body, String moduleName) {
-    %match(ConstraintList constraints) {
+    %match(constraints) {
       concConstraint() -> {
         return body;
       }

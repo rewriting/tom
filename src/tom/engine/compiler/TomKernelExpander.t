@@ -278,12 +278,12 @@ public class TomKernelExpander extends TomBase {
 	while(!`tomSubjectList.isEmptyconcTomTerm()) {
 	  TomTerm subject = `tomSubjectList.getHeadconcTomTerm();
 matchBlock: {
-	      %match(TomTerm subject) {
+	      %match(subject) {
 		Variable(variableOption,astName,tomType@TomTypeAlone(type),constraints) -> {
 		  TomTerm newVariable = null;
 		  if(expander.getType(`type) == null) {
 		    /* the subject is a variable with an unknown type */
-		    %match(PatternInstructionList patternInstructionList) {
+		    %match(patternInstructionList) {
 		      concPatternInstruction(_*, PatternInstruction[
 			  Pattern=Pattern[TomList=concTomTerm(X*,(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(Name(name),_*)],_*)]], _*) -> {
 			//System.out.println("X.length = " + `X*.length());
@@ -342,7 +342,7 @@ matchBlock: {
    */
   visit Pattern {
     Pattern(subjectList,termList, guardList) -> {
-      %match(TomType contextType) {
+      %match(contextType) {
 	TypeList(typeList) -> {
 	  //System.out.println("expandVariable.9: "+l1+"(" + termList + ")");
 
@@ -399,7 +399,7 @@ matchBlock: {
 	ConstraintList newConstraints = (ConstraintList)expander.expandVariable(getSymbolCodomain(tomSymbol),`constraints);
 	return `RecordAppl(option,nameList,subterm,newConstraints);
       } else {
-	%match(TomType contextType) {
+	%match(contextType) {
 	  type@Type[] -> {
 	    SlotList subterm = expander.expandVariableList(`emptySymbol(), `slotList);
 	    ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`type,`constraints);
@@ -422,7 +422,7 @@ matchBlock: {
 	return `var.setAstType(localType);
       }
 
-      %match(TomType contextType){
+      %match(contextType){
 	type@Type[] ->{
 	  ConstraintList newConstraints = (ConstraintList)expander.expandVariable(`type,`constraints);
 	  return `var.setAstType(`type).setConstraints(newConstraints);
@@ -449,15 +449,15 @@ private TomType getTypeFromVariableList(TomName name, TomList list) {
   //System.out.println("name = " + name);
   //System.out.println("list = " + list);
 
-  %match(TomName name,TomList list) {
-    _,concTomTerm() -> {
+  %match(list) {
+    concTomTerm() -> {
       System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
       throw new TomRuntimeException("getTypeFromVariableList. Stange case '" + name + "' not found");
     }
 
-    varName, concTomTerm(Variable[AstName=varName,AstType=type@Type[]],_*) -> { return `type; }
-    varName, concTomTerm(VariableStar[AstName=varName,AstType=type@Type[]],_*) -> { return `type; }
-    _, concTomTerm(_,tail*) -> { return getTypeFromVariableList(name,`tail); }
+    concTomTerm(Variable[AstName=varName,AstType=type@Type[]],_*) -> { if(name==`varName) return `type; }
+    concTomTerm(VariableStar[AstName=varName,AstType=type@Type[]],_*) -> { if(name==`varName) return `type; }
+    concTomTerm(_,tail*) -> { return getTypeFromVariableList(name,`tail); }
 
   }
   return null;
@@ -477,7 +477,7 @@ private SlotList expandVariableList(TomSymbol symbol, SlotList subtermList) {
   }
 
   //System.out.println("symbol = " + subject.getastname());
-  %match(TomSymbol symbol, SlotList subtermList) {
+  %match(symbol, subtermList) {
     emptySymbol(), concSlot(PairSlotAppl(slotName,slotAppl),tail*) -> {
       /*
        * if the top symbol is unknown, the subterms
@@ -505,7 +505,7 @@ private SlotList expandVariableList(TomSymbol symbol, SlotList subtermList) {
 	  //System.out.println("listoperator: " + symb);
 	  //System.out.println("subtermlist: " + subtermlist);
 
-	  %match(TomTerm slotAppl) {
+	  %match(slotAppl) {
 	    VariableStar[Option=option,AstName=name,Constraints=constraints] -> {
 	      ConstraintList newconstraints = (ConstraintList)expandVariable(`codomain,`constraints);
 	      SlotList sl = expandVariableList(symbol,`tail);
@@ -538,7 +538,7 @@ private SlotList expandVariableList(TomSymbol symbol, SlotList subtermList) {
 %strategy replace_replaceInstantiatedVariable(instantiatedVariable:TomList) extends `Identity() {
   visit TomTerm {
     subject -> {
-      %match(TomTerm subject, TomList instantiatedVariable) {
+      %match(subject, instantiatedVariable) {
 	RecordAppl[NameList=(opNameAST),Slots=concSlot()] , concTomTerm(_*,var@(Variable|VariableStar)[AstName=opNameAST] ,_*) -> {
 	  return `var;
 	}

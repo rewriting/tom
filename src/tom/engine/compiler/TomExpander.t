@@ -165,7 +165,7 @@ public class TomExpander extends TomGenericPlugin {
   }
 
   private TomSymbol addDefaultIsFSym(TomSymbol tomSymbol) {
-    %match(TomSymbol tomSymbol) {
+    %match(tomSymbol) {
       Symbol[Option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return tomSymbol;
       }
@@ -280,7 +280,7 @@ public class TomExpander extends TomGenericPlugin {
     } else {
       Slot head = args.getHeadconcSlot();
       SlotList tail = expandChar(args.getTailconcSlot());
-      %match(Slot head) {
+      %match(head) {
         PairSlotAppl(slotName,appl@RecordAppl[NameList=(Name(tomName)),Slots=()]) -> {
           /*
            * ensure that the argument contains at least 1 character and 2 single quotes
@@ -410,10 +410,10 @@ public class TomExpander extends TomGenericPlugin {
     }
 
   private static TomList sortAttributeList(TomList attrList) {
-    %match(TomList attrList) {
+    %match(attrList) {
       concTomTerm() -> { return attrList; }
       concTomTerm(X1*,e1,X2*,e2,X3*) -> {
-        %match(TomTerm e1, TomTerm e2) {
+        %match(e1, e2) {
           TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name1))],_*)],
             TermAppl[Args=concTomTerm(RecordAppl[NameList=(Name(name2))],_*)] -> {
               if(`name1.compareTo(`name2) > 0) {
@@ -470,7 +470,7 @@ public class TomExpander extends TomGenericPlugin {
 
   private static OptionList convertOriginTracking(String name,OptionList optionList) {
     Option originTracking = findOriginTracking(optionList);
-    %match(Option originTracking) {
+    %match(originTracking) {
       OriginTracking[Line=line, FileName=fileName] -> {
         return `concOption(OriginTracking(Name(name),line,fileName));
       }
@@ -546,12 +546,12 @@ public class TomExpander extends TomGenericPlugin {
      */
     TomNameList newNameList = `concTomName();
 matchBlock: {
-              %match(TomNameList nameList) {
-                (Name("_")) -> {
+              %match(nameList) {
+                concTomName(Name("_")) -> {
                   break matchBlock;
                 }
 
-                (_*,Name(name),_*) -> {
+                concTomName(_*,Name(name),_*) -> {
                   newNameList = `concTomName(newNameList*,Name(ASTFactory.encodeXMLString(symbolTable(),name)));
                 }
               }

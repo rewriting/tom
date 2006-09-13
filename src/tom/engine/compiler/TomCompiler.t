@@ -183,11 +183,11 @@ public class TomCompiler extends TomGenericPlugin {
           PatternInstruction newPatternInstruction = (PatternInstruction) `preProcessing(compiler).visit(`patternInstructionList.getHeadconcPatternInstruction());
 
 matchBlock: {
-              %match(PatternInstruction newPatternInstruction) {
+              %match(newPatternInstruction) {
                 PatternInstruction(pattern@Pattern[SubjectList=subjectList,TomList=termList,Guards=guardList],actionInst, option) -> {
                   Instruction newAction = `actionInst;
                   /* expansion of RawAction into TypedAction */
-                  %match(Instruction actionInst) {
+                  %match(actionInst) {
                     RawAction(x) -> {
                       newAction=`TypedAction(If(TrueTL(),x,Nop()),pattern,negativePattern);
                     }
@@ -264,7 +264,7 @@ matchBlock: {
         while (!jVisitList.isEmptyconcTomVisit()){
           TomList subjectListAST = `concTomTerm();
           TomVisit visit = jVisitList.getHeadconcTomVisit();
-          %match(TomVisit visit) {
+          %match(visit) {
             VisitTerm(vType@Type[TomType=ASTTomType(type)],patternInstructionList,_) -> {
               if (visitorFwd == null) {//first time in loop
                 visitorFwd = compiler.symbolTable().getForwardType(`type);//do the job only once
@@ -307,7 +307,7 @@ matchBlock: {
         TomList guardList = `concTomTerm();//no guardlist in pattern
         while(!ruleList.isEmptyconcTomRule()) {
           TomRule rule = ruleList.getHeadconcTomRule();
-          %match(TomRule rule) {
+          %match(rule) {
             RewriteRule(Term(RecordAppl[Slots=matchPatternsList]),//lhsTerm
                 Term(rhsTerm),
                 condList,
@@ -348,7 +348,7 @@ matchBlock: {
   }
 
   private Instruction buildCondition(InstructionList condList, Instruction action) {
-    %match(InstructionList condList) {
+    %match(condList) {
       concInstruction() -> { return action; }
 
       concInstruction(MatchingCondition[Lhs=pattern,Rhs=subject], tail*) -> {
@@ -399,7 +399,7 @@ matchBlock: {
       ArrayList equalityCheck) {
     TomTerm renamedTerm = subject;
 
-    %match(TomTerm subject) {
+    %match(subject) {
       var@(UnamedVariable|UnamedVariableStar)[Constraints=constraints] -> {
         ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap,equalityCheck);
         return `var.setConstraints(newConstraintList);
@@ -452,7 +452,7 @@ matchBlock: {
     while(!constraintList.isEmptyconcConstraint()) {
       Constraint cstElt = constraintList.getHeadconcConstraint();
       Constraint newCstElt = cstElt;
-      %match(Constraint cstElt) {
+      %match(cstElt) {
         AssignTo(var@Variable[]) -> {
           newCstElt = `AssignTo(renameVariable(var,multiplicityMap,equalityCheck));
         }
@@ -480,7 +480,7 @@ matchBlock: {
       ArrayList abstractedPattern,
       ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
-    %match(TomTerm subject) {
+    %match(subject) {
       RecordAppl[NameList=(Name(tomName),_*), Slots=arguments] -> {
         TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
 
@@ -490,7 +490,7 @@ matchBlock: {
           while(!args.isEmptyconcSlot()) {
             Slot elt = args.getHeadconcSlot();
             TomTerm newElt = elt.getAppl();
-            %match(TomTerm newElt) {
+            %match(newElt) {
               appl@RecordAppl[NameList=(Name(tomName2),_*)] -> {
                 /*
                  * we no longer abstract syntactic subterm
@@ -530,7 +530,7 @@ matchBlock: {
   }
 
   private TomList abstractPatternList(TomList subjectList, ArrayList abstractedPattern, ArrayList introducedVariable)  {
-    %match(TomList subjectList) {
+    %match(subjectList) {
       concTomTerm() -> { return subjectList; }
       concTomTerm(head,tail*) -> {
         TomTerm newElt = abstractPattern(`head,abstractedPattern,introducedVariable);
@@ -578,7 +578,7 @@ matchBlock: {
 itBlock: {
            for(Iterator it2 = constraintVariable.iterator(); it2.hasNext() ; ) {
              TomTerm constraintTerm = (TomTerm) it2.next();
-             %match(TomTerm patternTerm, TomTerm constraintTerm) {
+             %match(patternTerm, TomTerm constraintTerm) {
                var@Variable[AstName=name], Variable[AstName=name] -> {
                  res.add(`var);
                  //break itBlock;
