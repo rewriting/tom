@@ -68,32 +68,35 @@ public class PatternAnalyser{
 
  %strategy Combine(wfg:Wfg) extends `Identity(){
    visit Wfg{
-       WfgNode(leaf@Activity[]) -> {
+     Empty() -> {
+       return wfg; 
+     }
+
+     WfgNode(leaf@Activity[]) -> {
        return `WfgNode(leaf,wfg);
      }
    }
  }
 
- public static Wfg bpelToWfg(TNode term,Wfg wfg){
+ public static Wfg bpelToWfg(TNode term){
+   Wfg wfg  = `Empty();
    Wfg wfglist = `ConcWfg();
    %match(TNode term){
      <flow>p</flow> ->{
-       wfglist = (Wfg) `ConcWfg(wfglist*,bpelToWfg(p,wfg));
+       Wfg res = bpelToWfg(`p);
+       wfglist = `ConcWfg(wfglist*,res);
      }
      <flow></flow> ->{
-       System.out.println("flow list "+wfglist);
-       wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(wfglist),All(MuVar("x")))).apply(wfg);
-       System.out.println("flow "+wfg);
+       return wfglist;
      }
      <sequence>p</sequence> ->{
-       wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(p,wfg)),All(MuVar("x")))).apply(wfg);
-       System.out.println("sequence "+wfg);
+       wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(p)),All(MuVar("x")))).apply(wfg);
      }
      <activity name=name /> -> {
-       return `Activity(name,noCond(),noCond()); 
+       return `WfgNode(Activity(name,noCond(),noCond())); 
      }
    }
-   return wfg;
+   return wfg; //wfg;
  }
 
  %strategy removeTextNode() extends Identity(){
@@ -192,10 +195,11 @@ public class PatternAnalyser{
    XmlTools xtools = new XmlTools();
    TNode term = xtools.convertXMLToTNode(args[0]);
    term = (TNode) `TopDown(removeTextNode()).apply(term);
-   Wfg wfg = `ConcWfg(WfgNode(Activity("_start",noCond(),noCond())));
+   Wfg wfg = null; //`ConcWfg(WfgNode(Activity("_start",noCond(),noCond())));
    %match(TNode term){
      DocumentNode(_,ElementNode("process",_,concTNode(_*,process,_*))) -> {
-       wfg = bpelToWfg(`process,wfg); 
+       wfg = bpelToWfg(`process); 
+       wfg = `ConcWfg(wfg);
      }
    }
    /* 

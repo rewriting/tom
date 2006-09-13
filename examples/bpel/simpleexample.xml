@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <process>
-<flow>
-<sequence>
-  <activity name="A" /> 
-  <activity name="B" /> 
+  <sequence>
+    <activity name="start" />
+  <flow>
+    <sequence>
+      <activity name="A" /> 
+      <activity name="B" /> 
+    </sequence>
+    <sequence>
+      <activity name="C" /> 
+      <flow>
+        <activity name="D" /> 
+        <activity name="E" /> 
+      </flow>
+      <activity name="F" /> 
+    </sequence>
+    <sequence>
+      <activity name="G" /> 
+    </sequence>
+  </flow>
 </sequence>
-<sequence>
-  <activity name="C" /> 
-<flow>
-  <activity name="D" /> 
-  <activity name="E" /> 
-</flow>
-<activity name="F" /> 
-</sequence>
-<sequence>
-  <activity name="G" /> 
-</sequence>
-</flow>
 </process>
+
+

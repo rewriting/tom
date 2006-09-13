@@ -27,6 +27,7 @@ expWfg:make(wfg) {
 WfgNode:make_insert(node,wfg) {
   %match(Wfg node){
     ConcWfg(_*,e,_*) -> {
+      System.out.println("ici e = " + `e);
       wfg = `WfgNode(wfg*,e);
     }
     ConcWfg(_*) -> {
