@@ -38,7 +38,7 @@ public class Tool{
 
   public static Wfg expand(Wfg t){
     HashMap table = new HashMap();
-    return (Wfg) `Sequence(TopDown(CollectWfgs(table)),TopDown(Replacelabels(table))).apply(t);
+    return (Wfg) `Sequence(RepeatId(TopDown(CollectWfgs(table))),TopDown(Replacelabels(table))).apply(t);
   }
 
 }

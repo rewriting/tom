@@ -21,7 +21,12 @@ Condition = and(c1:Condition,c2:Condition)
 expWfg:make(wfg) {
   bpel.wfg.types.Wfg wfgWithPos = bpel.Tool.expand(wfg);
   //to avoid unaccessible real_make statement
-  if(! wfgWithPos.equals(wfg)) return wfgWithPos;
+  if(! wfgWithPos.equals(wfg)){
+    return wfgWithPos;
+  }
+  if(wfgWithPos.equals(wfg)){
+    return wfg;
+  }
 }
 
 WfgNode:make_insert(node,wfg) {
