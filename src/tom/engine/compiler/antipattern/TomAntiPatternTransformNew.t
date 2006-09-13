@@ -77,6 +77,9 @@ public class TomAntiPatternTransformNew {
 	 */
 	public static Constraint transform(Constraint c, Collection quantifiedVarList,
 			Collection freeVarList) {	
+
+		// replace all unamed variables by named ones
+		c = (Constraint)`TopDown(ReplaceUnamedVariables()).apply(c);
 		
 		// get the free variables of the pattern
 		`TopDownCollect(CollectPositiveVariable(freeVarList)).apply(c);
@@ -142,6 +145,16 @@ public class TomAntiPatternTransformNew {
 			}
 		}
 	}
+
+	// replaces all unamed variables with named ones
+	%strategy ReplaceUnamedVariables() extends `Identity(){		
+		visit TomTerm {		 
+			UnamedVariable(option,astType,constraints) -> { 
+				return `Variable(option,Name(FRESH_VAR_NAME + (varCounter++)),astType,constraints); 
+			}
+		}
+	}
+	
 	
 	// remove an anti-symbol
 	%strategy ElimAnti() extends `Identity(){		

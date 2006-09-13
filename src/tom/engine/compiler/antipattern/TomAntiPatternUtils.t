@@ -121,11 +121,6 @@ public class TomAntiPatternUtils {
 			Instruction subAction,
 			TomKernelCompiler kernelCompiler) {
 		
-//		System.out.println("Action:" + action);
-//		System.out.println("TomTerm:" + tomTerm);
-//		System.out.println("RootPath:" + rootpath);
-//		System.out.println("ModuleName:" + moduleName);
-		
 		// resent container 
 		varAssignments = null;
 		
