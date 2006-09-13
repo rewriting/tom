@@ -50,7 +50,7 @@ import java.util.*;
 public class PatternAnalyser{
   
   %include {mustrategy.tom }
-  %include {util/HashMap.tom}
+  %include {util/HashSet.tom}
   %include {util/ArrayList.tom}
   %include {wfg/Wfg.tom}
   %include {Ctl.tom}
@@ -72,18 +72,17 @@ public class PatternAnalyser{
         return wfg; 
       }
 
-      wfg@WfgNode(leaf@Activity[],refList*) -> {
+      node@WfgNode(leaf@Activity[],refList*) -> {
         %match(Wfg refList){
           WfgNode(_*,x,_*) -> {
-            //TODO:Radu
             %match(Wfg x){
               !refWfg(y) -> {
-                return `wfg;
+                return `node;
               }
             }
           }
         }
-        return `WfgNode(leaf,wfg);
+        return `WfgNode(leaf,refList*,wfg);
       }
     }
   }
@@ -166,10 +165,11 @@ public class PatternAnalyser{
 
   public static void printWfg(Wfg wfg){
     Node root = new Node("");
+    HashSet visited = new HashSet();
     System.out.println("digraph g{");
     %match(Wfg wfg) {
       ConcWfg(e,_*) -> {
-        `mu(MuVar("y"),_ConsWfgNode(GetRoot(root),Sequence(VisitWfgNode(wfg,Print(root)),VisitWfgNode(wfg,Try(MuVar("y")))))).apply(`e);
+        `mu(MuVar("y"),Try(_ConsWfgNode(GetRoot(root,visited),Sequence(VisitWfgNode(wfg,Print(root)),VisitWfgNode(wfg,Try(MuVar("y"))))))).apply(`e);
       }
     }
     System.out.println("}");
@@ -194,10 +194,14 @@ public class PatternAnalyser{
     }
   }
 
-  %strategy GetRoot(root:Node) extends `Identity(){
+  %strategy GetRoot(root:Node,visited:HashSet) extends `Fail(){
     visit Wfg{
-      Activity[name=name] ->{
-        root.name = `name; 
+      a@Activity[name=name] ->{
+        if (!visited.contains(`name)) {
+          visited.add(`name);
+          root.name = `name;
+          return `a;
+        }
       }
     }
   }
@@ -219,9 +223,10 @@ public class PatternAnalyser{
     term = (TNode) `TopDown(removeTextNode()).apply(term);
     Wfg wfg = null; //`ConcWfg(WfgNode(Activity("_start",noCond(),noCond())));
     %match(TNode term){
-      DocumentNode(_,ElementNode("process",_,concTNode(_*,process,_*))) -> {
+      DocumentNode(_,ElementNode("process",_,concTNode(_*,process@ElementNode[Name="sequence"],_*))) -> {
         wfg = bpelToWfg(`process); 
-        //wfg = `expWfg(ConcWfg(wfg));
+        System.out.println("\nWfg with labels:\n" + wfg);
+        wfg = `expWfg(ConcWfg(wfg));
       }
     }
     /* 
@@ -243,7 +248,7 @@ public class PatternAnalyser{
        labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
        ));
      */
-    System.out.println("\nWfg with positions:\n" + wfg);
+    //System.out.println("\nWfg with positions:\n" + wfg);
     PatternAnalyser.printWfg(wfg);
   }
 }//class PatternAnalyser

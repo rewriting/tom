@@ -40,7 +40,7 @@ container="error"
 faultName="invalidRequest"/>
 </catch>
 </faultHandlers>
-
+<sequence>
 <flow>
 <links>
 <link name="receive-to-assess"/>
@@ -99,5 +99,6 @@ operation="approve" container="approvalInfo">
 <target linkName="approval-to-reply"/>
 </reply>
 </flow>
+</sequence>
 </process>
 

@@ -4,13 +4,14 @@
     <invoke name="start" />
     <flow>
       <sequence>
+         <sequence>
+           <invoke name="B">
+          </invoke> 
+        </sequence>
         <sequence>
           <invoke name="A" /> 
         </sequence>
-        <sequence>
-          <invoke name="B" /> 
-        </sequence>
-      </sequence>
+     </sequence>
       <sequence>
         <invoke name="C" /> 
         <flow>
@@ -25,7 +26,7 @@
         <invoke name="G" /> 
       </sequence>
     </flow>
-    <assign name="end" > 
+    <assign name="end" >
       <target name="toto"/>
     </assign> 
   </sequence>
