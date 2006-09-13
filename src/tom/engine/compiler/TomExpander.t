@@ -190,7 +190,7 @@ public class TomExpander extends TomGenericPlugin {
   /*
    * The 'expandTermApplTomSyntax' phase replaces:
    * - each 'TermAppl' by its expanded record form:
-   *    placeholders are removed
+   *    placeholders are not removed
    *    slotName are attached to arguments
    * - each BackQuoteTerm by its compiled form
    */
