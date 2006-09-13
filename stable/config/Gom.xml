@@ -48,8 +48,8 @@
             version=''
             description='Only here to initialize the environment'
             class='tom.gom.starter.GomStarter'/>
-    <plugin name='PomGomParser'
-      class='tom.gom.parser.PomGomParserPlugin'/>
+    <plugin name='ANTLRMapperGomParser'
+      class='tom.gom.parser.ANTLRMapperGomParserPlugin'/>
     <plugin name='Expander'
             class='tom.gom.expander.GomExpanderPlugin'/>
     <plugin name='TypeExpander'

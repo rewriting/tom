@@ -32,7 +32,7 @@ import java.util.logging.Level;
 
 import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
-import tom.pom.ATermAST;
+import tom.antlrmapper.ATermAST;
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.adt.gom.types.*;
@@ -45,7 +45,7 @@ import antlr.TokenStreamSelector;
  * The responsability of the GomParser plugin is to parse the input Gom file
  * Get the input file from GomStreamManager and parse
  */
-public class PomGomParserPlugin extends GomGenericPlugin {
+public class ANTLRMapperGomParserPlugin extends GomGenericPlugin {
 
   public static final String PARSED_SUFFIX = ".tfix.gom.parsed";
   /** input stream */
@@ -56,8 +56,8 @@ public class PomGomParserPlugin extends GomGenericPlugin {
   private GomModule module;
 
   /** The constructor*/
-  public PomGomParserPlugin() {
-    super("PomGomParser");
+  public ANTLRMapperGomParserPlugin() {
+    super("ANTLRMapperGomParser");
   }
 
   /**
@@ -72,7 +72,7 @@ public class PomGomParserPlugin extends GomGenericPlugin {
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"PomGomParser", "[GomStreamManager]",
+          new Object[]{"ANTLRMapperGomParser", "[GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
@@ -86,13 +86,13 @@ public class PomGomParserPlugin extends GomGenericPlugin {
 
     if (inputReader == null)
       return;
-    PomGomLexer pomgomlexer = new PomGomLexer(inputReader);
+    ANTLRMapperGomLexer antlrmappergomlexer = new ANTLRMapperGomLexer(inputReader);
     //BlockLexer blocklexer = new BlockLexer(gomlexer.getInputState());
-    PomGomParser parser = new PomGomParser(pomgomlexer, "PomGomParser");
+    ANTLRMapperGomParser parser = new ANTLRMapperGomParser(antlrmappergomlexer, "ANTLRMapperGomParser");
     getLogger().log(Level.INFO, "Start parsing");
     try {
       // Parse the input expression
-      parser.setASTNodeClass("tom.pom.ATermAST");
+      parser.setASTNodeClass("tom.antlrmapper.ATermAST");
       parser.module();
       // walk the input
       ATermAST t = (ATermAST)parser.getAST();
@@ -105,7 +105,7 @@ public class PomGomParserPlugin extends GomGenericPlugin {
       else{
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.detailedParseException,
-           "", inputFileName, pomgomlexer.getLine()));
+           "", inputFileName, antlrmappergomlexer.getLine()));
       return;
       }
     } catch (RecognitionException re) {
@@ -114,7 +114,7 @@ public class PomGomParserPlugin extends GomGenericPlugin {
       //re.printStackTrace(pw);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.detailedParseException,
-            re.toString(), inputFileName, pomgomlexer.getLine()));
+            re.toString(), inputFileName, antlrmappergomlexer.getLine()));
       return;
     } catch(TokenStreamException streamException) {
       //StringWriter stringwriter = new StringWriter();
@@ -122,7 +122,7 @@ public class PomGomParserPlugin extends GomGenericPlugin {
       //streamException.printStackTrace(printwriter);
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.detailedParseException,
-            streamException.toString(),inputFileName, pomgomlexer.getLine()));
+            streamException.toString(),inputFileName, antlrmappergomlexer.getLine()));
       return;
     } catch (Exception e) {
       StringWriter stringwriter = new StringWriter();

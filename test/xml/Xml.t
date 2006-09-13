@@ -50,7 +50,7 @@ public class Xml {
   }
 
   TNode addInteger(TNode list,int n) {
-    %match(TNode list) {
+    %match(list) {
       <IntegerList _*>(integers*)</IntegerList> -> {
         String s = ""+n;
         if(n%2 == 0) {
@@ -66,7 +66,7 @@ public class Xml {
   }
 
   boolean checkSortedInteger(TNode list) {
-    %match(TNode list) {
+    %match(list) {
       <IntegerList>[<(Int|Integer)>(#TEXT(s1))</(Int|Integer)>,
                     <(Integer|Int)>(#TEXT(s2))</(Integer|Int)>]</IntegerList> -> {
         if(`s1.compareTo(`s2) > 0) { return false; }
@@ -76,7 +76,7 @@ public class Xml {
   }
 
   TNode swapElements(TNode list) {
-    %match(TNode list) {
+    %match(list) {
       <IntegerList (attr*)>(X1*,
                             n1@<_ []>#TEXT(s1)</_>,
                             n2@<(Integer|Int) []>#TEXT(s2)</(Integer|Int)>,
@@ -91,7 +91,7 @@ public class Xml {
 
   LinkedList extractElements(TNode list) {
     LinkedList res = new LinkedList();
-    %match(TNode list) {
+    %match(list) {
       <IntegerList>
          <(Integer|Int)>(#TEXT(s1))</(Integer|Int)>
       </IntegerList> -> { res.add(`s1); }
@@ -120,7 +120,7 @@ public class Xml {
         </Configuration>
         );
     int res = 0;
-    %match(TNode node) {
+    %match(node) {
       <Configuration>
         <Cellule>
           a @ <Defaut R1=iR />

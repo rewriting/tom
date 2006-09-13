@@ -27,8 +27,8 @@ header {
 {
   import antlr.LexerSharedInputState;
 }
-//{{{class PomGomParser extends Parser;
-class PomGomParser extends Parser;
+//{{{class ANTLRMapperGomParser extends Parser;
+class ANTLRMapperGomParser extends Parser;
 options {
   buildAST = true;  // uses CommonAST by default
   k=2; // because of field definition
@@ -37,7 +37,7 @@ options {
 {
   private LexerSharedInputState lexerstate = null;
 
-  public PomGomParser(PomGomLexer lexer, String name) {
+  public ANTLRMapperGomParser(ANTLRMapperGomLexer lexer, String name) {
     this(lexer);
     /* the name attribute is used for constructor disambiguation */
     this.lexerstate = lexer.getInputState();
@@ -107,7 +107,7 @@ hookSortModule
 
 field: type STAR^ | id:ID COLON^ type ;
 
-class PomGomLexer extends Lexer;
+class ANTLRMapperGomLexer extends Lexer;
 options {
   k = 2; // \r and \r\n
 }

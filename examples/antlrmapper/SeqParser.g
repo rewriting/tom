@@ -1,5 +1,5 @@
 header {
-package pom;
+package antlrmapper;
 }
 
 //{{{ class SeqParser extends Parser;

@@ -38,8 +38,8 @@
     <taskdef name="gom"
              classname="tom.gom.tools.ant.GomTask"
              classpathref="tom.classpath"/>
-    <taskdef name="pom"
-             classname="tom.pom.tools.ant.PomTask"
+    <taskdef name="antlrmapper"
+             classname="tom.antlrmapper.AntTask"
              classpathref="tom.classpath"/>
     <taskdef name="tom.junit"
              classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"

@@ -177,8 +177,8 @@
       </fileset>
     </path>
 
-    <taskdef name="pom"
-             classname="tom.pom.tools.ant.PomTask"
+    <taskdef name="antlrmapper"
+             classname="tom.antlrmapper.AntTask"
              classpathref="tom.classpath"/>
     <taskdef name="gom"
              classname="tom.gom.tools.ant.GomTask"
@@ -196,8 +196,8 @@
       </fileset>
     </path>
 
-    <taskdef name="pomsrc"
-             classname="tom.pom.tools.ant.PomTask"
+    <taskdef name="antlrmappersrc"
+             classname="tom.antlrmapper.AntTask"
              classpathref="tomsrc.classpath"/>
     <taskdef name="gomsrc"
              classname="tom.gom.tools.ant.GomTask"
@@ -222,10 +222,10 @@
         <classpath refid="tom.classpath"/>
       </gom>
     </presetdef>
-    <presetdef name="pomcompile">
-      <pom>
+    <presetdef name="antlrmappercompile">
+      <antlrmapper>
         <classpath refid="tom.classpath"/>
-      </pom>
+      </antlrmapper>
     </presetdef>
   </target>
 
@@ -238,10 +238,10 @@
     <presetdef name="gomcompile">
       <gomsrc config="${src.gomconfigfile}"/>
     </presetdef>
-    <presetdef name="pomcompile">
-      <pomsrc>
+    <presetdef name="antlrmappercompile">
+      <antlrmappersrc>
         <classpath refid="tom.classpath"/>
-      </pomsrc>
+      </antlrmappersrc>
     </presetdef>
   </target>
 
@@ -258,7 +258,7 @@
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
       <include name="tom/gom/**/*.t"/>
-      <include name="tom/pom/**/*.t"/>
+      <include name="tom/antlrmapper/**/*.t"/>
 
       <exclude name="tom/engine/parser/*.g.t"/>
       <exclude name="tom/gom/**/GomParser.g.t"/>
@@ -339,7 +339,7 @@
            outputdirectory="${gen.destination}/tom/gom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
-    <antlr target="${src.src}/tom/gom/parser/PomGomParser.g"
+    <antlr target="${src.src}/tom/gom/parser/ANTLRMapperGomParser.g"
            outputdirectory="${gen.destination}/tom/gom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
@@ -359,11 +359,11 @@
   <target name="buildmappings.common"
     if="gen.destination"
     depends="init.task.stable,-withstable">
-    <pomcompile
-      srcfile="${gen.destination}/tom/gom/parser/PomGomParserTokenTypes.txt"
+    <antlrmappercompile
+      srcfile="${gen.destination}/tom/gom/parser/ANTLRMapperGomParserTokenTypes.txt"
       destdir="${gen.destination}"
       package="tom.gom.parser">
-    </pomcompile>
+    </antlrmappercompile>
     <!-- once mappings generated, compile AST2Gom.t -->
     <tomcompile srcdir="${src.src}"
          destdir="${gen.destination}"
@@ -553,10 +553,10 @@
 	    <fileset dir="${stable.build}" includes="tom/gom/**/*.class"/>
 	    <fileset dir="${stable.src}" includes="tom/gom/**/*.properties"/>
     </jar>
-    <jar jarfile="${stable.dist.lib}/pom.jar"
+    <jar jarfile="${stable.dist.lib}/antlrmapper.jar"
          update="yes">
-	    <fileset dir="${stable.build}" includes="tom/pom/**/*.class"/>
-	    <fileset dir="${stable.src}" includes="tom/pom/**/*.properties"/>
+	    <fileset dir="${stable.build}" includes="tom/antlrmapper/**/*.class"/>
+	    <fileset dir="${stable.src}" includes="tom/antlrmapper/**/*.properties"/>
     </jar>
 
     <copy todir="${stable.dist.lib}">
@@ -697,10 +697,10 @@
 	      excludes="tom/gom/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="gom/**/*.properties"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/pom-${src.version}.jar">
+    <jar jarfile="${src.dist.lib}/antlrmapper-${src.version}.jar">
       <fileset dir="${src.build}"
-        includes="tom/pom/**/*.class"/>
-      <fileset dir="${src.src}" includes="pom/**/*.properties"/>
+        includes="tom/antlrmapper/**/*.class"/>
+      <fileset dir="${src.src}" includes="antlrmapper/**/*.properties"/>
     </jar>
     <jar jarfile="${src.dist.lib}/GomADT-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/gom/adt/**/*.class"/>

@@ -1,4 +1,4 @@
-// $ANTLR 2.7.6 (20060516): "PomGomParser.g" -> "PomGomLexer.java"$
+// $ANTLR 2.7.6 (20060516): "ANTLRMapperGomParser.g" -> "ANTLRMapperGomLexer.java"$
 
   /*
    * Gom
@@ -49,18 +49,18 @@ import antlr.LexerSharedInputState;
 import antlr.collections.impl.BitSet;
 import antlr.SemanticException;
 
-public class PomGomLexer extends antlr.CharScanner implements PomGomParserTokenTypes, TokenStream
+public class ANTLRMapperGomLexer extends antlr.CharScanner implements ANTLRMapperGomParserTokenTypes, TokenStream
  {
-public PomGomLexer(InputStream in) {
+public ANTLRMapperGomLexer(InputStream in) {
 	this(new ByteBuffer(in));
 }
-public PomGomLexer(Reader in) {
+public ANTLRMapperGomLexer(Reader in) {
 	this(new CharBuffer(in));
 }
-public PomGomLexer(InputBuffer ib) {
+public ANTLRMapperGomLexer(InputBuffer ib) {
 	this(new LexerSharedInputState(ib));
 }
-public PomGomLexer(LexerSharedInputState state) {
+public ANTLRMapperGomLexer(LexerSharedInputState state) {
 	super(state);
 	caseSensitiveLiterals = true;
 	setCaseSensitive(true);

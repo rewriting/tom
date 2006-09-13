@@ -1,4 +1,4 @@
-// $ANTLR 2.7.6 (20060516): "PomGomParser.g" -> "PomGomParser.java"$
+// $ANTLR 2.7.6 (20060516): "ANTLRMapperGomParser.g" -> "ANTLRMapperGomParser.java"$
 
   /*
    * Gom
@@ -46,40 +46,40 @@ import antlr.collections.impl.ASTArray;
 
   import antlr.LexerSharedInputState;
 
-public class PomGomParser extends antlr.LLkParser       implements PomGomParserTokenTypes
+public class ANTLRMapperGomParser extends antlr.LLkParser       implements ANTLRMapperGomParserTokenTypes
  {
 
   private LexerSharedInputState lexerstate = null;
 
-  public PomGomParser(PomGomLexer lexer, String name) {
+  public ANTLRMapperGomParser(ANTLRMapperGomLexer lexer, String name) {
     this(lexer);
     /* the name attribute is used for constructor disambiguation */
     this.lexerstate = lexer.getInputState();
   }
 
-protected PomGomParser(TokenBuffer tokenBuf, int k) {
+protected ANTLRMapperGomParser(TokenBuffer tokenBuf, int k) {
   super(tokenBuf,k);
   tokenNames = _tokenNames;
   buildTokenTypeASTClassMap();
   astFactory = new ASTFactory(getTokenTypeToASTClassMap());
 }
 
-public PomGomParser(TokenBuffer tokenBuf) {
+public ANTLRMapperGomParser(TokenBuffer tokenBuf) {
   this(tokenBuf,2);
 }
 
-protected PomGomParser(TokenStream lexer, int k) {
+protected ANTLRMapperGomParser(TokenStream lexer, int k) {
   super(lexer,k);
   tokenNames = _tokenNames;
   buildTokenTypeASTClassMap();
   astFactory = new ASTFactory(getTokenTypeToASTClassMap());
 }
 
-public PomGomParser(TokenStream lexer) {
+public ANTLRMapperGomParser(TokenStream lexer) {
   this(lexer,2);
 }
 
-public PomGomParser(ParserSharedInputState state) {
+public ANTLRMapperGomParser(ParserSharedInputState state) {
   super(state,2);
   tokenNames = _tokenNames;
   buildTokenTypeASTClassMap();

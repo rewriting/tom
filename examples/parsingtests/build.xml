@@ -22,11 +22,11 @@
               outputdirectory="${examples.gen}/${parsingtests}">
  		<classpath refid="tom.classpath"/>
     </tomantlr>
-    <pom srcfile="${examples.gen}/${parsingtests}/SeqParserTokenTypes.txt"
+    <antlrmapper srcfile="${examples.gen}/${parsingtests}/SeqParserTokenTypes.txt"
       destdir="${examples.gen}"
       package="${parsingtests}">
       <classpath refid="tom.classpath"/>
-    </pom>
+    </antlrmapper>
     <tomantlr target="${examples.gen}/${parsingtests}/SeqWalker.g"
               outputdirectory="${examples.gen}/${parsingtests}">
     	<classpath refid="tom.classpath"/>	    	

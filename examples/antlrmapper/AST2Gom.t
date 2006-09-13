@@ -1,12 +1,12 @@
-package pom;
+package antlrmapper;
 
-import tom.pom.ATermAST;
+import tom.antlrmapper.ATermAST;
 
 import aterm.*;
 import aterm.pure.*;
 
-import pom.seq.*;
-import pom.seq.types.*;
+import antlrmapper.seq.*;
+import antlrmapper.seq.types.*;
 
 public class AST2Gom {
 

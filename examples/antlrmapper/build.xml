@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Build the pom example" default="build" basedir="..">
+<project name="Build the antlrmapper example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <property name="pom" value="pom"/>
+  <property name="antlrmapper" value="antlrmapper"/>
   <target name="clean" description="Cleans examples directory">
-    <delete dir="${examples.gen}/${pom}"/>
-    <delete dir="${examples.build}/${pom}"/>
+    <delete dir="${examples.gen}/${antlrmapper}"/>
+    <delete dir="${examples.build}/${antlrmapper}"/>
   </target>
   <target name="build" depends="init">
-    <gomcompile example="${pom}"/>
+    <gomcompile example="${antlrmapper}"/>
     <!-- build parser -->
-    <mkdir dir="${examples.gen}/${pom}"/>
-    <tomantlr target="${pom}/SeqParser.g"
-              outputdirectory="${examples.gen}/${pom}">
+    <mkdir dir="${examples.gen}/${antlrmapper}"/>
+    <tomantlr target="${antlrmapper}/SeqParser.g"
+              outputdirectory="${examples.gen}/${antlrmapper}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
-    <pom srcfile="${examples.gen}/${pom}/SeqParserTokenTypes.txt"
+    <antlrmapper srcfile="${examples.gen}/${antlrmapper}/SeqParserTokenTypes.txt"
          destdir="${examples.gen}"
-         package="${pom}">
+         package="${antlrmapper}">
       <classpath refid="tom.classpath"/>
-    </pom>
-    <tomcompile example="${pom}"/>
-    <javacompile example="${pom}"/>
+    </antlrmapper>
+    <tomcompile example="${antlrmapper}"/>
+    <javacompile example="${antlrmapper}"/>
     <!-- copy resources -->
-    <copy todir="${examples.build}/${pom}">
-      <fileset dir="${examples.dir}/${pom}">
+    <copy todir="${examples.build}/${antlrmapper}">
+      <fileset dir="${examples.dir}/${antlrmapper}">
         <include name="ex_current"/>
       </fileset>
     </copy>
@@ -32,10 +32,10 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
-        <include name="${pom}/*.t"/>
-        <include name="${pom}/*.g"/>
-        <include name="${pom}/*.gom"/>
-        <include name="${pom}/ex_current"/>
+        <include name="${antlrmapper}/*.t"/>
+        <include name="${antlrmapper}/*.g"/>
+        <include name="${antlrmapper}/*.gom"/>
+        <include name="${antlrmapper}/ex_current"/>
       </zipfileset>
     </zip>
   </target>

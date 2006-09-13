@@ -1,4 +1,4 @@
-// $ANTLR 2.7.6 (20060516): "PomGomParser.g" -> "PomGomLexer.java"$
+// $ANTLR 2.7.6 (20060516): "ANTLRMapperGomParser.g" -> "ANTLRMapperGomParser.java"$
 
   /*
    * Gom
@@ -25,7 +25,7 @@
    **/
   package tom.gom.parser;
 
-public interface PomGomParserTokenTypes {
+public interface ANTLRMapperGomParserTokenTypes {
 	int EOF = 1;
 	int NULL_TREE_LOOKAHEAD = 3;
 	int MODULE = 4;

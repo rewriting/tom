@@ -27,7 +27,7 @@ package tom.gom.parser;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-import tom.pom.ATermAST;
+import tom.antlrmapper.ATermAST;
 import aterm.*;
 import aterm.pure.*;
 

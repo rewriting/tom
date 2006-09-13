@@ -1,9 +1,9 @@
-package pom;
+package antlrmapper;
 
 import java.io.DataInputStream;
 import java.io.*;
 
-import tom.pom.ATermAST;
+import tom.antlrmapper.ATermAST;
 
 import antlr.collections.*;
 
@@ -13,8 +13,8 @@ import java.util.*;
 import aterm.*;
 import aterm.pure.*;
 
-import pom.seq.*;
-import pom.seq.types.*;
+import antlrmapper.seq.*;
+import antlrmapper.seq.types.*;
 
 public class Main {
 
@@ -27,7 +27,7 @@ public class Main {
             new FileInputStream(args[0])));
       SeqParser parser = new SeqParser(lexer);
       // Parse the input expression
-      parser.setASTNodeClass("tom.pom.ATermAST");
+      parser.setASTNodeClass("tom.antlrmapper.ATermAST");
       parser.seq();
       // walk the input
       ATermAST t = (ATermAST)parser.getAST();
