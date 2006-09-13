@@ -311,7 +311,7 @@ public class TomConstraintCompiler{
 			// Decompose
 			e@EqualConstraint(RecordAppl(options,name,a1,constraints),g) -> {
 				
-				%match(TomTerm g) {
+				%match(g) {
 					SymbolOf(_) -> {return `e;}
 				}				
 				
@@ -336,7 +336,7 @@ public class TomConstraintCompiler{
 			
 			e@NEqualConstraint(RecordAppl(options,name,a1,constraints),g) -> {
 				
-				%match(TomTerm g){
+				%match(g){
 					SymbolOf(_) -> {return `e;}
 				}				
 				

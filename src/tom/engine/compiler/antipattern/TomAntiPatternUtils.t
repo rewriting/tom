@@ -169,7 +169,7 @@ public class TomAntiPatternUtils {
 					varAssignments == null ? subAction : varAssignments);
 		}
 		
-		%match(Constraint compiledApProblem){
+		%match(compiledApProblem){
 			TrueConstraint() ->{
 				return `TrueTL();				 
 			}
@@ -276,7 +276,7 @@ public class TomAntiPatternUtils {
 			String moduleName,
 			TomKernelCompiler kernelCompiler) {
 		
-		%match(Constraint c) {
+		%match(c) {
 			AndConstraint(concAnd(x))->{
 				return getTomMappingForConstraint(`x,symbolTable,moduleName,kernelCompiler);
 		    }
@@ -362,7 +362,7 @@ public class TomAntiPatternUtils {
 			SymbolTable symbolTable,
 			String moduleName) {		
 		
-		%match(TomTerm t) {			
+		%match(t) {			
 			
            Subterm(constructorName,slotName, currentTerm)->{                 		        
         	   
@@ -434,7 +434,7 @@ public class TomAntiPatternUtils {
 	 */
 	private Expression expandDisjunction(Expression exp, String moduleName) {
 	    Expression cond = `FalseTL();
-	    %match(Expression exp) {
+	    %match(exp) {
 	      EqualFunctionSymbol(termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
 	        while(!`nameList.isEmptyconcTomName()) {
 	          TomName name = `nameList.getHeadconcTomName();
@@ -460,7 +460,7 @@ public class TomAntiPatternUtils {
 	 */
 	public static String formatConstraint(Constraint c){
 		
-		%match(Constraint c) {
+		%match(c) {
 			TrueConstraint() -> {
 				return "T";	
 			}
@@ -525,7 +525,7 @@ public class TomAntiPatternUtils {
 	 */
 	public static String formatTerm(TomTerm t){
 		
-		%match(TomTerm t){
+		%match(t){
 			Variable(_,Name(name),_,_) ->{
 				return `name;
 			}

@@ -91,7 +91,7 @@ public class TomAntiPatternCompiler{
 			// Decompose
 			e@EqualConstraint(RecordAppl(options,name,a1,constraints),g) -> {
 				
-				%match(TomTerm g) {
+				%match(g) {
 					SymbolOf(_) -> {return `e;}
 				}				
 				
