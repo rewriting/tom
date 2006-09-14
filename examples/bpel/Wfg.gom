@@ -31,6 +31,7 @@ expWfg:make(wfg){
 
 expWfg:import{
 import bpel.wfg.*;
+import bpel.RelativePosition;
 import bpel.wfg.types.*;
 import tom.library.strategy.mutraveler.Position;
 import java.util.HashMap;
@@ -52,7 +53,8 @@ expWfg:block{
     %strategy Replacelabels(table:HashMap) extends `Identity() {
       visit Wfg{
         refWfg(label) -> {
-          Position pos = (Position) table.get(`label);
+          RelativePosition pos = 
+            RelativePosition.constructRelativePosition(getPosition(),(Position) table.get(`label));
           if (pos == null) throw new RuntimeException("The label "+`label+" is not referenced");
           Wfg ref = `posWfg();
           int[] array = pos.toArray();
