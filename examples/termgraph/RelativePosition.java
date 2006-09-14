@@ -15,6 +15,24 @@ public class RelativePosition extends Position {
   }
 
 
+  public static RelativePosition constructRelativePosition(Position source,Position target) {
+    int[] sourceData = source.toArray();
+    int[] targetData = target.toArray();
+    int min_length =Math.min(sourceData.length,targetData.length); 
+    int i=0;
+    while(i<min_length && sourceData[i]==targetData[i]){
+      i++;
+    }
+    int[] relativeData = new int[targetData.length-i+1];
+    relativeData[0]=sourceData.length-i;
+    for(int j=1;j<relativeData.length;j++){
+      relativeData[j] = targetData[i+j-1];
+    }
+    return new RelativePosition(relativeData);
+  }
+
+
+
   public Position getAbsolutePosition(Position currentPosition){
     int[] currentData = currentPosition.toArray();
     int prefix = currentPosition.depth()-data[0];

@@ -9,12 +9,80 @@ Term = a() | b() | c() | d()
      | posTerm(int*)
      | expTerm(term:Term)
 
-expTerm:make(term) {
-  termgraph.term.types.Term termWithPos = termgraph.Tool.expand(term);
+expTerm:make(term){
+  Term termWithPos = expand(term);
   //to avoid unaccessible real_make statement
-  if(! termWithPos.equals(term)) return termWithPos;
- }
+  if(! termWithPos.equals(term)){
+    return termWithPos;
+  }
+  if(termWithPos.equals(term)){
+    return term;
+  }
+}
 
- posTerm:interface{
-tom.library.strategy.mutraveler.MuReference
-   }
+expTerm:import{
+import termgraph.term.*;
+import termgraph.RelativePosition;
+import termgraph.term.types.*;
+import tom.library.strategy.mutraveler.Position;
+import java.util.HashMap;
+}
+
+expTerm:block{
+    %include{java/util/HashMap.tom}
+    %include{java/mustrategy.tom}
+
+    %strategy CollectTerms(table:HashMap) extends `Identity() {
+      visit Term{
+        labTerm(label,term) -> {
+          table.put(`label,getPosition());
+          return `term;
+        }
+      }
+    }
+
+    %strategy Replacelabels(table:HashMap) extends `Identity() {
+      visit Term{
+        refTerm(label) -> {
+          RelativePosition pos = 
+            RelativePosition.constructRelativePosition(getPosition(),(Position) table.get(`label));
+          if (pos == null) throw new RuntimeException("The label "+`label+" is not referenced");
+          Term ref = `posTerm();
+          int[] array = pos.toArray();
+          for(int i=0;i<pos.depth();i++){
+            ref = `posTerm(ref*,array[i]);
+          }
+          return ref; 
+        }
+      }
+    }
+
+    public static Term expand(Term t){
+      HashMap table = new HashMap();
+      return (Term) `Sequence(RepeatId(TopDown(CollectTerms(table))),TopDown(Replacelabels(table))).apply(t);
+    }
+}
+
+/*
+TermNode:make_insert(node,term) {
+    %match(Term node){
+      ConcTerm(_*,e,_*) -> {
+        term = `TermNode(term*,e);
+      }
+    ConcTerm(_*) -> {
+      return term;
+    }
+  }
+}
+
+ConcTerm:make_insert(term,termlist) {
+  %match(Term term){
+    Empty() -> {
+      return termlist;
+    }
+  }
+}
+*/
+posTerm:interface{
+  tom.library.strategy.mutraveler.MuReference
+}

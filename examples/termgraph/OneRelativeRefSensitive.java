@@ -10,16 +10,16 @@ import jjtraveler.Visitor;
 import jjtraveler.VisitFailure;
 import java.util.*;
 /**
- * <code>AllRelativeRefSensitive(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
+ * <code>OneRelativeRefSensitive(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
  * <p>
  * Basic visitor combinator with one visitor argument, that applies
  * this visitor to all children and if the children is a position to
  * the term at this relative position.
  */
 
-public class AllRelativeRefSensitive extends AllRefSensitive {
+public class OneRelativeRefSensitive extends OneRefSensitive {
 
-  public AllRelativeRefSensitive(Visitable s, MuStrategy v) {
+  public OneRelativeRefSensitive(Visitable s, MuStrategy v) {
     super(s,v);
   }
 

@@ -13,13 +13,12 @@ import java.util.*;
  * <code>AllRefSensitive(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
  * <p>
  * Basic visitor combinator with one visitor argument, that applies
- * this visitor to all children and if the children is a position to the term at this position.
+ * this visitor to all children and if the children is a position to the wfg at this position.
  */
 
 public class AllRefSensitive extends AbstractMuStrategy {
   
   %include{mustrategy.tom}
-  %include{term/term.tom}
 
   public final static int ARG = 0;
   protected Visitable originalSubj;
