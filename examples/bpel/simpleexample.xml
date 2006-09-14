@@ -1,35 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <process>
-  <sequence>
-    <invoke name="start" />
-    <flow>
+  <flow>
+    <sequence>
       <sequence>
-         <sequence>
-           <invoke name="B">
-          </invoke> 
-        </sequence>
-        <sequence>
-          <invoke name="A" /> 
-        </sequence>
-     </sequence>
-      <sequence>
-        <invoke name="C" /> 
-        <flow>
-          <invoke name="D">
-            <source name="toto"/>
-          </invoke> 
-          <invoke name="E" /> 
-        </flow>
-        <invoke name="F" /> 
+        <invoke name="B">
+        </invoke> 
       </sequence>
       <sequence>
-        <invoke name="G" /> 
+        <invoke name="A" /> 
       </sequence>
-    </flow>
-    <assign name="end" >
-      <target name="toto"/>
-    </assign> 
-  </sequence>
+    </sequence>
+    <sequence>
+      <invoke name="C" /> 
+      <flow>
+        <invoke name="D">
+          <source linkName="toto"/>
+        </invoke> 
+        <invoke name="E" /> 
+      </flow>
+      <invoke name="F" /> 
+    </sequence>
+    <sequence>
+      <invoke name="G" > 
+        <target linkName="toto"/>
+      </invoke>
+    </sequence>
+  </flow>
 </process>
 
 

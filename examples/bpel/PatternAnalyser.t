@@ -101,18 +101,14 @@ public class PatternAnalyser{
       <sequence>proc</sequence> ->{
         wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(proc)),All(MuVar("x")))).apply(wfg);
       }
-      <(assign|invoke) name=name>linklist*</(assign|invoke)> -> {
+      <(assign|invoke|receive|reply) name=name>linklist*</(assign|invoke|receive|reply)> -> {
         wfg = `WfgNode(Activity(name,noCond(),noCond())); 
         %match(TNodeList linklist){
-          (_*,link,_*) -> {
-            %match(TNode link){
-              <target name=linkname/> -> {
-                wfg = `labWfg(linkname,wfg);
-              }
-              <source name=linkname/> -> {
-                wfg = `WfgNode(wfg*,refWfg(linkname));
-              }
-            }
+         (_*,<source linkName=linkName/>,_*) -> {
+            wfg = `WfgNode(wfg*,refWfg(linkName));
+          }
+        (_*,<target linkName=linkName/>,_*) -> {
+            wfg = `labWfg(linkName,wfg);
           }
         }
       }
@@ -168,7 +164,10 @@ public class PatternAnalyser{
     HashSet visited = new HashSet();
     System.out.println("digraph g{");
     %match(Wfg wfg) {
-      ConcWfg(e,_*) -> {
+      ConcWfg(_*,e,_*) -> {
+        `mu(MuVar("y"),Try(_ConsWfgNode(GetRoot(root,visited),Sequence(VisitWfgNode(wfg,Print(root)),VisitWfgNode(wfg,Try(MuVar("y"))))))).apply(`e);
+      }
+      e@WfgNode(_*) -> {
         `mu(MuVar("y"),Try(_ConsWfgNode(GetRoot(root,visited),Sequence(VisitWfgNode(wfg,Print(root)),VisitWfgNode(wfg,Try(MuVar("y"))))))).apply(`e);
       }
     }
@@ -223,10 +222,11 @@ public class PatternAnalyser{
     term = (TNode) `TopDown(removeTextNode()).apply(term);
     Wfg wfg = null; //`ConcWfg(WfgNode(Activity("_start",noCond(),noCond())));
     %match(TNode term){
-      DocumentNode(_,ElementNode("process",_,concTNode(_*,process@ElementNode[Name="sequence"],_*))) -> {
-        wfg = bpelToWfg(`process); 
+      DocumentNode(_,ElementNode("process",_,concTNode(_*,elt@<(sequence|flow)></(sequence|flow)>,_*))) -> {
+        wfg = bpelToWfg(`elt); 
         System.out.println("\nWfg with labels:\n" + wfg);
-        wfg = `expWfg(ConcWfg(wfg));
+        wfg = `expWfg(wfg);
+        System.out.println("\nWfg with positions:\n" + wfg);
       }
     }
     /* 
@@ -236,17 +236,17 @@ public class PatternAnalyser{
        labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("end"))), 
        labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
        ));
-       Wfg wfg = `expWfg(ConcWfg(
-       WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C"),refWfg("G")), 
-       labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("B"),refWfg("F"))), 
-       labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("D"),refWfg("E"))), 
-       labWfg("G",WfgNode(Activity("G",noCond(),noCond()),refWfg("E"),refWfg("end"))), 
-       labWfg("B",WfgNode(Activity("B",noCond(),noCond()),refWfg("end"))), 
-       labWfg("D",WfgNode(Activity("D",noCond(),noCond()),refWfg("F"))), 
-       labWfg("E",WfgNode(Activity("E",noCond(),noCond()),refWfg("F"))), 
-       labWfg("F",WfgNode(Activity("F",noCond(),noCond()),refWfg("end"))), 
-       labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
-       ));
+    wfg = `expWfg(ConcWfg(
+          WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C"),refWfg("G")), 
+          labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("B"),refWfg("F"))), 
+          labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("D"),refWfg("E"))), 
+          labWfg("G",WfgNode(Activity("G",noCond(),noCond()),refWfg("E"),refWfg("end"))), 
+          labWfg("B",WfgNode(Activity("B",noCond(),noCond()),refWfg("end"))), 
+          labWfg("D",WfgNode(Activity("D",noCond(),noCond()),refWfg("F"))), 
+          labWfg("E",WfgNode(Activity("E",noCond(),noCond()),refWfg("F"))), 
+          labWfg("F",WfgNode(Activity("F",noCond(),noCond()),refWfg("end"))), 
+          labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
+          ));
      */
     //System.out.println("\nWfg with positions:\n" + wfg);
     PatternAnalyser.printWfg(wfg);
