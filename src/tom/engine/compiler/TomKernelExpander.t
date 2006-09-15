@@ -279,26 +279,15 @@ public class TomKernelExpander extends TomBase {
 	  TomTerm subject = `tomSubjectList.getHeadconcTomTerm();
 matchBlock: {
 	      %match(subject) {
-		Variable(variableOption,astName,tomType@TomTypeAlone(type),constraints) -> {
+		Variable(variableOption,astName@Name(name),tomType@TomTypeAlone(type),constraints) -> {
 		  TomTerm newVariable = null;
 		  if(expander.getType(`type) == null) {
 		    /* the subject is a variable with an unknown type */
-		    %match(patternInstructionList) {
-		      concPatternInstruction(_*, PatternInstruction[
-			  Pattern=Pattern[TomList=concTomTerm(X*,(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(Name(name),_*)],_*)]], _*) -> {
-			//System.out.println("X.length = " + `X*.length());
-			if(`X*.length() == index) {
-			  TomSymbol symbol = expander.getSymbolFromName(`name);
-			  //System.out.println("name = " + `name);
-			  if(symbol!=null) {
-			    TomType newType = getSymbolCodomain(symbol);
-			    //System.out.println("newType = " + `newType);
-			    newVariable = `Variable(variableOption,astName,newType,constraints);
-			  } else {
-			    throw new TomRuntimeException("No symbol found for name '" + `name + "'");
-			  }
-			}
-		      }
+		    TomType newType = expander.guessTypeFromPatterns(`patternInstructionList,index);
+		    if(newType!=null) {
+		      newVariable = `Variable(variableOption,astName,newType,constraints);
+		    } else {
+		      throw new TomRuntimeException("No symbol found for name '" + `name + "'");
 		    }
 		  } else {
 		    newVariable = subject;
@@ -313,10 +302,20 @@ matchBlock: {
 		  break matchBlock;
 		}
 
-		t@(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(Name(name),_*)] -> {
-		  newSubjectList.add(`BuildReducedTerm(t)); 
+		t@(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(tomName@Name(name),_*)] -> {
 		  TomSymbol symbol = expander.getSymbolFromName(`name);
-		  TomType type = getSymbolCodomain(symbol);
+		  TomType type = null;
+		  if(symbol!=null) {
+		    type = getSymbolCodomain(symbol);
+		  } else {
+		    // unknown function call
+		    type = expander.guessTypeFromPatterns(`patternInstructionList,index);
+		  }
+		  if(type!=null) {
+		    newSubjectList.add(`BuildReducedTerm(t,type));
+		  } else {
+		    throw new TomRuntimeException("No symbol found for name '" + `name + "'");
+		  }
 		  typeList = `concTomType(typeList*,type);
 		}
 
@@ -334,7 +333,9 @@ matchBlock: {
       //System.out.println("newPatternInstructionList = " + newPatternInstructionList);
       return `Match(newTomSubjectList,newPatternInstructionList, option);
     }
-    }
+  }
+
+
 
   /*
    * given a list of subjects
@@ -431,6 +432,30 @@ matchBlock: {
     }
 
   }
+}
+
+/**
+ * @param index the column-index of the type that has to be infered
+ */
+private TomType guessTypeFromPatterns(PatternInstructionList patternInstructionList, int index) {
+  %match(patternInstructionList) {
+    concPatternInstruction(_*, PatternInstruction[
+	Pattern=Pattern[TomList=concTomTerm(X*,(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(Name(name),_*)],_*)]], _*) -> {
+      //System.out.println("X.length = " + `X*.length());
+      if(`X*.length() == index) {
+	TomSymbol symbol = getSymbolFromName(`name);
+	//System.out.println("name = " + `name);
+	if(symbol!=null) {
+	  TomType newType = getSymbolCodomain(symbol);
+	  //System.out.println("newType = " + `newType);
+	  return `newType;
+	} else {
+	  return null;
+	}
+      }
+    }
+  }
+  return null;
 }
 
 protected jjtraveler.Visitable expandVariable(TomType contextType, jjtraveler.Visitable subject) {

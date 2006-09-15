@@ -394,7 +394,7 @@ public class TomExpander extends TomGenericPlugin {
               } else if(isArrayOperator(tomSymbol)) {
                 return ASTFactory.buildArray(`name,args);
               } else if(isDefinedSymbol(tomSymbol)) {
-                return `FunctionCall(name,args);
+                return `FunctionCall(name,getSymbolCodomain(tomSymbol),args);
               } else {
                 String moduleName = getModuleName(`optionList);
                 if(moduleName==null) {
@@ -403,7 +403,7 @@ public class TomExpander extends TomGenericPlugin {
                 return `BuildTerm(name,args,moduleName);
               }
             } else {
-              return `FunctionCall(name,args);
+              return `FunctionCall(name,EmptyType(),args);
             }
           }
         } // end match

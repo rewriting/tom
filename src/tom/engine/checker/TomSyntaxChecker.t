@@ -539,11 +539,16 @@ block: {
          if(typeMatchArgs.get(i) == null) {
            %match(PatternInstructionList patternInstructionList) {
              concPatternInstruction(_*, PatternInstruction[
-                 Pattern=Pattern[TomList=concTomTerm(X*,(TermAppl|RecordAppl|ListAppl)[NameList=concTomName(Name(name),_*)],_*)]], _*) -> {
+                 Pattern=Pattern[TomList=concTomTerm(X*,subject@(TermAppl|RecordAppl|ListAppl|XMLAppl)[NameList=concTomName(Name(name),_*)],_*)]], _*) -> {
                //System.out.println("X.length = " + `X*.length());
                if(`X*.length() == i) {
-                 TomSymbol symbol = getSymbolFromName(`name);
-                 //System.out.println("name = " + `name);
+                 TomSymbol symbol = null;
+		 if(`subject.isXMLAppl()) {
+		   symbol = getSymbolFromName(Constants.ELEMENT_NODE);
+		 } else {
+		   symbol = getSymbolFromName(`name);
+		 }
+		 //System.out.println("name = " + `name);
                  if(symbol!=null) {
                    TomType type = getSymbolCodomain(symbol);
                    //System.out.println("type = " + type);

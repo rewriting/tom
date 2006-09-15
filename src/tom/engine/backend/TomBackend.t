@@ -325,12 +325,17 @@ public class TomBackend extends TomGenericPlugin {
 						String moduleName = (String) stack.peek();
 						//System.out.println("moduleName: " + moduleName);
             TomSymbol tomSymbol = TomBase.getSymbolFromName(l.getHeadconcTomName().getString(),tb.getSymbolTable(moduleName)); 
+            //System.out.println("mark: " + tomSymbol);
             tb.setUsedSymbolDestructor(moduleName,tomSymbol,markStrategy);
 					} catch (EmptyStackException e) {
 						System.out.println("No moduleName in stack");
 					}
 					l = l.getTailconcTomName();
 				}
+        /*
+         * here we can fail because the subterms appear in isFsym tests
+         * therefore, they are marked when traversing the compiledAutomata
+         */
 				`Fail().visit(null);
 			}
 			(BuildTerm|BuildEmptyList|BuildEmptyArray)[AstName=Name(name)] -> {

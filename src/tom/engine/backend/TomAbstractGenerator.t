@@ -146,7 +146,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      FunctionCall(Name(name), argList) -> {
+      FunctionCall[AstName=Name(name), Args=argList] -> {
         buildFunctionCall(deep,`name, `argList, moduleName);
         return;
       }

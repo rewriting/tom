@@ -502,31 +502,35 @@ public class TomBase {
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
     %match(TomTerm t) {
       (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
-    	String tomName = null;
-    	if (`headName 
-    			instanceof AntiName){
-    		tomName = ((AntiName)`headName).getName().getString(); 
-    	}else{
-    		tomName = ((TomName)`headName).getString();
-    	}    	
-        TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
-        return tomSymbol.getTypesToType().getCodomain();
+	String tomName = null;
+	if(`(headName) instanceof AntiName) {
+	  tomName = ((AntiName)`headName).getName().getString(); 
+	} else {
+	  tomName = ((TomName)`headName).getString();
+	}    	
+	TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
+	if(tomSymbol!=null) {
+	  return tomSymbol.getTypesToType().getCodomain();
+	} else {
+	  return `EmptyType();
+	}
       }
 
       (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[AstType=type] -> { 
-        return `type; 
+	return `type; 
       }
 
       Ref(term) -> { return getTermType(`term, symbolTable); }
 
       TargetLanguageToTomTerm[Tl=(TL|ITL)[]] -> { return `EmptyType(); }
 
-      FunctionCall[] -> { return `EmptyType(); }
-      
+      FunctionCall[AstType=type] -> { return `type; }
+
       AntiTerm(term) -> { return getTermType(`term,symbolTable);}
     }
-		System.out.println("getTermType error on term: " + t);
-		throw new TomRuntimeException("getTermType error on term: " + t);
+    //System.out.println("getTermType error on term: " + t);
+    //throw new TomRuntimeException("getTermType error on term: " + t);
+    return `EmptyType();
   }
   
   protected static TomType getTermType(Expression t, SymbolTable symbolTable){

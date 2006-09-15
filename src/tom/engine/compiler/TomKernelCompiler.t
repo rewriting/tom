@@ -101,62 +101,62 @@ public class TomKernelCompiler extends TomBase {
      * compiles the Match construct into a matching automaton: CompiledMatch
      */
 
-  %strategy replace_compileMatching(compiler:TomKernelCompiler) extends `Identity(){
-        visit Instruction {
-          Match(SubjectList(l1),patternInstructionList, optionList)  -> {
-            //TODO
-            String moduleName = "default";
-            TomNumberList rootpath = `concTomNumber();
-            compiler.matchNumber++;
-            rootpath = `concTomNumber(rootpath*,MatchNumber(Number(compiler.matchNumber)));
+  %strategy replace_compileMatching(compiler:TomKernelCompiler) extends `Identity() {
+    visit Instruction {
+      Match(SubjectList(l1),patternInstructionList, optionList)  -> {
+	//TODO
+	String moduleName = "default";
+	TomNumberList rootpath = `concTomNumber();
+	compiler.matchNumber++;
+	rootpath = `concTomNumber(rootpath*,MatchNumber(Number(compiler.matchNumber)));
 
-            /*
-             * for each pattern action (<term>,...,<term> -> <action>)
-             * build a matching automata
-             */
-            TomList automataList = `concTomTerm();
-            int actionNumber = 0;
-            VisitableVisitor compileStrategy = `ChoiceTopDown(replace_compileMatching(compiler));
-            while(!`patternInstructionList.isEmptyconcPatternInstruction()) {
-              actionNumber++;
-              PatternInstruction pa = `patternInstructionList.getHeadconcPatternInstruction();
-              SlotList patternList = tomListToSlotList(pa.getPattern().getTomList());
-              Instruction actionInst = pa.getAction();
-              if(patternList==null || actionInst==null) {
-                System.out.println("TomKernelCompiler: null value");
-                throw new TomRuntimeException("TomKernelCompiler: null value");
-              }
+	/*
+	 * for each pattern action (<term>,...,<term> -> <action>)
+	 * build a matching automata
+	 */
+	TomList automataList = `concTomTerm();
+	int actionNumber = 0;
+	VisitableVisitor compileStrategy = `ChoiceTopDown(replace_compileMatching(compiler));
+	while(!`patternInstructionList.isEmptyconcPatternInstruction()) {
+	  actionNumber++;
+	  PatternInstruction pa = `patternInstructionList.getHeadconcPatternInstruction();
+	  SlotList patternList = tomListToSlotList(pa.getPattern().getTomList());
+	  Instruction actionInst = pa.getAction();
+	  if(patternList==null || actionInst==null) {
+	    System.out.println("TomKernelCompiler: null value");
+	    throw new TomRuntimeException("TomKernelCompiler: null value");
+	  }
 
-              /*
-               * compile nested match constructs
-               * given a list of pattern: we build a matching automaton
-               */
-              actionInst = (Instruction) compileStrategy.visit(actionInst);
-              Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,patternList,rootpath,moduleName);
-//              System.out.println("Matching automata: " + matchingAutomata);
-              OptionList automataOptionList = `concOption();
-              TomName label = compiler.getLabel(pa.getOption());
-              if(label != null) {
-                automataOptionList = `concOption(Label(label),automataOptionList*);
-              }
-              TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(Number(actionNumber)));
-              TomTerm automata = `Automata(automataOptionList,slotListToTomList(patternList),numberList,matchingAutomata);
-              //System.out.println("automata = " + automata);
+	  /*
+	   * compile nested match constructs
+	   * given a list of pattern: we build a matching automaton
+	   */
+	  actionInst = (Instruction) compileStrategy.visit(actionInst);
+	  Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,patternList,rootpath,moduleName);
+	  //              System.out.println("Matching automata: " + matchingAutomata);
+	  OptionList automataOptionList = `concOption();
+	  TomName label = compiler.getLabel(pa.getOption());
+	  if(label != null) {
+	    automataOptionList = `concOption(Label(label),automataOptionList*);
+	  }
+	  TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(Number(actionNumber)));
+	  TomTerm automata = `Automata(automataOptionList,slotListToTomList(patternList),numberList,matchingAutomata);
+	  //System.out.println("automata = " + automata);
 
-              automataList = append(automata,automataList);
-              `patternInstructionList = `patternInstructionList.getTailconcPatternInstruction();
-            }
+	  automataList = append(automata,automataList);
+	  `patternInstructionList = `patternInstructionList.getTailconcPatternInstruction();
+	}
 
-            /*
-             * return the compiled Match construction
-             */
-            InstructionList astAutomataList = compiler.automataListCompileMatchingList(automataList);
-            SlotList slots = tomListToSlotList(`l1);
-            Instruction astAutomata = compiler.collectVariableFromSubjectList(slots,rootpath,`AbstractBlock(astAutomataList),moduleName);
- //           System.out.println("Matching compiled: " + `CompiledMatch(astAutomata, optionList));
-            return `CompiledMatch(astAutomata, optionList);
-          }
-        } // end match
+	/*
+	 * return the compiled Match construction
+	 */
+	InstructionList astAutomataList = compiler.automataListCompileMatchingList(automataList);
+	SlotList slots = tomListToSlotList(`l1);
+	Instruction astAutomata = compiler.collectVariableFromSubjectList(slots,rootpath,`AbstractBlock(astAutomataList),moduleName);
+	//           System.out.println("Matching compiled: " + `CompiledMatch(astAutomata, optionList));
+	return `CompiledMatch(astAutomata, optionList);
+      }
+    } // end match
   } 
 
   public TomTerm compileMatching(TomTerm subject) {
@@ -186,12 +186,17 @@ public class TomKernelCompiler extends TomBase {
         return `CheckInstance(variableType,TomTermToExpression(subjectVar),let);
       }
 
-      concSlot(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall)[AstName=Name(tomName)]),tail*) -> {
+      concSlot(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall|BuildConstant)[AstName=Name(tomName)]),tail*) -> {
         body = collectVariableFromSubjectList(`tail,path,body,moduleName);
         // ModuleName
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
-        TomType tomType = getSymbolCodomain(tomSymbol);
-				TomNumberList newPath = `concTomNumber(path*,NameNumber(slotName));
+	TomType tomType = `EmptyType();
+	if(tomSymbol!=null) {
+	  tomType = getSymbolCodomain(tomSymbol);
+	} else if(`subjectVar.isFunctionCall()) {
+	  tomType=`subjectVar.getAstType();
+	}
+	TomNumberList newPath = `concTomNumber(path*,NameNumber(slotName));
         TomTerm variable = `Variable(concOption(),PositionName(newPath),tomType, concConstraint());
         Expression source = `TomTermToExpression(subjectVar);
         Instruction checkStamp = `CheckStamp(variable);
@@ -433,7 +438,6 @@ public class TomKernelCompiler extends TomBase {
                                       int indexTerm,
                                       boolean ensureNotEmptyList,
                                       String moduleName) {
-    //getSymbolTable(moduleName).setUsedSymbolDestructor(p.symbol);
     %match(termList) {
       concSlot() -> {
           /*
@@ -633,7 +637,6 @@ public class TomKernelCompiler extends TomBase {
                                        int indexTerm,
                                        boolean ensureNotEmptyList,
                                        String moduleName) {
-    //getSymbolTable(moduleName).setUsedSymbolDestructor(p.symbol);
     %match(termList) {
       concSlot() -> {
           /*
@@ -882,8 +885,6 @@ public class TomKernelCompiler extends TomBase {
         }
 
         Expression getSlotAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
-        // to mark the symbol as alive
-        //getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
 
         TomNumberList newPath  = `concTomNumber(path*,NameNumber(slotName));
         TomTerm newVariableAST = `Variable(concOption(),PositionName(newPath),subtermType,concConstraint());
@@ -937,8 +938,6 @@ public class TomKernelCompiler extends TomBase {
         }
 
         Expression getSubtermAST = `GetSlot(subtermType,opNameAST,slotName.getString(),subjectVariableAST);
-        // to mark the symbol as alive
-        //getSymbolTable(moduleName).setUsedSymbolDestructor(tomSymbol);
         TomNumberList newPath  = `concTomNumber(path*,NameNumber(slotName));
         TomTerm newVariableAST = `Variable(concOption(),PositionName(newPath),subtermType,concConstraint());
         return `Let(newVariableAST,getSubtermAST,body);
@@ -962,8 +961,6 @@ public class TomKernelCompiler extends TomBase {
           if ( isAnti ){
         	  check = `Negation(check);
           }
-          // to mark the symbol as alive
-          //getSymbolTable(moduleName).setUsedSymbolDestructor(name.getString());
           cond = `Or(check,cond);
           `nameList = `nameList.getTailconcTomName();
         }

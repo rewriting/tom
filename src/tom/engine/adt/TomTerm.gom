@@ -70,8 +70,14 @@ TomTerm =
 
     | Automata(Option:OptionList,PatternList:TomList,NumberList:TomNumberList,Inst:Instruction)
 
-    | BuildReducedTerm(TomTerm:TomTerm)
-    | FunctionCall(AstName:TomName,Args:TomList)
+    | BuildReducedTerm(TomTerm:TomTerm,AstType:TomType)
+  /**
+   * <code>FunctionCall</code> generates a function call
+   *
+   * @param AstName the name of the symbol
+   * @param AstType the codomain of the function call, EmptyType if not known
+   */
+    | FunctionCall(AstName:TomName,AstType:TomType,Args:TomList)
     | BuildConstant(AstName:TomName)
     | BuildTerm(AstName:TomName,Args:TomList,ModuleName:String)
     | BuildEmptyList(AstName:TomName)

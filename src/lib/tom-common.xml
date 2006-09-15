@@ -51,7 +51,7 @@
            optimize="${optimize}"
            optimize2="${optimize2}"
            verbose="${verbose}"
-	   fork="${tomfork}"
+           fork="${tomfork}"
            pretty="${pretty}">
         <classpath refid="tom.classpath"/>
       </tom>

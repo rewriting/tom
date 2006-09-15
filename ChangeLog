@@ -1,3 +1,6 @@
+2006-09-15  Pierre-Etienne Moreau  <pem@huggy.loria.fr>
+	* allows function symbols in subjects
+
 2006-09-12  Pem  <pem@becky.local>
   * removed old branches (concurrent, Set, traversal)
 	* created module tom-oldies
