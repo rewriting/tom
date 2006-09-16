@@ -39,9 +39,9 @@ class DebugStrategy extends AbstractMuStrategy {
 
 }
 
-class DummyController implements DebugStrategyObserver {
+class DummyObserver implements DebugStrategyObserver {
 
-  int scope = 0;
+  protected int scope = 0;
 
   public void before(DebugStrategy s) {
     String[] names = s.getStrat().getClass().getName().split("[\\.\\$]");
@@ -52,6 +52,28 @@ class DummyController implements DebugStrategyObserver {
     System.out.println("[" + (--scope) + "] new subtree : " + res);
   }
 }
+
+
+class GraphicalObserver implements DebugStrategyObserver {
+
+  protected int scope = 0;
+  protected Visitable term;
+
+  public GraphicalObserver(Visitable initialTerm)  {
+    term = initialTerm;
+  }
+
+  public void before(DebugStrategy s)  {
+    String[] names = s.getStrat().getClass().getName().split("[\\.\\$]");
+    String name = names[names.length-1];
+    System.out.println("[" + (scope++) + "] applying " + name + " at " + s.getPosition());
+  }
+  public void after(DebugStrategy s, Visitable res) {
+    System.out.println("[" + (--scope) + "] new subtree : " + res);
+  }
+}
+
+
 
 
 public class StratDebugger {
@@ -94,17 +116,19 @@ public class StratDebugger {
 
   %strategy Bidon() extends `Identity() {
     visit Exp {
-      x -> { System.out.println("bidon : " + `x); }
+      x -> { System.out.println("bidon : " + `x ); }
       Var("x") ->  { return `plus(Var("y"),Var("z")); } 
     }
   }
   
 
   public static void main(String[] argv) {
-    MuStrategy s = `mu(MuVar("x"),Sequence(Bidon(),All(MuVar("x"))));
-    DummyController controller = new DummyController();
-    s = decorateStrategy(controller, s);
+    MuStrategy s = `TopDown(Bidon());
+    StrategyViewer.stratToDot(s);
+    DummyObserver observer = new DummyObserver();
+    s = decorateStrategy(observer, s);
     Exp n = `plus(S(Zero()),Var("x")); 
+    VisitableViewer.VisitableToDot(n);
     s.apply(n);
   }
 }
