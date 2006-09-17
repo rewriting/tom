@@ -37,15 +37,19 @@ public class AllRefSensitive extends AbstractMuStrategy {
   }
 
   public void visitPosition(Position pos, MuStrategy strat) throws VisitFailure{
-    Position p = getPosition();
-    setPosition(pos);
+    int[] oldpos = getPosition().toArray();
+    getPosition().init(pos);
     try{
+      System.out.println("original subject before omega :"+originalSubj);
+      System.out.println("position before omega :"+getPosition());
       originalSubj = pos.getOmega(strat).visit(originalSubj);
+      System.out.println("original subject after omega :"+originalSubj);
+      System.out.println("position after omega :"+getPosition());
     }catch(VisitFailure e){
-      setPosition(p);
+      getPosition().init(oldpos);
       throw new VisitFailure();
     }
-    setPosition(p);
+    getPosition().init(oldpos);
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {

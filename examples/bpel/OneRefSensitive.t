@@ -37,42 +37,43 @@ public class OneRefSensitive extends AbstractMuStrategy {
   }
 
   public void visitPosition(Position pos, MuStrategy strat) throws VisitFailure{
-    Position p = getPosition();
-    setPosition(pos);
+    int[] oldpos = getPosition().toArray();
+    getPosition().init(pos);
     try{
       originalSubj = pos.getOmega(strat).visit(originalSubj);
     }catch(VisitFailure e){
-      setPosition(p);
+      getPosition().init(oldpos);
       throw new VisitFailure();
     }
-    setPosition(p);
+      getPosition().init(oldpos);
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
-   int childCount = any.getChildCount();
-   if(!hasPosition()) {
-     throw new RuntimeException("Need to initialize positions");
-   } else {
-     for(int i = 0; i < childCount; i++) {
-       Visitable oldChild = any.getChildAt(i);
-       try { 
-         //System.out.println("One.pos = " + position);
-         position.down(i+1);
-         Visitable newChild;
-         if (oldChild instanceof MuReference){
-           newChild = visitReference((MuReference)oldChild,(MuStrategy)visitors[ARG]);
-         }
-         else{ 
-           newChild = visitors[ARG].visit(oldChild);
-         }
-         position.up();
-         return any.setChildAt(i,newChild);
-       } catch(VisitFailure f) {
-         position.up();
-       }
-     }
-   }
-   throw new VisitFailure();
+    int childCount = any.getChildCount();
+    if(!hasPosition()) {
+      throw new RuntimeException("Need to initialize positions");
+    } else {
+      for(int i = 0; i < childCount; i++) {
+        Visitable oldChild = any.getChildAt(i);
+        try { 
+          //System.out.println("One.pos = " + position);
+          getPosition().down(i+1);
+          Visitable newChild;
+          if (oldChild instanceof MuReference){
+            newChild = visitReference((MuReference)oldChild,(MuStrategy)visitors[ARG]);
+          }
+          else{ 
+            newChild = visitors[ARG].visit(oldChild);
+          }
+          originalSubj = getPosition().getReplace(newChild).visit(originalSubj);
+          getPosition().up();
+          return any.setChildAt(i,newChild);
+        } catch(VisitFailure f) {
+          getPosition().up();
+        }
+      }
+    }
+    throw new VisitFailure();
   }
 
   public Visitable getSubject(){

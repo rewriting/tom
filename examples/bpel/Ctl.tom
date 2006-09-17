@@ -20,6 +20,12 @@
   make(v,s) { new OneRefSensitive(v,s) }
 }
 
+%op Strategy RelativeRef(v:Visitable,s:Strategy) {
+  is_fsym(t) { (t instanceof RelativeRef) }
+  make(v,s) { new RelativeRef(v,s) }
+}
+
+
 %op Strategy TopDownRef(v:Visitable,s1:Strategy) {
   make(v,s1) { `mu(MuVar("_x"),Sequence(s1,AllRelativeRefSensitive(v,MuVar("_x")))) }
 }
