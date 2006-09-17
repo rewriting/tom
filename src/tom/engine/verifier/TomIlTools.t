@@ -53,7 +53,7 @@ public class TomIlTools extends TomBase {
   // ------------------------------------------------------------
   %include { ../adt/tomsignature/TomSignature.tom }
   %include { ../adt/zenon/Zenon.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
   %typeterm Collection {
     implement { java.util.Collection }
   }

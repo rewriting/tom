@@ -23,15 +23,16 @@ public class RelativePosition extends Position {
     while(i<min_length && sourceData[i]==targetData[i]){
       i++;
     }
-    int[] relativeData = new int[targetData.length-i+1];
-    relativeData[0]=sourceData.length-i;
+    int[] relativeData = new int[target.depth()-i+1];
+    relativeData[0]=source.depth()-i;
     for(int j=1;j<relativeData.length;j++){
       relativeData[j] = targetData[i+j-1];
     }
-    return new RelativePosition(relativeData);
+    RelativePosition res = 
+    new RelativePosition(relativeData);
+    return res;
+
   }
-
-
 
   public Position getAbsolutePosition(Position currentPosition){
     int[] currentData = currentPosition.toArray();
@@ -45,6 +46,7 @@ public class RelativePosition extends Position {
       absoluteData[i]=data[i-prefix+1];
     }
     Position absolutePos = new Position(absoluteData);
+    System.out.println("absoluteposition = " + absolutePos);
     return absolutePos;
   }
 

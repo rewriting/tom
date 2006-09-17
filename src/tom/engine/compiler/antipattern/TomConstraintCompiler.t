@@ -59,7 +59,7 @@ public class TomConstraintCompiler{
 	
 //	------------------------------------------------------------
 	%include { adt/tomconstraint/TomConstraint.tom }
-	%include { mutraveler.tom}	
+	%include { mustrategy.tom}	
 //	------------------------------------------------------------
 	
 	/**

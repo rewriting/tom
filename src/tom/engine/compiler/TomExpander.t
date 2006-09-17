@@ -68,7 +68,7 @@ import jjtraveler.VisitFailure;
 public class TomExpander extends TomGenericPlugin {
 
   %include { adt/tomsignature/TomSignature.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
 
   %typeterm TomExpander {
     implement { TomExpander }

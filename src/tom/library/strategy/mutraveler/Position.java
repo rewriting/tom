@@ -25,8 +25,8 @@ public class Position {
   }
 
   public Position(int[] data) {
-    this.data = new int[data.length];
     size = data.length;
+    this.data = new int[size];
     System.arraycopy(data, 0, this.data, 0, size);
   }
 

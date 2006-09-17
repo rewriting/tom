@@ -59,7 +59,7 @@ import jjtraveler.VisitFailure;
 
 public class TomKernelExpander extends TomBase {
 
-  %include { mutraveler.tom}
+  %include { mustrategy.tom}
 
   %typeterm TomKernelExpander {
     implement { TomKernelExpander }

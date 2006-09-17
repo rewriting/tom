@@ -52,7 +52,7 @@ public class PILFactory extends TomBase {
   
   %include{ adt/tomsignature/TomSignature.tom }
   %include{ java/util/types/Collection.tom }
-  %include{ mutraveler.tom }
+  %include{ mustrategy.tom }
 
   /**
    * level specifies the level of details of the output

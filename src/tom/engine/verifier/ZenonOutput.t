@@ -55,7 +55,7 @@ public class ZenonOutput {
   // ------------------------------------------------------------
   %include { adt/il/Il.tom }
   %include { adt/zenon/Zenon.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
   %typeterm Map {
     implement { java.util.Map }
   }

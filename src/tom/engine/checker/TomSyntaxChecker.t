@@ -63,7 +63,7 @@ import jjtraveler.VisitFailure;
 public class TomSyntaxChecker extends TomChecker {
 
   %include { adt/tomsignature/TomSignature.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/></options>";

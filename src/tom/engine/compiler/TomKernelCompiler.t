@@ -76,7 +76,7 @@ public class TomKernelCompiler extends TomBase {
 
 // ------------------------------------------------------------
   %include { adt/tomsignature/TomSignature.tom }
-  %include { mutraveler.tom}
+  %include { mustrategy.tom}
 // ------------------------------------------------------------
  
   %typeterm TomKernelCompiler {

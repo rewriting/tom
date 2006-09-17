@@ -54,7 +54,7 @@ import jjtraveler.reflective.VisitableVisitor;
 public abstract class TomGenericPlugin extends TomBase implements Plugin {
   
   %include { adt/platformoption/PlatformOption.tom }
-  %include{ mutraveler.tom }
+  %include{ mustrategy.tom }
 
   /** The name of the plugin. */
   private String pluginName;

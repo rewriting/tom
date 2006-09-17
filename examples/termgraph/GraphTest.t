@@ -38,13 +38,14 @@ import java.util.*;
 
 import termgraph.term.*;
 import termgraph.term.types.*;
+import termgraph.term.strategy.term.*;
 import termgraph.term.types.term.posTerm;
 
 public class GraphTest{
 
-  %include {mustrategy.tom }
+  %include {Ctl.tom }
   %include {term/term.tom}
-
+  %include {term/_term.tom}
 
 
   %strategy Print() extends Identity(){
@@ -163,7 +164,13 @@ public class GraphTest{
     root=subject;
     subject= (Term) `TopDownRelativeRefSensitive(subject,DummyStrat()).apply(subject);
     System.out.println("After DummyStrat: "+subject);
+    System.out.println("Try to reproduce the bug");
+    subject = `expTerm(g(f(f(refTerm("toto"))),labTerm("toto",a())));
+    try{
+    MuTraveler.init(`_g(_f(OneRelativeRefSensitive(subject,Identity())),Identity())).visit(subject);
+    }catch(VisitFailure e){
+      System.out.println("Echec");
+    }
 
   }
-
-}
+ }

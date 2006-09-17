@@ -65,7 +65,7 @@ import tom.library.strategy.mutraveler.*;
 public class TomOptimizer extends TomGenericPlugin {
 
   %include{ adt/tomsignature/TomSignature.tom }
-  %include{ mutraveler.tom}
+  %include{ mustrategy.tom}
   %include{java/util/ArrayList.tom}
   %include{java/util/HashSet.tom}
 

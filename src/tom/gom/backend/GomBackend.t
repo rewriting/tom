@@ -49,7 +49,7 @@ public class GomBackend {
   private List importList = null;
 
   %include { ../adt/objects/Objects.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
 
   GomBackend(TemplateFactory templatefactory, File tomHomePath, List importList) {
     this.templatefactory = templatefactory;
