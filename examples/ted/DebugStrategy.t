@@ -24,8 +24,8 @@ class DebugStrategy extends AbstractMuStrategy {
     return obs;
   }
 
-  public VisitableVisitor getStrat() {
-    return (VisitableVisitor) getChildAt(0);
+  public MuStrategy getStrat() {
+    return (MuStrategy) getChildAt(0);
   }
 }
 
