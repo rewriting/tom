@@ -56,10 +56,8 @@ public class StratDebugger {
 
   public static void main(String[] argv) {
     MuStrategy s = `InnermostId(RS());
-    Exp n = `plus(S(S(Zero())),S(Zero())); 
+    Exp n = `plus(S(Zero()),S(Zero())); 
     
-    //StrategyViewer.stratToDotStdout(s);
-    //DummyObserver observer = new DummyObserver();
     GraphicalObserver observer = new GraphicalObserver(n,s);
     s = decorateStrategy(observer, s);
     VisitableViewer.visitableToDotStdout(n);

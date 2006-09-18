@@ -6,7 +6,6 @@ import tom.library.strategy.mutraveler.*;
 import jjtraveler.VisitFailure;
 import java.io.*;
 
-/*
 // -------------------- SVG -----------------------------
 import java.awt.*;
 import java.awt.event.*;
@@ -15,12 +14,14 @@ import javax.swing.*;
 
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.svg.*;
-import org.apache.batik.dom.svg.*;
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.w3c.dom.svg.SVGDocument;
+import org.apache.batik.util.XMLResourceDescriptor;
+
 
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 // ----------------------------------------------------
-*/
 
 class VisitableVisitorFwd extends AbstractMuStrategy {
   public final static int ARG = 0;
@@ -63,44 +64,55 @@ class GraphicalObserver implements DebugStrategyObserver {
   public GraphicalObserver(Visitable initialTerm, MuStrategy initialStrategy)  {
     term = initialTerm;
     init_strat = initialStrategy;
-    //javax.swing.SwingUtilities.invokeLater(
-    //    new Runnable() { public void run() { createAndShowGUI();} });
+    javax.swing.SwingUtilities.invokeLater(
+        new Runnable() { public void run() { createAndShowGUI();} });
   }
 
-  /*
+  
   // GUI
-  static JSVGCanvas svgCanvas = new JSVGCanvas();
+  JSVGCanvas svgCanvas1 = new JSVGCanvas();
+  JSVGCanvas svgCanvas2 = new JSVGCanvas();
 
   private void createAndShowGUI() {
-    //Make sure we have nice window decorations.
     JFrame.setDefaultLookAndFeelDecorated(true);
+    JFrame.setDefaultLookAndFeelDecorated(true);
+    JFrame frame = new JFrame("Strategy Debugger");
+    //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    
 
-    //Create and set up the window.
-    JFrame frame = new JFrame("Strategy debugger of hell");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    JButton button = new JButton("Next");
+    button.addActionListener(
+        new ActionListener () {
+          public void actionPerformed(ActionEvent e) {
+          synchronized (GraphicalObserver.this) {
+            GraphicalObserver.this.notify();
+            }
+          }
+        }
+    );
 
-    frame.getContentPane().add(svgCanvas);
+    
+    JPanel pan = new JPanel(new GridLayout(1,2));
+    pan.add(svgCanvas2);
+    pan.add(svgCanvas1);
 
-    //Display the window.
+    frame.getContentPane().add(pan, BorderLayout.CENTER);
+    frame.getContentPane().add(button, BorderLayout.SOUTH);
     frame.pack();
     frame.setVisible(true);
   }
 
-  private static DocumentBuilder db = null;
-  
-  public static SVGOMDocument string2Dom(Reader xml)
-    throws ParserConfigurationException, IOException, SAXException
-    {
-      if(db == null) {
-        DocumentBuilderFactory dbf =
-          DocumentBuilderFactory.newInstance();
-        db = dbf.newDocumentBuilder();
-      }
-      //return (SVGOMDocument) db.parse(new InputSource(new StringReader(xml ) ) );
-      return (SVGOMDocument) db.parse(new InputSource(xml));
+  private static  SVGDocument streamToSVGDom(InputStream stream) {
+    try {
+      String parser = XMLResourceDescriptor.getXMLParserClassName();
+      SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
+      String uri = "http://bidon";
+      return f.createSVGDocument(uri,stream);
+    } catch (IOException ex) { 
+      ex.printStackTrace();
+      return null;
     }
-
-*/
+  }
 
   public void before(DebugStrategy s)  {
     String[] names = s.getStrat().getClass().getName().split("[\\.\\$]");
@@ -112,21 +124,25 @@ class GraphicalObserver implements DebugStrategyObserver {
       Process pr = rt.exec("dot -Tsvg");
       Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
       VisitableViewer.visitableToDot(term, out, s.getPosition(), "#66FF66");
-      //StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(),"#6666FF");
       out.close();
       pr.waitFor();
-      BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-      pr = rt.exec("display -");
+      SVGDocument dom = streamToSVGDom(pr.getInputStream());
+      svgCanvas1.setSVGDocument(dom);
+
+
+      pr = rt.exec("dot -Tsvg");
       out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      int c;
-      while ((c = in.read()) != -1) {
-        out.write((char)c);
-      }
-      //SVGOMDocument dom = string2Dom(in);
-      //svgCanvas.installSVGDocument(dom);
-      in.close();
+      StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(),"#6666FF");
       out.close();
       pr.waitFor();
+      dom = streamToSVGDom(pr.getInputStream());
+      svgCanvas2.setSVGDocument(dom);
+
+      //System.in.read();
+      synchronized (this) {
+        this.wait();
+      }
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -141,19 +157,26 @@ class GraphicalObserver implements DebugStrategyObserver {
       Process pr = rt.exec("dot -Tsvg");
       Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
       VisitableViewer.visitableToDot(term, out, s.getPosition(), "#FF6666");
-      //StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(), "#6666FF");
       out.close();
       pr.waitFor();
       BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-      pr = rt.exec("display -");
+      SVGDocument dom = streamToSVGDom(pr.getInputStream());
+      svgCanvas1.setSVGDocument(dom);
+
+      pr = rt.exec("dot -Tsvg");
       out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      int c;
-      while ((c = in.read()) != -1) {
-        out.write((char)c);
-      }
-      in.close();
+      StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(),"#6666FF");
       out.close();
       pr.waitFor();
+      dom = streamToSVGDom(pr.getInputStream());
+      svgCanvas2.setSVGDocument(dom);
+
+      //System.in.read();
+      synchronized (this) {
+        this.wait();
+      }
+
+
     } catch (Exception e) {
       e.printStackTrace();
     }
