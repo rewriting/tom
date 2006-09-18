@@ -1,10 +1,3 @@
-%typeterm Visitable {
-  implement      { jjtraveler.Visitable}
-  equals(l1,l2)  { l1.equals(l2) }
-  check_stamp(l) {}
-  set_stamp(l)   { l }  
-}
-
 %op Strategy AllRelativeRefSensitive(v:Visitable,s:Strategy) {
   is_fsym(t) { (t instanceof AllRelativeRefSensitive) }
   make(v,s) { new AllRelativeRefSensitive(v,s) }
@@ -18,11 +11,6 @@
 %op Strategy OneRefSensitive(v:Visitable,s:Strategy) {
   is_fsym(t) { (t instanceof OneRefSensitive) }
   make(v,s) { new OneRefSensitive(v,s) }
-}
-
-%op Strategy RelativeRef(v:Visitable,s:Strategy) {
-  is_fsym(t) { (t instanceof RelativeRef) }
-  make(v,s) { new RelativeRef(v,s) }
 }
 
 
