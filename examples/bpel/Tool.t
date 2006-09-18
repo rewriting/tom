@@ -2,7 +2,7 @@ package bpel;
 
 import bpel.wfg.*;
 import bpel.wfg.types.*;
-import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.*;
 import java.util.HashMap;
 
 public class Tool{

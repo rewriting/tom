@@ -1,10 +1,6 @@
 package bpel;
 
-import tom.library.strategy.mutraveler.AbstractMuStrategy;
-import tom.library.strategy.mutraveler.MuStrategy;
-import tom.library.strategy.mutraveler.MuVisitable;
-import tom.library.strategy.mutraveler.MuReference;
-import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.*;
 import jjtraveler.Visitable;
 import jjtraveler.Visitor;
 import jjtraveler.VisitFailure;

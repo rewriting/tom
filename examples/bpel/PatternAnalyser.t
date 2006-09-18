@@ -38,6 +38,7 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 
+import ted.*;
 
 import tom.library.strategy.mutraveler.*;
 
@@ -55,6 +56,11 @@ public class PatternAnalyser{
   %include {wfg/_Wfg.tom}
   %include {Ctl.tom}
   %include {adt/tnode/TNode.tom }
+
+  %typeterm Visitable {
+    implement { jjtraveler.Visitable}
+    equals(t1,t2) {t1.equals(t2)}
+  }
 
   %strategy Combine(wfg:Wfg) extends `Identity(){
     visit Wfg{
@@ -139,7 +145,8 @@ public class PatternAnalyser{
     Node node = new Node("");
     HashSet visited = new HashSet();
     System.out.println("digraph g{");
-    `PrintWfg(wfg,node,visited).apply(wfg);    
+    //`PrintWfg(wfg,node,visited).apply(wfg);    
+    StratDebugger.applyGraphicalDebug(wfg,`PrintWfg(wfg,node,visited));    
     System.out.println("}");
   }
 

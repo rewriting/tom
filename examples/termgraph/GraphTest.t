@@ -78,8 +78,9 @@ public class GraphTest {
     Term subject =
       `expTerm(f(g(g(labTerm("l1",a()),labTerm("l2",b())),f(refTerm("l1")))));
     System.out.println("Initial subject: "+subject);
-    Term newSubject = (Term) `TopDown(Ref(subject,DummyStrat())).apply(subject);
+    Term newSubject = (Term) `TopDown(RelativeRef(subject,DummyStrat())).apply(subject);
     System.out.println("Subject after dummystrat: "+newSubject);
+
     root = subject;
     `TopDown(Ref(subject,MatchGraph())).apply(root);
 
@@ -126,18 +127,20 @@ public class GraphTest {
     }
 
     System.out.println("\nApply dummyStrat with relative positions");
-    subject= `g(a(),g(posTerm(1,2),a()));
+    subject= `g(posTerm(1,2),a());
     System.out.println("Initial Subject: "+subject);
     root=subject;
-    subject= (Term) `TopDown(RelativeRef(subject,DummyStrat())).apply(subject);
-    System.out.println("After DummyStrat: "+subject);
-    System.out.println("Try to reproduce the bug");
-    subject = `expTerm(g(f(f(refTerm("toto"))),labTerm("toto",a())));
-    try {
-      MuTraveler.init(`_g(_f(One(RelativeRef(subject,Identity()))),Identity())).visit(subject);
-    } catch(VisitFailure e) {
-      System.out.println("Failure");
-    }
+    subject= (Term) `One(RelativeRef(subject,ABC())).apply(subject);
+    subject= (Term) `One(RelativeRef(subject,ABC())).apply(subject);
+    System.out.println("After ABC: "+subject);
+    System.out.println("After Repeat(ABC): "+`RepeatId(One(RelativeRef(root,ABC()))).apply(root));
+    System.out.println("After ABC;ABC "+`Sequence(One(RelativeRef(root,ABC())),One(RelativeRef(root,ABC()))).apply(root));
+  }
 
+  %strategy ABC() extends Identity() {
+    visit Term {
+      a() -> { return `b(); }
+      b() -> { return `c(); }
+    }
   }
 }
