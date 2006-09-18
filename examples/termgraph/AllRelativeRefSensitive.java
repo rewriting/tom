@@ -4,6 +4,7 @@ import tom.library.strategy.mutraveler.AbstractMuStrategy;
 import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.MuVisitable;
 import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.RelativePosition;
 import tom.library.strategy.mutraveler.MuReference;
 import jjtraveler.Visitable;
 import jjtraveler.Visitor;

@@ -41,69 +41,36 @@ import termgraph.term.types.*;
 import termgraph.term.strategy.term.*;
 import termgraph.term.types.term.posTerm;
 
-public class GraphTest{
+public class GraphTest {
 
-  %include {Ctl.tom }
+  //%include {mustrategy.tom }
   %include {term/term.tom}
   %include {term/_term.tom}
 
-
-  %strategy Print() extends Identity(){
+  %strategy Print() extends Identity() {
     visit Term {
-     x@_ -> {System.out.println(`x);}
+      x@_ -> { System.out.println(`x); }
     }
   }
 
-
-  %strategy DummyStrat() extends Identity(){
+  %strategy DummyStrat() extends Identity() {
     visit Term {
-      a() -> {return  `b();}
-      b() -> {return `a();}
+      a() -> { return `b(); }
+      b() -> { return `a(); }
     }
   }
-  
+
   %strategy MatchGraph() extends Identity() {
-    visit Term{
-      graph@g(g(x@a(),b()),f(Ref(x)))-> {
+    visit Term {
+      graph@g(g(x@a(),b()),f(mRef(x)))-> {
         System.out.println("graph pattern found at "+getPosition());
       }
     }
   }
 
-  %typeterm Visitable {
-    implement      { jjtraveler.Visitable}
-    equals(l1,l2)  { l1.equals(l2) }
-    check_stamp(l) {}
-    set_stamp(l)   { l }  
-  }
-
-  %op Strategy AllPos(s:Visitable,v:Strategy) {
-    is_fsym(t) { (t instanceof AllRefSensitive) }
-    make(s,v) { new AllRefSensitive(s,v) }
-  }
-
-  %op Strategy AllRelativePos(s:Visitable,v:Strategy) {
-    is_fsym(t) { (t instanceof AllRelativeRefSensitive) }
-    make(s,v) { new AllRelativeRefSensitive(s,v) }
-  }
-
-  %op Strategy BottomUpRefSensitive(s:Visitable,v:Strategy) {
-    make(s,v) { `mu(MuVar("_x"),Sequence(AllPos(s,MuVar("_x")),v)) }
-  }
-
-  %op Strategy TopDownRefSensitive(s:Visitable,v:Strategy) {
-    make(s,v) { `mu(MuVar("_x"),Sequence(v,AllPos(s,MuVar("_x")))) }
-  }
-
-  %op Strategy TopDownRelativeRefSensitive(s:Visitable,v:Strategy) {
-    make(s,v) { `mu(MuVar("_x"),Sequence(v,AllRelativePos(s,MuVar("_x")))) }
-  }
-
-
   static Term root = null;
-  %op Term Ref(ptr:Term) {
-    is_fsym(t) { (t!=null) 
-      && (t instanceof posTerm) }
+  %op Term mRef(ptr:Term) {
+    is_fsym(t) { (t!=null) && (t instanceof posTerm) }
     get_slot(ptr, t) { (Term)(new Position(((posTerm)t).toArray())).getSubterm().apply(root) }
   }
 
@@ -111,25 +78,25 @@ public class GraphTest{
     Term subject =
       `expTerm(f(g(g(labTerm("l1",a()),labTerm("l2",b())),f(refTerm("l1")))));
     System.out.println("Initial subject: "+subject);
-    Term newSubject = (Term) `TopDownRefSensitive(subject,DummyStrat()).apply(subject);
+    Term newSubject = (Term) `TopDown(Ref(subject,DummyStrat())).apply(subject);
     System.out.println("Subject after dummystrat: "+newSubject);
     root = subject;
-    `TopDownRefSensitive(subject,MatchGraph()).apply(root);
+    `TopDown(Ref(subject,MatchGraph())).apply(root);
 
     // Problems to resolve
-    System.out.println("Examples of strange behaviour of pattern-matching when  using Ref\n");
+    System.out.println("Examples of strange behaviour of pattern-matching when  using mRef\n");
     System.out.println("1. when the subject is modified inside a match");
     subject = `expTerm(g(labTerm("a",a()),refTerm("a")));
     System.out.println("%match "+subject);
     root=subject;
     %match(Term subject){
-      g(x@a(),Ref(x)) -> {
-        System.out.println("\tmatched with g(x@a(),Ref(x))");
+      g(x@a(),mRef(x)) -> {
+        System.out.println("\tmatched with g(x@a(),mRef(x))");
         subject = `expTerm(g(labTerm("a",b()),refTerm("a")));
         System.out.println("\t\tChange subject: "+subject);
       }
-      g(x@a(),Ref(x)) -> {
-        System.out.println("\tmatched with g(x@a(),Ref(x))");
+      g(x@a(),mRef(x)) -> {
+        System.out.println("\tmatched with g(x@a(),mRef(x))");
       }
     }
 
@@ -138,12 +105,12 @@ public class GraphTest{
     System.out.println("%match "+subject);
     root=subject;
     %match(Term subject){
-      g(x@a(),g(y@Ref(x),Ref(y))) -> {
-        System.out.println("\tmatched with g(x@a(),g(y@Ref(x),Ref(y)))");
+      g(x@a(),g(y@mRef(x),mRef(y))) -> {
+        System.out.println("\tmatched with g(x@a(),g(y@mRef(x),mRef(y)))");
       }
       /*
-         !g(x@a(),g(Ref(x),Ref(x))) -> {
-         System.out.println("\tnot matched with g(x@a(),g(Ref(x),Ref(x)))");
+         !g(x@a(),g(mRef(x),mRef(x))) -> {
+         System.out.println("\tnot matched with g(x@a(),g(mRef(x),mRef(x)))");
          }
        */
     }
@@ -153,8 +120,8 @@ public class GraphTest{
     System.out.println("%match "+subject);
     root=subject;
     %match(Term subject){
-      g(x@a(),g(Ref(x),a())) -> {
-        System.out.println("\tmatched with g(x@a(),g(Ref(x),a()))");
+      g(x@a(),g(mRef(x),a())) -> {
+        System.out.println("\tmatched with g(x@a(),g(mRef(x),a()))");
       }
     }
 
@@ -162,15 +129,15 @@ public class GraphTest{
     subject= `g(a(),g(posTerm(1,2),a()));
     System.out.println("Initial Subject: "+subject);
     root=subject;
-    subject= (Term) `TopDownRelativeRefSensitive(subject,DummyStrat()).apply(subject);
+    subject= (Term) `TopDown(RelativeRef(subject,DummyStrat())).apply(subject);
     System.out.println("After DummyStrat: "+subject);
     System.out.println("Try to reproduce the bug");
     subject = `expTerm(g(f(f(refTerm("toto"))),labTerm("toto",a())));
-    try{
-    MuTraveler.init(`_g(_f(OneRelativeRefSensitive(subject,Identity())),Identity())).visit(subject);
-    }catch(VisitFailure e){
-      System.out.println("Echec");
+    try {
+      MuTraveler.init(`_g(_f(One(RelativeRef(subject,Identity()))),Identity())).visit(subject);
+    } catch(VisitFailure e) {
+      System.out.println("Failure");
     }
 
   }
- }
+}

@@ -22,9 +22,8 @@ expTerm:make(term){
 
 expTerm:import{
 import termgraph.term.*;
-import termgraph.RelativePosition;
 import termgraph.term.types.*;
-import tom.library.strategy.mutraveler.Position;
+import tom.library.strategy.mutraveler.*;
 import java.util.HashMap;
 }
 
@@ -45,7 +44,7 @@ expTerm:block{
       visit Term{
         refTerm(label) -> {
           RelativePosition pos = 
-            RelativePosition.constructRelativePosition(getPosition(),(Position) table.get(`label));
+            RelativePosition.make(getPosition(),(Position) table.get(`label));
           if (pos == null) throw new RuntimeException("The label "+`label+" is not referenced");
           Term ref = `posTerm();
           int[] array = pos.toArray();
