@@ -50,7 +50,12 @@ public class Ref extends AbstractMuStrategy {
     if (any instanceof MuReference){
       return visitReference((MuReference)any,(MuStrategy)visitors[ARG]);
     } else { 
-      return visitors[ARG].visit(any);
+      if(strict) {
+	// does nothing when it is not a Ref
+	return any;
+      } else {
+	return visitors[ARG].visit(any);
+      }
     }
   }
 

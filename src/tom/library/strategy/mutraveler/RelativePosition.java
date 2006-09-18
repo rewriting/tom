@@ -42,7 +42,6 @@ public class RelativePosition extends Position {
       absoluteData[i]=data[i-prefix+1];
     }
     Position absolutePos = new Position(absoluteData);
-    System.out.println("absoluteposition = " + absolutePos);
     return absolutePos;
   }
 
