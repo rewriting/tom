@@ -52,16 +52,28 @@ public class StratDebugger {
       plus(Zero(),n) -> { return `n; }
     }
   }
-  
+ 
+
+  public static Visitable applyDebug(Visitable subject, MuStrategy strat) {
+    DummyObserver observer = new DummyObserver();
+    strat = decorateStrategy(observer, strat);
+    return strat.apply(subject);
+  }
+
+  public static Visitable applyGraphicalDebug(Visitable subject, MuStrategy strat) {
+    GraphicalObserver observer = new GraphicalObserver(subject,strat);
+    strat = decorateStrategy(observer, strat);
+    return strat.apply(subject);
+  }
+
 
   public static void main(String[] argv) {
     MuStrategy s = `InnermostId(RS());
-    Exp n = `plus(S(Zero()),S(Zero())); 
-    
-    GraphicalObserver observer = new GraphicalObserver(n,s);
-    s = decorateStrategy(observer, s);
-    VisitableViewer.visitableToDotStdout(n);
-    s.apply(n);
+    Exp n = `plus(S(Zero()),S(Zero()));
+
+    n = (Exp) applyGraphicalDebug(n,s);
+    //n = (Exp) applyDebug(n,s);
+    System.out.println("final result = " + n);
   }
 }
 
