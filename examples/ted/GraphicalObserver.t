@@ -165,7 +165,7 @@ class GraphicalObserver implements DebugStrategyObserver {
 
       pr = rt.exec("dot -Tsvg");
       out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
-      StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(),"#6666FF");
+      StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(),"#666666");
       out.close();
       pr.waitFor();
       dom = streamToSVGDom(pr.getInputStream());
