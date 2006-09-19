@@ -41,10 +41,13 @@ import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
 import tom.engine.exception.*;
+import tom.engine.tools.SymbolTable;
+import tom.engine.TomBase;
 
 import tom.library.strategy.mutraveler.MuTraveler;
 
@@ -64,8 +67,99 @@ public class TomAntiPatternTransformNew {
 	%include { java/util/types/Collection.tom}	
 //	------------------------------------------------------------
 	
+	// TODO - change this
+	// flag that specifies if the action will be performed on the 'if then' 
+	// or on the 'else' branch
+	// - if one not is above, than action is on 'else'; if two, action on 'if then' 
+	// and so on
+	private static int actionOnIf = 0;
 	private static int varCounter = 0;
 	private static final String FRESH_VAR_NAME = "_tom_fresh_var_";
+	private static SymbolTable symbolTable = null;
+	
+	/**
+	 * for the given term, abstracts all anti terms contained
+	 * 
+	 * @return a term in which all the anti terms are abstracted with variables
+	 * 			and with one match constraint for each anti-term that was abstracted 
+	 */
+	public static TomTerm getConstraintedTerm(TomTerm tomTerm,
+			SymbolTable symbolTable, int isList){
+		
+		TomTerm termAntiReplaced = null;		
+		ArrayList globalFreeVarList = new ArrayList();
+		TomList tomGlobalFreeVarList = `concTomTerm();
+		ArrayList replacedTerms = new ArrayList();
+		Constraint andAntiCons = `AndAntiConstraint();
+				
+		TomAntiPatternTransformNew.symbolTable = symbolTable;
+		
+		// existing constraints
+		ConstraintList constraints = null;
+		if(tomTerm instanceof AntiTerm){
+			constraints = `concConstraint(); // no constraints for a term that begins with an anti
+		}else{
+			constraints = tomTerm.getConstraints();
+		}
+		
+		int termLine = 0;
+		String fileName = null;
+		
+		//System.out.println("Term :" + tomTerm);
+		
+		// get the file name and line number
+		TomTerm tmpTomTerm = tomTerm;		
+		if (tmpTomTerm instanceof AntiTerm){
+			tmpTomTerm = ((AntiTerm)tmpTomTerm).getTomTerm();
+		}		
+		%match(tmpTomTerm){
+			(Variable|RecordAppl)[Option = concOption(_*,OriginTracking[Line=termLine,FileName=fileName],_*)] ->{
+				termLine = `termLine;
+				fileName = `fileName;
+			}			
+		}
+		
+		//System.out.println("Entered with: " + tomTerm);
+		
+		while(true){		
+			// get the term with a variable instead of anti
+			String varName = FRESH_VAR_NAME + (varCounter++);
+			TomTerm abstractVariable = `Variable(concOption(OriginTracking(Name(varName),
+					termLine,fileName)),Name(varName),EmptyType(),concConstraint());		
+			termAntiReplaced = (TomTerm) `OnceTopDownId(AbstractTerm(abstractVariable,replacedTerms)).apply(tomTerm);
+			// if nothing was done
+			if (termAntiReplaced == tomTerm){
+				break;
+			}
+			
+			// give the variable the correct type
+			abstractVariable = abstractVariable.setAstType(
+					TomBase.getTermType((TomTerm)replacedTerms.get(0),symbolTable));
+			
+			// add the new anti constraint
+			andAntiCons = `AndAntiConstraint(andAntiCons*,
+					AntiMatchConstraint((TomTerm)replacedTerms.get(0),abstractVariable,actionOnIf,isList));
+			
+			// reinitialize
+			replacedTerms.clear();
+			tomTerm = termAntiReplaced;
+		}		
+				
+		// add the newly created constraints
+		if (!andAntiCons.isEmptyAndAntiConstraint()){
+			andAntiCons = andAntiCons.reverse();
+			constraints = `concConstraint(constraints*,andAntiCons);
+		}
+		termAntiReplaced = termAntiReplaced.setConstraints(constraints);
+		
+		//System.out.println("Finished with: " + termAntiReplaced);
+		
+		// change the level
+		actionOnIf = actionOnIf == 0 ? 1:0;
+		
+		return termAntiReplaced; 		
+	}
+	
 	
 	/**
 	 * transforms the anti-pattern problem received 
@@ -124,7 +218,9 @@ public class TomAntiPatternTransformNew {
 		// we need to have all quantified variables stored in the list 
 		quantifiedVarList.add(abstractVariable);
 
-		Constraint cAntiReplaced = (Constraint) `OnceTopDownId(AbstractTerm(abstractVariable)).apply(c);
+		ArrayList tmp = new ArrayList();
+		
+		Constraint cAntiReplaced = (Constraint) `OnceTopDownId(AbstractTerm(abstractVariable, tmp)).apply(c);
 		cAntiReplaced = applyMainRule(cAntiReplaced,quantifiedVarList);
 		
 		return `AndConstraint(concAnd(cAntiReplaced,cNoAnti));
@@ -164,9 +260,22 @@ public class TomAntiPatternTransformNew {
 	}
 	
 	// replace a term by another (a variable)
-	%strategy AbstractTerm(variable:TomTerm) extends `Identity() {
+	%strategy AbstractTerm(variable:TomTerm, bag:Collection) extends `Identity() {
 		visit TomTerm {
-			AntiTerm[] -> { return variable; }
+			AntiTerm(t) -> { 
+				bag.add(`t);				
+				// return the variable with the correct type
+				return variable.setAstType(TomBase.getTermType(`t,symbolTable)); 
+			}
 		}
 	}	
+
+	public static int getActionOnIf(){
+		return actionOnIf;
+	}
+	
+	public static void initialize(){
+		actionOnIf = 0;
+		varCounter = 0;
+	}
 } // end class

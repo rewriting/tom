@@ -42,6 +42,7 @@ import tom.engine.adt.tomoption.types.*;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomterm.types.tomterm.*;
+import tom.engine.adt.tomterm.types.tomlist.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
 
@@ -100,8 +101,52 @@ public class TomAntiPatternUtils {
 	%strategy FindAnti() extends `Fail(){
 		visit TomTerm {
 			at@AntiTerm[] -> { return `at; }
-		}
+		}		
 	}
+	
+//	/**
+//	 * Compiles the anti-pattern matching constraint that it received
+//	 * 
+//	 * 
+//	 * @param constraint 
+//	 * @param moduleName
+//	 * @param symbolTable
+//	 * @param kernelCompiler
+//	 * @return compiled expresion
+//	 */	
+//	public static Expression compileAntiMatchConstraint( Constraint constraint,
+//			String moduleName,
+//			SymbolTable symbolTable,			
+//			TomKernelCompiler kernelCompiler) {
+//			
+//		Collection quantifiedVarList = new ArrayList();
+//		Collection freeVarList = new ArrayList();
+//		//		((concTomTerm)((MatchConstraint)constraint).getGlobalFreeVarList()).toArray());
+//		
+//		TomList tomList = ((MatchConstraint)constraint).getGlobalFreeVarList();
+//		while(!tomList.isEmptyconcTomTerm()){
+//			freeVarList.add(tomList.getHeadconcTomTerm());
+//			tomList = tomList.getTailconcTomTerm();
+//		}
+//		
+//		Constraint transformedProblem = TomAntiPatternTransformNew.transform(
+//				`EqualConstraint(((MatchConstraint)constraint).getPattern(),
+//						((MatchConstraint)constraint).getSubject()),quantifiedVarList,freeVarList);
+//		
+//		// launch the antipattern compiler
+//		Constraint compiledApProblem = TomAntiPatternCompiler.compile(transformedProblem,quantifiedVarList,freeVarList);					
+//			
+//		%match(compiledApProblem){
+//			TrueConstraint() ->{
+//				return `TrueTL();				 
+//			}
+//			FalseConstraint()->{
+//				return `FalseTL();				
+//			}
+//		}
+//		return getTomMappingForConstraint(compiledApProblem,symbolTable,moduleName,kernelCompiler);
+//		
+//	}
 	
 	/**
 	 * Compiles the anti-pattern matching problem that it received
@@ -123,10 +168,9 @@ public class TomAntiPatternUtils {
 		
 		// resent container 
 		varAssignments = null;
-		
+				
 		// subject to be matched
-		TomTerm subject = null;
-		
+		TomTerm subject = null;		
 		subject = getSubjectVariableAST(tomTerm,rootpath,symbolTable,slotName,moduleName);
 		
 		// transform the anti-pattern match problem into
