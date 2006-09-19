@@ -84,33 +84,6 @@
     get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Omega.ARG) }
   }
 
-  %op Strategy Ref(root:Visitable, s1:Strategy) {
-    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Ref) && ((tom.library.strategy.mutraveler.Ref)t).isRelative()==false && ((tom.library.strategy.mutraveler.Ref)t).isStrict()==false }
-    make(v,s) { tom.library.strategy.mutraveler.Ref.make(v,s) }
-    get_slot(root, t) { ((tom.library.strategy.mutraveler.Ref)t).getSubject() }
-    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Ref.ARG) }
-  }
-  
-  %op Strategy RelativeRef(root:Visitable, s1:Strategy) {
-    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Ref) && ((tom.library.strategy.mutraveler.Ref)t).isRelative()==true && ((tom.library.strategy.mutraveler.Ref)t).isStrict()==false }
-    make(v,s) { tom.library.strategy.mutraveler.Ref.makeRelative(v,s) }
-    get_slot(root, t) { ((tom.library.strategy.mutraveler.Ref)t).getSubject() }
-    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Ref.ARG) }
-  }
-
-  %op Strategy StrictRef(root:Visitable, s1:Strategy) {
-    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Ref) && ((tom.library.strategy.mutraveler.Ref)t).isRelative()==false && ((tom.library.strategy.mutraveler.Ref)t).isStrict()==true }
-    make(v,s) { tom.library.strategy.mutraveler.Ref.make(v,s) }
-    get_slot(root, t) { ((tom.library.strategy.mutraveler.Ref)t).getSubject() }
-    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Ref.ARG) }
-  }
-  
-  %op Strategy StrictRelativeRef(root:Visitable, s1:Strategy) {
-    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Ref) && ((tom.library.strategy.mutraveler.Ref)t).isRelative()==true && ((tom.library.strategy.mutraveler.Ref)t).isStrict()==true }
-    make(v,s) { tom.library.strategy.mutraveler.Ref.makeRelative(v,s) }
-    get_slot(root, t) { ((tom.library.strategy.mutraveler.Ref)t).getSubject() }
-    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Ref.ARG) }
-  }
 
 /*
  * basic operators with Id considered as a failure

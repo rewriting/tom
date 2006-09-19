@@ -22,6 +22,8 @@ public class StratDebugger {
   }
 
   %include{ mustrategy.tom }
+  %include{ ref.tom }
+  %include{ visitable.tom }
 
   %typeterm DebugStrategyObserver {
     implement { ted.DebugStrategyObserver }

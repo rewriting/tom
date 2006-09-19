@@ -57,10 +57,8 @@ public class PatternAnalyser{
   %include {Ctl.tom}
   %include {adt/tnode/TNode.tom }
 
-  %typeterm Visitable {
-    implement { jjtraveler.Visitable}
-    equals(t1,t2) {t1.equals(t2)}
-  }
+  %include {ref.tom}
+  %include {visitable.tom}
 
   %strategy Combine(wfg:Wfg) extends `Identity(){
     visit Wfg{
