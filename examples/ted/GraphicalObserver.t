@@ -125,7 +125,7 @@ class GraphicalObserver implements DebugStrategyObserver {
       Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
       VisitableViewer.visitableToDot(term, out, s.getPosition(), "#66FF66");
       out.close();
-      pr.waitFor();
+      //pr.waitFor();
       SVGDocument dom = streamToSVGDom(pr.getInputStream());
       svgCanvas1.setSVGDocument(dom);
 
@@ -134,7 +134,7 @@ class GraphicalObserver implements DebugStrategyObserver {
       out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
       StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(),"#6666FF");
       out.close();
-      pr.waitFor();
+      //pr.waitFor();
       dom = streamToSVGDom(pr.getInputStream());
       svgCanvas2.setSVGDocument(dom);
 
@@ -158,7 +158,7 @@ class GraphicalObserver implements DebugStrategyObserver {
       Writer out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
       VisitableViewer.visitableToDot(term, out, s.getPosition(), "#FF6666");
       out.close();
-      pr.waitFor();
+      //pr.waitFor();
       BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
       SVGDocument dom = streamToSVGDom(pr.getInputStream());
       svgCanvas1.setSVGDocument(dom);
@@ -167,7 +167,7 @@ class GraphicalObserver implements DebugStrategyObserver {
       out = new BufferedWriter(new OutputStreamWriter(pr.getOutputStream()));
       StrategyViewer.stratToDot(init_strat, out, (MuStrategy) s.getStrat(),"#666666");
       out.close();
-      pr.waitFor();
+      //pr.waitFor();
       dom = streamToSVGDom(pr.getInputStream());
       svgCanvas2.setSVGDocument(dom);
 
