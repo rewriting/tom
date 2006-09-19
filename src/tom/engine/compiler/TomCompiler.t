@@ -61,7 +61,7 @@ import jjtraveler.VisitFailure;
 public class TomCompiler extends TomGenericPlugin {
 
   %include { adt/tomsignature/TomSignature.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
 
   %typeterm Set {
     implement      { java.util.Set }
@@ -136,11 +136,11 @@ public class TomCompiler extends TomGenericPlugin {
 
   %strategy preProcessing_once(compiler:TomCompiler) extends `Identity(){
     visit TomTerm {
-      BuildReducedTerm(var@(Variable|VariableStar)[]) -> {
+      BuildReducedTerm[TomTerm=var@(Variable|VariableStar)[]] -> {
         return `var;
       }
 
-      BuildReducedTerm(RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs]) -> {
+      BuildReducedTerm[TomTerm=RecordAppl[Option=optionList,NameList=(name@Name(tomName)),Slots=termArgs],AstType=astType] -> {
         TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
         SlotList newTermArgs = (SlotList) `preProcessing_makeTerm(compiler).visit(`termArgs);
         TomList tomListArgs = slotListToTomList(newTermArgs);
@@ -153,7 +153,7 @@ public class TomCompiler extends TomGenericPlugin {
           } else if(isArrayOperator(tomSymbol)) {
             return ASTFactory.buildArray(`name,tomListArgs);
           } else if(isDefinedSymbol(tomSymbol)) {
-            return `FunctionCall(name,tomListArgs);
+            return `FunctionCall(name,getSymbolCodomain(tomSymbol),tomListArgs);
           } else {
             String moduleName = getModuleName(`optionList);
             if(moduleName==null) {
@@ -162,7 +162,7 @@ public class TomCompiler extends TomGenericPlugin {
             return `BuildTerm(name,tomListArgs,moduleName);
           }
         } else {
-          return `FunctionCall(name,tomListArgs);
+          return `FunctionCall(name,astType,tomListArgs);
         }
 
       }
@@ -274,7 +274,7 @@ matchBlock: {
               String funcName = "visit_" + `type;//function name
               Instruction matchStatement = `Match(SubjectList(subjectListAST),patternInstructionList, concOption(orgTrack));
               //return default strategy.visit(arg)
-              Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),subjectListAST));
+              Instruction returnStatement = `Return(FunctionCall(Name("super." + funcName),vType,subjectListAST));
               InstructionList instructions = `concInstruction(matchStatement, returnStatement);
               l = `concDeclaration(l*,MethodDef(Name(funcName),concTomTerm(arg),vType,TomTypeAlone("jjtraveler.VisitFailure"),AbstractBlock(instructions)));
             }
@@ -308,12 +308,12 @@ matchBlock: {
         while(!ruleList.isEmptyconcTomRule()) {
           TomRule rule = ruleList.getHeadconcTomRule();
           %match(rule) {
-            RewriteRule(Term(RecordAppl[Slots=matchPatternsList]),//lhsTerm
+            RewriteRule(Term(lhsTerm@RecordAppl[Slots=matchPatternsList]),
                 Term(rhsTerm),
                 condList,
                 option) -> {
               //transform rhsTerm into Instruction to build PatternInstructionList
-              TomTerm newRhs = `BuildReducedTerm(rhsTerm);
+              TomTerm newRhs = `BuildReducedTerm(rhsTerm,compiler.getTermType(lhsTerm));
               Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
               Instruction newRhsInst = compiler.buildCondition(`condList,`rhsInst);
               Pattern pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
@@ -338,12 +338,12 @@ matchBlock: {
   } // end strategy
 
   %op Strategy preProcessing_makeTerm(compiler:TomCompiler){
-     make(compiler){ `ChoiceTopDown(preProcessing_makeTerm_once(compiler)) }
+     make(compiler) { `ChoiceTopDown(preProcessing_makeTerm_once(compiler)) }
   }
 
   %strategy preProcessing_makeTerm_once(compiler:TomCompiler) extends `Identity()  {
     visit TomTerm {
-      t -> {return (TomTerm) MuTraveler.init(`preProcessing(compiler)).visit(`BuildReducedTerm((TomTerm)t));}
+      t -> {return (TomTerm) MuTraveler.init(`preProcessing(compiler)).visit(`BuildReducedTerm(t,compiler.getTermType(t)));}
     }
   }
 
@@ -352,13 +352,12 @@ matchBlock: {
       concInstruction() -> { return action; }
 
       concInstruction(MatchingCondition[Lhs=pattern,Rhs=subject], tail*) -> {
-        try{
         Instruction newAction = `buildCondition(tail,action);
 
         TomType subjectType = getTermType(`pattern);
         TomNumberList path = `concTomNumber();
         path = `concTomNumber(path*,RuleVar());
-        TomTerm newSubject = (TomTerm)(MuTraveler.init(`preProcessing(this)).visit(`BuildReducedTerm(subject)));
+        TomTerm newSubject = (TomTerm) `preProcessing(this).apply(`BuildReducedTerm(subject,subjectType));
         TomTerm introducedVariable = newSubject;
         TomList guardList = `concTomTerm();
         TomList generatedSubjectList = `cons(introducedVariable,concTomTerm());
@@ -375,20 +374,15 @@ matchBlock: {
               concPatternInstruction(generatedPatternInstruction),
               concOption());
         return generatedMatch;
-        }catch(VisitFailure e){}
       }
 
       concInstruction(TypedEqualityCondition[TomType=type,Lhs=lhs,Rhs=rhs], tail*) -> {
-        try{
-        Instruction newAction = `buildCondition(tail,action);
-
-        TomTerm newLhs = (TomTerm)(MuTraveler.init(`preProcessing(this)).visit(`BuildReducedTerm(lhs)));
-
-        TomTerm newRhs = (TomTerm)(MuTraveler.init(`preProcessing(this)).visit(`BuildReducedTerm(rhs)));
-        Expression equality = `EqualTerm(type,newLhs,newRhs);
-        Instruction generatedTest = `If(equality,newAction,Nop());
-        return generatedTest;
-        }catch(VisitFailure e){}
+	  Instruction newAction = `buildCondition(tail,action);
+	  TomTerm newLhs = (TomTerm) `preProcessing(this).apply(`BuildReducedTerm(lhs,type));
+	  TomTerm newRhs = (TomTerm) `preProcessing(this).apply(`BuildReducedTerm(rhs,type));
+	  Expression equality = `EqualTerm(type,newLhs,newRhs);
+	  Instruction generatedTest = `If(equality,newAction,Nop());
+	  return generatedTest;
       }
     }
     throw new TomRuntimeException("buildCondition strange term: " + condList);
@@ -554,8 +548,7 @@ matchBlock: {
   /*
    * attach the when contraint to the right variable
    */
-  private TomList attachConstraint(TomList subjectList,
-      TomTerm constraint) {
+  private TomList attachConstraint(TomList subjectList, TomTerm constraint) {
     HashSet patternVariable = new HashSet();
     HashSet constraintVariable = new HashSet();
 
@@ -565,9 +558,7 @@ matchBlock: {
 
     //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);
     TomList newSubjectList = null;
-    try{
-    newSubjectList = (TomList)(MuTraveler.init(`attachConstraint(variableSet,constraint,this)).visit(subjectList));
-    }catch(VisitFailure e){}
+    newSubjectList = (TomList) `attachConstraint(variableSet,constraint,this).apply(subjectList);
     return newSubjectList;
   }
 
@@ -611,19 +602,19 @@ itBlock: {
 
     visit TomTerm {
       var@(Variable|VariableStar)[Constraints=constraintList] -> {
-        if(variableSet.remove(`var) && variableSet.isEmpty()) {
-					Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint)));
-          ConstraintList newConstraintList = `concConstraint(constraintList*,c);
-          return `var.setConstraints(newConstraintList);
-        }
+	if(variableSet.remove(`var) && variableSet.isEmpty()) {
+	  Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint,EmptyType())));
+	  ConstraintList newConstraintList = `concConstraint(constraintList*,c);
+	  return `var.setConstraints(newConstraintList);
+	}
       }
 
       appl@RecordAppl[Constraints=constraintList] -> {
-        if(variableSet.isEmpty()) {
-					Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint)));
-          ConstraintList newConstraintList = `concConstraint(constraintList*,c);
-          return `appl.setConstraints(newConstraintList);
-        }
+	if(variableSet.isEmpty()) {
+	  Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint,EmptyType())));
+	  ConstraintList newConstraintList = `concConstraint(constraintList*,c);
+	  return `appl.setConstraints(newConstraintList);
+	}
       }
     }
   }
