@@ -36,6 +36,8 @@ import antipatterns.testantipattern.antipattern.types.*;
 
 public class TestAntiPattern extends TestCase {	  
 	
+	%include{boolean.tom}
+	
     %gom {
 	    module AntiPattern
 	    imports String
@@ -225,48 +227,48 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(match10(`f(a(),b())) == `Equal("x",a()));				
 	}
 	
-	private Result match11(Term subject){
-		%match(Term subject){
-			f(!g(x),!g(x)) ->{
-				return `True();
-			}
-		}
-		return `False();
-	}
-    
-    public void testAp11() {		
-		
-		assertTrue(match11(`f(g(a()),g(b()))) == `False());						
-	}	
+//	private Result match11(Term subject){
+//		%match(Term subject){
+//			f(!g(x),!g(x)) ->{
+//				return `True();
+//			}
+//		}
+//		return `False();
+//	}
+//    
+//    public void testAp11() {		
+//		
+//		assertTrue(match11(`f(g(a()),g(b()))) == `False());						
+//	}	
 	
-	private Result match12(Term subject){
-		%match(Term subject){
-			!f(!g(x),!g(x)) ->{
-				return `True();
-			}
-		}
-		return `False();
-	}
+//	private Result match12(Term subject){
+//		%match(Term subject){
+//			!f(!g(x),!g(x)) ->{
+//				return `True();
+//			}
+//		}
+//		return `False();
+//	}
+//	
+//    public void testAp12() {		
+//		
+//		assertTrue(match12(`f(g(a()),g(b()))) == `True());						
+//	}
 	
-    public void testAp12() {		
-		
-		assertTrue(match12(`f(g(a()),g(b()))) == `True());						
-	}
-	
-	private Result match13(Term subject){
-		%match(Term subject){
-			f(!x,!x) ->{
-				return `True();
-			}
-		}
-		return `False();
-	}
-	
-	public void testAp13() {		
-		
-    	assertTrue(match13(`f(a(),a())) == `False());
-		assertTrue(match13(`f(a(),b())) == `False());						
-	}
+//	private Result match13(Term subject){
+//		%match(Term subject){
+//			f(!x,!x) ->{
+//				return `True();
+//			}
+//		}
+//		return `False();
+//	}
+//	
+//	public void testAp13() {		
+//		
+//    	assertTrue(match13(`f(a(),a())) == `False());
+//		assertTrue(match13(`f(a(),b())) == `False());						
+//	}
 	
 //	private Result match14(Term subject){
 //		%match(Term subject){

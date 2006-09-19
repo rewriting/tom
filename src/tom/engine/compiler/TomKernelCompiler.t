@@ -157,23 +157,26 @@ public class TomKernelCompiler extends TomBase {
 
 	  /*
 	   * compile nested match constructs
-	   * given a list of pattern: we build a matching automaton
-	   */
-	  actionInst = (Instruction) compileStrategy.visit(actionInst);
-	  Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,patternList,rootpath,moduleName);
-	  //              System.out.println("Matching automata: " + matchingAutomata);
-	  OptionList automataOptionList = `concOption();
-	  TomName label = compiler.getLabel(pa.getOption());
-	  if(label != null) {
-	    automataOptionList = `concOption(Label(label),automataOptionList*);
-	  }
-	  TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(Number(actionNumber)));
-	  TomTerm automata = `Automata(automataOptionList,slotListToTomList(patternList),numberList,matchingAutomata);
-	  //System.out.println("automata = " + automata);
+       * given a list of pattern: we build a matching automaton
+       */
+      actionInst = (Instruction) compileStrategy.visit(actionInst);
+      // reset anti flags
+      antiConstraintFirstTime = true;
+      TomAntiPatternTransformNew.initialize();
+      Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,`Nop(),
+    		  patternList,rootpath,moduleName,null,true);
+      OptionList automataOptionList = `concOption();
+      TomName label = compiler.getLabel(pa.getOption());
+      if(label != null) {
+        automataOptionList = `concOption(Label(label),automataOptionList*);
+      }
+      TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(Number(actionNumber)));
+      TomTerm automata = `Automata(automataOptionList,slotListToTomList(patternList),numberList,matchingAutomata);
 
-	  automataList = append(automata,automataList);
-	  `patternInstructionList = `patternInstructionList.getTailconcPatternInstruction();
-	}
+      automataList = append(automata,automataList);
+      `patternInstructionList = `patternInstructionList.getTailconcPatternInstruction();
+    }
+
 
 	/*
 	 * return the compiled Match construction

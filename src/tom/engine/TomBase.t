@@ -227,6 +227,11 @@ public class TomBase {
 		System.out.println("isArrayOperator: strange case: '" + subject + "'");
 		throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
   }
+  
+  protected static boolean isSyntacticOperator(TomSymbol subject) {	  
+	  return (!(isListOperator(subject) || isArrayOperator(subject)));	  
+  }
+
 
   // ------------------------------------------------------------
   public static void collectVariable(Collection collection, jjtraveler.Visitable subject) {
