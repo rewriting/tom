@@ -183,7 +183,7 @@ public class TomBase {
     return res;
   }
 
-  protected static boolean isListOperator(TomSymbol subject) {
+  public static boolean isListOperator(TomSymbol subject) {
     if(subject==null) {
       return false;
     }
@@ -490,7 +490,7 @@ public class TomBase {
     return symbolTable.getSymbolFromName(tomName);
   }
   
-  protected static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
+  public static TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
     TomSymbolList list = symbolTable.getSymbolFromType(tomType);
     TomSymbolList filteredList = `concTomSymbol();
     // Not necessary since checker ensure the uniqueness of the symbol
