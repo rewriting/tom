@@ -13,7 +13,7 @@ Constraint = Ensure(Variable:TomTerm)
 		   | NEqualConstraint(pattern:TomTerm, genTerm:TomTerm)
 		   | Exists(var:TomTerm,cons:Constraint)
 		   | ForAll(var:TomTerm,cons:Constraint)
-		   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int, ListOperator : int )
+		   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int)
 		   | AndAntiConstraint(Constraint*)
 
 ConstraintList = concConstraint(Constraint*)

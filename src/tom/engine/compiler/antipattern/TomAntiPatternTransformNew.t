@@ -83,14 +83,15 @@ public class TomAntiPatternTransformNew {
 	 * @return a term in which all the anti terms are abstracted with variables
 	 * 			and with one match constraint for each anti-term that was abstracted 
 	 */
-	public static TomTerm getConstraintedTerm(TomTerm tomTerm,
-			SymbolTable symbolTable, int isList){
+	public static TomTerm getConstrainedTerm(TomTerm tomTerm,
+			SymbolTable symbolTable){
 		
 		TomTerm termAntiReplaced = null;		
 		ArrayList globalFreeVarList = new ArrayList();
 		TomList tomGlobalFreeVarList = `concTomTerm();
 		ArrayList replacedTerms = new ArrayList();
 		Constraint andAntiCons = `AndAntiConstraint();
+		int isList = 0;
 				
 		TomAntiPatternTransformNew.symbolTable = symbolTable;
 		
@@ -104,8 +105,6 @@ public class TomAntiPatternTransformNew {
 		
 		int termLine = 0;
 		String fileName = null;
-		
-		//System.out.println("Term :" + tomTerm);
 		
 		// get the file name and line number
 		TomTerm tmpTomTerm = tomTerm;		
@@ -130,15 +129,32 @@ public class TomAntiPatternTransformNew {
 			// if nothing was done
 			if (termAntiReplaced == tomTerm){
 				break;
-			}
-			
+			}			
+			TomTerm replacedTerm = (TomTerm)replacedTerms.get(0);			
 			// give the variable the correct type
-			abstractVariable = abstractVariable.setAstType(
-					TomBase.getTermType((TomTerm)replacedTerms.get(0),symbolTable));
+			TomType type = TomBase.getTermType(replacedTerm,symbolTable);
+			abstractVariable = abstractVariable.setAstType(type);
+			// see if it is a list			
+			TomSymbol symbol = null;
+			match:%match(replacedTerm){
+				RecordAppl[NameList=(Name(tomName),_*)] ->{
+					symbol = symbolTable.getSymbolFromName(`tomName);
+					break match;
+				}
+				Variable[AstName=Name(tomName)]->{
+					symbol = symbolTable.getSymbolFromName(`tomName);
+					break match;
+				}
+				x ->{
+					System.out.println("No symbol can be detected for:" + `x);
+				}
+			}			
+			isList = TomBase.isListOperator(symbol) ? 1:0;
+			System.out.println("IsList:" + isList);
 			
 			// add the new anti constraint
 			andAntiCons = `AndAntiConstraint(andAntiCons*,
-					AntiMatchConstraint((TomTerm)replacedTerms.get(0),abstractVariable,actionOnIf,isList));
+					AntiMatchConstraint(replacedTerm,abstractVariable,actionOnIf));
 			
 			// reinitialize
 			replacedTerms.clear();
