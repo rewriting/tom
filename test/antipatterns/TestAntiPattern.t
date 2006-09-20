@@ -112,6 +112,24 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(match3(`f(b(),c())) == `False());
 	}
 	
+	private Result match3_1(Term subject){
+		%match(Term subject){
+			f(!a(),!b()) ->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp3_1() {
+		
+		assertTrue(match3_1(`f(a(),a())) == `False());
+		assertTrue(match3_1(`f(a(),c())) == `False());
+		assertTrue(match3_1(`f(a(),b())) == `False());
+		assertTrue(match3_1(`f(b(),c())) == `True());
+		assertTrue(match3_1(`f(b(),b())) == `False());
+	}
+	
 	private Result match4(Term subject){
 		%match(Term subject){
 			!f(a(),!b()) ->{
