@@ -87,11 +87,8 @@ public class TomAntiPatternTransformNew {
 			SymbolTable symbolTable){
 		
 		TomTerm termAntiReplaced = null;		
-		ArrayList globalFreeVarList = new ArrayList();
-		TomList tomGlobalFreeVarList = `concTomTerm();
 		ArrayList replacedTerms = new ArrayList();
-		Constraint andAntiCons = `AndAntiConstraint();
-		int isList = 0;
+		Constraint andAntiCons = `AndAntiConstraint();		
 				
 		TomAntiPatternTransformNew.symbolTable = symbolTable;
 		
@@ -134,24 +131,6 @@ public class TomAntiPatternTransformNew {
 			// give the variable the correct type
 			TomType type = TomBase.getTermType(replacedTerm,symbolTable);
 			abstractVariable = abstractVariable.setAstType(type);
-			// see if it is a list			
-			TomSymbol symbol = null;
-			match:%match(replacedTerm){
-				RecordAppl[NameList=(Name(tomName),_*)] ->{
-					symbol = symbolTable.getSymbolFromName(`tomName);
-					break match;
-				}
-				Variable[AstName=Name(tomName)]->{
-					symbol = symbolTable.getSymbolFromName(`tomName);
-					break match;
-				}
-				x ->{
-					System.out.println("No symbol can be detected for:" + `x);
-				}
-			}			
-			isList = TomBase.isListOperator(symbol) ? 1:0;
-			System.out.println("IsList:" + isList);
-			
 			// add the new anti constraint
 			andAntiCons = `AndAntiConstraint(andAntiCons*,
 					AntiMatchConstraint(replacedTerm,abstractVariable,actionOnIf));
