@@ -189,13 +189,30 @@ public class TestAntiPattern extends TestCase {
 		}
 		return `False();
 	}
-
-    public void testAp8() {
+	
+	public void testAp8() {
 		
 		assertTrue(match8(`f(a(),b())) == `Equal("x",a()));
 		assertTrue(match8(`f(a(),g(b()))) == `Equal("x",a()));
 		assertTrue(match8(`f(b(),g(b()))) == `False());
 		assertTrue(match8(`g(b())) == `False());
+	}
+	
+	private Result match8_1(Term subject){
+		%match(Term subject){
+			f(!g(x),x) ->{
+				return `Equal("x",x);
+			}
+		}
+		return `False();
+	}
+
+    public void testAp8_1() {
+		
+		assertTrue(match8_1(`f(b(),a())) == `Equal("x",a()));
+		assertTrue(match8_1(`f(g(b()),a())) == `Equal("x",a()));
+		assertTrue(match8_1(`f(g(b()),b())) == `False());
+		assertTrue(match8_1(`g(b())) == `False());
 	}
     
 	private Result match9(Term subject){
@@ -245,57 +262,57 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(match10(`f(a(),b())) == `Equal("x",a()));				
 	}
 	
-//	private Result match11(Term subject){
-//		%match(Term subject){
-//			f(!g(x),!g(x)) ->{
-//				return `True();
-//			}
-//		}
-//		return `False();
-//	}
-//    
-//    public void testAp11() {		
-//		
-//		assertTrue(match11(`f(g(a()),g(b()))) == `False());						
-//	}	
+	private Result match11(Term subject){
+		%match(Term subject){
+			f(!g(x),!g(x)) ->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+    
+    public void testAp11() {		
+		
+		assertTrue(match11(`f(g(a()),g(b()))) == `False());						
+	}	
 	
-//	private Result match12(Term subject){
-//		%match(Term subject){
-//			!f(!g(x),!g(x)) ->{
-//				return `True();
-//			}
-//		}
-//		return `False();
-//	}
-//	
-//    public void testAp12() {		
-//		
-//		assertTrue(match12(`f(g(a()),g(b()))) == `True());						
-//	}
+	private Result match12(Term subject){
+		%match(Term subject){
+			!f(!g(x),!g(x)) ->{
+				return `True();
+			}
+		}
+		return `False();
+	}
 	
-//	private Result match13(Term subject){
-//		%match(Term subject){
-//			f(!x,!x) ->{
-//				return `True();
-//			}
-//		}
-//		return `False();
-//	}
-//	
-//	public void testAp13() {		
-//		
-//    	assertTrue(match13(`f(a(),a())) == `False());
-//		assertTrue(match13(`f(a(),b())) == `False());						
-//	}
+    public void testAp12() {		
+		
+		assertTrue(match12(`f(g(a()),g(b()))) == `True());						
+	}
 	
-//	private Result match14(Term subject){
-//		%match(Term subject){
-//			!!x ->{
-//				return `True();
-//			}
-//		}
-//		return `False();
-//	}
+	private Result match13(Term subject){
+		%match(Term subject){
+			f(!x,!x) ->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp13() {		
+		
+    	assertTrue(match13(`f(a(),a())) == `False());
+		assertTrue(match13(`f(a(),b())) == `False());						
+	}
+	
+	private Result match14(Term subject){
+		%match(Term subject){
+			!!x ->{
+				return `True();
+			}
+		}
+		return `False();
+	}
 	
 	private Result match15(Term subject){
 		%match(Term subject){
