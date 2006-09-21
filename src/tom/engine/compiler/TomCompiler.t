@@ -62,6 +62,8 @@ public class TomCompiler extends TomGenericPlugin {
 
   %include { adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
+  %include { java/util/types/Collection.tom}
+  %include { java/util/types/Map.tom}
 
   %typeterm Set {
     implement      { java.util.Set }
@@ -194,9 +196,8 @@ matchBlock: {
                   }
                   negativePattern = `concPattern(negativePattern*,pattern);
 
-                  /* generate equality checks */
-                  ArrayList equalityCheck = new ArrayList();
-                  TomList renamedTermList = linearizePattern(`termList,equalityCheck);
+                  /* generate equality checks */                  
+                  TomList renamedTermList = linearizePattern(`termList);
                   newPatternInstruction = `PatternInstruction(Pattern(subjectList,renamedTermList,guardList),newAction, option);
                   /* attach guards to variables or applications*/
                   TomList constrainedTermList = renamedTermList;
@@ -389,18 +390,18 @@ matchBlock: {
   }
 
   private static TomTerm renameVariable(TomTerm subject,
-      Map multiplicityMap,
-      ArrayList equalityCheck) {
+      Map multiplicityMap,      
+      Collection antiList) {
     TomTerm renamedTerm = subject;
 
     %match(subject) {
       var@(UnamedVariable|UnamedVariableStar)[Constraints=constraints] -> {
-        ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap,equalityCheck);
+        ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap);
         return `var.setConstraints(newConstraintList);
       }
 
       var@(Variable|VariableStar)[AstName=name,Constraints=clist] -> {
-        ConstraintList newConstraintList = renameVariableInConstraintList(`clist,multiplicityMap,equalityCheck);
+        ConstraintList newConstraintList = renameVariableInConstraintList(`clist,multiplicityMap);
         if(!multiplicityMap.containsKey(`name)) {
           // We see this variable for the first time
           multiplicityMap.put(`name,new Integer(1));
@@ -427,32 +428,34 @@ matchBlock: {
         SlotList newArgs = `concSlot();
         while(!args.isEmptyconcSlot()) {
           Slot elt = args.getHeadconcSlot();
-          TomTerm newElt = renameVariable(elt.getAppl(),multiplicityMap,equalityCheck);
+          TomTerm newElt = renameVariable(elt.getAppl(),multiplicityMap,antiList);
           newArgs = `concSlot(newArgs*,PairSlotAppl(elt.getSlotName(),newElt));
           args = args.getTailconcSlot();
         }
-        ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap,equalityCheck);
+        ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
         renamedTerm = `RecordAppl(optionList,nameList,newArgs,newConstraintList);
         return renamedTerm;
       }
-      
+      // store this for late processing
       AntiTerm[TomTerm=t] ->{
-    	  return `AntiTerm(renameVariable(t,multiplicityMap,equalityCheck));
+    	  antiList.add(`t);
+    	  //return `AntiTerm(renameVariable(t,multiplicityMap,equalityCheck));
       }
     }
     return renamedTerm;
   }
 
   private static ConstraintList renameVariableInConstraintList(ConstraintList constraintList,
-      Map multiplicityMap,
-      ArrayList equalityCheck) {
+      Map multiplicityMap) {
     ArrayList list = new ArrayList();
     while(!constraintList.isEmptyconcConstraint()) {
       Constraint cstElt = constraintList.getHeadconcConstraint();
       Constraint newCstElt = cstElt;
       %match(cstElt) {
         AssignTo(var@Variable[]) -> {
-          newCstElt = `AssignTo(renameVariable(var,multiplicityMap,equalityCheck));
+          // we should never find anti in constraints at this point in the compilation,
+          // so it is safe to pass a null value
+          newCstElt = `AssignTo(renameVariable(var,multiplicityMap,null)); 
         }
       }
       list.add(newCstElt);
@@ -461,18 +464,90 @@ matchBlock: {
     return ASTFactory.makeConstraintList(list);
   }
 
-  private static TomList linearizePattern(TomList subject, ArrayList equalityCheck) {
+  private static TomList linearizePattern(TomList subject) {
     Map multiplicityMap = new HashMap();
     // perform the renaming and generate equality checks
     TomList newList = `concTomTerm();
     while(!subject.isEmptyconcTomTerm()) {
       TomTerm elt = subject.getHeadconcTomTerm();
-      TomTerm newElt = renameVariable(elt,multiplicityMap,equalityCheck);
+      // contains the anti-terms found 
+      // this is because we want to rename the variables of 
+      // the antis only after we renamed the free variables
+      ArrayList antiList = new ArrayList();      
+      TomTerm newElt = renameVariable(elt,multiplicityMap,antiList);      
+
+      newElt = handleAntiReplacement(newElt,multiplicityMap,antiList);
+  
       newList = append(newElt,newList);
       subject = subject.getTailconcTomTerm();
     }
     return newList;
   }
+  /**
+   * Handles the replacement of the variables for the anti terms. They are a special case
+   * because we should never constraint a variable X to be equal to another X that has more 
+   * anti symbols above - the second could be never instantiated.
+   * 
+   *  For example: f(!x,x) should be transformed in f(!y,x), with the constraint y=x 
+   *  and not f(!x,y), with y=x 
+   * 
+   */
+  private static TomTerm handleAntiReplacement(TomTerm newElt, Map multiplicityMap, ArrayList antiList){
+	  // an intermediate list for the antis 
+      ArrayList newAntiList = new ArrayList();
+	  // will collect all variables found fo this set
+	  // of antis
+      Map multiplicityMapIntermediate = new HashMap();
+      multiplicityMapIntermediate.putAll(multiplicityMap);
+      // just a copy of the current map	      
+      Map multiplicityMapSnapShot = new HashMap();
+      
+      while(true){ 
+	      while (!antiList.isEmpty()){
+	    	  TomTerm antiTerm = (TomTerm)antiList.get(0);
+	    	  // all have to be called with the initial multiplicityMap
+	    	  multiplicityMapSnapShot.clear();
+	    	  multiplicityMapSnapShot.putAll(multiplicityMap);
+	    	  // handle the renaming in this anti term
+	    	  newElt = (TomTerm)`OnceTopDownId(RenameAnti(antiTerm,multiplicityMapSnapShot,newAntiList)).apply(newElt);
+	    	  // make sure we collect the changes to the map
+	    	  multiplicityMapIntermediate.putAll(multiplicityMapSnapShot);
+	    	  antiList.remove(0);
+	      }
+	      // handle new anti terms found
+	      antiList = newAntiList;
+	      // the new anti terms should be searched for var replacement
+	      // using the multiplicity map that was updated at the previous step
+	      multiplicityMap.clear();
+	      multiplicityMap.putAll(multiplicityMapIntermediate);
+	      // if no more antis, stop
+	      if (newAntiList.isEmpty()){
+	    	  break;
+	      }
+      } // end while
+      
+      return newElt;
+  }
+    
+  %strategy RenameAnti(antiTerm:TomTerm, multiplicityMap:Map, antiList:Collection) extends `Identity(){
+	  visit TomTerm {
+		  a@AntiTerm(x) ->{
+			  // TODO - change the way comparison is made
+			  // because this can generate very subtle bugs - we can find 
+			  // the same term at a different positions
+			  if (`x == antiTerm){
+				  TomTerm newTerm = `AntiTerm(renameVariable(antiTerm,multiplicityMap,antiList));
+				  // if we changed something, return the new term
+				  // if not, stop anyway
+				  if (`a != newTerm){
+					  return newTerm;
+				  }else{
+					  throw new VisitFailure();
+				  }
+			  }
+		  }
+	  }// end visit
+  }// end strategy
 
   private TomTerm abstractPattern(TomTerm subject,
       ArrayList abstractedPattern,
