@@ -47,6 +47,7 @@ public class TestAntiPattern extends TestCase {
 	    	| c()
 	        | f(x1:Term, x2:Term) 
 	        | g(pred:Term)
+	        | ff(x1:Term, x2:Term)
 	        
 	    Result = True()
 	    	| False()
@@ -129,6 +130,57 @@ public class TestAntiPattern extends TestCase {
 		assertTrue(match3_1(`f(b(),c())) == `True());
 		assertTrue(match3_1(`f(b(),b())) == `False());
 	}
+	
+	private Result match3_2(Term subject){
+		%match(Term subject){
+			!f[] ->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp3_2() {
+		
+		assertTrue(match3_2(`f(a(),a())) == `False());
+		assertTrue(match3_2(`a()) == `True());		
+	}
+	
+	private Result match3_3(Term subject){
+		%match(Term subject){
+			!f(_,_) ->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp3_3() {
+		
+		assertTrue(match3_3(`f(a(),a())) == `False());
+		assertTrue(match3_3(`a()) == `True());		
+	}
+	
+	private Result match3_4(Term subject){
+		%match(Term subject){
+			!(f|ff)(a(),!b()) ->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp3_4() {
+		
+		assertTrue(match3_4(`f(a(),a())) == `False());
+		assertTrue(match3_4(`ff(a(),a())) == `False());
+		assertTrue(match3_4(`f(a(),b())) == `True());
+		assertTrue(match3_4(`ff(a(),b())) == `True());
+		assertTrue(match3_4(`f(b(),b())) == `True());
+		assertTrue(match3_4(`ff(b(),b())) == `True());
+		assertTrue(match3_4(`a()) == `True());		
+	}
+	
 	
 	private Result match4(Term subject){
 		%match(Term subject){
