@@ -95,7 +95,7 @@ public class TomAntiPatternTransformNew {
 		// existing constraints
 		ConstraintList constraints = null;
 		if(tomTerm instanceof AntiTerm){
-			constraints = `concConstraint(); // no constraints for a term that begins with an anti
+			constraints = tomTerm.getTomTerm().getConstraints();
 		}else{
 			constraints = tomTerm.getConstraints();
 		}
