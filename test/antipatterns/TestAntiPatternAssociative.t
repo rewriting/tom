@@ -307,4 +307,24 @@ public class TestAntiPatternAssociative extends TestCase {
 		assertTrue(match11(`f(g(a()),l(concTerm(b(),c(),g(a()))))) == `False());
 		assertTrue(match11(`a()) == `True());
 	}
+	
+	private Result match12(Term subject){
+		%match(Term subject){
+			f(x,!l(concTerm(_*,x,_*)))->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp12() {
+		
+		assertTrue(match12(`f(a(),l(concTerm(b(),a(),c())))) == `False());
+		assertTrue(match12(`f(a(),l(concTerm(b(),c(),c())))) == `True());
+		assertTrue(match12(`f(g(a()),l(concTerm(b(),c(),c())))) == `True());
+		assertTrue(match12(`f(g(a()),l(concTerm(b(),c(),g(a()))))) == `False());
+		assertTrue(match12(`a()) == `False());
+		assertTrue(match12(`f(g(a()),b())) == `True());
+	}
+	
 }
