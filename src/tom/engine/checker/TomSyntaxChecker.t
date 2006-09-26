@@ -1142,9 +1142,21 @@ block: {
 	    slotReference = symbol.getPairNameDeclList();
 	    nameReference = `dijName;
 	  } else {
-	    if(getSymbolDomain(symbol) != domainReference || symbol.getPairNameDeclList() != slotReference) {
+	    if(getSymbolDomain(symbol) != domainReference) {
 	      messageError(fileName,decLine, TomMessage.invalidDisjunctionDomain, new Object[]{nameReference, `(dijName) });
 	      return null;
+	    }
+	    if(symbol.getPairNameDeclList() != slotReference) {
+	      PairNameDeclList l1 = slotReference;
+	      PairNameDeclList l2 = symbol.getPairNameDeclList();
+	      while(!l1.isEmptyconcPairNameDecl()) {
+		if(l1.getHeadconcPairNameDecl().getSlotName() != l2.getHeadconcPairNameDecl().getSlotName()) {
+		  messageError(fileName,decLine, TomMessage.invalidDisjunctionDomain, new Object[]{nameReference, `(dijName) });
+		  return null;
+		}
+		l1=l1.getTailconcPairNameDecl();
+		l2=l2.getTailconcPairNameDecl();
+	      }
 	    }
 	  }
 	}
