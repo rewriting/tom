@@ -1,3 +1,4 @@
+
 %op Strategy AllRelativeRefSensitive(v:Visitable,s:Strategy) {
   is_fsym(t) { (t instanceof AllRelativeRefSensitive) }
   make(v,s) { new AllRelativeRefSensitive(v,s) }
