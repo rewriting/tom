@@ -160,7 +160,7 @@ class Pico1 {
     System.out.println("opti(p4): " + opti(p4));
 		
 		Inst p5 = `Seq(Assign("n",Cst(2)),
-				           While(Not(Eq(Var("n"),Cst(100))),
+					   While(Not(Eq(Var("n"),Cst(100))),
 									 Seq(Assign("i",Cst(2)),
 									 Seq(Assign("p",Cst(1)),
 									 Seq(While(Not(Eq(Var("i"),Var("n"))),
