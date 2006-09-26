@@ -1,7 +1,7 @@
 /*
  * Gom
  *
- * Copyright (c) 2005-2006, INRIA
+ * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -314,7 +314,7 @@ public class GomOptionManager implements OptionManager, OptionOwner {
    */
   public void displayVersion() {
     System.out.println("Gom " + Gom.VERSION + "\n\n"
-                       + "Copyright (c) 2005-2006, INRIA, Nancy, France.\n");
+                       + "Copyright (c) 2000-2006, INRIA, Nancy, France.\n");
   }
 
   /**
