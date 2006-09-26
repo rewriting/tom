@@ -1120,6 +1120,7 @@ block: {
 
       TomSymbol symbol = null;
       TomTypeList domainReference = null;
+      PairNameDeclList slotReference = null;
       String nameReference = null;
       %match(TomNameList symbolNameList) {
 	(_*, Name(dijName), _*) -> { // for each SymbolName
@@ -1138,9 +1139,10 @@ block: {
 
 	  if (domainReference == null) { // save Domain reference
 	    domainReference = getSymbolDomain(symbol);
+	    slotReference = symbol.getPairNameDeclList();
 	    nameReference = `dijName;
 	  } else {
-	    if(getSymbolDomain(symbol) != domainReference) {
+	    if(getSymbolDomain(symbol) != domainReference || symbol.getPairNameDeclList() != slotReference) {
 	      messageError(fileName,decLine, TomMessage.invalidDisjunctionDomain, new Object[]{nameReference, `(dijName) });
 	      return null;
 	    }
