@@ -69,15 +69,17 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 // ------------------------------------------------------------
 
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
-    if ((getSymbolTable(moduleName).getIntType() == type)
-        || (getSymbolTable(moduleName).getCharType() == type)
-        || (getSymbolTable(moduleName).getLongType() == type)
-        || (getSymbolTable(moduleName).getFloatType() == type)
-        || (getSymbolTable(moduleName).getDoubleType() == type)) {
+    String typeName = getTomType(type);
+    if(getSymbolTable(moduleName).isIntType(typeName)
+        || getSymbolTable(moduleName).isCharType(typeName)
+        || getSymbolTable(moduleName).isLongType(typeName)
+        || getSymbolTable(moduleName).isFloatType(typeName)
+        || getSymbolTable(moduleName).isDoubleType(typeName)
+        ) {
       output.write(" 0 ");
-    } else if (getSymbolTable(moduleName).getBooleanType() == type) {
+    } else if(getSymbolTable(moduleName).isBooleanType(typeName)) {
       output.write(" false ");
-    } else if (getSymbolTable(moduleName).getStringType() == type) {
+    } else if(getSymbolTable(moduleName).isStringType(typeName)) {
       output.write(" \"\" ");
     } else {
       output.write(" null ");

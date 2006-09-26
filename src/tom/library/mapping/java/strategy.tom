@@ -1,3 +1,4 @@
+%include {int.tom }
 /*
 %typeterm Visitable {
   implement { jjtraveler.Visitable}

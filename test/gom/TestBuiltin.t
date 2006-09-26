@@ -45,12 +45,10 @@ public class TestBuiltin extends TestCase {
     return factory.makeAppl(factory.makeAFun(nodeName,1,false),factory.makeInt(nodeLine));
   }
 
-
   private aterm.ATermList constructList(int e1, int e2, int e3) {
     ATermFactory factory = SingletonFactory.getInstance();
     return factory.makeList(factory.makeInt(e1),factory.makeList(factory.makeInt(e2),factory.makeList(factory.makeInt(e3),factory.makeList())));
   }
-
 
   public void testInt() {
     Wrapper t1 = `Int(10);

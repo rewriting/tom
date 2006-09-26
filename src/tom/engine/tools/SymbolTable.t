@@ -62,17 +62,17 @@ public class SymbolTable {
 
   private Map mapSymbolName = null;
   private Map mapTypeName = null;
-  
+
   public void init(OptionManager optionManager) {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
-	
+
     TomForwardType emptyForward = `EmptyForward();
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
       putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"int"),emptyForward);
-      putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
+      //putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
       putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
       putTypeDefinition(TYPE_FLOAT, ASTFactory.makeType(TYPE_FLOAT,"float"),emptyForward);
       putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
@@ -82,7 +82,7 @@ public class SymbolTable {
     } else if( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
       putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
       putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"boolean"),emptyForward);
-      putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
+      //putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
       putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
       putTypeDefinition(TYPE_FLOAT, ASTFactory.makeType(TYPE_FLOAT,"float"),emptyForward);
       putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
@@ -92,7 +92,7 @@ public class SymbolTable {
     } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) { // this is really bad, will need to be improved
       putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
       putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"bool"),emptyForward);
-      putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
+      //putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
       putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
       putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
       putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"String"),emptyForward);
@@ -101,7 +101,7 @@ public class SymbolTable {
     } else if( ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() ) { // this is really bad, will need to be improved
       putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"str"),emptyForward);
       putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"bool"),emptyForward);
-      putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
+      //putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
       putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
       putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"float"),emptyForward);
       putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"str"),emptyForward);
@@ -135,7 +135,7 @@ public class SymbolTable {
     while(it.hasNext()) {
       TomSymbol symbol = (TomSymbol)it.next();
       if(symbol.getTypesToType().getCodomain() == type) {
-        res = `concTomSymbol(symbol,res*);
+	res = `concTomSymbol(symbol,res*);
       }
     }
     return res;
@@ -148,17 +148,17 @@ public class SymbolTable {
 
   public TomTypeDefinition getTypeDefinition(String name) {
     TomTypeDefinition def = (TomTypeDefinition) mapTypeName.get(name);
-		return def;
+    return def;
   }
-	
+
   public TomType getType(String name) {
     TomTypeDefinition def = getTypeDefinition(name);
     if (def != null) {
       TomType result = def.getTomType();
       return result;
     } else {
-			return null;
-		} 
+      return null;
+    } 
   }
 
   public TomForwardType getForwardType(String name) {
@@ -167,87 +167,88 @@ public class SymbolTable {
       TomForwardType result = def.getForward();
       return result;
     } else { 
-			return null;
-		} 
+      return null;
+    } 
   }
 
-	public boolean isUsedSymbolConstructor(TomSymbol symbol) {
+  public boolean isUsedSymbolConstructor(TomSymbol symbol) {
     // System.out.println("con " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null));
-		return (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null);
-		//return true;
-	}
-	
-	public boolean isUsedSymbolDestructor(TomSymbol symbol) {
+    return (mapSymbolName.get(`UsedSymbolConstructor(symbol)) != null);
+    //return true;
+  }
+
+  public boolean isUsedSymbolDestructor(TomSymbol symbol) {
     // System.out.println("des " + symbol.getAstName().getString() + ": " + (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null));
     return (mapSymbolName.get(`UsedSymbolDestructor(symbol)) != null);
-		//return true;
-	}
-	
-	public boolean isUsedTypeDefinition(TomTypeDefinition type) {
-		return (mapTypeName.get(`UsedTypeDefinition(type)) != null);
-		//return true;
-	}
- 
-	public void setUsedSymbolConstructor(TomSymbol symbol) {
-    TomSymbol result = (TomSymbol) mapSymbolName.put(`UsedSymbolConstructor(symbol),symbol);
-	}
-	
-	public void setUsedSymbolDestructor(TomSymbol symbol) {
-		//System.out.println("setUsedDestructor: " + symbol.getAstName());
-    TomSymbol result = (TomSymbol) mapSymbolName.put(`UsedSymbolDestructor(symbol),symbol);
-	}
-	
-	public void setUsedTypeDefinition(TomTypeDefinition type) {
-    TomTypeDefinition result = (TomTypeDefinition) mapTypeName.put(`UsedTypeDefinition(type),type);
-	}
+    //return true;
+  }
 
-	public void setUsedSymbolConstructor(String name) {
-		TomSymbol symbol = getSymbolFromName(name);
-		if(symbol!=null) {
-			setUsedSymbolConstructor(symbol);
-		}
-	}
-	
-	public void setUsedSymbolDestructor(String name) {
-		TomSymbol symbol = getSymbolFromName(name);
-		if(symbol!=null) {
-			setUsedSymbolDestructor(symbol);
-		}
-	}
-	
-	public void setUsedTypeDefinition(String name) {
-		TomTypeDefinition type = getTypeDefinition(name);
-		if(type!=null) {
-			setUsedTypeDefinition(type);
-		}
-	}
-	
-	public boolean isUsedSymbolConstructor(String name) {
-		TomSymbol symbol = getSymbolFromName(name);
-		if(symbol!=null) {
-			return isUsedSymbolConstructor(symbol);
-		}
-		return false;
-	}
-	
-	public boolean isUsedSymbolDestructor(String name) {
-		TomSymbol symbol = getSymbolFromName(name);
-		if(symbol!=null) {
-			return isUsedSymbolDestructor(symbol);
-		}
-		return false;
-	}
-	
-	public boolean isUsedTypeDefinition(String name) {
-		TomTypeDefinition type = getTypeDefinition(name);
-		if(type!=null) {
-			return isUsedTypeDefinition(type);
-		}
-		return false;
-	}
+  public boolean isUsedTypeDefinition(TomTypeDefinition type) {
+    return (mapTypeName.get(`UsedTypeDefinition(type)) != null);
+    //return true;
+  }
+
+  public void setUsedSymbolConstructor(TomSymbol symbol) {
+    TomSymbol result = (TomSymbol) mapSymbolName.put(`UsedSymbolConstructor(symbol),symbol);
+  }
+
+  public void setUsedSymbolDestructor(TomSymbol symbol) {
+    //System.out.println("setUsedDestructor: " + symbol.getAstName());
+    TomSymbol result = (TomSymbol) mapSymbolName.put(`UsedSymbolDestructor(symbol),symbol);
+  }
+
+  public void setUsedTypeDefinition(TomTypeDefinition type) {
+    TomTypeDefinition result = (TomTypeDefinition) mapTypeName.put(`UsedTypeDefinition(type),type);
+  }
+
+  public void setUsedSymbolConstructor(String name) {
+    TomSymbol symbol = getSymbolFromName(name);
+    if(symbol!=null) {
+      setUsedSymbolConstructor(symbol);
+    }
+  }
+
+  public void setUsedSymbolDestructor(String name) {
+    TomSymbol symbol = getSymbolFromName(name);
+    if(symbol!=null) {
+      setUsedSymbolDestructor(symbol);
+    }
+  }
+
+  public void setUsedTypeDefinition(String name) {
+    TomTypeDefinition type = getTypeDefinition(name);
+    if(type!=null) {
+      setUsedTypeDefinition(type);
+    }
+  }
+
+  public boolean isUsedSymbolConstructor(String name) {
+    TomSymbol symbol = getSymbolFromName(name);
+    if(symbol!=null) {
+      return isUsedSymbolConstructor(symbol);
+    }
+    return false;
+  }
+
+  public boolean isUsedSymbolDestructor(String name) {
+    TomSymbol symbol = getSymbolFromName(name);
+    if(symbol!=null) {
+      return isUsedSymbolDestructor(symbol);
+    }
+    return false;
+  }
+
+  public boolean isUsedTypeDefinition(String name) {
+    TomTypeDefinition type = getTypeDefinition(name);
+    if(type!=null) {
+      return isUsedTypeDefinition(type);
+    }
+    return false;
+  }
 
   public TomType getIntType() {
-    return getType(TYPE_INT);
+    return `ASTFactory.makeType(TYPE_INT,"int");
+    //return getType(TYPE_INT);
   }
 
   public TomType getLongType() {
@@ -269,7 +270,7 @@ public class SymbolTable {
   public TomType getBooleanType() {
     return getType(TYPE_BOOLEAN);
   }
-  
+
   public TomType getStringType() {
     return getType(TYPE_STRING);
   }
@@ -318,7 +319,7 @@ public class SymbolTable {
     return isIntType(type) || isLongType(type) || isCharType(type) ||
       isStringType(type) || isBooleanType(type) || isDoubleType(type);
   }
- 
+
   public TomType getBuiltinType(String type) {
     if(isIntType(type)) {
       return getIntType();
@@ -336,7 +337,7 @@ public class SymbolTable {
     System.out.println("Not a builtin type: " + type);
     throw new TomRuntimeException("getBuiltinType error on term: " + type);
   }
-  
+
   public Iterator keySymbolIterator() {
     Set keys = mapSymbolName.keySet();
     Iterator it = keys.iterator();
@@ -356,13 +357,13 @@ public class SymbolTable {
     TomEntryList list = `concTomEntry();
     Iterator it = keySymbolIterator();
     while(it.hasNext()) {
-			Object key = it.next();
-			if(key instanceof String) {
-				String name = (String)key;
-				TomSymbol symbol = getSymbolFromName(name);
-				TomEntry entry = `Entry(name,symbol);
-				list = `concTomEntry(entry,list*);
-			}
+      Object key = it.next();
+      if(key instanceof String) {
+	String name = (String)key;
+	TomSymbol symbol = getSymbolFromName(name);
+	TomEntry entry = `Entry(name,symbol);
+	list = `concTomEntry(entry,list*);
+      }
     }
     return `Table(list);
   }
@@ -370,25 +371,25 @@ public class SymbolTable {
   public TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
     %match(TomSymbol symbol) {
       Symbol(name,TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
-        //System.out.println("update codomain: " + `name);
-        //System.out.println("depend from : " + `opName);
-        TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
-        //System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
-        dependSymbol = updateConstrainedSymbolCodomain(dependSymbol,symbolTable);
-        TomType codomain = TomBase.getSymbolCodomain(dependSymbol);
-        //System.out.println("2nd depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
-        OptionList newOptions = `options;
-        %match(OptionList options) {
-          concOption(O1*,DeclarationToOption(m@MakeDecl[AstType=Codomain[]]),O2*) -> {
-            Declaration newMake = `m.setAstType(codomain);
-            //System.out.println("newMake: " + newMake);
-            newOptions = `concOption(O1*,O2*,DeclarationToOption(newMake));
-          }
-        }
-        TomSymbol newSymbol = `Symbol(name,TypesToType(domain,codomain),slots,newOptions);
-        //System.out.println("newSymbol: " + newSymbol);
-        symbolTable.putSymbol(`name.getString(),newSymbol);
-        return newSymbol;
+	//System.out.println("update codomain: " + `name);
+	//System.out.println("depend from : " + `opName);
+	TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
+	//System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
+	dependSymbol = updateConstrainedSymbolCodomain(dependSymbol,symbolTable);
+	TomType codomain = TomBase.getSymbolCodomain(dependSymbol);
+	//System.out.println("2nd depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
+	OptionList newOptions = `options;
+	%match(OptionList options) {
+	  concOption(O1*,DeclarationToOption(m@MakeDecl[AstType=Codomain[]]),O2*) -> {
+	    Declaration newMake = `m.setAstType(codomain);
+	    //System.out.println("newMake: " + newMake);
+	    newOptions = `concOption(O1*,O2*,DeclarationToOption(newMake));
+	  }
+	}
+	TomSymbol newSymbol = `Symbol(name,TypesToType(domain,codomain),slots,newOptions);
+	//System.out.println("newSymbol: " + newSymbol);
+	symbolTable.putSymbol(`name.getString(),newSymbol);
+	return newSymbol;
       }
     }
     return symbol;
