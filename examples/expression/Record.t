@@ -32,6 +32,7 @@ package expression;
 public class Record { 
 
   %include {int.tom}
+  %include {string.tom}
 
   %typeterm Exp {
     implement { Exp }

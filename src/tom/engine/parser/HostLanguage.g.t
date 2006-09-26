@@ -78,6 +78,7 @@ options{
 
   private HashSet includedFileSet = null;
   private HashSet alreadyParsedFileSet = null;
+  private boolean booleanIncluded = false;
 
   // the parser for tom constructs
   TomParser tomparser;
@@ -238,12 +239,13 @@ options{
     }
     try {
       fileCanonicalName = file.getCanonicalPath();
-      if(testIncludedFile(fileCanonicalName, includedFileSet)) {
-        throw new TomIncludeException(TomMessage.includedFileCycle,new Object[]{fileName, new Integer(getLine()), currentFile});
-      }
+      //if(testIncludedFile(fileCanonicalName, includedFileSet)) {
+        //throw new TomIncludeException(TomMessage.includedFileCycle,new Object[]{fileName, new Integer(getLine()), currentFile});
+      //}
 
-      // if trying to include a file twice, but not in a cycle: discard
-      if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet)) {
+      // if trying to include a file twice, or if in a cycle: discard
+      if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet) ||
+	  testIncludedFile(fileCanonicalName, includedFileSet)) {
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
           getLogger().log(new PlatformLogRecord(Level.WARNING,
                 TomMessage.includedFileAlreadyParsed,
@@ -757,12 +759,9 @@ typeTerm [LinkedList list] throws TomException
             list.add(termdecl);
 
 	    // to automatically include booleans
-	    try {
+	    if(!booleanIncluded) {
+	      booleanIncluded = true;
 	      includeFile("boolean.tom",list);
-	    } catch (TomIncludeException e) {
-	      if(e instanceof TomIncludeException) {
-		// discard since the import can be done during the import of boolean
-	      }
 	    }
 
         }
