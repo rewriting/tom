@@ -48,6 +48,7 @@ import jjtraveler.VisitFailure;
 public class ApAndDisunification2 implements Matching{
 	
 	%include{ mustrategy.tom }	
+	%include{ boolean.tom }	
 	%include{ term/Term.tom }
 	
 	public static int varCounter = 0;

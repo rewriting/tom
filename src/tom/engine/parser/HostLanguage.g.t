@@ -756,6 +756,14 @@ typeTerm [LinkedList list] throws TomException
 
             list.add(termdecl);
 
+	    // to automatically include booleans
+	    try {
+	      includeFile("boolean.tom",list);
+	    } catch (TomIncludeException e) {
+	      if(e instanceof TomIncludeException) {
+		// discard since the import can be done during the import of boolean
+	      }
+	    }
 
         }
 
