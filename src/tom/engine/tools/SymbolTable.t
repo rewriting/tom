@@ -63,50 +63,24 @@ public class SymbolTable {
   private Map mapSymbolName = null;
   private Map mapTypeName = null;
 
+  private boolean cCode = false;
+  private boolean jCode = false;
+  private boolean camlCode = false;
+  private boolean pCode = false;
+
   public void init(OptionManager optionManager) {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
 
-    TomForwardType emptyForward = `EmptyForward();
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
-      putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
-      putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"int"),emptyForward);
-      //putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
-      putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
-      putTypeDefinition(TYPE_FLOAT, ASTFactory.makeType(TYPE_FLOAT,"float"),emptyForward);
-      putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
-      putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"char*"),emptyForward);
-      putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"void*"),emptyForward);
-      putTypeDefinition(TYPE_VOID, ASTFactory.makeType(TYPE_VOID,"void"),emptyForward);
+      cCode = true;
     } else if( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
-      putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
-      putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"boolean"),emptyForward);
-      //putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
-      putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
-      putTypeDefinition(TYPE_FLOAT, ASTFactory.makeType(TYPE_FLOAT,"float"),emptyForward);
-      putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
-      putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"String"),emptyForward);
-      putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"Object"),emptyForward);
-      putTypeDefinition(TYPE_VOID, ASTFactory.makeType(TYPE_VOID,"void"),emptyForward);
-    } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) { // this is really bad, will need to be improved
-      putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"char"),emptyForward);
-      putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"bool"),emptyForward);
-      //putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
-      putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
-      putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"double"),emptyForward);
-      putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"String"),emptyForward);
-      putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"None"),emptyForward);
-      putTypeDefinition(TYPE_VOID, ASTFactory.makeType(TYPE_VOID,"unit"),emptyForward);
-    } else if( ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() ) { // this is really bad, will need to be improved
-      putTypeDefinition(TYPE_CHAR, ASTFactory.makeType(TYPE_CHAR,"str"),emptyForward);
-      putTypeDefinition(TYPE_BOOLEAN, ASTFactory.makeType(TYPE_BOOLEAN,"bool"),emptyForward);
-      //putTypeDefinition(TYPE_INT, ASTFactory.makeType(TYPE_INT,"int"),emptyForward);
-      putTypeDefinition(TYPE_LONG, ASTFactory.makeType(TYPE_LONG,"long"),emptyForward);
-      putTypeDefinition(TYPE_DOUBLE, ASTFactory.makeType(TYPE_DOUBLE,"float"),emptyForward);
-      putTypeDefinition(TYPE_STRING, ASTFactory.makeType(TYPE_STRING,"str"),emptyForward);
-      putTypeDefinition(TYPE_UNIVERSAL, ASTFactory.makeType(TYPE_UNIVERSAL,"None"),emptyForward);
-      putTypeDefinition(TYPE_VOID, ASTFactory.makeType(TYPE_VOID,"function"),emptyForward);
+      jCode = true;
+    } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) {
+      camlCode = true;
+    } else if( ((Boolean)optionManager.getOptionValue("pCode")).booleanValue() ) {
+      pCode = true;
     }
 
   }
@@ -248,39 +222,74 @@ public class SymbolTable {
 
   public TomType getIntType() {
     return `ASTFactory.makeType(TYPE_INT,"int");
-    //return getType(TYPE_INT);
   }
 
   public TomType getLongType() {
-    return getType(TYPE_LONG);
+    return `ASTFactory.makeType(TYPE_LONG,"long");
   }
 
   public TomType getFloatType() {
-    return getType(TYPE_FLOAT);
+    return `ASTFactory.makeType(TYPE_FLOAT,"float");
   }
 
   public TomType getCharType() {
-    return getType(TYPE_CHAR);
+    String type = "char";
+    if(pCode) {
+      type = "str";
+    }
+    return `ASTFactory.makeType(TYPE_CHAR,type);
   }
 
   public TomType getDoubleType() {
-    return getType(TYPE_DOUBLE);
+    String type = "double";
+    if(pCode) {
+      type = "float";
+    }
+    return `ASTFactory.makeType(TYPE_DOUBLE,type);
   }
 
   public TomType getBooleanType() {
-    return getType(TYPE_BOOLEAN);
+    String type = "boolean";
+    if(cCode) {
+      type = "int";
+    } else if(camlCode) {
+      type = "bool";
+    } else if(pCode) {
+      type = "bool";
+    } 
+    return `ASTFactory.makeType(TYPE_BOOLEAN,type);
   }
 
   public TomType getStringType() {
-    return getType(TYPE_STRING);
+    String type = "String";
+    if(pCode) {
+      type = "char*";
+    } else if(pCode) {
+      type = "str";
+    } 
+    return `ASTFactory.makeType(TYPE_STRING,type);
   }
 
   public TomType getUniversalType() {
-    return getType(TYPE_UNIVERSAL);
+    String type = "Object";
+    if(cCode) {
+      type = "void*";
+    } else if(camlCode) {
+      type = "None";
+    } else if(pCode) {
+      type = "None";
+    }
+    return `ASTFactory.makeType(TYPE_UNIVERSAL,type);
   }
 
   public TomType getVoidType() {
-    return getType(TYPE_VOID);
+    String type = "void";
+    if(camlCode) {
+      type = "unit";
+    } else if(pCode) {
+      type = "function";
+    }
+    return `ASTFactory.makeType(TYPE_VOID,type);
   }
 
   public boolean isIntType(String type) {

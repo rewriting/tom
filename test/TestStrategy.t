@@ -14,6 +14,7 @@ import java.util.*;
 public class TestStrategy extends TestCase {
 
   %include { mustrategy.tom }
+  %include { boolean.tom }
   %include { java/util/LinkedList.tom }
 
   %typeterm Hashtable{

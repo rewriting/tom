@@ -1,4 +1,6 @@
-%include {int.tom }
+%include { int.tom }
+%include { string.tom }
+
 /*
 %typeterm Visitable {
   implement { jjtraveler.Visitable}
