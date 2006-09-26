@@ -1,0 +1,76 @@
+/*
+ * from MuTraveler
+ */
+%typeterm MuStrategy {
+  implement { tom.library.strategy.mutraveler.MuStrategy }
+  equals(t1,t2) {t1.equals(t2)}
+  visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd }
+}
+
+%op MuStrategy MuIdentity() {
+  is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Identity) }
+  make() { new tom.library.strategy.mutraveler.Identity() }
+}
+
+%op MuStrategy MuFail() {
+  is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Fail) }
+  make() { new tom.library.strategy.mutraveler.Fail() }
+}
+
+/*
+ * GraphStrategy Library
+ */
+
+%typeterm Strategy {
+  implement { tom.library.sl.GraphStrategy }
+  equals(t1,t2) {t1.equals(t2)}
+  visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd }
+}
+
+
+%op Strategy mu(s1:Strategy, s2:Strategy) {
+  make(var,v) { new tom.library.sl.Mu(var,v) }
+}
+  
+%op Strategy MuVar(var:String) {
+  is_fsym(t) { (t instanceof tom.library.sl.MuVar) }
+  make(name) { new tom.library.sl.MuVar(name) }
+  get_slot(var, t) { ((tom.library.sl.MuVar)t).getName() }
+}
+
+/*
+ * basic operators
+ */
+
+  %op Strategy Identity() {
+    is_fsym(t) { (t instanceof tom.library.sl.Identity) }
+    make() { new tom.library.sl.Identity() }
+  }
+
+  %op Strategy Fire(s1:MuStrategy) {
+    is_fsym(t) { (t instanceof tom.library.sl.Fire) }
+    make(v) { new tom.library.sl.Fire(v) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.sl.Fire.ARG) }
+  }
+
+  %op Strategy One(s1:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.sl.One) }
+    make(v) { new tom.library.sl.One(v) }
+    get_slot(s1, t) { (tom.library.sl.GraphStrategy)t.getChildAt(tom.library.sl.One.ARG) }
+  }
+
+  %op Strategy Fail() {
+    is_fsym(t) { (t instanceof tom.library.sl.Fail) }
+    make() { new tom.library.sl.Fail() }
+  }
+
+  %op Strategy Choice(s1:Strategy, s2:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.sl.Choice) }
+    make(first,then) { new tom.library.sl.Choice(first,then) }
+    get_slot(s1, t) { (tom.library.sl.GraphStrategy)t.getChildAt(tom.library.sl.Choice.FIRST) }
+    get_slot(s2, t) { (tom.library.sl.GraphStrategy)t.getChildAt(tom.library.sl.Choice.THEN) }
+  }
+
+  %op Strategy OnceBottomUp(s1:Strategy) {
+    make(v) { `mu(MuVar("_x"),Choice(One(MuVar("_x")),v)) }
+  }

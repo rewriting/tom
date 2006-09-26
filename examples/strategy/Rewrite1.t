@@ -32,17 +32,16 @@ package strategy;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
+import tom.library.strategy.mutraveler.*;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 
+import ted.*;
 public class Rewrite1 {
 
   %include { term/term.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
   
   public final static void main(String[] args) {
     Rewrite1 test = new Rewrite1();
@@ -53,8 +52,8 @@ public class Rewrite1 {
     //Term subject = `g(d(),d());
     Term subject = `f(g(g(a(),b()),g(a(),a())));
 
-   VisitableVisitor rule = `RewriteSystem(subject);
-   VisitableVisitor ruleId = `RewriteSystemId();
+   MuStrategy rule = `RewriteSystem(subject);
+   MuStrategy ruleId = `RewriteSystemId();
 
     try {
       System.out.println("subject       = " + subject);
@@ -62,7 +61,8 @@ public class Rewrite1 {
       System.out.println("onceBottomUpId= " + MuTraveler.init(`OnceBottomUpId(ruleId)).visit(subject));
       System.out.println("bottomUp      = " + MuTraveler.init(`BottomUp(Try(rule))).visit(subject));
       System.out.println("bottomUpId    = " + MuTraveler.init(`BottomUp(ruleId)).visit(subject));
-      System.out.println("innermost     = " + MuTraveler.init(`Innermost(rule)).visit(subject));
+      StratDebugger.applyGraphicalDebug(subject,`BottomUp(ruleId));
+      System.out.println("innermost     = " + `Innermost(rule).apply(subject));
       System.out.println("innermostSlow = " + MuTraveler.init(`Repeat(OnceBottomUp(rule))).visit(subject));
       System.out.println("innermostId   = " + MuTraveler.init(`InnermostId(ruleId)).visit(subject));
     } catch (VisitFailure e) {
