@@ -248,7 +248,7 @@
 
 %op Strategy AF(s:Strategy) {
   make(s) {`AU(Identity(),s) }
-
+}
 
 %op Strategy EF(s:Strategy) {
   make(s) {`EU(Identity(),s) }
