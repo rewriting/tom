@@ -38,8 +38,6 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 
-import ted.*;
-
 import tom.library.strategy.mutraveler.*;
 
 import jjtraveler.reflective.VisitableVisitor;
@@ -54,7 +52,7 @@ public class PatternAnalyser{
   %include {util/ArrayList.tom}
   %include {wfg/Wfg.tom}
   %include {wfg/_Wfg.tom}
-  %include {Ctl.tom}
+  %include {strategy.tom}
   %include {adt/tnode/TNode.tom }
   %include{boolean.tom}
   %include {ref.tom}
