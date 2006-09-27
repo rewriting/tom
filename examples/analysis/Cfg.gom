@@ -12,9 +12,9 @@ Cfg = BeginIf(ast:Ast,refSuccess:Reference,refFailure:Reference)
     | ConcCfg(Cfg*)
     | LabCfg(label:String,cfg:Cfg)
 
-Reference = Ref(int*)
-          | RefLabel(label:String)
+Reference = Pos(int*)
+          | Label(label:String)
 
-Ref:interface{
+Pos:interface{
 tom.library.strategy.mutraveler.MuReference
   }

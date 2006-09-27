@@ -51,7 +51,6 @@ public class AnalyserBasedOnRef{
   %include {util/HashMap.tom}
   %include {util/ArrayList.tom}
   %include {cfg/Cfg.tom}
-  %include {CtlRef.tom}
 
   
   /**
@@ -149,12 +148,12 @@ public class AnalyserBasedOnRef{
 
   %strategy ReplaceLabels(table:HashMap) extends `Identity() {
     visit Reference{
-      RefLabel(label) -> {
+      Label(label) -> {
         Position pos = (Position) table.get(`label);
-        Reference ref = `Ref();
+        Reference ref = `Pos();
         int[] array = pos.toArray();
         for(int i=0;i<pos.depth();i++){
-          ref = `Ref(ref*,array[i]);
+          ref = `Pos(ref*,array[i]);
         }
         return ref; 
       }
@@ -170,7 +169,7 @@ public class AnalyserBasedOnRef{
   public ArrayList collectNotUsedAffectations(Cfg cfg){
     ArrayList list = new ArrayList();
     VariableRef var = new VariableRef();
-    `TopDownRef(cfg,Try(Sequence(Sequence(FindAffect(var),AX(cfg,AU(cfg,IsNotUsed(var),OrCtl(IsAffect(var),IsFree(var))))),Collect(list)))).apply(cfg.getChildAt(0));
+    `TopDown(StrictRef(cfg,Try(Sequence(Sequence(FindAffect(var),AX(StrictRef(cfg,AU(StrictRef(cfg,IsNotUsed(var)),StrictRef(cfg,OrCtl(IsAffect(var),IsFree(var))))))),Collect(list))))).apply(cfg.getChildAt(0));
     return list;
   }
 
@@ -185,18 +184,18 @@ public class AnalyserBasedOnRef{
     MuStrategy s2 =  
       `AndCtl(
           Not(IsNotUsed(var)),
-          AllRef(cfg,mu(MuVar("x"),
+          All(StrictRef(cfg,mu(MuVar("x"),
               Choice(
                 OrCtl(IsAffect(var),IsFree(var)),
-                Sequence(IsNotUsed(var),AllRef(cfg,MuVar("x")))
+                Sequence(IsNotUsed(var),All(StrictRef(cfg,MuVar("x"))))
                 )
               )
             )
-          );
+          ));
     //onceUsedCond AX(A(s1 U s2))  
-    MuStrategy onceUsed = `AX(cfg,AU(cfg,s1,s2));
+    MuStrategy onceUsed = `AX(StrictRef(cfg,AU(StrictRef(cfg,s1),StrictRef(cfg,s2))));
 
-    `TopDownRef(cfg,Try(Sequence(Sequence(FindAffect(var),onceUsed),Collect(list)))).apply(cfg.getChildAt(0));
+    `TopDown(StrictRef(cfg,Try(Sequence(Sequence(FindAffect(var),onceUsed),Collect(list))))).apply(cfg.getChildAt(0));
     return list;
   } 
 
@@ -220,15 +219,15 @@ public class AnalyserBasedOnRef{
 
 
     Cfg cfg = `ConcCfg(
-        BeginIf(cond,RefLabel("success"),RefLabel("failure")), 
-        LabCfg("success",Nil(RefLabel("letz"))),
-        LabCfg("failure",Affect(letrefx,RefLabel("letassignx"))),
-        LabCfg("letassignx",Affect(letassignx,RefLabel("lety"))),
-        LabCfg("lety",Affect(lety,RefLabel("freey"))),
-        LabCfg("freey",Free(var_y,RefLabel("freex"))),
-        LabCfg("freex",Free(var_x,RefLabel("letz"))),
-        LabCfg("letz",Affect(letz,RefLabel("freez"))),
-        LabCfg("freez",Free(var_z,RefLabel("end"))),
+        BeginIf(cond,Label("success"),Label("failure")), 
+        LabCfg("success",Nil(Label("letz"))),
+        LabCfg("failure",Affect(letrefx,Label("letassignx"))),
+        LabCfg("letassignx",Affect(letassignx,Label("lety"))),
+        LabCfg("lety",Affect(lety,Label("freey"))),
+        LabCfg("freey",Free(var_y,Label("freex"))),
+        LabCfg("freex",Free(var_x,Label("letz"))),
+        LabCfg("letz",Affect(letz,Label("freez"))),
+        LabCfg("freez",Free(var_z,Label("end"))),
         LabCfg("end",End())
         );
 
