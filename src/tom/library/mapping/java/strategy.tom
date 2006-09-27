@@ -1,5 +1,7 @@
 %include { int.tom }
 %include { string.tom }
+%include { visitable.tom }
+%include { util/types/Map.tom }
 
 /*
    %typeterm Visitable {
