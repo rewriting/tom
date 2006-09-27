@@ -64,15 +64,14 @@
  * It succeeds if s1 is "True" until s2 is "True".
  * @param s1 the first strategy.
  * @param s2 the second strategy.
- * @param map the map containing all instructions marks.
 
  */
-%op Strategy AU(s1:Strategy, s2:Strategy, m:Map) {
-  make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"), m)))) }
+%op Strategy AU(s1:Strategy, s2:Strategy) {
+  make(s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(s1,All(MuVar("x"))))) }
 }
 
-%op Strategy EU(v:Visitable,s1:Strategy, s2:Strategy) {
-  make(v,s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,One(MuVar("x"))),One(v,Identity()))))}
+%op Strategy EU(s1:Strategy, s2:Strategy) {
+  make(s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,One(MuVar("x"))),One(Identity()))))}
 }
 
 %op Strategy TrueCtl(){

@@ -1,7 +1,6 @@
-
 %include { mustrategy.tom }
 %include { util/types/Map.tom }
-//%include { adt/bytecode/Bytecode.tom }
+%include { adt/bytecode/Bytecode.tom }
 
 /**
  * This strategy fills in the `Map' m with the `ConsInstructionList'
