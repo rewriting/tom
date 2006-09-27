@@ -28,18 +28,31 @@
  */
 package tom.library.bytecode;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Attribute;
+import org.objectweb.asm.*;
 
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
+import java.io.IOException;
+
+import tom.library.bytecode.*;
+import tom.library.adt.bytecode.*;
+import tom.library.adt.bytecode.types.*;
+
 
 public class BytecodeReader implements ClassVisitor {
   %include { adt/bytecode/Bytecode.tom }
+
+
+  public BytecodeReader(String className){
+    super();
+    try {
+      ClassAdapter ca = new ClassAdapter(this);
+      ClassReader cr = new ClassReader(className);
+      cr.accept(ca, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+    } catch(IOException io) {
+      System.err.println("Class not found : " + className);
+    }
+  }
 
   private TClass clazz;
 

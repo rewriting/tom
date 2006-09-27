@@ -31,8 +31,8 @@ package tom.library.bytecode;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.io.IOException;
 import java.io.Writer;
+import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 
@@ -374,24 +374,14 @@ public class CFGViewer {
    * Ex: java bytecode.CFGViewer bytecode.Subject
    * @param args args[0] : the class name
    */
-  public static void main(String[] args) {
-    if(args.length <= 0) {
-      System.out.println("Usage : java bytecode.CFGViewer <class name>\nEx: java bytecode.CFGViewer bytecode.Subject");
-      return;
-    }
-
-    try {
-      ClassReader cr = new ClassReader(args[0]);
-      BytecodeReader cg = new BytecodeReader();
-      ClassAdapter ca = new ClassAdapter(cg);
-      cr.accept(ca, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-
+    public static void main(String[] args) {
+      if(args.length <= 0) {
+        System.out.println("Usage : java bytecode.CFGViewer <class name>\nEx: java bytecode.CFGViewer bytecode.Subject");
+        return;
+      }
+      BytecodeReader cg = new BytecodeReader(args[0]);
       TClass c = cg.getTClass();
-
       classToDot(c);
-    } catch(IOException ioe) {
-      System.err.println("Class not found : " + args[0]);
     }
   }
-}
 
