@@ -6,4 +6,4 @@
   make(var,v) { new tom.library.strategy.mutraveler.Mu(var,v) }
 }
 
-%include{ strategy.tom }
+%include{ strategy/graph.tom }

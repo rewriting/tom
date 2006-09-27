@@ -1,14 +1,6 @@
 %include { int.tom }
 %include { string.tom }
-%include { visitable.tom }
-%include { util/types/Map.tom }
 
-/*
-   %typeterm Visitable {
-   implement { jjtraveler.Visitable}
-   equals(t1,t2) {t1.equals(t2)}
-   }
- */
 /*
  * basic operators
  */
@@ -99,7 +91,6 @@
   get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Omega.ARG) }
 }
 
-
 /*
  * basic operators with Id considered as a failure
  */
@@ -141,125 +132,4 @@
   make(v,d) { new tom.library.strategy.mutraveler.OmegaU(v,d) }
   get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.OmegaU.ARG) }
   get_slot(defaultStrategy, t) { (jjtraveler.reflective.VisitableVisitor)t.getDefaultStrategy() }
-}
-
-/*
- * strategies
- */
-
-%op Strategy Try(s1:Strategy) {
-  make(v) { `Choice(v,Identity()) }
-}
-
-%op Strategy TopDown(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) }
-}
-
-%op Strategy TopDownCollect(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Try(Sequence(v,All(MuVar("_x"))))) }
-}
-
-%op Strategy BottomUp(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),v)) }
-}
-
-%op Strategy OnceBottomUp(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Choice(One(MuVar("_x")),v)) }
-}
-
-%op Strategy OnceTopDown(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Choice(v,One(MuVar("_x")))) }
-}
-
-%op Strategy Innermost(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),Try(Sequence(v,MuVar("_x"))))) }
-}
-
-%op Strategy Repeat(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Choice(Sequence(v,MuVar("_x")),Identity())) }
-}
-
-/*
- * strategies with Id considered as failure
- */
-
-%op Strategy TryId(s1:Strategy) {
-  make(v) { v }
-}
-
-%op Strategy RepeatId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),SequenceId(v,MuVar("_x"))) }
-}
-
-%op Strategy OnceBottomUpId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),ChoiceId(OneId(MuVar("_x")),v)) }
-}
-
-%op Strategy OnceTopDownId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),ChoiceId(v,OneId(MuVar("_x")))) }
-}
-
-%op Strategy InnermostId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),SequenceId(v,MuVar("_x")))) }
-}
-
-%op Strategy OutermostId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(SequenceId(v,MuVar("_x")),All(MuVar("_x")))) }
-}
-
-%op Strategy TopDownId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),SequenceId(v,All(MuVar("_x")))) }
-}
-
-%op Strategy BottomUpId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),SequenceId(All(MuVar("_x")),v)) }
-}
-
-/**
- * This strategy opertor corresponds to temporal operator AU in CTL.
- * Identity() can be interpreted as True and Failure as False
- * It succeeds if s1 is "True" until s2 is "True".
- * @param s1 the first strategy.
- * @param s2 the second strategy.
- * @param map the map containing all instructions marks.
-
- */
-%op Strategy AU(s1:Strategy, s2:Strategy, m:Map) {
-  make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"), m)))) }
-}
-
-%op Strategy EU(v:Visitable,s1:Strategy, s2:Strategy) {
-  make(v,s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,One(MuVar("x"))),One(v,Identity()))))}
-}
-
-%op Strategy TrueCtl(){
-  make() {`Identity() }
-}
-
-%op Strategy FalseCtl(){
-  make() {`Fail() }
-}
-
-%op Strategy AndCtl(s1:Strategy, s2:Strategy) {
-  make(s1,s2) {`Sequence(s1,s2) }
-}
-
-%op Strategy OrCtl(s1:Strategy, s2:Strategy) {
-  make(s1,s2) {`Choice(s1,s2)}
-}
-
-%op Strategy AF(s:Strategy) {
-  make(s) {`AU(Identity(),s) }
-}
-
-%op Strategy EF(s:Strategy) {
-  make(s) {`EU(Identity(),s) }
-}
-
-%op Strategy AX(s:Strategy) {
-  make(s) { `All(s) }
-}
-
-%op Strategy EX(s:Strategy) {
-  make(s) {`One(s) }
 }

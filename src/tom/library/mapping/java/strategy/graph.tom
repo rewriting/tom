@@ -26,13 +26,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*
-%typeterm Visitable {
-  implement { jjtraveler.Visitable}
-  equals(t1,t2) {t1.equals(t2)}
-}
-*/
 
+%include { util/types/Map.tom }
+%include { cs.tom }
+%include{ visitable.tom}
   %op Strategy Ref(root:Visitable, s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Ref) && ((tom.library.strategy.mutraveler.Ref)t).isRelative()==false && ((tom.library.strategy.mutraveler.Ref)t).isStrict()==false }
     make(v,s) { tom.library.strategy.mutraveler.Ref.make(v,s) }
@@ -61,3 +58,51 @@
     get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Ref.ARG) }
   }
 
+/**
+ * This strategy opertor corresponds to temporal operator AU in CTL.
+ * Identity() can be interpreted as True and Failure as False
+ * It succeeds if s1 is "True" until s2 is "True".
+ * @param s1 the first strategy.
+ * @param s2 the second strategy.
+ * @param map the map containing all instructions marks.
+
+ */
+%op Strategy AU(s1:Strategy, s2:Strategy, m:Map) {
+  make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"), m)))) }
+}
+
+%op Strategy EU(v:Visitable,s1:Strategy, s2:Strategy) {
+  make(v,s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,One(MuVar("x"))),One(v,Identity()))))}
+}
+
+%op Strategy TrueCtl(){
+  make() {`Identity() }
+}
+
+%op Strategy FalseCtl(){
+  make() {`Fail() }
+}
+
+%op Strategy AndCtl(s1:Strategy, s2:Strategy) {
+  make(s1,s2) {`Sequence(s1,s2) }
+}
+
+%op Strategy OrCtl(s1:Strategy, s2:Strategy) {
+  make(s1,s2) {`Choice(s1,s2)}
+}
+
+%op Strategy AF(s:Strategy) {
+  make(s) {`AU(Identity(),s) }
+}
+
+%op Strategy EF(s:Strategy) {
+  make(s) {`EU(Identity(),s) }
+}
+
+%op Strategy AX(s:Strategy) {
+  make(s) { `All(s) }
+}
+
+%op Strategy EX(s:Strategy) {
+  make(s) {`One(s) }
+}
