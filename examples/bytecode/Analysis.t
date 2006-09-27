@@ -1,10 +1,6 @@
 package bytecode;
 
 import java.util.HashMap;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassAdapter;
-
 import tom.library.strategy.mutraveler.MuStrategy;
 
 import tom.library.adt.bytecode.*;
@@ -12,12 +8,12 @@ import tom.library.adt.bytecode.types.*;
 import tom.library.adt.bytecode.types.tstringlist.*;
 import tom.library.adt.bytecode.types.tlabellist.*;
 import tom.library.adt.bytecode.types.tintlist.*;
-
+import tom.library.bytecode.*;
 import java.io.FileOutputStream;
 
 public class Analysis {
 
-  %include { visitable.tom }
+  %include { float.tom }
   %include { adt/bytecode/Bytecode.tom }
   %include { bytecode/cfg.tom }
 
@@ -107,7 +103,7 @@ public class Analysis {
 
         HashMap indexMap = new HashMap();
         MuStrategy noLoad =
-          `AU(
+          `AUMap(
               Not(Sequence(IsLoad(), HasIndex(indexMap, "index"))),
               Sequence(IsStore(indexMap, "useless"), HasIndex(indexMap, "index")),
               labelMap);
@@ -197,9 +193,9 @@ public class Analysis {
       return;
     }
       System.out.println("Parsing class file " + args[0] + " ...");
-      ClassReader cr = new ClassReader(args[0]);
+      BytecodeReader cr = new BytecodeReader(args[0]);
       System.out.println("Analyzing ...");
-      TClass c = cg.getTClass();
+      TClass c = cr.getTClass();
       TClass cImproved = analyze(c);
 
       String impClassName = args[0] + "Imp";
@@ -208,9 +204,13 @@ public class Analysis {
 
       BytecodeGenerator bg = new BytecodeGenerator();
       byte[] code = bg.toBytecode(cImproved);
-      FileOutputStream fos = new FileOutputStream(impClassName + ".class");
-      fos.write(code);
-      fos.close();
+      try{
+        FileOutputStream fos = new FileOutputStream(impClassName + ".class");
+        fos.write(code);
+        fos.close();
+      }catch(java.io.IOException e){
+        System.out.println("IO Exception");
+      }
   }
 }
 
