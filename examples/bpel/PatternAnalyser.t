@@ -52,11 +52,9 @@ public class PatternAnalyser{
   %include {util/ArrayList.tom}
   %include {wfg/Wfg.tom}
   %include {wfg/_Wfg.tom}
-  %include {strategy.tom}
+  %include {mustrategy.tom}
   %include {adt/tnode/TNode.tom }
   %include{boolean.tom}
-  %include {ref.tom}
-  %include {visitable.tom}
 
   %strategy Combine(wfg:Wfg) extends `Identity(){
     visit Wfg{
