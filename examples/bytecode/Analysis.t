@@ -1,21 +1,25 @@
-
 package bytecode;
 
 import java.util.HashMap;
-import java.io.IOException;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassAdapter;
 
 import tom.library.strategy.mutraveler.MuStrategy;
 
-import bytecode.classtree.*;
-import bytecode.classtree.types.*;
+import tom.library.adt.bytecode.*;
+import tom.library.adt.bytecode.types.*;
+import tom.library.adt.bytecode.types.tstringlist.*;
+import tom.library.adt.bytecode.types.tlabellist.*;
+import tom.library.adt.bytecode.types.tintlist.*;
 
 import java.io.FileOutputStream;
 
 public class Analysis {
-  %include { Cfg.tom }
+
+  %include { visitable.tom }
+  %include { adt/bytecode/Bytecode.tom }
+  %include { bytecode/cfg.tom }
 
   // Checks if the current instruction is a load type instruction.
   %strategy IsLoad() extends Fail() {
@@ -192,14 +196,8 @@ public class Analysis {
       System.out.println("Usage : java bytecode.Analysis <class name>\nEx: java bytecode.Analysis bytecode.Subject");
       return;
     }
-
-    try {
       System.out.println("Parsing class file " + args[0] + " ...");
       ClassReader cr = new ClassReader(args[0]);
-      TClassGenerator cg = new TClassGenerator();
-      ClassAdapter ca = new ClassAdapter(cg);
-      cr.accept(ca, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-
       System.out.println("Analyzing ...");
       TClass c = cg.getTClass();
       TClass cImproved = analyze(c);
@@ -213,10 +211,6 @@ public class Analysis {
       FileOutputStream fos = new FileOutputStream(impClassName + ".class");
       fos.write(code);
       fos.close();
-
-    } catch(IOException ioe) {
-      System.err.println("Class not found : " + args[0]);
-    }
   }
 }
 
