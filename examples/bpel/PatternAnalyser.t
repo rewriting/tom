@@ -115,7 +115,7 @@ public class PatternAnalyser{
             buffer.append(%[ @from@ -> @`to@\n ]%);
           }  
           (_*) -> {        
-            wfg = `WfgNode(Activity("\""+buffer.toString()+"\"",node.hashCode(),noCond(),noCond())); 
+            wfg = `WfgNode(Activity(buffer.toString(),node.hashCode(),noCond(),noCond())); 
           }
 
           (_*,<source linkName=linkName/>,_*) -> {
@@ -198,26 +198,27 @@ public class PatternAnalyser{
   %strategy Print(root:Node) extends `Identity(){
     visit Wfg{
       WfgNode(Activity[name=name,code=code],_*) ->{
-        String  id = `name+"_"+`code;
-        id = id.replaceAll("-","Z");
-        System.out.println(root.id+" -> "+id+";");
+        String id = ("" + `code).replaceAll("-","Z");
+        System.out.println(root.id + "[label=\""+ `root.name +"\"];");
+        System.out.println(id + "[label=\""+ `name +"\"];");
+        System.out.println(root.id + " -> " + id + ";");
       }
       Activity[name=name,code=code] ->{
-        String  id = `name+"_"+`code;
-        id = id.replaceAll("-","Z");
-        System.out.println(root.id+" -> "+id+";");
-      }
+        String id = ("" + `code).replaceAll("-","Z");
+        System.out.println(root.id + "[label=\""+ `root.name +"\"];");
+        System.out.println(id + "[label=\""+ `name +"\"];");
+        System.out.println(root.id + " -> " + id + ";");
+     }
     }
   }
 
   %strategy GetRoot(root:Node,visited:HashSet) extends `Fail(){
     visit Wfg{
       a@Activity[name=name,code=code] ->{
-        if (!visited.contains(`name)) {
-          visited.add(`name);
-          root.id = `name+"_"+`code;
-          root.id = root.id.replaceAll("-","Z");
-          //System.out.println("getroot : " + `name);
+        if (!visited.contains(new Integer(`code))) {
+          visited.add(new Integer(`code));
+          root.name = `name;
+          root.id = ("" + `code).replaceAll("-","Z");
           return `a;
         }
       }
@@ -228,6 +229,7 @@ public class PatternAnalyser{
     implement {Node}
   }
   static class Node{
+    public String name="";
     public String id="";
   }
 
