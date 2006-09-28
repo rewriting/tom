@@ -383,11 +383,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         `buildLet(deep, var, list, tlType, exp, body, moduleName);
         return;
       }
-      
-      LetNoCurly(var@(Variable|VariableStar)[Option=list,AstType=Type[TlType=tlType@TLType[]]],exp,body) -> {
-	    `buildLetNoCurly(deep, var, list, tlType, exp, body, moduleName);
-	    return;
-      }
 
       LetRef(var@(Variable|VariableStar)[Option=list,AstType=Type[TlType=tlType@TLType[]]],exp,body) -> {
         `buildLetRef(deep, var, list, tlType, exp, body, moduleName);
@@ -854,7 +849,6 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp, String moduleName) throws IOException ;
   protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
-  protected abstract void buildLetNoCurly(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body, String moduleName) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList, String modulename) throws IOException ;
   protected abstract void buildUnamedBlock(int deep, InstructionList instList, String moduleName) throws IOException ;

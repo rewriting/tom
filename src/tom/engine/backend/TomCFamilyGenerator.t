@@ -146,13 +146,6 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     output.writeln(deep,"}");
   }
   
-  protected void buildLetNoCurly(int deep, TomTerm var, OptionList optionList, TomType tlType, 
-	          			  Expression exp, Instruction body, String moduleName) throws IOException {
-	output.write(deep,getTLCode(tlType) + " ");
-	buildAssignVar(deep,var,optionList,exp,moduleName);
-	generateInstruction(deep,body,moduleName);	
-  }
-
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
                              Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);

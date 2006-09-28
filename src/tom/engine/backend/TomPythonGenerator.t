@@ -134,11 +134,6 @@ public class TomPythonGenerator extends TomImperativeGenerator {
     generateInstruction(deep,body,moduleName);
   }
   
-  protected void buildLetNoCurly(int deep, TomTerm var, OptionList optionList, TomType tlType, 
-	      Expression exp, Instruction body, String moduleName) throws IOException {
-	  buildLet(deep, var, optionList, tlType, exp, body, moduleName);
-  }
-
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
       Expression exp, Instruction body, String moduleName) throws IOException {
     buildLet(deep,var,optionList,tlType,exp,body, moduleName);

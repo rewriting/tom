@@ -9,9 +9,8 @@ Instruction = TomTermToInstruction(Tom:TomTerm)
             | Assign(Variable:TomTerm,Source:Expression)
             
 		   /**
-			* <code>Let</code> declares and instanciates a variable surrounded by curlys
-		   	* <code>LetNoCurly</code> as above, but no curlys
-		   	* <code>LetRef</code> ?
+			* <code>Let</code> declares and instanciates a variable surrounded by curlys - functional way
+		   	* <code>LetRef</code> as above, but not functional
 		   	* <code>LetAssign</code> instanciates a variable
 		   	*
 		   	* @param Variable a variable
@@ -19,7 +18,6 @@ Instruction = TomTermToInstruction(Tom:TomTerm)
 		   	* @param AstInstruction next instruction
 		   	*/
    			| Let(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
-            | LetNoCurly(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)            
             | LetRef(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
             | LetAssign(Variable:TomTerm,Source:Expression,AstInstruction:Instruction)
             /**/
