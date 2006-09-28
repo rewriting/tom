@@ -153,7 +153,7 @@ public class TomKernelCompiler extends TomBase {
       // final test
 	  Instruction finalTest = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),actionInst,Nop());      
       Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(finalTest,`Nop(),
-    		  patternList,rootpath,moduleName,null,true);
+    		  patternList,rootpath,moduleName,null);
 	  // glue the flag declaration
       //matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
       OptionList automataOptionList = `concOption();
@@ -275,8 +275,7 @@ public class TomKernelCompiler extends TomBase {
                                            SlotList termList,
                                            TomNumberList rootpath,
                                            String moduleName,
-                                           TomTerm subject,
-                                           boolean isActionOnIf) {
+                                           TomTerm subject) {
 	  
     %match(termList) {
       concSlot() -> {    	  
@@ -285,7 +284,7 @@ public class TomKernelCompiler extends TomBase {
       // X or _,...  
       concSlot(PairSlotAppl(slotName,
                                 var@(Variable|UnamedVariable)[AstType=termType]),termTail*) -> {        
-    	Instruction subAction = genSyntacticMatchingAutomata(action,elseAction,`termTail,rootpath,moduleName,subject,true);       
+    	Instruction subAction = genSyntacticMatchingAutomata(action,elseAction,`termTail,rootpath,moduleName,subject);       
         
         Expression source = null;
         if (subject !=null ){
@@ -319,7 +318,7 @@ public class TomKernelCompiler extends TomBase {
         		`currentTerm,getSymbolTable(moduleName));                   	 
         // recursive call with the transformed term                            	 
         return genSyntacticMatchingAutomata(action,elseAction,`concSlot(PairSlotAppl(slotName,
-        		transformedTerm),termTail*),rootpath,moduleName,subject,true);                            	 
+        		transformedTerm),termTail*),rootpath,moduleName,subject);                            	 
       }                                                                                    
       // (f|g)[...]
       concSlot(PairSlotAppl(slotName,
@@ -342,11 +341,11 @@ public class TomKernelCompiler extends TomBase {
             		`currentTerm,getSymbolTable(moduleName));
             // recursive call with the transformed term
         	return genSyntacticMatchingAutomata(action,elseAction,`concSlot(PairSlotAppl(slotName,
-            		transformedTerm),termTail*),rootpath,moduleName,subject,isActionOnIf);
+            		transformedTerm),termTail*),rootpath,moduleName,subject);
         }                                       	  
         
         // recursively call the algorithm on termTail
-        Instruction subAction = genSyntacticMatchingAutomata(action,elseAction,`termTail,rootpath,moduleName,subject,true);        
+        Instruction subAction = genSyntacticMatchingAutomata(action,elseAction,`termTail,rootpath,moduleName,subject);        
 
         // find the codomain of (f|g) [* should be the same *]
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
@@ -410,7 +409,7 @@ public class TomKernelCompiler extends TomBase {
                                          automata));
         } else {
           // case: syntactic operator
-          Instruction automata = genSyntacticMatchingAutomata(constraintAutomata,elseAction,`termArgs,path,moduleName,null,isActionOnIf);        
+          Instruction automata = genSyntacticMatchingAutomata(constraintAutomata,elseAction,`termArgs,path,moduleName,null);        
           TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain(); 
           // if there is no disjunction or no arguments
           if(`nameList.length()==1 || `termArgs.isEmptyconcSlot()) {        	  
@@ -505,7 +504,7 @@ public class TomKernelCompiler extends TomBase {
         Instruction subAction = genListMatchingAutomata(p,`termTail,indexTerm+1,true,moduleName);
 
         TomName slotName = `PositionName(concTomNumber(Number(indexTerm)));
-        subAction = `genSyntacticMatchingAutomata(subAction,p.elseAction,concSlot(PairSlotAppl(slotName,term)),p.path,moduleName,null, true);
+        subAction = `genSyntacticMatchingAutomata(subAction,p.elseAction,concSlot(PairSlotAppl(slotName,term)),p.path,moduleName,null);
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
@@ -704,7 +703,7 @@ public class TomKernelCompiler extends TomBase {
         Instruction subAction = genArrayMatchingAutomata(p,`termTail,indexTerm+1,true,moduleName);
 
         TomName slotName = `PositionName(concTomNumber(Number(indexTerm)));
-        subAction = `genSyntacticMatchingAutomata(subAction,Nop(),concSlot(PairSlotAppl(slotName,term)),p.path,moduleName,null,true);
+        subAction = `genSyntacticMatchingAutomata(subAction,Nop(),concSlot(PairSlotAppl(slotName,term)),p.path,moduleName,null);
         TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`tomName);
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
@@ -1089,26 +1088,9 @@ public class TomKernelCompiler extends TomBase {
       
       concConstraint(c@AndAntiConstraint(_*), tail*) -> {
     	 
-    	  Instruction antiMatchBlock = null;
-    	  
-    	  // if first time for this pattern add boolean variable declaration
-    	  // and also final test
-//    	  if (antiConstraintFirstTime){	
-//    		  antiConstraintFirstTime = false;
-//    		  
-//    		  Instruction antiMatchInstruction = buildAntiMatchBlockConstraint((AndAntiConstraint)`c,source,body,moduleName);
-//    		  // final test
-//    		  Instruction finalTest = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),body,Nop());
-//    		  InstructionList instructionList = `concInstruction(antiMatchInstruction,finalTest);		  
-//    		  // glue the flag declaration
-//    		  Expression flagValue = `TrueTL();
-//    		  Instruction declareFlag = `LetRef(antiFlagVariable,TrueTL(),antiMatchInstruction);//`LetNoCurly(antiFlagVariable,flagValue,UnamedBlock(instructionList));    		  
-//    		  antiMatchBlock = declareFlag;
-//    	  }else{
-    		  antiMatchBlock = buildAntiMatchBlockConstraint((AndAntiConstraint)`c,source,body,moduleName);
-//    	  }
-		    
-		  return `buildConstraint(tail,source,antiMatchBlock,elseBody,moduleName);
+    	Instruction antiMatchBlock = null;    	  
+    	antiMatchBlock = buildAntiMatchBlockConstraint((AndAntiConstraint)`c,source,body,moduleName);
+    	return `buildConstraint(tail,source,antiMatchBlock,elseBody,moduleName);
       }
 
       concConstraint(head,_*) -> {
@@ -1182,26 +1164,9 @@ public class TomKernelCompiler extends TomBase {
       this.matchNumber++;
       rootpath = `concTomNumber(rootpath*,MatchNumber(Number(this.matchNumber)));
       
-      Instruction aditionalInstruction = `Nop();
-      
-//      // if we have a list
-//      if (TomBase.isListOperator(getSymbolTable(moduleName).getSymbolFromName(
-//			  constraint.getPattern().getNameList().getHeadconcName()))){
-//		  // and if we are on pozitive (even number of antis)
-//          if (constraint.getActionOnIf()==1){
-//        	  // we should put the flag to false, because we on to find at least 
-//        	  // one matching
-//        	  aditionalInstruction = assignFlagFalse;
-//          }
-//	  }
-//      return `UnamedBlock(concInstruction(aditionalInstruction, 
-//      		genSyntacticMatchingAutomata(ifAction,elseAction,
-//	  			`concSlot(PairSlotAppl(Name("ANTI"),constraint.getPattern())),rootpath,moduleName,
-//	  			constraint.getSubject(),(constraint.getActionOnIf()==1? true: false))));
-      
     return genSyntacticMatchingAutomata(ifAction,elseAction,
 		`concSlot(PairSlotAppl(Name("ANTI"),constraint.getPattern())),rootpath,moduleName,
-		constraint.getSubject(),(constraint.getActionOnIf()==1? true: false));       
+		constraint.getSubject());       
 
   }
   
