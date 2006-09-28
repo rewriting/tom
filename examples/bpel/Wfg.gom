@@ -1,9 +1,9 @@
 module Wfg
-imports String int
+imports String int 
 abstract syntax
 
 Wfg = WfgNode(Wfg*)
-    | Activity(name:String,inputcond:Condition,outputcond:Condition)
+    | Activity(name:String,code:int,inputcond:Condition,outputcond:Condition)
     | ConcWfg(Wfg*)
     | labWfg(label:String,wfg:Wfg)
     | refWfg(label:String)

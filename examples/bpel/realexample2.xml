@@ -59,14 +59,14 @@
 				<to variable="approval" part="accept" />
 			</copy>
 		</assign>
-		<invoke partnerLink="approver" portType="lns:loanApprovalPT"
+ 		<invoke partnerLink="approver" portType="lns:loanApprovalPT"
 			operation="approve" inputVariable="request"
 			outputVariable="approval">
 			<target linkName="receive-to-approval" />
 			<target linkName="assess-to-approval" />
 			<source linkName="approval-to-reply" />
 		</invoke>
-		<reply partnerLink="customer" portType="lns:loanServicePT"
+		 <reply partnerLink="customer" portType="lns:loanServicePT"
 			operation="request" variable="approval">
 			<target linkName="setMessage-to-reply" />
 			<target linkName="approval-to-reply" />

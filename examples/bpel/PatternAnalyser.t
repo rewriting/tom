@@ -75,163 +75,193 @@ public class PatternAnalyser{
       }
     }
 
-    public static Wfg bpelToWfg(TNode term){
-      Wfg wfg  = `Empty();
-      Wfg wfglist = `ConcWfg();
-      %match(TNode term){
-        <flow>proc</flow> ->{
-          Wfg res = bpelToWfg(`proc);
-          wfglist = `ConcWfg(wfglist*,res);
-        }
-        <flow></flow> ->{
-          return wfglist;
-        }
-        <sequence>proc</sequence> ->{
-          wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(proc)),All(MuVar("x")))).apply(wfg);
-        }
-        <(assign|invoke|receive|reply) name=name>linklist*</(assign|invoke|receive|reply)> -> {
-          wfg = `WfgNode(Activity(name,noCond(),noCond())); 
-          %match(TNodeList linklist){
-            (_*,<source linkName=linkName/>,_*) -> {
-              wfg = `WfgNode(wfg*,refWfg(linkName));
-            }
-            (_*,<target linkName=linkName/>,_*) -> {
-              wfg = `labWfg(linkName,wfg);
-            }
+  public static Wfg bpelToWfg(TNode term){
+    Wfg wfg  = `Empty();
+    Wfg wfglist = `ConcWfg();
+    %match(TNode term){
+      <flow>proc</flow> ->{
+        Wfg res = bpelToWfg(`proc);
+        wfglist = `ConcWfg(wfglist*,res);
+      }
+      <flow></flow> ->{
+        return wfglist;
+      }
+      <sequence>proc</sequence> ->{
+        wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(proc)),All(MuVar("x")))).apply(wfg);
+      }
+      node@<(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
+        wfg = `WfgNode(Activity(operation,node.hashCode(),noCond(),noCond())); 
+        %match(TNodeList linklist){
+          (_*,<source linkName=linkName/>,_*) -> {
+            wfg = `WfgNode(wfg*,refWfg(linkName));
+          }
+          (_*,<target linkName=linkName/>,_*) -> {
+            wfg = `labWfg(linkName,wfg);
           }
         }
       }
-      return wfg; 
-    }
+      node@<assign>list*</assign> -> {
+        StringBuffer buffer = new StringBuffer();
 
-    %op Strategy VisitWfgNode(wfg:Visitable,s:Strategy) {
-      /*
-         make(wfg,s) {
-         `mu(MuVar("x"),Sequence(Debug("visitWfgNode"),Sequence(OneRelativeRefSensitive(wfg,Sequence(Debug("followed"),s)),Try(_ConsWfgNode(Identity(),MuVar("x"))))))
-         }
-       */
-      make(wfg,s) {
-        `mu(MuVar("x"),Sequence(One(RelativeRef(wfg,s)),Try(_ConsWfgNode(Identity(),MuVar("x")))))
-      }
-    }
+        %match(TNodeList list){
+          (_*,<copy>fromnode@<from /> <to variable=to /></copy>,_*) -> {
+            String from = "";
 
-    %op Strategy PrintWfgNode(wfg:Visitable,node:Node,visited:HashSet) {
-      /*
-         make(wfg,node,visited) {
-         `mu(MuVar("y"),Sequence(Debug("printwfgnode"),Try(_ConsWfgNode(GetRoot(node,visited),Sequence(VisitWfgNode(wfg,Print(node)),VisitWfgNode(wfg,MuVar("y"))))))   )
-         }
-       */
-      make(wfg,node,visited) {
-        `mu(MuVar("y"),Try(_ConsWfgNode(GetRoot(node,visited),Sequence(VisitWfgNode(wfg,Print(node)),VisitWfgNode(wfg,MuVar("y"))))))
-      }
+            %match(fromnode){
+              <from variable=variable /> -> {from = `variable;}
+              <from expression=expression /> -> {from = `expression;}
+            }
 
-    }
+            buffer.append(%[ @from@ -> @`to@\n ]%);
+          }  
+          (_*) -> {        
+            wfg = `WfgNode(Activity("\""+buffer.toString()+"\"",node.hashCode(),noCond(),noCond())); 
+          }
 
-    %op Strategy PrintWfg(wfg:Visitable,node:Node,visited:HashSet) {
-      make(wfg,node,visited) {
-        `Choice(mu(MuVar("z"),_ConsConcWfg(PrintWfgNode(wfg,node,visited),MuVar("z"))),PrintWfgNode(wfg,node,visited))
-      }
-    }
-
-    public static void printWfg(Wfg wfg){
-      Node node = new Node("");
-      HashSet visited = new HashSet();
-      System.out.println("digraph g{");
-      `PrintWfg(wfg,node,visited).apply(wfg);    
-      //StratDebugger.applyGraphicalDebug(wfg,`PrintWfg(wfg,node,visited));    
-      System.out.println("}");
-    }
-
-    %strategy Debug(s: String) extends `Identity() {
-      visit Wfg {
-        _ -> {
-          System.out.println("- " + s +": " + getPosition());
+          (_*,<source linkName=linkName/>,_*) -> {
+            wfg = `WfgNode(wfg*,refWfg(linkName));
+          }
+          (_*,<target linkName=linkName/>,_*) -> {
+            wfg = `labWfg(linkName,wfg);
+          }
         }
       }
+
+
+
     }
+    return wfg; 
+  }
 
-
+  %op Strategy VisitWfgNode(wfg:Visitable,s:Strategy) {
     /*
-       %strategy PrintWfg(wfg:Visitable,node:Node,visited:HashSet) extends `Identity(){
-       visit Wfg{
-       e@ConcWfg(_*) -> {
-       `mu(MuVar("z"),Sequence(Debug("PrintWfg"), 
-       Try(_ConsConcWfg(PrintWfgNode(wfg,node,visited),MuVar("z"))))  
-       ).apply(`e);
-       }
-       e@WfgNode(_*) -> {
-       `PrintWfgNode(wfg,node,visited).apply(`e);
-       }
-       }
+       make(wfg,s) {
+       `mu(MuVar("x"),Sequence(Debug("visitWfgNode"),Sequence(OneRelativeRefSensitive(wfg,Sequence(Debug("followed"),s)),Try(_ConsWfgNode(Identity(),MuVar("x"))))))
        }
      */
+    make(wfg,s) {
+      `mu(MuVar("x"),Sequence(One(RelativeRef(wfg,s)),Try(_ConsWfgNode(Identity(),MuVar("x")))))
+    }
+  }
 
-    %strategy Print(root:Node) extends `Identity(){
-      visit Wfg{
-        WfgNode(Activity[name=name],_*) ->{
-          System.out.println(root.name+" -> "+`name+";");
-        }
-        Activity[name=name] ->{
-          System.out.println(root.name+" -> "+`name+";");
+  %op Strategy PrintWfgNode(wfg:Visitable,node:Node,visited:HashSet) {
+    /*
+       make(wfg,node,visited) {
+       `mu(MuVar("y"),Sequence(Debug("printwfgnode"),Try(_ConsWfgNode(GetRoot(node,visited),Sequence(VisitWfgNode(wfg,Print(node)),VisitWfgNode(wfg,MuVar("y"))))))   )
+       }
+     */
+    make(wfg,node,visited) {
+      `mu(MuVar("y"),Try(_ConsWfgNode(GetRoot(node,visited),Sequence(VisitWfgNode(wfg,Print(node)),VisitWfgNode(wfg,MuVar("y"))))))
+    }
+
+  }
+
+  %op Strategy PrintWfg(wfg:Visitable,node:Node,visited:HashSet) {
+    make(wfg,node,visited) {
+      `Choice(mu(MuVar("z"),_ConsConcWfg(PrintWfgNode(wfg,node,visited),MuVar("z"))),PrintWfgNode(wfg,node,visited))
+    }
+  }
+
+  public static void printWfg(Wfg wfg){
+    Node node = new Node();
+    HashSet visited = new HashSet();
+    System.out.println("digraph g{");
+    `PrintWfg(wfg,node,visited).apply(wfg);    
+    //StratDebugger.applyGraphicalDebug(wfg,`PrintWfg(wfg,node,visited));    
+    System.out.println("}");
+  }
+
+  %strategy Debug(s: String) extends `Identity() {
+    visit Wfg {
+      _ -> {
+        System.out.println("- " + s +": " + getPosition());
+      }
+    }
+  }
+
+
+  /*
+     %strategy PrintWfg(wfg:Visitable,node:Node,visited:HashSet) extends `Identity(){
+     visit Wfg{
+     e@ConcWfg(_*) -> {
+     `mu(MuVar("z"),Sequence(Debug("PrintWfg"), 
+     Try(_ConsConcWfg(PrintWfgNode(wfg,node,visited),MuVar("z"))))  
+     ).apply(`e);
+     }
+     e@WfgNode(_*) -> {
+     `PrintWfgNode(wfg,node,visited).apply(`e);
+     }
+     }
+     }
+   */
+
+  %strategy Print(root:Node) extends `Identity(){
+    visit Wfg{
+      WfgNode(Activity[name=name,code=code],_*) ->{
+        String  id = `name+"_"+`code;
+        id = id.replaceAll("-","Z");
+        System.out.println(root.id+" -> "+id+";");
+      }
+      Activity[name=name,code=code] ->{
+        String  id = `name+"_"+`code;
+        id = id.replaceAll("-","Z");
+        System.out.println(root.id+" -> "+id+";");
+      }
+    }
+  }
+
+  %strategy GetRoot(root:Node,visited:HashSet) extends `Fail(){
+    visit Wfg{
+      a@Activity[name=name,code=code] ->{
+        if (!visited.contains(`name)) {
+          visited.add(`name);
+          root.id = `name+"_"+`code;
+          root.id = root.id.replaceAll("-","Z");
+          //System.out.println("getroot : " + `name);
+          return `a;
         }
       }
     }
+  }
 
-    %strategy GetRoot(root:Node,visited:HashSet) extends `Fail(){
-      visit Wfg{
-        a@Activity[name=name] ->{
-          if (!visited.contains(`name)) {
-            visited.add(`name);
-            root.name = `name;
-            //System.out.println("getroot : " + `name);
-            return `a;
-          }
-        }
+  %typeterm Node{
+    implement {Node}
+  }
+  static class Node{
+    public String id="";
+  }
+
+  public static void main(String[] args){
+    XmlTools xtools = new XmlTools();
+    TNode term = xtools.convertXMLToTNode(args[0]);
+    Wfg wfg = null;
+    %match(TNode term){
+      DocumentNode(_,ElementNode("process",_,concTNode(_*,elt@<(sequence|flow)></(sequence|flow)>,_*))) -> {
+        wfg = bpelToWfg(`elt); 
+        //System.out.println("\nWfg with labels:\n" + wfg);
+        wfg = `expWfg(wfg);
+        //System.out.println("\nWfg with positions:\n" + wfg);
       }
     }
-
-    %typeterm Node{
-      implement {Node}
-    }
-    static class Node{
-      public String name;
-
-      public Node(String name){
-        this.name=name;
-      }
-
-    }
-    public static void main(String[] args){
-      XmlTools xtools = new XmlTools();
-      TNode term = xtools.convertXMLToTNode(args[0]);
-      Wfg wfg = null;
-      %match(TNode term){
-        DocumentNode(_,ElementNode("process",_,concTNode(_*,elt@<(sequence|flow)></(sequence|flow)>,_*))) -> {
-          wfg = bpelToWfg(`elt); 
-          //System.out.println("\nWfg with labels:\n" + wfg);
-          wfg = `expWfg(wfg);
-          //System.out.println("\nWfg with positions:\n" + wfg);
-        }
-      }
-      /* 
-         Wfg wfg = `expWfg(ConcWfg(
-         WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C")),
-         labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("end"))), 
-         labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("end"))), 
-         labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
-         ));
-         wfg = `expWfg(ConcWfg(
-         WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C"),refWfg("G")), 
-         labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("B"),refWfg("F"))), 
-         labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("D"),refWfg("E"))), 
-         labWfg("G",WfgNode(Activity("G",noCond(),noCond()),refWfg("E"),refWfg("end"))), 
-         labWfg("B",WfgNode(Activity("B",noCond(),noCond()),refWfg("end"))), 
-         labWfg("D",WfgNode(Activity("D",noCond(),noCond()),refWfg("F"))), 
-         labWfg("E",WfgNode(Activity("E",noCond(),noCond()),refWfg("F"))), 
-         labWfg("F",WfgNode(Activity("F",noCond(),noCond()),refWfg("end"))), 
-         labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
-         ));
-       */
-      PatternAnalyser.printWfg(wfg);
-    }
-  }//class PatternAnalyser
+    /* 
+       Wfg wfg = `expWfg(ConcWfg(
+       WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C")),
+       labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("end"))), 
+       labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("end"))), 
+       labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
+       ));
+       wfg = `expWfg(ConcWfg(
+       WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C"),refWfg("G")), 
+       labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("B"),refWfg("F"))), 
+       labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("D"),refWfg("E"))), 
+       labWfg("G",WfgNode(Activity("G",noCond(),noCond()),refWfg("E"),refWfg("end"))), 
+       labWfg("B",WfgNode(Activity("B",noCond(),noCond()),refWfg("end"))), 
+       labWfg("D",WfgNode(Activity("D",noCond(),noCond()),refWfg("F"))), 
+       labWfg("E",WfgNode(Activity("E",noCond(),noCond()),refWfg("F"))), 
+       labWfg("F",WfgNode(Activity("F",noCond(),noCond()),refWfg("end"))), 
+       labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
+       ));
+     */
+    PatternAnalyser.printWfg(wfg);
+  }
+}//class PatternAnalyser
