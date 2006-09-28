@@ -35,6 +35,7 @@ import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
+import tom.engine.adt.tominstruction.types.instruction.*;
 import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tomname.types.tomname.*;
 import tom.engine.adt.tomoption.*;
@@ -69,20 +70,13 @@ public class TomKernelCompiler extends TomBase {
   // boolean flag used for anti-pattern matching
   private static final String ANTI_FLAG_NAME = "tom_anti_constraints_status";
   
-  private TomType antiFlagType = null;
-  private TomTerm antiFlagVariable = null;
-  // instructions that assign true or false to anti-flag variable
-  private Instruction assignAntiFlagTrue = null;
-  private Instruction assignAntiFlagFalse = null;
+  private static TomType antiFlagType = null;
+  private static TomTerm antiFlagVariable = null;
   
   public TomKernelCompiler(SymbolTable symbolTable) {
     this.symbolTable = symbolTable;
     // initialize anti flag
-    antiFlagType = symbolTable.getBooleanType();
-    antiFlagVariable = `Variable(concOption(OriginTracking(Name(ANTI_FLAG_NAME),0,""))
-		  ,Name(ANTI_FLAG_NAME),antiFlagType,concConstraint());
-    assignAntiFlagTrue = `LetAssign(antiFlagVariable,And(TrueTL(),TomTermToExpression(antiFlagVariable)),Nop());
-    assignAntiFlagFalse = `LetAssign(antiFlagVariable,And(FalseTL(),TomTermToExpression(antiFlagVariable)),Nop());
+    antiFlagType = symbolTable.getBooleanType();     
   }
 
   private SymbolTable getSymbolTable(String moduleName) {
@@ -150,11 +144,18 @@ public class TomKernelCompiler extends TomBase {
        * given a list of pattern: we build a matching automaton
        */
       actionInst = (Instruction) compileStrategy.visit(actionInst);
-      // reset anti flags
+      // anti flag
       antiConstraintFirstTime = true;
-      TomAntiPatternTransformNew.initialize();
-      Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,`Nop(),
+      TomName antiFlagName = `PositionName(concTomNumber(rootpath*,NameNumber(Name(ANTI_FLAG_NAME))));
+      antiFlagVariable = `Variable(concOption(OriginTracking(antiFlagName,0,""))
+    		  ,antiFlagName,antiFlagType,concConstraint());
+      TomAntiPatternTransformNew.initialize();      
+      // final test
+	  Instruction finalTest = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),actionInst,Nop());      
+      Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(finalTest,`Nop(),
     		  patternList,rootpath,moduleName,null,true);
+	  // glue the flag declaration
+      //matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
       OptionList automataOptionList = `concOption();
       TomName label = compiler.getLabel(pa.getOption());
       if(label != null) {
@@ -365,7 +366,6 @@ public class TomKernelCompiler extends TomBase {
         // handle the constraints        
         Instruction	constraintAutomata = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST)
         		,subAction,elseAction,moduleName);
-        
         Instruction automataInstruction;
         if(isListOperator(tomSymbol)) {        	
           // case: list operator
@@ -1036,6 +1036,12 @@ public class TomKernelCompiler extends TomBase {
 
   private Instruction compileConstraint(TomTerm subject, Expression source, 
 		  Instruction body, Instruction elseBody, String moduleName) {
+	if (antiConstraintFirstTime){	
+		  antiConstraintFirstTime = false;      
+		  // add flag variable declaration
+		  return `LetRef(antiFlagVariable,TrueTL(),compileConstraint(subject, source, 
+    		  body, elseBody, moduleName));
+	}
     %match(subject) {
       (Variable|VariableStar)[Constraints=constraints] -> {
         return buildConstraint(`constraints,`TomTermToExpression(subject),body,elseBody,moduleName);
@@ -1087,20 +1093,20 @@ public class TomKernelCompiler extends TomBase {
     	  
     	  // if first time for this pattern add boolean variable declaration
     	  // and also final test
-    	  if (antiConstraintFirstTime){	
-    		  antiConstraintFirstTime = false;
-    		  
-    		  Instruction antiMatchInstruction = buildAntiMatchBlockConstraint((AndAntiConstraint)`c,source,body,moduleName);
-    		  // final test
-    		  Instruction finalTest = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),body,Nop());
-    		  InstructionList instructionList = `concInstruction(antiMatchInstruction,finalTest);		  
-    		  // glue the flag declaration
-    		  Expression flagValue = `TrueTL();
-    		  Instruction declareFlag = `LetNoCurly(antiFlagVariable,flagValue,UnamedBlock(instructionList));    		  
-    		  antiMatchBlock = declareFlag;
-    	  }else{
+//    	  if (antiConstraintFirstTime){	
+//    		  antiConstraintFirstTime = false;
+//    		  
+//    		  Instruction antiMatchInstruction = buildAntiMatchBlockConstraint((AndAntiConstraint)`c,source,body,moduleName);
+//    		  // final test
+//    		  Instruction finalTest = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),body,Nop());
+//    		  InstructionList instructionList = `concInstruction(antiMatchInstruction,finalTest);		  
+//    		  // glue the flag declaration
+//    		  Expression flagValue = `TrueTL();
+//    		  Instruction declareFlag = `LetRef(antiFlagVariable,TrueTL(),antiMatchInstruction);//`LetNoCurly(antiFlagVariable,flagValue,UnamedBlock(instructionList));    		  
+//    		  antiMatchBlock = declareFlag;
+//    	  }else{
     		  antiMatchBlock = buildAntiMatchBlockConstraint((AndAntiConstraint)`c,source,body,moduleName);
-    	  }
+//    	  }
 		    
 		  return `buildConstraint(tail,source,antiMatchBlock,elseBody,moduleName);
       }
@@ -1120,12 +1126,16 @@ public class TomKernelCompiler extends TomBase {
 	  Instruction antiInstruction = null; 
 	  Constraint antiMatchConstraint = null;
 	  
+	  Instruction assignAntiFlagTrue = `LetAssign(antiFlagVariable,And(TrueTL(),TomTermToExpression(antiFlagVariable)),Nop());
+	  Instruction assignAntiFlagFalse = `LetAssign(antiFlagVariable,And(FalseTL(),TomTermToExpression(antiFlagVariable)),Nop());
+	  
 	  // actions that will be performed on if and on else
 	  Instruction ifAction = null, elseAction = null;
 	  
 	  // compute all anti constraints	  
 	  antiMatchConstraint = consList.getHeadAndAntiConstraint();
-	  if (antiMatchConstraint.getActionOnIf() == 1){
+	  boolean actionOnIf = antiMatchConstraint.getActionOnIf() == 1;
+	  if (actionOnIf){
 		  ifAction = assignAntiFlagTrue;
 		  elseAction = assignAntiFlagFalse;
 	  }else{
@@ -1155,7 +1165,11 @@ public class TomKernelCompiler extends TomBase {
 		  
 		  consList = (AndAntiConstraint)consList.getTailAndAntiConstraint();		  					  
 	  }
-	  
+	  // add the body to the list if the body is not the flag assignement
+	  // quite ugly ... should be changed
+	  if (!(body instanceof LetAssign)){
+		  instructionList = `concInstruction(instructionList*,body);
+	  }
 	  return `UnamedBlock(instructionList);
   }
   
@@ -1166,10 +1180,29 @@ public class TomKernelCompiler extends TomBase {
 	  SlotList slotList = tomListToSlotList(`concTomTerm(constraint.getPattern())); 
 	  TomNumberList rootpath = `concTomNumber();
       this.matchNumber++;
-      rootpath = `concTomNumber(rootpath*,MatchNumber(Number(this.matchNumber)));	  
-	  return genSyntacticMatchingAutomata(ifAction,elseAction,
-	  			`concSlot(PairSlotAppl(Name("ANTI"),constraint.getPattern())),rootpath,moduleName,
-	  			constraint.getSubject(),(constraint.getActionOnIf()==1? true: false));       
+      rootpath = `concTomNumber(rootpath*,MatchNumber(Number(this.matchNumber)));
+      
+      Instruction aditionalInstruction = `Nop();
+      
+//      // if we have a list
+//      if (TomBase.isListOperator(getSymbolTable(moduleName).getSymbolFromName(
+//			  constraint.getPattern().getNameList().getHeadconcName()))){
+//		  // and if we are on pozitive (even number of antis)
+//          if (constraint.getActionOnIf()==1){
+//        	  // we should put the flag to false, because we on to find at least 
+//        	  // one matching
+//        	  aditionalInstruction = assignFlagFalse;
+//          }
+//	  }
+//      return `UnamedBlock(concInstruction(aditionalInstruction, 
+//      		genSyntacticMatchingAutomata(ifAction,elseAction,
+//	  			`concSlot(PairSlotAppl(Name("ANTI"),constraint.getPattern())),rootpath,moduleName,
+//	  			constraint.getSubject(),(constraint.getActionOnIf()==1? true: false))));
+      
+    return genSyntacticMatchingAutomata(ifAction,elseAction,
+		`concSlot(PairSlotAppl(Name("ANTI"),constraint.getPattern())),rootpath,moduleName,
+		constraint.getSubject(),(constraint.getActionOnIf()==1? true: false));       
+
   }
   
   private static class MatchingParameter {
