@@ -43,7 +43,8 @@ import termgraph.term.types.term.posTerm;
 
 public class GraphTest {
 
-  //%include {mustrategy.tom }
+  %include {mustrategy.tom }
+  %include {strategy/graph.tom }
   %include {term/term.tom}
   %include {term/_term.tom}
 

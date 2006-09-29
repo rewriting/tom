@@ -53,6 +53,7 @@ public class PatternAnalyser{
   %include {wfg/Wfg.tom}
   %include {wfg/_Wfg.tom}
   %include {mustrategy.tom}
+  %include {strategy/graph.tom}
   %include {adt/tnode/TNode.tom }
   %include{boolean.tom}
 

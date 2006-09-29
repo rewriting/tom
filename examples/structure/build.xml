@@ -37,12 +37,12 @@
       </fileset>
     </copy>
     <!-- Create a jar for the applet -->
-    <path id="mutraveler.path"> <!-- ugly hack to find the jar -->
+    <path id="strategy.path"> <!-- ugly hack to find the jar -->
       <fileset dir="${tom.home}/lib">
-        <include name="mutraveler*.jar"/>
+        <include name="strategy*.jar"/>
       </fileset>
     </path>
-    <property name="mutraveler.jar" refid="mutraveler.path"/>
+    <property name="strategy.jar" refid="strategy.path"/>
     <jar jarfile="${examples.build}/${structure}/structure.jar">
       <fileset dir="${examples.build}">
         <include name="${structure}/**/*.class"/>
@@ -51,7 +51,7 @@
       <zipfileset src="${tom.home}/lib/shared-objects.jar"/>
       <zipfileset src="${tom.home}/lib/jjtraveler.jar"/>
       <zipfileset src="${tom.home}/lib/antlr.jar"/>
-      <zipfileset src="${mutraveler.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
+      <zipfileset src="${strategy.jar}" includes="tom/library/strategy/mutraveler/MuVisitable.class"/>
       <zipfileset src="${tom.home}/lib/aterm.jar"/>
     </jar>
   </target>

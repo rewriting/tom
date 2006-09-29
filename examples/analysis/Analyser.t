@@ -38,7 +38,6 @@ import analysis.ast.types.*;
 
 import tom.library.strategy.mutraveler.*;
 
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 import java.util.*;
@@ -47,7 +46,8 @@ import org._3pq.jgrapht.edge.*;
 
 public class Analyser{
 
-  %include {mutraveler.tom }
+  %include {mustrategy.tom }
+  %include {strategy/graph.tom }
   %include {node/Node.tom}
 
   //Definition des types
@@ -268,10 +268,10 @@ public class Analyser{
           affect(var,term) -> {
             //test de la cond temporel A(notUsed(var)Ufree(var)) au noeud nn du cfg
             //s1 = notUsed(var)
-            VisitableVisitor s1 = `NotUsed(var);
+            MuStrategy s1 = `NotUsed(var);
             //s2 = free(var)
-            VisitableVisitor s2 = `Free(var);
-            VisitableVisitor notUsedCond = `AU(s1,s2);
+            MuStrategy s2 = `Free(var);
+            MuStrategy notUsedCond = `AU(s1,s2);
             //      `mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity)))));
             if(cfg.verify(notUsedCond,n)) {
               System.out.println("Variable "+`var+" with the value "+`term+" is not used");
@@ -301,10 +301,10 @@ public class Analyser{
 
 
             //s1 = not(modified(var)
-            VisitableVisitor s1 = `Not(Modified(var));
+            MuStrategy s1 = `Not(Modified(var));
 
             //s2 = (used(var) and AX(notUsedCond(var)
-            VisitableVisitor s2 =  
+            MuStrategy s2 =  
               `Sequence(
                   Not(NotUsed(var)),
                   All(mu(MuVar("x"),
@@ -316,7 +316,7 @@ public class Analyser{
                     )
                   );
             //onceUsedCond AX(A(s1 U s2))  
-            VisitableVisitor onceUsedCond = `AX(AU(s1,s2));
+            MuStrategy onceUsedCond = `AX(AU(s1,s2));
 
             //  `All(mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity))))));
 

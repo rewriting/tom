@@ -7,4 +7,6 @@
 %op Strategy mu(s1:Strategy, s2:Strategy) {
   make(var,v) { new tom.library.strategy.mutraveler.Mu(var,v) }
 }
-%include {strategy/graph.tom }
+
+%include { strategy/basic.tom }
+%include { strategy/composed.tom }

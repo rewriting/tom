@@ -29,6 +29,7 @@
 
 %include { util/types/Map.tom }
 %include { composed.tom }
+
 %include{ visitable.tom}
   %op Strategy Ref(root:Visitable, s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Ref) && ((tom.library.strategy.mutraveler.Ref)t).isRelative()==false && ((tom.library.strategy.mutraveler.Ref)t).isStrict()==false }

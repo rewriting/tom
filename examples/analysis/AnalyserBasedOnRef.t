@@ -39,7 +39,6 @@ import analysis.ast.types.*;
 
 import tom.library.strategy.mutraveler.*;
 
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 import java.util.*;
@@ -48,6 +47,7 @@ import java.util.*;
 public class AnalyserBasedOnRef{
   
   %include {mustrategy.tom }
+  %include {strategy/graph.tom }
   %include {util/HashMap.tom}
   %include {util/ArrayList.tom}
   %include {cfg/Cfg.tom}

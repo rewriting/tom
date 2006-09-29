@@ -45,13 +45,13 @@ public class TestAnalyser extends TestCase {
 
   %include {node/Node.tom}
   %include {mutraveler.tom}
-  
+
   private Analyser analyser;
   private Ast subject;
   private ControlFlowGraph correspondingCfg;
-  private	Variable var_x = `Name("x");
-	private	Variable var_y = `Name("y");
-	private	Variable var_z = `Name("z");
+  private Variable var_x = `Name("x");
+  private Variable var_y = `Name("y");
+  private Variable var_z = `Name("z");
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestAnalyser.class));
@@ -59,31 +59,31 @@ public class TestAnalyser extends TestCase {
 
   public void setUp() {
     analyser = new Analyser();
- 			subject = `concAst(
-        If(True(),
-           concAst(),
-           concAst(
-             LetRef(var_x,g(a()),concAst(
-                 LetAssign(var_x,g(b())),
-                 LetAssign(var_x,f(a(),b())),
-                 Let(var_y,g(Var(var_x)),concAst())
-                 )
-             )
-           )
-        ),
-        Let(var_z,f(a(),b()),concAst())
-    );
+    subject = `concAst(
+	If(True(),
+	  concAst(),
+	  concAst(
+	    LetRef(var_x,g(a()),concAst(
+		LetAssign(var_x,g(b())),
+		LetAssign(var_x,f(a(),b())),
+		Let(var_y,g(Var(var_x)),concAst())
+		)
+	      )
+	    )
+	  ),
+	Let(var_z,f(a(),b()),concAst())
+	);
 
-		System.out.println("subject          = " + subject);
+    System.out.println("subject          = " + subject);
 
     try{
-			correspondingCfg = analyser.constructCFG(subject);
-			System.out.println("correpsonding correspondingCfg = " + correspondingCfg);
-   	}catch(Exception e){
-			System.out.println(e);
-		}
+      correspondingCfg = analyser.constructCFG(subject);
+      System.out.println("correpsonding correspondingCfg = " + correspondingCfg);
+    }catch(Exception e){
+      System.out.println(e);
+    }
   }
- 
+
   public void testNotUsed() {
     List notUsedAffectations = analyser.notUsedAffectations(correspondingCfg);
     List attemptedResult = new ArrayList();
@@ -92,8 +92,8 @@ public class TestAnalyser extends TestCase {
       Vertex n = (Vertex) (iter.next());
       Node nn = n.getNode();
       %match(Node nn){
-        affect(Name("y"),g(Var(Name("x")))) -> {attemptedResult.add(n);}
-        affect(Name("z"),f(a(),b())) -> {attemptedResult.add(n);}
+	affect(Name("y"),g(Var(Name("x")))) -> {attemptedResult.add(n);}
+	affect(Name("z"),f(a(),b())) -> {attemptedResult.add(n);}
       }
     }
     assertEquals(notUsedAffectations,attemptedResult);
@@ -107,7 +107,7 @@ public class TestAnalyser extends TestCase {
       Vertex n = (Vertex) (iter.next());
       Node nn = n.getNode();
       %match(Node nn){
-        affect(Name("x"),f(a(),b())) -> {attemptedResult.add(n);}
+	affect(Name("x"),f(a(),b())) -> {attemptedResult.add(n);}
       }
     }
     assertEquals(onceUsedAffectations,attemptedResult);
