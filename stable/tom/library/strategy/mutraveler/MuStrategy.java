@@ -5,7 +5,7 @@ import tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd;
 
 public interface MuStrategy extends jjtraveler.reflective.VisitableVisitor {
 
-  public void setPosition(Position pos);
+  public void setPosition(Position p);
 
   public Position getPosition();
 

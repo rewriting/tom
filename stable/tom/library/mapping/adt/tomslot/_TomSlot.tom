@@ -2890,6 +2890,67 @@
   make( new_HeadconcConstraint,  new_TailconcConstraint) { new tom.engine.adt.tomconstraint.strategy.constraintlist.Make_ConsconcConstraint( new_HeadconcConstraint,  new_TailconcConstraint) }
 }
 
+%op Strategy Is_EmptyAndAntiConstraint() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Is_EmptyAndAntiConstraint)}
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint.Is_EmptyAndAntiConstraint() }
+}
+
+%op Strategy _EmptyAndAntiConstraint() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._EmptyAndAntiConstraint)}
+
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint._EmptyAndAntiConstraint() }
+}
+
+%op Strategy Make_EmptyAndAntiConstraint() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyAndAntiConstraint)}
+
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint.Make_EmptyAndAntiConstraint() }
+}
+
+%op Strategy Is_ConsAndAntiConstraint() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Is_ConsAndAntiConstraint)}
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint.Is_ConsAndAntiConstraint() }
+}
+
+%op Strategy _ConsAndAntiConstraint(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._ConsAndAntiConstraint)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.tomconstraint.strategy.constraint._ConsAndAntiConstraint(arg0, arg1) }
+}
+
+%op Strategy Make_ConsAndAntiConstraint(_HeadAndAntiConstraint:Strategy, _TailAndAntiConstraint:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsAndAntiConstraint)}
+
+  get_slot(_HeadAndAntiConstraint, t) { _HeadAndAntiConstraint }
+  get_slot(_TailAndAntiConstraint, t) { _TailAndAntiConstraint }
+  make( new_HeadAndAntiConstraint,  new_TailAndAntiConstraint) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_ConsAndAntiConstraint( new_HeadAndAntiConstraint,  new_TailAndAntiConstraint) }
+}
+
+%op Strategy Is_AntiMatchConstraint() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Is_AntiMatchConstraint)}
+  make() { new tom.engine.adt.tomconstraint.strategy.constraint.Is_AntiMatchConstraint() }
+}
+
+%op Strategy _AntiMatchConstraint(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._AntiMatchConstraint)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.engine.adt.tomconstraint.strategy.constraint._AntiMatchConstraint(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_AntiMatchConstraint(_Pattern:Strategy, _Subject:Strategy, _ActionOnIf:int) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_AntiMatchConstraint)}
+
+  get_slot(_Pattern, t) { _Pattern }
+  get_slot(_Subject, t) { _Subject }
+  get_slot(_ActionOnIf, t) { _ActionOnIf }
+  make( new_Pattern,  new_Subject,  _ActionOnIf) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_AntiMatchConstraint( new_Pattern,  new_Subject,  _ActionOnIf) }
+}
+
 %op Strategy Is_ForAll() {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Is_ForAll)}
   make() { new tom.engine.adt.tomconstraint.strategy.constraint.Is_ForAll() }
@@ -3635,20 +3696,22 @@
   make() { new tom.engine.adt.tomterm.strategy.tomterm.Is_FunctionCall() }
 }
 
-%op Strategy _FunctionCall(arg0:Strategy, arg1:Strategy) {
+%op Strategy _FunctionCall(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm._FunctionCall)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
-  make(arg0, arg1) { new tom.engine.adt.tomterm.strategy.tomterm._FunctionCall(arg0, arg1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.engine.adt.tomterm.strategy.tomterm._FunctionCall(arg0, arg1, arg2) }
 }
 
-%op Strategy Make_FunctionCall(_AstName:Strategy, _Args:Strategy) {
+%op Strategy Make_FunctionCall(_AstName:Strategy, _AstType:Strategy, _Args:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.Make_FunctionCall)}
 
   get_slot(_AstName, t) { _AstName }
+  get_slot(_AstType, t) { _AstType }
   get_slot(_Args, t) { _Args }
-  make( new_AstName,  new_Args) { new tom.engine.adt.tomterm.strategy.tomterm.Make_FunctionCall( new_AstName,  new_Args) }
+  make( new_AstName,  new_AstType,  new_Args) { new tom.engine.adt.tomterm.strategy.tomterm.Make_FunctionCall( new_AstName,  new_AstType,  new_Args) }
 }
 
 %op Strategy Is_BuildReducedTerm() {
@@ -3656,18 +3719,20 @@
   make() { new tom.engine.adt.tomterm.strategy.tomterm.Is_BuildReducedTerm() }
 }
 
-%op Strategy _BuildReducedTerm(arg0:Strategy) {
+%op Strategy _BuildReducedTerm(arg0:Strategy, arg1:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm._BuildReducedTerm)}
 
   get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomterm.strategy.tomterm._BuildReducedTerm(arg0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.tomterm.strategy.tomterm._BuildReducedTerm(arg0, arg1) }
 }
 
-%op Strategy Make_BuildReducedTerm(_TomTerm:Strategy) {
+%op Strategy Make_BuildReducedTerm(_TomTerm:Strategy, _AstType:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomterm.strategy.tomterm.Make_BuildReducedTerm)}
 
   get_slot(_TomTerm, t) { _TomTerm }
-  make( new_TomTerm) { new tom.engine.adt.tomterm.strategy.tomterm.Make_BuildReducedTerm( new_TomTerm) }
+  get_slot(_AstType, t) { _AstType }
+  make( new_TomTerm,  new_AstType) { new tom.engine.adt.tomterm.strategy.tomterm.Make_BuildReducedTerm( new_TomTerm,  new_AstType) }
 }
 
 %op Strategy Is_Automata() {
@@ -4541,6 +4606,11 @@
 %op Strategy _concConstraint(sub:Strategy) {
   is_fsym(t) { false }
   make(sub)  { `mu(MuVar("x"),Choice(_ConsconcConstraint(sub,MuVar("x")),_EmptyconcConstraint())) }
+}
+
+%op Strategy _AndAntiConstraint(sub:Strategy) {
+  is_fsym(t) { false }
+  make(sub)  { `mu(MuVar("x"),Choice(_ConsAndAntiConstraint(sub,MuVar("x")),_EmptyAndAntiConstraint())) }
 }
 
 %op Strategy _concOption(sub:Strategy) {

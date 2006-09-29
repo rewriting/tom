@@ -2,6 +2,7 @@
 %include { string.tom }
 %include { int.tom }
 %include { long.tom }
+%include { float.tom }
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
@@ -1257,6 +1258,26 @@
   make(t0, t1) { tom.engine.adt.tomconstraint.types.constraintlist.ConsconcConstraint.make(t0, t1)}
 }
 
+%op Constraint EmptyAndAntiConstraint() {
+  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndAntiConstraint }
+  make() { tom.engine.adt.tomconstraint.types.constraint.EmptyAndAntiConstraint.make()}
+}
+
+%op Constraint ConsAndAntiConstraint(HeadAndAntiConstraint:Constraint, TailAndAntiConstraint:Constraint) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndAntiConstraint }
+  get_slot(HeadAndAntiConstraint, t) { t.getHeadAndAntiConstraint() }
+  get_slot(TailAndAntiConstraint, t) { t.getTailAndAntiConstraint() }
+  make(t0, t1) { tom.engine.adt.tomconstraint.types.constraint.ConsAndAntiConstraint.make(t0, t1)}
+}
+
+%op Constraint AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf:int) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraint.AntiMatchConstraint }
+  get_slot(Pattern, t) { t.getPattern() }
+  get_slot(Subject, t) { t.getSubject() }
+  get_slot(ActionOnIf, t) { t.getActionOnIf() }
+  make(t0, t1, t2) { tom.engine.adt.tomconstraint.types.constraint.AntiMatchConstraint.make(t0, t1, t2)}
+}
+
 %op Constraint ForAll(var:TomTerm, cons:Constraint) {
   is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraint.ForAll }
   get_slot(var, t) { t.getvar() }
@@ -1402,17 +1423,19 @@
   make(t0) { tom.engine.adt.tomterm.types.tomterm.BuildConstant.make(t0)}
 }
 
-%op TomTerm FunctionCall(AstName:TomName, Args:TomList) {
+%op TomTerm FunctionCall(AstName:TomName, AstType:TomType, Args:TomList) {
   is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.tomterm.FunctionCall }
   get_slot(AstName, t) { t.getAstName() }
+  get_slot(AstType, t) { t.getAstType() }
   get_slot(Args, t) { t.getArgs() }
-  make(t0, t1) { tom.engine.adt.tomterm.types.tomterm.FunctionCall.make(t0, t1)}
+  make(t0, t1, t2) { tom.engine.adt.tomterm.types.tomterm.FunctionCall.make(t0, t1, t2)}
 }
 
-%op TomTerm BuildReducedTerm(TomTerm:TomTerm) {
+%op TomTerm BuildReducedTerm(TomTerm:TomTerm, AstType:TomType) {
   is_fsym(t) { t instanceof tom.engine.adt.tomterm.types.tomterm.BuildReducedTerm }
   get_slot(TomTerm, t) { t.getTomTerm() }
-  make(t0) { tom.engine.adt.tomterm.types.tomterm.BuildReducedTerm.make(t0)}
+  get_slot(AstType, t) { t.getAstType() }
+  make(t0, t1) { tom.engine.adt.tomterm.types.tomterm.BuildReducedTerm.make(t0, t1)}
 }
 
 %op TomTerm Automata(Option:OptionList, PatternList:TomList, NumberList:TomNumberList, Inst:Instruction) {
@@ -1884,6 +1907,15 @@
   get_head(l) { l.getHeadconcConstraint() }
   get_tail(l) { l.getTailconcConstraint() }
   is_empty(l) { l.isEmptyconcConstraint() }
+}
+
+%oplist Constraint AndAntiConstraint(Constraint*) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomconstraint.types.constraint.ConsAndAntiConstraint || t instanceof tom.engine.adt.tomconstraint.types.constraint.EmptyAndAntiConstraint }
+  make_empty() { tom.engine.adt.tomconstraint.types.constraint.EmptyAndAntiConstraint.make() }
+  make_insert(e,l) { tom.engine.adt.tomconstraint.types.constraint.ConsAndAntiConstraint.make(e,l) }
+  get_head(l) { (l.isConsAndAntiConstraint())?(l.getHeadAndAntiConstraint()):(l) }
+  get_tail(l) { (l.isConsAndAntiConstraint())?(l.getTailAndAntiConstraint()):(tom.engine.adt.tomconstraint.types.constraint.EmptyAndAntiConstraint.make()) }
+  is_empty(l) { l.isEmptyAndAntiConstraint() }
 }
 
 %oplist TomList concTomTerm(TomTerm*) {

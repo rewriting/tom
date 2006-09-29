@@ -25,8 +25,8 @@ public class Position {
   }
 
   public Position(int[] data) {
-    this.data = new int[data.length];
     size = data.length;
+    this.data = new int[size];
     System.arraycopy(data, 0, this.data, 0, size);
   }
 
@@ -40,7 +40,21 @@ public class Position {
   }
 
   public int[] toArray(){
-    return data;
+    int[] copy  = new int[size];
+    System.arraycopy(data, 0, copy, 0, size);
+    return copy;
+  }
+
+  public void init(int[] data) {
+    size = data.length;
+    this.data = new int[size];
+    System.arraycopy(data, 0, this.data, 0, size);
+  }
+
+  public void init(Position pos) {
+    size = pos.data.length;
+    data = new int[size];
+    System.arraycopy(pos.data, 0, data, 0, size);
   }
 
   public Object clone() {

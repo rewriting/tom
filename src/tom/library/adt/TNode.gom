@@ -1,18 +1,18 @@
 module TNode
-imports String
+imports String 
 abstract syntax
 TNode = EmptyNode()
       | CommentNode(Data:String)
-			| ProcessingInstructionNode(Target:String,Data:String)
-			| TextNode(Data:String)
-			| CDATASectionNode(Data:String)
-			| DocumentNode(DocType:TNode, DocElem:TNode)
-			| ElementNode(Name:String, AttrList:TNodeList, ChildList:TNodeList)
-			| AttributeNode(Name:String, Specified:String, Value:String)
-			| DocumentTypeNode(Name:String, PublicId:String, SystemId:String, InternalSubset:String,
+      | ProcessingInstructionNode(Target:String,Data:String)
+      | TextNode(Data:String)
+      | CDATASectionNode(Data:String)
+      | DocumentNode(DocType:TNode, DocElem:TNode)
+      | ElementNode(Name:String, AttrList:TNodeList, ChildList:TNodeList)
+      | AttributeNode(Name:String, Specified:String, Value:String)
+      | DocumentTypeNode(Name:String, PublicId:String, SystemId:String, InternalSubset:String,
 	                       Entities:TNodeList, Notations:TNodeList)
-			| EntityReferenceNode(Name:String, ChildList:TNodeList)
-			| EntityNode(NotationName:String, PublicId:String, SystemId:String)
-			| NotationNode(PublicId:String, SystemId:String) 
+      | EntityReferenceNode(Name:String, ChildList:TNodeList)
+      | EntityNode(NotationName:String, PublicId:String, SystemId:String)
+      | NotationNode(PublicId:String, SystemId:String) 
 
 TNodeList = concTNode(TNode*)

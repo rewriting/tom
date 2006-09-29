@@ -96,9 +96,11 @@ public class TestAnalyser extends TestCase {
 	affect(Name("z"),f(a(),b())) -> {attemptedResult.add(n);}
       }
     }
+    System.out.println("notUsedAffectations = " + notUsedAffectations);
+    System.out.println("attemptedResult     = " + attemptedResult);
     assertEquals(notUsedAffectations,attemptedResult);
   }
-
+/*
   public void testOnceUsed() {
     List onceUsedAffectations = analyser.onceUsedAffectations(correspondingCfg);
     List attemptedResult = new ArrayList();
@@ -110,7 +112,9 @@ public class TestAnalyser extends TestCase {
 	affect(Name("x"),f(a(),b())) -> {attemptedResult.add(n);}
       }
     }
+    System.out.println("onceUsedAffectations = " + onceUsedAffectations);
+    System.out.println("attemptedResult      = " + attemptedResult);
     assertEquals(onceUsedAffectations,attemptedResult);
   }
-
+*/
 }

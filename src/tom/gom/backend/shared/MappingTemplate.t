@@ -54,6 +54,7 @@ public class MappingTemplate extends TemplateClass {
 %include { int.tom }
 %include { long.tom }
 %include { double.tom }
+%include { float.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
 ]%);
