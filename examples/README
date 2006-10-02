@@ -275,17 +275,13 @@ If you come from the
   Concepts: mapping to predefined java type
 
 * termgraph
-  Graph matching proof of concept
+  Pattern matching on graphs
   Shows how to perform pattern matching on graphs coded by terms
-  using custom visitors.
+  using ref visitors provided by tom library
 
 * tutorial
   Examples introduced in the tutorial
   Concepts: string matching, XML
-
-* vas [no longer in the distribution]
-  Introduction to the VAS abstract syntax
-  Concepts: vas
 
 * xml
   XML manipulation based on TNode
