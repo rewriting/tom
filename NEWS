@@ -2,7 +2,9 @@ version 2.4:
  - the eclipse plugin is back, for eclipse version 3.2
 
  - in the %match construct, the sort of the subject is now optional. Its is
-   automatically inferred from the patterns when possible.
+   automatically inferred from the patterns when possible. In addition, a
+   subject is no longer restricted to a variable. Constructors and function calls
+   can be used.
 
  - Gom generates congruence strategies and offers new functionalities, such as
    the length of a list.
