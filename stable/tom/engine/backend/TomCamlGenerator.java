@@ -60,9 +60,25 @@ public class TomCamlGenerator extends TomImperativeGenerator {
    * the implementation of methods are here for caml 
    */
  
-	protected void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction, String moduleName) throws IOException {
-		generateInstruction(deep,instruction,moduleName);
-	}
+  protected void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction, String moduleName) throws IOException {
+    generateInstruction(deep,instruction,moduleName);
+  }
+
+  protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
+    if(getSymbolTable(moduleName).isBooleanType(getTomType(type))) {
+      output.write("(");
+      generate(deep,exp1,moduleName);
+      output.write(" = ");
+      generate(deep,exp2,moduleName);
+      output.write(")");
+    } else {
+      output.write("tom_terms_equal_" + getTomType(type) + "(");
+      generate(deep,exp1,moduleName);
+      output.write(", ");
+      generate(deep,exp2,moduleName);
+      output.write(")");
+    }
+  }
 
   protected void buildExpAnd(int deep, Expression exp1, Expression exp2, String moduleName) throws IOException {
 	output.write(" ( ");

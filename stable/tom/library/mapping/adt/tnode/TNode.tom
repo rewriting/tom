@@ -2,8 +2,8 @@
 %include { string.tom }
 %include { int.tom }
 %include { long.tom }
-%include { float.tom }
 %include { double.tom }
+%include { float.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
 

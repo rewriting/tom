@@ -334,7 +334,7 @@
     <property name="distrib.zip"
       value="${examples.dist}/tom-examples-${version}.zip"/>
     <zip destfile="${distrib.zip}" update="yes">
-      <zipfileset dir="${examples.dir}" prefix="examples" mode="755">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="755">
         <include name="build.sh"/>
       </zipfileset>
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">

@@ -67,6 +67,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
    */
 
 
+
   protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
      if(opNameAST instanceof  tom.engine.adt.tomname.types.TomName ) { { tom.engine.adt.tomname.types.TomName  tom_match1_1=(( tom.engine.adt.tomname.types.TomName )opNameAST); if ( ( tom_is_fun_sym_EmptyName(tom_match1_1) ||  false  ) ) { {boolean tom_match1_tom_anti_constraints_status= true ; if (tom_terms_equal_boolean(tom_match1_tom_anti_constraints_status,  true )) { if ( true ) {
  output.write("tom_get_head_" + getTomType(domain) + "(");  } } } } if ( ( tom_is_fun_sym_Name(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_String=tom_get_slot_Name_String(tom_match1_1); { String  tom_opName=tom_match1_1_String; {boolean tom_match1_tom_anti_constraints_status= true ; if (tom_terms_equal_boolean(tom_match1_tom_anti_constraints_status,  true )) { if ( true ) {

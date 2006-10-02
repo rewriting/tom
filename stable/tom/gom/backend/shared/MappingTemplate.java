@@ -49,15 +49,46 @@ public class MappingTemplate extends TemplateClass {
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    writer.write("\n%include { string.tom }\n%include { int.tom }\n%include { long.tom }\n%include { double.tom }\n%include { float.tom }\n%include { aterm.tom }\n%include { atermlist.tom }\n"
-
-
-
-
-
-
+    if(GomEnvironment.getInstance().isBuiltinSort("String")) {
+      writer.write("\n%include { string.tom }\n"
 
 );
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("int")) {
+      writer.write("\n%include { int.tom }\n"
+
+);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("char")) {
+      writer.write("\n%include { char.tom }\n"
+
+);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("double")) {
+      writer.write("\n%include { double.tom }\n"
+
+);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("long")) {
+      writer.write("\n%include { long.tom }\n"
+
+);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("float")) {
+      writer.write("\n%include { float.tom }\n"
+
+);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("ATerm")) {
+      writer.write("\n%include { aterm.tom }\n"
+
+);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("ATermList")) {
+      writer.write("\n%include { atermlist.tom }\n"
+
+);
+    }
 
     // generate a %typeterm for each class
      if(sortClasses instanceof  tom.gom.adt.objects.types.GomClassList ) { { tom.gom.adt.objects.types.GomClassList  tom_match1_1=(( tom.gom.adt.objects.types.GomClassList )sortClasses); if ( ( tom_is_fun_sym_concGomClass(tom_match1_1) ||  false  ) ) { { tom.gom.adt.objects.types.GomClassList  tom_match1_1_list1=tom_match1_1; { tom.gom.adt.objects.types.GomClassList  tom_match1_1_begin1=tom_match1_1_list1; { tom.gom.adt.objects.types.GomClassList  tom_match1_1_end1=tom_match1_1_list1; { while (!(tom_is_empty_concGomClass_GomClassList(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1; { { tom.gom.adt.objects.types.GomClass  tom_match1_1_2=tom_get_head_concGomClass_GomClassList(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concGomClass_GomClassList(tom_match1_1_list1); if ( ( tom_is_fun_sym_SortClass(tom_match1_1_2) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_match1_1_2_ClassName=tom_get_slot_SortClass_ClassName(tom_match1_1_2); { tom.gom.adt.objects.types.ClassName  tom_sortName=tom_match1_1_2_ClassName; {boolean tom_match1_tom_anti_constraints_status= true ; if (tom_terms_equal_boolean(tom_match1_tom_anti_constraints_status,  true )) { if ( true ) {
