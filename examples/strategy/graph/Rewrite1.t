@@ -42,6 +42,7 @@ import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 
 public class Rewrite1 {
+%include { string.tom }
 %include { sl.tom }
 %gom {  
   module term
