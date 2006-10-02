@@ -1,0 +1,15 @@
+How to prepare a release
+
+- bootinstall, test, commit
+- in build.xml, update the property stable.version
+- commit, tag the release with
+	cvs -d $GFORGE rtag -R tom-2_4rc1 jtom
+- create distfiles: ./build.sh dist.all
+                    ./build.sh source.distribution
+- upload files to gforge
+
+- add news entry in jtom-doc/www/{index.php,news.php} 
+
+- update tom manual version
+- build manual
+- upload manual
