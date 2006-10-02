@@ -9,7 +9,7 @@ public class TestMatchInference extends TestCase {
   
 %gom {
   module test
-  imports int
+  imports int String
   abstract syntax
   Term = a()
        | f(s:Term)

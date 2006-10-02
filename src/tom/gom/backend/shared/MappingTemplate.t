@@ -49,15 +49,46 @@ public class MappingTemplate extends TemplateClass {
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
   public void generate(java.io.Writer writer) throws java.io.IOException {
-    writer.write(%[
+    if(GomEnvironment.getInstance().isBuiltinSort("String")) {
+      writer.write(%[
 %include { string.tom }
+]%);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("int")) {
+      writer.write(%[
 %include { int.tom }
-%include { long.tom }
+]%);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("char")) {
+      writer.write(%[
+%include { char.tom }
+]%);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("double")) {
+      writer.write(%[
 %include { double.tom }
+]%);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("long")) {
+      writer.write(%[
+%include { long.tom }
+]%);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("float")) {
+      writer.write(%[
 %include { float.tom }
+]%);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("ATerm")) {
+      writer.write(%[
 %include { aterm.tom }
+]%);
+    }
+    if(GomEnvironment.getInstance().isBuiltinSort("ATermList")) {
+      writer.write(%[
 %include { atermlist.tom }
 ]%);
+    }
 
     // generate a %typeterm for each class
     %match(GomClassList sortClasses) {

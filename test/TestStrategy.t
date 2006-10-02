@@ -15,6 +15,7 @@ public class TestStrategy extends TestCase {
 
   %include { mustrategy.tom }
   %include { boolean.tom }
+  %include { long.tom }
   %include { java/util/LinkedList.tom }
 
   %typeterm Hashtable{
