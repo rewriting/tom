@@ -78,7 +78,6 @@ options{
 
   private HashSet includedFileSet = null;
   private HashSet alreadyParsedFileSet = null;
-  private boolean booleanIncluded = false;
 
   // the parser for tom constructs
   TomParser tomparser;
@@ -96,7 +95,7 @@ options{
   private int currentLine = 1;
   private int currentColumn = 1;
 
-	private boolean skipComment = false;
+  private boolean skipComment = false;
 
   public HostParser(TokenStreamSelector selector, String currentFile,
                     HashSet includedFiles, HashSet alreadyParsedFiles,
@@ -757,13 +756,6 @@ typeTerm [LinkedList list] throws TomException
             Declaration termdecl = tomparser.typeTerm();
 
             list.add(termdecl);
-
-	    // to automatically include booleans
-	    if(!booleanIncluded) {
-	      booleanIncluded = true;
-	      includeFile("boolean.tom",list);
-	    }
-
         }
 
     ;

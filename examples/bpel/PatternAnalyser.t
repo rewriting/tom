@@ -55,7 +55,6 @@ public class PatternAnalyser{
   %include {mustrategy.tom}
   %include {strategy/graph.tom}
   %include {adt/tnode/TNode.tom }
-  %include{boolean.tom}
 
   %strategy Combine(wfg:Wfg) extends `Identity(){
     visit Wfg{

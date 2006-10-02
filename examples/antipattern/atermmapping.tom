@@ -10,7 +10,7 @@
   %include { int.tom }
   %include { boolean.tom }
 
-/*
+
   %typeterm ATerm {
     implement { ATerm }
     equals(t1, t2) { t1 == t2}
@@ -20,7 +20,7 @@
     implement { ATermList }
     equals(t1, t2) { t1 == t2}
   }
-  */
+  
   %typeterm AFun {
     implement { AFun }
     equals(t1, t2) { t1 == t2 }

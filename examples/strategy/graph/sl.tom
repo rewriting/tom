@@ -1,3 +1,5 @@
+%include { string.tom }
+
 /*
  * from MuTraveler
  */

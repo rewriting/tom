@@ -36,8 +36,6 @@ import antipatterns.testantipatternassociative.antipatternassociative.types.*;
 
 public class TestAntiPatternAssociative extends TestCase {	  
 	
-	%include{boolean.tom}
-	
     %gom {
 	    module AntiPatternAssociative
 	    imports String

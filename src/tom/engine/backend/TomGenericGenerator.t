@@ -106,13 +106,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
     output.write(")");
   }
 
-  protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
-    output.write("tom_terms_equal_" + getTomType(type) + "(");
-    generate(deep,exp1,moduleName);
-    output.write(", ");
-    generate(deep,exp2,moduleName);
-    output.write(")");
-  }
 
   protected void buildExpIsFsym(int deep, String opname, TomTerm exp, String moduleName) throws IOException {
     String s = (String)isFsymMap.get(opname);

@@ -67,6 +67,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
    */
 
 
+
   protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
     %match(TomName opNameAST) {
       EmptyName() -> { output.write("tom_get_head_" + getTomType(domain) + "("); }

@@ -33,7 +33,6 @@ public class PathFinder {
 
   //%include {charlist.tom}
   %include { string.tom }
-  %include { boolean.tom }
 
   public final static void main(String[] args) {
     PathFinder test = new PathFinder();

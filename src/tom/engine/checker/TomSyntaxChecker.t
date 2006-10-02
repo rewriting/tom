@@ -519,6 +519,13 @@ public class TomSyntaxChecker extends TomChecker {
 	  TomSymbol symbol = getSymbolFromName(`name);
 	  if(symbol!=null) {
 	    TomType type = getSymbolCodomain(symbol);
+	    String typeName = getTomType(`type);
+	    if(!testTypeExistence(typeName)) {
+	      messageError(currentTomStructureOrgTrack.getFileName(),
+		  currentTomStructureOrgTrack.getLine(),
+		  TomMessage.unknownMatchArgumentTypeInSignature,
+		  new Object[]{`name, typeName});
+	    }
 	    typeMatchArgs.add(type);
             validateTerm(`term, type, false, true, true);
 	  } else {
@@ -553,6 +560,14 @@ block: {
                    TomType type = getSymbolCodomain(symbol);
                    //System.out.println("type = " + type);
                    typeMatchArgs.set(i,type);
+		   String typeName = getTomType(`type);
+		   if(!testTypeExistence(typeName)) {
+		     messageError(currentTomStructureOrgTrack.getFileName(),
+			 currentTomStructureOrgTrack.getLine(),
+			 TomMessage.unknownMatchArgumentTypeInSignature,
+			 new Object[]{`name, typeName});
+		   }
+
                    break block;
                  }
                }

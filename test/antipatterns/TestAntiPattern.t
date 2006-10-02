@@ -36,26 +36,24 @@ import antipatterns.testantipattern.antipattern.types.*;
 
 public class TestAntiPattern extends TestCase {	  
 	
-	%include{boolean.tom}
-	
-    %gom {
-	    module AntiPattern
-	    imports String
-	    abstract syntax
-	    Term = a()
-	    	| b()
-	    	| c()
-	        | f(x1:Term, x2:Term) 
-	        | g(pred:Term)
-	        | ff(x1:Term, x2:Term)
-	        
-	    Result = True()
-	    	| False()
-	    	| And(Result*)
-	    	| Or(Result*)
-	    	| Equal(x1:String,x2:Term)
-	    	| NEqual(x1:String,x2:Term)
-	   }
+  %gom {
+    module AntiPattern
+      imports String
+      abstract syntax
+      Term = a()
+      | b()
+      | c()
+      | f(x1:Term, x2:Term) 
+      | g(pred:Term)
+      | ff(x1:Term, x2:Term)
+
+      Result = True()
+      | False()
+      | And(Result*)
+      | Or(Result*)
+      | Equal(x1:String,x2:Term)
+      | NEqual(x1:String,x2:Term)
+  }
 	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestAntiPattern.class));
