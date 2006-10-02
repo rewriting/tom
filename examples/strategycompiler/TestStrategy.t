@@ -16,6 +16,7 @@ import java.util.*;
 
 public class TestStrategy extends TestCase {
 
+  %include { long.tom }
   %include { mustrategy.tom }
   %include { java/util/LinkedList.tom }
 
