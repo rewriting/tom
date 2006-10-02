@@ -76,5 +76,5 @@ to do:
   setenv CLASSPATH ${TOM_LIB}:${CLASSPATH}
 
 (windows)
-	The TOM_LIB variable is automatically set by the script "tom.bat" to contain
+  The TOM_LIB variable is automatically set by the script "tom.bat" to contain
   all the jars in the "%TOM_HOME%\lib" folder.   

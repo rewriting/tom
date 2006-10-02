@@ -255,7 +255,7 @@ public class HostParser extends antlr.LLkParser       implements HostParserToken
       if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet) ||
 	  testIncludedFile(fileCanonicalName, includedFileSet)) {
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
-          getLogger().log(new PlatformLogRecord(Level.WARNING,
+          getLogger().log(new PlatformLogRecord(Level.INFO,
                 TomMessage.includedFileAlreadyParsed,
                 currentFile, fileName, getLine()));
         }

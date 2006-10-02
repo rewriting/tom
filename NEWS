@@ -1,3 +1,20 @@
+version 2.4:
+ - the eclipse plugin is back, for eclipse version 3.2
+
+ - in the %match construct, the sort of the subject is now optional. Its is
+   automatically inferred from the patterns when possible.
+
+ - Gom generates congruence strategies and offers new functionalities, such as
+   the length of a list.
+
+ - !: a new construct that can be used to denote anti-patterns. Tom support
+   anti-patterns under syntactic and list-operators, but not yet in XML.
+
+ - the strategy library has been extended such that strategy expressions can be
+   matched, like any other term. A strategy can now take another strategy in
+   argument. The mu-expansion is performed on strategies defined using %strategy.
+
+ - a support for Java bytecode analysis and transformation has been added
 
 version 2.3:
  - a new generator of abstract data types has been introduced: Gom. 
@@ -5,7 +22,7 @@ version 2.3:
    Gom is more expressive than Vas by allowing the definition of Hooks.
    This ensure that an action is executed each time a constructor is built. In
    practice, this allows to compute canonical forms.
-   In addtition, Gom generate more compact code and is more efficient than Vas.
+   In addition, Gom generate more compact code and is more efficient than Vas.
 
  - %strategy: a new construct that helps to defines strategies. When
    using %strategy, it is no longer necessary to define inner-classes.
@@ -42,7 +59,7 @@ version 2.2:
   - access functions (get_head, get_tail, etc.) have to be defined in %oplist
     and %oparray
   - fixed a completeness bug in array version of list-matching
-  - a new optimizer has been developped (-O2): this improves pattern matching
+  - a new optimizer has been developed (-O2): this improves pattern matching
     efficiency
   - backquote notation can be used in make(...) { ... }
 
@@ -104,7 +121,7 @@ version 1.5:
 version 1.4:
   - fix the ^M problem under windows
   - user defined labels a are allowed in patterns
-  - complex paths allowed in %include contructs
+  - complex paths allowed in %include constructs
 
 version 1.3:
   - %typein and %typedouble added
@@ -123,7 +140,7 @@ version 1.2:
   - several bugs fixed
 
 version 1.1:
-  - new debuging facilities:
+  - new debugging facilities:
     Tom source and the generated code are now synchronized
   - backquote support for typelist and typearray
     make_add renamed into make_insert (for oplist)

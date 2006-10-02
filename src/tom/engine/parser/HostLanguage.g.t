@@ -247,7 +247,7 @@ options{
       if(testIncludedFile(fileCanonicalName, alreadyParsedFileSet) ||
 	  testIncludedFile(fileCanonicalName, includedFileSet)) {
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
-          getLogger().log(new PlatformLogRecord(Level.WARNING,
+          getLogger().log(new PlatformLogRecord(Level.INFO,
                 TomMessage.includedFileAlreadyParsed,
                 currentFile, fileName, getLine()));
         }
