@@ -65,8 +65,8 @@ set STD_OPTS=true
 :okOpts
 
 rem ----- Execute The Requested Command ---------------------------------------
-echo Using JAVA_HOME:       %JAVA_HOME%
-echo Using TOM_HOME:        %TOM_HOME%
+rem echo Using JAVA_HOME:       %JAVA_HOME%
+rem echo Using TOM_HOME:        %TOM_HOME%
 
 rem Set standard command for invoking Java.
 set _RUNJAVA="%JAVA_HOME%\bin\java"
