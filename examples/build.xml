@@ -336,6 +336,7 @@
     <zip destfile="${distrib.zip}" update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="755">
         <include name="build.sh"/>
+        <include name="build.bat"/>
       </zipfileset>
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="README"/>
