@@ -339,6 +339,7 @@
       </zipfileset>
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="README"/>
+      	<include name="common.xml"/>
         <include name="build.xml"/>
         <include name="*/build.xml"/>
         <include name="${examples.lib}/*.jar"/>
