@@ -17,7 +17,6 @@
     </javac.preset>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
-    <!-- Do not distribute it yet
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
@@ -27,6 +26,5 @@
         <include name="${strategycompiler}/*.gom"/>
       </zipfileset>
     </zip>
-    -->
   </target>
 </project>
