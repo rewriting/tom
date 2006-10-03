@@ -128,7 +128,6 @@ public class Analyser{
 
 
   // Predicat NotUsed(v:Variable) qui teste si une variable n'est pas utilisee au noeud racine d'un cfg 
-
   %op Strategy NotUsed(v:Variable) {
     make(v) {new ControlFlowGraphBasicStrategy(`TopDown(InnerNotUsed(v)))}
   }
@@ -137,34 +136,10 @@ public class Analyser{
   %strategy InnerNotUsed(v:Variable) extends `Identity(){
     visit Term {
       t@Var(var) -> {
-        if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(`t);
+        if(`var.equals(v)) throw new VisitFailure();
       }
     }
   }
-  // en attendant que le bug dans NodeForward soit fixe (ensuite on utilisera la strategie InnerNotUsed)
-  /* class InnerNotUsed extends NodeBasicStrategy{
-
-
-     Variable v;
-
-     public InnerNotUsed(Variable v) {
-     super(`Identity());
-     this.v=v;
-     }
-
-     public Visitable visit(Visitable arg) throws VisitFailure {
-     if(arg instanceof Term){
-     %match(Term arg){
-     Var(var) -> {
-     if(`var.equals(v)) return (Term) MuTraveler.init(`Fail()).visit(arg);
-     }
-     }
-     }
-
-     return super.visit(arg);
-     }
-     }*/ 
-
 
   // Predicat Free(v:Variable) qui teste si une variable est libere au noeud racine d'un cfg
   %strategy InnerFree(v:Variable) extends `Fail() {
@@ -182,8 +157,8 @@ public class Analyser{
   }
 
 
-  // Predicat Modified(v:Variable) qui teste si une variable est modifie (affected) au noeud racine d'un cfg
-  %strategy InnerModified(v:Variable) extends `Fail() {
+  // Predicat Affect(v:Variable) qui teste si une variable est modifie (affected) au noeud racine d'un cfg
+  %strategy InnerAffect(v:Variable) extends `Fail() {
     visit Node{
       n@affect(var,_) -> {
         if(`var.equals(v)) {
@@ -193,8 +168,8 @@ public class Analyser{
     }
   }
 
-  %op Strategy Modified(v:Variable) {
-    make(v) { new ControlFlowGraphBasicStrategy(`InnerModified(v))}
+  %op Strategy Affect(v:Variable) {
+    make(v) { new ControlFlowGraphBasicStrategy(`InnerAffect(v))}
   }
 
   //Construction du CFG à partir de l'Ast
@@ -270,9 +245,8 @@ public class Analyser{
             //s1 = notUsed(var)
             MuStrategy s1 = `NotUsed(var);
             //s2 = free(var)
-            MuStrategy s2 = `Free(var);
-            MuStrategy notUsedCond = `AU(s1,s2);
-            //      `mu(MuVar("x"),Choice(s2,Sequence(s1,Sequence(All(MuVar("x")),One(Identity)))));
+            MuStrategy s2 = `OrCtl(Free(var),Affect(var));
+            MuStrategy notUsedCond = `AX(AU(s1,s2));
             if(cfg.verify(notUsedCond,n)) {
               System.out.println("Variable "+`var+" with the value "+`term+" is not used");
               l.add(n);
@@ -301,7 +275,7 @@ public class Analyser{
 
 
             //s1 = not(modified(var)
-            MuStrategy s1 = `Not(Modified(var));
+            MuStrategy s1 = `Not(Affect(var));
 
             //s2 = (used(var) and AX(notUsedCond(var)
             MuStrategy s2 =  

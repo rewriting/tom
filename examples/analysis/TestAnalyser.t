@@ -60,25 +60,25 @@ public class TestAnalyser extends TestCase {
   public void setUp() {
     analyser = new Analyser();
     subject = `concAst(
-	If(True(),
-	  concAst(),
-	  concAst(
-	    LetRef(var_x,g(a()),concAst(
-		LetAssign(var_x,g(b())),
-		LetAssign(var_x,f(a(),b())),
-		Let(var_y,g(Var(var_x)),concAst())
-		)
-	      )
-	    )
-	  ),
-	Let(var_z,f(a(),b()),concAst())
-	);
+        If(True(),
+          concAst(),
+          concAst(
+            LetRef(var_x,g(a()),concAst(
+                LetAssign(var_x,g(b())),
+                LetAssign(var_x,f(a(),b())),
+                Let(var_y,g(Var(var_x)),concAst())
+                )
+              )
+            )
+          ),
+        Let(var_z,f(a(),b()),concAst())
+        );
 
     System.out.println("subject          = " + subject);
 
     try{
       correspondingCfg = analyser.constructCFG(subject);
-      System.out.println("correpsonding correspondingCfg = " + correspondingCfg);
+      System.out.println("correpsonding cfg = " + correspondingCfg);
     }catch(Exception e){
       System.out.println(e);
     }
@@ -92,15 +92,17 @@ public class TestAnalyser extends TestCase {
       Vertex n = (Vertex) (iter.next());
       Node nn = n.getNode();
       %match(Node nn){
-	affect(Name("y"),g(Var(Name("x")))) -> {attemptedResult.add(n);}
-	affect(Name("z"),f(a(),b())) -> {attemptedResult.add(n);}
+        affect(Name("x"),g(a())) -> {attemptedResult.add(n);}
+        affect(Name("x"),g(b())) -> {attemptedResult.add(n);}
+        affect(Name("y"),g(Var(Name("x")))) -> {attemptedResult.add(n);}
+        affect(Name("z"),f(a(),b())) -> {attemptedResult.add(n);}
       }
     }
     System.out.println("notUsedAffectations = " + notUsedAffectations);
     System.out.println("attemptedResult     = " + attemptedResult);
     assertEquals(notUsedAffectations,attemptedResult);
   }
-/*
+
   public void testOnceUsed() {
     List onceUsedAffectations = analyser.onceUsedAffectations(correspondingCfg);
     List attemptedResult = new ArrayList();
@@ -109,12 +111,12 @@ public class TestAnalyser extends TestCase {
       Vertex n = (Vertex) (iter.next());
       Node nn = n.getNode();
       %match(Node nn){
-	affect(Name("x"),f(a(),b())) -> {attemptedResult.add(n);}
+        affect(Name("x"),f(a(),b())) -> {attemptedResult.add(n);}
       }
     }
     System.out.println("onceUsedAffectations = " + onceUsedAffectations);
     System.out.println("attemptedResult      = " + attemptedResult);
     assertEquals(onceUsedAffectations,attemptedResult);
   }
-*/
+
 }
