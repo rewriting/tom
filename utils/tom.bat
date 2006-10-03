@@ -23,14 +23,18 @@ rem ---------------------------------------------------------------------------
  
 rem Make sure prerequisite environment variables are set
 if not "%JAVA_HOME%" == "" goto gotJavaHome
-echo The JAVA_HOME environment variable is not defined
-echo This environment variable is needed to run this program
-goto end
+echo WARNING: The JAVA_HOME environment variable is not defined
+echo The installation may not work
+set JAVA_PREFIX=
+rem goto end
+goto okJavaHome
+
 :gotJavaHome
 if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\javaw.exe" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\jdb.exe" goto noJavaHome
 if not exist "%JAVA_HOME%\bin\javac.exe" goto noJavaHome
+set JAVA_PREFIX=%JAVA_HOME%\bin\
 goto okJavaHome
 :noJavaHome
 echo The JAVA_HOME environment variable is not defined correctly
@@ -65,10 +69,11 @@ set STD_OPTS=true
 
 rem ----- Execute The Requested Command ---------------------------------------
 echo Using JAVA_HOME:       %JAVA_HOME%
+echo Using JAVA_PREFIX:     %JAVA_PREFIX%
 echo Using TOM_HOME:        %TOM_HOME%
 
 rem Set standard command for invoking Java.
-set _RUNJAVA="%JAVA_HOME%\bin\java"
+set _RUNJAVA="%JAVA_PREFIX%java"
 set MAINCLASS=tom.engine.Tom
 
 rem Get command line arguments and save them in 
@@ -99,3 +104,4 @@ rem execute TOM
 %_RUNJAVA% %JAVA_OPTS% -Dtom.home=%TOM_HOME% -classpath "%CLASSPATH%%TOM_LIB%" %MAINCLASS% %TOM_OPTS% %CMD_LINE_ARGS%
 
 :end
+
