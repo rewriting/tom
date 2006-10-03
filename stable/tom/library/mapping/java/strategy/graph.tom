@@ -65,14 +65,13 @@
  * It succeeds if s1 is "True" until s2 is "True".
  * @param s1 the first strategy.
  * @param s2 the second strategy.
-
  */
 %op Strategy AU(s1:Strategy, s2:Strategy) {
-  make(s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(s1,All(MuVar("x"))))) }
+  make(s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,All(MuVar("x"))),One(Identity())))) }
 }
 
 %op Strategy EU(s1:Strategy, s2:Strategy) {
-  make(s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(Sequence(s1,One(MuVar("x"))),One(Identity()))))}
+  make(s1,s2) { `mu(MuVar("x"),Choice(s2,Sequence(s1,One(MuVar("x")))))}
 }
 
 %op Strategy TrueCtl(){

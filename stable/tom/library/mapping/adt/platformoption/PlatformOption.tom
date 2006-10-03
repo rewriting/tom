@@ -1,11 +1,7 @@
 
 %include { string.tom }
+
 %include { int.tom }
-%include { long.tom }
-%include { double.tom }
-%include { float.tom }
-%include { aterm.tom }
-%include { atermlist.tom }
 
 %typeterm PlatformValue {
   implement { tom.platform.adt.platformoption.types.PlatformValue }

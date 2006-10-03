@@ -1,11 +1,13 @@
 
 %include { string.tom }
+
 %include { int.tom }
-%include { long.tom }
+
 %include { double.tom }
+
+%include { long.tom }
+
 %include { float.tom }
-%include { aterm.tom }
-%include { atermlist.tom }
 
 %typeterm TNode {
   implement { tom.library.adt.tnode.types.TNode }

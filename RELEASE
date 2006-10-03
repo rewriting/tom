@@ -10,6 +10,6 @@ How to prepare a release
 
 - add news entry in jtom-doc/www/{index.php,news.php} 
 
-- update tom manual version
+- update tom manual version (template.hva, tom.sty)
 - build manual
 - upload manual
