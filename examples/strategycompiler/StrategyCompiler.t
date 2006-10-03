@@ -61,6 +61,9 @@ public class StrategyCompiler {
       TClass inlinedStrat = buildInlinedStrategy(subject, inlinedClassName, classCollector);
       //bytecode.CFGViewer.classToDot(inlinedStrat);
 
+      //DEBUG Dump the compiled class into a file 'tmp'
+      ClassDumper.dumpTClassToFile(inlinedStrat,inlinedClassName+"tmp");
+ 
       // Dump the compiled class into a `Class' object.
       Class clazz = ClassDumper.dumpTClass(inlinedStrat);
       try {
@@ -183,7 +186,7 @@ public class StrategyCompiler {
        Method(
          MethodInfo(
            owner,
-           AccessList(PUBLIC()),
+           accessList,
            "visit",
            MethodDescriptor(
              FieldDescriptorList(ObjectType("jjtraveler/Visitable")),
@@ -203,7 +206,7 @@ public class StrategyCompiler {
           // Adds a `Astore(1)' instruction at the beginning of the inlined
           // `visit' call to handle the `Visitable' parameter.
           // The `Astore(1)' will be renamed as the other load/stores. Thus we
-          // now automagically in which local variable the parameter is.
+          // now automatically in which local variable the parameter is.
           // It works because each inlined method push on the stack the
           // `returned value'.
           newCode = newCode.setinstructions(`InstructionList(Astore(1), instructions*));
@@ -224,7 +227,7 @@ public class StrategyCompiler {
                 TopDown(
                   InlineVisitCode(classCollector, methodCollector, subject, inlinedClassName, methodEnd, symbolTable)));
 
-          // TODO : remplace with a strategy like : mu(MuVar("x"), OnceTopDownId(S(MuVar("x"))))
+          // TODO : replace with a strategy like : mu(MuVar("x"), OnceTopDownId(S(MuVar("x"))))
 
           // Do the job.
           newCode = (TMethodCode)inliner.apply(newCode);
@@ -293,19 +296,26 @@ public class StrategyCompiler {
       // The field is renamed too.
       x@(Getstatic|Putstatic|Getfield|Putfield)[name=name, owner=owner, fieldDesc=fieldDesc] -> {
         // FIXME ugly !
-        String newName = subject.toString().replace('.', '_').replace('@', '_') + "_" + `name;
+        %match(String name){
+          //we do not need to create vistors fields after inlining
+          //if we create them they are duplicated
+          !"visitors" ->{
+            //Renaming of fields is not necessar 
+            //String newName = subject.toString().replace('.', '_').replace('@', '_') + "_" + `name;
+            %match(TFieldList subjectFieldList, String `name) {
+              (_*, f@Field[name=fName], _*), fname -> {
+                //classCollector.addField(`f.setname(newName));
+                classCollector.addField(`f);
+              }
+            }
 
-        %match(TFieldList subjectFieldList, String `name) {
-          (_*, f@Field[name=fName], _*), fname -> {
-            classCollector.addField(`f.setname(newName));
+            TInstruction ins = `x.setowner(inlinedClassName);
+            //return ins.setname(newName);
+            return ins;
           }
         }
-
-        TInstruction ins = `x.setowner(inlinedClassName);
-        return ins.setname(newName);
       }
     }
-
     // Labels must be renamed too as a `Label(X)' can be present into the
     // current code and in a future inlined code.
     visit TLabel {
@@ -348,54 +358,46 @@ public class StrategyCompiler {
       symbolTable:SymbolTable
       ) extends Identity() {
     visit TInstructionList {
-      // Match a `getArgument' call.
+      // Match a `visitors[index]' call.
       // The index of the wanted argument is computed, and then the
       // corresponding strategy is pushed into strategy stack of the collector.
       // The captured instructions are removed because they will be useless
       // after inlining.
       (Aload(0),
+       Getfield[],
        index,
-       Invokevirtual(
-         _,
-         "getArgument",
-         MethodDescriptor(
-           ConsFieldDescriptorList(
-             I(),
-             EmptyFieldDescriptorList()),
-           ReturnDescriptor(
-             ObjectType(
-               "jjtraveler/reflective/VisitableVisitor")))),
+       Aaload[],
        tail*) -> {
         // Computes the index of the argument to be retrieve.
-          int index = 0;
-          boolean index_flag = false;
-          %match(TInstruction `index) {
-            Iconst_m1() -> { index = -1; index_flag = true; }
-            Iconst_0() -> { index = 0; index_flag = true; }
-            Iconst_1() -> { index = 1; index_flag = true; }
-            Iconst_2() -> { index = 2; index_flag = true; }
-            Iconst_3() -> { index = 3; index_flag = true; }
-            Iconst_4() -> { index = 4; index_flag = true; }
-            Iconst_5() -> { index = 5; index_flag = true; }
-            (Bipush|Sipush)(operand) -> { index = `operand; index_flag = true; }
-            Ldc(IntValue(value)) -> { index = `value; index_flag = true; }
-          }
-
-          if(index_flag) {
-            // Gets the subterm normally returned by the `getArgument' call and
-            // push it onto the strategy stack.
-            MuStrategy s = (MuStrategy)((tom.library.strategy.mutraveler.AbstractMuStrategy)subject).getArgument(index);
-            classCollector.pushStrategy(s);
-
-            // Replaces the matched instructions by a `Nop()' one to ensure
-            // that the next term to be analysed is the tail.
-            // This is just to ensure that the matched instructions will
-            // not be twice.
-            // It allow us to 'remove' them and thus the instructions will not
-            // be added into the new instruction list builds in the collector.
-            return `InstructionList(Nop(), tail*);
-          }
+        int index = 0;
+        boolean index_flag = false;
+        %match(TInstruction `index) {
+          Iconst_m1() -> { index = -1; index_flag = true; }
+          Iconst_0() -> { index = 0; index_flag = true; }
+          Iconst_1() -> { index = 1; index_flag = true; }
+          Iconst_2() -> { index = 2; index_flag = true; }
+          Iconst_3() -> { index = 3; index_flag = true; }
+          Iconst_4() -> { index = 4; index_flag = true; }
+          Iconst_5() -> { index = 5; index_flag = true; }
+          (Bipush|Sipush)(operand) -> { index = `operand; index_flag = true; }
+          Ldc(IntValue(value)) -> { index = `value; index_flag = true; }
         }
+
+        if(index_flag) {
+          // Gets the subterm normally returned by the `getArgument' call and
+          // push it onto the strategy stack.
+          MuStrategy s = (MuStrategy)((tom.library.strategy.mutraveler.AbstractMuStrategy)subject).getArgument(index);
+          classCollector.pushStrategy(s);
+
+          // Replaces the matched instructions by a `Nop()' one to ensure
+          // that the next term to be analysed is the tail.
+          // This is just to ensure that the matched instructions will
+          // not be twice.
+          // It allow us to 'remove' them and thus the instructions will not
+          // be added into the new instruction list builds in the collector.
+          return `InstructionList(Nop(), tail*);
+        }
+      }
 
       // Match a `visit' method call.
       // The method call is inlined by recursively call the
@@ -404,16 +406,16 @@ public class StrategyCompiler {
       // Special cases as `Mu' and `%strategy' are handle properly into the
       // `handleVisit' method.
       (Invokeinterface(
-            owner,
-            "visit",
-            MethodDescriptor(
-              ConsFieldDescriptorList(
-                ObjectType(
-                  "jjtraveler/Visitable"),
-                EmptyFieldDescriptorList()),
-              ReturnDescriptor(
-                ObjectType(
-                  "jjtraveler/Visitable")))),
+                       owner,
+                       "visit",
+                       MethodDescriptor(
+                         ConsFieldDescriptorList(
+                           ObjectType(
+                             "jjtraveler/Visitable"),
+                           EmptyFieldDescriptorList()),
+                         ReturnDescriptor(
+                           ObjectType(
+                             "jjtraveler/Visitable")))),
        tail*) -> {
         %match(String `owner) {
           ("jjtraveler/Visitor"|"jjtraveler/reflective/VisitableVisitor")() -> {
@@ -680,8 +682,8 @@ public class StrategyCompiler {
                       "jjtraveler/reflective/VisitableVisitor"))),
                 Void())),
             Return()),
-          EmptyLocalVariableList(),
-          EmptyTryCatchBlockList()));
+      EmptyLocalVariableList(),
+      EmptyTryCatchBlockList()));
 
     return constructor;
   }
