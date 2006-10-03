@@ -1,7 +1,8 @@
 package strategycompiler;
 
-import strategycompiler.classtree.*;
-import strategycompiler.classtree.types.*;
+import tom.library.adt.bytecode.*;
+import tom.library.adt.bytecode.types.*;
+
 
 /**
  * Collector for method related stuff.
@@ -11,8 +12,9 @@ import strategycompiler.classtree.types.*;
  * compiler.
  */
 public class MethodCollector {
-  %include { classtree/ClassTree.tom }
 
+  %include { adt/bytecode/Bytecode.tom }
+  
   private TLocalVariableList varList;
   private TTryCatchBlockList tcbList;
   private TInstructionList insList;

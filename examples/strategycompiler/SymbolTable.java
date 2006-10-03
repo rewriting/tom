@@ -1,4 +1,3 @@
-
 package strategycompiler;
 
 import java.util.HashMap;

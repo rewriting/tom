@@ -8,8 +8,9 @@ import java.util.EmptyStackException;
 
 import tom.library.strategy.mutraveler.MuStrategy;
 
-import strategycompiler.classtree.*;
-import strategycompiler.classtree.types.*;
+import tom.library.adt.bytecode.*;
+import tom.library.adt.bytecode.types.*;
+
 
 /**
  * Collector for class related stuff.
@@ -22,7 +23,7 @@ import strategycompiler.classtree.types.*;
  * `getArgument' return values.
  */
 public class ClassCollector {
-  %include { classtree/ClassTree.tom }
+  %include { adt/bytecode/Bytecode.tom }
 
   private TFieldList fieldList;
   private TMethodList methodList;

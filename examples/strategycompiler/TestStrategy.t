@@ -1,4 +1,3 @@
-
 package strategycompiler;
 
 import junit.framework.TestCase;
@@ -17,6 +16,7 @@ import java.util.*;
 public class TestStrategy extends TestCase {
 
   %include { long.tom }
+  %include { boolean.tom }
   %include { mustrategy.tom }
   %include { java/util/LinkedList.tom }
 

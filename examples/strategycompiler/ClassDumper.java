@@ -5,11 +5,10 @@ import java.util.HashMap;
 import java.io.IOException;
 import java.io.FileOutputStream;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassAdapter;
+import tom.library.adt.bytecode.*;
+import tom.library.adt.bytecode.types.*;
 
-import strategycompiler.classtree.*;
-import strategycompiler.classtree.types.*;
+import tom.library.bytecode.*;
 
 
 /**
@@ -33,21 +32,10 @@ public class ClassDumper {
     Object o = loadedClass.get(internalClassName);
     TClass clazz = null;
     if(o == null) {
-      try {
         System.out.println("Parsing class file `" + internalClassName + "' ...");
-        ClassReader cr = new ClassReader(internalClassName);
-        TClassGenerator cg = new TClassGenerator();
-        ClassAdapter ca = new ClassAdapter(cg);
-        cr.accept(ca, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-
-        clazz = cg.getTClass();
+        BytecodeReader cr = new BytecodeReader(internalClassName);
+        clazz = cr.getTClass();
         loadedClass.put(internalClassName, clazz);
-      } catch(IOException ioe) {
-        System.err.println("Error while loading class file `" + internalClassName + "'.");
-        System.err.println("Java has returned the error :");
-        ioe.printStackTrace();
-        System.exit(-1);  // FIXME
-      }
     } else
       clazz = (TClass)o;
 

@@ -1,4 +1,3 @@
-
 package strategycompiler;
 
 import tom.library.strategy.mutraveler.MuStrategy;
@@ -8,8 +7,9 @@ import tom.library.strategy.mutraveler.MuVar;
 
 import java.util.HashMap;
 
-import strategycompiler.classtree.*;
-import strategycompiler.classtree.types.*;
+import tom.library.adt.bytecode.*;
+import tom.library.adt.bytecode.types.*;
+
 
 /**
  * Tom strategy compiler.
@@ -18,8 +18,8 @@ import strategycompiler.classtree.types.*;
  */
 public class StrategyCompiler {
   %include { mustrategy.tom }
-  %include { classtree/ClassTree.tom }
-
+  %include { adt/bytecode/Bytecode.tom }
+ 
   /**
    * Compiles the given strategy into the class file `inlinedClassName'.
    * Packages are not handled correctly yet (i.e. if `inlinedClassName' is
