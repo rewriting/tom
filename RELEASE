@@ -8,7 +8,6 @@ How to prepare a release:
 - ./build.sh all
 - cvs commit
 
-
 - update the version of the manual (template.hva, tom.sty)
 - update the date of the manual (manual.tex)
 - build manual
@@ -17,15 +16,20 @@ How to prepare a release:
 - mkdir manuel-<version> ; cd manual-<version> ; unzip ../manual.zip
 - cd .. ; zip -r manual-<version>.zip manual-<version>
 
+- prepare the eclipse plugin
 
+- create distfiles:
+- ./build.sh dist.all
+- ./build.sh source.distribution
 
-- 
-- commit, tag the release with
-	cvs -d $GFORGE rtag -R tom-2_4rc1 jtom
-- create distfiles: ./build.sh dist.all
-                    ./build.sh source.distribution
 - upload files to gforge
+- upload manual
+
+
+
+
+- update Changelog, commit, tag the release with
+	cvs -d $GFORGE rtag -R tom-2_4rc1 jtom
 
 - add news entry in jtom-doc/www/{index.php,news.php} 
 
-- upload manual
