@@ -151,7 +151,7 @@ public class TomKernelCompiler extends TomBase {
     		  ,antiFlagName,antiFlagType,concConstraint());
       TomAntiPatternTransformNew.initialize();      
       // final test
-      Instruction finalTest = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),actionInst,Nop());      
+      Instruction finalTest = `If(EqualTerm(antiFlagType,Ref(antiFlagVariable),ExpressionToTomTerm(TrueTL())),actionInst,Nop());      
       Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(finalTest,`Nop(),
     		  patternList,rootpath,moduleName,null);
 	  // glue the flag declaration
