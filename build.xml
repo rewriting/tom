@@ -113,7 +113,7 @@
     <attribute name="destdir"/>
     <attribute name="debug"   default="${javacDebugInfo}"/>
     <attribute name="verbose" default="${javacVerbose}"/>
-    <attribute name="fork"    default="no"/>
+    <attribute name="fork"    default="yes"/>
     <attribute name="target"  default="${javacTarget}"/>
     <attribute name="source"  default="${javacSource}"/>
     <attribute name="nowarn"  default="${nowarnings}"/>
@@ -443,7 +443,7 @@
     <replace dir="${src.gen}" token="@TOM_VERSION@" value="${src.version} (src)">
 	    <include name="tom/engine/Tom.java"/>
     </replace>
-    <tomjavac destdir="${src.build}" fork="no">
+    <tomjavac destdir="${src.build}" fork="yes">
       <src path="${src.src}"/>
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>
