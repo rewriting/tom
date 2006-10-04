@@ -20,7 +20,7 @@
          update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="gombench/*.t"/>
-        <include name="gombench/*.tom"/>
+        <include name="gombench/**/*.tom"/>
         <include name="gombench/**/*.java"/>
         <include name="gombench/*.gom"/>
       </zipfileset>
