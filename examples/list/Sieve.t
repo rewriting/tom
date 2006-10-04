@@ -32,7 +32,7 @@ package list;
 import aterm.*;
 import aterm.pure.SingletonFactory;
 
-public class Erat {
+public class Sieve {
   private static ATermFactory factory = SingletonFactory.getInstance();
 
   %include { int.tom }
@@ -82,7 +82,7 @@ public class Erat {
   }
 
   public final static void main(String[] args) {
-    Erat test = new Erat();
+    Sieve test = new Sieve();
     test.run();
   }
 
