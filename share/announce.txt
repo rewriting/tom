@@ -29,7 +29,7 @@ equational rewriting.
 This offers the possibility to analyze and transform any kind of
 data-structure. Tom can be used for large scale developments and
 applications. It comes with documentation, programming, and debugging
-support. 
+support.
 
 This new release contains many improvements and new features:
   - Anti-Patterns:
@@ -45,7 +45,7 @@ This new release contains many improvements and new features:
   - Congruence Strategies:
     Gom generates new elementary congruence and constructions
     strategies. This allows for instance to define the Map operation in
-    a easy way: map(s) = _conc(s) 
+    a easy way: map(s) = _conc(s)
 
   - Java Bytecode:
     A support for Java bytecode analysis and transformation is available
@@ -57,7 +57,7 @@ This new release contains many improvements and new features:
   - Eclipse Plugin:
     It is back for Eclipse version 3.2.
     It also supports Gom and all new functionalities.
-  
+
 Tom is available, in open source (GPL/BSD License), from the web page:
 
   http://tom.loria.fr
