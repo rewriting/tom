@@ -34,7 +34,7 @@ support.
 This new release contains many improvements and new features:
   - Anti-Patterns:
     Tom now supports not only pattern matching, but also anti-pattern
-    matching. For example, the patterns (_*,!a(),_*) denotes a list
+    matching. For example, the pattern (_*,!a(),_*) denotes a list
     which contains at least one element different from a(). In a similar
     way, !(_*,a(),_*) denotes a list which does not contain any a().
 
