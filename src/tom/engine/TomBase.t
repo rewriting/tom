@@ -81,7 +81,8 @@ public class TomBase {
   }
 
   protected static TomNumberList appendNumber(int n, TomNumberList path) {
-    return `concTomNumber(path*,Number(n));
+    //return `concTomNumber(path*,Number(n));
+    return `concTomNumber(path*,NameNumber(PositionName(concTomNumber(Number(n)))));
   }
     
   protected static TomList append(TomTerm t, TomList l) {

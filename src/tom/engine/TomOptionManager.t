@@ -278,7 +278,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
       getLogger().log(Level.SEVERE,TomMessage.optionNotFound.getMessage(),getCanonicalName(name));
-      throw new RuntimeException();
+      //throw new RuntimeException();
     }
     return option;
   }

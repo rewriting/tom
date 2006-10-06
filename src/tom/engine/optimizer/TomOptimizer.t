@@ -209,17 +209,19 @@ public class TomOptimizer extends TomGenericPlugin {
 
   private static boolean expConstantInBody(Expression exp, Instruction body) {
     HashSet c = new HashSet();
-    try{
+    try {
       MuTraveler.init(`TopDownCollect(findRefVariable(c))).visit(exp);
-    }catch(VisitFailure e){
+    } catch(VisitFailure e) {
       logger.log( Level.SEVERE, "Error during collecting variables in "+exp);
     }
     Iterator it = c.iterator();
     while(it.hasNext()) {
       TomName name = (TomName) it.next();
-      try{
+      try {
         MuTraveler.init(`isAssigned(name)).visit(body);
-      }catch(VisitFailure e){return false;}
+      } catch(VisitFailure e) {
+        return false;
+      }
     }
     return true; 
   }
@@ -272,44 +274,59 @@ public class TomOptimizer extends TomGenericPlugin {
 
         /*
          * 
-         * LetRef x where x is used 0 or 1 ==> eliminate
+         * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
+         * x should not appear in exp
          */
-        (LetRef|LetAssign)(var@(Variable|VariableStar)[AstName=name@Name(tomName)],exp,body) -> {
+        (LetRef|LetAssign)(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
+          /*
+           * do not optimize Variable(TomNumber...) because LetRef X*=GeTTail(X*) in ...
+           * is not correctly handled 
+           * we must check that X notin exp
+           */
+          String varName = "";
+          %match(name) {
+            Name(tomName) -> { varName = `tomName; }
+          }
+
           ArrayList list  = new ArrayList();
           MuTraveler.init(`computeOccurences(name,list)).visit(`body);
           int mult = list.size();
           if(mult == 0) {
-            Option orgTrack = findOriginTracking(`var.getOption());
-
-            logger.log( Level.WARNING,
-                TomMessage.unusedVariable.getMessage(),
-                new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()),
-                `extractRealName(tomName)} );
-            logger.log( Level.INFO,
-                TomMessage.remove.getMessage(),
-                new Object[]{ new Integer(mult), `extractRealName(tomName) });
-
-            return `body;
-
-          } else if(mult == 1) {
-            if(expConstantInBody(`exp,`body)) {
-
+            if(varName.length() > 0) {
+              Option orgTrack = findOriginTracking(`var.getOption());
+              logger.log( Level.WARNING,
+                  TomMessage.unusedVariable.getMessage(),
+                  new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()), `extractRealName(varName)} );
               logger.log( Level.INFO,
-                  TomMessage.inline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(tomName) });
-
+                  TomMessage.remove.getMessage(),
+                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+            }
+            return `body;
+          } else if(mult == 1) {
+            list.clear();
+            `computeOccurences(name,list).apply(`exp);
+            if(expConstantInBody(`exp,`body) && list.size()==0) {
+              if(varName.length() > 0) {
+                logger.log( Level.INFO,
+                    TomMessage.inline.getMessage(),
+                    new Object[]{ new Integer(mult), `extractRealName(varName) });
+              }
+              //System.out.println("replace1: " + `var + "\nby: " + `exp);
               return (Instruction) (MuTraveler.init(`inlineInstruction(name,exp)).visit(`body));
             } else {
-              logger.log( Level.INFO,
-                  TomMessage.noInline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(tomName) });
+              if(varName.length() > 0) {
+                logger.log( Level.INFO,
+                    TomMessage.noInline.getMessage(),
+                    new Object[]{ new Integer(mult), `extractRealName(varName) });
+              }
             }
-
           } else {
             /* do nothing: traversal() */
-            logger.log( Level.INFO,
-                TomMessage.doNothing.getMessage(),
-                new Object[]{ new Integer(mult), `extractRealName(tomName) });
+            if(varName.length() > 0) {
+              logger.log( Level.INFO,
+                  TomMessage.doNothing.getMessage(),
+                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+            }
           }
         }
 
@@ -318,44 +335,58 @@ public class TomOptimizer extends TomGenericPlugin {
           return `body; 
         } 
 
-        Let(var@(Variable|VariableStar)[AstName=name@Name(tomName)],exp,body) -> {
+        let@Let(var@(Variable|VariableStar)[AstName=name],exp,body) -> {
+          String varName = "";
+          %match(name) {
+            Name(tomName) -> { varName = `tomName; }
+          }
           ArrayList list  = new ArrayList();
           MuTraveler.init(`computeOccurences(name,list)).visit(`body);
           int mult = list.size();
 
+          //System.out.println("name: " + `name);
           if(mult == 0) {
-            Option orgTrack = findOriginTracking(`var.getOption());
-
-            logger.log( Level.WARNING,
-                TomMessage.unusedVariable.getMessage(),
-                new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()),
-                `extractRealName(tomName)} );
-            logger.log( Level.INFO,
-                TomMessage.remove.getMessage(),
-                new Object[]{ new Integer(mult), `extractRealName(tomName) });
-
+            if(varName.length() > 0) {
+              Option orgTrack = findOriginTracking(`var.getOption());
+              logger.log( Level.WARNING,
+                  TomMessage.unusedVariable.getMessage(),
+                  new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()),
+                  `extractRealName(varName)} );
+              logger.log( Level.INFO,
+                  TomMessage.remove.getMessage(),
+                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+            }
+            //System.out.println("elim2: " + `var);
+            //System.out.println("let: " + `let);
             return `body; 
           } else if(mult == 1) {
             if(expConstantInBody(`exp,`body)) {
-              logger.log( Level.INFO,
-                  TomMessage.inline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(tomName) });
+              if(varName.length() > 0) {
+                logger.log( Level.INFO,
+                    TomMessage.inline.getMessage(),
+                    new Object[]{ new Integer(mult), `extractRealName(varName) });
+              }
+              // System.out.println("replace2: " + `var + "\nby: " + `exp);
               return (Instruction) (MuTraveler.init(`inlineInstruction(name,exp)).visit(`body));
             } else {
-              logger.log( Level.INFO,
-                  TomMessage.noInline.getMessage(),
-                  new Object[]{ new Integer(mult), `extractRealName(tomName) });
+              if(varName.length() > 0) {
+                logger.log( Level.INFO,
+                    TomMessage.noInline.getMessage(),
+                    new Object[]{ new Integer(mult), `extractRealName(varName) });
+              }
             }
           } else {
             /* do nothing: traversal() */
-            logger.log( Level.INFO,
-                TomMessage.doNothing.getMessage(),
-                new Object[]{ new Integer(mult), `extractRealName(tomName) });
+            if(varName.length() > 0) {
+              logger.log( Level.INFO,
+                  TomMessage.doNothing.getMessage(),
+                  new Object[]{ new Integer(mult), `extractRealName(varName) });
+            }
           }
         }
 
       } // end match
-    }      
+    }
 
     %strategy NopElimAndFlatten() extends `Identity() {
       visit Instruction {
