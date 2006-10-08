@@ -7,53 +7,55 @@ import jjtraveler.VisitFailure;
 import java.util.LinkedList;
 import java.util.Iterator;
 
-public class Mu extends AbstractMuStrategy {
+public class Mu extends AbstractStrategyLanguage {
   public final static int VAR = 0;
   public final static int V = 1;
 
-  private MuTopDown myMuTopDown;
+  private MuStrategyTopDown muStrategyTopDown;
+  private SLStrategyTopDown slStrategyTopDown;
   private boolean expanded =false;
   public Mu(VisitableVisitor var, VisitableVisitor v) {
     initSubterm(var, v);
-    myMuTopDown = new MuTopDown();
+    muStrategyTopDown = new MuStrategyTopDown();
+    slStrategyTopDown = new SLStrategyTopDown();
   }
 
   public final Visitable visit(Visitable any) throws VisitFailure {
-    if(!expanded) { expand(); }
+    if(!expanded) { muExpand(); }
     return visitors[V].visit(any);
   }
 
   protected void visit() throws jjtraveler.VisitFailure {
-    System.out.println("try Mu on: " + getSubject());
-    if(!expanded) { gexpand(); }
-    ((AbstractMuStrategy)visitors[V]).visit();
-    System.out.println("Mu succeeds: " + getSubject());
+    //System.out.println("try Mu on: " + getSubject());
+    if(!expanded) { slExpand(); }
+    ((AbstractStrategyLanguage)visitors[V]).visit();
+    //System.out.println("Mu succeeds: " + getSubject());
   }
 
   private boolean isExpanded() {
     return ((MuVar)visitors[VAR]).isExpanded();
   }
 
-  public void expand() {
+  public void muExpand() {
     try {
-      myMuTopDown.init();
-      myMuTopDown.visit(this);
+      muStrategyTopDown.init();
+      muStrategyTopDown.visit(this);
       expanded = true;
     } catch (VisitFailure e) {
       System.out.println("mu reduction failed");
     }
   }
   
-  public void gexpand() {
+  public void slExpand() {
     try {
-      System.out.println("myMuTopdown.init");
-      myMuTopDown.init();
-      System.out.println("myMuTopdown.visit");
-      myMuTopDown.visit(this);
-      //((AbstractMuStrategy)myMuTopDown).gapply(this);
+      //System.out.println("SL TopDown.init");
+      slStrategyTopDown.init();
+      //System.out.println("SL TopDown.visit");
+      slStrategyTopDown.visit(this);
+      //((AbstractStrategyLanguage)myMuTopDown).gapply(this);
       expanded = true;
     } catch (VisitFailure e) {
-      System.out.println("mu reduction failed");
+      System.out.println("SL mu reduction failed");
     }
   }
 
@@ -73,12 +75,34 @@ public class Mu extends AbstractMuStrategy {
  * When the current node is not a Mu or a MuVar, we visit all children of the
  * current node.
  */
-class MuTopDown {
-  %include { mustrategy.tom }
+class MuStrategyTopDown {
+  %typeterm MuStrategy {
+    implement { tom.library.strategy.mutraveler.MuStrategy }
+    equals(t1,t2) {t1.equals(t2)}
+    visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd }
+  }
+
+  %op MuStrategy Mu(s1:MuStrategy, s2:MuStrategy) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Mu) }
+    make(var, v) { new tom.library.strategy.mutraveler.Mu(var, v) }
+    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Mu.VAR) }
+    get_slot(s2, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Mu.V) }
+  }
+
+  %typeterm MuStrategyString {
+    implement { String }
+    equals(t1,t2) {t1.equals(t2)}
+  }
+
+  %op MuStrategy MuVar(var:MuStrategyString) {
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.MuVar) }
+    make(name) { new tom.library.strategy.mutraveler.MuVar(name) }
+    get_slot(var, t) { ((tom.library.strategy.mutraveler.MuVar)t).getName() }
+  }
 
   private LinkedList stack;
 
-  public MuTopDown() {
+  public MuStrategyTopDown() {
     stack = new LinkedList();
   }
   public void init() {
@@ -86,7 +110,7 @@ class MuTopDown {
   }
 
   public void visit(Visitable any) throws VisitFailure {
-    %match(Strategy any) {
+    %match(any) {
       m@Mu(var@MuVar(_), v) -> {
         stack.addFirst(`m);
         visit(`v);
@@ -102,12 +126,81 @@ class MuTopDown {
           while(it.hasNext()) {
             Mu m = (Mu)it.next();
             if(((MuVar)m.getArgument(Mu.VAR)).getName().equals(`n)) {
-              System.out.println("MuVar: setInstance " + `n );
+              //System.out.println("MuVar: setInstance " + `n );
               muvar.setInstance(m);
               return;
             }
           }
-          System.out.println("MuVar: " + `n + " not found");
+          //System.out.println("MuVar: " + `n + " not found");
+          throw new VisitFailure();
+        }
+      }
+    }
+
+    int childCount = any.getChildCount();
+    for(int i = 0; i < childCount; i++) {
+      visit(any.getChildAt(i));
+    }
+  }
+}
+
+class SLStrategyTopDown {
+  %typeterm SLStrategy {
+    implement { tom.library.sl.StrategyLanguage }
+    equals(t1,t2) {t1.equals(t2)}
+    visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd }
+  }
+
+  %op SLStrategy MuSL(s1:SLStrategy, s2:SLStrategy) {
+    is_fsym(t) { (t instanceof tom.library.sl.Mu) }
+    make(var, v) { new tom.library.sl.Mu(var, v) }
+    get_slot(s1, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Mu.VAR) }
+    get_slot(s2, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Mu.V) }
+  }
+
+  %typeterm SLStrategyString {
+    implement { String }
+    equals(t1,t2) {t1.equals(t2)}
+  }
+
+  %op SLStrategy MuVarSL(var:SLStrategyString) {
+    is_fsym(t) { (t instanceof tom.library.sl.MuVar) }
+    make(name) { new tom.library.sl.MuVar(name) }
+    get_slot(var, t) { ((tom.library.sl.MuVar)t).getName() }
+  }
+
+  private LinkedList stack;
+
+  public SLStrategyTopDown() {
+    stack = new LinkedList();
+  }
+  public void init() {
+    stack.clear();
+  }
+
+  public void visit(Visitable any) throws VisitFailure {
+    %match(any) {
+      m@MuSL(var@MuVarSL(_), v) -> {
+        stack.addFirst(`m);
+        visit(`v);
+        visit(`var);
+        stack.removeFirst();
+        return;
+      }
+
+      var@MuVarSL(n) -> {
+        MuVar muvar = (MuVar)`var;
+        if(!muvar.isExpanded()) {
+          Iterator it = stack.iterator();
+          while(it.hasNext()) {
+            Mu m = (Mu)it.next();
+            if(((MuVar)m.getArgument(Mu.VAR)).getName().equals(`n)) {
+              //System.out.println("MuVar: setInstance " + `n );
+              muvar.setInstance(m);
+              return;
+            }
+          }
+          //System.out.println("MuVar: " + `n + " not found");
           throw new VisitFailure();
         }
       }

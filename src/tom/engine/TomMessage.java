@@ -26,6 +26,9 @@
 package tom.engine;
 
 import tom.platform.PlatformMessage;
+import tom.platform.PlatformLogRecord;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The TomMessage class is a container for error messages, using the
@@ -45,7 +48,7 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage simpleMessage         =
     new TomMessage("{0}:{1,number,integer}: {2}");
   public static final TomMessage exceptionMessage      =
-    new TomMessage("{0}: Unhandled exception occurs with input {1}: See stacktrace\n+++++++++++++++++++++++++\n{2}+++++++++++++++++++++++++");
+    new TomMessage("{0}: Unhandled exception\n");
   public static final TomMessage taskErrorMessage      =
     new TomMessage("{0}: Encountered {1,number,integer} error(s) and {2,number,integer} warning(s)\nNo file generated.\n");
   public static final TomMessage taskWarningMessage    =
@@ -338,5 +341,17 @@ public class TomMessage implements PlatformMessage {
   public String getMessage() {
     return message;
   }
+
+  public static void error(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
+    logger.log(new PlatformLogRecord(Level.SEVERE, msg, msgArgs,fileName, errorLine));
+  }
+
+  public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object msgArg) {
+    warning(logger,fileName,errorLine,msg, new Object[] { msgArg } );
+  }
+
+  public static void warning(Logger logger, String fileName, int errorLine, PlatformMessage msg, Object[] msgArgs) {
+    logger.log(new PlatformLogRecord(Level.WARNING, msg, msgArgs,fileName, errorLine));
+  }
   
-} // class TomMessage
+}

@@ -55,7 +55,7 @@ public class Rewrite1 {
 
   public final static void main(String[] args) {
     jjtraveler.Visitable subject = `f(a());
-    GraphStrategy s = `Identity();
+    StrategyLanguage s = `Identity();
     subject = s.gapply(subject);
     System.out.println("root = " + subject);
 

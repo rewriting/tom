@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2000-2006, INRIA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,11 +48,11 @@
 }
 
 /*
- * GraphStrategy Library
+ * StrategyLanguage Library
  */
 
 %typeterm Strategy {
-  implement { tom.library.sl.GraphStrategy }
+  implement { tom.library.sl.StrategyLanguage }
   equals(t1,t2) {t1.equals(t2)}
   visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd }
 }
@@ -62,6 +62,13 @@
   make(var,v) { new tom.library.sl.Mu(var,v) }
 }
   
+%op Strategy Mu(s1:Strategy, s2:Strategy) {
+  is_fsym(t) { (t instanceof tom.library.sl.Mu) }
+  make(var, v) { new tom.library.sl.Mu(var, v) }
+  get_slot(s1, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Mu.VAR) }
+  get_slot(s2, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Mu.V) }
+}
+
 %op Strategy MuVar(var:String) {
   is_fsym(t) { (t instanceof tom.library.sl.MuVar) }
   make(name) { new tom.library.sl.MuVar(name) }
@@ -86,7 +93,7 @@
   %op Strategy One(s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.sl.One) }
     make(v) { new tom.library.sl.One(v) }
-    get_slot(s1, t) { (tom.library.sl.GraphStrategy)t.getChildAt(tom.library.sl.One.ARG) }
+    get_slot(s1, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.One.ARG) }
   }
 
   %op Strategy Fail() {
@@ -97,8 +104,8 @@
   %op Strategy Choice(s1:Strategy, s2:Strategy) {
     is_fsym(t) { (t instanceof tom.library.sl.Choice) }
     make(first,then) { new tom.library.sl.Choice(first,then) }
-    get_slot(s1, t) { (tom.library.sl.GraphStrategy)t.getChildAt(tom.library.sl.Choice.FIRST) }
-    get_slot(s2, t) { (tom.library.sl.GraphStrategy)t.getChildAt(tom.library.sl.Choice.THEN) }
+    get_slot(s1, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Choice.FIRST) }
+    get_slot(s2, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Choice.THEN) }
   }
 
   %op Strategy OnceBottomUp(s1:Strategy) {

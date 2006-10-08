@@ -45,7 +45,7 @@ import jjtraveler.VisitFailure;
  * undone.
  */
 
-public class One extends AbstractMuStrategy {
+public class One extends AbstractStrategyLanguage {
   public final static int ARG = 0;
   
   public One(VisitableVisitor v) {
@@ -81,16 +81,16 @@ public class One extends AbstractMuStrategy {
     int childCount = getSubject().getChildCount();
       
     for(int i = 0; i < childCount; i++) {
-      System.out.println("One: try i = " + i + " on " + getSubject());
+      //System.out.println("One: try i = " + i + " on " + getSubject());
       try { 
         //System.out.println("One.pos = " + environment);
         environment.down(i+1);
-        ((AbstractMuStrategy)visitors[ARG]).visit();
-        System.out.println("One: succeeds: " + getSubject());
+        ((AbstractStrategyLanguage)visitors[ARG]).visit();
+        //System.out.println("One: succeeds: " + getSubject());
         environment.up();
         return ;
       } catch(jjtraveler.VisitFailure f) {
-        System.out.println("One: failed on: " + getSubject());
+        //System.out.println("One: failed on: " + getSubject());
         environment.up();
       }
     }

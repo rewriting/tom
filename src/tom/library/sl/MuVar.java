@@ -42,7 +42,7 @@ import jjtraveler.VisitFailure;
 
 */
 
-public class MuVar extends AbstractMuStrategy {
+public class MuVar extends AbstractStrategyLanguage {
   private VisitableVisitor instance = null;
   protected String name;
   
@@ -83,12 +83,12 @@ public class MuVar extends AbstractMuStrategy {
   }
   protected void visit() throws VisitFailure {
     if(instance != null) {
-      System.out.println("try MuVar on: " + getSubject());
-      ((AbstractMuStrategy)instance).visit();
-      System.out.println("MuVar succed: " + getSubject());
+      //System.out.println("try MuVar on: " + getSubject());
+      ((AbstractStrategyLanguage)instance).visit();
+      //System.out.println("MuVar succed: " + getSubject());
       return;
     } else {
-      System.out.println("MuVar instance==null failed");
+      //System.out.println("MuVar instance==null failed");
       throw new VisitFailure();
     }
   }

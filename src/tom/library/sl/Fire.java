@@ -30,7 +30,7 @@
  **/
 package tom.library.sl;
 
-public class Fire extends AbstractMuStrategy {
+public class Fire extends AbstractStrategyLanguage {
   public final static int ARG = 0;
 
   public Fire(jjtraveler.reflective.VisitableVisitor v) {
@@ -42,9 +42,9 @@ public class Fire extends AbstractMuStrategy {
   }
 
   protected void visit() throws jjtraveler.VisitFailure {
-    System.out.println("try Fire on: " + getSubject());
+    //System.out.println("try Fire on: " + getSubject());
     setSubject(visitors[ARG].visit(getSubject()));
-    System.out.println("succed: " + getSubject());
+    //System.out.println("succed: " + getSubject());
   }
 
 }

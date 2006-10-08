@@ -116,6 +116,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
         if(getOptionBooleanValue("optimize2")) {
           renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
+          renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
+          renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
         }
 
         if(getOptionBooleanValue("optimize")) {
@@ -277,7 +279,7 @@ public class TomOptimizer extends TomGenericPlugin {
          * LetRef x<-exp in body where x is used 0 or 1 ==> eliminate
          * x should not appear in exp
          */
-        (LetRef|LetAssign)(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
+        let@(LetRef|LetAssign)(var@(Variable|VariableStar)[AstName=name@Name(_)],exp,body) -> {
           /*
            * do not optimize Variable(TomNumber...) because LetRef X*=GeTTail(X*) in ...
            * is not correctly handled 
@@ -294,9 +296,8 @@ public class TomOptimizer extends TomGenericPlugin {
           if(mult == 0) {
             if(varName.length() > 0) {
               Option orgTrack = findOriginTracking(`var.getOption());
-              logger.log( Level.WARNING,
-                  TomMessage.unusedVariable.getMessage(),
-                  new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()), `extractRealName(varName)} );
+	      TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
+		  TomMessage.unusedVariable,`extractRealName(varName));
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(varName) });
@@ -305,7 +306,7 @@ public class TomOptimizer extends TomGenericPlugin {
           } else if(mult == 1) {
             list.clear();
             `computeOccurences(name,list).apply(`exp);
-            if(expConstantInBody(`exp,`body) && list.size()==0) {
+            if(`let.isLetRef() && expConstantInBody(`exp,`body) && list.size()==0) {
               if(varName.length() > 0) {
                 logger.log( Level.INFO,
                     TomMessage.inline.getMessage(),
@@ -348,10 +349,8 @@ public class TomOptimizer extends TomGenericPlugin {
           if(mult == 0) {
             if(varName.length() > 0) {
               Option orgTrack = findOriginTracking(`var.getOption());
-              logger.log( Level.WARNING,
-                  TomMessage.unusedVariable.getMessage(),
-                  new Object[]{orgTrack.getFileName(), new Integer(orgTrack.getLine()),
-                  `extractRealName(varName)} );
+	      TomMessage.warning(logger,orgTrack.getFileName(), orgTrack.getLine(),
+		  TomMessage.unusedVariable,`extractRealName(varName));
               logger.log( Level.INFO,
                   TomMessage.remove.getMessage(),
                   new Object[]{ new Integer(mult), `extractRealName(varName) });
@@ -526,6 +525,8 @@ public class TomOptimizer extends TomGenericPlugin {
           return `FalseTL();
         }
         ref@EqualTerm(_,kid1,kid2) -> {
+//System.out.println("kid1 = " + `kid1);
+//System.out.println("kid2 = " + `kid2);
           if(`compare(kid1,kid2)){
             return `TrueTL();
           } else {

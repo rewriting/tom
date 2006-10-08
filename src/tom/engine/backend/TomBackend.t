@@ -51,6 +51,8 @@ import tom.engine.adt.tomtype.types.*;
 import tom.engine.tools.*;
 import tom.engine.exception.TomRuntimeException;
 import tom.platform.OptionParser;
+import tom.platform.PluginPlatformMessage;
+import tom.platform.PlatformException;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 import tom.library.strategy.mutraveler.MuTraveler;
@@ -94,58 +96,64 @@ public class TomBackend extends TomGenericPlugin {
    *
    */
   public void run() {
-    if(isActivated() == true) {
-      TomAbstractGenerator generator = null;
-      Writer writer;
-      long startChrono = System.currentTimeMillis();
-      try {
-        String encoding = getOptionStringValue("encoding");
-        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile()),encoding));
-        OutputCode output = new OutputCode(writer, getOptionManager());
-        if(getOptionBooleanValue("noOutput")) {
-          throw new TomRuntimeException("Backend activated, but noOutput is set");
-        } else if(getOptionBooleanValue("cCode")) {
-          generator = new TomCGenerator(output, getOptionManager(), symbolTable());
-        } else if(getOptionBooleanValue("camlCode")) {
-          generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
-        } else if(getOptionBooleanValue("pCode")) {
-          generator = new TomPythonGenerator(output, getOptionManager(), symbolTable());
-        } else if(getOptionBooleanValue("jCode")) {
-          generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
-        } else {
-          throw new TomRuntimeException("no selected language for the Backend");
+    try {
+      if(isActivated() == true) {
+        TomAbstractGenerator generator = null;
+        Writer writer;
+        long startChrono = System.currentTimeMillis();
+        try {
+          String encoding = getOptionStringValue("encoding");
+          writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile()),encoding));
+          OutputCode output = new OutputCode(writer, getOptionManager());
+          if(getOptionBooleanValue("noOutput")) {
+            throw new TomRuntimeException("Backend activated, but noOutput is set");
+          } else if(getOptionBooleanValue("cCode")) {
+            generator = new TomCGenerator(output, getOptionManager(), symbolTable());
+          } else if(getOptionBooleanValue("camlCode")) {
+            generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
+          } else if(getOptionBooleanValue("pCode")) {
+            generator = new TomPythonGenerator(output, getOptionManager(), symbolTable());
+          } else if(getOptionBooleanValue("jCode")) {
+            generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
+          } else {
+            throw new TomRuntimeException("no selected language for the Backend");
+          }
+
+          TomTerm pilCode = (TomTerm) getWorkingTerm();
+
+          markUsedConstructorDestructor(pilCode);
+
+          generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
+          // verbose
+          getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
+              new Integer((int)(System.currentTimeMillis()-startChrono)));
+          writer.close();
+        } catch (IOException e) {
+          getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
+              new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
+          return;
+        } catch (Exception e) {
+          String fileName = getStreamManager().getInputFileName();
+          int line = -1;
+          TomMessage.error(getLogger(),fileName,line,TomMessage.exceptionMessage, new Object[]{fileName});
+          e.printStackTrace();
+          return;
         }
-				
-        TomTerm pilCode = (TomTerm) getWorkingTerm();
+        // set the generated File Name
+        try {
+          generatedFileName = getStreamManager().getOutputFile().getCanonicalPath();
+        } catch (IOException e) {
+          System.out.println("IO Exception when computing generatedFileName");
+          e.printStackTrace();
+        }
 
-				markUsedConstructorDestructor(pilCode);
-
-        generator.generate(defaultDeep, generator.operatorsTogenerate(pilCode),TomBase.DEFAULT_MODULE_NAME);
-        // verbose
-        getLogger().log(Level.INFO, TomMessage.tomGenerationPhase.getMessage(),
-                        new Integer((int)(System.currentTimeMillis()-startChrono)));
-        writer.close();
-      } catch (IOException e) {
-        getLogger().log( Level.SEVERE, TomMessage.backendIOException.getMessage(),
-                         new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
-        return;
-      } catch (Exception e) {
-        getLogger().log( Level.SEVERE, TomMessage.exceptionMessage.getMessage(),
-                         new Object[]{getStreamManager().getInputFileName(), "TomBackend", e.getMessage()} );
-        e.printStackTrace();
-        return;
+      } else {
+        // backend is desactivated
+        getLogger().log(Level.INFO,TomMessage.backendInactivated.getMessage());
       }
-      // set the generated File Name
-      try {
-        generatedFileName = getStreamManager().getOutputFile().getCanonicalPath();
-      } catch (IOException e) {
-        System.out.println("IO Exception when computing generatedFileName");
-        e.printStackTrace();
-      }
-
-    } else {
-      // backend is desactivated
-      getLogger().log(Level.INFO,TomMessage.backendInactivated.getMessage());
+    } catch(PlatformException e) {
+      getLogger().log( Level.SEVERE, PluginPlatformMessage.platformStopped.getMessage());
+      return;
     }
   }
 

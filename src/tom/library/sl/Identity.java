@@ -38,7 +38,7 @@ package tom.library.sl;
  * See also <a href="IdentityTest.java">IdentityTest</a>.
  */
 
-public class Identity extends AbstractMuStrategy {
+public class Identity extends AbstractStrategyLanguage {
   public Identity() {
     initSubterm();
   }

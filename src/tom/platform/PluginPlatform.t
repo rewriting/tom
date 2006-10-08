@@ -39,7 +39,7 @@ import tom.library.adt.tnode.*;
  * error management.
  *
  */
-public class PluginPlatform extends PluginPlatformBase{
+public class PluginPlatform extends PluginPlatformBase {
 
   /** Used to analyse xml configuration file */
   %include{ adt/tnode/TNode.tom }
@@ -64,7 +64,7 @@ public class PluginPlatform extends PluginPlatformBase{
 
   /** Class Pluginplatform constructor */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
-	super(loggerRadical);  
+    super(loggerRadical);  
     statusHandler = new StatusHandler();
     this.loggerRadical = loggerRadical;
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
@@ -82,72 +82,77 @@ public class PluginPlatform extends PluginPlatformBase{
    * </ul>
    */
   public int run() {
-    boolean globalSuccess = true;
-    int globalNbOfErrors = 0;
-    int globalNbOfWarnings = 0;
-    // intialize run instances
-    lastGeneratedObjects = new ArrayList();
-    // for each input we call the sequence of plug-ins
-    for(int i=0; i < inputToCompileList.size(); i++) {
-      Object input = inputToCompileList.get(i);
-      Object[] pluginArg = new Object[]{input};
-      Object initArgument = input;
-      boolean success = true;
-      statusHandler.clear();
+    try {
+      boolean globalSuccess = true;
+      int globalNbOfErrors = 0;
+      int globalNbOfWarnings = 0;
+      // intialize run instances
+      lastGeneratedObjects = new ArrayList();
+      // for each input we call the sequence of plug-ins
+      for(int i=0; i < inputToCompileList.size(); i++) {
+        Object input = inputToCompileList.get(i);
+        Object[] pluginArg = new Object[]{input};
+        Object initArgument = input;
+        boolean success = true;
+        statusHandler.clear();
 
-      if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);
-      if(input instanceof String && ((String)input).endsWith(".t")) {
-        String inputWithoutSuffix = ((String)input).substring(0, ((String)input).length() - ".t".length());
-        testHandler = new TestHandler(inputWithoutSuffix);
-        if(!testHandler.hasError()){
-          Logger.getLogger(loggerRadical).addHandler(this.testHandler);
+        if(this.testHandler!=null) Logger.getLogger(loggerRadical).removeHandler(this.testHandler);
+        if(input instanceof String && ((String)input).endsWith(".t")) {
+          String inputWithoutSuffix = ((String)input).substring(0, ((String)input).length() - ".t".length());
+          testHandler = new TestHandler(inputWithoutSuffix);
+          if(!testHandler.hasError()){
+            Logger.getLogger(loggerRadical).addHandler(this.testHandler);
           }
-      }
-
-      getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
-      // runs the plugins
-      Iterator it = pluginsList.iterator();
-      while(it.hasNext()) {
-        Plugin plugin = (Plugin)it.next();
-        plugin.setArgs(pluginArg);
-        if(statusHandler.hasError()) {
-          getLogger().log(Level.SEVERE, PluginPlatformMessage.settingArgError.getMessage());
-          success = false;
-          globalSuccess = false;
-          globalNbOfErrors += statusHandler.nbOfErrors();
-          globalNbOfWarnings += statusHandler.nbOfWarnings();
-          break;
         }
-        plugin.run();
-        if(statusHandler.hasError()) {
-          getLogger().log(Level.SEVERE, PluginPlatformMessage.processingError.getMessage(),
-                          new Object[]{plugin.getClass().getName(), initArgument});
-          success = false;
-          globalSuccess = false;
-          globalNbOfErrors += statusHandler.nbOfErrors();
-          globalNbOfWarnings += statusHandler.nbOfWarnings();
-          break;
+
+        getLogger().log(Level.FINER, PluginPlatformMessage.nowCompiling.getMessage(), input);
+        // runs the plugins
+        Iterator it = pluginsList.iterator();
+        while(it.hasNext()) {
+          Plugin plugin = (Plugin)it.next();
+          plugin.setArgs(pluginArg);
+          if(statusHandler.hasError()) {
+            getLogger().log(Level.SEVERE, PluginPlatformMessage.settingArgError.getMessage());
+            success = false;
+            globalSuccess = false;
+            globalNbOfErrors += statusHandler.nbOfErrors();
+            globalNbOfWarnings += statusHandler.nbOfWarnings();
+            break;
+          }
+          plugin.run();
+          if(statusHandler.hasError()) {
+            getLogger().log(Level.SEVERE, PluginPlatformMessage.processingError.getMessage(),
+                new Object[]{plugin.getClass().getName(), initArgument});
+            success = false;
+            globalSuccess = false;
+            globalNbOfErrors += statusHandler.nbOfErrors();
+            globalNbOfWarnings += statusHandler.nbOfWarnings();
+            break;
+          }
+          pluginArg = plugin.getArgs();
         }
-        pluginArg = plugin.getArgs();
+
+        if(success) {
+          // save the first element of last plugin getArg response
+          // this shall correspond to a generated file name
+          lastGeneratedObjects.add(pluginArg[0]);
+          globalNbOfWarnings += statusHandler.nbOfWarnings();
+        }
       }
 
-      if(success) {
-        // save the first element of last plugin getArg response
-        // this shall correspond to a generated file name
-        lastGeneratedObjects.add(pluginArg[0]);
-        globalNbOfWarnings += statusHandler.nbOfWarnings();
+      if(!globalSuccess) {
+        // this is the highest possible level > will be printed no matter what
+        getLogger().log(Level.SEVERE, PluginPlatformMessage.runErrorMessage.getMessage(),
+            new Integer(globalNbOfErrors));
+        return 1;
+      } else if(globalNbOfWarnings>0) {
+        getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),
+            new Integer(globalNbOfWarnings));
+        return 0;
       }
-    }
-
-    if(!globalSuccess) {
-      // this is the highest possible level > will be printed no matter what
-      getLogger().log(Level.SEVERE, PluginPlatformMessage.runErrorMessage.getMessage(),
-                      new Integer(globalNbOfErrors));
+    } catch(PlatformException e) {
+      getLogger().log(Level.SEVERE, PluginPlatformMessage.platformStopped.getMessage());
       return 1;
-    } else if(globalNbOfWarnings>0) {
-      getLogger().log(Level.INFO, PluginPlatformMessage.runWarningMessage.getMessage(),
-                      new Integer(globalNbOfWarnings));
-      return 0;
     }
     return 0;
   }

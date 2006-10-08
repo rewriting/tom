@@ -46,7 +46,7 @@ import jjtraveler.VisitFailure;
  * Note that any side-effects of v1 are not undone when it fails.
  */
 
-public class Choice extends AbstractMuStrategy {
+public class Choice extends AbstractStrategyLanguage {
   public final static int FIRST = 0;
   public final static int THEN = 1;
   public Choice(VisitableVisitor first, VisitableVisitor then) {
@@ -62,14 +62,14 @@ public class Choice extends AbstractMuStrategy {
   }
   protected void visit() throws VisitFailure {
     try {
-        System.out.println("try Choice1 on: " + getSubject());
-      ((AbstractMuStrategy)visitors[FIRST]).visit();
-        System.out.println("first branch succeeds: " + getSubject());
+        //System.out.println("try Choice1 on: " + getSubject());
+      ((AbstractStrategyLanguage)visitors[FIRST]).visit();
+        //System.out.println("first branch succeeds: " + getSubject());
       return;
     } catch (VisitFailure f) {
-        System.out.println("try Choice2 on: " + getSubject());
-      ((AbstractMuStrategy)visitors[THEN]).visit();
-        System.out.println("second branch succeeds: " + getSubject());
+        //System.out.println("try Choice2 on: " + getSubject());
+      ((AbstractStrategyLanguage)visitors[THEN]).visit();
+        //System.out.println("second branch succeeds: " + getSubject());
       return;
     }
   }

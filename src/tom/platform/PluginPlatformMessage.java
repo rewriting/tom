@@ -47,6 +47,8 @@ public class PluginPlatformMessage implements PlatformMessage {
     new PluginPlatformMessage("The configuration file {0} was not found");
 
   // Platform messages
+  public static final PluginPlatformMessage platformStopped =
+    new PluginPlatformMessage("Platform stopped");
   public static final PluginPlatformMessage configFileNotXML =
     new PluginPlatformMessage("The configuration file {0} is not a valid XML file");
   public static final PluginPlatformMessage classNotAPlugin =

@@ -42,7 +42,7 @@ import jjtraveler.VisitFailure;
  * <a href="FailTest.java">FailTest</a>
  */
 
-public class Fail extends AbstractMuStrategy {
+public class Fail extends AbstractStrategyLanguage {
   private String message;
     
   /** 

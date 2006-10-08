@@ -1,14 +1,14 @@
-
-Main author and developer:
-    Pierre-Etienne Moreau     e-mail: Pierre-Etienne.Moreau@loria.fr
-
-Main contributors:
+Current developers:
     Emilie Balland            e-mail: Emilie.Balland@loria.fr
     Paul Brauner              e-mail: Paul.Brauner@loria.fr
-    Julien Guyon
     Radu Kopetz               e-mail: Radu.Kopetz@loria.fr
+    Pierre-Etienne Moreau     e-mail: Pierre-Etienne.Moreau@loria.fr
     Antoine Reilles           e-mail: Antoine.Reilles@loria.fr
+
+Main contributors:
+    Julien Guyon              Eclipse plugin
     Bertrand Tavernier        CRIL Technology
+    Yoann Toussaint           Strategy construct and ANTLRMapper
 
 Other contributors:
     Gregory Andrien           Plugin-Platform
@@ -17,7 +17,6 @@ Other contributors:
     Stephane Hrvatin          Antlr based parser
     Anne-Claire Lonchamp      Constraint extension
     Christophe Ringeissen     Initial design of Tom
-    Yoann Toussaint           Strategy construct and ANTLRMapper
     Jurgen Vinju              Many discussions and ApiGen integration
     Patrick Viry              Discussions and backquote notation
     Eelco Visser              Discussions and %match construct

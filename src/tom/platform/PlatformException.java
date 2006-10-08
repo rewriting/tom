@@ -27,39 +27,6 @@
 
 package tom.platform;
 
-import java.util.logging.*;
+public class PlatformException extends java.lang.RuntimeException {
 
-public class PlatformLogRecord extends LogRecord {
-  private int line;
-  private String filePath;
-  private PlatformMessage message;
-
-  public PlatformLogRecord(Level level, PlatformMessage message, String filePath, int line) {
-    this(level, message, new Object[]{} , filePath, line);
-  }
-
-  public PlatformLogRecord(Level level, PlatformMessage message, Object detail, String filePath, int line) {
-    this(level, message, new Object[]{detail}, filePath, line);
-  }
-
-  public PlatformLogRecord(Level level, PlatformMessage message, Object[] detail, String filePath, int line) {
-    super(level, message.getMessage());
-    super.setParameters(detail);
-    this.filePath =filePath;
-    this.line = line;
-    this.message = message;
-  }
-
-  public int getLine() {
-    return line;
-  }
-
-  public String getFilePath() {
-    return filePath;
-  }
-
-  public PlatformMessage getPlatformMessage() {
-    return message;
-  }
-
-} // class PlatformLogRecord
+}

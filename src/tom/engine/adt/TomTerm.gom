@@ -108,3 +108,13 @@ PatternList = concPattern(Pattern*)
 PatternInstructionList = concPatternInstruction(PatternInstruction*)
 
 TomList = concTomTerm(TomTerm*)
+
+  /*
+   * Hooks
+   */
+
+  Ref:make(e) {
+    %match(e) {
+      ExpressionToTomTerm[] -> { return e; }
+    }
+  }
