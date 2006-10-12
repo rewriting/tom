@@ -1,4 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<process>
 <flow>
 <links>
 <link name="receive-to-assess"/>

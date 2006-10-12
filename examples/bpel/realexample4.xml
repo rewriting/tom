@@ -18,17 +18,13 @@
           <documentation>
             Decide On Shipper                
           </documentation>
-          <sources>    
-            <source linkName="ship-to-invoice"/>               
-          </sources>
+          <source linkName="ship-to-invoice"/>               
         </invoke>
         <receive 		name="ArrangeLogistics"		partnerLink="shipping"    portType="lns:shippingCallbackPT"    operation="sendSchedule"    variable="shippingSchedule">  
           <documentation>
             Arrange Logistics                
           </documentation>
-          <sources> 
-            <source linkName="ship-to-scheduling"/>               
-          </sources>
+          <source linkName="ship-to-scheduling"/>               
         </receive>
       </sequence>
       <sequence>  
@@ -41,9 +37,7 @@
           <documentation>      
             Complete Price Calculation 
           </documentation>
-          <targets>  
-            <target linkName="ship-to-invoice"/>  
-          </targets>
+          <target linkName="ship-to-invoice"/>  
         </invoke>
       </sequence>
       <sequence> 
@@ -56,9 +50,7 @@
           <documentation>   
             Complete Production Scheduling   
           </documentation>
-          <targets>  
-            <target linkName="ship-to-scheduling"/>  
-          </targets>
+          <target linkName="ship-to-scheduling"/>  
         </invoke>
       </sequence>
     </flow>
@@ -68,4 +60,3 @@
     </documentation>
   </sequence>
 </process>
-

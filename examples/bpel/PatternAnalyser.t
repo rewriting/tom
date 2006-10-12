@@ -90,7 +90,7 @@ public class PatternAnalyser{
         wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(proc)),All(MuVar("x")))).apply(wfg);
       }
       node@<(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
-        wfg = `WfgNode(Activity(operation,node.hashCode(),noCond(),noCond())); 
+        wfg = `WfgNode(Activity(operation,node.hashCode(),noCond())); 
         %match(TNodeList linklist){
           (_*,<source linkName=linkName/>,_*) -> {
             wfg = `WfgNode(wfg*,refWfg(linkName));
@@ -115,7 +115,7 @@ public class PatternAnalyser{
             buffer.append(%[ @from@ -> @`to@\n ]%);
           }  
           (_*) -> {        
-            wfg = `WfgNode(Activity(buffer.toString(),node.hashCode(),noCond(),noCond())); 
+            wfg = `WfgNode(Activity(buffer.toString(),node.hashCode(),noCond())); 
           }
 
           (_*,<source linkName=linkName/>,_*) -> {
@@ -171,6 +171,16 @@ public class PatternAnalyser{
     System.out.println("}");
   }
 
+  public void essai(){
+    %strategy Toto(wfg:Wfg) extends `Identity(){
+      visit Wfg{
+        Empty() -> {
+          return wfg; 
+        }
+      }
+    }
+  }
+
   %strategy Debug(s: String) extends `Identity() {
     visit Wfg {
       _ -> {
@@ -208,7 +218,7 @@ public class PatternAnalyser{
         System.out.println(root.id + "[label=\""+ `root.name +"\"];");
         System.out.println(id + "[label=\""+ `name +"\"];");
         System.out.println(root.id + " -> " + id + ";");
-     }
+      }
     }
   }
 
@@ -245,25 +255,6 @@ public class PatternAnalyser{
         //System.out.println("\nWfg with positions:\n" + wfg);
       }
     }
-    /* 
-       Wfg wfg = `expWfg(ConcWfg(
-       WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C")),
-       labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("end"))), 
-       labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("end"))), 
-       labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
-       ));
-       wfg = `expWfg(ConcWfg(
-       WfgNode(Activity("start",noCond(),noCond()),refWfg("A"),refWfg("C"),refWfg("G")), 
-       labWfg("A",WfgNode(Activity("A",noCond(),noCond()),refWfg("B"),refWfg("F"))), 
-       labWfg("C",WfgNode(Activity("C",noCond(),noCond()),refWfg("D"),refWfg("E"))), 
-       labWfg("G",WfgNode(Activity("G",noCond(),noCond()),refWfg("E"),refWfg("end"))), 
-       labWfg("B",WfgNode(Activity("B",noCond(),noCond()),refWfg("end"))), 
-       labWfg("D",WfgNode(Activity("D",noCond(),noCond()),refWfg("F"))), 
-       labWfg("E",WfgNode(Activity("E",noCond(),noCond()),refWfg("F"))), 
-       labWfg("F",WfgNode(Activity("F",noCond(),noCond()),refWfg("end"))), 
-       labWfg("end",WfgNode(Activity("end",noCond(),noCond()))) 
-       ));
-     */
     PatternAnalyser.printWfg(wfg);
   }
 }//class PatternAnalyser

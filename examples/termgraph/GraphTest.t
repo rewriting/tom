@@ -77,7 +77,7 @@ public class GraphTest {
 
   public static void main(String[] args){
     Term subject =
-      `expTerm(f(g(g(labTerm("l1",a()),labTerm("l2",b())),f(refTerm("l1")))));
+      `expTerm(g(f(g(labTerm("l1",a()),labTerm("l2",b()))),g(refTerm("l1"),refTerm("l2"))));
     System.out.println("Initial subject: "+subject);
     Term newSubject = (Term) `TopDown(RelativeRef(subject,DummyStrat())).apply(subject);
     System.out.println("Subject after dummystrat: "+newSubject);

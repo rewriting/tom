@@ -28,24 +28,52 @@ import java.util.HashMap;
 }
 
 expTerm:block{
-    %include{java/util/HashMap.tom}
-    %include{java/mustrategy.tom}
+  %include{java/util/HashMap.tom}
+  %include{java/mustrategy.tom}
 
-    %strategy CollectTerms(table:HashMap) extends `Identity() {
-      visit Term{
-        labTerm(label,term) -> {
-          table.put(`label,getPosition());
-          return `term;
+  %strategy Collectlabels(tableMin:HashMap,tableRef:HashMap) extends `Identity() {
+    visit Term{
+     labTerm[label=label,term=term]-> {
+        tableRef.put(`label,`term);
+        if(!tableMin.containsKey(`label) || getPosition().compare(tableMin.get(`label))){
+          tableMin.put(`label,getPosition());
+        }
+      }
+      refTerm[label=label] -> {
+        if(!tableMin.containsKey(`label) || getPosition().compare(tableMin.get(`label))){
+          tableMin.put(`label,getPosition());
         }
       }
     }
+  }
 
-    %strategy Replacelabels(table:HashMap) extends `Identity() {
-      visit Term{
-        refTerm(label) -> {
+  %strategy Replacelabels(tableMin:HashMap,tableRef:HashMap) extends `Identity() {
+    visit Term{
+
+      refTerm[label=label] -> {
+        if (!tableRef.containsKey(`label)) throw new RuntimeException("The label "+`label+" is not referenced");
+        if(getPosition().equals(tableMin.get(`label))){
+          return (Term) tableRef.get(`label);
+        }
+        else{ 
           RelativePosition pos = 
-            RelativePosition.make(getPosition(),(Position) table.get(`label));
-          if (pos == null) throw new RuntimeException("The label "+`label+" is not referenced");
+          RelativePosition.make(getPosition(),(Position) tableMin.get(`label));
+          Term ref = `posTerm();
+          int[] array = pos.toArray();
+          for(int i=0;i<pos.depth();i++){
+            ref = `posTerm(ref*,array[i]);
+          }
+          return ref; 
+        }
+      }
+      labTerm[label=label] -> {
+        if (!tableRef.containsKey(`label)) throw new RuntimeException("The label "+`label+" is not referenced");
+        if(getPosition().equals(tableMin.get(`label))){
+          return (Term) tableRef.get(`label);
+        }
+        else{ 
+          RelativePosition pos = 
+          RelativePosition.make(getPosition(),(Position) tableMin.get(`label));
           Term ref = `posTerm();
           int[] array = pos.toArray();
           for(int i=0;i<pos.depth();i++){
@@ -55,33 +83,15 @@ expTerm:block{
         }
       }
     }
+  }
 
-    public static Term expand(Term t){
-      HashMap table = new HashMap();
-      return (Term) `Sequence(RepeatId(TopDown(CollectTerms(table))),TopDown(Replacelabels(table))).apply(t);
-    }
-}
-
-/*
-TermNode:make_insert(node,term) {
-    %match(Term node){
-      ConcTerm(_*,e,_*) -> {
-        term = `TermNode(term*,e);
-      }
-    ConcTerm(_*) -> {
-      return term;
-    }
+  public static Term expand(Term t){
+    HashMap tableMin = new HashMap();
+    HashMap tableRef = new HashMap();
+    return (Term) `Sequence(RepeatId(TopDown(Collectlabels(tableMin,tableRef))),TopDown(Replacelabels(tableMin,tableRef))).apply(t);
   }
 }
 
-ConcTerm:make_insert(term,termlist) {
-  %match(Term term){
-    Empty() -> {
-      return termlist;
-    }
-  }
-}
-*/
 posTerm:interface{
   tom.library.strategy.mutraveler.MuReference
 }

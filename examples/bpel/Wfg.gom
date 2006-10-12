@@ -3,7 +3,7 @@ imports String int
 abstract syntax
 
 Wfg = WfgNode(Wfg*)
-    | Activity(name:String,code:int,inputcond:Condition,outputcond:Condition)
+    | Activity(name:String,code:int,joincond:Condition)
     | ConcWfg(Wfg*)
     | labWfg(label:String,wfg:Wfg)
     | refWfg(label:String)
