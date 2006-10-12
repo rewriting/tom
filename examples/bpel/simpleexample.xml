@@ -7,11 +7,13 @@
       <sequence>
         <invoke operation="B" />
         <while>
+          <condition>a</condition>
           <sequence>
             <invoke operation="inner1" />
             <flow>
               <invoke operation="inner2" />
               <repeatUntil>
+                <condition>a</condition>
                 <sequence>
                   <invoke operation="inner3" />
                   <flow>
@@ -33,7 +35,18 @@
           </invoke> 
           <invoke operation="E" /> 
         </flow>
-        <invoke operation="F" /> 
+        <invoke operation="F" />
+        <if>
+          <condition></condition>
+          <invoke operation="if1" />
+          <elseif>
+            <invoke operation="if2" />
+          </elseif>
+          <else>
+            <invoke operation="if3" />
+          </else>
+        </if>
+        <invoke operation="H" />
       </sequence>
       <sequence>
         <invoke operation="G" > 

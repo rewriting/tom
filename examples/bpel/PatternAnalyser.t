@@ -102,13 +102,26 @@ public class PatternAnalyser{
           }
         }
       }
-      node@<(while|repeatUntil)>(activity)</(while|repeatUntil)> -> {
+      node@<(while|repeatUntil)>(<condition></condition>, activity)</(while|repeatUntil)> -> {
         whileCounter++;
         String label = "loop" + whileCounter;
         Wfg middle = bpelToWfg(`activity);
         Wfg begin = `labWfg(label, WfgNode(Activity("begin "+node.getName(),node.hashCode(),noCond()), middle ));
         Wfg end = `WfgNode(Activity("end "+node.getName(),-node.hashCode(),noCond()), refWfg(label));
         wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(end),All(MuVar("x")))).apply(begin);
+      }
+      node@ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
+        Wfg res = bpelToWfg(`activity);
+        wfglist = `ConcWfg(wfglist*,res);
+        %match(TNodeList elses) {
+          (_*,<(else|elseif)>altenate_activity</(else|elseif)>,_*) -> {
+            res = bpelToWfg(`altenate_activity);
+            wfglist = `ConcWfg(wfglist*,res);
+          }
+          _ -> {
+            return wfglist;
+          }
+        }
       }
       node@<assign>list*</assign> -> {
         StringBuffer buffer = new StringBuffer();
@@ -127,7 +140,6 @@ public class PatternAnalyser{
           (_*) -> {        
             wfg = `WfgNode(Activity(buffer.toString(),node.hashCode(),noCond())); 
           }
-
           (_*,<source linkName=linkName/>,_*) -> {
             wfg = `WfgNode(wfg*,refWfg(linkName));
           }
@@ -186,14 +198,6 @@ public class PatternAnalyser{
         if (`name.startsWith("begin") || `name.startsWith("end"))  System.out.println(id + "[shape=box];");
         System.out.println(root.id + " -> " + id + ";");
       }
-      /*
-      Activity[name=name,code=code] ->{
-        String id = ("" + `code).replaceAll("-","Z");
-        System.out.println(root.id + "[label=\""+ `root.name +"\"];");
-        System.out.println(id + "[label=\""+ `name +"\"];");
-        System.out.println(root.id + " -> " + id + ";");
-      }
-      */
     }
   }
 
