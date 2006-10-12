@@ -125,6 +125,29 @@ public class Position {
     }
   }
 
+  /**
+   * Compares two positions
+   */
+  public boolean compare(Object o) {
+    if (o instanceof Position) {
+      Position p = (Position)o;
+      /* we need to check only the meaningful part of the data array */
+      if (size==p.size) {
+        for(int i=0; i<size; i++) {
+          if (data[i]<p.data[i]) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        return size<p.size;
+      }
+    } else {
+      return false;
+    }
+  }
+
+
   public int hashCode() {
     /* Hash only the interesting part of the array */
     int[] hashedData = new int[size];
