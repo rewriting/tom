@@ -1,0 +1,14 @@
+module lambdaterm
+imports String int
+abstract syntax
+LambdaTerm =
+     | app(arg1:LambdaTerm,arg2:LambdaTerm)
+     | abs(var:String,arg:LambdaTerm)
+     | abs2(arg:LambdaTerm)
+     | var(name:String)
+     | posLambdaTerm(int*)
+
+
+posLambdaTerm:interface{
+  tom.library.strategy.mutraveler.MuReference
+}

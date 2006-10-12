@@ -35,12 +35,12 @@ expTerm:block{
     visit Term{
      labTerm[label=label,term=term]-> {
         tableRef.put(`label,`term);
-        if(!tableMin.containsKey(`label) || getPosition().compare(tableMin.get(`label))){
+        if(!tableMin.containsKey(`label) || getPosition().compare(tableMin.get(`label))==-1){
           tableMin.put(`label,getPosition());
         }
       }
       refTerm[label=label] -> {
-        if(!tableMin.containsKey(`label) || getPosition().compare(tableMin.get(`label))){
+        if(!tableMin.containsKey(`label) || getPosition().compare(tableMin.get(`label))==-1){
           tableMin.put(`label,getPosition());
         }
       }
