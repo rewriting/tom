@@ -75,6 +75,8 @@ public class PatternAnalyser{
       }
     }
 
+  private static int whileCounter = 0;
+
   public static Wfg bpelToWfg(TNode term){
     Wfg wfg  = `Empty();
     Wfg wfglist = `ConcWfg();
@@ -99,6 +101,14 @@ public class PatternAnalyser{
             wfg = `labWfg(linkName,wfg);
           }
         }
+      }
+      node@<(while|repeatUntil)>(activity)</(while|repeatUntil)> -> {
+        whileCounter++;
+        String label = "loop" + whileCounter;
+        Wfg middle = bpelToWfg(`activity);
+        Wfg begin = `labWfg(label, WfgNode(Activity("begin "+node.getName(),node.hashCode(),noCond()), middle ));
+        Wfg end = `WfgNode(Activity("end "+node.getName(),-node.hashCode(),noCond()), refWfg(label));
+        wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(end),All(MuVar("x")))).apply(begin);
       }
       node@<assign>list*</assign> -> {
         StringBuffer buffer = new StringBuffer();
@@ -126,30 +136,17 @@ public class PatternAnalyser{
           }
         }
       }
-
-
-
     }
     return wfg; 
   }
 
   %op Strategy VisitWfgNode(wfg:Visitable,s:Strategy) {
-    /*
-       make(wfg,s) {
-       `mu(MuVar("x"),Sequence(Debug("visitWfgNode"),Sequence(OneRelativeRefSensitive(wfg,Sequence(Debug("followed"),s)),Try(_ConsWfgNode(Identity(),MuVar("x"))))))
-       }
-     */
     make(wfg,s) {
       `mu(MuVar("x"),Sequence(One(RelativeRef(wfg,s)),Try(_ConsWfgNode(Identity(),MuVar("x")))))
     }
   }
 
   %op Strategy PrintWfgNode(wfg:Visitable,node:Node,visited:HashSet) {
-    /*
-       make(wfg,node,visited) {
-       `mu(MuVar("y"),Sequence(Debug("printwfgnode"),Try(_ConsWfgNode(GetRoot(node,visited),Sequence(VisitWfgNode(wfg,Print(node)),VisitWfgNode(wfg,MuVar("y"))))))   )
-       }
-     */
     make(wfg,node,visited) {
       `mu(MuVar("y"),Try(_ConsWfgNode(GetRoot(node,visited),Sequence(VisitWfgNode(wfg,Print(node)),VisitWfgNode(wfg,MuVar("y"))))))
     }
@@ -171,16 +168,6 @@ public class PatternAnalyser{
     System.out.println("}");
   }
 
-  public void essai(){
-    %strategy Toto(wfg:Wfg) extends `Identity(){
-      visit Wfg{
-        Empty() -> {
-          return wfg; 
-        }
-      }
-    }
-  }
-
   %strategy Debug(s: String) extends `Identity() {
     visit Wfg {
       _ -> {
@@ -190,35 +177,23 @@ public class PatternAnalyser{
   }
 
 
-  /*
-     %strategy PrintWfg(wfg:Visitable,node:Node,visited:HashSet) extends `Identity(){
-     visit Wfg{
-     e@ConcWfg(_*) -> {
-     `mu(MuVar("z"),Sequence(Debug("PrintWfg"), 
-     Try(_ConsConcWfg(PrintWfgNode(wfg,node,visited),MuVar("z"))))  
-     ).apply(`e);
-     }
-     e@WfgNode(_*) -> {
-     `PrintWfgNode(wfg,node,visited).apply(`e);
-     }
-     }
-     }
-   */
-
   %strategy Print(root:Node) extends `Identity(){
     visit Wfg{
       WfgNode(Activity[name=name,code=code],_*) ->{
         String id = ("" + `code).replaceAll("-","Z");
         System.out.println(root.id + "[label=\""+ `root.name +"\"];");
         System.out.println(id + "[label=\""+ `name +"\"];");
+        if (`name.startsWith("begin") || `name.startsWith("end"))  System.out.println(id + "[shape=box];");
         System.out.println(root.id + " -> " + id + ";");
       }
+      /*
       Activity[name=name,code=code] ->{
         String id = ("" + `code).replaceAll("-","Z");
         System.out.println(root.id + "[label=\""+ `root.name +"\"];");
         System.out.println(id + "[label=\""+ `name +"\"];");
         System.out.println(root.id + " -> " + id + ";");
       }
+      */
     }
   }
 
@@ -245,6 +220,7 @@ public class PatternAnalyser{
 
   public static void main(String[] args){
     XmlTools xtools = new XmlTools();
+    xtools.setDeletingWhiteSpaceNodes(true);
     TNode term = xtools.convertXMLToTNode(args[0]);
     Wfg wfg = null;
     %match(TNode term){

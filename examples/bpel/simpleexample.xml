@@ -1,32 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <process>
-  <flow>
-    <sequence>
+  <sequence>
+    <invoke operation="root" />
+    <flow>
       <sequence>
-        <invoke name="B">
-        </invoke> 
+        <invoke operation="B" />
+        <while>
+          <sequence>
+            <invoke operation="inner1" />
+            <flow>
+              <invoke operation="inner2" />
+              <repeatUntil>
+                <sequence>
+                  <invoke operation="inner3" />
+                  <flow>
+                    <invoke operation="inner4" />
+                    <invoke operation="inner5" />
+                  </flow>
+                </sequence>
+              </repeatUntil>
+            </flow>
+          </sequence>
+        </while>
+        <invoke operation="A" /> 
       </sequence>
       <sequence>
-        <invoke name="A" /> 
+        <invoke operation="C" /> 
+        <flow>
+          <invoke operation="D">
+            <source linkName="toto"/>
+          </invoke> 
+          <invoke operation="E" /> 
+        </flow>
+        <invoke operation="F" /> 
       </sequence>
-    </sequence>
-    <sequence>
-      <invoke name="C" /> 
-      <flow>
-        <invoke name="D">
-          <source linkName="toto"/>
-        </invoke> 
-        <invoke name="E" /> 
-      </flow>
-      <invoke name="F" /> 
-    </sequence>
-    <sequence>
-      <invoke name="G" > 
-        <target linkName="toto"/>
-      </invoke>
-    </sequence>
-  </flow>
+      <sequence>
+        <invoke operation="G" > 
+          <target linkName="toto"/>
+        </invoke>
+      </sequence>
+    </flow>
+  </sequence>
 </process>
 
 
