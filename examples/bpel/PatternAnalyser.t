@@ -136,7 +136,7 @@ public class PatternAnalyser{
             }
 
             buffer.append(%[ @from@ -> @`to@\n ]%);
-          }  
+          }
           (_*) -> {        
             wfg = `WfgNode(Activity(buffer.toString(),node.hashCode(),noCond())); 
           }

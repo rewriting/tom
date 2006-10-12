@@ -12,6 +12,15 @@
       <fileset dir="${examples.dir}/${bpel}">
       </fileset>
     </copy>
+    <tomantlr target="${bpel}/SeqParser.g"
+              outputdirectory="${examples.gen}/${bpel}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+    <antlrmapper srcfile="${examples.gen}/${bpel}/SeqParserTokenTypes.txt"
+         destdir="${examples.gen}"
+         package="${bpel}">
+      <classpath refid="tom.classpath"/>
+    </antlrmapper>
     <gomcompile example="${bpel}"/>
     <tomcompile example="${bpel}"/>
     <javacompile example="${bpel}"/>
