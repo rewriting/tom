@@ -12,11 +12,11 @@
       <fileset dir="${examples.dir}/${bpel}">
       </fileset>
     </copy>
-    <tomantlr target="${bpel}/SeqParser.g"
+    <tomantlr target="${bpel}/CondParser.g"
               outputdirectory="${examples.gen}/${bpel}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
-    <antlrmapper srcfile="${examples.gen}/${bpel}/SeqParserTokenTypes.txt"
+    <antlrmapper srcfile="${examples.gen}/${bpel}/CondParserTokenTypes.txt"
          destdir="${examples.gen}"
          package="${bpel}">
       <classpath refid="tom.classpath"/>
