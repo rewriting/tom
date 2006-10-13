@@ -49,6 +49,7 @@ import java.util.*;
 public class PatternAnalyser{
 
   %include {util/HashSet.tom}
+  %include {util/HashMap.tom}
   %include {util/ArrayList.tom}
   %include {wfg/Wfg.tom}
   %include {wfg/_Wfg.tom}
@@ -77,45 +78,86 @@ public class PatternAnalyser{
 
   private static int whileCounter = 0;
 
-  public static Wfg bpelToWfg(TNode term){
+  private static class ExplicitConditions {
+    public HashMap sourceToName = new HashMap();
+    public HashMap nameToConditions = new HashMap();
+
+    %strategy Substitute(sourceToName:HashMap) extends `Identity() {
+      visit Condition {
+        label(n) -> {
+          return `cond(refWfg( (String) sourceToName.get(n) ));
+        }
+      }
+    }
+
+    public void putCondition(String name, Condition cond) {
+      ConditionList clist = (ConditionList) nameToConditions.get(name);
+      if (clist == null) 
+        nameToConditions.put(name,`condList(cond));
+      else
+        nameToConditions.put(name, `condList(clist*,cond));
+    }
+
+    public void putLinkName(String source, String name) {
+      sourceToName.put(source,name);
+    }
+
+    public void substitute() {
+      %match(HashMap nameToConditions) {
+        (_*,mapEntry(k,v),_*) -> {
+          ConditionList newList = (ConditionList) ((MuStrategy) `TopDown(Substitute(sourceToName))).apply((ConditionList) `v);
+          nameToConditions.put(`k,newList);
+        }
+      }
+    }
+  }
+
+  public static Wfg bpelToWfg(TNode term, ExplicitConditions explicitCond){
     Wfg wfg  = `Empty();
     Wfg wfglist = `ConcWfg();
+
     %match(TNode term){
       <flow>proc</flow> ->{
-        Wfg res = bpelToWfg(`proc);
+        Wfg res = bpelToWfg(`proc, explicitCond);
         wfglist = `ConcWfg(wfglist*,res);
       }
       <flow></flow> ->{
         return wfglist;
       }
       <sequence>proc</sequence> ->{
-        wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(proc)),All(MuVar("x")))).apply(wfg);
+        wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(proc,explicitCond)),All(MuVar("x")))).apply(wfg);
       }
       node@<(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
-        wfg = `WfgNode(Activity(operation,node.hashCode(),noCond())); 
+        //wfg = `labWfg(operation,WfgNode(Activity(operation,node.hashCode(),noCond(),noCond()))); 
+        wfg = `WfgNode(Activity(operation,node.hashCode(),noCond(),noCond())); 
         %match(TNodeList linklist){
+          (_*,<joincondition>cond</joincondition>,_*) -> {
+            explicitCond.putCondition(`operation,ConditionParser.parse(`cond.getData())); 
+          }
           (_*,<source linkName=linkName/>,_*) -> {
+            explicitCond.putLinkName(`linkName,`operation);
             wfg = `WfgNode(wfg*,refWfg(linkName));
           }
           (_*,<target linkName=linkName/>,_*) -> {
             wfg = `labWfg(linkName,wfg);
           }
         }
+        //wfg = `labWfg(operation,wfg);
       }
       node@<(while|repeatUntil)>(<condition></condition>, activity)</(while|repeatUntil)> -> {
         whileCounter++;
         String label = "loop" + whileCounter;
-        Wfg middle = bpelToWfg(`activity);
-        Wfg begin = `labWfg(label, WfgNode(Activity("begin "+node.getName(),node.hashCode(),noCond()), middle ));
-        Wfg end = `WfgNode(Activity("end "+node.getName(),-node.hashCode(),noCond()), refWfg(label));
+        Wfg middle = bpelToWfg(`activity,explicitCond);
+        Wfg begin = `labWfg(label,WfgNode(Activity("begin "+node.getName(),node.hashCode(),noCond(),noCond()), middle ));
+        Wfg end = `WfgNode(Activity("end "+node.getName(),-node.hashCode(),noCond(),noCond()), refWfg(label));
         wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(end),All(MuVar("x")))).apply(begin);
       }
       node@ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
-        Wfg res = bpelToWfg(`activity);
+        Wfg res = bpelToWfg(`activity,explicitCond);
         wfglist = `ConcWfg(wfglist*,res);
         %match(TNodeList elses) {
           (_*,<(else|elseif)>altenate_activity</(else|elseif)>,_*) -> {
-            res = bpelToWfg(`altenate_activity);
+            res = bpelToWfg(`altenate_activity, explicitCond);
             wfglist = `ConcWfg(wfglist*,res);
           }
           _ -> {
@@ -138,7 +180,7 @@ public class PatternAnalyser{
             buffer.append(%[ @from@ -> @`to@\n ]%);
           }
           (_*) -> {        
-            wfg = `WfgNode(Activity(buffer.toString(),node.hashCode(),noCond())); 
+            wfg = `WfgNode(Activity(buffer.toString(),node.hashCode(),noCond(),noCond())); 
           }
           (_*,<source linkName=linkName/>,_*) -> {
             wfg = `WfgNode(wfg*,refWfg(linkName));
@@ -229,10 +271,21 @@ public class PatternAnalyser{
     Wfg wfg = null;
     %match(TNode term){
       DocumentNode(_,ElementNode("process",_,concTNode(_*,elt@<(sequence|flow)></(sequence|flow)>,_*))) -> {
-        wfg = bpelToWfg(`elt); 
-        //System.out.println("\nWfg with labels:\n" + wfg);
+        ExplicitConditions conds = new ExplicitConditions();
+        wfg = bpelToWfg(`elt, conds);
+        conds.substitute();
+        
+        // debug 
+        HashMap hm = conds.nameToConditions;
+        %match(HashMap hm) {
+          (_*,mapEntry(k,v),_*) -> {
+            System.out.println(`k + " -> " + `v);
+          }
+        }
+               
+        System.out.println("\nWfg with labels:\n" + wfg);
         wfg = `expWfg(wfg);
-        //System.out.println("\nWfg with positions:\n" + wfg);
+        System.out.println("\nWfg with positions:\n" + wfg);
       }
     }
     PatternAnalyser.printWfg(wfg);

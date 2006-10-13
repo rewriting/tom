@@ -3,7 +3,7 @@ imports String int
 abstract syntax
 
 Wfg = WfgNode(Wfg*)
-    | Activity(name:String,code:int,joincond:Condition)
+    | Activity(name:String,code:int,incond:Condition,outcond:Condition)
     | ConcWfg(Wfg*)
     | labWfg(label:String,wfg:Wfg)
     | refWfg(label:String)
@@ -15,8 +15,11 @@ Condition = and(c1:Condition,c2:Condition)
           | or(c1:Condition,c2:Condition)
           | xor(c1:Condition,c2:Condition)
           | cond(wfg:Wfg)
+          | label(node:String)
           | noCond()
 
+
+ConditionList = condList(Condition*)
 
 expWfg:make(wfg){
   Wfg wfgWithPos = expand(wfg);
@@ -43,6 +46,7 @@ expWfg:block{
     %strategy CollectWfgs(table:HashMap) extends `Identity() {
       visit Wfg{
         labWfg(label,wfg) -> {
+          System.out.println("label = " + `label);
           table.put(`label,getPosition());
           return `wfg;
         }
@@ -52,9 +56,10 @@ expWfg:block{
     %strategy Replacelabels(table:HashMap) extends `Identity() {
       visit Wfg{
         refWfg(label) -> {
+          Position target = (Position) table.get(`label);
+          if (target == null) throw new RuntimeException("The label "+`label+" is not referenced");
           RelativePosition pos = 
-            RelativePosition.make(getPosition(),(Position) table.get(`label));
-          if (pos == null) throw new RuntimeException("The label "+`label+" is not referenced");
+            RelativePosition.make(getPosition(),target);
           Wfg ref = `posWfg();
           int[] array = pos.toArray();
           for(int i=0;i<pos.depth();i++){
@@ -67,7 +72,7 @@ expWfg:block{
 
     public static Wfg expand(Wfg t){
       HashMap table = new HashMap();
-      return (Wfg) `Sequence(RepeatId(TopDown(CollectWfgs(table))),TopDown(Replacelabels(table))).apply(t);
+      return (Wfg) `Sequence(TopDown(CollectWfgs(table)),TopDown(Replacelabels(table))).apply(t);
     }
 }
 
