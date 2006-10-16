@@ -19,8 +19,6 @@ Condition = and(c1:Condition,c2:Condition)
           | noCond()
 
 
-ConditionList = condList(Condition*)
-
 expWfg:make(wfg){
   Wfg wfgWithPos = expand(wfg);
   //to avoid unaccessible real_make statement
@@ -46,8 +44,6 @@ expWfg:block{
     %strategy CollectWfgs(table:HashMap) extends `Identity() {
       visit Wfg{
         labWfg(label,wfg) -> {
-          System.out.println("label = " + `label);
-          System.out.println("position = " + getPosition());
           table.put(`label,getPosition());
           return `wfg;
         }
