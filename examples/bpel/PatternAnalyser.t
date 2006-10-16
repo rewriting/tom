@@ -139,7 +139,7 @@ public class PatternAnalyser{
             wfg = `labWfg(linkName,wfg);
           }
         }
-        //wfg = `labWfg(operation,wfg);
+        wfg = `labWfg(operation,wfg);
       }
       node@<(while|repeatUntil)>(<condition></condition>, activity)</(while|repeatUntil)> -> {
         whileCounter++;
@@ -236,27 +236,62 @@ public class PatternAnalyser{
 
   %strategy DefaultCond(root:Node) extends `Identity() {
     visit Wfg {
-      WfgNode(Activity(name,code,incond,outcond),X*) -> {
+      node@Activity(name,code,incond,outcond) -> {
         String root_name = root.name;
-        return `WfgNode(Activity(name,code,and(cond(refWfg(root_name)),incond),outcond),X*);
+        System.out.println("root = " + root_name + ", name = " + `name);
+        if (root_name.equals("")) return `node;
+        return `Activity(name,code,and(cond(refWfg(root_name)),incond),outcond);
       }
     }
   }
 
-  /* adds default condition concerning node to the visited WfgNode 
+   /* adds default condition concerning node to the visited WfgNode 
      if it doesn't already contain a condition about node */
   %op Strategy AddDefaultCond(node:Node) {
-    make(node) { `Choice(Findref(node),DefaultCond(node)); }
+    make(node) { `Sequence(TopDown(FindRef(node)),DefaultCond(node)) }
   }
-
-
-
-  %strategy Debug(s: String) extends `Identity() {
+   
+  // adds the explicit condition if present in the hashmap
+  %strategy AddExplicitCond(nameToCondition:HashMap) extends Identity() {
     visit Wfg {
-      _ -> {
-        System.out.println("- " + s +": " + getPosition());
+      node@Activity(name,code,incond,outcond) -> {
+        Condition newcond = (Condition) nameToCondition.get(`name);
+        if (newcond == null) return `node;
+        return `Activity(name,code,newcond,outcond);
       }
     }
+  }
+
+  %op Strategy IgnoreLabels(s:Strategy) {
+    make(s) { `mu(MuVar("i"),Choice(_labWfg(Identity(),MuVar("i")),s)) }
+  }
+
+  %op Strategy AddCondWfgNode(wfg:Visitable,node:Node,visited:HashSet,nameToCondition:HashMap) {
+    make(wfg,node,visited,nameToCondition) {
+      `mu(MuVar("y"),IgnoreLabels(Sequence(
+              CurrentNode(wfg,Sequence(
+                  Sequence(
+                    AddExplicitCond(nameToCondition),
+                    AddDefaultCond(node)),
+                  GetRoot(node,visited))),
+              AllWfg(wfg,Try(MuVar("y")))
+              )
+            )
+         )
+    }
+  }
+
+  %op Strategy AddCondWfg(wfg:Visitable,node:Node,visited:HashSet,nameToCondition:HashMap) {
+    make(wfg,node,visited,nameToCondition) {
+      `Choice(_ConcWfg(AddCondWfgNode(wfg,node,visited,nameToCondition)),AddCondWfgNode(wfg,node,visited,nameToCondition))
+    }
+  }
+
+  public static Wfg addConditionsWfg(Wfg wfg, HashMap nameToCondition){
+    Node node = new Node();
+    HashSet visited = new HashSet();
+    //return (Wfg) `AddCondWfg(wfg,node,visited,nameToCondition).apply(wfg);
+    return (Wfg) StratDebugger.applyDebug(wfg,`AddCondWfg(wfg,node,visited,nameToCondition));    
   }
 
 
@@ -314,11 +349,15 @@ public class PatternAnalyser{
           }
         }
 
+        wfg = addConditionsWfg(wfg,conds.nameToCondition);
         //System.out.println("\nWfg with labels:\n" + wfg);
         wfg = `expWfg(wfg);
         //System.out.println("\nWfg with positions:\n" + wfg);
+
+        printWfg(wfg);
+        //VisitableViewer.visitableToDotStdout(wfg);
+        System.out.println(wfg);
       }
     }
-    PatternAnalyser.printWfg(wfg);
   }
 }//class PatternAnalyser
