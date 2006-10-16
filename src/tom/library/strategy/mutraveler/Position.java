@@ -128,22 +128,22 @@ public class Position {
   /**
    * Compares two positions
    */
-  public boolean compare(Object o) {
+  public int compare(Object o) {
     if (o instanceof Position) {
       Position p = (Position)o;
       /* we need to check only the meaningful part of the data array */
       if (size==p.size) {
         for(int i=0; i<size; i++) {
           if (data[i]<p.data[i]) {
-            return true;
+            return -1;
           }
         }
-        return false;
+        return 0;
       } else {
-        return size<p.size;
+        return size<p.size?-1:1;
       }
     } else {
-      return false;
+      return -2;
     }
   }
 
