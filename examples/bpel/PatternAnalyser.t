@@ -30,6 +30,7 @@
 
 package bpel;
 
+import ted.*;
 import bpel.wfg.*;
 import bpel.wfg.types.*;
 import bpel.wfg.strategy.wfg.*;
@@ -190,15 +191,22 @@ public class PatternAnalyser{
     return wfg; 
   }
 
-  %op Strategy VisitWfgNode(wfg:Visitable,s:Strategy) {
+  %op Strategy CurrentNode(wfg:Visitable,s:Strategy) {
     make(wfg,s) {
-      `mu(MuVar("x"),Sequence(One(RelativeRef(wfg,s)),Try(_ConsWfgNode(Identity(),MuVar("x")))))
+      `_ConsWfgNode(RelativeRef(wfg,s),Identity())
     }
   }
 
+  %op Strategy AllWfg(wfg:Visitable,s:Strategy) {
+    make(wfg,s) {
+      `_ConsWfgNode(Identity(),_WfgNode(RelativeRef(wfg,s)))
+    }
+  }
+
+
   %op Strategy PrintWfgNode(wfg:Visitable,node:Node,visited:HashSet) {
     make(wfg,node,visited) {
-      `mu(MuVar("y"),Try(_ConsWfgNode(GetRoot(node,visited),Sequence(VisitWfgNode(wfg,Print(node)),VisitWfgNode(wfg,MuVar("y"))))))
+      `mu(MuVar("y"),Sequence(CurrentNode(wfg,Sequence(Print(node),GetRoot(node,visited))),AllWfg(wfg,Try(MuVar("y")))))
     }
   }
 
@@ -213,7 +221,7 @@ public class PatternAnalyser{
     HashSet visited = new HashSet();
     System.out.println("digraph g{");
     `PrintWfg(wfg,node,visited).apply(wfg);    
-    //StratDebugger.applyGraphicalDebug(wfg,`PrintWfg(wfg,node,visited));    
+    //StratDebugger.applyDebug(wfg,`PrintWfg(wfg,node,visited));    
     System.out.println("}");
   }
 
@@ -254,12 +262,14 @@ public class PatternAnalyser{
 
   %strategy Print(root:Node) extends `Identity(){
     visit Wfg{
-      WfgNode(Activity[name=name,code=code],_*) ->{
-        String id = ("" + `code).replaceAll("-","Z");
-        System.out.println(root.id + "[label=\""+ `root.name +"\"];");
-        System.out.println(id + "[label=\""+ `name +"\"];");
-        if (`name.startsWith("begin") || `name.startsWith("end"))  System.out.println(id + "[shape=box];");
-        System.out.println(root.id + " -> " + id + ";");
+      Activity[name=name,code=code] ->{
+        if(! root.name.equals("")){
+          String id = ("" + `code).replaceAll("-","Z");
+          System.out.println(root.id + "[label=\""+ `root.name +"\"];");
+          System.out.println(id + "[label=\""+ `name +"\"];");
+          if (`name.startsWith("begin") || `name.startsWith("end"))  System.out.println(id + "[shape=box];");
+          System.out.println(root.id + " -> " + id + ";");
+        }
       }
     }
   }
@@ -295,7 +305,7 @@ public class PatternAnalyser{
         ExplicitConditions conds = new ExplicitConditions();
         wfg = bpelToWfg(`elt, conds);
         conds.substitute();
-        
+
         // debug 
         HashMap hm = conds.nameToCondition;
         %match(HashMap hm) {
@@ -303,7 +313,7 @@ public class PatternAnalyser{
             System.out.println(`k + " -> " + `v);
           }
         }
-               
+
         //System.out.println("\nWfg with labels:\n" + wfg);
         wfg = `expWfg(wfg);
         //System.out.println("\nWfg with positions:\n" + wfg);
