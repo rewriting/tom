@@ -33,6 +33,7 @@ package bpel;
 import ted.*;
 import bpel.wfg.*;
 import bpel.wfg.types.*;
+import bpel.wfg.types.wfg.*;
 import bpel.wfg.strategy.wfg.*;
 
 import tom.library.xml.*;
@@ -125,8 +126,7 @@ public class PatternAnalyser{
         wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(proc,explicitCond)),All(MuVar("x")))).apply(wfg);
       }
       node@<(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
-        //wfg = `labWfg(operation,WfgNode(Activity(operation,node.hashCode(),noCond(),noCond()))); 
-        wfg = `WfgNode(Activity(operation,node.hashCode(),noCond(),noCond())); 
+        wfg = `WfgNode(Activity(operation,noCond(),noCond())); 
         %match(TNodeList linklist){
           (_*,<joincondition>cond</joincondition>,_*) -> {
             explicitCond.putCondition(`operation,ConditionParser.parse(`cond.getData())); 
@@ -145,8 +145,8 @@ public class PatternAnalyser{
         whileCounter++;
         String label = "loop" + whileCounter;
         Wfg middle = bpelToWfg(`activity,explicitCond);
-        Wfg begin = `labWfg(label,WfgNode(Activity("begin "+node.getName(),node.hashCode(),noCond(),noCond()), middle ));
-        Wfg end = `WfgNode(Activity("end "+node.getName(),-node.hashCode(),noCond(),noCond()), refWfg(label));
+        Wfg begin = `labWfg(label,WfgNode(Activity("begin "+node.getName(),noCond(),noCond()), middle ));
+        Wfg end = `WfgNode(Activity("end "+node.getName(),noCond(),noCond()), refWfg(label));
         wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(end),All(MuVar("x")))).apply(begin);
       }
       node@ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
@@ -177,7 +177,7 @@ public class PatternAnalyser{
             buffer.append(%[ @from@ -> @`to@\n ]%);
           }
           (_*) -> {        
-            wfg = `WfgNode(Activity(buffer.toString(),node.hashCode(),noCond(),noCond())); 
+            wfg = `WfgNode(Activity(buffer.toString(),noCond(),noCond())); 
           }
           (_*,<source linkName=linkName/>,_*) -> {
             wfg = `WfgNode(wfg*,refWfg(linkName));
@@ -191,33 +191,34 @@ public class PatternAnalyser{
     return wfg; 
   }
 
-  %op Strategy CurrentNode(wfg:Visitable,s:Strategy) {
+  %op Strategy CurrentNode(wfg:Wfg,s:Strategy) {
     make(wfg,s) {
       `_ConsWfgNode(RelativeRef(wfg,s),Identity())
     }
   }
 
-  %op Strategy AllWfg(wfg:Visitable,s:Strategy) {
+  %op Strategy AllWfg(wfg:Wfg,s:Strategy) {
     make(wfg,s) {
-      `_ConsWfgNode(Identity(),_WfgNode(RelativeRef(wfg,s)))
+      `_ConsWfgNode(Identity(),Choice(_WfgNode(RelativeRef(wfg,s)),_EmptyWfgNode()))
     }
   }
 
 
-  %op Strategy PrintWfgNode(wfg:Visitable,node:Node,visited:HashSet) {
+%op Strategy PrintWfgNode(wfg:Wfg,node:PositionNode,visited:HashSet) {
     make(wfg,node,visited) {
-      `mu(MuVar("y"),Sequence(CurrentNode(wfg,Sequence(Print(node),GetRoot(node,visited))),AllWfg(wfg,Try(MuVar("y")))))
+      `mu(MuVar("y"),Sequence(CurrentNode(wfg,GetRoot(node,visited)),AllWfg(wfg,CurrentNode(wfg,Print(node,wfg))),AllWfg(wfg,Try(MuVar("y")))))
     }
   }
 
-  %op Strategy PrintWfg(wfg:Visitable,node:Node,visited:HashSet) {
+  %op Strategy PrintWfg(wfg:Wfg,node:PositionNode,visited:HashSet) {
     make(wfg,node,visited) {
       `Choice(_ConcWfg(PrintWfgNode(wfg,node,visited)),PrintWfgNode(wfg,node,visited))
     }
   }
 
   public static void printWfg(Wfg wfg){
-    Node node = new Node();
+    PositionNode node = new PositionNode();
+    node.pos = null;
     HashSet visited = new HashSet();
     System.out.println("digraph g{");
     `PrintWfg(wfg,node,visited).apply(wfg);    
@@ -226,38 +227,42 @@ public class PatternAnalyser{
   }
 
   // fails when finding the right ref
-  %strategy FindRef(node:Node) extends `Identity() {
+  %strategy FindRef(node:PositionNode,root:Wfg) extends `Identity() {
     visit Wfg {
       refWfg(s) -> {
-        if (`s.equals(node.name)) throw new VisitFailure(); 
+        Activity act = (Activity) node.pos.getSubterm().apply(root);
+        if (`s.equals(act.getname())) throw new VisitFailure(); 
       }
+
     }
   }
 
-  %strategy DefaultCond(root:Node) extends `Identity() {
+  %strategy DefaultCond(node:PositionNode,root:Wfg) extends `Identity() {
     visit Wfg {
-      node@Activity(name,code,incond,outcond) -> {
-        String root_name = root.name;
+      a@Activity(name,incond,outcond) -> {
+        Activity act = (Activity) node.pos.getSubterm().apply(root);
+        String root_name = act.getname();
         System.out.println("root = " + root_name + ", name = " + `name);
-        if (root_name.equals("")) return `node;
-        return `Activity(name,code,and(cond(refWfg(root_name)),incond),outcond);
+        if (root_name.equals("")) return `a;
+        return `Activity(name,and(cond(refWfg(root_name)),incond),outcond);
       }
     }
   }
 
    /* adds default condition concerning node to the visited WfgNode 
      if it doesn't already contain a condition about node */
-  %op Strategy AddDefaultCond(node:Node) {
-    make(node) { `Sequence(TopDown(FindRef(node)),DefaultCond(node)) }
+  %op Strategy AddDefaultCond(node:PositionNode,root:Wfg) {
+    make(node,root) { `Sequence(TopDown(FindRef(node,root)),DefaultCond(node,root)) }
   }
    
   // adds the explicit condition if present in the hashmap
   %strategy AddExplicitCond(nameToCondition:HashMap) extends Identity() {
     visit Wfg {
-      node@Activity(name,code,incond,outcond) -> {
+      node@Activity(name,incond,outcond) -> {
+
         Condition newcond = (Condition) nameToCondition.get(`name);
         if (newcond == null) return `node;
-        return `Activity(name,code,newcond,outcond);
+        return `Activity(name,newcond,outcond);
       }
     }
   }
@@ -266,14 +271,13 @@ public class PatternAnalyser{
     make(s) { `mu(MuVar("i"),Choice(_labWfg(Identity(),MuVar("i")),s)) }
   }
 
-  %op Strategy AddCondWfgNode(wfg:Visitable,node:Node,visited:HashSet,nameToCondition:HashMap) {
+  %op Strategy AddCondWfgNode(wfg:Wfg,node:PositionNode,visited:HashSet,nameToCondition:HashMap) {
     make(wfg,node,visited,nameToCondition) {
       `mu(MuVar("y"),IgnoreLabels(Sequence(
-              CurrentNode(wfg,Sequence(
-                  Sequence(
-                    AddExplicitCond(nameToCondition),
-                    AddDefaultCond(node)),
-                  GetRoot(node,visited))),
+              CurrentNode(wfg,GetRoot(node,visited)),
+              AllWfg(wfg,IgnoreLabels(CurrentNode(wfg,
+                    AddExplicitCond(nameToCondition)
+                     ))),
               AllWfg(wfg,Try(MuVar("y")))
               )
             )
@@ -281,55 +285,60 @@ public class PatternAnalyser{
     }
   }
 
-  %op Strategy AddCondWfg(wfg:Visitable,node:Node,visited:HashSet,nameToCondition:HashMap) {
+  %op Strategy AddCondWfg(wfg:Wfg,node:PositionNode,visited:HashSet,nameToCondition:HashMap) {
     make(wfg,node,visited,nameToCondition) {
       `Choice(_ConcWfg(AddCondWfgNode(wfg,node,visited,nameToCondition)),AddCondWfgNode(wfg,node,visited,nameToCondition))
     }
   }
 
   public static Wfg addConditionsWfg(Wfg wfg, HashMap nameToCondition){
-    Node node = new Node();
+    PositionNode node = new PositionNode();
+    node.pos = null;
     HashSet visited = new HashSet();
     //return (Wfg) `AddCondWfg(wfg,node,visited,nameToCondition).apply(wfg);
-    return (Wfg) StratDebugger.applyDebug(wfg,`AddCondWfg(wfg,node,visited,nameToCondition));    
+    return (Wfg) StratDebugger.applyGraphicalDebug(wfg,`AddCondWfg(wfg,node,visited,nameToCondition));    
   }
 
 
-  %strategy Print(root:Node) extends `Identity(){
+  %strategy Print(node:PositionNode,root:Wfg) extends `Identity(){
     visit Wfg{
-      Activity[name=name,code=code] ->{
-        if(! root.name.equals("")){
-          String id = ("" + `code).replaceAll("-","Z");
-          System.out.println(root.id + "[label=\""+ `root.name +"\"];");
-          System.out.println(id + "[label=\""+ `name +"\"];");
-          if (`name.startsWith("begin") || `name.startsWith("end"))  System.out.println(id + "[shape=box];");
-          System.out.println(root.id + " -> " + id + ";");
+      a@Activity[name=name,incond=incond] ->{
+        Position pos = node.pos;
+        if(pos != null){
+          Activity act = (Activity) pos.getSubterm().apply(root);
+          System.out.println(act.getname()+ "[label=\""+ act.getname() + "\\n" + act.getincond() +"\"];");
+          Position currentpos = getPosition();
+          System.out.println(`name+ "[label=\""+ `name + "\\n" + `incond +"\"];");
+          if (`name.startsWith("begin") || `name.startsWith("end"))  System.out.println(`name + "[shape=box];");
+          System.out.println(act.getname() + " -> " + `name + ";");
         }
       }
     }
   }
 
-  %strategy GetRoot(root:Node,visited:HashSet) extends `Fail(){
+  %strategy GetRoot(node:PositionNode,visited:HashSet) extends `Fail(){
     visit Wfg{
-      a@Activity[name=name,code=code] ->{
-        if (!visited.contains(new Integer(`code))) {
-          visited.add(new Integer(`code));
-          root.name = `name;
-          root.id = ("" + `code).replaceAll("-","Z");
+      a@Activity[name=name,incond=incond] ->{
+        System.out.println("name = " + `name);
+        Position currentpos = getPosition();
+        if (!visited.contains(currentpos)) {
+          node.pos = currentpos;
+          visited.add(currentpos);
           return `a;
         }
       }
     }
   }
 
-  %typeterm Node{
-    implement {Node}
-  }
-  static class Node{
-    public String name="";
-    public String id="";
+  %typeterm PositionNode{
+    implement {PositionNode}
   }
 
+
+
+  public static class PositionNode{
+    Position pos;
+  }
   public static void main(String[] args){
     XmlTools xtools = new XmlTools();
     xtools.setDeletingWhiteSpaceNodes(true);
@@ -341,22 +350,25 @@ public class PatternAnalyser{
         wfg = bpelToWfg(`elt, conds);
         conds.substitute();
 
-        // debug 
-        HashMap hm = conds.nameToCondition;
-        %match(HashMap hm) {
-          (_*,mapEntry(k,v),_*) -> {
-            System.out.println(`k + " -> " + `v);
-          }
-        }
+        // debug
+        /*
+           HashMap hm = conds.nameToCondition;
+           %match(HashMap hm) {
+           (_*,mapEntry(k,v),_*) -> {
+           System.out.println(`k + " -> " + `v);
+           }
+           }
+         */
 
+        System.out.println("\nWfg with labels:\n" + wfg);
         wfg = addConditionsWfg(wfg,conds.nameToCondition);
-        //System.out.println("\nWfg with labels:\n" + wfg);
         wfg = `expWfg(wfg);
-        //System.out.println("\nWfg with positions:\n" + wfg);
+        System.out.println(wfg);
+
+        //System.out.println("\nWfg with nodeitions:\n" + wfg);
 
         printWfg(wfg);
-        //VisitableViewer.visitableToDotStdout(wfg);
-        System.out.println(wfg);
+        VisitableViewer.visitableToDotStdout(wfg);
       }
     }
   }
