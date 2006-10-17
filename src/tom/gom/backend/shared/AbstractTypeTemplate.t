@@ -46,7 +46,7 @@ public class AbstractTypeTemplate extends TemplateHookedClass {
 package @getPackage()@;
 @generateImport()@
 
-public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable, Comparable @generateInterface()@ {
+public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable, tom.library.sl.Visitable, Comparable @generateInterface()@ {
 
 @generateBlock()@
 

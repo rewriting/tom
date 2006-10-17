@@ -72,7 +72,7 @@ writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
-public class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable @generateInterface()@ {
+public class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable, tom.library.sl.Visitable @generateInterface()@ {
 @generateBlock()@
   private static @className()@ proto = new @className()@();
   private int hashCode;
@@ -241,7 +241,19 @@ generateGetters(writer);
     }
   }
 
+  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] childs) {
+    if (childs.length == @nonBuiltinChildCount()@) {
+      return @nonBuiltinArrayMake("childs")@;
+    } else {
+      throw new IndexOutOfBoundsException();
+    }
+  }
+
   public jjtraveler.Visitable[] getChilds() {
+    return new jjtraveler.Visitable[] { @nonBuiltinChildList(slotList)@ };
+  }
+
+  public jjtraveler.Visitable[] getChildren() {
     return new jjtraveler.Visitable[] { @nonBuiltinChildList(slotList)@ };
   }
 ]%);

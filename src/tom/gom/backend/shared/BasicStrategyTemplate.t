@@ -40,9 +40,8 @@ public class BasicStrategyTemplate extends TemplateClass {
     writer.write(%[
 package @getPackage()@;
 import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.MuStrategy;
     
-  public class @className()@ extends @className(fwd)@ implements MuStrategy {
+  public class @className()@ extends @className(fwd)@ implements tom.library.strategy.mutraveler.MuStrategy, tom.library.sl.Strategy {
   private Position position;
 
   public void setPosition(Position pos) {
@@ -80,6 +79,15 @@ import tom.library.strategy.mutraveler.MuStrategy;
     }
   }
 
+  public jjtraveler.Visitable[] getChildren() {
+    return new jjtraveler.Visitable[]{(jjtraveler.Visitable)any};
+  }
+
+  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
+    any = (jjtraveler.Visitor)children[0];
+    return this;
+  }
+
   /*
    * Apply the strategy, and returns the subject in case of VisitFailure
    */
@@ -90,6 +98,26 @@ import tom.library.strategy.mutraveler.MuStrategy;
       return any;
     }
   }
+
+  public tom.library.sl.Visitable apply(tom.library.sl.Visitable any) { /*throws Failure*/
+    try {
+      return (tom.library.sl.Visitable)this.visit(any);
+    } catch (jjtraveler.VisitFailure f) {
+      return any;
+    }
+  }
+
+  public tom.library.sl.Environment getEnvironment() {
+    return ((tom.library.sl.Strategy)any).getEnvironment();
+  }
+
+  public void setEnvironment(tom.library.sl.Environment env) {
+    ((tom.library.sl.Strategy)any).setEnvironment(env);
+  }
+
+  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure {
+    return v.visit_Strategy(this);
+  } 
 
   public tom.library.strategy.mutraveler.MuStrategy accept(tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
     return v.visit_Strategy(this);
