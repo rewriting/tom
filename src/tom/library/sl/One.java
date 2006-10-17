@@ -29,9 +29,6 @@
  * 
  **/
 package tom.library.sl;
-import jjtraveler.Visitable;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
 
 /**
  * <code>T(t1,...,ti,...,tN).accept(One(v)) = T(t1,...,ti.accept(v),...,tN)</code>
@@ -45,36 +42,22 @@ import jjtraveler.VisitFailure;
  * undone.
  */
 
-public class One extends AbstractStrategyLanguage {
+public class One extends AbstractStrategy {
   public final static int ARG = 0;
   
-  public One(VisitableVisitor v) {
+  public One(Strategy v) {
     initSubterm(v);
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure {
+  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     int childCount = any.getChildCount();
-    if(position==null) {
-      for(int i = 0; i < childCount; i++) {
-        try {
-          Visitable newChild = visitors[ARG].visit(any.getChildAt(i));
-          return any.setChildAt(i,newChild);
-        } catch(VisitFailure f) { }
-      }
-    } else {
-      for(int i = 0; i < childCount; i++) {
-        try { 
-          //System.out.println("One.pos = " + position);
-          position.down(i+1);
-          Visitable newChild = visitors[ARG].visit(any.getChildAt(i));
-          position.up();
-          return any.setChildAt(i,newChild);
-        } catch(VisitFailure f) {
-          position.up();
-        }
-      }
+    for(int i = 0; i < childCount; i++) {
+      try {
+        jjtraveler.Visitable newChild = visitors[ARG].visit(any.getChildAt(i));
+        return any.setChildAt(i,newChild);
+      } catch(jjtraveler.VisitFailure f) { }
     }
-    throw new VisitFailure();
+    throw new jjtraveler.VisitFailure();
   }
 
   protected void visit() throws jjtraveler.VisitFailure {
@@ -85,7 +68,7 @@ public class One extends AbstractStrategyLanguage {
       try { 
         //System.out.println("One.pos = " + environment);
         environment.down(i+1);
-        ((AbstractStrategyLanguage)visitors[ARG]).visit();
+        ((AbstractStrategy)visitors[ARG]).visit();
         //System.out.println("One: succeeds: " + getSubject());
         environment.up();
         return ;

@@ -30,44 +30,16 @@
  **/
 package tom.library.sl;
 
-/**
- * <code>Choice(v1,v2) = v1</code>    if v1 succeeds
- * <p>
- * <code>Choice(v1,v2) = v2</code>    if v1 fails
- * <p>
- * Visitor combinator with two visitor arguments, that tries to
- * apply the first visitor and if it fails tries the other 
- * (left-biased choice).
- * <p>
- * Note that any side-effects of v1 are not undone when it fails.
- */
+public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisitor {
 
-public class Choice extends AbstractStrategy {
-  public final static int FIRST = 0;
-  public final static int THEN = 1;
-  public Choice(Strategy first, Strategy then) {
-    initSubterm(first,then);
-  }
-    
-  public jjtraveler.Visitable visit(jjtraveler.Visitable visitable) throws jjtraveler.VisitFailure {
-    try {
-      return visitors[FIRST].visit(visitable);
-    } catch (jjtraveler.VisitFailure f) {
-      return visitors[THEN].visit(visitable);
-    }
-  }
+  public void setEnvironment(Environment p);
 
-  protected void visit() throws jjtraveler.VisitFailure {
-    try {
-        //System.out.println("try Choice1 on: " + getSubject());
-      ((AbstractStrategy)visitors[FIRST]).visit();
-        //System.out.println("first branch succeeds: " + getSubject());
-      return;
-    } catch (jjtraveler.VisitFailure f) {
-        //System.out.println("try Choice2 on: " + getSubject());
-      ((AbstractStrategy)visitors[THEN]).visit();
-        //System.out.println("second branch succeeds: " + getSubject());
-      return;
-    }
-  }
+  public Environment getEnvironment();
+
+  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure;
+
+  public Visitable apply(Visitable any) /*throws Failure*/;
+
+  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure;
 }
+

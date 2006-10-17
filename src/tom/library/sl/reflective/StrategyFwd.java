@@ -28,23 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  **/
-package tom.library.sl;
+package tom.library.sl.reflective;
+import tom.library.sl.AbstractStrategy;
+import tom.library.sl.Visitable;
+import tom.library.sl.Strategy;
 
-public class Fire extends AbstractStrategyLanguage {
+public class StrategyFwd extends AbstractStrategy {
   public final static int ARG = 0;
 
-  public Fire(jjtraveler.reflective.VisitableVisitor v) {
+  public StrategyFwd(Strategy v) {
     initSubterm(v);
   }
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure {
-    return visitors[ARG].visit(subject);
+  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+    if (any instanceof Strategy) {
+      return ((Strategy) any).accept(this);
+    } else {
+      return visitors[ARG].visit(any);
+    }
   }
 
   protected void visit() throws jjtraveler.VisitFailure {
-    //System.out.println("try Fire on: " + getSubject());
-    setSubject(visitors[ARG].visit(getSubject()));
-    //System.out.println("succed: " + getSubject());
+    setSubject((Visitable)visitors[ARG].visit(getSubject()));
   }
 
+  public Strategy visit_Strategy(Strategy any) throws jjtraveler.VisitFailure {
+    return (Strategy) visitors[ARG].visit(any);
+  }
 }
+

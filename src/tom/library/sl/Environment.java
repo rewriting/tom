@@ -45,7 +45,7 @@ public class Environment {
    * */
   protected int size; 
   protected int[] omega;
-  protected jjtraveler.Visitable[] subterm;
+  protected Visitable[] subterm;
 
   public Environment() {
     this(DEFAULT_LENGTH);
@@ -53,7 +53,7 @@ public class Environment {
 
   private Environment(int length) {
     omega = new int[length+1];
-    subterm = new jjtraveler.Visitable[length+1];
+    subterm = new Visitable[length+1];
     size = 1; // root is in subterm[0]
     omega[0]=0; // the first cell is not used
   }
@@ -63,7 +63,7 @@ public class Environment {
     if (minLength > current) {
       int max = Math.max(current * 2, minLength);
       int[] newOmega = new int[max];
-      jjtraveler.Visitable[] newSubterm = new jjtraveler.Visitable[max];
+      Visitable[] newSubterm = new Visitable[max];
       System.arraycopy(omega, 0, newOmega, 0, size);
       System.arraycopy(subterm, 0, newSubterm, 0, size);
       omega = newOmega;
@@ -104,7 +104,7 @@ public class Environment {
   public int hashCode() {
     /* Hash only the interesting part of the array */
     int[] hashedOmega = new int[size];
-    jjtraveler.Visitable[] hashedSubterm = new jjtraveler.Visitable[size];
+    Visitable[] hashedSubterm = new Visitable[size];
     System.arraycopy(omega,0,hashedOmega,0,size);
     System.arraycopy(subterm,0,hashedSubterm,0,size);
     return size * hashedOmega.hashCode() * hashedSubterm.hashCode();
@@ -129,14 +129,14 @@ public class Environment {
    * get the current root
    * @return the current root
    */
-  protected jjtraveler.Visitable getRoot() {
+  protected Visitable getRoot() {
     return subterm[0];
   }
 
   /**
    * set the current root
    */
-  protected void setRoot(jjtraveler.Visitable root) {
+  protected void setRoot(Visitable root) {
     this.subterm[0] = root;
   }
 
@@ -144,14 +144,14 @@ public class Environment {
    * get the term that corresponds to the current position
    * @return the current term
    */
-  protected jjtraveler.Visitable getSubject() {
+  protected Visitable getSubject() {
     return subterm[size-1];
   }
 
   /**
    * set the current term
    */
-  protected void setSubject(jjtraveler.Visitable root) {
+  protected void setSubject(Visitable root) {
     this.subterm[size-1] = root;
   }
   /**
@@ -178,9 +178,9 @@ public class Environment {
   public void up() {
     //System.out.println("before up: " + this);
     int childIndex = getSubOmega()-1;
-    jjtraveler.Visitable child = getSubject();
+    Visitable child = getSubject();
     size--;
-    setSubject(getSubject().setChildAt(childIndex,child));
+    setSubject((Visitable)(getSubject().setChildAt(childIndex,child)));
     //System.out.println("after up: " + this);
   }
 
@@ -196,7 +196,7 @@ public class Environment {
         ensureLength(size+1);
       }
       omega[size] = n;
-      subterm[size] = getSubject().getChildAt(n-1);
+      subterm[size] = (Visitable) getSubject().getChildAt(n-1);
       size++;
     }
     //System.out.println("after down: " + this);

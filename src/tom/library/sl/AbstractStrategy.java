@@ -36,48 +36,23 @@ package tom.library.sl;
  * should play the role of children.
  */
 
-public abstract class AbstractStrategyLanguage implements StrategyLanguage {
-  protected jjtraveler.reflective.VisitableVisitor[] visitors;
-  protected tom.library.strategy.mutraveler.Position position;
-
-  public void setPosition(tom.library.strategy.mutraveler.Position pos) {
-    this.position = pos;
-  }
-
-  public tom.library.strategy.mutraveler.Position getPosition() {
-    if(position!=null) {
-      return position;
-    } else {
-      throw new RuntimeException("position not initialized");
-    }
-  }
-
-  public final boolean hasPosition() {
-    return position!=null;
-  }
+public abstract class AbstractStrategy implements Strategy {
+  protected Strategy[] visitors;
 
   protected void initSubterm() {
-    visitors = new jjtraveler.reflective.VisitableVisitor[] {};
+    visitors = new Strategy[] {};
   }
-  protected void initSubterm(jjtraveler.reflective.VisitableVisitor v1) {
-    visitors = new jjtraveler.reflective.VisitableVisitor[] {v1};
+  protected void initSubterm(Strategy v1) {
+    visitors = new Strategy[] {v1};
   }
-  protected void initSubterm(jjtraveler.reflective.VisitableVisitor v1, jjtraveler.reflective.VisitableVisitor v2) {
-    visitors = new jjtraveler.reflective.VisitableVisitor[] {v1,v2};
+  protected void initSubterm(Strategy v1, Strategy v2) {
+    visitors = new Strategy[] {v1,v2};
   }
-  protected void initSubterm(jjtraveler.reflective.VisitableVisitor v1, jjtraveler.reflective.VisitableVisitor v2, jjtraveler.reflective.VisitableVisitor v3) {
-    visitors = new jjtraveler.reflective.VisitableVisitor[] {v1,v2,v3};
+  protected void initSubterm(Strategy v1, Strategy v2, Strategy v3) {
+    visitors = new Strategy[] {v1,v2,v3};
   }
-  protected void initSubterm(jjtraveler.reflective.VisitableVisitor[] v) {
+  protected void initSubterm(Strategy[] v) {
     visitors = v;
-  }
-
-  public final jjtraveler.reflective.VisitableVisitor getArgument(int i) {
-    return visitors[i];
-  }
-
-  public void setArgument(int i, jjtraveler.reflective.VisitableVisitor child) {
-    visitors[i]= child;
   }
 
   public int getChildCount() {
@@ -85,32 +60,47 @@ public abstract class AbstractStrategyLanguage implements StrategyLanguage {
   }
 
   public jjtraveler.Visitable getChildAt(int i) {
-      return visitors[i];
+    return visitors[i];
+  }
+
+  public jjtraveler.Visitable[] getChildren() {
+    return visitors;
   }
   
   public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) {
-    visitors[i]= (jjtraveler.reflective.VisitableVisitor) child;
+    visitors[i] = (Strategy) child;
     return this;
   }
 
-  /*
-   * Apply the strategy, and returns the subject in case of VisitFailure
-   */
-  public jjtraveler.Visitable apply(jjtraveler.Visitable any) {
+  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
+    Strategy[] newVisitors = new Strategy[children.length];
+    for(int i = 0; i < children.length; ++i) {
+      newVisitors[i] = (Strategy) children[i];
+    }
+    this.visitors = newVisitors;
+    return this;
+  }
+
+  public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure {
+    return v.visit_Strategy(this);
+  }
+
+  public Visitable apply(Visitable any) { /*throws Failure*/
     try {
-      return tom.library.strategy.mutraveler.MuTraveler.init(this).visit(any);
+      init();
+      setRoot(any);
+      visit();
+      return getRoot();
     } catch (jjtraveler.VisitFailure f) {
       return any;
     }
   }
 
-  public tom.library.strategy.mutraveler.MuStrategy accept(tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
-    return v.visit_Strategy(this);
-  }
-
  /*
   * For graphs
   */
+  protected abstract void visit() throws jjtraveler.VisitFailure;
+
 
   protected Environment environment;
   public void setEnvironment(Environment env) {
@@ -128,55 +118,37 @@ public abstract class AbstractStrategyLanguage implements StrategyLanguage {
   /**
    * getter en setter for the root term (i.e. top position)
    */
-  public jjtraveler.Visitable getRoot() {
+  public Visitable getRoot() {
     return getEnvironment().getRoot();
   }
 
-  public void setRoot(jjtraveler.Visitable any) {
+  public void setRoot(Visitable any) {
     getEnvironment().setRoot(any);
   }
 
   /**
    * getter en setter for the term of the current position
    */
-  public jjtraveler.Visitable getSubject() {
+  public Visitable getSubject() {
     return getEnvironment().getSubject();
   }
 
-  public void setSubject(jjtraveler.Visitable any) {
+  public void setSubject(Visitable any) {
     getEnvironment().setSubject(any);
-  }
-
-  /*
-   * Apply the strategy, and returns the subject in case of VisitFailure
-   */
-
-  public jjtraveler.Visitable gapply(jjtraveler.Visitable any) {
-    try {
-      init();
-      setRoot(any);
-      visit();
-      return getRoot();
-    } catch (jjtraveler.VisitFailure f) {
-      return any;
-    }
   }
 
   public void init() {
     init(new Environment());
   }
 
-  protected abstract void visit() throws jjtraveler.VisitFailure;
-
   private void init(Environment env) {
     setEnvironment(env);
     for(int i=0 ; i<getChildCount() ; i++) {
       jjtraveler.Visitable child = getChildAt(i);
-      if(child instanceof AbstractStrategyLanguage) {
-        ((AbstractStrategyLanguage)child).init(env);
+      if(child instanceof AbstractStrategy) {
+        ((AbstractStrategy)child).init(env);
       }
     }
   }
 
 }
-

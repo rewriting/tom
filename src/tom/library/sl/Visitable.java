@@ -30,16 +30,16 @@
  **/
 package tom.library.sl;
 
-public interface StrategyLanguage extends tom.library.strategy.mutraveler.MuStrategy {
+public interface Visitable extends jjtraveler.Visitable {
 
+    /**
+     * Replaces all children of any visitable at once, and returns this
+     * visitable. 
+     */
+    public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children);
 
-  public void setEnvironment(Environment p);
-
-  public Environment getEnvironment();
-
-  public jjtraveler.Visitable gapply(jjtraveler.Visitable any);
-
-  public jjtraveler.Visitable getRoot();
-
+    /**
+     * Returns the list of (non builtin) Visitable children
+     */
+    public jjtraveler.Visitable[] getChildren();
 }
-
