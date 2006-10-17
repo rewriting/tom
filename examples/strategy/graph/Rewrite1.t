@@ -37,10 +37,6 @@ import rewrite1.term.types.*;
 
 import tom.library.sl.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-
 public class Rewrite1 {
 %include { string.tom }
 %include { sl.tom }
@@ -54,37 +50,37 @@ public class Rewrite1 {
 }
 
   public final static void main(String[] args) {
-    jjtraveler.Visitable subject = `f(a());
-    StrategyLanguage s = `Identity();
-    subject = s.gapply(subject);
+    Visitable subject = `f(a());
+    Strategy s = `Identity();
+    subject = s.apply(subject);
     System.out.println("root = " + subject);
 
-    s = `Fire(R1());
-    subject = `s.gapply(subject);
+    s = `(R1());
+    subject = `s.apply(subject);
     System.out.println("root = " + subject);
 
-    s = `One(Fire(R1()));
-    subject = `s.gapply(subject);
+    s = `One((R1()));
+    subject = `s.apply(subject);
     System.out.println("root = " + subject);
   
     System.out.println("----------");
-    s = `OnceBottomUp(Fire(R2()));
-    subject = `s.gapply(`g(f(a()),b()));
+    s = `OnceBottomUp((R2()));
+    subject = `s.apply(`g(f(a()),b()));
     System.out.println("root1 = " + subject);
-    subject = `s.gapply(subject);
+    subject = `s.apply(subject);
     System.out.println("root2 = " + subject);
-    subject = `s.gapply(subject);
+    subject = `s.apply(subject);
     System.out.println("root3 = " + subject);
   }
 
-  %strategy R1() extends `MuIdentity() {
+  %strategy R1() extends `Identity() {
     visit Term {
       f(a()) -> { return `f(b()); }
       b() -> { return `c(); }
     }
   }
 
-  %strategy R2() extends `MuFail() {
+  %strategy R2() extends `Fail() {
     visit Term {
       f(a()) -> { return `f(b()); }
       b() -> { return `c(); }

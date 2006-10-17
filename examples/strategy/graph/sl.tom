@@ -29,32 +29,13 @@
 %include { string.tom }
 
 /*
- * from MuTraveler
- */
-%typeterm MuStrategy {
-  implement { tom.library.strategy.mutraveler.MuStrategy }
-  equals(t1,t2) {t1.equals(t2)}
-  visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd }
-}
-
-%op MuStrategy MuIdentity() {
-  is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Identity) }
-  make() { new tom.library.strategy.mutraveler.Identity() }
-}
-
-%op MuStrategy MuFail() {
-  is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Fail) }
-  make() { new tom.library.strategy.mutraveler.Fail() }
-}
-
-/*
  * StrategyLanguage Library
  */
 
 %typeterm Strategy {
-  implement { tom.library.sl.StrategyLanguage }
+  implement { tom.library.sl.Strategy }
   equals(t1,t2) {t1.equals(t2)}
-  visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd }
+  visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyFwd }
 }
 
 
@@ -82,12 +63,6 @@
   %op Strategy Identity() {
     is_fsym(t) { (t instanceof tom.library.sl.Identity) }
     make() { new tom.library.sl.Identity() }
-  }
-
-  %op Strategy Fire(s1:MuStrategy) {
-    is_fsym(t) { (t instanceof tom.library.sl.Fire) }
-    make(v) { new tom.library.sl.Fire(v) }
-    get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.sl.Fire.ARG) }
   }
 
   %op Strategy One(s1:Strategy) {
