@@ -38,6 +38,7 @@ import rewrite1.term.types.*;
 import tom.library.sl.*;
 
 public class Rewrite1 {
+
 %include { string.tom }
 %include { sl.tom }
 %gom {  
