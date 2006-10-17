@@ -179,7 +179,7 @@ public class TomMessage implements PlatformMessage {
   public static final TomMessage tomOptimizationType =
     new TomMessage("optimization of type ''{0}''");
   public static final TomMessage unusedVariable        =
-    new TomMessage("{0}:{1,number,integer}: Variable ''{2}'' is never used");
+    new TomMessage("Variable ''{0}'' is never used");
   public static final TomMessage remove                =
     new TomMessage("{0} -> remove:     {1}");
   public static final TomMessage inline                =
