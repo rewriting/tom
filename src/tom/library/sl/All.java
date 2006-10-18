@@ -69,7 +69,12 @@ public class All extends AbstractStrategy {
           childs[i] = newChild;
         } else if(newChild != oldChild) {
           // allocate the array, and fill it
-          childs = (Visitable[])getSubject().getChildren();
+          // childs = (Visitable[])getSubject().getChildren();
+          jjtraveler.Visitable[] array = getSubject().getChildren();
+          childs = new Visitable[childCount];
+          for(int j = 0; j < array.length; j++) {
+            childs[j] = (Visitable) array[j];
+          }
           childs[i] = newChild;
         }
         environment.up();

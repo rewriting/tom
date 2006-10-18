@@ -72,6 +72,11 @@ public class Rewrite1 {
     System.out.println("root2 = " + subject);
     subject = `s.apply(subject);
     System.out.println("root3 = " + subject);
+
+    System.out.println("----------");
+    s = `All((R2()));
+    subject = `s.apply(`g(f(a()),b()));
+    System.out.println("root1 = " + subject);
   }
 
   %strategy R1() extends `Identity() {
