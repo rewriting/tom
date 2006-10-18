@@ -72,6 +72,14 @@
     get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.All.ARG) }
   }
 
+  %op Strategy IfThenElse(s1:Strategy, s2:Strategy, s3:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.sl.IfThenElse) }
+    make(condition,trueCase,falseCase) { new tom.library.sl.IfThenElse(condition,trueCase,falseCase) }
+    get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.IfThenElse.CONDITION) }
+    get_slot(s2, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.IfThenElse.TRUE_CASE) }
+    get_slot(s3, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.IfThenElse.FALSE_CASE) }
+  }
+
   %op Strategy Fail() {
     is_fsym(t) { (t instanceof tom.library.sl.Fail) }
     make() { new tom.library.sl.Fail() }
