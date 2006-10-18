@@ -57,15 +57,15 @@ public class Choice extends AbstractStrategy {
     }
   }
 
-  protected void visit() throws jjtraveler.VisitFailure {
+  public void visit() throws jjtraveler.VisitFailure {
     try {
         //System.out.println("try Choice1 on: " + getSubject());
-      ((AbstractStrategy)visitors[FIRST]).visit();
+      visitors[FIRST].visit();
         //System.out.println("first branch succeeds: " + getSubject());
       return;
     } catch (jjtraveler.VisitFailure f) {
         //System.out.println("try Choice2 on: " + getSubject());
-      ((AbstractStrategy)visitors[THEN]).visit();
+      visitors[THEN].visit();
         //System.out.println("second branch succeeds: " + getSubject());
       return;
     }

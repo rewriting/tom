@@ -129,14 +129,14 @@ public class Environment {
    * get the current root
    * @return the current root
    */
-  protected Visitable getRoot() {
+  public Visitable getRoot() {
     return subterm[0];
   }
 
   /**
    * set the current root
    */
-  protected void setRoot(Visitable root) {
+  public void setRoot(Visitable root) {
     this.subterm[0] = root;
   }
 
@@ -144,14 +144,14 @@ public class Environment {
    * get the term that corresponds to the current position
    * @return the current term
    */
-  protected Visitable getSubject() {
+  public Visitable getSubject() {
     return subterm[size-1];
   }
 
   /**
    * set the current term
    */
-  protected void setSubject(Visitable root) {
+  public void setSubject(Visitable root) {
     this.subterm[size-1] = root;
   }
   /**

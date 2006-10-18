@@ -60,7 +60,7 @@ public class One extends AbstractStrategy {
     throw new jjtraveler.VisitFailure();
   }
 
-  protected void visit() throws jjtraveler.VisitFailure {
+  public void visit() throws jjtraveler.VisitFailure {
     int childCount = getSubject().getChildCount();
       
     for(int i = 0; i < childCount; i++) {
@@ -68,7 +68,7 @@ public class One extends AbstractStrategy {
       try { 
         //System.out.println("One.pos = " + environment);
         environment.down(i+1);
-        ((AbstractStrategy)visitors[ARG]).visit();
+        (visitors[ARG]).visit();
         //System.out.println("One: succeeds: " + getSubject());
         environment.up();
         return ;

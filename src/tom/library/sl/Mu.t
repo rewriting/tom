@@ -19,10 +19,10 @@ public class Mu extends AbstractStrategy {
     return visitors[V].visit(any);
   }
 
-  protected void visit() throws jjtraveler.VisitFailure {
+  public void visit() throws jjtraveler.VisitFailure {
     //System.out.println("try Mu on: " + getSubject());
     if(!expanded) { muExpand(); }
-    ((AbstractStrategy)visitors[V]).visit();
+    visitors[V].visit();
     //System.out.println("Mu succeeds: " + getSubject());
   }
 

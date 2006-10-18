@@ -99,8 +99,6 @@ public abstract class AbstractStrategy implements Strategy {
  /*
   * For graphs
   */
-  protected abstract void visit() throws jjtraveler.VisitFailure;
-
 
   protected Environment environment;
   public void setEnvironment(Environment env) {
@@ -138,15 +136,15 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   public void init() {
-    init(new Environment());
+    init(this,new Environment());
   }
 
-  private void init(Environment env) {
-    setEnvironment(env);
-    for(int i=0 ; i<getChildCount() ; i++) {
-      jjtraveler.Visitable child = getChildAt(i);
-      if(child instanceof AbstractStrategy) {
-        ((AbstractStrategy)child).init(env);
+  public static void init(Strategy s, Environment env) {
+    s.setEnvironment(env);
+    for(int i=0 ; i<s.getChildCount() ; i++) {
+      jjtraveler.Visitable child = s.getChildAt(i);
+      if(child instanceof Strategy) {
+        init((Strategy)child,env);
       }
     }
   }

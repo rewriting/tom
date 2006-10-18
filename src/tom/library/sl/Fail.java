@@ -64,7 +64,7 @@ public class Fail extends AbstractStrategy {
     throw new VisitFailure(message);
   }
 
-  protected void visit() throws VisitFailure {
+  public void visit() throws VisitFailure {
     throw new VisitFailure(message);
   }
 

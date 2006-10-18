@@ -76,10 +76,10 @@ public class MuVar extends AbstractStrategy {
       throw new jjtraveler.VisitFailure();
     }
   }
-  protected void visit() throws jjtraveler.VisitFailure {
+  public void visit() throws jjtraveler.VisitFailure {
     if(instance != null) {
       //System.out.println("try MuVar on: " + getSubject());
-      ((AbstractStrategy)instance).visit();
+      instance.visit();
       //System.out.println("MuVar succed: " + getSubject());
       return;
     } else {

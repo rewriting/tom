@@ -48,7 +48,7 @@ public class StrategyFwd extends AbstractStrategy {
     }
   }
 
-  protected void visit() throws jjtraveler.VisitFailure {
+  public void visit() throws jjtraveler.VisitFailure {
     setSubject((Visitable)visitors[ARG].visit(getSubject()));
   }
 

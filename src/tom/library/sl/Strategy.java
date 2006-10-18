@@ -36,9 +36,9 @@ public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisi
 
   public Environment getEnvironment();
 
-  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure;
-
   public Visitable apply(Visitable any) /*throws Failure*/;
+
+  public void visit() throws jjtraveler.VisitFailure;
 
   public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure;
 }

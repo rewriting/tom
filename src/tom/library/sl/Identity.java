@@ -47,7 +47,7 @@ public class Identity extends AbstractStrategy {
     return x;
   }
 
-  protected void visit() {
+  public void visit() {
     // do nothing
   }
 }
