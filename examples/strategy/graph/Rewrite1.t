@@ -92,6 +92,13 @@ public class Rewrite1 {
     s = `Omega(2,R2());
     subject = `s.apply(`g(f(a()),b()));
     System.out.println("root1 = " + subject);
+
+    System.out.println("----------IfThenElse");
+    s = `IfThenElse(R2(),Builda(),Buildb());
+    subject = `s.apply(`f(b()));
+    System.out.println("root1 = " + subject);
+    subject = `s.apply(`f(a()));
+    System.out.println("root1 = " + subject);
   }
 
   %strategy R1() extends `Identity() {
@@ -105,6 +112,16 @@ public class Rewrite1 {
     visit Term {
       f(a()) -> { return `f(b()); }
       b() -> { return `c(); }
+    }
+  }
+  %strategy Builda() extends `Identity() {
+    visit Term {
+      _ -> { return `a(); }
+    }
+  }
+  %strategy Buildb() extends `Identity() {
+    visit Term {
+      _ -> { return `b(); }
     }
   }
 } 
