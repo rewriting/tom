@@ -97,8 +97,7 @@ public class TomAntiPatternTransformNew {
 		}
 		
 		int termLine = 0;
-		String fileName = null;
-		
+		String fileName = null;		
 		// get the file name and line number
 		TomTerm tmpTomTerm = tomTerm;		
 		if (tmpTomTerm instanceof AntiTerm){
@@ -253,8 +252,10 @@ public class TomAntiPatternTransformNew {
 	// replace a term by another (a variable)
 	%strategy AbstractTerm(variable:TomTerm, bag:Collection) extends `Identity() {
 		visit TomTerm {
-			AntiTerm(t) -> { 
-				bag.add(`t);				
+			AntiTerm(t) -> {
+				// move the constraints from this terms to the variable
+				// that replaces it
+				bag.add(`t.setConstraints(`concConstraint()));				
 				// return the variable with the correct type
 				return variable.setAstType(TomBase.getTermType(`t,symbolTable)).setConstraints(`t.getConstraints()); 
 			}

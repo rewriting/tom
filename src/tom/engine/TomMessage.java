@@ -165,7 +165,7 @@ public class TomMessage implements PlatformMessage {
       new TomMessage("Rule right hand side uses an undeclared variable ''{0}''");
   
   public static final TomMessage illegalAnnotationInAntiPattern=
-      new TomMessage("It is forbidden to annotate a symbol preceded by an anti or to make annotations under an anti symbol");  
+      new TomMessage("It is forbidden to make annotations under an anti symbol");  
   
   // compiler
   public static final TomMessage errorMissingSlotDecl=
