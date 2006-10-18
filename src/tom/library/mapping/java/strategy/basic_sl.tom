@@ -57,7 +57,13 @@
   %op Strategy One(s1:Strategy) {
     is_fsym(t) { (t instanceof tom.library.sl.One) }
     make(v) { new tom.library.sl.One(v) }
-    get_slot(s1, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.One.ARG) }
+    get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.One.ARG) }
+  }
+
+  %op Strategy All(s1:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.sl.All) }
+    make(v) { new tom.library.sl.All(v) }
+    get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.All.ARG) }
   }
 
   %op Strategy Fail() {
@@ -68,6 +74,6 @@
   %op Strategy Choice(s1:Strategy, s2:Strategy) {
     is_fsym(t) { (t instanceof tom.library.sl.Choice) }
     make(first,then) { new tom.library.sl.Choice(first,then) }
-    get_slot(s1, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Choice.FIRST) }
-    get_slot(s2, t) { (tom.library.sl.StrategyLanguage)t.getChildAt(tom.library.sl.Choice.THEN) }
+    get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.FIRST) }
+    get_slot(s2, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.THEN) }
   }
