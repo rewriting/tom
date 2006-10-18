@@ -42,7 +42,9 @@ public class StratMappingTemplate extends TemplateClass {
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
     writer.write(%[
-%include { mustrategy.tom }
+   /*
+   %include { mustrategy.tom }
+   */
 ]%);
     /* XXX: i could introduce an interface providing generateMapping() */
     %match(GomClassList operatorClasses) {
