@@ -155,8 +155,8 @@ public class GomBackend {
             getMappingTemplate(mappingClass));
         operator.generateFile();
 
-        TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(`className);
-        isOpStrat.generateFile();
+        //TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(`className);
+        //isOpStrat.generateFile();
 
         TemplateClass sOpStrat = new tom.gom.backend.strategy.SOpTemplate(`className,`slots);
         sOpStrat.generateFile();

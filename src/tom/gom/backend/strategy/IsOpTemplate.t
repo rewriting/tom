@@ -53,6 +53,8 @@ public class IsOpTemplate extends TemplateClass {
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
+    // generate is normally never called, Is_op is now an alias for When_op(Id)
+    /*
 writer.write(%[
 package @getPackage()@;
 
@@ -71,13 +73,14 @@ public class @className()@ extends tom.library.strategy.mutraveler.Fail {
   }
 }
 ]%);
+*/
   }
 
   public String generateMapping() {
+    String whenName = className().replaceFirst("Is","When");
     return %[
 %op Strategy @className()@() {
-  is_fsym(t) { (t!=null) && t instanceof (@fullClassName()@)}
-  make() { new @fullClassName()@() }
+  make() { `@whenName@(Identity()) }
 }
 ]%;
   }
