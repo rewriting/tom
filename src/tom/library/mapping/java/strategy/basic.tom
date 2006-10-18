@@ -50,7 +50,7 @@
   make(v) { new tom.library.strategy.mutraveler.Not(v) }
   get_slot(s1, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Not.ARG) }
 }
-   
+
 %oplist Strategy Sequence(Strategy*) {
    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Sequence) }
    make_empty() { new tom.library.strategy.mutraveler.Identity() }

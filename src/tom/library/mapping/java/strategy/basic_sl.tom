@@ -77,6 +77,12 @@
     make() { new tom.library.sl.Fail() }
   }
 
+  %op Strategy Not(s1:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.sl.Not) }
+    make(v) { new tom.library.sl.Not(v) }
+    get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Not.ARG) }
+  }
+
   %oplist Strategy Sequence(Strategy*) {
     is_fsym(t) { (t instanceof tom.library.sl.Sequence) }
     make_empty() { new tom.library.sl.Identity() }
