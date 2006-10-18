@@ -71,6 +71,15 @@
     make() { new tom.library.sl.Fail() }
   }
 
+  %oplist Strategy Sequence(Strategy*) {
+    is_fsym(t) { (t instanceof tom.library.sl.Sequence) }
+    make_empty() { new tom.library.sl.Identity() }
+    make_insert(head,tail) { new tom.library.sl.Sequence(head,tail) }
+    get_head(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Sequence.FIRST) }
+    get_tail(t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Sequence.THEN) }
+    is_empty(t) { t instanceof tom.library.sl.Identity }
+  }
+
   %op Strategy Choice(s1:Strategy, s2:Strategy) {
     is_fsym(t) { (t instanceof tom.library.sl.Choice) }
     make(first,then) { new tom.library.sl.Choice(first,then) }
