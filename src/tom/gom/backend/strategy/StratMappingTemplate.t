@@ -56,19 +56,21 @@ public class StratMappingTemplate extends TemplateClass {
       writer.write(
         (new tom.gom.backend.strategy.SOpTemplate(`opName,`slotList)).generateMapping());
       writer.write(
-        (new tom.gom.backend.strategy.MakeOpTemplate(`opName,`slotList)).generateMapping());
+          (new tom.gom.backend.strategy.MakeOpTemplate(`opName,`slotList)).generateMapping());
+      writer.write(
+          (new tom.gom.backend.strategy.WhenOpTemplate(`opName)).generateMapping());
       }
       concGomClass(_*,
           VariadicOperatorClass[ClassName=vopName,
-                                Empty=OperatorClass[ClassName=empty],
-                                Cons=OperatorClass[ClassName=cons]],
-                            _*)-> {
+          Empty=OperatorClass[ClassName=empty],
+          Cons=OperatorClass[ClassName=cons]],
+          _*)-> {
         writer.write(%[
-%op Strategy _@className(`vopName)@(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_@className(`cons)@(sub,MuVar("x")),_@className(`empty)@())) }
-}
-]%);
+            %op Strategy _@className(`vopName)@(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_@className(`cons)@(sub,MuVar("x")),_@className(`empty)@())) }
+            }
+            ]%);
       }
     }
   }
