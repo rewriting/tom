@@ -256,7 +256,7 @@ public class TomAntiPatternTransformNew {
 			AntiTerm(t) -> { 
 				bag.add(`t);				
 				// return the variable with the correct type
-				return variable.setAstType(TomBase.getTermType(`t,symbolTable)); 
+				return variable.setAstType(TomBase.getTermType(`t,symbolTable)).setConstraints(`t.getConstraints()); 
 			}
 		}
 	}	

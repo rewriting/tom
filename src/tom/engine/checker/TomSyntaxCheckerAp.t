@@ -102,17 +102,22 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
   private void checkForAnnotations(TomTerm t, OptionList options){	  
     String fileName = findOriginTrackingFileName(options);
     int decLine = findOriginTrackingLine(options);
-    `TopDown(CheckForAnnotations(fileName,decLine)).apply(t);
+    `TopDown(CheckForAnnotations(fileName,decLine,t)).apply(t);
   }
 
 
   /**
    * Given a term, it checks if it contains annotations
+   * - if the annotations are on head, allow them
+   * - error otherwise 
    */  
-  %strategy CheckForAnnotations(fileName:String,decLine:int) extends `Identity(){
+  %strategy CheckForAnnotations(fileName:String, decLine:int, headTerm: TomTerm) extends `Identity(){
     visit TomTerm {
       t@(TermAppl|Variable|RecordAppl|UnamedVariable)[Constraints=concConstraint(_*,AssignTo[],_*)] ->{
-        TomChecker.messageError(getClass().getName(),fileName,decLine,TomMessage.illegalAnnotationInAntiPattern, new Object[]{});
+    	if (`t != headTerm){  
+    		TomChecker.messageError(getClass().getName(),fileName,decLine,
+    				TomMessage.illegalAnnotationInAntiPattern, new Object[]{});
+    	}	
         //throw new TomRuntimeException("Illegal use of annotations in " + `t);
       }
     }// end visit
