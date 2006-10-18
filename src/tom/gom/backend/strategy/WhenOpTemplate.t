@@ -63,7 +63,7 @@ public class @className()@ extends tom.library.strategy.mutraveler.Fail {
   private static final String msg = "Not an @className(operator)@";
   public final static int ARG = 0;
 
-  public @className()@(VisitableVisitor v) {
+  public @className()@(jjtraveler.reflective.VisitableVisitor v) {
     initSubterm(v);
   }
 
