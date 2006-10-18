@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build the tactics example" default="build" basedir="..">
+  <import file="../common.xml"/>
+  <property name="tactics" value="tactics"/>
+  <target name="clean" description="Cleans examples directory">
+    <delete dir="${examples.gen}/${tactics}"/>
+    <delete dir="${examples.build}/${tactics}"/>
+  </target>
+  <target name="build" depends="init">
+    <gomcompile example="${tactics}"/>
+    <tomcompile example="${tactics}"/>
+    <javacompile example="${tactics}"/>
+  </target>
+  <target name="dist" depends="prepare.examples" if="distrib.zip">
+    <zip destfile="${distrib.zip}" 
+         update="yes">
+      <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
+        <include name="${tactics}/*.java"/>
+        <include name="${tactics}/*.gom"/>
+        <include name="${tactics}/*.t"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>
+
