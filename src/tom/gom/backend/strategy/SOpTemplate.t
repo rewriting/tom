@@ -59,7 +59,7 @@ public class SOpTemplate extends TemplateClass {
 writer.write(%[
 package @getPackage()@;
 
-public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy {
+public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy, tom.library.sl.Strategy {
   private static final String msg = "Not an @className(operator)@";
   /* Manage an internal position */
   private tom.library.strategy.mutraveler.Position position;
@@ -80,6 +80,20 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     return position!=null;
   }
 
+  /* Manage an internal environment */
+  protected tom.library.sl.Environment environment;
+  public void setEnvironment(tom.library.sl.Environment env) {
+    this.environment = env;
+  }
+
+  public tom.library.sl.Environment getEnvironment() {
+    if(environment!=null) {
+      return environment;
+    } else {
+      throw new RuntimeException("environment not initialized");
+    }
+  }
+
   private jjtraveler.reflective.VisitableVisitor[] args;
 
   public jjtraveler.reflective.VisitableVisitor getArgument(int i) {
@@ -98,6 +112,16 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     args[i]= (jjtraveler.reflective.VisitableVisitor) child;
     return this;
   }
+
+  public jjtraveler.Visitable[] getChildren() {
+    return args;
+  }
+
+  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
+    args = (jjtraveler.reflective.VisitableVisitor[])children;
+    return this;
+  }
+
   /*
    * Apply the strategy, and returns the subject in case of VisitFailure
    */
@@ -109,9 +133,25 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     }
   }
 
+  public tom.library.sl.Visitable apply(tom.library.sl.Visitable any) { /*throws Failure*/
+    try {
+      tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
+      getEnvironment().setRoot(any);
+      visit();
+      return getEnvironment().getRoot();
+    } catch (jjtraveler.VisitFailure f) {
+      return any;
+    }
+  }
+
   public tom.library.strategy.mutraveler.MuStrategy accept(tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
     return v.visit_Strategy(this);
   }
+
+  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure {
+    return v.visit_Strategy(this);
+  }
+
 
   private static boolean[] nonbuiltin = new boolean[]{@genNonBuiltin()@};
   public @className()@(@genConstrArgs(slotList.length(),"jjtraveler.reflective.VisitableVisitor arg")@) {
@@ -204,6 +244,42 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     } else {
       throw new jjtraveler.VisitFailure(msg);
     }
+  }
+
+  public void visit() throws jjtraveler.VisitFailure {
+    tom.library.sl.Visitable any = getEnvironment().getSubject();
+    int childCount = any.getChildCount();
+
+    tom.library.sl.Visitable[] childs = null;
+    try {
+      for (int i = 0; i < childCount; i++) {
+        tom.library.sl.Visitable oldChild = (tom.library.sl.Visitable)any.getChildAt(i);
+        environment.down(i+1);
+        ((tom.library.sl.Strategy)args[i]).visit();
+        tom.library.sl.Visitable newChild = getEnvironment().getSubject();
+        if(childs != null) {
+          childs[i] = newChild;
+        } else if(newChild != oldChild) {
+          // allocate the array, and fill it
+          // childs = (Visitable[])getEnvironment().getSubject().getChildren();
+          jjtraveler.Visitable[] array = getEnvironment().getSubject().getChildren();
+          childs = new tom.library.sl.Visitable[childCount];
+          for(int j = 0; j < array.length; j++) {
+            childs[j] = (tom.library.sl.Visitable) array[j];
+          }
+          childs[i] = newChild;
+        }
+        environment.up();
+      }
+    } catch(jjtraveler.VisitFailure f) {
+      environment.up();
+      throw new jjtraveler.VisitFailure();
+    }
+
+    if(childs!=null) {
+      getEnvironment().setSubject((tom.library.sl.Visitable)getEnvironment().getSubject().setChildren(childs));
+    }
+    return;
   }
 }
 ]%);
