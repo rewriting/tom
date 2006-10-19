@@ -49,6 +49,7 @@ public class Rewrite1 {
        | g(arg1:Term, arg2:Term)
        | h(arg1:Term, arg2:Term, arg3:Term)
 }
+%include { rewrite1/term/_term.tom }
 
   public final static void main(String[] args) {
     Visitable subject = `f(a());
@@ -95,6 +96,18 @@ public class Rewrite1 {
 
     System.out.println("----------IfThenElse");
     s = `IfThenElse(R2(),Builda(),Buildb());
+    subject = `s.apply(`f(b()));
+    System.out.println("root1 = " + subject);
+    subject = `s.apply(`f(a()));
+    System.out.println("root1 = " + subject);
+
+    System.out.println("----------When_f()");
+    s = `When_f(R2());
+    subject = `s.apply(`f(a()));
+    System.out.println("root1 = " + subject);
+
+    System.out.println("----------IfThenElse...Make_?");
+    s = `IfThenElse(R2(),Make_a(),Make_b());
     subject = `s.apply(`f(b()));
     System.out.println("root1 = " + subject);
     subject = `s.apply(`f(a()));
