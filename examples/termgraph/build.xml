@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the termgraph example" default="build" basedir="..">
   <import file="../common.xml"/>
+  <macrodef name="gomrefcompile">
+    <attribute name="example"/>
+    <sequential>
+      <gom.preset srcdir="${examples.dir}"
+        package="@{example}" 
+        reference="true" 
+        destdir="${examples.gen}">
+        <include name="@{example}/**/*.gom"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
   <property name="termgraph" value="termgraph"/>
   <target name="clean" description="Cleans examples directory">
     <delete dir="${examples.gen}/${termgraph}"/>
     <delete dir="${examples.build}/${termgraph}"/>
   </target>
   <target name="build" depends="init">
-  <!-- copy resources in build -->
+    <!-- copy resources in build -->
     <copy todir="${examples.build}/${termgraph}">
       <fileset dir="${examples.dir}/${termgraph}">
       </fileset>
     </copy>
-    <gomcompile example="${termgraph}"/>
+    <gomrefcompile example="${termgraph}"/>
     <tomcompile example="${termgraph}"/>
     <javacompile example="${termgraph}"/>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
-         update="yes">
+      update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="${termgraph}/*.t"/>
         <include name="${termgraph}/*.tom"/>

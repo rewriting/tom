@@ -5,10 +5,6 @@ abstract syntax
 Wfg = WfgNode(Wfg*)
     | Activity(name:String,incond:Condition,outcond:Condition)
     | ConcWfg(Wfg*)
-    | labWfg(label:String,wfg:Wfg)
-    | refWfg(label:String)
-    | posWfg(int*)
-    | expWfg(wfg:Wfg)
     | Empty()
 
 Condition = and(c1:Condition,c2:Condition) 
@@ -17,61 +13,6 @@ Condition = and(c1:Condition,c2:Condition)
           | cond(wfg:Wfg)
           | label(node:String)
           | noCond()
-
-
-expWfg:make(wfg){
-  Wfg wfgWithPos = expand(wfg);
-  //to avoid unaccessible real_make statement
-  if(! wfgWithPos.equals(wfg)){
-    return wfgWithPos;
-  }
-  if(wfgWithPos.equals(wfg)){
-    return wfg;
-  }
-}
-
-expWfg:import{
-import bpel.wfg.*;
-import bpel.wfg.types.*;
-import tom.library.strategy.mutraveler.*;
-import java.util.HashMap;
-}
-
-expWfg:block{
-    %include{java/util/HashMap.tom}
-    %include{java/mustrategy.tom}
-
-    %strategy CollectWfgs(table:HashMap) extends `Identity() {
-      visit Wfg{
-        labWfg(label,wfg) -> {
-          table.put(`label,getPosition());
-          return `wfg;
-        }
-      }
-    }
-
-    %strategy Replacelabels(table:HashMap) extends `Identity() {
-      visit Wfg{
-        refWfg(label) -> {
-          Position target = (Position) table.get(`label);
-          if (target == null) throw new RuntimeException("The label "+`label+" is not referenced");
-          RelativePosition pos = 
-            RelativePosition.make(getPosition(),target);
-          Wfg ref = `posWfg();
-          int[] array = pos.toArray();
-          for(int i=0;i<pos.depth();i++){
-            ref = `posWfg(ref*,array[i]);
-          }
-          return ref; 
-        }
-      }
-    }
-
-    public static Wfg expand(Wfg t){
-      HashMap table = new HashMap();
-      return (Wfg) `Sequence(TopDown(RepeatId(CollectWfgs(table))),TopDown(Replacelabels(table))).apply(t);
-    }
-}
 
 WfgNode:make_insert(node,wfg) {
     %match(Wfg node){
@@ -90,8 +31,4 @@ ConcWfg:make_insert(wfg,wfglist) {
       return wfglist;
     }
   }
-}
-
-posWfg:interface{
-  tom.library.strategy.mutraveler.MuReference
 }

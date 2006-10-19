@@ -47,11 +47,13 @@ import antlr.TokenStreamException;
 
 public class GomExpander {
   private GomStreamManager streamManager;
+  private String packagePrefix;
 
   %include { ../adt/gom/Gom.tom}
 
   public GomExpander(GomStreamManager streamManager) {
     this.streamManager = streamManager;
+    packagePrefix= streamManager.getPackagePath().replace(File.separatorChar,'.');
   }
 
   private GomEnvironment environment() {

@@ -54,6 +54,8 @@
             class='tom.gom.expander.GomExpanderPlugin'/>
     <plugin name='TypeExpander'
             class='tom.gom.expander.GomTypeExpanderPlugin'/>
+    <plugin name='ReferenceExpander'
+            class='tom.gom.expander.GomReferenceExpanderPlugin'/>
     <plugin name='Compiler'
             class='tom.gom.compiler.GomCompilerPlugin'/>
     <plugin name='Backend'
@@ -69,9 +71,13 @@
                altName='V'
                description='Print version'
                value='false'/>
-      <boolean name='verbose'
+       <boolean name='verbose'
                altName='v'
                description='Display compilation information'
+               value='false'/>
+      <boolean name='reference'
+               altName='r'
+               description='Add references to the Gom signature'
                value='false'/>
       <boolean name='debug'
                altName='vv'

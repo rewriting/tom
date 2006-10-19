@@ -1,34 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the bpel example" default="build" basedir="..">
   <import file="../common.xml"/>
+  <macrodef name="gomrefcompile">
+    <attribute name="example"/>
+    <sequential>
+      <gom.preset srcdir="${examples.dir}"
+        package="@{example}" 
+        reference="true" 
+        destdir="${examples.gen}">
+        <include name="@{example}/**/*.gom"/>
+      </gom.preset>
+    </sequential>
+  </macrodef>
   <property name="bpel" value="bpel"/>
   <target name="clean" description="Cleans examples directory">
+    <property name="bpel" value="bpel"/>
     <delete dir="${examples.gen}/${bpel}"/>
     <delete dir="${examples.build}/${bpel}"/>
   </target>
   <target name="build" depends="init">
-  <!-- copy resources in build -->
+    <!-- copy resources in build -->
     <copy todir="${examples.build}/${bpel}">
       <fileset dir="${examples.dir}/${bpel}">
       </fileset>
     </copy>
     <mkdir dir="${examples.gen}/${bpel}"/>
     <tomantlr target="${bpel}/CondParser.g"
-              outputdirectory="${examples.gen}/${bpel}">
+      outputdirectory="${examples.gen}/${bpel}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <antlrmapper srcfile="${examples.gen}/${bpel}/CondParserTokenTypes.txt"
-         destdir="${examples.gen}"
-         package="${bpel}">
+      destdir="${examples.gen}"
+      package="${bpel}">
       <classpath refid="tom.classpath"/>
     </antlrmapper>
-    <gomcompile example="${bpel}"/>
+    <gomrefcompile example="${bpel}"/>
     <tomcompile example="${bpel}"/>
     <javacompile example="${bpel}"/>
   </target>
   <target name="dist" depends="prepare.examples" if="distrib.zip">
     <zip destfile="${distrib.zip}" 
-         update="yes">
+      update="yes">
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="${bpel}/*.t"/>
         <include name="${bpel}/*.tom"/>
