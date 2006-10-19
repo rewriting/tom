@@ -61,7 +61,7 @@ public class Rewrite1 {
       System.out.println("onceBottomUpId= " + MuTraveler.init(`OnceBottomUpId(ruleId)).visit(subject));
       System.out.println("bottomUp      = " + MuTraveler.init(`BottomUp(Try(rule))).visit(subject));
       System.out.println("bottomUpId    = " + MuTraveler.init(`BottomUp(ruleId)).visit(subject));
-      StratDebugger.applyGraphicalDebug(subject,`BottomUp(ruleId));
+      //StratDebugger.applyGraphicalDebug(subject,`BottomUp(ruleId));
       System.out.println("innermost     = " + `Innermost(rule).apply(subject));
       System.out.println("innermostSlow = " + MuTraveler.init(`Repeat(OnceBottomUp(rule))).visit(subject));
       System.out.println("innermostId   = " + MuTraveler.init(`InnermostId(ruleId)).visit(subject));

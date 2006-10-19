@@ -295,8 +295,8 @@ public class PatternAnalyser{
     PositionNode node = new PositionNode();
     node.pos = null;
     HashSet visited = new HashSet();
-    //return (Wfg) `AddCondWfg(wfg,node,visited,nameToCondition).apply(wfg);
-    return (Wfg) StratDebugger.applyGraphicalDebug(wfg,`AddCondWfg(wfg,node,visited,nameToCondition));    
+    return (Wfg) `AddCondWfg(wfg,node,visited,nameToCondition).apply(wfg);
+    //return (Wfg) StratDebugger.applyGraphicalDebug(wfg,`AddCondWfg(wfg,node,visited,nameToCondition));    
   }
 
 
@@ -368,7 +368,7 @@ public class PatternAnalyser{
         //System.out.println("\nWfg with nodeitions:\n" + wfg);
 
         printWfg(wfg);
-        VisitableViewer.visitableToDotStdout(wfg);
+        //VisitableViewer.visitableToDotStdout(wfg);
       }
     }
   }
