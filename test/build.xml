@@ -40,6 +40,11 @@
          <include name="gom/Importing.gom"/>
          <include name="gom/List.gom"/>
     </gom.preset>
+    <gom.preset srcdir="${test.src}"
+                package="sl"
+                destdir="${test.gen}">
+         <include name="sl/testsl.gom"/>
+    </gom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}">
       <exclude name="cfib1.t"/>

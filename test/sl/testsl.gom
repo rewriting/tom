@@ -27,28 +27,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package sl;
+ module testsl 
+ imports String
+ abstract syntax
+ Term = a()
+      | b()
+      | c()
+      | f(x1:Term, x2:Term) 
+      | g(pred:Term)
+      | ff(x1:Term, x2:Term)
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class TestSL extends TestCase {	  
-
-  %include { testsl/testsl/testsl.tom }
-
-  private NewBehaviour nb = new NewBehaviour();
-  private OldBehaviour ob = new OldBehaviour();
-	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestSL.class));
-	}
-	
-	public void setUp() {
-		
-	}
-	
-	public void testSL1() {		
-    System.out.println(`f(a(),a()));
-		assertTrue(1 == 1);
-	}
-}
