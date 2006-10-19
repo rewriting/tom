@@ -69,13 +69,13 @@ public class @className()@  implements tom.library.strategy.mutraveler.MuStrateg
   }
   public jjtraveler.Visitable getChildAt(int index) {
     switch(index) {
-    case 1: return sub;
+    case 0: return sub;
       default: throw new IndexOutOfBoundsException();
     }
   }
   public jjtraveler.Visitable setChildAt(int index, jjtraveler.Visitable child) {
     switch(index) {
-      case 1: sub = (jjtraveler.reflective.VisitableVisitor)child;
+      case 0: sub = (jjtraveler.reflective.VisitableVisitor)child;
       default: throw new IndexOutOfBoundsException();
     }
   }
