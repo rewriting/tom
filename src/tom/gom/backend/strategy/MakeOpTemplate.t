@@ -363,7 +363,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           res += %[
-    @fieldName(`fieldName)@.visit();
+    ((tom.library.sl.Strategy)@fieldName(`fieldName)@).visit();
     @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) getEnvironment().getSubject();
 ]%;
         }
@@ -389,9 +389,11 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     String res = "";
     int index = 0;
     %match(SlotFieldList slotList) {
-      concSlotField(_*,SlotField[Name=name],_*) -> {
-        res += "    this."+fieldName(`name)+" = "+array+"["+index+"];\n";
-        index++;
+      concSlotField(_*,SlotField[Name=name,Domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res += "    this."+fieldName(`name)+" = (jjtraveler.reflective.VisitableVisitor)"+array+"["+index+"];\n";
+          index++;
+        }
       }
     }
     return res;
