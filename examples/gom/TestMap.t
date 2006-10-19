@@ -44,6 +44,7 @@ public class TestMap extends TestCase {
 
   private static int cnt;
   %include { elist/Elist.tom }
+  %include { mustrategy.tom }
   %include { elist/_Elist.tom }
   %include { java/util/types/Collection.tom }
   %include { java/util/types/Map.tom }
