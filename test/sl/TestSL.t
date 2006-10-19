@@ -34,7 +34,7 @@ import junit.framework.TestSuite;
 
 public class TestSL extends TestCase {	  
 
-  %include { testsl/testsl/testsl.tom }
+  %include { testsl/testsl.tom }
 
   private NewBehaviour nb = new NewBehaviour();
   private OldBehaviour ob = new OldBehaviour();

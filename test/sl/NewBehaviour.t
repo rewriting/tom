@@ -1,10 +1,10 @@
 package sl;
-import sl.testsl.testsl.types.*;
+import sl.testsl.types.*;
 
 public class NewBehaviour {
 
   %include { sl.tom }
-  %include { testsl/testsl/testsl.tom }
+  %include { testsl/testsl.tom }
 
   %strategy Rule1() extends `Identity() {
     visit Term {
