@@ -112,6 +112,12 @@ public class Rewrite1 {
     System.out.println("root1 = " + subject);
     subject = `s.apply(`f(a()));
     System.out.println("root1 = " + subject);
+
+    System.out.println("----------_f()");
+    s = `_g(R2(),R1());
+    subject = `s.apply(`g(f(a()),b()));
+    System.out.println("root1 = " + subject);
+
   }
 
   %strategy R1() extends `Identity() {
