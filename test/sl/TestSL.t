@@ -49,5 +49,35 @@ public class TestSL extends TestCase {
 	
 	public void testSL1() {		
 		assertTrue( ob.test1() == nb.test1() );
-	}
+  }
+  public void testSL2() {		
+    assertTrue( ob.test2() == nb.test2() );
+  }
+  public void testSL3() {		
+    assertTrue( ob.test3() == nb.test3() );
+  }
+  public void testSL4() {		
+    assertTrue( ob.test4() == nb.test4() );
+  }
+  public void testSL5() {		
+    assertTrue( ob.test5() == nb.test5() );
+  }
+  public void testSL6() {		
+    assertTrue( ob.test6() == nb.test6() );
+  }
+  public void testSL7() {		
+    assertTrue( ob.test7() == nb.test7() );
+  }
+  public void testSL8() {		
+    assertTrue( ob.test8() == nb.test8() );
+  }
+  public void testSL9() {		
+    assertTrue( ob.test9() == nb.test9() );
+  }
+  public void testSL10() {		
+    assertTrue( ob.test10() == nb.test10() );
+  }
+
+
+
 }
