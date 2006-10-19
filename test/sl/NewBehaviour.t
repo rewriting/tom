@@ -6,6 +6,7 @@ public class NewBehaviour {
 
   %include { sl.tom }
   %include { testsl/testsl.tom }
+  %include { testsl/_testsl.tom }
 
   %strategy R1() extends `Identity() {
     visit Term {
@@ -92,6 +93,13 @@ public class NewBehaviour {
     Strategy s = `IfThenElse(R2(),Builda(),Buildb()); 
     return (Term) s.apply(subject);
   }
+
+  public Term testWhen1() {
+    Term subject = `f(a());
+    Strategy s = `When_f(R2()); 
+    return (Term) s.apply(subject);
+  }
+
 
 }
 

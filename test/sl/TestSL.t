@@ -77,7 +77,8 @@ public class TestSL extends TestCase {
   public void testSL10() {		
     assertTrue( ob.test10() == nb.test10() );
   }
-
-
+  public void testSLWhen1() {		
+    assertTrue( ob.testWhen1() == nb.testWhen1() );
+  }
 
 }

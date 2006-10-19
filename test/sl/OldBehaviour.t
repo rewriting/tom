@@ -5,6 +5,7 @@ import tom.library.strategy.mutraveler.MuStrategy;
 public class OldBehaviour {
   %include { mustrategy.tom }
   %include { testsl/testsl.tom }
+  %include { testsl/_testsl.tom }
 
   %strategy R1() extends `Identity() {
     visit Term {
@@ -92,5 +93,15 @@ public class OldBehaviour {
     return (Term) s.apply(subject);
   }
 
-}
+  public Term testWhen1() {
+    Term subject = `f(a());
+    MuStrategy s = `When_f(R2()); 
+    Term res;
+    try {
+      return (Term) s.visit(subject);
+    } catch (jjtraveler.VisitFailure f) {
+      throw new RuntimeException("Fail");
+    }
+  }
 
+}
