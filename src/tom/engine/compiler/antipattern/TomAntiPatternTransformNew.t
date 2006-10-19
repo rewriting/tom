@@ -30,6 +30,7 @@ import java.util.*;
 
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomconstraint.types.constraint.*;
 import tom.engine.adt.tomdeclaration.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.adt.tominstruction.types.*;
@@ -253,11 +254,24 @@ public class TomAntiPatternTransformNew {
 	%strategy AbstractTerm(variable:TomTerm, bag:Collection) extends `Identity() {
 		visit TomTerm {
 			AntiTerm(t) -> {
-				// move the constraints from this terms to the variable
-				// that replaces it
-				bag.add(`t.setConstraints(`concConstraint()));				
+				// move the assign constraints from this terms to the variable
+				// that replaces it and leave all the other constraints
+				ConstraintList assignConstraints = `concConstraint();
+				ConstraintList otherConstraints = `concConstraint();
+				ConstraintList cList = `t.getConstraints();
+				while(!cList.isEmptyconcConstraint()){
+					Constraint head = cList.getHeadconcConstraint();
+					if (head instanceof AssignTo ){
+						assignConstraints = `concConstraint(assignConstraints*,head);
+					}else{
+						otherConstraints = `concConstraint(otherConstraints*,head);
+					}
+					cList = cList.getTailconcConstraint(); 
+				}
+				
+				bag.add(`t.setConstraints(otherConstraints));				
 				// return the variable with the correct type
-				return variable.setAstType(TomBase.getTermType(`t,symbolTable)).setConstraints(`t.getConstraints()); 
+				return variable.setAstType(TomBase.getTermType(`t,symbolTable)).setConstraints(assignConstraints);				
 			}
 		}
 	}	
