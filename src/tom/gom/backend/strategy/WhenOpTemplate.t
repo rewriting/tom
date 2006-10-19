@@ -56,22 +56,28 @@ public class WhenOpTemplate extends TemplateClass {
 writer.write(%[
 package @getPackage()@;
 
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-
-public class @className()@ extends tom.library.strategy.mutraveler.Fail {
+public class @className()@ extends tom.library.sl.Fail {
   private static final String msg = "Not an @className(operator)@";
   public final static int ARG = 0;
 
-  public @className()@(jjtraveler.reflective.VisitableVisitor v) {
+  public @className()@(tom.library.sl.Strategy v) {
     initSubterm(v);
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure {
+  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     if(any instanceof @fullClassName(operator)@) {
       return visitors[ARG].visit(any);
     } else {
-      throw new VisitFailure(msg);
+      throw new jjtraveler.VisitFailure(msg);
+    }
+  }
+
+  public void visit() throws jjtraveler.VisitFailure {
+    if(getSubject() instanceof @fullClassName(operator)@) {
+      visitors[ARG].visit();
+      return;
+    } else {
+      throw new jjtraveler.VisitFailure(msg);
     }
   }
 }

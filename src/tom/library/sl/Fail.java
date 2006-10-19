@@ -30,9 +30,6 @@
  **/
 package tom.library.sl;
 
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-
 /**
  * <code>x.accept(Fail)</code> always raises a VisitFailure exception. 
  * <p>
@@ -60,12 +57,12 @@ public class Fail extends AbstractStrategy {
     this.message = message;
   }
 
-  public Visitable visit(Visitable any) throws VisitFailure {
-    throw new VisitFailure(message);
+  public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+    throw new jjtraveler.VisitFailure(message);
   }
 
-  public void visit() throws VisitFailure {
-    throw new VisitFailure(message);
+  public void visit() throws jjtraveler.VisitFailure {
+    throw new jjtraveler.VisitFailure(message);
   }
 
 }
