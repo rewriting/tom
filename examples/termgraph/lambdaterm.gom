@@ -1,5 +1,5 @@
 module lambdaterm
-imports String int
+imports String
 abstract syntax
 LambdaTerm =
      | app(arg1:LambdaTerm,arg2:LambdaTerm)

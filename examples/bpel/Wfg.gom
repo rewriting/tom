@@ -1,5 +1,5 @@
 module Wfg
-imports String int 
+imports String 
 abstract syntax
 
 Wfg = WfgNode(Wfg*)

@@ -1,5 +1,4 @@
 module term
-imports String int
 abstract syntax
 Term = a() | b() | c() | d()
      | f(arg1:Term)

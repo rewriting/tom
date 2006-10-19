@@ -51,6 +51,9 @@ public class GomReferenceExpander {
     this.packagePath = packagePath;
     stringSortDecl = environment().builtinSort("String");
     intSortDecl = environment().builtinSort("int");
+    //we mark them as used builtins
+    environment().markUsedBuiltin("String");
+    environment().markUsedBuiltin("int");
   }
 
   public SortList expand(SortList typedModuleList) {
