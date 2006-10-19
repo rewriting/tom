@@ -59,7 +59,7 @@ public class MakeOpTemplate extends TemplateClass {
 writer.write(%[
 package @getPackage()@;
 
-public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy {
+public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy, tom.library.sl.Strategy {
   /* Do not manage an internal position, since the arguments is not really
    * used
    */
@@ -70,6 +70,19 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   }
 
   public boolean hasPosition() { return false; }
+
+  protected tom.library.sl.Environment environment;
+  public void setEnvironment(tom.library.sl.Environment env) {
+    this.environment = env;
+  }
+
+  public tom.library.sl.Environment getEnvironment() {
+    if(environment!=null) {
+      return environment;
+    } else {
+      throw new RuntimeException("environment not initialized");
+    }
+  }
 
 @generateMembers()@
 
@@ -88,6 +101,16 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       default: throw new IndexOutOfBoundsException();
     }
   }
+
+  public jjtraveler.Visitable[] getChildren() {
+    return new jjtraveler.Visitable[]{@generateMembersList()@};
+  }
+
+  public jjtraveler.Visitable setChildren(jjtraveler.Visitable[] children) {
+    @generateMembersSetChildren("children")@
+    return this;
+  }
+
   /*
    * Apply the strategy, and returns the subject in case of VisitFailure
    */
@@ -99,7 +122,22 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     }
   }
 
+  public tom.library.sl.Visitable apply(tom.library.sl.Visitable any) { /*throws Failure*/
+    try {
+      tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
+      getEnvironment().setRoot(any);
+      visit();
+      return getEnvironment().getRoot();
+    } catch (jjtraveler.VisitFailure f) {
+      return any;
+    }
+  }
+
   public tom.library.strategy.mutraveler.MuStrategy accept(tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd v) throws jjtraveler.VisitFailure {
+    return v.visit_Strategy(this);
+  }
+
+  public tom.library.sl.Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure {
     return v.visit_Strategy(this);
   }
 
@@ -114,6 +152,12 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   public jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
 @computeNewChilds(slotList,"any")@
     return @fullClassName(operator)@.make(@genMakeArguments(slotList)@);
+  }
+
+  public void visit() throws jjtraveler.VisitFailure {
+@computeSLNewChilds(slotList,"any")@
+    getEnvironment().setSubject((tom.library.sl.Visitable)@fullClassName(operator)@.make(@genMakeArguments(slotList)@));
+    return;
   }
 }
 ]%);
@@ -214,6 +258,24 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     return res;
   }
 
+  private String generateMembersList() {
+    String res="";
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res += fieldName(`fieldName) + ", ";
+        } else {
+          // Skip builtin childs
+        }
+      }
+    }
+    if (res.length() != 0) {
+      return res.substring(0,res.length()-2);
+    } else {
+      return res;
+    }
+  }
+
   /**
     * Generate "case: " instructions for each non builtin child
     * XXX: this code in duplicated from OperatorTemplate, need to be factorized
@@ -293,6 +355,24 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
   }
 
   /**
+   * Generate code to initialize all members of the strategy with the sl scheme
+   */
+  private String computeSLNewChilds(SlotFieldList slots, String argName) {
+    String res = "";
+    %match(SlotFieldList slots) {
+      concSlotField(_*,SlotField[Name=fieldName,Domain=domain],_*) -> {
+        if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res += %[
+    @fieldName(`fieldName)@.visit();
+    @fullClassName(`domain)@ new@fieldName(`fieldName)@ = (@fullClassName(`domain)@) getEnvironment().getSubject();
+]%;
+        }
+      }
+    }
+    return res;
+  }
+
+  /**
     * Generate the computation of all new childs for the target
     */
   private String generateMembersInit() {
@@ -300,6 +380,18 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Name=name],_*) -> {
         res += "    this."+fieldName(`name)+" = "+fieldName(`name)+";\n";
+      }
+    }
+    return res;
+  }
+
+  private String generateMembersSetChildren(String array) {
+    String res = "";
+    int index = 0;
+    %match(SlotFieldList slotList) {
+      concSlotField(_*,SlotField[Name=name],_*) -> {
+        res += "    this."+fieldName(`name)+" = "+array+"["+index+"];\n";
+        index++;
       }
     }
     return res;
