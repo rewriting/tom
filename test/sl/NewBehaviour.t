@@ -12,7 +12,8 @@ public class NewBehaviour {
     }
   }
 
-  public Term test1(Term t) {
+  public Term test1() {
+    Term t = `f(a(),a());
     return (Term) `All(Rule1()).apply(t);
   }
 }

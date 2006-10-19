@@ -48,7 +48,6 @@ public class TestSL extends TestCase {
 	}
 	
 	public void testSL1() {		
-    System.out.println(`f(a(),a()));
-		assertTrue(1 == 1);
+		assertTrue( ob.test1() == nb.test1() );
 	}
 }
