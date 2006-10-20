@@ -84,23 +84,25 @@ public class NewBehaviour {
 
   public Term test9() {
     Term subject = `f(b());
-    Strategy s = `IfThenElse(R2(),Builda(),Buildb()); 
+    Strategy s = `IfThenElse(R2(),Builda(),Buildb());
     return (Term) s.apply(subject);
   }
 
   public Term test10() {
     Term subject = `f(a());
-    Strategy s = `IfThenElse(R2(),Builda(),Buildb()); 
+    Strategy s = `IfThenElse(R2(),Builda(),Buildb());
     return (Term) s.apply(subject);
   }
 
   public Term testWhen1() {
     Term subject = `f(a());
-    Strategy s = `When_f(R2()); 
+    Strategy s = `When_f(R2());
     return (Term) s.apply(subject);
   }
 
-
+  public Term testCongruence1() {
+    Term subject = `g(f(a()),b());
+    Strategy s = `_g(R1(),R2());
+    return (Term) s.apply(subject);
+  }
 }
-
-

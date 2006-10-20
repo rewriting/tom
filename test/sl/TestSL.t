@@ -80,5 +80,8 @@ public class TestSL extends TestCase {
   public void testSLWhen1() {		
     assertTrue( ob.testWhen1() == nb.testWhen1() );
   }
+  public void testSLCongruence1() {		
+    assertTrue( ob.testCongruence1() == nb.testCongruence1() );
+  }
 
 }

@@ -83,19 +83,19 @@ public class OldBehaviour {
 
   public Term test9() {
     Term subject = `f(b());
-    MuStrategy s = `IfThenElse(R2(),Builda(),Buildb()); 
+    MuStrategy s = `IfThenElse(R2(),Builda(),Buildb());
     return (Term) s.apply(subject);
   }
 
   public Term test10() {
     Term subject = `f(a());
-    MuStrategy s = `IfThenElse(R2(),Builda(),Buildb()); 
+    MuStrategy s = `IfThenElse(R2(),Builda(),Buildb());
     return (Term) s.apply(subject);
   }
 
   public Term testWhen1() {
     Term subject = `f(a());
-    MuStrategy s = `When_f(R2()); 
+    MuStrategy s = `When_f(R2());
     Term res;
     try {
       return (Term) s.visit(subject);
@@ -104,4 +104,14 @@ public class OldBehaviour {
     }
   }
 
+  public Term testCongruence1() {
+    Term subject = `g(f(a()),b());
+    MuStrategy s = `_g(R1(),R2());
+    Term res;
+    try {
+      return (Term) s.visit(subject);
+    } catch (jjtraveler.VisitFailure f) {
+      throw new RuntimeException("Fail");
+    }
+  }
 }
