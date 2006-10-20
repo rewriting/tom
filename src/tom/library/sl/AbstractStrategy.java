@@ -85,14 +85,14 @@ public abstract class AbstractStrategy implements Strategy {
     return v.visit_Strategy(this);
   }
 
-  public Visitable apply(Visitable any) { /*throws Failure*/
+  public Visitable fire(Visitable any) {
     try {
       init();
       setRoot(any);
       visit();
       return getRoot();
     } catch (jjtraveler.VisitFailure f) {
-      return any;
+      throw new tom.library.sl.FireException();
     }
   }
 

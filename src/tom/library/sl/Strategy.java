@@ -36,7 +36,11 @@ public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisi
 
   public Environment getEnvironment();
 
-  public Visitable apply(Visitable any) /*throws Failure*/;
+  /**
+   *  Apply the strategy
+   *  @throws FireException in case of failure
+   */
+  public Visitable fire(Visitable any);
 
   public void visit() throws jjtraveler.VisitFailure;
 

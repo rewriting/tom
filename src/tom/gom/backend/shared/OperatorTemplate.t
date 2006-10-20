@@ -72,7 +72,7 @@ writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
-public class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable, tom.library.sl.Visitable @generateInterface()@ {
+public final class @className()@ extends @fullClassName(extendsType)@ implements tom.library.strategy.mutraveler.MuVisitable, tom.library.sl.Visitable @generateInterface()@ {
 @generateBlock()@
   private static @className()@ proto = new @className()@();
   private int hashCode;
