@@ -114,6 +114,10 @@ writer.write(%[
     throw new IllegalArgumentException("This is not a @className()@ " + trm);
   }
 
+  public static @fullClassName()@ fromString(String s) {
+    return fromTerm(aterm.pure.SingletonFactory.getInstance().parse(s));
+  }
+
 ]%);
 
     /* length and reverse prototypes, only usable on lists */
