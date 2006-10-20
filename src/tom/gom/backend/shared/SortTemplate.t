@@ -118,6 +118,10 @@ writer.write(%[
     return fromTerm(aterm.pure.SingletonFactory.getInstance().parse(s));
   }
 
+  public static @fullClassName()@ fromStream(java.io.InputStream stream) throws java.io.IOException {
+    return fromTerm(aterm.pure.SingletonFactory.getInstance().readFromFile(stream));
+  }
+
 ]%);
 
     /* length and reverse prototypes, only usable on lists */

@@ -27,4 +27,18 @@ public class TestFrom extends TestCase {
     assertEquals(test.toString(),
         "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))");
   }
+
+  public void testFromStream() {
+    String s = "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))"; 
+    java.io.InputStream stream = null;
+    Out test = null;
+    try {
+      stream = new java.io.DataInputStream(new java.io.StringBufferInputStream(s));
+      test = Out.fromStream(stream);
+    } catch (java.io.IOException e) {
+      fail("Streaming problem");
+    }
+    assertEquals(test.toString(),
+        "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))");
+  }
 }
