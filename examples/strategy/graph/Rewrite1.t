@@ -27,13 +27,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//package strategy;
+package strategy.graph;
 
-//import strategy.term.*;
-//import strategy.term.types.*;
-
-import rewrite1.term.*;
-import rewrite1.term.types.*;
+import strategy.graph.rewrite1.term.*;
+import strategy.graph.rewrite1.term.types.*;
 
 import tom.library.sl.*;
 

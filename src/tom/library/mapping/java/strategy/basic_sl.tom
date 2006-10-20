@@ -106,3 +106,4 @@
     get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.FIRST) }
     get_slot(s2, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Choice.THEN) }
   }
+
