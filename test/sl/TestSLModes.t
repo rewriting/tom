@@ -58,6 +58,13 @@ public class TestSLModes extends TestCase {
     }
   }
 
+  %strategy R3() extends `Fail() {
+    visit Term {
+      f(b()) -> { return `f(c()); }
+      c() -> { return `a(); }
+    }
+  }
+
   public void testIdentity() {
     Term subject = `f(a());
     Strategy s = `Identity();
@@ -380,6 +387,46 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
   }
 
+  public void testMake_a() {
+    Term subject = `f(c());
+    Strategy s = `Make_a();
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`a());
+    } catch (jjtraveler.VisitFailure e) {
+      fail("IfThenElse.visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`a());
+    } catch (tom.library.sl.FireException e) {
+      fail("IfThenElse.fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testMake_gfab() {
+    Term subject = `f(c());
+    Strategy s = `Make_g(Make_f(Make_a()),Make_b());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`g(f(a()),b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("IfThenElse.visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`g(f(a()),b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("IfThenElse.fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
   public void testIfThenElse1() {
     Term subject = `f(a());
     Strategy s = `IfThenElse(R2(),Make_a(),Make_b());
@@ -418,5 +465,63 @@ public class TestSLModes extends TestCase {
       fail("IfThenElse.fire should not fail on "+subject);
     }
     assertEquals(resJ,resS);
+  }
+
+  public void testSequence() {
+    Term subject = `f(a());
+    Strategy s = `Sequence(R2(),R3());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied sequence",resJ,`f(c()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("Sequence(R2,R3).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`f(c()));
+    } catch (tom.library.sl.FireException e) {
+      fail("Sequence(R2,R3).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testSequenceFail1() {
+    Term subject = `f(c());
+    Strategy s = `Sequence(R2(),Identity());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("Sequence(R2,id).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("Sequence(R2,id).visit should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+    }
+    assertNull(resJ);
+    assertNull(resS);
+  }
+
+  public void testSequenceFail2() {
+    Term subject = `f(c());
+    Strategy s = `Sequence(Identity(),R3());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("Sequence(Identity,R3).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("Sequence(Identity,R3).visit should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+    }
+    assertNull(resJ);
+    assertNull(resS);
   }
 }
