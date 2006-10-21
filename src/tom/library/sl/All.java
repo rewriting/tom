@@ -47,9 +47,27 @@ public class All extends AbstractStrategy {
   public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     int childCount = any.getChildCount();
     jjtraveler.Visitable result = any;
-    for (int i = 0; i < childCount; i++) {
-      jjtraveler.Visitable newChild = visitors[ARG].visit(result.getChildAt(i));
-      result = result.setChildAt(i, newChild);
+    if (any instanceof Visitable) {
+      jjtraveler.Visitable[] childs = null;
+      for (int i = 0; i < childCount; i++) {
+        jjtraveler.Visitable oldChild = any.getChildAt(i);
+        jjtraveler.Visitable newChild = visitors[ARG].visit(oldChild);
+        if(childs != null) {
+          childs[i] = newChild;
+        } else if(newChild != oldChild) {
+          // allocate the array, and fill it
+          childs = ((Visitable) any).getChildren();
+          childs[i] = newChild;
+        }
+      }
+      if(childs!=null) {
+        result = ((Visitable) any).setChildren(childs);
+      }
+    } else {
+      for (int i = 0; i < childCount; i++) {
+        jjtraveler.Visitable newChild = visitors[ARG].visit(result.getChildAt(i));
+        result = result.setChildAt(i, newChild);
+      }
     }
     return result;
   }
