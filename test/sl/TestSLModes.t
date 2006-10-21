@@ -563,4 +563,24 @@ public class TestSLModes extends TestCase {
     assertNull(resJ);
     assertNull(resS);
   }
+
+  public void testCongruence() {
+    Term subject = `g(f(a()),b());
+    Strategy s = `_g(R1(),R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied congruence",resJ,`g(f(b()),c()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("_g(R1,R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`g(f(b()),c()));
+    } catch (tom.library.sl.FireException e) {
+      fail("_g(R1,R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
 }
