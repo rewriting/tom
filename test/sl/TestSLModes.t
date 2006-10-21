@@ -524,4 +524,43 @@ public class TestSLModes extends TestCase {
     assertNull(resJ);
     assertNull(resS);
   }
+
+  public void testWhen() {
+    Term subject = `f(a());
+    Strategy s = `When_f(R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied sequence",resJ,`f(b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("When_f(R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`f(b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("When_f(R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testWhenFail() {
+    Term subject = `f(b());
+    Strategy s = `When_f(R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("When_f(R2).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("When_f(R2).visit should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+    }
+    assertNull(resJ);
+    assertNull(resS);
+  }
 }
