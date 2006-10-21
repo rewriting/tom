@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2006, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -80,7 +80,7 @@ public class TestSLModes extends TestCase {
 
   public void testR1() {
     Term subject = `f(a());
-    Strategy s = `(R1());
+    Strategy s = `R1();
     Term resJ = null;
     Term resS = null;
     try {
@@ -96,6 +96,67 @@ public class TestSLModes extends TestCase {
       fail("R1.fire should not fail on f(a)");
     }
     assertEquals(resJ,resS);
+  }
+
+  public void testR1Fail() {
+    Term subject = `f(b());
+    Strategy s = `R1();
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule : fail is identity",resJ,subject);
+    } catch (jjtraveler.VisitFailure e) {
+      fail("R1.visit should not throw failure on f(b)");
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,subject);
+    } catch (tom.library.sl.FireException e) {
+      fail("R1.fire should not throw failure on f(b)");
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testR2() {
+    Term subject = `f(a());
+    Strategy s = `R2();
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`f(b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("R2.visit should not fail on f(a)");
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`f(b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("R2.fire should not fail on f(a)");
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testR2Fail() {
+    Term subject = `f(b());
+    Strategy s = `R2();
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("R2.visit should fail on f(b)");
+    } catch (jjtraveler.VisitFailure e) {
+      assertNull(resJ);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("R2.fire should fail on f(b)");
+    } catch (tom.library.sl.FireException e) {
+      assertNull(resS);
+    }
+    assertNull(resJ);
+    assertNull(resS);
   }
 
   public void testOne() {
@@ -118,4 +179,126 @@ public class TestSLModes extends TestCase {
     assertEquals(resJ,resS);
   }
 
+  public void testOneFail() {
+    Term subject = `f(a());
+    Strategy s = `One(R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("One(R2).visit should fail on f(a)");
+    } catch (jjtraveler.VisitFailure e) {
+      assertNull(resJ);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("One(R2).fire should fail on f(a)");
+    } catch (tom.library.sl.FireException e) {
+      assertNull(resS);
+    }
+    assertNull(resJ);
+    assertNull(resS);
+  }
+
+  public void testOnceBottomUp() {
+    Term subject = `g(f(a()),b());
+    Strategy s = `OnceBottomUp((R2()));
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`g(f(b()),b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("OnceBottomUp(R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`g(f(b()),b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("OnceBottomUp(R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+    subject = resJ;
+    /* second application */
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`g(f(c()),b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("OnceBottomUp(R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`g(f(c()),b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("OnceBottomUp(R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+    subject = resJ;
+    /* third application */
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`g(f(c()),c()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("OnceBottomUp(R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`g(f(c()),c()));
+    } catch (tom.library.sl.FireException e) {
+      fail("OnceBottomUp(R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+    subject = resJ;
+    /* fourth application: it fails */
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("OnceBottomUp(R2).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+      resJ = null;
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("OnceBottomUp(R2).fire should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+      resS = null;
+    }
+    assertNull(resS);
+    assertNull(resJ);
+  }
+
+  public void testAll() {
+    Term subject = `g(f(a()),b());
+    Strategy s = `All((R2()));
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`g(f(b()),c()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("All(R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`g(f(b()),c()));
+    } catch (tom.library.sl.FireException e) {
+      fail("All(R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+    /* second application should fail */
+    subject = resJ;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("All(R2).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+      resJ = null;
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("All(R2).fire should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+      resS = null;
+    }
+    assertNull(resS);
+    assertNull(resJ);
+  }
 }
