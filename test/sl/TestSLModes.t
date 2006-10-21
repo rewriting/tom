@@ -379,4 +379,44 @@ public class TestSLModes extends TestCase {
     assertNull(resJ);
     assertNull(resS);
   }
+
+  public void testIfThenElse1() {
+    Term subject = `f(a());
+    Strategy s = `IfThenElse(R2(),Make_a(),Make_b());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`a());
+    } catch (jjtraveler.VisitFailure e) {
+      fail("IfThenElse.visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`a());
+    } catch (tom.library.sl.FireException e) {
+      fail("IfThenElse.fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testIfThenElse2() {
+    Term subject = `f(b());
+    Strategy s = `IfThenElse(R2(),Make_a(),Make_b());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`b());
+    } catch (jjtraveler.VisitFailure e) {
+      fail("IfThenElse.visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`b());
+    } catch (tom.library.sl.FireException e) {
+      fail("IfThenElse.fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
 }
