@@ -301,4 +301,82 @@ public class TestSLModes extends TestCase {
     assertNull(resS);
     assertNull(resJ);
   }
+
+  public void testAllFail() {
+    Term subject = `g(f(b()),b());
+    Strategy s = `All((R2()));
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("All(R2).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("All(R2).fire should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+    }
+    assertNull(resS);
+    assertNull(resJ);
+  }
+
+  public void testOmega1() {
+    Term subject = `g(f(a()),b());
+    Strategy s = `Omega(1,R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`g(f(b()),b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("Omega(1,R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`g(f(b()),b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("Omega(1,R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testOmega2() {
+    Term subject = `g(f(a()),b());
+    Strategy s = `Omega(2,R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`g(f(a()),c()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("Omega(2,R2).visit should not fail on "+subject);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`g(f(a()),c()));
+    } catch (tom.library.sl.FireException e) {
+      fail("Omega(2,R2).fire should not fail on "+subject);
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testOmega1Fail() {
+    Term subject = `g(f(b()),b());
+    Strategy s = `Omega(1,R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("Omega(1,R2).visit should fail on "+subject);
+    } catch (jjtraveler.VisitFailure e) {
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("Omega(1,R2).visit should fail on "+subject);
+    } catch (tom.library.sl.FireException e) {
+    }
+    assertNull(resJ);
+    assertNull(resS);
+  }
 }
