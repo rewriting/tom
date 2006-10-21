@@ -79,14 +79,15 @@ public class All extends AbstractStrategy {
     Visitable[] childs = null;
     try {
       for (int i = 0; i < childCount; i++) {
-        /* restore subject */
-        setSubject(any);
         Visitable oldChild = (Visitable)any.getChildAt(i);
         environment.down(i+1);
         (visitors[ARG]).visit();
         Visitable newChild = getSubject();
         if(childs != null) {
           childs[i] = newChild;
+          environment.up();
+          /* restore subject */
+          setSubject(any);
         } else if(newChild != oldChild) {
           // allocate the array, and fill it
           // childs = (Visitable[])any.getChildren();
@@ -96,8 +97,13 @@ public class All extends AbstractStrategy {
             childs[j] = (Visitable) array[j];
           }
           childs[i] = newChild;
+          environment.up();
+          /* restore subject */
+          setSubject(any);
+        } else {
+          /* no need to restore subject */
+          environment.up();
         }
-        environment.up();
       }
     } catch(jjtraveler.VisitFailure f) {
       environment.up();
