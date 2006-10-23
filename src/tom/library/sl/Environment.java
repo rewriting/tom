@@ -163,6 +163,15 @@ public class Environment {
   }
 
   /**
+   * get the current position
+   * @return the current position
+   */
+  public int[] getOmega() {
+    return omega;
+  }
+
+
+  /**
    * Get the depth of the position in the tree
    * @return depth on the position
    */
