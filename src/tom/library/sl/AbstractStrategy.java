@@ -86,12 +86,12 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   public Visitable fire(Visitable any) {
-    try {
-      init();
-      setRoot(any);
-      visit();
+    init();
+    setRoot(any);
+    visit();
+    if (getStatus() == Environment.SUCCESS) {
       return getRoot();
-    } catch (jjtraveler.VisitFailure f) {
+    } else {
       throw new tom.library.sl.FireException();
     }
   }
@@ -114,7 +114,18 @@ public abstract class AbstractStrategy implements Strategy {
   }
 
   /**
-   * getter en setter for the root term (i.e. top position)
+   * getter and setter for the status
+   */
+  public int getStatus() {
+    return getEnvironment().getStatus();
+  }
+
+  public void setStatus(int stat) {
+    getEnvironment().setStatus(stat);
+  }
+
+  /**
+   * getter and setter for the root term (i.e. top position)
    */
   public Visitable getRoot() {
     return getEnvironment().getRoot();

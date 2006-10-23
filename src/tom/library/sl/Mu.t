@@ -15,15 +15,15 @@ public class Mu extends AbstractStrategy {
   }
 
   public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
-    if(!expanded) { muExpand(); }
+    if(!expanded)
+      muExpand();
     return visitors[V].visit(any);
   }
 
-  public void visit() throws jjtraveler.VisitFailure {
-    //System.out.println("try Mu on: " + getSubject());
-    if(!expanded) { muExpand(); }
+  public void visit() {
+    if(!expanded)
+      muExpand();
     visitors[V].visit();
-    //System.out.println("Mu succeeds: " + getSubject());
   }
 
   private boolean isExpanded() {

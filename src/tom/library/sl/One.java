@@ -60,24 +60,20 @@ public class One extends AbstractStrategy {
     throw new jjtraveler.VisitFailure();
   }
 
-  public void visit() throws jjtraveler.VisitFailure {
+  public void visit() {
     int childCount = getSubject().getChildCount();
 
     for(int i = 0; i < childCount; i++) {
-      //System.out.println("One: try i = " + i + " on " + getSubject());
-      try {
-        //System.out.println("One.pos = " + environment);
-        environment.down(i+1);
-        (visitors[ARG]).visit();
-        //System.out.println("One: succeeds: " + getSubject());
-        environment.up();
-        return ;
-      } catch(jjtraveler.VisitFailure f) {
-        //System.out.println("One: failed on: " + getSubject());
-        environment.up();
+      environment.down(i+1);
+      (visitors[ARG]).visit();
+      environment.up();
+      if (getStatus() == Environment.SUCCESS) {
+        return;
+      } else {
+        setStatus(Environment.SUCCESS);
       }
     }
-    throw new jjtraveler.VisitFailure();
+    setStatus(Environment.FAILURE);
+    return;
   }
-
 }

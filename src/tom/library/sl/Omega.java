@@ -66,22 +66,17 @@ public class Omega extends AbstractStrategy {
     }
   }
 
-  public void visit() throws jjtraveler.VisitFailure {
+  public void visit() {
     if(indexPosition==0) {
       return;
     } else if(indexPosition>0 && indexPosition<=getSubject().getChildCount()) {
       int childNumber = indexPosition-1;
-      try {
-        environment.down(indexPosition);
-        (visitors[ARG]).visit();
-        environment.up();
-        return ;
-      } catch(jjtraveler.VisitFailure f) {
-        environment.up();
-        throw new jjtraveler.VisitFailure();
-      }
+      environment.down(indexPosition);
+      (visitors[ARG]).visit();
+      environment.up();
+      return ;
     } else {
-      throw new jjtraveler.VisitFailure();
+      setStatus(Environment.FAILURE);
     }
   }
 }

@@ -2,19 +2,19 @@
  *
  * Copyright (c) 2000-2006, Pierre-Etienne Moreau
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,7 +26,7 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  **/
 package tom.library.sl;
 
@@ -36,7 +36,7 @@ package tom.library.sl;
  * <code>Choice(v1,v2) = v2</code>    if v1 fails
  * <p>
  * Visitor combinator with two visitor arguments, that tries to
- * apply the first visitor and if it fails tries the other 
+ * apply the first visitor and if it fails tries the other
  * (left-biased choice).
  * <p>
  * Note that any side-effects of v1 are not undone when it fails.
@@ -48,7 +48,7 @@ public class Choice extends AbstractStrategy {
   public Choice(Strategy first, Strategy then) {
     initSubterm(first,then);
   }
-    
+
   public jjtraveler.Visitable visit(jjtraveler.Visitable visitable) throws jjtraveler.VisitFailure {
     try {
       return visitors[FIRST].visit(visitable);
@@ -57,16 +57,13 @@ public class Choice extends AbstractStrategy {
     }
   }
 
-  public void visit() throws jjtraveler.VisitFailure {
-    try {
-        //System.out.println("try Choice1 on: " + getSubject());
-      visitors[FIRST].visit();
-        //System.out.println("first branch succeeds: " + getSubject());
+  public void visit() {
+    visitors[FIRST].visit();
+    if (getStatus() == Environment.SUCCESS) {
       return;
-    } catch (jjtraveler.VisitFailure f) {
-        //System.out.println("try Choice2 on: " + getSubject());
+    } else {
+      setStatus(Environment.SUCCESS);
       visitors[THEN].visit();
-        //System.out.println("second branch succeeds: " + getSubject());
       return;
     }
   }

@@ -101,18 +101,22 @@ import tom.library.strategy.mutraveler.Position;
   }
 
   public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
-    try {
-      tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
-      getEnvironment().setRoot(any);
-      visit();
+    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
+    getEnvironment().setRoot(any);
+    visit();
+    if (getEnvironment().getStatus() == tom.library.sl.Environment.SUCCESS) {
       return getEnvironment().getRoot();
-    } catch (jjtraveler.VisitFailure f) {
+    } else {
       throw new tom.library.sl.FireException();
     }
   }
 
-  public void visit() throws jjtraveler.VisitFailure {
-    getEnvironment().setSubject((tom.library.sl.Visitable)this.visit(getEnvironment().getSubject()));
+  public void visit() {
+    try {
+      getEnvironment().setSubject((tom.library.sl.Visitable)this.visit(getEnvironment().getSubject()));
+    } catch(jjtraveler.VisitFailure f) {
+      getEnvironment().setStatus(tom.library.sl.Environment.FAILURE);
+    }
   }
 
   public tom.library.sl.Environment getEnvironment() {

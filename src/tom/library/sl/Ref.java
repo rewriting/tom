@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 2000-2006, Pierre-Etienne Moreau All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * - Redistributions of source code must retain the above copyright notice,
@@ -11,7 +11,7 @@
  * materials provided with the distribution.  - Neither the name of the INRIA
  * nor the names of its contributors may be used to endorse or promote products
  * derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -23,8 +23,8 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- **/ 
+ *
+ **/
 
 package tom.library.sl;
 
@@ -64,10 +64,10 @@ public class Ref extends AbstractStrategy {
     throw new RuntimeException("The strategy operator Ref can be used only with the methods visit() and fire()");
   }
 
-  public void visit() throws jjtraveler.VisitFailure {
+  public void visit() {
     if (getSubject() instanceof Reference){
       visitReference((Reference)getSubject());
-    } else { 
+    } else {
       if(strict) {
         // does nothing when it is not a Ref
       } else {
@@ -76,7 +76,7 @@ public class Ref extends AbstractStrategy {
     }
   }
 
-  private void visitReference(Reference ref) throws jjtraveler.VisitFailure{
+  private void visitReference(Reference ref) {
     int[] pos;
     if(relative) {
       pos = getAbsolutePosition(environment.getOmega(),ref.toArray());
@@ -84,14 +84,12 @@ public class Ref extends AbstractStrategy {
       pos = ref.toArray();
     }
     int[] oldToNew = getRelativePosition(environment.getOmega(),pos);
-    int[] newToOld = getRelativePosition(pos,environment.getOmega()); 
+    int[] newToOld = getRelativePosition(pos,environment.getOmega());
     goToPosition(oldToNew);
-    try{
-      visitors[ARG].visit();
-    } 
-    catch(jjtraveler.VisitFailure e) {
+    visitors[ARG].visit();
+    if (getStatus() != Environment.SUCCESS) {
       goToPosition(newToOld);
-      throw new jjtraveler.VisitFailure();
+      return;
     }
     goToPosition(newToOld);
   }
@@ -110,7 +108,7 @@ public class Ref extends AbstractStrategy {
   }
 
   private int[] getRelativePosition(int[] source,int[] target) {
-    int min_length =Math.min(source.length,target.length); 
+    int min_length =Math.min(source.length,target.length);
     int commonPrefixLength=0;
     while(commonPrefixLength<min_length && source[commonPrefixLength]==target[commonPrefixLength]){
       commonPrefixLength++;

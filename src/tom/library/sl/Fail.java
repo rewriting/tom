@@ -2,19 +2,19 @@
  *
  * Copyright (c) 2000-2006, Pierre-Etienne Moreau
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,12 +26,12 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  **/
 package tom.library.sl;
 
 /**
- * <code>x.accept(Fail)</code> always raises a VisitFailure exception. 
+ * <code>x.accept(Fail)</code> always raises a VisitFailure exception.
  * <p>
  * Basic visitor combinator without arguments, that always fails.
  * <p>
@@ -41,13 +41,13 @@ package tom.library.sl;
 
 public class Fail extends AbstractStrategy {
   private String message;
-    
-  /** 
+
+  /**
    * Construct Fail combinator with empty failure message.
    */
   public Fail() {
     initSubterm();
-    this.message = ""; 
+    this.message = "";
   }
   /**
    * Construct Fail combinator with a failure message to be passed to the
@@ -61,8 +61,8 @@ public class Fail extends AbstractStrategy {
     throw new jjtraveler.VisitFailure(message);
   }
 
-  public void visit() throws jjtraveler.VisitFailure {
-    throw new jjtraveler.VisitFailure(message);
+  public void visit() {
+    setStatus(Environment.FAILURE);
+    return;
   }
-
 }

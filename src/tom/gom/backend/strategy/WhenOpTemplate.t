@@ -129,12 +129,12 @@ public class @className()@  implements tom.library.strategy.mutraveler.MuStrateg
   }
 
   public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
-    try {
-      tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
-      getEnvironment().setRoot(any);
-      visit();
+    tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
+    getEnvironment().setRoot(any);
+    visit();
+    if (getEnvironment().getStatus() == tom.library.sl.Environment.SUCCESS) {
       return getEnvironment().getRoot();
-    } catch (jjtraveler.VisitFailure f) {
+    } else {
       throw new tom.library.sl.FireException();
     }
   }
@@ -155,12 +155,12 @@ public class @className()@  implements tom.library.strategy.mutraveler.MuStrateg
     }
   }
 
-  public void visit() throws jjtraveler.VisitFailure {
+  public void visit() {
     if(getEnvironment().getSubject() instanceof @fullClassName(operator)@) {
       ((tom.library.sl.Strategy)sub).visit();
       return;
     } else {
-      throw new jjtraveler.VisitFailure(msg);
+      getEnvironment().setStatus(tom.library.sl.Environment.FAILURE);
     }
   }
 }
