@@ -41,6 +41,7 @@ public class TestRef extends TestCase {
   %include { testsl/_testsl.tom }
   %include { testsl/testsl.tom }
 
+  //TODO remove when composed will be added to sl.tom
   %op Strategy TopDown(s1:Strategy) {
     make(v) { `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) }
   }

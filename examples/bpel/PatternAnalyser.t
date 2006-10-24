@@ -26,7 +26,7 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
 package bpel;
 
@@ -40,11 +40,7 @@ import tom.library.xml.*;
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 
-import tom.library.strategy.mutraveler.*;
-
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
+import tom.library.sl.*;
 import java.util.*;
 
 
@@ -55,11 +51,22 @@ public class PatternAnalyser{
   %include {util/ArrayList.tom}
   %include {wfg/Wfg.tom}
   %include {wfg/_Wfg.tom}
-  %include {mustrategy.tom}
-  %include {strategy/graph.tom}
+  %include {sl.tom}
+  %include {strategy/graph_sl.tom}
   %include {adt/tnode/TNode.tom }
 
-  %strategy Combine(wfg:Wfg) extends `Identity(){
+
+  //TODO remove when composed will be added to sl.tom
+  %op Strategy TopDown(s1:Strategy) {
+    make(v) { `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) }
+  }
+
+  %op Strategy Try(s1:Strategy) {
+    make(v) { `Choice(v,Identity()) }
+  }
+
+
+  %strategy Combine(wfg:Wfg) extends `Fail(){
     visit Wfg{
       Empty() -> {
         return wfg; 
@@ -68,15 +75,15 @@ public class PatternAnalyser{
       node@WfgNode(leaf@Activity[],refList*) -> {
         %match(Wfg refList){
           WfgNode(_*,!refWfg[],_*) -> {
-             // node is not a leaf
-                return `node;
-            }
+            // node is not a leaf
+            return `node;
           }
-        // node is a leaf ( contains only chidren of type ref)
-          return `WfgNode(leaf,refList*,wfg);
         }
+        // node is a leaf ( contains only chidren of type ref)
+        return `WfgNode(leaf,refList*,wfg);
       }
     }
+  }
 
   private static int whileCounter = 0;
 
@@ -103,7 +110,7 @@ public class PatternAnalyser{
     public void substitute() {
       %match(HashMap nameToCondition) {
         (_*,mapEntry(k,v),_*) -> {
-          Condition newCond = (Condition) ((MuStrategy) `TopDown(Substitute(sourceToName))).apply((Condition) `v);
+          Condition newCond = (Condition) ((Strategy) `TopDown(Substitute(sourceToName))).fire((Condition) `v);
           nameToCondition.put(`k,newCond);
         }
       }
@@ -123,7 +130,7 @@ public class PatternAnalyser{
         return wfglist;
       }
       <sequence>proc</sequence> ->{
-        wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(bpelToWfg(proc,explicitCond)),All(MuVar("x")))).apply(wfg);
+        wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(bpelToWfg(proc,explicitCond)),All(MuVar("x")))).fire(wfg);
       }
       node@<(invoke|receive|reply) operation=operation>linklist*</(invoke|receive|reply)> -> {
         wfg = `WfgNode(Activity(operation,noCond(),noCond())); 
@@ -147,7 +154,7 @@ public class PatternAnalyser{
         Wfg middle = bpelToWfg(`activity,explicitCond);
         Wfg begin = `labWfg(label,WfgNode(Activity("begin "+node.getName(),noCond(),noCond()), middle ));
         Wfg end = `WfgNode(Activity("end "+node.getName(),noCond(),noCond()), refWfg(label));
-        wfg = (Wfg) `mu(MuVar("x"),ChoiceId(Combine(end),All(MuVar("x")))).apply(begin);
+        wfg = (Wfg) `mu(MuVar("x"),Choice(Combine(end),All(MuVar("x")))).fire(begin);
       }
       node@ElementNode("if",_,(<condition></condition>,activity,elses*)) -> {
         Wfg res = bpelToWfg(`activity,explicitCond);
@@ -191,56 +198,58 @@ public class PatternAnalyser{
     return wfg; 
   }
 
-  %op Strategy CurrentNode(wfg:Wfg,s:Strategy) {
-    make(wfg,s) {
-      `_ConsWfgNode(RelativeRef(wfg,s),Identity())
+  %op Strategy CurrentNode(s:Strategy) {
+    make(s) {
+      `_ConsWfgNode(RelativeRef(s),Identity())
     }
   }
 
-  %op Strategy AllWfg(wfg:Wfg,s:Strategy) {
-    make(wfg,s) {
-      `_ConsWfgNode(Identity(),Choice(_WfgNode(RelativeRef(wfg,s)),_EmptyWfgNode()))
+  %op Strategy AllWfg(s:Strategy) {
+    make(s) {
+      `_ConsWfgNode(Identity(),Choice(_WfgNode(RelativeRef(s)),_EmptyWfgNode()))
     }
   }
 
 
-%op Strategy PrintWfgNode(wfg:Wfg,node:PositionNode,visited:HashSet) {
+  %op Strategy PrintWfgNode(wfg:Wfg,node:Position,visited:HashSet) {
     make(wfg,node,visited) {
-      `mu(MuVar("y"),Sequence(CurrentNode(wfg,GetRoot(node,visited)),AllWfg(wfg,CurrentNode(wfg,Print(node,wfg))),AllWfg(wfg,Try(MuVar("y")))))
+      `mu(MuVar("y"),Sequence(CurrentNode(GetRoot(node,visited)),AllWfg(CurrentNode(Print(node,wfg))),AllWfg(Try(MuVar("y")))))
     }
   }
 
-  %op Strategy PrintWfg(wfg:Wfg,node:PositionNode,visited:HashSet) {
+  %op Strategy PrintWfg(wfg:Wfg,node:Position,visited:HashSet) {
     make(wfg,node,visited) {
       `Choice(_ConcWfg(PrintWfgNode(wfg,node,visited)),PrintWfgNode(wfg,node,visited))
     }
   }
 
   public static void printWfg(Wfg wfg){
-    PositionNode node = new PositionNode();
+    Position node = new Position();
     node.pos = null;
     HashSet visited = new HashSet();
     System.out.println("digraph g{");
-    `PrintWfg(wfg,node,visited).apply(wfg);    
+    `PrintWfg(wfg,node,visited).fire(wfg);    
     //StratDebugger.applyDebug(wfg,`PrintWfg(wfg,node,visited));    
     System.out.println("}");
   }
 
   // fails when finding the right ref
-  %strategy FindRef(node:PositionNode,root:Wfg) extends `Identity() {
+  %strategy FindRef(node:Position,root:Wfg) extends `Identity() {
     visit Wfg {
       refWfg(s) -> {
-        Activity act = (Activity) node.pos.getSubterm().apply(root);
-        if (`s.equals(act.getname())) throw new VisitFailure(); 
+        //TODO remove use of the old library
+        Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(root);
+        if (`s.equals(act.getname())) throw new FireException(); 
       }
 
     }
   }
 
-  %strategy DefaultCond(node:PositionNode,root:Wfg) extends `Identity() {
+  %strategy DefaultCond(node:Position,root:Wfg) extends `Identity() {
     visit Wfg {
       a@Activity(name,incond,outcond) -> {
-        Activity act = (Activity) node.pos.getSubterm().apply(root);
+        //TODO remove use of the old library
+        Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(root);
         String root_name = act.getname();
         System.out.println("root = " + root_name + ", name = " + `name);
         if (root_name.equals("")) return `a;
@@ -249,12 +258,12 @@ public class PatternAnalyser{
     }
   }
 
-   /* adds default condition concerning node to the visited WfgNode 
+  /* adds default condition concerning node to the visited WfgNode 
      if it doesn't already contain a condition about node */
-  %op Strategy AddDefaultCond(node:PositionNode,root:Wfg) {
+  %op Strategy AddDefaultCond(node:Position,root:Wfg) {
     make(node,root) { `Sequence(TopDown(FindRef(node,root)),DefaultCond(node,root)) }
   }
-   
+
   // adds the explicit condition if present in the hashmap
   %strategy AddExplicitCond(nameToCondition:HashMap) extends Identity() {
     visit Wfg {
@@ -271,43 +280,44 @@ public class PatternAnalyser{
     make(s) { `mu(MuVar("i"),Choice(_labWfg(Identity(),MuVar("i")),s)) }
   }
 
-  %op Strategy AddCondWfgNode(wfg:Wfg,node:PositionNode,visited:HashSet,nameToCondition:HashMap) {
-    make(wfg,node,visited,nameToCondition) {
+  %op Strategy AddCondWfgNode(node:Position,visited:HashSet,nameToCondition:HashMap) {
+    make(node,visited,nameToCondition) {
       `mu(MuVar("y"),IgnoreLabels(Sequence(
-              CurrentNode(wfg,GetRoot(node,visited)),
-              AllWfg(wfg,IgnoreLabels(CurrentNode(wfg,
+              CurrentNode(GetRoot(node,visited)),
+              AllWfg(IgnoreLabels(CurrentNode(
                     AddExplicitCond(nameToCondition)
-                     ))),
-              AllWfg(wfg,Try(MuVar("y")))
+                    ))),
+              AllWfg(Try(MuVar("y")))
               )
             )
          )
     }
   }
 
-  %op Strategy AddCondWfg(wfg:Wfg,node:PositionNode,visited:HashSet,nameToCondition:HashMap) {
-    make(wfg,node,visited,nameToCondition) {
-      `Choice(_ConcWfg(AddCondWfgNode(wfg,node,visited,nameToCondition)),AddCondWfgNode(wfg,node,visited,nameToCondition))
+  %op Strategy AddCondWfg(node:Position,visited:HashSet,nameToCondition:HashMap) {
+    make(node,visited,nameToCondition) {
+      `Choice(_ConcWfg(AddCondWfgNode(node,visited,nameToCondition)),AddCondWfgNode(node,visited,nameToCondition))
     }
   }
 
   public static Wfg addConditionsWfg(Wfg wfg, HashMap nameToCondition){
-    PositionNode node = new PositionNode();
+    Position node = new Position();
     node.pos = null;
     HashSet visited = new HashSet();
-    return (Wfg) `AddCondWfg(wfg,node,visited,nameToCondition).apply(wfg);
+    return (Wfg) `AddCondWfg(node,visited,nameToCondition).fire(wfg);
     //return (Wfg) StratDebugger.applyGraphicalDebug(wfg,`AddCondWfg(wfg,node,visited,nameToCondition));    
   }
 
 
-  %strategy Print(node:PositionNode,root:Wfg) extends `Identity(){
+  %strategy Print(node:Position,root:Wfg) extends `Identity(){
     visit Wfg{
       a@Activity[name=name,incond=incond] ->{
-        Position pos = node.pos;
+        int[] pos = node.pos;
         if(pos != null){
-          Activity act = (Activity) pos.getSubterm().apply(root);
+          //TODO remove use of the old library
+          Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(root);
           System.out.println(act.getname()+ "[label=\""+ act.getname() + "\\n" + act.getincond() +"\"];");
-          Position currentpos = getPosition();
+          int[] currentpos = getEnvironment().getOmega();
           System.out.println(`name+ "[label=\""+ `name + "\\n" + `incond +"\"];");
           if (`name.startsWith("begin") || `name.startsWith("end"))  System.out.println(`name + "[shape=box];");
           System.out.println(act.getname() + " -> " + `name + ";");
@@ -316,11 +326,11 @@ public class PatternAnalyser{
     }
   }
 
-  %strategy GetRoot(node:PositionNode,visited:HashSet) extends `Fail(){
+  %strategy GetRoot(node:Position,visited:HashSet) extends `Fail(){
     visit Wfg{
       a@Activity[name=name,incond=incond] ->{
         System.out.println("name = " + `name);
-        Position currentpos = getPosition();
+        int[] currentpos = getEnvironment().getOmega();
         if (!visited.contains(currentpos)) {
           node.pos = currentpos;
           visited.add(currentpos);
@@ -330,15 +340,14 @@ public class PatternAnalyser{
     }
   }
 
-  %typeterm PositionNode{
-    implement {PositionNode}
+  %typeterm Position{
+    implement {Position}
   }
 
-
-
-  public static class PositionNode{
-    Position pos;
+  public static class Position{
+    int[] pos;
   }
+
   public static void main(String[] args){
     XmlTools xtools = new XmlTools();
     xtools.setDeletingWhiteSpaceNodes(true);
