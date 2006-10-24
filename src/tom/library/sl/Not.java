@@ -52,8 +52,12 @@ public class Not extends AbstractStrategy {
 
   public void visit() {
     (visitors[ARG]).visit();
-    if (getStatus() != Environment.SUCCESS)
+    if (getStatus() != Environment.SUCCESS) {
+      setStatus(Environment.SUCCESS);
       return;
-    setStatus(Environment.FAILURE);
+    } else {
+      setStatus(Environment.FAILURE);
+      return;
+    }
   }
 }
