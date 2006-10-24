@@ -64,12 +64,17 @@ public class Tools {
 //    System.out.println("\nRunning Matching4: \n");
 //    Matching test4 = new Matching4();
 //    tools.run(test4,args[0]);
+
+  System.out.println("\nRunning Matching6: \n");
+  Matching test6 = new Matching6();
+  tools.run(test6,args[0]);
+    
 //    System.out.println("\nRunning MatchingDifferences: \n");
 //    Matching test5 = new MatchingDifferences();
 //    tools.run(test5,args[3]);
-	  System.out.println("\nRunning anti-patterns with disunification: \n");
-	  Matching test6 = new ApAndDisunification2();
-	  tools.run(test6,args[0]);
+//	  System.out.println("\nRunning anti-patterns with disunification: \n");
+//	  Matching test6 = new ApAndDisunification2();
+//	  tools.run(test6,args[0]);
   }
 
   public void run(Matching match, String fileName) {
