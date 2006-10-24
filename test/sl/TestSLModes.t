@@ -583,4 +583,45 @@ public class TestSLModes extends TestCase {
     }
     assertEquals(resJ,resS);
   }
+
+  public void testNotR2() {
+    Term subject = `f(b());
+    Strategy s = `Not(R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals("Applied a rule",resJ,`f(b()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("Not(R2).visit should not fail on f(b)");
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals("Applied a rule",resJ,`f(b()));
+    } catch (tom.library.sl.FireException e) {
+      fail("Not(R2).fire should not fail on f(b)");
+    }
+    assertEquals(resJ,resS);
+  }
+
+  public void testNotR2Fail() {
+    Term subject = `f(a());
+    Strategy s = `Not(R2());
+    Term resJ = null;
+    Term resS = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      fail("Not(R2).visit should fail on f(a)");
+    } catch (jjtraveler.VisitFailure e) {
+      assertNull(resJ);
+    }
+    try {
+      resS = (Term) s.fire(subject);
+      fail("Not(R2).fire should fail on f(a)");
+    } catch (tom.library.sl.FireException e) {
+      assertNull(resS);
+    }
+    assertNull(resJ);
+    assertNull(resS);
+  }
 }
