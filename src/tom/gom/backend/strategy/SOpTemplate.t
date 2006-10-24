@@ -262,6 +262,9 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       tom.library.sl.Visitable newChild = getEnvironment().getSubject();
       if(childs != null) {
         childs[i] = newChild;
+        environment.up();
+        /* restore subject */
+        getEnvironment().setSubject(any);
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
         // childs = (Visitable[])getEnvironment().getSubject().getChildren();
@@ -271,8 +274,13 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
           childs[j] = (tom.library.sl.Visitable) array[j];
         }
         childs[i] = newChild;
+        environment.up();
+        /* restore subject */
+        getEnvironment().setSubject(any);
+      } else {
+        /* no need to restore subject */
+        environment.up();
       }
-      environment.up();
     }
 
     if(childs!=null) {
