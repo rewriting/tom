@@ -97,6 +97,12 @@ If you come from the
   Matching5
     - same algorithm as 4, but implemented using %rule
     - is is not working properly because of the problems with %rule
+  ApAndDisunification1
+  	- algorithm for solving anti-pattern matching problems
+  	that uses disunification	
+  ApAndDisunification2
+  	- algorithm for solving anti-pattern matching problems
+  	that uses only pattern matching after the anti-patterns are transformed		
   Problems:
     - if the construct of terms is in a file, and the rules in another,
       tom won't apply the rules
