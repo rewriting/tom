@@ -48,6 +48,7 @@ public class TestReduceAll extends TestCase {
       }
     }
   }
+  %include { testreduceall/reduce/_reduce.tom }
 
   %strategy AB() extends `Fail() {
     visit Term {
@@ -102,5 +103,30 @@ public class TestReduceAll extends TestCase {
       fail("Fire should not fail");
     }
   }
+
+  public void testCongruenceRed_Visit() {
+    Term subject = `f(a(),b());
+    Strategy s = `_f(AB(),AB());
+    Term resJ = null;
+    try {
+      resJ = (Term) s.visit(subject);
+      assertEquals(resJ,`f(b(),c()));
+    } catch (jjtraveler.VisitFailure e) {
+      fail("Visit should not fail");
+    }
+  }
+
+  public void testCongruenceRed_Fire() {
+    Term subject = `f(a(),b());
+    Strategy s = `_f(AB(),AB());
+    Term resS = null;
+    try {
+      resS = (Term) s.fire(subject);
+      assertEquals(resS,`f(b(),c()));
+    } catch (tom.library.sl.FireException e) {
+      fail("Fire should not fail");
+    }
+  }
+
 
 }
