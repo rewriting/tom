@@ -70,9 +70,11 @@ public class One extends AbstractStrategy {
       if (getStatus() == Environment.SUCCESS) {
         return;
       } else {
+        /* Forget about the failure, to try another subterm */
         setStatus(Environment.SUCCESS);
       }
     }
+    /* If we reach this point, there is a real failure */
     setStatus(Environment.FAILURE);
     return;
   }

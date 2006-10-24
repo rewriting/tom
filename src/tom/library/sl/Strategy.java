@@ -32,8 +32,15 @@ package tom.library.sl;
 
 public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisitor {
 
+  /**
+   *  Set up a new environment
+   */
   public void setEnvironment(Environment p);
 
+  /**
+   *  Get a reference to the current environment.
+   *  @return the current environment
+   */
   public Environment getEnvironment();
 
   /**
@@ -42,6 +49,10 @@ public interface Strategy extends Visitable, jjtraveler.reflective.VisitableVisi
    */
   public Visitable fire(Visitable any);
 
+  /**
+   *  Visits the current subject (found in the environment)
+   *  and place its result in the environment.
+   */
   public void visit();
 
   public Strategy accept(tom.library.sl.reflective.StrategyFwd v) throws jjtraveler.VisitFailure;

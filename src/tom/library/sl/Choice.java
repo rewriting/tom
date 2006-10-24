@@ -62,6 +62,7 @@ public class Choice extends AbstractStrategy {
     if (getStatus() == Environment.SUCCESS) {
       return;
     } else {
+      /* forget about the previous failure, and try the Then part */
       setStatus(Environment.SUCCESS);
       visitors[THEN].visit();
       return;

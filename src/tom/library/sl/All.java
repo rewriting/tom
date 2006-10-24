@@ -113,5 +113,4 @@ public class All extends AbstractStrategy {
     }
     return;
   }
-
 }
