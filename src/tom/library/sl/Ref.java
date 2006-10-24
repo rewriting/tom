@@ -78,13 +78,19 @@ public class Ref extends AbstractStrategy {
 
   private void visitReference(Reference ref) {
     int[] pos;
+    int[] omega =environment.getOmega();
+    int size =environment.depth()+1;
+    int[] reducedOmega = new int[size];
+    for(int i=0;i<size;i++){
+      reducedOmega[i]=omega[i];
+    }
     if(relative) {
-      pos = getAbsolutePosition(environment.getOmega(),ref.toArray());
+      pos = getAbsolutePosition(reducedOmega,ref.toArray());
     } else {
       pos = ref.toArray();
     }
-    int[] oldToNew = getRelativePosition(environment.getOmega(),pos);
-    int[] newToOld = getRelativePosition(pos,environment.getOmega());
+    int[] oldToNew = getRelativePosition(reducedOmega,pos);
+    int[] newToOld = getRelativePosition(pos,reducedOmega);
     goToPosition(oldToNew);
     visitors[ARG].visit();
     if (getStatus() != Environment.SUCCESS) {

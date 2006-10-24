@@ -102,9 +102,10 @@ public class GomReferenceExpander {
     return `concOperator(labOp,refOp,posOp,expOp);
   }
 
+  //TODO remove MuReference when sl is operational
   private HookDeclList posHooks(){
     return 
-      `concHookDecl(InterfaceHookDecl(" tom.library.strategy.mutraveler.MuReference "));
+      `concHookDecl(InterfaceHookDecl(" tom.library.strategy.mutraveler.MuReference,tom.library.sl.Reference "));
   }
 
   private HookDeclList expHooks(SortDecl sortDecl){

@@ -30,28 +30,34 @@
 %include { util/types/Map.tom }
 %include { basic_sl.tom }
 
+%op Strategy AllSeq(s:Strategy) {
+    is_fsym(t) { (t instanceof tom.library.sl.Re) }
+    make(s) { new tom.library.sl.AllSeq(s) }
+    get_slot(s,t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Ref.ARG) }
+  }
+ 
   %op Strategy Ref(s:Strategy) {
     is_fsym(t) { (t instanceof tom.library.sl.Ref) && ((tom.library.sl.Ref)t).isRelative()==false && ((tom.library.sl.Ref)t).isStrict()==false }
     make(s) { tom.library.sl.Ref.make(s) }
-    get_slot(s,t) { (tom.library.sl.MuStrategy)t.getChildAt(tom.library.sl.Ref.ARG) }
+    get_slot(s,t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Ref.ARG) }
   }
   
   %op Strategy RelativeRef(s:Strategy) {
     is_fsym(t) { (t instanceof tom.library.sl.Ref) && ((tom.library.sl.Ref)t).isRelative()==true && ((tom.library.sl.Ref)t).isStrict()==false }
     make(s) { tom.library.sl.Ref.makeRelative(s) }
-    get_slot(s, t) { (tom.library.sl.MuStrategy)t.getChildAt(tom.library.sl.Ref.ARG) }
+    get_slot(s, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Ref.ARG) }
   }
 
   %op Strategy StrictRef(s:Strategy) {
     is_fsym(t) { (t instanceof tom.library.sl.Ref) && ((tom.library.sl.Ref)t).isRelative()==false && ((tom.library.sl.Ref)t).isStrict()==true }
-    make(s) { tom.library.sl.Ref.make(s) }
-    get_slot(s, t) { (tom.library.sl.MuStrategy)t.getChildAt(tom.library.sl.Ref.ARG) }
+    make(s) { tom.library.sl.Ref.makeStrict(s) }
+    get_slot(s, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Ref.ARG) }
   }
   
   %op Strategy StrictRelativeRef(s:Strategy) {
     is_fsym(t) { (t instanceof tom.library.sl.Ref) && ((tom.library.sl.Ref)t).isRelative()==true && ((tom.library.sl.Ref)t).isStrict()==true }
-    make(s) { tom.library.sl.Ref.makeRelative(s) }
-    get_slot(s, t) { (tom.library.sl.MuStrategy)t.getChildAt(tom.library.sl.Ref.ARG) }
+    make(s) { tom.library.sl.Ref.makeRelativeStrict(s) }
+    get_slot(s, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.Ref.ARG) }
   }
 
 /**

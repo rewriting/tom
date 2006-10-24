@@ -137,6 +137,11 @@ public class Position {
           if (data[i]<p.data[i]) {
             return -1;
           }
+          else{
+            if(data[i]>p.data[i]) {
+              return 1;
+            }
+          }
         }
         return 0;
       } else {

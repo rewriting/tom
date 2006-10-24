@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ *
+ * Copyright (c) 2000-2006, Pierre-Etienne Moreau
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,55 +26,46 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ **/
+package tom.library.sl;
+
+/**
+ * <code>AllSeq(v).visit(T(t1,...,tN) = T(v.visit(t1), ..., v.visit(t1))</code>
+ * <p>
+ * Basic visitor combinator with one visitor argument, that applies
+ * this visitor to all children.
  */
 
-package sl;
+public class AllSeq extends AbstractStrategy {
+  public final static int ARG = 0;
 
-import sl.testsl.types.*;
-import tom.library.sl.Strategy;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class TestRef extends TestCase {
-
-  %include { sl.tom }
-  %include { strategy/graph_sl.tom }
-  %include { testsl/_testsl.tom }
-  %include { testsl/testsl.tom }
-
-  %op Strategy TopDown(s1:Strategy) {
-    make(v) { `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) }
+  public AllSeq(Strategy v) {
+    initSubterm(v);
   }
 
-  %op Strategy TopDownSeq(s1:Strategy) {
-    make(v) { `mu(MuVar("_x"),Sequence(v,AllSeq(MuVar("_x")))) }
+  public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
+    int childCount = any.getChildCount();
+    jjtraveler.Visitable result = any;
+    for (int i = 0; i < childCount; i++) {
+      jjtraveler.Visitable newChild = visitors[ARG].visit(result.getChildAt(i));
+      result = result.setChildAt(i, newChild);
+    }
+    return result;
   }
 
-  %strategy AB() extends `Identity() {
-    visit Term {
-      a() -> { return `b(); }
-      b() -> { return `c(); }
+  public void visit() {
+    int childCount = getSubject().getChildCount();
+    for (int i = 0; i < childCount; i++) {
+      environment.down(i+1);
+      (visitors[ARG]).visit();
+      if (getStatus() != Environment.SUCCESS) {
+        environment.up();
+        return;
+      } else {
+        /* no need to restore subject */
+        environment.up();
+      }
     }
   }
-
-  public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestRef.class));
-  }
-
-  public void testRef() {
-    Term subject = `expTerm(g(g(a(),refTerm("l")),labTerm("l",a())));
-    try{
-      Term res = (Term) `TopDown(StrictRelativeRef(AB())).fire(subject);
-      assertEquals(res,`expTerm(g(g(a(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDown(RelativeRef(AB())).fire(subject);
-      assertEquals(res,`expTerm(g(g(b(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDownSeq(StrictRelativeRef(AB())).fire(subject);
-      assertEquals(res,`expTerm(g(g(a(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDownSeq(RelativeRef(AB())).fire(subject);
-      assertEquals(res,`expTerm(g(g(b(),refTerm("n")),labTerm("n",c()))));
-    } catch (tom.library.sl.FireException e) {
-      fail("It should not fail");
-    }
-  }
-
 }
