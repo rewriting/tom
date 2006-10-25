@@ -643,6 +643,11 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
     :  	(a:ANTI_SYM {anti = !anti;} )*    	
         (   // xml term
             result = xmlTerm[optionList, constraintList]
+            {
+            	if (anti){
+    		    	result = `AntiTerm(result);
+    		    }
+            }
 
         |   // var* or _*
         	{!anti}? // do not allow anti symbols on var* or _* 
@@ -931,6 +936,7 @@ xmlAttribute returns [TomTerm result] throws TomException
     LinkedList optionListAnno2 = new LinkedList();
     TomNameList nameList;
     boolean varStar = false;
+    boolean anti = false;
 }
     :
         (
@@ -946,11 +952,12 @@ xmlAttribute returns [TomTerm result] throws TomException
                     optionListAnno2.add(`Name(anno2.getText()));
                 }
             )?
+            (a:ANTI_SYM {anti = !anti;} )*
             term = unamedVariableOrTermStringIdentifier[optionListAnno2]
             {
                 name = ASTFactory.encodeXMLString(symbolTable,id.getText());
                 nameList = `concTomName(Name(name));
-                termName = `TermAppl(concOption(),nameList,concTomTerm(),concConstraint());
+                termName = `TermAppl(concOption(),nameList,concTomTerm(),concConstraint());                
             }
         | // [anno1@]_ = [anno2@](_|String|Identifier)
             (
@@ -969,10 +976,16 @@ xmlAttribute returns [TomTerm result] throws TomException
                     optionListAnno2.add(`Name(anno3.getText()));
                 }
             )?
+            (b:ANTI_SYM {anti = !anti;} )*		
             term = unamedVariableOrTermStringIdentifier[optionListAnno2]
         )
         {
             if (!varStar) {
+            	
+            	if (anti){
+            		term = `AntiTerm(term);
+            	}
+            	
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
                 slotList.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),UnamedVariable(concOption(),TomTypeAlone("unknown type"),concConstraint())));
@@ -1009,15 +1022,21 @@ xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [TomNameList r
     result = `concTomName();
     StringBuffer XMLName = new StringBuffer("");
     int decLine = 0;
+    boolean anti = false;
 }
-    :
+    :    	
         (
+        	(a:ANTI_SYM {anti = !anti;} )*	
             name:ALL_ID
             {
                 text.append(name.getText());
                 XMLName.append(name.getText());
-                decLine = name.getLine();
-                result = `concTomName(Name(name.getText()));
+                decLine = name.getLine();                
+                if (anti) { 
+                	result =  `concTomName(AntiName(Name(name.getText())));
+                }else{
+	               	result = `concTomName(Name(name.getText()));
+                }
             }
         |   name2:UNDERSCORE
             {
@@ -1026,19 +1045,28 @@ xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [TomNameList r
                 decLine = name2.getLine();
                 result = `concTomName(Name(name2.getText()));
             }
-        |   LPAREN name3:ALL_ID
+        |   LPAREN (b:ANTI_SYM {anti = !anti;} )* name3:ALL_ID
             {
                 text.append(name3.getText());
                 XMLName.append(name3.getText());
                 decLine = name3.getLine();
-                result = `concTomName(Name(name3.getText()));
+                if (anti) { 
+                	result =  `concTomName(AntiName(Name(name3.getText())));
+                }else{
+                	result = `concTomName(Name(name3.getText()));
+                }
+
             }
             (
-                ALTERNATIVE name4:ALL_ID
+                ALTERNATIVE (c:ANTI_SYM {anti = !anti;} )* name4:ALL_ID
                 {
                     text.append("|"+name4.getText());
                     XMLName.append("|"+name4.getText());
-                    result = `concTomName(result*,Name(name4.getText()));
+                    if (anti) { 
+                    	result = `concTomName(result*,AntiName(Name(name4.getText())));
+                    }else{
+                    	result = `concTomName(result*,Name(name4.getText()));
+                    }
                 }
             )*
             RPAREN
@@ -1305,37 +1333,27 @@ unamedVariable [LinkedList optionList, LinkedList constraintList] returns [TomTe
 headSymbolList [LinkedList optionList] returns [TomNameList result]
 { 
     result = `concTomName();
-    TomName name = null;    
-    boolean localanti = false;
+    TomName name = null;
 }
     :
         (
             LPAREN {text.append('(');}
-            //(ANTI_SYM {localanti = !localanti;} )*
             name = headSymbolOrConstant[optionList] 
             {
-            	result = localanti ? `concTomName(result*,AntiName(name)) 
-            		: `concTomName(result*,name);
-            	localanti = false;
+            	result = `concTomName(result*,name);            	
             }
 
             ALTERNATIVE {text.append('|');}
-            //(ANTI_SYM {localanti = !localanti;} )*
             name = headSymbolOrConstant[optionList] 
             {
-            	result = localanti ? `concTomName(result*,AntiName(name)) 
-                		: `concTomName(result*,name);
-                localanti = false;
+            	result = `concTomName(result*,name);                
             }
 
             ( 
-                ALTERNATIVE {text.append('|');} 
-                //(ANTI_SYM {localanti = !localanti;} )*
+                ALTERNATIVE {text.append('|');}
                 name = headSymbolOrConstant[optionList] 
                 {
-                	result = localanti ? `concTomName(result*,AntiName(name)) 
-                    		: `concTomName(result*,name);
-                    localanti = false;
+                	result = `concTomName(result*,name);                    
                 }
             )* 
             t:RPAREN 
