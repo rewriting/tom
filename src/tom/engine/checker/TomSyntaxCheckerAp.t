@@ -69,7 +69,7 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
   public  TermDescription validateTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
     %match(TomTerm term) {
       // validate that after the anti symbol we have a valid term  
-      AntiTerm(t@(TermAppl|Variable|RecordAppl)[Option=options]) ->{
+      AntiTerm(t@(TermAppl|Variable|RecordAppl|XMLAppl)[Option=options]) ->{
         checkForAnnotations(`t,`options);
         return super.validateTerm(`t, expectedType, listSymbol, topLevel, permissive);
       }
@@ -81,14 +81,8 @@ public class TomSyntaxCheckerAp extends TomSyntaxChecker {
   public  TermDescription analyseTerm(TomTerm term) {
     %match(TomTerm term) {
       // for the moment, the anti only on termappl and on named variables
-      AntiTerm(t@(TermAppl|Variable|RecordAppl)[])  -> {
+      AntiTerm(t@(TermAppl|Variable|RecordAppl|XMLAppl)[])  -> {
     	  return super.analyseTerm(`t);
-      }
-      (RecordAppl|TermAppl)[Option=options,NameList=(AntiName(Name(name)), _*)] ->{
-    	  return new TermDescription(RECORD_APPL_DISJUNCTION,`name,
-            findOriginTrackingFileName(`options),
-            findOriginTrackingLine(`options),
-            getSymbolCodomain(getSymbolFromName(`name)));
       }
     }
     return super.analyseTerm(term);
