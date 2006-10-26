@@ -317,7 +317,6 @@ public class PatternAnalyser{
           //TODO remove use of the old library
           Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(root);
           System.out.println(act.getname()+ "[label=\""+ act.getname() + "\\n" + act.getincond() +"\"];");
-          int[] currentpos = getEnvironment().getOmega();
           System.out.println(`name+ "[label=\""+ `name + "\\n" + `incond +"\"];");
           if (`name.startsWith("begin") || `name.startsWith("end"))  System.out.println(`name + "[shape=box];");
           System.out.println(act.getname() + " -> " + `name + ";");
@@ -329,9 +328,14 @@ public class PatternAnalyser{
   %strategy GetRoot(node:Position,visited:HashSet) extends `Fail(){
     visit Wfg{
       a@Activity[name=name,incond=incond] ->{
-        System.out.println("name = " + `name);
-        int[] currentpos = getEnvironment().getOmega();
+        int[] omega = getEnvironment().getOmega();
+        int depth = getEnvironment().depth();
+        int[] currentpos = new int[depth];
+        for(int i=1;i<=depth;i++){
+          currentpos[i-1]=omega[i];
+        }
         if (!visited.contains(currentpos)) {
+          System.out.println("name = " + `name);
           node.pos = currentpos;
           visited.add(currentpos);
           return `a;
@@ -372,9 +376,7 @@ public class PatternAnalyser{
         System.out.println("\nWfg with labels:\n" + wfg);
         wfg = addConditionsWfg(wfg,conds.nameToCondition);
         wfg = `expWfg(wfg);
-        System.out.println(wfg);
-
-        //System.out.println("\nWfg with nodeitions:\n" + wfg);
+        System.out.println("\nWfg with conditions:\n" + wfg);
 
         printWfg(wfg);
         //VisitableViewer.visitableToDotStdout(wfg);

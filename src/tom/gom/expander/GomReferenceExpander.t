@@ -105,7 +105,7 @@ public class GomReferenceExpander {
   //TODO remove MuReference when sl is operational
   private HookDeclList posHooks(){
     return 
-      `concHookDecl(InterfaceHookDecl(" tom.library.strategy.mutraveler.MuReference,tom.library.sl.Reference "));
+      `concHookDecl(InterfaceHookDecl("{tom.library.strategy.mutraveler.MuReference,tom.library.sl.Reference}"));
   }
 
   private HookDeclList expHooks(SortDecl sortDecl){
@@ -131,65 +131,90 @@ public class GomReferenceExpander {
     %include{java/util/HashMap.tom}
     %include{java/mustrategy.tom}
 
-    %strategy Collectlabels(tableMin:HashMap,tableRef:HashMap) extends `Identity() {
+    %strategy CollectLabelInfo(info:Info) extends Fail() {
       visit @sortName@{
         lab@sortName@[label=label,term=term]-> {
-          tableRef.put(`label,`term);
-          if(!tableMin.containsKey(`label) || getPosition().compare(tableMin.get(`label))==-1){
-            tableMin.put(`label,getPosition());
-          }
+        info.label=`label;
+        info.term=`term;
+        info.pos=getPosition();
+        return `lab@sortName@(label,term); 
         }
+      }
+    }
+
+    %strategy Replace1(info:Info) extends Fail() {
+      visit @sortName@{
         ref@sortName@[label=label] -> {
-          if(!tableMin.containsKey(`label) || getPosition().compare(tableMin.get(`label))==-1){
-            tableMin.put(`label,getPosition());
+          if(`label.equals(info.label)){
+            if(getPosition().compare(info.pos)==-1){
+              info.pos=getPosition(); 
+              return info.term;
+            }
+            else{
+              return `ref@sortName@(label);
+            }
           }
         }
       }
     }
 
-    %strategy Replacelabels(tableMin:HashMap,tableRef:HashMap) extends `Identity() {
+    %strategy Replace2(info:Info) extends Identity() {
       visit @sortName@{
-
         ref@sortName@[label=label] -> {
-          if (!tableRef.containsKey(`label)) throw new RuntimeException("The label "+`label+" is not referenced");
-          if(getPosition().equals(tableMin.get(`label))){
-            return (@sortName@) tableRef.get(`label);
-          }
-          else{ 
-            RelativePosition pos = 
-              RelativePosition.make(getPosition(),(Position) tableMin.get(`label));
-            @sortName@ ref = `pos@sortName@();
-            int[] array = pos.toArray();
-            for(int i=0;i<pos.depth();i++){
-              ref = `pos@sortName@(ref*,array[i]);
+          if(`label.equals(info.label)){
+            if (! info.pos.equals(getPosition())){
+              RelativePosition pos = 
+                RelativePosition.make(getPosition(),info.pos);
+              @sortName@ ref = `pos@sortName@();
+              int[] array = `pos.toArray();
+              for(int i=0;i<`pos.depth();i++){
+                ref = `pos@sortName@(ref*,array[i]);
+              }
+              return ref; 
             }
-            return ref; 
           }
         }
-        lab@sortName@[label=label] -> {
-          if (!tableRef.containsKey(`label)) throw new RuntimeException("The label "+`label+" is not referenced");
-          if(getPosition().equals(tableMin.get(`label))){
-            return (@sortName@) tableRef.get(`label);
-          }
-          else{ 
-            RelativePosition pos = 
-              RelativePosition.make(getPosition(),(Position) tableMin.get(`label));
-            @sortName@ ref = `pos@sortName@();
-            int[] array = pos.toArray();
-            for(int i=0;i<pos.depth();i++){
-              ref = `pos@sortName@(ref*,array[i]);
+        lab@sortName@[label=label,term=term] -> {
+          if(`label.equals(info.label)){
+            if (! info.pos.equals(getPosition())){
+              RelativePosition pos = 
+                RelativePosition.make(getPosition(),info.pos);
+              @sortName@ ref = `pos@sortName@();
+              int[] array = `pos.toArray();
+              for(int i=0;i<`pos.depth();i++){
+                ref = `pos@sortName@(ref*,array[i]);
+              }
+              return ref; 
             }
-            return ref; 
+            else{
+              return `term;
+            }
           }
         }
       }
+    }
+
+    %typeterm Info{
+      implement {Info}
+    }
+
+
+    public static class Info{
+      public String label;
+      public tom.library.strategy.mutraveler.Position pos;
+      public @sortName@ term;
     }
 
     public static @sortName@ expand(@sortName@ t){
-      HashMap tableMin = new HashMap();
-      HashMap tableRef = new HashMap();
-      return (@sortName@) `Sequence(RepeatId(TopDown(Collectlabels(tableMin,tableRef))),TopDown(Replacelabels(tableMin,tableRef))).apply(t);
+      Info info = new Info();
+      //TODO verify that every ref has a corresponding label
+      return (@sortName@) `Repeat(Sequence(
+            OnceTopDown(CollectLabelInfo(info)),
+            Try(OnceTopDown(Replace1(info))),
+            TopDown(Replace2(info))
+            )).apply(t);
     }
+
     ]%;
     return `concHookDecl(MakeHookDecl(concSlot(Slot("term",sortDecl)),codeMake),ImportHookDecl(codeImport),BlockHookDecl(codeBlock));
   }
