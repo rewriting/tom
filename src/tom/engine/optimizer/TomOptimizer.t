@@ -118,10 +118,10 @@ public class TomOptimizer extends TomGenericPlugin {
           renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
           renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
           renamedTerm = (TomTerm) optStrategy2.visit(renamedTerm);
-        }
-
-        if(getOptionBooleanValue("optimize")) {
-          renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
+        }else{
+	        if(getOptionBooleanValue("optimize")) {
+	          renamedTerm = (TomTerm) optStrategy1.visit(renamedTerm);
+	        }
         }
         setWorkingTerm(renamedTerm);
 

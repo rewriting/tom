@@ -105,7 +105,7 @@ public class TomAntiPatternTransformNew {
 			tmpTomTerm = ((AntiTerm)tmpTomTerm).getTomTerm();
 		}		
 		%match(tmpTomTerm){
-			(Variable|RecordAppl)[Option = concOption(_*,OriginTracking[Line=termLine,FileName=fileName],_*)] ->{
+			(Variable|RecordAppl|XMLAppl)[Option = concOption(_*,OriginTracking[Line=termLine,FileName=fileName],_*)] ->{
 				termLine = `termLine;
 				fileName = `fileName;
 			}			
@@ -142,8 +142,6 @@ public class TomAntiPatternTransformNew {
 			constraints = `concConstraint(constraints*,andAntiCons);
 		}
 		termAntiReplaced = termAntiReplaced.setConstraints(constraints);
-		
-		//System.out.println("Finished with: " + termAntiReplaced);
 		
 		// change the level
 		actionOnIf = actionOnIf == 0 ? 1:0;
@@ -260,15 +258,14 @@ public class TomAntiPatternTransformNew {
 				ConstraintList otherConstraints = `concConstraint();
 				ConstraintList cList = `t.getConstraints();
 				while(!cList.isEmptyconcConstraint()){
-					Constraint head = cList.getHeadconcConstraint();
+					Constraint head = cList.getHeadconcConstraint();					
 					if (head instanceof AssignTo ){
 						assignConstraints = `concConstraint(assignConstraints*,head);
 					}else{
 						otherConstraints = `concConstraint(otherConstraints*,head);
 					}
 					cList = cList.getTailconcConstraint(); 
-				}
-				
+				}				
 				bag.add(`t.setConstraints(otherConstraints));				
 				// return the variable with the correct type
 				return variable.setAstType(TomBase.getTermType(`t,symbolTable)).setConstraints(assignConstraints);				
