@@ -1043,7 +1043,7 @@ public class TomKernelCompiler extends TomBase {
 	}
     %match(subject) {
       (Variable|VariableStar)[Constraints=constraints] -> {
-        return buildConstraint(`constraints,`TomTermToExpression(subject),body,elseBody,moduleName);
+        return buildConstraint(`constraints,`TomTermToExpression(subject.setConstraints(concConstraint())),body,elseBody,moduleName);
       }
 
       (UnamedVariable|UnamedVariableStar)[Constraints=constraints] -> {
