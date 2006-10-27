@@ -2,8 +2,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import testlistnonlinear.test.types.*;
 
-
-
 public class TestListNonLinear extends TestCase {
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(Test.class));
@@ -11,10 +9,55 @@ public class TestListNonLinear extends TestCase {
   
 %gom {
   module test
-  imports int
+  imports String int
   abstract syntax
     IntList = intlist(int*)
-    Term = f(l1:IntList,l2:IntList)
+    Toto = f(l1:IntList,l2:IntList)
+
+
+Term = Var(name:String)
+     | funAppl(fun:Fun, p:TermList)
+     | NewVar(name:String, base_name: String) // asks for a new var
+     | FreshVar(name:String, base_name: String) // asks for a fresh var
+
+Fun  = fun(name:String)
+
+TermList = concTerm(Term*)
+
+Relation = relation(name:String)
+
+Prop = relationAppl(r:Relation, t:TermList)
+     | and(p1:Prop, p2:Prop)
+     | or(p1:Prop, p2:Prop)
+     | implies(left:Prop, right:Prop)
+     | forAll(var:String, p:Prop)
+     | exists(var:String, p:Prop)
+     | bottom()
+     | top()
+
+Context = context(Prop*)
+
+Sequent = sequent(h:Context,c:Context)
+
+Premisses = premisses(Tree*)
+
+// st == symbol table
+Tree = rule(name:String, p:Premisses, c:Sequent, active:Prop)
+
+//--- new rules ---
+SeqList = concSeq(Sequent*)
+
+VarList = varlist(String*)
+
+// hs == hand-side : 0 left, 1 right
+Rule = ruledesc(hs:int, concl:Prop, prem:SeqList)
+
+TermRule = termrule(lhs:Term,rh:Term)
+
+TermRuleList = termrulelist(TermRule*)
+
+
+
 }
 
 
@@ -32,7 +75,7 @@ public class TestListNonLinear extends TestCase {
   public void test2() {
     IntList l1 = `intlist(1,2,4,5);
     IntList l2 = `intlist(1,2,3,4,5);
-    Term t = `f(l1,l2);
+    Toto t = `f(l1,l2);
     %match(t) {
       f((x*,y*),(x*,3,y*)) -> {
         return;
@@ -40,4 +83,33 @@ public class TestListNonLinear extends TestCase {
     }
     fail("ca marche pas");
   }
+
+  public void test4() {
+    IntList l1 = `intlist(1,2,4,5);
+    IntList l2 = `intlist(1,2,3,4,5);
+    IntList l3 = `intlist(1,2,6,4,5);
+    %match(IntList l1, IntList l2, IntList l3) {
+      (x*,y*),(x*,a,y*),(x*,b,y*) -> {
+        return;
+      }
+    }
+    fail("ca marche pas");
+  }
+
+
+
+  public void test3() {
+Tree t = `rule("implies L",Conspremisses(rule("axiom",Emptypremisses(),sequent(Conscontext(relationAppl(relation("G"),EmptyconcTerm()),Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Emptycontext())),Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Emptycontext()))),relationAppl(relation("A"),EmptyconcTerm())),Conspremisses(rule("axiom",Emptypremisses(),sequent(Conscontext(relationAppl(relation("G"),EmptyconcTerm()),Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Emptycontext()))),Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Emptycontext())),relationAppl(relation("B"),EmptyconcTerm())),Emptypremisses())),sequent(Conscontext(relationAppl(relation("G"),EmptyconcTerm()),Conscontext(implies(relationAppl(relation("A"),EmptyconcTerm()),relationAppl(relation("B"),EmptyconcTerm())),Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Emptycontext()))),Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Emptycontext())),implies(relationAppl(relation("A"),EmptyconcTerm()),relationAppl(relation("B"),EmptyconcTerm())));
+    %match(t) {
+      rule(
+          "implies L",
+          (p1@rule(_,_,sequent((g1*,g2*),(A,d*)),_), p2@rule(_,_,sequent((g1*,B,g2*),d),_)),
+          sequent(y@(g1*,a,g2*),d),
+          a@implies(A,B)
+          )
+        -> { return; }
+    }
+    fail("ca marche pas");
+  }
 }
+
