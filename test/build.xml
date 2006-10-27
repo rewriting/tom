@@ -57,6 +57,7 @@
       <exclude name="TestPeano.t"/>
       <exclude name="TestWhen.t"/>
       <exclude name="TomList.t"/>
+      <exclude name="TestOptimizer.t"/>
     </tom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}"
@@ -64,6 +65,13 @@
       <include name="Record.t"/>
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
+      <exclude name="TestOptimizer.t"/>
+    </tom.preset>
+    <tom.preset srcdir="${test.src}"
+                destdir="${test.gen}"
+                optimize="yes">
+      <exclude name="**/*"/>
+      <include name="TestOptimizer.t"/>
     </tom.preset>
     <javac.preset destdir="${test.build}">
       <src path="${test.src}"/>
