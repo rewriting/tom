@@ -5,4 +5,8 @@
   <Person Age="21"> <FirstName>Jurgen        </FirstName> </Person>
   <Person Age="21"> <FirstName>Julien        </FirstName> </Person>
   <Person Age="24"> <FirstName>Pierre-Etienne</FirstName> </Person>
+  <SpecialPerson Age="24" title="SP"> 
+  		<FirstName>Gigi</FirstName> 
+  		<LastName>Becali</LastName>   		
+  </SpecialPerson>
 </Persons>
