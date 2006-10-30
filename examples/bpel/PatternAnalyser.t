@@ -313,7 +313,7 @@ public class PatternAnalyser{
 
   %op Strategy AddCondWfg(node:Position,visited:HashSet,nameToCondition:HashMap) {
     make(node,visited,nameToCondition) {
-      `Choice(_ConcWfg(AddCondWfgNode(node,visited,nameToCondition)),AddCondWfgNode(node,visited,nameToCondition))
+      `Choice(_ConcWfg(AddCondWfgNode(node,visited,nameToCondition)),Sequence(Debug("debug"),AddCondWfgNode(node,visited,nameToCondition)))
     }
   }
 

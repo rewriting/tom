@@ -204,12 +204,12 @@ public class Environment {
    * This may be a BAD idea
    */
   public void up() {
-    //System.out.println("before up: " + this);
+    System.out.println("before up: " + this);
     int childIndex = getSubOmega()-1;
     Visitable child = getSubject();
     size--;
     setSubject((Visitable)(getSubject().setChildAt(childIndex,child)));
-    //System.out.println("after up: " + this);
+    System.out.println("after up: " + this);
   }
 
   /**
