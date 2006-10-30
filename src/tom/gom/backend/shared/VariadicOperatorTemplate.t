@@ -94,7 +94,7 @@ writer.write(%[
     }
   }
 
- public @domainClassName@[] toArray() {
+  public @domainClassName@[] toArray() {
     @domainClassName@[] array;
     if(this instanceof @fullClassName(cons.getClassName())@) {
       @domainClassName@ h = ((@fullClassName(cons.getClassName())@)this).getHead@className()@();
@@ -111,9 +111,17 @@ writer.write(%[
         array[0]=h;
       }
     } else {
-        array = new @domainClassName@[0];
+      array = new @domainClassName@[0];
     }
     return array;
+  }
+
+  public static @fullClassName(sortName)@ fromArray(@domainClassName@[] array) {
+    @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
+    for(int i = array.length; i>0;) {
+      res = @fullClassName(cons.getClassName())@.make((@domainClassName@)array[--i],res);
+    }
+    return res;
   }
 
   public @fullClassName(sortName)@ reverse() {

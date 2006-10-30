@@ -72,6 +72,36 @@ public class TestList extends TestCase {
     }
   }
 
+  public void testFromZeroArray() {
+    Element[] array = new Element[]{};
+    List l = conc.fromArray(array);
+    assertEquals(0,l.length());
+    assertEquals(0,((conc)l).toArray().length);
+  }
+
+  public void testFromNArray() {
+    int n = 15;
+    Element[] array = new Element[15];
+    for (int i = 0; i<n; i++) {
+      if (0 == i%2) {
+        array[i] = `a();
+      } else {
+        array[i] = `b();
+      }
+    }
+    List list = conc.fromArray(array);
+    assertEquals(list.length(),n);
+    List l = `conc();
+    for (int i = 0; i<n; i++) {
+      if (0 == i%2) {
+        l = `conc(l*,a());
+      } else {
+        l = `conc(l*,b());
+      }
+    }
+    assertEquals(l,list);
+  }
+
   public void testZeroReverse() {
     List l = `conc();
     assertEquals(getListReverse(l),l.reverse());
