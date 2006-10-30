@@ -146,7 +146,6 @@ public class PatternAnalyser{
             wfg = `labWfg(linkName,wfg);
           }
         }
-        wfg = `labWfg(operation,wfg);
       }
       node@<(while|repeatUntil)>(<condition></condition>, activity)</(while|repeatUntil)> -> {
         whileCounter++;
@@ -206,14 +205,14 @@ public class PatternAnalyser{
 
   %op Strategy AllWfg(s:Strategy) {
     make(s) {
-      `_ConsWfgNode(Identity(),Choice(_WfgNode(RelativeRef(s)),_EmptyWfgNode()))
+      `_ConsWfgNode(Identity(),Choice(_EmptyWfgNode(),_WfgNode(RelativeRef(s))))
     }
   }
 
 
   %op Strategy PrintWfgNode(wfg:Wfg,node:Position,visited:HashSet) {
     make(wfg,node,visited) {
-      `mu(MuVar("y"),Sequence(CurrentNode(GetRoot(node,visited)),AllWfg(CurrentNode(Print(node,wfg))),AllWfg(Try(MuVar("y")))))
+      `mu(MuVar("y"),Try(Sequence(CurrentNode(GetRoot(node,visited)),AllWfg(CurrentNode(Print(node,wfg))),AllWfg(MuVar("y")))))
     }
   }
 
@@ -228,10 +227,31 @@ public class PatternAnalyser{
     node.pos = null;
     HashSet visited = new HashSet();
     System.out.println("digraph g{");
-    `PrintWfg(wfg,node,visited).fire(wfg);    
+    `PrintWfg(wfg,node,visited).fire(wfg) ;    
     //StratDebugger.applyDebug(wfg,`PrintWfg(wfg,node,visited));    
     System.out.println("}");
   }
+
+  %strategy Debug(label:String) extends `Identity() {
+    visit Wfg {
+      _ -> {
+      System.out.println("print "+label);
+      System.out.println(getEnvironment());
+      }
+    }
+  }
+
+  %strategy LabelActivityByItsName(visited:HashSet) extends `Identity() {
+    visit Wfg {
+      a@Activity[name=name] -> {
+        if (!visited.contains(`name)){
+          visited.add(`name);
+          return `labWfg(name,a);
+        }
+      }
+    }
+  }
+
 
   // fails when finding the right ref
   %strategy FindRef(node:Position,root:Wfg) extends `Identity() {
@@ -268,29 +288,26 @@ public class PatternAnalyser{
   %strategy AddExplicitCond(nameToCondition:HashMap) extends Identity() {
     visit Wfg {
       node@Activity(name,incond,outcond) -> {
-
         Condition newcond = (Condition) nameToCondition.get(`name);
+        System.out.println(newcond);
         if (newcond == null) return `node;
         return `Activity(name,newcond,outcond);
       }
     }
   }
 
-  %op Strategy IgnoreLabels(s:Strategy) {
-    make(s) { `mu(MuVar("i"),Choice(_labWfg(Identity(),MuVar("i")),s)) }
-  }
 
   %op Strategy AddCondWfgNode(node:Position,visited:HashSet,nameToCondition:HashMap) {
     make(node,visited,nameToCondition) {
-      `mu(MuVar("y"),IgnoreLabels(Sequence(
-              CurrentNode(GetRoot(node,visited)),
-              AllWfg(IgnoreLabels(CurrentNode(
-                    AddExplicitCond(nameToCondition)
-                    ))),
-              AllWfg(Try(MuVar("y")))
-              )
-            )
-         )
+      `mu(MuVar("y"),Try(Sequence(
+                Debug("l1"),
+                CurrentNode(GetRoot(node,visited)),
+                Debug("l2"),
+                AllWfg(CurrentNode(
+                      Sequence(Debug("l3"),
+                        AddExplicitCond(nameToCondition)
+                        ))),
+                AllWfg(MuVar("y")))))
     }
   }
 
@@ -334,13 +351,14 @@ public class PatternAnalyser{
         for(int i=1;i<=depth;i++){
           currentpos[i-1]=omega[i];
         }
-        Environment e = (Environment) getEnvironment().clone();
+        Position newPos = new Position();
+        newPos.pos = currentpos;
         //System.out.println("equals = " + (e.equals(getEnvironment())));
         //System.out.println("hashs = " + (e.hashCode() == getEnvironment().hashCode()));
-        if (!visited.contains(getEnvironment())) {
+        if (!visited.contains(newPos)) {
           System.out.println("name = " + `name);
           node.pos = currentpos;
-          visited.add(getEnvironment().clone());
+          visited.add(newPos);
           //System.out.println("taille = " +  visited.size() + " : "+ visited);
           return `a;
         }
@@ -354,6 +372,26 @@ public class PatternAnalyser{
 
   public static class Position {
     int[] pos;
+
+    public int hashCode(){
+      return Arrays.hashCode(pos);
+    }
+
+    public boolean equals(Object o){
+      if (! (o instanceof Position)){
+        return false;
+      }
+      return Arrays.equals(pos,((Position)o).pos);
+
+    }
+
+    public Object clone(){
+      int[] posclone = new int[pos.length];
+      System.arraycopy(pos,0,posclone,0,pos.length);
+      Position clone = new Position();
+      clone.pos = posclone;
+      return clone;
+    }
   }
 
   public static void main(String[] args){
@@ -364,23 +402,22 @@ public class PatternAnalyser{
     %match(TNode term){
       DocumentNode(_,ElementNode("process",_,concTNode(_*,elt@<(sequence|flow)></(sequence|flow)>,_*))) -> {
         ExplicitConditions conds = new ExplicitConditions();
+        // graph construction
         wfg = bpelToWfg(`elt, conds);
-        conds.substitute();
-
-        // debug
-        /*
-           HashMap hm = conds.nameToCondition;
-           %match(HashMap hm) {
-           (_*,mapEntry(k,v),_*) -> {
-           System.out.println(`k + " -> " + `v);
-           }
-           }
-         */
-
+        // graph expansion
         System.out.println("\nWfg with labels:\n" + wfg);
-        //wfg = addConditionsWfg(wfg,conds.nameToCondition);
         wfg = `expWfg(wfg);
-        System.out.println("\nWfg with conditions:\n" + wfg);
+        System.out.println("\nWfg after expansion:\n" + wfg);
+        // substituting link names by node names in the explicit conditions
+        conds.substitute();
+        // adding explicit and implicit conditions 
+        wfg = addConditionsWfg(wfg,conds.nameToCondition);
+        System.out.println("\nWfg after adding explicit conditions:\n" + wfg);
+        // labeling activity by their operation names
+        HashSet set = new HashSet();
+        wfg = (Wfg) `TopDown(LabelActivityByItsName(set)).fire(wfg);
+        // expanding
+        wfg = `expWfg(wfg);
 
         printWfg(wfg);
         //VisitableViewer.visitableToDotStdout(wfg);

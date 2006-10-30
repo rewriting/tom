@@ -29,6 +29,7 @@
  *
  **/
 package tom.library.sl;
+import java.util.Arrays;
 
 /**
  * Object that represents an environment of a strategy
@@ -110,7 +111,7 @@ public class Environment {
     Visitable[] hashedSubterm = new Visitable[size];
     System.arraycopy(omega,0,hashedOmega,0,size);
     System.arraycopy(subterm,0,hashedSubterm,0,size);
-    return size * hashedOmega.hashCode() * hashedSubterm.hashCode();
+    return size * Arrays.hashCode(hashedOmega) * Arrays.hashCode(hashedSubterm);
   }
 
   /**
