@@ -105,4 +105,11 @@ public class NewBehaviour {
     Strategy s = `_g(R1(),R2());
     return (Term) s.fire(subject);
   }
+
+  public Term testCongruence2() {
+    Term subject = `f(a());
+    Strategy s = `_g(R1(),R2());
+    return (Term) s.fire(subject);
+  }
+
 }

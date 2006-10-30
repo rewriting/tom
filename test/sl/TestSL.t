@@ -38,17 +38,17 @@ public class TestSL extends TestCase {
 
   private NewBehaviour nb = new NewBehaviour();
   private OldBehaviour ob = new OldBehaviour();
-	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestSL.class));
-	}
-	
-	public void setUp() {
-		
-	}
-	
-	public void testSL1() {		
-		assertTrue( ob.test1() == nb.test1() );
+
+  public static void main(String[] args) {
+    junit.textui.TestRunner.run(new TestSuite(TestSL.class));
+  }
+
+  public void setUp() {
+
+  }
+
+  public void testSL1() {		
+    assertTrue( ob.test1() == nb.test1() );
   }
   public void testSL2() {		
     assertTrue( ob.test2() == nb.test2() );
@@ -83,5 +83,15 @@ public class TestSL extends TestCase {
   public void testSLCongruence1() {		
     assertTrue( ob.testCongruence1() == nb.testCongruence1() );
   }
-
+  public void testSLCongruence2() {	
+    try{
+      ob.testCongruence2();
+    fail();
+    }catch(RuntimeException e){
+      try{
+        nb.testCongruence2();
+        fail();
+      }catch(tom.library.sl.FireException ee){}
+    }
+  }
 }

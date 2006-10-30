@@ -114,4 +114,15 @@ public class OldBehaviour {
       throw new RuntimeException("Fail");
     }
   }
+
+  public Term testCongruence2() {
+    Term subject = `f(a());
+    MuStrategy s = `_g(R1(),R2());
+    try {
+      return (Term) s.visit(subject);
+    } catch (jjtraveler.VisitFailure f) {
+      throw new RuntimeException("Fail");
+    }
+  }
+
 }
