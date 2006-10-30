@@ -68,12 +68,17 @@ writer.write(%[
 
   protected String generateInterface() {
     String interfaces = super.generateInterface();
-    if (! interfaces.equals("")) return "implements "+interfaces.substring(1);
-    else return interfaces;
+    if (! interfaces.equals("")) {
+      return "implements "+interfaces.substring(1);
+    } else {
+      return interfaces;
+    }
   }
 
 
   private void generateBody(java.io.Writer writer) throws java.io.IOException {
+    String domainClassName = fullClassName(
+        cons.getSlots().getHeadconcSlotField().getDomain());
     writer.write(%[
   public int length() {
     int count = 0;
@@ -89,24 +94,24 @@ writer.write(%[
     }
   }
 
- public @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[] toArray() {
-    @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[] array;
+ public @domainClassName@[] toArray() {
+    @domainClassName@[] array;
     if(this instanceof @fullClassName(cons.getClassName())@) {
-      @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@ h = ((@fullClassName(cons.getClassName())@)this).getHead@className()@();
+      @domainClassName@ h = ((@fullClassName(cons.getClassName())@)this).getHead@className()@();
       @fullClassName(sortName)@ tl = ((@fullClassName(cons.getClassName())@)this).getTail@className()@();
       if (tl instanceof @className()@) {
-        @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[] tailArray =((@className()@)tl).toArray();
-        array = new @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[1+tailArray.length];
-        array[0]=h;     
+        @domainClassName@[] tailArray =((@className()@)tl).toArray();
+        array = new @domainClassName@[1+tailArray.length];
+        array[0]=h;
         for(int i =0;i<tailArray.length;i++){
           array[i+1]=tailArray[i];
         }
       } else {
-        array = new @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[1];
-        array[0]=h;  
+        array = new @domainClassName@[1];
+        array[0]=h;
       }
     } else {
-        array = new @fullClassName(cons.getSlots().getHeadconcSlotField().getDomain())@[0];
+        array = new @domainClassName@[0];
     }
     return array;
   }
