@@ -125,4 +125,15 @@ public class OldBehaviour {
     }
   }
 
+  public Term testCongruenceList() {
+    Term subject = `l(a(),b(),a(),b());
+    MuStrategy s = `_l(R1());
+    try {
+      return (Term) s.visit(subject);
+    } catch (jjtraveler.VisitFailure f) {
+      throw new RuntimeException("Fail");
+    }
+  }
+
+
 }

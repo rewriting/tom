@@ -67,9 +67,9 @@
   }
 
   %op Strategy All(s1:Strategy) {
-    is_fsym(t) { (t instanceof tom.library.sl.AllSeq) }
-    make(v) { new tom.library.sl.AllSeq(v) }
-    get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.AllSeq.ARG) }
+    is_fsym(t) { (t instanceof tom.library.sl.All) }
+    make(v) { new tom.library.sl.All(v) }
+    get_slot(s1, t) { (tom.library.sl.Strategy)t.getChildAt(tom.library.sl.All.ARG) }
   }
 
   %op Strategy IfThenElse(s1:Strategy, s2:Strategy, s3:Strategy) {

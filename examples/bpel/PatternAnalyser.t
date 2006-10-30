@@ -300,20 +300,17 @@ public class PatternAnalyser{
   %op Strategy AddCondWfgNode(node:Position,visited:HashSet,nameToCondition:HashMap) {
     make(node,visited,nameToCondition) {
       `mu(MuVar("y"),Try(Sequence(
-                Debug("l1"),
                 CurrentNode(GetRoot(node,visited)),
-                Debug("l2"),
                 AllWfg(CurrentNode(
-                      Sequence(Debug("l3"),
                         AddExplicitCond(nameToCondition)
-                        ))),
-                AllWfg(MuVar("y")))))
+                        )),
+                Sequence(AllWfg(MuVar("y")),Debug("After mu")))))
     }
   }
 
   %op Strategy AddCondWfg(node:Position,visited:HashSet,nameToCondition:HashMap) {
     make(node,visited,nameToCondition) {
-      `Choice(_ConcWfg(AddCondWfgNode(node,visited,nameToCondition)),Sequence(Debug("debug"),AddCondWfgNode(node,visited,nameToCondition)))
+      `Choice(_ConcWfg(AddCondWfgNode(node,visited,nameToCondition)),AddCondWfgNode(node,visited,nameToCondition))
     }
   }
 
@@ -414,12 +411,12 @@ public class PatternAnalyser{
         wfg = addConditionsWfg(wfg,conds.nameToCondition);
         System.out.println("\nWfg after adding explicit conditions:\n" + wfg);
         // labeling activity by their operation names
-        HashSet set = new HashSet();
-        wfg = (Wfg) `TopDown(LabelActivityByItsName(set)).fire(wfg);
+        //HashSet set = new HashSet();
+        //wfg = (Wfg) `TopDown(LabelActivityByItsName(set)).fire(wfg);
         // expanding
-        wfg = `expWfg(wfg);
+        //wfg = `expWfg(wfg);
 
-        printWfg(wfg);
+        //printWfg(wfg);
         //VisitableViewer.visitableToDotStdout(wfg);
       }
     }
