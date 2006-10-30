@@ -248,6 +248,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
 
   public void visit() {
     tom.library.sl.Visitable any = getEnvironment().getSubject();
+    if(any instanceof @fullClassName(operator)@) {
     int childCount = any.getChildCount();
 
     tom.library.sl.Visitable[] childs = null;
@@ -286,7 +287,10 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     if(childs!=null) {
       getEnvironment().setSubject((tom.library.sl.Visitable)getEnvironment().getSubject().setChildren(childs));
     }
-    return;
+    //return;
+    } else {
+      getEnvironment().setStatus(tom.library.sl.Environment.FAILURE);
+    }
   }
 }
 ]%);
