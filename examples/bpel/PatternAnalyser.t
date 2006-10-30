@@ -334,10 +334,14 @@ public class PatternAnalyser{
         for(int i=1;i<=depth;i++){
           currentpos[i-1]=omega[i];
         }
-        if (!visited.contains(currentpos)) {
+        Environment e = (Environment) getEnvironment().clone();
+        //System.out.println("equals = " + (e.equals(getEnvironment())));
+        //System.out.println("hashs = " + (e.hashCode() == getEnvironment().hashCode()));
+        if (!visited.contains(getEnvironment())) {
           System.out.println("name = " + `name);
           node.pos = currentpos;
-          visited.add(currentpos);
+          visited.add(getEnvironment().clone());
+          //System.out.println("taille = " +  visited.size() + " : "+ visited);
           return `a;
         }
       }
@@ -348,7 +352,7 @@ public class PatternAnalyser{
     implement {Position}
   }
 
-  public static class Position{
+  public static class Position {
     int[] pos;
   }
 
@@ -374,7 +378,7 @@ public class PatternAnalyser{
          */
 
         System.out.println("\nWfg with labels:\n" + wfg);
-        wfg = addConditionsWfg(wfg,conds.nameToCondition);
+        //wfg = addConditionsWfg(wfg,conds.nameToCondition);
         wfg = `expWfg(wfg);
         System.out.println("\nWfg with conditions:\n" + wfg);
 
