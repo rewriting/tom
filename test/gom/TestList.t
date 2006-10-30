@@ -61,14 +61,14 @@ public class TestList extends TestCase {
   public void testnArray() {
     int n = 15;
     List l = `conc();
-    for(int i = 0; i<n; i++) {
+    for (int i = 0; i<n; i++) {
       l = `conc(a(),b(),l*);
     }
     Element[] array1 = getListArray(l);
     Element[] array2 = ((conc)l).toArray(); 
     assertEquals(array1.length,array2.length);
-    for(int i=0;i<array1.length;i++){
-    assertEquals(array1[i],array2[i]);
+    for (int i=0; i<array1.length; i++) {
+      assertEquals(array1[i],array2[i]);
     }
   }
 
