@@ -343,7 +343,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   protected void genDeclList(String name, String moduleName)  throws IOException {
     TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(name);
     TomType listType = getSymbolCodomain(tomSymbol);
-    TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
+    //TomType eltType = getSymbolDomain(tomSymbol).getHeadconcTomType();
 
     String s = "";
     if(nodeclMode) {

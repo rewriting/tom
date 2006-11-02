@@ -410,13 +410,12 @@ public class TomKernelCompiler extends TomBase {
         } else {
           // case: syntactic operator
           Instruction automata = genSyntacticMatchingAutomata(constraintAutomata,elseAction,`termArgs,path,moduleName,null);        
-          TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain(); 
           // if there is no disjunction or no arguments
           if(`nameList.length()==1 || `termArgs.isEmptyconcSlot()) {        	  
-              automataInstruction = `collectSubtermFromTomSymbol(termArgs,tomSymbol,subjectVariableAST,path,automata,moduleName);        	  
+	    automataInstruction = `collectSubtermFromTomSymbol(termArgs,tomSymbol,subjectVariableAST,path,automata,moduleName);        	  
           } else {        	  
-        	  automataInstruction = `collectSubtermFromSubjectList(currentTerm,subjectVariableAST,path,automata,moduleName);
-        	  return automataInstruction;
+	    automataInstruction = `collectSubtermFromSubjectList(currentTerm,subjectVariableAST,path,automata,moduleName);
+	    return automataInstruction;
           }
         }
         // generate is_fsym(t,f) || is_fsym(t,g)
@@ -1107,72 +1106,70 @@ public class TomKernelCompiler extends TomBase {
   
   
   private Instruction buildAntiMatchBlockConstraint(AndAntiConstraint consList, 
-		  Expression source, Instruction body, String moduleName){
-	  
-	  InstructionList instructionList = null;
-	  Instruction antiInstruction = null; 
-	  Constraint antiMatchConstraint = null;
-	  
-	  Instruction assignAntiFlagTrue = `LetAssign(antiFlagVariable,And(TrueTL(),TomTermToExpression(antiFlagVariable)),Nop());
-	  Instruction assignAntiFlagFalse = `LetAssign(antiFlagVariable,And(FalseTL(),TomTermToExpression(antiFlagVariable)),Nop());
-	  
-	  // actions that will be performed on if and on else
-	  Instruction ifAction = null, elseAction = null;
-	  
-	  // compute all anti constraints	  
-	  antiMatchConstraint = consList.getHeadAndAntiConstraint();
-	  boolean actionOnIf = antiMatchConstraint.getActionOnIf() == 1;
-	  if (actionOnIf){
-		  ifAction = assignAntiFlagTrue;
-		  elseAction = assignAntiFlagFalse;
-	  }else{
-		  ifAction = assignAntiFlagFalse;
-		  elseAction = assignAntiFlagTrue;
-	  }
-	  
-	  antiInstruction = buildAntiMatchConstraint((AntiMatchConstraint)antiMatchConstraint,
-			  source,ifAction,elseAction,moduleName);
-	  instructionList = `concInstruction(antiInstruction);
-	  consList = (AndAntiConstraint)consList.getTailAndAntiConstraint();
-	  // this evaluates all constraints at the same 'not' level as the above one
-	  while(!consList.isEmptyAndAntiConstraint()){
-		  antiMatchConstraint = consList.getHeadAndAntiConstraint();
-		  antiInstruction = buildAntiMatchConstraint((AntiMatchConstraint)antiMatchConstraint,
-			  source, ifAction, elseAction, moduleName);
-		  
-		  if (antiMatchConstraint.getActionOnIf() == 0){
-			  antiInstruction = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),
-					  antiInstruction,Nop());
-		  }else{
-			  antiInstruction = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),
-					  Nop(),antiInstruction);
-		  }		  
-		  // add intruction to the list
-		  instructionList = `concInstruction(instructionList*,antiInstruction);
-		  
-		  consList = (AndAntiConstraint)consList.getTailAndAntiConstraint();		  					  
-	  }
-	  // add the body to the list if the body is not the flag assignement
-	  // quite ugly ... should be changed
-	  if (!(body instanceof LetAssign)){
-		  instructionList = `concInstruction(instructionList*,body);
-	  }
-	  return `UnamedBlock(instructionList);
+      Expression source, Instruction body, String moduleName) {
+
+    InstructionList instructionList = null;
+    Instruction antiInstruction = null; 
+    Constraint antiMatchConstraint = null;
+
+    Instruction assignAntiFlagTrue = `LetAssign(antiFlagVariable,And(TrueTL(),TomTermToExpression(antiFlagVariable)),Nop());
+    Instruction assignAntiFlagFalse = `LetAssign(antiFlagVariable,And(FalseTL(),TomTermToExpression(antiFlagVariable)),Nop());
+
+    // actions that will be performed on if and on else
+    Instruction ifAction = null, elseAction = null;
+
+    // compute all anti constraints	  
+    antiMatchConstraint = consList.getHeadAndAntiConstraint();
+    boolean actionOnIf = antiMatchConstraint.getActionOnIf() == 1;
+    if (actionOnIf){
+      ifAction = assignAntiFlagTrue;
+      elseAction = assignAntiFlagFalse;
+    }else{
+      ifAction = assignAntiFlagFalse;
+      elseAction = assignAntiFlagTrue;
+    }
+
+    antiInstruction = buildAntiMatchConstraint((AntiMatchConstraint)antiMatchConstraint,
+	source,ifAction,elseAction,moduleName);
+    instructionList = `concInstruction(antiInstruction);
+    consList = (AndAntiConstraint)consList.getTailAndAntiConstraint();
+    // this evaluates all constraints at the same 'not' level as the above one
+    while(!consList.isEmptyAndAntiConstraint()){
+      antiMatchConstraint = consList.getHeadAndAntiConstraint();
+      antiInstruction = buildAntiMatchConstraint((AntiMatchConstraint)antiMatchConstraint,
+	  source, ifAction, elseAction, moduleName);
+
+      if (antiMatchConstraint.getActionOnIf() == 0){
+	antiInstruction = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),
+	    antiInstruction,Nop());
+      }else{
+	antiInstruction = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),
+	    Nop(),antiInstruction);
+      }		  
+      // add intruction to the list
+      instructionList = `concInstruction(instructionList*,antiInstruction);
+
+      consList = (AndAntiConstraint)consList.getTailAndAntiConstraint();		  					  
+    }
+    // add the body to the list if the body is not the flag assignement
+    // quite ugly ... should be changed
+    if (!(body instanceof LetAssign)){
+      instructionList = `concInstruction(instructionList*,body);
+    }
+    return `UnamedBlock(instructionList);
   }
   
   
   private Instruction buildAntiMatchConstraint(AntiMatchConstraint constraint, 
-		  Expression source, Instruction ifAction, Instruction elseAction, String moduleName){ 
-	  
-	  SlotList slotList = tomListToSlotList(`concTomTerm(constraint.getPattern())); 
-	  TomNumberList rootpath = `concTomNumber();
-      this.matchNumber++;
-      rootpath = `concTomNumber(rootpath*,MatchNumber(Number(this.matchNumber)));
-      
-    return genSyntacticMatchingAutomata(ifAction,elseAction,
-		`concSlot(PairSlotAppl(Name("ANTI"),constraint.getPattern())),rootpath,moduleName,
-		constraint.getSubject());       
+      Expression source, Instruction ifAction, Instruction elseAction, String moduleName) {
+    //SlotList slotList = tomListToSlotList(`concTomTerm(constraint.getPattern())); 
+    TomNumberList rootpath = `concTomNumber();
+    this.matchNumber++;
+    rootpath = `concTomNumber(rootpath*,MatchNumber(Number(this.matchNumber)));
 
+    return genSyntacticMatchingAutomata(ifAction,elseAction,
+	`concSlot(PairSlotAppl(Name("ANTI"),constraint.getPattern())),rootpath,moduleName,
+	constraint.getSubject());       
   }
   
   private static class MatchingParameter {

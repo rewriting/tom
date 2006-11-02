@@ -26,9 +26,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-//package master;
-//import master.pil.term.types.*;
-import pil.term.types.*;
+package master;
+import master.pil.term.types.*;
+//import pil.term.types.*;
 
 import java.util.*;
 

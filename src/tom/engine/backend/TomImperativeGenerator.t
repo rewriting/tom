@@ -165,7 +165,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
     String tomType = getTomType(listType);
     String glType = getTLType(listType);
-    String tlEltType = getTLType(eltType);
+    //String tlEltType = getTLType(eltType);
     String utype = glType;
     if(lazyMode) {
       utype =  getTLType(getUniversalType());

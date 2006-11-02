@@ -226,12 +226,12 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
 
     String tomType = getTomType(listType);
     String glType = getTLType(listType);
-    String tlEltType = getTLType(eltType);
+    //String tlEltType = getTLType(eltType);
 
-    String utype = glType;
-    if(lazyMode) {
-      utype = getTLType(getUniversalType());
-    }
+    //String utype = glType;
+    //if(lazyMode) {
+    //  utype = getTLType(getUniversalType());
+    //}
     
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
     String term_equal = "tom_terms_equal_" + tomType;

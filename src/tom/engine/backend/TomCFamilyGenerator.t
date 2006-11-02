@@ -281,7 +281,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
 
     String tomType = getTomType(listType);
     String glType = getTLType(listType);
-    String tlEltType = getTLType(eltType);
+    //String tlEltType = getTLType(eltType);
 
     String utype = glType;
     if(lazyMode) {

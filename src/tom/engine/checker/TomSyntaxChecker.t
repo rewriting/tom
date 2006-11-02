@@ -346,7 +346,7 @@ public class TomSyntaxChecker extends TomChecker {
 
   private  int verifySymbolDomain(TomTypeList args, String symbName, String symbolType) {
     int position = 1;
-    if(symbolType == TomSyntaxChecker.CONSTRUCTOR) {
+    if(symbolType.equals(TomSyntaxChecker.CONSTRUCTOR)) {
       %match(TomTypeList args) {
         (_*,  TomTypeAlone(typeName),_*) -> { // for each symbol types
           if(!testTypeExistence(`typeName)) {
@@ -377,7 +377,7 @@ public class TomSyntaxChecker extends TomChecker {
   private  void verifySymbolMacroFunctions(OptionList option, int domainLength, String symbolType) {
     ArrayList verifyList = new ArrayList();
     boolean foundOpMake = false;
-    if(symbolType == TomSyntaxChecker.CONSTRUCTOR){ //Nothing absolutely necessary
+    if(symbolType.equals(TomSyntaxChecker.CONSTRUCTOR)) { //Nothing absolutely necessary
     } else if(symbolType == TomSyntaxChecker.OP_ARRAY ) {
       verifyList.add(TomSyntaxChecker.MAKE_EMPTY);
       verifyList.add(TomSyntaxChecker.MAKE_APPEND);
