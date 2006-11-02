@@ -1279,4 +1279,35 @@
     <delete dir="${dist}/checkout"/>
   </target>
 
+  <target name="init.task.findbugs">
+    <fail unless="findbugs.home">
+Please define "findbugs.home"
+To use findbugs, you should install it on your machine.
+Download it from http://findbugs.sourceforge.net/
+Then define the "findbugs.home" property, giving it the path
+to the findbugs installation, e.g.
+findbugs.home=/home/login/soft/findbugs-1.1/
+    </fail>
+    <path id="tom.findbugs">
+      <fileset dir="${findbugs.home}/lib/">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+
+    <taskdef name="findbugs"
+             classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+             classpathref="tom.findbugs"/>
+  </target>
+
+  <target name="findbugs" depends="src.dist, init.task.findbugs">
+    <findbugs home="${findbugs.home}"
+      output="html"
+      outputFile="tom-fb.html" >
+      <auxClasspath path="${src.classpath}" />
+      <sourcePath path="${src}" />
+      <class location="${src.dist.lib}/tom-${src.version}.jar" />
+      <class location="${src.dist.lib}/tom-library-${src.version}.jar" />
+    </findbugs>
+  </target>
+
 </project>

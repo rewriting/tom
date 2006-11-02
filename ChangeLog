@@ -1,3 +1,9 @@
+2006-11-02  tonio <reilles@loria.fr>
+	* build.xml:
+	  - add basic findbugs support
+	* local.properties:
+	  - document the findbugs.home properties
+
 2006-10-08  pem <moreau@loria.fr>
 	* src/tom/library/sl/StrategyLanguage.java: 
 	  - renamed GraphStrategy into StrategyLanguage

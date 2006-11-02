@@ -15,3 +15,6 @@ zvtov.bin={ZVTOV_BIIN}
 # plugin.workspace.dir contains the path to the eclipse workspace used to
 # build the plugin. Usually, ${HOME}/workspace
 plugin.workspace.dir={WORKSPACE}
+
+# home of the findbugs installation: mandatory to use the findbugs target
+findbugs.home=<WORKSPACE>/findbugs/
