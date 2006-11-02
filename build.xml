@@ -1305,8 +1305,10 @@ findbugs.home=/home/login/soft/findbugs-1.1/
       outputFile="tom-fb.html" >
       <auxClasspath path="${src.classpath}" />
       <sourcePath path="${src}" />
+      <sourcePath path="${src.gen}" />
       <class location="${src.dist.lib}/tom-${src.version}.jar" />
       <class location="${src.dist.lib}/tom-library-${src.version}.jar" />
+      <class location="${src.dist.lib}/strategy-${src.version}.jar" />
     </findbugs>
   </target>
 
