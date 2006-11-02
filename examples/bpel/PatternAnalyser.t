@@ -260,7 +260,6 @@ public class PatternAnalyser{
         //TODO remove use of the old library
         Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(getEnvironment().getRoot());
         if (`s.equals(act.getname())){
-          System.out.println("Fail with:"+node.pos);
           getEnvironment().setStatus(Environment.FAILURE);
         }
       }
@@ -273,7 +272,6 @@ public class PatternAnalyser{
         //TODO remove use of the old library
         Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(getEnvironment().getRoot());
         String root_name = act.getname();
-        System.out.println("root = " + root_name + ", name = " + `name);
         if (root_name.equals("")) return `a;
         return `Activity(name,and(cond(refWfg(root_name)),incond),outcond);
       }
@@ -291,9 +289,7 @@ public class PatternAnalyser{
     visit Wfg {
       node@Activity(name,incond,outcond) -> {
         Condition newcond = (Condition) nameToCondition.get(`name);
-        System.out.println(newcond);
         if (newcond == null) return `node;
-        System.out.println("explicit :"+newcond);    
         return `Activity(name,newcond,outcond);
       }
     }
@@ -304,19 +300,24 @@ public class PatternAnalyser{
     make(node,visited,nameToCondition) {
       `mu(MuVar("y"),Try(Sequence(
                 CurrentNode(GetRoot(node,visited)),
-                Choice(AllWfg(CurrentNode(
+                AllWfg(CurrentNode(
                     Sequence(
-                        AddDefaultCond(node),
-                        Debug("after default cond")
-                      )
-                        )),Debug("After all")),
+                        AddExplicitCond(nameToCondition),
+                        AddDefaultCond(node)
+                      ))),
                 AllWfg(MuVar("y")))))
     }
   }
 
+  %op Strategy _ConcWfgSeq(s:Strategy){
+    make(s){
+      `Choice(When_ConsConcWfg(AllSeq(s)),Is_EmptyConcWfg())
+    }
+  }
+
   %op Strategy AddCondWfg(node:Position,visited:HashSet,nameToCondition:HashMap) {
-    make(node,visited,nameToCondition) {
-      `Choice(_ConcWfg(AddCondWfgNode(node,visited,nameToCondition)),AddCondWfgNode(node,visited,nameToCondition))
+    make(node,visited,nameToCondition){
+      `Choice(_ConcWfgSeq(AddCondWfgNode(node,visited,nameToCondition)),AddCondWfgNode(node,visited,nameToCondition))
     }
   }
 
@@ -359,7 +360,6 @@ public class PatternAnalyser{
         //System.out.println("equals = " + (e.equals(getEnvironment())));
         //System.out.println("hashs = " + (e.hashCode() == getEnvironment().hashCode()));
         if (!visited.contains(newPos)) {
-          System.out.println("name = " + `name);
           node.pos = currentpos;
           visited.add(newPos);
           //System.out.println("taille = " +  visited.size() + " : "+ visited);
