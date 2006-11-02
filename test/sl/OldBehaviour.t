@@ -126,7 +126,7 @@ public class OldBehaviour {
   }
 
   public Term testCongruenceList() {
-    Term subject = `l(a(),b(),a(),b());
+    Term subject = `l(a(),b());
     MuStrategy s = `_l(R1());
     try {
       return (Term) s.visit(subject);

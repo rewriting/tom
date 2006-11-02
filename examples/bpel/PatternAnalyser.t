@@ -234,9 +234,9 @@ public class PatternAnalyser{
 
   %strategy Debug(label:String) extends `Identity() {
     visit Wfg {
-      _ -> {
-      System.out.println("print "+label);
-      System.out.println(getEnvironment());
+      x -> {
+      System.out.println(label);
+      System.out.println(`x);
       }
     }
   }
@@ -254,22 +254,24 @@ public class PatternAnalyser{
 
 
   // fails when finding the right ref
-  %strategy FindRef(node:Position,root:Wfg) extends `Identity() {
+  %strategy FindRef(node:Position) extends `Identity() {
     visit Wfg {
       refWfg(s) -> {
         //TODO remove use of the old library
-        Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(root);
-        if (`s.equals(act.getname())) throw new FireException(); 
+        Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(getEnvironment().getRoot());
+        if (`s.equals(act.getname())){
+          System.out.println("Fail with:"+node.pos);
+          getEnvironment().setStatus(Environment.FAILURE);
+        }
       }
-
     }
   }
 
-  %strategy DefaultCond(node:Position,root:Wfg) extends `Identity() {
+  %strategy DefaultCond(node:Position) extends `Identity() {
     visit Wfg {
       a@Activity(name,incond,outcond) -> {
         //TODO remove use of the old library
-        Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(root);
+        Activity act = (Activity) new tom.library.strategy.mutraveler.Position(node.pos).getSubterm().apply(getEnvironment().getRoot());
         String root_name = act.getname();
         System.out.println("root = " + root_name + ", name = " + `name);
         if (root_name.equals("")) return `a;
@@ -280,8 +282,8 @@ public class PatternAnalyser{
 
   /* adds default condition concerning node to the visited WfgNode 
      if it doesn't already contain a condition about node */
-  %op Strategy AddDefaultCond(node:Position,root:Wfg) {
-    make(node,root) { `Sequence(TopDown(FindRef(node,root)),DefaultCond(node,root)) }
+  %op Strategy AddDefaultCond(node:Position) {
+    make(node) { `Choice(Not(TopDown(FindRef(node))),DefaultCond(node)) }
   }
 
   // adds the explicit condition if present in the hashmap
@@ -291,6 +293,7 @@ public class PatternAnalyser{
         Condition newcond = (Condition) nameToCondition.get(`name);
         System.out.println(newcond);
         if (newcond == null) return `node;
+        System.out.println("explicit :"+newcond);    
         return `Activity(name,newcond,outcond);
       }
     }
@@ -301,10 +304,13 @@ public class PatternAnalyser{
     make(node,visited,nameToCondition) {
       `mu(MuVar("y"),Try(Sequence(
                 CurrentNode(GetRoot(node,visited)),
-                AllWfg(CurrentNode(
-                        AddExplicitCond(nameToCondition)
-                        )),
-                Sequence(AllWfg(MuVar("y")),Debug("After mu")))))
+                Choice(AllWfg(CurrentNode(
+                    Sequence(
+                        AddDefaultCond(node),
+                        Debug("after default cond")
+                      )
+                        )),Debug("After all")),
+                AllWfg(MuVar("y")))))
     }
   }
 
@@ -416,7 +422,7 @@ public class PatternAnalyser{
         // expanding
         //wfg = `expWfg(wfg);
 
-        //printWfg(wfg);
+        printWfg(wfg);
         //VisitableViewer.visitableToDotStdout(wfg);
       }
     }

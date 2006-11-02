@@ -254,6 +254,7 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
     tom.library.sl.Visitable[] childs = null;
     for (int i = 0; i < childCount; i++) {
       tom.library.sl.Visitable oldChild = (tom.library.sl.Visitable)any.getChildAt(i);
+      jjtraveler.Visitable[] array = getEnvironment().getSubject().getChildren();
       environment.down(i+1);
       ((tom.library.sl.Strategy)args[i]).visit();
       if (getEnvironment().getStatus() != tom.library.sl.Environment.SUCCESS) {
@@ -269,14 +270,14 @@ public class @className()@ implements tom.library.strategy.mutraveler.MuStrategy
       } else if(newChild != oldChild) {
         // allocate the array, and fill it
         // childs = (Visitable[])getEnvironment().getSubject().getChildren();
-        jjtraveler.Visitable[] array = getEnvironment().getSubject().getChildren();
+        java.util.List list = java.util.Arrays.asList(array);
         childs = new tom.library.sl.Visitable[childCount];
         for(int j = 0; j < array.length; j++) {
           childs[j] = (tom.library.sl.Visitable) array[j];
         }
         childs[i] = newChild;
-        environment.up();
         /* restore subject */
+        environment.up();
         getEnvironment().setSubject(any);
       } else {
         /* no need to restore subject */

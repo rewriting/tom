@@ -95,8 +95,6 @@ public class TestSL extends TestCase {
     }
   }
   public void testSLCongruenceList() {
-    System.out.println(ob.testCongruenceList());
-    System.out.println(nb.testCongruenceList());
     assertTrue( ob.testCongruenceList() == nb.testCongruenceList() );
   }
  

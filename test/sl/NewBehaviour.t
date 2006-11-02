@@ -113,7 +113,7 @@ public class NewBehaviour {
   }
 
   public Term testCongruenceList() {
-    Term subject = `l(a(),b(),a(),b());
+    Term subject = `l(a(),b());
     Strategy s = `_l(R1());
     return (Term) s.fire(subject);
   }
