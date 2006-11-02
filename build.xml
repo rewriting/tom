@@ -1300,11 +1300,16 @@ findbugs.home=/home/login/soft/findbugs-1.1.1/
   </target>
 
   <target name="findbugs" depends="src.dist, init.task.findbugs">
+    <path id="src.dist.classpath">
+      <fileset dir="${src.dist.lib}">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
     <findbugs home="${findbugs.home}"
       output="html"
       outputFile="tom-fb.html" >
-      <auxClasspath path="${src.classpath}" />
-      <sourcePath path="${src}" />
+      <auxClasspath refid="src.dist.classpath" />
+      <sourcePath path="${src.src}" />
       <sourcePath path="${src.gen}" />
       <class location="${src.dist.lib}/tom-${src.version}.jar" />
       <class location="${src.dist.lib}/tom-library-${src.version}.jar" />
