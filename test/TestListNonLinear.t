@@ -4,7 +4,7 @@ import testlistnonlinear.test.types.*;
 
 public class TestListNonLinear extends TestCase {
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(Test.class));
+    junit.textui.TestRunner.run(new TestSuite(TestListNonLinear.class));
   }
   
 %gom {
@@ -99,14 +99,42 @@ TermRuleList = termrulelist(TermRule*)
 
 
   public void test3() {
-Tree t = `rule("implies L",Conspremisses(rule("axiom",Emptypremisses(),sequent(Conscontext(relationAppl(relation("G"),EmptyconcTerm()),Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Emptycontext())),Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Emptycontext()))),relationAppl(relation("A"),EmptyconcTerm())),Conspremisses(rule("axiom",Emptypremisses(),sequent(Conscontext(relationAppl(relation("G"),EmptyconcTerm()),Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Emptycontext()))),Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Emptycontext())),relationAppl(relation("B"),EmptyconcTerm())),Emptypremisses())),sequent(Conscontext(relationAppl(relation("G"),EmptyconcTerm()),Conscontext(implies(relationAppl(relation("A"),EmptyconcTerm()),relationAppl(relation("B"),EmptyconcTerm())),Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Emptycontext()))),Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Emptycontext())),implies(relationAppl(relation("A"),EmptyconcTerm()),relationAppl(relation("B"),EmptyconcTerm())));
+Tree t = `rule("implies L",Conspremisses(rule("axiom",Emptypremisses(),sequent(
+Conscontext(relationAppl(relation("G"),EmptyconcTerm()), /* g1* */
+Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Emptycontext())), /* g2* */
+Conscontext(relationAppl(relation("A"),EmptyconcTerm()), /* A */
+Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Emptycontext()))), /* d* */
+relationAppl(relation("A"),EmptyconcTerm())), /* */
+Conspremisses(rule("axiom",Emptypremisses(),sequent(
+Conscontext(relationAppl(relation("G"),EmptyconcTerm()), /* g1* */
+Conscontext(relationAppl(relation("B"),EmptyconcTerm()), /* B */
+Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Emptycontext()))), /* g2* */
+Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Emptycontext())), /* d */
+relationAppl(relation("B"),EmptyconcTerm())),Emptypremisses())), /* */
+sequent(
+Conscontext(relationAppl(relation("G"),EmptyconcTerm()), /* g1* */
+Conscontext(implies(relationAppl(relation("A"),EmptyconcTerm()),relationAppl(relation("B"),EmptyconcTerm())), /* a */
+Conscontext(relationAppl(relation("A"),EmptyconcTerm()),Emptycontext()))), /* g2* */
+Conscontext(relationAppl(relation("B"),EmptyconcTerm()),Emptycontext())), /* d */
+implies(
+relationAppl(relation("A"),EmptyconcTerm()), /* A */
+relationAppl(relation("B"),EmptyconcTerm()))); /* B */
+
     %match(t) {
+      rule(
+          "implies L",
+          (rule(_,_,sequent((g1*,g2*),(A,d*)),_), rule(_,_,sequent((g1*,B,g2*),d),_)),
+          sequent((g1*,a,g2*),d),
+          a@implies(A,B)
+          )
+/*
       rule(
           "implies L",
           (p1@rule(_,_,sequent((g1*,g2*),(A,d*)),_), p2@rule(_,_,sequent((g1*,B,g2*),d),_)),
           sequent(y@(g1*,a,g2*),d),
           a@implies(A,B)
           )
+*/
         -> { return; }
     }
     fail("ca marche pas");

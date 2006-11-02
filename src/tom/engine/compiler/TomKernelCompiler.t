@@ -366,12 +366,12 @@ public class TomKernelCompiler extends TomBase {
         Instruction	constraintAutomata = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST)
         		,subAction,elseAction,moduleName);
         Instruction automataInstruction;
-        if(isListOperator(tomSymbol)) {        	
+        if(isListOperator(tomSymbol)) {
           // case: list operator
-            /*
-             * store the subject into an internal variable
-             * call genListMatchingAutomata with the new internal variable
-             */
+	  /*
+	   * store the subject into an internal variable
+	   * call genListMatchingAutomata with the new internal variable
+	   */
           int indexSubterm = 1;
           TomNumberList newPath = `concTomNumber(path*,ListNumber(Number(indexSubterm)));
           TomTerm newSubjectVariableAST = `VariableStar(concOption(),PositionName(newPath),codomain,concConstraint());
@@ -493,13 +493,12 @@ public class TomKernelCompiler extends TomBase {
            * get an element and store it
            */
         Instruction subAction = genListMatchingAutomata(p,`termTail,indexTerm+1,true,moduleName);
-        return genGetElementList(p.symbol, p.subjectListName, `var, `termType, subAction, ensureNotEmptyList, moduleName);
+        return genGetElementList(p, indexTerm, `var, `termType, subAction, ensureNotEmptyList, moduleName);
       }
 
       concSlot(PairSlotAppl[Appl=term@RecordAppl[NameList=(Name(tomName),_*)]],termTail*)  -> {
           /*
-           * get an element
-           * perform syntactic matching
+           * get an elementi and perform syntactic matching
            */
         Instruction subAction = genListMatchingAutomata(p,`termTail,indexTerm+1,true,moduleName);
 
@@ -509,7 +508,7 @@ public class TomKernelCompiler extends TomBase {
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
         TomTerm var =  `Variable(concOption(),PositionName(newPath),termType,concConstraint());
-        return genGetElementList(p.symbol, p.subjectListName, var, termType, subAction, ensureNotEmptyList, moduleName);
+        return genGetElementList(p, indexTerm, var, termType, subAction, ensureNotEmptyList, moduleName);
       }
       
       concSlot(PairSlotAppl[Appl=var@(VariableStar|UnamedVariableStar)[AstType=termType]],termTail*) -> {
@@ -537,7 +536,7 @@ public class TomKernelCompiler extends TomBase {
              * ...
              */
           Instruction subAction = genListMatchingAutomata(p,`termTail,indexTerm+1,false,moduleName);
-					TomNumberList ppath = p.path;
+	  TomNumberList ppath = p.path;
           TomNumberList pathBegin = `concTomNumber(ppath*,Begin(Number(indexTerm)));
           TomNumberList pathEnd = `concTomNumber(ppath*,End(Number(indexTerm)));
           TomTerm variableBeginAST = `Variable(concOption(),PositionName(pathBegin),termType,concConstraint());
@@ -553,10 +552,10 @@ public class TomKernelCompiler extends TomBase {
                *   * SUBSTITUTION: E_i
                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);
                *   ...
-               *   if(!IS_EMPTY_TomList(end_i) )
-               *     end_i = (TomList) GET_TAIL_TomList(end_i);
-               *   else *** use this impossible value to indicate the end of the loop ***
+               *   if(IS_EMPTY_TomList(end_i) )
                *     end_i = begin_i
+               *   else *** use this impossible value to indicate the end of the loop ***
+               *     end_i = (TomList) GET_TAIL_TomList(end_i);
                *   subjectList = end_i;
                * } while( end_i != begin_i )  
                * *** subjectList is reseted to begin_i when the loop stops
@@ -626,25 +625,35 @@ public class TomKernelCompiler extends TomBase {
   }
 
 
-  private Instruction genGetElementList(TomSymbol tomSymbol, TomTerm subjectListName, TomTerm var,
+  private Instruction genGetElementList(MatchingParameter p, int indexTerm, TomTerm var,
                                         TomType termType, Instruction subAction, boolean notEmptyList, String moduleName) {
       /*
        * generate:
        * ---------
+       * Let save_i = subjectList
        * if(!IS_EMPTY_TomList(subjectList)) {
        *   Let TomTerm var = (TomTerm) GET_HEAD_TomList(subjectList);
        *   subjectList = (TomList) GET_TAIL_TomList(subjectList);
        *   ...
        * }
+       * subjectList = save_i;
        */
-    Instruction body = `LetAssign(subjectListName,genGetTail(tomSymbol,Ref(subjectListName)),subAction);
-    Expression source = genGetHead(tomSymbol,termType,`Ref(subjectListName));
+    Instruction body = `LetAssign(p.subjectListName,genGetTail(p.symbol,Ref(p.subjectListName)),subAction);
+    Expression source = genGetHead(p.symbol,termType,`Ref(p.subjectListName));
     Instruction let = buildLet(var, source, body, `Nop(), moduleName);
     if(notEmptyList) {
-      return `genCheckEmptyList(tomSymbol, subjectListName,Nop(),let);
-    } else {
-      return let;
+      let = `genCheckEmptyList(p.symbol, p.subjectListName,Nop(),let);
     }
+
+    TomNumberList ppath = p.path;
+    TomNumberList pathEnd = `concTomNumber(ppath*,End(Number(indexTerm)));
+    TomType listType = p.symbol.getTypesToType().getCodomain();
+    TomTerm variableEndAST = `Variable(concOption(),PositionName(pathEnd),listType,concConstraint());
+    Instruction letRestore = `Assign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)));
+    Instruction letSave = `Let(variableEndAST,
+	TomTermToExpression(Ref(p.subjectListName)),
+	UnamedBlock(concInstruction(let,letRestore)));
+    return letSave;
   }
   
   private Expression genGetHead(TomSymbol tomSymbol, TomType type, TomTerm var) {
