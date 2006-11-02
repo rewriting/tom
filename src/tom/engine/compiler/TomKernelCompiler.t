@@ -604,13 +604,9 @@ public class TomKernelCompiler extends TomBase {
   }
 
   private boolean containOnlyVariableStar(SlotList termList) {
-    %match(termList) {
-      concSlot() -> {
-        return true;
-      }
-
-      concSlot(PairSlotAppl[Appl=(VariableStar|UnamedVariableStar)[]],termTail*) -> {
-        return containOnlyVariableStar(`termTail);
+    %match(SlotList termList) {
+      !concSlot(_*,!PairSlotAppl[Appl=(VariableStar|UnamedVariableStar)[]],_*)->{
+    	  return true;
       }
     }
     return false;
