@@ -40,7 +40,7 @@ import java.util.*;
  * Object that represents a position in a term
  */
 
-public class Position {
+public class Position implements Cloneable {
   private static final int DEFAULT_LENGTH = 8;
   protected int size;
   protected int[] data;
@@ -88,7 +88,13 @@ public class Position {
   }
 
   public Object clone() {
-    Position clone = new Position(data.length);
+    Position clone = null;
+    try {
+      clone = (Position) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException("Position cloning error");
+    }
+    clone.data = new int[data.length];
     clone.size = size;
     System.arraycopy(data, 0, clone.data, 0, size);
     return clone;

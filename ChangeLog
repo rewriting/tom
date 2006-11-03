@@ -1,3 +1,9 @@
+2006-11-03  tonio <reilles@loria.fr>
+	* src/tom/library/sl/Environment.java
+	* src/tom/library/strategies/mutraveler/Position.java:
+	  - correctly implement the Cloneable interface. Problem spotted by
+	  findbugs
+
 2006-11-02  tonio <reilles@loria.fr>
 	* build.xml:
 	  - add basic findbugs support

@@ -38,7 +38,7 @@ import java.util.Arrays;
  * the root is stored in the first cell
  */
 
-public class Environment {
+public class Environment implements Cloneable {
   private static final int DEFAULT_LENGTH = 8;
   public static final int SUCCESS = 0;
   public static final int FAILURE = 1;
@@ -75,11 +75,13 @@ public class Environment {
     }
   }
 
-  public Object clone() {
-    Environment clone = new Environment(omega.length);
-    clone.size = size;
+  public Object clone() throws CloneNotSupportedException {
+    Environment clone = (Environment) super.clone();
+    clone.omega = new int[omega.length];
+    clone.subterm = new Visitable[omega.length];
     System.arraycopy(omega, 0, clone.omega, 0, size);
     System.arraycopy(subterm, 0, clone.subterm, 0, size);
+    clone.size = size;
     return clone;
   }
 
