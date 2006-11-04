@@ -138,6 +138,34 @@ public class TestBuiltin extends TestCase {
     assertTrue(res);
   }
 
+  public void testBoolean() {
+    Wrapper t1 = `Bool(true);
+    Wrapper t2 = `Bool(true);
+    assertTrue(t1 == t2);
+
+    t1 = `Bool(false);
+    t2 = `Bool(false);
+    assertTrue(t1 == t2);
+  }
+
+  public void testMatchBoolean() {
+    boolean res = false;
+    Wrapper nm = `Bool(true());
+    %match(Wrapper nm) {
+      Bool(false()) -> { res = false; }
+      Bool(true()) -> { res = true; }
+    }
+    assertTrue("Match in the second branch",res);
+
+    nm = `Bool(false());
+    %match(Wrapper nm) {
+      Bool(false()) -> { res = false; }
+      Bool(true()) -> { res = true; }
+    }
+    assertFalse("Match in the first branch",res);
+  }
+
+
   public final static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
   }
