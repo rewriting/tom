@@ -375,6 +375,10 @@ writer.write(%[
             res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
             res.append(getMethod(slot));
             res.append("())");
+          } else if (`domain.equals(`ClassName("","boolean"))) {
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
+            res.append(getMethod(slot));
+            res.append("()?1:0)");
           } else if (`domain.equals(`ClassName("","long"))) {
             res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
             res.append(getMethod(slot));
@@ -437,6 +441,8 @@ writer.write(%[
             buffer.append("((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()");
           } else  if (`domain.equals(`ClassName("","float"))) {
             buffer.append("(float) ((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
+          } else  if (`domain.equals(`ClassName("","boolean"))) {
+            buffer.append("(((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()==0?false:true)");
           } else  if (`domain.equals(`ClassName("","long"))) {
             buffer.append("(long) ((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
           } else  if (`domain.equals(`ClassName("","double"))) {
@@ -697,7 +703,7 @@ writer.write(%[
 			%match(SlotField head) {
 				SlotField[Name=slotName,Domain=domain] -> {
 					if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-						if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
+						if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char")) || `domain.equals(`ClassName("","boolean"))) { 
 							res.append(%[@buffer@.append(@fieldName(`slotName)@);
     ]%);
 						} else if (`domain.equals(`ClassName("","String"))) {
@@ -734,6 +740,11 @@ writer.write(%[
            res.append(%[
     if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
       return (this.@fieldName(`slotName)@ < @other@.@fieldName(`slotName)@)?-1:1;
+]%);
+         } else if (`domain.equals(`ClassName("","boolean"))) {
+           res.append(%[
+    if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
+      return (!this.@fieldName(`slotName)@ && @other@.@fieldName(`slotName)@)?-1:1;
 ]%);
          } else if (`domain.equals(`ClassName("","String"))) {
            res.append(%[
@@ -776,6 +787,8 @@ writer.write(%[
         } else {
           if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) {
             writer.write(fieldName(`slotName));
+          } else if (`domain.equals(`ClassName("","boolean"))) {
+            writer.write("("+fieldName(`slotName)+"?1:0)");
           } else if (`domain.equals(`ClassName("","String"))) {
             // Use the string hashFunction for Strings, and pass index as arity
             writer.write("shared.HashFunctions.stringHashFunction("+fieldName(`slotName)+", "+index+")");
@@ -826,14 +839,13 @@ public void generateConstructor(java.io.Writer writer) throws java.io.IOExceptio
             ]%);
       }
     }
-    // also generate the tom mapping
     mapping.generate(writer); 
   }
 }
 
 /*
- * The function for generating the file is extended, to be able to call Tom if necessary
- * (i.e. if there are user defined hooks)
+ * The function for generating the file is extended, to be able to call Tom if
+ * necessary (i.e. if there are user defined hooks)
  */
 public int generateFile() {
   if (hooks.isEmptyconcHook()) {

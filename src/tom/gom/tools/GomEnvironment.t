@@ -79,6 +79,7 @@ public class GomEnvironment {
 
   private Map builtinSorts = new HashMap();
   private void initBuiltins() {
+    builtinSorts.put("boolean",`ClassName("","boolean"));
     builtinSorts.put("int",`ClassName("","int"));
     builtinSorts.put("String",`ClassName("","String"));
     builtinSorts.put("char",`ClassName("","char"));

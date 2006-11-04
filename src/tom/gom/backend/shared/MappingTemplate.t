@@ -49,6 +49,11 @@ public class MappingTemplate extends TemplateClass {
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
   public void generate(java.io.Writer writer) throws java.io.IOException {
+    if(GomEnvironment.getInstance().isBuiltinSort("boolean")) {
+      writer.write(%[
+%include { boolean.tom }
+]%);
+    }
     if(GomEnvironment.getInstance().isBuiltinSort("String")) {
       writer.write(%[
 %include { string.tom }
