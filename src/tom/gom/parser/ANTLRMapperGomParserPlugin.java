@@ -48,6 +48,7 @@ import antlr.TokenStreamSelector;
 public class ANTLRMapperGomParserPlugin extends GomGenericPlugin {
 
   public static final String PARSED_SUFFIX = ".tfix.gom.parsed";
+  public static final String PARSEDTERM_SUFFIX = ".tfix.aterm.parsed";
   /** input stream */
   private Reader inputReader;
   private String inputFileName;
@@ -100,7 +101,12 @@ public class ANTLRMapperGomParserPlugin extends GomGenericPlugin {
       //antlr.debug.misc.ASTFrame frame = new antlr.debug.misc.ASTFrame("AST JTree Example", t);
       //frame.setVisible(true);
       if (t != null){
-        module = AST2Gom.getGomModule(t);
+        if(intermediate) {
+          Tools.generateOutput(
+              getStreamManager().getInputFileNameWithoutSuffix()
+              + PARSEDTERM_SUFFIX, t.genATermFromAST(TokenTable.getTokenMap()));
+        }
+        module = AST2Gom.getGomModule(t,getStreamManager());
       }
       else{
       getLogger().log(new PlatformLogRecord(Level.SEVERE,

@@ -129,7 +129,7 @@ public class GomParserPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{module, getStreamManager()};
+    return new Object[]{ module, getStreamManager() };
   }
 
 }

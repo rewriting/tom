@@ -27,6 +27,7 @@ package tom.gom.parser;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
+import tom.gom.GomStreamManager;
 import tom.antlrmapper.ATermAST;
 import aterm.*;
 import aterm.pure.*;
@@ -36,38 +37,91 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 
-public class AST2Gom{
+public class AST2Gom {
 
   %include { Mapping.tom }
   %include { ../adt/gom/Gom.tom }
 
-  public static GomModule getGomModule(ATermAST t){
-    return getGomModule(t.genATermFromAST(TokenTable.getTokenMap()));
+  public static GomModule getGomModule(ATermAST t, GomStreamManager stream) {
+    return getGomModule(t.genATermFromAST(TokenTable.getTokenMap()),stream);
   }
 
-  private static GomModule getGomModule(ATerm t) {
-    %match(ATerm t){
-      MODULE(_,(name,imports,section*)) ->{
+  private static GomModule getGomModule(ATerm t, GomStreamManager stream) {
+    /*
+     * The first sequence of (ID DOT)* ID nodes composes the module name
+     */
+    GomModuleName moduleName = null;
+    ATermList list = null;
+    %match(ATerm t) {
+      MODULE(_,l) -> {
+        list = `l;
+        ATermList modname = `concATerm();
+        while (true) {
+          %match(ATermList list) {
+            (a@(ID|DOT)[],_*) -> {
+              modname = `concATerm(modname*,a);
+              list = list.getNext();
+              continue;
+            }
+            _ -> { break; }
+          }
+        }
+        moduleName = getGomModuleName(modname, stream);
+      }
+    }
+    if (moduleName == null) {
+      throw new GomRuntimeException("No module name here");
+    }
+    %match(ATermList list) {
+      (imports,section*) ->{
         %match(ATerm imports){//checks that imports is a real import, not a section
           IMPORTS(_,_) -> {
-            return `GomModule(getGomModuleName(name),concSection(getImports(imports),getSection(section*)));
+            return `GomModule(moduleName,concSection(getImports(imports),getSection(section*)));
           }
         }
       }
-      MODULE(_,(name,section*)) ->{
-        return `GomModule(getGomModuleName(name),concSection(getSection(section*)));
+      (section*) ->{
+        return `GomModule(moduleName,concSection(getSection(section*)));
       }
     }
     throw new GomRuntimeException("Unable to translate: " + t);
   }
 
   private static GomModuleName getGomModuleName(ATerm t) {
-    %match(ATerm t){
-      ID(NodeInfo[text=text],_) ->{
+    %match(ATerm t) {
+      ID(NodeInfo[text=text],_) -> {
         return `GomModuleName(text);
       }
     }
     throw new GomRuntimeException("Unable to translate: " + t);
+  }
+
+  private static GomModuleName getGomModuleName(ATermList l,
+                                                GomStreamManager stream) {
+    %match(ATermList l) {
+      (prefix*,ID(NodeInfo[text=text],_)) -> {
+        if (!`prefix.isEmpty()) {
+          setPkgPath(`prefix,stream);
+        }
+        return `GomModuleName(text);
+      }
+    }
+    throw new GomRuntimeException("Unable to translate: " + l);
+  }
+
+  private static void setPkgPath(ATermList l, GomStreamManager stream) {
+    StringBuffer pkgPrefix = new StringBuffer("");
+    while (!l.isEmpty()) {
+      ATerm t = l.getFirst();
+      %match(ATerm t) {
+        ID(NodeInfo[text=text],_) -> { pkgPrefix.append(`text); }
+        DOT[] -> { pkgPrefix.append("."); }
+      }
+      l = l.getNext();
+    }
+    /* Take care to remove the last dot */
+    pkgPrefix.deleteCharAt(pkgPrefix.length()-1);
+    stream.appendToPackagePath(pkgPrefix.toString());
   }
 
   private static Section getImports(ATerm t) {
@@ -95,6 +149,9 @@ public class AST2Gom{
   private static ImportedModule getImportedModule(ATerm t) {
     %match(ATerm t){
       module -> {
+        /*
+         * Add a list operator, as imports are unqualified names
+         */
         return `Import(getGomModuleName(module));
       }
     }

@@ -44,7 +44,9 @@ options {
   }
 }
 
-module: MODULE^ moduleName:ID (imports)? section ;
+module: MODULE^ modulename (imports)? section ;
+
+modulename: (mod:ID DOT)* moduleName:ID ;
 
 imports: IMPORTS^ (importedModuleName:ID)* ;
 
@@ -132,6 +134,7 @@ tokens
 ARROW       : "->";
 COLON       : ':';
 COMMA       : ',';
+DOT         : '.';
 LEFT_BRACE  : '(';
 RIGHT_BRACE : ')';
 STAR        : '*';
