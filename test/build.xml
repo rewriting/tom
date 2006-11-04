@@ -46,6 +46,10 @@
                 destdir="${test.gen}">
          <include name="sl/testsl.gom"/>
     </gom.preset>
+    <gom.preset srcdir="${test.src}"
+                destdir="${test.gen}">
+         <include name="gom/Dotted.gom"/>
+    </gom.preset>
     <tom.preset srcdir="${test.src}"
                 destdir="${test.gen}">
       <exclude name="cfib1.t"/>

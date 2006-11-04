@@ -1,0 +1,8 @@
+module gom.Dotted
+
+abstract syntax
+Nop = EmptyNop()
+    | UnaryNop(slot:Nop)
+    | BinaryNop(ls:Nop,rs:Nop)
+    | TertiaryNop(ls:Nop,cs:Nop,rs:Nop)
+    | Vary(Nop*)
