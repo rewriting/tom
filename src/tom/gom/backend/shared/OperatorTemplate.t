@@ -703,8 +703,11 @@ writer.write(%[
 			%match(SlotField head) {
 				SlotField[Name=slotName,Domain=domain] -> {
 					if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-						if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char")) || `domain.equals(`ClassName("","boolean"))) { 
+						if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
 							res.append(%[@buffer@.append(@fieldName(`slotName)@);
+    ]%);
+						} else if (`domain.equals(`ClassName("","boolean"))) {
+							res.append(%[@buffer@.append(@fieldName(`slotName)@?1:0);
     ]%);
 						} else if (`domain.equals(`ClassName("","String"))) {
 							res.append(%[@buffer@.append("\"");

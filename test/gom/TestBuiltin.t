@@ -165,6 +165,13 @@ public class TestBuiltin extends TestCase {
     assertFalse("Match in the first branch",res);
   }
 
+  public void testFromString() {
+    String s = "Bool(1)"; 
+    Wrapper test = Wrapper.fromString(s);
+    assertEquals("Terms are equals", test, `Bool(true()));
+    assertEquals("String representations are equals",test.toString(),
+        "Bool(1)");
+  }
 
   public final static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
