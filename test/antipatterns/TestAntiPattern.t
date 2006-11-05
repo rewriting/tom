@@ -38,7 +38,7 @@ public class TestAntiPattern extends TestCase {
 	
   %gom {
     module AntiPattern
-      imports String
+      imports String int
       abstract syntax
       Term = a()
       | b()
@@ -46,6 +46,8 @@ public class TestAntiPattern extends TestCase {
       | f(x1:Term, x2:Term) 
       | g(pred:Term)
       | ff(x1:Term, x2:Term)
+      | i(val:int)
+      | j(val:int)
 
       Result = True()
       | False()
@@ -397,5 +399,61 @@ public class TestAntiPattern extends TestCase {
     	assertTrue(match16(`f(b(),f(a(),b()))) == `False());
 	}
 
+  private Result match17(Term subject){
+		%match(Term subject){
+			i(!1) ->{
+				return `True(); 
+			}
+		}
+		return `False();
+	}
 	
+	public void testAp17() {		
+    	assertTrue(match17(`i(1)) == `False());
+    	assertTrue(match17(`i(2)) == `True());
+	}
+
+  private Result match18(Term subject){
+		%match(Term subject){
+			i(x@!1) ->{
+				return `Equal("j(x)",j(x)); 
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp18() {		
+    	assertTrue(match18(`i(1)) == `False());
+    	assertTrue(match18(`i(2)) == `Equal("j(x)",j(2)));
+	}
+
+  private Result match19(Term subject){
+		%match(Term subject){
+			ff(i(x@!1),i(x)) ->{
+				return `Equal("j(x)",j(x)); 
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp19() {		
+    	assertTrue(match19(`ff(i(1),i(2))) == `False());
+    	assertTrue(match19(`ff(i(2),i(2))) == `Equal("j(x)",j(2)));
+	}
+
+  private Result match20(Term subject){
+		%match(Term subject){
+			ff(x@!a(),x) ->{
+				return `Equal("x",x); 
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp20() {		
+    	assertTrue(match20(`ff(a(),a())) == `False());
+    	assertTrue(match20(`ff(a(),b())) == `False());
+    	assertTrue(match20(`ff(b(),b())) == `Equal("x",b()));
+	}
+
 }
