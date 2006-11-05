@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2006, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -99,7 +99,7 @@ public class TestBuiltin extends TestCase {
     }
     assertTrue(res.equals("1234567890l"));
   }
-  
+
   public void testMatchChar() {
     String res = "";
     Wrapper t = `Char('b');
@@ -166,7 +166,7 @@ public class TestBuiltin extends TestCase {
   }
 
   public void testFromString() {
-    String s = "Bool(1)"; 
+    String s = "Bool(1)";
     Wrapper test = Wrapper.fromString(s);
     assertEquals("Terms are equals", test, `Bool(true()));
     assertEquals("String representations are equals",test.toString(),
@@ -182,5 +182,5 @@ public class TestBuiltin extends TestCase {
   public final static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
   }
-  
+
 }

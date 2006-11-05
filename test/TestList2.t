@@ -3,7 +3,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import aterm.pure.*;
 
-public class TestList2 extends GenericTest{
+public class TestList2 extends GenericTest {
   private static ATerm ok,fail;
   private static final ATermFactory factory = new PureFactory(16);
   private static final Object[][] TESTS = new Object[][]{
@@ -42,7 +42,7 @@ public class TestList2 extends GenericTest{
       {"match6",new Integer(1),"aterm.ATerm",factory.parse("[f(a),f(b),f(a),f(c)]"),factory.parse("ok")},
       {"match6",new Integer(1),"aterm.ATerm",factory.parse("[g(f(a)),f(b),g(f(a)),f(c)]"),factory.parse("ok")}
   };                                                      
-  public TestList2(int testNumber){
+  public TestList2(int testNumber) {
     super(testNumber,TESTS);
   }
 

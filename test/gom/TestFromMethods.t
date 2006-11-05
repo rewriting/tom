@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2006, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -30,20 +30,42 @@
  */
 package gom;
 
-import java.io.*;
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import gom.bool.types.*;
+import gom.b.u.i.l.t.i.n.builtin.types.*;
 
-public class TestBool extends TestCase {
+public class TestFromMethods extends TestCase {
 
-  %include { bool/Bool.tom }
+  %include { b/u/i/l/t/i/n/builtin/Builtin.tom }
+
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestBool.class));
+    junit.textui.TestRunner.run(suite());
   }
 
-  public void testNotHook() {
-    Bool test = `Not(And(True(),True()));
-    assertEquals(test,`Or(False(),False()));
+  public static Test suite() {
+    Wrapper[] TESTS = new Wrapper[] {
+      `Int(21),
+      `Long(23),
+      `Name("who?")
+    };
+    TestSuite suite = new TestSuite();
+    for (int i = 0; i<TESTS.length;i++) {
+      suite.addTest(new TestFromMethods("testFromString",TESTS[i]));
+    }
+    return suite;
+  }
+
+  private Wrapper testSubject;
+  public TestFromMethods(String method, Wrapper wr) {
+    super(method);
+    testSubject = wr; 
+  }
+
+  public void testFromString() {
+    System.out.println("Testing");
+    System.out.println("Testing = "+testSubject);
+    Wrapper newObj = Wrapper.fromString(testSubject.toString());
+    assertEquals(testSubject,newObj);
   }
 }

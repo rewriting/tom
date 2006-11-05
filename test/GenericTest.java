@@ -3,9 +3,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import java.lang.reflect.*;
 
-public abstract class GenericTest extends TestCase{
+public abstract class GenericTest extends TestCase {
   private int testNumber;
-  private static final String[] primitiveWrappers = new String[]{"java.lang.Boolean",
+  private static final String[] primitiveWrappers = new String[]{
+    "java.lang.Boolean",
     "java.lang.Character",
     "java.lang.Byte", 
     "java.lang.Short",
@@ -14,7 +15,8 @@ public abstract class GenericTest extends TestCase{
     "java.lang.Float",
     "java.lang.Double"};
 
-  private static final Class[] primitiveClasses = new Class[]{java.lang.Boolean.TYPE,
+  private static final Class[] primitiveClasses = new Class[]{
+    java.lang.Boolean.TYPE,
     java.lang.Character.TYPE,
     java.lang.Byte.TYPE, 
     java.lang.Short.TYPE,
@@ -23,7 +25,8 @@ public abstract class GenericTest extends TestCase{
     java.lang.Float.TYPE,
     java.lang.Double.TYPE};
 
-  private static final String[] primitiveTypes = new String[]{"boolean","char","byte","short","int","long","float","double"};
+  private static final String[] primitiveTypes = new String[]{
+    "boolean","char","byte","short","int","long","float","double"};
 
 
   private Object[][] testTab;
@@ -75,7 +78,7 @@ public abstract class GenericTest extends TestCase{
         }
       }
       if(! isPrimitive){
-        // si la méthode testee est de type void, il faut faire attention d'avoir redéfini correctement equals
+        // si la mÃ©thode testee est de type void, il faut faire attention d'avoir redÃ©fini correctement equals
         if(returnType.getName().equals("void")){
           methode.invoke(this,parameters);
           assertSame(
@@ -90,7 +93,9 @@ public abstract class GenericTest extends TestCase{
               td[2+2*nbParam]);
         }
       }
-    }catch(Exception e){System.out.println(e);}
+    } catch(Exception e) {
+      System.out.println(e);
+    }
   }
 
 }
