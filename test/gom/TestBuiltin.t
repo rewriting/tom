@@ -173,6 +173,12 @@ public class TestBuiltin extends TestCase {
         "Bool(1)");
   }
 
+  public void testFrom_int() {
+    Wrapper test = `Int(123456);
+    Wrapper testBis = Wrapper.fromString(test.toString());
+    assertEquals(test,testBis);
+  }
+
   public final static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
   }
