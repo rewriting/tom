@@ -1278,6 +1278,7 @@
     </tar>
     <delete dir="${dist}/checkout"/>
   </target>
+  
 
   <target name="init.task.findbugs">
     <fail unless="findbugs.home">

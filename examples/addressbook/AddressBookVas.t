@@ -40,8 +40,6 @@ public class AddressBookVas {
     abstract syntax
       Date = date( year:int, month:int, day:int )
       Person = person(firstname:String,lastname:String, birthdate:Date)
-             | bob()
-             | alice()
       PersonList = concPerson( Person* )
   }
  
@@ -51,11 +49,12 @@ public class AddressBookVas {
     happyBirthday(book,today);
   }
 
-  public static void happyBirthday(PersonList book, Date date) {
-    %match(book, date) {
-      concPerson(X*, person(firstname, _, date(_, month,day)), _*) , 
-                                          date(_,month,day)   -> {
-        System.out.println("Happy birthday " + `firstname);
+  public static void happyBirthday(PersonList book, Date d) {
+    %match(book, d) {
+      concPerson(_*, person(firstname, _, date(_, month,day)), _*) , date(_,month,day)   -> {
+	System.out.println("month = " + `month);
+	System.out.println("day = " + `day);
+	  System.out.println("Happy birthday " + `firstname);
       }
     }
   }
@@ -63,7 +62,7 @@ public class AddressBookVas {
   public static PersonList generateBook() {
     return `concPerson(
       person("John","Smith",date(1965,3,27)),
-      person("Marie","Muller",date(1986,3,27)),
+      person("Marie","Muller",date(1986,3,28)),
       person("Paul","Muller",date(2000,1,27))
 			);
   }
