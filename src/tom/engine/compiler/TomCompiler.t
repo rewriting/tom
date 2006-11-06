@@ -391,17 +391,27 @@ matchBlock: {
 
   private static TomTerm renameVariable(TomTerm subject,
       Map multiplicityMap,      
-      Collection antiList) {
+      Collection antiList,
+      boolean treatConstraints) {
     TomTerm renamedTerm = subject;
 
     %match(subject) {
       var@(UnamedVariable|UnamedVariableStar)[Constraints=constraints] -> {
-        ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap);
-        return `var.setConstraints(newConstraintList);
+    	  if (treatConstraints){
+    		  ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap);
+    		  return `var.setConstraints(newConstraintList);
+    	  }else{
+    		  return `var;
+    	  }
       }
 
-      var@(Variable|VariableStar)[AstName=name,Constraints=clist] -> {
-        ConstraintList newConstraintList = renameVariableInConstraintList(`clist,multiplicityMap);
+      var@(Variable|VariableStar)[AstName=name,Constraints=constraints] -> {
+        ConstraintList newConstraintList;
+        if (treatConstraints){        
+        	newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
+        }else{
+        	newConstraintList = `constraints;
+        }
         if(!multiplicityMap.containsKey(`name)) {
           // We see this variable for the first time
           multiplicityMap.put(`name,new Integer(1));
@@ -428,17 +438,26 @@ matchBlock: {
         SlotList newArgs = `concSlot();
         while(!args.isEmptyconcSlot()) {
           Slot elt = args.getHeadconcSlot();
-          TomTerm newElt = renameVariable(elt.getAppl(),multiplicityMap,antiList);
+          TomTerm newElt = renameVariable(elt.getAppl(),multiplicityMap,antiList,treatConstraints);
           newArgs = `concSlot(newArgs*,PairSlotAppl(elt.getSlotName(),newElt));
           args = args.getTailconcSlot();
+        }        
+        ConstraintList newConstraintList;
+        if (treatConstraints){        
+        	newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
+        }else{
+        	newConstraintList = `constraints;
         }
-        ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
         renamedTerm = `RecordAppl(optionList,nameList,newArgs,newConstraintList);
         return renamedTerm;
       }
-      // store this for late processing
-      AntiTerm[TomTerm=t] ->{
-    	  antiList.add(`t);
+      // store this for late processing,
+      // after renaming in the constraints
+      AntiTerm[TomTerm=t@(Variable|VariableStar|RecordAppl)[Constraints=constraints]] ->{
+    	  ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
+		  TomTerm newTerm = `t.setConstraints(newConstraintList);    		  
+
+    	  antiList.add(newTerm);
     	  //return `AntiTerm(renameVariable(t,multiplicityMap,equalityCheck));
       }
     }
@@ -455,7 +474,7 @@ matchBlock: {
         AssignTo(var@Variable[]) -> {
           // we should never find anti in constraints at this point in the compilation,
           // so it is safe to pass a null value
-          newCstElt = `AssignTo(renameVariable(var,multiplicityMap,null)); 
+          newCstElt = `AssignTo(renameVariable(var,multiplicityMap,null,true)); 
         }
       }
       list.add(newCstElt);
@@ -474,7 +493,7 @@ matchBlock: {
       // this is because we want to rename the variables of 
       // the antis only after we renamed the free variables
       ArrayList antiList = new ArrayList();      
-      TomTerm newElt = renameVariable(elt,multiplicityMap,antiList);      
+      TomTerm newElt = renameVariable(elt,multiplicityMap,antiList,true);      
 
       newElt = handleAntiReplacement(newElt,multiplicityMap,antiList);
   
@@ -527,8 +546,8 @@ matchBlock: {
       } // end while
       
       return newElt;
-  }
-    
+  }    
+  
   %strategy RenameAnti(antiTerm:TomTerm, multiplicityMap:Map, antiList:Collection) extends `Identity(){
 	  visit TomTerm {
 		  a@AntiTerm(x) ->{
@@ -536,7 +555,9 @@ matchBlock: {
 			  // because this can generate very subtle bugs - we can find 
 			  // the same term at a different positions
 			  if (`x == antiTerm){
-				  TomTerm newTerm = `AntiTerm(renameVariable(antiTerm,multiplicityMap,antiList));
+				  // at this point, all the constraints have been treated
+				  // so we can set the treatConstraints to false
+				  TomTerm newTerm = `AntiTerm(renameVariable(antiTerm,multiplicityMap,antiList,false));
 				  // if we changed something, return the new term
 				  // if not, stop anyway
 				  if (`a != newTerm){
