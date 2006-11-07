@@ -324,5 +324,4 @@ public class TestAntiPatternAssociative extends TestCase {
 		assertTrue(match12(`a()) == `False());
 		assertTrue(match12(`f(g(a()),b())) == `True());
 	}
-	
 }
