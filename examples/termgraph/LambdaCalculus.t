@@ -30,10 +30,7 @@
 package termgraph;
 
 import tom.library.strategy.mutraveler.*;
-
 import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
 import java.util.*;
 
 import termgraph.lambdaterm.*;
@@ -43,37 +40,17 @@ import termgraph.lambdaterm.types.lambdaterm.posLambdaTerm;
 
 public class LambdaCalculus {
 
+  private static int comptVariable = 0;	
   %include{java/util/HashMap.tom}
-  %include {mustrategy.tom }
-  %include {strategy/graph.tom }
+  %include { mustrategy.tom }
   %include {lambdaterm/lambdaterm.tom}
   %include {lambdaterm/_lambdaterm.tom}
-  
+
   %strategy ToDeBruinj(table:HashMap) extends Identity(){
     visit LambdaTerm{
-      
-     app(arg1,arg2) -> {
-        LambdaTerm t1 = (LambdaTerm) `ToDeBruinj(table).apply(`arg1);
-        LambdaTerm t2 = (LambdaTerm) `ToDeBruinj(table).apply(`arg2);
-        return `app(t1,t2);
-     }
-
-      abs[var=var,arg=arg] -> {
-        Position old = (Position) table.get(`var);
-        table.put(`var,getPosition());
-        LambdaTerm t = (LambdaTerm) `ToDeBruinj(table).apply(`arg);
-        if (old != null) {
-          table.put(`var,old);
-        }
-        else{
-          table.remove(`var);
-        }
-        return `abs2(t);
-      }
-
-      var[name=name] -> {
-        if(table.containsKey(`name)){
-          RelativePosition pos = RelativePosition.make(getPosition(),(Position)table.get(`name));
+      v@var[] -> {
+        if(table.containsKey(`v)){
+          RelativePosition pos = RelativePosition.make(getPosition(),(Position)table.get(`v));
           int[] array = pos.toArray();
           LambdaTerm ref = `posLambdaTerm();
           for(int i=0;i<pos.depth();i++){
@@ -85,16 +62,105 @@ public class LambdaCalculus {
     }
   }
 
+  %strategy CollectVar(table:HashMap) extends Fail() {
+    visit LambdaTerm{
+      abs[var=var,arg=arg] -> {
+        table.put(`var,getPosition());
+        return `abs2(arg);
+      }
+    }
+  }
 
-  public static void main(String[] args){
-    HashMap table = new HashMap();
-    LambdaTerm t1 = `abs("x",abs("y",app(var("x"),var("y"))));
-    t1 = (LambdaTerm) `ToDeBruinj(table).apply(t1); 
-    System.out.println("l x.l y. x y :"+t1);
-    table = new HashMap();
-    LambdaTerm t2 = `app(abs("x",abs("y",app(var("x"),var("y")))),var("x"));
-    t2 = (LambdaTerm)  `ToDeBruinj(table).apply(t2);
-    System.out.println("(l x.l y. x y) x :"+t2);
+  public final static void main(String[] args) {
+    LambdaTerm subject = `var("undefined");
+    LambdaInfo info = new LambdaInfo();
+    MuStrategy beta = `Sequence(_app(Identity(),collectTerm(info)),_app(Sequence(collectPosition(info),_abs2(Mu(MuVar("x"),Choice((substitute(info)),All(MuVar("x")))))),Identity()));
+    String s;
+    LambdaTermLexer lexer = new LambdaTermLexer(System.in); // Create parser attached to lexer
+    LambdaTermParser parser = new LambdaTermParser(lexer);
+    while(true){
+      System.out.print(">");
+      try {
+        subject = parser.lambdaterm();
+        System.out.println(prettyPrinter(subject));
+      } catch (Exception e) {
+        System.out.println(e);
+
+      }
+      System.out.println("Orginal term:"+subject);
+      HashMap table = new HashMap();
+      subject = (LambdaTerm) `TopDown(Try((Sequence(CollectVar(table),TopDown(ToDeBruinj(table)))))).apply(subject); 
+      System.out.println("Representation in graph term:"+subject);
+      System.out.println("After beta-normalisation: "+`Sequence(RepeatId(beta),RepeatId(removeApp())).apply(subject));
+    }
+  }
+
+  %strategy removeApp() extends `Identity() {
+    visit LambdaTerm {
+      app(abs2(arg),_)-> {return `arg;}
+    }
+  }
+
+  %strategy print() extends `Identity() {
+    visit LambdaTerm {
+      X -> {System.out.println(prettyPrinter(`X));}
+    }
+  }
+
+  %strategy collectPosition(info:LambdaInfo) extends `Identity() {
+    visit LambdaTerm {
+      _ -> {
+        info.pos=getPosition();
+      }
+    }
+  }
+
+  %strategy collectTerm(info:LambdaInfo) extends `Identity() {
+    visit LambdaTerm {
+      term -> {
+        info.term=`term;
+      }
+    }
+  }
+
+
+  %typeterm Position{
+    implement {Position}
+  }
+
+  %typeterm LambdaInfo{
+    implement {LambdaInfo}
+  }
+
+
+  static class LambdaInfo{
+    public Position pos;
+    public LambdaTerm term;
+  }
+  
+  //[subject/X]t
+  %strategy substitute(info:LambdaInfo) extends `Fail(){
+    visit LambdaTerm {
+      p@posLambdaTerm(_*) -> {
+        RelativePosition relPos = new RelativePosition(((MuReference)`p).toArray());
+        if(relPos.getAbsolutePosition(getPosition()).equals(info.pos)){
+          return info.term;
+        }
+
+        else{
+          return `p;
+        }
+      }
+    }
+  }
+
+  public static String prettyPrinter(LambdaTerm t){
+    %match(LambdaTerm t){
+      app(term1,term2) -> {return "("+prettyPrinter(`term1)+"."+prettyPrinter(`term2)+")";}
+      abs(term1,term2) -> {return "("+prettyPrinter(`term1)+"->"+prettyPrinter(`term2)+")";}
+      var(s) -> {return `s;}
+    }
+    return "";
   }
 
 }

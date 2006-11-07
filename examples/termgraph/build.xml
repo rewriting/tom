@@ -24,6 +24,17 @@
       </fileset>
     </copy>
     <gomrefcompile example="${termgraph}"/>
+    <!-- build parser -->
+    <tom.preset outputfile="${examples.gen}/${termgraph}/LambdaTermParser.g"
+                options="-I ${examples.gen}/${termgraph}"
+                srcdir="${examples.dir}"> 
+                <include name="${termgraph}/**/LambdaTermParser.g.t"/>
+    </tom.preset>
+    <mkdir dir="${examples.gen}/${termgraph}"/>
+    <tomantlr target="${examples.gen}/${termgraph}/LambdaTermParser.g"
+              outputdirectory="${examples.gen}/${termgraph}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
     <tomcompile example="${termgraph}"/>
     <javacompile example="${termgraph}"/>
   </target>
