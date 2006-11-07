@@ -115,7 +115,7 @@ public class TomKernelCompiler extends TomBase {
 
   %strategy replace_compileMatching(compiler:TomKernelCompiler) extends `Identity() {
     visit Instruction {
-      Match(SubjectList(l1),patternInstructionList, optionList)  -> {
+      Match(SubjectList(l1),patternInstructionList, optionList)  -> {    	  
 	//TODO
 	String moduleName = "default";
 	TomNumberList rootpath = `concTomNumber();
@@ -142,20 +142,21 @@ public class TomKernelCompiler extends TomBase {
 	  /*
 	   * compile nested match constructs
        * given a list of pattern: we build a matching automaton
-       */
-      actionInst = (Instruction) compileStrategy.visit(actionInst);
-      // anti flag
+       */	  
+	  actionInst = (Instruction) compileStrategy.visit(actionInst);
+      // anti flag      
       antiConstraintFirstTime = true;
-      TomName antiFlagName = `PositionName(concTomNumber(rootpath*,NameNumber(Name(ANTI_FLAG_NAME))));
+      TomName antiFlagName = `PositionName(concTomNumber(rootpath*,NameNumber(Name(ANTI_FLAG_NAME))));      
       antiFlagVariable = `Variable(concOption(OriginTracking(antiFlagName,0,""))
     		  ,antiFlagName,antiFlagType,concConstraint());
       TomAntiPatternTransformNew.initialize();      
       // final test
-      Instruction finalTest = `If(EqualTerm(antiFlagType,Ref(antiFlagVariable),ExpressionToTomTerm(TrueTL())),actionInst,Nop());      
+      Instruction finalTest = `If(EqualTerm(antiFlagType,Ref(antiFlagVariable),ExpressionToTomTerm(TrueTL())),actionInst
+    		  ,LetAssign(antiFlagVariable,TrueTL(),Nop()));      
       Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(finalTest,`Nop(),
     		  patternList,rootpath,moduleName,null);
 	  // glue the flag declaration
-      //matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
+      matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
       OptionList automataOptionList = `concOption();
       TomName label = compiler.getLabel(pa.getOption());
       if(label != null) {
@@ -1038,13 +1039,14 @@ public class TomKernelCompiler extends TomBase {
   }
 
   private Instruction compileConstraint(TomTerm subject, Expression source, 
-		  Instruction body, Instruction elseBody, String moduleName) {
-	if (antiConstraintFirstTime){	
-		  antiConstraintFirstTime = false;      
-		  // add flag variable declaration
-		  return `LetRef(antiFlagVariable,TrueTL(),compileConstraint(subject, source, 
-    		  body, elseBody, moduleName));
-	}
+		  Instruction body, Instruction elseBody, String moduleName) {	 
+//	if (antiConstraintFirstTime){	
+//		  antiConstraintFirstTime = false;      
+//		  // add flag variable declaration
+//		  return `LetRef(antiFlagVariable,TrueTL(),compileConstraint(subject, source, 
+//    		  body, elseBody, moduleName));
+//		  
+//	}
     %match(subject) {
       (Variable|VariableStar)[Constraints=constraints] -> {
         return buildConstraint(`constraints,`TomTermToExpression(subject.setConstraints(concConstraint())),body,elseBody,moduleName);
