@@ -411,12 +411,12 @@ matchBlock: {
         	newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
         }else{
         	newConstraintList = `constraints;
-        }
+        }        
         if(!multiplicityMap.containsKey(`name)) {
           // We see this variable for the first time
           multiplicityMap.put(`name,new Integer(1));
           renamedTerm = `var.setConstraints(newConstraintList);
-        } else {
+        } else {        
           // We have already seen this variable
           Integer multiplicity = (Integer) multiplicityMap.get(`name);
           int mult = multiplicity.intValue();
@@ -454,11 +454,12 @@ matchBlock: {
       // store this for late processing,
       // after renaming in the constraints
       AntiTerm[TomTerm=t@(Variable|VariableStar|RecordAppl)[Constraints=constraints]] ->{
+    	  
     	  ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
 		  TomTerm newTerm = `t.setConstraints(newConstraintList);    		  
 
     	  antiList.add(newTerm);
-    	  //return `AntiTerm(renameVariable(t,multiplicityMap,equalityCheck));
+    	  return `AntiTerm(newTerm);
       }
     }
     return renamedTerm;
@@ -519,11 +520,10 @@ matchBlock: {
       Map multiplicityMapIntermediate = new HashMap();
       multiplicityMapIntermediate.putAll(multiplicityMap);
       // just a copy of the current map	      
-      Map multiplicityMapSnapShot = new HashMap();
-      
+      Map multiplicityMapSnapShot = new HashMap();      
       while(true){ 
 	      while (!antiList.isEmpty()){
-	    	  TomTerm antiTerm = (TomTerm)antiList.get(0);
+	    	  TomTerm antiTerm = (TomTerm)antiList.remove(0);//antiList.get(0);	    	  
 	    	  // all have to be called with the initial multiplicityMap
 	    	  multiplicityMapSnapShot.clear();
 	    	  multiplicityMapSnapShot.putAll(multiplicityMap);
@@ -531,7 +531,7 @@ matchBlock: {
 	    	  newElt = (TomTerm)`OnceTopDownId(RenameAnti(antiTerm,multiplicityMapSnapShot,newAntiList)).apply(newElt);
 	    	  // make sure we collect the changes to the map
 	    	  multiplicityMapIntermediate.putAll(multiplicityMapSnapShot);
-	    	  antiList.remove(0);
+	    	  //antiList.remove(0);
 	      }
 	      // handle new anti terms found
 	      antiList = newAntiList;
