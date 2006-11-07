@@ -42,19 +42,19 @@ public class ANTLRMapper {
   }
 
   public static int exec(String[] args) {
-    String srcfile = null;
-    String destdir = null;
-    String pack = null;
+    String srcfile = "";
+    String destdir = ".";
+    String pack = "";
 
     for (int i=0; i<args.length; i++) {
       if (args[i].equals("--srcfile")) {
-        srcfile = args[++i];
+	srcfile = args[++i];
       }
       if (args[i].equals("--destdir")) {
-        destdir = args[++i];
+	destdir = args[++i];
       }
       if (args[i].equals("--package")) {
-        pack = args[++i];
+	pack = args[++i];
       }
     }
     ANTLRMapper antlrMapper = new ANTLRMapper(srcfile,destdir,pack);
@@ -75,24 +75,24 @@ public class ANTLRMapper {
       BufferedReader reader = new BufferedReader(new FileReader(fileName));
       String line = "";
       while(line != null) {
-        line = reader.readLine();
+	line = reader.readLine();
 matchBlock: {
-              %match(line) {
-								concString('//',_*) -> { /* comment */
-                  break matchBlock;
-              }
-              concString(name*,'=',_*,'=',value*) -> {//token
-                Integer val = Integer.valueOf(`value);
-                tokenMap.put(val,`name);
-                break matchBlock;
-              }
-              concString(name*,'=',value*) -> {
-                Integer val = Integer.valueOf(`value);
-                tokenMap.put(val,`name);
-                break matchBlock;
-              }
-              }
-            }
+	      %match(line) {
+		concString('//',_*) -> { /* comment */
+		  break matchBlock;
+	        }
+	        concString(name*,'=',_*,'=',value*) -> {//token
+		  Integer val = Integer.valueOf(`value);
+		  tokenMap.put(val,`name);
+		  break matchBlock;
+		}
+		concString(name*,'=',value*) -> {
+		  Integer val = Integer.valueOf(`value);
+		  tokenMap.put(val,`name);
+		  break matchBlock;
+		}
+	      }
+	    }
       }
     } catch (Exception e) {
       System.err.println("Exception: "+e);
@@ -106,32 +106,33 @@ matchBlock: {
 
   private void generateTable(Map tokenMap) {
     StringBuffer out = new StringBuffer();
-
-    out.append(%[
-package @packagePrefix@;
-
-public class TokenTable {
-  private static java.util.HashMap tokenMap = null;
-
-  private static java.util.HashMap initTokenMap() {
-    tokenMap = new java.util.HashMap();
-@initMap("tokenMap",tokenMap)@
-    return tokenMap;
-  }
-  public static java.util.Map getTokenMap() {
-    if (tokenMap == null) {
-      tokenMap = initTokenMap();
+    if(packagePrefix.length()>0) {
+      out.append(%[package @packagePrefix@;
+	  ]%);
     }
-    return (java.util.Map)tokenMap.clone();
-  }
+    out.append(%[
+	public class TokenTable {
+	private static java.util.HashMap tokenMap = null;
 
-}
+	private static java.util.HashMap initTokenMap() {
+	tokenMap = new java.util.HashMap();
+	@initMap("tokenMap",tokenMap)@
+	return tokenMap;
+	}
+	public static java.util.Map getTokenMap() {
+	if (tokenMap == null) {
+	tokenMap = initTokenMap();
+	}
+	return (java.util.Map)tokenMap.clone();
+	}
 
-]%);
+	}
+
+	]%);
     try {
       Writer writer = new BufferedWriter(
-          new FileWriter(destDir + File.separator +
-            packagePath + File.separator + "TokenTable.java"));
+	  new FileWriter(destDir + File.separator +
+	    packagePath + File.separator + "TokenTable.java"));
       writer.write(out.toString());
       writer.close();
     } catch (IOException e) {
@@ -149,7 +150,7 @@ public class TokenTable {
       Integer key = (Integer)it.next();
       String value = (String)tokMap.get(key);
       out.append(%[
-    @mapName@.put(new Integer(@key.intValue()@),"@value@");]%);
+	  @mapName@.put(new Integer(@key.intValue()@),"@value@");]%);
     }
     return out.toString();
   }
@@ -158,54 +159,54 @@ public class TokenTable {
     StringBuffer out = new StringBuffer();
 
     out.append(%[
-  %include{ int.tom }
-  %include{ string.tom }
-  %include{ aterm.tom }
-  %include{ atermlist.tom }
+	%include{ int.tom }
+	%include{ string.tom }
+	%include{ aterm.tom }
+	%include{ atermlist.tom }
 
-  %oplist ATermList concATerm (ATerm*){
-    is_fsym(t) { t instanceof ATermList }
-    make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
-    make_insert(e,l) { l.insert(e) }
-    get_head(t) { t.getFirst() }
-    get_tail(t) { t.getNext() }
-    is_empty(t) { t.isEmpty() }
-  }
+	%oplist ATermList concATerm (ATerm*){
+	is_fsym(t) { t instanceof ATermList }
+	make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
+	make_insert(e,l) { l.insert(e) }
+	get_head(t) { t.getFirst() }
+	get_tail(t) { t.getNext() }
+	is_empty(t) { t.isEmpty() }
+	}
 
-  %op ATerm NodeInfo(text:String,line:int,column:int) {
-    is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",3,false) }
-    get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }
-    get_slot(line, t) { ((ATermInt)((ATermAppl)t).getArgument(1)).getInt() }
-    get_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }
-    make(t,l,c) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("NodeInfo",3,false),SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(t,0,true)),SingletonFactory.getInstance().makeInt(l),SingletonFactory.getInstance().makeInt(c)) }
-  }
+	%op ATerm NodeInfo(text:String,line:int,column:int) {
+	is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",3,false) }
+	get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }
+	get_slot(line, t) { ((ATermInt)((ATermAppl)t).getArgument(1)).getInt() }
+	get_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }
+	make(t,l,c) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("NodeInfo",3,false),SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(t,0,true)),SingletonFactory.getInstance().makeInt(l),SingletonFactory.getInstance().makeInt(c)) }
+	}
 
-  ]%);
+	]%);
 
-    Iterator it = tokMap.keySet().iterator();
-    while(it.hasNext()) {
-      Integer key = (Integer)it.next();
-      String value = (String)tokMap.get(key);
-      out.append(%[
-  %op ATerm @value@(info:ATerm,childs:ATermList) {
-    is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("@value@",2,false) }
-    get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
-    get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
-    make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("@value@",2,false),i,c) }
-  }]%);
-    }
+	Iterator it = tokMap.keySet().iterator();
+	while(it.hasNext()) {
+	  Integer key = (Integer)it.next();
+	  String value = (String)tokMap.get(key);
+	  out.append(%[
+	      %op ATerm @value@(info:ATerm,childs:ATermList) {
+	      is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("@value@",2,false) }
+	      get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+	      get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+	      make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("@value@",2,false),i,c) }
+	      }]%);
+	}
 
-    try {
-      Writer writer = new BufferedWriter(
-          new FileWriter(destDir + File.separator +
-            packagePath + File.separator + "Mapping.tom"));
-      writer.write(out.toString());
-      writer.close();
-    } catch (IOException e) {
-      System.err.println(e.getClass() + ": " + e.getMessage());
-    } catch (Exception e) {
-      System.err.println("Write failed "+e);
-      e.printStackTrace();
-    }
+	try {
+	  Writer writer = new BufferedWriter(
+	      new FileWriter(destDir + File.separator +
+		packagePath + File.separator + "Mapping.tom"));
+	  writer.write(out.toString());
+	  writer.close();
+	} catch (IOException e) {
+	  System.err.println(e.getClass() + ": " + e.getMessage());
+	} catch (Exception e) {
+	  System.err.println("Write failed "+e);
+	  e.printStackTrace();
+	}
   }
 }
