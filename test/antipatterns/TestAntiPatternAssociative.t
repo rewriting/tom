@@ -46,6 +46,7 @@ public class TestAntiPatternAssociative extends TestCase {
 	        | f(x1:Term, x2:Term) 
 	        | g(pred:Term)
 	        | l(list:TermList)
+	        | lst(Term*)
 	    
 	    TermList = concTerm(Term*)    
 	        
@@ -324,4 +325,25 @@ public class TestAntiPatternAssociative extends TestCase {
 		assertTrue(match12(`a()) == `False());
 		assertTrue(match12(`f(g(a()),b())) == `True());
 	}
+	
+	// used to generate a compilation error
+	private Result match13(Term subject){
+		%match(Term subject){
+			lst(_*,lst(_*,f(a(),x@!a()),_*),lst(_*,f(a(),x),_*),_*)->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+	
+	// used to generate a compilation error
+	private Result match14(Term subject){
+		%match(Term subject){
+			lst(_*,lst(_*,f(a(),x@!a()),_*),lst(_*,f(a(),x@!a()),_*),_*)->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+
 }
