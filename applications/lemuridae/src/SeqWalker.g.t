@@ -98,6 +98,8 @@ command returns [Command c]
   | #(RRULE l=pred r=pred) { c = `rewritep(l,r); }
   | #(TRULE lhs=term rhs=term) { c = `rewritet(lhs,rhs); }
   | #(DISPLAY i2:ID) { c = `display(i2.getText()); }
+  | QUIT { c = `quit(); }
+  | #(PROOFCHECK i4:ID) { c = `proofcheck(i4.getText()); }
   | #(PRINT i3:ID) { c = `print(i3.getText()); }
   ;
 

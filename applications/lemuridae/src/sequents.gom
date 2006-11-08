@@ -53,6 +53,8 @@ Command = rewritep(l:Prop, r:Prop)
         | rewritet(lt:Term, rt:Term)
         | proof(name:String, s:Sequent)
         | display(name:String)
+	| quit()
+	| proofcheck(name:String)
         | print(name:String)
 	
 ProofCommand = proofCommand(text:String)

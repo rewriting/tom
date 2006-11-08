@@ -465,7 +465,7 @@ class PrettyPrinter {
   }
 
   public static void display(Tree tree, TermRuleList tl) throws java.io.IOException, java.lang.InterruptedException {
-    tree = cleanTree(tree, tl);
+/*    tree = cleanTree(tree, tl); */
     display(tree);
   }
   

@@ -78,6 +78,8 @@ command: PROOF^ ID COLUMN! seq DOT!
        | RRULE^ atom ARROW! pred DOT!
        | TRULE^ term ARROW! term DOT!
        | DISPLAY^ ID DOT!
+       | QUIT^ DOT!
+       | PROOFCHECK^ ID DOT!
        | PRINT^ ID DOT!
       ;
 
@@ -161,8 +163,10 @@ FOCUS: "focus";
 ASKRULES: "showrules";
 CUT: "cut";
 DISPLAY: "display";
+QUIT: "quit";
 THEOREM: "theorem";
 PRINT: "print";
+PROOFCHECK: "proofcheck";
 
 //VAR: ('a'..'z')('a'..'z'|'0'..'9')*;
 ID : ('A'..'Z'|'a'..'z')('A'..'Z'|'a'..'z'|'0'..'9')*;

@@ -1046,10 +1046,20 @@ b: {
           System.out.println(`name + " proved.");
         }
 
+	proofcheck(name) -> {
+	  Tree tree = theorems.get(`name);
+	  if(ProofChecker.proofcheck(tree)) System.out.println("Proof check passed !");
+	  else System.out.println("Proof check failed :S");
+	}
+
         display(name) -> {
           Tree tree = theorems.get(`name);
           PrettyPrinter.display(tree,newTermRules);
         }
+
+	quit() -> {
+	  System.exit(0);
+	}
 
         print(name) -> {
           Tree tree = theorems.get(`name);
