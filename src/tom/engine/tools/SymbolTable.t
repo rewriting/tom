@@ -33,7 +33,6 @@ import java.util.Set;
 import tom.engine.exception.TomRuntimeException;
 
 import tom.engine.TomBase;
-
 import tom.engine.adt.tomsignature.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomdeclaration.types.*;
