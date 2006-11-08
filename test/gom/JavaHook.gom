@@ -15,7 +15,7 @@ Unary:make(a) {
   System.out.println("Unary("+a+")");
 }
 Vary:make_insert(e,l) {
-  System.out.println("Vary("+e+","+l+")");
+  System.out.println("inserting("+e+","+l+")");
 }
 Ternary:make(t1,t2,t3) {
   System.out.println("Ternary("+t1+","+t2+","+t3+")");

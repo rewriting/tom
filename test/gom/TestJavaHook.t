@@ -7,9 +7,9 @@ import gom.javahook.types.*;
 
 public class TestJavaHook extends TestCase {
 
-	%include { javahook/JavaHook.tom }
-	
-	public static String newline = System.getProperty("line.separator");
+  %include { javahook/JavaHook.tom }
+
+  public static String newline = System.getProperty("line.separator");
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestJavaHook.class));
@@ -20,7 +20,7 @@ public class TestJavaHook extends TestCase {
     ByteArrayOutputStream res = new ByteArrayOutputStream();
     System.setOut(new PrintStream(res));
     `Empty();
-    System.setOut(tmpOut);   
+    System.setOut(tmpOut);
     assertEquals(res.toString(),"Empty()" + newline);
   }
 
@@ -62,9 +62,9 @@ public class TestJavaHook extends TestCase {
         "Empty()"+ newline +
         "Empty()"+ newline +
         "Empty()"+ newline +
-        "Vary(Empty(),EmptyVary())" + newline +
-        "Vary(Empty(),ConsVary(Empty(),EmptyVary()))" + newline +
-        "Vary(Empty(),ConsVary(Empty(),ConsVary(Empty(),EmptyVary())))" + newline +
-        "Vary(Empty(),ConsVary(Empty(),ConsVary(Empty(),ConsVary(Empty(),EmptyVary()))))" + newline);
+        "inserting(Empty(),Vary())" + newline +
+        "inserting(Empty(),Vary(Empty()))" + newline +
+        "inserting(Empty(),Vary(Empty(),Empty()))" + newline +
+        "inserting(Empty(),Vary(Empty(),Empty(),Empty()))" + newline);
   }
 }
