@@ -113,12 +113,22 @@ writer.write(%[
   private int getArity() {
     return @slotList.length()@;
   }
+]%);
 
+  /*
+   * Generate a toStringBuffer method if the operator is not associative
+   */
+  if (sortName == extendsType) {
+writer.write(%[
   public void toStringBuffer(java.lang.StringBuffer buffer) {
     buffer.append("@className()@(");
     @toStringChilds("buffer")@
     buffer.append(")");
   }
+]%);
+  }
+
+writer.write(%[
 
   /**
     * This method implements a lexicographic order
