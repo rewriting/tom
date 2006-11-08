@@ -14,10 +14,10 @@ public class BasicList {
   }
 
   public final static void main(String[] args) {
-    List l1 = `conc(a(),b(),c());
-    System.out.println("l1 = " + l1);
+    List l = `conc(a(),b(),c());
+    System.out.println("l = " + l);
 
-    %match(l1) {
+    %match(l) {
       conc(_,b(),_) -> { System.out.println("found: b"); }
     }
  
