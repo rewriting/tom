@@ -346,4 +346,19 @@ public class TestAntiPatternAssociative extends TestCase {
 		return `False();
 	}
 
+	private Result match15(Term subject){
+		%match(Term subject){
+			lst(_*,lst(_*,f(y,x@!a()),_*),lst(_*,f(y,_),_*),_*) ->{
+				return `True();
+			}
+		}
+		return `False();
+	}
+	
+	public void testAp15() {
+		assertTrue(match15(`lst(lst(f(a(),a()),f(a(),b()),f(a(),a())),lst(f(a(),a()),f(a(),b()),f(a(),a())))) == `True());
+	}
+
+
+
 }
