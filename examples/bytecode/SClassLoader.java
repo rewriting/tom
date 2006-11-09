@@ -28,44 +28,34 @@
  */
 package bytecode;
 
-
 import java.io.FileOutputStream;
 
-
 public class SClassLoader extends ClassLoader {
-
 	public SClassLoader(ClassLoader parent) {
 		super(parent);
 	}
-
 	public SClassLoader() {
 		super();
 	}
-	
 
-	public synchronized Class loadClass(String name)throws ClassNotFoundException{
-
-		if(name.equals("Test")||(name.equals("Test2"))){
-			System.out.println("transformer le fichier Test");
-		Transformateur t = new Transformateur();
-		byte[] scode = t.transformer(name);
-		try{
-       	 	FileOutputStream fos = new FileOutputStream(name+".class");
-        	fos.write(scode);
-       		fos.close();
-			System.out.println("ok");
-
-      	}catch(java.io.IOException e){
-        	System.out.println("IO Exception");
-      	}
-      	Class sClass = defineClass(name,scode, 0, scode.length) ;
-      	return loadClass(sClass.getName(),true);
-		}
-		else{
-			Class sClass = loadClass(name,false);
-			return sClass;
-		}
-	}
-	
-
+  public synchronized Class loadClass(String name) throws ClassNotFoundException {
+    if(name.equals("Test")||(name.equals("Test2"))) {
+      System.out.println("Transform the file: " + name);
+      Transformer t = new Transformer();
+      byte[] scode = t.transform(name);
+      try {
+        FileOutputStream fos = new FileOutputStream(name+".class");
+        fos.write(scode);
+        fos.close();
+        System.out.println("ok");
+      } catch(java.io.IOException e) {
+        System.out.println("IO Exception");
+      }
+      Class sClass = defineClass(name,scode, 0, scode.length) ;
+      return loadClass(sClass.getName(),true);
+    } else {
+      Class sClass = loadClass(name,false);
+      return sClass;
+    }
+  }
 }

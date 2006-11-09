@@ -64,10 +64,10 @@ public class Test {
 		}
 	}
 	
-	public static void lire4 (String nameFile){
-		Test2 t2 = new Test2();
-		t2.lire1(nameFile);
-	}
+	//public static void lire4 (String nameFile){
+//		Test2 t2 = new Test2();
+//		t2.lire1(nameFile);
+//	}
 	/*public static void lire4(String nameFile){
 		new SecureAccess().sread(nameFile);
 	}*/
@@ -84,7 +84,7 @@ public class Test {
 		lire1(nameFile);
 		lire2(1,nameFile);
 		lire3(nameFile);
-		lire4(nameFile);
+		//lire4(nameFile);
 		
 	}
 
