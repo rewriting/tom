@@ -12,7 +12,7 @@
   <property name="tom.home"        value="${env.TOM_HOME}"/>
   <property name="tom.common.path" value="${tom.home}/lib"/>
   <import file="${tom.common.path}/tom-common.xml"/>
-  
+
   <!-- some used directory location -->
   <property name="examples.dir"   location="."/>
   <property name="examples.dist"  location="dist"/>
@@ -29,7 +29,7 @@
   <target name="init" depends="tom.init">
     <!-- to have something correct, check tom.home is defined to something meaningful
     <fail unless="TOM_HOME"
-          message="TOM_HOME has to be defined in your environment, 
+          message="TOM_HOME has to be defined in your environment,
           to find the Tom classes"/>-->
     <mkdir dir="${examples.build}"/>
     <mkdir dir="${examples.gen}"/>
@@ -44,7 +44,7 @@
       <attribute name="example"/>
       <sequential>
         <tom.preset srcdir="${examples.dir}"
-                    destdir="${examples.gen}">          
+                    destdir="${examples.gen}">
           <include name="@{example}/**/*.t"/>
           <exclude name="@{example}/**/*.g.t"/>
         </tom.preset>
@@ -55,8 +55,8 @@
       <attribute name="factory"/>
       <sequential>
         <adt srcdir="${examples.dir}"
-             name="@{factory}" 
-             package="@{example}" 
+             name="@{factory}"
+             package="@{example}"
              visitable="${visitable}"
              destdir="${examples.gen}">
           <include name="@{example}/**/*.adt"/>
@@ -68,7 +68,7 @@
       <sequential>
         <vas config="${vasconfigfile}"
              srcdir="${examples.dir}"
-             package="@{example}" 
+             package="@{example}"
              destdir="${examples.gen}">
           <include name="@{example}/**/*.vas"/>
         </vas>
@@ -78,7 +78,7 @@
       <attribute name="example"/>
       <sequential>
         <gom.preset srcdir="${examples.dir}"
-                    package="@{example}" 
+                    package="@{example}"
                     destdir="${examples.gen}">
           <include name="@{example}/**/*.gom"/>
         </gom.preset>
@@ -100,12 +100,12 @@
   <target name="prepare.examples">
     <mkdir dir="${examples.dist}"/>
   </target>
-  
+
   <!-- target debug to help finding properties problems -->
-  <target name="debug"> 
+  <target name="debug">
     <echoproperties/>
   </target>
-  
+
   <target name="clean.examples" description="Cleans examples directory">
     <delete dir="${examples.gen}"/>
     <delete dir="${examples.build}"/>
@@ -144,7 +144,7 @@
     </copy>
   </target>
 
-  <target name="examples" 
+  <target name="examples"
           description="Builds the examples (at least some)"
           depends="sub.all">
   </target>
@@ -325,9 +325,9 @@
     <fail unless="version">
       ****************************************************
       ****************************************************
-      You have to define the "version" property in order 
-			to build the examples distribution
-			> ./build.sh -Dversion="xxx"
+      You have to define the "version" property in order
+      to build the examples distribution
+      > ./build.sh -Dversion="xxx"
       ****************************************************
       ****************************************************
     </fail>
@@ -340,7 +340,7 @@
       </zipfileset>
       <zipfileset dir="${examples.dir}" prefix="examples" filemode="644">
         <include name="README"/>
-      	<include name="common.xml"/>
+        <include name="common.xml"/>
         <include name="build.xml"/>
         <include name="*/build.xml"/>
         <include name="${examples.lib}/*.jar"/>
@@ -353,8 +353,8 @@
     </subant>
   </target>
 
-  <target name="dist.examples" 
-          description="Prepare a distribution of examples" 
+  <target name="dist.examples"
+          description="Prepare a distribution of examples"
           depends="prepare.examples, dist.all">
   </target>
 
@@ -362,10 +362,10 @@
     <delete dir="${examples.dist}"/>
   </target>
 
-  <target name="clean" 
-          description="Cleans everything in the project" 
+  <target name="clean"
+          description="Cleans everything in the project"
           depends="clean.examples">
-  </target> 
+  </target>
 
   <target name="initjunit">
     <taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
@@ -381,9 +381,9 @@
               showoutput="true">
       <classpath>
         <path refid="tom.classpath"/>
-	<fileset dir="${examples.dir}/${examples.lib}">
+        <fileset dir="${examples.dir}/${examples.lib}">
           <include name="*.jar"/>
-	</fileset>
+        </fileset>
         <pathelement location="${examples.build}"/>
       </classpath>
       <batchtest>
@@ -417,5 +417,5 @@
     <antcall target="clean"/>
     <antcall target="junit"/>
   </target>
-  
+
 </project>
