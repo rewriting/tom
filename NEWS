@@ -3,8 +3,8 @@ version 2.4:
 
  - in the %match construct, the sort of the subject is now optional. Its is
    automatically inferred from the patterns when possible. In addition, a
-   subject is no longer restricted to a variable. Constructors and function calls
-   can be used.
+   subject is no longer restricted to a variable. Constructors and function
+   calls can be used.
 
  - Gom generates congruence strategies and offers new functionalities, such as
    the length of a list.
@@ -14,13 +14,14 @@ version 2.4:
 
  - the strategy library has been extended such that strategy expressions can be
    matched, like any other term. A strategy can now take another strategy in
-   argument. The mu-expansion is performed on strategies defined using %strategy.
+   argument. The mu-expansion is performed on strategies defined using
+   %strategy.
 
  - a support for Java bytecode analysis and transformation has been added
 
 version 2.3:
- - a new generator of abstract data types has been introduced: Gom. 
-   Its syntax is compatible with the syntax of Vas. 
+ - a new generator of abstract data types has been introduced: Gom.
+   Its syntax is compatible with the syntax of Vas.
    Gom is more expressive than Vas by allowing the definition of Hooks.
    This ensure that an action is executed each time a constructor is built. In
    practice, this allows to compute canonical forms.
@@ -29,7 +30,7 @@ version 2.3:
  - %strategy: a new construct that helps to defines strategies. When
    using %strategy, it is no longer necessary to define inner-classes.
    In addition, a Tom mapping is automatically generated.
-         
+
 - %[...]%: a new construct that helps to write backends. The text
    between %[ and ]% is no interpreted, therefore the string
    s=%[print("hello\n")]% corresponds to s="print(\"hello\\n\")"

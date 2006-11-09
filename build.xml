@@ -254,9 +254,9 @@
          destdir="${gen.destination}"
          options="-I ${src.mapping} --optimize">
       <include name="tom/engine/**/**/*.t"/>     	
-      <include name="tom/engine/**/*.t"/> 
-      <include name="tom/library/**/*.t"/> 
-      <include name="tom/platform/**/*.t"/> 
+      <include name="tom/engine/**/*.t"/>
+      <include name="tom/library/**/*.t"/>
+      <include name="tom/platform/**/*.t"/>
       <include name="tom/gom/**/*.t"/>
       <include name="tom/antlrmapper/**/*.t"/>
 
@@ -1278,7 +1278,7 @@
     </tar>
     <delete dir="${dist}/checkout"/>
   </target>
-  
+
 
   <target name="init.task.findbugs">
     <fail unless="findbugs.home">

@@ -39,7 +39,8 @@ Prepare for the build
 
 Build
 -----
-  To compile the stable distribution of Tom, you have to use the build.sh script.
+  To compile the stable distribution of Tom, you have to use the build.sh
+  script.
   $ ./build.sh stable
 
   To build and install the source distribution, you have to do the following:
@@ -48,7 +49,7 @@ Build
 
   To list all the available targets for the build:
   $ ./build.sh -projecthelp
-  
+
   NOTE: for Windows, just use "build.bat" instead of "build.sh"
 
 Setup
@@ -59,9 +60,9 @@ to do:
     They contains the 'tom' and 'tom.src' scripts, to use Tom.
   - Set the TOM_HOME environment variable to either the stable/dist directory
     or the src/dist directory. Using stable/dist is the safest option. If you
-    use src/dist, the 'tom' command will be equivalent to the 'tom.src' command,
-    and the source version will always be used. (If you do not set TOM_HOME,
-    stable/dist will be the default).
+    use src/dist, the 'tom' command will be equivalent to the 'tom.src'
+    command, and the source version will always be used. (If you do not set
+    TOM_HOME, stable/dist will be the default).
   - Optionally, set the JAVA_HOME environment variable.
     This should be set to the directory where your JDK is installed.
   - To run the examples, we also suggest you to define a TOM_LIB variable
@@ -76,4 +77,4 @@ to do:
 
 (windows)
   The TOM_LIB variable is automatically set by the script "tom.bat" to contain
-  all the jars in the "%TOM_HOME%\lib" folder.   
+  all the jars in the "%TOM_HOME%\lib" folder.
