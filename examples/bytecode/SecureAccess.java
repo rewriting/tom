@@ -28,7 +28,6 @@
  */
 package bytecode;
 
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -39,56 +38,45 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-
-
 public class SecureAccess {
 
+  public void sread(String filename){
+    String fichier = filename;
+    File f = new File(fichier);  
+    if(!f.isHidden()) {
+      // we open the file if it is not hidden
+      System.out.println("Open file");
+      FileInputStream fis;
+      try {
+        fis = new FileInputStream(f);
+        BufferedInputStream bis = new BufferedInputStream(fis);  
+        DataInputStream dis = new DataInputStream(bis); 
+        BufferedReader d=new BufferedReader(new InputStreamReader(dis));
+        String record = null;  
+        try {  
+          while ( (record=d.readLine()) != null ) {  
+            System.out.println(record);
+          }  
+        } catch (IOException e) {  
+          e.printStackTrace();
+        }  
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }  
+    } else {
+      System.out.println("a hidden file cannot be read!");
+    }
+  }
 
-	public void sread(String filename){
-		String fichier = filename;
-		File f = new File(fichier);  
-		if(!f.isHidden()){//si le fichier n'est pas caché on l'ouvre
-			System.out.println("Open file");
-			FileInputStream fis;
-			try {
-				fis = new FileInputStream(f);
-				BufferedInputStream bis = new BufferedInputStream(fis);  
-				DataInputStream dis = new DataInputStream(bis); 
-				BufferedReader d=new BufferedReader(new InputStreamReader(dis));
-
-				String record = null;  
-				try {  
-				   while ( (record=d.readLine()) != null ) {  
-				      System.out.println(record);
-				   }  
-				} catch (IOException e) {  
-					e.printStackTrace();
-				}  
-
-		
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}  
-			
-
-		}
-		else{
-			System.out.println("Désolé, vous n'avez pas le droit de lire les fichiers cachés");
-		}
-		
-	}
-	
-	public void sreadF(String filename){
-		String fichier = filename;
-		File f = new File(fichier);  
-		if(!f.isHidden()){
-			try {
-				FileReader fr=new FileReader(f);
-				fr.read();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-		}
-	}
+  public void sreadF(String fileName){
+    File f = new File(fileName);  
+    if(!f.isHidden()) {
+      try {
+        FileReader fr=new FileReader(f);
+        fr.read();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
 }

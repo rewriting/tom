@@ -43,56 +43,54 @@ public class Transformer {
   %include { adt/bytecode/Bytecode.tom }
 
   public static Set classSet = new HashSet();
-  public static String clm;
 
   //On cherche INVOKEVIRTUAL
   %strategy FindFileAccess() extends Identity() {
     visit TInstructionList {
-      (before*,New("java/io/FileReader"),Dup(),Aload(nombre),Invokespecial[owner="java/io/FileReader", name="<init>"],
+      (before*,New("java/io/FileReader"),Dup(),Aload(number),Invokespecial[owner="java/io/FileReader", name="<init>"],
        Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
 	System.out.println("Access to a file");
 	return `InstructionList(before*,
 	    New("SecureAccess"),
 	    Dup(),
 	    Invokespecial("SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-	    Aload(nombre),
+	    Aload(number),
 	    Invokevirtual("SecureAccess","sread",MethodDescriptor(FieldDescriptorList(ObjectType("java/lang/String")),Void())),
 	    after*); 
       }
 
-      (before*,Aload(nombre), Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
+      (before*,Aload(number), Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
 	System.out.println("Access to a file");
 	return `InstructionList(before*,
 	    New("SecureAccess"),
 	    Dup(),
 	    Invokespecial("SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-	    Aload(nombre-1),
+	    Aload(number-1),
 	    Invokevirtual("SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),Void())),
 	    after*); 
       }
 
-      (before*,New(n@nomClass),Dup(),Invokespecial(nm@nom,"<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),Astore(nombre),after*) -> {
-	if(!classSet.contains(`n)){
-	  System.out.println("new class "+`n);
+      (before*,New(className),Dup(),Invokespecial(name,"<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),Astore(number),after*) -> {
+	if(!classSet.contains(`className)) {
+	  System.out.println("new class "+`className);
 	  Class c;
 	  try {
-	    c = Class.forName(`n);
+	    c = Class.forName(`className);
 
-	    if(c.getSuperclass().toString().equals("class java.lang.ClassLoader")){
+	    if(c.getSuperclass().toString().equals("class java.lang.ClassLoader")) {
 	      System.out.println("Bad ClassLoader!");
-	      clm=`n;
 	      return `InstructionList(before*,
 		  New("SClassLoader"),
 		  Dup(),
 		  Invokespecial("SClassLoader","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-		  Astore(nombre),
+		  Astore(number),
 		  after*);
 	    } else {
 	      return `InstructionList(before*,
-		  New(nomClass),
+		  New(className),
 		  Dup(),
-		  Invokespecial(nm,"<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-		  Astore(nombre),
+		  Invokespecial(name,"<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
+		  Astore(number),
 		  after*);
 	    }
 	  } catch (ClassNotFoundException e) {
@@ -108,7 +106,7 @@ public class Transformer {
 
   /*%strategy FindOtherClass() extends Identity() {
     visit TInstructionList {
-    (before*,New(n@nomClass),after*) -> {
+    (before*,New(n@className),after*) -> {
     System.out.println("nouvelle classe"+`n);
     }
     }//ferme visit	
