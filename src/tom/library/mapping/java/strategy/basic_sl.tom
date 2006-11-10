@@ -31,6 +31,10 @@
 %include { int.tom }
 %include { string.tom }
 
+%op Strategy mu(s1:Strategy, s2:Strategy) {
+  make(var,v) { new tom.library.sl.Mu(var,v) }
+}
+
 %op Strategy Mu(s1:Strategy, s2:Strategy) {
   is_fsym(t) { (t instanceof tom.library.sl.Mu) }
   make(var, v) { new tom.library.sl.Mu(var, v) }

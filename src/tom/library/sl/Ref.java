@@ -79,65 +79,20 @@ public class Ref extends AbstractStrategy {
   private void visitReference(Reference ref) {
     int[] pos;
     int[] omega =environment.getOmega();
-    int size =environment.depth()+1;
-    int[] reducedOmega = new int[size];
-    for(int i=0;i<size;i++){
-      reducedOmega[i]=omega[i];
-    }
     if(relative) {
-      pos = getAbsolutePosition(reducedOmega,ref.toArray());
+      pos = OmegaManager.getAbsoluteOmega(omega,ref.toArray());
     } else {
       pos = ref.toArray();
     }
-    int[] oldToNew = getRelativePosition(reducedOmega,pos);
-    int[] newToOld = getRelativePosition(pos,reducedOmega);
-    goToPosition(oldToNew);
+    int[] oldToNew = OmegaManager.getRelativeOmega(omega,pos);
+    int[] newToOld = OmegaManager.getRelativeOmega(pos,omega);
+    environment.goTo(oldToNew);
     visitors[ARG].visit();
     if (getStatus() != Environment.SUCCESS) {
-      goToPosition(newToOld);
+      environment.goTo(newToOld);
       return;
     }
-    goToPosition(newToOld);
+    environment.goTo(newToOld);
   }
 
-  private void goToPosition(int[] pos) {
-    int pos_back = pos[0];
-    int pos_length = pos.length;
-    for(int i=0;i<pos_back;i++){
-      environment.up();
-    }
-    if(pos_length>1){
-      for(int i=1;i<pos_length;i++){
-        environment.down(pos[i]);
-      }
-    }
-  }
-
-  private int[] getRelativePosition(int[] source,int[] target) {
-    int min_length =Math.min(source.length,target.length);
-    int commonPrefixLength=0;
-    while(commonPrefixLength<min_length && source[commonPrefixLength]==target[commonPrefixLength]){
-      commonPrefixLength++;
-    }
-    int[] relative = new int[target.length-commonPrefixLength+1];
-    relative[0]=source.length-commonPrefixLength;
-    for(int j=1;j<relative.length;j++){
-      relative[j] = target[commonPrefixLength+j-1];
-    }
-    return relative;
-  }
-
-  private int[] getAbsolutePosition(int[] current,int[] relative) {
-    int prefix = current.length-relative[0];
-    int absoluteLength = prefix+relative.length-1;
-    int[] absolute = new int[absoluteLength];
-    for(int i=0 ; i<prefix ; i++) {
-      absolute[i]=current[i];
-    }
-    for(int i=prefix ; i<absoluteLength ; i++){
-      absolute[i]=relative[i-prefix+1];
-    }
-    return absolute;
-  }
-
-}
+ }

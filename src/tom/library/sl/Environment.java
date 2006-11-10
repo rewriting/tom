@@ -188,7 +188,9 @@ public class Environment implements Cloneable {
    * @return the current position
    */
   public int[] getOmega() {
-    return omega;
+    int[] reducedOmega = new int[depth()];
+    System.arraycopy(omega,1,reducedOmega,0,depth());
+    return reducedOmega;
   }
 
 
@@ -231,12 +233,27 @@ public class Environment implements Cloneable {
     }
     //System.out.println("after down: " + this);
   }
+
+
+  public void goTo(int[] pos) {
+    int pos_back = pos[0];
+    int pos_length = pos.length;
+    for(int i=0;i<pos_back;i++){
+      up();
+    }
+    if(pos_length>1){
+      for(int i=1;i<pos_length;i++){
+        down(pos[i]);
+      }
+    }
+  }
+
   /**
-    * Returns a <code>String</code> object representing the position.
-    * The string representation consists of a list of elementary positions
-    *
-    * @return a string representation of this position
-    */
+   * Returns a <code>String</code> object representing the position.
+   * The string representation consists of a list of elementary positions
+   *
+   * @return a string representation of this position
+   */
   public String toString() {
     StringBuffer r = new StringBuffer("[");
     for(int i=0 ; i<size ; i++) {

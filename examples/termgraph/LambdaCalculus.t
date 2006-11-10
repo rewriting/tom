@@ -29,8 +29,7 @@
 
 package termgraph;
 
-import tom.library.strategy.mutraveler.*;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.sl.*;
 import java.util.*;
 
 import termgraph.lambdaterm.*;
@@ -41,7 +40,7 @@ import termgraph.lambdaterm.types.lambdaterm.posLambdaTerm;
 public class LambdaCalculus {
 
   private static int comptVariable = 0;	
-  %include { mustrategy.tom }
+  %include { sl.tom }
   %include {lambdaterm/lambdaterm.tom}
   %include {lambdaterm/_lambdaterm.tom}
   %include {util/HashMap.tom}
@@ -49,7 +48,7 @@ public class LambdaCalculus {
   public final static void main(String[] args) {
     LambdaTerm subject = `var("undefined");
     LambdaInfo info = new LambdaInfo();
-    MuStrategy beta = `Sequence(
+    Strategy beta = `Sequence(
         _app(Identity(),collectTerm(info)),
         _app(Sequence(
             collectPosition(info),
@@ -62,13 +61,13 @@ public class LambdaCalculus {
       System.out.print(">");
       try {
         subject = parser.lambdaterm();
-        System.out.println(prettyPrinter(subject));
       } catch (Exception e) {
         System.out.println(e);
 
       }
-      System.out.println("Orginal term:"+subject);
-      System.out.println("After beta-normalisation: "+`RepeatId(TopDown(Try(beta))).apply(subject));
+      System.out.println("Orginal term:"+prettyPrint(subject));
+      System.out.println("After beta-normalisation: "+`TopDown(Try(beta)).fire(subject));
+      System.out.println("After beta-normalisation: "+prettyPrint((LambdaTerm)`TopDown(Try(beta)).fire(subject)));
     }
   }
 
@@ -80,14 +79,14 @@ public class LambdaCalculus {
 
   %strategy print() extends `Identity() {
     visit LambdaTerm {
-      X -> {System.out.println(prettyPrinter(`X));}
+      X -> {System.out.println(prettyPrint(`X));}
     }
   }
 
   %strategy collectPosition(info:LambdaInfo) extends `Identity() {
     visit LambdaTerm {
       _ -> {
-        info.pos=getPosition();
+        info.omega=getEnvironment().getOmega();
       }
     }
   }
@@ -111,7 +110,7 @@ public class LambdaCalculus {
 
 
   static class LambdaInfo{
-    public Position pos;
+    public int[] omega;
     public LambdaTerm term;
   }
   
@@ -119,8 +118,7 @@ public class LambdaCalculus {
   %strategy substitute(info:LambdaInfo) extends `Fail(){
     visit LambdaTerm {
       p@posLambdaTerm(_*) -> {
-        RelativePosition relPos = new RelativePosition(((MuReference)`p).toArray());
-        if(relPos.getAbsolutePosition(getPosition()).equals(info.pos)){
+        if(OmegaManager.getAbsoluteOmega(getEnvironment().getOmega(),((Reference)`p).toArray()).equals(info.omega)){
           return info.term;
         }
         else{
@@ -130,10 +128,11 @@ public class LambdaCalculus {
     }
   }
 
-  public static String prettyPrinter(LambdaTerm t){
+  public static String prettyPrint(LambdaTerm t){
+    t= (LambdaTerm) `TopDown(UnExpand()).fire(t);
     %match(LambdaTerm t){
-      app(term1,term2) -> {return "("+prettyPrinter(`term1)+"."+prettyPrinter(`term2)+")";}
-      abs(term1,term2) -> {return "("+prettyPrinter(`term1)+"->"+prettyPrinter(`term2)+")";}
+      app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
+      abs3(term1,term2) -> {return "("+prettyPrint(`term1)+"->"+prettyPrint(`term2)+")";}
       var(s) -> {return `s;}
     }
     return "";
@@ -141,30 +140,31 @@ public class LambdaCalculus {
  
   static int ppcounter = 0;
 
+  %strategy Debug() extends `Identity() {
+    visit LambdaTerm {
+      _ -> {
+        System.out.println(getEnvironment());
+      }
+    }
+  }
+
   %strategy UnExpand() extends `Identity() {
     visit LambdaTerm {
       abs2(term) -> {
-        String var = "x" + (counter++);
-        return abs(var,term);
+        String v = "x" + (ppcounter++);
+        System.out.println("replace"+v);
+        return `abs3(var(v),term);
       }
-      p@posLambdaTerm[] -> {
+      p@posLambdaTerm(_*)-> {
+        int[] omega = OmegaManager.getRelativeOmega(OmegaManager.getAbsoluteOmega(getEnvironment().getOmega(),((Reference)`p).toArray()),getEnvironment().getOmega());
+        getEnvironment().goTo(((Reference)`p).toArray());
+        LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
+        getEnvironment().goTo(omega);
+        return var;
+      }
 
-      }
     }
   }
-
-   public static String prettyPrint(LambdaTerm t, HashTable h, int counter){
-    %match(LambdaTerm t){
-      app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
-      abs(term1,term2) -> {
-        String var = 
-        return "("+prettyPrint(`term1)+"->"+prettyPrint(`term2)+")";
-      }
-      var(s) -> {return `s;}
-    }
-    return "";
-  }
-
-
-
 }
+
+

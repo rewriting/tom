@@ -34,58 +34,58 @@ import java.io.FileReader;
 
 public class Test {
 
-	public static void lire1(String nameFile){
-		try {
-			new FileReader(nameFile).read();
-			} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			new FileReader(nameFile).read();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-		
-	public static void lire2(int Entier,String nameFile){
-		try {
-			new FileReader(nameFile).read();
-			} catch (Exception e) {
-			e.printStackTrace();
-		} 
-	}
-	
-	public static void lire3(String nameFile){
-		try {
-			FileReader f=new FileReader(nameFile);
-			f.read();
-			} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	//public static void lire4 (String nameFile){
-//		Test2 t2 = new Test2();
-//		t2.lire1(nameFile);
-//	}
-	/*public static void lire4(String nameFile){
-		new SecureAccess().sread(nameFile);
-	}*/
-	/*
-	public static void utiliserAutreClassloader () throws ClassNotFoundException{
-		//ClassLoader clMechant=this.getClass().getClassLoader();
-		ClassLoader clm = new ClassLoaderMechant();
-		clm.loadClass("Test3Secure");
-	}
-	*/
-	
-	public static void main(String[] args) {
-		String nameFile = args[0];
-		lire1(nameFile);
-		lire2(1,nameFile);
-		lire3(nameFile);
-		//lire4(nameFile);
-		
-	}
+  public static void lire1(String nameFile){
+    try {
+      new FileReader(nameFile).read();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    try {
+      new FileReader(nameFile).read();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void lire2(int Entier,String nameFile){
+    try {
+      new FileReader(nameFile).read();
+    } catch (Exception e) {
+      e.printStackTrace();
+    } 
+  }
+
+  public static void lire3(String nameFile){
+    try {
+      FileReader f=new FileReader(nameFile);
+      f.read();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  //public static void lire4 (String nameFile){
+  //		Test2 t2 = new Test2();
+  //		t2.lire1(nameFile);
+  //	}
+  /*public static void lire4(String nameFile){
+    new SecureAccess().sread(nameFile);
+    }*/
+  /*
+     public static void utiliserAutreClassloader () throws ClassNotFoundException{
+//ClassLoader clMechant=this.getClass().getClassLoader();
+ClassLoader clm = new ClassLoaderMechant();
+clm.loadClass("Test3Secure");
+     }
+   */
+
+  public static void main(String[] args) {
+    String nameFile = args[0];
+    lire1(nameFile);
+    lire2(1,nameFile);
+    lire3(nameFile);
+    //lire4(nameFile);
+
+  }
 
 }

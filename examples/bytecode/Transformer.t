@@ -49,56 +49,56 @@ public class Transformer {
     visit TInstructionList {
       (before*,New("java/io/FileReader"),Dup(),Aload(number),Invokespecial[owner="java/io/FileReader", name="<init>"],
        Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
-	System.out.println("Access to a file");
-	return `InstructionList(before*,
-	    New("SecureAccess"),
-	    Dup(),
-	    Invokespecial("SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-	    Aload(number),
-	    Invokevirtual("SecureAccess","sread",MethodDescriptor(FieldDescriptorList(ObjectType("java/lang/String")),Void())),
-	    after*); 
+        System.out.println("Access to a file");
+        return `InstructionList(before*,
+            New("bytecode/SecureAccess"),
+            Dup(),
+            Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
+            Aload(number),
+            Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(FieldDescriptorList(ObjectType("java/lang/String")),Void())),
+            after*); 
       }
 
       (before*,Aload(number), Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
-	System.out.println("Access to a file");
-	return `InstructionList(before*,
-	    New("SecureAccess"),
-	    Dup(),
-	    Invokespecial("SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-	    Aload(number-1),
-	    Invokevirtual("SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),Void())),
-	    after*); 
+        System.out.println("Access to a file");
+        return `InstructionList(before*,
+            New("bytecode/SecureAccess"),
+            Dup(),
+            Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
+            Aload(number-1),
+            Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),Void())),
+            after*); 
       }
 
       (before*,New(className),Dup(),Invokespecial(name,"<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),Astore(number),after*) -> {
-	if(!classSet.contains(`className)) {
-	  System.out.println("new class "+`className);
-	  Class c;
-	  try {
-	    c = Class.forName(`className);
+        if(!classSet.contains(`className)) {
+          System.out.println("new class "+`className);
+          Class c;
+          try {
+            c = Class.forName(`className);
 
-	    if(c.getSuperclass().toString().equals("class java.lang.ClassLoader")) {
-	      System.out.println("Bad ClassLoader!");
-	      return `InstructionList(before*,
-		  New("SClassLoader"),
-		  Dup(),
-		  Invokespecial("SClassLoader","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-		  Astore(number),
-		  after*);
-	    } else {
-	      return `InstructionList(before*,
-		  New(className),
-		  Dup(),
-		  Invokespecial(name,"<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-		  Astore(number),
-		  after*);
-	    }
-	  } catch (ClassNotFoundException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	  }
+            if(c.getSuperclass().toString().equals("class java.lang.ClassLoader")) {
+              System.out.println("Bad ClassLoader!");
+              return `InstructionList(before*,
+                  New("SClassLoader"),
+                  Dup(),
+                  Invokespecial("SClassLoader","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
+                  Astore(number),
+                  after*);
+            } else {
+              return `InstructionList(before*,
+                  New(className),
+                  Dup(),
+                  Invokespecial(name,"<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
+                  Astore(number),
+                  after*);
+            }
+          } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
 
-	}
+        }
 
       }
     }//end visit
@@ -122,12 +122,12 @@ public class Transformer {
     TMethodList secureMethods = `MethodList();
     %match(TMethodList methods) {
       MethodList(_*, x, _*) -> {
-	System.out.println("Analysis of method "+`x.getinfo().getname());
-	TInstructionList ins = `x.getcode().getinstructions();
-	TInstructionList secureInstList = (TInstructionList) `TopDown(FindFileAccess()).apply(ins);
-	TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
-	TMethod secureMethod = `x.setcode(secureCode);
-	secureMethods = `MethodList(secureMethods*,secureMethod);	        
+        System.out.println("Analysis of method "+`x.getinfo().getname());
+        TInstructionList ins = `x.getcode().getinstructions();
+        TInstructionList secureInstList = (TInstructionList) `TopDown(FindFileAccess()).apply(ins);
+        TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
+        TMethod secureMethod = `x.setcode(secureCode);
+        secureMethods = `MethodList(secureMethods*,secureMethod);	        
       } 
     }
     return givenClass.setmethods(secureMethods);
@@ -146,42 +146,42 @@ public class Transformer {
   %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {
     visit TOuterClassInfo {
       x@OuterClassInfo[owner=owner] -> {
-	if(`owner.equals(currentName))
-	  return `x.setowner(newName);
+        if(`owner.equals(currentName))
+          return `x.setowner(newName);
       }
     }
 
     visit TLocalVariable {
       x@LocalVariable[typeDesc=t] -> {
-	if(`t.equals(currentName))
-	  return `x.settypeDesc(newName);
+        if(`t.equals(currentName))
+          return `x.settypeDesc(newName);
       }
     }
 
     visit TFieldDescriptor {
       x@ObjectType[className=n] -> {
-	if(`n.equals(currentName))
-	  return `x.setclassName(newName);
+        if(`n.equals(currentName))
+          return `x.setclassName(newName);
       }
     }
 
     visit TMethodInfo {
       x@MethodInfo[owner=owner] -> {
-	if(`owner.equals(currentName))
-	  return `x.setowner(newName);
+        if(`owner.equals(currentName))
+          return `x.setowner(newName);
       }
     }
 
     visit TInstruction {
       x@(Getstatic|Putstatic|Getfield|Putfield|
-	  Invokevirtual|Invokespecial|Invokestatic|Invokeinterface)
-	[owner=owner] -> {
-	  if(`owner.equals(currentName))
-	    return `x.setowner(newName);
-	}
+          Invokevirtual|Invokespecial|Invokestatic|Invokeinterface)
+        [owner=owner] -> {
+          if(`owner.equals(currentName))
+            return `x.setowner(newName);
+        }
       x@(New|Anewarray|Checkcast|Instanceof|Multianewarray)[typeDesc=t] -> {
-	if(`t.equals(currentName))
-	  return `x.settypeDesc(newName);
+        if(`t.equals(currentName))
+          return `x.settypeDesc(newName);
       }
     }
 

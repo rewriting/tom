@@ -39,23 +39,25 @@ public class SClassLoader extends ClassLoader {
 	}
 
   public synchronized Class loadClass(String name) throws ClassNotFoundException {
-    if(name.equals("Test")||(name.equals("Test2"))) {
-      System.out.println("Transform the file: " + name);
-      Transformer t = new Transformer();
-      byte[] scode = t.transform(name);
-      try {
-        FileOutputStream fos = new FileOutputStream(name+".class");
-        fos.write(scode);
-        fos.close();
-        System.out.println("ok");
-      } catch(java.io.IOException e) {
-        System.out.println("IO Exception");
-      }
-      Class sClass = defineClass(name,scode, 0, scode.length) ;
-      return loadClass(sClass.getName(),true);
-    } else {
-      Class sClass = loadClass(name,false);
-      return sClass;
+    System.out.println("Load the file: " + name);
+    //if(name.equals("bytecode.Test")||(name.equals("Test2"))) {
+    Transformer t = new Transformer();
+    byte[] scode = t.transform(name);
+    System.out.println("Transform the file: " + name);
+    try {
+      FileOutputStream fos = new FileOutputStream(name+".class");
+      fos.write(scode);
+      fos.close();
+      System.out.println("ok");
+    } catch(java.io.IOException e) {
+      System.out.println("IO Exception");
     }
+    System.out.println("End of load");
+    Class sClass = defineClass(name,scode, 0, scode.length) ;
+    return loadClass(sClass.getName(),true);
+    //} else {
+    //Class sClass = loadClass(name,false);
+    //return sClass;
+    //}
   }
 }

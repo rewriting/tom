@@ -39,13 +39,8 @@
 }
 
 
-%op Strategy mu(s1:Strategy, s2:Strategy) {
-  make(var,v) { new tom.library.sl.Mu(var,v) }
-}
 
 %include { strategy/basic_sl.tom }
-//%include { strategy/composed.tom }
+%include { strategy/graph_sl.tom }
+%include { strategy/composed_sl.tom }
 
-  %op Strategy OnceBottomUp(s1:Strategy) {
-    make(v) { `mu(MuVar("_x"),Choice(One(MuVar("_x")),v)) }
-  }
