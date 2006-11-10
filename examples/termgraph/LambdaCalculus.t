@@ -41,35 +41,9 @@ import termgraph.lambdaterm.types.lambdaterm.posLambdaTerm;
 public class LambdaCalculus {
 
   private static int comptVariable = 0;	
-  %include{java/util/HashMap.tom}
   %include { mustrategy.tom }
   %include {lambdaterm/lambdaterm.tom}
   %include {lambdaterm/_lambdaterm.tom}
-
-  %strategy ToDeBruinj(table:HashMap) extends Identity(){
-    visit LambdaTerm{
-      v@var[] -> {
-        if(table.containsKey(`v)){
-          RelativePosition pos = RelativePosition.make(getPosition(),(Position)table.get(`v));
-          int[] array = pos.toArray();
-          LambdaTerm ref = `posLambdaTerm();
-          for(int i=0;i<pos.depth();i++){
-            ref = `posLambdaTerm(ref*,array[i]);
-          }
-          return ref;
-        }
-      }
-    }
-  }
-
-  %strategy CollectVar(table:HashMap) extends Fail() {
-    visit LambdaTerm{
-      abs[var=var,arg=arg] -> {
-        table.put(`var,getPosition());
-        return `abs2(arg);
-      }
-    }
-  }
 
   public final static void main(String[] args) {
     LambdaTerm subject = `var("undefined");
@@ -93,9 +67,6 @@ public class LambdaCalculus {
 
       }
       System.out.println("Orginal term:"+subject);
-      HashMap table = new HashMap();
-      subject = (LambdaTerm) `BottomUp(Try((Sequence(CollectVar(table),TopDown(ToDeBruinj(table)))))).apply(subject); 
-      System.out.println("Representation in graph term:"+subject);
       System.out.println("After beta-normalisation: "+`RepeatId(TopDown(Try(beta))).apply(subject));
     }
   }
