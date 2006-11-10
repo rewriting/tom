@@ -1,0 +1,8 @@
+# compile the program
+$ tom.src --verify Match.t
+
+# verify the patterns, and build a proof
+$ zvtov Match.zv
+
+# check the proof
+$ coqc Match.v
