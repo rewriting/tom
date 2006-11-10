@@ -52,6 +52,7 @@ import tom.engine.TomBase;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
+import jjtraveler.Visitable;
 
 import java.util.*;
 
@@ -81,22 +82,20 @@ public class TomAntiPatternUtils {
 	 *            The TomTerm to search
 	 * @return true if tomTerm contains anti-symbols false otherwise
 	 */	
-	public static boolean hasAntiTerms(TomTerm tomTerm){
-    MuStrategy findAnti = `OnceTopDown(FindAnti());
-    try {
-      TomTerm res = (TomTerm) findAnti.visit(tomTerm);
-      return true;
-    } catch(jjtraveler.VisitFailure e) {
-      return false;
-    }
+	public static boolean hasAntiTerms(Visitable tomTerm){
+		MuStrategy findAnti = `OnceTopDownId(FindAnti());
+		if (tomTerm == findAnti.apply(tomTerm)){
+			return false;
+		}
+		return true;    
 	}
 	
 	/**
 	 * search an anti symbol
 	 */  
-	%strategy FindAnti() extends `Fail(){
+	%strategy FindAnti() extends `Identity(){
 		visit TomTerm {
-			at@AntiTerm[] -> { return `at; }
+			AntiTerm[TomTerm=t] -> { return `t; }
 		}		
 	}
 	

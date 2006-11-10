@@ -64,9 +64,6 @@ import tom.engine.adt.tomterm.types.tomterm.*;
 public class TomKernelCompiler extends TomBase {
 
   private SymbolTable symbolTable;
-  // indicates that we just started to evaluate anti-matching constraints
-  // it is reseted for every pattern
-  private static boolean antiConstraintFirstTime = true;
   // boolean flag used for anti-pattern matching
   private static final String ANTI_FLAG_NAME = "tom_anti_constraints_status";
   
@@ -144,19 +141,25 @@ public class TomKernelCompiler extends TomBase {
        * given a list of pattern: we build a matching automaton
        */	  
 	  actionInst = (Instruction) compileStrategy.visit(actionInst);
-      // anti flag      
-      antiConstraintFirstTime = true;
-      TomName antiFlagName = `PositionName(concTomNumber(rootpath*,NameNumber(Name(ANTI_FLAG_NAME))));      
-      antiFlagVariable = `Variable(concOption(OriginTracking(antiFlagName,0,""))
-    		  ,antiFlagName,antiFlagType,concConstraint());
-      TomAntiPatternTransformNew.initialize();      
-      // final test
-      Instruction finalTest = `If(EqualTerm(antiFlagType,Ref(antiFlagVariable),ExpressionToTomTerm(TrueTL())),actionInst
-    		  ,LetAssign(antiFlagVariable,TrueTL(),Nop()));      
-      Instruction matchingAutomata = compiler.genSyntacticMatchingAutomata(finalTest,`Nop(),
-    		  patternList,rootpath,moduleName,null);
-	  // glue the flag declaration
-      matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
+	  Instruction matchingAutomata = null;
+	  // if we have anti-patterns, we should use a boolean flag
+	  if (TomAntiPatternUtils.hasAntiTerms(patternList)){	  
+	      // anti flag
+	      TomName antiFlagName = `PositionName(concTomNumber(rootpath*,NameNumber(Name(ANTI_FLAG_NAME))));      
+	      antiFlagVariable = `Variable(concOption(OriginTracking(antiFlagName,0,""))
+	    		  ,antiFlagName,antiFlagType,concConstraint());
+	      TomAntiPatternTransformNew.initialize();      
+	      // final test
+	      Instruction finalTest = `If(EqualTerm(antiFlagType,Ref(antiFlagVariable),ExpressionToTomTerm(TrueTL())),actionInst
+	    		  ,LetAssign(antiFlagVariable,TrueTL(),Nop()));      
+	      matchingAutomata = compiler.genSyntacticMatchingAutomata(finalTest,`Nop(),
+	    		  patternList,rootpath,moduleName,null);
+		  // glue the flag declaration
+	      matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
+	  }else{
+		  matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,`Nop(),
+	    		  patternList,rootpath,moduleName,null);
+	  }
       OptionList automataOptionList = `concOption();
       TomName label = compiler.getLabel(pa.getOption());
       if(label != null) {
