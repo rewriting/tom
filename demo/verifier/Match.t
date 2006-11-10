@@ -8,8 +8,8 @@ class Match {
     abstract syntax
     T = a()
         | b()
-        | f(t:T)
-        | h(t:T)
+        | f(t1:T)
+        | h(t2:T)
         | g(left:T,right:T)
   }
 
@@ -25,6 +25,12 @@ class Match {
     %match(T test) {
       g(a(),b()) -> { System.out.println("a and b"); }
       g(x,b())   -> { System.out.println(`x); }
+    }
+
+    %match(test) {
+      g[] -> {}
+      x@g[] -> { System.out.println(`x); }
+      f(h(x)) -> {System.out.println(`x); }
     }
   }
 }
