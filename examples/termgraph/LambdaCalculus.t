@@ -74,7 +74,12 @@ public class LambdaCalculus {
   public final static void main(String[] args) {
     LambdaTerm subject = `var("undefined");
     LambdaInfo info = new LambdaInfo();
-    MuStrategy beta = `Sequence(_app(Identity(),collectTerm(info)),_app(Sequence(collectPosition(info),_abs2(Mu(MuVar("x"),Choice((substitute(info)),All(MuVar("x")))))),Identity()));
+    MuStrategy beta = `Sequence(
+        _app(Identity(),collectTerm(info)),
+        _app(Sequence(
+            collectPosition(info),
+            _abs2(Mu(MuVar("x"),Choice((substitute(info)),All(MuVar("x")))))),Identity()),
+        removeApp());
     String s;
     LambdaTermLexer lexer = new LambdaTermLexer(System.in); // Create parser attached to lexer
     LambdaTermParser parser = new LambdaTermParser(lexer);
@@ -89,9 +94,9 @@ public class LambdaCalculus {
       }
       System.out.println("Orginal term:"+subject);
       HashMap table = new HashMap();
-      subject = (LambdaTerm) `TopDown(Try((Sequence(CollectVar(table),TopDown(ToDeBruinj(table)))))).apply(subject); 
+      subject = (LambdaTerm) `BottomUp(Try((Sequence(CollectVar(table),TopDown(ToDeBruinj(table)))))).apply(subject); 
       System.out.println("Representation in graph term:"+subject);
-      System.out.println("After beta-normalisation: "+`Sequence(RepeatId(beta),RepeatId(removeApp())).apply(subject));
+      System.out.println("After beta-normalisation: "+`RepeatId(TopDown(Try(beta))).apply(subject));
     }
   }
 
@@ -146,7 +151,6 @@ public class LambdaCalculus {
         if(relPos.getAbsolutePosition(getPosition()).equals(info.pos)){
           return info.term;
         }
-
         else{
           return `p;
         }
