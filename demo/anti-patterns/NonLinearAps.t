@@ -20,12 +20,14 @@ class NonLinearAps {
 	} 
 
 	public final static void main(String[] args) {
-		Vehicle veh = `car(white(),green(),ecological());
+		Vehicle veh;
+
+		veh = `bike();  
+		searchCars(veh);		 		
+
+		veh = `car(white(),green(),ecological());
 		searchCars(veh);		
-		
-		veh = `car(white(),white(),poluting());
-		searchCars(veh);
-		
+
 		veh = `car(red(),red(),ecological());
 		searchCars(veh);
 		
@@ -35,24 +37,23 @@ class NonLinearAps {
 		veh = `car(green(),green(),poluting());
 		searchCars(veh);
 		 
-		veh = `bike();  
-		searchCars(veh);		 		
 	}
 	
 	private static void searchCars(Vehicle subject){
 		%match(subject){
-			!car(white(),red(),ecological()) ->{
-				System.out.println("A vehicle that is not an ecological car with interior color=white, exterior=red:" + `subject);				
-			}
 			car(x,x,ecological()) ->{
-				System.out.println("Ecological car that has the same interior and exterior colors:" + `subject);
+				System.out.println("Ecological car that has the same interior and exterior colors: " + `subject);
+			}
+			!car(x,x,_) ->{
+				System.out.println("Not a car, or car with different colors: " + `subject);
 			}
 			car(x,!x,!ecological()) ->{
-				System.out.println("Car that is not ecological and that does not have the same interior and exterior colors:" + `subject);
+				System.out.println("Car that is not ecological and that does not have the same interior and exterior colors: " + `subject);
 			}
 			car(x@!green(),x,ecological()) ->{
-				System.out.println("Ecological car and that has the same interior and exterior colors, but different from green:" + `subject);
+				System.out.println("Ecological car and that has the same interior and exterior colors, but different from green: " + `subject);
 			}
 		}
+		System.out.println();
 	}
 }

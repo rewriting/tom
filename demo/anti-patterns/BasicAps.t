@@ -20,7 +20,12 @@ class BasicAps {
 	}
 
 	public final static void main(String[] args) {
-		Vehicle veh = `car(white(),ecological());
+		Vehicle veh;
+
+		veh = `bike();
+		searchCars(veh);				
+
+        veh = `car(white(),ecological());
 		searchCars(veh);		
 		
 		veh = `car(white(),poluting());
@@ -32,21 +37,21 @@ class BasicAps {
 		veh = `car(green(),poluting());
 		searchCars(veh);
 		
-		veh = `bike();
-		searchCars(veh);				
 	}
 	
-	private static void searchCars(Vehicle subject){
+	private static void searchCars(Vehicle subject) {
+        //System.out.println("searchCars: " + subject);
 		%match(subject){
 			car(!white(),ecological()) ->{
-				System.out.println("Car that is ecological and not white:" + `subject);				
+				System.out.println("Car that is not white but ecological: " + `subject);				
 			}
 			car(white(),!ecological()) ->{
-				System.out.println("Car that is white and not ecological:" + `subject);
+				System.out.println("Car that is white but not ecological: " + `subject);
 			}
 			!car(white(),!ecological()) ->{
-				System.out.println("Not a white car or a white ecological one:" + `subject);
+				System.out.println("Not a white car or a white ecological one: " + `subject);
 			}
 		}
+		System.out.println();
 	}
 }
