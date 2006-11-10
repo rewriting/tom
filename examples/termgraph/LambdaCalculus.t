@@ -44,6 +44,7 @@ public class LambdaCalculus {
   %include { mustrategy.tom }
   %include {lambdaterm/lambdaterm.tom}
   %include {lambdaterm/_lambdaterm.tom}
+  %include {util/HashMap.tom}
 
   public final static void main(String[] args) {
     LambdaTerm subject = `var("undefined");
@@ -137,5 +138,33 @@ public class LambdaCalculus {
     }
     return "";
   }
+ 
+  static int ppcounter = 0;
+
+  %strategy UnExpand() extends `Identity() {
+    visit LambdaTerm {
+      abs2(term) -> {
+        String var = "x" + (counter++);
+        return abs(var,term);
+      }
+      p@posLambdaTerm[] -> {
+
+      }
+    }
+  }
+
+   public static String prettyPrint(LambdaTerm t, HashTable h, int counter){
+    %match(LambdaTerm t){
+      app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
+      abs(term1,term2) -> {
+        String var = 
+        return "("+prettyPrint(`term1)+"->"+prettyPrint(`term2)+")";
+      }
+      var(s) -> {return `s;}
+    }
+    return "";
+  }
+
+
 
 }
