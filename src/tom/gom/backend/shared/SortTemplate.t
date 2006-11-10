@@ -31,18 +31,23 @@ public class SortTemplate extends TemplateHookedClass {
   ClassName abstractType;
   ClassName visitor;
   ClassNameList operatorList;
+  ClassNameList variadicOperatorList;
   SlotFieldList slotList;
+
+  %include { ../../adt/objects/Objects.tom}
 
   public SortTemplate(ClassName className,
                       ClassName abstractType,
                       ClassName visitor,
                       ClassNameList operatorList,
+                      ClassNameList variadicOperatorList,
                       SlotFieldList slots,
                       HookList hooks) {
     super(className,hooks);
     this.abstractType = abstractType;
     this.visitor = visitor;
     this.operatorList = operatorList;
+    this.variadicOperatorList = variadicOperatorList;
     this.slotList = slots;
   }
 
@@ -145,7 +150,7 @@ writer.write(%[
   }
 
   private void generateFromTerm(java.io.Writer writer, String trm, String tmp) throws java.io.IOException {
-    ClassNameList consum = operatorList;
+    ClassNameList consum = `concClassName(operatorList*,variadicOperatorList*);
     while (!consum.isEmptyconcClassName()) {
       ClassName operatorName = consum.getHeadconcClassName();
       consum = consum.getTailconcClassName();

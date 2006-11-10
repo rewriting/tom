@@ -123,6 +123,7 @@ public class GomCompiler {
           // use a Set to collect slots and avoid duplicates
           Set allSortSlots = new HashSet();
           ClassNameList allOperators = `concClassName();
+          ClassNameList allVariadicOperators = `concClassName();
           %match(OperatorDeclList `oplist) {
             concOperator(_*,
                          opdecl@OperatorDecl[Name=opname,
@@ -145,6 +146,7 @@ public class GomCompiler {
                   slots = `concSlotField(slotHead,slotTail);
                   // as the operator is variadic, add a Cons and an Empty
                   variadicOpClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
+                  allVariadicOperators = `concClassName(variadicOpClassName,allVariadicOperators*);
                   empty = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Empty"+opname);
                   operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Cons"+opname);
 
@@ -205,6 +207,7 @@ public class GomCompiler {
                                           visitorName,
                                           visitableforwardName,
                                           allOperators,
+                                          allVariadicOperators,
                                           slotFieldListFromSet(allSortSlots),
                                           makeHooksFromHookDecls(sorthooks));
           sortGomClassForSortDecl.put(`sortDecl,sortClass);

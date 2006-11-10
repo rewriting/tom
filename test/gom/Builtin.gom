@@ -14,6 +14,9 @@ Wrapper = | Int(i:int)
           | CharBis(c:char)
           | Bool(b:boolean)
           | BoolBis(b:boolean)
+          | concWrap(Wrapper*)
+          | concInt(int*)
+          | concLong(long*)
 /*
           | Real(r:real)
           | RealBis(r:real)
@@ -24,3 +27,4 @@ Wrapper = | Int(i:int)
           | Char(c:char)
           | CharBis(c:char)
 */
+

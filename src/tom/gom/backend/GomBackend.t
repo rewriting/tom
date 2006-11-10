@@ -127,9 +127,10 @@ public class GomBackend {
                 AbstractType=abstracttype,
                 Visitor=visitorName,
                 Operators=ops,
+                VariadicOperators=varyops,
                 Slots=slots,
                 Hooks=hooks] -> {
-        TemplateClass sort = templatefactory.makeSortTemplate(`className,`abstracttype,`visitorName,`ops,`slots,`hooks);
+        TemplateClass sort = templatefactory.makeSortTemplate(`className,`abstracttype,`visitorName,`ops,`varyops,`slots,`hooks);
         sort.generateFile();
         return 1;
       }

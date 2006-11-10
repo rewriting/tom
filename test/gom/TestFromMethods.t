@@ -47,11 +47,16 @@ public class TestFromMethods extends TestCase {
     Wrapper[] TESTS = new Wrapper[] {
       `Int(21),
       `Long(23),
-      `Name("who?")
+      `Name("who?"),
+      `concWrap(Int(1),Int(2),Name("toto"),Name("blop")),
+      `concInt(1,2,3,4,5,6,7,8,9,0),
+      `concLong(10000,123455,23445556),
+      `concWrap(Int(1),concWrap(Name("a"),Name("b"),Name("c")),Int(3))
     };
     TestSuite suite = new TestSuite();
     for (int i = 0; i<TESTS.length;i++) {
       suite.addTest(new TestFromMethods("testFromString",TESTS[i]));
+      suite.addTest(new TestFromMethods("testFromTerm",TESTS[i]));
     }
     return suite;
   }
@@ -62,9 +67,12 @@ public class TestFromMethods extends TestCase {
     testSubject = wr; 
   }
 
+  public void testFromTerm() {
+    Wrapper newObj = Wrapper.fromTerm(testSubject.toATerm());
+    assertEquals(testSubject,newObj);
+  }
+
   public void testFromString() {
-    System.out.println("Testing");
-    System.out.println("Testing = "+testSubject);
     Wrapper newObj = Wrapper.fromString(testSubject.toString());
     assertEquals(testSubject,newObj);
   }

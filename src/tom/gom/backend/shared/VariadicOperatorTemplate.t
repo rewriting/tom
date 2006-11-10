@@ -153,6 +153,24 @@ writer.write(%[
     }
     buffer.append(")");
   }
+
+  public static @fullClassName(sortName)@ fromTerm(aterm.ATerm trm) {
+    if(trm instanceof aterm.ATermAppl) {
+      aterm.ATermAppl appl = (aterm.ATermAppl) trm;
+      if("@className()@".equals(appl.getName())) {
+        @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
+        aterm.ATermList args = appl.getArguments().reverse();
+        while (!args.isEmpty()) {
+          aterm.ATerm head = args.getFirst();
+          @domainClassName@ elem = @fromATermElement("head","elem")@;
+          res = @fullClassName(cons.getClassName())@.make(elem,res);
+          args = args.getNext();
+        }
+        return res;
+      }
+    }
+    return null;
+  }
 ]%);
   }
 
@@ -181,6 +199,39 @@ writer.write(%[
     }
     throw new GomRuntimeException(
         "Problem generating toString for variadic element");
+  }
+
+  private String fromATermElement(String term, String element) {
+    SlotField slot = cons.getSlots().getHeadconcSlotField();
+    %match(SlotField slot) {
+      SlotField[Domain=domain] -> {
+        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          if (`domain.equals(`ClassName("","int"))) {
+            return "((aterm.ATermInt)"+term+").getInt()";
+          } else  if (`domain.equals(`ClassName("","float"))) {
+            return "(float) ((aterm.ATermReal)"+term+").getReal()";
+          } else  if (`domain.equals(`ClassName("","boolean"))) {
+            return "(((aterm.ATermInt)"+term+").getInt()==0?false:true)";
+          } else  if (`domain.equals(`ClassName("","long"))) {
+            return "(long) ((aterm.ATermReal)"+term+").getReal()";
+          } else  if (`domain.equals(`ClassName("","double"))) {
+            return "((aterm.ATermReal)"+term+").getReal()";
+          } else  if (`domain.equals(`ClassName("","char"))) {
+            return "(char) ((aterm.ATermInt)"+term+").getInt()";
+          } else if (`domain.equals(`ClassName("","String"))) {
+            return "(String) ((aterm.ATermAppl)"+term+").getAFun().getName()";
+          } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList"))) {
+            return term;
+          } else {
+            throw new GomRuntimeException("Builtin "+`domain+" not supported");
+          }
+        } else {
+          return fullClassName(`domain)+".fromTerm("+term+")";
+        }
+      }
+    }
+    throw new GomRuntimeException(
+        "Problem generating fromString for variadic element");
   }
 
   /** the class logger instance*/
