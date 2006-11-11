@@ -310,7 +310,7 @@
 
 2004-06-09  pem  <pem@becky.local>
   * version 2.0 released
-  
+
 2004-06-07  pem  <pem@polly.loria.fr>
 
   * src/jtom/optimizer/TomOptimizer.t: fixed TOM-43
@@ -411,45 +411,43 @@
     and expand it into a list of char: 'a','b','c'
 
 2004-03-17 julien <julien.guyon@loria.fr>
-  
   * Start incorporating Vas and prepare field for other tools integration
 
 2004-03-16  pem  <pem@polly.loria.fr>
 
-  * src/jtom/compiler/TomKernelCompiler.t: 
+  * src/jtom/compiler/TomKernelCompiler.t:
     - syntactic patterns are no longer abstracted
     - compilation of syntactic patterns in list-matching
 
 2004-03-15    <pem@bach>
 
-  * src/jtom/Tom.java: allows Tom to compile several files 
+  * src/jtom/Tom.java: allows Tom to compile several files
 
   * improved Makefiles
-  
+
 2004-03-10  pem  <pem@polly.loria.fr>
 
   * bootinstall
-  
-  * src/jtom/backend/TomCamlGenerator.t: 
+  * src/jtom/backend/TomCamlGenerator.t:
     - compilation of list-matching for Caml
     - added caml mapping
 
 2004-03-03    <pem@bach>
 
-  * src/jtom/compiler/TomKernelExpander.t: 
+  * src/jtom/compiler/TomKernelExpander.t:
     - major redesign of the expansion phase
       (to deal with the Instruction type)
 
-  * src/jtom/compiler/TomKernelCompiler.t: 
-    - major redesign of matching algorithms 
+  * src/jtom/compiler/TomKernelCompiler.t:
+    - major redesign of matching algorithms
       (by using the Instruction type)
 
-  * src/jtom/parser/TomParser.jj: 
+  * src/jtom/parser/TomParser.jj:
     - introduced <TOM_QUOTE> and <TOM_CHAR> (for char)
     - removed %typeint, %typedouble and %typestring
       (use predefined mapping instead)
 
-  * src/jtom/backend/TomGenericGenerator.t: 
+  * src/jtom/backend/TomGenericGenerator.t:
     - introduced a new intermediate generator
     - between TomAbstractGenerator and TomImperativeGenerator
 
@@ -460,8 +458,8 @@
      EqualityCondition, LocalVariable,EndLocalVariable,
      MakeFunctionBegin, MakeFunctionEnd
    - this makes the code simpler and more typed
-  
-  * src/jtom/tools/SymbolTable.java: 
+
+  * src/jtom/tools/SymbolTable.java:
     - introduced builtin-types (INT,BOOL,STRING,CHAR,DOUBLE)
     - builtin char are now supported
 
@@ -471,7 +469,7 @@
 
 2004-02-25    <pem@bach>
 
-  * src/jtom/compiler/TomKernelCompiler.t: 
+  * src/jtom/compiler/TomKernelCompiler.t:
     - compile ArrayMatching with new schema
     - introduced MatchingParameter to store parameters
 
