@@ -150,8 +150,11 @@ public abstract class TemplateClass {
           res.append(%[@element@.toStringBuffer(@buffer@);
 ]%);
         } else {
-          if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) {
+          if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float"))) {
             res.append(%[@buffer@.append(@element@);
+]%);
+          } else if (`domain.equals(`ClassName("","char"))) {
+            res.append(%[@buffer@.append(((int)@element@-(int)'0'));
 ]%);
           } else if (`domain.equals(`ClassName("","boolean"))) {
             res.append(%[@buffer@.append(@element@?1:0);
@@ -200,9 +203,9 @@ public abstract class TemplateClass {
             res.append(getMethod(slot));
             res.append("())");
           } else if (`domain.equals(`ClassName("","char"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(((int)");
             res.append(getMethod(slot));
-            res.append("())");
+            res.append("()-(int)'0'))");
           } else if (`domain.equals(`ClassName("","String"))) {
             res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(");
             res.append("aterm.pure.SingletonFactory.getInstance().makeAFun(");
@@ -248,7 +251,7 @@ public abstract class TemplateClass {
           } else  if (`domain.equals(`ClassName("","double"))) {
             buffer.append("((aterm.ATermReal)").append(appl).append(").getReal()");
           } else  if (`domain.equals(`ClassName("","char"))) {
-            buffer.append("(char) ((aterm.ATermInt)").append(appl).append(").getInt()");
+            buffer.append("(char) (((aterm.ATermInt)").append(appl).append(").getInt()+(int)'0')");
           } else if (`domain.equals(`ClassName("","String"))) {
             buffer.append("(String) ((aterm.ATermAppl)").append(appl).append(").getAFun().getName()");
           } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
