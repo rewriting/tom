@@ -15,21 +15,21 @@ public class TestFrom extends TestCase {
   public void testFromTerm() {
     aterm.ATerm trm =
       aterm.pure.SingletonFactory.getInstance().parse(
-          "Loop(Loop(Pack(Atom),Element(Atom)),Element(Element(Atom)))"); 
+          "Loop(Loop(Pack(Atom),Element(Atom)),Element(Element(Atom)))");
     Out test = Out.fromTerm(trm);
     assertEquals(test.toString(),
         "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))");
   }
 
   public void testFromString() {
-    String s = "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))"; 
+    String s = "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))";
     Out test = Out.fromString(s);
     assertEquals(test.toString(),
         "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))");
   }
 
   public void testFromStream() {
-    String s = "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))"; 
+    String s = "Loop(Loop(Pack(Atom()),Element(Atom())),Element(Element(Atom())))";
     java.io.InputStream stream = null;
     Out test = null;
     try {
