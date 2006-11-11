@@ -21,18 +21,18 @@
     - document the findbugs.home properties
 
 2006-10-08  pem <moreau@loria.fr>
-  * src/tom/library/sl/StrategyLanguage.java: 
+  * src/tom/library/sl/StrategyLanguage.java:
     - renamed GraphStrategy into StrategyLanguage
     - make MuExpansion work for new StrategyLanguage
 
-  * src/tom/engine/TomMessage.java: 
+  * src/tom/engine/TomMessage.java:
     - add error(...) and warning(...) to help managing error messages
 
-  * src/tom/engine/TomOptionManager.t: 
+  * src/tom/engine/TomOptionManager.t:
     - --<flag> set flag to true and no longer set the opposite
       this fixes the -O2 -p bug
 
-  * src/tom/engine/optimizer/TomOptimizer.t: 
+  * src/tom/engine/optimizer/TomOptimizer.t:
     - -O2 implies opt2 opt1 opt2
       this re-optimize expressions normalized by opt1
       and thus inline anti-pattern-status variables
@@ -100,7 +100,7 @@
   * Gom uses the new Gom parser with the help of pom
 
 2006-06-01    <tonio@arcelot>
-  * switched TNode to gom data structure 
+  * switched TNode to gom data structure
 
 2006-05-31 toussain
   * fixed pom:
@@ -196,7 +196,7 @@
   - new optimizer (-O2) for test-fusion and test-merging
 
 2005-03-22  pem  <pem@polly.loria.fr>
-  * src/jtom/compiler/TomKernelCompiler.t:  
+  * src/jtom/compiler/TomKernelCompiler.t:
   - fixed the completeness list-matching bug in array version
     (subjectIndex has to be reseted to begin)
 
@@ -205,13 +205,13 @@
   - introduce the Ensure constraint
   - attach this constraint to the last instantiated variable (of the
       pattern) occuring in this constraint
-  * src/jtom/compiler/TomKernelCompiler.t: 
+  * src/jtom/compiler/TomKernelCompiler.t:
   - generate IfThenElse for the ensure constraint
 
 2005-03-10  pem  <pem@polly.loria.fr>
-  * src/jtom/parser/TomJavaParser.g: 
+  * src/jtom/parser/TomJavaParser.g:
     - allows definition of get_head, get_tail, and is_empty inside %oplist definitions
-  * src/jtom/compiler/TomKernelExpander.t: 
+  * src/jtom/compiler/TomKernelExpander.t:
     - extend type-inference algorithm to expand already instantiated
       variables under an unknown operator
 
@@ -250,7 +250,6 @@
   list-matching: the containOnlyVariableStar was correct but not
   complete
   Still have to fix the array version.
-  
 
 2004-09-16  pem  <pem@becky.local>
 
@@ -259,12 +258,12 @@
 
 2004-09-06  pem  <pem@polly.loria.fr>
 
-  * introduced mutraveler library 
+  * introduced mutraveler library
 
 2004-08-18  pem  <pem@polly.loria.fr>
 
   * bootinstall
-  * moved Tom.xml and Tom.src.xml into utils  
+  * moved Tom.xml and Tom.src.xml into utils
   * src/tom/platform/adt/PlatformOption.adt: redesigned the ADT
   * src/jtom/TomOptionManager.t: simplified option manager
   * src/jtom/Tom.xml: renamed valueB, valueI, and valueS into value
@@ -285,9 +284,9 @@
   *  |        |--- strategies  (Antoine's master thesis)
   *  |        |--- traversal   (generic traversal)
   *  |        |--- xml         (xml tools)
-  *  |        
+  *  |
   *  |--- platform             (the Tom Plugin Platform, known as Tom server)
-  *           |--- adt     
+  *           |--- adt
 
 2004-07-05  julien guyon  <julien.guyon@loria.fr>
   * bootinstall of version bumped to 3.0
@@ -295,16 +294,17 @@
 
 2004-06-28  pem  <pem@polly.loria.fr>
 
-  * src/jtom/parser/TomParser.t (TOKEN): 
+  * src/jtom/parser/TomParser.t (TOKEN):
     - allows x=_ in XML syntax (TOM-48)
 
-  * src/jtom/adt/TomSignature.adt: 
-    - extended BuildVariable signature (with an 'args' slot) to write disjunction in bracket notation 
+  * src/jtom/adt/TomSignature.adt:
+    - extended BuildVariable signature (with an 'args' slot) to write
+      disjunction in bracket notation
     - fixed TOM-47
 
 2004-06-25  pem  <pem@polly.loria.fr>
 
-  * src/jtom/tools/SymbolTable.java: 
+  * src/jtom/tools/SymbolTable.java:
     - added builtin long type
     - not yet correctly implement for builtin constants
 
@@ -323,11 +323,11 @@
 2004-06-01  pem  <pem@polly.loria.fr>
 
   * src/jtom/compiler/TomCompiler.t: fixed TOM-40 by adding a
-    if(true) before construction the rhs of a rewrite rule  
+    if(true) before construction the rhs of a rewrite rule
 
 2004-05-09    <pem@BACH>
 
-  * src/jtom/parser/TomParser.t: 
+  * src/jtom/parser/TomParser.t:
     - make TomParser a Tom file
     - introduced TomTaskParser
     - make TomJavaParser a separate parser
@@ -353,7 +353,7 @@
 
 2004-04-19  pem  <pem@polly.loria.fr>
 
-  * src/jtom/compiler/TomExpander.t: 
+  * src/jtom/compiler/TomExpander.t:
     - improved the sortAttributeList method
     - fix a test failure
 
@@ -371,11 +371,11 @@
 
 2004-04-12    <pem@bach>
 
-  * src/jtom/optimizer/TomOptimizer.t: 
+  * src/jtom/optimizer/TomOptimizer.t:
     - improved criteria for inlining
     - allow inlining for LetRef and LetAssign
 
-  * src/jtom/backend/TomImperativeGenerator.t: 
+  * src/jtom/backend/TomImperativeGenerator.t:
     - removed buildList (to allow more inlining)
     - this is now done in TomExpander and TomFactory
 
@@ -390,7 +390,7 @@
 
 2004-04-08  pem  <pem@polly.loria.fr>
 
-  * src/jtom/compiler/TomKernelExpander.t: 
+  * src/jtom/compiler/TomKernelExpander.t:
     - fix a major bug in the Type Expander
     - merge TomExpander.variableExpand with TomKernelExpander.variableExpand
 
@@ -403,13 +403,12 @@
 2004-04-06  pem  <pem@polly.loria.fr>
 
   * bootinstall
-  * src/jtom/compiler/TomExpander.t: 
+  * src/jtom/compiler/TomExpander.t:
     added a post-processing phase to TomExpander
     this phases update the codomain of GetHeadDecl in order to
     generate correctly typed getHead functions
   * detect concatenated-char : 'abc'
     and expand it into a list of char: 'a','b','c'
-    
 
 2004-03-17 julien <julien.guyon@loria.fr>
   
