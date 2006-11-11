@@ -65,6 +65,14 @@ public class TestBuiltin extends TestCase {
     assertTrue(na == nb);
   }
 
+  public void testDouble() {
+    Double a = new Double(1.23);
+    Double b = new Double(1.23);
+    Wrapper na = `Double(a.doubleValue());
+    Wrapper nb = `Double(b.doubleValue());
+    assertTrue(na == nb);
+  }
+
   public void testATerm() {
     aterm.ATerm a = constructNode("n1",2);
     aterm.ATerm b = constructNode("n1",2);
