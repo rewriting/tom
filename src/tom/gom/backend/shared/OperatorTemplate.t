@@ -431,53 +431,10 @@ writer.write(%[
       if (res.length()!=0) {
         res.append(", ");
       }
-      fromATermSlotField(res,head, appl, index);
+      fromATermSlotField(res,head, appl+".getArgument("+index+")");
       index++;
     }
     return res.toString();
-  }
-  private void fromATermSlotField(StringBuffer buffer, SlotField slot, String appl, int index) {
-    %match(SlotField slot) {
-      SlotField[Domain=domain] -> {
-        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          buffer.append(fullClassName(`domain));
-          buffer.append(".fromTerm(");
-          buffer.append(appl);
-          buffer.append(".getArgument(");
-          buffer.append(index);
-          buffer.append("))");
-        } else {
-          if (`domain.equals(`ClassName("","int"))) {
-            buffer.append("((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()");
-          } else  if (`domain.equals(`ClassName("","float"))) {
-            buffer.append("(float) ((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
-          } else  if (`domain.equals(`ClassName("","boolean"))) {
-            buffer.append("(((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()==0?false:true)");
-          } else  if (`domain.equals(`ClassName("","long"))) {
-            /* As the parse method from aterm may return an ATermInt, we have
-               to handle that case */
-            buffer.append("(long) ");
-            buffer.append("( (");
-            buffer.append(appl).append(".getArgument(").append(index).append(")");
-            buffer.append("instanceof aterm.ATermInt)?");
-            buffer.append("((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()");
-            buffer.append(":");
-            buffer.append("((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
-            buffer.append(")");
-          } else  if (`domain.equals(`ClassName("","double"))) {
-            buffer.append("((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
-          } else  if (`domain.equals(`ClassName("","char"))) {
-            buffer.append("(char) ((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()");
-          } else if (`domain.equals(`ClassName("","String"))) {
-            buffer.append("(String) ((aterm.ATermAppl)").append(appl).append(".getArgument(").append(index).append(")).getAFun().getName()");
-          } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
-            buffer.append(appl).append(".getArgument(").append(index).append(")");
-          } else {
-            throw new GomRuntimeException("Builtin " + `domain + " not supported");
-          }
-        }
-      }
-    }
   }
 
   private String fieldName(String fieldName) {

@@ -203,35 +203,9 @@ writer.write(%[
 
   private String fromATermElement(String term, String element) {
     SlotField slot = cons.getSlots().getHeadconcSlotField();
-    %match(SlotField slot) {
-      SlotField[Domain=domain] -> {
-        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          if (`domain.equals(`ClassName("","int"))) {
-            return "((aterm.ATermInt)"+term+").getInt()";
-          } else  if (`domain.equals(`ClassName("","float"))) {
-            return "(float) ((aterm.ATermReal)"+term+").getReal()";
-          } else  if (`domain.equals(`ClassName("","boolean"))) {
-            return "(((aterm.ATermInt)"+term+").getInt()==0?false:true)";
-          } else  if (`domain.equals(`ClassName("","long"))) {
-            return "(long) (("+term+" instanceof aterm.ATermInt)?((aterm.ATermInt)"+term+").getInt():((aterm.ATermReal)"+term+").getReal())";
-          } else  if (`domain.equals(`ClassName("","double"))) {
-            return "((aterm.ATermReal)"+term+").getReal()";
-          } else  if (`domain.equals(`ClassName("","char"))) {
-            return "(char) ((aterm.ATermInt)"+term+").getInt()";
-          } else if (`domain.equals(`ClassName("","String"))) {
-            return "(String) ((aterm.ATermAppl)"+term+").getAFun().getName()";
-          } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList"))) {
-            return term;
-          } else {
-            throw new GomRuntimeException("Builtin "+`domain+" not supported");
-          }
-        } else {
-          return fullClassName(`domain)+".fromTerm("+term+")";
-        }
-      }
-    }
-    throw new GomRuntimeException(
-        "Problem generating fromString for variadic element");
+    StringBuffer buffer = new StringBuffer();
+    fromATermSlotField(buffer,slot,term);
+    return buffer.toString();
   }
 
   /** the class logger instance*/

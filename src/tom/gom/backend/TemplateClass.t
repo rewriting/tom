@@ -130,6 +130,48 @@ public abstract class TemplateClass {
     throw new GomRuntimeException("TemplateClass:className got a strange ClassName");
   }
 
+  public void fromATermSlotField(StringBuffer buffer, SlotField slot, String appl) {
+    %match(SlotField slot) {
+      SlotField[Domain=domain] -> {
+        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          buffer.append(fullClassName(`domain));
+          buffer.append(".fromTerm(");
+          buffer.append(appl);
+          buffer.append(")");
+        } else {
+          if (`domain.equals(`ClassName("","int"))) {
+            buffer.append("((aterm.ATermInt)").append(appl).append(").getInt()");
+          } else  if (`domain.equals(`ClassName("","float"))) {
+            buffer.append("(float) ((aterm.ATermReal)").append(appl).append(").getReal()");
+          } else  if (`domain.equals(`ClassName("","boolean"))) {
+            buffer.append("(((aterm.ATermInt)").append(appl).append(").getInt()==0?false:true)");
+          } else  if (`domain.equals(`ClassName("","long"))) {
+            /* As the parse method from aterm may return an ATermInt, we have
+               to handle that case */
+            buffer.append("(long) ");
+            buffer.append("((");
+            buffer.append(appl);
+            buffer.append(" instanceof aterm.ATermInt)?");
+            buffer.append("((aterm.ATermInt)").append(appl).append(").getInt()");
+            buffer.append(":");
+            buffer.append("((aterm.ATermReal)").append(appl).append(").getReal()");
+            buffer.append(")");
+          } else  if (`domain.equals(`ClassName("","double"))) {
+            buffer.append("((aterm.ATermReal)").append(appl).append(").getReal()");
+          } else  if (`domain.equals(`ClassName("","char"))) {
+            buffer.append("(char) ((aterm.ATermInt)").append(appl).append(").getInt()");
+          } else if (`domain.equals(`ClassName("","String"))) {
+            buffer.append("(String) ((aterm.ATermAppl)").append(appl).append(").getAFun().getName()");
+          } else if (`domain.equals(`ClassName("aterm","ATerm")) || `domain.equals(`ClassName("aterm","ATermList")) ){
+            buffer.append(appl);
+          } else {
+            throw new GomRuntimeException("Builtin " + `domain + " not supported");
+          }
+        }
+      }
+    }
+  }
+
   protected String fileName() {
     return fullClassName().replace('.',File.separatorChar)+".java";
   }
