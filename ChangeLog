@@ -1,3 +1,9 @@
+2006-11-11  tonio <reilles@loria.fr>
+  * src/tom/engine/compiler/TomKernelCompiler.t:
+    - ocaml backend fixes :
+    fix PR 1564, by correctly using references for ap_flag, and a wrong
+    dereference in the associative algorithm
+
 2006-11-04  tonio <reilles@loria.fr>
   * src/tom/gom/:
     - add support for the "boolean" builtin
