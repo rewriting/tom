@@ -1,6 +1,6 @@
 OCAMLC?=ocamlc
 
-all: tompeano tomlist peanomapped erat
+all: tompeano tomlist peanomapped erat searchdup
 
 peanotype.cmo: peanotype.ml
 	${OCAMLC} -c peanotype.ml
@@ -31,6 +31,9 @@ tomlist: List1.tom.cmo
 
 erat: erat.tom.ml
 	${OCAMLC} -o erat erat.tom.ml
+
+searchdup: searchdup.tom.ml
+	${OCAMLC} -o searchdup searchdup.tom.ml
 
 eratopt: erat.tom.ml
 	tom.src --camlCode -O erat.t
