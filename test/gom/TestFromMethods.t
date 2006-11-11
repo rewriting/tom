@@ -49,6 +49,7 @@ public class TestFromMethods extends TestCase {
       `Int(21),
       `Long(23),
       `Name("who?"),
+      `Node(aterm.pure.SingletonFactory.getInstance().parse("f(g,(h(<a>,b),b),c)")),
       `concWrap(Int(1),Int(2),Name("toto"),Name("blop")),
       `concInt(1,2,3,4,5,6,7,8,9,0),
       `concLong(10000,123455,23445556),
