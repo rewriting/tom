@@ -47,6 +47,10 @@ public class TestFromMethods extends TestCase {
     Wrapper[] TESTS = new Wrapper[] {
       `Char('a'),
       `Int(21),
+      `Real(21),
+      `Real((float)20.3),
+      `Double(21),
+      `Double(20.3),
       `Bool(true()),
       `Bool(false()),
       `Long(23),

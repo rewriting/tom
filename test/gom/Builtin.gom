@@ -1,5 +1,5 @@
 module Builtin
-imports int boolean String ATerm ATermList long char
+imports int boolean String ATerm ATermList long char float double
 
 abstract syntax
 Wrapper = | Int(i:int)
@@ -19,14 +19,8 @@ Wrapper = | Int(i:int)
           | concLong(long*)
           | concBool(boolean*)
           | concChar(char*)
-/*
-          | Real(r:real)
-          | RealBis(r:real)
-          | Double(d:doubl)
-          | DoubleBis(d:doubl)
-          | Char(c:char)
-          | CharBis(c:char)
-          | Char(c:char)
-          | CharBis(c:char)
-*/
+          | Real(r:float)
+          | RealBis(r:float)
+          | Double(d:double)
+          | DoubleBis(d:double)
 
