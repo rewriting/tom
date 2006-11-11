@@ -213,7 +213,7 @@ writer.write(%[
           } else  if (`domain.equals(`ClassName("","boolean"))) {
             return "(((aterm.ATermInt)"+term+").getInt()==0?false:true)";
           } else  if (`domain.equals(`ClassName("","long"))) {
-            return "(long) ((aterm.ATermReal)"+term+").getReal()";
+            return "(long) (("+term+" instanceof aterm.ATermInt)?((aterm.ATermInt)"+term+").getInt():((aterm.ATermReal)"+term+").getReal())";
           } else  if (`domain.equals(`ClassName("","double"))) {
             return "((aterm.ATermReal)"+term+").getReal()";
           } else  if (`domain.equals(`ClassName("","char"))) {

@@ -117,6 +117,4 @@ public class NewBehaviour {
     Strategy s = `_l(R1());
     return (Term) s.fire(subject);
   }
-
-
 }

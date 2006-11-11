@@ -454,7 +454,16 @@ writer.write(%[
           } else  if (`domain.equals(`ClassName("","boolean"))) {
             buffer.append("(((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()==0?false:true)");
           } else  if (`domain.equals(`ClassName("","long"))) {
-            buffer.append("(long) ((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
+            /* As the parse method from aterm may return an ATermInt, we have
+               to handle that case */
+            buffer.append("(long) ");
+            buffer.append("( (");
+            buffer.append(appl).append(".getArgument(").append(index).append(")");
+            buffer.append("instanceof aterm.ATermInt)?");
+            buffer.append("((aterm.ATermInt)").append(appl).append(".getArgument(").append(index).append(")).getInt()");
+            buffer.append(":");
+            buffer.append("((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
+            buffer.append(")");
           } else  if (`domain.equals(`ClassName("","double"))) {
             buffer.append("((aterm.ATermReal)").append(appl).append(".getArgument(").append(index).append(")).getReal()");
           } else  if (`domain.equals(`ClassName("","char"))) {
