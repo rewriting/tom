@@ -13,11 +13,11 @@ JAVA_ARGS=
 while [ $# -gt 0 ]; do
   case $1 in
     -D*)
-		JAVA_ARGS=$JAVA_ARGS" "$1
-		;;
-		*)
-		SCRIPT_ARGS=$SCRIPT_ARGS" "$1
-		;;			
+      JAVA_ARGS=$JAVA_ARGS" "$1
+      ;;
+    *)
+      SCRIPT_ARGS=$SCRIPT_ARGS" "$1
+      ;;
   esac
   shift
 done
@@ -66,9 +66,9 @@ JAVACMD=java$JAVA_ARGS
 
 
 if [ -z "$LOCALCLASSPATH" ] ; then
-    LOCALCLASSPATH=$TOM_JAR:$EXTERNAL_JAR
+  LOCALCLASSPATH=$TOM_JAR:$EXTERNAL_JAR
 else
-    LOCALCLASSPATH=$TOM_JAR:$EXTERNAL_JAR:$LOCALCLASSPATH
+  LOCALCLASSPATH=$TOM_JAR:$EXTERNAL_JAR:$LOCALCLASSPATH
 fi
 
 SCRIPT_INC="${@TOM_HOME@}/@INCLUDES_DIR@"
