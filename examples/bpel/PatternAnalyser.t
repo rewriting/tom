@@ -55,17 +55,6 @@ public class PatternAnalyser{
   %include {strategy/graph_sl.tom}
   %include {adt/tnode/TNode.tom }
 
-
-  //TODO remove when composed will be added to sl.tom
-  %op Strategy TopDown(s1:Strategy) {
-    make(v) { `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) }
-  }
-
-  %op Strategy Try(s1:Strategy) {
-    make(v) { `Choice(v,Identity()) }
-  }
-
-
   %strategy Combine(wfg:Wfg) extends `Fail(){
     visit Wfg{
       Empty() -> {
