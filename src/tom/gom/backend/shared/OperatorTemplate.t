@@ -374,53 +374,6 @@ writer.write(%[
     return res.toString();
   }
 
-  private void toATermSlotField(StringBuffer res, SlotField slot) {
-    %match(SlotField slot) {
-      SlotField[Domain=domain] -> {
-        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          res.append(getMethod(slot));
-          res.append("().toATerm()");
-        } else {
-          if (`domain.equals(`ClassName("","int"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
-            res.append(getMethod(slot));
-            res.append("())");
-          } else if (`domain.equals(`ClassName("","boolean"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
-            res.append(getMethod(slot));
-            res.append("()?1:0)");
-          } else if (`domain.equals(`ClassName("","long"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
-            res.append(getMethod(slot));
-            res.append("())");
-          } else if (`domain.equals(`ClassName("","double"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
-            res.append(getMethod(slot));
-            res.append("())");
-          } else if (`domain.equals(`ClassName("","float"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
-            res.append(getMethod(slot));
-            res.append("())");
-          } else if (`domain.equals(`ClassName("","char"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
-            res.append(getMethod(slot));
-            res.append("())");
-          } else if (`domain.equals(`ClassName("","String"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(");
-            res.append("aterm.pure.SingletonFactory.getInstance().makeAFun(");
-            res.append(getMethod(slot));
-            res.append("() ,0 , true))");
-          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))){
-            res.append(getMethod(slot));
-            res.append("()");
-          } else {
-            throw new GomRuntimeException("Builtin " + `domain + " not supported");
-          }
-        }
-      }
-    }
-  }
-
   private String generatefromATermChilds(String appl) {
     StringBuffer res = new StringBuffer();
     int index = 0;
@@ -440,6 +393,7 @@ writer.write(%[
   private String fieldName(String fieldName) {
     return "_"+fieldName;
   }
+
   private String childListWithType(SlotFieldList slots) {
     StringBuffer res = new StringBuffer();
     while(!slots.isEmptyconcSlotField()) {
@@ -676,32 +630,7 @@ writer.write(%[
 			}
 			SlotField head = slots.getHeadconcSlotField();
 			slots = slots.getTailconcSlotField();
-			%match(SlotField head) {
-				SlotField[Name=slotName,Domain=domain] -> {
-					if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-						if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
-							res.append(%[@buffer@.append(@fieldName(`slotName)@);
-    ]%);
-						} else if (`domain.equals(`ClassName("","boolean"))) {
-							res.append(%[@buffer@.append(@fieldName(`slotName)@?1:0);
-    ]%);
-						} else if (`domain.equals(`ClassName("","String"))) {
-							res.append(%[@buffer@.append("\"");
-    @buffer@.append(@fieldName(`slotName)@);
-    @buffer@.append("\"");
-    ]%);
-						} else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
-							res.append(%[@buffer@.append(@fieldName(`slotName)@.toString());
-     ]%);
-						} else {
-							throw new GomRuntimeException("Builtin "+`domain+" not supported");
-						}
-					} else {
-						res.append(%[@fieldName(`slotName)@.toStringBuffer(@buffer@);
-     ]%);
-					}
-				}
-			}
+      toStringSlotField(res,head,fieldName(head.getName()),buffer);
 		}
     return res.toString();
   }

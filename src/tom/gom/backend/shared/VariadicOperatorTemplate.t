@@ -176,29 +176,9 @@ writer.write(%[
 
   private String toStringChild(String buffer, String element) {
     SlotField head = cons.getSlots().getHeadconcSlotField();
-    %match(SlotField head) {
-      SlotField[Domain=domain] -> {
-        if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-          if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
-            return %[@buffer@.append(@element@);]%;
-          } else if (`domain.equals(`ClassName("","boolean"))) {
-            return %[@buffer@.append(@element@?1:0);]%;
-          } else if (`domain.equals(`ClassName("","String"))) {
-            return %[@buffer@.append("\"");
-                @buffer@.append(@element@);
-                @buffer@.append("\"");]%;
-          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
-            return %[@buffer@.append(@element@.toString());]%;
-          } else {
-            throw new GomRuntimeException("Builtin "+`domain+" not supported");
-          }
-        } else {
-          return %[@element@.toStringBuffer(@buffer@);]%;
-        }
-      }
-    }
-    throw new GomRuntimeException(
-        "Problem generating toString for variadic element");
+    StringBuffer res = new StringBuffer();
+    toStringSlotField(res,head,element,buffer);
+    return res.toString();
   }
 
   private String fromATermElement(String term, String element) {

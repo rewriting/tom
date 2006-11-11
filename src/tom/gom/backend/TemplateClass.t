@@ -21,7 +21,6 @@
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
  *
  **/
-
 package tom.gom.backend;
 
 import tom.gom.GomStreamManager;
@@ -45,6 +44,7 @@ public abstract class TemplateClass {
   public String className() {
     return className(this.className);
   }
+
   public String className(ClassName clsName) {
     %match(ClassName clsName) {
       ClassName[Name=name] -> {
@@ -53,9 +53,11 @@ public abstract class TemplateClass {
     }
     throw new GomRuntimeException("TemplateClass:className got a strange ClassName");
   }
+
   public String fullClassName() {
     return fullClassName(this.className);
   }
+
   public String fullClassName(ClassName clsName) {
     %match(ClassName clsName) {
       ClassName[Pkg=pkgPrefix,Name=name] -> {
@@ -72,6 +74,7 @@ public abstract class TemplateClass {
   public String getPackage() {
     return getPackage(this.className);
   }
+
   public String getPackage(ClassName clsName) {
     %match(ClassName clsName) {
       ClassName[Pkg=pkg] -> {
@@ -89,6 +92,7 @@ public abstract class TemplateClass {
     }
     throw new GomRuntimeException("TemplateClass:hasMethod got a strange SlotField");
   }
+
   public String getMethod(SlotField slot) {
     %match(SlotField slot) {
       SlotField[Name=name] -> {
@@ -97,6 +101,7 @@ public abstract class TemplateClass {
     }
     throw new GomRuntimeException("TemplateClass:getMethod got a strange SlotField");
   }
+
   public String setMethod(SlotField slot) {
     %match(SlotField slot) {
       SlotField[Name=name] -> {
@@ -105,6 +110,7 @@ public abstract class TemplateClass {
     }
     throw new GomRuntimeException("TemplateClass:getMethod got a strange SlotField");
   }
+
   public String index(SlotField slot) {
     %match(SlotField slot) {
       SlotField[Name=name] -> {
@@ -113,6 +119,7 @@ public abstract class TemplateClass {
     }
     throw new GomRuntimeException("TemplateClass:index got a strange SlotField");
   }
+
   public String slotDomain(SlotField slot) {
     %match(SlotField slot) {
       SlotField[Domain=domain] -> {
@@ -121,13 +128,95 @@ public abstract class TemplateClass {
     }
     throw new GomRuntimeException("TemplateClass:slotDomain got a strange SlotField");
   }
-  public String fieldName(ClassName clsName) {
+
+  private String fieldName(String fieldName) {
+    return "_"+fieldName;
+  }
+
+  public String classFieldName(ClassName clsName) {
     %match(ClassName clsName) {
       ClassName[Name=name] -> {
         return `name.toLowerCase();
       }
     }
     throw new GomRuntimeException("TemplateClass:className got a strange ClassName");
+  }
+
+  public void toStringSlotField(StringBuffer res, SlotField slot,
+                                String element, String buffer) {
+    %match(SlotField slot) {
+      SlotField[Name=slotName,Domain=domain] -> {
+        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res.append(%[@element@.toStringBuffer(@buffer@);
+]%);
+        } else {
+          if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) {
+            res.append(%[@buffer@.append(@element@);
+]%);
+          } else if (`domain.equals(`ClassName("","boolean"))) {
+            res.append(%[@buffer@.append(@element@?1:0);
+]%);
+          } else if (`domain.equals(`ClassName("","String"))) {
+            res.append(%[@buffer@.append("\"");
+            @buffer@.append(@element@);
+            @buffer@.append("\"");
+]%);
+          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
+            res.append(%[@buffer@.append(@element@.toString());
+]%);
+          } else {
+            throw new GomRuntimeException("Builtin " + `domain + " not supported");
+          }
+        }
+      }
+    }
+  }
+
+  public void toATermSlotField(StringBuffer res, SlotField slot) {
+    %match(SlotField slot) {
+      SlotField[Domain=domain] -> {
+        if(!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
+          res.append(getMethod(slot));
+          res.append("().toATerm()");
+        } else {
+          if (`domain.equals(`ClassName("","int"))) {
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
+            res.append(getMethod(slot));
+            res.append("())");
+          } else if (`domain.equals(`ClassName("","boolean"))) {
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
+            res.append(getMethod(slot));
+            res.append("()?1:0)");
+          } else if (`domain.equals(`ClassName("","long"))) {
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
+            res.append(getMethod(slot));
+            res.append("())");
+          } else if (`domain.equals(`ClassName("","double"))) {
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
+            res.append(getMethod(slot));
+            res.append("())");
+          } else if (`domain.equals(`ClassName("","float"))) {
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
+            res.append(getMethod(slot));
+            res.append("())");
+          } else if (`domain.equals(`ClassName("","char"))) {
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeInt(");
+            res.append(getMethod(slot));
+            res.append("())");
+          } else if (`domain.equals(`ClassName("","String"))) {
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeAppl(");
+            res.append("aterm.pure.SingletonFactory.getInstance().makeAFun(");
+            res.append(getMethod(slot));
+            res.append("() ,0 , true))");
+          } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))){
+            res.append(getMethod(slot));
+            res.append("()");
+          } else {
+            throw new GomRuntimeException("Builtin " + `domain + " not supported");
+          }
+        }
+      }
+    }
   }
 
   public void fromATermSlotField(StringBuffer buffer, SlotField slot, String appl) {
@@ -201,6 +290,7 @@ public abstract class TemplateClass {
   public String visitMethod(ClassName sortName) {
     return "visit_"+className(sortName);
   }
+
   public String isOperatorMethod(ClassName opName) {
     return "is"+className(opName);
   }
