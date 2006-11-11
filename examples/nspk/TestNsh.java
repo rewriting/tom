@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2004-2006, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -51,7 +51,7 @@ public class TestNsh extends TestCase {
 
   public void testQuery() {
     assertEquals("Tests the query function (and toString()).",
-                 "state(ConsconcAgent(agent(sender(1),SLEEP(),N(sender(1),sender(1))),ConsconcAgent(agent(sender(0),SLEEP(),N(sender(0),sender(0))),EmptyconcAgent())),ConsconcAgent(agent(receiver(1),SLEEP(),N(receiver(1),receiver(1))),ConsconcAgent(agent(receiver(0),SLEEP(),N(receiver(0),receiver(0))),EmptyconcAgent())),intruder(devil(),EmptyconcNonce(),EmptyconcMessage()),EmptyconcMessage())",
+                 "state(concAgent(agent(sender(1),SLEEP(),N(sender(1),sender(1))),agent(sender(0),SLEEP(),N(sender(0),sender(0)))),concAgent(agent(receiver(1),SLEEP(),N(receiver(1),receiver(1))),agent(receiver(0),SLEEP(),N(receiver(0),receiver(0)))),intruder(devil(),concNonce(),concMessage()),concMessage())",
                  test.query(2,2).toString());
   }
 
@@ -79,5 +79,4 @@ public class TestNsh extends TestCase {
     assertEquals("Tests that collectOneStep get enough states.",
                  66,nb2Next);
   }
-
 }
