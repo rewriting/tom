@@ -45,6 +45,7 @@ public class TestFromMethods extends TestCase {
 
   public static Test suite() {
     Wrapper[] TESTS = new Wrapper[] {
+      `Char('a'),
       `Int(21),
       `Long(23),
       `Name("who?"),
