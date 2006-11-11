@@ -138,25 +138,32 @@ public class TomKernelCompiler extends TomBase {
 
 	  /*
 	   * compile nested match constructs
-       * given a list of pattern: we build a matching automaton
-       */	  
+     * given a list of pattern: we build a matching automaton
+     */	  
 	  actionInst = (Instruction) compileStrategy.visit(actionInst);
 	  Instruction matchingAutomata = null;
 	  // if we have anti-patterns, we should use a boolean flag
 	  if (TomAntiPatternUtils.hasAntiTerms(patternList)){	  
 	      // anti flag
 	      TomName antiFlagName = `PositionName(concTomNumber(rootpath*,NameNumber(Name(ANTI_FLAG_NAME))));      
-	      antiFlagVariable = `Variable(concOption(OriginTracking(antiFlagName,0,""))
-	    		  ,antiFlagName,antiFlagType,concConstraint());
+	      antiFlagVariable = `Variable(
+            concOption(OriginTracking(antiFlagName,0,"")),
+            antiFlagName,antiFlagType,concConstraint());
 	      TomAntiPatternTransformNew.initialize();      
 	      // final test
-	      Instruction finalTest = `If(EqualTerm(antiFlagType,Ref(antiFlagVariable),ExpressionToTomTerm(TrueTL())),actionInst
-	    		  ,LetAssign(antiFlagVariable,TrueTL(),Nop()));      
-	      matchingAutomata = compiler.genSyntacticMatchingAutomata(finalTest,`Nop(),
+	      Instruction finalTest = `If(
+            EqualTerm(
+              antiFlagType,
+              Ref(antiFlagVariable),
+              ExpressionToTomTerm(TrueTL())),
+            actionInst,
+            LetAssign(antiFlagVariable,TrueTL(),Nop()));      
+	      matchingAutomata = compiler.genSyntacticMatchingAutomata(
+            finalTest, `Nop(),
 	    		  patternList,rootpath,moduleName,null);
-		  // glue the flag declaration
+        // glue the flag declaration
 	      matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
-	  }else{
+	  } else {
 		  matchingAutomata = compiler.genSyntacticMatchingAutomata(actionInst,`Nop(),
 	    		  patternList,rootpath,moduleName,null);
 	  }
@@ -566,7 +573,9 @@ public class TomKernelCompiler extends TomBase {
             Instruction stopIter = `Assign(variableEndAST,TomTermToExpression(variableBeginAST));
             Instruction assign1 = `genCheckEmptyList(p.symbol, Ref(variableEndAST),stopIter,tailExp);
             Instruction assign2 = `Assign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)));
-            loop = `DoWhile(UnamedBlock(concInstruction(let,assign1,assign2)),Negation(EqualTerm(termType,Ref(variableEndAST),variableBeginAST)));
+            loop = `DoWhile(
+                UnamedBlock(concInstruction(let,assign1,assign2)),
+                Negation(EqualTerm(termType,Ref(variableEndAST),variableBeginAST)));
           } else {
               /*
                * case (X*,y,...)
@@ -652,10 +661,12 @@ public class TomKernelCompiler extends TomBase {
     TomNumberList pathEnd = `concTomNumber(ppath*,End(Number(indexTerm)));
     TomType listType = p.symbol.getTypesToType().getCodomain();
     TomTerm variableEndAST = `Variable(concOption(),PositionName(pathEnd),listType,concConstraint());
-    Instruction letRestore = `Assign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)));
+    Instruction letRestore = `Assign(
+        p.subjectListName,
+        TomTermToExpression(variableEndAST));
     Instruction letSave = `Let(variableEndAST,
-	TomTermToExpression(Ref(p.subjectListName)),
-	UnamedBlock(concInstruction(let,letRestore)));
+        TomTermToExpression(Ref(p.subjectListName)),
+        UnamedBlock(concInstruction(let,letRestore)));
     return letSave;
   }
   
@@ -1117,8 +1128,14 @@ public class TomKernelCompiler extends TomBase {
     Instruction antiInstruction = null; 
     Constraint antiMatchConstraint = null;
 
-    Instruction assignAntiFlagTrue = `LetAssign(antiFlagVariable,And(TrueTL(),TomTermToExpression(antiFlagVariable)),Nop());
-    Instruction assignAntiFlagFalse = `LetAssign(antiFlagVariable,And(FalseTL(),TomTermToExpression(antiFlagVariable)),Nop());
+    Instruction assignAntiFlagTrue = `LetAssign(
+        antiFlagVariable,
+        And(TrueTL(),TomTermToExpression(Ref(antiFlagVariable))),
+        Nop());
+    Instruction assignAntiFlagFalse = `LetAssign(
+        antiFlagVariable,
+        And(FalseTL(),TomTermToExpression(Ref(antiFlagVariable))),
+        Nop());
 
     // actions that will be performed on if and on else
     Instruction ifAction = null, elseAction = null;
@@ -1144,12 +1161,22 @@ public class TomKernelCompiler extends TomBase {
       antiInstruction = buildAntiMatchConstraint((AntiMatchConstraint)antiMatchConstraint,
 	  source, ifAction, elseAction, moduleName);
 
-      if (antiMatchConstraint.getActionOnIf() == 0){
-	antiInstruction = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),
-	    antiInstruction,Nop());
-      }else{
-	antiInstruction = `If(EqualTerm(antiFlagType,antiFlagVariable,ExpressionToTomTerm(TrueTL())),
-	    Nop(),antiInstruction);
+      if (antiMatchConstraint.getActionOnIf() == 0) {
+        antiInstruction = `If(
+            EqualTerm(
+              antiFlagType,
+              Ref(antiFlagVariable),
+              ExpressionToTomTerm(TrueTL())),
+            antiInstruction,
+            Nop());
+      } else {
+        antiInstruction = `If(
+            EqualTerm(
+              antiFlagType,
+              Ref(antiFlagVariable),
+              ExpressionToTomTerm(TrueTL())),
+            Nop(),
+            antiInstruction);
       }		  
       // add intruction to the list
       instructionList = `concInstruction(instructionList*,antiInstruction);
@@ -1158,13 +1185,12 @@ public class TomKernelCompiler extends TomBase {
     }
     // add the body to the list if the body is not the flag assignement
     // quite ugly ... should be changed
-    if (!(body instanceof LetAssign)){
+    if (!(body instanceof LetAssign)) {
       instructionList = `concInstruction(instructionList*,body);
     }
     return `UnamedBlock(instructionList);
   }
-  
-  
+
   private Instruction buildAntiMatchConstraint(AntiMatchConstraint constraint, 
       Expression source, Instruction ifAction, Instruction elseAction, String moduleName) {
     //SlotList slotList = tomListToSlotList(`concTomTerm(constraint.getPattern())); 
