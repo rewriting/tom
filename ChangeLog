@@ -477,7 +477,7 @@
 
 2004-02-23  pem  <pem@polly.loria.fr>
 
-  * src/jtom/compiler/TomKernelCompiler.t: 
+  * src/jtom/compiler/TomKernelCompiler.t:
     - introduced the Let(...) construction
     - updated syntactic and list matching algorithm
     - simplified the kernel a lot
@@ -493,31 +493,25 @@
     - adapted sortAttribute to RecordAppl
     - concatenate a "context" variable to each XML nodes
 
-  
 2004-01-29    <pem@bach>
-
   * src/jtom/compiler/TomExpander.t: anonymous XML nodes are allowed
     <_ []> ... </_>
   * modified signature of Xml AttributeNode: the value is now a
-    String (instead of a Term). 
-    attr=#TEXT(x) has to be replaced by attr=x where x is a String  
+    String (instead of a Term).
+    attr=#TEXT(x) has to be replaced by attr=x where x is a String
 
 2003-12-10  pem  <pem@polly.loria.fr>
-
   * bootinstall
   * version 1.5 released
 
 2003-12-04    <pem@bach>
-  
   * bootinstall
 
 2003-12-02    <pem@bach>
-
   * ported jtom to new version of apigen
 
 2003-11-25  pem  <pem@polly.loria.fr>
-
-  * src/jtom/parser/TomParser.jj: 
+  * src/jtom/parser/TomParser.jj:
     - fix bug related to annotations in XML
     - replaced double-backquote by `XML(...)
 
