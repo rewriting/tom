@@ -47,13 +47,17 @@ public class TestFromMethods extends TestCase {
     Wrapper[] TESTS = new Wrapper[] {
       `Char('a'),
       `Int(21),
+      `Bool(true()),
+      `Bool(false()),
       `Long(23),
       `Name("who?"),
       `Node(aterm.pure.SingletonFactory.getInstance().parse("f(g,(h(<a>,b),b),c)")),
       `concWrap(Int(1),Int(2),Name("toto"),Name("blop")),
       `concInt(1,2,3,4,5,6,7,8,9,0),
       `concLong(10000,123455,23445556),
-      `concWrap(Int(1),concWrap(Name("a"),Name("b"),Name("c")),Int(3))
+      `concWrap(Int(1),concWrap(Name("a"),Name("b"),Name("c")),Int(3)),
+      `concBool(true(),false(),true(),false()),
+      `concChar('t','o','m')
     };
     TestSuite suite = new TestSuite();
     for (int i = 0; i<TESTS.length;i++) {
