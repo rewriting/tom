@@ -28,36 +28,62 @@
  */
 package bytecode;
 
-import java.io.FileOutputStream;
+import java.io.FileReader;
 
-public class SClassLoader extends ClassLoader {
-	public SClassLoader(ClassLoader parent) {
-		super(parent);
-	}
-	public SClassLoader() {
-		super();
-	}
+public class Reading {
 
-  public synchronized Class loadClass(String name) throws ClassNotFoundException {
-    System.out.println("Load the file: " + name);
-    //if(name.equals("bytecode.Reading")||(name.equals("Test2"))) {
-    Transformer t = new Transformer();
-    byte[] scode = t.transform(name);
-    System.out.println("Transform the file: " + name);
+  public static void lire1(String nameFile){
     try {
-      FileOutputStream fos = new FileOutputStream(name+".class");
-      fos.write(scode);
-      fos.close();
-      System.out.println("ok");
-    } catch(java.io.IOException e) {
-      System.out.println("IO Exception");
+      new FileReader(nameFile).read();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
-    System.out.println("End of load");
-    Class sClass = defineClass(name,scode, 0, scode.length) ;
-    return loadClass(sClass.getName(),true);
-    //} else {
-    //Class sClass = loadClass(name,false);
-    //return sClass;
-    //}
+    try {
+      new FileReader(nameFile).read();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
+
+  public static void lire2(int Entier,String nameFile){
+    try {
+      new FileReader(nameFile).read();
+    } catch (Exception e) {
+      e.printStackTrace();
+    } 
+  }
+
+  public static void lire3(String nameFile){
+    try {
+      FileReader f=new FileReader(nameFile);
+      f.read();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  //public static void lire4 (String nameFile){
+  //		Test2 t2 = new Test2();
+  //		t2.lire1(nameFile);
+  //	}
+  /*public static void lire4(String nameFile){
+    new SecureAccess().sread(nameFile);
+    }*/
+  /*
+     public static void utiliserAutreClassloader () throws ClassNotFoundException{
+//ClassLoader clMechant=this.getClass().getClassLoader();
+ClassLoader clm = new ClassLoaderMechant();
+clm.loadClass("Test3Secure");
+     }
+   */
+
+  public static void main(String[] args) {
+    String nameFile = args[0];
+    lire1(nameFile);
+    lire2(1,nameFile);
+    lire3(nameFile);
+    //lire4(nameFile);
+
+  }
+
 }
