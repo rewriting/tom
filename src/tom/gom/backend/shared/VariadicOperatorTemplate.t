@@ -160,19 +160,11 @@ writer.write(%[
       if("@className()@".equals(appl.getName())) {
         @fullClassName(sortName)@ res = @fullClassName(empty.getClassName())@.make();
 
-	aterm.ATerm array[] = appl.getArgumentArray();
-	for(int i = array.length; i>0; ) {
-	  --i;
-	  @domainClassName@ elem = @fromATermElement("array[i]","elem")@;
-	  res = @fullClassName(cons.getClassName())@.make(elem,res);
-	}
-        //aterm.ATermList args = appl.getArguments().reverse();
-        //while (!args.isEmpty()) {
-        //  aterm.ATerm head = args.getFirst();
-        //  @domainClassName@ elem = @fromATermElement("head","elem")@;
-        //  res = @fullClassName(cons.getClassName())@.make(elem,res);
-        //  args = args.getNext();
-        //}
+        aterm.ATerm array[] = appl.getArgumentArray();
+        for(int i = array.length-1; i>=0; --i) {
+          @domainClassName@ elem = @fromATermElement("array[i]","elem")@;
+          res = @fullClassName(cons.getClassName())@.make(elem,res);
+        }
         return res;
       }
     }
