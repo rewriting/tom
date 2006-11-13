@@ -193,6 +193,17 @@ public class Environment implements Cloneable {
     return reducedOmega;
   }
 
+  /**
+   * get the current position
+   * @return the current position
+   */
+  public Position getPosition() {
+    int[] reducedOmega = new int[depth()];
+    System.arraycopy(omega,1,reducedOmega,0,depth());
+    return Position.makeAbsolutePosition(reducedOmega);
+  }
+
+
 
   /**
    * Get the depth of the position in the tree
@@ -235,15 +246,18 @@ public class Environment implements Cloneable {
   }
 
 
-  public void goTo(int[] pos) {
-    int pos_back = pos[0];
-    int pos_length = pos.length;
-    for(int i=0;i<pos_back;i++){
-      up();
-    }
-    if(pos_length>1){
-      for(int i=1;i<pos_length;i++){
-        down(pos[i]);
+  public void goTo(Position posRelative) {
+    if(posRelative.isRelative()){
+      int[] pos = posRelative.toArray();
+      int pos_back = pos[0];
+      int pos_length = pos.length;
+      for(int i=0;i<pos_back;i++){
+        up();
+      }
+      if(pos_length>1){
+        for(int i=1;i<pos_length;i++){
+          down(pos[i]);
+        }
       }
     }
   }
