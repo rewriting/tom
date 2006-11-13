@@ -62,7 +62,7 @@ public class StrategyCompiler {
       //bytecode.CFGViewer.classToDot(inlinedStrat);
 
       //DEBUG Dump the compiled class into a file 'tmp'
-      ClassDumper.dumpTClassToFile(inlinedStrat,inlinedClassName+"tmp");
+      // ClassDumper.dumpTClassToFile(inlinedStrat,inlinedClassName+"tmp");
  
       // Dump the compiled class into a `Class' object.
       Class clazz = ClassDumper.dumpTClass(inlinedStrat);

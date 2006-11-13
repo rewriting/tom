@@ -120,7 +120,7 @@ public class TestStrategy extends TestCase {
 
   %strategy S0() extends Identity() {
     visit Term {
-      g(x,x)            -> { return `x; }
+      g(x,x)       -> { return `x; }
     }
   }
 
@@ -134,57 +134,57 @@ public class TestStrategy extends TestCase {
   //with 2 parameters
   %strategy S2(l:long,s:String) extends Identity() {
     visit Term {
-      g(x,x)            -> { return `x; }
+      g(x,x)       -> { return `x; }
     }
   }
 
   //with builtin parameter
   %strategy S3(i:int) extends Identity() {
     visit Term {
-      g(x,x)            -> { return `x; }
+      g(x,x)       -> { return `x; }
     }
   }
 
   %strategy S4(hashtable:Hashtable,linkedList:LinkedList) extends Identity() {
     visit Term {
-      g(x,y)            -> { linkedList.add("ok"); return `g(y,x);}
+      g(x,y)       -> { linkedList.add("ok"); return `g(y,x);}
     }
   }
 
    //with many visits
   %strategy S5() extends Identity() {
     visit Term {
-      g(x,x)            -> { return `x; }
+      g(x,x)       -> { return `x; }
     }
     visit Term1 {
-      e()            -> { return `e(); }
+      e()          -> { return `e(); }
     }
   }
   //with visits in reverse order
   %strategy S6() extends Identity() {
     visit Term1 {
-      e()            -> { return `e(); }
+      e()          -> { return `e(); }
     }
 
     visit Term {
-      g(x,x)            -> { return `x; }
+      g(x,x)       -> { return `x; }
     }
   }
 
   %strategy S7() extends S8(bool0) {
     visit Term {
-      g(x,x)            -> { return `x; }
+      g(x,x)       -> { return `x; }
     }
   }
   %strategy S8(b:boolean) extends  `S9(3) {
     visit Term {
-      g(x,x)            -> { return `x; }
+      g(x,x)       -> { return `x; }
     }
   }
 
   %strategy S9(i:int) extends  Identity() {
     visit Term {
-      g(x,x)            -> { return `x; }
+      g(x,x)       -> { return `x; }
     }
   }
 
