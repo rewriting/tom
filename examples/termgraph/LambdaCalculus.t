@@ -66,7 +66,7 @@ public class LambdaCalculus {
 
       }
       System.out.println("Orginal term:"+prettyPrint(subject));
-      System.out.println("After beta-normalisation: "+prettyPrint((LambdaTerm)`TopDown(Try(beta)).fire(subject)));
+      System.out.println("After beta-normalisation: "+prettyPrint((LambdaTerm)`TopDown(Try(Repeat(beta))).fire(subject)));
     }
   }
 
