@@ -107,12 +107,11 @@ public class ANTLRMapperGomParserPlugin extends GomGenericPlugin {
               + PARSEDTERM_SUFFIX, t.genATermFromAST(TokenTable.getTokenMap()));
         }
         module = AST2Gom.getGomModule(t,getStreamManager());
-      }
-      else{
-      getLogger().log(new PlatformLogRecord(Level.SEVERE,
-            GomMessage.detailedParseException,
-           "", inputFileName, antlrmappergomlexer.getLine()));
-      return;
+      } else {
+        getLogger().log(new PlatformLogRecord(Level.SEVERE,
+              GomMessage.detailedParseException,
+              "", inputFileName, antlrmappergomlexer.getLine()));
+        return;
       }
     } catch (RecognitionException re) {
       //StringWriter sw = new StringWriter();

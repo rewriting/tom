@@ -39,8 +39,10 @@ import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
-import tom.gom.parser.GomLexer;
-import tom.gom.parser.GomParser;
+import tom.gom.parser.AST2Gom;
+import tom.gom.parser.ANTLRMapperGomLexer;
+import tom.gom.parser.ANTLRMapperGomParser;
+import tom.antlrmapper.ATermAST;
 import tom.platform.PlatformLogRecord;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
@@ -134,10 +136,14 @@ public class GomExpander {
           new Object[]{moduleName+".gom"});
       return null;
     }
-    GomLexer lexer = new GomLexer(inputStream);
-    GomParser parser = new GomParser(lexer,"GomIncludeParser");
+    ANTLRMapperGomLexer lexer = new ANTLRMapperGomLexer(inputStream);
+    ANTLRMapperGomParser parser = new ANTLRMapperGomParser(lexer,"GomIncludeParser");
     try {
-      result = parser.module();
+      parser.setASTNodeClass("tom.antlrmapper.ATermAST");
+      parser.module();
+      ATermAST t = (ATermAST)parser.getAST();
+      result = AST2Gom.getGomModule(t,streamManager);
+
     } catch (RecognitionException re) {
       getLogger().log(new PlatformLogRecord(Level.SEVERE,
             GomMessage.detailedParseException,
