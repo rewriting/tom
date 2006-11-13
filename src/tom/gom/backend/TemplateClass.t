@@ -51,7 +51,8 @@ public abstract class TemplateClass {
         return `name;
       }
     }
-    throw new GomRuntimeException("TemplateClass:className got a strange ClassName");
+    throw new GomRuntimeException(
+        "TemplateClass:className got a strange ClassName "+clsName);
   }
 
   public String fullClassName() {
@@ -68,7 +69,8 @@ public abstract class TemplateClass {
         }
       }
     }
-    throw new GomRuntimeException("TemplateClass:fullClassName got a strange ClassName "+clsName);
+    throw new GomRuntimeException(
+        "TemplateClass:fullClassName got a strange ClassName "+clsName);
   }
 
   public String getPackage() {
@@ -81,7 +83,8 @@ public abstract class TemplateClass {
         return `pkg;
       }
     }
-    throw new GomRuntimeException("TemplateClass:getPackage got a strange ClassName");
+    throw new GomRuntimeException(
+        "TemplateClass:getPackage got a strange ClassName "+clsName);
   }
 
   public String hasMethod(SlotField slot) {
@@ -90,7 +93,8 @@ public abstract class TemplateClass {
         return "has"+`name;
       }
     }
-    throw new GomRuntimeException("TemplateClass:hasMethod got a strange SlotField");
+    throw new GomRuntimeException(
+        "TemplateClass:hasMethod got a strange SlotField "+slot);
   }
 
   public String getMethod(SlotField slot) {
@@ -99,7 +103,8 @@ public abstract class TemplateClass {
         return "get"+`name;
       }
     }
-    throw new GomRuntimeException("TemplateClass:getMethod got a strange SlotField");
+    throw new GomRuntimeException(
+        "TemplateClass:getMethod got a strange SlotField "+slot);
   }
 
   public String setMethod(SlotField slot) {
@@ -108,7 +113,8 @@ public abstract class TemplateClass {
         return "set"+`name;
       }
     }
-    throw new GomRuntimeException("TemplateClass:getMethod got a strange SlotField");
+    throw new GomRuntimeException(
+        "TemplateClass:setMethod got a strange SlotField "+slot);
   }
 
   public String index(SlotField slot) {
@@ -117,7 +123,8 @@ public abstract class TemplateClass {
         return "index_"+`name;
       }
     }
-    throw new GomRuntimeException("TemplateClass:index got a strange SlotField");
+    throw new GomRuntimeException(
+        "TemplateClass:index got a strange SlotField "+slot);
   }
 
   public String slotDomain(SlotField slot) {
@@ -126,7 +133,8 @@ public abstract class TemplateClass {
         return fullClassName(`domain);
       }
     }
-    throw new GomRuntimeException("TemplateClass:slotDomain got a strange SlotField");
+    throw new GomRuntimeException(
+        "TemplateClass:slotDomain got a strange SlotField "+slot);
   }
 
   private String fieldName(String fieldName) {
@@ -139,7 +147,8 @@ public abstract class TemplateClass {
         return `name.toLowerCase();
       }
     }
-    throw new GomRuntimeException("TemplateClass:className got a strange ClassName");
+    throw new GomRuntimeException(
+        "TemplateClass:className got a strange ClassName "+clsName);
   }
 
   public void toStringSlotField(StringBuffer res, SlotField slot,
@@ -150,8 +159,15 @@ public abstract class TemplateClass {
           res.append(%[@element@.toStringBuffer(@buffer@);
 ]%);
         } else {
-          if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float"))) {
+          if (`domain.equals(`ClassName("","int"))
+              || `domain.equals(`ClassName("","double"))
+              || `domain.equals(`ClassName("","float"))) {
             res.append(%[@buffer@.append(@element@);
+]%);
+          } else if (`domain.equals(`ClassName("","long"))) {
+            /* Make sure we write this long as a double, otherwise aterm will
+             * try to read it as an int, and may fail */
+            res.append(%[@buffer@.append((double)@element@);
 ]%);
           } else if (`domain.equals(`ClassName("","char"))) {
             res.append(%[@buffer@.append(((int)@element@-(int)'0'));

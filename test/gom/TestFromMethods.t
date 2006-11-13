@@ -47,6 +47,8 @@ public class TestFromMethods extends TestCase {
     Wrapper[] TESTS = new Wrapper[] {
       `Char('a'),
       `Int(21),
+      `Int(java.lang.Integer.MAX_VALUE-2),
+      `Int(java.lang.Integer.MAX_VALUE),
       `Real(21),
       `Real((float)20.3),
       `Double(21),
@@ -54,6 +56,9 @@ public class TestFromMethods extends TestCase {
       `Bool(true()),
       `Bool(false()),
       `Long(23),
+      `Long(java.lang.Integer.MAX_VALUE-3),
+      `Long(java.lang.Integer.MAX_VALUE-1),
+      `Long(java.lang.Integer.MAX_VALUE),
       `Long(java.lang.Long.MAX_VALUE-10),
       `Long(java.lang.Long.MAX_VALUE-1),
       `Long(java.lang.Long.MAX_VALUE),
