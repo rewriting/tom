@@ -66,7 +66,6 @@ public class LambdaCalculus {
 
       }
       System.out.println("Orginal term:"+prettyPrint(subject));
-      System.out.println("After beta-normalisation: "+`TopDown(Try(beta)).fire(subject));
       System.out.println("After beta-normalisation: "+prettyPrint((LambdaTerm)`TopDown(Try(beta)).fire(subject)));
     }
   }
@@ -86,7 +85,7 @@ public class LambdaCalculus {
   %strategy collectPosition(info:LambdaInfo) extends `Identity() {
     visit LambdaTerm {
       _ -> {
-        info.omega=getEnvironment().getOmega();
+        info.omega= getEnvironment().getPosition();
       }
     }
   }
@@ -110,15 +109,18 @@ public class LambdaCalculus {
 
 
   static class LambdaInfo{
-    public int[] omega;
+    public Position omega;
     public LambdaTerm term;
   }
-  
+
   //[subject/X]t
   %strategy substitute(info:LambdaInfo) extends `Fail(){
     visit LambdaTerm {
       p@posLambdaTerm(_*) -> {
-        if(OmegaManager.getAbsoluteOmega(getEnvironment().getOmega(),((Reference)`p).toArray()).equals(info.omega)){
+        Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+        Position source = getEnvironment().getPosition();
+        Position absolute = source.getAbsolutePosition(relative);        
+        if(absolute.equals(info.omega)){
           return info.term;
         }
         else{
@@ -129,6 +131,7 @@ public class LambdaCalculus {
   }
 
   public static String prettyPrint(LambdaTerm t){
+    ppcounter = 0;
     t= (LambdaTerm) `TopDown(UnExpand()).fire(t);
     %match(LambdaTerm t){
       app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
@@ -137,7 +140,7 @@ public class LambdaCalculus {
     }
     return "";
   }
- 
+
   static int ppcounter = 0;
 
   %strategy Debug() extends `Identity() {
@@ -152,14 +155,16 @@ public class LambdaCalculus {
     visit LambdaTerm {
       abs2(term) -> {
         String v = "x" + (ppcounter++);
-        System.out.println("replace"+v);
         return `abs3(var(v),term);
       }
       p@posLambdaTerm(_*)-> {
-        int[] omega = OmegaManager.getRelativeOmega(OmegaManager.getAbsoluteOmega(getEnvironment().getOmega(),((Reference)`p).toArray()),getEnvironment().getOmega());
-        getEnvironment().goTo(((Reference)`p).toArray());
+        Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+        Position source = getEnvironment().getPosition();
+        Position target = source.getAbsolutePosition(relative);
+        Position relativeInv = target.getRelativePosition(source);
+        getEnvironment().goTo(relative);
         LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
-        getEnvironment().goTo(omega);
+        getEnvironment().goTo(relativeInv);
         return var;
       }
 
