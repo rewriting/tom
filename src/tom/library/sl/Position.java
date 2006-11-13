@@ -125,7 +125,7 @@ public class Position implements Cloneable {
     if (o instanceof Position) {
       Position p = (Position)o;
       /* we need to check only the meaningful part of the omega array */
-      if (depth()==p.depth()) {
+      if (depth()==p.depth() & isRelative()==p.isRelative()) {
         for(int i=0; i<depth(); i++) {
           if (omega[i]!=p.omega[i]) {
             return false;

@@ -31,6 +31,7 @@ package sl;
 
 import sl.testenvironment.term.types.*;
 import tom.library.sl.Environment;
+import tom.library.sl.Position;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -76,21 +77,19 @@ public class TestEnvironment extends TestCase {
     e2.down(2);
     //test of down
     assertEquals(e1.getRoot(),`f(a(),b()));
-    assertEquals(e1.getOmega().length,1);
-    assertEquals(e1.getOmega()[0],2);
+    assertEquals(e1.getPosition(),Position.makeAbsolutePosition(new int[]{2}));
     assertEquals(e1.getSubject(),`b());
     e1.up();
     e2.up();
     //test of up
     assertEquals(e1.getRoot(),`f(a(),b()));
-    assertEquals(e1.getOmega().length,0);
+    assertEquals(e1.getPosition(),Position.makeAbsolutePosition(new int[]{}));
     assertEquals(e1.getSubject(),`f(a(),b()));
     e1.down(1);
     e2.down(1);
     //test of down
     assertEquals(e1.getRoot(),`f(a(),b()));
-    assertEquals(e1.getOmega().length,1);
-    assertEquals(e1.getOmega()[0],1);
+    assertEquals(e1.getPosition(),Position.makeAbsolutePosition(new int[]{1}));
     assertEquals(e1.getSubject(),`a());
   }
 

@@ -187,16 +187,6 @@ public class Environment implements Cloneable {
    * get the current position
    * @return the current position
    */
-  public int[] getOmega() {
-    int[] reducedOmega = new int[depth()];
-    System.arraycopy(omega,1,reducedOmega,0,depth());
-    return reducedOmega;
-  }
-
-  /**
-   * get the current position
-   * @return the current position
-   */
   public Position getPosition() {
     int[] reducedOmega = new int[depth()];
     System.arraycopy(omega,1,reducedOmega,0,depth());
