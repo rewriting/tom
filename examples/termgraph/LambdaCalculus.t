@@ -75,21 +75,25 @@ public class LambdaCalculus {
 
       }
       System.out.println("Orginal term: "+prettyPrint(subject));
+      info = new LambdaInfo();
       try{
-        System.out.println("Call by name: "+prettyPrint((LambdaTerm)`RepeatId(TopDown(Try(betaLeft))).fire(subject)));
-      }catch(java.lang.StackOverflowError e){
+        System.out.println("Call by name: "+prettyPrint((LambdaTerm)`Not(Sequence(RepeatId(TopDown(Try(betaLeft))),OnceTopDown(betaLeft))).fire(subject)));
+      }catch (FireException e){
         System.out.println("Call by name: Infinite loop");
       }
       info.lazy=true;
       try{
-        System.out.println("Call by need: "+prettyPrint((LambdaTerm)`RepeatId(TopDown(Try(betaLeft))).fire(subject)));
-      }catch(java.lang.StackOverflowError e){
+        System.out.println("Call by need: "+prettyPrint((LambdaTerm)`Not(Sequence(RepeatId(TopDown(Try(betaLeft))),OnceTopDown(betaLeft))).fire(subject)));
+      }catch(FireException e){
         System.out.println("Call by need: Infinite loop");
       }
+      info.lazy=false;
       try{
-        System.out.println("Call by value: "+prettyPrint((LambdaTerm)`InnermostId(betaRight).fire(subject)));
+        System.out.println("Call by value: "+(LambdaTerm)`InnermostId(Try(betaRight)).fire(subject));
+        System.out.println("Call by value: "+prettyPrint((LambdaTerm)`InnermostId(Try(betaRight)).fire(subject)));
       }catch(java.lang.StackOverflowError e){
         System.out.println("Call by value: Infinite loop");
+        e.printStackTrace();
       }
     }
   }
@@ -135,112 +139,120 @@ public class LambdaCalculus {
         int n = `x.getChildCount();
         for(int i = n-1;i>=0;i--){
           getEnvironment().down(i);
+          System.out.println(getEnvironment());
           s.visit();
-          getEnvironment().up();
+          System.out.println("after visit" + getEnvironment());
+          if(getEnvironment().getStatus() != Environment.SUCCESS){
+            System.out.println("not success");
+            getEnvironment().up();
+            return `x;
+          }else{
+            getEnvironment().up();
+          }
         }
       }
     }
   }
 
-  %typeterm Position{
-    implement {Position}
-  }
+    %typeterm Position{
+      implement {Position}
+    }
 
-  %typeterm LambdaInfo{
-    implement {LambdaInfo}
-  }
+    %typeterm LambdaInfo{
+      implement {LambdaInfo}
+    }
 
 
-  static class LambdaInfo{
-    public Position omega;
-    public LambdaTerm term;
-    public Position firstOccur;
-    public boolean lazy;
-  }
+    static class LambdaInfo{
+      public Position omega;
+      public LambdaTerm term;
+      public Position firstOccur;
+      public boolean lazy;
+    }
 
-  //[subject/X]t
-  %strategy substitute(info:LambdaInfo) extends `Fail(){
-    visit LambdaTerm {
-      p@posLambdaTerm(_*) -> {
-        Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
-        Position source = getEnvironment().getPosition();
-        Position absolute = source.getAbsolutePosition(relative);        
-        if(absolute.equals(info.omega)){
-          if(info.firstOccur==null || !info.lazy){
-            info.firstOccur = getEnvironment().getPosition();
-            return info.term;
+    //[subject/X]t
+    %strategy substitute(info:LambdaInfo) extends `Fail(){
+      visit LambdaTerm {
+        p@posLambdaTerm(_*) -> {
+          Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+          Position source = getEnvironment().getPosition();
+          Position absolute = source.getAbsolutePosition(relative);        
+          if(absolute.equals(info.omega)){
+            if(info.firstOccur==null || !info.lazy){
+              info.firstOccur = getEnvironment().getPosition();
+              return info.term;
+            }
+            else{
+              Position target = info.firstOccur;
+              Position relativeInv = source.getRelativePosition(target);
+              int[] omega = relativeInv.toArray(); 
+              LambdaTerm t = `posLambdaTerm();
+              for (int i =0; i<omega.length;i++){
+                t = `posLambdaTerm(t*,omega[i]);
+              }
+              return `t;
+            }
           }
           else{
-            Position target = info.firstOccur;
-            Position relativeInv = source.getRelativePosition(target);
-            int[] omega = relativeInv.toArray(); 
-            LambdaTerm t = `posLambdaTerm();
-            for (int i =0; i<omega.length;i++){
-              t = `posLambdaTerm(t*,omega[i]);
-            }
-            return `t;
+            return `p;
           }
         }
-        else{
-          return `p;
+      }
+    }
+
+    %op Strategy TopDownSeq(s1:Strategy) {
+      make(v) { `mu(MuVar("_x"),Sequence(v,AllSeq(MuVar("_x")))) }
+    }
+    public static String prettyPrint(LambdaTerm t){
+      ppcounter = 0;
+      t = (LambdaTerm) `TopDownSeq(UnExpand()).fire(t);
+      %match(LambdaTerm t){
+        app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
+        abs3(term1,term2) -> {return "("+prettyPrint(`term1)+"->"+prettyPrint(`term2)+")";}
+        var(s) -> {return `s;}
+      }
+      return "";
+    }
+
+    static int ppcounter = 0;
+
+    %strategy Debug() extends `Identity() {
+      visit LambdaTerm {
+        _ -> {
+          System.out.println(getEnvironment());
         }
       }
     }
-  }
 
-  %op Strategy TopDownSeq(s1:Strategy) {
-    make(v) { `mu(MuVar("_x"),Sequence(v,AllSeq(MuVar("_x")))) }
-  }
-  public static String prettyPrint(LambdaTerm t){
-    ppcounter = 0;
-    t = (LambdaTerm) `TopDownSeq(UnExpand()).fire(t);
-    %match(LambdaTerm t){
-      app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
-      abs3(term1,term2) -> {return "("+prettyPrint(`term1)+"->"+prettyPrint(`term2)+")";}
-      var(s) -> {return `s;}
-    }
-    return "";
-  }
-
-  static int ppcounter = 0;
-
-  %strategy Debug() extends `Identity() {
-    visit LambdaTerm {
-      _ -> {
-        System.out.println(getEnvironment());
-      }
-    }
-  }
-
-  %strategy UnExpand() extends `Identity() {
-    visit LambdaTerm {
-      abs2(term) -> {
-        String v = "x" + (ppcounter++);
-        return `abs3(var(v),term);
-      }
-      p@posLambdaTerm(_*)-> {
-        //test if it is a cycle to a lambda
-        //it can be a ref corresponding to a sharing due to lazy evaluation
-        if(`((Reference)p).toArray().length==1){
-          Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
-          Position source = getEnvironment().getPosition();
-          Position target = source.getAbsolutePosition(relative);
-          Position relativeInv = target.getRelativePosition(source);
-          getEnvironment().goTo(relative);
-          LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
-          getEnvironment().goTo(relativeInv);
-          return var;
+    %strategy UnExpand() extends `Identity() {
+      visit LambdaTerm {
+        abs2(term) -> {
+          String v = "x" + (ppcounter++);
+          return `abs3(var(v),term);
         }
-        else{
-          Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
-          Position source = getEnvironment().getPosition();
-          Position target = source.getAbsolutePosition(relative);
-          return (LambdaTerm) target.getSubterm().fire(getEnvironment().getRoot());
+        p@posLambdaTerm(_*)-> {
+          //test if it is a cycle to a lambda
+          //it can be a ref corresponding to a sharing due to lazy evaluation
+          if(`((Reference)p).toArray().length==1){
+            Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+            Position source = getEnvironment().getPosition();
+            Position target = source.getAbsolutePosition(relative);
+            Position relativeInv = target.getRelativePosition(source);
+            getEnvironment().goTo(relative);
+            LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
+            getEnvironment().goTo(relativeInv);
+            return var;
+          }
+          else{
+            Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+            Position source = getEnvironment().getPosition();
+            Position target = source.getAbsolutePosition(relative);
+            return (LambdaTerm) target.getSubterm().fire(getEnvironment().getRoot());
+          }
         }
-      }
 
+      }
     }
   }
-}
 
 
