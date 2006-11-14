@@ -67,6 +67,14 @@
   get_slot(s2, t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Choice.THEN) }
 }
 
+%oplist Strategy ChoiceV(Strategy*) {
+   is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Choice) }
+   make_empty() { new tom.library.strategy.mutraveler.Fail() }
+   make_insert(head,tail) { new tom.library.strategy.mutraveler.Choice(head,tail) }
+   get_head(t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Choice.FIRST) }
+   get_tail(t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Choice.THEN) }
+   is_empty(t) { t instanceof tom.library.strategy.mutraveler.Fail }
+}
 %op Strategy All(s1:Strategy) {
   is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.All) }
   make(v) { new tom.library.strategy.mutraveler.All(v) }
