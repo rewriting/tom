@@ -1,20 +1,20 @@
 /*
  *
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2006, Pierre-Etienne Moreau
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  * 	- Redistributions of source code must retain the above copyright
- * 	notice, this list of conditions and the following disclaimer.  
+ * 	notice, this list of conditions and the following disclaimer.
  * 	- Redistributions in binary form must reproduce the above copyright
  * 	notice, this list of conditions and the following disclaimer in the
  * 	documentation and/or other materials provided with the distribution.
  * 	- Neither the name of the INRIA nor the names of its
  * 	contributors may be used to endorse or promote products derived from
  * 	this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,48 +26,40 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  **/
-/*
- * complex strategies
+package tom.library.sl;
+
+/**
+ * <code>FailOnId(v)[t] = v[t]</code> if v1 succeeds and 
+ \* modify t
+ * <p>
+ * <code>fails</code> otherwise
+ * <p>
+ * Basic visitor combinator with two visitor arguments, that applies
+ * these visitors one after the other (sequential composition).
  */
 
-%op Strategy Try(s1:Strategy) {
-  make(v) { `Choice(v,Identity()) }
-}
+public class FailOnId extends AbstractStrategy {
+  public final static int ARG = 0;
+  public FailOnId(Strategy first) {
+    initSubterm(first);
+  }
 
-%op Strategy TopDown(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(v,All(MuVar("_x")))) }
-}
+  public jjtraveler.Visitable visit(jjtraveler.Visitable visitable) throws jjtraveler.VisitFailure {
+    jjtraveler.Visitable newSubj = visitors[ARG].visit(visitable);
+    if(visitable.equals(newSubj)){
+      throw new jjtraveler.VisitFailure();
+    }
+    return newSubj;
+  }
 
-%op Strategy TopDownCollect(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Try(Sequence(v,All(MuVar("_x"))))) }
-}
-
-%op Strategy BottomUp(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),v)) }
-}
-
-%op Strategy OnceBottomUp(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Choice(One(MuVar("_x")),v)) }
-}
-
-%op Strategy OnceTopDown(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Choice(v,One(MuVar("_x")))) }
-}
-
-%op Strategy Innermost(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),Try(Sequence(v,MuVar("_x"))))) }
-}
-
-%op Strategy Repeat(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Choice(Sequence(v,MuVar("_x")),Identity())) }
-}
-
-%op Strategy RepeatId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Choice(SequenceId(v,MuVar("_x")),Identity())) }
-}
-
-%op Strategy InnermostId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),Try(SequenceId(v,MuVar("_x"))))) }
+  public void visit() {
+    Visitable oldSubj = getEnvironment().getSubject();
+    visitors[ARG].visit();
+    Visitable newSubj = getEnvironment().getSubject();
+    if(oldSubj.equals(newSubj)){
+      getEnvironment().setStatus(Environment.IDENTITY);
+    }
+  }
 }

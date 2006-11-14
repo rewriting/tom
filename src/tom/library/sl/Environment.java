@@ -42,6 +42,7 @@ public class Environment implements Cloneable {
   private static final int DEFAULT_LENGTH = 8;
   public static final int SUCCESS = 0;
   public static final int FAILURE = 1;
+  public static final int IDENTITY = 2;
   /*
    * number of elements in the arrays
    * the current position is int omega[size-1]

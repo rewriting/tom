@@ -96,4 +96,4 @@ public class Ref extends AbstractStrategy {
     environment.goTo(newToOld);
   }
 
- }
+}
