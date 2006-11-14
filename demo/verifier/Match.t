@@ -14,23 +14,15 @@ class Match {
   }
 
   public static void main(String[] args) {
-    Match essai = new Match();
-    essai.test();
-  }
-
-  void test() {
     T test = `g(a(),b());
-    T test2 = `g(a(),b());
-    T test3 = `g(a(),b());
     %match(T test) {
       g(a(),b()) -> { System.out.println("a and b"); }
       g(x,b())   -> { System.out.println(`x); }
+      //g[] -> {}
+      //x@g[] -> { System.out.println(`x); }
+      //g(x,x) -> {System.out.println(`x); }
     }
 
-    %match(test) {
-      g[] -> {}
-      x@g[] -> { System.out.println(`x); }
-      f(h(x)) -> {System.out.println(`x); }
-    }
   }
+
 }

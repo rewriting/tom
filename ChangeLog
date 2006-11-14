@@ -1,3 +1,5 @@
+2006-11-13  pem <pem@loria.fr>
+  * fix PR-1547
 2006-11-11  tonio <reilles@loria.fr>
   * src/tom/engine/compiler/TomKernelCompiler.t:
     - ocaml backend fixes :

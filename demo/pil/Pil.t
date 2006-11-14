@@ -1,12 +1,9 @@
 import pil.term.types.*;
-
 import java.util.*;
-
-import jjtraveler.VisitFailure;
-import jjtraveler.reflective.VisitableVisitor;
 
 class Pil {
   %include { mustrategy.tom }
+  %include { java/util/types/Collection.tom }
 
   %gom {
     module Term
@@ -41,17 +38,19 @@ class Pil {
     System.out.println("p1 = " + p1);
     System.out.println(pretty(p1));
 
-    System.out.println("renamed p1   = " + `RenameVar("x","z").apply(p1));
+    System.out.println("renamed p1   = " + `TopDown(RenameVar("x","z")).apply(p1));
     //System.out.println("optimized p1 = " + `BottomUp(RemoveLet()).apply(p1));
 
   }
-
+   
+  // Renaming
   %strategy RenameVar(n1:String,n2:String) extends Identity() {
     visit Expr {
       Var(n) -> { if(`n==n1) return `Var(n2); }
     }
   }
-    
+
+ // Optimize
   %strategy RemoveLet() extends Identity() {
     visit Expr {
       Let(Var(n),expr,body) -> { 
@@ -63,5 +62,7 @@ class Pil {
     }
   }
 
-
 }
+
+//make(v) { `Choice(v,Identity()) }
+//make(v) { `mu(MuVar("_x"),Try(Sequence(v,MuVar("_x")))) }

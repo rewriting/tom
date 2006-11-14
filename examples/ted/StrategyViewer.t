@@ -134,12 +134,10 @@ public class StrategyViewer {
 
 
   public static void main(String[] args) {
-    //MuStrategy strat = `mu(MuVar("x"),Sequence(All(MuVar("x")),Identity()));
+    MuStrategy strat = `Repeat(R());
+
     //MuStrategy strat = `Sequence(InnermostId(ChoiceId(RepeatId(R()),R())), InnermostId( ChoiceId( Sequence(RepeatId(R()), RepeatId(SequenceId(ChoiceId(R(),R()),OnceTopDownId(R())))), SequenceId(R(),OnceTopDownId(RepeatId(R()))))));
 
-    MuStrategy strat = `Choice(
-        mu(MuVar("x"),TopDownCollect(S(MuVar("x")))),
-        mu(MuVar("y"),TopDownCollect(S(MuVar("y")))));
 
     stratToDotStdout(strat);
   }
