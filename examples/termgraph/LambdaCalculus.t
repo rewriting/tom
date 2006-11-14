@@ -45,15 +45,24 @@ public class LambdaCalculus {
   %include {lambdaterm/_lambdaterm.tom}
   %include {util/HashMap.tom}
 
+
   public final static void main(String[] args) {
     LambdaTerm subject = `var("undefined");
     LambdaInfo info = new LambdaInfo();
-    Strategy beta = `Sequence(
-        _app(Identity(),collectTerm(info)),
+    Strategy betaLeft = `Sequence(
+        _app(Identity(),RelativeRef(collectTerm(info))), 
         _app(Sequence(
             collectPosition(info),
             _abs2(Mu(MuVar("x"),Choice((substitute(info)),All(MuVar("x")))))),Identity()),
-        removeApp());
+        clean(info));
+    Strategy betaRight = `Sequence(
+        _app(Identity(),RelativeRef(collectTerm(info))), 
+        _app(Sequence(
+            collectPosition(info),
+            _abs2(Mu(MuVar("x"),Choice((substitute(info)),AllRightSeq(MuVar("x")))))),Identity()),
+        clean(info));
+
+
     String s;
     LambdaTermLexer lexer = new LambdaTermLexer(System.in); // Create parser attached to lexer
     LambdaTermParser parser = new LambdaTermParser(lexer);
@@ -65,14 +74,34 @@ public class LambdaCalculus {
         System.out.println(e);
 
       }
-      System.out.println("Orginal term:"+prettyPrint(subject));
-      System.out.println("After beta-normalisation: "+prettyPrint((LambdaTerm)`TopDown(Try(Repeat(beta))).fire(subject)));
+      System.out.println("Orginal term: "+prettyPrint(subject));
+      try{
+        System.out.println("Call by name: "+prettyPrint((LambdaTerm)`RepeatId(TopDown(Try(betaLeft))).fire(subject)));
+      }catch(java.lang.StackOverflowError e){
+        System.out.println("Call by name: Infinite loop");
+      }
+      info.lazy=true;
+      try{
+        System.out.println("Call by need: "+prettyPrint((LambdaTerm)`RepeatId(TopDown(Try(betaLeft))).fire(subject)));
+      }catch(java.lang.StackOverflowError e){
+        System.out.println("Call by need: Infinite loop");
+      }
+      try{
+        System.out.println("Call by value: "+prettyPrint((LambdaTerm)`InnermostId(betaRight).fire(subject)));
+      }catch(java.lang.StackOverflowError e){
+        System.out.println("Call by value: Infinite loop");
+      }
     }
   }
 
-  %strategy removeApp() extends `Identity() {
+  %strategy clean(info:LambdaInfo) extends `Identity() {
     visit LambdaTerm {
-      app(abs2(arg),_)-> {return `arg;}
+      app(abs2(arg),_)-> {
+        info.firstOccur =null;
+        info.term =null;
+        info.omega =null;
+        return `arg;
+      }
     }
   }
 
@@ -98,6 +127,20 @@ public class LambdaCalculus {
     }
   }
 
+  //we do not need the sequentiality
+  //it is just for the simplicity ;)
+  %strategy AllRightSeq(s:Strategy) extends `Identity(){
+    visit LambdaTerm{
+      x -> {
+        int n = `x.getChildCount();
+        for(int i = n-1;i>=0;i--){
+          getEnvironment().down(i);
+          s.visit();
+          getEnvironment().up();
+        }
+      }
+    }
+  }
 
   %typeterm Position{
     implement {Position}
@@ -111,6 +154,8 @@ public class LambdaCalculus {
   static class LambdaInfo{
     public Position omega;
     public LambdaTerm term;
+    public Position firstOccur;
+    public boolean lazy;
   }
 
   //[subject/X]t
@@ -121,7 +166,20 @@ public class LambdaCalculus {
         Position source = getEnvironment().getPosition();
         Position absolute = source.getAbsolutePosition(relative);        
         if(absolute.equals(info.omega)){
-          return info.term;
+          if(info.firstOccur==null || !info.lazy){
+            info.firstOccur = getEnvironment().getPosition();
+            return info.term;
+          }
+          else{
+            Position target = info.firstOccur;
+            Position relativeInv = source.getRelativePosition(target);
+            int[] omega = relativeInv.toArray(); 
+            LambdaTerm t = `posLambdaTerm();
+            for (int i =0; i<omega.length;i++){
+              t = `posLambdaTerm(t*,omega[i]);
+            }
+            return `t;
+          }
         }
         else{
           return `p;
@@ -130,9 +188,12 @@ public class LambdaCalculus {
     }
   }
 
+  %op Strategy TopDownSeq(s1:Strategy) {
+    make(v) { `mu(MuVar("_x"),Sequence(v,AllSeq(MuVar("_x")))) }
+  }
   public static String prettyPrint(LambdaTerm t){
     ppcounter = 0;
-    t= (LambdaTerm) `TopDown(UnExpand()).fire(t);
+    t = (LambdaTerm) `TopDownSeq(UnExpand()).fire(t);
     %match(LambdaTerm t){
       app(term1,term2) -> {return "("+prettyPrint(`term1)+"."+prettyPrint(`term2)+")";}
       abs3(term1,term2) -> {return "("+prettyPrint(`term1)+"->"+prettyPrint(`term2)+")";}
@@ -158,14 +219,24 @@ public class LambdaCalculus {
         return `abs3(var(v),term);
       }
       p@posLambdaTerm(_*)-> {
-        Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
-        Position source = getEnvironment().getPosition();
-        Position target = source.getAbsolutePosition(relative);
-        Position relativeInv = target.getRelativePosition(source);
-        getEnvironment().goTo(relative);
-        LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
-        getEnvironment().goTo(relativeInv);
-        return var;
+        //test if it is a cycle to a lambda
+        //it can be a ref corresponding to a sharing due to lazy evaluation
+        if(`((Reference)p).toArray().length==1){
+          Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+          Position source = getEnvironment().getPosition();
+          Position target = source.getAbsolutePosition(relative);
+          Position relativeInv = target.getRelativePosition(source);
+          getEnvironment().goTo(relative);
+          LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
+          getEnvironment().goTo(relativeInv);
+          return var;
+        }
+        else{
+          Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+          Position source = getEnvironment().getPosition();
+          Position target = source.getAbsolutePosition(relative);
+          return (LambdaTerm) target.getSubterm().fire(getEnvironment().getRoot());
+        }
       }
 
     }
