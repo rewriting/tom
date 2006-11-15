@@ -232,7 +232,6 @@ b: {
   }
 
   // forall
-  // TODO add FV test
   public static SeqList applyForAllR(Sequent seq, Prop active, Term new_var) throws Exception {
     %match(Sequent seq, Prop active) {
       sequent(ctxt,(X*,act@forAll(n,p),Y*)), act -> {
@@ -250,7 +249,7 @@ b: {
         sequent((X*,act@forAll(n,p),Y*),c), act -> {
           Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), new_var); 
           // FIXME : remove act and add contraction rule ??
-          return `concSeq(sequent(context(X*,act,res,Y*),c));
+          return `concSeq(sequent(context(X*,res,Y*),c));
         }
       }
       throw new Exception("can't apply rule forall L");
@@ -268,15 +267,35 @@ b: {
     throw new Exception("can't apply rule exists R");
   }
 
-  // TODO add FV test
-  public static SeqList applyExistsL(Sequent seq, Prop active) throws Exception 
+  public static SeqList applyExistsL(Sequent seq, Prop active, Term new_var) throws Exception 
   {
     %match(Sequent seq, Prop active) {
-      sequent((X*,act@exists(_,p),Y*),c), act -> {
-        return `concSeq(sequent(context(X*,p,Y*),c));
+      sequent((X*,act@exists(n,p),Y*),c), act -> {
+        Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), new_var); 
+        return `concSeq(sequent(context(X*,res,Y*),c));
       }
     }
     throw new Exception("can't apply rule exists L");
+  }
+
+  public static SeqList applyContractionL(Sequent seq, Prop active) throws Exception 
+  {
+    %match(Sequent seq, Prop active) {
+      sequent((X*,act,Y*),c), act -> {
+        return `concSeq(sequent(context(X*,act,act,Y*),c));
+      }
+    }
+    throw new Exception("can't apply rule contraction L");
+  }
+
+  public static SeqList applyContractionR(Sequent seq, Prop active) throws Exception 
+  {
+    %match(Sequent seq, Prop active) {
+      sequent(ctxt,(X*,act,Y*)), act -> {
+        return `concSeq(sequent(ctxt,context(X*,act,act,Y*)));
+      }
+    }
+    throw new Exception("can't apply rule contraction R");
   }
 
 
@@ -425,19 +444,19 @@ b: {
 
         // forAll R
         forAll[var=n] -> {
-          ruleType = `forAllRightInfo();
           // TODO interactif ?
           Term nvar = Utils.freshVar(`n, goal);
+          ruleType = `forAllRightInfo(nvar);
           slist = applyForAllR(goal, active, nvar);
           applied = true;
         }
 
         // exists R
         exists(x,_) -> {
-          ruleType = `existsRightInfo();
           System.out.print("instance of " + `x + " > ");
-          Term new_var = Utils.getTerm();
-          slist = applyExistsR(goal, active, new_var);
+          Term new_term = Utils.getTerm();
+          ruleType = `existsRightInfo(new_term);
+          slist = applyExistsR(goal, active, new_term);
           applied = true;
         }
 
@@ -469,17 +488,18 @@ b: {
 
         // forAll L
         forAll(x,_) -> {
-          ruleType = `forAllLeftInfo();
           System.out.print("instance of " + `x + " > ");
-          Term new_var = Utils.getTerm();
-          slist = applyForAllL(goal, active, new_var);
+          Term new_term = Utils.getTerm();
+          ruleType = `forAllLeftInfo(new_term);
+          slist = applyForAllL(goal, active, new_term);
           applied = true;
         }
 
         // exists L
-        exists[] -> {
-          ruleType = `existsLeftInfo();
-          slist = applyExistsL(goal, active);
+        exists[var=n] -> {
+          Term nvar = Utils.freshVar(`n, goal);
+          ruleType = `existsLeftInfo(nvar);
+          slist = applyExistsL(goal, active, nvar);
           applied = true;
         }
       } // match(active)
@@ -694,9 +714,9 @@ b: {
 
             // forAll R
             forAll[var=n] -> {
-              ruleType = `forAllRightInfo();
               // TODO interactif ?
               Term nvar = Utils.freshVar(`n, `p);
+              ruleType = `forAllRightInfo(nvar);
               slist = applyForAllR(goal, `p, nvar);
             }
 
@@ -744,9 +764,10 @@ b: {
             }
 
             // exists L
-            exists[] -> {
-              ruleType = `existsLeftInfo();
-              slist = applyExistsL(goal, `p);
+            exists[var=n] -> {
+              Term nvar = Utils.freshVar(`n, goal);
+              ruleType = `existsLeftInfo(nvar);
+              slist = applyExistsL(goal, `p, nvar);
             }
 
             // trying rules
