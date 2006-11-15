@@ -322,7 +322,7 @@ b: {
 
   %strategy getOpenPositions(list:LinkedList) extends `Identity() {
     visit Tree {
-      rule[name="open"] -> {
+      rule[type=openInfo[]] -> {
         list.add(getPosition());
       }
     }
@@ -375,12 +375,12 @@ b: {
       %match(SeqList slist) {
         (_*,s,_*) -> {
           prems = `premisses(prems*,
-              rule("open", premisses(), s, s.getc().getHeadcontext())) ;
+              rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
         }
       }
 
       // get new tree
-      Tree newrule = `rule("rule\\ " + n, prems, goal, active);
+      Tree newrule = `rule(customRuleInfo("rule\\ " + n), prems, goal, active);
       return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
     }
 
@@ -395,7 +395,7 @@ b: {
 
     // list of the new premisses after applying a rule
     SeqList slist = null;  
-    String ruleName = null;
+    RuleType ruleType = null;
     boolean applied = false;
 
     // breaking right rule
@@ -404,28 +404,28 @@ b: {
 
         // And R
         and[] -> {
-          ruleName = "and R";
+          ruleType = `andRightInfo();
           slist = applyAndR(goal,active);
           applied = true;
         }
 
         // Or R
         or[] -> {
-          ruleName = "or R";
+          ruleType = `orRightInfo();
           slist = applyOrR(goal,active);
           applied = true;
         }
 
         // Implies R
         implies[] -> {
-          ruleName = "implies R";
+          ruleType = `impliesRightInfo();
           slist = applyImpliesR(goal, active);
           applied = true;
         }
 
         // forAll R
         forAll[var=n] -> {
-          ruleName = "forAll R";
+          ruleType = `forAllRightInfo();
           // TODO interactif ?
           Term nvar = Utils.freshVar(`n, goal);
           slist = applyForAllR(goal, active, nvar);
@@ -434,7 +434,7 @@ b: {
 
         // exists R
         exists(x,_) -> {
-          ruleName = "exists R";
+          ruleType = `existsRightInfo();
           System.out.print("instance of " + `x + " > ");
           Term new_var = Utils.getTerm();
           slist = applyExistsR(goal, active, new_var);
@@ -448,28 +448,28 @@ b: {
 
         // Or L
         or[] -> {
-          ruleName = "or L";
+          ruleType = `orLeftInfo();
           slist = applyOrL(goal, active);
           applied = true;
         }
 
         // And L
         and[] -> {
-          ruleName = "and L";
+          ruleType = `andLeftInfo();
           slist = applyAndL(goal, active);
           applied = true;
         }
 
         // Implies L
         implies[] -> {
-          ruleName = "implies L";
+          ruleType = `impliesLeftInfo();
           slist = applyImpliesL(goal, active);
           applied = true;
         }
 
         // forAll L
         forAll(x,_) -> {
-          ruleName = "forAll L";
+          ruleType = `forAllLeftInfo();
           System.out.print("instance of " + `x + " > ");
           Term new_var = Utils.getTerm();
           slist = applyForAllL(goal, active, new_var);
@@ -478,7 +478,7 @@ b: {
 
         // exists L
         exists[] -> {
-          ruleName = "exists L";
+          ruleType = `existsLeftInfo();
           slist = applyExistsL(goal, active);
           applied = true;
         }
@@ -491,11 +491,11 @@ b: {
       %match(SeqList slist) {
         (_*,s,_*) -> {
           prems = `premisses(prems*,
-              rule("open", premisses(), s, s.getc().getHeadcontext())) ;
+              rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
         }
       }
       // get new tree
-      Tree newrule = `rule(ruleName, prems, goal, active);
+      Tree newrule = `rule(ruleType, prems, goal, active);
       return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
     } else throw new Exception ("there is no head connector");
   }
@@ -507,7 +507,7 @@ b: {
       sequent((_*,x,_*),(_*,x,_*)) -> { active = `x; }
     }
     applyAxiom(goal,active); 
-    Tree newrule = `rule("axiom", premisses(), goal, active);
+    Tree newrule = `rule(axiomInfo(), premisses(), goal, active);
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree);
   }
 
@@ -515,7 +515,7 @@ b: {
       Prop active, boolean focus_left) throws Exception {
     Sequent goal = getSequentByPosition(tree, pos);
     applyTop(goal); 
-    Tree newrule = `rule("top", premisses(), goal, active);
+    Tree newrule = `rule(topInfo(), premisses(), goal, active);
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree);
   }
 
@@ -523,7 +523,7 @@ b: {
       Prop active, boolean focus_left) throws Exception {
     Sequent goal = getSequentByPosition(tree, pos);
     applyBottom(goal); 
-    Tree newrule = `rule("bottom", premisses(), goal, active);
+    Tree newrule = `rule(bottomInfo(), premisses(), goal, active);
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree);
   }
 
@@ -535,11 +535,11 @@ b: {
     %match(SeqList slist) {
       (_*,s,_*) -> { 
         prems = 
-          `premisses(prems*, rule("open", premisses(), s, s.getc().getHeadcontext())) ;
+          `premisses(prems*, rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
       }
     }
     // get new tree
-    Tree newrule = `rule("cut", prems, goal, active);
+    Tree newrule = `rule(cutInfo("cut"), prems, goal, active);
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
   }
 
@@ -594,11 +594,11 @@ b: {
         %match(Sequent goal) {
           sequent(h,c) -> {
             Sequent newseq = `sequent(context(h*,concl*),c);
-            prems = `premisses(thtree, rule("open", premisses(), newseq, newseq.getc().getHeadcontext())) ;
+            prems = `premisses(thtree, rule(openInfo(), premisses(), newseq, newseq.getc().getHeadcontext())) ;
           }
         }
         // get new tree
-        Tree newrule = `rule("cut ("+name+")", prems, goal, active);
+        Tree newrule = `rule(cutInfo(name), prems, goal, active);
         tree = (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
       }
     }
@@ -610,10 +610,10 @@ b: {
       Prop active, boolean focus_left) throws Exception {
     Sequent goal = getSequentByPosition(tree, pos);
     Sequent s = (Sequent) Unification.reduce(goal,newTermRules);
-    Premisses prems = `premisses(rule("open", premisses(), s, s.getc().getHeadcontext()));
+    Premisses prems = `premisses(rule(openInfo(), premisses(), s, s.getc().getHeadcontext()));
 
     // get new tree
-    Tree newrule = `rule("reduce", prems, goal, active);
+    Tree newrule = `rule(reductionInfo(), prems, goal, active);
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
   }
 
@@ -639,7 +639,7 @@ b: {
   private Tree autoCommandRecursive(Sequent goal) {
 
     SeqList slist = null;
-    String ruleName = null;
+    RuleType ruleType = null;
 
     %match(Sequent goal) {
 
@@ -648,7 +648,7 @@ b: {
         try {
           // FIXME useful ?
           applyAxiom(goal,`p);
-          return `rule("axiom", premisses(), goal, p);
+          return `rule(axiomInfo(), premisses(), goal, p);
         } catch (Exception e) {}
       }
 
@@ -657,7 +657,7 @@ b: {
         try {
           // FIXME useful ?
           applyTop(goal);
-          return `rule("top", premisses(), goal, p);
+          return `rule(topInfo(), premisses(), goal, p);
         } catch (Exception e) {}
       }
 
@@ -666,7 +666,7 @@ b: {
         try {
           // FIXME useful ?
           applyBottom(goal);
-          return `rule("bottom", premisses(), goal, p);
+          return `rule(bottomInfo(), premisses(), goal, p);
         } catch (Exception e) {}
       }
 
@@ -676,25 +676,25 @@ b: {
           %match(Prop `p) {
             // And R
             and[] -> {
-              ruleName = "and R";
+              ruleType = `andRightInfo();
               slist = applyAndR(goal,`p);
             }
 
             // Or R
             or[] -> {
-              ruleName = "or R";
+              ruleType = `orRightInfo();
               slist = applyOrR(goal,`p);
             }
 
             // Implies R
             implies[] -> {
-              ruleName = "implies R";
+              ruleType = `impliesRightInfo();
               slist = applyImpliesR(goal, `p);
             }
 
             // forAll R
             forAll[var=n] -> {
-              ruleName = "forAll R";
+              ruleType = `forAllRightInfo();
               // TODO interactif ?
               Term nvar = Utils.freshVar(`n, `p);
               slist = applyForAllR(goal, `p, nvar);
@@ -705,7 +705,7 @@ b: {
               Rule r = applicableInAuto(`atom, false);
               if (r != null) {
                 slist = applyRule(r, goal,`atom, new HashMap<Term,Term>());
-                ruleName = "custom rule";
+                ruleType = `customRuleInfo("custom rule");
               }
             }
           }
@@ -717,7 +717,7 @@ b: {
               prems = `premisses(prems*,autoCommandRecursive(s));
             }
           }
-          return `rule(ruleName, prems, goal, p);
+          return `rule(ruleType, prems, goal, p);
         }
       } // match right hand side
 
@@ -727,25 +727,25 @@ b: {
           %match(Prop `p) {
             // Or L
             or[] -> {
-              ruleName = "or L";
+              ruleType = `orLeftInfo();
               slist = applyOrL(goal, `p);
             }
 
             // And L
             and[] -> {
-              ruleName = "and L";
+              ruleType = `andLeftInfo();
               slist = applyAndL(goal, `p);
             }
 
             // Implies L
             implies[] -> {
-              ruleName = "implies L";
+              ruleType = `impliesLeftInfo();
               slist = applyImpliesL(goal, `p);
             }
 
             // exists L
             exists[] -> {
-              ruleName = "exists L";
+              ruleType = `existsLeftInfo();
               slist = applyExistsL(goal, `p);
             }
 
@@ -754,7 +754,7 @@ b: {
               Rule r = applicableInAuto(`atom, true);
               if(r != null) {
                 slist = applyRule(r, goal,`atom, new HashMap<Term,Term>());
-                ruleName = "custom rule";
+                ruleType = `customRuleInfo("custom rule");
               }
             }
 
@@ -767,11 +767,11 @@ b: {
               prems = `premisses(prems*,autoCommandRecursive(s));
             }
           }
-          return `rule(ruleName, prems, goal, p);
+          return `rule(ruleType, prems, goal, p);
         }
       }
     }
-    return `rule("open",premisses(),goal,top());
+    return `rule(openInfo(),premisses(),goal,top());
   }
 
 
@@ -816,7 +816,7 @@ b: {
     env.focus = 1;
     env.currentGoal = 0;
     env.openGoals = new LinkedList<Position>();
-    env.tree = `rule("open", premisses(), goal, goal.getc().getHeadcontext());
+    env.tree = `rule(openInfo(), premisses(), goal, goal.getc().getHeadcontext());
     try { MuTraveler.init(`TopDown(getOpenPositions(env.openGoals))).visit(env.tree); }
     catch (VisitFailure e) { e.printStackTrace(); }
    

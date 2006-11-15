@@ -22,37 +22,27 @@ class PrettyPrinter {
   %typeterm Set {implement {Set}}
   %typeterm Collection { implement {Collection}}
 
-  // export latex
-  private static HashMap dict = new HashMap();
-
-  // static bloc
-  static {
-    dict.put("axiom", "\\mathop{ax}");  
-    dict.put("implies I", "\\Rightarrow_\\mathcal{I}");  
-    dict.put("implies E", "\\Rightarrow_\\mathcal{E}");
-    dict.put("implies R", "\\Rightarrow_\\mathcal{R}");
-    dict.put("implies L", "\\Rightarrow_\\mathcal{L}");
-    dict.put("and I", "\\land_\\mathcal{I}");  
-    dict.put("and E", "\\land_\\mathcal{E}");
-    dict.put("and R", "\\land_\\mathcal{R}");
-    dict.put("and L", "\\land_\\mathcal{L}");
-    dict.put("or I", "\\lor_\\mathcal{I}");
-    dict.put("or E", "\\lor_\\mathcal{E}");
-    dict.put("or R", "\\lor_\\mathcal{R}");
-    dict.put("or L", "\\lor_\\mathcal{L}");
-    dict.put("forAll R", "\\forall_\\mathcal{R}");
-    dict.put("forAll L", "\\forall_\\mathcal{L}");
-    dict.put("exists R", "\\exists_\\mathcal{R}");
-    dict.put("exists L", "\\exists_\\mathcal{L}");
-    dict.put("bottom", "\\bot");
-    dict.put("top", "\\top");
-    dict.put("cut", "\\mathop{cut}");
-  }
-
-  private static String translate(String name) {
-    String res = (String) dict.get(name);
-    if (res != null) return res;
-    else  return name;
+  private static String translate(RuleType rt) {
+    %match(rt) {
+      axiomInfo() ->  { return "axiom"; }
+      impliesLeftInfo() -> { return "\\Rightarrow_\\mathcal{L}"; }
+      impliesRightInfo()-> { return "\\Rightarrow_\\mathcal{R}"; }
+      andLeftInfo() -> { return "\\land_\\mathcal{L}"; }
+      andRightInfo() -> { return "\\land_\\mathcal{R}"; }
+      orLeftInfo() -> { return "\\lor_\\mathcal{L}"; }
+      orRightInfo() -> { return "\\lor_\\mathcal{R}"; }
+      forAllRightInfo() -> { return "\\forall_\\mathcal{R}"; }
+      forAllLeftInfo() -> { return "\\forall_\\mathcal{L}"; }
+      existsRightInfo() -> { return "\\exists_\\mathcal{R}"; }
+      existsLeftInfo() -> { return "\\exists_\\mathcal{L}"; }
+      bottomInfo() -> { return "\\bot"; }
+      topInfo() -> { return "\\top"; }
+      cutInfo(name) -> { return "cut (" + `name + ")"; }
+      openInfo() -> { return "open"; } 
+      reductionInfo() -> { return "reduction"; }
+      customRuleInfo(name) -> { return `name; }
+    }
+    return rt.toString();
   }
 
   public static int peanoToInt(Term term) throws Exception {
@@ -76,7 +66,7 @@ class PrettyPrinter {
   }
 
   // --- auxiliary strats for cleanTree ----
-  
+
   %strategy RemoveInHyp(prop: Prop) extends `Identity() {
     visit Sequent {
       sequent((X*,p,Y*), c) -> { if (prop == `p) return `sequent(context(X*,Y*),c); }
@@ -92,24 +82,24 @@ class PrettyPrinter {
   %strategy IsActive(prop: Prop, tl: TermRuleList) extends `Fail() {
     visit Tree {
       // all propositions are virtually used in an open branch
-      r@rule[name="open"] -> { return `r; }
-      
+      r@rule[type=openInfo[]] -> { return `r; }
+
       // in case of a reduce rule, we have to check if the reduced form of a prop is active
-      r@rule("reduce",_,concl,_) -> {
+      r@rule(reductionInfo[],_,concl,_) -> {
         %match(Sequent `concl, Prop prop) {
           sequent((_*,p,_*),_), p -> {
             Prop after = (Prop) Unification.reduce(`p,tl);
             if (`p != after) 
-                return `r;
-            }
+              return `r;
+          }
           sequent(_,(_*,p,_*)), p -> {
             Prop after = (Prop) Unification.reduce(`p,tl);
             if (`p != after) 
-                return `r;
+              return `r;
           }
         }
       }
-      
+
       r@rule(name,_,_,p) -> { if (prop == `p) { return `r; } }
     }
   }
@@ -134,16 +124,16 @@ class PrettyPrinter {
       }
     }
   }
-  
+
   // ---------------------------------------
-  
+
   /**
    * remove unused hypothesis and conclusions in subtrees
    **/
   public static Tree cleanTree(Tree tree, TermRuleList tl) {
     return (Tree) ((MuStrategy) `TopDown(Clean(tl))).apply(tree);
   }
-  
+
   public static String toLatex(sequentsAbstractType term) {
     %match(Tree term) {
       rule(n,(),c,_) -> {return "\\infer["+ translate(`n) +"]{" + toLatex(`c) + "}{}";}
@@ -168,7 +158,7 @@ class PrettyPrinter {
     }
 
     %match(Prop term) {
-     
+
       // arithmetic pretty print
       relationAppl(relation("eq"),(x,y)) -> {
         return toLatex(`x) + " = " + toLatex(`y);
@@ -211,7 +201,7 @@ class PrettyPrinter {
 
     %match(Term term) {
       Var(n) -> { return `n; }
-    
+
       // arithmetic
       funAppl(fun("z"),()) -> { return "0"; }
       i@funAppl(fun("succ"),x) -> {
@@ -241,7 +231,7 @@ class PrettyPrinter {
       funAppl(fun("emptyset"),()) -> { 
         return "\\emptyset";
       }
-     
+
       // finite 1st order theory of classes pretty print
       funAppl(fun("appl"),(p,x*)) -> {
         return `toLatex(p) + "["+ toLatex(`x*) + "]";
@@ -272,7 +262,7 @@ class PrettyPrinter {
     }
     return false;
   }
-  
+
   public static String listToLatex(Term t) {
     %match(Term t) {
       funAppl(fun("cons"),(x,funAppl(fun("nil"),()))) -> { return toLatex(`x); }
@@ -316,7 +306,7 @@ class PrettyPrinter {
       relationAppl(relation(r),()) -> {
         return `r;
       }
-     
+
       // arithmetic pretty print
       relationAppl(relation("eq"),(x,y)) -> {
         return prettyPrint(`x) + " = " + prettyPrint(`y);
@@ -327,16 +317,16 @@ class PrettyPrinter {
       relationAppl(relation("lt"),(x,y)) -> {
         return prettyPrint(`x) + " < " + prettyPrint(`y);
       }
- 
+
       // set theory prettyprint
       relationAppl(relation("in"),(x,y)) -> {
         return prettyPrint(`x) + " in " + prettyPrint(`y);
       }
-     
+
       relationAppl(relation(r),x) -> {
         return `r + "(" + prettyPrint(`x) + ")";
       }
-      
+
       bottom() -> {
         return "False";
       }
@@ -367,7 +357,7 @@ class PrettyPrinter {
       funAppl(fun("div"),(t1,t2)) -> { 
         return "(" + prettyPrint(`t1) + "/" + prettyPrint(`t2) + ")";
       }
-      
+
       // finite 1st order theory of classes pretty print
       funAppl(fun("appl"),(p,x*)) -> {
         return `prettyPrint(p) + "["+ prettyPrint(`x*) + "]";
@@ -379,12 +369,12 @@ class PrettyPrinter {
         if(endedByNil(`l)) return "<" + prettyList(`l) + ">"; 
         else return prettyPrint(`x) + "::" + prettyPrint(`y);
       }
-      
-      
+
+
       funAppl(fun(name),x) -> {
         return `name + "(" + prettyPrint(`x) + ")";
       }
-     
+
       FreshVar(n,_) -> { return `n; }
       NewVar(n,_) -> { return `n; }
     }
@@ -465,10 +455,10 @@ class PrettyPrinter {
   }
 
   public static void display(Tree tree, TermRuleList tl) throws java.io.IOException, java.lang.InterruptedException {
-/*    tree = cleanTree(tree, tl); */
+    /*    tree = cleanTree(tree, tl); */
     display(tree);
   }
-  
+
   // displays a latex output in xdvi
   public static void display(sequentsAbstractType term) throws java.io.IOException, java.lang.InterruptedException {
     File tmp = File.createTempFile("output",".tex");

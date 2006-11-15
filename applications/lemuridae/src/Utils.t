@@ -22,31 +22,31 @@ class Utils {
   // pour convenance
 
   public static Tree axiom(Sequent s, Prop active) {
-    return `rule("axiom", premisses(), s, active);
+    return `rule(axiomInfo(), premisses(), s, active);
   }
 
   public static Tree impliesL(Tree s1, Tree s2, Sequent c, Prop active) {
-    return `rule("implies L", premisses(s1,s2), c, active);
+    return `rule(impliesLeftInfo(), premisses(s1,s2), c, active);
   }
 
   public static Tree impliesR(Tree s, Sequent c, Prop active) {
-    return `rule("implies R", premisses(s), c, active);
+    return `rule(impliesRightInfo(), premisses(s), c, active);
   }
 
   public static Tree andL(Tree s, Sequent c, Prop active) {
-    return `rule("and L", premisses(s), c, active);
+    return `rule(andLeftInfo(), premisses(s), c, active);
   }
 
   public static Tree andR(Tree s1, Tree s2, Sequent c, Prop active) {
-    return `rule("and R", premisses(s1,s2), c, active);
+    return `rule(andRightInfo(), premisses(s1,s2), c, active);
   }
 
   public static Tree orR(Tree s, Sequent c, Prop active) {
-    return `rule("or R", premisses(s), c, active);
+    return `rule(orRightInfo(), premisses(s), c, active);
   }
 
   public static Tree orL(Tree s1, Tree s2, Sequent c, Prop active) {
-    return `rule("or L", premisses(s1,s2), c, active);
+    return `rule(orLeftInfo(), premisses(s1,s2), c, active);
   }
 
   public static Prop prop(String name) {  // relation d'arite nulle, pour convenance

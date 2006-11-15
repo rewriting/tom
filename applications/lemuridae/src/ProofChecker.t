@@ -24,49 +24,49 @@ public static boolean proofcheck (Tree term) {
 	%match(Tree term) {
 	/* rule(NOM,PREMISSES,CONCLUSIONS,ACTIVEPROP) */
 	rule(
-		"axiom",
+		axiomInfo[],
 		 _,
 		 sequent((_*,x,_*),(_*,x,_*)),
 		 _
 	)
 			 -> {return true;}
 	rule(
-		"and L",
+		andLeftInfo[],
 		 (p@rule(_,_,sequent((g1*,A,B,g2*), d),_)),
 		 sequent((g1*,a,g2*),d),
 		 a@and(A,B)
 	)
 			 -> { return proofcheck(`p);}
 	rule(
-		"and R",
+		andRightInfo[],
 		 (p1@rule(_,_,sequent(g,(d1*,A,d2*)),_),p2@rule(_,_,sequent(g,(d1*,B,d2*)),_)),
 		 sequent(g,(d1*,a,d2*)),
 		 a@and(A,B)
 	)
 			 -> { return (proofcheck(`p1) && proofcheck(`p2)); }
 	rule(
-		"or R",
+		orRightInfo[],
 		 (p@rule(_,_,sequent(g, (d1*,A,B,d2*)),_)),
 		 sequent(g, (d1*,a,d2*)),
 		 a@or(A,B)
 	)
 			 -> { return proofcheck(`p);}
 	rule(
-		"or L",
+		orLeftInfo[],
 		 (p1@rule(_,_,sequent((g1*,A,g2*), d),_),p2@rule(_,_,sequent((g1*,B,g2*), d),_)),
 		 sequent((g1*,a,g2*), d),
 		 a@or(A,B)
 	)
 			 -> { return (proofcheck(`p1) && proofcheck(`p2)); }
 	rule(
-		"implies R",
+		impliesRightInfo[],
 		(p@rule(_,_,sequent((g*,A), (d1*, B, d2*)),_)),
 		sequent(g, (d1*,a,d2*)),
 		a@implies(A,B)
 	)
 			-> { return proofcheck(`p);}
 	rule(
-		"implies L",
+		impliesLeftInfo[],
 /*		(p1@rule(_,_,sequent((g1*,g2*),(A,d*)),_), p2@rule(_,_,sequent((g1*,B,g2*),d),_)), */
 		(p1@rule(_,_,sequent(x,(A,d*)),_), p2@rule(_,_,sequent((g1*,B,g2*),d),_)),
 		sequent(y@(g1*,a,g2*),d),

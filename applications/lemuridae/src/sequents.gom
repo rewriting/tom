@@ -30,7 +30,24 @@ Sequent = sequent(h:Context,c:Context)
 Premisses = premisses(Tree*)
 
 // st == symbol table
-Tree = rule(name:String, p:Premisses, c:Sequent, active:Prop)
+Tree = rule(type:RuleType, p:Premisses, c:Sequent, active:Prop)
+RuleType = axiomInfo()
+         | impliesLeftInfo()
+         | impliesRightInfo()
+         | andLeftInfo()
+         | andRightInfo()
+         | orLeftInfo()
+         | orRightInfo()
+         | forAllRightInfo()
+         | forAllLeftInfo()
+         | existsRightInfo()
+         | existsLeftInfo()
+         | bottomInfo()
+         | topInfo()
+         | cutInfo(name:String)
+         | openInfo() // open leaf
+         | reductionInfo() // reduction step
+         | customRuleInfo(name:String)
 
 //--- new rules ---
 SeqList = concSeq(Sequent*)
