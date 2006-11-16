@@ -24,22 +24,22 @@ class PrettyPrinter {
 
   private static String translate(RuleType rt) {
     %match(rt) {
-      axiomInfo() ->  { return "axiom"; }
-      impliesLeftInfo() -> { return "\\Rightarrow_\\mathcal{L}"; }
-      impliesRightInfo()-> { return "\\Rightarrow_\\mathcal{R}"; }
-      andLeftInfo() -> { return "\\land_\\mathcal{L}"; }
-      andRightInfo() -> { return "\\land_\\mathcal{R}"; }
-      orLeftInfo() -> { return "\\lor_\\mathcal{L}"; }
-      orRightInfo() -> { return "\\lor_\\mathcal{R}"; }
-      forAllRightInfo() -> { return "\\forall_\\mathcal{R}"; }
-      forAllLeftInfo() -> { return "\\forall_\\mathcal{L}"; }
-      existsRightInfo() -> { return "\\exists_\\mathcal{R}"; }
-      existsLeftInfo() -> { return "\\exists_\\mathcal{L}"; }
-      bottomInfo() -> { return "\\bot"; }
-      topInfo() -> { return "\\top"; }
+      axiomInfo[] ->  { return "axiom"; }
+      impliesLeftInfo[] -> { return "\\Rightarrow_\\mathcal{L}"; }
+      impliesRightInfo[]-> { return "\\Rightarrow_\\mathcal{R}"; }
+      andLeftInfo[] -> { return "\\land_\\mathcal{L}"; }
+      andRightInfo[] -> { return "\\land_\\mathcal{R}"; }
+      orLeftInfo[] -> { return "\\lor_\\mathcal{L}"; }
+      orRightInfo[] -> { return "\\lor_\\mathcal{R}"; }
+      forAllRightInfo[] -> { return "\\forall_\\mathcal{R}"; }
+      forAllLeftInfo[] -> { return "\\forall_\\mathcal{L}"; }
+      existsRightInfo[] -> { return "\\exists_\\mathcal{R}"; }
+      existsLeftInfo[] -> { return "\\exists_\\mathcal{L}"; }
+      bottomInfo[] -> { return "\\bot"; }
+      topInfo[] -> { return "\\top"; }
       cutInfo(name) -> { return "cut (" + `name + ")"; }
-      openInfo() -> { return "open"; } 
-      reductionInfo() -> { return "reduction"; }
+      openInfo[] -> { return "open"; } 
+      reductionInfo[] -> { return "reduction"; }
       customRuleInfo(name) -> { return `name; }
     }
     return rt.toString();

@@ -31,16 +31,24 @@ public class ProofChecker {
     }
   }
 
-  public static boolean proofcheck (Tree term) {
+  public static boolean boundedInContext(Term var, Context ctxt) {
+    return ((Context) `replaceFreeVars(var,Var("@notavar@")).fire(ctxt)) == ctxt; 
+  }
+
+  public static boolean proofcheck(Tree term) {
     %match(Tree term) {
-      /* rule(NOM,PREMISSES,CONCLUSIONS,ACTIVEPROP) */
-      rule(
-          axiomInfo[],
-          _,
-          sequent((_*,x,_*),(_*,x,_*)),
-          _
-          )
-        -> {return true;}
+      /* rule(type, premisses, conclusion, focussed proposition) */
+
+      // propositional fragment
+      rule(axiomInfo[],_,sequent((_*,x,_*),(_*,x,_*)),_) -> {
+        return true;
+      }
+      rule(topInfo[],_,sequent(_,(_*,top(),_*)),_) -> {
+        return true;
+      }
+      rule(bottomInfo[],_,sequent((_*,bottom(),_*),_),_) -> {
+        return true;
+      }
       rule(
           andLeftInfo[],
           (p@rule(_,_,sequent((g1*,A,B,g2*), d),_)),
@@ -84,13 +92,17 @@ public class ProofChecker {
           )
         -> { return (proofcheck(`p1) && proofcheck(`p2)); } 
 
+      // first order logic
       rule(
           forAllRightInfo(new_var),
           (p@rule(_,_,sequent(g,(d1*,B,d2*)),_)), 
           sequent(g,(d1*,a,d2*)),
           a@forAll(v,A)
           )
-        -> { if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B) return proofcheck(`p); } 
+        -> {
+          if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B && boundedInContext(`new_var,`context(d1*,d2*,g*))) 
+            return proofcheck(`p); 
+        }
 
       rule(
           forAllLeftInfo(new_term),
@@ -106,7 +118,8 @@ public class ProofChecker {
           sequent(g,(d1*,a,d2*)),
           a@exists(v,A)
           )
-        -> { if (`replaceFreeVars(Var(v),new_term).fire(`A) == `B) return proofcheck(`p); } 
+        -> { if (`replaceFreeVars(Var(v),new_term).fire(`A) == `B) return proofcheck(`p); 
+        } 
 
       rule(
           existsLeftInfo(new_var),
@@ -114,8 +127,12 @@ public class ProofChecker {
           sequent((g1*,a,g2*),d),
           a@exists(v,A)
           )
-        -> { if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B) return proofcheck(`p); } 
+        -> {
+          if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B && boundedInContext(`new_var,`context(g1*,g2*,d*)))
+            return proofcheck(`p); 
+        } 
 
+      // error case
       x -> {
         System.out.println(`x);
         try {PrettyPrinter.display(`x);}
