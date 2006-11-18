@@ -280,6 +280,7 @@ b: {
 
   public static SeqList applyContractionL(Sequent seq, Prop active) throws Exception 
   {
+    System.out.println("ici");
     %match(Sequent seq, Prop active) {
       sequent((X*,act,Y*),c), act -> {
         return `concSeq(sequent(context(X*,act,act,Y*),c));
@@ -562,6 +563,25 @@ b: {
     Tree newrule = `rule(cutInfo("cut"), prems, goal, active);
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
   }
+
+  private Tree duplicateCommand(Tree tree, Position pos, 
+      Prop active, boolean focus_left) throws Exception {
+    Sequent goal = getSequentByPosition(tree, pos);
+    SeqList slist = null;
+    if(focus_left) slist = applyContractionL(goal, active);
+    else slist = applyContractionR(goal, active);
+    Premisses prems = `premisses();
+    %match(SeqList slist) {
+      (_*,s,_*) -> { 
+        prems = 
+          `premisses(prems*, rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
+      }
+    }
+    // get new tree
+    Tree newrule = `rule(contractionLeftInfo(), prems, goal, active);
+    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
+  }
+
 
   private Tree theoremCommand(Tree tree, Position pos, 
       Prop active, boolean focus_left, String name) throws Exception {
@@ -939,6 +959,15 @@ b: {
             tree = elimCommand(env.tree, currentPos, active, env.focus_left); 
           } catch (Exception e) {
             System.out.println("Can't apply elim: " + e.getMessage());
+          }
+        }
+
+        /* duplicate case */
+        proofCommand("duplicate") -> {
+          try {
+            tree = duplicateCommand(env.tree, currentPos, active, env.focus_left); 
+          } catch (Exception e) {
+            System.out.println("Can't apply duplicate: " + e.getMessage());
           }
         }
 

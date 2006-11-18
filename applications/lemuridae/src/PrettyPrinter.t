@@ -40,6 +40,8 @@ class PrettyPrinter {
       cutInfo(name) -> { return "cut (" + `name + ")"; }
       openInfo[] -> { return "open"; } 
       reductionInfo[] -> { return "reduction"; }
+      contractionLeftInfo[] -> { return "contr_\\mathcal{L}"; }
+      contractionRightInfo[] -> { return "contr_\\mathcal{R}"; }
       customRuleInfo(name) -> { return `name; }
     }
     return rt.toString();

@@ -91,6 +91,20 @@ public class ProofChecker {
           a@implies(A,B)
           )
         -> { return (proofcheck(`p1) && proofcheck(`p2)); } 
+      rule(
+          contractionLeftInfo[],
+          (p@rule(_,_,sequent((g1*,a,a,g2*), d),_)),
+          sequent((g1*,a,g2*),d),
+          a
+          )
+        -> { return proofcheck(`p);}
+      rule(
+          contractionRightInfo[],
+          (p@rule(_,_,sequent(g,(d1*,a,a,d2*)),_)),
+          sequent(g,(d1*,a,d2*)),
+          a
+          )
+        -> { return proofcheck(`p); }
 
       // first order logic
       rule(

@@ -78,10 +78,10 @@ command: PROOF^ ID COLUMN! seq DOT!
        | RRULE^ atom ARROW! pred DOT!
        | TRULE^ term ARROW! term DOT!
        | DISPLAY^ ID DOT!
-       | QUIT^ DOT!
+       | QUIT DOT!
        | PROOFCHECK^ ID DOT!
        | PRINT^ ID DOT!
-      ;
+       ;
 
 proofcommand: FOCUS^ ID DOT!
             | RRULE^ NUMBER DOT!
