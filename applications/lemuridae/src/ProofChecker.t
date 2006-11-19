@@ -119,6 +119,13 @@ public class ProofChecker {
           a
           )
         -> { return proofcheck(`p); }
+      rule(
+          cutInfo(a),
+          (p1@rule(_,_,sequent(g,(d*,a)),_), p2@rule(_,_,sequent((g*,a),d),_)),
+          sequent(g,d),
+          _
+          )
+        -> { return proofcheck(`p1) && proofcheck(`p2); }
 
       // first order logic
       rule(
