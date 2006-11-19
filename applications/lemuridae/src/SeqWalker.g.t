@@ -18,6 +18,7 @@ options {
   %include { sequents/sequents.tom }
 }
 
+/*
 seq returns [Sequent s]
 {
   Context ctxt;
@@ -37,7 +38,8 @@ list_pred returns [Context c]
   : p = pred { c = `context(p,c*); }
   | #(LIST left=list_pred p=pred) { c = `context(left*,p); }
   ; 
-  
+*/
+
 pred returns [Prop p]
     { 
       Prop a,b;
@@ -91,10 +93,11 @@ command returns [Command c]
   {
     c = null;
     Prop r,l;
-    Sequent s;
+    //Sequent s;
+    Prop p;
     Term lhs,rhs;
   }
-  : #(PROOF i1:ID s=seq) { c = `proof(i1.getText(),s); }
+  : #(PROOF i1:ID p=pred) { c = `proof(i1.getText(),p); }
   | #(RRULE l=pred r=pred) { c = `rewritep(l,r); }
   | #(TRULE lhs=term rhs=term) { c = `rewritet(lhs,rhs); }
   | #(DISPLAY i2:ID) { c = `display(i2.getText()); }

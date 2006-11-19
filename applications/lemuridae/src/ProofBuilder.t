@@ -248,7 +248,6 @@ b: {
       %match(Sequent seq, Prop active) {
         sequent((X*,act@forAll(n,p),Y*),c), act -> {
           Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), new_var); 
-          // FIXME : remove act and add contraction rule ??
           return `concSeq(sequent(context(X*,res,Y*),c));
         }
       }
@@ -278,9 +277,10 @@ b: {
     throw new Exception("can't apply rule exists L");
   }
 
+ // contraction
+
   public static SeqList applyContractionL(Sequent seq, Prop active) throws Exception 
   {
-    System.out.println("ici");
     %match(Sequent seq, Prop active) {
       sequent((X*,act,Y*),c), act -> {
         return `concSeq(sequent(context(X*,act,act,Y*),c));
@@ -297,6 +297,28 @@ b: {
       }
     }
     throw new Exception("can't apply rule contraction R");
+  }
+
+  // weakening
+
+  public static SeqList applyWeakL(Sequent seq, Prop active) throws Exception 
+  {
+    %match(Sequent seq, Prop active) {
+      sequent((X*,act,Y*),c), act -> {
+        return `concSeq(sequent(context(X*,Y*),c));
+      }
+    }
+    throw new Exception("can't apply rule weakening L");
+  }
+
+  public static SeqList applyWeakR(Sequent seq, Prop active) throws Exception 
+  {
+    %match(Sequent seq, Prop active) {
+      sequent(ctxt,(X*,act,Y*)), act -> {
+        return `concSeq(sequent(ctxt,context(X*,Y*)));
+      }
+    }
+    throw new Exception("can't apply rule weakening R");
   }
 
 
@@ -548,22 +570,6 @@ b: {
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree);
   }
 
-  private Tree cutCommand(Tree tree, Position pos, 
-      Prop active, boolean focus_left, Prop prop) throws Exception {
-    Sequent goal = getSequentByPosition(tree, pos);
-    SeqList slist = applyCut(goal, prop);
-    Premisses prems = `premisses();
-    %match(SeqList slist) {
-      (_*,s,_*) -> { 
-        prems = 
-          `premisses(prems*, rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
-      }
-    }
-    // get new tree
-    Tree newrule = `rule(cutInfo("cut"), prems, goal, active);
-    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
-  }
-
   private Tree duplicateCommand(Tree tree, Position pos, 
       Prop active, boolean focus_left) throws Exception {
     Sequent goal = getSequentByPosition(tree, pos);
@@ -578,11 +584,49 @@ b: {
       }
     }
     // get new tree
-    Tree newrule = `rule(contractionLeftInfo(), prems, goal, active);
+    Tree newrule = null;
+    if(focus_left) newrule = `rule(contractionLeftInfo(), prems, goal, active);
+    else newrule = `rule(contractionRightInfo(), prems, goal, active);
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
   }
 
+  private Tree removeCommand(Tree tree, Position pos, 
+      Prop active, boolean focus_left) throws Exception {
+    Sequent goal = getSequentByPosition(tree, pos);
+    SeqList slist = null;
+    if(focus_left) slist = applyWeakL(goal, active);
+    else slist = applyWeakR(goal, active);
+    Premisses prems = `premisses();
+    %match(SeqList slist) {
+      (_*,s,_*) -> { 
+        prems = 
+          `premisses(prems*, rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
+      }
+    }
+    // get new tree
+    Tree newrule = null;
+    if(focus_left) newrule = `rule(weakLeftInfo(), prems, goal, active);
+    else newrule = `rule(weakRightInfo(), prems, goal, active);
+    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
+  }
 
+  private Tree cutCommand(Tree tree, Position pos, 
+      Prop active, boolean focus_left, Prop prop) throws Exception {
+    Sequent goal = getSequentByPosition(tree, pos);
+    SeqList slist = applyCut(goal, prop);
+    Premisses prems = `premisses();
+    %match(SeqList slist) {
+      (_*,s,_*) -> { 
+        prems = 
+          `premisses(prems*, rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
+      }
+    }
+    // get new tree
+    Tree newrule = `rule(cutInfo(prop), prems, goal, active);
+    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
+  }
+
+  // FIXME does not use kernel, may be dangerous
   private Tree theoremCommand(Tree tree, Position pos, 
       Prop active, boolean focus_left, String name) throws Exception {
 
@@ -590,7 +634,20 @@ b: {
     Tree thtree = theorems.get(`name);
 
     %match(Tree thtree) {
-      rule(_,_,sequent(hyps,concl),_) -> {
+      rule(_,_,sequent((),(prop)),_) -> {
+        //prems = `premisses();
+        // get new tree
+        //return `concSeq(sequent(l*,context(r*,prop)),sequent(context(l*,prop),r));
+        //Tree newrule = `rule(cutInfo(prop), prems, goal, active);
+        //return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
+      }
+    }
+    throw new Exception("can't apply theorem");
+
+/*
+    %match(Tree thtree) {
+      rule(_,_,sequent((),(prop)),_) -> {
+
 
         // instanciate a common symbol table for all matches
         HashMap<String,Term> st = new HashMap<String,Term>(); 
@@ -625,7 +682,6 @@ b: {
         }
       }
     }
-
     // has changed, have to match again
     %match(Tree thtree) {
       rule(_,_,sequent(_,concl),_) -> {
@@ -644,6 +700,7 @@ b: {
     }
 
     return tree;
+    */
   }
 
   private Tree reduceCommand(Tree tree, Position pos, 
@@ -824,7 +881,6 @@ b: {
     return (Tree) MuTraveler.init(pos.getReplace(newtree)).visit(tree); 
   }
 
-
   /* ------------------------------------------------------------------ */
 
   private class ProofEnv implements Cloneable {
@@ -971,6 +1027,15 @@ b: {
           }
         }
 
+        /* remove case */
+        proofCommand("remove") -> {
+          try {
+            tree = removeCommand(env.tree, currentPos, active, env.focus_left); 
+          } catch (Exception e) {
+            System.out.println("Can't apply duplicate: " + e.getMessage());
+          }
+        }
+
         /* auto case */
         proofCommand("auto") -> {
           try {
@@ -1018,6 +1083,7 @@ b: {
         }
 
         /* experimental theorem case */
+        /*
         theoremCommand(name) -> {
           try {
             tree = theoremCommand(env.tree, currentPos, active, env.focus_left, `name);
@@ -1025,6 +1091,7 @@ b: {
             System.out.println("can't apply theorem " + `name + " : " + e.getMessage());
           }
         }
+        */
 
         /* experimental reduce case */
         proofCommand("reduce") -> {
@@ -1090,26 +1157,26 @@ b: {
           newTermRules = `termrulelist(newTermRules*,termrule(lhs,rhs));
         }
 
-        proof(name,s) -> {
-          Tree tree = buildProofTree(`s);
+        proof(name,p) -> {
+          Tree tree = buildProofTree(`sequent(context(),context(p)));
           theorems.put(`name,tree);
           System.out.println(`name + " proved.");
         }
 
-	proofcheck(name) -> {
-	  Tree tree = theorems.get(`name);
-	  if(ProofChecker.proofcheck(tree)) System.out.println("Proof check passed !");
-	  else System.out.println("Proof check failed :S");
-	}
+        proofcheck(name) -> {
+          Tree tree = theorems.get(`name);
+          if(ProofChecker.proofcheck(tree)) System.out.println("Proof check passed !");
+          else System.out.println("Proof check failed :S");
+        }
 
         display(name) -> {
           Tree tree = theorems.get(`name);
           PrettyPrinter.display(tree,newTermRules);
         }
 
-	quit() -> {
-	  System.exit(0);
-	}
+        quit() -> {
+          System.exit(0);
+        }
 
         print(name) -> {
           Tree tree = theorems.get(`name);

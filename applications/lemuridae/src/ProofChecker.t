@@ -105,6 +105,20 @@ public class ProofChecker {
           a
           )
         -> { return proofcheck(`p); }
+      rule(
+          weakLeftInfo[],
+          (p@rule(_,_,sequent((g1*,g2*), d),_)),
+          sequent((g1*,a,g2*),d),
+          a
+          )
+        -> { return proofcheck(`p);}
+      rule(
+          weakRightInfo[],
+          (p@rule(_,_,sequent(g,(d1*,d2*)),_)),
+          sequent(g,(d1*,a,d2*)),
+          a
+          )
+        -> { return proofcheck(`p); }
 
       // first order logic
       rule(

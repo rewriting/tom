@@ -37,11 +37,13 @@ class PrettyPrinter {
       existsLeftInfo[] -> { return "\\exists_\\mathcal{L}"; }
       bottomInfo[] -> { return "\\bot"; }
       topInfo[] -> { return "\\top"; }
-      cutInfo(name) -> { return "cut (" + `name + ")"; }
+      cutInfo(p) -> { return "cut (" + `toLatex(p) + ")"; }
       openInfo[] -> { return "open"; } 
       reductionInfo[] -> { return "reduction"; }
       contractionLeftInfo[] -> { return "contr_\\mathcal{L}"; }
       contractionRightInfo[] -> { return "contr_\\mathcal{R}"; }
+      weakLeftInfo() -> { return "weak_\\mathcal{L}"; }
+      weakRightInfo() -> { return "weak_\\mathcal{R}"; }
       customRuleInfo(name) -> { return `name; }
     }
     return rt.toString();

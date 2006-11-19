@@ -14,13 +14,15 @@ tokens {
     RULEALONE;
 }
 
+/*
 seq: SEQ list_pred  
    | list_pred SEQ list_pred 
    ;
 
 list_pred: pred (LIST^ pred)* ;
+*/
 
-pred: andpred (IMPL^ andpred)* ;
+pred: andpred (IMPL^ pred)? ;
 
 andpred: orpred (AND^ orpred)* ;
 
@@ -74,7 +76,7 @@ funappl : ID LPAREN^ term_list RPAREN!;
 
 // points d'entree pour les programmes
 
-command: PROOF^ ID COLUMN! seq DOT!
+command: PROOF^ ID COLUMN! pred DOT!
        | RRULE^ atom ARROW! pred DOT!
        | TRULE^ term ARROW! term DOT!
        | DISPLAY^ ID DOT!
