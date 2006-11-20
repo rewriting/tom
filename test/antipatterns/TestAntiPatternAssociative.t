@@ -43,12 +43,13 @@ public class TestAntiPatternAssociative extends TestCase {
 	    Term = a()
 	    	| b()
 	    	| c()
+	    	| d()
 	        | f(x1:Term, x2:Term) 
 	        | g(pred:Term)
 	        | l(list:TermList)
 	        | lst(Term*)
 	    
-	    TermList = concTerm(Term*)    
+	    TermList = concTerm(Term*)
 	        
 	    Result = True()
 	    	| False()
@@ -358,7 +359,26 @@ public class TestAntiPatternAssociative extends TestCase {
 	public void testAp15() {
 		assertTrue(match15(`lst(lst(f(a(),a()),f(a(),b()),f(a(),a())),lst(f(a(),a()),f(a(),b()),f(a(),a())))) == `True());
 	}
+	
+	private Result match16(TermList subject){
+		%match( subject ) {
+			concTerm(before*,lst(begin0*,f(col0,x@!a()),end0*),lst(begin1*,f(col0,a()),end1*),after*) -> {
+				return `True();
+			}
+		}
+		return `False();	
+	}
 
+	public void testAp16() {
+		TermList tLst = `concTerm(
+				lst(f(b(),a()),f(c(),a()),f(d(),a())),
+				lst(f(b(),b()),f(c(),a()),f(d(),a())),
+				lst(f(b(),b()),f(c(),a()),f(d(),c())),
+				lst(f(b(),c()),f(c(),c()),f(d(),a())),
+				lst(f(b(),b()),f(c(),d()),f(d(),d()))
+		);
 
+		assertTrue(match16(tLst) == `True());
+	} 
 
 }
