@@ -157,9 +157,11 @@ public class TomKernelCompiler extends TomBase {
               Ref(antiFlagVariable),
               ExpressionToTomTerm(TrueTL())),
             actionInst,
-            LetAssign(antiFlagVariable,TrueTL(),Nop()));      
+            Nop());
+            //LetAssign(antiFlagVariable,TrueTL(),Nop()));      
 	      matchingAutomata = compiler.genSyntacticMatchingAutomata(
-            finalTest, `Nop(),
+            finalTest,
+            `Nop(),
 	    		  patternList,rootpath,moduleName,null);
         // glue the flag declaration
 	      matchingAutomata = `LetRef(antiFlagVariable,TrueTL(),matchingAutomata);
@@ -1194,7 +1196,9 @@ public class TomKernelCompiler extends TomBase {
     // add the body to the list if the body is not the flag assignement
     // quite ugly ... should be changed
     if (!(body instanceof LetAssign)) {
-      instructionList = `concInstruction(instructionList*,body);
+    	// also reset the flag
+    	Instruction flagReset = `LetAssign(antiFlagVariable,TrueTL(),Nop());
+    	instructionList = `concInstruction(instructionList*,body,flagReset);
     }
     return `UnamedBlock(instructionList);
   }
