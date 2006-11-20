@@ -38,38 +38,28 @@ rule in(l,fImpair(t)) -> Impair(appl(t,l)).
 
 
 
-
-proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) |- \An.(N(n) => Pair(succ(succ(0))*n)).
+proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) => \An.(N(n) => Pair(succ(succ(0))*n)).
 reduce.
 auto.
-cut in(cons(n0,nil()),fPair(one()+one())).
-auto.
-reduce.
+focus h2. rule. fPair(one()+one()).
+auto. reduce.
 axiom.
-focus h2.
-rule. fPair((one()+one())).
-axiom.
-next.
-auto. 
-reduce. 
-auto.
-
-auto.
-reduce.
-auto.
+rule.
+auto. reduce.
 focus h2. elim. succ(y0).
-focus h3. elim. y0.
-focus h4. rule. fImpair(one()).
+focus h2. elim. y0.
+focus h2. rule. fImpair(one()).
 auto. reduce.
 axiom.
 auto. reduce.
 auto.
-
-
-proof eqrefl: |- \Ax.eq(x,x).
+auto. reduce.
 auto.
 
-proof eqsym: |- \Ax.(\Ay.( eq(x,y) => eq(y,x) )).
+proof eqrefl: \Ax.eq(x,x).
+auto.
+
+proof eqsym: \Ax.(\Ay.( eq(x,y) => eq(y,x) )).
 elim.elim.elim.
 focus h1. rule. fEq(one(),S(x0)).
 focus h1. rule. 
@@ -79,7 +69,7 @@ rule. reduce.
 theorem eqrefl.
 focus h2. elim. x0. axiom.
 
-proof eqtrans: |- \Ax.(\Ay.(\Az.( eq(x,y) => (eq(y,z) => eq(x,z)) ))).
+proof eqtrans:  \Ax.(\Ay.(\Az.( eq(x,y) => (eq(y,z) => eq(x,z)) ))).
 auto.
 focus h2. rule. A0.
 focus h4. rule. A0.
@@ -88,28 +78,34 @@ axiom.
 axiom.
 
 
-proof succisafun:  eq(x,y) |- eq(succ(x),succ(y)).
-focus h1. rule. fEq(S(succ(x)),succ(one())).
+proof succisafun: \Ax.(\Ay.( eq(x,y) => eq(succ(x),succ(y)) )).
+elim. elim. elim.
+focus h1. rule. fEq(S(succ(x0)),succ(one())).
 focus h1. rule. reduce.
 axiom.
 rule. reduce.
 theorem eqrefl.
-focus h2. elim. succ(x). axiom.
+focus h2. elim. succ(x0). axiom.
 
 
-proof nplus0:  |- \An.(N(n) => eq(n+0,n)).
+proof nplus0:   \An.(N(n) => eq(n+0,n)).
 elim. elim.
 focus h1. rule. fEq(one()+S(0),one()).
 focus h1. rule. reduce.
 axiom.
 rule.
 focus h1. rule. rule. reduce.
-theorem succisafun. axiom.
+theorem succisafun.
+focus h3. elim. (y0+0). focus h3. elim. (y0).
+focus h3. elim.
+axiom.
+axiom.
 rule. reduce.
 theorem eqrefl.
 focus h2. elim. 0. axiom.
 
-proof plusassoc:  |- \Ax.(\Ay.(\Az.(N(x) => eq( x+(y+z) , (x+y)+z )))).
+
+proof plusassoc:   \Ax.(\Ay.(\Az.(N(x) => eq( x+(y+z) , (x+y)+z )))).
 elim. elim. elim. elim.
 focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
 focus h1. rule. reduce. axiom.
@@ -119,9 +115,11 @@ focus h2. elim. y0+z0. axiom.
 rule.
 focus h1. rule. rule. reduce.
 theorem succisafun.
-axiom.
+focus h3. elim. y1+(y0+z0). focus h3. elim. (y1+y0)+z0. focus h3. elim. 
+axiom. axiom.
 
-proof plusnSm: |- \An.(\Am.( N(n) => eq(succ(n+m),n+succ(m)))).
+
+proof plusnSm:  \An.(\Am.( N(n) => eq(succ(n+m),n+succ(m)))).
 elim. elim.elim.
 focus h1. rule. fEq(succ(one()+S(m0)),one()+succ(S(m0))).
 focus h1. rule. reduce. axiom.
@@ -131,9 +129,12 @@ rule. reduce.
 theorem eqrefl.
 focus h2. elim. succ(m0). axiom.
 focus h1. rule. rule. reduce.
-theorem succisafun. axiom.
+theorem succisafun.
+focus h3. elim. succ(y0+m0). focus h3. elim. y0+succ(m0). focus h3. elim. 
+axiom. axiom.
 
-proof pluscommut: |- \An.(\Am.(N(n)=>(N(m)=>eq(n+m,m+n)))).
+
+proof pluscommut:  \An.(\Am.(N(n)=>(N(m)=>eq(n+m,m+n)))).
 elim.elim.elim.elim.
 focus h1. rule. fEq(one()+S(m0),S(m0)+one()).
 focus h1. rule. reduce. axiom.
@@ -142,32 +143,34 @@ next.
 rule. reduce.
 theorem nplus0.
 focus h3. elim. m0.
-focus h4. elim.
+focus h3. elim.
 theorem eqsym.
-focus h5. elim. m0+0.
-focus h6. elim. m0.
-focus h7. elim.
+focus h4. elim. m0+0.
+focus h4. elim. m0.
+focus h4. elim.
 axiom.
 axiom.
 axiom.
 focus h1. rule. rule. reduce.
 theorem plusnSm.
 focus h4. elim. m0.
-focus h5. elim. y0.
-focus h6. elim.
+focus h4. elim. y0.
+focus h4. elim.
 theorem succisafun.
+focus h5. elim. y0+m0. focus h5. elim. m0+y0. focus h5. elim. 
+next. axiom.
+next. axiom.
 theorem eqtrans.
-focus h8. elim. succ(y0+m0).
-focus h9. elim. succ(m0+y0).
-focus h10. elim. m0+succ(y0). 
-focus h11. elim.
-focus h11. elim.
-axiom.
+focus h6. elim. succ(y0+m0).
+focus h6. elim. succ(m0+y0).
+focus h6. elim. m0+succ(y0). 
+focus h6. elim.
+focus h6. elim.
 axiom.
 axiom.
 axiom.
 
-proof multn0: |- \An.(N(n) => eq(0,n*0)).
+proof multn0:  \An.(N(n) => eq(0,n*0)).
 elim.elim.
 focus h1. rule. fEq(S(0),one()*S(0)).
 focus h1. rule. reduce. axiom.
@@ -183,6 +186,5 @@ axiom.
 rule. reduce.
 theorem eqrefl.
 focus h3. elim. 0. axiom.
-
 
 
