@@ -4,6 +4,17 @@ focus h5. elim. a(). auto.
 elim. y0. axiom.
 focus h1. elim. x0. auto.
 elim. y0. auto.
+
+proof l1: \Ax.P(x) => P(a()).
+elim. focus h1. elim. a(). axiom.
+
+
+proof l2:  ( \Ax.P(x)  /\ (P(a()) => P(b())) )  => P(b()).
+auto.
+theorem l1.
+auto.
+
 proofcheck l.
-display l.
+proofcheck l1.
+proofcheck l2.
 

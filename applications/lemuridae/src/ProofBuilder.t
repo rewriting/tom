@@ -610,8 +610,7 @@ b: {
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
   }
 
-  private Tree cutCommand(Tree tree, Position pos, 
-      Prop active, boolean focus_left, Prop prop) throws Exception {
+  private Tree cutCommand(Tree tree, Position pos, Prop prop) throws Exception {
     Sequent goal = getSequentByPosition(tree, pos);
     SeqList slist = applyCut(goal, prop);
     Premisses prems = `premisses();
@@ -622,85 +621,52 @@ b: {
       }
     }
     // get new tree
-    Tree newrule = `rule(cutInfo(prop), prems, goal, active);
+    Tree newrule = `rule(cutInfo(prop), prems, goal, goal.getc().getHeadcontext());
     return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
   }
 
-  // FIXME does not use kernel, may be dangerous
-  private Tree theoremCommand(Tree tree, Position pos, 
-      Prop active, boolean focus_left, String name) throws Exception {
+  // FIXME uses positions ... may be easily broken
+  private Tree theoremCommand(Tree tree, Position pos, String name) throws Exception {
 
-    Sequent goal = getSequentByPosition(tree, pos);
     Tree thtree = theorems.get(`name);
+    Prop conclusion = null;
+    Position poscopy = (Position) pos.clone();
 
     %match(Tree thtree) {
       rule(_,_,sequent((),(prop)),_) -> {
-        //prems = `premisses();
-        // get new tree
-        //return `concSeq(sequent(l*,context(r*,prop)),sequent(context(l*,prop),r));
-        //Tree newrule = `rule(cutInfo(prop), prems, goal, active);
-        //return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
+        tree = cutCommand(tree,poscopy,`prop);
+        poscopy.down(2);
+        poscopy.down(1);
+        conclusion = `prop;
       }
     }
-    throw new Exception("can't apply theorem");
 
-/*
-    %match(Tree thtree) {
-      rule(_,_,sequent((),(prop)),_) -> {
-
-
-        // instanciate a common symbol table for all matches
-        HashMap<String,Term> st = new HashMap<String,Term>(); 
-        HashMap<String,Term> temp = null; 
-
-        // matching theorem hypothesis with current goal's hypothesis
-        %match(Context `hyps) {
-          (_*,hyp1,_*) -> {
-            boolean matches = false;
-            %match(Sequent goal) {
-              sequent((_*,hyp2,_*),_) -> {
-                `hyp2 = (Prop) Unification.substPreTreatment(`hyp2);
-                // Unification.match has side effects on temp, we need a copy
-                temp = (HashMap<String,Term>) st.clone();
-                temp = Unification.match(`hyp1,`hyp2, temp);
-                if (temp != null) {
-                  st = temp;
-                  matches = true;
-                  // renaming variables
-                  Set<Map.Entry<String,Term>> entries = st.entrySet();
-                  for (Map.Entry<String,Term> ent: entries) {
-                    Term old_term = `Var(ent.getKey());
-                    Term new_term = ent.getValue();
-                    thtree = (Tree) Utils.replaceFreeVars(thtree, old_term, new_term);
-                    thtree = (Tree) Unification.substPostTreatment(thtree);
-                  }
-                }
-              }
-            }
-            if (!matches) throw new Exception("theorem and hypothesis don't match");
+    while(true) {
+b :{
+      Sequent goal = getSequentByPosition(tree, poscopy);
+      %match(goal,Prop conclusion) {
+        sequent((),(concl)), concl -> {
+          return (Tree) ((MuStrategy) poscopy.getReplace(thtree)).apply(tree);
+        }
+        sequent((p,_*),_), _ -> {
+          tree = removeCommand(tree,poscopy,`p,true);
+          poscopy.down(2);
+          poscopy.down(1);
+          break b;
+        }
+        sequent((),(_*,p,_*)), tokeep -> {
+          if (`p != conclusion) {
+            tree = removeCommand(tree,poscopy,`p,false);
+            Prop bidon = `tokeep;
+            poscopy.down(2);
+            poscopy.down(1);
+            break b;
           }
         }
       }
+      throw new Exception("can't apply theorem");
+   }
     }
-    // has changed, have to match again
-    %match(Tree thtree) {
-      rule(_,_,sequent(_,concl),_) -> {
-
-        Premisses prems = `premisses(); 
-        %match(Sequent goal) {
-          sequent(h,c) -> {
-            Sequent newseq = `sequent(context(h*,concl*),c);
-            prems = `premisses(thtree, rule(openInfo(), premisses(), newseq, newseq.getc().getHeadcontext())) ;
-          }
-        }
-        // get new tree
-        Tree newrule = `rule(cutInfo(name), prems, goal, active);
-        tree = (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
-      }
-    }
-
-    return tree;
-    */
   }
 
   private Tree reduceCommand(Tree tree, Position pos, 
@@ -889,7 +855,7 @@ b: {
     public boolean focus_left = false;  // true if focus on one hypothesis, false if on a conclusion
     public int focus = 1;
     public int currentGoal = 0;
-    
+
     public Object clone() {
       ProofEnv res = new ProofEnv();
       res.tree = tree;
@@ -900,14 +866,14 @@ b: {
       return res;
     }
   }
-  
+
   // builds the proof by manipulating a tree
   private Tree buildProofTree(Sequent goal) {
-    
+
     // environnement stack to allow the "undo" command and incomplete proof save
     Stack<ProofEnv> envStack = new Stack<ProofEnv>();
     ProofEnv env = new ProofEnv();
-    
+
     // initialisations
     env.focus_left = false;
     env.focus = 1;
@@ -916,7 +882,7 @@ b: {
     env.tree = `rule(openInfo(), premisses(), goal, goal.getc().getHeadcontext());
     try { MuTraveler.init(`TopDown(getOpenPositions(env.openGoals))).visit(env.tree); }
     catch (VisitFailure e) { e.printStackTrace(); }
-   
+
     // main loop
     while(env.openGoals.size() > 0) {
       Tree tree = null;
@@ -954,7 +920,7 @@ b: {
             env = envStack.pop();
           }
         }
-        
+
         proofCommand("next") -> {
           env.currentGoal = (env.currentGoal+1 ) % env.openGoals.size();
         }
@@ -1076,22 +1042,21 @@ b: {
         /* cut case */
         cutCommand(prop) -> {
           try {
-            tree = cutCommand(env.tree, currentPos, active, env.focus_left, `prop);
+            tree = cutCommand(env.tree, currentPos, `prop);
           } catch (Exception e) {
             System.out.println("can't apply cut rule : " + e.getMessage());
           }
         }
 
         /* experimental theorem case */
-        /*
         theoremCommand(name) -> {
           try {
-            tree = theoremCommand(env.tree, currentPos, active, env.focus_left, `name);
+            tree = theoremCommand(env.tree, currentPos, `name);
+            //System.out.println(tree);
           } catch(Exception e) {
             System.out.println("can't apply theorem " + `name + " : " + e.getMessage());
           }
         }
-        */
 
         /* experimental reduce case */
         proofCommand("reduce") -> {
@@ -1109,7 +1074,7 @@ b: {
         // get open positions
         envStack.push(env);
         env = (ProofEnv) env.clone();
- 
+
         env.tree = tree;       
         env.openGoals.remove(currentPos);
         ((MuStrategy)currentPos.getOmega(`TopDown(getOpenPositions(env.openGoals)))).apply(env.tree);
