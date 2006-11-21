@@ -22,6 +22,7 @@ Prop = relationAppl(r:Relation, t:TermList)
      | exists(var:String, p:Prop)
      | bottom()
      | top()
+     | nullProp() // for open leaves
 
 Context = context(Prop*)
 
@@ -31,6 +32,8 @@ Premisses = premisses(Tree*)
 
 // st == symbol table
 Tree = rule(type:RuleType, p:Premisses, c:Sequent, active:Prop)
+     | nullTree() // for conveniance
+
 RuleType = axiomInfo()
          | impliesLeftInfo()
          | impliesRightInfo()
@@ -59,7 +62,7 @@ SeqList = concSeq(Sequent*)
 VarList = varlist(String*)
 
 // hs == hand-side : 0 left, 1 right
-Rule = ruledesc(hs:int, concl:Prop, prem:SeqList)
+Rule = ruledesc(hs:int, concl:Prop, prem:SeqList, tree:Tree)
 
 TermRule = termrule(lhs:Term,rh:Term)
 

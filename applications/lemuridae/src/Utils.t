@@ -169,10 +169,13 @@ class Utils {
     return set;
   }
 
+
   public static Term freshVar(String x, sequentsAbstractType term) {
+    HashSet<Term> set = collectVars(term);
+    return freshVar(x,set);
+  }
 
-    HashSet set = collectVars(term);
-
+  public static Term freshVar(String x, Set<Term> set) {
     int i = 0;
     while(true) {
       String s = x + i;

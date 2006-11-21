@@ -93,7 +93,7 @@ b: {
      %match (Rule rule, Sequent seq, Prop active) {
 
        // si c'est une regle gauche
-       ruledesc(0,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
+       ruledesc(0,_,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
          Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
          try { 
            VisitableVisitor v1 = `AddInContexts(gamma);
@@ -105,7 +105,7 @@ b: {
        }
 
        // si c'est une regle droite
-       ruledesc(1,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
+       ruledesc(1,_,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
          try { 
            VisitableVisitor v1 = `AddInContexts(ctxt);
            res = (SeqList) MuTraveler.init(`TopDown(v1)).visit(res);

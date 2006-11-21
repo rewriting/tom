@@ -435,7 +435,7 @@ class PrettyPrinter {
 
     // generated rules
     %match(Rule term) {
-      ruledesc(hs,c,p) -> {
+      ruledesc(hs,c,p,_) -> {
         String r1 = prettyRule(`p);
         String r2;
         if(`hs==0)
