@@ -748,6 +748,9 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
                     ASTFactory.makeList(list),
                     ASTFactory.makeConstraintList(constraintList)
                 );
+                if(anti) {
+                    result = `AntiTerm(result);
+                }
             }
         )
     ;
