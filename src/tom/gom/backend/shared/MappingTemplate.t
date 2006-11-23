@@ -157,7 +157,7 @@ public class MappingTemplate extends TemplateClass {
         if(`sortName == `headDomain) { /* handle List = conc(List*) case */
           writer.write(%[
 %oplist @className(`sortName)@ @className(`opName)@(@className(`headDomain)@*) {
-  is_fsym(t) { t instanceof @fullClassName(`concClass)@ || t instanceof @fullClassName(`emptyClass)@ }
+  is_fsym(t) { t instanceof @fullClassName(`sortName)@ }
   make_empty() { @fullClassName(`emptyClass)@.make() }
   make_insert(e,l) { @fullClassName(`concClass)@.make(e,l) }
   get_head(l) { (l.@isOperatorMethod(`concClass)@())?(l.@getMethod(`head)@()):(l) }

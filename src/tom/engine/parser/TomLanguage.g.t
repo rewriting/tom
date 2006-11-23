@@ -662,29 +662,28 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
         	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
             name = headSymbol[optionList] 
             {
-			    result = `Variable(ASTFactory.makeOptionList(optionList),name,
-						TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
-			    if (anti){
-			    	result = `AntiTerm(result);
-			    }
+	      result = `Variable(ASTFactory.makeOptionList(optionList),name,
+		  TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
+	      if (anti) {
+		result = `AntiTerm(result);
+	      }
             }            
 
         |   // for a single constant. 
             // ambiguous with the next rule so :
-        	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
+       	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
             name = headConstant[optionList] 
             {
-                nameList = `concTomName(nameList*,name);
-                optionList.add(`Constant());
-                result = `TermAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    );
-                if (anti){
-			    	result = `AntiTerm(result);
-			    }
+	      nameList = `concTomName(nameList*,name);
+	      optionList.add(`Constant());
+	      result = `TermAppl(
+		  ASTFactory.makeOptionList(optionList),
+		  nameList,
+		  ASTFactory.makeList(list),
+		  ASTFactory.makeConstraintList(constraintList));
+	      if (anti) {
+		result = `AntiTerm(result);
+	      }
             }
 
         |   // f(...) or f[...] or !f(...) or !f[...]
@@ -715,7 +714,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
         |   // (f|g...) 
             // ambiguity with the last rule so use a lookahead
             // if ALTERNATIVE then parse headSymbolList
-        	{LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
+       	{LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
             implicit = args[list, secondOptionList] 
             {
               if(implicit) {
@@ -754,8 +753,6 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
             }
         )
     ;
-
-
 
 xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm result] throws TomException
 {
@@ -1370,11 +1367,9 @@ headSymbolList [LinkedList optionList] returns [TomNameList result]
 headSymbolOrConstant [LinkedList optionList] returns [TomName result]
 {
   result = null;
-} : (
-    result = headSymbol[optionList]
-		|
-    result = headConstant[optionList]
-		);
+} : ( result = headSymbol[optionList]
+    | result = headConstant[optionList]
+    );
 
 headSymbol [LinkedList optionList] returns [TomName result]
 { 
@@ -1425,7 +1420,7 @@ headConstant [LinkedList optionList] returns [TomName result]
 			break;
 		default:
 	}
-        }
+}
 ;
 
 // Operator Declaration
