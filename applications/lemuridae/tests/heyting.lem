@@ -1,0 +1,17 @@
+rule eq(0,0) -> \T.
+rule eq(0,succ(x)) -> \B.
+rule eq(succ(x),0) -> \B.
+rule eq(succ(x),succ(y)) -> eq(x,y).
+termrule 0+y -> y.
+termrule succ(x)+y -> succ(x+y).
+termrule 0*y -> 0.
+termrule succ(x)*y -> x*y+y.
+
+rule N(n) -> \Af.(in(0,f) => \Ay.(in(y,f) => in(succ(y),f)) => in(n,f)).
+hered.
+
+
+proof l: eq(3+5,2*4).
+reduce.
+auto.
+
