@@ -687,21 +687,23 @@ b :{
           try {
             tree = ruleCommand(env.tree, currentPos, active, env.focus_left, `n);
           } catch (Exception e) {
-            System.out.println("Can't apply custom rule "+ `n +": " + e.getMessage());
+            System.out.println("Can't apply custom rule "+ `n + ": " + e.getMessage());
           }
         }
 
         /* elim case */
         proofCommand("elim") -> {
           try {
-            MuStrategy elim;
+            MuStrategy strat;
+
             if (env.focus_left)
-              elim = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllL(active), ApplyExistsL(active));
+              strat = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllL(active), ApplyExistsL(active));
             else
-              elim = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsR(active));
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(elim)).apply(env.tree);
+              strat = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsR(active));
+
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
-            System.out.println("Can't apply elim: " + e.getMessage());
+            System.out.println("Can't apply elim" + e.getMessage());
           }
         }
 
@@ -711,9 +713,9 @@ b :{
             MuStrategy strat;
             if (env.focus_left) strat = `ApplyContractionL(active);
             else strat = `ApplyContractionR(active);
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
-            System.out.println("Can't apply duplicate: " + e.getMessage());
+            System.out.println("Can't apply duplicate" + e.getMessage());
           }
         }
 
@@ -723,9 +725,9 @@ b :{
             MuStrategy strat;
             if (env.focus_left) strat = `ApplyWeakL(active);
             else strat = `ApplyWeakR(active);
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
-            System.out.println("Can't apply duplicate: " + e.getMessage());
+            System.out.println("Can't apply duplicate" + e.getMessage());
           }
         }
 
@@ -733,9 +735,9 @@ b :{
         proofCommand("auto") -> {
           try {
             MuStrategy strat = `TopDown(ApplyAuto(newRules));
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
-            System.out.println("Can't apply auto: " + e.getMessage());
+            System.out.println("Can't apply auto" + e.getMessage());
             e.printStackTrace();
           }
         }
@@ -744,9 +746,9 @@ b :{
         proofCommand("axiom") -> {
           try {
             MuStrategy strat = `ApplyAxiom(); 
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
-            System.out.println("can't apply rule axiom : " + e.getMessage());
+            System.out.println("can't apply rule axiom" + e.getMessage());
           }
         }
 
@@ -754,7 +756,7 @@ b :{
         proofCommand("bottom") -> {
           try {
             MuStrategy strat = `ApplyBottom(); 
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply bottom rule : " + e.getMessage());
           }
@@ -764,7 +766,7 @@ b :{
         proofCommand("top") -> {
           try {
             MuStrategy strat = `ApplyTop(); 
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply top rule : " + e.getMessage());
           }
@@ -774,7 +776,7 @@ b :{
         cutCommand(prop) -> {
           try {
             MuStrategy strat = `ApplyCut(prop); 
-            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply cut rule : " + e.getMessage());
           }
