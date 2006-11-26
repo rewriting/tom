@@ -54,7 +54,7 @@ RuleType = axiomInfo()
          | weakRightInfo()
          | openInfo() // open leaf
          | reductionInfo() // reduction step
-         | customRuleInfo(name:String)
+         | customRuleInfo(name:String,expanded:Tree)
 
 //--- new rules ---
 SeqList = concSeq(Sequent*)

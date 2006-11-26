@@ -42,8 +42,8 @@ proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) => \An.(N(n) => Pair(succ(succ(0))*n)).
 reduce.
 auto.
 focus h2. rule. fPair(one()+one()).
-auto. reduce.
-axiom.
+rule. reduce. 
+rule.
 rule.
 auto. reduce.
 focus h2. elim. succ(y0).
@@ -54,7 +54,7 @@ axiom.
 auto. reduce.
 auto.
 auto. reduce.
-auto.
+axiom.
 
 proof eqrefl: \Ax.eq(x,x).
 auto.

@@ -44,9 +44,9 @@ public class ProofBuilder {
   %strategy ApplyRule(rule: Rule, active: Prop, args: TermMap) extends Fail() {
     visit Tree {
       rule[c=seq] -> {
-
         SeqList res = rule.getprem();
         Prop conclusion = rule.getconcl();
+        Tree expanded = rule.gettree();
 
         // renommage temporaire pour eviter les collisions
         // FIXME : renommer dans les regles de reecriture plutot
@@ -61,7 +61,9 @@ public class ProofBuilder {
         for (Map.Entry<String,Term> ent: entries) {
           Term old_term = `Var(ent.getKey());
           Term new_term = ent.getValue();
-          res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term); 
+          res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
+          // also replacing in the expanded tree
+          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
         }
 
         // post traitement 
@@ -73,6 +75,8 @@ public class ProofBuilder {
           String bname = fvar.getbase_name();
           Term new_var = Utils.freshVar(bname, `seq);
           res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
+          // also replacing in the expanded tree
+          expanded = (Tree) Utils.replaceFreeVars(expanded, fvar, new_var); 
         }
 
         // remplacement des nouvelles variables (forall left et exists right)
@@ -86,6 +90,8 @@ public class ProofBuilder {
             throw new VisitFailure("Variable " + old_term.getname() +" not present in the rule");
           Term new_term = ent.getValue();
           res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
+          // also replacing in the expanded tree
+          expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
         }
 
         // ajout des contextes dans les premisses
@@ -121,7 +127,10 @@ b: {
           }
         }
 
-        return `rule(customRuleInfo("customrule"),newprems,seq,active);
+        // adding instanciation steps for the expanded form
+        
+
+        return `rule(customRuleInfo("customrule",expanded),newprems,seq,active);
       }
     }
   }
