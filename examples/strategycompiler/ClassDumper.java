@@ -18,7 +18,9 @@ import tom.library.bytecode.*;
  * Gom term when it has already been done.
  */
 public class ClassDumper {
-  // Map of already loaded class (used to prevent class reloading).
+  /**
+   * Map of already loaded class (used to prevent class reloading).
+   */
   private static HashMap loadedClass = new HashMap();
 
   /**
@@ -32,7 +34,7 @@ public class ClassDumper {
     Object o = loadedClass.get(internalClassName);
     TClass clazz = null;
     if(o == null) {
-        System.out.println("Parsing class file `" + internalClassName + "' ...");
+        //System.out.println("Parsing class file `" + internalClassName + "' ...");
         BytecodeReader cr = new BytecodeReader(internalClassName);
         clazz = cr.getTClass();
         loadedClass.put(internalClassName, clazz);
@@ -89,6 +91,13 @@ public class ClassDumper {
     Class c = loader.loadClass(clazz.getinfo().getname());
 
     return c;
+  }
+
+  /**
+   * Clear the loaded class cache.
+   */
+  public static void clearCache() {
+    loadedClass.clear();
   }
 }
 

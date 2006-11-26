@@ -29,19 +29,17 @@
 
 package strategycompiler;
 
-import strategycompiler.benchstratid.term.*;
-import strategycompiler.benchstratid.term.types.*;
+import strategycompiler.benchstratidsl.term.*;
+import strategycompiler.benchstratidsl.term.types.*;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 import jjtraveler.Visitable;
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.AbstractMuStrategy;
+import tom.library.sl.*;
 
 import java.util.*;
 
-public class BenchStratId {
+public class BenchStratIdSl {
 
   %gom {
     module Term
@@ -54,10 +52,10 @@ public class BenchStratId {
          | g(s1:Term)
    }
 
-  %include { mustrategy.tom }
+  %include { sl.tom }
 
   public final static void main(String[] args) {
-    BenchStratId test = new BenchStratId();
+    BenchStratIdSl test = new BenchStratIdSl();
 
     int heightmax_ex = 0;
     int heightmax_id = 0;
@@ -68,16 +66,17 @@ public class BenchStratId {
       System.out.println("Usage: java strategycompiler.BenchStratId <heightmax_ex> <heightmax_id>");
       return;
     }
-
-    System.out.println("Bench with the MuTraveler library\n");
+   
+    System.out.println("Bench with the Sl library\n");
     System.out.println("RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2())))");
-    System.out.println("height\tnot compiled\tcompiled");
+    System.out.println("height\ttime");
     for (int i = 2; i<=heightmax_ex; i++) {
       test.benchInnermost(i);
     }
+
     System.out.println();
     System.out.println("RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2())))");
-    System.out.println("height\tnot compiled\tcompiled");
+    System.out.println("height\ttime");
     for (int i = 2; i<=heightmax_id; i++) {
       test.benchInnermostId(i);
     }
@@ -85,32 +84,22 @@ public class BenchStratId {
 
   public void benchInnermost(int baobabHeight) {
     Term subject = baobab(baobabHeight);
+    
+    long startChrono = System.currentTimeMillis();
+    `RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))).fire(subject);
+    long stopChrono = System.currentTimeMillis();
 
-		long startChrono1 = System.currentTimeMillis();
-    `RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))).apply(subject);
-		long stopChrono1 = System.currentTimeMillis();
-
-    StrategyCompiler.clearCache();
-		long startChrono2 = System.currentTimeMillis();
-    StrategyCompiler.compile(`RepeatId(Sequence(Innermost(RedFail()),Innermost(RedFail2()))), "sFail").apply(subject);
-		long stopChrono2 = System.currentTimeMillis();
-
-		System.out.println(baobabHeight + "\t" + (stopChrono1-startChrono1)/1000. + "\t\t" + (stopChrono2-startChrono2)/1000.);
+    System.out.println(baobabHeight + "\t" + (stopChrono-startChrono)/1000.);
   }
 
   public void benchInnermostId(int baobabHeight) {
     Term subject = baobab(baobabHeight);
 
-    long startChrono1 = System.currentTimeMillis();
-    `RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))).apply(subject);
-		long stopChrono1 = System.currentTimeMillis();
+    long startChrono = System.currentTimeMillis();
+    `RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))).fire(subject);
+    long stopChrono = System.currentTimeMillis();
 
-    StrategyCompiler.clearCache();
-    long startChrono2 = System.currentTimeMillis();
-    StrategyCompiler.compile(`RepeatId(Sequence(InnermostId(RedId()),InnermostId(RedId2()))), "sId").apply(subject);
-		long stopChrono2 = System.currentTimeMillis();
-
-		System.out.println(baobabHeight + "\t" + (stopChrono1-startChrono1)/1000. + "\t\t" + (stopChrono2-startChrono2)/1000.);
+    System.out.println(baobabHeight + "\t" + (stopChrono-startChrono)/1000.);
   }
 
   Term baobab(int height) {
