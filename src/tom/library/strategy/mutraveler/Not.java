@@ -47,7 +47,7 @@ public class Not extends AbstractMuStrategy {
 
   public Visitable visit(Visitable x) throws VisitFailure {
     try {
-      getArgument(ARG).visit(x);
+      visitors[ARG].visit(x);
     } catch (VisitFailure f) {
       return x;
     }

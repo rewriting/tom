@@ -67,7 +67,7 @@ public class OmegaU extends AbstractMuStrategy {
       return defaultStrategy.visit(any);
     } else {
       int selectedSubterm = (randomInt%arity)+1;
-      return (new Omega(selectedSubterm,getArgument(ARG))).visit(any);
+      return (new Omega(selectedSubterm,visitors[ARG])).visit(any);
     }
   }
 }

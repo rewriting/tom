@@ -54,9 +54,9 @@ public class SequenceId extends AbstractMuStrategy {
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
-    Visitable v = getArgument(FIRST).visit(any);
+    Visitable v = visitors[FIRST].visit(any);
     if (!(v == any)) {
-      return getArgument(THEN).visit(v);
+      return visitors[THEN].visit(v);
     } else {
       return v;
     }
