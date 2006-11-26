@@ -37,81 +37,6 @@ public class ProofBuilder {
     }
   }
 
-  public static SeqList applyRule(Rule rule, Sequent seq, Prop active,
-      Map<Term,Term> args) throws Exception {
-
-    SeqList res = rule.getprem();
-    // si la regle instancie des variables, il faut dupliquer la proposition
-    Prop conclusion = rule.getconcl();
-
-    // renommage temporaire pour eviter les collisions
-    // FIXME : renommer dans les regles de reecriture plutot
-    Prop active_prepared = (Prop) Unification.substPreTreatment(active);
-
-    // recuperage de la table des symboles
-    HashMap<String,Term> tds = Unification.match(conclusion, active_prepared);
-    if (tds == null) throw new Exception("active formula and rule conclusion don't match");
-
-    // renommage des variables
-    Set<Map.Entry<String,Term>> entries= tds.entrySet();
-    for (Map.Entry<String,Term> ent: entries) {
-      Term old_term = `Var(ent.getKey());
-      Term new_term = ent.getValue();
-      res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term); 
-    }
-
-    // post traitement 
-    res = (SeqList) Unification.substPostTreatment(res);
-
-    // creation des variables fraiches (forall right et exists left)
-    Set<Term> fresh = Utils.getSideConstraints(rule.getprem());
-    for (Term fvar : fresh) {
-      String bname = fvar.getbase_name();
-      Term new_var = Utils.freshVar(bname, seq);
-      res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
-    }
-
-    // remplacement des nouvelles variables (forall left et exists right)
-    Set<Term> new_vars = Utils.getNewVars(rule.getprem());
-    if (new_vars.size() != args.size())
-      throw new Exception("Wrong variables number");
-    Set<Map.Entry<Term,Term>> entries2 = args.entrySet();
-    for (Map.Entry<Term,Term> ent: entries2) {
-      Term old_term = ent.getKey();
-      if (! new_vars.contains(old_term))
-        throw new Exception("Variable " + old_term.getname() +" not present in the rule");
-      Term new_term = ent.getValue();
-      res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
-    }
-
-    // ajout des contextes dans les premisses
-b: {
-     %match (Rule rule, Sequent seq, Prop active) {
-
-       // si c'est une regle gauche
-       ruledesc(0,_,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
-         Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
-         res = (SeqList) `TopDown(AddInContexts(gamma)).apply(res); 
-         res = (SeqList) `TopDown(PutInConclusion(c)).apply(res); 
-         break b;
-       }
-
-       // si c'est une regle droite
-       ruledesc(1,_,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
-         res = (SeqList) `TopDown(AddInContexts(ctxt)).apply(res);
-         Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
-         res = (SeqList) `TopDown(PutInConclusion(delta)).apply(res); 
-         break b;
-       }
-
-       // probleme
-       _,_,_ -> { throw new Exception("wrong hand side rule application"); }
-     }
-   }
-
-   return res;
-  }
-
   %typeterm TermMap {
     implement { Map<Term,Term> }
   }
@@ -196,13 +121,10 @@ b: {
           }
         }
 
-        return `rule(customRuleInfo(""),newprems,seq,active);
+        return `rule(customRuleInfo("customrule"),newprems,seq,active);
       }
     }
   }
-
-
-
 
   /**
    * classical rules
@@ -301,6 +223,58 @@ b: {
     }
   }
 
+  %strategy ApplyContractionL(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent((X*,act,Y*),g), act -> {
+            Tree t1 = createOpenLeaf(`sequent(context(X*,act,act,Y*),g));
+            return `rule(contractionLeftInfo(),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyContractionR(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent(d,(X*,act,Y*)), act -> {
+            Tree t1 = createOpenLeaf(`sequent(d,context(X*,act,act,Y*)));
+            return `rule(contractionRightInfo(),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyWeakL(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent((X*,act,Y*),g), act -> {
+            Tree t1 = createOpenLeaf(`sequent(context(X*,Y*),g));
+            return `rule(weakLeftInfo(),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyWeakR(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent(d,(X*,act,Y*)), act -> {
+            Tree t1 = createOpenLeaf(`sequent(d,context(X*,Y*)));
+            return `rule(weakRightInfo(),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
   %strategy ApplyBottom() extends Fail() {
     visit Tree {
       rule[c=seq@sequent((_*,act@bottom(),_*),_)] -> {
@@ -346,39 +320,44 @@ b: {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
-          sequent(d,(X*,act@forAll(n,p),Y*)), act -> {
+          sequent((X*,act@forAll(n,p),Y*),g), act -> {
+            System.out.print("instance of " + `n + " > ");
+            Term term;
+            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
+            Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
+            return `rule(forAllLeftInfo(term),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyExistsR(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent(d,(X*,act@exists(n,p),Y*)), act -> {
+            Term term;
+            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
+            Tree t1 = createOpenLeaf(`sequent(d,context(X*,res,Y*)));
+            return `rule(existsRightInfo(term),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyExistsL(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent((X*,act@exists(n,p),Y*),g), act -> {
             Term nvar = Utils.freshVar(`n,`seq);
             Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar); 
-            Tree t1 = createOpenLeaf(`sequent(d,context(X*,res,Y*)));
-            return `rule(forAllRightInfo(nvar),premisses(t1),seq,act);
-          }
-        }
-      }
-    }
-  }
-
-  %strategy ApplyExistsR(active:Prop,term:Term) extends Fail() {
-    visit Tree {
-      rule[c=seq] -> {
-        %match(seq, Prop active) {
-          sequent((X*,act@exists(n,p),Y*),g), act -> {
-            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
             Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
-            return `rule(existsRightInfo(term),premisses(t1),seq,act);
-          }
-        }
-      }
-    }
-  }
-
-  %strategy ApplyExistsL(active:Prop,term:Term) extends Fail() {
-    visit Tree {
-      rule[c=seq] -> {
-        %match(seq, Prop active) {
-          sequent((X*,act@exists(n,p),Y*),g), act -> {
-            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
-            Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
-            return `rule(existsRightInfo(term),premisses(t1),seq,act);
+            return `rule(existsLeftInfo(nvar),premisses(t1),seq,act);
           }
         }
       }
@@ -639,7 +618,6 @@ b: {
     HashMap<Term,Term> args = new HashMap<Term,Term>();
 
     if (n == -1) { // trying to apply one unique rule
-
       for(int i=0; i<newRules.size(); i++) {
         Rule rule = newRules.get(i); 
         Prop conclusion = rule.getconcl();
@@ -664,220 +642,10 @@ b: {
         args.put(t, new_var);
       }
 
-      Sequent goal = getSequentByPosition(tree, pos);
-      SeqList slist = applyRule(rule, goal, active, args);
-
-      // create open leaves
-      Premisses prems = `premisses();
-      %match(SeqList slist) {
-        (_*,s,_*) -> {
-          prems = `premisses(prems*,
-              rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
-        }
-      }
-
-      // get new tree
-      Tree newrule = `rule(customRuleInfo("rule\\ " + n), prems, goal, active);
-      return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
+      return (Tree) ((MuStrategy) pos.getOmega(`ApplyRule(rule,active,args))).apply(tree);
     }
 
     else throw new Exception("rule " + n + " doesn't exist.");
-  }
-
-
-  private Tree elimCommand(Tree tree, Position pos,
-      Prop active, boolean focus_left) throws Exception {
-
-    Sequent goal = getSequentByPosition(tree, pos);
-
-    // list of the new premisses after applying a rule
-    SeqList slist = null;  
-    RuleType ruleType = null;
-    boolean applied = false;
-
-    // breaking right rule
-    if(!focus_left) {
-      %match(Prop active) {
-
-        // And R
-        and[] -> {
-          ruleType = `andRightInfo();
-          slist = applyAndR(goal,active);
-          applied = true;
-        }
-
-        // Or R
-        or[] -> {
-          ruleType = `orRightInfo();
-          slist = applyOrR(goal,active);
-          applied = true;
-        }
-
-        // Implies R
-        implies[] -> {
-          ruleType = `impliesRightInfo();
-          slist = applyImpliesR(goal, active);
-          applied = true;
-        }
-
-        // forAll R
-        forAll[var=n] -> {
-          // TODO interactif ?
-          Term nvar = Utils.freshVar(`n, goal);
-          ruleType = `forAllRightInfo(nvar);
-          slist = applyForAllR(goal, active, nvar);
-          applied = true;
-        }
-
-        // exists R
-        exists(x,_) -> {
-          System.out.print("instance of " + `x + " > ");
-          Term new_term = Utils.getTerm();
-          ruleType = `existsRightInfo(new_term);
-          slist = applyExistsR(goal, active, new_term);
-          applied = true;
-        }
-
-      } // match(active)
-
-    } else /* focus_left */ {
-      %match(Prop active) {
-
-        // Or L
-        or[] -> {
-          ruleType = `orLeftInfo();
-          slist = applyOrL(goal, active);
-          applied = true;
-        }
-
-        // And L
-        and[] -> {
-          ruleType = `andLeftInfo();
-          slist = applyAndL(goal, active);
-          applied = true;
-        }
-
-        // Implies L
-        implies[] -> {
-          ruleType = `impliesLeftInfo();
-          slist = applyImpliesL(goal, active);
-          applied = true;
-        }
-
-        // forAll L
-        forAll(x,_) -> {
-          System.out.print("instance of " + `x + " > ");
-          Term new_term = Utils.getTerm();
-          ruleType = `forAllLeftInfo(new_term);
-          slist = applyForAllL(goal, active, new_term);
-          applied = true;
-        }
-
-        // exists L
-        exists[var=n] -> {
-          Term nvar = Utils.freshVar(`n, goal);
-          ruleType = `existsLeftInfo(nvar);
-          slist = applyExistsL(goal, active, nvar);
-          applied = true;
-        }
-      } // match(active)
-    } // focus != 0
-
-    // if one of the rules has been applied
-    if (applied) {
-      Premisses prems = `premisses();
-      %match(SeqList slist) {
-        (_*,s,_*) -> {
-          prems = `premisses(prems*,
-              rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
-        }
-      }
-      // get new tree
-      Tree newrule = `rule(ruleType, prems, goal, active);
-      return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
-    } else throw new Exception ("there is no head connector");
-  }
-
-  private Tree axiomCommand(Tree tree, Position pos,
-      Prop active, boolean focus_left) throws Exception {
-    Sequent goal = getSequentByPosition(tree, pos);
-    %match(Sequent goal) {
-      sequent((_*,x,_*),(_*,x,_*)) -> { active = `x; }
-    }
-    applyAxiom(goal,active); 
-    Tree newrule = `rule(axiomInfo(), premisses(), goal, active);
-    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree);
-  }
-
-  private Tree topCommand(Tree tree, Position pos,
-      Prop active, boolean focus_left) throws Exception {
-    Sequent goal = getSequentByPosition(tree, pos);
-    applyTop(goal); 
-    Tree newrule = `rule(topInfo(), premisses(), goal, active);
-    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree);
-  }
-
-  private Tree bottomCommand(Tree tree, Position pos,
-      Prop active, boolean focus_left) throws Exception {
-    Sequent goal = getSequentByPosition(tree, pos);
-    applyBottom(goal); 
-    Tree newrule = `rule(bottomInfo(), premisses(), goal, active);
-    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree);
-  }
-
-  private Tree duplicateCommand(Tree tree, Position pos, 
-      Prop active, boolean focus_left) throws Exception {
-    Sequent goal = getSequentByPosition(tree, pos);
-    SeqList slist = null;
-    if(focus_left) slist = applyContractionL(goal, active);
-    else slist = applyContractionR(goal, active);
-    Premisses prems = `premisses();
-    %match(SeqList slist) {
-      (_*,s,_*) -> { 
-        prems = 
-          `premisses(prems*, rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
-      }
-    }
-    // get new tree
-    Tree newrule = null;
-    if(focus_left) newrule = `rule(contractionLeftInfo(), prems, goal, active);
-    else newrule = `rule(contractionRightInfo(), prems, goal, active);
-    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
-  }
-
-  private Tree removeCommand(Tree tree, Position pos, 
-      Prop active, boolean focus_left) throws Exception {
-    Sequent goal = getSequentByPosition(tree, pos);
-    SeqList slist = null;
-    if(focus_left) slist = applyWeakL(goal, active);
-    else slist = applyWeakR(goal, active);
-    Premisses prems = `premisses();
-    %match(SeqList slist) {
-      (_*,s,_*) -> { 
-        prems = 
-          `premisses(prems*, rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
-      }
-    }
-    // get new tree
-    Tree newrule = null;
-    if(focus_left) newrule = `rule(weakLeftInfo(), prems, goal, active);
-    else newrule = `rule(weakRightInfo(), prems, goal, active);
-    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
-  }
-
-  private Tree cutCommand(Tree tree, Position pos, Prop prop) throws Exception {
-    Sequent goal = getSequentByPosition(tree, pos);
-    SeqList slist = applyCut(goal, prop);
-    Premisses prems = `premisses();
-    %match(SeqList slist) {
-      (_*,s,_*) -> { 
-        prems = 
-          `premisses(prems*, rule(openInfo(), premisses(), s, s.getc().getHeadcontext())) ;
-      }
-    }
-    // get new tree
-    Tree newrule = `rule(cutInfo(prop), prems, goal, goal.getc().getHeadcontext());
-    return (Tree) MuTraveler.init(pos.getReplace(newrule)).visit(tree); 
   }
 
   // FIXME uses positions ... may be easily broken
@@ -889,7 +657,7 @@ b: {
 
     %match(Tree thtree) {
       rule(_,_,sequent((),(prop)),_) -> {
-        tree = cutCommand(tree,poscopy,`prop);
+        tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyCut(prop))).apply(tree);
         poscopy.down(2);
         poscopy.down(1);
         conclusion = `prop;
@@ -904,7 +672,7 @@ b :{
           return (Tree) ((MuStrategy) poscopy.getReplace(thtree)).apply(tree);
         }
         sequent((p,_*),_), _ -> {
-          tree = removeCommand(tree,poscopy,`p,true);
+          tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyWeakL(p))).apply(tree);
           poscopy.down(2);
           poscopy.down(1);
           break b;
@@ -912,7 +680,7 @@ b :{
         sequent((),(_*,p,_*)), tokeep -> {
           //FIXME replace condition by p@!tokeep in pattern when bug disappears
           if (`p != conclusion) {
-            tree = removeCommand(tree,poscopy,`p,false);
+            tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyWeakR(p))).apply(tree);
             poscopy.down(2);
             poscopy.down(1);
             break b;
@@ -936,7 +704,7 @@ b :{
   }
 
 
-  private Rule applicableInAuto(Prop prop, boolean left) {
+  private static Rule applicableInAuto(ArrayList<Rule> newRules, Prop prop, boolean left) {
     Rule res = null; 
 
     for(int i=0; i<newRules.size(); i++) {
@@ -953,153 +721,38 @@ b :{
     return res;
   }
 
-
-  private Tree autoCommandRecursive(Sequent goal) {
-
-    SeqList slist = null;
-    RuleType ruleType = null;
-
-    %match(Sequent goal) {
-
-      // axiom
-      sequent((_*,p,_*),(_*,p,_*)) -> {
-        try {
-          // FIXME useful ?
-          applyAxiom(goal,`p);
-          return `rule(axiomInfo(), premisses(), goal, p);
-        } catch (Exception e) {}
-      }
-
-      // top
-      sequent(_,(_*,p@top(),_*)) -> {
-        try {
-          // FIXME useful ?
-          applyTop(goal);
-          return `rule(topInfo(), premisses(), goal, p);
-        } catch (Exception e) {}
-      }
-
-      // bottom
-      sequent((_*,p@bottom(),_*),_) -> {
-        try {
-          // FIXME useful ?
-          applyBottom(goal);
-          return `rule(bottomInfo(), premisses(), goal, p);
-        } catch (Exception e) {}
-      }
-
-      // right hand side
-      sequent(_,(_*,p,_*)) -> {
-        try {
-          %match(Prop `p) {
-            // And R
-            and[] -> {
-              ruleType = `andRightInfo();
-              slist = applyAndR(goal,`p);
-            }
-
-            // Or R
-            or[] -> {
-              ruleType = `orRightInfo();
-              slist = applyOrR(goal,`p);
-            }
-
-            // Implies R
-            implies[] -> {
-              ruleType = `impliesRightInfo();
-              slist = applyImpliesR(goal, `p);
-            }
-
-            // forAll R
-            forAll[var=n] -> {
-              // TODO interactif ?
-              Term nvar = Utils.freshVar(`n, `p);
-              ruleType = `forAllRightInfo(nvar);
-              slist = applyForAllR(goal, `p, nvar);
-            }
-
-            // trying rules
-            atom@relationAppl[] -> {
-              Rule r = applicableInAuto(`atom, false);
-              if (r != null) {
-                slist = applyRule(r, goal,`atom, new HashMap<Term,Term>());
-                ruleType = `customRuleInfo("custom rule");
-              }
-            }
-          }
-        } catch (Exception e) { System.out.println(e.getMessage());}
-        if (slist != null) {
-          Premisses prems = `premisses();
-          %match(SeqList slist) {
-            (_*,s,_*) -> {
-              prems = `premisses(prems*,autoCommandRecursive(s));
-            }
-          }
-          return `rule(ruleType, prems, goal, p);
-        }
-      } // match right hand side
-
-      // left hand side
-      sequent((_*,p,_*),_) -> {
-        try {
-          %match(Prop `p) {
-            // Or L
-            or[] -> {
-              ruleType = `orLeftInfo();
-              slist = applyOrL(goal, `p);
-            }
-
-            // And L
-            and[] -> {
-              ruleType = `andLeftInfo();
-              slist = applyAndL(goal, `p);
-            }
-
-            // Implies L
-            implies[] -> {
-              ruleType = `impliesLeftInfo();
-              slist = applyImpliesL(goal, `p);
-            }
-
-            // exists L
-            exists[var=n] -> {
-              Term nvar = Utils.freshVar(`n, goal);
-              ruleType = `existsLeftInfo(nvar);
-              slist = applyExistsL(goal, `p, nvar);
-            }
-
-            // trying rules
-            atom@relationAppl[] -> {
-              Rule r = applicableInAuto(`atom, true);
-              if(r != null) {
-                slist = applyRule(r, goal,`atom, new HashMap<Term,Term>());
-                ruleType = `customRuleInfo("custom rule");
-              }
-            }
-
-          }
-        } catch (Exception e) {} 
-        if (slist != null) {
-          Premisses prems = `premisses();
-          %match(SeqList slist) {
-            (_*,s,_*) -> {
-              prems = `premisses(prems*,autoCommandRecursive(s));
-            }
-          }
-          return `rule(ruleType, prems, goal, p);
-        }
-      }
-    }
-    return `rule(openInfo(),premisses(),goal,top());
+  %typeterm RuleArrayList {
+    implement { ArrayList<Rule> }
   }
 
+  %strategy ApplyAuto(newRules: RuleArrayList) extends Identity() {
+    visit Tree {
+      // right hand side (+ axiom)
+      t@rule[c=sequent(_,(_*,p,_*))] -> { 
+        MuStrategy strat;
+        Rule r = applicableInAuto(newRules, `p, false);
+        HashMap<Term,Term> hm = new HashMap<Term,Term>();
+        if(r != null) strat = `ApplyRule(r,p,hm); 
+        else strat = `ChoiceV(ApplyAxiom(),ApplyTop(),ApplyAndR(p),ApplyOrR(p),ApplyImpliesR(p),ApplyForAllR(p));
+        try { 
+          Tree res = (Tree) strat.visit(`t);
+          return res;
+        } catch (VisitFailure v) {}
+      }
 
-  private Tree autoCommand(Tree tree, Position pos, 
-      Prop active, boolean focus_left) throws Exception {
-
-    Sequent goal = getSequentByPosition(tree, pos);
-    Tree newtree = autoCommandRecursive(goal);
-    return (Tree) MuTraveler.init(pos.getReplace(newtree)).visit(tree); 
+      // left hand side
+      t@rule[c=sequent((_*,p,_*),_)] -> {
+        MuStrategy strat;
+        Rule r = applicableInAuto(newRules, `p, true);
+        HashMap<Term,Term> hm = new HashMap<Term,Term>();
+        if(r != null) strat = `ApplyRule(r,p,hm); 
+        else strat = `ChoiceV(ApplyBottom(),ApplyAndL(p),ApplyOrL(p),ApplyImpliesL(p),ApplyExistsL(p));
+        try { 
+          Tree res = (Tree) strat.visit(`t);
+          return res;
+        } catch (VisitFailure v) {}
+      }
+    }
   }
 
   /* ------------------------------------------------------------------ */
@@ -1233,7 +886,12 @@ b :{
         /* elim case */
         proofCommand("elim") -> {
           try {
-            tree = elimCommand(env.tree, currentPos, active, env.focus_left); 
+            MuStrategy elim;
+            if (env.focus_left)
+              elim = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllL(active), ApplyExistsL(active));
+            else
+              elim = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsR(active));
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(elim)).apply(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply elim: " + e.getMessage());
           }
@@ -1242,7 +900,10 @@ b :{
         /* duplicate case */
         proofCommand("duplicate") -> {
           try {
-            tree = duplicateCommand(env.tree, currentPos, active, env.focus_left); 
+            MuStrategy strat;
+            if (env.focus_left) strat = `ApplyContractionL(active);
+            else strat = `ApplyContractionR(active);
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply duplicate: " + e.getMessage());
           }
@@ -1251,7 +912,10 @@ b :{
         /* remove case */
         proofCommand("remove") -> {
           try {
-            tree = removeCommand(env.tree, currentPos, active, env.focus_left); 
+            MuStrategy strat;
+            if (env.focus_left) strat = `ApplyWeakL(active);
+            else strat = `ApplyWeakR(active);
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply duplicate: " + e.getMessage());
           }
@@ -1260,7 +924,8 @@ b :{
         /* auto case */
         proofCommand("auto") -> {
           try {
-            tree = autoCommand(env.tree, currentPos, active, env.focus_left); 
+            MuStrategy strat = `TopDown(ApplyAuto(newRules));
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply auto: " + e.getMessage());
             e.printStackTrace();
@@ -1270,7 +935,8 @@ b :{
         /* Axiom case */
         proofCommand("axiom") -> {
           try {
-            tree = axiomCommand(env.tree, currentPos, active, env.focus_left);
+            MuStrategy strat = `ApplyAxiom(); 
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply rule axiom : " + e.getMessage());
           }
@@ -1279,7 +945,8 @@ b :{
         /* Bottom case */
         proofCommand("bottom") -> {
           try {
-            tree = bottomCommand(env.tree, currentPos, active, env.focus_left);
+            MuStrategy strat = `ApplyBottom(); 
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply bottom rule : " + e.getMessage());
           }
@@ -1288,7 +955,8 @@ b :{
         /* top case */
         proofCommand("top") -> {
           try {
-            tree = topCommand(env.tree, currentPos, active, env.focus_left);
+            MuStrategy strat = `ApplyTop(); 
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply top rule : " + e.getMessage());
           }
@@ -1297,7 +965,8 @@ b :{
         /* cut case */
         cutCommand(prop) -> {
           try {
-            tree = cutCommand(env.tree, currentPos, `prop);
+            MuStrategy strat = `ApplyCut(prop); 
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).apply(env.tree);
           } catch (Exception e) {
             System.out.println("can't apply cut rule : " + e.getMessage());
           }
