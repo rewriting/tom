@@ -21,7 +21,7 @@ import antlr.collections.*;
 public class ProofBuilder {
 
   %include { sequents/sequents.tom }
-  %include { mutraveler.tom }
+  %include { mustrategy.tom }
   %include { string.tom }
   %include { util/LinkedList.tom }
 
@@ -44,7 +44,6 @@ public class ProofBuilder {
     // si la regle instancie des variables, il faut dupliquer la proposition
     Prop conclusion = rule.getconcl();
 
-
     // renommage temporaire pour eviter les collisions
     // FIXME : renommer dans les regles de reecriture plutot
     Prop active_prepared = (Prop) Unification.substPreTreatment(active);
@@ -52,7 +51,6 @@ public class ProofBuilder {
     // recuperage de la table des symboles
     HashMap<String,Term> tds = Unification.match(conclusion, active_prepared);
     if (tds == null) throw new Exception("active formula and rule conclusion don't match");
-
 
     // renommage des variables
     Set<Map.Entry<String,Term>> entries= tds.entrySet();
@@ -64,8 +62,6 @@ public class ProofBuilder {
 
     // post traitement 
     res = (SeqList) Unification.substPostTreatment(res);
-
-
 
     // creation des variables fraiches (forall right et exists left)
     Set<Term> fresh = Utils.getSideConstraints(rule.getprem());
@@ -95,24 +91,16 @@ b: {
        // si c'est une regle gauche
        ruledesc(0,_,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
          Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
-         try { 
-           VisitableVisitor v1 = `AddInContexts(gamma);
-           res = (SeqList) MuTraveler.init(`TopDown(v1)).visit(res); 
-           VisitableVisitor v2 = `PutInConclusion(c);
-           res = (SeqList) MuTraveler.init(`TopDown(v2)).visit(res); 
-         } catch (VisitFailure e) { e.printStackTrace(); }
+         res = (SeqList) `TopDown(AddInContexts(gamma)).apply(res); 
+         res = (SeqList) `TopDown(PutInConclusion(c)).apply(res); 
          break b;
        }
 
        // si c'est une regle droite
        ruledesc(1,_,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
-         try { 
-           VisitableVisitor v1 = `AddInContexts(ctxt);
-           res = (SeqList) MuTraveler.init(`TopDown(v1)).visit(res);
-           Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
-           VisitableVisitor v2 = `PutInConclusion(delta);
-           res = (SeqList) MuTraveler.init(`TopDown(v2)).visit(res); 
-         } catch (VisitFailure e) {  e.printStackTrace();  }
+         res = (SeqList) `TopDown(AddInContexts(ctxt)).apply(res);
+         Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
+         res = (SeqList) `TopDown(PutInConclusion(delta)).apply(res); 
          break b;
        }
 
@@ -124,11 +112,278 @@ b: {
    return res;
   }
 
+  %typeterm TermMap {
+    implement { Map<Term,Term> }
+  }
+
+  %strategy ApplyRule(rule: Rule, active: Prop, args: TermMap) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+
+        SeqList res = rule.getprem();
+        Prop conclusion = rule.getconcl();
+
+        // renommage temporaire pour eviter les collisions
+        // FIXME : renommer dans les regles de reecriture plutot
+        Prop active_prepared = (Prop) Unification.substPreTreatment(active);
+
+        // recuperage de la table des symboles
+        HashMap<String,Term> tds = Unification.match(conclusion, active_prepared);
+        if (tds == null) throw new VisitFailure("active formula and rule conclusion don't match");
+
+        // renommage des variables
+        Set<Map.Entry<String,Term>> entries= tds.entrySet();
+        for (Map.Entry<String,Term> ent: entries) {
+          Term old_term = `Var(ent.getKey());
+          Term new_term = ent.getValue();
+          res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term); 
+        }
+
+        // post traitement 
+        res = (SeqList) Unification.substPostTreatment(res);
+
+        // creation des variables fraiches (forall right et exists left)
+        Set<Term> fresh = Utils.getSideConstraints(rule.getprem());
+        for (Term fvar : fresh) {
+          String bname = fvar.getbase_name();
+          Term new_var = Utils.freshVar(bname, `seq);
+          res = (SeqList) Utils.replaceTerm(res,fvar,new_var);
+        }
+
+        // remplacement des nouvelles variables (forall left et exists right)
+        Set<Term> new_vars = Utils.getNewVars(rule.getprem());
+        if (new_vars.size() != args.size())
+          throw new VisitFailure("Wrong variables number");
+        Set<Map.Entry<Term,Term>> entries2 = args.entrySet();
+        for (Map.Entry<Term,Term> ent: entries2) {
+          Term old_term = ent.getKey();
+          if (! new_vars.contains(old_term))
+            throw new VisitFailure("Variable " + old_term.getname() +" not present in the rule");
+          Term new_term = ent.getValue();
+          res = (SeqList) Utils.replaceFreeVars(res, old_term, new_term);
+        }
+
+        // ajout des contextes dans les premisses
+b: {
+        %match (rule, seq, Prop active) {
+
+          // si c'est une regle gauche
+          ruledesc(0,_,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
+            Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
+            res = (SeqList) `TopDown(AddInContexts(gamma)).apply(res); 
+            res = (SeqList) `TopDown(PutInConclusion(c)).apply(res); 
+            break b;
+          }
+
+          // si c'est une regle droite
+          ruledesc(1,_,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
+            res = (SeqList) `TopDown(AddInContexts(ctxt)).apply(res);
+            Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
+            res = (SeqList) `TopDown(PutInConclusion(delta)).apply(res); 
+            break b;
+          }
+
+          // probleme
+          _,_,_ -> { throw new VisitFailure("wrong hand side rule application"); }
+        }
+   }
+
+        // creating open leaves
+        Premisses newprems = `premisses();
+        %match(SeqList res) {
+          (_*,x,_*) -> {
+            newprems = `premisses(newprems*,createOpenLeaf(x));    
+          }
+        }
+
+        return `rule(customRuleInfo(""),newprems,seq,active);
+      }
+    }
+  }
+
+
+
 
   /**
    * classical rules
    **/
 
+  private static Tree createOpenLeaf(Sequent concl) {
+    return `rule(openInfo(),premisses(),concl,nullProp());
+  }
+
+  %strategy ApplyAxiom() extends Fail() {
+    visit Tree {
+      rule[c=seq@sequent((_*,act,_*),(_*,act,_*))] -> {
+        return `rule(axiomInfo(),premisses(),seq,act);
+      }
+    }
+  }
+
+  %strategy ApplyImpliesR(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent(d,(X*,act@implies(p1,p2),Y*)), act -> {
+            Tree t1 = createOpenLeaf(`sequent(context(d*,p1),context(X*,p2,Y*)));
+            return `rule(impliesRightInfo(),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyImpliesL(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent((X*,act@implies(p1,p2),Y*),g), act -> {
+            Tree t1 = createOpenLeaf(`sequent(context(X*,Y*),context(p1,g*)));
+            Tree t2 = createOpenLeaf(`sequent(context(X*,p2,Y*),g));
+            return `rule(impliesLeftInfo(),premisses(t1,t2),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyAndR(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent(d,(X*,act@and(p1,p2),Y*)), act -> {
+            Tree t1 = createOpenLeaf(`sequent(d,context(X*,p1,Y*)));
+            Tree t2 = createOpenLeaf(`sequent(d,context(X*,p2,Y*)));
+            return `rule(andRightInfo(),premisses(t1,t2),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyAndL(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent((X*,act@and(p1,p2),Y*),g), act -> {
+            Tree t1 = createOpenLeaf(`sequent(context(X*,p1,p2,Y*),g));
+            return `rule(andLeftInfo(),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyOrR(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent(d,(X*,act@or(p1,p2),Y*)), act -> {
+            Tree t1 = createOpenLeaf(`sequent(d,context(X*,p1,p2,Y*)));
+            return `rule(orRightInfo(),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyOrL(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent((X*,act@or(p1,p2),Y*),g), act -> {
+            Tree t1 = createOpenLeaf(`sequent(context(X*,p1,Y*),g));
+            Tree t2 = createOpenLeaf(`sequent(context(X*,p2,Y*),g));
+            return `rule(andLeftInfo(),premisses(t1,t2),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyBottom() extends Fail() {
+    visit Tree {
+      rule[c=seq@sequent((_*,act@bottom(),_*),_)] -> {
+        return `rule(bottomInfo(),premisses(),seq,act);
+      }
+    }
+  }
+
+  %strategy ApplyTop() extends Fail() {
+    visit Tree {
+      rule[c=seq@sequent(_,(_*,act@top(),_*))] -> {
+        return `rule(topInfo(),premisses(),seq,act);
+      }
+    }
+  }
+
+ %strategy ApplyCut(prop:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq@sequent(l,r)] -> {
+        Tree t1 = createOpenLeaf(`sequent(l*,context(r*,prop)));
+        Tree t2 = createOpenLeaf(`sequent(context(l*,prop),r));
+        return `rule(cutInfo(prop),premisses(t1,t2),seq,nullProp());
+      }
+    }
+  }
+
+  %strategy ApplyForAllR(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent(d,(X*,act@forAll(n,p),Y*)), act -> {
+            Term nvar = Utils.freshVar(`n,`seq);
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar); 
+            Tree t1 = createOpenLeaf(`sequent(d,context(X*,res,Y*)));
+            return `rule(forAllRightInfo(nvar),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyForAllL(active:Prop) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent(d,(X*,act@forAll(n,p),Y*)), act -> {
+            Term nvar = Utils.freshVar(`n,`seq);
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), nvar); 
+            Tree t1 = createOpenLeaf(`sequent(d,context(X*,res,Y*)));
+            return `rule(forAllRightInfo(nvar),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyExistsR(active:Prop,term:Term) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent((X*,act@exists(n,p),Y*),g), act -> {
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
+            Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
+            return `rule(existsRightInfo(term),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyExistsL(active:Prop,term:Term) extends Fail() {
+    visit Tree {
+      rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent((X*,act@exists(n,p),Y*),g), act -> {
+            Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
+            Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
+            return `rule(existsRightInfo(term),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
 
   // And
 
@@ -412,7 +667,7 @@ b: {
       Sequent goal = getSequentByPosition(tree, pos);
       SeqList slist = applyRule(rule, goal, active, args);
 
-      // create open leafs
+      // create open leaves
       Premisses prems = `premisses();
       %match(SeqList slist) {
         (_*,s,_*) -> {
@@ -655,9 +910,9 @@ b :{
           break b;
         }
         sequent((),(_*,p,_*)), tokeep -> {
+          //FIXME replace condition by p@!tokeep in pattern when bug disappears
           if (`p != conclusion) {
             tree = removeCommand(tree,poscopy,`p,false);
-            Prop bidon = `tokeep;
             poscopy.down(2);
             poscopy.down(1);
             break b;
