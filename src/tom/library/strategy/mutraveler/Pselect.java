@@ -73,9 +73,9 @@ public class Pselect extends AbstractMuStrategy {
   public Visitable visit(Visitable visitable) throws VisitFailure {
     int randomInt = Math.abs(random.nextInt());
     if(randomInt % q < p) {
-      return getArgument(FIRST).visit(visitable);
+      return visitors[FIRST].visit(visitable);
     } else {
-      return getArgument(THEN).visit(visitable);
+      return visitors[THEN].visit(visitable);
     }
   }
 }

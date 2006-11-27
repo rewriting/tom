@@ -64,12 +64,12 @@ public class Omega extends AbstractMuStrategy {
     } else if(indexPosition>0 && indexPosition<=any.getChildCount()) {
       int childNumber = indexPosition-1;
       if(position==null) {
-        Visitable newChild = getArgument(ARG).visit(any.getChildAt(childNumber));
+        Visitable newChild = visitors[ARG].visit(any.getChildAt(childNumber));
         return any.setChildAt(childNumber,newChild);
       } else {
         try {
           position.down(indexPosition);
-          Visitable newChild = getArgument(ARG).visit(any.getChildAt(childNumber));
+          Visitable newChild = visitors[ARG].visit(any.getChildAt(childNumber));
           position.up();
           return any.setChildAt(childNumber,newChild);
         } catch(VisitFailure f) {
