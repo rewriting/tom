@@ -44,7 +44,7 @@ class PrettyPrinter {
       contractionRightInfo[] -> { return "contr_\\mathcal{R}"; }
       weakLeftInfo() -> { return "weak_\\mathcal{L}"; }
       weakRightInfo() -> { return "weak_\\mathcal{R}"; }
-      customRuleInfo(name) -> { return `name; }
+      customRuleInfo[name=n] -> { return `n; }
     }
     return rt.toString();
   }
