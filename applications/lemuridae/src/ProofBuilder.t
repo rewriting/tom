@@ -413,12 +413,27 @@ b: {
     return res;
   }
 
-  %strategy getOpenPositions(list:LinkedList) extends `Identity() {
+  %strategy getOpenPosition(list:LinkedList) extends `Fail() {
+    visit RuleType {
+      // do not look into custom rules expanded trees
+      rt -> { return `rt; }
+    }
     visit Tree {
-      rule[type=openInfo[]] -> {
+      r@rule[type=openInfo[]] -> {
         list.add(getPosition());
+        return `r;
       }
     }
+  }
+
+  private static void getOpenPositions(Tree tree, LinkedList pl) {
+    MuStrategy s = (MuStrategy) `mu(MuVar("x"),Choice(getOpenPosition(pl),All(MuVar("x"))));
+    s.apply(tree);
+  }
+
+  private static void getOpenPositions(Tree tree, Position pos, LinkedList pl) {
+    MuStrategy s = (MuStrategy) pos.getOmega(`mu(MuVar("x"),Choice(getOpenPosition(pl),All(MuVar("x")))));
+    s.apply(tree);
   }
 
   private Sequent getSequentByPosition(Tree tree, Position pos) {
@@ -605,8 +620,7 @@ b :{
     env.currentGoal = 0;
     env.openGoals = new LinkedList<Position>();
     env.tree = `rule(openInfo(), premisses(), goal, goal.getc().getHeadcontext());
-    try { MuTraveler.init(`TopDown(getOpenPositions(env.openGoals))).visit(env.tree); }
-    catch (VisitFailure e) { e.printStackTrace(); }
+    getOpenPositions(env.tree, env.openGoals);
 
     // main loop
     while(env.openGoals.size() > 0) {
@@ -820,7 +834,7 @@ b :{
 
         env.tree = tree;       
         env.openGoals.remove(currentPos);
-        ((MuStrategy)currentPos.getOmega(`TopDown(getOpenPositions(env.openGoals)))).apply(env.tree);
+        getOpenPositions(env.tree, currentPos, env.openGoals);
         env.currentGoal = env.openGoals.size()-1;
 
         // reset focus
