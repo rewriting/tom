@@ -102,7 +102,7 @@ public class StrategyCompiler {
    * @return The Gom tree representing the compiled class.
    */
   private static TClass buildInlinedStrategy(MuStrategy subject, String inlinedClassName, ClassCollector classCollector) {
-    System.out.println("Compiling strategy `" + inlinedClassName + "'...");
+    //System.out.println("Compiling strategy `" + inlinedClassName + "'...");
 
     // Generates the constructor.
     classCollector.addMethod(buildConstructor(inlinedClassName));
@@ -173,7 +173,7 @@ public class StrategyCompiler {
    */
   private static void inlineVisitMethod(ClassCollector classCollector, MethodCollector methodCollector, MuStrategy subject, String inlinedClassName) {
     String className = getClassName(subject);
-    System.out.println("Inlining `visit' method in `" + className + "'...");
+    //System.out.println("Inlining `visit' method in `" + className + "'...");
 
     // Get the Gom term representing the class.
     TClass clazz = ClassDumper.dumpClass(className);
@@ -716,6 +716,13 @@ public class StrategyCompiler {
             methodCollector.getTryCatchBlockList()));
 
     return visitMethod;
+  }
+
+  /**
+    * Clear the loaded class cache.
+    */
+  public static void clearCache() {
+    ClassDumper.clearCache();
   }
 }
 
