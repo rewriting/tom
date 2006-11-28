@@ -75,8 +75,8 @@
   <!-- for bootstrap -->
   <property name="bootstrap.dir"        location="${src.src}/bootstrap" />
 
-  <property name="javacSource"    value="1.4"/>
-  <property name="javacTarget"    value="1.4"/>
+  <property name="javacSource"    value="1.5"/>
+  <property name="javacTarget"    value="1.5"/>
   <property name="javacDebugInfo" value="on"/>
   <property name="javacVerbose"   value="false"/>
   <property name="nowarnings"     value="false" />
