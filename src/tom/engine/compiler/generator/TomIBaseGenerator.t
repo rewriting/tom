@@ -9,5 +9,5 @@ public interface TomIBaseGenerator{
 	
 	%include { adt/tomsignature/TomSignature.tom }
 	
-	public Instruction generateInstruction(Instruction expresion);
+	public Instruction generate(Instruction expresion);
 }

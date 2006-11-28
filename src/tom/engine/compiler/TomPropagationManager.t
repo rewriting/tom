@@ -18,10 +18,12 @@ public class TomPropagationManager extends TomBase {
 	
 	private static final String[] propagatorsNames = {""};
 	
-	public Constraint performPropagations(TomTerm termToCompile){
+	public Constraint performPropagations(TomTerm termToCompile) 
+			throws ClassNotFoundException,InstantiationException,IllegalAccessException{
 		
 		// counts the propagators that didn't change the expression
 		short propCounter = 0;
+		Constraint result = null;
 		
 		Constraint constraintToCompile = preparePropagation(termToCompile);
 		
@@ -29,10 +31,10 @@ public class TomPropagationManager extends TomBase {
 		mainLoop: while(true){		
 			for(String i:propagatorsNames){
 				
-				TomIBasePropagator prop = (TomIBasePropagator)Class.forName(propagatorsPackage + i);
-				Constraint result = prop.propagate(constraintToCompile);
+				TomIBasePropagator prop = (TomIBasePropagator)Class.forName(propagatorsPackage + i).newInstance();
+				result = prop.propagate(constraintToCompile);
 				// if nothing was done, start counting 
-				if (result == expression){
+				if (result == constraintToCompile){
 					propCounter++;
 				}else{
 					// reset counter
@@ -46,6 +48,7 @@ public class TomPropagationManager extends TomBase {
 				constraintToCompile = result;
 			}
 		} // end while
+		return result;
 	}
 	
 	/**
