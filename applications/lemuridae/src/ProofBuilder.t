@@ -21,6 +21,7 @@ import antlr.collections.*;
 public class ProofBuilder {
 
   %include { sequents/sequents.tom }
+  %include { sequents/_sequents.tom }
   %include { mustrategy.tom }
   %include { string.tom }
   %include { util/LinkedList.tom }
@@ -41,6 +42,13 @@ public class ProofBuilder {
     implement { Map<Term,Term> }
   }
 
+
+  %strategy ReplaceTree(t: Tree) extends Fail() {
+    visit Tree {
+      _ -> { return t; }
+    }
+  }
+
   %strategy ApplyRule(rule: Rule, active: Prop, args: TermMap) extends Fail() {
     visit Tree {
       rule[c=seq] -> {
@@ -55,6 +63,33 @@ public class ProofBuilder {
         // recuperage de la table des symboles
         HashMap<String,Term> tds = Unification.match(conclusion, active_prepared);
         if (tds == null) throw new VisitFailure("active formula and rule conclusion don't match");
+
+        //  -- building the original axiom with quantifiers --
+
+        // building p => phi /\ phi -> p
+        Prop conj = null;
+        if (rule.geths() == 1) { // right rule
+          %match (expanded) {
+            rule[c=sequent((),(phi))] -> {
+              conj = `and(implies(conclusion,phi),implies(phi,conclusion));
+            }
+          }
+        } else {
+          %match (expanded) {
+            rule[c=sequent((phi),())] -> {
+              conj = `and(implies(conclusion,phi),implies(phi,conclusion));
+            }
+          }
+        }
+
+        // adding quantifiers
+        Prop newconcl = conj;
+        Set<String> vars = tds.keySet();
+        for (String var: vars) {
+          newconcl = `forAll(var,newconcl);
+        }
+
+        // -- 
 
         // renommage des variables
         Set<Map.Entry<String,Term>> entries= tds.entrySet();
@@ -94,12 +129,141 @@ public class ProofBuilder {
           expanded = (Tree) Utils.replaceFreeVars(expanded, old_term, new_term); 
         }
 
+        // adding instanciation steps for the expanded form
+        // if it is a right rule
+        Position next = new Position();
+        if (rule.geths() == 1) {
+          %match (expanded) {
+            rule[c=sequent((),(phi))] -> {
+              // p. 22 paul master thesis
+              Tree newt = createOpenLeaf(`sequent(context(newconcl),context()));
+              // loop on forall left - instanciating the variables
+              for(int i=0; i<tds.size(); i++) {
+                Tree leaf = (Tree) next.getSubterm().apply(newt);
+                %match(leaf) { 
+                  rule[c=sequent(context(f@forAll(var,_)),())] -> {
+                    Term newterm = tds.get(`var); 
+                    newt = (Tree) ((MuStrategy) next.getOmega(`ApplyForAllL(f,newterm))).apply(newt);
+                    next.down(2);
+                    next.down(1);
+                  }
+                }
+              }
+              Prop tmp = `and(implies(active,phi),implies(phi,active));
+              newt = (Tree) ((MuStrategy) next.getOmega(`ApplyAndL(tmp))).apply(newt);
+              next.down(2); next.down(1);
+              newt = (Tree) ((MuStrategy) next.getOmega(`ApplyImpliesL(implies(phi,active)))).apply(newt);
+              next.down(2); next.down(1);
+
+              // weakening until we obtain the concusion sequent of expanded
+              boolean done = false;
+              Position nextcopy = (Position) next.clone();
+              while(!done) {
+                b :{
+                   Sequent currentseq = ((Tree) ((MuStrategy) nextcopy.getSubterm()).apply(newt)).getc();
+                   Sequent wantedseq = expanded.getc();
+                   %match(currentseq,wantedseq) {
+                     x,x -> {
+                       done = true ;
+                       newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ReplaceTree(expanded))).apply(newt);
+                       break b;
+                     }
+                     sequent((_*,p,_*),_), sequent(!(_*,p,_*),_) -> {
+                       newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ApplyWeakL(p))).apply(newt);
+                       nextcopy.down(2);
+                       nextcopy.down(1);
+                       break b;
+                     }
+                     sequent(_,(_*,p,_*)), sequent(_,!(_*,p,_*)) -> {
+                       if (`p != conclusion) {
+                         newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ApplyWeakR(p))).apply(newt);
+                         nextcopy.down(2);
+                         nextcopy.down(1);
+                         break b;
+                       }
+                     }
+                   }
+                 }
+              }
+              // going to axiom : cons(_,cons(here,_ ...  = pos(2,1)
+              next.up(); next.down(2); next.down(1);
+              expanded = newt;
+            }
+          }
+        // if it is a left rule
+        } else {
+          %match (expanded) {
+            rule[c=sequent((phi),())] -> {
+              // p. 22 paul master thesis
+              Tree newt = createOpenLeaf(`sequent(context(newconcl),context()));
+              // loop on forall left - instanciating the variables
+              for(int i=0; i<tds.size(); i++) {
+                Tree leaf = (Tree) next.getSubterm().apply(newt);
+                %match(leaf) { 
+                  rule[c=sequent(context(f@forAll(var,_)),())] -> {
+                    Term newterm = tds.get(`var); 
+                    newt = (Tree) ((MuStrategy) next.getOmega(`ApplyForAllL(f,newterm))).apply(newt);
+                    next.down(2);
+                    next.down(1);
+                  }
+                }
+              }
+              Prop tmp = `and(implies(active,phi),implies(phi,active));
+              newt = (Tree) ((MuStrategy) next.getOmega(`ApplyAndL(tmp))).apply(newt);
+              next.down(2); next.down(1);
+              newt = (Tree) ((MuStrategy) next.getOmega(`ApplyImpliesL(implies(active,phi)))).apply(newt);
+              next.down(2);  
+              // going to cons(_,cons(here,_ ...  = pos(2,1)
+              next.down(2); next.down(1); 
+
+
+              // weakening until we obtain the concusion sequent of expanded
+              boolean done = false;
+              Position nextcopy = (Position) next.clone();
+              while(!done) {
+                b :{
+                   Sequent currentseq = ((Tree) ((MuStrategy) nextcopy.getSubterm()).apply(newt)).getc();
+                   Sequent wantedseq = expanded.getc();
+                   %match(currentseq,wantedseq) {
+                     x,x -> {
+                       done = true ;
+                       newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ReplaceTree(expanded))).apply(newt);
+                       break b;
+                     }
+                     sequent((_*,p,_*),_), sequent(!(_*,p,_*),_) -> {
+                       newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ApplyWeakL(p))).apply(newt);
+                       nextcopy.down(2);
+                       nextcopy.down(1);
+                       break b;
+                     }
+                     sequent(_,(_*,p,_*)), sequent(_,!(_*,p,_*)) -> {
+                       if (`p != conclusion) {
+                         newt = (Tree) ((MuStrategy) nextcopy.getOmega(`ApplyWeakR(p))).apply(newt);
+                         nextcopy.down(2);
+                         nextcopy.down(1);
+                         break b;
+                       }
+                     }
+                   }
+                 }
+              }
+
+              // going to axiom 
+              next.up(); next.up(); next.down(1);
+              expanded = newt;
+            }
+          }
+        }
+
         // ajout des contextes dans les premisses
 b: {
         %match (rule, seq, Prop active) {
 
           // si c'est une regle gauche
           ruledesc(0,_,_,_), sequent(ctxt@(u*,act,v*),c), act -> {
+            // also in expanded tree
+            expanded = (Tree) `TopDown(AddInContexts(ctxt)).apply(expanded); 
+            expanded = (Tree) `TopDown(PutInConclusion(c)).apply(expanded); 
             Context gamma = args.size() <= 0 ? `context(u*,v*) : `ctxt;
             res = (SeqList) `TopDown(AddInContexts(gamma)).apply(res); 
             res = (SeqList) `TopDown(PutInConclusion(c)).apply(res); 
@@ -108,6 +272,9 @@ b: {
 
           // si c'est une regle droite
           ruledesc(1,_,_,_), sequent(ctxt,c@(u*,act,v*)), act -> {
+            // also in expanded tree
+            expanded = (Tree) `TopDown(AddInContexts(ctxt)).apply(expanded);
+            expanded = (Tree) `TopDown(PutInConclusion(c)).apply(expanded); 
             res = (SeqList) `TopDown(AddInContexts(ctxt)).apply(res);
             Context delta = args.size() <= 0 ? `context(u*,v*) : `c;
             res = (SeqList) `TopDown(PutInConclusion(delta)).apply(res); 
@@ -119,6 +286,10 @@ b: {
         }
    }
 
+        // closing the expanding tree with the axiom
+        expanded = (Tree) ((MuStrategy) next.getOmega(`ApplyAxiom())).apply(expanded);
+        expanded = (Tree) Unification.substPostTreatment(expanded);
+
         // creating open leaves
         Premisses newprems = `premisses();
         %match(SeqList res) {
@@ -127,8 +298,7 @@ b: {
           }
         }
 
-        // adding instanciation steps for the expanded form
-        
+        //try { PrettyPrinter.display(expanded); } catch (Exception e) {}
 
         return `rule(customRuleInfo("customrule",expanded),newprems,seq,active);
       }
@@ -139,7 +309,7 @@ b: {
    * classical rules
    **/
 
-  private static Tree createOpenLeaf(Sequent concl) {
+  public static Tree createOpenLeaf(Sequent concl) {
     return `rule(openInfo(),premisses(),concl,nullProp());
   }
 
@@ -325,14 +495,11 @@ b: {
     }
   }
 
-  %strategy ApplyForAllL(active:Prop) extends Fail() {
+  %strategy ApplyForAllL(active:Prop, term:Term) extends Fail() {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
           sequent((X*,act@forAll(n,p),Y*),g), act -> {
-            System.out.print("instance of " + `n + " > ");
-            Term term;
-            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
             Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
             Tree t1 = createOpenLeaf(`sequent(context(X*,res,Y*),g));
             return `rule(forAllLeftInfo(term),premisses(t1),seq,act);
@@ -342,16 +509,43 @@ b: {
     }
   }
 
-  %strategy ApplyExistsR(active:Prop) extends Fail() {
+  %strategy ApplyForAllLInteractive(active:Prop) extends Fail() {
+    visit Tree {
+      r@rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent((X*,act@forAll(n,p),Y*),g), act -> {
+            System.out.print("instance of " + `n + " > ");
+            Term term = null;
+            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
+            return (Tree) `ApplyForAllL(active,term).visit(`r);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyExistsR(active:Prop, term:Term) extends Fail() {
     visit Tree {
       rule[c=seq] -> {
         %match(seq, Prop active) {
           sequent(d,(X*,act@exists(n,p),Y*)), act -> {
-            Term term;
-            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
             Prop res = (Prop) Utils.replaceFreeVars(`p, `Var(n), term); 
             Tree t1 = createOpenLeaf(`sequent(d,context(X*,res,Y*)));
             return `rule(existsRightInfo(term),premisses(t1),seq,act);
+          }
+        }
+      }
+    }
+  }
+
+  %strategy ApplyExistsRInteractive(active:Prop) extends Fail() {
+    visit Tree {
+      r@rule[c=seq] -> {
+        %match(seq, Prop active) {
+          sequent(d,(X*,act@exists(n,p),Y*)), act -> {
+            Term term = null;
+            try { term = Utils.getTerm(); } catch (Exception e) { throw new VisitFailure(); }
+            return (Tree) `ApplyExistsR(active,term).visit(`r);
           }
         }
       }
@@ -586,6 +780,10 @@ b :{
       }
     }
   }
+  
+  %op Strategy SafeTopDown(s:Strategy) {
+    make(s) { `mu(MuVar("x"), Choice(Sequence(Not(Is_customRuleInfo()),s,All(MuVar("x"))), Identity()))  }
+  }
 
   /* ------------------------------------------------------------------ */
 
@@ -711,6 +909,7 @@ b :{
             tree = ruleCommand(env.tree, currentPos, active, env.focus_left, `n);
           } catch (Exception e) {
             System.out.println("Can't apply custom rule "+ `n + ": " + e.getMessage());
+            e.printStackTrace();
           }
         }
 
@@ -720,9 +919,9 @@ b :{
             MuStrategy strat;
 
             if (env.focus_left)
-              strat = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllL(active), ApplyExistsL(active));
+              strat = `ChoiceV(ApplyImpliesL(active), ApplyAndL(active), ApplyOrL(active), ApplyForAllLInteractive(active), ApplyExistsL(active));
             else
-              strat = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsR(active));
+              strat = `ChoiceV(ApplyImpliesR(active), ApplyAndR(active), ApplyOrR(active), ApplyForAllR(active), ApplyExistsRInteractive(active));
 
             tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
@@ -757,7 +956,7 @@ b :{
         /* auto case */
         proofCommand("auto") -> {
           try {
-            MuStrategy strat = `TopDown(ApplyAuto(newRules));
+            MuStrategy strat = `SafeTopDown(ApplyAuto(newRules));
             tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply auto" + e.getMessage());
@@ -887,12 +1086,15 @@ b :{
 
         proofcheck(name) -> {
           Tree tree = theorems.get(`name);
+          tree = ProofExpander.expand(tree);
           if(ProofChecker.proofcheck(tree)) System.out.println("Proof check passed !");
           else System.out.println("Proof check failed :S");
         }
 
         display(name) -> {
           Tree tree = theorems.get(`name);
+          PrettyPrinter.display(tree,newTermRules);
+          tree = ProofExpander.expand(tree);
           PrettyPrinter.display(tree,newTermRules);
         }
 

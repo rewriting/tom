@@ -84,8 +84,22 @@ class Utils {
 
 
   %strategy ReplaceFreeVars(old_term: Term, new_term: Term) extends `Identity() {
+    visit RuleType {
+      forAllRightInfo(t) -> {
+        if (`t==old_term) return `forAllRightInfo(new_term);
+      }
+      forAllLeftInfo(t) -> {
+        if (`t==old_term) return `forAllLeftInfo(new_term);
+      }
+      existsRightInfo(t) -> {
+        if (`t==old_term) return `existsRightInfo(new_term);
+      }
+      existsLeftInfo(t) -> {
+        if (`t==old_term) return `existsLeftInfo(new_term);
+      }
+    }
+    
     visit Prop {
-      
       relationAppl(r, tl) -> {
        TermList res = (TermList) replaceTerm(`tl, old_term, new_term);
         return `relationAppl(r, res);

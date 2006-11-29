@@ -135,7 +135,7 @@ public class ProofChecker {
           a@forAll(v,A)
           )
         -> {
-          if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B && boundedInContext(`new_var,`context(d1*,d2*,g*))) 
+          if (`replaceFreeVars(Var(v),new_var).fire(`A) == `B && boundedInContext(`new_var,`context(d1*,d2*,g*)))  
             return proofcheck(`p); 
         }
 

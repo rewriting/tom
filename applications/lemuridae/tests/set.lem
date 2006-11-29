@@ -7,6 +7,9 @@ rule in(x,symdiff(X,Y)) -> in(x,union(X,Y)) /\ ~in(x,inter(X,Y)).
 
 proof emptySetInAll:  \AA.subset(emptyset(),A).
 auto.
+proofcheck emptySetInAll.
+
+display emptySetInAll.
 
 proof l: ~in(x,inter(A,B)) => in(x,A) => ~in(x,B).
 auto.
