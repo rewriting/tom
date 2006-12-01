@@ -9,8 +9,9 @@ TNode = EmptyNode()
       | DocumentNode(DocType:TNode, DocElem:TNode)
       | ElementNode(Name:String, AttrList:TNodeList, ChildList:TNodeList)
       | AttributeNode(Name:String, Specified:String, Value:String)
-      | DocumentTypeNode(Name:String, PublicId:String, SystemId:String, InternalSubset:String,
-	                       Entities:TNodeList, Notations:TNodeList)
+      | DocumentTypeNode(Name:String, PublicId:String, SystemId:String,
+                         InternalSubset:String, Entities:TNodeList,
+                         Notations:TNodeList)
       | EntityReferenceNode(Name:String, ChildList:TNodeList)
       | EntityNode(NotationName:String, PublicId:String, SystemId:String)
       | NotationNode(PublicId:String, SystemId:String) 
