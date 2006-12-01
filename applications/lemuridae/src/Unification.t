@@ -136,13 +136,21 @@ class Unification {
  /* ---------- for reduce ----------*/
 
   %strategy RenameIntoTemp() extends `Identity() {
+    visit Prop {
+      forAll(n,p) -> { return `forAll("temp_"+n,p); }
+      exists(n,p) -> { return `exists("temp_"+n,p); }
+    }
     visit Term {
        Var(name) -> { return `Var("temp_" + name); }
     }
   }
 
   %strategy RenameFromTemp() extends `Identity() {
-     visit Term {
+    visit Prop {
+      forAll(n,p) -> { if (`n.startsWith("temp_")) return `forAll(n.substring(5),p); }
+      exists(n,p) -> { if (`n.startsWith("temp_")) return `exists(n.substring(5),p); }
+    }
+    visit Term {
        Var(name) -> { if (`name.startsWith("temp_")) return `Var(name.substring(5)); }
     }
   }
