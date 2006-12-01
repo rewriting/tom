@@ -31,8 +31,6 @@ package matching;
 }
 
 {
-  import aterm.*;
-  import aterm.pure.SingletonFactory;
   import matching.lamterm.*;
   import matching.lamterm.types.*;
 	import java.util.Hashtable;
@@ -44,10 +42,6 @@ options {
 }
 {
   %include { lamterm/Lamterm.tom }
-  private LamtermFactory factory = LamtermFactory.getInstance(SingletonFactory.getInstance());
-  public LamtermFactory getLamtermFactory() {
-    return factory;
-  }
 }
 
 
@@ -122,7 +116,7 @@ constant returns [LamTerm constant]
 }
 : constname:CONST 
 {
-    constant=`const(constname.getText());
+    constant=`constant(constname.getText());
 }
 ;
 

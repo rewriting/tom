@@ -31,35 +31,21 @@
 
 package lambdaparallel;
 
-import aterm.*;
-import aterm.pure.*;
-import lambdaparallel.parallellamterm.*;
 import lambdaparallel.parallellamterm.types.*;
-
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.VisitFailure;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
-
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
 import java.io.*;
 
 public class Parallellamcal{
 	private static int comptVariable = 0;	
-	%include { mutraveler.tom }
+	%include { mustrategy.tom }
 	%include { parallellamterm/Parallellamterm.tom }
 	
 
 	public final static void main(String[] args) {
 		Parallellamterm subject = `var("undefined");
-		VisitableVisitor beta = `reductionRules();
-		VisitableVisitor print = `print();
+		MuStrategy beta = `reductionRules();
+		MuStrategy print = `print();
 		String s;
 		System.out.println(" ******************************************************************\n lambda Parallel\n By Germain Faure\n  It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
      ParallelllamcalLexer lexer = new ParallelllamcalLexer(System.in); // Create parser attached to lexer
@@ -74,7 +60,7 @@ public class Parallellamcal{
 				
 			}
 			try{
-				System.out.println("After beta-normalisation: "+MuTraveler.init(`Sequence(Innermost(beta),print)).visit(subject));
+				System.out.println("After beta-normalisation: "+`Sequence(Innermost(beta),print).visit(subject));
 			} 
 			catch(VisitFailure e) {
 				System.out.println("reduction failed on: " + subject);

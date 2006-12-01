@@ -26,15 +26,14 @@
         </tom.preset>
       </sequential>
     </macrodef>
-    <macrodef name="vascompile">
+    <macrodef name="gomcompile">
       <attribute name="package"/>
       <sequential>
-        <vas config="${vasconfigfile}"
-             srcdir="${rho.dir}"
-             package="@{package}" 
-             destdir="${rho.gen}">
-          <include name="@{package}/**/*.vas"/>
-        </vas>
+        <gom.preset srcdir="${rho.dir}"
+                    package="@{package}"
+                    destdir="${rho.gen}">
+          <include name="@{package}/**/*.gom"/>
+        </gom.preset>
       </sequential>
     </macrodef>
     <macrodef name="javacompile">
@@ -52,13 +51,7 @@
   <target name="build" depends="build.xrho,build.matching,build.parallel"/>
 
   <target name="build.xrho" depends="init">
-    <!--<vascompile package="xrho"/>-->
-    <gom config="${gomconfigfile}"
-         srcdir="${rho.dir}"
-         package="xrho" 
-         destdir="${rho.gen}">
-      <include name="xrho/**/*.gom"/>
-    </gom>
+    <gomcompile package="xrho"/>
     <tomcompile package="xrho"/>
     <tom.preset srcdir="${rho.dir}" 
 	    outputfile="${rho.gen}/xrho/RhoParser.g"
@@ -73,7 +66,7 @@
   </target>
 
   <target name="build.matching" depends="init">
-    <vascompile package="matching"/>
+    <gomcompile package="matching"/>
     <tomcompile package="matching"/>
     <tom.preset srcdir="${rho.dir}" 
 	    outputfile="${rho.gen}/matching/LamcalParser.g"
@@ -88,12 +81,11 @@
   </target>
 
   <target name="build.parallel" depends="init">
-  <gom config="${gomconfigfile}"
-         srcdir="${rho.dir}"
-         package="lambdaparallel" 
-         destdir="${rho.gen}">
+  <gom.preset srcdir="${rho.dir}"
+              package="lambdaparallel" 
+              destdir="${rho.gen}">
       <include name="lambdaparallel/**/*.gom"/>
-    </gom>
+    </gom.preset>
     <tomcompile package="lambdaparallel"/>
     <tom.preset srcdir="${rho.dir}" 
 	    outputfile="${rho.gen}/lambdaparallel/LamcalparallelParser.g"

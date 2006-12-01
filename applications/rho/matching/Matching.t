@@ -30,25 +30,10 @@
 
 package matching;
 
-import aterm.*;
-import aterm.pure.*;
-import matching.lamterm.*;
 import matching.lamterm.types.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
-
-//import tom.library.adt.mutraveleradt.*;
-//import tom.library.adt.mutraveleradt.types.*;
-
-import tom.library.strategy.mutraveler.MuTraveler;
+import tom.library.strategy.mutraveler.MuStrategy;
 import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
-
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 import java.io.*;
@@ -57,31 +42,22 @@ import java.util.*;
 public class Matching {
 	
 	private int comptVariable = 0;
-	private LamtermFactory factory;
-	
-	public Matching(LamtermFactory factory) {
-		this.factory = factory;
-	}
-	public LamtermFactory getLamtermFactory() {
-		return factory;
-	}
-	
-	
-	%include { mutraveler.tom }
+
+	%include { mustrategy.tom }
 	%include { lamterm/Lamterm.tom }
+  %include { util/types/Collection.tom }
 
 	public final static void main(String[] args) {
-		Matching matchingEngine = new Matching(LamtermFactory.getInstance(SingletonFactory.getInstance()));
+		Matching matchingEngine = new Matching();
 		matchingEngine.run();
 	}
 	
-
 	public void run(){
 	System.out.println(" ******************************************************************\n Computing matching modulo superdevelopments. \n constants begin with a,b,c...w\n local variable begin with x,y or z\n matching variables are in capital letters\n  ******************************************************************\n");
     LamcalLexer lexer = new LamcalLexer(System.in); // Create parser attached to lexer
     LamcalParser parser = new LamcalParser(lexer);
-//		VisitableVisitor reduce = new ReductionRules();
-//		VisitableVisitor strategyNormalize =MuTraveler.init(`Repeat(reduce));
+//		MuStrategy reduce = new ReductionRules();
+//		MuStrategy strategyNormalize =`Repeat(reduce);
 	
 		while(true){
 //			Collection c=new HashSet();
@@ -97,10 +73,10 @@ public class Matching {
 			}
 		}	
 	}
-	public String prettyPrinter(Collection c){
+	public String prettyPrinter(Collection c) {
 		Iterator it=c.iterator();
 		String result="";
-		while(it.hasNext()){
+		while(it.hasNext()) {
 			Systems s=(Systems)it.next();
 			result+="[";		
 			result+=prettyPrinter(s);
@@ -108,42 +84,41 @@ public class Matching {
 		}
 		return result+"size of the bag: "+c.size();
 	}
-	public String prettyPrinter(Systems s){
+	public String prettyPrinter(Systems s) {
 		String result="";
 
-		%match(Systems s){
+		%match(Systems s) {
 			(match(a,b),Y*)->{
 				result+=prettyPrinter(`a)+":="+prettyPrinter(`b)+",";
 				result+=`prettyPrinter(Y);
 			}
 		}
-
 		return result;
 	}
+
 	public String prettyPrinter(LamTerm t){
-		%match(LamTerm t){
+		%match(t) {
 			app(term1,term2) -> {return "("+prettyPrinter(`term1)+"."+prettyPrinter(`term2)+")";}
 			abs(term1,term2) -> {return "("+prettyPrinter(`term1)+"->"+prettyPrinter(`term2)+")";}
 			matchVar(s) -> {return `s;}
 			localVar(s) -> {return `s;}
-			const(s) -> {return `s;}
-			_ -> {return "";}
+			constant(s) -> {return `s;}
 		}
     return "";
 	}
 	public Collection reduce(Systems s) throws VisitFailure { 
 		Collection c = new HashSet();
-		%match(Systems s){
+		%match(Systems s) {
 			//Trivial
-			(X*,match(a@const[],a),Y*)-> {
+			(X*,match(a@constant[],a),Y*) -> {
 				c.add(`and(X*,Y*));}
-			(X*,match(x@localVar[],x),Y*)-> {
+			(X*,match(x@localVar[],x),Y*) -> {
 				c.add(`and(X*,Y*));}
 			//Abs
-			(X*,match(abs(x@localVar[],A),abs(x@localVar[],B)),Y*) ->{
+			(X*,match(abs(x@localVar[],A),abs(x@localVar[],B)),Y*) -> {
 				c.add(`and(X*,match(A,B),Y*));}
 			//Subst
-			l:(X*,match(Z@matchVar[],A),Y*) ->{
+			l:(X*,match(Z@matchVar[],A),Y*) -> {
 //				System.out.println("subst with X: "+X+"and Y: "+Y);
 				boolean b1=belongsTo(`Z,`and(X*,Y*));
 //				System.out.println("b1="+b1);
@@ -159,28 +134,27 @@ public class Matching {
 					Systems s2=`substitute(Z,A,Y*);
 //					System.out.println("subst in if2"+2);
 					c.add(`and(s1*,match(Z,A),s2*));
-				}
-				else{
+				} else {
 					//			System.out.println("bye.bye.subst");
 					break l;
 				}
 			}
 			//Decompose
-			(X*,match(app(A1,B1),app(A2,B2)),Y*) ->{
+			(X*,match(app(A1,B1),app(A2,B2)),Y*) -> {
 				c.add(`and(X*,match(A1,A2),match(B1,B2),Y*));}
 			//Proj
-			(X*,match(app(A1,B1),A2),Y*) ->{
+			(X*,match(app(A1,B1),A2),Y*) -> {
 				//			System.out.println("Proj");
 				c.add(`and(X*,match(A1,abs(localVar("_x"+(++comptVariable)),A2)),Y*));
 			}
 			//Beta-exp
-				(X*,match(app(A1,B1),C),Y*) ->{
+				(X*,match(app(A1,B1),C),Y*) -> {
 //				System.out.println("Beta-exp");
 					//1. Collection of all the subterms of C
 					Collection collSubTerm=getAllSubterm(`C);
 					//2. For each subterm compute the set of position in which the considered subterm appears.
 					Iterator itSubTerm=collSubTerm.iterator();
-					while(itSubTerm.hasNext()){
+					while(itSubTerm.hasNext()) {
 //								System.out.println("ici1");
 						LamTerm B2=(LamTerm)itSubTerm.next();
 						//							System.out.println("la2");
@@ -188,7 +162,7 @@ public class Matching {
 						List l=allSubCollection(collPosition);
 						Iterator itListAllSubCollection=l.iterator();
 						//3. For each subset of the previous set do the replacement of the subterm by a fresh variable and then do decomposition.
-						while(itListAllSubCollection.hasNext()){
+						while(itListAllSubCollection.hasNext()) {
 							LamTerm x=`localVar("_x"+(++comptVariable));
 							LamTerm A2=`C;
 //							System.out.println("ici3");
@@ -196,9 +170,9 @@ public class Matching {
 							Iterator itSubCollection=subCollection.iterator();
 							while(itSubCollection.hasNext()){
 								//							System.out.println("ici4");
-								VisitableVisitor subsitute=((Position)itSubCollection.next()).getReplace(x);
+								MuStrategy subsitute=(MuStrategy)((Position)itSubCollection.next()).getReplace(x);
 //								System.out.println("ici4");
-								A2=(LamTerm)MuTraveler.init(subsitute).visit(A2);
+								A2=(LamTerm)subsitute.visit(A2);
 								//							System.out.println("ici5");
 							}
 							c.add(`and(X*,match(A1,abs(x,A2)),match(B1,B2),Y*));		
@@ -245,9 +219,9 @@ public class Matching {
 		return false;
 	}
 	public boolean belongsTo(LamTerm var,LamTerm term){
-		%match(LamTerm term){
+		%match(term) {
 			localVar[] -> {return false;}
-			const[] -> {return false;}
+			constant[] -> {return false;}
 			X@matchVar[] -> {
 				if (`X == var){
 					return true;
@@ -320,7 +294,7 @@ public class Matching {
 	public LamTerm substitute(LamTerm X, LamTerm subject, LamTerm t){
 //		System.out.println("here");
 		%match(LamTerm t){
-			const[] -> {return `t;}
+			constant[] -> {return `t;}
 			localVar[] -> {return `t;}
 			matchVar(name) -> {
 				%match(LamTerm X){
@@ -344,7 +318,7 @@ public class Matching {
 	//[X\subject]t
 	public LamTerm substituteLocalVar(LamTerm X, LamTerm subject, LamTerm t){
 		%match(LamTerm t){
-			const[] -> {return `t;}
+			constant[] -> {return `t;}
 			matchVar[] -> {return `t;}
 			Y@localVar[] -> {
 				if (X == `Y){ return `subject;}
@@ -430,53 +404,38 @@ public class Matching {
 		}
 	}
 	//return the collection of all substerm (strict or not) of subject
-	public Collection getAllSubterm(LamTerm subject) throws VisitFailure{
-		VisitableVisitor collect = new Collect();
- 		VisitableVisitor getAll = `mu(MuVar("x"),
+	public Collection getAllSubterm(LamTerm subject) throws VisitFailure {
+    Collection bagSubterm = new HashSet();
+		MuStrategy collect = `Collect(bagSubterm);
+ 		MuStrategy getAll = `mu(MuVar("x"),
  																	Sequence(collect,Try(All(MuVar("x")))));		
-		MuTraveler.init(getAll).visit(subject);
-		return ((Collect)collect).getBagSubTerm();
+		getAll.visit(subject);
+		return bagSubterm;
 	}
 	//return all the position of subject in which subTerm occurs
-	public Collection getAllPos(LamTerm subject, LamTerm subTerm) throws VisitFailure{
- 		VisitableVisitor getPos=new GetPos(subTerm);
- 		VisitableVisitor getAllPos=`mu(MuVar("x"),
+	public Collection getAllPos(LamTerm subject, LamTerm subTerm) throws VisitFailure {
+    ArrayList posList = new ArrayList();
+ 		MuStrategy getPos=`GetPos(posList,subTerm);
+ 		MuStrategy getAllPos=`mu(MuVar("x"),
  																	Sequence(getPos,Try(All(MuVar("x")))));	 	
- 		MuTraveler.init(getAllPos).visit(subject);
-		return ((GetPos)getPos).getBagPosition();
+ 		getAllPos.visit(subject);
+		return posList;
 	}
-	class Collect extends LamtermVisitableFwd {
-		private Collection bagSubTerm=new HashSet();
-		public Collection getBagSubTerm(){
-			return bagSubTerm;
-		}
-		public Collect() {
-			super(`Fail());
-		}
-		public LamTerm visit_LamTerm(LamTerm arg) throws VisitFailure { 
-			bagSubTerm.add(arg);
-			return arg;
-		}
-	}
-	class GetPos extends LamtermVisitableFwd {
-		private Collection bagPosition=new HashSet();
-		private LamTerm lookingFor;
-		public Collection getBagPosition(){
-			return bagPosition;
-		}
-		public GetPos(LamTerm a) {
-			super(`Fail());
-			lookingFor=a;
-		}
-		public LamTerm visit_LamTerm(LamTerm arg) throws VisitFailure { 
-			%match(LamTerm arg){
-				x -> {
-					if (arg == lookingFor) {
-						bagPosition.add(MuTraveler.getPosition(this));
-					}
-				}
-			}
-			return arg;
-		}
-	}
+  %strategy Collect(bagSubTerm:Collection) extends Fail() {
+		visit LamTerm {
+      x -> {
+        bagSubTerm.add(`x);
+        return `x;
+      }
+    }
+  }
+  %strategy GetPos(bagPosition:Collection,lookingFor:LamTerm) extends Fail() {
+		visit LamTerm { 
+      x -> {
+        if (`x == lookingFor) {
+          bagPosition.add(getPosition());
+        }
+      }
+    }
+  }
 }

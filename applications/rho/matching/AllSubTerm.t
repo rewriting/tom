@@ -29,7 +29,6 @@
 
 package matching;
 
-import aterm.pure.SingletonFactory;
 import matching.term.*;
 import matching.term.types.*;
 
@@ -44,31 +43,25 @@ import java.util.*;
 import java.io.*;
 
 public class AllSubTerm {
-  private termFactory factory;
 	private Collection bag = new HashSet();
 	private Collection bagPos = new HashSet();
-  public AllSubTerm(termFactory factory) {
-    this.factory = factory;
-  }
 
-  public termFactory getTermFactory() {
-    return factory;
-  }
   %include { term/term.tom }
+  %include { util/types/Collection.tom }
   %include { mutraveler.tom }
   
   public final static void main(String[] args) {
-    AllSubTerm test = new AllSubTerm(termFactory.getInstance(SingletonFactory.getInstance()));
+    AllSubTerm test = new AllSubTerm();
     test.run();
   }
 
   public void run() {
 		Term subject = `f(f(a()));
 		Term subTerm = `f(b());
-		VisitableVisitor collect = new Collect();
+		VisitableVisitor collect = `Collect(bag);
 		VisitableVisitor getAll = `mu(MuVar("x"),
 																	Sequence(collect,All(MuVar("x"))));
-		VisitableVisitor getPos=new GetPos(subTerm);
+		VisitableVisitor getPos= `GetPos(subTerm,bagPos);
 		VisitableVisitor getAllPos=`mu(MuVar("x"),
 																	Sequence(getPos,All(MuVar("x"))));
 		System.out.println("subject = " + subject);
@@ -89,8 +82,7 @@ public class AllSubTerm {
 		if (c.size() == 1){
 			result.add(c);
 			return result;
-		}
-		else{ 
+		} else { 
 			Iterator c_it=c.iterator();
 			Object e=c_it.next();
 			Collection h =new HashSet();
@@ -99,7 +91,7 @@ public class AllSubTerm {
 			c.remove(e);
 			List l=allSubCollection(c);
 			Iterator it=l.iterator();
-			while(it.hasNext()){
+			while(it.hasNext()) {
 				Collection s1=(Collection)it.next();
 				result.add(new HashSet(s1));
 				s1.add(e);
@@ -108,34 +100,20 @@ public class AllSubTerm {
 			return result;
 		}
 	}
-	class Collect extends termVisitableFwd {
-		public Collect() {
-			super(`Fail());
-		}
-		public Term visit_Term(Term arg) throws VisitFailure { 
-			%match(Term arg){
-				x -> {bag.add(arg);}
-			}
-			return arg;
-		}
+  %strategy Collect(bag:Collection) extends Fail() {
+		visit Term {
+      x -> { bag.add(`x); }
+    }
 	}
-	class GetPos extends termVisitableFwd {
-		Term a;
-		public GetPos(Term a) {
-			super(`Fail());
-			this.a=a;
-		}
-		public Term visit_Term(Term arg) throws VisitFailure { 
-			%match(Term arg){
-				x -> {
-					if (arg == a) {
-						System.out.println("j'ai trouve un sous-terme");
-						bagPos.add(MuTraveler.getPosition(this));
-					}
-				}
-			}
-			return arg;
-		}
-	}
+  %strategy GetPos(a:Term,bagPos:Collection) extends Fail() {
+		visit Term { 
+      x -> {
+        if (`x == a) {
+          System.out.println("j'ai trouve un sous-terme");
+          bagPos.add(getPosition());
+        }
+      }
+    }
+  }
 }
 

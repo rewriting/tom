@@ -36,44 +36,35 @@ import aterm.pure.*;
 import xrho.rhoterm.*;
 import xrho.rhoterm.types.*;
 
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.Position;
-import tom.library.strategy.mutraveler.Identity;
-
-import tom.library.strategy.mutraveler.reflective.AbstractVisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.reflective.VisitableVisitor;
+import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.VisitFailure;
 
 import java.io.*;
 
 public class Rho {
 	
-	%include { mutraveler.tom }
+	%include { mustrategy.tom }
 	%include { rhoterm/Rhoterm.tom }
 	
-	%op VisitableVisitor Not_abs() {
+	%op Strategy Not_abs() {
 		make() {new Not_abs() }
 	}
 
-	%op VisitableVisitor One_abs(strat:VisitableVisitor) {
-		make(v) {`Sequence(Not_abs(),One(v)) }//new One_abs((VisitableVisitor)v)
+	%op Strategy One_abs(strat:Strategy) {
+		make(v) {`Sequence(Not_abs(),One(v)) }//new One_abs((MuStrategy)v)
 	}
-	%op VisitableVisitor All_abs(strat:VisitableVisitor) {
-		make(v) {`Sequence(Not_abs(),All(v)) }//new One_abs((VisitableVisitor)v)
+	%op Strategy All_abs(strat:Strategy) {
+		make(v) {`Sequence(Not_abs(),All(v)) }//new One_abs((MuStrategy)v)
 	}
 
-	VisitableVisitor rules = new ReductionRules();
-	VisitableVisitor onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rules));
-	VisitableVisitor print = new Print();
+	MuStrategy rules = new ReductionRules();
+	MuStrategy onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rules));
+	MuStrategy print = new Print();
 	//STRATEGIE OUTERMOST
-	VisitableVisitor oneStepWeakNormalisation = MuTraveler.init(`mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
-	VisitableVisitor weakNormalisation =MuTraveler.init(`mu(MuVar("x"),Choice(rules,One_abs(MuVar("x")))));
-	VisitableVisitor strategyWithAllPrint = MuTraveler.init(`Repeat(Sequence(oneStepWeakNormalisation,Try(print))));
-	VisitableVisitor strategyResult =MuTraveler.init(`Repeat(oneStepWeakNormalisation));
+	MuStrategy oneStepWeakNormalisation = `mu(MuVar("x"),Choice(rules,One_abs(MuVar("x"))));
+	MuStrategy weakNormalisation = `mu(MuVar("x"),Choice(rules,One_abs(MuVar("x"))));
+	MuStrategy strategyWithAllPrint = `Repeat(Sequence(oneStepWeakNormalisation,Try(print)));
+	MuStrategy strategyResult = `Repeat(oneStepWeakNormalisation);
 
 	public final static void main(String[] args) {
 		Rho rhoEngine = new Rho();
@@ -83,7 +74,7 @@ public class Rho {
 
 	public void run(){
 		RTerm subject = `Const("undefined");
-		VisitableVisitor currentStrategy = strategyResult;
+		MuStrategy currentStrategy = strategyResult;
 		String s;
 		System.out.println(" ******************************************************************\n xRho: an experimental implementation  in Tom of the explicit rho-calculus \n with weak normalization and linear first-order patterns\n By Germain Faure\n  It is under development and is definitevely not stable nor deliverable. \n ******************************************************************");
     RhoLexer lexer = new RhoLexer(System.in); // Create parser attached to lexer
