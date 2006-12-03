@@ -72,38 +72,66 @@ class BenchGomGC {
   public static void main(String[] args) {
     
     int intbase = 0;
+    int count = 0;
     try {
       intbase = Integer.parseInt(args[0]);
+      count = Integer.parseInt(args[1]);
     } catch (Exception e) {
-      System.out.println("Usage: java gom.GomGC <base>");
+      System.out.println("Usage: java strategycompiler.BenchGomGC <base> <count>");
       return;
     }
     base = buildInt(intbase);
 
-    MuStrategy s = `BottomUp(Rewrite());
-    long startCompileChrono = System.currentTimeMillis();
-    MuStrategy cs = StrategyCompiler.compile(s, "cs");
-    long stopCompileChrono = System.currentTimeMillis();
+    s = `BottomUp(Rewrite());
+    long startChrono = System.currentTimeMillis();
+    cs = StrategyCompiler.compile(s, "cs");
+    long stopChrono = System.currentTimeMillis();
 
-    Nat pre = null;
-    Nat post = `F(M(),N(),P(),Zero(),Suc(Zero()));
-    long startNotCompiledChrono = System.currentTimeMillis();
-    while (post != pre) {
-      pre = post;
-      post = (Nat)s.apply(post);
+    System.out.println("base:\t" + intbase + "\nstrategy compilation time:\t" + (stopChrono-startChrono)/1000.);
+
+    run(`F(M(),N(),P(),Zero(),Suc(Zero())), count);
+    run(`F(M(),N(),F(N(),P(),Zero(),N(),Zero()),Zero(),Suc(Zero())), count);
+    run(`C(F(N(), Zero(), C(M(), N()), P(), Suc(N())), C(N(), P())), count);
+    run(`F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero()), count);
+    run(`F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N())), count);
+    run(`F(P(), Suc(P()), Zero(), N(), P()), count);
+  }
+
+  private static MuStrategy s = null;
+  private static MuStrategy cs = null;
+
+  private static void run(Nat subject, int count) {
+    System.out.println("\n" + subject);
+
+    System.out.println("mutraveler not compiled:");
+    for(int i = 0; i < count; ++i) {
+      Nat pre = null;
+      Nat post = subject;
+
+      long startChrono = System.currentTimeMillis();
+      while (post != pre) {
+        pre = post;
+        post = (Nat)s.apply(post);
+      }
+      long stopChrono = System.currentTimeMillis();
+
+      System.out.println((stopChrono-startChrono)/1000.);
     }
-    long stopNotCompiledChrono = System.currentTimeMillis();
 
-    pre = null;
-    post = `F(M(),N(),P(),Zero(),Suc(Zero()));
-    long startCompiledChrono = System.currentTimeMillis();
-    while (post != pre) {
-      pre = post;
-      post = (Nat)cs.apply(post);
+    System.out.println("mutraveler compiled:");
+    for(int i = 0; i < count; ++i) {
+      Nat pre = null;
+      Nat post = subject;
+
+      long startChrono = System.currentTimeMillis();
+      while (post != pre) {
+        pre = post;
+        post = (Nat)cs.apply(post);
+      }
+      long stopChrono = System.currentTimeMillis();
+
+      System.out.println((stopChrono-startChrono)/1000.);
     }
-    long stopCompiledChrono = System.currentTimeMillis();
-
-    System.out.println("base:\t" + intbase + "\nmutraveler not compiled:\t" + (stopNotCompiledChrono-startNotCompiledChrono)/1000. + "\nmutraveler compiled:\t" + (stopCompiledChrono-startCompiledChrono)/1000. + "\nstrategy compilation time:\t" + (stopCompileChrono-startCompileChrono)/1000.);
   }
 
   public static Nat buildInt(int i) {

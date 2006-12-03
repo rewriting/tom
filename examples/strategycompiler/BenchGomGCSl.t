@@ -72,26 +72,47 @@ class BenchGomGCSl {
   public static void main(String[] args) {
     
     int intbase = 0;
+    int count = 0;
     try {
       intbase = Integer.parseInt(args[0]);
+      count = Integer.parseInt(args[1]);
     } catch (Exception e) {
-      System.out.println("Usage: java gom.GomGC <base>");
+      System.out.println("Usage: java strategycompiler.BenchGomGCSl <base> <count>");
       return;
     }
     base = buildInt(intbase);
 
-    Strategy s = `BottomUp(Rewrite());
+    s = `BottomUp(Rewrite());
 
-    Nat pre = null;
-    Nat post = `F(M(),N(),P(),Zero(),Suc(Zero()));
-    long startChrono = System.currentTimeMillis();
-    while (post != pre) {
-      pre = post;
-      post = (Nat)s.fire(post);
+    System.out.println("base:\t" + intbase);
+
+    run(`F(M(),N(),P(),Zero(),Suc(Zero())), count);
+    run(`F(M(),N(),F(N(),P(),Zero(),N(),Zero()),Zero(),Suc(Zero())), count);
+    run(`C(F(N(), Zero(), C(M(), N()), P(), Suc(N())), C(N(), P())), count);
+    run(`F(C(M(), C(N(), Suc(Suc(N())))), N(), C(P(), Suc(Zero())), Suc(Suc(Zero())), Zero()), count);
+    run(`F(N(), M(), Suc(C(Suc(P()), N())), M(), C(Suc(N()), N())), count);
+    run(`F(P(), Suc(P()), Zero(), N(), P()), count);
+  }
+
+  private static Strategy s = null;
+
+  private static void run(Nat subject, int count) {
+    System.out.println("\n" + subject);
+
+    System.out.println("sl:");
+    for(int i = 0; i < count; ++i) {
+      Nat pre = null;
+      Nat post = subject;
+
+      long startChrono = System.currentTimeMillis();
+      while (post != pre) {
+        pre = post;
+        post = (Nat)s.fire(post);
+      }
+      long stopChrono = System.currentTimeMillis();
+
+      System.out.println((stopChrono-startChrono)/1000.);
     }
-    long stopChrono = System.currentTimeMillis();
-
-    System.out.println("base:\t" + intbase + "\nsl:\t" + (stopChrono-startChrono)/1000.);
   }
 
   public static Nat buildInt(int i) {
