@@ -46,6 +46,8 @@ public class ClassicalAssociativity implements Matching {
 	%include{ mustrategy.tom }
 	%include{ java/util/types/Collection.tom}
 	
+	private static int globalCounter = 0; 
+	
 	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
 		return (Constraint)`InnermostId(PerformAssociativeMatching()).apply(c);
 	}
@@ -85,9 +87,9 @@ public class ClassicalAssociativity implements Matching {
 	            Term t_1 = args2.getHeadconcTerm(); // first elem
 	            Term t_2 = args2.getTailconcTerm().getHeadconcTerm(); // second elem
 	            
-	            Term x_1 = `Variable("x_1");
-	            Term x_2 = `Variable("x_2");
-	            
+	            Term x_1 = `Variable("x" + ++globalCounter + "_a");
+	            Term x_2 = `Variable("x" + ++globalCounter + "_a");
+	            	            
 	            Constraint secondTerm = `Exists(x_1,Exists(x_2,
 	            							And( concAnd(
 		            							Equal(p_1,x_1), 
@@ -114,12 +116,12 @@ public class ClassicalAssociativity implements Matching {
 	                Term p_2 = `a1.getTailconcTerm().getHeadconcTerm(); // second elem
 	                
 	                Constraint firstTerm =  `And(concAnd(
-	                							Equal(p_1,Variable("e_" + getNeutralElem(f))),
+	                							Equal(p_1,Variable(getNeutralElem(f))),
 	                							Equal(p_2,g)
 	                							));
 	                Constraint secondTerm =  `And(concAnd(
 												Equal(p_1,g),
-												Equal(p_2,Variable("e_" + getNeutralElem(f)))
+												Equal(p_2,Variable(getNeutralElem(f)))
 												));
 	                
 	                return `Or(concOr(firstTerm,secondTerm));
@@ -206,6 +208,11 @@ public class ClassicalAssociativity implements Matching {
 					return `And(concAnd(equal,res));
 				}
 	        }
+			
+			// cleaning
+			Or(concOr(X*,x,Y*,x,Z*))->{
+				return `Or(concOr(X*,x,Y*,Z*));
+			}
 	        
 		} // end visit    
 	}
@@ -254,7 +261,7 @@ public class ClassicalAssociativity implements Matching {
 	private String getNeutralElem(Term t){
 		%match(t){
 			Appl(name,_) -> {
-				return ((String)`name).substring(0,`name.indexOf("_"));
+				return "e_" + ((String)`name).substring(0,`name.indexOf("_"));
 			}
 		}
 		

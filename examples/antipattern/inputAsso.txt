@@ -1,0 +1,9 @@
+match(a, a)
+match(a, b)
+-
+match(f(a,b), f(a,a))
+match(f(a,b), f(a,b))
+match(f(a,b), c)
+-
+match(f_a(X_a,Y_a), f_a(a,b))
+match(f_a(X_a,Y_a), f_a(a,f_a(b,c)))
