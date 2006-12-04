@@ -26,7 +26,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package antipattern;
+package antipattern.associative;
 
 import aterm.*;
 import aterm.pure.*;
@@ -59,7 +59,7 @@ public class ClassicalAssociativity implements Matching {
 			}
 			
 	        // Decompose 1 & 2
-	        Equal(f@Appl(name,a1),Appl(name,a2)) -> {        	
+	        Equal(f@Appl(name,a1),g@Appl(name,a2)) -> {
 	    		AConstraintList l = `concAnd();
 	            TermList args1 = `a1;
 	            TermList args2 = `a2;
@@ -73,7 +73,10 @@ public class ClassicalAssociativity implements Matching {
 	        	// if we do not have an associative symbol                
 	            if ( !isAssociative(`f) ){
 	            	return `And(l);
-	            }          
+	            }
+	            // reinitialize
+	            args1 = `a1;
+	            args2 = `a2;
 	            
 	            Term p_1 = args1.getHeadconcTerm(); // first elem
 	            Term p_2 = args1.getTailconcTerm().getHeadconcTerm(); // second elem
@@ -89,6 +92,7 @@ public class ClassicalAssociativity implements Matching {
 	            							Equal(p_2,Appl(name,concTerm(x_2,t_2))),
 	            							Equal(Appl(name,concTerm(x_1,x_2)),t_1)
 	            							));
+	            
 	            return `Or(concOr(And(l),secondTerm));
 	        }
 	        
@@ -128,10 +132,12 @@ public class ClassicalAssociativity implements Matching {
 	        
 	        // Replace
 			input@And(concAnd(X*,equal@Equal(var@Variable(name),s),Y*)) -> {
-				Constraint toApplyOn = `And(concAnd(Y*));
+				System.out.println("Equal=" + `equal);
+				Constraint toApplyOn = `And(concAnd(X*,Y*));
+				System.out.println("TO=" + `toApplyOn);
 				Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).apply(toApplyOn);
-				if (res != toApplyOn){					
-					return `And(concAnd(X*,equal,res));
+				if (res != toApplyOn){
+					return `And(concAnd(equal,toApplyOn));
 				}
 	        }
 			
@@ -151,20 +157,24 @@ public class ClassicalAssociativity implements Matching {
 	        Or(concOr(X*,False(),Y*)) -> {
 	          return `Or(concOr(X*,Y*));
 	        }        
-	        Or(concOr()) ->{
-	        	return `False();
-	        }        
 	        
 	        // PropagateSuccess
-	        And(concAnd()) -> {
-	          return `True();
-	        }
-	        And(concAnd(x)) -> {
-	          return `x;
-	        }
 	        And(concAnd(X*,True(),Y*)) -> {
 	          return `And(concAnd(X*,Y*));
 	        }
+	        
+	        // Distribution of And and Or
+	        And(concAnd(X*,Or(concOr(Z*)),Y*)) ->{
+	        	OConstraintList result = `concOr();
+	        	OConstraintList cOr = `Z*;
+	        	while(!cOr.isEmptyconcOr()){
+	        		result = `concOr(result*,And(concAnd(X*,cOr.getHeadconcOr(),Y*)));
+	        		cOr = cOr.getTailconcOr();
+	        	}
+	        	
+	        	return `Or(result);
+	        }
+	        
 		} // end visit    
 	}
 	
@@ -178,7 +188,7 @@ public class ClassicalAssociativity implements Matching {
 				}
 			}
 			
-			Variable(name) -> {
+			Variable(name) -> {				
 				if (`name.endsWith("_a")) {
 					return true;
 				}else{
