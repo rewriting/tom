@@ -26,7 +26,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package antipattern.associative;
+package antipattern;
 
 import aterm.*;
 import aterm.pure.*;
@@ -44,7 +44,7 @@ public class ClassicalAssociativity implements Matching {
 	
 	%include{ term/Term.tom }
 	%include{ mustrategy.tom }
-	%include { java/util/types/Collection.tom}
+	%include{ java/util/types/Collection.tom}
 	
 	public Constraint simplifyAndSolve(Constraint c, Collection solution) {
 		return (Constraint)`InnermostId(PerformAssociativeMatching()).apply(c);
@@ -74,6 +74,7 @@ public class ClassicalAssociativity implements Matching {
 	            if ( !isAssociative(`f) ){
 	            	return `And(l);
 	            }
+	            /////// Decompose 2 ////////////////////////////
 	            // reinitialize
 	            args1 = `a1;
 	            args2 = `a2;
@@ -87,13 +88,22 @@ public class ClassicalAssociativity implements Matching {
 	            Term x_1 = `Variable("x_1");
 	            Term x_2 = `Variable("x_2");
 	            
-	            Constraint secondTerm = `And( concAnd(
-	            							Equal(p_1,x_1), 
-	            							Equal(p_2,Appl(name,concTerm(x_2,t_2))),
-	            							Equal(Appl(name,concTerm(x_1,x_2)),t_1)
+	            Constraint secondTerm = `Exists(x_1,Exists(x_2,
+	            							And( concAnd(
+		            							Equal(p_1,x_1), 
+		            							Equal(p_2,Appl(name,concTerm(x_2,t_2))),
+		            							Equal(Appl(name,concTerm(x_1,x_2)),t_1)
+	            								))
 	            							));
+	            Constraint thirdTerm = `Exists(x_1,Exists(x_2,
+											And( concAnd(
+												Equal(p_1,Appl(name,concTerm(t_1,x_1))), 
+												Equal(p_2,x_2),
+												Equal(Appl(name,concTerm(x_1,x_2)),t_2)
+												))
+											));
 	            
-	            return `Or(concOr(And(l),secondTerm));
+	            return `Or(concOr(And(l),secondTerm,thirdTerm));
 	        }
 	        
 	        // Decompose 3
@@ -130,17 +140,6 @@ public class ClassicalAssociativity implements Matching {
 	          }
 	        }
 	        
-	        // Replace
-			input@And(concAnd(X*,equal@Equal(var@Variable(name),s),Y*)) -> {
-				System.out.println("Equal=" + `equal);
-				Constraint toApplyOn = `And(concAnd(X*,Y*));
-				System.out.println("TO=" + `toApplyOn);
-				Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).apply(toApplyOn);
-				if (res != toApplyOn){
-					return `And(concAnd(equal,toApplyOn));
-				}
-	        }
-			
 	        //	Delete
 	        Equal(t1@Appl(name,_),t2@Appl(name,_)) -> {
 	        	if (`t1 == `t2) {  
@@ -175,8 +174,60 @@ public class ClassicalAssociativity implements Matching {
 	        	return `Or(result);
 	        }
 	        
+	        //Exists
+	        Exists(var,x) ->{
+	        	// if the variable does not exists - remove the Exists 
+	        	// if the variable exists only in one eq, just replace with true the eq
+	        	if (nbOccurences(`var,`x) <= 1){
+	        		return (Constraint)`TopDown(ReplaceEquality(var)).apply(`x);
+	        	}
+	        }
+	        
+	        //Exists
+	        Exists(v@Variable(var),Or(list)) ->{
+				
+				OConstraintList l = `list;
+				OConstraintList result = `concOr();
+				
+				while(!l.isEmptyconcOr()){
+					result = `concOr(Exists(v,l.getHeadconcOr()),result*);
+					l = l.getTailconcOr();
+				}
+				
+				return `Or(result);
+			}
+
+	        
+	        // Replace
+			input@And(concAnd(X*,equal@Equal(var@Variable(name),s),Y*)) -> {				
+				Constraint toApplyOn = `And(concAnd(X*,Y*));				
+				Constraint res = (Constraint)`TopDown(ReplaceStrat(var,s)).apply(toApplyOn);
+				if (res != toApplyOn){					
+					return `And(concAnd(equal,res));
+				}
+	        }
+	        
 		} // end visit    
 	}
+	
+	private int counter = 0;	
+	private int nbOccurences(Term t, Constraint toSearchIn){
+		counter = 0;
+		`TopDown(CheckOccurence(t)).apply(toSearchIn);
+		return counter;
+	}	
+	
+	%strategy CheckOccurence(t:Term) extends `Identity(){
+		visit Term {
+			x -> {
+				if (t == `x){
+					counter++;
+				}
+			}
+		}
+	}
+	
+	
 	
 	private boolean isAssociative(Term t){
 		%match(t){
@@ -214,6 +265,14 @@ public class ClassicalAssociativity implements Matching {
 		visit Term {
 			x -> {
 				if (`x == var) { return value; }  
+			}
+		}
+	}
+	
+	%strategy ReplaceEquality(var:Term) extends `Identity(){
+		visit Constraint {
+			Equal(x,_) -> {
+				if (`x == var) { return `True(); }  
 			}
 		}
 	}

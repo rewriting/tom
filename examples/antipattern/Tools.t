@@ -64,9 +64,14 @@ public class Tools {
 //    Matching test4 = new Matching4();
 //    tools.run(test4,args[0]);
 
-  System.out.println("\nRunning Matching6: \n");
-  Matching test6 = new Matching6();
-  tools.run(test6,args[0]);
+//  System.out.println("\nRunning Matching6: \n");
+//  Matching test6 = new Matching6();
+//  tools.run(test6,args[0]);
+    
+  System.out.println("\nRunning ClassicalAsso: \n");
+  Matching testAsso = new ClassicalAssociativity();
+  tools.run(testAsso,args[0]);
+
     
 //    System.out.println("\nRunning MatchingDifferences: \n");
 //    Matching test5 = new MatchingDifferences();
