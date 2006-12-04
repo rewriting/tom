@@ -45,7 +45,9 @@ import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.VisitFailure;
 
 // another algorithm for solving anti-pattern problems
-public class ApAndDisunification2 implements Matching{
+// applies the trasnformation rule, but after that it does not
+// use disunification, but rather some propagations and cleaning
+public class ApElimination implements Matching{
 	
 	%include{ mustrategy.tom }	
 	%include{ boolean.tom }	

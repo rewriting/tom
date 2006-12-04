@@ -43,7 +43,6 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-
 public class Tools {
 
   %include{ term/Term.tom }
