@@ -36,7 +36,7 @@ And:make(cl){
 			return `And(concAnd(X*,Y*,Z*));
 		}
 		concAnd() ->{
-			return `False();
+			return `True();
 		}
 		concAnd(x) ->{
 			return `x;
@@ -50,14 +50,14 @@ Or:make(cl){
 			return `Or(concOr(X*,Y*,Z*));
 		}	
 		concOr() ->{
-			return `True();
+			return `False();
 		}
 	} 
 }
 // normalize modulo neutral element
 Appl:make(name,args){
 	if (name.endsWith("_a")){
-		Object neutralElement = `Variable("e_" + ((String)name).substring(0,name.indexOf("_"))); 
+		Object neutralElement = `Appl("e_" + ((String)name).substring(0,name.indexOf("_")),concTerm()); 
 		%match(args){
 			concTerm(elem1,elem2) ->{
 				if (`elem1 == neutralElement){				

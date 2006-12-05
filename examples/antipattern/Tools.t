@@ -126,6 +126,8 @@ public class Tools {
       if(name.equals("anti") && afun.getArity()==1) {
         ATerm subterm = appl.getArgument(0);
         return `Anti(atermToTerm(subterm));
+//      }else if(name.startsWith("e_") && afun.getArity()==0){    	  
+//    	  return `Variable(name);
       } else if(Character.isUpperCase(name.charAt(0)) && afun.getArity()==0) {
         return `Variable(name);        
       } else {

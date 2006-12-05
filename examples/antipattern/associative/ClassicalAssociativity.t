@@ -61,7 +61,12 @@ public class ClassicalAssociativity implements Matching {
 			}
 			
 	        // Decompose 1 & 2
-	        Equal(f@Appl(name,a1),g@Appl(name,a2)) -> {
+	        eq@Equal(f@Appl(name,a1),g@Appl(name,a2)) -> {
+	        	
+	        	if (`name.startsWith("e_")) {	        	
+	        		return `eq; // do nothing
+	        	}
+	        	
 	    		AConstraintList l = `concAnd();
 	            TermList args1 = `a1;
 	            TermList args2 = `a2;
@@ -109,19 +114,23 @@ public class ClassicalAssociativity implements Matching {
 	        }
 	        
 	        // Decompose 3
-	        Equal(f@Appl(name1,a1),g@Appl(name2,a2)) -> {
+	        eq@Equal(f@Appl(name1,a1),g@Appl(name2,a2)) -> {
 	        	
-	        	if (`name1 != `name2 && isAssociative(`f)){
+	        	if (`name1.startsWith("e_")) {	        	
+	        		return `eq; // do nothing
+	        	}
+	        	
+	        	if (`name1 != `name2 && isAssociative(`f)){	        		
 	        		Term p_1 = `a1.getHeadconcTerm(); // first elem
 	                Term p_2 = `a1.getTailconcTerm().getHeadconcTerm(); // second elem
 	                
 	                Constraint firstTerm =  `And(concAnd(
-	                							Equal(p_1,Variable(getNeutralElem(f))),
+	                							Equal(p_1,getNeutralElem(f)),
 	                							Equal(p_2,g)
 	                							));
 	                Constraint secondTerm =  `And(concAnd(
 												Equal(p_1,g),
-												Equal(p_2,Variable(getNeutralElem(f)))
+												Equal(p_2,getNeutralElem(f))
 												));
 	                
 	                return `Or(concOr(firstTerm,secondTerm));
@@ -136,7 +145,7 @@ public class ClassicalAssociativity implements Matching {
 	        }
 	        
 	        // SymbolClash 2
-	        Equal(v@Variable(_),f) -> {
+	        Equal(v@Variable(_),f@Appl[]) -> {
 	          if(!isAssociative(`v) && isAssociative(`f)) {
 	            return `False();
 	          }
@@ -239,7 +248,7 @@ public class ClassicalAssociativity implements Matching {
 	private boolean isAssociative(Term t){
 		%match(t){
 			Appl(name,_) -> {
-				if (`name.endsWith("_a")) {
+				if (`name.endsWith("_a") || `name.startsWith("e_")) {
 					return true;
 				}else{
 					return false;
@@ -258,14 +267,13 @@ public class ClassicalAssociativity implements Matching {
 		return false;
 	}
 	
-	private String getNeutralElem(Term t){
+	private Term getNeutralElem(Term t){
 		%match(t){
 			Appl(name,_) -> {
-				return "e_" + ((String)`name).substring(0,`name.indexOf("_"));
+				return `Appl("e_" + ((String)name).substring(0,name.indexOf("_")),concTerm());
 			}
-		}
-		
-		return "XXX";
+		}		
+		throw new RuntimeException("Cannot compute neutral elem for:" + t);
 	}
 	
 	%strategy ReplaceStrat(var:Term, value:Term) extends `Identity(){
