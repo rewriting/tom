@@ -477,6 +477,7 @@
     <copy todir="${dest}" file="${share}/INSTALL"/>
     <copy todir="${dest}" file="NEWS"/>
     <copy todir="${dest}" file="AUTHORS"/>
+    <copy todir="${dest}" file="LICENCE"/>
   </target>
 
   <target name="stable" depends="stable.dist"/>
