@@ -129,6 +129,10 @@ public class Tools {
 //      }else if(name.startsWith("e_") && afun.getArity()==0){    	  
 //    	  return `Variable(name);
       } else if(Character.isUpperCase(name.charAt(0)) && afun.getArity()==0) {
+    	  // check if it is a constrained variable
+    	  if (name.length() > 2 && name.charAt(name.length()-2) == '_'){
+    		  return `ConsVariable(Variable(name),name.charAt(name.length()-1) + "_a");
+    	  }
         return `Variable(name);        
       } else {
     	  String strTmp = "cons";
@@ -270,6 +274,9 @@ public class Tools {
 	public String formatTerm(Term t){
 		
 		%match(Term t){
+			ConsVariable(Variable(name),_) ->{
+				return `name;
+			}
 			Variable(name) ->{
 				return `name;
 			}
