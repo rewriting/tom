@@ -25,4 +25,4 @@ Source: "share\*";      DestDir: "{app}\share"; Flags: recursesubdirs createalls
 ; add TOM_HOME to environmental variables
 Root: HKLM; Subkey:"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "TOM_HOME"; ValueData: "{app}"; Flags: deletevalue
 ; add %TOM_HOME%\bin to PATH variable
-Root: HKLM; Subkey:"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "%TOM_HOME%\bin"
+Root: HKLM; Subkey:"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};%TOM_HOME%\bin"
