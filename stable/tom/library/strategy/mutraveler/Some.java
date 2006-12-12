@@ -60,7 +60,7 @@ public class Some extends AbstractMuStrategy {
     if(position==null) {
       for (int i = 0; i < childCount; i++) {
         try { 
-          result = result.setChildAt(i,getArgument(ARG).visit(any.getChildAt(i))); 
+          result = result.setChildAt(i,visitors[ARG].visit(any.getChildAt(i))); 
           successCount++;
         } catch(VisitFailure f) { }
       }
@@ -68,7 +68,7 @@ public class Some extends AbstractMuStrategy {
       for (int i = 0; i < childCount; i++) {
         try { 
           position.down(i+1);
-          Visitable newChild = getArgument(ARG).visit(any.getChildAt(i));
+          Visitable newChild = visitors[ARG].visit(any.getChildAt(i));
           position.up();
           result = result.setChildAt(i,newChild); 
           successCount++;

@@ -164,8 +164,7 @@ public class Tom {
       if( handlers[i] instanceof ConsoleHandler ) {
         // search for the global console handler
         consoleHandler = handlers[i];
-        handlers[i].setFormatter((Formatter)Class.forName(
-                                                          LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter")).newInstance());
+        handlers[i].setFormatter((Formatter)Class.forName( LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter")).newInstance());
       } else if( handlers[i] instanceof FileHandler ) {
         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.FileHandler.formatter")).newInstance());
       } else if( handlers[i] instanceof SocketHandler ) {

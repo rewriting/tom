@@ -119,6 +119,10 @@ public class StatusHandler extends Handler {
   public RuntimeAlert getAlertForInput(String filePath) {
     return (RuntimeAlert)inputAlert.get(filePath);
   }
+  
+  public Map getAlertMap() {
+    return inputAlert;
+  }
 
   /**
    * This Handler keeps track of all LogRecords,  therefore this method always

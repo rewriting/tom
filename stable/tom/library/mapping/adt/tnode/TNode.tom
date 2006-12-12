@@ -1,14 +1,6 @@
 
 %include { string.tom }
 
-%include { int.tom }
-
-%include { double.tom }
-
-%include { long.tom }
-
-%include { float.tom }
-
 %typeterm TNode {
   implement { tom.library.adt.tnode.types.TNode }
   equals(t1,t2) { t1.equals(t2) }

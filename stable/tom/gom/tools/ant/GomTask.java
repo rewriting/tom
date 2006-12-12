@@ -51,6 +51,7 @@ import org.apache.tools.ant.taskdefs.Java;
  * <li>options</li>
  * <li>failonerror</li>
  * <li>fork</li>
+ * <li>reference</li>
  * <li></li>
  * </ul>
  * Of these arguments, the <b>srcdir</b> and <b>destdir</b> are
@@ -71,6 +72,7 @@ public class GomTask extends MatchingTask {
   private boolean verbose = false;
   private boolean failOnError = true;
   private boolean fork = false;
+  private boolean reference = false;
   private String protectedFileSeparator = "\\"+File.separatorChar;
 
   private Java javaRunner;
@@ -125,6 +127,22 @@ public class GomTask extends MatchingTask {
    */
   public boolean getFork() {
     return fork;
+  }
+
+  /**
+   * If true, asks the compiler for Gom signature with references.
+   * @param reference if true, asks the compiler for Gom signature with references
+   */
+  public void setReference(boolean reference) {
+    this.reference = reference;
+  }
+
+  /**
+   * Gets the reference flag.
+   * @return the reference flag
+   */
+  public boolean getReference() {
+    return reference;
   }
 
   /**
@@ -265,6 +283,10 @@ public class GomTask extends MatchingTask {
       if(getVerbose() == true) {
         javaRunner.createArg().setValue("--verbose");
       }
+      if(getReference() == true) {
+        javaRunner.createArg().setValue("--reference");
+      }
+
 
       for (int i = 0; i < compileList.length; i++) {
         javaRunner.createArg().setValue(compileList[i].getAbsolutePath());

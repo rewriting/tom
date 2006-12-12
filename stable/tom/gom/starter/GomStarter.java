@@ -69,7 +69,7 @@ public class GomStarter extends GomGenericPlugin {
     GomStreamManager newStreamManager = new GomStreamManager();
     newStreamManager.initializeFromOptionManager(getOptionManager());
     newStreamManager.prepareForInputFile(fileName);
-    argToRelay = new Object[]{newStreamManager};
+    argToRelay = new Object[]{ newStreamManager };
   }
 
   /**

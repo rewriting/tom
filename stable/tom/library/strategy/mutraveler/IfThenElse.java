@@ -53,15 +53,15 @@ public class IfThenElse extends AbstractMuStrategy {
     boolean success;
     Visitable result;
     try {
-      getArgument(CONDITION).visit(x);
+      visitors[CONDITION].visit(x);
       success = true;
     } catch (VisitFailure vf) {
       success = false;
     }
     if (success) {
-      result = getArgument(TRUE_CASE).visit(x);
+      result = visitors[TRUE_CASE].visit(x);
     } else {
-      result = getArgument(FALSE_CASE).visit(x);
+      result = visitors[FALSE_CASE].visit(x);
     }
     return result;
   }
