@@ -20,7 +20,7 @@ Source: "Gom.xml";      DestDir: "{app}"
 Source: "INSTALL";      DestDir: "{app}"
 Source: "LICENCE";      DestDir: "{app}"
 Source: "NEWS";         DestDir: "{app}"
-Source: "README";       DestDir: "{app}"; DestName: "README.txt"; Flags: isreadme
+Source: "README";       DestDir: "{app}"; DestName: "README.wri"; Flags: isreadme
 Source: "Tom.xml";      DestDir: "{app}"
 Source: "bin\*";        DestDir: "{app}\bin"
 Source: "lib\*";        DestDir: "{app}\lib"
