@@ -13,6 +13,7 @@ SourceDir=../../stable/dist
 OutputBaseFilename=TOM_2_4_setup
 OutputDir=../../utils/installKit
 LicenseFile=LICENCE
+ChangesEnvironment=yes
 
 [Files]
 Source: "AUTHORS";      DestDir: "{app}"
