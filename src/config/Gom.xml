@@ -57,7 +57,7 @@
     <plugin name='ReferenceExpander'
             class='tom.gom.expander.GomReferenceExpanderPlugin'/>
     <plugin name='Compiler'
-            class='tom.gom.compiler.GomCompilerPlugin'/>
+            class='tom.gom.compiler.CompilerPlugin'/>
     <plugin name='Backend'
             class='tom.gom.backend.GomBackendPlugin'/>
   </plugins>

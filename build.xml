@@ -411,6 +411,13 @@
 	 <include name="tom/engine/adt/Zenon.gom"/>
     </gomcompile>
 
+    <!-- adt for gom -->
+    <gomcompile srcdir="${src.src}"
+                package="tom.gom.adt"
+                destdir="${src.gen}">
+     <include name="tom/gom/adt/*.gom"/>
+    </gomcompile>
+
     <copy todir="${src.mapping}/adt">
       <fileset dir="${src.gen}/tom/library/adt" includes="**/*.tom"/>
       <fileset dir="${src.gen}/tom/platform/adt" includes="**/*.tom"/>
@@ -418,14 +425,6 @@
       <fileset dir="${src.gen}/tom/gom/adt" includes="**/*.tom"/>
     </copy>
 
-    <!-- adt for the verifier -->
-
-    <!-- adt for gom -->
-    <gomcompile srcdir="${src.src}"
-                package="tom.gom.adt"
-                destdir="${src.gen}">
-     <include name="tom/gom/adt/*.gom"/>
-    </gomcompile>
   </target>
 
   <target name="src" description="compile the TOM development sources" depends="prepare.src">

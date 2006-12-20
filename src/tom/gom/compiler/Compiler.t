@@ -45,7 +45,7 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-public class GomCompiler {
+public class Compiler {
 
   %include { ../adt/gom/Gom.tom}
   %include { ../adt/objects/Objects.tom}

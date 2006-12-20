@@ -37,10 +37,10 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.adt.objects.types.*;
 
 /**
- * The GomCompilerPlugin translates the algebraic specification into a set of
+ * The CompilerPlugin translates the algebraic specification into a set of
  * classes
  */
-public class GomCompilerPlugin extends GomGenericPlugin {
+public class CompilerPlugin extends GomGenericPlugin {
   
   public static final String COMPILED_SUFFIX = ".tfix.gom.compiled";
 
@@ -51,7 +51,7 @@ public class GomCompilerPlugin extends GomGenericPlugin {
   private GomClassList classList;
 
   /** The constructor*/
-  public GomCompilerPlugin() {
+  public CompilerPlugin() {
     super("GomCompiler");
   }
   
@@ -79,7 +79,7 @@ public class GomCompilerPlugin extends GomGenericPlugin {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
 
     getLogger().log(Level.INFO, "Start compilation");
-    GomCompiler compiler = new GomCompiler();
+    Compiler compiler = new Compiler();
     classList = compiler.compile(sortList);
     if(classList == null) {
       getLogger().log(Level.SEVERE, 
