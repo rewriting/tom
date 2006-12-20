@@ -15,6 +15,7 @@ import aterm.*;
 import aterm.pure.*;
 
 import antlr.types.*;
+import tom.gom.adt.gom.types.*;
 
 import java.io.*;
 
@@ -24,6 +25,7 @@ import utils.Tree2ATerm;
 public class Gomantlr {
 
     %include { antlr/antlr.tom }
+    //%include { tom/gom/adt/gom/Gom.tom}
 
     public static void main(String[] args) {
         try {
@@ -496,42 +498,4 @@ public class Gomantlr {
     private static Antlr_unrecognized get_antlr_unrecognized(ATerm t) {
         return `antlr_unrecognized(t);
     }
-
-    /*
-      %include { ../expr/Expr.tom }
-
-      %include { Mapping.tom }
-
-      private static RuleBase getGOMTree(ATerm t) {
-      %match(ATerm t) {
-      SEMI(_,(x,y)) -> {
-      RuleBase rb = `getGOMTree(y);
-      return `concStatement(getStatement(x),rb*);
-      }
-      SEMI(_,(x)) -> {
-      return `concStatement(getStatement(x));
-      }
-      }
-      throw new RuntimeException("Unable to translate " + t);
-      }
-
-      private static Statement getStatement(ATerm t) {
-      %match(ATerm t) {
-      EQUALS(_,(ID(NodeInfo[text=text],_),expr)) -> { return `Equal(Id(text),getExpr(expr)); }
-      }
-      throw new RuntimeException("Unable to translate " + t);
-      }
-
-      private static Expr getExpr(ATerm t) {
-      %match(t) {
-      NUM(NodeInfo[text=text],_) -> { return `Num(Integer.parseInt(text)); }
-      ID(NodeInfo[text=text],_)  -> { return `Id(text); }
-      MATHOP(NodeInfo[text="+"],(e1,e2)) -> { return `Plus(getExpr(e1),getExpr(e2)); }
-      MATHOP(NodeInfo[text="-"],(e1,e2)) -> { return `Minus(getExpr(e1),getExpr(e2)); }
-      MATHOP(NodeInfo[text="*"],(e1,e2)) -> { return `Mult(getExpr(e1),getExpr(e2)); }
-      MATHOP(NodeInfo[text="/"],(e1,e2)) -> { return `Div(getExpr(e1),getExpr(e2)); }
-      }
-      throw new RuntimeException("Unable to translate " + t);
-      }
-    */
 }
