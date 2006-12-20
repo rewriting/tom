@@ -14,7 +14,7 @@ import antlr.TokenStreamRewriteEngine;
 import aterm.*;
 import aterm.pure.*;
 
-import gomantlr.types.*;
+import antlr.types.*;
 
 import java.io.*;
 
@@ -23,7 +23,7 @@ import utils.Tree2ATerm;
 
 public class Gomantlr {
 
-    %include { gomantlr/Gomantlr.tom }
+    %include { antlr/antlr.tom }
 
     public static void main(String[] args) {
         try {
@@ -63,7 +63,7 @@ public class Gomantlr {
         }
     }
 
-    %include { ANTLRMapping.tom }
+    %include { antlr.tom }
 
     private static Antlr_grammar getGOMANTLRTree(ATerm t) {
         %match(t) {

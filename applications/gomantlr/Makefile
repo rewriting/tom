@@ -1,5 +1,5 @@
 all:
-	gom gomantlr.gom
+	gom antlr.gom
 	tom Gomantlr.t
 	javac *.java
 	java Gomantlr Java.g
@@ -8,4 +8,4 @@ clean:
 	cd utils;make clean
 	rm -f *.java
 	rm -f *.class
-	rm -rf gomantlr
+	rm -rf antlr

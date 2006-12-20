@@ -1,4 +1,4 @@
-module Gomantlr
+module antlr
 imports String int ATerm ATermList char
 abstract syntax
 
