@@ -59,7 +59,7 @@
     <plugin name='Compiler'
             class='tom.gom.compiler.CompilerPlugin'/>
     <plugin name='Backend'
-            class='tom.gom.backend.GomBackendPlugin'/>
+            class='tom.gom.backend.BackendPlugin'/>
   </plugins>
   <optionmanager class='tom.gom.GomOptionManager'>
     <options>

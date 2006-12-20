@@ -43,7 +43,7 @@ import tom.library.strategy.mutraveler.MuTraveler;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-public class GomBackend {
+public class Backend {
   TemplateFactory templatefactory;
   private File tomHomePath;
   private List importList = null;
@@ -51,7 +51,7 @@ public class GomBackend {
   %include { ../adt/objects/Objects.tom }
   %include { mustrategy.tom }
 
-  GomBackend(TemplateFactory templatefactory, File tomHomePath, List importList) {
+  Backend(TemplateFactory templatefactory, File tomHomePath, List importList) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
     this.importList = importList;
