@@ -47,7 +47,7 @@
     <plugin name='Starter'
             version=''
             description='Only here to initialize the environment'
-            class='tom.gom.starter.GomStarter'/>
+            class='tom.gom.starter.Starter'/>
     <plugin name='ANTLRMapperGomParser'
       class='tom.gom.parser.ANTLRMapperGomParserPlugin'/>
     <plugin name='Expander'

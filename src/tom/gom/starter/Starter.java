@@ -32,17 +32,17 @@ import tom.gom.tools.GomGenericPlugin;
 
 
 /**
- * The GomStarter "plugin". Only here to initialize the GomStreamManager
+ * The Starter "plugin". Only here to initialize the GomStreamManager
  * and to initalize the plugin platform set/getargs process with it
  */
-public class GomStarter extends GomGenericPlugin {
+public class Starter extends GomGenericPlugin {
 
   /** The args to set during run and to return */
   private Object[] argToRelay;
   /** Saved information during setArgs */
   private String fileName;
   
-  public GomStarter() {
+  public Starter() {
     super("GomStarter");
   }
 
