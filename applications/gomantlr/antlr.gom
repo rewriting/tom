@@ -2,59 +2,59 @@ module antlr
 imports String int ATerm ATermList char
 abstract syntax
 
-Antlr_grammar = antlr_COMBINED_GRAMMAR(id:Antlr_id,comment:Antlr_comment,options:Antlr_options,tokens:Antlr_tokens,scopes:Antlr_scopes,actions:Antlr_actions,rules:Antlr_rules)
-              | antlr_LEXER_GRAMMAR(id:Antlr_id,comment:Antlr_comment,options:Antlr_options,tokens:Antlr_tokens,scopes:Antlr_scopes,actions:Antlr_actions,rules:Antlr_rules)
+AntlrGrammar = antlrCombinedGrammar(id:AntlrId,comment:AntlrComment,options:AntlrOptions,tokens:AntlrTokens,scopes:AntlrScopes,actions:AntlrActions,rules:AntlrRules)
+              | antlrLexerGrammar(id:AntlrId,comment:AntlrComment,options:AntlrOptions,tokens:AntlrTokens,scopes:AntlrScopes,actions:AntlrActions,rules:AntlrRules)
 
-Antlr_id = antlr_ID(name:String)
+AntlrId = antlrId(name:String)
 
-Antlr_comment = antlr_nilcomment() | antlr_comment(comment:String)
+AntlrComment = antlrNilComment() | antlrComment(comment:String)
 
-Antlr_options = antlr_options(Antlr_option*)
+AntlrOptions = antlrOptions(AntlrOption*)
 
-Antlr_option = antlr_assign_value(id:Antlr_id,value:Antlr_value)
-             | antlr_assign_id(id:Antlr_id,src:Antlr_id)
-             | antlr_option(options:Antlr_unrecognized)
+AntlrOption = antlrAssignValue(id:AntlrId,value:AntlrValue)
+             | antlrAssignId(id:AntlrId,src:AntlrId)
+             | antlrOption(options:AntlrUnrecognized)
 
-Antlr_value = antlr_int(v:int)
+AntlrValue = antlrInt(v:int)
 
-Antlr_tokens = antlr_niltokens() | antlr_tokens(tokens:Antlr_unrecognized)
+AntlrTokens = antlrNilTokens() | antlrTokens(tokens:AntlrUnrecognized)
 
-Antlr_scopes = antlr_scopes(Antlr_scope*)
+AntlrScopes = antlrScopes(AntlrScope*)
 
-Antlr_scope =  antlr_scope(scope:Antlr_unrecognized)
+AntlrScope =  antlrScope(scope:AntlrUnrecognized)
 
-Antlr_actions = antlr_actions(Antlr_action*)
+AntlrActions = antlrActions(AntlrAction*)
 
-Antlr_action =  antlr_action(id:Antlr_id,action:String)
+AntlrAction =  antlrAction(id:AntlrId,action:String)
 
-Antlr_rules = antlr_rules(Antlr_rule*)
+AntlrRules = antlrRules(AntlrRule*)
 
-Antlr_rule =  antlr_rule(id:Antlr_id,modifier:Antlr_modifier,args:Antlr_args,ret:Antlr_ret,options:Antlr_options,scopes:Antlr_scopes,actions:Antlr_actions,element:Antlr_element,exceptions:Antlr_exceptions)
+AntlrRule =  antlrRule(id:AntlrId,modifier:AntlrModifier,args:AntlrArgs,ret:AntlrRet,options:AntlrOptions,scopes:AntlrScopes,actions:AntlrActions,element:AntlrElement,exceptions:AntlrExceptions)
 
-Antlr_modifier = antlr_nilmodifier() | antlr_modifier(modifier:String)
+AntlrModifier = antlrNilModifier() | antlrModifier(modifier:String)
 
-Antlr_args = antlr_nilargs() | antlr_args(args:Antlr_unrecognized)
+AntlrArgs = antlrNilArgs() | antlrArgs(args:AntlrUnrecognized)
 
-Antlr_ret = antlr_nilret() | antlr_ret(ret:Antlr_unrecognized)
+AntlrRet = antlrNilRet() | antlrRet(ret:AntlrUnrecognized)
 
-Antlr_exceptions = antlr_nilexceptions() | antlr_exceptions(exceptions:Antlr_unrecognized)
+AntlrExceptions = antlrNilExceptions() | antlrExceptions(exceptions:AntlrUnrecognized)
 
-Antlr_element = antlr_element(alt:Antlr_unrecognized)
-          | antlr_optional(options:Antlr_options,elt:Antlr_element)
-          | antlr_closure(options:Antlr_options,elt:Antlr_element)
-          | antlr_positiveclosure(options:Antlr_options,elt:Antlr_element)
-          | antlr_ruleref(rule:String)
-          | antlr_token(token:String)
-          | antlr_string(string:String)
-          | antlr_char(c:String)
-          | antlr_charrange(c1:String,c2:String)
-          | antlr_or(Antlr_element*)
-          | antlr_and(Antlr_element*)
-          | antlr_not(element:Antlr_element)
-          | antlr_sempred(s:String)
-          | antlr_eltaction(action:String)
-          | antlr_eltoptions(unrecoptions:Antlr_unrecognized)
-          | antlr_wildcard()
-          | antlr_epsilon()
+AntlrElement = antlrElement(alt:AntlrUnrecognized)
+          | antlrOptional(options:AntlrOptions,elt:AntlrElement)
+          | antlrClosure(options:AntlrOptions,elt:AntlrElement)
+          | antlrPositiveClosure(options:AntlrOptions,elt:AntlrElement)
+          | antlrRuleRef(rule:String)
+          | antlrToken(token:String)
+          | antlrString(string:String)
+          | antlrChar(c:String)
+          | antlrCharRange(c1:String,c2:String)
+          | antlrOr(AntlrElement*)
+          | antlrAnd(AntlrElement*)
+          | antlrNot(element:AntlrElement)
+          | antlrSempred(s:String)
+          | antlrEltAction(action:String)
+          | antlrEltOptions(unrecoptions:AntlrUnrecognized)
+          | antlrWildcard()
+          | antlrEpsilon()
 
-Antlr_unrecognized = antlr_unrecognized(aterm:ATerm)
+AntlrUnrecognized = antlrUnrecognized(aterm:ATerm)

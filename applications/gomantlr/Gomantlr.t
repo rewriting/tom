@@ -65,25 +65,25 @@ public class Gomantlr {
             }
             
             BufferedReader br = new BufferedReader(fr);
-            String tool_args[]= new String[1];
-            tool_args[0]=grammarFileName;
+            String toolArgs[]= new String[1];
+            toolArgs[0]=grammarFileName;
             
-            Tool tool=new Tool(tool_args);
+            Tool tool=new Tool(toolArgs);
             
             Grammar grammar=new Grammar(tool,grammarFileName,br);
-            Grammar lexergrammar=new Grammar(grammar.getLexerGrammar());
+            Grammar lexerGrammar=new Grammar(grammar.getLexerGrammar());
             
             GrammarAST ast=grammar.getGrammarTree();
-            GrammarAST lexerast=lexergrammar.getGrammarTree();
+            GrammarAST lexerAST=lexerGrammar.getGrammarTree();
             
-            ATerm astaterm=AST2ATerm.getATerm(ast,ANTLRParser._tokenNames);
-            ATerm lexerastaterm=AST2ATerm.getATerm(lexerast,ANTLRParser._tokenNames);
+            ATerm aterm=AST2ATerm.getATerm(ast,ANTLRParser._tokenNames);
+            ATerm lexerATerm=AST2ATerm.getATerm(lexerAST,ANTLRParser._tokenNames);
             
-            Antlr_grammar antlr_grammar=getGOMANTLRTree(astaterm);
-            Antlr_grammar antlr_lexergrammar=getGOMANTLRTree(lexerastaterm);
+            AntlrGrammar antlrGrammar=getGOMANTLRTree(aterm);
+            AntlrGrammar antlrLexerGrammar=getGOMANTLRTree(lexerATerm);
             
-            System.out.println(antlr_grammar);
-            System.out.println(antlr_lexergrammar);
+            System.out.println(antlrGrammar);
+            System.out.println(antlrLexerGrammar);
         } catch (Exception e) {
             System.err.println("exception: " + e);
             e.printStackTrace();
@@ -92,37 +92,37 @@ public class Gomantlr {
     
     %include { antlr.tom }
 
-    private static Antlr_grammar getGOMANTLRTree(ATerm t) {
+    private static AntlrGrammar getGOMANTLRTree(ATerm t) {
         %match(t) {
             COMBINED_GRAMMAR(_,(ID(NodeInfo(x,_,_),_),y*)) -> {
-                Antlr_id id=`get_antlr_id(x);
-                Antlr_comment comment=`get_antlr_comment(locate_antlr_comment(y));
-                Antlr_options options=`get_antlr_options(locate_antlr_options(y));
-                Antlr_tokens tokens=`get_antlr_tokens(locate_antlr_tokens(y));
-                Antlr_scopes scopes=`get_antlr_scopes(locate_antlr_scopes(y));
-                Antlr_actions actions=`get_antlr_actions(locate_antlr_actions(y));
-                Antlr_rules rules=`get_antlr_rules(locate_antlr_rules(y));
-                return `antlr_COMBINED_GRAMMAR(id,comment,options,tokens,scopes,actions,rules);
+                AntlrId id=`getAntlrId(x);
+                AntlrComment comment=`getAntlrComment(locateAntlrComment(y));
+                AntlrOptions options=`getAntlrOptions(locateAntlrOptions(y));
+                AntlrTokens tokens=`getAntlrTokens(locateAntlrTokens(y));
+                AntlrScopes scopes=`getAntlrScopes(locateAntlrScopes(y));
+                AntlrActions actions=`getAntlrActions(locateAntlrActions(y));
+                AntlrRules rules=`getAntlrRules(locateAntlrRules(y));
+                return `antlrCombinedGrammar(id,comment,options,tokens,scopes,actions,rules);
             }
             LEXER_GRAMMAR(_,(ID(NodeInfo(x,_,_),_),y*)) -> {
-                Antlr_id id=`get_antlr_id(x);
-                Antlr_comment comment=`get_antlr_comment(locate_antlr_comment(y));
-                Antlr_options options=`get_antlr_options(locate_antlr_options(y));
-                Antlr_tokens tokens=`get_antlr_tokens(locate_antlr_tokens(y));
-                Antlr_scopes scopes=`get_antlr_scopes(locate_antlr_scopes(y));
-                Antlr_actions actions=`get_antlr_actions(locate_antlr_actions(y));
-                Antlr_rules rules=`get_antlr_rules(locate_antlr_rules(y));
-                return `antlr_LEXER_GRAMMAR(id,comment,options,tokens,scopes,actions,rules);
+                AntlrId id=`getAntlrId(x);
+                AntlrComment comment=`getAntlrComment(locateAntlrComment(y));
+                AntlrOptions options=`getAntlrOptions(locateAntlrOptions(y));
+                AntlrTokens tokens=`getAntlrTokens(locateAntlrTokens(y));
+                AntlrScopes scopes=`getAntlrScopes(locateAntlrScopes(y));
+                AntlrActions actions=`getAntlrActions(locateAntlrActions(y));
+                AntlrRules rules=`getAntlrRules(locateAntlrRules(y));
+                return `antlrLexerGrammar(id,comment,options,tokens,scopes,actions,rules);
             }
         }
         return null;
     }
 
-    private static Antlr_id get_antlr_id(String s) {
-        return `antlr_ID(s);
+    private static AntlrId getAntlrId(String s) {
+        return `antlrId(s);
     }
 
-    private static String locate_antlr_comment(ATermList t) {
+    private static String locateAntlrComment(ATermList t) {
         %match(ATermList t) {
             (_*,DOC_COMMENT(NodeInfo(comment,_,_),_),_*) -> {
                 return `comment;
@@ -131,15 +131,15 @@ public class Gomantlr {
         return null;
     }
 
-    private static Antlr_comment get_antlr_comment(String s) {
+    private static AntlrComment getAntlrComment(String s) {
         if(s!=null) {
-            return `antlr_comment(s);
+            return `antlrComment(s);
         } else {
-            return `antlr_nilcomment();
+            return `antlrNilComment();
         }
     }
 
-    private static ATermList locate_antlr_options(ATermList t) {
+    private static ATermList locateAntlrOptions(ATermList t) {
         %match(ATermList t) {
             (_*,BLOCK(_,(OPTIONS(_,x),_)),_*) -> {
                 return `x;
@@ -151,33 +151,33 @@ public class Gomantlr {
         return `concATerm();
     }
 
-    private static Antlr_options get_antlr_options(ATermList t) {
+    private static AntlrOptions getAntlrOptions(ATermList t) {
         %match(ATermList t) {
             (x,y*) -> {
-                Antlr_options options=`get_antlr_options(y);
+                AntlrOptions options=`getAntlrOptions(y);
                 if(`x.getChildCount()!=0) {
-                    return `antlr_options(get_antlr_option(x),options*);
+                    return `antlrOptions(getAntlrOption(x),options*);
                 } else {
                     return options;
                 }
             }
         }
-        return `antlr_options();
+        return `antlrOptions();
     }
 
-    private static Antlr_option get_antlr_option(ATerm t) {
+    private static AntlrOption getAntlrOption(ATerm t) {
         %match(ATerm t) {
             ASSIGN(_,(ID(NodeInfo(name,_,_),_),ID(NodeInfo(src,_,_),_))) -> {
-                return `antlr_assign_id(get_antlr_id(name),get_antlr_id(src));
+                return `antlrAssignId(getAntlrId(name),getAntlrId(src));
             }
             ASSIGN(_,(ID(NodeInfo(name,_,_),_),INT(NodeInfo(value,_,_),_))) -> {
-                return `antlr_assign_value(get_antlr_id(name),antlr_int(Integer.parseInt(value)));
+                return `antlrAssignValue(getAntlrId(name),antlrInt(Integer.parseInt(value)));
             }
         }
-        return `antlr_option(antlr_unrecognized(t));
+        return `antlrOption(antlrUnrecognized(t));
     }
 
-    private static ATermList locate_antlr_tokens(ATermList t) {
+    private static ATermList locateAntlrTokens(ATermList t) {
         %match(ATermList t) {
             (_*,TOKENS(_,x),_*) -> {
                 return `x;
@@ -186,106 +186,106 @@ public class Gomantlr {
         return `concATerm();
     }
 
-    private static Antlr_tokens get_antlr_tokens(ATermList t) {
+    private static AntlrTokens getAntlrTokens(ATermList t) {
         if(t!=null && t.getChildCount()!=0) {
-            return `antlr_tokens(antlr_unrecognized(t));
+            return `antlrTokens(antlrUnrecognized(t));
         } else {
-            return `antlr_niltokens();
+            return `antlrNilTokens();
         }
     }
 
-    private static ATermList locate_antlr_scopes(ATermList t) {
+    private static ATermList locateAntlrScopes(ATermList t) {
         %match(ATermList t) {
             (x*,SCOPE(_,y),z*) -> {
-                ATermList lx=`locate_antlr_scopes(x);
-                ATermList lz=`locate_antlr_scopes(z);
+                ATermList lx=`locateAntlrScopes(x);
+                ATermList lz=`locateAntlrScopes(z);
                 return `concATerm(lx*,y,lz*);
             }
         }
         return `concATerm();
     }
 
-    private static Antlr_scopes get_antlr_scopes(ATermList t) {
+    private static AntlrScopes getAntlrScopes(ATermList t) {
         %match(ATermList t) {
             (x,y*) -> {
-                Antlr_scopes scopes=`get_antlr_scopes(y);
+                AntlrScopes scopes=`getAntlrScopes(y);
                 if(`x.getChildCount()!=0) {
-                    return `antlr_scopes(antlr_scope(get_antlr_unrecognized(x)),scopes*);
+                    return `antlrScopes(antlrScope(getAntlrUnrecognized(x)),scopes*);
                 } else {
                     return scopes;
                 }
             }
         }
-        return `antlr_scopes();
+        return `antlrScopes();
     }
 
-    private static ATermList locate_antlr_actions(ATermList t) {
+    private static ATermList locateAntlrActions(ATermList t) {
         %match(ATermList t) {
             (x*,AMPERSAND(_,y),z*) -> {
-                ATermList lx=`locate_antlr_actions(x);
-                ATermList lz=`locate_antlr_actions(z);
+                ATermList lx=`locateAntlrActions(x);
+                ATermList lz=`locateAntlrActions(z);
                 return `concATerm(lx*,y,lz*);
             }
         }
         return `concATerm();
     }
 
-    private static Antlr_actions get_antlr_actions(ATermList t) {
+    private static AntlrActions getAntlrActions(ATermList t) {
         %match(ATermList t) {
             (x,y*) -> {
                 %match(ATermList x) {
                     (ID(NodeInfo(name,_,_),_),ACTION(NodeInfo(action,_,_),_)) -> {
-                        Antlr_actions actions=`get_antlr_actions(y);
-                        return `antlr_actions(antlr_action(get_antlr_id(name),action),actions*);
+                        AntlrActions actions=`getAntlrActions(y);
+                        return `antlrActions(antlrAction(getAntlrId(name),action),actions*);
                     }
                 }
             }
         }
-        return `antlr_actions();
+        return `antlrActions();
     }
 
-    private static ATermList locate_antlr_rules(ATermList t) {
+    private static ATermList locateAntlrRules(ATermList t) {
         %match(ATermList t) {
             (x*,RULE(_,(y*,_)),z*) -> {
-                ATermList lx=`locate_antlr_rules(x);
-                ATermList lz=`locate_antlr_rules(z);
+                ATermList lx=`locateAntlrRules(x);
+                ATermList lz=`locateAntlrRules(z);
                 return `concATerm(lx*,y,lz*);
             }
         }
         return `concATerm();
     }
 
-    private static Antlr_rules get_antlr_rules(ATermList t) {
+    private static AntlrRules getAntlrRules(ATermList t) {
         %match(ATermList t) {
             (x,y*) -> {
-                Antlr_rule rule=`get_antlr_rule((ATermList)x);
+                AntlrRule rule=`getAntlrRule((ATermList)x);
                 if(rule!=null) {
-                    Antlr_rules rules=`get_antlr_rules(y);
-                    return `antlr_rules(rule,rules*);
+                    AntlrRules rules=`getAntlrRules(y);
+                    return `antlrRules(rule,rules*);
                 } else {
-                    return `get_antlr_rules(y);
+                    return `getAntlrRules(y);
                 }
             }
         }
         // we should not get here
-        return `antlr_rules();
+        return `antlrRules();
     }
 
-    private static Antlr_rule get_antlr_rule(ATermList t) {
+    private static AntlrRule getAntlrRule(ATermList t) {
         //System.out.println("rule: "+t);
         %match(ATermList t) {
             (ID(NodeInfo(x,_,_),_),y*) -> {
                 if(!`x.regionMatches(0,"synpred",0,7)) {
-                    Antlr_id id=`get_antlr_id(x);
-                    Antlr_modifier modifier=`get_antlr_modifier(locate_antlr_modifier(y));
-                    Antlr_args args=`get_antlr_args(locate_antlr_args(y));
-                    Antlr_ret ret=`get_antlr_ret(locate_antlr_ret(y));
-                    Antlr_options options=`get_antlr_options(locate_antlr_options(y));
-                    Antlr_scopes scopes=`get_antlr_scopes(locate_antlr_scopes(y));
-                    Antlr_actions actions=`get_antlr_actions(locate_antlr_actions(y));
-                    Antlr_element element=`get_antlr_orelement(locate_antlr_element(y));
-                    Antlr_exceptions exceptions=`get_antlr_exceptions(locate_antlr_exceptions(y));
-                    Antlr_rule resultat=`antlr_rule(id,modifier,args,ret,options,scopes,actions,element,exceptions);
+                    AntlrId id=`getAntlrId(x);
+                    AntlrModifier modifier=`getAntlrModifier(locateAntlrModifier(y));
+                    AntlrArgs args=`getAntlrArgs(locateAntlrArgs(y));
+                    AntlrRet ret=`getAntlrRet(locateAntlrRet(y));
+                    AntlrOptions options=`getAntlrOptions(locateAntlrOptions(y));
+                    AntlrScopes scopes=`getAntlrScopes(locateAntlrScopes(y));
+                    AntlrActions actions=`getAntlrActions(locateAntlrActions(y));
+                    AntlrElement element=`getAntlrOrElement(locateAntlrElement(y));
+                    AntlrExceptions exceptions=`getAntlrExceptions(locateAntlrExceptions(y));
+                    AntlrRule resultat=`antlrRule(id,modifier,args,ret,options,scopes,actions,element,exceptions);
                     System.out.println("rule: ("+id+","+element+")");
                     return resultat;
                 } else {
@@ -296,7 +296,7 @@ public class Gomantlr {
         return null;
     }
 
-    private static String locate_antlr_modifier(ATermList t) {
+    private static String locateAntlrModifier(ATermList t) {
         %match(ATermList t) {
             (PROTECTED(_,_),_*) -> {
                 return "protected";
@@ -314,15 +314,15 @@ public class Gomantlr {
         return null;
     }
 
-    private static Antlr_modifier get_antlr_modifier(String s) {
+    private static AntlrModifier getAntlrModifier(String s) {
         if(s!=null) {
-            return `antlr_modifier(s);
+            return `antlrModifier(s);
         } else {
-            return `antlr_nilmodifier();
+            return `antlrNilModifier();
         }
     }
 
-    private static ATerm locate_antlr_args(ATermList t) {
+    private static ATerm locateAntlrArgs(ATermList t) {
         %match(ATermList t) {
             (_*,ARG(_,x),_*) -> {
                 return `x;
@@ -331,15 +331,15 @@ public class Gomantlr {
         return null;
     }
 
-    private static Antlr_args get_antlr_args(ATerm t) {
+    private static AntlrArgs getAntlrArgs(ATerm t) {
         if(t!=null && t.getChildCount()!=0) {
-            return `antlr_args(antlr_unrecognized(t));
+            return `antlrArgs(antlrUnrecognized(t));
         } else {
-            return `antlr_nilargs();
+            return `antlrNilArgs();
         }
     }
 
-    private static ATerm locate_antlr_ret(ATermList t) {
+    private static ATerm locateAntlrRet(ATermList t) {
         %match(ATermList t) {
             (_*,RET(_,x),_*) -> {
                 return `x;
@@ -348,15 +348,15 @@ public class Gomantlr {
         return null;
     }
 
-    private static Antlr_ret get_antlr_ret(ATerm t) {
+    private static AntlrRet getAntlrRet(ATerm t) {
         if(t!=null && t.getChildCount()!=0) {
-            return `antlr_ret(antlr_unrecognized(t));
+            return `antlrRet(antlrUnrecognized(t));
         } else {
-            return `antlr_nilret();
+            return `antlrNilRet();
         }
     }
 
-    private static ATerm locate_antlr_exceptions(ATermList t) {
+    private static ATerm locateAntlrExceptions(ATermList t) {
         %match(ATermList t) {
             (_*,EXCEPTION(_,x)) -> {
                 return `x;
@@ -365,15 +365,15 @@ public class Gomantlr {
         return null;
     }
 
-    private static Antlr_exceptions get_antlr_exceptions(ATerm t) {
+    private static AntlrExceptions getAntlrExceptions(ATerm t) {
         if(t!=null) {
-            return `antlr_exceptions(antlr_unrecognized(t));
+            return `antlrExceptions(antlrUnrecognized(t));
         } else {
-            return `antlr_nilexceptions();
+            return `antlrNilExceptions();
         }
     }
 
-    private static ATermList locate_antlr_element(ATermList t) {
+    private static ATermList locateAntlrElement(ATermList t) {
         %match(ATermList t) {
             (_*,BLOCK(_,(OPTIONS(_,_),x*,_)),_*) -> {
                 return `x;
@@ -385,150 +385,150 @@ public class Gomantlr {
         return `concATerm();
     }
 
-    private static Antlr_element inner_get_antlr_orelement(ATermList t) {
-        Antlr_element e=`antlr_element(antlr_unrecognized(t));
+    private static AntlrElement inner_getAntlrOrElement(ATermList t) {
+        AntlrElement e=`antlrElement(antlrUnrecognized(t));
         %match(ATermList t) {
             () -> {
-                e=`antlr_or();
+                e=`antlrOr();
             }
             (x,y*) -> {
-                Antlr_element element=`inner_get_antlr_orelement(y);
-                e=`antlr_or(get_antlr_element(x),element*);
+                AntlrElement element=`inner_getAntlrOrElement(y);
+                e=`antlrOr(getAntlrElement(x),element*);
             }
         }
         return e;
     }
 
-    private static Antlr_element get_antlr_orelement(ATermList t) {
-        Antlr_element e=`antlr_element(antlr_unrecognized(t));
+    private static AntlrElement getAntlrOrElement(ATermList t) {
+        AntlrElement e=`antlrElement(antlrUnrecognized(t));
         %match(ATermList t) {
             () -> {
-                e=`antlr_or();
+                e=`antlrOr();
             }
             (x,y*) -> {
-                Antlr_element element=`inner_get_antlr_orelement(y);
-                e=`antlr_or(get_antlr_element(x),element*);
+                AntlrElement element=`inner_getAntlrOrElement(y);
+                e=`antlrOr(getAntlrElement(x),element*);
             }
         }
-        return normalize_element(e);
+        return normalizeElement(e);
     }
 
-    private static Antlr_element inner_get_antlr_andelement(ATermList t) {
-        Antlr_element e=`antlr_element(antlr_unrecognized(t));
+    private static AntlrElement inner_getAntlrAndElement(ATermList t) {
+        AntlrElement e=`antlrElement(antlrUnrecognized(t));
         %match(ATermList t) {
             () -> {
-                e=`antlr_and();
+                e=`antlrAnd();
             }
             (x,y*) -> {
-                Antlr_element element=`inner_get_antlr_andelement(y);
-                e=`antlr_and(get_antlr_element(x),element*);
+                AntlrElement element=`inner_getAntlrAndElement(y);
+                e=`antlrAnd(getAntlrElement(x),element*);
             }
         }
         return e;
     }
 
-    private static Antlr_element get_antlr_andelement(ATermList t) {
-        Antlr_element e=`antlr_element(antlr_unrecognized(t));
+    private static AntlrElement getAntlrAndElement(ATermList t) {
+        AntlrElement e=`antlrElement(antlrUnrecognized(t));
         %match(ATermList t) {
             () -> {
-                e=`antlr_and();
+                e=`antlrAnd();
             }
             (x,y*) -> {
-                Antlr_element element=`inner_get_antlr_andelement(y);
-                e=`antlr_and(get_antlr_element(x),element*);
+                AntlrElement element=`inner_getAntlrAndElement(y);
+                e=`antlrAnd(getAntlrElement(x),element*);
             }
         }
-        return normalize_element(e);
+        return normalizeElement(e);
     }
 
-    private static Antlr_element normalize_element(Antlr_element e) {
-        Antlr_element e1=e;
+    private static AntlrElement normalizeElement(AntlrElement e) {
+        AntlrElement e1=e;
         %match(e) {
-            antlr_and(antlr_sempred(_),y*) -> {
-                e1=`antlr_and(y*);
+            antlrAnd(antlrSempred(_),y*) -> {
+                e1=`antlrAnd(y*);
             }
-            antlr_or(antlr_sempred(_),y*) -> {
-                e1=`antlr_or(y*);
+            antlrOr(antlrSempred(_),y*) -> {
+                e1=`antlrOr(y*);
             }
         }
         %match(e1) {
-            antlr_and(x) -> {
+            antlrAnd(x) -> {
                 return `x;
             }
-            antlr_or(x) -> {
+            antlrOr(x) -> {
                 return `x;
             }
         }
         return e1;
     }
 
-    private static Antlr_element get_antlr_element(ATerm t) {
+    private static AntlrElement getAntlrElement(ATerm t) {
         %match(ATerm t) {
             ALT(_,(x*,_)) -> {
-                return `get_antlr_andelement(x);
+                return `getAntlrAndElement(x);
             }
             BLOCK(_,(x*,_)) -> {
-                return `get_antlr_orelement(x);
+                return `getAntlrOrElement(x);
             }
             SET(_,(x*)) -> {
-                return `get_antlr_orelement(x);
+                return `getAntlrOrElement(x);
             }
             CLOSURE(_,(x*)) -> {
-                Antlr_options options=`get_antlr_options(locate_antlr_options(x));
-                Antlr_element element=`get_antlr_orelement(locate_antlr_element(x));
-                return `antlr_closure(options,element);
+                AntlrOptions options=`getAntlrOptions(locateAntlrOptions(x));
+                AntlrElement element=`getAntlrOrElement(locateAntlrElement(x));
+                return `antlrClosure(options,element);
             }
             POSITIVE_CLOSURE(_,(x*)) -> {
-                Antlr_options options=`get_antlr_options(locate_antlr_options(x));
-                Antlr_element element=`get_antlr_orelement(locate_antlr_element(x));
-                return `antlr_positiveclosure(options,element);
+                AntlrOptions options=`getAntlrOptions(locateAntlrOptions(x));
+                AntlrElement element=`getAntlrOrElement(locateAntlrElement(x));
+                return `antlrPositiveClosure(options,element);
             }
             OPTIONAL(_,(x*)) -> {
-                Antlr_options options=`get_antlr_options(locate_antlr_options(x));
-                Antlr_element element=`get_antlr_orelement(locate_antlr_element(x));
-                return `antlr_optional(options,element);
+                AntlrOptions options=`getAntlrOptions(locateAntlrOptions(x));
+                AntlrElement element=`getAntlrOrElement(locateAntlrElement(x));
+                return `antlrOptional(options,element);
             }
             OPTIONS(_,x) -> {
-                return `antlr_eltoptions(antlr_unrecognized(x));
+                return `antlrEltOptions(antlrUnrecognized(x));
             }
             NOT(_,(x*)) -> {
-                return `antlr_not(get_antlr_orelement(x));
+                return `antlrNot(getAntlrOrElement(x));
             }
             CHAR_RANGE(_,(CHAR_LITERAL(NodeInfo(x,_,_),_),CHAR_LITERAL(NodeInfo(y,_,_),_))) -> {
-                return `antlr_charrange(x,y);
+                return `antlrCharRange(x,y);
             }
             WILDCARD(_,_) -> {
-                return `antlr_wildcard();
+                return `antlrWildcard();
             }
             SYN_SEMPRED(NodeInfo(x,_,_),_) -> {
-                return `antlr_sempred(x);
+                return `antlrSempred(x);
             }
             RULE_REF(NodeInfo(x,_,_),_) -> {
-                return `antlr_ruleref(x);
+                return `antlrRuleRef(x);
             }
             TOKEN_REF(NodeInfo(x,_,_),_) -> {
-                return `antlr_token(x);
+                return `antlrToken(x);
             }
             STRING_LITERAL(NodeInfo(x,_,_),_) -> {
-                return `antlr_string(x);
+                return `antlrString(x);
             }
             CHAR_LITERAL(NodeInfo(x,_,_),_) -> {
-                return `antlr_char(x);
+                return `antlrChar(x);
             }
             ACTION(NodeInfo(y,_,_),_) -> {
-                return `antlr_eltaction(y);
+                return `antlrEltAction(y);
             }
             EPSILON(_,_) -> {
-                return `antlr_epsilon();
+                return `antlrEpsilon();
             }
             _ -> {
-                return `antlr_element(antlr_unrecognized(t));
+                return `antlrElement(antlrUnrecognized(t));
             }
         }
         return null;
     }
 
-    private static Antlr_unrecognized get_antlr_unrecognized(ATerm t) {
-        return `antlr_unrecognized(t);
+    private static AntlrUnrecognized getAntlrUnrecognized(ATerm t) {
+        return `antlrUnrecognized(t);
     }
 }
