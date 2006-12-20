@@ -51,7 +51,7 @@
     <plugin name='ANTLRMapperGomParser'
       class='tom.gom.parser.ANTLRMapperGomParserPlugin'/>
     <plugin name='Expander'
-            class='tom.gom.expander.GomExpanderPlugin'/>
+            class='tom.gom.expander.ExpanderPlugin'/>
     <plugin name='TypeExpander'
             class='tom.gom.expander.GomTypeExpanderPlugin'/>
     <plugin name='ReferenceExpander'

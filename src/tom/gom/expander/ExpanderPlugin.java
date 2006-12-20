@@ -34,13 +34,13 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 
 /**
- * The responsability of the GomExpander plugin is to
+ * The responsability of the Expander plugin is to
  * parse the Gom files included by the module to be compiled
  *
  * Get the inputs files from GomStreamManager, parse and populate the
  * GomEnvironment
  */
-public class GomExpanderPlugin extends GomGenericPlugin {
+public class ExpanderPlugin extends GomGenericPlugin {
 
   public static final String EXPANDED_SUFFIX = ".tfix.gom.expanded";
 
@@ -50,7 +50,7 @@ public class GomExpanderPlugin extends GomGenericPlugin {
   private GomModuleList modules;
 
   /** The constructor*/
-  public GomExpanderPlugin() {
+  public ExpanderPlugin() {
     super("GomExpander");
   }
 
@@ -78,7 +78,7 @@ public class GomExpanderPlugin extends GomGenericPlugin {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
 
     getLogger().log(Level.INFO, "Start expanding");
-    GomExpander expander = new GomExpander(streamManager);
+    Expander expander = new Expander(streamManager);
     modules = expander.expand(module);
     if(modules == null) {
       getLogger().log(Level.SEVERE, 

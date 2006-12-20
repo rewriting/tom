@@ -47,13 +47,13 @@ import tom.platform.PlatformLogRecord;
 import antlr.RecognitionException;
 import antlr.TokenStreamException;
 
-public class GomExpander {
+public class Expander {
   private GomStreamManager streamManager;
   private String packagePrefix;
 
   %include { ../adt/gom/Gom.tom}
 
-  public GomExpander(GomStreamManager streamManager) {
+  public Expander(GomStreamManager streamManager) {
     this.streamManager = streamManager;
     packagePrefix= streamManager.getPackagePath().replace(File.separatorChar,'.');
   }
