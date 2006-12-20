@@ -1,3 +1,28 @@
+/*
+ *
+ * Gomantlr
+ *
+ * Copyright (c) 2006, INRIA
+ * Nancy, France.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * Eric Deplagne <Eric.Deplagne@loria.fr>
+ *
+ **/
+
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
@@ -15,22 +40,22 @@ import aterm.*;
 import aterm.pure.*;
 
 import antlr.types.*;
-import tom.gom.adt.gom.types.*;
+//import tom.gom.adt.gom.types.*;
 
 import java.io.*;
 
 import utils.AST2ATerm;
-import utils.Tree2ATerm;
+//import utils.Tree2ATerm;
 
 public class Gomantlr {
 
     %include { antlr/antlr.tom }
     //%include { tom/gom/adt/gom/Gom.tom}
-
+    
     public static void main(String[] args) {
         try {
             String grammarFileName = args[0];
-
+            
             FileReader fr = null;
             try {
                 fr = new FileReader(grammarFileName);
@@ -38,25 +63,25 @@ public class Gomantlr {
             catch (IOException ioe) {
                 System.err.println("IO exception on file "+grammarFileName+": " + ioe);
             }
-
+            
             BufferedReader br = new BufferedReader(fr);
             String tool_args[]= new String[1];
             tool_args[0]=grammarFileName;
-
+            
             Tool tool=new Tool(tool_args);
-
+            
             Grammar grammar=new Grammar(tool,grammarFileName,br);
             Grammar lexergrammar=new Grammar(grammar.getLexerGrammar());
-
+            
             GrammarAST ast=grammar.getGrammarTree();
             GrammarAST lexerast=lexergrammar.getGrammarTree();
-
-            ATerm astaterm=AST2ATerm.AST2ATerm(ast,ANTLRParser._tokenNames);
-            ATerm lexerastaterm=AST2ATerm.AST2ATerm(lexerast,ANTLRParser._tokenNames);
-
+            
+            ATerm astaterm=AST2ATerm.getATerm(ast,ANTLRParser._tokenNames);
+            ATerm lexerastaterm=AST2ATerm.getATerm(lexerast,ANTLRParser._tokenNames);
+            
             Antlr_grammar antlr_grammar=getGOMANTLRTree(astaterm);
             Antlr_grammar antlr_lexergrammar=getGOMANTLRTree(lexerastaterm);
-
+            
             System.out.println(antlr_grammar);
             System.out.println(antlr_lexergrammar);
         } catch (Exception e) {
@@ -64,7 +89,7 @@ public class Gomantlr {
             e.printStackTrace();
         }
     }
-
+    
     %include { antlr.tom }
 
     private static Antlr_grammar getGOMANTLRTree(ATerm t) {
@@ -107,10 +132,11 @@ public class Gomantlr {
     }
 
     private static Antlr_comment get_antlr_comment(String s) {
-        if(s!=null)
+        if(s!=null) {
             return `antlr_comment(s);
-        else
+        } else {
             return `antlr_nilcomment();
+        }
     }
 
     private static ATermList locate_antlr_options(ATermList t) {
@@ -129,10 +155,11 @@ public class Gomantlr {
         %match(ATermList t) {
             (x,y*) -> {
                 Antlr_options options=`get_antlr_options(y);
-                if(`x.getChildCount()!=0)
+                if(`x.getChildCount()!=0) {
                     return `antlr_options(get_antlr_option(x),options*);
-                else
+                } else {
                     return options;
+                }
             }
         }
         return `antlr_options();
@@ -160,10 +187,11 @@ public class Gomantlr {
     }
 
     private static Antlr_tokens get_antlr_tokens(ATermList t) {
-        if(t!=null  && t.getChildCount()!=0)
+        if(t!=null && t.getChildCount()!=0) {
             return `antlr_tokens(antlr_unrecognized(t));
-        else
+        } else {
             return `antlr_niltokens();
+        }
     }
 
     private static ATermList locate_antlr_scopes(ATermList t) {
@@ -181,10 +209,11 @@ public class Gomantlr {
         %match(ATermList t) {
             (x,y*) -> {
                 Antlr_scopes scopes=`get_antlr_scopes(y);
-                if(`x.getChildCount()!=0)
+                if(`x.getChildCount()!=0) {
                     return `antlr_scopes(antlr_scope(get_antlr_unrecognized(x)),scopes*);
-                else
+                } else {
                     return scopes;
+                }
             }
         }
         return `antlr_scopes();
@@ -233,9 +262,9 @@ public class Gomantlr {
                 if(rule!=null) {
                     Antlr_rules rules=`get_antlr_rules(y);
                     return `antlr_rules(rule,rules*);
-                }
-                else
+                } else {
                     return `get_antlr_rules(y);
+                }
             }
         }
         // we should not get here
@@ -259,9 +288,9 @@ public class Gomantlr {
                     Antlr_rule resultat=`antlr_rule(id,modifier,args,ret,options,scopes,actions,element,exceptions);
                     System.out.println("rule: ("+id+","+element+")");
                     return resultat;
-                }
-                else
+                } else {
                     return null;
+                }
             }
         }
         return null;
@@ -286,10 +315,11 @@ public class Gomantlr {
     }
 
     private static Antlr_modifier get_antlr_modifier(String s) {
-        if(s!=null)
+        if(s!=null) {
             return `antlr_modifier(s);
-        else
+        } else {
             return `antlr_nilmodifier();
+        }
     }
 
     private static ATerm locate_antlr_args(ATermList t) {
@@ -302,10 +332,11 @@ public class Gomantlr {
     }
 
     private static Antlr_args get_antlr_args(ATerm t) {
-        if(t!=null  && t.getChildCount()!=0)
+        if(t!=null && t.getChildCount()!=0) {
             return `antlr_args(antlr_unrecognized(t));
-        else
+        } else {
             return `antlr_nilargs();
+        }
     }
 
     private static ATerm locate_antlr_ret(ATermList t) {
@@ -318,10 +349,11 @@ public class Gomantlr {
     }
 
     private static Antlr_ret get_antlr_ret(ATerm t) {
-        if(t!=null  && t.getChildCount()!=0)
+        if(t!=null && t.getChildCount()!=0) {
             return `antlr_ret(antlr_unrecognized(t));
-        else
+        } else {
             return `antlr_nilret();
+        }
     }
 
     private static ATerm locate_antlr_exceptions(ATermList t) {
@@ -334,10 +366,11 @@ public class Gomantlr {
     }
 
     private static Antlr_exceptions get_antlr_exceptions(ATerm t) {
-        if(t!=null)
+        if(t!=null) {
             return `antlr_exceptions(antlr_unrecognized(t));
-        else
+        } else {
             return `antlr_nilexceptions();
+        }
     }
 
     private static ATermList locate_antlr_element(ATermList t) {
