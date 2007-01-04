@@ -1,0 +1,46 @@
+rule reflexive(r) -> \Ax.app(r,x,x).
+rule symmetric(r) -> \Ax.(\Ay.(app(r,x,y) => app(r,y,x))).
+rule transitive(r) -> \Ax.(\Ay.(\Az.( app(r,x,y) => app(r,y,z) => app(r,x,z) ))).
+rule equivalence(r) -> reflexive(r) /\ symmetric(r) /\ transitive(r).
+
+rule app(union(r1,r2),x,y) -> app(r1,x,y) \/ app(r2,x,y).
+rule app(composition(r1,r2),x,y) -> \Ez.(app(r1,x,z) /\ app(r2,z,y)).
+
+rule eq(x,y) -> \Ar.(reflexive(r) => app(r,x,y)).
+rule app(reflClsr(r),x,y) -> eq(x,y) \/ app(r,x,y).
+rule app(transClsr(r),x,y) -> app(r,x,y) \/ app(composition(r,transClsr(r)),x,y).
+rule app(symmClsr(r),x,y) ->  app(r,x,y) \/ app(r,y,x).
+
+rule app(reflTransClsr(r),x,y) -> app(union(reflClsr(r),transClsr(r)),x,y).
+rule app(symmReflTransClsr(r),x,y) -> app(union(symmClsr(r),reflTransClsr(r)),x,y).
+
+
+
+rule CR(r) -> \Ax.(\Ay.( app(symmReflTransClsr(r),x,y) =>  \Ez.( app(reflTransClsr(r),x,z) /\ app(reflTransClsr(r),y,z) ) )).
+commonReducedForm.
+
+
+rule confluent(r) -> \Ax.(\Au.(\Av.(  
+                        ( app(reflTransClsr(r),x,u) /\ app(reflTransClsr(r),x,v) ) 
+		         => \Ez.( app(reflTransClsr(r),u,z) /\ app(reflTransClsr(r),v,z) )  ))).
+commonReducedForm2.
+
+
+proof confluentImpliesCR: \Ar.(confluent(r) => CR(r)).
+auto.
+focus c1. rule. z.
+focus c2. remove.
+next.
+focus c2. remove.
+focus h1. rule.
+focus h1. rule.
+next. next.
+focus h1. rule.
+focus h1. rule.
+focus h1. rule.
+next.next.next.next.
+rule.rule.
+focus c2.remove.rule.
+
+
+

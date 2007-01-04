@@ -1,17 +1,68 @@
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+termrule appl(succ(t),l) -> succ(appl(t,l)).
+rule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+rule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+rule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+rule in(l,emptyset()) -> \B.
+rule in(l,P(a)) -> \En.(in(cons(n,l),A)).
+rule in(l,C(a)) -> \An.(in(cons(n,l),A)).
+
 rule eq(0,0) -> \T.
 rule eq(0,succ(x)) -> \B.
 rule eq(succ(x),0) -> \B.
 rule eq(succ(x),succ(y)) -> eq(x,y).
-termrule 0+y -> y.
-termrule succ(x)+y -> succ(x+y).
-termrule 0*y -> 0.
-termrule succ(x)*y -> x*y+y.
+rule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 
-rule N(n) -> \Af.(in(0,f) => \Ay.(in(y,f) => in(succ(y),f)) => in(n,f)).
+
+termrule 0 + y -> y.
+termrule succ(x)+y -> succ(x+y).
+termrule 0 * y -> 0.
+termrule succ(x) * y -> x * y + y.
+termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
+termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
+
+
+rule N(n) -> \AA.( in(cons(0,nil()),A) => ( \Ay.(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
 hered.
+rule in(l,fN(t)) -> N(appl(t,l)).
+
 
 
 proof l: eq(3+5,2*4).
 reduce.
 auto.
+
+
+proof lemme1: \Ax.( N(x) =>  eq(0,x) => eq(x,0) ).
+elim.elim.
+focus h1. rule. supset(fEq(S(0),one()),fEq(one(),S(0))).
+auto.reduce.axiom.
+next.
+auto.reduce. axiom.
+reduce.axiom.
+focus c2.remove.
+auto.
+reduce.
+auto.reduce.
+auto.
+
+
+
+proof eqsym: \Ax.(\Ay.( N(x) => N(y) => eq(x,y) => eq(y,x) )).
+elim.elim.elim.
+focus h1. rule. supset(fEq(one(),S(y0)),fEq(S(y0),one())).
+auto. reduce.
+focus h2. remove. 
+focus h3. remove. 
+focus c2. remove.
+theorem lemme1.
+focus h3. elim. y0.
+auto.
+next.
+auto.reduce.axiom.
+reduce.axiom.
+auto. reduce.
+
 
