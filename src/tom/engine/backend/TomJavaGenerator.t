@@ -250,4 +250,4 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
 			output.writeln(deep,"}");
 		}
 	}
-} // class TomJavaGenerator
+}

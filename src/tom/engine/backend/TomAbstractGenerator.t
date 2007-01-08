@@ -257,7 +257,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       EqualFunctionSymbol(type, exp, RecordAppl[NameList=(nameAST@Name(opName))]) -> {
         if(getSymbolTable(moduleName).isBuiltinType(getTomType(`type))) {
           TomSymbol tomSymbol = getSymbolTable(moduleName).getSymbolFromName(`opName);
-          if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+          if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol) || hasIsFsymDecl(tomSymbol)) {
             generateExpression(deep,`IsFsym(nameAST,exp), moduleName);
           } else {
             generateExpression(deep,`EqualTerm(type,BuildConstant(nameAST),exp), moduleName);

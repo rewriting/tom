@@ -148,9 +148,11 @@ public class TomExpander extends TomGenericPlugin {
       TomSymbol tomSymbol = getSymbolFromName(tomName);
 
       /*
-       * add default isFsym and make HERE
+       * add default isFsym and make HERE, unless it is a builtin type
        */
-      tomSymbol = addDefaultIsFSym(tomSymbol);
+      if (!getStreamManager().getSymbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol)))) {
+        tomSymbol = addDefaultIsFSym(tomSymbol);
+      }
       try {
         //TomTerm term = (TomTerm) expandStrategy.visit(`TomSymbolToTomTerm(tomSymbol));
         //tomSymbol = term.getAstSymbol();
