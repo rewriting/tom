@@ -28,6 +28,10 @@
  */
 package bytecode;
 
+/* 
+ *  Secure class loader that replaces all call to read() by secureRead()
+ *  option of java command : java -Djava.system.class.loader=bytecode.SClassLoader
+ */
 
 public class SClassLoader extends ClassLoader {
   

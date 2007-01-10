@@ -48,7 +48,7 @@ public class SimplePDP {
   public ResponseCtx evaluate(RequestCtx request){
     //		module FilePolicyModule is provided to access policies as files
     FilePolicyModule policyModule = new FilePolicyModule();
-    policyModule.addPolicy("policy.xml");
+    policyModule.addPolicy("/Users/balland/workspace/jtom/examples//bytecode/policy.xml");
 
     //CurrentEnvModule provides values for the current time, date, and dateTime
     CurrentEnvModule envModule = new CurrentEnvModule();
