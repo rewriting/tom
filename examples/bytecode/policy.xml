@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="urn:oasis:names:tc:xacml:1.0:policy 
+  http://www.oasis-open.org/tc/xacml/1.0/cs-xacml-schema-policy-01.xsd" 
+  PolicyId="identifier:example:SimplePolicy1" 
+  RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:deny-overrides">
+
+  <Description> 
+    Security policy for Secure Access Application 
+  </Description> 
+
+  <Target> 
+    <Subjects> 
+      <AnySubject/> 
+    </Subjects> 
+    <Resources> 
+      <AnyResource/> 
+    </Resources> 
+    <Actions> 
+      <AnyAction/> 
+    </Actions> 
+  </Target> 
+
+  <Rule 
+    RuleId= "urn:oasis:names:tc:xacml:1.0:example:SimpleRule1" 
+    Effect="Permit">
+    <Target> 
+      <Subjects> 
+        <Subject> 
+          <AnySubject/>
+        </Subject> 
+      </Subjects> 
+      <Resource>
+        <Attribute AttributeId="urn:oasis:names:tc:xacml:1.0:resource:ufspath"
+          DataType="http://www.w3.org/2001/XMLSchema#anyURI">
+          <AttributeValue>toto.txt</AttributeValue>
+        </Attribute>
+      </Resource>
+
+      <Actions> 
+        <AnyAction/> 
+      </Actions> 
+    </Target>
+
+  </Rule> 
+</Policy>  

@@ -29,34 +29,45 @@
 package bytecode;
 
 
-public class SClassLoader extends ClassLoader {
-  
-  public SClassLoader(ClassLoader parent) {
-    super(parent);
-  }
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-  public SClassLoader() {
-    super();
-  }
+import com.sun.xacml.PDP;
+import com.sun.xacml.PDPConfig;
+import com.sun.xacml.ctx.RequestCtx;
+import com.sun.xacml.ctx.ResponseCtx;
+import com.sun.xacml.finder.AttributeFinder;
+import com.sun.xacml.finder.PolicyFinder;
+import com.sun.xacml.finder.impl.CurrentEnvModule;
+import com.sun.xacml.finder.impl.FilePolicyModule;
 
-  public synchronized Class loadClass(String name)throws ClassNotFoundException{
-    if (!(name.startsWith("java.")) && !(name.equals("SecureAccess")) 
-        && !(name.startsWith("javax.")) && !(name.startsWith("com."))
-        && !(name.startsWith("sun.")) && !(name.startsWith("org."))){
-      //Classes qui posent probleme:
-      //Object
-      //Throwable -> Tom getInstructionList : probl?me pour les methodes qui ne contiennent pas des instructions 
-      //Exception -> Prohibited package name: java.lang
-      System.out.println("Transforming file " + name);
-      Transformer t = new Transformer();
-      byte[] scode = t.transformer(name);
-      Class sClass = defineClass(name,scode, 0, scode.length) ;
-      return loadClass(name,true);
-        }
-    else{
-      Class sClass = loadClass(name,false);
-      return sClass;
-    }
-  }
 
+public class SimplePDP {
+  public ResponseCtx evaluate(RequestCtx request){
+    //		module FilePolicyModule is provided to access policies as files
+    FilePolicyModule policyModule = new FilePolicyModule();
+    policyModule.addPolicy("policy.xml");
+
+    //CurrentEnvModule provides values for the current time, date, and dateTime
+    CurrentEnvModule envModule = new CurrentEnvModule();
+
+    //The two modules are provided to the PDP through finders
+    PolicyFinder policyFinder = new PolicyFinder();
+    Set policyModules = new HashSet();
+    policyModules.add(policyModule);
+    policyFinder.setModules(policyModules);
+
+    AttributeFinder attrFinder = new AttributeFinder();
+    List attrModules = new ArrayList();
+    attrModules.add(envModule);
+    attrFinder.setModules(attrModules);
+
+    //With these finders defined, we can create a new PDP and 
+    //configure it with the modules using the PDPConfig class
+    PDP pdp = new PDP(new PDPConfig(attrFinder, policyFinder, null));
+
+    return pdp.evaluate(request);
+  }
 }
