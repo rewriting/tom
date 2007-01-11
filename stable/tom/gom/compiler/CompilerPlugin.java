@@ -22,7 +22,7 @@
  * 
  **/
 
-package tom.gom.expander;
+package tom.gom.compiler;
 
 import java.util.logging.Level;
 
@@ -30,42 +30,43 @@ import tom.platform.PlatformLogRecord;
 import tom.engine.tools.Tools;
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
-import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 
+import tom.gom.adt.gom.types.*;
+
+import tom.gom.adt.objects.types.*;
+
 /**
- * The responsability of the GomExpander plugin is to
- * parse the Gom files included by the module to be compiled
- *
- * Get the inputs files from GomStreamManager, parse and populate the
- * GomEnvironment
+ * The CompilerPlugin translates the algebraic specification into a set of
+ * classes
  */
-public class GomExpanderPlugin extends GomGenericPlugin {
+public class CompilerPlugin extends GomGenericPlugin {
+  
+  public static final String COMPILED_SUFFIX = ".tfix.gom.compiled";
 
-  public static final String EXPANDED_SUFFIX = ".tfix.gom.expanded";
+  /** the list of sorts to compile */
+  private SortList sortList;
 
-  /** the input module */
-  private GomModule module;
-  /** the list of included modules */
-  private GomModuleList modules;
+  /** the list of compiled classes */
+  private GomClassList classList;
 
   /** The constructor*/
-  public GomExpanderPlugin() {
-    super("GomExpander");
+  public CompilerPlugin() {
+    super("GomCompiler");
   }
-
+  
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
    */
   public void setArgs(Object arg[]) {
-    if (arg[0] instanceof GomModule) {
-      module = (GomModule)arg[0];
+    if (arg[0] instanceof SortList) {
+      sortList = (SortList)arg[0];
       setStreamManager((GomStreamManager)arg[1]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomExpander", "[GomModule,GomStreamManager]",
+          new Object[]{"GomCompiler", "[SortList,GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
@@ -77,29 +78,30 @@ public class GomExpanderPlugin extends GomGenericPlugin {
   public void run() {
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
 
-    getLogger().log(Level.INFO, "Start expanding");
-    GomExpander expander = new GomExpander(streamManager);
-    modules = expander.expand(module);
-    if(modules == null) {
+    getLogger().log(Level.INFO, "Start compilation");
+    Compiler compiler = new Compiler();
+    classList = compiler.compile(sortList);
+    if(classList == null) {
       getLogger().log(Level.SEVERE, 
-          GomMessage.expansionIssue.getMessage(),
+          GomMessage.compilationIssue.getMessage(),
           streamManager.getInputFileName());
     } else {
-      getLogger().log(Level.FINE, "Imported Modules: {0}",modules);
-      getLogger().log(Level.INFO, "Expansion succeeds");
+      getLogger().log(Level.FINE, "Compiled Modules: {0}",classList);
+      getLogger().log(Level.INFO, "Compilation succeeds");
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
-            + EXPANDED_SUFFIX, (aterm.ATerm)modules.toATerm());
+            + COMPILED_SUFFIX, (aterm.ATerm)classList.toATerm());
       }
     }
   }
 
   /**
    * inherited from plugin interface
-   * returns an array containing the parsed module and the streamManager
+   * returns an array containing the compiled classes and the streamManager
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{modules, getStreamManager()};
+    return new Object[]{classList, getStreamManager()};
   }
+
 }

@@ -39,15 +39,15 @@ import tom.gom.tools.GomGenericPlugin;
 import tom.gom.adt.objects.types.*;
 
 /**
- * The GomBackendPlugin handle the code generation
+ * The BackendPlugin handle the code generation
  */
-public class GomBackendPlugin extends GomGenericPlugin {
+public class BackendPlugin extends GomGenericPlugin {
 
   /** the list of compiled classes */
   private GomClassList classList;
 
   /** The constructor*/
-  public GomBackendPlugin() {
+  public BackendPlugin() {
     super("GomBackend");
   }
 
@@ -61,7 +61,7 @@ public class GomBackendPlugin extends GomGenericPlugin {
    * inherited from OptionOwner interface (plugin)
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return OptionParser.xmlToOptionList(GomBackendPlugin.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(BackendPlugin.DECLARED_OPTIONS);
   }
 
   /**
@@ -102,7 +102,7 @@ public class GomBackendPlugin extends GomGenericPlugin {
       getLogger().log(Level.FINER,"Failed to get canonical path for " + tomHome);
     }
 
-    GomBackend backend = new GomBackend(TemplateFactory.getFactory(backendType), 
+    Backend backend = new Backend(TemplateFactory.getFactory(backendType), 
     		tomHomePath, streamManager.getImportList());
     backend.generate(classList);
     if(classList == null) {
