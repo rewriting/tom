@@ -104,18 +104,18 @@ public class ToolBox {
       map.put(accessObj[i],new Integer(accessFlags[i]));
     }
 
-     if(list instanceof  tom.library.adt.bytecode.types.TAccessList ) { { tom.library.adt.bytecode.types.TAccessList  tom_match1_1=(( tom.library.adt.bytecode.types.TAccessList )list); if ( ( tom_is_fun_sym_AccessList(tom_match1_1) ||  false  ) ) { { tom.library.adt.bytecode.types.TAccessList  tom_match1_1_list1=tom_match1_1; { tom.library.adt.bytecode.types.TAccessList  tom_match1_1_begin1=tom_match1_1_list1; { tom.library.adt.bytecode.types.TAccessList  tom_match1_1_end1=tom_match1_1_list1; { while (!(tom_is_empty_AccessList_TAccessList(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1; { { tom.library.adt.bytecode.types.TAccess  tom_acc=tom_get_head_AccessList_TAccessList(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_AccessList_TAccessList(tom_match1_1_list1); {boolean tom_match1_tom_anti_constraints_status= true ; if ((tom_match1_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(list instanceof  tom.library.adt.bytecode.types.TAccessList ) { { tom.library.adt.bytecode.types.TAccessList  tom_match1_1=(( tom.library.adt.bytecode.types.TAccessList )list); if ( ( tom_is_fun_sym_AccessList(tom_match1_1) ||  false  ) ) { { tom.library.adt.bytecode.types.TAccessList  tom_match1_1_list1=tom_match1_1; { tom.library.adt.bytecode.types.TAccessList  tom_match1_1_begin1=tom_match1_1_list1; { tom.library.adt.bytecode.types.TAccessList  tom_match1_1_end1=tom_match1_1_list1; { while (!(tom_is_empty_AccessList_TAccessList(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1; { { tom.library.adt.bytecode.types.TAccessList  tom_match1_1_end2=tom_match1_1_list1; { { tom.library.adt.bytecode.types.TAccess  tom_acc=tom_get_head_AccessList_TAccessList(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_AccessList_TAccessList(tom_match1_1_list1); if ( true ) {
 
         value = value | ((Integer)map.get(tom_acc)).intValue();
-       } } } }tom_match1_1_end1=tom_get_tail_AccessList_TAccessList(tom_match1_1_end1); } }tom_match1_1_list1=tom_match1_1_begin1; } } } } } } }
+       } }tom_match1_1_list1=tom_match1_1_end2; } }tom_match1_1_end1=tom_get_tail_AccessList_TAccessList(tom_match1_1_end1); } }tom_match1_1_list1=tom_match1_1_begin1; } } } } } } }
 
     return value;   
   }
 
   public static String buildSignature(TSignature signature){
     String sig = null;
-     if(signature instanceof  tom.library.adt.bytecode.types.TSignature ) { { tom.library.adt.bytecode.types.TSignature  tom_match2_1=(( tom.library.adt.bytecode.types.TSignature )signature); if ( ( tom_is_fun_sym_Signature(tom_match2_1) ||  false  ) ) { { String  tom_match2_1_sig=tom_get_slot_Signature_sig(tom_match2_1); { String  tom_s=tom_match2_1_sig; {boolean tom_match2_tom_anti_constraints_status= true ; if ((tom_match2_tom_anti_constraints_status ==  true )) { if ( true ) {
-sig=tom_s; } } } } } } } }
+     if(signature instanceof  tom.library.adt.bytecode.types.TSignature ) { { tom.library.adt.bytecode.types.TSignature  tom_match2_1=(( tom.library.adt.bytecode.types.TSignature )signature); if ( ( tom_is_fun_sym_Signature(tom_match2_1) ||  false  ) ) { { String  tom_s=tom_get_slot_Signature_sig(tom_match2_1); if ( true ) {
+sig=tom_s; } } } } }
 
     return sig;
   }
@@ -136,12 +136,12 @@ sig=tom_s; } } } } } } } }
   }
 
   public static Object buildConstant(TValue value) {
-       if(value instanceof  tom.library.adt.bytecode.types.TValue ) { { tom.library.adt.bytecode.types.TValue  tom_match3_1=(( tom.library.adt.bytecode.types.TValue )value); if ( ( tom_is_fun_sym_StringValue(tom_match3_1) ||  false  ) ) { { String  tom_match3_1_s=tom_get_slot_StringValue_s(tom_match3_1); { String  tom_v=tom_match3_1_s; {boolean tom_match3_tom_anti_constraints_status= true ; if ((tom_match3_tom_anti_constraints_status ==  true )) { if ( true ) {
- return tom_v; } } } } } } if ( ( tom_is_fun_sym_IntValue(tom_match3_1) ||  false  ) ) { { int  tom_match3_1_i=tom_get_slot_IntValue_i(tom_match3_1); { int  tom_v=tom_match3_1_i; {boolean tom_match3_tom_anti_constraints_status= true ; if ((tom_match3_tom_anti_constraints_status ==  true )) { if ( true ) {
-return new Integer(tom_v); } } } } } } if ( ( tom_is_fun_sym_LongValue(tom_match3_1) ||  false  ) ) { { long  tom_match3_1_l=tom_get_slot_LongValue_l(tom_match3_1); { long  tom_v=tom_match3_1_l; {boolean tom_match3_tom_anti_constraints_status= true ; if ((tom_match3_tom_anti_constraints_status ==  true )) { if ( true ) {
-return new Long(tom_v); } } } } } } if ( ( tom_is_fun_sym_FloatValue(tom_match3_1) ||  false  ) ) { { float  tom_match3_1_f=tom_get_slot_FloatValue_f(tom_match3_1); { float  tom_v=tom_match3_1_f; {boolean tom_match3_tom_anti_constraints_status= true ; if ((tom_match3_tom_anti_constraints_status ==  true )) { if ( true ) {
-return new Float(tom_v); } } } } } } if ( ( tom_is_fun_sym_DoubleValue(tom_match3_1) ||  false  ) ) { { double  tom_match3_1_d=tom_get_slot_DoubleValue_d(tom_match3_1); { double  tom_v=tom_match3_1_d; {boolean tom_match3_tom_anti_constraints_status= true ; if ((tom_match3_tom_anti_constraints_status ==  true )) { if ( true ) {
-return new Double(tom_v); } } } } } } } }
+       if(value instanceof  tom.library.adt.bytecode.types.TValue ) { { tom.library.adt.bytecode.types.TValue  tom_match3_1=(( tom.library.adt.bytecode.types.TValue )value); if ( ( tom_is_fun_sym_StringValue(tom_match3_1) ||  false  ) ) { { String  tom_v=tom_get_slot_StringValue_s(tom_match3_1); if ( true ) {
+ return tom_v; } } } if ( ( tom_is_fun_sym_IntValue(tom_match3_1) ||  false  ) ) { { int  tom_v=tom_get_slot_IntValue_i(tom_match3_1); if ( true ) {
+return new Integer(tom_v); } } } if ( ( tom_is_fun_sym_LongValue(tom_match3_1) ||  false  ) ) { { long  tom_v=tom_get_slot_LongValue_l(tom_match3_1); if ( true ) {
+return new Long(tom_v); } } } if ( ( tom_is_fun_sym_FloatValue(tom_match3_1) ||  false  ) ) { { float  tom_v=tom_get_slot_FloatValue_f(tom_match3_1); if ( true ) {
+return new Float(tom_v); } } } if ( ( tom_is_fun_sym_DoubleValue(tom_match3_1) ||  false  ) ) { { double  tom_v=tom_get_slot_DoubleValue_d(tom_match3_1); if ( true ) {
+return new Double(tom_v); } } } } }
 
       return null;
   }
@@ -294,28 +294,28 @@ return new Double(tom_v); } } } } } } } }
     return tom_make_MethodDescriptor(fList,ret);
   }
 
-   private static class BuildDescriptor  extends  tom.library.adt.bytecode.BytecodeBasicStrategy   { private  StringBuffer  sb;  public BuildDescriptor(  StringBuffer  sb ) { super(tom_make_Identity() ); this.sb=sb; } public  StringBuffer  getsb() { return sb;} public int getChildCount() { return 1; } public jjtraveler.Visitable getChildAt(int i) { switch (i) { case 0: return super.getChildAt(0); default: throw new IndexOutOfBoundsException(); }} public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) { switch (i) { case 0: return super.setChildAt(0, child); default: throw new IndexOutOfBoundsException(); }} public  tom.library.adt.bytecode.types.TFieldDescriptor  visit_TFieldDescriptor(  tom.library.adt.bytecode.types.TFieldDescriptor  tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.library.adt.bytecode.types.TFieldDescriptor ) { { tom.library.adt.bytecode.types.TFieldDescriptor  tom_match4_1=(( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg); if ( ( tom_is_fun_sym_ObjectType(tom_match4_1) ||  false  ) ) { { String  tom_match4_1_className=tom_get_slot_ObjectType_className(tom_match4_1); { String  tom_className=tom_match4_1_className; {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
+   private static class BuildDescriptor  extends  tom.library.adt.bytecode.BytecodeBasicStrategy   { private  StringBuffer  sb;  public BuildDescriptor(  StringBuffer  sb ) { super(tom_make_Identity() ); this.sb=sb; } public  StringBuffer  getsb() { return sb;} public int getChildCount() { return 1; } public jjtraveler.Visitable getChildAt(int i) { switch (i) { case 0: return super.getChildAt(0); default: throw new IndexOutOfBoundsException(); }} public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) { switch (i) { case 0: return super.setChildAt(0, child); default: throw new IndexOutOfBoundsException(); }} public  tom.library.adt.bytecode.types.TFieldDescriptor  visit_TFieldDescriptor(  tom.library.adt.bytecode.types.TFieldDescriptor  tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.library.adt.bytecode.types.TFieldDescriptor ) { { tom.library.adt.bytecode.types.TFieldDescriptor  tom_match4_1=(( tom.library.adt.bytecode.types.TFieldDescriptor )tom__arg); if ( ( tom_is_fun_sym_ObjectType(tom_match4_1) ||  false  ) ) { { String  tom_className=tom_get_slot_ObjectType_className(tom_match4_1); if ( true ) {
 
 
- sb.append("L" + tom_className+ ";");  } } } } } } if ( ( tom_is_fun_sym_ArrayType(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('[');  } } } } if ( ( tom_is_fun_sym_B(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('B');  } } } } if ( ( tom_is_fun_sym_C(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('C');  } } } } if ( ( tom_is_fun_sym_D(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('D');  } } } } if ( ( tom_is_fun_sym_F(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('F');  } } } } if ( ( tom_is_fun_sym_I(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('I');  } } } } if ( ( tom_is_fun_sym_J(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('J');  } } } } if ( ( tom_is_fun_sym_S(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('S');  } } } } if ( ( tom_is_fun_sym_Z(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('Z');  } } } } } } return super.visit_TFieldDescriptor(tom__arg) ;  } public  tom.library.adt.bytecode.types.TMethodDescriptor  visit_TMethodDescriptor(  tom.library.adt.bytecode.types.TMethodDescriptor  tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.library.adt.bytecode.types.TMethodDescriptor ) { { tom.library.adt.bytecode.types.TMethodDescriptor  tom_match5_1=(( tom.library.adt.bytecode.types.TMethodDescriptor )tom__arg); {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
-
-
-
- sb.append('(');  } } } } } return super.visit_TMethodDescriptor(tom__arg) ;  } public  tom.library.adt.bytecode.types.TReturnDescriptor  visit_TReturnDescriptor(  tom.library.adt.bytecode.types.TReturnDescriptor  tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.library.adt.bytecode.types.TReturnDescriptor ) { { tom.library.adt.bytecode.types.TReturnDescriptor  tom_match6_1=(( tom.library.adt.bytecode.types.TReturnDescriptor )tom__arg); {boolean tom_match6_tom_anti_constraints_status= true ; if ((tom_match6_tom_anti_constraints_status ==  true )) { if ( true ) {
+ sb.append("L" + tom_className+ ";");  } } } if ( ( tom_is_fun_sym_ArrayType(tom_match4_1) ||  false  ) ) { if ( true ) {
+ sb.append('[');  } } if ( ( tom_is_fun_sym_B(tom_match4_1) ||  false  ) ) { if ( true ) {
+ sb.append('B');  } } if ( ( tom_is_fun_sym_C(tom_match4_1) ||  false  ) ) { if ( true ) {
+ sb.append('C');  } } if ( ( tom_is_fun_sym_D(tom_match4_1) ||  false  ) ) { if ( true ) {
+ sb.append('D');  } } if ( ( tom_is_fun_sym_F(tom_match4_1) ||  false  ) ) { if ( true ) {
+ sb.append('F');  } } if ( ( tom_is_fun_sym_I(tom_match4_1) ||  false  ) ) { if ( true ) {
+ sb.append('I');  } } if ( ( tom_is_fun_sym_J(tom_match4_1) ||  false  ) ) { if ( true ) {
+ sb.append('J');  } } if ( ( tom_is_fun_sym_S(tom_match4_1) ||  false  ) ) { if ( true ) {
+ sb.append('S');  } } if ( ( tom_is_fun_sym_Z(tom_match4_1) ||  false  ) ) { if ( true ) {
+ sb.append('Z');  } } } } return super.visit_TFieldDescriptor(tom__arg) ;  } public  tom.library.adt.bytecode.types.TMethodDescriptor  visit_TMethodDescriptor(  tom.library.adt.bytecode.types.TMethodDescriptor  tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.library.adt.bytecode.types.TMethodDescriptor ) { if ( true ) {
 
 
 
- sb.append(')');  } } } if ( ( tom_is_fun_sym_Void(tom_match6_1) ||  false  ) ) { {boolean tom_match6_tom_anti_constraints_status= true ; if ((tom_match6_tom_anti_constraints_status ==  true )) { if ( true ) {
- sb.append('V');  } } } } } } return super.visit_TReturnDescriptor(tom__arg) ;  } }private static  tom.library.strategy.mutraveler.MuStrategy  tom_make_BuildDescriptor( StringBuffer  t0) { return new BuildDescriptor(t0); }
+ sb.append('(');  } } return super.visit_TMethodDescriptor(tom__arg) ;  } public  tom.library.adt.bytecode.types.TReturnDescriptor  visit_TReturnDescriptor(  tom.library.adt.bytecode.types.TReturnDescriptor  tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.library.adt.bytecode.types.TReturnDescriptor ) { { tom.library.adt.bytecode.types.TReturnDescriptor  tom_match6_1=(( tom.library.adt.bytecode.types.TReturnDescriptor )tom__arg); if ( true ) {
+
+
+
+ sb.append(')');  } if ( ( tom_is_fun_sym_Void(tom_match6_1) ||  false  ) ) { if ( true ) {
+ sb.append('V');  } } } } return super.visit_TReturnDescriptor(tom__arg) ;  } }private static  tom.library.strategy.mutraveler.MuStrategy  tom_make_BuildDescriptor( StringBuffer  t0) { return new BuildDescriptor(t0); }
 
 
 

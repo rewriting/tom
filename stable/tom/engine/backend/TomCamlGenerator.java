@@ -293,16 +293,16 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     } 
     s.append(") = " + tlCode.getCode() + " ");
 
-     if(tlCode instanceof  tom.engine.adt.tomsignature.types.TargetLanguage ) { { tom.engine.adt.tomsignature.types.TargetLanguage  tom_match1_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode); if ( ( tom_is_fun_sym_TL(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_Code=tom_get_slot_TL_Code(tom_match1_1); { tom.engine.adt.tomsignature.types.Position  tom_match1_1_Start=tom_get_slot_TL_Start(tom_match1_1); { tom.engine.adt.tomsignature.types.Position  tom_match1_1_End=tom_get_slot_TL_End(tom_match1_1); if ( ( tom_is_fun_sym_TextPosition(tom_match1_1_Start) ||  false  ) ) { { int  tom_match1_1_Start_Line=tom_get_slot_TextPosition_Line(tom_match1_1_Start); { int  tom_startLine=tom_match1_1_Start_Line; if ( ( tom_is_fun_sym_TextPosition(tom_match1_1_End) ||  false  ) ) { { int  tom_match1_1_End_Line=tom_get_slot_TextPosition_Line(tom_match1_1_End); { int  tom_endLine=tom_match1_1_End_Line; {boolean tom_match1_tom_anti_constraints_status= true ; if ((tom_match1_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(tlCode instanceof  tom.engine.adt.tomsignature.types.TargetLanguage ) { { tom.engine.adt.tomsignature.types.TargetLanguage  tom_match1_1=(( tom.engine.adt.tomsignature.types.TargetLanguage )tlCode); if ( ( tom_is_fun_sym_TL(tom_match1_1) ||  false  ) ) { { tom.engine.adt.tomsignature.types.Position  tom_match1_1_Start=tom_get_slot_TL_Start(tom_match1_1); { tom.engine.adt.tomsignature.types.Position  tom_match1_1_End=tom_get_slot_TL_End(tom_match1_1); if ( ( tom_is_fun_sym_TextPosition(tom_match1_1_Start) ||  false  ) ) { { int  tom_startLine=tom_get_slot_TextPosition_Line(tom_match1_1_Start); if ( ( tom_is_fun_sym_TextPosition(tom_match1_1_End) ||  false  ) ) { { int  tom_endLine=tom_get_slot_TextPosition_Line(tom_match1_1_End); if ( true ) {
 
         output.write(0,s, tom_startLine, tom_endLine- tom_startLine);
         return;
-       } } } } } } } } } } } } } if ( ( tom_is_fun_sym_ITL(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_Code=tom_get_slot_ITL_Code(tom_match1_1); {boolean tom_match1_tom_anti_constraints_status= true ; if ((tom_match1_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } } } } } } if ( ( tom_is_fun_sym_ITL(tom_match1_1) ||  false  ) ) { if ( true ) {
 
   // pas de \n donc pas besoin de reworkTL
         output.write(s);
         return;
-       } } } } } } }
+       } } } }
 
   }
 
@@ -316,17 +316,17 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
-         if(arg instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tom_match2_1=(( tom.engine.adt.tomterm.types.TomTerm )arg); if ( ( tom_is_fun_sym_Variable(tom_match2_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match2_1_AstName=tom_get_slot_Variable_AstName(tom_match2_1); if ( ( tom_is_fun_sym_Name(tom_match2_1_AstName) ||  false  ) ) { { String  tom_match2_1_AstName_String=tom_get_slot_Name_String(tom_match2_1_AstName); { String  tom_name=tom_match2_1_AstName_String; {boolean tom_match2_tom_anti_constraints_status= true ; if ((tom_match2_tom_anti_constraints_status ==  true )) { if ( true ) {
+         if(arg instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tom_match2_1=(( tom.engine.adt.tomterm.types.TomTerm )arg); if ( ( tom_is_fun_sym_Variable(tom_match2_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match2_1_AstName=tom_get_slot_Variable_AstName(tom_match2_1); if ( ( tom_is_fun_sym_Name(tom_match2_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match2_1_AstName); if ( true ) {
 
 
             s.append(tom_name);
             break matchBlock;
-           } } } } } } } } {boolean tom_match2_tom_anti_constraints_status= true ; if ((tom_match2_tom_anti_constraints_status ==  true )) { if ( true ) {
+           } } } } } if ( true ) {
 
 
             System.out.println("genDeclMake: strange term: " + arg);
             throw new TomRuntimeException("genDeclMake: strange term: " + arg);
-           } } } } }
+           } } }
 
       }
       argList = argList.getTailconcTomTerm();

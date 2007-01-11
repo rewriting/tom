@@ -1,197 +1,10 @@
 
-%include { mustrategy.tom }
-
-%op Strategy Is_RuleVar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_RuleVar)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_RuleVar() }
-}
-
-%op Strategy _RuleVar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._RuleVar)}
-
-  make() { new tom.engine.adt.tomname.strategy.tomnumber._RuleVar() }
-}
-
-%op Strategy Make_RuleVar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_RuleVar)}
-
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Make_RuleVar() }
-}
-
-%op Strategy Is_NameNumber() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_NameNumber)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_NameNumber() }
-}
-
-%op Strategy _NameNumber(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._NameNumber)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._NameNumber(arg0) }
-}
-
-%op Strategy Make_NameNumber(_AstName:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_NameNumber)}
-
-  get_slot(_AstName, t) { _AstName }
-  make( new_AstName) { new tom.engine.adt.tomname.strategy.tomnumber.Make_NameNumber( new_AstName) }
-}
-
-%op Strategy Is_RenamedVar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_RenamedVar)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_RenamedVar() }
-}
-
-%op Strategy _RenamedVar(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._RenamedVar)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._RenamedVar(arg0) }
-}
-
-%op Strategy Make_RenamedVar(_AstName:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_RenamedVar)}
-
-  get_slot(_AstName, t) { _AstName }
-  make( new_AstName) { new tom.engine.adt.tomname.strategy.tomnumber.Make_RenamedVar( new_AstName) }
-}
-
-%op Strategy Is_AbsVar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_AbsVar)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_AbsVar() }
-}
-
-%op Strategy _AbsVar(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._AbsVar)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._AbsVar(arg0) }
-}
-
-%op Strategy Make_AbsVar(_Number:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_AbsVar)}
-
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_AbsVar( new_Number) }
-}
-
-%op Strategy Is_Number() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_Number)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_Number() }
-}
-
-%op Strategy _Number(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._Number)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._Number(arg0) }
-}
-
-%op Strategy Make_Number(_Integer:int) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_Number)}
-
-  get_slot(_Integer, t) { _Integer }
-  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_Number( _Integer) }
-}
-
-%op Strategy Is_End() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_End)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_End() }
-}
-
-%op Strategy _End(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._End)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._End(arg0) }
-}
-
-%op Strategy Make_End(_Number:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_End)}
-
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_End( new_Number) }
-}
-
-%op Strategy Is_Begin() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_Begin)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_Begin() }
-}
-
-%op Strategy _Begin(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._Begin)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._Begin(arg0) }
-}
-
-%op Strategy Make_Begin(_Number:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_Begin)}
-
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_Begin( new_Number) }
-}
-
-%op Strategy Is_IndexNumber() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_IndexNumber)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_IndexNumber() }
-}
-
-%op Strategy _IndexNumber(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._IndexNumber)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._IndexNumber(arg0) }
-}
-
-%op Strategy Make_IndexNumber(_Number:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_IndexNumber)}
-
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_IndexNumber( new_Number) }
-}
-
-%op Strategy Is_ListNumber() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_ListNumber)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_ListNumber() }
-}
-
-%op Strategy _ListNumber(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._ListNumber)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._ListNumber(arg0) }
-}
-
-%op Strategy Make_ListNumber(_Number:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_ListNumber)}
-
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_ListNumber( new_Number) }
-}
-
-%op Strategy Is_PatternNumber() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_PatternNumber)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_PatternNumber() }
-}
-
-%op Strategy _PatternNumber(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._PatternNumber)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._PatternNumber(arg0) }
-}
-
-%op Strategy Make_PatternNumber(_Number:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_PatternNumber)}
-
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_PatternNumber( new_Number) }
-}
+   /*
+   %include { mustrategy.tom }
+   */
 
 %op Strategy Is_MatchNumber() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Is_MatchNumber)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumber.Is_MatchNumber() }
+  make() { `When_MatchNumber(Identity()) }
 }
 
 %op Strategy _MatchNumber(arg0:Strategy) {
@@ -208,9 +21,241 @@
   make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_MatchNumber( new_Number) }
 }
 
+%op Strategy When_MatchNumber(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_MatchNumber)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_MatchNumber(s) }
+}
+
+%op Strategy Is_PatternNumber() {
+  make() { `When_PatternNumber(Identity()) }
+}
+
+%op Strategy _PatternNumber(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._PatternNumber)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._PatternNumber(arg0) }
+}
+
+%op Strategy Make_PatternNumber(_Number:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_PatternNumber)}
+
+  get_slot(_Number, t) { _Number }
+  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_PatternNumber( new_Number) }
+}
+
+%op Strategy When_PatternNumber(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_PatternNumber)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_PatternNumber(s) }
+}
+
+%op Strategy Is_ListNumber() {
+  make() { `When_ListNumber(Identity()) }
+}
+
+%op Strategy _ListNumber(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._ListNumber)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._ListNumber(arg0) }
+}
+
+%op Strategy Make_ListNumber(_Number:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_ListNumber)}
+
+  get_slot(_Number, t) { _Number }
+  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_ListNumber( new_Number) }
+}
+
+%op Strategy When_ListNumber(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_ListNumber)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_ListNumber(s) }
+}
+
+%op Strategy Is_IndexNumber() {
+  make() { `When_IndexNumber(Identity()) }
+}
+
+%op Strategy _IndexNumber(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._IndexNumber)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._IndexNumber(arg0) }
+}
+
+%op Strategy Make_IndexNumber(_Number:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_IndexNumber)}
+
+  get_slot(_Number, t) { _Number }
+  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_IndexNumber( new_Number) }
+}
+
+%op Strategy When_IndexNumber(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_IndexNumber)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_IndexNumber(s) }
+}
+
+%op Strategy Is_Begin() {
+  make() { `When_Begin(Identity()) }
+}
+
+%op Strategy _Begin(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._Begin)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._Begin(arg0) }
+}
+
+%op Strategy Make_Begin(_Number:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_Begin)}
+
+  get_slot(_Number, t) { _Number }
+  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_Begin( new_Number) }
+}
+
+%op Strategy When_Begin(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_Begin)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_Begin(s) }
+}
+
+%op Strategy Is_End() {
+  make() { `When_End(Identity()) }
+}
+
+%op Strategy _End(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._End)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._End(arg0) }
+}
+
+%op Strategy Make_End(_Number:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_End)}
+
+  get_slot(_Number, t) { _Number }
+  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_End( new_Number) }
+}
+
+%op Strategy When_End(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_End)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_End(s) }
+}
+
+%op Strategy Is_Number() {
+  make() { `When_Number(Identity()) }
+}
+
+%op Strategy _Number(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._Number)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._Number(arg0) }
+}
+
+%op Strategy Make_Number(_Integer:int) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_Number)}
+
+  get_slot(_Integer, t) { _Integer }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_Number( _Integer) }
+}
+
+%op Strategy When_Number(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_Number)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_Number(s) }
+}
+
+%op Strategy Is_AbsVar() {
+  make() { `When_AbsVar(Identity()) }
+}
+
+%op Strategy _AbsVar(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._AbsVar)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._AbsVar(arg0) }
+}
+
+%op Strategy Make_AbsVar(_Number:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_AbsVar)}
+
+  get_slot(_Number, t) { _Number }
+  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_AbsVar( new_Number) }
+}
+
+%op Strategy When_AbsVar(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_AbsVar)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_AbsVar(s) }
+}
+
+%op Strategy Is_RenamedVar() {
+  make() { `When_RenamedVar(Identity()) }
+}
+
+%op Strategy _RenamedVar(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._RenamedVar)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._RenamedVar(arg0) }
+}
+
+%op Strategy Make_RenamedVar(_AstName:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_RenamedVar)}
+
+  get_slot(_AstName, t) { _AstName }
+  make( new_AstName) { new tom.engine.adt.tomname.strategy.tomnumber.Make_RenamedVar( new_AstName) }
+}
+
+%op Strategy When_RenamedVar(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_RenamedVar)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_RenamedVar(s) }
+}
+
+%op Strategy Is_NameNumber() {
+  make() { `When_NameNumber(Identity()) }
+}
+
+%op Strategy _NameNumber(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._NameNumber)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._NameNumber(arg0) }
+}
+
+%op Strategy Make_NameNumber(_AstName:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_NameNumber)}
+
+  get_slot(_AstName, t) { _AstName }
+  make( new_AstName) { new tom.engine.adt.tomname.strategy.tomnumber.Make_NameNumber( new_AstName) }
+}
+
+%op Strategy When_NameNumber(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_NameNumber)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_NameNumber(s) }
+}
+
+%op Strategy Is_RuleVar() {
+  make() { `When_RuleVar(Identity()) }
+}
+
+%op Strategy _RuleVar() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._RuleVar)}
+
+  make() { new tom.engine.adt.tomname.strategy.tomnumber._RuleVar() }
+}
+
+%op Strategy Make_RuleVar() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_RuleVar)}
+
+  make() { new tom.engine.adt.tomname.strategy.tomnumber.Make_RuleVar() }
+}
+
+%op Strategy When_RuleVar(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_RuleVar)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_RuleVar(s) }
+}
+
 %op Strategy Is_EmptyconcTomName() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnamelist.Is_EmptyconcTomName)}
-  make() { new tom.engine.adt.tomname.strategy.tomnamelist.Is_EmptyconcTomName() }
+  make() { `When_EmptyconcTomName(Identity()) }
 }
 
 %op Strategy _EmptyconcTomName() {
@@ -225,9 +270,13 @@
   make() { new tom.engine.adt.tomname.strategy.tomnamelist.Make_EmptyconcTomName() }
 }
 
+%op Strategy When_EmptyconcTomName(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnamelist.When_EmptyconcTomName)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnamelist.When_EmptyconcTomName(s) }
+}
+
 %op Strategy Is_ConsconcTomName() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnamelist.Is_ConsconcTomName)}
-  make() { new tom.engine.adt.tomname.strategy.tomnamelist.Is_ConsconcTomName() }
+  make() { `When_ConsconcTomName(Identity()) }
 }
 
 %op Strategy _ConsconcTomName(arg0:Strategy, arg1:Strategy) {
@@ -246,9 +295,13 @@
   make( new_HeadconcTomName,  new_TailconcTomName) { new tom.engine.adt.tomname.strategy.tomnamelist.Make_ConsconcTomName( new_HeadconcTomName,  new_TailconcTomName) }
 }
 
+%op Strategy When_ConsconcTomName(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnamelist.When_ConsconcTomName)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnamelist.When_ConsconcTomName(s) }
+}
+
 %op Strategy Is_EmptyconcTomNumber() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist.Is_EmptyconcTomNumber)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumberlist.Is_EmptyconcTomNumber() }
+  make() { `When_EmptyconcTomNumber(Identity()) }
 }
 
 %op Strategy _EmptyconcTomNumber() {
@@ -263,9 +316,13 @@
   make() { new tom.engine.adt.tomname.strategy.tomnumberlist.Make_EmptyconcTomNumber() }
 }
 
+%op Strategy When_EmptyconcTomNumber(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist.When_EmptyconcTomNumber)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumberlist.When_EmptyconcTomNumber(s) }
+}
+
 %op Strategy Is_ConsconcTomNumber() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist.Is_ConsconcTomNumber)}
-  make() { new tom.engine.adt.tomname.strategy.tomnumberlist.Is_ConsconcTomNumber() }
+  make() { `When_ConsconcTomNumber(Identity()) }
 }
 
 %op Strategy _ConsconcTomNumber(arg0:Strategy, arg1:Strategy) {
@@ -284,64 +341,13 @@
   make( new_HeadconcTomNumber,  new_TailconcTomNumber) { new tom.engine.adt.tomname.strategy.tomnumberlist.Make_ConsconcTomNumber( new_HeadconcTomNumber,  new_TailconcTomNumber) }
 }
 
-%op Strategy Is_AntiName() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Is_AntiName)}
-  make() { new tom.engine.adt.tomname.strategy.tomname.Is_AntiName() }
-}
-
-%op Strategy _AntiName(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname._AntiName)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomname._AntiName(arg0) }
-}
-
-%op Strategy Make_AntiName(_Name:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Make_AntiName)}
-
-  get_slot(_Name, t) { _Name }
-  make( new_Name) { new tom.engine.adt.tomname.strategy.tomname.Make_AntiName( new_Name) }
-}
-
-%op Strategy Is_EmptyName() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Is_EmptyName)}
-  make() { new tom.engine.adt.tomname.strategy.tomname.Is_EmptyName() }
-}
-
-%op Strategy _EmptyName() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname._EmptyName)}
-
-  make() { new tom.engine.adt.tomname.strategy.tomname._EmptyName() }
-}
-
-%op Strategy Make_EmptyName() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Make_EmptyName)}
-
-  make() { new tom.engine.adt.tomname.strategy.tomname.Make_EmptyName() }
-}
-
-%op Strategy Is_PositionName() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Is_PositionName)}
-  make() { new tom.engine.adt.tomname.strategy.tomname.Is_PositionName() }
-}
-
-%op Strategy _PositionName(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname._PositionName)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomname._PositionName(arg0) }
-}
-
-%op Strategy Make_PositionName(_NumberList:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Make_PositionName)}
-
-  get_slot(_NumberList, t) { _NumberList }
-  make( new_NumberList) { new tom.engine.adt.tomname.strategy.tomname.Make_PositionName( new_NumberList) }
+%op Strategy When_ConsconcTomNumber(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumberlist.When_ConsconcTomNumber)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumberlist.When_ConsconcTomNumber(s) }
 }
 
 %op Strategy Is_Name() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Is_Name)}
-  make() { new tom.engine.adt.tomname.strategy.tomname.Is_Name() }
+  make() { `When_Name(Identity()) }
 }
 
 %op Strategy _Name(arg0:Strategy) {
@@ -358,12 +364,85 @@
   make( _String) { new tom.engine.adt.tomname.strategy.tomname.Make_Name( _String) }
 }
 
-%op Strategy _concTomName(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsconcTomName(sub,MuVar("x")),_EmptyconcTomName())) }
+%op Strategy When_Name(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.When_Name)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomname.When_Name(s) }
 }
 
-%op Strategy _concTomNumber(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsconcTomNumber(sub,MuVar("x")),_EmptyconcTomNumber())) }
+%op Strategy Is_PositionName() {
+  make() { `When_PositionName(Identity()) }
 }
+
+%op Strategy _PositionName(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname._PositionName)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomname._PositionName(arg0) }
+}
+
+%op Strategy Make_PositionName(_NumberList:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Make_PositionName)}
+
+  get_slot(_NumberList, t) { _NumberList }
+  make( new_NumberList) { new tom.engine.adt.tomname.strategy.tomname.Make_PositionName( new_NumberList) }
+}
+
+%op Strategy When_PositionName(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.When_PositionName)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomname.When_PositionName(s) }
+}
+
+%op Strategy Is_EmptyName() {
+  make() { `When_EmptyName(Identity()) }
+}
+
+%op Strategy _EmptyName() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname._EmptyName)}
+
+  make() { new tom.engine.adt.tomname.strategy.tomname._EmptyName() }
+}
+
+%op Strategy Make_EmptyName() {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Make_EmptyName)}
+
+  make() { new tom.engine.adt.tomname.strategy.tomname.Make_EmptyName() }
+}
+
+%op Strategy When_EmptyName(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.When_EmptyName)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomname.When_EmptyName(s) }
+}
+
+%op Strategy Is_AntiName() {
+  make() { `When_AntiName(Identity()) }
+}
+
+%op Strategy _AntiName(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname._AntiName)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomname._AntiName(arg0) }
+}
+
+%op Strategy Make_AntiName(_Name:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.Make_AntiName)}
+
+  get_slot(_Name, t) { _Name }
+  make( new_Name) { new tom.engine.adt.tomname.strategy.tomname.Make_AntiName( new_Name) }
+}
+
+%op Strategy When_AntiName(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomname.When_AntiName)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomname.When_AntiName(s) }
+}
+
+            %op Strategy _concTomName(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsconcTomName(sub,MuVar("x")),_EmptyconcTomName())) }
+            }
+            
+            %op Strategy _concTomNumber(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsconcTomNumber(sub,MuVar("x")),_EmptyconcTomNumber())) }
+            }
+            

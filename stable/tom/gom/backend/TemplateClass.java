@@ -46,10 +46,10 @@ public abstract class TemplateClass {
   }
 
   public String className(ClassName clsName) {
-     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match1_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_Name=tom_get_slot_ClassName_Name(tom_match1_1); { String  tom_name=tom_match1_1_Name; {boolean tom_match1_tom_anti_constraints_status= true ; if ((tom_match1_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match1_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match1_1) ||  false  ) ) { { String  tom_name=tom_get_slot_ClassName_Name(tom_match1_1); if ( true ) {
 
         return tom_name;
-       } } } } } } } }
+       } } } } }
 
     throw new GomRuntimeException(
         "TemplateClass:className got a strange ClassName "+clsName);
@@ -60,14 +60,14 @@ public abstract class TemplateClass {
   }
 
   public String fullClassName(ClassName clsName) {
-     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match2_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match2_1) ||  false  ) ) { { String  tom_match2_1_Pkg=tom_get_slot_ClassName_Pkg(tom_match2_1); { String  tom_match2_1_Name=tom_get_slot_ClassName_Name(tom_match2_1); { String  tom_pkgPrefix=tom_match2_1_Pkg; { String  tom_name=tom_match2_1_Name; {boolean tom_match2_tom_anti_constraints_status= true ; if ((tom_match2_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match2_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match2_1) ||  false  ) ) { { String  tom_pkgPrefix=tom_get_slot_ClassName_Pkg(tom_match2_1); { String  tom_name=tom_get_slot_ClassName_Name(tom_match2_1); if ( true ) {
 
         if(tom_pkgPrefix.length()==0) {
           return tom_name;
         } else {
           return tom_pkgPrefix+"."+tom_name;
         }
-       } } } } } } } } } }
+       } } } } } }
 
     throw new GomRuntimeException(
         "TemplateClass:fullClassName got a strange ClassName "+clsName);
@@ -78,60 +78,60 @@ public abstract class TemplateClass {
   }
 
   public String getPackage(ClassName clsName) {
-     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match3_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match3_1) ||  false  ) ) { { String  tom_match3_1_Pkg=tom_get_slot_ClassName_Pkg(tom_match3_1); { String  tom_pkg=tom_match3_1_Pkg; {boolean tom_match3_tom_anti_constraints_status= true ; if ((tom_match3_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match3_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match3_1) ||  false  ) ) { { String  tom_pkg=tom_get_slot_ClassName_Pkg(tom_match3_1); if ( true ) {
 
         return tom_pkg;
-       } } } } } } } }
+       } } } } }
 
     throw new GomRuntimeException(
         "TemplateClass:getPackage got a strange ClassName "+clsName);
   }
 
   public String hasMethod(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match4_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match4_1) ||  false  ) ) { { String  tom_match4_1_Name=tom_get_slot_SlotField_Name(tom_match4_1); { String  tom_name=tom_match4_1_Name; {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match4_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match4_1) ||  false  ) ) { { String  tom_name=tom_get_slot_SlotField_Name(tom_match4_1); if ( true ) {
 
         return "has"+tom_name;
-       } } } } } } } }
+       } } } } }
 
     throw new GomRuntimeException(
         "TemplateClass:hasMethod got a strange SlotField "+slot);
   }
 
   public String getMethod(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match5_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match5_1) ||  false  ) ) { { String  tom_match5_1_Name=tom_get_slot_SlotField_Name(tom_match5_1); { String  tom_name=tom_match5_1_Name; {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match5_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match5_1) ||  false  ) ) { { String  tom_name=tom_get_slot_SlotField_Name(tom_match5_1); if ( true ) {
 
         return "get"+tom_name;
-       } } } } } } } }
+       } } } } }
 
     throw new GomRuntimeException(
         "TemplateClass:getMethod got a strange SlotField "+slot);
   }
 
   public String setMethod(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match6_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match6_1) ||  false  ) ) { { String  tom_match6_1_Name=tom_get_slot_SlotField_Name(tom_match6_1); { String  tom_name=tom_match6_1_Name; {boolean tom_match6_tom_anti_constraints_status= true ; if ((tom_match6_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match6_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match6_1) ||  false  ) ) { { String  tom_name=tom_get_slot_SlotField_Name(tom_match6_1); if ( true ) {
 
         return "set"+tom_name;
-       } } } } } } } }
+       } } } } }
 
     throw new GomRuntimeException(
         "TemplateClass:setMethod got a strange SlotField "+slot);
   }
 
   public String index(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match7_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match7_1) ||  false  ) ) { { String  tom_match7_1_Name=tom_get_slot_SlotField_Name(tom_match7_1); { String  tom_name=tom_match7_1_Name; {boolean tom_match7_tom_anti_constraints_status= true ; if ((tom_match7_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match7_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match7_1) ||  false  ) ) { { String  tom_name=tom_get_slot_SlotField_Name(tom_match7_1); if ( true ) {
 
         return "index_"+tom_name;
-       } } } } } } } }
+       } } } } }
 
     throw new GomRuntimeException(
         "TemplateClass:index got a strange SlotField "+slot);
   }
 
   public String slotDomain(SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match8_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match8_1) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_match8_1_Domain=tom_get_slot_SlotField_Domain(tom_match8_1); { tom.gom.adt.objects.types.ClassName  tom_domain=tom_match8_1_Domain; {boolean tom_match8_tom_anti_constraints_status= true ; if ((tom_match8_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match8_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match8_1) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_domain=tom_get_slot_SlotField_Domain(tom_match8_1); if ( true ) {
 
         return fullClassName(tom_domain);
-       } } } } } } } }
+       } } } } }
 
     throw new GomRuntimeException(
         "TemplateClass:slotDomain got a strange SlotField "+slot);
@@ -142,10 +142,10 @@ public abstract class TemplateClass {
   }
 
   public String classFieldName(ClassName clsName) {
-     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match9_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match9_1) ||  false  ) ) { { String  tom_match9_1_Name=tom_get_slot_ClassName_Name(tom_match9_1); { String  tom_name=tom_match9_1_Name; {boolean tom_match9_tom_anti_constraints_status= true ; if ((tom_match9_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match9_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match9_1) ||  false  ) ) { { String  tom_name=tom_get_slot_ClassName_Name(tom_match9_1); if ( true ) {
 
         return tom_name.toLowerCase();
-       } } } } } } } }
+       } } } } }
 
     throw new GomRuntimeException(
         "TemplateClass:className got a strange ClassName "+clsName);
@@ -153,7 +153,7 @@ public abstract class TemplateClass {
 
   public void toStringSlotField(StringBuffer res, SlotField slot,
                                 String element, String buffer) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match10_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match10_1) ||  false  ) ) { { String  tom_match10_1_Name=tom_get_slot_SlotField_Name(tom_match10_1); { tom.gom.adt.objects.types.ClassName  tom_match10_1_Domain=tom_get_slot_SlotField_Domain(tom_match10_1); { tom.gom.adt.objects.types.ClassName  tom_domain=tom_match10_1_Domain; {boolean tom_match10_tom_anti_constraints_status= true ; if ((tom_match10_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match10_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match10_1) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_domain=tom_get_slot_SlotField_Domain(tom_match10_1); if ( true ) {
 
         if(!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
           res.append(""/* Generated by TOM (version 2.5alpha): Do not edit this file */+element+".toStringBuffer("/* Generated by TOM (version 2.5alpha): Do not edit this file */+buffer+");\n"
@@ -187,12 +187,12 @@ public abstract class TemplateClass {
             throw new GomRuntimeException("Builtin " + tom_domain+ " not supported");
           }
         }
-       } } } } } } } } }
+       } } } } }
 
   }
 
   public void toATermSlotField(StringBuffer res, SlotField slot) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match11_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match11_1) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_match11_1_Domain=tom_get_slot_SlotField_Domain(tom_match11_1); { tom.gom.adt.objects.types.ClassName  tom_domain=tom_match11_1_Domain; {boolean tom_match11_tom_anti_constraints_status= true ; if ((tom_match11_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match11_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match11_1) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_domain=tom_get_slot_SlotField_Domain(tom_match11_1); if ( true ) {
 
         if(!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
           res.append(getMethod(slot));
@@ -234,12 +234,12 @@ public abstract class TemplateClass {
             throw new GomRuntimeException("Builtin " + tom_domain+ " not supported");
           }
         }
-       } } } } } } } }
+       } } } } }
 
   }
 
   public void fromATermSlotField(StringBuffer buffer, SlotField slot, String appl) {
-     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match12_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match12_1) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_match12_1_Domain=tom_get_slot_SlotField_Domain(tom_match12_1); { tom.gom.adt.objects.types.ClassName  tom_domain=tom_match12_1_Domain; {boolean tom_match12_tom_anti_constraints_status= true ; if ((tom_match12_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(slot instanceof  tom.gom.adt.objects.types.SlotField ) { { tom.gom.adt.objects.types.SlotField  tom_match12_1=(( tom.gom.adt.objects.types.SlotField )slot); if ( ( tom_is_fun_sym_SlotField(tom_match12_1) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_domain=tom_get_slot_SlotField_Domain(tom_match12_1); if ( true ) {
 
         if(!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
           buffer.append(fullClassName(tom_domain));
@@ -276,7 +276,7 @@ public abstract class TemplateClass {
             throw new GomRuntimeException("Builtin " + tom_domain+ " not supported");
           }
         }
-       } } } } } } } }
+       } } } } }
 
   }
 

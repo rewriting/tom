@@ -100,7 +100,7 @@ public class ZenonOutput {
     ZExpr negpattern = null;
 
     // theorem to prove
-     if(accept instanceof  tom.engine.adt.il.types.Instr ) { { tom.engine.adt.il.types.Instr  tom_match1_1=(( tom.engine.adt.il.types.Instr )accept); if ( ( tom_is_fun_sym_accept(tom_match1_1) ||  false  ) ) { { aterm.ATerm  tom_match1_1_Positive=tom_get_slot_accept_Positive(tom_match1_1); { aterm.ATerm  tom_match1_1_Negative=tom_get_slot_accept_Negative(tom_match1_1); { aterm.ATerm  tom_positive=tom_match1_1_Positive; { aterm.ATerm  tom_negative=tom_match1_1_Negative; {boolean tom_match1_tom_anti_constraints_status= true ; if ((tom_match1_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(accept instanceof  tom.engine.adt.il.types.Instr ) { { tom.engine.adt.il.types.Instr  tom_match1_1=(( tom.engine.adt.il.types.Instr )accept); if ( ( tom_is_fun_sym_accept(tom_match1_1) ||  false  ) ) { { aterm.ATerm  tom_positive=tom_get_slot_accept_Positive(tom_match1_1); { aterm.ATerm  tom_negative=tom_get_slot_accept_Negative(tom_match1_1); if ( true ) {
 
         Pattern positivePattern = Pattern.fromTerm(tom_positive);
         PatternList negativePatternList = PatternList.fromTerm(tom_negative);
@@ -115,7 +115,7 @@ public class ZenonOutput {
         if (verifier.isCamlSemantics()) {
           negpattern = tomiltools.patternToZExpr(negativePatternList,variableMap);
         }
-       } } } } } } } } } }
+       } } } } } }
 
 
     ZExpr zenonConstraint = zexprFromExpr(constraint);
@@ -164,7 +164,7 @@ public class ZenonOutput {
     ZExpr pattern = null;
     ZExpr negpattern = null;
     // theorem to prove
-     if(tree instanceof  tom.engine.adt.il.types.DerivTree ) { { tom.engine.adt.il.types.DerivTree  tom_match2_1=(( tom.engine.adt.il.types.DerivTree )tree); {boolean tom_bool_match2_1= false ; { tom.engine.adt.il.types.Deriv  tom_match2_1_Post= null ; if (tom_is_fun_sym_derivrule(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_Post=tom_get_slot_derivrule_Post(tom_match2_1); } else { if (tom_is_fun_sym_derivrule2(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_Post=tom_get_slot_derivrule2_Post(tom_match2_1); } } if (tom_bool_match2_1) { if ( ( tom_is_fun_sym_ebs(tom_match2_1_Post) ||  false  ) ) { { tom.engine.adt.il.types.Environment  tom_match2_1_Post_Rhs=tom_get_slot_ebs_Rhs(tom_match2_1_Post); if ( ( tom_is_fun_sym_env(tom_match2_1_Post_Rhs) ||  false  ) ) { { tom.engine.adt.il.types.SubstitutionList  tom_match2_1_Post_Rhs_Subs=tom_get_slot_env_Subs(tom_match2_1_Post_Rhs); { tom.engine.adt.il.types.Instr  tom_match2_1_Post_Rhs_I=tom_get_slot_env_I(tom_match2_1_Post_Rhs); { tom.engine.adt.il.types.SubstitutionList  tom_subsList=tom_match2_1_Post_Rhs_Subs; if ( ( tom_is_fun_sym_accept(tom_match2_1_Post_Rhs_I) ||  false  ) ) { { aterm.ATerm  tom_match2_1_Post_Rhs_I_Positive=tom_get_slot_accept_Positive(tom_match2_1_Post_Rhs_I); { aterm.ATerm  tom_match2_1_Post_Rhs_I_Negative=tom_get_slot_accept_Negative(tom_match2_1_Post_Rhs_I); { aterm.ATerm  tom_positive=tom_match2_1_Post_Rhs_I_Positive; { aterm.ATerm  tom_negative=tom_match2_1_Post_Rhs_I_Negative; {boolean tom_match2_tom_anti_constraints_status= true ; if ((tom_match2_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(tree instanceof  tom.engine.adt.il.types.DerivTree ) { { tom.engine.adt.il.types.DerivTree  tom_match2_1=(( tom.engine.adt.il.types.DerivTree )tree); {boolean tom_bool_match2_1= false ; { tom.engine.adt.il.types.Deriv  tom_match2_1_Post= null ; if (tom_is_fun_sym_derivrule(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_Post=tom_get_slot_derivrule_Post(tom_match2_1); } else { if (tom_is_fun_sym_derivrule2(tom_match2_1)) {tom_bool_match2_1= true ;tom_match2_1_Post=tom_get_slot_derivrule2_Post(tom_match2_1); } } if (tom_bool_match2_1) { if ( ( tom_is_fun_sym_ebs(tom_match2_1_Post) ||  false  ) ) { { tom.engine.adt.il.types.Environment  tom_match2_1_Post_Rhs=tom_get_slot_ebs_Rhs(tom_match2_1_Post); if ( ( tom_is_fun_sym_env(tom_match2_1_Post_Rhs) ||  false  ) ) { { tom.engine.adt.il.types.Instr  tom_match2_1_Post_Rhs_I=tom_get_slot_env_I(tom_match2_1_Post_Rhs); { tom.engine.adt.il.types.SubstitutionList  tom_subsList=tom_get_slot_env_Subs(tom_match2_1_Post_Rhs); if ( ( tom_is_fun_sym_accept(tom_match2_1_Post_Rhs_I) ||  false  ) ) { { aterm.ATerm  tom_positive=tom_get_slot_accept_Positive(tom_match2_1_Post_Rhs_I); { aterm.ATerm  tom_negative=tom_get_slot_accept_Negative(tom_match2_1_Post_Rhs_I); if ( true ) {
 
 
         Pattern positivePattern = Pattern.fromTerm(tom_positive);
@@ -178,7 +178,7 @@ public class ZenonOutput {
         if (verifier.isCamlSemantics()) {
           negpattern = tomiltools.patternToZExpr(negativePatternList,variableMap);
         }
-       } } } } } } } } } } } } } } } } } } }
+       } } } } } } } } } } } } } }
 
 
     ZExpr constraints = tom_make_ztrue();
@@ -231,7 +231,7 @@ public class ZenonOutput {
   /**
    * collects all variable names in the DerivTree, and give a name to _'s
    */
-   private static class programVariablesCollector  extends  tom.engine.adt.il.IlBasicStrategy   { private  java.util.Map  store;  public programVariablesCollector(  java.util.Map  store ) { super(tom_make_Identity() ); this.store=store; } public  java.util.Map  getstore() { return store;} public int getChildCount() { return 1; } public jjtraveler.Visitable getChildAt(int i) { switch (i) { case 0: return super.getChildAt(0); default: throw new IndexOutOfBoundsException(); }} public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) { switch (i) { case 0: return super.setChildAt(0, child); default: throw new IndexOutOfBoundsException(); }} public  tom.engine.adt.il.types.Variable  visit_Variable(  tom.engine.adt.il.types.Variable  tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.engine.adt.il.types.Variable ) { { tom.engine.adt.il.types.Variable  tom_match3_1=(( tom.engine.adt.il.types.Variable )tom__arg); if ( ( tom_is_fun_sym_var(tom_match3_1) ||  false  ) ) { { String  tom_match3_1_Name=tom_get_slot_var_Name(tom_match3_1); { String  tom_name=tom_match3_1_Name; {boolean tom_match3_tom_anti_constraints_status= true ; if ((tom_match3_tom_anti_constraints_status ==  true )) { if ( true ) {
+   private static class programVariablesCollector  extends  tom.engine.adt.il.IlBasicStrategy   { private  java.util.Map  store;  public programVariablesCollector(  java.util.Map  store ) { super(tom_make_Identity() ); this.store=store; } public  java.util.Map  getstore() { return store;} public int getChildCount() { return 1; } public jjtraveler.Visitable getChildAt(int i) { switch (i) { case 0: return super.getChildAt(0); default: throw new IndexOutOfBoundsException(); }} public jjtraveler.Visitable setChildAt(int i, jjtraveler.Visitable child) { switch (i) { case 0: return super.setChildAt(0, child); default: throw new IndexOutOfBoundsException(); }} public  tom.engine.adt.il.types.Variable  visit_Variable(  tom.engine.adt.il.types.Variable  tom__arg )  throws jjtraveler.VisitFailure { if(tom__arg instanceof  tom.engine.adt.il.types.Variable ) { { tom.engine.adt.il.types.Variable  tom_match3_1=(( tom.engine.adt.il.types.Variable )tom__arg); if ( ( tom_is_fun_sym_var(tom_match3_1) ||  false  ) ) { { String  tom_name=tom_get_slot_var_Name(tom_match3_1); if ( true ) {
 
 
         String newname = tom_name;
@@ -244,7 +244,7 @@ public class ZenonOutput {
           store.put(tom_name,newname);
         }
         return tom_make_var(newname);
-       } } } } } } } } return super.visit_Variable(tom__arg) ;  } }private static  tom.library.strategy.mutraveler.MuStrategy  tom_make_programVariablesCollector( java.util.Map  t0) { return new programVariablesCollector(t0); }
+       } } } } } return super.visit_Variable(tom__arg) ;  } }private static  tom.library.strategy.mutraveler.MuStrategy  tom_make_programVariablesCollector( java.util.Map  t0) { return new programVariablesCollector(t0); }
 
 
 
@@ -258,154 +258,154 @@ public class ZenonOutput {
   }
 
   ZTerm ztermFromTerm(Term term) {
-     if(term instanceof  tom.engine.adt.il.types.Term ) { { tom.engine.adt.il.types.Term  tom_match4_1=(( tom.engine.adt.il.types.Term )term); if ( ( tom_is_fun_sym_tau(tom_match4_1) ||  false  ) ) { { tom.engine.adt.il.types.AbsTerm  tom_match4_1_Abst=tom_get_slot_tau_Abst(tom_match4_1); { tom.engine.adt.il.types.AbsTerm  tom_absTerm=tom_match4_1_Abst; {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(term instanceof  tom.engine.adt.il.types.Term ) { { tom.engine.adt.il.types.Term  tom_match4_1=(( tom.engine.adt.il.types.Term )term); if ( ( tom_is_fun_sym_tau(tom_match4_1) ||  false  ) ) { { tom.engine.adt.il.types.AbsTerm  tom_absTerm=tom_get_slot_tau_Abst(tom_match4_1); if ( true ) {
 
         return ztermFromAbsTerm(tom_absTerm);
-       } } } } } } if ( ( tom_is_fun_sym_repr(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } if ( ( tom_is_fun_sym_repr(tom_match4_1) ||  false  ) ) { if ( true ) {
 
         return tom_make_zvar("Error in ztermFromTerm repr");
-       } } } } if ( ( tom_is_fun_sym_subterm(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } if ( ( tom_is_fun_sym_subterm(tom_match4_1) ||  false  ) ) { if ( true ) {
 
         return tom_make_zvar("Error in ztermFromTerm subterm");
-       } } } } if ( ( tom_is_fun_sym_slot(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } if ( ( tom_is_fun_sym_slot(tom_match4_1) ||  false  ) ) { if ( true ) {
 
         return tom_make_zvar("Error in ztermFromTerm "+ term+" slot");
-       } } } } if ( ( tom_is_fun_sym_appSubsT(tom_match4_1) ||  false  ) ) { {boolean tom_match4_tom_anti_constraints_status= true ; if ((tom_match4_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } if ( ( tom_is_fun_sym_appSubsT(tom_match4_1) ||  false  ) ) { if ( true ) {
 
         // probleme: la substitution devrait etre appliquee
         return tom_make_zvar("Error in ztermFromTerm appsubsT ");
-       } } } } } }
+       } } } }
 
     return tom_make_zvar("match vide dans ztermFromTerm");
   }
 
   ZExpr zexprFromExpr(Expr expr) {
-     if(expr instanceof  tom.engine.adt.il.types.Expr ) { { tom.engine.adt.il.types.Expr  tom_match5_1=(( tom.engine.adt.il.types.Expr )expr); if ( ( tom_is_fun_sym_iltrue(tom_match5_1) ||  false  ) ) { {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
- return tom_make_ztrue(); } } } } if ( ( tom_is_fun_sym_ilfalse(tom_match5_1) ||  false  ) ) { {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
- return tom_make_zfalse(); } } } } if ( ( tom_is_fun_sym_tisfsym(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.AbsTerm  tom_match5_1_Abst=tom_get_slot_tisfsym_Abst(tom_match5_1); { tom.engine.adt.il.types.Symbol  tom_match5_1_Symbol=tom_get_slot_tisfsym_Symbol(tom_match5_1); { tom.engine.adt.il.types.AbsTerm  tom_absterm=tom_match5_1_Abst; { tom.engine.adt.il.types.Symbol  tom_s=tom_match5_1_Symbol; {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(expr instanceof  tom.engine.adt.il.types.Expr ) { { tom.engine.adt.il.types.Expr  tom_match5_1=(( tom.engine.adt.il.types.Expr )expr); if ( ( tom_is_fun_sym_iltrue(tom_match5_1) ||  false  ) ) { if ( true ) {
+ return tom_make_ztrue(); } } if ( ( tom_is_fun_sym_ilfalse(tom_match5_1) ||  false  ) ) { if ( true ) {
+ return tom_make_zfalse(); } } if ( ( tom_is_fun_sym_tisfsym(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.AbsTerm  tom_absterm=tom_get_slot_tisfsym_Abst(tom_match5_1); { tom.engine.adt.il.types.Symbol  tom_s=tom_get_slot_tisfsym_Symbol(tom_match5_1); if ( true ) {
 
         return tom_make_zisfsym(ztermFromAbsTerm(tom_absterm),zsymbolFromSymbol(tom_s));
-       } } } } } } } } if ( ( tom_is_fun_sym_teq(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.AbsTerm  tom_match5_1_Labst=tom_get_slot_teq_Labst(tom_match5_1); { tom.engine.adt.il.types.AbsTerm  tom_match5_1_Rabst=tom_get_slot_teq_Rabst(tom_match5_1); { tom.engine.adt.il.types.AbsTerm  tom_absterml=tom_match5_1_Labst; { tom.engine.adt.il.types.AbsTerm  tom_abstermr=tom_match5_1_Rabst; {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } } if ( ( tom_is_fun_sym_teq(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.AbsTerm  tom_absterml=tom_get_slot_teq_Labst(tom_match5_1); { tom.engine.adt.il.types.AbsTerm  tom_abstermr=tom_get_slot_teq_Rabst(tom_match5_1); if ( true ) {
 
         return tom_make_zeq(ztermFromAbsTerm(tom_absterml),ztermFromAbsTerm(tom_abstermr));
-       } } } } } } } } if ( ( tom_is_fun_sym_isfsym(tom_match5_1) ||  false  ) ) { {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } } if ( ( tom_is_fun_sym_isfsym(tom_match5_1) ||  false  ) ) { if ( true ) {
 
         // this should not occur
         return tom_make_zisfsym(tom_make_zvar("Error in zexprFromExpr"),tom_make_zsymbol("isfsym"));
-       } } } } if ( ( tom_is_fun_sym_eq(tom_match5_1) ||  false  ) ) { {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } if ( ( tom_is_fun_sym_eq(tom_match5_1) ||  false  ) ) { if ( true ) {
 
         // this should not occur
         return tom_make_zeq(tom_make_zvar("Error in zexprFromExpr"),tom_make_zvar("eq"));
-       } } } } if ( ( tom_is_fun_sym_appSubsE(tom_match5_1) ||  false  ) ) { {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } if ( ( tom_is_fun_sym_appSubsE(tom_match5_1) ||  false  ) ) { if ( true ) {
 
         // this should not occur
         return tom_make_zeq(tom_make_zvar("Error in zexprFromExpr"),tom_make_zvar("appSubsE"));
-       } } } } if ( ( tom_is_fun_sym_iland(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.Expr  tom_match5_1_Left=tom_get_slot_iland_Left(tom_match5_1); { tom.engine.adt.il.types.Expr  tom_match5_1_Right=tom_get_slot_iland_Right(tom_match5_1); { tom.engine.adt.il.types.Expr  tom_lt=tom_match5_1_Left; { tom.engine.adt.il.types.Expr  tom_rt=tom_match5_1_Right; {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } if ( ( tom_is_fun_sym_iland(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.Expr  tom_lt=tom_get_slot_iland_Left(tom_match5_1); { tom.engine.adt.il.types.Expr  tom_rt=tom_get_slot_iland_Right(tom_match5_1); if ( true ) {
 
         return tom_make_zand(zexprFromExpr(tom_lt),zexprFromExpr(tom_rt));
-       } } } } } } } } if ( ( tom_is_fun_sym_ilor(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.Expr  tom_match5_1_Left=tom_get_slot_ilor_Left(tom_match5_1); { tom.engine.adt.il.types.Expr  tom_match5_1_Right=tom_get_slot_ilor_Right(tom_match5_1); { tom.engine.adt.il.types.Expr  tom_lt=tom_match5_1_Left; { tom.engine.adt.il.types.Expr  tom_rt=tom_match5_1_Right; {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } } if ( ( tom_is_fun_sym_ilor(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.Expr  tom_lt=tom_get_slot_ilor_Left(tom_match5_1); { tom.engine.adt.il.types.Expr  tom_rt=tom_get_slot_ilor_Right(tom_match5_1); if ( true ) {
 
         return tom_make_zor(zexprFromExpr(tom_lt),zexprFromExpr(tom_rt));
-       } } } } } } } } if ( ( tom_is_fun_sym_ilnot(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.Expr  tom_match5_1_Exp=tom_get_slot_ilnot_Exp(tom_match5_1); { tom.engine.adt.il.types.Expr  tom_nex=tom_match5_1_Exp; {boolean tom_match5_tom_anti_constraints_status= true ; if ((tom_match5_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } } if ( ( tom_is_fun_sym_ilnot(tom_match5_1) ||  false  ) ) { { tom.engine.adt.il.types.Expr  tom_nex=tom_get_slot_ilnot_Exp(tom_match5_1); if ( true ) {
 
         return tom_make_znot(zexprFromExpr(tom_nex));
-       } } } } } } } }
+       } } } } }
 
     return tom_make_zeq(tom_make_zvar("Error in zexprFromExpr"),tom_make_zvar("end " + expr.toString()));
   }
 
   ZSymbol zsymbolFromSymbol(Symbol symb) {
-     if(symb instanceof  tom.engine.adt.il.types.Symbol ) { { tom.engine.adt.il.types.Symbol  tom_match6_1=(( tom.engine.adt.il.types.Symbol )symb); if ( ( tom_is_fun_sym_fsymbol(tom_match6_1) ||  false  ) ) { { String  tom_match6_1_Name=tom_get_slot_fsymbol_Name(tom_match6_1); { String  tom_name=tom_match6_1_Name; {boolean tom_match6_tom_anti_constraints_status= true ; if ((tom_match6_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(symb instanceof  tom.engine.adt.il.types.Symbol ) { { tom.engine.adt.il.types.Symbol  tom_match6_1=(( tom.engine.adt.il.types.Symbol )symb); if ( ( tom_is_fun_sym_fsymbol(tom_match6_1) ||  false  ) ) { { String  tom_name=tom_get_slot_fsymbol_Name(tom_match6_1); if ( true ) {
 
         return tom_make_zsymbol(tom_name);
-       } } } } } } } }
+       } } } } }
 
     return tom_make_zsymbol("random");
   }
 
   ZExpr zexprFromSeq(Seq seq) {
-     if(seq instanceof  tom.engine.adt.il.types.Seq ) { { tom.engine.adt.il.types.Seq  tom_match7_1=(( tom.engine.adt.il.types.Seq )seq); if ( ( tom_is_fun_sym_seq(tom_match7_1) ||  false  ) ) { {boolean tom_match7_tom_anti_constraints_status= true ; if ((tom_match7_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(seq instanceof  tom.engine.adt.il.types.Seq ) { { tom.engine.adt.il.types.Seq  tom_match7_1=(( tom.engine.adt.il.types.Seq )seq); if ( ( tom_is_fun_sym_seq(tom_match7_1) ||  false  ) ) { if ( true ) {
 
         return tom_make_ztrue();
-       } } } } if ( ( tom_is_fun_sym_dedterm(tom_match7_1) ||  false  ) ) { { tom.engine.adt.il.types.TermList  tom_match7_1_Terms=tom_get_slot_dedterm_Terms(tom_match7_1); { tom.engine.adt.il.types.TermList  tom_termlist=tom_match7_1_Terms; {boolean tom_match7_tom_anti_constraints_status= true ; if ((tom_match7_tom_anti_constraints_status ==  true )) { if ( true ) { if(tom_termlist instanceof  tom.engine.adt.il.types.TermList ) { { tom.engine.adt.il.types.TermList  tom_match8_1=(( tom.engine.adt.il.types.TermList )tom_termlist); if ( ( tom_is_fun_sym_concTerm(tom_match8_1) ||  false  ) ) { { tom.engine.adt.il.types.TermList  tom_match8_1_list1=tom_match8_1; { tom.engine.adt.il.types.TermList  tom_match8_1_begin1=tom_match8_1_list1; { tom.engine.adt.il.types.TermList  tom_match8_1_end1=tom_match8_1_list1; { while (!(tom_is_empty_concTerm_TermList(tom_match8_1_end1))) {tom_match8_1_list1=tom_match8_1_end1; { { tom.engine.adt.il.types.Term  tom_tl=tom_get_head_concTerm_TermList(tom_match8_1_list1);tom_match8_1_list1=tom_get_tail_concTerm_TermList(tom_match8_1_list1); if (!(tom_is_empty_concTerm_TermList(tom_match8_1_list1))) { { tom.engine.adt.il.types.Term  tom_tr=tom_get_head_concTerm_TermList(tom_match8_1_list1);tom_match8_1_list1=tom_get_tail_concTerm_TermList(tom_match8_1_list1); if (tom_is_empty_concTerm_TermList(tom_match8_1_list1)) { {boolean tom_match8_tom_anti_constraints_status= true ; if ((tom_match8_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } if ( ( tom_is_fun_sym_dedterm(tom_match7_1) ||  false  ) ) { { tom.engine.adt.il.types.TermList  tom_termlist=tom_get_slot_dedterm_Terms(tom_match7_1); if ( true ) { if(tom_termlist instanceof  tom.engine.adt.il.types.TermList ) { { tom.engine.adt.il.types.TermList  tom_match8_1=(( tom.engine.adt.il.types.TermList )tom_termlist); if ( ( tom_is_fun_sym_concTerm(tom_match8_1) ||  false  ) ) { { tom.engine.adt.il.types.TermList  tom_match8_1_list1=tom_match8_1; { tom.engine.adt.il.types.TermList  tom_match8_1_begin1=tom_match8_1_list1; { tom.engine.adt.il.types.TermList  tom_match8_1_end1=tom_match8_1_list1; { while (!(tom_is_empty_concTerm_TermList(tom_match8_1_end1))) {tom_match8_1_list1=tom_match8_1_end1; { { tom.engine.adt.il.types.TermList  tom_match8_1_end2=tom_match8_1_list1; { { tom.engine.adt.il.types.Term  tom_tl=tom_get_head_concTerm_TermList(tom_match8_1_list1);tom_match8_1_list1=tom_get_tail_concTerm_TermList(tom_match8_1_list1); { tom.engine.adt.il.types.TermList  tom_match8_1_end3=tom_match8_1_list1; { if (!(tom_is_empty_concTerm_TermList(tom_match8_1_list1))) { { tom.engine.adt.il.types.Term  tom_tr=tom_get_head_concTerm_TermList(tom_match8_1_list1);tom_match8_1_list1=tom_get_tail_concTerm_TermList(tom_match8_1_list1); if (tom_is_empty_concTerm_TermList(tom_match8_1_list1)) { if ( true ) {
 
 
 
             return tom_make_zeq(ztermFromTerm(tom_tl),ztermFromTerm(tom_tr));
-           } } } } } } }tom_match8_1_end1=tom_get_tail_concTerm_TermList(tom_match8_1_end1); } }tom_match8_1_list1=tom_match8_1_begin1; } } } } } } }
+           } } } }tom_match8_1_list1=tom_match8_1_end3; } } }tom_match8_1_list1=tom_match8_1_end2; } }tom_match8_1_end1=tom_get_tail_concTerm_TermList(tom_match8_1_end1); } }tom_match8_1_list1=tom_match8_1_begin1; } } } } } } }
 
-       } } } } } } if ( ( tom_is_fun_sym_dedexpr(tom_match7_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match7_1_Exprs=tom_get_slot_dedexpr_Exprs(tom_match7_1); { tom.engine.adt.il.types.ExprList  tom_exprlist=tom_match7_1_Exprs; {boolean tom_match7_tom_anti_constraints_status= true ; if ((tom_match7_tom_anti_constraints_status ==  true )) { if ( true ) { if(tom_exprlist instanceof  tom.engine.adt.il.types.ExprList ) { { tom.engine.adt.il.types.ExprList  tom_match9_1=(( tom.engine.adt.il.types.ExprList )tom_exprlist); if ( ( tom_is_fun_sym_concExpr(tom_match9_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match9_1_list1=tom_match9_1; { tom.engine.adt.il.types.ExprList  tom_match9_1_begin1=tom_match9_1_list1; { tom.engine.adt.il.types.ExprList  tom_match9_1_end1=tom_match9_1_list1; { while (!(tom_is_empty_concExpr_ExprList(tom_match9_1_end1))) {tom_match9_1_list1=tom_match9_1_end1; { { tom.engine.adt.il.types.Expr  tom_t=tom_get_head_concExpr_ExprList(tom_match9_1_list1);tom_match9_1_list1=tom_get_tail_concExpr_ExprList(tom_match9_1_list1); if (!(tom_is_empty_concExpr_ExprList(tom_match9_1_list1))) { { tom.engine.adt.il.types.Expr  tom_match9_1_3=tom_get_head_concExpr_ExprList(tom_match9_1_list1);tom_match9_1_list1=tom_get_tail_concExpr_ExprList(tom_match9_1_list1); if ( ( tom_is_fun_sym_iltrue(tom_match9_1_3) ||  false  ) ) { if (tom_is_empty_concExpr_ExprList(tom_match9_1_list1)) { {boolean tom_match9_tom_anti_constraints_status= true ; if ((tom_match9_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } if ( ( tom_is_fun_sym_dedexpr(tom_match7_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_exprlist=tom_get_slot_dedexpr_Exprs(tom_match7_1); if ( true ) { if(tom_exprlist instanceof  tom.engine.adt.il.types.ExprList ) { { tom.engine.adt.il.types.ExprList  tom_match9_1=(( tom.engine.adt.il.types.ExprList )tom_exprlist); if ( ( tom_is_fun_sym_concExpr(tom_match9_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match9_1_list1=tom_match9_1; { tom.engine.adt.il.types.ExprList  tom_match9_1_begin1=tom_match9_1_list1; { tom.engine.adt.il.types.ExprList  tom_match9_1_end1=tom_match9_1_list1; { while (!(tom_is_empty_concExpr_ExprList(tom_match9_1_end1))) {tom_match9_1_list1=tom_match9_1_end1; { { tom.engine.adt.il.types.ExprList  tom_match9_1_end2=tom_match9_1_list1; { { tom.engine.adt.il.types.Expr  tom_t=tom_get_head_concExpr_ExprList(tom_match9_1_list1);tom_match9_1_list1=tom_get_tail_concExpr_ExprList(tom_match9_1_list1); { tom.engine.adt.il.types.ExprList  tom_match9_1_end3=tom_match9_1_list1; { if (!(tom_is_empty_concExpr_ExprList(tom_match9_1_list1))) { { tom.engine.adt.il.types.Expr  tom_match9_1_3=tom_get_head_concExpr_ExprList(tom_match9_1_list1);tom_match9_1_list1=tom_get_tail_concExpr_ExprList(tom_match9_1_list1); if ( ( tom_is_fun_sym_iltrue(tom_match9_1_3) ||  false  ) ) { if (tom_is_empty_concExpr_ExprList(tom_match9_1_list1)) { if ( true ) {
 
 
 
             return zexprFromExpr(tom_t);
-           } } } } } } } }tom_match9_1_end1=tom_get_tail_concExpr_ExprList(tom_match9_1_end1); } }tom_match9_1_list1=tom_match9_1_begin1; } } } } } } }
+           } } } } }tom_match9_1_list1=tom_match9_1_end3; } } }tom_match9_1_list1=tom_match9_1_end2; } }tom_match9_1_end1=tom_get_tail_concExpr_ExprList(tom_match9_1_end1); } }tom_match9_1_list1=tom_match9_1_begin1; } } } } } } }
 
-       } } } } } } if ( ( tom_is_fun_sym_dedexpr(tom_match7_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match7_1_Exprs=tom_get_slot_dedexpr_Exprs(tom_match7_1); { tom.engine.adt.il.types.ExprList  tom_exprlist=tom_match7_1_Exprs; {boolean tom_match7_tom_anti_constraints_status= true ; if ((tom_match7_tom_anti_constraints_status ==  true )) { if ( true ) { if(tom_exprlist instanceof  tom.engine.adt.il.types.ExprList ) { { tom.engine.adt.il.types.ExprList  tom_match10_1=(( tom.engine.adt.il.types.ExprList )tom_exprlist); if ( ( tom_is_fun_sym_concExpr(tom_match10_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match10_1_list1=tom_match10_1; { tom.engine.adt.il.types.ExprList  tom_match10_1_begin1=tom_match10_1_list1; { tom.engine.adt.il.types.ExprList  tom_match10_1_end1=tom_match10_1_list1; { while (!(tom_is_empty_concExpr_ExprList(tom_match10_1_end1))) {tom_match10_1_list1=tom_match10_1_end1; { { tom.engine.adt.il.types.Expr  tom_t=tom_get_head_concExpr_ExprList(tom_match10_1_list1);tom_match10_1_list1=tom_get_tail_concExpr_ExprList(tom_match10_1_list1); if (!(tom_is_empty_concExpr_ExprList(tom_match10_1_list1))) { { tom.engine.adt.il.types.Expr  tom_match10_1_3=tom_get_head_concExpr_ExprList(tom_match10_1_list1);tom_match10_1_list1=tom_get_tail_concExpr_ExprList(tom_match10_1_list1); if ( ( tom_is_fun_sym_ilfalse(tom_match10_1_3) ||  false  ) ) { if (tom_is_empty_concExpr_ExprList(tom_match10_1_list1)) { {boolean tom_match10_tom_anti_constraints_status= true ; if ((tom_match10_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } if ( ( tom_is_fun_sym_dedexpr(tom_match7_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_exprlist=tom_get_slot_dedexpr_Exprs(tom_match7_1); if ( true ) { if(tom_exprlist instanceof  tom.engine.adt.il.types.ExprList ) { { tom.engine.adt.il.types.ExprList  tom_match10_1=(( tom.engine.adt.il.types.ExprList )tom_exprlist); if ( ( tom_is_fun_sym_concExpr(tom_match10_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match10_1_list1=tom_match10_1; { tom.engine.adt.il.types.ExprList  tom_match10_1_begin1=tom_match10_1_list1; { tom.engine.adt.il.types.ExprList  tom_match10_1_end1=tom_match10_1_list1; { while (!(tom_is_empty_concExpr_ExprList(tom_match10_1_end1))) {tom_match10_1_list1=tom_match10_1_end1; { { tom.engine.adt.il.types.ExprList  tom_match10_1_end2=tom_match10_1_list1; { { tom.engine.adt.il.types.Expr  tom_t=tom_get_head_concExpr_ExprList(tom_match10_1_list1);tom_match10_1_list1=tom_get_tail_concExpr_ExprList(tom_match10_1_list1); { tom.engine.adt.il.types.ExprList  tom_match10_1_end3=tom_match10_1_list1; { if (!(tom_is_empty_concExpr_ExprList(tom_match10_1_list1))) { { tom.engine.adt.il.types.Expr  tom_match10_1_3=tom_get_head_concExpr_ExprList(tom_match10_1_list1);tom_match10_1_list1=tom_get_tail_concExpr_ExprList(tom_match10_1_list1); if ( ( tom_is_fun_sym_ilfalse(tom_match10_1_3) ||  false  ) ) { if (tom_is_empty_concExpr_ExprList(tom_match10_1_list1)) { if ( true ) {
 
 
 
             return tom_make_znot(zexprFromExpr(tom_t));
-           } } } } } } } }tom_match10_1_end1=tom_get_tail_concExpr_ExprList(tom_match10_1_end1); } }tom_match10_1_list1=tom_match10_1_begin1; } } } } } } }
+           } } } } }tom_match10_1_list1=tom_match10_1_end3; } } }tom_match10_1_list1=tom_match10_1_end2; } }tom_match10_1_end1=tom_get_tail_concExpr_ExprList(tom_match10_1_end1); } }tom_match10_1_list1=tom_match10_1_begin1; } } } } } } }
 
-       } } } } } } } }
+       } } } } }
 
     return tom_make_ztrue();
   }
 
   ZTerm ztermFromAbsTerm(AbsTerm absterm) {
-     if(absterm instanceof  tom.engine.adt.il.types.AbsTerm ) { { tom.engine.adt.il.types.AbsTerm  tom_match11_1=(( tom.engine.adt.il.types.AbsTerm )absterm); if ( ( tom_is_fun_sym_absvar(tom_match11_1) ||  false  ) ) { { tom.engine.adt.il.types.Variable  tom_match11_1_Varname=tom_get_slot_absvar_Varname(tom_match11_1); if ( ( tom_is_fun_sym_var(tom_match11_1_Varname) ||  false  ) ) { { String  tom_match11_1_Varname_Name=tom_get_slot_var_Name(tom_match11_1_Varname); { String  tom_name=tom_match11_1_Varname_Name; {boolean tom_match11_tom_anti_constraints_status= true ; if ((tom_match11_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(absterm instanceof  tom.engine.adt.il.types.AbsTerm ) { { tom.engine.adt.il.types.AbsTerm  tom_match11_1=(( tom.engine.adt.il.types.AbsTerm )absterm); if ( ( tom_is_fun_sym_absvar(tom_match11_1) ||  false  ) ) { { tom.engine.adt.il.types.Variable  tom_match11_1_Varname=tom_get_slot_absvar_Varname(tom_match11_1); if ( ( tom_is_fun_sym_var(tom_match11_1_Varname) ||  false  ) ) { { String  tom_name=tom_get_slot_var_Name(tom_match11_1_Varname); if ( true ) {
 
         return tom_make_zvar(tom_name);
-       } } } } } } } } if ( ( tom_is_fun_sym_st(tom_match11_1) ||  false  ) ) { { tom.engine.adt.il.types.Symbol  tom_match11_1_Symbol=tom_get_slot_st_Symbol(tom_match11_1); { tom.engine.adt.il.types.AbsTerm  tom_match11_1_Abst=tom_get_slot_st_Abst(tom_match11_1); { int  tom_match11_1_Index=tom_get_slot_st_Index(tom_match11_1); { tom.engine.adt.il.types.AbsTerm  tom_t=tom_match11_1_Abst; { int  tom_index=tom_match11_1_Index; {boolean tom_match11_tom_anti_constraints_status= true ; if ((tom_match11_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } } } if ( ( tom_is_fun_sym_st(tom_match11_1) ||  false  ) ) { { tom.engine.adt.il.types.AbsTerm  tom_t=tom_get_slot_st_Abst(tom_match11_1); { int  tom_index=tom_get_slot_st_Index(tom_match11_1); if ( true ) {
 
         return tom_make_zst(ztermFromAbsTerm(tom_t),tom_index);
-       } } } } } } } } } if ( ( tom_is_fun_sym_sl(tom_match11_1) ||  false  ) ) { { tom.engine.adt.il.types.Symbol  tom_match11_1_Symbol=tom_get_slot_sl_Symbol(tom_match11_1); { tom.engine.adt.il.types.AbsTerm  tom_match11_1_Abst=tom_get_slot_sl_Abst(tom_match11_1); { String  tom_match11_1_Name=tom_get_slot_sl_Name(tom_match11_1); { tom.engine.adt.il.types.AbsTerm  tom_t=tom_match11_1_Abst; { String  tom_name=tom_match11_1_Name; {boolean tom_match11_tom_anti_constraints_status= true ; if ((tom_match11_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } } if ( ( tom_is_fun_sym_sl(tom_match11_1) ||  false  ) ) { { tom.engine.adt.il.types.AbsTerm  tom_t=tom_get_slot_sl_Abst(tom_match11_1); { String  tom_name=tom_get_slot_sl_Name(tom_match11_1); if ( true ) {
 
         return tom_make_zsl(ztermFromAbsTerm(tom_t),tom_name);
-       } } } } } } } } } } }
+       } } } } } }
 
     return tom_make_zvar("Error in ztermFromAbsTerm");
   }
 
   Seq cleanSeq(Seq seq) {
-     if(seq instanceof  tom.engine.adt.il.types.Seq ) { { tom.engine.adt.il.types.Seq  tom_match12_1=(( tom.engine.adt.il.types.Seq )seq); if ( ( tom_is_fun_sym_seq(tom_match12_1) ||  false  ) ) { {boolean tom_match12_tom_anti_constraints_status= true ; if ((tom_match12_tom_anti_constraints_status ==  true )) { if ( true ) {
- return seq;  } } } } if ( ( tom_is_fun_sym_dedterm(tom_match12_1) ||  false  ) ) { { tom.engine.adt.il.types.TermList  tom_match12_1_Terms=tom_get_slot_dedterm_Terms(tom_match12_1); if ( ( tom_is_fun_sym_concTerm(tom_match12_1_Terms) ||  false  ) ) { { tom.engine.adt.il.types.TermList  tom_match12_1_Terms_list1=tom_match12_1_Terms; { tom.engine.adt.il.types.TermList  tom_match12_1_Terms_begin1=tom_match12_1_Terms_list1; { tom.engine.adt.il.types.TermList  tom_match12_1_Terms_end1=tom_match12_1_Terms_list1; { while (!(tom_is_empty_concTerm_TermList(tom_match12_1_Terms_end1))) {tom_match12_1_Terms_list1=tom_match12_1_Terms_end1; { { tom.engine.adt.il.types.Term  tom_t=tom_get_head_concTerm_TermList(tom_match12_1_Terms_list1);tom_match12_1_Terms_list1=tom_get_tail_concTerm_TermList(tom_match12_1_Terms_list1); if (!(tom_is_empty_concTerm_TermList(tom_match12_1_Terms_list1))) { { tom.engine.adt.il.types.Term  tom_v=tom_get_head_concTerm_TermList(tom_match12_1_Terms_list1);tom_match12_1_Terms_list1=tom_get_tail_concTerm_TermList(tom_match12_1_Terms_list1); if (tom_is_empty_concTerm_TermList(tom_match12_1_Terms_list1)) { {boolean tom_match12_tom_anti_constraints_status= true ; if ((tom_match12_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(seq instanceof  tom.engine.adt.il.types.Seq ) { { tom.engine.adt.il.types.Seq  tom_match12_1=(( tom.engine.adt.il.types.Seq )seq); if ( ( tom_is_fun_sym_seq(tom_match12_1) ||  false  ) ) { if ( true ) {
+ return seq;  } } if ( ( tom_is_fun_sym_dedterm(tom_match12_1) ||  false  ) ) { { tom.engine.adt.il.types.TermList  tom_match12_1_Terms=tom_get_slot_dedterm_Terms(tom_match12_1); if ( ( tom_is_fun_sym_concTerm(tom_match12_1_Terms) ||  false  ) ) { { tom.engine.adt.il.types.TermList  tom_match12_1_Terms_list1=tom_match12_1_Terms; { tom.engine.adt.il.types.TermList  tom_match12_1_Terms_begin1=tom_match12_1_Terms_list1; { tom.engine.adt.il.types.TermList  tom_match12_1_Terms_end1=tom_match12_1_Terms_list1; { while (!(tom_is_empty_concTerm_TermList(tom_match12_1_Terms_end1))) {tom_match12_1_Terms_list1=tom_match12_1_Terms_end1; { { tom.engine.adt.il.types.TermList  tom_match12_1_Terms_end2=tom_match12_1_Terms_list1; { { tom.engine.adt.il.types.Term  tom_t=tom_get_head_concTerm_TermList(tom_match12_1_Terms_list1);tom_match12_1_Terms_list1=tom_get_tail_concTerm_TermList(tom_match12_1_Terms_list1); { tom.engine.adt.il.types.TermList  tom_match12_1_Terms_end3=tom_match12_1_Terms_list1; { if (!(tom_is_empty_concTerm_TermList(tom_match12_1_Terms_list1))) { { tom.engine.adt.il.types.Term  tom_v=tom_get_head_concTerm_TermList(tom_match12_1_Terms_list1);tom_match12_1_Terms_list1=tom_get_tail_concTerm_TermList(tom_match12_1_Terms_list1); if (tom_is_empty_concTerm_TermList(tom_match12_1_Terms_list1)) { if ( true ) {
 
           return tom_make_dedterm(tom_cons_list_concTerm(tom_t,tom_cons_list_concTerm(tom_v,tom_empty_list_concTerm())));
-       } } } } } } }tom_match12_1_Terms_end1=tom_get_tail_concTerm_TermList(tom_match12_1_Terms_end1); } }tom_match12_1_Terms_list1=tom_match12_1_Terms_begin1; } } } } } } } if ( ( tom_is_fun_sym_dedexpr(tom_match12_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs=tom_get_slot_dedexpr_Exprs(tom_match12_1); if ( ( tom_is_fun_sym_concExpr(tom_match12_1_Exprs) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs_list1=tom_match12_1_Exprs; { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs_begin1=tom_match12_1_Exprs_list1; { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs_end1=tom_match12_1_Exprs_list1; { while (!(tom_is_empty_concExpr_ExprList(tom_match12_1_Exprs_end1))) {tom_match12_1_Exprs_list1=tom_match12_1_Exprs_end1; { { tom.engine.adt.il.types.Expr  tom_t=tom_get_head_concExpr_ExprList(tom_match12_1_Exprs_list1);tom_match12_1_Exprs_list1=tom_get_tail_concExpr_ExprList(tom_match12_1_Exprs_list1); if (!(tom_is_empty_concExpr_ExprList(tom_match12_1_Exprs_list1))) { { tom.engine.adt.il.types.Expr  tom_v=tom_get_head_concExpr_ExprList(tom_match12_1_Exprs_list1);tom_match12_1_Exprs_list1=tom_get_tail_concExpr_ExprList(tom_match12_1_Exprs_list1); if (tom_is_empty_concExpr_ExprList(tom_match12_1_Exprs_list1)) { {boolean tom_match12_tom_anti_constraints_status= true ; if ((tom_match12_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } }tom_match12_1_Terms_list1=tom_match12_1_Terms_end3; } } }tom_match12_1_Terms_list1=tom_match12_1_Terms_end2; } }tom_match12_1_Terms_end1=tom_get_tail_concTerm_TermList(tom_match12_1_Terms_end1); } }tom_match12_1_Terms_list1=tom_match12_1_Terms_begin1; } } } } } } } if ( ( tom_is_fun_sym_dedexpr(tom_match12_1) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs=tom_get_slot_dedexpr_Exprs(tom_match12_1); if ( ( tom_is_fun_sym_concExpr(tom_match12_1_Exprs) ||  false  ) ) { { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs_list1=tom_match12_1_Exprs; { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs_begin1=tom_match12_1_Exprs_list1; { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs_end1=tom_match12_1_Exprs_list1; { while (!(tom_is_empty_concExpr_ExprList(tom_match12_1_Exprs_end1))) {tom_match12_1_Exprs_list1=tom_match12_1_Exprs_end1; { { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs_end2=tom_match12_1_Exprs_list1; { { tom.engine.adt.il.types.Expr  tom_t=tom_get_head_concExpr_ExprList(tom_match12_1_Exprs_list1);tom_match12_1_Exprs_list1=tom_get_tail_concExpr_ExprList(tom_match12_1_Exprs_list1); { tom.engine.adt.il.types.ExprList  tom_match12_1_Exprs_end3=tom_match12_1_Exprs_list1; { if (!(tom_is_empty_concExpr_ExprList(tom_match12_1_Exprs_list1))) { { tom.engine.adt.il.types.Expr  tom_v=tom_get_head_concExpr_ExprList(tom_match12_1_Exprs_list1);tom_match12_1_Exprs_list1=tom_get_tail_concExpr_ExprList(tom_match12_1_Exprs_list1); if (tom_is_empty_concExpr_ExprList(tom_match12_1_Exprs_list1)) { if ( true ) {
 
         return tom_make_dedexpr(tom_cons_list_concExpr(tom_t,tom_cons_list_concExpr(tom_v,tom_empty_list_concExpr())));
-       } } } } } } }tom_match12_1_Exprs_end1=tom_get_tail_concExpr_ExprList(tom_match12_1_Exprs_end1); } }tom_match12_1_Exprs_list1=tom_match12_1_Exprs_begin1; } } } } } } } } }
+       } } } }tom_match12_1_Exprs_list1=tom_match12_1_Exprs_end3; } } }tom_match12_1_Exprs_list1=tom_match12_1_Exprs_end2; } }tom_match12_1_Exprs_end1=tom_get_tail_concExpr_ExprList(tom_match12_1_Exprs_end1); } }tom_match12_1_Exprs_list1=tom_match12_1_Exprs_begin1; } } } } } } } } }
 
     return seq;
   }
 
   private Map ztermVariableMapFromSubstitutionList(SubstitutionList sublist, Map map) {
-     if(sublist instanceof  tom.engine.adt.il.types.SubstitutionList ) { { tom.engine.adt.il.types.SubstitutionList  tom_match13_1=(( tom.engine.adt.il.types.SubstitutionList )sublist); if ( ( tom_is_fun_sym_subs(tom_match13_1) ||  false  ) ) { { tom.engine.adt.il.types.SubstitutionList  tom_match13_1_list1=tom_match13_1; if (tom_is_empty_subs_SubstitutionList(tom_match13_1_list1)) { {boolean tom_match13_tom_anti_constraints_status= true ; if ((tom_match13_tom_anti_constraints_status ==  true )) { if ( true ) {
- return map;  } } } } } } if ( ( tom_is_fun_sym_subs(tom_match13_1) ||  false  ) ) { { tom.engine.adt.il.types.SubstitutionList  tom_match13_1_list1=tom_match13_1; if (!(tom_is_empty_subs_SubstitutionList(tom_match13_1_list1))) { { tom.engine.adt.il.types.Substitution  tom_match13_1_1=tom_get_head_subs_SubstitutionList(tom_match13_1_list1);tom_match13_1_list1=tom_get_tail_subs_SubstitutionList(tom_match13_1_list1); if ( ( tom_is_fun_sym_undefsubs(tom_match13_1_1) ||  false  ) ) { { tom.engine.adt.il.types.SubstitutionList  tom_t=tom_match13_1_list1; {boolean tom_match13_tom_anti_constraints_status= true ; if ((tom_match13_tom_anti_constraints_status ==  true )) { if ( true ) {
- return ztermVariableMapFromSubstitutionList(tom_t,map); } } } } } } } } } if ( ( tom_is_fun_sym_subs(tom_match13_1) ||  false  ) ) { { tom.engine.adt.il.types.SubstitutionList  tom_match13_1_list1=tom_match13_1; if (!(tom_is_empty_subs_SubstitutionList(tom_match13_1_list1))) { { tom.engine.adt.il.types.Substitution  tom_match13_1_1=tom_get_head_subs_SubstitutionList(tom_match13_1_list1);tom_match13_1_list1=tom_get_tail_subs_SubstitutionList(tom_match13_1_list1); if ( ( tom_is_fun_sym_is(tom_match13_1_1) ||  false  ) ) { { tom.engine.adt.il.types.Variable  tom_match13_1_1_Var=tom_get_slot_is_Var(tom_match13_1_1); { tom.engine.adt.il.types.Term  tom_match13_1_1_Term=tom_get_slot_is_Term(tom_match13_1_1); if ( ( tom_is_fun_sym_var(tom_match13_1_1_Var) ||  false  ) ) { { String  tom_match13_1_1_Var_Name=tom_get_slot_var_Name(tom_match13_1_1_Var); { String  tom_name=tom_match13_1_1_Var_Name; { tom.engine.adt.il.types.Term  tom_term=tom_match13_1_1_Term; { tom.engine.adt.il.types.SubstitutionList  tom_t=tom_match13_1_list1; {boolean tom_match13_tom_anti_constraints_status= true ; if ((tom_match13_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(sublist instanceof  tom.engine.adt.il.types.SubstitutionList ) { { tom.engine.adt.il.types.SubstitutionList  tom_match13_1=(( tom.engine.adt.il.types.SubstitutionList )sublist); if ( ( tom_is_fun_sym_subs(tom_match13_1) ||  false  ) ) { { tom.engine.adt.il.types.SubstitutionList  tom_match13_1_list1=tom_match13_1; if (tom_is_empty_subs_SubstitutionList(tom_match13_1_list1)) { if ( true ) {
+ return map;  } } } } if ( ( tom_is_fun_sym_subs(tom_match13_1) ||  false  ) ) { { tom.engine.adt.il.types.SubstitutionList  tom_match13_1_list1=tom_match13_1; { tom.engine.adt.il.types.SubstitutionList  tom_match13_1_end1=tom_match13_1_list1; { if (!(tom_is_empty_subs_SubstitutionList(tom_match13_1_list1))) { { tom.engine.adt.il.types.Substitution  tom_match13_1_1=tom_get_head_subs_SubstitutionList(tom_match13_1_list1);tom_match13_1_list1=tom_get_tail_subs_SubstitutionList(tom_match13_1_list1); if ( ( tom_is_fun_sym_undefsubs(tom_match13_1_1) ||  false  ) ) { { tom.engine.adt.il.types.SubstitutionList  tom_t=tom_match13_1_list1; if ( true ) {
+ return ztermVariableMapFromSubstitutionList(tom_t,map); } } } } }tom_match13_1_list1=tom_match13_1_end1; } } } } if ( ( tom_is_fun_sym_subs(tom_match13_1) ||  false  ) ) { { tom.engine.adt.il.types.SubstitutionList  tom_match13_1_list1=tom_match13_1; { tom.engine.adt.il.types.SubstitutionList  tom_match13_1_end1=tom_match13_1_list1; { if (!(tom_is_empty_subs_SubstitutionList(tom_match13_1_list1))) { { tom.engine.adt.il.types.Substitution  tom_match13_1_1=tom_get_head_subs_SubstitutionList(tom_match13_1_list1);tom_match13_1_list1=tom_get_tail_subs_SubstitutionList(tom_match13_1_list1); if ( ( tom_is_fun_sym_is(tom_match13_1_1) ||  false  ) ) { { tom.engine.adt.il.types.Variable  tom_match13_1_1_Var=tom_get_slot_is_Var(tom_match13_1_1); if ( ( tom_is_fun_sym_var(tom_match13_1_1_Var) ||  false  ) ) { { String  tom_name=tom_get_slot_var_Name(tom_match13_1_1_Var); { tom.engine.adt.il.types.Term  tom_term=tom_get_slot_is_Term(tom_match13_1_1); { tom.engine.adt.il.types.SubstitutionList  tom_t=tom_match13_1_list1; if ( true ) {
 
         map.put(tom_name,ztermFromTerm(tom_term));
         return ztermVariableMapFromSubstitutionList(tom_t,map);
-       } } } } } } } } } } } } } } } } }
+       } } } } } } } } }tom_match13_1_list1=tom_match13_1_end1; } } } } } }
 
     throw new TomRuntimeException("verifier: strange substitution list: "+sublist);
   }
 
   public void collectConstraints(DerivTree tree, Map conditions) {
-     if(tree instanceof  tom.engine.adt.il.types.DerivTree ) { { tom.engine.adt.il.types.DerivTree  tom_match14_1=(( tom.engine.adt.il.types.DerivTree )tree); if ( ( tom_is_fun_sym_derivrule(tom_match14_1) ||  false  ) ) { { tom.engine.adt.il.types.DerivTree  tom_match14_1_Pre=tom_get_slot_derivrule_Pre(tom_match14_1); { tom.engine.adt.il.types.Seq  tom_match14_1_Cond=tom_get_slot_derivrule_Cond(tom_match14_1); { tom.engine.adt.il.types.DerivTree  tom_pre=tom_match14_1_Pre; { tom.engine.adt.il.types.Seq  tom_condition=tom_match14_1_Cond; {boolean tom_match14_tom_anti_constraints_status= true ; if ((tom_match14_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(tree instanceof  tom.engine.adt.il.types.DerivTree ) { { tom.engine.adt.il.types.DerivTree  tom_match14_1=(( tom.engine.adt.il.types.DerivTree )tree); if ( ( tom_is_fun_sym_derivrule(tom_match14_1) ||  false  ) ) { { tom.engine.adt.il.types.DerivTree  tom_pre=tom_get_slot_derivrule_Pre(tom_match14_1); { tom.engine.adt.il.types.Seq  tom_condition=tom_get_slot_derivrule_Cond(tom_match14_1); if ( true ) {
 
         String condname = Integer.toString(conditions.size()+1);
         conditions.put(condname,tom_condition);
         collectConstraints(tom_pre,conditions);
-       } } } } } } } } if ( ( tom_is_fun_sym_derivrule2(tom_match14_1) ||  false  ) ) { { tom.engine.adt.il.types.DerivTree  tom_match14_1_Pre=tom_get_slot_derivrule2_Pre(tom_match14_1); { tom.engine.adt.il.types.DerivTree  tom_match14_1_Pre2=tom_get_slot_derivrule2_Pre2(tom_match14_1); { tom.engine.adt.il.types.Seq  tom_match14_1_Cond=tom_get_slot_derivrule2_Cond(tom_match14_1); { tom.engine.adt.il.types.DerivTree  tom_pre=tom_match14_1_Pre; { tom.engine.adt.il.types.DerivTree  tom_pre2=tom_match14_1_Pre2; { tom.engine.adt.il.types.Seq  tom_condition=tom_match14_1_Cond; {boolean tom_match14_tom_anti_constraints_status= true ; if ((tom_match14_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } } if ( ( tom_is_fun_sym_derivrule2(tom_match14_1) ||  false  ) ) { { tom.engine.adt.il.types.DerivTree  tom_pre=tom_get_slot_derivrule2_Pre(tom_match14_1); { tom.engine.adt.il.types.DerivTree  tom_pre2=tom_get_slot_derivrule2_Pre2(tom_match14_1); { tom.engine.adt.il.types.Seq  tom_condition=tom_get_slot_derivrule2_Cond(tom_match14_1); if ( true ) {
 
         String condname = Integer.toString(conditions.size()+1);
         conditions.put(condname,tom_condition);
         collectConstraints(tom_pre,conditions);
         collectConstraints(tom_pre2,conditions);
-       } } } } } } } } } } } }
+       } } } } } } }
 
   }
 

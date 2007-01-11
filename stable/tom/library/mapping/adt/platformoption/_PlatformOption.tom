@@ -1,9 +1,10 @@
 
-%include { mustrategy.tom }
+   /*
+   %include { mustrategy.tom }
+   */
 
 %op Strategy Is_BooleanValue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.Is_BooleanValue)}
-  make() { new tom.platform.adt.platformoption.strategy.platformvalue.Is_BooleanValue() }
+  make() { `When_BooleanValue(Identity()) }
 }
 
 %op Strategy _BooleanValue(arg0:Strategy) {
@@ -20,9 +21,13 @@
   make( new_BooleanValue) { new tom.platform.adt.platformoption.strategy.platformvalue.Make_BooleanValue( new_BooleanValue) }
 }
 
+%op Strategy When_BooleanValue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.When_BooleanValue)}
+  make(s) { new tom.platform.adt.platformoption.strategy.platformvalue.When_BooleanValue(s) }
+}
+
 %op Strategy Is_StringValue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.Is_StringValue)}
-  make() { new tom.platform.adt.platformoption.strategy.platformvalue.Is_StringValue() }
+  make() { `When_StringValue(Identity()) }
 }
 
 %op Strategy _StringValue(arg0:Strategy) {
@@ -39,9 +44,13 @@
   make( _StringValue) { new tom.platform.adt.platformoption.strategy.platformvalue.Make_StringValue( _StringValue) }
 }
 
+%op Strategy When_StringValue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.When_StringValue)}
+  make(s) { new tom.platform.adt.platformoption.strategy.platformvalue.When_StringValue(s) }
+}
+
 %op Strategy Is_IntegerValue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.Is_IntegerValue)}
-  make() { new tom.platform.adt.platformoption.strategy.platformvalue.Is_IntegerValue() }
+  make() { `When_IntegerValue(Identity()) }
 }
 
 %op Strategy _IntegerValue(arg0:Strategy) {
@@ -58,9 +67,13 @@
   make( _IntegerValue) { new tom.platform.adt.platformoption.strategy.platformvalue.Make_IntegerValue( _IntegerValue) }
 }
 
+%op Strategy When_IntegerValue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformvalue.When_IntegerValue)}
+  make(s) { new tom.platform.adt.platformoption.strategy.platformvalue.When_IntegerValue(s) }
+}
+
 %op Strategy Is_EmptyconcPlatformOption() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist.Is_EmptyconcPlatformOption)}
-  make() { new tom.platform.adt.platformoption.strategy.platformoptionlist.Is_EmptyconcPlatformOption() }
+  make() { `When_EmptyconcPlatformOption(Identity()) }
 }
 
 %op Strategy _EmptyconcPlatformOption() {
@@ -75,9 +88,13 @@
   make() { new tom.platform.adt.platformoption.strategy.platformoptionlist.Make_EmptyconcPlatformOption() }
 }
 
+%op Strategy When_EmptyconcPlatformOption(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist.When_EmptyconcPlatformOption)}
+  make(s) { new tom.platform.adt.platformoption.strategy.platformoptionlist.When_EmptyconcPlatformOption(s) }
+}
+
 %op Strategy Is_ConsconcPlatformOption() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist.Is_ConsconcPlatformOption)}
-  make() { new tom.platform.adt.platformoption.strategy.platformoptionlist.Is_ConsconcPlatformOption() }
+  make() { `When_ConsconcPlatformOption(Identity()) }
 }
 
 %op Strategy _ConsconcPlatformOption(arg0:Strategy, arg1:Strategy) {
@@ -96,9 +113,13 @@
   make( new_HeadconcPlatformOption,  new_TailconcPlatformOption) { new tom.platform.adt.platformoption.strategy.platformoptionlist.Make_ConsconcPlatformOption( new_HeadconcPlatformOption,  new_TailconcPlatformOption) }
 }
 
+%op Strategy When_ConsconcPlatformOption(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoptionlist.When_ConsconcPlatformOption)}
+  make(s) { new tom.platform.adt.platformoption.strategy.platformoptionlist.When_ConsconcPlatformOption(s) }
+}
+
 %op Strategy Is_True() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean.Is_True)}
-  make() { new tom.platform.adt.platformoption.strategy.platformboolean.Is_True() }
+  make() { `When_True(Identity()) }
 }
 
 %op Strategy _True() {
@@ -113,9 +134,13 @@
   make() { new tom.platform.adt.platformoption.strategy.platformboolean.Make_True() }
 }
 
+%op Strategy When_True(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean.When_True)}
+  make(s) { new tom.platform.adt.platformoption.strategy.platformboolean.When_True(s) }
+}
+
 %op Strategy Is_False() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean.Is_False)}
-  make() { new tom.platform.adt.platformoption.strategy.platformboolean.Is_False() }
+  make() { `When_False(Identity()) }
 }
 
 %op Strategy _False() {
@@ -130,9 +155,13 @@
   make() { new tom.platform.adt.platformoption.strategy.platformboolean.Make_False() }
 }
 
+%op Strategy When_False(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformboolean.When_False)}
+  make(s) { new tom.platform.adt.platformoption.strategy.platformboolean.When_False(s) }
+}
+
 %op Strategy Is_PluginOption() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoption.Is_PluginOption)}
-  make() { new tom.platform.adt.platformoption.strategy.platformoption.Is_PluginOption() }
+  make() { `When_PluginOption(Identity()) }
 }
 
 %op Strategy _PluginOption(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
@@ -157,7 +186,13 @@
   make( _Name,  _AltName,  _Description,  new_Value,  _AttrName) { new tom.platform.adt.platformoption.strategy.platformoption.Make_PluginOption( _Name,  _AltName,  _Description,  new_Value,  _AttrName) }
 }
 
-%op Strategy _concPlatformOption(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsconcPlatformOption(sub,MuVar("x")),_EmptyconcPlatformOption())) }
+%op Strategy When_PluginOption(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformoption.strategy.platformoption.When_PluginOption)}
+  make(s) { new tom.platform.adt.platformoption.strategy.platformoption.When_PluginOption(s) }
 }
+
+            %op Strategy _concPlatformOption(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsconcPlatformOption(sub,MuVar("x")),_EmptyconcPlatformOption())) }
+            }
+            

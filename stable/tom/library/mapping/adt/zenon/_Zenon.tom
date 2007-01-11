@@ -1,9 +1,10 @@
 
-%include { mustrategy.tom }
+   /*
+   %include { mustrategy.tom }
+   */
 
 %op Strategy Is_ztype() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztype.Is_ztype)}
-  make() { new tom.engine.adt.zenon.strategy.ztype.Is_ztype() }
+  make() { `When_ztype(Identity()) }
 }
 
 %op Strategy _ztype(arg0:Strategy) {
@@ -20,9 +21,13 @@
   make( _Tname) { new tom.engine.adt.zenon.strategy.ztype.Make_ztype( _Tname) }
 }
 
+%op Strategy When_ztype(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztype.When_ztype)}
+  make(s) { new tom.engine.adt.zenon.strategy.ztype.When_ztype(s) }
+}
+
 %op Strategy Is_ztrue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_ztrue)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_ztrue() }
+  make() { `When_ztrue(Identity()) }
 }
 
 %op Strategy _ztrue() {
@@ -37,9 +42,13 @@
   make() { new tom.engine.adt.zenon.strategy.zexpr.Make_ztrue() }
 }
 
+%op Strategy When_ztrue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_ztrue)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_ztrue(s) }
+}
+
 %op Strategy Is_zfalse() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_zfalse)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_zfalse() }
+  make() { `When_zfalse(Identity()) }
 }
 
 %op Strategy _zfalse() {
@@ -54,9 +63,13 @@
   make() { new tom.engine.adt.zenon.strategy.zexpr.Make_zfalse() }
 }
 
+%op Strategy When_zfalse(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_zfalse)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_zfalse(s) }
+}
+
 %op Strategy Is_zisfsym() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_zisfsym)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_zisfsym() }
+  make() { `When_zisfsym(Identity()) }
 }
 
 %op Strategy _zisfsym(arg0:Strategy, arg1:Strategy) {
@@ -75,9 +88,13 @@
   make( new_T,  new_Symbol) { new tom.engine.adt.zenon.strategy.zexpr.Make_zisfsym( new_T,  new_Symbol) }
 }
 
+%op Strategy When_zisfsym(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_zisfsym)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_zisfsym(s) }
+}
+
 %op Strategy Is_zeq() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_zeq)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_zeq() }
+  make() { `When_zeq(Identity()) }
 }
 
 %op Strategy _zeq(arg0:Strategy, arg1:Strategy) {
@@ -96,9 +113,13 @@
   make( new_Lt,  new_Rt) { new tom.engine.adt.zenon.strategy.zexpr.Make_zeq( new_Lt,  new_Rt) }
 }
 
+%op Strategy When_zeq(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_zeq)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_zeq(s) }
+}
+
 %op Strategy Is_zforall() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_zforall)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_zforall() }
+  make() { `When_zforall(Identity()) }
 }
 
 %op Strategy _zforall(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -119,9 +140,13 @@
   make( new_Var,  new_Aztype,  new_Expr) { new tom.engine.adt.zenon.strategy.zexpr.Make_zforall( new_Var,  new_Aztype,  new_Expr) }
 }
 
+%op Strategy When_zforall(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_zforall)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_zforall(s) }
+}
+
 %op Strategy Is_zexists() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_zexists)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_zexists() }
+  make() { `When_zexists(Identity()) }
 }
 
 %op Strategy _zexists(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -142,9 +167,13 @@
   make( new_Var,  new_Aztype,  new_Expr) { new tom.engine.adt.zenon.strategy.zexpr.Make_zexists( new_Var,  new_Aztype,  new_Expr) }
 }
 
+%op Strategy When_zexists(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_zexists)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_zexists(s) }
+}
+
 %op Strategy Is_zand() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_zand)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_zand() }
+  make() { `When_zand(Identity()) }
 }
 
 %op Strategy _zand(arg0:Strategy, arg1:Strategy) {
@@ -163,9 +192,13 @@
   make( new_Lte,  new_Rte) { new tom.engine.adt.zenon.strategy.zexpr.Make_zand( new_Lte,  new_Rte) }
 }
 
+%op Strategy When_zand(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_zand)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_zand(s) }
+}
+
 %op Strategy Is_zor() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_zor)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_zor() }
+  make() { `When_zor(Identity()) }
 }
 
 %op Strategy _zor(arg0:Strategy, arg1:Strategy) {
@@ -184,9 +217,13 @@
   make( new_Lte,  new_Rte) { new tom.engine.adt.zenon.strategy.zexpr.Make_zor( new_Lte,  new_Rte) }
 }
 
+%op Strategy When_zor(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_zor)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_zor(s) }
+}
+
 %op Strategy Is_znot() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_znot)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_znot() }
+  make() { `When_znot(Identity()) }
 }
 
 %op Strategy _znot(arg0:Strategy) {
@@ -203,9 +240,13 @@
   make( new_Nex) { new tom.engine.adt.zenon.strategy.zexpr.Make_znot( new_Nex) }
 }
 
+%op Strategy When_znot(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_znot)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_znot(s) }
+}
+
 %op Strategy Is_zequiv() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.Is_zequiv)}
-  make() { new tom.engine.adt.zenon.strategy.zexpr.Is_zequiv() }
+  make() { `When_zequiv(Identity()) }
 }
 
 %op Strategy _zequiv(arg0:Strategy, arg1:Strategy) {
@@ -224,9 +265,13 @@
   make( new_Lte,  new_Rte) { new tom.engine.adt.zenon.strategy.zexpr.Make_zequiv( new_Lte,  new_Rte) }
 }
 
+%op Strategy When_zequiv(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zexpr.When_zequiv)}
+  make(s) { new tom.engine.adt.zenon.strategy.zexpr.When_zequiv(s) }
+}
+
 %op Strategy Is_zaxiom() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiom.Is_zaxiom)}
-  make() { new tom.engine.adt.zenon.strategy.zaxiom.Is_zaxiom() }
+  make() { `When_zaxiom(Identity()) }
 }
 
 %op Strategy _zaxiom(arg0:Strategy, arg1:Strategy) {
@@ -245,9 +290,13 @@
   make( _Name,  new_Ax) { new tom.engine.adt.zenon.strategy.zaxiom.Make_zaxiom( _Name,  new_Ax) }
 }
 
+%op Strategy When_zaxiom(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiom.When_zaxiom)}
+  make(s) { new tom.engine.adt.zenon.strategy.zaxiom.When_zaxiom(s) }
+}
+
 %op Strategy Is_zvar() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.Is_zvar)}
-  make() { new tom.engine.adt.zenon.strategy.zterm.Is_zvar() }
+  make() { `When_zvar(Identity()) }
 }
 
 %op Strategy _zvar(arg0:Strategy) {
@@ -264,9 +313,13 @@
   make( _Varname) { new tom.engine.adt.zenon.strategy.zterm.Make_zvar( _Varname) }
 }
 
+%op Strategy When_zvar(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.When_zvar)}
+  make(s) { new tom.engine.adt.zenon.strategy.zterm.When_zvar(s) }
+}
+
 %op Strategy Is_zappl() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.Is_zappl)}
-  make() { new tom.engine.adt.zenon.strategy.zterm.Is_zappl() }
+  make() { `When_zappl(Identity()) }
 }
 
 %op Strategy _zappl(arg0:Strategy, arg1:Strategy) {
@@ -285,9 +338,13 @@
   make( new_Zsymb,  new_Termlist) { new tom.engine.adt.zenon.strategy.zterm.Make_zappl( new_Zsymb,  new_Termlist) }
 }
 
+%op Strategy When_zappl(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.When_zappl)}
+  make(s) { new tom.engine.adt.zenon.strategy.zterm.When_zappl(s) }
+}
+
 %op Strategy Is_zst() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.Is_zst)}
-  make() { new tom.engine.adt.zenon.strategy.zterm.Is_zst() }
+  make() { `When_zst(Identity()) }
 }
 
 %op Strategy _zst(arg0:Strategy, arg1:Strategy) {
@@ -306,9 +363,13 @@
   make( new_Abst,  _Index) { new tom.engine.adt.zenon.strategy.zterm.Make_zst( new_Abst,  _Index) }
 }
 
+%op Strategy When_zst(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.When_zst)}
+  make(s) { new tom.engine.adt.zenon.strategy.zterm.When_zst(s) }
+}
+
 %op Strategy Is_zsl() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.Is_zsl)}
-  make() { new tom.engine.adt.zenon.strategy.zterm.Is_zsl() }
+  make() { `When_zsl(Identity()) }
 }
 
 %op Strategy _zsl(arg0:Strategy, arg1:Strategy) {
@@ -327,9 +388,13 @@
   make( new_Abst,  _Name) { new tom.engine.adt.zenon.strategy.zterm.Make_zsl( new_Abst,  _Name) }
 }
 
+%op Strategy When_zsl(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zterm.When_zsl)}
+  make(s) { new tom.engine.adt.zenon.strategy.zterm.When_zsl(s) }
+}
+
 %op Strategy Is_Emptyzby() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist.Is_Emptyzby)}
-  make() { new tom.engine.adt.zenon.strategy.zaxiomlist.Is_Emptyzby() }
+  make() { `When_Emptyzby(Identity()) }
 }
 
 %op Strategy _Emptyzby() {
@@ -344,9 +409,13 @@
   make() { new tom.engine.adt.zenon.strategy.zaxiomlist.Make_Emptyzby() }
 }
 
+%op Strategy When_Emptyzby(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist.When_Emptyzby)}
+  make(s) { new tom.engine.adt.zenon.strategy.zaxiomlist.When_Emptyzby(s) }
+}
+
 %op Strategy Is_Conszby() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist.Is_Conszby)}
-  make() { new tom.engine.adt.zenon.strategy.zaxiomlist.Is_Conszby() }
+  make() { `When_Conszby(Identity()) }
 }
 
 %op Strategy _Conszby(arg0:Strategy, arg1:Strategy) {
@@ -365,9 +434,13 @@
   make( new_Headzby,  new_Tailzby) { new tom.engine.adt.zenon.strategy.zaxiomlist.Make_Conszby( new_Headzby,  new_Tailzby) }
 }
 
+%op Strategy When_Conszby(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zaxiomlist.When_Conszby)}
+  make(s) { new tom.engine.adt.zenon.strategy.zaxiomlist.When_Conszby(s) }
+}
+
 %op Strategy Is_zthm() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zspec.Is_zthm)}
-  make() { new tom.engine.adt.zenon.strategy.zspec.Is_zthm() }
+  make() { `When_zthm(Identity()) }
 }
 
 %op Strategy _zthm(arg0:Strategy, arg1:Strategy) {
@@ -386,9 +459,13 @@
   make( new_Thm,  new_By) { new tom.engine.adt.zenon.strategy.zspec.Make_zthm( new_Thm,  new_By) }
 }
 
+%op Strategy When_zthm(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zspec.When_zthm)}
+  make(s) { new tom.engine.adt.zenon.strategy.zspec.When_zthm(s) }
+}
+
 %op Strategy Is_zsymbol() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zsymbol.Is_zsymbol)}
-  make() { new tom.engine.adt.zenon.strategy.zsymbol.Is_zsymbol() }
+  make() { `When_zsymbol(Identity()) }
 }
 
 %op Strategy _zsymbol(arg0:Strategy) {
@@ -405,9 +482,13 @@
   make( _Name) { new tom.engine.adt.zenon.strategy.zsymbol.Make_zsymbol( _Name) }
 }
 
+%op Strategy When_zsymbol(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.zsymbol.When_zsymbol)}
+  make(s) { new tom.engine.adt.zenon.strategy.zsymbol.When_zsymbol(s) }
+}
+
 %op Strategy Is_EmptyconcZTerm() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztermlist.Is_EmptyconcZTerm)}
-  make() { new tom.engine.adt.zenon.strategy.ztermlist.Is_EmptyconcZTerm() }
+  make() { `When_EmptyconcZTerm(Identity()) }
 }
 
 %op Strategy _EmptyconcZTerm() {
@@ -422,9 +503,13 @@
   make() { new tom.engine.adt.zenon.strategy.ztermlist.Make_EmptyconcZTerm() }
 }
 
+%op Strategy When_EmptyconcZTerm(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztermlist.When_EmptyconcZTerm)}
+  make(s) { new tom.engine.adt.zenon.strategy.ztermlist.When_EmptyconcZTerm(s) }
+}
+
 %op Strategy Is_ConsconcZTerm() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztermlist.Is_ConsconcZTerm)}
-  make() { new tom.engine.adt.zenon.strategy.ztermlist.Is_ConsconcZTerm() }
+  make() { `When_ConsconcZTerm(Identity()) }
 }
 
 %op Strategy _ConsconcZTerm(arg0:Strategy, arg1:Strategy) {
@@ -443,12 +528,18 @@
   make( new_HeadconcZTerm,  new_TailconcZTerm) { new tom.engine.adt.zenon.strategy.ztermlist.Make_ConsconcZTerm( new_HeadconcZTerm,  new_TailconcZTerm) }
 }
 
-%op Strategy _zby(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_Conszby(sub,MuVar("x")),_Emptyzby())) }
+%op Strategy When_ConsconcZTerm(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.zenon.strategy.ztermlist.When_ConsconcZTerm)}
+  make(s) { new tom.engine.adt.zenon.strategy.ztermlist.When_ConsconcZTerm(s) }
 }
 
-%op Strategy _concZTerm(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsconcZTerm(sub,MuVar("x")),_EmptyconcZTerm())) }
-}
+            %op Strategy _zby(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_Conszby(sub,MuVar("x")),_Emptyzby())) }
+            }
+            
+            %op Strategy _concZTerm(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsconcZTerm(sub,MuVar("x")),_EmptyconcZTerm())) }
+            }
+            

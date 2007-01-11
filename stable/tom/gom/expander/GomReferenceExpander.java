@@ -59,10 +59,10 @@ public class GomReferenceExpander {
   public SortList expand(SortList typedModuleList) {
     //return (SortList) `_concSort(ExpandSort()).apply(typedModuleList);
     SortList expandedList = tom_empty_list_concSort();
-     if(typedModuleList instanceof  tom.gom.adt.gom.types.SortList ) { { tom.gom.adt.gom.types.SortList  tom_match1_1=(( tom.gom.adt.gom.types.SortList )typedModuleList); if ( ( tom_is_fun_sym_concSort(tom_match1_1) ||  false  ) ) { { tom.gom.adt.gom.types.SortList  tom_match1_1_list1=tom_match1_1; { tom.gom.adt.gom.types.SortList  tom_match1_1_begin1=tom_match1_1_list1; { tom.gom.adt.gom.types.SortList  tom_match1_1_end1=tom_match1_1_list1; { while (!(tom_is_empty_concSort_SortList(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1; { { tom.gom.adt.gom.types.Sort  tom_sort=tom_get_head_concSort_SortList(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concSort_SortList(tom_match1_1_list1); {boolean tom_match1_tom_anti_constraints_status= true ; if ((tom_match1_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(typedModuleList instanceof  tom.gom.adt.gom.types.SortList ) { { tom.gom.adt.gom.types.SortList  tom_match1_1=(( tom.gom.adt.gom.types.SortList )typedModuleList); if ( ( tom_is_fun_sym_concSort(tom_match1_1) ||  false  ) ) { { tom.gom.adt.gom.types.SortList  tom_match1_1_list1=tom_match1_1; { tom.gom.adt.gom.types.SortList  tom_match1_1_begin1=tom_match1_1_list1; { tom.gom.adt.gom.types.SortList  tom_match1_1_end1=tom_match1_1_list1; { while (!(tom_is_empty_concSort_SortList(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1; { { tom.gom.adt.gom.types.SortList  tom_match1_1_end2=tom_match1_1_list1; { { tom.gom.adt.gom.types.Sort  tom_sort=tom_get_head_concSort_SortList(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_concSort_SortList(tom_match1_1_list1); if ( true ) {
 
         expandedList = tom_append_list_concSort(expandedList,tom_cons_list_concSort(expandSort(tom_sort),tom_empty_list_concSort()));
-       } } } }tom_match1_1_end1=tom_get_tail_concSort_SortList(tom_match1_1_end1); } }tom_match1_1_list1=tom_match1_1_begin1; } } } } } } }
+       } }tom_match1_1_list1=tom_match1_1_end2; } }tom_match1_1_end1=tom_get_tail_concSort_SortList(tom_match1_1_end1); } }tom_match1_1_list1=tom_match1_1_begin1; } } } } } } }
 
     return expandedList;
   }

@@ -262,10 +262,10 @@ public class XMLToTNode {
   }
 
   private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
-     if(elt instanceof  tom.library.adt.tnode.types.TNode ) { { tom.library.adt.tnode.types.TNode  tom_match1_1=(( tom.library.adt.tnode.types.TNode )elt); if(list instanceof  tom.library.adt.tnode.types.TNodeList ) { { tom.library.adt.tnode.types.TNodeList  tom_match1_2=(( tom.library.adt.tnode.types.TNodeList )list); if ( ( tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_Name=tom_get_slot_AttributeNode_Name(tom_match1_1); if ( ( tom_is_fun_sym_concTNode(tom_match1_2) ||  false  ) ) { { tom.library.adt.tnode.types.TNodeList  tom_match1_2_list1=tom_match1_2; if (tom_is_empty_concTNode_TNodeList(tom_match1_2_list1)) { {boolean tom_match1_tom_anti_constraints_status= true ; if ((tom_match1_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(elt instanceof  tom.library.adt.tnode.types.TNode ) { { tom.library.adt.tnode.types.TNode  tom_match1_1=(( tom.library.adt.tnode.types.TNode )elt); if(list instanceof  tom.library.adt.tnode.types.TNodeList ) { { tom.library.adt.tnode.types.TNodeList  tom_match1_2=(( tom.library.adt.tnode.types.TNodeList )list); if ( ( tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false  ) ) { if ( ( tom_is_fun_sym_concTNode(tom_match1_2) ||  false  ) ) { { tom.library.adt.tnode.types.TNodeList  tom_match1_2_list1=tom_match1_2; if (tom_is_empty_concTNode_TNodeList(tom_match1_2_list1)) { if ( true ) {
 
         return tom_cons_list_concTNode(elt,tom_append_list_concTNode(list,tom_empty_list_concTNode()));
-       } } } } } } } } if ( ( tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_Name=tom_get_slot_AttributeNode_Name(tom_match1_1); { String  tom_name1=tom_match1_1_Name; if ( ( tom_is_fun_sym_concTNode(tom_match1_2) ||  false  ) ) { { tom.library.adt.tnode.types.TNodeList  tom_match1_2_list1=tom_match1_2; if (!(tom_is_empty_concTNode_TNodeList(tom_match1_2_list1))) { { tom.library.adt.tnode.types.TNode  tom_match1_2_1=tom_get_head_concTNode_TNodeList(tom_match1_2_list1);tom_match1_2_list1=tom_get_tail_concTNode_TNodeList(tom_match1_2_list1); if ( ( tom_is_fun_sym_AttributeNode(tom_match1_2_1) ||  false  ) ) { { String  tom_match1_2_1_Name=tom_get_slot_AttributeNode_Name(tom_match1_2_1); { String  tom_name2=tom_match1_2_1_Name; { tom.library.adt.tnode.types.TNode  tom_head=tom_match1_2_1; { tom.library.adt.tnode.types.TNodeList  tom_tail=tom_match1_2_list1; {boolean tom_match1_tom_anti_constraints_status= true ; if ((tom_match1_tom_anti_constraints_status ==  true )) { if ( true ) {
+       } } } } } if ( ( tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false  ) ) { { String  tom_name1=tom_get_slot_AttributeNode_Name(tom_match1_1); if ( ( tom_is_fun_sym_concTNode(tom_match1_2) ||  false  ) ) { { tom.library.adt.tnode.types.TNodeList  tom_match1_2_list1=tom_match1_2; { tom.library.adt.tnode.types.TNodeList  tom_match1_2_end1=tom_match1_2_list1; { if (!(tom_is_empty_concTNode_TNodeList(tom_match1_2_list1))) { { tom.library.adt.tnode.types.TNode  tom_match1_2_1=tom_get_head_concTNode_TNodeList(tom_match1_2_list1);tom_match1_2_list1=tom_get_tail_concTNode_TNodeList(tom_match1_2_list1); if ( ( tom_is_fun_sym_AttributeNode(tom_match1_2_1) ||  false  ) ) { { String  tom_name2=tom_get_slot_AttributeNode_Name(tom_match1_2_1); { tom.library.adt.tnode.types.TNode  tom_head=tom_match1_2_1; { tom.library.adt.tnode.types.TNodeList  tom_tail=tom_match1_2_list1; if ( true ) {
 
 
         if(tom_name1.compareTo(tom_name2) >= 0) {
@@ -274,7 +274,7 @@ public class XMLToTNode {
         } else {
           return tom_cons_list_concTNode(elt,tom_append_list_concTNode(list,tom_empty_list_concTNode()));
         }
-       } } } } } } } } } } } } } } } } } } }
+       } } } } } } }tom_match1_2_list1=tom_match1_2_end1; } } } } } } } } } }
 
     System.err.println("insertSortedAttribute: Strange case");
     return list;

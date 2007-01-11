@@ -42,12 +42,12 @@ public class IsOpTemplate extends TemplateClass {
    */
   public IsOpTemplate(ClassName className) {
     super(className);
-     if(className instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match1_1=(( tom.gom.adt.objects.types.ClassName )className); if ( ( tom_is_fun_sym_ClassName(tom_match1_1) ||  false  ) ) { { String  tom_match1_1_Pkg=tom_get_slot_ClassName_Pkg(tom_match1_1); { String  tom_match1_1_Name=tom_get_slot_ClassName_Name(tom_match1_1); { String  tom_pkg=tom_match1_1_Pkg; { String  tom_name=tom_match1_1_Name; {boolean tom_match1_tom_anti_constraints_status= true ; if ((tom_match1_tom_anti_constraints_status ==  true )) { if ( true ) {
+     if(className instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match1_1=(( tom.gom.adt.objects.types.ClassName )className); if ( ( tom_is_fun_sym_ClassName(tom_match1_1) ||  false  ) ) { { String  tom_pkg=tom_get_slot_ClassName_Pkg(tom_match1_1); { String  tom_name=tom_get_slot_ClassName_Name(tom_match1_1); if ( true ) {
 
         String newpkg = tom_pkg.replaceFirst(".types.",".strategy.");
         String newname = "Is_"+tom_name;
         this.className = tom_make_ClassName(newpkg,newname);
-       } } } } } } } } } }
+       } } } } } }
 
     this.operator = className;
   }
