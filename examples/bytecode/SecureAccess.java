@@ -28,33 +28,77 @@
  */
 package bytecode;
 
+import com.sun.xacml.*;
+import com.sun.xacml.ctx.*;
+import com.sun.xacml.finder.*;
+import com.sun.xacml.finder.impl.*;
 
-import java.io.File;
+import java.util.*;
+import java.io.*;
 
 
 public class SecureAccess {
 
   public int sread(String filename){
-    System.out.print("Secured reading: ");
-    String fichier = filename;
-    //String fichier = "C:/toto.txt";
-    int res=-1;
-    File f = new File(fichier);  
-    /*if(!f.isHidden()){
-      try {
-      FileReader fr=new FileReader(f);
-      res=fr.read();
-      } catch (Exception e) {
-      e.printStackTrace();
+    System.out.println("Secured reading request: ");
+    File f = new File(filename);  
+    try{
+      if(enforcePolicy(filename)){
+        FileReader r = new FileReader(filename);
+        return r.read(); 
       }
-      }*/
-    //appeler simplePEP en passant en parametre filename
-    System.out.println("print: " +fichier);
-    (new SimplePEP()).enforcePolicy(fichier);
-    //System.out.println("filename : "+filename);
-    //sp.enforcePolicy(filename);
-    System.out.println(res);
-    return res;
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    //error code for security policy deny 
+    return -2;
   }
-  
-}
+
+  public boolean enforcePolicy (String file) throws Exception{
+
+    // setup the policy finder 
+    FilePolicyModule policies = new FilePolicyModule();
+    policies.addPolicy("bytecode/policy.xml");
+    PolicyFinder policyFinder = new PolicyFinder();
+    Set policyModules = new HashSet();
+    policyModules.add(policies);
+    policyFinder.setModules(policyModules);
+
+    // module to provide the current date & time
+    CurrentEnvModule envModule = new CurrentEnvModule();
+
+    // setup the attribute finder
+    AttributeFinder attrFinder = new AttributeFinder();
+    List attrModules = new ArrayList();
+    attrModules.add(envModule);
+    attrFinder.setModules(attrModules);
+
+    // create the PDP
+    PDP pdp = new PDP(new PDPConfig(attrFinder, policyFinder, null));
+
+    //replace in the request model [filename] vc static void main(String[] args) throws IOException { 
+
+    BufferedReader in = new BufferedReader(new FileReader("bytecode/requestModel.xml")); 
+    BufferedWriter out = new BufferedWriter(new FileWriter(file+"Request.xml")); 
+    String s;
+    while ((s = in.readLine()) != null){
+      out.write(s.replaceAll("filename",file)); 
+      out.newLine();
+    }
+    in.close(); 
+    out.close(); 
+
+    // now work on the request
+    RequestCtx request = RequestCtx.getInstance(new FileInputStream(file+"Request.xml"));
+    ResponseCtx response = pdp.evaluate(request);
+    // we print out the result
+    response.encode(System.out);
+    Iterator results = response.getResults().iterator();
+    //if one result is deny, return false
+    while(results.hasNext()){
+      if(((Result)results.next()).getDecision()!=Result.DECISION_PERMIT) return false; 
+    }
+    return true; 
+    }
+
+  }

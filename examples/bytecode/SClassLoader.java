@@ -33,8 +33,10 @@ package bytecode;
  *  option of java command : java -Djava.system.class.loader=bytecode.SClassLoader
  */
 
+import com.sun.xacml.finder.impl.FilePolicyModule;
+
 public class SClassLoader extends ClassLoader {
-  
+
   public SClassLoader(ClassLoader parent) {
     super(parent);
   }
@@ -46,18 +48,14 @@ public class SClassLoader extends ClassLoader {
   public synchronized Class loadClass(String name)throws ClassNotFoundException{
     if (!(name.startsWith("java.")) && !(name.equals("SecureAccess")) 
         && !(name.startsWith("javax.")) && !(name.startsWith("com."))
-        && !(name.startsWith("sun.")) && !(name.startsWith("org."))){
-      //Classes qui posent probleme:
-      //Object
-      //Throwable -> Tom getInstructionList : probl?me pour les methodes qui ne contiennent pas des instructions 
-      //Exception -> Prohibited package name: java.lang
-      System.out.println("Transforming file " + name);
+        && !(name.startsWith("sun.")) && !(name.startsWith("org."))
+        && !(name.equals("bytecode.SecureAccess"))) {
       Transformer t = new Transformer();
-      byte[] scode = t.transformer(name);
+      byte[] scode = t.transform(name);
       Class sClass = defineClass(name,scode, 0, scode.length) ;
       return loadClass(name,true);
         }
-    else{
+    else {
       Class sClass = loadClass(name,false);
       return sClass;
     }

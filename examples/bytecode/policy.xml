@@ -1,47 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="urn:oasis:names:tc:xacml:1.0:policy 
-  http://www.oasis-open.org/tc/xacml/1.0/cs-xacml-schema-policy-01.xsd" 
-  PolicyId="identifier:example:SimplePolicy1" 
-  RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:deny-overrides">
+<Policy PolicyId="SamplePolicy" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+  <!--  This Policy only applies to read action
+  -->
+  <Target>
+    <Subjects>
+      <AnySubject />
+    </Subjects>
+    <Resources>
+      <AnyResource />
+    </Resources>
+    <Actions>
+      <AnyAction />
+    </Actions>
+  </Target>
 
-  <Description> 
-    Security policy for Secure Access Application 
-  </Description> 
-
-  <Target> 
-    <Subjects> 
-      <AnySubject/> 
-    </Subjects> 
-    <Resources> 
-      <AnyResource/> 
-    </Resources> 
-    <Actions> 
-      <AnyAction/> 
-    </Actions> 
-  </Target> 
-
-  <Rule 
-    RuleId= "urn:oasis:names:tc:xacml:1.0:example:SimpleRule1" 
-    Effect="Permit">
-    <Target> 
-      <Subjects> 
-        <Subject> 
-          <AnySubject/>
-        </Subject> 
-      </Subjects> 
-      <Resource>
-        <Attribute AttributeId="urn:oasis:names:tc:xacml:1.0:resource:ufspath"
-          DataType="http://www.w3.org/2001/XMLSchema#anyURI">
-          <AttributeValue>toto.txt</AttributeValue>
-        </Attribute>
-      </Resource>
-
-      <Actions> 
-        <AnyAction/> 
-      </Actions> 
+  <!--  Rule to see if we should allow the Subject to read
+  -->
+  <Rule RuleId="ReadRule" Effect="Permit">
+    <Target>
+      <Subjects>
+        <AnySubject/>
+      </Subjects>
+      <Resources>
+        <AnyResource/>
+      </Resources>
+      <Actions>
+        <Action>
+          <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">read</AttributeValue>
+            <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+              AttributeId="FileAction"/>
+          </ActionMatch>
+        </Action>
+      </Actions>
     </Target>
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+        <ResourceAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+          AttributeId="urn:oasis:names:tc:xacml:1.0:resource:resource-id"/>
+      </Apply>
+      <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">bytecode/toto.txt</AttributeValue>
+    </Condition>
+  </Rule>
 
-  </Rule> 
-</Policy>  
+  <!--  A final, "fall-through" Rule that always Denies
+  -->
+  <Rule RuleId="FinalRule" Effect="Deny" />
+</Policy>
