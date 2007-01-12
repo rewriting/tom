@@ -39,7 +39,7 @@ import antlr.TokenStreamRewriteEngine;
 import aterm.*;
 import aterm.pure.*;
 
-import antlr.types.*;
+import antlrgrammar.types.AntlrGrammar;
 //import tom.gom.adt.gom.types.*;
 
 import java.io.*;
@@ -47,9 +47,13 @@ import java.io.*;
 import utils.AST2ATerm;
 //import utils.Tree2ATerm;
 
+import gomantlr.ATerm2AntlrGrammar;
+
+import gomantlr.exceptions.AntlrWrongGrammarException;
+
 public class Gomantlr {
 
-    %include { antlr/antlr.tom }
+    %include { antlrgrammar/AntlrGrammar.tom }
     //%include { tom/gom/adt/gom/Gom.tom}
     
     public static void main(String[] args) {
@@ -78,9 +82,22 @@ public class Gomantlr {
             
             ATerm aterm=AST2ATerm.getATerm(ast,ANTLRParser._tokenNames);
             ATerm lexerATerm=AST2ATerm.getATerm(lexerAST,ANTLRParser._tokenNames);
+
+            System.out.println(aterm);
+            System.out.println(lexerATerm);
             
-            AntlrGrammar antlrGrammar=getGOMANTLRTree(aterm);
-            AntlrGrammar antlrLexerGrammar=getGOMANTLRTree(lexerATerm);
+            AntlrGrammar antlrGrammar;
+            AntlrGrammar antlrLexerGrammar;
+            try {
+                antlrGrammar=ATerm2AntlrGrammar.getAntlrGrammar(aterm);
+            } catch (AntlrWrongGrammarException e) {
+                antlrGrammar=e.getAntlrGrammar();
+            }
+            try {
+                antlrLexerGrammar=ATerm2AntlrGrammar.getAntlrGrammar(lexerATerm);
+            } catch (AntlrWrongGrammarException e) {
+                antlrLexerGrammar=e.getAntlrGrammar();
+            }
             
             System.out.println(antlrGrammar);
             System.out.println(antlrLexerGrammar);
@@ -90,6 +107,8 @@ public class Gomantlr {
         }
     }
     
+    /*
+
     %include { antlr.tom }
 
     private static AntlrGrammar getGOMANTLRTree(ATerm t) {
@@ -115,7 +134,7 @@ public class Gomantlr {
                 return `antlrLexerGrammar(id,comment,options,tokens,scopes,actions,rules);
             }
         }
-        return null;
+        return `antlrWrongGrammar(getAntlrUnrecognized(t));
     }
 
     private static AntlrId getAntlrId(String s) {
@@ -196,7 +215,7 @@ public class Gomantlr {
 
     private static ATermList locateAntlrScopes(ATermList t) {
         %match(ATermList t) {
-            (x*,SCOPE(_,y),z*) -> {
+            (x*,SCOPES(_,y),z*) -> {
                 ATermList lx=`locateAntlrScopes(x);
                 ATermList lz=`locateAntlrScopes(z);
                 return `concATerm(lx*,y,lz*);
@@ -531,4 +550,5 @@ public class Gomantlr {
     private static AntlrUnrecognized getAntlrUnrecognized(ATerm t) {
         return `antlrUnrecognized(t);
     }
+    */
 }

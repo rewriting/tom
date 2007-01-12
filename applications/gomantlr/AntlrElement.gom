@@ -1,0 +1,22 @@
+module AntlrElement
+imports AntlrCommons
+abstract syntax
+
+AntlrElement =
+    AntlrElement(alt:AntlrUnrecognized)
+  | AntlrOptional(options:AntlrOptions,elt:AntlrElement)
+  | AntlrClosure(options:AntlrOptions,elt:AntlrElement)
+  | AntlrPositiveClosure(options:AntlrOptions,elt:AntlrElement)
+  | AntlrRuleRef(rule:String)
+  | AntlrToken(token:String)
+  | AntlrStringElement(string:String)
+  | AntlrChar(c:String)
+  | AntlrCharRange(c1:String,c2:String)
+  | AntlrOrElement(AntlrElement*)
+  | AntlrAndElement(AntlrElement*)
+  | AntlrNot(element:AntlrElement)
+  | AntlrSempred(s:String)
+  | AntlrEltAction(action:String)
+  | AntlrEltOptions(unrecoptions:AntlrUnrecognized)
+  | AntlrWildcard()
+  | AntlrEpsilon()

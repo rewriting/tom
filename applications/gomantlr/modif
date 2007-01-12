@@ -1,0 +1,16 @@
+#!/bin/sh
+
+module=$1;
+package=`echo $1 | tr A-Z a-z`
+submodule="$2"
+subpackage=`echo $2 | tr A-Z a-z`
+
+file=$package/$subpackage/${submodule}AbstractType.java
+mv $file $file.orig
+./modifAbstractType $module < $file.orig > $file
+rm -f $file.orig
+
+file=$package/$subpackage/${submodule}Visitor.java
+mv $file $file.orig
+./modifVisitor $module < $file.orig > $file
+rm -f $file.orig
