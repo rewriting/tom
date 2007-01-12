@@ -61,9 +61,9 @@ public class TomBase {
 
   %include { adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
-	%typeterm Collection {
-		implement { java.util.Collection }
-	}
+  %typeterm Collection {
+    implement { java.util.Collection }
+  }
 
  public final static String DEFAULT_MODULE_NAME = "default"; 
   
@@ -324,7 +324,7 @@ public class TomBase {
   }
   
   
-	protected static String getModuleName(OptionList optionList) {
+  protected static String getModuleName(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,ModuleName(moduleName),_*) -> { return `moduleName; }
     }
@@ -523,7 +523,7 @@ public class TomBase {
           tomName = ((AntiName)`headName).getName().getString(); 
         } else {
           tomName = ((TomName)`headName).getString();
-        }    	
+        }
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
         if(tomSymbol!=null) {
           return tomSymbol.getTypesToType().getCodomain();
@@ -533,7 +533,7 @@ public class TomBase {
       }
 
       (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[AstType=type] -> { 
-	return `type; 
+        return `type; 
       }
 
       Ref(term) -> { return getTermType(`term, symbolTable); }
@@ -558,8 +558,8 @@ public class TomBase {
       GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
       GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
     }
-		System.out.println("getTermType error on term: " + t);
-		throw new TomRuntimeException("getTermType error on term: " + t);
+    System.out.println("getTermType error on term: " + t);
+    throw new TomRuntimeException("getTermType error on term: " + t);
   }
 
   protected static SlotList tomListToSlotList(TomList tomList) {
