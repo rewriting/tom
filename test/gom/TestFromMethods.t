@@ -55,7 +55,6 @@ public class TestFromMethods extends TestCase {
       `Double(20.3),
       `Bool(true()),
       `Bool(false()),
-      /* long may fail
       `Long(23),
       `Long(java.lang.Integer.MAX_VALUE-3),
       `Long(java.lang.Integer.MAX_VALUE-1),
@@ -63,7 +62,6 @@ public class TestFromMethods extends TestCase {
       `Long(java.lang.Long.MAX_VALUE-10),
       `Long(java.lang.Long.MAX_VALUE-1),
       `Long(java.lang.Long.MAX_VALUE),
-      */
       `Name("who?"),
       `Node(aterm.pure.SingletonFactory.getInstance().parse("f(g,(h(<a>,b),b),c)")),
       `concWrap(Int(1),Int(2),Name("toto"),Name("blop")),

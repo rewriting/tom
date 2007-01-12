@@ -165,9 +165,8 @@ public abstract class TemplateClass {
             res.append(%[@buffer@.append(@element@);
 ]%);
           } else if (`domain.equals(`ClassName("","long"))) {
-            /* Make sure we write this long as a double, otherwise aterm will
-             * try to read it as an int, and may fail */
-            res.append(%[@buffer@.append((double)@element@);
+            res.append(%[@buffer@.append(@element@);
+            @buffer@.append("l");
 ]%);
           } else if (`domain.equals(`ClassName("","char"))) {
             res.append(%[@buffer@.append(((int)@element@-(int)'0'));
@@ -207,7 +206,7 @@ public abstract class TemplateClass {
             res.append(getMethod(slot));
             res.append("()?1:0)");
           } else if (`domain.equals(`ClassName("","long"))) {
-            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeReal(");
+            res.append("(aterm.ATerm) aterm.pure.SingletonFactory.getInstance().makeLong(");
             res.append(getMethod(slot));
             res.append("())");
           } else if (`domain.equals(`ClassName("","double"))) {
@@ -254,16 +253,7 @@ public abstract class TemplateClass {
           } else  if (`domain.equals(`ClassName("","boolean"))) {
             buffer.append("(((aterm.ATermInt)").append(appl).append(").getInt()==0?false:true)");
           } else  if (`domain.equals(`ClassName("","long"))) {
-            /* As the parse method from aterm may return an ATermInt, we have
-               to handle that case */
-            buffer.append("(long) ");
-            buffer.append("((");
-            buffer.append(appl);
-            buffer.append(" instanceof aterm.ATermInt)?");
-            buffer.append("((aterm.ATermInt)").append(appl).append(").getInt()");
-            buffer.append(":");
-            buffer.append("((aterm.ATermReal)").append(appl).append(").getReal()");
-            buffer.append(")");
+            buffer.append("((aterm.ATermLong)").append(appl).append(").getLong()");
           } else  if (`domain.equals(`ClassName("","double"))) {
             buffer.append("((aterm.ATermReal)").append(appl).append(").getReal()");
           } else  if (`domain.equals(`ClassName("","char"))) {
