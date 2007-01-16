@@ -38,14 +38,14 @@ public abstract class PluginPlatformBase {
   private static StatusHandler globalStatusHandler = new StatusHandler();
   
   protected PluginPlatformBase(String loggerRadical){
-	  Logger.getLogger(loggerRadical).addHandler(globalStatusHandler);
+    Logger.getLogger(loggerRadical).addHandler(globalStatusHandler);
   }
   
   public StatusHandler getGlobalStatusHandler(){
-	  return globalStatusHandler;
+    return globalStatusHandler;
   }
   
   public void clearGlobalStatusHandler(){
-	  globalStatusHandler.clear();
+    globalStatusHandler.clear();
   }
 }

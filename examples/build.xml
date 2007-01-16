@@ -374,8 +374,8 @@
   </target>
 
   <target name="junit" description="Runs junit acceptance tests" depends="examples, initjunit">
-    <tomjunit printsummary="yes"
-              fork="true"
+    <tomjunit printsummary="on"
+              fork="on"
               haltonfailure="false"
               failureproperty="tests.failed"
               showoutput="true">

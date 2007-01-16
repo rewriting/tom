@@ -324,7 +324,7 @@ return null; } } } }
   }
   
   
-	protected static String getModuleName(OptionList optionList) {
+  protected static String getModuleName(OptionList optionList) {
      if(optionList instanceof  tom.engine.adt.tomoption.types.OptionList ) { { tom.engine.adt.tomoption.types.OptionList  tom_match14_1=(( tom.engine.adt.tomoption.types.OptionList )optionList); if ( ( tom_is_fun_sym_concOption(tom_match14_1) ||  false  ) ) { { tom.engine.adt.tomoption.types.OptionList  tom_match14_1_list1=tom_match14_1; { tom.engine.adt.tomoption.types.OptionList  tom_match14_1_begin1=tom_match14_1_list1; { tom.engine.adt.tomoption.types.OptionList  tom_match14_1_end1=tom_match14_1_list1; { while (!(tom_is_empty_concOption_OptionList(tom_match14_1_end1))) {tom_match14_1_list1=tom_match14_1_end1; { { tom.engine.adt.tomoption.types.OptionList  tom_match14_1_end2=tom_match14_1_list1; { { tom.engine.adt.tomoption.types.Option  tom_match14_1_2=tom_get_head_concOption_OptionList(tom_match14_1_list1);tom_match14_1_list1=tom_get_tail_concOption_OptionList(tom_match14_1_list1); if ( ( tom_is_fun_sym_ModuleName(tom_match14_1_2) ||  false  ) ) { { String  tom_moduleName=tom_get_slot_ModuleName_String(tom_match14_1_2); if ( true ) {
  return tom_moduleName;  } } } }tom_match14_1_list1=tom_match14_1_end2; } }tom_match14_1_end1=tom_get_tail_concOption_OptionList(tom_match14_1_end1); } }tom_match14_1_list1=tom_match14_1_begin1; } } } } } } }
 
@@ -523,7 +523,7 @@ return null; } } } }
           tomName = ((AntiName)tom_headName).getName().getString(); 
         } else {
           tomName = ((TomName)tom_headName).getString();
-        }    	
+        }
         TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
         if(tomSymbol!=null) {
           return tomSymbol.getTypesToType().getCodomain();
@@ -533,7 +533,7 @@ return null; } } } }
        } } }tom_match26_1_NameList_list1=tom_match26_1_NameList_end1; } } } } } } } {boolean tom_bool_match26_1= false ; { tom.engine.adt.tomtype.types.TomType  tom_match26_1_AstType= null ; if (tom_is_fun_sym_Variable(tom_match26_1)) {tom_bool_match26_1= true ;tom_match26_1_AstType=tom_get_slot_Variable_AstType(tom_match26_1); } else { if (tom_is_fun_sym_VariableStar(tom_match26_1)) {tom_bool_match26_1= true ;tom_match26_1_AstType=tom_get_slot_VariableStar_AstType(tom_match26_1); } else { if (tom_is_fun_sym_UnamedVariable(tom_match26_1)) {tom_bool_match26_1= true ;tom_match26_1_AstType=tom_get_slot_UnamedVariable_AstType(tom_match26_1); } else { if (tom_is_fun_sym_UnamedVariableStar(tom_match26_1)) {tom_bool_match26_1= true ;tom_match26_1_AstType=tom_get_slot_UnamedVariableStar_AstType(tom_match26_1); } } } } if (tom_bool_match26_1) { { tom.engine.adt.tomtype.types.TomType  tom_type=tom_match26_1_AstType; if ( true ) {
 
  
-	return tom_type; 
+        return tom_type; 
        } } } } } if ( ( tom_is_fun_sym_Ref(tom_match26_1) ||  false  ) ) { { tom.engine.adt.tomterm.types.TomTerm  tom_term=tom_get_slot_Ref_TomTerm(tom_match26_1); if ( true ) {
 
  return getTermType(tom_term, symbolTable);  } } } if ( ( tom_is_fun_sym_TargetLanguageToTomTerm(tom_match26_1) ||  false  ) ) { { tom.engine.adt.tomsignature.types.TargetLanguage  tom_match26_1_Tl=tom_get_slot_TargetLanguageToTomTerm_Tl(tom_match26_1); if ( ( tom_is_fun_sym_ITL(tom_match26_1_Tl) ||  ( tom_is_fun_sym_TL(tom_match26_1_Tl) ||  false  )  ) ) { if ( true ) {
@@ -558,8 +558,8 @@ return null; } } } }
  return getTermType(tom_term, symbolTable);  } } } if ( ( tom_is_fun_sym_GetSliceArray(tom_match27_1) ||  false  ) ) { { tom.engine.adt.tomterm.types.TomTerm  tom_term=tom_get_slot_GetSliceArray_SubjectListName(tom_match27_1); if ( true ) {
  return getTermType(tom_term, symbolTable);  } } } } }
 
-		System.out.println("getTermType error on term: " + t);
-		throw new TomRuntimeException("getTermType error on term: " + t);
+    System.out.println("getTermType error on term: " + t);
+    throw new TomRuntimeException("getTermType error on term: " + t);
   }
 
   protected static SlotList tomListToSlotList(TomList tomList) {

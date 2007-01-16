@@ -49,7 +49,7 @@ public class Twice {
     x = 41;
     %match(x) {
       42 -> { }
-      Twice*(y) -> { System.out.println(x+" is two times "+`y); }
+      Twice(y) -> { System.out.println(x+" is two times "+`y); }
       _ -> { System.out.println(x+" is a number"); }
     }
   }

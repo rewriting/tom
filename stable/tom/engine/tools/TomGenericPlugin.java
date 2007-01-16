@@ -283,4 +283,4 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     return argString.toString();
   }
   
-} // class TomGenericPlugin
+}

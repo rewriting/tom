@@ -91,8 +91,8 @@
 
   <target name="junit" description="Runs junit acceptance tests"
           depends="build">
-    <tom.junit printsummary="yes"
-               fork="yes"
+    <tom.junit printsummary="on"
+               fork="on"
                dir="${test.build}"
                haltonfailure="false"
                failureproperty="tests.failed"
