@@ -313,7 +313,18 @@ public class ATerm2AntlrGrammar {
                     rule=e.getAntlrRule();
                     
                 }
-                container.rules=`AntlrRules(rules*,rule);
+                // sempred rules are added by ANTLR, and we don't want them.
+                boolean keep=true;
+                %match(rule) {
+                    AntlrRule(AntlrId(name),_,_,_,_,_,_,_,_) -> {
+                         if(`name.regionMatches(0,"synpred",0,7)) {
+                             keep=false;
+                         }
+                    }
+                }
+                if(keep) {
+                    container.rules=`AntlrRules(rules*,rule);
+                }
                 return;
             }
             concATerm(x@RULE[],y,z*) -> {
@@ -326,7 +337,18 @@ public class ATerm2AntlrGrammar {
                     rule=e.getAntlrRule();
                     
                 }
-                container.rules=`AntlrRules(rules*,rule);
+                // sempred rules are added by ANTLR, and we don't want them.
+                boolean keep=true;
+                %match(rule) {
+                    AntlrRule(AntlrId(name),_,_,_,_,_,_,_,_) -> {
+                         if(`name.regionMatches(0,"synpred",0,7)) {
+                             keep=false;
+                         }
+                    }
+                }
+                if(keep) {
+                    container.rules=`AntlrRules(rules*,rule);
+                }
                 parseArgs7(`concATerm(y,z*),container);
                 return;
             }
