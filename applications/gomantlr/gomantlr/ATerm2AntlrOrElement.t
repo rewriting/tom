@@ -119,16 +119,7 @@ public class ATerm2AntlrOrElement {
                     container.goodParse=false;
                     element2=e.getAntlrElement();
                 }
-                // Sempreds are added by ANTLR, and we don't want them.
-                boolean keep=true;
-                %match(element2) {
-                    AntlrSempred[] -> {
-                        keep=false;
-                    }
-                }
-                if(keep) {
-                    container.element=`AntlrOrElement(element*,element2);
-                }
+                container.element=`AntlrOrElement(element*,element2);
                 parseArgs(`y,container);
                 return;
             }
