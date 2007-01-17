@@ -30,52 +30,70 @@ import aterm.pure.*;
 
 import antlrgrammar.antlrelement.types.AntlrElement;
 
-import antlrgrammar.antlrcommons.types.AntlrOptions;
-import antlrgrammar.antlrcommons.types.AntlrOption;
-import antlrgrammar.antlrcommons.types.AntlrId;
-import antlrgrammar.antlrcommons.types.AntlrUnrecognized;
+import gomantlr.exceptions.AntlrWrongElementException;
 
 public class ATerm2AntlrElement {
    
     %include { ../antlrgrammar/AntlrGrammar.tom }
     %include { ../antlr.tom }
 
-    public static AntlrElement getAntlrElement(ATerm t) {
-        %match(ATerm t) {
-            ALT(_,(x*,_)) -> {
-                return `getAntlrAndElement(x);
+    /*
+     *
+     * This is the grammar corresponding to the AST,
+     * which explains what is done here.
+     *
+     * The actual grammar is a bit different
+     * (and more complex here)
+     * but is not what matters here.
+     *
+     * Element: Block
+     *        | AndElement
+     *        | SetOrElement
+     *        | Closure
+     *        | PositiveClosure
+     *        | Optional
+     *        | NotElement
+     *        | CharRange
+     *        | Wildcard
+     *        | Sempred
+     *        | RuleRef
+     *        | TokenRef
+     *        | StringElement
+     *        | CharElement
+     *        | ActionElement
+     *        | Epsilon
+     *
+     */
+
+    public static AntlrElement getAntlrElement(ATerm t) throws AntlrWrongElementException {
+        %match(t) {
+            BLOCK[] -> {
+                return ATerm2AntlrBlock.getAntlrBlock(t);
             }
-            BLOCK(_,(x*,_)) -> {
-                return `getAntlrOrElement(x);
+            ALT[] -> {
+                return ATerm2AntlrAndElement.getAntlrAndElement(t);
             }
-            SET(_,(x*)) -> {
-                return `getAntlrOrElement(x);
+            SET[] -> {
+                return ATerm2AntlrOrElement.getAntlrOrElement(t);
             }
-            CLOSURE(_,(x*)) -> {
-                AntlrOptions options=`getAntlrOptions(locateAntlrOptions(x));
-                AntlrElement element=`getAntlrOrElement(locateAntlrElement(x));
-                return `AntlrClosure(options,element);
+            CLOSURE[] -> {
+                return ATerm2AntlrClosure.getAntlrClosure(t);
             }
-            POSITIVE_CLOSURE(_,(x*)) -> {
-                AntlrOptions options=`getAntlrOptions(locateAntlrOptions(x));
-                AntlrElement element=`getAntlrOrElement(locateAntlrElement(x));
-                return `AntlrPositiveClosure(options,element);
+            POSITIVE_CLOSURE[] -> {
+                return ATerm2AntlrPositiveClosure.getAntlrPositiveClosure(t);
             }
-            OPTIONAL(_,(x*)) -> {
-                AntlrOptions options=`getAntlrOptions(locateAntlrOptions(x));
-                AntlrElement element=`getAntlrOrElement(locateAntlrElement(x));
-                return `AntlrOptional(options,element);
+            OPTIONAL[] -> {
+                return ATerm2AntlrOptional.getAntlrOptional(t);
             }
-            OPTIONS(_,x) -> {
-                return `AntlrEltOptions(AntlrUnrecognized(x));
+            NOT[] -> {
+                return ATerm2AntlrNotElement.getAntlrNotElement(t);
             }
-            NOT(_,(x*)) -> {
-                return `AntlrNot(getAntlrOrElement(x));
+            CHAR_RANGE[] -> {
+                return ATerm2AntlrCharRange.getAntlrCharRange(t);
             }
-            CHAR_RANGE(_,(CHAR_LITERAL(NodeInfo(x,_,_),_),CHAR_LITERAL(NodeInfo(y,_,_),_))) -> {
-                return `AntlrCharRange(x,y);
-            }
-            WILDCARD(_,_) -> {
+            // We can recognize those directly here.
+            // (they're not reused anywhere else)
+            WILDCARD[] -> {
                 return `AntlrWildcard();
             }
             SYN_SEMPRED(NodeInfo(x,_,_),_) -> {
@@ -91,153 +109,16 @@ public class ATerm2AntlrElement {
                 return `AntlrStringElement(x);
             }
             CHAR_LITERAL(NodeInfo(x,_,_),_) -> {
-                return `AntlrChar(x);
+                return `AntlrCharElement(x);
             }
             ACTION(NodeInfo(y,_,_),_) -> {
-                return `AntlrEltAction(y);
+                return `AntlrActionElement(y);
             }
-            EPSILON(_,_) -> {
+            EPSILON[] -> {
                 return `AntlrEpsilon();
             }
-            _ -> {
-                return `AntlrElement(AntlrUnrecognized(t));
-            }
         }
-        return null;
-    }
 
-    private static AntlrUnrecognized getAntlrUnrecognized(ATerm t) {
-        return `AntlrUnrecognized(t);
-    }
-
-    private static ATermList locateAntlrElement(ATermList t) {
-        %match(ATermList t) {
-            (_*,BLOCK(_,(OPTIONS(_,_),x*,_)),_*) -> {
-                return `x;
-            }
-            (_*,BLOCK(_,(x*,_)),_*) -> {
-                return `x;
-            }
-        }
-        return `concATerm();
-    }
-
-    private static AntlrElement inner_getAntlrOrElement(ATermList t) {
-        AntlrElement e=`AntlrElement(AntlrUnrecognized(t));
-        %match(ATermList t) {
-            () -> {
-                e=`AntlrOrElement();
-            }
-            (x,y*) -> {
-                AntlrElement element=`inner_getAntlrOrElement(y);
-                e=`AntlrOrElement(getAntlrElement(x),element*);
-            }
-        }
-        return e;
-    }
-
-    private static AntlrElement getAntlrOrElement(ATermList t) {
-        AntlrElement e=`AntlrElement(AntlrUnrecognized(t));
-        %match(ATermList t) {
-            () -> {
-                e=`AntlrOrElement();
-            }
-            (x,y*) -> {
-                AntlrElement element=`inner_getAntlrOrElement(y);
-                e=`AntlrOrElement(getAntlrElement(x),element*);
-            }
-        }
-        return normalizeElement(e);
-    }
-
-    private static AntlrElement inner_getAntlrAndElement(ATermList t) {
-        AntlrElement e=`AntlrElement(AntlrUnrecognized(t));
-        %match(ATermList t) {
-            () -> {
-                e=`AntlrAndElement();
-            }
-            (x,y*) -> {
-                AntlrElement element=`inner_getAntlrAndElement(y);
-                e=`AntlrAndElement(getAntlrElement(x),element*);
-            }
-        }
-        return e;
-    }
-
-    private static AntlrElement getAntlrAndElement(ATermList t) {
-        AntlrElement e=`AntlrElement(AntlrUnrecognized(t));
-        %match(ATermList t) {
-            () -> {
-                e=`AntlrAndElement();
-            }
-            (x,y*) -> {
-                AntlrElement element=`inner_getAntlrAndElement(y);
-                e=`AntlrAndElement(getAntlrElement(x),element*);
-            }
-        }
-        return normalizeElement(e);
-    }
-
-    private static AntlrElement normalizeElement(AntlrElement e) {
-        AntlrElement e1=e;
-        %match(e) {
-            AntlrAndElement(AntlrSempred(_),y*) -> {
-                e1=`AntlrAndElement(y*);
-            }
-            AntlrOrElement(AntlrSempred(_),y*) -> {
-                e1=`AntlrOrElement(y*);
-            }
-        }
-        %match(e1) {
-            AntlrAndElement(x) -> {
-                return `x;
-            }
-            AntlrOrElement(x) -> {
-                return `x;
-            }
-        }
-        return e1;
-    }
-
-    private static ATermList locateAntlrOptions(ATermList t) {
-        %match(ATermList t) {
-            (_*,BLOCK(_,(OPTIONS(_,x),_)),_*) -> {
-                return `x;
-            }
-            (_*,OPTIONS(_,x),_*) -> {
-                return `x;
-            }
-        }
-        return `concATerm();
-    }
-
-    private static AntlrOptions getAntlrOptions(ATermList t) {
-        %match(ATermList t) {
-            (x,y*) -> {
-                AntlrOptions options=`getAntlrOptions(y);
-                if(`x.getChildCount()!=0) {
-                    return `AntlrOptions(getAntlrOption(x),options*);
-                } else {
-                    return options;
-                }
-            }
-        }
-        return `AntlrOptions();
-    }
-
-    private static AntlrOption getAntlrOption(ATerm t) {
-        %match(ATerm t) {
-            ASSIGN(_,(ID(NodeInfo(name,_,_),_),ID(NodeInfo(src,_,_),_))) -> {
-                return `AntlrAssignId(getAntlrId(name),getAntlrId(src));
-            }
-            ASSIGN(_,(ID(NodeInfo(name,_,_),_),INT(NodeInfo(value,_,_),_))) -> {
-                return `AntlrAssignInt(getAntlrId(name),AntlrInt(Integer.parseInt(value)));
-            }
-        }
-        return `AntlrWrongOption(AntlrPlainWrongOption(ATerm2AntlrWrong.getAntlrWrong(t)));
-    }
-
-    private static AntlrId getAntlrId(String s) {
-        return `AntlrId(s);
+        throw new AntlrWrongElementException(`AntlrPlainWrongElement(ATerm2AntlrWrong.getAntlrWrong(t)));
     }
 }

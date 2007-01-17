@@ -41,18 +41,18 @@ public class ATerm2AntlrRule {
     %include { ../antlrgrammar/AntlrGrammar.tom }
 
     private static class Container {
-        AntlrId id=null;
-        AntlrModifier modifier=`AntlrNilModifier();
-        AntlrArgs args=`AntlrNilArgs();
-        AntlrRet ret=`AntlrNilRet();
-        AntlrOptions options=`AntlrOptions();
-        AntlrScopes scopes=`AntlrScopes();
-        AntlrActions actions=`AntlrActions();
-        AntlrElement element=null;
-        AntlrExceptions exceptions=`AntlrExceptions();
+        public AntlrId id=null;
+        public AntlrModifier modifier=`AntlrNilModifier();
+        public AntlrArgs args=`AntlrNilArgs();
+        public AntlrRet ret=`AntlrNilRet();
+        public AntlrOptions options=`AntlrOptions();
+        public AntlrScopes scopes=`AntlrScopes();
+        public AntlrActions actions=`AntlrActions();
+        public AntlrElement element=null;
+        public AntlrExceptions exceptions=`AntlrExceptions();
 
-        boolean goodParse=true;
-        AntlrWrong wrong=null;
+        public boolean goodParse=true;
+        public AntlrWrong wrong=null;
     }
 
     %include { ../antlr.tom }
@@ -310,14 +310,25 @@ public class ATerm2AntlrRule {
 
     private static void parseArgs8(ATermList l,Container container) {
         %match(l) {
+            // The element is always a block in the AST.
             concATerm(x@BLOCK[],y*) -> {
-                container.element=ATerm2AntlrElement.getAntlrElement(`x);
+                try {
+                    container.element=ATerm2AntlrBlock.getAntlrBlock(`x);
+                } catch (AntlrWrongElementException e) {
+                    container.goodParse=false;
+                    container.element=e.getAntlrElement();
+                }
+                System.out.println("element: " + container.element);
                 parseArgs9(`y,container);
                 return;
             }
             _ -> {
                 container.goodParse=false;
-                container.element=ATerm2AntlrElement.getAntlrElement(`concATerm());
+                try {
+                    container.element=ATerm2AntlrElement.getAntlrElement(`concATerm());
+                } catch (AntlrWrongElementException e) {
+                    container.element=e.getAntlrElement();
+                }
                 parseArgs9(l,container);
             }
         }

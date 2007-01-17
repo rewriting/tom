@@ -3,20 +3,69 @@ imports AntlrCommons
 abstract syntax
 
 AntlrElement =
-    AntlrElement(alt:AntlrUnrecognized)
-  | AntlrOptional(options:AntlrOptions,elt:AntlrElement)
-  | AntlrClosure(options:AntlrOptions,elt:AntlrElement)
-  | AntlrPositiveClosure(options:AntlrOptions,elt:AntlrElement)
+    AntlrBlock(options:AntlrOptions,actions:AntlrActions,element:AntlrElement)
+  | AntlrOptional(element:AntlrElement)
+  | AntlrClosure(element:AntlrElement)
+  | AntlrPositiveClosure(element:AntlrElement)
+  | AntlrOrElement(AntlrElement*)
+  | AntlrAndElement(AntlrElement*)
+  | AntlrNotElement(element:AntlrElement)
   | AntlrRuleRef(rule:String)
   | AntlrToken(token:String)
   | AntlrStringElement(string:String)
-  | AntlrChar(c:String)
+  | AntlrCharElement(c:String)
   | AntlrCharRange(c1:String,c2:String)
-  | AntlrOrElement(AntlrElement*)
-  | AntlrAndElement(AntlrElement*)
-  | AntlrNot(element:AntlrElement)
   | AntlrSempred(s:String)
-  | AntlrEltAction(action:String)
-  | AntlrEltOptions(unrecoptions:AntlrUnrecognized)
+  | AntlrActionElement(action:String)
   | AntlrWildcard()
   | AntlrEpsilon()
+  | AntlrWrongElement(wrong:AntlrWrongElement)
+
+AntlrWrongElement =
+    // Closure
+    AntlrIncorrectClosureArg(element:AntlrElement)
+  | AntlrIncorrectClosure(element:AntlrElement,wrong:AntlrWrong)
+  | AntlrPlainWrongClosure(wrong:AntlrWrong)
+
+    // PositiveClosure
+  | AntlrIncorrectPositiveClosureArg(element:AntlrElement)
+  | AntlrIncorrectPositiveClosure(element:AntlrElement,wrong:AntlrWrong)
+  | AntlrPlainWrongPositiveClosure(wrong:AntlrWrong)
+
+    // Optional
+  | AntlrIncorrectOptionalArg(element:AntlrElement)
+  | AntlrIncorrectOptional(element:AntlrElement,wrong:AntlrWrong)
+  | AntlrPlainWrongOptional(wrong:AntlrWrong)
+
+    // NotElement
+  | AntlrIncorrectNotElementArg(element:AntlrElement)
+  | AntlrIncorrectNotElement(element:AntlrElement,wrong:AntlrWrong)
+  | AntlrPlainWrongNotElement(wrong:AntlrWrong)
+
+    // Block
+    // Something odd inside the arguments of Block.
+  | AntlrIncorrectBlock(options:AntlrOptions,actions:AntlrActions,element:AntlrElement)
+    // Not a block, where we expected one.
+  | AntlrPlainWrongBlock(wrong:AntlrWrong)
+
+    // AndElement
+    // AndElement, with no element.
+  |  AntlrAndElementNoElement(wrong:AntlrWrong)
+    // Some element of an AndElement is bad.
+  | AntlrIncorrectAndElement(AntlrElement*)
+    // Not an AndElement, where we expected one.
+  | AntlrPlainWrongAndElement(wrong:AntlrWrong)
+
+    // OrElement
+    // OrElement, with no element.
+  | AntlrOrElementNoElement(wrong:AntlrWrong)
+    // Some element of an OrElement is bad.
+  | AntlrIncorrectOrElement(AntlrElement*)
+    // Not an OrElement, where we expected one.
+  | AntlrPlainWrongOrElement(wrong:AntlrWrong)
+
+    // CharRange
+  | AntlrWrongCharRange(wrong:AntlrWrong)
+
+    // Plain wrong, not an element.
+  | AntlrPlainWrongElement(wrong:AntlrWrong)

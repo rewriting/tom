@@ -50,7 +50,7 @@ public class ATerm2AntlrOption {
         public AntlrId src=null;
         public AntlrInt i=null;
 
-        boolean goodParse=true;
+        public boolean goodParse=true;
         public AntlrWrong wrong=null;
     }
 

@@ -45,7 +45,7 @@ public class ATerm2AntlrAction {
         public AntlrId scope=null;
         public String action=null;
 
-        boolean goodParse=true;
+        public boolean goodParse=true;
         public AntlrWrong wrong=null;
     }
 
