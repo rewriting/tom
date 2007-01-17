@@ -313,7 +313,7 @@ public class ATerm2AntlrGrammar {
                     rule=e.getAntlrRule();
                     
                 }
-                // sempred rules are added by ANTLR, and we don't want them.
+                // synpred rules are added by ANTLR, and we don't want them.
                 boolean keep=true;
                 %match(rule) {
                     AntlrRule(AntlrId(name),_,_,_,_,_,_,_,_) -> {
@@ -337,7 +337,7 @@ public class ATerm2AntlrGrammar {
                     rule=e.getAntlrRule();
                     
                 }
-                // sempred rules are added by ANTLR, and we don't want them.
+                // synpred rules are added by ANTLR, and we don't want them.
                 boolean keep=true;
                 %match(rule) {
                     AntlrRule(AntlrId(name),_,_,_,_,_,_,_,_) -> {
