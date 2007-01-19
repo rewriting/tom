@@ -318,7 +318,6 @@ public class ATerm2AntlrRule {
                     container.goodParse=false;
                     container.element=e.getAntlrElement();
                 }
-                System.out.println("element: " + container.element);
                 parseArgs9(`y,container);
                 return;
             }
