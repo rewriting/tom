@@ -16,6 +16,7 @@ all:
 	tom Gomantlr.t
 	tom aterm2antlrgrammar/*.t
 	tom aterm2antlrgrammar/exceptions/*.t
+	tom utils/*.t
 	javac *.java
 	java Gomantlr Java.g
 
