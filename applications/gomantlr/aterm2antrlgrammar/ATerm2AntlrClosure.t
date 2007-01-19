@@ -1,0 +1,101 @@
+/*
+ *
+ * Gomantlr
+ *
+ * Copyright (c) 2006-2007, INRIA
+ * Nancy, France.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * Eric Deplagne <Eric.Deplagne@loria.fr>
+ *
+ **/
+
+package aterm2antlrgrammar;
+
+import aterm.*;
+import aterm.pure.*;
+
+import antlrgrammar.antlrelement.types.AntlrElement;
+import antlrgrammar.antlrcommons.types.AntlrWrong;
+
+import aterm2antlrgrammar.exceptions.AntlrWrongElementException;
+
+public class ATerm2AntlrClosure {
+   
+    %include { ../antlrgrammar/AntlrGrammar.tom }
+
+    private static class Container {
+        public AntlrElement element=null;
+
+        public boolean goodParse=true;
+        public AntlrWrong wrong=null;
+    }
+
+    %include { ../antlr.tom }
+
+    /*
+     *
+     * Closure: Element '*'^
+     *
+     */
+
+    public static AntlrElement getAntlrClosure(ATerm t) throws AntlrWrongElementException {
+        %match(t) {
+            CLOSURE(_,l) -> {
+                Container container=new Container();
+                parseArgs(`l,container);
+                if(container.goodParse) {
+                    return `AntlrClosure(container.element);
+                } else {
+                    if(container.wrong!=null) {
+                        throw new AntlrWrongElementException(
+                            `AntlrIncorrectClosure(container.element,container.wrong));
+                    } else {
+                        throw new AntlrWrongElementException(
+                            `AntlrIncorrectClosureArg(container.element));
+                    }
+                }
+            }
+        }
+        
+        throw new AntlrWrongElementException(`AntlrPlainWrongClosure(ATerm2AntlrWrong.getAntlrWrong(t)));
+    }
+    
+    /*
+     *
+     * Element
+     *
+     */
+
+    private static void parseArgs(ATermList l,Container container) {
+        %match(l) {
+            // The element is always a block in the AST.
+            concATerm(x@BLOCK[]) -> {
+                try {
+                    container.element=ATerm2AntlrBlock.getAntlrBlock(`x);
+                } catch (AntlrWrongElementException e) {
+                    container.goodParse=false;
+                    container.element=e.getAntlrElement();
+                }
+                return;
+            }
+            _ -> {
+                container.goodParse=false;
+                container.wrong=ATerm2AntlrWrong.getAntlrWrong(l);
+            }
+        }
+    }
+}

@@ -47,9 +47,9 @@ import java.io.*;
 import utils.AST2ATerm;
 //import utils.Tree2ATerm;
 
-import gomantlr.ATerm2AntlrGrammar;
+import aterm2antlrgrammar.ATerm2AntlrGrammar;
 
-import gomantlr.exceptions.AntlrWrongGrammarException;
+import aterm2antlrgrammar.exceptions.AntlrWrongGrammarException;
 
 public class Gomantlr {
 

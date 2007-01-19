@@ -14,14 +14,14 @@ all:
 	./modif AntlrGrammar AntlrRules
 	./modif AntlrGrammar AntlrElement
 	tom Gomantlr.t
-	tom gomantlr/*.t
-	tom gomantlr/exceptions/*.t
+	tom aterm2antlrgrammar/*.t
+	tom aterm2antlrgrammar/exceptions/*.t
 	javac *.java
 	java Gomantlr Java.g
 
 clean:
 	cd utils;make clean
-	cd gomantlr;make clean
+	cd aterm2antlrgrammar;make clean
 	rm -f $(foreach v,$(wildcard *.t),$(shell echo $(basename $(v)).java))
 	rm -f *.class
 	rm -f *~
