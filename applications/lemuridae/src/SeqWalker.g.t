@@ -50,6 +50,7 @@ pred returns [Prop p]
       : i:ID { p = `relationAppl(relation(i.getText()), concTerm()); } 
       | BOTTOM { p = `bottom(); }
       | TOP { p = `top(); }
+      | #(EQUIV a=pred b=pred )  { p = `and(implies(a,b),implies(b,a)); }
       | #(IMPL a=pred b=pred )  { p = `implies(a,b); }
       | #(OR a=pred b=pred ) { p = `or(a,b); }
       | #(AND a=pred b=pred ) {  p = `and(a,b); }

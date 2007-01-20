@@ -913,8 +913,8 @@ b :{
           }
         }
 
-        /* elim case */
-        proofCommand("elim") -> {
+        /* intro case */
+        proofCommand("intro") -> {
           try {
             MuStrategy strat;
 
@@ -925,7 +925,7 @@ b :{
 
             tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
-            System.out.println("Can't apply elim" + e.getMessage());
+            System.out.println("Can't apply intro" + e.getMessage());
           }
         }
 

@@ -22,7 +22,10 @@ seq: SEQ list_pred
 list_pred: pred (LIST^ pred)* ;
 */
 
-pred: andpred (IMPL^ pred)? ;
+
+pred: equivpred (IMPL^ pred)? ;
+
+equivpred: andpred (EQUIV^ andpred)* ;
 
 andpred: orpred (AND^ orpred)* ;
 
@@ -120,6 +123,8 @@ RPAREN : ')' ;
 SEQ : "|-";
 
 IMPL : "=>";
+
+EQUIV : "<=>";
 
 OR : "\\/" ;
 

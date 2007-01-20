@@ -1,12 +1,12 @@
 proof l: (\Ax.(A \/ B => \Ey.P(x,y)) /\ C /\ A /\ B) => (\Ax.(\Ey.D(x,y)) => ( \Ax.(\Ey.(P(x,y) => \T)) /\ (\T => \Ex.D(a(),x)))).
 auto.
-focus h5. elim. a(). auto.
-elim. y0. axiom.
-focus h1. elim. x0. auto.
-elim. y0. auto.
+focus h5. intro. a(). auto.
+intro. y0. axiom.
+focus h1. intro. x0. auto.
+intro. y0. auto.
 
 proof l1: \Ax.P(x) => P(a()).
-elim. focus h1. elim. a(). axiom.
+intro. focus h1. intro. a(). axiom.
 
 
 proof l2:  ( \Ax.P(x)  /\ (P(a()) => P(b())) )  => P(b()).

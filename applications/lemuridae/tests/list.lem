@@ -15,7 +15,7 @@ termrule app(cons(h,t),l) -> cons(h,app(t,l)).
 
 
 proof testlist :  P(len(cons(1,cons(2,nil())))) => P(len(cons(0,cons(3,nil())))).
-elim.
+intro.
 reduce.
 axiom.
 
