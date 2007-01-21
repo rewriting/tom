@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2007, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -32,49 +32,37 @@ package strategy;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import tom.library.strategy.mutraveler.MuTraveler;
-import tom.library.strategy.mutraveler.MuStrategy;
 import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
 import jjtraveler.VisitFailure;
 
-public class RecursiveCollector {
+import java.util.*;
+
+public class Rewrite5 {
 
   %include { term/term.tom }
   %include { mustrategy.tom }
-  
+  %include { java/util/types/Collection.tom }
+
   public final static void main(String[] args) {
-    //Term subject = `g(g(a(),b()),g(c(),d()));
-    Term subject = `h(g(a(),b()),a(),g(c(),d()));
-
-    try {
-      System.out.println("subject          = " + subject);
-      System.out.println("collect all nodes, except those under the first subterm of g(...)");
-      MuTraveler.init(`mu(MuVar("x"),TopDownCollect(Collector(MuVar("x"))))).visit(subject);
-
-    } catch (VisitFailure e) {
-      System.out.println("reduction failed on: " + subject);
-    }
-
+    Collection collection = new HashSet();
+    Term subject = `f(g(g(a(),b()),g(a(),b())));
+    `BottomUp(Collector(subject,collection,RewriteSystem())).apply(subject);
+    System.out.println("collect : " + collection);
   }
- 
-  /*
-   * under a g(), collect only in second subterm
-   * 2 solutions
-   * - use getRoot
-   * - perform mu-expansion in user defined strategies [TODO]
-   */
-
-  %strategy Collector(current:Strategy) extends `Identity() {
+  
+  %strategy RewriteSystem() extends `Fail() {
     visit Term {
-      g(_,t2) -> {
-      //MuTraveler.getRoot(this).visit(`t2);
-      //MuTraveler.init(`TopDownCollect(Collector())).visit(`t2);
-      current.visit(`t2);
-      `Fail().visit(null); 
+        g(x,b()) -> { return `x; }
+    }
+  }
+  %strategy Collector(root:Term,collection:Collection,strat:Strategy) extends `Identity() {
+    visit Term {
+      x -> {
+        try {
+          Term r = (Term)`strat.visit(`x);
+          collection.add(getPosition().getReplace(`x).visit(`root)); 
+        } catch(VisitFailure e) { }
       }
-
-      x -> { System.out.println("found " + `x); }
     }
   }
 }
