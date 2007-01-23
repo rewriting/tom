@@ -90,8 +90,7 @@ public class PrintGomModule {
                 printGrammarList(`y);
             }
             concGrammar(Grammar(x),y*) -> {
-                GrammarList grammarList1=sortProductionList(`x);
-                printSortedGrammarList(grammarList1);
+                printProductionList(`x);
                 printGrammarList(`y);
             }
         }
@@ -99,6 +98,13 @@ public class PrintGomModule {
 
     public static void printGomTypeList(GomTypeList gomTypeList) {
         // We don't need to print it for a .gom file.
+    }
+
+    public static void printProductionList(ProductionList productionList) {
+        //System.out.println("before sortProductionList, productionList="+productionList);
+        GrammarList grammarList=sortProductionList(productionList);
+        //System.out.println("after sortProductionList, grammarList="+grammarList);
+        printSortedGrammarList(grammarList);
     }
 
     private static GrammarList sortProductionList(ProductionList productionList) {
@@ -124,13 +130,13 @@ public class PrintGomModule {
                     // We don't have Sorts here,
                     // and each Grammar is non-empty
                     // and contains only productions of type Production.
-                    concGrammar(x@Grammar(y@concProduction(Production(_,_,codomain2),_*)),z*) -> {
+                    concGrammar(z*,x@Grammar(y@concProduction(Production(_,_,GomType(codomain2)),_*))) -> {
                         if(`codomain1.equals(`codomain2)) {
                             Grammar grammar=`Grammar(concProduction(y*,production));
                             return `concGrammar(grammar,grammarList*);
                         } else {
                             GrammarList grammarList2=addToGrammarList(production,`z);
-                            return `concGrammar(x,grammarList2*);
+                            return `concGrammar(grammarList2*,x);
                         }
                     }
                 }
