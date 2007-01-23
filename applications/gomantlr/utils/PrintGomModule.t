@@ -101,9 +101,7 @@ public class PrintGomModule {
     }
 
     public static void printProductionList(ProductionList productionList) {
-        //System.out.println("before sortProductionList, productionList="+productionList);
         GrammarList grammarList=sortProductionList(productionList);
-        //System.out.println("after sortProductionList, grammarList="+grammarList);
         printSortedGrammarList(grammarList);
     }
 
