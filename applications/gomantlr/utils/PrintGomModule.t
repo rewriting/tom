@@ -101,89 +101,33 @@ public class PrintGomModule {
     }
 
     public static void printProductionList(ProductionList productionList) {
-        GrammarList grammarList=sortProductionList(productionList);
-        printSortedGrammarList(grammarList);
-    }
-
-    private static GrammarList sortProductionList(ProductionList productionList) {
         %match(productionList) {
             concProduction() -> {
-                return `concGrammar();
             }
-            concProduction(x,y*) -> {
-                GrammarList grammarList=sortProductionList(`y);
-                return addToGrammarList(`x,grammarList);
-            }
-        }
-        return `concGrammar();
-    }
-
-    private static GrammarList addToGrammarList(Production production, GrammarList grammarList) {
-        %match(production) {
-            Production(name,domain,GomType(codomain1)) -> {
-                %match(grammarList) {
-                    concGrammar() -> {
-                        return `concGrammar(Grammar(concProduction(production)));
-                    }
-                    // We don't have Sorts here,
-                    // and each Grammar is non-empty
-                    // and contains only productions of type Production.
-                    concGrammar(z*,x@Grammar(y@concProduction(Production(_,_,GomType(codomain2)),_*))) -> {
-                        if(`codomain1.equals(`codomain2)) {
-                            Grammar grammar=`Grammar(concProduction(y*,production));
-                            return `concGrammar(grammar,grammarList*);
-                        } else {
-                            GrammarList grammarList2=addToGrammarList(production,`z);
-                            return `concGrammar(grammarList2*,x);
-                        }
-                    }
-                }
-            }
-            // We don't handle hooks for now
-            Hook[] -> {
-            }
-        }
-
-        return `concGrammar();
-    }
-
-    private static void printSortedGrammarList(GrammarList grammarList) {
-        %match(grammarList) {
-            concGrammar() -> {
-            }
-            concGrammar(Grammar(x),y*) -> {
-                printSortedProductionList(`x);
-                printSortedGrammarList(`y);
-            }
-        }
-    }
-
-    private static void printSortedProductionList(ProductionList productionList) {
-        %match(productionList) {
-            concProduction(Production(_,_,GomType(name)),_*) -> {
+            concProduction(Production(name,domain,GomType(codomain)),y*) -> {
                 System.out.println("");
-                System.out.println(`name+" =");
-                System.out.print("   ");
-                printSortedProductionList2(productionList);
+                System.out.println(`codomain+" =");
+                System.out.print("    "+`name+"(");
+                printFieldList(`domain);
+                System.out.println(")");
+                printProductionList2(`codomain,`y);
             }
         }
     }
-    
-    private static void printSortedProductionList2(ProductionList productionList) {
+
+    private static void printProductionList2(String codomain,ProductionList productionList) {
         %match(productionList) {
             concProduction() -> {
             }
-            concProduction(Production(name,domain,_)) -> {
-                System.out.print(" "+`name+"(");
-                printFieldList(`domain);
-                System.out.println(")");
-            }
-            concProduction(Production(name,domain,GomType(codomain1)),x,y*) -> {
-                System.out.print(" "+`name+"(");
-                printFieldList(`domain);
-                System.out.println(")");
-                System.out.print("  |");
-                printSortedProductionList2(`concProduction(x,y*));
+            concProduction(Production(name,domain,GomType(codomain1)),y*) -> {
+                if(`codomain1.equals(`codomain)) {
+                    System.out.print("| "+`name+"(");
+                    printFieldList(`domain);
+                    System.out.println(")");
+                    printProductionList2(codomain,`y);
+                } else {
+                    printProductionList(productionList);
+                }
             }
         }
     }
