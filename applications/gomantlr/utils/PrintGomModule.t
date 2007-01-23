@@ -121,7 +121,7 @@ public class PrintGomModule {
             }
             concProduction(Production(name,domain,GomType(codomain1)),y*) -> {
                 if(`codomain1.equals(`codomain)) {
-                    System.out.print("| "+`name+"(");
+                    System.out.print("  | "+`name+"(");
                     printFieldList(`domain);
                     System.out.println(")");
                     printProductionList2(codomain,`y);
