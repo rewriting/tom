@@ -37,7 +37,7 @@ import tom.library.adt.bytecode.types.tintlist.*;
 import tom.library.bytecode.*;
 import java.util.Vector;
 
-public class Transformer {
+public class Transformer2 {
 
   %include { mustrategy.tom }
   %include { adt/bytecode/Bytecode.tom }
@@ -45,15 +45,24 @@ public class Transformer {
   public static Vector  v = new Vector();
   public static String clm;
 
-  %strategy FindFileAccess() extends Identity() {
-    //Case 1: new FileReader(nameFile).read();
+  %strategy NewFileReader(index:IntWrapper) extends Identity() {
     visit TInstructionList {
-      (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
+      (New("java/io/FileReader"),Dup(),Aload(nombre),
        Invokespecial[owner="java/io/FileReader", name="<init>"],
-       Astore(nombre2),middle*,Aload(nombre2),Aload(nombre1),
+       Astore(nombre2),_*) -> {
+
+
+      }
+    }
+  }
+
+  %strategy CallToRead(index:IntWrapper) extends Identity() {
+    visit TInstructionList {
+      (Aload(nombre2),Aload(nombre1),
        Invokevirtual("java/io/FileReader","read",MethodDescriptor(ConsFieldDescriptorList(ArrayType(C()),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
        Pop(), after*)-> {
-        System.out.println("Access to a file(reader(buf))" );
+  
+      System.out.println("Access to a file(reader(buf))" );
         return `InstructionList(before*,
             middle*,
             New("bytecode/SecureAccess"),
@@ -64,44 +73,21 @@ public class Transformer {
             Invokevirtual("bytecode/SecureAccess","sreadBuf",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),ConsFieldDescriptorList(ArrayType(C()),EmptyFieldDescriptorList())),Void())),
             after*); 
       }
+    }
+  }
 
-      //Case 2: FileReader r = new FileReader(nameFile); ... ; r.read()
-
-      (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
+  %strategy NewSFileReader() extends Identity() {
+    visit TInstructionList {
+    (New("java/io/FileReader"),Dup(),Aload(nombre),
        Invokespecial[owner="java/io/FileReader", name="<init>"],
-       middle*,
-       Invokevirtual[owner ="java/io/FileReader",name="read"], 
-       Pop(),
-       after*) -> {
-        System.out.println("Attempt to read a file");
-        return `InstructionList(before*,
-            New("bytecode/SecureAccess"),
-            Dup(),
-            Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-            Aload(nombre),
-            Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
-            Pop(),
-            Return(),
-            after*);
-
-
+       Astore(nombre2),_*) -> {
+      return `TInstructionList( 
       }
+    }
+  }
 
-      //Case 3
-      (before*,Aload(nombre), Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
-        return `InstructionList(before*,
-            New("bytecode/SecureAccess"),
-            Dup(),
-            Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-            Aload(nombre),
-            Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
-            Pop(),
-            Return(),
-            after*);
-      }
 
-    }//visit
-  }//strategy
+
 
 
   private static TClass fileAccesVerify(TClass givenClass) {
