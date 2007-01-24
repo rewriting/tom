@@ -50,7 +50,8 @@ public class SClassLoader extends ClassLoader {
         && !(name.startsWith("javax.")) && !(name.startsWith("com."))
         && !(name.startsWith("sun.")) && !(name.startsWith("org."))
         && !(name.equals("bytecode.SecureAccess"))) {
-      Transformer t = new Transformer();
+      //Transformer t = new Transformer();
+      Transformer2 t = new Transformer2();
       byte[] scode = t.transform(name);
       Class sClass = defineClass(name,scode, 0, scode.length) ;
       return loadClass(name,true);

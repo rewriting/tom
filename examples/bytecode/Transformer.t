@@ -177,7 +177,7 @@ public class Transformer {
 
   public static byte[] transform(String file){
     v.add(file);
-    System.out.println("Parsing class file " + fichier + " ...");
+    System.out.println("Parsing class file " + file + " ...");
     BytecodeReader br = new BytecodeReader(file);
     System.out.println("Analyzing ...");
     TClass c= br.getTClass();
