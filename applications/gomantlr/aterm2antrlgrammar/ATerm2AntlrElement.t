@@ -96,9 +96,6 @@ public class ATerm2AntlrElement {
             WILDCARD[] -> {
                 return `AntlrWildcard();
             }
-            SYN_SEMPRED(NodeInfo(x,_,_),_) -> {
-                return `AntlrSempred(x);
-            }
             RULE_REF(NodeInfo(x,_,_),_) -> {
                 return `AntlrRuleRef(x);
             }

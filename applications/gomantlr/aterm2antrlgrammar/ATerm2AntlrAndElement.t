@@ -90,25 +90,24 @@ public class ATerm2AntlrAndElement {
             concATerm(x,y*) -> {
                 AntlrElement element=container.element;
                 AntlrElement element2;
-                try {
-                    element2=ATerm2AntlrElement.getAntlrElement(`x);
-                } catch (AntlrWrongElementException e) {
-                    container.goodParse=false;
-                    element2=e.getAntlrElement();
-                    
-                }
-                // Sempreds are added by ANTLR, and we don't want them.
-                boolean keep=true;
-                %match(element2) {
-                    AntlrSempred[] -> {
-                        keep=false;
+                %match(x) {
+                    // Sempreds are added by ANTLR, and we don't want them.
+                    SYN_SEMPRED[] -> {
+                        parseArgs(`y,container);
+                        return;
+                    }
+                    _ -> {
+                        try {
+                            element2=ATerm2AntlrElement.getAntlrElement(`x);
+                        } catch (AntlrWrongElementException e) {
+                            container.goodParse=false;
+                            element2=e.getAntlrElement();
+                        }
+                        container.element=`AntlrAndElement(element*,element2);
+                        parseArgs(`y,container);
+                        return;
                     }
                 }
-                if(keep) {
-                    container.element=`AntlrAndElement(element*,element2);
-                }
-                parseArgs(`y,container);
-                return;
             }
             _ -> {
                 AntlrElement element=container.element;

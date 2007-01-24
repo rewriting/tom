@@ -15,7 +15,6 @@ AntlrElement =
   | AntlrStringElement(string:String)
   | AntlrCharElement(c:String)
   | AntlrCharRange(c1:String,c2:String)
-  | AntlrSempred(s:String)
   | AntlrActionElement(action:String)
   | AntlrWildcard()
   | AntlrEpsilon()
