@@ -357,7 +357,6 @@ public class ATerm2AntlrGrammar {
                         if(`name.charAt(0)=='T') {
                             try {
                                 Integer.parseInt(`name.substring(1));
-                                System.out.println("Rejecting T<n>");
                                 keep=false;
                             } catch (NumberFormatException e) {
                                 // Not an integer, keep it.
