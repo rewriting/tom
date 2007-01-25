@@ -25,6 +25,8 @@
 
 package utils;
 
+import java.io.PrintStream;
+
 import tom.gom.adt.gom.types.*;
 
 public class PrintGomModule {
@@ -32,40 +34,52 @@ public class PrintGomModule {
     %include { adt/gom/Gom.tom}
     
     public static void printGomModule(GomModule gomModule) {
+        printGomModule(gomModule,System.out);
+    }
+
+    public static void printGomModule(GomModule gomModule,PrintStream stream) {
         %match(gomModule) {
             GomModule(GomModuleName(name),sectionList) -> {
-                System.out.println("module "+`name);
-                printSectionList(`sectionList);
+                stream.println("module "+`name);
+                printSectionList(`sectionList,stream);
             }
         }
     }
 
     public static void printSectionList(SectionList sectionList) {
+        printSectionList(sectionList,System.out);
+    }
+
+    public static void printSectionList(SectionList sectionList,PrintStream stream) {
         // In fact, we should just have one Imports, then one Public.
         %match(sectionList) {
             concSection() -> {
             }
             concSection(Imports(x),y*) -> {
-                printImportList(`x);
-                printSectionList(`y);
+                printImportList(`x,stream);
+                printSectionList(`y,stream);
             }
             concSection(Public(x),y*) -> {
-                System.out.println("abstract syntax");
-                printGrammarList(`x);
-                printSectionList(`y);
+                stream.println("abstract syntax");
+                printGrammarList(`x,stream);
+                printSectionList(`y,stream);
             }
         }
     }
 
     public static void printImportList(ImportList importList) {
-        printImportList(importList,null);
+        printImportList(importList,System.out);
     }
 
-    private static void printImportList(ImportList importList, String list) {
+    public static void printImportList(ImportList importList,PrintStream stream) {
+        printImportList(importList,null,stream);
+    }
+
+    private static void printImportList(ImportList importList, String list,PrintStream stream) {
         %match(importList) {
             concImportedModule() -> {
                 if(list!=null) {
-                    System.out.println("imports "+list);
+                    stream.println("imports "+list);
                 }
             }
             concImportedModule(Import(GomModuleName(name)),y*) -> {
@@ -75,76 +89,92 @@ public class PrintGomModule {
 
                 list=list+" "+`name;
                 
-                printImportList(`y,list);
+                printImportList(`y,list,stream);
             }
         }
     }
 
     public static void printGrammarList(GrammarList grammarList) {
+        printGrammarList(grammarList,System.out);
+    }
+
+    public static void printGrammarList(GrammarList grammarList,PrintStream stream) {
         // In fact, we should just have one Sorts, then one Grammar.
         %match(grammarList) {
             concGrammar() -> {
             }
             concGrammar(Sorts(x),y*) -> {
-                printGomTypeList(`x);
-                printGrammarList(`y);
+                printGomTypeList(`x,stream);
+                printGrammarList(`y,stream);
             }
             concGrammar(Grammar(x),y*) -> {
-                printProductionList(`x);
-                printGrammarList(`y);
+                printProductionList(`x,stream);
+                printGrammarList(`y,stream);
             }
         }
     }
 
     public static void printGomTypeList(GomTypeList gomTypeList) {
+        printGomTypeList(gomTypeList,System.out);
+    }
+
+    public static void printGomTypeList(GomTypeList gomTypeList,PrintStream stream) {
         // We don't need to print it for a .gom file.
     }
 
     public static void printProductionList(ProductionList productionList) {
+        printProductionList(productionList,System.out);
+    }
+
+    public static void printProductionList(ProductionList productionList,PrintStream stream) {
         %match(productionList) {
             concProduction() -> {
             }
             concProduction(Production(name,domain,GomType(codomain)),y*) -> {
-                System.out.println("");
-                System.out.println(`codomain+" =");
-                System.out.print("    "+`name+"(");
-                printFieldList(`domain);
-                System.out.println(")");
-                printProductionList2(`codomain,`y);
+                stream.println("");
+                stream.println(`codomain+" =");
+                stream.print("    "+`name+"(");
+                printFieldList(`domain,stream);
+                stream.println(")");
+                printProductionList2(`codomain,`y,stream);
             }
         }
     }
 
-    private static void printProductionList2(String codomain,ProductionList productionList) {
+    private static void printProductionList2(String codomain,ProductionList productionList,PrintStream stream) {
         %match(productionList) {
             concProduction() -> {
             }
             concProduction(Production(name,domain,GomType(codomain1)),y*) -> {
                 if(`codomain1.equals(`codomain)) {
-                    System.out.print("  | "+`name+"(");
-                    printFieldList(`domain);
-                    System.out.println(")");
-                    printProductionList2(codomain,`y);
+                    stream.print("  | "+`name+"(");
+                    printFieldList(`domain,stream);
+                    stream.println(")");
+                    printProductionList2(codomain,`y,stream);
                 } else {
-                    printProductionList(productionList);
+                    printProductionList(productionList,stream);
                 }
             }
         }
     }
 
     public static void printFieldList(FieldList fieldList) {
+        printFieldList(fieldList,System.out);
+    }
+
+    public static void printFieldList(FieldList fieldList,PrintStream stream) {
         %match(fieldList) {
             concField() -> {
             }
             concField(StarredField(GomType(type))) -> {
-                System.out.print(`type+"*");
+                stream.print(`type+"*");
             }
             concField(NamedField(name,GomType(type))) -> {
-                System.out.print(`name+":"+`type);
+                stream.print(`name+":"+`type);
             }
             concField(NamedField(name,GomType(type)),x,y*) -> {
-                System.out.print(`name+":"+`type+",");
-                printFieldList(`concField(x,y*));
+                stream.print(`name+":"+`type+",");
+                printFieldList(`concField(x,y*),stream);
             }
         }
     }
