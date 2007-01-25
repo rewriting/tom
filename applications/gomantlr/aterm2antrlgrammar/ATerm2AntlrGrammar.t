@@ -313,13 +313,22 @@ public class ATerm2AntlrGrammar {
                     rule=e.getAntlrRule();
                     
                 }
-                // synpred rules are added by ANTLR, and we don't want them.
                 boolean keep=true;
-                %match(rule) {
-                    AntlrRule(AntlrId(name),_,_,_,_,_,_,_,_) -> {
-                         if(`name.regionMatches(0,"synpred",0,7)) {
-                             keep=false;
-                         }
+                AntlrGrammarType type=container.type;
+                %match(type) {
+                    // The last rule of the lexer grammar is added by ANTLR, and we don't want it.
+                    AntlrLexerGrammar() -> {
+                        keep=false;
+                    }
+                }
+                if(keep) {
+                    %match(rule) {
+                        AntlrRule(AntlrId(name),_,_,_,_,_,_,_,_) -> {
+                            // synpred rules are added by ANTLR, and we don't want them.
+                            if(`name.regionMatches(0,"synpred",0,7)) {
+                                keep=false;
+                            }
+                        }
                     }
                 }
                 if(keep) {
@@ -337,13 +346,23 @@ public class ATerm2AntlrGrammar {
                     rule=e.getAntlrRule();
                     
                 }
-                // synpred rules are added by ANTLR, and we don't want them.
                 boolean keep=true;
                 %match(rule) {
                     AntlrRule(AntlrId(name),_,_,_,_,_,_,_,_) -> {
-                         if(`name.regionMatches(0,"synpred",0,7)) {
-                             keep=false;
-                         }
+                        // synpred rules are added by ANTLR, and we don't want them.
+                        if(`name.regionMatches(0,"synpred",0,7)) {
+                            keep=false;
+                        }
+                        // T<n> rules are added by ANTLR, and we don't want them.
+                        if(`name.charAt(0)=='T') {
+                            try {
+                                Integer.parseInt(`name.substring(1));
+                                System.out.println("Rejecting T<n>");
+                                keep=false;
+                            } catch (NumberFormatException e) {
+                                // Not an integer, keep it.
+                            }
+                        }
                     }
                 }
                 if(keep) {
