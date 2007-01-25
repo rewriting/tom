@@ -40,25 +40,39 @@ import aterm.*;
 import aterm.pure.*;
 
 import antlrgrammar.types.AntlrGrammar;
-//import tom.gom.adt.gom.types.*;
+
+import tom.gom.adt.gom.types.GomModule;
 
 import java.io.*;
 
 import utils.AST2ATerm;
 //import utils.Tree2ATerm;
+import utils.PrintGomModule;
 
 import aterm2antlrgrammar.ATerm2AntlrGrammar;
 
 import aterm2antlrgrammar.exceptions.AntlrWrongGrammarException;
 
+import gomantlr.GenerateGom;
+
 public class Gomantlr {
 
-    %include { antlrgrammar/AntlrGrammar.tom }
-    //%include { tom/gom/adt/gom/Gom.tom}
-    
+    //%include { antlrgrammar/AntlrGrammar.tom }
+    //%include { adt/gom/Gom.tom}
+
     public static void main(String[] args) {
         try {
-            String grammarFileName = args[0];
+            File grammarFile = new File(args[0]);
+
+            String grammarFileBaseName = grammarFile.getName();
+
+            String grammarFilePath = grammarFile.getParent();
+            if(grammarFilePath==null) {
+                grammarFilePath="";
+            }
+
+            String grammarFileName = grammarFilePath+grammarFileBaseName+".g";
+            String gomFileName = grammarFilePath+"Gomantlr_"+grammarFileBaseName+".gom";
             
             FileReader fr = null;
             try {
@@ -83,24 +97,32 @@ public class Gomantlr {
             ATerm aterm=AST2ATerm.getATerm(ast,ANTLRParser._tokenNames);
             ATerm lexerATerm=AST2ATerm.getATerm(lexerAST,ANTLRParser._tokenNames);
 
-            System.out.println(aterm);
-            System.out.println(lexerATerm);
-            
+            //System.out.println(aterm);
+            //System.out.println(lexerATerm);
+
             AntlrGrammar antlrGrammar;
-            AntlrGrammar antlrLexerGrammar;
             try {
                 antlrGrammar=ATerm2AntlrGrammar.getAntlrGrammar(aterm);
             } catch (AntlrWrongGrammarException e) {
                 antlrGrammar=e.getAntlrGrammar();
             }
+
+            AntlrGrammar antlrLexerGrammar;
             try {
                 antlrLexerGrammar=ATerm2AntlrGrammar.getAntlrGrammar(lexerATerm);
             } catch (AntlrWrongGrammarException e) {
                 antlrLexerGrammar=e.getAntlrGrammar();
             }
+
+            //System.out.println(antlrGrammar);
+            //System.out.println(antlrLexerGrammar);
+
+            GomModule gomModule=GenerateGom.generateGom(antlrGrammar);
             
-            System.out.println(antlrGrammar);
-            System.out.println(antlrLexerGrammar);
+            FileOutputStream outputStream=new FileOutputStream(gomFileName);
+            PrintStream printStream=new PrintStream(outputStream);
+
+            PrintGomModule.printGomModule(gomModule,printStream);
         } catch (Exception e) {
             System.err.println("exception: " + e);
             e.printStackTrace();
