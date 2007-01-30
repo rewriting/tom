@@ -1,4 +1,4 @@
-module Seq
+module propp.Seq
 imports String int
 abstract syntax
 

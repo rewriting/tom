@@ -8,7 +8,7 @@
   </target>
   <target name="build" depends="init">
     <!-- build adt -->    
-    <gomcompile example="${structure}"/>
+    <gombuild example="${structure}"/>
     <!-- build tom -->
     <tom.preset srcdir="${examples.dir}"
                 destdir="${examples.gen}">

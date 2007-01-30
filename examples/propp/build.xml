@@ -9,7 +9,7 @@
   <target name="build" depends="init">
     <!--<adtcompile example="${propp}"
       factory="seq"/>-->
-    <gomcompile example="${propp}"/>
+    <gombuild example="${propp}"/>
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${propp}/SeqParser.g"
                 options="-I ${examples.gen}/${propp}"

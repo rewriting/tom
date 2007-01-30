@@ -13,7 +13,7 @@
         <include name="*.xml"/>
       </fileset>
     </copy>
-    <gomcompile example="${strategy}"/>
+    <gombuild example="${strategy}"/>
     <tomcompile example="${strategy}"/>
     <javacompile example="${strategy}"/>
   </target>

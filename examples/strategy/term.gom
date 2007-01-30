@@ -1,4 +1,4 @@
-module term
+module strategy.term
 abstract syntax
   Term = a() | b() | c() | d()
 	     | f(arg1:Term)

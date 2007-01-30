@@ -1,4 +1,4 @@
-module Data
+module addressbook.Data
 imports int String
 
 abstract syntax

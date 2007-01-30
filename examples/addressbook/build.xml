@@ -7,7 +7,7 @@
     <delete dir="${examples.build}/${addressbook}"/>
   </target>
   <target name="build" depends="init">
-    <gomcompile example="${addressbook}"/>
+    <gombuild example="${addressbook}"/>
     <tomcompile example="${addressbook}"/>
     <javacompile example="${addressbook}"/>
   </target>

@@ -7,7 +7,7 @@
     <delete dir="${examples.build}/${gomoku}"/>
   </target>
   <target name="build" depends="init">
-    <gomcompile example="${gomoku}"/>
+    <gombuild example="${gomoku}"/>
     <tomcompile example="${gomoku}"/>
     <javacompile example="${gomoku}"/>
   </target>
