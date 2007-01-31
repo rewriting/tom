@@ -467,10 +467,16 @@ public class ASTFactory {
       concTomTerm(Composite(concTomTerm(head@BuildConsList[AstName=opName])),tail*) -> {
 	/*
 	 * Flatten nested lists
+	 * unless domain and codomain are equals
 	 */
 	if(name==`opName) {
-	  TomTerm subList = buildList(name,`tail,symbolTable);
-	  return `BuildAppendList(name,head,subList);
+	  TomSymbol listSymbol = symbolTable.getSymbolFromName(name.getString());
+	  %match(listSymbol) {
+	    Symbol[TypesToType=TypesToType[Domain=concTomType(TomTypeAlone(!typeName)), Codomain=TomTypeAlone(typeName)]] -> {
+	      TomTerm subList = buildList(name,`tail,symbolTable);
+	      return `BuildAppendList(name,head,subList);
+	    }
+	  }
 	}
       }
 
