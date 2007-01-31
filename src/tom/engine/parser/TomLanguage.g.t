@@ -1469,6 +1469,7 @@ operator returns [Declaration result] throws TomException
             )*
             )? RPAREN
         )
+        (
         LBRACE
         {
             astName = `Name(name.getText());
@@ -1514,6 +1515,7 @@ operator returns [Declaration result] throws TomException
             { options.add(attribute); }
         )*
         t:RBRACE
+	)
         {
 
           //System.out.println("pairNameDeclList = " + pairNameDeclList);

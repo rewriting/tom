@@ -346,7 +346,7 @@ public class TomBase {
   }
 
   protected static boolean hasConstant(OptionList optionList) {
-    %match(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,Constant[],_*) -> { return true; }
     }
     return false;

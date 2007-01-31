@@ -34,13 +34,14 @@ class Pil {
   }
  
   public final static void main(String[] args) {
-    Expr p1 = `Let(Var("x"),a(), Var("x"));
+    Expr p1 = `Let(Var("x"),a(), Seq(a(),Let(Var("y"),b(),Var("x"))));
     System.out.println("p1 = " + p1);
     System.out.println(pretty(p1));
 
-    System.out.println("renamed p1   = " + `TopDown(RenameVar("x","z")).apply(p1));
-    //System.out.println("optimized p1 = " + `BottomUp(RemoveLet()).apply(p1));
-
+Collection pt = new ArrayList();
+    //System.out.println("renamed p1   = " + `TopDown(RenameVar("x","z")).apply(p1));
+    System.out.println("optimized p1 = " + `BottomUp(RemoveLet(pt)).apply(p1));
+System.out.println("pt = " + pt);
   }
    
   // Renaming
@@ -51,11 +52,12 @@ class Pil {
   }
 
  // Optimize
-  %strategy RemoveLet() extends Identity() {
+  %strategy RemoveLet(pt:Collection) extends Identity() {
     visit Expr {
       Let(Var(n),expr,body) -> { 
         if(`body == `TopDown(RenameVar(n,"_"+n)).apply(`body)) {
 	      // if Var(n) is not used
+pt.add(getPosition());
 	      return `body;
 	    }
       }

@@ -74,13 +74,12 @@ hookOperator
 {
   String code = "";
 }
-:! (typeId:OPERATOR)? id:ID COLON^ hook:hook
-// '!' turns off auto transform
+:! (hookScope:OPERATOR)? pointCut:ID COLON^ hook:hook // '!' turns off auto transform
 {
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
 
-#hookOperator = #(COLON,id,hook);
+#hookOperator = #(COLON,pointCut,hook);
 #hookOperator.setText(code);
 }
 ;
@@ -91,18 +90,18 @@ makeHook : (MAKE^  | MAKEINSERT^) arglist;
 
 otherHook : BLOCK | INTERFACE | IMPORT;
 
-typeId : SORT | MODULE;
+hookScope : SORT | MODULE;
 
 hookSortModule
 {
   String code = "";
 }
-:! typeId:typeId id:ID COLON^ hook:otherHook
+:! hookScope:hookScope pointCut:ID COLON^ hook:otherHook
 {
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
 
-#hookSortModule = #(COLON,typeId,id,hook);
+#hookSortModule = #(COLON,hookScope,pointCut,hook);
 #hookSortModule.setText(code);
 }
 ;
