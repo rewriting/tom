@@ -38,6 +38,37 @@ rule in(l,fImpair(t)) -> Impair(appl(t,l)).
 
 
 
+proof zisnat: N(0).
+rule. 0.
+axiom. axiom.
+
+proof oneisnat: N(1).
+rule. 0.
+axiom. axiom.
+
+proof predsucc: \An.(N(n) => (~Null(n)) => eq(pred(succ(n)), succ(pred(n)))).
+intro. intro. intro.
+focus h2. intro. bottom.
+focus h1. rule. union(fNull(one()), fEq(pred(succ(one())),succ(pred(one())))).
+rule.
+rule. focus c2. rule.
+reduce.
+focus c2. rule.
+focus h1. remove.
+focus c2. remove.
+focus c2. remove.
+auto.
+reduce.
+axiom.
+reduce.
+axiom.
+focus h1. rule. 
+focus h1. rule. reduce.
+axiom.
+focus h1. rule. reduce.
+axiom.
+
+	
 proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) => \An.(N(n) => Pair(succ(succ(0))*n)).
 reduce.
 auto.
