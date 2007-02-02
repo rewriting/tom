@@ -693,24 +693,23 @@ b: {
     while(true) {
 b :{
       Sequent goal = getSequentByPosition(tree, poscopy);
-      %match(goal,Prop conclusion) {
-        sequent((),(concl)), concl -> {
+      %match(Prop conclusion, goal) {
+        // pattern means "only and at least one 'goal' in the sequent rhs"
+        concl, sequent((),!(_*,concl,_*,!concl,_*)) -> {
           return (Tree) ((MuStrategy) poscopy.getReplace(thtree)).apply(tree);
         }
-        sequent((p,_*),_), _ -> {
+        _, sequent((p,_*),_) -> {
           tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyWeakL(p))).apply(tree);
           poscopy.down(2);
           poscopy.down(1);
           break b;
         }
-        sequent((),(_*,p,_*)), tokeep -> {
+        tokeep, sequent((),(_*,p@!tokeep,_*)) -> {
           //FIXME replace condition by p@!tokeep in pattern when bug disappears
-          if (`p != conclusion) {
             tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyWeakR(p))).apply(tree);
             poscopy.down(2);
             poscopy.down(1);
             break b;
-          }
         }
       }
       throw new Exception("can't apply theorem");
