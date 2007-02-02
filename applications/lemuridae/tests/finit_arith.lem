@@ -17,7 +17,8 @@ rule in(l,fNull(t)) -> Null(appl(t,l)).
 rule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 rule in(l,fN(t)) -> N(appl(t,l)).
 rule eq(x,y) -> \AA.(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
-rule N(n) -> \AA.( in(cons(0,nil()),A) => ( \Ay.(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
+rule N(n) -> \AA.( in(cons(0,nil()),A) => ( \Ay.(N(y) => in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
+hered.
 hered.
 rule Null(0) -> \T.
 rule Null(succ(x)) -> \B.
@@ -29,22 +30,24 @@ rule in(l,P(a)) -> \En.(in(cons(n,l),A)).
 rule in(l,C(a)) -> \An.(in(cons(n,l),A)).
 
 
-rule Pair(0) -> \T.
-rule Pair(succ(n)) -> Impair(n).
-rule Impair(succ(n)) -> Pair(n).
-
-rule in(l,fPair(t)) -> Pair(appl(t,l)).
-rule in(l,fImpair(t)) -> Impair(appl(t,l)).
-
-
-
 proof zisnat: N(0).
 rule. 0.
-axiom. axiom.
+axiom. axiom. axiom.
 
 proof oneisnat: N(1).
 rule. 0.
+theorem zisnat. axiom.
 axiom. axiom.
+
+proof ind: \A n. (N(n) => N(succ(n))).
+auto.
+rule n0.
+axiom.
+next. axiom.
+focus h2.
+rule. A0.
+axiom.
+next. axiom.
 
 proof predsucc: \An.(N(n) => (~Null(n)) => eq(pred(succ(n)), succ(pred(n)))).
 intro. intro. intro.
@@ -68,6 +71,12 @@ axiom.
 focus h1. rule. reduce.
 axiom.
 
+proof discriminate: \An.(~eq(0,succ(n))).
+auto.
+focus h1. rule. fNull(one()).
+focus h1. rule. reduce.
+focus h1. rule.
+rule. reduce. rule.
 	
 proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) => \An.(N(n) => Pair(succ(succ(0))*n)).
 reduce.

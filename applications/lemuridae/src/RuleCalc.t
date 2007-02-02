@@ -65,12 +65,12 @@ b:{
     %match(RuleList ruleList) {
 
       (rd1*, r@ruledesc(1,_,(sequent((),(p1*,prop,p2*))),_) ,rd2*) -> {
-        Position pos = forallNeg(`prop, true, new Position());
+        Position pos = forallNeg(`prop, false, new Position());
         if (pos != null) {
           // string are not taken into account by omega
           pos.down(1);
           Prop prop1 = (Prop) ((MuStrategy) MuTraveler.init(pos.getSubterm())).apply(`prop);
-          lastPos = forallNeg(`prop1, false, pos);
+          lastPos = forallNeg(`prop1, true, pos);
           if(lastPos != null) {
             // removing lastRule from the rules
             ruleList = `rlist(rd1*,rd2*);
