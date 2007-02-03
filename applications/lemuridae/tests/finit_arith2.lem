@@ -16,10 +16,10 @@ termrule succ(x) * y -> x * y + y.
 rule in(l,fNull(t)) -> Null(appl(t,l)).
 rule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 rule in(l,fN(t)) -> N(appl(t,l)).
-rule eq(x,y) -> \AA.(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
-rule N(n) -> \AA.( in(cons(0,nil()),A) => ( \Ay.(N(y) => in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
+rule eq(x,y) -> \Ap.(  in(cons(x,nil()),p) => in(cons(y,nil()),p) ).
+rule N(n) -> \Ap.( in(cons(0,nil()),p) => ( \Ay.(N(y) => in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p) )).
 hered.
-hered.
+hered2.
 rule Null(0) -> \T.
 rule Null(succ(x)) -> \B.
 rule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
@@ -32,202 +32,20 @@ rule in(l,C(a)) -> \An.(in(cons(n,l),A)).
 
 proof zisnat: N(0).
 rule. 0.
-axiom. axiom. axiom.
+axiom.
 
 proof oneisnat: N(1).
 rule. 0.
-theorem zisnat. axiom.
+focus h2. rule. 0.
 axiom. axiom.
+theorem zisnat. axiom.
 
 proof ind: \A n. (N(n) => N(succ(n))).
 auto.
-rule n0.
-axiom.
+focus h3. rule. p0.
 next. axiom.
-focus h2.
-rule. A0.
-axiom.
-next. axiom.
-
-proof predsucc: \An.(N(n) => (~Null(n)) => eq(pred(succ(n)), succ(pred(n)))).
-intro. intro. intro.
-focus h2. intro. bottom.
-focus h1. rule. union(fNull(one()), fEq(pred(succ(one())),succ(pred(one())))).
-rule.
-rule. focus c2. rule.
-reduce.
-focus c2. rule.
-focus h1. remove.
-focus c2. remove.
-focus c2. remove.
-auto.
-reduce.
-axiom.
-reduce.
-axiom.
-focus h1. rule. 
-focus h1. rule. reduce.
-axiom.
-focus h1. rule. reduce.
-axiom.
-
-proof discriminate: \An.(~eq(0,succ(n))).
-auto.
-focus h1. rule. fNull(one()).
-focus h1. rule. reduce.
-focus h1. rule.
-rule. reduce. rule.
-	
-proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) => \An.(N(n) => Pair(succ(succ(0))*n)).
-reduce.
-auto.
-focus h2. rule. fPair(one()+one()).
-rule. reduce. 
-rule.
-rule.
-auto. reduce.
-focus h2. intro. succ(y0).
-focus h2. intro. y0.
-focus h2. rule. fImpair(one()).
-auto. reduce.
-axiom.
-auto. reduce.
-auto.
-auto. reduce.
-axiom.
-
-proof eqrefl: \Ax.eq(x,x).
-auto.
-
-proof eqsym: \Ax.(\Ay.( eq(x,y) => eq(y,x) )).
-intro.intro.intro.
-focus h1. rule. fEq(one(),S(x0)).
-focus h1. rule. 
-reduce.
-axiom.
-rule. reduce.
-theorem eqrefl.
-focus h2. intro. x0. axiom.
-
-proof eqtrans:  \Ax.(\Ay.(\Az.( eq(x,y) => (eq(y,z) => eq(x,z)) ))).
-auto.
-focus h2. rule. A0.
-focus h4. rule. A0.
-axiom.
-axiom.
-axiom.
-
-
-proof succisafun: \Ax.(\Ay.( eq(x,y) => eq(succ(x),succ(y)) )).
-intro. intro. intro.
-focus h1. rule. fEq(S(succ(x0)),succ(one())).
-focus h1. rule. reduce.
-axiom.
-rule. reduce.
-theorem eqrefl.
-focus h2. intro. succ(x0). axiom.
-
-
-proof nplus0:   \An.(N(n) => eq(n+0,n)).
-intro. intro.
-focus h1. rule. fEq(one()+S(0),one()).
 next.
-focus h1. rule. reduce.
-axiom.
-next.
-rule.
-focus h1. rule. rule. reduce.
-theorem succisafun.
-focus h3. intro. (y0+0). focus h3. intro. (y0).
-focus h3. intro.
-axiom.
-axiom.
-rule. reduce.
-theorem eqrefl.
-focus h2. intro. 0. axiom.
 
 
-proof plusassoc:   \Ax.(\Ay.(\Az.(N(x) => eq( x+(y+z) , (x+y)+z )))).
-intro. intro. intro. intro.
-focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
-next.
-focus h1. rule. reduce. axiom.
-rule. reduce. 
-theorem eqrefl.
-focus h2. intro. y0+z0. axiom.
-rule.
-focus h1. rule. rule. reduce.
-theorem succisafun.
-focus h3. intro. y1+(y0+z0). focus h3. intro. (y1+y0)+z0. focus h3. intro. 
-axiom. axiom.
-
-
-proof plusnSm:  \An.(\Am.( N(n) => eq(succ(n+m),n+succ(m)))).
-intro. intro.intro.
-focus h1. rule. fEq(succ(one()+S(m0)),one()+succ(S(m0))).
-next.
-focus h1. rule. reduce. axiom.
-rule. reduce.
-theorem eqrefl.
-focus h2. intro. succ(m0). axiom.
-rule.
-focus h1. rule. rule. reduce.
-theorem succisafun.
-focus h3. intro. succ(y0+m0). focus h3. intro. y0+succ(m0). focus h3. intro. 
-axiom. axiom.
-
-
-proof pluscommut:  \An.(\Am.(N(n)=>(N(m)=>eq(n+m,m+n)))).
-intro.intro.intro.intro.
-focus h1. rule. fEq(one()+S(m0),S(m0)+one()).
-next.
-focus h1. rule. reduce. axiom.
-rule. reduce.
-theorem nplus0.
-focus h3. intro. m0.
-focus h3. intro.
-theorem eqsym.
-focus h4. intro. m0+0.
-focus h4. intro. m0.
-focus h4. intro.
-axiom.
-axiom.
-axiom.
-rule.
-focus h1. rule. rule. reduce.
-theorem plusnSm.
-focus h4. intro. m0.
-focus h4. intro. y0.
-focus h4. intro.
-theorem succisafun.
-focus h5. intro. y0+m0. focus h5. intro. m0+y0. focus h5. intro. 
-next. axiom.
-next. axiom.
-theorem eqtrans.
-focus h6. intro. succ(y0+m0).
-focus h6. intro. succ(m0+y0).
-focus h6. intro. m0+succ(y0). 
-focus h6. intro.
-focus h6. intro.
-axiom.
-axiom.
-axiom.
-
-proof multn0:  \An.(N(n) => eq(0,n*0)).
-intro.intro.
-focus h1. rule. fEq(S(0),one()*S(0)).
-next.
-focus h1. rule. reduce. axiom.
-rule. reduce.
-theorem eqrefl.
-focus h2. intro. 0. axiom.
-rule.
-focus h1. rule. rule. reduce.
-focus h1. rule. fEq(S(0),one()+S(0)).
-focus h1. rule. reduce.
-axiom.
-rule. reduce.
-theorem eqrefl.
-focus h3. intro. 0. axiom.
-
+il faut hered = hered2 ... corriger lemu avant
 
