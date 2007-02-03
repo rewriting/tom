@@ -62,20 +62,14 @@ public class RuleCalc {
       // looks for permutability problems
       %match(PropRuleList pruleList) {
         (r1*, r@proprule(_,prop) ,r2*) -> {
-          Position pos = forallNeg(`prop, false, new Position());
-          if (pos != null) {
-            // string are not taken into account by omega
-            pos.down(1);
-            Prop prop1 = (Prop) ((MuStrategy) MuTraveler.init(pos.getSubterm())).apply(`prop);
-            lastPos = forallNeg(`prop1, true, pos);
-            if(lastPos != null) {
-              // removing lastRule from the rules
-              pruleList = `prlist(r1*,r2*);
-              // removing lastProp from the rule
-              lastRule = `r;
-              lastProp = `prop;
-              return;
-            }
+          lastPos = forallNeg(`prop, 0, 1, new Position());
+          if(lastPos != null) {
+            // removing lastRule from the rules
+            pruleList = `prlist(r1*,r2*);
+            // removing lastProp from the rule
+            lastRule = `r;
+            lastProp = `prop;
+            return;
           }
         }
       }
@@ -265,47 +259,48 @@ public class RuleCalc {
     }
 
 
-    private static Position forallNeg(Prop p, boolean current, Position pos) {
+    // last : 0 = undefined, -1 = negative, 1 = positive
+    private static Position forallNeg(Prop p, int last, int current, Position pos) {
       %match(Prop p) {
         (relationAppl | top | bottom) [] -> { return null; }
 
         (and | or) (p1,p2) -> {
           pos.down(1);
-          Position pos1 = forallNeg(`p1, current, pos);
+          Position pos1 = forallNeg(`p1, last, current, pos);
           if (pos1 != null) return pos1;
           pos.up();
           pos.down(2);
-          pos1 = forallNeg(`p2, current, pos);
+          pos1 = forallNeg(`p2, last, current, pos);
           if (pos1 != null) return pos1;
           pos.up();
         }
 
         implies(p1,p2) -> {
           pos.down(1);
-          Position pos1 = forallNeg(`p1, !current, pos);
+          Position pos1 = forallNeg(`p1, last, -current, pos);
           if (pos1 != null) return pos1;
           pos.up();
           pos.down(2);
-          pos1 = forallNeg(`p2, current, pos);
+          pos1 = forallNeg(`p2, last, current, pos);
           if (pos1 != null) return pos1;
           pos.up();
         }
 
         forAll(_,p1) -> {
-          if(current) {
+          if(current*last >= 0) {
             // string are not taken into account by omega
             pos.down(1);
-            return forallNeg(`p1,current,pos);
+            return forallNeg(`p1,current,current,pos);
           }
-          else return pos; 
+          else return pos;
         }
 
         exists(_,p1) -> { 
-          if(current)
+          if(current*last > 0)
             return pos;
           else {
             pos.down(2);
-            return forallNeg(`p1,current,pos); 
+            return forallNeg(`p1,current,current,pos); 
           }
         }
       }
