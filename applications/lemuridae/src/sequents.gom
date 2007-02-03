@@ -68,9 +68,11 @@ TermRule = termrule(lhs:Term,rh:Term)
 
 TermRuleList = termrulelist(TermRule*)
 
-// --- for the new rules computing---
-// sequents and constraints
+// --- for the new rules computation---
+PropRule = proprule(lhs:Prop,rhs:Prop)
+PropRuleList = prlist(PropRule*)
 RuleList = rlist(Rule*)
+
 
 // parsed in interactive mode
 Command = rewritep(l:Prop, r:Prop)

@@ -1093,8 +1093,8 @@ b :{
         display(name) -> {
           Tree tree = theorems.get(`name);
           PrettyPrinter.display(tree,newTermRules);
-          tree = ProofExpander.expand(tree);
-          PrettyPrinter.display(tree,newTermRules);
+          //tree = ProofExpander.expand(tree);
+          //PrettyPrinter.display(tree,newTermRules);
         }
 
         quit() -> {

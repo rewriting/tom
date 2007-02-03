@@ -19,7 +19,6 @@ rule in(l,fN(t)) -> N(appl(t,l)).
 rule eq(x,y) -> \AA.(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
 rule N(n) -> \AA.( in(cons(0,nil()),A) => ( \Ay.(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
 hered.
-hered2.
 rule Null(0) -> \T.
 rule Null(succ(x)) -> \B.
 rule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
@@ -41,7 +40,7 @@ rule in(l,fImpair(t)) -> Impair(appl(t,l)).
 
 proof zisnat: N(0).
 rule. 0.
-axiom. axiom.
+axiom.
 
 proof oneisnat: N(1).
 rule. 0.
@@ -52,19 +51,21 @@ proof predsucc: \An.(N(n) => (~Null(n)) => eq(pred(succ(n)), succ(pred(n)))).
 intro. intro. intro.
 focus h2. intro. bottom.
 focus h1. rule. union(fNull(one()), fEq(pred(succ(one())),succ(pred(one())))).
+rule.
+rule. focus c2.rule. reduce.
+focus c2.rule.
+next.
+focus h1. rule.
+focus h1. rule.
+reduce.
+axiom.
+focus h1. rule.
+reduce.
+axiom.
+rule.
+focus c1. rule.
+rule. focus c2. rule. reduce.
 auto.
-reduce.
-axiom.
-reduce.
-axiom.
-auto. reduce.
-focus c3. rule.
-focus h1. rule.
-focus h1. rule.
-reduce.
-axiom.
-focus h1. rule. reduce.	
-axiom.
 
 proof discriminate: \An.(~eq(0,succ(n))).
 auto.
@@ -78,18 +79,17 @@ reduce.
 auto.
 focus h2. rule. fPair(one()+one()).
 auto. reduce.
+rule.
+rule.
+focus h1. rule. rule. reduce.
+rule.
 focus h2. intro. succ(y0).
 focus h2. intro. y0.
 focus h2. rule. fImpair(one()).
-auto. reduce.
+focus h1. rule. reduce.
 axiom.
-auto. reduce.
-auto.
-auto. reduce.
-rule.
-auto.
-reduce.
-axiom.
+rule. reduce. auto.
+auto. reduce. auto.
 
 proof eqrefl: \Ax.eq(x,x).
 auto.
@@ -129,6 +129,10 @@ focus h1. rule. fEq(one()+S(0),one()).
 next.
 focus h1. rule. reduce.
 axiom.
+rule. reduce.
+theorem eqrefl.
+focus h2. intro. 0.
+axiom.
 rule.
 focus h1. rule. rule. reduce.
 theorem succisafun.
@@ -136,18 +140,12 @@ focus h3. intro. (y0+0). focus h3. intro. (y0).
 focus h3. intro.
 axiom.
 axiom.
-rule. reduce.
-theorem eqrefl.
-focus h2. intro. 0.
-axiom.
-
 
 proof plusassoc:   \Ax.(\Ay.(\Az.(N(x) => eq( x+(y+z) , (x+y)+z )))).
 intro. intro. intro. intro.
 focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
 next.
 focus h1. rule. reduce. axiom.
-next.
 rule. reduce. 
 theorem eqrefl.
 focus h2. intro. y0+z0. axiom.
@@ -163,7 +161,6 @@ intro. intro.intro.
 focus h1. rule. fEq(succ(one()+S(m0)),one()+succ(S(m0))).
 next.
 focus h1. rule. reduce. axiom.
-next.
 rule. reduce.
 theorem eqrefl.
 focus h2. intro. succ(m0). axiom.
@@ -179,7 +176,6 @@ intro.intro.intro.intro.
 focus h1. rule. fEq(one()+S(m0),S(m0)+one()).
 next.
 focus h1. rule. reduce. axiom.
-next.
 rule. reduce.
 theorem nplus0.
 focus h3. intro. m0.
@@ -216,7 +212,6 @@ intro.intro.
 focus h1. rule. fEq(S(0),one()*S(0)).
 next.
 focus h1. rule. reduce. axiom.
-next.
 rule. reduce.
 theorem eqrefl.
 focus h2. intro. 0. axiom.

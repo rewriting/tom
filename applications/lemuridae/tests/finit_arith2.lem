@@ -19,15 +19,14 @@ rule in(l,fN(t)) -> N(appl(t,l)).
 rule eq(x,y) -> \Ap.(  in(cons(x,nil()),p) => in(cons(y,nil()),p) ).
 rule N(n) -> \Ap.( in(cons(0,nil()),p) => ( \Ay.(N(y) => in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p) )).
 hered.
-hered2.
 rule Null(0) -> \T.
 rule Null(succ(x)) -> \B.
 rule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
 rule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
 rule in(l,supset(A,B)) -> in(l,A) => in(l,B).
 rule in(l,emptyset()) -> \B.
-rule in(l,P(a)) -> \En.(in(cons(n,l),A)).
-rule in(l,C(a)) -> \An.(in(cons(n,l),A)).
+rule in(l,P(a)) -> \En.(in(cons(n,l),a)).
+rule in(l,C(a)) -> \An.(in(cons(n,l),a)).
 
 
 proof zisnat: N(0).
@@ -44,8 +43,9 @@ proof ind: \A n. (N(n) => N(succ(n))).
 auto.
 focus h3. rule. p0.
 next. axiom.
-next.
-
-
-il faut hered = hered2 ... corriger lemu avant
+axiom.
+focus h3. rule. n0.
+axiom.
+axiom.
+axiom.
 
