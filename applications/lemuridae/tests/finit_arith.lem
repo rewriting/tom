@@ -13,94 +13,86 @@ termrule 0 * y -> 0.
 termrule succ(x) + y -> succ(x+y).
 termrule succ(x) * y -> x * y + y.
 
-rule in(l,fNull(t)) -> Null(appl(t,l)).
-rule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
-rule in(l,fN(t)) -> N(appl(t,l)).
+proprule in(l,fNull(t)) -> Null(appl(t,l)).
+proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
+proprule in(l,fN(t)) -> N(appl(t,l)).
 rule eq(x,y) -> \AA.(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
 rule N(n) -> \AA.( in(cons(0,nil()),A) => ( \Ay.(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
 hered.
 rule Null(0) -> \T.
 rule Null(succ(x)) -> \B.
-rule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
-rule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
-rule in(l,supset(A,B)) -> in(l,A) => in(l,B).
-rule in(l,emptyset()) -> \B.
-rule in(l,P(a)) -> \En.(in(cons(n,l),A)).
-rule in(l,C(a)) -> \An.(in(cons(n,l),A)).
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> \B.
+proprule in(l,P(a)) -> \En.(in(cons(n,l),A)).
+proprule in(l,C(a)) -> \An.(in(cons(n,l),A)).
 
 
 rule Pair(0) -> \T.
 rule Pair(succ(n)) -> Impair(n).
 rule Impair(succ(n)) -> Pair(n).
 
-rule in(l,fPair(t)) -> Pair(appl(t,l)).
-rule in(l,fImpair(t)) -> Impair(appl(t,l)).
+proprule in(l,fPair(t)) -> Pair(appl(t,l)).
+proprule in(l,fImpair(t)) -> Impair(appl(t,l)).
 
 
 
 proof zisnat: N(0).
-rule. 0.
+rule. 
 axiom.
 
 proof oneisnat: N(1).
-rule. 0.
+rule.
 focus h2. rule. 0.
 axiom. axiom.
 
 proof predsucc: \An.(N(n) => (~Null(n)) => eq(pred(succ(n)), succ(pred(n)))).
-intro. intro. intro.
-focus h2. intro. bottom.
+intros.
 focus h1. rule. union(fNull(one()), fEq(pred(succ(one())),succ(pred(one())))).
+reduce.
+intro.
 rule.
-rule. focus c2.rule. reduce.
-focus c2.rule.
 next.
-focus h1. rule.
-focus h1. rule.
 reduce.
-axiom.
-focus h1. rule.
-reduce.
-axiom.
-rule.
-focus c1. rule.
-rule. focus c2. rule. reduce.
+intros.
+rule. reduce.
 auto.
 
 proof discriminate: \An.(~eq(0,succ(n))).
-auto.
+intros.
 focus h1. rule. fNull(one()).
-focus h1. rule. reduce.
-focus h1. rule.
-rule. reduce. rule.
-	
-proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) => \An.(N(n) => Pair(succ(succ(0))*n)).
 reduce.
 auto.
+reduce.
+rule.
+
+proof pair2n : \Ax.(\Ay.eq(x+y,y+x)) => \An.(N(n) => Pair(succ(succ(0))*n)).
+reduce.
+intros.
 focus h2. rule. fPair(one()+one()).
-auto. reduce.
+reduce.
 rule.
 rule.
-focus h1. rule. rule. reduce.
+reduce.
 rule.
 focus h2. intro. succ(y0).
 focus h2. intro. y0.
 focus h2. rule. fImpair(one()).
-focus h1. rule. reduce.
+reduce.
 axiom.
-rule. reduce. auto.
-auto. reduce. auto.
+reduce. auto.
+reduce. axiom.
 
 proof eqrefl: \Ax.eq(x,x).
 auto.
 
 proof eqsym: \Ax.(\Ay.( eq(x,y) => eq(y,x) )).
-intro.intro.intro.
+intros.
 focus h1. rule. fEq(one(),S(x0)).
-focus h1. rule. 
 reduce.
 axiom.
-rule. reduce.
+reduce.
 theorem eqrefl.
 focus h2. intro. x0. axiom.
 
@@ -114,113 +106,94 @@ axiom.
 
 
 proof succisafun: \Ax.(\Ay.( eq(x,y) => eq(succ(x),succ(y)) )).
-intro. intro. intro.
+intros.
 focus h1. rule. fEq(S(succ(x0)),succ(one())).
-focus h1. rule. reduce.
+reduce.
 axiom.
-rule. reduce.
+reduce.
 theorem eqrefl.
 focus h2. intro. succ(x0). axiom.
 
 
 proof nplus0:   \An.(N(n) => eq(n+0,n)).
-intro. intro.
+intros.
 focus h1. rule. fEq(one()+S(0),one()).
 next.
-focus h1. rule. reduce.
-axiom.
-rule. reduce.
+reduce. axiom.
+reduce.
 theorem eqrefl.
 focus h2. intro. 0.
 axiom.
 rule.
-focus h1. rule. rule. reduce.
+reduce.
 theorem succisafun.
 focus h3. intro. (y0+0). focus h3. intro. (y0).
-focus h3. intro.
-axiom.
-axiom.
+intros.
 
 proof plusassoc:   \Ax.(\Ay.(\Az.(N(x) => eq( x+(y+z) , (x+y)+z )))).
-intro. intro. intro. intro.
+intros.
 focus h1. rule. fEq( one()+(S(y0)+S(z0)) , one()+S(y0)+S(z0) ).
-next.
-focus h1. rule. reduce. axiom.
-rule. reduce. 
+next. reduce. axiom.
+reduce. 
 theorem eqrefl.
 focus h2. intro. y0+z0. axiom.
 rule.
-focus h1. rule. rule. reduce.
+reduce.
 theorem succisafun.
-focus h3. intro. y1+(y0+z0). focus h3. intro. (y1+y0)+z0. focus h3. intro. 
-axiom. axiom.
-
+focus h3. intro. y1+(y0+z0). focus h3. intro. (y1+y0)+z0. 
+intros.
 
 proof plusnSm:  \An.(\Am.( N(n) => eq(succ(n+m),n+succ(m)))).
-intro. intro.intro.
+intros.
 focus h1. rule. fEq(succ(one()+S(m0)),one()+succ(S(m0))).
-next.
-focus h1. rule. reduce. axiom.
-rule. reduce.
+next. reduce. axiom.
+reduce.
 theorem eqrefl.
 focus h2. intro. succ(m0). axiom.
 rule.
-focus h1. rule. rule. reduce.
+reduce.
 theorem succisafun.
-focus h3. intro. succ(y0+m0). focus h3. intro. y0+succ(m0). focus h3. intro. 
-axiom. axiom.
+focus h3. intro. succ(y0+m0). focus h3. intro. y0+succ(m0).
+intros.
 
 
 proof pluscommut:  \An.(\Am.(N(n)=>(N(m)=>eq(n+m,m+n)))).
-intro.intro.intro.intro.
+intros.
 focus h1. rule. fEq(one()+S(m0),S(m0)+one()).
-next.
-focus h1. rule. reduce. axiom.
-rule. reduce.
+next. reduce. axiom.
+reduce.
 theorem nplus0.
 focus h3. intro. m0.
-focus h3. intro.
+intros.
 theorem eqsym.
 focus h4. intro. m0+0.
 focus h4. intro. m0.
-focus h4. intro.
-axiom.
-axiom.
-axiom.
-rule.
-focus h1. rule. rule. reduce.
+intros.
+rule. reduce.
 theorem plusnSm.
 focus h4. intro. m0.
 focus h4. intro. y0.
-focus h4. intro.
+intros.
 theorem succisafun.
-focus h5. intro. y0+m0. focus h5. intro. m0+y0. focus h5. intro. 
-next. axiom.
-next. axiom.
+focus h5. intro. y0+m0. focus h5. intro. m0+y0. 
+intros.
 theorem eqtrans.
 focus h6. intro. succ(y0+m0).
 focus h6. intro. succ(m0+y0).
-focus h6. intro. m0+succ(y0). 
-focus h6. intro.
-focus h6. intro.
-axiom.
-axiom.
-axiom.
+focus h6. intro. m0+succ(y0).
+intros.
 
 proof multn0:  \An.(N(n) => eq(0,n*0)).
-intro.intro.
+intros..
 focus h1. rule. fEq(S(0),one()*S(0)).
-next.
-focus h1. rule. reduce. axiom.
-rule. reduce.
+next. reduce. axiom.
+reduce.
 theorem eqrefl.
 focus h2. intro. 0. axiom.
-rule.
-focus h1. rule. rule. reduce.
-focus h1. rule. fEq(S(0),one()+S(0)).
-focus h1. rule. reduce.
-axiom.
 rule. reduce.
+focus h1. rule. fEq(S(0),one()+S(0)).
+reduce. axiom.
+reduce.
 theorem eqrefl.
 focus h3. intro. 0. axiom.
 

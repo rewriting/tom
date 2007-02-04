@@ -963,6 +963,18 @@ b :{
           }
         }
 
+        /* intros case */
+        proofCommand("intros") -> {
+          try {
+            ArrayList<Rule> emptylist = new ArrayList<Rule>();
+            MuStrategy strat = `SafeTopDown(ApplyAuto(emptylist));
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+          } catch (Exception e) {
+            System.out.println("Can't apply intros" + e.getMessage());
+            e.printStackTrace();
+          }
+        }
+
         /* Axiom case */
         proofCommand("axiom") -> {
           try {
