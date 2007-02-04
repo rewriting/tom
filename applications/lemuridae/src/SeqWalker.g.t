@@ -99,8 +99,9 @@ command returns [Command c]
     Term lhs,rhs;
   }
   : #(PROOF i1:ID p=pred) { c = `proof(i1.getText(),p); }
-  | #(RRULE l=pred r=pred) { c = `rewritep(l,r); }
-  | #(TRULE lhs=term rhs=term) { c = `rewritet(lhs,rhs); }
+  | #(RRULE l=pred r=pred) { c = `rewritesuper(l,r); }
+  | #(PRULE l=pred r=pred) { c = `rewriteprop(l,r); }
+  | #(TRULE lhs=term rhs=term) { c = `rewriteterm(lhs,rhs); }
   | #(DISPLAY i2:ID) { c = `display(i2.getText()); }
   | QUIT { c = `quit(); }
   | #(PROOFCHECK i4:ID) { c = `proofcheck(i4.getText()); }

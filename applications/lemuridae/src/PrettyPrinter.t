@@ -83,7 +83,7 @@ class PrettyPrinter {
     }
   }
 
-  %strategy IsActive(prop: Prop, tl: TermRuleList) extends `Fail() {
+  %strategy IsActive(prop: Prop, tl: TermRuleList, pl: PropRuleList) extends `Fail() {
     visit Tree {
       // all propositions are virtually used in an open branch
       r@rule[type=openInfo[]] -> { return `r; }
@@ -92,12 +92,12 @@ class PrettyPrinter {
       r@rule(reductionInfo[],_,concl,_) -> {
         %match(Sequent `concl, Prop prop) {
           sequent((_*,p,_*),_), p -> {
-            Prop after = (Prop) Unification.reduce(`p,tl);
+            Prop after = (Prop) Unification.reduce(`p,tl,pl);
             if (`p != after) 
               return `r;
           }
           sequent(_,(_*,p,_*)), p -> {
-            Prop after = (Prop) Unification.reduce(`p,tl);
+            Prop after = (Prop) Unification.reduce(`p,tl,pl);
             if (`p != after) 
               return `r;
           }
@@ -108,20 +108,20 @@ class PrettyPrinter {
     }
   }
 
-  %strategy Clean(tl: TermRuleList) extends `Identity() {
+  %strategy Clean(tl: TermRuleList, pl: PropRuleList) extends `Identity() {
     visit Tree {
       r@rule(_,_,sequent(h,c),_) -> {
         Tree res = `r;
         %match(Context h) {
           (_*,x,_*) -> {
             res = (Tree) 
-              ((MuStrategy) `Choice(OnceTopDown(IsActive(x,tl)),InnermostId(RemoveInHyp(x)))).apply(`res);
+              ((MuStrategy) `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInHyp(x)))).apply(`res);
           }
         }
         %match(Context c) {
           (_*,x,_*) -> {
             res = (Tree) 
-              ((MuStrategy) `Choice(OnceTopDown(IsActive(x,tl)),InnermostId(RemoveInConcl(x)))).apply(`res);
+              ((MuStrategy) `Choice(OnceTopDown(IsActive(x,tl,pl)),InnermostId(RemoveInConcl(x)))).apply(`res);
           }
         }
         return res;
@@ -134,8 +134,8 @@ class PrettyPrinter {
   /**
    * remove unused hypothesis and conclusions in subtrees
    **/
-  public static Tree cleanTree(Tree tree, TermRuleList tl) {
-    return (Tree) ((MuStrategy) `TopDown(Clean(tl))).apply(tree);
+  public static Tree cleanTree(Tree tree, TermRuleList tl, PropRuleList pl) {
+    return (Tree) ((MuStrategy) `TopDown(Clean(tl,pl))).apply(tree);
   }
 
   public static String toLatex(sequentsAbstractType term) {
@@ -458,8 +458,8 @@ class PrettyPrinter {
     return term.toString();
   }
 
-  public static void display(Tree tree, TermRuleList tl) throws java.io.IOException, java.lang.InterruptedException {
-    /*    tree = cleanTree(tree, tl); */
+  public static void display(Tree tree, TermRuleList tl, PropRuleList pl) throws java.io.IOException, java.lang.InterruptedException {
+    //tree = cleanTree(tree, tl, pl);
     display(tree);
   }
 

@@ -82,6 +82,7 @@ funappl : ID LPAREN^ term_list RPAREN!;
 command: PROOF^ ID COLUMN! pred DOT!
        | RRULE^ atom ARROW! pred DOT!
        | TRULE^ term ARROW! term DOT!
+       | PRULE^ atom ARROW! pred DOT!
        | DISPLAY^ ID DOT!
        | QUIT DOT!
        | PROOFCHECK^ ID DOT!
@@ -166,6 +167,7 @@ LT: '<';
 PROOF: "proof";
 RRULE: "rule";
 TRULE: "termrule";
+PRULE: "proprule";
 FOCUS: "focus";
 ASKRULES: "showrules";
 CUT: "cut";

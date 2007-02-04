@@ -720,7 +720,7 @@ b :{
   private Tree reduceCommand(Tree tree, Position pos, 
       Prop active, boolean focus_left) throws Exception {
     Sequent goal = getSequentByPosition(tree, pos);
-    Sequent s = (Sequent) Unification.reduce(goal,newTermRules);
+    Sequent s = (Sequent) Unification.reduce(goal,newTermRules,newPropRules);
     Premisses prems = `premisses(rule(openInfo(), premisses(), s, s.getc().getHeadcontext()));
 
     // get new tree
@@ -862,7 +862,7 @@ b :{
         }
 
         proofCommand("display") -> {
-          try { PrettyPrinter.display(env.tree, newTermRules); }
+          try { PrettyPrinter.display(env.tree, newTermRules, newPropRules); }
           catch (Exception e) { System.out.println("display failed : " + e); }
         }
 
@@ -1049,6 +1049,7 @@ b :{
 
   private ArrayList<Rule> newRules = new ArrayList<Rule>();
   private TermRuleList newTermRules = `termrulelist();
+  private PropRuleList newPropRules = `proprulelist();
   private HashMap<String,Tree> theorems = new HashMap<String,Tree>();
 
   public void mainLoop() throws Exception {
@@ -1064,7 +1065,7 @@ b :{
       }
 
       %match(Command command) {
-        rewritep(p1,p2) -> {
+        rewritesuper(p1,p2) -> {
           RuleList rl = RuleCalc.transform(`p1,`p2);
           %match(RuleList rl) {
             (_*,r,_*) -> { newRules.add(`r);}
@@ -1073,8 +1074,12 @@ b :{
           System.out.println(PrettyPrinter.prettyRule(rl));
         }
 
-        rewritet(lhs,rhs) -> {
+        rewriteterm(lhs,rhs) -> {
           newTermRules = `termrulelist(newTermRules*,termrule(lhs,rhs));
+        }
+
+        rewriteprop(lhs,rhs) -> {
+          newPropRules = `proprulelist(newPropRules*,proprule(lhs,rhs));
         }
 
         proof(name,p) -> {
@@ -1092,9 +1097,9 @@ b :{
 
         display(name) -> {
           Tree tree = theorems.get(`name);
-          PrettyPrinter.display(tree,newTermRules);
+          PrettyPrinter.display(tree,newTermRules,newPropRules);
           //tree = ProofExpander.expand(tree);
-          //PrettyPrinter.display(tree,newTermRules);
+          //PrettyPrinter.display(tree,newTermRules,newPropRules);
         }
 
         quit() -> {

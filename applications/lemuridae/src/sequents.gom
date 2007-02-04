@@ -65,18 +65,18 @@ VarList = varlist(String*)
 Rule = ruledesc(hs:int, concl:Prop, prem:SeqList, tree:Tree)
 
 TermRule = termrule(lhs:Term,rh:Term)
-
 TermRuleList = termrulelist(TermRule*)
+PropRule = proprule(lhs:Prop,rhs:Prop)
+PropRuleList = proprulelist(PropRule*)
 
 // --- for the new rules computation---
-PropRule = proprule(lhs:Prop,rhs:Prop)
-PropRuleList = prlist(PropRule*)
 RuleList = rlist(Rule*)
 
 
 // parsed in interactive mode
-Command = rewritep(l:Prop, r:Prop)
-        | rewritet(lt:Term, rt:Term)
+Command = rewriteprop(l:Prop, r:Prop)
+        | rewritesuper(l:Prop, r:Prop)
+        | rewriteterm(lt:Term, rt:Term)
         | proof(name:String, p:Prop)
         | display(name:String)
         | quit()

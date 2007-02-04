@@ -42,7 +42,7 @@ public class RuleCalc {
     private PropRule lastRule = null;
 
     public RulesComputer(Prop atom, Prop p) {
-      pruleList = `prlist(proprule(atom,p));
+      pruleList = `proprulelist(proprule(atom,p));
       run();
     }
 
@@ -65,7 +65,7 @@ public class RuleCalc {
           lastPos = forallNeg(`prop, 0, 1, new Position());
           if(lastPos != null) {
             // removing lastRule from the rules
-            pruleList = `prlist(r1*,r2*);
+            pruleList = `proprulelist(r1*,r2*);
             // removing lastProp from the rule
             lastRule = `r;
             lastProp = `prop;
@@ -88,7 +88,7 @@ public class RuleCalc {
 
       // adding new prop to lastrule
       lastRule = `proprule(lastRule.getlhs(), cleanedProp);
-      pruleList = `prlist(pruleList*, lastRule, proprule(newPred,problematicProp));
+      pruleList = `proprulelist(pruleList*, lastRule, proprule(newPred,problematicProp));
 
       run();
     }
