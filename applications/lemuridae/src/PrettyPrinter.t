@@ -173,6 +173,9 @@ class PrettyPrinter {
       relationAppl(relation("lt"),(x,y)) -> {
         return toLatex(`x) + " < " + toLatex(`y);
       }
+      relationAppl(relation("le"),(x,y)) -> {
+        return toLatex(`x) + " \\le " + toLatex(`y);
+      }
 
       // set theory pretty print
       relationAppl(relation("in"),(x,y)) -> {
@@ -321,6 +324,9 @@ class PrettyPrinter {
       relationAppl(relation("lt"),(x,y)) -> {
         return prettyPrint(`x) + " < " + prettyPrint(`y);
       }
+      relationAppl(relation("le"),(x,y)) -> {
+        return prettyPrint(`x) + " <= " + prettyPrint(`y);
+      }
 
       // set theory prettyprint
       relationAppl(relation("in"),(x,y)) -> {
@@ -459,7 +465,7 @@ class PrettyPrinter {
   }
 
   public static void display(Tree tree, TermRuleList tl, PropRuleList pl) throws java.io.IOException, java.lang.InterruptedException {
-    //tree = cleanTree(tree, tl, pl);
+    tree = cleanTree(tree, tl, pl);
     display(tree);
   }
 

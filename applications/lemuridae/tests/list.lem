@@ -5,7 +5,7 @@ termrule succ(x) * y -> x * y + y.
 
 
 rule list(l) -> \A p.(in(nil(),p) => \A a.(\Al.(in(l,p) => in(cons(a,l),p))) => in(l,p)).
-hered2. hered.
+hered.
 
 termrule len(cons(h,t)) -> 1 + len(t).
 termrule len(nil()) -> 0.

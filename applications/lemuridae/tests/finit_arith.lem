@@ -25,8 +25,8 @@ proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
 proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
 proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
 proprule in(l,emptyset()) -> \B.
-proprule in(l,P(a)) -> \En.(in(cons(n,l),A)).
-proprule in(l,C(a)) -> \An.(in(cons(n,l),A)).
+proprule in(l,P(p)) -> \En.(in(cons(n,l),p)).
+proprule in(l,C(p)) -> \An.(in(cons(n,l),p)).
 
 
 rule Pair(0) -> \T.
@@ -46,6 +46,73 @@ proof oneisnat: N(1).
 rule.
 focus h2. rule. 0.
 axiom. axiom.
+
+proof ind: \A n. (N(n) => N(succ(n))).
+auto.
+focus h3. rule. inter(fN(one()),A0).
+reduce.
+intro.
+axiom.
+theorem zisnat. axiom.
+next.
+reduce.
+intros.
+focus h4. rule. n0.
+axiom.
+axiom.
+rule. reduce.
+intros.
+focus h4. rule. y0.
+axiom.
+axiom.
+focus h4. rule. n0.
+next. axiom.
+focus h5. rule. A0.
+axiom.
+axiom.
+axiom.
+
+proof eqrefl: \Ax.eq(x,x).
+auto.
+
+proof succisafun: \Ax.(\Ay.( eq(x,y) => eq(succ(x),succ(y)) )).
+intros.
+focus h1. rule. fEq(S(succ(x0)),succ(one())).
+reduce.
+axiom.
+reduce.
+theorem eqrefl.
+focus h2. intro. succ(x0). axiom.
+
+proof natcase: \A n.(N(n) => (Null(n) \/ \E m.(N(m) /\ eq(n,succ(m))))).
+intros.
+focus h1. rule. inter(fN(one()),union(fNull(one()),P(inter(fN(one()),fEq(S(one()),succ(one())))))).
+next. 
+reduce. intros.
+focus c2. intro. n1. 
+intros.
+reduce.
+intro. intro. rule.
+theorem zisnat. axiom.
+focus h1. remove. focus c2. remove. focus c2. remove.
+rule. reduce.
+intros.
+focus c2. intro. succ(n0).
+intros.
+theorem succisafun.
+focus h4. intro. y0. focus h4. intro. succ(n0).
+intros.
+theorem ind.
+focus h4. intro. n0.
+intros.
+focus c2. intro. y0.
+auto.
+theorem ind.
+focus h4. intro. y0.
+intros.
+theorem ind.
+focus h3. intro. y0.
+intros.
 
 proof predsucc: \An.(N(n) => (~Null(n)) => eq(pred(succ(n)), succ(pred(n)))).
 intros.
@@ -84,8 +151,6 @@ axiom.
 reduce. auto.
 reduce. axiom.
 
-proof eqrefl: \Ax.eq(x,x).
-auto.
 
 proof eqsym: \Ax.(\Ay.( eq(x,y) => eq(y,x) )).
 intros.
@@ -103,16 +168,6 @@ focus h4. rule. A0.
 axiom.
 axiom.
 axiom.
-
-
-proof succisafun: \Ax.(\Ay.( eq(x,y) => eq(succ(x),succ(y)) )).
-intros.
-focus h1. rule. fEq(S(succ(x0)),succ(one())).
-reduce.
-axiom.
-reduce.
-theorem eqrefl.
-focus h2. intro. succ(x0). axiom.
 
 
 proof nplus0:   \An.(N(n) => eq(n+0,n)).
@@ -196,5 +251,88 @@ reduce. axiom.
 reduce.
 theorem eqrefl.
 focus h3. intro. 0. axiom.
+
+
+rule le(0,n) -> \T.
+proprule le(succ(n),succ(m)) ->  le(n,m).
+proprule in(l,fLe(n1,n2)) -> le(appl(n1,l),appl(n2,l)).
+
+
+proof lerefl : \A n.(N(n) => le(n,n)).
+intros.
+focus h1. rule. fLe(one(),one()).
+reduce. rule.
+rule. reduce.
+axiom.
+reduce. axiom.
+
+
+
+
+proof letrans : \An.(\Am.(\Ap.( N(n) => N(m) => N(p) => le(n,m) => le(m,p) => le(n,p)))).
+intro.intro.intro. intro.intro.intro.
+focus h1. rule. supset(fLe(one(),S(m0)),supset(fLe(S(m0),S(p0)),fLe(one(),S(p0)))).
+next. reduce. axiom.
+reduce.
+intros. rule.
+rule. reduce.
+focus h3. rule. supset( supset(fLe(S(y0),one()),supset(fLe(one(),S(p0)),fLe(S(y0),S(p0)))),
+                        supset(fLe(S(succ(y0)),one()),supset(fLe(one(),S(p0)),fLe(S(succ(y0)),S(p0))))        ).
+next. reduce. axiom.
+reduce.
+
+
+
+termrule fib(0) -> 1.
+termrule fib(1) -> 1.
+termrule fib(succ(succ(n))) -> fib(succ(n)) + fib(n).
+
+termrule appl(fib(n),l) -> fib(appl(n,l)).
+
+
+proof ltnsm: \An.(\Am.(N(n) => N(m) => lt(n,m) => lt(n,succ(m)))).
+intro. intro. intro. intro.
+focus h1. rule. supset(fLt(one(),S(m0)),fLt(one(),S(succ(m0)))).
+reduce.
+intros.
+rule.
+next.
+reduce. axiom.
+rule. reduce.
+
+pas fini
+
+
+
+
+proof plusmonoton: \An.(\Am.(N(n) => N(m) => lt(0,n) => lt(0,m) => lt(0,n+m))).
+focus h1. rule. supset(fLt(S(0),one()),fLt(S(0),plus(one(),S(m0)))).
+reduce. intros.
+next.
+reduce. intros.
+rule. reduce.
+intros.
+
+pas fini
+
+
+
+proof fibmonoton: \Ax.(\Ay.(N(x) => N(y) => lt(x,y) => lt(fib(x),fib(y)))).
+intro.intro.intro.intro.
+focus h1. rule. supset(fLt(one(),S(y0)),fLt(fib(one()),fib(S(y0)))).
+next. reduce. axiom.
+reduce.
+focus h2. rule. supset(fLt(S(0),one()),fLt(fib(S(1)),fib(one()))).
+reduce. intros.
+next. next. 
+reduce. axiom.
+rule. reduce.
+
+
+
+
+
+
+
 
 
