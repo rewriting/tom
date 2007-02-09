@@ -15,10 +15,10 @@ Condition = and(c1:Condition,c2:Condition)
           | noCond()
 
 WfgNode:make_insert(node,wfg) {
-    %match(Wfg node){
-      ConcWfg(_*,e,_*) -> {
-        wfg = `WfgNode(wfg*,e);
-      }
+  %match(Wfg node){
+    ConcWfg(_*,e,_*) -> {
+      wfg = `WfgNode(wfg*,e);
+    }
     ConcWfg(_*) -> {
       return wfg;
     }
