@@ -40,14 +40,19 @@ public class GomReferenceExpander {
 
   %include { ../adt/gom/Gom.tom}
 
+  // indicates if the expand method must include normalization phase 
+  // specific to termgraphs
   private String packagePath;
+  
   private SortDecl stringSortDecl,intSortDecl;
-
+  private boolean forTermgraph;
+  
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();
   }
 
-  public GomReferenceExpander(String packagePath) {
+  public GomReferenceExpander(String packagePath,boolean forTermgraph) {
+    this.forTermgraph = forTermgraph;
     this.packagePath = packagePath;
     stringSortDecl = environment().builtinSort("String");
     intSortDecl = environment().builtinSort("int");
@@ -116,7 +121,7 @@ public class GomReferenceExpander {
     import java.util.*;
     ]%;
 
-    String codeBlock =%[
+    String codeBlockCommon =%[
     %include{java/util/HashMap.tom}
     %include{java/util/ArrayList.tom}
     %include{java/mustrategy.tom}
@@ -215,8 +220,18 @@ public class GomReferenceExpander {
         }
       }
     }
+   ]%;
 
-
+    
+    String codeBlockTermWithPointers =%[
+      public static @sortName@ expand(@sortName@ t){
+        HashMap map = new HashMap();
+        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Pos(map)));
+        return (@sortName@) `label2pos.apply(t);
+      }
+    ]%;
+    
+    String codeBlockTermGraph =%[
     public static @sortName@ expand(@sortName@ t){
       Info info = new Info();
       ArrayList marked = new ArrayList();
@@ -225,8 +240,10 @@ public class GomReferenceExpander {
       MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Pos(map)));
       return (@sortName@) `Sequence(normalization,label2pos).apply(t);
     }
-
     ]%;
+
+    String codeBlock = codeBlockCommon + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
+
     return `concHookDecl(MakeHookDecl(concSlot(Slot("term",sortDecl)),codeMake),ImportHookDecl(codeImport),BlockHookDecl(codeBlock));
   }
 

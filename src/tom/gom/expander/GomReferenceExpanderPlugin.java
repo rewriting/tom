@@ -44,7 +44,8 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
 
   /** the declared options string*/
   private static final String DECLARED_OPTIONS = "<options>" + 
-    "<boolean name='reference' altName='r' description='Add references to the signature' value='false'/>" +
+    "<boolean name='pointer' altName='tp' description='Extend the signature for pointers' value='false'/>" +
+    "<boolean name='termgraph' altName='tg' description='Extend the signature for term-graphs' value='false'/>" +
     "</options>";
 
   /** the list of included modules */
@@ -76,12 +77,11 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
    * Create the initial SortList 
    */
   public void run() {
-    if(getOptionBooleanValue("reference")) {
+    if(getOptionBooleanValue("termgraph") || getOptionBooleanValue("pointer")) {
       boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
-
-      getLogger().log(Level.INFO, "Start adding references");
+      getLogger().log(Level.INFO, "Extend the signature");
       String packagePrefix= streamManager.getPackagePath().replace(File.separatorChar,'.');
-      GomReferenceExpander referencer = new GomReferenceExpander(packagePrefix);
+      GomReferenceExpander referencer = new GomReferenceExpander(packagePrefix,getOptionBooleanValue("termgraph"));
       referencedModuleList = referencer.expand(typedModuleList);
       if(referencedModuleList == null) {
         getLogger().log(Level.SEVERE, 
@@ -89,7 +89,7 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
           streamManager.getInputFileName());
       } else {
         getLogger().log(Level.FINE, "Referenced Modules: {0}",referencedModuleList);
-        getLogger().log(Level.INFO, "Reference expansion succeeds");
+        getLogger().log(Level.INFO, "Signature extension succeeds");
         if(intermediate) {
           Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
               + TYPED_SUFFIX, (aterm.ATerm)referencedModuleList.toATerm());
