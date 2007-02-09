@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the termgraph example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <macrodef name="gomrefcompile">
+  <macrodef name="gomtermgraphcompile">
     <attribute name="example"/>
     <sequential>
       <gom.preset srcdir="${examples.dir}"
         package="@{example}" 
-        reference="true" 
+        termgraph="true" 
         destdir="${examples.gen}">
         <include name="@{example}/**/*.gom"/>
       </gom.preset>
@@ -23,7 +23,7 @@
       <fileset dir="${examples.dir}/${termgraph}">
       </fileset>
     </copy>
-    <gomrefcompile example="${termgraph}"/>
+    <gomtermgraphcompile example="${termgraph}"/>
     <!-- build parser -->
     <tom.preset outputfile="${examples.gen}/${termgraph}/LambdaTermParser.g"
                 options="-I ${examples.gen}/${termgraph}"
