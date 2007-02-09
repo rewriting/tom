@@ -147,21 +147,17 @@ public class Position implements Cloneable {
     if (o instanceof Position) {
       Position p = (Position)o;
       /* we need to check only the meaningful part of the omega array */
-      if (depth()==p.depth()) {
-        for(int i=0; i<depth(); i++) {
-          if (omega[i]<p.omega[i]) {
+      for(int i=0; i<depth(); i++) {
+        if(i == p.depth() || omega[i]>p.omega[i]) {
+          return 1;
+        }
+        else{
+          if ( omega[i]<p.omega[i]) {
             return -1;
           }
-          else{
-            if(omega[i]>p.omega[i]) {
-              return 1;
-            }
-          }
         }
-        return 0;
-      } else {
-        return depth()<p.depth()?-1:1;
       }
+      return depth()==p.depth()?0:-1;
     } else {
       return -2;
     }
@@ -210,7 +206,7 @@ public class Position implements Cloneable {
    * @return the omega strategy the performs the replacement
    */
   public Strategy getReplace(final Visitable t) {
-    return getOmega(new Identity() {public jjtraveler.Visitable visit(jjtraveler.Visitable x){ return t;}});
+    return getOmega(new Identity() {public void visit(){ setSubject(t); }});
   }
 
   /**
