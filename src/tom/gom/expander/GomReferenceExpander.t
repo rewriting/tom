@@ -57,7 +57,6 @@ public class GomReferenceExpander {
   }
 
   public SortList expand(SortList typedModuleList) {
-    //return (SortList) `_concSort(ExpandSort()).apply(typedModuleList);
     SortList expandedList = `concSort();
     %match(typedModuleList){
       concSort(_*,sort,_*) -> {
@@ -66,16 +65,6 @@ public class GomReferenceExpander {
     }
     return expandedList;
   }
-
-  /*
-     %strategy ExpandSort() extends `Identity() {
-     visit Sort{
-     sort@Sort[Decl=Decl,Operators=Operators]-> {
-     return `sort.setOperators(concOperator(Operators*,getRefOperators(Decl)));
-     }
-     }
-     }
-   */
 
   private Sort expandSort(Sort sort) {
     OperatorDeclList l1 = sort.getOperators();
@@ -112,7 +101,7 @@ public class GomReferenceExpander {
     String sortName = sortDecl.getName();
     String moduleName = sortDecl.getModuleDecl().getModuleName().getName();
     String codeMake =%[
-    @sortName@ termWithPos = expand(term);
+      @sortName@ termWithPos = expand(term);
     //to avoid unaccessible real_make statement
     if(! termWithPos.equals(term)){
       return termWithPos;
@@ -124,75 +113,13 @@ public class GomReferenceExpander {
     String codeImport =%[
     import @packagePath@.@moduleName.toLowerCase()@.types.@sortName@;
     import tom.library.strategy.mutraveler.*;
-    import java.util.HashMap;
+    import java.util.*;
     ]%;
 
     String codeBlock =%[
     %include{java/util/HashMap.tom}
+    %include{java/util/ArrayList.tom}
     %include{java/mustrategy.tom}
-
-    %strategy CollectLabelInfo(info:Info) extends Fail() {
-      visit @sortName@{
-        lab@sortName@[label=label,term=term]-> {
-        info.label=`label;
-        info.term=`term;
-        info.pos=getPosition();
-        return `lab@sortName@(label,term); 
-        }
-      }
-    }
-
-    %strategy Replace1(info:Info) extends Fail() {
-      visit @sortName@{
-        ref@sortName@[label=label] -> {
-          if(`label.equals(info.label)){
-            if(getPosition().compare(info.pos)==-1){
-              info.pos=getPosition(); 
-              return info.term;
-            }
-            else{
-              return `ref@sortName@(label);
-            }
-          }
-        }
-      }
-    }
-
-    %strategy Replace2(info:Info) extends Identity() {
-      visit @sortName@{
-        ref@sortName@[label=label] -> {
-          if(`label.equals(info.label)){
-            if (! info.pos.equals(getPosition())){
-              RelativePosition pos = 
-                RelativePosition.make(getPosition(),info.pos);
-              @sortName@ ref = `pos@sortName@();
-              int[] array = `pos.toArray();
-              for(int i=0;i<`pos.depth();i++){
-                ref = `pos@sortName@(ref*,array[i]);
-              }
-              return ref; 
-            }
-          }
-        }
-        lab@sortName@[label=label,term=term] -> {
-          if(`label.equals(info.label)){
-            if (! info.pos.equals(getPosition())){
-              RelativePosition pos = 
-                RelativePosition.make(getPosition(),info.pos);
-              @sortName@ ref = `pos@sortName@();
-              int[] array = `pos.toArray();
-              for(int i=0;i<`pos.depth();i++){
-                ref = `pos@sortName@(ref*,array[i]);
-              }
-              return ref; 
-            }
-            else{
-              return `term;
-            }
-          }
-        }
-      }
-    }
 
     %typeterm Info{
       implement {Info}
@@ -205,14 +132,98 @@ public class GomReferenceExpander {
       public @sortName@ term;
     }
 
+
+    %strategy Collect(marked:ArrayList,info:Info) extends Fail(){
+      visit @sortName@{
+        lab@sortName@[label=label,term=term]-> {
+          if(! marked.contains(`label)){
+            info.label=`label;
+            info.term=`lab@sortName@(label,term);
+            info.pos=getPosition();
+            marked.add(`label);
+            return `lab@sortName@(label,term); 
+          }
+        }
+      }
+    }
+
+    %strategy Min(info:Info) extends Identity(){
+      visit @sortName@{
+        ref@sortName@[label=label] -> {
+          if(`label.equals(info.label)){
+            if(getPosition().compare(info.pos)==-1){
+              info.pos=getPosition(); 
+            }
+          }
+        }
+      }
+    }
+
+    %strategy Switch(info:Info) extends Identity(){
+      visit @sortName@{
+        ref@sortName@[label=label] -> {
+          if (info.pos.equals(getPosition())){
+            return info.term; 
+          }
+        }
+        lab@sortName@[label=label,term=term] -> {
+          if(`label.equals(info.label)){
+            if (! info.pos.equals(getPosition())){
+              return `ref@sortName@(label); 
+            }
+          }
+        }
+      }
+    }
+
+
+    %strategy ClearMarked(list:ArrayList) extends Identity(){
+      visit @sortName@{
+        _ -> {
+          list.clear();
+        }
+      }
+    }
+
+    %strategy CollectLabels(map:HashMap) extends Fail(){
+      visit @sortName@{
+        lab@sortName@[label=label,term=term]-> {
+          map.put(`label,getPosition());
+          return `term;
+        }
+      }
+    }
+
+    %strategy Label2Pos(map:HashMap) extends Identity(){
+      visit @sortName@{
+        ref@sortName@[label=label] -> {
+          if (! map.containsKey(`label)) {
+            // ref with an unexistent label
+            throw new RuntimeException("Term-graph with a null reference at"+getPosition());
+          }
+          else {
+            Position target = (Position) map.get(`label);
+            RelativePosition pos = 
+              RelativePosition.make(getPosition(),target);
+            @sortName@ ref = `pos@sortName@();
+            int[] array = `pos.toArray();
+            for(int i=0;i<`pos.depth();i++){
+              ref = `pos@sortName@(ref*,array[i]);
+            }
+            return ref; 
+          }
+        }
+      }
+    }
+
+
     public static @sortName@ expand(@sortName@ t){
       Info info = new Info();
-      //TODO verify that every ref has a corresponding label
-      return (@sortName@) `Repeat(Sequence(
-            OnceTopDown(CollectLabelInfo(info)),
-            Try(OnceTopDown(Replace1(info))),
-            TopDown(Replace2(info))
-            )).apply(t);
+      ArrayList marked = new ArrayList();
+      HashMap map = new HashMap();
+      MuStrategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown(Collect(marked,info)),BottomUp(Min(info)),TopDown(Switch(info)))),ClearMarked(marked)));
+      MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Pos(map)));
+      return (@sortName@) `Sequence(normalization,label2pos).apply(t);
     }
 
     ]%;
