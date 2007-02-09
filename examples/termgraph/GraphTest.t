@@ -70,6 +70,7 @@ public class GraphTest {
   }
 
   static Term root = null;
+  
   %op Term mRef(ptr:Term) {
     is_fsym(t) { (t!=null) && (t instanceof MuReference) }
     get_slot(ptr, t) { (Term)(new Position(((MuReference)t).toArray())).getSubterm().apply(root) }
