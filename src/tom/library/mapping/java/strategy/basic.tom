@@ -75,6 +75,7 @@
    get_tail(t) { (tom.library.strategy.mutraveler.MuStrategy)t.getChildAt(tom.library.strategy.mutraveler.Choice.THEN) }
    is_empty(t) { t instanceof tom.library.strategy.mutraveler.Fail }
 }
+
 %op Strategy All(s1:Strategy) {
   is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.All) }
   make(v) { new tom.library.strategy.mutraveler.All(v) }
