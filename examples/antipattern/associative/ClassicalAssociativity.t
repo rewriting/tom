@@ -144,12 +144,24 @@ public class ClassicalAssociativity implements Matching {
 	          }
 	        }
 	        
-	        // SymbolClash 2
-	        Equal(v@Variable(_),f@Appl[]) -> {
-	          if(!isAssociative(`v) && isAssociative(`f)) {
-	            return `False();
-	          }
-	        }
+//	        // SymbolClash 2
+//	        Equal(v@Variable(_),f@Appl[]) -> {
+//	          if(!isAssociative(`v) && isAssociative(`f)) {
+//	            return `False();
+//	          }
+//	        }
+	        
+	        // ConstrainedVar 1,2
+	        Equal(ConsVariable(v@var,parentName),f@Appl[]) -> {
+	        	
+	        	int sizeF = getSize(`parentName,`f);	     
+	        	
+	        	if ( sizeF == 1){	        		
+	        		return `Equal(v,f);	        	  
+	        	}else if(sizeF != -1){
+	        		return `False();
+	        	}
+	        }        
 	        
 	        //	Delete
 	        Equal(t1@Appl(name,_),t2@Appl(name,_)) -> {
@@ -243,25 +255,55 @@ public class ClassicalAssociativity implements Matching {
 		}
 	}
 	
+	private int getSize(String parentName, Term t){
+		try{
+			return size(parentName,t);
+		}catch(Exception e){
+			return -1;
+		}
+	}
+	
+	private int size(String parentName, Term t){		
+		%match(t){
+			Appl(name,childs) ->{
+				//System.out.println("name=" + `name);
+				//System.out.println("parentName=" + parentName);
+				if (`name.startsWith("e_")) { return 0; }
+				if (!`name.endsWith("_a") || `name != parentName) { return 1; }
+				if (`name.endsWith("_a")){
+					int finalRes = 0;
+					%match(childs){
+						concTerm(_*,x,_*) ->{
+							//System.out.println("computing for:" +`x);
+							finalRes += size(parentName,`x);
+						}
+					}
+					return finalRes;
+				}
+			}
+		}// end match
+		
+		throw new RuntimeException("Cannot compute the size of t=" + t);
+	}
 	
 	
 	private boolean isAssociative(Term t){
 		%match(t){
 			Appl(name,_) -> {
-				if (`name.endsWith("_a") || `name.startsWith("e_")) {
+				if (`name.endsWith("_a") /*|| `name.startsWith("e_")*/) {
 					return true;
 				}else{
 					return false;
 				}
 			}
 			
-			Variable(name) -> {				
-				if (`name.endsWith("_a")) {
-					return true;
-				}else{
-					return false;
-				}
-			}
+//			Variable(name) -> {				
+//				if (`name.endsWith("_a")) {
+//					return true;
+//				}else{
+//					return false;
+//				}
+//			}
 		}
 		
 		return false;

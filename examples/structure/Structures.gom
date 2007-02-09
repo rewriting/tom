@@ -1,4 +1,4 @@
-module Structures
+module structure.Structures
 abstract syntax
 
 Struc = o() | a() | a1() | a2()
@@ -46,7 +46,6 @@ concCop:make_insert(e,l) {
 
   if(!l.isEmptyconcCop()) {
     if (0 < e.compareToLPO(l.getHeadconcCop())) {
-    //if (0 < e.compareTo(l.getHeadconcCop())) {
       structure.structures.types.StrucCop newTail = l.getTailconcCop();
       newTail = `concCop(e,newTail*);
       return realMake(l.getHeadconcCop(), newTail);
@@ -63,7 +62,6 @@ concPar:make_insert(e,l) {
   }
   if(!l.isEmptyconcPar()) {
     if(0 < e.compareToLPO(l.getHeadconcPar())) {
-    //if(0 < e.compareTo(l.getHeadconcPar())) {
       structure.structures.types.StrucPar newTail = l.getTailconcPar();
       return realMake(l.getHeadconcPar(), `concPar(e,newTail*));
     } else {

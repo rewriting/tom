@@ -28,55 +28,77 @@
  */
 package bytecode;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import com.sun.xacml.*;
+import com.sun.xacml.ctx.*;
+import com.sun.xacml.finder.*;
+import com.sun.xacml.finder.impl.*;
+
+import java.util.*;
+import java.io.*;
+
 
 public class SecureAccess {
 
-  public void sread(String filename){
-    String fichier = filename;
-    File f = new File(fichier);  
-    if(!f.isHidden()) {
-      // we open the file if it is not hidden
-      System.out.println("Open file");
-      FileInputStream fis;
-      try {
-        fis = new FileInputStream(f);
-        BufferedInputStream bis = new BufferedInputStream(fis);  
-        DataInputStream dis = new DataInputStream(bis); 
-        BufferedReader d=new BufferedReader(new InputStreamReader(dis));
-        String record = null;  
-        try {  
-          while ( (record=d.readLine()) != null ) {  
-            System.out.println(record);
-          }  
-        } catch (IOException e) {  
-          e.printStackTrace();
-        }  
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      }  
-    } else {
-      System.out.println("a hidden file cannot be read!");
+  public int sread(String filename){
+    System.out.println("Secured reading request: ");
+    File f = new File(filename);  
+    try{
+      if(enforcePolicy(filename)){
+        FileReader r = new FileReader(filename);
+        return r.read(); 
+      }
+    }catch(Exception e){
+      e.printStackTrace();
     }
+    //error code for security policy deny 
+    return -2;
   }
 
-  public void sreadF(String fileName){
-    File f = new File(fileName);  
-    if(!f.isHidden()) {
-      try {
-        FileReader fr=new FileReader(f);
-        fr.read();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+  public boolean enforcePolicy (String file) throws Exception{
+
+    // setup the policy finder 
+    FilePolicyModule policies = new FilePolicyModule();
+    policies.addPolicy("bytecode/policy.xml");
+    PolicyFinder policyFinder = new PolicyFinder();
+    Set policyModules = new HashSet();
+    policyModules.add(policies);
+    policyFinder.setModules(policyModules);
+
+    // module to provide the current date & time
+    CurrentEnvModule envModule = new CurrentEnvModule();
+
+    // setup the attribute finder
+    AttributeFinder attrFinder = new AttributeFinder();
+    List attrModules = new ArrayList();
+    attrModules.add(envModule);
+    attrFinder.setModules(attrModules);
+
+    // create the PDP
+    PDP pdp = new PDP(new PDPConfig(attrFinder, policyFinder, null));
+
+    //replace in the request model [filename] vc static void main(String[] args) throws IOException { 
+
+    BufferedReader in = new BufferedReader(new FileReader("bytecode/requestModel.xml")); 
+    BufferedWriter out = new BufferedWriter(new FileWriter(file+"Request.xml")); 
+    String s;
+    while ((s = in.readLine()) != null){
+      out.write(s.replaceAll("filename",file)); 
+      out.newLine();
     }
+    in.close(); 
+    out.close(); 
+
+    // now work on the request
+    RequestCtx request = RequestCtx.getInstance(new FileInputStream(file+"Request.xml"));
+    ResponseCtx response = pdp.evaluate(request);
+    // we print out the result
+    response.encode(System.out);
+    Iterator results = response.getResults().iterator();
+    //if one result is deny, return false
+    while(results.hasNext()){
+      if(((Result)results.next()).getDecision()!=Result.DECISION_PERMIT) return false; 
+    }
+    return true; 
+    }
+
   }
-}

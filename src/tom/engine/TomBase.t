@@ -61,9 +61,9 @@ public class TomBase {
 
   %include { adt/tomsignature/TomSignature.tom }
   %include { mustrategy.tom }
-	%typeterm Collection {
-		implement { java.util.Collection }
-	}
+  %typeterm Collection {
+    implement { java.util.Collection }
+  }
 
  public final static String DEFAULT_MODULE_NAME = "default"; 
   
@@ -108,8 +108,8 @@ public class TomBase {
       Type(ASTTomType(s),_) -> {return `s;}
       EmptyType() -> {return null;}
     }
-		System.out.println("getTomType error on term: " + type);
-		throw new TomRuntimeException("getTomType error on term: " + type);
+    System.out.println("getTomType error on term: " + type);
+    throw new TomRuntimeException("getTomType error on term: " + type);
   }
 
   protected static String getTLType(TomType type) {
@@ -117,7 +117,7 @@ public class TomBase {
       TLType[]  -> { return getTLCode(type); }
       Type[TlType=tlType] -> { return getTLCode(`tlType); }
     }
-		throw new TomRuntimeException("getTLType error on term: " + type);
+    throw new TomRuntimeException("getTLType error on term: " + type);
   }
 
   protected static String getTLCode(TomType type) {
@@ -125,8 +125,8 @@ public class TomBase {
       TLType(TL[Code=tlType])  -> { return `tlType; }
       TLType(ITL[Code=tlType]) -> { return `tlType; }
     }
-		System.out.println("getTLCode error on term: " + type);
-		throw new TomRuntimeException("getTLCode error on term: " + type);
+    System.out.println("getTLCode error on term: " + type);
+    throw new TomRuntimeException("getTLCode error on term: " + type);
   }
 
   public static TomType getSymbolCodomain(TomSymbol symbol) {
@@ -164,7 +164,7 @@ public class TomBase {
       RuleVar() -> { return "_rulevar"; }
       Number(i) -> { return "_" + `i; }
     }
-		return subject.toString(); 
+    return subject.toString(); 
   }
 
   protected static String numberListToIdentifier(TomNumberList l) {
@@ -202,8 +202,8 @@ public class TomBase {
         return false;
       }
     }
-		System.out.println("isListOperator: strange case: '" + subject + "'");
-		throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
+    System.out.println("isListOperator: strange case: '" + subject + "'");
+    throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
   }
 
   protected static boolean isArrayOperator(TomSymbol subject) {
@@ -225,12 +225,12 @@ public class TomBase {
         return false;
       }
     }
-		System.out.println("isArrayOperator: strange case: '" + subject + "'");
-		throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
+    System.out.println("isArrayOperator: strange case: '" + subject + "'");
+    throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
   }
   
-  protected static boolean isSyntacticOperator(TomSymbol subject) {	  
-	  return (!(isListOperator(subject) || isArrayOperator(subject)));	  
+  protected static boolean isSyntacticOperator(TomSymbol subject) {
+    return (!(isListOperator(subject) || isArrayOperator(subject)));
   }
 
 
@@ -239,37 +239,37 @@ public class TomBase {
     `TopDownCollect(collectVariable(collection)).apply(`subject);
   }
 
-	%strategy collectVariable(collection:Collection) extends `Identity() {
-		visit TomTerm {
-			v@(Variable|VariableStar)[Constraints=constraintList] -> {
-				collection.add(`v);
-				TomTerm annotedVariable = getAssignToVariable(`constraintList);
-				if(annotedVariable!=null) {
-					collection.add(annotedVariable);
-				}
-				`Fail().visit(`v);
-			}
+  %strategy collectVariable(collection:Collection) extends `Identity() {
+    visit TomTerm {
+      v@(Variable|VariableStar)[Constraints=constraintList] -> {
+        collection.add(`v);
+        TomTerm annotedVariable = getAssignToVariable(`constraintList);
+        if(annotedVariable!=null) {
+          collection.add(annotedVariable);
+        }
+        `Fail().visit(`v);
+      }
 
-			v@(UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
-				TomTerm annotedVariable = getAssignToVariable(`constraintList);
-				if(annotedVariable!=null) {
-					collection.add(annotedVariable);
-				}
-				`Fail().visit(`v);
-			}
+      v@(UnamedVariable|UnamedVariableStar)[Constraints=constraintList] -> {
+        TomTerm annotedVariable = getAssignToVariable(`constraintList);
+        if(annotedVariable!=null) {
+          collection.add(annotedVariable);
+        }
+        `Fail().visit(`v);
+      }
 
-			// to collect annoted nodes but avoid collect variables in optionSymbol
-			t@RecordAppl[Slots=subterms, Constraints=constraintList] -> {
+      // to collect annoted nodes but avoid collect variables in optionSymbol
+      t@RecordAppl[Slots=subterms, Constraints=constraintList] -> {
         collectVariable(collection,`subterms);
-				TomTerm annotedVariable = getAssignToVariable(`constraintList);
-				if(annotedVariable!=null) {
-					collection.add(annotedVariable);
-				}
-				`Fail().visit(`t);
-			}
+        TomTerm annotedVariable = getAssignToVariable(`constraintList);
+        if(annotedVariable!=null) {
+          collection.add(annotedVariable);
+        }
+        `Fail().visit(`t);
+      }
 
-		}
-	}
+    }
+  }
 
   public static Map collectMultiplicity(jjtraveler.Visitable subject) {
     // collect variables
@@ -313,8 +313,18 @@ public class TomBase {
     }
     return null;
   }
+
+  protected static boolean hasIsFsymDecl(TomSymbol tomSymbol) {
+    %match(tomSymbol) {
+      Symbol[Option=concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*)] -> {
+        return true;
+      }
+    }
+    return false;
+  }
   
-	protected static String getModuleName(OptionList optionList) {
+  
+  protected static String getModuleName(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,ModuleName(moduleName),_*) -> { return `moduleName; }
     }
@@ -336,7 +346,7 @@ public class TomBase {
   }
 
   protected static boolean hasConstant(OptionList optionList) {
-    %match(OptionList optionList) {
+    %match(optionList) {
       concOption(_*,Constant[],_*) -> { return true; }
     }
     return false;
@@ -508,22 +518,22 @@ public class TomBase {
   public static TomType getTermType(TomTerm t, SymbolTable symbolTable) {
     %match(TomTerm t) {
       (TermAppl|RecordAppl)[NameList=(headName,_*)] -> {
-	String tomName = null;
-	if(`(headName) instanceof AntiName) {
-	  tomName = ((AntiName)`headName).getName().getString(); 
-	} else {
-	  tomName = ((TomName)`headName).getString();
-	}    	
-	TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
-	if(tomSymbol!=null) {
-	  return tomSymbol.getTypesToType().getCodomain();
-	} else {
-	  return `EmptyType();
-	}
+        String tomName = null;
+        if(`(headName) instanceof AntiName) {
+          tomName = ((AntiName)`headName).getName().getString(); 
+        } else {
+          tomName = ((TomName)`headName).getString();
+        }
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
+        if(tomSymbol!=null) {
+          return tomSymbol.getTypesToType().getCodomain();
+        } else {
+          return `EmptyType();
+        }
       }
 
       (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[AstType=type] -> { 
-	return `type; 
+        return `type; 
       }
 
       Ref(term) -> { return getTermType(`term, symbolTable); }
@@ -548,8 +558,8 @@ public class TomBase {
       GetSliceList[VariableBeginAST=term] -> { return getTermType(`term, symbolTable); }
       GetSliceArray[SubjectListName=term] -> { return getTermType(`term, symbolTable); }
     }
-		System.out.println("getTermType error on term: " + t);
-		throw new TomRuntimeException("getTermType error on term: " + t);
+    System.out.println("getTermType error on term: " + t);
+    throw new TomRuntimeException("getTermType error on term: " + t);
   }
 
   protected static SlotList tomListToSlotList(TomList tomList) {

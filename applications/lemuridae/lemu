@@ -1,4 +1,6 @@
 #!/bin/sh
+export CLASSPATH=$PWD/libs/jline-0.9.9.jar:$CLASSPATH
 cd build/
-java ProofBuilder
+java jline.ConsoleRunner ProofBuilder
 cd ..
+

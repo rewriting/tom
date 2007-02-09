@@ -1,0 +1,47 @@
+module AntlrRules
+imports AntlrCommons AntlrElement
+abstract syntax
+
+AntlrRules = AntlrRules(AntlrRule*)
+
+AntlrRule = 
+    // Everyting fine.
+    AntlrRule(
+        id:AntlrId,
+        modifier:AntlrModifier,
+        args:AntlrArgs,
+        ret:AntlrRet,
+        options:AntlrOptions,
+        scopes:AntlrScopes,
+        actions:AntlrActions,
+        element:AntlrElement,
+        exceptions:AntlrExceptions)
+    // Wrong rule.
+  | AntlrWrongRule(rule:AntlrWrongRule)
+
+AntlrWrongRule =
+    // Something odd inside the arguments.
+    AntlrIncorrectRuleArgs(
+        id:AntlrId,
+        modifier:AntlrModifier,
+        args:AntlrArgs,
+        ret:AntlrRet,
+        options:AntlrOptions,
+        scopes:AntlrScopes,
+        actions:AntlrActions,
+        element:AntlrElement,
+        exceptions:AntlrExceptions)
+    // Some unexpected argument appears.
+  | AntlrIncorrectRule(
+        id:AntlrId,
+        modifier:AntlrModifier,
+        args:AntlrArgs,
+        ret:AntlrRet,
+        options:AntlrOptions,
+        scopes:AntlrScopes,
+        actions:AntlrActions,
+        element:AntlrElement,
+        exceptions:AntlrExceptions,
+        wrong:AntlrWrong)
+     // Plain wrong, not a rule.
+   | AntlrPlainWrongRule(rule:AntlrWrong)

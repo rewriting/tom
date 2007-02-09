@@ -7,6 +7,11 @@
     <delete dir="${examples.build}/${bytecode}"/>
   </target>
   <target name="build" depends="init">
+    <!-- copy resources in build -->
+    <copy todir="${examples.build}/${bytecode}">
+      <fileset dir="${examples.dir}/${bytecode}">
+      </fileset>
+    </copy>
     <gomcompile example="${bytecode}"/>
     <tomcompile example="${bytecode}"/>
     <javac.preset fork="true" destdir="${examples.build}">

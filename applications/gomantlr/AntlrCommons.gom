@@ -1,0 +1,121 @@
+module AntlrCommons
+imports String int ATerm ATermList char
+abstract syntax
+
+// Voluntarity left out, this situation should disappear
+AntlrUnrecognized = AntlrUnrecognized(aterm:ATerm)
+
+// Here something has gone wrong
+AntlrWrong =
+    // Placeholder, the real wrong is somewhere else.
+    AntlrNoWrong()
+    // Wrong.
+  | AntlrWrong(aterm:ATerm)
+
+// For error handing with strings.
+AntlrString =
+    // OK.
+    AntlrString(string:String)
+    // KO. Just replaces null pointer.
+  | AntlrWrongString()
+
+AntlrId =
+    // OK.
+    AntlrId(name:String)
+    // KO.
+  | AntlrWrongId(id:AntlrWrong)
+
+AntlrComment = 
+    // No comment.
+    AntlrNilComment()
+    // Comment.
+  | AntlrComment(comment:String)
+    // KO.
+  | AntlrWrongComment(wrongComment:AntlrWrong)
+
+AntlrOptions = 
+    // OK.
+    AntlrOptions(AntlrOption*)
+    // KO.
+  | AntlrWrongOptions(options:AntlrWrongOptions)
+
+AntlrWrongOptions =
+    // No option.
+    AntlrNoOption(wrong:AntlrWrong)
+    // Some option is bad.
+  | AntlrIncorrectOptions(AntlrOption*)
+    // Plain wrong.
+  | AntlrPlainWrongOptions(wrong:AntlrWrong)
+
+AntlrOption = 
+    // id = id
+    AntlrAssignId(id:AntlrId,src:AntlrId)
+    // id = value
+  | AntlrAssignInt(id:AntlrId,i:AntlrInt)
+    // KO.
+  | AntlrWrongOption(wrongOption:AntlrWrongOption)
+
+AntlrWrongOption =
+    // Something odd inside the arguments.
+    AntlrIncorrectAssignIdArgs(id:AntlrId,src:AntlrId)
+  | AntlrIncorrectAssignIntArgs(id:AntlrId,i:AntlrInt)
+    // Some unexpected argument appears.
+  | AntlrIncorrectAssignId(id:AntlrId,src:AntlrId,wrong:AntlrWrong)
+  | AntlrIncorrectAssignInt(id:AntlrId,i:AntlrInt,wrong:AntlrWrong)
+    // Plain wrong, not an option.
+  | AntlrPlainWrongOption(wrong:AntlrWrong)
+
+AntlrInt = AntlrInt(v:int)
+         | AntlrWrongInt(wrongInt:AntlrWrongInt)
+
+AntlrWrongInt =
+    // Bad int.
+    AntlrIncorrectInt(value:String)
+    // Not an int.
+  | AntlrPlainWrongInt(wrong:AntlrWrong)
+
+AntlrTokens = AntlrNilTokens() 
+            | AntlrTokens(tokens:AntlrUnrecognized)
+            | AntlrWrongTokens(wrongTokens:AntlrWrong)
+
+AntlrScopes = AntlrScopes(AntlrScope*)
+
+AntlrScope =  AntlrScope(scope:AntlrUnrecognized)
+
+AntlrActions = AntlrActions(AntlrAction*)
+             | AntlrWrongActions(actions:AntlrWrongActions)
+
+AntlrWrongActions =
+    // Some action is wrong
+    AntlrIncorrectActions(AntlrAction*)
+    // Plain wrong.
+  | AntlrPlainWrongActions(actions:AntlrWrong)
+
+AntlrAction = AntlrGlobalAction(id:AntlrId,action:String)
+            | AntlrScopedAction(id:AntlrId,score:AntlrId,action:String)
+            | AntlrWrongAction(wrongAction:AntlrWrongAction)
+
+AntlrWrongAction =
+    // Something odd inside the arguments.
+    AntlrIncorrectGlobalActionArgs(id:AntlrId,action:AntlrString)
+  | AntlrIncorrectScopedActionArgs(id:AntlrId,scope:AntlrId,action:AntlrString)
+    // Some unexpected argument appears.
+  | AntlrIncorrectGlobalAction(id:AntlrId,action:AntlrString,wrong:AntlrWrong)
+  | AntlrIncorrectScopedAction(id:AntlrId,scope:AntlrId,action:AntlrString,wrong:AntlrWrong)
+    // Plain wrong, not an action.
+  | AntlrPlainWrongAction(wrong:AntlrWrong)
+
+AntlrModifier = AntlrNilModifier() | AntlrModifier(modifier:String)
+
+AntlrArgs = AntlrNilArgs() 
+          | AntlrArgs(args:AntlrUnrecognized)
+          | AntlrWrongArgs(wrong:AntlrWrong)
+
+AntlrRet = AntlrNilRet() 
+         | AntlrRet(ret:AntlrUnrecognized)
+         | AntlrWrongRet(wrong:AntlrWrong)
+
+AntlrExceptions = AntlrExceptions(AntlrException*)
+
+AntlrException = AntlrException(exception:AntlrUnrecognized)
+               | AntlrWrongException(wrong:AntlrWrong)

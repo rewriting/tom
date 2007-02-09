@@ -47,7 +47,7 @@ public abstract class GenericTest extends TestCase {
       boolean isPrimitive = false;
       for (int j=0 ;j<nbParam;j++){
         String parameterClass = (String)(td[2+j]);
-        //Gestion des types primitifs pour les parametres
+        // deal with primitive types as parameters
         isPrimitive = false;
         for (int i=0;i<primitiveClasses.length& !isPrimitive;i++){
           if (parameterClass.equals(primitiveTypes[i])){
@@ -60,15 +60,15 @@ public abstract class GenericTest extends TestCase {
         }
         parameters[j] = td[2+nbParam+j];
       }
-      // La methode a tester doit etre une methode de la classe de test
-      // Le receveur de la methode est this
+      /* the method to test should be in the test class
+       * the reciever of the method is this */
       Method methode = this.getClass().getMethod((String)td[0],parameterTypes);
       Class returnType = methode.getReturnType();
-      //Gestion des types primitifs pour le retour d'une methode
+      // Deal with promitive return types for a method
       isPrimitive = false;
       for (int i=0;i<primitiveClasses.length & !isPrimitive;i++){
 
-        if (returnType.equals(primitiveClasses[i])){
+        if (returnType.equals(primitiveClasses[i])) {
           isPrimitive = true;
           Method value = Class.forName(primitiveWrappers[i]).getMethod(primitiveTypes[i]+"Value",null);
           assertEquals(
@@ -77,9 +77,10 @@ public abstract class GenericTest extends TestCase {
               value.invoke(td[2+2*nbParam],null));
         }
       }
-      if(! isPrimitive){
-        // si la méthode testee est de type void, il faut faire attention d'avoir redéfini correctement equals
-        if(returnType.getName().equals("void")){
+      if(!isPrimitive) {
+        /* If the tested method returns void, take care to the equals
+         * definition */ 
+        if(returnType.getName().equals("void")) {
           methode.invoke(this,parameters);
           assertSame(
               td[0]+" : "+" expected "+td[2+2*nbParam]+" for term "+td[1+2*nbParam],

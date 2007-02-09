@@ -15,6 +15,7 @@ Constraint = Ensure(Variable:TomTerm)
 		   | ForAll(var:TomTerm,cons:Constraint)
 		   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int)
 		   | AndAntiConstraint(Constraint*)
+		   | EqualSublist(startList:int,endList:int,var:TomTerm,list:TomTerm)
 
 ConstraintList = concConstraint(Constraint*)
 AConstraintList = concAnd(Constraint*)

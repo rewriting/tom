@@ -110,14 +110,20 @@ class Unification {
     return null; // clash par defaut
   }
 
-  public static sequentsAbstractType reduce(sequentsAbstractType t, TermRuleList tl) {
+  public static sequentsAbstractType reduce(sequentsAbstractType t, TermRuleList tl, PropRuleList pl) {
     sequentsAbstractType res = null;
     while(res != t) {
       res = t;
       %match(TermRuleList tl) {
         (_*,r,_*) -> {
-          MuStrategy rr =  (MuStrategy) `InnermostId(ApplyTermRule(r));
-          t = (sequentsAbstractType) rr.apply(t);
+          MuStrategy ar =  (MuStrategy) `InnermostId(ApplyTermRule(r));
+          t = (sequentsAbstractType) ar.apply(t);
+        }
+      }
+      %match(PropRuleList pl) {
+        (_*,r,_*) -> {
+          MuStrategy ar =  (MuStrategy) `InnermostId(ApplyPropRule(r));
+          t = (sequentsAbstractType) ar.apply(t);
         }
       }
     }
@@ -127,11 +133,18 @@ class Unification {
   %strategy ApplyTermRule(rule:TermRule) extends `Identity() {
     visit Term {
       x -> {
-        return `reduce(x,rule);
+        return `reduceTerm(x,rule);
       }
     }
   }
 
+  %strategy ApplyPropRule(rule:PropRule) extends `Identity() {
+    visit Prop {
+      x -> {
+        return `reduceProp(x,rule);
+      }
+    }
+  }
 
  /* ---------- for reduce ----------*/
 
@@ -161,7 +174,7 @@ class Unification {
 
  /* ----------------------------------*/
 
-  public static Term reduce(Term t, TermRule rule) {
+  public static Term reduceTerm(Term t, TermRule rule) {
     %match(TermRule rule) {
       termrule(lhs,rhs) -> {
         t = (Term) substPreTreatment(t);
@@ -172,18 +185,43 @@ class Unification {
 
         Term res = `rhs;
 
-        // renommage des variables
+        // substitution
         Set<Map.Entry<String,Term>> entries = tds.entrySet();
         for (Map.Entry<String,Term> ent: entries) {
-          Term old_term = `Var(ent.getKey());
+          Term old_var = `Var(ent.getKey());
           Term new_term = ent.getValue();
-          res = (Term) Utils.replaceTerm(res, old_term, new_term);
+          res = (Term) Utils.replaceTerm(res, old_var, new_term);
         }
 
         return (Term) substPostTreatment(res);
       }
     }
     return t;
+  }
+
+  public static Prop reduceProp(Prop p, PropRule rule) {
+    %match(PropRule rule) {
+      proprule(lhs,rhs) -> {
+        p = (Prop) substPreTreatment(p);
+
+        // recuperage de la table des symboles
+        HashMap<String,Term> tds = match(`lhs, p);
+        if (tds == null) return (Prop) substPostTreatment(p); 
+
+        Prop res = `rhs;
+
+        // substitution
+        Set<Map.Entry<String,Term>> entries = tds.entrySet();
+        for (Map.Entry<String,Term> ent: entries) {
+          Term old_var = `Var(ent.getKey());
+          Term new_term = ent.getValue();
+          res = (Prop) Utils.replaceTerm(res, old_var, new_term);
+        }
+
+        return (Prop) substPostTreatment(res);
+      }
+    }
+    return p;
   }
 
   public static void main(String[] args) throws Exception {

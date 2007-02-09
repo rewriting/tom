@@ -47,17 +47,19 @@
     <plugin name='Starter'
             version=''
             description='Only here to initialize the environment'
-            class='tom.gom.starter.GomStarter'/>
+            class='tom.gom.starter.Starter'/>
     <plugin name='ANTLRMapperGomParser'
       class='tom.gom.parser.ANTLRMapperGomParserPlugin'/>
     <plugin name='Expander'
-            class='tom.gom.expander.GomExpanderPlugin'/>
+            class='tom.gom.expander.ExpanderPlugin'/>
     <plugin name='TypeExpander'
             class='tom.gom.expander.GomTypeExpanderPlugin'/>
+    <plugin name='ReferenceExpander'
+            class='tom.gom.expander.GomReferenceExpanderPlugin'/>
     <plugin name='Compiler'
-            class='tom.gom.compiler.GomCompilerPlugin'/>
+            class='tom.gom.compiler.CompilerPlugin'/>
     <plugin name='Backend'
-            class='tom.gom.backend.GomBackendPlugin'/>
+            class='tom.gom.backend.BackendPlugin'/>
   </plugins>
   <optionmanager class='tom.gom.GomOptionManager'>
     <options>
@@ -69,9 +71,13 @@
                altName='V'
                description='Print version'
                value='false'/>
-      <boolean name='verbose'
+       <boolean name='verbose'
                altName='v'
                description='Display compilation information'
+               value='false'/>
+      <boolean name='reference'
+               altName='r'
+               description='Add references to the Gom signature'
                value='false'/>
       <boolean name='debug'
                altName='vv'

@@ -29,10 +29,7 @@
 
 package nspk;
 
-import aterm.*;
-import aterm.pure.*;
 import java.util.*;
-import nspk.term.*;
 import nspk.term.types.*;
 
 public class Nsh {

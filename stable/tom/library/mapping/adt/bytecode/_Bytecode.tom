@@ -1,9 +1,10 @@
 
-%include { mustrategy.tom }
+   /*
+   %include { mustrategy.tom }
+   */
 
 %op Strategy Is_EmptyInstructionList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist.Is_EmptyInstructionList)}
-  make() { new tom.library.adt.bytecode.strategy.tinstructionlist.Is_EmptyInstructionList() }
+  make() { `When_EmptyInstructionList(Identity()) }
 }
 
 %op Strategy _EmptyInstructionList() {
@@ -18,9 +19,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstructionlist.Make_EmptyInstructionList() }
 }
 
+%op Strategy When_EmptyInstructionList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist.When_EmptyInstructionList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstructionlist.When_EmptyInstructionList(s) }
+}
+
 %op Strategy Is_ConsInstructionList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist.Is_ConsInstructionList)}
-  make() { new tom.library.adt.bytecode.strategy.tinstructionlist.Is_ConsInstructionList() }
+  make() { `When_ConsInstructionList(Identity()) }
 }
 
 %op Strategy _ConsInstructionList(arg0:Strategy, arg1:Strategy) {
@@ -39,9 +44,13 @@
   make( new_HeadInstructionList,  new_TailInstructionList) { new tom.library.adt.bytecode.strategy.tinstructionlist.Make_ConsInstructionList( new_HeadInstructionList,  new_TailInstructionList) }
 }
 
+%op Strategy When_ConsInstructionList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstructionlist.When_ConsInstructionList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstructionlist.When_ConsInstructionList(s) }
+}
+
 %op Strategy Is_ReturnDescriptor() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor.Is_ReturnDescriptor)}
-  make() { new tom.library.adt.bytecode.strategy.treturndescriptor.Is_ReturnDescriptor() }
+  make() { `When_ReturnDescriptor(Identity()) }
 }
 
 %op Strategy _ReturnDescriptor(arg0:Strategy) {
@@ -58,9 +67,13 @@
   make( new_type) { new tom.library.adt.bytecode.strategy.treturndescriptor.Make_ReturnDescriptor( new_type) }
 }
 
+%op Strategy When_ReturnDescriptor(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor.When_ReturnDescriptor)}
+  make(s) { new tom.library.adt.bytecode.strategy.treturndescriptor.When_ReturnDescriptor(s) }
+}
+
 %op Strategy Is_Void() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor.Is_Void)}
-  make() { new tom.library.adt.bytecode.strategy.treturndescriptor.Is_Void() }
+  make() { `When_Void(Identity()) }
 }
 
 %op Strategy _Void() {
@@ -75,9 +88,13 @@
   make() { new tom.library.adt.bytecode.strategy.treturndescriptor.Make_Void() }
 }
 
+%op Strategy When_Void(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.treturndescriptor.When_Void)}
+  make(s) { new tom.library.adt.bytecode.strategy.treturndescriptor.When_Void(s) }
+}
+
 %op Strategy Is_EmptyFieldList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfieldlist.Is_EmptyFieldList)}
-  make() { new tom.library.adt.bytecode.strategy.tfieldlist.Is_EmptyFieldList() }
+  make() { `When_EmptyFieldList(Identity()) }
 }
 
 %op Strategy _EmptyFieldList() {
@@ -92,9 +109,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfieldlist.Make_EmptyFieldList() }
 }
 
+%op Strategy When_EmptyFieldList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfieldlist.When_EmptyFieldList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfieldlist.When_EmptyFieldList(s) }
+}
+
 %op Strategy Is_ConsFieldList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfieldlist.Is_ConsFieldList)}
-  make() { new tom.library.adt.bytecode.strategy.tfieldlist.Is_ConsFieldList() }
+  make() { `When_ConsFieldList(Identity()) }
 }
 
 %op Strategy _ConsFieldList(arg0:Strategy, arg1:Strategy) {
@@ -113,9 +134,13 @@
   make( new_HeadFieldList,  new_TailFieldList) { new tom.library.adt.bytecode.strategy.tfieldlist.Make_ConsFieldList( new_HeadFieldList,  new_TailFieldList) }
 }
 
+%op Strategy When_ConsFieldList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfieldlist.When_ConsFieldList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfieldlist.When_ConsFieldList(s) }
+}
+
 %op Strategy Is_EmptyInnerClassInfoList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinnerclassinfolist.Is_EmptyInnerClassInfoList)}
-  make() { new tom.library.adt.bytecode.strategy.tinnerclassinfolist.Is_EmptyInnerClassInfoList() }
+  make() { `When_EmptyInnerClassInfoList(Identity()) }
 }
 
 %op Strategy _EmptyInnerClassInfoList() {
@@ -130,9 +155,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinnerclassinfolist.Make_EmptyInnerClassInfoList() }
 }
 
+%op Strategy When_EmptyInnerClassInfoList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinnerclassinfolist.When_EmptyInnerClassInfoList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinnerclassinfolist.When_EmptyInnerClassInfoList(s) }
+}
+
 %op Strategy Is_ConsInnerClassInfoList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinnerclassinfolist.Is_ConsInnerClassInfoList)}
-  make() { new tom.library.adt.bytecode.strategy.tinnerclassinfolist.Is_ConsInnerClassInfoList() }
+  make() { `When_ConsInnerClassInfoList(Identity()) }
 }
 
 %op Strategy _ConsInnerClassInfoList(arg0:Strategy, arg1:Strategy) {
@@ -151,9 +180,13 @@
   make( new_HeadInnerClassInfoList,  new_TailInnerClassInfoList) { new tom.library.adt.bytecode.strategy.tinnerclassinfolist.Make_ConsInnerClassInfoList( new_HeadInnerClassInfoList,  new_TailInnerClassInfoList) }
 }
 
+%op Strategy When_ConsInnerClassInfoList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinnerclassinfolist.When_ConsInnerClassInfoList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinnerclassinfolist.When_ConsInnerClassInfoList(s) }
+}
+
 %op Strategy Is_OuterClassInfo() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo.Is_OuterClassInfo)}
-  make() { new tom.library.adt.bytecode.strategy.touterclassinfo.Is_OuterClassInfo() }
+  make() { `When_OuterClassInfo(Identity()) }
 }
 
 %op Strategy _OuterClassInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -174,9 +207,13 @@
   make( _owner,  _name,  new_desc) { new tom.library.adt.bytecode.strategy.touterclassinfo.Make_OuterClassInfo( _owner,  _name,  new_desc) }
 }
 
+%op Strategy When_OuterClassInfo(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo.When_OuterClassInfo)}
+  make(s) { new tom.library.adt.bytecode.strategy.touterclassinfo.When_OuterClassInfo(s) }
+}
+
 %op Strategy Is_EmptyOuterClassInfo() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo.Is_EmptyOuterClassInfo)}
-  make() { new tom.library.adt.bytecode.strategy.touterclassinfo.Is_EmptyOuterClassInfo() }
+  make() { `When_EmptyOuterClassInfo(Identity()) }
 }
 
 %op Strategy _EmptyOuterClassInfo() {
@@ -191,9 +228,13 @@
   make() { new tom.library.adt.bytecode.strategy.touterclassinfo.Make_EmptyOuterClassInfo() }
 }
 
+%op Strategy When_EmptyOuterClassInfo(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.touterclassinfo.When_EmptyOuterClassInfo)}
+  make(s) { new tom.library.adt.bytecode.strategy.touterclassinfo.When_EmptyOuterClassInfo(s) }
+}
+
 %op Strategy Is_TryCatchBlock() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblock.Is_TryCatchBlock)}
-  make() { new tom.library.adt.bytecode.strategy.ttrycatchblock.Is_TryCatchBlock() }
+  make() { `When_TryCatchBlock(Identity()) }
 }
 
 %op Strategy _TryCatchBlock(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -214,9 +255,13 @@
   make( new_start,  new_end,  new_handler) { new tom.library.adt.bytecode.strategy.ttrycatchblock.Make_TryCatchBlock( new_start,  new_end,  new_handler) }
 }
 
+%op Strategy When_TryCatchBlock(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblock.When_TryCatchBlock)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttrycatchblock.When_TryCatchBlock(s) }
+}
+
 %op Strategy Is_ObjectType() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_ObjectType)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_ObjectType() }
+  make() { `When_ObjectType(Identity()) }
 }
 
 %op Strategy _ObjectType(arg0:Strategy) {
@@ -233,9 +278,13 @@
   make( _className) { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ObjectType( _className) }
 }
 
+%op Strategy When_ObjectType(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_ObjectType)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_ObjectType(s) }
+}
+
 %op Strategy Is_ArrayType() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_ArrayType)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_ArrayType() }
+  make() { `When_ArrayType(Identity()) }
 }
 
 %op Strategy _ArrayType(arg0:Strategy) {
@@ -252,9 +301,13 @@
   make( new_arrayType) { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_ArrayType( new_arrayType) }
 }
 
+%op Strategy When_ArrayType(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_ArrayType)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_ArrayType(s) }
+}
+
 %op Strategy Is_B() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_B)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_B() }
+  make() { `When_B(Identity()) }
 }
 
 %op Strategy _B() {
@@ -269,9 +322,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_B() }
 }
 
+%op Strategy When_B(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_B)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_B(s) }
+}
+
 %op Strategy Is_C() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_C)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_C() }
+  make() { `When_C(Identity()) }
 }
 
 %op Strategy _C() {
@@ -286,9 +343,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_C() }
 }
 
+%op Strategy When_C(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_C)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_C(s) }
+}
+
 %op Strategy Is_D() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_D)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_D() }
+  make() { `When_D(Identity()) }
 }
 
 %op Strategy _D() {
@@ -303,9 +364,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_D() }
 }
 
+%op Strategy When_D(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_D)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_D(s) }
+}
+
 %op Strategy Is_F() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_F)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_F() }
+  make() { `When_F(Identity()) }
 }
 
 %op Strategy _F() {
@@ -320,9 +385,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_F() }
 }
 
+%op Strategy When_F(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_F)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_F(s) }
+}
+
 %op Strategy Is_I() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_I)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_I() }
+  make() { `When_I(Identity()) }
 }
 
 %op Strategy _I() {
@@ -337,9 +406,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_I() }
 }
 
+%op Strategy When_I(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_I)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_I(s) }
+}
+
 %op Strategy Is_J() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_J)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_J() }
+  make() { `When_J(Identity()) }
 }
 
 %op Strategy _J() {
@@ -354,9 +427,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_J() }
 }
 
+%op Strategy When_J(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_J)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_J(s) }
+}
+
 %op Strategy Is_S() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_S)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_S() }
+  make() { `When_S(Identity()) }
 }
 
 %op Strategy _S() {
@@ -371,9 +448,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_S() }
 }
 
+%op Strategy When_S(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_S)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_S(s) }
+}
+
 %op Strategy Is_Z() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.Is_Z)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Is_Z() }
+  make() { `When_Z(Identity()) }
 }
 
 %op Strategy _Z() {
@@ -388,9 +469,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfielddescriptor.Make_Z() }
 }
 
+%op Strategy When_Z(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptor.When_Z)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptor.When_Z(s) }
+}
+
 %op Strategy Is_MethodDescriptor() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethoddescriptor.Is_MethodDescriptor)}
-  make() { new tom.library.adt.bytecode.strategy.tmethoddescriptor.Is_MethodDescriptor() }
+  make() { `When_MethodDescriptor(Identity()) }
 }
 
 %op Strategy _MethodDescriptor(arg0:Strategy, arg1:Strategy) {
@@ -409,9 +494,13 @@
   make( new_parameters,  new_return) { new tom.library.adt.bytecode.strategy.tmethoddescriptor.Make_MethodDescriptor( new_parameters,  new_return) }
 }
 
+%op Strategy When_MethodDescriptor(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethoddescriptor.When_MethodDescriptor)}
+  make(s) { new tom.library.adt.bytecode.strategy.tmethoddescriptor.When_MethodDescriptor(s) }
+}
+
 %op Strategy Is_LocalVariable() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlocalvariable.Is_LocalVariable)}
-  make() { new tom.library.adt.bytecode.strategy.tlocalvariable.Is_LocalVariable() }
+  make() { `When_LocalVariable(Identity()) }
 }
 
 %op Strategy _LocalVariable(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
@@ -438,9 +527,13 @@
   make( _name,  _typeDesc,  new_signature,  new_start,  new_end,  _index) { new tom.library.adt.bytecode.strategy.tlocalvariable.Make_LocalVariable( _name,  _typeDesc,  new_signature,  new_start,  new_end,  _index) }
 }
 
+%op Strategy When_LocalVariable(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlocalvariable.When_LocalVariable)}
+  make(s) { new tom.library.adt.bytecode.strategy.tlocalvariable.When_LocalVariable(s) }
+}
+
 %op Strategy Is_EmptyFieldDescriptorList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist.Is_EmptyFieldDescriptorList)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Is_EmptyFieldDescriptorList() }
+  make() { `When_EmptyFieldDescriptorList(Identity()) }
 }
 
 %op Strategy _EmptyFieldDescriptorList() {
@@ -455,9 +548,13 @@
   make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_EmptyFieldDescriptorList() }
 }
 
+%op Strategy When_EmptyFieldDescriptorList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist.When_EmptyFieldDescriptorList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.When_EmptyFieldDescriptorList(s) }
+}
+
 %op Strategy Is_ConsFieldDescriptorList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist.Is_ConsFieldDescriptorList)}
-  make() { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Is_ConsFieldDescriptorList() }
+  make() { `When_ConsFieldDescriptorList(Identity()) }
 }
 
 %op Strategy _ConsFieldDescriptorList(arg0:Strategy, arg1:Strategy) {
@@ -476,9 +573,13 @@
   make( new_HeadFieldDescriptorList,  new_TailFieldDescriptorList) { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.Make_ConsFieldDescriptorList( new_HeadFieldDescriptorList,  new_TailFieldDescriptorList) }
 }
 
+%op Strategy When_ConsFieldDescriptorList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfielddescriptorlist.When_ConsFieldDescriptorList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfielddescriptorlist.When_ConsFieldDescriptorList(s) }
+}
+
 %op Strategy Is_EmptyLocalVariableList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist.Is_EmptyLocalVariableList)}
-  make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Is_EmptyLocalVariableList() }
+  make() { `When_EmptyLocalVariableList(Identity()) }
 }
 
 %op Strategy _EmptyLocalVariableList() {
@@ -493,9 +594,13 @@
   make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_EmptyLocalVariableList() }
 }
 
+%op Strategy When_EmptyLocalVariableList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist.When_EmptyLocalVariableList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tlocalvariablelist.When_EmptyLocalVariableList(s) }
+}
+
 %op Strategy Is_ConsLocalVariableList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist.Is_ConsLocalVariableList)}
-  make() { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Is_ConsLocalVariableList() }
+  make() { `When_ConsLocalVariableList(Identity()) }
 }
 
 %op Strategy _ConsLocalVariableList(arg0:Strategy, arg1:Strategy) {
@@ -514,9 +619,13 @@
   make( new_HeadLocalVariableList,  new_TailLocalVariableList) { new tom.library.adt.bytecode.strategy.tlocalvariablelist.Make_ConsLocalVariableList( new_HeadLocalVariableList,  new_TailLocalVariableList) }
 }
 
+%op Strategy When_ConsLocalVariableList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlocalvariablelist.When_ConsLocalVariableList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tlocalvariablelist.When_ConsLocalVariableList(s) }
+}
+
 %op Strategy Is_ABSTRACT() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_ABSTRACT)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_ABSTRACT() }
+  make() { `When_ABSTRACT(Identity()) }
 }
 
 %op Strategy _ABSTRACT() {
@@ -531,9 +640,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_ABSTRACT() }
 }
 
+%op Strategy When_ABSTRACT(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_ABSTRACT)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_ABSTRACT(s) }
+}
+
 %op Strategy Is_ANNOTATION() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_ANNOTATION)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_ANNOTATION() }
+  make() { `When_ANNOTATION(Identity()) }
 }
 
 %op Strategy _ANNOTATION() {
@@ -548,9 +661,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_ANNOTATION() }
 }
 
+%op Strategy When_ANNOTATION(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_ANNOTATION)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_ANNOTATION(s) }
+}
+
 %op Strategy Is_BRIDGE() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_BRIDGE)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_BRIDGE() }
+  make() { `When_BRIDGE(Identity()) }
 }
 
 %op Strategy _BRIDGE() {
@@ -565,9 +682,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_BRIDGE() }
 }
 
+%op Strategy When_BRIDGE(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_BRIDGE)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_BRIDGE(s) }
+}
+
 %op Strategy Is_DEPRECATED() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_DEPRECATED)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_DEPRECATED() }
+  make() { `When_DEPRECATED(Identity()) }
 }
 
 %op Strategy _DEPRECATED() {
@@ -582,9 +703,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_DEPRECATED() }
 }
 
+%op Strategy When_DEPRECATED(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_DEPRECATED)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_DEPRECATED(s) }
+}
+
 %op Strategy Is_ENUM() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_ENUM)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_ENUM() }
+  make() { `When_ENUM(Identity()) }
 }
 
 %op Strategy _ENUM() {
@@ -599,9 +724,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_ENUM() }
 }
 
+%op Strategy When_ENUM(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_ENUM)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_ENUM(s) }
+}
+
 %op Strategy Is_FINAL() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_FINAL)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_FINAL() }
+  make() { `When_FINAL(Identity()) }
 }
 
 %op Strategy _FINAL() {
@@ -616,9 +745,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_FINAL() }
 }
 
+%op Strategy When_FINAL(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_FINAL)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_FINAL(s) }
+}
+
 %op Strategy Is_INTERFACE() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_INTERFACE)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_INTERFACE() }
+  make() { `When_INTERFACE(Identity()) }
 }
 
 %op Strategy _INTERFACE() {
@@ -633,9 +766,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_INTERFACE() }
 }
 
+%op Strategy When_INTERFACE(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_INTERFACE)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_INTERFACE(s) }
+}
+
 %op Strategy Is_NATIVE() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_NATIVE)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_NATIVE() }
+  make() { `When_NATIVE(Identity()) }
 }
 
 %op Strategy _NATIVE() {
@@ -650,9 +787,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_NATIVE() }
 }
 
+%op Strategy When_NATIVE(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_NATIVE)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_NATIVE(s) }
+}
+
 %op Strategy Is_PRIVATE() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_PRIVATE)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_PRIVATE() }
+  make() { `When_PRIVATE(Identity()) }
 }
 
 %op Strategy _PRIVATE() {
@@ -667,9 +808,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_PRIVATE() }
 }
 
+%op Strategy When_PRIVATE(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_PRIVATE)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_PRIVATE(s) }
+}
+
 %op Strategy Is_PROTECTED() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_PROTECTED)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_PROTECTED() }
+  make() { `When_PROTECTED(Identity()) }
 }
 
 %op Strategy _PROTECTED() {
@@ -684,9 +829,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_PROTECTED() }
 }
 
+%op Strategy When_PROTECTED(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_PROTECTED)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_PROTECTED(s) }
+}
+
 %op Strategy Is_PUBLIC() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_PUBLIC)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_PUBLIC() }
+  make() { `When_PUBLIC(Identity()) }
 }
 
 %op Strategy _PUBLIC() {
@@ -701,9 +850,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_PUBLIC() }
 }
 
+%op Strategy When_PUBLIC(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_PUBLIC)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_PUBLIC(s) }
+}
+
 %op Strategy Is_STATIC() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_STATIC)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_STATIC() }
+  make() { `When_STATIC(Identity()) }
 }
 
 %op Strategy _STATIC() {
@@ -718,9 +871,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_STATIC() }
 }
 
+%op Strategy When_STATIC(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_STATIC)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_STATIC(s) }
+}
+
 %op Strategy Is_STRICT() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_STRICT)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_STRICT() }
+  make() { `When_STRICT(Identity()) }
 }
 
 %op Strategy _STRICT() {
@@ -735,9 +892,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_STRICT() }
 }
 
+%op Strategy When_STRICT(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_STRICT)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_STRICT(s) }
+}
+
 %op Strategy Is_SUPER() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_SUPER)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_SUPER() }
+  make() { `When_SUPER(Identity()) }
 }
 
 %op Strategy _SUPER() {
@@ -752,9 +913,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_SUPER() }
 }
 
+%op Strategy When_SUPER(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_SUPER)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_SUPER(s) }
+}
+
 %op Strategy Is_SYNCHRONIZED() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_SYNCHRONIZED)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_SYNCHRONIZED() }
+  make() { `When_SYNCHRONIZED(Identity()) }
 }
 
 %op Strategy _SYNCHRONIZED() {
@@ -769,9 +934,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_SYNCHRONIZED() }
 }
 
+%op Strategy When_SYNCHRONIZED(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_SYNCHRONIZED)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_SYNCHRONIZED(s) }
+}
+
 %op Strategy Is_SYNTHETIC() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_SYNTHETIC)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_SYNTHETIC() }
+  make() { `When_SYNTHETIC(Identity()) }
 }
 
 %op Strategy _SYNTHETIC() {
@@ -786,9 +955,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_SYNTHETIC() }
 }
 
+%op Strategy When_SYNTHETIC(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_SYNTHETIC)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_SYNTHETIC(s) }
+}
+
 %op Strategy Is_TRANSIENT() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_TRANSIENT)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_TRANSIENT() }
+  make() { `When_TRANSIENT(Identity()) }
 }
 
 %op Strategy _TRANSIENT() {
@@ -803,9 +976,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_TRANSIENT() }
 }
 
+%op Strategy When_TRANSIENT(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_TRANSIENT)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_TRANSIENT(s) }
+}
+
 %op Strategy Is_VARARGS() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_VARARGS)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_VARARGS() }
+  make() { `When_VARARGS(Identity()) }
 }
 
 %op Strategy _VARARGS() {
@@ -820,9 +997,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_VARARGS() }
 }
 
+%op Strategy When_VARARGS(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_VARARGS)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_VARARGS(s) }
+}
+
 %op Strategy Is_VOLATILE() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.Is_VOLATILE)}
-  make() { new tom.library.adt.bytecode.strategy.taccess.Is_VOLATILE() }
+  make() { `When_VOLATILE(Identity()) }
 }
 
 %op Strategy _VOLATILE() {
@@ -837,9 +1018,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccess.Make_VOLATILE() }
 }
 
+%op Strategy When_VOLATILE(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccess.When_VOLATILE)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccess.When_VOLATILE(s) }
+}
+
 %op Strategy Is_InnerClassInfo() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinnerclassinfo.Is_InnerClassInfo)}
-  make() { new tom.library.adt.bytecode.strategy.tinnerclassinfo.Is_InnerClassInfo() }
+  make() { `When_InnerClassInfo(Identity()) }
 }
 
 %op Strategy _InnerClassInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
@@ -862,9 +1047,13 @@
   make( _name,  _outerName,  _innerName,  new_access) { new tom.library.adt.bytecode.strategy.tinnerclassinfo.Make_InnerClassInfo( _name,  _outerName,  _innerName,  new_access) }
 }
 
+%op Strategy When_InnerClassInfo(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinnerclassinfo.When_InnerClassInfo)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinnerclassinfo.When_InnerClassInfo(s) }
+}
+
 %op Strategy Is_EmptyAccessList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccesslist.Is_EmptyAccessList)}
-  make() { new tom.library.adt.bytecode.strategy.taccesslist.Is_EmptyAccessList() }
+  make() { `When_EmptyAccessList(Identity()) }
 }
 
 %op Strategy _EmptyAccessList() {
@@ -879,9 +1068,13 @@
   make() { new tom.library.adt.bytecode.strategy.taccesslist.Make_EmptyAccessList() }
 }
 
+%op Strategy When_EmptyAccessList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccesslist.When_EmptyAccessList)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccesslist.When_EmptyAccessList(s) }
+}
+
 %op Strategy Is_ConsAccessList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccesslist.Is_ConsAccessList)}
-  make() { new tom.library.adt.bytecode.strategy.taccesslist.Is_ConsAccessList() }
+  make() { `When_ConsAccessList(Identity()) }
 }
 
 %op Strategy _ConsAccessList(arg0:Strategy, arg1:Strategy) {
@@ -900,9 +1093,13 @@
   make( new_HeadAccessList,  new_TailAccessList) { new tom.library.adt.bytecode.strategy.taccesslist.Make_ConsAccessList( new_HeadAccessList,  new_TailAccessList) }
 }
 
+%op Strategy When_ConsAccessList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.taccesslist.When_ConsAccessList)}
+  make(s) { new tom.library.adt.bytecode.strategy.taccesslist.When_ConsAccessList(s) }
+}
+
 %op Strategy Is_EmptyStringList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tstringlist.Is_EmptyStringList)}
-  make() { new tom.library.adt.bytecode.strategy.tstringlist.Is_EmptyStringList() }
+  make() { `When_EmptyStringList(Identity()) }
 }
 
 %op Strategy _EmptyStringList() {
@@ -917,9 +1114,13 @@
   make() { new tom.library.adt.bytecode.strategy.tstringlist.Make_EmptyStringList() }
 }
 
+%op Strategy When_EmptyStringList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tstringlist.When_EmptyStringList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tstringlist.When_EmptyStringList(s) }
+}
+
 %op Strategy Is_ConsStringList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tstringlist.Is_ConsStringList)}
-  make() { new tom.library.adt.bytecode.strategy.tstringlist.Is_ConsStringList() }
+  make() { `When_ConsStringList(Identity()) }
 }
 
 %op Strategy _ConsStringList(arg0:Strategy, arg1:Strategy) {
@@ -938,9 +1139,13 @@
   make( _HeadStringList,  new_TailStringList) { new tom.library.adt.bytecode.strategy.tstringlist.Make_ConsStringList( _HeadStringList,  new_TailStringList) }
 }
 
+%op Strategy When_ConsStringList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tstringlist.When_ConsStringList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tstringlist.When_ConsStringList(s) }
+}
+
 %op Strategy Is_MethodCode() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodcode.Is_MethodCode)}
-  make() { new tom.library.adt.bytecode.strategy.tmethodcode.Is_MethodCode() }
+  make() { `When_MethodCode(Identity()) }
 }
 
 %op Strategy _MethodCode(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -961,9 +1166,13 @@
   make( new_instructions,  new_localVariables,  new_tryCatchBlocks) { new tom.library.adt.bytecode.strategy.tmethodcode.Make_MethodCode( new_instructions,  new_localVariables,  new_tryCatchBlocks) }
 }
 
+%op Strategy When_MethodCode(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodcode.When_MethodCode)}
+  make(s) { new tom.library.adt.bytecode.strategy.tmethodcode.When_MethodCode(s) }
+}
+
 %op Strategy Is_EmptyCode() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodcode.Is_EmptyCode)}
-  make() { new tom.library.adt.bytecode.strategy.tmethodcode.Is_EmptyCode() }
+  make() { `When_EmptyCode(Identity()) }
 }
 
 %op Strategy _EmptyCode() {
@@ -978,9 +1187,13 @@
   make() { new tom.library.adt.bytecode.strategy.tmethodcode.Make_EmptyCode() }
 }
 
+%op Strategy When_EmptyCode(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodcode.When_EmptyCode)}
+  make(s) { new tom.library.adt.bytecode.strategy.tmethodcode.When_EmptyCode(s) }
+}
+
 %op Strategy Is_EmptyTryCatchBlockList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblocklist.Is_EmptyTryCatchBlockList)}
-  make() { new tom.library.adt.bytecode.strategy.ttrycatchblocklist.Is_EmptyTryCatchBlockList() }
+  make() { `When_EmptyTryCatchBlockList(Identity()) }
 }
 
 %op Strategy _EmptyTryCatchBlockList() {
@@ -995,9 +1208,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttrycatchblocklist.Make_EmptyTryCatchBlockList() }
 }
 
+%op Strategy When_EmptyTryCatchBlockList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblocklist.When_EmptyTryCatchBlockList)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttrycatchblocklist.When_EmptyTryCatchBlockList(s) }
+}
+
 %op Strategy Is_ConsTryCatchBlockList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblocklist.Is_ConsTryCatchBlockList)}
-  make() { new tom.library.adt.bytecode.strategy.ttrycatchblocklist.Is_ConsTryCatchBlockList() }
+  make() { `When_ConsTryCatchBlockList(Identity()) }
 }
 
 %op Strategy _ConsTryCatchBlockList(arg0:Strategy, arg1:Strategy) {
@@ -1016,9 +1233,13 @@
   make( new_HeadTryCatchBlockList,  new_TailTryCatchBlockList) { new tom.library.adt.bytecode.strategy.ttrycatchblocklist.Make_ConsTryCatchBlockList( new_HeadTryCatchBlockList,  new_TailTryCatchBlockList) }
 }
 
+%op Strategy When_ConsTryCatchBlockList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttrycatchblocklist.When_ConsTryCatchBlockList)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttrycatchblocklist.When_ConsTryCatchBlockList(s) }
+}
+
 %op Strategy Is_EmptyintList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tintlist.Is_EmptyintList)}
-  make() { new tom.library.adt.bytecode.strategy.tintlist.Is_EmptyintList() }
+  make() { `When_EmptyintList(Identity()) }
 }
 
 %op Strategy _EmptyintList() {
@@ -1033,9 +1254,13 @@
   make() { new tom.library.adt.bytecode.strategy.tintlist.Make_EmptyintList() }
 }
 
+%op Strategy When_EmptyintList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tintlist.When_EmptyintList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tintlist.When_EmptyintList(s) }
+}
+
 %op Strategy Is_ConsintList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tintlist.Is_ConsintList)}
-  make() { new tom.library.adt.bytecode.strategy.tintlist.Is_ConsintList() }
+  make() { `When_ConsintList(Identity()) }
 }
 
 %op Strategy _ConsintList(arg0:Strategy, arg1:Strategy) {
@@ -1054,9 +1279,13 @@
   make( _HeadintList,  new_TailintList) { new tom.library.adt.bytecode.strategy.tintlist.Make_ConsintList( _HeadintList,  new_TailintList) }
 }
 
+%op Strategy When_ConsintList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tintlist.When_ConsintList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tintlist.When_ConsintList(s) }
+}
+
 %op Strategy Is_EmptyMethodList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodlist.Is_EmptyMethodList)}
-  make() { new tom.library.adt.bytecode.strategy.tmethodlist.Is_EmptyMethodList() }
+  make() { `When_EmptyMethodList(Identity()) }
 }
 
 %op Strategy _EmptyMethodList() {
@@ -1071,9 +1300,13 @@
   make() { new tom.library.adt.bytecode.strategy.tmethodlist.Make_EmptyMethodList() }
 }
 
+%op Strategy When_EmptyMethodList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodlist.When_EmptyMethodList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tmethodlist.When_EmptyMethodList(s) }
+}
+
 %op Strategy Is_ConsMethodList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodlist.Is_ConsMethodList)}
-  make() { new tom.library.adt.bytecode.strategy.tmethodlist.Is_ConsMethodList() }
+  make() { `When_ConsMethodList(Identity()) }
 }
 
 %op Strategy _ConsMethodList(arg0:Strategy, arg1:Strategy) {
@@ -1092,9 +1325,13 @@
   make( new_HeadMethodList,  new_TailMethodList) { new tom.library.adt.bytecode.strategy.tmethodlist.Make_ConsMethodList( new_HeadMethodList,  new_TailMethodList) }
 }
 
+%op Strategy When_ConsMethodList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodlist.When_ConsMethodList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tmethodlist.When_ConsMethodList(s) }
+}
+
 %op Strategy Is_Field() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfield.Is_Field)}
-  make() { new tom.library.adt.bytecode.strategy.tfield.Is_Field() }
+  make() { `When_Field(Identity()) }
 }
 
 %op Strategy _Field(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy) {
@@ -1119,9 +1356,13 @@
   make( new_access,  _name,  new_desc,  new_signature,  new_value) { new tom.library.adt.bytecode.strategy.tfield.Make_Field( new_access,  _name,  new_desc,  new_signature,  new_value) }
 }
 
+%op Strategy When_Field(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tfield.When_Field)}
+  make(s) { new tom.library.adt.bytecode.strategy.tfield.When_Field(s) }
+}
+
 %op Strategy Is_EmptyLabelList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlabellist.Is_EmptyLabelList)}
-  make() { new tom.library.adt.bytecode.strategy.tlabellist.Is_EmptyLabelList() }
+  make() { `When_EmptyLabelList(Identity()) }
 }
 
 %op Strategy _EmptyLabelList() {
@@ -1136,9 +1377,13 @@
   make() { new tom.library.adt.bytecode.strategy.tlabellist.Make_EmptyLabelList() }
 }
 
+%op Strategy When_EmptyLabelList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlabellist.When_EmptyLabelList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tlabellist.When_EmptyLabelList(s) }
+}
+
 %op Strategy Is_ConsLabelList() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlabellist.Is_ConsLabelList)}
-  make() { new tom.library.adt.bytecode.strategy.tlabellist.Is_ConsLabelList() }
+  make() { `When_ConsLabelList(Identity()) }
 }
 
 %op Strategy _ConsLabelList(arg0:Strategy, arg1:Strategy) {
@@ -1157,9 +1402,13 @@
   make( new_HeadLabelList,  new_TailLabelList) { new tom.library.adt.bytecode.strategy.tlabellist.Make_ConsLabelList( new_HeadLabelList,  new_TailLabelList) }
 }
 
+%op Strategy When_ConsLabelList(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlabellist.When_ConsLabelList)}
+  make(s) { new tom.library.adt.bytecode.strategy.tlabellist.When_ConsLabelList(s) }
+}
+
 %op Strategy Is_Class() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tclass.Is_Class)}
-  make() { new tom.library.adt.bytecode.strategy.tclass.Is_Class() }
+  make() { `When_Class(Identity()) }
 }
 
 %op Strategy _Class(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -1180,9 +1429,13 @@
   make( new_info,  new_fields,  new_methods) { new tom.library.adt.bytecode.strategy.tclass.Make_Class( new_info,  new_fields,  new_methods) }
 }
 
+%op Strategy When_Class(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tclass.When_Class)}
+  make(s) { new tom.library.adt.bytecode.strategy.tclass.When_Class(s) }
+}
+
 %op Strategy Is_ClassInfo() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tclassinfo.Is_ClassInfo)}
-  make() { new tom.library.adt.bytecode.strategy.tclassinfo.Is_ClassInfo() }
+  make() { `When_ClassInfo(Identity()) }
 }
 
 %op Strategy _ClassInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy, arg6:Strategy) {
@@ -1211,9 +1464,13 @@
   make( _name,  new_signature,  new_access,  _superName,  new_interfaces,  new_innerClasses,  new_outerClass) { new tom.library.adt.bytecode.strategy.tclassinfo.Make_ClassInfo( _name,  new_signature,  new_access,  _superName,  new_interfaces,  new_innerClasses,  new_outerClass) }
 }
 
+%op Strategy When_ClassInfo(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tclassinfo.When_ClassInfo)}
+  make(s) { new tom.library.adt.bytecode.strategy.tclassinfo.When_ClassInfo(s) }
+}
+
 %op Strategy Is_MethodInfo() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodinfo.Is_MethodInfo)}
-  make() { new tom.library.adt.bytecode.strategy.tmethodinfo.Is_MethodInfo() }
+  make() { `When_MethodInfo(Identity()) }
 }
 
 %op Strategy _MethodInfo(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy, arg4:Strategy, arg5:Strategy) {
@@ -1240,9 +1497,13 @@
   make( _owner,  new_access,  _name,  new_desc,  new_signature,  new_exceptions) { new tom.library.adt.bytecode.strategy.tmethodinfo.Make_MethodInfo( _owner,  new_access,  _name,  new_desc,  new_signature,  new_exceptions) }
 }
 
+%op Strategy When_MethodInfo(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethodinfo.When_MethodInfo)}
+  make(s) { new tom.library.adt.bytecode.strategy.tmethodinfo.When_MethodInfo(s) }
+}
+
 %op Strategy Is_ARRAY() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_ARRAY)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_ARRAY() }
+  make() { `When_ARRAY(Identity()) }
 }
 
 %op Strategy _ARRAY() {
@@ -1257,9 +1518,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_ARRAY() }
 }
 
+%op Strategy When_ARRAY(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_ARRAY)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_ARRAY(s) }
+}
+
 %op Strategy Is_BOOLEAN() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_BOOLEAN)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_BOOLEAN() }
+  make() { `When_BOOLEAN(Identity()) }
 }
 
 %op Strategy _BOOLEAN() {
@@ -1274,9 +1539,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_BOOLEAN() }
 }
 
+%op Strategy When_BOOLEAN(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_BOOLEAN)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_BOOLEAN(s) }
+}
+
 %op Strategy Is_BYTE() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_BYTE)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_BYTE() }
+  make() { `When_BYTE(Identity()) }
 }
 
 %op Strategy _BYTE() {
@@ -1291,9 +1560,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_BYTE() }
 }
 
+%op Strategy When_BYTE(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_BYTE)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_BYTE(s) }
+}
+
 %op Strategy Is_CHAR() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_CHAR)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_CHAR() }
+  make() { `When_CHAR(Identity()) }
 }
 
 %op Strategy _CHAR() {
@@ -1308,9 +1581,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_CHAR() }
 }
 
+%op Strategy When_CHAR(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_CHAR)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_CHAR(s) }
+}
+
 %op Strategy Is_DOUBLE() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_DOUBLE)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_DOUBLE() }
+  make() { `When_DOUBLE(Identity()) }
 }
 
 %op Strategy _DOUBLE() {
@@ -1325,9 +1602,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_DOUBLE() }
 }
 
+%op Strategy When_DOUBLE(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_DOUBLE)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_DOUBLE(s) }
+}
+
 %op Strategy Is_FLOAT() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_FLOAT)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_FLOAT() }
+  make() { `When_FLOAT(Identity()) }
 }
 
 %op Strategy _FLOAT() {
@@ -1342,9 +1623,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_FLOAT() }
 }
 
+%op Strategy When_FLOAT(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_FLOAT)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_FLOAT(s) }
+}
+
 %op Strategy Is_INT() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_INT)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_INT() }
+  make() { `When_INT(Identity()) }
 }
 
 %op Strategy _INT() {
@@ -1359,9 +1644,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_INT() }
 }
 
+%op Strategy When_INT(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_INT)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_INT(s) }
+}
+
 %op Strategy Is_LONG() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_LONG)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_LONG() }
+  make() { `When_LONG(Identity()) }
 }
 
 %op Strategy _LONG() {
@@ -1376,9 +1665,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_LONG() }
 }
 
+%op Strategy When_LONG(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_LONG)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_LONG(s) }
+}
+
 %op Strategy Is_OBJECT() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_OBJECT)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_OBJECT() }
+  make() { `When_OBJECT(Identity()) }
 }
 
 %op Strategy _OBJECT() {
@@ -1393,9 +1686,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_OBJECT() }
 }
 
+%op Strategy When_OBJECT(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_OBJECT)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_OBJECT(s) }
+}
+
 %op Strategy Is_SHORT() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_SHORT)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_SHORT() }
+  make() { `When_SHORT(Identity()) }
 }
 
 %op Strategy _SHORT() {
@@ -1410,9 +1707,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_SHORT() }
 }
 
+%op Strategy When_SHORT(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_SHORT)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_SHORT(s) }
+}
+
 %op Strategy Is_VOID() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.Is_VOID)}
-  make() { new tom.library.adt.bytecode.strategy.ttype.Is_VOID() }
+  make() { `When_VOID(Identity()) }
 }
 
 %op Strategy _VOID() {
@@ -1427,9 +1728,13 @@
   make() { new tom.library.adt.bytecode.strategy.ttype.Make_VOID() }
 }
 
+%op Strategy When_VOID(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.ttype.When_VOID)}
+  make(s) { new tom.library.adt.bytecode.strategy.ttype.When_VOID(s) }
+}
+
 %op Strategy Is_StringValue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.Is_StringValue)}
-  make() { new tom.library.adt.bytecode.strategy.tvalue.Is_StringValue() }
+  make() { `When_StringValue(Identity()) }
 }
 
 %op Strategy _StringValue(arg0:Strategy) {
@@ -1446,9 +1751,13 @@
   make( _s) { new tom.library.adt.bytecode.strategy.tvalue.Make_StringValue( _s) }
 }
 
+%op Strategy When_StringValue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.When_StringValue)}
+  make(s) { new tom.library.adt.bytecode.strategy.tvalue.When_StringValue(s) }
+}
+
 %op Strategy Is_IntValue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.Is_IntValue)}
-  make() { new tom.library.adt.bytecode.strategy.tvalue.Is_IntValue() }
+  make() { `When_IntValue(Identity()) }
 }
 
 %op Strategy _IntValue(arg0:Strategy) {
@@ -1465,9 +1774,13 @@
   make( _i) { new tom.library.adt.bytecode.strategy.tvalue.Make_IntValue( _i) }
 }
 
+%op Strategy When_IntValue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.When_IntValue)}
+  make(s) { new tom.library.adt.bytecode.strategy.tvalue.When_IntValue(s) }
+}
+
 %op Strategy Is_LongValue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.Is_LongValue)}
-  make() { new tom.library.adt.bytecode.strategy.tvalue.Is_LongValue() }
+  make() { `When_LongValue(Identity()) }
 }
 
 %op Strategy _LongValue(arg0:Strategy) {
@@ -1484,9 +1797,13 @@
   make( _l) { new tom.library.adt.bytecode.strategy.tvalue.Make_LongValue( _l) }
 }
 
+%op Strategy When_LongValue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.When_LongValue)}
+  make(s) { new tom.library.adt.bytecode.strategy.tvalue.When_LongValue(s) }
+}
+
 %op Strategy Is_FloatValue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.Is_FloatValue)}
-  make() { new tom.library.adt.bytecode.strategy.tvalue.Is_FloatValue() }
+  make() { `When_FloatValue(Identity()) }
 }
 
 %op Strategy _FloatValue(arg0:Strategy) {
@@ -1503,9 +1820,13 @@
   make( _f) { new tom.library.adt.bytecode.strategy.tvalue.Make_FloatValue( _f) }
 }
 
+%op Strategy When_FloatValue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.When_FloatValue)}
+  make(s) { new tom.library.adt.bytecode.strategy.tvalue.When_FloatValue(s) }
+}
+
 %op Strategy Is_DoubleValue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.Is_DoubleValue)}
-  make() { new tom.library.adt.bytecode.strategy.tvalue.Is_DoubleValue() }
+  make() { `When_DoubleValue(Identity()) }
 }
 
 %op Strategy _DoubleValue(arg0:Strategy) {
@@ -1522,9 +1843,13 @@
   make( _d) { new tom.library.adt.bytecode.strategy.tvalue.Make_DoubleValue( _d) }
 }
 
+%op Strategy When_DoubleValue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.When_DoubleValue)}
+  make(s) { new tom.library.adt.bytecode.strategy.tvalue.When_DoubleValue(s) }
+}
+
 %op Strategy Is_EmptyValue() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.Is_EmptyValue)}
-  make() { new tom.library.adt.bytecode.strategy.tvalue.Is_EmptyValue() }
+  make() { `When_EmptyValue(Identity()) }
 }
 
 %op Strategy _EmptyValue() {
@@ -1539,9 +1864,13 @@
   make() { new tom.library.adt.bytecode.strategy.tvalue.Make_EmptyValue() }
 }
 
+%op Strategy When_EmptyValue(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tvalue.When_EmptyValue)}
+  make(s) { new tom.library.adt.bytecode.strategy.tvalue.When_EmptyValue(s) }
+}
+
 %op Strategy Is_Anchor() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Anchor)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Anchor() }
+  make() { `When_Anchor(Identity()) }
 }
 
 %op Strategy _Anchor(arg0:Strategy) {
@@ -1558,9 +1887,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Anchor( new_label) }
 }
 
+%op Strategy When_Anchor(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Anchor)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Anchor(s) }
+}
+
 %op Strategy Is_Nop() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Nop)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Nop() }
+  make() { `When_Nop(Identity()) }
 }
 
 %op Strategy _Nop() {
@@ -1575,9 +1908,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Nop() }
 }
 
+%op Strategy When_Nop(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Nop)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Nop(s) }
+}
+
 %op Strategy Is_Aconst_null() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Aconst_null)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Aconst_null() }
+  make() { `When_Aconst_null(Identity()) }
 }
 
 %op Strategy _Aconst_null() {
@@ -1592,9 +1929,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Aconst_null() }
 }
 
+%op Strategy When_Aconst_null(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Aconst_null)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Aconst_null(s) }
+}
+
 %op Strategy Is_Iconst_m1() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_m1)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_m1() }
+  make() { `When_Iconst_m1(Identity()) }
 }
 
 %op Strategy _Iconst_m1() {
@@ -1609,9 +1950,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iconst_m1() }
 }
 
+%op Strategy When_Iconst_m1(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_m1)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_m1(s) }
+}
+
 %op Strategy Is_Iconst_0() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_0)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_0() }
+  make() { `When_Iconst_0(Identity()) }
 }
 
 %op Strategy _Iconst_0() {
@@ -1626,9 +1971,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iconst_0() }
 }
 
+%op Strategy When_Iconst_0(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_0)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_0(s) }
+}
+
 %op Strategy Is_Iconst_1() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_1)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_1() }
+  make() { `When_Iconst_1(Identity()) }
 }
 
 %op Strategy _Iconst_1() {
@@ -1643,9 +1992,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iconst_1() }
 }
 
+%op Strategy When_Iconst_1(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_1)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_1(s) }
+}
+
 %op Strategy Is_Iconst_2() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_2)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_2() }
+  make() { `When_Iconst_2(Identity()) }
 }
 
 %op Strategy _Iconst_2() {
@@ -1660,9 +2013,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iconst_2() }
 }
 
+%op Strategy When_Iconst_2(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_2)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_2(s) }
+}
+
 %op Strategy Is_Iconst_3() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_3)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_3() }
+  make() { `When_Iconst_3(Identity()) }
 }
 
 %op Strategy _Iconst_3() {
@@ -1677,9 +2034,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iconst_3() }
 }
 
+%op Strategy When_Iconst_3(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_3)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_3(s) }
+}
+
 %op Strategy Is_Iconst_4() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_4)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_4() }
+  make() { `When_Iconst_4(Identity()) }
 }
 
 %op Strategy _Iconst_4() {
@@ -1694,9 +2055,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iconst_4() }
 }
 
+%op Strategy When_Iconst_4(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_4)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_4(s) }
+}
+
 %op Strategy Is_Iconst_5() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_5)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iconst_5() }
+  make() { `When_Iconst_5(Identity()) }
 }
 
 %op Strategy _Iconst_5() {
@@ -1711,9 +2076,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iconst_5() }
 }
 
+%op Strategy When_Iconst_5(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_5)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iconst_5(s) }
+}
+
 %op Strategy Is_Lconst_0() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lconst_0)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lconst_0() }
+  make() { `When_Lconst_0(Identity()) }
 }
 
 %op Strategy _Lconst_0() {
@@ -1728,9 +2097,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lconst_0() }
 }
 
+%op Strategy When_Lconst_0(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lconst_0)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lconst_0(s) }
+}
+
 %op Strategy Is_Lconst_1() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lconst_1)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lconst_1() }
+  make() { `When_Lconst_1(Identity()) }
 }
 
 %op Strategy _Lconst_1() {
@@ -1745,9 +2118,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lconst_1() }
 }
 
+%op Strategy When_Lconst_1(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lconst_1)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lconst_1(s) }
+}
+
 %op Strategy Is_Fconst_0() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fconst_0)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fconst_0() }
+  make() { `When_Fconst_0(Identity()) }
 }
 
 %op Strategy _Fconst_0() {
@@ -1762,9 +2139,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fconst_0() }
 }
 
+%op Strategy When_Fconst_0(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fconst_0)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fconst_0(s) }
+}
+
 %op Strategy Is_Fconst_1() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fconst_1)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fconst_1() }
+  make() { `When_Fconst_1(Identity()) }
 }
 
 %op Strategy _Fconst_1() {
@@ -1779,9 +2160,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fconst_1() }
 }
 
+%op Strategy When_Fconst_1(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fconst_1)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fconst_1(s) }
+}
+
 %op Strategy Is_Fconst_2() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fconst_2)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fconst_2() }
+  make() { `When_Fconst_2(Identity()) }
 }
 
 %op Strategy _Fconst_2() {
@@ -1796,9 +2181,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fconst_2() }
 }
 
+%op Strategy When_Fconst_2(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fconst_2)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fconst_2(s) }
+}
+
 %op Strategy Is_Dconst_0() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dconst_0)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dconst_0() }
+  make() { `When_Dconst_0(Identity()) }
 }
 
 %op Strategy _Dconst_0() {
@@ -1813,9 +2202,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dconst_0() }
 }
 
+%op Strategy When_Dconst_0(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dconst_0)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dconst_0(s) }
+}
+
 %op Strategy Is_Dconst_1() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dconst_1)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dconst_1() }
+  make() { `When_Dconst_1(Identity()) }
 }
 
 %op Strategy _Dconst_1() {
@@ -1830,9 +2223,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dconst_1() }
 }
 
+%op Strategy When_Dconst_1(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dconst_1)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dconst_1(s) }
+}
+
 %op Strategy Is_Bipush() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Bipush)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Bipush() }
+  make() { `When_Bipush(Identity()) }
 }
 
 %op Strategy _Bipush(arg0:Strategy) {
@@ -1849,9 +2246,13 @@
   make( _operand) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Bipush( _operand) }
 }
 
+%op Strategy When_Bipush(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Bipush)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Bipush(s) }
+}
+
 %op Strategy Is_Sipush() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Sipush)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Sipush() }
+  make() { `When_Sipush(Identity()) }
 }
 
 %op Strategy _Sipush(arg0:Strategy) {
@@ -1868,9 +2269,13 @@
   make( _operand) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Sipush( _operand) }
 }
 
+%op Strategy When_Sipush(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Sipush)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Sipush(s) }
+}
+
 %op Strategy Is_Ldc() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ldc)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ldc() }
+  make() { `When_Ldc(Identity()) }
 }
 
 %op Strategy _Ldc(arg0:Strategy) {
@@ -1887,9 +2292,13 @@
   make( new_cst) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ldc( new_cst) }
 }
 
+%op Strategy When_Ldc(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ldc)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ldc(s) }
+}
+
 %op Strategy Is_Iload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iload() }
+  make() { `When_Iload(Identity()) }
 }
 
 %op Strategy _Iload(arg0:Strategy) {
@@ -1906,9 +2315,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iload( _var) }
 }
 
+%op Strategy When_Iload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iload(s) }
+}
+
 %op Strategy Is_Lload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lload() }
+  make() { `When_Lload(Identity()) }
 }
 
 %op Strategy _Lload(arg0:Strategy) {
@@ -1925,9 +2338,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lload( _var) }
 }
 
+%op Strategy When_Lload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lload(s) }
+}
+
 %op Strategy Is_Fload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fload() }
+  make() { `When_Fload(Identity()) }
 }
 
 %op Strategy _Fload(arg0:Strategy) {
@@ -1944,9 +2361,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fload( _var) }
 }
 
+%op Strategy When_Fload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fload(s) }
+}
+
 %op Strategy Is_Dload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dload() }
+  make() { `When_Dload(Identity()) }
 }
 
 %op Strategy _Dload(arg0:Strategy) {
@@ -1963,9 +2384,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dload( _var) }
 }
 
+%op Strategy When_Dload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dload(s) }
+}
+
 %op Strategy Is_Aload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Aload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Aload() }
+  make() { `When_Aload(Identity()) }
 }
 
 %op Strategy _Aload(arg0:Strategy) {
@@ -1982,9 +2407,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Aload( _var) }
 }
 
+%op Strategy When_Aload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Aload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Aload(s) }
+}
+
 %op Strategy Is_Iaload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iaload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iaload() }
+  make() { `When_Iaload(Identity()) }
 }
 
 %op Strategy _Iaload() {
@@ -1999,9 +2428,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iaload() }
 }
 
+%op Strategy When_Iaload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iaload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iaload(s) }
+}
+
 %op Strategy Is_Laload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Laload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Laload() }
+  make() { `When_Laload(Identity()) }
 }
 
 %op Strategy _Laload() {
@@ -2016,9 +2449,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Laload() }
 }
 
+%op Strategy When_Laload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Laload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Laload(s) }
+}
+
 %op Strategy Is_Faload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Faload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Faload() }
+  make() { `When_Faload(Identity()) }
 }
 
 %op Strategy _Faload() {
@@ -2033,9 +2470,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Faload() }
 }
 
+%op Strategy When_Faload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Faload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Faload(s) }
+}
+
 %op Strategy Is_Daload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Daload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Daload() }
+  make() { `When_Daload(Identity()) }
 }
 
 %op Strategy _Daload() {
@@ -2050,9 +2491,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Daload() }
 }
 
+%op Strategy When_Daload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Daload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Daload(s) }
+}
+
 %op Strategy Is_Aaload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Aaload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Aaload() }
+  make() { `When_Aaload(Identity()) }
 }
 
 %op Strategy _Aaload() {
@@ -2067,9 +2512,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Aaload() }
 }
 
+%op Strategy When_Aaload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Aaload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Aaload(s) }
+}
+
 %op Strategy Is_Baload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Baload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Baload() }
+  make() { `When_Baload(Identity()) }
 }
 
 %op Strategy _Baload() {
@@ -2084,9 +2533,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Baload() }
 }
 
+%op Strategy When_Baload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Baload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Baload(s) }
+}
+
 %op Strategy Is_Caload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Caload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Caload() }
+  make() { `When_Caload(Identity()) }
 }
 
 %op Strategy _Caload() {
@@ -2101,9 +2554,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Caload() }
 }
 
+%op Strategy When_Caload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Caload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Caload(s) }
+}
+
 %op Strategy Is_Saload() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Saload)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Saload() }
+  make() { `When_Saload(Identity()) }
 }
 
 %op Strategy _Saload() {
@@ -2118,9 +2575,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Saload() }
 }
 
+%op Strategy When_Saload(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Saload)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Saload(s) }
+}
+
 %op Strategy Is_Istore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Istore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Istore() }
+  make() { `When_Istore(Identity()) }
 }
 
 %op Strategy _Istore(arg0:Strategy) {
@@ -2137,9 +2598,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Istore( _var) }
 }
 
+%op Strategy When_Istore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Istore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Istore(s) }
+}
+
 %op Strategy Is_Lstore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lstore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lstore() }
+  make() { `When_Lstore(Identity()) }
 }
 
 %op Strategy _Lstore(arg0:Strategy) {
@@ -2156,9 +2621,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lstore( _var) }
 }
 
+%op Strategy When_Lstore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lstore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lstore(s) }
+}
+
 %op Strategy Is_Fstore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fstore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fstore() }
+  make() { `When_Fstore(Identity()) }
 }
 
 %op Strategy _Fstore(arg0:Strategy) {
@@ -2175,9 +2644,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fstore( _var) }
 }
 
+%op Strategy When_Fstore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fstore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fstore(s) }
+}
+
 %op Strategy Is_Dstore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dstore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dstore() }
+  make() { `When_Dstore(Identity()) }
 }
 
 %op Strategy _Dstore(arg0:Strategy) {
@@ -2194,9 +2667,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dstore( _var) }
 }
 
+%op Strategy When_Dstore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dstore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dstore(s) }
+}
+
 %op Strategy Is_Astore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Astore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Astore() }
+  make() { `When_Astore(Identity()) }
 }
 
 %op Strategy _Astore(arg0:Strategy) {
@@ -2213,9 +2690,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Astore( _var) }
 }
 
+%op Strategy When_Astore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Astore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Astore(s) }
+}
+
 %op Strategy Is_Iastore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iastore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iastore() }
+  make() { `When_Iastore(Identity()) }
 }
 
 %op Strategy _Iastore() {
@@ -2230,9 +2711,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iastore() }
 }
 
+%op Strategy When_Iastore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iastore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iastore(s) }
+}
+
 %op Strategy Is_Lastore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lastore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lastore() }
+  make() { `When_Lastore(Identity()) }
 }
 
 %op Strategy _Lastore() {
@@ -2247,9 +2732,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lastore() }
 }
 
+%op Strategy When_Lastore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lastore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lastore(s) }
+}
+
 %op Strategy Is_Fastore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fastore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fastore() }
+  make() { `When_Fastore(Identity()) }
 }
 
 %op Strategy _Fastore() {
@@ -2264,9 +2753,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fastore() }
 }
 
+%op Strategy When_Fastore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fastore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fastore(s) }
+}
+
 %op Strategy Is_Dastore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dastore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dastore() }
+  make() { `When_Dastore(Identity()) }
 }
 
 %op Strategy _Dastore() {
@@ -2281,9 +2774,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dastore() }
 }
 
+%op Strategy When_Dastore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dastore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dastore(s) }
+}
+
 %op Strategy Is_Aastore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Aastore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Aastore() }
+  make() { `When_Aastore(Identity()) }
 }
 
 %op Strategy _Aastore() {
@@ -2298,9 +2795,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Aastore() }
 }
 
+%op Strategy When_Aastore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Aastore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Aastore(s) }
+}
+
 %op Strategy Is_Bastore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Bastore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Bastore() }
+  make() { `When_Bastore(Identity()) }
 }
 
 %op Strategy _Bastore() {
@@ -2315,9 +2816,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Bastore() }
 }
 
+%op Strategy When_Bastore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Bastore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Bastore(s) }
+}
+
 %op Strategy Is_Castore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Castore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Castore() }
+  make() { `When_Castore(Identity()) }
 }
 
 %op Strategy _Castore() {
@@ -2332,9 +2837,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Castore() }
 }
 
+%op Strategy When_Castore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Castore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Castore(s) }
+}
+
 %op Strategy Is_Sastore() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Sastore)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Sastore() }
+  make() { `When_Sastore(Identity()) }
 }
 
 %op Strategy _Sastore() {
@@ -2349,9 +2858,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Sastore() }
 }
 
+%op Strategy When_Sastore(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Sastore)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Sastore(s) }
+}
+
 %op Strategy Is_Pop() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Pop)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Pop() }
+  make() { `When_Pop(Identity()) }
 }
 
 %op Strategy _Pop() {
@@ -2366,9 +2879,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Pop() }
 }
 
+%op Strategy When_Pop(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Pop)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Pop(s) }
+}
+
 %op Strategy Is_Pop2() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Pop2)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Pop2() }
+  make() { `When_Pop2(Identity()) }
 }
 
 %op Strategy _Pop2() {
@@ -2383,9 +2900,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Pop2() }
 }
 
+%op Strategy When_Pop2(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Pop2)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Pop2(s) }
+}
+
 %op Strategy Is_Dup() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dup)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dup() }
+  make() { `When_Dup(Identity()) }
 }
 
 %op Strategy _Dup() {
@@ -2400,9 +2921,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dup() }
 }
 
+%op Strategy When_Dup(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dup)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dup(s) }
+}
+
 %op Strategy Is_Dup_x1() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dup_x1)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dup_x1() }
+  make() { `When_Dup_x1(Identity()) }
 }
 
 %op Strategy _Dup_x1() {
@@ -2417,9 +2942,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dup_x1() }
 }
 
+%op Strategy When_Dup_x1(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dup_x1)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dup_x1(s) }
+}
+
 %op Strategy Is_Dup_x2() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dup_x2)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dup_x2() }
+  make() { `When_Dup_x2(Identity()) }
 }
 
 %op Strategy _Dup_x2() {
@@ -2434,9 +2963,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dup_x2() }
 }
 
+%op Strategy When_Dup_x2(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dup_x2)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dup_x2(s) }
+}
+
 %op Strategy Is_Dup2() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dup2)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dup2() }
+  make() { `When_Dup2(Identity()) }
 }
 
 %op Strategy _Dup2() {
@@ -2451,9 +2984,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dup2() }
 }
 
+%op Strategy When_Dup2(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dup2)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dup2(s) }
+}
+
 %op Strategy Is_Dup2_x1() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dup2_x1)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dup2_x1() }
+  make() { `When_Dup2_x1(Identity()) }
 }
 
 %op Strategy _Dup2_x1() {
@@ -2468,9 +3005,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dup2_x1() }
 }
 
+%op Strategy When_Dup2_x1(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dup2_x1)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dup2_x1(s) }
+}
+
 %op Strategy Is_Dup2_x2() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dup2_x2)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dup2_x2() }
+  make() { `When_Dup2_x2(Identity()) }
 }
 
 %op Strategy _Dup2_x2() {
@@ -2485,9 +3026,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dup2_x2() }
 }
 
+%op Strategy When_Dup2_x2(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dup2_x2)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dup2_x2(s) }
+}
+
 %op Strategy Is_Swap() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Swap)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Swap() }
+  make() { `When_Swap(Identity()) }
 }
 
 %op Strategy _Swap() {
@@ -2502,9 +3047,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Swap() }
 }
 
+%op Strategy When_Swap(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Swap)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Swap(s) }
+}
+
 %op Strategy Is_Iadd() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iadd)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iadd() }
+  make() { `When_Iadd(Identity()) }
 }
 
 %op Strategy _Iadd() {
@@ -2519,9 +3068,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iadd() }
 }
 
+%op Strategy When_Iadd(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iadd)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iadd(s) }
+}
+
 %op Strategy Is_Ladd() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ladd)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ladd() }
+  make() { `When_Ladd(Identity()) }
 }
 
 %op Strategy _Ladd() {
@@ -2536,9 +3089,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ladd() }
 }
 
+%op Strategy When_Ladd(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ladd)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ladd(s) }
+}
+
 %op Strategy Is_Fadd() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fadd)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fadd() }
+  make() { `When_Fadd(Identity()) }
 }
 
 %op Strategy _Fadd() {
@@ -2553,9 +3110,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fadd() }
 }
 
+%op Strategy When_Fadd(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fadd)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fadd(s) }
+}
+
 %op Strategy Is_Dadd() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dadd)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dadd() }
+  make() { `When_Dadd(Identity()) }
 }
 
 %op Strategy _Dadd() {
@@ -2570,9 +3131,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dadd() }
 }
 
+%op Strategy When_Dadd(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dadd)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dadd(s) }
+}
+
 %op Strategy Is_Isub() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Isub)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Isub() }
+  make() { `When_Isub(Identity()) }
 }
 
 %op Strategy _Isub() {
@@ -2587,9 +3152,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Isub() }
 }
 
+%op Strategy When_Isub(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Isub)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Isub(s) }
+}
+
 %op Strategy Is_Lsub() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lsub)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lsub() }
+  make() { `When_Lsub(Identity()) }
 }
 
 %op Strategy _Lsub() {
@@ -2604,9 +3173,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lsub() }
 }
 
+%op Strategy When_Lsub(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lsub)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lsub(s) }
+}
+
 %op Strategy Is_Fsub() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fsub)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fsub() }
+  make() { `When_Fsub(Identity()) }
 }
 
 %op Strategy _Fsub() {
@@ -2621,9 +3194,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fsub() }
 }
 
+%op Strategy When_Fsub(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fsub)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fsub(s) }
+}
+
 %op Strategy Is_Dsub() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dsub)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dsub() }
+  make() { `When_Dsub(Identity()) }
 }
 
 %op Strategy _Dsub() {
@@ -2638,9 +3215,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dsub() }
 }
 
+%op Strategy When_Dsub(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dsub)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dsub(s) }
+}
+
 %op Strategy Is_Imul() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Imul)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Imul() }
+  make() { `When_Imul(Identity()) }
 }
 
 %op Strategy _Imul() {
@@ -2655,9 +3236,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Imul() }
 }
 
+%op Strategy When_Imul(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Imul)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Imul(s) }
+}
+
 %op Strategy Is_Lmul() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lmul)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lmul() }
+  make() { `When_Lmul(Identity()) }
 }
 
 %op Strategy _Lmul() {
@@ -2672,9 +3257,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lmul() }
 }
 
+%op Strategy When_Lmul(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lmul)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lmul(s) }
+}
+
 %op Strategy Is_Fmul() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fmul)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fmul() }
+  make() { `When_Fmul(Identity()) }
 }
 
 %op Strategy _Fmul() {
@@ -2689,9 +3278,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fmul() }
 }
 
+%op Strategy When_Fmul(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fmul)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fmul(s) }
+}
+
 %op Strategy Is_Dmul() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dmul)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dmul() }
+  make() { `When_Dmul(Identity()) }
 }
 
 %op Strategy _Dmul() {
@@ -2706,9 +3299,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dmul() }
 }
 
+%op Strategy When_Dmul(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dmul)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dmul(s) }
+}
+
 %op Strategy Is_Idiv() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Idiv)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Idiv() }
+  make() { `When_Idiv(Identity()) }
 }
 
 %op Strategy _Idiv() {
@@ -2723,9 +3320,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Idiv() }
 }
 
+%op Strategy When_Idiv(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Idiv)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Idiv(s) }
+}
+
 %op Strategy Is_Ldiv() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ldiv)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ldiv() }
+  make() { `When_Ldiv(Identity()) }
 }
 
 %op Strategy _Ldiv() {
@@ -2740,9 +3341,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ldiv() }
 }
 
+%op Strategy When_Ldiv(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ldiv)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ldiv(s) }
+}
+
 %op Strategy Is_Fdiv() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fdiv)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fdiv() }
+  make() { `When_Fdiv(Identity()) }
 }
 
 %op Strategy _Fdiv() {
@@ -2757,9 +3362,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fdiv() }
 }
 
+%op Strategy When_Fdiv(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fdiv)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fdiv(s) }
+}
+
 %op Strategy Is_Ddiv() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ddiv)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ddiv() }
+  make() { `When_Ddiv(Identity()) }
 }
 
 %op Strategy _Ddiv() {
@@ -2774,9 +3383,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ddiv() }
 }
 
+%op Strategy When_Ddiv(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ddiv)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ddiv(s) }
+}
+
 %op Strategy Is_Irem() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Irem)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Irem() }
+  make() { `When_Irem(Identity()) }
 }
 
 %op Strategy _Irem() {
@@ -2791,9 +3404,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Irem() }
 }
 
+%op Strategy When_Irem(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Irem)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Irem(s) }
+}
+
 %op Strategy Is_Lrem() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lrem)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lrem() }
+  make() { `When_Lrem(Identity()) }
 }
 
 %op Strategy _Lrem() {
@@ -2808,9 +3425,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lrem() }
 }
 
+%op Strategy When_Lrem(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lrem)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lrem(s) }
+}
+
 %op Strategy Is_Frem() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Frem)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Frem() }
+  make() { `When_Frem(Identity()) }
 }
 
 %op Strategy _Frem() {
@@ -2825,9 +3446,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Frem() }
 }
 
+%op Strategy When_Frem(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Frem)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Frem(s) }
+}
+
 %op Strategy Is_Drem() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Drem)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Drem() }
+  make() { `When_Drem(Identity()) }
 }
 
 %op Strategy _Drem() {
@@ -2842,9 +3467,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Drem() }
 }
 
+%op Strategy When_Drem(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Drem)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Drem(s) }
+}
+
 %op Strategy Is_Ineg() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ineg)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ineg() }
+  make() { `When_Ineg(Identity()) }
 }
 
 %op Strategy _Ineg() {
@@ -2859,9 +3488,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ineg() }
 }
 
+%op Strategy When_Ineg(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ineg)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ineg(s) }
+}
+
 %op Strategy Is_Lneg() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lneg)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lneg() }
+  make() { `When_Lneg(Identity()) }
 }
 
 %op Strategy _Lneg() {
@@ -2876,9 +3509,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lneg() }
 }
 
+%op Strategy When_Lneg(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lneg)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lneg(s) }
+}
+
 %op Strategy Is_Fneg() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fneg)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fneg() }
+  make() { `When_Fneg(Identity()) }
 }
 
 %op Strategy _Fneg() {
@@ -2893,9 +3530,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fneg() }
 }
 
+%op Strategy When_Fneg(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fneg)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fneg(s) }
+}
+
 %op Strategy Is_Dneg() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dneg)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dneg() }
+  make() { `When_Dneg(Identity()) }
 }
 
 %op Strategy _Dneg() {
@@ -2910,9 +3551,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dneg() }
 }
 
+%op Strategy When_Dneg(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dneg)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dneg(s) }
+}
+
 %op Strategy Is_Ishl() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ishl)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ishl() }
+  make() { `When_Ishl(Identity()) }
 }
 
 %op Strategy _Ishl() {
@@ -2927,9 +3572,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ishl() }
 }
 
+%op Strategy When_Ishl(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ishl)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ishl(s) }
+}
+
 %op Strategy Is_Lshl() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lshl)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lshl() }
+  make() { `When_Lshl(Identity()) }
 }
 
 %op Strategy _Lshl() {
@@ -2944,9 +3593,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lshl() }
 }
 
+%op Strategy When_Lshl(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lshl)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lshl(s) }
+}
+
 %op Strategy Is_Ishr() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ishr)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ishr() }
+  make() { `When_Ishr(Identity()) }
 }
 
 %op Strategy _Ishr() {
@@ -2961,9 +3614,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ishr() }
 }
 
+%op Strategy When_Ishr(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ishr)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ishr(s) }
+}
+
 %op Strategy Is_Lshr() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lshr)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lshr() }
+  make() { `When_Lshr(Identity()) }
 }
 
 %op Strategy _Lshr() {
@@ -2978,9 +3635,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lshr() }
 }
 
+%op Strategy When_Lshr(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lshr)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lshr(s) }
+}
+
 %op Strategy Is_Iushr() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iushr)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iushr() }
+  make() { `When_Iushr(Identity()) }
 }
 
 %op Strategy _Iushr() {
@@ -2995,9 +3656,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iushr() }
 }
 
+%op Strategy When_Iushr(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iushr)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iushr(s) }
+}
+
 %op Strategy Is_Lushr() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lushr)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lushr() }
+  make() { `When_Lushr(Identity()) }
 }
 
 %op Strategy _Lushr() {
@@ -3012,9 +3677,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lushr() }
 }
 
+%op Strategy When_Lushr(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lushr)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lushr(s) }
+}
+
 %op Strategy Is_Iand() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iand)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iand() }
+  make() { `When_Iand(Identity()) }
 }
 
 %op Strategy _Iand() {
@@ -3029,9 +3698,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iand() }
 }
 
+%op Strategy When_Iand(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iand)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iand(s) }
+}
+
 %op Strategy Is_Land() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Land)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Land() }
+  make() { `When_Land(Identity()) }
 }
 
 %op Strategy _Land() {
@@ -3046,9 +3719,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Land() }
 }
 
+%op Strategy When_Land(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Land)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Land(s) }
+}
+
 %op Strategy Is_Ior() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ior)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ior() }
+  make() { `When_Ior(Identity()) }
 }
 
 %op Strategy _Ior() {
@@ -3063,9 +3740,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ior() }
 }
 
+%op Strategy When_Ior(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ior)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ior(s) }
+}
+
 %op Strategy Is_Lor() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lor)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lor() }
+  make() { `When_Lor(Identity()) }
 }
 
 %op Strategy _Lor() {
@@ -3080,9 +3761,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lor() }
 }
 
+%op Strategy When_Lor(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lor)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lor(s) }
+}
+
 %op Strategy Is_Ixor() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ixor)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ixor() }
+  make() { `When_Ixor(Identity()) }
 }
 
 %op Strategy _Ixor() {
@@ -3097,9 +3782,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ixor() }
 }
 
+%op Strategy When_Ixor(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ixor)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ixor(s) }
+}
+
 %op Strategy Is_Lxor() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lxor)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lxor() }
+  make() { `When_Lxor(Identity()) }
 }
 
 %op Strategy _Lxor() {
@@ -3114,9 +3803,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lxor() }
 }
 
+%op Strategy When_Lxor(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lxor)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lxor(s) }
+}
+
 %op Strategy Is_Iinc() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iinc)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iinc() }
+  make() { `When_Iinc(Identity()) }
 }
 
 %op Strategy _Iinc(arg0:Strategy, arg1:Strategy) {
@@ -3135,9 +3828,13 @@
   make( _incr,  _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iinc( _incr,  _var) }
 }
 
+%op Strategy When_Iinc(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iinc)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iinc(s) }
+}
+
 %op Strategy Is_I2l() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_I2l)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_I2l() }
+  make() { `When_I2l(Identity()) }
 }
 
 %op Strategy _I2l() {
@@ -3152,9 +3849,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_I2l() }
 }
 
+%op Strategy When_I2l(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_I2l)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_I2l(s) }
+}
+
 %op Strategy Is_I2f() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_I2f)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_I2f() }
+  make() { `When_I2f(Identity()) }
 }
 
 %op Strategy _I2f() {
@@ -3169,9 +3870,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_I2f() }
 }
 
+%op Strategy When_I2f(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_I2f)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_I2f(s) }
+}
+
 %op Strategy Is_I2d() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_I2d)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_I2d() }
+  make() { `When_I2d(Identity()) }
 }
 
 %op Strategy _I2d() {
@@ -3186,9 +3891,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_I2d() }
 }
 
+%op Strategy When_I2d(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_I2d)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_I2d(s) }
+}
+
 %op Strategy Is_L2i() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_L2i)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_L2i() }
+  make() { `When_L2i(Identity()) }
 }
 
 %op Strategy _L2i() {
@@ -3203,9 +3912,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_L2i() }
 }
 
+%op Strategy When_L2i(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_L2i)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_L2i(s) }
+}
+
 %op Strategy Is_L2f() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_L2f)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_L2f() }
+  make() { `When_L2f(Identity()) }
 }
 
 %op Strategy _L2f() {
@@ -3220,9 +3933,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_L2f() }
 }
 
+%op Strategy When_L2f(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_L2f)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_L2f(s) }
+}
+
 %op Strategy Is_L2d() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_L2d)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_L2d() }
+  make() { `When_L2d(Identity()) }
 }
 
 %op Strategy _L2d() {
@@ -3237,9 +3954,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_L2d() }
 }
 
+%op Strategy When_L2d(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_L2d)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_L2d(s) }
+}
+
 %op Strategy Is_F2i() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_F2i)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_F2i() }
+  make() { `When_F2i(Identity()) }
 }
 
 %op Strategy _F2i() {
@@ -3254,9 +3975,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_F2i() }
 }
 
+%op Strategy When_F2i(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_F2i)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_F2i(s) }
+}
+
 %op Strategy Is_F2l() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_F2l)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_F2l() }
+  make() { `When_F2l(Identity()) }
 }
 
 %op Strategy _F2l() {
@@ -3271,9 +3996,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_F2l() }
 }
 
+%op Strategy When_F2l(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_F2l)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_F2l(s) }
+}
+
 %op Strategy Is_F2d() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_F2d)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_F2d() }
+  make() { `When_F2d(Identity()) }
 }
 
 %op Strategy _F2d() {
@@ -3288,9 +4017,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_F2d() }
 }
 
+%op Strategy When_F2d(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_F2d)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_F2d(s) }
+}
+
 %op Strategy Is_D2i() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_D2i)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_D2i() }
+  make() { `When_D2i(Identity()) }
 }
 
 %op Strategy _D2i() {
@@ -3305,9 +4038,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_D2i() }
 }
 
+%op Strategy When_D2i(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_D2i)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_D2i(s) }
+}
+
 %op Strategy Is_D2l() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_D2l)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_D2l() }
+  make() { `When_D2l(Identity()) }
 }
 
 %op Strategy _D2l() {
@@ -3322,9 +4059,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_D2l() }
 }
 
+%op Strategy When_D2l(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_D2l)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_D2l(s) }
+}
+
 %op Strategy Is_D2f() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_D2f)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_D2f() }
+  make() { `When_D2f(Identity()) }
 }
 
 %op Strategy _D2f() {
@@ -3339,9 +4080,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_D2f() }
 }
 
+%op Strategy When_D2f(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_D2f)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_D2f(s) }
+}
+
 %op Strategy Is_I2b() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_I2b)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_I2b() }
+  make() { `When_I2b(Identity()) }
 }
 
 %op Strategy _I2b() {
@@ -3356,9 +4101,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_I2b() }
 }
 
+%op Strategy When_I2b(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_I2b)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_I2b(s) }
+}
+
 %op Strategy Is_I2c() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_I2c)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_I2c() }
+  make() { `When_I2c(Identity()) }
 }
 
 %op Strategy _I2c() {
@@ -3373,9 +4122,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_I2c() }
 }
 
+%op Strategy When_I2c(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_I2c)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_I2c(s) }
+}
+
 %op Strategy Is_I2s() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_I2s)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_I2s() }
+  make() { `When_I2s(Identity()) }
 }
 
 %op Strategy _I2s() {
@@ -3390,9 +4143,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_I2s() }
 }
 
+%op Strategy When_I2s(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_I2s)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_I2s(s) }
+}
+
 %op Strategy Is_Lcmp() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lcmp)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lcmp() }
+  make() { `When_Lcmp(Identity()) }
 }
 
 %op Strategy _Lcmp() {
@@ -3407,9 +4164,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lcmp() }
 }
 
+%op Strategy When_Lcmp(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lcmp)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lcmp(s) }
+}
+
 %op Strategy Is_Fcmpl() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fcmpl)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fcmpl() }
+  make() { `When_Fcmpl(Identity()) }
 }
 
 %op Strategy _Fcmpl() {
@@ -3424,9 +4185,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fcmpl() }
 }
 
+%op Strategy When_Fcmpl(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fcmpl)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fcmpl(s) }
+}
+
 %op Strategy Is_Fcmpg() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Fcmpg)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Fcmpg() }
+  make() { `When_Fcmpg(Identity()) }
 }
 
 %op Strategy _Fcmpg() {
@@ -3441,9 +4206,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Fcmpg() }
 }
 
+%op Strategy When_Fcmpg(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Fcmpg)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Fcmpg(s) }
+}
+
 %op Strategy Is_Dcmpl() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dcmpl)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dcmpl() }
+  make() { `When_Dcmpl(Identity()) }
 }
 
 %op Strategy _Dcmpl() {
@@ -3458,9 +4227,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dcmpl() }
 }
 
+%op Strategy When_Dcmpl(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dcmpl)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dcmpl(s) }
+}
+
 %op Strategy Is_Dcmpg() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dcmpg)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dcmpg() }
+  make() { `When_Dcmpg(Identity()) }
 }
 
 %op Strategy _Dcmpg() {
@@ -3475,9 +4248,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dcmpg() }
 }
 
+%op Strategy When_Dcmpg(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dcmpg)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dcmpg(s) }
+}
+
 %op Strategy Is_Ifeq() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ifeq)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ifeq() }
+  make() { `When_Ifeq(Identity()) }
 }
 
 %op Strategy _Ifeq(arg0:Strategy) {
@@ -3494,9 +4271,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ifeq( new_label) }
 }
 
+%op Strategy When_Ifeq(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ifeq)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ifeq(s) }
+}
+
 %op Strategy Is_Ifne() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ifne)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ifne() }
+  make() { `When_Ifne(Identity()) }
 }
 
 %op Strategy _Ifne(arg0:Strategy) {
@@ -3513,9 +4294,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ifne( new_label) }
 }
 
+%op Strategy When_Ifne(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ifne)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ifne(s) }
+}
+
 %op Strategy Is_Iflt() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Iflt)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Iflt() }
+  make() { `When_Iflt(Identity()) }
 }
 
 %op Strategy _Iflt(arg0:Strategy) {
@@ -3532,9 +4317,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Iflt( new_label) }
 }
 
+%op Strategy When_Iflt(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Iflt)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Iflt(s) }
+}
+
 %op Strategy Is_Ifge() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ifge)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ifge() }
+  make() { `When_Ifge(Identity()) }
 }
 
 %op Strategy _Ifge(arg0:Strategy) {
@@ -3551,9 +4340,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ifge( new_label) }
 }
 
+%op Strategy When_Ifge(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ifge)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ifge(s) }
+}
+
 %op Strategy Is_Ifgt() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ifgt)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ifgt() }
+  make() { `When_Ifgt(Identity()) }
 }
 
 %op Strategy _Ifgt(arg0:Strategy) {
@@ -3570,9 +4363,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ifgt( new_label) }
 }
 
+%op Strategy When_Ifgt(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ifgt)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ifgt(s) }
+}
+
 %op Strategy Is_Ifle() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ifle)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ifle() }
+  make() { `When_Ifle(Identity()) }
 }
 
 %op Strategy _Ifle(arg0:Strategy) {
@@ -3589,9 +4386,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ifle( new_label) }
 }
 
+%op Strategy When_Ifle(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ifle)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ifle(s) }
+}
+
 %op Strategy Is_If_icmpeq() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmpeq)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmpeq() }
+  make() { `When_If_icmpeq(Identity()) }
 }
 
 %op Strategy _If_icmpeq(arg0:Strategy) {
@@ -3608,9 +4409,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_If_icmpeq( new_label) }
 }
 
+%op Strategy When_If_icmpeq(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_If_icmpeq)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_If_icmpeq(s) }
+}
+
 %op Strategy Is_If_icmpne() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmpne)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmpne() }
+  make() { `When_If_icmpne(Identity()) }
 }
 
 %op Strategy _If_icmpne(arg0:Strategy) {
@@ -3627,9 +4432,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_If_icmpne( new_label) }
 }
 
+%op Strategy When_If_icmpne(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_If_icmpne)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_If_icmpne(s) }
+}
+
 %op Strategy Is_If_icmplt() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmplt)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmplt() }
+  make() { `When_If_icmplt(Identity()) }
 }
 
 %op Strategy _If_icmplt(arg0:Strategy) {
@@ -3646,9 +4455,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_If_icmplt( new_label) }
 }
 
+%op Strategy When_If_icmplt(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_If_icmplt)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_If_icmplt(s) }
+}
+
 %op Strategy Is_If_icmpge() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmpge)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmpge() }
+  make() { `When_If_icmpge(Identity()) }
 }
 
 %op Strategy _If_icmpge(arg0:Strategy) {
@@ -3665,9 +4478,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_If_icmpge( new_label) }
 }
 
+%op Strategy When_If_icmpge(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_If_icmpge)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_If_icmpge(s) }
+}
+
 %op Strategy Is_If_icmpgt() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmpgt)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmpgt() }
+  make() { `When_If_icmpgt(Identity()) }
 }
 
 %op Strategy _If_icmpgt(arg0:Strategy) {
@@ -3684,9 +4501,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_If_icmpgt( new_label) }
 }
 
+%op Strategy When_If_icmpgt(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_If_icmpgt)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_If_icmpgt(s) }
+}
+
 %op Strategy Is_If_icmple() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmple)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_If_icmple() }
+  make() { `When_If_icmple(Identity()) }
 }
 
 %op Strategy _If_icmple(arg0:Strategy) {
@@ -3703,9 +4524,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_If_icmple( new_label) }
 }
 
+%op Strategy When_If_icmple(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_If_icmple)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_If_icmple(s) }
+}
+
 %op Strategy Is_If_acmpeq() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_If_acmpeq)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_If_acmpeq() }
+  make() { `When_If_acmpeq(Identity()) }
 }
 
 %op Strategy _If_acmpeq(arg0:Strategy) {
@@ -3722,9 +4547,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_If_acmpeq( new_label) }
 }
 
+%op Strategy When_If_acmpeq(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_If_acmpeq)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_If_acmpeq(s) }
+}
+
 %op Strategy Is_If_acmpne() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_If_acmpne)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_If_acmpne() }
+  make() { `When_If_acmpne(Identity()) }
 }
 
 %op Strategy _If_acmpne(arg0:Strategy) {
@@ -3741,9 +4570,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_If_acmpne( new_label) }
 }
 
+%op Strategy When_If_acmpne(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_If_acmpne)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_If_acmpne(s) }
+}
+
 %op Strategy Is_Goto() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Goto)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Goto() }
+  make() { `When_Goto(Identity()) }
 }
 
 %op Strategy _Goto(arg0:Strategy) {
@@ -3760,9 +4593,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Goto( new_label) }
 }
 
+%op Strategy When_Goto(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Goto)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Goto(s) }
+}
+
 %op Strategy Is_Jsr() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Jsr)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Jsr() }
+  make() { `When_Jsr(Identity()) }
 }
 
 %op Strategy _Jsr(arg0:Strategy) {
@@ -3779,9 +4616,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Jsr( new_label) }
 }
 
+%op Strategy When_Jsr(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Jsr)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Jsr(s) }
+}
+
 %op Strategy Is_Ret() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ret)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ret() }
+  make() { `When_Ret(Identity()) }
 }
 
 %op Strategy _Ret(arg0:Strategy) {
@@ -3798,9 +4639,13 @@
   make( _var) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ret( _var) }
 }
 
+%op Strategy When_Ret(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ret)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ret(s) }
+}
+
 %op Strategy Is_Tableswitch() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Tableswitch)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Tableswitch() }
+  make() { `When_Tableswitch(Identity()) }
 }
 
 %op Strategy _Tableswitch(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
@@ -3823,9 +4668,13 @@
   make( _min,  _max,  new_dflt,  new_labels) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Tableswitch( _min,  _max,  new_dflt,  new_labels) }
 }
 
+%op Strategy When_Tableswitch(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Tableswitch)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Tableswitch(s) }
+}
+
 %op Strategy Is_Lookupswitch() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lookupswitch)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lookupswitch() }
+  make() { `When_Lookupswitch(Identity()) }
 }
 
 %op Strategy _Lookupswitch(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -3846,9 +4695,13 @@
   make( new_dflt,  new_keys,  new_labels) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lookupswitch( new_dflt,  new_keys,  new_labels) }
 }
 
+%op Strategy When_Lookupswitch(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lookupswitch)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lookupswitch(s) }
+}
+
 %op Strategy Is_Ireturn() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ireturn)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ireturn() }
+  make() { `When_Ireturn(Identity()) }
 }
 
 %op Strategy _Ireturn() {
@@ -3863,9 +4716,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ireturn() }
 }
 
+%op Strategy When_Ireturn(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ireturn)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ireturn(s) }
+}
+
 %op Strategy Is_Lreturn() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Lreturn)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Lreturn() }
+  make() { `When_Lreturn(Identity()) }
 }
 
 %op Strategy _Lreturn() {
@@ -3880,9 +4737,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Lreturn() }
 }
 
+%op Strategy When_Lreturn(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Lreturn)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Lreturn(s) }
+}
+
 %op Strategy Is_Freturn() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Freturn)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Freturn() }
+  make() { `When_Freturn(Identity()) }
 }
 
 %op Strategy _Freturn() {
@@ -3897,9 +4758,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Freturn() }
 }
 
+%op Strategy When_Freturn(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Freturn)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Freturn(s) }
+}
+
 %op Strategy Is_Dreturn() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Dreturn)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Dreturn() }
+  make() { `When_Dreturn(Identity()) }
 }
 
 %op Strategy _Dreturn() {
@@ -3914,9 +4779,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Dreturn() }
 }
 
+%op Strategy When_Dreturn(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Dreturn)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Dreturn(s) }
+}
+
 %op Strategy Is_Areturn() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Areturn)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Areturn() }
+  make() { `When_Areturn(Identity()) }
 }
 
 %op Strategy _Areturn() {
@@ -3931,9 +4800,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Areturn() }
 }
 
+%op Strategy When_Areturn(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Areturn)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Areturn(s) }
+}
+
 %op Strategy Is_Return() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Return)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Return() }
+  make() { `When_Return(Identity()) }
 }
 
 %op Strategy _Return() {
@@ -3948,9 +4821,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Return() }
 }
 
+%op Strategy When_Return(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Return)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Return(s) }
+}
+
 %op Strategy Is_Getstatic() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Getstatic)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Getstatic() }
+  make() { `When_Getstatic(Identity()) }
 }
 
 %op Strategy _Getstatic(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -3971,9 +4848,13 @@
   make( _owner,  _name,  new_fieldDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Getstatic( _owner,  _name,  new_fieldDesc) }
 }
 
+%op Strategy When_Getstatic(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Getstatic)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Getstatic(s) }
+}
+
 %op Strategy Is_Putstatic() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Putstatic)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Putstatic() }
+  make() { `When_Putstatic(Identity()) }
 }
 
 %op Strategy _Putstatic(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -3994,9 +4875,13 @@
   make( _owner,  _name,  new_fieldDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Putstatic( _owner,  _name,  new_fieldDesc) }
 }
 
+%op Strategy When_Putstatic(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Putstatic)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Putstatic(s) }
+}
+
 %op Strategy Is_Getfield() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Getfield)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Getfield() }
+  make() { `When_Getfield(Identity()) }
 }
 
 %op Strategy _Getfield(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -4017,9 +4902,13 @@
   make( _owner,  _name,  new_fieldDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Getfield( _owner,  _name,  new_fieldDesc) }
 }
 
+%op Strategy When_Getfield(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Getfield)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Getfield(s) }
+}
+
 %op Strategy Is_Putfield() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Putfield)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Putfield() }
+  make() { `When_Putfield(Identity()) }
 }
 
 %op Strategy _Putfield(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -4040,9 +4929,13 @@
   make( _owner,  _name,  new_fieldDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Putfield( _owner,  _name,  new_fieldDesc) }
 }
 
+%op Strategy When_Putfield(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Putfield)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Putfield(s) }
+}
+
 %op Strategy Is_Invokevirtual() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Invokevirtual)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Invokevirtual() }
+  make() { `When_Invokevirtual(Identity()) }
 }
 
 %op Strategy _Invokevirtual(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -4063,9 +4956,13 @@
   make( _owner,  _name,  new_methodDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Invokevirtual( _owner,  _name,  new_methodDesc) }
 }
 
+%op Strategy When_Invokevirtual(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Invokevirtual)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Invokevirtual(s) }
+}
+
 %op Strategy Is_Invokespecial() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Invokespecial)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Invokespecial() }
+  make() { `When_Invokespecial(Identity()) }
 }
 
 %op Strategy _Invokespecial(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -4086,9 +4983,13 @@
   make( _owner,  _name,  new_methodDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Invokespecial( _owner,  _name,  new_methodDesc) }
 }
 
+%op Strategy When_Invokespecial(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Invokespecial)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Invokespecial(s) }
+}
+
 %op Strategy Is_Invokestatic() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Invokestatic)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Invokestatic() }
+  make() { `When_Invokestatic(Identity()) }
 }
 
 %op Strategy _Invokestatic(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -4109,9 +5010,13 @@
   make( _owner,  _name,  new_methodDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Invokestatic( _owner,  _name,  new_methodDesc) }
 }
 
+%op Strategy When_Invokestatic(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Invokestatic)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Invokestatic(s) }
+}
+
 %op Strategy Is_Invokeinterface() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Invokeinterface)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Invokeinterface() }
+  make() { `When_Invokeinterface(Identity()) }
 }
 
 %op Strategy _Invokeinterface(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -4132,9 +5037,13 @@
   make( _owner,  _name,  new_methodDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Invokeinterface( _owner,  _name,  new_methodDesc) }
 }
 
+%op Strategy When_Invokeinterface(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Invokeinterface)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Invokeinterface(s) }
+}
+
 %op Strategy Is_New() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_New)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_New() }
+  make() { `When_New(Identity()) }
 }
 
 %op Strategy _New(arg0:Strategy) {
@@ -4151,9 +5060,13 @@
   make( _typeDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_New( _typeDesc) }
 }
 
+%op Strategy When_New(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_New)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_New(s) }
+}
+
 %op Strategy Is_Newarray() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Newarray)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Newarray() }
+  make() { `When_Newarray(Identity()) }
 }
 
 %op Strategy _Newarray(arg0:Strategy) {
@@ -4170,9 +5083,13 @@
   make( _operand) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Newarray( _operand) }
 }
 
+%op Strategy When_Newarray(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Newarray)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Newarray(s) }
+}
+
 %op Strategy Is_Anewarray() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Anewarray)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Anewarray() }
+  make() { `When_Anewarray(Identity()) }
 }
 
 %op Strategy _Anewarray(arg0:Strategy) {
@@ -4189,9 +5106,13 @@
   make( _typeDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Anewarray( _typeDesc) }
 }
 
+%op Strategy When_Anewarray(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Anewarray)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Anewarray(s) }
+}
+
 %op Strategy Is_Arraylength() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Arraylength)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Arraylength() }
+  make() { `When_Arraylength(Identity()) }
 }
 
 %op Strategy _Arraylength() {
@@ -4206,9 +5127,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Arraylength() }
 }
 
+%op Strategy When_Arraylength(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Arraylength)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Arraylength(s) }
+}
+
 %op Strategy Is_Athrow() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Athrow)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Athrow() }
+  make() { `When_Athrow(Identity()) }
 }
 
 %op Strategy _Athrow() {
@@ -4223,9 +5148,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Athrow() }
 }
 
+%op Strategy When_Athrow(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Athrow)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Athrow(s) }
+}
+
 %op Strategy Is_Checkcast() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Checkcast)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Checkcast() }
+  make() { `When_Checkcast(Identity()) }
 }
 
 %op Strategy _Checkcast(arg0:Strategy) {
@@ -4242,9 +5171,13 @@
   make( _typeDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Checkcast( _typeDesc) }
 }
 
+%op Strategy When_Checkcast(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Checkcast)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Checkcast(s) }
+}
+
 %op Strategy Is_Instanceof() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Instanceof)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Instanceof() }
+  make() { `When_Instanceof(Identity()) }
 }
 
 %op Strategy _Instanceof(arg0:Strategy) {
@@ -4261,9 +5194,13 @@
   make( _typeDesc) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Instanceof( _typeDesc) }
 }
 
+%op Strategy When_Instanceof(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Instanceof)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Instanceof(s) }
+}
+
 %op Strategy Is_Monitorenter() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Monitorenter)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Monitorenter() }
+  make() { `When_Monitorenter(Identity()) }
 }
 
 %op Strategy _Monitorenter() {
@@ -4278,9 +5215,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Monitorenter() }
 }
 
+%op Strategy When_Monitorenter(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Monitorenter)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Monitorenter(s) }
+}
+
 %op Strategy Is_Monitorexit() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Monitorexit)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Monitorexit() }
+  make() { `When_Monitorexit(Identity()) }
 }
 
 %op Strategy _Monitorexit() {
@@ -4295,9 +5236,13 @@
   make() { new tom.library.adt.bytecode.strategy.tinstruction.Make_Monitorexit() }
 }
 
+%op Strategy When_Monitorexit(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Monitorexit)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Monitorexit(s) }
+}
+
 %op Strategy Is_Multianewarray() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Multianewarray)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Multianewarray() }
+  make() { `When_Multianewarray(Identity()) }
 }
 
 %op Strategy _Multianewarray(arg0:Strategy, arg1:Strategy) {
@@ -4316,9 +5261,13 @@
   make( _typeDesc,  _dims) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Multianewarray( _typeDesc,  _dims) }
 }
 
+%op Strategy When_Multianewarray(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Multianewarray)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Multianewarray(s) }
+}
+
 %op Strategy Is_Ifnull() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ifnull)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ifnull() }
+  make() { `When_Ifnull(Identity()) }
 }
 
 %op Strategy _Ifnull(arg0:Strategy) {
@@ -4335,9 +5284,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ifnull( new_label) }
 }
 
+%op Strategy When_Ifnull(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ifnull)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ifnull(s) }
+}
+
 %op Strategy Is_Ifnonnull() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.Is_Ifnonnull)}
-  make() { new tom.library.adt.bytecode.strategy.tinstruction.Is_Ifnonnull() }
+  make() { `When_Ifnonnull(Identity()) }
 }
 
 %op Strategy _Ifnonnull(arg0:Strategy) {
@@ -4354,9 +5307,13 @@
   make( new_label) { new tom.library.adt.bytecode.strategy.tinstruction.Make_Ifnonnull( new_label) }
 }
 
+%op Strategy When_Ifnonnull(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tinstruction.When_Ifnonnull)}
+  make(s) { new tom.library.adt.bytecode.strategy.tinstruction.When_Ifnonnull(s) }
+}
+
 %op Strategy Is_CatchHandler() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.thandler.Is_CatchHandler)}
-  make() { new tom.library.adt.bytecode.strategy.thandler.Is_CatchHandler() }
+  make() { `When_CatchHandler(Identity()) }
 }
 
 %op Strategy _CatchHandler(arg0:Strategy, arg1:Strategy) {
@@ -4375,9 +5332,13 @@
   make( new_handler,  _type) { new tom.library.adt.bytecode.strategy.thandler.Make_CatchHandler( new_handler,  _type) }
 }
 
+%op Strategy When_CatchHandler(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.thandler.When_CatchHandler)}
+  make(s) { new tom.library.adt.bytecode.strategy.thandler.When_CatchHandler(s) }
+}
+
 %op Strategy Is_FinallyHandler() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.thandler.Is_FinallyHandler)}
-  make() { new tom.library.adt.bytecode.strategy.thandler.Is_FinallyHandler() }
+  make() { `When_FinallyHandler(Identity()) }
 }
 
 %op Strategy _FinallyHandler(arg0:Strategy) {
@@ -4394,9 +5355,13 @@
   make( new_handler) { new tom.library.adt.bytecode.strategy.thandler.Make_FinallyHandler( new_handler) }
 }
 
+%op Strategy When_FinallyHandler(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.thandler.When_FinallyHandler)}
+  make(s) { new tom.library.adt.bytecode.strategy.thandler.When_FinallyHandler(s) }
+}
+
 %op Strategy Is_Method() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethod.Is_Method)}
-  make() { new tom.library.adt.bytecode.strategy.tmethod.Is_Method() }
+  make() { `When_Method(Identity()) }
 }
 
 %op Strategy _Method(arg0:Strategy, arg1:Strategy) {
@@ -4415,9 +5380,13 @@
   make( new_info,  new_code) { new tom.library.adt.bytecode.strategy.tmethod.Make_Method( new_info,  new_code) }
 }
 
+%op Strategy When_Method(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tmethod.When_Method)}
+  make(s) { new tom.library.adt.bytecode.strategy.tmethod.When_Method(s) }
+}
+
 %op Strategy Is_Label() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlabel.Is_Label)}
-  make() { new tom.library.adt.bytecode.strategy.tlabel.Is_Label() }
+  make() { `When_Label(Identity()) }
 }
 
 %op Strategy _Label(arg0:Strategy) {
@@ -4434,9 +5403,13 @@
   make( _id) { new tom.library.adt.bytecode.strategy.tlabel.Make_Label( _id) }
 }
 
+%op Strategy When_Label(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tlabel.When_Label)}
+  make(s) { new tom.library.adt.bytecode.strategy.tlabel.When_Label(s) }
+}
+
 %op Strategy Is_Signature() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tsignature.Is_Signature)}
-  make() { new tom.library.adt.bytecode.strategy.tsignature.Is_Signature() }
+  make() { `When_Signature(Identity()) }
 }
 
 %op Strategy _Signature(arg0:Strategy) {
@@ -4453,9 +5426,13 @@
   make( _sig) { new tom.library.adt.bytecode.strategy.tsignature.Make_Signature( _sig) }
 }
 
+%op Strategy When_Signature(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tsignature.When_Signature)}
+  make(s) { new tom.library.adt.bytecode.strategy.tsignature.When_Signature(s) }
+}
+
 %op Strategy Is_EmptySignature() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tsignature.Is_EmptySignature)}
-  make() { new tom.library.adt.bytecode.strategy.tsignature.Is_EmptySignature() }
+  make() { `When_EmptySignature(Identity()) }
 }
 
 %op Strategy _EmptySignature() {
@@ -4470,57 +5447,63 @@
   make() { new tom.library.adt.bytecode.strategy.tsignature.Make_EmptySignature() }
 }
 
-%op Strategy _InstructionList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsInstructionList(sub,MuVar("x")),_EmptyInstructionList())) }
+%op Strategy When_EmptySignature(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.library.adt.bytecode.strategy.tsignature.When_EmptySignature)}
+  make(s) { new tom.library.adt.bytecode.strategy.tsignature.When_EmptySignature(s) }
 }
 
-%op Strategy _FieldList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsFieldList(sub,MuVar("x")),_EmptyFieldList())) }
-}
-
-%op Strategy _InnerClassInfoList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsInnerClassInfoList(sub,MuVar("x")),_EmptyInnerClassInfoList())) }
-}
-
-%op Strategy _FieldDescriptorList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsFieldDescriptorList(sub,MuVar("x")),_EmptyFieldDescriptorList())) }
-}
-
-%op Strategy _LocalVariableList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsLocalVariableList(sub,MuVar("x")),_EmptyLocalVariableList())) }
-}
-
-%op Strategy _AccessList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsAccessList(sub,MuVar("x")),_EmptyAccessList())) }
-}
-
-%op Strategy _StringList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsStringList(sub,MuVar("x")),_EmptyStringList())) }
-}
-
-%op Strategy _TryCatchBlockList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsTryCatchBlockList(sub,MuVar("x")),_EmptyTryCatchBlockList())) }
-}
-
-%op Strategy _intList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsintList(sub,MuVar("x")),_EmptyintList())) }
-}
-
-%op Strategy _MethodList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsMethodList(sub,MuVar("x")),_EmptyMethodList())) }
-}
-
-%op Strategy _LabelList(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsLabelList(sub,MuVar("x")),_EmptyLabelList())) }
-}
+            %op Strategy _InstructionList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsInstructionList(sub,MuVar("x")),_EmptyInstructionList())) }
+            }
+            
+            %op Strategy _FieldList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsFieldList(sub,MuVar("x")),_EmptyFieldList())) }
+            }
+            
+            %op Strategy _InnerClassInfoList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsInnerClassInfoList(sub,MuVar("x")),_EmptyInnerClassInfoList())) }
+            }
+            
+            %op Strategy _FieldDescriptorList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsFieldDescriptorList(sub,MuVar("x")),_EmptyFieldDescriptorList())) }
+            }
+            
+            %op Strategy _LocalVariableList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsLocalVariableList(sub,MuVar("x")),_EmptyLocalVariableList())) }
+            }
+            
+            %op Strategy _AccessList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsAccessList(sub,MuVar("x")),_EmptyAccessList())) }
+            }
+            
+            %op Strategy _StringList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsStringList(sub,MuVar("x")),_EmptyStringList())) }
+            }
+            
+            %op Strategy _TryCatchBlockList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsTryCatchBlockList(sub,MuVar("x")),_EmptyTryCatchBlockList())) }
+            }
+            
+            %op Strategy _intList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsintList(sub,MuVar("x")),_EmptyintList())) }
+            }
+            
+            %op Strategy _MethodList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsMethodList(sub,MuVar("x")),_EmptyMethodList())) }
+            }
+            
+            %op Strategy _LabelList(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsLabelList(sub,MuVar("x")),_EmptyLabelList())) }
+            }
+            

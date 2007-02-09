@@ -630,7 +630,7 @@ writer.write(%[
 			}
 			SlotField head = slots.getHeadconcSlotField();
 			slots = slots.getTailconcSlotField();
-      toStringSlotField(res,head,fieldName(head.getName()),buffer);
+      toStringSlotField(res, head, fieldName(head.getName()), buffer);
 		}
     return res.toString();
   }
@@ -644,7 +644,11 @@ writer.write(%[
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Name=slotName,Domain=domain],_*) -> {
         if (GomEnvironment.getInstance().isBuiltinClass(`domain)) {
-         if (`domain.equals(`ClassName("","int"))|| `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) { 
+         if (`domain.equals(`ClassName("","int"))
+             || `domain.equals(`ClassName("","long"))
+             || `domain.equals(`ClassName("","double"))
+             || `domain.equals(`ClassName("","float"))
+             || `domain.equals(`ClassName("","char"))) { 
            res.append(%[
     if( this.@fieldName(`slotName)@ != @other@.@fieldName(`slotName)@)
       return (this.@fieldName(`slotName)@ < @other@.@fieldName(`slotName)@)?-1:1;
@@ -661,7 +665,8 @@ writer.write(%[
       return @fieldName(`slotName)@Cmp;
              
 ]%);
-         } else if (`domain.equals(`ClassName("aterm","ATerm")) ||`domain.equals(`ClassName("aterm","ATermList"))) {
+         } else if (`domain.equals(`ClassName("aterm","ATerm"))
+             ||`domain.equals(`ClassName("aterm","ATermList"))) {
            res.append(%[
     /* Inefficient total order on ATerm */
     int @fieldName(`slotName)@Cmp = ((this.@fieldName(`slotName)@).toString()).compareTo((@other@.@fieldName(`slotName)@).toString());
@@ -693,7 +698,11 @@ writer.write(%[
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {
           writer.write(fieldName(`slotName)+".hashCode()");
         } else {
-          if (`domain.equals(`ClassName("","int")) || `domain.equals(`ClassName("","long")) || `domain.equals(`ClassName("","double")) || `domain.equals(`ClassName("","float")) || `domain.equals(`ClassName("","char"))) {
+          if (`domain.equals(`ClassName("","int"))
+              || `domain.equals(`ClassName("","long"))
+              || `domain.equals(`ClassName("","double"))
+              || `domain.equals(`ClassName("","float"))
+              || `domain.equals(`ClassName("","char"))) {
             writer.write(fieldName(`slotName));
           } else if (`domain.equals(`ClassName("","boolean"))) {
             writer.write("("+fieldName(`slotName)+"?1:0)");

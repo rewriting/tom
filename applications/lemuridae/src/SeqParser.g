@@ -22,7 +22,10 @@ seq: SEQ list_pred
 list_pred: pred (LIST^ pred)* ;
 */
 
-pred: andpred (IMPL^ pred)? ;
+
+pred: equivpred (IMPL^ pred)? ;
+
+equivpred: andpred (EQUIV^ andpred)* ;
 
 andpred: orpred (AND^ orpred)* ;
 
@@ -79,6 +82,7 @@ funappl : ID LPAREN^ term_list RPAREN!;
 command: PROOF^ ID COLUMN! pred DOT!
        | RRULE^ atom ARROW! pred DOT!
        | TRULE^ term ARROW! term DOT!
+       | PRULE^ atom ARROW! pred DOT!
        | DISPLAY^ ID DOT!
        | QUIT DOT!
        | PROOFCHECK^ ID DOT!
@@ -121,6 +125,8 @@ SEQ : "|-";
 
 IMPL : "=>";
 
+EQUIV : "<=>";
+
 OR : "\\/" ;
 
 AND :  "/\\" ;
@@ -161,6 +167,7 @@ LT: '<';
 PROOF: "proof";
 RRULE: "rule";
 TRULE: "termrule";
+PRULE: "proprule";
 FOCUS: "focus";
 ASKRULES: "showrules";
 CUT: "cut";

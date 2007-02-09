@@ -1,24 +1,24 @@
 /*
- *   
+ *
  * TOM - To One Matching Compiler
- * 
+ *
  * Copyright (c) 2000-2006, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
@@ -48,7 +48,9 @@ import tom.engine.adt.tomtype.types.*;
 import tom.platform.OptionManager;
 
 public class SymbolTable {
+
   %include { adt/tomsignature/TomSignature.tom }
+
   private final static String TYPE_INT       = "int";
   private final static String TYPE_LONG      = "long";
   private final static String TYPE_FLOAT     = "float";
@@ -70,7 +72,6 @@ public class SymbolTable {
   public void init(OptionManager optionManager) {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
-
 
     if( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       cCode = true;
@@ -108,7 +109,7 @@ public class SymbolTable {
     while(it.hasNext()) {
       TomSymbol symbol = (TomSymbol)it.next();
       if(symbol.getTypesToType().getCodomain() == type) {
-	res = `concTomSymbol(symbol,res*);
+        res = `concTomSymbol(symbol,res*);
       }
     }
     return res;
@@ -367,10 +368,10 @@ public class SymbolTable {
     while(it.hasNext()) {
       Object key = it.next();
       if(key instanceof String) {
-	String name = (String)key;
-	TomSymbol symbol = getSymbolFromName(name);
-	TomEntry entry = `Entry(name,symbol);
-	list = `concTomEntry(entry,list*);
+        String name = (String)key;
+        TomSymbol symbol = getSymbolFromName(name);
+        TomEntry entry = `Entry(name,symbol);
+        list = `concTomEntry(entry,list*);
       }
     }
     return `Table(list);
@@ -379,25 +380,25 @@ public class SymbolTable {
   public TomSymbol updateConstrainedSymbolCodomain(TomSymbol symbol, SymbolTable symbolTable) {
     %match(TomSymbol symbol) {
       Symbol(name,TypesToType(domain,Codomain(Name(opName))),slots,options) -> {
-	//System.out.println("update codomain: " + `name);
-	//System.out.println("depend from : " + `opName);
-	TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
-	//System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
-	dependSymbol = updateConstrainedSymbolCodomain(dependSymbol,symbolTable);
-	TomType codomain = TomBase.getSymbolCodomain(dependSymbol);
-	//System.out.println("2nd depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
-	OptionList newOptions = `options;
-	%match(OptionList options) {
-	  concOption(O1*,DeclarationToOption(m@MakeDecl[AstType=Codomain[]]),O2*) -> {
-	    Declaration newMake = `m.setAstType(codomain);
-	    //System.out.println("newMake: " + newMake);
-	    newOptions = `concOption(O1*,O2*,DeclarationToOption(newMake));
-	  }
-	}
-	TomSymbol newSymbol = `Symbol(name,TypesToType(domain,codomain),slots,newOptions);
-	//System.out.println("newSymbol: " + newSymbol);
-	symbolTable.putSymbol(`name.getString(),newSymbol);
-	return newSymbol;
+        //System.out.println("update codomain: " + `name);
+        //System.out.println("depend from : " + `opName);
+        TomSymbol dependSymbol = symbolTable.getSymbolFromName(`opName);
+        //System.out.println("1st depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
+        dependSymbol = updateConstrainedSymbolCodomain(dependSymbol,symbolTable);
+        TomType codomain = TomBase.getSymbolCodomain(dependSymbol);
+        //System.out.println("2nd depend codomain: " + TomBase.getSymbolCodomain(dependSymbol));
+        OptionList newOptions = `options;
+        %match(OptionList options) {
+          concOption(O1*,DeclarationToOption(m@MakeDecl[AstType=Codomain[]]),O2*) -> {
+            Declaration newMake = `m.setAstType(codomain);
+            //System.out.println("newMake: " + newMake);
+            newOptions = `concOption(O1*,O2*,DeclarationToOption(newMake));
+          }
+        }
+        TomSymbol newSymbol = `Symbol(name,TypesToType(domain,codomain),slots,newOptions);
+        //System.out.println("newSymbol: " + newSymbol);
+        symbolTable.putSymbol(`name.getString(),newSymbol);
+        return newSymbol;
       }
     }
     return symbol;

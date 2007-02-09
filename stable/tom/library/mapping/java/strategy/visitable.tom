@@ -28,7 +28,7 @@
  */
 
 %typeterm Visitable {
-  implement { jjtraveler.Visitable}
+  implement { jjtraveler.Visitable }
   equals(t1,t2) {t1.equals(t2)}
 }
 

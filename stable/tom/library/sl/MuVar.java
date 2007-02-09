@@ -30,20 +30,15 @@
  **/
 package tom.library.sl;
 
-import jjtraveler.Visitable;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
 /**
  * <code>MuVar(v)</code> always raises a VisitFailure exception. 
  * <p>
  * Basic visitor combinator used to build recursive visitors
  * <p>
+ */
 
-*/
-
-public class MuVar extends AbstractMuStrategy {
-  private VisitableVisitor instance = null;
+public class MuVar extends AbstractStrategy {
+  private Strategy instance = null;
   protected String name;
   
   public MuVar(String name) {
@@ -74,30 +69,27 @@ public class MuVar extends AbstractMuStrategy {
     }
   }
   
-  public final Visitable visit(Visitable any) throws VisitFailure {
+  public final jjtraveler.Visitable visit(jjtraveler.Visitable any) throws jjtraveler.VisitFailure {
     if(instance != null) {
       return instance.visit(any);
     } else {
-      throw new VisitFailure();
+      throw new jjtraveler.VisitFailure();
     }
   }
-  protected void visit() throws VisitFailure {
+  public void visit() {
     if(instance != null) {
-      System.out.println("try MuVar on: " + getSubject());
-      ((AbstractMuStrategy)instance).visit();
-      System.out.println("MuVar succed: " + getSubject());
+      instance.visit();
       return;
     } else {
-      System.out.println("MuVar instance==null failed");
-      throw new VisitFailure();
+      setStatus(Environment.FAILURE);
     }
   }
 
-  public VisitableVisitor getInstance() {
+  public Strategy getInstance() {
     return instance;
   }
   
-  protected void setInstance(VisitableVisitor v) {
+  protected void setInstance(Strategy v) {
     this.instance = v;
   }
   

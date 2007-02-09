@@ -77,6 +77,16 @@
         </gom.preset>
       </sequential>
     </macrodef>
+    <!-- The gombuild macro do not pass the package argument -->
+    <macrodef name="gombuild">
+      <attribute name="example"/>
+      <sequential>
+        <gom.preset srcdir="${examples.dir}"
+                    destdir="${examples.gen}">
+          <include name="@{example}/**/*.gom"/>
+        </gom.preset>
+      </sequential>
+    </macrodef>
     <macrodef name="javacompile">
       <attribute name="example"/>
       <sequential>

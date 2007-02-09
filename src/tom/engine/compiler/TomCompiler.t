@@ -151,7 +151,7 @@ public class TomCompiler extends TomGenericPlugin {
           return `BuildConstant(name);
         } else if(tomSymbol != null) {
           if(isListOperator(tomSymbol)) {
-            return ASTFactory.buildList(`name,tomListArgs);
+            return ASTFactory.buildList(`name,tomListArgs,compiler.symbolTable());
           } else if(isArrayOperator(tomSymbol)) {
             return ASTFactory.buildArray(`name,tomListArgs);
           } else if(isDefinedSymbol(tomSymbol)) {

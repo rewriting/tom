@@ -40,7 +40,7 @@ import java.util.*;
  * Object that represents a position in a term
  */
 
-public class Position {
+public class Position implements Cloneable {
   private static final int DEFAULT_LENGTH = 8;
   protected int size;
   protected int[] data;
@@ -88,7 +88,13 @@ public class Position {
   }
 
   public Object clone() {
-    Position clone = new Position(data.length);
+    Position clone = null;
+    try {
+      clone = (Position) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException("Position cloning error");
+    }
+    clone.data = new int[data.length];
     clone.size = size;
     System.arraycopy(data, 0, clone.data, 0, size);
     return clone;
@@ -124,6 +130,34 @@ public class Position {
       return false;
     }
   }
+
+  /**
+   * Compares two positions
+   */
+  public int compare(Object o) {
+    if (o instanceof Position) {
+      Position p = (Position)o;
+      /* we need to check only the meaningful part of the data array */
+      if (size==p.size) {
+        for(int i=0; i<size; i++) {
+          if (data[i]<p.data[i]) {
+            return -1;
+          }
+          else{
+            if(data[i]>p.data[i]) {
+              return 1;
+            }
+          }
+        }
+        return 0;
+      } else {
+        return size<p.size?-1:1;
+      }
+    } else {
+      return -2;
+    }
+  }
+
 
   public int hashCode() {
     /* Hash only the interesting part of the array */

@@ -35,15 +35,14 @@ public class RuleCalc {
    **/
   private static class RulesComputer {
 
-    private RuleList ruleList = null;
+    private RuleList result = `rlist();
+    private PropRuleList pruleList = null;
     private Position lastPos = null; // innermost problematic forall/exists
     private Prop lastProp = null;
-    private Rule lastRule = null;
+    private PropRule lastRule = null;
 
     public RulesComputer(Prop atom, Prop p) {
-      ruleList = `rlist(ruledesc(1,atom,concSeq(sequent( context() , context(p) )),nullTree()),
-                        ruledesc(0,atom,concSeq(sequent( context(p), context()  )),nullTree())
-                       );
+      pruleList = `proprulelist(proprule(atom,p));
       run();
     }
 
@@ -60,50 +59,23 @@ public class RuleCalc {
       lastPos = null;
       lastRule = null;
 
-b:{
-    // looks for permutability problems
-    %match(RuleList ruleList) {
-
-      (rd1*, r@ruledesc(1,_,(sequent((),(p1*,prop,p2*))),_) ,rd2*) -> {
-        Position pos = forallNeg(`prop, true, new Position());
-        if (pos != null) {
-          // string are not taken into account by omega
-          pos.down(1);
-          Prop prop1 = (Prop) ((MuStrategy) MuTraveler.init(pos.getSubterm())).apply(`prop);
-          lastPos = forallNeg(`prop1, false, pos);
+      // looks for permutability problems
+      %match(PropRuleList pruleList) {
+        (r1*, r@proprule(_,prop) ,r2*) -> {
+          lastPos = forallNeg(`prop, 0, 1, new Position());
           if(lastPos != null) {
             // removing lastRule from the rules
-            ruleList = `rlist(rd1*,rd2*);
+            pruleList = `proprulelist(r1*,r2*);
             // removing lastProp from the rule
-            lastRule = `r.setprem(`concSeq(sequent(context(),context(p1*,p2*))));
+            lastRule = `r;
             lastProp = `prop;
-            break b;
-          }
-        }
-      }
-
-      (rd1*, r@ruledesc(0,_,(sequent((p1*,prop,p2*),())),_) ,rd2*) -> {
-        Position pos = forallNeg(`prop, false, new Position());
-        if (pos != null) {
-          // string are not taken into account by omega
-          pos.down(1);
-          Prop prop1 = (Prop) ((MuStrategy) MuTraveler.init(pos.getSubterm())).apply(`prop);
-          lastPos = forallNeg(`prop1, true, pos);
-          if(lastPos != null) {
-            // removing lastRule from the rules
-            ruleList = `rlist(rd1*,rd2*);
-            // removing lastProp from the rule
-            lastRule = `r.setprem(`concSeq(sequent(context(p1*,p2*),context())));
-            lastProp = `prop;
-            break b;
+            return;
           }
         }
       }
     }
-  } // block b
-    }
 
-    public void run(String name) {
+    private void run(String name) {
       if (lastProp == null)
         return;
 
@@ -114,23 +86,12 @@ b:{
       Prop newPred = `relationAppl(relation(name),tl);
       Prop cleanedProp = (Prop) ((MuStrategy) lastPos.getReplace(newPred)).apply(lastProp);
 
-      // adding new prop to lastrule 
-      %match(Rule lastRule) {
-        ruledesc(1,concl,(sequent((),(p*))),tree) -> {
-          lastRule = `ruledesc(1,concl,concSeq(sequent(context(),context(p*,cleanedProp))),tree); 
-        }
-        ruledesc(0,concl,(sequent((p*),())),tree) -> {
-          lastRule = `ruledesc(0,concl,concSeq(sequent(context(p*,cleanedProp),context())),tree); 
-        }
-      }
+      // adding new prop to lastrule
+      lastRule = `proprule(lastRule.getlhs(), cleanedProp);
+      pruleList = `proprulelist(pruleList*, lastRule, proprule(newPred,problematicProp));
 
-      // addind new rules to rule list
-      ruleList = `rlist(ruleList*,lastRule,
-                        ruledesc(1,newPred,concSeq(sequent( context() , context(problematicProp) )),nullTree()),
-                        ruledesc(0,newPred,concSeq(sequent( context(problematicProp), context()  )),nullTree())
-                       );
       run();
-   }
+    }
 
     public Prop getProblem() {
       if(lastPos != null)
@@ -142,20 +103,27 @@ b:{
     private boolean generated = false;
 
     public RuleList getResult() {
-      if (generated) return ruleList;
+      if (generated) return result;
 
-      RuleList tmp = `rlist();
-      %match(RuleList ruleList) {
-        (_*,ruledesc(hs,pred,(seq),_),_*) -> {
-          Tree tree = buildTree(`seq);
-          //try {PrettyPrinter.display(tree);} catch (Exception e) {}
-          SeqList prems = collectPremises(tree);
-          tmp = `rlist(tmp*,ruledesc(hs,pred,prems,tree));
+      Sequent seq = null;
+      Tree partialTree = null;
+      SeqList prems = null;
+      %match(PropRuleList pruleList) {
+        (_*,proprule(lhs,rhs),_*) -> {
+          // right super rule
+          seq = `sequent(context(), context(rhs));
+          partialTree = buildTree(`seq);
+          prems = collectPremises(partialTree);
+          result = `rlist(result*,ruledesc(1,lhs,prems,partialTree));
+          // left super rule
+          seq = `sequent(context(rhs), context());
+          partialTree = buildTree(`seq);
+          prems = collectPremises(partialTree);
+          result = `rlist(result*,ruledesc(0,lhs,prems,partialTree));
         }
       }
-      ruleList = tmp;
       generated = true;
-      return ruleList;
+      return result;
     }
 
 
@@ -291,47 +259,48 @@ b:{
     }
 
 
-    private static Position forallNeg(Prop p, boolean current, Position pos) {
+    // last : 0 = undefined, -1 = negative, 1 = positive
+    private static Position forallNeg(Prop p, int last, int current, Position pos) {
       %match(Prop p) {
         (relationAppl | top | bottom) [] -> { return null; }
 
         (and | or) (p1,p2) -> {
           pos.down(1);
-          Position pos1 = forallNeg(`p1, current, pos);
+          Position pos1 = forallNeg(`p1, last, current, pos);
           if (pos1 != null) return pos1;
           pos.up();
           pos.down(2);
-          pos1 = forallNeg(`p2, current, pos);
+          pos1 = forallNeg(`p2, last, current, pos);
           if (pos1 != null) return pos1;
           pos.up();
         }
 
         implies(p1,p2) -> {
           pos.down(1);
-          Position pos1 = forallNeg(`p1, !current, pos);
+          Position pos1 = forallNeg(`p1, last, -current, pos);
           if (pos1 != null) return pos1;
           pos.up();
           pos.down(2);
-          pos1 = forallNeg(`p2, current, pos);
+          pos1 = forallNeg(`p2, last, current, pos);
           if (pos1 != null) return pos1;
           pos.up();
         }
 
         forAll(_,p1) -> {
-          if(current) {
+          if(current*last >= 0) {
             // string are not taken into account by omega
             pos.down(1);
-            return forallNeg(`p1,current,pos);
+            return forallNeg(`p1,current,current,pos);
           }
-          else return pos; 
+          else return pos;
         }
 
         exists(_,p1) -> { 
-          if(current)
+          if(current*last > 0)
             return pos;
           else {
             pos.down(2);
-            return forallNeg(`p1,current,pos); 
+            return forallNeg(`p1,current,current,pos); 
           }
         }
       }

@@ -202,14 +202,9 @@ public class ASTFactory {
     return list;
   }
    
-public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList, PairNameDeclList pairNameDeclList,
-                              List optionList) {
-    TomType type;
-    TomName name = `Name(symbolName);
-    type = resultType;
-    TomType typesToType =  `TypesToType(typeList,type); 
-    OptionList options = makeOptionList(optionList);
-    return `Symbol(name,typesToType,pairNameDeclList,options);
+  public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTypeList typeList,
+      PairNameDeclList pairNameDeclList, List optionList) {
+    return `Symbol(Name(symbolName),TypesToType(typeList,resultType),pairNameDeclList,makeOptionList(optionList));
   }
 
   public static OptionList makeOption(Option arg) {
@@ -447,34 +442,75 @@ public static TomSymbol makeSymbol(String symbolName, TomType resultType, TomTyp
         return list;
       }
     }
-		//System.out.println("metaEncodeExplicitTermList: strange case: " + term);
-		list.add(term);
-		return list;
+    //System.out.println("metaEncodeExplicitTermList: strange case: " + term);
+    list.add(term);
+    return list;
   }
 
-  public static TomTerm buildList(TomName name,TomList args) {
+  public static TomTerm buildList(TomName name,TomList args, SymbolTable symbolTable) {
+    //System.out.println("buildList: " + args);
     %match(TomList args) {
       concTomTerm() -> {
         return `BuildEmptyList(name);
       }
 
       concTomTerm(head@VariableStar[],tail*) -> {
-        TomTerm subList = buildList(name,`tail);
+        TomTerm subList = buildList(name,`tail,symbolTable);
         return `BuildAppendList(name,head,subList);
       }
       
       concTomTerm(Composite(concTomTerm(_*,head@VariableStar[])),tail*) -> {
-        TomTerm subList = buildList(name,`tail);
+        TomTerm subList = buildList(name,`tail,symbolTable);
         return `BuildAppendList(name,head,subList);
       }
 
+      concTomTerm(Composite(concTomTerm(head@BuildConsList[AstName=opName])),tail*) -> {
+	/*
+	 * Flatten nested lists
+	 * unless domain and codomain are equals
+	 */
+	if(name==`opName) {
+	  TomSymbol listSymbol = symbolTable.getSymbolFromName(name.getString());
+	  %match(listSymbol) {
+	    Symbol[TypesToType=TypesToType[Domain=concTomType(TomTypeAlone(!typeName)), Codomain=TomTypeAlone(typeName)]] -> {
+	      TomTerm subList = buildList(name,`tail,symbolTable);
+	      return `BuildAppendList(name,head,subList);
+	    }
+	  }
+	}
+      }
+
+      concTomTerm(Composite(concTomTerm(head@BuildTerm[AstName=Name(tomName),ModuleName=module])),tail*) -> {
+	/*
+	 * compare the codomain of tomName with the domain of name
+	 * if the codomain of the inserted element is equal to the codomain
+	 * of the list operator, a BuildAppendList is performed 
+	 * unless the domain and the codomain of the list operator is the same
+	 */
+	TomSymbol symbol = symbolTable.getSymbolFromName(`tomName);
+	TomSymbol listSymbol = symbolTable.getSymbolFromName(name.getString());
+
+	//System.out.println("list   = " + listSymbol);
+	//System.out.println("symbol = " + symbol);
+
+        TomTerm subList = buildList(name,`tail,symbolTable);
+	//TomType codomain = getSymbolCodomain(symbol);
+	%match(listSymbol,symbol) {
+	  Symbol[TypesToType=TypesToType[Domain=concTomType(TomTypeAlone(!typeName)), Codomain=TomTypeAlone(typeName)]],
+	  Symbol[TypesToType=TypesToType[Codomain=TomTypeAlone(typeName)]] -> {
+	    //System.out.println("append");
+	    return `BuildAppendList(name,head,subList);
+	  }
+	}
+        return `BuildConsList(name,head,subList);
+      }
       concTomTerm(head@(BuildTerm|BuildConstant|Variable|Composite)[],tail*) -> {
-        TomTerm subList = buildList(name,`tail);
+        TomTerm subList = buildList(name,`tail,symbolTable);
         return `BuildConsList(name,head,subList);
       }
 
       concTomTerm(TargetLanguageToTomTerm[],tail*) -> {
-        TomTerm subList = buildList(name,`tail);
+        TomTerm subList = buildList(name,`tail,symbolTable);
         return subList;
       }
 

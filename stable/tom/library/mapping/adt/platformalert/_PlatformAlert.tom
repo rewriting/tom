@@ -1,9 +1,10 @@
 
-%include { mustrategy.tom }
+   /*
+   %include { mustrategy.tom }
+   */
 
 %op Strategy Is_EmptyconcAlert() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist.Is_EmptyconcAlert)}
-  make() { new tom.platform.adt.platformalert.strategy.alertlist.Is_EmptyconcAlert() }
+  make() { `When_EmptyconcAlert(Identity()) }
 }
 
 %op Strategy _EmptyconcAlert() {
@@ -18,9 +19,13 @@
   make() { new tom.platform.adt.platformalert.strategy.alertlist.Make_EmptyconcAlert() }
 }
 
+%op Strategy When_EmptyconcAlert(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist.When_EmptyconcAlert)}
+  make(s) { new tom.platform.adt.platformalert.strategy.alertlist.When_EmptyconcAlert(s) }
+}
+
 %op Strategy Is_ConsconcAlert() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist.Is_ConsconcAlert)}
-  make() { new tom.platform.adt.platformalert.strategy.alertlist.Is_ConsconcAlert() }
+  make() { `When_ConsconcAlert(Identity()) }
 }
 
 %op Strategy _ConsconcAlert(arg0:Strategy, arg1:Strategy) {
@@ -39,9 +44,13 @@
   make( new_HeadconcAlert,  new_TailconcAlert) { new tom.platform.adt.platformalert.strategy.alertlist.Make_ConsconcAlert( new_HeadconcAlert,  new_TailconcAlert) }
 }
 
+%op Strategy When_ConsconcAlert(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alertlist.When_ConsconcAlert)}
+  make(s) { new tom.platform.adt.platformalert.strategy.alertlist.When_ConsconcAlert(s) }
+}
+
 %op Strategy Is_Error() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert.Is_Error)}
-  make() { new tom.platform.adt.platformalert.strategy.alert.Is_Error() }
+  make() { `When_Error(Identity()) }
 }
 
 %op Strategy _Error(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -62,9 +71,13 @@
   make( _Message,  _File,  _Line) { new tom.platform.adt.platformalert.strategy.alert.Make_Error( _Message,  _File,  _Line) }
 }
 
+%op Strategy When_Error(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert.When_Error)}
+  make(s) { new tom.platform.adt.platformalert.strategy.alert.When_Error(s) }
+}
+
 %op Strategy Is_Warning() {
-  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert.Is_Warning)}
-  make() { new tom.platform.adt.platformalert.strategy.alert.Is_Warning() }
+  make() { `When_Warning(Identity()) }
 }
 
 %op Strategy _Warning(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
@@ -85,7 +98,13 @@
   make( _Message,  _File,  _Line) { new tom.platform.adt.platformalert.strategy.alert.Make_Warning( _Message,  _File,  _Line) }
 }
 
-%op Strategy _concAlert(sub:Strategy) {
-  is_fsym(t) { false }
-  make(sub)  { `mu(MuVar("x"),Choice(_ConsconcAlert(sub,MuVar("x")),_EmptyconcAlert())) }
+%op Strategy When_Warning(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.platform.adt.platformalert.strategy.alert.When_Warning)}
+  make(s) { new tom.platform.adt.platformalert.strategy.alert.When_Warning(s) }
 }
+
+            %op Strategy _concAlert(sub:Strategy) {
+            is_fsym(t) { false }
+            make(sub)  { `mu(MuVar("x"),Choice(_ConsconcAlert(sub,MuVar("x")),_EmptyconcAlert())) }
+            }
+            

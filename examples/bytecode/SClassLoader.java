@@ -28,36 +28,38 @@
  */
 package bytecode;
 
-import java.io.FileOutputStream;
+/* 
+ *  Secure class loader that replaces all call to read() by secureRead()
+ *  option of java command : java -Djava.system.class.loader=bytecode.SClassLoader
+ */
+
+import com.sun.xacml.finder.impl.FilePolicyModule;
 
 public class SClassLoader extends ClassLoader {
-	public SClassLoader(ClassLoader parent) {
-		super(parent);
-	}
-	public SClassLoader() {
-		super();
-	}
 
-  public synchronized Class loadClass(String name) throws ClassNotFoundException {
-    System.out.println("Load the file: " + name);
-    //if(name.equals("bytecode.Reading")||(name.equals("Test2"))) {
-    Transformer t = new Transformer();
-    byte[] scode = t.transform(name);
-    System.out.println("Transform the file: " + name);
-    try {
-      FileOutputStream fos = new FileOutputStream(name+".class");
-      fos.write(scode);
-      fos.close();
-      System.out.println("ok");
-    } catch(java.io.IOException e) {
-      System.out.println("IO Exception");
-    }
-    System.out.println("End of load");
-    Class sClass = defineClass(name,scode, 0, scode.length) ;
-    return loadClass(sClass.getName(),true);
-    //} else {
-    //Class sClass = loadClass(name,false);
-    //return sClass;
-    //}
+  public SClassLoader(ClassLoader parent) {
+    super(parent);
   }
+
+  public SClassLoader() {
+    super();
+  }
+
+  public synchronized Class loadClass(String name)throws ClassNotFoundException{
+    if (!(name.startsWith("java.")) && !(name.equals("SecureAccess")) 
+        && !(name.startsWith("javax.")) && !(name.startsWith("com."))
+        && !(name.startsWith("sun.")) && !(name.startsWith("org."))
+        && !(name.equals("bytecode.SecureAccess"))) {
+      //Transformer t = new Transformer();
+      Transformer2 t = new Transformer2();
+      byte[] scode = t.transform(name);
+      Class sClass = defineClass(name,scode, 0, scode.length) ;
+      return loadClass(name,true);
+        }
+    else {
+      Class sClass = loadClass(name,false);
+      return sClass;
+    }
+  }
+
 }

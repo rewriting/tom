@@ -35,99 +35,86 @@ import tom.library.adt.bytecode.types.tstringlist.*;
 import tom.library.adt.bytecode.types.tlabellist.*;
 import tom.library.adt.bytecode.types.tintlist.*;
 import tom.library.bytecode.*;
-import java.util.*;
+import java.util.Vector;
 
 public class Transformer {
 
   %include { mustrategy.tom }
   %include { adt/bytecode/Bytecode.tom }
 
-  public static Set classSet = new HashSet();
+  public static Vector  v = new Vector();
+  public static String clm;
 
-  //On cherche INVOKEVIRTUAL
   %strategy FindFileAccess() extends Identity() {
+    //Case 1: new FileReader(nameFile).read();
     visit TInstructionList {
-      (before*,New("java/io/FileReader"),Dup(),Aload(number),Invokespecial[owner="java/io/FileReader", name="<init>"],
-       Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
-        System.out.println("Access to a file");
+      (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
+       Invokespecial[owner="java/io/FileReader", name="<init>"],
+       Astore(nombre2),middle*,Aload(nombre2),Aload(nombre1),
+       Invokevirtual("java/io/FileReader","read",MethodDescriptor(ConsFieldDescriptorList(ArrayType(C()),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
+       Pop(), after*)-> {
+        System.out.println("Access to a file(reader(buf))" );
+        return `InstructionList(before*,
+            middle*,
+            New("bytecode/SecureAccess"),
+            Dup(),
+            Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
+            Aload(nombre),
+            Aload(nombre1),
+            Invokevirtual("bytecode/SecureAccess","sreadBuf",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),ConsFieldDescriptorList(ArrayType(C()),EmptyFieldDescriptorList())),Void())),
+            after*); 
+      }
+
+      //Case 2: FileReader r = new FileReader(nameFile); ... ; r.read()
+
+      (before*,New("java/io/FileReader"),Dup(),Aload(nombre),
+       Invokespecial[owner="java/io/FileReader", name="<init>"],
+       middle*,
+       Invokevirtual[owner ="java/io/FileReader",name="read"], 
+       Pop(),
+       after*) -> {
+        System.out.println("Attempt to read a file");
         return `InstructionList(before*,
             New("bytecode/SecureAccess"),
             Dup(),
             Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-            Aload(number),
-            Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(FieldDescriptorList(ObjectType("java/lang/String")),Void())),
-            after*); 
+            Aload(nombre),
+            Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
+            Pop(),
+            Return(),
+            after*);
+
+
       }
 
-      (before*,Aload(number), Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
-        System.out.println("Access to a file");
+      //Case 3
+      (before*,Aload(nombre), Invokevirtual[owner ="java/io/FileReader",name="read"], Pop(),after*) -> {
         return `InstructionList(before*,
             New("bytecode/SecureAccess"),
             Dup(),
             Invokespecial("bytecode/SecureAccess","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-            Aload(number-1),
-            Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),Void())),
-            after*); 
+            Aload(nombre),
+            Invokevirtual("bytecode/SecureAccess","sread",MethodDescriptor(ConsFieldDescriptorList(ObjectType("java/lang/String"),EmptyFieldDescriptorList()),ReturnDescriptor(I()))),
+            Pop(),
+            Return(),
+            after*);
       }
 
-      (before*,New(className),Dup(),Invokespecial(name,"<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),Astore(number),after*) -> {
-        if(!classSet.contains(`className)) {
-          System.out.println("new class "+`className);
-          Class c;
-          try {
-            c = Class.forName(`className);
+    }//visit
+  }//strategy
 
-            if(c.getSuperclass().toString().equals("class java.lang.ClassLoader")) {
-              System.out.println("Bad ClassLoader!");
-              return `InstructionList(before*,
-                  New("SClassLoader"),
-                  Dup(),
-                  Invokespecial("SClassLoader","<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-                  Astore(number),
-                  after*);
-            } else {
-              return `InstructionList(before*,
-                  New(className),
-                  Dup(),
-                  Invokespecial(name,"<init>",MethodDescriptor(EmptyFieldDescriptorList(),Void())),
-                  Astore(number),
-                  after*);
-            }
-          } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-
-        }
-
-      }
-    }//end visit
-  }//end strategy
-
-  /*%strategy FindOtherClass() extends Identity() {
-    visit TInstructionList {
-    (before*,New(n@className),after*) -> {
-    System.out.println("nouvelle classe"+`n);
-    }
-    }//ferme visit	
-    }//ferme strategy*/
-
-
-  //On parcourt toutes les méthodes de la classe
-  //On cherche les appelles FileReader.read();
-  //(statégie FindDileAccess sera appliquée)
 
   private static TClass fileAccesVerify(TClass givenClass) {
     TMethodList methods = givenClass.getmethods();
     TMethodList secureMethods = `MethodList();
     %match(TMethodList methods) {
       MethodList(_*, x, _*) -> {
-        System.out.println("Analysis of method "+`x.getinfo().getname());
+        System.out.println("Analysis of the method "+`x.getinfo().getname());
         TInstructionList ins = `x.getcode().getinstructions();
         TInstructionList secureInstList = (TInstructionList) `TopDown(FindFileAccess()).apply(ins);
         TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
         TMethod secureMethod = `x.setcode(secureCode);
-        secureMethods = `MethodList(secureMethods*,secureMethod);	        
+        secureMethods = `MethodList(secureMethods*,secureMethod);	
       } 
     }
     return givenClass.setmethods(secureMethods);
@@ -138,7 +125,6 @@ public class Transformer {
   private static TClass renameClass(TClass clazz, String newName) {
     TClassInfo classInfo = clazz.getinfo();
     String currentName = classInfo.getname();
-
     TClass newClass = clazz.setinfo(classInfo.setname(newName));
     return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).apply(newClass);
   }
@@ -187,10 +173,12 @@ public class Transformer {
 
   }
 
-  public static byte[] transform(String fileName) {
-    classSet.add(fileName);
-    System.out.println("Parsing class file " + fileName + " ...");
-    BytecodeReader br = new BytecodeReader(fileName);
+
+
+  public static byte[] transform(String file){
+    v.add(file);
+    System.out.println("Parsing class file " + file + " ...");
+    BytecodeReader br = new BytecodeReader(file);
     System.out.println("Analyzing ...");
     TClass c= br.getTClass();
     //String secureName = c.getinfo().getname() + "Secure";
@@ -199,4 +187,6 @@ public class Transformer {
     BytecodeGenerator bg = new BytecodeGenerator();
     return bg.toBytecode(c);
   }
+
 }
+

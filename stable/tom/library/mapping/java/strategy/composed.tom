@@ -31,7 +31,6 @@
 /*
  * complex strategies
  */
-%include {basic.tom}
 
 %op Strategy Try(s1:Strategy) {
   make(v) { `Choice(v,Identity()) }

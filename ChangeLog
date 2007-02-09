@@ -1,5 +1,13 @@
+2007-01-30  pem <pem@loria.fr>
+  * added default make when a %op does not have one
+  * list operators are flattened in a backquote expression
+
+2007-01-12  tonio <reilles@loria.fr>
+  * use the new ATerm long support, for long support in Gom
+
 2006-11-13  pem <pem@loria.fr>
   * fix PR-1547
+
 2006-11-11  tonio <reilles@loria.fr>
   * src/tom/engine/compiler/TomKernelCompiler.t:
     - ocaml backend fixes :

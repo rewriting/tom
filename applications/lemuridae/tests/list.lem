@@ -1,0 +1,46 @@
+termrule 0 + y -> y.
+termrule 0 * y -> 0.
+termrule succ(x) + y -> succ(x+y).
+termrule succ(x) * y -> x * y + y.
+
+
+rule list(l) -> \A p.(in(nil(),p) => \A a.(\Al.(in(l,p) => in(cons(a,l),p))) => in(l,p)).
+hered.
+
+termrule len(cons(h,t)) -> 1 + len(t).
+termrule len(nil()) -> 0.
+
+termrule app(nil(),l) -> l.
+termrule app(cons(h,t),l) -> cons(h,app(t,l)).
+
+
+proof testlist :  P(len(cons(1,cons(2,nil())))) => P(len(cons(0,cons(3,nil())))).
+intro.
+reduce.
+axiom.
+
+rule in(l,p()) -> P(l) => P(app(nil(),l)).
+
+
+proof testAppNilEnd: \A l. (list(l) => P(l) => P(app(nil(),l))).
+auto.
+focus h1.
+rule. p().
+next.
+auto.
+next.
+auto.
+reduce. axiom.
+focus h1. remove.
+focus h1. remove.
+focus c2. remove.
+auto.
+reduce. axiom.
+reduce. axiom.
+
+
+
+
+
+
+

@@ -499,24 +499,23 @@ b: {
     while(true) {
 b :{
       Sequent goal = getSequentByPosition(tree, poscopy);
-      %match(goal,Prop conclusion) {
-        sequent((),(concl)), concl -> {
+      %match(Prop conclusion, goal) {
+        // pattern means "only and at least one 'goal' in the sequent rhs"
+        concl, sequent((),!(_*,concl,_*,!concl,_*)) -> {
           return (Tree) ((MuStrategy) poscopy.getReplace(thtree)).apply(tree);
         }
-        sequent((p,_*),_), _ -> {
+        _, sequent((p,_*),_) -> {
           tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyWeakL(p))).apply(tree);
           poscopy.down(2);
           poscopy.down(1);
           break b;
         }
-        sequent((),(_*,p,_*)), tokeep -> {
+        tokeep, sequent((),(_*,p@!tokeep,_*)) -> {
           //FIXME replace condition by p@!tokeep in pattern when bug disappears
-          if (`p != conclusion) {
             tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyWeakR(p))).apply(tree);
             poscopy.down(2);
             poscopy.down(1);
             break b;
-          }
         }
       }
       throw new Exception("can't apply theorem");
@@ -527,7 +526,7 @@ b :{
   private Tree reduceCommand(Tree tree, Position pos, 
       Prop active, boolean focus_left) throws Exception {
     Sequent goal = getSequentByPosition(tree, pos);
-    Sequent s = (Sequent) Unification.reduce(goal,newTermRules);
+    Sequent s = (Sequent) Unification.reduce(goal,newTermRules,newPropRules);
     Premisses prems = `premisses(rule(openInfo(), premisses(), s, s.getc().getHeadcontext()));
 
     // get new tree
@@ -665,7 +664,7 @@ b :{
         }
 
         proofCommand("display") -> {
-          try { PrettyPrinter.display(env.tree, newTermRules); }
+          try { PrettyPrinter.display(env.tree, newTermRules, newPropRules); }
           catch (Exception e) { System.out.println("display failed : " + e); }
         }
 
@@ -714,8 +713,8 @@ b :{
           }
         }
 
-        /* elim case */
-        proofCommand("elim") -> {
+        /* intro case */
+        proofCommand("intro") -> {
           try {
             MuStrategy strat;
 
@@ -726,7 +725,7 @@ b :{
 
             tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
-            System.out.println("Can't apply elim" + e.getMessage());
+            System.out.println("Can't apply intro" + e.getMessage());
           }
         }
 
@@ -761,6 +760,18 @@ b :{
             tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
           } catch (Exception e) {
             System.out.println("Can't apply auto" + e.getMessage());
+            e.printStackTrace();
+          }
+        }
+
+        /* intros case */
+        proofCommand("intros") -> {
+          try {
+            ArrayList<Rule> emptylist = new ArrayList<Rule>();
+            MuStrategy strat = `SafeTopDown(ApplyAuto(emptylist));
+            tree = (Tree) ((MuStrategy) currentPos.getOmega(strat)).visit(env.tree);
+          } catch (Exception e) {
+            System.out.println("Can't apply intros" + e.getMessage());
             e.printStackTrace();
           }
         }
@@ -851,6 +862,7 @@ b :{
 
   private ArrayList<Rule> newRules = new ArrayList<Rule>();
   private TermRuleList newTermRules = `termrulelist();
+  private PropRuleList newPropRules = `proprulelist();
   private HashMap<String,Tree> theorems = new HashMap<String,Tree>();
 
   public void mainLoop() throws Exception {
@@ -866,7 +878,7 @@ b :{
       }
 
       %match(Command command) {
-        rewritep(p1,p2) -> {
+        rewritesuper(p1,p2) -> {
           RuleList rl = RuleCalc.transform(`p1,`p2);
           %match(RuleList rl) {
             (_*,r,_*) -> { newRules.add(`r);}
@@ -875,8 +887,12 @@ b :{
           System.out.println(PrettyPrinter.prettyRule(rl));
         }
 
-        rewritet(lhs,rhs) -> {
+        rewriteterm(lhs,rhs) -> {
           newTermRules = `termrulelist(newTermRules*,termrule(lhs,rhs));
+        }
+
+        rewriteprop(lhs,rhs) -> {
+          newPropRules = `proprulelist(newPropRules*,proprule(lhs,rhs));
         }
 
         proof(name,p) -> {
@@ -893,7 +909,9 @@ b :{
 
         display(name) -> {
           Tree tree = theorems.get(`name);
-          PrettyPrinter.display(tree,newTermRules);
+          PrettyPrinter.display(tree,newTermRules,newPropRules);
+          //tree = ProofExpander.expand(tree);
+          //PrettyPrinter.display(tree,newTermRules,newPropRules);
         }
 
         quit() -> {

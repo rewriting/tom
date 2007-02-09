@@ -1,0 +1,5 @@
+module term
+abstract syntax
+Nat = zero()
+    | suc(n:Nat)
+    | couple(n1:Nat,n2:Nat)

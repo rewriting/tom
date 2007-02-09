@@ -274,7 +274,6 @@
       <include name="**/TomLanguage.g.t"/>
     </tomcompile>
 
-
     <tomcompile srcdir="${src.src}"
 	    outputfile="${gen.destination}/tom/engine/parser/HostLanguage.g"
 	    options="-I ${src.mapping} -I ${src.gen}/tom/engine/adt">
@@ -412,20 +411,20 @@
 	 <include name="tom/engine/adt/Zenon.gom"/>
     </gomcompile>
 
-    <copy todir="${src.mapping}/adt">
-      <fileset dir="${src.gen}/tom/library/adt" includes="**/*.tom"/>
-      <fileset dir="${src.gen}/tom/platform/adt" includes="**/*.tom"/>
-      <fileset dir="${src.gen}/tom/engine/adt" includes="**/*.tom"/>
-    </copy>
-
-    <!-- adt for the verifier -->
-
     <!-- adt for gom -->
     <gomcompile srcdir="${src.src}"
                 package="tom.gom.adt"
                 destdir="${src.gen}">
      <include name="tom/gom/adt/*.gom"/>
     </gomcompile>
+
+    <copy todir="${src.mapping}/adt">
+      <fileset dir="${src.gen}/tom/library/adt" includes="**/*.tom"/>
+      <fileset dir="${src.gen}/tom/platform/adt" includes="**/*.tom"/>
+      <fileset dir="${src.gen}/tom/engine/adt" includes="**/*.tom"/>
+      <fileset dir="${src.gen}/tom/gom/adt" includes="**/*.tom"/>
+    </copy>
+
   </target>
 
   <target name="src" description="compile the TOM development sources" depends="prepare.src">
@@ -713,9 +712,6 @@
     <!-- tom share -->
     <copy todir="${src.dist.share}/tom">
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
-      <fileset dir="${src.adt}" includes="**/*.tom">
-        <exclude name="TomSignature.tom"/>
-      </fileset>
     </copy>
     <copy todir="${src.dist.share}">
       <fileset dir="${share}">

@@ -137,6 +137,7 @@ public class TomExpander extends TomGenericPlugin {
    * this is performed by recursively traversing each symbol
    * - backquote are expanded
    * - each TomTypeAlone is replaced by the corresponding TomType
+   * - default IsFsymDecl and MakeDecl are added
    */
   public void updateSymbolTable() {
     SymbolTable symbolTable = getStreamManager().getSymbolTable();
@@ -146,14 +147,14 @@ public class TomExpander extends TomGenericPlugin {
     while(it.hasNext()) {
       String tomName = (String)it.next();
       TomSymbol tomSymbol = getSymbolFromName(tomName);
-
       /*
-       * add default isFsym and make HERE
+       * add default IsFsymDecl and MakeDecl, unless it is a builtin type
        */
-      tomSymbol = addDefaultIsFSym(tomSymbol);
+      if(!getStreamManager().getSymbolTable().isBuiltinType(getTomType(getSymbolCodomain(tomSymbol)))) {
+        tomSymbol = addDefaultIsFsym(tomSymbol);
+        tomSymbol = addDefaultMake(tomSymbol);
+      }
       try {
-        //TomTerm term = (TomTerm) expandStrategy.visit(`TomSymbolToTomTerm(tomSymbol));
-        //tomSymbol = term.getAstSymbol();
         tomSymbol = (TomSymbol) expandStrategy.visit(`tomSymbol);
       } catch(VisitFailure e) {
         System.out.println("should not be there");
@@ -164,18 +165,44 @@ public class TomExpander extends TomGenericPlugin {
     }
   }
 
-  private TomSymbol addDefaultIsFSym(TomSymbol tomSymbol) {
+  private TomSymbol addDefaultIsFsym(TomSymbol tomSymbol) {
     %match(tomSymbol) {
       Symbol[Option=(_*,DeclarationToOption(IsFsymDecl[]),_*)] -> {
         return tomSymbol;
       }
-      Symbol(name,t@TypesToType(_,codom),l,(b*,origin@OriginTracking(_,line,file),a*)) -> {
-        return `Symbol(name,t,l,concOption(b*,origin,DeclarationToOption(IsFsymDecl(name,Variable(concOption(OriginTracking(Name("t"),line,file)),Name("t"),codom,concConstraint()),Return(ExpressionToTomTerm(FalseTL())),OriginTracking(Name("is_fsym"),line,file))),a*));
+      Symbol(name,t@TypesToType(_,codom),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
+	Declaration isfsym = `IsFsymDecl(name,Variable(concOption(OriginTracking(Name("t"),line,file)),Name("t"),codom,concConstraint()),Return(ExpressionToTomTerm(FalseTL())),OriginTracking(Name("is_fsym"),line,file));
+        return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(isfsym),X2*));
       }
     }
     return tomSymbol;
   }
 
+  private TomSymbol addDefaultMake(TomSymbol tomSymbol) {
+    %match(tomSymbol) {
+      Symbol[Option=(_*,DeclarationToOption((MakeDecl|MakeEmptyList|MakeEmptyArray)[]),_*)] -> {
+        return tomSymbol;
+      }
+      Symbol(name,t@TypesToType(domain,codomain),l,concOption(X1*,origin@OriginTracking(_,line,file),X2*)) -> {
+        //build variables for make
+        TomTypeList typesList = `domain;
+        TomList argsAST = `concTomTerm();
+        int index = 0;
+        while(!typesList.isEmptyconcTomType()) {
+          TomType subtermType = typesList.getHeadconcTomType();
+          TomTerm variable = `Variable(concOption(),Name("t"+index),subtermType,concConstraint());
+          argsAST = append(variable,argsAST);
+          typesList = typesList.getTailconcTomType();
+          index++;
+        }
+	TomTerm functionCall = `FunctionCall(name,codomain,argsAST);
+	Declaration make = `MakeDecl(name,codomain,argsAST,TomTermToInstruction(functionCall),
+                            OriginTracking(Name("make"),line,file));
+        return `Symbol(name,t,l,concOption(X1*,origin,DeclarationToOption(make),X2*));
+      }
+    }
+    return tomSymbol;
+  }
   /**
    * inherited from OptionOwner interface (plugin)
    */
@@ -390,7 +417,7 @@ public class TomExpander extends TomGenericPlugin {
               return `BuildConstant(name);
             } else if(tomSymbol != null) {
               if(isListOperator(tomSymbol)) {
-                return ASTFactory.buildList(`name,args);
+                return ASTFactory.buildList(`name,args,expander.symbolTable());
               } else if(isArrayOperator(tomSymbol)) {
                 return ASTFactory.buildArray(`name,args);
               } else if(isDefinedSymbol(tomSymbol)) {
@@ -588,7 +615,4 @@ matchBlock: {
             }
 
   }
-
-
-} // class TomExpander
-
+}

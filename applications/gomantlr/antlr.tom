@@ -1,0 +1,295 @@
+%include{ int.tom }
+%include{ string.tom }
+%include{ aterm.tom }
+%include{ atermlist.tom }
+
+%oplist ATermList concATerm (ATerm*){
+  is_fsym(t) { t instanceof ATermList }
+  make_empty() { aterm.pure.SingletonFactory.getInstance().makeList() }
+  make_insert(e,l) { l.insert(e) }
+  get_head(t) { t.getFirst() }
+  get_tail(t) { t.getNext() }
+  is_empty(t) { t.isEmpty() }
+}
+
+%op ATerm NodeInfo(text:String,line:int,column:int) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NodeInfo",3,false) }
+  get_slot(text, t) { ((ATermAppl)((ATermAppl)t).getArgument(0)).getAFun().getName() }
+  get_slot(line, t) { ((ATermInt)((ATermAppl)t).getArgument(1)).getInt() }
+  get_slot(column, t) { ((ATermInt)((ATermAppl)t).getArgument(2)).getInt() }
+  make(t,l,c) { SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("NodeInfo",3,false),SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun(t,0,true)),SingletonFactory.getInstance().makeInt(l),SingletonFactory.getInstance().makeInt(c)) }
+}
+
+	
+%op ATerm COMBINED_GRAMMAR(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("COMBINED_GRAMMAR",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("COMBINED_GRAMMAR",2,false),i,c) }
+}
+
+%op ATerm LEXER_GRAMMAR(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("LEXER_GRAMMAR",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("LEXER_GRAMMAR",2,false),i,c) }
+}
+
+%op ATerm PARSER_GRAMMAR(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("PARSER_GRAMMAR",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("PARSER_GRAMMAR",2,false),i,c) }
+}
+
+%op ATerm TREE_GRAMMAR(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("TREE_GRAMMAR",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("TREE_GRAMMAR",2,false),i,c) }
+}
+
+%op ATerm ID(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && (t instanceof ATermAppl) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("ID",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("ID",2,false),i,c) }
+}
+
+%op ATerm OPTIONS(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("\"options\"",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("\"options\"",2,false),i,c) }
+}
+
+%op ATerm EXCEPTION(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("\"exception\"",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("\"exception\"",2,false),i,c) }
+}
+
+%op ATerm AMPERSAND(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("AMPERSAND",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("AMPERSAND",2,false),i,c) }
+}
+
+%op ATerm ACTION(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("ACTION",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("ACTION",2,false),i,c) }
+}
+
+%op ATerm SCOPES(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("\"scope\"",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("\"scope\"",2,false),i,c) }
+}
+
+%op ATerm RULE(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("RULE",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("RULE",2,false),i,c) }
+}
+
+%op ATerm EOR(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("EOR",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("EOR",2,false),i,c) }
+}
+
+%op ATerm BLOCK(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("BLOCK",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("BLOCK",2,false),i,c) }
+}
+
+%op ATerm EOB(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("EOB",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("EOB",2,false),i,c) }
+}
+
+%op ATerm ALT(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("ALT",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("ALT",2,false),i,c) }
+}
+
+%op ATerm EOA(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("EOA",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("EOA",2,false),i,c) }
+}
+
+%op ATerm PROTECTED(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("\"protected\"",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("\"protected\"",2,false),i,c) }
+}
+
+%op ATerm PUBLIC(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("\"public\"",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("\"public\"",2,false),i,c) }
+}
+
+%op ATerm PRIVATE(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("\"private\"",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("\"private\"",2,false),i,c) }
+}
+
+%op ATerm FRAGMENT(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("\"fragment\"",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("\"fragment\"",2,false),i,c) }
+}
+
+%op ATerm DOC_COMMENT(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && (t instanceof ATermAppl) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("DOC_COMMENT",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("DOC_COMMENT",2,false),i,c) }
+}
+
+%op ATerm TOKENS(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("\"tokens\"",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("\"tokens\"",2,false),i,c) }
+}
+
+%op ATerm ARGS(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("ARG",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("ARG",2,false),i,c) }
+}
+
+%op ATerm RET(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("RET",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("RET",2,false),i,c) }
+}
+
+%op ATerm CLOSURE(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("CLOSURE",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("CLOSURE",2,false),i,c) }
+}
+
+%op ATerm POSITIVE_CLOSURE(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("POSITIVE_CLOSURE",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("POSITIVE_CLOSURE",2,false),i,c) }
+}
+
+%op ATerm OPTIONAL(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("OPTIONAL",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("OPTIONAL",2,false),i,c) }
+}
+
+%op ATerm SYN_SEMPRED(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("SYN_SEMPRED",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("SYN_SEMPRED",2,false),i,c) }
+}
+
+%op ATerm RULE_REF(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("RULE_REF",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("RULE_REF",2,false),i,c) }
+}
+
+%op ATerm TOKEN_REF(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("TOKEN_REF",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("TOKEN_REF",2,false),i,c) }
+}
+
+%op ATerm STRING_LITERAL(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("STRING_LITERAL",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("STRING_LITERAL",2,false),i,c) }
+}
+
+%op ATerm CHAR_LITERAL(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("CHAR_LITERAL",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("CHAR_LITERAL",2,false),i,c) }
+}
+
+%op ATerm CHAR_RANGE(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("CHAR_RANGE",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("CHAR_RANGE",2,false),i,c) }
+}
+
+%op ATerm SET(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("SET",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("SET",2,false),i,c) }
+}
+
+%op ATerm NOT(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("NOT",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("NOT",2,false),i,c) }
+}
+
+%op ATerm EPSILON(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("EPSILON",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("EPSILON",2,false),i,c) }
+}
+
+%op ATerm WILDCARD(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("WILDCARD",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("WILDCARD",2,false),i,c) }
+}
+
+%op ATerm ASSIGN(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("ASSIGN",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("ASSIGN",2,false),i,c) }
+}
+
+%op ATerm INT(info:ATerm,childs:ATermList) {
+  is_fsym(t) { (t != null) && (t instanceof ATermAppl) && ((ATermAppl)t).getAFun() == SingletonFactory.getInstance().makeAFun("INT",2,false) }
+  get_slot(info, t) { ((ATermAppl)t).getArgument(0) }
+  get_slot(childs, t) { (ATermList)((ATermAppl)t).getArgument(1) }
+  make(i,c) {SingletonFactory.getInstance().makeAppl(SingletonFactory.getInstance().makeAFun("INT",2,false),i,c) }
+}

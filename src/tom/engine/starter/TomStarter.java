@@ -81,4 +81,4 @@ public class TomStarter extends TomGenericPlugin {
     return (Object[])argToRelay.clone();
   }
 
-} // class TomStarter
+}

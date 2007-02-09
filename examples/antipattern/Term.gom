@@ -2,6 +2,7 @@ module Term
 imports String int
 abstract syntax
 Term = Variable(name:String)
+     | ConsVariable(var:Term, upTerm: String)	
      | Appl(name:String, args:TermList)
      | ApplCons(name:String, args:TermList, cons:AConstraintList)
      | Anti(pattern:Term)

@@ -58,7 +58,7 @@ public class GomStreamManager {
    * Relative path which corresponds to the package where to generate the java
    * classes (empty by default).
    * */
-  private String packagePath;
+  private String packagePath = "";
 
   /** Suffixes */
   private String inputSuffix;
@@ -216,6 +216,16 @@ public class GomStreamManager {
 
   public void setPackagePath(String packagePath) {
     this.packagePath = packagePath.replace('.',File.separatorChar);
+  }
+
+  public void appendToPackagePath(String path) {
+    if(this.packagePath != "") {
+      this.packagePath = this.packagePath +
+                         File.separatorChar +
+                         path.replace('.',File.separatorChar);
+    } else {
+      this.packagePath = path.replace('.',File.separatorChar);
+    }
   }
 
   public File findModuleFile(String extendedModuleName) {

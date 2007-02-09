@@ -1,0 +1,88 @@
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+termrule appl(succ(t),l) -> succ(appl(t,l)).
+termrule appl(pred(t),l) -> pred(appl(t,l)).
+termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
+termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
+
+termrule pred(0) -> 0.
+termrule pred(succ(x)) -> x.
+termrule 0 + y -> y.
+termrule 0 * y -> 0.
+termrule succ(x) + y -> succ(x+y).
+termrule succ(x) * y -> x * y + y.
+
+proprule in(l,fNull(t)) -> Null(appl(t,l)).
+proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
+proprule in(l,fN(t)) -> N(appl(t,l)).
+rule eq(x,y) -> \Ap.(  in(cons(x,nil()),p) => in(cons(y,nil()),p) ).
+rule N(n) -> \Ap.( in(cons(0,nil()),p) => ( \Ay.(N(y) => in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p) )).
+hered.
+rule Null(0) -> \T.
+rule Null(succ(x)) -> \B.
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> \B.
+proprule in(l,P(a)) -> \En.(in(cons(n,l),a)).
+proprule in(l,C(a)) -> \An.(in(cons(n,l),a)).
+
+
+proof zisnat: N(0).
+rule. 
+axiom.
+
+proof oneisnat: N(1).
+rule.
+focus h2. rule. 0.
+axiom. axiom.
+theorem zisnat. axiom.
+
+proof ind: \A n. (N(n) => N(succ(n))).
+auto.
+focus h3. rule. p0.
+next. axiom.
+axiom.
+focus h3. rule. n0.
+axiom.
+axiom.
+axiom.
+
+proof eqrefl: \Ax.eq(x,x).
+auto.
+
+proof succisafun: \Ax.(\Ay.( eq(x,y) => eq(succ(x),succ(y)) )).
+intros.
+focus h1. rule. fEq(S(succ(x0)),succ(one())).
+reduce.
+axiom.
+reduce.
+theorem eqrefl.
+focus h2. intro. succ(x0). axiom.
+
+
+proof prop1: \A n.(N(n) => (Null(n) \/ \E m.(N(m) /\ eq(n,succ(m))))).
+intros.
+focus h1. rule. union(fNull(one()),P(inter(fN(one()),fEq(S(one()),succ(one()))))).
+next. next.
+reduce. intros.
+focus c2. intro. n1. 
+intros.
+next. reduce.
+intro. rule.
+focus h1. remove. focus c2. remove. focus c2. remove.
+rule. reduce.
+intros.
+focus c2. intro. succ(n0).
+intros.
+theorem succisafun.
+focus h4. intro. y0. focus h4. intro. succ(n0).
+intros.
+theorem ind.
+focus h4. intro. n0.
+intros.
+focus c2. intro. y0.
+auto.
+
+
