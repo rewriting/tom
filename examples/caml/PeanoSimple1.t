@@ -44,6 +44,7 @@ exception Erreur of string ;;
 %op term suc(s1:term) {
   is_fsym(t) { get_sym(t) = fsuc }
   get_slot(s1,t) { get_sub 0 t }
+  make(t) { (Suc t) }
 }
 
 let rec plus (t1,t2)= 

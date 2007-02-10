@@ -42,7 +42,7 @@
     </gom.preset>
     <gom.preset srcdir="${test.src}"
                 package="sl"
-                reference="true" 
+                pointer="true" 
                 destdir="${test.gen}">
          <include name="sl/testsl.gom"/>
     </gom.preset>
