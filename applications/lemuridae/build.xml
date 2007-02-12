@@ -38,6 +38,22 @@
                 srcdir="${lemu.src}"> 
       <include name="SeqWalker.g.t"/>
     </tom.preset>
+
+    <!-- LAMBDA -->
+    <tom.preset outputfile="${lemu.gen}/LambdaParser.g"
+      options="-I ${lemu.gen}"
+      srcdir="${lemu.src}"> 
+      <include name="LambdaParser.g.t"/>
+    </tom.preset>
+
+    <tomantlr target="${lemu.gen}/LambdaParser.g"
+              outputdirectory="${lemu.gen}">
+      <classpath refid="tom.classpath"/>
+    </tomantlr>
+ 
+
+    <!-- FIN LAMBDA -->
+
     <tomantlr target="${lemu.src}/SeqParser.g"
               outputdirectory="${lemu.gen}">
       <classpath refid="tom.classpath"/>

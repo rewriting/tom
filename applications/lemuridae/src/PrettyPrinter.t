@@ -140,14 +140,14 @@ class PrettyPrinter {
 
   public static String toLatex(sequentsAbstractType term) {
     %match(Tree term) {
-      rule(n,(),c,_) -> {return "\\infer["+ translate(`n) +"]{" + toLatex(`c) + "}{}";}
-      rule(n,p,c,_) -> {return "\\infer["+ translate(`n) +"]{" + toLatex(`c) + "}{"+ toLatex(`p) +"}";}
+      rule(n,(),c,_) -> {return "\\inferrule*[Left=$"+ translate(`n) +"$]\n{~}\n{" + toLatex(`c) + "}";}
+      rule(n,p,c,_) -> {return "\\inferrule*[Left=$"+ translate(`n) +"$]\n{" + toLatex(`p) + "}\n{"+ toLatex(`c) +"}";}
     }
 
     %match(Premisses term) {
       () -> { return ""; }
       (x) -> { return toLatex(`x); }
-      (h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
+      (h,t*) -> { return toLatex(`h) + " \\\\ " + toLatex(`t*); }
     }
 
     %match(Context term) {
@@ -380,6 +380,29 @@ class PrettyPrinter {
         else return prettyPrint(`x) + "::" + prettyPrint(`y);
       }
 
+      // lambda-sigma
+      funAppl(fun("lambda"),(x)) -> {
+        return "λ" + `prettyPrint(x);
+      }
+      funAppl(fun("lappl"),(p,x*)) -> {
+        return "(" + `prettyPrint(p) + " "+ prettyPrint(`x*) + ")";
+      }
+      funAppl(fun("subst"),(p,x*)) -> {
+        return  `prettyPrint(p) + "["+ prettyPrint(`x*) + "]";
+      }
+      funAppl(fun("one"),()) -> {
+        return ("1");
+      }
+      funAppl(fun("shift"),()) -> {
+        return ("↑");
+      }
+      funAppl(fun("lcons"),(x,y)) -> {
+        return prettyPrint(`x) + "." + prettyPrint(`y);
+      }
+      funAppl(fun("rond"),(x,y)) -> {
+        return prettyPrint(`x) + " o " + prettyPrint(`y);
+      }
+    
 
       funAppl(fun(name),x) -> {
         return `name + "(" + prettyPrint(`x) + ")";
@@ -465,7 +488,7 @@ class PrettyPrinter {
   }
 
   public static void display(Tree tree, TermRuleList tl, PropRuleList pl) throws java.io.IOException, java.lang.InterruptedException {
-    tree = cleanTree(tree, tl, pl);
+    //tree = cleanTree(tree, tl, pl);
     display(tree);
   }
 
@@ -475,7 +498,7 @@ class PrettyPrinter {
     FileWriter writer = new FileWriter(tmp);
     String path = tmp.getAbsolutePath();
 
-    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\begin{document}\n\\[\n");
+    writer.write("\\documentclass{article}\n\\usepa"+"ckage{mathpartir}\n\\begin{document}\n\\[\n");
     writer.write(toLatex(term));
     writer.write("\n\\]\n");
     writer.write("\\end{document}\n");

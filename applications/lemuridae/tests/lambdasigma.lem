@@ -1,0 +1,24 @@
+termrule lappl(lambda(a),b) -> subst(a,lcons(b,id())) .
+termrule subst(one(),id()) -> one().
+termrule subst(one(),lcons(a,s)) -> a.
+termrule subst(lappl(b,a),s) -> lappl(subst(b,s),subst(a,s)).
+termrule subst(lambda(a),s) -> lambda(subst(a,lcons(one(),rond(s,shift())))).
+termrule subst(subst(a,s),t) -> subst(a,rond(s,t)).
+termrule rond(id(),s) -> s.
+termrule rond(shift(),id()) -> shift().
+termrule rond(shift(),lcons(a,s)) -> s.
+termrule rond(lcons(a,s),t) -> lcons(subst(a,t),rond(s,t)).
+termrule rond(rond(s1,s2),s3) -> rond(s1,rond(s2,s3)).
+
+
+termrule swap() -> lambda(lambda(lambda(lappl(lappl(subst(one(),rond(shift(),shift())),one()),subst(one(),shift()))))).
+
+termrule( subst(a(),id()) ) -> a().
+termrule( subst(b(),id()) ) -> b().
+termrule( subst(f(),id()) ) -> f().
+
+
+proof test: P(  lappl(lappl(lappl(swap(),f()),a()),b())   ).
+reduce.
+
+

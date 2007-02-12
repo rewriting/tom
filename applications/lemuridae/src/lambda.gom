@@ -1,0 +1,16 @@
+module lambda
+imports String int
+
+abstract syntax
+
+LTerm = Var(name:String)
+      | Fun(name:String)
+      | Abs(name:String,t:LTerm)
+      | Appl(t1:LTerm,t2:LTerm)
+
+LTermDB = DB(n:int)
+        | FunDB(name:String)
+        | AbsDB(t:LTermDB)
+        | ApplDB(t1:LTermDB,t2:LTermDB)
+
+

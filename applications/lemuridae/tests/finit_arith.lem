@@ -17,7 +17,7 @@ proprule in(l,fNull(t)) -> Null(appl(t,l)).
 proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 proprule in(l,fN(t)) -> N(appl(t,l)).
 rule eq(x,y) -> \AA.(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
-rule N(n) -> \AA.( in(cons(0,nil()),A) => ( \Ay.(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
+rule N(n) -> \Ap.( in(cons(0,nil()),p) => ( \Ay.(in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p) )).
 hered.
 rule Null(0) -> \T.
 rule Null(succ(x)) -> \B.
