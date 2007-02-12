@@ -127,7 +127,7 @@ public class TomCompiler extends TomGenericPlugin {
    * preProcessing:
    * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
    *
-   * transforms RuleSet into Function + Match + BuildReducedTerm
+   * [commented] transforms RuleSet into Function + Match + BuildReducedTerm
    * abstract list-matching patterns
    * rename non-linear patterns
    */
@@ -285,56 +285,56 @@ matchBlock: {
         return (Declaration) MuTraveler.init(`preProcessing(compiler)).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
 
-      RuleSet(rl@concTomRule(RewriteRule[Lhs=Term(RecordAppl[NameList=(Name(tomName))])],_*),optionList) -> {
-        TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
-        TomName name = tomSymbol.getAstName();
-        String moduleName = getModuleName(`optionList);
-        PatternInstructionList patternInstructionList  = `concPatternInstruction();
-
-        //build variables list for lhs symbol
-        TomTypeList typesList = getSymbolDomain(tomSymbol);
-        TomList subjectListAST = `concTomTerm();
-        TomNumberList path = `concTomNumber(RuleVar());
-        int index = 0;
-        while(!typesList.isEmptyconcTomType()) {
-          TomType subtermType = typesList.getHeadconcTomType();
-          TomTerm variable = `Variable(concOption(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
-          subjectListAST = append(variable,subjectListAST);
-          typesList = typesList.getTailconcTomType();
-          index++;
-        }
-
-        TomRuleList ruleList = `rl;
-        TomList guardList = `concTomTerm();//no guardlist in pattern
-        while(!ruleList.isEmptyconcTomRule()) {
-          TomRule rule = ruleList.getHeadconcTomRule();
-          %match(rule) {
-            RewriteRule(Term(lhsTerm@RecordAppl[Slots=matchPatternsList]),
-                Term(rhsTerm),
-                condList,
-                option) -> {
-              //transform rhsTerm into Instruction to build PatternInstructionList
-              TomTerm newRhs = `BuildReducedTerm(rhsTerm,compiler.getTermType(lhsTerm));
-              Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
-              Instruction newRhsInst = compiler.buildCondition(`condList,`rhsInst);
-              Pattern pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
-              patternInstructionList = `concPatternInstruction(patternInstructionList*,PatternInstruction(pattern,RawAction(newRhsInst),option));
-            }
-          }
-          ruleList = ruleList.getTailconcTomRule();
-        }
-
-        Instruction matchAST = `Match(SubjectList(subjectListAST),
-            patternInstructionList, optionList);
-        //return type `name(subjectListAST)
-        Instruction buildAST = `Return(BuildTerm(name,(TomList) MuTraveler.init(preProcessing_makeTerm(compiler)).visit(subjectListAST),moduleName));
-        Instruction functionBody =  (Instruction) MuTraveler.init(`preProcessing(compiler)).visit(`AbstractBlock(concInstruction(matchAST,buildAST)));
-
-        //find codomain
-        TomType codomain = getSymbolCodomain(tomSymbol);
-
-        return `FunctionDef(name,subjectListAST,codomain,EmptyType(),functionBody);
-      }
+//      RuleSet(rl@concTomRule(RewriteRule[Lhs=Term(RecordAppl[NameList=(Name(tomName))])],_*),optionList) -> {
+//        TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
+//        TomName name = tomSymbol.getAstName();
+//        String moduleName = getModuleName(`optionList);
+//        PatternInstructionList patternInstructionList  = `concPatternInstruction();
+//
+//        //build variables list for lhs symbol
+//        TomTypeList typesList = getSymbolDomain(tomSymbol);
+//        TomList subjectListAST = `concTomTerm();
+//        TomNumberList path = `concTomNumber(RuleVar());
+//        int index = 0;
+//        while(!typesList.isEmptyconcTomType()) {
+//          TomType subtermType = typesList.getHeadconcTomType();
+//          TomTerm variable = `Variable(concOption(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
+//          subjectListAST = append(variable,subjectListAST);
+//          typesList = typesList.getTailconcTomType();
+//          index++;
+//        }
+//
+//        TomRuleList ruleList = `rl;
+//        TomList guardList = `concTomTerm();//no guardlist in pattern
+//        while(!ruleList.isEmptyconcTomRule()) {
+//          TomRule rule = ruleList.getHeadconcTomRule();
+//          %match(rule) {
+//            RewriteRule(Term(lhsTerm@RecordAppl[Slots=matchPatternsList]),
+//                Term(rhsTerm),
+//                condList,
+//                option) -> {
+//              //transform rhsTerm into Instruction to build PatternInstructionList
+//              TomTerm newRhs = `BuildReducedTerm(rhsTerm,compiler.getTermType(lhsTerm));
+//              Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
+//              Instruction newRhsInst = compiler.buildCondition(`condList,`rhsInst);
+//              Pattern pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
+//              patternInstructionList = `concPatternInstruction(patternInstructionList*,PatternInstruction(pattern,RawAction(newRhsInst),option));
+//            }
+//          }
+//          ruleList = ruleList.getTailconcTomRule();
+//        }
+//
+//        Instruction matchAST = `Match(SubjectList(subjectListAST),
+//            patternInstructionList, optionList);
+//        //return type `name(subjectListAST)
+//        Instruction buildAST = `Return(BuildTerm(name,(TomList) MuTraveler.init(preProcessing_makeTerm(compiler)).visit(subjectListAST),moduleName));
+//        Instruction functionBody =  (Instruction) MuTraveler.init(`preProcessing(compiler)).visit(`AbstractBlock(concInstruction(matchAST,buildAST)));
+//
+//        //find codomain
+//        TomType codomain = getSymbolCodomain(tomSymbol);
+//
+//        return `FunctionDef(name,subjectListAST,codomain,EmptyType(),functionBody);
+//      }
     }//end match
   } // end strategy
 
