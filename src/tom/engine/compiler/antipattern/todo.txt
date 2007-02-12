@@ -1,7 +1,0 @@
-TODO
-
-
-3. guards are not handled
-4. in the action we should only allow the free variables - should we provide a warning message ?
-5. remove from getTomMappingForConstraint -TomAntiPatternUtils - things that are no more needed
-6. clean TomAntiPatternUtils from OrConstraint 

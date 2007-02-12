@@ -212,7 +212,7 @@ public class TomAntiPatternTransformNew {
 		Constraint cAntiReplaced = (Constraint) `OnceTopDownId(AbstractTerm(abstractVariable, tmp)).apply(c);
 		cAntiReplaced = applyMainRule(cAntiReplaced,quantifiedVarList);
 		
-		return `AndConstraint(concAnd(cAntiReplaced,cNoAnti));
+		return `AndConstraint(concConstraint(cAntiReplaced,cNoAnti));
 	}
 	
 	// collect variables, a do not inspect under an AntiTerm
