@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build the bpel example" default="build" basedir="..">
   <import file="../common.xml"/>
-  <macrodef name="gomrefcompile">
+  <macrodef name="gomtermgraphcompile">
     <attribute name="example"/>
     <sequential>
       <gom.preset srcdir="${examples.dir}"
         package="@{example}" 
-        pointer="true" 
+        termgraph="true" 
         destdir="${examples.gen}">
         <include name="@{example}/**/*.gom"/>
       </gom.preset>
@@ -34,7 +34,7 @@
       package="${bpel}">
       <classpath refid="tom.classpath"/>
     </antlrmapper>
-    <gomrefcompile example="${bpel}"/>
+    <gomtermgraphcompile example="${bpel}"/>
     <tomcompile example="${bpel}"/>
     <javacompile example="${bpel}"/>
   </target>
