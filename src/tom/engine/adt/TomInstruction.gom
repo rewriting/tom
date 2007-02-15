@@ -1,5 +1,5 @@
 module TomInstruction
-imports TomSignature 
+imports TomSignature
 abstract syntax
 Instruction = TomTermToInstruction(Tom:TomTerm)
             | TargetLanguageToInstruction(Tl:TargetLanguage)

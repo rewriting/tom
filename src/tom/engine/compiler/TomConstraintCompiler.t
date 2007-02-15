@@ -7,7 +7,7 @@ import tom.engine.tools.TomGenericPlugin;
  * 
  * It controls different phases of compilation:
  * - propagation of constraints
- * - instruction generation from constrains
+ * - instruction generation from constraints
  * - ...   
  */
 public class TomConstraintCompiler extends TomGenericPlugin {

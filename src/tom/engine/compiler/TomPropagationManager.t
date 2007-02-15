@@ -18,7 +18,7 @@ public class TomPropagationManager extends TomBase {
 	
 	private static final String[] propagatorsNames = {""};
 	
-	public Constraint performPropagations(TomTerm termToCompile) 
+	public static Constraint performPropagations(TomTerm termToCompile) 
 			throws ClassNotFoundException,InstantiationException,IllegalAccessException{
 		
 		// counts the propagators that didn't change the expression
@@ -54,8 +54,10 @@ public class TomPropagationManager extends TomBase {
 	/**
 	 * Prepares the propagation phase
 	 */
-	private Constraint preparePropagation(TomTerm termToCompile){
+	private static Constraint preparePropagation(TomTerm termToCompile){
 		// TODO
+		// should transform 'Match' instruction into a conjuction of MatchConstraint
+	    // Match(matchSubjectList,patternInstructionList, matchOptionList)  -> {
 		return null;
 	}
 }

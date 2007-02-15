@@ -1,5 +1,5 @@
 module TomConstraint
-imports TomSignature
+imports TomTerm
 abstract syntax
 Constraint = Ensure(Variable:TomTerm)
            | Equal(Variable:TomTerm)
@@ -10,9 +10,9 @@ Constraint = Ensure(Variable:TomTerm)
 		   | AndConstraint(cla:ConstraintList)
 		   | OrConstraint(clo:ConstraintList)
 		   | MatchConstraint(pattern:TomTerm, genTerm:TomTerm)
-		   | NMatchConstraint(pattern:TomTerm, genTerm:TomTerm)
-		   | Exists(var:TomTerm,cons:Constraint)
-		   | ForAll(var:TomTerm,cons:Constraint)
+//		   | NMatchConstraint(pattern:TomTerm, genTerm:TomTerm)
+//		   | Exists(var:TomTerm,cons:Constraint)
+//		   | ForAll(var:TomTerm,cons:Constraint)
 		   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int)
 		   | AndAntiConstraint(Constraint*)
 		   | EqualSublist(startList:int,endList:int,var:TomTerm,list:TomTerm)
