@@ -32,25 +32,28 @@ import tom.gom.adt.objects.types.*;
 
 public abstract class TemplateHookedClass extends TemplateClass {
   protected HookList hooks;
-  File tomHomePath;
-  List importList;
+  protected File tomHomePath;
+  protected List importList;
+  protected TemplateClass mapping;
  
-  public TemplateHookedClass(ClassName className,File tomHomePath, List importList,  HookList hooks) {
+  public TemplateHookedClass(ClassName className,File tomHomePath, List importList,  HookList hooks, TemplateClass mapping) {
     super(className);
     this.hooks = hooks;
     this.tomHomePath = tomHomePath;
     this.importList = importList;
+    this.mapping = mapping;
   }
 
   %include { ../adt/objects/Objects.tom}
 
   protected String generateBlock() {
     StringBuffer res = new StringBuffer();
-    %match(HookList hooks) {
+    HookList h = `concHook(hooks*);   
+    %match(HookList h) {
       concHook(L1*,BlockHook(code),L2*) -> {
         //remove brackets
         res.append(`code.substring(1,`code.length()-1)+"\n");
-        hooks = `concHook(L1*,L2*);
+        h = `concHook(L1*,L2*);
       }
     }
     return res.toString();
@@ -58,11 +61,12 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateImport() {
     StringBuffer res = new StringBuffer();
-    %match(HookList hooks) {
+    HookList h = `concHook(hooks*);   
+    %match(HookList h) {
       concHook(L1*,ImportHook(code),L2*) -> {
         //remove brackets
         res.append(`code.substring(1,`code.length()-1)+"\n");
-        hooks = `concHook(L1*,L2*);
+        h = `concHook(L1*,L2*);
       }
     }
     return res.toString();
@@ -70,11 +74,12 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
   protected String generateInterface() {
     StringBuffer res = new StringBuffer();
-    %match(HookList hooks) {
+    HookList h = `concHook(hooks*);   
+    %match(HookList h) {
       concHook(L1*,InterfaceHook(code),L2*) -> {
         //remove brackets
         res.append(","+`code.substring(1,`code.length()-1).replaceAll("\n",""));
-        hooks = `concHook(L1*,L2*);
+        h = `concHook(L1*,L2*);
       }
     }
     return res.toString();
@@ -135,7 +140,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
       //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
       //String[] params = {"-X",config_xml,"--output",file_path,"-"};
 
-      System.out.println("params: " + tomParams);
+      //System.out.println("params: " + tomParams);
 
       try {
         StringWriter gen = new StringWriter();

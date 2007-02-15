@@ -28,13 +28,12 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 import tom.gom.backend.TemplateHookedClass;
+import tom.gom.backend.TemplateClass;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
 public class VariadicOperatorTemplate extends TemplateHookedClass {
-  File tomHomePath;
-  List importList;
   ClassName abstractType;
   ClassName sortName;
   GomClass empty;
@@ -49,8 +48,9 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
                                   ClassName sortName,
                                   GomClass empty,
                                   GomClass cons,
-                                  HookList hooks){
-    super(className,tomHomePath,importList,hooks);
+                                  HookList hooks,
+                                  TemplateClass mapping) {
+    super(className,tomHomePath,importList,hooks,mapping);
     this.tomHomePath = tomHomePath;
     this.importList = importList;
     this.abstractType = abstractType;
@@ -99,7 +99,7 @@ writer.write(%[
     } else {
       return 0;
     }
-  }
+    }
 
   public @domainClassName@[] toArray() {
     @domainClassName@[] array;
@@ -178,6 +178,9 @@ writer.write(%[
     return null;
   }
 ]%);
+    if (! hooks.isEmptyconcHook()) {
+      mapping.generate(writer); 
+    }
   }
 
   private String toStringChild(String buffer, String element) {

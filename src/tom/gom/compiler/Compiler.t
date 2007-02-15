@@ -112,7 +112,7 @@ public class Compiler {
       consum=consum.getTailconcSort();
       // get the class name for the sort
       %match(Sort sort) {
-        Sort[Decl=sortDecl@SortDecl[ModuleDecl=moduleDecl,Hooks=sorthooks],Operators=oplist] -> {
+        Sort[Decl=sortDecl@SortDecl[ModuleDecl=moduleDecl],Operators=oplist,Hooks=sorthooks] -> {
           ClassName sortClassName = (ClassName)sortClassNameForSortDecl.get(`sortDecl);
           ClassName abstracttypeName = (ClassName)abstractTypeNameForModule.get(`moduleDecl);
           ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDecl);
@@ -184,6 +184,7 @@ public class Compiler {
 
                 operatorClass = `VariadicOperatorClass(variadicOpClassName ,
                                                        abstracttypeName,
+                                                       mappingName,
                                                        sortClassName,
                                                        emptyClass,
                                                        cons,
@@ -204,6 +205,7 @@ public class Compiler {
           // create the sort class and add it to the list
           GomClass sortClass = `SortClass(sortClassName,
                                           abstracttypeName,
+                                          mappingName,
                                           visitorName,
                                           visitableforwardName,
                                           allOperators,
@@ -274,17 +276,18 @@ public class Compiler {
       GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,fwdclass);
       classList = `concGomClass(visitablefwdclass,classList*);
 
-      /* create the abstractType */
-      ClassNameList classSortList = sortClassNames(sortList);
-      ClassName abstractTypeName = (ClassName) abstractTypeNameForModule.get(moduleDecl);
-      GomClass abstracttype =
-        `AbstractTypeClass(abstractTypeName,visitorName,classSortList,makeHooksFromHookDecls(moduleDecl.getHooks()));
-      classList = `concGomClass(abstracttype,classList*);
-
       /* create a TomMapping */
       ClassName tomMappingName = (ClassName) tomMappingNameForModule.get(moduleDecl);
       GomClass tommappingclass = `TomMapping(tomMappingName,visitablefwdName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(tommappingclass,classList*);
+
+      /* create the abstractType */
+      ClassNameList classSortList = sortClassNames(sortList);
+      ClassName abstractTypeName = (ClassName) abstractTypeNameForModule.get(moduleDecl);
+      GomClass abstracttype =
+        `AbstractTypeClass(abstractTypeName,tomMappingName,visitorName,classSortList,makeHooksFromHookDecls(moduleDecl.getHooks()));
+      classList = `concGomClass(abstracttype,classList*);
+
 
     }
 

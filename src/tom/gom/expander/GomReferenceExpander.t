@@ -61,20 +61,49 @@ public class GomReferenceExpander {
     environment().markUsedBuiltin("int");
   }
 
-  public SortList expand(SortList typedModuleList) {
+  public SortList expand(SortList list) {
     SortList expandedList = `concSort();
-    %match(typedModuleList){
+    HashMap mapModuleSorts = new HashMap();
+    %match(list){
       concSort(_*,sort,_*) -> {
+        SortDecl sortDecl = `sort.getDecl();
+        ModuleDecl module = sortDecl.getModuleDecl();
+        SortDeclList sorts = (SortDeclList) mapModuleSorts.get(module);
+        if(sorts !=null) {
+          mapModuleSorts.put(module,`concSortDecl(sorts*,sortDecl));
+        }
+        else {
+          mapModuleSorts.put(module,`concSortDecl(sortDecl));
+        }
         expandedList = `concSort(expandedList*,expandSort(sort));
       }
     }
-    return expandedList;
+    //add a global expand method in every ModuleDecl for each sort
+     %match(expandedList){
+      concSort(_*,sort,_*) -> {
+        SortDecl sortDecl = `sort.getDecl();
+        ModuleDecl module = sortDecl.getModuleDecl();
+        SortDeclList sorts = (SortDeclList) mapModuleSorts.get(module);
+        HookDeclList hooks = module.getHooks();
+        HookDeclList expHooks = expHooksModule(module,sorts);
+        module = module.setHooks(`concHookDecl(hooks*,expHooks*));
+        sortDecl = sortDecl.setModuleDecl(module);
+       `sort = `sort.setDecl(sortDecl); 
+        expandedList = `concSort(expandedList*,sort);
+      }
+     }
+     return expandedList;
   }
 
   private Sort expandSort(Sort sort) {
     OperatorDeclList l1 = sort.getOperators();
     OperatorDeclList l2 = getRefOperators(sort.getDecl());
-    return `sort.setOperators(`concOperator(l1*,l2*));
+    Sort extendSort = sort.setOperators(`concOperator(l1*,l2*));
+    //add an expand method in every sort
+    HookDeclList expHooks = expHooksSort(extendSort.getDecl());
+    HookDeclList oldHooks = extendSort.getHooks();
+    extendSort = extendSort.setHooks(`concHookDecl(oldHooks*,expHooks*));
+    return extendSort;
   }
 
   /*
@@ -90,10 +119,7 @@ public class GomReferenceExpander {
     String posOpName = "pos"+sort.getName();
     OperatorDecl posOp = `OperatorDecl(posOpName,sort,Variadic(intSortDecl),posHooks());
 
-    String expOpName = "exp"+sort.getName();
-    OperatorDecl expOp = `OperatorDecl(expOpName,sort,Slots(concSlot(Slot("term",sort))),expHooks(sort));
-
-    return `concOperator(labOp,refOp,posOp,expOp);
+    return `concOperator(labOp,refOp,posOp);
   }
 
   //TODO remove MuReference when sl is operational
@@ -101,22 +127,37 @@ public class GomReferenceExpander {
     return 
       `concHookDecl(InterfaceHookDecl("{tom.library.strategy.mutraveler.MuReference,tom.library.sl.Reference}"));
   }
+  
+  private HookDeclList expHooksModule(ModuleDecl module,SortDeclList sorts){
+    String moduleName = module.getModuleName().getName();
+    String codeImport =%[
+    import @packagePath@.@moduleName.toLowerCase()@.types.*;
+    ]%;
 
-  private HookDeclList expHooks(SortDecl sortDecl){
+    String codeBlock =%[
+    public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
+      ]%;
+
+    %match(sorts){
+      concSortDecl(_*,SortDecl[Name=name],_*) -> {
+        codeBlock += "t="+`name+".expand(t);\n";
+      }
+    }
+
+    codeBlock += %[
+      return t;
+    }
+    ]%;  
+    return `concHookDecl(ImportHookDecl(codeImport),BlockHookDecl(codeBlock));
+  }
+    
+  private HookDeclList expHooksSort(SortDecl sortDecl){
     String sortName = sortDecl.getName();
     String moduleName = sortDecl.getModuleDecl().getModuleName().getName();
-    String codeMake =%[
-      @sortName@ termWithPos = expand(term);
-    //to avoid unaccessible real_make statement
-    if(! termWithPos.equals(term)){
-      return termWithPos;
-    }
-    if(termWithPos.equals(term)){
-      return term;
-    }]%;
 
     String codeImport =%[
-    import @packagePath@.@moduleName.toLowerCase()@.types.@sortName@;
+    import @packagePath@.@moduleName.toLowerCase()@.types.@sortName.toLowerCase()@.*;
+    import @packagePath@.@moduleName.toLowerCase()@.*;
     import tom.library.strategy.mutraveler.*;
     import java.util.*;
     ]%;
@@ -220,32 +261,34 @@ public class GomReferenceExpander {
         }
       }
     }
-   ]%;
-
-    
-    String codeBlockTermWithPointers =%[
-      public static @sortName@ expand(@sortName@ t){
-        HashMap map = new HashMap();
-        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Pos(map)));
-        return (@sortName@) `label2pos.apply(t);
-      }
     ]%;
-    
-    String codeBlockTermGraph =%[
-    public static @sortName@ expand(@sortName@ t){
-      Info info = new Info();
-      ArrayList marked = new ArrayList();
+
+
+    String codeBlockTermWithPointers =%[
+      
+    public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
       HashMap map = new HashMap();
-      MuStrategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown(Collect(marked,info)),BottomUp(Min(info)),TopDown(Switch(info)))),ClearMarked(marked)));
       MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Pos(map)));
-      return (@sortName@) `Sequence(normalization,label2pos).apply(t);
+      return (@moduleName@AbstractType) `label2pos.apply(t);
     }
+    ]%;
+
+    String codeBlockTermGraph =%[
+    
+    public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
+        Info info = new Info();
+        ArrayList marked = new ArrayList();
+        HashMap map = new HashMap();
+        MuStrategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown(Collect(marked,info)),BottomUp(Min(info)),TopDown(Switch(info)))),ClearMarked(marked)));
+        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Pos(map)));
+        return (@moduleName@AbstractType) `Sequence(normalization,label2pos).apply(t);
+      }
     ]%;
 
     String codeBlock = codeBlockCommon + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
 
-    return `concHookDecl(MakeHookDecl(concSlot(Slot("term",sortDecl)),codeMake),ImportHookDecl(codeImport),BlockHookDecl(codeBlock));
-  }
+    return `concHookDecl(ImportHookDecl(codeImport),BlockHookDecl(codeBlock));
+}
 
 
 }

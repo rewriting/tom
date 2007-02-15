@@ -27,21 +27,22 @@ package tom.gom.backend.shared;
 import java.io.*;
 import java.util.*;
 
+import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassName visitor;
   ClassNameList sortList;
-  List importList;
-  File tomHomePath;
+
 public AbstractTypeTemplate(File tomHomePath,
                             List importList,
                             ClassName className,
                             ClassName visitor,
                             ClassNameList sortList,
-                            HookList hooks) {
-    super(className,tomHomePath,importList,hooks);
+                            HookList hooks,
+                            TemplateClass mapping) {
+    super(className,tomHomePath,importList,hooks,mapping);
     this.visitor = visitor;
     this.sortList = sortList;
   }
@@ -83,8 +84,14 @@ public abstract class @className()@ implements shared.SharedObjectWithID, jjtrav
   }
 
   abstract public @className()@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure;
+]%);
+if (! hooks.isEmptyconcHook()) {
+  mapping.generate(writer); 
+}
+ writer.write(
+%[
 }
 ]%);
-  }
+ }
 
 }

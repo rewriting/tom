@@ -27,18 +27,17 @@ package tom.gom.backend.shared;
 import java.io.*;
 import java.util.*;
 
+import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 
 public class SortTemplate extends TemplateHookedClass {
-  File tomHomePath;
-  List importList;
   ClassName abstractType;
   ClassName visitor;
   ClassNameList operatorList;
   ClassNameList variadicOperatorList;
   SlotFieldList slotList;
-
+ 
   %include { ../../adt/objects/Objects.tom}
 
   public SortTemplate(File tomHomePath,
@@ -49,8 +48,9 @@ public class SortTemplate extends TemplateHookedClass {
                       ClassNameList operatorList,
                       ClassNameList variadicOperatorList,
                       SlotFieldList slots,
-                      HookList hooks) {
-    super(className,tomHomePath,importList,hooks);
+                      HookList hooks,
+                      TemplateClass mapping) {
+    super(className,tomHomePath,importList,hooks,mapping);
     this.tomHomePath = tomHomePath;
     this.importList = importList;
     this.abstractType = abstractType;
@@ -150,13 +150,16 @@ writer.write(%[
       "This "+this.getClass().getName()+" is not a list");
   }
 ]%);
+    if (! hooks.isEmptyconcHook()) {
+      mapping.generate(writer); 
+    }
   }
-  
-  protected String generateInterface() {
-    String interfaces = super.generateInterface();
-    if (! interfaces.equals("")) return "implements "+interfaces.substring(1);
-    else return interfaces;
-  }
+
+protected String generateInterface() {
+  String interfaces = super.generateInterface();
+  if (! interfaces.equals("")) return "implements "+interfaces.substring(1);
+  else return interfaces;
+}
 
   private void generateFromTerm(java.io.Writer writer, String trm, String tmp) throws java.io.IOException {
     ClassNameList consum = `concClassName(operatorList*,variadicOperatorList*);

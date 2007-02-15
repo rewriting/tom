@@ -117,9 +117,11 @@ public class Backend {
       }
       AbstractTypeClass[ClassName=className,
                         Visitor=visitorName,
+                        Mapping=mapping,
                         SortList=sortList,
                         Hooks=hooks] -> {
-        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(tomHomePath,importList,`className,`visitorName,`sortList,`hooks);
+        GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
+        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(tomHomePath,importList,`className,`visitorName,`sortList,`hooks,getMappingTemplate(mappingClass));
         abstracttype.generateFile();
         return 1;
       }
@@ -127,10 +129,13 @@ public class Backend {
                 AbstractType=abstracttype,
                 Visitor=visitorName,
                 Operators=ops,
+                Mapping=mapping,
                 VariadicOperators=varyops,
                 Slots=slots,
                 Hooks=hooks] -> {
-        TemplateClass sort = templatefactory.makeSortTemplate(tomHomePath,importList,`className,`abstracttype,`visitorName,`ops,`varyops,`slots,`hooks);
+        GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
+        TemplateClass sort = templatefactory.makeSortTemplate(tomHomePath,importList,`className,`abstracttype,`visitorName,`ops,`varyops,`slots,`hooks,getMappingTemplate(mappingClass));
+            
         sort.generateFile();
         return 1;
       }
@@ -172,10 +177,12 @@ public class Backend {
       VariadicOperatorClass[ClassName=className,
                             AbstractType=abstracttype,
                             SortName=sort,
+                            Mapping=mapping,
                             Empty=empty,
                             Cons=cons,
                             Hooks=hooks] -> {
-        TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(tomHomePath,importList,`className,`abstracttype,`sort,`empty,`cons,`hooks);
+        GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
+        TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(tomHomePath,importList,`className,`abstracttype,`sort,`empty,`cons,`hooks,getMappingTemplate(mappingClass));
         operator.generateFile();
         return 1;
       }

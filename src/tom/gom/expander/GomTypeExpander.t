@@ -95,6 +95,7 @@ public class GomTypeExpander {
 
     /* now get all operators for each sort */
     Map operatorsForSort = new HashMap();
+    Map hooksForSort = new HashMap();
     consum = moduleList;
     while(!consum.isEmptyconcGomModule()) {
       GomModule module = consum.getHeadconcGomModule();
@@ -108,6 +109,16 @@ public class GomTypeExpander {
           // we may want to pass modulename to help resolve ambiguities with modules
          getOperatorDecl(`prod,sortDeclList,operatorsForSort);
 
+        }
+      }
+      
+      //attach the hooks to each sort
+      %match(GomModule module) {
+        GomModule(modulename,concSection(_*,
+              Public(concGrammar(_*,Sorts(concGomType(_*,GomType(typeName),_*)),_*)),
+              _*)) -> {
+          HookDeclList moduleHooks = getModuleHooks(module);
+          hooksForSort.put(`SortDecl(typeName,ModuleDecl(modulename,packagePath,moduleHooks)),getSortHooks(module,`typeName));
         }
       }
 
@@ -136,7 +147,8 @@ public class GomTypeExpander {
     while(it.hasNext()) {
       SortDecl decl = (SortDecl) it.next();
       OperatorDeclList opdecl = (OperatorDeclList) operatorsForSort.get(decl);
-      Sort fullSort = `Sort(decl,opdecl);
+      HookDeclList hooks = (HookDeclList) hooksForSort.get(decl);
+      Sort fullSort = `Sort(decl,opdecl,hooks);
       if(checkSortValidity(fullSort)) {
         sortList = `concSort(fullSort,sortList*);
       }
@@ -361,8 +373,9 @@ public class GomTypeExpander {
       GomModule(modulename,concSection(_*,
             Public(concGrammar(_*,Sorts(concGomType(_*,GomType(typeName),_*)),_*)),
             _*)) -> {
-        HookDeclList sortHooks = getSortHooks(module,`typeName);
-        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath,moduleHooks),sortHooks));
+        //HookDeclList sortHooks = getSortHooks(module,`typeName);
+        //result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath,moduleHooks),sortHooks));
+        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath,moduleHooks)));
       }
     }
     return result;
@@ -376,8 +389,9 @@ public class GomTypeExpander {
     HookDeclList moduleHooks = getModuleHooks(module);
     %match(GomModule module) {
       GomModule(modulename,concSection(_*,Public(concGrammar(_*,Grammar(concProduction(_*,Production(_,_,GomType(typeName)),_*)),_*)),_*)) -> {
-        HookDeclList sortHooks = getSortHooks(module,`typeName);
-        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath,moduleHooks),sortHooks));
+        //HookDeclList sortHooks = getSortHooks(module,`typeName);
+        //result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath,moduleHooks)));
+        result.add(`SortDecl(typeName,ModuleDecl(modulename,packagePath,moduleHooks)));
       }
     }
     return result;

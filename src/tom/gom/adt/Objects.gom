@@ -4,9 +4,10 @@ imports String
 abstract syntax
 
 GomClass = VisitableFwdClass(ClassName:ClassName,Fwd:GomClass)
-         | AbstractTypeClass(ClassName:ClassName,Visitor:ClassName,SortList:ClassNameList,Hooks:HookList)
+         | AbstractTypeClass(ClassName:ClassName,Mapping:ClassName,Visitor:ClassName,SortList:ClassNameList,Hooks:HookList)
          | SortClass(ClassName:ClassName,
                      AbstractType:ClassName,
+                     Mapping:ClassName,
                      Visitor:ClassName,
                      Forward:ClassName,
                      Operators:ClassNameList,
@@ -23,6 +24,7 @@ GomClass = VisitableFwdClass(ClassName:ClassName,Fwd:GomClass)
                          Hooks:HookList)
          | VariadicOperatorClass(ClassName:ClassName,
                                  AbstractType:ClassName,
+                                 Mapping:ClassName,
                                  SortName:ClassName,
                                  Empty:GomClass,
                                  Cons:GomClass,

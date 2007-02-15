@@ -34,14 +34,11 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
 public class OperatorTemplate extends TemplateHookedClass {
-  File tomHomePath;
-  List importList;
   ClassName abstractType;
   ClassName extendsType;
   ClassName sortName;
   ClassName visitor;
   SlotFieldList slotList;
-  TemplateClass mapping;
 
   %include { ../../adt/objects/Objects.tom}
 
@@ -55,7 +52,7 @@ public class OperatorTemplate extends TemplateHookedClass {
                           SlotFieldList slots,
                           HookList hooks,
                           TemplateClass mapping) {
-    super(className,tomHomePath,importList,hooks);
+    super(className,tomHomePath,importList,hooks,mapping);
     this.tomHomePath = tomHomePath;
     this.importList = importList;
     this.abstractType = abstractType;
@@ -63,7 +60,6 @@ public class OperatorTemplate extends TemplateHookedClass {
     this.sortName = sortName;
     this.visitor = visitor;
     this.slotList = slots;
-    this.mapping = mapping;
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -724,41 +720,41 @@ writer.write(%[
   }
 
 public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
-  if (hooks.isEmptyconcHook()) {
-    writer.write(%[
-        public static @className()@ make(@childListWithType(slotList)@) {
-        proto.initHashCode(@childList(slotList)@);
-        return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
-        }
+  
+  %match(HookList hooks) {
+    
+    ! concHook(_*,MakeHook[],_*) -> {
+      writer.write(%[
+          public static @className()@ make(@childListWithType(slotList)@) {
+          proto.initHashCode(@childList(slotList)@);
+          return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
+          }
+          ]%);
+    }
 
-        ]%);
-  } else { // we have to generate an hidden "real" make
-    writer.write(%[
+    concHook(_*,MakeHook[],_*,MakeHook[]) -> {
+      throw new GomRuntimeException("Support for multiple Make hooks for an operator not implemented yet");
+    }
+ 
+    concHook(_*,MakeHook(args,code),_*) -> {
+      writer.write(%[
         private static @className()@ realMake(@childListWithType(slotList)@) {
         proto.initHashCode(@childList(slotList)@);
         return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
         }
 
+        public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
+        @`code@
+        return realMake(@unprotectedChildList(`args)@);
+        }
         ]%);
-    if(hooks.length() > 1) {
-      throw new GomRuntimeException("Support for multiple hooks for an operator not implemented yet");
     }
-    // then a make function calling it
-    %match(HookList hooks) {
-      concHook(MakeHook(args,code)) -> {
-        // replace the inner make call
-        writer.write(%[
-            public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
-            @`code@
-            return realMake(@unprotectedChildList(`args)@);
-            }
 
-            ]%);
-      }
+    ! concHook() -> {
+      mapping.generate(writer); 
     }
-    mapping.generate(writer); 
+
   }
 }
-
 
 }
