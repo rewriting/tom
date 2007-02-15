@@ -1,46 +1,81 @@
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> \B.
+proprule in(l,P(p)) -> \En.(in(cons(n,l),p)).
+proprule in(l,C(p)) -> \An.(in(cons(n,l),p)).
+
+
+termrule pred(0) -> 0.
+termrule pred(succ(x)) -> x.
 termrule 0 + y -> y.
 termrule 0 * y -> 0.
 termrule succ(x) + y -> succ(x+y).
 termrule succ(x) * y -> x * y + y.
+termrule appl(succ(t),l) -> succ(appl(t,l)).
+termrule appl(pred(t),l) -> pred(appl(t,l)).
+termrule appl(t1+t2,l) -> appl(t1,l) + appl(t2,l).
+termrule appl(t1*t2,l) -> appl(t1,l) * appl(t2,l).
 
 
-rule list(l) -> \A p.(in(nil(),p) => \A a.(\Al.(in(l,p) => in(cons(a,l),p))) => in(l,p)).
-hered.
 
-termrule len(cons(h,t)) -> 1 + len(t).
-termrule len(nil()) -> 0.
-
-termrule app(nil(),l) -> l.
-termrule app(cons(h,t),l) -> cons(h,app(t,l)).
+rule Null(0) -> \T.
+rule Null(succ(x)) -> \B.
+proprule in(l,fNull(t)) -> Null(appl(t,l)).
 
 
-proof testlist :  P(len(cons(1,cons(2,nil())))) => P(len(cons(0,cons(3,nil())))).
+rule eq(x,y) -> \AA.(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
+proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
+
+
+rule Nat(n) -> \Ap.( in(cons(0,nil()),p) => ( \Ay.(in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p) )).
+herednat.
+proprule in(l,fNat(t)) -> Nat(appl(t,l)).
+
+
+rule List(l) -> \A p.(in(cons(lnil(),nil()),p) => \A a.(\A ll.(in(cons(ll,nil()),p) => in(cons(lcons(a,ll),nil()),p))) => in(cons(l,nil()),p)).
+heredlist.
+proprule in(l,fList(t)) -> List(appl(t,l)).
+
+
+termrule appl(lcons(h,t),l) -> lcons(appl(h,l),appl(t,l)).
+
+
+termrule len(lcons(h,t)) -> 1 + len(t).
+termrule len(lnil()) -> 0.
+termrule appl(len(x),l) -> len(appl(x,l)).
+
+
+termrule append(lnil(),l) -> l.
+termrule append(lcons(h,t),l) -> lcons(h,append(t,l)).
+termrule appl(append(x,y),l) -> append(appl(x,l),appl(y,l)).
+
+
+proof testlist :  P(len(lcons(1,lcons(2,lnil())))) => P(len(lcons(0,lcons(3,lnil())))).
 intro.
 reduce.
 axiom.
 
-rule in(l,p()) -> P(l) => P(app(nil(),l)).
 
-
-proof testAppNilEnd: \A l. (list(l) => P(l) => P(app(nil(),l))).
-auto.
+proof testAppNilEnd: \A l. (List(l) => eq(l,append(l,lnil()))).
+intro. intro.
 focus h1.
-rule. p().
-next.
-auto.
-next.
-auto.
-reduce. axiom.
-focus h1. remove.
-focus h1. remove.
+rule. fEq(one(),append(one(),S(lnil()))).
+reduce.
+axiom.
+reduce.
+rule. axiom.
 focus c2. remove.
-auto.
-reduce. axiom.
-reduce. axiom.
-
-
-
-
-
-
+rule.
+reduce.
+focus h1.
+rule.
+fEq( lcons(S(a0),S(ll0)) ,   lcons(S(a0), one()  ) ).
+reduce.
+axiom.
+reduce.
+rule. axiom.
 
