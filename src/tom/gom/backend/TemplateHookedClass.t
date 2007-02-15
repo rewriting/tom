@@ -135,7 +135,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
       //String[] params = {"-X",xmlFile.getPath(),"--optimize","--optimize2","--output",file_path,"-"};
       //String[] params = {"-X",config_xml,"--output",file_path,"-"};
 
-      //System.out.println("params: " + tomParams);
+      System.out.println("params: " + tomParams);
 
       try {
         StringWriter gen = new StringWriter();

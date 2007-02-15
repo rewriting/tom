@@ -175,7 +175,7 @@ public class Backend {
                             Empty=empty,
                             Cons=cons,
                             Hooks=hooks] -> {
-        TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(`className,`abstracttype,`sort,`empty,`cons,`hooks);
+        TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(tomHomePath,importList,`className,`abstracttype,`sort,`empty,`cons,`hooks);
         operator.generateFile();
         return 1;
       }
