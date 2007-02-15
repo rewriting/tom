@@ -140,14 +140,14 @@ class PrettyPrinter {
 
   public static String toLatex(sequentsAbstractType term) {
     %match(Tree term) {
-      rule(n,(),c,_) -> {return "\\inferrule*[Left=$"+ translate(`n) +"$]\n{~}\n{" + toLatex(`c) + "}";}
-      rule(n,p,c,_) -> {return "\\inferrule*[Left=$"+ translate(`n) +"$]\n{" + toLatex(`p) + "}\n{"+ toLatex(`c) +"}";}
+      rule(n,(),c,_) -> {return "\\infer["+ translate(`n) +"]\n{"+ toLatex(`c) +"}\n{}";}
+      rule(n,p,c,_) -> {return "\\infer["+ translate(`n) +"]\n{" + toLatex(`c) + "}\n{"+ toLatex(`p) +"}";}
     }
 
     %match(Premisses term) {
       () -> { return ""; }
       (x) -> { return toLatex(`x); }
-      (h,t*) -> { return toLatex(`h) + " \\\\ " + toLatex(`t*); }
+      (h,t*) -> { return toLatex(`h) + " & " + toLatex(`t*); }
     }
 
     %match(Context term) {
@@ -215,6 +215,7 @@ class PrettyPrinter {
         try { return Integer.toString(peanoToInt(`i));}
         catch (Exception e) {}
       }
+      
       funAppl(fun("plus"),(t1,t2)) -> { 
         return "(" + toLatex(`t1) + "+" + toLatex(`t2) + ")";
       }
@@ -498,7 +499,7 @@ class PrettyPrinter {
     FileWriter writer = new FileWriter(tmp);
     String path = tmp.getAbsolutePath();
 
-    writer.write("\\documentclass{article}\n\\usepa"+"ckage{mathpartir}\n\\begin{document}\n\\[\n");
+    writer.write("\\documentclass{article}\n\\usepa"+"ckage{proof}\n\\begin{document}\n\\[\n");
     writer.write(toLatex(term));
     writer.write("\n\\]\n");
     writer.write("\\end{document}\n");
