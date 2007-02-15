@@ -24,10 +24,15 @@
 
 package tom.gom.backend.shared;
 
+import java.io.*;
+import java.util.*;
+
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 
 public class SortTemplate extends TemplateHookedClass {
+  File tomHomePath;
+  List importList;
   ClassName abstractType;
   ClassName visitor;
   ClassNameList operatorList;
@@ -36,14 +41,18 @@ public class SortTemplate extends TemplateHookedClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public SortTemplate(ClassName className,
+  public SortTemplate(File tomHomePath,
+                      List importList, 	
+                      ClassName className,
                       ClassName abstractType,
                       ClassName visitor,
                       ClassNameList operatorList,
                       ClassNameList variadicOperatorList,
                       SlotFieldList slots,
                       HookList hooks) {
-    super(className,hooks);
+    super(className,tomHomePath,importList,hooks);
+    this.tomHomePath = tomHomePath;
+    this.importList = importList;
     this.abstractType = abstractType;
     this.visitor = visitor;
     this.operatorList = operatorList;

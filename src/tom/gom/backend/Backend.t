@@ -119,7 +119,7 @@ public class Backend {
                         Visitor=visitorName,
                         SortList=sortList,
                         Hooks=hooks] -> {
-        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(`className,`visitorName,`sortList,`hooks);
+        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(tomHomePath,importList,`className,`visitorName,`sortList,`hooks);
         abstracttype.generateFile();
         return 1;
       }
@@ -130,7 +130,7 @@ public class Backend {
                 VariadicOperators=varyops,
                 Slots=slots,
                 Hooks=hooks] -> {
-        TemplateClass sort = templatefactory.makeSortTemplate(`className,`abstracttype,`visitorName,`ops,`varyops,`slots,`hooks);
+        TemplateClass sort = templatefactory.makeSortTemplate(tomHomePath,importList,`className,`abstracttype,`visitorName,`ops,`varyops,`slots,`hooks);
         sort.generateFile();
         return 1;
       }

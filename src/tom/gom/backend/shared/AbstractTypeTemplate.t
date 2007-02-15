@@ -24,18 +24,24 @@
 
 package tom.gom.backend.shared;
 
+import java.io.*;
+import java.util.*;
+
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
 
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassName visitor;
   ClassNameList sortList;
-
-  public AbstractTypeTemplate(ClassName className,
-                              ClassName visitor,
-                              ClassNameList sortList,
-                              HookList hooks) {
-    super(className,hooks);
+  List importList;
+  File tomHomePath;
+public AbstractTypeTemplate(File tomHomePath,
+                            List importList,
+                            ClassName className,
+                            ClassName visitor,
+                            ClassNameList sortList,
+                            HookList hooks) {
+    super(className,tomHomePath,importList,hooks);
     this.visitor = visitor;
     this.sortList = sortList;
   }
