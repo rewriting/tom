@@ -1,6 +1,6 @@
 header {
  /*
-  * Copyright (c) 2005-2006, INRIA
+  * Copyright (c) 2005-2007, INRIA
   * All rights reserved.
   * 
   * Redistribution and use in source and binary forms, with or without
