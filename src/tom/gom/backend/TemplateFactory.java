@@ -43,7 +43,7 @@ public abstract class TemplateFactory {
   public abstract TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName visitor, ClassNameList sortList, HookList hooks);
   public abstract TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName abstractType, ClassName visitor, ClassNameList operators, ClassNameList variadicOperators, SlotFieldList slots, HookList hooks);
   public abstract TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName abstractType, ClassName extendsType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks,TemplateClass mapping);
-  public abstract TemplateClass makeVariadicOperatorTemplate(ClassName className, ClassName abstractType, ClassName sort, GomClass empty, GomClass conc, HookList hooks);
+  public abstract TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName abstractType, ClassName sort, GomClass empty, GomClass conc, HookList hooks);
 }
 
 class SharedTemplateFactory extends TemplateFactory {
@@ -71,9 +71,9 @@ class SharedTemplateFactory extends TemplateFactory {
   public TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName abstractType, ClassName extendsType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks,TemplateClass mapping) {
     return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, importList, className,abstractType,extendsType,sort,visitor,slots,hooks,mapping);
   }
-  public TemplateClass makeVariadicOperatorTemplate(ClassName
+  public TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, ClassName
       className, ClassName abstractType, ClassName sort, GomClass
       empty, GomClass conc,HookList hooks) {
-    return new tom.gom.backend.shared.VariadicOperatorTemplate(className,abstractType,sort,empty,conc,hooks);
+    return new tom.gom.backend.shared.VariadicOperatorTemplate(tomHomePath, importList, className,abstractType,sort,empty,conc,hooks);
   }
 }

@@ -25,6 +25,7 @@
 package tom.gom.backend.shared;
 
 import java.io.*;
+import java.util.*;
 import java.util.logging.*;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.tools.GomEnvironment;
@@ -32,6 +33,8 @@ import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
 
 public class VariadicOperatorTemplate extends TemplateHookedClass {
+  File tomHomePath;
+  List importList;
   ClassName abstractType;
   ClassName sortName;
   GomClass empty;
@@ -39,13 +42,17 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public VariadicOperatorTemplate(ClassName className,
+  public VariadicOperatorTemplate(File tomHomePath,
+                                  List importList, 	
+                                  ClassName className,
                                   ClassName abstractType,
                                   ClassName sortName,
                                   GomClass empty,
                                   GomClass cons,
                                   HookList hooks){
-    super(className,hooks);
+    super(className,tomHomePath,importList,hooks);
+    this.tomHomePath = tomHomePath;
+    this.importList = importList;
     this.abstractType = abstractType;
     this.sortName = sortName;
     this.empty = empty;
