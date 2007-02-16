@@ -1,12 +1,84 @@
-rule reflexive(r) -> \Ax.app(r,x,x).
-rule symmetric(r) -> \Ax.(\Ay.(app(r,x,y) => app(r,y,x))).
-rule transitive(r) -> \Ax.(\Ay.(\Az.( app(r,x,y) => app(r,y,z) => app(r,x,z) ))).
+termrule appl(t,nil()) -> t.
+termrule appl(one(),cons(t,l)) -> t.
+termrule appl(S(n),cons(t,l)) -> appl(n,l).
+proprule in(l,inter(A,B)) -> in(l,A) /\ in(l,B).
+proprule in(l,union(A,B)) -> in(l,A) \/ in(l,B).
+proprule in(l,supset(A,B)) -> in(l,A) => in(l,B).
+proprule in(l,emptyset()) -> \B.
+proprule in(l,P(p)) -> \En.(in(cons(n,l),p)).
+proprule in(l,C(p)) -> \An.(in(cons(n,l),p)).
+
+
+rule reflexive(r) -> \Ax.rel(r,x,x).
+rule symmetric(r) -> \Ax.(\Ay.(rel(r,x,y) => rel(r,y,x))).
+rule transitive(r) -> \Ax.(\Ay.(\Az.( rel(r,x,y) => rel(r,y,z) => rel(r,x,z) ))).
 rule equivalence(r) -> reflexive(r) /\ symmetric(r) /\ transitive(r).
+
+
+rule included(r1,r2) -> \Ax.(\Ay.( rel(r1,x,y) => rel(r2,x,y) )).
+rule same(r1,r1) -> included(r1,r2) /\ included(r2,r1).
+
+
+
+rule
+closTrans(R,x,a) -> \Ap.(\Ax.(\Ay.(rel(R,x,y) => in(cons(x,cons(y,nil())),p))) => (
+                     \Ax.(\Ay.(\Az.(    closTrans(R,x,y) => in(cons(x,cons(y,nil())),p)
+                                     => closTrans(R,y,z) => in(cons(y,cons(z,nil())),p)
+                                     => in(cons(x,cons(z,nil())),p) )))
+                    ) => in(cons(x,cons(a,nil())),p)).
+tStep.
+tTrans.
+
+proprule in(l,fClosTrans(r,x,y)) -> closTrans(appl(r,l),appl(x,l),appl(y,l)).
+proprule in(l,fRel(r,x,y))       -> rel(appl(r,l),appl(x,l),appl(y,l)).
+
+proof test1: \Ar.(\Aa.(\Ab.(   rel(r,a,b) => closTrans(r,a,b)  ))).
+intros.
+rule.
+focus h1. rule. b0. a0.
+axiom.
+axiom.
+
+
+proof test2: rel(r1(),a(),b()) => rel(r1(),b(),c()) => closTrans(r1(),a(),c()).
+intros.
+rule.
+focus h2. rule. c(). b(). a().
+focus h1. rule. b(). a().
+axiom.
+axiom.
+focus h1. rule. c(). b().
+axiom.
+next.
+axiom.
+theorem test1.
+focus h6. intro. r1(). 
+focus h6. intro. b().
+focus h6. intro. c().
+intros.
+next.
+theorem test1.
+focus h5. intro. r1(). 
+focus h5. intro. a().
+focus h5. intro. b().
+intros.
+focus h1.
+rule. c(). b().
+axiom.
+axiom.
+
+
+
+-- POTENTIELLEMENT FAUX A PARTIR D'ICI--
+
+
+
 
 rule app(union(r1,r2),x,y) -> app(r1,x,y) \/ app(r2,x,y).
 rule app(composition(r1,r2),x,y) -> \Ez.(app(r1,x,z) /\ app(r2,z,y)).
 
-rule eq(x,y) -> \Ar.(reflexive(r) => app(r,x,y)).
+
+
 rule app(reflClsr(r),x,y) -> eq(x,y) \/ app(r,x,y).
 rule app(transClsr(r),x,y) -> app(r,x,y) \/ app(composition(r,transClsr(r)),x,y).
 rule app(symmClsr(r),x,y) ->  app(r,x,y) \/ app(r,y,x).
