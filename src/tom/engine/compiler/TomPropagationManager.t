@@ -16,16 +16,14 @@ public class TomPropagationManager extends TomBase {
 	
 	private static final String propagatorsPackage = "tom.engine.compiler.propagator";
 	
-	private static final String[] propagatorsNames = {""};
+	private static final String[] propagatorsNames = {"TomSyntacticPropagator"};
 	
-	public static Constraint performPropagations(TomTerm termToCompile) 
+	public static Constraint performPropagations(Constraint constraintToCompile) 
 			throws ClassNotFoundException,InstantiationException,IllegalAccessException{
 		
 		// counts the propagators that didn't change the expression
 		short propCounter = 0;
-		Constraint result = null;
-		
-		Constraint constraintToCompile = preparePropagation(termToCompile);
+		Constraint result = null;		
 		
 		// iterate until all propagators are applied and nothing was changed 
 		mainLoop: while(true){		
@@ -49,15 +47,5 @@ public class TomPropagationManager extends TomBase {
 			}
 		} // end while
 		return result;
-	}
-	
-	/**
-	 * Prepares the propagation phase
-	 */
-	private static Constraint preparePropagation(TomTerm termToCompile){
-		// TODO
-		// should transform 'Match' instruction into a conjuction of MatchConstraint
-	    // Match(matchSubjectList,patternInstructionList, matchOptionList)  -> {
-		return null;
-	}
+	}	
 }

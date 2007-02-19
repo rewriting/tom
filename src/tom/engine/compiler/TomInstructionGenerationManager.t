@@ -18,7 +18,7 @@ public class TomInstructionGenerationManager extends TomBase {
 	
 	private static final String generatorsPackage = "tom.engine.compiler.generator";
 	// the list of all generators
-	private static final String[] generatorsNames = {"",""};
+	private static final String[] generatorsNames = {"TomSyntacticGenerator"};
 	
 	private static SymbolTable symbolTable; 
 	
@@ -57,6 +57,8 @@ public class TomInstructionGenerationManager extends TomBase {
 	
 	/**
 	 * Prepares the generation phase
+	 * 1. replaces all constraints with ConstraintToExpression
+	 * 2. puts the variables assignments at the end of conjunction
 	 */
 	private static Expression prepareGeneration(Constraint constraint){
 		// TODO
