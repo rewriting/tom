@@ -11,6 +11,7 @@ import tom.library.sl.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
+import tom.engine.TomBase;
 
 import tom.engine.compiler.*;
 /**
@@ -56,12 +57,16 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
         return tomSymbol.getTypesToType().getCodomain();
 	}
 	
-	private static TomType getTermTypeFromTerm(TomTerm term){
-		%match(term){
+	private static TomType getTermTypeFromTerm(TomTerm tomTerm){
+		%match(tomTerm){
 			RecordAppl[NameList=nameList@(headName,_*)] ->{
 				return getTermTypeFromName(`headName);
 			}
+			Subterm(constructorName, slotName, term) ->{
+				TomSymbol tomSymbol = TomInstructionGenerationManager.getSymbolTable().getSymbolFromName(((TomName)`constructorName).getString());
+	        	return TomBase.getSlotType(tomSymbol, `slotName);
+			}
 		}
-        throw new TomRuntimeException("getTermTypeFromTerm: cannot find the type for: " + term);
+        throw new TomRuntimeException("getTermTypeFromTerm: cannot find the type for: " + tomTerm);
 	}
 }
