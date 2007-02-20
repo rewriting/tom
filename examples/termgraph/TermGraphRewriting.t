@@ -113,7 +113,7 @@ public class TermGraphRewriting {
     /* replace in t the lhs by the rhs */
     t = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getReplace(`f(refTerm("x"))).fire(t);
     /*  duplications + normalization */
-    t = `expTerm(substTerm(t,redex));
+    t = (Term) `termAbstractType.expand(`substTerm(t,redex));
     t = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(t);
     System.out.println("Final term :"+t);
   }
