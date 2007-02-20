@@ -197,11 +197,10 @@ matchBlock: {
                   }
                   negativePattern = `concPattern(negativePattern*,pattern);
 
-                  /* generate equality checks */                  
-                  TomList renamedTermList = linearizePattern(`termList);
-                  newPatternInstruction = `PatternInstruction(Pattern(subjectList,renamedTermList,guardList),newAction, option);
+                  /* generate equality checks */
+                  newPatternInstruction = `PatternInstruction(Pattern(subjectList,termList,guardList),newAction, option);
                   /* attach guards to variables or applications*/
-                  TomList constrainedTermList = renamedTermList;
+                  TomList constrainedTermList = `termList;
                   TomList l = `guardList;
                   while(!l.isEmptyconcTomTerm()) {
                     TomTerm guard = l.getHeadconcTomTerm();
@@ -215,7 +214,7 @@ matchBlock: {
                   /* abstract patterns */
                   ArrayList abstractedPattern  = new ArrayList();
                   ArrayList introducedVariable = new ArrayList();
-                  TomList newTermList = compiler.abstractPatternList(renamedTermList, abstractedPattern, introducedVariable);
+                  TomList newTermList = compiler.abstractPatternList(`termList, abstractedPattern, introducedVariable);
 
                   /* newPatternInstruction is overwritten when abstraction is performed */
                   if(abstractedPattern.size() > 0) {
@@ -389,188 +388,7 @@ matchBlock: {
     }
     throw new TomRuntimeException("buildCondition strange term: " + condList);
   }
-
-  private static TomTerm renameVariable(TomTerm subject,
-      Map multiplicityMap,      
-      Collection antiList,
-      boolean treatConstraints) {
-    TomTerm renamedTerm = subject;
-
-    %match(subject) {
-      var@(UnamedVariable|UnamedVariableStar)[Constraints=constraints] -> {
-    	  if (treatConstraints){
-    		  ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap);
-    		  return `var.setConstraints(newConstraintList);
-    	  }else{
-    		  return `var;
-    	  }
-      }
-
-      var@(Variable|VariableStar)[AstName=name,Constraints=constraints] -> {
-        ConstraintList newConstraintList;
-        if (treatConstraints){        
-        	newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
-        }else{
-        	newConstraintList = `constraints;
-        }        
-        if(!multiplicityMap.containsKey(`name)) {
-          // We see this variable for the first time
-          multiplicityMap.put(`name,new Integer(1));
-          renamedTerm = `var.setConstraints(newConstraintList);
-        } else {        
-          // We have already seen this variable
-          Integer multiplicity = (Integer) multiplicityMap.get(`name);
-          int mult = multiplicity.intValue();
-          multiplicityMap.put(`name,new Integer(mult+1));
-
-          TomNumberList path = `concTomNumber();
-          path = `concTomNumber(path*,RenamedVar(name));
-          path = `concTomNumber(path*,Number(mult));
-
-          renamedTerm = `var.setAstName(`PositionName(path));
-          renamedTerm = renamedTerm.setConstraints(`concConstraint(Equal(var.setConstraints(concConstraint())),newConstraintList*));
-        }
-
-        return renamedTerm;
-      }
-
-      RecordAppl[Option=optionList, NameList=nameList, Slots=arguments, Constraints=constraints] -> {
-        SlotList args = `arguments;
-        SlotList newArgs = `concSlot();
-        while(!args.isEmptyconcSlot()) {
-          Slot elt = args.getHeadconcSlot();
-          TomTerm newElt = renameVariable(elt.getAppl(),multiplicityMap,antiList,treatConstraints);
-          newArgs = `concSlot(newArgs*,PairSlotAppl(elt.getSlotName(),newElt));
-          args = args.getTailconcSlot();
-        }        
-        ConstraintList newConstraintList;
-        if (treatConstraints){        
-        	newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
-        }else{
-        	newConstraintList = `constraints;
-        }
-        renamedTerm = `RecordAppl(optionList,nameList,newArgs,newConstraintList);
-        return renamedTerm;
-      }
-      // store this for late processing,
-      // after renaming in the constraints
-      AntiTerm[TomTerm=t@(Variable|VariableStar|RecordAppl)[Constraints=constraints]] ->{
-    	  
-    	  ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
-		  TomTerm newTerm = `t.setConstraints(newConstraintList);    		  
-
-    	  antiList.add(newTerm);
-    	  return `AntiTerm(newTerm);
-      }
-    }
-    return renamedTerm;
-  }
-
-  private static ConstraintList renameVariableInConstraintList(ConstraintList constraintList,
-      Map multiplicityMap) {
-    ArrayList list = new ArrayList();
-    while(!constraintList.isEmptyconcConstraint()) {
-      Constraint cstElt = constraintList.getHeadconcConstraint();
-      Constraint newCstElt = cstElt;
-      %match(cstElt) {
-        AssignTo(var@Variable[]) -> {
-          // we should never find anti in constraints at this point in the compilation,
-          // so it is safe to pass a null value
-          newCstElt = `AssignTo(renameVariable(var,multiplicityMap,null,true)); 
-        }
-      }
-      list.add(newCstElt);
-      constraintList = constraintList.getTailconcConstraint();
-    }
-    return ASTFactory.makeConstraintList(list);
-  }
-
-  private static TomList linearizePattern(TomList subject) {
-    Map multiplicityMap = new HashMap();
-    // perform the renaming and generate equality checks
-    TomList newList = `concTomTerm();
-    while(!subject.isEmptyconcTomTerm()) {
-      TomTerm elt = subject.getHeadconcTomTerm();
-      // contains the anti-terms found 
-      // this is because we want to rename the variables of 
-      // the antis only after we renamed the free variables
-      ArrayList antiList = new ArrayList();      
-      TomTerm newElt = renameVariable(elt,multiplicityMap,antiList,true);      
-
-      newElt = handleAntiReplacement(newElt,multiplicityMap,antiList);
   
-      newList = append(newElt,newList);
-      subject = subject.getTailconcTomTerm();
-    }
-    return newList;
-  }
-  /**
-   * Handles the replacement of the variables for the anti terms. They are a special case
-   * because we should never constraint a variable X to be equal to another X that has more 
-   * anti symbols above - the second could be never instantiated.
-   * 
-   *  For example: f(!x,x) should be transformed in f(!y,x), with the constraint y=x 
-   *  and not f(!x,y), with y=x 
-   * 
-   */
-  private static TomTerm handleAntiReplacement(TomTerm newElt, Map multiplicityMap, ArrayList antiList){
-	  // an intermediate list for the antis 
-      ArrayList newAntiList = new ArrayList();
-	  // will collect all variables found fo this set
-	  // of antis
-      Map multiplicityMapIntermediate = new HashMap();
-      multiplicityMapIntermediate.putAll(multiplicityMap);
-      // just a copy of the current map	      
-      Map multiplicityMapSnapShot = new HashMap();      
-      while(true){ 
-	      while (!antiList.isEmpty()){
-	    	  TomTerm antiTerm = (TomTerm)antiList.remove(0);//antiList.get(0);	    	  
-	    	  // all have to be called with the initial multiplicityMap
-	    	  multiplicityMapSnapShot.clear();
-	    	  multiplicityMapSnapShot.putAll(multiplicityMap);
-	    	  // handle the renaming in this anti term
-	    	  newElt = (TomTerm)`OnceTopDownId(RenameAnti(antiTerm,multiplicityMapSnapShot,newAntiList)).apply(newElt);
-	    	  // make sure we collect the changes to the map
-	    	  multiplicityMapIntermediate.putAll(multiplicityMapSnapShot);
-	    	  //antiList.remove(0);
-	      }
-	      // handle new anti terms found
-	      antiList = newAntiList;
-	      // the new anti terms should be searched for var replacement
-	      // using the multiplicity map that was updated at the previous step
-	      multiplicityMap.clear();
-	      multiplicityMap.putAll(multiplicityMapIntermediate);
-	      // if no more antis, stop
-	      if (newAntiList.isEmpty()){
-	    	  break;
-	      }
-      } // end while
-      
-      return newElt;
-  }    
-  
-  %strategy RenameAnti(antiTerm:TomTerm, multiplicityMap:Map, antiList:Collection) extends `Identity(){
-	  visit TomTerm {
-		  a@AntiTerm(x) ->{
-			  // TODO - change the way comparison is made
-			  // because this can generate very subtle bugs - we can find 
-			  // the same term at a different positions
-			  if (`x == antiTerm){
-				  // at this point, all the constraints have been treated
-				  // so we can set the treatConstraints to false
-				  TomTerm newTerm = `AntiTerm(renameVariable(antiTerm,multiplicityMap,antiList,false));
-				  // if we changed something, return the new term
-				  // if not, stop anyway
-				  if (`a != newTerm){
-					  return newTerm;
-				  }else{
-					  throw new VisitFailure();
-				  }
-			  }
-		  }
-	  }// end visit
-  }// end strategy
-
   private TomTerm abstractPattern(TomTerm subject,
       ArrayList abstractedPattern,
       ArrayList introducedVariable)  {
