@@ -197,9 +197,9 @@ matchArgument [LinkedList list] throws TomException
 
     //(type:ALL_ID { tomType = `TomTypeAlone(type.getText()); })?
     //(BACKQUOTE)?
-    subject1 = plainTerm[null,0] 
+    subject1 = plainTerm[null,null,0] 
     (BACKQUOTE)?
-    (subject2 = plainTerm[null,0])?
+    (subject2 = plainTerm[null,null,0])?
     {
       if(subject2==null) {
 	//System.out.println("matchArgument = " + subject1);
@@ -217,12 +217,6 @@ matchArgument [LinkedList list] throws TomException
 	  throw new TomException(TomMessage.invalidMatchSubject, new Object[]{subject1, subject2});
 	}
       }
-
-/*
-    subject = plainTerm[null,0] {
-      System.out.println("subject = " + subject);
-      list.add(subject); 
-*/
     }
         ;
 
@@ -557,7 +551,7 @@ ruleConstruct [Option ot] returns [Declaration result] throws TomException
                 { listOfLhs = `concTomTerm(listOfLhs*,lhs); }
             )*
  
-            ARROW {orgText = `Name(text.toString());} rhs = plainTerm[null,0]
+            ARROW {orgText = `Name(text.toString());} rhs = plainTerm[null,null,0]
             (
                 WHERE pattern = annotedTerm AFFECT subject = annotedTerm 
                 { conditionList = `concInstruction(conditionList*,MatchingCondition(pattern,subject)); }
@@ -605,10 +599,20 @@ ruleConstruct [Option ot] returns [Declaration result] throws TomException
 annotedTerm returns [TomTerm result] throws TomException
 {
     result = null;
+    TomName labeledName = null;
     TomName annotedName = null;
     int line = 0;
 }
     :   (
+            ( 
+                (ALL_ID COLON) => lname:ALL_ID COLON 
+                {
+                    text.append(lname.getText());
+                    text.append(':');
+                    labeledName = `Name(lname.getText());
+                    line = lname.getLine();
+                }
+            )? 
             ( 
                 (ALL_ID AT) => name:ALL_ID AT 
                 {
@@ -619,11 +623,11 @@ annotedTerm returns [TomTerm result] throws TomException
                 }
             )? 
             
-            result = plainTerm[annotedName,line] 
+            result = plainTerm[labeledName,annotedName,line] 
         )
     ;
 
-plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
+plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
 {
     result = null;
     LinkedList constraintList = new LinkedList();
@@ -635,6 +639,9 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws Tom
     boolean implicit = false;
     boolean anti = false;
 
+    if(astLabeledName != null) {
+      constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
+    }
     if(astAnnotedName != null) {
       constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
     }

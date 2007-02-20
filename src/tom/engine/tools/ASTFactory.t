@@ -230,6 +230,13 @@ public class ASTFactory {
           concConstraint()));
   }
   
+  public static Constraint makeStorePosition(TomName name,int line, String fileName) {
+    return `AssignPositionTo(Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
+          name,
+          TomTypeAlone("unknown type"),
+          concConstraint()));
+  }
+
   public static OptionList makeOption(Option arg, Option info) {
     OptionList list = `concOption();
     if(arg!= null) {
