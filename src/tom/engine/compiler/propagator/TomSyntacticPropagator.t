@@ -13,7 +13,9 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 	%include { sl.tom }	
 	
 	public Constraint propagate(Constraint constraint){
-		return  (Constraint)((Strategy)`TopDown(SyntacticPatternMatching())).fire(constraint);
+		System.out.println("Propagation entered with:" + constraint);
+		System.out.println("Propagation out with:" + (Constraint)`InnermostId(SyntacticPatternMatching()).fire(constraint));
+		return  (Constraint)`InnermostId(SyntacticPatternMatching()).fire(constraint);
 	}
 	
 	// TODO - don't forget the constraints attached to terms

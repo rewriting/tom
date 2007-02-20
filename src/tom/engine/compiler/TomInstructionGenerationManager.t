@@ -5,12 +5,16 @@ import java.util.Iterator;
 
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomname.types.*;
 import tom.engine.adt.tominstruction.types.*;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.compiler.generator.*;
 import tom.engine.exception.TomRuntimeException;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomtype.types.*;
+
 
 /**
  * This class is in charge with launching all the generators,
@@ -24,7 +28,7 @@ public class TomInstructionGenerationManager extends TomBase {
 	%include { sl.tom}
 //	------------------------------------------------------------	
 	
-	private static final String generatorsPackage = "tom.engine.compiler.generator";
+	private static final String generatorsPackage = "tom.engine.compiler.generator.";
 	// the list of all generators
 	private static final String[] generatorsNames = {"TomSyntacticGenerator"};
 	
@@ -67,13 +71,16 @@ public class TomInstructionGenerationManager extends TomBase {
 	 * Prepares the generation phase
 	 * 1. replaces all constraints with ConstraintToExpression 
 	 */
-	private static Expression prepareGeneration(Constraint constraint){
-		Expression result = `TrueTL();
+	private static Expression prepareGeneration(Constraint constraint){		
+		Expression result = null;
 		%match(constraint){
 			AndConstraint(concConstraint(_*,m@MatchConstraint[],_*)) ->{
-				result = `And(result,ConstraintToExpression(m));
+				result = (result == null ? `ConstraintToExpression(m) : `And(result,ConstraintToExpression(m)));
 			}
-		}		
+			m@MatchConstraint[] ->{
+				result = `ConstraintToExpression(m);
+			}
+		}			
 		return result;
 	}	
 	
@@ -85,7 +92,10 @@ public class TomInstructionGenerationManager extends TomBase {
 		// collect all the variables and generate declarations
 		ArrayList vars = new ArrayList();
 		ArrayList varsValues = new ArrayList();
-		expression = (Expression)`TopDown(CollectVariables(vars,varsValues)).fire(expression);
+		System.out.println("Expresion before:" + `expression);
+		// it is done innermost because the expression is also simplified  
+		expression = (Expression)`InnermostId(CollectVariables(vars,varsValues)).fire(expression);
+		System.out.println("Expresion after:" + `expression);
 		action = genVariablesDeclaration(vars,varsValues,action);
 		
 		// generate automata
@@ -98,7 +108,7 @@ public class TomInstructionGenerationManager extends TomBase {
 	private static Instruction generateAutomata(Expression expression, Instruction action){
 		%match(expression){
 			And(left,right) ->{
-				Instruction subInstruction = buildInstructionFromExpression(`right,action);
+				Instruction subInstruction = generateAutomata(`right,action);
 				return `If(left,subInstruction,Nop());
 			}			
 			x ->{
@@ -108,6 +118,10 @@ public class TomInstructionGenerationManager extends TomBase {
 		throw new TomRuntimeException("generateAutomata - strange expression:" + expression);
 	}
 	
+	/**
+	 * 1. Collects all the variables, and eliminates them from expression
+	 * 2. Converts 'Subterm' to 'GetSlot'
+	 */
 	%strategy CollectVariables(vars:Collection,varsValues:Collection) extends Identity(){
 		visit Expression{
 			And(ConstraintToExpression(MatchConstraint(v@Variable[],t)),r) ->{
@@ -121,6 +135,14 @@ public class TomInstructionGenerationManager extends TomBase {
 				return `l;
 			}			
 		}// end visit
+		
+		visit TomTerm{
+			Subterm(constructorName, slotName, term) ->{
+				TomSymbol tomSymbol = symbolTable.getSymbolFromName(((TomName)`constructorName).getString());
+	        	TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);
+				return `ExpressionToTomTerm(GetSlot(subtermType, constructorName, slotName.getString(), term));
+			}
+		}
 	}
 	
 	/**

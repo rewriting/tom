@@ -22,7 +22,9 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
 	%include { sl.tom }	
 	
 	public Expression generate(Expression expression){		
-		return  (Expression)((Strategy)`TopDown(SyntacticGenerator())).fire(expression);
+		System.out.println("Generation entered with:" + expression);
+		System.out.println("Generation out with:" + (Expression)`TopDown(SyntacticGenerator()).fire(expression));
+		return  (Expression)`TopDown(SyntacticGenerator()).fire(expression);
 	}
 
 	// If we find ConstraintToExpression it means that this constraint was not processed	
@@ -38,11 +40,11 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
 						Expression check = `EqualFunctionSymbol(termType,subject,RecordAppl(option,concTomName(name),l,concConstraint()));
 				        cond = (cond == null ? check : `Or(check,cond));	
 					}
-				}		        
+				}
 		        return cond;
 			}
 			// generate equality
-			ConstraintToExpression(MatchConstraint(t@Subterm[],u@Subterm[])) ->{
+			ConstraintToExpression(MatchConstraint(t@Subterm[],u@Subterm[])) ->{				
 				return `EqualTerm(getTermTypeFromTerm(t),t,u);		        		      
 			}			
 		} // end visit

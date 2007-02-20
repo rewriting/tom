@@ -58,14 +58,14 @@ public class TomConstraintCompiler extends TomBase {
 						//TODO - use rootpath
 						ConstraintList constraintList = TomConstraintCompiler.buildConstraintConjunction(`patternList,`subjectList);
 						try{
-							Constraint propagationResult = TomPropagationManager.performPropagations(`AndConstraint(constraintList));
+							Constraint propagationResult = TomPropagationManager.performPropagations(`AndConstraint(constraintList));							
 							Instruction matchingAutomata = TomInstructionGenerationManager.performGenerations(propagationResult, `action, symbolTable);
 							
 							TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(Number(actionNumber)));
 						    TomTerm automata = `Automata(optionList,patternList,numberList,matchingAutomata);
 						    automataList = append(automata,automataList);
 						}catch(Exception e){
-							throw new TomRuntimeException("Propagation or generation exception:" + e.getMessage());
+							throw new TomRuntimeException("Propagation or generation exception:" + e);
 						}																	    						
 					}
 				}// end %match				

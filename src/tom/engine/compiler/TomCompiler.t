@@ -93,7 +93,7 @@ public class TomCompiler extends TomGenericPlugin {
   }
 
   public void run() {
-    TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(getStreamManager().getSymbolTable());
+    //TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(getStreamManager().getSymbolTable());
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     try {
@@ -101,7 +101,8 @@ public class TomCompiler extends TomGenericPlugin {
       absVarNumber = 0;
       TomTerm preCompiledTerm = (TomTerm) `preProcessing(this).visit((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
-      TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
+      //TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
+      TomTerm compiledTerm = TomConstraintCompiler.compile(preCompiledTerm,getStreamManager().getSymbolTable());
       Set hashSet = new HashSet();
       TomTerm renamedTerm = (TomTerm) `TopDown(findRenameVariable(hashSet)).visit(compiledTerm);
       //TomTerm renamedTerm = compiledTerm;

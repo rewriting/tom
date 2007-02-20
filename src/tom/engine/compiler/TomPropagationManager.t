@@ -14,7 +14,7 @@ public class TomPropagationManager extends TomBase {
 	
 	%include { adt/tomsignature/TomSignature.tom }	
 	
-	private static final String propagatorsPackage = "tom.engine.compiler.propagator";
+	private static final String propagatorsPackage = "tom.engine.compiler.propagator.";
 	
 	private static final String[] propagatorsNames = {"TomSyntacticPropagator"};
 	
