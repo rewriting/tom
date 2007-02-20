@@ -59,7 +59,7 @@ public class TomConstraintCompiler extends TomBase {
 						ConstraintList constraintList = TomConstraintCompiler.buildConstraintConjunction(`patternList,`subjectList);
 						try{
 							Constraint propagationResult = TomPropagationManager.performPropagations(`AndConstraint(constraintList));
-							Instruction matchingAutomata = TomInstructionGenerationManager.performGenerations( propagationResult, symbolTable);
+							Instruction matchingAutomata = TomInstructionGenerationManager.performGenerations(propagationResult, `action, symbolTable);
 							
 							TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(Number(actionNumber)));
 						    TomTerm automata = `Automata(optionList,patternList,numberList,matchingAutomata);
@@ -68,16 +68,31 @@ public class TomConstraintCompiler extends TomBase {
 							throw new TomRuntimeException("Propagation or generation exception:" + e.getMessage());
 						}																	    						
 					}
-				}// end %match
-				
+				}// end %match				
 				/*
 				 * return the compiled Match construction
 				 */
 				InstructionList astAutomataList = TomConstraintCompiler.automataListCompileMatchingList(automataList);
-				return `CompiledMatch(AbstractBlock(astAutomataList), matchOptionList);
+				return `CompiledMatch(collectVariableFromSubjectList(subjectList,AbstractBlock(astAutomataList)), matchOptionList);
 			}
 		}// end visit
 	}// end strategy
+	
+	/**
+	 * collects match variables (from match(t1,...,tn)) and 
+	 * checks their instance type 
+	 */
+	private static Instruction collectVariableFromSubjectList(TomList subjectList, Instruction body) {
+		%match(subjectList) { 
+			concTomTerm() -> { return body; }
+			concTomTerm(subjectVar@Variable[Option=option,AstType=variableType],tail*) -> {
+				body = collectVariableFromSubjectList(`tail,body);				
+				// Check that the matched variable has the correct type
+				return `CheckInstance(variableType,TomTermToExpression(subjectVar),body);
+			}			
+		}
+		throw new TomRuntimeException("collectVariableFromSubjectList: strange term: " + `subjectList);
+	}
 	
 	/**
 	 * takes a list of patterns (p1...pn) and a list of subjects (s1...sn)

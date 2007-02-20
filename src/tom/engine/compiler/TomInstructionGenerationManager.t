@@ -1,5 +1,8 @@
 package tom.engine.compiler;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tominstruction.types.*;
@@ -7,6 +10,7 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.engine.adt.tomexpression.types.*;
 import tom.engine.tools.SymbolTable;
 import tom.engine.compiler.generator.*;
+import tom.engine.exception.TomRuntimeException;
 
 /**
  * This class is in charge with launching all the generators,
@@ -14,7 +18,11 @@ import tom.engine.compiler.generator.*;
  */
 public class TomInstructionGenerationManager extends TomBase {
 	
+//	------------------------------------------------------------	
 	%include { adt/tomsignature/TomSignature.tom }	
+	%include { java/util/types/Collection.tom}
+	%include { sl.tom}
+//	------------------------------------------------------------	
 	
 	private static final String generatorsPackage = "tom.engine.compiler.generator";
 	// the list of all generators
@@ -22,7 +30,7 @@ public class TomInstructionGenerationManager extends TomBase {
 	
 	private static SymbolTable symbolTable; 
 	
-	public static Instruction performGenerations(Constraint constraint, SymbolTable symbolTable) 
+	public static Instruction performGenerations(Constraint constraint, Instruction action, SymbolTable symbolTable) 
 			throws ClassNotFoundException,InstantiationException,IllegalAccessException{
 		
 		TomInstructionGenerationManager.symbolTable = symbolTable;
@@ -52,27 +60,79 @@ public class TomInstructionGenerationManager extends TomBase {
 				expression = result; 
 			}
 		} // end while
-		return buildInstructionFromExpression(result);
+		return buildInstructionFromExpression(result,action);
 	}
 	
 	/**
 	 * Prepares the generation phase
-	 * 1. replaces all constraints with ConstraintToExpression
-	 * 2. puts the variables assignments at the end of conjunction
+	 * 1. replaces all constraints with ConstraintToExpression 
 	 */
 	private static Expression prepareGeneration(Constraint constraint){
-		// TODO
-		// 1. replace all constraints with ConstraintToExpression 
-		// 2. put the variables assignments at the end of conjunction
-		return null;
+		Expression result = `TrueTL();
+		%match(constraint){
+			AndConstraint(concConstraint(_*,m@MatchConstraint[],_*)) ->{
+				result = `And(result,ConstraintToExpression(m));
+			}
+		}		
+		return result;
+	}	
+	
+	/**
+	 * Converts the resulted expression (after generation) into instructions
+	 */
+	private static Instruction buildInstructionFromExpression(Expression expression, Instruction action){
+
+		// collect all the variables and generate declarations
+		ArrayList vars = new ArrayList();
+		ArrayList varsValues = new ArrayList();
+		expression = (Expression)`TopDown(CollectVariables(vars,varsValues)).fire(expression);
+		action = genVariablesDeclaration(vars,varsValues,action);
+		
+		// generate automata
+		return generateAutomata(expression,action);
 	}
 	
 	/**
-	 * Converts the expression into instructions
+	 * Generates the automata from the expression
 	 */
-	private static Instruction buildInstructionFromExpression(Expression expression){
-		// TODO
-		return null;
+	private static Instruction generateAutomata(Expression expression, Instruction action){
+		%match(expression){
+			And(left,right) ->{
+				Instruction subInstruction = buildInstructionFromExpression(`right,action);
+				return `If(left,subInstruction,Nop());
+			}			
+			x ->{
+				return `If(x,action,Nop());
+			}			
+		}
+		throw new TomRuntimeException("generateAutomata - strange expression:" + expression);
+	}
+	
+	%strategy CollectVariables(vars:Collection,varsValues:Collection) extends Identity(){
+		visit Expression{
+			And(ConstraintToExpression(MatchConstraint(v@Variable[],t)),r) ->{
+				vars.add(`v);
+				varsValues.add(`TomTermToExpression(t));
+				return `r;
+			}
+			And(l,ConstraintToExpression(MatchConstraint(v@Variable[],t))) ->{
+				vars.add(`v);
+				varsValues.add(`TomTermToExpression(t));
+				return `l;
+			}			
+		}// end visit
+	}
+	
+	/**
+	 * Generates variables' declarations
+	 */
+	private static Instruction genVariablesDeclaration(ArrayList vars, ArrayList varsValues, Instruction action){
+		Iterator vvIt = varsValues.iterator();
+		// generate declarations		
+		for(Object var: vars){
+			action = `LetRef((TomTerm)var,(Expression)vvIt.next(),action);
+		}		
+		return action;
 	}
 	
 	public static SymbolTable getSymbolTable(){

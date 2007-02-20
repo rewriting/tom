@@ -42,7 +42,7 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
 		        return cond;
 			}
 			// generate equality
-			ConstraintToExpression(MatchConstraint(t,u@!SymbolOf(_))) ->{
+			ConstraintToExpression(MatchConstraint(t@Subterm[],u@Subterm[])) ->{
 				return `EqualTerm(getTermTypeFromTerm(t),t,u);		        		      
 			}			
 		} // end visit
