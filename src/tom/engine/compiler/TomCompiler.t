@@ -198,19 +198,7 @@ matchBlock: {
                   negativePattern = `concPattern(negativePattern*,pattern);
 
                   /* generate equality checks */
-                  newPatternInstruction = `PatternInstruction(Pattern(subjectList,termList,guardList),newAction, option);
-                  /* attach guards to variables or applications*/
-                  TomList constrainedTermList = `termList;
-                  TomList l = `guardList;
-                  while(!l.isEmptyconcTomTerm()) {
-                    TomTerm guard = l.getHeadconcTomTerm();
-                    //System.out.println("try to attach "+guard+"\nto "+constrainedTermList);
-                    constrainedTermList = compiler.attachConstraint(constrainedTermList,guard);
-                    l = l.getTailconcTomTerm();
-                  }
-                  TomList emptyGuardList = `concTomTerm();
-                  newPatternInstruction = `PatternInstruction(Pattern(subjectList,constrainedTermList,emptyGuardList),newAction, option);
-
+                  newPatternInstruction = `PatternInstruction(Pattern(subjectList,termList,concTomTerm()),newAction, option);
                   /* abstract patterns */
                   ArrayList abstractedPattern  = new ArrayList();
                   ArrayList introducedVariable = new ArrayList();
@@ -222,7 +210,7 @@ matchBlock: {
 
                     TomList generatedSubjectList = `ASTFactory.makeList(introducedVariable);
                     PatternInstruction generatedPatternInstruction =
-                      `PatternInstruction(Pattern(generatedSubjectList, ASTFactory.makeList(abstractedPattern),emptyGuardList),newAction, concOption());
+                      `PatternInstruction(Pattern(generatedSubjectList, ASTFactory.makeList(abstractedPattern),concTomTerm()),newAction, concOption());
                     /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
                     OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
                     Instruction generatedMatch =
@@ -232,7 +220,7 @@ matchBlock: {
                     generatedMatch = (Instruction) MuTraveler.init(`preProcessing(compiler)).visit(generatedMatch);
                     /*System.out.println("Generate new Match"+generatedMatch); */
                     newPatternInstruction =
-                      `PatternInstruction(Pattern(subjectList,newTermList,emptyGuardList),generatedMatch, option);
+                      `PatternInstruction(Pattern(subjectList,newTermList,concTomTerm()),generatedMatch, option);
 
                     /*System.out.println("newPatternInstruction = " + newPatternInstruction); */
                   }
@@ -284,57 +272,6 @@ matchBlock: {
         }
         return (Declaration) MuTraveler.init(`preProcessing(compiler)).visit(`Class(name,visitorFwd,extendsTerm,AbstractDecl(l)));
       }
-
-//      RuleSet(rl@concTomRule(RewriteRule[Lhs=Term(RecordAppl[NameList=(Name(tomName))])],_*),optionList) -> {
-//        TomSymbol tomSymbol = compiler.symbolTable().getSymbolFromName(`tomName);
-//        TomName name = tomSymbol.getAstName();
-//        String moduleName = getModuleName(`optionList);
-//        PatternInstructionList patternInstructionList  = `concPatternInstruction();
-//
-//        //build variables list for lhs symbol
-//        TomTypeList typesList = getSymbolDomain(tomSymbol);
-//        TomList subjectListAST = `concTomTerm();
-//        TomNumberList path = `concTomNumber(RuleVar());
-//        int index = 0;
-//        while(!typesList.isEmptyconcTomType()) {
-//          TomType subtermType = typesList.getHeadconcTomType();
-//          TomTerm variable = `Variable(concOption(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
-//          subjectListAST = append(variable,subjectListAST);
-//          typesList = typesList.getTailconcTomType();
-//          index++;
-//        }
-//
-//        TomRuleList ruleList = `rl;
-//        TomList guardList = `concTomTerm();//no guardlist in pattern
-//        while(!ruleList.isEmptyconcTomRule()) {
-//          TomRule rule = ruleList.getHeadconcTomRule();
-//          %match(rule) {
-//            RewriteRule(Term(lhsTerm@RecordAppl[Slots=matchPatternsList]),
-//                Term(rhsTerm),
-//                condList,
-//                option) -> {
-//              //transform rhsTerm into Instruction to build PatternInstructionList
-//              TomTerm newRhs = `BuildReducedTerm(rhsTerm,compiler.getTermType(lhsTerm));
-//              Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
-//              Instruction newRhsInst = compiler.buildCondition(`condList,`rhsInst);
-//              Pattern pattern = `Pattern(subjectListAST,slotListToTomList(matchPatternsList),guardList);
-//              patternInstructionList = `concPatternInstruction(patternInstructionList*,PatternInstruction(pattern,RawAction(newRhsInst),option));
-//            }
-//          }
-//          ruleList = ruleList.getTailconcTomRule();
-//        }
-//
-//        Instruction matchAST = `Match(SubjectList(subjectListAST),
-//            patternInstructionList, optionList);
-//        //return type `name(subjectListAST)
-//        Instruction buildAST = `Return(BuildTerm(name,(TomList) MuTraveler.init(preProcessing_makeTerm(compiler)).visit(subjectListAST),moduleName));
-//        Instruction functionBody =  (Instruction) MuTraveler.init(`preProcessing(compiler)).visit(`AbstractBlock(concInstruction(matchAST,buildAST)));
-//
-//        //find codomain
-//        TomType codomain = getSymbolCodomain(tomSymbol);
-//
-//        return `FunctionDef(name,subjectListAST,codomain,EmptyType(),functionBody);
-//      }
     }//end match
   } // end strategy
 
@@ -452,88 +389,8 @@ matchBlock: {
       }
     }
     throw new TomRuntimeException("abstractPatternList: " + subjectList);
-  }
-
-
-  /***********************************/
-  /* functions related to the 'when' */
-  /***********************************/
-
-
-  /*
-   * attach the when contraint to the right variable
-   */
-  private TomList attachConstraint(TomList subjectList, TomTerm constraint) {
-    HashSet patternVariable = new HashSet();
-    HashSet constraintVariable = new HashSet();
-
-    collectVariable(patternVariable,subjectList);
-    collectVariable(constraintVariable,constraint);
-    Set variableSet = intersection(patternVariable,constraintVariable);
-
-    //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);
-    TomList newSubjectList = null;
-    newSubjectList = (TomList) `attachConstraint(variableSet,constraint,this).apply(subjectList);
-    return newSubjectList;
-  }
-
-  /*
-   * build a set with all the variables in the intersection of two sets
-   * used by the when
-   */
-  private static Set intersection(Set patternVariable, Set constraintVariable) {
-    Set res = new HashSet();
-    for(Iterator it1 = patternVariable.iterator(); it1.hasNext() ; ) {
-      TomTerm patternTerm = (TomTerm) it1.next();
-itBlock: {
-           for(Iterator it2 = constraintVariable.iterator(); it2.hasNext() ; ) {
-             TomTerm constraintTerm = (TomTerm) it2.next();
-             %match(patternTerm, TomTerm constraintTerm) {
-               var@Variable[AstName=name], Variable[AstName=name] -> {
-                 res.add(`var);
-                 //break itBlock;
-               }
-               var@VariableStar[AstName=ame], VariableStar[AstName=name] -> {
-                 res.add(`var);
-                 //break itBlock;
-               }
-             }
-           }
-         }
-    }
-    return res;
-  }
-
-  /*
-   * find the variable on which we should attach the constraint
-   * used by the when
-   */
-
-  %op Strategy attachConstraint(variableSet:Set,constraint:TomTerm,compiler:TomCompiler){
-    make(variableSet,constraint,compiler) { `ChoiceTopDown(attachConstraint_once(variableSet,constraint,compiler)) }
-  }
-
-  %strategy attachConstraint_once(variableSet:Set,constraint:TomTerm,compiler:TomCompiler) extends `Identity(){
-
-    visit TomTerm {
-      var@(Variable|VariableStar)[Constraints=constraintList] -> {
-	if(variableSet.remove(`var) && variableSet.isEmpty()) {
-	  Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint,EmptyType())));
-	  ConstraintList newConstraintList = `concConstraint(constraintList*,c);
-	  return `var.setConstraints(newConstraintList);
-	}
-      }
-
-      appl@RecordAppl[Constraints=constraintList] -> {
-	if(variableSet.isEmpty()) {
-	  Constraint c = `Ensure((TomTerm) MuTraveler.init(preProcessing(compiler)).visit(BuildReducedTerm(constraint,EmptyType())));
-	  ConstraintList newConstraintList = `concConstraint(constraintList*,c);
-	  return `appl.setConstraints(newConstraintList);
-	}
-      }
-    }
-  }
-
+  }  
+  
   /*
    * add a prefix (tom_) to back-quoted variables which comes from the lhs
    */
@@ -556,5 +413,4 @@ itBlock: {
       }
     }
   }
-
 }
