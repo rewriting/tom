@@ -69,8 +69,7 @@ public class TomPropagationManager extends TomBase {
 	 */
 	private static Constraint preparePropagations(Constraint constraintToCompile){
 		ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
-		Constraint newConstr = (Constraint)`InnermostId(DetachConstraints(constraintList)).fire(constraintToCompile);
-		System.out.println("fini");
+		Constraint newConstr = (Constraint)`InnermostId(DetachConstraints(constraintList)).fire(constraintToCompile);		
 		ConstraintList concConsList = `concConstraint();
 		for(Constraint constr: constraintList){
 			concConsList = `concConstraint(constr,concConsList*);
@@ -90,8 +89,6 @@ public class TomPropagationManager extends TomBase {
 				}
 				TomNumberList path = TomConstraintCompiler.getRootpath();
 				TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(""+ (++freshVarCounter)))));
-				System.out.println("term:" + `t);
-				System.out.println("type:" + TomConstraintCompiler.getTermTypeFromTerm(`t));
 				TomTerm freshVariable = `Variable(concOption(),freshVarName,TomConstraintCompiler.getTermTypeFromTerm(t),concConstraint());
 				
 				bag.add(`MatchConstraint(t,freshVariable));

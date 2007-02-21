@@ -23,8 +23,6 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
 	%include { sl.tom }	
 	
 	public Expression generate(Expression expression){		
-		System.out.println("Generation entered with:" + expression);
-		System.out.println("Generation out with:" + (Expression)`TopDown(SyntacticGenerator()).fire(expression));
 		return  (Expression)`TopDown(SyntacticGenerator()).fire(expression);
 	}
 
