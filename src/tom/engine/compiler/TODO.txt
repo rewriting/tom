@@ -1,5 +1,3 @@
-- handle constraints of terms 
 - move some simplifications in hooks
 - optimize method call for subterm
 - should move Intruction generation out of generators ?
-- remove all related code to when

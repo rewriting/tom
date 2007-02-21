@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomconstraint.types.*;
-
+import tom.engine.adt.tomname.types.*;
 import tom.engine.compiler.propagator.*;
 
 /**
@@ -24,12 +24,20 @@ public class TomPropagationManager extends TomBase {
 	
 	private static final String[] propagatorsNames = {"TomSyntacticPropagator"};
 	
+	private static TomNumberList rootpath = null;
+	private static short freshVarCounter = 0;
+	
 	public static Constraint performPropagations(Constraint constraintToCompile) 
 			throws ClassNotFoundException,InstantiationException,IllegalAccessException{
 		
+		freshVarCounter = 0;		
+		
 		// counts the propagators that didn't change the expression
 		short propCounter = 0;
-		Constraint result = null;		
+		Constraint result = null;	
+		
+		// some preparations
+		constraintToCompile = preparePropagations(constraintToCompile);
 		
 		// iterate until all propagators are applied and nothing was changed 
 		mainLoop: while(true){		
@@ -61,7 +69,8 @@ public class TomPropagationManager extends TomBase {
 	 */
 	private static Constraint preparePropagations(Constraint constraintToCompile){
 		ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
-		Constraint newConstr = (Constraint)`TopDown(DetachConstraints(constraintList)).fire(constraintToCompile);
+		Constraint newConstr = (Constraint)`InnermostId(DetachConstraints(constraintList)).fire(constraintToCompile);
+		System.out.println("fini");
 		ConstraintList concConsList = `concConstraint();
 		for(Constraint constr: constraintList){
 			concConsList = `concConstraint(constr,concConsList*);
@@ -69,17 +78,31 @@ public class TomPropagationManager extends TomBase {
 		return `AndConstraint(concConstraint(newConstr,concConsList*));
 	}
 	
+	/**
+	 * f(x,a@b@g(y)) << t -> f(x,z) << t /\ g(y) << z /\ a << z /\ b << z
+	 */
 	%strategy DetachConstraints(bag:Collection) extends Identity(){
 		visit TomTerm{
 			t@(RecordAppl|Variable)[Constraints=constraints] ->{
-		    	// for each constraint
+				// if empty, nothing to do
+				if (`constraints.isEmptyconcConstraint()){
+					return `t;
+				}
+				TomNumberList path = TomConstraintCompiler.getRootpath();
+				TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(""+ (++freshVarCounter)))));
+				System.out.println("term:" + `t);
+				System.out.println("type:" + TomConstraintCompiler.getTermTypeFromTerm(`t));
+				TomTerm freshVariable = `Variable(concOption(),freshVarName,TomConstraintCompiler.getTermTypeFromTerm(t),concConstraint());
+				
+				bag.add(`MatchConstraint(t,freshVariable));
+				// for each constraint
 		    	%match(constraints){
 		    		concConstraint(_*,AssignTo(var),_*) ->{
 		    			// add constraint to bag and delete it from the term
-		    			bag.add(`MatchConstraint(var,t));
-		    			return `t.setConstraints(`concConstraint());		    					    			
+		    			bag.add(`MatchConstraint(var,freshVariable));		    					    					    			
 		    		}
-		    	}// end match
+		    	}// end match		    	
+		    	return freshVariable;		    	
 		    }
 		} // end visit
 	} // end strategy

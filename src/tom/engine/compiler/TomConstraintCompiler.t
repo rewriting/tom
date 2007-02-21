@@ -28,10 +28,11 @@ public class TomConstraintCompiler extends TomBase {
 	%include { adt/tomsignature/TomSignature.tom }
 	%include { sl.tom }
 	
-	private static SymbolTable symbolTable;
+	private static SymbolTable symbolTable = null;
+	private static TomNumberList rootpath = null;
 	// keeps track of the match number to insure distinct variables' 
 	// names for distinct match constructs
-	private static int matchNumber = 0;
+	private static short matchNumber = 0;
 	
 	public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable){
 		TomConstraintCompiler.symbolTable = symbolTable;
@@ -47,19 +48,18 @@ public class TomConstraintCompiler extends TomBase {
 		visit Instruction {			
 			Match(SubjectList(subjectList),patternInstructionList, matchOptionList)  -> {				
 				matchNumber++;
-				TomNumberList rootpath = `concTomNumber(MatchNumber(Number(matchNumber)));
-				TomList automataList = `concTomTerm();
-				int actionNumber = 0;
+				rootpath = `concTomNumber(MatchNumber(Number(matchNumber)));
+				short actionNumber = 0;
+				TomList automataList = `concTomTerm();				
 				// for each pattern action <term>,...,<term> -> { action }
 				// build a matching automata  
 				%match(patternInstructionList){
 					concPatternInstruction(_*,PatternInstruction(Pattern[TomList=patternList],action,optionList),_*) ->{
-						actionNumber++;
-						//TODO - use rootpath
 						ConstraintList constraintList = TomConstraintCompiler.buildConstraintConjunction(`patternList,`subjectList);
 						try{
+							actionNumber++;
 							Constraint propagationResult = TomPropagationManager.performPropagations(`AndConstraint(constraintList));							
-							Instruction matchingAutomata = TomInstructionGenerationManager.performGenerations(propagationResult, `action, symbolTable);
+							Instruction matchingAutomata = TomInstructionGenerationManager.performGenerations(propagationResult, `action);
 							
 							TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(Number(actionNumber)));
 						    TomTerm automata = `Automata(optionList,patternList,numberList,matchingAutomata);
@@ -133,5 +133,35 @@ public class TomConstraintCompiler extends TomBase {
 			}
 		}
 		return null;
-	}	
+	}
+	
+	public static TomNumberList getRootpath(){
+		return rootpath;
+	}
+	
+	public static SymbolTable getSymbolTable(){
+		return symbolTable;
+	}
+	
+	public static TomType getTermTypeFromName(TomName tomName){
+		String stringName = ((Name)tomName).getString();
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(stringName);
+        return tomSymbol.getTypesToType().getCodomain();
+	}
+	
+	public static TomType getTermTypeFromTerm(TomTerm tomTerm){
+		%match(tomTerm){
+			RecordAppl[NameList=nameList@(headName,_*)] ->{
+				return getTermTypeFromName(`headName);
+			}
+			Variable[AstType=type] ->{
+				return `type;
+			}
+			Subterm(constructorName, slotName, term) ->{
+				TomSymbol tomSymbol = symbolTable.getSymbolFromName(((TomName)`constructorName).getString());
+	        	return TomBase.getSlotType(tomSymbol, `slotName);
+			}
+		}
+        throw new TomRuntimeException("getTermTypeFromTerm: cannot find the type for: " + tomTerm);
+	}
 }

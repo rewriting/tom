@@ -34,7 +34,7 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
 			// generate is_fsym(t,f) || is_fsym(t,g) || ...
 			ConstraintToExpression(MatchConstraint(RecordAppl[Option=option,NameList=nameList@(headName,_*),Slots=l],SymbolOf(subject))) ->{
 				Expression cond = null;
-				TomType termType = getTermTypeFromName(`headName);
+				TomType termType = TomConstraintCompiler.getTermTypeFromName(`headName);
 				// add condition for each name
 				%match(nameList){
 					concTomName(_*,name,_*) ->{
@@ -46,27 +46,8 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
 			}
 			// generate equality
 			ConstraintToExpression(MatchConstraint(t@Subterm[],u@Subterm[])) ->{				
-				return `EqualTerm(getTermTypeFromTerm(t),t,u);		        		      
+				return `EqualTerm(TomConstraintCompiler.getTermTypeFromTerm(t),t,u);		        		      
 			}			
 		} // end visit
-	} // end strategy
-	
-	private static TomType getTermTypeFromName(TomName tomName){
-		String stringName = ((Name)tomName).getString();
-        TomSymbol tomSymbol = TomInstructionGenerationManager.getSymbolTable().getSymbolFromName(stringName);
-        return tomSymbol.getTypesToType().getCodomain();
-	}
-	
-	private static TomType getTermTypeFromTerm(TomTerm tomTerm){
-		%match(tomTerm){
-			RecordAppl[NameList=nameList@(headName,_*)] ->{
-				return getTermTypeFromName(`headName);
-			}
-			Subterm(constructorName, slotName, term) ->{
-				TomSymbol tomSymbol = TomInstructionGenerationManager.getSymbolTable().getSymbolFromName(((TomName)`constructorName).getString());
-	        	return TomBase.getSlotType(tomSymbol, `slotName);
-			}
-		}
-        throw new TomRuntimeException("getTermTypeFromTerm: cannot find the type for: " + tomTerm);
-	}
+	} // end strategy	
 }

@@ -32,12 +32,9 @@ public class TomInstructionGenerationManager extends TomBase {
 	// the list of all generators
 	private static final String[] generatorsNames = {"TomSyntacticGenerator"};
 	
-	private static SymbolTable symbolTable; 
-	
-	public static Instruction performGenerations(Constraint constraint, Instruction action, SymbolTable symbolTable) 
+	public static Instruction performGenerations(Constraint constraint, Instruction action) 
 			throws ClassNotFoundException,InstantiationException,IllegalAccessException{
 		
-		TomInstructionGenerationManager.symbolTable = symbolTable;
 		// counts the generators that didn't change the instruction
 		short genCounter = 0;
 		Expression result = null;
@@ -88,16 +85,8 @@ public class TomInstructionGenerationManager extends TomBase {
 	 * Converts the resulted expression (after generation) into instructions
 	 */
 	private static Instruction buildInstructionFromExpression(Expression expression, Instruction action){
-
-		// collect all the variables and generate declarations
-		ArrayList<TomTerm> vars = new ArrayList();
-		ArrayList<Expression> varsValues = new ArrayList();
-		System.out.println("Expresion before:" + `expression);
 		// it is done innermost because the expression is also simplified  
-		expression = (Expression)`InnermostId(CollectVariables(vars,varsValues)).fire(expression);
-		System.out.println("Expresion after:" + `expression);
-		action = genVariablesDeclaration(vars,varsValues,action);
-		
+		expression = (Expression)`InnermostId(ReplaceSubterms()).fire(expression);		
 		// generate automata
 		return generateAutomata(expression,action);
 	}
@@ -109,8 +98,11 @@ public class TomInstructionGenerationManager extends TomBase {
 		%match(expression){
 			And(left,right) ->{
 				Instruction subInstruction = generateAutomata(`right,action);
-				return `If(left,subInstruction,Nop());
-			}			
+				return `generateAutomata(left,subInstruction);
+			}
+			ConstraintToExpression(MatchConstraint(v@Variable[],t)) ->{
+				return `LetRef(v,TomTermToExpression(t),action);
+			}
 			x ->{
 				return `If(x,action,Nop());
 			}			
@@ -119,45 +111,15 @@ public class TomInstructionGenerationManager extends TomBase {
 	}
 	
 	/**
-	 * 1. Collects all the variables, and eliminates them from expression
-	 * 2. Converts 'Subterm' to 'GetSlot'
+	 * Converts 'Subterm' to 'GetSlot'
 	 */
-	%strategy CollectVariables(vars:Collection,varsValues:Collection) extends Identity(){
-		visit Expression{
-			And(ConstraintToExpression(MatchConstraint(v@Variable[],t)),r) ->{
-				vars.add(`v);
-				varsValues.add(`TomTermToExpression(t));
-				return `r;
-			}
-			And(l,ConstraintToExpression(MatchConstraint(v@Variable[],t))) ->{
-				vars.add(`v);
-				varsValues.add(`TomTermToExpression(t));
-				return `l;
-			}			
-		}// end visit
-		
+	%strategy ReplaceSubterms() extends Identity(){
 		visit TomTerm{
 			Subterm(constructorName, slotName, term) ->{
-				TomSymbol tomSymbol = symbolTable.getSymbolFromName(((TomName)`constructorName).getString());
+				TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(((TomName)`constructorName).getString());
 	        	TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);
 				return `ExpressionToTomTerm(GetSlot(subtermType, constructorName, slotName.getString(), term));
 			}
 		}
-	}
-	
-	/**
-	 * Generates variables' declarations
-	 */
-	private static Instruction genVariablesDeclaration(ArrayList<TomTerm> vars, ArrayList<Expression> varsValues, Instruction action){
-		Iterator<Expression> vvIt = varsValues.iterator();
-		// generate declarations		
-		for(TomTerm var: vars){
-			action = `LetRef(var,vvIt.next(),action);
-		}		
-		return action;
-	}
-	
-	public static SymbolTable getSymbolTable(){
-		return symbolTable;	
 	}
 }

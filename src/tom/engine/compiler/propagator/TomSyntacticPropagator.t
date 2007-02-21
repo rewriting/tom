@@ -8,17 +8,18 @@ import tom.engine.adt.tomslot.types.*;
  * Syntactic propagator
  */
 public class TomSyntacticPropagator implements TomIBasePropagator{
-	
+
+// --------------------------------------------------------	
 	%include { adt/tomsignature/TomSignature.tom }
 	%include { sl.tom }	
+// --------------------------------------------------------
 	
 	public Constraint propagate(Constraint constraint){
 		System.out.println("Propagation entered with:" + constraint);
 		System.out.println("Propagation out with:" + (Constraint)`InnermostId(SyntacticPatternMatching()).fire(constraint));
 		return  (Constraint)`InnermostId(SyntacticPatternMatching()).fire(constraint);
-	}
-	
-	// TODO - don't forget the constraints attached to terms
+	}	
+
 	%strategy SyntacticPatternMatching() extends `Identity(){		
 		visit Constraint{			
 			// Decompose
@@ -48,7 +49,14 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 			// z = t /\ z = u -> z = t /\ t = u
 			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*,MatchConstraint(Variable[AstName=z],u),Z*)) ->{				
 				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(t,u),Z*));
+			}
+			
+			// Merge
+			// z = p1 /\ p2 = z -> z = p1 /\ p2 = p1
+			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],p1),Y*,MatchConstraint(p2,Variable[AstName=z]),Z*)) ->{				
+				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(p2,p1),Z*));
 			}			
+
 			
 //			// Delete
 //			EqualConstraint(a,a) ->{				
