@@ -1,5 +1,7 @@
 package tom.engine.compiler;
 
+import java.util.ArrayList;
+
 import tom.engine.TomBase;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomconstraint.types.*;
@@ -12,7 +14,11 @@ import tom.engine.compiler.propagator.*;
  */
 public class TomPropagationManager extends TomBase {
 	
-	%include { adt/tomsignature/TomSignature.tom }	
+//------------------------------------------------------	
+	%include { adt/tomsignature/TomSignature.tom }
+	%include { sl.tom }
+	%include { java/util/types/Collection.tom}
+//------------------------------------------------------
 	
 	private static final String propagatorsPackage = "tom.engine.compiler.propagator.";
 	
@@ -47,5 +53,34 @@ public class TomPropagationManager extends TomBase {
 			}
 		} // end while
 		return result;
-	}	
+	}
+	
+	/**
+	 * Before propagations
+	 * - make sure that all constraints attached to terms are handled
+	 */
+	private static Constraint preparePropagations(Constraint constraintToCompile){
+		ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
+		Constraint newConstr = (Constraint)`TopDown(DetachConstraints(constraintList)).fire(constraintToCompile);
+		ConstraintList concConsList = `concConstraint();
+		for(Constraint constr: constraintList){
+			concConsList = `concConstraint(constr,concConsList*);
+		}
+		return `AndConstraint(concConstraint(newConstr,concConsList*));
+	}
+	
+	%strategy DetachConstraints(bag:Collection) extends Identity(){
+		visit TomTerm{
+			t@(RecordAppl|Variable)[Constraints=constraints] ->{
+		    	// for each constraint
+		    	%match(constraints){
+		    		concConstraint(_*,AssignTo(var),_*) ->{
+		    			// add constraint to bag and delete it from the term
+		    			bag.add(`MatchConstraint(var,t));
+		    			return `t.setConstraints(`concConstraint());		    					    			
+		    		}
+		    	}// end match
+		    }
+		} // end visit
+	} // end strategy
 }

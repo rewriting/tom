@@ -90,8 +90,8 @@ public class TomInstructionGenerationManager extends TomBase {
 	private static Instruction buildInstructionFromExpression(Expression expression, Instruction action){
 
 		// collect all the variables and generate declarations
-		ArrayList vars = new ArrayList();
-		ArrayList varsValues = new ArrayList();
+		ArrayList<TomTerm> vars = new ArrayList();
+		ArrayList<Expression> varsValues = new ArrayList();
 		System.out.println("Expresion before:" + `expression);
 		// it is done innermost because the expression is also simplified  
 		expression = (Expression)`InnermostId(CollectVariables(vars,varsValues)).fire(expression);
@@ -148,11 +148,11 @@ public class TomInstructionGenerationManager extends TomBase {
 	/**
 	 * Generates variables' declarations
 	 */
-	private static Instruction genVariablesDeclaration(ArrayList vars, ArrayList varsValues, Instruction action){
-		Iterator vvIt = varsValues.iterator();
+	private static Instruction genVariablesDeclaration(ArrayList<TomTerm> vars, ArrayList<Expression> varsValues, Instruction action){
+		Iterator<Expression> vvIt = varsValues.iterator();
 		// generate declarations		
-		for(Object var: vars){
-			action = `LetRef((TomTerm)var,(Expression)vvIt.next(),action);
+		for(TomTerm var: vars){
+			action = `LetRef(var,vvIt.next(),action);
 		}		
 		return action;
 	}
