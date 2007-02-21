@@ -82,7 +82,7 @@ public class TomPropagationManager extends TomBase {
 	 */
 	%strategy DetachConstraints(bag:Collection) extends Identity(){
 		visit TomTerm{
-			t@(RecordAppl|Variable)[Constraints=constraints] ->{
+			t@(RecordAppl|Variable|UnamedVariable)[Constraints=constraints] ->{
 				// if empty, nothing to do
 				if (`constraints.isEmptyconcConstraint()){
 					return `t;

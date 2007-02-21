@@ -100,7 +100,7 @@ public class TomInstructionGenerationManager extends TomBase {
 				Instruction subInstruction = generateAutomata(`right,action);
 				return `generateAutomata(left,subInstruction);
 			}
-			ConstraintToExpression(MatchConstraint(v@Variable[],t)) ->{
+			ConstraintToExpression(MatchConstraint(v@(Variable|UnamedVariable)[],t)) ->{
 				return `LetRef(v,TomTermToExpression(t),action);
 			}
 			x ->{
