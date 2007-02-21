@@ -1,8 +1,13 @@
 module TomConstraint
 imports TomTerm
 abstract syntax
-Constraint = Ensure(Variable:TomTerm)
-           | Equal(Variable:TomTerm)
+
+Constraint = 
+		  /**
+		   * <code>AssignTo</code> specifies that we want to instanciate Variable with the term on which this constraint is attached
+		   *
+		   * @param Variable the variable to constrain
+		   */
            | AssignTo(Variable:TomTerm)
  		   | TrueConstraint()
 		   | FalseConstraint()		   
