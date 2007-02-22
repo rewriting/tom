@@ -128,9 +128,7 @@ public class TomCompiler extends TomGenericPlugin {
    * preProcessing:
    * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
    *
-   * [commented] transforms RuleSet into Function + Match + BuildReducedTerm
    * abstract list-matching patterns
-   * rename non-linear patterns
    */
 
   %op Strategy preProcessing(compiler:TomCompiler){

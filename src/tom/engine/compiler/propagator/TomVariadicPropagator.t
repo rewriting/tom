@@ -4,10 +4,11 @@ import tom.engine.adt.tomconstraint.types.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
+
 /**
  * Syntactic propagator
  */
-public class TomSyntacticPropagator implements TomIBasePropagator{
+public class TomVariadicPropagator implements TomIBasePropagator{
 
 // --------------------------------------------------------	
 	%include { adt/tomsignature/TomSignature.tom }
@@ -15,27 +16,42 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 // --------------------------------------------------------
 	
 	public Constraint propagate(Constraint constraint){
-		return  (Constraint)`InnermostId(SyntacticPatternMatching()).fire(constraint);
+		return  (Constraint)`InnermostId(VariadicPatternMatching()).fire(constraint);
 	}	
 
-	%strategy SyntacticPatternMatching() extends `Identity(){		
+	%strategy VariadicPatternMatching() extends `Identity(){		
 		visit Constraint{			
 			// Decompose
-			// f(t1,...,tn) = g -> SymbolOf(g)=f /\ t1=subterm1(g) /\ ... /\ tn=subtermn(g) 
-			m@MatchConstraint(RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g) -> {
+			// conc(t1,X*,t2,Y*) = g -> SymbolOf(g)=conc /\ t1=Sublist(g,1,2) /\ X* = VariableSublist(g,2,i)
+			// /\ t2=Sublist(g,i,i+1) /\ Y* = Sublist(g,i+1,length(g))			
+			m@MatchConstraint(RecordAppl(options,nameList@(name@Name(tomName),_*),
+					,constraints),g) -> {
 				// if we cannot decompose, stop
 				%match(g) {
 					SymbolOf(_) -> {return `m;}
-				}								
-				// if this a list, nothing to do
-				if(TomConstraintCompiler.isListOperator(TomConstraintCompiler.getSymbolTable().
-						getSymbolFromName(`tomName))) {return `m;}
-				
+				}
+				// if this is not a list, nothing to do
+				if(!TomConstraintCompiler.isListOperator(TomConstraintCompiler.getSymbolTable().
+						getSymbolFromName(`tomName))) {return `m;}							
+				 
 				ConstraintList l = `concConstraint();
-				SlotList sList = `slots;
+				short syntacticSlotsCount = 0;
+				short varSublistIndex = 0;
+				// SlotList sList = `slots;
+				%match(slots){
+					concSlot(_*,PairSlotAppl[Appl=appl],_*)->{
+						// if we have a VariableSublist
+						if((`appl) instanceof VariableStar or (`appl) instanceof UnamedVariableStar){
+							l = `concConstraint(MatchConstraint(appl,VariableSublist(g,2,i,length(g))),l*);
+						}
+					}
+				}// end match
+				
 				while(!sList.isEmptyconcSlot()) {
 					Slot headSlot = sList.getHeadconcSlot();
-					l = `concConstraint(MatchConstraint(headSlot.getAppl(),Subterm(name,headSlot.getSlotName(),g)),l*);					
+					if()
+					l = `concConstraint(MatchConstraint(headSlot.getAppl(),Subterm(name.getHeadconcTomName()
+							,headSlot.getSlotName(),g)),l*);					
 					sList = sList.getTailconcSlot();										
 				}				
 				l = l.reverse();
