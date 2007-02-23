@@ -97,12 +97,12 @@ hookSortModule
   String code = "";
 }
 :! hookScope:hookScope pointCut:ID COLON^ hook:otherHook
-{
+{ 
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
   
 #hookSortModule = #(COLON,hookScope,pointCut,hook);
-#hookSortModule.setText(code.trim());
+#hookSortModule.setText(code);
 }
 ;
 

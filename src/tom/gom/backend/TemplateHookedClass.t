@@ -52,7 +52,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
     %match(HookList h) {
       concHook(L1*,BlockHook(code),L2*) -> {
         //remove brackets
-        res.append(`code.substring(1,`code.length()-1)+"\n");
+        int index = `code.indexOf("{"); // in case of spaces
+        res.append(`code.substring(index+1,`code.length()-1)+"\n");
         h = `concHook(L1*,L2*);
       }
     }
@@ -65,7 +66,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
     %match(HookList h) {
       concHook(L1*,ImportHook(code),L2*) -> {
         //remove brackets
-        res.append(`code.substring(1,`code.length()-1)+"\n");
+        int index = `code.indexOf("{"); // in case of spaces
+        res.append(`code.substring(index+1,`code.length()-1)+"\n");
         h = `concHook(L1*,L2*);
       }
     }
@@ -78,7 +80,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
     %match(HookList h) {
       concHook(L1*,InterfaceHook(code),L2*) -> {
         //remove brackets
-        res.append(","+`code.substring(1,`code.length()-1).replaceAll("\n",""));
+        int index = `code.indexOf("{"); // in case of spaces
+        res.append(","+`code.substring(index+1,`code.length()-1).replaceAll("\n",""));
         h = `concHook(L1*,L2*);
       }
     }
