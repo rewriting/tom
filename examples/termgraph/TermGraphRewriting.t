@@ -161,7 +161,7 @@ public class TermGraphRewriting {
     t = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getReplace(`f(refTerm("x"))).fire(t);
     /*  duplications + normalization */
     map.clear();
-    Term tt = (Term) `InnermostId(Pem(map)).fire(`substTerm(t,redex));
+    Term tt = (Term) `InnermostIdSeq(Pem(map)).fire(`substTerm(t,redex));
     tt = (Term) termAbstractType.label2pos(tt);
     tt = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(tt);
     System.out.println("Canonical term with the new method: "+tt);
