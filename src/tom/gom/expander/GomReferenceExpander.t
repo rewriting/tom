@@ -189,6 +189,13 @@ public class GomReferenceExpander {
         MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
         return (@moduleName@AbstractType) `Sequence(normalization,label2pos).apply(t);
       }
+
+      public static @moduleName@AbstractType label2pos(@moduleName@AbstractType t){
+        HashMap map = new HashMap();
+        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
+        return (@moduleName@AbstractType) label2pos.apply(t);
+      }
+
     ]%;
 
     String codeBlock = "{" +codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers) + "}";

@@ -69,5 +69,5 @@
 }
 
 %op Strategy InnermostId(s1:Strategy) {
-  make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),Try(SequenceId(v,MuVar("_x"))))) }
+  make(v) { `mu(MuVar("_x"),Sequence(AllSeq(MuVar("_x")),Try(SequenceId(v,MuVar("_x"))))) }
 }

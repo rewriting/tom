@@ -69,6 +69,53 @@ public class TermGraphRewriting {
     }
   }
 
+  // In this strategy, the failure is Identity
+  %strategy Pem(map:HashMap) extends Identity(){
+    visit Term {
+     refTerm[label=label] -> {
+        if (! map.containsKey(`label)){
+          Info info = new Info();
+          Position pos = Position.makeAbsolutePosition(new int[]{});
+          Position old = getEnvironment().getPosition();
+          Position rootpos = Position.makeAbsolutePosition(new int[]{});
+          map.put(`label,old);
+          getEnvironment().goTo(old.getRelativePosition(rootpos));
+          Strategy s =`TopDown(CollectSubterm(label,info));
+          AbstractStrategy.init(s,getEnvironment()); 
+          s.visit();
+          getEnvironment().goTo(rootpos.getRelativePosition(old));
+          return `labTerm(label,info.term);
+        }
+      }
+     labTerm[label=label] -> {
+       map.put(`label,getEnvironment().getPosition());
+     }
+    }
+  }
+
+  %typeterm Info{
+    implement {Info}
+  }
+
+
+  static class Info{
+    public Position omega;
+    public Term term;
+  }
+
+
+  %strategy CollectSubterm(label:String,info:Info) extends Identity(){
+    visit Term {
+      labTerm[label=label,term=subterm] -> {
+        if(label.equals(`label)){
+          info.term = `subterm;
+          info.omega = getEnvironment().getPosition();
+          return `refTerm(label);
+        }
+      }
+    }
+  }
+
   %strategy AddLabel(map:HashMap) extends Identity() {
     visit Term{
       t -> {
@@ -113,8 +160,13 @@ public class TermGraphRewriting {
     /* replace in t the lhs by the rhs */
     t = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getReplace(`f(refTerm("x"))).fire(t);
     /*  duplications + normalization */
-    t = (Term) `termAbstractType.expand(`substTerm(t,redex));
+    map.clear();
+    Term tt = (Term) `InnermostId(Pem(map)).fire(`substTerm(t,redex));
+    tt = (Term) termAbstractType.label2pos(tt);
+    tt = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(tt);
+    System.out.println("Canonical term with the new method: "+tt);
+    t = (Term) termAbstractType.expand(`substTerm(t,redex));
     t = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(t);
-    System.out.println("Final term :"+t);
+    System.out.println("Canonical term with the old method: "+t);
   }
 }
