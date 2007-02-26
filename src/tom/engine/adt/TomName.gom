@@ -6,14 +6,15 @@ TomName = Name(String:String)
         | EmptyName()
         | AntiName(Name:TomName)
 
-TomNumber = MatchNumber(Number:TomNumber)
-          | PatternNumber(Number:TomNumber)
-          | ListNumber(Number:TomNumber)
-          | IndexNumber(Number:TomNumber)
-          | Begin(Number:TomNumber)
-          | End(Number:TomNumber)
-          | Number(Integer:int)
-          | AbsVar(Number:TomNumber)
+TomNumber = MatchNumber(Integer:int)
+          | PatternNumber(Integer:int)
+          | ListNumber(Integer:int)
+          | IndexNumber(Integer:int)
+          | Begin(Integer:int)
+          | End(Integer:int)
+          | Save(Integer:int)
+          | Position(Integer:int)
+          | AbsVar(Integer:int)
           | RenamedVar(AstName:TomName)
           | NameNumber(AstName:TomName)
           | RuleVar()
@@ -21,3 +22,16 @@ TomNumber = MatchNumber(Number:TomNumber)
 TomNumberList = concTomNumber(TomNumber*)
 
 TomNameList = concTomName(TomName*)
+
+NameNumber:make(name) {
+  %match(name) {
+    PositionName(concTomNumber(p@Position[])) -> { return `p; }
+  }
+}
+
+concTomNumber:make_insert(e,l) {
+  %match(e) {
+    NameNumber(PositionName(concTomNumber(p*))) -> { return `concTomNumber(p*,l*); }
+  }
+}
+

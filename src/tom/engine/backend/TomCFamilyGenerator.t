@@ -297,6 +297,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     String get_head = eltCast + "tom_get_head_" + name + "_" + tomType;
     String get_tail = listCast + "tom_get_tail_" + name + "_" + tomType;
     String get_slice = listCast + "tom_get_slice_" + name;
+    String get_index = "tom_get_index_" + name;
 
     s+= modifier + utype + " tom_append_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n";
     s+= "   if(" + is_empty + "(l1)) {\n";
@@ -320,6 +321,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     s+= "   }\n";
     s+= "  }\n";
     s+= "\n";
+   
     //If necessary we remove \n code depending on pretty option
     TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);
     output.write(itl.getCode()); 

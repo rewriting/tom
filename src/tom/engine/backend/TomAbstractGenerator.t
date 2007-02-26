@@ -129,13 +129,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-			/*
-      BuildVariable[AstName=PositionName(l)] -> {
-        output.write("tom" + numberListToIdentifier(`l));
-        return;
-      }
-			 */
-
       BuildTerm(Name(name), argList, myModuleName) -> {
         `buildTerm(deep, name, argList, myModuleName);
         return;
@@ -161,7 +154,7 @@ public abstract class TomAbstractGenerator extends TomBase {
            * sans type: re-definition lorsque %variable est utilise
            * avec type: probleme en cas de filtrage dynamique
            */
-        output.write("tom" + numberListToIdentifier(`l));
+        output.write("tom" + tomNumberListToString(`l));
         return;
       }
 
@@ -171,7 +164,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       VariableStar[AstName=PositionName(l)] -> {
-        output.write("tom" + numberListToIdentifier(`l));
+        output.write("tom" + tomNumberListToString(`l));
         return;
       }
 
@@ -321,7 +314,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         buildExpGetSliceList(deep, `name, `varBegin, `varEnd, moduleName);
         return;
       }
-
+      
       GetSliceArray(Name(name),varArray,varBegin,expEnd) -> {
         buildExpGetSliceArray(deep, `name, `varArray, `varBegin, `expEnd, moduleName);
         return;

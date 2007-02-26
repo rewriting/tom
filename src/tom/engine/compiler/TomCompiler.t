@@ -389,28 +389,25 @@ matchBlock: {
     throw new TomRuntimeException("buildCondition strange term: " + condList);
   }
 
-  private static TomTerm renameVariable(TomTerm subject,
-      Map multiplicityMap,      
-      Collection antiList,
-      boolean treatConstraints) {
+  private static TomTerm renameVariable(TomTerm subject, Map multiplicityMap, Collection antiList, boolean treatConstraints) {
     TomTerm renamedTerm = subject;
 
     %match(subject) {
       var@(UnamedVariable|UnamedVariableStar)[Constraints=constraints] -> {
-    	  if (treatConstraints){
-    		  ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap);
-    		  return `var.setConstraints(newConstraintList);
-    	  }else{
-    		  return `var;
-    	  }
+	if(treatConstraints) {
+	  ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap);
+	  return `var.setConstraints(newConstraintList);
+	} else {
+	  return `var;
+	}
       }
 
       var@(Variable|VariableStar)[AstName=name,Constraints=constraints] -> {
         ConstraintList newConstraintList;
-        if (treatConstraints){        
-        	newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
-        }else{
-        	newConstraintList = `constraints;
+        if(treatConstraints) {
+	  newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
+        } else {
+	  newConstraintList = `constraints;
         }        
         if(!multiplicityMap.containsKey(`name)) {
           // We see this variable for the first time
@@ -424,7 +421,7 @@ matchBlock: {
 
           TomNumberList path = `concTomNumber();
           path = `concTomNumber(path*,RenamedVar(name));
-          path = `concTomNumber(path*,Number(mult));
+          path = `concTomNumber(path*,Position(mult));
 
           renamedTerm = `var.setAstName(`PositionName(path));
           renamedTerm = renamedTerm.setConstraints(`concConstraint(Equal(var.setConstraints(concConstraint())),newConstraintList*));
@@ -443,30 +440,27 @@ matchBlock: {
           args = args.getTailconcSlot();
         }        
         ConstraintList newConstraintList;
-        if (treatConstraints){        
-        	newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
-        }else{
-        	newConstraintList = `constraints;
+        if(treatConstraints) {
+	  newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
+        } else {
+	  newConstraintList = `constraints;
         }
         renamedTerm = `RecordAppl(optionList,nameList,newArgs,newConstraintList);
         return renamedTerm;
       }
       // store this for late processing,
       // after renaming in the constraints
-      AntiTerm[TomTerm=t@(Variable|VariableStar|RecordAppl)[Constraints=constraints]] ->{
-    	  
-    	  ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
-		  TomTerm newTerm = `t.setConstraints(newConstraintList);    		  
-
-    	  antiList.add(newTerm);
-    	  return `AntiTerm(newTerm);
+      AntiTerm[TomTerm=t@(Variable|VariableStar|RecordAppl)[Constraints=constraints]] -> {
+	ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap);
+	TomTerm newTerm = `t.setConstraints(newConstraintList);    		  
+	antiList.add(newTerm);
+	return `AntiTerm(newTerm);
       }
     }
     return renamedTerm;
   }
 
-  private static ConstraintList renameVariableInConstraintList(ConstraintList constraintList,
-      Map multiplicityMap) {
+  private static ConstraintList renameVariableInConstraintList(ConstraintList constraintList, Map multiplicityMap) {
     ArrayList list = new ArrayList();
     while(!constraintList.isEmptyconcConstraint()) {
       Constraint cstElt = constraintList.getHeadconcConstraint();
@@ -548,31 +542,29 @@ matchBlock: {
       return newElt;
   }    
   
-  %strategy RenameAnti(antiTerm:TomTerm, multiplicityMap:Map, antiList:Collection) extends `Identity(){
-	  visit TomTerm {
-		  a@AntiTerm(x) ->{
-			  // TODO - change the way comparison is made
-			  // because this can generate very subtle bugs - we can find 
-			  // the same term at a different positions
-			  if (`x == antiTerm){
-				  // at this point, all the constraints have been treated
-				  // so we can set the treatConstraints to false
-				  TomTerm newTerm = `AntiTerm(renameVariable(antiTerm,multiplicityMap,antiList,false));
-				  // if we changed something, return the new term
-				  // if not, stop anyway
-				  if (`a != newTerm){
-					  return newTerm;
-				  }else{
-					  throw new VisitFailure();
-				  }
-			  }
-		  }
-	  }// end visit
+  %strategy RenameAnti(antiTerm:TomTerm, multiplicityMap:Map, antiList:Collection) extends `Identity() {
+    visit TomTerm {
+      a@AntiTerm(x) -> {
+	// TODO - change the way comparison is made
+	// because this can generate very subtle bugs - we can find 
+	// the same term at a different positions
+	if(`x == antiTerm) {
+	  // at this point, all the constraints have been treated
+	  // so we can set the treatConstraints to false
+	  TomTerm newTerm = `AntiTerm(renameVariable(antiTerm,multiplicityMap,antiList,false));
+	  // if we changed something, return the new term
+	  // if not, stop anyway
+	  if(`a != newTerm) {
+	    return newTerm;
+	  } else {
+	    throw new VisitFailure();
+	  }
+	}
+      }
+    }// end visit
   }// end strategy
 
-  private TomTerm abstractPattern(TomTerm subject,
-      ArrayList abstractedPattern,
-      ArrayList introducedVariable)  {
+  private TomTerm abstractPattern(TomTerm subject, ArrayList abstractedPattern, ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(subject) {
       RecordAppl[NameList=(Name(tomName),_*), Slots=arguments] -> {
@@ -600,7 +592,7 @@ matchBlock: {
                   TomNumberList path = `concTomNumber();
                   //path = append(`AbsVar(Number(introducedVariable.size())),path);
                   absVarNumber++;
-                  path = `concTomNumber(path*,AbsVar(Number(absVarNumber)));
+                  path = `concTomNumber(path*,AbsVar(absVarNumber));
 
                   TomTerm newVariable = `Variable(concOption(),PositionName(path),type2,concConstraint());
 
