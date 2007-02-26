@@ -133,7 +133,7 @@ public class GomReferenceExpander {
     import @packagePath@.@moduleName.toLowerCase()@.*;
     import tom.library.strategy.mutraveler.*;
     import java.util.*;
-    ]%;
+   ]%;
 
     String codeBlockCommon =%[
     %include{java/util/HashMap.tom}
@@ -191,9 +191,9 @@ public class GomReferenceExpander {
       }
     ]%;
 
-    String codeBlock = codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
+    String codeBlock = "{" +codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers) + "}";
 
-    return `concHookDecl(ImportHookDecl(codeImport),BlockHookDecl(codeBlock));
+    return `concHookDecl(ImportHookDecl("{"+codeImport+"}"),BlockHookDecl(codeBlock));
   }
 
   private static String getStrategies(String sortName, String moduleName){
