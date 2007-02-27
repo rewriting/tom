@@ -15,6 +15,8 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 	%include { sl.tom }	
 // --------------------------------------------------------
 	
+	private static freshVarCounter = 0;
+	
 	public Constraint propagate(Constraint constraint){
 		return  (Constraint)`InnermostId(VariadicPatternMatching()).fire(constraint);
 	}	
@@ -22,8 +24,11 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 	%strategy VariadicPatternMatching() extends `Identity(){		
 		visit Constraint{			
 			// Decompose
-			// conc(t1,X*,t2,Y*) = g -> SymbolOf(g)=conc /\ t1=Sublist(g,1,2) /\ X* = VariableSublist(g,2,i)
-			// /\ t2=Sublist(g,i,i+1) /\ Y* = Sublist(g,i+1,length(g))			
+			// conc(t1,X*,t2,Y*) = g -> SymbolOf(g)=conc /\ fresh_var = g 
+			// /\ NotEmpty(fresh_Var) /\ t1=GetHead(fresh_var) /\ fresh_var = GetTail(fresh_var) 
+			// /\ begin1 = fresh_var /\ end1 = fresh_var /\	X* = VariableHeadList(begin1,end1) /\ fresh_var = end1
+			// /\ NotEmpty(fresh_Var) /\ t2=GetHead(fresh_var) /\ fresh_var = GetTail(fresh_var) 
+			// /\ begin2 = fresh_var /\ end2 = fresh_var /\	Y* = VariableHeadList(begin2,end2) /\ fresh_var = end2
 			m@MatchConstraint(RecordAppl(options,nameList@(name@Name(tomName),_*),
 					,constraints),g) -> {
 				// if we cannot decompose, stop
@@ -32,8 +37,15 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				}
 				// if this is not a list, nothing to do
 				if(!TomConstraintCompiler.isListOperator(TomConstraintCompiler.getSymbolTable().
-						getSymbolFromName(`tomName))) {return `m;}							
-				 
+						getSymbolFromName(`tomName))) {return `m;}
+				// declare fresh variable
+				TomNumberList path = TomConstraintCompiler.getRootpath();
+				TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshList_"+ (++freshVarCounter)))));
+				TomTerm freshVariable = `Variable(concOption(),freshVarName,TomConstraintCompiler.getTermTypeFromTerm(t),concConstraint());
+				
+				TomName freshVarName = TomConstraintCompiler.getRootPath();
+				Constraint freshVarDeclaration = MatchConstraint(VariableStar(,AstName:TomName,AstType:TomType,Constraints:ConstraintList),g);
+				
 				ConstraintList l = `concConstraint();
 				short syntacticSlotsCount = 0;
 				short varSublistIndex = 0;
@@ -42,7 +54,11 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 					concSlot(_*,PairSlotAppl[Appl=appl],_*)->{
 						// if we have a VariableSublist
 						if((`appl) instanceof VariableStar or (`appl) instanceof UnamedVariableStar){
-							l = `concConstraint(MatchConstraint(appl,VariableSublist(g,2,i,length(g))),l*);
+							l = `concConstraint(MatchConstraint(appl,VariableSublist(g,syntacticSlotsCount)),l*);
+						}else{							
+							l = `concConstraint(NotEmptyListConstraint(name,),
+									MatchConstraint(appl,Sublist(g,syntacticSlotsCount,syntacticSlotsCount),l*);
+							syntacticSlotsCount++;
 						}
 					}
 				}// end match
@@ -56,6 +72,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				}				
 				l = l.reverse();
 				// add head equality condition
+				// TODO + length condition
 				l = `concConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),l*);
 				
 				return `AndConstraint(l);

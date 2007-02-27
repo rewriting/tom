@@ -31,5 +31,6 @@ Constraint =
 		   */
 		   | Sublist(list:TomTerm, start:int, end:int)
   		   | VariableSublist(list:TomTerm, start:int, end:int, maxLength:int)
+  		   | NotEmptyListConstraint(Opname:TomName,Variable:TomTerm)
 
 ConstraintList = concConstraint(Constraint*)

@@ -88,7 +88,7 @@ public class TomPropagationManager extends TomBase {
 					return `t;
 				}
 				TomNumberList path = TomConstraintCompiler.getRootpath();
-				TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(""+ (++freshVarCounter)))));
+				TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("_fresh_"+ (++freshVarCounter)))));
 				TomTerm freshVariable = `Variable(concOption(),freshVarName,TomConstraintCompiler.getTermTypeFromTerm(t),concConstraint());
 				
 				bag.add(`MatchConstraint(t,freshVariable));
