@@ -159,16 +159,22 @@ public class TermGraphRewriting {
             getEnvironment().goTo(current.getRelativePosition(rootpos));
             Info info = new Info();
             Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
-            Strategy swap1 =`TopDown(Swap1(dest,current,info));
-            Strategy swap2 =`TopDown(Swap2(dest,current,info));
-            AbstractStrategy.init(update,getEnvironment()); 
-            AbstractStrategy.init(swap1,getEnvironment()); 
-            AbstractStrategy.init(swap2,getEnvironment()); 
+            Strategy getSubterm =dest.getSubterm();
+            int[] relarray = dest.getRelativePosition(current).toArray();
+            info.term = (Term) getEnvironment().getSubject();
+            Term relref = `posTerm();
+            for(int i=0;i<relarray.length;i++){
+              relref = `posTerm(relref*,relarray[i]);
+            }
+            Strategy replace =dest.getReplace(relref);
+            AbstractStrategy.init(update,getEnvironment());
+            AbstractStrategy.init(getSubterm,getEnvironment()); 
+            AbstractStrategy.init(replace,getEnvironment()); 
             update.visit();
-            swap1.visit();
-            swap2.visit();
+            Term subterm = (Term) getSubterm.fire(getEnvironment().getSubject()); 
+            replace.visit(); 
             getEnvironment().goTo(rootpos.getRelativePosition(current));
-            return (Term) getEnvironment().getSubject();
+            return subterm; 
           }
         }
         else{
@@ -211,34 +217,6 @@ public class TermGraphRewriting {
     }
   }
 
-
-  %strategy Swap1(source:Position,target:Position,info:Info) extends Identity() {
-    visit Term {
-      t -> {
-        Position current = getEnvironment().getPosition(); 
-        if(current.equals(source)){
-          int[] relarray = current.getRelativePosition(target).toArray();
-          info.term = (Term) getEnvironment().getSubject();
-          Term relref = `posTerm();
-          for(int i=0;i<relarray.length;i++){
-            relref = `posTerm(relref*,relarray[i]);
-          }
-          return relref;
-        }
-      }
-    }
-  }
-
-  %strategy Swap2(source:Position,target:Position,info:Info) extends Identity() {
-    visit Term {
-      t -> {
-        Position current = getEnvironment().getPosition(); 
-        if(current.equals(target)){
-          return info.term;
-        }
-      }
-    }   
-  }
 
   %op Strategy UnExpand(map:HashMap) {
     make(map) {
