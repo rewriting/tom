@@ -180,7 +180,7 @@ public class Environment implements Cloneable {
    * get the current sub-position
    * @return the current sub-position
    */
-  protected int getSubOmega() {
+  public int getSubOmega() {
     return omega[size-1];
   }
 

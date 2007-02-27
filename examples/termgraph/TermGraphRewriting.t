@@ -69,40 +69,6 @@ public class TermGraphRewriting {
     }
   }
 
-  // In this strategy, the failure is Identity
-  %strategy Pem(map:HashMap) extends Identity(){
-    visit Term {
-     refTerm[label=label] -> {
-        if (! map.containsKey(`label)){
-          Info info = new Info();
-          Position pos = Position.makeAbsolutePosition(new int[]{});
-          Position old = getEnvironment().getPosition();
-          Position rootpos = Position.makeAbsolutePosition(new int[]{});
-          map.put(`label,old);
-          getEnvironment().goTo(old.getRelativePosition(rootpos));
-          Strategy s =`TopDown(CollectSubterm(label,info));
-          AbstractStrategy.init(s,getEnvironment()); 
-          s.visit();
-          getEnvironment().goTo(rootpos.getRelativePosition(old));
-          return `labTerm(label,info.term);
-        }
-      }
-     labTerm[label=label] -> {
-       map.put(`label,getEnvironment().getPosition());
-     }
-    }
-  }
-
-  %typeterm Info{
-    implement {Info}
-  }
-
-
-  static class Info{
-    public Position omega;
-    public Term term;
-  }
-
 
   %strategy CollectSubterm(label:String,info:Info) extends Identity(){
     visit Term {
@@ -134,13 +100,152 @@ public class TermGraphRewriting {
       }
     }
   }
-  
+ 
+
+  %typeterm Info{
+    implement {Info}
+  }
+
+  %typeterm Position{
+    implement {Position}
+  }
+
+
+  static class Info{
+    public Position omega;
+    public Term term;
+  }
+
+
+  // In this strategy, the failure is Identity
+  %strategy NormalizeLabel(map:HashMap) extends Identity(){
+    visit Term {
+     refTerm[label=label] -> {
+        if (! map.containsKey(`label)){
+          Info info = new Info();
+          Position pos = Position.makeAbsolutePosition(new int[]{});
+          Position old = getEnvironment().getPosition();
+          Position rootpos = Position.makeAbsolutePosition(new int[]{});
+          map.put(`label,old);
+          getEnvironment().goTo(old.getRelativePosition(rootpos));
+          Strategy s =`Try(TopDown(CollectSubterm(label,info)));
+          AbstractStrategy.init(s,getEnvironment()); 
+          s.visit();
+          getEnvironment().goTo(rootpos.getRelativePosition(old));
+          return `labTerm(label,info.term);
+        }
+     }
+     labTerm[label=label] -> {
+       map.put(`label,getEnvironment().getPosition());
+     }
+    }
+  }
+
+  // In this strategy, the failure is Identity
+  %strategy NormalizePos() extends Identity(){
+    visit Term {
+      p@posTerm(_*) -> {
+        Position current = (Position) getEnvironment().getPosition().clone(); 
+        int subomega = getEnvironment().getSubOmega();
+        getEnvironment().up();
+        //verify that we are not inside a position
+        if(! (getEnvironment().getSubject() instanceof posTerm)){  
+          getEnvironment().down(subomega);
+          Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
+          Position dest = current.getAbsolutePosition(relPos);
+          if(current.compare(dest)==-1){
+            //we must switch the rel position and the pointed subterm
+            Position rootpos = Position.makeAbsolutePosition(new int[]{});
+            getEnvironment().goTo(current.getRelativePosition(rootpos));
+            Info info = new Info();
+            Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
+            Strategy swap1 =`TopDown(Swap1(dest,current,info));
+            Strategy swap2 =`TopDown(Swap2(dest,current,info));
+            AbstractStrategy.init(update,getEnvironment()); 
+            AbstractStrategy.init(swap1,getEnvironment()); 
+            AbstractStrategy.init(swap2,getEnvironment()); 
+            update.visit();
+            swap1.visit();
+            swap2.visit();
+            getEnvironment().goTo(rootpos.getRelativePosition(current));
+            return (Term) getEnvironment().getSubject();
+          }
+        }
+        else{
+          getEnvironment().down(subomega);
+        }
+      }
+    }
+  }
+
+
+  %strategy UpdatePos(source:Position,target:Position) extends Fail() {
+    visit Term {
+      p@posTerm(_*) -> {
+        Position current = getEnvironment().getPosition(); 
+        Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
+        Position dest = current.getAbsolutePosition(relPos);
+        if(current.hasPrefix(source) && !dest.hasPrefix(source)){
+          //we must update this relative pos from the redex to the external
+          current = current.changePrefix(source,target);
+          int[] relarray = current.getRelativePosition(dest).toArray();
+          Term relref = `posTerm();
+          for(int i=0;i<relarray.length;i++){
+            relref = `posTerm(relref*,relarray[i]);
+          }
+          return relref;
+       }
+
+        if (dest.hasPrefix(source) && !current.hasPrefix(source)){
+          //we must update this relative pos from the external to the redex
+          dest = dest.changePrefix(source,dest); 
+          int[] relarray = current.getRelativePosition(dest).toArray();
+          Term relref = `posTerm();
+          for(int i=0;i<relarray.length;i++){
+            relref = `posTerm(relref*,relarray[i]);
+          }
+          return relref;
+        }
+        return `p;
+      }
+    }
+  }
+
+
+  %strategy Swap1(source:Position,target:Position,info:Info) extends Identity() {
+    visit Term {
+      t -> {
+        Position current = getEnvironment().getPosition(); 
+        if(current.equals(source)){
+          int[] relarray = current.getRelativePosition(target).toArray();
+          info.term = (Term) getEnvironment().getSubject();
+          Term relref = `posTerm();
+          for(int i=0;i<relarray.length;i++){
+            relref = `posTerm(relref*,relarray[i]);
+          }
+          return relref;
+        }
+      }
+    }
+  }
+
+  %strategy Swap2(source:Position,target:Position,info:Info) extends Identity() {
+    visit Term {
+      t -> {
+        Position current = getEnvironment().getPosition(); 
+        if(current.equals(target)){
+          return info.term;
+        }
+      }
+    }   
+  }
+
   %op Strategy UnExpand(map:HashMap) {
     make(map) {
       `Sequence(TopDown(CollectRef(map)),BottomUp(AddLabel(map)))
     }
   }
-  
+
 
   public static void main(String[] args){
     Term t = `g(g(g(a(),g(posTerm(2,1),posTerm(3,2))),a()),posTerm(1,1,1,2));
@@ -148,6 +253,7 @@ public class TermGraphRewriting {
     HashMap map = new HashMap();
     /* rule g(x,y) -> f(x) at pos 1.1*/
     System.out.println("apply the rule g(x,y) -> f(x) at position 1.1");
+
     /* term t with labels */
     t = (Term) `UnExpand(map).fire(t);
     /* redex with labels */
@@ -159,14 +265,25 @@ public class TermGraphRewriting {
     redex = (Term) Position.makeAbsolutePosition(new int[]{2}).getReplace(`labTerm("y",term_y)).fire(redex);
     /* replace in t the lhs by the rhs */
     t = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getReplace(`f(refTerm("x"))).fire(t);
-    /*  duplications + normalization */
+    /* concat the redex on top of the term */
+    t = `substTerm(t,redex);
+
+    /*  three methods for normalization */
+    Term t1 = (Term) termAbstractType.expand(t);
+    t1 = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(t1);
+    System.out.println("Canonical term obtained by a point fix: "+t1);
+
     map.clear();
-    Term tt = (Term) `InnermostIdSeq(Pem(map)).fire(`substTerm(t,redex));
-    tt = (Term) termAbstractType.label2pos(tt);
-    tt = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(tt);
-    System.out.println("Canonical term with the new method: "+tt);
-    t = (Term) termAbstractType.expand(`substTerm(t,redex));
-    t = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(t);
-    System.out.println("Canonical term with the old method: "+t);
+    Term t2 = (Term) `InnermostIdSeq(NormalizeLabel(map)).fire(t);
+    t2 = (Term) termAbstractType.label2pos(t2);
+    t2 = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(t2);
+    System.out.println("Canonical term obtained by Innermost strategy + a map: "+t2);
+
+    Term t3 = (Term) termAbstractType.label2pos(t);
+    t3 = (Term) `InnermostIdSeq(NormalizePos()).fire(t3);
+    t3 = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(t3);
+    System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t3);
+
   }
-}
+
+}//class TermGraphRewriting

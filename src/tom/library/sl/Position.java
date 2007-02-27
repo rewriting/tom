@@ -31,6 +31,11 @@
 
 package tom.library.sl;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+
 /**
  * Object that represents a position in a term
  */
@@ -53,6 +58,20 @@ public class Position implements Cloneable {
   public static Position makeRelativePosition(int[] omega){
     return new Position(omega,true);
   }
+
+  public static Position makeAbsolutePosition(Position prefix,Position suffix){
+    int[] prefixArray = prefix.toArray();
+    int[] suffixArray = suffix.toArray();
+    int[] concArray = new int[suffixArray.length+prefixArray.length];
+    for( int i=0;i<prefixArray.length;i++){
+      concArray[i]=prefixArray[i];
+    }
+    for( int i=0;i<suffixArray.length;i++){
+      concArray[i+prefixArray.length]=suffixArray[i];
+    }
+    return new Position(concArray,true);
+  }
+
 
   public Position getRelativePosition(Position targetPos) {
     int[] target = targetPos.toArray();
@@ -251,6 +270,35 @@ public class Position implements Cloneable {
 
   public boolean isRelative(){
     return isRelative;
+  }
+
+  public boolean hasPrefix(Position prefix){
+    if(isRelative() || prefix.isRelative()){
+      return false;
+    }
+    int[] prefixTab = prefix.toArray();
+    if(omega.length<prefixTab.length) {
+      return false;
+    }
+    for(int i=0;i<prefixTab.length;i++){
+      if(prefixTab[i]!=omega[i]) return false;
+    }
+    return true;
+  }
+
+  public Position getSuffix(Position prefix){
+    if(! hasPrefix(prefix)) return null;
+    int[] suffixTab = new int[depth()-prefix.depth()];
+    for(int i=0;i<suffixTab.length;i++){
+      suffixTab[i]=omega[i+prefix.depth()];
+    }
+    return Position.makeAbsolutePosition(suffixTab);
+  }
+
+  public Position changePrefix(Position oldprefix,Position newprefix){
+    if(! hasPrefix(oldprefix)) return null;
+    Position suffix = getSuffix(oldprefix);
+    return Position.makeAbsolutePosition(newprefix,suffix);
   }
 
 }
