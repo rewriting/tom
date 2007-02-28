@@ -2,3 +2,4 @@
 - optimize method call for subterm
 - should move Intruction generation out of generators ?
 - can we annotate X* ? if yes, make sur in TomPropagationManager.preparePropagations that this is handled
+- small optimization _* /\ _* -> _*

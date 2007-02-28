@@ -103,9 +103,16 @@ public class TomInstructionGenerationManager extends TomBase {
 				Instruction subInstruction = generateAutomata(`right,action);
 				return `generateAutomata(left,subInstruction);
 			}
-			ConstraintToExpression(MatchConstraint(v@(Variable|UnamedVariable)[],t)) ->{
+			// variables' assignments
+			ConstraintToExpression(MatchConstraint(v@(Variable|UnamedVariable|VariableStar|UnamedVariableStar)[],t)) ->{
 				return `LetRef(v,TomTermToExpression(t),action);
 			}
+			// while
+			WhileExpression(condition,EqualTerm(type,end,ExpressionToTomTerm(expr))) ->{
+				Instruction varAssign = `LetRef(end,expr,Nop());
+				return `WhileDo(condition,UnamedBlock(concInstruction(action,varAssign)));
+			}
+			// 'if' conditions 
 			x ->{
 				return `If(x,action,Nop());
 			}			

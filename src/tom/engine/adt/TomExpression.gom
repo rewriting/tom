@@ -32,3 +32,10 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
            | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
            | ConstraintToExpression(cons:Constraint)
+           /**
+		   * <code>WhileExpression</code> a while loop
+		   *
+		   * @param LoopCondition the loop condition
+		   * @param EndExpression the expression to add at the end of the loop that usually changes the condition for the loop
+		   */
+           | WhileExpression(LoopCondition:Expression, EndExpression:Expression)
