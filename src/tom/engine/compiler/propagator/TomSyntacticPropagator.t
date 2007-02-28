@@ -45,13 +45,13 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 				return `AndConstraint(l);
 			}		
 			
-			// Merge
+			// Merge 1
 			// z = t /\ z = u -> z = t /\ t = u
 			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*,MatchConstraint(Variable[AstName=z],u),Z*)) ->{				
 				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(t,u),Z*));
 			}
 			
-			// Merge
+			// Merge 2 (this can occur because of the annotations of terms)
 			// z = p1 /\ p2 = z -> z = p1 /\ p2 = p1
 			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],p1),Y*,MatchConstraint(p2,Variable[AstName=z]),Z*)) ->{				
 				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(p2,p1),Z*));

@@ -20,17 +20,6 @@ Constraint =
 //		   | ForAll(var:TomTerm,cons:Constraint)
 		   | AntiMatchConstraint(Pattern:TomTerm, Subject:TomTerm, ActionOnIf : int)
 		   | AndAntiConstraint(Constraint*)
-		  /**
-		   * <code>Sublist</code> a fixed length sublist 
-   		   * <code>VariableSublist</code> a sublist with variable length
-		   *
-		   * @param list the list from which to extract the sublist 
-   		   * @param start the start index of the sublist in the list
-   		   * @param end the end index of the sublist in the list
-   		   * @param maxLength the maximum length of the sublist
-		   */
-		   | Sublist(list:TomTerm, start:int, end:int)
-  		   | VariableSublist(list:TomTerm, start:int, end:int, maxLength:int)
   		   | NotEmptyListConstraint(Opname:TomName,Variable:TomTerm)
 
 ConstraintList = concConstraint(Constraint*)

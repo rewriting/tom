@@ -26,6 +26,8 @@ TomTerm =
    * <code>VariableStar</code> a list-variable
    * <code>UnamedVariable</code> a variable without name
    * <code>UnamedVariableStar</code> a list-variable without name
+   * <code>VariableHeadList</code> a head list that is variable ( starting from begining to end )
+   * <code>TestVarStar</code> instead of generating an assignment, this generates an equality test
    *
    * @param Option a list of options
    * @param AstName the name of the variable
@@ -36,6 +38,8 @@ TomTerm =
     | VariableStar(Option:OptionList,AstName:TomName,AstType:TomType,Constraints:ConstraintList)
     | UnamedVariable(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
     | UnamedVariableStar(Option:OptionList,AstType:TomType,Constraints:ConstraintList)
+    | VariableHeadList(Begin:TomTerm,End:TomTerm)
+    | TestVarStar(Variable:TomTerm)
 
   /**
    * <code>...ToTomTerm</code> wrappers to convert a type into TomTerm

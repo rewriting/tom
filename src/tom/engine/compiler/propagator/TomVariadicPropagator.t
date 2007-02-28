@@ -1,6 +1,11 @@
 package tom.engine.compiler.propagator;
 
 import tom.engine.adt.tomconstraint.types.*;
+import tom.engine.adt.tomsignature.types.*;
+import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.tomterm.types.*;
+import tom.engine.adt.tomname.types.*;
+import tom.engine.adt.tomterm.types.tomterm.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.compiler.*;
@@ -15,7 +20,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 	%include { sl.tom }	
 // --------------------------------------------------------
 	
-	private static freshVarCounter = 0;
+	private static short freshVarCounter = 0;
 	
 	public Constraint propagate(Constraint constraint){
 		return  (Constraint)`InnermostId(VariadicPatternMatching()).fire(constraint);
@@ -29,7 +34,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 			// /\ begin1 = fresh_var /\ end1 = fresh_var /\	X* = VariableHeadList(begin1,end1) /\ fresh_var = end1
 			// /\ NotEmpty(fresh_Var) /\ t2=GetHead(fresh_var) /\ fresh_var = GetTail(fresh_var) 
 			// /\ begin2 = fresh_var /\ end2 = fresh_var /\	Y* = VariableHeadList(begin2,end2) /\ fresh_var = end2
-			m@MatchConstraint(RecordAppl(options,nameList@(name@Name(tomName),_*),
+			m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots
 					,constraints),g) -> {
 				// if we cannot decompose, stop
 				%match(g) {
@@ -39,57 +44,43 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				if(!TomConstraintCompiler.isListOperator(TomConstraintCompiler.getSymbolTable().
 						getSymbolFromName(`tomName))) {return `m;}
 				// declare fresh variable
-				TomNumberList path = TomConstraintCompiler.getRootpath();
-				TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("_freshList_"+ (++freshVarCounter)))));
-				TomTerm freshVariable = `Variable(concOption(),freshVarName,TomConstraintCompiler.getTermTypeFromTerm(t),concConstraint());
+				TomType listType = TomConstraintCompiler.getTermTypeFromTerm(`t);
+				TomTerm freshVariable = getFreshVariableStar(listType,"_freshList_");
+				Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
 				
-				TomName freshVarName = TomConstraintCompiler.getRootPath();
-				Constraint freshVarDeclaration = MatchConstraint(VariableStar(,AstName:TomName,AstType:TomType,Constraints:ConstraintList),g);
-				
-				ConstraintList l = `concConstraint();
-				short syntacticSlotsCount = 0;
-				short varSublistIndex = 0;
+				ConstraintList l = `concConstraint();				
 				// SlotList sList = `slots;
 				%match(slots){
 					concSlot(_*,PairSlotAppl[Appl=appl],_*)->{
-						// if we have a VariableSublist
-						if((`appl) instanceof VariableStar or (`appl) instanceof UnamedVariableStar){
-							l = `concConstraint(MatchConstraint(appl,VariableSublist(g,syntacticSlotsCount)),l*);
-						}else{							
-							l = `concConstraint(NotEmptyListConstraint(name,),
-									MatchConstraint(appl,Sublist(g,syntacticSlotsCount,syntacticSlotsCount),l*);
-							syntacticSlotsCount++;
+						// if we have a variable
+						if(((`appl) instanceof VariableStar) || ((`appl) instanceof UnamedVariableStar)){
+							TomTerm beginSublist = getFreshVariableStar(listType,"_begin_");
+							TomTerm endSublist = getFreshVariableStar(listType,"_end_");
+							l = `concConstraint(MatchConstraint(beginSublist,freshVariable),
+									MatchConstraint(endSublist,freshVariable),
+									MatchConstraint(appl,VariableHeadList(beginSublist,endSublist)),
+									MatchConstraint(freshVariable,endSublist),l*);
+						}else{	// a term or a syntactic variable						
+							l = `concConstraint(NotEmptyListConstraint(name,freshVariable),
+									MatchConstraint(appl,ExpressionToTomTerm(GetHead(name,listType,freshVariable))),
+									MatchConstraint(freshVariable,ExpressionToTomTerm(GetTail(name,freshVariable))),l*);
 						}
 					}
-				}// end match
-				
-				while(!sList.isEmptyconcSlot()) {
-					Slot headSlot = sList.getHeadconcSlot();
-					if()
-					l = `concConstraint(MatchConstraint(headSlot.getAppl(),Subterm(name.getHeadconcTomName()
-							,headSlot.getSlotName(),g)),l*);					
-					sList = sList.getTailconcSlot();										
-				}				
+				}// end match			
+							
 				l = l.reverse();
-				// add head equality condition
-				// TODO + length condition
-				l = `concConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),l*);
+				// add head equality condition + fresh var declaration
+				l = `concConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),
+						freshVarDeclaration,l*);
 				
 				return `AndConstraint(l);
-			}		
-			
-			// Merge
-			// z = t /\ z = u -> z = t /\ t = u
-			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*,MatchConstraint(Variable[AstName=z],u),Z*)) ->{				
-				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(t,u),Z*));
 			}
-			
-			// Merge
-			// z = p1 /\ p2 = z -> z = p1 /\ p2 = p1
-			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],p1),Y*,MatchConstraint(p2,Variable[AstName=z]),Z*)) ->{				
-				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(p2,p1),Z*));
-			}			
-
+					
+			// Merge for star variables
+			// X* = p1 /\ X* = p2 -> X* = p1 /\ X* == p2 
+			AndConstraint(concConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x],p1),Y*,MatchConstraint(v@VariableStar[AstName=x],p2),Z*)) ->{				
+				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(TestVarStar(v),p2),Z*));
+			}
 			
 //			// Delete
 //			EqualConstraint(a,a) ->{				
@@ -127,4 +118,10 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 			}
 		}
 	}// end %strategy	
+	
+	private static TomTerm getFreshVariableStar(TomType type, String namePart){
+		TomNumberList path = TomConstraintCompiler.getRootpath();
+		TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(namePart + (++freshVarCounter)))));
+		return `VariableStar(concOption(),freshVarName,type,concConstraint());
+	}
 }
