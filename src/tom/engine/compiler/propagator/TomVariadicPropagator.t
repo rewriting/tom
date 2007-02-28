@@ -58,7 +58,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 							TomTerm endSublist = getFreshVariableStar(listType,"_end_");
 							l = `concConstraint(MatchConstraint(beginSublist,freshVariable),
 									MatchConstraint(endSublist,freshVariable),
-									MatchConstraint(appl,VariableHeadList(beginSublist,endSublist)),
+									MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)),
 									MatchConstraint(freshVariable,endSublist),l*);
 						}else{	// a term or a syntactic variable						
 							l = `concConstraint(NotEmptyListConstraint(name,freshVariable),

@@ -77,6 +77,9 @@ public class TomInstructionGenerationManager extends TomBase {
 			m@MatchConstraint[] ->{
 				result = `ConstraintToExpression(m);
 			}
+			NotEmptyListConstraint(opName,variable) ->{
+				result = `Negation(IsEmptyList(opName,variable));
+			}
 		}			
 		return result;
 	}	
