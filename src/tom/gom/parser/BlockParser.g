@@ -61,12 +61,13 @@ options {
 
 block returns [String block]
 { block = "?"; }
-: LBRACE { /* Verify there was nothing more than only a LBRACE in the input */ 
+:
+ LBRACE { /* Verify there was nothing more than only a LBRACE in the input */ 
   if (!lexer.target.toString().trim().equals("{"))
     throw new RecognitionException("Expecting \"{\", found \""+lexer.target.toString()+"\"");
 } 
   rawblocklist
-  RBRACE
+  RBRACE 
 { 
   block = lexer.target.toString();
   lexer.clearTarget();

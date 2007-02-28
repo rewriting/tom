@@ -78,7 +78,7 @@ public class GraphTest {
 
   public static void main(String[] args){
     Term subject =
-      `expTerm(g(f(g(labTerm("l1",a()),labTerm("l2",b()))),g(refTerm("l1"),refTerm("l2"))));
+      (Term) termAbstractType.expand(`g(f(g(labTerm("l1",a()),labTerm("l2",b()))),g(refTerm("l1"),refTerm("l2"))));
     System.out.println("Initial subject: "+subject);
     Term newSubject = (Term) `TopDown(RelativeRef(subject,DummyStrat())).apply(subject);
     System.out.println("Subject after dummystrat: "+newSubject);
@@ -89,13 +89,13 @@ public class GraphTest {
     // Problems to resolve
     System.out.println("Examples of strange behaviour of pattern-matching when  using mRef\n");
     System.out.println("1. when the subject is modified inside a match");
-    subject = `expTerm(g(labTerm("a",a()),refTerm("a")));
+    subject = (Term) termAbstractType.expand(`g(labTerm("a",a()),refTerm("a")));
     System.out.println("%match "+subject);
     root=subject;
     %match(Term subject){
       g(x@a(),mRef(x)) -> {
         System.out.println("\tmatched with g(x@a(),mRef(x))");
-        subject = `expTerm(g(labTerm("a",b()),refTerm("a")));
+        subject = (Term) termAbstractType.expand(`g(labTerm("a",b()),refTerm("a")));
         System.out.println("\t\tChange subject: "+subject);
       }
       g(x@a(),mRef(x)) -> {
@@ -104,7 +104,7 @@ public class GraphTest {
     }
 
     System.out.println("\n2. in case of transitive references");
-    subject =`expTerm(g(labTerm("a",a()),g(labTerm("ref",refTerm("a")),refTerm("ref"))));
+    subject =(Term) termAbstractType.expand(`g(labTerm("a",a()),g(labTerm("ref",refTerm("a")),refTerm("ref"))));
     System.out.println("%match "+subject);
     root=subject;
     %match(Term subject){
@@ -119,7 +119,7 @@ public class GraphTest {
     }
 
     System.out.println("\n3. in case of identical subterms at different positions");
-    subject=`expTerm(g(a(),g(refTerm("a"),labTerm("a",a()))));
+    subject=(Term) termAbstractType.expand(`g(a(),g(refTerm("a"),labTerm("a",a()))));
     System.out.println("%match "+subject);
     root=subject;
     %match(Term subject){

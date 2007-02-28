@@ -30,6 +30,7 @@
 package sl;
 
 import sl.testsl.types.*;
+import sl.testsl.*;
 import tom.library.sl.Strategy;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -57,16 +58,16 @@ public class TestRef extends TestCase {
   }
 
   public void testRef() {
-    Term subject = `expTerm(g(g(a(),refTerm("l")),labTerm("l",a())));
+    Term subject = (Term) testslAbstractType.expand(`g(g(a(),refTerm("l")),labTerm("l",a())));
     try{
       Term res = (Term) `TopDown(StrictRelativeRef(AB())).fire(subject);
-      assertEquals(res,`expTerm(g(g(a(),refTerm("n")),labTerm("n",b()))));
+      assertEquals(res,testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",b()))));
       res = (Term) `TopDown(RelativeRef(AB())).fire(subject);
-      assertEquals(res,`expTerm(g(g(b(),refTerm("n")),labTerm("n",b()))));
+      assertEquals(res,testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",b()))));
       res = (Term) `TopDownSeq(StrictRelativeRef(AB())).fire(subject);
-      assertEquals(res,`expTerm(g(g(a(),refTerm("n")),labTerm("n",b()))));
+      assertEquals(res,testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",b()))));
       res = (Term) `TopDownSeq(RelativeRef(AB())).fire(subject);
-      assertEquals(res,`expTerm(g(g(b(),refTerm("n")),labTerm("n",c()))));
+      assertEquals(res,testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",c()))));
     } catch (tom.library.sl.FireException e) {
       fail("It should not fail");
     }

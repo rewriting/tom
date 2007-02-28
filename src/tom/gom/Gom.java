@@ -78,7 +78,9 @@ public class Gom {
       );
       return 1;
     }
-    PluginPlatform platform = PluginPlatformFactory.getInstance().create(commandLine, Gom.LOGRADICAL);
+    PluginPlatform platform = PluginPlatformFactory.getInstance().create(
+        commandLine,
+        Gom.LOGRADICAL);
     if(platform == null) {
       return 1;
     }

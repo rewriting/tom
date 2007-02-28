@@ -81,8 +81,14 @@ public class TomBase {
   }
 
   protected static TomNumberList appendNumber(int n, TomNumberList path) {
-    //return `concTomNumber(path*,Number(n));
-    return `concTomNumber(path*,NameNumber(PositionName(concTomNumber(Number(n)))));
+    /*
+     * concTomNumber(path*,Position(n))
+     * can be used instead of 
+     * concTomNumber(path*,NameNumber(PositionName(concTomNumber(Position(n)))))
+     * thanks to hooks defined in TomName.gom
+     */
+    return `concTomNumber(path*,Position(n));
+    //return `concTomNumber(path*,NameNumber(PositionName(concTomNumber(Position(n)))));
   }
     
   protected static TomList append(TomTerm t, TomList l) {
@@ -147,41 +153,88 @@ public class TomBase {
     }
   }
 
-  private static HashMap numberListToIdentifierMap = new HashMap();
-
-  private static String elementToIdentifier(TomNumber subject) {
-    %match(TomNumber subject) {
-      Begin(Number(i)) -> { return "_begin" + `i; }
-      End(Number(i)) -> { return "_end" + `i; }
-      MatchNumber(Number(i)) -> { return "_match" + `i; }
-      PatternNumber(Number(i)) -> { return "_pattern" + `i; }
-      ListNumber(Number(i)) -> { return "_list" + `i; }
-      IndexNumber(Number(i)) -> { return "_index" + `i; }
-      AbsVar(Number(i)) -> { return "_absvar" + `i; }
-      RenamedVar(Name(name)) -> { return "_renamedvar_" + `name; }
-      NameNumber(Name(name)) -> { return "_" + `name; }
-      NameNumber(PositionName(numberList)) -> { return `numberListToIdentifier(numberList); }
-      RuleVar() -> { return "_rulevar"; }
-      Number(i) -> { return "_" + `i; }
-    }
-    return subject.toString(); 
-  }
-
-  protected static String numberListToIdentifier(TomNumberList l) {
-    String res = (String)numberListToIdentifierMap.get(l);
-    if(res == null) {
-      TomNumberList key = l;
+  private static HashMap tomNumberListToStringMap = new HashMap();
+  protected static String tomNumberListToString(TomNumberList numberList) {
+    String result = (String)tomNumberListToStringMap.get(numberList);
+    if(result == null) {
+      TomNumberList key = numberList;
       StringBuffer buf = new StringBuffer(30);
-      while(!l.isEmptyconcTomNumber()) {
-        TomNumber elt = l.getHeadconcTomNumber();
-        //buf.append("_");
-        buf.append(elementToIdentifier(elt));
-        l = l.getTailconcTomNumber();
+      while(!numberList.isEmptyconcTomNumber()) {
+	TomNumber number = numberList.getHeadconcTomNumber();
+	numberList = numberList.getTailconcTomNumber();
+	%match(number) {
+	  Position(n) -> {
+	    buf.append("Position");
+	    buf.append(Integer.toString(`n));
+	  }
+	  MatchNumber(n) -> {
+	    buf.append("Match");
+	    buf.append(Integer.toString(`n));
+	  }
+	  PatternNumber(n) -> {
+	    buf.append("Pattern");
+	    buf.append(Integer.toString(`n));
+	  }
+	  ListNumber(n) -> {
+	    buf.append("List");
+	    buf.append(Integer.toString(`n));
+	  }
+	  IndexNumber(n) -> {
+	    buf.append("Index");
+	    buf.append(Integer.toString(`n));
+	  }
+	  Begin(n) -> {
+	    buf.append("Begin");
+	    buf.append(Integer.toString(`n));
+	  }
+	  End(n) -> {
+	    buf.append("End");
+	    buf.append(Integer.toString(`n));
+	  }
+	  Save(n) -> {
+	    buf.append("Save");
+	    buf.append(Integer.toString(`n));
+	  }
+	  AbsVar(n) -> {
+	    buf.append("AbsVar");
+	    buf.append(Integer.toString(`n));
+	  }
+	  RenamedVar(tomName) -> {
+	    String identifier = "Empty";
+	    %match(TomName tomName) {
+	      Name(name) -> {
+		identifier = `name;
+	      }
+	      PositionName(localNumberList) -> {
+		identifier = tomNumberListToString(`localNumberList);
+	      }
+	    }
+	    buf.append("RenamedVar");
+	    buf.append(identifier);
+	  }
+	  NameNumber(tomName) -> {
+	    String identifier = "Empty";
+	    %match(TomName tomName) {
+	      Name(name) -> {
+		identifier = `name;
+	      }
+	      PositionName(localNumberList) -> {
+		identifier = tomNumberListToString(`localNumberList);
+	      }
+	    }
+	    buf.append("NameNumber");
+	    buf.append(identifier);
+	  }
+	  RuleVar() -> {
+	    //buf.insert(0,"RuleVar");
+	    buf.append("RuleVar");
+	  }
+	}
       }
-      res = buf.toString();
-      numberListToIdentifierMap.put(key,res);
+      result = buf.toString();
+      tomNumberListToStringMap.put(key,result);
     }
-    return res;
+    return result;
   }
 
   public static boolean isListOperator(TomSymbol subject) {
@@ -207,7 +260,6 @@ public class TomBase {
   }
 
   protected static boolean isArrayOperator(TomSymbol subject) {
-    //%variable
     if(subject==null) {
       return false;
     }
@@ -372,29 +424,6 @@ public class TomBase {
     }
     return false;
   } 
-
-  /*
-  protected boolean hasGetHead(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,DeclarationToOption(GetHeadDecl[]),_*) -> { return true; }
-    }
-    return false;
-  } 
-
-  protected boolean hasGetTail(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,DeclarationToOption(GetTailDecl[]),_*) -> { return true; }
-    }
-    return false;
-  } 
-
-  protected boolean hasIsEmpty(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,DeclarationToOption(IsEmptyDecl[]),_*) -> { return true; }
-    }
-    return false;
-  } 
-*/
 
   protected static TomName getSlotName(TomSymbol symbol, int number) {
     PairNameDeclList pairNameDeclList = symbol.getPairNameDeclList();
@@ -570,7 +599,7 @@ public class TomBase {
     %match(TomList tomList) {
       concTomTerm() -> { return `concSlot(); }
       concTomTerm(head,tail*) -> { 
-        TomName slotName = `PositionName(concTomNumber(Number(index)));
+        TomName slotName = `PositionName(concTomNumber(Position(index)));
         SlotList sl = tomListToSlotList(`tail,index+1);
         return `concSlot(PairSlotAppl(slotName,head),sl*); 
       }

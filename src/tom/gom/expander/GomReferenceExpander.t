@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import tom.library.strategy.mutraveler.*;
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
@@ -38,6 +39,9 @@ import tom.gom.tools.error.GomRuntimeException;
 
 public class GomReferenceExpander {
 
+  %include{java/util/HashMap.tom}
+  %include{java/mustrategy.tom}
+  %include{java/boolean.tom}
   %include { ../adt/gom/Gom.tom}
 
   // indicates if the expand method must include normalization phase 
@@ -67,7 +71,7 @@ public class GomReferenceExpander {
     %match(list){
       concSort(_*,sort,_*) -> {
         SortDecl sortDecl = `sort.getDecl();
-        ModuleDecl module = sortDecl.getModuleDecl();
+        GomModuleName module = sortDecl.getModuleDecl().getModuleName();
         SortDeclList sorts = (SortDeclList) mapModuleSorts.get(module);
         if(sorts !=null) {
           mapModuleSorts.put(module,`concSortDecl(sorts*,sortDecl));
@@ -78,32 +82,25 @@ public class GomReferenceExpander {
         expandedList = `concSort(expandedList*,expandSort(sort));
       }
     }
-    //add a global expand method in every ModuleDecl for each sort
-     %match(expandedList){
-      concSort(_*,sort,_*) -> {
-        SortDecl sortDecl = `sort.getDecl();
-        ModuleDecl module = sortDecl.getModuleDecl();
-        SortDeclList sorts = (SortDeclList) mapModuleSorts.get(module);
-        HookDeclList hooks = module.getHooks();
-        HookDeclList expHooks = expHooksModule(module,sorts);
-        module = module.setHooks(`concHookDecl(hooks*,expHooks*));
-        sortDecl = sortDecl.setModuleDecl(module);
-       `sort = `sort.setDecl(sortDecl); 
-        expandedList = `concSort(expandedList*,sort);
-      }
-     }
-     return expandedList;
+    //return expandedList;
+    //add a global expand method in every ModuleDecl contained in the SortList
+    return (SortList) `TopDown(ExpandModule(mapModuleSorts,packagePath,forTermgraph)).apply(expandedList);
   }
+
+  %strategy ExpandModule(map:HashMap,packagePath:String,forTermgraph:boolean) extends `Identity(){
+    visit ModuleDecl {
+      module -> {
+        SortDeclList sorts = (SortDeclList) map.get(`module.getModuleName());
+        return (ModuleDecl) `module.setHooks(expHooksModule(`module,sorts,packagePath,forTermgraph));
+      }
+    }
+  }
+
 
   private Sort expandSort(Sort sort) {
     OperatorDeclList l1 = sort.getOperators();
     OperatorDeclList l2 = getRefOperators(sort.getDecl());
-    Sort extendSort = sort.setOperators(`concOperator(l1*,l2*));
-    //add an expand method in every sort
-    HookDeclList expHooks = expHooksSort(extendSort.getDecl());
-    HookDeclList oldHooks = extendSort.getHooks();
-    extendSort = extendSort.setHooks(`concHookDecl(oldHooks*,expHooks*));
-    return extendSort;
+    return sort.setOperators(`concOperator(l1*,l2*));
   }
 
   /*
@@ -127,40 +124,16 @@ public class GomReferenceExpander {
     return 
       `concHookDecl(InterfaceHookDecl("{tom.library.strategy.mutraveler.MuReference,tom.library.sl.Reference}"));
   }
-  
-  private HookDeclList expHooksModule(ModuleDecl module,SortDeclList sorts){
+
+  private static HookDeclList expHooksModule(ModuleDecl module,SortDeclList sorts,String packagePath,boolean forTermgraph){
     String moduleName = module.getModuleName().getName();
+    
     String codeImport =%[
     import @packagePath@.@moduleName.toLowerCase()@.types.*;
-    ]%;
-
-    String codeBlock =%[
-    public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
-      ]%;
-
-    %match(sorts){
-      concSortDecl(_*,SortDecl[Name=name],_*) -> {
-        codeBlock += "t="+`name+".expand(t);\n";
-      }
-    }
-
-    codeBlock += %[
-      return t;
-    }
-    ]%;  
-    return `concHookDecl(ImportHookDecl(codeImport),BlockHookDecl(codeBlock));
-  }
-    
-  private HookDeclList expHooksSort(SortDecl sortDecl){
-    String sortName = sortDecl.getName();
-    String moduleName = sortDecl.getModuleDecl().getModuleName().getName();
-
-    String codeImport =%[
-    import @packagePath@.@moduleName.toLowerCase()@.types.@sortName.toLowerCase()@.*;
     import @packagePath@.@moduleName.toLowerCase()@.*;
     import tom.library.strategy.mutraveler.*;
     import java.util.*;
-    ]%;
+   ]%;
 
     String codeBlockCommon =%[
     %include{java/util/HashMap.tom}
@@ -175,25 +148,80 @@ public class GomReferenceExpander {
     public static class Info{
       public String label;
       public tom.library.strategy.mutraveler.Position pos;
-      public @sortName@ term;
+      public @moduleName@AbstractType term;
     }
+    ]%;
 
+    String codeStrategies = "";
+    String CollectLabels= "Fail()",Collect = "Fail()";
+    String Min= "Identity()",Switch= "Identity()",ClearMarked= "Identity()",Label2Pos = "Identity()";
 
-    %strategy Collect(marked:ArrayList,info:Info) extends Fail(){
-      visit @sortName@{
-        lab@sortName@[label=label,term=term]-> {
-          if(! marked.contains(`label)){
-            info.label=`label;
-            info.term=`lab@sortName@(label,term);
-            info.pos=getPosition();
-            marked.add(`label);
-            return `lab@sortName@(label,term); 
-          }
-        }
+    %match(sorts){
+      concSortDecl(_*,SortDecl[Name=sortName],_*) -> {
+        codeStrategies += getStrategies(`sortName,moduleName);
+        Min = "Sequence(Min"+`sortName+"(info),"+Min+")";
+        Switch = "Sequence(Switch"+`sortName+"(info),"+Switch+")";
+        ClearMarked = "Sequence(ClearMarked"+`sortName+"(marked),"+ClearMarked+")";
+        Label2Pos = "Sequence(Label2Pos"+`sortName+"(map),"+Label2Pos+")";
+        CollectLabels = "ChoiceV(CollectLabels"+`sortName+"(map),"+CollectLabels+")";
+        Collect = "ChoiceV(Collect"+`sortName+"(marked,info),"+Collect+")";
       }
     }
 
-    %strategy Min(info:Info) extends Identity(){
+    String codeBlockTermWithPointers =%[
+
+      public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
+        HashMap map = new HashMap();
+        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
+        return (@moduleName@AbstractType) `label2pos.apply(t);
+      }
+    ]%;
+
+
+
+    String codeBlockTermGraph =%[
+
+      public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
+        Info info = new Info();
+        ArrayList marked = new ArrayList();
+        HashMap map = new HashMap();
+        MuStrategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown(@Collect@),BottomUp(@Min@),TopDown(@Switch@))),@ClearMarked@));
+        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
+        return (@moduleName@AbstractType) `Sequence(normalization,label2pos).apply(t);
+      }
+
+      public static @moduleName@AbstractType label2pos(@moduleName@AbstractType t){
+        HashMap map = new HashMap();
+        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
+        return (@moduleName@AbstractType) label2pos.apply(t);
+      }
+
+    ]%;
+
+    String codeBlock = "{" +codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers) + "}";
+
+    return `concHookDecl(ImportHookDecl("{"+codeImport+"}"),BlockHookDecl(codeBlock));
+  }
+
+  private static String getStrategies(String sortName, String moduleName){
+
+    String strategies =%[
+
+      %strategy Collect@sortName@(marked:ArrayList,info:Info) extends Fail(){
+        visit @sortName@{
+          lab@sortName@[label=label,term=term]-> {
+            if(! marked.contains(`label)){
+              info.label=`label;
+              info.term=`lab@sortName@(label,term);
+              info.pos=getPosition();
+              marked.add(`label);
+              return `lab@sortName@(label,term); 
+            }
+          }
+        }
+      }
+
+    %strategy Min@sortName@(info:Info) extends Identity(){
       visit @sortName@{
         ref@sortName@[label=label] -> {
           if(`label.equals(info.label)){
@@ -205,11 +233,11 @@ public class GomReferenceExpander {
       }
     }
 
-    %strategy Switch(info:Info) extends Identity(){
+    %strategy Switch@sortName@(info:Info) extends Identity(){
       visit @sortName@{
         ref@sortName@[label=label] -> {
           if (info.pos.equals(getPosition())){
-            return info.term; 
+            return (@sortName@) info.term; 
           }
         }
         lab@sortName@[label=label,term=term] -> {
@@ -223,7 +251,7 @@ public class GomReferenceExpander {
     }
 
 
-    %strategy ClearMarked(list:ArrayList) extends Identity(){
+    %strategy ClearMarked@sortName@(list:ArrayList) extends Identity(){
       visit @sortName@{
         _ -> {
           list.clear();
@@ -231,7 +259,7 @@ public class GomReferenceExpander {
       }
     }
 
-    %strategy CollectLabels(map:HashMap) extends Fail(){
+    %strategy CollectLabels@sortName@(map:HashMap) extends Fail(){
       visit @sortName@{
         lab@sortName@[label=label,term=term]-> {
           map.put(`label,getPosition());
@@ -240,7 +268,7 @@ public class GomReferenceExpander {
       }
     }
 
-    %strategy Label2Pos(map:HashMap) extends Identity(){
+    %strategy Label2Pos@sortName@(map:HashMap) extends Identity(){
       visit @sortName@{
         ref@sortName@[label=label] -> {
           if (! map.containsKey(`label)) {
@@ -263,32 +291,8 @@ public class GomReferenceExpander {
     }
     ]%;
 
-
-    String codeBlockTermWithPointers =%[
-      
-    public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
-      HashMap map = new HashMap();
-      MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Pos(map)));
-      return (@moduleName@AbstractType) `label2pos.apply(t);
-    }
-    ]%;
-
-    String codeBlockTermGraph =%[
-    
-    public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
-        Info info = new Info();
-        ArrayList marked = new ArrayList();
-        HashMap map = new HashMap();
-        MuStrategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown(Collect(marked,info)),BottomUp(Min(info)),TopDown(Switch(info)))),ClearMarked(marked)));
-        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(CollectLabels(map))),TopDown(Label2Pos(map)));
-        return (@moduleName@AbstractType) `Sequence(normalization,label2pos).apply(t);
-      }
-    ]%;
-
-    String codeBlock = codeBlockCommon + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
-
-    return `concHookDecl(ImportHookDecl(codeImport),BlockHookDecl(codeBlock));
-}
+    return strategies;
+  }
 
 
 }

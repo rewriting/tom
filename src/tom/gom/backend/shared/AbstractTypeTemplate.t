@@ -48,13 +48,20 @@ public AbstractTypeTemplate(File tomHomePath,
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
+    
     writer.write(
 %[
 package @getPackage()@;
 @generateImport()@
 
 public abstract class @className()@ implements shared.SharedObjectWithID, jjtraveler.Visitable, tom.library.sl.Visitable, Comparable @generateInterface()@ {
+]%);
 
+    if (! hooks.isEmptyconcHook()) {
+      mapping.generate(writer); 
+    }
+    writer.write(
+%[
 @generateBlock()@
 
   private int uniqueID;
@@ -84,12 +91,6 @@ public abstract class @className()@ implements shared.SharedObjectWithID, jjtrav
   }
 
   abstract public @className()@ accept(@fullClassName(visitor)@ v) throws jjtraveler.VisitFailure;
-]%);
-if (! hooks.isEmptyconcHook()) {
-  mapping.generate(writer); 
-}
- writer.write(
-%[
 }
 ]%);
  }

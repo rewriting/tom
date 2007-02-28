@@ -71,6 +71,7 @@ public class Compiler {
     Iterator it = getModuleDeclSet(sortList).iterator();
     while(it.hasNext()) {
       ModuleDecl moduleDecl = (ModuleDecl) it.next();
+      ModuleDecl moduleDeclWithoutHooks = `ModuleDecl(moduleDecl.getModuleName(),moduleDecl.getPkg(),concHookDecl());
       String moduleName = moduleDecl.getModuleName().getName();
 
       /* create an AbstractType class */
@@ -79,15 +80,15 @@ public class Compiler {
           moduleName+"AbstractType");
 
       ClassName visitorName = `ClassName(packagePrefix(moduleDecl),moduleName+"Visitor");
-      visitorNameForModule.put(moduleDecl,visitorName);
+      visitorNameForModule.put(moduleDeclWithoutHooks,visitorName);
 
       ClassName visitablefwdName = `ClassName(packagePrefix(moduleDecl),moduleName+"BasicStrategy");
-      visitableForwardNameForModule.put(moduleDecl,visitablefwdName);
+      visitableForwardNameForModule.put(moduleDeclWithoutHooks,visitablefwdName);
 
       ClassName tomMappingName = `ClassName(packagePrefix(moduleDecl),moduleName);
-      tomMappingNameForModule.put(moduleDecl,tomMappingName);
+      tomMappingNameForModule.put(moduleDeclWithoutHooks,tomMappingName);
 
-      abstractTypeNameForModule.put(moduleDecl,abstractTypeName);
+      abstractTypeNameForModule.put(moduleDeclWithoutHooks,abstractTypeName);
 
     }
 
@@ -114,11 +115,11 @@ public class Compiler {
       %match(Sort sort) {
         Sort[Decl=sortDecl@SortDecl[ModuleDecl=moduleDecl],Operators=oplist,Hooks=sorthooks] -> {
           ClassName sortClassName = (ClassName)sortClassNameForSortDecl.get(`sortDecl);
-          ClassName abstracttypeName = (ClassName)abstractTypeNameForModule.get(`moduleDecl);
-          ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDecl);
-          ClassName visitableforwardName = (ClassName)visitableForwardNameForModule.get(`moduleDecl);
-          ClassName mappingName = (ClassName)tomMappingNameForModule.get(`moduleDecl);
-
+          ModuleDecl moduleDeclWithoutHooks = `ModuleDecl(moduleDecl.getModuleName(),moduleDecl.getPkg(),concHookDecl());
+          ClassName abstracttypeName = (ClassName)abstractTypeNameForModule.get(`moduleDeclWithoutHooks);
+          ClassName visitorName = (ClassName)visitorNameForModule.get(`moduleDeclWithoutHooks);
+          ClassName visitableforwardName = (ClassName)visitableForwardNameForModule.get(`moduleDeclWithoutHooks);
+          ClassName mappingName = (ClassName)tomMappingNameForModule.get(`moduleDeclWithoutHooks);
           // create operator classes. Also, store a list of all operators for the sort class
           // use a Set to collect slots and avoid duplicates
           Set allSortSlots = new HashSet();
@@ -257,10 +258,10 @@ public class Compiler {
         }
       }
 
-      ClassName abstractTypeClassName = (ClassName)abstractTypeNameForModule.get(moduleDecl);
+      ClassName abstractTypeClassName = (ClassName)abstractTypeNameForModule.get(moduleDeclWithoutHooks);
 
       // late creation of the visitors, since it has to know all operators
-      ClassName visitorName = (ClassName) visitorNameForModule.get(moduleDecl);
+      ClassName visitorName = (ClassName) visitorNameForModule.get(moduleDeclWithoutHooks);
       GomClass visitorclass = `VisitorClass(visitorName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(visitorclass,classList*);
 
@@ -272,18 +273,18 @@ public class Compiler {
       classList = `concGomClass(fwdclass,classList*);
 
       /* create a VisitableFwd class */
-      ClassName visitablefwdName = (ClassName) visitableForwardNameForModule.get(moduleDecl);
+      ClassName visitablefwdName = (ClassName) visitableForwardNameForModule.get(moduleDeclWithoutHooks);
       GomClass visitablefwdclass = `VisitableFwdClass(visitablefwdName,fwdclass);
       classList = `concGomClass(visitablefwdclass,classList*);
 
       /* create a TomMapping */
-      ClassName tomMappingName = (ClassName) tomMappingNameForModule.get(moduleDecl);
+      ClassName tomMappingName = (ClassName) tomMappingNameForModule.get(moduleDeclWithoutHooks);
       GomClass tommappingclass = `TomMapping(tomMappingName,visitablefwdName,allSortClasses,allOperatorClasses);
       classList = `concGomClass(tommappingclass,classList*);
 
       /* create the abstractType */
       ClassNameList classSortList = sortClassNames(sortList);
-      ClassName abstractTypeName = (ClassName) abstractTypeNameForModule.get(moduleDecl);
+      ClassName abstractTypeName = (ClassName) abstractTypeNameForModule.get(moduleDeclWithoutHooks);
       GomClass abstracttype =
         `AbstractTypeClass(abstractTypeName,tomMappingName,visitorName,classSortList,makeHooksFromHookDecls(moduleDecl.getHooks()));
       classList = `concGomClass(abstracttype,classList*);
@@ -340,7 +341,8 @@ public class Compiler {
       SortList sorts = `concSort();
       %match(SortList sortList) {
         concSort(_*,s@Sort[Decl=SortDecl[ModuleDecl=mod]],_*) -> {
-          if (`mod.equals(module)) {
+          ModuleDecl modWithoutHooks = `ModuleDecl(mod.getModuleName(),mod.getPkg(),concHookDecl());
+          if (`modWithoutHooks.equals(module)) {
             sorts = `concSort(s,sorts*);
           }
         }
