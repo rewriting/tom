@@ -153,20 +153,20 @@ public class TermGraphRewriting {
           getEnvironment().down(subomega);
           Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
           Position dest = current.getAbsolutePosition(relPos);
-          if(current.compare(dest)==-1){
+          if(current.compare(dest)== -1){
             //we must switch the rel position and the pointed subterm
             Position rootpos = Position.makeAbsolutePosition(new int[]{});
             getEnvironment().goTo(current.getRelativePosition(rootpos));
             Info info = new Info();
             Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
-            Strategy getSubterm =dest.getSubterm();
+            Strategy getSubterm = dest.getSubterm();
             int[] relarray = dest.getRelativePosition(current).toArray();
             info.term = (Term) getEnvironment().getSubject();
             Term relref = `posTerm();
             for(int i=0;i<relarray.length;i++){
               relref = `posTerm(relref*,relarray[i]);
             }
-            Strategy replace =dest.getReplace(relref);
+            Strategy replace = dest.getReplace(relref);
             AbstractStrategy.init(update,getEnvironment());
             AbstractStrategy.init(getSubterm,getEnvironment()); 
             AbstractStrategy.init(replace,getEnvironment()); 
@@ -204,7 +204,7 @@ public class TermGraphRewriting {
 
         if (dest.hasPrefix(source) && !current.hasPrefix(source)){
           //we must update this relative pos from the external to the redex
-          dest = dest.changePrefix(source,dest); 
+          dest = dest.changePrefix(source,target); 
           int[] relarray = current.getRelativePosition(dest).toArray();
           Term relref = `posTerm();
           for(int i=0;i<relarray.length;i++){
@@ -229,35 +229,66 @@ public class TermGraphRewriting {
     Term t = `g(g(g(a(),g(posTerm(2,1),posTerm(3,2))),a()),posTerm(1,1,1,2));
     System.out.println("Initial term :"+t);
     HashMap map = new HashMap();
+
     /* rule g(x,y) -> f(x) at pos 1.1*/
     System.out.println("apply the rule g(x,y) -> f(x) at position 1.1");
 
+    /*  three methods for rewriting */
+
+    /*  two based on labels */
+    /************************************************************/
+    
     /* term t with labels */
-    t = (Term) `UnExpand(map).fire(t);
+    Term tt = (Term) `UnExpand(map).fire(t);
+    
     /* redex with labels */
-    Term redex = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getSubterm().fire(t);
+    Term redex = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getSubterm().fire(tt);
+    
     /* add labels for variables x and y */
     final Term term_x =  (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(redex);
     final Term term_y =  (Term) Position.makeAbsolutePosition(new int[]{2}).getSubterm().fire(redex);
     redex = (Term) Position.makeAbsolutePosition(new int[]{1}).getReplace(`labTerm("x",term_x)).fire(redex);
     redex = (Term) Position.makeAbsolutePosition(new int[]{2}).getReplace(`labTerm("y",term_y)).fire(redex);
     /* replace in t the lhs by the rhs */
-    t = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getReplace(`f(refTerm("x"))).fire(t);
+    tt = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getReplace(`f(refTerm("x"))).fire(tt);
+    
     /* concat the redex on top of the term */
-    t = `substTerm(t,redex);
+    tt = `substTerm(tt,redex);
 
-    /*  three methods for normalization */
-    Term t1 = (Term) termAbstractType.expand(t);
+    /* normalization by point fix */
+    Term t1 = (Term) termAbstractType.expand(tt);
     t1 = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(t1);
     System.out.println("Canonical term obtained by a point fix: "+t1);
 
+    /* normalization by innermost strategy */
     map.clear();
-    Term t2 = (Term) `InnermostIdSeq(NormalizeLabel(map)).fire(t);
+    Term t2 = (Term) `InnermostIdSeq(NormalizeLabel(map)).fire(tt);
     t2 = (Term) termAbstractType.label2pos(t2);
     t2 = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(t2);
     System.out.println("Canonical term obtained by Innermost strategy + a map: "+t2);
 
-    Term t3 = (Term) termAbstractType.label2pos(t);
+    /*  one directly based on positions */
+    /************************************************************/
+  
+    /* redex */
+    Position posSubst = Position.makeAbsolutePosition(new int[]{2});
+    Position posRedex = Position.makeAbsolutePosition(new int[]{1,1,1});
+  
+    /* concat a constant on top of the term */
+    Term t3 = `substTerm(t,a());
+
+    /* update positions on phi(rhs) and on the redex */
+    Strategy update =`mu(MuVar("x"),Choice(UpdatePos(posRedex,posSubst),All(MuVar("x"))));
+    t3 = (Term) update.fire(t3);
+
+    /* concat the redex on top of the term */
+    redex = (Term) posRedex.getSubterm().fire(t3);
+    t3 = (Term) posSubst.getReplace(redex).fire(t3);
+
+    /* replace in t the lhs by the rhs */
+    t3 = (Term) posRedex.getReplace(`f(posTerm(4,2,1))).fire(t3);
+
+    /* normalization by innermost strategy */
     t3 = (Term) `InnermostIdSeq(NormalizePos()).fire(t3);
     t3 = (Term) Position.makeAbsolutePosition(new int[]{1}).getSubterm().fire(t3);
     System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t3);
