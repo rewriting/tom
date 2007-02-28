@@ -46,7 +46,6 @@ class Evaluator {
 
       Plus(e1,e2) -> { return `eval(Plus(eval(e1),eval(e2))); }
       Mult(e1,e2) -> { return `eval(Mult(eval(e1),eval(e2))); }
-
       x -> { return `x; }
     }
     throw new RuntimeException("strange term: " + expr);
