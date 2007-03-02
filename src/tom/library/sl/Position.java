@@ -72,7 +72,11 @@ public class Position implements Cloneable {
     return new Position(concArray,true);
   }
 
-
+/**
+ * Compute a relative position to go from this to targetPos
+ * @param targetPos the destination
+ * @return the relative position
+ */
   public Position getRelativePosition(Position targetPos) {
     int[] target = targetPos.toArray();
     int[] source = toArray();
@@ -89,6 +93,11 @@ public class Position implements Cloneable {
     return Position.makeRelativePosition(relative);
   }
 
+/**
+ * Compute an absolute position corresponding this relativePos wrt. this
+ * @param relativePos the relative position to follow
+ * @return the absolute position
+ */
   public Position getAbsolutePosition(Position relativePos) {
     int[] relative = relativePos.toArray();
     int[] current = this.toArray();
