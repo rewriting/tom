@@ -283,7 +283,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
  
-      GetSlot(_,Name(opname),slotName, var@(Variable|ExpressionToTomTerm)[]) -> {    	  
+      GetSlot(_,Name(opname),slotName, var@(Variable|BuildTerm|ExpressionToTomTerm)[]) -> {    	  
         `buildExpGetSlot(deep, opname, slotName, var, moduleName);
         return;
       }

@@ -3,6 +3,7 @@ package tom.engine.compiler.propagator;
 import tom.engine.adt.tomconstraint.types.*;
 import tom.library.sl.*;
 import tom.engine.adt.tomslot.types.*;
+import tom.engine.tools.SymbolTable;
 import tom.engine.compiler.*;
 /**
  * Syntactic propagator
@@ -27,9 +28,9 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 				%match(g) {
 					SymbolOf(_) -> {return `m;}
 				}								
-				// if this a list, nothing to do
-				if(TomConstraintCompiler.isListOperator(TomConstraintCompiler.getSymbolTable().
-						getSymbolFromName(`tomName))) {return `m;}
+				// if this a list or array, nothing to do
+				if(!TomConstraintCompiler.isSyntacticOperator(
+						TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}
 				
 				ConstraintList l = `concConstraint();
 				SlotList sList = `slots;
@@ -47,16 +48,23 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 			
 			// Merge 1
 			// z = t /\ z = u -> z = t /\ t = u
-			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*,MatchConstraint(Variable[AstName=z],u),Z*)) ->{				
-				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(t,u),Z*));
+//			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*,MatchConstraint(Variable[AstName=z],u),Z*)) ->{				
+//				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(t,u),Z*));
+//			}
+			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*)) ->{
+				Constraint toApplyOn = `AndConstraint(concConstraint(Y*));
+				Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).fire(toApplyOn);
+				if (res != toApplyOn){					
+					return `AndConstraint(concConstraint(X*,eq,res));
+				}
 			}
+			
 			
 			// Merge 2 (this can occur because of the annotations of terms)
 			// z = p1 /\ p2 = z -> z = p1 /\ p2 = p1
-			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],p1),Y*,MatchConstraint(p2,Variable[AstName=z]),Z*)) ->{				
-				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(p2,p1),Z*));
-			}			
-
+//			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],p1),Y*,MatchConstraint(p2,Variable[AstName=z]),Z*)) ->{				
+//				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(p2,p1),Z*));
+//			}
 			
 //			// Delete
 //			EqualConstraint(a,a) ->{				
@@ -94,4 +102,12 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 			}
 		}
 	}// end %strategy	
+	
+	%strategy ReplaceVariable(varName:TomName, value:TomTerm) extends `Identity(){
+		visit TomTerm {
+			Variable[AstName=name] -> {
+				if (`name == varName) { return value; }  
+			}
+		}
+	}
 }

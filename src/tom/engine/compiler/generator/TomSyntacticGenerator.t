@@ -12,8 +12,8 @@ import tom.engine.tools.SymbolTable;
 import tom.engine.exception.TomRuntimeException;
 import tom.engine.adt.tomsignature.types.*;
 import tom.engine.TomBase;
-
 import tom.engine.compiler.*;
+
 /**
  * Syntactic Generator
  */

@@ -40,6 +40,9 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
 				return `WhileExpression(whileTest,endExpression);		        		      
 			}			
 			// generate equal
+			ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm((GetHead|GetSlot)[Codomain=type]),t)) ->{
+				return `EqualTerm(type,e,t);
+			}
 			ConstraintToExpression(MatchConstraint(TestVarStar(v@VariableStar[AstType=type]),t)) ->{
 				return `EqualTerm(type,v,t);
 			}

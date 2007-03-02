@@ -16,14 +16,14 @@ import tom.engine.compiler.*;
 public class TomVariadicPropagator implements TomIBasePropagator{
 
 // --------------------------------------------------------	
-	%include { adt/tomsignature/TomSignature.tom }
-	%include { sl.tom }	
+	%include { adt/tomsignature/TomSignature.tom }	
+	%include { mustrategy.tom}
 // --------------------------------------------------------
 	
 	private static short freshVarCounter = 0;
 	
 	public Constraint propagate(Constraint constraint){
-		return  (Constraint)`InnermostId(VariadicPatternMatching()).fire(constraint);
+		return  (Constraint)`InnermostId(VariadicPatternMatching()).apply(constraint);
 	}	
 
 	%strategy VariadicPatternMatching() extends `Identity(){		
@@ -79,11 +79,24 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 					
 			// Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones) 
 			// X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*					
-			andC@AndConstraint(concConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[]],p1),Y*,MatchConstraint(v@VariableStar[AstName=x],p2),Z*)) ->{
+//			andC@AndConstraint(concConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[]],p1),Y*,MatchConstraint(v@VariableStar[AstName=x],p2),Z*)) ->{
+//				TomNumberList path = TomConstraintCompiler.getRootpath();
+//				TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("freshVar_" + (++freshVarCounter)))));
+//				TomTerm freshVar = `v.setAstName(freshVarName);
+//				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(freshVar,p2),MatchConstraint(TestVarStar(freshVar),v),Z*));
+//			}
+					
+			// Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
+			// X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
+			andC@AndConstraint(concConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[]],p1),Y*)) ->{
+				Constraint toApplyOn = `AndConstraint(concConstraint(Y*));
 				TomNumberList path = TomConstraintCompiler.getRootpath();
 				TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("freshVar_" + (++freshVarCounter)))));
 				TomTerm freshVar = `v.setAstName(freshVarName);
-				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(freshVar,p2),MatchConstraint(TestVarStar(freshVar),v),Z*));
+				Constraint res = (Constraint)`OnceTopDownId(ReplaceMatchConstraint(x,freshVar)).apply(toApplyOn);
+				if (res != toApplyOn){					
+					return `AndConstraint(concConstraint(X*,eq,res));
+				}
 			}
 			
 //			// Delete
@@ -121,7 +134,17 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				return `AndConstraint(concConstraint(X*,Y*,Z*));
 			}
 		}
-	}// end %strategy	
+	}// end %strategy
+	
+	%strategy ReplaceMatchConstraint(varName:TomName, freshVar:TomTerm) extends `Identity(){
+		visit Constraint {
+			MatchConstraint(v@VariableStar[AstName=name],p) -> {
+				if (`name == varName) {					
+					return `AndConstraint(concConstraint(MatchConstraint(freshVar,p),MatchConstraint(TestVarStar(freshVar),v)));
+				}				  
+			}
+		}
+	}
 	
 	private static TomTerm getFreshVariableStar(TomType type, String namePart){
 		TomNumberList path = TomConstraintCompiler.getRootpath();

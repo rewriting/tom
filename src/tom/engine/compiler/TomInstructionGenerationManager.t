@@ -85,9 +85,9 @@ public class TomInstructionGenerationManager extends TomBase {
 	/**
 	 * Converts the resulted expression (after generation) into instructions
 	 */
-	private static Instruction buildInstructionFromExpression(Expression expression, Instruction action){
-		// it is done innermost because the expression is also simplified  
-		expression = (Expression)`InnermostId(ReplaceSubterms()).fire(expression);
+	private static Instruction buildInstructionFromExpression(Expression expression, Instruction action){		
+		// it is done innermost because the expression is also simplified		
+		expression = (Expression)`InnermostId(ReplaceSubterms()).fire(expression);		
 		// generate automata
 		Instruction automata = generateAutomata(expression,action);		
 		// make sure that each variable is declared only once
@@ -142,9 +142,9 @@ public class TomInstructionGenerationManager extends TomBase {
 	 */
 	%strategy ReplaceSubterms() extends Identity(){
 		visit TomTerm{
-			Subterm(constructorName, slotName, term) ->{
-				TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(((TomName)`constructorName).getString());
-	        	TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);
+			s@Subterm(constructorName@Name(name), slotName, term) ->{
+				TomSymbol tomSymbol = TomConstraintCompiler.getSymbolTable().getSymbolFromName(`name);
+	        	TomType subtermType = TomBase.getSlotType(tomSymbol, `slotName);	        	
 				return `ExpressionToTomTerm(GetSlot(subtermType, constructorName, slotName.getString(), term));
 			}
 		}
