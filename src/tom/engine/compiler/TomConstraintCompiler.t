@@ -33,6 +33,9 @@ public class TomConstraintCompiler extends TomBase {
 	// keeps track of the match number to insure distinct variables' 
 	// names for distinct match constructs
 	private static short matchNumber = 0;
+	// keeps track of the subject number to insure distinct variables' 
+	// names when renaming subjects
+	private static short freshSubjectCounter = 0;	
 	
 	public static TomTerm compile(TomTerm termToCompile,SymbolTable symbolTable){
 		TomConstraintCompiler.symbolTable = symbolTable;
@@ -49,13 +52,16 @@ public class TomConstraintCompiler extends TomBase {
 			Match(SubjectList(subjectList),patternInstructionList, matchOptionList)  -> {				
 				matchNumber++;
 				rootpath = `concTomNumber(MatchNumber(Number(matchNumber)));
+				freshSubjectCounter = 0;
 				short actionNumber = 0;
-				TomList automataList = `concTomTerm();				
+				TomList automataList = `concTomTerm();	
+				// get the new names for subjects ( for further casts if needed - especially for lists)
+				TomList renamedSubjects = renameSubjects(`subjectList);
 				// for each pattern action <term>,...,<term> -> { action }
 				// build a matching automata  
 				%match(patternInstructionList){
 					concPatternInstruction(_*,PatternInstruction(Pattern[TomList=patternList],action,optionList),_*) ->{
-						ConstraintList constraintList = TomConstraintCompiler.buildConstraintConjunction(`patternList,`subjectList);
+						ConstraintList constraintList = TomConstraintCompiler.buildConstraintConjunction(`patternList,renamedSubjects);
 						try{
 							actionNumber++;
 							Constraint propagationResult = TomPropagationManager.performPropagations(`AndConstraint(constraintList));							
@@ -73,25 +79,61 @@ public class TomConstraintCompiler extends TomBase {
 				 * return the compiled Match construction
 				 */
 				InstructionList astAutomataList = TomConstraintCompiler.automataListCompileMatchingList(automataList);
-				return `CompiledMatch(collectVariableFromSubjectList(subjectList,AbstractBlock(astAutomataList)), matchOptionList);
+				return `CompiledMatch(collectVariableFromSubjectList(subjectList,renamedSubjects,AbstractBlock(astAutomataList)), matchOptionList);
 			}
 		}// end visit
 	}// end strategy
 	
 	/**
-	 * collects match variables (from match(t1,...,tn)) and 
-	 * checks their instance type 
+	 * collects match variables (from match(t1,...,tn)) and
+	 * 1. checks their instance type 
+	 * 2. create new renamed subjects with corresponding casts	 
 	 */
-	private static Instruction collectVariableFromSubjectList(TomList subjectList, Instruction body) {
+	private static Instruction collectVariableFromSubjectList(TomList subjectList, TomList renamedSubjects, Instruction body) {
 		%match(subjectList) { 
 			concTomTerm() -> { return body; }
 			concTomTerm(subjectVar@Variable[Option=option,AstType=variableType],tail*) -> {
-				body = collectVariableFromSubjectList(`tail,body);				
+				body = collectVariableFromSubjectList(`tail,renamedSubjects.getTailconcTomTerm(),body);		        
+		        Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
+		        Instruction let = `LetRef(renamedSubjects.getHeadconcTomTerm(),source,body);
 				// Check that the matched variable has the correct type
-				return `CheckInstance(variableType,TomTermToExpression(subjectVar),body);
+				return `CheckInstance(variableType,TomTermToExpression(subjectVar),let);
 			}			
+			// if we do not have a variable ( we have a BuildTerm or FunctionCall or BuildConstant)
+			concTomTerm(subjectVar@!Variable[],tail*) -> {
+		        body = collectVariableFromSubjectList(`tail,renamedSubjects.getTailconcTomTerm(),body);
+		        Expression source = `Cast(((Variable)renamedSubjects.getHeadconcTomTerm()).getAstType(),TomTermToExpression(subjectVar));
+		        return `LetRef(renamedSubjects.getHeadconcTomTerm(),source,body);
+			}
 		}
 		throw new TomRuntimeException("collectVariableFromSubjectList: strange term: " + `subjectList);
+	}
+	
+	/**
+	 * given the list of match variables (from match(t1,...,tn)), it renames them and returns the new list 
+	 */
+	private static TomList renameSubjects(TomList subjectList){		
+		TomList renamedSubjects = `concTomTerm();
+		%match(subjectList) { 
+			concTomTerm(_*,subject,_*) ->{				
+				TomName freshSubjectName  = `PositionName(concTomNumber(rootpath*,NameNumber(Name("freshSubject_" + (++freshSubjectCounter)))));
+				TomType freshSubjectType = `EmptyType();
+				%match(subject){
+					Variable[AstType=variableType] ->{ freshSubjectType = `variableType; }
+					sv@(BuildTerm|FunctionCall|BuildConstant)[AstName=Name(tomName)] ->{
+				        TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);				        
+						if(tomSymbol != null) {
+							freshSubjectType = TomBase.getSymbolCodomain(tomSymbol);
+						} else if(`sv.isFunctionCall()) {
+							freshSubjectType =`sv.getAstType();
+						}
+					}
+				}// end match
+				TomTerm renamedVar = `Variable(concOption(),freshSubjectName,freshSubjectType,concConstraint());  
+				renamedSubjects = `concTomTerm(renamedVar,renamedSubjects*);
+			}
+		}// end match
+		return renamedSubjects.reverse();
 	}
 	
 	/**
@@ -119,11 +161,9 @@ public class TomConstraintCompiler extends TomBase {
 		%match(automataList) {
 			concTomTerm() -> { return `concInstruction(); }
 			concTomTerm(Automata(optionList,patternList,_,instruction),l*)  -> {
-				InstructionList newList = automataListCompileMatchingList(`l);
-				/*
-				 * if a label is assigned to a pattern (label:pattern ->
-				 * action) we generate corresponding labeled-block
-				 */
+				InstructionList newList = automataListCompileMatchingList(`l);				
+				 // if a label is assigned to a pattern (label:pattern ->
+				 // action) we generate corresponding labeled-block				 
 				%match(optionList) {
 				      concOption(_*,Label(name@Name[]),_*) -> { 
 				    	  `instruction = `NamedBlock(name.getString(),concInstruction(instruction));
