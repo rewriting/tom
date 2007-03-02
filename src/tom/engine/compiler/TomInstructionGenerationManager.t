@@ -89,7 +89,7 @@ public class TomInstructionGenerationManager extends TomBase {
 		// it is done innermost because the expression is also simplified  
 		expression = (Expression)`InnermostId(ReplaceSubterms()).fire(expression);
 		// generate automata
-		Instruction automata = generateAutomata(expression,action); 
+		Instruction automata = generateAutomata(expression,action);		
 		// make sure that each variable is declared only once
 		ArrayList<TomTerm> declaredVariables = new ArrayList<TomTerm>(); 		
 		automata = (Instruction)`TopDown(ChangeVarDeclarations(declaredVariables)).fire(automata);
@@ -108,13 +108,13 @@ public class TomInstructionGenerationManager extends TomBase {
 			// variables' assignments
 			ConstraintToExpression(MatchConstraint(v@(Variable|UnamedVariable|VariableStar)[],t)) ->{
 				return `LetRef(v,TomTermToExpression(t),action);			
-			}
+			}			
 			// while
 			WhileExpression(condition,EqualTerm(type,end,ExpressionToTomTerm(expr))) ->{
 				Instruction varAssign = `LetRef(end,expr,Nop());
 				return `WhileDo(condition,UnamedBlock(concInstruction(action,varAssign)));
 			}
-			// 'if' conditions 
+			// 'if' conditions			
 			x ->{
 				return `If(x,action,Nop());
 			}			
