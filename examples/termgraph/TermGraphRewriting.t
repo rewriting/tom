@@ -197,29 +197,44 @@ public class TermGraphRewriting {
           Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
           Position dest = current.getAbsolutePosition(relPos);
           if(current.compare(dest)== -1){
-            //we must switch the rel position and the pointed subterm
+            getEnvironment().followRef();
+            Position realDest = getEnvironment().getPosition(); 
+            if(! realDest.equals(dest)){
+              //the subterm pointed was a  pos (in case of previous switch) 
+              //and we must only update the relative position
 
-            // 1. we construct the new relative position
-            int[] relarray = dest.getRelativePosition(current).toArray();
-            Term relref = `posTerm();
-            for(int i=0;i<relarray.length;i++){
-              relref = `posTerm(relref*,relarray[i]);
+              int[] relarray = current.getRelativePosition(realDest).toArray();
+              Term relref = `posTerm();
+              for(int i=0;i<relarray.length;i++){
+                relref = `posTerm(relref*,relarray[i]);
+              }
+              getEnvironment().goTo(realDest.getRelativePosition(current));
+              return relref;
             }
+            else{
+              //we must switch the rel position and the pointed subterm
 
-            // 2. we update the part we want to change 
-            Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
-            AbstractStrategy.init(update,getEnvironment());
-            getEnvironment().goTo(relPos);
-            update.visit(); 
+              // 1. we construct the new relative position
+              int[] relarray = dest.getRelativePosition(current).toArray();
+              Term relref = `posTerm();
+              for(int i=0;i<relarray.length;i++){
+                relref = `posTerm(relref*,relarray[i]);
+              }
 
-            // 3. we save the subterm updated 
-            Term subterm = (Term) getEnvironment().getSubject(); 
+              // 2. we update the part we want to change 
+              Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
+              AbstractStrategy.init(update,getEnvironment());
+              update.visit(); 
 
-            // 4. we replace at dest  the subterm by the new relative pso
-            getEnvironment().setSubject(relref);
+              // 3. we save the subterm updated 
+              Term subterm = (Term) getEnvironment().getSubject(); 
 
-            getEnvironment().goTo(dest.getRelativePosition(current));
-            return subterm; 
+              // 4. we replace at dest  the subterm by the new relative pso
+              getEnvironment().setSubject(relref);
+
+              getEnvironment().goTo(dest.getRelativePosition(current));
+              return subterm; 
+            }
           }
         }
         else{
@@ -346,6 +361,9 @@ public class TermGraphRewriting {
     /*  an optimized version (no update during the innermost strat) */
     /************************************************************/
 
+    t = `g(g(g(f(a()),g(posTerm(2,1),posTerm(3,2))),a()),posTerm(1,1,1,1,1));
+    System.out.println("\n\nMore complex initial term :"+t);
+    
     /* concat a constant on top of the term */
     Term t4 = `substTerm(t,a());
 
