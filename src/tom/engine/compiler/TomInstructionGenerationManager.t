@@ -30,7 +30,7 @@ public class TomInstructionGenerationManager extends TomBase {
 	
 	private static final String generatorsPackage = "tom.engine.compiler.generator.";
 	// the list of all generators
-	private static final String[] generatorsNames = {"TomSyntacticGenerator"};
+	private static final String[] generatorsNames = {"TomSyntacticGenerator","TomVariadicGenerator"};
 	
 	public static Instruction performGenerations(Constraint constraint, Instruction action) 
 			throws ClassNotFoundException,InstantiationException,IllegalAccessException{
