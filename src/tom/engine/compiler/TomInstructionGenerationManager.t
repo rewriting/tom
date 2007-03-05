@@ -36,7 +36,7 @@ public class TomInstructionGenerationManager extends TomBase {
 			throws ClassNotFoundException,InstantiationException,IllegalAccessException{		
 		// counts the generators that didn't change the instruction
 		short genCounter = 0;
-		Expression result = null;	
+		Expression result = null;
 		
 		Expression expression = prepareGeneration(constraint);		
 		// iterate until all propagators are applied and nothing was changed 
@@ -66,20 +66,23 @@ public class TomInstructionGenerationManager extends TomBase {
 	 * Prepares the generation phase
 	 * 1. replaces all constraints with ConstraintToExpression 
 	 */
-	private static Expression prepareGeneration(Constraint constraint){		
-		Expression result = null;
+	private static Expression prepareGeneration(Constraint constraint){
 		%match(constraint){
-			AndConstraint(concConstraint(_*,m@MatchConstraint[],_*)) ->{
-				result = (result == null ? `ConstraintToExpression(m) : `And(result,ConstraintToExpression(m)));
+			AndConstraint(concConstraint(m,X*)) ->{
+				return `And(prepareGeneration(m),
+						prepareGeneration(AndConstraint(concConstraint(X*))));				
 			}
 			m@MatchConstraint[] ->{
-				result = `ConstraintToExpression(m);
+				return `ConstraintToExpression(m);
 			}
-			NotEmptyListConstraint(opName,variable) ->{
-				result = `Negation(IsEmptyList(opName,variable));
+			Negate(c) ->{
+				return `Negation(prepareGeneration(c));
+			}
+			EmptyListConstraint(opName,variable) ->{				
+				return `IsEmptyList(opName,variable);
 			}
 		}			
-		return result;
+		throw new TomRuntimeException("TomInstructionGenerationManager.prepareGeneration - strange constraint:" + constraint);
 	}	
 	
 	/**
@@ -119,7 +122,7 @@ public class TomInstructionGenerationManager extends TomBase {
 				return `If(x,action,Nop());
 			}			
 		}
-		throw new TomRuntimeException("generateAutomata - strange expression:" + expression);
+		throw new TomRuntimeException("TomInstructionGenerationManager.generateAutomata - strange expression:" + expression);
 	}
 	
 	/**

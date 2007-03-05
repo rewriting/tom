@@ -27,11 +27,10 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 				// if we cannot decompose, stop
 				%match(g) {
 					SymbolOf(_) -> {return `m;}
-				}								
+				}
 				// if this a list or array, nothing to do
 				if(!TomConstraintCompiler.isSyntacticOperator(
-						TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}
-				
+						TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}				
 				ConstraintList l = `concConstraint();
 				SlotList sList = `slots;
 				while(!sList.isEmptyconcSlot()) {
@@ -48,9 +47,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 			
 			// Merge 1
 			// z = t /\ z = u -> z = t /\ t = u
-//			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*,MatchConstraint(Variable[AstName=z],u),Z*)) ->{				
-//				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(t,u),Z*));
-//			}
+			// z = p1 /\ p2 = z -> z = p1 /\ p2 = p1 (this can occur because of the annotations of terms) 
 			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*)) ->{
 				Constraint toApplyOn = `AndConstraint(concConstraint(Y*));
 				Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).fire(toApplyOn);
@@ -58,13 +55,6 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 					return `AndConstraint(concConstraint(X*,eq,res));
 				}
 			}
-			
-			
-			// Merge 2 (this can occur because of the annotations of terms)
-			// z = p1 /\ p2 = z -> z = p1 /\ p2 = p1
-//			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],p1),Y*,MatchConstraint(p2,Variable[AstName=z]),Z*)) ->{				
-//				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(p2,p1),Z*));
-//			}
 			
 //			// Delete
 //			EqualConstraint(a,a) ->{				
@@ -87,19 +77,6 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 //			AndConstraint(concAnd(X*,TrueConstraint(),Y*)) -> {
 //				return `AndConstraint(concAnd(X*,Y*));
 //			}
-			
-			// TODO - move in hooks ?	
-			
-			// clean
-			AndConstraint(concConstraint()) -> {
-				return `TrueConstraint();
-			}
-			AndConstraint(concConstraint(t)) -> {
-				return `t;
-			}
-			AndConstraint(concConstraint(X*,AndConstraint(concConstraint(Y*)),Z*)) ->{
-				return `AndConstraint(concConstraint(X*,Y*,Z*));
-			}
 		}
 	}// end %strategy	
 	

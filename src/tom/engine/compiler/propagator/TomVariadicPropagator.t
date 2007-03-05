@@ -23,7 +23,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 	private static short freshVarCounter = 0;
 	
 	public Constraint propagate(Constraint constraint){
-		return  (Constraint)`InnermostId(VariadicPatternMatching()).apply(constraint);
+		return (Constraint)`InnermostId(VariadicPatternMatching()).apply(constraint);		
 	}	
 
 	%strategy VariadicPatternMatching() extends `Identity(){		
@@ -48,44 +48,56 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				TomTerm freshVariable = getFreshVariableStar(listType,"freshList_");
 				Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
 				
-				ConstraintList l = `concConstraint();				
+				ConstraintList l = `concConstraint();		
+				TomTerm lastElement = null;
 				// SlotList sList = `slots;
 				%match(slots){
-					concSlot(_*,PairSlotAppl[Appl=appl],_*)->{
+					p:concSlot(_*,PairSlotAppl[Appl=appl],X*)->{
+						if (`X.length() == 0) {
+							lastElement = `appl;
+							break p;
+						}						
 						// if we have a variable
 						if(((`appl) instanceof VariableStar) || ((`appl) instanceof UnamedVariableStar)){
 							TomTerm beginSublist = getFreshVariableStar(listType,"begin_");
-							TomTerm endSublist = getFreshVariableStar(listType,"end_");
+							TomTerm endSublist = getFreshVariableStar(listType,"end_");							
 							// we put them in the inverse order in the list because later on we do a 'reverse' 
 							l = `concConstraint(MatchConstraint(freshVariable,endSublist),
 									MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)),
 									MatchConstraint(endSublist,freshVariable),
 									MatchConstraint(beginSublist,freshVariable),l*);
-						}else{	// a term or a syntactic variable						
+						}else{	// a term or a syntactic variable
 							// we put them in the inverse order in the list because later on we do a 'reverse'
 							l = `concConstraint(MatchConstraint(freshVariable,ExpressionToTomTerm(GetTail(name,freshVariable))),
 									MatchConstraint(appl,ExpressionToTomTerm(GetHead(name,listType,freshVariable))),
-									NotEmptyListConstraint(name,freshVariable),l*);
+									Negate(EmptyListConstraint(name,freshVariable)),l*);
 						}
+					}					 
+					concSlot() ->{
+						l = `concConstraint(EmptyListConstraint(name,freshVariable),l*);
 					}
 				}// end match
+				// the last element needs a special treatment
+				// 1. if it is a VariableStar, we shouldn't generate a while, just an assignment for the variable				
+				// 2. if it is not a VariableStar, this means that we should check that the subject ends also
+				// 3. if it is an UnamedVariableStar, there is nothing to do
+				if (lastElement != null){
+					if(lastElement instanceof VariableStar){
+						l = `concConstraint(MatchConstraint(lastElement,freshVariable),l*);
+					}else if (!(lastElement instanceof UnamedVariableStar)){
+						l = `concConstraint(EmptyListConstraint(name,freshVariable),
+								MatchConstraint(freshVariable,ExpressionToTomTerm(GetTail(name,freshVariable))),
+								MatchConstraint(lastElement,ExpressionToTomTerm(GetHead(name,listType,freshVariable))),
+								Negate(EmptyListConstraint(name,freshVariable)),l*);						
+					}
+				}
 				l = l.reverse();
 				// add head equality condition + fresh var declaration
 				l = `concConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),
 						freshVarDeclaration,l*);
 				
 				return `AndConstraint(l);
-			}
-					
-			// Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones) 
-			// X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*					
-//			andC@AndConstraint(concConstraint(X*,eq@MatchConstraint(VariableStar[AstName=x@!PositionName[]],p1),Y*,MatchConstraint(v@VariableStar[AstName=x],p2),Z*)) ->{
-//				TomNumberList path = TomConstraintCompiler.getRootpath();
-//				TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("freshVar_" + (++freshVarCounter)))));
-//				TomTerm freshVar = `v.setAstName(freshVarName);
-//				return `AndConstraint(concConstraint(X*,eq,Y*,MatchConstraint(freshVar,p2),MatchConstraint(TestVarStar(freshVar),v),Z*));
-//			}
-					
+			}					
 			// Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
 			// X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
 			andC@AndConstraint(concConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[]],p1),Y*)) ->{
@@ -97,41 +109,6 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				if (res != toApplyOn){					
 					return `AndConstraint(concConstraint(X*,eq,res));
 				}
-			}
-			
-//			// Delete
-//			EqualConstraint(a,a) ->{				
-//				return `TrueConstraint();
-//			}
-			
-//			// SymbolClash
-//			EqualConstraint(RecordAppl[NameList=name1],RecordAppl[NameList=name2]) -> {
-//				if(`name1 != `name2) {					
-//					return `FalseConstraint();
-//				}
-//			}
-			
-//			// PropagateClash
-//			AndConstraint(concAnd(_*,FalseConstraint(),_*)) -> {
-//				return `FalseConstraint();
-//			}		
-//			
-//			// PropagateSuccess
-//			AndConstraint(concAnd(X*,TrueConstraint(),Y*)) -> {
-//				return `AndConstraint(concAnd(X*,Y*));
-//			}
-			
-			// TODO - move in hooks ?	
-			
-			// clean
-			AndConstraint(concConstraint()) -> {
-				return `TrueConstraint();
-			}
-			AndConstraint(concConstraint(t)) -> {
-				return `t;
-			}
-			AndConstraint(concConstraint(X*,AndConstraint(concConstraint(Y*)),Z*)) ->{
-				return `AndConstraint(concConstraint(X*,Y*,Z*));
 			}
 		}
 	}// end %strategy
