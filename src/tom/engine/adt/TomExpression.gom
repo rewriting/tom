@@ -2,6 +2,7 @@ module TomExpression
 imports TomSignature String
 abstract syntax
 Expression = TomTermToExpression(AstTerm:TomTerm)
+		   | TomInstructionToExpression(Instruction:Instruction)
            /**
             * We have different Bottom for different types
             * For instance, builtin types can't be null in Java
@@ -33,9 +34,9 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
            | ConstraintToExpression(cons:Constraint)
            /**
-		   * <code>WhileExpression</code> a while loop
+		   * <code>WhileExpression</code> a do while loop
 		   *
 		   * @param LoopCondition the loop condition
 		   * @param EndExpression the expression to add at the end of the loop that usually changes the condition for the loop
 		   */
-           | WhileExpression(LoopCondition:Expression, EndExpression:Expression)
+           | DoWhileExpression(LoopCondition:Expression, EndExpression:Expression)
