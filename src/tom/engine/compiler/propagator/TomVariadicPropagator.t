@@ -28,12 +28,15 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 
 	%strategy VariadicPatternMatching() extends `Identity(){		
 		visit Constraint{			
-			// Decompose
+			// Decompose 
 			// conc(t1,X*,t2,Y*) = g -> SymbolOf(g)=conc /\ fresh_var = g 
-			// /\ NotEmpty(fresh_Var) /\ t1=GetHead(fresh_var) /\ fresh_var = GetTail(fresh_var) 
+			// /\ NotEmpty(fresh_Var) /\ tmp = fresh_var /\ fresh_var = GetTail(fresh_var) /\ t1=GetHead(tmp) 
 			// /\ begin1 = fresh_var /\ end1 = fresh_var /\	X* = VariableHeadList(begin1,end1) /\ fresh_var = end1
-			// /\ NotEmpty(fresh_Var) /\ t2=GetHead(fresh_var) /\ fresh_var = GetTail(fresh_var) 
+			// /\ NotEmpty(fresh_Var) /\ tmp = fresh_var /\ fresh_var = GetTail(fresh_var) /\ t1=GetHead(tmp) 
 			// /\ begin2 = fresh_var /\ end2 = fresh_var /\	Y* = VariableHeadList(begin2,end2) /\ fresh_var = end2
+			//
+			// OBS: t1=GetHead(tmp)  could further generate loops by decomposition and we do not want to have 
+			// fresh_var = GetTail(fresh_var) in a loop; this is the reason for tmp
 			m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots
 					,constraints),g) -> {
 				// if we cannot decompose, stop
@@ -46,6 +49,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				// declare fresh variable
 				TomType listType = TomConstraintCompiler.getTermTypeFromTerm(`t);
 				TomTerm freshVariable = getFreshVariableStar(listType,"freshList_");
+				TomTerm tmpVariable = getFreshVariableStar(listType,"tmpList_");
 				Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
 				
 				ConstraintList l = `concConstraint();		
@@ -68,8 +72,9 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 									MatchConstraint(beginSublist,freshVariable),l*);
 						}else{	// a term or a syntactic variable
 							// we put them in the inverse order in the list because later on we do a 'reverse'
-							l = `concConstraint(MatchConstraint(freshVariable,ExpressionToTomTerm(GetTail(name,freshVariable))),
-									MatchConstraint(appl,ExpressionToTomTerm(GetHead(name,listType,freshVariable))),
+							l = `concConstraint(MatchConstraint(appl,ExpressionToTomTerm(GetHead(name,listType,tmpVariable))),
+									MatchConstraint(freshVariable,ExpressionToTomTerm(GetTail(name,freshVariable))),
+									MatchConstraint(tmpVariable,freshVariable),
 									Negate(EmptyListConstraint(name,freshVariable)),l*);
 						}
 					}					 
@@ -86,8 +91,9 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 						l = `concConstraint(MatchConstraint(lastElement,freshVariable),l*);
 					}else if (!(lastElement instanceof UnamedVariableStar)){
 						l = `concConstraint(EmptyListConstraint(name,freshVariable),
+								MatchConstraint(lastElement,ExpressionToTomTerm(GetHead(name,listType,tmpVariable))),
 								MatchConstraint(freshVariable,ExpressionToTomTerm(GetTail(name,freshVariable))),
-								MatchConstraint(lastElement,ExpressionToTomTerm(GetHead(name,listType,freshVariable))),
+								MatchConstraint(tmpVariable,freshVariable),
 								Negate(EmptyListConstraint(name,freshVariable)),l*);						
 					}
 				}

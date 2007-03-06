@@ -45,9 +45,8 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 				return `AndConstraint(l);
 			}		
 			
-			// Merge 1
-			// z = t /\ z = u -> z = t /\ t = u
-			// z = p1 /\ p2 = z -> z = p1 /\ p2 = p1 (this can occur because of the annotations of terms) 
+			// Replace
+			// z = t /\ Context( z = u ) -> z = t /\ Context( t = u )			 
 			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*)) ->{
 				Constraint toApplyOn = `AndConstraint(concConstraint(Y*));
 				Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).fire(toApplyOn);
@@ -55,7 +54,7 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 					return `AndConstraint(concConstraint(X*,eq,res));
 				}
 			}
-			
+			// // z = p1 /\ p2 = z -> z = p1 /\ p2 = p1 (this can occur because of the annotations of terms)
 //			// Delete
 //			EqualConstraint(a,a) ->{				
 //				return `TrueConstraint();
@@ -81,10 +80,15 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 	}// end %strategy	
 	
 	%strategy ReplaceVariable(varName:TomName, value:TomTerm) extends `Identity(){
-		visit TomTerm {
-			Variable[AstName=name] -> {
-				if (`name == varName) { return value; }  
+		visit Constraint{
+			MatchConstraint(Variable[AstName=name],t) ->{
+				if (`name == varName) { return `MatchConstraint(value,t); }
 			}
 		}
+//		visit TomTerm {
+//			Variable[AstName=name] -> {
+//				if (`name == varName) { return value; }  
+//			}
+//		}
 	}
 }

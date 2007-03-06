@@ -36,8 +36,7 @@ public class TomInstructionGenerationManager extends TomBase {
 			throws ClassNotFoundException,InstantiationException,IllegalAccessException{		
 		// counts the generators that didn't change the instruction
 		short genCounter = 0;
-		Expression result = null;
-		
+		Expression result = null;		
 		Expression expression = prepareGeneration(constraint);		
 		// iterate until all propagators are applied and nothing was changed 
 		mainLoop: while(true){		
@@ -59,6 +58,7 @@ public class TomInstructionGenerationManager extends TomBase {
 				expression = result; 
 			}
 		} // end while
+		//System.out.println("result: " + result);
 		return buildInstructionFromExpression(result,action);
 	}
 	

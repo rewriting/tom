@@ -43,7 +43,7 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
 		        return cond;
 			}
 			// generate equality
-			ConstraintToExpression(MatchConstraint(t@Subterm[],u@Subterm[])) ->{				
+			ConstraintToExpression(MatchConstraint(t@Subterm[],u@(Subterm|Variable)[])) ->{				
 				return `EqualTerm(TomConstraintCompiler.getTermTypeFromTerm(t),t,u);		        		      
 			}			
 		} // end visit
