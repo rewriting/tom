@@ -94,7 +94,7 @@ public class TomInstructionGenerationManager extends TomBase {
 		// generate automata
 		Instruction automata = generateAutomata(expression,action);		
 		// make sure that each variable is declared only once
-		ArrayList<TomTerm> declaredVariables = new ArrayList<TomTerm>(); 		
+		ArrayList<TomName> declaredVariables = new ArrayList<TomName>(); 		
 		automata = (Instruction)`TopDown(ChangeVarDeclarations(declaredVariables)).fire(automata);
 		return automata;
 	}
@@ -134,11 +134,11 @@ public class TomInstructionGenerationManager extends TomBase {
 	 */
 	%strategy ChangeVarDeclarations(declaredVariables:Collection) extends Identity(){
 		visit Instruction{
-			LetRef(var,source,instruction) ->{
-				if (declaredVariables.contains(`var)){
+			LetRef(var@(Variable|VariableStar)[AstName=name],source,instruction) ->{
+				if (declaredVariables.contains(`name)){
 					return `LetAssign(var,source,instruction);
-				}else{
-					declaredVariables.add(`var);
+				}else{					
+					declaredVariables.add(`name);
 				}			
 			}
 		}// end visit
