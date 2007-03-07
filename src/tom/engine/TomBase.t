@@ -206,7 +206,7 @@ public class TomBase {
     throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
   }
 
-  protected static boolean isArrayOperator(TomSymbol subject) {
+  public static boolean isArrayOperator(TomSymbol subject) {
     //%variable
     if(subject==null) {
       return false;
@@ -229,7 +229,7 @@ public class TomBase {
     throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
   }
   
-  protected static boolean isSyntacticOperator(TomSymbol subject) {
+  public static boolean isSyntacticOperator(TomSymbol subject) {
     return (!(isListOperator(subject) || isArrayOperator(subject)));
   }
 
