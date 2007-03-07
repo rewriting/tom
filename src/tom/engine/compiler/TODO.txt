@@ -1,6 +1,8 @@
-- move some simplifications in hooks
 - optimize method call for subterm
 - should move Intruction generation out of generators ?
 - can we annotate X* ? if yes, make sur in TomPropagationManager.preparePropagations that this is handled
 - small optimization _* /\ _* -> _*
 - remove commented code from propagators
+- comment the while generation
+- simplify generation !!
+- Ref(Variable)

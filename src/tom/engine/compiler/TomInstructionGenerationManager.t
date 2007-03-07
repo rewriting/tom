@@ -112,12 +112,16 @@ public class TomInstructionGenerationManager extends TomBase {
 			ConstraintToExpression(MatchConstraint(v@(Variable|UnamedVariable|VariableStar)[],t)) ->{
 				return `LetRef(v,TomTermToExpression(t),action);			
 			}			
-			// while
-			WhileExpression(condition,EqualTerm(type,end,ExpressionToTomTerm(expr))) ->{
-				Instruction varAssign = `LetRef(end,expr,Nop());
-				return `WhileDo(condition,UnamedBlock(concInstruction(action,varAssign)));
+			// do while
+			DoWhileExpression(expr,condition) ->{
+				Instruction subInstruction = generateAutomata(`expr,`Nop());
+				return `DoWhile(UnamedBlock(concInstruction(action,subInstruction)),condition);
 			}
-			// 'if' conditions			
+			// 'if'
+			IfExpression(condition, EqualTerm[Kid1=left1,Kid2=right1], EqualTerm[Kid1=left2,Kid2=right2]) ->{
+				return `If(condition,LetAssign(left1,TomTermToExpression(right1),Nop()),LetAssign(left2,TomTermToExpression(right2),Nop()));
+			}
+			// conditions			
 			x ->{
 				return `If(x,action,Nop());
 			}			

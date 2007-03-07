@@ -39,4 +39,5 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
 		   * @param LoopCondition the loop condition
 		   * @param EndExpression the expression to add at the end of the loop that usually changes the condition for the loop
 		   */
-           | DoWhileExpression(LoopCondition:Expression, EndExpression:Expression)
+           | DoWhileExpression(EndExpression:Expression, LoopCondition:Expression)
+           | IfExpression(Condition:Expression,ThenExpression:Expression,ElseExpression:Expression)

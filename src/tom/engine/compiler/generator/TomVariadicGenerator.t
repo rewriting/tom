@@ -33,13 +33,13 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
 			// generate pre-loop for X* = or _* = 
 			ConstraintToExpression(MatchConstraint(v@(VariableStar|UnamedVariableStar)[],VariableHeadList(opName,begin,end@VariableStar[AstType=type]))) ->{
 				Expression doWhileTest = `Negation(EqualTerm(type,end,begin));//`Negation(IsEmptyList(opName,end));
-				Expression endExpression = `TomInstructionToExpression(If(IsEmptyList(opName,end),EqualTerm(type,end,begin),
-						EqualTerm(type,end,ExpressionToTomTerm(GetTail(opName,end)))));
+				Expression endExpression = `IfExpression(IsEmptyList(opName,end),EqualTerm(type,end,begin),
+						EqualTerm(type,end,ExpressionToTomTerm(GetTail(opName,end))));				
 				if ((`v) instanceof VariableStar){
 					Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(GetSliceList(opName,begin,end))));
-					return `And(DoWhileExpression(doWhileTest,endExpression),varDeclaration);
+					return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
 				}
-				return `DoWhileExpression(doWhileTest,endExpression);		        		      
+				return `DoWhileExpression(endExpression,doWhileTest);		        		      
 			}			
 			// generate equal
 			ConstraintToExpression(MatchConstraint(e@ExpressionToTomTerm(GetHead[Codomain=type]),t)) ->{				

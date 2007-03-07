@@ -21,6 +21,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 // --------------------------------------------------------
 	
 	private static short freshVarCounter = 0;
+	private static short beginEndCounter = 0;
 	
 	public Constraint propagate(Constraint constraint){
 		return (Constraint)`InnermostId(VariadicPatternMatching()).apply(constraint);		
@@ -30,10 +31,10 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 		visit Constraint{			
 			// Decompose 
 			// conc(t1,X*,t2,Y*) = g -> SymbolOf(g)=conc /\ fresh_var = g 
-			// /\ NotEmpty(fresh_Var) /\ tmp = fresh_var /\ fresh_var = GetTail(fresh_var) /\ t1=GetHead(tmp) 
-			// /\ begin1 = fresh_var /\ end1 = fresh_var /\	X* = VariableHeadList(begin1,end1) /\ fresh_var = end1
-			// /\ NotEmpty(fresh_Var) /\ tmp = fresh_var /\ fresh_var = GetTail(fresh_var) /\ t1=GetHead(tmp) 
-			// /\ begin2 = fresh_var /\ end2 = fresh_var /\	Y* = VariableHeadList(begin2,end2) /\ fresh_var = end2
+			// /\ NotEmpty(fresh_Var)  /\ t1=GetHead(fresh_var) /\ fresh_var1 = GetTail(fresh_var) 
+			// /\ begin1 = fresh_var1  /\ end1 = fresh_var1 /\	X* = VariableHeadList(begin1,end1) /\ fresh_var2 = end1
+			// /\ NotEmpty(fresh_Var2) /\ t2=GetHead(fresh_var2)/\ fresh_var3 = GetTail(fresh_var2)  
+			// /\ begin2 = fresh_var3  /\ end2 = fresh_var3 /\	Y* = VariableHeadList(begin2,end2) /\ fresh_var4 = end2
 			//
 			// OBS: t1=GetHead(tmp)  could further generate loops by decomposition and we do not want to have 
 			// fresh_var = GetTail(fresh_var) in a loop; this is the reason for tmp
@@ -48,8 +49,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 						getSymbolFromName(`tomName))) {return `m;}				
 				// declare fresh variable
 				TomType listType = TomConstraintCompiler.getTermTypeFromTerm(`t);
-				TomTerm freshVariable = getFreshVariableStar(listType,"freshList_");
-				TomTerm tmpVariable = getFreshVariableStar(listType,"tmpList_");
+				TomTerm freshVariable = getFreshVariableStar(listType);				
 				Constraint freshVarDeclaration = `MatchConstraint(freshVariable,g);
 				
 				ConstraintList l = `concConstraint();		
@@ -61,22 +61,23 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 							lastElement = `appl;
 							break p;
 						}						
+						TomTerm newFreshVarList = getFreshVariableStar(listType);
 						// if we have a variable
 						if(((`appl) instanceof VariableStar) || ((`appl) instanceof UnamedVariableStar)){
-							TomTerm beginSublist = getFreshVariableStar(listType,"begin_");
-							TomTerm endSublist = getFreshVariableStar(listType,"end_");							
+							TomTerm beginSublist = getBeginVariableStar(listType);
+							TomTerm endSublist = getEndVariableStar(listType);							
 							// we put them in the inverse order in the list because later on we do a 'reverse' 
-							l = `concConstraint(MatchConstraint(freshVariable,endSublist),
+							l = `concConstraint(MatchConstraint(newFreshVarList,endSublist),
 									MatchConstraint(appl,VariableHeadList(name,beginSublist,endSublist)),
 									MatchConstraint(endSublist,freshVariable),
-									MatchConstraint(beginSublist,freshVariable),l*);
+									MatchConstraint(beginSublist,freshVariable),l*);							
 						}else{	// a term or a syntactic variable
 							// we put them in the inverse order in the list because later on we do a 'reverse'
-							l = `concConstraint(MatchConstraint(appl,ExpressionToTomTerm(GetHead(name,listType,tmpVariable))),
-									MatchConstraint(freshVariable,ExpressionToTomTerm(GetTail(name,freshVariable))),
-									MatchConstraint(tmpVariable,freshVariable),
+							l = `concConstraint(MatchConstraint(newFreshVarList,ExpressionToTomTerm(GetTail(name,freshVariable))),
+									MatchConstraint(appl,ExpressionToTomTerm(GetHead(name,listType,freshVariable))),
 									Negate(EmptyListConstraint(name,freshVariable)),l*);
 						}
+						freshVariable = newFreshVarList;
 					}					 
 					concSlot() ->{
 						l = `concConstraint(EmptyListConstraint(name,freshVariable),l*);
@@ -86,14 +87,14 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				// 1. if it is a VariableStar, we shouldn't generate a while, just an assignment for the variable				
 				// 2. if it is not a VariableStar, this means that we should check that the subject ends also
 				// 3. if it is an UnamedVariableStar, there is nothing to do
+				TomTerm newFreshVarList = getFreshVariableStar(listType);
 				if (lastElement != null){
 					if(lastElement instanceof VariableStar){
 						l = `concConstraint(MatchConstraint(lastElement,freshVariable),l*);
 					}else if (!(lastElement instanceof UnamedVariableStar)){
-						l = `concConstraint(EmptyListConstraint(name,freshVariable),
-								MatchConstraint(lastElement,ExpressionToTomTerm(GetHead(name,listType,tmpVariable))),
-								MatchConstraint(freshVariable,ExpressionToTomTerm(GetTail(name,freshVariable))),
-								MatchConstraint(tmpVariable,freshVariable),
+						l = `concConstraint(EmptyListConstraint(name,newFreshVarList),
+								MatchConstraint(newFreshVarList,ExpressionToTomTerm(GetTail(name,freshVariable))),
+								MatchConstraint(lastElement,ExpressionToTomTerm(GetHead(name,listType,freshVariable))),
 								Negate(EmptyListConstraint(name,freshVariable)),l*);						
 					}
 				}
@@ -129,9 +130,21 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 		}
 	}
 	
-	private static TomTerm getFreshVariableStar(TomType type, String namePart){
+	private static TomTerm getBeginVariableStar(TomType type){
 		TomNumberList path = TomConstraintCompiler.getRootpath();
-		TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name(namePart + (++freshVarCounter)))));
+		TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("begin_" + (++beginEndCounter)))));
+		return `VariableStar(concOption(),freshVarName,type,concConstraint());
+	}
+	
+	private static TomTerm getEndVariableStar(TomType type){
+		TomNumberList path = TomConstraintCompiler.getRootpath();
+		TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("end_" + beginEndCounter))));
+		return `VariableStar(concOption(),freshVarName,type,concConstraint());
+	}
+	
+	private static TomTerm getFreshVariableStar(TomType type){
+		TomNumberList path = TomConstraintCompiler.getRootpath();
+		TomName freshVarName  = `PositionName(concTomNumber(path*,NameNumber(Name("freshList_" + (++freshVarCounter)))));
 		return `VariableStar(concOption(),freshVarName,type,concConstraint());
 	}
 }
