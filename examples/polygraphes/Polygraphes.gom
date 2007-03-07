@@ -1,0 +1,67 @@
+module polygraphes.Polygraphes
+imports int String
+abstract syntax
+TwoPath = 
+      | id(Value:int)
+      | g(Name:String, Source:int, Target:int)
+      | c0( Lc0:TwoPathC0 )
+      | c1( Lc1:TwoPathC1 )
+
+TwoPathC0 = concC0( TwoPath* )
+TwoPathC1 = concC1( TwoPath* )
+
+/*
+sort TwoPath:import {
+  import polygraphes.*;
+}
+sort TwoPathC0:import {
+  import polygraphes.*;
+}
+sort TwoPathC1:import {
+  import polygraphes.*;
+}
+*/
+//sort TwoPath:block {
+//}
+
+c0:make(l) {
+  %match(l) {
+    concC0() -> { return `id(0); }
+    concC0(x)-> { return `x; }
+  }
+}
+
+c1:make(l) {
+  %match(l) {
+    concC1() -> { return `id(0); }
+    concC1(x)-> { return `x; }
+  }
+}
+
+
+/*
+ * C0(0,G) = G
+ * C0(G,0) = G
+ */
+concC0:make_insert(e,l) {
+  %match(e,l) {
+    id(0),_ -> { return l; }
+    id(m),concC0(id(n),tail*) -> { return `concC0(id(n+m),tail*); }
+    c0(concC0(subL*)),_ -> { return `concC0(subL*,l*); }
+  }
+}
+
+/*
+ * C1(m,G) = G if m=G.source
+ * C1(G,n) = G if n=G.target
+ * C1(C0(F,p),C0(n,G)) = C0(F,G) if G.source = p and F.target=n
+ * C1(C0(m,G),C0(F,q)) = C0(F,G) if G.target = q and F.source=m
+ */
+concC1:make_insert(e,l) {
+  %match(e,l) {
+    id(m), concC1(head*,tail*) -> { if(`m == polygraphes.Polygraphes.getSourceC1(`head*)) return l; }
+    _, concC1(head*,id(n),tail*) -> { if(`n == polygraphes.Polygraphes.getTargetC1(`concC1(e,head*))) return `concC1(e,head*,tail*); }
+    c1(concC1(subL*)),_ -> { return `concC1(subL*,l*); }
+  }
+}
+
