@@ -1,6 +1,6 @@
 termrule less(succ(n),succ(m)) -> less(n,m).
 termrule less(0,x) -> true().
-termrule less(x,0) -> false().
+termrule less(succ(x),0) -> false().
 termrule if(true(),x,y) -> x.
 termrule if(false(),x,y) -> y.
 termrule insert(n,bin(m,a,b)) -> if(less(n,m), bin(m,insert(n,a),b), bin(m,a,insert(n,b))).
