@@ -42,28 +42,28 @@ public class Polygraphes {
   %include { sl.tom }
   %include { polygraphes/Polygraphes.tom }
 
-  public static int getSource(TwoPath t) {
+  public static int getPGSource(TwoPath t) {
     %match(t) {
       id(n) -> { return `n; }
       g[Source=x] -> { return `x; }
       c0() -> { return 0; }
-      c0(head,tail*) -> { if(!`tail*.isEmptyconcc0()) { return getSource(`head) + getSource(`tail*); } }
+      c0(head,tail*) -> { if(!`tail*.isEmptyc0()) { return getPGSource(`head) + getPGSource(`tail*); } }
 
       c1() -> { return 0; }
-      c1(head,tail*) -> { if(!`tail*.isEmptyconcc1()) { return getSource(`head); } }
+      c1(head,tail*) -> { if(!`tail*.isEmptyc1()) { return getPGSource(`head); } }
     }
     throw new RuntimeException("strange term: " + t);
   }
 
-  public static int getTarget(TwoPath t) {
+  public static int getPGTarget(TwoPath t) {
     %match(t) {
       id(n) -> { return `n; }
       g[Target=x] -> { return `x; }
       c0() -> { return 0; }
-      c0(head,tail*) -> { if(!`tail*.isEmptyconcc0()) { return getTarget(`head) + getTarget(`tail*); } }
+      c0(head,tail*) -> { if(!`tail*.isEmptyc0()) { return getPGTarget(`head) + getPGTarget(`tail*); } }
 
       c1() -> { return 0; }
-      c1(head*,last) -> { if(!`head*.isEmptyconcc1()) { return getTarget(`head); } }
+      c1(head*,last) -> { if(!`head*.isEmptyc1()) { return getPGTarget(`head); } }
     }
     throw new RuntimeException("strange term: " + t);
   }
@@ -113,7 +113,7 @@ public class Polygraphes {
        */
       /*
 	 c0(concC0( c1(concC1(f*,g*)), c1(concC1(h*,k*)))) -> {
-	 if(`f*.isEmptyconcC1() || `g*.isEmptyconcC1() || `h*.isEmptyconcC1() || `k*.isEmptyconcC1() ) {
+	 if(`f*.isEmptyC1() || `g*.isEmptyC1() || `h*.isEmptyC1() || `k*.isEmptyC1() ) {
       // do nothing 
       } else {
       return `c1(concC1( c0(concC0(c12c0(f*),c12c0(h*))), c0(concC0(c12c0(g*),c12c0(k*)))));
@@ -128,8 +128,8 @@ public class Polygraphes {
       c0(id(m),g@g[],tail*) -> {
 	%match(TwoPath tail) {
 	  c0(_*,!id[],_*) -> { 
-	    return `c1(c0(id(m),g,           id(getSource(tail*))), 
-		       c0(id(m+getTarget(g)),tail*));
+	    return `c1(c0(id(m),g,           id(getPGSource(tail*))), 
+		       c0(id(m+getPGTarget(g)),tail*));
 	  }
 	}
       }
@@ -138,7 +138,7 @@ public class Polygraphes {
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
       c0(head*, c1(f*,g*), tail*) -> {
-	if(`f*.isEmptyconcc1() || `g*.isEmptyconcc1()) {
+	if(`f*.isEmptyc1() || `g*.isEmptyc1()) {
 	  // do nothing 
 	} else {
 	  // head, tail are either empty or id(m)

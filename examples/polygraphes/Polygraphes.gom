@@ -34,21 +34,21 @@ c1:make_insert(x,y) {
     c1(),g -> { return `g; }
     g,c1() -> { return `g; }
     c1(X*),g -> { 
-      if(getTarget(x)!=getSource(y)) { throws new RuntimeException("bad number of lines: " + x + " " + y); }
+      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
       return `c1(X*,g);
     }
     c0(),g -> { return `g; }
     
     id(m), g -> { 
-      if(getTarget(x)!=getSource(y)) { throws new RuntimeException("bad number of lines: " + x + " " + y); }
+      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
       return `g;
     }
     g, id(n) -> { 
-      if(getTarget(x)!=getSource(y)) { throws new RuntimeException("bad number of lines: " + x + " " + y); }
+      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
       return `g;
     }
-    c1(),_ -> { return l; }
-    c1(subL*),_ -> { return `c1(subL*,l*); }
+    c1(),g -> { return `g; }
+    c1(subL*),g -> { return `c1(subL*,g*); }
   }
 }
 
