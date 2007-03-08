@@ -1204,19 +1204,19 @@
     <delete dir="${bundle.temp.dir}"/>
   </target>
 
-  <target name="doc.stable" description="Build javadoc for stable">
+  <target name="stable.doc" description="Build javadoc for stable">
     <mkdir dir="${stable.doc}"/>
     <javadoc destdir="${stable.doc}"
              windowtitle="TOM documentation"
              breakiterator="yes">
       <classpath refid="stable.classpath"/>
       <fileset dir="${stable.src}">
-        <include name="tom/library/sl/*.java"/>
+        <include name="tom/library/sl/**/*.java"/>
       </fileset>
     </javadoc>
   </target>
 
-  <target name="doc.src"
+  <target name="src.doc"
           description="Build javadoc for src"
           depends="src">
     <mkdir dir="${src.doc}"/>
@@ -1225,10 +1225,10 @@
              breakiterator="yes">
       <classpath refid="src.classpath"/>
       <fileset dir="${src.src}">
-        <include name="tom/library/sl/*.java"/>
+        <include name="tom/library/sl/**/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
-        <include name="tom/**/*.java"/>
+        <include name="tom/library/sl/**/*.java"/>
         <exclude name="**/adt/**/*.java"/>
       </fileset>
     </javadoc>
