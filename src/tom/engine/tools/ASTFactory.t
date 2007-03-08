@@ -455,7 +455,7 @@ public class ASTFactory {
   }
 
   public static TomTerm buildList(TomName name,TomList args, SymbolTable symbolTable) {
-    //System.out.println("buildList: " + args);
+    //if(!args.isEmptyconcTomTerm()) System.out.println("buildList: " + args.getHeadconcTomTerm());
     %match(TomList args) {
       concTomTerm() -> {
         return `BuildEmptyList(name);
@@ -466,12 +466,13 @@ public class ASTFactory {
         return `BuildAppendList(name,head,subList);
       }
       
-      concTomTerm(Composite(concTomTerm(_*,head@VariableStar[])),tail*) -> {
+      concTomTerm(Composite(concTomTerm(head@VariableStar[],_*)),tail*) -> {
         TomTerm subList = buildList(name,`tail,symbolTable);
+	//System.out.println("buildAppendList: " + `head);
         return `BuildAppendList(name,head,subList);
       }
 
-      concTomTerm(Composite(concTomTerm(head@BuildConsList[AstName=opName])),tail*) -> {
+      concTomTerm(Composite(concTomTerm(head@BuildConsList[AstName=opName],_*)),tail*) -> {
 	/*
 	 * Flatten nested lists
 	 * unless domain and codomain are equals
@@ -487,7 +488,7 @@ public class ASTFactory {
 	}
       }
 
-      concTomTerm(Composite(concTomTerm(head@BuildTerm[AstName=Name(tomName),ModuleName=module])),tail*) -> {
+      concTomTerm(Composite(concTomTerm(head@BuildTerm[AstName=Name(tomName),ModuleName=module],_*)),tail*) -> {
 	/*
 	 * compare the codomain of tomName with the domain of name
 	 * if the codomain of the inserted element is equal to the codomain
@@ -543,7 +544,7 @@ public class ASTFactory {
         return `BuildAppendArray(name,head,subList);
       }
 
-      concTomTerm(Composite(concTomTerm(_*,head@VariableStar[])),tail*) -> {
+      concTomTerm(Composite(concTomTerm(_*,head@VariableStar[],_*)),tail*) -> {
           /*System.out.println("head = " + head);*/
         TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildAppendArray(name,head,subList);

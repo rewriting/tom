@@ -414,21 +414,21 @@ xmlAttribute [TomList context] returns [TomTerm result]
                         ),
                         value
                     );
-										if(context != null) {
-										  args = `concTomTerm(context*,args*);
-										}
-										result = `BackQuoteAppl(
-											concOption(ModuleName(TNODE_MODULE_NAME)),
-											Name(Constants.ATTRIBUTE_NODE),
-											args);
+		    if(context != null) {
+		    args = `concTomTerm(context*,args*);
+		    }
+		    result = `BackQuoteAppl(
+		      concOption(ModuleName(TNODE_MODULE_NAME)),
+		      Name(Constants.ATTRIBUTE_NODE),
+		      args);
                 }
             | BQ_STAR
               {
-								result = `VariableStar(
-										concOption(),
-										Name(id.getText()),
-										TomTypeAlone("unknown type"),
-										concConstraint());
+		result = `VariableStar(
+		    concOption(),
+		    Name(id.getText()),
+		    TomTypeAlone("unknown type"),
+		    concConstraint());
               }
             )
         )
