@@ -15,8 +15,8 @@ c0:make_insert(x,y) {
   %match(x,y) {
     c0(),g -> { return `g; }
     g,c0() -> { return `g; }
-    c0(X*),g -> { return `c0(X*,g); }
     c1(),g -> { return `g; }
+    c0(X*),g -> { if(!`X*.isEmptyc0()) { return `c0(X*,g); } }
 
     id(0),g -> { return `g; }
     g,id(0) -> { return `g; }
@@ -33,11 +33,11 @@ c1:make_insert(x,y) {
   %match(x,y) {
     c1(),g -> { return `g; }
     g,c1() -> { return `g; }
-    c1(X*),g -> { 
-      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
-      return `c1(X*,g);
-    }
     c0(),g -> { return `g; }
+    Consc1(h,t),g -> {
+      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
+        return `c1(h,t*,g);
+      }
     
     id(m), g -> { 
       if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
@@ -47,8 +47,6 @@ c1:make_insert(x,y) {
       if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
       return `g;
     }
-    c1(),g -> { return `g; }
-    c1(subL*),g -> { return `c1(subL*,g*); }
   }
 }
 
