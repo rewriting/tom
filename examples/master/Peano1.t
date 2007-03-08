@@ -36,12 +36,17 @@ public class Peano1 {
     Nat = zero()
         | suc(pred:Nat)
         | plus(x1:Nat, x2:Nat)
+        | mult(x1:Nat, x2:Nat)
    }
 
     // rule plus
   %rule {
     plus(x, zero())    -> x 
     plus(x, suc(y))    -> suc(plus(x,y))
+  } // rule
+  %rule {
+    mult(x, zero())    -> zero() 
+    mult(x, suc(y))    -> plus(x,mult(x,y))
   } // rule
   
   //-------------------------------------------------------
@@ -53,6 +58,7 @@ public class Peano1 {
 
     //System.out.println("plus(one,two) = " + plus(one,two));
     System.out.println("plus(one,two) = " + `plus(suc(zero()),suc(suc(zero()))));
+    System.out.println("mult(two,two) = " + `mult(zero(),suc(suc(zero()))));
   }
   
   public final static void main(String[] args) {
