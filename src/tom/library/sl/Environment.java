@@ -253,21 +253,40 @@ public class Environment implements Cloneable {
     }
   }
 
-  /**
-   * Returns a <code>String</code> object representing the position.
-   * The string representation consists of a list of elementary positions
-   *
-   * @return a string representation of this position
-   */
-  public String toString() {
-    StringBuffer r = new StringBuffer("[");
-    for(int i=0 ; i<size ; i++) {
-      r.append(omega[i]);
-      if(i<size-1) {
-        r.append(", ");
+  public void followRef() {
+    if (getSubject() instanceof Reference){
+      int[] pos= ((Reference) getSubject()).toArray();
+      int pos_back = pos[0];
+      int pos_length = pos.length;
+      for(int i=0;i<pos_back;i++){
+        up();
+      }
+      if(pos_length>1){
+        for(int i=1;i<pos_length;i++){
+          down(pos[i]);
+          if (getSubject() instanceof Reference){
+            followRef();
+          }
+        }
       }
     }
-    r.append("]");
+  }
+
+    /**
+     * Returns a <code>String</code> object representing the position.
+     * The string representation consists of a list of elementary positions
+     *
+     * @return a string representation of this position
+     */
+    public String toString() {
+      StringBuffer r = new StringBuffer("[");
+      for(int i=0 ; i<size ; i++) {
+        r.append(omega[i]);
+        if(i<size-1) {
+          r.append(", ");
+        }
+      }
+      r.append("]");
 
     r.append("\n[");
 

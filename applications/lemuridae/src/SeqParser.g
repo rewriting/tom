@@ -87,6 +87,10 @@ command: PROOF^ ID COLUMN! pred DOT!
        | QUIT DOT!
        | PROOFCHECK^ ID DOT!
        | PRINT^ ID DOT!
+       | RESUME^ ID DOT!
+       | GIBBER DOT!
+       | IMPORT^ PATH DOT!
+       | EOF
        ;
 
 proofcommand: FOCUS^ ID DOT!
@@ -97,6 +101,9 @@ proofcommand: FOCUS^ ID DOT!
             | ASKRULES DOT!
             | DISPLAY DOT!
             | ID DOT!
+            | QUIT DOT!
+            | ABORT DOT!
+            | EOF
             ;
 
 start1: pred DOT! ;
@@ -176,8 +183,12 @@ QUIT: "quit";
 THEOREM: "theorem";
 PRINT: "print";
 PROOFCHECK: "proofcheck";
+ABORT: "abort";
+RESUME: "resume";
+GIBBER: "gibber";
+IMPORT: "import";
 
 //VAR: ('a'..'z')('a'..'z'|'0'..'9')*;
 ID : ('A'..'Z'|'a'..'z')('A'..'Z'|'a'..'z'|'0'..'9')*;
 NUMBER: ('0'..'9')+;
-
+PATH:  '\"'((~'\"')+)'\"';
