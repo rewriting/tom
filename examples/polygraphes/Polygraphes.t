@@ -46,24 +46,11 @@ public class Polygraphes {
     %match(t) {
       id(n) -> { return `n; }
       g[Source=x] -> { return `x; }
-      c0(l) -> { return getSourceC0(`l); }
-      c1(l) -> { return getSourceC1(`l); }
-    }
-    throw new RuntimeException("strange term: " + t);
-  }
+      c0() -> { return 0; }
+      c0(head,tail*) -> { if(!`tail*.isEmptyconcc0()) { return getSource(`head) + getSource(`tail*); } }
 
-  public static int getSourceC0(TwoPathC0 t) {
-    %match(t) {
-      concC0() -> { return 0; }
-      concC0(head,tail*) -> { return getSource(`head) + getSourceC0(`tail*); }
-    }
-    throw new RuntimeException("strange term: " + t);
-  }
-
-  public static int getSourceC1(TwoPathC1 t) {
-    %match(t) {
-      concC1() -> { return 0; }
-      concC1(head,_*) -> { return getSource(`head); }
+      c1() -> { return 0; }
+      c1(head,tail*) -> { if(!`tail*.isEmptyconcc1()) { return getSource(`head); } }
     }
     throw new RuntimeException("strange term: " + t);
   }
@@ -72,48 +59,33 @@ public class Polygraphes {
     %match(t) {
       id(n) -> { return `n; }
       g[Target=x] -> { return `x; }
-      c0(l) -> { return getTargetC0(`l); }
-      c1(l) -> { return getTargetC1(`l); }
-    }
-    throw new RuntimeException("strange term: " + t);
-  }
+      c0() -> { return 0; }
+      c0(head,tail*) -> { if(!`tail*.isEmptyconcc0()) { return getTarget(`head) + getTarget(`tail*); } }
 
-  public static int getTargetC0(TwoPathC0 t) {
-    %match(t) {
-      concC0() -> { return 0; }
-      concC0(head,tail*) -> { return getTarget(`head) + getTargetC0(`tail*); }
+      c1() -> { return 0; }
+      c1(head*,last) -> { if(!`head*.isEmptyconcc1()) { return getTarget(`head); } }
     }
     throw new RuntimeException("strange term: " + t);
   }
-
-  public static int getTargetC1(TwoPathC1 t) {
-    %match(t) {
-      concC1() -> { return 0; }
-      concC1(_*,last) -> { return getTarget(`last); }
-    }
-    throw new RuntimeException("strange term: " + t);
-  }
-  
 
   public static void main(String[] args) {
     TwoPath zero = `g("zero",0,1);
     TwoPath suc = `g("suc",1,1);
     TwoPath dup = `g("dup",1,2);
     TwoPath add = `g("add",2,1);
-    TwoPath two = `c0(concC0(c1(concC1(zero,suc)),c1(concC1(zero,suc))));
+    TwoPath two = `c0(c1(zero,suc),c1(zero,suc));
     System.out.println("two = " + two);
     
-    TwoPath two2 = `c0(concC0(id(0),
-                              c1(concC1(id(0),zero,id(1),id(1),suc,id(1))),id(0),
-                              c1(concC1(id(0),zero,id(1),id(1),suc,id(1))),id(0),
-                              id(0)));
+    TwoPath two2 = `c0(id(0),
+                       c1(id(0),zero,id(1),id(1),suc,id(1)),id(0),
+                       c1(id(0),zero,id(1),id(1),suc,id(1)),id(0),
+		       id(0));
     System.out.println("two = " + two2);
 
-    TwoPath dupadd = `c1(concC1(
-      c0(concC0(c1(concC1(dup,
-                          c0(concC0(suc,id(1))))), id(1))),
-      c0(concC0(id(1),c1(concC1(c0(concC0(suc,suc)),add))))
-      ));
+    TwoPath dupadd = `c1(
+	                 c0(c1(dup,
+			      c0(suc,id(1))), id(1)),
+			 c0(id(1),c1(c0(suc,suc),add)));
 
 //res = c1(concC1(
 //c0(concC0(g("dup",1,2),id(1))),
@@ -153,11 +125,11 @@ public class Polygraphes {
        * C0(id(m),g,tail*) -> C1(C0(id(m),g,id(source(tail*)),
        C0(id(m+target(g)),tail*)) g notin tail
        */
-      c0(concC0(id(m),g@g[],tail*)) -> {
-	%match(TwoPathC0 tail) {
-	  concC0(_*,!id[],_*) -> { 
-	    return `c1(concC1( c0(concC0(id(m),g,id(getSourceC0(tail*)))), 
-		  c0(concC0(id(m+getTarget(g)),tail*))));
+      c0(id(m),g@g[],tail*) -> {
+	%match(TwoPath tail) {
+	  c0(_*,!id[],_*) -> { 
+	    return `c1(c0(id(m),g,           id(getSource(tail*))), 
+		       c0(id(m+getTarget(g)),tail*));
 	  }
 	}
       }
@@ -165,14 +137,14 @@ public class Polygraphes {
       /*
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
-      c0(concC0(head*, c1(concC1(f*,g*)), tail*)) -> {
-	if(`f*.isEmptyconcC1() || `g*.isEmptyconcC1()) {
+      c0(head*, c1(f*,g*), tail*) -> {
+	if(`f*.isEmptyconcc1() || `g*.isEmptyconcc1()) {
 	  // do nothing 
 	} else {
 	  // head, tail are either empty or id(m)
 	  if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
-	    return `c1(concC1( c0(concC0(head*,c12c0(f*),tail*)),
-	   	               c0(concC0(head*,c12c0(g*),tail*))));
+	    return `c1(c0(head*,c12c0(f*),tail*),
+		       c0(head*,c12c0(g*),tail*));
 	  }
 	}
       }
@@ -180,28 +152,29 @@ public class Polygraphes {
     }
   }
 
-  private static boolean isEmptyOrId(TwoPathC0 l) {
+  private static boolean isEmptyOrId(TwoPath l) {
     %match(l) {
-      concC0() -> { return true; }
-      concC0(id(n)) -> { return true; }
+      c0()  -> { return true; }
+      id(n) -> { return true; }
     }
     return false;
   }
 
   /* conversion functions */
-  %op TwoPathC1 c02c1(l:TwoPathC0) {}
-  static private TwoPathC1 c02c1(TwoPathC0 l) {
-    %match(TwoPathC0 l) {
-      concC0() -> { return `concC1(); }
-      concC0(head,tail*) -> { return `concC1(head,c02c1(tail*)); }
+  %op TwoPath c02c1(l:TwoPath) {}
+  static private TwoPath c02c1(TwoPath l) {
+    %match(TwoPath l) {
+      Emptyc0() -> { return `Emptyc1(); }
+      Consc0(head,tail) -> { return `Consc1(head,c02c1(tail)); }
     }
     return null;
   }
-  %op TwoPathC0 c12c0(l:TwoPathC1) {}
-  static private TwoPathC0 c12c0(TwoPathC1 l) {
-    %match(TwoPathC1 l) {
-      concC1() -> { return `concC0(); }
-      concC1(head,tail*) -> { return `concC0(head,c12c0(tail*)); }
+
+  %op TwoPath c12c0(l:TwoPath) {}
+  static private TwoPath c12c0(TwoPath l) {
+    %match(TwoPath l) {
+      Emptyc1() -> { return `Emptyc0(); }
+      Consc1(head,tail) -> { return `Consc0(head,c12c0(tail)); }
     }
     return null;
   }
