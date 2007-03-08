@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2007-2007, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  *  - Redistributions of source code must retain the above copyright
- *  notice, this list of conditions and the following disclaimer.  
+ *  notice, this list of conditions and the following disclaimer.
  *  - Redistributions in binary form must reproduce the above copyright
  *  notice, this list of conditions and the following disclaimer in the
  *  documentation and/or other materials provided with the distribution.
  *  - Neither the name of the INRIA nor the names of its
  *  contributors may be used to endorse or promote products derived from
  *  this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -74,10 +74,8 @@ public class Polygraphes {
     TwoPath dup = `g("dup",1,2);
     TwoPath add = `g("add",2,1);
     TwoPath two = `c0(c1(zero,suc),c1(zero,suc));
-    System.out.println("test1 = "+`c1(suc));
-    System.out.println("test2 = "+`c1(zero,suc));
     System.out.println("two = " + two);
-    
+
     TwoPath two2 = `c0(id(0),
                        c1(id(0),zero,id(1),id(1),suc,id(1)),id(0),
                        c1(id(0),zero,id(1),id(1),suc,id(1)),id(0),
@@ -97,8 +95,8 @@ public class Polygraphes {
 //c0(concC0(id(1),g("add",2,1)))))
 
     System.out.println("dup = " + dupadd);
-    //TwoPath res = (TwoPath) `Repeat(OnceTopDown(Sequence(Transform(),Print()))).fire(dupadd);
-    //System.out.println("res = " + res);
+    TwoPath res = (TwoPath) `Repeat(OnceTopDown(Sequence(Transform(),Print()))).fire(dupadd);
+    System.out.println("res = " + res);
 
   }
 
@@ -116,7 +114,7 @@ public class Polygraphes {
       /*
 	 c0(concC0( c1(concC1(f*,g*)), c1(concC1(h*,k*)))) -> {
 	 if(`f*.isEmptyC1() || `g*.isEmptyC1() || `h*.isEmptyC1() || `k*.isEmptyC1() ) {
-      // do nothing 
+      // do nothing
       } else {
       return `c1(concC1( c0(concC0(c12c0(f*),c12c0(h*))), c0(concC0(c12c0(g*),c12c0(k*)))));
       }
@@ -129,8 +127,8 @@ public class Polygraphes {
        */
       c0(id(m),g@g[],tail*) -> {
         %match(TwoPath tail) {
-          c0(_*,!id[],_*) -> { 
-            return `c1(c0(id(m),g,             id(getPGSource(tail*))), 
+          c0(_*,!id[],_*) -> {
+            return `c1(c0(id(m),g,             id(getPGSource(tail*))),
                        c0(id(m+getPGTarget(g)),tail*));
           }
         }
@@ -140,12 +138,14 @@ public class Polygraphes {
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
       c0(head*, c1(f*,g*), tail*) -> {
-        /* With AU, g may not be a c1 ... */
-        if(`f*.isEmptyc1() || `g*.isEmptyc1()) {
-          // do nothing 
+        if(`f*.isEmptyc1()
+            || `g*.isEmptyc1()) {
+          // do nothing
         } else {
           // head, tail are either empty or id(m)
-          if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
+          if(isEmptyOrId(`head)
+              && isEmptyOrId(`tail)
+              && !(`head*.isEmptyc0() && `tail*.isEmptyc0())) {
             return `c1(c0(head*,c12c0(f*),tail*),
                        c0(head*,c12c0(g*),tail*));
           }
