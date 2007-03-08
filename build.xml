@@ -1211,7 +1211,7 @@
              breakiterator="yes">
       <classpath refid="stable.classpath"/>
       <fileset dir="${stable.src}">
-        <include name="tom/**/*.java"/>
+        <include name="tom/library/sl/*.java"/>
       </fileset>
     </javadoc>
   </target>
@@ -1225,7 +1225,7 @@
              breakiterator="yes">
       <classpath refid="src.classpath"/>
       <fileset dir="${src.src}">
-        <include name="tom/**/*.java"/>
+        <include name="tom/library/sl/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
         <include name="tom/**/*.java"/>
