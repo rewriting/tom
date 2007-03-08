@@ -1234,18 +1234,31 @@
     </javadoc>
   </target>
 
+  <target name="src.www"
+          description="Upload javadoc for src"
+          depends="src.doc">
+        <exec executable="rsync">
+          <arg value="-r"/>
+          <arg value='--exclude'/>
+          <arg value='"CVS/"'/>
+          <arg value='--exclude'/>
+          <arg value='".DS_Store"'/>
+          <arg value='--exclude'/>
+          <arg value='".cvsignore"'/>
+          <arg value="${src.doc}"/>
+          <arg value='loria:/local/tom/htdocs/doc/javadoc/'/>
+        </exec>
+        <exec executable="ssh">
+          <arg value='-4'/>
+          <arg value="loria"/>
+          <arg value="find /local/tom/htdocs/doc/javadoc -user $${USER} | xargs chmod -f g+rw "/>
+        </exec>
+  </target>
+
   <target name="clean.doc">
     <delete dir="stable.doc"/>
     <delete dir="src.doc"/>
   </target>
-
-  <!-- <target name="tags">
-    <exec>
-    find /Volumes/Home/pem/workspace/jtom/src/tom \( -name "*.t" -o
-    -name "*.java" \) | xargs etags - -language=java
-    </exec>
-    </target>
-  -->
 
   <target name="source.distribution"
           description="Creates a  ready to distribute tom-sources.tgz ">
@@ -1271,7 +1284,6 @@
     </tar>
     <delete dir="${dist}/checkout"/>
   </target>
-
 
   <target name="init.task.findbugs">
     <fail unless="findbugs.home">
@@ -1312,5 +1324,13 @@ findbugs.home=/home/login/soft/findbugs-1.1.1/
       <class location="${src.dist.lib}/plugin-platform-${src.version}.jar" />
     </findbugs>
   </target>
+
+  <!-- <target name="tags">
+<exec>
+find /Volumes/Home/pem/workspace/jtom/src/tom \( -name "*.t" -o
+-name "*.java" \) | xargs etags - -language=java
+</exec>
+</target>
+  -->
 
 </project>
