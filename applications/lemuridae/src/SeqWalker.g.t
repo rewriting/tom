@@ -106,6 +106,10 @@ command returns [Command c]
   | QUIT { c = `quit(); }
   | #(PROOFCHECK i4:ID) { c = `proofcheck(i4.getText()); }
   | #(PRINT i3:ID) { c = `print(i3.getText()); }
+  | #(RESUME i5:ID) { c = `resume(i5.getText()); }
+  | GIBBER { c = `gibber(); }
+  | #(IMPORT i6:PATH) { c = `importfile(i6.getText()); }
+  | EOF { c = `endoffile(); }
   ;
 
 proofcommand returns [ProofCommand c]
@@ -121,6 +125,9 @@ proofcommand returns [ProofCommand c]
   | #(THEOREM name:ID) { c = `theoremCommand(name.getText()); }
   | DISPLAY { c = `proofCommand("display"); }
   | ASKRULES { c = `askrulesCommand(); }
+  | QUIT { c = `proofquit(); }
+  | ABORT { c = `abort(); }
+  | EOF { c = `proofendoffile(); }
   ;
 
 ident returns [String s]

@@ -19,6 +19,12 @@ class Utils {
  
   %include { sequents/sequents.tom }
 
+  private static InputStream stream = new DataInputStream(System.in);
+
+  public static void setStream(InputStream newStream) {
+    stream = newStream;
+  }
+  
   // pour convenance
 
   public static Tree axiom(Sequent s, Prop active) {
@@ -235,6 +241,8 @@ class Utils {
   }
 
   // handling user input
+
+  /*
   public static String getInput() {
     String res = null;
     BufferedReader clav = new BufferedReader(new InputStreamReader(System.in));
@@ -242,9 +250,10 @@ class Utils {
     catch (IOException e) { System.out.println(e); }
     return res.trim();
   }
+  */
 
   public static Prop getProp() throws RecognitionException, TokenStreamException {
-    SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+    SeqLexer lexer = new SeqLexer(stream);
     SeqParser parser = new SeqParser(lexer);
     SeqTreeParser walker = new SeqTreeParser();
 
@@ -255,7 +264,7 @@ class Utils {
   }
 
   public static Term getTerm() throws RecognitionException, TokenStreamException {
-    SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+    SeqLexer lexer = new SeqLexer(stream);
     SeqParser parser = new SeqParser(lexer);
     SeqTreeParser walker = new SeqTreeParser();
 
@@ -267,7 +276,7 @@ class Utils {
 
   public static Command getCommand()
     throws RecognitionException, TokenStreamException {
-      SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+      SeqLexer lexer = new SeqLexer(stream);
       SeqParser parser = new SeqParser(lexer);
       SeqTreeParser walker = new SeqTreeParser();
 
@@ -280,7 +289,7 @@ class Utils {
 
   public static ProofCommand getProofCommand()
     throws RecognitionException, TokenStreamException {
-      SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+      SeqLexer lexer = new SeqLexer(stream);
       SeqParser parser = new SeqParser(lexer);
       SeqTreeParser walker = new SeqTreeParser();
 
@@ -293,7 +302,7 @@ class Utils {
   // FIXME : get rid of "ident" in parser and use lexer directly
   public static String getIdent()
     throws RecognitionException, TokenStreamException {
-      SeqLexer lexer = new SeqLexer(new DataInputStream(System.in));
+      SeqLexer lexer = new SeqLexer(stream);
       SeqParser parser = new SeqParser(lexer);
       SeqTreeParser walker = new SeqTreeParser();
 

@@ -712,7 +712,7 @@ b :{
             break b;
         }
       }
-      throw new Exception("can't apply theorem");
+      throw new Exception("theorem not proved");
    }
     }
   }
@@ -805,7 +805,7 @@ b :{
   }
 
   // builds the proof by manipulating a tree
-  private Tree buildProofTree(Sequent goal) {
+  private Stack buildProofTree(Sequent goal) {
 
     // environnement stack to allow the "undo" command and incomplete proof save
     Stack<ProofEnv> envStack = new Stack<ProofEnv>();
@@ -818,7 +818,16 @@ b :{
     env.openGoals = new LinkedList<Position>();
     env.tree = `rule(openInfo(), premisses(), goal, goal.getc().getHeadcontext());
     getOpenPositions(env.tree, env.openGoals);
+    envStack.push(env);
+    return buildProofTreeFromStack(envStack);
 
+  }
+
+  private Stack<ProofEnv> buildProofTreeFromStack(Stack<ProofEnv> envStack) {
+
+	  ProofEnv env = envStack.pop(); 
+	  Sequent goal = null;
+	    
     // main loop
     while(env.openGoals.size() > 0) {
       Tree tree = null;
@@ -1034,6 +1043,23 @@ b :{
           }
         }
 
+        /* quit */
+        proofquit() -> {
+          System.exit(0);
+        }
+
+        /* abort */
+        abort() -> {
+          envStack.push(env);
+          return envStack; 
+        }
+
+        /* proof end of file */
+        proofendoffile() -> {
+          System.out.println("Warning : The file ended while the theorem was not proved !\nProve it manually or abort.");
+          InputStream stream = new DataInputStream(System.in);
+          Utils.setStream(stream);
+        }
 
       } /* end of the big command switch */
 
@@ -1055,7 +1081,8 @@ b :{
 
     } // while still open goals
 
-    return env.tree;
+    envStack.push(env);
+    return envStack;
   }
 
 
@@ -1063,10 +1090,24 @@ b :{
   private TermRuleList newTermRules = `termrulelist();
   private PropRuleList newPropRules = `proprulelist();
   private HashMap<String,Tree> theorems = new HashMap<String,Tree>();
+  private HashMap<String,Stack<ProofEnv>> unprovedTheorems = new HashMap<String,Stack<ProofEnv>>();
 
+  private void store(Stack<ProofEnv> envStack, String name) {
+	  if(envStack.peek().openGoals.size() == 0) {
+	    Tree tree = envStack.peek().tree;
+	    theorems.put(name,tree);
+	    unprovedTheorems.remove(name);
+            System.out.println(name + " proved.");
+            }
+	  else {
+	    unprovedTheorems.put(name, envStack);
+	    System.out.println(name + " remains unproved !!");
+	  }
+	}
+  
   public void mainLoop() throws Exception {
     Command command = null;
-
+      
     while(true) {
 
       System.out.print("> ");
@@ -1095,31 +1136,74 @@ b :{
         }
 
         proof(name,p) -> {
-          Tree tree = buildProofTree(`sequent(context(),context(p)));
-          theorems.put(`name,tree);
-          System.out.println(`name + " proved.");
+          Stack<ProofEnv> envStack = buildProofTree(`sequent(context(),context(p)));
+          store(envStack, `name);
+/*	  if(envStack.peek().openGoals.size() == 0) {
+	    Tree tree = envStack.peek().tree;
+	    theorems.put(`name,tree);
+            System.out.println(`name + " proved.");
+            }
+	  else {
+	    unprovedTheorems.put(`name, envStack);
+	    System.out.println(`name + " remains unproved !!");
+	  }
+*/
         }
 
         proofcheck(name) -> {
           Tree tree = theorems.get(`name);
-          tree = ProofExpander.expand(tree);
-          if(ProofChecker.proofcheck(tree)) System.out.println("Proof check passed !");
-          else System.out.println("Proof check failed :S");
+          if(tree==null) System.out.println(`name + " not found"); else {
+            tree = ProofExpander.expand(tree);
+            if(ProofChecker.proofcheck(tree)) System.out.println("Proof check passed !");
+            else System.out.println("Proof check failed :S");
+	  }
         }
 
         display(name) -> {
           Tree tree = theorems.get(`name);
-          PrettyPrinter.display(tree,newTermRules,newPropRules);
+          if(tree==null) { System.out.println(`name + " not found");} else
+            PrettyPrinter.display(tree,newTermRules,newPropRules);
           //tree = ProofExpander.expand(tree);
           //PrettyPrinter.display(tree,newTermRules,newPropRules);
         }
 
+        resume(name) -> {
+          Stack<ProofEnv> envStack = unprovedTheorems.get(`name);
+          if(envStack==null) { System.out.println(`name + " not found"); } else {
+            envStack = buildProofTreeFromStack(envStack);
+            store(envStack, `name);
+          }
+        }
+
+        gibber() -> {
+          System.out.println("        .=\"=.\n      _/.-.-.\\_\n     ( ( 0 0 ) )\n      |/  \"  \\|\n       \\'---'/\n        `\"\"\"`");
+          System.out.println("Have you gibbered today ?");
+        }
+
+        importfile(name) -> {
+          String newname = `name.substring(1, `name.length()-1);
+          try { 
+            InputStream stream = new FileInputStream(newname);
+            Utils.setStream(stream);
+          }
+          catch (Exception FileNotFoundException) {
+            System.out.println(newname + " : File not found");
+          }
+        }
+
+        endoffile() -> {
+          System.out.println("End of file");
+          InputStream stream = new DataInputStream(System.in);
+          Utils.setStream(stream);
+        }
+  
         quit() -> {
           System.exit(0);
         }
 
         print(name) -> {
           Tree tree = theorems.get(`name);
+	  if(tree==null) System.out.println(`name + " not found"); else
           %match(Tree tree) {
             rule[c=concl] -> {
               String str = `name + " : " + PrettyPrinter.prettyPrint(`concl);
