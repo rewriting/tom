@@ -74,6 +74,8 @@ public class Polygraphes {
     TwoPath dup = `g("dup",1,2);
     TwoPath add = `g("add",2,1);
     TwoPath two = `c0(c1(zero,suc),c1(zero,suc));
+    System.out.println("test1 = "+`c1(suc));
+    System.out.println("test2 = "+`c1(zero,suc));
     System.out.println("two = " + two);
     
     TwoPath two2 = `c0(id(0),
@@ -95,8 +97,8 @@ public class Polygraphes {
 //c0(concC0(id(1),g("add",2,1)))))
 
     System.out.println("dup = " + dupadd);
-    TwoPath res = (TwoPath) `Repeat(OnceTopDown(Sequence(Transform(),Print()))).fire(dupadd);
-    System.out.println("res = " + res);
+    //TwoPath res = (TwoPath) `Repeat(OnceTopDown(Sequence(Transform(),Print()))).fire(dupadd);
+    //System.out.println("res = " + res);
 
   }
 

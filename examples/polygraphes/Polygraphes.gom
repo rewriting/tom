@@ -38,8 +38,8 @@ c1:make_insert(x,y) {
       if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
         return `c1(h,t*,g);
       }
-    
-    id(m), g -> { 
+
+    id(m), g -> {
       if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
       return `g;
     }
@@ -49,4 +49,3 @@ c1:make_insert(x,y) {
     }
   }
 }
-
