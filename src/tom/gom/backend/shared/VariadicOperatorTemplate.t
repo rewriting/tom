@@ -157,6 +157,10 @@ writer.write(%[
           buffer.append(",");
         }
       }
+      if(!(cur instanceof @fullClassName(empty.getClassName())@)) {
+        buffer.append(",");
+        cur.toStringBuffer(buffer);
+      }
     }
     buffer.append(")");
   }
