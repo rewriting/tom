@@ -83,6 +83,8 @@ command: PROOF^ ID COLUMN! pred DOT!
        | RRULE^ atom ARROW! pred DOT!
        | TRULE^ term ARROW! term DOT!
        | PRULE^ atom ARROW! pred DOT!
+       | NORMALIZE! TERM^ term DOT!
+       | NORMALIZE! PROP^ pred DOT!
        | DISPLAY^ ID DOT!
        | QUIT DOT!
        | PROOFCHECK^ ID DOT!
@@ -98,6 +100,7 @@ proofcommand: FOCUS^ ID DOT!
             | RRULE DOT { #proofcommand = #[RULEALONE,"RULEALONE"]; }
             | CUT^ pred DOT!
             | THEOREM^ ID DOT!
+            | NORMALIZE^ DOT!
             | ASKRULES DOT!
             | DISPLAY DOT!
             | ID DOT!
@@ -123,7 +126,32 @@ WS
     | '\r')
     { _ttype = Token.SKIP; }
   ;
-  
+
+SL_COMMENT
+: "//" (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
+{
+  $setType(Token.SKIP);
+  newline();
+}
+;
+
+ML_COMMENT
+: "/*"
+(
+ options {
+ generateAmbigWarnings=false;
+ }
+ :
+ { LA(2)!='/' }? '*'
+ |       '\r' '\n' {newline();}
+ |       '\r'      {newline();}
+ |       '\n'      {newline();}
+ |       ~('*'|'\n'|'\r')
+ )*
+"*/"
+{$setType(Token.SKIP);}
+;
+
 LPAREN : '(' ;
 
 RPAREN : ')' ;
@@ -146,13 +174,13 @@ NOT : '!'
 
 DOT : '.' ;
 
-FORALL  : "\\A";
+FORALL  : "\\A" | "forall";
 
-EXISTS : "\\E";
+EXISTS : "\\E" | "exists";
 
-BOTTOM : "\\B";
+BOTTOM : "\\B" | "False";
 
-TOP: "\\T";
+TOP: "\\T" | "True";
 
 
 ARROW : "->";
@@ -187,6 +215,10 @@ ABORT: "abort";
 RESUME: "resume";
 GIBBER: "gibber";
 IMPORT: "import";
+NORMALIZE: "reduce";
+TERM: "term";
+PROP: "proposition";
+
 
 //VAR: ('a'..'z')('a'..'z'|'0'..'9')*;
 ID : ('A'..'Z'|'a'..'z')('A'..'Z'|'a'..'z'|'0'..'9')*;

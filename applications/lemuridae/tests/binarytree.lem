@@ -5,5 +5,50 @@ termrule if(true(),x,y) -> x.
 termrule if(false(),x,y) -> y.
 termrule insert(n,bin(m,a,b)) -> if(less(n,m), bin(m,insert(n,a),b), bin(m,a,insert(n,b))).
 termrule insert (n,nil()) -> bin(n,nil(),nil()).
-proof test: P ( insert(2, insert(4, insert(3, insert(6, nil()))))).
+
+reduce term  insert(2, insert(4, insert(3, insert(6, nil())))).
+
+proprule le(succ(n),succ(m)) -> le(n,m).
+proprule le(0,x) -> True.
+proprule le(succ(x),0) -> False.
+proprule Sorted(bin(n,bin(n1,a1,b1),bin(n2,a2,b2))) -> le(n1,n) /\ le(n,n2) /\ Sorted(bin(n1,a1,b1)) /\ Sorted(bin(n2,a2,b2)).
+proprule Sorted(bin(n,bin(n1,a1,b1),nil())) -> le(n1,n) /\ Sorted(bin(n1,a1,b1)).
+proprule Sorted(bin(n,nil(),bin(n2,a2,b2))) -> le(n,n2) /\ Sorted(bin(n2,a2,b2)).
+proprule Sorted(bin(n,nil(),nil())) -> True.
+
+proof lem1: Sorted( insert(2, insert(4, insert(3, insert(6, nil()))))  ).
 reduce.
+intros.
+
+// importe arith et ajoute les axiomes de simu du 2nd ordre
+
+import "../tests/finit_arith.lem".
+proprule in(l,fLe(n1,n2)) -> le(appl(n1,l),appl(n2,l)).
+proprule in(l,fSorted(n)) -> Sorted(appl(n,l)).
+termrule appl(less(t1,t2),l) -> less(appl(t1,l),appl(t2,l)).
+termrule appl(bin(t1,t2),l) -> bin(appl(t1,l),appl(t2,l)).
+termrule appl(insert(t1,t2),l) -> insert(appl(t1,l),appl(t2,l)).
+termrule appl(if(t1,t2,t3),l) -> if(appl(t1,l),appl(t2,l),appl(t3,l)).
+
+
+proof ledef: forall x.( forall y.( N(x) => N(y) => (eq(less(x,y) , true()) <=> le(x,y))  )).
+intro. intro. intro. intro. intro.
+focus h1. rule. supset( fLe(one(),S(y0)), fEq(less(one(),S(y0)), S(true())) ).
+reduce.
+auto.
+next. next.
+reduce. axiom.
+rule. reduce.
+
+// A
+
+focus h3. rule.   supset( fLe(succ(S(y1)),one()), fEq(less(succ(S(y1)),one()), S(true())) ).
+
+// A
+/*
+theorem natcase.
+focus h4. intro. y0.
+intros.
+*/
+
+

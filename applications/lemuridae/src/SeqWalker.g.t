@@ -94,13 +94,13 @@ command returns [Command c]
   {
     c = null;
     Prop r,l;
-    //Sequent s;
-    Prop p;
     Term lhs,rhs;
   }
-  : #(PROOF i1:ID p=pred) { c = `proof(i1.getText(),p); }
+  : #(PROOF i1:ID l=pred) { c = `proof(i1.getText(),l); }
   | #(RRULE l=pred r=pred) { c = `rewritesuper(l,r); }
   | #(PRULE l=pred r=pred) { c = `rewriteprop(l,r); }
+  | #(PROP l=pred) { c = `normalizeProp(l); }
+  | #(TERM lhs=term) { c = `normalizeTerm(lhs); }
   | #(TRULE lhs=term rhs=term) { c = `rewriteterm(lhs,rhs); }
   | #(DISPLAY i2:ID) { c = `display(i2.getText()); }
   | QUIT { c = `quit(); }
@@ -123,6 +123,7 @@ proofcommand returns [ProofCommand c]
   | RULEALONE { c = `ruleCommand(-1);}
   | #(CUT p=pred) { c = `cutCommand(p); }
   | #(THEOREM name:ID) { c = `theoremCommand(name.getText()); }
+  | NORMALIZE { c = `normalizeSequent(); }
   | DISPLAY { c = `proofCommand("display"); }
   | ASKRULES { c = `askrulesCommand(); }
   | QUIT { c = `proofquit(); }

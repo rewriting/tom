@@ -17,7 +17,7 @@ proprule in(l,fNull(t)) -> Null(appl(t,l)).
 proprule in(l,fEq(t1,t2)) -> eq( appl(t1,l), appl(t2,l) ).
 proprule in(l,fN(t)) -> N(appl(t,l)).
 rule eq(x,y) -> \AA.(  in(cons(x,nil()),A) => in(cons(y,nil()),A) ).
-rule N(n) -> \Ap.( in(cons(0,nil()),p) => ( \Ay.(in(cons(y,nil()),p) =>  in(cons(succ(y),nil()),p)) => in(cons(n,nil()),p) )).
+rule N(n) -> \AA.( in(cons(0,nil()),A) => ( \Ay.(in(cons(y,nil()),A) =>  in(cons(succ(y),nil()),A)) => in(cons(n,nil()),A) )).
 hered.
 rule Null(0) -> \T.
 rule Null(succ(x)) -> \B.
@@ -253,7 +253,11 @@ theorem eqrefl.
 focus h3. intro. 0. axiom.
 
 
+
+/*
+
 rule le(0,n) -> \T.
+rule le(succ(n),0) -> \B.
 proprule le(succ(n),succ(m)) ->  le(n,m).
 proprule in(l,fLe(n1,n2)) -> le(appl(n1,l),appl(n2,l)).
 
@@ -268,7 +272,6 @@ reduce. axiom.
 
 
 
-
 proof letrans : \An.(\Am.(\Ap.( N(n) => N(m) => N(p) => le(n,m) => le(m,p) => le(n,p)))).
 intro.intro.intro. intro.intro.intro.
 focus h1. rule. supset(fLe(one(),S(m0)),supset(fLe(S(m0),S(p0)),fLe(one(),S(p0)))).
@@ -280,7 +283,6 @@ focus h3. rule. supset( supset(fLe(S(y0),one()),supset(fLe(one(),S(p0)),fLe(S(y0
                         supset(fLe(S(succ(y0)),one()),supset(fLe(one(),S(p0)),fLe(S(succ(y0)),S(p0))))        ).
 next. reduce. axiom.
 reduce.
-
 
 
 termrule fib(0) -> 1.
@@ -328,7 +330,7 @@ next. next.
 reduce. axiom.
 rule. reduce.
 
-
+*/
 
 
 
