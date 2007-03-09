@@ -92,7 +92,7 @@ public class GomEnvironment {
   private Map usedBuiltinSorts = new HashMap();
 
   /**
-   * Check is the argument is a builtin module name
+   * Check if the argument is a builtin module name
    * Those are not parsed, since they only declare
    * operators for the tom signature, with no support
    */
