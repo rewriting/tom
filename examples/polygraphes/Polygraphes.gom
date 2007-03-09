@@ -12,15 +12,16 @@ TwoPath =
  * C0(G,0) = G
  */
 c0:make_insert(x,y) {
-  %match(x,y) {
-    c0(),g -> { return `g; }
-    g,c0() -> { return `g; }
-    c1(),g -> { return `g; }
-    // We want A here
-    c0(X*),g -> { if(`X*.isConsc0()) { return `c0(X*,g); } }
+     // normal form AU
+     if(x.isEmptyc0()) { return y; }
+     if(y.isEmptyc0()) { return x; }
+     if(x.isConsc0()) { return `c0(x*,y); }
 
+  %match(x,y) {
     id(0),g -> { return `g; }
     g,id(0) -> { return `g; }
+    c1(),g -> { return `g; }
+    g,c1() -> { return `g; }
     /* id(m),id(n) is handled by AU :-) */
     id(m),c0(id(n),tail*) -> { return `c0(id(n+m),tail*); }
   }
@@ -31,31 +32,16 @@ c0:make_insert(x,y) {
  * C1(G,n) = G if n=G.target
  */
 c1:make_insert(x,y) {
-  //System.out.println("x = " + x + "  " + x.getClass() + "  " + (x instanceof polygraphes.polygraphes.types.twopath.Consc1));
-  %match(x,y) {
-    c1(),g -> {  return `g; }
-    g,c1() -> {  return `g; }
-    c0(),g -> {  return `g; }
-    // We want A here
-    c1(X*),g -> {
-      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) {
-        throw new RuntimeException("bad number of lines: " + x + " " + y);
-      }
-      // X* should no be a single element
-      if(`X*.isConsc1()) { return `c1(X*,g); }
-    }
+     // normal form AU
+     if(x.isEmptyc1()) { return y; }
+     if(y.isEmptyc1()) { return x; }
+     if(x.isConsc1()) { return `c1(x*,y); }
 
-    id(m), g -> {
-      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) {
+     if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) {
         throw new RuntimeException("bad number of lines: " + x + " " + y);
       }
-      return `g;
-    }
-    g, id(n) -> {
-      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) {
-        throw new RuntimeException("bad number of lines: " + x + " " + y);
-      }
-      return `g;
-    }
+  %match(x,y) {
+    id(m), g -> { return `g; }
+    g, id(n) -> { return `g; }
   }
 }

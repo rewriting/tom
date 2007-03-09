@@ -42,6 +42,11 @@ public class Polygraphes {
   %include { sl.tom }
   %include { polygraphes/Polygraphes.tom }
 
+%op TwoPath idS(t:TwoPath) {}
+%op TwoPath idT(t:TwoPath) {}
+private static TwoPath idS(TwoPath t) { return `id(getPGSource(t)); }
+private static TwoPath idT(TwoPath t) { return `id(getPGTarget(t)); }
+
   public static int getPGSource(TwoPath t) {
     %match(t) {
       id(n) -> { return `n; }
@@ -90,7 +95,7 @@ public class Polygraphes {
 		       id(0));
     System.out.println("two = " + two2);
 
-    TwoPath dupadd = `c1(
+    TwoPath res = `c1(
                         c0(c1(dup,
                               c0(suc,id(1))), id(1)),
                         c0(id(1),c1(c0(suc,suc),add)));
@@ -102,9 +107,11 @@ public class Polygraphes {
 //      c0(id(2),g("suc",1,1))),
 //   c0(id(1),g("add",2,1)))
 
-    System.out.println("dup = " + dupadd);
-    TwoPath res = (TwoPath) `Repeat(OnceTopDown(Sequence(Transform(),Print()))).fire(dupadd);
-    System.out.println("res = " + res);
+    System.out.println("res0 = " + res);
+    res = (TwoPath) `Repeat(OnceTopDown(Transform())).fire(res);
+    System.out.println("res1 = " + res);
+    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).fire(res);
+    System.out.println("res2 = " + res);
 
   }
 
@@ -117,75 +124,90 @@ public class Polygraphes {
   %strategy Transform() extends Fail() {
     visit TwoPath {
       /*
-       * C0(C1(f,g),C1(h,k)) -> C1(C0(f,h),C0(g,k)) si target(f) = source(g)
-       */
-      /*
-	 c0(concC0( c1(concC1(f*,g*)), c1(concC1(h*,k*)))) -> {
-	 if(`f*.isEmptyC1() || `g*.isEmptyC1() || `h*.isEmptyC1() || `k*.isEmptyC1() ) {
-      // do nothing
-      } else {
-      return `c1(concC1( c0(concC0(c12c0(f*),c12c0(h*))), c0(concC0(c12c0(g*),c12c0(k*)))));
-      }
-      }
-       */
-
-      /*
-       * 
+       * Lifting rule
        */
       c0(X*,f@!id[],Y*,g@!id[],Z*) -> {
-System.out.println("f = " + `f);
-System.out.println("g = " + `g);
-            return `c1(c0(X*,f,Y*,id(getPGSource(g)),Z*),
-                       c0(id(getPGTarget(X*)),id(getPGTarget(f)),id(getPGTarget(Y*)),g,id(getPGTarget(Z*))));
+	return `c1(c0(X*,f,Y*,idS(g),Z*),
+	           c0(idT(X*),idT(f),idT(Y*),g,idT(Z*)));
       }
-      
+
       /*
+       * Vertical Splitting rule
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
       c0(head*, c1(f*,g*), tail*) -> {
-	// f*,g* should be a c1 list or a single element
-        if((!`f*.isEmptyc1() && !`f*.isConsc0()) && (!`g*.isEmptyc1() && !`g*.isConsc0())) {
-          // head, tail are either empty or id(m)
-          if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
-System.out.println("f* = " + `f);
-System.out.println("g* = " + `g);
-System.out.println("h* = " + `head);
-System.out.println("t* = " + `tail);
-// conversion function are not correct here
-            return `c1(c0(head*,f*,tail*),
-                       c0(head*,g*,tail*));
-          }
-        }
+	// head and tail should not be both empty
+	if(!`head*.isEmptyc0() || !`tail*.isEmptyc0()) {
+	  // f*,g* should be a non empty c1 list or a single element
+	  if((!`f*.isEmptyc1()) && (!`g*.isEmptyc1())) {
+	    // head, tail are either empty or id(m)
+	    // idea: use id(m) with m possibily 0
+	    // i.e. id(0) is neutral wrt. c0
+	    if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
+	      return `c1(c0(head*,f*,tail*),
+		         c0(head*,g*,tail*));
+	    }
+	  }
+	}
       }
     }
   }
 
+  %strategy Gravity() extends Fail() {
+    visit TwoPath {
+      /*
+       * Gravity rule
+       */
+      c1(c0(M*,f,N*),
+	 c0(P*,id(m),Q*),
+	 tail*) -> {
+	if(!`f.isid()) {
+	  int sp = getPGSource(`P*);
+	  int sq = getPGSource(`Q*);
+	  int tm = getPGTarget(`M*);
+	  int tn = getPGTarget(`N*);
+	  int tf = getPGTarget(`f);
+	  if((sp <= tm) && (sp+`m >= tm+tf)) {
+	      return `c1(c0(M*,idS(f),N*),
+                         c0(P*,id(tm-sp),f*,id(tn-sq),Q*),
+                         tail*);
+	  }
+	}
+      }
+
+/* bug anti-pattern
+      c1(c0(M*,f@!id[],N*),
+	 c0(P*,g@!id[],Q*),
+	 tail*) -> {
+ */
+/*
+      c1(c0(M*,f,N*),
+	 c0(P*,g,Q*),
+	 tail*) -> {
+	if(!`f.isid() && !`g.isid()) {
+	  if(isEmptyOrId(`M) && isEmptyOrId(`N) && isEmptyOrId(`P) &&isEmptyOrId(`Q)) {
+	    int delta = getPGSource(`P) - (getPGTarget(`M) + getPGTarget(`f));
+	    if(delta >= 0) {
+	      return `c1(c0(M*,f,id(delta),g,Q*),
+                         tail*);
+	    } 
+
+	    delta = getPGTarget(`M) - (getPGSource(`P) + getPGSource(`g));
+	    if(delta>=0) {
+	      return `c1(c0(P*,g,id(delta),f,N*),
+                         tail*);
+	    }
+	  }
+	}
+      }
+*/
+    }
+  }
   private static boolean isEmptyOrId(TwoPath l) {
     %match(l) {
       c0()  -> { return true; }
       id(n) -> { return true; }
     }
     return false;
-  }
-
-  /* conversion functions */
-  %op TwoPath c02c1(l:TwoPath) {}
-  static private TwoPath c02c1(TwoPath l) {
-    %match(TwoPath l) {
-      Emptyc0() -> { return `Emptyc1(); }
-      Consc0(head,tail) -> { return `Consc1(head,c02c1(tail)); }
-    }
-    //throw new RuntimeException("c02c1 transforming "+l);
-    return l;
-  }
-
-  %op TwoPath c12c0(l:TwoPath) {}
-  static private TwoPath c12c0(TwoPath l) {
-    %match(TwoPath l) {
-      Emptyc1() -> { return `Emptyc0(); }
-      Consc1(head,tail) -> { return `Consc0(head,c12c0(tail)); }
-    }
-    //throw new RuntimeException("c12c2 transforming "+l);
-    return l;
   }
 }
