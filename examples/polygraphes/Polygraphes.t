@@ -91,9 +91,9 @@ public class Polygraphes {
     System.out.println("two = " + two2);
 
     TwoPath dupadd = `c1(
-	                 c0(c1(dup,
-			      c0(suc,id(1))), id(1)),
-			 c0(id(1),c1(c0(suc,suc),add)));
+                        c0(c1(dup,
+                              c0(suc,id(1))), id(1)),
+                        c0(id(1),c1(c0(suc,suc),add)));
 
 //c1(
 //   c1(c0(g("dup",1,2),id(1)),
@@ -141,7 +141,7 @@ public class Polygraphes {
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
       c0(head*, c1(f*,g*), tail*) -> {
-        if(`f*.isEmptyc1() || `g*.isEmptyc1()) {
+        if(!(`f*.isConsc1() || `g*.isConsc1())) {
           // do nothing
         } else {
           // head, tail are either empty or id(m)

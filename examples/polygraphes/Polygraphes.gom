@@ -31,23 +31,32 @@ c0:make_insert(x,y) {
  * C1(G,n) = G if n=G.target
  */
 c1:make_insert(x,y) {
-System.out.println("x = " + x + "  " + x.getClass() + "  " + (x instanceof polygraphes.polygraphes.types.twopath.Consc1));
+  System.out.println("x = " + x + "  " + x.getClass() + "  " + (x instanceof polygraphes.polygraphes.types.twopath.Consc1));
   %match(x,y) {
     c1(),g -> { System.out.println("1"); return `g; }
     g,c1() -> { System.out.println("2"); return `g; }
     c0(),g -> { System.out.println("3"); return `g; }
     // We want A here
-    c1(X*),g -> {System.out.println("4"); 
-      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
-        if(`X*.isConsc1()) { return `c1(X*,g); }
+    c1(X*),g -> {
+      System.out.println("4"); 
+      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) {
+        throw new RuntimeException("bad number of lines: " + x + " " + y);
       }
+      if(`X*.isConsc1()) { return `c1(X*,g); }
+    }
 
     id(m), g -> {
- System.out.println("5");      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
+      System.out.println("5");
+      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) {
+        throw new RuntimeException("bad number of lines: " + x + " " + y);
+      }
       return `g;
     }
-    g, id(n) -> { System.out.println("6"); 
-      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) { throw new RuntimeException("bad number of lines: " + x + " " + y); }
+    g, id(n) -> {
+      System.out.println("6"); 
+      if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) {
+        throw new RuntimeException("bad number of lines: " + x + " " + y);
+      }
       return `g;
     }
   }
