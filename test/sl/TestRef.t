@@ -60,13 +60,13 @@ public class TestRef extends TestCase {
   public void testRef() {
     Term subject = (Term) testslAbstractType.expand(`g(g(a(),refTerm("l")),labTerm("l",a())));
     try{
-      Term res = (Term) `TopDown(StrictRelativeRef(AB())).fire(subject);
+      Term res = (Term) `TopDown(StrictDeRef(AB())).fire(subject);
       assertEquals(res,testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDown(RelativeRef(AB())).fire(subject);
+      res = (Term) `TopDown(DeRef(AB())).fire(subject);
       assertEquals(res,testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDownSeq(StrictRelativeRef(AB())).fire(subject);
+      res = (Term) `TopDownSeq(StrictDeRef(AB())).fire(subject);
       assertEquals(res,testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDownSeq(RelativeRef(AB())).fire(subject);
+      res = (Term) `TopDownSeq(DeRef(AB())).fire(subject);
       assertEquals(res,testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",c()))));
     } catch (tom.library.sl.FireException e) {
       fail("It should not fail");

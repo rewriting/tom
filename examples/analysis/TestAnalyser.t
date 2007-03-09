@@ -36,15 +36,12 @@ import analysis.node.types.*;
 import analysis.node.*;
 import analysis.ast.*;
 import analysis.ast.types.*;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.Visitable;
-import jjtraveler.VisitFailure;
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 
 public class TestAnalyser extends TestCase {
 
   %include {node/Node.tom}
-  %include {mutraveler.tom}
+  %include {sl.tom}
 
   private Analyser analyser;
   private Ast subject;
