@@ -133,6 +133,8 @@ public class Polygraphes {
        * 
        */
       c0(X*,f@!id[],Y*,g@!id[],Z*) -> {
+System.out.println("f = " + `f);
+System.out.println("g = " + `g);
             return `c1(c0(X*,f,Y*,id(getPGSource(g)),Z*),
                        c0(id(getPGTarget(X*)),id(getPGTarget(f)),id(getPGTarget(Y*)),g,id(getPGTarget(Z*))));
       }
@@ -141,13 +143,17 @@ public class Polygraphes {
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
       c0(head*, c1(f*,g*), tail*) -> {
-        if(!(`f*.isConsc1() || `g*.isConsc1())) {
-          // do nothing
-        } else {
+	// f*,g* should be a c1 list or a single element
+        if((!`f*.isEmptyc1() && !`f*.isConsc0()) && (!`g*.isEmptyc1() && !`g*.isConsc0())) {
           // head, tail are either empty or id(m)
           if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
-            return `c1(c0(head*,c12c0(f*),tail*),
-                       c0(head*,c12c0(g*),tail*));
+System.out.println("f* = " + `f);
+System.out.println("g* = " + `g);
+System.out.println("h* = " + `head);
+System.out.println("t* = " + `tail);
+// conversion function are not correct here
+            return `c1(c0(head*,f*,tail*),
+                       c0(head*,g*,tail*));
           }
         }
       }
