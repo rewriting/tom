@@ -37,7 +37,7 @@ c1:make_insert(x,y) {
      if(y.isEmptyc1()) { return x; }
      if(x.isConsc1()) { return `c1(x*,y); }
 
-     if(polygraphes.Polygraphes.getPGTarget(x)!=polygraphes.Polygraphes.getPGSource(y)) {
+     if(polygraphes.Polygraphes.t(x)!=polygraphes.Polygraphes.s(y)) {
         throw new RuntimeException("bad number of lines: " + x + " " + y);
       }
   %match(x,y) {
