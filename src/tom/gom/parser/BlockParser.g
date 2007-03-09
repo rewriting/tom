@@ -63,7 +63,7 @@ block returns [String block]
 { block = "?"; }
 :
  LBRACE { /* Verify there was nothing more than only a LBRACE in the input */ 
-  if (!lexer.target.toString().trim().equals("{"))
+   if (!lexer.target.toString().trim().equals("{"))
     throw new RecognitionException("Expecting \"{\", found \""+lexer.target.toString()+"\"");
 } 
   rawblocklist

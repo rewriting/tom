@@ -229,7 +229,7 @@ public class TermGraphRewriting {
               // 3. we save the subterm updated 
               Term subterm = (Term) getEnvironment().getSubject(); 
 
-              // 4. we replace at dest  the subterm by the new relative pso
+              // 4. we replace at dest  the subterm by the new relative pos
               getEnvironment().setSubject(relref);
 
               getEnvironment().goTo(dest.getRelativePosition(current));
