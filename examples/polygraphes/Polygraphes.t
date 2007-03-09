@@ -47,9 +47,11 @@ public class Polygraphes {
       id(n) -> { return `n; }
       g[Source=x] -> { return `x; }
       c0() -> { return 0; }
+      // We want A here
       c0(head,tail*) -> { if(!`tail*.isEmptyc0()) { return getPGSource(`head) + getPGSource(`tail*); } }
 
       c1() -> { return 0; }
+      // We want A here
       c1(head,tail*) -> { if(!`tail*.isEmptyc1()) { return getPGSource(`head); } }
     }
     throw new RuntimeException("strange term: " + t);
@@ -60,9 +62,11 @@ public class Polygraphes {
       id(n) -> { return `n; }
       g[Target=x] -> { return `x; }
       c0() -> { return 0; }
+      // We want A here
       c0(head,tail*) -> { if(!`tail*.isEmptyc0()) { return getPGTarget(`head) + getPGTarget(`tail*); } }
 
       c1() -> { return 0; }
+      // We want A here
       c1(head*,last) -> { if(!`head*.isEmptyc1()) { return getPGTarget(`head); } }
     }
     throw new RuntimeException("strange term: " + t);
@@ -75,6 +79,10 @@ public class Polygraphes {
     TwoPath add = `g("add",2,1);
     TwoPath two = `c0(c1(zero,suc),c1(zero,suc));
     System.out.println("two = " + two);
+
+    System.out.println("two+two = " + `c1(c1(suc,suc)));
+    System.out.println("two+two = " + `c1(c1(suc,suc),c1(suc,suc)));
+
 
     TwoPath two2 = `c0(id(0),
                        c1(id(0),zero,id(1),id(1),suc,id(1)),id(0),
@@ -122,30 +130,22 @@ public class Polygraphes {
        */
 
       /*
-       * C0(id(m),g,tail*) -> C1(C0(id(m),g,id(source(tail*)),
-       C0(id(m+target(g)),tail*)) g notin tail
+       * 
        */
-      c0(id(m),g@g[],tail*) -> {
-        %match(TwoPath tail) {
-          c0(_*,!id[],_*) -> {
-            return `c1(c0(id(m),g,             id(getPGSource(tail*))),
-                       c0(id(m+getPGTarget(g)),tail*));
-          }
-        }
+      c0(X*,f@!id[],Y*,g@!id[],Z*) -> {
+            return `c1(c0(X*,f,Y*,id(getPGSource(g)),Z*),
+                       c0(id(getPGTarget(X*)),id(getPGTarget(f)),id(getPGTarget(Y*)),g,id(getPGTarget(Z*))));
       }
-
+      
       /*
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
       c0(head*, c1(f*,g*), tail*) -> {
-        if(`f*.isEmptyc1()
-            || `g*.isEmptyc1()) {
+        if(`f*.isEmptyc1() || `g*.isEmptyc1()) {
           // do nothing
         } else {
           // head, tail are either empty or id(m)
-          if(isEmptyOrId(`head)
-              && isEmptyOrId(`tail)
-              && !(`head*.isEmptyc0() && `tail*.isEmptyc0())) {
+          if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
             return `c1(c0(head*,c12c0(f*),tail*),
                        c0(head*,c12c0(g*),tail*));
           }
