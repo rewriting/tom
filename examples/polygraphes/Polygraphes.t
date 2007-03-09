@@ -87,12 +87,12 @@ public class Polygraphes {
 			      c0(suc,id(1))), id(1)),
 			 c0(id(1),c1(c0(suc,suc),add)));
 
-//res = c1(concC1(
-//c0(concC0(g("dup",1,2),id(1))),
-//c0(concC0(g("suc",1,1),id(2))),
-//c0(concC0(id(1),g("suc",1,1),id(1))),
-//c0(concC0(id(2),g("suc",1,1))),
-//c0(concC0(id(1),g("add",2,1)))))
+//c1(
+//   c1(c0(g("dup",1,2),id(1)),
+//      c0(c0(g("suc",1,1),id(1)),id(1))),
+//   c1(c0(id(1),g("suc",1,1),id(1)),
+//      c0(id(2),g("suc",1,1))),
+//   c0(id(1),g("add",2,1)))
 
     System.out.println("dup = " + dupadd);
     TwoPath res = (TwoPath) `Repeat(OnceTopDown(Sequence(Transform(),Print()))).fire(dupadd);
