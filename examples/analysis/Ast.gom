@@ -3,9 +3,9 @@ imports String
 abstract syntax
 Ast = If(condition:Expression,succesInst:Ast,failureInst:Ast)
     | WhileDo(condition:Expression,doInst:Ast) 
-    | Let(variable:Variable,term:Term,instr:Ast)
-    | LetRef(variable:Variable,term:Term,instr:Ast)
-    | LetAssign(variable:Variable,term:Term)
+    | Let(variable:Variable,t:Term,instr:Ast)
+    | LetRef(variable:Variable,t:Term,instr:Ast)
+    | LetAssign(variable:Variable,t:Term)
     | Nop()
     | concAst(Ast*)
 
@@ -23,5 +23,3 @@ Term = a()
      | f(arg1: Term, arg2:Term)
      | g(arg:Term)
      | Var(v:Variable)
-
-

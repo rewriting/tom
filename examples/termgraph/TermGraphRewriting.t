@@ -146,39 +146,30 @@ public class TermGraphRewriting {
     visit Term {
       p@posTerm(_*) -> {
         Position current = (Position) getEnvironment().getPosition(); 
-        int subomega = getEnvironment().getSubOmega();
-        getEnvironment().up();
-        //verify that we are not inside a position
-        if(! (getEnvironment().getSubject() instanceof posTerm)){  
-          getEnvironment().down(subomega);
-          Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
-          Position dest = current.getAbsolutePosition(relPos);
-          if(current.compare(dest)== -1){
-            //we must switch the rel position and the pointed subterm
-            Position rootpos = Position.makeAbsolutePosition(new int[]{});
-            getEnvironment().goTo(current.getRelativePosition(rootpos));
-            Info info = new Info();
-            Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
-            Strategy getSubterm = dest.getSubterm();
-            int[] relarray = dest.getRelativePosition(current).toArray();
-            info.term = (Term) getEnvironment().getSubject();
-            Term relref = `posTerm();
-            for(int i=0;i<relarray.length;i++){
-              relref = `posTerm(relref*,relarray[i]);
-            }
-            Strategy replace = dest.getReplace(relref);
-            AbstractStrategy.init(update,getEnvironment());
-            AbstractStrategy.init(getSubterm,getEnvironment()); 
-            AbstractStrategy.init(replace,getEnvironment()); 
-            update.visit();
-            Term subterm = (Term) getSubterm.fire(getEnvironment().getSubject()); 
-            replace.visit(); 
-            getEnvironment().goTo(rootpos.getRelativePosition(current));
-            return subterm; 
+        Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
+        Position dest = current.getAbsolutePosition(relPos);
+        if(current.compare(dest)== -1){
+          //we must switch the rel position and the pointed subterm
+          Position rootpos = Position.makeAbsolutePosition(new int[]{});
+          getEnvironment().goTo(current.getRelativePosition(rootpos));
+          Info info = new Info();
+          Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
+          Strategy getSubterm = dest.getSubterm();
+          int[] relarray = dest.getRelativePosition(current).toArray();
+          info.term = (Term) getEnvironment().getSubject();
+          Term relref = `posTerm();
+          for(int i=0;i<relarray.length;i++){
+            relref = `posTerm(relref*,relarray[i]);
           }
-        }
-        else{
-          getEnvironment().down(subomega);
+          Strategy replace = dest.getReplace(relref);
+          AbstractStrategy.init(update,getEnvironment());
+          AbstractStrategy.init(getSubterm,getEnvironment()); 
+          AbstractStrategy.init(replace,getEnvironment()); 
+          update.visit();
+          Term subterm = (Term) getSubterm.fire(getEnvironment().getSubject()); 
+          replace.visit(); 
+          getEnvironment().goTo(rootpos.getRelativePosition(current));
+          return subterm; 
         }
       }
     }
@@ -189,19 +180,14 @@ public class TermGraphRewriting {
     visit Term {
       p@posTerm(_*) -> {
         Position current = (Position) getEnvironment().getPosition(); 
-        int subomega = getEnvironment().getSubOmega();
-        getEnvironment().up();
-        //verify that we are not inside a position
-        if(! (getEnvironment().getSubject() instanceof posTerm)){  
-          getEnvironment().down(subomega);
-          Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
-          Position dest = current.getAbsolutePosition(relPos);
-          if(current.compare(dest)== -1){
-            getEnvironment().followRef();
-            Position realDest = getEnvironment().getPosition(); 
-            if(! realDest.equals(dest)){
-              //the subterm pointed was a  pos (in case of previous switch) 
-              //and we must only update the relative position
+        Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
+        Position dest = current.getAbsolutePosition(relPos);
+        if(current.compare(dest)== -1){
+          getEnvironment().followRef();
+          Position realDest = getEnvironment().getPosition(); 
+          if(! realDest.equals(dest)){
+            //the subterm pointed was a  pos (in case of previous switch) 
+            //and we must only update the relative position
 
               int[] relarray = current.getRelativePosition(realDest).toArray();
               Term relref = `posTerm();
@@ -229,17 +215,13 @@ public class TermGraphRewriting {
               // 3. we save the subterm updated 
               Term subterm = (Term) getEnvironment().getSubject(); 
 
-              // 4. we replace at dest  the subterm by the new relative pso
+              // 4. we replace at dest  the subterm by the new relative pos
               getEnvironment().setSubject(relref);
 
               getEnvironment().goTo(dest.getRelativePosition(current));
               return subterm; 
             }
           }
-        }
-        else{
-          getEnvironment().down(subomega);
-        }
       }
     }
   }
@@ -361,7 +343,7 @@ public class TermGraphRewriting {
     /*  an optimized version (no update during the innermost strat) */
     /************************************************************/
 
-    t = `g(g(g(f(a()),g(posTerm(2,1),posTerm(3,2))),a()),posTerm(1,1,1,1,1));
+    t = `g(g(g(f(a()),g(posTerm(2,1),a())),posTerm(1,1,2,2)),posTerm(1,1,1,1,1));
     System.out.println("\n\nMore complex initial term :"+t);
     
     /* concat a constant on top of the term */

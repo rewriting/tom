@@ -4,64 +4,44 @@ abstract syntax
 TwoPath = 
       | id(Value:int)
       | g(Name:String, Source:int, Target:int)
-      | c0( Lc0:TwoPathC0 )
-      | c1( Lc1:TwoPathC1 )
-
-TwoPathC0 = concC0( TwoPath* )
-TwoPathC1 = concC1( TwoPath* )
-
-/*
-sort TwoPath:import {
-  import polygraphes.*;
-}
-sort TwoPathC0:import {
-  import polygraphes.*;
-}
-sort TwoPathC1:import {
-  import polygraphes.*;
-}
-*/
-//sort TwoPath:block {
-//}
-
-c0:make(l) {
-  %match(l) {
-    concC0() -> { return `id(0); }
-    concC0(x)-> { return `x; }
-  }
-}
-
-c1:make(l) {
-  %match(l) {
-    concC1() -> { return `id(0); }
-    concC1(x)-> { return `x; }
-  }
-}
-
+      | c0( TwoPath* )
+      | c1( TwoPath* )
 
 /*
  * C0(0,G) = G
  * C0(G,0) = G
  */
-concC0:make_insert(e,l) {
-  %match(e,l) {
-    id(0),_ -> { return l; }
-    id(m),concC0(id(n),tail*) -> { return `concC0(id(n+m),tail*); }
-    c0(concC0(subL*)),_ -> { return `concC0(subL*,l*); }
+c0:make_insert(x,y) {
+     // normal form AU
+     if(x.isEmptyc0()) { return y; }
+     if(y.isEmptyc0()) { return x; }
+     if(x.isConsc0()) { return `c0(x*,y); }
+
+  %match(x,y) {
+    id(0),g -> { return `g; }
+    g,id(0) -> { return `g; }
+    c1(),g -> { return `g; }
+    g,c1() -> { return `g; }
+    /* id(m),id(n) is handled by AU :-) */
+    id(m),c0(id(n),tail*) -> { return `c0(id(n+m),tail*); }
   }
 }
 
 /*
  * C1(m,G) = G if m=G.source
  * C1(G,n) = G if n=G.target
- * C1(C0(F,p),C0(n,G)) = C0(F,G) if G.source = p and F.target=n
- * C1(C0(m,G),C0(F,q)) = C0(F,G) if G.target = q and F.source=m
  */
-concC1:make_insert(e,l) {
-  %match(e,l) {
-    id(m), concC1(head*,tail*) -> { if(`m == polygraphes.Polygraphes.getSourceC1(`head*)) return l; }
-    _, concC1(head*,id(n),tail*) -> { if(`n == polygraphes.Polygraphes.getTargetC1(`concC1(e,head*))) return `concC1(e,head*,tail*); }
-    c1(concC1(subL*)),_ -> { return `concC1(subL*,l*); }
+c1:make_insert(x,y) {
+     // normal form AU
+     if(x.isEmptyc1()) { return y; }
+     if(y.isEmptyc1()) { return x; }
+     if(x.isConsc1()) { return `c1(x*,y); }
+
+     if(polygraphes.Polygraphes.t(x)!=polygraphes.Polygraphes.s(y)) {
+        throw new RuntimeException("bad number of lines: " + x + " " + y);
+      }
+  %match(x,y) {
+    id(m), g -> { return `g; }
+    g, id(n) -> { return `g; }
   }
 }
-

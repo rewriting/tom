@@ -188,13 +188,13 @@ public class PatternAnalyser{
 
   %op Strategy CurrentNode(s:Strategy) {
     make(s) {
-      `_ConsWfgNode(RelativeRef(s),Identity())
+      `_ConsWfgNode(DeRef(s),Identity())
     }
   }
 
   %op Strategy AllWfg(s:Strategy) {
     make(s) {
-      `_ConsWfgNode(Identity(),Choice(_EmptyWfgNode(),_WfgNode(RelativeRef(s))))
+      `_ConsWfgNode(Identity(),Choice(_EmptyWfgNode(),_WfgNode(DeRef(s))))
     }
   }
 

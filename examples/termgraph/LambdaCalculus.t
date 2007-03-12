@@ -52,7 +52,7 @@ public class LambdaCalculus {
     
     // beta with refs (designed for call by need)
     Strategy betaRef = `Sequence(
-        _app(Identity(),RelativeRef(collectTerm(info))), 
+        _app(Identity(),DeRef(collectTerm(info))), 
         _app(Sequence(
             collectPosition(info),
             _abs2(Mu(MuVar("x"),Choice(substitute(info),All(MuVar("x")))))),Identity()),

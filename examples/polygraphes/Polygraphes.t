@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2007-2007, INRIA
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
- * met: 
+ * met:
  *  - Redistributions of source code must retain the above copyright
- *  notice, this list of conditions and the following disclaimer.  
+ *  notice, this list of conditions and the following disclaimer.
  *  - Redistributions in binary form must reproduce the above copyright
  *  notice, this list of conditions and the following disclaimer in the
  *  documentation and/or other materials provided with the distribution.
  *  - Neither the name of the INRIA nor the names of its
  *  contributors may be used to endorse or promote products derived from
  *  this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -42,89 +42,50 @@ public class Polygraphes {
   %include { sl.tom }
   %include { polygraphes/Polygraphes.tom }
 
-  public static int getSource(TwoPath t) {
+  public static int s(TwoPath t) {
     %match(t) {
       id(n) -> { return `n; }
       g[Source=x] -> { return `x; }
-      c0(l) -> { return getSourceC0(`l); }
-      c1(l) -> { return getSourceC1(`l); }
+      c0() -> { return 0; }
+      // We want A here
+      c0(head,tail*) -> { if(!`tail*.isEmptyc0()) { return s(`head) + s(`tail*); } }
+      c1() -> { return 0; }
+      // We want A here
+      c1(head,tail*) -> { if(!`tail*.isEmptyc1()) { return s(`head); } }
     }
     throw new RuntimeException("strange term: " + t);
   }
 
-  public static int getSourceC0(TwoPathC0 t) {
-    %match(t) {
-      concC0() -> { return 0; }
-      concC0(head,tail*) -> { return getSource(`head) + getSourceC0(`tail*); }
-    }
-    throw new RuntimeException("strange term: " + t);
-  }
-
-  public static int getSourceC1(TwoPathC1 t) {
-    %match(t) {
-      concC1() -> { return 0; }
-      concC1(head,_*) -> { return getSource(`head); }
-    }
-    throw new RuntimeException("strange term: " + t);
-  }
-
-  public static int getTarget(TwoPath t) {
+  public static int t(TwoPath t) {
     %match(t) {
       id(n) -> { return `n; }
       g[Target=x] -> { return `x; }
-      c0(l) -> { return getTargetC0(`l); }
-      c1(l) -> { return getTargetC1(`l); }
+      c0() -> { return 0; }
+      // We want A here
+      c0(head,tail*) -> { if(!`tail*.isEmptyc0()) { return t(`head) + t(`tail*); } }
+      c1() -> { return 0; }
+      // We want A here
+      c1(head*,last) -> { if(!`head*.isEmptyc1()) { return t(`head); } }
     }
     throw new RuntimeException("strange term: " + t);
   }
-
-  public static int getTargetC0(TwoPathC0 t) {
-    %match(t) {
-      concC0() -> { return 0; }
-      concC0(head,tail*) -> { return getTarget(`head) + getTargetC0(`tail*); }
-    }
-    throw new RuntimeException("strange term: " + t);
-  }
-
-  public static int getTargetC1(TwoPathC1 t) {
-    %match(t) {
-      concC1() -> { return 0; }
-      concC1(_*,last) -> { return getTarget(`last); }
-    }
-    throw new RuntimeException("strange term: " + t);
-  }
-  
 
   public static void main(String[] args) {
     TwoPath zero = `g("zero",0,1);
     TwoPath suc = `g("suc",1,1);
     TwoPath dup = `g("dup",1,2);
     TwoPath add = `g("add",2,1);
-    TwoPath two = `c0(concC0(c1(concC1(zero,suc)),c1(concC1(zero,suc))));
-    System.out.println("two = " + two);
-    
-    TwoPath two2 = `c0(concC0(id(0),
-                              c1(concC1(id(0),zero,id(1),id(1),suc,id(1))),id(0),
-                              c1(concC1(id(0),zero,id(1),id(1),suc,id(1))),id(0),
-                              id(0)));
-    System.out.println("two = " + two2);
 
-    TwoPath dupadd = `c1(concC1(
-      c0(concC0(c1(concC1(dup,
-                          c0(concC0(suc,id(1))))), id(1))),
-      c0(concC0(id(1),c1(concC1(c0(concC0(suc,suc)),add))))
-      ));
+    TwoPath res = `c1(
+                        c0(c1(dup,
+                              c0(suc,id(1))), id(1)),
+                        c0(id(1),c1(c0(suc,suc),add)));
 
-//res = c1(concC1(
-//c0(concC0(g("dup",1,2),id(1))),
-//c0(concC0(g("suc",1,1),id(2))),
-//c0(concC0(id(1),g("suc",1,1),id(1))),
-//c0(concC0(id(2),g("suc",1,1))),
-//c0(concC0(id(1),g("add",2,1)))))
-
-    System.out.println("dup = " + dupadd);
-    TwoPath res = (TwoPath) `Repeat(OnceTopDown(Sequence(Transform(),Print()))).fire(dupadd);
-    System.out.println("res = " + res);
+    System.out.println("res0 = " + res);
+    res = (TwoPath) `Repeat(OnceTopDown(Splitting())).fire(res);
+    System.out.println("res1 = " + res);
+    res = (TwoPath) `Repeat(OnceTopDown(Gravity())).fire(res);
+    System.out.println("res2 = " + res);
 
   }
 
@@ -134,75 +95,68 @@ public class Polygraphes {
     }
   }
 
-  %strategy Transform() extends Fail() {
+  %strategy Lifting() extends Fail() {
     visit TwoPath {
       /*
-       * C0(C1(f,g),C1(h,k)) -> C1(C0(f,h),C0(g,k)) si target(f) = source(g)
+       * Lifting rule
        */
-      /*
-	 c0(concC0( c1(concC1(f*,g*)), c1(concC1(h*,k*)))) -> {
-	 if(`f*.isEmptyconcC1() || `g*.isEmptyconcC1() || `h*.isEmptyconcC1() || `k*.isEmptyconcC1() ) {
-      // do nothing 
-      } else {
-      return `c1(concC1( c0(concC0(c12c0(f*),c12c0(h*))), c0(concC0(c12c0(g*),c12c0(k*)))));
+      c0(X*,f@!id[],Y*,g@!id[],Z*) -> {
+	return `c1(c0(X*,f,Y*,id(s(g)),Z*),
+   	           c0(id(t(X*)),id(t(f)),id(t(Y*)),g,id(t(Z*))));
       }
-      }
-       */
+    }
+  }
 
+  %strategy Splitting() extends Fail() {
+    visit TwoPath {
       /*
-       * C0(id(m),g,tail*) -> C1(C0(id(m),g,id(source(tail*)),
-       C0(id(m+target(g)),tail*)) g notin tail
-       */
-      c0(concC0(id(m),g@g[],tail*)) -> {
-	%match(TwoPathC0 tail) {
-	  concC0(_*,!id[],_*) -> { 
-	    return `c1(concC1( c0(concC0(id(m),g,id(getSourceC0(tail*)))), 
-		  c0(concC0(id(m+getTarget(g)),tail*))));
-	  }
-	}
-      }
-
-      /*
+       * Vertical Splitting rule
        * C0(id(m),C1(f*,g*),id(n)) -> C1(C0(id(m),f*,id(n)),C0(id(m),g*,id(n)))
        */
-      c0(concC0(head*, c1(concC1(f*,g*)), tail*)) -> {
-	if(`f*.isEmptyconcC1() || `g*.isEmptyconcC1()) {
-	  // do nothing 
-	} else {
-	  // head, tail are either empty or id(m)
-	  if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
-	    return `c1(concC1( c0(concC0(head*,c12c0(f*),tail*)),
-	   	               c0(concC0(head*,c12c0(g*),tail*))));
+      c0(head*, c1(f*,g*), tail*) -> {
+	// head and tail should not be both empty
+	if(!`head*.isEmptyc0() || !`tail*.isEmptyc0()) {
+	  // f*,g* should be a non empty c1 list or a single element
+	  if((!`f*.isEmptyc1()) && (!`g*.isEmptyc1())) {
+	    // head, tail are either empty or id(m)
+	    // idea: use id(m) with m possibily 0
+	    // i.e. id(0) is neutral wrt. c0
+	    if(isEmptyOrId(`head) && isEmptyOrId(`tail)) {
+	      return `c1(c0(head*,f*,tail*),
+		         c0(head*,g*,tail*));
+	    }
 	  }
 	}
       }
-
     }
   }
 
-  private static boolean isEmptyOrId(TwoPathC0 l) {
+  %strategy Gravity() extends Fail() {
+    visit TwoPath {
+      /*
+       * Gravity rule
+       */
+      c1(c0(M*,f,N*),
+	 c0(P*,id(m),Q*),
+	 tail*) -> {
+	if(!`f.isid()) {
+	  int sp = s(`P*);
+	  int tm = t(`M*);
+	  if((sp <= tm) && (sp+`m >= tm+t(`f))) {
+	      return `c1(c0(M*,id(s(f)),N*),
+                         c0(P*,id(tm-sp),f*,id(t(N*)-s(Q*)),Q*),
+                         tail*);
+	  }
+	}
+      }
+    }
+  }
+
+  private static boolean isEmptyOrId(TwoPath l) {
     %match(l) {
-      concC0() -> { return true; }
-      concC0(id(n)) -> { return true; }
+      c0()  -> { return true; }
+      id(n) -> { return true; }
     }
     return false;
-  }
-
-  /* conversion functions */
-  %op TwoPathC1 c02c1(l:TwoPathC0) {}
-  static private TwoPathC1 c02c1(TwoPathC0 l) {
-    %match(TwoPathC0 l) {
-      concC0() -> { return `concC1(); }
-      concC0(head,tail*) -> { return `concC1(head,c02c1(tail*)); }
-    }
-    return null;
-  }
-  %op TwoPathC0 c12c0(l:TwoPathC1) {}
-  static private TwoPathC0 c12c0(TwoPathC1 l) {
-    %match(TwoPathC1 l) {
-      concC1() -> { return `concC0(); }
-      concC1(head,tail*) -> { return `concC0(head,c12c0(tail*)); }
-    }
-    return null;
   }
 }

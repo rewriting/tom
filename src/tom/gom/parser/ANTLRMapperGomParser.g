@@ -27,7 +27,6 @@ header {
 {
   import antlr.LexerSharedInputState;
 }
-//{{{class ANTLRMapperGomParser extends Parser;
 class ANTLRMapperGomParser extends Parser;
 options {
   buildAST = true;  // uses CommonAST by default
@@ -100,7 +99,6 @@ hookSortModule
 { 
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
-  
 #hookSortModule = #(COLON,hookScope,pointCut,hook);
 #hookSortModule.setText(code);
 }

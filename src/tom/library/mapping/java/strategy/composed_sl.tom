@@ -60,6 +60,10 @@
   make(v) { `mu(MuVar("_x"),Sequence(All(MuVar("_x")),Try(Sequence(v,MuVar("_x"))))) }
 }
 
+%op Strategy Outermost(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Sequence(Try(Sequence(v,MuVar("_x"))),All(MuVar("_x")))) }
+}
+
 %op Strategy Repeat(s1:Strategy) {
   make(v) { `mu(MuVar("_x"),Choice(Sequence(v,MuVar("_x")),Identity())) }
 }
@@ -74,4 +78,8 @@
 
 %op Strategy InnermostIdSeq(s1:Strategy) {
   make(v) { `mu(MuVar("_x"),Sequence(AllSeq(MuVar("_x")),Try(SequenceId(v,MuVar("_x"))))) }
+}
+
+%op Strategy OutermostId(s1:Strategy) {
+  make(v) { `mu(MuVar("_x"),Sequence(Try(SequenceId(v,MuVar("_x"))),All(MuVar("_x")))) }
 }

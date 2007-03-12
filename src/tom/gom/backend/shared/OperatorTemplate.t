@@ -483,6 +483,9 @@ writer.write(%[
   }
   private int nonBuiltinChildCount() {
     int count = 0;
+    //in case of reference, conspos are considered as constants
+    //to avoid traversal inside a position
+    if(className().equals("Conspos"+sortName.getName())) return count;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Domain=domain],_*) -> {
         if (!GomEnvironment.getInstance().isBuiltinClass(`domain)) {

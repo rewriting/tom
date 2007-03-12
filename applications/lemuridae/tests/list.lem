@@ -79,3 +79,58 @@ axiom.
 reduce.
 rule. axiom.
 
+proof appAss: \Al.(\An.(\Am.( List(l) =>  eq(append(append(l,n),m), append(l,append(n,m)))))).
+intros.
+focus h1.
+rule.
+fEq(append(append(one(),S(n0)),S(m0)) , append(one(),append(S(n0), S(m0)))).
+reduce.
+axiom.
+reduce.
+rule. axiom.
+focus c2. remove.
+focus h1. remove.
+rule. reduce.
+focus h1.
+rule.
+fEq(lcons(S(a0),append(append(S(ll0),S(n0)),S(m0)) ) , lcons(S(a0),one() ) ).
+reduce.
+axiom.
+reduce.
+rule. axiom.
+
+
+proof lnilIsList: List(lnil()).
+rule.
+axiom.
+
+proof oneElemIsList: \A x.List(lcons(x,lnil())).
+intro.
+rule.
+focus h2. rule. lnil(). x0.
+axiom.
+axiom.
+
+
+rule IsNil(lnil()) -> \T.
+rule IsNil(lcons(x,y)) -> \B.
+proprule in(l,fIsNil(t)) -> IsNil(appl(t,l)).
+
+
+proof discrim: ~eq(lnil(),lcons(0,lnil())).
+intro.
+focus h1.
+rule.
+fIsNil(one()).
+reduce.
+focus h1. rule. axiom.
+rule.
+reduce.
+rule.
+
+proof appCommCons : \Ax.(\Ay.(\Aa.(eq ( lcons(a,append(x,y)) , append(lcons(a,x),y) )))).
+intro. intro. intro.
+cut List(lcons(a0,lnil())) => 
+
+
+

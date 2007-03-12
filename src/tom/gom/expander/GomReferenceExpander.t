@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import tom.library.strategy.mutraveler.*;
+import tom.library.sl.*;
 import tom.gom.GomMessage;
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
@@ -40,7 +40,7 @@ import tom.gom.tools.error.GomRuntimeException;
 public class GomReferenceExpander {
 
   %include{java/util/HashMap.tom}
-  %include{java/mustrategy.tom}
+  %include{java/sl.tom}
   %include{java/boolean.tom}
   %include { ../adt/gom/Gom.tom}
 
@@ -84,7 +84,7 @@ public class GomReferenceExpander {
     }
     //return expandedList;
     //add a global expand method in every ModuleDecl contained in the SortList
-    return (SortList) `TopDown(ExpandModule(mapModuleSorts,packagePath,forTermgraph)).apply(expandedList);
+    return (SortList) `TopDown(ExpandModule(mapModuleSorts,packagePath,forTermgraph)).fire(expandedList);
   }
 
   %strategy ExpandModule(map:HashMap,packagePath:String,forTermgraph:boolean) extends `Identity(){
@@ -119,10 +119,9 @@ public class GomReferenceExpander {
     return `concOperator(labOp,refOp,posOp);
   }
 
-  //TODO remove MuReference when sl is operational
   private HookDeclList posHooks(){
     return 
-      `concHookDecl(InterfaceHookDecl("{tom.library.strategy.mutraveler.MuReference,tom.library.sl.Reference}"));
+      `concHookDecl(InterfaceHookDecl("{tom.library.sl.Reference}"));
   }
 
   private static HookDeclList expHooksModule(ModuleDecl module,SortDeclList sorts,String packagePath,boolean forTermgraph){
@@ -131,14 +130,14 @@ public class GomReferenceExpander {
     String codeImport =%[
     import @packagePath@.@moduleName.toLowerCase()@.types.*;
     import @packagePath@.@moduleName.toLowerCase()@.*;
-    import tom.library.strategy.mutraveler.*;
+    import tom.library.sl.*;
     import java.util.*;
    ]%;
 
     String codeBlockCommon =%[
     %include{java/util/HashMap.tom}
     %include{java/util/ArrayList.tom}
-    %include{java/mustrategy.tom}
+    %include{sl.tom}
 
     %typeterm Info{
       implement {Info}
@@ -147,7 +146,7 @@ public class GomReferenceExpander {
 
     public static class Info{
       public String label;
-      public tom.library.strategy.mutraveler.Position pos;
+      public Position pos;
       public @moduleName@AbstractType term;
     }
     ]%;
@@ -172,8 +171,8 @@ public class GomReferenceExpander {
 
       public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
         HashMap map = new HashMap();
-        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
-        return (@moduleName@AbstractType) `label2pos.apply(t);
+        Strategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
+        return (@moduleName@AbstractType) `label2pos.fire(t);
       }
     ]%;
 
@@ -185,15 +184,15 @@ public class GomReferenceExpander {
         Info info = new Info();
         ArrayList marked = new ArrayList();
         HashMap map = new HashMap();
-        MuStrategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown(@Collect@),BottomUp(@Min@),TopDown(@Switch@))),@ClearMarked@));
-        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
-        return (@moduleName@AbstractType) `Sequence(normalization,label2pos).apply(t);
+        Strategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown(@Collect@),BottomUp(@Min@),TopDown(@Switch@))),@ClearMarked@));
+        Strategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
+        return (@moduleName@AbstractType) `Sequence(normalization,label2pos).fire(t);
       }
 
       public static @moduleName@AbstractType label2pos(@moduleName@AbstractType t){
         HashMap map = new HashMap();
-        MuStrategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
-        return (@moduleName@AbstractType) label2pos.apply(t);
+        Strategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
+        return (@moduleName@AbstractType) label2pos.fire(t);
       }
 
     ]%;
@@ -213,7 +212,7 @@ public class GomReferenceExpander {
             if(! marked.contains(`label)){
               info.label=`label;
               info.term=`lab@sortName@(label,term);
-              info.pos=getPosition();
+              info.pos=getEnvironment().getPosition();
               marked.add(`label);
               return `lab@sortName@(label,term); 
             }
@@ -225,8 +224,8 @@ public class GomReferenceExpander {
       visit @sortName@{
         ref@sortName@[label=label] -> {
           if(`label.equals(info.label)){
-            if(getPosition().compare(info.pos)==-1){
-              info.pos=getPosition(); 
+            if(getEnvironment().getPosition().compare(info.pos)==-1){
+              info.pos=getEnvironment().getPosition(); 
             }
           }
         }
@@ -236,13 +235,13 @@ public class GomReferenceExpander {
     %strategy Switch@sortName@(info:Info) extends Identity(){
       visit @sortName@{
         ref@sortName@[label=label] -> {
-          if (info.pos.equals(getPosition())){
+          if (info.pos.equals(getEnvironment().getPosition())){
             return (@sortName@) info.term; 
           }
         }
         lab@sortName@[label=label,term=term] -> {
           if(`label.equals(info.label)){
-            if (! info.pos.equals(getPosition())){
+            if (! info.pos.equals(getEnvironment().getPosition())){
               return `ref@sortName@(label); 
             }
           }
@@ -262,7 +261,7 @@ public class GomReferenceExpander {
     %strategy CollectLabels@sortName@(map:HashMap) extends Fail(){
       visit @sortName@{
         lab@sortName@[label=label,term=term]-> {
-          map.put(`label,getPosition());
+          map.put(`label,getEnvironment().getPosition());
           return `term;
         }
       }
@@ -273,12 +272,12 @@ public class GomReferenceExpander {
         ref@sortName@[label=label] -> {
           if (! map.containsKey(`label)) {
             // ref with an unexistent label
-            throw new RuntimeException("Term-graph with a null reference at"+getPosition());
+            throw new RuntimeException("Term-graph with a null reference at"+getEnvironment().getPosition());
           }
           else {
             Position target = (Position) map.get(`label);
-            RelativePosition pos = 
-              RelativePosition.make(getPosition(),target);
+            Position pos = 
+              getEnvironment().getPosition().getRelativePosition(target);
             @sortName@ ref = `pos@sortName@();
             int[] array = `pos.toArray();
             for(int i=0;i<`pos.depth();i++){

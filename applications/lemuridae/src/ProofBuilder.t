@@ -495,6 +495,7 @@ b: {
     }
   }
 
+  // FIXME :  alpha renaming needed
   %strategy ApplyForAllL(active:Prop, term:Term) extends Fail() {
     visit Tree {
       rule[c=seq] -> {
@@ -524,6 +525,7 @@ b: {
     }
   }
 
+  // FIXME :  alpha renaming needed
   %strategy ApplyExistsR(active:Prop, term:Term) extends Fail() {
     visit Tree {
       rule[c=seq] -> {
@@ -705,7 +707,6 @@ b :{
           break b;
         }
         tokeep, sequent((),(_*,p@!tokeep,_*)) -> {
-          //FIXME replace condition by p@!tokeep in pattern when bug disappears
             tree = (Tree) ((MuStrategy) poscopy.getOmega(`ApplyWeakR(p))).apply(tree);
             poscopy.down(2);
             poscopy.down(1);
@@ -1035,7 +1036,7 @@ b :{
         }
 
         /* experimental reduce case */
-        proofCommand("reduce") -> {
+        normalizeSequent() -> {
           try {
             tree = reduceCommand(env.tree, currentPos, active, env.focus_left);
           } catch (Exception e) {
@@ -1092,18 +1093,18 @@ b :{
   private HashMap<String,Tree> theorems = new HashMap<String,Tree>();
   private HashMap<String,Stack<ProofEnv>> unprovedTheorems = new HashMap<String,Stack<ProofEnv>>();
 
+  // called when leaving proof mode
   private void store(Stack<ProofEnv> envStack, String name) {
 	  if(envStack.peek().openGoals.size() == 0) {
-	    Tree tree = envStack.peek().tree;
-	    theorems.put(name,tree);
-	    unprovedTheorems.remove(name);
-            System.out.println(name + " proved.");
-            }
-	  else {
-	    unprovedTheorems.put(name, envStack);
-	    System.out.println(name + " remains unproved !!");
-	  }
-	}
+      Tree tree = envStack.peek().tree;
+      theorems.put(name,tree);
+      unprovedTheorems.remove(name);
+      System.out.println(name + " proved.");
+    } else {
+      unprovedTheorems.put(name, envStack);
+      System.out.println(name + " remains unproved !!");
+    }
+  }
   
   public void mainLoop() throws Exception {
     Command command = null;
@@ -1118,6 +1119,9 @@ b :{
       }
 
       %match(Command command) {
+
+        /* declarations */
+
         rewritesuper(p1,p2) -> {
           RuleList rl = RuleCalc.transform(`p1,`p2);
           %match(RuleList rl) {
@@ -1135,36 +1139,23 @@ b :{
           newPropRules = `proprulelist(newPropRules*,proprule(lhs,rhs));
         }
 
+        /* reduce command */
+
+        normalizeProp(p) -> {
+          Prop res = (Prop) Unification.reduce(`p,newTermRules,newPropRules);
+          System.out.println(PrettyPrinter.prettyPrint(res));
+        }
+
+        normalizeTerm(t) -> {
+           Term res = (Term) Unification.reduce(`t,newTermRules,newPropRules);
+           System.out.println(PrettyPrinter.prettyPrint(res));
+        }
+
+        /* proof handling */
+
         proof(name,p) -> {
           Stack<ProofEnv> envStack = buildProofTree(`sequent(context(),context(p)));
           store(envStack, `name);
-/*	  if(envStack.peek().openGoals.size() == 0) {
-	    Tree tree = envStack.peek().tree;
-	    theorems.put(`name,tree);
-            System.out.println(`name + " proved.");
-            }
-	  else {
-	    unprovedTheorems.put(`name, envStack);
-	    System.out.println(`name + " remains unproved !!");
-	  }
-*/
-        }
-
-        proofcheck(name) -> {
-          Tree tree = theorems.get(`name);
-          if(tree==null) System.out.println(`name + " not found"); else {
-            tree = ProofExpander.expand(tree);
-            if(ProofChecker.proofcheck(tree)) System.out.println("Proof check passed !");
-            else System.out.println("Proof check failed :S");
-	  }
-        }
-
-        display(name) -> {
-          Tree tree = theorems.get(`name);
-          if(tree==null) { System.out.println(`name + " not found");} else
-            PrettyPrinter.display(tree,newTermRules,newPropRules);
-          //tree = ProofExpander.expand(tree);
-          //PrettyPrinter.display(tree,newTermRules,newPropRules);
         }
 
         resume(name) -> {
@@ -1175,10 +1166,43 @@ b :{
           }
         }
 
+        proofcheck(name) -> {
+          Tree tree = theorems.get(`name);
+          if(tree==null) System.out.println(`name + " not found"); else {
+            tree = ProofExpander.expand(tree);
+            if(ProofChecker.proofcheck(tree)) System.out.println("Proof check passed !");
+            else System.out.println("Proof check failed :S");
+          }
+        }
+
+        /* pretty print */
+
+        display(name) -> {
+          Tree tree = theorems.get(`name);
+          if(tree==null) System.out.println(`name + " not found");
+          else PrettyPrinter.display(tree,newTermRules,newPropRules);
+          //tree = ProofExpander.expand(tree);
+          //PrettyPrinter.display(tree,newTermRules,newPropRules);
+        }
+
         gibber() -> {
           System.out.println("        .=\"=.\n      _/.-.-.\\_\n     ( ( 0 0 ) )\n      |/  \"  \\|\n       \\'---'/\n        `\"\"\"`");
           System.out.println("Have you gibbered today ?");
         }
+
+        print(name) -> {
+          Tree tree = theorems.get(`name);
+          if(tree==null) System.out.println(`name + " not found"); 
+          else
+            %match(Tree tree) {
+              rule[c=concl] -> {
+                String str = `name + " : " + PrettyPrinter.prettyPrint(`concl);
+                System.out.println(str);
+              }
+            }
+        }
+
+        /* file/stream management */
 
         importfile(name) -> {
           String newname = `name.substring(1, `name.length()-1);
@@ -1199,17 +1223,6 @@ b :{
   
         quit() -> {
           System.exit(0);
-        }
-
-        print(name) -> {
-          Tree tree = theorems.get(`name);
-	  if(tree==null) System.out.println(`name + " not found"); else
-          %match(Tree tree) {
-            rule[c=concl] -> {
-              String str = `name + " : " + PrettyPrinter.prettyPrint(`concl);
-              System.out.println(str);
-            }
-          }
         }
 
       }  // %match(Command)
