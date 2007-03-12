@@ -114,14 +114,45 @@ public class GomReferenceExpander {
     OperatorDecl refOp = `OperatorDecl("ref"+sort.getName(),sort,Slots(concSlot(Slot("label",stringSortDecl))),concHookDecl());
 
     String posOpName = "pos"+sort.getName();
-    OperatorDecl posOp = `OperatorDecl(posOpName,sort,Variadic(intSortDecl),posHooks());
+    OperatorDecl posOp = `OperatorDecl(posOpName,sort,Variadic(intSortDecl),posHooks(sort));
 
     return `concOperator(labOp,refOp,posOp);
   }
 
-  private HookDeclList posHooks(){
+  private HookDeclList posHooks(SortDecl sort){
+    
+    String moduleName = sort.getModuleDecl().getModuleName().getName();
+    String sortName = sort.getName();
+
+    String codeImport =%[
+    import @packagePath@.@moduleName.toLowerCase()@.types.*;
+    import tom.library.sl.*;
+    ]%;
+
+    String codeBlock =%[
+
+    public Position toPos(){
+      return Position.makeRelativePosition(toArray());
+    }
+     
+    /**
+     * constructs the reference from the relative position given in parameter
+     */
+    public static @sortName@ fromPos(Position pos){
+      //available only for relative positions
+      if(! pos.isRelative()) return null;
+      @sortName@ ref = `pos@sortName@();
+      int[] array = pos.toArray();
+      for(int i=0;i<pos.depth();i++){
+        ref = `pos@sortName@(ref*,array[i]);
+      }
+      return ref; 
+    }
+
+      ]%;
+
     return 
-      `concHookDecl(InterfaceHookDecl("{tom.library.sl.Reference}"));
+      `concHookDecl(ImportHookDecl("{"+codeImport+"}"),InterfaceHookDecl("{tom.library.sl.Reference}"),BlockHookDecl("{"+codeBlock+"}"));
   }
 
   private static HookDeclList expHooksModule(ModuleDecl module,SortDeclList sorts,String packagePath,boolean forTermgraph){

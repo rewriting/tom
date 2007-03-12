@@ -255,7 +255,7 @@ public class Environment implements Cloneable {
 
   public void followRef() {
     if (getSubject() instanceof Reference){
-      int[] pos= ((Reference) getSubject()).toArray();
+      int[] pos= ((Reference) getSubject()).toPos().toArray();
       int pos_back = pos[0];
       int pos_length = pos.length;
       for(int i=0;i<pos_back;i++){

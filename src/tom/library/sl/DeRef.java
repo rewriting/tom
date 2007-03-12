@@ -77,23 +77,21 @@ public class DeRef extends AbstractStrategy {
   }
 
   private void visitReference(Reference ref) {
-    Position destPos;
-    Position currentPos =environment.getPosition();
     if(relative) {
-      Position relativePos = Position.makeRelativePosition(ref.toArray());
+      Position destPos;
+      Position currentPos =environment.getPosition();
+      Position relativePos = ref.toPos();
       destPos = currentPos.getAbsolutePosition(relativePos);
-    } else {
-      destPos = Position.makeAbsolutePosition(ref.toArray());
-    }
-    Position oldToNew = currentPos.getRelativePosition(destPos);
-    Position newToOld = destPos.getRelativePosition(currentPos);
-    environment.goTo(oldToNew);
-    visitors[ARG].visit();
-    if (getStatus() != Environment.SUCCESS) {
+      Position oldToNew = currentPos.getRelativePosition(destPos);
+      Position newToOld = destPos.getRelativePosition(currentPos);
+      environment.goTo(oldToNew);
+      visitors[ARG].visit();
+      if (getStatus() != Environment.SUCCESS) {
+        environment.goTo(newToOld);
+        return;
+      }
       environment.goTo(newToOld);
-      return;
     }
-    environment.goTo(newToOld);
   }
 
 }
