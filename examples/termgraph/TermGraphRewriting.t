@@ -171,23 +171,23 @@ public class TermGraphRewriting {
           getEnvironment().goTo(rootpos.getRelativePosition(current));
           return subterm; 
         }
+      }
     }
   }
-}
 
   // In this strategy, the failure is Identity
   %strategy NormalizePosOpt() extends Identity(){
     visit Term {
       p@posTerm(_*) -> {
         Position current = (Position) getEnvironment().getPosition(); 
-          Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
-          Position dest = current.getAbsolutePosition(relPos);
-          if(current.compare(dest)== -1){
-            getEnvironment().followRef();
-            Position realDest = getEnvironment().getPosition(); 
-            if(! realDest.equals(dest)){
-              //the subterm pointed was a  pos (in case of previous switch) 
-              //and we must only update the relative position
+        Position relPos = Position.makeRelativePosition(((Reference)`p).toArray());
+        Position dest = current.getAbsolutePosition(relPos);
+        if(current.compare(dest)== -1){
+          getEnvironment().followRef();
+          Position realDest = getEnvironment().getPosition(); 
+          if(! realDest.equals(dest)){
+            //the subterm pointed was a  pos (in case of previous switch) 
+            //and we must only update the relative position
 
               int[] relarray = current.getRelativePosition(realDest).toArray();
               Term relref = `posTerm();
