@@ -94,6 +94,27 @@ public class NewBehaviour {
     return (Term) s.fire(subject);
   }
 
+  public Term test11() {
+    Term subject = `g(f(a()),b());
+    Strategy s = `OnceTopDownId((R1()));
+    subject = (Term) s.fire(subject);
+    subject = (Term) s.fire(subject);
+    return (Term) s.fire(subject);
+  }
+
+  public Term test12(){
+    Term subject = `g(f(a()),b());
+    Strategy s = `Innermost((R2()));
+    return (Term) s.fire(subject);
+  }
+
+  public Term test13(){
+    Term subject = `g(f(a()),b());
+    Strategy s = `Outermost((R2()));
+    return (Term) s.fire(subject);
+  }
+
+
   public Term testWhen1() {
     Term subject = `f(a());
     Strategy s = `When_f(R2());
