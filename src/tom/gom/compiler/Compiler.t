@@ -341,28 +341,6 @@ public class Compiler {
     return classNames;
   }
 
-  private Collection getModuleDeclSet(SortList sortList) {
-    class CollectModuleDecls extends GomBasicStrategy {
-      Collection bag;
-      CollectModuleDecls(Collection bag) {
-        super(`Identity());
-        this.bag = bag;
-      }
-      public ModuleDecl visit_ModuleDecl(ModuleDecl arg) {
-        bag.add(arg);
-        return arg;
-      }
-    }
-    Collection res = new HashSet();
-    try {
-      VisitableVisitor getModule = new CollectModuleDecls(res);
-      MuTraveler.init(`BottomUp(getModule)).visit(sortList);
-    } catch (VisitFailure e) {
-      throw new GomRuntimeException("Failed to get the set of module names");
-    }
-    return res;
-  }
-
   /*
    * Get all sort definitions for a given module
    */
@@ -400,58 +378,9 @@ public class Compiler {
     return list;
   }
   
-  private HookList makeHooksFromHookDecls(HookDeclList declList) {
-    HookList list = `concHook();
-    %match(HookDeclList declList) {
-      concHookDecl(_*,
-          hook,
-          _*) -> {
-        SlotFieldList newArgs = null;
-        Hook newHook = null;
-        %match(HookDecl `hook) {
-          MakeHookDecl[SlotArgs=slotArgs,Code=hookCode] -> {
-            newArgs = makeSlotFieldListFromSlotList(`slotArgs);
-            newHook = `MakeHook(newArgs,hookCode);
-            if (newArgs == null) {
-              throw new GomRuntimeException("Hook declaration "+`hook+" not processed");
-            }
-          }
-          BlockHookDecl[Code=hookCode] -> {
-            newHook = `BlockHook(hookCode);
-          }
-          InterfaceHookDecl[Code=hookCode] -> {
-            newHook = `InterfaceHook(hookCode);
-          }
-          ImportHookDecl[Code=hookCode] -> {
-            newHook = `ImportHook(hookCode);
-          }
-
-        }
-        if (newHook == null) {
-          throw new GomRuntimeException("Hook declaration "+`hook+" not processed");
-        }
-        list = `concHook(list*,newHook);
-      }
-    }
-    return list;
-  }
-
-  private SlotFieldList makeSlotFieldListFromSlotList(SlotList args) {
-    SlotFieldList newArgs = `concSlotField();
-    while(!args.isEmptyconcSlot()) {
-      Slot arg = args.getHeadconcSlot();
-      args = args.getTailconcSlot();
-      %match(Slot arg) {
-        Slot[Name=slotName,Sort=sortDecl] -> {
-          ClassName slotClassName = (ClassName) sortClassNameForSortDecl.get(`sortDecl);
-          newArgs = `concSlotField(newArgs*,SlotField(slotName,slotClassName));
-        }
-      }
-    }
-    return newArgs;
-  }
-
-  private ClassNameList allClassForImports(Map classMap, ModuleDecl moduleDecl) {
+  private ClassNameList allClassForImports(
+      Map classMap,
+      ModuleDecl moduleDecl) {
     ClassNameList importedList = `concClassName();
     ModuleDeclList importedModulelist = environment().getModuleDependency(moduleDecl);
     while(!importedModulelist.isEmptyconcModuleDecl()) {
