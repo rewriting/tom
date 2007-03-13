@@ -171,6 +171,15 @@ public class TermGraphRewriting {
     }
   }
 
+/*
+ * what are the good names for getAbsolutePosition and getRelativePosition ?
+ * do we switch receiver and argument
+ * rename goTo into goto ?
+ * goto can have an absolute or a relative position as argument ?
+ * introduce 2 subclasses AbsolutePosition and RelativePosition ?
+ * distinction between pos and ref ?
+ */
+
   // In this strategy, the failure is Identity
   %strategy NormalizePosOpt() extends Identity(){
     visit Term {
@@ -178,16 +187,15 @@ public class TermGraphRewriting {
         Position current = (Position) getEnvironment().getPosition(); 
         Position relPos = ((Reference)`p).toPos();
         Position dest = current.getAbsolutePosition(relPos);
-        if(current.compare(dest)== -1){
+        if(current.compare(dest)== -1) {
           getEnvironment().followRef();
           Position realDest = getEnvironment().getPosition(); 
-          if(! realDest.equals(dest)){
-            //the subterm pointed was a  pos (in case of previous switch) 
+          if(!realDest.equals(dest)) {
+            //the subterm pointed was a pos (in case of previous switch) 
             //and we must only update the relative position
-            getEnvironment().goTo(realDest.getRelativePosition(current));
+            getEnvironment().goTo(realDest.getRelativePosition(current)); // i.e. goto(current)
             return ConsposTerm.fromPos(current.getRelativePosition(realDest));
-          }
-          else{
+          } else {
             //we must switch the rel position and the pointed subterm
 
             // 1. we construct the new relative position
@@ -204,7 +212,7 @@ public class TermGraphRewriting {
             // 4. we replace at dest  the subterm by the new relative pos
             getEnvironment().setSubject(relref);
 
-            getEnvironment().goTo(dest.getRelativePosition(current));
+            getEnvironment().goTo(dest.getRelativePosition(current)); // i.e. goto(current)
             return subterm; 
           }
         }
@@ -233,8 +241,6 @@ public class TermGraphRewriting {
         return `p;
       }
     }
-  }
-
 
   %op Strategy UnExpand(map:HashMap) {
     make(map) {
