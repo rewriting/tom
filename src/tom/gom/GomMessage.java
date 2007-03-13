@@ -118,6 +118,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Module {0} not found. Breaking expansion phase");
   public static final GomMessage expansionIssue =
     new GomMessage("Problems encountered expanding module {0}");
+  public static final GomMessage hookExpansionIssue =
+    new GomMessage("Problems encountered expanding hooks for module {0}");
 
   // GomTypeExpander
   public static final GomMessage orphanedHook =

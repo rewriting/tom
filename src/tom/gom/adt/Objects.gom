@@ -4,7 +4,11 @@ imports String
 abstract syntax
 
 GomClass = VisitableFwdClass(ClassName:ClassName,Fwd:GomClass)
-         | AbstractTypeClass(ClassName:ClassName,Mapping:ClassName,Visitor:ClassName,SortList:ClassNameList,Hooks:HookList)
+         | AbstractTypeClass(ClassName:ClassName,
+                             Mapping:ClassName,
+                             Visitor:ClassName,
+                             SortList:ClassNameList,
+                             Hooks:HookList)
          | SortClass(ClassName:ClassName,
                      AbstractType:ClassName,
                      Mapping:ClassName,

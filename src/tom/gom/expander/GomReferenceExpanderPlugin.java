@@ -49,8 +49,10 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
     "</options>";
 
   /** the list of included modules */
-  private SortList typedModuleList;
-  private SortList referencedModuleList;
+  private ModuleList typedModuleList;
+  private HookDeclList hookList;
+  private ModuleList referencedModuleList;
+  private HookDeclList referencedHookList;
   /** The constructor*/
   public GomReferenceExpanderPlugin() {
     super("GomReferenceExpander");
@@ -61,28 +63,32 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
    * arg[0] should contain the GomStreamManager to get the input file name
    */
   public void setArgs(Object arg[]) {
-    if (arg[0] instanceof SortList) {
-      typedModuleList = (SortList)arg[0];
-      setStreamManager((GomStreamManager)arg[1]);
+    if (arg[0] instanceof ModuleList && arg[1] instanceof HookDeclList) {
+      typedModuleList = (ModuleList) arg[0];
+      hookList = (HookDeclList) arg[1];
+      setStreamManager((GomStreamManager)arg[2]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomReferenceExpander", "[SortList,GomStreamManager]",
+          new Object[]{"GomReferenceExpander", "[ModuleList,GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
 
   /**
    * inherited from plugin interface
-   * Create the initial SortList 
+   * Create the initial ModuleList 
    */
   public void run() {
     if(getOptionBooleanValue("termgraph") || getOptionBooleanValue("pointer")) {
       boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
       getLogger().log(Level.INFO, "Extend the signature");
-      String packagePrefix= streamManager.getPackagePath().replace(File.separatorChar,'.');
+      String packagePrefix =
+        streamManager.getPackagePath().replace(File.separatorChar,'.');
       GomReferenceExpander referencer = new GomReferenceExpander(packagePrefix,getOptionBooleanValue("termgraph"));
-      referencedModuleList = referencer.expand(typedModuleList);
+      Pair mpair = referencer.expand(typedModuleList,hookList);
+      referencedModuleList = mpair.getModules();
+      referencedHookList = mpair.getHooks();
       if(referencedModuleList == null) {
         getLogger().log(Level.SEVERE, 
           GomMessage.expansionIssue.getMessage(),
@@ -96,8 +102,9 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
         }
       }
     }
-    else{
+    else {
       referencedModuleList = typedModuleList;
+      referencedHookList = hookList;
     }
   }
 
@@ -107,6 +114,6 @@ public class GomReferenceExpanderPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{referencedModuleList, getStreamManager()};
+    return new Object[]{referencedModuleList, referencedHookList, getStreamManager()};
   }
 }

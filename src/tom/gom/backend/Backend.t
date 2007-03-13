@@ -161,9 +161,6 @@ public class Backend {
             getMappingTemplate(mappingClass));
         operator.generateFile();
 
-        //TemplateClass isOpStrat = new tom.gom.backend.strategy.IsOpTemplate(`className);
-        //isOpStrat.generateFile();
-
         TemplateClass sOpStrat = new tom.gom.backend.strategy.SOpTemplate(`className,`slots);
         sOpStrat.generateFile();
 
@@ -184,7 +181,12 @@ public class Backend {
         GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
         TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(tomHomePath,importList,`className,`abstracttype,`sort,`empty,`cons,`hooks,getMappingTemplate(mappingClass));
         operator.generateFile();
-        return 1;
+        /* Generate files for cons and empty */
+        int ret = 1;
+        ret+=generateClass(`empty);
+        ret+=generateClass(`cons);
+
+        return ret;
       }
     }
     throw new GomRuntimeException("Trying to generate code for a strange class: "+gomclass);

@@ -41,10 +41,12 @@ import tom.gom.tools.GomGenericPlugin;
 public class GomTypeExpanderPlugin extends GomGenericPlugin {
 
   public static final String TYPED_SUFFIX = ".tfix.gom.typed";
+  public static final String TYPEDHOOK_SUFFIX = ".tfix.hooks.typed";
 
   /** the list of included modules */
   private GomModuleList moduleList;
-  private SortList typedModuleList;
+  private ModuleList typedModuleList;
+  private HookDeclList typedHookList;
   /** The constructor*/
   public GomTypeExpanderPlugin() {
     super("GomTypeExpander");
@@ -89,6 +91,20 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
             + TYPED_SUFFIX, (aterm.ATerm)typedModuleList.toATerm());
       }
     }
+    HookTypeExpander hooktyper = new HookTypeExpander(typedModuleList);
+    typedHookList = hooktyper.expand(moduleList);
+    if(typedHookList == null) {
+      getLogger().log(Level.SEVERE, 
+          GomMessage.hookExpansionIssue.getMessage(),
+          streamManager.getInputFileName());
+    } else {
+      getLogger().log(Level.FINE, "Typed Hooks: {0}",typedHookList);
+      getLogger().log(Level.INFO, "Hook expansion succeeds");
+      if(intermediate) {
+        Tools.generateOutput(getStreamManager().getInputFileNameWithoutSuffix()
+            + TYPEDHOOK_SUFFIX, (aterm.ATerm)typedHookList.toATerm());
+      }
+    }
   }
 
   /**
@@ -97,6 +113,8 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
    * got from setArgs phase
    */
   public Object[] getArgs() {
-    return new Object[]{typedModuleList, getStreamManager()};
+    return new Object[]{
+      typedModuleList, typedHookList, getStreamManager()
+    };
   }
 }
