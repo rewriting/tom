@@ -36,7 +36,7 @@ import tom.gom.adt.gom.*;
 import tom.gom.adt.gom.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public class GomTypeExpander {
+public class TypeExpander {
 
   %include { ../adt/gom/Gom.tom}
 
@@ -45,7 +45,7 @@ public class GomTypeExpander {
     return GomEnvironment.getInstance();
   }
 
-  public GomTypeExpander(String packagePath) {
+  public TypeExpander(String packagePath) {
     this.packagePath = packagePath;
   }
   /**
@@ -178,7 +178,7 @@ public class GomTypeExpander {
       }
     }
     throw new GomRuntimeException(
-        "GomTypeExpander::getOperatorDecl: wrong Production?");
+        "TypeExpander::getOperatorDecl: wrong Production?");
   }
 
   private SortDecl declFromTypename(String typename,
@@ -209,7 +209,7 @@ public class GomTypeExpander {
       }
     }
     // the error message could be more refined
-    throw new GomRuntimeException("GomTypeExpander::typedProduction: illformed Production");
+    throw new GomRuntimeException("TypeExpander::typedProduction: illformed Production");
   }
 
   SlotList typedSlotList(FieldList fields, SortDeclList sortDeclList) {

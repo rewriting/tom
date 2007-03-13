@@ -35,10 +35,10 @@ import tom.gom.adt.gom.types.*;
 import tom.gom.tools.GomGenericPlugin;
 
 /**
- * The responsability of the GomTypeExpander plugin is to 
+ * The responsability of the TypeExpander plugin is to 
  * produce an abstract view of the Gom input with type information
  */
-public class GomTypeExpanderPlugin extends GomGenericPlugin {
+public class TypeExpanderPlugin extends GomGenericPlugin {
 
   public static final String TYPED_SUFFIX = ".tfix.gom.typed";
   public static final String TYPEDHOOK_SUFFIX = ".tfix.hooks.typed";
@@ -48,8 +48,8 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
   private ModuleList typedModuleList;
   private HookDeclList typedHookList;
   /** The constructor*/
-  public GomTypeExpanderPlugin() {
-    super("GomTypeExpander");
+  public TypeExpanderPlugin() {
+    super("TypeExpander");
   }
 
   /**
@@ -63,7 +63,7 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomTypeExpander", "[GomModuleList,GomStreamManager]",
+          new Object[]{"TypeExpander", "[GomModuleList,GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
@@ -77,7 +77,7 @@ public class GomTypeExpanderPlugin extends GomGenericPlugin {
 
     getLogger().log(Level.INFO, "Start typing");
     String packagePrefix= streamManager.getPackagePath().replace(File.separatorChar,'.');
-    GomTypeExpander typer = new GomTypeExpander(packagePrefix);
+    TypeExpander typer = new TypeExpander(packagePrefix);
     typedModuleList = typer.expand(moduleList);
     if(typedModuleList == null) {
       getLogger().log(Level.SEVERE, 
