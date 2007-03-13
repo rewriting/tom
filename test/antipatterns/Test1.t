@@ -52,7 +52,7 @@ public class Test1 extends TestCase {
 	  c0(P*,g@!id[],Q*),
 	  tail*) -> {
 	if(`g.isid()) {
-	  fail();
+	  //fail();
 	}
       }
     }

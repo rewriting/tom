@@ -127,11 +127,11 @@ public class TermGraphRewriting {
           Position old = getEnvironment().getPosition();
           Position rootpos = Position.makeAbsolutePosition(new int[]{});
           map.put(`label,old);
-          getEnvironment().goTo(old.getRelativePosition(rootpos));
+          getEnvironment().goTo(rootpos);
           Strategy s =`Try(TopDown(CollectSubterm(label,info)));
           AbstractStrategy.init(s,getEnvironment()); 
           s.visit();
-          getEnvironment().goTo(rootpos.getRelativePosition(old));
+          getEnvironment().goTo(old);
           return `labTerm(label,info.term);
         }
       }
@@ -151,7 +151,7 @@ public class TermGraphRewriting {
         if(current.compare(dest)== -1){
           //we must switch the rel position and the pointed subterm
           Position rootpos = Position.makeAbsolutePosition(new int[]{});
-          getEnvironment().goTo(current.getRelativePosition(rootpos));
+          getEnvironment().goTo(rootpos);
           Info info = new Info();
           Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
           Strategy getSubterm = dest.getSubterm();
@@ -164,7 +164,7 @@ public class TermGraphRewriting {
           update.visit();
           Term subterm = (Term) getSubterm.fire(getEnvironment().getSubject()); 
           replace.visit(); 
-          getEnvironment().goTo(rootpos.getRelativePosition(current));
+          getEnvironment().goTo(current);
           return subterm; 
         }
       }
@@ -174,8 +174,6 @@ public class TermGraphRewriting {
 /*
  * what are the good names for getAbsolutePosition and getRelativePosition ?
  * do we switch receiver and argument
- * rename goTo into goto ?
- * goto can have an absolute or a relative position as argument ?
  * introduce 2 subclasses AbsolutePosition and RelativePosition ?
  * distinction between pos and ref ?
  */
@@ -193,7 +191,7 @@ public class TermGraphRewriting {
           if(!realDest.equals(dest)) {
             //the subterm pointed was a pos (in case of previous switch) 
             //and we must only update the relative position
-            getEnvironment().goTo(realDest.getRelativePosition(current)); // i.e. goto(current)
+            getEnvironment().goTo(current);
             return ConsposTerm.fromPos(current.getRelativePosition(realDest));
           } else {
             //we must switch the rel position and the pointed subterm
@@ -212,7 +210,7 @@ public class TermGraphRewriting {
             // 4. we replace at dest  the subterm by the new relative pos
             getEnvironment().setSubject(relref);
 
-            getEnvironment().goTo(dest.getRelativePosition(current)); // i.e. goto(current)
+            getEnvironment().goTo(current);
             return subterm; 
           }
         }
@@ -241,6 +239,7 @@ public class TermGraphRewriting {
         return `p;
       }
     }
+  }
 
   %op Strategy UnExpand(map:HashMap) {
     make(map) {
