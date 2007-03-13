@@ -36,9 +36,12 @@ public abstract class TemplateHookedClass extends TemplateClass {
   protected List importList;
   protected TemplateClass mapping;
  
-  public TemplateHookedClass(ClassName className,File tomHomePath, List importList,  HookList hooks, TemplateClass mapping) {
-    super(className);
-    this.hooks = hooks;
+  public TemplateHookedClass(GomClass gomClass,
+                             File tomHomePath,
+                             List importList,
+                             TemplateClass mapping) {
+    super(gomClass);
+    this.hooks = gomClass.getHooks();
     this.tomHomePath = tomHomePath;
     this.importList = importList;
     this.mapping = mapping;

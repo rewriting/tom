@@ -29,6 +29,7 @@ import tom.gom.tools.GomEnvironment;
 import tom.gom.backend.TemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
 public class MappingTemplate extends TemplateClass {
   ClassName basicStrategy;
@@ -37,14 +38,20 @@ public class MappingTemplate extends TemplateClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public MappingTemplate(ClassName className,
-                         ClassName basicStrategy,
-                         GomClassList sortClasses,
-                         GomClassList operatorClasses) {
-    super(className);
-    this.basicStrategy = basicStrategy;
-    this.sortClasses = sortClasses;
-    this.operatorClasses = operatorClasses;
+  public MappingTemplate(GomClass gomClass) {
+    super(gomClass);
+    %match(gomClass) {
+      TomMapping[BasicStrategy=basicStrategy,
+                 SortClasses=sortClasses,
+                 OperatorClasses=ops] -> {
+        this.basicStrategy = `basicStrategy;
+        this.sortClasses = `sortClasses;
+        this.operatorClasses = `ops;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Wrong argument for MappingTemplate: " + gomClass);
   }
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */

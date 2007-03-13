@@ -44,22 +44,27 @@ public class OperatorTemplate extends TemplateHookedClass {
 
   public OperatorTemplate(File tomHomePath,
                           List importList, 	
-                          ClassName className,
-                          ClassName abstractType,
-                          ClassName extendsType,
-                          ClassName sortName,
-                          ClassName visitor,
-                          SlotFieldList slots,
-                          HookList hooks,
+                          GomClass gomClass,
                           TemplateClass mapping) {
-    super(className,tomHomePath,importList,hooks,mapping);
-    this.tomHomePath = tomHomePath;
-    this.importList = importList;
-    this.abstractType = abstractType;
-    this.extendsType = extendsType;;
-    this.sortName = sortName;
-    this.visitor = visitor;
-    this.slotList = slots;
+    super(gomClass,tomHomePath,importList,mapping);
+    %match(gomClass) {
+      OperatorClass[AbstractType=abstractType,
+                    ExtendsType=extendsType,
+                    Mapping=mapping,
+                    SortName=sortName,
+                    Visitor=visitorName,
+                    Slots=slots,
+                    Hooks=hooks] -> {
+        this.abstractType = `abstractType;
+        this.extendsType = `extendsType;;
+        this.sortName = `sortName;
+        this.visitor = `visitorName;
+        this.slotList = `slots;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Bad argument for OperatorTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {

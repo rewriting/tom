@@ -31,10 +31,12 @@ import tom.gom.tools.error.GomRuntimeException;
 import java.io.*;
 
 public abstract class TemplateClass {
+  protected GomClass gomClass;
   protected ClassName className;
 
-  public TemplateClass(ClassName className) {
-    this.className = className;
+  public TemplateClass(GomClass gomClass) {
+    this.gomClass = gomClass;
+    this.className = gomClass.getClassName();
   }
 
   %include { ../adt/objects/Objects.tom}
@@ -148,7 +150,7 @@ public abstract class TemplateClass {
       }
     }
     throw new GomRuntimeException(
-        "TemplateClass:className got a strange ClassName "+clsName);
+        "TemplateClass:classFieldName got a strange ClassName "+clsName);
   }
 
   public void toStringSlotField(StringBuffer res, SlotField slot,

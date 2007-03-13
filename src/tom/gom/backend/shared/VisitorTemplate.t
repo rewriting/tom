@@ -26,6 +26,7 @@ package tom.gom.backend.shared;
 
 import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
 public class VisitorTemplate extends TemplateClass {
   GomClassList sortClasses;
@@ -33,10 +34,18 @@ public class VisitorTemplate extends TemplateClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public VisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList operatorClasses) {
-    super(className);
-    this.sortClasses = sortClasses;
-    this.operatorClasses = operatorClasses;
+  public VisitorTemplate(GomClass gomClass) {
+    super(gomClass);
+    %match(gomClass) {
+      VisitorClass[SortClasses=sortClasses,
+                   OperatorClasses=ops] -> {
+        this.sortClasses = `sortClasses;
+        this.operatorClasses = `ops;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Bad argument for VisitorTemplate: " + gomClass);
   }
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */

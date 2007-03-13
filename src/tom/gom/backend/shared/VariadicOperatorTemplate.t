@@ -43,20 +43,24 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
 
   public VariadicOperatorTemplate(File tomHomePath,
                                   List importList, 	
-                                  ClassName className,
-                                  ClassName abstractType,
-                                  ClassName sortName,
-                                  GomClass empty,
-                                  GomClass cons,
-                                  HookList hooks,
+                                  GomClass gomClass,
                                   TemplateClass mapping) {
-    super(className,tomHomePath,importList,hooks,mapping);
-    this.tomHomePath = tomHomePath;
-    this.importList = importList;
-    this.abstractType = abstractType;
-    this.sortName = sortName;
-    this.empty = empty;
-    this.cons = cons;
+    super(gomClass,tomHomePath,importList,mapping);
+    %match(gomClass) {
+      VariadicOperatorClass[AbstractType=abstractType,
+                            SortName=sortName,
+                            Mapping=mapping,
+                            Empty=empty,
+                            Cons=cons] -> {
+        this.abstractType = `abstractType;
+        this.sortName = `sortName;
+        this.empty = `empty;
+        this.cons = `cons;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Wrong argument for VariadicOperatorTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
