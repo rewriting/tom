@@ -43,6 +43,11 @@ public class TestMultiHook extends TestCase {
     assertEquals(t.geti(),22);
   }
 
+  public void testOInt() {
+    Wrapper t = `OInt(10);
+    assertEquals(t.geti(),22);
+  }
+
   public final static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(TestMultiHook.class));
   }
