@@ -65,7 +65,11 @@ public class IfThenElse extends AbstractStrategy {
   public void visit() {
     boolean success;
     Visitable result;
+    Visitable subject = getEnvironment().getSubject();
     visitors[CONDITION].visit();
+    /* reset modifications from CONDITION */
+    /* we are just interested in the status */
+    getEnvironment().setSubject(subject);
     if (getStatus() == Environment.SUCCESS) {
       success = true;
     } else {
