@@ -63,6 +63,30 @@ public class OldBehaviour {
     return (Term) s.apply(subject);
   }
 
+  public Term testChoice() {
+    Term subject = `f(b());
+    MuStrategy s = `Choice(R2(),R1());
+    return (Term) s.apply(subject);
+  }
+
+  public Term testChoiceSideEffect() {
+    Term subject = `f(a());
+    MuStrategy s = `Choice(Sequence(R1(),R2()),R1());
+    return (Term) s.apply(subject);
+  }
+
+  public Term testNot() {
+    Term subject = `f(b());
+    MuStrategy s = `Not(R2());
+    return (Term) s.apply(subject);
+  }
+
+  public Term testNotSideEffect() {
+    Term subject = `f(a());
+    MuStrategy s = `Not(Sequence(R1(),R2()));
+    return (Term) s.apply(subject);
+  }
+
   public Term test6() {
     Term subject = `g(f(a()),b());
     MuStrategy s = `Sequence(All(R2()),All(All(R1())));

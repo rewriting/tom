@@ -64,6 +64,30 @@ public class NewBehaviour {
     return (Term) s.fire(subject);
   }
 
+  public Term testChoice() {
+    Term subject = `f(b());
+    Strategy s = `Choice(R2(),R1());
+    return (Term) s.fire(subject);
+  }
+
+  public Term testChoiceSideEffect() {
+    Term subject = `f(a());
+    Strategy s = `Choice(Sequence(R1(),R2()),R1());
+    return (Term) s.fire(subject);
+  }
+
+  public Term testNot() {
+    Term subject = `f(b());
+    Strategy s = `Not(R2());
+    return (Term) s.fire(subject);
+  }
+
+  public Term testNotSideEffect() {
+    Term subject = `f(a());
+    Strategy s = `Not(Sequence(R1(),R2()));
+    return (Term) s.fire(subject);
+  }
+
   public Term test6() {
     Term subject = `g(f(a()),b());
     Strategy s = `Sequence(All(R2()),All(All(R1())));
