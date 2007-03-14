@@ -58,6 +58,14 @@ public class Test1 extends TestCase {
     }
   }
 
+  public void test2() {
+    TwoPath t = `g();
+    %match(t) {
+      !id() -> { return; /* OK */ }
+    }
+    fail();
+  }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(Test1.class));
   }
