@@ -217,11 +217,9 @@ public class AST2Gom {
       ARROW(_,(name,fieldlist*, type)) -> {
         return `Production(getId(name),getFieldList(fieldlist*),getGomType(type));
       }
-      COLON(NodeInfo(code,_,_),(id,hook)) -> {
-        return `Hook(KindOperator(),getId(id),getHookKind(hook),getHookarg(hook),code);
-      }
-      COLON(NodeInfo(code,_,_),(idType,id,hook)) -> {
-        return `Hook(getIdkind(idType),getId(id),getHookKind(hook),concArg(),code);
+      COLON(NodeInfo(code,_,_),(idType,id,hook,args*)) -> {
+        return `Hook(getIdkind(idType),getId(id),
+                     getHookKind(hook),getArgList(args),code);
       }
 
     }
@@ -321,20 +319,12 @@ public class AST2Gom {
 
   private static HookKind getHookKind(ATerm t) {
     %match(t) {
-      MAKE[]       -> { return `KindMakeHook(); }
-      MAKEINSERT[] -> { return `KindMakeinsertHook(); }
-      BLOCK[]      -> { return `KindBlockHook(); }
-      IMPORT[]     -> { return `KindImportHook(); }
-      INTERFACE[]  -> { return `KindInterfaceHook(); }
-    }
-    throw new GomRuntimeException("Unable to translate: " + t);
-  }
-
-  private static ArgList getHookarg(ATerm t) {
-    %match(t) {
-      MAKE(_,args)       -> { return getArgList(`args); }
-      MAKEINSERT(_,args) -> { return getArgList(`args); }
-      _                  -> { return `concArg(); }
+      ID(NodeInfo[text="make"],_) -> { return `KindMakeHook(); }
+      ID(NodeInfo[text="make_insert"],_) -> { return `KindMakeinsertHook(); }
+      ID(NodeInfo[text="block"],_) -> { return `KindBlockHook(); }
+      ID(NodeInfo[text="import"],_) -> { return `KindImportHook(); }
+      ID(NodeInfo[text="interface"],_) -> { return `KindInterfaceHook(); }
+      ID(NodeInfo[text=text],_) -> { return `HookKind(text);}
     }
     throw new GomRuntimeException("Unable to translate: " + t);
   }

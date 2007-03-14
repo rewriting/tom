@@ -67,7 +67,7 @@ alternatives : (ALT)? id:ID fieldlist (ALT altid:ID fieldlist)* (SEMI)? ;
 
 fieldlist: LEFT_BRACE! (field (COMMA field)* )? RIGHT_BRACE! ;
 
-arglist: LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRACE! ;
+arglist: (LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRACE!)? ;
 
 hookOperator
 {
@@ -78,16 +78,12 @@ hookOperator
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
 
-#hookOperator = #(COLON,pointCut,hook);
+#hookOperator = #(COLON,#[OPERATOR],pointCut,hook);
 #hookOperator.setText(code);
 }
 ;
 
-hook: makeHook | otherHook;
-
-makeHook : (MAKE^  | MAKEINSERT^) arglist;
-
-otherHook : BLOCK | INTERFACE | IMPORT;
+hook: hookType:ID arglist;
 
 hookScope : SORT | MODULE;
 
@@ -95,7 +91,7 @@ hookSortModule
 {
   String code = "";
 }
-:! hookScope:hookScope pointCut:ID COLON^ hook:otherHook
+:! hookScope:hookScope pointCut:ID COLON^ hook:hook
 { 
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
@@ -121,10 +117,6 @@ tokens
   SYNTAX   = "syntax";
   SORT     = "sort";
   OPERATOR = "operator";
-  MAKE     = "make";
-  MAKEINSERT   = "make_insert";
-  BLOCK    = "block";
-  INTERFACE = "interface";
   IMPORT  = "import";
 }
 
