@@ -62,6 +62,18 @@ public class TestSL extends TestCase {
   public void testSL5() {		
     assertTrue( ob.test5() == nb.test5() );
   }
+  public void testSLChoice() {		
+    assertTrue( ob.testChoice() == nb.testChoice() );
+  }
+  public void testSLChoiceSideEffect() {		
+    assertTrue( ob.testChoiceSideEffect() == nb.testChoiceSideEffect() );
+  } 
+  public void testSLNot() {		
+    assertTrue( ob.testNot() == nb.testNot() );
+  }
+  public void testSLNotSideEffect() {		
+    assertTrue( ob.testNotSideEffect() == nb.testNotSideEffect() );
+  }
   public void testSL6() {		
     assertTrue( ob.test6() == nb.test6() );
   }

@@ -1,4 +1,5 @@
 2007-03-14  pem <pem@loria.fr>
+  * accept disjunction of builtin constants: f(1|2) for example
   * fixed PR-2250
 
 2007-01-30  pem <pem@loria.fr>
