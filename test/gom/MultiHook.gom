@@ -1,0 +1,10 @@
+module gom.MultiHook
+imports int
+abstract syntax
+Wrapper = Int(i:int)
+Int:make(i) {
+  i = i+1;
+}
+Int:make(j) {
+  j = j*2;
+}
