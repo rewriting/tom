@@ -99,16 +99,16 @@ public class HookTypeExpander {
            Code=hcode] -> {
         HookDecl newHook = null;
         %match(HookKind `hkind) {
-          KindBlockHook[] -> {
+          HookKind("block") -> {
             newHook = `BlockHookDecl(mdecl,hcode);
           }
-          KindInterfaceHook[] -> {
+          HookKind("interface") -> {
             newHook = `InterfaceHookDecl(mdecl,hcode);
           }
-          KindImportHook[] -> {
+          HookKind("import") -> {
             newHook = `ImportHookDecl(mdecl,hcode);
           }
-          (KindMakeHook|KindMakeinsertHook)[] -> {
+          HookKind("make")|HookKind("make_insert") -> {
             SlotList typedArgs = typeArguments(`hookArgs,`hkind,`mdecl);
             if (typedArgs == null) {
               getLogger().log(Level.SEVERE,
@@ -212,7 +212,7 @@ public class HookTypeExpander {
       HookKind kind,
       Decl decl) {
     %match(kind) {
-      KindMakeHook[] -> {
+      HookKind("make") -> {
         /*
          * The TypedProduction has to be Slots
          * A KindMakeHook is attached to an operator
@@ -238,7 +238,7 @@ public class HookTypeExpander {
           }
         }
       }
-      KindMakeinsertHook[] -> {
+      HookKind("make_insert") -> {
         /*
          * The TypedProduction has to be Variadic
          * Then we get the codomain from the operatordecl

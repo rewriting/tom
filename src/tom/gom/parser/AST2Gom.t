@@ -319,11 +319,6 @@ public class AST2Gom {
 
   private static HookKind getHookKind(ATerm t) {
     %match(t) {
-      ID(NodeInfo[text="make"],_) -> { return `KindMakeHook(); }
-      ID(NodeInfo[text="make_insert"],_) -> { return `KindMakeinsertHook(); }
-      ID(NodeInfo[text="block"],_) -> { return `KindBlockHook(); }
-      ID(NodeInfo[text="import"],_) -> { return `KindImportHook(); }
-      ID(NodeInfo[text="interface"],_) -> { return `KindInterfaceHook(); }
       ID(NodeInfo[text=text],_) -> { return `HookKind(text);}
     }
     throw new GomRuntimeException("Unable to translate: " + t);
