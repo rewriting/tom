@@ -679,9 +679,9 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
         |   // for a single constant. 
             // ambiguous with the next rule so :
        	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
-            name = headConstant[optionList] 
+            nameList = headConstantList[optionList] 
             {
-	      nameList = `concTomName(nameList*,name);
+	      //nameList = `concTomName(nameList*,name);
 	      optionList.add(`Constant());
 	      result = `TermAppl(
 		  ASTFactory.makeOptionList(optionList),
@@ -1395,9 +1395,21 @@ headSymbol [LinkedList optionList] returns [TomName result]
 	)
 ;
 
+headConstantList [LinkedList optionList] returns [TomNameList result]
+{
+    result = `concTomName();
+    TomName name = null;
+} :
+  name=headConstant[optionList] { result = `concTomName(result*,name); }
+  (
+    ALTERNATIVE { text.append('|'); }
+    name=headConstant[optionList] { result = `concTomName(result*,name); }
+  )*
+;
+
 headConstant [LinkedList optionList] returns [TomName result]
 { 
-    result = null; 
+    result = null;
     Token t;
 } : 
         t=constant // add to symbol table
