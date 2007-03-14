@@ -140,8 +140,12 @@ public abstract class TemplateHookedClass extends TemplateClass {
 
       tomParams.add("-X");
       tomParams.add(xmlFile.getPath());
-      tomParams.add("--optimize");
-      tomParams.add("--optimize2");
+      /*
+       * remove optimization since the is a bug
+       * between AU+Opt
+       */
+      //tomParams.add("--optimize");
+      //tomParams.add("--optimize2");
       tomParams.add("--output");
       tomParams.add(file_path);
       tomParams.add("-");     

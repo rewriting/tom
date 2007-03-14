@@ -237,37 +237,36 @@ public class Environment implements Cloneable {
   }
 
 
-  public void goTo(Position posRelative) {
-    if(posRelative.isRelative()){
-      int[] pos = posRelative.toArray();
-      int pos_back = pos[0];
-      int pos_length = pos.length;
+  public void goTo(Position pos) {
+    if(pos.isRelative()) {
+      int[] omega = pos.toArray();
+      int pos_back = omega[0];
+      int pos_length = omega.length;
       for(int i=0;i<pos_back;i++){
         up();
       }
       if(pos_length>1){
         for(int i=1;i<pos_length;i++){
-          down(pos[i]);
+          down(omega[i]);
         }
       }
+    } else {
+      Position posRelative = getPosition().getRelativePosition(pos);
+      goTo(posRelative);
     }
   }
 
   public void followRef() {
-    if (getSubject() instanceof Reference){
-      int[] pos= ((Reference) getSubject()).toArray();
+    if(getSubject() instanceof Reference) {
+      int[] pos= ((Reference) getSubject()).toPos().toArray();
       int pos_back = pos[0];
       int pos_length = pos.length;
-      for(int i=0;i<pos_back;i++){
+      for(int i=0;i<pos_back;i++) {
         up();
       }
-      if(pos_length>1){
-        for(int i=1;i<pos_length;i++){
-          down(pos[i]);
-          if (getSubject() instanceof Reference){
-            followRef();
-          }
-        }
+      for(int i=1;i<pos_length;i++) {
+        down(pos[i]);
+        followRef();
       }
     }
   }

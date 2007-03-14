@@ -47,7 +47,7 @@ public class GomReferenceExpander {
 
   // indicates if the expand method must include normalization phase
   // specific to termgraphs
-  private String packagePath;
+  private static String packagePath;
 
   private static SortDecl stringSortDecl,intSortDecl;
   private boolean forTermgraph;
@@ -119,15 +119,48 @@ public class GomReferenceExpander {
 
     String posOpName = "pos"+sort.getName();
     OperatorDecl posOp = `OperatorDecl(posOpName,sort,Variadic(intSortDecl));
-    hookList.add(posHooks(posOp));
+    hookList.add(posHooks(posOp,sort));
 
     return `concOperator(labOp,refOp,posOp);
   }
 
-  private static HookDeclList posHooks(OperatorDecl opDecl){
-    return
-      `concHookDecl(InterfaceHookDecl(
-            CutOperator(opDecl),"{tom.library.sl.Reference}"));
+  private static HookDeclList posHooks(OperatorDecl opDecl, SortDecl sort) {
+    
+    String moduleName = sort.getModuleDecl().getModuleName().getName();
+    String sortName = sort.getName();
+
+    String codeImport =%[
+    import @packagePath@.@moduleName.toLowerCase()@.types.*;
+    import tom.library.sl.*;
+    ]%;
+
+    String codeBlock =%[
+
+    public Position toPos(){
+      return Position.makeRelativePosition(toArray());
+    }
+     
+    /**
+     * constructs the reference from the relative position given in parameter
+     */
+    public static @sortName@ fromPos(Position pos){
+      //available only for relative positions
+      if(! pos.isRelative()) return null;
+      @sortName@ ref = `pos@sortName@();
+      int[] array = pos.toArray();
+      for(int i=0;i<pos.depth();i++){
+        ref = `pos@sortName@(ref*,array[i]);
+      }
+      return ref; 
+    }
+
+      ]%;
+
+    return 
+      `concHookDecl(
+          ImportHookDecl(CutOperator(opDecl),"{"+codeImport+"}"),
+          InterfaceHookDecl(CutOperator(opDecl),"{tom.library.sl.Reference}"),
+          BlockHookDecl(CutOperator(opDecl),"{"+codeBlock+"}"));
   }
 
   private static HookDeclList expHooksModule(GomModuleName gomModuleName,

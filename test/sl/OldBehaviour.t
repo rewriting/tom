@@ -87,11 +87,38 @@ public class OldBehaviour {
     return (Term) s.apply(subject);
   }
 
+  public Term testITESideEffect() {
+    Term subject = `f(a());
+    MuStrategy s = `IfThenElse(R2(),Identity(),Buildb());
+    return (Term) s.apply(subject);
+  }
+
   public Term test10() {
     Term subject = `f(a());
     MuStrategy s = `IfThenElse(R2(),Builda(),Buildb());
     return (Term) s.apply(subject);
   }
+
+  public Term test11() {
+    Term subject = `g(f(a()),b());
+    MuStrategy s = `OnceTopDownId((R1()));
+    subject = (Term) s.apply(subject);
+    subject = (Term) s.apply(subject);
+    return (Term) s.apply(subject);
+  }
+
+  public Term test12(){
+    Term subject = `g(f(a()),b());
+    MuStrategy s = `Innermost((R2()));
+    return (Term) s.apply(subject);
+  }
+
+  public Term test13(){
+    Term subject = `g(f(a()),b());
+    MuStrategy s = `Outermost((R2()));
+    return (Term) s.apply(subject);
+  }
+
 
   public Term testWhen1() {
     Term subject = `f(a());

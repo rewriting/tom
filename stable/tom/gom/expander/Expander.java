@@ -81,15 +81,16 @@ public class Expander {
         GomModuleName moduleNameName = (GomModuleName)it.next();
         String moduleName = moduleNameName.getName();
 
-        if(!environment().isBuiltin(moduleName)
-            && !alreadyParsedModule.contains(moduleNameName)) {
-          GomModule importedModule = parse(moduleName);
-          if(importedModule == null) {
-            return null;
-          }
-          result = tom_append_list_concGomModule(result,tom_cons_list_concGomModule(importedModule,tom_empty_list_concGomModule()));
-          alreadyParsedModule.add(moduleNameName);
-          newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
+        if(!environment().isBuiltin(moduleName)) {
+	  if(!alreadyParsedModule.contains(moduleNameName)) {
+            GomModule importedModule = parse(moduleName);
+            if(importedModule == null) {
+              return null;
+            }
+            result = tom_append_list_concGomModule(result,tom_cons_list_concGomModule(importedModule,tom_empty_list_concGomModule()));
+            alreadyParsedModule.add(moduleNameName);
+            newModuleToAnalyse.addAll(generateModuleToAnalyseSet(importedModule,alreadyParsedModule));
+	  }
         } else {
           environment().markUsedBuiltin(moduleName); 
         }

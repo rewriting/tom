@@ -74,8 +74,20 @@ public class TestSL extends TestCase {
   public void testSL9() {		
     assertTrue( ob.test9() == nb.test9() );
   }
+  public void testITESideEffect() {		
+    assertTrue( ob.testITESideEffect() == nb.testITESideEffect() );
+  }
   public void testSL10() {		
     assertTrue( ob.test10() == nb.test10() );
+  }
+  public void testSL11() {		
+    assertTrue( ob.test11() == nb.test11() );
+  }
+  public void testSL12() {		
+    assertTrue( ob.test12() == nb.test12() );
+  }
+  public void testSL13() {		
+    assertTrue( ob.test13() == nb.test13() );
   }
   public void testSLWhen1() {		
     assertTrue( ob.testWhen1() == nb.testWhen1() );
@@ -86,7 +98,7 @@ public class TestSL extends TestCase {
   public void testSLCongruence2() {	
     try{
       ob.testCongruence2();
-    fail();
+      fail();
     }catch(RuntimeException e){
       try{
         nb.testCongruence2();
@@ -97,5 +109,5 @@ public class TestSL extends TestCase {
   public void testSLCongruenceList() {
     assertTrue( ob.testCongruenceList() == nb.testCongruenceList() );
   }
- 
+
 }

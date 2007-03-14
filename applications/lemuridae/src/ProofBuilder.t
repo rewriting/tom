@@ -1058,8 +1058,8 @@ b :{
         /* proof end of file */
         proofendoffile() -> {
           System.out.println("Warning : The file ended while the theorem was not proved !\nProve it manually or abort.");
-          InputStream stream = new DataInputStream(System.in);
-          Utils.setStream(stream);
+          Utils.setStream(new DataInputStream(System.in));
+          inputStreams.clear();
         }
 
       } /* end of the big command switch */
@@ -1092,6 +1092,7 @@ b :{
   private PropRuleList newPropRules = `proprulelist();
   private HashMap<String,Tree> theorems = new HashMap<String,Tree>();
   private HashMap<String,Stack<ProofEnv>> unprovedTheorems = new HashMap<String,Stack<ProofEnv>>();
+  private Stack<InputStream> inputStreams = new Stack<InputStream>();
 
   // called when leaving proof mode
   private void store(Stack<ProofEnv> envStack, String name) {
@@ -1209,6 +1210,7 @@ b :{
           try { 
             InputStream stream = new FileInputStream(newname);
             Utils.setStream(stream);
+            inputStreams.push(stream);
           }
           catch (Exception FileNotFoundException) {
             System.out.println(newname + " : File not found");
@@ -1218,6 +1220,7 @@ b :{
         endoffile() -> {
           System.out.println("End of file");
           InputStream stream = new DataInputStream(System.in);
+          if (! inputStreams.empty()) stream = inputStreams.pop();
           Utils.setStream(stream);
         }
   

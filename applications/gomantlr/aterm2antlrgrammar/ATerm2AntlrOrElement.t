@@ -39,8 +39,13 @@ public class ATerm2AntlrOrElement {
     %include { ../antlrgrammar/AntlrGrammar.tom }
 
     private static class Container {
-        public enum OrElementType {
-            OR_ELEMENT, SET_OR_ELEMENT;
+	// enums are not available before java5, lets avoid them
+        public static class OrElementType {
+            public static final OrElementType OR_ELEMENT=new OrElementType();
+	    public static final OrElementType SET_OR_ELEMENT=new OrElementType();
+
+	    private OrElementType() {
+	    }
         }
 
         public OrElementType elementType=null;

@@ -490,6 +490,7 @@ writer.write(%[
     int count = 0;
     //in case of reference, conspos are considered as constants
     //to avoid traversal inside a position
+    //TODO: in the future Gom replace this code by a hook
     if(className().equals("Conspos"+sortName.getName())) return count;
     %match(SlotFieldList slotList) {
       concSlotField(_*,SlotField[Domain=domain],_*) -> {

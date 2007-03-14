@@ -30,7 +30,7 @@ termrule appl(bin(t1,t2),l) -> bin(appl(t1,l),appl(t2,l)).
 termrule appl(insert(t1,t2),l) -> insert(appl(t1,l),appl(t2,l)).
 termrule appl(if(t1,t2,t3),l) -> if(appl(t1,l),appl(t2,l),appl(t3,l)).
 
-
+/*
 proof ledef: forall x.( forall y.( N(x) => N(y) => (eq(less(x,y) , true()) <=> le(x,y))  )).
 intro. intro. intro. intro. intro.
 focus h1. rule. supset( fLe(one(),S(y0)), fEq(less(one(),S(y0)), S(true())) ).
@@ -45,10 +45,10 @@ rule. reduce.
 focus h3. rule.   supset( fLe(succ(S(y1)),one()), fEq(less(succ(S(y1)),one()), S(true())) ).
 
 // A
-/*
 theorem natcase.
 focus h4. intro. y0.
 intros.
 */
+
 
 

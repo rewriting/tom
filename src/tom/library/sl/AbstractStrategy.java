@@ -85,6 +85,17 @@ public abstract class AbstractStrategy implements Strategy {
     return v.visit_Strategy(this);
   }
 
+  public void execute(Strategy s) {
+    AbstractStrategy.init(s,getEnvironment());
+    s.visit();
+  }
+
+  public void execute(Strategy s, Visitable v) {
+    setSubject(v);
+    AbstractStrategy.init(s,getEnvironment());
+    s.visit();
+  }
+
   public Visitable fire(Visitable any) {
     init();
     setRoot(any);

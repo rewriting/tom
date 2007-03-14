@@ -52,10 +52,18 @@ public class Test1 extends TestCase {
 	  c0(P*,g@!id[],Q*),
 	  tail*) -> {
 	if(`g.isid()) {
-	  fail();
+//	  fail();
 	}
       }
     }
+  }
+
+  public void test2() {
+    TwoPath t = `g();
+    %match(t) {
+      !id() -> { return; /* OK */ }
+    }
+    fail();
   }
 
   public static void main(String[] args) {

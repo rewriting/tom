@@ -188,7 +188,7 @@ public class LambdaCalculus {
   %strategy substitute(info:LambdaInfo) extends `Fail(){
     visit LambdaTerm {
       p@posLambdaTerm(_*) -> {
-        Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+        Position relative = ((Reference)`p).toPos();
         Position source = getEnvironment().getPosition();
         Position absolute = source.getAbsolutePosition(relative);
         if(absolute.equals(info.omega)){
@@ -247,8 +247,8 @@ public class LambdaCalculus {
       p@posLambdaTerm(_*)-> {
         //test if it is a cycle to a lambda
         //it can be a ref corresponding to a sharing due to lazy evaluation
-        if(`((Reference)p).toArray().length==1){
-          Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+        if(`((Reference)p).toPos().depth()==1){
+          Position relative = ((Reference)`p).toPos();
           Position source = getEnvironment().getPosition();
           Position target = source.getAbsolutePosition(relative);
           Position relativeInv = target.getRelativePosition(source);
@@ -258,7 +258,7 @@ public class LambdaCalculus {
           return var;
         }
         else{
-          Position relative = Position.makeRelativePosition(((Reference)`p).toArray());
+          Position relative = ((Reference)`p).toPos();
           Position source = getEnvironment().getPosition();
           Position target = source.getAbsolutePosition(relative);
           return (LambdaTerm) target.getSubterm().fire(getEnvironment().getRoot());
