@@ -750,9 +750,9 @@ writer.write(%[
       public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
         @`code@
   ]%);
-        generateOtherMakeHooks(`tail,`args,writer);
+        SlotFieldList bargs = generateOtherMakeHooks(`tail,`args,writer);
         writer.write(%[
-        return realMake(@unprotectedChildList(`args)@);
+        return realMake(@unprotectedChildList(bargs)@);
       }
   ]%);
         mapping.generate(writer); 
@@ -760,32 +760,34 @@ writer.write(%[
     }
 
   }
-  public void generateOtherMakeHooks(
+  public SlotFieldList generateOtherMakeHooks(
       HookList other,
       SlotFieldList oArgs,
       java.io.Writer writer)
     throws java.io.IOException {
+    SlotFieldList bargs = oArgs;
     %match(other) {
       concHook(!MakeHook[],tail*) -> {
         /* skip non Make hooks */
-        generateOtherMakeHooks(`tail, oArgs, writer);
+        bargs = generateOtherMakeHooks(`tail, oArgs, writer);
       }
       concHook(MakeHook(args, code),tail*) -> {
         /* Rename the previous arguments according to new, if needed */
         if(oArgs != `args) {
-          recVarNameRemap(oArgs, `args, writer);
+          recVarNameRemap(oArgs,`args, writer);
         }
         writer.write(`code);
-        generateOtherMakeHooks(`tail, `args, writer);
+        bargs = generateOtherMakeHooks(`tail, `args, writer);
       }
     }
+    return bargs;
   }
 
   private void recVarNameRemap(
       SlotFieldList oargs,
       SlotFieldList nargs,
       java.io.Writer writer)
-    throws java.io.IOException {
+  throws java.io.IOException {
     %match(oargs, nargs) {
       concSlotField(),concSlotField() -> {
         return ;
