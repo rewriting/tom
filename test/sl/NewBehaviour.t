@@ -87,6 +87,12 @@ public class NewBehaviour {
     Strategy s = `IfThenElse(R2(),Builda(),Buildb());
     return (Term) s.fire(subject);
   }
+  
+  public Term testITESideEffect() {
+    Term subject = `f(a());
+    Strategy s = `IfThenElse(R2(),Identity(),Buildb());
+    return (Term) s.fire(subject);
+  }
 
   public Term test10() {
     Term subject = `f(a());

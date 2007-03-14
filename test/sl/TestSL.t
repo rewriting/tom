@@ -74,6 +74,9 @@ public class TestSL extends TestCase {
   public void testSL9() {		
     assertTrue( ob.test9() == nb.test9() );
   }
+  public void testITESideEffect() {		
+    assertTrue( ob.testITESideEffect() == nb.testITESideEffect() );
+  }
   public void testSL10() {		
     assertTrue( ob.test10() == nb.test10() );
   }

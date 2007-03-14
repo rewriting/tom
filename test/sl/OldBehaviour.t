@@ -87,6 +87,12 @@ public class OldBehaviour {
     return (Term) s.apply(subject);
   }
 
+  public Term testITESideEffect() {
+    Term subject = `f(a());
+    MuStrategy s = `IfThenElse(R2(),Identity(),Buildb());
+    return (Term) s.apply(subject);
+  }
+
   public Term test10() {
     Term subject = `f(a());
     MuStrategy s = `IfThenElse(R2(),Builda(),Buildb());

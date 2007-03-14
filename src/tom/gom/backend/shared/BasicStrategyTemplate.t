@@ -100,6 +100,18 @@ import tom.library.strategy.mutraveler.Position;
     }
   }
 
+  public void execute(tom.library.sl.Strategy s) {
+    tom.library.sl.AbstractStrategy.init(s,getEnvironment());
+    s.visit();
+  }
+
+  public void execute(tom.library.sl.Strategy s, tom.library.sl.Visitable v) {
+    getEnvironment().setSubject(v);
+    tom.library.sl.AbstractStrategy.init(s,getEnvironment());
+    s.visit();
+  }
+
+
   public tom.library.sl.Visitable fire(tom.library.sl.Visitable any) {
     tom.library.sl.AbstractStrategy.init(this,new tom.library.sl.Environment());
     getEnvironment().setRoot(any);
