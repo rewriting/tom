@@ -727,42 +727,84 @@ writer.write(%[
     }
   }
 
-public void generateConstructor(java.io.Writer writer) throws java.io.IOException {
-  
-  %match(HookList hooks) {
-    
-    ! concHook(_*,MakeHook[],_*) -> {
-      writer.write(%[
-          public static @className()@ make(@childListWithType(slotList)@) {
+  public void generateConstructor(java.io.Writer writer)
+    throws java.io.IOException {
+
+    %match(hooks) {
+      concHook() -> {
+        writer.write(%[
+        public static @className()@ make(@childListWithType(slotList)@) {
           proto.initHashCode(@childList(slotList)@);
           return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
-          }
-          ]%);
-    }
-
-    concHook(_*,MakeHook[],_*,MakeHook[]) -> {
-      throw new GomRuntimeException("Support for multiple Make hooks for an operator not implemented yet");
-    }
- 
-    concHook(_*,MakeHook(args,code),_*) -> {
-      writer.write(%[
-        private static @className()@ realMake(@childListWithType(slotList)@) {
+        }
+  ]%);
+      }
+   
+      concHook(MakeHook(args,code),tail*) -> {
+        writer.write(%[
+      private static @className()@ realMake(@childListWithType(slotList)@) {
         proto.initHashCode(@childList(slotList)@);
         return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
-        }
-
-        public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
+      }
+      public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
         @`code@
+  ]%);
+        generateOtherMakeHooks(`tail,`args,writer);
+        writer.write(%[
         return realMake(@unprotectedChildList(`args)@);
-        }
-        ]%);
-    }
-
-    ! concHook() -> {
-      mapping.generate(writer); 
+      }
+  ]%);
+        mapping.generate(writer); 
+      }
     }
 
   }
-}
+  public void generateOtherMakeHooks(
+      HookList other,
+      SlotFieldList oArgs,
+      java.io.Writer writer)
+    throws java.io.IOException {
+    %match(other) {
+      concHook(!MakeHook[],tail*) -> {
+        /* skip non Make hooks */
+        generateOtherMakeHooks(`tail, oArgs, writer);
+      }
+      concHook(MakeHook(args, code),tail*) -> {
+        /* Rename the previous arguments according to new, if needed */
+        if(oArgs != `args) {
+          recVarNameRemap(oArgs, `args, writer);
+        }
+        writer.write(`code);
+        generateOtherMakeHooks(`tail, `args, writer);
+      }
+    }
+  }
 
+  private void recVarNameRemap(
+      SlotFieldList oargs,
+      SlotFieldList nargs,
+      java.io.Writer writer)
+    throws java.io.IOException {
+    %match(oargs, nargs) {
+      concSlotField(),concSlotField() -> {
+        return ;
+      }
+      concSlotField(SlotField[Name=oargName,Domain=odomain],to*),
+      concSlotField(SlotField[Name=nargName,Domain=ndomain],tn*) -> {
+        if (!(`odomain==`ndomain)) {
+          throw new GomRuntimeException(
+              "OperatorTemplate: incompatible args "+
+              "should be rejected by typechecker");
+        } else if (!`oargName.equals(`nargName)) {
+          writer.write(%[
+    @fullClassName(`ndomain)@ @`nargName@ = @`oargName@;
+]%);
+        } /* else nothing to rename */
+        recVarNameRemap(`to,`tn, writer);
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "OperatorTemplate:recVarNameRemap failed " + oargs + " " + nargs);
+  }
 }
