@@ -253,8 +253,10 @@ public class Environment implements Cloneable {
       }
     }
     // we do not want to follow the last reference
-    down(omega[omega.length-1]);
- }
+    if(omega.length>0) {
+      down(omega[omega.length-1]);
+    }
+  }
 
   public void goTo(Reference ref) {
     int[] pos = ref.toArray();
@@ -270,7 +272,9 @@ public class Environment implements Cloneable {
       }
     }
     // we do not want to follow the last reference
-    down(pos[pos_length-1]);
+    if(omega.length>0) {
+      down(pos[pos_length-1]);
+    }
   }
 
   /**
