@@ -35,7 +35,7 @@ import java.util.*;
 import termgraph.lambdaterm.*;
 import termgraph.lambdaterm.types.*;
 import termgraph.lambdaterm.strategy.lambdaterm.*;
-import termgraph.lambdaterm.types.lambdaterm.posLambdaTerm;
+import termgraph.lambdaterm.types.lambdaterm.*;
 
 public class LambdaCalculus {
 
@@ -188,23 +188,16 @@ public class LambdaCalculus {
   %strategy substitute(info:LambdaInfo) extends `Fail(){
     visit LambdaTerm {
       p@posLambdaTerm(_*) -> {
-        Position relative = ((Reference)`p).toPos();
         Position source = getEnvironment().getPosition();
-        Position absolute = source.getAbsolutePosition(relative);
-        if(absolute.equals(info.omega)){
+        Position dest = ((Reference)`p).getDestPosition(source);
+        if(dest.equals(info.omega)){
           if(info.firstOccur==null || !info.lazy){
             info.firstOccur = getEnvironment().getPosition();
             return info.term;
           }
           else{
             Position target = info.firstOccur;
-            Position relativeInv = source.getRelativePosition(target);
-            int[] omega = relativeInv.toArray(); 
-            LambdaTerm t = `posLambdaTerm();
-            for (int i =0; i<omega.length;i++){
-              t = `posLambdaTerm(t*,omega[i]);
-            }
-            return `t;
+            return ConsposLambdaTerm.getReference(source,target);
           }
         }
         else{
@@ -247,20 +240,18 @@ public class LambdaCalculus {
       p@posLambdaTerm(_*)-> {
         //test if it is a cycle to a lambda
         //it can be a ref corresponding to a sharing due to lazy evaluation
-        if(`((Reference)p).toPos().depth()==1){
-          Position relative = ((Reference)`p).toPos();
+        if(`((Reference)p).toArray().length==1){
           Position source = getEnvironment().getPosition();
-          Position target = source.getAbsolutePosition(relative);
-          Position relativeInv = target.getRelativePosition(source);
-          getEnvironment().goTo(relative);
+          Position target = ((Reference)`p).getDestPosition(source);
+          Reference inv_p = ConsposLambdaTerm.getReference(target,source);
+          getEnvironment().goTo((Reference)`p);
           LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
-          getEnvironment().goTo(relativeInv);
+          getEnvironment().goTo(inv_p);
           return var;
         }
         else{
-          Position relative = ((Reference)`p).toPos();
           Position source = getEnvironment().getPosition();
-          Position target = source.getAbsolutePosition(relative);
+          Position target = ((Reference)`p).getDestPosition(source);
           return (LambdaTerm) target.getSubterm().fire(getEnvironment().getRoot());
         }
       }

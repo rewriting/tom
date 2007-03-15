@@ -79,9 +79,7 @@ public class DeRef extends AbstractStrategy {
   private void visitReference(Reference ref) {
     if(relative) {
       Position current = environment.getPosition();
-      Position relative = ref.toPos();
-      Position dest = current.getAbsolutePosition(relative);
-      environment.goTo(dest);
+      environment.goTo(ref);
       visitors[ARG].visit();
       if (getStatus() != Environment.SUCCESS) {
         environment.goTo(current);

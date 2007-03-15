@@ -54,7 +54,7 @@ public class TermGraphRewriting {
     visit Term {
       p@posTerm(_*) -> {
         Position target =
-          getEnvironment().getPosition().getAbsolutePosition(((Reference)`p).toPos());
+          ((Reference)`p).getDestPosition(getEnvironment().getPosition());
         if (map.containsKey(target.toString())){
           String label = (String) map.get(target.toString());
           return `refTerm(label);
@@ -123,14 +123,12 @@ public class TermGraphRewriting {
       refTerm[label=label] -> {
         if (! map.containsKey(`label)){
           Info info = new Info();
-          Position pos = Position.makeAbsolutePosition(new int[]{});
+          Position pos = new Position(new int[]{});
           Position old = getEnvironment().getPosition();
-          Position rootpos = Position.makeAbsolutePosition(new int[]{});
+          Position rootpos = new Position(new int[]{});
           map.put(`label,old);
           getEnvironment().goTo(rootpos);
-          Strategy s =`Try(TopDown(CollectSubterm(label,info)));
-          AbstractStrategy.init(s,getEnvironment()); 
-          s.visit();
+          execute(`Try(TopDown(CollectSubterm(label,info))));
           getEnvironment().goTo(old);
           return `labTerm(label,info.term);
         }
@@ -141,68 +139,36 @@ public class TermGraphRewriting {
     }
   }
 
+  /*
+   * what are the good names for getAbsolutePosition and getRelativePosition ?
+   * do we switch receiver and argument
+   * introduce 2 subclasses AbsolutePosition and RelativePosition ?
+   * distinction between pos and ref ?
+   */
+
   // In this strategy, the failure is Identity
   %strategy NormalizePos() extends Identity(){
     visit Term {
       p@posTerm(_*) -> {
-        Position current = (Position) getEnvironment().getPosition(); 
-        Position relPos = ((Reference)`p).toPos();
-        Position dest = current.getAbsolutePosition(relPos);
-        if(current.compare(dest)== -1){
-          //we must switch the rel position and the pointed subterm
-          Position rootpos = Position.makeAbsolutePosition(new int[]{});
-          getEnvironment().goTo(rootpos);
-          Info info = new Info();
-          Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
-          Strategy getSubterm = dest.getSubterm();
-          info.term = (Term) getEnvironment().getSubject();
-          Term relref = ConsposTerm.fromPos(dest.getRelativePosition(current));
-          Strategy replace = dest.getReplace(relref);
-          AbstractStrategy.init(update,getEnvironment());
-          AbstractStrategy.init(getSubterm,getEnvironment()); 
-          AbstractStrategy.init(replace,getEnvironment()); 
-          update.visit();
-          Term subterm = (Term) getSubterm.fire(getEnvironment().getSubject()); 
-          replace.visit(); 
-          getEnvironment().goTo(current);
-          return subterm; 
-        }
-      }
-    }
-  }
-
-/*
- * what are the good names for getAbsolutePosition and getRelativePosition ?
- * do we switch receiver and argument
- * introduce 2 subclasses AbsolutePosition and RelativePosition ?
- * distinction between pos and ref ?
- */
-
-  // In this strategy, the failure is Identity
-  %strategy NormalizePosOpt() extends Identity(){
-    visit Term {
-      p@posTerm(_*) -> {
-        Position current = (Position) getEnvironment().getPosition(); 
-        Position relPos = ((Reference)`p).toPos();
-        Position dest = current.getAbsolutePosition(relPos);
+        Position current = getEnvironment().getPosition(); 
+        Position dest = ((Reference)`p).getDestPosition(current);
         if(current.compare(dest)== -1) {
-          getEnvironment().followRef();
+          getEnvironment().goTo((Reference)`p);
           Position realDest = getEnvironment().getPosition(); 
           if(!realDest.equals(dest)) {
             //the subterm pointed was a pos (in case of previous switch) 
             //and we must only update the relative position
             getEnvironment().goTo(current);
-            return ConsposTerm.fromPos(current.getRelativePosition(realDest));
+            return ConsposTerm.getReference(current,realDest);
           } else {
             //we must switch the rel position and the pointed subterm
 
             // 1. we construct the new relative position
-            Term relref = ConsposTerm.fromPos(dest.getRelativePosition(current));
+            Term relref = ConsposTerm.getReference(dest,current);
 
             // 2. we update the part we want to change 
             Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
-            AbstractStrategy.init(update,getEnvironment());
-            update.visit(); 
+            execute(update); 
 
             // 3. we save the subterm updated 
             Term subterm = (Term) getEnvironment().getSubject(); 
@@ -223,18 +189,17 @@ public class TermGraphRewriting {
     visit Term {
       p@posTerm(_*) -> {
         Position current = getEnvironment().getPosition(); 
-        Position relPos = ((Reference)`p).toPos();
-        Position dest = current.getAbsolutePosition(relPos);
+        Position dest = ((Reference)`p).getDestPosition(current);
         if(current.hasPrefix(source) && !dest.hasPrefix(source)){
           //we must update this relative pos from the redex to the external
           current = current.changePrefix(source,target);
-          return ConsposTerm.fromPos(current.getRelativePosition(dest));
+          return ConsposTerm.getReference(current,dest);
         }
 
         if (dest.hasPrefix(source) && !current.hasPrefix(source)){
           //we must update this relative pos from the external to the redex
           dest = dest.changePrefix(source,target); 
-          return ConsposTerm.fromPos(current.getRelativePosition(dest));
+          return ConsposTerm.getReference(current,dest);
         }
         return `p;
       }
@@ -247,8 +212,8 @@ public class TermGraphRewriting {
     }
   }
 
-
   public static void main(String[] args){
+
     Term t = `g(g(g(a(),g(posTerm(2,1),posTerm(3,2))),a()),posTerm(1,1,1,2));
     System.out.println("Initial term :"+t);
     HashMap map = new HashMap();
@@ -262,23 +227,23 @@ public class TermGraphRewriting {
     /************************************************************/
 
     /* position of the final subject */
-    Position posFinal = Position.makeAbsolutePosition(new int[]{1});
+    Position posFinal = new Position(new int[]{1});
 
     /* term t with labels */
     Term tt = (Term) `UnExpand(map).fire(t);
 
     /* redex with labels */
-    Term redex = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getSubterm().fire(tt);
+    Term redex = (Term) new Position(new int[]{1,1}).getSubterm().fire(tt);
 
     /* add labels for variables x and y */
-    Position _x = Position.makeAbsolutePosition(new int[]{1});
-    Position _y = Position.makeAbsolutePosition(new int[]{2});
+    Position _x = new Position(new int[]{1});
+    Position _y = new Position(new int[]{2});
     final Term term_x =  (Term) _x.getSubterm().fire(redex);
     final Term term_y =  (Term) _y.getSubterm().fire(redex);
     redex = (Term) _x.getReplace(`labTerm("x",term_x)).fire(redex);
     redex = (Term) _y.getReplace(`labTerm("y",term_y)).fire(redex);
     /* replace in t the lhs by the rhs */
-    tt = (Term) Position.makeAbsolutePosition(new int[]{1,1}).getReplace(`f(refTerm("x"))).fire(tt);
+    tt = (Term) new Position(new int[]{1,1}).getReplace(`f(refTerm("x"))).fire(tt);
 
     /* concat the redex on top of the term */
     tt = `substTerm(tt,redex);
@@ -294,13 +259,13 @@ public class TermGraphRewriting {
     t2 = (Term) termAbstractType.label2pos(t2);
     t2 = (Term) posFinal.getSubterm().fire(t2);
     System.out.println("Canonical term obtained by Innermost strategy + a map: "+t2);
-
+    
     /*  one directly based on positions */
     /************************************************************/
 
     /* redex */
-    Position posSubst = Position.makeAbsolutePosition(new int[]{2});
-    Position posRedex = Position.makeAbsolutePosition(new int[]{1,1,1});
+    Position posSubst = new Position(new int[]{2});
+    Position posRedex = new Position(new int[]{1,1,1});
 
     /* concat a constant on top of the term */
     Term t3 = `substTerm(t,a());
@@ -320,12 +285,14 @@ public class TermGraphRewriting {
     t3 = (Term) `InnermostIdSeq(NormalizePos()).fire(t3);
     t3 = (Term) posFinal.getSubterm().fire(t3);
     System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t3);
-
+    
     /*  an optimized version (no update during the innermost strat) */
     /************************************************************/
 
     t = `g(g(g(f(a()),g(posTerm(2,1),a())),posTerm(1,1,2,2)),posTerm(1,1,1,1,1));
     System.out.println("\nMore complex initial term :"+t);
+    /* rule g(x,y) -> f(x) at pos 1.1*/
+    System.out.println("apply the rule g(x,y) -> f(x) at position 1.1");
 
     /* concat a constant on top of the term */
     Term t4 = `substTerm(t,a());
@@ -341,10 +308,9 @@ public class TermGraphRewriting {
     t4 = (Term) posRedex.getReplace(`f(posTerm(4,2,1))).fire(t4);
 
     /* normalization by innermost strategy */
-    t4 = (Term) `InnermostIdSeq(NormalizePosOpt()).fire(t4);
+    t4 = (Term) `InnermostIdSeq(NormalizePos()).fire(t4);
     t4 = (Term) posFinal.getSubterm().fire(t4);
-    System.out.println("Canonical term obtained by an optimized version: "+t4);
-
+    System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t4);
 
   }
 
