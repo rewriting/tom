@@ -174,8 +174,11 @@ public class Environment implements Cloneable {
    * set the current term
    */
   public void setSubject(Visitable root) {
+    //System.out.println("setsubject "+root);
+    //System.out.println("in the env "+this);
     this.subterm[size-1] = root;
   }
+
   /**
    * get the current sub-position
    * @return the current sub-position
@@ -191,7 +194,7 @@ public class Environment implements Cloneable {
   public Position getPosition() {
     int[] reducedOmega = new int[depth()];
     System.arraycopy(omega,1,reducedOmega,0,depth());
-    return Position.makeAbsolutePosition(reducedOmega);
+    return new Position(reducedOmega);
   }
 
 
@@ -238,54 +241,53 @@ public class Environment implements Cloneable {
 
 
   public void goTo(Position pos) {
-    if(pos.isRelative()) {
-      int[] omega = pos.toArray();
-      int pos_back = omega[0];
-      int pos_length = omega.length;
-      for(int i=0;i<pos_back;i++){
-        up();
-      }
-      if(pos_length>1){
-        for(int i=1;i<pos_length;i++){
-          down(omega[i]);
-        }
-      }
-    } else {
-      Position posRelative = getPosition().getRelativePosition(pos);
-      goTo(posRelative);
+    int[] omega= pos.toArray();
+    int pos_back = depth();
+    for(int i=0;i<pos_back;i++) {
+      up();
     }
-  }
-
-  public void followRef() {
-    if(getSubject() instanceof Reference) {
-      int[] pos= ((Reference) getSubject()).toPos().toArray();
-      int pos_back = pos[0];
-      int pos_length = pos.length;
-      for(int i=0;i<pos_back;i++) {
-        up();
-      }
-      for(int i=1;i<pos_length;i++) {
-        down(pos[i]);
-        followRef();
+    for(int i=0;i<omega.length-1;i++) {
+      down(omega[i]);
+      if (getSubject() instanceof Reference) {
+        goTo((Reference)getSubject());
       }
     }
+    // we do not want to follow the last reference
+    down(omega[omega.length-1]);
+ }
+
+  public void goTo(Reference ref) {
+    int[] pos = ref.toArray();
+    int pos_back = pos[0];
+    int pos_length = pos.length;
+    for(int i=0;i<pos_back;i++) {
+      up();
+    }
+    for(int i=1;i<pos_length-1;i++) {
+      down(pos[i]);
+      if (getSubject() instanceof Reference) {
+        goTo((Reference)getSubject());
+      }
+    }
+    // we do not want to follow the last reference
+    down(pos[pos_length-1]);
   }
 
-    /**
-     * Returns a <code>String</code> object representing the position.
-     * The string representation consists of a list of elementary positions
-     *
-     * @return a string representation of this position
-     */
-    public String toString() {
-      StringBuffer r = new StringBuffer("[");
-      for(int i=0 ; i<size ; i++) {
-        r.append(omega[i]);
-        if(i<size-1) {
-          r.append(", ");
-        }
+  /**
+   * Returns a <code>String</code> object representing the position.
+   * The string representation consists of a list of elementary positions
+   *
+   * @return a string representation of this position
+   */
+  public String toString() {
+    StringBuffer r = new StringBuffer("[");
+    for(int i=0 ; i<size ; i++) {
+      r.append(omega[i]);
+      if(i<size-1) {
+        r.append(", ");
       }
-      r.append("]");
+    }
+    r.append("]");
 
     r.append("\n[");
 

@@ -130,28 +130,46 @@ public class GomReferenceExpander {
     ]%;
 
     String codeBlock =%[
-
-    public Position toPos(){
-      return Position.makeRelativePosition(toArray());
-    }
      
-    /**
-     * constructs the reference from the relative position given in parameter
-     */
-    public static @sortName@ fromPos(Position pos){
-      //available only for relative positions
-      if(! pos.isRelative()) return null;
-      @sortName@ ref = `pos@sortName@();
-      int[] array = pos.toArray();
-      for(int i=0;i<pos.depth();i++){
-        ref = `pos@sortName@(ref*,array[i]);
+    // These two following methods could be factorized in an abstract class implementing Reference 
+   
+    public Position getDestPosition(Position source) {
+      int[] relative = toArray();
+      int[] current = source.toArray();
+      int prefix = source.depth()-relative[0];
+      int absoluteLength = prefix+relative.length-1;
+      int[] absolute = new int[absoluteLength];
+      for(int i=0 ; i<prefix ; i++) {
+        absolute[i]=current[i];
       }
-      return ref; 
+      for(int i=prefix ; i<absoluteLength ; i++){
+        absolute[i]=relative[i-prefix+1];
+      }
+      return new Position(absolute);
     }
 
-      ]%;
-
-    return 
+   public static Conspos@sortName@ getReference(Position source, Position dest) {
+      int[] sourceOmega = source.toArray();
+      int[] destOmega = dest.toArray();
+      int min_length =Math.min(sourceOmega.length,destOmega.length);
+      int commonPrefixLength=0;
+      while(commonPrefixLength<min_length && sourceOmega[commonPrefixLength]==destOmega[commonPrefixLength]){
+        commonPrefixLength++;
+      }
+      int[] relative = new int[destOmega.length-commonPrefixLength+1];
+      relative[0]=sourceOmega.length-commonPrefixLength;
+      for(int j=1;j<relative.length;j++){
+        relative[j] = destOmega[commonPrefixLength+j-1];
+      }
+      @sortName@ ref = `pos@sortName@();
+      for(int i=0;i<relative.length;i++){
+        ref = `pos@sortName@(ref*,relative[i]);
+      }
+      return (Conspos@sortName@) ref; 
+    }
+    
+   ]%;
+   return 
       `concHookDecl(ImportHookDecl("{"+codeImport+"}"),InterfaceHookDecl("{tom.library.sl.Reference}"),BlockHookDecl("{"+codeBlock+"}"));
   }
 
@@ -188,6 +206,9 @@ public class GomReferenceExpander {
 
     %match(sorts){
       concSortDecl(_*,SortDecl[Name=sortName],_*) -> {
+        codeImport +=%[
+          import @packagePath@.@moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.*;
+        ]%;
         codeStrategies += getStrategies(`sortName,moduleName);
         Min = "Sequence(Min"+`sortName+"(info),"+Min+")";
         Switch = "Sequence(Switch"+`sortName+"(info),"+Switch+")";
@@ -307,13 +328,7 @@ public class GomReferenceExpander {
           }
           else {
             Position target = (Position) map.get(`label);
-            Position pos = 
-              getEnvironment().getPosition().getRelativePosition(target);
-            @sortName@ ref = `pos@sortName@();
-            int[] array = `pos.toArray();
-            for(int i=0;i<`pos.depth();i++){
-              ref = `pos@sortName@(ref*,array[i]);
-            }
+            @sortName@ ref = (@sortName@) (Conspos@sortName@.getReference(getEnvironment().getPosition(),target));
             return ref; 
           }
         }
