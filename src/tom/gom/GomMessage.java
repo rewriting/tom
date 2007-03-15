@@ -130,8 +130,8 @@ public class GomMessage implements PlatformMessage {
     new GomMessage("Hook for operator {0} discarded");
   public static final GomMessage unsupportedHookAlgebraic =
     new GomMessage("Hook type {0} not supported for non algebraic operator");
-  public static final GomMessage badMakeInsertArguments =
-    new GomMessage("Bad arguments for make_insert: expecting 2, but got {0}");
+  public static final GomMessage badHookArguments =
+    new GomMessage("Bad arguments for {0}: expecting 2, but got {1}");
   public static final GomMessage unsupportedHookVariadic =
     new GomMessage("Hook type {0} not supported for non variadic operator");
   public static final GomMessage undeclaredSorts =

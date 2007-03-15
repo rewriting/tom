@@ -68,8 +68,9 @@ public class HookTypeExpander {
           Hook[NameType=KindModule(),Name=mname] -> {
             if(`mname.equals(`moduleName)) {
               ModuleDecl mdecl = getModuleDecl(`mname,moduleList);
-              HookDecl newDecl = makeHookDecl(`hook,`CutModule(mdecl));
-              hookList = `concHookDecl(newDecl,hookList*);
+              HookDeclList newDeclList =
+                makeHookDeclList(`hook,`CutModule(mdecl));
+              hookList = `concHookDecl(newDeclList*,hookList*);
             } else {
               getLogger().log(Level.SEVERE,
                   "Hooks on module are authorised only on the current module");
@@ -77,13 +78,13 @@ public class HookTypeExpander {
           }
           Hook[NameType=KindSort(),Name=sname] -> {
             SortDecl sdecl = getSortDecl(`sname,`moduleName,moduleList);
-            HookDecl newDecl = makeHookDecl(`hook,`CutSort(sdecl));
-            hookList = `concHookDecl(newDecl,hookList*);
+            HookDeclList newDeclList = makeHookDeclList(`hook,`CutSort(sdecl));
+            hookList = `concHookDecl(newDeclList*,hookList*);
           }
           Hook[NameType=KindOperator(),Name=oname] -> {
             OperatorDecl odecl = getOperatorDecl(`oname,`moduleName,moduleList);
-            HookDecl newDecl = makeHookDecl(`hook,`CutOperator(odecl));
-            hookList = `concHookDecl(newDecl,hookList*);
+            HookDeclList newDeclList = makeHookDeclList(`hook,`CutOperator(odecl));
+            hookList = `concHookDecl(newDeclList*,hookList*);
           }
         }
       }
@@ -91,39 +92,47 @@ public class HookTypeExpander {
     return hookList;
   }
 
-  HookDecl makeHookDecl(Production hook, Decl mdecl) {
+  HookDeclList makeHookDeclList(Production hook, Decl mdecl) {
     %match(hook) {
       Hook[HookType=hkind,
            Name=hName,
            Args=hookArgs,
-           Code=hcode] -> {
-        HookDecl newHook = null;
+           StringCode=scode] -> {
+        HookDeclList newHookList = `concHookDecl();
         %match(HookKind `hkind) {
           HookKind("block") -> {
-            newHook = `BlockHookDecl(mdecl,hcode);
+            newHookList = `concHookDecl(
+                BlockHookDecl(mdecl,Code(trimBracket(scode))));
           }
           HookKind("interface") -> {
-            newHook = `InterfaceHookDecl(mdecl,hcode);
+            newHookList = `concHookDecl(
+                InterfaceHookDecl(mdecl,Code(trimBracket(scode))));
           }
           HookKind("import") -> {
-            newHook = `ImportHookDecl(mdecl,hcode);
+            newHookList = `concHookDecl(
+                ImportHookDecl(mdecl,Code(trimBracket(scode))));
           }
-          HookKind("make")|HookKind("make_insert") -> {
+          HookKind(("make"|"make_insert"|"make_empty")[]) -> {
             SlotList typedArgs = typeArguments(`hookArgs,`hkind,`mdecl);
             if (typedArgs == null) {
               getLogger().log(Level.SEVERE,
                   GomMessage.discardedHook.getMessage(),
                   new Object[]{ `(hName) });
-              return `MakeHookDecl(mdecl,concSlot(),hcode);
+              return `concHookDecl();
             }
-            newHook = `MakeHookDecl(mdecl,typedArgs,hcode);
+            newHookList = `concHookDecl(
+                MakeHookDecl(mdecl,typedArgs,Code(scode)));
+          }
+          HookKind("AU") -> {
+            return `makeAUHookList(hName,mdecl,scode);
+
           }
         }
-        if (newHook == null) {
+        if (newHookList == `concHookDecl()) {
           throw new GomRuntimeException(
               "GomTypeExpander:typeModuleHook unknown HookKind: "+`hkind);
         }
-        return newHook;
+        return newHookList;
       }
     }
     throw new GomRuntimeException(
@@ -238,7 +247,7 @@ public class HookTypeExpander {
           }
         }
       }
-      HookKind("make_insert") -> {
+      HookKind(hookName@"make_insert") -> {
         /*
          * The TypedProduction has to be Variadic
          * Then we get the codomain from the operatordecl
@@ -253,8 +262,35 @@ public class HookTypeExpander {
               }
               _ -> {
                 getLogger().log(Level.SEVERE,
-                    GomMessage.badMakeInsertArguments.getMessage(),
-                    new Object[]{new Integer(args.length())});
+                    GomMessage.badHookArguments.getMessage(),
+                    new Object[]{ `(hookName), new Integer(args.length())});
+                return null;
+              }
+            }
+          }
+          _ -> {
+            getLogger().log(Level.SEVERE,
+                GomMessage.unsupportedHookVariadic.getMessage(),
+                new Object[]{ kind });
+            return null;
+          }
+        }
+      }
+      HookKind(hookName@"make_empty") -> {
+        /*
+         * The TypedProduction has to be Variadic
+         * Then we get the codomain from the operatordecl
+         */
+        %match(decl) {
+          CutOperator[
+            ODecl=OperatorDecl[Sort=sort,Prod=Variadic(sortDecl)]] -> {
+            // for a make_empty hook, there is no argument
+            %match(ArgList args) {
+              concArg() -> { return `concSlot(); }
+              _ -> {
+                getLogger().log(Level.SEVERE,
+                    GomMessage.badHookArguments.getMessage(),
+                    new Object[]{ `(hookName), new Integer(args.length())});
                 return null;
               }
             }
@@ -282,6 +318,76 @@ public class HookTypeExpander {
       }
     }
     throw new GomRuntimeException("GomTypeExpander:recArgSlots failed "+args+" "+slots);
+  }
+
+  private String trimBracket(String stringCode) {
+    int start = `stringCode.indexOf('{')+1;
+    int end = `stringCode.lastIndexOf('}');
+    return `stringCode.substring(start,end).trim();
+  }
+
+  private SortDecl getSortAndCheck(Decl mdecl) {
+    %match(mdecl) {
+      CutOperator(OperatorDecl[Sort=domainsdecl,Prod=Variadic[Sort=sdecl]]) -> {
+        if (`domainsdecl == `sdecl) {
+          return `sdecl;
+        } else {
+          getLogger().log(Level.SEVERE,
+              "Different domain and codomain");
+        }
+      }
+      _ -> {
+        getLogger().log(Level.SEVERE,
+            "AU hook can only be used on a variadic operator");
+      }
+    }
+    return null;
+  }
+
+  private HookDeclList makeAUHookList(String opName, Decl mdecl, String scode) {
+    /* Can only be applied to a variadic operator, those domain and codomain
+     * are equals */
+    SortDecl domain = getSortAndCheck(mdecl);
+    if (null == domain)
+      return `concHookDecl(); 
+
+    HookDeclList auHooks = `concHookDecl();
+    String userNeutral = trimBracket(scode);
+    /* The hook body is the name of the neutral element */
+    if (!"".equals(userNeutral)) {
+      auHooks = `concHookDecl(
+          MakeHookDecl(mdecl,concSlot(),Code("return "+userNeutral+";")),
+          auHooks*);
+    }
+    /* Flatten and remove neutral */
+    /* 
+     * if(<head>.isEmpty<conc>()) { return <tail>; }
+     * if(<tail>.isEmpty<conc>()) { return <head>; }
+     * if(<head>.isCons<conc>()) { return `<conc>(<head>*,<tail>); }
+     */
+    if(!"".equals(userNeutral)) {
+      auHooks = `concHookDecl(
+          MakeHookDecl(
+            mdecl,
+            concSlot(Slot("head",domain),Slot("tail",domain)),
+            CodeList(
+              Code("if (head == "+userNeutral+") { return tail; }"),
+              Code("if (tail ==  "+userNeutral+") { return head; }")
+              )),
+          auHooks*);
+    }
+    auHooks = `concHookDecl(
+        MakeHookDecl(
+          mdecl,
+          concSlot(Slot("head",domain),Slot("tail",domain)),
+          CodeList(
+            Code("if (head.isEmpty"+opName+"()) { return tail; }"),
+            Code("if (tail.isEmpty"+opName+"()) { return head; }"),
+            Code("if (head.isCons"+opName+"()) { return `"+opName+"(head*,tail); }")
+          )),
+        auHooks*);
+
+    return auHooks;
   }
 
   private Logger getLogger() {

@@ -27,6 +27,7 @@ package tom.gom.backend;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
+import tom.gom.backend.CodeGen;
 import tom.gom.adt.objects.*;
 import tom.gom.adt.objects.types.*;
 
@@ -54,11 +55,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
     HookList h = `concHook(hooks*);   
     %match(HookList h) {
       concHook(L1*,BlockHook(code),L2*) -> {
-        //remove brackets
-        int start = `code.indexOf("{")+1;
-        int end = `code.lastIndexOf("}");
-        res.append(`code.trim().substring(start,end)+"\n");
-        h = `concHook(L1*,L2*);
+        res.append(CodeGen.generateCode(`code));
+        res.append("\n");
       }
     }
     return res.toString();
@@ -69,11 +67,8 @@ public abstract class TemplateHookedClass extends TemplateClass {
     HookList h = `concHook(hooks*);   
     %match(HookList h) {
       concHook(L1*,ImportHook(code),L2*) -> {
-        //remove bracketsa
-        int start = `code.indexOf("{")+1;
-        int end = `code.lastIndexOf("}");
-        res.append(`code.substring(start,end)+"\n");
-        h = `concHook(L1*,L2*);
+        res.append(CodeGen.generateCode(`code));
+        res.append("\n");
       }
     }
     return res.toString();
@@ -84,11 +79,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
     HookList h = `concHook(hooks*);   
     %match(HookList h) {
       concHook(L1*,InterfaceHook(code),L2*) -> {
-        //remove brackets
-        int start = `code.indexOf("{")+1;
-        int end = `code.lastIndexOf("}");
-        res.append(","+`code.substring(start,end).replaceAll("\n",""));
-        h = `concHook(L1*,L2*);
+        res.append(",");
+        res.append(CodeGen.generateCode(`code));
+        res.append("\n");
       }
     }
     return res.toString();
@@ -134,7 +127,7 @@ public abstract class TemplateHookedClass extends TemplateClass {
           tomParams.add("--import");
           tomParams.add(importPath);
         }
-      }catch(IOException e){
+      } catch (IOException e) {
         getLogger().log(Level.SEVERE,"Failed compute import list: " + e.getMessage());
       }
 
@@ -167,8 +160,9 @@ public abstract class TemplateHookedClass extends TemplateClass {
           getLogger().log(Level.SEVERE, tom.gom.GomMessage.tomFailure.getMessage(),new Object[]{file_path});
           return res;
         }
-      } catch(IOException e) {
-        getLogger().log(Level.SEVERE,"Failed generate Tom code: " + e.getMessage());
+      } catch (IOException e) {
+        getLogger().log(Level.SEVERE,
+            "Failed generate Tom code: " + e.getMessage());
       }
     }
     return 0;

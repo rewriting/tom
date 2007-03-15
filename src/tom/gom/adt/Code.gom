@@ -1,0 +1,5 @@
+module Code
+imports String
+abstract syntax
+Code = Code(prog:String)
+     | CodeList(Code*)

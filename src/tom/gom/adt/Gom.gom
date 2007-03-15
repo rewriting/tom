@@ -1,5 +1,5 @@
 module Gom
-imports String
+imports String Code
 abstract syntax
 
 /* Output from the parser */
@@ -15,7 +15,7 @@ Grammar = Grammar(ProductionList:ProductionList)
 GrammarList = concGrammar(Grammar*)
 Production = Production(Name:String, Domain:FieldList, Codomain:GomType)
            | Hook(NameType:IdKind, Name:String, HookType:HookKind,
-                  Args:ArgList, Code:String)
+                  Args:ArgList, StringCode:String)
 ProductionList = concProduction(Production*)
 HookKind = HookKind(kind:String)
 IdKind = KindModule()
@@ -50,10 +50,10 @@ SortList = concSort(Sort*)
 Decl = CutModule(MDecl:ModuleDecl)
      | CutSort(Sort:SortDecl)
      | CutOperator(ODecl:OperatorDecl)
-HookDecl = MakeHookDecl(Pointcut:Decl,SlotArgs:SlotList,Code:String)
-         | BlockHookDecl(Pointcut:Decl,Code:String)
-         | InterfaceHookDecl(Pointcut:Decl,Code:String)
-         | ImportHookDecl(Pointcut:Decl,Code:String)
+HookDecl = MakeHookDecl(Pointcut:Decl,SlotArgs:SlotList,Code:Code)
+         | BlockHookDecl(Pointcut:Decl,Code:Code)
+         | InterfaceHookDecl(Pointcut:Decl,Code:Code)
+         | ImportHookDecl(Pointcut:Decl,Code:Code)
 HookDeclList = concHookDecl(HookDecl*)
 
 /* Helper constructors */

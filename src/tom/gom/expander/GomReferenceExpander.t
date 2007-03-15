@@ -158,9 +158,10 @@ public class GomReferenceExpander {
 
     return 
       `concHookDecl(
-          ImportHookDecl(CutOperator(opDecl),"{"+codeImport+"}"),
-          InterfaceHookDecl(CutOperator(opDecl),"{tom.library.sl.Reference}"),
-          BlockHookDecl(CutOperator(opDecl),"{"+codeBlock+"}"));
+          ImportHookDecl(CutOperator(opDecl),Code(codeImport)),
+          InterfaceHookDecl(CutOperator(opDecl),
+                            Code("tom.library.sl.Reference")),
+          BlockHookDecl(CutOperator(opDecl),Code(codeBlock)));
   }
 
   private static HookDeclList expHooksModule(GomModuleName gomModuleName,
@@ -240,11 +241,11 @@ public class GomReferenceExpander {
 
     ]%;
 
-    String codeBlock = "{" +codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers) + "}";
+    String codeBlock = codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
 
     return `concHookDecl(
-        ImportHookDecl(CutModule(mDecl),"{"+codeImport+"}"),
-        BlockHookDecl(CutModule(mDecl),codeBlock));
+        ImportHookDecl(CutModule(mDecl),Code(codeImport)),
+        BlockHookDecl(CutModule(mDecl),Code(codeBlock)));
   }
 
   private static String getStrategies(String sortName, String moduleName){

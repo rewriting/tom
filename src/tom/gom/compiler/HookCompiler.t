@@ -41,9 +41,7 @@ import tom.library.sl.*;
 
 public class HookCompiler {
 
-  %include { ../adt/gom/Gom.tom}
   %include { ../adt/objects/Objects.tom}
-
   %include{ sl.tom }
 
   private GomEnvironment environment() {

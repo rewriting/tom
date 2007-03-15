@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.logging.*;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.backend.TemplateClass;
+import tom.gom.backend.CodeGen;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
@@ -732,7 +733,8 @@ writer.write(%[
     throws java.io.IOException {
 
     %match(hooks) {
-      concHook() -> {
+      /* If there is no MakeHook */
+      !concHook(_*,MakeHook[],_*) -> {
         writer.write(%[
         public static @className()@ make(@childListWithType(slotList)@) {
           proto.initHashCode(@childList(slotList)@);
@@ -741,46 +743,49 @@ writer.write(%[
   ]%);
       }
    
-      concHook(MakeHook(args,code),tail*) -> {
+      /* If there is at least one MakeHook */
+      lbl:concHook(_*,MakeHook[HookArguments=args],_*) -> {
         writer.write(%[
       private static @className()@ realMake(@childListWithType(slotList)@) {
         proto.initHashCode(@childList(slotList)@);
         return (@className()@) shared.SingletonSharedObjectFactory.getInstance().build(proto);
       }
       public static @fullClassName(sortName)@ make(@unprotectedChildListWithType(`args)@) {
-        @`code@
   ]%);
-        SlotFieldList bargs = generateOtherMakeHooks(`tail,`args,writer);
+        SlotFieldList bargs = generateMakeHooks(hooks,null,writer);
         writer.write(%[
         return realMake(@unprotectedChildList(bargs)@);
       }
   ]%);
         mapping.generate(writer); 
+        break lbl;
       }
     }
-
   }
-  public SlotFieldList generateOtherMakeHooks(
+
+  public SlotFieldList generateMakeHooks(
       HookList other,
-      SlotFieldList oArgs,
+      SlotFieldList oArgs, /* will be null if it is the first hook */
       java.io.Writer writer)
     throws java.io.IOException {
-    SlotFieldList bargs = oArgs;
     %match(other) {
       concHook(!MakeHook[],tail*) -> {
         /* skip non Make hooks */
-        bargs = generateOtherMakeHooks(`tail, oArgs, writer);
+        return generateMakeHooks(`tail, oArgs, writer);
       }
       concHook(MakeHook(args, code),tail*) -> {
         /* Rename the previous arguments according to new, if needed */
-        if(oArgs != `args) {
+        if(oArgs != null && oArgs != `args) {
           recVarNameRemap(oArgs,`args, writer);
         }
-        writer.write(`code);
-        bargs = generateOtherMakeHooks(`tail, `args, writer);
+        /* Make sure we defeat java dead code detection */
+        writer.write("if (true) {");
+        CodeGen.generateCode(`code,writer);
+        writer.write("}");
+        return generateMakeHooks(`tail, `args, writer);
       }
     }
-    return bargs;
+    return oArgs;
   }
 
   private void recVarNameRemap(

@@ -1,3 +1,8 @@
+2007-03-15  tonio <reilles@loria.fr>
+  * added "make_empty" hook: allow to select how to build an empty list
+  * added "AU" hook: specify associative with neutral operators. the body of
+  the hook optionally contains a redefinition of the neutral element.
+
 2007-03-14  pem <pem@loria.fr>
   * accept disjunction of builtin constants: f(1|2) for example
   * fixed PR-2250

@@ -47,7 +47,6 @@ import jjtraveler.VisitFailure;
 
 public class Compiler {
 
-  %include { ../adt/gom/Gom.tom}
   %include { ../adt/objects/Objects.tom}
 
   %include { mutraveler.tom }

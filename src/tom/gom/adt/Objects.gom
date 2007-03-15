@@ -1,5 +1,5 @@
 module Objects
-imports String
+imports String Code Gom
 
 abstract syntax
 
@@ -45,9 +45,9 @@ ClassNameList = concClassName(ClassName*)
 SlotField = SlotField(Name:String,Domain:ClassName)
 SlotFieldList = concSlotField(SlotField*)
 
-Hook = MakeHook(HookArguments:SlotFieldList,Code:String)
-     | MakeBeforeHook(HookArguments:SlotFieldList,Code:String)
-     | BlockHook(Code:String)
-     | InterfaceHook(Code:String)
-     | ImportHook(Code:String)
+Hook = MakeHook(HookArguments:SlotFieldList,Code:Code)
+     | MakeBeforeHook(HookArguments:SlotFieldList,Code:Code)
+     | BlockHook(Code:Code)
+     | InterfaceHook(Code:Code)
+     | ImportHook(Code:Code)
 HookList = concHook(Hook*)
