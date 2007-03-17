@@ -1,3 +1,9 @@
+2007-03-17  tonio <reilles@loria.fr>
+  * added "mapping" hook: allow to redefine the generated tom mapping for
+    operators or sorts
+  * added "AC" hook: generate AC normalisation function, using the builtin
+    "compareTo" for ordering
+
 2007-03-15  tonio <reilles@loria.fr>
   * added "make_empty" hook: allow to select how to build an empty list
   * added "AU" hook: specify associative with neutral operators. the body of

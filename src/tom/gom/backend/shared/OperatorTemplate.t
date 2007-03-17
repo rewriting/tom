@@ -804,6 +804,8 @@ writer.write(%[
               "OperatorTemplate: incompatible args "+
               "should be rejected by typechecker");
         } else if (!`oargName.equals(`nargName)) {
+          /* XXX: the declaration should be omitted if nargName was previously
+           * used */
           writer.write(%[
     @fullClassName(`ndomain)@ @`nargName@ = @`oargName@;
 ]%);
@@ -818,26 +820,33 @@ writer.write(%[
 
   public void generateTomMapping(Writer writer, ClassName basicStrategy)
       throws java.io.IOException {
-    writer.write("%op "+className(sortName)+" "+className()+"(");
-    slotDecl(writer,slotList);
-    writer.write(") {\n");
-    //writer.write("  is_fsym(t) { (t!=null) && t."+isOperatorMethod(`opName)+"() }\n");
-    writer.write("  is_fsym(t) { t instanceof "+fullClassName()+" }\n");
-    %match(slotList) {
-      concSlotField(_*,slot@SlotField[Name=slotName],_*) -> {
-        writer.write("  get_slot("+`slotName+", t) ");
-        writer.write("{ t."+getMethod(`slot)+"() }\n");
+    %match(hooks) {
+      !concHook(_*,MappingHook[],_*) -> {
+        writer.write("%op "+className(sortName)+" "+className()+"(");
+        slotDecl(writer,slotList);
+        writer.write(") {\n");
+        writer.write("  is_fsym(t) { t instanceof "+fullClassName()+" }\n");
+        %match(slotList) {
+          concSlotField(_*,slot@SlotField[Name=slotName],_*) -> {
+            writer.write("  get_slot("+`slotName+", t) ");
+            writer.write("{ t."+getMethod(`slot)+"() }\n");
+          }
+        }
+        writer.write("  make(");
+        slotArgs(writer,slotList);
+        writer.write(") { ");
+        writer.write(fullClassName());
+        writer.write(".make(");
+        slotArgs(writer,slotList);
+        writer.write(")}\n");
+        writer.write("}\n");
+        writer.write("\n");
+        return;
+      }
+      concHook(_*,MappingHook[Code=code],_*) -> {
+        CodeGen.generateCode(`code,writer);
       }
     }
-    writer.write("  make(");
-    slotArgs(writer,slotList);
-    writer.write(") { ");
-    writer.write(fullClassName());
-    writer.write(".make(");
-    slotArgs(writer,slotList);
-    writer.write(")}\n");
-    writer.write("}\n");
-    writer.write("\n");
     return;
   }
 }

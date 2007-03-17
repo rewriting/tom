@@ -76,27 +76,27 @@ public class MappingTemplate extends MappingTemplateClass {
 %include { char.tom }
 ]%);
     }
-    if(GomEnvironment.getInstance().isBuiltinSort("double")) {
+    if (GomEnvironment.getInstance().isBuiltinSort("double")) {
       writer.write(%[
 %include { double.tom }
 ]%);
     }
-    if(GomEnvironment.getInstance().isBuiltinSort("long")) {
+    if (GomEnvironment.getInstance().isBuiltinSort("long")) {
       writer.write(%[
 %include { long.tom }
 ]%);
     }
-    if(GomEnvironment.getInstance().isBuiltinSort("float")) {
+    if (GomEnvironment.getInstance().isBuiltinSort("float")) {
       writer.write(%[
 %include { float.tom }
 ]%);
     }
-    if(GomEnvironment.getInstance().isBuiltinSort("ATerm")) {
+    if (GomEnvironment.getInstance().isBuiltinSort("ATerm")) {
       writer.write(%[
 %include { aterm.tom }
 ]%);
     }
-    if(GomEnvironment.getInstance().isBuiltinSort("ATermList")) {
+    if (GomEnvironment.getInstance().isBuiltinSort("ATermList")) {
       writer.write(%[
 %include { atermlist.tom }
 ]%);

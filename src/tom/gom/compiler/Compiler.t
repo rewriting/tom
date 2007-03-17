@@ -137,7 +137,8 @@ public class Compiler {
               Prod=typedproduction],
               _*) -> {
             String sortNamePackage = `sortName.toLowerCase();
-            ClassName operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
+            ClassName operatorClassName =
+              `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
             SlotFieldList slots = `concSlotField();
             ClassName variadicOpClassName = null;
             ClassName empty = null;
@@ -150,10 +151,13 @@ public class Compiler {
                 allSortSlots.add(`slotTail);
                 slots = `concSlotField(slotHead,slotTail);
                 // as the operator is variadic, add a Cons and an Empty
-                variadicOpClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
+                variadicOpClassName =
+                  `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,opname);
                 allVariadicOperators = `concClassName(variadicOpClassName,allVariadicOperators*);
-                empty = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Empty"+opname);
-                operatorClassName = `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Cons"+opname);
+                empty =
+                  `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Empty"+opname);
+                operatorClassName =
+                  `ClassName(packagePrefix(moduleDecl)+".types."+sortNamePackage,"Cons"+opname);
 
                 allOperators = `concClassName(empty,allOperators*);
               }
@@ -167,7 +171,7 @@ public class Compiler {
             GomClass operatorClass;
             allOperators = `concClassName(operatorClassName,allOperators*);
             if (variadicOpClassName != null) {
-              // We just processed a variadic operator
+              /* We just processed a variadic operator */
               GomClass cons = `OperatorClass(operatorClassName,
                   abstracttypeName,
                   variadicOpClassName,
@@ -250,7 +254,6 @@ public class Compiler {
               %match(GomClass opClass) {
                 VariadicOperatorClass[Empty=emptyClass,Cons=consClass] -> {
                   allOperatorClasses = `concGomClass(emptyClass,consClass,allOperatorClasses*);
-
                 }
               }
             }
@@ -353,7 +356,7 @@ public class Compiler {
     throw new RuntimeException("Module " + module + " not found");
   }
 
-  private String packagePrefix(ModuleDecl moduleDecl) {
+  public static String packagePrefix(ModuleDecl moduleDecl) {
     String pkgPrefix = "";
     %match(ModuleDecl moduleDecl) {
       ModuleDecl[ModuleName=GomModuleName[Name=name],Pkg=pkgopt] -> {
@@ -376,7 +379,7 @@ public class Compiler {
     }
     return list;
   }
-  
+
   private ClassNameList allClassForImports(
       Map classMap,
       ModuleDecl moduleDecl) {

@@ -24,32 +24,37 @@ package gom;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import gom.testau.l.types.*;
+import gom.testac.ac.types.*;
 
-public class TestAU extends TestCase {
+public class TestAC extends TestCase {
 
   %gom {
-    module l
+    module ac 
     abstract syntax
-    /* p is variadic, but not AU */
+    /* p is variadic, but not AC */
     NAU = m()
         | n()
         | p(NAU*)
-    /* conc is AU, with the default neutral */
+    /* conc is AC, with the default neutral */
     T = a()
       | b()
+      | c()
+      | d()
       | conc(T*)
-    conc:AU() {}
-    /* list is AU, with aa() as neutral */
+    conc:AC() {}
+    /* list is AC, with aa() as neutral */
     L = aa()
       | bb()
+      | cc()
+      | dd()
       | list(L*)
-    list:AU() { `aa() }
+    list:AC() { `aa() }
   }
   public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestAU.class));
+    junit.textui.TestRunner.run(new TestSuite(TestAC.class));
   }
 
+  /* First make sure simple test of the AU functionality do pass */
   public void testFlatten1() {
     assertEquals(`conc(a(),b(),a()),`conc(a(),conc(b()),a()));
   }
@@ -128,4 +133,27 @@ public class TestAU extends TestCase {
     assertEquals("m() does not match p(x*,y*)",cnt,0);
   }
 
+  public void testOrder() {
+    T t1 = `conc(a(), b(), c(), d());    
+    T t2 = `conc(b(), d(), a(), c());    
+    T t3 = `conc(d(), b(), c(), a());    
+    assertEquals(t1,t2);
+    assertEquals(t2,t3);
+  }
+
+  public void testOrderFlatten() {
+    T t1 = `conc(a(), b(), conc(b(), a(), c()), c(), d());    
+    T t2 = `conc(b(), conc(a(), b(), c()), d(), a(), c());    
+    T t3 = `conc(d(), b(), c(), a(), conc(c(), b(), a()));    
+    assertEquals(t1,t2);
+    assertEquals(t2,t3);
+  }
+
+  public void testOrderN() {
+    L t1 = `list(aa(), bb(), cc(), dd());    
+    L t2 = `list(bb(), dd(), aa(), cc());    
+    L t3 = `list(dd(), bb(), cc(), aa());    
+    assertEquals(t1,t2);
+    assertEquals(t2,t3);
+  }
 }

@@ -36,7 +36,7 @@ public abstract class TemplateFactory {
     }
   }
 
-  public abstract TemplateClass makeTomMappingTemplate(GomClass gomClass);
+  public abstract MappingTemplateClass makeTomMappingTemplate(GomClass gomClass);
   public abstract TemplateClass makeForwardTemplate(GomClass gomClass);
   public abstract TemplateClass makeVisitableForwardTemplate(GomClass gomClass);
   public abstract TemplateClass makeVisitorTemplate(GomClass gomClass);

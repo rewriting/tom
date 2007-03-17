@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.code.types.*;
+import tom.gom.adt.objects.types.*;
 
 public class CodeGen {
 
@@ -40,11 +41,11 @@ public class CodeGen {
   }
   
   /**
-    * Generate code in a String.
-    * 
-    * @params code the Code to generate
-    * @return the generated code
-    */
+   * Generate code in a String.
+   * 
+   * @params code the Code to generate
+   * @return the generated code
+   */
   public static String generateCode(Code code) {
     StringWriter writer = new StringWriter();
     try {
@@ -58,16 +59,43 @@ public class CodeGen {
   }
 
   /**
-    * Generate code in a writer.
-    * 
-    * @params code the Code to generate
-    * @params writer where to generate
-    */
+   * Generate code in a writer.
+   * 
+   * @params code the Code to generate
+   * @params writer where to generate
+   */
   public static void generateCode(Code code, Writer writer)
     throws java.io.IOException {
     %match(code) {
       Code(scode) -> {
         writer.write(`scode);
+        return;
+      }
+      (Empty|Cons)[Operator=opdecl] -> {
+        %match(opdecl) {
+          OperatorDecl[Name=opName,
+                       Sort=SortDecl[Name=sortName,ModuleDecl=moduleDecl],
+                       Prod=Variadic[]] -> {
+            String tName = `opName;
+            %match(code) {
+              Empty[] -> {
+                tName = "Empty" + `opName;
+              }
+              Cons[] -> {
+                tName = "Cons" + `opName;
+              }
+            }
+            String sortNamePackage = `sortName.toLowerCase();
+            ClassName className = `ClassName(
+                tom.gom.compiler.Compiler.packagePrefix(
+                  moduleDecl)+".types."+sortNamePackage,tName);
+            writer.write(tom.gom.backend.TemplateClass.fullClassName(className));        
+            return;
+          }
+        }
+        Logger.getLogger("CodeGen").log(
+            Level.SEVERE,"{Empty,Cons}: expecting varidic, but got {0}",
+            new Object[] { `(opdecl) });
         return;
       }
       (IsEmpty|IsCons)[Var=varName,Operator=opdecl] -> {
@@ -88,8 +116,22 @@ public class CodeGen {
           }
         }
         Logger.getLogger("CodeGen").log(
-            Level.SEVERE,"IsEmpty: expecting varidic, but got {0}",
+            Level.SEVERE,"Is{Empty,Cons}: expecting varidic, but got {0}",
             new Object[] { `(opdecl) });
+        return;
+      }
+      FullSortClass(SortDecl[Name=sortName,ModuleDecl=moduleDecl]) -> {
+        ClassName sortClassName = `ClassName(
+            tom.gom.compiler.Compiler.packagePrefix(moduleDecl)+".types",sortName);
+        writer.write(tom.gom.backend.TemplateClass.fullClassName(sortClassName));        
+        return;
+      }
+      Compare[LCode=lcode,RCode=rcode] -> {
+        generateCode(`lcode, writer);
+        writer.write(".compareTo(");
+        generateCode(`rcode, writer);
+        writer.write(")");
+        return;
       }
       CodeList() -> { return ; }
       CodeList(h,t*) -> {

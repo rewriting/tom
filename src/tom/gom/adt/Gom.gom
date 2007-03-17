@@ -54,6 +54,7 @@ HookDecl = MakeHookDecl(Pointcut:Decl,SlotArgs:SlotList,Code:Code)
          | BlockHookDecl(Pointcut:Decl,Code:Code)
          | InterfaceHookDecl(Pointcut:Decl,Code:Code)
          | ImportHookDecl(Pointcut:Decl,Code:Code)
+         | MappingHookDecl(Pointcut:Decl,Code:Code)
 HookDeclList = concHookDecl(HookDecl*)
 
 /* Helper constructors */

@@ -42,7 +42,7 @@ import tom.library.sl.*;
 public class HookCompiler {
 
   %include { ../adt/objects/Objects.tom}
-  %include{ sl.tom }
+  %include { sl.tom }
 
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();
@@ -62,23 +62,23 @@ public class HookCompiler {
     /* for each hook, find the class, and attach the hook */
     %match(declList) {
       concHookDecl(_*,hook,_*) -> {
-        Decl decl = `hook.getPointcut(); 
+        Decl decl = `hook.getPointcut();
         %match(decl) {
           CutModule(mdecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`mdecl);
             classes = (GomClassList)
               `TopDown(AttachModuleHook(clsName,hook)).fire(classes);
-          }          
+          }
           CutSort(sdecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`sdecl);
             classes = (GomClassList)
               `TopDown(AttachSortHook(clsName,hook)).fire(classes);
-          }          
+          }
           CutOperator(odecl) -> {
             ClassName clsName = (ClassName) declToClassName.get(`odecl);
             classes = (GomClassList)
               `TopDown(AttachOperatorHook(clsName,hook)).fire(classes);
-          }          
+          }
         }
       }
     }
@@ -116,20 +116,20 @@ public class HookCompiler {
                                 Empty=emptyClass,Cons=consClass] -> {
         if (`className == `cName) {
           /* We may want to attach the hook to the cons or empty */
-          if (hook.isMakeHookDecl()
-              && hook.getSlotArgs() != `concSlot()) {
-            // Attach to the cons
-            GomClass newCons =
-              `consClass.setHooks(
-                  `concHook(makeHooksFromHookDecl(hook),oldHooks*));
-            return `obj.setCons(newCons);
-          } else if (hook.isMakeHookDecl()
-              && hook.getSlotArgs() == `concSlot()) {
-            // Attach to the empty
-            GomClass newEmpty =
-              `emptyClass.setHooks(
-                  `concHook(makeHooksFromHookDecl(hook),oldHooks*));
-            return `obj.setEmpty(newEmpty);
+          if (hook.isMakeHookDecl()) {
+            if (hook.getSlotArgs() != `concSlot()) {
+              HookList oldConsHooks = `consClass.getHooks();
+              GomClass newCons =
+                `consClass.setHooks(
+                    `concHook(makeHooksFromHookDecl(hook),oldConsHooks*));
+              return `obj.setCons(newCons);
+            } else if (hook.getSlotArgs() == `concSlot()) {
+              HookList oldEmptyHooks = `emptyClass.getHooks();
+              GomClass newEmpty =
+                `emptyClass.setHooks(
+                    `concHook(makeHooksFromHookDecl(hook),oldEmptyHooks*));
+              return `obj.setEmpty(newEmpty);
+            }
           } else {
             return
               `obj.setHooks(`concHook(makeHooksFromHookDecl(hook),oldHooks*));
@@ -160,6 +160,9 @@ public class HookCompiler {
       ImportHookDecl[Code=hookCode] -> {
         return `ImportHook(hookCode);
       }
+      MappingHookDecl[Code=hookCode] -> {
+        return `MappingHook(hookCode);
+      }
     }
     throw new GomRuntimeException(
         "Hook declaration " + `hookDecl + " not processed");
@@ -180,5 +183,4 @@ public class HookCompiler {
     }
     return newArgs;
   }
-
 }

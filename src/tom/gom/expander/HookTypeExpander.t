@@ -112,6 +112,10 @@ public class HookTypeExpander {
             newHookList = `concHookDecl(
                 ImportHookDecl(mdecl,Code(trimBracket(scode))));
           }
+          HookKind("mapping") -> {
+            newHookList = `concHookDecl(
+                MappingHookDecl(mdecl,Code(trimBracket(scode))));
+          }
           HookKind(("make"|"make_insert"|"make_empty")[]) -> {
             SlotList typedArgs = typeArguments(`hookArgs,`hkind,`mdecl);
             if (typedArgs == null) {
@@ -125,6 +129,10 @@ public class HookTypeExpander {
           }
           HookKind("AU") -> {
             return `makeAUHookList(hName,mdecl,scode);
+
+          }
+          HookKind("AC") -> {
+            return `makeACHookList(hName,mdecl,scode);
 
           }
         }
@@ -344,12 +352,46 @@ public class HookTypeExpander {
     return null;
   }
 
+  private HookDeclList makeACHookList(String opName, Decl mdecl, String scode) {
+    SortDecl domain = getSortAndCheck(mdecl);
+    if (null == domain)
+      return `concHookDecl();
+    HookDeclList acHooks = makeAUHookList(opName, mdecl, scode);
+    acHooks = `concHookDecl(
+        MakeHookDecl(
+          mdecl,
+          concSlot(Slot("head",domain),Slot("tail",domain)),
+          CodeList(
+            Code("if ("),
+            IsCons("tail",mdecl.getODecl()),
+            Code(") {\n"),
+            Code("  if (0 < "),
+            Compare(Code("head"),Code("tail.getHead" + opName + "()")),
+            Code(") {\n"),
+            Code("    "),FullSortClass(domain),Code(" tmpHd = head;\n"),
+            Code("    head = tail.getHead" + opName + "();\n"),
+            Code("    tail = `" + opName + "(tmpHd,tail.getTail" + opName + "());\n"),
+            Code("  }\n"),
+            Code("} else {\n"),
+            Code("  if (0 < "),
+            Compare(Code("head"),Code("tail")),
+            Code(") {\n"),
+            Code("    "),FullSortClass(domain),Code(" tmpHd = head;\n"),
+            Code("    head = tail;\n"),
+            Code("    tail = tmpHd;\n"),
+            Code("  }\n"),
+            Code("}\n")
+            )),
+        acHooks*);
+    return acHooks;
+  }
+
   private HookDeclList makeAUHookList(String opName, Decl mdecl, String scode) {
     /* Can only be applied to a variadic operator, those domain and codomain
      * are equals */
     SortDecl domain = getSortAndCheck(mdecl);
     if (null == domain)
-      return `concHookDecl(); 
+      return `concHookDecl();
 
     HookDeclList auHooks = `concHookDecl();
     String userNeutral = trimBracket(scode);
@@ -360,7 +402,7 @@ public class HookTypeExpander {
           auHooks*);
     }
     /* Flatten and remove neutral */
-    /* 
+    /*
      * if(<head>.isEmpty<conc>()) { return <tail>; }
      * if(<tail>.isEmpty<conc>()) { return <head>; }
      * if(<head>.isCons<conc>()) { return `<conc>(<head>*,<tail>); }
@@ -371,8 +413,8 @@ public class HookTypeExpander {
             mdecl,
             concSlot(Slot("head",domain),Slot("tail",domain)),
             CodeList(
-              Code("if (head == "+userNeutral+") { return tail; }"),
-              Code("if (tail ==  "+userNeutral+") { return head; }")
+              Code("if (head == "+userNeutral+") { return tail; }\n"),
+              Code("if (tail ==  "+userNeutral+") { return head; }\n")
               )),
           auHooks*);
     }
@@ -384,16 +426,57 @@ public class HookTypeExpander {
           CodeList(
             Code("if ("),
             IsEmpty("head",mdecl.getODecl()),
-            Code(") { return tail; }"),
+            Code(") { return tail; }\n"),
             Code("if ("),
             IsEmpty("tail",mdecl.getODecl()),
-            Code(") { return head; }"),
+            Code(") { return head; }\n"),
             Code("if ("),
             IsCons("head",mdecl.getODecl()),
-            Code(") { return `"+opName+"(head*,tail); }")
+            Code(") { return `"+opName+"(head*,tail); }\n")
           )),
         auHooks*);
 
+    /* The mapping for AU operators has to be correct */
+    %match(mdecl) {
+      CutOperator(OperatorDecl[Sort=domainsdecl@SortDecl[Name=sortName],
+                               Prod=Variadic[]]) -> {
+        auHooks = `concHookDecl(
+            MappingHookDecl(
+              mdecl,
+              CodeList(
+                Code("%oplist " + sortName),
+                Code(" " + opName),
+                Code("(" + sortName + "*) {\n"),
+                Code("is_fsym(t) { t instanceof "),
+                FullSortClass(domainsdecl),
+                Code("}\n"),
+                Code("make_empty() { "),
+                Empty(mdecl.getODecl()),
+                Code(".make() }\n"),
+                Code("make_insert(e,l) { "),
+                Cons(mdecl.getODecl()),
+                Code(".make(e,l) }\n"),
+                Code("get_head(l) { ("),
+                IsCons("l",mdecl.getODecl()),
+                Code(")?(l."),
+                Code("getHead" + opName + "()"),
+                Code("):(l) }\n"),
+                Code("get_tail(l) { ("),
+                IsCons("l",mdecl.getODecl()),
+                Code(")?(l."),
+                Code("getTail" + opName + "()"),
+                Code("):("),
+                Empty(mdecl.getODecl()),
+                Code(".make()) }\n"),
+                Code("is_empty(l) { "),
+                Code("l == "),
+                Empty(mdecl.getODecl()),
+                Code(".make() }\n"),
+                Code("}\n")
+                )),
+            auHooks*);
+      }
+    }
     return auHooks;
   }
 

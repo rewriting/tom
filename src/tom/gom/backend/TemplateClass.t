@@ -61,7 +61,7 @@ public abstract class TemplateClass {
     return fullClassName(this.className);
   }
 
-  public String fullClassName(ClassName clsName) {
+  public static String fullClassName(ClassName clsName) {
     %match(ClassName clsName) {
       ClassName[Pkg=pkgPrefix,Name=name] -> {
         if(`pkgPrefix.length()==0) {
