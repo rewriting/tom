@@ -205,6 +205,42 @@ writer.write(%[
     return buffer.toString();
   }
 
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+        %match(cons) {
+          OperatorClass[
+            Slots=concSlotField(head@SlotField[Domain=headDomain], tail)
+          ] -> {
+        ClassName emptyClass = empty.getClassName();
+        ClassName consClass = cons.getClassName();
+        if(sortName == `headDomain) { /* handle List = conc(List*) case */
+          writer.write(%[
+%oplist @className(sortName)@ @className()@(@className(`headDomain)@*) {
+  is_fsym(t) { t instanceof @fullClassName(`sortName)@ }
+  make_empty() { @fullClassName(emptyClass)@.make() }
+  make_insert(e,l) { @fullClassName(consClass)@.make(e,l) }
+  get_head(l) { (l.@isOperatorMethod(consClass)@())?(l.@getMethod(`head)@()):(l) }
+  get_tail(l) { (l.@isOperatorMethod(consClass)@())?(l.@getMethod(`tail)@()):(@fullClassName(emptyClass)@.make()) }
+  is_empty(l) { l.@isOperatorMethod(emptyClass)@() }
+}
+]%);
+        } else {
+          writer.write(%[
+%oplist @className(sortName)@ @className()@(@className(`headDomain)@*) {
+  is_fsym(t) { t instanceof @fullClassName(consClass)@ || t instanceof @fullClassName(emptyClass)@ }
+  make_empty() { @fullClassName(emptyClass)@.make() }
+  make_insert(e,l) { @fullClassName(consClass)@.make(e,l) }
+  get_head(l) { l.@getMethod(`head)@() }
+  get_tail(l) { l.@getMethod(`tail)@() }
+  is_empty(l) { l.@isOperatorMethod(emptyClass)@() }
+}
+]%);
+        }
+      }
+    }
+    return;
+  }
+
   /** the class logger instance*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());

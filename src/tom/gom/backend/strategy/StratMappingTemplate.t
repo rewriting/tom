@@ -26,12 +26,12 @@ package tom.gom.backend.strategy;
 
 import tom.gom.GomStreamManager;
 import tom.gom.tools.GomEnvironment;
-import tom.gom.backend.TemplateClass;
+import tom.gom.backend.MappingTemplateClass;
 import java.io.*;
 import tom.gom.adt.objects.types.*;
 import tom.gom.tools.error.GomRuntimeException;
 
-public class StratMappingTemplate extends TemplateClass {
+public class StratMappingTemplate extends MappingTemplateClass {
   GomClassList operatorClasses;
 
   %include { ../../adt/objects/Objects.tom}

@@ -376,14 +376,21 @@ public class HookTypeExpander {
               )),
           auHooks*);
     }
+    /* getODecl call is safe here, since mdecl was checked by getSortAndCheck */
     auHooks = `concHookDecl(
         MakeHookDecl(
           mdecl,
           concSlot(Slot("head",domain),Slot("tail",domain)),
           CodeList(
-            Code("if (head.isEmpty"+opName+"()) { return tail; }"),
-            Code("if (tail.isEmpty"+opName+"()) { return head; }"),
-            Code("if (head.isCons"+opName+"()) { return `"+opName+"(head*,tail); }")
+            Code("if ("),
+            IsEmpty("head",mdecl.getODecl()),
+            Code(") { return tail; }"),
+            Code("if ("),
+            IsEmpty("tail",mdecl.getODecl()),
+            Code(") { return head; }"),
+            Code("if ("),
+            IsCons("head",mdecl.getODecl()),
+            Code(") { return `"+opName+"(head*,tail); }")
           )),
         auHooks*);
 

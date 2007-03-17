@@ -70,6 +70,27 @@ public class CodeGen {
         writer.write(`scode);
         return;
       }
+      (IsEmpty|IsCons)[Var=varName,Operator=opdecl] -> {
+        %match(opdecl) {
+          OperatorDecl[Name=opName,Prod=Variadic[]] -> {
+            writer.write(`varName);
+            %match(code) {
+              IsEmpty[] -> {
+                writer.write(".isEmpty");
+              }
+              IsCons[] -> {
+                writer.write(".isCons");
+              }
+            }
+            writer.write(`opName);
+            writer.write("()");
+            return;
+          }
+        }
+        Logger.getLogger("CodeGen").log(
+            Level.SEVERE,"IsEmpty: expecting varidic, but got {0}",
+            new Object[] { `(opdecl) });
+      }
       CodeList() -> { return ; }
       CodeList(h,t*) -> {
         generateCode(`h,writer);

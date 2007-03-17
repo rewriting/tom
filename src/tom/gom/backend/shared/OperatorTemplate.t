@@ -815,4 +815,29 @@ writer.write(%[
     throw new GomRuntimeException(
         "OperatorTemplate:recVarNameRemap failed " + oargs + " " + nargs);
   }
+
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+    writer.write("%op "+className(sortName)+" "+className()+"(");
+    slotDecl(writer,slotList);
+    writer.write(") {\n");
+    //writer.write("  is_fsym(t) { (t!=null) && t."+isOperatorMethod(`opName)+"() }\n");
+    writer.write("  is_fsym(t) { t instanceof "+fullClassName()+" }\n");
+    %match(slotList) {
+      concSlotField(_*,slot@SlotField[Name=slotName],_*) -> {
+        writer.write("  get_slot("+`slotName+", t) ");
+        writer.write("{ t."+getMethod(`slot)+"() }\n");
+      }
+    }
+    writer.write("  make(");
+    slotArgs(writer,slotList);
+    writer.write(") { ");
+    writer.write(fullClassName());
+    writer.write(".make(");
+    slotArgs(writer,slotList);
+    writer.write(")}\n");
+    writer.write("}\n");
+    writer.write("\n");
+    return;
+  }
 }

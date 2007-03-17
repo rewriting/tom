@@ -305,4 +305,42 @@ public abstract class TemplateClass {
   public String isOperatorMethod(ClassName opName) {
     return "is"+className(opName);
   }
+
+  protected void slotDecl(java.io.Writer writer, SlotFieldList slotList)
+                        throws java.io.IOException {
+    int index = 0;
+    while(!slotList.isEmptyconcSlotField()) {
+      SlotField slot = slotList.getHeadconcSlotField();
+      slotList = slotList.getTailconcSlotField();
+      if (index>0) { writer.write(", "); }
+      %match(SlotField slot) {
+        SlotField[Name=slotName,Domain=ClassName[Name=domainName]] -> {
+          writer.write(`slotName);
+          writer.write(":");
+          writer.write(`domainName);
+          index++;
+        }
+      }
+    }
+  }
+
+  protected void slotArgs(java.io.Writer writer, SlotFieldList slotList)
+                        throws java.io.IOException {
+    int index = 0;
+    while(!slotList.isEmptyconcSlotField()) {
+      SlotField slot = slotList.getHeadconcSlotField();
+      slotList = slotList.getTailconcSlotField();
+      if (index>0) { writer.write(", "); }
+      /* Warning: do not write the 'index' alone, this is not a valid variable
+         name */
+      writer.write("t"+index);
+      index++;
+    }
+  }
+
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+    return;
+  }
+
 }

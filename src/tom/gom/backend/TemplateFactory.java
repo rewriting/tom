@@ -48,7 +48,7 @@ public abstract class TemplateFactory {
 
 class SharedTemplateFactory extends TemplateFactory {
 
-  public TemplateClass makeTomMappingTemplate(GomClass gomClass) {
+  public MappingTemplateClass makeTomMappingTemplate(GomClass gomClass) {
     return new tom.gom.backend.shared.MappingTemplate(gomClass);
   }
   public TemplateClass makeForwardTemplate(GomClass gomClass) {

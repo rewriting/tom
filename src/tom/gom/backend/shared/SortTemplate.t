@@ -180,4 +180,16 @@ protected String generateInterface() {
     }
   }
 
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+    writer.write(%[
+%typeterm @className()@ {
+  implement { @fullClassName()@ }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { @fullClassName(basicStrategy)@ }
+}
+
+]%);
+    return;
+  }
 }

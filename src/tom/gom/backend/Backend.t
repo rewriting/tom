@@ -61,81 +61,108 @@ public class Backend {
     return GomEnvironment.getInstance();
   }
 
-  private Map mappingForMappingName = new HashMap();
-
   public int generate(GomClassList classList) {
     int errno = 0;
-    // populate the mappingForMappingName Map
+    Set mappingSet = new HashSet();
+    Map generators =
+      new HashMap();
+    // prepare stuff for the mappings
     %match(GomClassList classList) {
-      concGomClass(_*,mapping@TomMapping[ClassName=mappingName],_*) -> {
-        mappingForMappingName.put(`mappingName,`mapping);
+      concGomClass(_*,
+          gomclass@TomMapping[ClassName=className@ClassName(pkg,name)],
+          _*) -> {
+        TemplateClass mapping =
+          templatefactory.makeTomMappingTemplate(`gomclass);
+        mappingSet.add(mapping);
+        generators.put(`className,mapping);
+
+        ClassName smappingclass = `ClassName(pkg,"_"+name);
+        GomClass nGomClass =
+          `gomclass.setClassName(smappingclass);
+        TemplateClass stratMapping = 
+          new tom.gom.backend.strategy.StratMappingTemplate(nGomClass);
+        generators.put(smappingclass,stratMapping);
       }
     }
     // generate a class for each element of the list
     while (!classList.isEmptyconcGomClass()) {
       GomClass gomclass = classList.getHeadconcGomClass();
       classList = classList.getTailconcGomClass();
-      errno += generateClass(gomclass);
+      errno += generateClass(gomclass,generators);
     }
+    /* The mappings may need to access generators */
+    Iterator it = mappingSet.iterator();
+    while (it.hasNext()) {
+      ((MappingTemplateClass)it.next()).addTemplates(generators);
+    }
+    it = generators.keySet().iterator();
+    while (it.hasNext()) {
+      ((TemplateClass)generators.get(it.next())).generateFile();
+    }
+    
     return 1;
   }
 
   /*
    * Create template classes for the different classes to generate
    */
-  public int generateClass(GomClass gomclass) {
+  public int generateClass(
+      GomClass gomclass,
+      Map generators) {
     %match(GomClass gomclass) {
-      TomMapping[ClassName=className@ClassName(pkg,name)] -> {
-        TemplateClass mapping =
-          templatefactory.makeTomMappingTemplate(gomclass);
-        mapping.generateFile();
-
-        GomClass nGomClass =
-          gomclass.setClassName(`ClassName(pkg,"_"+name));
-        TemplateClass stratMapping = 
-          new tom.gom.backend.strategy.StratMappingTemplate(nGomClass);
-        stratMapping.generateFile();
+      TomMapping[ClassName=className] -> {
+        /* It was processed by the caller: check it is already in generators */
+        if (!generators.containsKey(`className)) {
+          throw new GomRuntimeException(
+              "Mapping should be processed before generateClass is called");
+        }
         return 1;
       }
-      FwdClass[] -> {
+      FwdClass[ClassName=className] -> {
         TemplateClass fwd = templatefactory.makeForwardTemplate(gomclass);
-        fwd.generateFile();
+        generators.put(`className,fwd);
         return 1;
       }
-      VisitableFwdClass[] -> {
+      VisitableFwdClass[ClassName=className] -> {
         TemplateClass visitablefwd =
           templatefactory.makeVisitableForwardTemplate(gomclass);
-        visitablefwd.generateFile();
+        generators.put(`className,visitablefwd);
         return 1;
       }
-      VisitorClass[] -> {
+      VisitorClass[ClassName=className] -> {
         TemplateClass visitor = templatefactory.makeVisitorTemplate(gomclass);
-        visitor.generateFile();
+        generators.put(`className,visitor);
         return 1;
       }
-      AbstractTypeClass[Mapping=mapping] -> {
-        GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
-        TemplateClass abstracttype = templatefactory.makeAbstractTypeTemplate(tomHomePath,importList,gomclass,getMappingTemplate(mappingClass));
-        abstracttype.generateFile();
+      AbstractTypeClass[ClassName=className,Mapping=mapping] -> {
+        TemplateClass abstracttype =
+          templatefactory.makeAbstractTypeTemplate(
+              tomHomePath,
+              importList,
+              gomclass,
+              (TemplateClass)generators.get(`mapping));
+        generators.put(`className,abstracttype);
         return 1;
       }
-      SortClass[Mapping=mapping] -> {
-        GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
-        TemplateClass sort = templatefactory.makeSortTemplate(tomHomePath,importList,gomclass,getMappingTemplate(mappingClass));
-            
-        sort.generateFile();
+      SortClass[ClassName=className,Mapping=mapping] -> {
+        TemplateClass sort =
+          templatefactory.makeSortTemplate(
+              tomHomePath,
+              importList,
+              gomclass,
+              (TemplateClass)generators.get(`mapping));
+        generators.put(`className,sort);
         return 1;
       }
       OperatorClass[ClassName=className,
                     Mapping=mapping,
                     Slots=slots] -> {
-        GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
         TemplateClass operator = templatefactory.makeOperatorTemplate(
             tomHomePath,
             importList,
             gomclass,
-            getMappingTemplate(mappingClass));
-        operator.generateFile();
+            (TemplateClass)generators.get(`mapping));
+        generators.put(`className,operator);
 
         TemplateClass sOpStrat =
           new tom.gom.backend.strategy.SOpTemplate(gomclass);
@@ -149,30 +176,25 @@ public class Backend {
 
        return 1;
       }
-      VariadicOperatorClass[Mapping=mapping,
+      VariadicOperatorClass[ClassName=className,
+                            Mapping=mapping,
                             Empty=empty,
                             Cons=cons] -> {
-        GomClass mappingClass = (GomClass)mappingForMappingName.get(`mapping);
-        TemplateClass operator = templatefactory.makeVariadicOperatorTemplate(tomHomePath,importList,gomclass,getMappingTemplate(mappingClass));
-        operator.generateFile();
+        TemplateClass operator =
+          templatefactory.makeVariadicOperatorTemplate(
+              tomHomePath,
+              importList,
+              gomclass,
+              (TemplateClass)generators.get(`mapping));
+        generators.put(`className,operator);
         /* Generate files for cons and empty */
         int ret = 1;
-        ret+=generateClass(`empty);
-        ret+=generateClass(`cons);
+        ret+=generateClass(`empty,generators);
+        ret+=generateClass(`cons,generators);
 
         return ret;
       }
     }
     throw new GomRuntimeException("Trying to generate code for a strange class: "+gomclass);
-  }
-
-  public TemplateClass getMappingTemplate(GomClass mapping) {
-    TemplateClass mappingTemplate = null;
-    %match(GomClass mapping) {
-      TomMapping[] -> {
-        mappingTemplate = templatefactory.makeTomMappingTemplate(mapping);
-      }
-    }
-    return mappingTemplate;
   }
 }

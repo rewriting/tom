@@ -1,5 +1,7 @@
 module Code
-imports String
+imports String Gom
 abstract syntax
 Code = Code(prog:String)
+     | IsEmpty(Var:String,Operator:OperatorDecl)
+     | IsCons(Var:String,Operator:OperatorDecl)
      | CodeList(Code*)
