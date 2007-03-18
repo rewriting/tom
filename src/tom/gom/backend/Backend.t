@@ -47,13 +47,18 @@ public class Backend {
   TemplateFactory templatefactory;
   private File tomHomePath;
   private List importList = null;
+  private boolean strategySupport = true;
 
   %include { ../adt/objects/Objects.tom }
   %include { mustrategy.tom }
 
-  Backend(TemplateFactory templatefactory, File tomHomePath, List importList) {
+  Backend(TemplateFactory templatefactory,
+          File tomHomePath,
+          boolean strategySupport,
+          List importList) {
     this.templatefactory = templatefactory;
     this.tomHomePath = tomHomePath;
+    this.strategySupport = strategySupport;
     this.importList = importList;
   }
 
@@ -71,17 +76,23 @@ public class Backend {
       concGomClass(_*,
           gomclass@TomMapping[ClassName=className@ClassName(pkg,name)],
           _*) -> {
-        TemplateClass mapping =
-          templatefactory.makeTomMappingTemplate(`gomclass);
-        mappingSet.add(mapping);
-        generators.put(`className,mapping);
-
         ClassName smappingclass = `ClassName(pkg,"_"+name);
         GomClass nGomClass =
           `gomclass.setClassName(smappingclass);
-        TemplateClass stratMapping = 
+        TemplateClass stratMapping =
           new tom.gom.backend.strategy.StratMappingTemplate(nGomClass);
         generators.put(smappingclass,stratMapping);
+
+        TemplateClass mapping = null;
+        if(strategySupport) {
+          mapping =
+            templatefactory.makeTomMappingTemplate(`gomclass,stratMapping);
+        } else {
+          mapping =
+            templatefactory.makeTomMappingTemplate(`gomclass,null);
+        }
+        mappingSet.add(mapping);
+        generators.put(`className,mapping);
       }
     }
     // generate a class for each element of the list
@@ -99,7 +110,7 @@ public class Backend {
     while (it.hasNext()) {
       ((TemplateClass)generators.get(it.next())).generateFile();
     }
-    
+
     return 1;
   }
 

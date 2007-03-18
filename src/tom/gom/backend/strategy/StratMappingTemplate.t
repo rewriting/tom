@@ -34,7 +34,7 @@ import tom.gom.tools.error.GomRuntimeException;
 public class StratMappingTemplate extends MappingTemplateClass {
   GomClassList operatorClasses;
 
-  %include { ../../adt/objects/Objects.tom}
+  %include { ../../adt/objects/Objects.tom }
 
   public StratMappingTemplate(GomClass gomClass) {
     super(gomClass);
@@ -49,12 +49,17 @@ public class StratMappingTemplate extends MappingTemplateClass {
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
+    generateTomMapping(writer, null);
+  }
+
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+
     writer.write(%[
    /*
    %include { mustrategy.tom }
    */
 ]%);
-    /* XXX: i could introduce an interface providing generateMapping() */
     %match(GomClassList operatorClasses) {
       concGomClass(_*,
           op@OperatorClass[ClassName=opName,

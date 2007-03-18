@@ -1,3 +1,11 @@
+2007-03-18  tonio <reilles@loria.fr>
+  * tom: %gom now takes an optional list of arguments to pass to the gom
+    compiler. We can now write %gom(--termgraph) {...} to get a termgraph
+    enabled data-structure
+  * added "--strategies-mapping" option: with it, the generated tom mapping
+    includes the strategy stuff. "sl.tom" or "mustrategy.tom" must be included
+    when using this option.
+
 2007-03-17  tonio <reilles@loria.fr>
   * added "mapping" hook: allow to redefine the generated tom mapping for
     operators or sorts

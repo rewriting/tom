@@ -36,7 +36,9 @@ public abstract class TemplateFactory {
     }
   }
 
-  public abstract MappingTemplateClass makeTomMappingTemplate(GomClass gomClass);
+  public abstract MappingTemplateClass makeTomMappingTemplate(
+      GomClass gomClass,
+      TemplateClass strategyMapping);
   public abstract TemplateClass makeForwardTemplate(GomClass gomClass);
   public abstract TemplateClass makeVisitableForwardTemplate(GomClass gomClass);
   public abstract TemplateClass makeVisitorTemplate(GomClass gomClass);
@@ -48,8 +50,11 @@ public abstract class TemplateFactory {
 
 class SharedTemplateFactory extends TemplateFactory {
 
-  public MappingTemplateClass makeTomMappingTemplate(GomClass gomClass) {
-    return new tom.gom.backend.shared.MappingTemplate(gomClass);
+  public MappingTemplateClass makeTomMappingTemplate(
+      GomClass gomClass,
+      TemplateClass strategyMapping) {
+    return
+      new tom.gom.backend.shared.MappingTemplate(gomClass,strategyMapping);
   }
   public TemplateClass makeForwardTemplate(GomClass gomClass) {
     return new tom.gom.backend.shared.ForwardTemplate(gomClass);

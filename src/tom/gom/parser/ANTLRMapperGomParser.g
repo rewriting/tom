@@ -57,7 +57,7 @@ sortdef: SORTS^ (type)* ;
 
 type: i:ID ;
 
-syntax: ABSTRACT! SYNTAX^ (production | hookOperator | hookSortModule |  typedecl)* ;
+syntax: ABSTRACT! SYNTAX^ (production | hookConstruct |  typedecl)* ;
 
 production: id:ID fieldlist ARROW^ type ;
 
@@ -69,36 +69,28 @@ fieldlist: LEFT_BRACE! (field (COMMA field)* )? RIGHT_BRACE! ;
 
 arglist: (LEFT_BRACE! (arg:ID(COMMA supplarg:ID)* )? RIGHT_BRACE!)? ;
 
-hookOperator
+hookConstruct
 {
   String code = "";
 }
-:! (hookScope:OPERATOR)? pointCut:ID COLON^ hook:hook // '!' turns off auto transform
+:! (hookScope:hookScope)? pointCut:ID COLON^ hook:hook
+ /* '!' turns off auto transform */
 {
   BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
   code = blockparser.block();
 
-#hookOperator = #(COLON,#[OPERATOR],pointCut,hook);
-#hookOperator.setText(code);
+  if (#hookScope == null) {
+    #hookConstruct = #(COLON,#[OPERATOR],pointCut,hook);
+  } else {
+    #hookConstruct = #(COLON,hookScope,pointCut,hook);
+  }
+  #hookConstruct.setText(code);
 }
 ;
 
 hook: hookType:ID arglist;
 
-hookScope : SORT | MODULE;
-
-hookSortModule
-{
-  String code = "";
-}
-:! hookScope:hookScope pointCut:ID COLON^ hook:hook
-{ 
-  BlockParser blockparser = BlockParser.makeBlockParser(lexerstate);
-  code = blockparser.block();
-#hookSortModule = #(COLON,hookScope,pointCut,hook);
-#hookSortModule.setText(code);
-}
-;
+hookScope : SORT | MODULE | OPERATOR;
 
 field: type STAR^ | id:ID COLON^ type ;
 
@@ -120,25 +112,20 @@ tokens
   IMPORT  = "import";
 }
 
-ARROW       : "->";
-COLON       : ':';
-COMMA       : ',';
-DOT         : '.';
-LEFT_BRACE  : '(';
+ARROW : "->";
+COLON : ':';
+COMMA : ',';
+DOT : '.';
+LEFT_BRACE : '(';
 RIGHT_BRACE : ')';
-STAR        : '*';
-EQUALS      : '=';
-ALT         : '|';
-SEMI        : ";;";
+STAR : '*';
+EQUALS : '=';
+ALT : '|';
+SEMI : ";;";
 
+LBRACE: '{';
 
-LBRACE
-: '{'
-;
-
-RBRACE
-: '}'
-;
+RBRACE: '}';
 
 WS : ( ' '
        | '\t'
@@ -149,7 +136,7 @@ WS : ( ' '
        ){$setType(Token.SKIP);}
 ;
 SLCOMMENT
-  :       "//"
+  : "//"
     (~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
 {
   $setType(Token.SKIP);
@@ -158,7 +145,7 @@ SLCOMMENT
 ;
 
 ML_COMMENT
-  :       "/*"
+  : "/*"
     (
      options {
        generateAmbigWarnings=false;

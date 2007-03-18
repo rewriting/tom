@@ -36,10 +36,11 @@ public class MappingTemplate extends MappingTemplateClass {
   ClassName basicStrategy;
   GomClassList sortClasses;
   GomClassList operatorClasses;
+  TemplateClass strategyMapping;
 
   %include { ../../adt/objects/Objects.tom}
 
-  public MappingTemplate(GomClass gomClass) {
+  public MappingTemplate(GomClass gomClass, TemplateClass strategyMapping) {
     super(gomClass);
     %match(gomClass) {
       TomMapping[BasicStrategy=basicStrategy,
@@ -48,6 +49,7 @@ public class MappingTemplate extends MappingTemplateClass {
         this.basicStrategy = `basicStrategy;
         this.sortClasses = `sortClasses;
         this.operatorClasses = `ops;
+        this.strategyMapping = strategyMapping;
         return;
       }
     }
@@ -130,6 +132,10 @@ public class MappingTemplate extends MappingTemplateClass {
         ((TemplateClass) templates.get(`opName))
           .generateTomMapping(writer,basicStrategy);
       }
+    }
+    /* Include the strategy mapping if needed */
+    if (strategyMapping != null) {
+      strategyMapping.generateTomMapping(writer,basicStrategy);
     }
   }
 
