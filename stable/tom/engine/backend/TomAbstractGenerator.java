@@ -130,13 +130,6 @@ public abstract class TomAbstractGenerator extends TomBase {
        } } } } } if ( ( tom_is_fun_sym_BuildTerm(tom_match1_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match1_1_AstName=tom_get_slot_BuildTerm_AstName(tom_match1_1); if ( ( tom_is_fun_sym_Name(tom_match1_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match1_1_AstName); { tom.engine.adt.tomterm.types.TomList  tom_argList=tom_get_slot_BuildTerm_Args(tom_match1_1); { String  tom_myModuleName=tom_get_slot_BuildTerm_ModuleName(tom_match1_1); if ( true ) {buildTerm(deep,tom_name,tom_argList,tom_myModuleName)
 
 
-
-
-
-
-
-
-
 ;
         return;
        } } } } } } } if ( ( tom_is_fun_sym_BuildAppendArray(tom_match1_1) ||  ( tom_is_fun_sym_BuildConsArray(tom_match1_1) ||  ( tom_is_fun_sym_BuildAppendList(tom_match1_1) ||  ( tom_is_fun_sym_BuildConsList(tom_match1_1) ||  ( tom_is_fun_sym_BuildEmptyArray(tom_match1_1) ||  ( tom_is_fun_sym_BuildEmptyList(tom_match1_1) ||  false  )  )  )  )  )  ) ) { { tom.engine.adt.tomterm.types.TomTerm  tom_l=tom_match1_1; if ( true ) {
@@ -161,7 +154,7 @@ public abstract class TomAbstractGenerator extends TomBase {
            * sans type: re-definition lorsque %variable est utilise
            * avec type: probleme en cas de filtrage dynamique
            */
-        output.write("tom" + numberListToIdentifier(tom_l));
+        output.write("tom" + tomNumberListToString(tom_l));
         return;
        } } } } } if ( ( tom_is_fun_sym_Variable(tom_match1_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match1_1_AstName=tom_get_slot_Variable_AstName(tom_match1_1); if ( ( tom_is_fun_sym_Name(tom_match1_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match1_1_AstName); if ( true ) {
 
@@ -171,7 +164,7 @@ public abstract class TomAbstractGenerator extends TomBase {
        } } } } } if ( ( tom_is_fun_sym_VariableStar(tom_match1_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match1_1_AstName=tom_get_slot_VariableStar_AstName(tom_match1_1); if ( ( tom_is_fun_sym_PositionName(tom_match1_1_AstName) ||  false  ) ) { { tom.engine.adt.tomname.types.TomNumberList  tom_l=tom_get_slot_PositionName_NumberList(tom_match1_1_AstName); if ( true ) {
 
 
-        output.write("tom" + numberListToIdentifier(tom_l));
+        output.write("tom" + tomNumberListToString(tom_l));
         return;
        } } } } } if ( ( tom_is_fun_sym_VariableStar(tom_match1_1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tom_match1_1_AstName=tom_get_slot_VariableStar_AstName(tom_match1_1); if ( ( tom_is_fun_sym_Name(tom_match1_1_AstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tom_match1_1_AstName); if ( true ) {
 

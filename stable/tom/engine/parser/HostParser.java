@@ -685,13 +685,36 @@ public HostParser(ParserSharedInputState state) {
 		} else {
 		subPackageName = packageName + "." + inputFileNameWithoutExtension;
 		}
-		getLogger().log(Level.FINE,"Calling gom with: -X "+config_xml.getPath() +" --destdir "+destDir+" --package "+subPackageName+" -");
-		String[] params = {"-X",config_xml.getPath(),"--destdir",destDir,"--package",subPackageName,"-"};
+		ArrayList parameters = new ArrayList();
+		parameters.add("-X");
+		parameters.add(config_xml.getPath());
+		parameters.add("--destdir");
+		parameters.add(destDir);
+		parameters.add("--package");
+		parameters.add(subPackageName);
+		/* treat user supplied options */
+		textCode = t.getText();
+		if (textCode.length() > 6) {
+		String[] userOpts =
+		textCode.substring(5,textCode.length()-1).split("\\s+");
+		for (int i=0; i < userOpts.length; i++) {
+		parameters.add(userOpts[i]);
+		}
+		}
+		parameters.add("-");
+		getLogger().log(Level.FINE,"Calling gom with: "+parameters);
 		
 		InputStream backupIn = System.in;
 		System.setIn(new DataInputStream(new StringBufferInputStream(gomCode)));
 		
-		int res = tom.gom.Gom.exec(params);
+		/* Prepare arguments */
+		Object[] preparams = parameters.toArray();
+		String[] params = new String[preparams.length];
+		for (int i = 0; i < preparams.length; i++) {
+		params[i] = (String)preparams[i];
+		}
+		int res = 1;
+		res = tom.gom.Gom.exec(params);
 		System.setIn(backupIn);
 		if (res != 0 ) {
 		throw new TomException(TomMessage.gomFailure,new Object[]{currentFile,new Integer(initialGomLine)});

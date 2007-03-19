@@ -1180,10 +1180,10 @@ inputState.guessing--;
 				
 				
 				;
-														if(context != null) {
-														  args = tom_append_list_concTomTerm(context,tom_append_list_concTomTerm(args,tom_empty_list_concTomTerm()));
-														}
-														result = tom_make_BackQuoteAppl(tom_cons_list_concOption(tom_make_ModuleName(TNODE_MODULE_NAME),tom_empty_list_concOption()),tom_make_Name(Constants.ATTRIBUTE_NODE),args)
+						    if(context != null) {
+						    args = tom_append_list_concTomTerm(context,tom_append_list_concTomTerm(args,tom_empty_list_concTomTerm()));
+						    }
+						    result = tom_make_BackQuoteAppl(tom_cons_list_concOption(tom_make_ModuleName(TNODE_MODULE_NAME),tom_empty_list_concOption()),tom_make_Name(Constants.ATTRIBUTE_NODE),args)
 				
 				
 				;
@@ -1196,7 +1196,7 @@ inputState.guessing--;
 			match(BQ_STAR);
 			if ( inputState.guessing==0 ) {
 				
-												result = tom_make_VariableStar(tom_empty_list_concOption(),tom_make_Name(id.getText()),tom_make_TomTypeAlone("unknown type"),tom_empty_list_concConstraint())
+						result = tom_make_VariableStar(tom_empty_list_concOption(),tom_make_Name(id.getText()),tom_make_TomTypeAlone("unknown type"),tom_empty_list_concConstraint())
 				
 				
 				

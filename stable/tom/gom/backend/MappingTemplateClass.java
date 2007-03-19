@@ -1,6 +1,5 @@
 /*
- *
- * GOM
+ * Gom
  *
  * Copyright (C) 2006-2007, INRIA
  * Nancy, France.
@@ -22,27 +21,20 @@
  * Antoine Reilles  e-mail: Antoine.Reilles@loria.fr
  *
  **/
+package tom.gom.backend;
 
-package tom.gom.backend.shared;
-
-import tom.gom.backend.TemplateClass;
-import java.io.*;
+import java.util.Map;
+import java.util.HashMap;
 import tom.gom.adt.objects.types.*;
 
-public class NullTemplate extends TemplateClass {
-
-  /**
-   * The NullTemplate class generates nothing.
-   */
-  public NullTemplate(GomClass gomClass) {
+public abstract class MappingTemplateClass extends TemplateClass {
+  public MappingTemplateClass(GomClass gomClass) {
     super(gomClass);
+    this.templates = new HashMap();
   }
+  protected Map templates;
 
-  /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */
-  public void generate(java.io.Writer writer) { /* does nothing */ }
-
-  public int generateFile() {
-    // Do nothing, we don't need to generate empty files
-    return 0;
+  public void addTemplates(Map map) {
+    this.templates.putAll(map);
   }
 }

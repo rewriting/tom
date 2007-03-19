@@ -36,7 +36,6 @@ import tom.platform.adt.platformoption.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.library.xml.*;
 
-
 /**
  * Helper class to parse OptionOwner options.
  * The options have to comply with the following this DTD

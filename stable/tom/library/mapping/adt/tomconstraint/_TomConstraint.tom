@@ -1533,11 +1533,11 @@
   make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._MatchNumber(arg0) }
 }
 
-%op Strategy Make_MatchNumber(_Number:Strategy) {
+%op Strategy Make_MatchNumber(_Integer:int) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_MatchNumber)}
 
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_MatchNumber( new_Number) }
+  get_slot(_Integer, t) { _Integer }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_MatchNumber( _Integer) }
 }
 
 %op Strategy When_MatchNumber(s:Strategy) {
@@ -1556,11 +1556,11 @@
   make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._PatternNumber(arg0) }
 }
 
-%op Strategy Make_PatternNumber(_Number:Strategy) {
+%op Strategy Make_PatternNumber(_Integer:int) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_PatternNumber)}
 
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_PatternNumber( new_Number) }
+  get_slot(_Integer, t) { _Integer }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_PatternNumber( _Integer) }
 }
 
 %op Strategy When_PatternNumber(s:Strategy) {
@@ -1579,11 +1579,11 @@
   make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._ListNumber(arg0) }
 }
 
-%op Strategy Make_ListNumber(_Number:Strategy) {
+%op Strategy Make_ListNumber(_Integer:int) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_ListNumber)}
 
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_ListNumber( new_Number) }
+  get_slot(_Integer, t) { _Integer }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_ListNumber( _Integer) }
 }
 
 %op Strategy When_ListNumber(s:Strategy) {
@@ -1602,11 +1602,11 @@
   make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._IndexNumber(arg0) }
 }
 
-%op Strategy Make_IndexNumber(_Number:Strategy) {
+%op Strategy Make_IndexNumber(_Integer:int) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_IndexNumber)}
 
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_IndexNumber( new_Number) }
+  get_slot(_Integer, t) { _Integer }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_IndexNumber( _Integer) }
 }
 
 %op Strategy When_IndexNumber(s:Strategy) {
@@ -1625,11 +1625,11 @@
   make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._Begin(arg0) }
 }
 
-%op Strategy Make_Begin(_Number:Strategy) {
+%op Strategy Make_Begin(_Integer:int) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_Begin)}
 
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_Begin( new_Number) }
+  get_slot(_Integer, t) { _Integer }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_Begin( _Integer) }
 }
 
 %op Strategy When_Begin(s:Strategy) {
@@ -1648,11 +1648,11 @@
   make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._End(arg0) }
 }
 
-%op Strategy Make_End(_Number:Strategy) {
+%op Strategy Make_End(_Integer:int) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_End)}
 
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_End( new_Number) }
+  get_slot(_Integer, t) { _Integer }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_End( _Integer) }
 }
 
 %op Strategy When_End(s:Strategy) {
@@ -1660,27 +1660,50 @@
   make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_End(s) }
 }
 
-%op Strategy Is_Number() {
-  make() { `When_Number(Identity()) }
+%op Strategy Is_Save() {
+  make() { `When_Save(Identity()) }
 }
 
-%op Strategy _Number(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._Number)}
+%op Strategy _Save(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._Save)}
 
   get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._Number(arg0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._Save(arg0) }
 }
 
-%op Strategy Make_Number(_Integer:int) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_Number)}
+%op Strategy Make_Save(_Integer:int) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_Save)}
 
   get_slot(_Integer, t) { _Integer }
-  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_Number( _Integer) }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_Save( _Integer) }
 }
 
-%op Strategy When_Number(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_Number)}
-  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_Number(s) }
+%op Strategy When_Save(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_Save)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_Save(s) }
+}
+
+%op Strategy Is_Position() {
+  make() { `When_Position(Identity()) }
+}
+
+%op Strategy _Position(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber._Position)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._Position(arg0) }
+}
+
+%op Strategy Make_Position(_Integer:int) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_Position)}
+
+  get_slot(_Integer, t) { _Integer }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_Position( _Integer) }
+}
+
+%op Strategy When_Position(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.When_Position)}
+  make(s) { new tom.engine.adt.tomname.strategy.tomnumber.When_Position(s) }
 }
 
 %op Strategy Is_AbsVar() {
@@ -1694,11 +1717,11 @@
   make(arg0) { new tom.engine.adt.tomname.strategy.tomnumber._AbsVar(arg0) }
 }
 
-%op Strategy Make_AbsVar(_Number:Strategy) {
+%op Strategy Make_AbsVar(_Integer:int) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomname.strategy.tomnumber.Make_AbsVar)}
 
-  get_slot(_Number, t) { _Number }
-  make( new_Number) { new tom.engine.adt.tomname.strategy.tomnumber.Make_AbsVar( new_Number) }
+  get_slot(_Integer, t) { _Integer }
+  make( _Integer) { new tom.engine.adt.tomname.strategy.tomnumber.Make_AbsVar( _Integer) }
 }
 
 %op Strategy When_AbsVar(s:Strategy) {
@@ -5006,6 +5029,29 @@
 %op Strategy When_AssignTo(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_AssignTo)}
   make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_AssignTo(s) }
+}
+
+%op Strategy Is_AssignPositionTo() {
+  make() { `When_AssignPositionTo(Identity()) }
+}
+
+%op Strategy _AssignPositionTo(arg0:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint._AssignPositionTo)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  make(arg0) { new tom.engine.adt.tomconstraint.strategy.constraint._AssignPositionTo(arg0) }
+}
+
+%op Strategy Make_AssignPositionTo(_Variable:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.Make_AssignPositionTo)}
+
+  get_slot(_Variable, t) { _Variable }
+  make( new_Variable) { new tom.engine.adt.tomconstraint.strategy.constraint.Make_AssignPositionTo( new_Variable) }
+}
+
+%op Strategy When_AssignPositionTo(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomconstraint.strategy.constraint.When_AssignPositionTo)}
+  make(s) { new tom.engine.adt.tomconstraint.strategy.constraint.When_AssignPositionTo(s) }
 }
 
 %op Strategy Is_TrueConstraint() {

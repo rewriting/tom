@@ -79,7 +79,7 @@ public class TomCGenerator extends TomCFamilyGenerator {
   }
 
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
-    output.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
+    output.writeln(deep,"goto matchlab" + tomNumberListToString(numberList) + ";");
   }
 
   protected void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException {

@@ -1,3 +1,6 @@
+2007-03-19  tonio <reilles@loria.fr>
+  * bootinstall
+
 2007-03-18  tonio <reilles@loria.fr>
   * tom: %gom now takes an optional list of arguments to pass to the gom
     compiler. We can now write %gom(--termgraph) {...} to get a termgraph

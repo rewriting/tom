@@ -1,25 +1,25 @@
 /*
  * Gom
- * 
+ *
  * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
+ *
  * Antoine Reilles    e-mail: Antoine.Reilles@loria.fr
- * 
+ *
  **/
 
 package tom.gom.compiler;
@@ -41,11 +41,12 @@ import tom.gom.adt.objects.types.*;
  * classes
  */
 public class CompilerPlugin extends GomGenericPlugin {
-  
+
   public static final String COMPILED_SUFFIX = ".tfix.gom.compiled";
 
   /** the list of sorts to compile */
-  private SortList sortList;
+  private ModuleList moduleList;
+  private HookDeclList hookList;
 
   /** the list of compiled classes */
   private GomClassList classList;
@@ -54,19 +55,21 @@ public class CompilerPlugin extends GomGenericPlugin {
   public CompilerPlugin() {
     super("GomCompiler");
   }
-  
+
   /**
    * inherited from plugin interface
    * arg[0] should contain the GomStreamManager to get the input file name
    */
   public void setArgs(Object arg[]) {
-    if (arg[0] instanceof SortList) {
-      sortList = (SortList)arg[0];
-      setStreamManager((GomStreamManager)arg[1]);
+    if (arg[0] instanceof ModuleList && arg[1] instanceof HookDeclList) {
+      moduleList = (ModuleList) arg[0];
+      hookList = (HookDeclList) arg[1];
+      setStreamManager((GomStreamManager) arg[2]);
     } else {
       getLogger().log(Level.SEVERE,
           GomMessage.invalidPluginArgument.getMessage(),
-          new Object[]{"GomCompiler", "[SortList,GomStreamManager]",
+          new Object[]{
+            "GomCompiler", "[ModuleList,HookDeclList,GomStreamManager]",
             getArgumentArrayString(arg)});
     }
   }
@@ -80,9 +83,9 @@ public class CompilerPlugin extends GomGenericPlugin {
 
     getLogger().log(Level.INFO, "Start compilation");
     Compiler compiler = new Compiler();
-    classList = compiler.compile(sortList);
+    classList = compiler.compile(moduleList,hookList);
     if(classList == null) {
-      getLogger().log(Level.SEVERE, 
+      getLogger().log(Level.SEVERE,
           GomMessage.compilationIssue.getMessage(),
           streamManager.getInputFileName());
     } else {

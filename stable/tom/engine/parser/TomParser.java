@@ -499,7 +499,7 @@ inputState.guessing--;
 		TomType tomType = null;
 		
 		
-		subject1=plainTerm(null,0);
+		subject1=plainTerm(null,null,0);
 		{
 		switch ( LA(1)) {
 		case BACKQUOTE:
@@ -551,7 +551,7 @@ inputState.guessing--;
 		case LBRACKET:
 		case UNDERSCORE:
 		{
-			subject2=plainTerm(null,0);
+			subject2=plainTerm(null,null,0);
 			break;
 		}
 		case RPAREN:
@@ -584,17 +584,11 @@ inputState.guessing--;
 				}
 			}
 			
-			/*
-			subject = plainTerm[null,0] {
-			System.out.println("subject = " + subject);
-			list.add(subject); 
-			*/
-			
 		}
 	}
 	
 	public final TomTerm  plainTerm(
-		TomName astAnnotedName, int line
+		TomName astLabeledName, TomName astAnnotedName, int line
 	) throws RecognitionException, TokenStreamException, TomException {
 		TomTerm result;
 		
@@ -610,6 +604,9 @@ inputState.guessing--;
 		boolean implicit = false;
 		boolean anti = false;
 		
+		if(astLabeledName != null) {
+		constraintList.add(ASTFactory.makeStorePosition(astLabeledName, line, currentFile()));
+		}
 		if(astAnnotedName != null) {
 		constraintList.add(ASTFactory.makeAssignTo(astAnnotedName, line, currentFile()));
 		}
@@ -617,7 +614,7 @@ inputState.guessing--;
 		
 		
 		{
-		_loop58:
+		_loop61:
 		do {
 			if ((LA(1)==ANTI_SYM)) {
 				a = LT(1);
@@ -627,7 +624,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop58;
+				break _loop61;
 			}
 			
 		} while (true);
@@ -644,10 +641,10 @@ inputState.guessing--;
 			}
 		}
 		else {
-			boolean synPredMatched61 = false;
+			boolean synPredMatched64 = false;
 			if ((((LA(1)==ALL_ID||LA(1)==UNDERSCORE))&&(!anti))) {
-				int _m61 = mark();
-				synPredMatched61 = true;
+				int _m64 = mark();
+				synPredMatched64 = true;
 				inputState.guessing++;
 				try {
 					{
@@ -655,12 +652,12 @@ inputState.guessing--;
 					}
 				}
 				catch (RecognitionException pe) {
-					synPredMatched61 = false;
+					synPredMatched64 = false;
 				}
-				rewind(_m61);
+				rewind(_m64);
 inputState.guessing--;
 			}
-			if ( synPredMatched61 ) {
+			if ( synPredMatched64 ) {
 				result=variableStar(optionList,constraintList);
 			}
 			else if (((LA(1)==UNDERSCORE))&&(!anti)) {
@@ -679,10 +676,10 @@ inputState.guessing--;
 				}
 			}
 			else if ((((LA(1) >= NUM_INT && LA(1) <= NUM_DOUBLE)))&&(LA(2) != LPAREN && LA(2) != LBRACKET)) {
-				name=headConstant(optionList);
+				nameList=headConstantList(optionList);
 				if ( inputState.guessing==0 ) {
 					
-						      nameList = tom_append_list_concTomName(nameList,tom_cons_list_concTomName(name,tom_empty_list_concTomName()));
+						      //nameList = `concTomName(nameList*,name);
 						      optionList.add(tom_make_Constant());
 						      result = tom_make_TermAppl(ASTFactory.makeOptionList(optionList),nameList,ASTFactory.makeList(list),ASTFactory.makeConstraintList(constraintList))
 					
@@ -862,9 +859,11 @@ inputState.guessing--;
 	public final TomTerm  annotedTerm() throws RecognitionException, TokenStreamException, TomException {
 		TomTerm result;
 		
+		Token  lname = null;
 		Token  name = null;
 		
 		result = null;
+		TomName labeledName = null;
 		TomName annotedName = null;
 		int line = 0;
 		
@@ -879,7 +878,7 @@ inputState.guessing--;
 			try {
 				{
 				match(ALL_ID);
-				match(AT);
+				match(COLON);
 				}
 			}
 			catch (RecognitionException pe) {
@@ -889,6 +888,44 @@ inputState.guessing--;
 inputState.guessing--;
 		}
 		if ( synPredMatched55 ) {
+			lname = LT(1);
+			match(ALL_ID);
+			match(COLON);
+			if ( inputState.guessing==0 ) {
+				
+				text.append(lname.getText());
+				text.append(':');
+				labeledName = tom_make_Name(lname.getText());
+				line = lname.getLine();
+				
+			}
+		}
+		else if ((_tokenSet_0.member(LA(1)))) {
+		}
+		else {
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		
+		}
+		{
+		boolean synPredMatched58 = false;
+		if (((LA(1)==ALL_ID))) {
+			int _m58 = mark();
+			synPredMatched58 = true;
+			inputState.guessing++;
+			try {
+				{
+				match(ALL_ID);
+				match(AT);
+				}
+			}
+			catch (RecognitionException pe) {
+				synPredMatched58 = false;
+			}
+			rewind(_m58);
+inputState.guessing--;
+		}
+		if ( synPredMatched58 ) {
 			name = LT(1);
 			match(ALL_ID);
 			match(AT);
@@ -908,7 +945,7 @@ inputState.guessing--;
 		}
 		
 		}
-		result=plainTerm(annotedName,line);
+		result=plainTerm(labeledName,annotedName,line);
 		}
 		return result;
 	}
@@ -1248,7 +1285,7 @@ inputState.guessing--;
 				if ( inputState.guessing==0 ) {
 					orgText = tom_make_Name(text.toString());
 				}
-				rhs=plainTerm(null,0);
+				rhs=plainTerm(null,null,0);
 				{
 				_loop49:
 				do {
@@ -1667,45 +1704,38 @@ inputState.guessing--;
 		return result;
 	}
 	
-	public final TomName  headConstant(
+	public final TomNameList  headConstantList(
 		LinkedList optionList
 	) throws RecognitionException, TokenStreamException {
-		TomName result;
+		TomNameList result;
 		
 		
-		result = null; 
-		Token t;
+		result = tom_empty_list_concTomName();
+		TomName name = null;
 		
 		
-		t=constant();
+		name=headConstant(optionList);
 		if ( inputState.guessing==0 ) {
-			
-				String name = t.getText();
-				int line = t.getLine();
-				text.append(name);
-				setLastLine(line);
-				result = tom_make_Name(name);
-				optionList.add(tom_make_OriginTracking(result,line,currentFile()));
-			
-				switch(t.getType()) {
-					case NUM_INT:
-						ASTFactory.makeIntegerSymbol(symbolTable,name,optionList);
-						break;
-					case NUM_LONG:
-						ASTFactory.makeLongSymbol(symbolTable,name,optionList);
-						break;
-					case CHARACTER:
-						ASTFactory.makeCharSymbol(symbolTable,name,optionList);
-						break;
-					case NUM_DOUBLE:
-						ASTFactory.makeDoubleSymbol(symbolTable,name,optionList);
-						break;
-					case STRING:
-						ASTFactory.makeStringSymbol(symbolTable,name,optionList);
-						break;
-					default:
+			result = tom_append_list_concTomName(result,tom_cons_list_concTomName(name,tom_empty_list_concTomName()));
+		}
+		{
+		_loop138:
+		do {
+			if ((LA(1)==ALTERNATIVE)) {
+				match(ALTERNATIVE);
+				if ( inputState.guessing==0 ) {
+					text.append('|');
 				}
+				name=headConstant(optionList);
+				if ( inputState.guessing==0 ) {
+					result = tom_append_list_concTomName(result,tom_cons_list_concTomName(name,tom_empty_list_concTomName()));
+				}
+			}
+			else {
+				break _loop138;
+			}
 			
+		} while (true);
 		}
 		return result;
 	}
@@ -1860,7 +1890,7 @@ inputState.guessing--;
 			
 		}
 		{
-		_loop128:
+		_loop131:
 		do {
 			if ((LA(1)==ALTERNATIVE)) {
 				match(ALTERNATIVE);
@@ -1875,7 +1905,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop128;
+				break _loop131;
 			}
 			
 		} while (true);
@@ -1917,7 +1947,7 @@ inputState.guessing--;
 		case ANTI_SYM:
 		{
 			{
-			_loop90:
+			_loop93:
 			do {
 				if ((LA(1)==ANTI_SYM)) {
 					a = LT(1);
@@ -1927,7 +1957,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop90;
+					break _loop93;
 				}
 				
 			} while (true);
@@ -1966,7 +1996,7 @@ inputState.guessing--;
 		{
 			match(LPAREN);
 			{
-			_loop92:
+			_loop95:
 			do {
 				if ((LA(1)==ANTI_SYM)) {
 					b = LT(1);
@@ -1976,7 +2006,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop92;
+					break _loop95;
 				}
 				
 			} while (true);
@@ -1997,12 +2027,12 @@ inputState.guessing--;
 				
 			}
 			{
-			_loop96:
+			_loop99:
 			do {
 				if ((LA(1)==ALTERNATIVE)) {
 					match(ALTERNATIVE);
 					{
-					_loop95:
+					_loop98:
 					do {
 						if ((LA(1)==ANTI_SYM)) {
 							c = LT(1);
@@ -2012,7 +2042,7 @@ inputState.guessing--;
 							}
 						}
 						else {
-							break _loop95;
+							break _loop98;
 						}
 						
 					} while (true);
@@ -2032,7 +2062,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop96;
+					break _loop99;
 				}
 				
 			} while (true);
@@ -2084,7 +2114,7 @@ inputState.guessing--;
 					list.add(term);
 				}
 				{
-				_loop69:
+				_loop72:
 				do {
 					if ((LA(1)==COMMA)) {
 						match(COMMA);
@@ -2097,7 +2127,7 @@ inputState.guessing--;
 						}
 					}
 					else {
-						break _loop69;
+						break _loop72;
 					}
 					
 				} while (true);
@@ -2139,7 +2169,7 @@ inputState.guessing--;
 					list.add(term);
 				}
 				{
-				_loop72:
+				_loop75:
 				do {
 					if ((LA(1)==COMMA)) {
 						match(COMMA);
@@ -2152,7 +2182,7 @@ inputState.guessing--;
 						}
 					}
 					else {
-						break _loop72;
+						break _loop75;
 					}
 					
 				} while (true);
@@ -2184,7 +2214,7 @@ inputState.guessing--;
 		case UNDERSCORE:
 		{
 			{
-			_loop74:
+			_loop77:
 			do {
 				if (((LA(1)==ALL_ID||LA(1)==UNDERSCORE))&&(LA(1) != XML_CLOSE)) {
 					term=xmlAttribute();
@@ -2193,7 +2223,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop74;
+					break _loop77;
 				}
 				
 			} while (true);
@@ -2361,7 +2391,7 @@ inputState.guessing--;
 			
 			}
 			{
-			_loop79:
+			_loop82:
 			do {
 				if ((LA(1)==ANTI_SYM)) {
 					a = LT(1);
@@ -2371,7 +2401,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop79;
+					break _loop82;
 				}
 				
 			} while (true);
@@ -2437,7 +2467,7 @@ inputState.guessing--;
 			
 			}
 			{
-			_loop83:
+			_loop86:
 			do {
 				if ((LA(1)==ANTI_SYM)) {
 					b = LT(1);
@@ -2447,7 +2477,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop83;
+					break _loop86;
 				}
 				
 			} while (true);
@@ -2558,7 +2588,7 @@ inputState.guessing--;
 		
 		
 		{
-		_loop86:
+		_loop89:
 		do {
 			if ((_tokenSet_0.member(LA(1)))) {
 				term=annotedTerm();
@@ -2567,7 +2597,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop86;
+				break _loop89;
 			}
 			
 		} while (true);
@@ -2616,7 +2646,7 @@ inputState.guessing--;
 				list.add(term);
 			}
 			{
-			_loop105:
+			_loop108:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -2629,7 +2659,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop105;
+					break _loop108;
 				}
 				
 			} while (true);
@@ -2671,7 +2701,7 @@ inputState.guessing--;
 			list.add(term);
 		}
 		{
-		_loop115:
+		_loop118:
 		do {
 			if ((LA(1)==COMMA)) {
 				match(COMMA);
@@ -2684,7 +2714,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop115;
+				break _loop118;
 			}
 			
 		} while (true);
@@ -2717,7 +2747,7 @@ inputState.guessing--;
 			list.add(tom_make_PairSlotAppl(tom_make_Name(name.getText()),term));
 		}
 		{
-		_loop119:
+		_loop122:
 		do {
 			if ((LA(1)==COMMA)) {
 				match(COMMA);
@@ -2739,7 +2769,7 @@ inputState.guessing--;
 				}
 			}
 			else {
-				break _loop119;
+				break _loop122;
 			}
 			
 		} while (true);
@@ -2778,6 +2808,49 @@ inputState.guessing--;
 			throw new NoViableAltException(LT(1), getFilename());
 		}
 		}
+		}
+		return result;
+	}
+	
+	public final TomName  headConstant(
+		LinkedList optionList
+	) throws RecognitionException, TokenStreamException {
+		TomName result;
+		
+		
+		result = null;
+		Token t;
+		
+		
+		t=constant();
+		if ( inputState.guessing==0 ) {
+			
+				String name = t.getText();
+				int line = t.getLine();
+				text.append(name);
+				setLastLine(line);
+				result = tom_make_Name(name);
+				optionList.add(tom_make_OriginTracking(result,line,currentFile()));
+			
+				switch(t.getType()) {
+					case NUM_INT:
+						ASTFactory.makeIntegerSymbol(symbolTable,name,optionList);
+						break;
+					case NUM_LONG:
+						ASTFactory.makeLongSymbol(symbolTable,name,optionList);
+						break;
+					case CHARACTER:
+						ASTFactory.makeCharSymbol(symbolTable,name,optionList);
+						break;
+					case NUM_DOUBLE:
+						ASTFactory.makeDoubleSymbol(symbolTable,name,optionList);
+						break;
+					case STRING:
+						ASTFactory.makeStringSymbol(symbolTable,name,optionList);
+						break;
+					default:
+				}
+			
 		}
 		return result;
 	}
@@ -2835,7 +2908,7 @@ inputState.guessing--;
 				
 			}
 			{
-			_loop138:
+			_loop144:
 			do {
 				if ((LA(1)==COMMA)) {
 					match(COMMA);
@@ -2860,7 +2933,7 @@ inputState.guessing--;
 					}
 				}
 				else {
-					break _loop138;
+					break _loop144;
 				}
 				
 			} while (true);
@@ -2879,6 +2952,7 @@ inputState.guessing--;
 		}
 		match(RPAREN);
 		}
+		{
 		match(LBRACE);
 		if ( inputState.guessing==0 ) {
 			
@@ -2886,7 +2960,7 @@ inputState.guessing--;
 			
 		}
 		{
-		_loop140:
+		_loop147:
 		do {
 			switch ( LA(1)) {
 			case MAKE:
@@ -2946,13 +3020,14 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop140;
+				break _loop147;
 			}
 			}
 		} while (true);
 		}
 		t = LT(1);
 		match(RBRACE);
+		}
 		if ( inputState.guessing==0 ) {
 			
 			
@@ -3022,7 +3097,7 @@ inputState.guessing--;
 					
 				}
 				{
-				_loop178:
+				_loop185:
 				do {
 					if ((LA(1)==COMMA)) {
 						match(COMMA);
@@ -3048,7 +3123,7 @@ inputState.guessing--;
 						}
 					}
 					else {
-						break _loop178;
+						break _loop185;
 					}
 					
 				} while (true);
@@ -3214,7 +3289,7 @@ inputState.guessing--;
 		}
 		match(LBRACE);
 		{
-		_loop143:
+		_loop150:
 		do {
 			switch ( LA(1)) {
 			case MAKE_EMPTY:
@@ -3267,7 +3342,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop143;
+				break _loop150;
 			}
 			}
 		} while (true);
@@ -3542,7 +3617,7 @@ inputState.guessing--;
 		}
 		match(LBRACE);
 		{
-		_loop146:
+		_loop153:
 		do {
 			switch ( LA(1)) {
 			case MAKE_EMPTY:
@@ -3587,7 +3662,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop146;
+				break _loop153;
 			}
 			}
 		} while (true);
@@ -3811,7 +3886,7 @@ inputState.guessing--;
 		match(LBRACE);
 		implement=keywordImplement();
 		{
-		_loop150:
+		_loop157:
 		do {
 			switch ( LA(1)) {
 			case VISITOR_FWD:
@@ -3856,7 +3931,7 @@ inputState.guessing--;
 			}
 			default:
 			{
-				break _loop150;
+				break _loop157;
 			}
 			}
 		} while (true);

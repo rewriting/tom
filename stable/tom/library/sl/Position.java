@@ -31,58 +31,34 @@
 
 package tom.library.sl;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+
 /**
  * Object that represents a position in a term
  */
 
 public class Position implements Cloneable {
 
-  private boolean isRelative;
   private int[] omega;
 
-  private Position(int[] omega, boolean isRelative) {
-    this.isRelative = isRelative;
+  public Position (int[] omega){
     this.omega = new int[omega.length];
     System.arraycopy(omega, 0, this.omega, 0, omega.length);
   }
 
-  public static Position makeAbsolutePosition(int[] omega){
-    return new Position(omega,false);
-  }
-
-  public static Position makeRelativePosition(int[] omega){
-    return new Position(omega,true);
-  }
-
-  public Position getRelativePosition(Position targetPos) {
-    int[] target = targetPos.toArray();
-    int[] source = toArray();
-    int min_length =Math.min(source.length,target.length);
-    int commonPrefixLength=0;
-    while(commonPrefixLength<min_length && source[commonPrefixLength]==target[commonPrefixLength]){
-      commonPrefixLength++;
+  public Position (Position prefix,Position suffix){
+    int[] prefixArray = prefix.toArray();
+    int[] suffixArray = suffix.toArray();
+    omega = new int[suffixArray.length+prefixArray.length];
+    for( int i=0;i<prefixArray.length;i++){
+      omega[i]=prefixArray[i];
     }
-    int[] relative = new int[target.length-commonPrefixLength+1];
-    relative[0]=source.length-commonPrefixLength;
-    for(int j=1;j<relative.length;j++){
-      relative[j] = target[commonPrefixLength+j-1];
+    for( int i=0;i<suffixArray.length;i++){
+      omega[i+prefixArray.length]=suffixArray[i];
     }
-    return Position.makeRelativePosition(relative);
-  }
-
-  public Position getAbsolutePosition(Position relativePos) {
-    int[] relative = relativePos.toArray();
-    int[] current = this.toArray();
-    int prefix = depth()-relative[0];
-    int absoluteLength = prefix+relative.length-1;
-    int[] absolute = new int[absoluteLength];
-    for(int i=0 ; i<prefix ; i++) {
-      absolute[i]=current[i];
-    }
-    for(int i=prefix ; i<absoluteLength ; i++){
-      absolute[i]=relative[i-prefix+1];
-    }
-    return Position.makeAbsolutePosition(absolute);
   }
 
   public int[] toArray(){
@@ -125,7 +101,7 @@ public class Position implements Cloneable {
     if (o instanceof Position) {
       Position p = (Position)o;
       /* we need to check only the meaningful part of the omega array */
-      if (depth()==p.depth() & isRelative()==p.isRelative()) {
+      if (depth()==p.depth()) {
         for(int i=0; i<depth(); i++) {
           if (omega[i]!=p.omega[i]) {
             return false;
@@ -147,21 +123,17 @@ public class Position implements Cloneable {
     if (o instanceof Position) {
       Position p = (Position)o;
       /* we need to check only the meaningful part of the omega array */
-      if (depth()==p.depth()) {
-        for(int i=0; i<depth(); i++) {
-          if (omega[i]<p.omega[i]) {
+      for(int i=0; i<depth(); i++) {
+        if(i == p.depth() || omega[i]>p.omega[i]) {
+          return 1;
+        }
+        else{
+          if ( omega[i]<p.omega[i]) {
             return -1;
           }
-          else{
-            if(omega[i]>p.omega[i]) {
-              return 1;
-            }
-          }
         }
-        return 0;
-      } else {
-        return depth()<p.depth()?-1:1;
       }
+      return depth()==p.depth()?0:-1;
     } else {
       return -2;
     }
@@ -210,7 +182,7 @@ public class Position implements Cloneable {
    * @return the omega strategy the performs the replacement
    */
   public Strategy getReplace(final Visitable t) {
-    return getOmega(new Identity() {public jjtraveler.Visitable visit(jjtraveler.Visitable x){ return t;}});
+    return getOmega(new Identity() {public void visit(){ setSubject(t); }});
   }
 
   /**
@@ -253,8 +225,30 @@ public class Position implements Cloneable {
     return r.toString();
   }
 
-  public boolean isRelative(){
-    return isRelative;
+  public boolean hasPrefix(Position prefix){
+    int[] prefixTab = prefix.toArray();
+    if(omega.length<prefixTab.length) {
+      return false;
+    }
+    for(int i=0;i<prefixTab.length;i++){
+      if(prefixTab[i]!=omega[i]) return false;
+    }
+    return true;
+  }
+
+  public Position getSuffix(Position prefix){
+    if(! hasPrefix(prefix)) return null;
+    int[] suffixTab = new int[depth()-prefix.depth()];
+    for(int i=0;i<suffixTab.length;i++){
+      suffixTab[i]=omega[i+prefix.depth()];
+    }
+    return new Position(suffixTab);
+  }
+
+  public Position changePrefix(Position oldprefix,Position newprefix){
+    if(! hasPrefix(oldprefix)) return null;
+    Position suffix = getSuffix(oldprefix);
+    return new Position(newprefix,suffix);
   }
 
 }
