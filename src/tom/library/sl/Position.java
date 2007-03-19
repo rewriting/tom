@@ -262,12 +262,15 @@ public class Position implements Cloneable,Path {
   }
 
   public Path sub(Path p){
-    int[] result = makePosition(p).toArray();
-    int[] inverse = new int[result.length];
-    for(int i=0;i<result.length;i++){
-      inverse[result.length-(i+1)]=-result[i];
+    return (makePosition(p).inv()).add(this);
+  }
+
+  public Path inv(){
+    int[] inverse = new int[omega.length];
+    for(int i=0;i<omega.length;i++){
+      inverse[omega.length-(i+1)]=-omega[i];
     }
-    return (new Position(inverse)).add(this);
+    return new Position(inverse);
   }
 
 
