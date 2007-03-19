@@ -33,6 +33,8 @@ package tom.library.sl;
 public interface Path {
 
   public Path add(Path p);
+  
+  public Path inv();
 
   public Path sub(Path p);
 
