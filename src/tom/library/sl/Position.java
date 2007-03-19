@@ -40,7 +40,7 @@ import java.util.Arrays;
  * Object that represents a position in a term
  */
 
-public class Position implements Cloneable {
+public class Position implements Cloneable,Path {
 
   private int[] omega;
 
@@ -249,6 +249,79 @@ public class Position implements Cloneable {
     if(! hasPrefix(oldprefix)) return null;
     Position suffix = getSuffix(oldprefix);
     return new Position(newprefix,suffix);
+  }
+
+
+  public Path add(Path p){
+    if(p.length()>0) {
+      Path result = this.conc(p.getHead());
+      return result.add(p.getTail());
+    } else {
+      return (Path) clone();
+    }
+  }
+
+  public Path sub(Path p){
+    return (makePosition(p).inv()).add(this);
+  }
+
+  public Path inv(){
+    int[] inverse = new int[omega.length];
+    for(int i=0;i<omega.length;i++){
+      inverse[omega.length-(i+1)]=-omega[i];
+    }
+    return new Position(inverse);
+  }
+
+
+  public Position makePosition(Path p){
+    int[] omega = new int[p.length()];
+    Path pp = p;
+    for(int i=0;i<p.length();i++){
+      omega[i]= pp.getHead();
+      pp = p.getTail();
+    }
+    return new Position(omega);
+  }
+
+  public int length(){
+    return omega.length;
+  }
+
+  public int getHead(){
+    return omega[0];
+  }
+
+  public Path getTail(){
+    if (length()==0) {
+      return null;
+    }
+    int[] tail = new int[omega.length-1];
+    System.arraycopy(omega, 1, tail, 0, tail.length);
+    return new Position(tail);
+  }
+
+  public Path conc(int i){
+    int[] result = new int[length()+1];
+    System.arraycopy(omega,0,result,0,length());
+    result[length()]=i;
+    return new Position(result);
+  }
+
+  public Path normalize(){
+    if(length()==0) return (Path) clone();
+    int[] normalizedTail = ((Position)(getTail().normalize())).toArray();
+    if(normalizedTail.length==0 || omega[0]!=-normalizedTail[0]){
+      int[] result = new int[1+normalizedTail.length];
+      result[0]=omega[0];
+      System.arraycopy(normalizedTail,0,result,1,normalizedTail.length);
+      return new Position(result);
+    }
+    else {
+      int[] result = new int[normalizedTail.length-1];
+      System.arraycopy(normalizedTail,1,result,0,normalizedTail.length-1);
+      return new Position(result);
+    }
   }
 
 }

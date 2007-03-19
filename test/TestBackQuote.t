@@ -12,14 +12,16 @@ public class TestBackQuote extends TestCase {
     module thing
       imports String
       abstract syntax
-      Thing = conc( Elem* )
-      Elem = a() | b() | c() | d()
+      L = conc( E* )
+      E = a() | b() | c() | d()
   }
 	
   public void test1() {
-    Thing l = `conc(a(), b(), c(), a(), b());
-    Thing l2 = `conc();
-    %match(Thing l) {
+    L l = `conc(a(), b(), c(), a(), b());
+    L l2 = `conc();
+    // do not modify the layout
+    // the problem was that space after the 'z*'
+    %match(L l) {
       conc(
 	  x*, 
 	  b(), 
@@ -36,6 +38,21 @@ public class TestBackQuote extends TestCase {
       }
     }
     return;
+  }
+
+  %op L abc() {}
+  private static L abc() {
+    return `conc(a(),b(),c());
+  }
+
+  public void test2() {
+    assertTrue(
+        "function of sort list",
+        `conc(a(),b(),c()) == `conc(abc()));
+    if(true) {
+      return ;
+    }
+    fail("should not be there");
   }
 
 }
