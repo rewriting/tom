@@ -9,17 +9,29 @@
 
 %include { float.tom }
 
+%typeterm TNodeList {
+  implement { tom.library.adt.tnode.types.TNodeList }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { tom.library.adt.tnode.TNodeBasicStrategy }
+}
+
+
 %typeterm TNode {
   implement { tom.library.adt.tnode.types.TNode }
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.library.adt.tnode.TNodeBasicStrategy }
 }
 
+%op TNodeList EmptyconcTNode() {
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode }
+  make() { tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make()}
+}
 
-%typeterm TNodeList {
-  implement { tom.library.adt.tnode.types.TNodeList }
-  equals(t1,t2) { t1.equals(t2) }
-  visitor_fwd { tom.library.adt.tnode.TNodeBasicStrategy }
+%op TNodeList ConsconcTNode(HeadconcTNode:TNode, TailconcTNode:TNodeList) {
+  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode }
+  get_slot(HeadconcTNode, t) { t.getHeadconcTNode() }
+  get_slot(TailconcTNode, t) { t.getTailconcTNode() }
+  make(t0, t1) { tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make(t0, t1)}
 }
 
 %op TNode EmptyNode() {
@@ -106,18 +118,6 @@
   get_slot(PublicId, t) { t.getPublicId() }
   get_slot(SystemId, t) { t.getSystemId() }
   make(t0, t1) { tom.library.adt.tnode.types.tnode.NotationNode.make(t0, t1)}
-}
-
-%op TNodeList EmptyconcTNode() {
-  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnodelist.EmptyconcTNode }
-  make() { tom.library.adt.tnode.types.tnodelist.EmptyconcTNode.make()}
-}
-
-%op TNodeList ConsconcTNode(HeadconcTNode:TNode, TailconcTNode:TNodeList) {
-  is_fsym(t) { t instanceof tom.library.adt.tnode.types.tnodelist.ConsconcTNode }
-  get_slot(HeadconcTNode, t) { t.getHeadconcTNode() }
-  get_slot(TailconcTNode, t) { t.getTailconcTNode() }
-  make(t0, t1) { tom.library.adt.tnode.types.tnodelist.ConsconcTNode.make(t0, t1)}
 }
 
 

@@ -1,5 +1,5 @@
 package tom.gom.parser;
-	  
+	
 	public class TokenTable {
 	private static java.util.HashMap tokenMap = null;
 

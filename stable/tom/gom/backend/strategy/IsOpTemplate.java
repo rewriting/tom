@@ -43,7 +43,7 @@ public class IsOpTemplate extends TemplateClass {
   public IsOpTemplate(GomClass gomClass) {
     super(gomClass);
     ClassName clsName = this.className;
-     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tom_match1_1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tom_match1_1) ||  false  ) ) { { String  tom_pkg=tom_get_slot_ClassName_Pkg(tom_match1_1); { String  tom_name=tom_get_slot_ClassName_Name(tom_match1_1); if ( true ) {
+     if(clsName instanceof  tom.gom.adt.objects.types.ClassName ) { { tom.gom.adt.objects.types.ClassName  tomMatch1Position1=(( tom.gom.adt.objects.types.ClassName )clsName); if ( ( tom_is_fun_sym_ClassName(tomMatch1Position1) ||  false  ) ) { { String  tom_pkg=tom_get_slot_ClassName_Pkg(tomMatch1Position1); { String  tom_name=tom_get_slot_ClassName_Name(tomMatch1Position1); if ( true ) {
 
         String newpkg = tom_pkg.replaceFirst(".types.",".strategy.");
         String newname = "Is_"+tom_name;
