@@ -29,6 +29,8 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 
 	%strategy VariadicPatternMatching() extends `Identity(){		
 		visit Constraint{			
+//[pem] again, why swapping SymbolOf(g) and conc ?
+//[pem] I need some explanations to deeply understand the rules
 			// Decompose 
 			// conc(t1,X*,t2,Y*) = g -> SymbolOf(g)=conc /\ fresh_var = g 
 			// /\ NotEmpty(fresh_Var)  /\ t1=GetHead(fresh_var) /\ fresh_var1 = GetTail(fresh_var) 
@@ -41,6 +43,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 			m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots
 					,constraints),g) -> {
 				// if we cannot decompose, stop
+//[pem] move above
 				%match(g) {
 					SymbolOf(_) -> {return `m;}
 				}				
@@ -57,12 +60,14 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				// SlotList sList = `slots;
 				%match(slots){
 					p:concSlot(_*,PairSlotAppl[Appl=appl],X*)->{
+//[pem] I do not understand this trick: no MatchConstraint is generated if the last element is an appl?
 						if (`X.length() == 0) {
 							lastElement = `appl;
 							break p;
 						}						
 						TomTerm newFreshVarList = getFreshVariableStar(listType);
 						// if we have a variable
+//[pem] can't we split the rule by dupplicating the pattern?
 						if(((`appl) instanceof VariableStar) || ((`appl) instanceof UnamedVariableStar)){
 							TomTerm beginSublist = getBeginVariableStar(listType);
 							TomTerm endSublist = getEndVariableStar(listType);							
@@ -88,6 +93,9 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				// 2. if it is not a VariableStar, this means that we should check that the subject ends also
 				// 3. if it is an UnamedVariableStar, there is nothing to do
 				TomTerm newFreshVarList = getFreshVariableStar(listType);
+//[pem] can't we do a post-treatment to inspect the last element, instead of using the lastElement variable?
+//[pem] do not use instanceof to implement pattern matching
+//[pem] use concSlot(_*,VariableStar[]) or concSlot(_*,UnamedVariableStar[]) instead
 				if (lastElement != null){
 					if(lastElement instanceof VariableStar){
 						l = `concConstraint(MatchConstraint(lastElement,freshVariable),l*);
@@ -107,6 +115,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 			}					
 			// Merge for star variables (we only deal with the variables of the pattern, ignoring the introduced ones)
 			// X* = p1 /\ X* = p2 -> X* = p1 /\ freshVar = p2 /\ freshVar == X*
+//[pem] make AndConstraint A*, this would simplify the code a lot
 			andC@AndConstraint(concConstraint(X*,eq@MatchConstraint(v@VariableStar[AstName=x@!PositionName[]],p1),Y*)) ->{
 				Constraint toApplyOn = `AndConstraint(concConstraint(Y*));
 				TomNumberList path = TomConstraintCompiler.getRootpath();

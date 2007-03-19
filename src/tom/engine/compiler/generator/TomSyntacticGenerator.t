@@ -37,6 +37,7 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
 				%match(nameList){
 					concTomName(_*,name,_*) ->{
 						Expression check = `EqualFunctionSymbol(termType,subject,RecordAppl(option,concTomName(name),l,concConstraint()));
+//[pem] can we consider Or as AU with False() as neutral element: this would remove the test
 				        cond = (cond == null ? check : `Or(check,cond));	
 					}
 				}

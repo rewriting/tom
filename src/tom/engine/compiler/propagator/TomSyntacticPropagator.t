@@ -22,15 +22,18 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 	%strategy SyntacticPatternMatching() extends `Identity(){		
 		visit Constraint{			
 			// Decompose
+//[pem] why not ... -> f(t1,...,tn)=SymbolOf(g)? '=' is not commutative
 			// f(t1,...,tn) = g -> SymbolOf(g)=f /\ t1=subterm1(g) /\ ... /\ tn=subtermn(g) 
 			m@MatchConstraint(RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g) -> {
+//[pem] why not creating a new rule: m@MatchConstraint(_,SymbolOf(_)) -> m
 				// if we cannot decompose, stop
 				%match(g) {
 					SymbolOf(_) -> {return `m;}
 				}
 				// if this a list or array, nothing to do
 				if(!TomConstraintCompiler.isSyntacticOperator(
-						TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}				
+						TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}
+//[pem] may b use %match consConstraint(_*,...Slot(slotName,appl)...,_*)
 				ConstraintList l = `concConstraint();
 				SlotList sList = `slots;
 				while(!sList.isEmptyconcSlot()) {
@@ -39,16 +42,19 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 					sList = sList.getTailconcSlot();										
 				}				
 				l = l.reverse();
+//[pem] why not reusing the lhs and set concSlot() ?
 				// add head equality condition
-				l = `concConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),l*);
-				
+				l = `concConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),l*)
+//[pem] can we use a real A or AU operator for AndConstraint ?
 				return `AndConstraint(l);
 			}		
 			
 			// Replace
 			// z = t /\ Context( z = u ) -> z = t /\ Context( t = u )			 
 			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*)) ->{
+//[pem] why not considering X*? Add a comment to explain why
 				Constraint toApplyOn = `AndConstraint(concConstraint(Y*));
+//[pem] is TopDown as efficient as Map on lists?
 				Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).fire(toApplyOn);
 				if (res != toApplyOn){					
 					return `AndConstraint(concConstraint(X*,eq,res));

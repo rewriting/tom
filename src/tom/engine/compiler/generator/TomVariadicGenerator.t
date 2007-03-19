@@ -35,6 +35,7 @@ public class TomVariadicGenerator implements TomIBaseGenerator{
 				Expression doWhileTest = `Negation(EqualTerm(type,end,begin));//`Negation(IsEmptyList(opName,end));
 				Expression endExpression = `IfExpression(IsEmptyList(opName,end),EqualTerm(type,end,begin),
 						EqualTerm(type,end,ExpressionToTomTerm(GetTail(opName,end))));				
+//[pem] should we use instanceof or isVariableStar() ?
 				if ((`v) instanceof VariableStar){
 					Expression varDeclaration = `ConstraintToExpression(MatchConstraint(v,ExpressionToTomTerm(GetSliceList(opName,begin,end))));
 					return `And(DoWhileExpression(endExpression,doWhileTest),varDeclaration);
