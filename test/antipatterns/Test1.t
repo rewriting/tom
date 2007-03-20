@@ -66,6 +66,18 @@ public class Test1 extends TestCase {
     fail();
   }
 
+  public void test3() {
+    TwoPath p1 = `c0(g(),id());
+    TwoPath p2 = `c0(id(),g());
+    %match(p1,p2) {
+      c0(M*,f@!id[],N*), c0(P*,g@!id[],Q*) -> {
+	if(`g.isid()) {
+	  fail();
+	}
+      }
+    }
+  }
+
   public static void main(String[] args) {
     junit.textui.TestRunner.run(new TestSuite(Test1.class));
   }
