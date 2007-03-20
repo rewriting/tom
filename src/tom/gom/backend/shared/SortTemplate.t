@@ -30,6 +30,7 @@ import java.util.*;
 import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
 public class SortTemplate extends TemplateHookedClass {
   ClassName abstractType;
@@ -42,22 +43,26 @@ public class SortTemplate extends TemplateHookedClass {
 
   public SortTemplate(File tomHomePath,
                       List importList, 	
-                      ClassName className,
-                      ClassName abstractType,
-                      ClassName visitor,
-                      ClassNameList operatorList,
-                      ClassNameList variadicOperatorList,
-                      SlotFieldList slots,
-                      HookList hooks,
+                      GomClass gomClass,
                       TemplateClass mapping) {
-    super(className,tomHomePath,importList,hooks,mapping);
-    this.tomHomePath = tomHomePath;
-    this.importList = importList;
-    this.abstractType = abstractType;
-    this.visitor = visitor;
-    this.operatorList = operatorList;
-    this.variadicOperatorList = variadicOperatorList;
-    this.slotList = slots;
+    super(gomClass,tomHomePath,importList,mapping);
+    %match(gomClass) {
+      SortClass[AbstractType=abstractType,
+                Visitor=visitor,
+                Operators=ops,
+                Mapping=mapping,
+                VariadicOperators=variops,
+                Slots=slots] -> {
+        this.abstractType = `abstractType;
+        this.visitor = `visitor;
+        this.operatorList = `ops;
+        this.variadicOperatorList = `variops;
+        this.slotList = `slots;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Bad argument for SortTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -175,4 +180,16 @@ protected String generateInterface() {
     }
   }
 
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+    writer.write(%[
+%typeterm @className()@ {
+  implement { @fullClassName()@ }
+  equals(t1,t2) { t1.equals(t2) }
+  visitor_fwd { @fullClassName(basicStrategy)@ }
+}
+
+]%);
+    return;
+  }
 }

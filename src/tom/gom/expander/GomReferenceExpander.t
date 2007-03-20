@@ -40,17 +40,18 @@ import tom.gom.tools.error.GomRuntimeException;
 public class GomReferenceExpander {
 
   %include{java/util/HashMap.tom}
+  %include{java/util/ArrayList.tom}
   %include{java/sl.tom}
   %include{java/boolean.tom}
   %include { ../adt/gom/Gom.tom}
 
-  // indicates if the expand method must include normalization phase 
+  // indicates if the expand method must include normalization phase
   // specific to termgraphs
-  private String packagePath;
-  
-  private SortDecl stringSortDecl,intSortDecl;
+  private static String packagePath;
+
+  private static SortDecl stringSortDecl,intSortDecl;
   private boolean forTermgraph;
-  
+
   private GomEnvironment environment() {
     return GomEnvironment.getInstance();
   }
@@ -65,41 +66,42 @@ public class GomReferenceExpander {
     environment().markUsedBuiltin("int");
   }
 
-  public SortList expand(SortList list) {
-    SortList expandedList = `concSort();
-    HashMap mapModuleSorts = new HashMap();
-    %match(list){
-      concSort(_*,sort,_*) -> {
-        SortDecl sortDecl = `sort.getDecl();
-        GomModuleName module = sortDecl.getModuleDecl().getModuleName();
-        SortDeclList sorts = (SortDeclList) mapModuleSorts.get(module);
-        if(sorts !=null) {
-          mapModuleSorts.put(module,`concSortDecl(sorts*,sortDecl));
-        }
-        else {
-          mapModuleSorts.put(module,`concSortDecl(sortDecl));
-        }
-        expandedList = `concSort(expandedList*,expandSort(sort));
-      }
-    }
-    //return expandedList;
+  public Pair expand(ModuleList list, HookDeclList hooks) {
+    ModuleList expandedList = `concModule();
+    ArrayList hookList = new ArrayList();
+    expandedList = (ModuleList) `TopDown(ExpandSort(hookList)).fire(list);
     //add a global expand method in every ModuleDecl contained in the SortList
-    return (SortList) `TopDown(ExpandModule(mapModuleSorts,packagePath,forTermgraph)).fire(expandedList);
+    `TopDown(
+        ExpandModule(packagePath,forTermgraph,hookList)).fire(expandedList);
+    Iterator it = hookList.iterator();
+    while(it.hasNext()) {
+      HookDeclList hList = (HookDeclList) it.next();
+      hooks = `concHookDecl(hList*,hooks*);
+    }
+    return `ModHookPair(expandedList,hooks);
   }
 
-  %strategy ExpandModule(map:HashMap,packagePath:String,forTermgraph:boolean) extends `Identity(){
-    visit ModuleDecl {
-      module -> {
-        SortDeclList sorts = (SortDeclList) map.get(`module.getModuleName());
-        return (ModuleDecl) `module.setHooks(expHooksModule(`module,sorts,packagePath,forTermgraph));
+  %strategy ExpandModule(
+      packagePath:String,
+      forTermgraph:boolean,
+      hookList:ArrayList) extends `Identity(){
+    visit Module {
+      module@Module[
+        MDecl=mdecl@ModuleDecl[ModuleName=modName],Sorts=sorts] -> {
+        hookList.add(expHooksModule(`modName,`sorts,`mdecl,packagePath,forTermgraph));
       }
     }
   }
 
+  %strategy ExpandSort(hookList:ArrayList) extends `Identity() {
+    visit Sort {
+      x -> { return expandSort(`x,`hookList); }
+    }
+  }
 
-  private Sort expandSort(Sort sort) {
+  private static Sort expandSort(Sort sort, ArrayList hookList) {
     OperatorDeclList l1 = sort.getOperators();
-    OperatorDeclList l2 = getRefOperators(sort.getDecl());
+    OperatorDeclList l2 = getRefOperators(sort.getDecl(),hookList);
     return sort.setOperators(`concOperator(l1*,l2*));
   }
 
@@ -108,18 +110,21 @@ public class GomReferenceExpander {
      lab<Sort>,ref<Sort>,pos<Sort>,exp<Sort>
      and the corresponding hooks
    */
-  private OperatorDeclList getRefOperators(SortDecl sort){
-    OperatorDecl labOp = `OperatorDecl("lab"+sort.getName(),sort,Slots(concSlot(Slot("label",stringSortDecl),Slot("term",sort))),concHookDecl());
+  private static OperatorDeclList getRefOperators(
+      SortDecl sort,
+      ArrayList hookList) {
+    OperatorDecl labOp = `OperatorDecl("lab"+sort.getName(),sort,Slots(concSlot(Slot("label",stringSortDecl),Slot("term",sort))));
 
-    OperatorDecl refOp = `OperatorDecl("ref"+sort.getName(),sort,Slots(concSlot(Slot("label",stringSortDecl))),concHookDecl());
+    OperatorDecl refOp = `OperatorDecl("ref"+sort.getName(),sort,Slots(concSlot(Slot("label",stringSortDecl))));
 
     String posOpName = "pos"+sort.getName();
-    OperatorDecl posOp = `OperatorDecl(posOpName,sort,Variadic(intSortDecl),posHooks(sort));
+    OperatorDecl posOp = `OperatorDecl(posOpName,sort,Variadic(intSortDecl));
+    hookList.add(posHooks(posOp,sort));
 
     return `concOperator(labOp,refOp,posOp);
   }
 
-  private HookDeclList posHooks(SortDecl sort){
+  private static HookDeclList posHooks(OperatorDecl opDecl, SortDecl sort) {
     
     String moduleName = sort.getModuleDecl().getModuleName().getName();
     String sortName = sort.getName();
@@ -170,12 +175,20 @@ public class GomReferenceExpander {
     
    ]%;
    return 
-      `concHookDecl(ImportHookDecl("{"+codeImport+"}"),InterfaceHookDecl("{tom.library.sl.Reference}"),BlockHookDecl("{"+codeBlock+"}"));
+      `concHookDecl(
+          ImportHookDecl(CutOperator(opDecl),Code(codeImport)),
+          InterfaceHookDecl(CutOperator(opDecl),
+                            Code("tom.library.sl.Reference")),
+          BlockHookDecl(CutOperator(opDecl),Code(codeBlock)));
   }
 
-  private static HookDeclList expHooksModule(ModuleDecl module,SortDeclList sorts,String packagePath,boolean forTermgraph){
-    String moduleName = module.getModuleName().getName();
-    
+  private static HookDeclList expHooksModule(GomModuleName gomModuleName,
+                                             SortList sorts,
+                                             ModuleDecl mDecl,
+                                             String packagePath,
+                                             boolean forTermgraph) {
+    String moduleName = gomModuleName.getName();
+
     String codeImport =%[
     import @packagePath@.@moduleName.toLowerCase()@.types.*;
     import @packagePath@.@moduleName.toLowerCase()@.*;
@@ -205,7 +218,7 @@ public class GomReferenceExpander {
     String Min= "Identity()",Switch= "Identity()",ClearMarked= "Identity()",Label2Pos = "Identity()";
 
     %match(sorts){
-      concSortDecl(_*,SortDecl[Name=sortName],_*) -> {
+      concSort(_*,Sort[Decl=SortDecl[Name=sortName]],_*) -> {
         codeImport +=%[
           import @packagePath@.@moduleName.toLowerCase()@.types.@`sortName.toLowerCase()@.*;
         ]%;
@@ -249,9 +262,11 @@ public class GomReferenceExpander {
 
     ]%;
 
-    String codeBlock = "{" +codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers) + "}";
+    String codeBlock = codeBlockCommon + codeStrategies + (forTermgraph?codeBlockTermGraph:codeBlockTermWithPointers);
 
-    return `concHookDecl(ImportHookDecl("{"+codeImport+"}"),BlockHookDecl(codeBlock));
+    return `concHookDecl(
+        ImportHookDecl(CutModule(mDecl),Code(codeImport)),
+        BlockHookDecl(CutModule(mDecl),Code(codeBlock)));
   }
 
   private static String getStrategies(String sortName, String moduleName){
@@ -266,7 +281,7 @@ public class GomReferenceExpander {
               info.term=`lab@sortName@(label,term);
               info.pos=getEnvironment().getPosition();
               marked.add(`label);
-              return `lab@sortName@(label,term); 
+              return `lab@sortName@(label,term);
             }
           }
         }
@@ -277,7 +292,7 @@ public class GomReferenceExpander {
         ref@sortName@[label=label] -> {
           if(`label.equals(info.label)){
             if(getEnvironment().getPosition().compare(info.pos)==-1){
-              info.pos=getEnvironment().getPosition(); 
+              info.pos=getEnvironment().getPosition();
             }
           }
         }
@@ -288,13 +303,13 @@ public class GomReferenceExpander {
       visit @sortName@{
         ref@sortName@[label=label] -> {
           if (info.pos.equals(getEnvironment().getPosition())){
-            return (@sortName@) info.term; 
+            return (@sortName@) info.term;
           }
         }
         lab@sortName@[label=label,term=term] -> {
           if(`label.equals(info.label)){
             if (! info.pos.equals(getEnvironment().getPosition())){
-              return `ref@sortName@(label); 
+              return `ref@sortName@(label);
             }
           }
         }
@@ -329,7 +344,7 @@ public class GomReferenceExpander {
           else {
             Position target = (Position) map.get(`label);
             @sortName@ ref = (@sortName@) (Conspos@sortName@.getReference(getEnvironment().getPosition(),target));
-            return ref; 
+            return ref;
           }
         }
       }
@@ -338,6 +353,4 @@ public class GomReferenceExpander {
 
     return strategies;
   }
-
-
 }

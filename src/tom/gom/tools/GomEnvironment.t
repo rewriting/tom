@@ -33,7 +33,6 @@ import java.util.*;
 
 public class GomEnvironment {
 
-  %include { ../adt/gom/Gom.tom}
   %include { ../adt/objects/Objects.tom}
   /**
    * GomEnvironment uses the Singleton pattern.

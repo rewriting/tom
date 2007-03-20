@@ -34,8 +34,8 @@ public class NullTemplate extends TemplateClass {
   /**
    * The NullTemplate class generates nothing.
    */
-  public NullTemplate(ClassName className) {
-    super(className);
+  public NullTemplate(GomClass gomClass) {
+    super(gomClass);
   }
 
   /* We may want to return the stringbuffer itself in the future, or directly write to a Stream */

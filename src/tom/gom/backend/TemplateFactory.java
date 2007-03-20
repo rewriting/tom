@@ -36,44 +36,45 @@ public abstract class TemplateFactory {
     }
   }
 
-  public abstract TemplateClass makeTomMappingTemplate(ClassName className, ClassName basicStrategy, GomClassList sortClasses, GomClassList opClasses);
-  public abstract TemplateClass makeForwardTemplate(ClassName className, ClassName visitor, ClassNameList importedVisitors, ClassName abstractType, ClassNameList importedAbstract, GomClassList sortClasses, GomClassList opClasses);
-  public abstract TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward);
-  public abstract TemplateClass makeVisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses);
-  public abstract TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName visitor, ClassNameList sortList, HookList hooks, TemplateClass mapping);
-  public abstract TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName abstractType, ClassName visitor, ClassNameList operators, ClassNameList variadicOperators, SlotFieldList slots, HookList hooks, TemplateClass mapping);
-  public abstract TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName abstractType, ClassName extendsType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks, TemplateClass mapping);
-  public abstract TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName abstractType, ClassName sort, GomClass empty, GomClass conc, HookList hooks, TemplateClass mapping);
+  public abstract MappingTemplateClass makeTomMappingTemplate(
+      GomClass gomClass,
+      TemplateClass strategyMapping);
+  public abstract TemplateClass makeForwardTemplate(GomClass gomClass);
+  public abstract TemplateClass makeVisitableForwardTemplate(GomClass gomClass);
+  public abstract TemplateClass makeVisitorTemplate(GomClass gomClass);
+  public abstract TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping);
+  public abstract TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping);
+  public abstract TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping);
+  public abstract TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping);
 }
 
 class SharedTemplateFactory extends TemplateFactory {
 
-  public TemplateClass makeTomMappingTemplate(ClassName className, ClassName basicStrategy, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.shared.MappingTemplate(className,basicStrategy,sortClasses,opClasses);
+  public MappingTemplateClass makeTomMappingTemplate(
+      GomClass gomClass,
+      TemplateClass strategyMapping) {
+    return
+      new tom.gom.backend.shared.MappingTemplate(gomClass,strategyMapping);
   }
-  public TemplateClass makeForwardTemplate(ClassName className, ClassName visitor,ClassNameList importedVisitors, ClassName abstractType, ClassNameList importedAbstract, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.shared.ForwardTemplate(className, visitor, importedVisitors, abstractType, importedAbstract, sortClasses, opClasses);
+  public TemplateClass makeForwardTemplate(GomClass gomClass) {
+    return new tom.gom.backend.shared.ForwardTemplate(gomClass);
   }
-  public TemplateClass makeVisitableForwardTemplate(ClassName className, ClassName forward) {
-    return new tom.gom.backend.shared.BasicStrategyTemplate(className,forward);
+  public TemplateClass makeVisitableForwardTemplate(GomClass gomClass) {
+    return new tom.gom.backend.shared.BasicStrategyTemplate(gomClass);
   }
-  public TemplateClass makeVisitorTemplate(ClassName className, GomClassList sortClasses, GomClassList opClasses) {
-    return new tom.gom.backend.shared.VisitorTemplate(className,sortClasses,opClasses);
+  public TemplateClass makeVisitorTemplate(GomClass gomClass) {
+    return new tom.gom.backend.shared.VisitorTemplate(gomClass);
   }
-  public TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName visitor, ClassNameList sortList, HookList hooks,TemplateClass mapping) {
-    return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, importList, className, visitor, sortList,hooks,mapping);
+  public TemplateClass makeAbstractTypeTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
+    return new tom.gom.backend.shared.AbstractTypeTemplate(tomHomePath, importList, gomClass,mapping);
   }
-  public TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName
-      abstractType, ClassName visitor, ClassNameList operators,
-      ClassNameList variadicOperators, SlotFieldList slots,HookList hooks,TemplateClass mapping) {
-    return new tom.gom.backend.shared.SortTemplate(tomHomePath, importList, className,abstractType,visitor,operators,variadicOperators,slots,hooks,mapping);
+  public TemplateClass makeSortTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
+    return new tom.gom.backend.shared.SortTemplate(tomHomePath, importList, gomClass,mapping);
   }
-  public TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, ClassName className, ClassName abstractType, ClassName extendsType, ClassName sort, ClassName visitor, SlotFieldList slots, HookList hooks,TemplateClass mapping) {
-    return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, importList, className,abstractType,extendsType,sort,visitor,slots,hooks,mapping);
+  public TemplateClass makeOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
+    return new tom.gom.backend.shared.OperatorTemplate(tomHomePath, importList, gomClass,mapping);
   }
-  public TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, ClassName
-      className, ClassName abstractType, ClassName sort, GomClass
-      empty, GomClass conc,HookList hooks, TemplateClass mapping) {
-    return new tom.gom.backend.shared.VariadicOperatorTemplate(tomHomePath, importList, className,abstractType,sort,empty,conc,hooks,mapping);
+  public TemplateClass makeVariadicOperatorTemplate(java.io.File tomHomePath, java.util.List importList, GomClass gomClass, TemplateClass mapping) {
+    return new tom.gom.backend.shared.VariadicOperatorTemplate(tomHomePath, importList, gomClass,mapping);
   }
 }

@@ -108,14 +108,14 @@ public class TestSL extends TestCase {
     assertTrue( ob.testCongruence1() == nb.testCongruence1() );
   }
   public void testSLCongruence2() {	
-    try{
+    try {
       ob.testCongruence2();
       fail();
-    }catch(RuntimeException e){
-      try{
+    } catch (RuntimeException e) {
+      try {
         nb.testCongruence2();
         fail();
-      }catch(tom.library.sl.FireException ee){}
+      } catch (tom.library.sl.FireException ee) {/*success*/}
     }
   }
   public void testSLCongruenceList() {

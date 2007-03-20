@@ -26,6 +26,7 @@ package tom.gom.backend.shared;
 
 import tom.gom.backend.TemplateClass;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
 public class ForwardTemplate extends TemplateClass {
   ClassName visitor;
@@ -37,20 +38,26 @@ public class ForwardTemplate extends TemplateClass {
 
   %include { ../../adt/objects/Objects.tom}
 
-  public ForwardTemplate(ClassName className,
-                         ClassName visitor,
-                         ClassNameList importedVisitors,
-                         ClassName abstractType,
-                         ClassNameList importedAbstract,
-                         GomClassList sortClasses,
-                         GomClassList operatorClasses) {
-    super(className);
-    this.visitor = visitor;
-    this.importedVisitors = importedVisitors;
-    this.abstractType = abstractType;
-    this.importedAbstractTypes = importedAbstract;
-    this.sortClasses = sortClasses;
-    this.operatorClasses = operatorClasses;
+  public ForwardTemplate(GomClass gomClass) {
+    super(gomClass);
+    %match(gomClass) {
+      FwdClass[Visitor=visitorClass,
+               ImportedVisitors=importedVisitors,
+               AbstractType=abstractType,
+               ImportedAbstractTypes=imported,
+               SortClasses=sortClasses,
+               OperatorClasses=ops] -> {
+        this.visitor = `visitorClass;
+        this.importedVisitors = `importedVisitors;
+        this.abstractType = `abstractType;
+        this.importedAbstractTypes = `imported;
+        this.sortClasses = `sortClasses;
+        this.operatorClasses = `ops;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Bad argument for ForwardTemplate: " + gomClass);
   }
 
   /* 

@@ -30,11 +30,13 @@
  **/
 package tom.library.sl;
 
-public interface Reference extends jjtraveler.Visitable {
+public interface Reference {
 
-    /**
-     * gives the array that represents the position of the reference
-     */
-    public int[] toArray();
+  /**
+   * gives the array that represents the reference
+   */
+  public int[] toArray();
+
+  public Position getDestPosition(Position source);
 
 }

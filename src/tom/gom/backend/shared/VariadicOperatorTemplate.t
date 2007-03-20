@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.logging.*;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.backend.TemplateClass;
+import tom.gom.backend.CodeGen;
 import tom.gom.tools.GomEnvironment;
 import tom.gom.tools.error.GomRuntimeException;
 import tom.gom.adt.objects.types.*;
@@ -43,20 +44,24 @@ public class VariadicOperatorTemplate extends TemplateHookedClass {
 
   public VariadicOperatorTemplate(File tomHomePath,
                                   List importList, 	
-                                  ClassName className,
-                                  ClassName abstractType,
-                                  ClassName sortName,
-                                  GomClass empty,
-                                  GomClass cons,
-                                  HookList hooks,
+                                  GomClass gomClass,
                                   TemplateClass mapping) {
-    super(className,tomHomePath,importList,hooks,mapping);
-    this.tomHomePath = tomHomePath;
-    this.importList = importList;
-    this.abstractType = abstractType;
-    this.sortName = sortName;
-    this.empty = empty;
-    this.cons = cons;
+    super(gomClass,tomHomePath,importList,mapping);
+    %match(gomClass) {
+      VariadicOperatorClass[AbstractType=abstractType,
+                            SortName=sortName,
+                            Mapping=mapping,
+                            Empty=empty,
+                            Cons=cons] -> {
+        this.abstractType = `abstractType;
+        this.sortName = `sortName;
+        this.empty = `empty;
+        this.cons = `cons;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Wrong argument for VariadicOperatorTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
@@ -199,6 +204,39 @@ writer.write(%[
     StringBuffer buffer = new StringBuffer();
     fromATermSlotField(buffer,slot,term);
     return buffer.toString();
+  }
+
+  public void generateTomMapping(Writer writer, ClassName basicStrategy)
+      throws java.io.IOException {
+    boolean hasHook = false;
+    %match(HookList hooks) {
+      concHook(_*,MappingHook[Code=code],_*) -> {
+        CodeGen.generateCode(`code,writer);
+        hasHook = true;
+      }
+    }
+    if (hasHook)
+      return;
+
+    %match(cons) {
+      OperatorClass[
+        Slots=concSlotField(head@SlotField[Domain=headDomain], tail)
+      ] -> {
+    ClassName emptyClass = empty.getClassName();
+    ClassName consClass = cons.getClassName();
+    writer.write(%[
+%oplist @className(sortName)@ @className()@(@className(`headDomain)@*) {
+  is_fsym(t) { t instanceof @fullClassName(consClass)@ || t instanceof @fullClassName(emptyClass)@ }
+  make_empty() { @fullClassName(emptyClass)@.make() }
+  make_insert(e,l) { @fullClassName(consClass)@.make(e,l) }
+  get_head(l) { l.@getMethod(`head)@() }
+  get_tail(l) { l.@getMethod(`tail)@() }
+  is_empty(l) { l.@isOperatorMethod(emptyClass)@() }
+}
+]%);
+      }
+    }
+    return;
   }
 
   /** the class logger instance*/

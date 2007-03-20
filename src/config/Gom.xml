@@ -53,7 +53,7 @@
     <plugin name='Expander'
       class='tom.gom.expander.ExpanderPlugin'/>
     <plugin name='TypeExpander'
-      class='tom.gom.expander.GomTypeExpanderPlugin'/>
+      class='tom.gom.expander.TypeExpanderPlugin'/>
     <plugin name='ReferenceExpander'
       class='tom.gom.expander.GomReferenceExpanderPlugin'/>
     <plugin name='Compiler'

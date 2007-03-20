@@ -30,21 +30,30 @@ import java.util.*;
 import tom.gom.backend.TemplateClass;
 import tom.gom.backend.TemplateHookedClass;
 import tom.gom.adt.objects.types.*;
+import tom.gom.tools.error.GomRuntimeException;
 
 public class AbstractTypeTemplate extends TemplateHookedClass {
   ClassName visitor;
   ClassNameList sortList;
 
-public AbstractTypeTemplate(File tomHomePath,
-                            List importList,
-                            ClassName className,
-                            ClassName visitor,
-                            ClassNameList sortList,
-                            HookList hooks,
-                            TemplateClass mapping) {
-    super(className,tomHomePath,importList,hooks,mapping);
-    this.visitor = visitor;
-    this.sortList = sortList;
+  %include { ../../adt/objects/Objects.tom }
+
+  public AbstractTypeTemplate(File tomHomePath,
+                              List importList,
+                              GomClass gomClass,
+                              TemplateClass mapping) {
+    super(gomClass,tomHomePath,importList,mapping);
+    %match(gomClass) {
+      AbstractTypeClass[Visitor=visitorName,
+                        Mapping=mapping,
+                        SortList=sortList] -> {
+        this.visitor = `visitorName;
+        this.sortList = `sortList;
+        return;
+      }
+    }
+    throw new GomRuntimeException(
+        "Bad argument for AbstractTypeTemplate: " + gomClass);
   }
 
   public void generate(java.io.Writer writer) throws java.io.IOException {
