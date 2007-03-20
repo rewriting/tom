@@ -218,8 +218,9 @@ public class GomReferenceExpander {
 
    public static path@sortName@ make(Path path){
      @sortName@ ref = `path@sortName@();
-     Path pp = path;
-      for(int i=0;i<path.length();i++){
+     Path pp = path.normalize();
+     int size = pp.length();
+      for(int i=0;i<size;i++){
         ref = `path@sortName@(ref*,pp.getHead());
         pp = pp.getTail();
       }
@@ -412,4 +413,5 @@ public class GomReferenceExpander {
 
     return strategies;
   }
+
 }

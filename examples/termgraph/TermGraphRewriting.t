@@ -158,12 +158,12 @@ public class TermGraphRewriting {
             //the subterm pointed was a pos (in case of previous switch) 
             //and we must only update the relative position
             getEnvironment().goTo(current.sub(getEnvironment().getPosition()));
-            return ConspathTerm.make(realDest.sub(current).normalize());
+            return pathTerm.make(realDest.sub(current));
           } else {
             //we must switch the rel position and the pointed subterm
 
             // 1. we construct the new relative position
-            Term relref = ConspathTerm.make(current.sub(dest));
+            Term relref = pathTerm.make(current.sub(dest));
 
             // 2. we update the part we want to change 
             Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
@@ -187,17 +187,17 @@ public class TermGraphRewriting {
     visit Term {
       p@pathTerm(_*) -> {
         Position current = getEnvironment().getPosition(); 
-        Position dest = (Position) current.add((Path)`p).normalize();
+        Position dest = (Position) current.add((Path)`p);
         if(current.hasPrefix(source) && !dest.hasPrefix(source)){
           //we must update this relative pos from the redex to the external
           current = current.changePrefix(source,target);
-          return ConspathTerm.make(dest.sub(current));
+          return pathTerm.make(dest.sub(current));
         }
 
         if (dest.hasPrefix(source) && !current.hasPrefix(source)){
           //we must update this relative pos from the external to the redex
           dest = dest.changePrefix(source,target); 
-          return ConspathTerm.make(dest.sub(current));
+          return pathTerm.make(dest.sub(current));
         }
         return `p;
       }
@@ -284,9 +284,6 @@ public class TermGraphRewriting {
     t3 = (Term) posFinal.getSubterm().fire(t3);
     System.out.println("Canonical term obtained by Innermost strategy directly on positions: "+t3);
     
-    /*  an optimized version (no update during the innermost strat) */
-    /************************************************************/
-
     t = `g(g(g(f(a()),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,1,1));
     System.out.println("\nMore complex initial term :"+t);
     /* rule g(x,y) -> f(x) at pos 1.1*/
