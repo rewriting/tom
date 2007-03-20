@@ -96,7 +96,7 @@ public class TermGraphRewriting {
   %strategy Print() extends Identity() {
     visit Term {
       t -> {
-        System.out.println("current subj :"+`t);
+        System.out.println("current env :"+getEnvironment());
       }
     }
   }
@@ -138,13 +138,6 @@ public class TermGraphRewriting {
     }
   }
 
-  /*
-   * what are the good names for getAbsolutePosition and getRelativePosition ?
-   * do we switch receiver and argument
-   * introduce 2 subclasses AbsolutePosition and RelativePosition ?
-   * distinction between pos and ref ?
-   */
-
   // In this strategy, the failure is Identity
   %strategy NormalizePos() extends Identity(){
     visit Term {
@@ -153,7 +146,7 @@ public class TermGraphRewriting {
         Position dest = (Position) current.add((Path)`p).normalize();
         if(current.compare(dest)== -1) {
           getEnvironment().goTo((Path)`p);
-          Path realDest = getEnvironment().getPosition(); 
+          Position realDest = getEnvironment().getPosition(); 
           if(!realDest.equals(dest)) {
             //the subterm pointed was a pos (in case of previous switch) 
             //and we must only update the relative position
@@ -166,8 +159,7 @@ public class TermGraphRewriting {
             Term relref = pathTerm.make(current.sub(dest));
 
             // 2. we update the part we want to change 
-            Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
-            execute(update); 
+            execute(`TopDown(UpdatePos(dest,current))); 
 
             // 3. we save the subterm updated 
             Term subterm = (Term) getEnvironment().getSubject(); 
@@ -183,11 +175,11 @@ public class TermGraphRewriting {
   }
 
 
-  %strategy UpdatePos(source:Position,target:Position) extends Fail() {
+  %strategy UpdatePos(source:Position,target:Position) extends Identity() {
     visit Term {
       p@pathTerm(_*) -> {
         Position current = getEnvironment().getPosition(); 
-        Position dest = (Position) current.add((Path)`p);
+        Position dest = (Position) current.add((Path)`p).normalize();
         if(current.hasPrefix(source) && !dest.hasPrefix(source)){
           //we must update this relative pos from the redex to the external
           current = current.changePrefix(source,target);
@@ -199,7 +191,6 @@ public class TermGraphRewriting {
           dest = dest.changePrefix(source,target); 
           return pathTerm.make(dest.sub(current));
         }
-        return `p;
       }
     }
   }
@@ -269,8 +260,7 @@ public class TermGraphRewriting {
     Term t3 = `substTerm(t,a());
 
     /* update positions on phi(rhs) and on the redex */
-    Strategy update =`mu(MuVar("x"),Choice(UpdatePos(posRedex,posSubst),All(MuVar("x"))));
-    t3 = (Term) update.fire(t3);
+    t3 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).fire(t3);
 
     /* concat the redex on top of the term */
     redex = (Term) posRedex.getSubterm().fire(t3);
@@ -293,7 +283,7 @@ public class TermGraphRewriting {
     Term t4 = `substTerm(t,a());
 
     /* update positions on phi(rhs) and on the redex */
-    t4 = (Term) update.fire(t4);
+    t4 = (Term) `TopDown(UpdatePos(posRedex,posSubst)).fire(t4);
 
     /* concat the redex on top of the term */
     redex = (Term) posRedex.getSubterm().fire(t4);

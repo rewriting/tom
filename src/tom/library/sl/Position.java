@@ -250,7 +250,7 @@ public class Position implements Cloneable,Path {
     int[] omega = new int[size];
     for(int i=0;i<size;i++){
       omega[i]= pp.getHead();
-      pp = p.getTail();
+      pp = pp.getTail();
     }
     return new Position(omega);
   }

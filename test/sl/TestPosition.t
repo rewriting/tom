@@ -54,12 +54,19 @@ public class TestPosition extends TestCase {
     assertEquals(r,new Position(new int[]{1,2,1,2,1,1,1,2,1}));
   }
 
+  public void testInv(){
+    Position p = new Position(new int[]{1,1,2});
+    Path r = p.inv();
+    r = r.normalize();
+    assertEquals(r,new Position(new int[]{-2,-1,-1}));
+  }
+
   public void testSub(){
     Position p1 = new Position(new int[]{1,1,2,1});
     Position p2 = new Position(new int[]{1,2,1,2,1});
     Path r = p2.sub(p1);
     r = r.normalize();
-    assertEquals(r,new Position(new int[]{-1,-1,-1,2,1,2,1}));
+    assertEquals(r,new Position(new int[]{-1, -2, -1, 2, 1, 2, 1}));
   }
 
  }
