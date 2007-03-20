@@ -124,7 +124,7 @@ public class GomReferenceExpander {
     return `concOperator(labOp,refOp,pathOp);
   }
 
-  private HookDeclList pathHooks(OperatorDecl opDecl, SortDecl sort){
+  private static HookDeclList pathHooks(OperatorDecl opDecl, SortDecl sort){
     
     String moduleName = sort.getModuleDecl().getModuleName().getName();
     String sortName = sort.getName();
