@@ -107,7 +107,7 @@ public class GomReferenceExpander {
 
   /*
      We add 4 new operators for every sort
-     lab<Sort>,ref<Sort>,pos<Sort>,exp<Sort>
+     lab<Sort>,ref<Sort>,path<Sort>,exp<Sort>
      and the corresponding hooks
    */
   private static OperatorDeclList getRefOperators(
@@ -117,14 +117,14 @@ public class GomReferenceExpander {
 
     OperatorDecl refOp = `OperatorDecl("ref"+sort.getName(),sort,Slots(concSlot(Slot("label",stringSortDecl))));
 
-    String posOpName = "pos"+sort.getName();
-    OperatorDecl posOp = `OperatorDecl(posOpName,sort,Variadic(intSortDecl));
-    hookList.add(posHooks(posOp,sort));
+    String pathOpName = "path"+sort.getName();
+    OperatorDecl pathOp = `OperatorDecl(pathOpName,sort,Variadic(intSortDecl));
+    hookList.add(pathHooks(pathOp,sort));
 
-    return `concOperator(labOp,refOp,posOp);
+    return `concOperator(labOp,refOp,pathOp);
   }
 
-  private static HookDeclList posHooks(OperatorDecl opDecl, SortDecl sort) {
+  private HookDeclList pathHooks(OperatorDecl opDecl, SortDecl sort){
     
     String moduleName = sort.getModuleDecl().getModuleName().getName();
     String sortName = sort.getName();
@@ -133,11 +133,10 @@ public class GomReferenceExpander {
     import @packagePath@.@moduleName.toLowerCase()@.types.*;
     import tom.library.sl.*;
     ]%;
-
+    
+    /**
     String codeBlock =%[
      
-    // These two following methods could be factorized in an abstract class implementing Reference 
-   
     public Position getDestPosition(Position source) {
       int[] relative = toArray();
       int[] current = source.toArray();
@@ -174,11 +173,71 @@ public class GomReferenceExpander {
     }
     
    ]%;
+     */
+  
+    String codeBlock =%[
+
+   public Path add(Path p){
+     Position pp = Position.make(this);
+     return make(pp.add(p));
+   }
+
+   public Path inv(){
+     Position pp = Position.make(this);
+     return make(pp.inv());
+   }
+
+   public Path sub(Path p){
+     Position pp = Position.make(this);
+     return make(pp.sub(p));
+   }
+  
+   public int getHead(){
+     return getHeadpath@sortName@();
+   }
+
+   public Path getTail(){
+     return (Path) getTailpath@sortName@();
+   }
+
+   public Path normalize(){
+     %match(this) {
+       path@sortName@(X*,x,y,Y*) -> {
+         if (`x==-`y) {
+           return ((Path)`path@sortName@(X*,Y*)).normalize();
+         }
+       }
+     }
+     return this;
+   }
+
+   public Path conc(int i){
+     path@sortName@ current = this;
+     return (Path) `Conspath@sortName@(i,current); 
+   }
+
+   public static path@sortName@ make(Path path){
+     @sortName@ ref = `path@sortName@();
+     Path pp = path;
+      for(int i=0;i<path.length();i++){
+        ref = `path@sortName@(ref*,pp.getHead());
+        pp = pp.getTail();
+      }
+      return (path@sortName@) ref;
+   }
+
+   public int compare(Path p){
+     Position p1 = Position.make(this);
+     Position p2 = Position.make(p);
+     return p1.compare(p2);
+   }
+   ]%;
+
    return 
       `concHookDecl(
           ImportHookDecl(CutOperator(opDecl),Code(codeImport)),
           InterfaceHookDecl(CutOperator(opDecl),
-                            Code("tom.library.sl.Reference")),
+                            Code("tom.library.sl.Path")),
           BlockHookDecl(CutOperator(opDecl),Code(codeBlock)));
   }
 
@@ -208,14 +267,14 @@ public class GomReferenceExpander {
 
     public static class Info{
       public String label;
-      public Position pos;
+      public Path path;
       public @moduleName@AbstractType term;
     }
     ]%;
 
     String codeStrategies = "";
     String CollectLabels= "Fail()",Collect = "Fail()";
-    String Min= "Identity()",Switch= "Identity()",ClearMarked= "Identity()",Label2Pos = "Identity()";
+    String Min= "Identity()",Switch= "Identity()",ClearMarked= "Identity()",Label2Path = "Identity()";
 
     %match(sorts){
       concSort(_*,Sort[Decl=SortDecl[Name=sortName]],_*) -> {
@@ -226,7 +285,7 @@ public class GomReferenceExpander {
         Min = "Sequence(Min"+`sortName+"(info),"+Min+")";
         Switch = "Sequence(Switch"+`sortName+"(info),"+Switch+")";
         ClearMarked = "Sequence(ClearMarked"+`sortName+"(marked),"+ClearMarked+")";
-        Label2Pos = "Sequence(Label2Pos"+`sortName+"(map),"+Label2Pos+")";
+        Label2Path = "Sequence(Label2Path"+`sortName+"(map),"+Label2Path+")";
         CollectLabels = "ChoiceV(CollectLabels"+`sortName+"(map),"+CollectLabels+")";
         Collect = "ChoiceV(Collect"+`sortName+"(marked,info),"+Collect+")";
       }
@@ -236,8 +295,8 @@ public class GomReferenceExpander {
 
       public static @moduleName@AbstractType expand(@moduleName@AbstractType t){
         HashMap map = new HashMap();
-        Strategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
-        return (@moduleName@AbstractType) `label2pos.fire(t);
+        Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
+        return (@moduleName@AbstractType) `label2path.fire(t);
       }
     ]%;
 
@@ -250,14 +309,14 @@ public class GomReferenceExpander {
         ArrayList marked = new ArrayList();
         HashMap map = new HashMap();
         Strategy normalization = `RepeatId(Sequence(Repeat(Sequence(OnceTopDown(@Collect@),BottomUp(@Min@),TopDown(@Switch@))),@ClearMarked@));
-        Strategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
-        return (@moduleName@AbstractType) `Sequence(normalization,label2pos).fire(t);
+        Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
+        return (@moduleName@AbstractType) `Sequence(normalization,label2path).fire(t);
       }
 
-      public static @moduleName@AbstractType label2pos(@moduleName@AbstractType t){
+      public static @moduleName@AbstractType label2path(@moduleName@AbstractType t){
         HashMap map = new HashMap();
-        Strategy label2pos = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Pos@));
-        return (@moduleName@AbstractType) label2pos.fire(t);
+        Strategy label2path = `Sequence(Repeat(OnceTopDown(@CollectLabels@)),TopDown(@Label2Path@));
+        return (@moduleName@AbstractType) label2path.fire(t);
       }
 
     ]%;
@@ -279,7 +338,7 @@ public class GomReferenceExpander {
             if(! marked.contains(`label)){
               info.label=`label;
               info.term=`lab@sortName@(label,term);
-              info.pos=getEnvironment().getPosition();
+              info.path=getEnvironment().getPosition();
               marked.add(`label);
               return `lab@sortName@(label,term);
             }
@@ -291,8 +350,8 @@ public class GomReferenceExpander {
       visit @sortName@{
         ref@sortName@[label=label] -> {
           if(`label.equals(info.label)){
-            if(getEnvironment().getPosition().compare(info.pos)==-1){
-              info.pos=getEnvironment().getPosition();
+            if(getEnvironment().getPosition().compare(info.path)==-1){
+              info.path=getEnvironment().getPosition(); 
             }
           }
         }
@@ -302,13 +361,13 @@ public class GomReferenceExpander {
     %strategy Switch@sortName@(info:Info) extends Identity(){
       visit @sortName@{
         ref@sortName@[label=label] -> {
-          if (info.pos.equals(getEnvironment().getPosition())){
+          if (info.path.equals(getEnvironment().getPosition())){
             return (@sortName@) info.term;
           }
         }
         lab@sortName@[label=label,term=term] -> {
           if(`label.equals(info.label)){
-            if (! info.pos.equals(getEnvironment().getPosition())){
+            if (! info.path.equals(getEnvironment().getPosition())){
               return `ref@sortName@(label);
             }
           }
@@ -334,7 +393,7 @@ public class GomReferenceExpander {
       }
     }
 
-    %strategy Label2Pos@sortName@(map:HashMap) extends Identity(){
+    %strategy Label2Path@sortName@(map:HashMap) extends Identity(){
       visit @sortName@{
         ref@sortName@[label=label] -> {
           if (! map.containsKey(`label)) {
@@ -343,7 +402,7 @@ public class GomReferenceExpander {
           }
           else {
             Position target = (Position) map.get(`label);
-            @sortName@ ref = (@sortName@) (Conspos@sortName@.getReference(getEnvironment().getPosition(),target));
+            @sortName@ ref = (@sortName@) (path@sortName@.make(target.sub(getEnvironment().getPosition())).normalize());
             return ref;
           }
         }

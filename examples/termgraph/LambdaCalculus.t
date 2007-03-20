@@ -187,7 +187,7 @@ public class LambdaCalculus {
   //[subject/X]t
   %strategy substitute(info:LambdaInfo) extends `Fail(){
     visit LambdaTerm {
-      p@posLambdaTerm(_*) -> {
+      p@pathLambdaTerm(_*) -> {
         Position source = getEnvironment().getPosition();
         Position dest = ((Reference)`p).getDestPosition(source);
         if(dest.equals(info.omega)){
@@ -197,7 +197,7 @@ public class LambdaCalculus {
           }
           else{
             Position target = info.firstOccur;
-            return ConsposLambdaTerm.getReference(source,target);
+            return ConspathLambdaTerm.make(target.sub(source));
           }
         }
         else{
@@ -237,16 +237,14 @@ public class LambdaCalculus {
         String v = "x" + (ppcounter++);
         return `abs3(var(v),term);
       }
-      p@posLambdaTerm(_*)-> {
+      p@pathLambdaTerm(_*)-> {
         //test if it is a cycle to a lambda
         //it can be a ref corresponding to a sharing due to lazy evaluation
-        if(`((Reference)p).toArray().length==1){
-          Position source = getEnvironment().getPosition();
-          Position target = ((Reference)`p).getDestPosition(source);
-          Reference inv_p = ConsposLambdaTerm.getReference(target,source);
-          getEnvironment().goTo((Reference)`p);
+        Path pp = (Path)`p;
+        if(pp.length()==1){
+          getEnvironment().goTo(pp);
           LambdaTerm var = ((LambdaTerm)getEnvironment().getSubject()).getvar();
-          getEnvironment().goTo(inv_p);
+          getEnvironment().goTo(pp.inv());
           return var;
         }
         else{

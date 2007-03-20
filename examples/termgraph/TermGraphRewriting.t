@@ -52,9 +52,9 @@ public class TermGraphRewriting {
 
   %strategy CollectRef(map:HashMap) extends Identity(){
     visit Term {
-      p@posTerm(_*) -> {
-        Position target =
-          ((Reference)`p).getDestPosition(getEnvironment().getPosition());
+      p@pathTerm(_*) -> {
+        Path target =
+          getEnvironment().getPosition().add((Path)`p).normalize();
         if (map.containsKey(target.toString())){
           String label = (String) map.get(target.toString());
           return `refTerm(label);
@@ -101,7 +101,6 @@ public class TermGraphRewriting {
     }
   }
 
-
   %typeterm Info{
     implement {Info}
   }
@@ -127,9 +126,9 @@ public class TermGraphRewriting {
           Position old = getEnvironment().getPosition();
           Position rootpos = new Position(new int[]{});
           map.put(`label,old);
-          getEnvironment().goTo(rootpos);
+          getEnvironment().goTo(rootpos.sub(getEnvironment().getPosition()));
           execute(`Try(TopDown(CollectSubterm(label,info))));
-          getEnvironment().goTo(old);
+          getEnvironment().goTo(old.sub(getEnvironment().getPosition()));
           return `labTerm(label,info.term);
         }
       }
@@ -149,22 +148,22 @@ public class TermGraphRewriting {
   // In this strategy, the failure is Identity
   %strategy NormalizePos() extends Identity(){
     visit Term {
-      p@posTerm(_*) -> {
+      p@pathTerm(_*) -> {
         Position current = getEnvironment().getPosition(); 
-        Position dest = ((Reference)`p).getDestPosition(current);
+        Position dest = (Position) current.add((Path)`p).normalize();
         if(current.compare(dest)== -1) {
-          getEnvironment().goTo((Reference)`p);
-          Position realDest = getEnvironment().getPosition(); 
+          getEnvironment().goTo((Path)`p);
+          Path realDest = getEnvironment().getPosition(); 
           if(!realDest.equals(dest)) {
             //the subterm pointed was a pos (in case of previous switch) 
             //and we must only update the relative position
-            getEnvironment().goTo(current);
-            return ConsposTerm.getReference(current,realDest);
+            getEnvironment().goTo(current.sub(getEnvironment().getPosition()));
+            return ConspathTerm.make(realDest.sub(current).normalize());
           } else {
             //we must switch the rel position and the pointed subterm
 
             // 1. we construct the new relative position
-            Term relref = ConsposTerm.getReference(dest,current);
+            Term relref = ConspathTerm.make(current.sub(dest));
 
             // 2. we update the part we want to change 
             Strategy update =`mu(MuVar("x"),Choice(UpdatePos(dest,current),All(MuVar("x"))));
@@ -175,8 +174,7 @@ public class TermGraphRewriting {
 
             // 4. we replace at dest  the subterm by the new relative pos
             getEnvironment().setSubject(relref);
-
-            getEnvironment().goTo(current);
+            getEnvironment().goTo(current.sub(getEnvironment().getPosition()));
             return subterm; 
           }
         }
@@ -187,19 +185,19 @@ public class TermGraphRewriting {
 
   %strategy UpdatePos(source:Position,target:Position) extends Fail() {
     visit Term {
-      p@posTerm(_*) -> {
+      p@pathTerm(_*) -> {
         Position current = getEnvironment().getPosition(); 
-        Position dest = ((Reference)`p).getDestPosition(current);
+        Position dest = (Position) current.add((Path)`p).normalize();
         if(current.hasPrefix(source) && !dest.hasPrefix(source)){
           //we must update this relative pos from the redex to the external
           current = current.changePrefix(source,target);
-          return ConsposTerm.getReference(current,dest);
+          return ConspathTerm.make(dest.sub(current));
         }
 
         if (dest.hasPrefix(source) && !current.hasPrefix(source)){
           //we must update this relative pos from the external to the redex
           dest = dest.changePrefix(source,target); 
-          return ConsposTerm.getReference(current,dest);
+          return ConspathTerm.make(dest.sub(current));
         }
         return `p;
       }
@@ -214,7 +212,7 @@ public class TermGraphRewriting {
 
   public static void main(String[] args){
 
-    Term t = `g(g(g(a(),g(posTerm(2,1),posTerm(3,2))),a()),posTerm(1,1,1,2));
+    Term t = `g(g(g(a(),g(pathTerm(-1,-2,1),pathTerm(-2,-2,-1,2))),a()),pathTerm(-2,1,1,2));
     System.out.println("Initial term :"+t);
     HashMap map = new HashMap();
 
@@ -231,7 +229,7 @@ public class TermGraphRewriting {
 
     /* term t with labels */
     Term tt = (Term) `UnExpand(map).fire(t);
-
+    
     /* redex with labels */
     Term redex = (Term) new Position(new int[]{1,1}).getSubterm().fire(tt);
 
@@ -256,7 +254,7 @@ public class TermGraphRewriting {
     /* normalization by innermost strategy */
     map.clear();
     Term t2 = (Term) `InnermostIdSeq(NormalizeLabel(map)).fire(tt);
-    t2 = (Term) termAbstractType.label2pos(t2);
+    t2 = (Term) termAbstractType.label2path(t2);
     t2 = (Term) posFinal.getSubterm().fire(t2);
     System.out.println("Canonical term obtained by Innermost strategy + a map: "+t2);
     
@@ -279,7 +277,7 @@ public class TermGraphRewriting {
     t3 = (Term) posSubst.getReplace(redex).fire(t3);
 
     /* replace in t the lhs by the rhs */
-    t3 = (Term) posRedex.getReplace(`f(posTerm(4,2,1))).fire(t3);
+    t3 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).fire(t3);
 
     /* normalization by innermost strategy */
     t3 = (Term) `InnermostIdSeq(NormalizePos()).fire(t3);
@@ -289,7 +287,7 @@ public class TermGraphRewriting {
     /*  an optimized version (no update during the innermost strat) */
     /************************************************************/
 
-    t = `g(g(g(f(a()),g(posTerm(2,1),a())),posTerm(1,1,2,2)),posTerm(1,1,1,1,1));
+    t = `g(g(g(f(a()),g(pathTerm(-1,-2,1),a())),pathTerm(-2,1,2,2)),pathTerm(-2,1,1,1,1));
     System.out.println("\nMore complex initial term :"+t);
     /* rule g(x,y) -> f(x) at pos 1.1*/
     System.out.println("apply the rule g(x,y) -> f(x) at position 1.1");
@@ -305,7 +303,7 @@ public class TermGraphRewriting {
     t4 = (Term) posSubst.getReplace(redex).fire(t4);
 
     /* replace in t the lhs by the rhs */
-    t4 = (Term) posRedex.getReplace(`f(posTerm(4,2,1))).fire(t4);
+    t4 = (Term) posRedex.getReplace(`f(pathTerm(-1,-1,-1,-1,2,1))).fire(t4);
 
     /* normalization by innermost strategy */
     t4 = (Term) `InnermostIdSeq(NormalizePos()).fire(t4);

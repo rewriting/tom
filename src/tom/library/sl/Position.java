@@ -99,11 +99,12 @@ public class Position implements Cloneable,Path {
    */
   public boolean equals(Object o) {
     if (o instanceof Position) {
-      Position p = (Position)o;
+      Position p1  = (Position) this.normalize();
+      Position p2  = (Position) ((Position)o).normalize();
       /* we need to check only the meaningful part of the omega array */
-      if (depth()==p.depth()) {
-        for(int i=0; i<depth(); i++) {
-          if (omega[i]!=p.omega[i]) {
+      if (p1.depth()==p2.depth()) {
+        for(int i=0; i<p1.depth(); i++) {
+          if (p1.omega[i]!=p2.omega[i]) {
             return false;
           }
         }
@@ -119,9 +120,8 @@ public class Position implements Cloneable,Path {
   /**
    * Compares two positions
    */
-  public int compare(Object o) {
-    if (o instanceof Position) {
-      Position p = (Position)o;
+  public int compare(Path path) {
+      Position p = Position.make(path);
       /* we need to check only the meaningful part of the omega array */
       for(int i=0; i<depth(); i++) {
         if(i == p.depth() || omega[i]>p.omega[i]) {
@@ -134,9 +134,6 @@ public class Position implements Cloneable,Path {
         }
       }
       return depth()==p.depth()?0:-1;
-    } else {
-      return -2;
-    }
   }
 
   /**
@@ -225,33 +222,7 @@ public class Position implements Cloneable,Path {
     return r.toString();
   }
 
-  public boolean hasPrefix(Position prefix){
-    int[] prefixTab = prefix.toArray();
-    if(omega.length<prefixTab.length) {
-      return false;
-    }
-    for(int i=0;i<prefixTab.length;i++){
-      if(prefixTab[i]!=omega[i]) return false;
-    }
-    return true;
-  }
-
-  public Position getSuffix(Position prefix){
-    if(! hasPrefix(prefix)) return null;
-    int[] suffixTab = new int[depth()-prefix.depth()];
-    for(int i=0;i<suffixTab.length;i++){
-      suffixTab[i]=omega[i+prefix.depth()];
-    }
-    return new Position(suffixTab);
-  }
-
-  public Position changePrefix(Position oldprefix,Position newprefix){
-    if(! hasPrefix(oldprefix)) return null;
-    Position suffix = getSuffix(oldprefix);
-    return new Position(newprefix,suffix);
-  }
-
-
+  
   public Path add(Path p){
     if(p.length()>0) {
       Path result = this.conc(p.getHead());
@@ -262,7 +233,7 @@ public class Position implements Cloneable,Path {
   }
 
   public Path sub(Path p){
-    return (makePosition(p).inv()).add(this);
+    return (make(p).inv()).add(this);
   }
 
   public Path inv(){
@@ -273,8 +244,7 @@ public class Position implements Cloneable,Path {
     return new Position(inverse);
   }
 
-
-  public Position makePosition(Path p){
+  public static Position make(Path p){
     int[] omega = new int[p.length()];
     Path pp = p;
     for(int i=0;i<p.length();i++){
@@ -322,6 +292,32 @@ public class Position implements Cloneable,Path {
       System.arraycopy(normalizedTail,1,result,0,normalizedTail.length-1);
       return new Position(result);
     }
+  }
+
+  public boolean hasPrefix(Position prefix){
+    int[] prefixTab = prefix.toArray();
+    if(omega.length<prefixTab.length) {
+      return false;
+    }
+    for(int i=0;i<prefixTab.length;i++){
+      if(prefixTab[i]!=omega[i]) return false;
+    }
+    return true;
+  }
+
+  public Position getSuffix(Position prefix){
+    if(! hasPrefix(prefix)) return null;
+    int[] suffixTab = new int[depth()-prefix.depth()];
+    for(int i=0;i<suffixTab.length;i++){
+      suffixTab[i]=omega[i+prefix.depth()];
+    }
+    return new Position(suffixTab);
+  }
+
+  public Position changePrefix(Position oldprefix,Position newprefix){
+    if(! hasPrefix(oldprefix)) return null;
+    Position suffix = getSuffix(oldprefix);
+    return new Position(newprefix,suffix);
   }
 
 }
