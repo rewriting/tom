@@ -45,11 +45,10 @@ public class GomReferenceExpander {
   %include{java/boolean.tom}
   %include { ../adt/gom/Gom.tom}
 
+  private static String packagePath;
+  private static SortDecl stringSortDecl,intSortDecl;
   // indicates if the expand method must include normalization phase
   // specific to termgraphs
-  private static String packagePath;
-
-  private static SortDecl stringSortDecl,intSortDecl;
   private boolean forTermgraph;
 
   private GomEnvironment environment() {
@@ -61,8 +60,10 @@ public class GomReferenceExpander {
     this.packagePath = packagePath;
     stringSortDecl = environment().builtinSort("String");
     intSortDecl = environment().builtinSort("int");
-    //we mark them as used builtins
+    //we mark them as used builtins:
+    //String is used for labelling
     environment().markUsedBuiltin("String");
+    //int is used for defining paths
     environment().markUsedBuiltin("int");
   }
 
@@ -134,47 +135,7 @@ public class GomReferenceExpander {
     import tom.library.sl.*;
     ]%;
     
-    /**
-    String codeBlock =%[
-     
-    public Position getDestPosition(Position source) {
-      int[] relative = toArray();
-      int[] current = source.toArray();
-      int prefix = source.depth()-relative[0];
-      int absoluteLength = prefix+relative.length-1;
-      int[] absolute = new int[absoluteLength];
-      for(int i=0 ; i<prefix ; i++) {
-        absolute[i]=current[i];
-      }
-      for(int i=prefix ; i<absoluteLength ; i++){
-        absolute[i]=relative[i-prefix+1];
-      }
-      return new Position(absolute);
-    }
-
-   public static Conspos@sortName@ getReference(Position source, Position dest) {
-      int[] sourceOmega = source.toArray();
-      int[] destOmega = dest.toArray();
-      int min_length =Math.min(sourceOmega.length,destOmega.length);
-      int commonPrefixLength=0;
-      while(commonPrefixLength<min_length && sourceOmega[commonPrefixLength]==destOmega[commonPrefixLength]){
-        commonPrefixLength++;
-      }
-      int[] relative = new int[destOmega.length-commonPrefixLength+1];
-      relative[0]=sourceOmega.length-commonPrefixLength;
-      for(int j=1;j<relative.length;j++){
-        relative[j] = destOmega[commonPrefixLength+j-1];
-      }
-      @sortName@ ref = `pos@sortName@();
-      for(int i=0;i<relative.length;i++){
-        ref = `pos@sortName@(ref*,relative[i]);
-      }
-      return (Conspos@sortName@) ref; 
-    }
-    
-   ]%;
-     */
-  
+ 
     String codeBlock =%[
 
    public Path add(Path p){
