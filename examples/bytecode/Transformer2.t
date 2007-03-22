@@ -28,7 +28,7 @@
  */
 package bytecode;
 
-import tom.library.strategy.mutraveler.MuStrategy;
+import tom.library.strategy.mutraveler.*;
 import java.io.FileOutputStream;
 import tom.library.adt.bytecode.*;
 import tom.library.adt.bytecode.types.*;
@@ -41,18 +41,30 @@ import java.util.HashMap;
 
 public class Transformer2 {
 
-  %include { mustrategy.tom }
-  %include { adt/bytecode/Bytecode.tom }
   %include { bytecode/cfg.tom }
+  %include { adt/bytecode/Bytecode.tom }
 
   public static Vector  v = new Vector();
- 
-%typeterm IntWrapper {
-  implement           { IntWrapper }
-  equals(t1,t2)       { (t1.equals(t2)) }
-} 
 
-public static String clm;
+  %typeterm IntWrapper {
+    implement           { IntWrapper }
+    equals(t1,t2)       { (t1.equals(t2)) }
+  } 
+
+  public static class IntWrapper{
+    private int index;
+
+    public void set(int i){
+      index = i;
+    }
+
+    public int get(){
+      return index;
+    }
+
+  }
+
+  public static String clm;
 
   %strategy NewFileReader(index:IntWrapper) extends Fail() {
     visit TInstructionList {
@@ -79,114 +91,100 @@ public static String clm;
     }
   }
 
-public static class IntWrapper{
-  private int index;
-
-  public void set(int i){
-    index = i;
+  %op Strategy AG(s:Strategy, m:Map, root:TInstructionList) {
+    make(s,m,root) { `mu(MuVar("x"),Sequence(s,AllCfg(MuVar("x"),m,root))) }
   }
 
-  public int get(){
-    return index;
-  }
-
-}
-
-%op Strategy AG(s:Strategy, m:Map) {
-  make(s,m) { `mu(MuVar("x"),Sequence(s,AllCfg(MuVar("x"),m))) }
-}
-
-private static TClass fileAccesVerify(TClass givenClass) {
-  TMethodList methods = givenClass.getmethods();
-  TMethodList secureMethods = `MethodList();
-  %match(TMethodList methods) {
-    MethodList(_*, x, _*) -> {
-      System.out.println("Analysis of the method "+`x.getinfo().getname());
-      TInstructionList ins = `x.getcode().getinstructions();
-      // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
-      // (This is needed for the flow simulation when a jump instruction is encoutered.)
-      HashMap labelMap = new HashMap();
-      `TopDown(BuildLabelMap(labelMap)).apply(ins);
-      HashMap indexMap = new HashMap();
-      IntWrapper index = new IntWrapper();
-      MuStrategy securiseAccess =
-        `Sequence(NewFileReader(index),AG(CallToSRead(index),labelMap));
-      TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).apply(ins);
-      TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
-      TMethod secureMethod = `x.setcode(secureCode);
-      secureMethods = `MethodList(secureMethods*,secureMethod);	
-    } 
-  }
-  return givenClass.setmethods(secureMethods);
-}
-
-
-
-private static TClass renameClass(TClass clazz, String newName) {
-  TClassInfo classInfo = clazz.getinfo();
-  String currentName = classInfo.getname();
-  TClass newClass = clazz.setinfo(classInfo.setname(newName));
-  return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).apply(newClass);
-}
-
-%strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {
-  visit TOuterClassInfo {
-    x@OuterClassInfo[owner=owner] -> {
-      if(`owner.equals(currentName))
-        return `x.setowner(newName);
+  private static TClass fileAccesVerify(TClass givenClass) {
+    TMethodList methods = givenClass.getmethods();
+    TMethodList secureMethods = `MethodList();
+    %match(TMethodList methods) {
+      MethodList(_*, x, _*) -> {
+        System.out.println("Analysis of the method "+`x.getinfo().getname());
+        TInstructionList ins = `x.getcode().getinstructions();
+        // Builds the labelMap to be able to retrieve the `TInstructionList' for each `Label'.
+        // (This is needed for the flow simulation when a jump instruction is encoutered.)
+        HashMap labelMap = new HashMap();
+        `TopDown(BuildLabelMap(labelMap)).apply(ins);
+        HashMap indexMap = new HashMap();
+        IntWrapper index = new IntWrapper();
+        MuStrategy securiseAccess =
+          `Sequence(NewFileReader(index),AG(CallToSRead(index),labelMap,ins));
+        TInstructionList secureInstList = (TInstructionList) `TopDown(Try(securiseAccess)).apply(ins);
+        TMethodCode secureCode = `x.getcode().setinstructions(secureInstList);
+        TMethod secureMethod = `x.setcode(secureCode);
+        secureMethods = `MethodList(secureMethods*,secureMethod);	
+      } 
     }
+    return givenClass.setmethods(secureMethods);
   }
 
-  visit TLocalVariable {
-    x@LocalVariable[typeDesc=t] -> {
-      if(`t.equals(currentName))
-        return `x.settypeDesc(newName);
-    }
+
+
+  private static TClass renameClass(TClass clazz, String newName) {
+    TClassInfo classInfo = clazz.getinfo();
+    String currentName = classInfo.getname();
+    TClass newClass = clazz.setinfo(classInfo.setname(newName));
+    return (TClass)`TopDown(RenameDescAndOwner(currentName, newName)).apply(newClass);
   }
 
-  visit TFieldDescriptor {
-    x@ObjectType[className=n] -> {
-      if(`n.equals(currentName))
-        return `x.setclassName(newName);
-    }
-  }
-
-  visit TMethodInfo {
-    x@MethodInfo[owner=owner] -> {
-      if(`owner.equals(currentName))
-        return `x.setowner(newName);
-    }
-  }
-
-  visit TInstruction {
-    x@(Getstatic|Putstatic|Getfield|Putfield|
-        Invokevirtual|Invokespecial|Invokestatic|Invokeinterface)
-      [owner=owner] -> {
+  %strategy RenameDescAndOwner(currentName:String, newName:String) extends Identity() {
+    visit TOuterClassInfo {
+      x@OuterClassInfo[owner=owner] -> {
         if(`owner.equals(currentName))
           return `x.setowner(newName);
       }
-    x@(New|Anewarray|Checkcast|Instanceof|Multianewarray)[typeDesc=t] -> {
-      if(`t.equals(currentName))
-        return `x.settypeDesc(newName);
     }
+
+    visit TLocalVariable {
+      x@LocalVariable[typeDesc=t] -> {
+        if(`t.equals(currentName))
+          return `x.settypeDesc(newName);
+      }
+    }
+
+    visit TFieldDescriptor {
+      x@ObjectType[className=n] -> {
+        if(`n.equals(currentName))
+          return `x.setclassName(newName);
+      }
+    }
+
+    visit TMethodInfo {
+      x@MethodInfo[owner=owner] -> {
+        if(`owner.equals(currentName))
+          return `x.setowner(newName);
+      }
+    }
+
+    visit TInstruction {
+      x@(Getstatic|Putstatic|Getfield|Putfield|
+          Invokevirtual|Invokespecial|Invokestatic|Invokeinterface)
+        [owner=owner] -> {
+          if(`owner.equals(currentName))
+            return `x.setowner(newName);
+        }
+      x@(New|Anewarray|Checkcast|Instanceof|Multianewarray)[typeDesc=t] -> {
+        if(`t.equals(currentName))
+          return `x.settypeDesc(newName);
+      }
+    }
+
   }
 
-}
 
-
-
-public static byte[] transform(String file){
-  v.add(file);
-  System.out.println("Parsing class file " + file + " ...");
-  BytecodeReader br = new BytecodeReader(file);
-  System.out.println("Analyzing ...");
-  TClass c= br.getTClass();
-  //String secureName = c.getinfo().getname() + "Secure";
-  //TClass cSecured = renameClass(fileAccesVerify(c),secureName);
-  c = fileAccesVerify(c);
-  BytecodeGenerator bg = new BytecodeGenerator();
-  return bg.toBytecode(c);
-}
+  public static byte[] transform(String file){
+    v.add(file);
+    System.out.println("Parsing class file " + file + " ...");
+    BytecodeReader br = new BytecodeReader(file);
+    System.out.println("Analyzing ...");
+    TClass c= br.getTClass();
+    //String secureName = c.getinfo().getname() + "Secure";
+    //TClass cSecured = renameClass(fileAccesVerify(c),secureName);
+    c = fileAccesVerify(c);
+    BytecodeGenerator bg = new BytecodeGenerator();
+    return bg.toBytecode(c);
+  }
 
 }
 
