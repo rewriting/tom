@@ -28,25 +28,16 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 	}	
 
 	%strategy VariadicPatternMatching() extends `Identity(){		
-		visit Constraint{			
-//[pem] again, why swapping SymbolOf(g) and conc ?
+		visit Constraint{
 //[pem] I need some explanations to deeply understand the rules
-			// Decompose 
-			// conc(t1,X*,t2,Y*) = g -> SymbolOf(g)=conc /\ fresh_var = g 
+			// Decompose - only if 'g' != SymbolOf 
+			// conc(t1,X*,t2,Y*) = g -> conc=SymbolOf(g) /\ fresh_var = g 
 			// /\ NotEmpty(fresh_Var)  /\ t1=GetHead(fresh_var) /\ fresh_var1 = GetTail(fresh_var) 
 			// /\ begin1 = fresh_var1  /\ end1 = fresh_var1 /\	X* = VariableHeadList(begin1,end1) /\ fresh_var2 = end1
 			// /\ NotEmpty(fresh_Var2) /\ t2=GetHead(fresh_var2)/\ fresh_var3 = GetTail(fresh_var2)  
 			// /\ begin2 = fresh_var3  /\ end2 = fresh_var3 /\	Y* = VariableHeadList(begin2,end2) /\ fresh_var4 = end2
-			//
-			// OBS: t1=GetHead(tmp)  could further generate loops by decomposition and we do not want to have 
-			// fresh_var = GetTail(fresh_var) in a loop; this is the reason for tmp
 			m@MatchConstraint(t@RecordAppl(options,nameList@(name@Name(tomName),_*),slots
-					,constraints),g) -> {
-				// if we cannot decompose, stop
-//[pem] move above
-				%match(g) {
-					SymbolOf(_) -> {return `m;}
-				}				
+					,constraints),g@!SymbolOf[]) -> {
 				// if this is not a list, nothing to do
 				if(!TomConstraintCompiler.isListOperator(TomConstraintCompiler.getSymbolTable().
 						getSymbolFromName(`tomName))) {return `m;}				
@@ -108,7 +99,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				}
 				l = l.reverse();
 				// add head equality condition + fresh var declaration
-				l = `concConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),
+				l = `concConstraint(MatchConstraint(SymbolOf(g),RecordAppl(options,nameList,concSlot(),constraints)),
 						freshVarDeclaration,l*);
 				
 				return `AndConstraint(l);

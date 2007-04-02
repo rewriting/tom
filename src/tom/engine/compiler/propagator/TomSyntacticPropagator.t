@@ -22,39 +22,37 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 	%strategy SyntacticPatternMatching() extends `Identity(){		
 		visit Constraint{			
 			// Decompose
-//[pem] why not ... -> f(t1,...,tn)=SymbolOf(g)? '=' is not commutative
-			// f(t1,...,tn) = g -> SymbolOf(g)=f /\ t1=subterm1(g) /\ ... /\ tn=subtermn(g) 
-			m@MatchConstraint(RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g) -> {
-//[pem] why not creating a new rule: m@MatchConstraint(_,SymbolOf(_)) -> m
-				// if we cannot decompose, stop
-				%match(g) {
-					SymbolOf(_) -> {return `m;}
-				}
+			// f(t1,...,tn) = g -> f = SymbolOf(g) /\ t1=subterm1(g) /\ ... /\ tn=subtermn(g) 
+			// we can decompose only if 'g' != SymbolOf 
+			m@MatchConstraint(lhs@RecordAppl(options,nameList@(name@Name(tomName),_*),slots,constraints),g@!SymbolOf[]) -> {
 				// if this a list or array, nothing to do
 				if(!TomConstraintCompiler.isSyntacticOperator(
 						TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}
-//[pem] may b use %match consConstraint(_*,...Slot(slotName,appl)...,_*)
-				ConstraintList l = `concConstraint();
-				SlotList sList = `slots;
-				while(!sList.isEmptyconcSlot()) {
-					Slot headSlot = sList.getHeadconcSlot();
-					l = `concConstraint(MatchConstraint(headSlot.getAppl(),Subterm(name,headSlot.getSlotName(),g)),l*);					
-					sList = sList.getTailconcSlot();										
-				}				
+				ConstraintList l = `concConstraint();				
+				// for each slot
+				%match(slots){
+					concSlot(_*,PairSlotAppl(slotName,appl),_*) ->{
+						l = `concConstraint(MatchConstraint(appl,Subterm(name,slotName,g)),l*);
+					}
+				}								
 				l = l.reverse();
-//[pem] why not reusing the lhs and set concSlot() ?
 				// add head equality condition
-				l = `concConstraint(MatchConstraint(RecordAppl(options,nameList,concSlot(),constraints),SymbolOf(g)),l*)
+				l = `concConstraint(MatchConstraint(SymbolOf(g),lhs.setSlots(concSlot())),l*);
 //[pem] can we use a real A or AU operator for AndConstraint ?
+//[radu] normally, yes: AU, with True() as neutral
+//[radu]: TODO				
 				return `AndConstraint(l);
 			}		
 			
 			// Replace
 			// z = t /\ Context( z = u ) -> z = t /\ Context( t = u )			 
+			// we only apply this rule from right to left; this is not important for
+			// classical pattern matching, but when anti-patterns are involved, if we replace
+			// right_to_left, results are not always correct
 			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*)) ->{
-//[pem] why not considering X*? Add a comment to explain why
 				Constraint toApplyOn = `AndConstraint(concConstraint(Y*));
 //[pem] is TopDown as efficient as Map on lists?
+//[radu] TODO: I am not sure I understand: you mean a list of extracted variables ? first extract variables, and put them in a Map ?      				
 				Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).fire(toApplyOn);
 				if (res != toApplyOn){					
 					return `AndConstraint(concConstraint(X*,eq,res));
