@@ -526,56 +526,6 @@
   make(s) { new tom.engine.adt.tominstruction.strategy.instruction.When_EqualityCondition(s) }
 }
 
-%op Strategy Is_CheckStamp() {
-  make() { `When_CheckStamp(Identity()) }
-}
-
-%op Strategy _CheckStamp(arg0:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction._CheckStamp)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  make(arg0) { new tom.engine.adt.tominstruction.strategy.instruction._CheckStamp(arg0) }
-}
-
-%op Strategy Make_CheckStamp(_Variable:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_CheckStamp)}
-
-  get_slot(_Variable, t) { _Variable }
-  make( new_Variable) { new tom.engine.adt.tominstruction.strategy.instruction.Make_CheckStamp( new_Variable) }
-}
-
-%op Strategy When_CheckStamp(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.When_CheckStamp)}
-  make(s) { new tom.engine.adt.tominstruction.strategy.instruction.When_CheckStamp(s) }
-}
-
-%op Strategy Is_CheckInstance() {
-  make() { `When_CheckInstance(Identity()) }
-}
-
-%op Strategy _CheckInstance(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction._CheckInstance)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.engine.adt.tominstruction.strategy.instruction._CheckInstance(arg0, arg1, arg2) }
-}
-
-%op Strategy Make_CheckInstance(_AstType:Strategy, _Source:Strategy, _Instruction:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.Make_CheckInstance)}
-
-  get_slot(_AstType, t) { _AstType }
-  get_slot(_Source, t) { _Source }
-  get_slot(_Instruction, t) { _Instruction }
-  make( new_AstType,  new_Source,  new_Instruction) { new tom.engine.adt.tominstruction.strategy.instruction.Make_CheckInstance( new_AstType,  new_Source,  new_Instruction) }
-}
-
-%op Strategy When_CheckInstance(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tominstruction.strategy.instruction.When_CheckInstance)}
-  make(s) { new tom.engine.adt.tominstruction.strategy.instruction.When_CheckInstance(s) }
-}
-
 %op Strategy Is_RawAction() {
   make() { `When_RawAction(Identity()) }
 }
@@ -1595,60 +1545,6 @@
   make(s) { new tom.engine.adt.tomdeclaration.strategy.declaration.When_TypeTermDecl(s) }
 }
 
-%op Strategy Is_CheckStampDecl() {
-  make() { `When_CheckStampDecl(Identity()) }
-}
-
-%op Strategy _CheckStampDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration._CheckStampDecl)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.engine.adt.tomdeclaration.strategy.declaration._CheckStampDecl(arg0, arg1, arg2) }
-}
-
-%op Strategy Make_CheckStampDecl(_Variable:Strategy, _Instr:Strategy, _OrgTrack:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_CheckStampDecl)}
-
-  get_slot(_Variable, t) { _Variable }
-  get_slot(_Instr, t) { _Instr }
-  get_slot(_OrgTrack, t) { _OrgTrack }
-  make( new_Variable,  new_Instr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_CheckStampDecl( new_Variable,  new_Instr,  new_OrgTrack) }
-}
-
-%op Strategy When_CheckStampDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.When_CheckStampDecl)}
-  make(s) { new tom.engine.adt.tomdeclaration.strategy.declaration.When_CheckStampDecl(s) }
-}
-
-%op Strategy Is_SetStampDecl() {
-  make() { `When_SetStampDecl(Identity()) }
-}
-
-%op Strategy _SetStampDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration._SetStampDecl)}
-
-  get_slot(arg0, t) { t.getArgument(0) }
-  get_slot(arg1, t) { t.getArgument(1) }
-  get_slot(arg2, t) { t.getArgument(2) }
-  make(arg0, arg1, arg2) { new tom.engine.adt.tomdeclaration.strategy.declaration._SetStampDecl(arg0, arg1, arg2) }
-}
-
-%op Strategy Make_SetStampDecl(_Variable:Strategy, _Instr:Strategy, _OrgTrack:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_SetStampDecl)}
-
-  get_slot(_Variable, t) { _Variable }
-  get_slot(_Instr, t) { _Instr }
-  get_slot(_OrgTrack, t) { _OrgTrack }
-  make( new_Variable,  new_Instr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_SetStampDecl( new_Variable,  new_Instr,  new_OrgTrack) }
-}
-
-%op Strategy When_SetStampDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.When_SetStampDecl)}
-  make(s) { new tom.engine.adt.tomdeclaration.strategy.declaration.When_SetStampDecl(s) }
-}
-
 %op Strategy Is_GetImplementationDecl() {
   make() { `When_GetImplementationDecl(Identity()) }
 }
@@ -1736,33 +1632,60 @@
   make(s) { new tom.engine.adt.tomdeclaration.strategy.declaration.When_GetSlotDecl(s) }
 }
 
-%op Strategy Is_TermsEqualDecl() {
-  make() { `When_TermsEqualDecl(Identity()) }
+%op Strategy Is_EqualTermDecl() {
+  make() { `When_EqualTermDecl(Identity()) }
 }
 
-%op Strategy _TermsEqualDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration._TermsEqualDecl)}
+%op Strategy _EqualTermDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy, arg3:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration._EqualTermDecl)}
 
   get_slot(arg0, t) { t.getArgument(0) }
   get_slot(arg1, t) { t.getArgument(1) }
   get_slot(arg2, t) { t.getArgument(2) }
   get_slot(arg3, t) { t.getArgument(3) }
-  make(arg0, arg1, arg2, arg3) { new tom.engine.adt.tomdeclaration.strategy.declaration._TermsEqualDecl(arg0, arg1, arg2, arg3) }
+  make(arg0, arg1, arg2, arg3) { new tom.engine.adt.tomdeclaration.strategy.declaration._EqualTermDecl(arg0, arg1, arg2, arg3) }
 }
 
-%op Strategy Make_TermsEqualDecl(_TermArg1:Strategy, _TermArg2:Strategy, _Instr:Strategy, _OrgTrack:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_TermsEqualDecl)}
+%op Strategy Make_EqualTermDecl(_TermArg1:Strategy, _TermArg2:Strategy, _Instr:Strategy, _OrgTrack:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_EqualTermDecl)}
 
   get_slot(_TermArg1, t) { _TermArg1 }
   get_slot(_TermArg2, t) { _TermArg2 }
   get_slot(_Instr, t) { _Instr }
   get_slot(_OrgTrack, t) { _OrgTrack }
-  make( new_TermArg1,  new_TermArg2,  new_Instr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_TermsEqualDecl( new_TermArg1,  new_TermArg2,  new_Instr,  new_OrgTrack) }
+  make( new_TermArg1,  new_TermArg2,  new_Instr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_EqualTermDecl( new_TermArg1,  new_TermArg2,  new_Instr,  new_OrgTrack) }
 }
 
-%op Strategy When_TermsEqualDecl(s:Strategy) {
-  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.When_TermsEqualDecl)}
-  make(s) { new tom.engine.adt.tomdeclaration.strategy.declaration.When_TermsEqualDecl(s) }
+%op Strategy When_EqualTermDecl(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.When_EqualTermDecl)}
+  make(s) { new tom.engine.adt.tomdeclaration.strategy.declaration.When_EqualTermDecl(s) }
+}
+
+%op Strategy Is_IsSortDecl() {
+  make() { `When_IsSortDecl(Identity()) }
+}
+
+%op Strategy _IsSortDecl(arg0:Strategy, arg1:Strategy, arg2:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration._IsSortDecl)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  get_slot(arg2, t) { t.getArgument(2) }
+  make(arg0, arg1, arg2) { new tom.engine.adt.tomdeclaration.strategy.declaration._IsSortDecl(arg0, arg1, arg2) }
+}
+
+%op Strategy Make_IsSortDecl(_TermArg:Strategy, _Instr:Strategy, _OrgTrack:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.Make_IsSortDecl)}
+
+  get_slot(_TermArg, t) { _TermArg }
+  get_slot(_Instr, t) { _Instr }
+  get_slot(_OrgTrack, t) { _OrgTrack }
+  make( new_TermArg,  new_Instr,  new_OrgTrack) { new tom.engine.adt.tomdeclaration.strategy.declaration.Make_IsSortDecl( new_TermArg,  new_Instr,  new_OrgTrack) }
+}
+
+%op Strategy When_IsSortDecl(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomdeclaration.strategy.declaration.When_IsSortDecl)}
+  make(s) { new tom.engine.adt.tomdeclaration.strategy.declaration.When_IsSortDecl(s) }
 }
 
 %op Strategy Is_GetHeadDecl() {
@@ -3331,6 +3254,31 @@
 %op Strategy When_GetSliceArray(s:Strategy) {
   is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_GetSliceArray)}
   make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_GetSliceArray(s) }
+}
+
+%op Strategy Is_IsSort() {
+  make() { `When_IsSort(Identity()) }
+}
+
+%op Strategy _IsSort(arg0:Strategy, arg1:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression._IsSort)}
+
+  get_slot(arg0, t) { t.getArgument(0) }
+  get_slot(arg1, t) { t.getArgument(1) }
+  make(arg0, arg1) { new tom.engine.adt.tomexpression.strategy.expression._IsSort(arg0, arg1) }
+}
+
+%op Strategy Make_IsSort(_AstType:Strategy, _Variable:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.Make_IsSort)}
+
+  get_slot(_AstType, t) { _AstType }
+  get_slot(_Variable, t) { _Variable }
+  make( new_AstType,  new_Variable) { new tom.engine.adt.tomexpression.strategy.expression.Make_IsSort( new_AstType,  new_Variable) }
+}
+
+%op Strategy When_IsSort(s:Strategy) {
+  is_fsym(t) { (t!=null) && t instanceof (tom.engine.adt.tomexpression.strategy.expression.When_IsSort)}
+  make(s) { new tom.engine.adt.tomexpression.strategy.expression.When_IsSort(s) }
 }
 
 %op Strategy Is_EmptyconcOr() {

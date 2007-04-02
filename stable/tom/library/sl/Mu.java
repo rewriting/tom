@@ -59,6 +59,7 @@ public class Mu extends AbstractStrategy {
 class MuStrategyTopDown {
   private static boolean tom_terms_equal_MuStrategy(Object t1, Object t2) {  return 
 
+
 t1.equals(t2) ;}private static boolean tom_is_fun_sym_Mu( tom.library.sl.Strategy  t) {  return 
 
 

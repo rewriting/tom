@@ -9,9 +9,9 @@ public class TestMatch extends TestCase {
  
   private static ATermFactory factory = SingletonFactory.getInstance();
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestMatch.class));
-	}
+  public static void main(String[] args) {
+    junit.textui.TestRunner.run(new TestSuite(TestMatch.class));
+  }
 	
   public void setUp() {
     ok   = factory.parse("ok");
@@ -25,6 +25,7 @@ public class TestMatch extends TestCase {
 
   %typeterm L {
     implement { ATermList }
+    is_sort(t) { t instanceof ATermList }
     equals(l1,l2)  { l1.equals(l2) }
   }
 
@@ -39,6 +40,7 @@ public class TestMatch extends TestCase {
   
   %typeterm E {
     implement { ATerm }
+    is_sort(t) { t instanceof ATerm }
     equals(t1, t2) { (t1.equals(t2)) }
   }
 

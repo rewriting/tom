@@ -66,14 +66,6 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     output.writeln(";");
   } 
 
-  protected void buildCheckStamp(int deep, TomType type, TomTerm variable, String moduleName) throws IOException {
-    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-      output.write("tom_check_stamp_" + getTomType(type) + "(");
-      generate(deep,variable,moduleName);
-      output.write(");");
-    }
-  }
- 
   protected void buildComment(int deep, String text) throws IOException {
     output.writeln("/* " + text + " */");
     return;
@@ -95,7 +87,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
       generate(deep,exp2,moduleName);
       output.write(")");
     } else {
-      output.write("tom_terms_equal_" + getTomType(type) + "(");
+      output.write("tom_equal_term_" + getTomType(type) + "(");
       generate(deep,exp1,moduleName);
       output.write(", ");
       generate(deep,exp2,moduleName);
@@ -291,7 +283,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
-    String term_equal = "tom_terms_equal_" + tomType;
+    String equal_term = "tom_equal_term_" + tomType;
     String make_insert = listCast + "tom_cons_list_" + name;
     String make_empty = listCast + "tom_empty_list_" + name;
     String get_head = eltCast + "tom_get_head_" + name + "_" + tomType;
@@ -313,7 +305,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     s+= "\n";
     
     s+= modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end) {\n"; 
-    s+= "   if(" + term_equal + "(begin,end)) {\n";
+    s+= "   if(" + equal_term + "(begin,end)) {\n";
     s+= "     return " +  make_empty + "();\n";
     s+= "   } else {\n";
     s+= "     return " +  make_insert + "(" + get_head + "(begin)," + 
@@ -339,14 +331,11 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
       matchBlock: {
-         if(arg instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tomMatch2Position1=(( tom.engine.adt.tomterm.types.TomTerm )arg); if ( ( tom_is_fun_sym_Variable(tomMatch2Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch2Position1NameNumberAstName=tom_get_slot_Variable_AstName(tomMatch2Position1); { tom.engine.adt.tomtype.types.TomType  tomMatch2Position1NameNumberAstType=tom_get_slot_Variable_AstType(tomMatch2Position1); if ( ( tom_is_fun_sym_Name(tomMatch2Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch2Position1NameNumberAstName); if ( ( tom_is_fun_sym_Type(tomMatch2Position1NameNumberAstType) ||  false  ) ) { { tom.engine.adt.tomtype.types.TomType  tomMatch2Position1NameNumberAstTypeNameNumberTlType=tom_get_slot_Type_TlType(tomMatch2Position1NameNumberAstType); { tom.engine.adt.tomtype.types.TomType  tom_tomType=tom_get_slot_Type_TomType(tomMatch2Position1NameNumberAstType); if ( ( tom_is_fun_sym_TLType(tomMatch2Position1NameNumberAstTypeNameNumberTlType) ||  false  ) ) { { tom.engine.adt.tomtype.types.TomType  tom_tlType=tomMatch2Position1NameNumberAstTypeNameNumberTlType; if ( true ) {
+         if(arg instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tomMatch2Position1=(( tom.engine.adt.tomterm.types.TomTerm )arg); if ( ( tom_is_fun_sym_Variable(tomMatch2Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch2Position1NameNumberAstName=tom_get_slot_Variable_AstName(tomMatch2Position1); { tom.engine.adt.tomtype.types.TomType  tomMatch2Position1NameNumberAstType=tom_get_slot_Variable_AstType(tomMatch2Position1); if ( ( tom_is_fun_sym_Name(tomMatch2Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch2Position1NameNumberAstName); if ( ( tom_is_fun_sym_Type(tomMatch2Position1NameNumberAstType) ||  false  ) ) { { tom.engine.adt.tomtype.types.TomType  tomMatch2Position1NameNumberAstTypeNameNumberTlType=tom_get_slot_Type_TlType(tomMatch2Position1NameNumberAstType); if ( ( tom_is_fun_sym_TLType(tomMatch2Position1NameNumberAstTypeNameNumberTlType) ||  false  ) ) { { tom.engine.adt.tomtype.types.TomType  tom_tlType=tomMatch2Position1NameNumberAstTypeNameNumberTlType; if ( true ) {
 
             s.append(getTLCode(tom_tlType) + " " + tom_name);
-            if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-              check.append("tom_check_stamp_" + getTomType(tom_tomType) + "(" + tom_name+ ");\n");
-            }
             break matchBlock;
-           } } } } } } } } } } } if ( true ) {
+           } } } } } } } } } } if ( true ) {
 
 
             System.out.println("genDeclMake: strange term: " + arg);
@@ -364,13 +353,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
 
     output.write(s);
     output.write("return ");
-    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-      output.write("tom_set_stamp_" + getTomType(returnType) + "(");
-      generateInstruction(0,instr,moduleName);
-      output.write(")");
-    } else {
-      generateInstruction(0,instr,moduleName);
-    }
+    generateInstruction(0,instr,moduleName);
     output.write("; }");
   }
 }

@@ -166,10 +166,6 @@ public class PILFactory extends TomBase {
 	return "if " + prettyPrint(`cond) + " then \n\t" + prettyPrint(`success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(`failure).replaceAll("\n","\n\t")+"\n";
       }
 
-      CheckInstance[Instruction=instruction] -> {
-	return "checkInstance\n\t" + prettyPrint(`instruction).replaceAll("\n","\n\t");
-      }
-
       AbstractBlock(concInstruction(x*,Nop(),y*)) -> {
 	return prettyPrint(`AbstractBlock(concInstruction(x*,y*)));
       }
@@ -195,15 +191,15 @@ public class PILFactory extends TomBase {
 	return prettyPrint(`automata); 
       }
 
-      CheckStamp(_) -> {
-	return "";
-      }
-
     }
 
     %match(Expression subject) {
       TomTermToExpression(astTerm) -> {
 	return prettyPrint(`astTerm);
+      }
+
+      IsSort[] -> {
+	return "isSort\n\t";
       }
 
       EqualFunctionSymbol(_,exp1,exp2) -> {

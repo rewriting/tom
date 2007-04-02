@@ -12,6 +12,7 @@ public class Array {
 
   %typeterm L {
     implement { ArrayList }
+    is_sort(t) { t instanceof ArrayList }
     equals(l1,l2)    { l1.equals(l2) }
   }
 
@@ -30,6 +31,7 @@ public class Array {
   
   %typeterm E {
     implement           { ATerm }
+    is_sort(t) { t instanceof Array }
     equals(t1, t2)      { (t1.equals(t2)) }
   }
 

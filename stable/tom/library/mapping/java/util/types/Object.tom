@@ -31,7 +31,6 @@
 
 %typeterm Object {
   implement      { Object }
+  is_sort(t)      { t instanceof Object }
   equals(o1,o2)  { o1.equals(o2) }
-  check_stamp(o) {}
-  set_stamp(o)   { o }
 }

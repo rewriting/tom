@@ -31,3 +31,8 @@ Expression = TomTermToExpression(AstTerm:TomTerm)
            | GetElement(Opname:TomName,Codomain:TomType,Kid1:TomTerm,Kid2:TomTerm)
            | GetSliceList(AstName:TomName,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
            | GetSliceArray(AstName:TomName,SubjectListName:TomTerm,VariableBeginAST:TomTerm,VariableEndAST:TomTerm)
+/*
+ * check that source is of sort astType, and then execute inst
+ */
+           | IsSort(AstType:TomType,Variable:TomTerm)
+

@@ -239,15 +239,4 @@ public class TomJavaGenerator extends TomCFamilyGenerator {
     output.writeln(deep," }");
   }
 	
-	protected void buildCheckInstance(int deep, String typeName, TomType tlType, Expression exp, Instruction instruction, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBuiltinType(typeName)) {
-			generateInstruction(deep,instruction,moduleName);
-		} else {
-			output.write(deep,"if(");
-			generateExpression(deep,exp,moduleName);
-			output.writeln(" instanceof " + getTLCode(tlType) + ") {");
-			generateInstruction(deep+1,instruction,moduleName);
-			output.writeln(deep,"}");
-		}
-	}
 }

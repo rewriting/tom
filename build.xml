@@ -236,7 +236,9 @@
       </tomsrc>
     </presetdef>
     <presetdef name="gomcompile">
-      <gomsrc config="${src.gomconfigfile}"/>
+      <gomsrc config="${src.gomconfigfile}">
+        <classpath refid="tomsrc.classpath"/>
+      </gomsrc>
     </presetdef>
     <presetdef name="antlrmappercompile">
       <antlrmappersrc>

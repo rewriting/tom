@@ -56,10 +56,6 @@ public class TomCGenerator extends TomCFamilyGenerator {
   %include { adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
-	protected void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction, String moduleName) throws IOException {
-		generateInstruction(deep,instruction,moduleName);
-	}
-
   protected void buildExpBottom(int deep, TomType type, String moduleName) throws IOException {
     output.write(" NULL ");
   }

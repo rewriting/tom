@@ -11,6 +11,7 @@ public class TestWhen extends TestCase {
 
   %typeterm term {
     implement { ATerm }
+    is_sort(t) { t instanceof ATerm }
     equals(t1, t2) { t1 == t2}
   }
 

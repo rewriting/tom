@@ -30,6 +30,7 @@ struct term *suc(struct term *x) {
 
 %typeterm term {
   implement { struct term* }
+  is_sort(t) { (0==0) }
 }
 
 %op term zero() {

@@ -77,22 +77,27 @@ public class TestRecord extends TestCase {
   
   %typeterm TomObject {
     implement { Object }
+    is_sort(t) { t instanceof Object }
   }
 
   %typeterm TomExp {
     implement { Exp }
+    is_sort(t) { t instanceof Exp }
   }
 
   %typeterm TomBinaryOperator {
     implement { BinaryOperator }
+    is_sort(t) { t instanceof BinaryOperator }
   }
   
   %typeterm TomUnaryOperator {
     implement { UnaryOperator }
+    is_sort(t) { t instanceof UnaryOperator }
   }
 
   %typeterm TomCstExp {
     implement { CstExp }
+    is_sort(t) { t instanceof CstExp }
   }
 
     // ------------------------------------------------------------
@@ -142,6 +147,7 @@ public class TestRecord extends TestCase {
   
   %typeterm TomInteger {
     implement { Integer }
+    is_sort(t) { t instanceof Integer }
   }
 
   %op TomInteger zero() {

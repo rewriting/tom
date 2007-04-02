@@ -2,12 +2,11 @@ module TomDeclaration
 imports TomSignature 
 abstract syntax
 Declaration = TypeTermDecl(AstName:TomName,Declarations:DeclarationList,OrgTrack:Option)
-            | CheckStampDecl(Variable:TomTerm,Instr:Instruction,OrgTrack:Option)
-            | SetStampDecl(Variable:TomTerm,Instr:Instruction,OrgTrack:Option)
             | GetImplementationDecl(Variable:TomTerm,Instr:Instruction,OrgTrack:Option)
             | IsFsymDecl(AstName:TomName,Variable:TomTerm,Instr:Instruction,OrgTrack:Option)
             | GetSlotDecl(AstName:TomName,SlotName:TomName,Variable:TomTerm,Instr:Instruction,OrgTrack:Option)
-            | TermsEqualDecl(TermArg1:TomTerm,TermArg2:TomTerm,Instr:Instruction,OrgTrack:Option)
+            | EqualTermDecl(TermArg1:TomTerm,TermArg2:TomTerm,Instr:Instruction,OrgTrack:Option)
+            | IsSortDecl(TermArg:TomTerm,Instr:Instruction,OrgTrack:Option)
             | GetHeadDecl(Opname:TomName, Codomain:TomType,Variable:TomTerm,Instr:Instruction,OrgTrack:Option)
             | GetTailDecl(Opname:TomName, Variable:TomTerm,Instr:Instruction,OrgTrack:Option)
             | IsEmptyDecl(Opname:TomName, Variable:TomTerm,Instr:Instruction,OrgTrack:Option)

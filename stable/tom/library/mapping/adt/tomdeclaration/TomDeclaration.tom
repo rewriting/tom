@@ -5,6 +5,7 @@
 
 %typeterm Instruction {
   implement { tom.engine.adt.tominstruction.types.Instruction }
+ is_sort(t) { t instanceof tom.engine.adt.tominstruction.types.Instruction}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -12,6 +13,7 @@
 
 %typeterm InstructionList {
   implement { tom.engine.adt.tominstruction.types.InstructionList }
+ is_sort(t) { t instanceof tom.engine.adt.tominstruction.types.InstructionList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -19,6 +21,7 @@
 
 %typeterm TomTypeList {
   implement { tom.engine.adt.tomtype.types.TomTypeList }
+ is_sort(t) { t instanceof tom.engine.adt.tomtype.types.TomTypeList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -26,6 +29,7 @@
 
 %typeterm TomType {
   implement { tom.engine.adt.tomtype.types.TomType }
+ is_sort(t) { t instanceof tom.engine.adt.tomtype.types.TomType}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -33,6 +37,7 @@
 
 %typeterm TomTypeDefinition {
   implement { tom.engine.adt.tomtype.types.TomTypeDefinition }
+ is_sort(t) { t instanceof tom.engine.adt.tomtype.types.TomTypeDefinition}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -40,6 +45,7 @@
 
 %typeterm TomForwardType {
   implement { tom.engine.adt.tomtype.types.TomForwardType }
+ is_sort(t) { t instanceof tom.engine.adt.tomtype.types.TomForwardType}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -47,6 +53,7 @@
 
 %typeterm TomSymbolList {
   implement { tom.engine.adt.tomsignature.types.TomSymbolList }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomSymbolList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -54,6 +61,7 @@
 
 %typeterm TomVisit {
   implement { tom.engine.adt.tomsignature.types.TomVisit }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomVisit}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -61,6 +69,7 @@
 
 %typeterm TomStructureTable {
   implement { tom.engine.adt.tomsignature.types.TomStructureTable }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomStructureTable}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -68,6 +77,7 @@
 
 %typeterm TomEntry {
   implement { tom.engine.adt.tomsignature.types.TomEntry }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomEntry}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -75,6 +85,7 @@
 
 %typeterm Position {
   implement { tom.engine.adt.tomsignature.types.Position }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.Position}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -82,6 +93,7 @@
 
 %typeterm TomRuleList {
   implement { tom.engine.adt.tomsignature.types.TomRuleList }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomRuleList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -89,6 +101,7 @@
 
 %typeterm TomSymbol {
   implement { tom.engine.adt.tomsignature.types.TomSymbol }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomSymbol}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -96,6 +109,7 @@
 
 %typeterm KeyEntry {
   implement { tom.engine.adt.tomsignature.types.KeyEntry }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.KeyEntry}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -103,6 +117,7 @@
 
 %typeterm TomEntryList {
   implement { tom.engine.adt.tomsignature.types.TomEntryList }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomEntryList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -110,6 +125,7 @@
 
 %typeterm TomRule {
   implement { tom.engine.adt.tomsignature.types.TomRule }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomRule}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -117,6 +133,7 @@
 
 %typeterm TomVisitList {
   implement { tom.engine.adt.tomsignature.types.TomVisitList }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomVisitList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -124,6 +141,7 @@
 
 %typeterm TargetLanguage {
   implement { tom.engine.adt.tomsignature.types.TargetLanguage }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TargetLanguage}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -131,6 +149,7 @@
 
 %typeterm TomSymbolTable {
   implement { tom.engine.adt.tomsignature.types.TomSymbolTable }
+ is_sort(t) { t instanceof tom.engine.adt.tomsignature.types.TomSymbolTable}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -138,6 +157,7 @@
 
 %typeterm TomNumber {
   implement { tom.engine.adt.tomname.types.TomNumber }
+ is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNumber}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -145,6 +165,7 @@
 
 %typeterm TomNumberList {
   implement { tom.engine.adt.tomname.types.TomNumberList }
+ is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNumberList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -152,6 +173,7 @@
 
 %typeterm TomNameList {
   implement { tom.engine.adt.tomname.types.TomNameList }
+ is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomNameList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -159,6 +181,7 @@
 
 %typeterm TomName {
   implement { tom.engine.adt.tomname.types.TomName }
+ is_sort(t) { t instanceof tom.engine.adt.tomname.types.TomName}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -166,6 +189,7 @@
 
 %typeterm DeclarationList {
   implement { tom.engine.adt.tomdeclaration.types.DeclarationList }
+ is_sort(t) { t instanceof tom.engine.adt.tomdeclaration.types.DeclarationList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -173,6 +197,7 @@
 
 %typeterm Declaration {
   implement { tom.engine.adt.tomdeclaration.types.Declaration }
+ is_sort(t) { t instanceof tom.engine.adt.tomdeclaration.types.Declaration}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -180,6 +205,7 @@
 
 %typeterm Expression {
   implement { tom.engine.adt.tomexpression.types.Expression }
+ is_sort(t) { t instanceof tom.engine.adt.tomexpression.types.Expression}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -187,6 +213,7 @@
 
 %typeterm OConstraintList {
   implement { tom.engine.adt.tomconstraint.types.OConstraintList }
+ is_sort(t) { t instanceof tom.engine.adt.tomconstraint.types.OConstraintList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -194,6 +221,7 @@
 
 %typeterm Constraint {
   implement { tom.engine.adt.tomconstraint.types.Constraint }
+ is_sort(t) { t instanceof tom.engine.adt.tomconstraint.types.Constraint}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -201,6 +229,7 @@
 
 %typeterm AConstraintList {
   implement { tom.engine.adt.tomconstraint.types.AConstraintList }
+ is_sort(t) { t instanceof tom.engine.adt.tomconstraint.types.AConstraintList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -208,6 +237,7 @@
 
 %typeterm ConstraintList {
   implement { tom.engine.adt.tomconstraint.types.ConstraintList }
+ is_sort(t) { t instanceof tom.engine.adt.tomconstraint.types.ConstraintList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -215,6 +245,7 @@
 
 %typeterm Option {
   implement { tom.engine.adt.tomoption.types.Option }
+ is_sort(t) { t instanceof tom.engine.adt.tomoption.types.Option}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -222,6 +253,7 @@
 
 %typeterm OptionList {
   implement { tom.engine.adt.tomoption.types.OptionList }
+ is_sort(t) { t instanceof tom.engine.adt.tomoption.types.OptionList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -229,6 +261,7 @@
 
 %typeterm PatternInstructionList {
   implement { tom.engine.adt.tomterm.types.PatternInstructionList }
+ is_sort(t) { t instanceof tom.engine.adt.tomterm.types.PatternInstructionList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -236,6 +269,7 @@
 
 %typeterm PatternInstruction {
   implement { tom.engine.adt.tomterm.types.PatternInstruction }
+ is_sort(t) { t instanceof tom.engine.adt.tomterm.types.PatternInstruction}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -243,6 +277,7 @@
 
 %typeterm Pattern {
   implement { tom.engine.adt.tomterm.types.Pattern }
+ is_sort(t) { t instanceof tom.engine.adt.tomterm.types.Pattern}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -250,6 +285,7 @@
 
 %typeterm TomList {
   implement { tom.engine.adt.tomterm.types.TomList }
+ is_sort(t) { t instanceof tom.engine.adt.tomterm.types.TomList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -257,6 +293,7 @@
 
 %typeterm TomTerm {
   implement { tom.engine.adt.tomterm.types.TomTerm }
+ is_sort(t) { t instanceof tom.engine.adt.tomterm.types.TomTerm}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -264,6 +301,7 @@
 
 %typeterm PatternList {
   implement { tom.engine.adt.tomterm.types.PatternList }
+ is_sort(t) { t instanceof tom.engine.adt.tomterm.types.PatternList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -271,6 +309,7 @@
 
 %typeterm PairNameDecl {
   implement { tom.engine.adt.tomslot.types.PairNameDecl }
+ is_sort(t) { t instanceof tom.engine.adt.tomslot.types.PairNameDecl}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -278,6 +317,7 @@
 
 %typeterm PairNameDeclList {
   implement { tom.engine.adt.tomslot.types.PairNameDeclList }
+ is_sort(t) { t instanceof tom.engine.adt.tomslot.types.PairNameDeclList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -285,6 +325,7 @@
 
 %typeterm SlotList {
   implement { tom.engine.adt.tomslot.types.SlotList }
+ is_sort(t) { t instanceof tom.engine.adt.tomslot.types.SlotList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -292,6 +333,7 @@
 
 %typeterm Slot {
   implement { tom.engine.adt.tomslot.types.Slot }
+ is_sort(t) { t instanceof tom.engine.adt.tomslot.types.Slot}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.tomdeclaration.TomDeclarationBasicStrategy }
 }
@@ -440,20 +482,6 @@
   get_slot(Lhs, t) { t.getLhs() }
   get_slot(Rhs, t) { t.getRhs() }
   make(t0, t1) { tom.engine.adt.tominstruction.types.instruction.EqualityCondition.make(t0, t1)}
-}
-
-%op Instruction CheckStamp(Variable:TomTerm) {
-  is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instruction.CheckStamp }
-  get_slot(Variable, t) { t.getVariable() }
-  make(t0) { tom.engine.adt.tominstruction.types.instruction.CheckStamp.make(t0)}
-}
-
-%op Instruction CheckInstance(AstType:TomType, Source:Expression, Instruction:Instruction) {
-  is_fsym(t) { t instanceof tom.engine.adt.tominstruction.types.instruction.CheckInstance }
-  get_slot(AstType, t) { t.getAstType() }
-  get_slot(Source, t) { t.getSource() }
-  get_slot(Instruction, t) { t.getInstruction() }
-  make(t0, t1, t2) { tom.engine.adt.tominstruction.types.instruction.CheckInstance.make(t0, t1, t2)}
 }
 
 %op Instruction RawAction(AstInstruction:Instruction) {
@@ -847,22 +875,6 @@
   make(t0, t1, t2) { tom.engine.adt.tomdeclaration.types.declaration.TypeTermDecl.make(t0, t1, t2)}
 }
 
-%op Declaration CheckStampDecl(Variable:TomTerm, Instr:Instruction, OrgTrack:Option) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomdeclaration.types.declaration.CheckStampDecl }
-  get_slot(Variable, t) { t.getVariable() }
-  get_slot(Instr, t) { t.getInstr() }
-  get_slot(OrgTrack, t) { t.getOrgTrack() }
-  make(t0, t1, t2) { tom.engine.adt.tomdeclaration.types.declaration.CheckStampDecl.make(t0, t1, t2)}
-}
-
-%op Declaration SetStampDecl(Variable:TomTerm, Instr:Instruction, OrgTrack:Option) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomdeclaration.types.declaration.SetStampDecl }
-  get_slot(Variable, t) { t.getVariable() }
-  get_slot(Instr, t) { t.getInstr() }
-  get_slot(OrgTrack, t) { t.getOrgTrack() }
-  make(t0, t1, t2) { tom.engine.adt.tomdeclaration.types.declaration.SetStampDecl.make(t0, t1, t2)}
-}
-
 %op Declaration GetImplementationDecl(Variable:TomTerm, Instr:Instruction, OrgTrack:Option) {
   is_fsym(t) { t instanceof tom.engine.adt.tomdeclaration.types.declaration.GetImplementationDecl }
   get_slot(Variable, t) { t.getVariable() }
@@ -890,13 +902,21 @@
   make(t0, t1, t2, t3, t4) { tom.engine.adt.tomdeclaration.types.declaration.GetSlotDecl.make(t0, t1, t2, t3, t4)}
 }
 
-%op Declaration TermsEqualDecl(TermArg1:TomTerm, TermArg2:TomTerm, Instr:Instruction, OrgTrack:Option) {
-  is_fsym(t) { t instanceof tom.engine.adt.tomdeclaration.types.declaration.TermsEqualDecl }
+%op Declaration EqualTermDecl(TermArg1:TomTerm, TermArg2:TomTerm, Instr:Instruction, OrgTrack:Option) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomdeclaration.types.declaration.EqualTermDecl }
   get_slot(TermArg1, t) { t.getTermArg1() }
   get_slot(TermArg2, t) { t.getTermArg2() }
   get_slot(Instr, t) { t.getInstr() }
   get_slot(OrgTrack, t) { t.getOrgTrack() }
-  make(t0, t1, t2, t3) { tom.engine.adt.tomdeclaration.types.declaration.TermsEqualDecl.make(t0, t1, t2, t3)}
+  make(t0, t1, t2, t3) { tom.engine.adt.tomdeclaration.types.declaration.EqualTermDecl.make(t0, t1, t2, t3)}
+}
+
+%op Declaration IsSortDecl(TermArg:TomTerm, Instr:Instruction, OrgTrack:Option) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomdeclaration.types.declaration.IsSortDecl }
+  get_slot(TermArg, t) { t.getTermArg() }
+  get_slot(Instr, t) { t.getInstr() }
+  get_slot(OrgTrack, t) { t.getOrgTrack() }
+  make(t0, t1, t2) { tom.engine.adt.tomdeclaration.types.declaration.IsSortDecl.make(t0, t1, t2)}
 }
 
 %op Declaration GetHeadDecl(Opname:TomName, Codomain:TomType, Variable:TomTerm, Instr:Instruction, OrgTrack:Option) {
@@ -1222,6 +1242,13 @@
   get_slot(VariableBeginAST, t) { t.getVariableBeginAST() }
   get_slot(VariableEndAST, t) { t.getVariableEndAST() }
   make(t0, t1, t2, t3) { tom.engine.adt.tomexpression.types.expression.GetSliceArray.make(t0, t1, t2, t3)}
+}
+
+%op Expression IsSort(AstType:TomType, Variable:TomTerm) {
+  is_fsym(t) { t instanceof tom.engine.adt.tomexpression.types.expression.IsSort }
+  get_slot(AstType, t) { t.getAstType() }
+  get_slot(Variable, t) { t.getVariable() }
+  make(t0, t1) { tom.engine.adt.tomexpression.types.expression.IsSort.make(t0, t1)}
 }
 
 %op OConstraintList EmptyconcOr() {

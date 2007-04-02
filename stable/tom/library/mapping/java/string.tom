@@ -32,9 +32,8 @@
 %include {char.tom}
 %typeterm String {
   implement           { String }
+  is_sort(t)           { t instanceof String }
   equals(t1,t2)       { (t1.equals(t2)) }
-  check_stamp(s)      {}
-  set_stamp(s)        { s }
 }
 
 %oplist String concString(char*) {

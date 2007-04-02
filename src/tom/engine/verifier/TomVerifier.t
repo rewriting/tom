@@ -208,11 +208,12 @@ public class TomVerifier extends TomGenericPlugin {
         return `cond;
       }
     }
+
     visit Instruction {
       If(TrueTL(),success,Nop()) -> {
         return `success;
       }
-      (UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {
+      (UnamedBlock|AbstractBlock)(concInstruction(inst)) -> {
         return `inst;
       }
       (Let|LetRef|LetAssign)[Variable=(UnamedVariable|UnamedVariableStar)[],AstInstruction=body] -> {
@@ -220,9 +221,6 @@ public class TomVerifier extends TomGenericPlugin {
       }
 
       CompiledPattern[AutomataInst=inst] -> {
-        return `inst;
-      }
-      CheckInstance[Instruction=inst] -> {
         return `inst;
       }
     }

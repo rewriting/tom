@@ -32,6 +32,4 @@
 %typeterm char {
   implement           { char }
   equals(t1,t2)       { (t1==t2) }
-  check_stamp(c)      {}
-  set_stamp(c)        { c }
 }

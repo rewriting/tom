@@ -167,9 +167,7 @@ public class Verifier extends TomBase {
     while (!instrlist.isEmptyconcInstruction()) {
       Instruction i = (Instruction) instrlist.getHeadconcInstruction();
       instrlist = instrlist.getTailconcInstruction();
-      if (!i.isCheckStamp()) {
-        list = `semicolon(list*,instrFromInstruction(i));
-      }
+      list = `semicolon(list*,instrFromInstruction(i));
     }
     return `sequence(list);
   }
@@ -203,7 +201,7 @@ public class Verifier extends TomBase {
       CompiledPattern[AutomataInst=instr] -> {
         return instrFromInstruction(`instr);
       }
-      AbstractBlock(concInstruction(CheckStamp[],instr)) -> {
+      AbstractBlock(concInstruction(instr)) -> {
         return instrFromInstruction(`instr);
       }
       AbstractBlock(concInstruction(instrlist*)) -> {

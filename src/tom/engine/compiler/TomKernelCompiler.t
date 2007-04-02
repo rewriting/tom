@@ -197,7 +197,6 @@ public class TomKernelCompiler extends TomBase {
     /*
      * collect match variables (from match(t1,...,tn))
      * create a list of declaration/assignment: v1=t1 ... vn=tn in body
-     * generate a check_stamp
      */
   private Instruction collectVariableFromSubjectList(SlotList subjectList, TomNumberList path, Instruction body, String moduleName) {
     %match(subjectList) { 
@@ -208,9 +207,9 @@ public class TomKernelCompiler extends TomBase {
         TomTerm variable = `Variable(option,PositionName(newPath),variableType,concConstraint());
         Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
           // the UnamedBlock encapsulation is needed for Caml
-        Instruction let = `Let(variable,source,AbstractBlock(concatInstruction(CheckStamp(variable),body)));
+        Instruction let = `Let(variable,source,body);
         // Check that the matched variable has the correct type
-        return `CheckInstance(variableType,TomTermToExpression(subjectVar),let);
+        return `If(IsSort(variableType,subjectVar),let,Nop());
       }
 
       concSlot(PairSlotAppl(slotName,subjectVar@(BuildTerm|FunctionCall|BuildConstant)[AstName=Name(tomName)]),tail*) -> {
@@ -226,8 +225,7 @@ public class TomKernelCompiler extends TomBase {
 	TomNumberList newPath = `concTomNumber(path*,NameNumber(slotName));
         TomTerm variable = `Variable(concOption(),PositionName(newPath),tomType, concConstraint());
         Expression source = `TomTermToExpression(subjectVar);
-        Instruction checkStamp = `CheckStamp(variable);
-        return `Let(variable,source,AbstractBlock(concatInstruction(checkStamp,body)));
+        return `Let(variable,source,body);
       }
     }
     throw new TomRuntimeException("collectVariableFromSubjectList: strange term: " + `subjectList);

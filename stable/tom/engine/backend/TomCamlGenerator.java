@@ -60,10 +60,6 @@ public class TomCamlGenerator extends TomImperativeGenerator {
    * the implementation of methods are here for caml 
    */
  
-  protected void buildCheckInstance(int deep, String typeName, TomType type, Expression exp, Instruction instruction, String moduleName) throws IOException {
-    generateInstruction(deep,instruction,moduleName);
-  }
-
   protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException {
     if(getSymbolTable(moduleName).isBooleanType(getTomType(type))) {
       output.write("(");
@@ -72,7 +68,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       generate(deep,exp2,moduleName);
       output.write(")");
     } else {
-      output.write("tom_terms_equal_" + getTomType(type) + "(");
+      output.write("tom_equal_term_" + getTomType(type) + "(");
       generate(deep,exp1,moduleName);
       output.write(", ");
       generate(deep,exp2,moduleName);
@@ -245,33 +241,6 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.writeln(deep,"done");
   }
 
-  protected void buildCheckStamp(int deep, TomType type, TomTerm variable, String moduleName) throws IOException {
-    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-      output.write("tom_check_stamp_" + getTomType(type) + "(");
-      generate(deep,variable,moduleName);
-      output.write(")");
-    } else {
-      output.write("(* checkstamp *) ()");
-    }
-  }
-/*
-  
-  protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var, String moduleName) throws IOException {
-    output.write("tom_get_head_" + getTomType(domain) + "(");
-    generate(deep,var,moduleName);
-    output.write(")");
-  }
-
-  
-  protected void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex, String moduleName) throws IOException {
-    output.write("tom_get_element_" + getTomType(domain) + "(");
-    generate(deep,varName,moduleName);
-    output.write(",");
-    generate(deep,varIndex,moduleName);
-    output.write(")");
-  }
-*/
-
   protected void genDecl(String returnType,
                          String declName,
                          String suffix,
@@ -352,7 +321,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 
     String tomType = getTomType(listType);
     String is_empty    = "tom_is_empty_" + name + "_" + tomType;
-    String term_equal  = "tom_terms_equal_" + tomType;
+    String equal_term  = "tom_equal_term_" + tomType;
     String make_insert = "tom_cons_list_" + name;
     String make_empty  = "tom_empty_list_" + name;
     String get_head    = "tom_get_head_" + name + "_" + tomType;
@@ -369,7 +338,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     s+= "\n";
     
     s+=  "let rec tom_get_slice_" + name + "(beginning, ending) =\n"; 
-    s+= "   if " + term_equal + "(beginning,ending) then " + make_empty + "()\n";
+    s+= "   if " + equal_term + "(beginning,ending) then " + make_empty + "()\n";
     s+= "   else " +  make_insert + "(" + get_head + "(beginning)," + 
       get_slice + "(" + get_tail + "(beginning),ending))\n";
     s+= "\n";

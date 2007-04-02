@@ -30,6 +30,7 @@
  **/
 %typeterm Strategy {
   implement { tom.library.strategy.mutraveler.MuStrategy }
+  is_sort(t) { t instanceof tom.library.strategy.mutraveler.MuStrategy }
   equals(t1,t2) {t1.equals(t2)}
   visitor_fwd { tom.library.strategy.mutraveler.reflective.StrategyVisitorFwd }
 }

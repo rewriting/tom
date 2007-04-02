@@ -23,6 +23,7 @@ public class TestBuiltin extends TestCase {
 
   %typeterm E {
     implement { ATerm }
+    is_sort(t) { t instanceof ATerm }
     equals(t1, t2)      { (t1.equals(t2)) }
   }
 

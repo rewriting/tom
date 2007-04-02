@@ -59,6 +59,7 @@ public class Mu extends AbstractStrategy {
 class MuStrategyTopDown {
   %typeterm MuStrategy {
     implement { tom.library.sl.Strategy }
+    is_sort(t) { t instanceof tom.library.sl.Strategy }
     equals(t1,t2) {t1.equals(t2)}
     visitor_fwd { tom.library.sl.reflective.StrategyFwd }
   }

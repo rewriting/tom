@@ -1649,7 +1649,7 @@ typeTerm returns [Declaration result] throws TomException
     TargetLanguage implement = null;
     TomForwardType tomFwdType = `EmptyForward();
     DeclarationList declarationList = `concDeclaration();
-		String s;
+    String s;
 }
     :   (
             type:ALL_ID
@@ -1659,15 +1659,11 @@ typeTerm returns [Declaration result] throws TomException
             LBRACE
 
             implement = keywordImplement
-            (    s = keywordVisitorFwd
-								{ tomFwdType = `TLForward(s); }
+            (   s = keywordVisitorFwd
+                { tomFwdType = `TLForward(s); }
             |   attribute = keywordEquals[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
             |   attribute = keywordIsSort[type.getText()]
-                { /* nothing */ }
-            |   attribute = keywordCheckStamp[type.getText()]
-                { declarationList = `concDeclaration(attribute,declarationList*); }
-            |   attribute = keywordSetStamp[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
             |   attribute = keywordGetImplementation[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
@@ -1733,7 +1729,7 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
                 
-                result = `TermsEqualDecl(
+                result = `EqualTermDecl(
                     Variable(option1,Name(name1.getText()),TomTypeAlone(type),concConstraint()),
                     Variable(option2,Name(name2.getText()),TomTypeAlone(type),concConstraint()),
                     Return(TargetLanguageToTomTerm(tlCode)), ot);
@@ -1748,16 +1744,23 @@ keywordIsSort[String type] returns [Declaration result] throws TomException
 }
     :
         (
-            t:IS_SORT LPAREN name:ALL_ID RPAREN
+            t:IS_SORT 
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
+            LPAREN name:ALL_ID RPAREN
             {
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
+                OptionList option = `concOption(info);
+                
                 selector().push("targetlexer");
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
-                result = null;
+                
+                result = `IsSortDecl(
+                    Variable(option,Name(name.getText()),TomTypeAlone(type),concConstraint()),
+                    Return(TargetLanguageToTomTerm(tlCode)), ot);
             }
         )
     ;
-
 
 keywordGetHead[TomName opname, String type] returns [Declaration result] throws TomException
 {
@@ -1910,50 +1913,6 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
 
             result = `IsFsymDecl(astName,
                 Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
-                Return(TargetLanguageToTomTerm(tlCode)),ot);
-        }
-    ;
-
-keywordCheckStamp [String typeString] returns [Declaration result] throws TomException
-{
-    result = null;
-    Option ot = null;
-}
-    :
-        t:CHECK_STAMP
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
-        LPAREN name:ALL_ID RPAREN
-        {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
-            OptionList option = `concOption(info);
-
-            selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
-            selector().pop();
-
-            result = `CheckStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
-                TargetLanguageToInstruction(tlCode),ot);
-        }
-    ;
-
-keywordSetStamp [String typeString] returns [Declaration result] throws TomException
-{
-    result = null;
-    Option ot = null;
-}
-    :
-        t:SET_STAMP
-        { ot = `OriginTracking(Name(t.getText()),t.getLine(),currentFile()); }
-        LPAREN name:ALL_ID RPAREN
-        {
-            Option info = `OriginTracking(Name(name.getText()),name.getLine(),currentFile());
-            OptionList option = `concOption(info);
-
-            selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
-            selector().pop();
-
-            result = `SetStampDecl(Variable(option,Name(name.getText()),TomTypeAlone(typeString),concConstraint()),
                 Return(TargetLanguageToTomTerm(tlCode)),ot);
         }
     ;
@@ -2191,8 +2150,6 @@ tokens {
     MAKE = "make";
     GET_SLOT = "get_slot";
     IS_FSYM = "is_fsym";
-    CHECK_STAMP = "check_stamp";
-    SET_STAMP = "set_stamp";
     GET_IMPLEMENTATION = "get_implementation";
     EQUALS = "equals";
     IS_SORT = "is_sort";
@@ -2201,7 +2158,6 @@ tokens {
     IS_EMPTY = "is_empty";
     IMPLEMENT = "implement";
     VISITOR_FWD = "visitor_fwd";
-    STAMP = "stamp";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
     WHEN = "when";

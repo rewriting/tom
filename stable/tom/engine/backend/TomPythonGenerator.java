@@ -65,14 +65,6 @@ public class TomPythonGenerator extends TomImperativeGenerator {
     generateExpression(deep,exp,moduleName);
   } 
 
-  protected void buildCheckStamp(int deep, TomType type, TomTerm variable, String moduleName) throws IOException {
-    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-      output.write("tom_check_stamp_" + getTomType(type) + "(");
-      generate(deep,variable,moduleName);
-      output.write(")");
-    }
-  }
-
   protected void buildComment(int deep, String text) throws IOException {
     //output.writeln("#" + text.replace("\n","\n#"));
   }
@@ -90,7 +82,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
       generate(deep,exp2,moduleName);
       output.write(")");
     } else {
-      output.write("tom_terms_equal_" + getTomType(type) + "(");
+      output.write("tom_equal_term_" + getTomType(type) + "(");
       generate(deep,exp1,moduleName);
       output.write(", ");
       generate(deep,exp2,moduleName);
@@ -234,7 +226,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     //}
     
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
-    String term_equal = "tom_terms_equal_" + tomType;
+    String equal_term = "tom_equal_term_" + tomType;
     String make_insert = "tom_cons_list_" + name;
     String make_empty = "tom_empty_list_" + name;
     String get_head = "tom_get_head_" + name + "_" + tomType;
@@ -253,7 +245,7 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     s+= "\n";
     
     s+= "def tom_get_slice_" + name + "(begin, end):\n"; 
-    s+= "   if " + term_equal + "(begin,end):\n";
+    s+= "   if " + equal_term + "(begin,end):\n";
     s+= "      return " +  make_empty + "()\n";
     s+= "   else:\n";
     s+= "      return " +  make_insert + "(" + get_head + "(begin)," + 
@@ -277,14 +269,11 @@ protected void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm ex
     while(!argList.isEmptyconcTomTerm()) {
       TomTerm arg = argList.getHeadconcTomTerm();
 matchBlock: {
-               if(arg instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tomMatch1Position1=(( tom.engine.adt.tomterm.types.TomTerm )arg); if ( ( tom_is_fun_sym_Variable(tomMatch1Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch1Position1NameNumberAstName=tom_get_slot_Variable_AstName(tomMatch1Position1); { tom.engine.adt.tomtype.types.TomType  tomMatch1Position1NameNumberAstType=tom_get_slot_Variable_AstType(tomMatch1Position1); if ( ( tom_is_fun_sym_Name(tomMatch1Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch1Position1NameNumberAstName); if ( ( tom_is_fun_sym_Type(tomMatch1Position1NameNumberAstType) ||  false  ) ) { { tom.engine.adt.tomtype.types.TomType  tomMatch1Position1NameNumberAstTypeNameNumberTlType=tom_get_slot_Type_TlType(tomMatch1Position1NameNumberAstType); { tom.engine.adt.tomtype.types.TomType  tom_tomType=tom_get_slot_Type_TomType(tomMatch1Position1NameNumberAstType); if ( ( tom_is_fun_sym_TLType(tomMatch1Position1NameNumberAstTypeNameNumberTlType) ||  false  ) ) { if ( true ) {
+               if(arg instanceof  tom.engine.adt.tomterm.types.TomTerm ) { { tom.engine.adt.tomterm.types.TomTerm  tomMatch1Position1=(( tom.engine.adt.tomterm.types.TomTerm )arg); if ( ( tom_is_fun_sym_Variable(tomMatch1Position1) ||  false  ) ) { { tom.engine.adt.tomname.types.TomName  tomMatch1Position1NameNumberAstName=tom_get_slot_Variable_AstName(tomMatch1Position1); { tom.engine.adt.tomtype.types.TomType  tomMatch1Position1NameNumberAstType=tom_get_slot_Variable_AstType(tomMatch1Position1); if ( ( tom_is_fun_sym_Name(tomMatch1Position1NameNumberAstName) ||  false  ) ) { { String  tom_name=tom_get_slot_Name_String(tomMatch1Position1NameNumberAstName); if ( ( tom_is_fun_sym_Type(tomMatch1Position1NameNumberAstType) ||  false  ) ) { { tom.engine.adt.tomtype.types.TomType  tomMatch1Position1NameNumberAstTypeNameNumberTlType=tom_get_slot_Type_TlType(tomMatch1Position1NameNumberAstType); if ( ( tom_is_fun_sym_TLType(tomMatch1Position1NameNumberAstTypeNameNumberTlType) ||  false  ) ) { if ( true ) {
 
                   s.append(tom_name);
-                  if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-                    check.append("tom_check_stamp_" + getTomType(tom_tomType) + "(" + tom_name+ ");\n");
-                  }
                   break matchBlock;
-                 } } } } } } } } } } if ( true ) {
+                 } } } } } } } } } if ( true ) {
 
 
                   System.out.println("genDeclMake: strange term: " + arg);
@@ -302,24 +291,7 @@ matchBlock: {
 
     output.write(s);
     output.write("return ");
-    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-      output.write("tom_set_stamp_" + getTomType(returnType) + "(");
-      generateInstruction(0,instr,moduleName);
-      output.write(")");
-    } else {
-      generateInstruction(0,instr,moduleName);
-    }
-  }
-
-  protected void buildCheckInstance(int deep, String typeName, TomType tlType, Expression exp, Instruction instruction, String moduleName) throws IOException {
-    if(getSymbolTable(moduleName).isBuiltinType(typeName)) {
-      generateInstruction(deep,instruction,moduleName);
-    } else {
-      output.write(deep,"if isinstance(");
-      generateExpression(deep,exp,moduleName);
-      output.writeln(getTLCode(tlType) + "):\n");
-      generateInstruction(deep+1,instruction,moduleName);
-    }
+    generateInstruction(0,instr,moduleName);
   }
 
   // FIXME

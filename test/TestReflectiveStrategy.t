@@ -264,6 +264,7 @@ public class TestReflectiveStrategy extends TestCase {
   private static  class Counter { public int count = 0; }
   %typeterm Counter {
     implement { Counter }
+    is_sort(t) { t instanceof Counter }
   }
   public int countAll(MuStrategy s) {
     Counter c = new Counter();

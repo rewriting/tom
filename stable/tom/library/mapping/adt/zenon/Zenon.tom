@@ -5,6 +5,7 @@
 
 %typeterm ZTermList {
   implement { tom.engine.adt.zenon.types.ZTermList }
+ is_sort(t) { t instanceof tom.engine.adt.zenon.types.ZTermList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
@@ -12,6 +13,7 @@
 
 %typeterm ZType {
   implement { tom.engine.adt.zenon.types.ZType }
+ is_sort(t) { t instanceof tom.engine.adt.zenon.types.ZType}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
@@ -19,6 +21,7 @@
 
 %typeterm ZTerm {
   implement { tom.engine.adt.zenon.types.ZTerm }
+ is_sort(t) { t instanceof tom.engine.adt.zenon.types.ZTerm}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
@@ -26,6 +29,7 @@
 
 %typeterm ZAxiom {
   implement { tom.engine.adt.zenon.types.ZAxiom }
+ is_sort(t) { t instanceof tom.engine.adt.zenon.types.ZAxiom}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
@@ -33,6 +37,7 @@
 
 %typeterm ZSpec {
   implement { tom.engine.adt.zenon.types.ZSpec }
+ is_sort(t) { t instanceof tom.engine.adt.zenon.types.ZSpec}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
@@ -40,6 +45,7 @@
 
 %typeterm ZSymbol {
   implement { tom.engine.adt.zenon.types.ZSymbol }
+ is_sort(t) { t instanceof tom.engine.adt.zenon.types.ZSymbol}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
@@ -47,6 +53,7 @@
 
 %typeterm ZExpr {
   implement { tom.engine.adt.zenon.types.ZExpr }
+ is_sort(t) { t instanceof tom.engine.adt.zenon.types.ZExpr}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }
@@ -54,6 +61,7 @@
 
 %typeterm ZAxiomList {
   implement { tom.engine.adt.zenon.types.ZAxiomList }
+ is_sort(t) { t instanceof tom.engine.adt.zenon.types.ZAxiomList}
   equals(t1,t2) { t1.equals(t2) }
   visitor_fwd { tom.engine.adt.zenon.ZenonBasicStrategy }
 }

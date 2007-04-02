@@ -222,7 +222,7 @@ public class TomSyntaxChecker extends TomChecker {
         matchblock:{
           %match(Declaration decl) {
             // Common Macro functions
-            TermsEqualDecl(Variable[AstName=Name(name1)],Variable[AstName=Name(name2)],_, orgTrack) -> {
+            EqualTermDecl(Variable[AstName=Name(name1)],Variable[AstName=Name(name2)],_, orgTrack) -> {
               `checkFieldAndLinearArgs(TomSyntaxChecker.EQUALS,verifyList,orgTrack,name1,name2, declType);
               break matchblock;
             }

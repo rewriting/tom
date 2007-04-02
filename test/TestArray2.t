@@ -10,6 +10,7 @@ public class TestArray2 extends TestCase {
 
   %typeterm jtList {
     implement { List }
+    is_sort(t) { t instanceof List }
     equals(l1,l2) { l1.equals(l2) }
   }
 
@@ -28,6 +29,7 @@ public class TestArray2 extends TestCase {
 
   %typeterm jtElement {
     implement           { Element }
+    is_sort(t) { t instanceof Element }
     equals(t1,t2)       { t1.equals(t2) }
   }
 

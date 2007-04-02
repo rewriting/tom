@@ -66,6 +66,7 @@ public class TestList2 extends GenericTest {
 
   %typeterm L {
     implement { ATermList }
+    is_sort(t) { t instanceof ATermList }
     equals(l1,l2)  { l1.equals(l2) }
   }
 
@@ -80,6 +81,7 @@ public class TestList2 extends GenericTest {
 
   %typeterm E {
     implement { ATerm }
+    is_sort(t) { t instanceof ATerm }
     equals(t1, t2) { (t1.equals(t2)) }
   }
 

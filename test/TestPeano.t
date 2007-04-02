@@ -11,11 +11,13 @@ public class TestPeano extends TestCase {
 
   %typeterm term {
     implement { ATerm }
+    is_sort(t) { t instanceof ATerm }
     equals(t1, t2)      { t1 == t2}
   }
 
   %typeterm appl {
     implement { ATermAppl }
+    is_sort(t) { t instanceof ATermAppl }
     equals(t1, t2)      { t1 == t2}
   }
 

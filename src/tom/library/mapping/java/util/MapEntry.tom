@@ -45,8 +45,6 @@ static class MapEntry {
 %typeterm MapEntry {
   implement      { MapEntry }
   equals(e1,e2)  { e1.equals(e2) }
-  check_stamp(l) {}
-  set_stamp(l)   { l }
 }
 
 %include { types/Object.tom }

@@ -1,3 +1,7 @@
+2007-04-02  pem
+  * removed check_stamp
+	* add is_sort(t) in the mapping
+
 2007-03-19  tonio <reilles@loria.fr>
   * bootinstall
 
