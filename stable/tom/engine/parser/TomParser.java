@@ -3095,7 +3095,7 @@ inputState.guessing--;
 					
 				}
 				{
-				_loop185:
+				_loop187:
 				do {
 					if ((LA(1)==COMMA)) {
 						match(COMMA);
@@ -3121,7 +3121,7 @@ inputState.guessing--;
 						}
 					}
 					else {
-						break _loop185;
+						break _loop187;
 					}
 					
 				} while (true);
@@ -3903,6 +3903,14 @@ inputState.guessing--;
 				}
 				break;
 			}
+			case IS_SORT:
+			{
+				attribute=keywordIsSort(type.getText());
+				if ( inputState.guessing==0 ) {
+					/* nothing */
+				}
+				break;
+			}
 			case CHECK_STAMP:
 			{
 				attribute=keywordCheckStamp(type.getText());
@@ -4030,6 +4038,37 @@ inputState.guessing--;
 			
 			
 			;
+			
+		}
+		}
+		return result;
+	}
+	
+	public final Declaration  keywordIsSort(
+		String type
+	) throws RecognitionException, TokenStreamException, TomException {
+		Declaration result;
+		
+		Token  t = null;
+		Token  name = null;
+		
+		result = null;
+		Option ot = null;
+		
+		
+		{
+		t = LT(1);
+		match(IS_SORT);
+		match(LPAREN);
+		name = LT(1);
+		match(ALL_ID);
+		match(RPAREN);
+		if ( inputState.guessing==0 ) {
+			
+			selector().push("targetlexer");
+			TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+			selector().pop();  
+			result = null;
 			
 		}
 		}
@@ -4192,6 +4231,7 @@ inputState.guessing--;
 		"\"implement\"",
 		"\"visitor_fwd\"",
 		"\"equals\"",
+		"\"is_sort\"",
 		"\"get_head\"",
 		"\"get_tail\"",
 		"\"is_empty\"",
