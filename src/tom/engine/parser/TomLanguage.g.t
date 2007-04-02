@@ -1663,6 +1663,8 @@ typeTerm returns [Declaration result] throws TomException
 								{ tomFwdType = `TLForward(s); }
             |   attribute = keywordEquals[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
+            |   attribute = keywordIsSort[type.getText()]
+                { /* nothing */ }
             |   attribute = keywordCheckStamp[type.getText()]
                 { declarationList = `concDeclaration(attribute,declarationList*); }
             |   attribute = keywordSetStamp[type.getText()]
@@ -1738,6 +1740,25 @@ keywordEquals[String type] returns [Declaration result] throws TomException
             }
         )
     ;
+
+keywordIsSort[String type] returns [Declaration result] throws TomException
+{
+    result = null;
+    Option ot = null;
+}
+    :
+        (
+            t:IS_SORT LPAREN name:ALL_ID RPAREN
+            {
+                selector().push("targetlexer");
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+                selector().pop();  
+                result = null;
+            }
+        )
+    ;
+
+
 keywordGetHead[TomName opname, String type] returns [Declaration result] throws TomException
 {
     result = null;
@@ -2174,6 +2195,7 @@ tokens {
     SET_STAMP = "set_stamp";
     GET_IMPLEMENTATION = "get_implementation";
     EQUALS = "equals";
+    IS_SORT = "is_sort";
     GET_HEAD = "get_head";
     GET_TAIL = "get_tail";
     IS_EMPTY = "is_empty";
