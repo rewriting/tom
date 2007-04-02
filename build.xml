@@ -232,7 +232,7 @@
   <target name="-withsrc" if="withsource">
     <presetdef name="tomcompile">
       <tomsrc config="${src.configfile}">
-        <classpath refid="tom.classpath"/>
+        <classpath refid="tomsrc.classpath"/>
       </tomsrc>
     </presetdef>
     <presetdef name="gomcompile">
@@ -240,7 +240,7 @@
     </presetdef>
     <presetdef name="antlrmappercompile">
       <antlrmappersrc>
-        <classpath refid="tom.classpath"/>
+        <classpath refid="tomsrc.classpath"/>
       </antlrmappersrc>
     </presetdef>
   </target>
