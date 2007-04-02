@@ -48,4 +48,6 @@ public interface Path {
   
   public Path conc(int i);
 
+  public int compare(Path path);
+
 }

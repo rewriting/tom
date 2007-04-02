@@ -8,13 +8,15 @@
  * Thus, we can retrieve the `ConsInstructionList' from a `Label'.
  * @param m the map to be filled.
  */
+
 %strategy BuildLabelMap(m:Map) extends Identity() {
   visit TInstructionList {
     c@ConsInstructionList(Anchor(l), _) -> {
-      m.put(`l, `c);
+      m.put(`l, getPosition());
     }
   }
 }
+
 
 /**
  * `AllCfg' stands for AllControlFlowGraph.
@@ -26,38 +28,55 @@
  * @param s the strategy to be applied on each child.
  * @param m the label map (see the BuildLabelMap strategy).
  */
-%strategy AllCfg(s:Strategy, m:Map) extends Identity() {
+
+%strategy AllCfg(s:Strategy, m:Map, root:TInstructionList) extends Identity() {
   visit TInstructionList {
+
     c@ConsInstructionList(ins, t) -> {
       TInstruction ins = `ins;
       %match(TInstruction ins) {
         Goto(l) -> {
-          s.visit((TInstructionList)m.get(`l));
-          return `c;
+          tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`l));
+          final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
+          root = (TInstructionList) p.getReplace(t).visit(root);
+          return  (TInstructionList) s.visit(getPosition().getSubterm().visit(root));
         }
 
         (Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
          If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
          If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l) -> {
-          s.visit((TInstructionList)m.get(`l));
-        }
+           tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`l));
+           final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
+           root = (TInstructionList) p.getReplace(t).visit(root);
+         }
 
         (Tableswitch|Lookupswitch)[dflt=dflt, labels=labels] -> {
           TLabelList labelList = `labels;
           %match(TLabelList labelList) {
             LabelList(_*, x, _*) -> {
-              s.visit((TInstructionList)m.get(`x));
+              tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`x));
+              final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
+              root = (TInstructionList) p.getReplace(t).visit(root);
             }
           }
-          s.visit((TInstructionList)m.get(`dflt));
-          return `c;
+          tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`dflt));
+          final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
+          root = (TInstructionList) p.getReplace(t).visit(root);
+          return  (TInstructionList) s.visit(getPosition().getSubterm().visit(root));
         }
 
         // Visit the next instruction.
-        _ -> { s.visit(`t); }
+        _ -> {
+          tom.library.strategy.mutraveler.Position p = getPosition();
+          p.down(2);
+          root = (TInstructionList) p.getReplace(s.visit(`t)).visit(root); 
+          p.up();
+          return  (TInstructionList) p.getSubterm().visit(root);
+        }
       }
     }
   }
+
 }
 
 /**
@@ -113,8 +132,9 @@
  * @param s1 the first strategy.
  * @param s2 the second strategy.
  * @param m the label map (see the BuildLabelMap strategy).
+ * @param t the complete list of instructions
  */
-%op Strategy AUMap(s1:Strategy, s2:Strategy, m:Map) {
-  make(s1,s2,m) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"),m)))) }
+%op Strategy AUMap(s1:Strategy, s2:Strategy, m:Map, t:TInstructionList) {
+  make(s1,s2,m,t) { `mu(MuVar("x"),Choice(s2,Sequence(s1,AllCfg(MuVar("x"),m,t)))) }
 }
 

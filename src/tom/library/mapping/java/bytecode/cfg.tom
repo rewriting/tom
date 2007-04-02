@@ -36,7 +36,7 @@
       TInstruction ins = `ins;
       %match(TInstruction ins) {
         Goto(l) -> {
-          Position p = (Position) (m.get(`l));
+          tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`l));
           final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
           root = (TInstructionList) p.getReplace(t).visit(root);
           return  (TInstructionList) s.visit(getPosition().getSubterm().visit(root));
@@ -45,7 +45,7 @@
         (Ifeq|Ifne|Iflt|Ifge|Ifgt|Ifle|
          If_icmpeq|If_icmpne|If_icmplt|If_icmpge|If_icmpgt|If_icmple|
          If_acmpeq|If_acmpne|Jsr|Ifnull|Ifnonnull)(l) -> {
-           Position p = (Position) (m.get(`l));
+           tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`l));
            final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
            root = (TInstructionList) p.getReplace(t).visit(root);
          }
@@ -54,12 +54,12 @@
           TLabelList labelList = `labels;
           %match(TLabelList labelList) {
             LabelList(_*, x, _*) -> {
-              Position p = (Position) (m.get(`x));
+              tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`x));
               final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
               root = (TInstructionList) p.getReplace(t).visit(root);
             }
           }
-          Position p = (Position) (m.get(`dflt));
+          tom.library.strategy.mutraveler.Position p = (tom.library.strategy.mutraveler.Position) (m.get(`dflt));
           final TInstructionList t = (TInstructionList) s.visit(p.getSubterm().visit(root));
           root = (TInstructionList) p.getReplace(t).visit(root);
           return  (TInstructionList) s.visit(getPosition().getSubterm().visit(root));
@@ -67,7 +67,7 @@
 
         // Visit the next instruction.
         _ -> {
-          Position p = getPosition();
+          tom.library.strategy.mutraveler.Position p = getPosition();
           p.down(2);
           root = (TInstructionList) p.getReplace(s.visit(`t)).visit(root); 
           p.up();

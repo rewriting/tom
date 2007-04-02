@@ -240,40 +240,22 @@ public class Environment implements Cloneable {
   }
 
 
-  public void goTo(Position pos) {
-    int[] omega= pos.toArray();
-    int pos_back = depth();
-    for(int i=0;i<pos_back;i++) {
-      up();
-    }
-    for(int i=0;i<omega.length-1;i++) {
-      down(omega[i]);
-      if (getSubject() instanceof Reference) {
-        goTo((Reference)getSubject());
+  public void goTo(Path path) {
+    Path normalizedPath = path.normalize();
+    int length = normalizedPath.length();
+    for(int i=0;i<length;i++) {
+      int head = normalizedPath.getHead();
+      normalizedPath = normalizedPath.getTail();
+      if(head>0){
+        down(head);
+        if (getSubject() instanceof Path && !(normalizedPath.length()==0)) {
+          // we do not want to follow the last reference
+          goTo((Path)getSubject());
+        }
+      } else {
+        //verify that getsubomega() = -head
+        up();
       }
-    }
-    // we do not want to follow the last reference
-    if(omega.length>0) {
-      down(omega[omega.length-1]);
-    }
-  }
-
-  public void goTo(Reference ref) {
-    int[] pos = ref.toArray();
-    int pos_back = pos[0];
-    int pos_length = pos.length;
-    for(int i=0;i<pos_back;i++) {
-      up();
-    }
-    for(int i=1;i<pos_length-1;i++) {
-      down(pos[i]);
-      if (getSubject() instanceof Reference) {
-        goTo((Reference)getSubject());
-      }
-    }
-    // we do not want to follow the last reference
-    if(omega.length>0) {
-      down(pos[pos_length-1]);
     }
   }
 

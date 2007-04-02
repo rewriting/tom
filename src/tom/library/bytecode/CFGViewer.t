@@ -347,7 +347,8 @@ public class CFGViewer {
                       Assign(insWrapper),
                       AllCfg(
                         PrintDotLink(w, insWrapper),
-                        labelMap)))));
+                        labelMap,
+                        ins)))));
 
             toDot.apply(ins);
 

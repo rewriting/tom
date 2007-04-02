@@ -489,10 +489,10 @@ writer.write("\n    a -= b;\n    a -= c;\n    a ^= (c >> 13);\n    b -= c;\n    
   }
   private int nonBuiltinChildCount() {
     int count = 0;
-    //in case of reference, conspos are considered as constants
-    //to avoid traversal inside a position
+    //in case of reference, paths are considered as constants
+    //to avoid traversal inside a path
     //TODO: in the future Gom replace this code by a hook
-    if(className().equals("Conspos"+sortName.getName())) return count;
+    if(className().equals("Conspath"+sortName.getName())) return count;
      if(slotList instanceof  tom.gom.adt.objects.types.SlotFieldList ) { { tom.gom.adt.objects.types.SlotFieldList  tomMatch9Position1=(( tom.gom.adt.objects.types.SlotFieldList )slotList); if ( ( tom_is_fun_sym_concSlotField(tomMatch9Position1) ||  false  ) ) { {int tomMatch9Position1Index1=0; { tom.gom.adt.objects.types.SlotFieldList  tomMatch9Position1List1=tomMatch9Position1; { tom.gom.adt.objects.types.SlotFieldList  tomMatch9Position1Begin1=tomMatch9Position1List1; { tom.gom.adt.objects.types.SlotFieldList  tomMatch9Position1End1=tomMatch9Position1List1; { while (!(tom_is_empty_concSlotField_SlotFieldList(tomMatch9Position1End1))) {tomMatch9Position1List1=tomMatch9Position1End1; { { tom.gom.adt.objects.types.SlotFieldList  tomMatch9Position1Save2=tomMatch9Position1List1; { { tom.gom.adt.objects.types.SlotField  tomMatch9Position1Position2=tom_get_head_concSlotField_SlotFieldList(tomMatch9Position1List1);tomMatch9Position1Index1=tomMatch9Position1Index1 + 1;tomMatch9Position1List1=tom_get_tail_concSlotField_SlotFieldList(tomMatch9Position1List1); if ( ( tom_is_fun_sym_SlotField(tomMatch9Position1Position2) ||  false  ) ) { { tom.gom.adt.objects.types.ClassName  tom_domain=tom_get_slot_SlotField_Domain(tomMatch9Position1Position2); if ( true ) {
 
         if (!GomEnvironment.getInstance().isBuiltinClass(tom_domain)) {
