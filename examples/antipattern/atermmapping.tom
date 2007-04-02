@@ -27,10 +27,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**********
- - ne pas matcher les afun mais directement des strings ? (sûrement non)
+ - ne pas matcher les afun mais directement des strings ? (sÃ»rement non)
 
  cf code : 
-  - comment gérer les exception ? (on peut pas pour l'instant)
+  - comment gÃ©rer les exception ? (on peut pas pour l'instant)
 
 ************/
 
@@ -41,16 +41,19 @@
 
   %typeterm ATerm {
     implement { ATerm }
+    is_sort(t) { t instanceof ATerm }
     equals(t1, t2) { t1 == t2}
   }
     
   %typeterm ATermList {
     implement { ATermList }
+    is_sort(t) { t instanceof ATermList }
     equals(t1, t2) { t1 == t2}
   }
   
   %typeterm AFun {
     implement { AFun }
+    is_sort(t) { t instanceof AFun }
     equals(t1, t2) { t1 == t2 }
   }
 
@@ -89,9 +92,9 @@
     /** ATermInt  **/
 
     %op ATerm ATermInt(val: int) {
-	is_fsym(t) { t instanceof ATermInt }
-	make(i) { aterm.pure.SingletonFactory.getInstance().makeInt(i) }
-	get_slot(val, t) { ((ATermInt)t).getInt() }
+      is_fsym(t) { t instanceof ATermInt }
+      make(i) { aterm.pure.SingletonFactory.getInstance().makeInt(i) }
+      get_slot(val, t) { ((ATermInt)t).getInt() }
     }
 
     /** ATermFun **/

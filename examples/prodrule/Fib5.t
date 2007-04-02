@@ -43,6 +43,7 @@ public class Fib5 {
     
   %typeterm Space {
     implement { MyList }
+    is_sort(t) { t instanceof MyList }
     equals(l1,l2)      { l1.equals(l2) }
   }
 

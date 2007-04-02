@@ -62,16 +62,19 @@ public final class Gasel1 {
 
   %typeterm Radical {
     implement { Object }
+    is_sort(t) { t instanceof Object }
     equals(t1,t2) { t1.equals(t2) } 
   }
  
   %typeterm LinkRadicalList {
     implement { List }
+    is_sort(t) { t instanceof List }
     equals(t1,t2) { t1.equals(t2) } 
   }
 
   %typeterm LinkRadical {
     implement { LinkRadical }
+    is_sort(t) { t instanceof LinkRadical }
     equals(t1,t2) { t1.equals(t2) } 
   }
  

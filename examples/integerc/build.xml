@@ -18,7 +18,6 @@
     -->
     <tom.preset srcdir="${examples.dir}"
 	        destdir="${examples.gen}/${integerc}"         
-                stamp="off" 
                 options="--cCode -I ${tom.home}/share/jtom">
       <include name="${integerc}/**/*.t"/>
     </tom.preset>

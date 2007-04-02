@@ -44,6 +44,7 @@ public class Fib3 {
 
   %typeterm Space {
     implement { ArrayList }
+    is_sort(t) { t instanceof ArrayList }
     equals(l1,l2)      { l1.equals(l2) }
   }
 

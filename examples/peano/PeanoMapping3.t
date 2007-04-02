@@ -35,12 +35,10 @@ import aterm.pure.*;
 
 public class PeanoMapping3 {
   static ATerm stamp = SingletonFactory.getInstance().makeList();
-  static ATerm tomstamp = SingletonFactory.getInstance().makeList();
 
   %typeterm term {
     implement           { ATermAppl }
-    check_stamp(t)      { if(t.getAnnotation(stamp) == tomstamp) return; else throw new RuntimeException("truand") }
-    set_stamp(t)        { (ATermAppl)t.setAnnotation(stamp,tomstamp)  }
+    is_sort(t)           { t instanceof ATermAppl }
     get_implementation(t) { t }
   }
 

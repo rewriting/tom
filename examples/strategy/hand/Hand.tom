@@ -38,12 +38,14 @@
 
 %typeterm Term {
   implement { strategy.hand.Term }
+  is_sort(t) { t instanceof strategy.hand.Term }
   visitor_fwd { strategy.hand.BasicStrategy}
   equals(t1,t2) {t1.equals(t2)}
 }
 
 %typeterm Slot {
   implement { strategy.hand.Slot }
+  is_sort(t) { t instanceof strategy.hand.Slot }
   visitor_fwd { strategy.hand.BasicStrategy}
   equals(t1,t2) {t1.equals(t2)}
 }

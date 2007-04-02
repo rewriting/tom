@@ -43,6 +43,7 @@ public class Person1 {
   %include { string.tom }
   %typeterm Person {
     implement { Person }
+    is_sort(t) { t instanceof Person }
   }
 
   %op Person person(firstname:String, lastname:String) {

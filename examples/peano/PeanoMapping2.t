@@ -40,6 +40,7 @@ public class PeanoMapping2 {
 
   %typeterm term {
     implement { ATerm }
+    is_sort(t) { t instanceof ATerm }
   }
 
   %op term zero() {

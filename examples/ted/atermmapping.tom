@@ -33,16 +33,19 @@
 
 %typeterm ATerm {
   implement { ATerm }
+  is_sort(t) { t instanceof ATerm }
   equals(t1, t2) { t1 == t2}
 }
 
 %typeterm ATermList {
   implement { ATermList }
+  is_sort(t) { t instanceof ATermList }
   equals(t1, t2) { t1 == t2}
 }
 
 %typeterm AFun {
   implement { AFun }
+  is_sort(t) { t instanceof AFun }
   equals(t1, t2) { t1 == t2 }
 }
 

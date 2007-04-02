@@ -36,6 +36,7 @@ public class RecordStrict {
   
   %typeterm Exp {
     implement { Exp }
+    is_sort(t) { t instanceof Exp }
     equals(t1,t2) {t1.equals(t2)}
   }
 

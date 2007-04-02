@@ -38,6 +38,7 @@ public class AtList {
   %include{ int.tom }
   %typeterm List {
     implement { aterm.ATermList }
+    is_sort(t) { t instanceof aterm.ATermList }
     equals(l1,l2)  { l1.equals(l2) }
   }
   %oplist List conc( int* ) {

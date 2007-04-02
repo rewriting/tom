@@ -74,6 +74,7 @@ class GraphicalObserver implements DebugStrategyObserver {
 
   %typeterm Visitable {
     implement { jjtraveler.Visitable }
+    is_sort(t) { t instanceof jjtraveler.Visitable }
     visitor_fwd { VisitableVisitorFwd }
   }
 

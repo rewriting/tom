@@ -53,6 +53,7 @@ public class TestCarre extends TestCase {
 
   %typeterm Carre {
     implement { gom.Carre }
+    is_sort(t) { t instanceof gom.Carre }
     equals(t1,t2) { t1.equals(t2) }
     visitor_fwd { CarreBasicStrategy }
   }

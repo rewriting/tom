@@ -37,6 +37,7 @@ public class Peano1 {
 
   %typeterm Nat {
     implement { ATermAppl }
+    is_sort(t) { t instanceof ATermAppl }
   }
 
   %op Nat zero() {

@@ -37,6 +37,7 @@ public class List1 {
 
   %typeterm TomList {
     implement { ATermList }
+    is_sort(t) { t instanceof ATermList }
     equals(l1,l2) { l1==l2 }
   }
 
@@ -51,6 +52,7 @@ public class List1 {
   
   %typeterm TomTerm {
     implement { ATermAppl }
+    is_sort(t) { t instanceof ATermAppl }
     equals(t1, t2)     { t1==t2 }
   }
 

@@ -73,11 +73,13 @@ public final class Gasel2 {
 
   %typeterm StateList {
     implement { List }
+    is_sort(t) { t instanceof List }
     equals(t1,t2) { t1.equals(t2) } 
   }
 
   %typeterm State {
     implement { State }
+    is_sort(t) { t instanceof State }
     equals(t1,t2) { t1.equals(t2) } 
   }
 

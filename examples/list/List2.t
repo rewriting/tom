@@ -38,6 +38,7 @@ public class List2 {
 
   %typeterm TomList {
     implement { ArrayList }
+    is_sort(t) { t instanceof ArrayList }
     equals(l1,l2)      { l1.equals(l2) }
   }
 
@@ -61,6 +62,7 @@ public class List2 {
   
   %typeterm TomTerm {
     implement { ATermAppl }
+    is_sort(t) { t instanceof ATermAppl }
     equals(t1, t2)     { t1==t2 }
   }
 

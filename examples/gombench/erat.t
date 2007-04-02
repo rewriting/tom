@@ -39,6 +39,7 @@ ATermList elim(ATermList l);
 %include{ int.tom }
 %typeterm List {
 	implement      { ATermList }
+	is_sort(t)      { 0==0 }
 	equals(l1,l2)  { l1 == l2 }
 }
 %oplist List conc( int* ) {

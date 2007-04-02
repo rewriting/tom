@@ -39,6 +39,7 @@ public class BenchCons {
 
   %typeterm TomList {
     implement { ATermAppl }
+    is_sort(t) { t instanceof ATermAppl }
     equals(l1,l2) { l1==l2 }
   }
 

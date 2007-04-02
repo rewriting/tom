@@ -36,21 +36,25 @@ public class Record {
 
   %typeterm Exp {
     implement { Exp }
+    is_sort(t) { t instanceof Exp }
     equals(t1,t2) {t1.equals(t2)}
   }
 
   %typeterm BinaryOperator {
     implement { BinaryOperator }
+    is_sort(t) { t instanceof BinaryOperator }
     equals(t1,t2) {t1.equals(t2)}
   }
 
   %typeterm UnaryOperator {
     implement { UnaryOperator }
+    is_sort(t) { t instanceof UnaryOperator }
     equals(t1,t2) {t1.equals(t2)}
   }
 
   %typeterm CstExp {
     implement { CstExp }
+    is_sort(t) { t instanceof CstExp }
     equals(t1,t2) {t1.equals(t2)}
   }
 

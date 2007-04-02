@@ -40,6 +40,7 @@ public class Strat {
 
   %typeterm TomList {
     implement { List }
+    is_sort(t) { t instanceof List }
     equals(l1,l2) { l1==l2 }
   }
 

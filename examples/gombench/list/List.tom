@@ -34,6 +34,7 @@
 
 %typeterm List {
   implement { gombench.list.List }
+  is_sort(t) { t instanceof gombench.list.List }
   equals(t1,t2) {t1.equals(t2)}
 }
 

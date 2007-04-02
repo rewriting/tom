@@ -14,7 +14,6 @@
     </tom.preset>
     <tom.preset srcdir="${examples.dir}"
 	        destdir="${examples.gen}/gombench"         
-                stamp="off" 
                 options="--cCode -I ${tom.home}/share/jtom">
       <include name="gombench/**/erat.t"/>
     </tom.preset>
