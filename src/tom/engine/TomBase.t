@@ -43,6 +43,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.theory.types.*;
 
 import tom.engine.exception.TomRuntimeException;
 
@@ -357,6 +358,13 @@ public class TomBase {
       concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
     }
     return null;
+  }
+
+  protected static Theory getTheory(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,MatchingTheory(theory),_*) -> { return `theory; }
+    }
+    return `concElementaryTheory(Syntactic());
   }
 
   protected static Declaration getIsFsymDecl(OptionList optionList) {

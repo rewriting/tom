@@ -45,6 +45,7 @@ import tom.engine.adt.tomsignature.types.*;
 import tom.engine.adt.tomterm.types.*;
 import tom.engine.adt.tomslot.types.*;
 import tom.engine.adt.tomtype.types.*;
+import tom.engine.adt.theory.types.*;
 
 import tom.engine.tools.SymbolTable;
 import tom.engine.tools.ASTFactory;
@@ -288,7 +289,7 @@ public class TomKernelCompiler extends TomBase {
 	Instruction subAction = genSyntacticMatchingAutomata(action,elseAction,`termTail,rootpath,moduleName,subject);       
 
 	Expression source = null;
-	if(subject !=null ) {
+	if(subject !=null) {
 	  source = `TomTermToExpression(subject);        	
 	} else {
 	  TomNumberList path  = `concTomNumber(rootpath*,NameNumber(slotName));
@@ -318,8 +319,8 @@ public class TomKernelCompiler extends TomBase {
       }                                                                                    
       // (f|g)[...]
       concSlot(PairSlotAppl(slotName,
-	    currentTerm@RecordAppl[NameList=nameList@(headName,_*),
-	    Slots=termArgs]),termTail*) -> {
+	    currentTerm@RecordAppl[Option=optionList, NameList=nameList@(headName,_*), Slots=termArgs]),
+          termTail*) -> {
 	// handle the case when the head symbol has a negation
 	String tomName = null;
 	if(`(headName) instanceof AntiName) {
@@ -366,7 +367,7 @@ public class TomKernelCompiler extends TomBase {
 	  TomTerm newVariableListAST = `VariableStar(concOption(),PositionName(newPathList),codomain,concConstraint());
 	  TomTerm newVariableIndexAST = `Variable(concOption(),PositionName(newPathIndex),getSymbolTable(moduleName).getIntType(),concConstraint());
 	  boolean ensureNotEmptyList = true;
-	  MatchingParameter p = new MatchingParameter(tomSymbol,path, constraintAutomata,elseAction, newVariableListAST, newVariableIndexAST);
+	  MatchingParameter p = new MatchingParameter(tomSymbol,path,constraintAutomata,elseAction,newVariableListAST,newVariableIndexAST,`optionList);
 	  Instruction automata = (isListOperator(tomSymbol))?
 	    // case: list operator
 	    genListMatchingAutomata(p,`termArgs, indexSubterm, ensureNotEmptyList, moduleName):
@@ -387,7 +388,11 @@ public class TomKernelCompiler extends TomBase {
 	  }
 	}
 	// generate is_fsym(t,f) || is_fsym(t,g)
-	Expression cond = `expandDisjunction(EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm),moduleName);
+        Theory theory = `concElementaryTheory(Syntactic());
+        %match(optionList) {
+          concOption(_*,MatchingTheory(th),_*) -> { theory = `th; }
+        }
+	Expression cond = `expandDisjunction(EqualFunctionSymbol(theory,codomain,subjectVariableAST,currentTerm),moduleName);
 	return `If(cond,automataInstruction,elseAction);
       }
     } // end match
@@ -472,7 +477,8 @@ public class TomKernelCompiler extends TomBase {
 
           Expression source = `GetSliceList(p.symbol.getAstName(),variableBeginAST,Ref(variableEndAST));
           Instruction let = buildLet(`var, source, p.path, subAction, p.elseAction, moduleName);
-          Instruction tailExp = `Assign(variableEndAST,genGetTail(p.symbol,Ref(variableEndAST)));
+          Theory theory = getTheory(p.optionList);
+          Instruction tailExp = `Assign(variableEndAST,genGetTail(theory,p.symbol,Ref(variableEndAST)));
           Instruction loop;
           if(containOnlyVariableStar(`termTail)) {
               /*
@@ -569,11 +575,11 @@ public class TomKernelCompiler extends TomBase {
        * subjectList = save_i;
        */
 
-    Instruction body = `LetAssign(p.subjectListName,genGetTail(p.symbol,Ref(p.subjectListName)),subAction);
+    Theory theory = getTheory(p.optionList);
+    Instruction body = `LetAssign(p.subjectListName,genGetTail(theory,p.symbol,Ref(p.subjectListName)),subAction);
     // compute the index position 
     body = `LetAssign(p.subjectListIndex,AddOne(Ref(p.subjectListIndex)),body);
-
-    Expression source = genGetHead(p.symbol,termType,`Ref(p.subjectListName));
+    Expression source = genGetHead(theory,p.symbol,termType,`Ref(p.subjectListName));
     Instruction let = buildLet(var, source, p.path, body, `Nop(), moduleName);
     if(notEmptyList) {
       let = `genCheckEmptyList(p.symbol, p.subjectListName,Nop(),let);
@@ -587,13 +593,21 @@ public class TomKernelCompiler extends TomBase {
     Instruction letSave = `Let(variableSaveAST, TomTermToExpression(Ref(p.subjectListName)), UnamedBlock(concInstruction(let,letRestore)));
     return letSave;
   }
-  
-  private Expression genGetHead(TomSymbol tomSymbol, TomType type, TomTerm var) {
+ 
+  /*
+   * return the head of the list
+   * or return the element itself if it is not an associative operator
+   */ 
+  private Expression genGetHead(Theory theory,TomSymbol tomSymbol, TomType type, TomTerm var) {
     TomName opNameAST = tomSymbol.getAstName();
     return `GetHead(opNameAST, type, var);
   }
 
-  private Expression genGetTail(TomSymbol tomSymbol, TomTerm var) {
+  /*
+   * return the tail of the list
+   * or generate a neutral element if it is not an associative operator
+   */ 
+  private Expression genGetTail(Theory theory,TomSymbol tomSymbol, TomTerm var) {
     TomName opNameAST = tomSymbol.getAstName();
     return `GetTail(opNameAST, var);
   }
@@ -836,7 +850,8 @@ public class TomKernelCompiler extends TomBase {
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         Instruction elseBody = `collectSubtermIf(tail,booleanVariable,currentTerm,termArgList,subjectVariableAST,path,moduleName);
         Instruction assign = `collectSubtermLetAssign(termArgList,tomSymbol,subjectVariableAST,path,Nop(),moduleName);
-        Expression cond = `EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm.setNameList(concTomName(name)));
+        Theory theory = `concElementaryTheory(Syntactic());
+        Expression cond = `EqualFunctionSymbol(theory,codomain,subjectVariableAST,currentTerm.setNameList(concTomName(name)));
         return  `If(cond,LetAssign(booleanVariable,TrueTL(),assign),elseBody);
       }
     }
@@ -931,14 +946,14 @@ public class TomKernelCompiler extends TomBase {
   public Expression expandDisjunction(Expression exp, String moduleName) {
     Expression cond = `FalseTL();
     %match(exp) {
-      EqualFunctionSymbol(termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
+      EqualFunctionSymbol(theory,termType,exp1,RecordAppl[Option=option,NameList=nameList,Slots=l]) -> {
         while(!`nameList.isEmptyconcTomName()) {
           TomName name = `nameList.getHeadconcTomName();
           boolean isAnti = (name instanceof AntiName);
           if(isAnti) {
 	    name = name.getName();
           }
-          Expression check = `EqualFunctionSymbol(termType,exp1,RecordAppl(option,concTomName(name),l,concConstraint()));
+          Expression check = `EqualFunctionSymbol(theory,termType,exp1,RecordAppl(option,concTomName(name),l,concConstraint()));
           
           if(isAnti) {
 	    check = `Negation(check);
@@ -1131,6 +1146,7 @@ public class TomKernelCompiler extends TomBase {
        * action:           list of actions to be fired when matching
        * subjectListName:  name of the internal variable supposed to store the subject
        * subjectListIndex: name of the internal variable supposed to store the index
+       * optionList
        */
     public TomSymbol symbol;
     public TomNumberList path;
@@ -1138,19 +1154,22 @@ public class TomKernelCompiler extends TomBase {
     public Instruction elseAction;
     public TomTerm subjectListName;
     public TomTerm subjectListIndex;
+    public OptionList optionList;
 
     MatchingParameter(TomSymbol symbol, 
                       TomNumberList path,
                       Instruction action,
                       Instruction elseAction,
                       TomTerm subjectListName,
-                      TomTerm subjectListIndex) {
+                      TomTerm subjectListIndex,
+                      OptionList optionList) {
       this.symbol=symbol;
       this.path=path;
       this.action=action;
       this.elseAction=elseAction;
       this.subjectListName=subjectListName;
       this.subjectListIndex=subjectListIndex;
+      this.optionList = optionList;
     }
 
   }

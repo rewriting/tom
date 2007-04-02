@@ -533,11 +533,11 @@ public class TomOptimizer extends TomGenericPlugin {
             return `ref;
           }
         }
-        ref@And(EqualFunctionSymbol(astType,exp,exp1),EqualFunctionSymbol(astType,exp,exp2)) -> {
+        ref@And(EqualFunctionSymbol(theory1,astType,exp,exp1),EqualFunctionSymbol(theory2,astType,exp,exp2)) -> {
           TomNameList l1 = `exp1.getNameList();
           TomNameList l2 = `exp2.getNameList();
           if (`exp1.getNameList()==`exp2.getNameList()){
-            return `EqualFunctionSymbol(astType,exp,exp1);
+            return `EqualFunctionSymbol(theory1,astType,exp,exp1);
           } else if(l1.length()==1 && l2.length()==1) {
             return `FalseTL();
           } else {

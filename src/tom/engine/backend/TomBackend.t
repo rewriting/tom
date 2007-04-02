@@ -324,7 +324,7 @@ public class TomBackend extends TomGenericPlugin {
      */
 
 visit TomTerm {
-  (TermAppl|RecordAppl|ListAppl)[NameList=nameList] -> {
+  (TermAppl|RecordAppl)[NameList=nameList] -> {
     TomNameList l = `nameList;
     // System.out.println("dest " + `l);
     while(!l.isEmptyconcTomName()) {

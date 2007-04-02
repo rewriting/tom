@@ -648,116 +648,108 @@ plainTerm [TomName astLabeledName, TomName astAnnotedName, int line] returns [To
 
 }
     :  	(a:ANTI_SYM {anti = !anti;} )*    	
-        (   // xml term
-            result = xmlTerm[optionList, constraintList]
-            {
-            	if (anti){
-    		    	result = `AntiTerm(result);
-    		    }
-            }
+        ( // xml term
+          result = xmlTerm[optionList, constraintList]
+          {
+            if(anti) { result = `AntiTerm(result); }
+          }
 
-        |   // var* or _*
-        	{!anti}? // do not allow anti symbols on var* or _* 
-            (variableStar[null,null]) => result = variableStar[optionList,constraintList] 
+        | // var* or _*
+          {!anti}? // do not allow anti symbols on var* or _* 
+          (variableStar[null,null]) => result = variableStar[optionList,constraintList] 
 
-        |   // _
-            {!anti}? // do not allow anti symbols on _
-        	result = unamedVariable[optionList,constraintList] 
+        | // _
+          {!anti}? // do not allow anti symbols on _
+          result = unamedVariable[optionList,constraintList] 
 
-        |   // for a single constant. 
-            // ambiguous with the next rule so :
-        	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
-            name = headSymbol[optionList] 
-            {
-	      result = `Variable(ASTFactory.makeOptionList(optionList),name,
-		  TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
-	      if (anti) {
-		result = `AntiTerm(result);
-	      }
-            }            
+        | // for a single constant. 
+          // ambiguous with the next rule so:
+          {LA(2) != LPAREN && LA(2) != LBRACKET}? 
+          name = headSymbol[optionList] 
+          {
+            result = `Variable(ASTFactory.makeOptionList(optionList),name,
+              TomTypeAlone("unknown type"),ASTFactory.makeConstraintList(constraintList));
+            if(anti) { result = `AntiTerm(result); }
+          }
 
-        |   // for a single constant. 
-            // ambiguous with the next rule so :
-       	{LA(2) != LPAREN && LA(2) != LBRACKET}? 
+        | // for a single constant. 
+          // ambiguous with the next rule so:
+       	  {LA(2) != LPAREN && LA(2) != LBRACKET}? 
             nameList = headConstantList[optionList] 
-            {
-	      //nameList = `concTomName(nameList*,name);
-	      optionList.add(`Constant());
-	      result = `TermAppl(
-		  ASTFactory.makeOptionList(optionList),
-		  nameList,
-		  ASTFactory.makeList(list),
-		  ASTFactory.makeConstraintList(constraintList));
-	      if (anti) {
-		result = `AntiTerm(result);
-	      }
-            }
+          {
+	    //nameList = `concTomName(nameList*,name);
+	    optionList.add(`Constant());
+	    result = `TermAppl(
+                ASTFactory.makeOptionList(optionList),
+                nameList,
+                ASTFactory.makeList(list),
+                ASTFactory.makeConstraintList(constraintList));
+            if (anti) { result = `AntiTerm(result); }
+          }
 
-        |   // f(...) or f[...] or !f(...) or !f[...]
-            name = headSymbol[optionList] 
-            { nameList = `concTomName(nameList*,name); }
-            implicit = args[list,secondOptionList]
-            {
-              if(implicit) {
-                    result = `RecordAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeSlotList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    );
-              } else {
-                    result = `TermAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    );
-              }
-              if(anti) {
-                result = `AntiTerm(result);
-              }
+        | // f(...) or f[...] or !f(...) or !f[...]
+          name = headSymbol[optionList] 
+          (qt:QMARK)?
+          { 
+            if(qt!=null) { optionList.add(`MatchingTheory(concElementaryTheory(Associative(),Unitary()))); } 
+            nameList = `concTomName(nameList*,name);
+          }
+          implicit = args[list,secondOptionList]
+          {
+            if(implicit) {
+              result = `RecordAppl(
+                  ASTFactory.makeOptionList(optionList),
+                  nameList,
+                  ASTFactory.makeSlotList(list),
+                  ASTFactory.makeConstraintList(constraintList)
+                  );
+            } else {
+              result = `TermAppl(
+                  ASTFactory.makeOptionList(optionList),
+                  nameList,
+                  ASTFactory.makeList(list),
+                  ASTFactory.makeConstraintList(constraintList)
+                  );
             }
+            if(anti) { result = `AntiTerm(result); }
+          }
             
-        |   // (f|g...) 
-            // ambiguity with the last rule so use a lookahead
-            // if ALTERNATIVE then parse headSymbolList
-       	{LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
-            implicit = args[list, secondOptionList] 
-            {
-              if(implicit) {
-                    result = `RecordAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeSlotList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    );
-              } else {
-                    result = `TermAppl(
-                        ASTFactory.makeOptionList(optionList),
-                        nameList,
-                        ASTFactory.makeList(list),
-                        ASTFactory.makeConstraintList(constraintList)
-                    );
-              }
-              if(anti) {
-                  result = `AntiTerm(result);
-              }
+        | // (f|g...) 
+          // ambiguity with the last rule so use a lookahead
+          // if ALTERNATIVE then parse headSymbolList
+       	  {LA(3) == ALTERNATIVE || LA(4) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
+          implicit = args[list, secondOptionList] 
+          {
+            if(implicit) {
+              result = `RecordAppl(
+                  ASTFactory.makeOptionList(optionList),
+                  nameList,
+                  ASTFactory.makeSlotList(list),
+                  ASTFactory.makeConstraintList(constraintList)
+                  );
+            } else {
+              result = `TermAppl(
+                  ASTFactory.makeOptionList(optionList),
+                  nameList,
+                  ASTFactory.makeList(list),
+                  ASTFactory.makeConstraintList(constraintList)
+                  );
             }
-        |   // (...)
-            implicit = args[list,secondOptionList]
-            {
-                nameList = `concTomName(Name(""));
-                optionList.addAll(secondOptionList);
-                result = `TermAppl(
-                    ASTFactory.makeOptionList(optionList),
-                    nameList,
-                    ASTFactory.makeList(list),
-                    ASTFactory.makeConstraintList(constraintList)
+            if(anti) { result = `AntiTerm(result); }
+          }
+        | // (...)
+          implicit = args[list,secondOptionList]
+          {
+            nameList = `concTomName(Name(""));
+            optionList.addAll(secondOptionList);
+            result = `TermAppl(
+                ASTFactory.makeOptionList(optionList),
+                nameList,
+                ASTFactory.makeList(list),
+                ASTFactory.makeConstraintList(constraintList)
                 );
-                if(anti) {
-                    result = `AntiTerm(result);
-                }
-            }
+            if(anti) { result = `AntiTerm(result); }
+          }
         )
     ;
 
@@ -1109,7 +1101,7 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
                 option = ASTFactory.makeOptionList(optionList);
                 ASTFactory.makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
-								result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
+                result = `TermAppl(option,nameList,concTomTerm(),concConstraint());
             }
         )
     ;
@@ -2179,6 +2171,7 @@ COLON       :   ':' ;
 EQUAL       :   '=' ;
 AT          :   '@' ;
 STAR        :   '*' ;
+QMARK       :   '?' ;
 UNDERSCORE  :   {!Character.isJavaIdentifierPart(LA(2))}? '_' ; 
 BACKQUOTE   :   "`" ;
 
