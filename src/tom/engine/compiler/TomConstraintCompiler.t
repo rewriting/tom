@@ -61,10 +61,10 @@ public class TomConstraintCompiler extends TomBase {
 				// build a matching automata  
 				%match(patternInstructionList){
 					concPatternInstruction(_*,PatternInstruction(Pattern[TomList=patternList],action,optionList),_*) ->{
-						ConstraintList constraintList = TomConstraintCompiler.buildConstraintConjunction(`patternList,renamedSubjects);
+						Constraint constraint = TomConstraintCompiler.buildConstraintConjunction(`patternList,renamedSubjects);
 						try{
 							actionNumber++;
-							Constraint propagationResult = TomPropagationManager.performPropagations(`AndConstraint(constraintList));							
+							Constraint propagationResult = TomPropagationManager.performPropagations(constraint);							
 							Instruction matchingAutomata = TomInstructionGenerationManager.performGenerations(propagationResult, `action);
 							
 							TomNumberList numberList = `concTomNumber(rootpath*,PatternNumber(Number(actionNumber)));
@@ -140,18 +140,18 @@ public class TomConstraintCompiler extends TomBase {
 	 * takes a list of patterns (p1...pn) and a list of subjects (s1...sn)
 	 * and generates p1 << s1 /\ .... /\ pn << sn
 	 */
-	private static ConstraintList buildConstraintConjunction(TomList patternList, TomList subjectList){
-		ConstraintList constraintList = `concConstraint();
+	private static Constraint buildConstraintConjunction(TomList patternList, TomList subjectList){
+		Constraint constraint = `AndConstraint();
 		while(!`patternList.isEmptyconcTomTerm()) {
 			TomTerm pattern = `patternList.getHeadconcTomTerm();
 			TomTerm subject = `subjectList.getHeadconcTomTerm();
 			
-			constraintList = `concConstraint(MatchConstraint(pattern, subject),constraintList*);
+			constraint = `AndConstraint(MatchConstraint(pattern, subject),constraint*);
 			
 			`patternList = `patternList.getTailconcTomTerm();
 			`subjectList = `subjectList.getTailconcTomTerm();
 		}// end while
-		return constraintList;
+		return constraint;
 	}	
 	
 	/**

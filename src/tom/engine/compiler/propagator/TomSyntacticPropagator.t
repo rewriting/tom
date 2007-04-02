@@ -28,34 +28,32 @@ public class TomSyntacticPropagator implements TomIBasePropagator{
 				// if this a list or array, nothing to do
 				if(!TomConstraintCompiler.isSyntacticOperator(
 						TomConstraintCompiler.getSymbolTable().getSymbolFromName(`tomName))) {return `m;}
-				ConstraintList l = `concConstraint();				
+				Constraint l = `AndConstraint();				
 				// for each slot
 				%match(slots){
 					concSlot(_*,PairSlotAppl(slotName,appl),_*) ->{
-						l = `concConstraint(MatchConstraint(appl,Subterm(name,slotName,g)),l*);
+						l = `AndConstraint(MatchConstraint(appl,Subterm(name,slotName,g)),l*);
 					}
 				}								
 				l = l.reverse();
 				// add head equality condition
-				l = `concConstraint(MatchConstraint(SymbolOf(g),lhs.setSlots(concSlot())),l*);
+				l = `AndConstraint(MatchConstraint(SymbolOf(g),lhs.setSlots(concSlot())),l*);
 //[pem] can we use a real A or AU operator for AndConstraint ?
 //[radu] normally, yes: AU, with True() as neutral
 //[radu]: TODO				
-				return `AndConstraint(l);
+				return l;
 			}		
 			
 			// Replace
-			// z = t /\ Context( z = u ) -> z = t /\ Context( t = u )			 
+			// Context1 /\ z = t /\ Context2( z = u ) -> z = t /\ Context( t = u )			 
 			// we only apply this rule from right to left; this is not important for
 			// classical pattern matching, but when anti-patterns are involved, if we replace
 			// right_to_left, results are not always correct
-			AndConstraint(concConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*)) ->{
-				Constraint toApplyOn = `AndConstraint(concConstraint(Y*));
-//[pem] is TopDown as efficient as Map on lists?
-//[radu] TODO: I am not sure I understand: you mean a list of extracted variables ? first extract variables, and put them in a Map ?      				
+			AndConstraint(X*,eq@MatchConstraint(Variable[AstName=z],t),Y*) ->{
+				Constraint toApplyOn = `AndConstraint(Y*);
 				Constraint res = (Constraint)`TopDown(ReplaceVariable(z,t)).fire(toApplyOn);
 				if (res != toApplyOn){					
-					return `AndConstraint(concConstraint(X*,eq,res));
+					return `AndConstraint(X*,eq,res);
 				}
 			}
 			// // z = p1 /\ p2 = z -> z = p1 /\ p2 = p1 (this can occur because of the annotations of terms)

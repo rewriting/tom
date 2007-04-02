@@ -12,8 +12,8 @@ Constraint =
  		   | TrueConstraint()
 		   | FalseConstraint()		   
 		   | Negate(c:Constraint)
-		   | AndConstraint(cla:ConstraintList)
-		   | OrConstraint(clo:ConstraintList)
+		   | AndConstraint(Constraint*)
+		   | OrConstraint(Constraint*)
 		   | MatchConstraint(pattern:TomTerm, subject:TomTerm)
 //		   | NMatchConstraint(pattern:TomTerm, subject:TomTerm)
 //		   | Exists(var:TomTerm,cons:Constraint)
@@ -45,3 +45,5 @@ AndConstraint:make(constList){
 		}		
 	}
 }
+
+

@@ -68,9 +68,9 @@ public class TomInstructionGenerationManager extends TomBase {
 	 */
 	private static Expression prepareGeneration(Constraint constraint){
 		%match(constraint){
-			AndConstraint(concConstraint(m,X*)) ->{
+			AndConstraint(m,X*) ->{
 				return `And(prepareGeneration(m),
-						prepareGeneration(AndConstraint(concConstraint(X*))));				
+						prepareGeneration(AndConstraint(X*)));				
 			}
 			m@MatchConstraint[] ->{
 				return `ConstraintToExpression(m);

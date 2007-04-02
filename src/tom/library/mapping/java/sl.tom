@@ -41,6 +41,6 @@
 
 
 %include { strategy/basic_sl.tom }
-%include { strategy/graph_sl.tom }
+//%include { strategy/graph_sl.tom }
 %include { strategy/composed_sl.tom }
 
