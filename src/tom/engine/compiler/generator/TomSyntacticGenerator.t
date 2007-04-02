@@ -30,7 +30,7 @@ public class TomSyntacticGenerator implements TomIBaseGenerator{
 	%strategy SyntacticGenerator() extends Identity(){
 		visit Expression{
 			// generate is_fsym(t,f) || is_fsym(t,g) || ...
-			ConstraintToExpression(MatchConstraint(RecordAppl[Option=option,NameList=nameList@(headName,_*),Slots=l],SymbolOf(subject))) ->{
+			ConstraintToExpression(MatchConstraint(SymbolOf(subject),RecordAppl[Option=option,NameList=nameList@(headName,_*),Slots=l])) ->{
 				Expression cond = null;
 				TomType termType = TomConstraintCompiler.getTermTypeFromName(`headName);
 				// add condition for each name

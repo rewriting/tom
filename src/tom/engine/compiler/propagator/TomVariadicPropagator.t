@@ -51,7 +51,7 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				// SlotList sList = `slots;
 				%match(slots){
 					p:concSlot(_*,PairSlotAppl[Appl=appl],X*)->{
-//[pem] I do not understand this trick: no MatchConstraint is generated if the last element is an appl?
+						// last element needs special treatment - see below	
 						if (`X.length() == 0) {
 							lastElement = `appl;
 							break p;
@@ -59,6 +59,10 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 						TomTerm newFreshVarList = getFreshVariableStar(listType);
 						// if we have a variable
 //[pem] can't we split the rule by dupplicating the pattern?
+//[radu] you mean insteand of having above concSlot(_*,PairSlotAppl[Appl=appl],X*) to have 
+// concSlot(_*,PairSlotAppl[Appl=appl@(VariableStar|UnamedVariableStar)],X*) and concSlot(_*,PairSlotAppl[Appl=appl],X*) ?
+// if the answer is yes, I am not sure it's worth it ...
+// TODO						
 						if(((`appl) instanceof VariableStar) || ((`appl) instanceof UnamedVariableStar)){
 							TomTerm beginSublist = getBeginVariableStar(listType);
 							TomTerm endSublist = getEndVariableStar(listType);							
@@ -85,9 +89,15 @@ public class TomVariadicPropagator implements TomIBasePropagator{
 				// 3. if it is an UnamedVariableStar, there is nothing to do
 				TomTerm newFreshVarList = getFreshVariableStar(listType);
 //[pem] can't we do a post-treatment to inspect the last element, instead of using the lastElement variable?
+//[radu] you mean replacing the the above pattern with 
+//	concSlot(_*,PairSlotAppl[Appl=appl],X*,last) and to add to more rules concSlot(_*,VariableStar[]) and concSlot(_*,UnamedVariableStar[]) ?
+// TODO				
 //[pem] do not use instanceof to implement pattern matching
 //[pem] use concSlot(_*,VariableStar[]) or concSlot(_*,UnamedVariableStar[]) instead
 				if (lastElement != null){
+					%match(lastElement){
+						
+					}
 					if(lastElement instanceof VariableStar){
 						l = `concConstraint(MatchConstraint(lastElement,freshVariable),l*);
 					}else if (!(lastElement instanceof UnamedVariableStar)){
