@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2006, INRIA
+ * Copyright (c) 2004-2007, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -62,6 +62,18 @@ public class TestSL extends TestCase {
   public void testSL5() {		
     assertTrue( ob.test5() == nb.test5() );
   }
+  public void testSLChoice() {		
+    assertTrue( ob.testChoice() == nb.testChoice() );
+  }
+  public void testSLChoiceSideEffect() {		
+    assertTrue( ob.testChoiceSideEffect() == nb.testChoiceSideEffect() );
+  } 
+  public void testSLNot() {		
+    assertTrue( ob.testNot() == nb.testNot() );
+  }
+  public void testSLNotSideEffect() {		
+    assertTrue( ob.testNotSideEffect() == nb.testNotSideEffect() );
+  }
   public void testSL6() {		
     assertTrue( ob.test6() == nb.test6() );
   }
@@ -74,8 +86,20 @@ public class TestSL extends TestCase {
   public void testSL9() {		
     assertTrue( ob.test9() == nb.test9() );
   }
+  public void testITESideEffect() {		
+    assertTrue( ob.testITESideEffect() == nb.testITESideEffect() );
+  }
   public void testSL10() {		
     assertTrue( ob.test10() == nb.test10() );
+  }
+  public void testSL11() {		
+    assertTrue( ob.test11() == nb.test11() );
+  }
+  public void testSL12() {		
+    assertTrue( ob.test12() == nb.test12() );
+  }
+  public void testSL13() {		
+    assertTrue( ob.test13() == nb.test13() );
   }
   public void testSLWhen1() {		
     assertTrue( ob.testWhen1() == nb.testWhen1() );
@@ -84,18 +108,18 @@ public class TestSL extends TestCase {
     assertTrue( ob.testCongruence1() == nb.testCongruence1() );
   }
   public void testSLCongruence2() {	
-    try{
+    try {
       ob.testCongruence2();
-    fail();
-    }catch(RuntimeException e){
-      try{
+      fail();
+    } catch (RuntimeException e) {
+      try {
         nb.testCongruence2();
         fail();
-      }catch(tom.library.sl.FireException ee){}
+      } catch (tom.library.sl.FireException ee) {/*success*/}
     }
   }
   public void testSLCongruenceList() {
     assertTrue( ob.testCongruenceList() == nb.testCongruenceList() );
   }
- 
+
 }

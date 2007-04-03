@@ -64,6 +64,30 @@ public class NewBehaviour {
     return (Term) s.fire(subject);
   }
 
+  public Term testChoice() {
+    Term subject = `f(b());
+    Strategy s = `Choice(R2(),R1());
+    return (Term) s.fire(subject);
+  }
+
+  public Term testChoiceSideEffect() {
+    Term subject = `f(a());
+    Strategy s = `Choice(Sequence(R1(),R2()),R1());
+    return (Term) s.fire(subject);
+  }
+
+  public Term testNot() {
+    Term subject = `f(b());
+    Strategy s = `Not(R2());
+    return (Term) s.fire(subject);
+  }
+
+  public Term testNotSideEffect() {
+    Term subject = `f(a());
+    Strategy s = `Not(Sequence(R1(),R2()));
+    return (Term) s.fire(subject);
+  }
+
   public Term test6() {
     Term subject = `g(f(a()),b());
     Strategy s = `Sequence(All(R2()),All(All(R1())));
@@ -87,12 +111,39 @@ public class NewBehaviour {
     Strategy s = `IfThenElse(R2(),Builda(),Buildb());
     return (Term) s.fire(subject);
   }
+  
+  public Term testITESideEffect() {
+    Term subject = `f(a());
+    Strategy s = `IfThenElse(R2(),Identity(),Buildb());
+    return (Term) s.fire(subject);
+  }
 
   public Term test10() {
     Term subject = `f(a());
     Strategy s = `IfThenElse(R2(),Builda(),Buildb());
     return (Term) s.fire(subject);
   }
+
+  public Term test11() {
+    Term subject = `g(f(a()),b());
+    Strategy s = `OnceTopDownId((R1()));
+    subject = (Term) s.fire(subject);
+    subject = (Term) s.fire(subject);
+    return (Term) s.fire(subject);
+  }
+
+  public Term test12(){
+    Term subject = `g(f(a()),b());
+    Strategy s = `Innermost((R2()));
+    return (Term) s.fire(subject);
+  }
+
+  public Term test13(){
+    Term subject = `g(f(a()),b());
+    Strategy s = `Outermost((R2()));
+    return (Term) s.fire(subject);
+  }
+
 
   public Term testWhen1() {
     Term subject = `f(a());

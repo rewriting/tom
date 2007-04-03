@@ -29,48 +29,44 @@
 
 package sl;
 
-import sl.testsl.types.*;
-import sl.testsl.*;
-import tom.library.sl.Strategy;
+import tom.library.sl.Position;
+import tom.library.sl.Path;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class TestRef extends TestCase {
+public class TestPosition extends TestCase {
 
-  %include { sl.tom }
-  %include { strategy/graph_sl.tom }
-  %include { testsl/_testsl.tom }
-  %include { testsl/testsl.tom }
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(new TestSuite(TestPosition.class));
+	}
 
-  %op Strategy TopDownSeq(s1:Strategy) {
-    make(v) { `mu(MuVar("_x"),Sequence(v,AllSeq(MuVar("_x")))) }
+  public void testNormalize(){
+    Position p = new Position(new int[]{1,-1,2,-2,1,2,3,-3,1,1});
+    Path pp = p.normalize();
+    assertEquals(pp,new Position(new int[]{1,2,1,1}));
   }
 
-  %strategy AB() extends `Identity() {
-    visit Term {
-      a() -> { return `b(); }
-      b() -> { return `c(); }
-    }
+  public void testAdd(){
+    Position p1 = new Position(new int[]{1,1,2,1});
+    Position p2 = new Position(new int[]{1,2,1,2,1});
+    Path r = p2.add(p1);
+    r = r.normalize();
+    assertEquals(r,new Position(new int[]{1,2,1,2,1,1,1,2,1}));
   }
 
-  public static void main(String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(TestRef.class));
+  public void testInv(){
+    Position p = new Position(new int[]{1,1,2});
+    Path r = p.inv();
+    r = r.normalize();
+    assertEquals(r,new Position(new int[]{-2,-1,-1}));
   }
 
-  public void testRef() {
-    Term subject = (Term) testslAbstractType.expand(`g(g(a(),refTerm("l")),labTerm("l",a())));
-    try{
-      Term res = (Term) `TopDown(StrictDeRef(AB())).fire(subject);
-      assertEquals(res,testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDown(DeRef(AB())).fire(subject);
-      assertEquals(res,testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDownSeq(StrictDeRef(AB())).fire(subject);
-      assertEquals(res,testslAbstractType.expand(`g(g(a(),refTerm("n")),labTerm("n",b()))));
-      res = (Term) `TopDownSeq(DeRef(AB())).fire(subject);
-      assertEquals(res,testslAbstractType.expand(`g(g(b(),refTerm("n")),labTerm("n",c()))));
-    } catch (tom.library.sl.FireException e) {
-      fail("It should not fail");
-    }
+  public void testSub(){
+    Position p1 = new Position(new int[]{1,1,2,1});
+    Position p2 = new Position(new int[]{1,2,1,2,1});
+    Path r = p2.sub(p1);
+    r = r.normalize();
+    assertEquals(r,new Position(new int[]{-1, -2, -1, 2, 1, 2, 1}));
   }
 
-}
+ }
