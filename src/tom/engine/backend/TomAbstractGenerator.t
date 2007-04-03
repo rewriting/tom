@@ -2,7 +2,7 @@
  *
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -129,13 +129,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-			/*
-      BuildVariable[AstName=PositionName(l)] -> {
-        output.write("tom" + numberListToIdentifier(`l));
-        return;
-      }
-			 */
-
       BuildTerm(Name(name), argList, myModuleName) -> {
         `buildTerm(deep, name, argList, myModuleName);
         return;
@@ -161,7 +154,7 @@ public abstract class TomAbstractGenerator extends TomBase {
            * sans type: re-definition lorsque %variable est utilise
            * avec type: probleme en cas de filtrage dynamique
            */
-        output.write("tom" + numberListToIdentifier(`l));
+        output.write("tom" + tomNumberListToString(`l));
         return;
       }
 
@@ -171,7 +164,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       VariableStar[AstName=PositionName(l)] -> {
-        output.write("tom" + numberListToIdentifier(`l));
+        output.write("tom" + tomNumberListToString(`l));
         return;
       }
 
@@ -273,6 +266,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      IsSort(Type[TomType=type@ASTTomType(typeName)], exp) -> {
+        `buildExpIsSort(deep,type,exp,moduleName);
+        return;
+      }
+
       IsFsym(Name(opname), exp) -> {
         buildExpIsFsym(deep, `opname, `exp, moduleName);
         return;
@@ -321,7 +319,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         buildExpGetSliceList(deep, `name, `varBegin, `varEnd, moduleName);
         return;
       }
-
+      
       GetSliceArray(Name(name),varArray,varBegin,expEnd) -> {
         buildExpGetSliceArray(deep, `name, `varArray, `varBegin, `expEnd, moduleName);
         return;
@@ -456,16 +454,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      CheckStamp(variable) -> {
-        `buildCheckStamp(deep, getTermType(variable), variable, moduleName);
-        return;
-      }
-
-			CheckInstance(Type[TomType=ASTTomType(typeName),TlType=tlType@TLType[]], exp, instruction) -> {
-        `buildCheckInstance(deep,typeName,tlType,exp,instruction, moduleName);
-        return;
-      }
-
       t -> {
         System.out.println("Cannot generate code for instruction: " + `t);
         throw new TomRuntimeException("Cannot generate code for instruction: " + `t);
@@ -563,25 +551,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return ;
       }
 
-      CheckStampDecl(Variable[AstName=Name(name),
-                              AstType=Type(ASTTomType(type),tlType@TLType[])],
-                     //astType=Type((type),tlType@TLType[])],
-                     instr, _) -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
-          `buildCheckStampDecl(deep, type, name, tlType, instr, moduleName);
-        }
-        return;
-      }
-
-      SetStampDecl(Variable[AstName=Name(name),
-                            AstType=Type(ASTTomType(type),tlType@TLType[])],
-                     instr, _) -> {
-        if(getSymbolTable(moduleName).isUsedSymbolDestructor(`name)) {
-          `buildSetStampDecl(deep, type, name, tlType, instr, moduleName);
-        }
-        return;
-      }
-
       GetImplementationDecl(Variable[AstName=Name(name),
                               AstType=Type(ASTTomType(type),tlType@TLType[])],
                      instr, _) -> {
@@ -609,11 +578,18 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      TermsEqualDecl(Variable[AstName=Name(name1), AstType=Type(ASTTomType(type1),_)],
+      EqualTermDecl(Variable[AstName=Name(name1), AstType=Type(ASTTomType(type1),_)],
                      Variable[AstName=Name(name2), AstType=Type(ASTTomType(type2),_)],
                      instr, _) -> {
         if(getSymbolTable(moduleName).isUsedTypeDefinition(`type1)) {
-          `buildTermsEqualDecl(deep, name1, name2, type1, type2, instr, moduleName);
+          `buildEqualTermDecl(deep, name1, name2, type1, type2, instr, moduleName);
+        }
+        return;
+      }
+      
+      IsSortDecl(Variable[AstName=Name(name1), AstType=Type(ASTTomType(type1),_)], instr, _) -> {
+        if(getSymbolTable(moduleName).isUsedTypeDefinition(`type1)) {
+          `buildIsSortDecl(deep, name1, type1, instr, moduleName);
         }
         return;
       }
@@ -837,6 +813,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpIsEmptyList(int deep, TomName opName, TomType type, TomTerm expList, String moduleName) throws IOException;
   protected abstract void buildExpIsEmptyArray(int deep, TomName opName, TomType type, TomTerm expIndex, TomTerm expArray, String moduleName) throws IOException;
   protected abstract void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2, String moduleName) throws IOException;
+  protected abstract void buildExpIsSort(int deep, TomType type, TomTerm exp, String moduleName) throws IOException;
   protected abstract void buildExpIsFsym(int deep, String opname, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp, String moduleName) throws IOException;
   protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm exp, String moduleName) throws IOException;
@@ -858,13 +835,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes, String moduleName) throws IOException;
   protected abstract void buildAddOne(int deep, TomTerm var, String moduleName) throws IOException;
   protected abstract void buildReturn(int deep, TomTerm exp, String moduleName) throws IOException ;
-  protected abstract void buildCheckStamp(int deep, TomType type, TomTerm variable, String moduleName) throws IOException ;
-  protected abstract void buildCheckInstance(int deep, String typeName,TomType type, Expression exp, Instruction instruction, String moduleName) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName, String moduleName) throws IOException ;
-  protected abstract void buildCheckStampDecl(int deep, String type, String name,
-                                              TomType tlType, Instruction instr, String moduleName) throws IOException;
-  protected abstract void buildSetStampDecl(int deep, String type, String name,
-                                              TomType tlType, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildGetImplementationDecl(int deep, String type, String name,
                                               TomType tlType, Instruction instr, String moduleName) throws IOException;
 
@@ -872,8 +843,10 @@ public abstract class TomAbstractGenerator extends TomBase {
                                           TomType tlType, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
                                            TomType tlType, Instruction instr, TomName slotName, String moduleName) throws IOException;
-  protected abstract void buildTermsEqualDecl(int deep, String name1, String name2,
+  protected abstract void buildEqualTermDecl(int deep, String name1, String name2,
                                               String type1, String type2, Instruction instr, String moduleName) throws IOException;
+  protected abstract void buildIsSortDecl(int deep, String name1, 
+                                              String type1, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, Instruction instr, String moduleName) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,

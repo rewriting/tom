@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (c) 2000-2006, INRIA
+ * Copyright (c) 2000-2007, INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -66,14 +66,6 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     output.writeln(";");
   } 
 
-  protected void buildCheckStamp(int deep, TomType type, TomTerm variable, String moduleName) throws IOException {
-    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-      output.write("tom_check_stamp_" + getTomType(type) + "(");
-      generate(deep,variable,moduleName);
-      output.write(");");
-    }
-  }
- 
   protected void buildComment(int deep, String text) throws IOException {
     output.writeln("/* " + text + " */");
     return;
@@ -95,7 +87,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
       generate(deep,exp2,moduleName);
       output.write(")");
     } else {
-      output.write("tom_terms_equal_" + getTomType(type) + "(");
+      output.write("tom_equal_term_" + getTomType(type) + "(");
       generate(deep,exp1,moduleName);
       output.write(", ");
       generate(deep,exp2,moduleName);
@@ -291,12 +283,13 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
     String is_empty = "tom_is_empty_" + name + "_" + tomType;
-    String term_equal = "tom_terms_equal_" + tomType;
+    String equal_term = "tom_equal_term_" + tomType;
     String make_insert = listCast + "tom_cons_list_" + name;
     String make_empty = listCast + "tom_empty_list_" + name;
     String get_head = eltCast + "tom_get_head_" + name + "_" + tomType;
     String get_tail = listCast + "tom_get_tail_" + name + "_" + tomType;
     String get_slice = listCast + "tom_get_slice_" + name;
+    String get_index = "tom_get_index_" + name;
 
     s+= modifier + utype + " tom_append_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n";
     s+= "   if(" + is_empty + "(l1)) {\n";
@@ -312,7 +305,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     s+= "\n";
     
     s+= modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end) {\n"; 
-    s+= "   if(" + term_equal + "(begin,end)) {\n";
+    s+= "   if(" + equal_term + "(begin,end)) {\n";
     s+= "     return " +  make_empty + "();\n";
     s+= "   } else {\n";
     s+= "     return " +  make_insert + "(" + get_head + "(begin)," + 
@@ -320,6 +313,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
     s+= "   }\n";
     s+= "  }\n";
     s+= "\n";
+   
     //If necessary we remove \n code depending on pretty option
     TargetLanguage itl = ASTFactory.reworkTLCode(`ITL(s), prettyMode);
     output.write(itl.getCode()); 
@@ -340,9 +334,6 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
         %match(TomTerm arg) {
           Variable[AstName=Name(name), AstType=Type[TomType=tomType,TlType=tlType@TLType[]]] -> {
             s.append(getTLCode(`tlType) + " " + `name);
-            if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-              check.append("tom_check_stamp_" + getTomType(`tomType) + "(" + `name + ");\n");
-            }
             break matchBlock;
           }
             
@@ -362,13 +353,7 @@ public abstract class TomCFamilyGenerator extends TomImperativeGenerator {
 
     output.write(s);
     output.write("return ");
-    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-      output.write("tom_set_stamp_" + getTomType(returnType) + "(");
-      generateInstruction(0,instr,moduleName);
-      output.write(")");
-    } else {
-      generateInstruction(0,instr,moduleName);
-    }
+    generateInstruction(0,instr,moduleName);
     output.write("; }");
   }
 }
