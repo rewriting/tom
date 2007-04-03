@@ -27,11 +27,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gom;
+package gomterm;
 
 import java.util.*;
-import gom.gomterm.*;
-import gom.gomterm.types.*;
+import gomterm.gomterm.*;
+import gomterm.gomterm.types.*;
 
 public class GomNsh {
   private static boolean authVerif = true;

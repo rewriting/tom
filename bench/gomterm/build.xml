@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Build the gom bench" default="build" basedir="..">
+<project name="Build the gomterm bench" default="build" basedir="..">
   <import file="../common.xml"/>
   <target name="clean" description="Cleans bench directory">
-    <delete dir="${bench.gen}/gom"/>
-    <delete dir="${bench.build}/gom"/>
+    <delete dir="${bench.gen}/gomterm"/>
+    <delete dir="${bench.build}/gomterm"/>
   </target>
   <target name="build" depends="init">
-    <gomcompile example="gom"/>
+    <gomcompile example="gomterm"/>
     <tom.preset srcdir="${bench.dir}"
                 destdir="${bench.gen}">          
-      <include name="gom/**/*.t"/>
-      <exclude name="gom/**/erat.t"/>
+      <include name="gomterm/**/*.t"/>
+      <exclude name="gomterm/**/erat.t"/>
     </tom.preset>
     <tom.preset srcdir="${bench.dir}"
-	        destdir="${bench.gen}/gom"         
+	        destdir="${bench.gen}/gomterm"         
                 options="--cCode -I ${tom.home}/share/jtom">
-      <include name="gom/**/erat.t"/>
+      <include name="gomterm/**/erat.t"/>
     </tom.preset>
-    <javacompile example="gom"/>
-    <copy todir="${bench.build}/gom">
-      <fileset dir="${bench.dir}/gom">
+    <javacompile example="gomterm"/>
+    <copy todir="${bench.build}/gomterm">
+      <fileset dir="${bench.dir}/gomterm">
         <include name="*.sh"/>
       </fileset>
     </copy>
@@ -28,10 +28,10 @@
     <zip destfile="${distrib.zip}" 
          update="yes">
       <zipfileset dir="${bench.dir}" prefix="bench" filemode="644">
-        <include name="gom/*.t"/>
-        <include name="gom/**/*.tom"/>
-        <include name="gom/**/*.java"/>
-        <include name="gom/*.gom"/>
+        <include name="gomterm/*.t"/>
+        <include name="gomterm/**/*.tom"/>
+        <include name="gomterm/**/*.java"/>
+        <include name="gomterm/*.gom"/>
       </zipfileset>
     </zip>
   </target>

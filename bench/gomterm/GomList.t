@@ -27,9 +27,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gom;
+package gomterm;
 
-import gom.gomlist.list.types.*;
+import gomterm.gomlist.list.types.*;
 
 public class GomList {
 

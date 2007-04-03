@@ -26,9 +26,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gom;
+package gomterm;
 
-import gom.gomgc.spec.types.*;
+import gomterm.gomgc.spec.types.*;
 
 class GomGC {
 
@@ -51,7 +51,7 @@ class GomGC {
     visit Nat {
       M() -> { return `Suc(Zero()); }
       N() -> { return `Suc(Suc(Suc(Zero()))); }
-      P() -> { return gom.GomGC.base; }
+      P() -> { return gomterm.GomGC.base; }
       //N() -> { return `Suc(Suc(Suc(Zero()))); }
       //P() -> { return `Suc(Suc(Suc(Suc(Zero())))); }
       C(Zero(),y) -> { return `y; }

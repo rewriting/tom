@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gom;
+package gomterm;
 
 import aterm.*;
 import aterm.pure.SingletonFactory;

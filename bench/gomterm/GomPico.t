@@ -26,8 +26,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gom;
-import gom.gompico.term.types.*;
+package gomterm;
+import gomterm.gompico.term.types.*;
 
 import java.util.*;
 

@@ -27,9 +27,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gom;
+package gomterm;
 
-import gom.list.*;
+import gomterm.list.*;
 
 public class HandList {
 

@@ -27,10 +27,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gom;
+package gomterm;
 
-import gom.stratid.term.*;
-import gom.stratid.term.types.*;
+import gomterm.stratid.term.*;
+import gomterm.stratid.term.types.*;
 
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
