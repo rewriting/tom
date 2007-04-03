@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2006, Pierre-Etienne Moreau
+ * Copyright (c) 2000-2007, Pierre-Etienne Moreau
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,13 @@
  **/
 package tom.library.sl;
 
-public interface Reference extends jjtraveler.Visitable {
+public interface Reference {
 
-    /**
-     * gives the array that represents the position of the reference
-     */
-    public int[] toArray();
+  /**
+   * gives the array that represents the reference
+   */
+  public int[] toArray();
+
+  public Position getDestPosition(Position source);
 
 }

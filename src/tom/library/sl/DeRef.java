@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2000-2006, Pierre-Etienne Moreau All rights reserved.
+ * Copyright (c) 2000-2007, Pierre-Etienne Moreau All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -28,45 +28,45 @@
 
 package tom.library.sl;
 
-public class Ref extends AbstractStrategy {
+public class DeRef extends AbstractStrategy {
   public final static int ARG = 0;
   // is it an absolute or a relative reference
   private boolean relative = false;
   // strict means that it fails when it is not a Ref
   private boolean strict = false;
 
-  private Ref(Strategy s, boolean relative,  boolean strict) {
+  private DeRef(Strategy s, boolean relative,  boolean strict) {
     initSubterm(s);
     this.relative=relative;
     this.strict = strict;
   }
 
-  public static Ref make(Strategy s) {
-    return new Ref(s,false,false);
+  public static DeRef make(Strategy s) {
+    return new DeRef(s,false,false);
   }
 
-  public static Ref makeRelative(Strategy s) {
-    return new Ref(s,true,false);
+  public static DeRef makeRelative(Strategy s) {
+    return new DeRef(s,true,false);
   }
 
-  public static Ref makeStrict(Strategy s) {
-    return new Ref(s,false,true);
+  public static DeRef makeStrict(Strategy s) {
+    return new DeRef(s,false,true);
   }
 
-  public static Ref makeRelativeStrict(Strategy s) {
-    return new Ref(s,true,true);
+  public static DeRef makeRelativeStrict(Strategy s) {
+    return new DeRef(s,true,true);
   }
 
   public boolean isRelative() { return relative; }
   public boolean isStrict() { return strict; }
 
   public jjtraveler.Visitable visit(jjtraveler.Visitable x) throws jjtraveler.VisitFailure {
-    throw new RuntimeException("The strategy operator Ref can be used only with the methods visit() and fire()");
+    throw new RuntimeException("The strategy operator DeRef can be used only with the methods visit() and fire()");
   }
 
   public void visit() {
-    if (getSubject() instanceof Reference){
-      visitReference((Reference)getSubject());
+    if (getSubject() instanceof Path){
+      visitPath((Path)getSubject());
     } else {
       if(strict) {
         // does nothing when it is not a Ref
@@ -76,24 +76,17 @@ public class Ref extends AbstractStrategy {
     }
   }
 
-  private void visitReference(Reference ref) {
-    Position destPos;
-    Position currentPos =environment.getPosition();
+  private void visitPath(Path path) {
     if(relative) {
-      Position relativePos = Position.makeRelativePosition(ref.toArray());
-      destPos = currentPos.getAbsolutePosition(relativePos);
-    } else {
-      destPos = Position.makeAbsolutePosition(ref.toArray());
+      Position current = environment.getPosition();
+      environment.goTo(path);
+      visitors[ARG].visit();
+      if (getStatus() != Environment.SUCCESS) {
+        environment.goTo(current.sub(getEnvironment().getPosition()));
+        return;
+      }
+      environment.goTo(current.sub(getEnvironment().getPosition()));
     }
-    Position oldToNew = currentPos.getRelativePosition(destPos);
-    Position newToOld = destPos.getRelativePosition(currentPos);
-    environment.goTo(oldToNew);
-    visitors[ARG].visit();
-    if (getStatus() != Environment.SUCCESS) {
-      environment.goTo(newToOld);
-      return;
-    }
-    environment.goTo(newToOld);
   }
 
 }

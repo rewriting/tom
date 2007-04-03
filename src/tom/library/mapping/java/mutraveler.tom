@@ -30,6 +30,7 @@
  **/
 %typeterm Strategy {
   implement { jjtraveler.reflective.VisitableVisitor }
+  is_sort(t) { t instanceof jjtraveler.reflective.VisitableVisitor }
   equals(t1,t2) {t1.equals(t2)}
 }
 %op Strategy mu(s1:Strategy, s2:Strategy) {

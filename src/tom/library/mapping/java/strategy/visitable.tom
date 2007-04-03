@@ -29,6 +29,7 @@
 
 %typeterm Visitable {
   implement { jjtraveler.Visitable }
+  is_sort(t) { t instanceof jjtraveler.Visitable }
   equals(t1,t2) {t1.equals(t2)}
 }
 

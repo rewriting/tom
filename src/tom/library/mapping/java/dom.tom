@@ -105,11 +105,13 @@ public static java.util.ArrayList tom_mapping_newTNodeList() {
 
 %typeterm TNode { 
 	implement {org.w3c.dom.Node}	
+	is_sort(t) {t instanceof org.w3c.dom.Node}	
 	equals(t1,t2) {t1.equals(t2)}
 }
 
 %typeterm TDocument { 
 	implement {org.w3c.dom.Document}	
+	is_sort(t) {t instanceof org.w3c.dom.Document}	
 	equals(t1,t2) {t1.equals(t2)}
 }
 
@@ -176,6 +178,7 @@ public static java.util.ArrayList tom_mapping_newTNodeList() {
 
 %typeterm TNodeList {
 	implement{ java.util.ArrayList }
+	is_sort(t){ t instanceof java.util.ArrayList }
 	equals(l1,l2) { l1.equals(l2) }
 }
 
